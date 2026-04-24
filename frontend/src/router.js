@@ -1,0 +1,89 @@
+export function strategiesPath() {
+  return "/strategies";
+}
+
+export function strategyWorkspacePath(strategyId) {
+  return `/strategies/${encodeURIComponent(strategyId)}`;
+}
+
+export function strategyBacktestsPath(strategyId) {
+  return `/strategies/${encodeURIComponent(strategyId)}/backtests`;
+}
+
+function appendStrategyContext(pathname, strategyId) {
+  if (!strategyId) return pathname;
+  const query = new URLSearchParams({ strategy: strategyId });
+  return `${pathname}?${query.toString()}`;
+}
+
+export function backtestDetailPath(backtestId, strategyId = "") {
+  return appendStrategyContext(`/backtests/${encodeURIComponent(backtestId)}`, strategyId);
+}
+
+export function backtestComparePath(backtestIds, strategyId = "") {
+  const ids = [...new Set((backtestIds || []).filter(Boolean))];
+  const query = new URLSearchParams({ ids: ids.join(",") });
+  if (strategyId) {
+    query.set("strategy", strategyId);
+  }
+  return `/backtests/compare?${query.toString()}`;
+}
+
+export function parseRoute(pathname, search = "") {
+  if (pathname === "/" || pathname === "/strategies") {
+    return { name: "strategies" };
+  }
+
+  const strategyBacktestsMatch = pathname.match(/^\/strategies\/([^/]+)\/backtests$/);
+  if (strategyBacktestsMatch) {
+    return {
+      name: "strategy-backtests",
+      strategyId: decodeURIComponent(strategyBacktestsMatch[1])
+    };
+  }
+
+  const strategyMatch = pathname.match(/^\/strategies\/([^/]+)$/);
+  if (strategyMatch) {
+    return {
+      name: "strategy-workspace",
+      strategyId: decodeURIComponent(strategyMatch[1])
+    };
+  }
+
+  if (pathname === "/backtests/compare") {
+    const params = new URLSearchParams(search);
+    const backtestIds = (params.get("ids") || "")
+      .split(",")
+      .map((item) => decodeURIComponent(item.trim()))
+      .filter(Boolean);
+    const strategyId = params.get("strategy")
+      ? decodeURIComponent(params.get("strategy"))
+      : "";
+    return {
+      name: "backtest-compare",
+      backtestIds,
+      strategyId
+    };
+  }
+
+  const match = pathname.match(/^\/backtests\/([^/]+)$/);
+  if (match) {
+    const params = new URLSearchParams(search);
+    return {
+      name: "backtest-detail",
+      backtestId: decodeURIComponent(match[1]),
+      strategyId: params.get("strategy")
+        ? decodeURIComponent(params.get("strategy"))
+        : ""
+    };
+  }
+
+  return { name: "strategies" };
+}
+
+export function navigateTo(pathname) {
+  if (typeof window === "undefined") return;
+  if (window.location.pathname === pathname) return;
+  window.history.pushState({}, "", pathname);
+  window.dispatchEvent(new PopStateEvent("popstate"));
+}

@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - "codex/**"
+  pull_request:
+
+jobs:
+  quality-and-build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Check UTF-8 encoding
+        shell: cmd
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1
+
+      - name: Check user-facing text
+        shell: cmd
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-user-facing-text.ps1
+
+      - name: Check capability governance snapshot
+        shell: cmd
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-governance.ps1
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        shell: cmd
+        run: npm ci
+
+      - name: Run Rust workspace tests
+        shell: cmd
+        run: cargo test --workspace
+
+      - name: Run frontend tests
+        working-directory: frontend
+        shell: cmd
+        run: cmd /c npm run test
+
+      - name: Run frontend E2E smoke
+        working-directory: frontend
+        shell: cmd
+        run: cmd /c npm run test:e2e
+
+      - name: Build frontend
+        working-directory: frontend
+        shell: cmd
+        run: cmd /c npm run build

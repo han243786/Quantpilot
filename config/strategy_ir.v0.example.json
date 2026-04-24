@@ -1,0 +1,98 @@
+﻿{
+  "ir_version": "strategy_ir/v0",
+  "metadata": {
+    "strategy_id": "paper_dual_ma_v1",
+    "name": "Dual Moving Average Trend Strategy",
+    "summary": "Go long when the fast moving average crosses above the slow moving average and exit when the trend reverses.",
+    "source": {
+      "source_type": "manual_paper_analysis",
+      "paper_title": "A Dual Moving Average Strategy",
+      "paper_reference": "doi:10.0000/example"
+    },
+    "authors": ["QuantPilot"],
+    "tags": ["trend", "moving_average", "paper_to_strategy"]
+  },
+  "signals": [
+    {
+      "signal_id": "ma_cross",
+      "name": "Fast and slow MA crossover",
+      "indicator": {
+        "kind": "ma_cross",
+        "inputs": ["close"],
+        "params": {
+          "fast": 20,
+          "slow": 50
+        }
+      },
+      "transforms": ["normalize"]
+    }
+  ],
+  "logic": {
+    "entry_rules": [
+      {
+        "rule_id": "entry_long",
+        "condition": "ma_cross == bullish",
+        "action": "open_long"
+      }
+    ],
+    "exit_rules": [
+      {
+        "rule_id": "exit_long",
+        "condition": "ma_cross == bearish",
+        "action": "close_long"
+      }
+    ],
+    "position_sizing": {
+      "method": "fixed_ratio",
+      "value": 0.2,
+      "unit": "portfolio_ratio"
+    },
+    "rebalance_rule": {
+      "frequency": "1d",
+      "condition": "on_bar_close"
+    }
+  },
+  "risk_rules": {
+    "max_position_ratio": 0.2,
+    "stop_loss_ratio": 0.02,
+    "take_profit_ratio": "unknown",
+    "max_drawdown_ratio": 0.1,
+    "max_trades_per_day": 5,
+    "notes": [
+      "Take-profit is not defined in the source paper."
+    ]
+  },
+  "data_requirements": [
+    {
+      "data_id": "btc_daily_kline",
+      "venue": "binance",
+      "symbol": "BTCUSDT",
+      "data_type": "kline",
+      "granularity": "1d",
+      "lookback": 200,
+      "fields": ["open", "high", "low", "close", "volume"]
+    }
+  ],
+  "execution": {
+    "venue_type": "paper",
+    "order_type": "market",
+    "time_in_force": "gtc",
+    "slippage_model": "fixed_bps",
+    "latency_assumption_ms": 250,
+    "capital_base": 100000.0
+  },
+  "gap_annotations": [
+    {
+      "gap_type": "execution",
+      "summary": "The paper assumes zero slippage while the runtime should model execution cost.",
+      "severity": "high",
+      "blocking": false
+    }
+  ],
+  "unknowns": [
+    {
+      "path": "risk_rules.take_profit_ratio",
+      "reason": "The source paper does not define a take-profit rule."
+    }
+  ]
+}

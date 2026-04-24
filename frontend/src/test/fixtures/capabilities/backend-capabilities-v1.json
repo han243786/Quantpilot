@@ -1,0 +1,229 @@
+{
+  "api_version": "quantpilot-capabilities/v1",
+  "strategy_ir": {
+    "declared_indicator_kinds": [
+      "ma_cross",
+      "rsi",
+      "macd",
+      "momentum",
+      "spread",
+      "z_score",
+      "custom"
+    ],
+    "supported_indicator_kinds": [
+      "ma_cross",
+      "rsi",
+      "macd",
+      "momentum",
+      "spread",
+      "z_score",
+      "custom"
+    ],
+    "indicator_support": [
+      {
+        "kind": "ma_cross",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "rsi",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "macd",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "momentum",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "spread",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "z_score",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "custom",
+        "status": "supported",
+        "reason": null
+      }
+    ]
+  },
+  "runtime": {
+    "supported_modes": [
+      "paper"
+    ],
+    "supported_execution_modules": [
+      "builtin.execution.paper"
+    ],
+    "mode_support": [
+      {
+        "key": "paper",
+        "status": "supported",
+        "reason": null
+      }
+    ],
+    "execution_module_support": [
+      {
+        "key": "builtin.execution.paper",
+        "status": "supported",
+        "reason": null
+      }
+    ]
+  },
+  "market_data": {
+    "supported_exchanges": [
+      "binance",
+      "okx"
+    ],
+    "supported_symbols": [
+      "BTCUSDT",
+      "ETHUSDT",
+      "SOLUSDT"
+    ],
+    "exchange_support": [
+      {
+        "key": "binance",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "key": "okx",
+        "status": "supported",
+        "reason": null
+      }
+    ],
+    "symbol_support": [
+      {
+        "key": "BTCUSDT",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "key": "ETHUSDT",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "key": "SOLUSDT",
+        "status": "supported",
+        "reason": null
+      }
+    ]
+  },
+  "frontend": {
+    "declared_module_keys": [
+      "builtin.data.kline",
+      "builtin.data.quote",
+      "builtin.intent.double_ma",
+      "builtin.intent.ma_deviation",
+      "builtin.intent.rsi",
+      "builtin.intent.macd",
+      "builtin.intent.momentum",
+      "builtin.intent.zscore",
+      "builtin.intent.spread_observer",
+      "builtin.agent.weighted",
+      "builtin.agent.arbitrage",
+      "builtin.risk.global",
+      "builtin.execution.paper",
+      "builtin.runtime.control"
+    ],
+    "supported_module_keys": [
+      "builtin.data.kline",
+      "builtin.data.quote",
+      "builtin.intent.double_ma",
+      "builtin.intent.ma_deviation",
+      "builtin.intent.rsi",
+      "builtin.intent.macd",
+      "builtin.intent.momentum",
+      "builtin.intent.zscore",
+      "builtin.intent.spread_observer",
+      "builtin.agent.weighted",
+      "builtin.agent.arbitrage",
+      "builtin.risk.global",
+      "builtin.execution.paper",
+      "builtin.runtime.control"
+    ],
+    "unsupported_module_reasons": {},
+    "module_support": [
+      {
+        "module_key": "builtin.data.kline",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "module_key": "builtin.data.quote",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "module_key": "builtin.intent.double_ma",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "module_key": "builtin.intent.ma_deviation",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "module_key": "builtin.intent.rsi",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "module_key": "builtin.intent.macd",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "module_key": "builtin.intent.momentum",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "module_key": "builtin.intent.zscore",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "module_key": "builtin.intent.spread_observer",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "module_key": "builtin.agent.weighted",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "module_key": "builtin.agent.arbitrage",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "module_key": "builtin.risk.global",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "module_key": "builtin.execution.paper",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "module_key": "builtin.runtime.control",
+        "status": "supported",
+        "reason": null
+      }
+    ]
+  }
+}

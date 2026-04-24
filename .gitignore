@@ -1,0 +1,40 @@
+# Rust build output
+/target/
+/target-test-*/
+
+# Local document extraction scratch
+/quantscript/_docx_extract/
+
+# Codex local state
+/.codex/
+
+# Frontend dependencies and build output
+/frontend/node_modules/
+/frontend/dist/
+/frontend/test-results/
+/frontend/playwright-report/
+/frontend/.playwright-browsers/
+/frontend/.vite/
+
+# Local environment overrides
+/.env
+/.env.local
+/frontend/.env
+/frontend/.env.local
+
+# Runtime artifacts and local graph snapshots
+/storage/runs/
+/storage/backtests/
+/storage/test-backtests/
+/storage/test-runs/
+/storage/test-graphs/
+/storage/test-backtest-artifacts-*/
+/storage/test-*/
+/storage/audit/*.json
+/storage/graphs/*.json
+/storage/graphs/*.qs
+
+# Local helper files
+/backend_pid.txt
+/tmp_runtime_request.json
+/tmp_test.txt

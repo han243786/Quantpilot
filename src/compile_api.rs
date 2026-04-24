@@ -1,0 +1,267 @@
+﻿use super::*;
+pub(super) fn register_compile_routes(router: Router<AppState>) -> Router<AppState> {
+    router
+        .route("/api/runtime/compile", post(compile_runtime_request))
+        .route(
+            "/api/strategy-ir/compile",
+            post(compile_strategy_ir_request),
+        )
+        .route(
+            "/api/quantscript/formal/compile",
+            post(compile_formal_quantscript_request),
+        )
+}
+async fn compile_runtime_request(
+    Json(request): Json<CompileRuntimeRequest>,
+) -> Result<Json<CompileRuntimeResponse>, (StatusCode, String)> {
+    validate_runtime_config_capabilities(&request.runtime_config).map_err(|details| {
+        json_bad_request_with_details(
+            "capability_gated",
+            "runtime config uses capabilities that are not enabled in the current beta",
+            details,
+        )
+    })?;
+    let contract_diagnostics =
+        collect_runtime_compile_contract_diagnostics(&request.runtime_config);
+    if !contract_diagnostics.is_empty() {
+        return Err(json_bad_request_with_details(
+            "runtime_compile_failed",
+            "runtime graph compile contract validation failed",
+            contract_diagnostics
+                .iter()
+                .map(api_error_detail_from_compile_diagnostic)
+                .collect(),
+        ));
+    }
+    let mapped = map_frontend_runtime_config(&request.runtime_config).map_err(internal_error)?;
+    let compiled =
+        compile_runtime_protocol_config(&mapped.runtime_protocol).map_err(internal_error)?;
+    let artifacts = build_compile_artifact_bundle(
+        &request.runtime_config.metadata.graph_id,
+        &request.runtime_config.metadata.compile_id,
+        &request.runtime_config.metadata.name,
+        &request.runtime_config.metadata.mode,
+        StrategyArtifactSourceKind::FrontendGraph,
+        &request.runtime_config.metadata.graph_id,
+        BTreeMap::new(),
+        &compiled,
+    )
+    .map_err(internal_error)?;
+    let diagnostics = collect_compile_diagnostics(&request.runtime_config);
+    let protocol_name = compiled.protocol_name.clone();
+    let config_hash = compiled.config_hash.clone();
+    let core_ir = compiled.core_ir.clone();
+
+    Ok(Json(CompileRuntimeResponse {
+        graph_id: request.runtime_config.metadata.graph_id.clone(),
+        compile_id: request.runtime_config.metadata.compile_id.clone(),
+        compilable: true,
+        protocol_name,
+        config_hash,
+        core_ir,
+        artifacts,
+        counts: CompileCounts {
+            data_sources: mapped.runtime_protocol.data_sources.len(),
+            intent_generators: mapped.runtime_protocol.intents.len(),
+            agents: mapped.runtime_protocol.agents.len(),
+            risk_controls: mapped.runtime_protocol.risks.len(),
+            executions: request.runtime_config.executions.len(),
+        },
+        diagnostics,
+        runtime_config: request.runtime_config.clone(),
+        runtime_targets: compile_runtime_targets_from_mapped(&mapped),
+    }))
+}
+
+async fn compile_strategy_ir_request(
+    Json(request): Json<CompileStrategyIrRequest>,
+) -> Result<Json<CompileStrategyIrResponse>, (StatusCode, String)> {
+    let strategy_ir =
+        serde_json::from_value::<StrategyIr>(request.strategy_ir).map_err(|error| {
+            json_bad_request_with_details(
+                "strategy_ir_compile_failed",
+                "invalid Strategy IR JSON payload",
+                vec![ApiErrorDetail {
+                    code: "QPSTRATJSON001".to_string(),
+                    target: Some("strategy_ir".to_string()),
+                    message: error.to_string(),
+                    span_label: None,
+                    reason: None,
+                }],
+            )
+        })?;
+
+    if let Err(validation_error) = strategy_ir.validate() {
+        let diagnostics = validation_error
+            .errors
+            .iter()
+            .map(|message| strategy_ir_diagnostic_from_validation_message(message))
+            .collect::<Vec<_>>();
+        return Err(json_bad_request_with_details(
+            "strategy_ir_compile_failed",
+            "Strategy IR validation failed",
+            diagnostics
+                .iter()
+                .map(api_error_detail_from_compile_diagnostic)
+                .collect(),
+        ));
+    }
+
+    let core_ir = lower_strategy_ir_to_core_ir(&strategy_ir).map_err(|error| {
+        let diagnostics = vec![strategy_ir_diagnostic_from_lowering_error(
+            &error.to_string(),
+        )];
+        json_bad_request_with_details(
+            "strategy_ir_compile_failed",
+            "Strategy IR lowering failed",
+            diagnostics
+                .iter()
+                .map(api_error_detail_from_compile_diagnostic)
+                .collect(),
+        )
+    })?;
+
+    Ok(Json(CompileStrategyIrResponse {
+        graph_id: request.graph_id,
+        compile_id: request.compile_id,
+        compilable: true,
+        core_ir,
+        diagnostics: Vec::new(),
+    }))
+}
+
+async fn compile_formal_quantscript_request(
+    Json(request): Json<CompileFormalQuantScriptRequest>,
+) -> Result<Json<CompileRuntimeResponse>, (StatusCode, String)> {
+    let module = parse_formal_quant_script_module(&request.source).map_err(internal_error)?;
+    let resolved = lower_formal_script_to_typed_hir(&module);
+    let analysis = analyze_formal_script_module(&module, &resolved);
+    let lowering_context = FormalLoweringContext {
+        universe_snapshot: request.universe_snapshot.clone(),
+    };
+    let partial_authoring_view =
+        build_quantscript_authoring_view(&request.source, &module, &resolved, &lowering_context)
+            .ok();
+
+    let mut diagnostics = resolved
+        .diagnostics
+        .iter()
+        .map(compile_diagnostic_from_script_diagnostic)
+        .collect::<Vec<_>>();
+    diagnostics.extend(
+        analysis
+            .diagnostics
+            .iter()
+            .map(compile_diagnostic_from_script_diagnostic),
+    );
+
+    let mut error_details = resolved
+        .diagnostics
+        .iter()
+        .filter(|diagnostic| diagnostic.severity == quantscript::DiagnosticSeverity::Error)
+        .map(api_error_detail_from_script_diagnostic)
+        .collect::<Vec<_>>();
+    error_details.extend(
+        analysis
+            .diagnostics
+            .iter()
+            .filter(|diagnostic| diagnostic.severity == quantscript::DiagnosticSeverity::Error)
+            .map(api_error_detail_from_script_diagnostic),
+    );
+
+    if !error_details.is_empty() {
+        return Err(json_bad_request_with_details_and_partial(
+            "quantscript_compile_failed",
+            "formal QuantScript semantic analysis failed",
+            error_details,
+            partial_authoring_view.clone(),
+        ));
+    }
+
+    let lowering_error_details = collect_formal_quantscript_pre_lowering_diagnostics(&module)
+        .into_iter()
+        .map(|diagnostic| api_error_detail_from_compile_diagnostic(&diagnostic))
+        .collect::<Vec<_>>();
+    if !lowering_error_details.is_empty() {
+        return Err(json_bad_request_with_details_and_partial(
+            "quantscript_lowering_failed",
+            "formal QuantScript lowering failed",
+            lowering_error_details,
+            partial_authoring_view.clone(),
+        ));
+    }
+    let runtime_config = lower_formal_script_to_runtime_config(&module, &lowering_context)
+        .map_err(|error| {
+            let message = format!("{error:#}");
+            let diagnostic = formal_quantscript_diagnostic_from_lowering_error(&message);
+            if diagnostic.code != "QPQSLOW999" {
+                return json_bad_request_with_details_and_partial(
+                    "quantscript_lowering_failed",
+                    "formal QuantScript lowering failed",
+                    vec![api_error_detail_from_compile_diagnostic(&diagnostic)],
+                    partial_authoring_view.clone(),
+                );
+            }
+            json_bad_request_with_partial(
+                "quantscript_lowering_failed",
+                format!("formal QuantScript lowering failed: {message}"),
+                partial_authoring_view.clone(),
+            )
+        })?;
+    let compiled = compile_runtime_protocol_config_with_metadata(
+        &runtime_config,
+        CoreMetadata {
+            strategy_id: request.graph_id.clone(),
+            name: request.runtime_template.metadata.name.clone(),
+            source_kind: CoreSourceKind::FormalQuantScript,
+        },
+    )
+    .map_err(internal_error)?;
+    let artifacts = build_compile_artifact_bundle(
+        &request.graph_id,
+        &request.compile_id,
+        &request.runtime_template.metadata.name,
+        &request.runtime_template.metadata.mode,
+        StrategyArtifactSourceKind::FormalQuantScript,
+        &request.graph_id,
+        build_formal_quantscript_strategy_metadata(
+            &request.source,
+            &module,
+            &resolved,
+            &lowering_context,
+        )
+        .map_err(internal_error)?,
+        &compiled,
+    )
+    .map_err(internal_error)?;
+    let protocol_name = compiled.protocol_name.clone();
+    let config_hash = compiled.config_hash.clone();
+    let core_ir = compiled.core_ir.clone();
+    let frontend_runtime_config = frontend_runtime_config_from_core_with_template(
+        &runtime_config,
+        &request.runtime_template,
+        &request.runtime_targets,
+        &request.graph_id,
+        &request.compile_id,
+    );
+
+    Ok(Json(CompileRuntimeResponse {
+        graph_id: request.graph_id,
+        compile_id: request.compile_id,
+        compilable: true,
+        protocol_name,
+        config_hash,
+        core_ir,
+        artifacts,
+        counts: CompileCounts {
+            data_sources: runtime_config.data_sources.len(),
+            intent_generators: runtime_config.intents.len(),
+            agents: runtime_config.agents.len(),
+            risk_controls: runtime_config.risks.len(),
+            executions: 1,
+        },
+        diagnostics,
+        runtime_config: frontend_runtime_config,
+        runtime_targets: request.runtime_targets,
+    }))
+}

@@ -1,0 +1,13 @@
+[package]
+name = "quantscript"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1"
+qrpc-core = { path = "../qrpc_core" }
+qrpc-compiler = { path = "../qrpc_compiler" }
+qrpc-core-ir = { path = "../qrpc_core_ir" }
+
+[dev-dependencies]
+qrpc-runtime = { path = "../qrpc_runtime" }

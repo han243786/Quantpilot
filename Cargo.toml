@@ -1,0 +1,32 @@
+[workspace]
+members = [
+    "qrpc_core",
+    "qrpc_core_ir",
+    "qrpc_compiler",
+    "qrpc_runtime",
+    "quantscript",
+]
+resolver = "2"
+
+[package]
+name = "quantpilot"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time", "fs"] }
+axum = { version = "0.7", features = ["json"] }
+tower-http = { version = "0.6", features = ["cors"] }
+async-stream = "0.3"
+futures-core = "0.3"
+qrpc-core = { path = "qrpc_core" }
+qrpc-core-ir = { path = "qrpc_core_ir" }
+qrpc-compiler = { path = "qrpc_compiler" }
+qrpc-runtime = { path = "qrpc_runtime" }
+quantscript = { path = "quantscript" }
+
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }

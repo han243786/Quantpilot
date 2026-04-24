@@ -1,0 +1,17 @@
+Copyright (c) 2026 QuantPilot contributors
+
+All rights reserved.
+
+No license is granted for use, copying, modification, distribution, or
+sub-licensing of this repository until the project owner replaces this file
+with an explicit outbound license grant.
+
+Current intent of this placeholder:
+
+- make the repository legal state explicit during private cleanup and baseline
+  commit preparation
+- avoid guessing a public license before the owner makes that decision
+- keep release-readiness documentation honest about the remaining owner choice
+
+For any public release, replace this placeholder with the final approved
+license text.

@@ -1,0 +1,201 @@
+{
+  "sampleCount": 5,
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  },
+  "graph": {
+    "nodeCount": 7,
+    "edgeCount": 6
+  },
+  "results": [
+    {
+      "name": "full",
+      "label": "当前完整节点卡片",
+      "url": "/?node_card_mode=full",
+      "summary": {
+        "domContentLoaded": {
+          "avg": 45.08,
+          "min": 41.2,
+          "max": 53
+        },
+        "load": {
+          "avg": 45.5,
+          "min": 41.8,
+          "max": 53.6
+        },
+        "firstNodeVisible": {
+          "avg": 245.14,
+          "min": 238.1,
+          "max": 247.7
+        },
+        "firstNodeCardMounted": {
+          "avg": 255.32,
+          "min": 249,
+          "max": 269.4
+        },
+        "allNodesMounted": {
+          "avg": 260.74,
+          "min": 251.5,
+          "max": 275.5
+        },
+        "allEdgesMounted": {
+          "avg": 264.06,
+          "min": 254.4,
+          "max": 279
+        },
+        "allFullCardsMounted": {
+          "avg": 267.56,
+          "min": 257.4,
+          "max": 281.8
+        }
+      },
+      "samples": [
+        {
+          "sample": 1,
+          "domContentLoaded": 53,
+          "load": 53.6,
+          "firstNodeVisible": 247.4,
+          "firstNodeCardMounted": 250.8,
+          "allNodesMounted": 253.9,
+          "allEdgesMounted": 256.6,
+          "allFullCardsMounted": 260.6
+        },
+        {
+          "sample": 2,
+          "domContentLoaded": 44.4,
+          "load": 44.6,
+          "firstNodeVisible": 247.7,
+          "firstNodeCardMounted": 251.2,
+          "allNodesMounted": 255.1,
+          "allEdgesMounted": 258.8,
+          "allFullCardsMounted": 262.1
+        },
+        {
+          "sample": 3,
+          "domContentLoaded": 44.3,
+          "load": 44.4,
+          "firstNodeVisible": 246.4,
+          "firstNodeCardMounted": 249,
+          "allNodesMounted": 251.5,
+          "allEdgesMounted": 254.4,
+          "allFullCardsMounted": 257.4
+        },
+        {
+          "sample": 4,
+          "domContentLoaded": 42.5,
+          "load": 43.1,
+          "firstNodeVisible": 246.1,
+          "firstNodeCardMounted": 269.4,
+          "allNodesMounted": 275.5,
+          "allEdgesMounted": 279,
+          "allFullCardsMounted": 281.8
+        },
+        {
+          "sample": 5,
+          "domContentLoaded": 41.2,
+          "load": 41.8,
+          "firstNodeVisible": 238.1,
+          "firstNodeCardMounted": 256.2,
+          "allNodesMounted": 267.7,
+          "allEdgesMounted": 271.5,
+          "allFullCardsMounted": 275.9
+        }
+      ]
+    },
+    {
+      "name": "staged",
+      "label": "首屏精简后再升级",
+      "url": "/",
+      "summary": {
+        "domContentLoaded": {
+          "avg": 42.32,
+          "min": 39.9,
+          "max": 47.7
+        },
+        "load": {
+          "avg": 42.92,
+          "min": 40.5,
+          "max": 48.4
+        },
+        "firstNodeVisible": {
+          "avg": 220.1,
+          "min": 212.4,
+          "max": 232.4
+        },
+        "firstNodeCardMounted": {
+          "avg": 238.6,
+          "min": 222.2,
+          "max": 248.3
+        },
+        "allNodesMounted": {
+          "avg": 250.26,
+          "min": 240.9,
+          "max": 257.3
+        },
+        "allEdgesMounted": {
+          "avg": 257.62,
+          "min": 253.7,
+          "max": 261.3
+        },
+        "allFullCardsMounted": {
+          "avg": 262.12,
+          "min": 256.3,
+          "max": 268.8
+        }
+      },
+      "samples": [
+        {
+          "sample": 1,
+          "domContentLoaded": 40.8,
+          "load": 41.3,
+          "firstNodeVisible": 232.4,
+          "firstNodeCardMounted": 247.7,
+          "allNodesMounted": 251.2,
+          "allEdgesMounted": 253.7,
+          "allFullCardsMounted": 256.3
+        },
+        {
+          "sample": 2,
+          "domContentLoaded": 47.7,
+          "load": 48.4,
+          "firstNodeVisible": 212.4,
+          "firstNodeCardMounted": 222.2,
+          "allNodesMounted": 240.9,
+          "allEdgesMounted": 258.5,
+          "allFullCardsMounted": 261.8
+        },
+        {
+          "sample": 3,
+          "domContentLoaded": 40.7,
+          "load": 41.3,
+          "firstNodeVisible": 218.9,
+          "firstNodeCardMounted": 247.2,
+          "allNodesMounted": 252.1,
+          "allEdgesMounted": 254.9,
+          "allFullCardsMounted": 261.4
+        },
+        {
+          "sample": 4,
+          "domContentLoaded": 42.5,
+          "load": 43.1,
+          "firstNodeVisible": 218.9,
+          "firstNodeCardMounted": 227.6,
+          "allNodesMounted": 249.8,
+          "allEdgesMounted": 261.3,
+          "allFullCardsMounted": 268.8
+        },
+        {
+          "sample": 5,
+          "domContentLoaded": 39.9,
+          "load": 40.5,
+          "firstNodeVisible": 217.9,
+          "firstNodeCardMounted": 248.3,
+          "allNodesMounted": 257.3,
+          "allEdgesMounted": 259.7,
+          "allFullCardsMounted": 262.3
+        }
+      ]
+    }
+  ]
+}

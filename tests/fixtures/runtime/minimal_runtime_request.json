@@ -1,0 +1,93 @@
+{
+  "runtime_config": {
+    "metadata": {
+      "graph_id": "graph_test",
+      "compile_id": "compile_test",
+      "name": "Test Graph",
+      "version": "1.0.0",
+      "mode": "paper"
+    },
+    "data_sources": [
+      {
+        "id": "data_data_1",
+        "module_key": "builtin.data.kline",
+        "name": "Data",
+        "config": {
+          "exchange": "binance",
+          "instrument": "BTCUSDT",
+          "timeframe": "1d",
+          "window_size": 200
+        }
+      }
+    ],
+    "intent_generators": [
+      {
+        "id": "intent_intent_1",
+        "module_key": "builtin.intent.double_ma",
+        "name": "Intent",
+        "config": {
+          "fast_period": 20,
+          "slow_period": 50,
+          "entry_ratio": 0.2
+        },
+        "input_refs": [
+          {
+            "source_id": "data_data_1",
+            "source_port": "market_data_out",
+            "target_port": "data_input"
+          }
+        ]
+      }
+    ],
+    "agents": [
+      {
+        "id": "agent_agent_1",
+        "module_key": "builtin.agent.weighted",
+        "name": "Agent",
+        "config": {
+          "decision_threshold": 0.05,
+          "max_quantity_ratio": 0.2
+        },
+        "intent_refs": [
+          "intent_intent_1"
+        ]
+      }
+    ],
+    "risk_controls": [
+      {
+        "id": "risk_risk_1",
+        "module_key": "builtin.risk.global",
+        "name": "Risk",
+        "config": {
+          "max_position": 0.2,
+          "max_total_leverage": 3.0,
+          "max_exchange_leverage": 3.0,
+          "min_action_interval_ms": 100
+        },
+        "agent_refs": [
+          "agent_agent_1"
+        ]
+      }
+    ],
+    "executions": [
+      {
+        "id": "execution_execution_1",
+        "module_key": "builtin.execution.paper",
+        "name": "Execution",
+        "config": {
+          "mode": "paper",
+          "slippage_bps": 5
+        },
+        "risk_ref": "risk_risk_1"
+      }
+    ],
+    "runtime_control": {
+      "id": "runtime_runtime_1",
+      "module_key": "builtin.runtime.control",
+      "name": "Runtime",
+      "config": {
+        "mode": "paper"
+      }
+    }
+  }
+}
