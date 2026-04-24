@@ -35,6 +35,21 @@ work:
 - public-release readiness must not be claimed while dependency audit,
   dependency migration strategy, and outbound license decisions remain open
 
+## Thread closeout note
+
+Thread closed on `2026-04-24` after private baseline commit
+`ad0b903 Close private baseline readiness`.
+
+The next thread should start from the clean private-baseline worktree and keep
+the same release boundary:
+
+- no new feature scope is implied by this closeout
+- the repository remains private
+- the accepted private-baseline gate remains `cmd /c tools\run-closeout-gates.bat`
+- the current frontend audit risk is accepted only for private-baseline use
+- public release remains blocked until dependency migration, final license text,
+  and public visibility approval are handled in a later owner-approved thread
+
 ## Repository visibility decision
 
 Owner decision:
