@@ -346,7 +346,7 @@ fn intents_from_condition(
                 let instrument = format_symbol(&left_source.symbol);
                 let intent = if action == "BUY" {
                     IntentConfig {
-                        intent_id: format!("intent_{}_ma_entry", sanitize_id(&instrument)),
+                        intent_id: format!("intent_{}_ma_entry", sanitize_id(instrument)),
                         name: format!("{instrument} MA Entry"),
                         kind: IntentKind::LongTermBuy,
                         input_data_ids: vec![left_source.data_id.clone()],
@@ -363,7 +363,7 @@ fn intents_from_condition(
                     }
                 } else if action == "SELL" {
                     IntentConfig {
-                        intent_id: format!("intent_{}_ma_exit", sanitize_id(&instrument)),
+                        intent_id: format!("intent_{}_ma_exit", sanitize_id(instrument)),
                         name: format!("{instrument} MA Exit"),
                         kind: IntentKind::LongTermSell,
                         input_data_ids: vec![left_source.data_id.clone()],
@@ -480,7 +480,7 @@ fn single_indicator_intent(
                     if indicator_threshold_compare_expr(
                         runtime_id_hint
                             .map(str::to_string)
-                            .unwrap_or_else(|| format!("intent_{}_rsi", sanitize_id(&instrument))),
+                            .unwrap_or_else(|| format!("intent_{}_rsi", sanitize_id(instrument))),
                         comparison_op,
                         threshold,
                     )
@@ -495,7 +495,7 @@ fn single_indicator_intent(
                     if indicator_threshold_compare_expr(
                         runtime_id_hint
                             .map(str::to_string)
-                            .unwrap_or_else(|| format!("intent_{}_rsi", sanitize_id(&instrument))),
+                            .unwrap_or_else(|| format!("intent_{}_rsi", sanitize_id(instrument))),
                         comparison_op,
                         threshold,
                     )
@@ -511,7 +511,7 @@ fn single_indicator_intent(
             IntentConfig {
                 intent_id: runtime_id_hint
                     .map(str::to_string)
-                    .unwrap_or_else(|| format!("intent_{}_rsi", sanitize_id(&instrument))),
+                    .unwrap_or_else(|| format!("intent_{}_rsi", sanitize_id(instrument))),
                 name: format!("{instrument} RSI"),
                 kind: IntentKind::Rsi,
                 input_data_ids: vec![source.data_id.clone()],
@@ -537,7 +537,7 @@ fn single_indicator_intent(
             IntentConfig {
                 intent_id: runtime_id_hint
                     .map(str::to_string)
-                    .unwrap_or_else(|| format!("intent_{}_macd", sanitize_id(&instrument))),
+                    .unwrap_or_else(|| format!("intent_{}_macd", sanitize_id(instrument))),
                 name: format!("{instrument} MACD"),
                 kind: IntentKind::Macd,
                 input_data_ids: vec![source.data_id.clone()],
@@ -575,7 +575,7 @@ fn single_indicator_intent(
             if indicator_threshold_compare_expr(
                 runtime_id_hint
                     .map(str::to_string)
-                    .unwrap_or_else(|| format!("intent_{}_momentum", sanitize_id(&instrument))),
+                    .unwrap_or_else(|| format!("intent_{}_momentum", sanitize_id(instrument))),
                 comparison_op,
                 threshold,
             )
@@ -586,7 +586,7 @@ fn single_indicator_intent(
             IntentConfig {
                 intent_id: runtime_id_hint
                     .map(str::to_string)
-                    .unwrap_or_else(|| format!("intent_{}_momentum", sanitize_id(&instrument))),
+                    .unwrap_or_else(|| format!("intent_{}_momentum", sanitize_id(instrument))),
                 name: format!("{instrument} Momentum"),
                 kind: IntentKind::Momentum,
                 input_data_ids: vec![source.data_id.clone()],
@@ -631,7 +631,7 @@ fn single_indicator_intent(
             if indicator_threshold_compare_expr(
                 runtime_id_hint
                     .map(str::to_string)
-                    .unwrap_or_else(|| format!("intent_{}_zscore", sanitize_id(&instrument))),
+                    .unwrap_or_else(|| format!("intent_{}_zscore", sanitize_id(instrument))),
                 comparison_op,
                 threshold,
             )
@@ -642,7 +642,7 @@ fn single_indicator_intent(
             IntentConfig {
                 intent_id: runtime_id_hint
                     .map(str::to_string)
-                    .unwrap_or_else(|| format!("intent_{}_zscore", sanitize_id(&instrument))),
+                    .unwrap_or_else(|| format!("intent_{}_zscore", sanitize_id(instrument))),
                 name: format!("{instrument} ZScore"),
                 kind: IntentKind::ZScore,
                 input_data_ids: vec![source.data_id.clone()],
@@ -716,7 +716,7 @@ fn spread_intent_from_condition(
     Ok(Some(IntentConfig {
         intent_id: runtime_id_hint
             .map(str::to_string)
-            .unwrap_or_else(|| format!("intent_{}_spread", sanitize_id(&instrument))),
+            .unwrap_or_else(|| format!("intent_{}_spread", sanitize_id(instrument))),
         name: format!("{instrument} Spread Observe"),
         kind: IntentKind::QuoteObserve,
         input_data_ids: vec![left_source.data_id.clone(), right_source.data_id.clone()],
@@ -817,7 +817,7 @@ fn moving_average_ratio_intent(
         IntentConfig {
             intent_id: runtime_id_hint
                 .map(str::to_string)
-                .unwrap_or_else(|| format!("intent_{}_ma_entry", sanitize_id(&instrument))),
+                .unwrap_or_else(|| format!("intent_{}_ma_entry", sanitize_id(instrument))),
             name: format!("{instrument} MA Entry"),
             kind: IntentKind::LongTermBuy,
             input_data_ids: vec![source.data_id.clone()],
@@ -832,7 +832,7 @@ fn moving_average_ratio_intent(
         IntentConfig {
             intent_id: runtime_id_hint
                 .map(str::to_string)
-                .unwrap_or_else(|| format!("intent_{}_ma_exit", sanitize_id(&instrument))),
+                .unwrap_or_else(|| format!("intent_{}_ma_exit", sanitize_id(instrument))),
             name: format!("{instrument} MA Exit"),
             kind: IntentKind::LongTermSell,
             input_data_ids: vec![source.data_id.clone()],

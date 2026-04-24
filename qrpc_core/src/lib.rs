@@ -1,8 +1,8 @@
-mod strategy_ir;
 mod plugin;
+mod strategy_ir;
 
-pub use qrpc_core_ir::{CoreStrategyIr, CORE_IR_V1_VERSION};
 pub use plugin::*;
+pub use qrpc_core_ir::{CoreStrategyIr, CORE_IR_V1_VERSION};
 pub use strategy_ir::*;
 
 use serde::{de::Error as DeError, Deserialize, Deserializer, Serialize, Serializer};
@@ -531,29 +531,34 @@ pub struct RunSpec {
     pub core_ir_digest: ArtifactDigest,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct RunSpecRuntimeProtocolInput {
+    pub graph_id: String,
+    pub compile_id: String,
+    pub run_mode: RunModeSpec,
+    pub runtime_mode: String,
+    pub protocol_name: String,
+    pub config_hash: String,
+    pub core_ir_digest: ArtifactDigest,
+}
+
 impl RunSpec {
     pub fn from_runtime_protocol(
-        graph_id: impl Into<String>,
-        compile_id: impl Into<String>,
-        run_mode: RunModeSpec,
-        runtime_mode: impl Into<String>,
-        protocol_name: impl Into<String>,
-        config_hash: impl Into<String>,
+        input: RunSpecRuntimeProtocolInput,
         config: &RuntimeProtocolCoreConfig,
-        core_ir_digest: ArtifactDigest,
     ) -> Self {
         Self {
             schema_version: RUN_SPEC_V1_VERSION.to_string(),
-            run_mode,
-            graph_id: graph_id.into(),
-            compile_id: compile_id.into(),
-            runtime_mode: runtime_mode.into(),
-            protocol_name: protocol_name.into(),
-            config_hash: config_hash.into(),
+            run_mode: input.run_mode,
+            graph_id: input.graph_id,
+            compile_id: input.compile_id,
+            runtime_mode: input.runtime_mode,
+            protocol_name: input.protocol_name,
+            config_hash: input.config_hash,
             datasets: config.data_sources.iter().map(DatasetSpec::from).collect(),
             execution_assumptions: ExecutionAssumptionSpec::from(config),
             execution_assumption_sources: None,
-            core_ir_digest,
+            core_ir_digest: input.core_ir_digest,
         }
     }
 }
@@ -1080,14 +1085,16 @@ mod tests {
         .unwrap();
 
         let run_spec = RunSpec::from_runtime_protocol(
-            "graph_test",
-            "compile_test",
-            RunModeSpec::Backtest,
-            "paper",
-            "quantpilot/minimal-sim/v1",
-            "runtime-spec-hash",
+            RunSpecRuntimeProtocolInput {
+                graph_id: "graph_test".to_string(),
+                compile_id: "compile_test".to_string(),
+                run_mode: RunModeSpec::Backtest,
+                runtime_mode: "paper".to_string(),
+                protocol_name: "quantpilot/minimal-sim/v1".to_string(),
+                config_hash: "runtime-spec-hash".to_string(),
+                core_ir_digest: core_ir_digest.clone(),
+            },
             &config,
-            core_ir_digest.clone(),
         );
         let snapshot = MarketDataSnapshotSpec::from_runtime_protocol(
             "snapshot_test",

@@ -1,4 +1,4 @@
-﻿use super::backtest_compare::compare_backtests;
+use super::backtest_compare::compare_backtests;
 use super::*;
 
 const MAX_EXPERIMENT_VARIANTS: usize = 27;
@@ -77,8 +77,7 @@ async fn start_test_run(
     let graph_id = request.runtime_config.metadata.graph_id.clone();
     let compile_id = request.runtime_config.metadata.compile_id.clone();
     let actor = normalize_actor_identity(request.actor);
-    let _collaboration =
-        collaboration_with_run_actor(&state.graph_store_dir, &graph_id, &actor)?;
+    let _collaboration = collaboration_with_run_actor(&state.graph_store_dir, &graph_id, &actor)?;
 
     let record = RunRecord {
         run_id: run_id.clone(),
@@ -159,7 +158,7 @@ async fn execute_backtest_request(
         &compiled.config,
         request.backtest_options.execution_assumptions.as_ref(),
     );
-    let resolved_execution_assumption_sources = resolved_execution_assumption_sources(&request);
+    let resolved_execution_assumption_sources = resolved_execution_assumption_sources(request);
     let protocol_name = compiled.protocol_name.clone();
     let config_hash = compiled.config_hash.clone();
     let now_ms = current_time_ms();
@@ -209,7 +208,7 @@ async fn execute_backtest_request(
     let backtest_spec = build_backtest_spec(
         &backtest_id,
         replay_source,
-        &request,
+        request,
         &compiled,
         &artifacts,
         now_ms,
@@ -561,7 +560,9 @@ async fn get_backtest_replay(
 ) -> Result<Json<RuntimeReplayResponse>, (StatusCode, String)> {
     let (cursor, limit) = normalized_replay_window(query);
     let record = load_backtest_record_from_state(&state, &backtest_id).await?;
-    Ok(Json(backtest_replay_response_from_record(record, cursor, limit)))
+    Ok(Json(backtest_replay_response_from_record(
+        record, cursor, limit,
+    )))
 }
 
 async fn stream_run_events(

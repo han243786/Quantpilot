@@ -42,6 +42,7 @@ pub(super) fn artifact_replay_source(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub(super) fn build_backtest_spec(
     backtest_id: &str,
     replay_source: FrontendBacktestReplaySource,
@@ -53,21 +54,23 @@ pub(super) fn build_backtest_spec(
     execution_assumption_sources: ExecutionAssumptionSourceSummary,
 ) -> BacktestSpec {
     let mut run_spec = RunSpec::from_runtime_protocol(
-        request.runtime_config.metadata.graph_id.clone(),
-        request.runtime_config.metadata.compile_id.clone(),
-        RunModeSpec::Backtest,
-        request.runtime_config.metadata.mode.clone(),
-        compiled.protocol_name.clone(),
-        compiled.config_hash.clone(),
+        RunSpecRuntimeProtocolInput {
+            graph_id: request.runtime_config.metadata.graph_id.clone(),
+            compile_id: request.runtime_config.metadata.compile_id.clone(),
+            run_mode: RunModeSpec::Backtest,
+            runtime_mode: request.runtime_config.metadata.mode.clone(),
+            protocol_name: compiled.protocol_name.clone(),
+            config_hash: compiled.config_hash.clone(),
+            core_ir_digest: artifacts.core_ir.digest.clone(),
+        },
         &compiled.config,
-        artifacts.core_ir.digest.clone(),
     );
 
     run_spec.execution_assumptions = execution_assumptions;
     run_spec.execution_assumption_sources = Some(execution_assumption_sources);
     let snapshot = qrpc_core::MarketDataSnapshotSpec::from_runtime_protocol(
         format!("market_snapshot_{backtest_id}"),
-        artifact_replay_source(replay_source.clone()),
+        artifact_replay_source(replay_source),
         requested_at_ms,
         &compiled.config,
     );

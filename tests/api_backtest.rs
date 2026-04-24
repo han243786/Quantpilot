@@ -425,6 +425,7 @@ fn expected_equity_curve_report_module(
     })
 }
 
+#[allow(clippy::too_many_arguments)]
 fn expected_report_narrative_from_modules(
     status: &str,
     headline: &str,
@@ -470,6 +471,7 @@ fn expected_report_narrative_from_modules(
     })
 }
 
+#[allow(clippy::too_many_arguments)]
 fn expected_compare_report_from_modules(
     status: &str,
     headline: &str,
@@ -496,6 +498,7 @@ fn expected_compare_report_from_modules(
     })
 }
 
+#[allow(clippy::too_many_arguments)]
 fn expected_compare_outputs_from_modules(
     status: &str,
     headline: &str,
@@ -615,13 +618,10 @@ async fn backtest_start_endpoint_supports_deterministic_mock_happy_path() {
     assert_eq!(listed["config_hash"], created["config_hash"]);
     assert_eq!(listed["event_count"], created["event_count"]);
     assert_eq!(listed["filters"]["replay_source"], "deterministic_mock");
-    assert!(
-        listed["filters"]["dataset_labels"]
-            .as_array()
-            .unwrap()
-            .len()
-            > 0
-    );
+    assert!(!listed["filters"]["dataset_labels"]
+        .as_array()
+        .unwrap()
+        .is_empty());
     assert_eq!(
         listed["filters"]["execution_assumptions_tag"]["label"],
         created["execution_assumptions"]["list_tag"]["label"]
@@ -676,18 +676,15 @@ async fn backtest_start_endpoint_supports_deterministic_mock_happy_path() {
         detail["runtime_diagnostics"]["source"],
         Value::String("backtest_event_log".to_string())
     );
-    assert!(
-        !detail["runtime_diagnostics"]["active_nodes"]
-            .as_array()
-            .unwrap()
-            .is_empty()
-    );
+    assert!(!detail["runtime_diagnostics"]["active_nodes"]
+        .as_array()
+        .unwrap()
+        .is_empty());
     let selected_node_id = detail["runtime_diagnostics"]["default_selected_node_id"]
         .as_str()
         .unwrap();
     assert!(
-        detail["runtime_diagnostics"]["node_details"][selected_node_id]["latest_event"]
-            .is_object()
+        detail["runtime_diagnostics"]["node_details"][selected_node_id]["latest_event"].is_object()
     );
     let node_details = detail["runtime_diagnostics"]["node_details"]
         .as_object()
@@ -730,9 +727,14 @@ async fn backtest_start_endpoint_supports_deterministic_mock_happy_path() {
     assert!(risk_node["risk_detail_rows"]
         .as_array()
         .map(|rows| {
-            rows.iter().any(|row| row["key"] == "limit_triggered" || row["key"] == "status")
-                && rows.iter().any(|row| row["key"] == "pre_risk.portfolio_net_exposure_ratio")
-                && rows.iter().any(|row| row["key"] == "post_risk.portfolio_net_exposure_ratio")
+            rows.iter()
+                .any(|row| row["key"] == "limit_triggered" || row["key"] == "status")
+                && rows
+                    .iter()
+                    .any(|row| row["key"] == "pre_risk.portfolio_net_exposure_ratio")
+                && rows
+                    .iter()
+                    .any(|row| row["key"] == "post_risk.portfolio_net_exposure_ratio")
         })
         .unwrap_or(false));
 
@@ -1056,7 +1058,7 @@ async fn backtest_replay_endpoint_exposes_paginated_ordered_timeline() {
     assert_eq!(replay["graph_id"], "graph_test");
     assert_eq!(replay["cursor"], 0);
     assert_eq!(replay["limit"], 3);
-    assert!(replay["checkpoints"].as_array().unwrap().len() > 0);
+    assert!(!replay["checkpoints"].as_array().unwrap().is_empty());
     assert!(replay["fill_event_count"].as_u64().is_some());
     assert!(replay["events"].as_array().unwrap().len() <= 3);
     let events = replay["events"].as_array().unwrap();

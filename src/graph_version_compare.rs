@@ -71,7 +71,8 @@ fn build_metadata_diff_row(
 }
 
 fn graph_metadata_value(graph: &Value, key: &str) -> Option<String> {
-    graph.get("metadata")
+    graph
+        .get("metadata")
         .and_then(|item| item.get(key))
         .map(stringify_json_value)
 }
@@ -82,14 +83,8 @@ fn build_node_diff(left_graph: &Value, right_graph: &Value) -> GraphVersionColle
     let left_ids: BTreeSet<String> = left_nodes.keys().cloned().collect();
     let right_ids: BTreeSet<String> = right_nodes.keys().cloned().collect();
 
-    let added_ids = right_ids
-        .difference(&left_ids)
-        .cloned()
-        .collect::<Vec<_>>();
-    let removed_ids = left_ids
-        .difference(&right_ids)
-        .cloned()
-        .collect::<Vec<_>>();
+    let added_ids = right_ids.difference(&left_ids).cloned().collect::<Vec<_>>();
+    let removed_ids = left_ids.difference(&right_ids).cloned().collect::<Vec<_>>();
     let changed_ids = left_ids
         .intersection(&right_ids)
         .filter_map(|node_id| {
@@ -114,14 +109,8 @@ fn build_edge_diff(left_graph: &Value, right_graph: &Value) -> GraphVersionColle
     let left_ids: BTreeSet<String> = left_edges.keys().cloned().collect();
     let right_ids: BTreeSet<String> = right_edges.keys().cloned().collect();
 
-    let added_ids = right_ids
-        .difference(&left_ids)
-        .cloned()
-        .collect::<Vec<_>>();
-    let removed_ids = left_ids
-        .difference(&right_ids)
-        .cloned()
-        .collect::<Vec<_>>();
+    let added_ids = right_ids.difference(&left_ids).cloned().collect::<Vec<_>>();
+    let removed_ids = left_ids.difference(&right_ids).cloned().collect::<Vec<_>>();
     let changed_ids = left_ids
         .intersection(&right_ids)
         .filter_map(|edge_id| {
@@ -211,7 +200,7 @@ fn build_config_diffs(left_graph: &Value, right_graph: &Value) -> Vec<GraphVersi
     diffs
 }
 
-fn graph_nodes_by_id<'a>(graph: &'a Value) -> BTreeMap<String, &'a Value> {
+fn graph_nodes_by_id(graph: &Value) -> BTreeMap<String, &Value> {
     graph
         .get("nodes")
         .and_then(Value::as_array)
@@ -225,7 +214,7 @@ fn graph_nodes_by_id<'a>(graph: &'a Value) -> BTreeMap<String, &'a Value> {
         .collect()
 }
 
-fn graph_edges_by_id<'a>(graph: &'a Value) -> BTreeMap<String, &'a Value> {
+fn graph_edges_by_id(graph: &Value) -> BTreeMap<String, &Value> {
     graph
         .get("edges")
         .and_then(Value::as_array)
@@ -262,11 +251,19 @@ fn flatten_config_fields(value: &Value, prefix: &str, target: &mut BTreeMap<Stri
             }
         }
         Value::Array(_) => {
-            let key = if prefix.is_empty() { "config".to_string() } else { prefix.to_string() };
+            let key = if prefix.is_empty() {
+                "config".to_string()
+            } else {
+                prefix.to_string()
+            };
             target.insert(key, stringify_json_value(value));
         }
         _ => {
-            let key = if prefix.is_empty() { "config".to_string() } else { prefix.to_string() };
+            let key = if prefix.is_empty() {
+                "config".to_string()
+            } else {
+                prefix.to_string()
+            };
             target.insert(key, stringify_json_value(value));
         }
     }

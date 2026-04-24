@@ -338,10 +338,12 @@ fn execute_stmt(
             else_if_branches,
             else_branch,
         } => execute_if_stmt(
-            condition,
-            then_branch,
-            else_if_branches,
-            else_branch.as_deref(),
+            IfStmtParts {
+                condition,
+                then_branch,
+                else_if_branches,
+                else_branch: else_branch.as_deref(),
+            },
             env,
             context,
             stack,
@@ -362,16 +364,27 @@ fn execute_stmt(
     }
 }
 
+struct IfStmtParts<'a> {
+    condition: &'a Expr,
+    then_branch: &'a [Stmt],
+    else_if_branches: &'a [(Expr, Vec<Stmt>)],
+    else_branch: Option<&'a [Stmt]>,
+}
+
 fn execute_if_stmt(
-    condition: &Expr,
-    then_branch: &[Stmt],
-    else_if_branches: &[(Expr, Vec<Stmt>)],
-    else_branch: Option<&[Stmt]>,
+    parts: IfStmtParts<'_>,
     env: &mut BTreeMap<String, Expr>,
     context: &EvalContext,
     stack: &mut BTreeSet<String>,
     last_expr: &mut Option<Expr>,
 ) -> Result<ExecOutcome> {
+    let IfStmtParts {
+        condition,
+        then_branch,
+        else_if_branches,
+        else_branch,
+    } = parts;
+
     let normalized_condition = normalize_expr(condition, env, context, stack)?;
     if let Some(value) = expr_bool(&normalized_condition) {
         let mut selected = if value { Some(then_branch) } else { None };

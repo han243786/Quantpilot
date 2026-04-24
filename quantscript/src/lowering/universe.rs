@@ -266,19 +266,21 @@ fn parse_rebalance_schedule(value: Option<String>) -> Result<Option<RebalanceSch
     }
 }
 
+type RebalanceAllocationParse = (
+    UniverseValue,
+    String,
+    Option<String>,
+    Option<String>,
+    Vec<f64>,
+);
+
 fn parse_rebalance_allocation_expr(
     allocation_name: &str,
     allocation_args: &[CallArg],
     context: &LoweringContext,
     best_effort_pool_extraction: bool,
     universe_bindings: &BTreeMap<String, UniverseValue>,
-) -> Result<(
-    UniverseValue,
-    String,
-    Option<String>,
-    Option<String>,
-    Vec<f64>,
-)> {
+) -> Result<RebalanceAllocationParse> {
     match allocation_name {
         "equal_weight" => {
             let selection_expr = find_arg(allocation_args, ArgSelector::Positional(0))
@@ -542,7 +544,7 @@ fn expand_stmts(
                                     )?
                                     .into_iter()
                                     .next()
-                                    .unwrap_or_else(|| Stmt::Return(None)),
+                                    .unwrap_or(Stmt::Return(None)),
                                 ))
                             }
                             MatchArmBody::Expr(expr) => MatchArmBody::Expr(
@@ -1427,12 +1429,10 @@ fn compare_symbols_by_metric(
     let left_record = asset_record_for_symbol(snapshot, left);
     let right_record = asset_record_for_symbol(snapshot, right);
     let left_value = left_record
-        .map(|asset| selector(&universe_asset_metrics(snapshot, asset)))
-        .flatten()
+        .and_then(|asset| selector(&universe_asset_metrics(snapshot, asset)))
         .unwrap_or(f64::NEG_INFINITY);
     let right_value = right_record
-        .map(|asset| selector(&universe_asset_metrics(snapshot, asset)))
-        .flatten()
+        .and_then(|asset| selector(&universe_asset_metrics(snapshot, asset)))
         .unwrap_or(f64::NEG_INFINITY);
     right_value
         .partial_cmp(&left_value)

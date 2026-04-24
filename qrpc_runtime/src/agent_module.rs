@@ -514,13 +514,11 @@ fn assign_target_weights(
 }
 
 fn signal_kind_for_intent(core_ir: &CoreStrategyIr, intent_id: &str) -> Option<SignalKind> {
-    Some(
-        core_ir
-            .signal_rules
-            .iter()
-            .find(|rule| rule.indicator_id == intent_id)
-            .map(|rule| rule.signal_kind.clone())?,
-    )
+    core_ir
+        .signal_rules
+        .iter()
+        .find(|rule| rule.indicator_id == intent_id)
+        .map(|rule| rule.signal_kind)
 }
 
 fn build_arb_agent_decision(

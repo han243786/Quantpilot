@@ -62,7 +62,9 @@ async fn experiment_endpoints_expose_parameter_grid_and_variant_summaries() {
         .await
         .unwrap();
     assert_eq!(list_response.status(), StatusCode::OK);
-    let list_body = to_bytes(list_response.into_body(), usize::MAX).await.unwrap();
+    let list_body = to_bytes(list_response.into_body(), usize::MAX)
+        .await
+        .unwrap();
     let list: Value = serde_json::from_slice(&list_body).unwrap();
     let items = list.as_array().unwrap();
     assert_eq!(items.len(), 1);

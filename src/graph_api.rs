@@ -251,13 +251,13 @@ pub(super) async fn load_graph(
     read_graph_json(&graph_path).await.map(Json)
 }
 
-async fn read_graph_json(path: &PathBuf) -> Result<Value, (StatusCode, String)> {
+async fn read_graph_json(path: &FsPath) -> Result<Value, (StatusCode, String)> {
     let content = fs::read_to_string(path).await.map_err(not_found_io_error)?;
     serde_json::from_str(&content).map_err(|error| internal_error(error.into()))
 }
 
 async fn persist_graph_version(
-    graph_store_dir: &PathBuf,
+    graph_store_dir: &FsPath,
     graph_id: &str,
     input_graph: &Value,
     version_label: Option<&str>,
@@ -272,8 +272,7 @@ async fn persist_graph_version(
     let version_dir = graph_version_dir(graph_store_dir, graph_id);
     let version_graph_path = version_dir.join(format!("{}.json", version_id));
     let version_quantscript_path = version_dir.join(format!("{}.qs", version_id));
-    let quantscript =
-        generate_quantscript_from_graph_value(input_graph).map_err(internal_error)?;
+    let quantscript = generate_quantscript_from_graph_value(input_graph).map_err(internal_error)?;
     let mut graph = input_graph.clone();
     if let Some(root) = graph.as_object_mut() {
         let metadata = root
@@ -312,7 +311,9 @@ async fn persist_graph_version(
     fs::write(&quantscript_path, &quantscript)
         .await
         .map_err(io_error)?;
-    fs::write(&version_graph_path, &body).await.map_err(io_error)?;
+    fs::write(&version_graph_path, &body)
+        .await
+        .map_err(io_error)?;
     fs::write(&version_quantscript_path, &quantscript)
         .await
         .map_err(io_error)?;
@@ -330,7 +331,7 @@ async fn persist_graph_version(
 }
 
 async fn read_optional_graph_json(
-    graph_store_dir: &PathBuf,
+    graph_store_dir: &FsPath,
     graph_id: &str,
 ) -> Result<Option<Value>, (StatusCode, String)> {
     let graph_path = graph_store_dir.join(format!("{}.json", graph_id));
@@ -341,7 +342,7 @@ async fn read_optional_graph_json(
 }
 
 async fn read_graph_index(
-    graph_store_dir: &PathBuf,
+    graph_store_dir: &FsPath,
 ) -> Result<Vec<GraphListEntry>, (StatusCode, String)> {
     let mut entries = fs::read_dir(graph_store_dir).await.map_err(io_error)?;
     let mut graphs = Vec::new();
@@ -407,7 +408,7 @@ async fn read_graph_index(
 }
 
 async fn read_graph_versions(
-    graph_store_dir: &PathBuf,
+    graph_store_dir: &FsPath,
     graph_id: &str,
 ) -> Result<Vec<GraphVersionEntry>, (StatusCode, String)> {
     let version_dir = graph_version_dir(graph_store_dir, graph_id);
@@ -505,11 +506,11 @@ async fn read_graph_versions(
     Ok(versions)
 }
 
-fn graph_version_dir(graph_store_dir: &PathBuf, graph_id: &str) -> PathBuf {
+fn graph_version_dir(graph_store_dir: &FsPath, graph_id: &str) -> PathBuf {
     graph_store_dir.join("versions").join(graph_id)
 }
 
-fn graph_version_json_path(graph_store_dir: &PathBuf, graph_id: &str, version_id: &str) -> PathBuf {
+fn graph_version_json_path(graph_store_dir: &FsPath, graph_id: &str, version_id: &str) -> PathBuf {
     graph_version_dir(graph_store_dir, graph_id).join(format!("{}.json", version_id))
 }
 
@@ -541,7 +542,7 @@ fn apply_optional_metadata_text(
     metadata.insert(key.to_string(), Value::String(trimmed.to_string()));
 }
 
-async fn resolve_graph_reveal_path(graph_json_path: &PathBuf) -> anyhow::Result<PathBuf> {
+async fn resolve_graph_reveal_path(graph_json_path: &FsPath) -> anyhow::Result<PathBuf> {
     let content = fs::read_to_string(graph_json_path).await?;
     let value: Value = serde_json::from_str(&content)?;
     resolve_graph_reveal_path_from_value(&value, graph_json_path).await
@@ -549,7 +550,7 @@ async fn resolve_graph_reveal_path(graph_json_path: &PathBuf) -> anyhow::Result<
 
 async fn resolve_graph_reveal_path_from_value(
     value: &Value,
-    fallback_path: &PathBuf,
+    fallback_path: &FsPath,
 ) -> anyhow::Result<PathBuf> {
     let saved_path = value
         .get("metadata")
@@ -567,7 +568,7 @@ async fn resolve_graph_reveal_path_from_value(
         }
     }
 
-    Ok(fallback_path.clone())
+    Ok(fallback_path.to_path_buf())
 }
 
 fn reveal_path_in_file_manager(path: &FsPath) -> anyhow::Result<()> {

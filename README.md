@@ -125,6 +125,16 @@ E2E gate contract:
 - `cmd /c npm run test:e2e` must run from `frontend` without manually pre-starting the backend
 - Playwright E2E uses the isolated API-mock contract and must not leak requests to `127.0.0.1:3000`
 
+Security audit boundary:
+
+- `cd frontend; cmd /c npm audit --audit-level=moderate` is a public-release
+  blocker check
+- the current Vite/esbuild audit chain requires a breaking Vite/Vitest
+  migration path, so it is not part of the private-baseline gate until that
+  migration is explicitly accepted and verified
+- the owner accepts the current audit risk only for private-baseline use; this
+  does not authorize public release or public-release-ready wording
+
 ## Repository hygiene
 
 Local build and runtime artifacts are intentionally ignored:
@@ -158,6 +168,7 @@ Optional flags:
 - [Capability Governance Registry Snapshot](./markdown/implementation/governance/implementation-capability-governance-registry.generated.md)
 - [Artifact Governance](./markdown/implementation/governance/implementation-artifact-governance.md)
 - [Current Status And Release State](./markdown/overview/overview-current-status-and-roadmap.md)
+- [Private Baseline Risk Register](./markdown/implementation/planning/implementation-private-baseline-risk-register.md)
 - [Trading Sandbox Implementation](./markdown/implementation/runtime/implementation-trading-sandbox.md)
 - [Testing Module Implementation](./markdown/implementation/runtime/implementation-testing-module.md)
 - [Active QRPC RFC Index (`RFC-001` to `RFC-020`)](./markdown/protocol/README.md)
@@ -178,6 +189,9 @@ Shortest current release state list:
 
 - `LICENSE` is still placeholder-only
 - `tools\run-closeout-gates.bat` is the accepted private-baseline gate set
+- frontend dependency audit risk is explicitly accepted only for private
+  baseline use; it remains a public-release blocker until the Vite/Vitest
+  migration strategy is accepted and verified
 - public release remains blocked until a separate public-release approval and
   outbound license decision are made
 

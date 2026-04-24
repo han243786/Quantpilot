@@ -838,6 +838,8 @@ fn empty_account_summary() -> AccountSummary {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::items_after_test_module)]
+
     use super::*;
     use qrpc_core::{
         ArtifactDigest, ArtifactDigestAlgorithm, BacktestReplaySource,
@@ -1058,6 +1060,7 @@ mod tests {
         );
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn fill_event(
         fill_id: &str,
         plan_id: &str,
@@ -1165,5 +1168,5 @@ async fn read_json<T: for<'de> Deserialize<'de>>(path: PathBuf) -> std::io::Resu
 }
 
 fn to_io_error(error: impl std::fmt::Display) -> std::io::Error {
-    std::io::Error::new(std::io::ErrorKind::Other, error.to_string())
+    std::io::Error::other(error.to_string())
 }

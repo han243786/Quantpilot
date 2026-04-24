@@ -19,6 +19,14 @@ pub struct FillEngine {
     open_orders: BTreeMap<String, OpenOrder>,
 }
 
+struct RestingOrderOpenRequest<'a> {
+    plan: &'a ExecutionPlan,
+    order: &'a SimOrder,
+    remaining_qty: f64,
+    now_ms: u64,
+    trace_id: &'a str,
+}
+
 impl FillEngine {
     pub fn submit_plan(
         &mut self,
@@ -138,12 +146,14 @@ impl FillEngine {
                         let remaining_qty = (order.quantity - executable_qty).max(0.0);
                         if remaining_qty > 1e-9 {
                             let open_order = self.try_open_resting_order(
-                                plan,
-                                order,
-                                remaining_qty,
+                                RestingOrderOpenRequest {
+                                    plan,
+                                    order,
+                                    remaining_qty,
+                                    now_ms,
+                                    trace_id,
+                                },
                                 portfolio,
-                                now_ms,
-                                trace_id,
                                 &mut events,
                             );
                             if let Some(open_order) = open_order {
@@ -160,12 +170,14 @@ impl FillEngine {
                         events.push(fill_event(&fill, &order.order_id, now_ms, trace_id));
                         fills.push(fill);
                     } else if let Some(open_order) = self.try_open_resting_order(
-                        plan,
-                        order,
-                        order.quantity,
+                        RestingOrderOpenRequest {
+                            plan,
+                            order,
+                            remaining_qty: order.quantity,
+                            now_ms,
+                            trace_id,
+                        },
                         portfolio,
-                        now_ms,
-                        trace_id,
                         &mut events,
                     ) {
                         pending_orders.push(open_order);
@@ -257,7 +269,7 @@ impl FillEngine {
                     trace_id: trace_id.to_string(),
                     source_id: open_order.plan_id.clone(),
                     ts_ms: now_ms,
-                payload: json!({
+                    payload: json!({
                         "status": "Filled",
                         "lifecycle_stage": "completed",
                         "order_id": open_order.order_id,
@@ -289,14 +301,18 @@ impl FillEngine {
 
     fn try_open_resting_order(
         &mut self,
-        plan: &ExecutionPlan,
-        order: &SimOrder,
-        remaining_qty: f64,
+        request: RestingOrderOpenRequest<'_>,
         portfolio: &mut PortfolioState,
-        now_ms: u64,
-        trace_id: &str,
         events: &mut Vec<RuntimeEvent>,
     ) -> Option<OpenOrder> {
+        let RestingOrderOpenRequest {
+            plan,
+            order,
+            remaining_qty,
+            now_ms,
+            trace_id,
+        } = request;
+
         if !can_rest(order) {
             events.push(cancel_event(
                 &plan.plan_id,

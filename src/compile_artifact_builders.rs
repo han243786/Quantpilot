@@ -43,6 +43,7 @@ fn build_strategy_artifact(
     })
 }
 
+#[allow(clippy::too_many_arguments)]
 pub(super) fn build_compile_artifact_bundle(
     graph_id: &str,
     compile_id: &str,

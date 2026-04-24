@@ -201,9 +201,14 @@ async fn graph_save_sets_owner_and_exposes_audit_history() {
         .unwrap();
 
     assert_eq!(save_response.status(), StatusCode::OK);
-    let save_body = to_bytes(save_response.into_body(), usize::MAX).await.unwrap();
+    let save_body = to_bytes(save_response.into_body(), usize::MAX)
+        .await
+        .unwrap();
     let save_payload: Value = serde_json::from_slice(&save_body).unwrap();
-    assert_eq!(save_payload["collaboration"]["owner"]["actor_id"], "owner_alice");
+    assert_eq!(
+        save_payload["collaboration"]["owner"]["actor_id"],
+        "owner_alice"
+    );
     assert_eq!(
         save_payload["collaboration"]["last_saved_by"]["display_name"],
         "Alice"
@@ -221,13 +226,15 @@ async fn graph_save_sets_owner_and_exposes_audit_history() {
         .unwrap();
 
     assert_eq!(audit_response.status(), StatusCode::OK);
-    let audit_body = to_bytes(audit_response.into_body(), usize::MAX).await.unwrap();
+    let audit_body = to_bytes(audit_response.into_body(), usize::MAX)
+        .await
+        .unwrap();
     let audit_entries: Value = serde_json::from_slice(&audit_body).unwrap();
     let entries = audit_entries.as_array().unwrap();
     assert_eq!(entries.len(), 1);
     assert_eq!(entries[0]["action"], "graph_saved");
     assert_eq!(entries[0]["actor"]["actor_id"], "owner_alice");
-  }
+}
 
 #[tokio::test(flavor = "multi_thread")]
 async fn runtime_creation_rejects_unauthorized_actor_for_owned_graph() {

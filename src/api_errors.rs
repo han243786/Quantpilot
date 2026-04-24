@@ -69,4 +69,3 @@ pub(super) fn not_found_io_error(error: std::io::Error) -> (StatusCode, String) 
         (StatusCode::INTERNAL_SERVER_ERROR, error.to_string())
     }
 }
-

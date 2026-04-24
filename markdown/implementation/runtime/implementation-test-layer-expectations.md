@@ -78,7 +78,7 @@ Use this when `/api/capabilities` interpretation, frontend capability gates,
 module exposure, or support-matrix wording changes:
 
 ```powershell
-cd frontend; cmd /c npm run test -- src/capabilities/supportMatrix.test.js src/capabilities/capabilityGovernance.test.js src/components/TopToolbar.capabilities.test.jsx src/pages/StrategyWorkspaceExperimentCard.test.jsx
+cd frontend; cmd /c npm run test -- src/capabilities/supportMatrix.test.js src/capabilities/capabilityGovernance.test.js src/components/TopToolbar.capabilities.test.jsx src/components/ModuleSidebar.test.jsx src/pages/StrategyWorkspaceExperimentCard.test.jsx src/store/graphStore.capabilities.test.js
 ```
 
 ### Runtime, replay, and persisted-detail explanation
@@ -87,7 +87,15 @@ Use this when runtime explanation rows, backtest detail explanation, event
 replay, or persisted-selection shaping changes:
 
 ```powershell
-cd frontend; cmd /c npm run test -- src/utils/runtimeExplanation.test.js src/components/EventStreamPanel.historyExplanation.test.jsx src/components/EventReplaySection.test.jsx src/pages/BacktestDetailPage.test.jsx src/store/graphStoreRuntimeSelectionState.test.js src/store/graphStorePersistenceConsistency.test.js
+cd frontend; cmd /c npm run test -- src/utils/runtimeExplanation.test.js src/components/EventStreamPanel.historyExplanation.test.jsx src/components/EventStreamPanel.backtestHistory.test.jsx src/components/EventStreamPanel.backtestArtifacts.test.jsx src/components/EventReplaySection.test.jsx src/pages/BacktestDetailPage.test.jsx src/pages/BacktestComparePage.test.jsx src/pages/StrategyBacktestsPage.test.jsx src/store/graphStoreRuntimeHistoryFlow.test.js src/store/graphStoreRuntimeSelectionState.test.js src/store/graphStorePersistenceConsistency.test.js
+```
+
+Use these backend checks when API detail, replay, persisted run/backtest
+records, or artifact-backed reload behavior changes:
+
+```powershell
+cargo test --test api_run -- --nocapture
+cargo test --test api_backtest -- --nocapture
 ```
 
 ### Formal QuantScript retained surface

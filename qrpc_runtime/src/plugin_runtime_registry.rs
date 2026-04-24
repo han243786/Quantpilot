@@ -162,7 +162,11 @@ impl RuntimePluginRegistry {
         Ok(())
     }
 
-    pub fn mark_faulted(&mut self, plugin_id: &str, reason: impl Into<String>) -> Result<(), String> {
+    pub fn mark_faulted(
+        &mut self,
+        plugin_id: &str,
+        reason: impl Into<String>,
+    ) -> Result<(), String> {
         let Some(lifecycle) = self.lifecycle.get_mut(plugin_id) else {
             return Err(format!("plugin `{plugin_id}` is not registered"));
         };
@@ -181,10 +185,7 @@ impl RuntimePluginRegistry {
             .flatten()
     }
 
-    pub fn active_intent_provider(
-        &self,
-        plugin_id: &str,
-    ) -> Option<Arc<dyn IntentModuleProvider>> {
+    pub fn active_intent_provider(&self, plugin_id: &str) -> Option<Arc<dyn IntentModuleProvider>> {
         self.is_active(plugin_id)
             .then(|| self.intent_providers.get(plugin_id).cloned())
             .flatten()
@@ -264,7 +265,10 @@ mod tests {
     fn registers_and_activates_data_provider() {
         let mut registry = RuntimePluginRegistry::default();
         registry
-            .register_data_provider(sample_data_manifest(), Arc::new(BuiltinDataModule::default()))
+            .register_data_provider(
+                sample_data_manifest(),
+                Arc::new(BuiltinDataModule::default()),
+            )
             .unwrap();
 
         assert_eq!(
@@ -301,7 +305,10 @@ mod tests {
     fn faulted_plugin_is_not_exposed_as_active() {
         let mut registry = RuntimePluginRegistry::default();
         registry
-            .register_data_provider(sample_data_manifest(), Arc::new(BuiltinDataModule::default()))
+            .register_data_provider(
+                sample_data_manifest(),
+                Arc::new(BuiltinDataModule::default()),
+            )
             .unwrap();
         registry.activate("quantpilot.data.alt_feed").unwrap();
         registry

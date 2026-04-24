@@ -84,9 +84,9 @@ impl RuntimeCoordinator {
         Self::with_modules_from_core_ir(
             core_ir,
             BuiltinDataModule::default(),
-            BuiltinIntentModule::default(),
-            BuiltinAgentModule::default(),
-            RiskChecker::default(),
+            BuiltinIntentModule,
+            BuiltinAgentModule,
+            RiskChecker,
             BuiltinExecutionModule::default(),
         )
     }
@@ -152,9 +152,9 @@ impl RuntimeCoordinator {
         Self::with_modules_from_core_ir(
             core_ir,
             data_module,
-            BuiltinIntentModule::default(),
-            BuiltinAgentModule::default(),
-            RiskChecker::default(),
+            BuiltinIntentModule,
+            BuiltinAgentModule,
+            RiskChecker,
             BuiltinExecutionModule::default(),
         )
     }
@@ -174,8 +174,8 @@ impl RuntimeCoordinator {
             core_ir,
             BuiltinDataModule::default(),
             intent_module,
-            BuiltinAgentModule::default(),
-            RiskChecker::default(),
+            BuiltinAgentModule,
+            RiskChecker,
             BuiltinExecutionModule::default(),
         )
     }
@@ -194,9 +194,9 @@ impl RuntimeCoordinator {
         Self::with_modules_from_core_ir(
             core_ir,
             BuiltinDataModule::default(),
-            BuiltinIntentModule::default(),
+            BuiltinIntentModule,
             agent_module,
-            RiskChecker::default(),
+            RiskChecker,
             BuiltinExecutionModule::default(),
         )
     }
@@ -215,8 +215,8 @@ impl RuntimeCoordinator {
         Self::with_modules_from_core_ir(
             core_ir,
             BuiltinDataModule::default(),
-            BuiltinIntentModule::default(),
-            BuiltinAgentModule::default(),
+            BuiltinIntentModule,
+            BuiltinAgentModule,
             risk_checker,
             BuiltinExecutionModule::default(),
         )
@@ -239,9 +239,9 @@ impl RuntimeCoordinator {
         Self::with_modules_from_core_ir(
             core_ir,
             BuiltinDataModule::default(),
-            BuiltinIntentModule::default(),
-            BuiltinAgentModule::default(),
-            RiskChecker::default(),
+            BuiltinIntentModule,
+            BuiltinAgentModule,
+            RiskChecker,
             execution_module,
         )
     }

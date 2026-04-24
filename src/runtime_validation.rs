@@ -146,9 +146,7 @@ pub(super) fn validate_runtime_config_capabilities(
         }
 
         if let Some(schedule) = config_str(&agent.config, "rebalance_schedule") {
-            if !schedule.is_empty()
-                && !matches!(schedule, "every_slow" | "every_1d" | "weekly")
-            {
+            if !schedule.is_empty() && !matches!(schedule, "every_slow" | "every_1d" | "weekly") {
                 details.push(capability_detail(
                     "invalid_rebalance_schedule",
                     format!("{}.config.rebalance_schedule", agent.id),
@@ -407,7 +405,9 @@ mod tests {
     fn validate_runtime_config_capabilities_rejects_invalid_multi_symbol_agent_config() {
         let error = validate_runtime_config_capabilities(&sample_runtime_config())
             .expect_err("invalid rebalance config should be rejected");
-        assert!(error.iter().any(|detail| detail.code == "unsupported_symbol"));
+        assert!(error
+            .iter()
+            .any(|detail| detail.code == "unsupported_symbol"));
         assert!(error
             .iter()
             .any(|detail| detail.code == "invalid_rebalance_target_weights"));

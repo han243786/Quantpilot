@@ -203,11 +203,11 @@ fn action_stats(
         .filter(|item| matches!(item.side, OrderSide::Sell))
         .map(|item| item.quantity_ratio)
         .sum::<f64>();
-    let portfolio_net_exposure_ratio = portfolio_net_exposure_ratio(portfolio, equity)
+    let portfolio_net_exposure_ratio =
+        portfolio_net_exposure_ratio(portfolio, equity) + buy_quantity_ratio - sell_quantity_ratio;
+    let symbol_net_exposure_ratio = symbol_net_exposure_ratio(portfolio, symbol, equity)
         + buy_quantity_ratio
         - sell_quantity_ratio;
-    let symbol_net_exposure_ratio =
-        symbol_net_exposure_ratio(portfolio, symbol, equity) + buy_quantity_ratio - sell_quantity_ratio;
 
     json!({
         "action_count": actions.len(),
@@ -337,10 +337,7 @@ fn evaluate_risk_decision(
                 max_symbol_net_exposure_ratio.clamp(0.0, 1.0),
             ) {
                 status = DecisionStatus::Clamp;
-                push_reason_code(
-                    &mut reason_codes,
-                    RiskReasonCode::ExceedSymbolNetExposure,
-                );
+                push_reason_code(&mut reason_codes, RiskReasonCode::ExceedSymbolNetExposure);
             }
         }
         if let Some(max_turnover) = risk.max_turnover {
@@ -494,7 +491,8 @@ fn evaluate_risk_decision(
     }
 
     let execution_venue_kind = core_ir.execution.venue_kind.clone();
-    if matches!(status, DecisionStatus::Clamp) && reason_codes != vec![RiskReasonCode::WithinLimit] {
+    if matches!(status, DecisionStatus::Clamp) && reason_codes != vec![RiskReasonCode::WithinLimit]
+    {
         reason_text = format!(
             "action list clamped by {:?}",
             reason_codes
@@ -657,8 +655,8 @@ fn clamp_buy_actions_to_symbol_net_exposure(
         .map(|item| item.quantity_ratio)
         .sum::<f64>();
     let current_ratio = symbol_net_exposure_ratio(portfolio, symbol, equity);
-    let remaining_headroom = (max_symbol_net_exposure_ratio - (current_ratio - total_sell_ratio).max(0.0))
-        .max(0.0);
+    let remaining_headroom =
+        (max_symbol_net_exposure_ratio - (current_ratio - total_sell_ratio).max(0.0)).max(0.0);
 
     if total_buy_ratio <= remaining_headroom + 1e-9 {
         return false;
@@ -903,11 +901,10 @@ fn clamp_portfolio_target_min_trade_weight(
 ) -> bool {
     let mut clamped = false;
     for item in target_weights {
-        if (item.target_weight - item.current_weight).abs() < min_trade_weight {
-            if (item.target_weight - item.current_weight).abs() > 1e-9 {
-                item.target_weight = item.current_weight;
-                clamped = true;
-            }
+        let delta = (item.target_weight - item.current_weight).abs();
+        if delta < min_trade_weight && delta > 1e-9 {
+            item.target_weight = item.current_weight;
+            clamped = true;
         }
     }
     clamped
@@ -1710,11 +1707,9 @@ mod tests {
             .expect("risk evaluation");
 
         assert_eq!(output.decisions[0].status, DecisionStatus::Clamp);
-        assert!(
-            output.decisions[0]
-                .reason_codes
-                .contains(&RiskReasonCode::ExceedSymbolNetExposure)
-        );
+        assert!(output.decisions[0]
+            .reason_codes
+            .contains(&RiskReasonCode::ExceedSymbolNetExposure));
         let total_buy = output.decisions[0]
             .adjusted_actions
             .iter()
@@ -1769,7 +1764,10 @@ mod tests {
             .unwrap();
 
         let payload = &output.events[0].payload;
-        assert_eq!(payload["reason_text"], "portfolio target clamped by [ExceedSingleWeight] (execution_venue=paper)");
+        assert_eq!(
+            payload["reason_text"],
+            "portfolio target clamped by [ExceedSingleWeight] (execution_venue=paper)"
+        );
         assert_eq!(payload["limit_triggered"], "max_single_weight");
         assert_eq!(payload["sizing_mode"], "portfolio_target");
         assert_eq!(payload["pre_risk"]["max_target_weight"], 0.8);

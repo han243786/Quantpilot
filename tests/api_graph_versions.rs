@@ -206,11 +206,16 @@ async fn graph_version_endpoints_expose_labels_notes_and_compare_diff() {
         .unwrap();
 
     assert_eq!(first_response.status(), StatusCode::OK);
-    let first_body = to_bytes(first_response.into_body(), usize::MAX).await.unwrap();
+    let first_body = to_bytes(first_response.into_body(), usize::MAX)
+        .await
+        .unwrap();
     let first_saved: Value = serde_json::from_slice(&first_body).unwrap();
     let first_version_id = first_saved["version_id"].as_str().unwrap().to_string();
     assert_eq!(first_saved["version_label"], "baseline");
-    assert_eq!(first_saved["save_note"], "Initial persisted strategy snapshot.");
+    assert_eq!(
+        first_saved["save_note"],
+        "Initial persisted strategy snapshot."
+    );
 
     sleep(Duration::from_millis(2)).await;
 
@@ -235,7 +240,9 @@ async fn graph_version_endpoints_expose_labels_notes_and_compare_diff() {
         .unwrap();
 
     assert_eq!(second_response.status(), StatusCode::OK);
-    let second_body = to_bytes(second_response.into_body(), usize::MAX).await.unwrap();
+    let second_body = to_bytes(second_response.into_body(), usize::MAX)
+        .await
+        .unwrap();
     let second_saved: Value = serde_json::from_slice(&second_body).unwrap();
     let second_version_id = second_saved["version_id"].as_str().unwrap().to_string();
     assert_eq!(second_saved["version_label"], "tuned");
@@ -256,7 +263,9 @@ async fn graph_version_endpoints_expose_labels_notes_and_compare_diff() {
         .await
         .unwrap();
     assert_eq!(list_response.status(), StatusCode::OK);
-    let list_body = to_bytes(list_response.into_body(), usize::MAX).await.unwrap();
+    let list_body = to_bytes(list_response.into_body(), usize::MAX)
+        .await
+        .unwrap();
     let versions: Value = serde_json::from_slice(&list_body).unwrap();
     let versions = versions.as_array().unwrap();
     assert_eq!(versions.len(), 2);
@@ -296,7 +305,9 @@ async fn graph_version_endpoints_expose_labels_notes_and_compare_diff() {
         .as_array()
         .unwrap()
         .iter()
-        .any(|row| row["key"] == "version_label" && row["left_value"] == "baseline" && row["right_value"] == "tuned"));
+        .any(|row| row["key"] == "version_label"
+            && row["left_value"] == "baseline"
+            && row["right_value"] == "tuned"));
     assert!(compare["node_diff"]["changed_ids"]
         .as_array()
         .unwrap()

@@ -1,6 +1,6 @@
 mod api_errors;
-mod app_runtime_helpers;
 mod app_router;
+mod app_runtime_helpers;
 mod backtest_artifacts;
 mod backtest_compare;
 mod backtest_compare_core;
@@ -8,20 +8,20 @@ mod backtest_compare_narrative;
 mod backtest_compare_types;
 mod capability_api;
 mod cli_support;
+mod collaboration;
 mod compile_api;
 mod compile_artifact_builders;
 mod compile_diagnostics;
-mod collaboration;
+mod formal_quantscript_authoring_types;
 mod frontend_api_types;
 mod frontend_runtime_mapping;
-mod formal_quantscript_authoring_types;
 mod graph_api;
 mod graph_quantscript_api;
 mod graph_version_compare;
-mod runtime_event_projection;
-mod runtime_persistence;
 mod runtime_api;
 mod runtime_diagnostics;
+mod runtime_event_projection;
+mod runtime_persistence;
 mod runtime_response_mapping;
 mod runtime_validation;
 
@@ -48,10 +48,11 @@ use qrpc_core::{
     DataSourceConfig, DatasetSpec, Exchange, ExecutionAssumptionSourceSummary,
     ExecutionAssumptionSpec, ExecutionAssumptionValueSource, IndicatorKind, IntentConfig,
     IntentKind, MarketType, OpenOrder, PortfolioState, RiskConfig, RunModeSpec, RunSpec,
-    RuntimeEvent, RuntimeEventType, RuntimeProtocolCoreConfig, SessionOutput, StrategyArtifact,
-    StrategyArtifactSourceKind, StrategyIr, UniverseSnapshot, COMPILE_ARTIFACT_V1_VERSION,
-    CORE_IR_ARTIFACT_V1_VERSION, GLOBAL_RISK_PROFILE_DEFAULT_MAX_EXCHANGE_LEVERAGE,
-    GLOBAL_RISK_PROFILE_DEFAULT_MAX_POSITION, GLOBAL_RISK_PROFILE_DEFAULT_MAX_TOTAL_LEVERAGE,
+    RunSpecRuntimeProtocolInput, RuntimeEvent, RuntimeEventType, RuntimeProtocolCoreConfig,
+    SessionOutput, StrategyArtifact, StrategyArtifactSourceKind, StrategyIr, UniverseSnapshot,
+    COMPILE_ARTIFACT_V1_VERSION, CORE_IR_ARTIFACT_V1_VERSION,
+    GLOBAL_RISK_PROFILE_DEFAULT_MAX_EXCHANGE_LEVERAGE, GLOBAL_RISK_PROFILE_DEFAULT_MAX_POSITION,
+    GLOBAL_RISK_PROFILE_DEFAULT_MAX_TOTAL_LEVERAGE,
     GLOBAL_RISK_PROFILE_DEFAULT_MIN_ACTION_INTERVAL_MS, GLOBAL_RISK_PROFILE_ID,
     PAPER_EXECUTION_PROFILE_DEFAULT_FEE_BPS, PAPER_EXECUTION_PROFILE_DEFAULT_SLIPPAGE_BPS,
     PAPER_EXECUTION_PROFILE_ID, STRATEGY_ARTIFACT_V1_VERSION,
@@ -87,8 +88,8 @@ use tokio::{fs, sync::RwLock, time::sleep};
 use tower_http::cors::{Any, CorsLayer};
 
 use api_errors::*;
-use app_runtime_helpers::*;
 use app_router::*;
+use app_runtime_helpers::*;
 use backtest_artifacts::{
     load_backtest_record_from_directory, persist_backtest_artifacts, BacktestArtifactViews,
     ExecutionAssumptionsModule, ExecutionAssumptionsTag,
@@ -100,20 +101,20 @@ use backtest_compare_narrative::*;
 use backtest_compare_types::*;
 use capability_api::*;
 use cli_support::*;
+use collaboration::*;
 use compile_api::*;
 use compile_artifact_builders::*;
 use compile_diagnostics::*;
-use collaboration::*;
+use formal_quantscript_authoring_types::*;
 use frontend_api_types::*;
 use frontend_runtime_mapping::*;
-use formal_quantscript_authoring_types::*;
 use graph_api::*;
 use graph_quantscript_api::*;
 use graph_version_compare::*;
-use runtime_event_projection::*;
-use runtime_persistence::*;
 use runtime_api::*;
 use runtime_diagnostics::*;
+use runtime_event_projection::*;
+use runtime_persistence::*;
 use runtime_response_mapping::*;
 use runtime_validation::*;
 
@@ -1286,13 +1287,15 @@ fn collect_authoring_semantic_symbol_index(
     module: &FormalScriptModule,
     resolved: &FormalResolveResult,
 ) -> AuthoringSemanticSymbolIndex {
-    let mut index = AuthoringSemanticSymbolIndex::default();
-    index.known_callables = resolved
-        .callables
-        .keys()
-        .cloned()
-        .chain(resolved.functions.keys().cloned())
-        .collect();
+    let mut index = AuthoringSemanticSymbolIndex {
+        known_callables: resolved
+            .callables
+            .keys()
+            .cloned()
+            .chain(resolved.functions.keys().cloned())
+            .collect(),
+        ..Default::default()
+    };
     let Some(strategy) = module.items.iter().find_map(|item| match item {
         quantscript::Item::Function(function) if function.name == "strategy" => Some(function),
         _ => None,
@@ -1365,6 +1368,7 @@ fn collect_stmt_symbol_kinds(stmts: &[FormalStmt], index: &mut AuthoringSemantic
     }
 }
 
+#[allow(clippy::only_used_in_recursion)]
 fn collect_expr_symbol_kinds(expr: &FormalExpr, index: &mut AuthoringSemanticSymbolIndex) {
     match expr {
         FormalExpr::Call { callee, args } => {
@@ -1456,7 +1460,7 @@ fn expr_contains_named_call(expr: &FormalExpr, names: &[&str]) -> bool {
     match expr {
         FormalExpr::Call { callee, args } => {
             let current = call_name(callee)
-                .map(|name| names.iter().any(|candidate| *candidate == name))
+                .map(|name| names.contains(&name))
                 .unwrap_or(false);
             current
                 || expr_contains_named_call(callee, names)
@@ -1499,14 +1503,7 @@ fn expr_contains_named_call(expr: &FormalExpr, names: &[&str]) -> bool {
 fn call_name(expr: &FormalExpr) -> Option<&str> {
     match expr {
         FormalExpr::Identifier(name) => Some(name.as_str()),
-        FormalExpr::Member { object, field } => match object.as_ref() {
-            FormalExpr::Identifier(name) => Some(if name == "risk" || name == "execution" {
-                field.as_str()
-            } else {
-                field.as_str()
-            }),
-            _ => Some(field.as_str()),
-        },
+        FormalExpr::Member { field, .. } => Some(field.as_str()),
         _ => None,
     }
 }
@@ -1681,6 +1678,7 @@ fn authoring_kind_code(kind: QuantScriptAuthoringSectionKind) -> &'static str {
 }
 
 #[cfg(test)]
+#[allow(clippy::items_after_test_module)]
 mod cli_tests {
     use super::*;
     use axum::body::{to_bytes, Body};
@@ -5576,7 +5574,10 @@ fn strategy() {
         assert_eq!(versions[0]["version_id"], version_v2);
         assert_eq!(versions[0]["is_latest"], true);
         assert_eq!(versions[1]["version_id"], version_v1);
-        assert!(versions[0]["path"].as_str().unwrap().contains("\\versions\\"));
+        assert!(versions[0]["path"]
+            .as_str()
+            .unwrap()
+            .contains("\\versions\\"));
 
         let old_version_response = app
             .clone()
@@ -5646,12 +5647,10 @@ fn strategy() {
             .await
             .unwrap();
         assert_eq!(versions_after_restore_response.status(), StatusCode::OK);
-        let versions_after_restore_body = to_bytes(
-            versions_after_restore_response.into_body(),
-            usize::MAX,
-        )
-        .await
-        .unwrap();
+        let versions_after_restore_body =
+            to_bytes(versions_after_restore_response.into_body(), usize::MAX)
+                .await
+                .unwrap();
         let versions_after_restore: serde_json::Value =
             serde_json::from_slice(&versions_after_restore_body).unwrap();
         assert_eq!(versions_after_restore.as_array().unwrap().len(), 3);
@@ -7101,11 +7100,10 @@ fn strategy() {
             serde_json::json!("ordered_top_n by feature.factor_score desc top 3")
         );
         assert!(
-            authoring_view["pool_pipeline"]["stages"][3]["related_section_ids"]
+            !authoring_view["pool_pipeline"]["stages"][3]["related_section_ids"]
                 .as_array()
                 .unwrap()
-                .len()
-                >= 1
+                .is_empty()
         );
         let effective_kinds = authoring_view["sections"]
             .as_array()

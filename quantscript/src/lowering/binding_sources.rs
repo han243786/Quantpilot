@@ -193,11 +193,11 @@ fn fetch_like_data_source_from_call(
 pub(crate) fn resolve_data_source_ref(
     expr: &Expr,
     env: &BindingEnv,
-    data_sources: &[DataSourceConfig],
+    _data_sources: &[DataSourceConfig],
 ) -> Result<Option<DataSourceConfig>> {
     match expr {
         Expr::Identifier(name) => Ok(env.data_by_name.get(name).cloned()),
-        Expr::Try(inner) | Expr::Await(inner) => resolve_data_source_ref(inner, env, data_sources),
+        Expr::Try(inner) | Expr::Await(inner) => resolve_data_source_ref(inner, env, _data_sources),
         _ => Ok(extract_data_source(expr, &env.callables)?),
     }
 }
@@ -226,10 +226,10 @@ pub(crate) fn arg_data_source_optional(
     args: &[CallArg],
     selector: ArgSelector<'_>,
     env: &BindingEnv,
-    data_sources: &[DataSourceConfig],
+    _data_sources: &[DataSourceConfig],
 ) -> Result<Option<DataSourceConfig>> {
     match find_arg(args, selector) {
-        Some(expr) => resolve_data_source_ref(expr, env, data_sources),
+        Some(expr) => resolve_data_source_ref(expr, env, _data_sources),
         None => Ok(None),
     }
 }

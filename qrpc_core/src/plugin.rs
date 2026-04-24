@@ -76,7 +76,11 @@ impl PluginManifest {
             }
             match PluginCapabilityContract::parse(&capability.id) {
                 Some(contract) => {
-                    if !self.kind.supported_capability_contracts().contains(&contract) {
+                    if !self
+                        .kind
+                        .supported_capability_contracts()
+                        .contains(&contract)
+                    {
                         errors.push(format!(
                             "plugin kind `{}` cannot declare capability contract `{}`",
                             self.kind.as_str(),
@@ -325,7 +329,9 @@ mod tests {
                 summary: "Restricted custom expression intent".into(),
             },
             capability_declarations: vec![PluginCapabilityDeclaration {
-                id: PluginCapabilityContract::IntentModuleProvider.as_str().into(),
+                id: PluginCapabilityContract::IntentModuleProvider
+                    .as_str()
+                    .into(),
                 version: PLUGIN_CAPABILITY_CONTRACT_V1_VERSION.into(),
             }],
             extension_points: vec![ExtensionPoint::IntentModuleProvider],
@@ -357,7 +363,9 @@ mod tests {
         let mut manifest = sample_manifest();
         manifest.capability_declarations[0].id = "quantpilot.capability.unknown".into();
         let errors = manifest.validate().unwrap_err();
-        assert!(errors.iter().any(|item| item.contains("unsupported capability contract")));
+        assert!(errors
+            .iter()
+            .any(|item| item.contains("unsupported capability contract")));
     }
 
     #[test]

@@ -274,4 +274,3 @@ pub(super) struct BacktestCompareReportBundle {
     pub(super) trade_ledger_section: BacktestReportNarrativeSection,
     pub(super) equity_curve_section: BacktestReportNarrativeSection,
 }
-

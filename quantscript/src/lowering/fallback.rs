@@ -890,7 +890,7 @@ mod tests {
             .unwrap_or_else(|| panic!("missing let binding: {pattern}"))
     }
 
-    fn expect_binary_expr<'a>(expr: &'a Expr, op: BinaryOp) -> (&'a Expr, &'a Expr) {
+    fn expect_binary_expr(expr: &Expr, op: BinaryOp) -> (&Expr, &Expr) {
         match expr {
             Expr::Binary {
                 left,

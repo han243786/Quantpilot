@@ -57,7 +57,7 @@ pub(super) fn print_cli_usage() {
     println!("{}", cli_usage());
 }
 
-pub(super) fn print_strategy_ir_summary(path: &PathBuf, strategy_ir: &StrategyIr) {
+pub(super) fn print_strategy_ir_summary(path: &FsPath, strategy_ir: &StrategyIr) {
     println!("Strategy IR file: {}", path.display());
     println!("  strategy_id: {}", strategy_ir.metadata.strategy_id);
     println!("  name: {}", strategy_ir.metadata.name);

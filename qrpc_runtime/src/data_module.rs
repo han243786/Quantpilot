@@ -304,9 +304,11 @@ pub(crate) struct MarketDataPreview {
 
 fn data_timestamp_ms(data: &NormalizedMarketData) -> Option<u64> {
     match data {
-        NormalizedMarketData::KlineSeries(series) => {
-            series.bars.last().map(|bar| bar.close_time_ms).or(Some(series.ts_ms))
-        }
+        NormalizedMarketData::KlineSeries(series) => series
+            .bars
+            .last()
+            .map(|bar| bar.close_time_ms)
+            .or(Some(series.ts_ms)),
         NormalizedMarketData::Quote(quote) => Some(quote.ts_ms),
     }
 }
@@ -397,18 +399,22 @@ fn source_health_from_flags(diagnostics: &FetchDiagnostics, flags: &[String]) ->
     if matches!(diagnostics.fallback, Some("mock")) {
         return SourceHealth::Missing;
     }
-    if diagnostics.source_status == SourceStatus::Error || flags.iter().any(|flag| flag == "source_error")
+    if diagnostics.source_status == SourceStatus::Error
+        || flags.iter().any(|flag| flag == "source_error")
     {
         return SourceHealth::Error;
     }
-    if diagnostics.source_status == SourceStatus::Stale || flags.iter().any(|flag| flag == "stale_data")
+    if diagnostics.source_status == SourceStatus::Stale
+        || flags.iter().any(|flag| flag == "stale_data")
     {
         return SourceHealth::Stale;
     }
-    if flags
-        .iter()
-        .any(|flag| matches!(flag.as_str(), "delayed_update" | "ping_delayed" | "gaps_detected"))
-    {
+    if flags.iter().any(|flag| {
+        matches!(
+            flag.as_str(),
+            "delayed_update" | "ping_delayed" | "gaps_detected"
+        )
+    }) {
         return SourceHealth::Delayed;
     }
     SourceHealth::Healthy
@@ -751,8 +757,8 @@ impl BuiltinDataModule {
             Err(primary_error) => {
                 #[cfg(target_os = "windows")]
                 {
-                    return fetch_json_via_powershell(endpoint)
-                        .with_context(|| format!("{primary_error:#}"));
+                    fetch_json_via_powershell(endpoint)
+                        .with_context(|| format!("{primary_error:#}"))
                 }
 
                 #[cfg(not(target_os = "windows"))]

@@ -1,30 +1,30 @@
 use super::*;
 
 pub(super) async fn persist_run_record(
-    run_store_dir: &PathBuf,
+    run_store_dir: &FsPath,
     record: &RunRecord,
 ) -> std::io::Result<()> {
     let path = run_store_dir.join(format!("{}.json", record.run_id));
     let body = serde_json::to_string_pretty(record)
-        .map_err(|error| std::io::Error::new(std::io::ErrorKind::Other, error.to_string()))?;
+        .map_err(|error| std::io::Error::other(error.to_string()))?;
     fs::write(path, body).await
 }
 
 pub(super) async fn persist_backtest_record(
-    backtest_store_dir: &PathBuf,
+    backtest_store_dir: &FsPath,
     record: &BacktestRecord,
 ) -> std::io::Result<BacktestArtifactViews> {
     persist_backtest_artifacts(backtest_store_dir, record).await
 }
 
 pub(super) async fn persist_experiment_record(
-    experiment_store_dir: &PathBuf,
+    experiment_store_dir: &FsPath,
     record: &ExperimentRecord,
 ) -> std::io::Result<()> {
     fs::create_dir_all(experiment_store_dir).await?;
     let path = experiment_store_dir.join(format!("{}.json", record.experiment_id));
     let body = serde_json::to_string_pretty(record)
-        .map_err(|error| std::io::Error::new(std::io::ErrorKind::Other, error.to_string()))?;
+        .map_err(|error| std::io::Error::other(error.to_string()))?;
     fs::write(path, body).await
 }
 
@@ -74,7 +74,9 @@ pub(super) async fn load_experiment_record_from_state(
         return Ok(record);
     }
 
-    let path = state.experiment_store_dir.join(format!("{}.json", experiment_id));
+    let path = state
+        .experiment_store_dir
+        .join(format!("{}.json", experiment_id));
     let content = fs::read_to_string(&path)
         .await
         .map_err(not_found_io_error)?;

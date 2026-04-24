@@ -494,7 +494,10 @@ mod tests {
             output.events[0].payload["explanation_summary"],
             "Execution planned 1 order(s) from risk_adjusted_actions using equity_notional_ratio sizing."
         );
-        assert_eq!(output.events[0].payload["sizing_source"], "risk_adjusted_actions");
+        assert_eq!(
+            output.events[0].payload["sizing_source"],
+            "risk_adjusted_actions"
+        );
         assert_eq!(
             output.events[0].payload["order_previews"][0]["order_type_decision_reason"],
             "live_quote_available_or_direct_market_execution"
@@ -694,6 +697,9 @@ mod tests {
         assert_eq!(eth_order.side, OrderSide::Buy);
         assert!((btc_order.quantity - 0.4).abs() < 1e-9);
         assert!((eth_order.quantity - 12.5).abs() < 1e-9);
-        assert_eq!(output.events[0].payload["sizing_source"], "portfolio_target_diff");
+        assert_eq!(
+            output.events[0].payload["sizing_source"],
+            "portfolio_target_diff"
+        );
     }
 }

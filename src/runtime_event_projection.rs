@@ -21,8 +21,14 @@ fn build_frontend_events(
             node_id: resolve_event_node_id(
                 event,
                 &runtime_targets.source_to_node,
-                runtime_targets.runtime_node_id.as_deref().unwrap_or_default(),
-                runtime_targets.execution_node_id.as_deref().unwrap_or_default(),
+                runtime_targets
+                    .runtime_node_id
+                    .as_deref()
+                    .unwrap_or_default(),
+                runtime_targets
+                    .execution_node_id
+                    .as_deref()
+                    .unwrap_or_default(),
             ),
             event_time_ms: event.ts_ms,
             severity: severity_for_event(&event.event_type).to_string(),

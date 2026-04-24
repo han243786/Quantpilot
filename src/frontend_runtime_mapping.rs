@@ -248,7 +248,12 @@ fn frontend_runtime_node_from_core(
     let node_id = runtime_targets
         .runtime_node_id
         .clone()
-        .or_else(|| template.runtime_control.as_ref().map(|node| node.id.clone()))
+        .or_else(|| {
+            template
+                .runtime_control
+                .as_ref()
+                .map(|node| node.id.clone())
+        })
         .unwrap_or_else(|| "runtime_script_main".to_string());
     let template_node = template
         .runtime_control
@@ -494,7 +499,10 @@ pub(super) fn map_frontend_runtime_config(
                 &agent.config,
                 "rebalance_score_normalize",
             ),
-            rebalance_target_weights: config_number_list(&agent.config, "rebalance_target_weights")?,
+            rebalance_target_weights: config_number_list(
+                &agent.config,
+                "rebalance_target_weights",
+            )?,
             params: config_number_map(&agent.config),
             enabled: true,
         });
@@ -527,10 +535,7 @@ pub(super) fn map_frontend_runtime_config(
                 .unwrap_or(GLOBAL_RISK_PROFILE_DEFAULT_MAX_POSITION),
             max_single_weight: config_f64(&risk.config, "max_single_weight"),
             max_concentration_ratio: config_f64(&risk.config, "max_concentration"),
-            max_symbol_net_exposure_ratio: config_f64(
-                &risk.config,
-                "max_symbol_net_exposure",
-            ),
+            max_symbol_net_exposure_ratio: config_f64(&risk.config, "max_symbol_net_exposure"),
             max_portfolio_net_exposure_ratio: config_f64(
                 &risk.config,
                 "max_portfolio_net_exposure",

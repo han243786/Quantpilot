@@ -1198,7 +1198,7 @@ impl Resolver {
         if !self.is_ema_like_name(name) {
             return None;
         }
-        let macd_line_expr = args.iter().filter(|arg| arg.name.is_none()).next()?;
+        let macd_line_expr = args.iter().find(|arg| arg.name.is_none())?;
         let (target, fast_period, slow_period) =
             self.infer_manual_macd_line_shape(&macd_line_expr.value, scope)?;
         let signal_period = args
@@ -1430,7 +1430,7 @@ impl Resolver {
             _ => return None,
         };
         let smoothing = classify_change_smoothing_kind(name)?;
-        let change_expr = args.iter().filter(|arg| arg.name.is_none()).next()?;
+        let change_expr = args.iter().find(|arg| arg.name.is_none())?;
         let (target, change_kind) = self.infer_change_source_call(&change_expr.value, scope)?;
         let period = args
             .iter()
@@ -1465,7 +1465,7 @@ impl Resolver {
                 _ => return None,
             },
         };
-        let target = args.iter().filter(|arg| arg.name.is_none()).next()?;
+        let target = args.iter().find(|arg| arg.name.is_none())?;
         Some((&target.value, kind))
     }
 

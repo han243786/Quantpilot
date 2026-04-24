@@ -100,7 +100,12 @@ fn input_fields(event_type: &str) -> &'static [&'static str] {
 
 fn output_fields(event_type: &str) -> &'static [&'static str] {
     match event_type {
-        "DataUpdated" => &["latest_price", "source_health", "source_status", "gap_count"],
+        "DataUpdated" => &[
+            "latest_price",
+            "source_health",
+            "source_status",
+            "gap_count",
+        ],
         "IntentTriggered" => &["signal_direction", "signal_strength"],
         "IntentEvaluated" => &["kind", "strength"],
         "AgentDecisionProduced" => &["net_side", "score"],
@@ -138,7 +143,11 @@ fn format_value(value: &Value) -> String {
         Value::Number(number) => number.to_string(),
         Value::String(text) if text.is_empty() => "-".to_string(),
         Value::String(text) => text.clone(),
-        Value::Array(items) => items.iter().map(format_value).collect::<Vec<_>>().join(", "),
+        Value::Array(items) => items
+            .iter()
+            .map(format_value)
+            .collect::<Vec<_>>()
+            .join(", "),
         _ => value.to_string(),
     }
 }
@@ -224,7 +233,10 @@ fn build_explanation_rows(event_type: &str, payload: &Value) -> Vec<RuntimeDiagn
     match event_type {
         "RiskDecisionProduced" => {
             for key in ["reason_text", "limit_triggered", "sizing_mode"] {
-                if let Some(row) = payload.get(key).and_then(|value| diagnostics_row(key, value)) {
+                if let Some(row) = payload
+                    .get(key)
+                    .and_then(|value| diagnostics_row(key, value))
+                {
                     rows.push(row);
                 }
             }
@@ -237,14 +249,20 @@ fn build_explanation_rows(event_type: &str, payload: &Value) -> Vec<RuntimeDiagn
                 "order_type_decision_reason",
                 "time_in_force",
             ] {
-                if let Some(row) = payload.get(key).and_then(|value| diagnostics_row(key, value)) {
+                if let Some(row) = payload
+                    .get(key)
+                    .and_then(|value| diagnostics_row(key, value))
+                {
                     rows.push(row);
                 }
             }
         }
         "DataUpdated" | "RuntimeWarning" | "RuntimeError" => {
             for key in ["source_health", "quality_flags", "fallback", "error"] {
-                if let Some(row) = payload.get(key).and_then(|value| diagnostics_row(key, value)) {
+                if let Some(row) = payload
+                    .get(key)
+                    .and_then(|value| diagnostics_row(key, value))
+                {
                     rows.push(row);
                 }
             }
@@ -270,7 +288,10 @@ fn build_data_quality_rows(payload: &Value) -> Vec<RuntimeDiagnosticsFieldRow> {
         "error",
         "ping_error",
     ] {
-        if let Some(row) = payload.get(key).and_then(|value| diagnostics_row(key, value)) {
+        if let Some(row) = payload
+            .get(key)
+            .and_then(|value| diagnostics_row(key, value))
+        {
             rows.push(row);
         }
     }
@@ -280,7 +301,10 @@ fn build_data_quality_rows(payload: &Value) -> Vec<RuntimeDiagnosticsFieldRow> {
 fn build_risk_detail_rows(payload: &Value) -> Vec<RuntimeDiagnosticsFieldRow> {
     let mut rows = Vec::new();
     for key in ["status", "limit_triggered", "sizing_mode", "reason_text"] {
-        if let Some(row) = payload.get(key).and_then(|value| diagnostics_row(key, value)) {
+        if let Some(row) = payload
+            .get(key)
+            .and_then(|value| diagnostics_row(key, value))
+        {
             rows.push(row);
         }
     }
@@ -340,7 +364,10 @@ fn build_order_detail_rows(event_type: &str, payload: &Value) -> Vec<RuntimeDiag
         "time_in_force",
         "reason_text",
     ] {
-        if let Some(row) = payload.get(key).and_then(|value| diagnostics_row(key, value)) {
+        if let Some(row) = payload
+            .get(key)
+            .and_then(|value| diagnostics_row(key, value))
+        {
             rows.push(row);
         }
     }
@@ -446,13 +473,10 @@ pub(super) fn build_runtime_diagnostics_from_events(
             .collect::<Vec<_>>();
         let node_event_count = node_events.len();
         let latest_event = node_events.first().copied();
-        let latest_data_event = node_events
-            .iter()
-            .copied()
-            .find(|event| {
-                event.payload.get("source_health").is_some()
-                    || event.payload.get("source_status").is_some()
-            });
+        let latest_data_event = node_events.iter().copied().find(|event| {
+            event.payload.get("source_health").is_some()
+                || event.payload.get("source_status").is_some()
+        });
         let latest_risk_event = node_events
             .iter()
             .copied()
@@ -485,10 +509,14 @@ pub(super) fn build_runtime_diagnostics_from_events(
                     .and_then(Value::as_str)
                     .map(str::to_string),
                 latest_input_rows: latest_event
-                    .map(|event| build_payload_rows(&event.payload, input_fields(&event.event_type)))
+                    .map(|event| {
+                        build_payload_rows(&event.payload, input_fields(&event.event_type))
+                    })
                     .unwrap_or_default(),
                 latest_output_rows: latest_event
-                    .map(|event| build_payload_rows(&event.payload, output_fields(&event.event_type)))
+                    .map(|event| {
+                        build_payload_rows(&event.payload, output_fields(&event.event_type))
+                    })
                     .unwrap_or_default(),
                 explanation_rows: latest_event
                     .map(|event| build_explanation_rows(&event.event_type, &event.payload))

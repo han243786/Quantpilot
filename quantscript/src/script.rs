@@ -646,7 +646,7 @@ fn tokenize_expr(input: &str) -> Result<Vec<ExprToken>> {
                 chars.next();
                 let mut content = String::new();
                 let mut escaped = false;
-                while let Some(next) = chars.next() {
+                for next in chars.by_ref() {
                     if escaped {
                         content.push(match next {
                             'n' => '\n',
@@ -669,7 +669,7 @@ fn tokenize_expr(input: &str) -> Result<Vec<ExprToken>> {
             '\'' => {
                 chars.next();
                 let mut content = String::new();
-                while let Some(next) = chars.next() {
+                for next in chars.by_ref() {
                     if next == '\'' {
                         break;
                     }

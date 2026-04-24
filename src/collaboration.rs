@@ -42,7 +42,8 @@ pub(super) fn collaboration_from_graph(graph: &Value) -> GraphCollaborationMetad
         .and_then(|item| item.get("editors"))
         .and_then(Value::as_array)
         .map(|items| {
-            items.iter()
+            items
+                .iter()
                 .filter_map(parse_actor_identity)
                 .fold(Vec::new(), |mut acc, actor| {
                     if !acc
@@ -74,9 +75,7 @@ pub(super) fn collaboration_with_saved_actor(
     existing: Option<&Value>,
     actor: &ActorIdentity,
 ) -> Result<GraphCollaborationMetadata, (StatusCode, String)> {
-    let mut collaboration = existing
-        .map(collaboration_from_graph)
-        .unwrap_or_else(GraphCollaborationMetadata::default);
+    let mut collaboration = existing.map(collaboration_from_graph).unwrap_or_default();
 
     if collaboration.owner.is_none() {
         collaboration.owner = Some(actor.clone());
@@ -88,7 +87,7 @@ pub(super) fn collaboration_with_saved_actor(
 }
 
 pub(super) fn authorize_graph_actor(
-    graph_store_dir: &PathBuf,
+    graph_store_dir: &FsPath,
     graph_id: &str,
     actor: &ActorIdentity,
 ) -> Result<GraphCollaborationMetadata, (StatusCode, String)> {
@@ -107,7 +106,7 @@ pub(super) fn authorize_graph_actor(
 }
 
 pub(super) fn collaboration_with_run_actor(
-    graph_store_dir: &PathBuf,
+    graph_store_dir: &FsPath,
     graph_id: &str,
     actor: &ActorIdentity,
 ) -> Result<GraphCollaborationMetadata, (StatusCode, String)> {
@@ -138,7 +137,7 @@ pub(super) fn write_graph_collaboration_metadata(
 }
 
 pub(super) async fn persist_graph_audit_entry(
-    audit_store_dir: &PathBuf,
+    audit_store_dir: &FsPath,
     entry: &GraphAuditEntry,
 ) -> std::io::Result<()> {
     fs::create_dir_all(audit_store_dir).await?;
@@ -146,12 +145,12 @@ pub(super) async fn persist_graph_audit_entry(
     let mut entries = load_graph_audit_entries(audit_store_dir, &entry.graph_id).await?;
     entries.push(entry.clone());
     let body = serde_json::to_string_pretty(&entries)
-        .map_err(|error| std::io::Error::new(std::io::ErrorKind::Other, error.to_string()))?;
+        .map_err(|error| std::io::Error::other(error.to_string()))?;
     fs::write(path, body).await
 }
 
 pub(super) async fn load_graph_audit_entries(
-    audit_store_dir: &PathBuf,
+    audit_store_dir: &FsPath,
     graph_id: &str,
 ) -> std::io::Result<Vec<GraphAuditEntry>> {
     let path = audit_store_dir.join(format!("{}.json", graph_id));
@@ -159,8 +158,7 @@ pub(super) async fn load_graph_audit_entries(
         return Ok(Vec::new());
     }
     let body = fs::read_to_string(path).await?;
-    let mut entries = serde_json::from_str::<Vec<GraphAuditEntry>>(&body)
-        .unwrap_or_default();
+    let mut entries = serde_json::from_str::<Vec<GraphAuditEntry>>(&body).unwrap_or_default();
     entries.sort_by(|left, right| {
         right
             .created_at_ms

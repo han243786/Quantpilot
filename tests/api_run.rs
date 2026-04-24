@@ -89,12 +89,10 @@ async fn run_endpoints_expose_service_level_contract_for_created_run() {
         detail["runtime_diagnostics"]["source"],
         Value::String("runtime_events".to_string())
     );
-    assert!(
-        !detail["runtime_diagnostics"]["active_nodes"]
-            .as_array()
-            .unwrap()
-            .is_empty()
-    );
+    assert!(!detail["runtime_diagnostics"]["active_nodes"]
+        .as_array()
+        .unwrap()
+        .is_empty());
     let selected_node_id = detail["runtime_diagnostics"]["default_selected_node_id"]
         .as_str()
         .unwrap();
@@ -145,9 +143,14 @@ async fn run_endpoints_expose_service_level_contract_for_created_run() {
     assert!(risk_node["risk_detail_rows"]
         .as_array()
         .map(|rows| {
-            rows.iter().any(|row| row["key"] == "limit_triggered" || row["key"] == "status")
-                && rows.iter().any(|row| row["key"] == "pre_risk.portfolio_net_exposure_ratio")
-                && rows.iter().any(|row| row["key"] == "post_risk.portfolio_net_exposure_ratio")
+            rows.iter()
+                .any(|row| row["key"] == "limit_triggered" || row["key"] == "status")
+                && rows
+                    .iter()
+                    .any(|row| row["key"] == "pre_risk.portfolio_net_exposure_ratio")
+                && rows
+                    .iter()
+                    .any(|row| row["key"] == "post_risk.portfolio_net_exposure_ratio")
         })
         .unwrap_or(false));
 
@@ -333,7 +336,7 @@ async fn run_replay_endpoint_exposes_paginated_ordered_timeline() {
     assert_eq!(replay["graph_id"], "graph_test");
     assert_eq!(replay["cursor"], 0);
     assert_eq!(replay["limit"], 2);
-    assert!(replay["checkpoints"].as_array().unwrap().len() > 0);
+    assert!(!replay["checkpoints"].as_array().unwrap().is_empty());
     assert!(replay["events"].as_array().unwrap().len() <= 2);
     let events = replay["events"].as_array().unwrap();
     assert!(!events.is_empty());

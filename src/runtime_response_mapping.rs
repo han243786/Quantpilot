@@ -108,6 +108,7 @@ pub(super) fn run_start_response(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub(super) fn backtest_run_response(
     backtest_id: String,
     graph_id: String,
@@ -144,7 +145,8 @@ pub(super) fn run_list_item_from_record(record: RunRecord) -> RunListItem {
 }
 
 pub(super) fn run_detail_response_from_record(record: RunRecord) -> RunDetailResponse {
-    let runtime_diagnostics = build_runtime_diagnostics_from_events(&record.events, "runtime_events");
+    let runtime_diagnostics =
+        build_runtime_diagnostics_from_events(&record.events, "runtime_events");
     RunDetailResponse {
         run_id: record.run_id,
         graph_id: record.graph_id,
@@ -244,15 +246,12 @@ fn experiment_sweep_axes(definition: &ExperimentDefinitionSummary) -> Vec<String
 }
 
 pub(super) fn experiment_list_item_from_record(record: ExperimentRecord) -> ExperimentListItem {
-    let best_variant = record
-        .variants
-        .iter()
-        .max_by(|left, right| {
-            left.summary
-                .total_return_ratio
-                .partial_cmp(&right.summary.total_return_ratio)
-                .unwrap_or(std::cmp::Ordering::Equal)
-        });
+    let best_variant = record.variants.iter().max_by(|left, right| {
+        left.summary
+            .total_return_ratio
+            .partial_cmp(&right.summary.total_return_ratio)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
     ExperimentListItem {
         experiment_id: record.experiment_id,
         graph_id: record.graph_id,
