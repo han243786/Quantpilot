@@ -6,7 +6,7 @@ on:
   pull_request:
   workflow_dispatch:
   schedule:
-    - cron: "7 2 * * *"  # 每日凌晨 2:07 UTC
+    - cron: "7 2 * * *"
 
 jobs:
   backend-scenarios:
@@ -17,6 +17,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
@@ -24,37 +29,36 @@ jobs:
         run: cargo build --release
 
       - name: Start backend in test mode
-        shell: cmd
+        shell: pwsh
         run: |
-          set QUANTPILOT_PORT=3000
-          set QUANTPILOT_DEV=true
-          set QUANTPILOT_API_KEY=
-          start /B target\release\quantpilot.exe
-        env:
-          QUANTPILOT_PORT: "3000"
-          QUANTPILOT_DEV: "true"
-          QUANTPILOT_API_KEY: ""
+          $env:QUANTPILOT_PORT = "3000"
+          $env:QUANTPILOT_DEV = "true"
+          $env:QUANTPILOT_API_KEY = ""
+          Start-Process -FilePath "target\release\quantpilot.exe" -NoNewWindow
 
       - name: Wait for backend
-        shell: cmd
+        shell: pwsh
         run: |
-          for /L %%i in (1,1,30) do (
-            curl -s http://127.0.0.1:3000/api/health && exit /b 0
-            timeout /t 2 >nul
-          )
-          echo "Backend failed to start"
-          exit /b 1
+          for ($i = 0; $i -lt 30; $i++) {
+            try {
+              $r = Invoke-WebRequest -Uri "http://127.0.0.1:3000/api/health" -UseBasicParsing -TimeoutSec 2
+              if ($r.StatusCode -eq 200) { Write-Host "Backend ready"; exit 0 }
+            } catch { }
+            Start-Sleep -Seconds 3
+          }
+          Write-Error "Backend failed to start after 90 seconds"
+          exit 1
 
-      - name: Run scenario 01 — BTC双均线 Paper运行
-        shell: cmd
+      - name: Run scenario 01 — BTC 双均线 Paper 运行
+        shell: pwsh
         run: node tools/run-scenario.js tests/scenarios/scenario_01_btc_dual_ma.qs
 
       - name: Run scenario 02 — 回测对比
-        shell: cmd
+        shell: pwsh
         run: node tools/run-scenario.js tests/scenarios/scenario_02_backtest_compare.qs
 
       - name: Run scenario 08 — 多交易对
-        shell: cmd
+        shell: pwsh
         run: node tools/run-scenario.js tests/scenarios/scenario_08_multi_symbol.qs
 
       - name: Upload scenario reports
@@ -76,7 +80,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
