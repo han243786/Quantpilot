@@ -28,38 +28,39 @@ jobs:
       - name: Build backend
         run: cargo build --release
 
-      - name: Start backend in test mode
+      - name: Build and run all scenarios
         shell: pwsh
         run: |
           $env:QUANTPILOT_PORT = "3000"
           $env:QUANTPILOT_DEV = "true"
           $env:QUANTPILOT_API_KEY = ""
-          Start-Process -FilePath "target\release\quantpilot.exe" -NoNewWindow
 
-      - name: Wait for backend
-        shell: pwsh
-        run: |
+          Write-Host "Starting backend..."
+          $backend = Start-Process -FilePath ".\target\release\quantpilot.exe" -PassThru -NoNewWindow
+
+          Write-Host "Waiting for backend health..."
           for ($i = 0; $i -lt 30; $i++) {
             try {
               $r = Invoke-WebRequest -Uri "http://127.0.0.1:3000/api/health" -UseBasicParsing -TimeoutSec 2
-              if ($r.StatusCode -eq 200) { Write-Host "Backend ready"; exit 0 }
+              if ($r.StatusCode -eq 200) { Write-Host "Backend ready"; break }
             } catch { }
             Start-Sleep -Seconds 3
           }
-          Write-Error "Backend failed to start after 90 seconds"
-          exit 1
 
-      - name: Run scenario 01 — BTC 双均线 Paper 运行
-        shell: pwsh
-        run: node tools/run-scenario.js tests/scenarios/scenario_01_btc_dual_ma.qs
+          Write-Host "Running scenario 01..."
+          node tools/run-scenario.js tests/scenarios/scenario_01_btc_dual_ma.qs
+          if ($LASTEXITCODE -ne 0) { throw "scenario_01 failed" }
 
-      - name: Run scenario 02 — 回测对比
-        shell: pwsh
-        run: node tools/run-scenario.js tests/scenarios/scenario_02_backtest_compare.qs
+          Write-Host "Running scenario 02..."
+          node tools/run-scenario.js tests/scenarios/scenario_02_backtest_compare.qs
+          if ($LASTEXITCODE -ne 0) { throw "scenario_02 failed" }
 
-      - name: Run scenario 08 — 多交易对
-        shell: pwsh
-        run: node tools/run-scenario.js tests/scenarios/scenario_08_multi_symbol.qs
+          Write-Host "Running scenario 08..."
+          node tools/run-scenario.js tests/scenarios/scenario_08_multi_symbol.qs
+          if ($LASTEXITCODE -ne 0) { throw "scenario_08 failed" }
+
+          Write-Host "All scenarios passed"
+          Stop-Process -Id $backend.Id -Force
 
       - name: Upload scenario reports
         if: always()
