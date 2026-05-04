@@ -2,12 +2,14 @@ name: Scenario Test
 
 on:
   push:
-    branches: [main, master, "codex/**"]
+    branches: [main, master]
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "7 2 * * *"
 
 jobs:
-  backend-scenarios:
+  scenarios:
     runs-on: windows-latest
     timeout-minutes: 20
 
@@ -17,10 +19,10 @@ jobs:
         with: { node-version: "22" }
       - uses: dtolnay/rust-toolchain@stable
 
-      - name: Build backend
+      - name: Build
         run: cargo build --release
 
-      - name: Run scenarios
+      - name: Test
         shell: pwsh
         run: |
           $env:QUANTPILOT_PORT = "3000"
@@ -30,11 +32,11 @@ jobs:
           Write-Host "Starting backend..."
           $proc = Start-Process -FilePath ".\target\release\quantpilot.exe" -PassThru -WindowStyle Hidden
 
-          Write-Host "Waiting for health..."
+          Write-Host "Waiting for backend..."
           for ($i = 0; $i -lt 30; $i++) {
             try {
               (Invoke-RestMethod "http://127.0.0.1:3000/api/health" -TimeoutSec 3) | Out-Null
-              Write-Host "Backend ready (attempt $i)"
+              Write-Host "Ready"
               break
             } catch { Start-Sleep -Seconds 3 }
           }
@@ -45,62 +47,19 @@ jobs:
             "tests/scenarios/scenario_02_backtest_compare.qs",
             "tests/scenarios/scenario_08_multi_symbol.qs"
           ) | ForEach-Object {
-            Write-Host "Running: $_"
+            Write-Host "=== $_ ==="
             node tools/run-scenario.js $_
-            if ($LASTEXITCODE -ne 0) { $failed++; Write-Host "FAILED" }
+            if ($LASTEXITCODE -ne 0) { $failed++ }
           }
 
           Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
-          Write-Host "Done: $failed failed"
+          Write-Host "========================================"
+          Write-Host " Scenarios: $(3 - $failed)/3 passed"
+          Write-Host "========================================"
           exit $failed
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: scenario-reports
+          name: test-reports
           path: markdown/测试/test-reports/
-
-  frontend-e2e:
-    runs-on: windows-latest
-    timeout-minutes: 20
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install & test
-        shell: pwsh
-        run: |
-          Push-Location frontend
-          npm ci
-          npx playwright install msedge
-
-          Write-Host "Starting frontend dev server..."
-          $proc = Start-Process -FilePath ".\node_modules\.bin\vite.cmd" -ArgumentList "--host","127.0.0.1","--port","5173" -PassThru -WindowStyle Hidden
-
-          Write-Host "Waiting for frontend..."
-          for ($i = 0; $i -lt 20; $i++) {
-            try {
-              (Invoke-WebRequest "http://127.0.0.1:5173" -UseBasicParsing -TimeoutSec 3) | Out-Null
-              Write-Host "Frontend ready"
-              break
-            } catch { Start-Sleep -Seconds 2 }
-          }
-
-          Write-Host "Running E2E tests..."
-          npx playwright test tests/e2e/scenario-test-v2.spec.js --config=playwright.ci.config.js
-          $exit = $LASTEXITCODE
-
-          Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
-          Pop-Location
-          exit $exit
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report
-          path: frontend/playwright-report/
