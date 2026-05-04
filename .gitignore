@@ -23,18 +23,8 @@
 /frontend/.env.local
 
 # Runtime artifacts and local graph snapshots
-/storage/runs/
-/storage/backtests/
-/storage/experiments/
-/storage/test-backtests/
-/storage/test-runs/
-/storage/test-graphs/
-/storage/test-backtest-artifacts-*/
-/storage/test-*/
-/storage/audit/*.json
-/storage/graphs/*.json
-/storage/graphs/*.qs
-/storage/graphs/versions/
+/storage/
+/.quantpilot-tmp/
 
 # Local helper files
 /backend_pid.txt
