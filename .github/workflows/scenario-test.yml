@@ -38,83 +38,92 @@ jobs:
         working-directory: frontend
         run: npx playwright install msedge
 
-      - name: Run backend scenarios + frontend E2E
+      - name: Run all tests
         shell: pwsh
         run: |
+          $ErrorActionPreference = "Stop"
           $env:QUANTPILOT_PORT = "3000"
           $env:QUANTPILOT_DEV = "true"
           $env:QUANTPILOT_API_KEY = ""
 
-          # ── Start Backend ──
-          Write-Host "[1/5] Starting backend..."
-          $backend = Start-Process -FilePath ".\target\release\quantpilot.exe" -PassThru -NoNewWindow
+          # Start backend
+          Write-Host "=== Starting backend ==="
+          $backend = Start-Process -FilePath ".\target\release\quantpilot.exe" -PassThru
+          Start-Sleep -Seconds 5
 
-          Write-Host "Waiting for backend..."
-          for ($i = 0; $i -lt 30; $i++) {
-            try {
-              $r = Invoke-WebRequest -Uri "http://127.0.0.1:3000/api/health" -UseBasicParsing -TimeoutSec 2
-              if ($r.StatusCode -eq 200) { Write-Host "Backend ready"; break }
-            } catch { }
-            Start-Sleep -Seconds 3
-          }
-
-          # ── Start Frontend ──
-          Write-Host "[2/5] Starting frontend dev server..."
-          $frontend = Start-Process -FilePath "npx" -ArgumentList "vite","--host","127.0.0.1","--port","5173" -WorkingDirectory "frontend" -PassThru -NoNewWindow
-
-          Write-Host "Waiting for frontend..."
+          # Verify backend
+          Write-Host "=== Checking backend ==="
           for ($i = 0; $i -lt 20; $i++) {
             try {
-              $r = Invoke-WebRequest -Uri "http://127.0.0.1:5173" -UseBasicParsing -TimeoutSec 2
-              if ($r.StatusCode -eq 200) { Write-Host "Frontend ready"; break }
-            } catch { }
-            Start-Sleep -Seconds 2
+              $r = Invoke-RestMethod -Uri "http://127.0.0.1:3000/api/health" -TimeoutSec 5
+              Write-Host "Backend: $($r.status)"
+              break
+            } catch {
+              Write-Host "Waiting... ($i)"
+              Start-Sleep -Seconds 3
+            }
           }
 
-          # ── Run Backend Scenarios ──
-          Write-Host "[3/5] Running backend scenarios..."
-          $failed = 0
-          node tools/run-scenario.js tests/scenarios/scenario_01_btc_dual_ma.qs; if ($LASTEXITCODE -ne 0) { $failed++ }
-          node tools/run-scenario.js tests/scenarios/scenario_02_backtest_compare.qs; if ($LASTEXITCODE -ne 0) { $failed++ }
-          node tools/run-scenario.js tests/scenarios/scenario_08_multi_symbol.qs; if ($LASTEXITCODE -ne 0) { $failed++ }
+          # Start frontend
+          Write-Host "=== Starting frontend ==="
+          $frontend = Start-Process -FilePath ".\node_modules\.bin\vite.cmd" -ArgumentList "--host","127.0.0.1","--port","5173" -WorkingDirectory "frontend" -PassThru
+          Start-Sleep -Seconds 8
 
-          # ── Run Frontend E2E ──
-          Write-Host "[4/5] Running Playwright E2E tests..."
+          # Verify frontend
+          Write-Host "=== Checking frontend ==="
+          for ($i = 0; $i -lt 15; $i++) {
+            try {
+              $r = Invoke-WebRequest -Uri "http://127.0.0.1:5173" -UseBasicParsing -TimeoutSec 5
+              Write-Host "Frontend: $($r.StatusCode)"
+              break
+            } catch {
+              Write-Host "Waiting... ($i)"
+              Start-Sleep -Seconds 2
+            }
+          }
+
+          # Run backend scenarios
+          Write-Host "=== Backend Scenarios ==="
+          $failed = 0
+          $scenarios = @(
+            "tests/scenarios/scenario_01_btc_dual_ma.qs",
+            "tests/scenarios/scenario_02_backtest_compare.qs",
+            "tests/scenarios/scenario_08_multi_symbol.qs"
+          )
+          foreach ($qs in $scenarios) {
+            Write-Host "--- $qs ---"
+            node tools/run-scenario.js $qs
+            Write-Host "Exit: $LASTEXITCODE"
+            if ($LASTEXITCODE -ne 0) { $failed++ }
+          }
+
+          # Run frontend E2E with headless config
+          Write-Host "=== Frontend E2E ==="
           Push-Location frontend
           npx playwright test tests/e2e/scenario-test-v2.spec.js --config=playwright.real.config.js
-          $e2eExit = $LASTEXITCODE
+          Write-Host "E2E Exit: $LASTEXITCODE"
+          $e2eFailed = $LASTEXITCODE -ne 0
           Pop-Location
 
-          # ── Cleanup ──
-          Write-Host "[5/5] Cleaning up..."
+          # Cleanup
+          Write-Host "=== Cleanup ==="
           Stop-Process -Id $backend.Id -Force -ErrorAction SilentlyContinue
           Stop-Process -Id $frontend.Id -Force -ErrorAction SilentlyContinue
 
-          # ── Report ──
+          # Report
           Write-Host ""
           Write-Host "═══════════════════════════════════"
-          Write-Host " Backend scenarios: $failed failed"
-          Write-Host " Frontend E2E exit: $e2eExit"
+          Write-Host " Backend: $failed failed"
+          Write-Host " Frontend: $(if ($e2eFailed) { 'FAILED' } else { 'PASSED' })"
           Write-Host "═══════════════════════════════════"
-          if ($failed -gt 0 -or $e2eExit -ne 0) { exit 1 }
+          if ($failed -gt 0 -or $e2eFailed) { exit 1 }
 
-      - name: Upload scenario reports
+      - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: scenario-reports
-          path: markdown/测试/test-reports/
-
-      - name: Upload screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshots
-          path: markdown/测试/screenshots/
-
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: frontend/playwright-report/
+          name: test-artifacts
+          path: |
+            markdown/测试/test-reports/
+            markdown/测试/screenshots/
+            frontend/playwright-report/
