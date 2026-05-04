@@ -5,125 +5,102 @@ on:
     branches: [main, master, "codex/**"]
   pull_request:
   workflow_dispatch:
-  schedule:
-    - cron: "7 2 * * *"
 
 jobs:
-  full-test:
+  backend-scenarios:
     runs-on: windows-latest
-    timeout-minutes: 45
+    timeout-minutes: 20
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - uses: dtolnay/rust-toolchain@stable
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Build backend
+        run: cargo build --release
+
+      - name: Run scenarios
+        shell: pwsh
+        run: |
+          $env:QUANTPILOT_PORT = "3000"
+          $env:QUANTPILOT_DEV = "true"
+          $env:QUANTPILOT_API_KEY = ""
+
+          Write-Host "Starting backend..."
+          $proc = Start-Process -FilePath ".\target\release\quantpilot.exe" -PassThru -WindowStyle Hidden
+
+          Write-Host "Waiting for health..."
+          for ($i = 0; $i -lt 30; $i++) {
+            try {
+              (Invoke-RestMethod "http://127.0.0.1:3000/api/health" -TimeoutSec 3) | Out-Null
+              Write-Host "Backend ready (attempt $i)"
+              break
+            } catch { Start-Sleep -Seconds 3 }
+          }
+
+          $failed = 0
+          @(
+            "tests/scenarios/scenario_01_btc_dual_ma.qs",
+            "tests/scenarios/scenario_02_backtest_compare.qs",
+            "tests/scenarios/scenario_08_multi_symbol.qs"
+          ) | ForEach-Object {
+            Write-Host "Running: $_"
+            node tools/run-scenario.js $_
+            if ($LASTEXITCODE -ne 0) { $failed++; Write-Host "FAILED" }
+          }
+
+          Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+          Write-Host "Done: $failed failed"
+          exit $failed
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: scenario-reports
+          path: markdown/测试/test-reports/
+
+  frontend-e2e:
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Build backend
-        run: cargo build --release
-
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm ci
-
-      - name: Install Playwright browsers
-        working-directory: frontend
-        run: npx playwright install msedge
-
-      - name: Run all tests
+      - name: Install & test
         shell: pwsh
         run: |
-          $ErrorActionPreference = "Stop"
-          $env:QUANTPILOT_PORT = "3000"
-          $env:QUANTPILOT_DEV = "true"
-          $env:QUANTPILOT_API_KEY = ""
+          Push-Location frontend
+          npm ci
+          npx playwright install msedge
 
-          # Start backend
-          Write-Host "=== Starting backend ==="
-          $backend = Start-Process -FilePath ".\target\release\quantpilot.exe" -PassThru
-          Start-Sleep -Seconds 5
+          Write-Host "Starting frontend dev server..."
+          $proc = Start-Process -FilePath ".\node_modules\.bin\vite.cmd" -ArgumentList "--host","127.0.0.1","--port","5173" -PassThru -WindowStyle Hidden
 
-          # Verify backend
-          Write-Host "=== Checking backend ==="
+          Write-Host "Waiting for frontend..."
           for ($i = 0; $i -lt 20; $i++) {
             try {
-              $r = Invoke-RestMethod -Uri "http://127.0.0.1:3000/api/health" -TimeoutSec 5
-              Write-Host "Backend: $($r.status)"
+              (Invoke-WebRequest "http://127.0.0.1:5173" -UseBasicParsing -TimeoutSec 3) | Out-Null
+              Write-Host "Frontend ready"
               break
-            } catch {
-              Write-Host "Waiting... ($i)"
-              Start-Sleep -Seconds 3
-            }
+            } catch { Start-Sleep -Seconds 2 }
           }
 
-          # Start frontend
-          Write-Host "=== Starting frontend ==="
-          $frontend = Start-Process -FilePath ".\node_modules\.bin\vite.cmd" -ArgumentList "--host","127.0.0.1","--port","5173" -WorkingDirectory "frontend" -PassThru
-          Start-Sleep -Seconds 8
+          Write-Host "Running E2E tests..."
+          npx playwright test tests/e2e/scenario-test-v2.spec.js --config=playwright.ci.config.js
+          $exit = $LASTEXITCODE
 
-          # Verify frontend
-          Write-Host "=== Checking frontend ==="
-          for ($i = 0; $i -lt 15; $i++) {
-            try {
-              $r = Invoke-WebRequest -Uri "http://127.0.0.1:5173" -UseBasicParsing -TimeoutSec 5
-              Write-Host "Frontend: $($r.StatusCode)"
-              break
-            } catch {
-              Write-Host "Waiting... ($i)"
-              Start-Sleep -Seconds 2
-            }
-          }
-
-          # Run backend scenarios
-          Write-Host "=== Backend Scenarios ==="
-          $failed = 0
-          $scenarios = @(
-            "tests/scenarios/scenario_01_btc_dual_ma.qs",
-            "tests/scenarios/scenario_02_backtest_compare.qs",
-            "tests/scenarios/scenario_08_multi_symbol.qs"
-          )
-          foreach ($qs in $scenarios) {
-            Write-Host "--- $qs ---"
-            node tools/run-scenario.js $qs
-            Write-Host "Exit: $LASTEXITCODE"
-            if ($LASTEXITCODE -ne 0) { $failed++ }
-          }
-
-          # Run frontend E2E with headless config
-          Write-Host "=== Frontend E2E ==="
-          Push-Location frontend
-          npx playwright test tests/e2e/scenario-test-v2.spec.js --config=playwright.real.config.js
-          Write-Host "E2E Exit: $LASTEXITCODE"
-          $e2eFailed = $LASTEXITCODE -ne 0
+          Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
           Pop-Location
+          exit $exit
 
-          # Cleanup
-          Write-Host "=== Cleanup ==="
-          Stop-Process -Id $backend.Id -Force -ErrorAction SilentlyContinue
-          Stop-Process -Id $frontend.Id -Force -ErrorAction SilentlyContinue
-
-          # Report
-          Write-Host ""
-          Write-Host "═══════════════════════════════════"
-          Write-Host " Backend: $failed failed"
-          Write-Host " Frontend: $(if ($e2eFailed) { 'FAILED' } else { 'PASSED' })"
-          Write-Host "═══════════════════════════════════"
-          if ($failed -gt 0 -or $e2eFailed) { exit 1 }
-
-      - name: Upload artifacts
+      - uses: actions/upload-artifact@v4
         if: always()
-        uses: actions/upload-artifact@v4
         with:
-          name: test-artifacts
-          path: |
-            markdown/测试/test-reports/
-            markdown/测试/screenshots/
-            frontend/playwright-report/
+          name: playwright-report
+          path: frontend/playwright-report/
