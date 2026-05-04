@@ -1,5 +1,15 @@
 {
   "api_version": "quantpilot-capabilities/v1",
+  "schema_version": "quantpilot/capabilities-schema/v1",
+  "schema_hash": "sha256:0b98a45b5f0902d861771d0097b0a3b7b2c0b641325276ee131b02f3e8023241",
+  "chain_stages": [
+    "data",
+    "intent",
+    "agent",
+    "risk",
+    "execution",
+    "fill"
+  ],
   "strategy_ir": {
     "declared_indicator_kinds": [
       "ma_cross",
@@ -225,5 +235,19 @@
         "reason": null
       }
     ]
+  },
+  "versioning": {
+    "model_version": "quantpilot/versioning-model/v1",
+    "strategy_version_source": "frontend_runtime_config.metadata.version",
+    "parameter_version_policy": "immutable_generation_pointer",
+    "deployment_revision_policy": "strategy_version_plus_compile_id_plus_capability_hash"
+  },
+  "permission_boundary": {
+    "model_version": "quantpilot/permission-boundary/v1",
+    "execution_owner_module": "builtin.execution.paper",
+    "live_execution_allowed": false,
+    "ai_write_policy": "proposal_only",
+    "plugin_network_default": "deny",
+    "non_execution_order_access": "deny"
   }
 }

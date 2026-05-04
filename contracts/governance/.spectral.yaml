@@ -1,0 +1,67 @@
+extends:
+  - spectral:oas
+  - spectral:asyncapi
+
+rules:
+  # 强制 operationId
+  qp-operation-id-required:
+    description: Every HTTP operation must declare operationId
+    severity: error
+    given: $.paths[*][get,post,put,patch,delete]
+    then:
+      field: operationId
+      function: truthy
+
+  # HTTP operation 必须声明 x-owner
+  qp-x-owner-required-http:
+    description: Every HTTP operation must declare x-owner
+    severity: error
+    given: $.paths[*][get,post,put,patch,delete]
+    then:
+      field: x-owner
+      function: truthy
+
+  # HTTP operation 必须声明 x-chain-stage
+  qp-x-chain-stage-required-http:
+    description: Every HTTP operation must declare x-chain-stage
+    severity: warn
+    given: $.paths[*][get,post,put,patch,delete]
+    then:
+      field: x-chain-stage
+      function: truthy
+
+  # HTTP operation 必须声明 x-stability
+  qp-x-stability-required-http:
+    description: Every HTTP operation must declare x-stability
+    severity: warn
+    given: $.paths[*][get,post,put,patch,delete]
+    then:
+      field: x-stability
+      function: truthy
+
+  # AsyncAPI operation 必须声明 x-owner
+  qp-x-owner-required-async:
+    description: Every async operation must declare x-owner
+    severity: error
+    given: $.operations[*]
+    then:
+      field: x-owner
+      function: truthy
+
+  # 强制所有 4xx/5xx 响应包含 application/problem+json
+  qp-problem-json-required:
+    description: Error responses must use application/problem+json
+    severity: warn
+    given: $.paths[*][*].responses[?(@property >= 400 && @property < 600)]
+    then:
+      field: content
+      function: truthy
+
+  # operation summary 必填
+  qp-summary-required:
+    description: Every operation must have a summary
+    severity: error
+    given: $.paths[*][get,post,put,patch,delete]
+    then:
+      field: summary
+      function: truthy

@@ -1188,22 +1188,40 @@ fn mock_raw_klines(source: &DataSourceConfig, now_ms: u64) -> Result<Vec<RawKlin
     let days = source.days.unwrap_or(150);
     let mut bars = Vec::new();
     let interval_ms = 86_400_000_u64;
+    // Deterministic pseudo-random seed from symbol debug name hash
+    let symbol_bytes = format!("{:?}", source.symbol).into_bytes();
+    let symbol_seed = symbol_bytes.iter().fold(0u64, |acc, &b| acc.wrapping_mul(31).wrapping_add(b as u64));
+    let seed = symbol_seed.wrapping_add(days as u64);
 
     for idx in 0..days {
         let day_index = idx as f64;
-        let close = match source.exchange {
+        // Multi-regime price: slow grind → breakout → consolidation → rally → pullback
+        let trend_close = match source.exchange {
             Exchange::Binance => {
-                if idx < 100 {
+                if idx < 50 {
+                    // Regime 1: slow accumulation 42k→43k
                     42_000.0 + day_index * 20.0
+                } else if idx < 100 {
+                    // Regime 2: breakout 43k→52k
+                    43_000.0 + (idx - 50) as f64 * 180.0
+                } else if idx < 140 {
+                    // Regime 3: consolidation 52k→50k (slight pullback)
+                    52_000.0 - (idx - 100) as f64 * 50.0
                 } else {
-                    45_000.0 + (idx - 100) as f64 * 250.0
+                    // Regime 4: rally 50k→68k
+                    50_000.0 + (idx - 140) as f64 * 300.0
                 }
             }
             Exchange::Okx => 42_100.0 + day_index * 22.0,
         };
-        let open = close * 0.99;
-        let high = close * 1.01;
-        let low = close * 0.98;
+
+        // Add stochastic volatility (±0.5% with seed-based pseudo-random walk)
+        let noise = pseudo_random(idx as u64, seed) * trend_close * 0.005;
+        let close = trend_close + noise;
+        let daily_range = close * (0.002 + pseudo_random(idx as u64 + 1, seed).abs() * 0.008);
+        let open = close - daily_range * pseudo_random(idx as u64 + 2, seed);
+        let high = close.max(open) + daily_range * pseudo_random(idx as u64 + 3, seed).abs() * 0.5;
+        let low = close.min(open) - daily_range * pseudo_random(idx as u64 + 4, seed).abs() * 0.5;
         let close_time = now_ms.saturating_sub(interval_ms * (days - idx) as u64);
         let open_time = close_time.saturating_sub(interval_ms);
         bars.push(RawKline {
@@ -1212,12 +1230,24 @@ fn mock_raw_klines(source: &DataSourceConfig, now_ms: u64) -> Result<Vec<RawKlin
             high,
             low,
             close,
-            volume: 1000.0 + idx as f64 * 10.0,
+            volume: 1000.0 + idx as f64 * 10.0 + pseudo_random(idx as u64 + 5, seed).abs() * 500.0,
             close_time,
         });
     }
 
     Ok(bars)
+}
+
+/// Deterministic pseudo-random in [-1.0, 1.0] based on index and seed
+fn pseudo_random(idx: u64, seed: u64) -> f64 {
+    let val = idx.wrapping_mul(6364136223846793005)
+        .wrapping_add(seed.wrapping_mul(1442695040888963407))
+        .wrapping_add(1);
+    let mixed = (val ^ (val >> 33)).wrapping_mul(0xFF51AFD7ED558CCD);
+    let mixed = (mixed ^ (mixed >> 33)).wrapping_mul(0xC4CEB9FE1A85EC53);
+    let mixed = mixed ^ (mixed >> 33);
+    // Map u64 to [-1.0, 1.0]
+    (mixed as f64 / u64::MAX as f64) * 2.0 - 1.0
 }
 
 fn mock_raw_quote(source: &DataSourceConfig, now_ms: u64) -> Result<RawQuote> {
@@ -1600,5 +1630,27 @@ mod tests {
         assert_eq!(second.1.fallback, Some("request_interval"));
         assert_eq!(second.1.source_status, SourceStatus::Healthy);
         assert_eq!(counts.get("binance_btc_quote").copied(), Some(2));
+    }
+
+    #[test]
+    fn pseudo_random_is_deterministic() {
+        let a = pseudo_random(42, 7);
+        let b = pseudo_random(42, 7);
+        assert_eq!(a, b, "same inputs produce same output");
+    }
+
+    #[test]
+    fn pseudo_random_range_is_normalized() {
+        for i in 0..1000 {
+            let val = pseudo_random(i, 12345);
+            assert!(val >= -1.0 && val <= 1.0, "value {val} out of [-1,1]");
+        }
+    }
+
+    #[test]
+    fn pseudo_random_different_seed_different_output() {
+        let a = pseudo_random(42, 7);
+        let b = pseudo_random(42, 8);
+        assert_ne!(a, b, "different seeds produce different output");
     }
 }

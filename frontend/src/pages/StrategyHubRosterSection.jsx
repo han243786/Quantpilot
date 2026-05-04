@@ -9,7 +9,7 @@ export default function StrategyHubRosterSection({ model }) {
   const { backtestItems, runItems, toolbar, rosterRows } = useStrategyHubRosterData(model);
 
   return (
-    <div className="strategy-hub-main">
+    <div className="strategy-hub-roster-stack">
       <Suspense fallback={<StrategyHubInspectorSectionFallback title="策略清单" />}>
         <StrategyHubRosterDirectorySection
           model={model}

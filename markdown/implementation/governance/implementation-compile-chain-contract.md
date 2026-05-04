@@ -89,4 +89,4 @@ Any compile-chain change must update all affected layers together:
 - [Support Matrix](./implementation-support-matrix.md)
 - [Capability Governance](./implementation-capability-governance.md)
 - [Current Status And Release State](../../overview/overview-current-status-and-roadmap.md)
-- [Completed Functional Closeout Ledger](../planning/implementation-functional-closeout-task-table.md)
+- [Archived Functional Closeout Ledger](../../archive/planning-retired/implementation-functional-closeout-task-table.md)

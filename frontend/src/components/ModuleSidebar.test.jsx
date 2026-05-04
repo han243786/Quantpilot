@@ -58,6 +58,18 @@ describe("ModuleSidebar capability visibility", () => {
 
     render(<ModuleSidebar />);
 
+    const sidebarNoteTrigger = screen.getByRole("button", { name: "查看模块模板说明" });
+    const sidebarNoteRoot = sidebarNoteTrigger.closest(".strategy-card-note");
+    expect(
+      screen.queryByText("只展示当前声明的模块边界；不可用模块保留卡片，并明确说明锁定原因。")
+    ).not.toBeInTheDocument();
+    fireEvent.mouseEnter(sidebarNoteTrigger);
+    expect(screen.getByRole("tooltip")).toHaveTextContent(
+      "只展示当前声明的模块边界；不可用模块保留卡片，并明确说明锁定原因。"
+    );
+    fireEvent.mouseLeave(sidebarNoteRoot);
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+
     const supportedButton = screen.getByTestId("module-card-supported.module");
     const unsupportedButton = screen.getByTestId("module-card-unsupported.module");
 
@@ -223,13 +235,12 @@ describe("ModuleSidebar capability visibility", () => {
 
     const recentSection = screen.getByTestId("module-sidebar-recent-section");
     const structureSection = screen.getByTestId("module-sidebar-structure-section");
-    const selectedTypeCard = screen.getByTestId("module-sidebar-selected-type-card");
 
     expect(recentSection).toBeInTheDocument();
     expect(recentSection).toHaveTextContent("Intent signal");
     expect(recentSection).toHaveTextContent("Data feed");
     expect(structureSection).toBeInTheDocument();
-    expect(selectedTypeCard).toHaveTextContent("Signal");
+    expect(screen.queryByTestId("module-sidebar-context")).not.toBeInTheDocument();
   });
 
   it("renders shared workspace context when lane and focus metadata are provided", () => {
@@ -296,22 +307,12 @@ describe("ModuleSidebar capability visibility", () => {
       <ModuleSidebar
         workspaceContext={{
           laneId: "diagnostics",
-          laneLabel: "Validate lane",
-          laneStatus: "Auto follow",
-          focusLabel: "issues focus",
-          reasonTitle: "Lane changed automatically",
-          reasonMessage:
-            "A targeted compile issue needs validation workflow, so the Validate lane was brought forward.",
-          reasonFocusMessage: "Canvas focus changed to issues focus."
+          laneLabel: "Validate lane"
         }}
       />
     );
 
-    expect(screen.getByTestId("module-sidebar-lane-card")).toHaveTextContent("Validate lane");
-    expect(screen.getByTestId("module-sidebar-focus-card")).toHaveTextContent("issues focus");
-    expect(screen.getByTestId("module-sidebar-reason-card")).toHaveTextContent(
-      "Lane changed automatically"
-    );
+    expect(screen.queryByTestId("module-sidebar-workbench")).not.toBeInTheDocument();
 
     const recommendedSection = screen.getByTestId("module-sidebar-recommended-section");
     expect(recommendedSection).toHaveTextContent("Paper execution");

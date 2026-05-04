@@ -121,6 +121,7 @@ fn generate_node_quantscript(
     let module_key = node
         .get("module_key")
         .and_then(Value::as_str)
+        .or_else(|| node.get("type").and_then(Value::as_str))
         .unwrap_or("unknown.module");
     let name = node.get("name").and_then(Value::as_str).unwrap_or(node_id);
     let kind = match node_type {

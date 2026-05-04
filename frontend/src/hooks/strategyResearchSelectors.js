@@ -25,6 +25,87 @@ function backtestExecutionAssumptionsSearchText(filters) {
     .toLowerCase();
 }
 
+function selectedRunId(runtime = {}) {
+  return runtime.selectedHistoryRunId || (runtime.runKind === "simulation" ? runtime.runId : null);
+}
+
+function selectedBacktestId(runtime = {}) {
+  return runtime.selectedBacktestId || (runtime.runKind === "backtest" ? runtime.runId : null);
+}
+
+function isSelectedRunRecord(run, runtime) {
+  const runId = selectedRunId(runtime);
+  return Boolean(runId && run?.run_id === runId);
+}
+
+function isSelectedBacktestRecord(item, runtime) {
+  const backtestId = selectedBacktestId(runtime);
+  return Boolean(backtestId && item?.backtest_id === backtestId);
+}
+
+export function filterRunHistoryRecords(history = [], runtime = {}, runFilters = {}) {
+  const graphFilter = (runFilters.historyFilter || "").trim().toLowerCase();
+  const compileFilter = (runFilters.historyCompileFilter || "").trim().toLowerCase();
+  const statusFilter = runFilters.historyStatusFilter || "all";
+  const sortOrder = runFilters.historySortOrder || "desc";
+  const fromTime = parseTimeInput(runFilters.historyFromTime);
+  const toTime = parseTimeInput(runFilters.historyToTime);
+
+  const next = history.filter((run) => {
+    if (isSelectedRunRecord(run, runtime)) return true;
+    const matchesGraph = !graphFilter || (run.graph_id || "").toLowerCase().includes(graphFilter);
+    const matchesCompile =
+      !compileFilter || (run.compile_id || "").toLowerCase().includes(compileFilter);
+    const effectiveStatus = resolveRunStatus(run, runtime);
+    const matchesStatus = statusFilter === "all" ? true : effectiveStatus === statusFilter;
+    const matchesFrom = fromTime === null ? true : run.created_at_ms >= fromTime;
+    const matchesTo = toTime === null ? true : run.created_at_ms <= toTime;
+    return matchesGraph && matchesCompile && matchesStatus && matchesFrom && matchesTo;
+  });
+
+  next.sort((left, right) => {
+    const delta = left.created_at_ms - right.created_at_ms;
+    return sortOrder === "asc" ? delta : -delta;
+  });
+
+  return next;
+}
+
+export function filterBacktestHistoryRecords(history = [], runtime = {}, backtestFilters = {}) {
+  const graphFilter = (backtestFilters.backtestHistoryFilter || "").trim().toLowerCase();
+  const compileFilter = (backtestFilters.backtestCompileFilter || "").trim().toLowerCase();
+  const datasetFilter = (backtestFilters.backtestDatasetFilter || "").trim().toLowerCase();
+  const parameterFilter = (backtestFilters.backtestParameterFilter || "").trim().toLowerCase();
+  const fromTime = parseTimeInput(backtestFilters.backtestFromTime);
+  const toTime = parseTimeInput(backtestFilters.backtestToTime);
+
+  const next = history.filter((item) => {
+    if (isSelectedBacktestRecord(item, runtime)) return true;
+    const matchesGraph = !graphFilter || (item.graph_id || "").toLowerCase().includes(graphFilter);
+    const matchesCompile =
+      !compileFilter || (item.compile_id || "").toLowerCase().includes(compileFilter);
+    const datasetText = (item.filters?.dataset_labels || []).join(" ").toLowerCase();
+    const parameterText = backtestExecutionAssumptionsSearchText(item.filters);
+    const startedAt = item.filters?.started_at_ms ?? item.created_at_ms;
+    const endedAt = item.filters?.ended_at_ms ?? item.created_at_ms;
+    const matchesDataset = !datasetFilter || datasetText.includes(datasetFilter);
+    const matchesParameter = !parameterFilter || parameterText.includes(parameterFilter);
+    const matchesFrom = fromTime === null ? true : endedAt >= fromTime;
+    const matchesTo = toTime === null ? true : startedAt <= toTime;
+    return (
+      matchesGraph &&
+      matchesCompile &&
+      matchesDataset &&
+      matchesParameter &&
+      matchesFrom &&
+      matchesTo
+    );
+  });
+
+  next.sort((left, right) => right.created_at_ms - left.created_at_ms);
+  return next;
+}
+
 function normalizeQualityFlags(value) {
   if (Array.isArray(value)) {
     return value.filter(Boolean).map((item) => String(item));
@@ -147,30 +228,7 @@ export function useStrategyResearchSelectors(uiState) {
   const eventFilters = uiState?.eventFilters || {};
 
   const filteredHistory = useMemo(() => {
-    const graphFilter = (runFilters.historyFilter || "").trim().toLowerCase();
-    const compileFilter = (runFilters.historyCompileFilter || "").trim().toLowerCase();
-    const statusFilter = runFilters.historyStatusFilter || "all";
-    const sortOrder = runFilters.historySortOrder || "desc";
-    const fromTime = parseTimeInput(runFilters.historyFromTime);
-    const toTime = parseTimeInput(runFilters.historyToTime);
-
-    const next = runtime.history.filter((run) => {
-      const matchesGraph = !graphFilter || (run.graph_id || "").toLowerCase().includes(graphFilter);
-      const matchesCompile =
-        !compileFilter || (run.compile_id || "").toLowerCase().includes(compileFilter);
-      const effectiveStatus = resolveRunStatus(run, runtime);
-      const matchesStatus = statusFilter === "all" ? true : effectiveStatus === statusFilter;
-      const matchesFrom = fromTime === null ? true : run.created_at_ms >= fromTime;
-      const matchesTo = toTime === null ? true : run.created_at_ms <= toTime;
-      return matchesGraph && matchesCompile && matchesStatus && matchesFrom && matchesTo;
-    });
-
-    next.sort((left, right) => {
-      const delta = left.created_at_ms - right.created_at_ms;
-      return sortOrder === "asc" ? delta : -delta;
-    });
-
-    return next;
+    return filterRunHistoryRecords(runtime.history, runtime, runFilters);
   }, [runFilters, runtime]);
 
   const totalPages = Math.max(1, Math.ceil(filteredHistory.length / (runFilters.historyPageSize || 6)));
@@ -181,37 +239,7 @@ export function useStrategyResearchSelectors(uiState) {
   );
 
   const filteredBacktests = useMemo(() => {
-    const graphFilter = (backtestFilters.backtestHistoryFilter || "").trim().toLowerCase();
-    const compileFilter = (backtestFilters.backtestCompileFilter || "").trim().toLowerCase();
-    const datasetFilter = (backtestFilters.backtestDatasetFilter || "").trim().toLowerCase();
-    const parameterFilter = (backtestFilters.backtestParameterFilter || "").trim().toLowerCase();
-    const fromTime = parseTimeInput(backtestFilters.backtestFromTime);
-    const toTime = parseTimeInput(backtestFilters.backtestToTime);
-
-    const next = runtime.backtestHistory.filter((item) => {
-      const matchesGraph = !graphFilter || (item.graph_id || "").toLowerCase().includes(graphFilter);
-      const matchesCompile =
-        !compileFilter || (item.compile_id || "").toLowerCase().includes(compileFilter);
-      const datasetText = (item.filters?.dataset_labels || []).join(" ").toLowerCase();
-      const parameterText = backtestExecutionAssumptionsSearchText(item.filters);
-      const startedAt = item.filters?.started_at_ms ?? item.created_at_ms;
-      const endedAt = item.filters?.ended_at_ms ?? item.created_at_ms;
-      const matchesDataset = !datasetFilter || datasetText.includes(datasetFilter);
-      const matchesParameter = !parameterFilter || parameterText.includes(parameterFilter);
-      const matchesFrom = fromTime === null ? true : endedAt >= fromTime;
-      const matchesTo = toTime === null ? true : startedAt <= toTime;
-      return (
-        matchesGraph &&
-        matchesCompile &&
-        matchesDataset &&
-        matchesParameter &&
-        matchesFrom &&
-        matchesTo
-      );
-    });
-
-    next.sort((left, right) => right.created_at_ms - left.created_at_ms);
-    return next;
+    return filterBacktestHistoryRecords(runtime.backtestHistory, runtime, backtestFilters);
   }, [
     backtestFilters.backtestDatasetFilter,
     backtestFilters.backtestCompileFilter,

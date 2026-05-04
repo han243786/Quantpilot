@@ -12,6 +12,55 @@ pub struct ExprId(pub u32);
 pub struct TypedHirModule {
     pub imports: Vec<HirImport>,
     pub functions: Vec<HirFunction>,
+    pub test_blocks: Vec<HirTestBlock>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct HirTestBlock {
+    pub name: String,
+    pub cover: Vec<String>,
+    pub steps: Vec<HirStepBlock>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct HirStepBlock {
+    pub name: String,
+    pub actions: Vec<HirTestAction>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum HirTestAction {
+    Compile,
+    Run {
+        mode: String,
+        duration_secs: u64,
+        save: bool,
+    },
+    Backtest {
+        source: String,
+        start: Option<String>,
+        end: Option<String>,
+        seed: Option<u64>,
+        save: bool,
+    },
+    Assert(String),
+    SaveRun,
+    Modify {
+        node: String,
+        param: String,
+        value: HirTestParamValue,
+    },
+    Wait {
+        condition: String,
+        timeout_secs: u64,
+    },
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum HirTestParamValue {
+    Number(f64),
+    String(String),
+    Bool(bool),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

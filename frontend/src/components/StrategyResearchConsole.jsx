@@ -1,9 +1,13 @@
 import { useMemo, useState } from "react";
 import { EventPanelIntro } from "./EventStreamPanel";
 import { useStrategyResearchModel } from "../hooks/useStrategyResearchModel";
+import { StrategyCardNote } from "../pages/StrategyHubSharedComponents";
 import StrategyBacktestsPanel from "./StrategyBacktestsPanel";
 import StrategyEventsPanel from "./StrategyEventsPanel";
 import StrategyRunsPanel from "./StrategyRunsPanel";
+
+const RESEARCH_CONSOLE_NOTE =
+  "每次聚焦一个主要历史视图，同时把事件流与辅助上下文保留在侧栏中。";
 
 const RESEARCH_MODES = [
   {
@@ -88,15 +92,14 @@ export default function StrategyResearchConsole({
         displayedEvents={model.displayedEvents}
         panelNotice={model.panelNotice}
         setPanelNotice={model.setPanelNotice}
+        handleSaveCurrentRuntimeArtifact={model.handleSaveCurrentRuntimeArtifact}
+        handleDiscardCurrentRuntimeArtifact={model.handleDiscardCurrentRuntimeArtifact}
       />
 
       <div className="research-console-summary" data-testid="research-summary">
         <div className="research-console-summary__main">
-          <div className="panel-title" data-testid="research-title">
-            研究工作区
-          </div>
-          <div className="strategy-card-subtitle">
-            每次聚焦一个主要历史视图，同时把事件流与辅助上下文保留在侧栏中。
+          <div className="panel-title strategy-card-title-note" data-testid="research-title">
+            <StrategyCardNote label="研究工作区" note={RESEARCH_CONSOLE_NOTE} />
           </div>
         </div>
         <div className="research-console-summary__metrics">

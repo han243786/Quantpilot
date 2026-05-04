@@ -28,10 +28,12 @@ Capability governance follows this chain:
 
 1. backend `/api/capabilities`
 2. [implementation-support-matrix.md](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/governance/implementation-support-matrix.md)
-3. frontend support matrix and capability gates
-4. README, UI prompts, tests, and acceptance checks
+3. [Runtime Governance Contract](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/runtime/implementation-runtime-governance-contract.md)
+4. frontend support matrix and capability gates
+5. README, UI prompts, tests, and acceptance checks
 
 If these layers disagree, backend `/api/capabilities` is authoritative and the other layers must be updated.
+Runtime identity fields, event envelopes, deployment revisions, and permission-boundary enforcement are owned by the Runtime Governance Contract.
 
 ## Capability classes
 
@@ -169,6 +171,7 @@ The following artifacts count as governance evidence:
 
 - [implementation-support-matrix.md](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/governance/implementation-support-matrix.md)
 - [implementation-compile-chain-contract.md](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/governance/implementation-compile-chain-contract.md)
-- [implementation-functional-closeout-task-table.md](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/planning/implementation-functional-closeout-task-table.md)
+- [Runtime Governance Contract](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/runtime/implementation-runtime-governance-contract.md)
+- [Archived Functional Closeout Ledger](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/archive/planning-retired/implementation-functional-closeout-task-table.md)
 - [overview-current-status-and-roadmap.md](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/overview/overview-current-status-and-roadmap.md)
 

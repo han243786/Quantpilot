@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useI18n } from "../i18n";
 import { isCapabilitySyncBlocked } from "../capabilities/supportMatrix";
+import { StrategyCardNote } from "../pages/StrategyHubSharedComponents";
 import { useGraphStore } from "../store/graphStore";
 
 const categoryOrder = ["data", "intent", "agent", "risk", "execution", "runtime"];
@@ -55,9 +56,9 @@ function laneRecommendation(laneId, laneLabel, selectedNodeType = null) {
       : "优先处理通常与源码工件或 Strategy IR 联动的模块。";
   }
   if (selectedNodeType) {
-    return `调整结构时，把最贴近${laneLabel || "当前泳道"}的模块放在顶部，并让 ${selectedNodeType} 模块贴近当前选中项。`;
+    return `调整结构时，把最贴近${laneLabel || "当前构建路径"}的模块放在顶部，并让 ${selectedNodeType} 模块贴近当前选中项。`;
   }
-  return `调整结构时，把最贴近${laneLabel || "当前泳道"}的模块放在顶部。`;
+  return `调整结构时，把最贴近${laneLabel || "当前构建路径"}的模块放在顶部。`;
 }
 
 function moduleAvailabilityTone(status) {
@@ -94,6 +95,10 @@ export default function ModuleSidebar({ workspaceContext = null }) {
   const [expandedGroups, setExpandedGroups] = useState(initialExpandedGroups);
   const capabilitySyncBlocked = isCapabilitySyncBlocked(capabilityStatus, capabilitySource);
   const hasSearch = keyword.trim().length > 0;
+  const sidebarTitle = t("\u6a21\u5757\u6a21\u677f");
+  const sidebarNote = t(
+    "\u53ea\u5c55\u793a\u5f53\u524d\u58f0\u660e\u7684\u6a21\u5757\u8fb9\u754c\uff1b\u4e0d\u53ef\u7528\u6a21\u5757\u4fdd\u7559\u5361\u7247\uff0c\u5e76\u660e\u786e\u8bf4\u660e\u9501\u5b9a\u539f\u56e0\u3002"
+  );
 
   const localizedCategoryLabels = useMemo(() => buildCategoryLabels(t), [t]);
   const allModules = useMemo(() => registry.getAll(), [registry]);
@@ -232,13 +237,6 @@ export default function ModuleSidebar({ workspaceContext = null }) {
 
   const hasVisibleModules = grouped.length > 0;
   const visibleModuleCount = grouped.reduce((count, group) => count + group.items.length, 0);
-  const supportedModuleCount = allModules.filter(
-    (item) => item.availability?.status !== "unsupported"
-  ).length;
-  const blockedModuleCount = allModules.length - supportedModuleCount;
-  const recentEditCount = Array.isArray(graph.metadata?.editor?.recent_node_ids)
-    ? graph.metadata.editor.recent_node_ids.length
-    : 0;
 
   function toggleGroup(category) {
     if (hasSearch) return;
@@ -294,9 +292,8 @@ export default function ModuleSidebar({ workspaceContext = null }) {
   return (
     <aside className="module-sidebar">
       <div className="sidebar-header">
-        <div className="panel-title">{t("\u6a21\u5757\u6a21\u677f")}</div>
-        <div className="panel-subtitle">
-          {t("\u53ea\u5c55\u793a\u5f53\u524d\u58f0\u660e\u7684\u6a21\u5757\u8fb9\u754c\uff1b\u4e0d\u53ef\u7528\u6a21\u5757\u4fdd\u7559\u5361\u7247\uff0c\u5e76\u660e\u786e\u8bf4\u660e\u9501\u5b9a\u539f\u56e0\u3002")}
+        <div className="panel-title strategy-card-title-note">
+          <StrategyCardNote label={sidebarTitle} note={sidebarNote} />
         </div>
         <input
           className="sidebar-search"
@@ -331,73 +328,6 @@ export default function ModuleSidebar({ workspaceContext = null }) {
           </div>
         </div>
 
-        {!hasSearch ? (
-          <>
-            {workspaceContext ? (
-              <div className="module-sidebar-workbench" data-testid="module-sidebar-workbench">
-                <div
-                  className="module-sidebar-workbench__card"
-                  data-testid="module-sidebar-lane-card"
-                >
-                  <span>当前泳道</span>
-                  <strong>{workspaceContext.laneLabel}</strong>
-                  <small>{workspaceContext.laneStatus}</small>
-                </div>
-                <div
-                  className="module-sidebar-workbench__card"
-                  data-testid="module-sidebar-focus-card"
-                >
-                  <span>当前焦点</span>
-                  <strong>{workspaceContext.focusLabel}</strong>
-                  <small>{workspaceContext.reasonFocusMessage}</small>
-                </div>
-                <div
-                  className="module-sidebar-workbench__card"
-                  data-testid="module-sidebar-reason-card"
-                >
-                  <span>当前原因</span>
-                  <strong>{workspaceContext.reasonTitle}</strong>
-                  <small>{workspaceContext.reasonMessage}</small>
-                </div>
-              </div>
-            ) : null}
-
-            <div className="module-sidebar-context" data-testid="module-sidebar-context">
-              <div
-                className="module-sidebar-context__card"
-                data-testid="module-sidebar-inventory-card"
-              >
-                <span>模块库</span>
-                <strong>{allModules.length}</strong>
-                <small>{`${supportedModuleCount} 可用 / ${blockedModuleCount} 已锁定`}</small>
-              </div>
-              <div
-                className="module-sidebar-context__card"
-                data-testid="module-sidebar-recent-edits-card"
-              >
-                <span>最近编辑</span>
-                <strong>{recentEditCount}</strong>
-                <small>当前策略图中最近触达的节点。</small>
-              </div>
-              <div
-                className="module-sidebar-context__card"
-                data-testid="module-sidebar-selected-type-card"
-              >
-                <span>当前选中类型</span>
-                <strong>
-                  {selectedNode
-                    ? localizedCategoryLabels[selectedNode.type] || selectedNode.type
-                    : "未选择节点"}
-                </strong>
-                <small>
-                  {selectedNode
-                    ? selectedNode.name || selectedNode.id
-                    : "先选择一个节点，再对齐下一步模块。"}
-                </small>
-              </div>
-            </div>
-          </>
-        ) : null}
       </div>
 
       <div className="sidebar-scroll">

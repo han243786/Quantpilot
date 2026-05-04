@@ -22,6 +22,7 @@ pub fn normalize_script_module(module: &ScriptModule) -> Result<ScriptModule> {
         .map(|item| match item {
             Item::Import(import) => Ok(Item::Import(import.clone())),
             Item::Function(function) => Ok(Item::Function(normalize_function(function, &context)?)),
+            Item::TestBlock(test_block) => Ok(Item::TestBlock(test_block.clone())),
         })
         .collect::<Result<Vec<_>>>()?;
 

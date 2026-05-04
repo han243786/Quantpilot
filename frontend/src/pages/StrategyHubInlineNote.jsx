@@ -166,7 +166,7 @@ export default function StrategyHubInlineNote({ title, content, triggerLabel, tr
                 <button
                   type="button"
                   className="strategy-inline-note__close"
-                  aria-label={`鍏抽棴${title}`}
+                  aria-label={`关闭${title}`}
                   onClick={closePopup}
                 >
                   x

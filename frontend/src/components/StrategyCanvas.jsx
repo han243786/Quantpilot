@@ -165,6 +165,19 @@ function FlowInner({
   const [showDeferredFlowDetails, setShowDeferredFlowDetails] = useState(
     resolveNodeCardMode() === "full"
   );
+  const lastAppliedFocusKeyRef = useRef("");
+  const focusTargetKey = useMemo(() => focusTargetIds.join("|"), [focusTargetIds]);
+  const focusNodePositionKey = useMemo(
+    () =>
+      focusTargetIds
+        .map((targetId) => {
+          const node = graph.nodes.find((item) => item.id === targetId);
+          if (!node) return `${targetId}:missing`;
+          return `${targetId}:${node.position.x}:${node.position.y}`;
+        })
+        .join("|"),
+    [focusTargetIds, graph.nodes]
+  );
   const focusTargetSet = useMemo(() => new Set(focusTargetIds), [focusTargetIds]);
   const recommendedNodeSet = useMemo(() => new Set(recommendedNodeIds), [recommendedNodeIds]);
   const repairPathEdgeSet = useMemo(() => new Set(repairPathEdgeIds), [repairPathEdgeIds]);
@@ -244,7 +257,7 @@ function FlowInner({
 
         return {
           id: edge.id,
-          type: "bezier",
+          type: "default",
           source: edge.source_node_id,
           target: edge.target_node_id,
           sourceHandle: edge.source_port,
@@ -301,11 +314,27 @@ function FlowInner({
   }, [showCanvasDecorations]);
 
   useEffect(() => {
-    if (focusTargetIds.length === 0) return undefined;
+    if (focusTargetKey.length === 0) {
+      lastAppliedFocusKeyRef.current = "";
+      return undefined;
+    }
+
+    const nextFocusKey = [
+      focusMode,
+      focusAnchorId || "",
+      focusTargetKey,
+      focusNodePositionKey
+    ].join("::");
+
+    if (lastAppliedFocusKeyRef.current === nextFocusKey) {
+      return undefined;
+    }
+
+    lastAppliedFocusKeyRef.current = nextFocusKey;
     return scheduleAfterFirstPaint(() =>
       focusCanvasTargets(reactFlow, graph.nodes, focusTargetIds, focusAnchorId)
     );
-  }, [focusAnchorId, focusMode, focusTargetIds, graph.nodes, reactFlow]);
+  }, [focusAnchorId, focusMode, focusNodePositionKey, focusTargetKey, reactFlow]);
 
   useEffect(() => {
     const nextViewport = graph.metadata.editor?.viewport;
@@ -347,7 +376,7 @@ function FlowInner({
         setSelectedNode(null);
         setSelectedEdge(null);
       }}
-      defaultEdgeOptions={{ type: "bezier" }}
+      defaultEdgeOptions={{ type: "default" }}
       nodesDraggable
       panOnDrag
       selectionOnDrag
@@ -442,9 +471,6 @@ export default function StrategyCanvas({
       resolveCanvasRecommendations(graph, selectedNodeId, workspaceContext?.laneId || null),
     [graph, recommendationStateOverride, selectedNodeId, workspaceContext?.laneId]
   );
-
-  const issueNodeCount = useMemo(() => collectIssueNodeIds(graph).length, [graph]);
-  const recentNodeCount = useMemo(() => collectRecentNodeIds(graph).length, [graph]);
 
   const laneSummary = useMemo(() => {
     const focusTargetSet = new Set(focusState.targetIds);
@@ -570,43 +596,6 @@ export default function StrategyCanvas({
             </div>
           </div>
           <div className="canvas-stage-pill">工作台</div>
-        </div>
-
-        <div className="canvas-workbench-strip" data-testid="canvas-workbench-strip">
-          <div className="canvas-workbench-card" data-testid="canvas-lane-card">
-            <span>当前泳道</span>
-            <strong>{workspaceContext?.laneLabel || "配置泳道"}</strong>
-            <small>
-              {workspaceContext?.laneStatus || "自动跟随"}
-              {selectedNode
-                ? ` | 当前节点 ${selectedNode.name || selectedNode.id}`
-                : " | 尚未选择节点"}
-            </small>
-          </div>
-          <div className="canvas-workbench-card" data-testid="canvas-focus-card">
-            <span>当前聚焦</span>
-            <strong>{focusState.label}</strong>
-            <small>
-              {`${focusState.badge}. ${focusState.note}`}
-            </small>
-          </div>
-          <div className="canvas-workbench-card" data-testid="canvas-reason-card">
-            <span>当前原因</span>
-            <strong>{workspaceContext?.reasonTitle || "当前没有自动泳道切换"}</strong>
-            <small>
-              {workspaceContext?.reasonMessage ||
-                "这里会解释手动切换泳道或高优先级路由的原因。"}
-              {" "}
-              {workspaceContext?.reasonFocusMessage || `画布当前处于${focusState.label}。`}
-            </small>
-          </div>
-          <div className="canvas-workbench-card" data-testid="canvas-health-card">
-            <span>结构健康度</span>
-            <strong>{`${issueNodeCount} 个问题节点 / ${recentNodeCount} 次最近编辑`}</strong>
-            <small>
-              {`当前结构共 ${graph.nodes.length} 个节点 / ${graph.edges.length} 条边。`}
-            </small>
-          </div>
         </div>
 
         <div className="canvas-focus-toolbar" role="tablist" aria-label="画布聚焦模式">

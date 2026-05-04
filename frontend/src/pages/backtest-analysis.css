@@ -1,5 +1,6 @@
 .detail-page {
   position: relative;
+  isolation: isolate;
   overflow: hidden;
   display: grid;
   grid-template-rows: auto;
@@ -17,9 +18,15 @@
 .detail-page::after {
   content: "";
   position: absolute;
+  z-index: 0;
   border-radius: 999px;
   pointer-events: none;
   filter: blur(14px);
+}
+
+.detail-page > * {
+  position: relative;
+  z-index: 1;
 }
 
 .detail-page::before {
@@ -590,8 +597,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .detail-header,
+  .analysis-hero,
+  .analysis-section,
+  .analysis-followup-section,
   .analysis-summary-card {
     animation: none;
     transition: none;
+    transform: none;
   }
 }

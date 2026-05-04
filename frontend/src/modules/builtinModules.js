@@ -30,6 +30,9 @@ const commonNode = (category, name, quickFields, summaryFields) => ({
 
 export const DEFAULT_CAPABILITIES = {
   api_version: "quantpilot-capabilities/v1",
+  schema_version: "quantpilot/capabilities-schema/v1",
+  schema_hash: "sha256:0b98a45b5f0902d861771d0097b0a3b7b2c0b641325276ee131b02f3e8023241",
+  chain_stages: ["data", "intent", "agent", "risk", "execution", "fill"],
   strategy_ir: {
     declared_indicator_kinds: DECLARED_INDICATOR_KINDS,
     supported_indicator_kinds: SUPPORTED_INDICATOR_KINDS
@@ -45,6 +48,20 @@ export const DEFAULT_CAPABILITIES = {
   frontend: {
     supported_module_keys: SUPPORTED_FRONTEND_MODULE_KEYS,
     unsupported_module_reasons: {}
+  },
+  versioning: {
+    model_version: "quantpilot/versioning-model/v1",
+    strategy_version_source: "frontend_runtime_config.metadata.version",
+    parameter_version_policy: "immutable_generation_pointer",
+    deployment_revision_policy: "strategy_version_plus_compile_id_plus_capability_hash"
+  },
+  permission_boundary: {
+    model_version: "quantpilot/permission-boundary/v1",
+    execution_owner_module: "builtin.execution.paper",
+    live_execution_allowed: false,
+    ai_write_policy: "proposal_only",
+    plugin_network_default: "deny",
+    non_execution_order_access: "deny"
   }
 };
 
@@ -1038,6 +1055,46 @@ function normalizeIndicatorSupportEntries(entries, declaredKinds = [], supported
   }));
 }
 
+function normalizeEnumValue(value, allowedValues, fallbackValue) {
+  return allowedValues.includes(value) ? value : fallbackValue;
+}
+
+function normalizeBooleanValue(value, fallbackValue) {
+  return typeof value === "boolean" ? value : fallbackValue;
+}
+
+function normalizePermissionBoundary(permissionBoundary) {
+  const source =
+    permissionBoundary && typeof permissionBoundary === "object" ? permissionBoundary : {};
+
+  return {
+    model_version: sanitizeDisplayText(
+      source.model_version,
+      DEFAULT_CAPABILITIES.permission_boundary.model_version
+    ),
+    execution_owner_module: sanitizeDisplayText(
+      source.execution_owner_module,
+      DEFAULT_CAPABILITIES.permission_boundary.execution_owner_module
+    ),
+    live_execution_allowed: normalizeBooleanValue(source.live_execution_allowed, false),
+    ai_write_policy: normalizeEnumValue(
+      source.ai_write_policy,
+      ["proposal_only", "disabled"],
+      "disabled"
+    ),
+    plugin_network_default: normalizeEnumValue(
+      source.plugin_network_default,
+      ["deny", "allow"],
+      "deny"
+    ),
+    non_execution_order_access: normalizeEnumValue(
+      source.non_execution_order_access,
+      ["deny", "allow"],
+      "deny"
+    )
+  };
+}
+
 function normalizeFrontendCapabilities(frontendCapabilities = {}) {
   const legacySupportedModuleKeys = Array.isArray(frontendCapabilities.supported_module_keys)
     ? frontendCapabilities.supported_module_keys
@@ -1140,7 +1197,8 @@ export function normalizeCapabilities(capabilities) {
         marketData.supported_symbols
       )
     },
-    frontend: normalizeFrontendCapabilities(capabilities.frontend)
+    frontend: normalizeFrontendCapabilities(capabilities.frontend),
+    permission_boundary: normalizePermissionBoundary(capabilities.permission_boundary)
   };
 }
 
@@ -1199,6 +1257,9 @@ export function applyCapabilitiesToModules(capabilities = DEFAULT_CAPABILITIES) 
 export function createSafeFallbackCapabilities(reason = "能力清单加载失败，当前进入安全回退模式。") {
   return {
     api_version: DEFAULT_CAPABILITIES.api_version,
+    schema_version: DEFAULT_CAPABILITIES.schema_version,
+    schema_hash: "safe-fallback",
+    chain_stages: [...DEFAULT_CAPABILITIES.chain_stages],
     strategy_ir: {
       declared_indicator_kinds: [...DEFAULT_CAPABILITIES.strategy_ir.declared_indicator_kinds],
       supported_indicator_kinds: [],
@@ -1231,6 +1292,13 @@ export function createSafeFallbackCapabilities(reason = "能力清单加载失�
         status: "declared_only",
         reason
       }))
+    },
+    versioning: { ...DEFAULT_CAPABILITIES.versioning },
+    permission_boundary: {
+      ...DEFAULT_CAPABILITIES.permission_boundary,
+      live_execution_allowed: false,
+      ai_write_policy: "disabled",
+      plugin_network_default: "deny"
     }
   };
 }

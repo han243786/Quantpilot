@@ -20,41 +20,41 @@ const StrategyWorkspaceResearchTab = lazy(() => import("./StrategyWorkspaceResea
 const WORKSPACE_TABS = [
   {
     id: "overview",
-    label: "Overview",
-    note: "Build health, issue queue, and recent research activity."
+    label: "总览",
+    note: "编译健康、问题队列与近期研究活动。"
   },
   {
     id: "code",
-    label: "Code",
-    note: "Graph editing, node wiring, and source-focused repair work."
+    label: "构建",
+    note: "策略图编辑、节点连线与源码修复。"
   },
   {
     id: "diagnostics",
-    label: "Diagnostics",
-    note: "Compile health, blocking issues, and repair routing."
+    label: "诊断",
+    note: "编译健康、阻塞问题与修复路径。"
   },
   {
     id: "research",
-    label: "Research",
-    note: "Runs, backtests, and the live event stream."
+    label: "研究",
+    note: "模拟、回测与实时事件流。"
   }
 ];
 
 const CODE_INSPECTOR_PANELS = [
   {
     id: "params",
-    label: "Config",
-    note: "Node configuration, graph identity, and structure controls."
+    label: "配置",
+    note: "节点配置、策略图身份与结构控制。"
   },
   {
     id: "diagnostics",
-    label: "Checks",
-    note: "Compile output, blockers, and repair routing."
+    label: "检查",
+    note: "编译输出、阻塞项与修复路径。"
   },
   {
     id: "code",
-    label: "Source",
-    note: "Graph source, Strategy IR, and code-facing tools."
+    label: "源码",
+    note: "策略图源码、Strategy IR 与源码工具。"
   }
 ];
 
@@ -102,9 +102,9 @@ export default function StrategyWorkspacePage({ strategyId }) {
   if (ui.status === "loading") {
     return (
       <div className="strategy-workspace-loading" role="status" aria-live="polite">
-        <div className="strategy-workspace-loading__title">Loading strategy workspace</div>
+        <div className="strategy-workspace-loading__title">正在加载策略工作区</div>
         <div className="strategy-workspace-loading__detail">
-          Resolving the requested strategy graph and preparing the workspace shell.
+          正在解析请求的策略图，并准备工作区界面。
         </div>
       </div>
     );
@@ -113,10 +113,10 @@ export default function StrategyWorkspacePage({ strategyId }) {
   if (ui.status === "error") {
     return (
       <div className="strategy-workspace-loading strategy-workspace-loading--error">
-        <div className="strategy-workspace-loading__title">Strategy workspace unavailable</div>
+        <div className="strategy-workspace-loading__title">策略工作区不可用</div>
         <div className="strategy-workspace-loading__detail">{ui.error}</div>
         <button className="ghost-btn" onClick={() => navigateTo(strategiesPath())}>
-          Back to strategy hub
+          返回策略中心
         </button>
       </div>
     );
@@ -128,16 +128,16 @@ export default function StrategyWorkspacePage({ strategyId }) {
         <div className="strategy-workspace-header__lead">
           <StrategyRouteBar
             items={[
-              { label: "Strategies", onClick: () => navigateTo(strategiesPath()) },
+              { label: "策略中心", onClick: () => navigateTo(strategiesPath()) },
               { label: graph.metadata?.name || currentGraphId },
-              { label: "Workspace", current: true }
+              { label: "工作区", current: true }
             ]}
           />
-          <div className="strategy-hub-kicker">Strategy workspace</div>
+          <div className="strategy-hub-kicker">策略工作区</div>
           <h1>{graph.metadata?.name || currentGraphId}</h1>
           <div className="strategy-workspace-header__meta">
             <span>{currentGraphId}</span>
-            <span>Updated {formatTime(graph.metadata?.updated_at)}</span>
+            <span>更新于 {formatTime(graph.metadata?.updated_at)}</span>
             <span>{runtimeStatusLabel(runtime.status)}</span>
           </div>
         </div>
@@ -147,15 +147,15 @@ export default function StrategyWorkspacePage({ strategyId }) {
             className="ghost-btn compact-btn"
             onClick={() => navigateTo(strategyBacktestsPath(strategyId))}
           >
-            Open backtests
+            打开回测
           </button>
           <div className={`status-pill ${readiness.tone}`}>{readiness.label}</div>
-          <div className="status-pill info">{compileSummary.protocol_name || "Protocol pending"}</div>
-          <div className="status-pill muted">Compare queue {compareSelection.length}/2</div>
+          <div className="status-pill info">{compileSummary.protocol_name || "协议待生成"}</div>
+          <div className="status-pill muted">对比队列 {compareSelection.length}/2</div>
         </div>
       </header>
 
-      <section className="strategy-workspace-tabbar" aria-label="Workspace modes">
+      <section className="strategy-workspace-tabbar" aria-label="工作区模式">
         {WORKSPACE_TABS.map((tab) => (
           <button
             key={tab.id}

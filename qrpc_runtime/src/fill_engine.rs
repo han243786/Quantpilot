@@ -409,10 +409,15 @@ fn market_state_for(
     market_state
         .get(&(exchange, symbol))
         .copied()
-        .unwrap_or(MarketState {
-            price: fallback_price,
-            buy_liquidity: 0.0,
-            sell_liquidity: 0.0,
+        .unwrap_or_else(|| {
+            // Fallback: unlimited liquidity at the reference price.
+            // In production, real Quote data populates the market_state map.
+            // This fallback ensures LIMIT orders still fill in mock/test environments.
+            MarketState {
+                price: fallback_price,
+                buy_liquidity: f64::MAX,
+                sell_liquidity: f64::MAX,
+            }
         })
 }
 

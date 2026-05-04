@@ -1,0 +1,17 @@
+{
+  "snapshot_id": "snap-auto-1777608220012",
+  "deployment_revision": "sha256:88026cebe3fd9ed50fd77cbd78b4a337b693986517cbe6bbd02ba76bb78d1dad",
+  "capability_hash": "sha256:0b98a45b5f0902d861771d0097b0a3b7b2c0b641325276ee131b02f3e8023241",
+  "strategy_version": "1.0.0",
+  "parameter_version": "sha256:62d6d906171b6946159e6d4ba67493ae0b0f0647aab139d954575c40eee7b752",
+  "core_ir_digest": "auto-generated-on-activation",
+  "event_slice_bounds": {
+    "from_event_id": "",
+    "to_event_id": "",
+    "from_sequence": 0,
+    "to_sequence": 0,
+    "event_count": 0
+  },
+  "created_at_ms": 1777608220012,
+  "signature": "b89b3580902c69d102c5be922fdf339a73819dbd2e3f02df3dd67edec290303d"
+}

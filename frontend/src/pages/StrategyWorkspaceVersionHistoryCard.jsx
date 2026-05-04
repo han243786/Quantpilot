@@ -15,21 +15,21 @@ function DiffList({ title, diff, testId }) {
       <div className="mini-list-title">{title}</div>
       <div className="strategy-inspector-metrics">
         <div className="kv-line">
-          <span>Left / right</span>
+          <span>左侧 / 右侧</span>
           <strong>
             {diff.left_count} / {diff.right_count}
           </strong>
         </div>
         <div className="kv-line">
-          <span>Added</span>
+          <span>新增</span>
           <strong>{formatList(diff.added_ids)}</strong>
         </div>
         <div className="kv-line">
-          <span>Removed</span>
+          <span>移除</span>
           <strong>{formatList(diff.removed_ids)}</strong>
         </div>
         <div className="kv-line">
-          <span>Changed</span>
+          <span>变更</span>
           <strong>{formatList(diff.changed_ids)}</strong>
         </div>
       </div>
@@ -113,10 +113,9 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
     <div className="open-orders-card" data-testid="workspace-version-history-card">
       <div className="open-orders-header">
         <div>
-          <div className="mini-list-title">Version history</div>
+          <div className="mini-list-title">版本历史</div>
           <div className="muted-line">
-            Keep the working draft separate from persisted versions. Preview first, restore only
-            when you want the saved version to become the current graph.
+            保持工作草稿与持久化版本分离。先预览，只有需要让保存版本成为当前策略图时才恢复。
           </div>
         </div>
         <strong>{graphVersions.length}</strong>
@@ -124,41 +123,41 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
 
       <div className="strategy-inspector-metrics">
         <div className="kv-line">
-          <span>Working draft</span>
+          <span>工作草稿</span>
           <strong>{draftSummary.graphId}</strong>
         </div>
         <div className="kv-line">
-          <span>Draft updated</span>
+          <span>草稿更新时间</span>
           <strong>{formatTime(draftSummary.updatedAt)}</strong>
         </div>
         <div className="kv-line">
-          <span>Draft shape</span>
+          <span>草稿结构</span>
           <strong>
-            {draftSummary.nodeCount} nodes / {draftSummary.edgeCount} edges
+            {draftSummary.nodeCount} 节点 / {draftSummary.edgeCount} 连线
           </strong>
         </div>
       </div>
 
       <div className="workspace-version-save-form" data-testid="workspace-version-save-form">
         <label className="field-label">
-          Version label
+          版本标签
           <input
             type="text"
             className="field-input"
             value={versionLabelDraft}
             data-testid="workspace-version-label-input"
             onChange={(event) => setVersionLabelDraft(event.target.value)}
-            placeholder="baseline, tuned, pre-risk-refactor"
+            placeholder="基线、调参后、风控重构前"
           />
         </label>
         <label className="field-label">
-          Save note
+          保存说明
           <textarea
             className="field-input field-input--multiline"
             value={saveNoteDraft}
             data-testid="workspace-version-note-input"
             onChange={(event) => setSaveNoteDraft(event.target.value)}
-            placeholder="What changed in this persisted version?"
+            placeholder="这个持久化版本有哪些变化？"
             rows={3}
           />
         </label>
@@ -169,21 +168,21 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
             data-testid="workspace-version-save-action"
             onClick={handleSaveVersion}
           >
-            Save persisted version
+            保存持久化版本
           </button>
         </div>
       </div>
 
       {previewMeta ? (
         <div className="history-note history-note-info" data-testid="workspace-version-preview">
-          Previewing persisted version {graphVersionPreview.versionId}: {previewMeta.name || previewMeta.graph_id} (
+          正在预览持久化版本 {graphVersionPreview.versionId}：{previewMeta.name || previewMeta.graph_id} (
           {previewMeta.graph_id}, {formatTime(previewMeta.updated_at)}).
         </div>
       ) : null}
 
       {graphVersionCompare ? (
         <div className="history-note history-note-info" data-testid="workspace-version-compare-summary">
-          Comparing {graphVersionCompare.left.version_id} against {graphVersionCompare.right.version_id}.
+          正在对比 {graphVersionCompare.left.version_id} 与 {graphVersionCompare.right.version_id}。
         </div>
       ) : null}
 
@@ -197,10 +196,10 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
         <div className="history-note history-note-warning">{graphVersionsMessage}</div>
       ) : null}
       {graphVersionsStatus === "loading" ? (
-        <div className="muted-line">Loading persisted versions...</div>
+        <div className="muted-line">正在加载持久化版本...</div>
       ) : null}
       {graphVersions.length === 0 && graphVersionsStatus !== "loading" ? (
-        <div className="muted-line">No persisted version has been recorded for this graph yet.</div>
+        <div className="muted-line">该策略图尚未记录持久化版本。</div>
       ) : null}
 
       <div className="workspace-version-history-list">
@@ -214,23 +213,23 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
             >
               <div className="open-order-topline">
                 <strong>{entry.version_id}</strong>
-                <span>{entry.is_latest ? "Latest" : "Persisted"}</span>
+                <span>{entry.is_latest ? "最新" : "已保存"}</span>
               </div>
               <div className="muted-line">
-                {entry.name} at {formatTime(entry.updated_at)}
+                {entry.name}，{formatTime(entry.updated_at)}
               </div>
               {entry.version_label ? (
                 <div className="muted-line" data-testid={`workspace-version-label-${entry.version_id}`}>
-                  Label: {entry.version_label}
+                  标签：{entry.version_label}
                 </div>
               ) : null}
               {entry.save_note ? (
                 <div className="muted-line" data-testid={`workspace-version-note-${entry.version_id}`}>
-                  Note: {entry.save_note}
+                  说明：{entry.save_note}
                 </div>
               ) : null}
               <div className="muted-line" data-testid={`workspace-version-shape-${entry.version_id}`}>
-                {entry.node_count} nodes / {entry.edge_count} edges
+                {entry.node_count} 节点 / {entry.edge_count} 连线
               </div>
               <div className="strategy-inspector-actions">
                 <button
@@ -239,7 +238,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
                   data-testid={`workspace-version-preview-${entry.version_id}`}
                   onClick={() => loadGraphVersionPreview(graphId, entry.version_id)}
                 >
-                  Preview
+                  预览
                 </button>
                 <button
                   type="button"
@@ -247,7 +246,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
                   data-testid={`workspace-version-restore-${entry.version_id}`}
                   onClick={() => restoreGraphVersion(graphId, entry.version_id)}
                 >
-                  Restore
+                  恢复
                 </button>
                 <button
                   type="button"
@@ -255,7 +254,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
                   data-testid={`workspace-version-compare-toggle-${entry.version_id}`}
                   onClick={() => toggleCompareSelection(entry.version_id)}
                 >
-                  {isSelected ? "Selected" : "Compare"}
+                  {isSelected ? "已选择" : "对比"}
                 </button>
               </div>
             </div>
@@ -265,7 +264,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
 
       {selectedCompareEntries.length > 0 ? (
         <div className="history-note" data-testid="workspace-version-compare-selection">
-          Compare queue: {selectedCompareEntries.map((entry) => entry.version_id).join(", ")}
+          对比队列：{selectedCompareEntries.map((entry) => entry.version_id).join(", ")}
         </div>
       ) : null}
 
@@ -277,7 +276,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
           disabled={compareSelection.length !== 2}
           onClick={handleCompareVersions}
         >
-          Compare versions
+          对比版本
         </button>
         <button
           type="button"
@@ -288,7 +287,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
             clearGraphVersionCompare();
           }}
         >
-          Clear compare
+          清空对比
         </button>
       </div>
 
@@ -296,35 +295,35 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
         <div className="workspace-version-compare-card" data-testid="workspace-version-compare-card">
           <div className="open-orders-header">
             <div>
-              <div className="mini-list-title">Version diff</div>
+              <div className="mini-list-title">版本差异</div>
               <div className="muted-line">
-                Left: {graphVersionCompare.left.version_id} / Right: {graphVersionCompare.right.version_id}
+                左侧：{graphVersionCompare.left.version_id} / 右侧：{graphVersionCompare.right.version_id}
               </div>
             </div>
-            <strong>{graphVersionCompare.has_changes ? "Changed" : "Same"}</strong>
+            <strong>{graphVersionCompare.has_changes ? "有变更" : "相同"}</strong>
           </div>
 
           <div className="workspace-version-compare-grid">
             <DiffList
-              title="Node diff"
+              title="节点差异"
               diff={graphVersionCompare.node_diff}
               testId="workspace-version-node-diff"
             />
             <DiffList
-              title="Edge diff"
+              title="连线差异"
               diff={graphVersionCompare.edge_diff}
               testId="workspace-version-edge-diff"
             />
           </div>
 
           <div className="workspace-version-compare-group" data-testid="workspace-version-metadata-diff">
-            <div className="mini-list-title">Metadata diff</div>
+            <div className="mini-list-title">元数据差异</div>
             <div className="strategy-inspector-metrics">
               {graphVersionCompare.metadata_rows.map((row) => (
                 <div className="kv-line" key={row.key} data-testid={`workspace-version-metadata-row-${row.key}`}>
                   <span>{row.label}</span>
                   <strong>
-                    {row.left_value || "-"} → {row.right_value || "-"}
+                    {row.left_value || "-"} {"->"} {row.right_value || "-"}
                   </strong>
                 </div>
               ))}
@@ -332,9 +331,9 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
           </div>
 
           <div className="workspace-version-compare-group" data-testid="workspace-version-config-diff">
-            <div className="mini-list-title">Config diff</div>
+            <div className="mini-list-title">配置差异</div>
             {graphVersionCompare.config_diffs.length === 0 ? (
-              <div className="muted-line">No config field changed between the selected versions.</div>
+              <div className="muted-line">所选版本之间没有配置字段变化。</div>
             ) : (
               <div className="workspace-version-config-list">
                 {graphVersionCompare.config_diffs.map((row, index) => (
@@ -348,7 +347,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
                       <span>{row.field_path}</span>
                     </div>
                     <div className="muted-line">
-                      {row.left_value || "-"} → {row.right_value || "-"}
+                      {row.left_value || "-"} {"->"} {row.right_value || "-"}
                     </div>
                   </div>
                 ))}
@@ -365,7 +364,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
             className="ghost-btn compact-btn"
             onClick={clearGraphVersionPreview}
           >
-            Clear preview
+            清空预览
           </button>
         </div>
       ) : null}

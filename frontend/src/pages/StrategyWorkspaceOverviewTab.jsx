@@ -38,30 +38,30 @@ export default function StrategyWorkspaceOverviewTab({
 }) {
   const overviewActionCards = [
     {
-      kicker: "Code",
-      title: "Open the builder workspace",
-      note: "Move into graph editing only when you need structural changes or source-facing work.",
-      meta: `${graph.nodes.length} nodes / ${graph.edges.length} edges`,
+      kicker: "构建",
+      title: "打开构建工作区",
+      note: "只有需要结构调整、连线或源码修复时再进入。",
+      meta: `${graph.nodes.length} 节点 / ${graph.edges.length} 连线`,
       tone: "muted",
-      cta: "Open code mode",
+      cta: "打开构建模式",
       onClick: () => ui.setActiveTab("code")
     },
     {
-      kicker: "Diagnostics",
-      title: "Review compile and validation blockers",
-      note: "Start from the repair queue before diving into the full diagnostics surface.",
-      meta: `${compileCounts.error} errors / ${compileCounts.warning} warnings`,
+      kicker: "诊断",
+      title: "查看编译与校验阻塞",
+      note: "先从修复队列定位问题，再进入完整诊断。",
+      meta: `${compileCounts.error} 错误 / ${compileCounts.warning} 警告`,
       tone: compileCounts.error > 0 ? "danger" : compileCounts.warning > 0 ? "warning" : "info",
-      cta: "Open diagnostics",
+      cta: "打开诊断",
       onClick: () => ui.setActiveTab("diagnostics")
     },
     {
-      kicker: "Research",
-      title: "Open run and backtest history",
-      note: "Jump into the backtest index and compare flow from the workspace shell.",
-      meta: `${recentRuns.length} runs / ${recentBacktests.length} backtests`,
+      kicker: "研究",
+      title: "打开模拟与回测历史",
+      note: "从工作区进入回测索引和对比流程。",
+      meta: `${recentRuns.length} 模拟 / ${recentBacktests.length} 回测`,
       tone: recentBacktests.length > 0 || recentRuns.length > 0 ? "info" : "muted",
-      cta: "Open backtests",
+      cta: "打开回测",
       onClick: () => navigateTo(strategyBacktestsPath(strategyId))
     }
   ];
@@ -71,18 +71,17 @@ export default function StrategyWorkspaceOverviewTab({
       <div className="strategy-workspace-overview__main">
         <section className="workspace-overview-hero">
           <div className="workspace-overview-hero__main">
-            <div className="workspace-overview-hero__eyebrow">Workspace cockpit</div>
-            <h2>Drive the strategy from readiness, issue flow, and recent research context.</h2>
+            <div className="workspace-overview-hero__eyebrow">工作区总览</div>
+            <h2>从就绪状态、问题流和近期研究上下文推进策略。</h2>
             <p>
-              The overview stays focused on the current state and the next likely action. Move into
-              code, diagnostics, or research only when the present task needs the deeper surface.
+              总览只保留当前状态和下一步动作。需要更深操作时，再进入构建、诊断或研究。
             </p>
             <div className="workspace-overview-hero__status">
               <span className={`status-pill ${readiness.tone}`}>{readiness.label}</span>
               <span className="status-pill info">
-                {compileSummary.protocol_name || "Protocol pending"}
+                {compileSummary.protocol_name || "协议待生成"}
               </span>
-              <span className="status-pill muted">Compare queue {compareSelection.length}/2</span>
+              <span className="status-pill muted">对比队列 {compareSelection.length}/2</span>
             </div>
           </div>
           <div className="workspace-overview-hero__metrics">
@@ -103,8 +102,8 @@ export default function StrategyWorkspaceOverviewTab({
         </section>
 
         <WorkspaceSection
-          title="Primary controls"
-          subtitle="The full toolbar remains available, but it now sits under the workspace overview instead of dominating the route shell."
+          title="主要控制"
+          subtitle="完整工具栏保留在总览内，不再压在页面顶层。"
           testId="workspace-primary-controls-section"
         >
           <div className="workspace-toolbar-shell">
@@ -113,21 +112,21 @@ export default function StrategyWorkspaceOverviewTab({
         </WorkspaceSection>
 
         <WorkspaceSection
-          title="Readiness and blockers"
-          subtitle="Start from the current compile and validation queue, then open the full diagnostics workflow only if needed."
+          title="就绪度与阻塞项"
+          subtitle="先查看当前编译与校验队列，必要时再打开完整诊断。"
           testId="workspace-readiness-section"
           actions={
             <button className="ghost-btn compact-btn" onClick={() => ui.setActiveTab("diagnostics")}>
-              Open diagnostics
+              打开诊断
             </button>
           }
         >
           <WorkspaceIssueQueueCard
-            title="Repair queue"
-            subtitle="Focus on the most urgent and actionable items before opening the full diagnostics surface."
+            title="修复队列"
+            subtitle="优先处理最紧急、可定位的问题。"
             items={issueQueue}
-            emptyText="There is no active blocking item in the current graph."
-            actionLabel="Open diagnostics"
+            emptyText="当前策略图没有阻塞项。"
+            actionLabel="打开诊断"
             onAction={() => ui.setActiveTab("diagnostics")}
             onSelectItem={ui.handleSelectIssueQueueItem}
             filters={ui.issueQueueFilters}
@@ -138,34 +137,34 @@ export default function StrategyWorkspaceOverviewTab({
         </WorkspaceSection>
 
         <WorkspaceSection
-          title="Research snapshot"
-          subtitle="Scan the latest runs and backtests here before moving into the full research surface."
+          title="研究快照"
+          subtitle="先查看近期模拟和回测，再进入完整研究面板。"
           testId="workspace-research-section"
           actions={
             <button
               className="ghost-btn compact-btn"
               onClick={() => navigateTo(strategyBacktestsPath(strategyId))}
             >
-              Open backtest index
+              打开回测索引
             </button>
           }
         >
           <div className="workspace-overview-grid workspace-overview-grid--dual">
             <OverviewList
-              title="Recent runs"
+              title="最近模拟"
               items={runPreviewItems}
-              emptyText="This strategy has no recent simulated run."
+              emptyText="该策略暂无最近模拟。"
             />
             <OverviewList
-              title="Recent backtests"
+              title="最近回测"
               items={backtestPreviewItems}
-              emptyText="This strategy has no recent backtest."
+              emptyText="该策略暂无最近回测。"
               renderActions={(item) => (
                 <button
                   className="ghost-btn compact-btn"
                   onClick={() => navigateTo(backtestDetailPath(item.backtest_id, strategyId))}
                 >
-                  Detail
+                  详情
                 </button>
               )}
             />
@@ -181,44 +180,44 @@ export default function StrategyWorkspaceOverviewTab({
         </div>
 
         <WorkspaceSection
-          title="Current context"
-          subtitle="Keep the most repeated strategy context visible while switching between workspace modes."
+          title="当前上下文"
+          subtitle="在工作区模式切换时保留高频策略上下文。"
         >
           <div className="strategy-inspector-metrics">
             <div className="kv-line">
-              <span>Latest compile ID</span>
+              <span>最新编译 ID</span>
               <strong>{graph.metadata?.runtime_binding?.last_compile_id || "-"}</strong>
             </div>
             <div className="kv-line">
-              <span>Config hash</span>
+              <span>配置哈希</span>
               <strong>{compileSummary.config_hash || "-"}</strong>
             </div>
             <div className="kv-line">
-              <span>Strategy IR role</span>
+              <span>Strategy IR 角色</span>
               <strong>{compileSummary.artifact_resolution?.strategy_ir_role_label || "-"}</strong>
             </div>
             <div className="kv-line">
-              <span>Runtime source</span>
+              <span>运行来源</span>
               <strong>{compileSummary.artifact_resolution?.runtime_source_label || "-"}</strong>
             </div>
             <div className="kv-line">
-              <span>Runnable truth</span>
+              <span>可运行依据</span>
               <strong>{compileSummary.artifact_resolution?.source_of_truth_label || "-"}</strong>
             </div>
             <div className="kv-line">
-              <span>Latest run</span>
+              <span>最新模拟</span>
               <strong>{lastRun ? formatTime(lastRun.created_at_ms) : "-"}</strong>
             </div>
             <div className="kv-line">
-              <span>Latest backtest</span>
+              <span>最新回测</span>
               <strong>{lastBacktest ? formatTime(lastBacktest.created_at_ms) : "-"}</strong>
             </div>
           </div>
         </WorkspaceSection>
 
         <WorkspaceSection
-          title="Owner, editors, and audit"
-          subtitle="Keep permission context and recent graph actions visible while staying inside the working draft."
+          title="所有者、协作者与审计"
+          subtitle="在当前草稿内保留权限和近期图操作上下文。"
           testId="workspace-collaboration-section"
         >
           <StrategyWorkspaceCollaborationCard
@@ -230,16 +229,16 @@ export default function StrategyWorkspaceOverviewTab({
         </WorkspaceSection>
 
         <WorkspaceSection
-          title="Experiment sweep"
-          subtitle="Run a narrow execution-assumptions sweep and compare variant outcomes across persisted backtests."
+          title="实验扫描"
+          subtitle="执行窄范围执行假设扫描，并对比持久化回测结果。"
           testId="workspace-experiment-section"
         >
           <StrategyWorkspaceExperimentCard strategyId={strategyId} currentGraph={graph} />
         </WorkspaceSection>
 
         <WorkspaceSection
-          title="Persisted versions"
-          subtitle="Preview persisted versions without overwriting the current working draft."
+          title="持久化版本"
+          subtitle="预览已保存版本，不覆盖当前草稿。"
           testId="workspace-persisted-versions-section"
         >
           <StrategyWorkspaceVersionHistoryCard
@@ -249,30 +248,30 @@ export default function StrategyWorkspaceOverviewTab({
         </WorkspaceSection>
 
         <WorkspaceSection
-          title="Next step"
-          subtitle="Surface the next likely transition directly instead of forcing the user to hunt for it."
+          title="下一步"
+          subtitle="直接给出下一步入口，减少寻找成本。"
         >
           <div className="strategy-inspector-actions">
             <button className="primary-btn" onClick={() => ui.setActiveTab("code")}>
-              Open code mode
+              打开构建模式
             </button>
             <button className="ghost-btn" onClick={() => ui.setActiveTab("diagnostics")}>
-              Review diagnostics
+              查看诊断
             </button>
             <button className="ghost-btn" onClick={() => ui.setActiveTab("research")}>
-              Open research
+              打开研究
             </button>
           </div>
         </WorkspaceSection>
 
         <WorkspaceSection
-          title="Compare queue"
-          subtitle="Keep the compare flow reachable inside the workspace without forcing the full history view open."
+          title="对比队列"
+          subtitle="在工作区内保留对比流程入口，不强制打开完整历史。"
         >
           <div className="strategy-compare-queue">
             <div className="strategy-compare-queue__chips">
               {compareSelection.length === 0 ? (
-                <span className="status-pill muted">No backtest selected</span>
+                <span className="status-pill muted">未选择回测</span>
               ) : (
                 compareSelection.map((backtestId) => (
                   <span key={backtestId} className="status-pill info">
@@ -287,13 +286,13 @@ export default function StrategyWorkspaceOverviewTab({
                 disabled={compareSelection.length !== 2}
                 onClick={() => navigateTo(backtestComparePath(compareSelection, strategyId))}
               >
-                Open compare
+                打开对比
               </button>
               <button
                 className="ghost-btn"
                 onClick={() => navigateTo(strategyBacktestsPath(strategyId))}
               >
-                Open backtest index
+                打开回测索引
               </button>
             </div>
           </div>

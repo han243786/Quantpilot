@@ -3,10 +3,10 @@ import { useI18n } from "../i18n";
 import { buildRepairPathInsight } from "../utils/repairPathInsights";
 
 function severityLabel(severity) {
-  if (severity === "error") return "Blocker";
-  if (severity === "warning") return "Warning";
-  if (severity === "info") return "Info";
-  return "Blocker";
+  if (severity === "error") return "阻塞";
+  if (severity === "warning") return "警告";
+  if (severity === "info") return "提示";
+  return "阻塞";
 }
 
 function severityTone(severity) {
@@ -18,8 +18,8 @@ function severityTone(severity) {
 function sourceLabel(source, t) {
   if (source === "strategy_ir") return t("Strategy IR");
   if (source === "formal_quantscript") return t("Formal QuantScript");
-  if (source === "runtime") return t("Runtime");
-  return t("Strategy graph");
+  if (source === "runtime") return t("运行");
+  return t("策略图");
 }
 
 export default function DiagnosticsPanel({
@@ -37,16 +37,16 @@ export default function DiagnosticsPanel({
   return (
     <div className="property-card diagnostics-card" data-testid="diagnostics-panel">
       <div className="property-card-heading">
-        <div className="property-card-title" data-testid="diagnostics-panel-title">{t("Compile diagnostics")}</div>
+        <div className="property-card-title" data-testid="diagnostics-panel-title">{t("编译诊断")}</div>
         <div className="property-card-caption">
           {t(
-            "Keep severity, source, target, and active repair-path context in one readable stream."
+            "将级别、来源、目标和当前修复路径放在同一条可读诊断流中。"
           )}
         </div>
       </div>
 
       {diagnostics.length === 0 ? (
-        <div className="empty-state diagnostics-empty" data-testid="diagnostics-empty">{t("No structured compile diagnostics yet.")}</div>
+        <div className="empty-state diagnostics-empty" data-testid="diagnostics-empty">{t("暂无结构化编译诊断。")}</div>
       ) : (
         <div className="diagnostics-list" data-testid="diagnostics-list">
           {diagnostics.map((diagnostic, index) => {
@@ -87,7 +87,7 @@ export default function DiagnosticsPanel({
                     <span className="diagnostic-chip">{diagnostic.target.label}</span>
                   ) : null}
                   {diagnostic.target ? (
-                    <span className="diagnostic-chip">{t("Actionable target")}</span>
+                    <span className="diagnostic-chip">{t("可定位目标")}</span>
                   ) : null}
                   {repairPathInsight ? (
                     <>
@@ -112,7 +112,7 @@ export default function DiagnosticsPanel({
                 {diagnostic.target ? (
                   <div className="issue-hint">
                     {t(
-                      "Click to route into the matching node, edge, or Strategy IR location and keep the canvas aligned."
+                      "点击后会定位到匹配的节点、连线或 Strategy IR 位置，并同步画布焦点。"
                     )}
                   </div>
                 ) : null}

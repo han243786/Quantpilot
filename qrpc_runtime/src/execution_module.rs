@@ -370,16 +370,26 @@ fn current_position_ratio(
 fn quote_price_map(
     normalized_data: &[NormalizedMarketData],
 ) -> BTreeMap<(qrpc_core::Exchange, Symbol), f64> {
-    normalized_data
-        .iter()
-        .filter_map(|item| match item {
-            NormalizedMarketData::Quote(quote) => Some((
-                (quote.exchange.clone(), quote.symbol.clone()),
-                quote.mid_price,
-            )),
-            _ => None,
-        })
-        .collect()
+    let mut map = BTreeMap::new();
+    for item in normalized_data {
+        match item {
+            NormalizedMarketData::Quote(quote) => {
+                map.insert(
+                    (quote.exchange.clone(), quote.symbol.clone()),
+                    quote.mid_price,
+                );
+            }
+            NormalizedMarketData::KlineSeries(series) => {
+                // Use last bar's close as fallback mid-price so orders become MARKET
+                // in mock/backtest environments where Quote data is unavailable
+                if let Some(last_bar) = series.bars.last() {
+                    map.entry((series.exchange.clone(), series.symbol.clone()))
+                        .or_insert(last_bar.close);
+                }
+            }
+        }
+    }
+    map
 }
 
 fn quote_market_state_map(
@@ -406,7 +416,8 @@ mod tests {
     use super::*;
     use qrpc_core::{
         DataQualitySnapshot, Exchange, ExecutionStatus, MarketType, PortfolioTarget,
-        PortfolioTargetDecision, QuoteSnapshot, RiskReasonCode, SourceStatus, TargetWeight,
+        PortfolioTargetDecision, QuoteSnapshot, RiskDecisionMode, RiskReasonCode,
+        SourceStatus, TargetWeight,
     };
     use qrpc_core_ir::{CoreMetadata, CoreSourceKind, CoreTimeInForce, ExecutionRule};
     use std::collections::BTreeMap;
@@ -465,6 +476,7 @@ mod tests {
             agent_decision_id: "decision_1".into(),
             symbol: Symbol::BtcUsdt,
             status: DecisionStatus::Approve,
+            mode: RiskDecisionMode::Normal,
             adjusted_portfolio_target_decision: None,
             adjusted_actions: vec![qrpc_core::ProposedAction {
                 exchange: Exchange::Binance,
@@ -553,6 +565,7 @@ mod tests {
             agent_decision_id: "decision_eth".into(),
             symbol: eth.clone(),
             status: DecisionStatus::Approve,
+            mode: RiskDecisionMode::Normal,
             adjusted_portfolio_target_decision: None,
             adjusted_actions: vec![qrpc_core::ProposedAction {
                 exchange: Exchange::Binance,
@@ -625,6 +638,7 @@ mod tests {
             agent_decision_id: "decision_rebalance".into(),
             symbol: btc.clone(),
             status: DecisionStatus::Approve,
+            mode: RiskDecisionMode::Normal,
             adjusted_portfolio_target_decision: Some(PortfolioTargetDecision {
                 target_id: "target_rebalance".into(),
                 target: PortfolioTarget {

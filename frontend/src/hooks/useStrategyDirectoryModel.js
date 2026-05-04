@@ -230,7 +230,7 @@ export function useStrategyDirectoryModel() {
   const graphIndexStatus = useGraphStore((state) => state.graphIndexStatus);
   const runtime = useGraphStore((state) => state.runtime);
   const revealGraphFile = useGraphStore((state) => state.revealGraphFile);
-  const openGraphFolder = useGraphStore((state) => state.openGraphFolder);
+  const deleteGraph = useGraphStore((state) => state.deleteGraph);
   const replaceBacktestCompareSelection = useGraphStore(
     (state) => state.replaceBacktestCompareSelection
   );
@@ -238,6 +238,7 @@ export function useStrategyDirectoryModel() {
   const refreshRunHistory = useGraphStore((state) => state.refreshRunHistory);
   const refreshBacktestHistory = useGraphStore((state) => state.refreshBacktestHistory);
   const loadLatestGraph = useGraphStore((state) => state.loadLatestGraph);
+  const resetGraph = useGraphStore((state) => state.resetGraph);
   const loadStrategyTemplate = useGraphStore((state) => state.loadStrategyTemplate);
   const toggleBacktestCompareSelection = useGraphStore(
     (state) => state.toggleBacktestCompareSelection
@@ -407,17 +408,41 @@ export function useStrategyDirectoryModel() {
     return graph;
   }
 
+  function openBlankWorkspace() {
+    const graph = resetGraph();
+    navigateTo(strategyWorkspacePath(graph.metadata?.graph_id || "draft_graph"));
+    return graph;
+  }
+
+  async function deleteStrategy(graphId, strategyName = graphId) {
+    if (!graphId) return false;
+    const label = strategyName || graphId;
+    const confirmed =
+      typeof window === "undefined" || typeof window.confirm !== "function"
+        ? true
+        : window.confirm(`确认删除策略“${label}”？此操作会移除策略文件和版本记录。`);
+    if (!confirmed) return false;
+
+    await deleteGraph(graphId);
+    setSelectedStrategyIds((current) => current.filter((item) => item !== graphId));
+    if (selectedStrategyId === graphId) {
+      setSelectedStrategyId("");
+    }
+    return true;
+  }
+
   return {
     graph,
     graphIndex,
     runtime,
     revealGraphFile,
-    openGraphFolder,
+    deleteStrategy,
     refreshGraphIndex,
     compareSelection,
     refreshRunHistory,
     refreshBacktestHistory,
     loadLatestGraph,
+    openBlankWorkspace,
     toggleBacktestCompareSelection,
     clearBacktestCompareSelection,
     query,

@@ -49,33 +49,33 @@ function buildTrendTemplate(registry, template) {
   const execution = graph.nodes.find((node) => node.module_key === "builtin.execution.paper");
   const runtime = graph.nodes.find((node) => node.module_key === "builtin.runtime.control");
 
-  runtime.name = "Trend runtime control";
+  runtime.name = "趋势运行控制";
 
-  kline.name = "BTC trend market data";
+  kline.name = "BTC 趋势行情数据";
   kline.config.exchange = "okx";
   kline.config.instrument = "BTCUSDT";
   kline.config.timeframe = "1d";
   kline.config.window_size = 240;
 
-  entryIntent.name = "Trend entry intent";
-  entryIntent.config.fast_period = 20;
-  entryIntent.config.slow_period = 80;
-  entryIntent.config.entry_ratio = 0.18;
+  entryIntent.name = "趋势入场意图";
+  entryIntent.config.fast_period = 12;
+  entryIntent.config.slow_period = 36;
+  entryIntent.config.entry_ratio = 0.05;
 
-  exitIntent.name = "Deviation exit intent";
-  exitIntent.config.lookback = 14;
-  exitIntent.config.baseline_period = 50;
-  exitIntent.config.threshold_ratio = 0.9;
+  exitIntent.name = "偏离离场意图";
+  exitIntent.config.lookback = 8;
+  exitIntent.config.baseline_period = 30;
+  exitIntent.config.threshold_ratio = 0.35;
 
-  agent.name = "Trend allocation agent";
-  agent.config.decision_threshold = 0.05;
-  agent.config.max_quantity_ratio = 0.45;
+  agent.name = "趋势配置代理";
+  agent.config.decision_threshold = 0.015;
+  agent.config.max_quantity_ratio = 0.65;
 
-  risk.name = "Trend portfolio risk";
-  risk.config.max_position = 0.35;
-  risk.config.max_total_leverage = 2.5;
+  risk.name = "趋势组合风控";
+  risk.config.max_position = 0.6;
+  risk.config.max_total_leverage = 3;
 
-  execution.name = "Trend paper execution";
+  execution.name = "趋势模拟执行";
   execution.config.slippage_bps = 6;
 
   return finalizeTemplateGraph(graph, registry);
@@ -90,29 +90,29 @@ function buildRsiTemplate(registry, template) {
   const execution = createNodeFromModule(registry.getByKey("builtin.execution.paper"));
   const now = Date.now();
 
-  runtimeNode.name = "Mean reversion runtime";
+  runtimeNode.name = "均值回归运行控制";
   runtimeNode.config.mode = "paper";
 
-  kline.name = "ETH mean reversion market data";
+  kline.name = "ETH 均值回归行情数据";
   kline.config.exchange = "okx";
   kline.config.instrument = "ETHUSDT";
   kline.config.timeframe = "4h";
   kline.config.window_size = 180;
 
-  rsi.name = "RSI reversion intent";
-  rsi.config.period = 14;
-  rsi.config.oversold_threshold = 28;
-  rsi.config.overbought_threshold = 72;
+  rsi.name = "RSI 回归意图";
+  rsi.config.period = 10;
+  rsi.config.oversold_threshold = 45;
+  rsi.config.overbought_threshold = 55;
 
-  agent.name = "Reversion allocation agent";
-  agent.config.decision_threshold = 0.04;
-  agent.config.max_quantity_ratio = 0.3;
+  agent.name = "回归配置代理";
+  agent.config.decision_threshold = 0.015;
+  agent.config.max_quantity_ratio = 0.5;
 
-  risk.name = "Reversion risk policy";
-  risk.config.max_position = 0.2;
-  risk.config.max_total_leverage = 1.5;
+  risk.name = "回归风控策略";
+  risk.config.max_position = 0.45;
+  risk.config.max_total_leverage = 2.5;
 
-  execution.name = "Reversion paper execution";
+  execution.name = "回归模拟执行";
   execution.config.slippage_bps = 4;
 
   const graph = {
@@ -181,29 +181,29 @@ function buildRebalanceTemplate(registry, template) {
   const execution = graph.nodes.find((node) => node.module_key === "builtin.execution.paper");
   const runtime = graph.nodes.find((node) => node.module_key === "builtin.runtime.control");
 
-  runtime.name = "Portfolio runtime control";
+  runtime.name = "组合运行控制";
 
-  kline.name = "Portfolio benchmark feed";
+  kline.name = "组合基准行情";
   kline.config.instrument = "BTCUSDT";
   kline.config.timeframe = "1d";
   kline.config.window_size = 120;
 
-  agent.name = "Multi-symbol rebalance agent";
-  agent.config.decision_threshold = 0.03;
-  agent.config.max_quantity_ratio = 0.6;
+  agent.name = "多标的再平衡代理";
+  agent.config.decision_threshold = 0.01;
+  agent.config.max_quantity_ratio = 0.8;
   agent.config.rebalance_symbols = "BTCUSDT, ETHUSDT, SOLUSDT";
-  agent.config.rebalance_schedule = "weekly";
+  agent.config.rebalance_schedule = "every_1d";
   agent.config.rebalance_allocation_kind = "fixed_weights";
   agent.config.rebalance_target_weights = "0.5, 0.3, 0.2";
 
-  risk.name = "Portfolio exposure risk";
-  risk.config.max_position = 0.4;
-  risk.config.max_total_leverage = 2;
-  risk.config.max_concentration = 0.55;
-  risk.config.max_symbol_net_exposure = 0.5;
-  risk.config.max_portfolio_net_exposure = 0.8;
+  risk.name = "组合敞口风控";
+  risk.config.max_position = 0.75;
+  risk.config.max_total_leverage = 3;
+  risk.config.max_concentration = 0.85;
+  risk.config.max_symbol_net_exposure = 0.85;
+  risk.config.max_portfolio_net_exposure = 0.95;
 
-  execution.name = "Portfolio paper execution";
+  execution.name = "组合模拟执行";
   execution.config.slippage_bps = 5;
 
   return finalizeTemplateGraph(graph, registry);
@@ -212,11 +212,11 @@ function buildRebalanceTemplate(registry, template) {
 export const STRATEGY_TEMPLATE_LIBRARY = [
   {
     id: "dual_ma_trend",
-    title: "Dual moving-average trend",
-    category: "Trend",
+    title: "双均线趋势",
+    category: "趋势",
     description:
-      "Starter graph for a trend-following strategy with double moving-average entry and deviation-based exit.",
-    defaultName: "Dual MA trend starter",
+      "双均线入场、均线偏离离场的趋势跟随起始策略图。",
+    defaultName: "双均线趋势起始模板",
     supportedModules: [
       "builtin.data.kline",
       "builtin.intent.double_ma",
@@ -230,11 +230,11 @@ export const STRATEGY_TEMPLATE_LIBRARY = [
   },
   {
     id: "rsi_reversion",
-    title: "RSI mean reversion",
-    category: "Mean reversion",
+    title: "RSI 均值回归",
+    category: "均值回归",
     description:
-      "Starter graph for a lightweight RSI mean-reversion strategy over a single ETH market feed.",
-    defaultName: "RSI mean reversion starter",
+      "面向单一 ETH 市场数据源的轻量 RSI 均值回归起始策略图。",
+    defaultName: "RSI 均值回归起始模板",
     supportedModules: [
       "builtin.runtime.control",
       "builtin.data.kline",
@@ -248,11 +248,11 @@ export const STRATEGY_TEMPLATE_LIBRARY = [
   },
   {
     id: "multi_symbol_rebalance",
-    title: "Multi-symbol rebalance",
-    category: "Portfolio",
+    title: "多标的再平衡",
+    category: "组合",
     description:
-      "Starter graph for the current beta multi-symbol rebalance surface using BTC, ETH, and SOL weights.",
-    defaultName: "Multi-symbol rebalance starter",
+      "使用 BTC、ETH、SOL 权重的多标的再平衡起始策略图。",
+    defaultName: "多标的再平衡起始模板",
     supportedModules: [
       "builtin.data.kline",
       "builtin.intent.double_ma",

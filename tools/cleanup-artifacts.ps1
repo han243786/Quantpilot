@@ -4,7 +4,8 @@ param(
   [ValidateSet("dry-run", "execute")]
   [string]$Mode = "dry-run",
   [int]$OlderThanDays = 7,
-  [switch]$IncludeLogs
+  [switch]$IncludeLogs,
+  [switch]$IncludeRuntimeArtifacts
 )
 
 Set-StrictMode -Version Latest
@@ -67,6 +68,44 @@ if ($IncludeLogs) {
 
   foreach ($file in $logFiles) {
     $targets.Add((New-CleanupEntry -Item $file -Category "log-file"))
+  }
+}
+
+if ($IncludeRuntimeArtifacts) {
+  foreach ($name in @("runs", "backtests", "experiments")) {
+    $dirPath = Join-Path $storageRootPath $name
+    if (Test-Path -LiteralPath $dirPath) {
+      $dir = Get-Item -LiteralPath $dirPath
+      if ($dir.LastWriteTime -lt $cutoff) {
+        $targets.Add((New-CleanupEntry -Item $dir -Category "runtime-artifact-dir"))
+      }
+    }
+  }
+
+  $auditPath = Join-Path $storageRootPath "audit"
+  if (Test-Path -LiteralPath $auditPath) {
+    Get-ChildItem -LiteralPath $auditPath -File -Filter "*.json" |
+      Where-Object { $_.LastWriteTime -lt $cutoff } |
+      ForEach-Object {
+        $targets.Add((New-CleanupEntry -Item $_ -Category "audit-artifact-file"))
+      }
+  }
+
+  $graphsPath = Join-Path $storageRootPath "graphs"
+  if (Test-Path -LiteralPath $graphsPath) {
+    Get-ChildItem -LiteralPath $graphsPath -File |
+      Where-Object { ($_.Extension -eq ".json" -or $_.Extension -eq ".qs") -and $_.LastWriteTime -lt $cutoff } |
+      ForEach-Object {
+        $targets.Add((New-CleanupEntry -Item $_ -Category "graph-snapshot-file"))
+      }
+
+    $versionsPath = Join-Path $graphsPath "versions"
+    if (Test-Path -LiteralPath $versionsPath) {
+      $versionsDir = Get-Item -LiteralPath $versionsPath
+      if ($versionsDir.LastWriteTime -lt $cutoff) {
+        $targets.Add((New-CleanupEntry -Item $versionsDir -Category "graph-version-dir"))
+      }
+    }
   }
 }
 

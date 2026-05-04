@@ -1,0 +1,17 @@
+{
+  "snapshot_id": "snap-1777604109776",
+  "deployment_revision": "v1",
+  "capability_hash": "sha256:abc",
+  "strategy_version": "1.0.0",
+  "parameter_version": "compile:test",
+  "core_ir_digest": "sha256:def",
+  "event_slice_bounds": {
+    "from_event_id": "e1",
+    "to_event_id": "e10",
+    "from_sequence": 1,
+    "to_sequence": 10,
+    "event_count": 10
+  },
+  "created_at_ms": 1777604109776,
+  "signature": "9e72425e650dfce3386bbd85f7eafa347ac9677f33ed02fbaa3ac337e270003f"
+}

@@ -18,8 +18,8 @@ export default function StrategyCodePanel({ onActivateSourceLane = null }) {
       label: "Formal QuantScript",
       value: model.formalQuantScriptSource ? `${model.formalQuantScriptSource.length} 字符` : "空",
       note: model.formalQuantScriptOverrideActive
-        ? "当前编译将优先使用已应用的 formal source override。"
-        : "当前编译默认使用图生成的 formal source。"
+        ? "当前编译将优先使用已应用的 Formal 源码覆盖。"
+        : "当前编译默认使用图生成的 Formal 源码。"
     },
     {
       label: "Strategy IR",
@@ -29,11 +29,11 @@ export default function StrategyCodePanel({ onActivateSourceLane = null }) {
         : "策略图级 IR 编辑器。"
     },
     {
-      label: "Authoring view",
+      label: "编写视图",
       value: model.authoringView ? `${model.authoringView.sections?.length || 0} 段` : "未生成",
       note: model.authoringView
-        ? "formal compile 产出的模块化源码视图。"
-        : "需先完成一次 successful formal compile。"
+        ? "Formal 编译产出的模块化源码视图。"
+        : "需先完成一次成功的 Formal 编译。"
     }
   ];
 

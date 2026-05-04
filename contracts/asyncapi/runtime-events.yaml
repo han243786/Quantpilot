@@ -1,0 +1,97 @@
+asyncapi: 3.1.0
+info:
+  title: QuantPilot Runtime Events
+  version: 1.0.0
+  description: |
+    QuantPilot 运行面事件流契约。
+    覆盖 runtime event stream (SSE) 的完整事件类型定义。
+
+servers:
+  browser:
+    host: 127.0.0.1:3000
+    protocol: http
+    pathname: /api/runtime/runs/{sessionId}/events/stream
+
+channels:
+  sessionEvents:
+    address: /api/runtime/runs/{sessionId}/events/stream
+    messages:
+      runtimeEvent:
+        $ref: '#/components/messages/RuntimeEvent'
+
+operations:
+  receiveRuntimeEvents:
+    action: receive
+    channel:
+      $ref: '#/channels/sessionEvents'
+    x-owner: backend-runtime
+    x-chain-stage: timeline
+    x-stability: beta
+
+components:
+  messages:
+    RuntimeEvent:
+      summary: 统一运行事件信封
+      payload:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - run_id
+          - sequence
+          - occurred_at
+          - stage
+          - payload
+        properties:
+          event_id:
+            type: string
+            example: evt_1042
+          event_type:
+            type: string
+            example: risk.decision
+          run_id:
+            type: string
+            example: ses_01
+          sequence:
+            type: integer
+            example: 1042
+          occurred_at:
+            type: string
+            format: date-time
+          trace_id:
+            type: string
+            example: trc_a1b2
+          schema_version:
+            type: string
+            example: 1.0.0
+          stage:
+            type: string
+            enum:
+              - data
+              - intent
+              - agent
+              - risk
+              - execution
+              - fill
+              - position
+              - system
+          module_key:
+            type: string
+          strategy_version:
+            type: string
+          parameter_version:
+            type: string
+          deployment_revision:
+            type: string
+          capability_hash:
+            type: string
+          severity:
+            type: string
+            enum: [Info, Warn, Error]
+          retention_class:
+            type: string
+            enum: [key, summary, debug]
+          reason_code:
+            type: string
+          payload:
+            type: object

@@ -2,10 +2,26 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import StrategyResearchConsole from "./StrategyResearchConsole";
 
+const researchActions = vi.hoisted(() => ({
+  handleSaveCurrentRuntimeArtifact: vi.fn(),
+  handleDiscardCurrentRuntimeArtifact: vi.fn()
+}));
+
 vi.mock("./EventStreamPanel", () => ({
-  EventPanelIntro: ({ runtime, displayedEvents }) => (
+  EventPanelIntro: ({
+    runtime,
+    displayedEvents,
+    handleSaveCurrentRuntimeArtifact,
+    handleDiscardCurrentRuntimeArtifact
+  }) => (
     <div data-testid="research-intro">
       intro:{runtime.status}:{displayedEvents.length}
+      <button type="button" data-testid="intro-save" onClick={handleSaveCurrentRuntimeArtifact}>
+        save
+      </button>
+      <button type="button" data-testid="intro-discard" onClick={handleDiscardCurrentRuntimeArtifact}>
+        discard
+      </button>
     </div>
   )
 }));
@@ -63,7 +79,9 @@ vi.mock("../hooks/useStrategyResearchModel", () => ({
     loadRunDetail: vi.fn(),
     setEventTypeFilter: vi.fn(),
     setEventSearchTerm: vi.fn(),
-    setSelectedNode: vi.fn()
+    setSelectedNode: vi.fn(),
+    handleSaveCurrentRuntimeArtifact: researchActions.handleSaveCurrentRuntimeArtifact,
+    handleDiscardCurrentRuntimeArtifact: researchActions.handleDiscardCurrentRuntimeArtifact
   })
 }));
 
@@ -120,5 +138,18 @@ describe("StrategyResearchConsole", () => {
     expect(screen.getByTestId("research-primary-mode")).toHaveTextContent("运行");
     expect(screen.getByTestId("research-main-panel")).toBeInTheDocument();
     expect(screen.getByTestId("research-side-panel")).toBeInTheDocument();
+  });
+
+  it("passes transient runtime artifact actions into the intro surface", () => {
+    researchActions.handleSaveCurrentRuntimeArtifact.mockClear();
+    researchActions.handleDiscardCurrentRuntimeArtifact.mockClear();
+
+    render(<StrategyResearchConsole />);
+
+    fireEvent.click(screen.getByTestId("intro-save"));
+    fireEvent.click(screen.getByTestId("intro-discard"));
+
+    expect(researchActions.handleSaveCurrentRuntimeArtifact).toHaveBeenCalledTimes(1);
+    expect(researchActions.handleDiscardCurrentRuntimeArtifact).toHaveBeenCalledTimes(1);
   });
 });

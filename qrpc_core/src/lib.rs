@@ -15,6 +15,7 @@ pub const BACKTEST_SPEC_V1_VERSION: &str = "quantpilot/backtest-spec/v1";
 pub const STRATEGY_ARTIFACT_V1_VERSION: &str = "quantpilot/strategy-artifact/v1";
 pub const COMPILE_ARTIFACT_V1_VERSION: &str = "quantpilot/compile-artifact/v1";
 pub const CORE_IR_ARTIFACT_V1_VERSION: &str = "quantpilot/core-ir-artifact/v1";
+pub const EVENT_ENVELOPE_PROTO_VERSION: &str = "quantpilot/events/v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Exchange {
@@ -108,6 +109,22 @@ pub enum DecisionStatus {
     Approve,
     Clamp,
     Reject,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum RiskDecisionMode {
+    Normal,
+    FreezeOpen,
+    ReduceOnly,
+    ReconcileOnly,
+    EmergencyHalt,
+}
+
+impl Default for RiskDecisionMode {
+    fn default() -> Self {
+        Self::Normal
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -792,6 +809,8 @@ pub struct RiskDecision {
     pub agent_decision_id: String,
     pub symbol: Symbol,
     pub status: DecisionStatus,
+    #[serde(default)]
+    pub mode: RiskDecisionMode,
     #[serde(default)]
     pub adjusted_portfolio_target_decision: Option<PortfolioTargetDecision>,
     pub adjusted_actions: Vec<ProposedAction>,

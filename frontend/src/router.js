@@ -20,6 +20,26 @@ export function backtestDetailPath(backtestId, strategyId = "") {
   return appendStrategyContext(`/backtests/${encodeURIComponent(backtestId)}`, strategyId);
 }
 
+export function approvalsPath() {
+  return "/approvals";
+}
+
+export function alertsPath() {
+  return "/alerts";
+}
+
+export function snapshotsPath() {
+  return "/snapshots";
+}
+
+export function runbookPath() {
+  return "/runbook";
+}
+
+export function chaosPath() {
+  return "/chaos";
+}
+
 export function backtestComparePath(backtestIds, strategyId = "") {
   const ids = [...new Set((backtestIds || []).filter(Boolean))];
   const query = new URLSearchParams({ ids: ids.join(",") });
@@ -32,6 +52,26 @@ export function backtestComparePath(backtestIds, strategyId = "") {
 export function parseRoute(pathname, search = "") {
   if (pathname === "/" || pathname === "/strategies") {
     return { name: "strategies" };
+  }
+
+  if (pathname === "/approvals") {
+    return { name: "approvals" };
+  }
+
+  if (pathname === "/alerts") {
+    return { name: "alerts" };
+  }
+
+  if (pathname === "/snapshots") {
+    return { name: "snapshots" };
+  }
+
+  if (pathname === "/runbook") {
+    return { name: "runbook" };
+  }
+
+  if (pathname === "/chaos") {
+    return { name: "chaos" };
   }
 
   const strategyBacktestsMatch = pathname.match(/^\/strategies\/([^/]+)\/backtests$/);

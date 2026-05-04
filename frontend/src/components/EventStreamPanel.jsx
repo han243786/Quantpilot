@@ -7,6 +7,7 @@ import {
 import { getRuntimeStatusMeta, runtimeStatusLabel } from "../utils/runtimeStatus";
 import AssetCandlesPanel from "./AssetCandlesPanel";
 import EventReplaySection from "./EventReplaySection";
+import RuntimeMutationPanel from "./RuntimeMutationPanel";
 import { useStrategyResearchModel } from "../hooks/useStrategyResearchModel";
 
 const COPY = {
@@ -384,8 +385,25 @@ function HistoryExplanationCard({ title, summary, entries, testId }) {
   );
 }
 
-export function EventPanelIntro({ runtime, displayedEvents, panelNotice, setPanelNotice }) {
+export function EventPanelIntro({
+  runtime,
+  displayedEvents,
+  panelNotice,
+  setPanelNotice,
+  handleSaveCurrentRuntimeArtifact,
+  handleDiscardCurrentRuntimeArtifact
+}) {
   const { t } = useI18n();
+  const canSaveCurrentArtifact =
+    runtime.artifactPersistenceStatus === "transient" &&
+    runtime.status === "completed" &&
+    Boolean(runtime.runId);
+  const runKindLabel =
+    runtime.runKind === "backtest"
+      ? runtime.artifactPersistenceStatus === "transient"
+        ? "回测预览"
+        : "历史回测"
+      : "模拟运行";
   return (
     <div className="event-panel-header" data-testid="event-panel-intro">
       <div className="event-panel-intro">
@@ -396,10 +414,31 @@ export function EventPanelIntro({ runtime, displayedEvents, panelNotice, setPane
       </div>
       <div className="event-summary-grid">
         <SummaryPill label="状态" value={runtimeStatusLabel(runtime.status)} />
-        <SummaryPill label="类型" value={runtime.runKind === "backtest" ? "历史回测" : "模拟运行"} />
+        <SummaryPill label="类型" value={runKindLabel} />
         <SummaryPill label="运行 ID" value={runtime.runId || "-"} />
         <SummaryPill label="事件数" value={displayedEvents.length} />
       </div>
+      {canSaveCurrentArtifact ? (
+        <div className="event-panel-actions">
+          <button
+            type="button"
+            className="ghost-btn compact-btn"
+            data-testid="runtime-artifact-save"
+            onClick={() => handleSaveCurrentRuntimeArtifact?.()}
+          >
+            保存本次结果
+          </button>
+          <button
+            type="button"
+            className="ghost-btn compact-btn"
+            data-testid="runtime-artifact-discard"
+            onClick={() => handleDiscardCurrentRuntimeArtifact?.()}
+          >
+            丢弃临时结果
+          </button>
+          <span className="muted-line">未保存结果仅保留在当前会话。</span>
+        </div>
+      ) : null}
       {runtime.backendError && !(panelNotice && panelNotice.type === "error") ? (
         <div
           className="toolbar-notice panel-feedback panel-feedback-error toolbar-notice-error"
@@ -421,7 +460,7 @@ export function EventPanelIntro({ runtime, displayedEvents, panelNotice, setPane
             className="toolbar-notice-close"
             onClick={() => setPanelNotice(null)}
           >
-            {t("鍏抽棴")}
+            {t("关闭")}
           </button>
         </div>
       ) : null}
@@ -444,7 +483,7 @@ export function EventFeedSection({
 }) {
   return (
     <EventSection
-      kicker="\u4e8b\u4ef6"
+      kicker="事件"
       title="事件流"
       summary={COPY.eventFeedSummary}
       className="event-feed-section"
@@ -650,7 +689,7 @@ export function BacktestSummarySection({
 
   return (
     <EventSection
-      kicker="\u56de\u6d4b"
+      kicker="回测"
       className="event-sidebar-section event-sidebar-section-summary"
       title="回测分析"
       summary={t("优先显示工件驱动的回测结果摘要，而不是旧式摘要拼接。")}
@@ -757,7 +796,7 @@ export function BacktestHistorySection({
 
   return (
     <EventSection
-      kicker="\u5386\u53f2"
+      kicker="历史"
       className="event-sidebar-section event-sidebar-section-backtest"
       title="回测历史"
       summary="把筛选、对比选择和详情入口统一放在同一块分析区域。"
@@ -794,7 +833,7 @@ export function BacktestHistorySection({
               testId="backtest-history-order-explanations"
             />
             <HistoryExplanationCard
-              title="Selected backtest data quality"
+              title="已选回测数据质量"
               summary={`Data quality details for loaded backtest ${runtime.selectedBacktestId}.`}
               entries={selectedBacktestDataQualityEntries}
               testId="backtest-history-data-quality"
@@ -1021,7 +1060,7 @@ export function BacktestHistorySection({
                     disabled={disableCompareToggle}
                     onClick={() => toggleBacktestCompareSelection(item.backtest_id)}
                   >
-                    {isCompareSelected ? "鍙栨秷瀵规瘮" : "鍔犲叆瀵规瘮"}
+                    {isCompareSelected ? "取消对比" : "加入对比"}
                   </button>
                 </div>
               </div>
@@ -1079,7 +1118,7 @@ export function RunHistorySection({
 
   return (
     <EventSection
-      kicker="\u5386\u53f2"
+      kicker="历史"
       className="event-sidebar-section event-sidebar-section-run"
       title="运行历史"
       summary="聚焦模拟运行记录，保留状态过滤、时间范围和详情恢复。"
@@ -1116,10 +1155,18 @@ export function RunHistorySection({
               testId="run-history-order-explanations"
             />
             <HistoryExplanationCard
-              title="Selected run data quality"
+              title="已选运行数据质量"
               summary={`Data quality details for loaded run ${runtime.runId}.`}
               entries={selectedRunDataQualityEntries}
               testId="run-history-data-quality"
+            />
+            <RuntimeMutationPanel
+              sourceKind="run"
+              sourceId={runtime.runId}
+              capabilityContext={runtime.governance ? { schema_hash: runtime.governance.capability_hash } : null}
+              initialMutations={runtime.parameterMutations || []}
+              title="参数变更"
+              testId="run-history-mutation-panel"
             />
           </div>
         ) : null}
@@ -1271,7 +1318,7 @@ export function RunHistorySection({
 export function AccountSection({ runtime, openOrders }) {
   return (
     <EventSection
-      kicker="\u8d26\u6237"
+      kicker="账户"
       className="event-sidebar-section event-sidebar-section-account"
       title="账户与挂单"
       summary="把账户摘要和当前挂单放在同一块，减少来回切换。"
@@ -1288,11 +1335,11 @@ export function AccountSection({ runtime, openOrders }) {
             <strong>{formatValue(runtime.account?.cash_balance)}</strong>
           </div>
           <div className="account-metric-card">
-            <span>鍙敤鐜伴噾</span>
+            <span>可用现金</span>
             <strong>{formatValue(runtime.account?.available_cash_balance)}</strong>
           </div>
           <div className="account-metric-card">
-            <span>鍐荤粨鐜伴噾</span>
+            <span>冻结现金</span>
             <strong>{formatValue(runtime.account?.frozen_cash_balance)}</strong>
           </div>
           <div className="account-metric-card">
@@ -1315,7 +1362,7 @@ export function AccountSection({ runtime, openOrders }) {
       </div>
       <div className="open-orders-card">
         <SectionCardHeader
-          title="褰撳墠鎸傚崟"
+          title="当前挂单"
           summary="买单主要冻结现金，卖单主要冻结仓位。"
           value={formatValue(runtime.account?.open_order_count)}
         />
@@ -1324,25 +1371,25 @@ export function AccountSection({ runtime, openOrders }) {
           <div key={order.order_id} className="open-order-item">
             <div className="open-order-topline">
               <span className={`side-pill ${orderSideClass(order.side)}`}>
-                {order.side === "Sell" ? "鍗栧嚭" : "涔板叆"}
+                {order.side === "Sell" ? "卖出" : "买入"}
               </span>
               <strong>{order.order_id}</strong>
             </div>
             <div className="open-order-grid">
               <div>
-                <span>鍓╀綑鏁伴噺</span>
+                <span>剩余数量</span>
                 <strong>{formatValue(order.remaining_qty)}</strong>
               </div>
               <div>
-                <span>闄愪环</span>
+                <span>限价</span>
                 <strong>{formatValue(order.limit_price)}</strong>
               </div>
               <div>
-                <span>鍐荤粨鐜伴噾</span>
+                <span>冻结现金</span>
                 <strong>{formatValue(order.reserved_cash)}</strong>
               </div>
               <div>
-                <span>鍐荤粨浠撲綅</span>
+                <span>冻结仓位</span>
                 <strong>{formatValue(order.reserved_qty)}</strong>
               </div>
             </div>
@@ -1358,12 +1405,14 @@ export default function EventStreamPanel({ detailMode = false, onOpenBacktestDet
   const model = useStrategyResearchModel();
 
   return (
-    <section className="event-panel">
+    <section className={`event-panel${detailMode ? " event-panel-detail" : ""}`}>
       <EventPanelIntro
         runtime={model.runtime}
         displayedEvents={model.displayedEvents}
         panelNotice={model.panelNotice}
         setPanelNotice={model.setPanelNotice}
+        handleSaveCurrentRuntimeArtifact={model.handleSaveCurrentRuntimeArtifact}
+        handleDiscardCurrentRuntimeArtifact={model.handleDiscardCurrentRuntimeArtifact}
       />
 
       <div className="event-panel-body">

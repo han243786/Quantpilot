@@ -2,6 +2,7 @@ import { createEmptyGraph } from "../graph/createGraph";
 import { compileGraph } from "../graph/compileGraph";
 import {
   attachValidationWithRegistry,
+  deleteJson,
   fetchJson,
   normalizeGraphAuditHistory,
   normalizeGraphVersionCompare,
@@ -39,7 +40,11 @@ export function createGraphStorePersistenceActions(set, get) {
           account: null,
           backtestArtifacts: null,
           diagnostics: null,
+          governance: null,
           events: [],
+          timeline: [],
+          retainedKeyEventIndex: null,
+          compactEvidence: null,
           backendError: null,
           history,
           historyStatus,
@@ -70,6 +75,7 @@ export function createGraphStorePersistenceActions(set, get) {
         quantScriptDraft: graph.metadata?.artifacts?.quantscript?.graph_source || "",
         strategyIrDraft: resolveStrategyIrDraft(graph, "")
       });
+      return graph;
     },
 
     async saveGraph(options = {}) {
@@ -183,6 +189,22 @@ export function createGraphStorePersistenceActions(set, get) {
       }));
       await get().refreshGraphVersions(finalGraph.metadata?.graph_id || "");
       await get().refreshGraphAuditHistory(finalGraph.metadata?.graph_id || "");
+    },
+
+    async deleteGraph(graphId) {
+      if (!graphId || graphId === "draft_graph") {
+        throw new Error("A saved strategy graph ID is required.");
+      }
+
+      const response = await deleteJson(`/graphs/${encodeURIComponent(graphId)}`);
+      const currentGraphId = get().graph?.metadata?.graph_id || "";
+      await get().refreshGraphIndex();
+
+      if (currentGraphId === graphId) {
+        get().resetGraph();
+      }
+
+      return response;
     },
 
     async loadGraphById(graphId, options = {}) {
@@ -407,14 +429,6 @@ export function createGraphStorePersistenceActions(set, get) {
       }
 
       return postJson(`/graphs/${encodeURIComponent(graphId)}/reveal`, {});
-    },
-
-    async openGraphFolder(graphId) {
-      if (!graphId) {
-        throw new Error("A strategy graph ID is required.");
-      }
-
-      return postJson(`/graphs/${encodeURIComponent(graphId)}/reveal-folder`, {});
     }
   };
 }

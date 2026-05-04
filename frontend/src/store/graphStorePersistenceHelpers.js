@@ -212,6 +212,34 @@ async function postJson(path, body) {
   return response.json();
 }
 
+async function deleteJson(path) {
+  const response = await fetch(`${API_BASE}${path}`, {
+    method: "DELETE"
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    let payload = null;
+    try {
+      payload = JSON.parse(text);
+    } catch {
+    }
+
+    const error = new Error(
+      humanizeErrorText(
+        payload?.message || text,
+        `Request failed with status ${response.status}.`
+      )
+    );
+    error.status = response.status;
+    error.error = payload?.error || null;
+    error.details = Array.isArray(payload?.details) ? payload.details : [];
+    throw error;
+  }
+
+  return response.json();
+}
+
 function buildRegistryFromCapabilities(capabilities) {
   return createModuleRegistry(
     applyCapabilitiesToModules(capabilities),
@@ -440,6 +468,7 @@ export {
   CAPABILITY_CACHE_KEY,
   STORAGE_KEY,
   createSafeFallbackCapabilities,
+  deleteJson,
   defaultModules,
   DEFAULT_CAPABILITIES as defaultCapabilities,
   defaultRegistry,

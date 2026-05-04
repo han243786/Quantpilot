@@ -22,7 +22,7 @@ function ToolbarNotices({ capabilityAlert, notice, setNotice }) {
           data-testid="toolbar-notice"
         >
           <span>{notice.message}</span>
-          <button type="button" className="toolbar-notice-close" onClick={() => setNotice(null)}>
+          <button type="button" className="toolbar-notice-close" onClick={() => setNotice(null)} data-testid="toolbar-notice-close">
             关闭
           </button>
         </div>
@@ -113,13 +113,13 @@ function DefaultToolbarLayout({
               <div className="toolbar-brand-subtitle">模拟运行沙盒</div>
             </div>
           </div>
-          <button className="ghost-btn" onClick={resetGraph}>
+          <button className="ghost-btn" onClick={resetGraph} data-testid="toolbar-reset-graph-action">
             新建策略图
           </button>
-          <button className="ghost-btn" onClick={handleLoadLatestGraph}>
+          <button className="ghost-btn" onClick={handleLoadLatestGraph} data-testid="toolbar-load-latest-action">
             加载最新
           </button>
-          <button className="ghost-btn" onClick={handleSaveGraph}>
+          <button className="ghost-btn" onClick={handleSaveGraph} data-testid="toolbar-save-graph-action">
             保存策略图
           </button>
           <button
@@ -131,7 +131,11 @@ function DefaultToolbarLayout({
           >
             导出运行配置
           </button>
-          <button className="ghost-btn" onClick={() => handleExportQuantScript({ graph })}>
+          <button
+            className="ghost-btn"
+            data-testid="toolbar-export-quantscript-action"
+            onClick={() => handleExportQuantScript({ graph })}
+          >
             导出策略图源码
           </button>
         </div>
@@ -183,10 +187,10 @@ function DefaultToolbarLayout({
           >
             运行回测
           </button>
-          <button className="ghost-btn" onClick={stopRuntime} disabled={!canStopRuntime}>
+          <button className="ghost-btn" onClick={stopRuntime} disabled={!canStopRuntime} data-testid="toolbar-stop-runtime-action">
             停止
           </button>
-          <button className="ghost-btn" onClick={resetRuntime}>
+          <button className="ghost-btn" onClick={resetRuntime} data-testid="toolbar-reset-runtime-action">
             重置运行时
           </button>
         </div>
@@ -299,10 +303,10 @@ function WorkspaceToolbarLayout({
           >
             运行回测
           </button>
-          <button className="ghost-btn" onClick={stopRuntime} disabled={!canStopRuntime}>
+          <button className="ghost-btn" onClick={stopRuntime} disabled={!canStopRuntime} data-testid="toolbar-stop-runtime-action">
             停止
           </button>
-          <button className="ghost-btn" onClick={resetRuntime}>
+          <button className="ghost-btn" onClick={resetRuntime} data-testid="toolbar-reset-runtime-action">
             重置运行时
           </button>
         </div>
@@ -311,10 +315,10 @@ function WorkspaceToolbarLayout({
       <div className="top-toolbar-utility-row">
         <div className="top-toolbar-utility-row__label">工具</div>
         <div className="toolbar-group toolbar-group--workspace-secondary">
-          <button className="ghost-btn" onClick={handleSaveGraph}>
+          <button className="ghost-btn" onClick={handleSaveGraph} data-testid="toolbar-save-graph-action">
             保存策略图
           </button>
-          <button className="ghost-btn" onClick={handleLoadLatestGraph}>
+          <button className="ghost-btn" onClick={handleLoadLatestGraph} data-testid="toolbar-load-latest-action">
             加载最新
           </button>
           <button
@@ -326,10 +330,14 @@ function WorkspaceToolbarLayout({
           >
             导出运行配置
           </button>
-          <button className="ghost-btn" onClick={() => handleExportQuantScript({ graph })}>
+          <button
+            className="ghost-btn"
+            data-testid="toolbar-export-quantscript-action"
+            onClick={() => handleExportQuantScript({ graph })}
+          >
             导出策略图源码
           </button>
-          <button className="ghost-btn" onClick={resetGraph}>
+          <button className="ghost-btn" onClick={resetGraph} data-testid="toolbar-reset-graph-action">
             新建策略图
           </button>
         </div>

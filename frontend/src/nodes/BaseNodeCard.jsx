@@ -1,6 +1,10 @@
 import { Handle, Position } from "@xyflow/react";
 import { useGraphStore } from "../store/graphStore";
 
+function stopCanvasControlEvent(event) {
+  event.stopPropagation();
+}
+
 export default function BaseNodeCard({ data, selected }) {
   const setSelectedNode = useGraphStore((state) => state.setSelectedNode);
   const updateNodeConfig = useGraphStore((state) => state.updateNodeConfig);
@@ -61,6 +65,7 @@ export default function BaseNodeCard({ data, selected }) {
           isConnectable={handlesConnectable}
           style={{ top: 48 + index * 22 }}
           className={`port-handle port-${nodeType} ${handlesConnectable ? "" : "port-handle-passive"}`.trim()}
+          data-testid={`handle-target-${nodeId}-${port.key}`}
         />
       ))}
 
@@ -73,7 +78,8 @@ export default function BaseNodeCard({ data, selected }) {
           ) : null}
         </div>
         <button
-          className="collapse-btn"
+          className="collapse-btn nodrag nopan"
+          onPointerDown={stopCanvasControlEvent}
           onClick={(event) => {
             event.stopPropagation();
             toggleNodeCollapse(nodeId);
@@ -90,13 +96,20 @@ export default function BaseNodeCard({ data, selected }) {
       </div>
 
       {!isSimplified && !collapsed && quickFieldDefinitions.length > 0 ? (
-        <div className="node-quick-fields">
+        <div
+          className="node-quick-fields nodrag nopan"
+          onPointerDown={stopCanvasControlEvent}
+          onClick={stopCanvasControlEvent}
+        >
           {quickFieldDefinitions.map((field) => (
-            <label key={field.key} className="quick-field">
+            <label key={field.key} className="quick-field nodrag nopan">
               <span>{field.label}</span>
               {field.type === "select" ? (
                 <select
+                  className="nodrag nopan"
                   value={field.value}
+                  onPointerDown={stopCanvasControlEvent}
+                  onClick={stopCanvasControlEvent}
                   onChange={(event) => updateNodeConfig(nodeId, field.key, event.target.value)}
                 >
                   {field.options.map((option) => (
@@ -105,8 +118,11 @@ export default function BaseNodeCard({ data, selected }) {
                 </select>
               ) : (
                 <input
+                  className="nodrag nopan"
                   type={field.type === "number" ? "number" : "text"}
                   value={field.value}
+                  onPointerDown={stopCanvasControlEvent}
+                  onClick={stopCanvasControlEvent}
                   onChange={(event) =>
                     updateNodeConfig(
                       nodeId,
@@ -140,6 +156,7 @@ export default function BaseNodeCard({ data, selected }) {
           isConnectable={handlesConnectable}
           style={{ top: 48 + index * 22 }}
           className={`port-handle port-${nodeType} ${handlesConnectable ? "" : "port-handle-passive"}`.trim()}
+          data-testid={`handle-source-${nodeId}-${port.key}`}
         />
       ))}
     </div>

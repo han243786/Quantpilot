@@ -51,6 +51,26 @@ test("run backtest smoke covers start, history refresh, and detail page", async 
     });
   });
 
+  await api.handle("**/api/runtime/backtests/*/save", async (route) => {
+    if (!backtestFixture) {
+      await route.fulfill({
+        status: 404,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify({ error: "not_found", message: "backtest fixture missing" })
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json; charset=utf-8",
+      body: JSON.stringify({
+        backtest_id: backtestFixture.startResponse.backtest_id,
+        saved: true
+      })
+    });
+  });
+
   await api.handle("**/api/runtime/backtests", async (route) => {
     await route.fulfill({
       status: 200,
@@ -84,6 +104,13 @@ test("run backtest smoke covers start, history refresh, and detail page", async 
   await page.getByTestId("research-tab-backtests").click();
   await expect(page.locator(".event-summary-grid")).toContainText("backtest_smoke_001");
   await expect(page.locator(".event-summary-grid")).toContainText("3");
+  await expect(page.getByTestId("runtime-artifact-save")).toBeVisible();
+  await Promise.all([
+    page.waitForResponse((response) =>
+      response.url().includes("/api/runtime/backtests/backtest_smoke_001/save")
+    ),
+    page.getByTestId("runtime-artifact-save").click()
+  ]);
   await expect(page.getByTestId("backtest-history-card")).toContainText("backtest_smoke_001");
   await expect(page.getByTestId("account-summary-equity")).toContainText("12050");
 

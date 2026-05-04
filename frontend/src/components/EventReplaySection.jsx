@@ -7,6 +7,19 @@ import { buildActionFailureMessage } from "../utils/actionFailure";
 import { getEventExplanationSummary } from "../utils/runtimeExplanation";
 
 const DEFAULT_PAGE_SIZE = 12;
+const FIRST_SEQUENCE_CURSOR = 1;
+
+function hasCursorValue(value) {
+  return value !== null && value !== undefined;
+}
+
+function replayWindowStart(replay) {
+  return replay?.sequence_cursor ?? (replay?.cursor ?? 0) + 1;
+}
+
+function checkpointWindowStart(checkpoint) {
+  return checkpoint?.sequence_cursor ?? (checkpoint?.cursor ?? 0) + 1;
+}
 
 function formatValue(value) {
   if (value === null || value === undefined || value === "") return "-";
@@ -58,7 +71,6 @@ export default function EventReplaySection({ runtime }) {
   }, [runtime?.selectedBacktestId, runtime?.selectedHistoryRunId]);
 
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
-  const [cursor, setCursor] = useState(0);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
   const [replay, setReplay] = useState(null);
@@ -66,24 +78,29 @@ export default function EventReplaySection({ runtime }) {
 
   useEffect(() => {
     setPageSize(DEFAULT_PAGE_SIZE);
-    setCursor(0);
     setStatus("idle");
     setError("");
     setReplay(null);
     setLoadedOnce(false);
   }, [source?.id, source?.kind]);
 
-  async function loadReplay(nextCursor = 0) {
+  function replayRequestParams(window = {}) {
+    const params = { limit: pageSize };
+    if (hasCursorValue(window.sequenceCursor)) {
+      params.sequence_cursor = window.sequenceCursor;
+    } else if (hasCursorValue(window.cursor)) {
+      params.cursor = window.cursor;
+    }
+    return params;
+  }
+
+  async function loadReplay(window = { sequenceCursor: FIRST_SEQUENCE_CURSOR }) {
     if (!source) return;
     setStatus("loading");
     setError("");
     try {
-      const payload = await source.fetchReplay(source.id, {
-        cursor: nextCursor,
-        limit: pageSize
-      });
+      const payload = await source.fetchReplay(source.id, replayRequestParams(window));
       setReplay(payload);
-      setCursor(payload.cursor || 0);
       setStatus("ready");
       setLoadedOnce(true);
     } catch (loadError) {
@@ -94,7 +111,7 @@ export default function EventReplaySection({ runtime }) {
 
   useEffect(() => {
     if (!loadedOnce) return;
-    void loadReplay(0);
+    void loadReplay({ sequenceCursor: FIRST_SEQUENCE_CURSOR });
     // pageSize is the only intended trigger; source reset is handled above.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageSize]);
@@ -102,7 +119,7 @@ export default function EventReplaySection({ runtime }) {
   if (!source) return null;
 
   const summaryText = replay
-    ? `${replay.cursor + 1}-${replay.window_end}/${replay.total_events}`
+    ? `${replayWindowStart(replay)}-${replay.window_end}/${replay.total_events}`
     : "未加载";
 
   return (
@@ -121,7 +138,7 @@ export default function EventReplaySection({ runtime }) {
           className="ghost-btn compact-btn"
           data-testid="event-replay-load"
           disabled={status === "loading"}
-          onClick={() => loadReplay(0)}
+          onClick={() => loadReplay({ sequenceCursor: FIRST_SEQUENCE_CURSOR })}
         >
           {loadedOnce ? "重新加载" : "加载回放"}
         </button>
@@ -139,8 +156,16 @@ export default function EventReplaySection({ runtime }) {
           type="button"
           className="ghost-btn compact-btn"
           data-testid="event-replay-prev"
-          disabled={!replay?.previous_cursor && replay?.previous_cursor !== 0}
-          onClick={() => loadReplay(replay.previous_cursor)}
+          disabled={
+            !hasCursorValue(replay?.previous_sequence_cursor) &&
+            !hasCursorValue(replay?.previous_cursor)
+          }
+          onClick={() =>
+            loadReplay({
+              sequenceCursor: replay.previous_sequence_cursor,
+              cursor: replay.previous_cursor
+            })
+          }
         >
           上一页
         </button>
@@ -148,8 +173,15 @@ export default function EventReplaySection({ runtime }) {
           type="button"
           className="ghost-btn compact-btn"
           data-testid="event-replay-next"
-          disabled={!replay?.next_cursor && replay?.next_cursor !== 0}
-          onClick={() => loadReplay(replay.next_cursor)}
+          disabled={
+            !hasCursorValue(replay?.next_sequence_cursor) && !hasCursorValue(replay?.next_cursor)
+          }
+          onClick={() =>
+            loadReplay({
+              sequenceCursor: replay.next_sequence_cursor,
+              cursor: replay.next_cursor
+            })
+          }
         >
           下一页
         </button>
@@ -167,6 +199,10 @@ export default function EventReplaySection({ runtime }) {
             <div className="history-meta-chip history-meta-chip-wide">
               <span>记录</span>
               <strong>{replay.record_id}</strong>
+            </div>
+            <div className="history-meta-chip">
+              <span>序列窗口</span>
+              <strong>{replayWindowStart(replay)}</strong>
             </div>
             <div className="history-meta-chip">
               <span>成交事件</span>
@@ -189,13 +225,20 @@ export default function EventReplaySection({ runtime }) {
             >
               {replay.checkpoints.slice(0, 6).map((checkpoint) => (
                 <button
-                  key={`${checkpoint.cursor}-${checkpoint.label}`}
+                  key={`${checkpoint.sequence_cursor ?? checkpoint.cursor}-${checkpoint.label}`}
                   type="button"
                   className={`ghost-btn compact-btn${
-                    checkpoint.cursor === replay.cursor ? " is-active" : ""
+                    checkpointWindowStart(checkpoint) === replayWindowStart(replay)
+                      ? " is-active"
+                      : ""
                   }`}
                   data-testid={`event-replay-checkpoint-${checkpoint.cursor}`}
-                  onClick={() => loadReplay(checkpoint.cursor)}
+                  onClick={() =>
+                    loadReplay({
+                      sequenceCursor: checkpoint.sequence_cursor,
+                      cursor: checkpoint.cursor
+                    })
+                  }
                 >
                   {checkpoint.label}
                 </button>

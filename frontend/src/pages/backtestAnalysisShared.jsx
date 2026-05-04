@@ -52,11 +52,11 @@ export function comparisonMetrics(detail) {
   return detail.backtest_artifacts?.metrics || null;
 }
 
-export function MetricPair({ label, value, testId = null }) {
+export function MetricPair({ label, value, testId = null, fullValue = null }) {
   return (
     <div className="kv-line" data-testid={testId || undefined}>
       <span>{label}</span>
-      <strong>{value}</strong>
+      <strong title={fullValue || value}>{value}</strong>
     </div>
   );
 }

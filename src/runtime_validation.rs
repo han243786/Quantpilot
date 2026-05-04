@@ -257,6 +257,100 @@ pub(super) fn validate_runtime_config_capabilities(
     }
 }
 
+fn is_valid_capability_hash(value: &str) -> bool {
+    value.strip_prefix("sha256:").is_some_and(|digest| {
+        digest.len() == 64
+            && digest
+                .chars()
+                .all(|ch| ch.is_ascii_digit() || matches!(ch, 'a'..='f'))
+    })
+}
+
+pub(super) fn validate_runtime_capability_guard(
+    context: Option<&FrontendCapabilityContext>,
+) -> Result<(), Vec<ApiErrorDetail>> {
+    let mut details = Vec::new();
+    let expected = current_capability_context();
+    let Some(context) = context else {
+        return Err(vec![capability_detail(
+            "missing_capability_context",
+            "capability_context",
+            "runtime write actions require the current capability context",
+            Some("Fetch /api/capabilities and include schema_hash plus permission_boundary before creating runtime records."),
+        )]);
+    };
+
+    if !is_valid_capability_hash(&context.schema_hash) {
+        details.push(capability_detail(
+            "malformed_capability_hash",
+            "capability_context.schema_hash",
+            "capability schema_hash must be formatted as sha256:<64 lowercase hex chars>",
+            Some("Capability hashes outside the canonical sha256 namespace are treated as unsafe."),
+        ));
+    } else if context.schema_hash != expected.schema_hash {
+        details.push(capability_detail(
+            "stale_capability_hash",
+            "capability_context.schema_hash",
+            "capability schema_hash does not match the current backend capability contract",
+            Some("Refresh /api/capabilities before starting run, backtest, or experiment writes."),
+        ));
+    }
+
+    let permission = &context.permission_boundary;
+    let expected_permission = &expected.permission_boundary;
+    for (target, actual, expected_value) in [
+        (
+            "capability_context.permission_boundary.model_version",
+            permission.model_version.as_str(),
+            expected_permission.model_version.as_str(),
+        ),
+        (
+            "capability_context.permission_boundary.execution_owner_module",
+            permission.execution_owner_module.as_str(),
+            expected_permission.execution_owner_module.as_str(),
+        ),
+        (
+            "capability_context.permission_boundary.ai_write_policy",
+            permission.ai_write_policy.as_str(),
+            expected_permission.ai_write_policy.as_str(),
+        ),
+        (
+            "capability_context.permission_boundary.plugin_network_default",
+            permission.plugin_network_default.as_str(),
+            expected_permission.plugin_network_default.as_str(),
+        ),
+        (
+            "capability_context.permission_boundary.non_execution_order_access",
+            permission.non_execution_order_access.as_str(),
+            expected_permission.non_execution_order_access.as_str(),
+        ),
+    ] {
+        if actual != expected_value {
+            details.push(capability_detail(
+                "permission_boundary_mismatch",
+                target,
+                format!("permission boundary field must be `{expected_value}`"),
+                Some("Runtime writes fail closed when the frontend boundary is missing, stale, or less restrictive than the backend contract."),
+            ));
+        }
+    }
+
+    if permission.live_execution_allowed != expected_permission.live_execution_allowed {
+        details.push(capability_detail(
+            "permission_boundary_mismatch",
+            "capability_context.permission_boundary.live_execution_allowed",
+            "live execution must remain disabled in the current beta",
+            Some("The current runtime boundary only allows paper execution."),
+        ));
+    }
+
+    if details.is_empty() {
+        Ok(())
+    } else {
+        Err(details)
+    }
+}
+
 pub(super) fn validate_backtest_execution_assumption_overrides(
     options: &FrontendBacktestOptions,
 ) -> Result<(), String> {
@@ -411,5 +505,42 @@ mod tests {
         assert!(error
             .iter()
             .any(|detail| detail.code == "invalid_rebalance_target_weights"));
+    }
+
+    #[test]
+    fn validate_runtime_capability_guard_rejects_missing_context() {
+        let error = validate_runtime_capability_guard(None)
+            .expect_err("missing capability context should fail closed");
+
+        assert_eq!(error[0].code, "missing_capability_context");
+        assert_eq!(error[0].target.as_deref(), Some("capability_context"));
+    }
+
+    #[test]
+    fn validate_runtime_capability_guard_rejects_malformed_hash() {
+        let mut context = current_capability_context();
+        context.schema_hash = "safe-fallback".to_string();
+
+        let error = validate_runtime_capability_guard(Some(&context))
+            .expect_err("malformed hash should fail closed");
+
+        assert!(error
+            .iter()
+            .any(|detail| detail.code == "malformed_capability_hash"));
+    }
+
+    #[test]
+    fn validate_runtime_capability_guard_rejects_permission_boundary_mismatch() {
+        let mut context = current_capability_context();
+        context.permission_boundary.live_execution_allowed = true;
+
+        let error = validate_runtime_capability_guard(Some(&context))
+            .expect_err("less restrictive permission boundary should fail closed");
+
+        assert!(error.iter().any(|detail| {
+            detail.code == "permission_boundary_mismatch"
+                && detail.target.as_deref()
+                    == Some("capability_context.permission_boundary.live_execution_allowed")
+        }));
     }
 }

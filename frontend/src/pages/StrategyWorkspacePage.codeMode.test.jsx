@@ -103,6 +103,17 @@ async function openWorkspaceMode(index) {
   fireEvent.click(workspaceTabs[index]);
 }
 
+function expectWorkspaceNote(label, note) {
+  const trigger = screen.getByRole("button", { name: `查看${label}说明` });
+  const noteRoot = trigger.closest(".strategy-card-note");
+
+  expect(screen.queryByText(note)).not.toBeInTheDocument();
+  fireEvent.mouseEnter(trigger);
+  expect(screen.getByRole("tooltip")).toHaveTextContent(note);
+  fireEvent.mouseLeave(noteRoot);
+  expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+}
+
 describe("StrategyWorkspacePage shell", () => {
   const initialState = useGraphStore.getState();
 
@@ -112,6 +123,10 @@ describe("StrategyWorkspacePage shell", () => {
       useGraphStore.setState(initialState, true);
       useGraphStore.setState({
         graph: buildGraph(),
+        graphAuditHistory: [],
+        graphAuditHistoryStatus: "ready",
+        graphAuditHistoryMessage: "",
+        refreshGraphAuditHistory: vi.fn(async () => []),
         runtime: {
           ...useGraphStore.getState().runtime,
           status: "idle",
@@ -139,6 +154,14 @@ describe("StrategyWorkspacePage shell", () => {
       expect(screen.getByTestId("workspace-research-section")).toBeInTheDocument();
       expect(screen.getByTestId("workspace-persisted-versions-section")).toBeInTheDocument();
     });
+    expectWorkspaceNote(
+      "主要控制",
+      "完整工具栏保留在总览内，不再压在页面顶层。"
+    );
+    expectWorkspaceNote(
+      "修复队列",
+      "优先处理最紧急、可定位的问题。"
+    );
   });
 
   it("opens code mode and renders the thinner inspector shell", async () => {
@@ -152,11 +175,15 @@ describe("StrategyWorkspacePage shell", () => {
     });
     const inspectorNav = container.querySelector(".workspace-inspector-nav");
 
-    expect(within(inspectorNav).getByRole("button", { name: /Config/i })).toBeInTheDocument();
-    expect(within(inspectorNav).getByRole("button", { name: /Checks/i })).toBeInTheDocument();
-    expect(within(inspectorNav).getByRole("button", { name: /Source/i })).toBeInTheDocument();
+    expect(within(inspectorNav).getByRole("button", { name: /配置/ })).toBeInTheDocument();
+    expect(within(inspectorNav).getByRole("button", { name: /检查/ })).toBeInTheDocument();
+    expect(within(inspectorNav).getByRole("button", { name: /源码/ })).toBeInTheDocument();
     expect(screen.getByTestId("strategy-canvas-stub")).toBeInTheDocument();
     expect(screen.getByTestId("strategy-params-panel-stub")).toBeInTheDocument();
+    expectWorkspaceNote(
+      "任务通道",
+      "一次只保持一个主通道活跃，必要时再展开辅助通道。"
+    );
   });
 
   it("switches inspector lanes and expands secondary disclosures", async () => {
@@ -168,12 +195,12 @@ describe("StrategyWorkspacePage shell", () => {
     });
     const inspectorNav = container.querySelector(".workspace-inspector-nav");
 
-    fireEvent.click(within(inspectorNav).getByRole("button", { name: /Source/i }));
+    fireEvent.click(within(inspectorNav).getByRole("button", { name: /源码/ }));
     await waitFor(() => {
-      expect(activeInspectorLabel(container)).toBe("Source");
+      expect(activeInspectorLabel(container)).toBe("源码");
     });
 
-    const disclosureButton = screen.getByRole("button", { name: /Show Config lane/i });
+    const disclosureButton = screen.getByRole("button", { name: /显示 配置通道/ });
     fireEvent.click(disclosureButton);
     await waitFor(() => {
       expect(container.querySelector(".workspace-inspector-disclosure__panel")).toBeTruthy();
@@ -232,7 +259,7 @@ describe("StrategyWorkspacePage shell", () => {
       });
     });
 
-    expect(activeInspectorLabel(container)).toBe("Config");
+    expect(activeInspectorLabel(container)).toBe("配置");
   });
 
   it("renders the diagnostics shell and queue filters", async () => {

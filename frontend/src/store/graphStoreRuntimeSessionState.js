@@ -31,9 +31,14 @@ export function buildRuntimeConnectingState(state, runKind, message) {
       connectionState: "connecting",
       backendError: null,
       events: [],
+      timeline: [],
+      retainedKeyEventIndex: null,
+      compactEvidence: null,
       account: null,
+      artifactPersistenceStatus: "idle",
       backtestArtifacts: null,
       diagnostics: null,
+      governance: null,
       selectedHistoryRunId: null,
       selectedBacktestId: null,
       highlightedNodeIds: []
@@ -110,7 +115,8 @@ export function buildRuntimeCompletionState(runtime) {
   return {
     ...runtime,
     status: "completed",
-    connectionState: "connected"
+    connectionState: "connected",
+    artifactPersistenceStatus: runtime.runId ? "transient" : runtime.artifactPersistenceStatus
   };
 }
 
@@ -142,9 +148,14 @@ export function buildBacktestCompletionState(state, graph, response, compileId) 
       runId: response.backtest_id || `backtest_${response.compile_id}`,
       runKind: "backtest",
       account: response.account || null,
+      artifactPersistenceStatus: "transient",
       backtestArtifacts: response.backtest_artifacts,
       diagnostics: response.runtime_diagnostics || null,
+      governance: response.governance || response.backtest_artifacts?.manifest?.governance || null,
       events,
+      timeline: response.timeline || [],
+      retainedKeyEventIndex: response.retained_key_event_index || null,
+      compactEvidence: response.compact_evidence || null,
       selectedHistoryRunId: null,
       selectedBacktestId: response.backtest_id || null,
       highlightedNodeIds
@@ -177,9 +188,14 @@ export function buildRuntimeResetState(state) {
       status: "idle",
       connectionState: "disconnected",
       account: null,
+      artifactPersistenceStatus: "idle",
       backtestArtifacts: null,
       diagnostics: null,
+      governance: null,
       events: [],
+      timeline: [],
+      retainedKeyEventIndex: null,
+      compactEvidence: null,
       backendError: null,
       selectedHistoryRunId: null,
       selectedBacktestId: null,

@@ -284,7 +284,17 @@ export async function installAnalysisReviewMocks(page) {
   await api.json("**/api/quantscript/formal/compile", backendCompileOkFixture);
   await api.json("**/api/runtime/compile", backendCompileOkFixture);
   await api.json("**/api/graphs/latest", graphFixture);
+  await api.json("**/api/graphs", [
+    {
+      graph_id: REVIEW_GRAPH_ID,
+      name: graphFixture.metadata.name,
+      updated_at: graphFixture.metadata.updated_at,
+      path: "storage/graphs/visual_review_graph.json"
+    }
+  ]);
   await api.json(`**/api/graphs/${REVIEW_GRAPH_ID}`, graphFixture);
+  await api.json("**/api/graphs/*/versions", []);
+  await api.json("**/api/graphs/*/audit", []);
   await api.json("**/api/runtime/runs", runFixture.historyResponse);
   await api.handle("**/api/runtime/runs/*", async (route) => {
     await route.fulfill({
@@ -297,6 +307,7 @@ export async function installAnalysisReviewMocks(page) {
     ...backtestPrimary.historyResponse,
     ...backtestSecondary.historyResponse
   ]);
+  await api.json("**/api/runtime/experiments", []);
   await api.handle("**/api/runtime/backtests/*", async (route) => {
     const backtestId = decodeURIComponent(new URL(route.request().url()).pathname.split("/").pop());
     const fixture = backtestId === "backtest_compare_002" ? backtestSecondary : backtestPrimary;

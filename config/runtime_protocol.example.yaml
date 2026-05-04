@@ -1,0 +1,65 @@
+﻿generators:
+  - generator_id: trend-intent
+    name: Trend Intent Generator
+    version: 0.1.0
+    enabled: true
+    input_requests:
+      - request_id: req-kline
+        instrument: BTCUSDT
+        market_scope: Spot
+        primary_data_type: KlineRange
+        source_type: SpotTicker
+        timeframe: Min1
+        lookback_count: 3
+        time_range: null
+        precision_policy:
+          price_scale: 2
+          quantity_scale: 6
+          rounding_mode: Round
+        usage_tag: IntentComputation
+        priority: 10
+        is_realtime: true
+        requested_at_ms: 0
+    trigger_policy: OnKlineClose
+    parameter_schema: []
+    output_intent_type: Directional
+    cooldown_ms: 5000
+    max_compute_time_ms: 50
+agents:
+  - agent_id: portfolio-agent
+    name: Portfolio Agent
+    version: 0.1.0
+    enabled: true
+    accepted_intent_types: [Directional]
+    accepted_instruments: [BTCUSDT]
+    has_internal_state: false
+    conflict_policy: WeightedMerge
+    weighting_policy: ConfidenceWeighted
+    output_policy:
+      allow_partial_target: true
+      allow_multi_candidate: false
+      max_total_exposure_ratio: 0.2
+      max_single_order_ratio: 0.1
+    evaluation_interval_ms: 1000
+    max_candidates_per_cycle: 8
+global_risk:
+  risk_id: global-risk
+  name: Global Risk Gate
+  version: 0.1.0
+  max_total_position_ratio: 0.3
+  max_single_instrument_ratio: 0.2
+  max_order_notional: 10000.0
+  max_daily_loss: 1000.0
+  max_drawdown_ratio: 0.1
+  max_orders_per_minute: 60
+  allow_new_long: true
+  allow_new_short: true
+  enabled: true
+runtime_mode:
+  mode: FactSimulation
+  data_provider_id: placeholder-data-provider
+  account_provider_id: placeholder-account-provider
+  execution_adapter_id: placeholder-execution-adapter
+  fill_model: SimulatedImmediate
+  enable_persistence_events: true
+  enable_reports: true

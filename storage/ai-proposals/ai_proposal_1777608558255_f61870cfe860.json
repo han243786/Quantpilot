@@ -1,0 +1,71 @@
+{
+  "ai_proposal_id": "ai_proposal_1777608558255_f61870cfe860",
+  "source_kind": "run",
+  "source_id": "run_1777608113626",
+  "graph_id": "fulltest-001",
+  "source_evidence": {
+    "source_kind": "run",
+    "source_id": "run_1777608113626",
+    "graph_id": "fulltest-001",
+    "event_count": 16,
+    "evidence_hash": "sha256:def456def456def456def456def456def456def456def456def456def456def4"
+  },
+  "target": {
+    "node_id": "a1",
+    "module_key": "builtin.agent.weighted",
+    "parameter_path": "decision_threshold"
+  },
+  "old_value": 0.05,
+  "new_value": 0.1,
+  "old_parameter_version": "sha256:56741100a1ecddb00fd35ade09882290794fd64a0cd90d91aa97fac674123f37",
+  "proposed_parameter_version": "sha256:5ad8dae1aaada643af58e38314afabe9b9aa175529dfca28b36cb4428fb0b5bf",
+  "status": "static_check_passed",
+  "static_check": {
+    "status": "static_check_passed",
+    "reason_code": "AI_PROPOSAL_STATIC_CHECK_PASSED",
+    "message": "AI proposal candidate passed static validation",
+    "checked_at_ms": 1777608558255,
+    "details": []
+  },
+  "model": {
+    "provider": "test",
+    "model": "test-v1",
+    "model_version": "1.0"
+  },
+  "prompt_hash": "sha256:abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1",
+  "evidence_hash": "sha256:def456def456def456def456def456def456def456def456def456def456def4",
+  "actor": {
+    "actor_id": "ai",
+    "display_name": "AI Assistant"
+  },
+  "reason": "AI suggests higher threshold",
+  "governance": {
+    "capability_hash": "sha256:0b98a45b5f0902d861771d0097b0a3b7b2c0b641325276ee131b02f3e8023241",
+    "deployment_revision": "sha256:88026cebe3fd9ed50fd77cbd78b4a337b693986517cbe6bbd02ba76bb78d1dad",
+    "strategy_version": "1.0.0",
+    "previous_parameter_version": "sha256:56741100a1ecddb00fd35ade09882290794fd64a0cd90d91aa97fac674123f37",
+    "proposed_parameter_version": "sha256:5ad8dae1aaada643af58e38314afabe9b9aa175529dfca28b36cb4428fb0b5bf",
+    "permission_boundary_model_version": "quantpilot/permission-boundary/v1",
+    "ai_write_policy": "proposal_only"
+  },
+  "lifecycle": [
+    {
+      "status": "submitted",
+      "event_id": "event_ai_proposal_1777608558255_f61870cfe860_AI_PROPOSAL_CREATED_1777608558255",
+      "sequence_no": 17,
+      "occurred_at_ms": 1777608558255,
+      "reason_code": "AI_PROPOSAL_CREATED",
+      "message": "AI proposal candidate submitted"
+    },
+    {
+      "status": "static_check_passed",
+      "event_id": "event_ai_proposal_1777608558255_f61870cfe860_AI_PROPOSAL_STATIC_CHECK_PASSED_1777608558256",
+      "sequence_no": 18,
+      "occurred_at_ms": 1777608558256,
+      "reason_code": "AI_PROPOSAL_STATIC_CHECK_PASSED",
+      "message": "AI proposal candidate passed static validation"
+    }
+  ],
+  "created_at_ms": 1777608558255,
+  "updated_at_ms": 1777608558255
+}

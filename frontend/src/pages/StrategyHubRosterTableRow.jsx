@@ -19,18 +19,26 @@ export default function StrategyHubRosterTableRow({ model, row }) {
         data-testid={`strategy-hub-roster-row-select-${row.graphId}`}
         onClick={() => model.setSelectedStrategyId(row.graphId)}
       >
-        <span className="strategy-row__main">
+        <span className="strategy-row__main" data-label="策略">
           <strong>{row.name}</strong>
           <small>{row.graphId}</small>
         </span>
-        <span className={`status-pill ${row.healthTone}`}>{row.healthLabel}</span>
-        <span className="strategy-row__activity">
+        <span className="strategy-row__cell" data-label="状态">
+          <span className={`status-pill ${row.healthTone}`}>{row.healthLabel}</span>
+        </span>
+        <span className="strategy-row__activity" data-label="活动">
           <strong>{row.activityLabel}</strong>
           <small>{row.lastActivityLabel}</small>
         </span>
-        <span>{row.runCountLabel}</span>
-        <span>{row.backtestCountLabel}</span>
-        <span>{row.latestReturnLabel}</span>
+        <span className="strategy-row__cell" data-label="模拟">
+          {row.runCountLabel}
+        </span>
+        <span className="strategy-row__cell" data-label="回测">
+          {row.backtestCountLabel}
+        </span>
+        <span className="strategy-row__cell" data-label="最近收益">
+          {row.latestReturnLabel}
+        </span>
       </button>
       <StrategyHubRosterRowActions model={model} row={row} />
     </div>

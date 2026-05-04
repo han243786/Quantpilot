@@ -1,5 +1,5 @@
 import { StrategyRouteBar } from "./BacktestAnalysisLayout";
-import { StrategyTaskGroup } from "./StrategyHubSharedComponents";
+import { StrategyCardNote, StrategyTaskGroup } from "./StrategyHubSharedComponents";
 import {
   projectStrategyHubInspectorOverview
 } from "../utils/strategyHubInspectorProjection";
@@ -22,8 +22,9 @@ export default function StrategyHubInspectorOverviewSection({ model, selectedStr
       <div className="strategy-card-header">
         <div>
           <StrategyRouteBar items={overview.routeItems} />
-          <div className="panel-title">{overview.title}</div>
-          <div className="strategy-card-subtitle">{overview.subtitle}</div>
+          <div className="panel-title strategy-card-title-note">
+            <StrategyCardNote label={overview.title} note={overview.subtitle} />
+          </div>
         </div>
         <div className={`status-pill ${overview.healthTone}`}>{overview.healthLabel}</div>
       </div>

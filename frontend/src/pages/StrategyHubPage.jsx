@@ -11,10 +11,10 @@ export default function StrategyHubPage() {
 
   return (
     <div className="strategy-hub-page" data-testid="strategy-hub-page">
-      <Suspense fallback={<StrategyHubSectionFallback title="Strategy Hub Overview" />}>
+      <Suspense fallback={<StrategyHubSectionFallback title="策略中心总览" />}>
         <StrategyHubHeroSection model={model} />
       </Suspense>
-      <Suspense fallback={<StrategyHubSectionFallback title="Strategy Hub Workspace" />}>
+      <Suspense fallback={<StrategyHubSectionFallback title="策略中心工作区" />}>
         <StrategyHubBodySection model={model} />
       </Suspense>
     </div>

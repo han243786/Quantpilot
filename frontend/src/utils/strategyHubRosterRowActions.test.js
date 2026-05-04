@@ -36,10 +36,12 @@ describe("strategyHubRosterRowActions", () => {
       expect.objectContaining({
         key: "files",
         label: "文件",
-        items: [
-          expect.objectContaining({ key: "open-folder", disabled: true }),
-          expect.objectContaining({ key: "reveal-file", disabled: true })
-        ]
+        items: [expect.objectContaining({ key: "reveal-file", disabled: true })]
+      }),
+      expect.objectContaining({
+        key: "manage",
+        label: "管理",
+        items: [expect.objectContaining({ key: "delete-strategy", disabled: false })]
       })
     ]);
     expect(groups[0].items[0].ariaLabel).toBe("打开 Alpha strategy 工作区");
@@ -47,8 +49,8 @@ describe("strategyHubRosterRowActions", () => {
 
   it("routes row actions through the extracted semantic dispatcher", async () => {
     const model = {
-      openGraphFolder: vi.fn().mockResolvedValue(undefined),
-      revealGraphFile: vi.fn().mockResolvedValue(undefined)
+      revealGraphFile: vi.fn().mockResolvedValue(undefined),
+      deleteStrategy: vi.fn().mockResolvedValue(true)
     };
     const row = { graphId: "alpha_strategy", name: "Alpha strategy", hasFilePath: true };
 
@@ -58,10 +60,10 @@ describe("strategyHubRosterRowActions", () => {
     runStrategyHubRosterRowAction(model, row, "open-backtests");
     expect(navigateTo).toHaveBeenCalledWith("/strategies/alpha_strategy/backtests");
 
-    await runStrategyHubRosterRowAction(model, row, "open-folder");
-    expect(model.openGraphFolder).toHaveBeenCalledWith("alpha_strategy");
-
     await runStrategyHubRosterRowAction(model, row, "reveal-file");
     expect(model.revealGraphFile).toHaveBeenCalledWith("alpha_strategy");
+
+    await runStrategyHubRosterRowAction(model, row, "delete-strategy");
+    expect(model.deleteStrategy).toHaveBeenCalledWith("alpha_strategy", "Alpha strategy");
   });
 });

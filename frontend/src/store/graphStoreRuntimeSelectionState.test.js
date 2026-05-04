@@ -3,6 +3,7 @@ import {
   buildPersistedRuntimeSelection,
   buildPersistedRuntimeSelectionState
 } from "./graphStoreRuntimeSelectionState";
+import { DEFAULT_RUNTIME_GOVERNANCE } from "../utils/runtimeGovernance";
 
 describe("graphStoreRuntimeSelectionState", () => {
   it("builds one shared completed selection shape for persisted runtime detail", () => {
@@ -12,9 +13,13 @@ describe("graphStoreRuntimeSelectionState", () => {
       status: "idle",
       connectionState: "disconnected",
       account: null,
+      artifactPersistenceStatus: "idle",
       backtestArtifacts: null,
       diagnostics: null,
       events: [],
+      timeline: [],
+      retainedKeyEventIndex: null,
+      compactEvidence: null,
       backendError: "old error",
       selectedHistoryRunId: null,
       selectedBacktestId: null,
@@ -30,6 +35,9 @@ describe("graphStoreRuntimeSelectionState", () => {
         backtestArtifacts: { metrics: { artifact_id: "metrics_001" } },
         diagnostics: { source: "backtest_event_log" },
         events: [{ event_id: "evt_1" }],
+        timeline: [{ event_id: "evt_timeline_1" }],
+        retainedKeyEventIndex: { retained_event_count: 1 },
+        compactEvidence: { retained_event_count: 1 },
         selectedHistoryRunId: null,
         selectedBacktestId: "backtest_001",
         highlightedNodeIds: ["execution_node"]
@@ -41,10 +49,16 @@ describe("graphStoreRuntimeSelectionState", () => {
       status: "completed",
       connectionState: "disconnected",
       account: { equity_estimate: 1000 },
+      artifactPersistenceStatus: "saved",
       backtestArtifacts: { metrics: { artifact_id: "metrics_001" } },
       diagnostics: { source: "backtest_event_log" },
+      governance: DEFAULT_RUNTIME_GOVERNANCE,
       events: [{ event_id: "evt_1" }],
+      timeline: [{ event_id: "evt_timeline_1" }],
+      retainedKeyEventIndex: { retained_event_count: 1 },
+      compactEvidence: { retained_event_count: 1 },
       backendError: null,
+      parameterMutations: [],
       selectedHistoryRunId: null,
       selectedBacktestId: "backtest_001",
       highlightedNodeIds: ["execution_node"]
@@ -67,6 +81,9 @@ describe("graphStoreRuntimeSelectionState", () => {
         account: null,
         diagnostics: null,
         events: [],
+        timeline: [],
+        retainedKeyEventIndex: null,
+        compactEvidence: null,
         selectedHistoryRunId: "run_001",
         selectedBacktestId: null,
         highlightedNodeIds: ["risk_node"]
@@ -81,9 +98,15 @@ describe("graphStoreRuntimeSelectionState", () => {
         status: "completed",
         connectionState: "disconnected",
         account: null,
+        artifactPersistenceStatus: "saved",
         backtestArtifacts: null,
         diagnostics: null,
+        governance: DEFAULT_RUNTIME_GOVERNANCE,
         events: [],
+        timeline: [],
+        retainedKeyEventIndex: null,
+        compactEvidence: null,
+        parameterMutations: [],
         selectedHistoryRunId: "run_001",
         selectedBacktestId: null,
         highlightedNodeIds: ["risk_node"]

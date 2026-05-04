@@ -1,16 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import StrategyCanvas from "./StrategyCanvas";
 import { useGraphStore } from "../store/graphStore";
 
 const reactFlowApi = {
   fitBounds: vi.fn(),
+  fitView: vi.fn(),
   setCenter: vi.fn(),
-  setViewport: vi.fn()
+  setViewport: vi.fn(),
+  zoomIn: vi.fn(),
+  zoomOut: vi.fn()
 };
 
 vi.mock("@xyflow/react", () => ({
   Background: () => null,
+  Panel: ({ children }) => <div>{children}</div>,
   ReactFlow: ({ children }) => <div data-testid="react-flow">{children}</div>,
   ReactFlowProvider: ({ children }) => <>{children}</>,
   useReactFlow: () => reactFlowApi,
@@ -23,8 +27,11 @@ describe("StrategyCanvas focus modes", () => {
 
   beforeEach(() => {
     reactFlowApi.fitBounds.mockReset();
+    reactFlowApi.fitView.mockReset();
     reactFlowApi.setCenter.mockReset();
     reactFlowApi.setViewport.mockReset();
+    reactFlowApi.zoomIn.mockReset();
+    reactFlowApi.zoomOut.mockReset();
 
     act(() => {
       useGraphStore.setState(
@@ -109,10 +116,7 @@ describe("StrategyCanvas focus modes", () => {
   it("switches focus modes, surfaces workbench context, and navigates between issue and recent targets", () => {
     render(<StrategyCanvas />);
 
-    expect(screen.getByTestId("canvas-lane-card")).toHaveTextContent("Kline");
-    expect(screen.getByTestId("canvas-focus-card")).toBeInTheDocument();
-    expect(screen.getByTestId("canvas-reason-card")).toBeInTheDocument();
-    expect(screen.getByTestId("canvas-health-card")).toHaveTextContent("2");
+    expect(screen.queryByTestId("canvas-workbench-strip")).not.toBeInTheDocument();
     expect(screen.getByTestId("canvas-focus-tab-selected")).toHaveAttribute("aria-selected", "true");
 
     fireEvent.click(screen.getByTestId("canvas-focus-tab-issues"));
@@ -190,16 +194,12 @@ describe("StrategyCanvas focus modes", () => {
       <StrategyCanvas
         workspaceContext={{
           laneId: "diagnostics",
-          laneLabel: "Validate lane",
-          laneStatus: "Auto follow",
-          reasonTitle: "Lane changed automatically",
-          reasonMessage: "Validation routing is active for the current compile blocker.",
-          reasonFocusMessage: "Canvas focus changed to issues focus."
+          laneLabel: "Validate lane"
         }}
       />
     );
 
-    expect(screen.getByTestId("canvas-lane-card")).toHaveTextContent("Validate lane");
+    expect(screen.queryByTestId("canvas-workbench-strip")).not.toBeInTheDocument();
     const recommendationPanel = screen.getByTestId("canvas-recommendation-panel");
     const recommendationTargets = screen.getByTestId("canvas-recommendation-targets");
     const repairPath = screen.getByTestId("canvas-repair-path");
@@ -216,5 +216,25 @@ describe("StrategyCanvas focus modes", () => {
 
     fireEvent.click(screen.getByTestId("canvas-recommendation-target-node_3"));
     expect(useGraphStore.getState().selectedNodeId).toBe("node_3");
+  });
+
+  it("does not replay selected-node focus while viewport movement is being stored", async () => {
+    render(<StrategyCanvas />);
+
+    await waitFor(() => {
+      expect(reactFlowApi.setCenter).toHaveBeenCalledTimes(1);
+    });
+
+    act(() => {
+      useGraphStore.getState().updateEditorViewport({ x: -90, y: -60, zoom: 0.92 }, false);
+    });
+
+    await act(async () => {
+      await new Promise((resolve) => {
+        window.setTimeout(resolve, 50);
+      });
+    });
+
+    expect(reactFlowApi.setCenter).toHaveBeenCalledTimes(1);
   });
 });

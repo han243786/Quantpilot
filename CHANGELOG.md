@@ -2,7 +2,9 @@
 
 ## 0.1.0
 
-Initial release candidate scope for QuantPilot.
+Initial private-baseline candidate scope for QuantPilot.
+Public release is not ready while the license, dependency, and repository
+visibility blockers remain open.
 
 ### Added
 
@@ -28,4 +30,5 @@ Initial release candidate scope for QuantPilot.
 - supported symbol boundary limited to `BTCUSDT`
 - no live trading support
 - no research-grade backtest claim
-- license selection is still pending owner confirmation
+- `LICENSE` remains placeholder-only; final outbound license selection is still
+  pending owner confirmation before any public release

@@ -3,9 +3,9 @@ export function EventPanelFallback() {
     <section className="workspace-section-card workspace-event-fallback" aria-hidden="true">
       <div className="workspace-section-card__header">
         <div>
-          <div className="panel-title">Research Event Stream</div>
+          <div className="panel-title">研究事件流</div>
           <div className="strategy-card-subtitle">
-            Loading the research console while keeping the current workspace layout stable.
+            正在加载研究控制台，并保持当前工作区布局稳定。
           </div>
         </div>
       </div>
@@ -17,14 +17,14 @@ export function EventPanelFallback() {
   );
 }
 
-export function WorkspacePanelFallback({ title = "Workspace Panel Loading" }) {
+export function WorkspacePanelFallback({ title = "工作区面板加载中" }) {
   return (
     <section className="workspace-section-card workspace-event-fallback" aria-hidden="true">
       <div className="workspace-section-card__header">
         <div>
           <div className="panel-title">{title}</div>
           <div className="strategy-card-subtitle">
-            Loading the components required for the current workspace mode.
+            正在加载当前工作区模式所需组件。
           </div>
         </div>
       </div>

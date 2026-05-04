@@ -23,5 +23,5 @@ packaging, and ecosystem governance.
 ## Current Source Of Truth
 
 - [Formal QuantScript Syntax Guide](D:/rust-js-pr/QuantPilot/quantpilot/markdown/guides/quantscript/guide-formal-quantscript-syntax.md)
-- [Plugin Roadmap](D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/planning/implementation-plugin-roadmap.md)
+- [Retired Plugin Roadmap Summary](D:/rust-js-pr/QuantPilot/quantpilot/markdown/archive/planning-retired/implementation-plugin-roadmap.md)
 - [RFC-020 Plugin Manifest Protocol](D:/rust-js-pr/QuantPilot/quantpilot/markdown/protocol/RFC-020-plugin-manifest-protocol.md)

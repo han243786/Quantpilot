@@ -1,6 +1,9 @@
 import { useGraphStore } from "../store/graphStore";
+import { StrategyCardNote } from "../pages/StrategyHubSharedComponents";
 import { getRuntimeStatusMeta, runtimeStatusLabel } from "../utils/runtimeStatus";
 import { buildRuntimeDiagnosticsProjection } from "../utils/runtimeDiagnosticsProjection";
+import GovernedTimelinePanel from "./GovernedTimelinePanel";
+import RuntimeReportPanel from "./RuntimeReportPanel";
 
 function DiagnosticsRows({ rows, emptyText }) {
   if (!rows || rows.length === 0) {
@@ -10,7 +13,7 @@ function DiagnosticsRows({ rows, emptyText }) {
   return rows.map((row) => (
     <div key={row.key} className="kv-line">
       <span>{row.label}</span>
-      <strong>{row.value}</strong>
+      <strong title={row.fullValue || row.value}>{row.value}</strong>
     </div>
   ));
 }
@@ -26,13 +29,16 @@ export default function RuntimeDiagnosticsPanel({
   const setSelectedNode = useGraphStore((state) => state.setSelectedNode);
   const projection = buildRuntimeDiagnosticsProjection(graph, runtime, selectedNodeId);
   const selectNode = onSelectNode || setSelectedNode;
+  const reportSourceKind = runtime?.selectedBacktestId ? "backtest" : "run";
+  const reportSourceId = runtime?.selectedBacktestId || runtime?.selectedHistoryRunId || runtime?.runId;
 
   if (!projection?.selectedNode) {
     return (
       <div className="property-card runtime-diagnostics-card">
         <div className="property-card-heading">
-          <div className="property-card-title">{title}</div>
-          <div className="property-card-caption">{subtitle}</div>
+          <div className="property-card-title strategy-card-title-note">
+            <StrategyCardNote label={title} note={subtitle} />
+          </div>
         </div>
         <div className="muted-line">
           当前还没有可归属到节点的运行时事件。先启动模拟、加载回测详情，或在画布中选中一个活跃节点。
@@ -46,14 +52,15 @@ export default function RuntimeDiagnosticsPanel({
   return (
     <div className="property-card runtime-diagnostics-card" data-testid="runtime-diagnostics-panel">
       <div className="property-card-heading">
-        <div className="property-card-title">{title}</div>
-        <div className="property-card-caption">{subtitle}</div>
+        <div className="property-card-title strategy-card-title-note">
+          <StrategyCardNote label={title} note={subtitle} />
+        </div>
       </div>
 
       {projection.activeNodes.length > 1 ? (
         <div
           className="strategy-inspector-actions"
-          aria-label="Runtime diagnostic nodes"
+          aria-label="运行诊断节点"
           data-testid="runtime-diagnostics-node-switcher"
         >
           {projection.activeNodes.map((node) => (
@@ -110,6 +117,28 @@ export default function RuntimeDiagnosticsPanel({
           {projection.latestNotice.summary}
         </div>
       ) : null}
+
+      {projection.governanceRows?.length > 0 ? (
+        <div className="mini-list" data-testid="runtime-diagnostics-governance">
+          <div className="mini-list-title">治理身份</div>
+          <DiagnosticsRows rows={projection.governanceRows} emptyText="当前没有治理身份。" />
+        </div>
+      ) : null}
+
+      <GovernedTimelinePanel
+        source={runtime}
+        title="证据时间轴"
+        summary="按 envelope 阶段、保留级别和模块过滤当前运行证据。"
+        testId="runtime-diagnostics-timeline"
+      />
+
+      <RuntimeReportPanel
+        sourceKind={reportSourceKind}
+        sourceId={reportSourceId}
+        evidenceSource={runtime}
+        title="运行证据报告"
+        summary="从当前运行或回测证据生成治理报告，保留 source id、序列范围和治理身份。"
+      />
 
       <div className="mini-list" data-testid="runtime-diagnostics-input-snapshot">
         <div className="mini-list-title">最新输入快照</div>

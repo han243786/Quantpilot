@@ -1,3 +1,5 @@
+import { StrategyCardNote } from "./StrategyHubSharedComponents";
+
 export function WorkspaceMetricCard({ label, value, note, tone = "muted" }) {
   return (
     <div className={`workspace-metric-card workspace-metric-card-${tone}`}>
@@ -44,8 +46,9 @@ export function WorkspaceSection({
     <section className={`workspace-section-card ${className}`.trim()} data-testid={testId}>
       <div className="workspace-section-card__header">
         <div>
-          <div className="panel-title">{title}</div>
-          {subtitle ? <div className="strategy-card-subtitle">{subtitle}</div> : null}
+          <div className="panel-title strategy-card-title-note">
+            <StrategyCardNote label={title} note={subtitle} />
+          </div>
         </div>
         {actions}
       </div>

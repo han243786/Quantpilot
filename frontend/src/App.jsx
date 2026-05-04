@@ -1,12 +1,18 @@
 import { Suspense, lazy, useEffect, useState } from "react";
 import { useGraphStore } from "./store/graphStore";
 import { parseRoute, strategiesPath } from "./router";
+import GlobalNav from "./components/GlobalNav";
 
 const StrategyHubPage = lazy(() => import("./pages/StrategyHubPage"));
 const StrategyWorkspacePage = lazy(() => import("./pages/StrategyWorkspacePage"));
 const StrategyBacktestsPage = lazy(() => import("./pages/StrategyBacktestsPage"));
 const BacktestDetailPage = lazy(() => import("./pages/BacktestDetailPage"));
 const BacktestComparePage = lazy(() => import("./pages/BacktestComparePage"));
+const ApprovalPage = lazy(() => import("./components/ApprovalPanel"));
+const AlertsPage = lazy(() => import("./pages/AlertsPage"));
+const SnapshotsPage = lazy(() => import("./pages/SnapshotsPage"));
+const RunbookPage = lazy(() => import("./pages/RunbookPage"));
+const ChaosPage = lazy(() => import("./pages/ChaosPage"));
 
 function AppShellFallback() {
   return (
@@ -62,7 +68,17 @@ export default function App() {
   }
 
   let content = <StrategyHubPage />;
-  if (route.name === "strategy-workspace") {
+  if (route.name === "approvals") {
+    content = <ApprovalPage />;
+  } else if (route.name === "alerts") {
+    content = <AlertsPage />;
+  } else if (route.name === "snapshots") {
+    content = <SnapshotsPage />;
+  } else if (route.name === "runbook") {
+    content = <RunbookPage />;
+  } else if (route.name === "chaos") {
+    content = <ChaosPage />;
+  } else if (route.name === "strategy-workspace") {
     content = <StrategyWorkspacePage strategyId={route.strategyId} />;
   } else if (route.name === "strategy-backtests") {
     content = <StrategyBacktestsPage strategyId={route.strategyId} />;
@@ -77,5 +93,10 @@ export default function App() {
     );
   }
 
-  return <Suspense fallback={<AppShellFallback />}>{content}</Suspense>;
+  return (
+    <>
+      <GlobalNav />
+      <Suspense fallback={<AppShellFallback />}>{content}</Suspense>
+    </>
+  );
 }

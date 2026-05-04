@@ -25,6 +25,13 @@ mod backend {
 
 static NEXT_TEST_ID: AtomicU64 = AtomicU64::new(0);
 
+#[derive(Clone)]
+pub struct TestAppDirs {
+    pub graph_store_dir: PathBuf,
+    pub run_store_dir: PathBuf,
+    pub backtest_store_dir: PathBuf,
+}
+
 #[allow(dead_code)]
 pub fn sample_runtime_request() -> Value {
     serde_json::from_str(include_str!(
@@ -34,16 +41,36 @@ pub fn sample_runtime_request() -> Value {
 }
 
 pub fn test_app(test_name: &str) -> Router {
+    let (router, _) = test_app_with_dirs(test_name);
+    router
+}
+
+pub fn test_app_with_dirs(test_name: &str) -> (Router, TestAppDirs) {
     let base_dir = unique_test_dir(test_name);
-    let graph_store_dir = base_dir.join("graphs");
-    let run_store_dir = base_dir.join("runs");
-    let backtest_store_dir = base_dir.join("backtests");
+    let dirs = TestAppDirs {
+        graph_store_dir: base_dir.join("graphs"),
+        run_store_dir: base_dir.join("runs"),
+        backtest_store_dir: base_dir.join("backtests"),
+    };
 
-    fs::create_dir_all(&graph_store_dir).expect("graph store dir should be created");
-    fs::create_dir_all(&run_store_dir).expect("run store dir should be created");
-    fs::create_dir_all(&backtest_store_dir).expect("backtest store dir should be created");
+    create_test_app_dirs(&dirs);
 
-    backend::test_app_router(graph_store_dir, run_store_dir, backtest_store_dir)
+    (test_app_from_dirs(dirs.clone()), dirs)
+}
+
+pub fn test_app_from_dirs(dirs: TestAppDirs) -> Router {
+    create_test_app_dirs(&dirs);
+    backend::test_app_router(
+        dirs.graph_store_dir,
+        dirs.run_store_dir,
+        dirs.backtest_store_dir,
+    )
+}
+
+fn create_test_app_dirs(dirs: &TestAppDirs) {
+    fs::create_dir_all(&dirs.graph_store_dir).expect("graph store dir should be created");
+    fs::create_dir_all(&dirs.run_store_dir).expect("run store dir should be created");
+    fs::create_dir_all(&dirs.backtest_store_dir).expect("backtest store dir should be created");
 }
 
 fn unique_test_dir(test_name: &str) -> PathBuf {

@@ -1,0 +1,120 @@
+name: Scenario Test
+
+on:
+  push:
+    branches: [main, master, "codex/**"]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "7 2 * * *"  # 每日凌晨 2:07 UTC
+
+jobs:
+  backend-scenarios:
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build backend
+        run: cargo build --release
+
+      - name: Start backend in test mode
+        shell: cmd
+        run: |
+          set QUANTPILOT_PORT=3000
+          set QUANTPILOT_DEV=true
+          set QUANTPILOT_API_KEY=
+          start /B target\release\quantpilot.exe
+        env:
+          QUANTPILOT_PORT: "3000"
+          QUANTPILOT_DEV: "true"
+          QUANTPILOT_API_KEY: ""
+
+      - name: Wait for backend
+        shell: cmd
+        run: |
+          for /L %%i in (1,1,30) do (
+            curl -s http://127.0.0.1:3000/api/health && exit /b 0
+            timeout /t 2 >nul
+          )
+          echo "Backend failed to start"
+          exit /b 1
+
+      - name: Run scenario 01 — BTC双均线 Paper运行
+        shell: cmd
+        run: node tools/run-scenario.js tests/scenarios/scenario_01_btc_dual_ma.qs
+
+      - name: Run scenario 02 — 回测对比
+        shell: cmd
+        run: node tools/run-scenario.js tests/scenarios/scenario_02_backtest_compare.qs
+
+      - name: Run scenario 08 — 多交易对
+        shell: cmd
+        run: node tools/run-scenario.js tests/scenarios/scenario_08_multi_symbol.qs
+
+      - name: Upload scenario reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scenario-reports
+          path: markdown/测试/test-reports/
+
+  frontend-e2e:
+    runs-on: windows-latest
+    needs: backend-scenarios
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: npx playwright install msedge
+
+      - name: Run Playwright v2 tests
+        working-directory: frontend
+        run: npx playwright test tests/e2e/scenario-test-v2.spec.js --config=playwright.real.config.js
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scenario-screenshots
+          path: markdown/测试/screenshots/
+
+  summary:
+    runs-on: ubuntu-latest
+    needs: [backend-scenarios, frontend-e2e]
+    if: always()
+    steps:
+      - name: Generate summary
+        run: |
+          echo "## Scenario Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| backend-scenarios | ${{ needs.backend-scenarios.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| frontend-e2e | ${{ needs.frontend-e2e.result }} |" >> $GITHUB_STEP_SUMMARY

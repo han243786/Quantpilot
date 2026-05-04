@@ -131,17 +131,31 @@ Use the dedicated docs below as the active release surface:
 - [First Release Readiness](../implementation/planning/implementation-first-release-readiness.md)
 - [Support Matrix](../implementation/governance/implementation-support-matrix.md)
 - [Test Layer Expectations](../implementation/runtime/implementation-test-layer-expectations.md)
-- [Completed Functional Closeout Ledger](../implementation/planning/implementation-functional-closeout-task-table.md)
+- [Archived Functional Closeout Ledger](../archive/planning-retired/implementation-functional-closeout-task-table.md)
 
 Current repository-level status:
 
 - `cargo test --workspace` passes
+- `cargo clippy --workspace --all-targets -- -D warnings` passes
 - frontend unit tests pass
 - the canonical Windows frontend gate form is `cmd /c npm run ...`
-- `cmd /c npm run test:e2e` passes from `frontend` without a manually
-  pre-started backend because the suite stays on the isolated API-mock contract
-- UTF-8 and mojibake gates pass
+- as of the latest `2026-04-26` P0/P1 closeout, `cmd /c npm run test:e2e`
+  passes from `frontend` without a manually pre-started backend because the
+  suite stays on the isolated API-mock contract
+- UTF-8 and user-facing text gates pass
 - capability-governance snapshot is current
+- P1 history filtering and save flows now keep freshly saved run/backtest
+  records visible through stale filters, then reload persisted detail state
+- the accepted closeout wrapper passes; remaining cleanup is P2 repository
+  hygiene and public-release blocker handling
+- opt-in visual review route/API fixture drift was repaired on `2026-04-26`
+  and re-checked on `2026-04-28`; the spec now captures strategy hub, strategy
+  workspace, backtest detail, and backtest compare screenshots with
+  reduced-motion capture when `VISUAL_REVIEW=1` is set
+- the `postcss <8.5.10` moderate audit finding was fixed through
+  `postcss@8.5.12`; the remaining npm audit risk is the Vite/esbuild chain,
+  still accepted only for private-baseline use and still blocking public
+  release claims
 
 ## V1 freeze direction
 

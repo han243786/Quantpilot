@@ -1,4 +1,5 @@
 import { compileGraph } from "../graph/compileGraph";
+import { getCapabilityActionBlockReason } from "../capabilities/supportMatrix";
 import { runGraphCompileFlow } from "./graphStoreCompileFlow";
 import {
   buildCompileFailureState,
@@ -16,6 +17,39 @@ import {
   saveGraphToStorage,
   stringifyJson
 } from "./graphStoreHelpers";
+
+function buildCapabilityBlockedCompileState(state, graph, reason) {
+  const compileSummary = {
+    compilable: false,
+    backend_verified: false,
+    errors: [reason],
+    diagnostics: [
+      {
+        code: "CAPABILITY_BOUNDARY",
+        severity: "error",
+        target: "capabilities.permission_boundary",
+        message: reason
+      }
+    ]
+  };
+
+  return {
+    graph: {
+      ...graph,
+      compile_summary: compileSummary
+    },
+    compileResult: {
+      graph,
+      compile_summary: compileSummary,
+      backend_compile_error: null
+    },
+    runtime: {
+      ...state.runtime,
+      status: "error",
+      backendError: reason
+    }
+  };
+}
 
 export function createGraphStoreCompileActions(set, get) {
   return {
@@ -98,6 +132,19 @@ export function createGraphStoreCompileActions(set, get) {
     async compileCurrentGraph() {
       const graph = get().graph;
       if (!graph.validation_state.is_valid) return null;
+      const capabilityBlockReason = getCapabilityActionBlockReason({
+        actionKey: "compile",
+        capabilityStatus: get().capabilityStatus,
+        capabilitySource: get().capabilitySource,
+        capabilityMessage: get().capabilityMessage,
+        capabilities: get().capabilities
+      });
+      if (capabilityBlockReason) {
+        set((state) =>
+          buildCapabilityBlockedCompileState(state, graph, capabilityBlockReason)
+        );
+        return null;
+      }
 
       const outcome = await runGraphCompileFlow({
         graph,

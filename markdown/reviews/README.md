@@ -17,4 +17,5 @@ Do not re-open old review findings as active work unless a current gate failure,
 capability-boundary drift, or reproducible regression is found.
 
 - [P2 Responsive Visual Review](./p2-responsive-visual-review.md)
+- [Closeout Change Summary 2026-04-28](./closeout-change-summary-2026-04-28.md)
 - [Performance Reviews](./performance/README.md)

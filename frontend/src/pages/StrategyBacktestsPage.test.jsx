@@ -30,7 +30,7 @@ vi.mock("../components/StrategyBacktestsPanel", () => ({
       <span>{`filtered:${filteredBacktests.length}`}</span>
       <span>{`compare:${compareSelection.length}`}</span>
       <button type="button" onClick={() => onOpenBacktestDetail("bt_alpha_01")}>
-        Open backtest detail
+        打开回测详情
       </button>
     </div>
   )
@@ -140,7 +140,7 @@ describe("StrategyBacktestsPage", () => {
     render(<StrategyBacktestsPage strategyId="alpha_strategy" />);
 
     const hero = screen.getByTestId("strategy-backtests-hero");
-    const routeBar = screen.getByRole("navigation", { name: "Strategy navigation" });
+    const routeBar = screen.getByRole("navigation", { name: "策略导航" });
 
     expect(hero).toHaveTextContent("alpha_strategy");
     expect(routeBar).toBeInTheDocument();
@@ -156,7 +156,7 @@ describe("StrategyBacktestsPage", () => {
       "/backtests/compare?ids=bt_alpha_01,bt_alpha_02&strategy=alpha_strategy"
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Open backtest detail" }));
+    fireEvent.click(screen.getByRole("button", { name: "打开回测详情" }));
     expect(navigateTo).toHaveBeenCalledWith("/backtests/bt_alpha_01?strategy=alpha_strategy");
   });
 });

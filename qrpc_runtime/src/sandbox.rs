@@ -132,6 +132,8 @@ pub trait Sandbox {
         now_ms: u64,
     ) -> Result<Vec<RuntimeEvent>>;
     fn snapshot(&self, now_ms: u64) -> SandboxSnapshot;
+    /// 存储候选模块配置，返回新的 deployment_revision
+    fn swap_module_config(&mut self, module_key: &str, config: serde_json::Value) -> Result<String>;
 }
 
 #[derive(Debug, Clone)]
@@ -469,6 +471,10 @@ impl Sandbox for RealTimeSandbox {
             now_ms,
         )
     }
+
+    fn swap_module_config(&mut self, module_key: &str, config: serde_json::Value) -> Result<String> {
+        self.coordinator.swap_module_config(module_key, config)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -722,6 +728,10 @@ impl Sandbox for FastBacktestSandbox {
             &self.test_mode,
             now_ms,
         )
+    }
+
+    fn swap_module_config(&mut self, module_key: &str, config: serde_json::Value) -> Result<String> {
+        self.coordinator.swap_module_config(module_key, config)
     }
 }
 

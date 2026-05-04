@@ -1,5 +1,9 @@
 import { Suspense, lazy } from "react";
+import { StrategyCardNote } from "./StrategyHubSharedComponents";
 import { WorkspacePanelFallback } from "./StrategyWorkspacePanelFallbacks";
+
+const TASK_LANES_NOTE =
+  "一次只保持一个主通道活跃，必要时再展开辅助通道。";
 
 const ModuleSidebar = lazy(() => import("../components/ModuleSidebar"));
 const StrategyCodePanel = lazy(() => import("../components/StrategyCodePanel"));
@@ -35,12 +39,12 @@ export default function StrategyWorkspaceCodeTab({
   secondaryInspectorDefinitions
 }) {
   return (
-    <Suspense fallback={<WorkspacePanelFallback title="Loading workspace code panel" />}>
+    <Suspense fallback={<WorkspacePanelFallback title="正在加载工作区构建面板" />}>
       <div className="strategy-workspace-code" data-testid="strategy-workspace-code-tab">
         <div className="workspace-mode-banner">
-          <strong>Advanced graph mode</strong>
+          <strong>高级策略图模式</strong>
           <span>
-            Open this mode only for structural changes, wiring work, or source-facing repair tasks.
+            仅在需要结构调整、连线或源码修复时使用此模式。
           </span>
         </div>
         <div className="strategy-workspace-builder strategy-workspace-builder--split">
@@ -58,9 +62,8 @@ export default function StrategyWorkspaceCodeTab({
             >
               <div className="workspace-section-card__header workspace-section-card__header--stack">
                 <div>
-                  <div className="panel-title">Task lanes</div>
-                  <div className="strategy-card-subtitle">
-                    Keep one primary lane active at a time, then expand secondary lanes only when needed.
+                  <div className="panel-title strategy-card-title-note">
+                    <StrategyCardNote label="任务通道" note={TASK_LANES_NOTE} />
                   </div>
                 </div>
                 <div className="workspace-inspector-stack__controls">
@@ -76,7 +79,7 @@ export default function StrategyWorkspaceCodeTab({
                       className="ghost-btn compact-btn"
                       onClick={ui.resumeCodeLaneAutoFollow}
                     >
-                      Resume auto-follow
+                      恢复自动跟随
                     </button>
                   ) : null}
                 </div>
@@ -96,14 +99,14 @@ export default function StrategyWorkspaceCodeTab({
                   {ui.codeLaneNotice.focusLabel ? (
                     <span className="workspace-inspector-stack__reason-focus">
                       {ui.codeLaneNotice.focusChanged
-                        ? `Canvas focus switched to ${ui.codeLaneNotice.focusLabel}.`
-                        : `Canvas focus stayed on ${ui.codeLaneNotice.focusLabel}.`}
+                        ? `画布焦点已切换到 ${ui.codeLaneNotice.focusLabel}。`
+                        : `画布焦点保持在 ${ui.codeLaneNotice.focusLabel}。`}
                     </span>
                   ) : null}
                 </div>
               ) : null}
 
-              <div className="workspace-inspector-nav" aria-label="Code mode tasks">
+              <div className="workspace-inspector-nav" aria-label="构建模式任务">
                 {codeInspectorPanels.map((panel) => (
                   <button
                     key={panel.id}
@@ -142,7 +145,7 @@ export default function StrategyWorkspaceCodeTab({
                         }`}
                         onClick={() => ui.toggleExpandedInspector(panel.id)}
                       >
-                        {isExpanded ? "Hide" : "Show"} {panel.label} lane
+                        {isExpanded ? "隐藏" : "显示"} {panel.label}通道
                       </button>
                       {isExpanded ? (
                         <div className="workspace-inspector-disclosure__panel">

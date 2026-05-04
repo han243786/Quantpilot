@@ -1,0 +1,87 @@
+// QuantPilot v0.2.0 Internal Event Envelope
+// Protocol Buffers v3 schema — canonical definition
+//
+// 此文件为内部事件格式的权威定义。
+// 当前运行时使用 JSON 序列化（前后端边界兼容），
+// 后续阶段将迁移至 Protobuf 二进制格式以降低序列化开销。
+
+syntax = "proto3";
+
+package quantpilot.events.v1;
+
+// 统一事件信封 — 所有内部模块间事件必须使用此格式
+message EventEnvelope {
+  // 事件唯一标识（UUID v4 格式）
+  string event_id = 1;
+
+  // 事件类型名（如 "data.price_tick", "risk.decision"）
+  string event_name = 2;
+
+  // Schema 版本（SemVer），用于消费者兼容性判断
+  string schema_version = 3;
+
+  // 分布式追踪 ID
+  string trace_id = 4;
+
+  // 事件发生时间（UTC epoch milliseconds）
+  int64 ts_event = 5;
+
+  // 事件摄入时间（UTC epoch milliseconds）
+  int64 ts_ingested = 6;
+
+  // 策略标识
+  string strategy_id = 7;
+
+  // 部署修订号
+  string deployment_revision = 8;
+
+  // 事件载荷（类型取决于 event_name）
+  bytes payload = 9;
+
+  // 链阶段
+  ChainStage stage = 10;
+
+  // 严重级别
+  Severity severity = 11;
+
+  // 保留级别
+  RetentionClass retention_class = 12;
+
+  // 原因码（枚举值，不塞长文本）
+  string reason_code = 13;
+
+  // 幂等键（用于去重）
+  string idempotency_key = 14;
+
+  // 配置代际号
+  uint64 config_generation = 15;
+}
+
+// 链阶段枚举
+enum ChainStage {
+  CHAIN_STAGE_UNSPECIFIED = 0;
+  CHAIN_STAGE_DATA = 1;
+  CHAIN_STAGE_INTENT = 2;
+  CHAIN_STAGE_AGENT = 3;
+  CHAIN_STAGE_RISK = 4;
+  CHAIN_STAGE_EXECUTION = 5;
+  CHAIN_STAGE_FILL = 6;
+  CHAIN_STAGE_POSITION = 7;
+  CHAIN_STAGE_SYSTEM = 8;
+}
+
+// 严重级别枚举
+enum Severity {
+  SEVERITY_UNSPECIFIED = 0;
+  SEVERITY_INFO = 1;
+  SEVERITY_WARN = 2;
+  SEVERITY_ERROR = 3;
+}
+
+// 保留级别枚举
+enum RetentionClass {
+  RETENTION_CLASS_UNSPECIFIED = 0;
+  RETENTION_CLASS_KEY = 1;       // 关键事实，长期保留
+  RETENTION_CLASS_SUMMARY = 2;   // 摘要，温层保留
+  RETENTION_CLASS_DEBUG = 3;     // 调试细节，短期保留
+}

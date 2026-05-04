@@ -20,6 +20,6 @@ This file replaces a legacy research report on plugin packaging and ecosystem de
 
 ## Current Source Of Truth
 
-- [Plugin Roadmap](D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/planning/implementation-plugin-roadmap.md)
+- [Retired Plugin Roadmap Summary](D:/rust-js-pr/QuantPilot/quantpilot/markdown/archive/planning-retired/implementation-plugin-roadmap.md)
 - [RFC-020 Plugin Manifest Protocol](D:/rust-js-pr/QuantPilot/quantpilot/markdown/protocol/RFC-020-plugin-manifest-protocol.md)
 - [Support Matrix](D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/governance/implementation-support-matrix.md)

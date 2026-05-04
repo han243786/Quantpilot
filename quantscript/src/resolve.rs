@@ -1,7 +1,8 @@
 use crate::diagnostics::{Diagnostic, DiagnosticSeverity, Span};
 use crate::hir::{
     DefId, ExprId, HirBindingPattern, HirCallArg, HirExpr, HirExprKind, HirFunction, HirImport,
-    HirImportName, HirLetStmt, HirMatchArm, HirMatchArmBody, HirParam, HirStmt, TypedHirModule,
+    HirImportName, HirLetStmt, HirMatchArm, HirMatchArmBody, HirParam, HirStmt, HirStepBlock,
+    HirTestAction, HirTestBlock, HirTestParamValue, TypedHirModule,
 };
 use crate::script::{
     BinaryOp, CallArg, Expr, FunctionDecl, Item, MatchArm, MatchArmBody, ScriptModule, Stmt,
@@ -309,8 +310,88 @@ impl Resolver {
             })
             .collect();
 
+        let test_blocks = module
+            .items
+            .iter()
+            .filter_map(|item| match item {
+                Item::TestBlock(test_block) => Some(HirTestBlock {
+                    name: test_block.name.clone(),
+                    cover: test_block.cover.clone(),
+                    steps: test_block
+                        .steps
+                        .iter()
+                        .map(|step| HirStepBlock {
+                            name: step.name.clone(),
+                            actions: step
+                                .actions
+                                .iter()
+                                .map(|action| match action {
+                                    crate::script::TestAction::Compile => HirTestAction::Compile,
+                                    crate::script::TestAction::Run {
+                                        mode,
+                                        duration_secs,
+                                        save,
+                                    } => HirTestAction::Run {
+                                        mode: mode.clone(),
+                                        duration_secs: *duration_secs,
+                                        save: *save,
+                                    },
+                                    crate::script::TestAction::Backtest {
+                                        source,
+                                        start,
+                                        end,
+                                        seed,
+                                        save,
+                                    } => HirTestAction::Backtest {
+                                        source: source.clone(),
+                                        start: start.clone(),
+                                        end: end.clone(),
+                                        seed: *seed,
+                                        save: *save,
+                                    },
+                                    crate::script::TestAction::Assert(expr) => {
+                                        HirTestAction::Assert(expr.clone())
+                                    }
+                                    crate::script::TestAction::SaveRun => HirTestAction::SaveRun,
+                                    crate::script::TestAction::Modify { node, param, value } => {
+                                        HirTestAction::Modify {
+                                            node: node.clone(),
+                                            param: param.clone(),
+                                            value: match value {
+                                                crate::script::TestParamValue::Number(n) => {
+                                                    HirTestParamValue::Number(*n)
+                                                }
+                                                crate::script::TestParamValue::String(s) => {
+                                                    HirTestParamValue::String(s.clone())
+                                                }
+                                                crate::script::TestParamValue::Bool(b) => {
+                                                    HirTestParamValue::Bool(*b)
+                                                }
+                                            },
+                                        }
+                                    }
+                                    crate::script::TestAction::Wait {
+                                        condition,
+                                        timeout_secs,
+                                    } => HirTestAction::Wait {
+                                        condition: condition.clone(),
+                                        timeout_secs: *timeout_secs,
+                                    },
+                                })
+                                .collect(),
+                        })
+                        .collect(),
+                }),
+                _ => None,
+            })
+            .collect();
+
         ResolveResult {
-            module: TypedHirModule { imports, functions },
+            module: TypedHirModule {
+                imports,
+                functions,
+                test_blocks,
+            },
             types: self.types,
             diagnostics: self.diagnostics,
             expr_semantics: self.expr_semantics,

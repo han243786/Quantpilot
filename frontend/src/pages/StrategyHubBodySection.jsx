@@ -15,14 +15,16 @@ export default function StrategyHubBodySection({ model }) {
 
   return (
     <div className="strategy-hub-body">
-      <Suspense fallback={<StrategyHubTemplateLibraryFallback />}>
-        <StrategyHubTemplateLibrarySection model={model} />
-      </Suspense>
-
       <div className="strategy-hub-grid">
-        <Suspense fallback={<StrategyHubRosterFallback />}>
-          <StrategyHubRosterSection model={model} />
-        </Suspense>
+        <div className="strategy-hub-main">
+          <Suspense fallback={<StrategyHubTemplateLibraryFallback />}>
+            <StrategyHubTemplateLibrarySection model={model} />
+          </Suspense>
+
+          <Suspense fallback={<StrategyHubRosterFallback />}>
+            <StrategyHubRosterSection model={model} />
+          </Suspense>
+        </div>
 
         <Suspense fallback={<StrategyHubInspectorFallback />}>
           <StrategyHubInspectorSection

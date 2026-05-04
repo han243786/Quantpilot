@@ -25,8 +25,10 @@ describe("EventReplaySection", () => {
       kind: "backtest",
       record_id: "backtest_001",
       graph_id: "graph_001",
+      source_event_count: 3,
       total_events: 3,
       cursor: 0,
+      sequence_cursor: 1,
       limit: 12,
       window_end: 3,
       fill_event_count: 1,
@@ -37,6 +39,7 @@ describe("EventReplaySection", () => {
       checkpoints: [
         {
           cursor: 0,
+          sequence_cursor: 1,
           label: "1-3",
           event_id: "evt_001",
           event_time_ms: 1_710_000_000_000
@@ -73,7 +76,9 @@ describe("EventReplaySection", () => {
         }
       ],
       previous_cursor: null,
-      next_cursor: null
+      next_cursor: null,
+      previous_sequence_cursor: null,
+      next_sequence_cursor: null
     });
 
     render(<EventReplaySection runtime={{ selectedBacktestId: "backtest_001" }} />);
@@ -82,7 +87,7 @@ describe("EventReplaySection", () => {
 
     await waitFor(() =>
       expect(fetchBacktestReplay).toHaveBeenCalledWith("backtest_001", {
-        cursor: 0,
+        sequence_cursor: 1,
         limit: 12
       })
     );
@@ -99,8 +104,10 @@ describe("EventReplaySection", () => {
         kind: "run",
         record_id: "run_001",
         graph_id: "graph_001",
+        source_event_count: 8,
         total_events: 8,
         cursor: 0,
+        sequence_cursor: 1,
         limit: 6,
         window_end: 6,
         fill_event_count: 0,
@@ -111,12 +118,14 @@ describe("EventReplaySection", () => {
         checkpoints: [
           {
             cursor: 0,
+            sequence_cursor: 1,
             label: "1-6",
             event_id: "evt_001",
             event_time_ms: 1_710_000_000_000
           },
           {
             cursor: 6,
+            sequence_cursor: 7,
             label: "7-8",
             event_id: "evt_007",
             event_time_ms: 1_710_000_006_000
@@ -149,14 +158,18 @@ describe("EventReplaySection", () => {
           }
         ],
         previous_cursor: null,
-        next_cursor: 6
+        next_cursor: 6,
+        previous_sequence_cursor: null,
+        next_sequence_cursor: 7
       })
       .mockResolvedValueOnce({
         kind: "run",
         record_id: "run_001",
         graph_id: "graph_001",
+        source_event_count: 8,
         total_events: 8,
         cursor: 6,
+        sequence_cursor: 7,
         limit: 6,
         window_end: 8,
         fill_event_count: 1,
@@ -167,12 +180,14 @@ describe("EventReplaySection", () => {
         checkpoints: [
           {
             cursor: 0,
+            sequence_cursor: 1,
             label: "1-6",
             event_id: "evt_001",
             event_time_ms: 1_710_000_000_000
           },
           {
             cursor: 6,
+            sequence_cursor: 7,
             label: "7-8",
             event_id: "evt_007",
             event_time_ms: 1_710_000_006_000
@@ -189,7 +204,51 @@ describe("EventReplaySection", () => {
           }
         ],
         previous_cursor: 0,
-        next_cursor: null
+        next_cursor: null,
+        previous_sequence_cursor: 1,
+        next_sequence_cursor: null
+      })
+      .mockResolvedValueOnce({
+        kind: "run",
+        record_id: "run_001",
+        graph_id: "graph_001",
+        source_event_count: 8,
+        total_events: 8,
+        cursor: 0,
+        sequence_cursor: 1,
+        limit: 6,
+        window_end: 6,
+        fill_event_count: 0,
+        account: {
+          cash_balance: 5_000,
+          equity_estimate: 5_010
+        },
+        checkpoints: [
+          {
+            cursor: 0,
+            sequence_cursor: 1,
+            label: "1-6",
+            event_id: "evt_001",
+            event_time_ms: 1_710_000_000_000
+          },
+          {
+            cursor: 6,
+            sequence_cursor: 7,
+            label: "7-8",
+            event_id: "evt_007",
+            event_time_ms: 1_710_000_006_000
+          }
+        ],
+        events: [
+          {
+            sequence_no: 1,
+            event: { event_type: "RuntimeNotice", summary: "Started", payload: {} }
+          }
+        ],
+        previous_cursor: null,
+        next_cursor: 6,
+        previous_sequence_cursor: null,
+        next_sequence_cursor: 7
       });
 
     render(<EventReplaySection runtime={{ selectedHistoryRunId: "run_001" }} />);
@@ -201,7 +260,7 @@ describe("EventReplaySection", () => {
 
     await waitFor(() =>
       expect(fetchRunReplay).toHaveBeenNthCalledWith(1, "run_001", {
-        cursor: 0,
+        sequence_cursor: 1,
         limit: 6
       })
     );
@@ -210,12 +269,23 @@ describe("EventReplaySection", () => {
 
     await waitFor(() =>
       expect(fetchRunReplay).toHaveBeenNthCalledWith(2, "run_001", {
-        cursor: 6,
+        sequence_cursor: 7,
         limit: 6
       })
     );
 
     expect(screen.getByTestId("event-replay-window")).toHaveTextContent("7-8/8");
     expect(screen.getByTestId("event-replay-row-7")).toHaveTextContent("ExecutionFilled");
+
+    fireEvent.click(screen.getByTestId("event-replay-prev"));
+
+    await waitFor(() =>
+      expect(fetchRunReplay).toHaveBeenNthCalledWith(3, "run_001", {
+        sequence_cursor: 1,
+        limit: 6
+      })
+    );
+
+    expect(screen.getByTestId("event-replay-window")).toHaveTextContent("1-6/8");
   });
 });

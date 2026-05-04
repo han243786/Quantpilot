@@ -21,10 +21,9 @@ pub(super) fn register_graph_routes(router: Router<AppState>) -> Router<AppState
         )
         .route("/api/graphs/:graph_id/reveal", post(reveal_graph_file))
         .route(
-            "/api/graphs/:graph_id/reveal-folder",
-            post(open_graph_folder),
+            "/api/graphs/:graph_id",
+            get(load_graph).delete(delete_graph),
         )
-        .route("/api/graphs/:graph_id", get(load_graph))
 }
 
 pub(super) async fn save_graph(
@@ -193,6 +192,30 @@ pub(super) async fn list_graph_audit_history(
         .map_err(io_error)
 }
 
+pub(super) async fn delete_graph(
+    State(state): State<AppState>,
+    Path(graph_id): Path<String>,
+) -> Result<Json<DeleteGraphResponse>, (StatusCode, String)> {
+    validate_graph_id(&graph_id).map_err(internal_error)?;
+    let graph_path = state.graph_store_dir.join(format!("{}.json", graph_id));
+    if !fs::try_exists(&graph_path).await.map_err(io_error)? {
+        return Err(not_found_io_error(std::io::Error::new(
+            std::io::ErrorKind::NotFound,
+            format!("graph `{}` not found", graph_id),
+        )));
+    }
+
+    remove_file_if_exists(&graph_path).await?;
+    remove_file_if_exists(&state.graph_store_dir.join(format!("{}.qs", graph_id))).await?;
+    remove_dir_if_exists(&graph_version_dir(&state.graph_store_dir, &graph_id)).await?;
+    refresh_latest_graph_after_delete(&state.graph_store_dir, &graph_id).await?;
+
+    Ok(Json(DeleteGraphResponse {
+        graph_id,
+        deleted: true,
+    }))
+}
+
 pub(super) async fn reveal_graph_file(
     State(state): State<AppState>,
     Path(graph_id): Path<String>,
@@ -214,31 +237,6 @@ pub(super) async fn reveal_graph_file(
     Ok(Json(RevealGraphResponse {
         graph_id,
         path: reveal_path.to_string_lossy().to_string(),
-    }))
-}
-
-pub(super) async fn open_graph_folder(
-    State(state): State<AppState>,
-    Path(graph_id): Path<String>,
-) -> Result<Json<RevealGraphResponse>, (StatusCode, String)> {
-    validate_graph_id(&graph_id).map_err(internal_error)?;
-    let graph_path = state.graph_store_dir.join(format!("{}.json", graph_id));
-    if !fs::try_exists(&graph_path).await.map_err(io_error)? {
-        return Err(not_found_io_error(std::io::Error::new(
-            std::io::ErrorKind::NotFound,
-            format!("graph `{}` not found", graph_id),
-        )));
-    }
-
-    let reveal_path = resolve_graph_reveal_path(&graph_path)
-        .await
-        .map_err(internal_error)?;
-    let folder_path = graph_folder_path(&reveal_path);
-    open_directory_in_file_manager(&folder_path).map_err(internal_error)?;
-
-    Ok(Json(RevealGraphResponse {
-        graph_id,
-        path: folder_path.to_string_lossy().to_string(),
     }))
 }
 
@@ -510,6 +508,55 @@ fn graph_version_dir(graph_store_dir: &FsPath, graph_id: &str) -> PathBuf {
     graph_store_dir.join("versions").join(graph_id)
 }
 
+async fn refresh_latest_graph_after_delete(
+    graph_store_dir: &FsPath,
+    deleted_graph_id: &str,
+) -> Result<(), (StatusCode, String)> {
+    let latest_path = graph_store_dir.join("latest.json");
+    if !fs::try_exists(&latest_path).await.map_err(io_error)? {
+        return Ok(());
+    }
+
+    let latest = read_graph_json(&latest_path).await?;
+    let latest_graph_id = latest
+        .get("metadata")
+        .and_then(|metadata| metadata.get("graph_id"))
+        .and_then(Value::as_str)
+        .unwrap_or_default();
+    if latest_graph_id != deleted_graph_id {
+        return Ok(());
+    }
+
+    let remaining = read_graph_index(graph_store_dir).await?;
+    if let Some(next_latest) = remaining.first() {
+        let next_latest_path = graph_store_dir.join(format!("{}.json", next_latest.graph_id));
+        let content = fs::read_to_string(&next_latest_path)
+            .await
+            .map_err(not_found_io_error)?;
+        fs::write(&latest_path, content).await.map_err(io_error)?;
+    } else {
+        remove_file_if_exists(&latest_path).await?;
+    }
+
+    Ok(())
+}
+
+async fn remove_file_if_exists(path: &FsPath) -> Result<(), (StatusCode, String)> {
+    match fs::remove_file(path).await {
+        Ok(()) => Ok(()),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
+        Err(error) => Err(io_error(error)),
+    }
+}
+
+async fn remove_dir_if_exists(path: &FsPath) -> Result<(), (StatusCode, String)> {
+    match fs::remove_dir_all(path).await {
+        Ok(()) => Ok(()),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
+        Err(error) => Err(io_error(error)),
+    }
+}
+
 fn graph_version_json_path(graph_store_dir: &FsPath, graph_id: &str, version_id: &str) -> PathBuf {
     graph_version_dir(graph_store_dir, graph_id).join(format!("{}.json", version_id))
 }
@@ -548,7 +595,7 @@ async fn resolve_graph_reveal_path(graph_json_path: &FsPath) -> anyhow::Result<P
     resolve_graph_reveal_path_from_value(&value, graph_json_path).await
 }
 
-async fn resolve_graph_reveal_path_from_value(
+pub(super) async fn resolve_graph_reveal_path_from_value(
     value: &Value,
     fallback_path: &FsPath,
 ) -> anyhow::Result<PathBuf> {
@@ -563,12 +610,30 @@ async fn resolve_graph_reveal_path_from_value(
         .map(PathBuf::from);
 
     if let Some(path) = saved_path {
-        if fs::try_exists(&path).await.unwrap_or(false) {
-            return Ok(path);
+        let candidates = if path.is_absolute() {
+            vec![path]
+        } else {
+            let mut items = vec![path.clone()];
+            if let Some(parent) = fallback_path.parent() {
+                items.push(parent.join(&path));
+            }
+            items
+        };
+
+        for candidate in candidates {
+            if fs::try_exists(&candidate).await.unwrap_or(false) {
+                return canonical_existing_path(&candidate).await;
+            }
         }
     }
 
-    Ok(fallback_path.to_path_buf())
+    canonical_existing_path(fallback_path).await
+}
+
+async fn canonical_existing_path(path: &FsPath) -> anyhow::Result<PathBuf> {
+    fs::canonicalize(path)
+        .await
+        .with_context(|| format!("failed to resolve graph reveal path `{}`", path.display()))
 }
 
 fn reveal_path_in_file_manager(path: &FsPath) -> anyhow::Result<()> {
@@ -594,44 +659,6 @@ fn reveal_path_in_file_manager(path: &FsPath) -> anyhow::Result<()> {
         let parent = path.parent().unwrap_or(path);
         Command::new("xdg-open")
             .arg(parent)
-            .spawn()
-            .context("failed to open graph directory")?;
-    }
-
-    Ok(())
-}
-
-fn graph_folder_path(path: &FsPath) -> PathBuf {
-    if path.is_dir() {
-        return path.to_path_buf();
-    }
-
-    path.parent()
-        .map(FsPath::to_path_buf)
-        .unwrap_or_else(|| path.to_path_buf())
-}
-
-fn open_directory_in_file_manager(path: &FsPath) -> anyhow::Result<()> {
-    #[cfg(target_os = "windows")]
-    {
-        Command::new("explorer")
-            .arg(path)
-            .spawn()
-            .context("failed to open graph directory in Explorer")?;
-    }
-
-    #[cfg(target_os = "macos")]
-    {
-        Command::new("open")
-            .arg(path)
-            .spawn()
-            .context("failed to open graph directory in Finder")?;
-    }
-
-    #[cfg(all(unix, not(target_os = "macos")))]
-    {
-        Command::new("xdg-open")
-            .arg(path)
             .spawn()
             .context("failed to open graph directory")?;
     }

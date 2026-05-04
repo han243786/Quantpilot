@@ -15,6 +15,7 @@ function buildState() {
       status: "idle",
       connectionState: "disconnected",
       account: null,
+      artifactPersistenceStatus: "idle",
       backtestArtifacts: null,
       diagnostics: null,
       events: [],
@@ -24,6 +25,11 @@ function buildState() {
       highlightedNodeIds: []
     }
   };
+}
+
+function withoutArtifactPersistenceStatus(runtime) {
+  const { artifactPersistenceStatus, ...rest } = runtime;
+  return rest;
 }
 
 describe("graphStore persistence consistency", () => {
@@ -53,7 +59,11 @@ describe("graphStore persistence consistency", () => {
       reloadProjection.highlightedNodeIds
     );
 
-    expect(reloadResult.runtime).toEqual(liveResult.runtime);
+    expect(liveResult.runtime.artifactPersistenceStatus).toBe("transient");
+    expect(reloadResult.runtime.artifactPersistenceStatus).toBe("saved");
+    expect(withoutArtifactPersistenceStatus(reloadResult.runtime)).toEqual(
+      withoutArtifactPersistenceStatus(liveResult.runtime)
+    );
     expect(reloadResult.selectedNodeId).toBe(liveResult.selectedNodeId);
     expect(reloadResult.graph.metadata.runtime_binding).toEqual(
       liveResult.nextGraph.metadata.runtime_binding

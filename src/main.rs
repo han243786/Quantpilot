@@ -1,12 +1,17 @@
+mod alert_engine;
 mod api_errors;
+mod api_test_scenario;
 mod app_router;
 mod app_runtime_helpers;
+mod auth_middleware;
+mod rate_limiter;
 mod backtest_artifacts;
 mod backtest_compare;
 mod backtest_compare_core;
 mod backtest_compare_narrative;
 mod backtest_compare_types;
 mod capability_api;
+mod chaos_experiment;
 mod cli_support;
 mod collaboration;
 mod compile_api;
@@ -18,12 +23,17 @@ mod frontend_runtime_mapping;
 mod graph_api;
 mod graph_quantscript_api;
 mod graph_version_compare;
+mod hotswap_api;
+mod runbook;
 mod runtime_api;
 mod runtime_diagnostics;
 mod runtime_event_projection;
 mod runtime_persistence;
 mod runtime_response_mapping;
 mod runtime_validation;
+mod sandbox_verification;
+mod snapshot_service;
+mod test_runner;
 
 use anyhow::{bail, Context};
 use async_stream::stream;
@@ -81,8 +91,11 @@ use std::{
     net::SocketAddr,
     path::{Path as FsPath, PathBuf},
     process::Command,
-    sync::Arc,
-    time::Duration,
+    sync::{
+        atomic::{AtomicU64, Ordering},
+        Arc,
+    },
+    time::{Duration, Instant},
 };
 use tokio::{fs, sync::RwLock, time::sleep};
 use tower_http::cors::{Any, CorsLayer};
@@ -91,8 +104,12 @@ use api_errors::*;
 use app_router::*;
 use app_runtime_helpers::*;
 use backtest_artifacts::{
-    load_backtest_record_from_directory, persist_backtest_artifacts, BacktestArtifactViews,
-    ExecutionAssumptionsModule, ExecutionAssumptionsTag,
+    build_backtest_artifact_views, cleanup_backtest_promotion_work_dirs,
+    cleanup_transient_backtest_records, delete_transient_backtest_record,
+    is_backtest_promotion_work_dir, load_backtest_record_from_directory,
+    load_transient_backtest_record, maybe_spill_transient_backtest_record,
+    persist_backtest_artifacts, BacktestArtifactViews, ExecutionAssumptionsModule,
+    ExecutionAssumptionsTag, DEFAULT_TRANSIENT_BACKTEST_SPILL_THRESHOLD_BYTES,
 };
 #[cfg(test)]
 use backtest_compare_core::*;
@@ -122,6 +139,11 @@ const RUN_WINDOW_MS: u64 = 5_000;
 const SSE_EVENT_DELAY_MS: u64 = 350;
 const BACKTEST_DETERMINISTIC_SEED: u64 = 7;
 const CAPABILITY_API_VERSION: &str = "quantpilot-capabilities/v1";
+const CAPABILITY_SCHEMA_VERSION: &str = "quantpilot/capabilities-schema/v1";
+const CAPABILITY_PERMISSION_MODEL_VERSION: &str = "quantpilot/permission-boundary/v1";
+const CAPABILITY_VERSIONING_MODEL_VERSION: &str = "quantpilot/versioning-model/v1";
+const RUNTIME_GOVERNANCE_SCHEMA_VERSION: &str = "quantpilot/runtime-governance/v1";
+const RUNTIME_CHAIN_STAGES: [&str; 6] = ["data", "intent", "agent", "risk", "execution", "fill"];
 
 const DECLARED_FRONTEND_MODULE_KEYS: [&str; 14] = [
     "builtin.data.kline",
@@ -162,11 +184,231 @@ struct AppState {
     runs: Arc<RwLock<BTreeMap<String, RunRecord>>>,
     backtests: Arc<RwLock<BTreeMap<String, BacktestRecord>>>,
     experiments: Arc<RwLock<BTreeMap<String, ExperimentRecord>>>,
+    parameter_mutations: Arc<RwLock<BTreeMap<String, RuntimeParameterMutationRecord>>>,
+    ai_proposals: Arc<RwLock<BTreeMap<String, RuntimeAiProposalRecord>>>,
+    evidence_metrics: Arc<RuntimeEvidenceMetrics>,
     graph_store_dir: Arc<PathBuf>,
     run_store_dir: Arc<PathBuf>,
     backtest_store_dir: Arc<PathBuf>,
     experiment_store_dir: Arc<PathBuf>,
     audit_store_dir: Arc<PathBuf>,
+    report_store_dir: Arc<PathBuf>,
+    mutation_store_dir: Arc<PathBuf>,
+    ai_proposal_store_dir: Arc<PathBuf>,
+    hotswap_records: Arc<RwLock<BTreeMap<String, HotSwapRecord>>>,
+    transient_backtest_store_dir: Arc<PathBuf>,
+    transient_backtest_spill_threshold_bytes: u64,
+    // Block 5 新增
+    approval_records: Arc<RwLock<BTreeMap<String, RuntimeApprovalRecord>>>,
+    sandbox_reports: Arc<RwLock<BTreeMap<String, SandboxVerificationReport>>>,
+    alert_rules: Arc<RwLock<Vec<AlertRule>>>,
+    alert_firings: Arc<RwLock<BTreeMap<String, AlertFiring>>>,
+    snapshots: Arc<RwLock<BTreeMap<String, DeploymentSignatureSnapshot>>>,
+    chaos_experiments: Arc<RwLock<BTreeMap<String, ChaosExperimentReport>>>,
+    approval_store_dir: Arc<PathBuf>,
+    sandbox_report_store_dir: Arc<PathBuf>,
+    alert_store_dir: Arc<PathBuf>,
+    snapshot_store_dir: Arc<PathBuf>,
+    chaos_store_dir: Arc<PathBuf>,
+    chaos_mode: Arc<std::sync::atomic::AtomicBool>,
+    config_generation: Arc<AtomicU64>,
+    config_generation_history: Arc<std::sync::Mutex<Vec<qrpc_runtime::ConfigGenerationEntry>>>,
+    #[cfg(test)]
+    test_storage_root: Option<Arc<TestStorageRoot>>,
+}
+
+#[derive(Default)]
+struct RuntimeEvidenceMetrics {
+    report_generation_count: AtomicU64,
+    report_generation_failure_count: AtomicU64,
+    report_source_changed_count: AtomicU64,
+    replay_page_count: AtomicU64,
+    replay_page_latency_total_ms: AtomicU64,
+    compact_projection_source_event_count_total: AtomicU64,
+    compact_projection_retained_event_count_total: AtomicU64,
+    compact_detail_window_required_count: AtomicU64,
+    mutation_proposal_created_count: AtomicU64,
+    mutation_proposal_rejected_count: AtomicU64,
+    mutation_activation_scheduled_count: AtomicU64,
+    mutation_activation_applied_count: AtomicU64,
+    mutation_activation_failed_count: AtomicU64,
+    mutation_activation_latency_total_ms: AtomicU64,
+    mutation_safe_window_denied_count: AtomicU64,
+    mutation_rollback_attempt_count: AtomicU64,
+    mutation_rollback_scheduled_count: AtomicU64,
+    mutation_rollback_applied_count: AtomicU64,
+    mutation_rollback_failed_count: AtomicU64,
+}
+
+impl RuntimeEvidenceMetrics {
+    fn record_report_generation(&self, report: &RuntimeEvidenceReportRecord) {
+        self.report_generation_count.fetch_add(1, Ordering::Relaxed);
+        if report.status != RuntimeReportLifecycleStatus::Ready {
+            self.report_generation_failure_count
+                .fetch_add(1, Ordering::Relaxed);
+        }
+        self.compact_projection_source_event_count_total
+            .fetch_add(report.source_event_count as u64, Ordering::Relaxed);
+        self.compact_projection_retained_event_count_total
+            .fetch_add(report.retained_event_count as u64, Ordering::Relaxed);
+        if report.retained_event_count == 0
+            || report.retained_event_count == report.source_event_count
+        {
+            self.compact_detail_window_required_count
+                .fetch_add(1, Ordering::Relaxed);
+        }
+    }
+
+    fn record_report_source_changed(&self) {
+        self.report_source_changed_count
+            .fetch_add(1, Ordering::Relaxed);
+        self.report_generation_failure_count
+            .fetch_add(1, Ordering::Relaxed);
+    }
+
+    fn record_replay_page(&self, latency_ms: u64) {
+        self.replay_page_count.fetch_add(1, Ordering::Relaxed);
+        self.replay_page_latency_total_ms
+            .fetch_add(latency_ms, Ordering::Relaxed);
+    }
+
+    fn record_mutation_proposal(&self, status: RuntimeParameterMutationStatus) {
+        match status {
+            RuntimeParameterMutationStatus::Proposed => {
+                self.mutation_proposal_created_count
+                    .fetch_add(1, Ordering::Relaxed);
+            }
+            RuntimeParameterMutationStatus::Rejected => {
+                self.mutation_proposal_rejected_count
+                    .fetch_add(1, Ordering::Relaxed);
+            }
+            _ => {}
+        }
+    }
+
+    fn record_mutation_activation_scheduled(&self) {
+        self.mutation_activation_scheduled_count
+            .fetch_add(1, Ordering::Relaxed);
+    }
+
+    fn record_mutation_activation_applied(&self, latency_ms: u64) {
+        self.mutation_activation_applied_count
+            .fetch_add(1, Ordering::Relaxed);
+        self.mutation_activation_latency_total_ms
+            .fetch_add(latency_ms, Ordering::Relaxed);
+    }
+
+    fn record_mutation_activation_failed(&self) {
+        self.mutation_activation_failed_count
+            .fetch_add(1, Ordering::Relaxed);
+    }
+
+    fn record_mutation_safe_window_denied(&self) {
+        self.mutation_safe_window_denied_count
+            .fetch_add(1, Ordering::Relaxed);
+    }
+
+    fn record_mutation_rollback_attempt(&self) {
+        self.mutation_rollback_attempt_count
+            .fetch_add(1, Ordering::Relaxed);
+    }
+
+    fn record_mutation_rollback_scheduled(&self) {
+        self.mutation_rollback_scheduled_count
+            .fetch_add(1, Ordering::Relaxed);
+    }
+
+    fn record_mutation_rollback_applied(&self) {
+        self.mutation_rollback_applied_count
+            .fetch_add(1, Ordering::Relaxed);
+    }
+
+    fn record_mutation_rollback_failed(&self) {
+        self.mutation_rollback_failed_count
+            .fetch_add(1, Ordering::Relaxed);
+    }
+
+    fn snapshot(&self) -> RuntimeEvidenceMetricsSnapshot {
+        let replay_page_count = self.replay_page_count.load(Ordering::Relaxed);
+        let replay_page_latency_total_ms =
+            self.replay_page_latency_total_ms.load(Ordering::Relaxed);
+        let mutation_activation_applied_count = self
+            .mutation_activation_applied_count
+            .load(Ordering::Relaxed);
+        let mutation_activation_latency_total_ms = self
+            .mutation_activation_latency_total_ms
+            .load(Ordering::Relaxed);
+        RuntimeEvidenceMetricsSnapshot {
+            report_generation_count: self.report_generation_count.load(Ordering::Relaxed),
+            report_generation_failure_count: self
+                .report_generation_failure_count
+                .load(Ordering::Relaxed),
+            report_source_changed_count: self.report_source_changed_count.load(Ordering::Relaxed),
+            replay_page_count,
+            replay_page_latency_total_ms,
+            replay_page_latency_avg_ms: if replay_page_count == 0 {
+                0.0
+            } else {
+                replay_page_latency_total_ms as f64 / replay_page_count as f64
+            },
+            compact_projection_source_event_count_total: self
+                .compact_projection_source_event_count_total
+                .load(Ordering::Relaxed),
+            compact_projection_retained_event_count_total: self
+                .compact_projection_retained_event_count_total
+                .load(Ordering::Relaxed),
+            compact_detail_window_required_count: self
+                .compact_detail_window_required_count
+                .load(Ordering::Relaxed),
+            mutation_proposal_created_count: self
+                .mutation_proposal_created_count
+                .load(Ordering::Relaxed),
+            mutation_proposal_rejected_count: self
+                .mutation_proposal_rejected_count
+                .load(Ordering::Relaxed),
+            mutation_activation_scheduled_count: self
+                .mutation_activation_scheduled_count
+                .load(Ordering::Relaxed),
+            mutation_activation_applied_count,
+            mutation_activation_failed_count: self
+                .mutation_activation_failed_count
+                .load(Ordering::Relaxed),
+            mutation_activation_latency_total_ms,
+            mutation_activation_latency_avg_ms: if mutation_activation_applied_count == 0 {
+                0.0
+            } else {
+                mutation_activation_latency_total_ms as f64
+                    / mutation_activation_applied_count as f64
+            },
+            mutation_safe_window_denied_count: self
+                .mutation_safe_window_denied_count
+                .load(Ordering::Relaxed),
+            mutation_rollback_attempt_count: self
+                .mutation_rollback_attempt_count
+                .load(Ordering::Relaxed),
+            mutation_rollback_scheduled_count: self
+                .mutation_rollback_scheduled_count
+                .load(Ordering::Relaxed),
+            mutation_rollback_applied_count: self
+                .mutation_rollback_applied_count
+                .load(Ordering::Relaxed),
+            mutation_rollback_failed_count: self
+                .mutation_rollback_failed_count
+                .load(Ordering::Relaxed),
+        }
+    }
+}
+
+#[cfg(test)]
+struct TestStorageRoot {
+    path: PathBuf,
+}
+
+#[cfg(test)]
+impl Drop for TestStorageRoot {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.path);
+    }
 }
 
 #[derive(Debug, Serialize)]
@@ -177,10 +419,85 @@ struct HealthResponse {
 #[derive(Debug, Serialize)]
 struct CapabilityResponse {
     api_version: &'static str,
+    schema_version: &'static str,
+    schema_hash: String,
+    chain_stages: Vec<&'static str>,
     strategy_ir: StrategyIrCapabilitySummary,
     runtime: RuntimeCapabilitySummary,
     market_data: MarketDataCapabilitySummary,
     frontend: FrontendCapabilitySummary,
+    versioning: CapabilityVersioningSummary,
+    permission_boundary: CapabilityPermissionBoundarySummary,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+struct CapabilityVersioningSummary {
+    model_version: &'static str,
+    strategy_version_source: &'static str,
+    parameter_version_policy: &'static str,
+    deployment_revision_policy: &'static str,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+struct CapabilityPermissionBoundarySummary {
+    model_version: &'static str,
+    execution_owner_module: &'static str,
+    live_execution_allowed: bool,
+    ai_write_policy: AiWritePolicy,
+    plugin_network_default: BoundaryAccessPolicy,
+    non_execution_order_access: BoundaryAccessPolicy,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum AiWritePolicy {
+    ProposalOnly,
+    Disabled,
+}
+
+impl AiWritePolicy {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::ProposalOnly => "proposal_only",
+            Self::Disabled => "disabled",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum BoundaryAccessPolicy {
+    Deny,
+    Allow,
+}
+
+impl BoundaryAccessPolicy {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::Deny => "deny",
+            Self::Allow => "allow",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum RuntimeEventStage {
+    Data,
+    Intent,
+    Agent,
+    Risk,
+    Execution,
+    Fill,
+    System,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum RuntimeEventRetentionClass {
+    Key,
+    Summary,
+    Debug,
 }
 
 #[derive(Debug, Serialize)]
@@ -290,28 +607,269 @@ async fn run_api_server() -> anyhow::Result<()> {
     let run_store_dir = PathBuf::from("storage/runs");
     let backtest_store_dir = PathBuf::from("storage/backtests");
     let experiment_store_dir = PathBuf::from("storage/experiments");
+    // Block 5 新存储目录
+    let approval_store_dir = PathBuf::from("storage/approvals");
+    let sandbox_report_store_dir = PathBuf::from("storage/sandbox-reports");
+    let alert_store_dir = PathBuf::from("storage/alerts");
+    let snapshot_store_dir = PathBuf::from("storage/snapshots");
+    let chaos_store_dir = PathBuf::from("storage/chaos");
+    let audit_store_dir = PathBuf::from("storage/audit");
+    let report_store_dir = PathBuf::from("storage/reports");
     fs::create_dir_all(&graph_store_dir).await?;
     fs::create_dir_all(&run_store_dir).await?;
     fs::create_dir_all(&backtest_store_dir).await?;
     fs::create_dir_all(&experiment_store_dir).await?;
+    fs::create_dir_all(&approval_store_dir).await?;
+    fs::create_dir_all(&sandbox_report_store_dir).await?;
+    fs::create_dir_all(&alert_store_dir).await?;
+    fs::create_dir_all(&snapshot_store_dir).await?;
+    fs::create_dir_all(&chaos_store_dir).await?;
+    fs::create_dir_all(&audit_store_dir).await?;
+    fs::create_dir_all(&report_store_dir).await?;
+    if let Err(error) = cleanup_backtest_promotion_work_dirs(&backtest_store_dir).await {
+        eprintln!(
+            "warning: failed to clean stale backtest promotion temp directories: {}",
+            error
+        );
+    }
 
     let state = new_app_state(graph_store_dir, run_store_dir, backtest_store_dir);
+    // Block 5: 初始化告警规则
+    alert_engine::init_alert_rules(&state).await;
+    // Block 5: 从磁盘预热持久化数据
+    warm_persisted_state(&state).await;
+    if let Err(error) =
+        cleanup_transient_backtest_records(state.transient_backtest_store_dir.as_ref()).await
+    {
+        eprintln!(
+            "warning: failed to clean stale transient backtest directories: {}",
+            error
+        );
+    }
+
+    let cors_origin = env::var("QUANTPILOT_CORS_ORIGIN")
+        .unwrap_or_else(|_| "http://127.0.0.1:5173,http://localhost:5173".to_string());
+    let cors_origins: Vec<HeaderValue> = cors_origin
+        .split(',')
+        .filter_map(|s| HeaderValue::from_str(s.trim()).ok())
+        .collect();
 
     let cors = CorsLayer::new()
-        .allow_origin([
-            HeaderValue::from_static("http://127.0.0.1:5173"),
-            HeaderValue::from_static("http://localhost:5173"),
-        ])
-        .allow_methods([Method::GET, Method::POST, Method::OPTIONS])
+        .allow_origin(cors_origins)
+        .allow_methods([Method::GET, Method::POST, Method::DELETE, Method::OPTIONS])
         .allow_headers(Any);
 
-    let app = build_app_router(state).layer(cors);
+    let app = build_app_router(state.clone())
+        .layer(cors)
+        .layer(axum::middleware::from_fn(
+            rate_limiter::rate_limit_middleware,
+        ))
+        .layer(axum::middleware::from_fn(
+            auth_middleware::api_key_auth,
+        ));
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    // Block 5 P1-5 + P3-4: 审批超时 + 观察窗口后台任务
+    let expiry_state = state.clone();
+    tokio::spawn(async move {
+        loop {
+            tokio::time::sleep(tokio::time::Duration::from_secs(60)).await;
+            process_expired_approvals(&expiry_state).await;
+            check_observation_windows(&expiry_state).await;
+        }
+    });
+
+    let port: u16 = env::var("QUANTPILOT_PORT")
+        .unwrap_or_else(|_| "3000".to_string())
+        .parse()
+        .unwrap_or(3000);
+    let addr = SocketAddr::from(([127, 0, 0, 1], port));
     println!("QuantPilot API listening on http://{}", addr);
     let listener = tokio::net::TcpListener::bind(addr).await?;
     axum::serve(listener, app).await?;
     Ok(())
+}
+
+async fn warm_persisted_state(state: &AppState) {
+    // 从磁盘加载审批记录
+    if let Ok(mut entries) = fs::read_dir(state.approval_store_dir.as_ref()).await {
+        while let Ok(Some(entry)) = entries.next_entry().await {
+            if let Ok(data) = fs::read(entry.path()).await {
+                if let Ok(record) = serde_json::from_slice::<RuntimeApprovalRecord>(&data) {
+                    state
+                        .approval_records
+                        .write()
+                        .await
+                        .insert(record.approval_id.clone(), record);
+                }
+            }
+        }
+    }
+    // 从磁盘加载快照
+    if let Ok(mut entries) = fs::read_dir(state.snapshot_store_dir.as_ref()).await {
+        while let Ok(Some(entry)) = entries.next_entry().await {
+            if let Ok(data) = fs::read(entry.path()).await {
+                if let Ok(snapshot) = serde_json::from_slice::<DeploymentSignatureSnapshot>(&data) {
+                    state
+                        .snapshots
+                        .write()
+                        .await
+                        .insert(snapshot.snapshot_id.clone(), snapshot);
+                }
+            }
+        }
+    }
+    // 从磁盘加载告警 firing 状态
+    if let Ok(mut entries) = fs::read_dir(state.alert_store_dir.as_ref()).await {
+        while let Ok(Some(entry)) = entries.next_entry().await {
+            if let Ok(data) = fs::read(entry.path()).await {
+                if let Ok(firing) = serde_json::from_slice::<AlertFiring>(&data) {
+                    state
+                        .alert_firings
+                        .write()
+                        .await
+                        .insert(firing.firing_id.clone(), firing);
+                }
+            }
+        }
+    }
+    // 从磁盘加载沙箱报告
+    if let Ok(mut entries) = fs::read_dir(state.sandbox_report_store_dir.as_ref()).await {
+        while let Ok(Some(entry)) = entries.next_entry().await {
+            if let Ok(data) = fs::read(entry.path()).await {
+                if let Ok(report) = serde_json::from_slice::<SandboxVerificationReport>(&data) {
+                    state
+                        .sandbox_reports
+                        .write()
+                        .await
+                        .insert(report.proposal_id.clone(), report);
+                }
+            }
+        }
+    }
+    // 从磁盘加载混沌实验
+    if let Ok(mut entries) = fs::read_dir(state.chaos_store_dir.as_ref()).await {
+        while let Ok(Some(entry)) = entries.next_entry().await {
+            if let Ok(data) = fs::read(entry.path()).await {
+                if let Ok(experiment) = serde_json::from_slice::<ChaosExperimentReport>(&data) {
+                    state
+                        .chaos_experiments
+                        .write()
+                        .await
+                        .insert(experiment.experiment_id.clone(), experiment);
+                }
+            }
+        }
+    }
+    eprintln!(
+        "[startup] warmed state: {} approvals, {} snapshots, {} alerts, {} sandbox reports, {} chaos experiments",
+        state.approval_records.read().await.len(),
+        state.snapshots.read().await.len(),
+        state.alert_firings.read().await.len(),
+        state.sandbox_reports.read().await.len(),
+        state.chaos_experiments.read().await.len(),
+    );
+}
+
+// Block 5 P1-5: 审批超时自动处理
+async fn process_expired_approvals(state: &AppState) {
+    let now_ms = current_time_ms();
+    let mut approvals = state.approval_records.write().await;
+    for approval in approvals.values_mut() {
+        if approval.review_state == RuntimeApprovalReviewState::Pending
+            || approval.review_state == RuntimeApprovalReviewState::UnderReview
+        {
+            if now_ms > approval.expires_at_ms {
+                approval.review_state = RuntimeApprovalReviewState::Expired;
+                approval.lifecycle.push(RuntimeApprovalLifecycleEntry {
+                    review_state: RuntimeApprovalReviewState::Expired,
+                    event_id: format!("event_apr_expired_{}", now_ms),
+                    sequence_no: approval.lifecycle.len() as u64 + 1,
+                    occurred_at_ms: now_ms,
+                    reason_code: "APPROVAL_EXPIRED".to_string(),
+                    message: format!(
+                        "审批单已过期 (L{}审批, {}h超时)",
+                        match approval.approval_level {
+                            RuntimeApprovalLevel::L1SingleReviewer => 1,
+                            RuntimeApprovalLevel::L2DualReviewer => 2,
+                            RuntimeApprovalLevel::L3RiskOwnerReview => 3,
+                        },
+                        match approval.approval_level {
+                            RuntimeApprovalLevel::L1SingleReviewer => 24,
+                            RuntimeApprovalLevel::L2DualReviewer => 48,
+                            RuntimeApprovalLevel::L3RiskOwnerReview => 72,
+                        },
+                    ),
+                    actor_id: None,
+                });
+                // 更新对应 AI 提案状态为 Expired
+                let mut proposals = state.ai_proposals.write().await;
+                if let Some(proposal) = proposals.get_mut(&approval.proposal_id) {
+                    proposal.status = RuntimeAiProposalStatus::Expired;
+                }
+                // 持久化
+                let _ = serde_json::to_vec_pretty(&*approval).ok().and_then(|json| {
+                    let dir = state.approval_store_dir.to_path_buf();
+                    let id = approval.approval_id.clone();
+                    tokio::task::spawn_blocking(move || {
+                        let _ = std::fs::create_dir_all(&dir);
+                        let _ = std::fs::write(dir.join(format!("{}.json", id)), &json);
+                    });
+                    None::<()>
+                });
+            }
+        }
+    }
+}
+
+// Block 5 P3-4: 观察窗口检查
+async fn check_observation_windows(state: &AppState) {
+    let now_ms = current_time_ms();
+    let risk_reject = state
+        .evidence_metrics
+        .mutation_proposal_rejected_count
+        .load(Ordering::Relaxed);
+    let rollback_count = state
+        .evidence_metrics
+        .mutation_rollback_attempt_count
+        .load(Ordering::Relaxed);
+
+    // 检查最近的 mutation 激活记录，若在观察窗口内且异常，触发告警
+    let mutations = state.parameter_mutations.read().await;
+    for mutation in mutations.values() {
+        if let Some(ref activation) = mutation.activation_state {
+            if let Some(deadline_ms) = activation.observation_deadline_ms {
+                if now_ms < deadline_ms {
+                    // 仍在观察窗口内
+                    if risk_reject > 100 || rollback_count > 0 {
+                        // 异常检测：触发告警
+                        let alert_id = format!(
+                            "alert-observation-{}-{}",
+                            mutation.proposal_id, now_ms
+                        );
+                        let firing = AlertFiring {
+                            firing_id: alert_id.clone(),
+                            rule_name: "hotswap_rollback_occurred".to_string(),
+                            severity: AlertSeverity::P2,
+                            state: AlertFiringState::Firing,
+                            fired_at_ms: now_ms,
+                            acknowledged_at_ms: None,
+                            resolved_at_ms: None,
+                            acknowledged_by: None,
+                            detail: format!(
+                                "观察窗口异常: mutation {} 激活后风控拒绝率或回滚率超阈值",
+                                mutation.proposal_id
+                            ),
+                        };
+                        state
+                            .alert_firings
+                            .write()
+                            .await
+                            .insert(alert_id, firing);
+                    }
+                }
+            }
+        }
+    }
 }
 
 fn collect_compile_diagnostics(runtime_config: &FrontendRuntimeConfig) -> Vec<CompileDiagnostic> {
@@ -1685,6 +2243,41 @@ mod cli_tests {
     use axum::http::{Request, StatusCode};
     use tower::ServiceExt;
 
+    fn test_storage_base(label: &str) -> PathBuf {
+        static TEST_STORAGE_COUNTER: std::sync::atomic::AtomicU64 =
+            std::sync::atomic::AtomicU64::new(0);
+        let sequence = TEST_STORAGE_COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        std::env::temp_dir().join(format!(
+            "quantpilot-test-{}-{}-{}-{}",
+            label,
+            std::process::id(),
+            current_time_ms(),
+            sequence
+        ))
+    }
+
+    fn test_app_state() -> AppState {
+        let base = test_storage_base("api");
+        let graph_dir = base.join("graphs");
+        let run_dir = base.join("runs");
+        let backtest_dir = base.join("backtests");
+        std::fs::create_dir_all(&graph_dir).unwrap();
+        std::fs::create_dir_all(&run_dir).unwrap();
+        std::fs::create_dir_all(&backtest_dir).unwrap();
+        test_app_state_from_dirs(base, graph_dir, run_dir, backtest_dir)
+    }
+
+    fn test_app_state_from_dirs(
+        base: PathBuf,
+        graph_dir: PathBuf,
+        run_dir: PathBuf,
+        backtest_dir: PathBuf,
+    ) -> AppState {
+        let mut state = new_app_state(graph_dir, run_dir, backtest_dir);
+        state.test_storage_root = Some(Arc::new(TestStorageRoot { path: base }));
+        state
+    }
+
     #[test]
     fn defaults_to_server_when_no_cli_args_are_provided() {
         let command = parse_cli_command_from(["quantpilot"] as [&str; 1]).unwrap();
@@ -1744,6 +2337,9 @@ mod cli_tests {
         let response = build_capability_response();
 
         assert_eq!(response.api_version, CAPABILITY_API_VERSION);
+        assert_eq!(response.schema_version, CAPABILITY_SCHEMA_VERSION);
+        assert_eq!(response.chain_stages, RUNTIME_CHAIN_STAGES.to_vec());
+        assert!(response.schema_hash.starts_with("sha256:"));
         assert_eq!(
             response.strategy_ir.declared_indicator_kinds,
             declared_indicator_kinds().to_vec()
@@ -2347,15 +2943,92 @@ mod cli_tests {
         assert!(value["market_data"]["exchange_support"].is_array());
         assert!(value["frontend"]["module_support"].is_array());
         assert!(value["frontend"]["supported_module_keys"].is_array());
+        assert_eq!(
+            value["chain_stages"],
+            serde_json::json!(RUNTIME_CHAIN_STAGES)
+        );
+        assert_eq!(
+            value["permission_boundary"]["non_execution_order_access"],
+            "deny"
+        );
+        assert_eq!(
+            value["versioning"]["parameter_version_policy"],
+            "immutable_generation_pointer"
+        );
+    }
+
+    #[test]
+    fn capability_contract_drives_response_hash_and_runtime_governance() {
+        let response = build_capability_response();
+        let governance = runtime_governance_snapshot(
+            &FrontendMetadata {
+                graph_id: "graph_hash_contract".to_string(),
+                compile_id: "compile_hash_contract".to_string(),
+                name: "Hash Contract".to_string(),
+                version: "1.2.3".to_string(),
+                mode: "paper".to_string(),
+            },
+            Some("params_hash_contract"),
+        );
+
+        assert_eq!(response.schema_hash, current_capability_hash());
+        assert_eq!(response.schema_hash, governance.capability_hash);
+        assert!(governance.deployment_revision.starts_with("sha256:"));
+    }
+
+    #[test]
+    fn capability_contract_hash_changes_when_governed_fields_change() {
+        let base = build_capability_contract();
+        let base_hash = capability_contract_hash(&base);
+
+        let mut changed_stage = base.clone();
+        changed_stage.chain_stages.push("settlement");
+        assert_ne!(capability_contract_hash(&changed_stage), base_hash);
+
+        let mut changed_runtime_mode = base.clone();
+        changed_runtime_mode.runtime_modes.push("live");
+        assert_ne!(capability_contract_hash(&changed_runtime_mode), base_hash);
+
+        let mut changed_module = base.clone();
+        changed_module
+            .supported_module_keys
+            .push("builtin.intent.contract_test");
+        assert_ne!(capability_contract_hash(&changed_module), base_hash);
+
+        let mut changed_symbol = base.clone();
+        changed_symbol.supported_symbols.push("DOGEUSDT");
+        assert_ne!(capability_contract_hash(&changed_symbol), base_hash);
+
+        let mut changed_policy = base;
+        changed_policy.permission_boundary = CapabilityPermissionBoundarySummary {
+            ai_write_policy: AiWritePolicy::Disabled,
+            ..changed_policy.permission_boundary
+        };
+        assert_ne!(capability_contract_hash(&changed_policy), base_hash);
+    }
+
+    #[test]
+    fn capability_contract_hash_is_canonical_and_order_stable() {
+        let mut left = build_capability_contract();
+        left.unsupported_module_reasons = BTreeMap::from([
+            ("builtin.intent.contract_b", "beta reason"),
+            ("builtin.intent.contract_a", "alpha reason"),
+        ]);
+
+        let mut right = build_capability_contract();
+        right.unsupported_module_reasons = BTreeMap::from([
+            ("builtin.intent.contract_a", "alpha reason"),
+            ("builtin.intent.contract_b", "beta reason"),
+        ]);
+
+        let left_hash = capability_contract_hash(&left);
+        assert!(left_hash.starts_with("sha256:"));
+        assert_eq!(left_hash, capability_contract_hash(&right));
     }
 
     #[tokio::test]
     async fn capabilities_endpoint_returns_capability_response_over_router() {
-        let graph_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let graph_app = build_app_router(test_app_state());
 
         let response = graph_app
             .oneshot(
@@ -2374,6 +3047,14 @@ mod cli_tests {
         let value: serde_json::Value = serde_json::from_slice(&body).unwrap();
 
         assert_eq!(value["api_version"], CAPABILITY_API_VERSION);
+        assert!(value["schema_hash"]
+            .as_str()
+            .unwrap()
+            .starts_with("sha256:"));
+        assert_eq!(
+            value["permission_boundary"]["ai_write_policy"],
+            serde_json::json!("proposal_only")
+        );
         assert!(value["strategy_ir"]["indicator_support"].is_array());
         assert!(value["frontend"]["module_support"].is_array());
         assert_eq!(
@@ -2413,6 +3094,7 @@ mod cli_tests {
 
     fn sample_compile_request_json() -> serde_json::Value {
         serde_json::json!({
+            "capability_context": serde_json::to_value(current_capability_context()).unwrap(),
             "runtime_config": {
                 "metadata": {
                     "graph_id": "graph_test",
@@ -2740,11 +3422,7 @@ mod cli_tests {
         compile_id: &str,
         universe_snapshot: Option<serde_json::Value>,
     ) -> serde_json::Value {
-        let graph_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let graph_app = build_app_router(test_app_state());
         let mut payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": compile_id,
@@ -2825,11 +3503,7 @@ mod cli_tests {
         compile_id: &str,
         universe_snapshot: Option<serde_json::Value>,
     ) -> serde_json::Value {
-        let graph_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let graph_app = build_app_router(test_app_state());
         let mut payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": compile_id,
@@ -2876,11 +3550,7 @@ mod cli_tests {
         config: serde_json::Value,
         compile_id: &str,
     ) -> serde_json::Value {
-        let graph_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let graph_app = build_app_router(test_app_state());
         let mut payload = sample_compile_request_json();
         payload["compile_id"] = serde_json::Value::String(compile_id.to_string());
         payload["runtime_config"]["intent_generators"][0]["module_key"] =
@@ -2909,11 +3579,7 @@ mod cli_tests {
         config: serde_json::Value,
         compile_id: &str,
     ) -> serde_json::Value {
-        let graph_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let graph_app = build_app_router(test_app_state());
         let mut payload = sample_spread_compile_request_json();
         payload["compile_id"] = serde_json::Value::String(compile_id.to_string());
         payload["runtime_config"]["intent_generators"][0]["config"] = config;
@@ -2940,11 +3606,7 @@ mod cli_tests {
         config: serde_json::Value,
         compile_id: &str,
     ) -> serde_json::Value {
-        let graph_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let graph_app = build_app_router(test_app_state());
         let mut payload = sample_spread_compile_request_json();
         payload["compile_id"] = serde_json::Value::String(compile_id.to_string());
         payload["runtime_config"]["intent_generators"][0]["config"] = config;
@@ -2980,11 +3642,7 @@ mod cli_tests {
         condition: &str,
         compile_id: &str,
     ) -> serde_json::Value {
-        let graph_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let graph_app = build_app_router(test_app_state());
         let mut payload = sample_strategy_ir_compile_request_json();
         payload["compile_id"] = serde_json::Value::String(compile_id.to_string());
         payload["strategy_ir"]["signals"][0]["signal_id"] =
@@ -3022,11 +3680,7 @@ mod cli_tests {
         condition: &str,
         compile_id: &str,
     ) -> serde_json::Value {
-        let graph_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let graph_app = build_app_router(test_app_state());
         let mut payload = sample_strategy_ir_compile_request_json();
         payload["compile_id"] = serde_json::Value::String(compile_id.to_string());
         payload["strategy_ir"]["signals"][0]["signal_id"] =
@@ -3086,11 +3740,7 @@ mod cli_tests {
         condition: &str,
         compile_id: &str,
     ) -> serde_json::Value {
-        let graph_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let graph_app = build_app_router(test_app_state());
         let mut payload = sample_strategy_ir_compile_request_json();
         payload["compile_id"] = serde_json::Value::String(compile_id.to_string());
         payload["strategy_ir"]["signals"][0]["signal_id"] =
@@ -3515,11 +4165,7 @@ mod cli_tests {
 
     #[tokio::test]
     async fn compile_endpoint_accepts_spread_arbitrage_modules_and_lowers_spread_indicator() {
-        let graph_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let graph_app = build_app_router(test_app_state());
 
         let response = graph_app
             .oneshot(
@@ -3554,11 +4200,7 @@ mod cli_tests {
 
     #[tokio::test]
     async fn compile_endpoint_roundtrips_data_request_controls() {
-        let graph_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let graph_app = build_app_router(test_app_state());
         let mut payload = sample_compile_request_json();
         payload["runtime_config"]["data_sources"][0]["config"]["ping_enabled"] =
             serde_json::Value::Bool(true);
@@ -3709,16 +4351,13 @@ mod cli_tests {
 
     #[tokio::test]
     async fn compile_endpoint_rejects_unsupported_runtime_mode_with_structured_error() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let mut payload = sample_compile_request_json();
         payload["runtime_config"]["metadata"]["mode"] =
             serde_json::Value::String("live".to_string());
 
         let response = app
+            .clone()
             .oneshot(
                 Request::builder()
                     .uri("/api/runtime/compile")
@@ -3742,11 +4381,7 @@ mod cli_tests {
 
     #[tokio::test]
     async fn compile_endpoint_returns_warmup_diagnostics() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let mut payload = sample_compile_request_json();
         payload["runtime_config"]["data_sources"][0]["config"]["window_size"] =
             serde_json::Value::from(20);
@@ -3754,6 +4389,7 @@ mod cli_tests {
             serde_json::Value::from(50);
 
         let response = app
+            .clone()
             .oneshot(
                 Request::builder()
                     .uri("/api/runtime/compile")
@@ -3779,13 +4415,10 @@ mod cli_tests {
 
     #[tokio::test]
     async fn compile_endpoint_returns_artifact_bundle() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
 
         let response = app
+            .clone()
             .oneshot(
                 Request::builder()
                     .uri("/api/runtime/compile")
@@ -3830,11 +4463,7 @@ mod cli_tests {
 
     #[tokio::test]
     async fn compile_endpoint_lowers_graph_momentum_to_structured_threshold_condition() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let mut payload = sample_compile_request_json();
         payload["runtime_config"]["intent_generators"][0]["module_key"] =
             serde_json::Value::String("builtin.intent.momentum".to_string());
@@ -3844,6 +4473,7 @@ mod cli_tests {
         });
 
         let response = app
+            .clone()
             .oneshot(
                 Request::builder()
                     .uri("/api/runtime/compile")
@@ -3883,11 +4513,7 @@ mod cli_tests {
 
     #[tokio::test]
     async fn compile_endpoint_lowers_graph_rsi_to_structured_threshold_condition() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let mut payload = sample_compile_request_json();
         payload["runtime_config"]["intent_generators"][0]["module_key"] =
             serde_json::Value::String("builtin.intent.rsi".to_string());
@@ -3937,11 +4563,7 @@ mod cli_tests {
 
     #[tokio::test]
     async fn compile_endpoint_lowers_graph_zscore_to_structured_threshold_condition() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let mut payload = sample_compile_request_json();
         payload["runtime_config"]["intent_generators"][0]["module_key"] =
             serde_json::Value::String("builtin.intent.zscore".to_string());
@@ -3990,11 +4612,7 @@ mod cli_tests {
 
     #[tokio::test]
     async fn strategy_ir_compile_endpoint_accepts_restricted_custom_and_lowers_to_core_ir() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
 
         let response = app
             .oneshot(
@@ -4028,11 +4646,7 @@ mod cli_tests {
 
     #[tokio::test]
     async fn strategy_ir_compile_endpoint_lowers_rsi_to_structured_threshold_condition() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let mut payload = sample_strategy_ir_compile_request_json();
         payload["strategy_ir"]["signals"][0]["signal_id"] =
             serde_json::Value::String("rsi_signal".to_string());
@@ -4085,11 +4699,7 @@ mod cli_tests {
 
     #[tokio::test]
     async fn strategy_ir_compile_endpoint_lowers_ma_cross_to_structured_series_compare() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let mut payload = sample_strategy_ir_compile_request_json();
         payload["strategy_ir"]["signals"][0]["signal_id"] =
             serde_json::Value::String("ma_cross".to_string());
@@ -4161,11 +4771,7 @@ mod cli_tests {
 
     #[tokio::test]
     async fn strategy_ir_compile_endpoint_lowers_momentum_to_structured_threshold_condition() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let mut payload = sample_strategy_ir_compile_request_json();
         payload["strategy_ir"]["signals"][0]["signal_id"] =
             serde_json::Value::String("momentum_signal".to_string());
@@ -4218,11 +4824,7 @@ mod cli_tests {
 
     #[tokio::test]
     async fn strategy_ir_compile_endpoint_lowers_zscore_to_structured_threshold_condition() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let mut payload = sample_strategy_ir_compile_request_json();
         payload["strategy_ir"]["signals"][0]["signal_id"] =
             serde_json::Value::String("zscore_signal".to_string());
@@ -4922,11 +5524,7 @@ fn strategy() {
         )
         .await;
 
-        let graph_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let graph_app = build_app_router(test_app_state());
         let mut graph_payload = sample_compile_request_json();
         graph_payload["compile_id"] =
             serde_json::Value::String("compile_graph_risk_profile_equivalence".to_string());
@@ -4986,11 +5584,7 @@ fn strategy() {
             "min_action_interval_ms": 250
         });
 
-        let strategy_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let strategy_app = build_app_router(test_app_state());
         let strategy_response = strategy_app
             .oneshot(
                 Request::builder()
@@ -5086,11 +5680,7 @@ fn strategy() {
         )
         .await;
 
-        let graph_app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let graph_app = build_app_router(test_app_state());
         let mut graph_payload = sample_compile_request_json();
         graph_payload["compile_id"] =
             serde_json::Value::String("compile_graph_execution_profile_equivalence".to_string());
@@ -5182,11 +5772,7 @@ fn strategy() {
 
     #[tokio::test]
     async fn strategy_ir_compile_endpoint_returns_structured_custom_diagnostics() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let mut payload = sample_strategy_ir_compile_request_json();
         payload["strategy_ir"]["signals"][0]["indicator"]["params"]["custom_expr"]["predicate"]
             ["left"]["data_id"] = serde_json::Value::String("other_data".to_string());
@@ -5226,20 +5812,14 @@ fn strategy() {
 
     #[tokio::test]
     async fn backtest_endpoint_returns_output_artifacts() {
-        std::fs::create_dir_all("storage/test-graphs").unwrap();
-        std::fs::create_dir_all("storage/test-runs").unwrap();
-        std::fs::create_dir_all("storage/test-backtests").unwrap();
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let mut payload = sample_compile_request_json();
         payload["backtest_options"] = serde_json::json!({
             "replay_source": "deterministic_mock"
         });
 
         let response = app
+            .clone()
             .oneshot(
                 Request::builder()
                     .uri("/api/runtime/backtest")
@@ -5283,9 +5863,167 @@ fn strategy() {
     }
 
     #[tokio::test]
+    async fn runtime_run_is_persisted_only_after_save() {
+        let base = test_storage_base("run-save-gate");
+        let graph_dir = base.join("graphs");
+        let run_dir = base.join("runs");
+        let backtest_dir = base.join("backtests");
+        std::fs::create_dir_all(&graph_dir).unwrap();
+        std::fs::create_dir_all(&run_dir).unwrap();
+        std::fs::create_dir_all(&backtest_dir).unwrap();
+        let app = build_app_router(test_app_state_from_dirs(
+            base,
+            graph_dir,
+            run_dir.clone(),
+            backtest_dir,
+        ));
+        let payload = sample_compile_request_json();
+
+        let response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri("/api/runtime/test-run")
+                    .method("POST")
+                    .header("content-type", "application/json")
+                    .body(Body::from(payload.to_string()))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+        let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
+        let created: serde_json::Value = serde_json::from_slice(&body).unwrap();
+        let run_id = created["run_id"].as_str().unwrap().to_string();
+        let run_path = run_dir.join(format!("{run_id}.json"));
+
+        assert!(!run_path.exists());
+
+        let save_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runtime/runs/{run_id}/save"))
+                    .method("POST")
+                    .body(Body::from("{}"))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(save_response.status(), StatusCode::OK);
+        assert!(run_path.exists());
+    }
+
+    #[tokio::test]
+    async fn runtime_run_can_be_discarded_only_before_save() {
+        let base = test_storage_base("run-discard");
+        let graph_dir = base.join("graphs");
+        let run_dir = base.join("runs");
+        let backtest_dir = base.join("backtests");
+        std::fs::create_dir_all(&graph_dir).unwrap();
+        std::fs::create_dir_all(&run_dir).unwrap();
+        std::fs::create_dir_all(&backtest_dir).unwrap();
+        let app = build_app_router(test_app_state_from_dirs(
+            base,
+            graph_dir,
+            run_dir.clone(),
+            backtest_dir,
+        ));
+        let payload = sample_compile_request_json();
+
+        let response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri("/api/runtime/test-run")
+                    .method("POST")
+                    .header("content-type", "application/json")
+                    .body(Body::from(payload.to_string()))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
+        let started: serde_json::Value = serde_json::from_slice(&body).unwrap();
+        let run_id = started["run_id"].as_str().unwrap().to_string();
+
+        let discard_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runtime/runs/{run_id}"))
+                    .method("DELETE")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(discard_response.status(), StatusCode::OK);
+
+        let detail_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runtime/runs/{run_id}"))
+                    .method("GET")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(detail_response.status(), StatusCode::NOT_FOUND);
+
+        let saved_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri("/api/runtime/test-run")
+                    .method("POST")
+                    .header("content-type", "application/json")
+                    .body(Body::from(payload.to_string()))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        let saved_body = to_bytes(saved_response.into_body(), usize::MAX)
+            .await
+            .unwrap();
+        let saved: serde_json::Value = serde_json::from_slice(&saved_body).unwrap();
+        let saved_run_id = saved["run_id"].as_str().unwrap().to_string();
+        let save_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runtime/runs/{saved_run_id}/save"))
+                    .method("POST")
+                    .body(Body::from("{}"))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(save_response.status(), StatusCode::OK);
+
+        let discard_saved_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runtime/runs/{saved_run_id}"))
+                    .method("DELETE")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(discard_saved_response.status(), StatusCode::CONFLICT);
+        assert!(run_dir.join(format!("{saved_run_id}.json")).exists());
+    }
+
+    #[tokio::test]
     async fn backtest_detail_can_be_reloaded_from_artifact_directory() {
-        let suffix = current_time_ms();
-        let base = PathBuf::from(format!("storage/test-backtest-artifacts-{suffix}"));
+        let base = test_storage_base("backtest-artifacts");
         let graph_dir = base.join("graphs");
         let run_dir = base.join("runs");
         let backtest_dir = base.join("backtests");
@@ -5293,7 +6031,8 @@ fn strategy() {
         std::fs::create_dir_all(&run_dir).unwrap();
         std::fs::create_dir_all(&backtest_dir).unwrap();
 
-        let app = build_app_router(new_app_state(
+        let app = build_app_router(test_app_state_from_dirs(
+            base,
             graph_dir.clone(),
             run_dir.clone(),
             backtest_dir.clone(),
@@ -5304,6 +6043,7 @@ fn strategy() {
         });
 
         let response = app
+            .clone()
             .oneshot(
                 Request::builder()
                     .uri("/api/runtime/backtest")
@@ -5320,6 +6060,22 @@ fn strategy() {
         let created: serde_json::Value = serde_json::from_slice(&body).unwrap();
         let backtest_id = created["backtest_id"].as_str().unwrap().to_string();
 
+        assert!(!backtest_dir.join(&backtest_id).exists());
+
+        let save_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runtime/backtests/{backtest_id}/save"))
+                    .method("POST")
+                    .body(Body::from("{}"))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(save_response.status(), StatusCode::OK);
+
         assert!(backtest_dir
             .join(&backtest_id)
             .join("manifest.json")
@@ -5332,6 +6088,30 @@ fn strategy() {
             .join(&backtest_id)
             .join("equity_curve.json")
             .exists());
+        assert!(std::fs::read_dir(&backtest_dir)
+            .unwrap()
+            .all(|entry| !is_backtest_promotion_work_dir(&entry.unwrap().path())));
+
+        let second_save_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runtime/backtests/{backtest_id}/save"))
+                    .method("POST")
+                    .body(Body::from("{}"))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(second_save_response.status(), StatusCode::OK);
+        assert!(backtest_dir
+            .join(&backtest_id)
+            .join("manifest.json")
+            .exists());
+        assert!(std::fs::read_dir(&backtest_dir)
+            .unwrap()
+            .all(|entry| !is_backtest_promotion_work_dir(&entry.unwrap().path())));
 
         let fresh_app = build_app_router(new_app_state(graph_dir, run_dir, backtest_dir));
         let detail_response = fresh_app
@@ -5361,9 +6141,220 @@ fn strategy() {
     }
 
     #[tokio::test]
+    async fn large_transient_backtest_spills_to_temp_until_save() {
+        let base = test_storage_base("backtest-transient-spill");
+        let graph_dir = base.join("graphs");
+        let run_dir = base.join("runs");
+        let backtest_dir = base.join("backtests");
+        std::fs::create_dir_all(&graph_dir).unwrap();
+        std::fs::create_dir_all(&run_dir).unwrap();
+        std::fs::create_dir_all(&backtest_dir).unwrap();
+
+        let mut state = test_app_state_from_dirs(base, graph_dir, run_dir, backtest_dir.clone());
+        state.transient_backtest_spill_threshold_bytes = 1;
+        let transient_dir = state.transient_backtest_store_dir.as_ref().clone();
+        let app = build_app_router(state);
+        let mut payload = sample_compile_request_json();
+        payload["backtest_options"] = serde_json::json!({
+            "replay_source": "deterministic_mock"
+        });
+
+        let response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri("/api/runtime/backtest")
+                    .method("POST")
+                    .header("content-type", "application/json")
+                    .body(Body::from(payload.to_string()))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+        let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
+        let created: serde_json::Value = serde_json::from_slice(&body).unwrap();
+        let backtest_id = created["backtest_id"].as_str().unwrap().to_string();
+
+        assert!(!backtest_dir.join(&backtest_id).exists());
+        assert!(std::fs::read_dir(&transient_dir)
+            .unwrap()
+            .any(|entry| entry.unwrap().path().is_dir()));
+
+        let detail_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runtime/backtests/{backtest_id}"))
+                    .method("GET")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(detail_response.status(), StatusCode::OK);
+        let detail_body = to_bytes(detail_response.into_body(), usize::MAX)
+            .await
+            .unwrap();
+        let detail: serde_json::Value = serde_json::from_slice(&detail_body).unwrap();
+        let mut expected_loaded_governance =
+            created["backtest_artifacts"]["manifest"]["governance"].clone();
+        expected_loaded_governance["governance_source"] =
+            serde_json::Value::String("loaded_manifest".to_string());
+        assert_eq!(detail["governance"], expected_loaded_governance);
+        assert_eq!(
+            detail["backtest_artifacts"]["manifest"]["governance"],
+            detail["governance"]
+        );
+
+        let save_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runtime/backtests/{backtest_id}/save"))
+                    .method("POST")
+                    .body(Body::from("{}"))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(save_response.status(), StatusCode::OK);
+        let save_body = to_bytes(save_response.into_body(), usize::MAX)
+            .await
+            .unwrap();
+        let saved: serde_json::Value = serde_json::from_slice(&save_body).unwrap();
+        assert_eq!(saved["governance"], detail["governance"]);
+        assert_eq!(
+            saved["backtest_artifacts"]["manifest"]["governance"],
+            detail["governance"]
+        );
+        assert!(backtest_dir
+            .join(&backtest_id)
+            .join("manifest.json")
+            .exists());
+        assert!(std::fs::read_dir(&transient_dir)
+            .map(|mut entries| entries.next().is_none())
+            .unwrap_or(true));
+    }
+
+    #[tokio::test]
+    async fn backtest_can_be_discarded_only_before_save() {
+        let base = test_storage_base("backtest-discard");
+        let graph_dir = base.join("graphs");
+        let run_dir = base.join("runs");
+        let backtest_dir = base.join("backtests");
+        std::fs::create_dir_all(&graph_dir).unwrap();
+        std::fs::create_dir_all(&run_dir).unwrap();
+        std::fs::create_dir_all(&backtest_dir).unwrap();
+
+        let mut state = test_app_state_from_dirs(base, graph_dir, run_dir, backtest_dir.clone());
+        state.transient_backtest_spill_threshold_bytes = 1;
+        let transient_dir = state.transient_backtest_store_dir.as_ref().clone();
+        let app = build_app_router(state);
+        let mut payload = sample_compile_request_json();
+        payload["backtest_options"] = serde_json::json!({
+            "replay_source": "deterministic_mock"
+        });
+
+        let response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri("/api/runtime/backtest")
+                    .method("POST")
+                    .header("content-type", "application/json")
+                    .body(Body::from(payload.to_string()))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
+        let created: serde_json::Value = serde_json::from_slice(&body).unwrap();
+        let backtest_id = created["backtest_id"].as_str().unwrap().to_string();
+
+        let discard_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runtime/backtests/{backtest_id}"))
+                    .method("DELETE")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(discard_response.status(), StatusCode::OK);
+        assert!(std::fs::read_dir(&transient_dir)
+            .map(|mut entries| entries.next().is_none())
+            .unwrap_or(true));
+
+        let detail_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runtime/backtests/{backtest_id}"))
+                    .method("GET")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(detail_response.status(), StatusCode::NOT_FOUND);
+
+        let saved_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri("/api/runtime/backtest")
+                    .method("POST")
+                    .header("content-type", "application/json")
+                    .body(Body::from(payload.to_string()))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        let saved_body = to_bytes(saved_response.into_body(), usize::MAX)
+            .await
+            .unwrap();
+        let saved: serde_json::Value = serde_json::from_slice(&saved_body).unwrap();
+        let saved_backtest_id = saved["backtest_id"].as_str().unwrap().to_string();
+        let save_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runtime/backtests/{saved_backtest_id}/save"))
+                    .method("POST")
+                    .body(Body::from("{}"))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(save_response.status(), StatusCode::OK);
+
+        let discard_saved_response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runtime/backtests/{saved_backtest_id}"))
+                    .method("DELETE")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(discard_saved_response.status(), StatusCode::CONFLICT);
+        assert!(backtest_dir
+            .join(&saved_backtest_id)
+            .join("manifest.json")
+            .exists());
+    }
+
+    #[tokio::test]
     async fn graphs_endpoint_lists_saved_graph_files_only() {
-        let suffix = current_time_ms();
-        let base = PathBuf::from(format!("storage/test-graph-index-{suffix}"));
+        let base = test_storage_base("graph-index");
         let graph_dir = base.join("graphs");
         let run_dir = base.join("runs");
         let backtest_dir = base.join("backtests");
@@ -5428,7 +6419,12 @@ fn strategy() {
         )
         .unwrap();
 
-        let app = build_app_router(new_app_state(graph_dir, run_dir, backtest_dir));
+        let app = build_app_router(test_app_state_from_dirs(
+            base,
+            graph_dir,
+            run_dir,
+            backtest_dir,
+        ));
         let response = app
             .oneshot(
                 Request::builder()
@@ -5463,9 +6459,105 @@ fn strategy() {
     }
 
     #[tokio::test]
-    async fn graph_version_endpoints_list_load_and_restore_versions() {
-        let suffix = current_time_ms();
-        let base = PathBuf::from(format!("storage/test-graph-versions-{suffix}"));
+    async fn delete_graph_endpoint_removes_strategy_files_and_refreshes_latest() {
+        let base = test_storage_base("graph-delete");
+        let graph_dir = base.join("graphs");
+        let run_dir = base.join("runs");
+        let backtest_dir = base.join("backtests");
+        std::fs::create_dir_all(&graph_dir).unwrap();
+        std::fs::create_dir_all(&run_dir).unwrap();
+        std::fs::create_dir_all(&backtest_dir).unwrap();
+        std::fs::create_dir_all(graph_dir.join("versions").join("alpha_strategy")).unwrap();
+
+        let alpha = serde_json::json!({
+            "metadata": {
+                "graph_id": "alpha_strategy",
+                "name": "Alpha strategy",
+                "updated_at": 1710000000000u64,
+                "collaboration": {
+                    "owner": {
+                        "actor_id": "previous_operator",
+                        "display_name": "Previous operator"
+                    }
+                }
+            },
+            "nodes": [],
+            "edges": []
+        });
+        let beta = serde_json::json!({
+            "metadata": {
+                "graph_id": "beta_strategy",
+                "name": "Beta strategy",
+                "updated_at": 1710000200000u64
+            },
+            "nodes": [],
+            "edges": []
+        });
+        std::fs::write(graph_dir.join("alpha_strategy.json"), alpha.to_string()).unwrap();
+        std::fs::write(graph_dir.join("alpha_strategy.qs"), "strategy alpha() {}").unwrap();
+        std::fs::write(
+            graph_dir
+                .join("versions")
+                .join("alpha_strategy")
+                .join("1710000000000.json"),
+            alpha.to_string(),
+        )
+        .unwrap();
+        std::fs::write(graph_dir.join("beta_strategy.json"), beta.to_string()).unwrap();
+        std::fs::write(graph_dir.join("beta_strategy.qs"), "strategy beta() {}").unwrap();
+        std::fs::write(graph_dir.join("latest.json"), alpha.to_string()).unwrap();
+
+        let app = build_app_router(test_app_state_from_dirs(
+            base,
+            graph_dir.clone(),
+            run_dir,
+            backtest_dir,
+        ));
+        let response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri("/api/graphs/alpha_strategy")
+                    .method("DELETE")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+        assert!(!graph_dir.join("alpha_strategy.json").exists());
+        assert!(!graph_dir.join("alpha_strategy.qs").exists());
+        assert!(!graph_dir.join("versions").join("alpha_strategy").exists());
+        assert!(graph_dir.join("beta_strategy.json").exists());
+
+        let latest: serde_json::Value =
+            serde_json::from_str(&std::fs::read_to_string(graph_dir.join("latest.json")).unwrap())
+                .unwrap();
+        assert_eq!(latest["metadata"]["graph_id"], "beta_strategy");
+
+        let list_response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/graphs")
+                    .method("GET")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(list_response.status(), StatusCode::OK);
+        let body = to_bytes(list_response.into_body(), usize::MAX)
+            .await
+            .unwrap();
+        let value: serde_json::Value = serde_json::from_slice(&body).unwrap();
+        assert_eq!(value.as_array().unwrap().len(), 1);
+        assert_eq!(value[0]["graph_id"], "beta_strategy");
+    }
+
+    #[tokio::test]
+    async fn delete_graph_endpoint_returns_not_found_for_missing_graph() {
+        let base = test_storage_base("graph-delete-missing");
         let graph_dir = base.join("graphs");
         let run_dir = base.join("runs");
         let backtest_dir = base.join("backtests");
@@ -5473,7 +6565,42 @@ fn strategy() {
         std::fs::create_dir_all(&run_dir).unwrap();
         std::fs::create_dir_all(&backtest_dir).unwrap();
 
-        let app = build_app_router(new_app_state(graph_dir.clone(), run_dir, backtest_dir));
+        let app = build_app_router(test_app_state_from_dirs(
+            base,
+            graph_dir,
+            run_dir,
+            backtest_dir,
+        ));
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/graphs/missing_strategy")
+                    .method("DELETE")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::NOT_FOUND);
+    }
+
+    #[tokio::test]
+    async fn graph_version_endpoints_list_load_and_restore_versions() {
+        let base = test_storage_base("graph-versions");
+        let graph_dir = base.join("graphs");
+        let run_dir = base.join("runs");
+        let backtest_dir = base.join("backtests");
+        std::fs::create_dir_all(&graph_dir).unwrap();
+        std::fs::create_dir_all(&run_dir).unwrap();
+        std::fs::create_dir_all(&backtest_dir).unwrap();
+
+        let app = build_app_router(test_app_state_from_dirs(
+            base,
+            graph_dir.clone(),
+            run_dir,
+            backtest_dir,
+        ));
         let graph_v1 = serde_json::json!({
             "metadata": {
                 "graph_id": "versioned_strategy",
@@ -5659,8 +6786,7 @@ fn strategy() {
 
     #[tokio::test]
     async fn reveal_graph_endpoint_returns_not_found_for_missing_graph() {
-        let suffix = current_time_ms();
-        let base = PathBuf::from(format!("storage/test-graph-reveal-{suffix}"));
+        let base = test_storage_base("graph-reveal");
         let graph_dir = base.join("graphs");
         let run_dir = base.join("runs");
         let backtest_dir = base.join("backtests");
@@ -5668,7 +6794,12 @@ fn strategy() {
         std::fs::create_dir_all(&run_dir).unwrap();
         std::fs::create_dir_all(&backtest_dir).unwrap();
 
-        let app = build_app_router(new_app_state(graph_dir, run_dir, backtest_dir));
+        let app = build_app_router(test_app_state_from_dirs(
+            base,
+            graph_dir,
+            run_dir,
+            backtest_dir,
+        ));
         let response = app
             .oneshot(
                 Request::builder()
@@ -5684,38 +6815,38 @@ fn strategy() {
     }
 
     #[tokio::test]
-    async fn reveal_graph_folder_endpoint_returns_not_found_for_missing_graph() {
-        let suffix = current_time_ms();
-        let base = PathBuf::from(format!("storage/test-graph-folder-reveal-{suffix}"));
+    async fn reveal_graph_path_prefers_existing_quantscript_and_returns_absolute_path() {
+        let base = test_storage_base("graph-reveal-path");
         let graph_dir = base.join("graphs");
-        let run_dir = base.join("runs");
-        let backtest_dir = base.join("backtests");
         std::fs::create_dir_all(&graph_dir).unwrap();
-        std::fs::create_dir_all(&run_dir).unwrap();
-        std::fs::create_dir_all(&backtest_dir).unwrap();
+        let graph_path = graph_dir.join("alpha_strategy.json");
+        let quantscript_path = graph_dir.join("alpha_strategy.qs");
+        std::fs::write(&graph_path, "{}").unwrap();
+        std::fs::write(&quantscript_path, "strategy alpha() {}").unwrap();
 
-        let app = build_app_router(new_app_state(graph_dir, run_dir, backtest_dir));
-        let response = app
-            .oneshot(
-                Request::builder()
-                    .uri("/api/graphs/missing_strategy/reveal-folder")
-                    .method("POST")
-                    .body(Body::empty())
-                    .unwrap(),
-            )
+        let graph = serde_json::json!({
+            "metadata": {
+                "artifacts": {
+                    "quantscript": {
+                        "saved_path": quantscript_path.to_string_lossy()
+                    }
+                }
+            }
+        });
+        let reveal_path = graph_api::resolve_graph_reveal_path_from_value(&graph, &graph_path)
             .await
             .unwrap();
 
-        assert_eq!(response.status(), StatusCode::NOT_FOUND);
+        assert!(reveal_path.is_absolute());
+        assert_eq!(
+            reveal_path,
+            std::fs::canonicalize(&quantscript_path).unwrap()
+        );
     }
 
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_success() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_test",
@@ -6488,11 +7619,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_lowers_direct_ma_compare_to_structured_core_ir_condition(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_ma_compare",
@@ -6552,11 +7679,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_lowers_one_sided_rsi_compare_to_structured_core_ir_condition(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_rsi_compare",
@@ -6615,11 +7738,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_lowers_one_sided_momentum_compare_to_structured_core_ir_condition(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_momentum_compare",
@@ -6670,11 +7789,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_keeps_dual_sided_momentum_compare_on_raw_text_path(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_momentum_dual",
@@ -6718,11 +7833,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_lowers_one_sided_zscore_compare_to_structured_core_ir_condition(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_zscore_compare",
@@ -6772,11 +7883,7 @@ fn strategy() {
 
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_lowers_equal_weight_rebalance_helper() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_rebalance",
@@ -7120,11 +8227,7 @@ fn strategy() {
 
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_structured_diagnostics() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_test",
@@ -7163,11 +8266,7 @@ fn strategy() {
 
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_rejects_non_trunk_control_flow_constructs_early() {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_non_trunk",
@@ -7276,11 +8375,7 @@ async fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_structured_lowering_diagnostic_for_missing_fetch(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_missing_fetch",
@@ -7320,11 +8415,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_structured_lowering_diagnostic_for_unsupported_emit_action(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_bad_action",
@@ -7361,11 +8452,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_structured_lowering_diagnostic_for_malformed_spread_helper(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_bad_spread_helper",
@@ -7409,11 +8496,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_structured_lowering_diagnostic_for_missing_indicator_source(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_missing_indicator_source",
@@ -7451,11 +8534,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_structured_lowering_diagnostic_for_missing_macd_source(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_missing_macd_source",
@@ -7493,11 +8572,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_structured_lowering_diagnostic_for_missing_momentum_source(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_missing_momentum_source",
@@ -7535,11 +8610,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_structured_lowering_diagnostic_for_missing_zscore_source(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_missing_zscore_source",
@@ -7577,11 +8648,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_structured_lowering_diagnostic_for_non_positive_indicator_window(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_non_positive_indicator_window",
@@ -7619,11 +8686,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_structured_lowering_diagnostic_for_missing_indicator_window(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_missing_indicator_window",
@@ -7661,11 +8724,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_structured_lowering_diagnostic_for_invalid_moving_average_source(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_invalid_moving_average_source",
@@ -7707,11 +8766,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_structured_lowering_diagnostic_for_missing_moving_average_source(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_missing_moving_average_source",
@@ -7753,11 +8808,7 @@ fn strategy() {
     #[tokio::test]
     async fn formal_quantscript_compile_endpoint_returns_structured_lowering_diagnostic_for_invalid_universe_helper_input(
     ) {
-        let app = build_app_router(new_app_state(
-            PathBuf::from("storage/test-graphs"),
-            PathBuf::from("storage/test-runs"),
-            PathBuf::from("storage/test-backtests"),
-        ));
+        let app = build_app_router(test_app_state());
         let payload = serde_json::json!({
             "graph_id": "graph_test",
             "compile_id": "compile_formal_invalid_universe_input",

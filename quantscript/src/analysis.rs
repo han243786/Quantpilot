@@ -71,6 +71,7 @@ fn collect_unsupported_construct_diagnostics(
                     ));
                 }
             }
+            Item::TestBlock(_) => {}
         }
     }
     diagnostics.extend(collect_non_universe_for_loop_diagnostics(

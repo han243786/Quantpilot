@@ -130,8 +130,8 @@ describe("EventStreamPanel history explanations", () => {
                 latest_output_rows: [],
                 explanation_rows: [],
                 data_quality_rows: [
-                  { key: "source_health", label: "婧愬仴搴?", value: "Delayed" },
-                  { key: "gap_count", label: "缂哄彛鏁伴噺", value: "2" }
+                  { key: "source_health", label: "源健康度", value: "Delayed" },
+                  { key: "gap_count", label: "缺口数量", value: "2" }
                 ],
                 risk_detail_rows: [],
                 order_detail_rows: [],

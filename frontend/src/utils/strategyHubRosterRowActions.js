@@ -34,16 +34,24 @@ export function projectStrategyHubRosterRowActionGroups(row) {
       tone: "muted",
       items: [
         {
-          key: "open-folder",
-          label: "打开文件夹",
-          ariaLabel: `打开 ${row.name} 文件夹`,
-          disabled: !row.hasFilePath
-        },
-        {
           key: "reveal-file",
           label: "打开文件位置",
           ariaLabel: `打开 ${row.name} 文件位置`,
           disabled: !row.hasFilePath
+        }
+      ]
+    },
+    {
+      key: "manage",
+      label: "管理",
+      tone: "danger",
+      items: [
+        {
+          key: "delete-strategy",
+          label: "删除策略",
+          ariaLabel: `删除 ${row.name} 策略`,
+          disabled: false,
+          buttonClassName: "danger-btn compact-btn"
         }
       ]
     }
@@ -58,10 +66,10 @@ export function runStrategyHubRosterRowAction(model, row, actionKey) {
     case "open-backtests":
       navigateTo(strategyBacktestsPath(row.graphId));
       return undefined;
-    case "open-folder":
-      return model.openGraphFolder(row.graphId);
     case "reveal-file":
       return model.revealGraphFile(row.graphId);
+    case "delete-strategy":
+      return model.deleteStrategy(row.graphId, row.name);
     default:
       return undefined;
   }

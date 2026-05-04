@@ -59,16 +59,73 @@ async function waitForHubRosterTable() {
   return screen.getByTestId("strategy-hub-roster-table");
 }
 
+const STRATEGY_HUB_CARD_NOTES = [
+  {
+    label: "策略清单",
+    note: "让列表保持在总览管理层面：先筛查策略，再只在必要时深入到单个工作区。"
+  },
+  {
+    label: "策略驾驶舱",
+    note: "在保持清单与活动面板可见的同时，持续聚焦当前选中的这一条策略。"
+  },
+  {
+    label: "近期研究活动",
+    note: "让回测直接留在首页可见，避免研究线索被埋进单个策略页面。"
+  },
+  {
+    label: "近期运行活动",
+    note: "不离开策略中心即可跟踪模拟记录与编译 ID。"
+  }
+];
+
+function expectCardNoteTooltip(label, note) {
+  const trigger = screen.getByRole("button", { name: `查看${label}说明` });
+  const noteRoot = trigger.closest(".strategy-card-note");
+
+  fireEvent.mouseEnter(trigger);
+  expect(screen.getByRole("tooltip")).toHaveTextContent(note);
+
+  fireEvent.mouseLeave(noteRoot);
+  expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+}
+
 describe("StrategyHubPage", () => {
   const initialState = useGraphStore.getState();
   let fetchMock;
+  let confirmMock;
+  let dateNowMock;
 
   beforeEach(() => {
     navigateTo.mockReset();
-    fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ graph_id: "alpha_strategy", path: "storage/graphs/alpha_strategy.qs" }),
-      text: async () => ""
+    confirmMock = vi.spyOn(window, "confirm").mockReturnValue(true);
+    dateNowMock = vi.spyOn(Date, "now").mockReturnValue(1710000999000);
+    fetchMock = vi.fn(async (url, options = {}) => {
+      if (url === "/api/graphs/alpha_strategy/reveal") {
+        return {
+          ok: true,
+          json: async () => ({ graph_id: "alpha_strategy", path: "storage/graphs/alpha_strategy.qs" }),
+          text: async () => ""
+        };
+      }
+      if (url === "/api/graphs/alpha_strategy" && options.method === "DELETE") {
+        return {
+          ok: true,
+          json: async () => ({ graph_id: "alpha_strategy", deleted: true }),
+          text: async () => ""
+        };
+      }
+      if (url === "/api/graphs") {
+        return {
+          ok: true,
+          json: async () => [],
+          text: async () => ""
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({}),
+        text: async () => ""
+      };
     });
     global.fetch = fetchMock;
 
@@ -133,6 +190,8 @@ describe("StrategyHubPage", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    confirmMock?.mockRestore();
+    dateNowMock?.mockRestore();
     if (originalFetch) {
       global.fetch = originalFetch;
     } else {
@@ -150,16 +209,40 @@ describe("StrategyHubPage", () => {
 
     expect(screen.getByTestId("strategy-hub-page")).toBeInTheDocument();
     expect(screen.getByTestId("strategy-hub-hero")).toBeInTheDocument();
+    const statusStrip = container.querySelector(".strategy-hub-status-strip");
+    expect(statusStrip).toBeInTheDocument();
+    expect(statusStrip.children).toHaveLength(8);
+    expect(statusStrip.querySelector(".strategy-hub-ops")).not.toBeInTheDocument();
     expect(await screen.findByTestId("strategy-template-library")).toBeInTheDocument();
     expect(rosterTable).toBeInTheDocument();
     expect(container.querySelector(".strategy-inspector-card")).toBeInTheDocument();
+    const hubGrid = container.querySelector(".strategy-hub-grid");
+    expect(hubGrid).toBeInTheDocument();
+    expect(hubGrid.children[0]).toHaveClass("strategy-hub-main");
+    expect(hubGrid.children[0]).toContainElement(screen.getByTestId("strategy-template-library"));
+    expect(hubGrid.children[0]).toContainElement(rosterTable);
+    expect(hubGrid.children[1]).toHaveClass("strategy-inspector-card");
     expect(await screen.findByTestId("strategy-hub-activity-card-backtest")).toBeInTheDocument();
     expect(await screen.findByTestId("strategy-hub-activity-card-run")).toBeInTheDocument();
     expect(rosterTable).not.toHaveTextContent("beta_strategy");
+    expect(
+      [...screen.getByTestId("strategy-hub-hero").querySelectorAll(".strategy-task-group__label")].map(
+        (item) => item.textContent
+      )
+    ).toEqual([]);
+    STRATEGY_HUB_CARD_NOTES.forEach(({ note }) => {
+      expect(screen.queryByText(note)).not.toBeInTheDocument();
+    });
+    STRATEGY_HUB_CARD_NOTES.forEach(({ label, note }) => {
+      expectCardNoteTooltip(label, note);
+    });
 
     fireEvent.click(screen.getByTestId("strategy-hub-roster-row-select-alpha_strategy"));
     fireEvent.click(screen.getByTestId("strategy-hub-open-current-workspace"));
     expect(navigateTo).toHaveBeenCalledWith("/strategies/alpha_strategy");
+
+    fireEvent.click(screen.getByTestId("strategy-hub-open-blank-workspace"));
+    expect(navigateTo).toHaveBeenCalledWith("/strategies/graph_1710000999000");
 
     expect(screen.getByTestId("strategy-hub-roster-row-shell-alpha_strategy")).toBeInTheDocument();
 
@@ -169,19 +252,22 @@ describe("StrategyHubPage", () => {
     fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-open-backtests"));
     expect(navigateTo).toHaveBeenCalledWith("/strategies/alpha_strategy/backtests");
 
-    fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-open-folder"));
-    expect(fetchMock).toHaveBeenCalledWith("/api/graphs/alpha_strategy/reveal-folder", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({})
-    });
-
     fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-reveal-file"));
     expect(fetchMock).toHaveBeenCalledWith("/api/graphs/alpha_strategy/reveal", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({})
     });
+
+    fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-delete-strategy"));
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith("/api/graphs/alpha_strategy", {
+        method: "DELETE"
+      });
+    });
+    expect(confirmMock).toHaveBeenCalledWith(
+      "确认删除策略“Alpha strategy”？此操作会移除策略文件和版本记录。"
+    );
   });
 
   it("keeps the inline note hover, pin, drag, and close behavior intact", async () => {
@@ -244,6 +330,37 @@ describe("StrategyHubPage", () => {
 
     fireEvent.click(closeButton);
     expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+  });
+
+  it("keeps metric card notes open after the popup is pinned", async () => {
+    const { container } = render(<StrategyHubPage />);
+
+    await waitForHubRosterTable();
+    vi.useFakeTimers();
+
+    const trigger = screen.getByRole("button", { name: "查看策略文件说明" });
+    fireEvent.mouseEnter(trigger);
+
+    const popup = screen.getByRole("tooltip");
+    expect(popup).toHaveTextContent("当前由后端真实追踪");
+
+    fireEvent.mouseEnter(popup);
+
+    act(() => {
+      vi.advanceTimersByTime(3000);
+    });
+
+    const closeButton = screen.getByRole("button", { name: "关闭策略文件说明" });
+    expect(closeButton).toBeInTheDocument();
+
+    const noteRoot = trigger.closest(".strategy-card-note");
+    fireEvent.mouseLeave(noteRoot);
+    expect(screen.getByRole("tooltip")).toBeInTheDocument();
+
+    fireEvent.click(closeButton);
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+
+    expect(container.querySelector(".strategy-card-note__pin-progress")).not.toBeInTheDocument();
   });
 
   it("does not treat the fallback in-memory graph as a tracked hub strategy when no real files exist", async () => {

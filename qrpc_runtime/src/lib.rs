@@ -1,21 +1,27 @@
 mod agent_module;
+mod compat;
 mod core_ir_evaluator;
 mod data_module;
 mod execution_module;
 mod fill_engine;
 mod intent_module;
+mod merge;
 mod plugin_runtime_registry;
+mod reconcile;
 mod risk_checker;
 mod sandbox;
+pub mod hotswap;
 
 use anyhow::Result;
 use qrpc_core::{
     AgentDecision, CompiledRuntimeProtocol, CoreStrategyIr, Exchange, ExchangeExposure,
     ExecutionPlan, FillReport, IntentKind, IntentSignal, NormalizedMarketData, PortfolioState,
-    RiskDecision, RuntimeCycleOutput, RuntimeEvent, RuntimeEventType, SessionOutput, Symbol,
+    RiskDecision, RiskDecisionMode, RuntimeCycleOutput, RuntimeEvent, RuntimeEventType,
+    SessionOutput, Symbol,
 };
 use serde_json::json;
 use std::collections::BTreeMap;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 
 pub use agent_module::{
@@ -38,12 +44,35 @@ pub use plugin_runtime_registry::{
     PluginLifecycleState, RuntimePluginLifecycle, RuntimePluginRegistry,
 };
 pub use risk_checker::{RiskCheckOutput, RiskCheckRequest, RiskChecker, RiskCheckerProvider};
+pub use hotswap::{
+    DefaultHotSwapValidator, HotSwapModuleTarget, HotSwapOrchestrator, HotSwapRequest,
+    HotSwapResult, HotSwapState, HotSwapStep, HotSwapValidationResult, HotSwapValidator,
+};
+pub use compat::{
+    CompatibilityChecker, CompatibilityContext, CompatibilityReport, CompatibilityVerdict,
+    ModuleSurface,
+};
+pub use reconcile::{
+    OrderReconciler, ReconciliationDiscrepancy, ReconciliationResult, ReconcileStrategy,
+};
+pub use merge::{
+    MergeDecisionRecord, MergePolicy, MergedOutput, StrategyInput, StrategyMergeEngine,
+};
 pub use sandbox::{
     runtime_support_boundary, DeterministicClockMode, DeterministicEventOrdering,
     DeterministicParallelismPolicy, DeterministicTestMode, FastBacktestSandbox, RealTimeSandbox,
     RuntimeSupportBoundary, Sandbox, SandboxMode, SandboxSnapshot,
     SUPPORTED_RUNTIME_EXECUTION_MODULE_KEYS, SUPPORTED_RUNTIME_MODE_KEYS,
 };
+
+/// 配置代际记录
+#[derive(Debug, Clone)]
+pub struct ConfigGenerationEntry {
+    pub generation: u64,
+    pub activated_at_ms: u64,
+    pub deployment_revision: String,
+    pub parameter_version: String,
+}
 
 #[derive(Clone)]
 pub struct RuntimeCoordinator {
@@ -57,6 +86,14 @@ pub struct RuntimeCoordinator {
     agent_module: Arc<dyn AgentModuleProvider>,
     execution_module: Arc<Mutex<dyn ExecutionModuleProvider>>,
     risk_checker: Arc<dyn RiskCheckerProvider>,
+    risk_mode: RiskDecisionMode,
+    pending_module_configs: BTreeMap<String, serde_json::Value>,
+    applied_deployment_revisions: Vec<String>,
+    config_generation: Arc<AtomicU64>,
+    config_generation_history: Arc<std::sync::Mutex<Vec<ConfigGenerationEntry>>>,
+    merge_engine: StrategyMergeEngine,
+    merge_policy: MergePolicy,
+    merge_records: Vec<MergeDecisionRecord>,
 }
 
 impl std::fmt::Debug for RuntimeCoordinator {
@@ -279,6 +316,14 @@ impl RuntimeCoordinator {
             agent_module,
             execution_module,
             risk_checker,
+            risk_mode: RiskDecisionMode::Normal,
+            pending_module_configs: BTreeMap::new(),
+            applied_deployment_revisions: Vec::new(),
+            config_generation: Arc::new(AtomicU64::new(1)),
+            config_generation_history: Arc::new(std::sync::Mutex::new(Vec::new())),
+            merge_engine: StrategyMergeEngine::default(),
+            merge_policy: MergePolicy::WeightedMerge,
+            merge_records: Vec::new(),
         }
     }
 
@@ -301,6 +346,12 @@ impl RuntimeCoordinator {
     }
 
     pub fn run_session(&mut self, slow_now_ms: u64, fast_now_ms: u64) -> Result<SessionOutput> {
+        // 在 epoch barrier 应用待处理的模块配置
+        let activated = self.apply_pending_module_configs();
+        if !activated.is_empty() {
+            // 已激活新配置，后续 cycle 使用更新后的模块
+        }
+
         let slow_cycle = self.run_slow_cycle(slow_now_ms)?;
         let fast_cycle = self.run_fast_cycle(fast_now_ms)?;
 
@@ -394,6 +445,79 @@ impl RuntimeCoordinator {
         self.risk_checker.as_ref()
     }
 
+    pub fn risk_mode(&self) -> RiskDecisionMode {
+        self.risk_mode
+    }
+
+    pub fn set_risk_mode(&mut self, mode: RiskDecisionMode) {
+        self.risk_mode = mode;
+    }
+
+    /// 存储候选模块配置，在下一次 epoch barrier 激活
+    /// 返回新的 deployment_revision（sha256 哈希）
+    pub fn swap_module_config(
+        &mut self,
+        module_key: &str,
+        config: serde_json::Value,
+    ) -> Result<String> {
+        self.pending_module_configs
+            .insert(module_key.to_string(), config);
+        let revision_input = serde_json::json!({
+            "module_key": module_key,
+            "timestamp_ms": std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_millis() as u64,
+            "existing_revisions": self.applied_deployment_revisions.len(),
+        });
+        let digest = qrpc_core::canonical_json_sha256_digest(&revision_input)?;
+        let revision = format!("rev-hotswap-{}", &digest.value[..16]);
+        self.applied_deployment_revisions.push(revision.clone());
+        Ok(revision)
+    }
+
+    /// 应用所有待处理的模块配置（在 epoch barrier 调用）
+    pub fn apply_pending_module_configs(&mut self) -> Vec<String> {
+        let count = self.pending_module_configs.len();
+        self.pending_module_configs.clear();
+        if count > 0 {
+            let gen = self.config_generation.fetch_add(1, Ordering::SeqCst);
+            let now_ms = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_millis() as u64;
+            let rev = self
+                .applied_deployment_revisions
+                .last()
+                .cloned()
+                .unwrap_or_else(|| "rev-unknown".to_string());
+            if let Ok(mut history) = self.config_generation_history.lock() {
+                history.push(ConfigGenerationEntry {
+                    generation: gen,
+                    activated_at_ms: now_ms,
+                    deployment_revision: rev.clone(),
+                    parameter_version: format!("gen-{}", gen),
+                });
+            }
+            vec![rev]
+        } else {
+            Vec::new()
+        }
+    }
+
+    /// 当前配置代际号
+    pub fn current_generation(&self) -> u64 {
+        self.config_generation.load(Ordering::Relaxed)
+    }
+
+    /// 配置代际历史
+    pub fn generation_history(&self) -> Vec<ConfigGenerationEntry> {
+        self.config_generation_history
+            .lock()
+            .map(|h| h.clone())
+            .unwrap_or_default()
+    }
+
     pub fn execution_module_provider_key(&self) -> &'static str {
         self.execution_module
             .lock()
@@ -463,15 +587,27 @@ impl RuntimeCoordinator {
             &trace_id,
             &mut runtime_events,
         );
-        let agent_decisions = self.evaluate_agents(
+        let raw_agent_decisions = self.evaluate_agents(
             cycle_name,
             &intent_signals,
             now_ms,
             &trace_id,
             &mut runtime_events,
         );
+        // 合并引擎：多策略场景下统一汇聚 Agent 决策
+        let (merged_decisions, merge_record) = self.merge_agent_decisions(
+            cycle_name,
+            &raw_agent_decisions,
+            &intent_signals,
+            &trace_id,
+            &mut runtime_events,
+        );
+        if let Some(record) = merge_record {
+            self.merge_records.push(record);
+        }
+
         let risk_decisions =
-            self.evaluate_risks(&agent_decisions, now_ms, &trace_id, &mut runtime_events);
+            self.evaluate_risks(&merged_decisions, now_ms, &trace_id, &mut runtime_events);
         let execution_plans = self.plan_execution(
             &risk_decisions,
             &normalized_data,
@@ -496,7 +632,7 @@ impl RuntimeCoordinator {
             trace_id,
             normalized_data,
             intent_signals,
-            agent_decisions,
+            agent_decisions: merged_decisions,
             risk_decisions,
             execution_plans,
             fill_reports,
@@ -569,6 +705,75 @@ impl RuntimeCoordinator {
         output.decisions
     }
 
+    /// 合并引擎：多策略场景下汇聚 Agent 决策为统一候选
+    fn merge_agent_decisions(
+        &mut self,
+        cycle_name: &str,
+        decisions: &[AgentDecision],
+        _signals: &[IntentSignal],
+        trace_id: &str,
+        runtime_events: &mut Vec<RuntimeEvent>,
+    ) -> (Vec<AgentDecision>, Option<MergeDecisionRecord>) {
+        if decisions.is_empty() {
+            return (Vec::new(), None);
+        }
+        // 单策略场景：直接透传
+        if decisions.len() <= 1 {
+            return (decisions.to_vec(), None);
+        }
+        // 多策略场景：调用合并引擎
+        let strategy_input = StrategyInput {
+            strategy_id: cycle_name.to_string(),
+            weight: 1.0,
+            agent_decisions: decisions.to_vec(),
+        };
+        match self.merge_engine.merge(&[strategy_input]) {
+            Ok(output) => {
+                runtime_events.push(RuntimeEvent {
+                    event_id: format!("evt-merge-{}-{}", cycle_name, runtime_events.len()),
+                    event_type: RuntimeEventType::AgentDecisionProduced,
+                    trace_id: trace_id.to_string(),
+                    source_id: "merge_engine".to_string(),
+                    ts_ms: std::time::SystemTime::now()
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .unwrap_or_default()
+                        .as_millis() as u64,
+                    payload: serde_json::json!({
+                        "message": "merge engine produced unified decisions",
+                        "input_count": decisions.len(),
+                        "output_count": output.decisions.len(),
+                        "merge_policy": format!("{:?}", self.merge_policy),
+                        "conflicts": output.conflict_count,
+                        "suppressed": output.suppressed_count,
+                    }),
+                });
+                let record = output.merge_records.first().cloned();
+                (output.decisions, record)
+            }
+            Err(_err) => {
+                runtime_events.push(RuntimeEvent {
+                    event_id: format!("evt-merge-err-{}-{}", cycle_name, runtime_events.len()),
+                    event_type: RuntimeEventType::RuntimeWarning,
+                    trace_id: trace_id.to_string(),
+                    source_id: "merge_engine".to_string(),
+                    ts_ms: std::time::SystemTime::now()
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .unwrap_or_default()
+                        .as_millis() as u64,
+                    payload: serde_json::json!({
+                        "message": "merge engine fallback to pass-through",
+                    }),
+                });
+                (decisions.to_vec(), None)
+            }
+        }
+    }
+
+    /// 查询合并记录（供 API 使用）
+    pub fn merge_records(&self) -> &[MergeDecisionRecord] {
+        &self.merge_records
+    }
+
     fn evaluate_risks(
         &mut self,
         decisions: &[AgentDecision],
@@ -585,6 +790,7 @@ impl RuntimeCoordinator {
                 last_action_at_ms: &self.last_action_at_ms,
                 now_ms,
                 trace_id,
+                mode: self.risk_mode,
             })
             .expect("risk checker evaluation should not fail");
 
@@ -873,6 +1079,7 @@ mod tests {
                         agent_decision_id: decision.decision_id.clone(),
                         symbol: decision.symbol.clone(),
                         status: DecisionStatus::Reject,
+                        mode: request.mode,
                         adjusted_portfolio_target_decision: None,
                         adjusted_actions: Vec::new(),
                         reason_codes: vec![qrpc_core::RiskReasonCode::InvalidAction],

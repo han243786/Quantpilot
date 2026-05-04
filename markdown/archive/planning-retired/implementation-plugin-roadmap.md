@@ -19,9 +19,9 @@ Use these instead:
 - current capability exposure:
   [Capability Governance](../../implementation/governance/implementation-capability-governance.md)
 - release closeout execution:
-  [Functional Closeout Task Table](../../implementation/planning/implementation-functional-closeout-task-table.md)
+  [Archived Functional Closeout Ledger](./implementation-functional-closeout-task-table.md)
 - non-blocking cleanup:
-  [Non-Blocking Closeout List](../../implementation/planning/implementation-non-blocking-closeout-list.md)
+  [Archived P2 Closeout Ledger](./implementation-non-blocking-closeout-list.md)
 
 ## Preserved context
 

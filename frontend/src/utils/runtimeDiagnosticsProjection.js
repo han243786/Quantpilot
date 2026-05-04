@@ -1,3 +1,8 @@
+import {
+  buildGovernanceIdentityRows,
+  governanceFromRuntime
+} from "./runtimeGovernance";
+
 const EVENT_LABELS = {
   DataUpdated: "数据更新",
   IntentTriggered: "意图触发",
@@ -7,6 +12,7 @@ const EVENT_LABELS = {
   ExecutionPlanned: "执行计划",
   ExecutionFilled: "执行成交",
   PortfolioUpdated: "组合更新",
+  SecurityViolationDetected: "安全违规",
   RuntimeNotice: "运行提示",
   RuntimeWarning: "数据告警",
   RuntimeError: "数据错误"
@@ -44,6 +50,13 @@ const INPUT_FIELDS_BY_EVENT = {
     "source_latency_ms",
     "gap_count",
     "quality_flags"
+  ],
+  SecurityViolationDetected: [
+    "actor",
+    "attempted_action",
+    "denied_policy",
+    "module_key",
+    "reason_code"
   ]
 };
 
@@ -61,8 +74,11 @@ const OUTPUT_FIELDS_BY_EVENT = {
 
 const FIELD_LABELS = {
   ask_price: "卖一价",
+  actor: "操作者",
+  attempted_action: "尝试动作",
   bid_price: "买一价",
   confidence: "置信度",
+  denied_policy: "拒绝策略",
   endpoint: "数据端点",
   error: "错误",
   exec_status: "执行状态",
@@ -74,6 +90,7 @@ const FIELD_LABELS = {
   limit_price: "限价",
   limit_triggered: "触发限制",
   lifecycle_stage: "生命周期",
+  module_key: "模块",
   net_side: "决策方向",
   net_strength: "决策强度",
   order_count: "订单数量",
@@ -86,6 +103,7 @@ const FIELD_LABELS = {
   qty: "数量",
   quality_flags: "质量标记",
   reason_text: "原因",
+  reason_code: "原因代码",
   remaining_qty: "剩余数量",
   risk_score: "风控评分",
   score: "评分",
@@ -118,6 +136,11 @@ function formatValue(value) {
   }
   if (Array.isArray(value)) {
     return value.map((item) => formatValue(item)).join(", ");
+  }
+  if (typeof value === "object") {
+    if (value.name) return String(value.name);
+    if (value.id) return String(value.id);
+    return JSON.stringify(value);
   }
   return String(value);
 }
@@ -212,6 +235,18 @@ function buildExplanationRowsFromPayload(eventType, payload = {}) {
 
   if (eventType === "DataUpdated" || eventType === "RuntimeWarning" || eventType === "RuntimeError") {
     for (const key of ["source_health", "quality_flags", "fallback", "error"]) {
+      if (payload[key] !== undefined && payload[key] !== null && payload[key] !== "") {
+        rows.push({
+          key,
+          label: FIELD_LABELS[key] || key,
+          value: formatValue(payload[key])
+        });
+      }
+    }
+  }
+
+  if (eventType === "SecurityViolationDetected") {
+    for (const key of ["attempted_action", "denied_policy", "module_key", "reason_code"]) {
       if (payload[key] !== undefined && payload[key] !== null && payload[key] !== "") {
         rows.push({
           key,
@@ -384,6 +419,8 @@ function severityTone(severity) {
 function buildStructuredProjection(graph, runtime, selectedNodeId = null) {
   const diagnostics = runtime?.diagnostics;
   if (!diagnostics || !diagnostics.node_details) return null;
+  const governance = governanceFromRuntime(runtime);
+  const governanceRows = buildGovernanceIdentityRows(governance);
 
   const nodes = Array.isArray(graph?.nodes) ? graph.nodes : [];
   const nodeMap = new Map(nodes.map((node) => [node.id, node]));
@@ -423,6 +460,8 @@ function buildStructuredProjection(graph, runtime, selectedNodeId = null) {
     activeNodes,
     selectedNode,
     selectedNodeId: resolvedNodeId,
+    governance,
+    governanceRows,
     latestEvent: selectedDetail.latest_event || null,
     explanationSummary: selectedDetail.explanation_summary || null,
     latestInputRows: selectedDetail.latest_input_rows || [],
@@ -449,6 +488,8 @@ function buildStructuredProjection(graph, runtime, selectedNodeId = null) {
 }
 
 function buildEventProjection(graph, runtime, selectedNodeId = null) {
+  const governance = governanceFromRuntime(runtime);
+  const governanceRows = buildGovernanceIdentityRows(governance);
   const nodes = Array.isArray(graph?.nodes) ? graph.nodes : [];
   const nodeMap = new Map(nodes.map((node) => [node.id, node]));
   const events = sortEvents(runtime?.events || []);
@@ -505,6 +546,8 @@ function buildEventProjection(graph, runtime, selectedNodeId = null) {
     }),
     selectedNode,
     selectedNodeId: resolvedNodeId,
+    governance,
+    governanceRows,
     latestEvent,
     explanationSummary:
       latestEvent?.payload?.explanation_summary || latestEvent?.payload?.reason_text || null,

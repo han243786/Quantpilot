@@ -42,7 +42,7 @@ export default function StrategyHubHeroSection({ model }) {
         </div>
 
         <div className="strategy-hub-hero__actions">
-          <StrategyTaskGroup label="管理" tone="muted">
+          <StrategyTaskGroup label="管理" tone="muted" showLabel={false}>
             <button
               className="ghost-btn"
               onClick={() => void Promise.all([model.refreshRunHistory(), model.refreshBacktestHistory()])}
@@ -53,7 +53,7 @@ export default function StrategyHubHeroSection({ model }) {
               同步最新策略图
             </button>
           </StrategyTaskGroup>
-          <StrategyTaskGroup label="构建" tone="info">
+          <StrategyTaskGroup label="构建" tone="info" showLabel={false}>
             <button
               className="primary-btn"
               data-testid="strategy-hub-open-current-workspace"
@@ -63,17 +63,21 @@ export default function StrategyHubHeroSection({ model }) {
             >
               打开当前工作区
             </button>
+            <button
+              className="ghost-btn"
+              data-testid="strategy-hub-open-blank-workspace"
+              onClick={() => void model.openBlankWorkspace()}
+            >
+              打开空白工作区
+            </button>
           </StrategyTaskGroup>
         </div>
       </header>
 
-      <section className="strategy-hub-kpis">
+      <section className="strategy-hub-status-strip" aria-label="策略中心状态总览">
         {headerCards.map((item) => (
           <StrategyMetricCard key={item.label} label={item.label} value={item.value} note={item.note} />
         ))}
-      </section>
-
-      <section className="strategy-hub-ops" aria-label="策略总览面板">
         <StrategyOpsCard
           title="待修复"
           value={formatCount(model.hubSummary.issueCount)}
@@ -81,7 +85,7 @@ export default function StrategyHubHeroSection({ model }) {
           tone="danger"
         />
         <StrategyOpsCard
-          title="可运行策略"
+          title="运行就绪"
           value={formatCount(model.hubSummary.runnableCount)}
           note="可直接进入模拟或回测复盘的策略数量。"
           tone="success"

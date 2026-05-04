@@ -51,6 +51,17 @@ describe("RuntimeDiagnosticsPanel", () => {
       ]
     };
     const runtime = {
+      governance: {
+        capability_hash: "sha256:diag-capability-1234567890abcdef",
+        deployment_revision: "rev-diagnostics-20260428",
+        strategy_version: "strategy-v17",
+        parameter_version: "params-v4",
+        governance_source: "current_runtime",
+        permission_boundary: {
+          model_version: "quantpilot/permission-boundary/v1",
+          ai_write_policy: "proposal_only"
+        }
+      },
       highlightedNodeIds: ["data_feed", "execution"],
       events: [
         {
@@ -99,6 +110,16 @@ describe("RuntimeDiagnosticsPanel", () => {
 
     expect(screen.getAllByText("Execution rejected").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Rejected").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("runtime-diagnostics-governance")).toHaveTextContent("能力边界");
+    expect(screen.getByTestId("runtime-diagnostics-governance")).toHaveTextContent(
+      "sha256:diag-c...abcdef"
+    );
+    expect(screen.getByTestId("runtime-diagnostics-governance")).toHaveTextContent(
+      "proposal_only"
+    );
+    expect(screen.getByTestId("runtime-diagnostics-governance")).toHaveTextContent(
+      "current_runtime"
+    );
     fireEvent.click(screen.getByRole("button", { name: "Price Feed" }));
     expect(onSelectNode).toHaveBeenCalledWith("data_feed");
   });
@@ -242,12 +263,12 @@ describe("RuntimeDiagnosticsPanel", () => {
             risk_detail_rows: [
               {
                 key: "limit_triggered",
-                label: "瑙﹀彂闄愬埗",
+                label: "触发限制",
                 value: "max_portfolio_net_exposure_ratio"
               },
               {
                 key: "post_risk.portfolio_net_exposure_ratio",
-                label: "椋庢帶鍚庣粍鍚堝噣鏁炲彛",
+                label: "风控后组合净敞口",
                 value: "0.4500"
               }
             ],

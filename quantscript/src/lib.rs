@@ -5,6 +5,7 @@ mod hir;
 mod lowering;
 mod resolve;
 mod script;
+mod test_plan;
 mod types;
 
 use anyhow::{anyhow, bail, Context, Result};
@@ -41,7 +42,11 @@ pub use resolve::{
 };
 pub use script::{
     parse_expr, parse_quant_script_module, BinaryOp, CallArg, Expr, FunctionDecl, ImportDecl,
-    ImportName, Item, MatchArm, MatchArmBody, Param, ScriptModule, Stmt, UnaryOp,
+    ImportName, Item, MatchArm, MatchArmBody, Param, ScriptModule, StepBlock, Stmt, TestAction,
+    TestBlock, TestParamValue, UnaryOp,
+};
+pub use test_plan::{
+    extract_test_plan, split_test_items, TestActionDef, TestParamValueDef, TestPlan, TestStep,
 };
 pub use types::{parse_type_annotation, Type, TypeArena, TypeId};
 

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { StrategyCardNote } from "./StrategyHubSharedComponents";
 import { buildRepairPathInsight } from "../utils/repairPathInsights";
 import {
   DEFAULT_WORKSPACE_ISSUE_FILTERS,
@@ -81,8 +82,9 @@ function WorkspaceIssueQueueCard({
     <div className="workspace-issue-queue">
       <div className="workspace-issue-queue__header">
         <div>
-          <div className="mini-list-title">{title}</div>
-          <div className="strategy-card-subtitle">{subtitle}</div>
+          <div className="mini-list-title strategy-card-title-note">
+            <StrategyCardNote label={title} note={subtitle} />
+          </div>
         </div>
         <div className="workspace-issue-queue__actions">
           {isDirty ? (
@@ -91,7 +93,7 @@ function WorkspaceIssueQueueCard({
               className="ghost-btn compact-btn"
               onClick={() => updateFilters(DEFAULT_WORKSPACE_ISSUE_FILTERS)}
             >
-              Reset filters
+              重置筛选
             </button>
           ) : null}
           {actionLabel && onAction ? (
@@ -128,7 +130,7 @@ function WorkspaceIssueQueueCard({
           }`}
           onClick={() => updateFilters((current) => ({ actionableOnly: !current.actionableOnly }))}
         >
-          {`Actionable ${counts.actionable}`}
+          {`可定位 ${counts.actionable}`}
         </button>
         <button
           type="button"
@@ -137,7 +139,7 @@ function WorkspaceIssueQueueCard({
           }`}
           onClick={() => updateFilters((current) => ({ showSourceFilters: !current.showSourceFilters }))}
         >
-          {`Sources ${orderedSources.length}`}
+          {`来源 ${orderedSources.length}`}
         </button>
       </div>
 
@@ -150,7 +152,7 @@ function WorkspaceIssueQueueCard({
             }`}
             onClick={() => updateFilters({ sourceFilter: "all", nodeTypeFilter: "all" })}
           >
-            {`All sources ${items.length}`}
+            {`全部来源 ${items.length}`}
           </button>
           {orderedSources.map((source) => (
             <button
@@ -176,7 +178,7 @@ function WorkspaceIssueQueueCard({
             }`}
             onClick={() => updateFilters({ nodeTypeFilter: "all" })}
           >
-            {`All node types ${sourceFilteredItems.length}`}
+            {`全部节点类型 ${sourceFilteredItems.length}`}
           </button>
           {orderedNodeTypes.map((nodeType) => (
             <button
@@ -219,7 +221,7 @@ function WorkspaceIssueQueueCard({
                   </span>
                   <span className="diagnostic-chip">{diagnosticQueueSource(item)}</span>
                   {item.actionable ? (
-                    <span className="diagnostic-chip">Actionable target</span>
+                    <span className="diagnostic-chip">可定位目标</span>
                   ) : null}
                   {repairPathInsight ? (
                     <>

@@ -73,9 +73,9 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
     <div className="open-orders-card" data-testid="workspace-experiment-card">
       <div className="open-orders-header">
         <div>
-          <div className="mini-list-title">Parameter sweep</div>
+          <div className="mini-list-title">参数扫描</div>
           <div className="muted-line">
-            Run a narrow execution-assumptions sweep without opening a second experiment protocol.
+            执行窄范围执行假设扫描，不另开第二套实验协议。
           </div>
         </div>
         <strong>{graphExperiments.length}</strong>
@@ -83,18 +83,18 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
 
       <div className="workspace-version-save-form" data-testid="workspace-experiment-form">
         <label className="field-label">
-          Experiment name
+          实验名称
           <input
             type="text"
             className="field-input"
             value={experimentName}
             data-testid="workspace-experiment-name-input"
             onChange={(event) => setExperimentName(event.target.value)}
-            placeholder="Execution assumptions sweep"
+            placeholder="执行假设扫描"
           />
         </label>
         <label className="field-label">
-          Fee bps grid
+          手续费 bps 网格
           <input
             type="text"
             className="field-input"
@@ -105,7 +105,7 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
           />
         </label>
         <label className="field-label">
-          Slippage bps grid
+          滑点 bps 网格
           <input
             type="text"
             className="field-input"
@@ -116,7 +116,7 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
           />
         </label>
         <label className="field-label">
-          Latency ms grid
+          延迟 ms 网格
           <input
             type="text"
             className="field-input"
@@ -135,7 +135,7 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
             title={runSweepBlockedReason || undefined}
             onClick={handleStartExperiment}
           >
-            Run sweep
+            运行扫描
           </button>
         </div>
       </div>
@@ -150,10 +150,10 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
       ) : null}
 
       {experimentsStatus === "loading" ? (
-        <div className="muted-line">Loading experiment history...</div>
+        <div className="muted-line">正在加载实验历史...</div>
       ) : null}
       {graphExperiments.length === 0 && experimentsStatus !== "loading" ? (
-        <div className="muted-line">No parameter sweep has been recorded for this graph yet.</div>
+        <div className="muted-line">该策略图尚未记录参数扫描。</div>
       ) : null}
       {backendError && selectedExperimentStatus === "error" ? (
         <div className="history-note history-note-warning">{backendError}</div>
@@ -168,14 +168,14 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
           >
             <div className="open-order-topline">
               <strong>{entry.experiment_name || entry.experiment_id}</strong>
-              <span>{entry.variant_count} variants</span>
+              <span>{entry.variant_count} 个变体</span>
             </div>
             <div className="muted-line">
-              Axes: {entry.sweep_axes.length > 0 ? entry.sweep_axes.join(", ") : "single variant"}
+              轴：{entry.sweep_axes.length > 0 ? entry.sweep_axes.join(", ") : "单一变体"}
             </div>
             {entry.best_backtest_id ? (
               <div className="muted-line">
-                Best backtest: {entry.best_backtest_id}
+                最佳回测：{entry.best_backtest_id}
                 {typeof entry.best_total_return_ratio === "number"
                   ? ` (${formatPercent(entry.best_total_return_ratio)})`
                   : ""}
@@ -188,7 +188,7 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
                 data-testid={`workspace-experiment-open-${entry.experiment_id}`}
                 onClick={() => loadExperimentDetail(entry.experiment_id)}
               >
-                Open results
+                打开结果
               </button>
             </div>
           </div>
@@ -203,7 +203,7 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
                 {activeExperiment.definition.experiment_name || activeExperiment.experiment_id}
               </div>
               <div className="muted-line">
-                Replay source: {activeExperiment.definition.replay_source}
+                回放来源：{activeExperiment.definition.replay_source}
               </div>
             </div>
             <strong>{activeExperiment.variants.length}</strong>
@@ -220,12 +220,12 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
                   <span>{variant.backtest_id}</span>
                 </div>
                 <div className="workspace-experiment-row__metrics">
-                  <span>Fee {variant.fee_bps} bps</span>
-                  <span>Slip {variant.slippage_bps} bps</span>
-                  <span>Latency {variant.latency_ms} ms</span>
-                  <span>Return {formatPercent(variant.summary.total_return_ratio)}</span>
-                  <span>Drawdown {formatPercent(variant.summary.max_drawdown_ratio)}</span>
-                  <span>Trades {variant.summary.trade_count}</span>
+                  <span>手续费 {variant.fee_bps} bps</span>
+                  <span>滑点 {variant.slippage_bps} bps</span>
+                  <span>延迟 {variant.latency_ms} ms</span>
+                  <span>收益 {formatPercent(variant.summary.total_return_ratio)}</span>
+                  <span>回撤 {formatPercent(variant.summary.max_drawdown_ratio)}</span>
+                  <span>交易 {variant.summary.trade_count}</span>
                 </div>
                 <div className="strategy-inspector-actions">
                   <button
@@ -234,7 +234,7 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
                     data-testid={`workspace-experiment-detail-${variant.variant_id}`}
                     onClick={() => navigateTo(backtestDetailPath(variant.backtest_id, strategyId))}
                   >
-                    Open backtest detail
+                    打开回测详情
                   </button>
                 </div>
               </div>

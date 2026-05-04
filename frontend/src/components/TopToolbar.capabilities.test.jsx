@@ -95,7 +95,7 @@ describe("TopToolbar capability fallback UI", () => {
     expectPrimaryActionsDisabled();
   });
 
-  it("shows cache fallback warning but keeps actions available", () => {
+  it("shows cache fallback warning with compile locked for safety", () => {
     act(() => {
       useGraphStore.setState({
         capabilityStatus: "degraded",
@@ -110,7 +110,8 @@ describe("TopToolbar capability fallback UI", () => {
     expect(screen.getByTestId("toolbar-capability-alert")).toHaveTextContent(
       /latest cached capability snapshot/i
     );
-    expectPrimaryActionsEnabled();
+    // compile action locked when capability is cache-degraded
+    expect(screen.getByTestId("toolbar-compile-action")).toBeDisabled();
   });
 
   it("shows syncing banner and locks actions while capabilities are loading", () => {

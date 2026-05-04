@@ -141,6 +141,17 @@ describe("runtimeDiagnosticsProjection", () => {
 
   it("falls back to the first active node when no explicit selection exists", () => {
     const runtime = {
+      governance: {
+        capability_hash: "sha256:projection-capability-1234567890abcdef",
+        deployment_revision: "rev-projection-20260428",
+        strategy_version: "strategy-v3",
+        parameter_version: "params-v1",
+        governance_source: "current_runtime",
+        permission_boundary: {
+          model_version: "quantpilot/permission-boundary/v1",
+          ai_write_policy: "proposal_only"
+        }
+      },
       highlightedNodeIds: ["execution"],
       events: [
         {
@@ -167,6 +178,16 @@ describe("runtimeDiagnosticsProjection", () => {
       expect.arrayContaining([
         expect.objectContaining({ key: "side", value: "Buy" }),
         expect.objectContaining({ key: "qty", value: "0.2500" })
+      ])
+    );
+    expect(projection.governanceRows).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: "capability_hash",
+          value: "sha256:projec...abcdef"
+        }),
+        expect.objectContaining({ key: "ai_write_policy", value: "proposal_only" }),
+        expect.objectContaining({ key: "governance_source", value: "current_runtime" })
       ])
     );
   });

@@ -621,33 +621,33 @@ export function compileGraph(graph, registry = null) {
         );
         if (unsupportedSymbols.length > 0) {
           errors.push(
-            `浠ｇ悊鑺傜偣 ${node.name} 浣跨敤浜嗘湭鏀寔鐨勫啀骞宠　浜ゆ槗瀵?${unsupportedSymbols.join(", ")}銆?`
+            `代理节点 ${node.name} 使用了未支持的再平衡交易对：${unsupportedSymbols.join(", ")}。`
           );
         }
 
         if (normalizeRebalanceSchedule(node.config.rebalance_schedule) === "__invalid__") {
-          errors.push(`浠ｇ悊鑺傜偣 ${node.name} 鐨?rebalance cadence 鍊间笉鍚堟硶銆?`);
+          errors.push(`代理节点 ${node.name} 的 rebalance cadence 值不合法。`);
         }
         const allocationKind = normalizeRebalanceAllocationKind(
           node.config.rebalance_allocation_kind
         );
         if (allocationKind === "__invalid__") {
-          errors.push(`浠ｇ悊鑺傜偣 ${node.name} 鐨?allocation rule 鍊间笉鍚堟硶銆?`);
+          errors.push(`代理节点 ${node.name} 的 allocation rule 值不合法。`);
         }
         if (normalizeRebalanceRankMethod(node.config.rebalance_rank_method) === "__invalid__") {
-          errors.push(`浠ｇ悊鑺傜偣 ${node.name} 鐨?rank method 鍊间笉鍚堟硶銆?`);
+          errors.push(`代理节点 ${node.name} 的 rank method 值不合法。`);
         }
         if (
           normalizeRebalanceScoreNormalize(node.config.rebalance_score_normalize) === "__invalid__"
         ) {
-          errors.push(`浠ｇ悊鑺傜偣 ${node.name} 鐨?score normalize 鍊间笉鍚堟硶銆?`);
+          errors.push(`代理节点 ${node.name} 的 score normalize 值不合法。`);
         }
 
         const weightsRaw = parseCsvStrings(node.config.rebalance_target_weights);
         const weights = parseCsvNumbers(node.config.rebalance_target_weights);
         if (weightsRaw.length !== weights.length) {
           errors.push(
-            `浠ｇ悊鑺傜偣 ${node.name} 鐨?target weights 蹇呴』鏄敱閫楀彿鍒嗛殧鐨勬暟瀛椼€?`
+            `代理节点 ${node.name} 的 target weights 必须是由逗号分隔的数字。`
           );
         }
         if (
@@ -656,7 +656,7 @@ export function compileGraph(graph, registry = null) {
           weights.length !== rebalanceSymbols.length
         ) {
           errors.push(
-            `浠ｇ悊鑺傜偣 ${node.name} 鐨?fixed_weights 鏁伴噺蹇呴』涓?rebalance symbols 涓€鑷淬€?`
+            `代理节点 ${node.name} 的 fixed_weights 数量必须与 rebalance symbols 一致。`
           );
         }
       }

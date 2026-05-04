@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act } from "@testing-library/react";
 import { useGraphStore } from "./graphStore";
 import { buildValidatedSampleGraph } from "../test/fixtures/runtime/buildValidatedSampleGraph";
+import { backendCapabilitiesFixture } from "../test/fixtures/capabilities/capabilityFallbacks";
 
 function cloneJson(value) {
   return JSON.parse(JSON.stringify(value));
@@ -137,6 +138,34 @@ describe("graphStore Strategy IR compile integration", () => {
     });
     window.localStorage.clear();
     vi.unstubAllGlobals();
+  });
+
+  it("blocks compile when loaded capabilities are missing permission boundary", async () => {
+    const { permission_boundary: _permissionBoundary, ...malformedCapabilities } =
+      backendCapabilitiesFixture;
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    act(() => {
+      useGraphStore.setState({
+        capabilities: malformedCapabilities,
+        capabilityStatus: "ready",
+        capabilitySource: "remote",
+        capabilityMessage: ""
+      });
+    });
+
+    let result = "not-run";
+    await act(async () => {
+      result = await useGraphStore.getState().compileCurrentGraph();
+    });
+
+    const state = useGraphStore.getState();
+    expect(result).toBeNull();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(state.runtime.backendError).toContain("缺少 permission_boundary");
+    expect(state.graph.compile_summary.compilable).toBe(false);
+    expect(state.graph.compile_summary.diagnostics[0].code).toBe("CAPABILITY_BOUNDARY");
   });
 
   it("preflights Strategy IR before runtime compile when a strategy_ir artifact exists", async () => {

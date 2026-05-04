@@ -15,14 +15,19 @@ For subtree navigation, start with [../README.md](../README.md).
 ## Release and closeout docs
 
 - [First Release Readiness](../implementation/planning/implementation-first-release-readiness.md)
-- [Completed Functional Closeout Ledger](../implementation/planning/implementation-functional-closeout-task-table.md)
-- [Completed P2 Closeout Ledger](../implementation/planning/implementation-non-blocking-closeout-list.md)
+- [v0.2.0 Upgrade Worklist](../implementation/planning/implementation-v0-2-upgrade-worklist.md)
+- [Archived Functional Closeout Ledger](../archive/planning-retired/implementation-functional-closeout-task-table.md)
+- [Archived P2 Closeout Ledger](../archive/planning-retired/implementation-non-blocking-closeout-list.md)
 
 ## Active contract docs
 
 - [Support Matrix](../implementation/governance/implementation-support-matrix.md)
 - [Compile-Chain Contract](../implementation/governance/implementation-compile-chain-contract.md)
 - [QuantScript Retained-Surface Contract](../implementation/governance/implementation-quantscript-retained-surface-contract.md)
+- [Runtime Governance Contract](../implementation/runtime/implementation-runtime-governance-contract.md)
+- [Runtime Evidence Contract](../implementation/runtime/implementation-runtime-evidence-contract.md)
+- [Runtime Mutation Contract](../implementation/runtime/implementation-runtime-mutation-contract.md)
+- [Runtime AI Approval Contract](../implementation/runtime/implementation-runtime-ai-approval-contract.md)
 - [Runtime / Backtest Explanation Contract](../implementation/runtime/implementation-runtime-backtest-explanation-contract.md)
 - [Persistence / Replay Contract](../implementation/runtime/implementation-persistence-replay-contract.md)
 - [Test Layer Expectations](../implementation/runtime/implementation-test-layer-expectations.md)

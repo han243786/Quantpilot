@@ -1,7 +1,7 @@
 use anyhow::Result;
 use qrpc_core::{
     AgentDecision, CoreStrategyIr, DecisionStatus, Exchange, OrderSide, PortfolioState,
-    RiskDecision, RiskReasonCode, RuntimeEvent, RuntimeEventType, Symbol,
+    RiskDecision, RiskDecisionMode, RiskReasonCode, RuntimeEvent, RuntimeEventType, Symbol,
 };
 use qrpc_core_ir::RiskPolicy;
 use serde_json::{json, Value};
@@ -15,6 +15,7 @@ pub struct RiskCheckRequest<'a> {
     pub last_action_at_ms: &'a BTreeMap<String, u64>,
     pub now_ms: u64,
     pub trace_id: &'a str,
+    pub mode: RiskDecisionMode,
 }
 
 #[derive(Debug, Clone)]
@@ -56,6 +57,7 @@ impl RiskCheckerProvider for RiskChecker {
                     request.last_action_at_ms,
                     request.now_ms,
                     request.trace_id,
+                    request.mode,
                 );
                 if matches!(
                     risk_decision.status,
@@ -256,7 +258,56 @@ fn evaluate_risk_decision(
     last_action_at_ms: &BTreeMap<String, u64>,
     now_ms: u64,
     trace_id: &str,
+    mode: RiskDecisionMode,
 ) -> RiskDecision {
+    let risk_id = risk.policy_id.clone();
+    let agent_decision_id = decision.decision_id.clone();
+    let symbol = decision.symbol.clone();
+    let risk_decision_id = format!("risk-{}-{now_ms}", decision.decision_id);
+
+    // Mode enforcement: restrict actions based on risk decision mode
+    match mode {
+        RiskDecisionMode::EmergencyHalt => {
+            return RiskDecision {
+                risk_decision_id,
+                risk_id,
+                agent_decision_id,
+                symbol,
+                status: DecisionStatus::Reject,
+                mode,
+                adjusted_portfolio_target_decision: None,
+                adjusted_actions: Vec::new(),
+                reason_codes: vec![RiskReasonCode::InvalidAction],
+                reason_text: "emergency halt: all new actions rejected, open orders must be cancelled".into(),
+                produced_at_ms: now_ms,
+                trace_id: trace_id.to_string(),
+            };
+        }
+        RiskDecisionMode::FreezeOpen | RiskDecisionMode::ReduceOnly | RiskDecisionMode::ReconcileOnly => {
+            let has_new_open = decision.proposed_actions.iter().any(|action| {
+                matches!(action.side, OrderSide::Buy)
+            }) || decision.portfolio_target_decision.as_ref().map_or(false, |target| {
+                target.target.target_weights.iter().any(|weight| weight.target_weight > weight.current_weight + 1e-9)
+            });
+            if has_new_open && matches!(mode, RiskDecisionMode::FreezeOpen) {
+                return RiskDecision {
+                    risk_decision_id,
+                    risk_id,
+                    agent_decision_id,
+                    symbol,
+                    status: DecisionStatus::Reject,
+                    mode,
+                    adjusted_portfolio_target_decision: None,
+                    adjusted_actions: Vec::new(),
+                    reason_codes: vec![RiskReasonCode::ExceedNewPositionsLimit],
+                    reason_text: "freeze open: new positions and additions are prohibited".into(),
+                    produced_at_ms: now_ms,
+                    trace_id: trace_id.to_string(),
+                };
+            }
+        }
+        RiskDecisionMode::Normal => {}
+    }
     let mut adjusted_portfolio_target_decision = decision.portfolio_target_decision.clone();
     let mut adjusted_actions = decision.proposed_actions.clone();
     let mut reason_codes = vec![RiskReasonCode::WithinLimit];
@@ -272,6 +323,7 @@ fn evaluate_risk_decision(
                 agent_decision_id: decision.decision_id.clone(),
                 symbol: decision.symbol.clone(),
                 status: DecisionStatus::Reject,
+                mode,
                 adjusted_portfolio_target_decision: None,
                 adjusted_actions: Vec::new(),
                 reason_codes: vec![RiskReasonCode::ActionTooFrequent],
@@ -403,6 +455,7 @@ fn evaluate_risk_decision(
             agent_decision_id: decision.decision_id.clone(),
             symbol: decision.symbol.clone(),
             status,
+            mode,
             adjusted_portfolio_target_decision,
             adjusted_actions: Vec::new(),
             reason_codes,
@@ -509,6 +562,7 @@ fn evaluate_risk_decision(
         agent_decision_id: decision.decision_id.clone(),
         symbol: decision.symbol.clone(),
         status,
+        mode,
         adjusted_portfolio_target_decision: None,
         adjusted_actions,
         reason_codes,
@@ -1061,6 +1115,7 @@ mod tests {
                 portfolio: &PortfolioState::new(100_000.0, 0),
                 last_action_at_ms: &last_action,
                 now_ms: 1_000,
+                mode: RiskDecisionMode::Normal,
                 trace_id: "trace",
             })
             .unwrap();
@@ -1115,6 +1170,7 @@ mod tests {
                 portfolio: &portfolio,
                 last_action_at_ms: &BTreeMap::new(),
                 now_ms: 1_000,
+                mode: RiskDecisionMode::Normal,
                 trace_id: "trace",
             })
             .unwrap();
@@ -1169,6 +1225,7 @@ mod tests {
                 portfolio: &portfolio,
                 last_action_at_ms: &BTreeMap::new(),
                 now_ms: 1_000,
+                mode: RiskDecisionMode::Normal,
                 trace_id: "trace",
             })
             .unwrap();
@@ -1232,6 +1289,7 @@ mod tests {
                 portfolio: &PortfolioState::new(100_000.0, 0),
                 last_action_at_ms: &BTreeMap::new(),
                 now_ms: 1_000,
+                mode: RiskDecisionMode::Normal,
                 trace_id: "trace",
             })
             .unwrap();
@@ -1291,6 +1349,7 @@ mod tests {
                 portfolio: &PortfolioState::new(100_000.0, 0),
                 last_action_at_ms: &BTreeMap::new(),
                 now_ms: 1_000,
+                mode: RiskDecisionMode::Normal,
                 trace_id: "trace",
             })
             .unwrap();
@@ -1377,6 +1436,7 @@ mod tests {
                 portfolio: &portfolio,
                 last_action_at_ms: &BTreeMap::new(),
                 now_ms: 1_000,
+                mode: RiskDecisionMode::Normal,
                 trace_id: "trace",
             })
             .unwrap();
@@ -1464,6 +1524,7 @@ mod tests {
                 portfolio: &portfolio,
                 last_action_at_ms: &BTreeMap::new(),
                 now_ms: 1_000,
+                mode: RiskDecisionMode::Normal,
                 trace_id: "trace",
             })
             .unwrap();
@@ -1542,6 +1603,7 @@ mod tests {
                 portfolio: &PortfolioState::new(100_000.0, 0),
                 last_action_at_ms: &BTreeMap::new(),
                 now_ms: 1_000,
+                mode: RiskDecisionMode::Normal,
                 trace_id: "trace",
             })
             .unwrap();
@@ -1629,6 +1691,7 @@ mod tests {
                 portfolio: &PortfolioState::new(100_000.0, 0),
                 last_action_at_ms: &BTreeMap::new(),
                 now_ms: 1_000,
+                mode: RiskDecisionMode::Normal,
                 trace_id: "trace",
             })
             .expect("risk evaluation");
@@ -1702,6 +1765,7 @@ mod tests {
                 portfolio: &portfolio,
                 last_action_at_ms: &BTreeMap::new(),
                 now_ms: 1_000,
+                mode: RiskDecisionMode::Normal,
                 trace_id: "trace",
             })
             .expect("risk evaluation");
@@ -1759,6 +1823,7 @@ mod tests {
                 portfolio: &PortfolioState::new(100_000.0, 0),
                 last_action_at_ms: &BTreeMap::new(),
                 now_ms: 1_000,
+                mode: RiskDecisionMode::Normal,
                 trace_id: "trace",
             })
             .unwrap();

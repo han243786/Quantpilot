@@ -1,8 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  canvasFocusStatusLabel,
-  taskLaneStatusLabel
-} from "../utils/workspaceContextLabels";
+import { canvasFocusStatusLabel } from "../utils/workspaceContextLabels";
 import {
   DEFAULT_WORKSPACE_ISSUE_FILTERS,
   filterWorkspaceIssueQueue,
@@ -232,30 +229,12 @@ export function useStrategyWorkspaceUiState({
   const activeInspectorDefinition =
     codeInspectorPanels.find((panel) => panel.id === activeCodeInspector) ||
     codeInspectorPanels[0];
-  const pinnedInspectorDefinition = useMemo(
-    () => codeInspectorPanels.find((panel) => panel.id === codeLaneState.pinnedLaneId) || null,
-    [codeInspectorPanels, codeLaneState.pinnedLaneId]
-  );
-  const taskLaneStatus = taskLaneStatusLabel(codeLaneState, pinnedInspectorDefinition);
-
   const canvasWorkspaceContext = useMemo(
     () => ({
       laneId: activeInspectorDefinition.id,
-      laneLabel: `${activeInspectorDefinition.label} lane`,
-      laneStatus: taskLaneStatus,
-      focusLabel: canvasFocusStatusLabel(canvasFocusMode),
-      reasonTitle: codeLaneNotice?.title || "No automatic lane change is active",
-      reasonMessage:
-        codeLaneNotice?.message ||
-        "The workspace keeps the active lane aligned with the current selection and repair target.",
-      reasonFocusMessage: codeLaneNotice?.focusLabel
-        ? codeLaneNotice.focusChanged
-          ? `Focus moved to ${codeLaneNotice.focusLabel}`
-          : `Focus stays on ${codeLaneNotice.focusLabel}`
-        : `Current focus ${canvasFocusStatusLabel(canvasFocusMode)}`,
-      reasonTone: codeLaneNotice?.tone || "muted"
+      laneLabel: `${activeInspectorDefinition.label} lane`
     }),
-    [activeInspectorDefinition, canvasFocusMode, codeLaneNotice, taskLaneStatus]
+    [activeInspectorDefinition]
   );
 
   useEffect(() => {

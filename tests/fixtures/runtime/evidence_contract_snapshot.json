@@ -1,0 +1,168 @@
+{
+  "compact_entry_fields": [
+    "compactability",
+    "event_id",
+    "event_type",
+    "governance",
+    "ingested_at_ms",
+    "module_key",
+    "node_id",
+    "occurred_at_ms",
+    "payload_version",
+    "retention_class",
+    "sequence_no",
+    "severity",
+    "stage",
+    "summary",
+    "timeline_item_version"
+  ],
+  "compact_evidence_fields": [
+    "dropped_by_retention",
+    "dropped_by_stage",
+    "dropped_event_count",
+    "entries",
+    "governance",
+    "key_event_count",
+    "policy_version",
+    "projection_version",
+    "retained_event_count",
+    "source_event_count",
+    "system_event_count"
+  ],
+  "report_artifact_metadata_fields": [
+    "artifact_id",
+    "content_type",
+    "file_name",
+    "kind"
+  ],
+  "report_export_fields": [
+    "evidence_digest",
+    "generation_policy",
+    "governance",
+    "graph_id",
+    "loading_strategy",
+    "mutation_lifecycle_event_count",
+    "report_id",
+    "retained_event_count",
+    "schema_version",
+    "sections",
+    "source_event_count",
+    "source_id",
+    "source_kind",
+    "source_sequence_range",
+    "status"
+  ],
+  "report_export_loading_strategy_fields": [
+    "primary_source",
+    "requires_detail_window",
+    "retained_event_count",
+    "source_event_count"
+  ],
+  "report_export_section_fields": [
+    "evidence_count",
+    "section_id",
+    "summary",
+    "title"
+  ],
+  "report_record_fields": [
+    "artifacts",
+    "created_at_ms",
+    "generation_policy",
+    "governance",
+    "graph_id",
+    "mutation_lifecycle_event_count",
+    "report_id",
+    "retained_event_count",
+    "source_event_count",
+    "source_id",
+    "source_kind",
+    "source_sequence_range",
+    "status",
+    "updated_at_ms"
+  ],
+  "replay_event_wrapper_fields": [
+    "event",
+    "sequence_no"
+  ],
+  "replay_filters_fields": [
+    "key_only"
+  ],
+  "replay_timeline_item_fields": [
+    "compactability",
+    "event_id",
+    "event_type",
+    "governance",
+    "ingested_at_ms",
+    "module_key",
+    "node_id",
+    "occurred_at_ms",
+    "payload_version",
+    "retention_class",
+    "sequence_no",
+    "severity",
+    "stage",
+    "summary",
+    "timeline_item_version"
+  ],
+  "replay_window_fields": [
+    "account",
+    "checkpoints",
+    "cursor",
+    "events",
+    "fill_event_count",
+    "filters",
+    "graph_id",
+    "kind",
+    "limit",
+    "next_cursor",
+    "next_sequence_cursor",
+    "record_id",
+    "sequence_cursor",
+    "source_event_count",
+    "timeline",
+    "total_events",
+    "window_end"
+  ],
+  "retained_key_event_index_fields": [
+    "entries",
+    "index_version",
+    "key_event_count",
+    "policy_version",
+    "retained_event_count",
+    "source_event_count",
+    "system_event_count"
+  ],
+  "stable_values": {
+    "compact_policy_version": "quantpilot/evidence-compaction/v1",
+    "key_index_policy_version": "quantpilot/key-event-index/v1",
+    "report_export_schema_version": "quantpilot/evidence-report-artifact/v1",
+    "report_loading_primary_source": "compact_evidence",
+    "report_source_kind": "run",
+    "report_status": "ready",
+    "replay_kind": "run",
+    "timeline_item_version": 1
+  },
+  "timeline_governance_fields": [
+    "capability_hash",
+    "deployment_revision",
+    "parameter_version",
+    "strategy_version"
+  ],
+  "timeline_item_fields": [
+    "compactability",
+    "event_id",
+    "event_type",
+    "governance",
+    "ingested_at_ms",
+    "module_key",
+    "node_id",
+    "occurred_at_ms",
+    "payload_version",
+    "retention_class",
+    "sequence_no",
+    "severity",
+    "stage",
+    "summary",
+    "timeline_item_version"
+  ]
+}

@@ -50,6 +50,89 @@ describe("BacktestDetailPage artifact projections", () => {
       compileId: "compile_artifact_001",
       backtestId: "backtest_artifact_001"
     });
+    fixture.detailResponse.governance = {
+      capability_hash: "sha256:detail-capability-1234567890abcdef",
+      deployment_revision: "rev-detail-20260428",
+      strategy_version: "strategy-v9",
+      parameter_version: "params-v6",
+      governance_source: "persisted_backtest_detail",
+      permission_boundary: {
+        model_version: "quantpilot/permission-boundary/v1",
+        ai_write_policy: "proposal_only"
+      }
+    };
+    fixture.detailResponse.backtest_artifacts.manifest.governance =
+      fixture.detailResponse.governance;
+    fixture.detailResponse.timeline = [
+      {
+        timeline_item_version: 1,
+        event_id: "evt_capability",
+        event_type: "CapabilitySnapshotTaken",
+        sequence_no: 1,
+        occurred_at_ms: 1_710_000_000_000,
+        ingested_at_ms: 1_710_000_000_000,
+        stage: "system",
+        retention_class: "key",
+        severity: "Info",
+        module_key: "runtime_governance",
+        node_id: "runtime",
+        summary: "Capability snapshot taken",
+        reason_code: "CAPABILITY_SNAPSHOT",
+        governance: {
+          capability_hash: fixture.detailResponse.governance.capability_hash,
+          deployment_revision: fixture.detailResponse.governance.deployment_revision,
+          strategy_version: fixture.detailResponse.governance.strategy_version,
+          parameter_version: fixture.detailResponse.governance.parameter_version
+        },
+        payload_version: 1,
+        compactability: "retain"
+      },
+      {
+        timeline_item_version: 1,
+        event_id: "evt_risk_detail",
+        event_type: "RiskDecisionProduced",
+        sequence_no: 2,
+        occurred_at_ms: 1_710_000_000_100,
+        ingested_at_ms: 1_710_000_000_100,
+        stage: "risk",
+        retention_class: "key",
+        severity: "Warn",
+        module_key: "builtin.risk.global",
+        node_id: "node_risk_5",
+        summary: "Risk clamp applied before execution.",
+        reason_code: "MAX_WEIGHT_CLAMPED",
+        governance: {
+          capability_hash: fixture.detailResponse.governance.capability_hash,
+          deployment_revision: fixture.detailResponse.governance.deployment_revision,
+          strategy_version: fixture.detailResponse.governance.strategy_version,
+          parameter_version: fixture.detailResponse.governance.parameter_version
+        },
+        payload_version: 1,
+        compactability: "retain"
+      }
+    ];
+    fixture.detailResponse.retained_key_event_index = {
+      index_version: 1,
+      policy_version: "quantpilot/key-event-index/v1",
+      source_event_count: 2,
+      retained_event_count: 2,
+      key_event_count: 2,
+      system_event_count: 1,
+      entries: fixture.detailResponse.timeline
+    };
+    fixture.detailResponse.compact_evidence = {
+      projection_version: 1,
+      policy_version: "quantpilot/evidence-compaction/v1",
+      source_event_count: 2,
+      retained_event_count: 2,
+      dropped_event_count: 0,
+      dropped_by_retention: {},
+      dropped_by_stage: {},
+      key_event_count: 2,
+      system_event_count: 1,
+      governance: fixture.detailResponse.timeline[0].governance,
+      entries: fixture.detailResponse.timeline
+    };
     fixture.detailResponse.runtime_diagnostics.node_details.node_risk_5 = {
       node_id: "node_risk_5",
       latest_event: null,
@@ -117,8 +200,12 @@ describe("BacktestDetailPage artifact projections", () => {
           backtestHistory: fixture.historyResponse,
           backtestArtifacts: fixture.detailResponse.backtest_artifacts,
           events: fixture.detailResponse.backtest_artifacts.event_log.events,
+          timeline: fixture.detailResponse.timeline,
+          retainedKeyEventIndex: fixture.detailResponse.retained_key_event_index,
+          compactEvidence: fixture.detailResponse.compact_evidence,
           account: fixture.detailResponse.account,
-          diagnostics: fixture.detailResponse.runtime_diagnostics || null
+          diagnostics: fixture.detailResponse.runtime_diagnostics || null,
+          governance: fixture.detailResponse.governance
         }
       });
     });
@@ -150,12 +237,16 @@ describe("BacktestDetailPage artifact projections", () => {
     const hero = screen.getByTestId("backtest-detail-hero");
     const coreArtifactsSection = screen.getByTestId("backtest-detail-core-artifacts");
     const replayPreviewSection = screen.getByTestId("backtest-detail-replay-preview");
+    const timelineSection = screen.getByTestId("backtest-detail-governed-timeline");
+    const reportSection = screen.getByTestId("backtest-detail-report-lifecycle");
     const outputArtifactsSection = screen.getByTestId("backtest-detail-output-artifacts");
     const explanationsSection = screen.getByTestId("backtest-detail-explanations");
     const contextSection = screen.getByTestId("backtest-detail-context");
     expect(hero).toBeInTheDocument();
     expect(coreArtifactsSection).toBeInTheDocument();
     expect(replayPreviewSection).toBeInTheDocument();
+    expect(timelineSection).toBeInTheDocument();
+    expect(reportSection).toBeInTheDocument();
     expect(outputArtifactsSection).toBeInTheDocument();
     expect(explanationsSection).toBeInTheDocument();
     expect(contextSection).toBeInTheDocument();
@@ -165,6 +256,12 @@ describe("BacktestDetailPage artifact projections", () => {
     expect(screen.getByTestId("backtest-detail-equity-card")).toBeInTheDocument();
     expect(screen.getByTestId("backtest-detail-trade-card")).toBeInTheDocument();
     expect(screen.getByTestId("backtest-detail-output-card")).toBeInTheDocument();
+    expect(screen.getByTestId("backtest-detail-timeline")).toBeInTheDocument();
+    expect(screen.getByTestId("runtime-report-panel")).toHaveTextContent("回测证据报告");
+    expect(screen.getByTestId("backtest-detail-timeline-stage-risk")).toHaveTextContent(
+      "Risk clamp applied before execution."
+    );
+    expect(screen.getByTestId("backtest-detail-timeline-retained-count")).toHaveTextContent("2/2");
     expect(screen.getByTestId("backtest-detail-risk-card")).toBeInTheDocument();
     expect(screen.getByTestId("backtest-detail-order-card")).toBeInTheDocument();
     expect(screen.getByTestId("backtest-detail-context-card")).toBeInTheDocument();
@@ -172,6 +269,16 @@ describe("BacktestDetailPage artifact projections", () => {
     expect(screen.getByTestId("backtest-detail-manifest-strategy-artifact")).toHaveTextContent("strategy_artifact_smoke_001");
     expect(screen.getByTestId("backtest-detail-manifest-compile-artifact")).toHaveTextContent("compile_artifact_smoke_001");
     expect(screen.getByTestId("backtest-detail-manifest-core-ir-artifact")).toHaveTextContent("core_ir_artifact_smoke_001");
+    expect(screen.getByTestId("backtest-detail-governance-card")).toHaveTextContent("治理身份");
+    expect(screen.getByTestId("backtest-detail-governance-capability_hash")).toHaveTextContent(
+      "sha256:detail...abcdef"
+    );
+    expect(screen.getByTestId("backtest-detail-governance-ai_write_policy")).toHaveTextContent(
+      "proposal_only"
+    );
+    expect(screen.getByTestId("backtest-detail-governance-governance_source")).toHaveTextContent(
+      "persisted_backtest_detail"
+    );
 
     expect(hero.querySelector(".analysis-summary-grid")).not.toBeNull();
     expect(hero).toHaveTextContent("+12.50%");

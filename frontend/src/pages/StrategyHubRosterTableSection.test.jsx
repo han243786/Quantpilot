@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import StrategyHubRosterTableSection from "./StrategyHubRosterTableSection";
 
@@ -13,12 +13,79 @@ vi.mock("../router", () => ({
 }));
 
 describe("StrategyHubRosterTableSection", () => {
-  it("renders rows and routes row-level actions through the extracted ownership layers", () => {
+  it("renders rows and routes row-level actions through the extracted ownership layers", async () => {
     const model = {
       toggleStrategySelection: vi.fn(),
       setSelectedStrategyId: vi.fn(),
-      openGraphFolder: vi.fn().mockResolvedValue(undefined),
-      revealGraphFile: vi.fn().mockResolvedValue(undefined)
+      revealGraphFile: vi.fn().mockResolvedValue(undefined),
+      deleteStrategy: vi.fn().mockResolvedValue(true)
+    };
+
+    const { container } = render(
+      <StrategyHubRosterTableSection
+        model={model}
+        rosterRows={[
+          {
+            graphId: "alpha_strategy",
+            name: "Alpha strategy",
+            healthTone: "success",
+            healthLabel: "Healthy",
+            activityLabel: "Recently compiled",
+            lastActivityLabel: "2024/3/9 12:00:00",
+            runCountLabel: "2",
+            backtestCountLabel: "1",
+            latestReturnLabel: "+12.00%",
+            selected: true,
+            active: true,
+            hasFilePath: true
+          }
+        ]}
+      />
+    );
+
+    const rosterHead = container.querySelector(".strategy-directory-table__head--roster");
+    expect([...rosterHead.children].map((item) => item.textContent)).toEqual([
+      "",
+      "策略",
+      "状态",
+      "活动",
+      "模拟",
+      "回测",
+      "最近收益",
+      "构建",
+      "研究",
+      "文件",
+      "管理"
+    ]);
+    expect(container.querySelectorAll(".strategy-row__actions > button")).toHaveLength(4);
+
+    fireEvent.click(screen.getByLabelText("选择 Alpha strategy"));
+    expect(model.toggleStrategySelection).toHaveBeenCalledWith("alpha_strategy");
+
+    fireEvent.click(screen.getByRole("button", { name: /Alpha strategy alpha_strategy/i }));
+    expect(model.setSelectedStrategyId).toHaveBeenCalledWith("alpha_strategy");
+
+    fireEvent.click(screen.getByRole("button", { name: "打开 Alpha strategy 工作区" }));
+    expect(navigateTo).toHaveBeenCalledWith("/strategies/alpha_strategy");
+
+    fireEvent.click(screen.getByRole("button", { name: "打开 Alpha strategy 回测页" }));
+    expect(navigateTo).toHaveBeenCalledWith("/strategies/alpha_strategy/backtests");
+
+    fireEvent.click(screen.getByRole("button", { name: "打开 Alpha strategy 文件位置" }));
+    expect(model.revealGraphFile).toHaveBeenCalledWith("alpha_strategy");
+
+    fireEvent.click(screen.getByRole("button", { name: "删除 Alpha strategy 策略" }));
+    await waitFor(() => {
+      expect(model.deleteStrategy).toHaveBeenCalledWith("alpha_strategy", "Alpha strategy");
+    });
+  });
+
+  it("shows row-level feedback when a roster action fails", async () => {
+    const model = {
+      toggleStrategySelection: vi.fn(),
+      setSelectedStrategyId: vi.fn(),
+      revealGraphFile: vi.fn().mockResolvedValue(undefined),
+      deleteStrategy: vi.fn().mockRejectedValue(new Error("DELETE /api/graphs failed"))
     };
 
     render(
@@ -43,22 +110,8 @@ describe("StrategyHubRosterTableSection", () => {
       />
     );
 
-    fireEvent.click(screen.getByLabelText("选择 Alpha strategy"));
-    expect(model.toggleStrategySelection).toHaveBeenCalledWith("alpha_strategy");
+    fireEvent.click(screen.getByRole("button", { name: "删除 Alpha strategy 策略" }));
 
-    fireEvent.click(screen.getByRole("button", { name: /Alpha strategy alpha_strategy/i }));
-    expect(model.setSelectedStrategyId).toHaveBeenCalledWith("alpha_strategy");
-
-    fireEvent.click(screen.getByRole("button", { name: "打开 Alpha strategy 工作区" }));
-    expect(navigateTo).toHaveBeenCalledWith("/strategies/alpha_strategy");
-
-    fireEvent.click(screen.getByRole("button", { name: "打开 Alpha strategy 回测页" }));
-    expect(navigateTo).toHaveBeenCalledWith("/strategies/alpha_strategy/backtests");
-
-    fireEvent.click(screen.getByRole("button", { name: "打开 Alpha strategy 文件夹" }));
-    expect(model.openGraphFolder).toHaveBeenCalledWith("alpha_strategy");
-
-    fireEvent.click(screen.getByRole("button", { name: "打开 Alpha strategy 文件位置" }));
-    expect(model.revealGraphFile).toHaveBeenCalledWith("alpha_strategy");
+    expect(await screen.findByRole("alert")).toHaveTextContent("DELETE /api/graphs failed");
   });
 });

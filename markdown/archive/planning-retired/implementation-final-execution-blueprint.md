@@ -11,5 +11,5 @@ This file replaces a legacy planning note that had persistent encoding issues.
 ## Current Source Of Truth
 
 - [First Release Readiness](D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/planning/implementation-first-release-readiness.md)
-- [Functional Closeout Task Table](D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/planning/implementation-functional-closeout-task-table.md)
+- [Archived Functional Closeout Ledger](D:/rust-js-pr/QuantPilot/quantpilot/markdown/archive/planning-retired/implementation-functional-closeout-task-table.md)
 - [Active QRPC RFC Index](D:/rust-js-pr/QuantPilot/quantpilot/markdown/protocol/README.md)

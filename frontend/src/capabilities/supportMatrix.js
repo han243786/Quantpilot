@@ -117,8 +117,14 @@ export const CAPABILITY_ACTION_MAP = {
     label: "启动模拟",
     apiPaths: [
       "/api/runtime/test-run",
+      "/api/runtime/runs/:run_id",
+      "/api/runtime/runs/:run_id/save",
       "/api/runtime/runs/:run_id/events",
-      "/api/runtime/runs/:run_id/status"
+      "/api/runtime/runs/:run_id/status",
+      "/api/runtime/mutations",
+      "/api/runtime/mutations/:proposal_id",
+      "/api/runtime/mutations/:proposal_id/activate",
+      "/api/runtime/mutations/:proposal_id/rollback"
     ],
     blockedDuringCapabilitySync: true,
     notes: [
@@ -128,7 +134,12 @@ export const CAPABILITY_ACTION_MAP = {
   },
   run_backtest: {
     label: "运行回测",
-    apiPaths: ["/api/runtime/backtest", "/api/runtime/backtests", "/api/runtime/backtests/:backtest_id"],
+    apiPaths: [
+      "/api/runtime/backtest",
+      "/api/runtime/backtests",
+      "/api/runtime/backtests/:backtest_id",
+      "/api/runtime/backtests/:backtest_id/save"
+    ],
     blockedDuringCapabilitySync: true,
     notes: [
       "当前仅提供基础回放/回测支持，不宣称研究级回测能力。",
@@ -140,7 +151,8 @@ export const CAPABILITY_ACTION_MAP = {
     apiPaths: [
       "/api/runtime/experiments/backtest-sweep",
       "/api/runtime/experiments",
-      "/api/runtime/experiments/:experiment_id"
+      "/api/runtime/experiments/:experiment_id",
+      "/api/runtime/experiments/:experiment_id/save"
     ],
     blockedDuringCapabilitySync: true,
     notes: [
@@ -198,15 +210,75 @@ export const SUPPORT_MATRIX = {
   uiActionMap: CAPABILITY_ACTION_MAP
 };
 
+const EXPECTED_PERMISSION_BOUNDARY = {
+  model_version: "quantpilot/permission-boundary/v1",
+  execution_owner_module: "builtin.execution.paper",
+  live_execution_allowed: false,
+  ai_write_policy: "proposal_only",
+  plugin_network_default: "deny",
+  non_execution_order_access: "deny"
+};
+
+function isTrustedCapabilityHash(value) {
+  return typeof value === "string" && /^sha256:[0-9a-f]{64}$/.test(value);
+}
+
 export function isCapabilitySyncBlocked(capabilityStatus, capabilitySource) {
-  return capabilityStatus === "loading" || capabilitySource === "safe_fallback";
+  return (
+    capabilityStatus === "loading" ||
+    capabilityStatus === "degraded" ||
+    capabilityStatus === "error" ||
+    capabilitySource === "cache" ||
+    capabilitySource === "safe_fallback"
+  );
+}
+
+export function getCapabilityBoundaryIssues(capabilities) {
+  const issues = [];
+  if (!capabilities || typeof capabilities !== "object") {
+    return ["缺少后端能力快照。"];
+  }
+
+  if (!isTrustedCapabilityHash(capabilities.schema_hash)) {
+    issues.push("能力 hash 缺失或格式非法。");
+  }
+
+  const permission = capabilities.permission_boundary;
+  if (!permission || typeof permission !== "object") {
+    issues.push("缺少 permission_boundary。");
+    return issues;
+  }
+
+  for (const [key, expected] of Object.entries(EXPECTED_PERMISSION_BOUNDARY)) {
+    if (permission[key] !== expected) {
+      issues.push(`permission_boundary.${key} 必须为 ${String(expected)}。`);
+    }
+  }
+
+  return issues;
+}
+
+export function buildCapabilityContext(capabilities) {
+  if (getCapabilityBoundaryIssues(capabilities).length > 0) return null;
+  return {
+    schema_hash: capabilities.schema_hash,
+    permission_boundary: {
+      model_version: capabilities.permission_boundary.model_version,
+      execution_owner_module: capabilities.permission_boundary.execution_owner_module,
+      live_execution_allowed: capabilities.permission_boundary.live_execution_allowed,
+      ai_write_policy: capabilities.permission_boundary.ai_write_policy,
+      plugin_network_default: capabilities.permission_boundary.plugin_network_default,
+      non_execution_order_access: capabilities.permission_boundary.non_execution_order_access
+    }
+  };
 }
 
 export function getCapabilityActionBlockReason({
   actionKey,
   capabilityStatus,
   capabilitySource,
-  capabilityMessage
+  capabilityMessage,
+  capabilities
 }) {
   const action = CAPABILITY_ACTION_MAP[actionKey];
   if (!action?.blockedDuringCapabilitySync) return "";
@@ -221,6 +293,23 @@ export function getCapabilityActionBlockReason({
         ? capabilityMessage.trim()
         : "能力校验失败，风险操作会在安全回退模式下继续保持锁定。";
     return `${action.label}在安全回退模式下不可用。${detail}`;
+  }
+
+  if (capabilityStatus === "degraded" || capabilitySource === "cache") {
+    return `${action.label}暂时锁定，能力服务不可用，仅检测到缓存能力快照。`;
+  }
+
+  if (capabilityStatus === "error") {
+    const detail =
+      typeof capabilityMessage === "string" && capabilityMessage.trim().length > 0
+        ? capabilityMessage.trim()
+        : "能力服务不可用。";
+    return `${action.label}暂时锁定，${detail}`;
+  }
+
+  const boundaryIssues = getCapabilityBoundaryIssues(capabilities);
+  if (boundaryIssues.length > 0) {
+    return `${action.label}暂时锁定，${boundaryIssues[0]}`;
   }
 
   return "";

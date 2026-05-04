@@ -49,6 +49,24 @@ function summarize(label, samples, key) {
   };
 }
 
+// P3.2: Performance assertion thresholds
+const PERF_THRESHOLDS = {
+  "编辑器首页": { domContentLoaded: 3000, load: 5000, ready: 4000 },
+  "回测详情页": { domContentLoaded: 3000, load: 5000, ready: 4000 },
+  "回测对比页": { domContentLoaded: 3000, load: 5000, ready: 4000 },
+};
+
+function assertPerformance(label, stats) {
+  const thresholds = PERF_THRESHOLDS[label];
+  if (!thresholds) return;
+  if (stats.ready.avg > thresholds.ready) {
+    console.warn(`[PERF] ${label}: ready ${stats.ready.avg}ms > threshold ${thresholds.ready}ms`);
+  }
+  if (stats.domContentLoaded.avg > thresholds.domContentLoaded) {
+    console.warn(`[PERF] ${label}: DCL ${stats.domContentLoaded.avg}ms > threshold ${thresholds.domContentLoaded}ms`);
+  }
+}
+
 function buildMarkdown(results) {
   const generatedAt = new Date().toLocaleString("zh-CN", {
     hour12: false,
@@ -181,6 +199,15 @@ test.describe("first-screen performance review", () => {
           })),
           "firstContentfulPaint"
         )
+      });
+    }
+
+    // P3.2: Assert performance thresholds
+    for (const result of results) {
+      assertPerformance(result.label, {
+        ready: result.ready,
+        domContentLoaded: result.domContentLoaded,
+        load: result.load,
       });
     }
 

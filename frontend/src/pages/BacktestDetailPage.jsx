@@ -1,5 +1,7 @@
 import { useEffect, useMemo } from "react";
 import EventStreamPanel from "../components/EventStreamPanel";
+import GovernedTimelinePanel from "../components/GovernedTimelinePanel";
+import RuntimeReportPanel from "../components/RuntimeReportPanel";
 import { useGraphStore } from "../store/graphStore";
 import {
   navigateTo,
@@ -15,6 +17,10 @@ import {
   MetricPair
 } from "./backtestAnalysisShared";
 import { buildDiagnosticsExplanationEntries } from "../utils/runtimeExplanation";
+import {
+  buildGovernanceIdentityRows,
+  governanceFromRuntime
+} from "../utils/runtimeGovernance";
 
 function ExplanationDetailCard({ title, summary, entries, testId, emptyText }) {
   return (
@@ -77,6 +83,10 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
   const endedAt = metrics?.ended_at_ms || null;
   const resolvedStrategyId =
     strategyId || selectedSummary?.graph_id || runtime.backtestArtifacts?.graph_id || "";
+  const governanceRows = useMemo(
+    () => buildGovernanceIdentityRows(governanceFromRuntime(runtime)),
+    [runtime]
+  );
 
   const curvePreview = useMemo(() => {
     if (!Array.isArray(equityCurve) || equityCurve.length === 0) return [];
@@ -92,6 +102,15 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
   const orderExplanationEntries = useMemo(
     () => buildDiagnosticsExplanationEntries(graph, runtime.diagnostics, "order"),
     [graph, runtime.diagnostics]
+  );
+  const timelineSource = useMemo(
+    () => ({
+      timeline: runtime.timeline,
+      events: runtime.events,
+      retained_key_event_index: runtime.retainedKeyEventIndex,
+      compact_evidence: runtime.compactEvidence
+    }),
+    [runtime.compactEvidence, runtime.events, runtime.retainedKeyEventIndex, runtime.timeline]
   );
 
   const summaryItems = [
@@ -120,6 +139,24 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
       value: formatValue(summary?.final_equity || metrics?.final_account?.equity_estimate)
     }
   ];
+
+  if (runtime.backendError) {
+    return (
+      <div className="qp-page">
+        <div className="qp-error" role="alert">
+          <span>加载回测失败: {runtime.backendError}</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!metrics && !summary && !runtime.backendError) {
+    return (
+      <div className="qp-page">
+        <div className="qp-loading">加载回测数据...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="detail-page strategy-analysis-page">
@@ -184,7 +221,7 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
               <div className="open-orders-card" data-testid="backtest-detail-manifest-card">
                 <div className="open-orders-header">
                   <div>
-                    <div className="mini-list-title">Manifest 工件</div>
+                    <div className="mini-list-title">清单工件</div>
                     <div className="muted-line">
                       与策略关联的 manifest 上下文、编译链路与回放来源。
                     </div>
@@ -219,12 +256,24 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
                   value={manifest?.compile_artifacts?.core_ir?.artifact_id || "-"}
                   testId="backtest-detail-manifest-core-ir-artifact"
                 />
+                <div className="mini-list" data-testid="backtest-detail-governance-card">
+                  <div className="mini-list-title">治理身份</div>
+                  {governanceRows.map((row) => (
+                    <MetricPair
+                      key={row.key}
+                      label={row.label}
+                      value={row.value}
+                      fullValue={row.fullValue}
+                      testId={`backtest-detail-governance-${row.key}`}
+                    />
+                  ))}
+                </div>
               </div>
 
               <div className="open-orders-card" data-testid="backtest-detail-metrics-card">
                 <div className="open-orders-header">
                   <div>
-                    <div className="mini-list-title">Metrics 工件</div>
+                    <div className="mini-list-title">指标工件</div>
                     <div className="muted-line">
                       当前策略实验的持久化结果摘要。
                     </div>
@@ -246,6 +295,35 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
                 />
               </div>
             </div>
+          </AnalysisSection>
+
+          <AnalysisSection
+            testId="backtest-detail-governed-timeline"
+            kicker="证据链"
+            title="治理时间轴"
+            summary="按 envelope 阶段、保留级别和模块查看回测证据，并优先保留关键事件。"
+          >
+            <GovernedTimelinePanel
+              source={timelineSource}
+              title="回测证据时间轴"
+              summary="同一 timeline item 同时服务详情、回放、压缩证据和后续报告输入。"
+              testId="backtest-detail-timeline"
+            />
+          </AnalysisSection>
+
+          <AnalysisSection
+            testId="backtest-detail-report-lifecycle"
+            kicker="报告生命周期"
+            title="证据报告"
+            summary="从压缩证据生成可导出的报告，报告只链接来源证据和治理身份，不复制完整原始日志。"
+          >
+            <RuntimeReportPanel
+              sourceKind="backtest"
+              sourceId={runtime.selectedBacktestId || backtestId}
+              evidenceSource={timelineSource}
+              title="回测证据报告"
+              summary="生成、打开和导出当前回测的治理报告。"
+            />
           </AnalysisSection>
 
           <AnalysisSection

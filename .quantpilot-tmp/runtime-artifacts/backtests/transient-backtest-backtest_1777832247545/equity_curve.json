@@ -1,0 +1,1212 @@
+{
+  "schema_version": "quantpilot/equity-curve-artifact/v1",
+  "artifact_id": "equity_curve_artifact_2773f6704de5",
+  "backtest_id": "backtest_1777832247545",
+  "point_count": 200,
+  "digest": {
+    "algorithm": "sha256_canonical_json",
+    "value": "2773f6704de5a6ada8a93f1028a3fe09171fc13ea23dead84271c58eee6ce70c"
+  },
+  "points": [
+    {
+      "ts_ms": 1760552247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1760638647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1760725047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1760811447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1760897847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1760984247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1761070647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1761157047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1761243447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1761329847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1761416247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1761502647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1761589047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1761675447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1761761847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1761848247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1761934647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1762021047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1762107447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1762193847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1762280247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1762366647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1762453047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1762539447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1762625847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1762712247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1762798647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1762885047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1762971447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1763057847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1763144247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1763230647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1763317047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1763403447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1763489847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1763576247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1763662647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1763749047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1763835447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1763921847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1764008247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1764094647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1764181047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1764267447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1764353847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1764440247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1764526647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1764613047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1764699447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1764785847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1764872247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1764958647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1765045047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1765131447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1765217847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1765304247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1765390647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1765477047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1765563447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1765649847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1765736247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1765822647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1765909047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1765995447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1766081847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1766168247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1766254647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1766341047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1766427447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1766513847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1766600247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1766686647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1766773047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1766859447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1766945847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1767032247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1767118647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1767205047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1767291447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1767377847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1767464247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1767550647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1767637047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1767723447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1767809847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1767896247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1767982647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1768069047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1768155447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1768241847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1768328247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1768414647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1768501047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1768587447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1768673847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1768760247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1768846647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1768933047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1769019447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1769105847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1769192247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1769278647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1769365047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1769451447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1769537847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1769624247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1769710647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1769797047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1769883447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1769969847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1770056247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1770142647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1770229047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1770315447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1770401847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1770488247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1770574647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1770661047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1770747447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1770833847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1770920247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1771006647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1771093047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1771179447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1771265847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1771352247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1771438647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1771525047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1771611447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1771697847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1771784247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1771870647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1771957047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1772043447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1772129847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1772216247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1772302647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1772389047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1772475447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1772561847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1772648247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1772734647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1772821047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1772907447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1772993847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1773080247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1773166647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1773253047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1773339447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1773425847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1773512247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1773598647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1773685047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1773771447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1773857847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1773944247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1774030647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1774117047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1774203447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1774289847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1774376247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1774462647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1774549047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1774635447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1774721847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1774808247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1774894647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1774981047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1775067447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1775153847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1775240247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1775326647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1775413047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1775499447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1775585847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1775672247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1775758647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1775845047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1775931447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1776017847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1776104247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1776190647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1776277047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1776363447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1776449847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1776536247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1776622647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1776709047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1776795447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1776881847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1776968247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1777054647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1777141047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1777227447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1777313847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1777400247546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1777486647546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1777573047546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1777659447546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    },
+    {
+      "ts_ms": 1777745847546,
+      "equity": 100000.0,
+      "cash_balance": 100000.0,
+      "net_notional": -0.0
+    }
+  ]
+}

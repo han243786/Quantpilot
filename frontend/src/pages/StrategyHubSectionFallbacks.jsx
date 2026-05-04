@@ -1,6 +1,6 @@
 export function StrategyHubRosterFallback() {
   return (
-    <div className="strategy-hub-main" aria-hidden="true">
+    <div className="strategy-hub-roster-stack" aria-hidden="true">
       <section className="strategy-directory-card">
         <div className="strategy-card-header">
           <div>

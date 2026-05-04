@@ -222,15 +222,15 @@ describe("StrategyCodePanel authoring view", () => {
     render(<StrategyCodePanel />);
 
     expect(screen.getByTestId("qs-authoring-source-order")).toHaveTextContent(
-      "Source order: Risk -> Execution -> Data -> Intent -> Agent"
+      "源码顺序：风控 -> 执行 -> 数据 -> 意图 -> 代理"
     );
     expect(screen.getByTestId("qs-authoring-pipeline-order")).toHaveTextContent(
-      "Pipeline order: Data -> Intent -> Agent -> Risk -> Execution"
+      "管线顺序：数据 -> 意图 -> 代理 -> 风控 -> 执行"
     );
 
     const poolCard = screen.getByTestId("qs-authoring-pool-pipeline");
     expect(poolCard).toHaveTextContent(
-      "Pool order: Source -> Eligibility -> Features -> Selection -> Weighting -> Rebalance"
+      "池顺序：来源 -> 资格 -> 特征 -> 选择 -> 权重 -> 再平衡"
     );
     expect(screen.getByTestId("authoring-pool-stage-source")).toHaveTextContent(
       "universe(exchange=binance, market=spot, quote=USDT)"
@@ -366,11 +366,11 @@ describe("StrategyCodePanel authoring view", () => {
     render(<StrategyCodePanel />);
 
     expect(screen.getByTestId("qs-authoring-partial-state")).toHaveTextContent(
-      "编译失败，已回退到 partial artifact"
+      "编译失败，已回退到部分工件"
     );
     expect(screen.getByTestId("qs-authoring-partial-state")).toHaveTextContent("QPQSLOW011");
     expect(screen.getByTestId("qs-authoring-source-order")).toHaveTextContent(
-      "Source order: Risk -> Execution -> Data -> Intent -> Agent"
+      "源码顺序：风控 -> 执行 -> 数据 -> 意图 -> 代理"
     );
     expect(screen.getByTestId("authoring-pool-stage-selection")).toHaveTextContent(
       "ordered_top_n by feature.factor_score desc top 3"
@@ -756,7 +756,7 @@ describe("StrategyCodePanel authoring view", () => {
       partialArtifactsPayload
     );
     expect(screen.getByTestId("qs-authoring-partial-state")).toHaveTextContent(
-      "编译失败，已回退到 partial artifact"
+      "编译失败，已回退到部分工件"
     );
 
     fireEvent.click(screen.getByTestId("authoring-section-highlight-sec_partial_data"));

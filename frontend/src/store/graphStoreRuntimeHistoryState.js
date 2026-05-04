@@ -181,15 +181,22 @@ export function buildRunDetailSelectionState(
   state,
   nextGraph,
   detail,
-  highlightedNodeIds
+  highlightedNodeIds,
+  parameterMutations = []
 ) {
   return buildPersistedRuntimeSelectionState(state, nextGraph, {
     runId: detail.run_id,
     runKind: "simulation",
     account: detail.account,
+    artifactPersistenceStatus: "saved",
     backtestArtifacts: null,
     diagnostics: detail.runtime_diagnostics || null,
+    governance: detail.governance || null,
     events: detail.events,
+    timeline: detail.timeline || [],
+    retainedKeyEventIndex: detail.retained_key_event_index || null,
+    compactEvidence: detail.compact_evidence || null,
+    parameterMutations,
     selectedHistoryRunId: detail.run_id,
     selectedBacktestId: null,
     highlightedNodeIds
@@ -207,9 +214,15 @@ export function buildBacktestDetailSelectionState(
     runId: detail.backtest_id,
     runKind: "backtest",
     account: detail.account,
+    artifactPersistenceStatus: "saved",
     backtestArtifacts: detail.backtest_artifacts,
     diagnostics: detail.runtime_diagnostics || null,
+    governance: detail.governance || detail.backtest_artifacts?.manifest?.governance || null,
     events,
+    timeline: detail.timeline || [],
+    retainedKeyEventIndex: detail.retained_key_event_index || null,
+    compactEvidence: detail.compact_evidence || null,
+    parameterMutations: [],
     selectedHistoryRunId: null,
     selectedBacktestId: detail.backtest_id,
     highlightedNodeIds

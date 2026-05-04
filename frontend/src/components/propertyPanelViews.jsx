@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { translateText } from "../i18n";
+import { StrategyCardNote } from "../pages/StrategyHubSharedComponents";
 import {
   deriveConfigureCardOrder,
   derivePriorityFieldGroups,
@@ -21,13 +22,13 @@ import {
 import { compileConflictGuidance, compileConflictSummary } from "../utils/compileContract";
 
 function authoringKindLabel(kind) {
-  if (kind === "risk") return "Risk";
-  if (kind === "execution") return "Execution";
-  if (kind === "data") return "Data";
-  if (kind === "intent") return "Intent";
-  if (kind === "agent") return "Agent";
-  if (kind === "mixed") return "Mixed";
-  if (kind === "unknown") return "Unknown";
+  if (kind === "risk") return "风控";
+  if (kind === "execution") return "执行";
+  if (kind === "data") return "数据";
+  if (kind === "intent") return "意图";
+  if (kind === "agent") return "代理";
+  if (kind === "mixed") return "混合";
+  if (kind === "unknown") return "未知";
   return kind || "-";
 }
 
@@ -61,12 +62,12 @@ function authoringRelationLabel(relation) {
 }
 
 function authoringPoolStageLabel(kind) {
-  if (kind === "source") return "Source";
-  if (kind === "eligibility") return "Eligibility";
-  if (kind === "features") return "Features";
-  if (kind === "selection") return "Selection";
-  if (kind === "weighting") return "Weighting";
-  if (kind === "rebalance") return "Rebalance";
+  if (kind === "source") return "来源";
+  if (kind === "eligibility") return "资格";
+  if (kind === "features") return "特征";
+  if (kind === "selection") return "选择";
+  if (kind === "weighting") return "权重";
+  if (kind === "rebalance") return "再平衡";
   return kind || "-";
 }
 
@@ -141,7 +142,11 @@ function sectionsToSelection(source, sections = []) {
 export function renderFieldInput(field, value, onChange) {
   if (field.type === "select") {
     return (
-      <select value={value} onChange={(event) => onChange(event.target.value)}>
+      <select
+        data-testid={`prop-input-${field.key || field.label}`}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      >
         {field.options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
@@ -154,6 +159,7 @@ export function renderFieldInput(field, value, onChange) {
   if (field.type === "boolean") {
     return (
       <input
+        data-testid={`prop-input-${field.key || field.label}`}
         type="checkbox"
         checked={Boolean(value)}
         onChange={(event) => onChange(event.target.checked)}
@@ -163,6 +169,7 @@ export function renderFieldInput(field, value, onChange) {
 
   return (
     <input
+      data-testid={`prop-input-${field.key || field.label}`}
       type={field.type === "number" ? "number" : "text"}
       value={value ?? ""}
       onChange={(event) =>
@@ -218,8 +225,9 @@ export function PropertyPanelShell({ title, subtitle, children, className = "" }
   return (
     <aside className={`property-panel ${className}`.trim()}>
       <div className="property-panel-intro">
-        <div className="panel-title">{title}</div>
-        {subtitle ? <div className="panel-subtitle">{subtitle}</div> : null}
+        <div className="panel-title strategy-card-title-note">
+          <StrategyCardNote label={title} note={subtitle} />
+        </div>
       </div>
       <div className="property-panel-scroll">{children}</div>
     </aside>
@@ -238,8 +246,9 @@ export function WorkspaceInspectorShell({
     <section className="workspace-section-card workspace-inspector-shell">
       <div className="workspace-section-card__header">
         <div>
-          <div className="panel-title">{title}</div>
-          {subtitle ? <div className="strategy-card-subtitle">{subtitle}</div> : null}
+          <div className="panel-title strategy-card-title-note">
+            <StrategyCardNote label={title} note={subtitle} />
+          </div>
         </div>
       </div>
       {contextNotice ? (
@@ -281,7 +290,7 @@ export function QuantScriptAuthoringSourceCard({ authoringView }) {
         <div className="property-card-heading">
           <div className="property-card-title">QuantScript 模块视图</div>
           <div className="property-card-caption">
-            formal compile 成功后，会在这里按源码顺序显示模块化 artifact。
+            Formal 编译成功后，会在这里按源码顺序显示模块化工件。
           </div>
         </div>
         <div className="muted-line">当前还没有 quantscript_authoring_view。</div>
@@ -294,11 +303,11 @@ export function QuantScriptAuthoringSourceCard({ authoringView }) {
       <div className="property-card-heading">
         <div className="property-card-title">QuantScript 模块视图</div>
         <div className="property-card-caption">
-          按源码顺序展示后端生成的 authoring artifact。
+          按源码顺序展示后端生成的编写工件。
         </div>
       </div>
       <div className="muted-line">
-        Source order: {authoringView.source_order.map(authoringKindLabel).join(" -> ")}
+        源码顺序：{authoringView.source_order.map(authoringKindLabel).join(" -> ")}
       </div>
       {authoringView.sections.map((section) => (
         <div
@@ -385,20 +394,20 @@ export function QuantScriptAuthoringStateCard({ authoringViewState }) {
 
   const errorCode = authoringViewState.error?.details?.[0]?.code || authoringViewState.error?.error || "-";
   const errorMessage =
-    authoringViewState.error?.message || "formal compile 失败，但 authoring artifact 仍以 best-effort 方式保留。";
+    authoringViewState.error?.message || "Formal 编译失败，但编写工件仍以尽力方式保留。";
 
   return (
     <div className="property-card" data-testid="qs-authoring-partial-state">
       <div className="property-card-heading">
-        <div className="property-card-title">QuantScript Authoring Fallback</div>
+        <div className="property-card-title">QuantScript 编写回退</div>
         <div className="property-card-caption">
-          formal compile 失败时，source workspace 继续显示 partial authoring artifact。
+          Formal 编译失败时，源码工作区继续显示部分编写工件。
         </div>
       </div>
       <div className="kv-line">
         <span>状态</span>
         <strong>
-          <StatusChip tone="warning">编译失败，已回退到 partial artifact</StatusChip>
+          <StatusChip tone="warning">编译失败，已回退到部分工件</StatusChip>
         </strong>
       </div>
       <div className="kv-line">
@@ -423,13 +432,13 @@ export function QuantScriptAuthoringFlowCard({ authoringView }) {
   return (
     <div className="property-card" data-testid="qs-authoring-pipeline-order">
       <div className="property-card-heading">
-        <div className="property-card-title">QuantScript Flow 视图</div>
+        <div className="property-card-title">QuantScript 流程视图</div>
         <div className="property-card-caption">
-          按概念链路展示 Data → Intent → Agent → Risk → Execution。
+          按概念链路展示：数据 → 意图 → 代理 → 风控 → 执行。
         </div>
       </div>
       <div className="muted-line">
-        Pipeline order: {authoringView.pipeline_order.map(authoringKindLabel).join(" -> ")}
+        管线顺序：{authoringView.pipeline_order.map(authoringKindLabel).join(" -> ")}
       </div>
       <div className="mini-list">
         <div className="mini-list-title">模块链路</div>
@@ -494,14 +503,13 @@ export function QuantScriptAuthoringPoolCard({ authoringView }) {
   return (
     <div className="property-card" data-testid="qs-authoring-pool-pipeline">
       <div className="property-card-heading">
-        <div className="property-card-title">Instrument Pool Pipeline</div>
+        <div className="property-card-title">标的池管线</div>
         <div className="property-card-caption">
-          只读展示 lowering 派生出的 source → eligibility → features → selection →
-          weighting → rebalance。
+          只读展示降级转换派生出的：来源 → 资格 → 特征 → 选择 → 权重 → 再平衡。
         </div>
       </div>
       <div className="muted-line">
-        Pool order: {poolPipeline.order.map(authoringPoolStageLabel).join(" -> ")}
+        池顺序：{poolPipeline.order.map(authoringPoolStageLabel).join(" -> ")}
       </div>
       {poolPipeline.stages.map((stage) => {
         const isActive = stage.related_section_ids.some((id) => activeSectionIds.has(id));
@@ -973,6 +981,7 @@ export function NodeOverviewCard({ selectedNode, moduleDef, updateNodeName }) {
       <label className="field-block">
         <span>节点名称</span>
         <input
+          data-testid="prop-input-node-name"
           value={selectedNode.name}
           onChange={(event) => updateNodeName(selectedNode.id, event.target.value)}
         />
@@ -1228,7 +1237,7 @@ export function EdgeOverviewCard({ selectedEdge, sourceNode, targetNode, removeS
           {selectedEdge.source_port} -&gt; {selectedEdge.target_port}
         </strong>
       </div>
-      <button className="danger-btn" onClick={removeSelected}>
+      <button className="danger-btn" onClick={removeSelected} data-testid="prop-action-delete-edge">
         删除边
       </button>
     </div>
@@ -1384,7 +1393,7 @@ export function NodeParamsSection({ model, prioritizePathFields = false }) {
       />
       <ConnectionsCard graph={model.graph} selectedNode={model.selectedNode} />
       <ValidationCard issues={model.nodeIssues} />
-      <button className="danger-btn full-width" onClick={model.removeSelected}>
+      <button className="danger-btn full-width" onClick={model.removeSelected} data-testid="prop-action-delete-node">
         删除节点
       </button>
     </PropertySection>
@@ -1458,7 +1467,7 @@ export function LaneAwareNodeParamsSection({ model, prioritizePathFields = false
           {orderedCards[cardId]}
         </div>
       ))}
-      <button className="danger-btn full-width" onClick={model.removeSelected}>
+      <button className="danger-btn full-width" onClick={model.removeSelected} data-testid="prop-action-delete-node">
         删除节点
       </button>
     </PropertySection>

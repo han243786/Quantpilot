@@ -4,6 +4,10 @@ QuantPilot is a single-machine quantitative trading sandbox focused on honest ca
 
 The current release target is `v0.1.0`.
 
+Current release posture: a private baseline may proceed after the accepted
+baseline gate passes, but public release must not be described as ready until
+the dependency, license, and repository-visibility blockers are closed.
+
 ## Beta Scope
 
 QuantPilot beta scope today:
@@ -96,7 +100,7 @@ See:
 
 ## Quality gates
 
-Release candidates should pass all of the following:
+Private-baseline candidates should pass all of the following:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1
@@ -129,11 +133,13 @@ Security audit boundary:
 
 - `cd frontend; cmd /c npm audit --audit-level=moderate` is a public-release
   blocker check
-- the current Vite/esbuild audit chain requires a breaking Vite/Vitest
+- the previous `postcss <8.5.10` moderate finding was removed through a
+  lockfile patch to `postcss@8.5.12`
+- the remaining Vite/esbuild audit chain requires a breaking Vite/Vitest
   migration path, so it is not part of the private-baseline gate until that
   migration is explicitly accepted and verified
-- the owner accepts the current audit risk only for private-baseline use; this
-  does not authorize public release or public-release-ready wording
+- the owner accepts the remaining audit risk only for private-baseline use;
+  this does not authorize public release or public-release-ready wording
 
 ## Repository hygiene
 
@@ -141,7 +147,12 @@ Local build and runtime artifacts are intentionally ignored:
 
 - Rust `target/` output
 - frontend `node_modules/`, `dist/`, Playwright output, and test results
-- runtime artifacts under `storage/runs/`, `storage/backtests/`, and local test artifact directories
+- runtime artifacts under `storage/runs/`, `storage/backtests/`,
+  `storage/experiments/`, and local test artifact directories
+- local graph snapshots under `storage/graphs/*.json`, `storage/graphs/*.qs`,
+  and `storage/graphs/versions/`
+- local audit JSON under `storage/audit/*.json`
+- local helper logs such as `codex-vite-dev.log`
 
 Artifact cleanup is dry-run by default:
 
@@ -153,6 +164,7 @@ Optional flags:
 
 - `-OlderThanDays <N>`
 - `-IncludeLogs`
+- `-IncludeRuntimeArtifacts`
 - `-Mode execute`
 
 ## Documentation entry points
@@ -189,9 +201,9 @@ Shortest current release state list:
 
 - `LICENSE` is still placeholder-only
 - `tools\run-closeout-gates.bat` is the accepted private-baseline gate set
-- frontend dependency audit risk is explicitly accepted only for private
-  baseline use; it remains a public-release blocker until the Vite/Vitest
-  migration strategy is accepted and verified
+- remaining frontend dependency audit risk is explicitly accepted only for
+  private baseline use; it remains a public-release blocker until the
+  Vite/Vitest migration strategy is accepted and verified
 - public release remains blocked until a separate public-release approval and
   outbound license decision are made
 

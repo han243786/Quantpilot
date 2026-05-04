@@ -6,6 +6,7 @@
 - [Capability Governance](./implementation-capability-governance.md)
 - [Capability Governance Registry Snapshot](./implementation-capability-governance-registry.generated.md)
 - [Artifact Governance](./implementation-artifact-governance.md)
+- [Runtime Governance Contract](../runtime/implementation-runtime-governance-contract.md)
 
 Governance references to protocol boundaries should use the active continuous index
 `RFC-001` through `RFC-020` in [../../protocol/README.md](../../protocol/README.md).

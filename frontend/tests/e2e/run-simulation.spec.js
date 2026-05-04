@@ -72,6 +72,23 @@ test("run simulation smoke covers start, SSE, and history refresh", async ({ pag
     });
   });
 
+  await api.handle("**/api/runtime/runs/*/save", async (route) => {
+    if (!runFixture) {
+      await route.fulfill({
+        status: 404,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify({ error: "not_found", message: "run fixture missing" })
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json; charset=utf-8",
+      body: JSON.stringify({ run_id: runFixture.startResponse.run_id, saved: true })
+    });
+  });
+
   await api.handle("**/api/runtime/runs", async (route) => {
     await route.fulfill({
       status: 200,
@@ -104,6 +121,13 @@ test("run simulation smoke covers start, SSE, and history refresh", async ({ pag
   await expect(page.locator(".event-summary-grid")).toContainText("run_smoke_001");
   await expect(page.locator(".event-summary-grid")).toContainText("4");
   await expect(page.getByTestId("event-feed-row-evt_run_exec_1")).toBeVisible();
+  await expect(page.getByTestId("runtime-artifact-save")).toBeVisible();
+  await Promise.all([
+    page.waitForResponse((response) =>
+      response.url().includes("/api/runtime/runs/run_smoke_001/save")
+    ),
+    page.getByTestId("runtime-artifact-save").click()
+  ]);
   await expect(page.getByTestId("run-history-card")).toContainText("run_smoke_001");
 
   await page

@@ -14,7 +14,7 @@ export function StrategyRouteBar({ items = [] }) {
   if (visibleItems.length === 0) return null;
 
   return (
-    <nav className="strategy-route-bar" aria-label="Strategy navigation">
+    <nav className="strategy-route-bar" aria-label="策略导航">
       {visibleItems.map((item, index) => {
         const isCurrent = Boolean(item.current) || index === visibleItems.length - 1;
         return (

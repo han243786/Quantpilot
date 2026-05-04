@@ -1,4 +1,5 @@
 use anyhow::{anyhow, bail, Result};
+use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ScriptModule {
@@ -9,6 +10,55 @@ pub struct ScriptModule {
 pub enum Item {
     Import(ImportDecl),
     Function(FunctionDecl),
+    TestBlock(TestBlock),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TestBlock {
+    pub name: String,
+    pub cover: Vec<String>,
+    pub steps: Vec<StepBlock>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct StepBlock {
+    pub name: String,
+    pub actions: Vec<TestAction>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum TestAction {
+    Compile,
+    Run {
+        mode: String,
+        duration_secs: u64,
+        save: bool,
+    },
+    Backtest {
+        source: String,
+        start: Option<String>,
+        end: Option<String>,
+        seed: Option<u64>,
+        save: bool,
+    },
+    Assert(String),
+    SaveRun,
+    Modify {
+        node: String,
+        param: String,
+        value: TestParamValue,
+    },
+    Wait {
+        condition: String,
+        timeout_secs: u64,
+    },
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum TestParamValue {
+    Number(f64),
+    String(String),
+    Bool(bool),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -177,11 +227,267 @@ impl ScriptParser {
                 items.push(Item::Import(self.parse_from_import()?));
             } else if line.starts_with("fn ") || line.starts_with("async fn ") {
                 items.push(Item::Function(self.parse_function()?));
+            } else if line.starts_with("@test ") || line.starts_with("@test{") {
+                items.push(Item::TestBlock(self.parse_test_block()?));
             } else {
                 bail!("unsupported top-level statement: {line}");
             }
         }
         Ok(ScriptModule { items })
+    }
+
+    fn parse_test_block(&mut self) -> Result<TestBlock> {
+        let line = self.take_line()?;
+        let _header = line
+            .trim_start_matches("@test")
+            .trim()
+            .strip_suffix('{')
+            .map(str::trim)
+            .unwrap_or("");
+        let fields = self.parse_test_fields()?;
+        let name = fields
+            .get("name")
+            .cloned()
+            .unwrap_or_else(|| "unnamed".to_string());
+        let cover = fields
+            .get("cover")
+            .map(|v| {
+                let inner = v.trim().trim_start_matches('[').trim_end_matches(']').trim();
+                if inner.is_empty() {
+                    return Vec::new();
+                }
+                // Count quotes to detect malformed arrays like ["A" "B"]
+                let quote_count = inner.chars().filter(|&c| c == '"').count();
+                if quote_count % 2 != 0 {
+                    // Malformed — return empty rather than garbage
+                    return Vec::new();
+                }
+                inner
+                    .split(',')
+                    .map(|s| s.trim().trim_matches('"').trim().to_string())
+                    .filter(|s| !s.is_empty())
+                    .collect()
+            })
+            .unwrap_or_default();
+        let mut steps = Vec::new();
+        while let Some(peeked) = self.peek_line() {
+            if peeked.starts_with("@step(") {
+                steps.push(self.parse_step_block()?);
+            } else {
+                break;
+            }
+        }
+        Ok(TestBlock { name, cover, steps })
+    }
+
+    fn parse_step_block(&mut self) -> Result<StepBlock> {
+        let line = self.take_line()?;
+        const MAX_NAME_LEN: usize = 500;
+        // Extract name from @step("name") or @step("name") {
+        // Find content between first " and second "
+        let mut name = line
+            .split('"')
+            .nth(1)
+            .map(|s| s.to_string())
+            .unwrap_or_else(|| "unnamed".to_string());
+        if name.len() > MAX_NAME_LEN {
+            name.truncate(MAX_NAME_LEN);
+        }
+
+        // If the line doesn't end with {, the opening brace may be on the next line
+        if !line.trim_end().ends_with('{') {
+            if self.index < self.lines.len() && self.lines[self.index].trim() == "{" {
+                self.index += 1;
+            }
+        }
+
+        let mut actions = Vec::new();
+        while let Some(peeked) = self.peek_line() {
+            let trimmed = peeked.trim();
+            if trimmed == "}" {
+                self.index += 1;
+                break;
+            }
+            if trimmed.starts_with("@compile") {
+                self.index += 1;
+                actions.push(TestAction::Compile);
+            } else if trimmed.starts_with("@assert ") {
+                let expr = trimmed.trim_start_matches("@assert ").trim().to_string();
+                self.index += 1;
+                actions.push(TestAction::Assert(expr));
+            } else if trimmed.starts_with("@save_run") {
+                self.index += 1;
+                actions.push(TestAction::SaveRun);
+            } else if trimmed.starts_with("@run ") || trimmed.starts_with("@run{") {
+                actions.push(self.parse_test_run_action()?);
+            } else if trimmed.starts_with("@backtest ") || trimmed.starts_with("@backtest{") {
+                actions.push(self.parse_test_backtest_action()?);
+            } else if trimmed.starts_with("@modify ") {
+                actions.push(self.parse_test_modify_action()?);
+            } else if trimmed.starts_with("@wait ") {
+                actions.push(self.parse_test_wait_action()?);
+            } else {
+                self.index += 1;
+            }
+        }
+        Ok(StepBlock { name, actions })
+    }
+
+    fn parse_test_run_action(&mut self) -> Result<TestAction> {
+        let line = self.take_line()?;
+        let fields = if line.contains('{') {
+            let inner = line
+                .trim_start_matches("@run")
+                .trim()
+                .trim_start_matches('{')
+                .trim_end_matches('}')
+                .trim();
+            parse_test_inline_fields(inner)
+        } else {
+            // multi-line: @run { \n ... \n }
+            self.parse_test_action_fields()?
+        };
+        Ok(TestAction::Run {
+            mode: fields.get("mode").cloned().unwrap_or_else(|| "paper".to_string()),
+            duration_secs: fields
+                .get("duration")
+                .and_then(|v| parse_duration_secs(v))
+                .unwrap_or(60),
+            save: fields
+                .get("save")
+                .map(|v| v == "true")
+                .unwrap_or(false),
+        })
+    }
+
+    fn parse_test_backtest_action(&mut self) -> Result<TestAction> {
+        let line = self.take_line()?;
+        let fields = if line.contains('{') {
+            let inner = line
+                .trim_start_matches("@backtest")
+                .trim()
+                .trim_start_matches('{')
+                .trim_end_matches('}')
+                .trim();
+            parse_test_inline_fields(inner)
+        } else {
+            self.parse_test_action_fields()?
+        };
+        Ok(TestAction::Backtest {
+            source: fields
+                .get("source")
+                .cloned()
+                .unwrap_or_else(|| "deterministic_mock".to_string()),
+            start: fields.get("start").cloned(),
+            end: fields.get("end").cloned(),
+            seed: fields.get("seed").and_then(|v| v.parse::<u64>().ok()),
+            save: fields
+                .get("save")
+                .map(|v| v == "true")
+                .unwrap_or(false),
+        })
+    }
+
+    fn parse_test_modify_action(&mut self) -> Result<TestAction> {
+        let line = self.take_line()?;
+        let stripped = line.trim_start_matches("@modify").trim();
+        let fields = if stripped.starts_with('{') {
+            let inner = stripped
+                .trim_start_matches('{')
+                .trim_end_matches('}')
+                .trim();
+            parse_test_inline_fields(inner)
+        } else {
+            parse_test_inline_fields(stripped)
+        };
+        let node = fields
+            .get("node")
+            .cloned()
+            .unwrap_or_default();
+        let param = fields
+            .get("param")
+            .cloned()
+            .unwrap_or_default();
+        let value = fields
+            .get("value")
+            .map(|v| {
+                if let Ok(n) = v.parse::<f64>() {
+                    TestParamValue::Number(n)
+                } else if v == "true" || v == "false" {
+                    TestParamValue::Bool(v == "true")
+                } else {
+                    TestParamValue::String(v.clone())
+                }
+            })
+            .unwrap_or(TestParamValue::Number(0.0));
+        Ok(TestAction::Modify { node, param, value })
+    }
+
+    fn parse_test_wait_action(&mut self) -> Result<TestAction> {
+        let line = self.take_line()?;
+        let stripped = line.trim_start_matches("@wait").trim();
+        let fields = if stripped.starts_with('{') {
+            let inner = stripped
+                .trim_start_matches('{')
+                .trim_end_matches('}')
+                .trim();
+            parse_test_inline_fields(inner)
+        } else {
+            parse_test_inline_fields(stripped)
+        };
+        Ok(TestAction::Wait {
+            condition: fields
+                .get("condition")
+                .cloned()
+                .unwrap_or_default(),
+            timeout_secs: fields
+                .get("timeout")
+                .and_then(|v| parse_duration_secs(v))
+                .unwrap_or(120),
+        })
+    }
+
+    fn parse_test_fields(&mut self) -> Result<BTreeMap<String, String>> {
+        let mut fields = BTreeMap::new();
+        while self.index < self.lines.len() {
+            let trimmed = self.lines[self.index].trim().to_string();
+            if trimmed == "}" {
+                self.index += 1;
+                break;
+            }
+            if trimmed.starts_with('@') {
+                break;
+            }
+            self.index += 1;
+            if let Some((key, value)) = trimmed.split_once(':') {
+                let val = value.trim().trim_end_matches(',').trim().trim_matches('"').trim().to_string();
+                fields.insert(key.trim().to_string(), val);
+            }
+        }
+        Ok(fields)
+    }
+
+    fn parse_test_action_fields(&mut self) -> Result<BTreeMap<String, String>> {
+        let mut fields = BTreeMap::new();
+        // Consume opening brace if present
+        if self.index < self.lines.len() {
+            if self.lines[self.index].trim() == "{" {
+                self.index += 1;
+            }
+        }
+        while self.index < self.lines.len() {
+            let trimmed = self.lines[self.index].trim().to_string();
+            if trimmed == "}" {
+                self.index += 1;
+                break;
+            }
+            self.index += 1;
+            if let Some((key, value)) = trimmed.split_once(':') {
+                let val = value.trim().trim_end_matches(',').trim().trim_matches('"').trim().to_string();
+                fields.insert(key.trim().to_string(), val);
+            }
+        }
+        Ok(fields)
     }
 
     fn parse_import(&mut self) -> Result<ImportDecl> {
@@ -585,6 +891,36 @@ fn parse_match_arm_body(input: &str) -> Result<MatchArmBody> {
     } else {
         Ok(MatchArmBody::Expr(parse_expr_lossy(input)))
     }
+}
+
+fn parse_test_inline_fields(input: &str) -> BTreeMap<String, String> {
+    let mut fields = BTreeMap::new();
+    for part in split_args(input) {
+        let trimmed = part.trim();
+        if let Some((key, value)) = trimmed.split_once(':') {
+            let val = value.trim().trim_matches('"').trim().to_string();
+            fields.insert(key.trim().to_string(), val);
+        }
+    }
+    fields
+}
+
+fn parse_duration_secs(input: &str) -> Option<u64> {
+    let input = input.trim().trim_matches('"');
+    if let Ok(n) = input.parse::<u64>() {
+        return Some(n);
+    }
+    // Parse "60s", "2m", "5min" format
+    if let Some(rest) = input.strip_suffix('s') {
+        return rest.trim().parse::<u64>().ok();
+    }
+    if let Some(rest) = input.strip_suffix("min") {
+        return rest.trim().parse::<u64>().ok().map(|v| v * 60);
+    }
+    if let Some(rest) = input.strip_suffix('m') {
+        return rest.trim().parse::<u64>().ok().map(|v| v * 60);
+    }
+    None
 }
 
 pub fn parse_expr(input: &str) -> Result<Expr> {

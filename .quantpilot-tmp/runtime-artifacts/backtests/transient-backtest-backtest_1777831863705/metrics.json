@@ -1,0 +1,101 @@
+{
+  "schema_version": "quantpilot/metrics-artifact/v1",
+  "artifact_id": "metrics_artifact_20e9b4ab3cc5",
+  "backtest_id": "backtest_1777831863705",
+  "digest": {
+    "algorithm": "sha256_canonical_json",
+    "value": "20e9b4ab3cc5ade2cc1c994807c4f98bb1815b89310db8da606502d83cf72496"
+  },
+  "summary": {
+    "step_count": 200,
+    "trade_count": 0,
+    "total_return_ratio": 0.0,
+    "max_drawdown_ratio": 0.0,
+    "final_equity": 100000.0,
+    "net_profit": 0.0,
+    "turnover_ratio": -0.0,
+    "average_trade_notional": 0.0,
+    "fee_drag_ratio": -0.0
+  },
+  "event_count": 1423,
+  "session_count": 200,
+  "started_at_ms": 1760551863706,
+  "ended_at_ms": 1777745463706,
+  "final_account": {
+    "equity_estimate": 100000.0,
+    "cash_balance": 100000.0,
+    "available_cash_balance": 36.17604000000574,
+    "frozen_cash_balance": 99963.82396,
+    "total_leverage": -0.0,
+    "total_gross_notional": -0.0,
+    "total_net_notional": -0.0,
+    "positions": 0,
+    "open_order_count": 6,
+    "open_orders": [
+      {
+        "order_id": "ord-risk-decision-agent_agent_1-1764785463705-1764785463705-Binance",
+        "side": "Buy",
+        "remaining_qty": 0.46533271288971617,
+        "limit_price": 42120.4,
+        "reserved_cash": 19619.6,
+        "reserved_qty": 0.0
+      },
+      {
+        "order_id": "ord-risk-decision-agent_agent_1-1764871863705-1764871863705-Binance",
+        "side": "Buy",
+        "remaining_qty": 0.46511627906976744,
+        "limit_price": 42140.0,
+        "reserved_cash": 19619.6,
+        "reserved_qty": 0.0
+      },
+      {
+        "order_id": "ord-risk-decision-agent_agent_1-1764958263705-1764958263705-Binance",
+        "side": "Buy",
+        "remaining_qty": 0.46490004649000466,
+        "limit_price": 42159.6,
+        "reserved_cash": 19619.6,
+        "reserved_qty": 0.0
+      },
+      {
+        "order_id": "ord-risk-decision-agent_agent_1-1765044663705-1765044663705-Binance",
+        "side": "Buy",
+        "remaining_qty": 0.4646840148698885,
+        "limit_price": 42179.2,
+        "reserved_cash": 19619.6,
+        "reserved_qty": 0.0
+      },
+      {
+        "order_id": "ord-risk-decision-agent_agent_1-1765131063705-1765131063705-Binance",
+        "side": "Buy",
+        "remaining_qty": 0.4644681839294008,
+        "limit_price": 42198.799999999996,
+        "reserved_cash": 19619.599999999995,
+        "reserved_qty": 0.0
+      },
+      {
+        "order_id": "ord-risk-decision-agent_agent_1-1765217463705-1765217463705-Binance",
+        "side": "Buy",
+        "remaining_qty": 0.04415041782729839,
+        "limit_price": 42218.4,
+        "reserved_cash": 1865.8239600000143,
+        "reserved_qty": 0.0
+      }
+    ]
+  },
+  "execution_assumptions": {
+    "summary": {
+      "fee_bps": 10.0,
+      "slippage_bps": 5.0,
+      "latency_ms": 0,
+      "sources": {
+        "fee_bps": "backend_fallback",
+        "slippage_bps": "profile_default",
+        "latency_ms": "backend_fallback"
+      }
+    },
+    "list_tag": {
+      "label": "fee=10 slip=5 lat=0",
+      "sources_label": "fee:backend slip:profile lat:backend"
+    }
+  }
+}

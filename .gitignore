@@ -25,6 +25,7 @@
 # Runtime artifacts and local graph snapshots
 /storage/runs/
 /storage/backtests/
+/storage/experiments/
 /storage/test-backtests/
 /storage/test-runs/
 /storage/test-graphs/
@@ -33,8 +34,20 @@
 /storage/audit/*.json
 /storage/graphs/*.json
 /storage/graphs/*.qs
+/storage/graphs/versions/
 
 # Local helper files
 /backend_pid.txt
+/codex-vite-dev.log
 /tmp_runtime_request.json
 /tmp_test.txt
+
+# Test artifacts (screenshots and reports)
+markdown/测试/screenshots/
+markdown/测试/test-reports/
+markdown/测试/测试报告-*.md
+/tmp/
+
+# OS files
+Thumbs.db
+Desktop.ini

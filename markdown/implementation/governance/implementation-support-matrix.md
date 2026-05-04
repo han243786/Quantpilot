@@ -136,6 +136,6 @@ These surfaces are real and visible in the current product, but they do not all 
 
 - [Current Status And Release State](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/overview/overview-current-status-and-roadmap.md)
 - [Compile-Chain Contract](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/governance/implementation-compile-chain-contract.md)
-- [Completed Functional Closeout Ledger](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/planning/implementation-functional-closeout-task-table.md)
+- [Archived Functional Closeout Ledger](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/archive/planning-retired/implementation-functional-closeout-task-table.md)
 - [First Release Readiness](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/planning/implementation-first-release-readiness.md)
 
