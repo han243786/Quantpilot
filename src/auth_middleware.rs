@@ -28,11 +28,14 @@ pub(super) async fn api_key_auth(
     let api_key = match std::env::var("QUANTPILOT_API_KEY") {
         Ok(key) if !key.is_empty() => key,
         _ => {
-            // 未配置 API Key 时打印警告并放行
-            eprintln!(
-                "[auth] WARNING: QUANTPILOT_API_KEY not set — all API requests allowed. \
-                 Set QUANTPILOT_API_KEY environment variable to enable authentication."
-            );
+            // Print warning once per process lifetime
+            static WARNED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+            if !WARNED.swap(true, std::sync::atomic::Ordering::Relaxed) {
+                eprintln!(
+                    "[auth] WARNING: QUANTPILOT_API_KEY not set — all API requests allowed. \
+                     Set QUANTPILOT_API_KEY environment variable to enable authentication."
+                );
+            }
             return next.run(request).await;
         }
     };

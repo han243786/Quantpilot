@@ -27,6 +27,7 @@ qrpc-core-ir = { path = "qrpc_core_ir" }
 qrpc-compiler = { path = "qrpc_compiler" }
 qrpc-runtime = { path = "qrpc_runtime" }
 quantscript = { path = "quantscript" }
+time = { version = "0.3", features = ["macros", "parsing"] }
 
 [dev-dependencies]
 tower = { version = "0.5", features = ["util"] }

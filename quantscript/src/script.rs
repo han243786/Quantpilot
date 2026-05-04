@@ -352,7 +352,7 @@ impl ScriptParser {
             duration_secs: fields
                 .get("duration")
                 .and_then(|v| parse_duration_secs(v))
-                .unwrap_or(60),
+                .unwrap_or(0), // 0 triggers validation error in runner
             save: fields
                 .get("save")
                 .map(|v| v == "true")

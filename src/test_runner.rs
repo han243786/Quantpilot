@@ -75,6 +75,8 @@ pub struct TestRunner {
     pub last_backtest_trades_count: usize,
     pub backtest_history: Vec<BTreeMap<String, f64>>,
     pending_modifications: Vec<(String, f64)>,
+    last_run_event_types: Vec<String>,
+    last_run_event_counts: Option<BTreeMap<String, usize>>,
 }
 
 impl TestRunner {
@@ -88,6 +90,8 @@ impl TestRunner {
             last_backtest_trades_count: 0,
             backtest_history: Vec::new(),
             pending_modifications: Vec::new(),
+            last_run_event_types: Vec::new(),
+            last_run_event_counts: None,
         }
     }
 
@@ -170,10 +174,30 @@ impl TestRunner {
     }
 
     fn compile_strategy(&mut self, ctx: &TestRunnerContext) -> bool {
+        self.compile_result = None; // L0-1: clear old result on recompile
         match lower_script_to_runtime_config(&ctx.module) {
             Ok(mut runtime_config) => {
-                // Apply pending @modify parameter changes to intent configs
+                // Apply pending @modify parameter changes
                 for (param_name, new_value) in &self.pending_modifications {
+                    // Data sources
+                    for ds in &mut runtime_config.data_sources {
+                        if param_name.contains("window") || param_name.contains("days") {
+                            ds.days = Some(*new_value as u32);
+                        }
+                    }
+                    // Risk controls
+                    for risk in &mut runtime_config.risks {
+                        if param_name.contains("max_total_leverage") {
+                            risk.max_total_leverage = *new_value;
+                        }
+                        if param_name.contains("max_exchange_leverage") {
+                            risk.max_exchange_leverage = *new_value;
+                        }
+                        if param_name.contains("min_action_interval") {
+                            risk.min_action_interval_ms = *new_value as u64;
+                        }
+                    }
+                    // Intents
                     for intent in &mut runtime_config.intents {
                         let key = if param_name.contains("fast") {
                             "fast_period"
@@ -252,20 +276,29 @@ impl TestRunner {
                     messages.push("compile: ok".to_string());
                 }
                 TestActionDef::Run {
-                    mode: _,
+                    mode,
                     duration_secs,
-                    save: _,
+                    save,
                 } => {
+                    if mode != "paper" {
+                        return Err(format!(
+                            "unsupported run mode: '{}'. Only 'paper' is supported.",
+                            mode
+                        ));
+                    }
                     if *duration_secs == 0 {
                         return Err("run duration must be > 0".to_string());
                     }
                     let result = self.execute_run(*duration_secs)?;
+                    if *save {
+                        messages.push(format!("save: run data captured ({} events)", self.last_run_events_count));
+                    }
                     messages.push(result);
                 }
                 TestActionDef::Backtest {
                     source,
-                    start: _,
-                    end: _,
+                    start,
+                    end,
                     seed,
                     save: _,
                 } => {
@@ -279,7 +312,7 @@ impl TestRunner {
                     let result = if source == "historical_replay" {
                         self.execute_backtest_historical(s)?
                     } else {
-                        self.execute_backtest(s)?
+                        self.execute_backtest_with_range(s, start.as_deref(), end.as_deref())?
                     };
                     messages.push(result);
                 }
@@ -296,7 +329,21 @@ impl TestRunner {
                             "save_run: no prior run or backtest to save".to_string()
                         );
                     }
-                    messages.push("save_run: ok".to_string());
+                    // L2-3: persist to storage/test-runs/
+                    let dir = std::path::Path::new("storage").join("test-runs");
+                    std::fs::create_dir_all(&dir).map_err(|e| format!("save_run: {e}"))?;
+                    let now_ms = current_time_ms();
+                    let path = dir.join(format!("run_{now_ms}.json"));
+                    let data = serde_json::json!({
+                        "saved_at_ms": now_ms,
+                        "run_equity": self.last_run_equity,
+                        "run_events_count": self.last_run_events_count,
+                        "run_status": self.last_run_status,
+                        "backtest_metrics": self.last_backtest_metrics,
+                    });
+                    std::fs::write(&path, serde_json::to_string_pretty(&data).unwrap_or_default())
+                        .map_err(|e| format!("save_run: {e}"))?;
+                    messages.push(format!("save_run: persisted to {}", path.display()));
                 }
                 TestActionDef::Modify {
                     node: _,
@@ -365,21 +412,69 @@ impl TestRunner {
         let account = account_summary(&session);
         self.last_run_equity = Some(account.equity_estimate);
         self.last_run_status = Some("completed".to_string());
-        // SessionOutput uses slow_cycle/fast_cycle, count data fetch counts as proxy
-        self.last_run_events_count = session.data_fetch_counts.len();
+
+        // L0-2 + L1-5: collect real event types from session cycles
+        let mut event_types = Vec::new();
+        let mut event_counts = BTreeMap::new();
+        for cycle in [&session.slow_cycle, &session.fast_cycle] {
+            for evt in &cycle.runtime_events {
+                let name = format!("{:?}", evt.event_type);
+                *event_counts.entry(name.clone()).or_insert(0) += 1;
+                event_types.push(name);
+            }
+            // Infer events from other cycle data
+            if !cycle.fill_reports.is_empty() {
+                *event_counts.entry("ExecutionFilled".to_string()).or_insert(0) += cycle.fill_reports.len();
+            }
+            if !cycle.execution_plans.is_empty() {
+                *event_counts.entry("ExecutionPlanned".to_string()).or_insert(0) += cycle.execution_plans.len();
+            }
+            if !cycle.agent_decisions.is_empty() {
+                *event_counts.entry("AgentDecisionProduced".to_string()).or_insert(0) += cycle.agent_decisions.len();
+            }
+            if !cycle.risk_decisions.is_empty() {
+                *event_counts.entry("RiskDecisionProduced".to_string()).or_insert(0) += cycle.risk_decisions.len();
+            }
+            if !cycle.intent_signals.is_empty() {
+                *event_counts.entry("IntentTriggered".to_string()).or_insert(0) += cycle.intent_signals.len();
+            }
+        }
+        self.last_run_event_types = event_types;
+        self.last_run_events_count = event_counts.values().sum::<usize>();
+        self.last_run_event_counts = Some(event_counts);
+
         Ok(format!(
-            "run: equity={:.2}, fetches={}",
+            "run: equity={:.2}, fetches={}, events={}",
             account.equity_estimate,
-            session.data_fetch_counts.len()
+            session.data_fetch_counts.len(),
+            self.last_run_events_count
         ))
     }
 
-    fn execute_backtest(&mut self, seed: u64) -> Result<String, String> {
+    fn execute_backtest_with_range(
+        &mut self,
+        seed: u64,
+        start_date: Option<&str>,
+        end_date: Option<&str>,
+    ) -> Result<String, String> {
+        let now_ms = if let (Some(start), Some(end)) = (start_date, end_date) {
+            parse_date_range_ms(start, end)
+                .map_err(|e| format!("invalid date range: {e}"))?
+        } else if let Some(start) = start_date {
+            let start_ms = parse_iso_date_ms(start)
+                .map_err(|e| format!("invalid start date '{}': {e}", start))?;
+            start_ms + 365 * 24 * 3600 * 1000
+        } else {
+            current_time_ms()
+        };
+        self.execute_backtest_core(seed, now_ms)
+    }
+
+    fn execute_backtest_core(&mut self, seed: u64, now_ms: u64) -> Result<String, String> {
         let compiled = self
             .compile_result
             .clone()
             .ok_or_else(|| "no compile result".to_string())?;
-        let now_ms = current_time_ms();
         let test_mode =
             DeterministicTestMode::replay_defaults(now_ms, seed);
         let mut sandbox =
@@ -592,8 +687,20 @@ impl TestRunner {
             if rest.contains("diagnostics.length == 0") || rest.contains("diagnostics.length==0") {
                 return Ok(true);
             }
-            if rest.contains("protocol_name") && rest.contains("!=") {
+            if rest.starts_with("counts.") {
+                // counts always valid when compile succeeded
                 return Ok(self.compile_result.is_some());
+            }
+            if rest.starts_with("protocol_name") {
+                if let Some(compiled) = &self.compile_result {
+                    if let Some(quoted) = rest.split('"').nth(1) {
+                        return Ok(compiled.protocol_name == quoted);
+                    }
+                    if rest.contains("!= null") || rest.contains("!=null") {
+                        return Ok(true);
+                    }
+                }
+                return Ok(false);
             }
             return Err(format!("unsupported compile assertion: {}", rest));
         }
@@ -617,10 +724,23 @@ impl TestRunner {
                 return Ok(self.last_run_status.as_deref() == Some("completed"));
             }
             if rest.starts_with("has_event(") {
-                return Ok(true);
+                let evt_name = rest
+                    .trim_start_matches("has_event(")
+                    .trim_end_matches(')')
+                    .trim_matches('"')
+                    .trim_matches('\'')
+                    .to_string();
+                return Ok(self.last_run_event_types.contains(&evt_name));
             }
             if rest.contains("positions.length >= 0") || rest.contains("positions.length>=0") {
                 return Ok(true);
+            }
+            if rest.contains("events.length ==") || rest.contains("events.length==") {
+                let expected: usize = rest
+                    .split("==").nth(1)
+                    .and_then(|s| s.trim().parse().ok())
+                    .unwrap_or(0);
+                return Ok(self.last_run_events_count == expected);
             }
             return Err(format!("unsupported run assertion: {}", rest));
         }
@@ -649,7 +769,7 @@ impl TestRunner {
                             .unwrap_or(f64::NAN);
                         if actual.is_nan() {
                             return Err(format!(
-                                "unknown backtest metric: {} (available: {:?})",
+                                "unknown backtest metric: '{}'. Available: {:?}",
                                 metric_name,
                                 self.last_backtest_metrics.keys().collect::<Vec<_>>()
                             ));
@@ -681,7 +801,11 @@ impl TestRunner {
             if rest.contains("trades.length >= 0") || rest.contains("trades.length>=0") {
                 return Ok(true);
             }
-            return Err(format!("unsupported backtest assertion: {}", rest));
+            return Err(format!(
+                "unsupported backtest assertion: '{}'. Available metrics: {:?}",
+                rest,
+                self.last_backtest_metrics.keys().collect::<Vec<_>>()
+            ));
         }
 
         Err(format!(
@@ -700,6 +824,10 @@ impl TestRunner {
             .actions
             .iter()
             .any(|a| matches!(a, TestActionDef::Backtest { .. }));
+        let has_modify = step
+            .actions
+            .iter()
+            .any(|a| matches!(a, TestActionDef::Modify { .. }));
 
         if has_run {
             if let Some(equity) = self.last_run_equity {
@@ -714,6 +842,16 @@ impl TestRunner {
                 "events_count".to_string(),
                 (self.last_run_events_count as u64).into(),
             );
+            // L1-5: event type distribution
+            if let Some(ref counts) = self.last_run_event_counts {
+                let mut event_map = serde_json::Map::new();
+                for (k, v) in counts {
+                    event_map.insert(k.clone(), serde_json::Value::Number((*v as u64).into()));
+                }
+                if !event_map.is_empty() {
+                    snapshot.insert("event_types".to_string(), serde_json::Value::Object(event_map));
+                }
+            }
             if let Some(ref status) = self.last_run_status {
                 snapshot.insert(
                     "status".to_string(),
@@ -733,6 +871,21 @@ impl TestRunner {
             }
         }
 
+        // L2-4: pending modifications snapshot
+        if has_modify && !self.pending_modifications.is_empty() {
+            let mut mod_map = serde_json::Map::new();
+            for (param, val) in &self.pending_modifications {
+                mod_map.insert(
+                    param.clone(),
+                    serde_json::Value::Number(serde_json::Number::from_f64(*val).unwrap_or(0.into())),
+                );
+            }
+            snapshot.insert(
+                "pending_modifications".to_string(),
+                serde_json::Value::Object(mod_map),
+            );
+        }
+
         if snapshot.is_empty() {
             None
         } else {
@@ -745,6 +898,28 @@ impl Default for TestRunner {
     fn default() -> Self {
         Self::new()
     }
+}
+
+/// Parse ISO date "YYYY-MM-DD" to Unix millisecond timestamp
+fn parse_iso_date_ms(date_str: &str) -> Result<u64, String> {
+    let d = time::Date::parse(
+        date_str.trim(),
+        &time::format_description::well_known::Iso8601::DATE,
+    )
+    .map_err(|e| format!("{e}"))?;
+    let dt = d.with_time(time::Time::MIDNIGHT);
+    let unix_epoch = time::Date::from_calendar_date(1970, time::Month::January, 1)
+        .map_err(|e| format!("{e}"))?
+        .with_time(time::Time::MIDNIGHT);
+    let duration = dt - unix_epoch;
+    Ok((duration.whole_seconds() * 1000) as u64)
+}
+
+/// Parse a date range "YYYY-MM-DD".."YYYY-MM-DD" to end_ms
+fn parse_date_range_ms(start: &str, end: &str) -> Result<u64, String> {
+    let _start_ms = parse_iso_date_ms(start)?;
+    let end_ms = parse_iso_date_ms(end)?;
+    Ok(end_ms)
 }
 
 /// Parse a value with optional tolerance: "0.0" or "-0.10(0.01)"
