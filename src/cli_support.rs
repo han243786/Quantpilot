@@ -42,13 +42,13 @@ where
             }
             Some("-h" | "--help" | "help") => Ok(CliCommand::PrintHelp),
             Some(other) => bail!(
-                "unsupported `strategy-ir` subcommand: {}\n\n{}",
+                "不支持的 `strategy-ir` 子命令: {}\n\n{}",
                 other,
                 cli_usage()
             ),
-            None => bail!("missing `strategy-ir` subcommand\n\n{}", cli_usage()),
+            None => bail!("缺少 `strategy-ir` 子命令\n\n{}", cli_usage()),
         },
-        Some(other) => bail!("unsupported command: {}\n\n{}", other, cli_usage()),
+        Some(other) => bail!("不支持的命令: {}\n\n{}", other, cli_usage()),
     }
 }
 
@@ -71,19 +71,19 @@ pub(super) fn print_strategy_ir_summary(path: &FsPath, strategy_ir: &StrategyIr)
 pub(super) fn parse_strategy_ir_json(source: &str) -> anyhow::Result<StrategyIr> {
     let source = source.strip_prefix('\u{feff}').unwrap_or(source);
     let strategy_ir: StrategyIr =
-        serde_json::from_str(source).context("failed to parse Strategy IR JSON")?;
+        serde_json::from_str(source).context("解析 Strategy IR JSON 失败")?;
     strategy_ir
         .validate()
-        .context("failed to validate Strategy IR payload")?;
+        .context("验证 Strategy IR 负载失败")?;
     Ok(strategy_ir)
 }
 
 pub(super) async fn validate_strategy_ir_file(path: PathBuf) -> anyhow::Result<()> {
     let source = fs::read_to_string(&path)
         .await
-        .with_context(|| format!("failed to read Strategy IR file `{}`", path.display()))?;
+        .with_context(|| format!("读取 Strategy IR 文件 `{}` 失败", path.display()))?;
     let strategy_ir = parse_strategy_ir_json(&source)
-        .with_context(|| format!("invalid Strategy IR file `{}`", path.display()))?;
+        .with_context(|| format!("无效的 Strategy IR 文件 `{}`", path.display()))?;
     print_strategy_ir_summary(&path, &strategy_ir);
     Ok(())
 }

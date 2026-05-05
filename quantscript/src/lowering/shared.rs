@@ -40,11 +40,11 @@ pub(crate) fn arg_expr_required<'a>(
 ) -> Result<&'a Expr> {
     find_arg(args, selector).ok_or_else(|| match selector {
         ArgSelector::Positional(index) => {
-            anyhow!("missing required function argument at index {index}")
+            anyhow!("缺少必需的函数参数，索引 {index}")
         }
-        ArgSelector::Named(name) => anyhow!("missing required function argument: {name}"),
+        ArgSelector::Named(name) => anyhow!("缺少必需的函数参数: {name}"),
         ArgSelector::NamedOrPositional(name, index) => {
-            anyhow!("missing required function argument: {name} or positional index {index}")
+            anyhow!("缺少必需的函数参数: {name} 或位置索引 {index}")
         }
     })
 }

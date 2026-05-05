@@ -27,13 +27,13 @@ pub fn load_runtime_protocol_config(yaml: &str) -> Result<RuntimeProtocolCoreCon
 
 pub fn validate_runtime_protocol_config(config: &RuntimeProtocolCoreConfig) -> Result<()> {
     if config.initial_cash_balance <= 0.0 {
-        bail!("initial_cash_balance must be > 0");
+        bail!("initial_cash_balance 必须大于 0");
     }
     if config.taker_fee_bps < 0.0
         || config.default_slippage_bps < 0.0
         || config.total_cost_buffer_bps < 0.0
     {
-        bail!("fee and slippage parameters must be >= 0");
+        bail!("手续费和滑点参数必须大于等于 0");
     }
 
     ensure_unique_ids(config)?;
@@ -366,28 +366,28 @@ fn ensure_unique_ids(config: &RuntimeProtocolCoreConfig) -> Result<()> {
     let mut data_ids = BTreeSet::new();
     for source in &config.data_sources {
         if !data_ids.insert(source.data_id.clone()) {
-            bail!("duplicate data_id: {}", source.data_id);
+            bail!("重复的 data_id: {}", source.data_id);
         }
     }
 
     let mut intent_ids = BTreeSet::new();
     for intent in &config.intents {
         if !intent_ids.insert(intent.intent_id.clone()) {
-            bail!("duplicate intent_id: {}", intent.intent_id);
+            bail!("重复的 intent_id: {}", intent.intent_id);
         }
     }
 
     let mut agent_ids = BTreeSet::new();
     for agent in &config.agents {
         if !agent_ids.insert(agent.agent_id.clone()) {
-            bail!("duplicate agent_id: {}", agent.agent_id);
+            bail!("重复的 agent_id: {}", agent.agent_id);
         }
     }
 
     let mut risk_ids = BTreeSet::new();
     for risk in &config.risks {
         if !risk_ids.insert(risk.risk_id.clone()) {
-            bail!("duplicate risk_id: {}", risk.risk_id);
+            bail!("重复的 risk_id: {}", risk.risk_id);
         }
     }
 
@@ -410,6 +410,12 @@ fn lower_runtime_intent_to_indicator(intent: &IntentConfig) -> Result<IndicatorN
         params.insert(
             "intent_variant".to_string(),
             serde_json::Value::String("long_term_sell".to_string()),
+        );
+    }
+    if matches!(intent.kind, IntentKind::SmaCrossover) {
+        params.insert(
+            "intent_variant".to_string(),
+            serde_json::Value::String("sma_crossover".to_string()),
         );
     }
     Ok(IndicatorNode {
@@ -449,7 +455,7 @@ fn lower_runtime_intent_to_signal_rule(intent: &IntentConfig) -> SignalRule {
 
 fn lower_runtime_intent_condition(intent: &IntentConfig) -> Option<ScalarExpr> {
     match intent.kind {
-        IntentKind::LongTermBuy => {
+        IntentKind::LongTermBuy | IntentKind::SmaCrossover => {
             let data_id = intent.input_data_ids.first()?;
             let fast_period = intent.params.get("fast_period")?.round() as usize;
             let slow_period = intent.params.get("slow_period")?.round() as usize;
@@ -657,7 +663,7 @@ fn lower_rebalance_schedule(value: &str) -> Result<CoreRebalanceSchedule> {
         "slow" => Ok(CoreRebalanceSchedule::EverySlow),
         "1d" => Ok(CoreRebalanceSchedule::Every1d),
         "weekly" => Ok(CoreRebalanceSchedule::Weekly),
-        other => bail!("unsupported rebalance schedule: {other}"),
+        other => bail!("不支持的重新平衡计划: {other}"),
     }
 }
 
@@ -740,7 +746,9 @@ fn lower_runtime_agent_to_policy(agent: &AgentConfig, intents: &[IntentConfig]) 
 
 fn lower_runtime_intent_kind(kind: &IntentKind) -> Result<CoreIndicatorKind> {
     match kind {
-        IntentKind::LongTermBuy | IntentKind::LongTermSell => Ok(CoreIndicatorKind::MaCross),
+        IntentKind::LongTermBuy | IntentKind::LongTermSell | IntentKind::SmaCrossover => {
+            Ok(CoreIndicatorKind::MaCross)
+        }
         IntentKind::Rsi => Ok(CoreIndicatorKind::Rsi),
         IntentKind::Macd => Ok(CoreIndicatorKind::Macd),
         IntentKind::Momentum => Ok(CoreIndicatorKind::Momentum),
@@ -758,6 +766,17 @@ fn lower_strategy_indicator_kind(kind: &qrpc_core::IndicatorKind) -> Result<Core
         qrpc_core::IndicatorKind::Spread => Ok(CoreIndicatorKind::Spread),
         qrpc_core::IndicatorKind::ZScore => Ok(CoreIndicatorKind::ZScore),
         qrpc_core::IndicatorKind::Custom => Ok(CoreIndicatorKind::Custom),
+        qrpc_core::IndicatorKind::QuoteObserve => Ok(CoreIndicatorKind::QuoteObserve),
+        qrpc_core::IndicatorKind::Atr => Ok(CoreIndicatorKind::Atr),
+        qrpc_core::IndicatorKind::BollingerBands => Ok(CoreIndicatorKind::BollingerBands),
+        qrpc_core::IndicatorKind::Obv => Ok(CoreIndicatorKind::Obv),
+        qrpc_core::IndicatorKind::Cmf => Ok(CoreIndicatorKind::Cmf),
+        qrpc_core::IndicatorKind::Adx => Ok(CoreIndicatorKind::Adx),
+        qrpc_core::IndicatorKind::Stochastic => Ok(CoreIndicatorKind::Stochastic),
+        qrpc_core::IndicatorKind::Cci => Ok(CoreIndicatorKind::Cci),
+        qrpc_core::IndicatorKind::ParabolicSar => Ok(CoreIndicatorKind::ParabolicSar),
+        qrpc_core::IndicatorKind::KeltnerChannel => Ok(CoreIndicatorKind::KeltnerChannel),
+        qrpc_core::IndicatorKind::DonchianChannel => Ok(CoreIndicatorKind::DonchianChannel),
     }
 }
 
@@ -826,49 +845,49 @@ fn lower_strategy_spread_threshold_condition(
 ) -> Result<Option<ScalarExpr>> {
     if signal.indicator.inputs.len() != 2 {
         bail!(
-            "QPSTRATSPREAD004 signal `{}` currently requires exactly two spread inputs",
+            "QPSTRATSPREAD004 信号 `{}` 当前需要恰好两个 spread 输入",
             signal.signal_id
         );
     }
 
     let spread_spec = lower_strategy_spread_spec(signal)?.ok_or_else(|| {
         anyhow!(
-            "QPSTRATSPREAD004 signal `{}` currently requires exactly two spread inputs",
+            "QPSTRATSPREAD004 信号 `{}` 当前需要恰好两个 spread 输入",
             signal.signal_id
         )
     })?;
 
     if !matches!(spread_spec.output, SpreadValueKind::Bps) {
         bail!(
-            "QPSTRATSPREAD001 signal `{}` currently supports only spread_output_code=bps",
+            "QPSTRATSPREAD001 信号 `{}` 当前仅支持 spread_output_code=bps",
             signal.signal_id
         );
     }
 
     if spread_spec.align.tolerance_ms == 0 {
         bail!(
-            "QPSTRATSPREAD002 signal `{}` currently requires a positive max_time_diff_ms tolerance",
+            "QPSTRATSPREAD002 信号 `{}` 当前需要一个正数的 max_time_diff_ms 容差",
             signal.signal_id
         );
     }
 
     if !matches!(rule.action, qrpc_core::LogicAction::OpenLong) {
         bail!(
-            "QPSTRATSPREAD003 signal `{}` currently supports only one-sided buy shapes using `>` or `>=` with an explicit numeric threshold",
+            "QPSTRATSPREAD003 信号 `{}` 当前仅支持使用 `>` 或 `>=` 的单一方向买入形态，需带明确的数值阈值",
             signal.signal_id
         );
     }
 
     let (left, op, right) = parse_strategy_signal_compare(&rule.condition).ok_or_else(|| {
         anyhow!(
-            "QPSTRATSPREAD003 signal `{}` currently supports only one-sided buy shapes using `>` or `>=` with an explicit numeric threshold",
+            "QPSTRATSPREAD003 信号 `{}` 当前仅支持使用 `>` 或 `>=` 的单一方向买入形态，需带明确的数值阈值",
             signal.signal_id
         )
     })?;
 
     if left != signal.signal_id || !matches!(op, ComparisonOp::Gt | ComparisonOp::Gte) {
         bail!(
-            "QPSTRATSPREAD003 signal `{}` currently supports only one-sided buy shapes using `>` or `>=` with an explicit numeric threshold",
+            "QPSTRATSPREAD003 信号 `{}` 当前仅支持使用 `>` 或 `>=` 的单一方向买入形态，需带明确的数值阈值",
             signal.signal_id
         );
     }
@@ -991,7 +1010,7 @@ fn known_or_unknown_f64(value: &qrpc_core::KnownOrUnknown<f64>, default: f64) ->
 
 fn describe_runtime_intent_condition(intent: &IntentConfig) -> String {
     match intent.kind {
-        IntentKind::LongTermBuy => format!(
+        IntentKind::LongTermBuy | IntentKind::SmaCrossover => format!(
             "ma_cross(fast={}, slow={}, entry_ratio={})",
             intent
                 .params
@@ -1149,14 +1168,14 @@ fn lower_strategy_custom_expr(
 
     let Some(raw_spec) = signal.indicator.params.get("custom_expr") else {
         bail!(
-            "CUSTOM001 signal `{}` is missing params.custom_expr",
+            "CUSTOM001 信号 `{}` 缺少 params.custom_expr",
             signal.signal_id
         );
     };
 
     let spec = serde_json::from_value::<CustomExprSpec>(raw_spec.clone()).map_err(|err| {
         anyhow!(
-            "CUSTOM002 signal `{}` has invalid custom_expr payload: {}",
+            "CUSTOM002 信号 `{}` 包含无效的 custom_expr 负载: {}",
             signal.signal_id,
             err
         )
@@ -1179,20 +1198,20 @@ fn validate_custom_expr_spec(
 ) -> Result<()> {
     if spec.schema_version != CUSTOM_EXPR_V1_VERSION {
         bail!(
-            "CUSTOM003 signal `{}` must use schema_version `{}`",
+            "CUSTOM003 信号 `{}` 必须使用 schema_version `{}`",
             signal.signal_id,
             CUSTOM_EXPR_V1_VERSION
         );
     }
     if matches!(spec.signal_kind, SignalKind::Raw) {
         bail!(
-            "CUSTOM004 signal `{}` cannot use raw signal_kind",
+            "CUSTOM004 信号 `{}` 不能使用 raw signal_kind",
             signal.signal_id
         );
     }
     if !(0.0..=1.0).contains(&spec.confidence) {
         bail!(
-            "CUSTOM005 signal `{}` confidence must be within [0, 1]",
+            "CUSTOM005 信号 `{}` 置信度必须在 [0, 1] 范围内",
             signal.signal_id
         );
     }
@@ -1236,20 +1255,20 @@ fn validate_custom_value_expr(
             validate_custom_data_id(data_id, signal, data_requirement_kinds, declared_inputs)?;
             if *window_size == 0 || *window_size > 512 {
                 bail!(
-                    "CUSTOM008 signal `{}` window_size must be within [1, 512]",
+                    "CUSTOM008 信号 `{}` window_size 必须在 [1, 512] 范围内",
                     signal.signal_id
                 );
             }
             let Some(data_kind) = data_requirement_kinds.get(data_id) else {
                 bail!(
-                    "CUSTOM006 signal `{}` references unknown data_id `{}`",
+                    "CUSTOM006 信号 `{}` 引用了未知的 data_id `{}`",
                     signal.signal_id,
                     data_id
                 );
             };
             if !matches!(data_kind, qrpc_core::DataRequirementType::Kline) {
                 bail!(
-                    "CUSTOM009 signal `{}` only allows window aggregation on kline inputs",
+                    "CUSTOM009 信号 `{}` 仅允许对 kline 输入进行窗口聚合",
                     signal.signal_id
                 );
             }
@@ -1263,7 +1282,7 @@ fn validate_custom_value_expr(
                 && matches!(right.as_ref(), CustomValueExpr::Number { value } if value.abs() <= f64::EPSILON)
             {
                 bail!(
-                    "CUSTOM010 signal `{}` cannot divide by a literal zero",
+                    "CUSTOM010 信号 `{}` 不能除以字面零值",
                     signal.signal_id
                 );
             }
@@ -1283,14 +1302,14 @@ fn validate_custom_data_id(
 ) -> Result<()> {
     if !declared_inputs.contains(data_id) {
         bail!(
-            "CUSTOM006 signal `{}` references undeclared input `{}`",
+            "CUSTOM006 信号 `{}` 引用了未声明的输入 `{}`",
             signal.signal_id,
             data_id
         );
     }
     if !data_requirement_kinds.contains_key(data_id) {
         bail!(
-            "CUSTOM007 signal `{}` references missing data requirement `{}`",
+            "CUSTOM007 信号 `{}` 引用了缺失的数据要求 `{}`",
             signal.signal_id,
             data_id
         );
@@ -1310,7 +1329,7 @@ fn validate_window_agg_field(
         | SeriesField::Low
         | SeriesField::Volume => Ok(()),
         SeriesField::BidOrClose | SeriesField::AskOrClose => bail!(
-            "CUSTOM011 signal `{}` cannot aggregate quote-side fields over a kline window",
+            "CUSTOM011 信号 `{}` 不能对 kline 窗口聚合报价侧字段",
             signal.signal_id
         ),
     }
@@ -1439,17 +1458,17 @@ fn decode_spread_output(code: u64) -> SpreadValueKind {
 
 fn validate_data_sources(data_sources: &[DataSourceConfig]) -> Result<()> {
     if data_sources.is_empty() {
-        bail!("at least one data source is required");
+        bail!("至少需要一个数据源");
     }
 
     for source in data_sources.iter().filter(|item| item.enabled) {
         if source.data_id.trim().is_empty() {
-            bail!("data_id must not be empty");
+            bail!("data_id 不能为空");
         }
         match source.kind {
             DataKind::KlineSeries => {
                 if source.days.unwrap_or_default() == 0 {
-                    bail!("kline data source {} must declare days > 0", source.data_id);
+                    bail!("kline 数据源 {} 必须声明 days > 0", source.data_id);
                 }
                 if source
                     .interval
@@ -1458,7 +1477,7 @@ fn validate_data_sources(data_sources: &[DataSourceConfig]) -> Result<()> {
                     .trim()
                     .is_empty()
                 {
-                    bail!("kline data source {} must declare interval", source.data_id);
+                    bail!("kline 数据源 {} 必须声明 interval", source.data_id);
                 }
             }
             DataKind::Quote => {}
@@ -1477,7 +1496,7 @@ fn validate_intents(config: &RuntimeProtocolCoreConfig) -> Result<()> {
         .collect::<std::collections::BTreeMap<_, _>>();
 
     if config.intents.is_empty() {
-        bail!("at least one intent is required");
+        bail!("至少需要一个意图");
     }
 
     for intent in config.intents.iter().filter(|item| item.enabled) {
@@ -1492,16 +1511,16 @@ fn validate_intent(
     enabled_sources: &std::collections::BTreeMap<&String, DataKind>,
 ) -> Result<()> {
     if intent.intent_id.trim().is_empty() || intent.name.trim().is_empty() {
-        bail!("intent id and name must not be empty");
+        bail!("意图 ID 和名称不能为空");
     }
     if intent.input_data_ids.is_empty() {
-        bail!("intent {} must declare input_data_ids", intent.intent_id);
+        bail!("意图 {} 必须声明 input_data_ids", intent.intent_id);
     }
 
     for data_id in &intent.input_data_ids {
         let Some(kind) = enabled_sources.get(data_id) else {
             bail!(
-                "intent {} references missing data source {}",
+                "意图 {} 引用了缺失的数据源 {}",
                 intent.intent_id,
                 data_id
             );
@@ -1509,24 +1528,25 @@ fn validate_intent(
         match intent.kind {
             IntentKind::LongTermBuy
             | IntentKind::LongTermSell
+            | IntentKind::SmaCrossover
             | IntentKind::Rsi
             | IntentKind::Macd
             | IntentKind::Momentum
             | IntentKind::ZScore => {
                 if !matches!(kind, DataKind::KlineSeries) {
-                    bail!("intent {} expects KlineSeries input", intent.intent_id);
+                    bail!("意图 {} 期望 KlineSeries 输入", intent.intent_id);
                 }
             }
             IntentKind::QuoteObserve => {
                 if runtime_intent_is_spread(intent) {
                     if !matches!(kind, DataKind::Quote | DataKind::KlineSeries) {
                         bail!(
-                            "intent {} expects Quote or KlineSeries input for spread",
+                            "意图 {} 期望 Quote 或 KlineSeries 输入用于 spread",
                             intent.intent_id
                         );
                     }
                 } else if !matches!(kind, DataKind::Quote) {
-                    bail!("intent {} expects Quote input", intent.intent_id);
+                    bail!("意图 {} 期望 Quote 输入", intent.intent_id);
                 }
             }
         }
@@ -1534,7 +1554,7 @@ fn validate_intent(
 
     if runtime_intent_is_spread(intent) && intent.input_data_ids.len() < 2 {
         bail!(
-            "intent {} spread observe requires at least two inputs",
+            "意图 {} spread 观察需要至少两个输入",
             intent.intent_id
         );
     }
@@ -1551,7 +1571,7 @@ fn validate_agents(config: &RuntimeProtocolCoreConfig) -> Result<()> {
         .collect::<BTreeSet<_>>();
 
     if config.agents.is_empty() {
-        bail!("at least one agent is required");
+        bail!("至少需要一个代理");
     }
 
     for agent in config.agents.iter().filter(|item| item.enabled) {
@@ -1563,15 +1583,15 @@ fn validate_agents(config: &RuntimeProtocolCoreConfig) -> Result<()> {
 
 fn validate_agent(agent: &AgentConfig, intent_ids: &BTreeSet<&str>) -> Result<()> {
     if agent.agent_id.trim().is_empty() || agent.name.trim().is_empty() {
-        bail!("agent id and name must not be empty");
+        bail!("代理 ID 和名称不能为空");
     }
     if agent.input_intent_ids.is_empty() {
-        bail!("agent {} must declare input_intent_ids", agent.agent_id);
+        bail!("代理 {} 必须声明 input_intent_ids", agent.agent_id);
     }
     for intent_id in &agent.input_intent_ids {
         if !intent_ids.contains(intent_id.as_str()) {
             bail!(
-                "agent {} references missing intent {}",
+                "代理 {} 引用了缺失的意图 {}",
                 agent.agent_id,
                 intent_id
             );
@@ -1589,7 +1609,7 @@ fn validate_risks(config: &RuntimeProtocolCoreConfig) -> Result<()> {
         .collect::<BTreeSet<_>>();
 
     if config.risks.is_empty() {
-        bail!("at least one risk config is required");
+        bail!("至少需要一个风险配置");
     }
 
     let mut observed_once = std::collections::BTreeMap::<&str, u32>::new();
@@ -1603,7 +1623,7 @@ fn validate_risks(config: &RuntimeProtocolCoreConfig) -> Result<()> {
     for agent_id in agent_ids {
         if observed_once.get(agent_id).copied().unwrap_or_default() != 1 {
             bail!(
-                "enabled agent {} must be observed by exactly one enabled risk",
+                "已启用的代理 {} 必须被恰好一个已启用的风险观察",
                 agent_id
             );
         }
@@ -1614,18 +1634,18 @@ fn validate_risks(config: &RuntimeProtocolCoreConfig) -> Result<()> {
 
 fn validate_risk(risk: &RiskConfig, agent_ids: &BTreeSet<&str>) -> Result<()> {
     if risk.risk_id.trim().is_empty() || risk.name.trim().is_empty() {
-        bail!("risk id and name must not be empty");
+        bail!("风险 ID 和名称不能为空");
     }
     if risk.observed_agent_ids.is_empty() {
-        bail!("risk {} must observe at least one agent", risk.risk_id);
+        bail!("风险 {} 必须至少观察一个代理", risk.risk_id);
     }
     if risk.max_total_leverage <= 0.0 || risk.max_exchange_leverage <= 0.0 {
-        bail!("risk {} leverage limits must be > 0", risk.risk_id);
+        bail!("风险 {} 杠杆限制必须大于 0", risk.risk_id);
     }
     for agent_id in &risk.observed_agent_ids {
         if !agent_ids.contains(agent_id.as_str()) {
             bail!(
-                "risk {} references missing agent {}",
+                "风险 {} 引用了缺失的代理 {}",
                 risk.risk_id,
                 agent_id
             );
@@ -1651,7 +1671,7 @@ mod tests {
         let mut config = sample_config();
         config.risks[0].observed_agent_ids.clear();
         let err = validate_runtime_protocol_config(&config).unwrap_err();
-        assert!(err.to_string().contains("must observe at least one agent"));
+        assert!(err.to_string().contains("必须至少观察一个代理"));
     }
 
     #[test]
@@ -1659,7 +1679,7 @@ mod tests {
         let mut config = sample_config();
         config.intents[2].input_data_ids = vec!["binance_btc_150d_1d".into()];
         let err = validate_runtime_protocol_config(&config).unwrap_err();
-        assert!(err.to_string().contains("expects Quote input"));
+        assert!(err.to_string().contains("期望 Quote 输入"));
     }
 
     #[test]
@@ -2640,7 +2660,7 @@ mod tests {
         assert!(
             error
                 .to_string()
-                .starts_with("QPSTRATSPREAD001 signal `spread_signal`"),
+                .starts_with("QPSTRATSPREAD001 信号 `spread_signal`"),
             "{}",
             error
         );

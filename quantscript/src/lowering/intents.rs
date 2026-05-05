@@ -17,12 +17,12 @@ use super::shared::{
 };
 
 const ERR_UNSUPPORTED_CONDITIONAL_EMIT: &str =
-    "QPQSLOW001 unsupported conditional emit Intent lowering: condition must map to a supported indicator or spread intent";
+    "QPQSLOW001 不支持的条件下发 Intent 下层转换: 条件必须映射到支持的指标或价差意图";
 const ERR_NO_EXECUTABLE_INTENTS: &str =
-    "QPQSLOW002 no executable emit Intent(...) could be lowered from strategy";
+    "QPQSLOW002 无法从策略中下层转换出可执行的 emit Intent(...)";
 const ERR_EMIT_REQUIRES_DATA_SOURCE: &str =
-    "QPQSLOW003 emit Intent requires at least one data source";
-const ERR_EMIT_REQUIRES_ACTION: &str = "QPQSLOW005 emit Intent requires action";
+    "QPQSLOW003 emit Intent 需要至少一个数据源";
+const ERR_EMIT_REQUIRES_ACTION: &str = "QPQSLOW005 emit Intent 需要指定动作";
 const STRUCTURED_COMPARISON_SHAPE_KEY: &str = "comparison_shape_code";
 const STRUCTURED_COMPARISON_OP_KEY: &str = "comparison_op_code";
 const STRUCTURED_COMPARISON_THRESHOLD_KEY: &str = "comparison_threshold";
@@ -348,12 +348,12 @@ fn intents_from_condition(
                     IntentConfig {
                         intent_id: format!("intent_{}_ma_entry", sanitize_id(instrument)),
                         name: format!("{instrument} MA Entry"),
-                        kind: IntentKind::LongTermBuy,
+                        kind: IntentKind::SmaCrossover,
                         input_data_ids: vec![left_source.data_id.clone()],
                         params: BTreeMap::from([
                             ("fast_period".into(), fast_period),
                             ("slow_period".into(), slow_period),
-                            ("entry_ratio".into(), 1.0),
+                            ("entry_ratio".into(), 0.2),
                             (
                                 "comparison_op_code".into(),
                                 comparison_op_code(comparison_op),
@@ -664,7 +664,17 @@ fn single_indicator_intent(
         }
         IndicatorBinding::MovingAverage { .. }
         | IndicatorBinding::MacdLine { .. }
-        | IndicatorBinding::MacdSignal { .. } => return Ok(Vec::new()),
+        | IndicatorBinding::MacdSignal { .. }
+        | IndicatorBinding::Atr { .. }
+        | IndicatorBinding::BollingerBands { .. }
+        | IndicatorBinding::Obv { .. }
+        | IndicatorBinding::Cmf { .. }
+        | IndicatorBinding::Adx { .. }
+        | IndicatorBinding::Stochastic { .. }
+        | IndicatorBinding::Cci { .. }
+        | IndicatorBinding::ParabolicSar { .. }
+        | IndicatorBinding::KeltnerChannel { .. }
+        | IndicatorBinding::DonchianChannel { .. } => return Ok(Vec::new()),
     };
 
     Ok(vec![intent])
@@ -1339,7 +1349,7 @@ fn legacy_intent_from_emit(
             format!("intent_{}_sell", sanitize_id(&instrument)),
             format!("{instrument} Sell"),
         ),
-        other => bail!("QPQSLOW004 unsupported Intent action for runtime lowering: {other}"),
+        other => bail!("QPQSLOW004 运行时下层转换不支持的 Intent 动作: {other}"),
     };
 
     Ok(IntentConfig {

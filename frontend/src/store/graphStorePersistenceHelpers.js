@@ -112,6 +112,18 @@ function recordRecentNodeIds(graph, nodeIds = []) {
   return withRecentNodeIds(graph, [...nextIds, ...currentIds]);
 }
 
+function normalizeEdges(rawEdges) {
+  if (!Array.isArray(rawEdges)) return [];
+  return rawEdges.map((edge) => ({
+    ...edge,
+    source_node_id: edge.source_node_id || edge.source,
+    target_node_id: edge.target_node_id || edge.target,
+    source_port: edge.source_port || edge.sourceHandle,
+    target_port: edge.target_port || edge.targetHandle,
+    edge_type: edge.edge_type || `${edge.source_node_id || edge.source}-${edge.target_node_id || edge.target}`
+  }));
+}
+
 function normalizeGraphShape(graph) {
   if (!graph || typeof graph !== "object") {
     return createEmptyGraph(defaultRegistry);
@@ -119,12 +131,21 @@ function normalizeGraphShape(graph) {
 
   const normalizedNodes = Array.isArray(graph.nodes)
     ? graph.nodes.map((node) => {
-        const moduleDef = defaultRegistry.getByKey(node.module_key);
+        // Fallback: QS-generated nodes store module_key in data.subtitle
+        const moduleKey = node.module_key || node.data?.subtitle;
+        const moduleDef = defaultRegistry.getByKey(moduleKey);
+        // Fallback: QS-generated nodes store ports in data.inputPorts / data.outputPorts
+        const inputPorts = node.input_ports || node.data?.inputPorts;
+        const outputPorts = node.output_ports || node.data?.outputPorts;
+        // Fallback: QS-generated nodes store config in data.config
+        const config = node.config || node.data?.config;
         return {
           ...node,
           name: sanitizeText(node.name, moduleDef?.node?.default_name || node.id || "节点"),
-          input_ports: Array.isArray(node.input_ports) ? node.input_ports : moduleDef?.ports?.inputs || [],
-          output_ports: Array.isArray(node.output_ports) ? node.output_ports : moduleDef?.ports?.outputs || [],
+          module_key: moduleKey || node.module_key,
+          config: { ...config } || {},
+          input_ports: Array.isArray(inputPorts) ? inputPorts : moduleDef?.ports?.inputs || [],
+          output_ports: Array.isArray(outputPorts) ? outputPorts : moduleDef?.ports?.outputs || [],
           ui_state: {
             collapsed: Boolean(node.ui_state?.collapsed)
           },
@@ -165,7 +186,7 @@ function normalizeGraphShape(graph) {
       artifacts: graph.metadata?.artifacts || {}
     },
     nodes: normalizedNodes,
-    edges: Array.isArray(graph.edges) ? graph.edges : [],
+    edges: normalizeEdges(graph.edges),
     validation_state: graph.validation_state || {},
     compile_summary: graph.compile_summary || {}
   };

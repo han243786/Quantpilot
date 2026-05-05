@@ -43,29 +43,29 @@ impl StrategyIr {
 
         if self.ir_version != STRATEGY_IR_V0_VERSION {
             errors.push(format!(
-                "ir_version must be {STRATEGY_IR_V0_VERSION}, found {}",
+                "ir_version 必须是 {STRATEGY_IR_V0_VERSION}，但实际为 {}",
                 self.ir_version
             ));
         }
 
         if self.metadata.strategy_id.trim().is_empty() {
-            errors.push("metadata.strategy_id is required".to_string());
+            errors.push("metadata.strategy_id 是必需的".to_string());
         }
         if self.metadata.name.trim().is_empty() {
-            errors.push("metadata.name is required".to_string());
+            errors.push("metadata.name 是必需的".to_string());
         }
         if self.metadata.summary.trim().is_empty() {
-            errors.push("metadata.summary is required".to_string());
+            errors.push("metadata.summary 是必需的".to_string());
         }
 
         if self.signals.is_empty() {
-            errors.push("signals must contain at least one signal".to_string());
+            errors.push("signals 必须包含至少一个信号".to_string());
         }
         if self.data_requirements.is_empty() {
-            errors.push("data_requirements must contain at least one data requirement".to_string());
+            errors.push("data_requirements 必须包含至少一个数据要求".to_string());
         }
         if self.logic.entry_rules.is_empty() {
-            errors.push("logic.entry_rules must contain at least one rule".to_string());
+            errors.push("logic.entry_rules 必须包含至少一条规则".to_string());
         }
 
         validate_unique_ids(
@@ -92,26 +92,26 @@ impl StrategyIr {
 
         for (index, signal) in self.signals.iter().enumerate() {
             if signal.signal_id.trim().is_empty() {
-                errors.push(format!("signals[{index}].signal_id is required"));
+                errors.push(format!("signals[{index}].signal_id 是必需的"));
             }
             if signal.name.trim().is_empty() {
-                errors.push(format!("signals[{index}].name is required"));
+                errors.push(format!("signals[{index}].name 是必需的"));
             }
             if signal.indicator.inputs.is_empty() {
                 errors.push(format!(
-                    "signals[{index}].indicator.inputs must contain at least one input"
+                    "signals[{index}].indicator.inputs 必须包含至少一个输入"
                 ));
             }
             if matches!(signal.indicator.kind, IndicatorKind::Spread)
                 && signal.indicator.inputs.len() < 2
             {
                 errors.push(format!(
-                    "signals[{index}].indicator.inputs must contain at least two inputs for spread"
+                    "signals[{index}].indicator.inputs 对于 spread 必须包含至少两个输入"
                 ));
             }
             if !indicator_kind_supported(&signal.indicator.kind) {
                 errors.push(format!(
-                    "signals[{index}].indicator.kind {:?} is not supported by the current runtime",
+                    "signals[{index}].indicator.kind {:?} 不被当前运行时支持",
                     signal.indicator.kind
                 ));
             }
@@ -165,33 +165,33 @@ impl StrategyIr {
         if let Some(profile) = &self.risk_profile {
             if profile.profile_id.trim() != "global" {
                 errors.push(
-                    "risk_profile.profile_id must be \"global\" in the current runtime".to_string(),
+                    "risk_profile.profile_id 在当前运行时中必须为 \"global\"".to_string(),
                 );
             }
             if let Some(value) = profile.max_position {
                 if value <= 0.0 {
-                    errors.push("risk_profile.max_position must be > 0".to_string());
+                    errors.push("risk_profile.max_position 必须大于 0".to_string());
                 }
             }
             if let Some(value) = profile.max_total_leverage {
                 if value < 1.0 {
-                    errors.push("risk_profile.max_total_leverage must be >= 1".to_string());
+                    errors.push("risk_profile.max_total_leverage 必须大于等于 1".to_string());
                 }
             }
             if let Some(value) = profile.max_exchange_leverage {
                 if value < 1.0 {
-                    errors.push("risk_profile.max_exchange_leverage must be >= 1".to_string());
+                    errors.push("risk_profile.max_exchange_leverage 必须大于等于 1".to_string());
                 }
             }
         }
 
         for (index, requirement) in self.data_requirements.iter().enumerate() {
             if requirement.data_id.trim().is_empty() {
-                errors.push(format!("data_requirements[{index}].data_id is required"));
+                errors.push(format!("data_requirements[{index}].data_id 是必需的"));
             }
             if requirement.fields.is_empty() {
                 errors.push(format!(
-                    "data_requirements[{index}].fields must contain at least one field"
+                    "data_requirements[{index}].fields 必须包含至少一个字段"
                 ));
             }
             validate_unknownable(
@@ -249,28 +249,28 @@ impl StrategyIr {
         if let Some(profile) = &self.execution_profile {
             if profile.profile_id.trim() != "paper" {
                 errors.push(
-                    "execution_profile.profile_id must be \"paper\" in the current runtime"
+                    "execution_profile.profile_id 在当前运行时中必须为 \"paper\""
                         .to_string(),
                 );
             }
             if let Some(value) = profile.fee_bps {
                 if value < 0.0 {
-                    errors.push("execution_profile.fee_bps must be >= 0".to_string());
+                    errors.push("execution_profile.fee_bps 必须大于等于 0".to_string());
                 }
             }
             if let Some(value) = profile.slippage_bps {
                 if value < 0.0 {
-                    errors.push("execution_profile.slippage_bps must be >= 0".to_string());
+                    errors.push("execution_profile.slippage_bps 必须大于等于 0".to_string());
                 }
             }
         }
 
         for (index, item) in self.unknowns.iter().enumerate() {
             if item.path.trim().is_empty() {
-                errors.push(format!("unknowns[{index}].path is required"));
+                errors.push(format!("unknowns[{index}].path 是必需的"));
             }
             if item.reason.trim().is_empty() {
-                errors.push(format!("unknowns[{index}].reason is required"));
+                errors.push(format!("unknowns[{index}].reason 是必需的"));
             }
         }
 
@@ -359,9 +359,20 @@ pub enum IndicatorKind {
     Spread,
     ZScore,
     Custom,
+    QuoteObserve,
+    Atr,
+    BollingerBands,
+    Obv,
+    Cmf,
+    Adx,
+    Stochastic,
+    Cci,
+    ParabolicSar,
+    KeltnerChannel,
+    DonchianChannel,
 }
 
-const DECLARED_INDICATOR_KINDS: [IndicatorKind; 7] = [
+const DECLARED_INDICATOR_KINDS: [IndicatorKind; 18] = [
     IndicatorKind::MaCross,
     IndicatorKind::Rsi,
     IndicatorKind::Macd,
@@ -369,9 +380,20 @@ const DECLARED_INDICATOR_KINDS: [IndicatorKind; 7] = [
     IndicatorKind::Spread,
     IndicatorKind::ZScore,
     IndicatorKind::Custom,
+    IndicatorKind::QuoteObserve,
+    IndicatorKind::Atr,
+    IndicatorKind::BollingerBands,
+    IndicatorKind::Obv,
+    IndicatorKind::Cmf,
+    IndicatorKind::Adx,
+    IndicatorKind::Stochastic,
+    IndicatorKind::Cci,
+    IndicatorKind::ParabolicSar,
+    IndicatorKind::KeltnerChannel,
+    IndicatorKind::DonchianChannel,
 ];
 
-const SUPPORTED_INDICATOR_KINDS: [IndicatorKind; 7] = [
+const SUPPORTED_INDICATOR_KINDS: [IndicatorKind; 18] = [
     IndicatorKind::MaCross,
     IndicatorKind::Rsi,
     IndicatorKind::Macd,
@@ -379,6 +401,17 @@ const SUPPORTED_INDICATOR_KINDS: [IndicatorKind; 7] = [
     IndicatorKind::Spread,
     IndicatorKind::ZScore,
     IndicatorKind::Custom,
+    IndicatorKind::QuoteObserve,
+    IndicatorKind::Atr,
+    IndicatorKind::BollingerBands,
+    IndicatorKind::Obv,
+    IndicatorKind::Cmf,
+    IndicatorKind::Adx,
+    IndicatorKind::Stochastic,
+    IndicatorKind::Cci,
+    IndicatorKind::ParabolicSar,
+    IndicatorKind::KeltnerChannel,
+    IndicatorKind::DonchianChannel,
 ];
 
 pub fn declared_indicator_kinds() -> &'static [IndicatorKind] {
@@ -554,17 +587,17 @@ fn validate_unique_ids<'a>(
     let mut seen = BTreeSet::new();
     for value in values {
         if !seen.insert(value.to_string()) {
-            errors.push(format!("{label} contains duplicate id: {value}"));
+            errors.push(format!("{label} 包含重复的 id: {value}"));
         }
     }
 }
 
 fn validate_logic_rule(rule: &LogicRule, path: &str, errors: &mut Vec<String>) {
     if rule.rule_id.trim().is_empty() {
-        errors.push(format!("{path}.rule_id is required"));
+        errors.push(format!("{path}.rule_id 是必需的"));
     }
     if rule.condition.trim().is_empty() {
-        errors.push(format!("{path}.condition is required"));
+        errors.push(format!("{path}.condition 是必需的"));
     }
 }
 
@@ -575,7 +608,7 @@ fn indicator_kind_supported(kind: &IndicatorKind) -> bool {
 fn validate_unknownable<T>(value: &KnownOrUnknown<T>, path: &str, errors: &mut Vec<String>) {
     if let KnownOrUnknown::Unknown(marker) = value {
         if marker != "unknown" {
-            errors.push(format!("{path} unknown marker must be \"unknown\""));
+            errors.push(format!("{path} 未知标记必须为 \"unknown\""));
         }
     }
 }
@@ -721,7 +754,7 @@ mod tests {
         let mut ir: StrategyIr = serde_json::from_str(SAMPLE_JSON).unwrap();
         ir.signals.push(ir.signals[0].clone());
         let err = ir.validate().unwrap_err();
-        assert!(err.errors.iter().any(|item| item.contains("duplicate id")));
+        assert!(err.errors.iter().any(|item| item.contains("重复的 id")));
     }
 
     #[test]

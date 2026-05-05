@@ -36,7 +36,7 @@ export async function compileRuntimeSource(context) {
 
   if (!context.formalSource.trim()) {
     return buildRuntimeCompileResult(
-      await requestRuntimeCompile(context.localResult.runtime_config),
+      await requestRuntimeCompile(context.localResult.runtime_config, context.nextGraph),
       context.runtimeCompileSource,
       context.compileResolution,
       formalRuntimeTargets,
@@ -65,7 +65,7 @@ export async function compileRuntimeSource(context) {
     }
 
     return buildRuntimeCompileResult(
-      await requestRuntimeCompile(context.localResult.runtime_config),
+      await requestRuntimeCompile(context.localResult.runtime_config, context.nextGraph),
       "runtime_fallback",
       buildArtifactResolutionSummary({
         hasStrategyIrArtifact: context.hasStrategyIrArtifact,

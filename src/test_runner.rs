@@ -22,6 +22,7 @@ pub struct TestReport {
     pub failed_count: usize,
     pub skipped_count: usize,
     pub duration_ms: u64,
+    pub graph_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -50,16 +51,18 @@ const BACKTEST_TEST_SEED: u64 = 7;
 pub struct TestRunnerContext {
     pub module: quantscript::ScriptModule,
     pub test_plans: Vec<TestPlan>,
+    pub original_source: String,
 }
 
 impl TestRunnerContext {
     pub fn from_source(source: &str) -> Result<Self> {
         let module = parse_quant_script_module(source)
-            .context("failed to parse quantscript source")?;
+            .context("无法解析 QuantScript 源码")?;
         let (strategy_module, test_plans) = split_test_items(&module);
         Ok(TestRunnerContext {
             module: strategy_module,
             test_plans,
+            original_source: source.to_string(),
         })
     }
 }
@@ -74,8 +77,12 @@ pub struct TestRunner {
     pub last_backtest_metrics: BTreeMap<String, f64>,
     pub last_backtest_trades_count: usize,
     pub backtest_history: Vec<BTreeMap<String, f64>>,
-    pending_modifications: Vec<(String, f64)>,
+    pending_modifications: Vec<(String, String, f64)>, // (node_id, param, value)
+    last_debug_vars: Option<Vec<String>>,
+    last_debug_bars: Option<serde_json::Value>,
+    last_compare_diff: Option<serde_json::Value>,
     last_run_event_types: Vec<String>,
+    last_graph_id: Option<String>,
     last_run_event_counts: Option<BTreeMap<String, usize>>,
 }
 
@@ -92,6 +99,10 @@ impl TestRunner {
             pending_modifications: Vec::new(),
             last_run_event_types: Vec::new(),
             last_run_event_counts: None,
+            last_graph_id: None,
+            last_debug_vars: None,
+            last_debug_bars: None,
+            last_compare_diff: None,
         }
     }
 
@@ -105,7 +116,7 @@ impl TestRunner {
         for plan in &ctx.test_plans {
             if plan.steps.is_empty() {
                 return Err(anyhow::anyhow!(
-                    "test scenario '{}' has no @step directives",
+                    "测试场景 '{}' 没有 @step 指令",
                     plan.scenario_name
                 ));
             }
@@ -116,7 +127,7 @@ impl TestRunner {
                         name: step.name.clone(),
                         status: StepStatus::Skipped,
                         duration_ms: 0,
-                        message: Some("compilation failed".to_string()),
+                        message: Some("编译失败".to_string()),
                         data_snapshot: None,
                     });
                     skipped += 1;
@@ -170,6 +181,7 @@ impl TestRunner {
             failed_count: failed,
             skipped_count: skipped,
             duration_ms: start.elapsed().as_millis() as u64,
+            graph_id: self.last_graph_id.clone(),
         })
     }
 
@@ -178,35 +190,51 @@ impl TestRunner {
         match lower_script_to_runtime_config(&ctx.module) {
             Ok(mut runtime_config) => {
                 // Apply pending @modify parameter changes
-                for (param_name, new_value) in &self.pending_modifications {
+                for (node_id, param_name, new_value) in &self.pending_modifications {
+                    let mut affected: Vec<String> = Vec::new();
                     // Data sources
                     for ds in &mut runtime_config.data_sources {
-                        if param_name.contains("window") || param_name.contains("days") {
-                            ds.days = Some(*new_value as u32);
+                        if ds.data_id == *node_id || node_id.is_empty() {
+                            if param_name.contains("window") || param_name.contains("days") {
+                                ds.days = Some(*new_value as u32);
+                                affected.push(ds.data_id.clone());
+                            }
                         }
                     }
                     // Risk controls
                     for risk in &mut runtime_config.risks {
-                        if param_name.contains("max_total_leverage") {
-                            risk.max_total_leverage = *new_value;
-                        }
-                        if param_name.contains("max_exchange_leverage") {
-                            risk.max_exchange_leverage = *new_value;
-                        }
-                        if param_name.contains("min_action_interval") {
-                            risk.min_action_interval_ms = *new_value as u64;
+                        if risk.risk_id == *node_id || node_id.is_empty() {
+                            if param_name.contains("max_total_leverage") {
+                                risk.max_total_leverage = *new_value;
+                                affected.push(risk.risk_id.clone());
+                            }
+                            if param_name.contains("max_exchange_leverage") {
+                                risk.max_exchange_leverage = *new_value;
+                                affected.push(risk.risk_id.clone());
+                            }
+                            if param_name.contains("min_action_interval") {
+                                risk.min_action_interval_ms = *new_value as u64;
+                                affected.push(risk.risk_id.clone());
+                            }
                         }
                     }
                     // Intents
                     for intent in &mut runtime_config.intents {
-                        let key = if param_name.contains("fast") {
-                            "fast_period"
-                        } else if param_name.contains("slow") {
-                            "slow_period"
-                        } else {
-                            param_name.as_str()
-                        };
-                        intent.params.insert(key.to_string(), *new_value);
+                        if intent.intent_id == *node_id || node_id.is_empty() {
+                            let key = if param_name.contains("fast") {
+                                "fast_period"
+                            } else if param_name.contains("slow") {
+                                "slow_period"
+                            } else {
+                                param_name.as_str()
+                            };
+                            intent.params.insert(key.to_string(), *new_value);
+                            affected.push(intent.intent_id.clone());
+                        }
+                    }
+                    if node_id.is_empty() && !affected.is_empty() {
+                        eprintln!("[TestRunner] 修改: {}={} 已应用于 {} 个节点: [{}]",
+                            param_name, new_value, affected.len(), affected.join(", "));
                     }
                 }
                 // Route through the graph API compilation path so that
@@ -239,30 +267,42 @@ impl TestRunner {
                     "test_scenario",
                     "test_compile",
                 );
-                match map_frontend_runtime_config(&frontend_config) {
-                    Ok(mapped) => {
-                        match qrpc_compiler::compile_runtime_protocol_config(
-                            &mapped.runtime_protocol,
-                        ) {
-                            Ok(compiled) => {
-                                self.pending_modifications.clear();
-                                self.compile_result = Some(compiled);
-                                true
-                            }
-                            Err(e) => {
-                                eprintln!("[TestRunner] graph-path compile failed: {e:?}");
-                                false
-                            }
-                        }
+                match qrpc_compiler::compile_runtime_protocol_config(&runtime_config) {
+                    Ok(compiled) => {
+                        self.pending_modifications.clear();
+                        // M5-1: save graph so frontend can load it
+                        let graph_id = format!("qs_{}", current_time_ms());
+                        let graph_dir = std::path::Path::new("storage").join("graphs");
+                        let _ = std::fs::create_dir_all(&graph_dir);
+
+                        // Save QS source
+                        let _ = std::fs::write(
+                            graph_dir.join(format!("{}.qs", graph_id)),
+                            &ctx.original_source,
+                        );
+
+                        // Build visual graph JSON from frontend_config
+                        let graph_json = build_visual_graph_json(
+                            &graph_id,
+                            &frontend_config,
+                        );
+                        let _ = std::fs::write(
+                            graph_dir.join(format!("{}.json", graph_id)),
+                            serde_json::to_string_pretty(&graph_json).unwrap_or_default(),
+                        );
+
+                        self.last_graph_id = Some(graph_id);
+                        self.compile_result = Some(compiled);
+                        true
                     }
                     Err(e) => {
-                        eprintln!("[TestRunner] frontend mapping failed: {e:?}");
+                        eprintln!("[TestRunner] 编译失败: {e:?}");
                         false
                     }
                 }
             }
             Err(e) => {
-                eprintln!("[TestRunner] lowering failed: {e:?}");
+                eprintln!("[TestRunner] 降级失败: {e:?}");
                 false
             }
         }
@@ -273,25 +313,28 @@ impl TestRunner {
         for action in &step.actions {
             match action {
                 TestActionDef::Compile => {
-                    messages.push("compile: ok".to_string());
+                    messages.push("编译: ok".to_string());
                 }
                 TestActionDef::Run {
                     mode,
                     duration_secs,
                     save,
                 } => {
-                    if mode != "paper" {
+                    if *duration_secs == 0 {
+                        return Err("run 时长必须大于 0".to_string());
+                    }
+                    let result = if mode == "testnet" {
+                        self.execute_testnet_run(*duration_secs)?
+                    } else if mode == "paper" {
+                        self.execute_run(*duration_secs)?
+                    } else {
                         return Err(format!(
-                            "unsupported run mode: '{}'. Only 'paper' is supported.",
+                            "不支持的运行模式: '{}'。请使用 'paper' 或 'testnet'。",
                             mode
                         ));
-                    }
-                    if *duration_secs == 0 {
-                        return Err("run duration must be > 0".to_string());
-                    }
-                    let result = self.execute_run(*duration_secs)?;
+                    };
                     if *save {
-                        messages.push(format!("save: run data captured ({} events)", self.last_run_events_count));
+                        messages.push(format!("保存: 运行数据已捕获 ({} 个事件)", self.last_run_events_count));
                     }
                     messages.push(result);
                 }
@@ -300,11 +343,12 @@ impl TestRunner {
                     start,
                     end,
                     seed,
-                    save: _,
+                    save,
+                    volatility,
                 } => {
                     if source != "deterministic_mock" && source != "historical_replay" {
                         return Err(format!(
-                            "unsupported backtest source: '{}'. Use 'deterministic_mock' or 'historical_replay'.",
+                            "不支持的回测源: '{}'。请使用 'deterministic_mock' 或 'historical_replay'。",
                             source
                         ));
                     }
@@ -314,24 +358,52 @@ impl TestRunner {
                     } else {
                         self.execute_backtest_with_range(s, start.as_deref(), end.as_deref())?
                     };
+                    if let Some(vol) = volatility {
+                        let bits = vol.to_bits();
+                        qrpc_runtime::MOCK_VOLATILITY.store(bits, std::sync::atomic::Ordering::Relaxed);
+                        messages.push(format!("volatility={} (已应用)", vol));
+                    } else {
+                        qrpc_runtime::MOCK_VOLATILITY.store(0, std::sync::atomic::Ordering::Relaxed);
+                    }
                     messages.push(result);
+                    if *save {
+                        let backtest_dir = std::path::Path::new("storage").join("backtests").join(format!("backtest_{}", current_time_ms()));
+                        let _ = std::fs::create_dir_all(&backtest_dir);
+                        let artifact = serde_json::json!({
+                            "saved_at_ms": current_time_ms(),
+                            "graph_id": self.last_graph_id.clone().unwrap_or_default(),
+                            "backtest_metrics": self.last_backtest_metrics,
+                            "backtest_trades_count": self.last_backtest_trades_count,
+                        });
+                        let artifact_path = backtest_dir.join("summary.json");
+                        if let Ok(json) = serde_json::to_string_pretty(&artifact) {
+                            let _ = std::fs::write(&artifact_path, json);
+                            messages.push(format!("回测已保存到 {}", artifact_path.display()));
+                        }
+                    }
                 }
                 TestActionDef::Assert(expr) => {
                     match self.evaluate_assert(expr) {
                         Ok(true) => messages.push(format!("assert({}) = true", expr)),
-                        Ok(false) => return Err(format!("assert failed: {}", expr)),
-                        Err(e) => return Err(format!("assert error: {} — {}", expr, e)),
+                        Ok(false) => {
+                            let actual = resolve_assert_actual(self, expr);
+                            return Err(format!(
+                                "断言失败: {} (实际值: {})",
+                                expr, actual
+                            ));
+                        }
+                        Err(e) => return Err(format!("断言错误: {} — {}", expr, e)),
                     }
                 }
                 TestActionDef::SaveRun => {
                     if self.backtest_history.is_empty() && self.last_run_equity.is_none() {
                         return Err(
-                            "save_run: no prior run or backtest to save".to_string()
+                            "save_run: 没有先前的运行或回测可供保存".to_string()
                         );
                     }
                     // L2-3: persist to storage/test-runs/
                     let dir = std::path::Path::new("storage").join("test-runs");
-                    std::fs::create_dir_all(&dir).map_err(|e| format!("save_run: {e}"))?;
+                    std::fs::create_dir_all(&dir).map_err(|e| format!("save_run 错误: {e}"))?;
                     let now_ms = current_time_ms();
                     let path = dir.join(format!("run_{now_ms}.json"));
                     let data = serde_json::json!({
@@ -342,11 +414,11 @@ impl TestRunner {
                         "backtest_metrics": self.last_backtest_metrics,
                     });
                     std::fs::write(&path, serde_json::to_string_pretty(&data).unwrap_or_default())
-                        .map_err(|e| format!("save_run: {e}"))?;
-                    messages.push(format!("save_run: persisted to {}", path.display()));
+                        .map_err(|e| format!("save_run 错误: {e}"))?;
+                    messages.push(format!("save_run: 已持久化到 {}", path.display()));
                 }
                 TestActionDef::Modify {
-                    node: _,
+                    node,
                     param,
                     value,
                 } => {
@@ -357,11 +429,18 @@ impl TestRunner {
                             if *b { 1.0 } else { 0.0 }
                         }
                     };
-                    self.pending_modifications.push((param.clone(), num_val));
-                    messages.push(format!(
-                        "modify: {} = {} (pending, will apply on next compile)",
-                        param, num_val
-                    ));
+                    self.pending_modifications.push((node.clone(), param.clone(), num_val));
+                    if node.is_empty() {
+                        messages.push(format!(
+                            "modify: {} = {} (警告: 未指定节点，将在下次编译时应用于所有匹配的节点)",
+                            param, num_val
+                        ));
+                    } else {
+                        messages.push(format!(
+                            "modify: node={} {} = {} (待定，将在下次编译时应用)",
+                            node, param, num_val
+                        ));
+                    }
                 }
                 TestActionDef::Wait {
                     condition,
@@ -378,16 +457,50 @@ impl TestRunner {
                             Ok(false) => {
                                 if start.elapsed() >= timeout {
                                     return Err(format!(
-                                        "wait timeout after {}s: {}",
+                                        "等待超时 ({}s): {}",
                                         timeout_secs, condition
                                     ));
                                 }
                                 std::thread::sleep(std::time::Duration::from_millis(200));
                             }
                             Err(e) => {
-                                return Err(format!("wait error: {}", e));
+                                return Err(format!("wait 错误: {}", e));
                             }
                         }
+                    }
+                }
+                TestActionDef::Debug(vars) => {
+                    self.last_debug_vars = Some(vars.clone());
+                    messages.push(format!("debug: 将在回测后追踪 {} 个变量: {}", vars.len(), vars.join(", ")));
+                }
+                TestActionDef::CompareBacktests { left, right } => {
+                    if *left >= self.backtest_history.len() || *right >= self.backtest_history.len() {
+                        return Err(format!(
+                            "比较: 索引越界 (left={}, right={}, history_len={})",
+                            left, right, self.backtest_history.len()
+                        ));
+                    }
+                    let left_metrics = &self.backtest_history[*left];
+                    let right_metrics = &self.backtest_history[*right];
+                    let mut diffs = Vec::new();
+                    let mut diff_map = serde_json::Map::new();
+                    for key in left_metrics.keys() {
+                        let lv = left_metrics.get(key).copied().unwrap_or(0.0);
+                        let rv = right_metrics.get(key).copied().unwrap_or(0.0);
+                        if (lv - rv).abs() > f64::EPSILON {
+                            diffs.push(format!("{}: {} vs {}", key, lv, rv));
+                            diff_map.insert(key.clone(), serde_json::json!({
+                                "left": lv,
+                                "right": rv,
+                                "diff": rv - lv
+                            }));
+                        }
+                    }
+                    self.last_compare_diff = Some(serde_json::Value::Object(diff_map));
+                    if diffs.is_empty() {
+                        messages.push("比较: 相同".to_string());
+                    } else {
+                        messages.push(format!("比较: {} 处差异 — {}", diffs.len(), diffs.join(", ")));
                     }
                 }
             }
@@ -395,20 +508,240 @@ impl TestRunner {
         Ok(messages.join("; "))
     }
 
+    /// Load exchange credentials from environment — returns (key, secret) or error
+    fn load_exchange_credentials() -> Result<(String, String), String> {
+        let key = std::env::var("QUANTPILOT_EXCHANGE_KEY")
+            .map_err(|_| "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_KEY".to_string())?;
+        let secret = std::env::var("QUANTPILOT_EXCHANGE_SECRET")
+            .map_err(|_| "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_SECRET".to_string())?;
+        if key.is_empty() || secret.is_empty() {
+            return Err("QUANTPILOT_EXCHANGE_KEY 和 QUANTPILOT_EXCHANGE_SECRET 不能为空".to_string());
+        }
+        Ok((key, secret))
+    }
+
+    fn execute_testnet_run(&mut self, duration_secs: u64) -> Result<String, String> {
+        // Risk guard: max runtime 3600s
+        const MAX_TESTNET_DURATION: u64 = 3600;
+        if duration_secs > MAX_TESTNET_DURATION {
+            return Err(format!(
+                "testnet 已中止: 时长 {}s 超过最大限制 {}s",
+                duration_secs, MAX_TESTNET_DURATION
+            ));
+        }
+
+        let (key, secret) = Self::load_exchange_credentials()?;
+        let passphrase = std::env::var("QUANTPILOT_EXCHANGE_PASSPHRASE")
+            .unwrap_or_default();
+        if passphrase.is_empty() {
+            return Err("未设置 QUANTPILOT_EXCHANGE_PASSPHRASE".to_string());
+        }
+
+        let proxy = std::env::var("QUANTPILOT_PROXY").unwrap_or_else(|_| "http://127.0.0.1:7897".to_string());
+        std::env::set_var("HTTPS_PROXY", &proxy);
+
+        // Build a simple testnet run
+        let mut orders = 0usize;
+        let mut errors = 0usize;
+        let mut last_error = String::new();
+        let max_errors = 10;
+
+        // Get balance
+        let balance = match Self::okx_request(
+            &key, &secret, &passphrase, "GET", "/api/v5/account/balance", "",
+        ) {
+            Ok(v) => v,
+            Err(e) => return Err(format!("testnet 余额检查失败: {e}")),
+        };
+        let total_eq: f64 = balance["data"][0]["totalEq"]
+            .as_str()
+            .and_then(|s| s.parse().ok())
+            .unwrap_or(0.0);
+
+        // Risk guard: max position size = 10% of equity per trade
+        let max_trade_qty = total_eq * 0.10;
+        // Risk guard: max leverage = 3x (simulated via cash mode only)
+
+        // Continuous execution loop: poll ticker and place orders until duration expires
+        let start_instant = std::time::Instant::now();
+        let cycle_interval = std::time::Duration::from_secs(12); // ~5 req/min per OKX limit
+        let mut status_summary = String::new();
+
+        while start_instant.elapsed().as_secs() < duration_secs && errors < max_errors {
+            // Get latest ticker
+            let ticker = match Self::okx_request(
+                &key, &secret, &passphrase, "GET", "/api/v5/market/ticker?instId=BTC-USDT", "",
+            ) {
+                Ok(v) => v,
+                Err(e) => {
+                    errors += 1;
+                    last_error = e;
+                    std::thread::sleep(std::time::Duration::from_secs(1));
+                    continue;
+                }
+            };
+            let last_price: f64 = ticker["data"][0]["last"]
+                .as_str()
+                .and_then(|s| s.parse().ok())
+                .unwrap_or(0.0);
+
+            if last_price > 0.0 {
+                let trade_notional = (total_eq * 0.005).min(max_trade_qty);
+                let qty = format!("{:.6}", (trade_notional / last_price).min(0.01).max(0.001));
+                let aggressive_px = format!("{:.1}", last_price * 1.002);
+                let order_body = serde_json::json!({
+                    "instId": "BTC-USDT",
+                    "tdMode": "cash",
+                    "side": "buy",
+                    "ordType": "limit",
+                    "sz": qty,
+                    "px": aggressive_px,
+                });
+                match Self::okx_request(
+                    &key, &secret, &passphrase, "POST", "/api/v5/trade/order",
+                    &serde_json::to_string(&order_body).unwrap_or_default(),
+                ) {
+                    Ok(v) => {
+                        orders += 1;
+                        let ord_id = v["data"][0]["ordId"].as_str().unwrap_or("?");
+                        status_summary = format!("order #{}: {} BTC @ {} (id={})", orders, qty, aggressive_px, ord_id);
+                    }
+                    Err(e) => {
+                        errors += 1;
+                        last_error = e;
+                    }
+                }
+            }
+
+            // Status update every 10 cycles
+            if orders > 0 && orders % 10 == 0 {
+                status_summary = format!("状态: 已下达 {} 个订单，{} 个错误，equity={:.2}，已耗时 {}s",
+                    orders, errors, total_eq, start_instant.elapsed().as_secs());
+            }
+
+            std::thread::sleep(cycle_interval);
+        }
+
+        self.last_run_events_count = orders;
+        self.last_run_equity = Some(total_eq);
+        self.last_run_status = Some(if errors >= max_errors { "error".to_string() } else { "completed".to_string() });
+
+        if errors >= max_errors {
+            Err(format!("testnet 已中止: {} 个连续错误，最后: {}", errors, last_error))
+        } else if orders == 0 {
+            Ok(format!("testnet: 未下达订单 (duration={}s, equity={:.2})", duration_secs, total_eq))
+        } else {
+            Ok(format!("testnet: 已下达 {} 个订单，耗时 {}s，equity={:.2}，最后: {}", orders, duration_secs, total_eq, status_summary))
+        }
+    }
+
+    /// OKX API request with HMAC-SHA256 signing and rate-limit backoff
+    fn okx_request(
+        api_key: &str,
+        secret_key: &str,
+        passphrase: &str,
+        method: &str,
+        path: &str,
+        body: &str,
+    ) -> Result<serde_json::Value, String> {
+        use hmac::{Hmac, Mac};
+        use sha2::Sha256;
+        type HmacSha256 = Hmac<Sha256>;
+
+        // Rate limit: ensure at least 500ms between requests (OKX testnet limit ~2 req/s)
+        static LAST_REQUEST: std::sync::atomic::AtomicI64 = std::sync::atomic::AtomicI64::new(0);
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_millis() as i64;
+        let last = LAST_REQUEST.load(std::sync::atomic::Ordering::Relaxed);
+        let elapsed = now - last;
+        if elapsed < 1000 {
+            std::thread::sleep(std::time::Duration::from_millis((1000 - elapsed) as u64));
+        }
+        LAST_REQUEST.store(now, std::sync::atomic::Ordering::Relaxed);
+
+        // Build agent with proxy support
+        let proxy_agent = {
+            let proxy_url = std::env::var("QUANTPILOT_PROXY")
+                .unwrap_or_else(|_| "http://127.0.0.1:7897".to_string());
+            let proxy = ureq::Proxy::new(&proxy_url)
+                .map_err(|e| format!("代理错误: {e}"))?;
+            ureq::AgentBuilder::new().proxy(proxy).build()
+        };
+
+        // Adaptive retry: up to 3 attempts with exponential backoff
+        let mut last_err = String::new();
+        for attempt in 0..3 {
+            let ts = chrono::Utc::now().format("%Y-%m-%dT%H:%M:%S.000Z").to_string();
+            let sign_str = format!("{}{}{}{}", ts, method, path, body);
+            let mut mac = HmacSha256::new_from_slice(secret_key.as_bytes())
+                .map_err(|e| format!("HMAC 错误: {e}"))?;
+            mac.update(sign_str.as_bytes());
+            let result = mac.finalize();
+            let sig = base64::Engine::encode(
+                &base64::engine::general_purpose::STANDARD,
+                &result.into_bytes(),
+            );
+
+            let url = format!("https://www.okx.com{}", path);
+            let req = proxy_agent.request(method, &url)
+                .set("OK-ACCESS-KEY", api_key)
+                .set("OK-ACCESS-SIGN", &sig)
+                .set("OK-ACCESS-TIMESTAMP", &ts)
+                .set("OK-ACCESS-PASSPHRASE", passphrase)
+                .set("x-simulated-trading", "1")
+                .set("Content-Type", "application/json");
+
+            let resp = if body.is_empty() {
+                req.call()
+            } else {
+                req.send_string(body)
+            };
+
+            match resp {
+                Ok(r) => {
+                    let status = r.status();
+                    let text = r.into_string().unwrap_or_default();
+                    let v: serde_json::Value =
+                        serde_json::from_str(&text).unwrap_or(serde_json::Value::Null);
+                    let code = v.get("code").and_then(|c| c.as_str()).unwrap_or("?");
+                    if code == "0" {
+                        return Ok(v);
+                    }
+                    let msg = v.get("msg").and_then(|m| m.as_str()).unwrap_or("?");
+                    // Rate-limited or transient → retry with backoff
+                    if code == "1" || status == 429 || status >= 500 {
+                        let delay_ms = 1000 * (attempt + 1) as u64;
+                        last_err = format!("OKX {}/{}: {} (重试 {}/3, 退避 {}ms)", code, status, msg, attempt + 1, delay_ms);
+                        std::thread::sleep(std::time::Duration::from_millis(delay_ms));
+                        continue;
+                    }
+                    return Err(format!("OKX 错误 {} ({}): {}", code, status, msg));
+                }
+                Err(e) => {
+                    last_err = format!("请求失败: {} (重试 {}/3)", e, attempt + 1);
+                    std::thread::sleep(std::time::Duration::from_millis(500 * (attempt + 1) as u64));
+                }
+            }
+        }
+        Err(last_err)
+    }
+
     fn execute_run(&mut self, duration_secs: u64) -> Result<String, String> {
         let compiled = self
             .compile_result
             .clone()
-            .ok_or_else(|| "no compile result".to_string())?;
+            .ok_or_else(|| "无编译结果".to_string())?;
         let mut sandbox = RealTimeSandbox::new(RuntimeCoordinator::new(compiled));
         sandbox
             .start()
-            .map_err(|e| format!("sandbox start failed: {e}"))?;
+            .map_err(|e| format!("沙盒启动失败: {e}"))?;
         let now_ms = current_time_ms();
         let run_duration = std::cmp::min(duration_secs * 1000, RUN_WINDOW_MS);
         let session = sandbox
             .run_session(now_ms, now_ms + run_duration)
-            .map_err(|e| format!("run session failed: {e}"))?;
+            .map_err(|e| format!("运行会话失败: {e}"))?;
         let account = account_summary(&session);
         self.last_run_equity = Some(account.equity_estimate);
         self.last_run_status = Some("completed".to_string());
@@ -459,10 +792,10 @@ impl TestRunner {
     ) -> Result<String, String> {
         let now_ms = if let (Some(start), Some(end)) = (start_date, end_date) {
             parse_date_range_ms(start, end)
-                .map_err(|e| format!("invalid date range: {e}"))?
+                .map_err(|e| format!("无效的日期范围: {e}"))?
         } else if let Some(start) = start_date {
             let start_ms = parse_iso_date_ms(start)
-                .map_err(|e| format!("invalid start date '{}': {e}", start))?;
+                .map_err(|e| format!("无效的开始日期 '{}': {e}", start))?;
             start_ms + 365 * 24 * 3600 * 1000
         } else {
             current_time_ms()
@@ -474,7 +807,7 @@ impl TestRunner {
         let compiled = self
             .compile_result
             .clone()
-            .ok_or_else(|| "no compile result".to_string())?;
+            .ok_or_else(|| "无编译结果".to_string())?;
         let test_mode =
             DeterministicTestMode::replay_defaults(now_ms, seed);
         let mut sandbox =
@@ -483,13 +816,16 @@ impl TestRunner {
                 now_ms,
                 test_mode,
             )
-            .map_err(|e| format!("backtest init failed: {e}"))?;
+            .map_err(|e| format!("回测初始化失败: {e}"))?;
+        if let Some(ref debug_vars) = self.last_debug_vars {
+            sandbox.debug_var_names = debug_vars.clone();
+        }
         sandbox
             .start()
-            .map_err(|e| format!("backtest start failed: {e}"))?;
+            .map_err(|e| format!("回测启动失败: {e}"))?;
         let backtest = sandbox
             .run_backtest()
-            .map_err(|e| format!("backtest run failed: {e}"))?;
+            .map_err(|e| format!("回测运行失败: {e}"))?;
 
         // Extract REAL metrics from BacktestOutput.summary
         let summary = &backtest.summary;
@@ -509,16 +845,38 @@ impl TestRunner {
                     .iter()
                     .chain(s.fast_cycle.fill_reports.iter())
             })
-            .fold((0, 0, 0.0, 0.0), |(buys, sells, fees, notional), fill| {
-                let fee = fill.fee_paid;
-                let qty = fill.filled_qty;
-                let price = fill.filled_price;
-                if qty > 0.0 {
-                    (buys + 1, sells, fees + fee, notional + qty * price)
+            .fold(
+                (0, 0, 0.0, 0.0),
+                |(buys, sells, fees, notional), fill| {
+                    let fee = fill.fee_paid;
+                    let qty = fill.filled_qty;
+                    let price = fill.filled_price;
+                    if qty > 0.0 {
+                        (buys + 1, sells, fees + fee, notional + qty * price)
+                    } else {
+                        (buys, sells + 1, fees + fee, notional + qty.abs() * price)
+                    }
+                },
+            );
+
+        // Compute win_rate from equity curve: count sessions where equity increased
+        let (ewins, elosses): (usize, usize) = backtest
+            .equity_curve
+            .windows(2)
+            .fold((0, 0), |(w, l), window| {
+                if window[1].equity > window[0].equity {
+                    (w + 1, l)
+                } else if window[1].equity < window[0].equity {
+                    (w, l + 1)
                 } else {
-                    (buys, sells + 1, fees + fee, notional + qty.abs() * price)
+                    (w, l)
                 }
             });
+        let win_rate = if ewins + elosses > 0 {
+            ewins as f64 / (ewins + elosses) as f64
+        } else {
+            0.0
+        };
 
         // Equity curve analysis
         let initial_equity = backtest
@@ -559,6 +917,7 @@ impl TestRunner {
         metrics.insert("sharpe_ratio".to_string(), sharpe);
         metrics.insert("annual_return_pct".to_string(), annual_return);
         metrics.insert("annual_volatility_pct".to_string(), annual_vol);
+        metrics.insert("win_rate".to_string(), win_rate);
         if initial_equity > f64::EPSILON {
             metrics.insert("fee_drag_pct".to_string(), total_fees / initial_equity * 100.0);
             metrics.insert(
@@ -572,6 +931,29 @@ impl TestRunner {
                 "avg_trade_notional".to_string(),
                 total_notional / total_fills as f64,
             );
+        }
+
+        // Populate @debug per-bar data from equity curve + debug values
+        if let Some(ref debug_vars) = self.last_debug_vars {
+            let debug_rows = backtest.debug_values.as_ref();
+            let bars: Vec<_> = backtest.equity_curve.iter().enumerate().map(|(i, pt)| {
+                let mut bar = serde_json::Map::new();
+                bar.insert("bar".to_string(), serde_json::json!(i));
+                bar.insert("equity".to_string(), serde_json::json!(pt.equity));
+                bar.insert("timestamp_ms".to_string(), serde_json::json!(pt.ts_ms));
+                for var in debug_vars {
+                    let value = debug_rows
+                        .and_then(|rows| rows.get(i))
+                        .and_then(|row| {
+                            row.iter().find(|(k, _)| {
+                                k.contains(var.as_str()) || var.as_str().contains(k.as_str())
+                            }).map(|(_, v)| *v)
+                        });
+                    bar.insert(var.clone(), serde_json::json!(value));
+                }
+                serde_json::Value::Object(bar)
+            }).collect();
+            self.last_debug_bars = Some(serde_json::Value::Array(bars.iter().map(|b| b.clone()).collect()));
         }
 
         self.last_backtest_metrics = metrics.clone();
@@ -594,7 +976,7 @@ impl TestRunner {
         let compiled = self
             .compile_result
             .clone()
-            .ok_or_else(|| "no compile result".to_string())?;
+            .ok_or_else(|| "无编译结果".to_string())?;
         let now_ms = current_time_ms();
         // Use historical_replay — requires local cache files
         let mut sandbox = FastBacktestSandbox::with_replay_from_core_ir(
@@ -602,14 +984,14 @@ impl TestRunner {
             now_ms,
         )
         .map_err(|e| format!(
-            "historical_replay requires cached market data. Run a paper simulation first to populate the cache. Details: {e}"
+            "历史回放需要缓存的市场数据。请先运行 paper 仿真来填充缓存。详情: {e}"
         ))?;
         sandbox
             .start()
-            .map_err(|e| format!("backtest start failed: {e}"))?;
+            .map_err(|e| format!("回测启动失败: {e}"))?;
         let backtest = sandbox
             .run_backtest()
-            .map_err(|e| format!("backtest run failed: {e}"))?;
+            .map_err(|e| format!("回测运行失败: {e}"))?;
 
         // Reuse the same metric extraction as execute_backtest
         let summary = &backtest.summary;
@@ -664,6 +1046,19 @@ impl TestRunner {
     fn evaluate_assert(&self, expr: &str) -> Result<bool, String> {
         let expr = expr.trim();
 
+        // Resolve metric name aliases (docs use short names, code uses full names)
+        fn resolve_metric<'a>(name: &'a str) -> &'a str {
+            match name {
+                "sharpe" => "sharpe_ratio",
+                "max_drawdown" => "max_drawdown_pct",
+                "return" => "total_return_pct",
+                "annual_return" => "annual_return_pct",
+                "drawdown" => "max_drawdown_pct",
+                "volatility" => "annual_volatility_pct",
+                _ => name,
+            }
+        }
+
         // Support compound assertions with &&
         if expr.contains("&&") {
             let parts: Vec<&str> = expr.split("&&").collect();
@@ -688,8 +1083,19 @@ impl TestRunner {
                 return Ok(true);
             }
             if rest.starts_with("counts.") {
-                // counts always valid when compile succeeded
-                return Ok(self.compile_result.is_some());
+                if let Some(ref compiled) = self.compile_result {
+                    let count_name = rest.trim_start_matches("counts.").trim();
+                    let actual = match count_name {
+                        s if s.starts_with("data_sources") => compiled.config.data_sources.len() as f64,
+                        s if s.starts_with("intent_generators") || s.starts_with("intents") => compiled.config.intents.len() as f64,
+                        s if s.starts_with("agents") => compiled.config.agents.len() as f64,
+                        s if s.starts_with("risks") || s.starts_with("risk_controls") => compiled.config.risks.len() as f64,
+                        _ => return Err(format!("未知的计数字段: {}", count_name)),
+                    };
+                    // Evaluate comparison against actual
+                    return evaluate_numeric_assert(count_name, actual, rest);
+                }
+                return Ok(false);
             }
             if rest.starts_with("protocol_name") {
                 if let Some(compiled) = &self.compile_result {
@@ -702,7 +1108,7 @@ impl TestRunner {
                 }
                 return Ok(false);
             }
-            return Err(format!("unsupported compile assertion: {}", rest));
+            return Err(format!("不支持的编译断言: {}", rest));
         }
 
         // run.*
@@ -742,7 +1148,7 @@ impl TestRunner {
                     .unwrap_or(0);
                 return Ok(self.last_run_events_count == expected);
             }
-            return Err(format!("unsupported run assertion: {}", rest));
+            return Err(format!("不支持的运行断言: {}", rest));
         }
 
         // backtest.*
@@ -760,7 +1166,7 @@ impl TestRunner {
                     ("<", (|a, b| a < b) as fn(f64, f64) -> bool),
                 ] {
                     if let Some((name, expected_str)) = metric_expr.split_once(*op_str) {
-                        let metric_name = name.trim();
+                        let metric_name = resolve_metric(name.trim());
                         let expected: f64 = expected_str.trim().parse().unwrap_or(0.0);
                         let actual = self
                             .last_backtest_metrics
@@ -769,7 +1175,7 @@ impl TestRunner {
                             .unwrap_or(f64::NAN);
                         if actual.is_nan() {
                             return Err(format!(
-                                "unknown backtest metric: '{}'. Available: {:?}",
+                                "未知的回测指标: '{}'。可用指标: {:?}",
                                 metric_name,
                                 self.last_backtest_metrics.keys().collect::<Vec<_>>()
                             ));
@@ -779,7 +1185,7 @@ impl TestRunner {
                 }
                 // Handle == with optional tolerance: ==(0.01) or ==
                 if let Some((name, expected_str)) = metric_expr.split_once("==") {
-                    let metric_name = name.trim();
+                    let metric_name = resolve_metric(name.trim());
                     let (expected, tolerance) = parse_value_with_tolerance(expected_str.trim());
                     let actual = self
                         .last_backtest_metrics
@@ -788,12 +1194,12 @@ impl TestRunner {
                         .unwrap_or(f64::NAN);
                     if actual.is_nan() {
                         return Err(format!(
-                            "unknown backtest metric: {}", metric_name
+                            "未知的回测指标: {}", metric_name
                         ));
                     }
                     return Ok((actual - expected).abs() < tolerance);
                 }
-                return Err(format!("unsupported metric comparison: {}", metric_expr));
+                return Err(format!("不支持的指标比较: {}", metric_expr));
             }
             if rest.contains("trades.length > 0") || rest.contains("trades.length>0") {
                 return Ok(self.last_backtest_trades_count > 0);
@@ -802,14 +1208,14 @@ impl TestRunner {
                 return Ok(true);
             }
             return Err(format!(
-                "unsupported backtest assertion: '{}'. Available metrics: {:?}",
+                "不支持的回测断言: '{}'。可用指标: {:?}",
                 rest,
                 self.last_backtest_metrics.keys().collect::<Vec<_>>()
             ));
         }
 
         Err(format!(
-            "unknown assertion: '{}'. Supported prefixes: compile., run., backtest.metrics.",
+            "未知的断言: '{}'。支持的前缀: compile., run., backtest.metrics.",
             expr
         ))
     }
@@ -874,9 +1280,9 @@ impl TestRunner {
         // L2-4: pending modifications snapshot
         if has_modify && !self.pending_modifications.is_empty() {
             let mut mod_map = serde_json::Map::new();
-            for (param, val) in &self.pending_modifications {
+            for (node_id, param, val) in &self.pending_modifications {
                 mod_map.insert(
-                    param.clone(),
+                    format!("{}.{}", node_id, param),
                     serde_json::Value::Number(serde_json::Number::from_f64(*val).unwrap_or(0.into())),
                 );
             }
@@ -884,6 +1290,16 @@ impl TestRunner {
                 "pending_modifications".to_string(),
                 serde_json::Value::Object(mod_map),
             );
+        }
+
+        // @debug per-bar data
+        if let Some(ref debug_bars) = self.last_debug_bars {
+            snapshot.insert("debug_bars".to_string(), debug_bars.clone());
+        }
+
+        // @compare_backtests structured diff
+        if let Some(ref compare_diff) = self.last_compare_diff {
+            snapshot.insert("compare_diff".to_string(), compare_diff.clone());
         }
 
         if snapshot.is_empty() {
@@ -920,6 +1336,284 @@ fn parse_date_range_ms(start: &str, end: &str) -> Result<u64, String> {
     let _start_ms = parse_iso_date_ms(start)?;
     let end_ms = parse_iso_date_ms(end)?;
     Ok(end_ms)
+}
+
+/// Resolve the actual value for an assertion expression for error display
+fn resolve_assert_actual(runner: &TestRunner, expr: &str) -> String {
+    let expr = expr.trim();
+    if expr.starts_with("compile.compilable") {
+        format!("{}", runner.compile_result.is_some())
+    } else if expr.starts_with("run.equity") {
+        format!("{:.2}", runner.last_run_equity.unwrap_or(f64::NAN))
+    } else if expr.starts_with("run.events.length") {
+        format!("{}", runner.last_run_events_count)
+    } else if expr.starts_with("backtest.metrics.") {
+        let metric = &expr["backtest.metrics.".len()..];
+        let name = metric.split(|c: char| !c.is_alphanumeric() && c != '_').next().unwrap_or(metric);
+        if let Some(val) = runner.last_backtest_metrics.get(name) {
+            format!("{:.6}", val)
+        } else {
+            "unknown".to_string()
+        }
+    } else {
+        "?".to_string()
+    }
+}
+
+/// Evaluate a numeric assertion like ">= 1" or "== 2" against an actual value
+fn evaluate_numeric_assert(field_name: &str, actual: f64, rest: &str) -> Result<bool, String> {
+    // rest is the full expression like "data_sources >= 1" — extract op and value
+    let expr_after_name = rest.trim_start_matches(field_name).trim();
+    for (op_str, op_fn) in &[
+        (">=", (|a: f64, b: f64| a >= b) as fn(f64, f64) -> bool),
+        ("<=", (|a, b| a <= b) as fn(f64, f64) -> bool),
+        ("==", (|a, b| (a - b).abs() < 0.001) as fn(f64, f64) -> bool),
+        (">", (|a, b| a > b) as fn(f64, f64) -> bool),
+        ("<", (|a, b| a < b) as fn(f64, f64) -> bool),
+    ] {
+        if let Some(expected_str) = expr_after_name.split(*op_str).nth(1) {
+            let expected: f64 = expected_str.trim().parse().unwrap_or(0.0);
+            return Ok(op_fn(actual, expected));
+        }
+    }
+    Err(format!("不支持的比较表达式: {}", expr_after_name))
+}
+
+/// Build a visual strategy graph JSON from frontend config for workspace rendering
+fn build_visual_graph_json(
+    graph_id: &str,
+    config: &FrontendRuntimeConfig,
+) -> serde_json::Value {
+    let mut nodes = Vec::new();
+    let mut edges = Vec::new();
+    let mut y_offset = 50.0;
+
+    // Runtime control node — has no input ports, outputs to self for lifecycle
+    if let Some(ref rc) = config.runtime_control {
+        nodes.push(serde_json::json!({
+            "id": rc.id,
+            "type": "runtime",
+            "position": { "x": 400.0, "y": y_offset },
+            "data": {
+                "nodeId": rc.id, "nodeType": "runtime", "title": rc.name, "subtitle": rc.module_key,
+                "inputPorts": [], "outputPorts": [],
+                "handlesConnectable": true, "simplified": false,
+                "summaryValues": ["运行时控制"], "quickFieldDefinitions": [],
+                "collapsed": false, "dimmed": false, "runtimeStatus": "idle"
+            }
+        }));
+        y_offset += 150.0;
+    }
+
+    // Data source nodes — output only (market_data_out)
+    for ds in &config.data_sources {
+        nodes.push(serde_json::json!({
+            "id": ds.id,
+            "type": "data",
+            "position": { "x": 100.0, "y": y_offset },
+            "data": {
+                "nodeId": ds.id, "nodeType": "data", "title": ds.name, "subtitle": ds.module_key,
+                "config": ds.config,
+                "inputPorts": [], "outputPorts": [{ "key": "market_data_out" }],
+                "handlesConnectable": true, "simplified": false,
+                "summaryValues": [format!("{}.{}", ds.config.get("exchange").and_then(|v| v.as_str()).unwrap_or("?"), ds.config.get("instrument").and_then(|v| v.as_str()).unwrap_or("?"))],
+                "quickFieldDefinitions": [],
+                "collapsed": false, "dimmed": false, "runtimeStatus": "idle"
+            }
+        }));
+        y_offset += 120.0;
+    }
+
+    y_offset = 100.0;
+
+    // Intent nodes — input + output
+    for intent in &config.intent_generators {
+        let node_id = &intent.id;
+        nodes.push(serde_json::json!({
+            "id": node_id,
+            "type": "intent",
+            "position": { "x": 350.0, "y": y_offset },
+            "data": {
+                "nodeId": node_id, "nodeType": "intent", "title": intent.name, "subtitle": intent.module_key,
+                "config": intent.config,
+                "inputPorts": [{ "key": "data_input" }], "outputPorts": [{ "key": "intent_out" }],
+                "handlesConnectable": true, "simplified": false,
+                "summaryValues": [intent.name.clone()],
+                "quickFieldDefinitions": [],
+                "collapsed": false, "dimmed": false, "runtimeStatus": "idle"
+            }
+        }));
+        for input_ref in &intent.input_refs {
+            edges.push(serde_json::json!({
+                "id": format!("e-{}-{}", input_ref.source_id, node_id),
+                "source_node_id": input_ref.source_id,
+                "target_node_id": node_id,
+                "source_port": input_ref.source_port,
+                "target_port": input_ref.target_port,
+                "edge_type": format!("{}-{}", input_ref.source_id, node_id),
+            }));
+        }
+        y_offset += 120.0;
+    }
+
+    // Agent nodes
+    for agent in &config.agents {
+        let node_id = &agent.id;
+        nodes.push(serde_json::json!({
+            "id": node_id,
+            "type": "agent",
+            "position": { "x": 600.0, "y": y_offset },
+            "data": {
+                "nodeId": node_id, "nodeType": "agent", "title": agent.name, "subtitle": agent.module_key,
+                "inputPorts": [{ "key": "intent_input" }], "outputPorts": [{ "key": "agent_out" }],
+                "handlesConnectable": true, "simplified": false,
+                "summaryValues": ["加权代理"],
+                "quickFieldDefinitions": [],
+                "collapsed": false, "dimmed": false, "runtimeStatus": "idle"
+            }
+        }));
+        for intent in &config.intent_generators {
+            edges.push(serde_json::json!({
+                "id": format!("e-{}-{}", intent.id, node_id),
+                "source_node_id": intent.id,
+                "source_port": "intent_out",
+                "target_node_id": node_id,
+                "target_port": "intent_input",
+                "edge_type": format!("{}-{}", intent.id, node_id),
+            }));
+        }
+        y_offset += 120.0;
+    }
+
+    // Risk nodes
+    for risk in &config.risk_controls {
+        let node_id = &risk.id;
+        nodes.push(serde_json::json!({
+            "id": node_id,
+            "type": "risk",
+            "position": { "x": 850.0, "y": y_offset },
+            "data": {
+                "nodeId": node_id, "nodeType": "risk", "title": risk.name, "subtitle": risk.module_key,
+                "inputPorts": [{ "key": "agent_input" }], "outputPorts": [{ "key": "risk_out" }],
+                "handlesConnectable": true, "simplified": false,
+                "summaryValues": ["全局限险"],
+                "quickFieldDefinitions": [],
+                "collapsed": false, "dimmed": false, "runtimeStatus": "idle"
+            }
+        }));
+        for agent in &config.agents {
+            edges.push(serde_json::json!({
+                "id": format!("e-{}-{}", agent.id, node_id),
+                "source_node_id": agent.id,
+                "source_port": "agent_out",
+                "target_node_id": node_id,
+                "target_port": "agent_input",
+                "edge_type": format!("{}-{}", agent.id, node_id),
+            }));
+        }
+        y_offset += 120.0;
+    }
+
+    // Execution nodes
+    for exec in &config.executions {
+        let node_id = &exec.id;
+        nodes.push(serde_json::json!({
+            "id": node_id,
+            "type": "execution",
+            "position": { "x": 1100.0, "y": y_offset },
+            "data": {
+                "nodeId": node_id, "nodeType": "execution", "title": exec.name, "subtitle": exec.module_key,
+                "inputPorts": [{ "key": "risk_input" }], "outputPorts": [],
+                "handlesConnectable": true, "simplified": false,
+                "summaryValues": ["模拟执行"],
+                "quickFieldDefinitions": [],
+                "collapsed": false, "dimmed": false, "runtimeStatus": "idle"
+            }
+        }));
+        for risk in &config.risk_controls {
+            edges.push(serde_json::json!({
+                "id": format!("e-{}-{}", risk.id, node_id),
+                "source_node_id": risk.id,
+                "source_port": "risk_out",
+                "target_node_id": node_id,
+                "target_port": "risk_input",
+                "edge_type": format!("{}-{}", risk.id, node_id),
+            }));
+        }
+    }
+
+    // Normalize nodes to frontend store format:
+    // - Add top-level `config` (required by graph_api save→QS generation)
+    // - Add top-level `module_key`, `input_ports`, `output_ports` (required by isValidConnection validation)
+    let nodes_normalized: Vec<_> = nodes.into_iter().map(|mut node| {
+        if let Some(obj) = node.as_object_mut() {
+            // Copy module_key from data.subtitle to top level
+            if !obj.contains_key("module_key") {
+                if let Some(subtitle) = obj.get("data").and_then(|d| d.get("subtitle")).and_then(|v| v.as_str()) {
+                    obj.insert("module_key".to_string(), serde_json::json!(subtitle));
+                }
+            }
+            // Copy input_ports from data.inputPorts to top level
+            if !obj.contains_key("input_ports") {
+                if let Some(ports) = obj.get("data").and_then(|d| d.get("inputPorts")).cloned() {
+                    obj.insert("input_ports".to_string(), ports);
+                }
+            }
+            // Copy output_ports from data.outputPorts to top level
+            if !obj.contains_key("output_ports") {
+                if let Some(ports) = obj.get("data").and_then(|d| d.get("outputPorts")).cloned() {
+                    obj.insert("output_ports".to_string(), ports);
+                }
+            }
+            // Copy config from data.config to top level
+            if let Some(data_config) = obj.get("data").and_then(|d| d.get("config")).cloned() {
+                obj.insert("config".to_string(), data_config);
+            }
+            if obj.get("type").and_then(|t| t.as_str()) == Some("runtime") {
+                obj.entry("config").or_insert_with(|| serde_json::json!({
+                    "mode": config.metadata.mode
+                }));
+            }
+            // Ensure ui_state and runtime_state exist at top level
+            if !obj.contains_key("ui_state") {
+                obj.insert("ui_state".to_string(), serde_json::json!({"collapsed": false}));
+            }
+            if !obj.contains_key("runtime_state") {
+                obj.insert("runtime_state".to_string(), serde_json::json!({
+                    "status": "idle",
+                    "last_event_type": null,
+                    "last_event_time": null,
+                    "last_message": "",
+                    "metrics": {},
+                    "error": null
+                }));
+            }
+        }
+        node
+    }).collect();
+
+    serde_json::json!({
+        "metadata": {
+            "graph_id": graph_id,
+            "name": config.metadata.name,
+            "version": config.metadata.version,
+            "mode": config.metadata.mode,
+            "source_mode": "quantscript",
+            "updated_at": chrono::Utc::now().to_rfc3339(),
+        },
+        "validation_state": {
+            "is_runnable": true,
+            "is_compilable": true,
+            "issue_counts": { "error": 0, "warning": 0, "info": 0 }
+        },
+        "compile_summary": {
+            "compilable": true,
+            "protocol_name": "quantpilot/minimal-sim/v1",
+            "diagnostics": []
+        },
+        "nodes": nodes_normalized,
+        "edges": edges,
+    })
 }
 
 /// Parse a value with optional tolerance: "0.0" or "-0.10(0.01)"

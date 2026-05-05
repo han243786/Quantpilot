@@ -117,7 +117,7 @@ impl HotSwapValidator for DefaultHotSwapValidator {
         if targets.is_empty() {
             return HotSwapValidationResult {
                 compatible: false,
-                violations: vec!["no module targets specified".into()],
+                violations: vec!["未指定模块目标".into()],
                 warnings: Vec::new(),
             };
         }
@@ -200,7 +200,7 @@ impl<'a> HotSwapOrchestrator<'a> {
                     "orchestrator",
                     RuntimeEventType::RuntimeError,
                     serde_json::json!({
-                        "message": "hot-swap sequence failed",
+                        "message": "热交换序列失败",
                         "reason": reason,
                         "failed_step": format!("{:?}", state.step),
                     }),
@@ -251,7 +251,7 @@ impl<'a> HotSwapOrchestrator<'a> {
                 state.risk_violations.push(violation.clone());
             }
             return Err(anyhow!(
-                "compatibility check failed: {}",
+                "兼容性检查失败: {}",
                 result.violations.join("; ")
             ));
         }
@@ -259,7 +259,7 @@ impl<'a> HotSwapOrchestrator<'a> {
             "compatibility",
             RuntimeEventType::RuntimeWarning,
             serde_json::json!({
-                "message": "compatibility check passed",
+                "message": "兼容性检查通过",
                 "warnings": result.warnings,
             }),
         );
@@ -272,7 +272,7 @@ impl<'a> HotSwapOrchestrator<'a> {
 
         let mut denied_reasons = Vec::new();
         if self.sandbox.is_running() {
-            denied_reasons.push("sandbox is currently running; pause before hot-swap".to_string());
+            denied_reasons.push("沙箱正在运行，请先暂停再执行热交换".to_string());
         }
         let open_order_count = current_snapshot.portfolio.open_orders.len() as u32;
         state.open_order_count = open_order_count;
@@ -288,18 +288,18 @@ impl<'a> HotSwapOrchestrator<'a> {
                 "safe-window",
                 RuntimeEventType::RuntimeError,
                 serde_json::json!({
-                    "message": "safe window entry denied",
+                    "message": "安全窗口进入被拒绝",
                     "reasons": denied_reasons,
                 }),
             );
-            return Err(anyhow!("safe window entry denied: {}", denied_reasons.join("; ")));
+            return Err(anyhow!("安全窗口进入被拒绝: {}", denied_reasons.join("; ")));
         }
 
         state.emit_event(
             "safe-window",
             RuntimeEventType::RuntimeWarning,
             serde_json::json!({
-                "message": "entered SAFE_WINDOW",
+                "message": "进入 SAFE_WINDOW 状态",
                 "policy_version": "quantpilot/hot-swap-safe-window/v1",
             }),
         );
@@ -353,14 +353,14 @@ impl<'a> HotSwapOrchestrator<'a> {
                 "reconciliation",
                 RuntimeEventType::RuntimeError,
                 serde_json::json!({
-                    "message": "unresolved open orders detected during reconciliation",
+                    "message": "对账期间检测到未解决的开仓订单",
                     "open_order_count": open_orders.len(),
                     "unresolved_count": unresolved,
-                    "action": "all open orders must be resolved before hot-swap can proceed",
+                    "action": "所有开仓订单必须在对账前解决，热交换才能继续",
                 }),
             );
             return Err(anyhow!(
-                "order reconciliation failed: {} unresolved open orders",
+                "订单对账失败: {} 个未解决的开仓订单",
                 unresolved
             ));
         }
@@ -369,7 +369,7 @@ impl<'a> HotSwapOrchestrator<'a> {
             "reconciliation",
             RuntimeEventType::RuntimeWarning,
             serde_json::json!({
-                "message": "order reconciliation passed",
+                "message": "订单对账通过",
                 "reconciled_count": open_orders.len(),
             }),
         );
@@ -419,7 +419,7 @@ impl<'a> HotSwapOrchestrator<'a> {
         let snapshot = state
             .snapshot
             .clone()
-            .ok_or_else(|| anyhow!("shadow replay requires a snapshot from the previous step"))?;
+            .ok_or_else(|| anyhow!("影子回放需要上一步的快照"))?;
 
         let window_ms = state.request.shadow_replay_window_ms.max(60_000);
         let replay_start_ms = snapshot.captured_at_ms.saturating_sub(window_ms);
@@ -430,7 +430,7 @@ impl<'a> HotSwapOrchestrator<'a> {
             "shadow-replay",
             RuntimeEventType::RuntimeWarning,
             serde_json::json!({
-                "message": "shadow replay started",
+                "message": "影子回放已开始",
                 "window_start_ms": replay_start_ms,
                 "window_end_ms": captured_at,
                 "window_duration_ms": captured_at.saturating_sub(replay_start_ms),
@@ -448,7 +448,7 @@ impl<'a> HotSwapOrchestrator<'a> {
                 "shadow-replay",
                 RuntimeEventType::RuntimeError,
                 serde_json::json!({
-                    "message": "shadow replay deviation exceeds threshold",
+                    "message": "影子回放偏差超过阈值",
                     "deviation": deviation,
                     "threshold": deviation_threshold,
                     "portfolio_before": portfolio_before,
@@ -456,7 +456,7 @@ impl<'a> HotSwapOrchestrator<'a> {
                 }),
             );
             return Err(anyhow!(
-                "shadow replay deviation {:.2} exceeds threshold {:.2}",
+                "影子回放偏差 {:.2} 超过阈值 {:.2}",
                 deviation,
                 deviation_threshold
             ));
@@ -466,7 +466,7 @@ impl<'a> HotSwapOrchestrator<'a> {
             "shadow-replay",
             RuntimeEventType::RuntimeWarning,
             serde_json::json!({
-                "message": "shadow replay passed",
+                "message": "影子回放通过",
                 "deviation": deviation,
                 "threshold": deviation_threshold,
             }),
@@ -505,7 +505,7 @@ impl<'a> HotSwapOrchestrator<'a> {
                         "atomic-switch",
                         RuntimeEventType::RuntimeError,
                         serde_json::json!({
-                            "message": "module config swap failed",
+                            "message": "模块配置交换失败",
                             "module_key": module_key,
                             "error": format!("{err:#}"),
                         }),
@@ -515,7 +515,7 @@ impl<'a> HotSwapOrchestrator<'a> {
             }
         }
         if applied_revisions.is_empty() {
-            return Err(anyhow!("no module configs were successfully swapped"));
+            return Err(anyhow!("没有模块配置成功交换"));
         }
         Ok(())
     }
@@ -544,13 +544,13 @@ impl<'a> HotSwapOrchestrator<'a> {
                 "observation",
                 RuntimeEventType::RuntimeError,
                 serde_json::json!({
-                    "message": "risk violations detected during observation window",
+                    "message": "观察窗口期间检测到风险违规",
                     "violations": state.risk_violations,
-                    "action": "auto-rollback triggered",
+                    "action": "自动回滚已触发",
                 }),
             );
             return Err(anyhow!(
-                "observation window detected risk violations: {}",
+                "观察窗口检测到风险违规: {}",
                 state.risk_violations.join("; ")
             ));
         }
@@ -559,7 +559,7 @@ impl<'a> HotSwapOrchestrator<'a> {
             "observation",
             RuntimeEventType::RuntimeWarning,
             serde_json::json!({
-                "message": "observation window check passed",
+                "message": "观察窗口检查通过",
                 "observation_window_ms": state.request.observation_window_ms,
                 "portfolio_equity": portfolio_equity,
             }),
@@ -777,7 +777,7 @@ mod tests {
         assert!(result
             .rollback_reason
             .unwrap()
-            .contains("no module targets specified"));
+            .contains("未指定模块目标"));
     }
 
     #[test]
@@ -804,7 +804,7 @@ mod tests {
 
         let result = orchestrator.execute(request).unwrap();
         assert!(!result.success);
-        assert!(result.rollback_reason.unwrap().contains("running"));
+        assert!(result.rollback_reason.unwrap().contains("正在运行"));
     }
 
     #[test]

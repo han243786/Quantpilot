@@ -13,11 +13,11 @@ function severityRank(severity) {
 }
 
 export function diagnosticQueueSource(item) {
-  if (item.source === "validation") return "Validation";
-  if (item.source === "strategy_ir") return "Strategy IR";
-  if (item.source === "runtime") return "Runtime";
-  if (item.source === "formal_quantscript") return "Formal QuantScript";
-  return "Strategy graph";
+  if (item.source === "validation") return "校验";
+  if (item.source === "strategy_ir") return "策略 IR";
+  if (item.source === "runtime") return "运行时";
+  if (item.source === "formal_quantscript") return "正式 QS";
+  return "策略图";
 }
 
 export function diagnosticQueueNodeType(item) {
@@ -26,16 +26,16 @@ export function diagnosticQueueNodeType(item) {
 }
 
 export function workspaceIssueQueueSeverityLabel(severity, count) {
-  if (severity === "error") return `Errors ${count}`;
-  if (severity === "warning") return `Warnings ${count}`;
-  if (severity === "info") return `Info ${count}`;
-  return `All ${count}`;
+  if (severity === "error") return `错误 ${count}`;
+  if (severity === "warning") return `警告 ${count}`;
+  if (severity === "info") return `提示 ${count}`;
+  return `全部 ${count}`;
 }
 
 export function workspaceIssueSeverityText(severity) {
-  if (severity === "warning") return "Warning";
-  if (severity === "info") return "Info";
-  return "Error";
+  if (severity === "warning") return "警告";
+  if (severity === "info") return "提示";
+  return "错误";
 }
 
 export function workspaceIssueQueueCounts(items = []) {
@@ -154,7 +154,7 @@ export function buildWorkspaceIssueQueue(graph, compileDiagnostics = []) {
       severity: diagnostic.severity || "error",
       source: diagnostic.source || "graph",
       nodeType: targetNode?.type || null,
-      title: target?.label || targetNode?.name || diagnostic.code || "Compile diagnostic",
+      title: target?.label || targetNode?.name || diagnostic.code || "编译诊断",
       message: diagnostic.message,
       note: diagnostic.hint || "",
       routeDiagnostic: diagnostic.target ? diagnostic : null,
@@ -204,7 +204,7 @@ export function buildWorkspaceIssueQueue(graph, compileDiagnostics = []) {
       severity: issue.level === "warning" ? "warning" : issue.level === "info" ? "info" : "error",
       source: "validation",
       nodeType: null,
-      title: "Strategy graph",
+      title: "策略图",
       message: issue.message,
       note: issue.hint || "",
       routeDiagnostic: null,

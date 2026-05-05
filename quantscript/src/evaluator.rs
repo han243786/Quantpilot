@@ -258,7 +258,7 @@ fn maybe_inline_function(
         return Ok(None);
     };
     if !stack.insert(name.clone()) {
-        bail!("recursive QuantScript functions are not supported: {name}");
+        bail!("不支持递归的 QuantScript 函数: {name}");
     }
     let result = evaluate_function(function, args, context, stack);
     stack.remove(name);
@@ -288,7 +288,7 @@ fn evaluate_function(
         let value = args
             .get(index)
             .map(|arg| arg.value.clone())
-            .ok_or_else(|| anyhow!("missing argument {} for {}", param.name, function.name))?;
+            .ok_or_else(|| anyhow!("缺少参数 {} 用于 {}", param.name, function.name))?;
         env.insert(param.name.clone(), value);
     }
 
@@ -309,7 +309,7 @@ fn execute_function_body(
         }
     }
 
-    last_expr.ok_or_else(|| anyhow!("helper function must return a value"))
+    last_expr.ok_or_else(|| anyhow!("辅助函数必须返回一个值"))
 }
 
 fn execute_stmt(
@@ -361,7 +361,7 @@ fn execute_stmt(
         Stmt::Match { expr, arms } => {
             execute_match_stmt(expr, arms, env, context, stack, last_expr)
         }
-        other => bail!("unsupported statement in helper function: {other:?}"),
+        other => bail!("辅助函数中不支持的语句: {other:?}"),
     }
 }
 
@@ -437,7 +437,7 @@ fn execute_if_stmt(
         }
     }
 
-    bail!("symbolic branching produced divergent helper-function states")
+    bail!("符号分支产生了发散的辅助函数状态")
 }
 
 fn execute_for_stmt(
@@ -451,7 +451,7 @@ fn execute_for_stmt(
 ) -> Result<ExecOutcome> {
     let normalized_iterable = normalize_expr(iterable, env, context, stack)?;
     let items = expr_iterable_items(&normalized_iterable)
-        .ok_or_else(|| anyhow!("unable to symbolically expand for-loop iterable"))?;
+        .ok_or_else(|| anyhow!("无法以符号方式展开 for 循环的可迭代对象"))?;
     for item in items {
         env.insert(pattern.to_string(), item);
         match execute_block_in_place(body, env, context, stack, last_expr)? {
@@ -478,10 +478,10 @@ fn execute_while_stmt(
                 outcome @ ExecOutcome::Return(_) => return Ok(outcome),
             },
             Some(false) => return Ok(ExecOutcome::Continue),
-            None => bail!("symbolic while-loop condition could not be resolved"),
+            None => bail!("符号化 while 循环条件无法解析"),
         }
     }
-    bail!("while-loop exceeded symbolic execution iteration limit")
+    bail!("while 循环超出符号执行迭代限制")
 }
 
 fn execute_match_stmt(
@@ -517,7 +517,7 @@ fn execute_match_stmt(
         }
     }
 
-    bail!("symbolic match produced divergent helper-function states")
+    bail!("符号化 match 产生了发散的辅助函数状态")
 }
 
 fn execute_block_in_place(

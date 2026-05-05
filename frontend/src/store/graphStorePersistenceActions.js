@@ -116,7 +116,7 @@ export function createGraphStorePersistenceActions(set, get) {
       const compiled = compileGraph(graphForSave, registry);
       if (!compiled.compile_summary.compilable) {
         throw new Error(
-          compiled.compile_summary.errors[0] || "Strategy graph failed compile validation."
+          compiled.compile_summary.errors[0] || "策略图编译校验失败。"
         );
       }
       const graph = attachValidationWithRegistry(
@@ -164,7 +164,7 @@ export function createGraphStorePersistenceActions(set, get) {
     async loadLatestGraph() {
       const finalGraph = resolveLoadedGraphWithRegistry(await fetchJson("/graphs/latest"), get().registry);
       if (!finalGraph) {
-        throw new Error("The latest saved strategy graph is unavailable.");
+        throw new Error("最新保存的策略图不可用。");
       }
       saveGraphToStorage(finalGraph);
       set((state) => ({
@@ -193,7 +193,7 @@ export function createGraphStorePersistenceActions(set, get) {
 
     async deleteGraph(graphId) {
       if (!graphId || graphId === "draft_graph") {
-        throw new Error("A saved strategy graph ID is required.");
+        throw new Error("需要提供已保存的策略图 ID。");
       }
 
       const response = await deleteJson(`/graphs/${encodeURIComponent(graphId)}`);
@@ -209,7 +209,7 @@ export function createGraphStorePersistenceActions(set, get) {
 
     async loadGraphById(graphId, options = {}) {
       if (!graphId) {
-        throw new Error("A strategy graph ID is required.");
+        throw new Error("需要提供策略图 ID。");
       }
 
       const { force = false } = options;
@@ -223,7 +223,7 @@ export function createGraphStorePersistenceActions(set, get) {
         get().registry
       );
       if (!finalGraph) {
-        throw new Error("The requested strategy graph is unavailable.");
+        throw new Error("请求的策略图不可用。");
       }
 
       saveGraphToStorage(finalGraph);
@@ -286,7 +286,7 @@ export function createGraphStorePersistenceActions(set, get) {
         set({
           graphVersions: [],
           graphVersionsStatus: "error",
-          graphVersionsMessage: error.message || "Failed to load persisted graph versions."
+          graphVersionsMessage: error.message || "加载持久化图谱版本失败。"
         });
         return [];
       }
@@ -317,7 +317,7 @@ export function createGraphStorePersistenceActions(set, get) {
         set({
           graphAuditHistory: [],
           graphAuditHistoryStatus: "error",
-          graphAuditHistoryMessage: error.message || "Failed to load graph audit history."
+          graphAuditHistoryMessage: error.message || "加载图谱审计历史失败。"
         });
         return [];
       }
@@ -325,7 +325,7 @@ export function createGraphStorePersistenceActions(set, get) {
 
     async loadGraphVersionPreview(graphId, versionId) {
       if (!graphId || !versionId) {
-        throw new Error("Both a graph ID and version ID are required.");
+        throw new Error("需要同时提供图谱 ID 和版本 ID。");
       }
 
       set({ graphVersionPreviewStatus: "loading", graphVersionPreviewMessage: "" });
@@ -337,7 +337,7 @@ export function createGraphStorePersistenceActions(set, get) {
           get().registry
         );
         if (!preview) {
-          throw new Error("The requested graph version is unavailable.");
+          throw new Error("请求的图谱版本不可用。");
         }
 
         set({
@@ -353,7 +353,7 @@ export function createGraphStorePersistenceActions(set, get) {
         set({
           graphVersionPreview: null,
           graphVersionPreviewStatus: "error",
-          graphVersionPreviewMessage: error.message || "Failed to load the selected graph version."
+          graphVersionPreviewMessage: error.message || "加载所选图谱版本失败。"
         });
         throw error;
       }
@@ -369,7 +369,7 @@ export function createGraphStorePersistenceActions(set, get) {
 
     async compareGraphVersions(graphId, leftVersionId, rightVersionId) {
       if (!graphId || !leftVersionId || !rightVersionId) {
-        throw new Error("Graph ID and two version IDs are required.");
+        throw new Error("需要提供图谱 ID 和两个版本 ID。");
       }
 
       set({
@@ -392,7 +392,7 @@ export function createGraphStorePersistenceActions(set, get) {
         set({
           graphVersionCompare: null,
           graphVersionCompareStatus: "error",
-          graphVersionCompareMessage: error.message || "Failed to compare persisted graph versions."
+          graphVersionCompareMessage: error.message || "对比持久化图谱版本失败。"
         });
         throw error;
       }
@@ -408,7 +408,7 @@ export function createGraphStorePersistenceActions(set, get) {
 
     async restoreGraphVersion(graphId, versionId) {
       if (!graphId || !versionId) {
-        throw new Error("Both a graph ID and version ID are required.");
+        throw new Error("需要同时提供图谱 ID 和版本 ID。");
       }
 
       await postJson(
@@ -425,7 +425,7 @@ export function createGraphStorePersistenceActions(set, get) {
 
     async revealGraphFile(graphId) {
       if (!graphId) {
-        throw new Error("A strategy graph ID is required.");
+        throw new Error("需要提供策略图 ID。");
       }
 
       return postJson(`/graphs/${encodeURIComponent(graphId)}/reveal`, {});

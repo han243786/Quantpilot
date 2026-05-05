@@ -17,7 +17,7 @@ const CODE_LANE_NOTICE_FADE_DELAY_MS = 4500;
 
 function codeLaneNoticePayload(message, tone = "info") {
   if (!message) return null;
-  return { title: "Workspace lane changed automatically", message, tone };
+  return { title: "工作区栏位已自动切换", message, tone };
 }
 
 function workspaceIssueFiltersStorageScope(strategyId, graphId) {
@@ -116,14 +116,14 @@ function workspaceIssueFiltersSummary(filters) {
   if (current.severityFilter !== "all") {
     parts.push(
       current.severityFilter === "error"
-        ? "Errors"
+        ? "错误"
         : current.severityFilter === "warning"
-          ? "Warnings"
+          ? "警告"
           : current.severityFilter
     );
   }
   if (current.actionableOnly) {
-    parts.push("Actionable only");
+    parts.push("仅可操作项");
   }
   if (current.sourceFilter !== "all") {
     parts.push(current.sourceFilter);
@@ -132,7 +132,7 @@ function workspaceIssueFiltersSummary(filters) {
     parts.push(current.nodeTypeFilter);
   }
 
-  return parts.length > 0 ? parts.join(" / ") : "No active filters";
+  return parts.length > 0 ? parts.join(" / ") : "无活动筛选";
 }
 
 export function useStrategyWorkspaceUiState({
@@ -186,7 +186,7 @@ export function useStrategyWorkspaceUiState({
       .catch((loadError) => {
         if (!disposed) {
           setStatus("error");
-          setError(loadError instanceof Error ? loadError.message : "Unable to load the requested strategy graph.");
+          setError(loadError instanceof Error ? loadError.message : "无法加载请求的策略图。");
         }
       });
 
@@ -331,7 +331,7 @@ export function useStrategyWorkspaceUiState({
     if (target?.scope === "strategy_ir") {
       activateCodeInspector("code", {
         priority: "high",
-        reason: "This diagnostic targets Strategy IR, so the workspace opened the source lane for direct review.",
+        reason: "该诊断指向策略 IR，工作区已打开源码栏位以便直接审查。",
         tone: "info",
         focusMode: "selected",
         focusChanged: true
@@ -342,7 +342,7 @@ export function useStrategyWorkspaceUiState({
 
     activateCodeInspector("diagnostics", {
       priority: "high",
-      reason: "This issue points to graph diagnostics, so the workspace opened the checks lane and issue-focused canvas mode.",
+      reason: "该问题指向图谱诊断，工作区已打开检查栏位和问题聚焦的画布模式。",
       tone: "warning",
       focusMode: "issues",
       focusChanged: true
@@ -354,7 +354,7 @@ export function useStrategyWorkspaceUiState({
     setActiveTab("code");
     activateCodeInspector("code", {
       priority: "high",
-      reason: "The source lane stays available for Strategy IR review, graph source edits, and code-focused repair work.",
+      reason: "源码栏位保持可用，用于策略 IR 审查、图谱源码编辑和代码修复工作。",
       tone: "info",
       focusMode: canvasFocusMode,
       focusChanged: false
@@ -379,7 +379,7 @@ export function useStrategyWorkspaceUiState({
       if (selectedCompileDiagnosticTarget.scope === "strategy_ir") {
         activateCodeInspector("code", {
           priority: "high",
-          reason: "Strategy IR was selected from the diagnostics target, so the workspace switched back to the source lane.",
+          reason: "已从诊断目标中选择策略 IR，工作区已切换回源码栏位。",
           tone: "info",
           focusMode: "selected",
           focusChanged: true

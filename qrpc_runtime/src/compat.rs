@@ -217,17 +217,17 @@ impl CompatibilityChecker {
         core_ir: &CoreStrategyIr,
     ) -> Result<()> {
         if surface.module_key.trim().is_empty() {
-            bail!("module_key must not be empty");
+            bail!("module_key 不能为空");
         }
         if surface.module_kind.trim().is_empty() {
-            bail!("module_kind must not be empty");
+            bail!("module_kind 不能为空");
         }
         if surface.interface_version.trim().is_empty() {
-            bail!("interface_version must not be empty");
+            bail!("interface_version 不能为空");
         }
         if surface.core_ir_version != core_ir.ir_version {
             bail!(
-                "core_ir_version '{}' does not match strategy IR version '{}'",
+                "core_ir_version '{}' 与策略 IR 版本 '{}' 不匹配",
                 surface.core_ir_version,
                 core_ir.ir_version
             );

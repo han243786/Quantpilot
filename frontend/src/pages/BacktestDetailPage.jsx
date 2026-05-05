@@ -9,6 +9,7 @@ import {
   strategyBacktestsPath,
   strategyWorkspacePath
 } from "../router";
+import { useI18n } from "../i18n";
 import { AnalysisHero, AnalysisSection } from "./BacktestAnalysisLayout";
 import {
   formatRatio,
@@ -59,6 +60,7 @@ function ExplanationDetailCard({ title, summary, entries, testId, emptyText }) {
 }
 
 export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
+  const { t } = useI18n();
   const runtime = useGraphStore((state) => state.runtime);
   const graph = useGraphStore((state) => state.graph);
   const loadBacktestDetail = useGraphStore((state) => state.loadBacktestDetail);
@@ -115,27 +117,31 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
 
   const summaryItems = [
     {
-      label: "协议",
+      label: t("协议"),
       value: manifest?.protocol_name || selectedSummary?.protocol_name || "-"
     },
     {
-      label: "配置哈希",
+      label: t("配置哈希"),
       value: manifest?.config_hash || selectedSummary?.config_hash || "-"
     },
     {
-      label: "收益",
+      label: t("收益"),
       value: formatRatio(summary?.total_return_ratio)
     },
     {
-      label: "最大回撤",
+      label: t("最大回撤"),
       value: formatRatio(summary?.max_drawdown_ratio)
     },
     {
-      label: "成交数",
+      label: t("成交数"),
       value: formatValue(summary?.trade_count ?? trades.length)
     },
     {
-      label: "最终权益",
+      label: t("胜率"),
+      value: summary?.win_rate != null ? `${(summary.win_rate * 100).toFixed(1)}%` : "-"
+    },
+    {
+      label: t("最终权益"),
       value: formatValue(summary?.final_equity || metrics?.final_account?.equity_estimate)
     }
   ];
@@ -144,7 +150,7 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
     return (
       <div className="qp-page">
         <div className="qp-error" role="alert">
-          <span>加载回测失败: {runtime.backendError}</span>
+          <span>{t("加载回测失败:")} {runtime.backendError}</span>
         </div>
       </div>
     );
@@ -153,7 +159,7 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
   if (!metrics && !summary && !runtime.backendError) {
     return (
       <div className="qp-page">
-        <div className="qp-loading">加载回测数据...</div>
+        <div className="qp-loading">{t("加载回测数据...")}</div>
       </div>
     );
   }
@@ -163,7 +169,7 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
       <AnalysisHero
         testId="backtest-detail-hero"
         routeItems={[
-          { label: "策略", onClick: () => navigateTo(strategiesPath()) },
+          { label: t("策略"), onClick: () => navigateTo(strategiesPath()) },
           resolvedStrategyId
             ? {
                 label: resolvedStrategyId,
@@ -172,15 +178,15 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
             : null,
           resolvedStrategyId
             ? {
-                label: "回测",
+                label: t("回测"),
                 onClick: () => navigateTo(strategyBacktestsPath(resolvedStrategyId))
               }
             : null,
-          { label: "详情", current: true }
+          { label: t("详情"), current: true }
         ]}
-        kicker="策略研究"
-        title="策略回测详情"
-        subtitle="在策略上下文中查看单次持久化实验，并在审查结果时持续保留回放输出、工件链路与返回入口。"
+        kicker={t("策略研究")}
+        title={t("策略回测详情")}
+        subtitle={t("在策略上下文中查看单次持久化实验，并在审查结果时持续保留回放输出、工件链路与返回入口。")}
         meta={`策略：${resolvedStrategyId || graph.metadata?.graph_id || "-"} | 回测：${
           runtime.selectedBacktestId || backtestId
         }`}
@@ -194,14 +200,14 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
                 )
               }
             >
-              {resolvedStrategyId ? "返回策略回测页" : "返回策略列表"}
+              {resolvedStrategyId ? t("返回策略回测页") : t("返回策略列表")}
             </button>
             {resolvedStrategyId ? (
               <button
                 className="ghost-btn"
                 onClick={() => navigateTo(strategyWorkspacePath(resolvedStrategyId))}
               >
-                打开策略工作区
+                {t("打开策略工作区")}
               </button>
             ) : null}
           </div>
@@ -213,51 +219,51 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
         <div className="analysis-main-column">
           <AnalysisSection
             testId="backtest-detail-core-artifacts"
-            kicker="工件概览"
-            title="核心工件"
-            summary="先以持久化的 manifest 和 metrics 工件作为主要审查入口，再按需展开回放预览或完整事件流。"
+            kicker={t("工件概览")}
+            title={t("核心工件")}
+            summary={t("先以持久化的 manifest 和 metrics 工件作为主要审查入口，再按需展开回放预览或完整事件流。")}
           >
             <div className="analysis-card-grid analysis-card-grid--two">
               <div className="open-orders-card" data-testid="backtest-detail-manifest-card">
                 <div className="open-orders-header">
                   <div>
-                    <div className="mini-list-title">清单工件</div>
+                    <div className="mini-list-title">{t("清单工件")}</div>
                     <div className="muted-line">
-                      与策略关联的 manifest 上下文、编译链路与回放来源。
+                      {t("与策略关联的 manifest 上下文、编译链路与回放来源。")}
                     </div>
                   </div>
                   <strong>{manifest?.manifest_id || "-"}</strong>
                 </div>
-                <MetricPair label="创建时间" value={formatTime(manifest?.created_at_ms)} />
+                <MetricPair label={t("创建时间")} value={formatTime(manifest?.created_at_ms)} />
                 <MetricPair
-                  label="编译 ID"
+                  label={t("编译 ID")}
                   value={manifest?.compile_id || selectedSummary?.compile_id || "-"}
                 />
                 <MetricPair
-                  label="运行规格"
+                  label={t("运行规格")}
                   value={manifest?.backtest_spec?.run_spec?.schema_version || "-"}
                 />
                 <MetricPair
-                  label="回放来源"
+                  label={t("回放来源")}
                   value={manifest?.backtest_spec?.replay_source || "-"}
                 />
                 <MetricPair
-                  label="策略工件"
+                  label={t("策略工件")}
                   value={manifest?.compile_artifacts?.strategy?.artifact_id || "-"}
                   testId="backtest-detail-manifest-strategy-artifact"
                 />
                 <MetricPair
-                  label="编译工件"
+                  label={t("编译工件")}
                   value={manifest?.compile_artifacts?.compile?.artifact_id || "-"}
                   testId="backtest-detail-manifest-compile-artifact"
                 />
                 <MetricPair
-                  label="Core IR 工件"
+                  label={t("Core IR 工件")}
                   value={manifest?.compile_artifacts?.core_ir?.artifact_id || "-"}
                   testId="backtest-detail-manifest-core-ir-artifact"
                 />
                 <div className="mini-list" data-testid="backtest-detail-governance-card">
-                  <div className="mini-list-title">治理身份</div>
+                  <div className="mini-list-title">{t("治理身份")}</div>
                   {governanceRows.map((row) => (
                     <MetricPair
                       key={row.key}
@@ -273,23 +279,23 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
               <div className="open-orders-card" data-testid="backtest-detail-metrics-card">
                 <div className="open-orders-header">
                   <div>
-                    <div className="mini-list-title">指标工件</div>
+                    <div className="mini-list-title">{t("指标工件")}</div>
                     <div className="muted-line">
-                      当前策略实验的持久化结果摘要。
+                      {t("当前策略实验的持久化结果摘要。")}
                     </div>
                   </div>
                   <strong>{runtime.backtestArtifacts?.metrics?.artifact_id || "-"}</strong>
                 </div>
-                <MetricPair label="开始时间" value={formatTime(startedAt)} />
-                <MetricPair label="结束时间" value={formatTime(endedAt)} />
+                <MetricPair label={t("开始时间")} value={formatTime(startedAt)} />
+                <MetricPair label={t("结束时间")} value={formatTime(endedAt)} />
                 <MetricPair
-                  label="步数"
+                  label={t("步数")}
                   value={formatValue(summary?.step_count)}
                   testId="backtest-detail-metrics-step-count"
                 />
-                <MetricPair label="会话数" value={formatValue(metrics?.session_count)} />
+                <MetricPair label={t("会话数")} value={formatValue(metrics?.session_count)} />
                 <MetricPair
-                  label="事件数"
+                  label={t("事件数")}
                   value={formatValue(metrics?.event_count || runtime.events.length)}
                   testId="backtest-detail-metrics-event-count"
                 />
@@ -299,52 +305,52 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
 
           <AnalysisSection
             testId="backtest-detail-governed-timeline"
-            kicker="证据链"
-            title="治理时间轴"
-            summary="按 envelope 阶段、保留级别和模块查看回测证据，并优先保留关键事件。"
+            kicker={t("证据链")}
+            title={t("治理时间轴")}
+            summary={t("按 envelope 阶段、保留级别和模块查看回测证据，并优先保留关键事件。")}
           >
             <GovernedTimelinePanel
               source={timelineSource}
-              title="回测证据时间轴"
-              summary="同一 timeline item 同时服务详情、回放、压缩证据和后续报告输入。"
+              title={t("回测证据时间轴")}
+              summary={t("同一 timeline item 同时服务详情、回放、压缩证据和后续报告输入。")}
               testId="backtest-detail-timeline"
             />
           </AnalysisSection>
 
           <AnalysisSection
             testId="backtest-detail-report-lifecycle"
-            kicker="报告生命周期"
-            title="证据报告"
-            summary="从压缩证据生成可导出的报告，报告只链接来源证据和治理身份，不复制完整原始日志。"
+            kicker={t("报告生命周期")}
+            title={t("证据报告")}
+            summary={t("从压缩证据生成可导出的报告，报告只链接来源证据和治理身份，不复制完整原始日志。")}
           >
             <RuntimeReportPanel
               sourceKind="backtest"
               sourceId={runtime.selectedBacktestId || backtestId}
               evidenceSource={timelineSource}
-              title="回测证据报告"
-              summary="生成、打开和导出当前回测的治理报告。"
+              title={t("回测证据报告")}
+              summary={t("生成、打开和导出当前回测的治理报告。")}
             />
           </AnalysisSection>
 
           <AnalysisSection
             testId="backtest-detail-replay-preview"
-            kicker="回放预览"
-            title="权益曲线与成交样本"
-            summary="详情页只保留高信号的回放切片，让它保持为策略分析视图，而不是原始日志堆叠。"
+            kicker={t("回放预览")}
+            title={t("权益曲线与成交样本")}
+            summary={t("详情页只保留高信号的回放切片，让它保持为策略分析视图，而不是原始日志堆叠。")}
           >
             <div className="analysis-card-grid analysis-card-grid--two">
               <div className="open-orders-card" data-testid="backtest-detail-equity-card">
                 <div className="open-orders-header">
                   <div>
-                    <div className="mini-list-title">权益曲线工件</div>
+                    <div className="mini-list-title">{t("权益曲线工件")}</div>
                     <div className="muted-line">
-                      预览曲线首尾片段，以便快速确认策略层面的权益表现。
+                      {t("预览曲线首尾片段，以便快速确认策略层面的权益表现。")}
                     </div>
                   </div>
                   <strong>{runtime.backtestArtifacts?.equity_curve?.artifact_id || "-"}</strong>
                 </div>
                 {curvePreview.length === 0 ? (
-                  <div className="muted-line">这次回测没有可用的权益曲线样本。</div>
+                  <div className="muted-line">{t("这次回测没有可用的权益曲线样本。")}</div>
                 ) : null}
                 {curvePreview.map((point, index) => (
                   <div key={`${point.ts_ms}_${index}`} className="open-order-item">
@@ -353,15 +359,15 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
                     </div>
                     <div className="open-order-grid">
                       <div>
-                        <span>权益</span>
+                        <span>{t("权益")}</span>
                         <strong>{formatValue(point.equity)}</strong>
                       </div>
                       <div>
-                        <span>现金</span>
+                        <span>{t("现金")}</span>
                         <strong>{formatValue(point.cash_balance)}</strong>
                       </div>
                       <div>
-                        <span>净名义价值</span>
+                        <span>{t("净名义价值")}</span>
                         <strong>{formatValue(point.net_notional)}</strong>
                       </div>
                     </div>
@@ -372,15 +378,15 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
               <div className="open-orders-card" data-testid="backtest-detail-trade-card">
                 <div className="open-orders-header">
                   <div>
-                    <div className="mini-list-title">成交账本工件</div>
+                    <div className="mini-list-title">{t("成交账本工件")}</div>
                     <div className="muted-line">
-                      抽样展示已执行成交，便于审计与回放交叉核验。
+                      {t("抽样展示已执行成交，便于审计与回放交叉核验。")}
                     </div>
                   </div>
                   <strong>{runtime.backtestArtifacts?.trade_ledger?.artifact_id || "-"}</strong>
                 </div>
                 {tradePreview.length === 0 ? (
-                  <div className="muted-line">这次回测没有记录成交。</div>
+                  <div className="muted-line">{t("这次回测没有记录成交。")}</div>
                 ) : null}
                 {tradePreview.map((trade) => (
                   <div key={trade.fill_id} className="open-order-item">
@@ -390,19 +396,19 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
                     </div>
                     <div className="open-order-grid">
                       <div>
-                        <span>方向</span>
+                        <span>{t("方向")}</span>
                         <strong>{trade.side}</strong>
                       </div>
                       <div>
-                        <span>数量</span>
+                        <span>{t("数量")}</span>
                         <strong>{formatValue(trade.filled_qty)}</strong>
                       </div>
                       <div>
-                        <span>价格</span>
+                        <span>{t("价格")}</span>
                         <strong>{formatValue(trade.filled_price)}</strong>
                       </div>
                       <div>
-                        <span>手续费</span>
+                        <span>{t("手续费")}</span>
                         <strong>{formatValue(trade.fee_paid)}</strong>
                       </div>
                     </div>
@@ -414,20 +420,20 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
 
           <AnalysisSection
             testId="backtest-detail-output-artifacts"
-            kicker="输出引用"
-            title="持久化输出文件"
-            summary="保留文件级可追溯性，但不把页面变成纯存储列表。"
+            kicker={t("输出引用")}
+            title={t("持久化输出文件")}
+            summary={t("保留文件级可追溯性，但不把页面变成纯存储列表。")}
           >
             <div className="open-orders-card" data-testid="backtest-detail-output-card">
               <div className="open-orders-header">
                 <div>
-                  <div className="mini-list-title">输出文件</div>
-                  <div className="muted-line">记录在当前策略实验 manifest 下的文件列表。</div>
+                  <div className="mini-list-title">{t("输出文件")}</div>
+                  <div className="muted-line">{t("记录在当前策略实验 manifest 下的文件列表。")}</div>
                 </div>
                 <strong>{outputArtifacts.length}</strong>
               </div>
               {outputArtifacts.length === 0 ? (
-                <div className="muted-line">这次回测没有记录任何输出文件引用。</div>
+                <div className="muted-line">{t("这次回测没有记录任何输出文件引用。")}</div>
               ) : null}
               {outputArtifacts.map((artifact) => (
                 <MetricPair key={artifact.artifact_id} label={artifact.kind} value={artifact.file_name} />
@@ -437,24 +443,24 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
 
           <AnalysisSection
             testId="backtest-detail-explanations"
-            kicker="执行解释"
-            title="风控与订单解释"
-            summary="复用同一套 runtime_diagnostics explanation rows，在详情页直接展示风控裁剪和订单执行语义。"
+            kicker={t("执行解释")}
+            title={t("风控与订单解释")}
+            summary={t("复用同一套 runtime_diagnostics explanation rows，在详情页直接展示风控裁剪和订单执行语义。")}
           >
             <div className="analysis-card-grid analysis-card-grid--two">
               <ExplanationDetailCard
-                title="风控详情"
-                summary="选取 detail payload 中已结构化的 risk_detail_rows，不再重新拼第二套解释协议。"
+                title={t("风控详情")}
+                summary={t("选取 detail payload 中已结构化的 risk_detail_rows，不再重新拼第二套解释协议。")}
                 entries={riskExplanationEntries}
                 testId="backtest-detail-risk-card"
-                emptyText="当前回测详情还没有可展示的风控解释。"
+                emptyText={t("当前回测详情还没有可展示的风控解释。")}
               />
               <ExplanationDetailCard
-                title="订单详情"
-                summary="沿用同一 explanation rows 展示下单来源、生命周期和订单语义。"
+                title={t("订单详情")}
+                summary={t("沿用同一 explanation rows 展示下单来源、生命周期和订单语义。")}
                 entries={orderExplanationEntries}
                 testId="backtest-detail-order-card"
-                emptyText="当前回测详情还没有可展示的订单解释。"
+                emptyText={t("当前回测详情还没有可展示的订单解释。")}
               />
             </div>
           </AnalysisSection>
@@ -463,18 +469,18 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
         <div className="analysis-sidebar-column">
           <AnalysisSection
             testId="backtest-detail-context"
-            kicker="策略上下文"
-            title="策略实验上下文"
-            summary="在详情、对比和工作区之间切换时，把策略 ID、实验 ID 与回放时序集中展示在一个位置。"
+            kicker={t("策略上下文")}
+            title={t("策略实验上下文")}
+            summary={t("在详情、对比和工作区之间切换时，把策略 ID、实验 ID 与回放时序集中展示在一个位置。")}
           >
             <div className="open-orders-card" data-testid="backtest-detail-context-card">
-              <MetricPair label="策略 ID" value={resolvedStrategyId || graph.metadata?.graph_id || "-"} />
-              <MetricPair label="图 ID" value={graph.metadata?.graph_id || "-"} />
-              <MetricPair label="回测 ID" value={runtime.selectedBacktestId || backtestId} />
-              <MetricPair label="协议" value={manifest?.protocol_name || "-"} />
-              <MetricPair label="配置哈希" value={manifest?.config_hash || "-"} />
-              <MetricPair label="开始时间" value={formatTime(startedAt)} />
-              <MetricPair label="结束时间" value={formatTime(endedAt)} />
+              <MetricPair label={t("策略 ID")} value={resolvedStrategyId || graph.metadata?.graph_id || "-"} />
+              <MetricPair label={t("图 ID")} value={graph.metadata?.graph_id || "-"} />
+              <MetricPair label={t("回测 ID")} value={runtime.selectedBacktestId || backtestId} />
+              <MetricPair label={t("协议")} value={manifest?.protocol_name || "-"} />
+              <MetricPair label={t("配置哈希")} value={manifest?.config_hash || "-"} />
+              <MetricPair label={t("开始时间")} value={formatTime(startedAt)} />
+              <MetricPair label={t("结束时间")} value={formatTime(endedAt)} />
             </div>
           </AnalysisSection>
         </div>

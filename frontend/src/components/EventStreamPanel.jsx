@@ -96,6 +96,99 @@ const HISTORY_COPY = {
   compareSelection: (count) => `已选对比：${count}/2`
 };
 
+function CompareDiffTable({ compareDiff }) {
+  const { t } = useI18n();
+  if (!compareDiff || typeof compareDiff !== "object") return null;
+  const metrics = Object.keys(compareDiff);
+  if (metrics.length === 0) return null;
+
+  const formatNum = (v) => {
+    if (v === null || v === undefined || !Number.isFinite(v)) return "-";
+    const abs = Math.abs(v);
+    let decimals = 2;
+    if (abs > 0 && abs < 0.01) decimals = 4;
+    else if (abs < 1) decimals = 4;
+    else if (abs < 100) decimals = 2;
+    else decimals = 2;
+    return v.toFixed(decimals);
+  };
+
+  const formatDiff = (diff) => {
+    if (diff === null || diff === undefined || !Number.isFinite(diff)) return "-";
+    const sign = diff > 0 ? "+" : "";
+    return `${sign}${formatNum(diff)}`;
+  };
+
+  return (
+    <>
+      <style>{`
+        .compare-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 6px;
+          font-size: 12px;
+          font-family: inherit;
+        }
+        .compare-table th,
+        .compare-table td {
+          padding: 3px 8px;
+          text-align: right;
+          border: 1px solid rgba(255,255,255,0.12);
+        }
+        .compare-table th {
+          background: rgba(255,255,255,0.06);
+          font-weight: 600;
+          text-align: center;
+        }
+        .compare-table td.compare-metric-label {
+          text-align: left;
+          font-weight: 500;
+        }
+        .compare-diff-positive {
+          background: rgba(0,200,83,0.18);
+          color: #66ffa6;
+        }
+        .compare-diff-negative {
+          background: rgba(255,68,68,0.18);
+          color: #ff7777;
+        }
+      `}</style>
+      <table className="compare-table" data-testid="compare-diff-table">
+        <thead>
+          <tr>
+            <th>{t("指标")}</th>
+            <th>{t("回测 #0")}</th>
+            <th>{t("回测 #1")}</th>
+            <th>{t("差异")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {metrics.map((key) => {
+            const entry = compareDiff[key];
+            if (!entry || typeof entry !== "object") return null;
+            const diffVal = Number.isFinite(entry.diff) ? entry.diff : null;
+            const toneClass = diffVal === null
+              ? ""
+              : diffVal > 0
+                ? "compare-diff-positive"
+                : diffVal < 0
+                  ? "compare-diff-negative"
+                  : "";
+            return (
+              <tr key={key}>
+                <td className="compare-metric-label">{key}</td>
+                <td>{formatNum(entry.left)}</td>
+                <td>{formatNum(entry.right)}</td>
+                <td className={toneClass}>{formatDiff(entry.diff)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </>
+  );
+}
+
 function formatValue(value) {
   if (value === null || value === undefined || value === "") return "-";
   if (typeof value === "number") {
@@ -401,22 +494,22 @@ export function EventPanelIntro({
   const runKindLabel =
     runtime.runKind === "backtest"
       ? runtime.artifactPersistenceStatus === "transient"
-        ? "回测预览"
-        : "历史回测"
-      : "模拟运行";
+        ? t("回测预览")
+        : t("历史回测")
+      : t("模拟运行");
   return (
     <div className="event-panel-header" data-testid="event-panel-intro">
       <div className="event-panel-intro">
-        <div className="panel-title">运行与回测面板</div>
+        <div className="panel-title">{t("运行与回测面板")}</div>
         <div className="panel-subtitle">
-          把运行摘要、事件流、历史记录和账户状态放在同一视图里，同时保持清晰分层。
+          {t("把运行摘要、事件流、历史记录和账户状态放在同一视图里，同时保持清晰分层。")}
         </div>
       </div>
       <div className="event-summary-grid">
-        <SummaryPill label="状态" value={runtimeStatusLabel(runtime.status)} />
-        <SummaryPill label="类型" value={runKindLabel} />
-        <SummaryPill label="运行 ID" value={runtime.runId || "-"} />
-        <SummaryPill label="事件数" value={displayedEvents.length} />
+        <SummaryPill label={t("状态")} value={runtimeStatusLabel(runtime.status)} />
+        <SummaryPill label={t("类型")} value={runKindLabel} />
+        <SummaryPill label={t("运行 ID")} value={runtime.runId || "-"} />
+        <SummaryPill label={t("事件数")} value={displayedEvents.length} />
       </div>
       {canSaveCurrentArtifact ? (
         <div className="event-panel-actions">
@@ -426,7 +519,7 @@ export function EventPanelIntro({
             data-testid="runtime-artifact-save"
             onClick={() => handleSaveCurrentRuntimeArtifact?.()}
           >
-            保存本次结果
+            {t("保存本次结果")}
           </button>
           <button
             type="button"
@@ -434,9 +527,9 @@ export function EventPanelIntro({
             data-testid="runtime-artifact-discard"
             onClick={() => handleDiscardCurrentRuntimeArtifact?.()}
           >
-            丢弃临时结果
+            {t("丢弃临时结果")}
           </button>
-          <span className="muted-line">未保存结果仅保留在当前会话。</span>
+          <span className="muted-line">{t("未保存结果仅保留在当前会话。")}</span>
         </div>
       ) : null}
       {runtime.backendError && !(panelNotice && panelNotice.type === "error") ? (
@@ -481,10 +574,11 @@ export function EventFeedSection({
   setEventSearchTerm,
   setSelectedNode
 }) {
+  const { t } = useI18n();
   return (
     <EventSection
-      kicker="事件"
-      title="事件流"
+      kicker={t("事件")}
+      title={t("事件流")}
       summary={COPY.eventFeedSummary}
       className="event-feed-section"
       testId="event-feed-section"
@@ -563,7 +657,7 @@ export function EventFeedSection({
           </button>
         </div>
         {filteredEvents.length === 0 ? (
-          <div className="empty-state">当前筛选条件下没有事件。</div>
+          <div className="empty-state">{t("当前筛选条件下没有事件。")}</div>
         ) : null}
         {filteredEvents.map((event) => (
           <button
@@ -589,84 +683,87 @@ export function EventFeedSection({
                   {getEventExplanationSummary(event)}
                 </div>
               ) : null}
+              {event.payload?.data_snapshot?.compare_diff ? (
+                <CompareDiffTable compareDiff={event.payload.data_snapshot.compare_diff} />
+              ) : null}
               <div className="event-meta-row">
-                <span>状态：{semanticText(eventBadge(event))}</span>
+                <span>{t("状态：")}{semanticText(eventBadge(event))}</span>
                 {event.payload?.limit_triggered ? (
-                  <span>限制：{formatValue(event.payload.limit_triggered)}</span>
+                  <span>{t("限制：")}{formatValue(event.payload.limit_triggered)}</span>
                 ) : null}
                 {event.payload?.post_risk?.concentration_ratio !== undefined ? (
                   <span data-testid={`event-feed-post-concentration-${event.event_id}`}>
-                    集中度：{formatRatio(event.payload.post_risk.concentration_ratio)}
+                    {t("集中度：")}{formatRatio(event.payload.post_risk.concentration_ratio)}
                   </span>
                 ) : null}
                 {event.payload?.post_risk?.max_symbol_net_exposure_ratio !== undefined ? (
                   <span data-testid={`event-feed-post-symbol-net-${event.event_id}`}>
-                    单标的净敞口：{formatRatio(
+                    {t("单标的净敞口：")}{formatRatio(
                       event.payload.post_risk.max_symbol_net_exposure_ratio
                     )}
                   </span>
                 ) : null}
                 {event.payload?.post_risk?.portfolio_net_exposure_ratio !== undefined ? (
                   <span data-testid={`event-feed-post-portfolio-net-${event.event_id}`}>
-                    组合净敞口：{formatRatio(
+                    {t("组合净敞口：")}{formatRatio(
                       event.payload.post_risk.portfolio_net_exposure_ratio
                     )}
                   </span>
                 ) : null}
                 {event.payload?.sizing_source ? (
-                  <span>定量来源：{formatValue(event.payload.sizing_source)}</span>
+                  <span>{t("定量来源：")}{formatValue(event.payload.sizing_source)}</span>
                 ) : null}
                 {event.payload?.order_type_decision_reason ? (
-                  <span>下单语义：{formatValue(event.payload.order_type_decision_reason)}</span>
+                  <span>{t("下单语义：")}{formatValue(event.payload.order_type_decision_reason)}</span>
                 ) : null}
                 {event.payload?.lifecycle_stage ? (
-                  <span>生命周期：{formatValue(event.payload.lifecycle_stage)}</span>
+                  <span>{t("生命周期：")}{formatValue(event.payload.lifecycle_stage)}</span>
                 ) : null}
-                {event.payload?.side ? <span>方向：{directionText(event.payload.side)}</span> : null}
+                {event.payload?.side ? <span>{t("方向：")}{directionText(event.payload.side)}</span> : null}
                 {event.payload?.signal_direction ? (
-                  <span>信号方向：{directionText(event.payload.signal_direction)}</span>
+                  <span>{t("信号方向：")}{directionText(event.payload.signal_direction)}</span>
                 ) : null}
                 {event.payload?.source_status ? (
-                  <span>数据状态：{semanticText(event.payload.source_status)}</span>
+                  <span>{t("数据状态：")}{semanticText(event.payload.source_status)}</span>
                 ) : null}
                 {event.payload?.source_health ? (
                   <span data-testid={`event-feed-source-health-${event.event_id}`}>
-                    来源健康：{semanticText(event.payload.source_health)}
+                    {t("来源健康：")}{semanticText(event.payload.source_health)}
                   </span>
                 ) : null}
                 {event.payload?.freshness_ms !== undefined ? (
                   <span data-testid={`event-feed-freshness-${event.event_id}`}>
-                    新鲜度：{formatValue(event.payload.freshness_ms)} ms
+                    {t("新鲜度：")}{formatValue(event.payload.freshness_ms)} ms
                   </span>
                 ) : null}
                 {event.payload?.gap_count !== undefined ? (
                   <span data-testid={`event-feed-gap-count-${event.event_id}`}>
-                    缺口：{formatValue(event.payload.gap_count)}
+                    {t("缺口：")}{formatValue(event.payload.gap_count)}
                   </span>
                 ) : null}
                 {qualityFlagsText(event.payload?.quality_flags) ? (
                   <span data-testid={`event-feed-quality-flags-${event.event_id}`}>
-                    质量标记：{qualityFlagsText(event.payload.quality_flags)}
+                    {t("质量标记：")}{qualityFlagsText(event.payload.quality_flags)}
                   </span>
                 ) : null}
-                {event.payload?.order_id ? <span>订单：{event.payload.order_id}</span> : null}
+                {event.payload?.order_id ? <span>{t("订单：")}{event.payload.order_id}</span> : null}
                 {event.payload?.remaining_qty !== undefined ? (
-                  <span>剩余数量：{formatValue(event.payload.remaining_qty)}</span>
+                  <span>{t("剩余数量：")}{formatValue(event.payload.remaining_qty)}</span>
                 ) : null}
                 {event.payload?.price !== undefined ? (
-                  <span>价格：{formatValue(event.payload.price)}</span>
+                  <span>{t("价格：")}{formatValue(event.payload.price)}</span>
                 ) : null}
                 {event.payload?.limit_price !== undefined && event.payload?.limit_price !== null ? (
-                  <span>限价：{formatValue(event.payload.limit_price)}</span>
+                  <span>{t("限价：")}{formatValue(event.payload.limit_price)}</span>
                 ) : null}
                 {event.payload?.reserved_cash !== undefined ? (
-                  <span>冻结现金：{formatValue(event.payload.reserved_cash)}</span>
+                  <span>{t("冻结现金：")}{formatValue(event.payload.reserved_cash)}</span>
                 ) : null}
                 {event.payload?.reserved_qty !== undefined ? (
-                  <span>冻结仓位：{formatValue(event.payload.reserved_qty)}</span>
+                  <span>{t("冻结仓位：")}{formatValue(event.payload.reserved_qty)}</span>
                 ) : null}
                 {event.payload?.fee_paid !== undefined ? (
-                  <span>手续费：{formatValue(event.payload.fee_paid)}</span>
+                  <span>{t("手续费：")}{formatValue(event.payload.fee_paid)}</span>
                 ) : null}
               </div>
             </div>
@@ -689,61 +786,61 @@ export function BacktestSummarySection({
 
   return (
     <EventSection
-      kicker="回测"
+      kicker={t("回测")}
       className="event-sidebar-section event-sidebar-section-summary"
-      title="回测分析"
+      title={t("回测分析")}
       summary={t("优先显示工件驱动的回测结果摘要，而不是旧式摘要拼接。")}
     >
       <div className="backtest-summary-card" data-testid="backtest-summary-card">
         <SectionCardHeader
-          title="回测结果详情"
-          summary="回测工件和模拟运行分开持久化，详情会恢复权益曲线与事件日志。"
+          title={t("回测结果详情")}
+          summary={t("回测工件和模拟运行分开持久化，详情会恢复权益曲线与事件日志。")}
           value={`${backtestSummary?.step_count || 0} 步`}
         />
         <div className="kv-line">
-          <span>回测 ID</span>
+          <span>{t("回测 ID")}</span>
           <strong data-testid="backtest-summary-id">
             {runtime.selectedBacktestId || runtime.runId || "-"}
           </strong>
         </div>
         <div className="kv-line">
-          <span>协议</span>
+          <span>{t("协议")}</span>
           <strong data-testid="backtest-summary-protocol">
             {selectedBacktestSummary?.protocol_name || "-"}
           </strong>
         </div>
         <div className="kv-line">
-          <span>配置哈希</span>
+          <span>{t("配置哈希")}</span>
           <strong data-testid="backtest-summary-config-hash">
             {selectedBacktestSummary?.config_hash || "-"}
           </strong>
         </div>
         <div className="account-metric-grid" data-testid="backtest-summary-metrics">
           <div className="account-metric-card" data-testid="backtest-summary-total-return">
-            <span>总收益率</span>
+            <span>{t("总收益率")}</span>
             <strong>{formatRatio(backtestSummary?.total_return_ratio)}</strong>
           </div>
           <div className="account-metric-card" data-testid="backtest-summary-max-drawdown">
-            <span>最大回撤</span>
+            <span>{t("最大回撤")}</span>
             <strong>{formatRatio(backtestSummary?.max_drawdown_ratio)}</strong>
           </div>
           <div className="account-metric-card">
-            <span>成交次数</span>
+            <span>{t("成交次数")}</span>
             <strong>{formatValue(backtestSummary?.trade_count)}</strong>
           </div>
           <div className="account-metric-card" data-testid="backtest-summary-trade-count">
-            <span>最终权益</span>
+            <span>{t("最终权益")}</span>
             <strong>{formatValue(backtestSummary?.final_equity)}</strong>
           </div>
         </div>
         <div className="kv-line">
-          <span>开始时间</span>
+          <span>{t("开始时间")}</span>
           <strong data-testid="backtest-summary-started-at">
             {backtestStartedAt ? new Date(backtestStartedAt).toLocaleString() : "-"}
           </strong>
         </div>
         <div className="kv-line">
-          <span>结束时间</span>
+          <span>{t("结束时间")}</span>
           <strong data-testid="backtest-summary-ended-at">
             {backtestEndedAt ? new Date(backtestEndedAt).toLocaleString() : "-"}
           </strong>
@@ -783,6 +880,7 @@ export function BacktestHistorySection({
   loadBacktestDetail,
   onOpenBacktestDetail
 }) {
+  const { t } = useI18n();
   if (detailMode) return null;
   const selectedBacktestRiskEntries = runtime.selectedBacktestId
     ? buildDiagnosticsExplanationEntries(graph, runtime.diagnostics, "risk")
@@ -796,19 +894,19 @@ export function BacktestHistorySection({
 
   return (
     <EventSection
-      kicker="历史"
+      kicker={t("历史")}
       className="event-sidebar-section event-sidebar-section-backtest"
-      title="回测历史"
-      summary="把筛选、对比选择和详情入口统一放在同一块分析区域。"
+      title={t("回测历史")}
+      summary={t("把筛选、对比选择和详情入口统一放在同一块分析区域。")}
     >
       <div className="backtest-history-card" data-testid="backtest-history-card">
         <SectionCardHeader
-          title="持久化回测记录"
-          summary="按图、编译、数据集、参数和时间窗口筛选历史结果。"
+          title={t("持久化回测记录")}
+          summary={t("按图、编译、数据集、参数和时间窗口筛选历史结果。")}
           action={
             <button
               className="ghost-btn compact-btn"
-              aria-label="刷新回测历史"
+              aria-label={t("刷新回测历史")}
               data-testid="backtest-history-refresh"
               disabled={runtime.backtestHistoryStatus === "loading"}
               onClick={() => handleRefreshBacktestHistory()}
@@ -821,19 +919,19 @@ export function BacktestHistorySection({
         {runtime.selectedBacktestId ? (
           <div className="analysis-card-grid analysis-card-grid--two">
             <HistoryExplanationCard
-              title="已选回测风控解释"
-              summary={`当前已加载回测 ${runtime.selectedBacktestId} 的风控说明。`}
+              title={t("已选回测风控解释")}
+              summary={t("当前已加载回测 {id} 的风控说明。", { id: runtime.selectedBacktestId })}
               entries={selectedBacktestRiskEntries}
               testId="backtest-history-risk-explanations"
             />
             <HistoryExplanationCard
-              title="已选回测订单解释"
-              summary={`当前已加载回测 ${runtime.selectedBacktestId} 的订单说明。`}
+              title={t("已选回测订单解释")}
+              summary={t("当前已加载回测 {id} 的订单说明。", { id: runtime.selectedBacktestId })}
               entries={selectedBacktestOrderEntries}
               testId="backtest-history-order-explanations"
             />
             <HistoryExplanationCard
-              title="已选回测数据质量"
+              title={t("已选回测数据质量")}
               summary={`Data quality details for loaded backtest ${runtime.selectedBacktestId}.`}
               entries={selectedBacktestDataQualityEntries}
               testId="backtest-history-data-quality"
@@ -846,31 +944,31 @@ export function BacktestHistorySection({
             {
               key: "graph",
               value: backtestHistoryFilter ?? runtime.backtestHistoryFilter ?? "",
-              placeholder: "按图 ID 过滤",
+              placeholder: t("按图 ID 过滤"),
               onChange: setBacktestHistoryFilter
             },
             {
               key: "compile",
               value: backtestCompileFilter ?? runtime.backtestCompileFilter ?? "",
-              placeholder: "按编译 ID 过滤",
+              placeholder: t("按编译 ID 过滤"),
               onChange: setBacktestCompileFilter
             },
             {
               key: "dataset",
               value: backtestDatasetFilter ?? runtime.backtestDatasetFilter ?? "",
-              placeholder: "按数据集过滤",
+              placeholder: t("按数据集过滤"),
               onChange: setBacktestDatasetFilter
             },
             {
               key: "parameter",
               value: backtestParameterFilter ?? runtime.backtestParameterFilter ?? "",
-              placeholder: "按参数过滤",
+              placeholder: t("按参数过滤"),
               onChange: setBacktestParameterFilter
             },
             {
               key: "fromTime",
               type: "datetime-local",
-              ariaLabel: "回测开始时间过滤",
+              ariaLabel: t("回测开始时间过滤"),
               className: "history-filter-input history-filter-time",
               value: backtestFromTime ?? runtime.backtestFromTime ?? "",
               onChange: setBacktestFromTime
@@ -878,7 +976,7 @@ export function BacktestHistorySection({
             {
               key: "toTime",
               type: "datetime-local",
-              ariaLabel: "回测结束时间过滤",
+              ariaLabel: t("回测结束时间过滤"),
               className: "history-filter-input history-filter-time",
               value: backtestToTime ?? runtime.backtestToTime ?? "",
               onChange: setBacktestToTime
@@ -907,7 +1005,7 @@ export function BacktestHistorySection({
               navigateTo(backtestComparePath(compareSelection, graph.metadata?.graph_id || ""))
             }
           >
-            打开对比 ({compareSelection.length}/2)
+            {t("打开对比")} ({compareSelection.length}/2)
           </button>
           <button className="ghost-btn compact-btn" onClick={() => clearBacktestCompareSelection()}>
             {HISTORY_COPY.clearCompare}
@@ -941,10 +1039,10 @@ export function BacktestHistorySection({
           <HistoryNotice>{`已选对比：${compareSelection.join(", ")}`}</HistoryNotice>
         ) : null}
         {runtime.backtestHistoryStatus === "loading" ? (
-          <HistoryNotice>正在加载回测历史...</HistoryNotice>
+          <HistoryNotice>{t("正在加载回测历史...")}</HistoryNotice>
         ) : null}
         {filteredBacktests.length === 0 && runtime.backtestHistoryStatus !== "loading" ? (
-          <HistoryNotice>当前过滤条件下没有回测记录。</HistoryNotice>
+          <HistoryNotice>{t("当前过滤条件下没有回测记录。")}</HistoryNotice>
         ) : null}
         <div className="run-history-list">
           {pagedBacktests.map((item) => {
@@ -1060,7 +1158,7 @@ export function BacktestHistorySection({
                     disabled={disableCompareToggle}
                     onClick={() => toggleBacktestCompareSelection(item.backtest_id)}
                   >
-                    {isCompareSelected ? "取消对比" : "加入对比"}
+                    {isCompareSelected ? t("取消对比") : t("加入对比")}
                   </button>
                 </div>
               </div>
@@ -1118,19 +1216,19 @@ export function RunHistorySection({
 
   return (
     <EventSection
-      kicker="历史"
+      kicker={t("历史")}
       className="event-sidebar-section event-sidebar-section-run"
-      title="运行历史"
-      summary="聚焦模拟运行记录，保留状态过滤、时间范围和详情恢复。"
+      title={t("运行历史")}
+      summary={t("聚焦模拟运行记录，保留状态过滤、时间范围和详情恢复。")}
     >
       <div className="run-history-card" data-testid="run-history-card">
         <SectionCardHeader
-          title="持久化运行记录"
+          title={t("持久化运行记录")}
           summary={t("查看后端已保存的运行结果，并恢复指定运行详情。")}
           action={
             <button
               className="ghost-btn compact-btn"
-              aria-label="刷新运行记录"
+              aria-label={t("刷新运行记录")}
               data-testid="run-history-refresh"
               disabled={runtime.historyStatus === "loading"}
               onClick={() => handleRefreshRunHistory()}
@@ -1143,19 +1241,19 @@ export function RunHistorySection({
         {runtime.runId ? (
           <div className="analysis-card-grid analysis-card-grid--two">
             <HistoryExplanationCard
-              title="已选运行风控解释"
-              summary={`当前已加载运行 ${runtime.runId} 的风控说明。`}
+              title={t("已选运行风控解释")}
+              summary={t("当前已加载运行 {id} 的风控说明。", { id: runtime.runId })}
               entries={selectedRunRiskEntries}
               testId="run-history-risk-explanations"
             />
             <HistoryExplanationCard
-              title="已选运行订单解释"
-              summary={`当前已加载运行 ${runtime.runId} 的订单说明。`}
+              title={t("已选运行订单解释")}
+              summary={t("当前已加载运行 {id} 的订单说明。", { id: runtime.runId })}
               entries={selectedRunOrderEntries}
               testId="run-history-order-explanations"
             />
             <HistoryExplanationCard
-              title="已选运行数据质量"
+              title={t("已选运行数据质量")}
               summary={`Data quality details for loaded run ${runtime.runId}.`}
               entries={selectedRunDataQualityEntries}
               testId="run-history-data-quality"
@@ -1165,7 +1263,7 @@ export function RunHistorySection({
               sourceId={runtime.runId}
               capabilityContext={runtime.governance ? { schema_hash: runtime.governance.capability_hash } : null}
               initialMutations={runtime.parameterMutations || []}
-              title="参数变更"
+              title={t("参数变更")}
               testId="run-history-mutation-panel"
             />
           </div>
@@ -1176,13 +1274,13 @@ export function RunHistorySection({
             {
               key: "graph",
               value: historyFilter ?? runtime.historyFilter ?? "",
-              placeholder: "按图 ID 过滤",
+              placeholder: t("按图 ID 过滤"),
               onChange: setRunHistoryFilter
             },
             {
               key: "compile",
               value: historyCompileFilter ?? runtime.historyCompileFilter ?? "",
-              placeholder: "按编译 ID 过滤",
+              placeholder: t("按编译 ID 过滤"),
               onChange: setRunHistoryCompileFilter
             },
             {
@@ -1205,12 +1303,12 @@ export function RunHistorySection({
               value: historyStatusFilter ?? runtime.historyStatusFilter ?? "all",
               onChange: setRunHistoryStatusFilter,
               options: [
-                { value: "all", label: "全部状态" },
-                { value: "completed", label: "已完成" },
-                { value: "running", label: "运行中" },
-                { value: "connecting", label: "连接中" },
-                 { value: "error", label: "错误" },
-                { value: "stopped", label: "已停止" }
+                { value: "all", label: t("全部状态") },
+                { value: "completed", label: t("已完成") },
+                { value: "running", label: t("运行中") },
+                { value: "connecting", label: t("连接中") },
+                 { value: "error", label: t("错误") },
+                { value: "stopped", label: t("已停止") }
               ]
             },
             {
@@ -1219,15 +1317,15 @@ export function RunHistorySection({
               value: historySortOrder ?? runtime.historySortOrder ?? "desc",
               onChange: setRunHistorySortOrder,
               options: [
-                 { value: "desc", label: "时间倒序" },
-                 { value: "asc", label: "时间正序" }
+                 { value: "desc", label: t("时间倒序") },
+                 { value: "asc", label: t("时间正序") }
               ]
             }
           ]}
         />
         <HistoryControlBar
           className="history-control-bar-run"
-          refreshAriaLabel="刷新运行记录"
+          refreshAriaLabel={t("刷新运行记录")}
           refreshDisabled={runtime.historyStatus === "loading"}
           onRefresh={() => handleRefreshRunHistory()}
           pageSize={historyPageSize ?? runtime.historyPageSize ?? 6}
@@ -1259,10 +1357,10 @@ export function RunHistorySection({
           }
         />
         {runtime.historyStatus === "loading" ? (
-          <HistoryNotice>正在加载运行记录...</HistoryNotice>
+          <HistoryNotice>{t("正在加载运行记录...")}</HistoryNotice>
         ) : null}
         {filteredHistory.length === 0 && runtime.historyStatus !== "loading" ? (
-          <HistoryNotice>当前过滤条件下没有运行记录。</HistoryNotice>
+          <HistoryNotice>{t("当前过滤条件下没有运行记录。")}</HistoryNotice>
         ) : null}
         <div className="run-history-list">
           {pagedHistory.map((run) => {
@@ -1316,80 +1414,81 @@ export function RunHistorySection({
 }
 
 export function AccountSection({ runtime, openOrders }) {
+  const { t } = useI18n();
   return (
     <EventSection
-      kicker="账户"
+      kicker={t("账户")}
       className="event-sidebar-section event-sidebar-section-account"
-      title="账户与挂单"
-      summary="把账户摘要和当前挂单放在同一块，减少来回切换。"
+      title={t("账户与挂单")}
+      summary={t("把账户摘要和当前挂单放在同一块，减少来回切换。")}
     >
       <div className="open-orders-card">
-        <SectionCardHeader title="账户摘要" summary="现金、净值、杠杆和名义价值统一展示。" />
+        <SectionCardHeader title={t("账户摘要")} summary={t("现金、净值、杠杆和名义价值统一展示。")} />
         <div className="account-metric-grid">
           <div className="account-metric-card" data-testid="account-summary-equity">
-            <span>总资产估值</span>
+            <span>{t("总资产估值")}</span>
             <strong>{formatValue(runtime.account?.equity_estimate ?? runtime.account?.cash_balance)}</strong>
           </div>
           <div className="account-metric-card">
-            <span>总现金</span>
+            <span>{t("总现金")}</span>
             <strong>{formatValue(runtime.account?.cash_balance)}</strong>
           </div>
           <div className="account-metric-card">
-            <span>可用现金</span>
+            <span>{t("可用现金")}</span>
             <strong>{formatValue(runtime.account?.available_cash_balance)}</strong>
           </div>
           <div className="account-metric-card">
-            <span>冻结现金</span>
+            <span>{t("冻结现金")}</span>
             <strong>{formatValue(runtime.account?.frozen_cash_balance)}</strong>
           </div>
           <div className="account-metric-card">
-            <span>总杠杆</span>
+            <span>{t("总杠杆")}</span>
             <strong>{formatValue(runtime.account?.total_leverage ?? runtime.account?.pnl)}</strong>
           </div>
           <div className="account-metric-card">
-            <span>持仓数</span>
+            <span>{t("持仓数")}</span>
             <strong>{formatValue(runtime.account?.positions)}</strong>
           </div>
         </div>
         <div className="kv-line">
-          <span>总名义价值</span>
+          <span>{t("总名义价值")}</span>
           <strong>{formatValue(runtime.account?.total_gross_notional)}</strong>
         </div>
         <div className="kv-line">
-          <span>净名义价值</span>
+          <span>{t("净名义价值")}</span>
           <strong>{formatValue(runtime.account?.total_net_notional)}</strong>
         </div>
       </div>
       <div className="open-orders-card">
         <SectionCardHeader
-          title="当前挂单"
-          summary="买单主要冻结现金，卖单主要冻结仓位。"
+          title={t("当前挂单")}
+          summary={t("买单主要冻结现金，卖单主要冻结仓位。")}
           value={formatValue(runtime.account?.open_order_count)}
         />
-        {openOrders.length === 0 ? <div className="muted-line">当前没有挂单。</div> : null}
+        {openOrders.length === 0 ? <div className="muted-line">{t("当前没有挂单。")}</div> : null}
         {openOrders.map((order) => (
           <div key={order.order_id} className="open-order-item">
             <div className="open-order-topline">
               <span className={`side-pill ${orderSideClass(order.side)}`}>
-                {order.side === "Sell" ? "卖出" : "买入"}
+                {order.side === "Sell" ? t("卖出") : t("买入")}
               </span>
               <strong>{order.order_id}</strong>
             </div>
             <div className="open-order-grid">
               <div>
-                <span>剩余数量</span>
+                <span>{t("剩余数量")}</span>
                 <strong>{formatValue(order.remaining_qty)}</strong>
               </div>
               <div>
-                <span>限价</span>
+                <span>{t("限价")}</span>
                 <strong>{formatValue(order.limit_price)}</strong>
               </div>
               <div>
-                <span>冻结现金</span>
+                <span>{t("冻结现金")}</span>
                 <strong>{formatValue(order.reserved_cash)}</strong>
               </div>
               <div>
-                <span>冻结仓位</span>
+                <span>{t("冻结仓位")}</span>
                 <strong>{formatValue(order.reserved_qty)}</strong>
               </div>
             </div>

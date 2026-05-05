@@ -268,7 +268,7 @@ pub fn build_backtest_artifact_views(
             .and_then(|spec| spec.run_spec.execution_assumption_sources.as_ref()),
     )?;
     let backtest_output_digest =
-        canonical_json_sha256_digest(&record.backtest).context("failed to hash backtest output")?;
+        canonical_json_sha256_digest(&record.backtest).context("计算回测输出哈希失败")?;
     let manifest = build_reproducibility_manifest(
         record,
         &event_log,
@@ -759,7 +759,7 @@ fn build_event_log_artifact(
     events: &[FrontendRuntimeEvent],
 ) -> anyhow::Result<EventLogArtifact> {
     let digest =
-        canonical_json_sha256_digest(events).context("failed to hash event log artifact")?;
+        canonical_json_sha256_digest(events).context("计算事件日志制品哈希失败")?;
     Ok(EventLogArtifact {
         schema_version: EVENT_LOG_ARTIFACT_V1_VERSION.to_string(),
         artifact_id: artifact_id("event_log_artifact", &digest),
@@ -787,7 +787,7 @@ fn build_trade_ledger_artifact(
         "trades": trades,
     });
     let digest =
-        canonical_json_sha256_digest(&payload).context("failed to hash trade ledger artifact")?;
+        canonical_json_sha256_digest(&payload).context("计算交易账本制品哈希失败")?;
     Ok(TradeLedgerArtifact {
         schema_version: TRADE_LEDGER_ARTIFACT_V1_VERSION.to_string(),
         artifact_id: artifact_id("trade_ledger_artifact", &digest),
@@ -892,7 +892,7 @@ fn build_equity_curve_artifact(
         })
         .collect::<Vec<_>>();
     let digest =
-        canonical_json_sha256_digest(&points).context("failed to hash equity curve artifact")?;
+        canonical_json_sha256_digest(&points).context("计算权益曲线制品哈希失败")?;
     Ok(EquityCurveArtifact {
         schema_version: EQUITY_CURVE_ARTIFACT_V1_VERSION.to_string(),
         artifact_id: artifact_id("equity_curve_artifact", &digest),
@@ -946,7 +946,7 @@ fn build_metrics_artifact(
         "execution_assumptions": execution_assumptions,
     });
     let digest =
-        canonical_json_sha256_digest(&payload).context("failed to hash metrics artifact")?;
+        canonical_json_sha256_digest(&payload).context("计算指标制品哈希失败")?;
     Ok(MetricsArtifact {
         schema_version: METRICS_ARTIFACT_V1_VERSION.to_string(),
         artifact_id: artifact_id("metrics_artifact", &digest),
@@ -1148,6 +1148,7 @@ fn summarize_equity_curve(
         turnover_ratio,
         average_trade_notional,
         fee_drag_ratio,
+        win_rate: 0.0,
     }
 }
 
@@ -1156,22 +1157,22 @@ fn projection_context(event: &FrontendRuntimeEvent) -> anyhow::Result<EventProje
         .payload
         .get("artifact_projection")
         .and_then(Value::as_object)
-        .ok_or_else(|| anyhow!("missing artifact projection context on {}", event.event_id))?;
+        .ok_or_else(|| anyhow!("在 {} 上缺少制品投影上下文", event.event_id))?;
     Ok(EventProjectionContext {
         session_index: projection
             .get("session_index")
             .and_then(Value::as_u64)
-            .ok_or_else(|| anyhow!("missing session_index on {}", event.event_id))?
+            .ok_or_else(|| anyhow!("在 {} 上缺少 session_index", event.event_id))?
             as usize,
         cycle_name: projection
             .get("cycle_name")
             .and_then(Value::as_str)
-            .ok_or_else(|| anyhow!("missing cycle_name on {}", event.event_id))?
+            .ok_or_else(|| anyhow!("在 {} 上缺少 cycle_name", event.event_id))?
             .to_string(),
         session_started_at_ms: projection
             .get("session_started_at_ms")
             .and_then(Value::as_u64)
-            .ok_or_else(|| anyhow!("missing session_started_at_ms on {}", event.event_id))?,
+            .ok_or_else(|| anyhow!("在 {} 上缺少 session_started_at_ms", event.event_id))?,
     })
 }
 
@@ -1180,26 +1181,26 @@ fn open_order_summary_from_value(value: &Value) -> anyhow::Result<super::OpenOrd
         order_id: value
             .get("order_id")
             .and_then(Value::as_str)
-            .ok_or_else(|| anyhow!("missing open order id"))?
+            .ok_or_else(|| anyhow!("缺少未结订单 ID"))?
             .to_string(),
         side: value
             .get("side")
             .and_then(Value::as_str)
-            .ok_or_else(|| anyhow!("missing open order side"))?
+            .ok_or_else(|| anyhow!("缺少未结订单方向"))?
             .to_string(),
         remaining_qty: value
             .get("remaining_qty")
             .and_then(Value::as_f64)
-            .ok_or_else(|| anyhow!("missing open order remaining_qty"))?,
+            .ok_or_else(|| anyhow!("缺少未结订单 remaining_qty"))?,
         limit_price: value.get("limit_price").and_then(Value::as_f64),
         reserved_cash: value
             .get("reserved_cash")
             .and_then(Value::as_f64)
-            .ok_or_else(|| anyhow!("missing open order reserved_cash"))?,
+            .ok_or_else(|| anyhow!("缺少未结订单 reserved_cash"))?,
         reserved_qty: value
             .get("reserved_qty")
             .and_then(Value::as_f64)
-            .ok_or_else(|| anyhow!("missing open order reserved_qty"))?,
+            .ok_or_else(|| anyhow!("缺少未结订单 reserved_qty"))?,
     })
 }
 
@@ -1208,20 +1209,20 @@ fn payload_string(payload: &Value, key: &str) -> anyhow::Result<String> {
         .get(key)
         .and_then(Value::as_str)
         .map(ToString::to_string)
-        .ok_or_else(|| anyhow!("missing string field {key}"))
+        .ok_or_else(|| anyhow!("缺少字符串字段 {key}"))
 }
 
 fn payload_number(payload: &Value, key: &str) -> anyhow::Result<f64> {
     payload
         .get(key)
         .and_then(Value::as_f64)
-        .ok_or_else(|| anyhow!("missing numeric field {key}"))
+        .ok_or_else(|| anyhow!("缺少数字字段 {key}"))
 }
 
 fn payload_number_with_fallback(payload: &Value, keys: &[&str]) -> anyhow::Result<f64> {
     keys.iter()
         .find_map(|key| payload.get(*key).and_then(Value::as_f64))
-        .ok_or_else(|| anyhow!("missing numeric fields {}", keys.join(", ")))
+        .ok_or_else(|| anyhow!("缺少数字字段 {}", keys.join(", ")))
 }
 
 fn payload_u64_with_fallback(payload: &Value, keys: &[&str]) -> Option<u64> {
@@ -1234,7 +1235,7 @@ fn payload_usize(payload: &Value, key: &str) -> anyhow::Result<usize> {
         .get(key)
         .and_then(Value::as_u64)
         .map(|value| value as usize)
-        .ok_or_else(|| anyhow!("missing usize field {key}"))
+        .ok_or_else(|| anyhow!("缺少 usize 字段 {key}"))
 }
 
 fn payload_array<'a>(payload: &'a Value, key: &str) -> Option<&'a Vec<Value>> {
@@ -1248,8 +1249,8 @@ where
     let value = payload
         .get(key)
         .cloned()
-        .ok_or_else(|| anyhow!("missing enum field {key}"))?;
-    serde_json::from_value(value).map_err(|error| anyhow!("failed to parse {key}: {error}"))
+        .ok_or_else(|| anyhow!("缺少枚举字段 {key}"))?;
+    serde_json::from_value(value).map_err(|error| anyhow!("解析 {key} 失败: {error}"))
 }
 
 fn payload_enum_with_fallback<T>(payload: &Value, keys: &[&str]) -> anyhow::Result<T>
@@ -1259,10 +1260,10 @@ where
     for key in keys {
         if let Some(value) = payload.get(*key).cloned() {
             return serde_json::from_value(value)
-                .map_err(|error| anyhow!("failed to parse {key}: {error}"));
+                .map_err(|error| anyhow!("解析 {key} 失败: {error}"));
         }
     }
-    Err(anyhow!("missing enum fields {}", keys.join(", ")))
+    Err(anyhow!("缺少枚举字段 {}", keys.join(", ")))
 }
 
 fn empty_account_summary() -> AccountSummary {
@@ -1412,8 +1413,10 @@ mod tests {
                     turnover_ratio: 9.99,
                     average_trade_notional: 1.0,
                     fee_drag_ratio: 0.5,
+                    win_rate: 0.5,
                 },
                 final_portfolio: PortfolioState::new(1.0, 100),
+                debug_values: None,
             },
             backtest_spec: Some(BacktestSpec::new(
                 "backtest_projection_test",

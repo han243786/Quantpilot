@@ -180,7 +180,7 @@ impl ReplayDataModule {
             .collect::<Vec<_>>();
         if kline_sources.is_empty() {
             return Err(anyhow!(
-                "backtest requires at least one enabled kline data source"
+                "回测需要至少一个启用的 K 线数据源"
             ));
         }
         let step_count = kline_bars
@@ -189,7 +189,7 @@ impl ReplayDataModule {
             .min()
             .unwrap_or(0);
         if step_count == 0 {
-            return Err(anyhow!("backtest requires non-empty historical kline data"));
+            return Err(anyhow!("回测需要非空的历史 K 线数据"));
         }
 
         let quote_sources = data_sources
@@ -269,12 +269,12 @@ impl DataModuleProvider for ReplayDataModule {
         let step = *self
             .next_step
             .lock()
-            .map_err(|_| anyhow!("replay data module step mutex poisoned"))?;
+            .map_err(|_| anyhow!("回放数据模块步骤互斥锁中毒"))?;
         let frame = self
             .frames
             .get(step)
             .or_else(|| self.frames.last())
-            .ok_or_else(|| anyhow!("replay data module has no frames"))?;
+            .ok_or_else(|| anyhow!("回放数据模块没有帧数据"))?;
 
         let mut normalized_data = Vec::new();
         let mut events = Vec::new();
@@ -297,7 +297,7 @@ impl DataModuleProvider for ReplayDataModule {
                     .cloned()
                     .map(NormalizedMarketData::Quote),
             }
-            .ok_or_else(|| anyhow!("missing replay frame data for {}", source.data_id))?;
+            .ok_or_else(|| anyhow!("缺失 {} 的回放帧数据", source.data_id))?;
             let diagnostics = FetchDiagnostics {
                 provider_key: self.provider_key(),
                 source_status: qrpc_core::SourceStatus::Healthy,
@@ -355,7 +355,7 @@ impl DataModuleProvider for ReplayDataModule {
             let mut guard = self
                 .next_step
                 .lock()
-                .map_err(|_| anyhow!("replay data module step mutex poisoned"))?;
+                .map_err(|_| anyhow!("回放数据模块步骤互斥锁中毒"))?;
             if *guard + 1 < self.frames.len() {
                 *guard += 1;
             }
@@ -484,6 +484,7 @@ pub struct FastBacktestSandbox {
     replay_timestamps: Vec<u64>,
     latency_assumption_ms: u64,
     test_mode: DeterministicTestMode,
+    pub debug_var_names: Vec<String>,
 }
 
 impl FastBacktestSandbox {
@@ -501,6 +502,7 @@ impl FastBacktestSandbox {
             replay_timestamps: Vec::new(),
             latency_assumption_ms: 0,
             test_mode,
+            debug_var_names: Vec::new(),
         }
     }
 
@@ -524,6 +526,7 @@ impl FastBacktestSandbox {
             replay_timestamps,
             latency_assumption_ms: 0,
             test_mode,
+            debug_var_names: Vec::new(),
         })
     }
 
@@ -565,6 +568,7 @@ impl FastBacktestSandbox {
             replay_timestamps,
             latency_assumption_ms: 0,
             test_mode,
+            debug_var_names: Vec::new(),
         })
     }
 
@@ -583,7 +587,7 @@ impl FastBacktestSandbox {
     pub fn run_backtest(&mut self) -> Result<BacktestOutput> {
         ensure_running(self.running, "fast backtest sandbox")?;
         if self.replay_timestamps.is_empty() {
-            return Err(anyhow!("backtest replay frames are not configured"));
+            return Err(anyhow!("回测回放帧未配置"));
         }
 
         let started_at_ms = self
@@ -604,6 +608,7 @@ impl FastBacktestSandbox {
         let mut peak_equity = self.coordinator.portfolio_state().cash_balance;
         let mut max_drawdown_ratio = 0.0_f64;
         let mut trade_count = 0_usize;
+        let mut debug_rows: Vec<BTreeMap<String, f64>> = Vec::new();
 
         for ts_ms in self.replay_timestamps.clone() {
             let slow_now_ms = ts_ms.saturating_add(self.latency_assumption_ms);
@@ -623,6 +628,17 @@ impl FastBacktestSandbox {
                 cash_balance: session.final_portfolio.cash_balance,
                 net_notional: session.final_portfolio.total_net_notional,
             });
+            if !self.debug_var_names.is_empty() {
+                let mut row = BTreeMap::new();
+                for signal in session.slow_cycle.intent_signals.iter().chain(session.fast_cycle.intent_signals.iter()) {
+                    for (key, value) in &signal.derived_metrics {
+                        if self.debug_var_names.iter().any(|v| key.contains(v.as_str()) || v.as_str().contains(key.as_str())) {
+                            row.insert(key.clone(), *value);
+                        }
+                    }
+                }
+                debug_rows.push(row);
+            }
             sessions.push(session);
         }
 
@@ -640,6 +656,15 @@ impl FastBacktestSandbox {
             0.0
         };
 
+        // Compute win_rate from equity curve
+        let mut wins = 0usize;
+        let mut total_steps = 0usize;
+        for window in equity_curve.windows(2) {
+            total_steps += 1;
+            if window[1].equity > window[0].equity { wins += 1; }
+        }
+        let win_rate = if total_steps > 0 { wins as f64 / total_steps as f64 } else { 0.0 };
+
         Ok(BacktestOutput {
             mode: "historical_replay".into(),
             started_at_ms,
@@ -656,8 +681,10 @@ impl FastBacktestSandbox {
                 turnover_ratio: 0.0,
                 average_trade_notional: 0.0,
                 fee_drag_ratio: 0.0,
+                win_rate,
             },
             final_portfolio: self.coordinator.portfolio_state().clone(),
+            debug_values: if self.debug_var_names.is_empty() { None } else { Some(debug_rows) },
         })
     }
 }
@@ -757,7 +784,7 @@ fn ensure_running(running: bool, label: &str) -> Result<()> {
     if running {
         Ok(())
     } else {
-        Err(anyhow!("{label} is not running"))
+        Err(anyhow!("{label} 未在运行"))
     }
 }
 
@@ -795,7 +822,7 @@ mod tests {
         let mut sandbox = FastBacktestSandbox::new(RuntimeCoordinator::new(compiled));
         let err = sandbox.run_session(1, 2).unwrap_err();
 
-        assert!(err.to_string().contains("not running"));
+        assert!(err.to_string().contains("未在运行"));
     }
 
     #[test]

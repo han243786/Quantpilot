@@ -163,7 +163,7 @@ const frontendModuleNotesMap = {
     "Spread-related module exposure is beta-only and must carry explicit boundary notes."
   ],
   "builtin.agent.arbitrage": [
-    "The module key may stay visible in beta code paths, but it is not evidence of true arbitrage platform support."
+    "该模块键可能在 Beta 代码路径中保持可见，但这并不代表真正的套利平台支持。"
   ]
 };
 

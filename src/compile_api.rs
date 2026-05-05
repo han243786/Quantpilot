@@ -33,9 +33,42 @@ async fn compile_runtime_request(
                 .collect(),
         ));
     }
+
+    // Run QS pipeline validation when graph_json is present (supplementary — does not replace legacy compilation)
+    let qs_pipeline_diagnostics = if let Some(ref graph_json) = request.graph_json {
+        match generate_quantscript_from_graph_value(graph_json)
+            .and_then(|qs_source| parse_graph_quantscript_source(&qs_source))
+            .and_then(|graph_value| convert_graph_json_to_script_module(&graph_value))
+            .and_then(|module| quantscript::lower_script_to_runtime_config(&module))
+        {
+            Ok(qs_protocol) => {
+                vec![CompileDiagnostic {
+                    code: "QPCONVOK".to_string(),
+                    severity: CompileDiagnosticSeverity::Warning,
+                    message: format!(
+                        "QS 管道验证通过: {} 个数据源, {} 个意图",
+                        qs_protocol.data_sources.len(),
+                        qs_protocol.intents.len()
+                    ),
+                    target: None,
+                    span_label: None,
+                    hint: None,
+                }]
+            }
+            Err(e) => {
+                eprintln!("[compile_api] QS 管道验证（非致命）: {}", e);
+                Vec::new()
+            }
+        }
+    } else {
+        eprintln!("[compile_api] 警告: 未收到 graph_json, 使用旧编译路径 (将在 v0.4.0 移除)");
+        Vec::new()
+    };
+
     let mapped = map_frontend_runtime_config(&request.runtime_config).map_err(internal_error)?;
-    let compiled =
-        compile_runtime_protocol_config(&mapped.runtime_protocol).map_err(internal_error)?;
+    let runtime_protocol_counts = (mapped.runtime_protocol.data_sources.len(), mapped.runtime_protocol.intents.len(), mapped.runtime_protocol.agents.len(), mapped.runtime_protocol.risks.len());
+    let runtime_targets = compile_runtime_targets_from_mapped(&mapped);
+    let compiled = compile_runtime_protocol_config(&mapped.runtime_protocol).map_err(internal_error)?;
     let artifacts = build_compile_artifact_bundle(
         &request.runtime_config.metadata.graph_id,
         &request.runtime_config.metadata.compile_id,
@@ -47,7 +80,8 @@ async fn compile_runtime_request(
         &compiled,
     )
     .map_err(internal_error)?;
-    let diagnostics = collect_compile_diagnostics(&request.runtime_config);
+    let mut diagnostics = collect_compile_diagnostics(&request.runtime_config);
+    diagnostics.extend(qs_pipeline_diagnostics);
     let protocol_name = compiled.protocol_name.clone();
     let config_hash = compiled.config_hash.clone();
     let core_ir = compiled.core_ir.clone();
@@ -61,15 +95,15 @@ async fn compile_runtime_request(
         core_ir,
         artifacts,
         counts: CompileCounts {
-            data_sources: mapped.runtime_protocol.data_sources.len(),
-            intent_generators: mapped.runtime_protocol.intents.len(),
-            agents: mapped.runtime_protocol.agents.len(),
-            risk_controls: mapped.runtime_protocol.risks.len(),
+            data_sources: runtime_protocol_counts.0,
+            intent_generators: runtime_protocol_counts.1,
+            agents: runtime_protocol_counts.2,
+            risk_controls: runtime_protocol_counts.3,
             executions: request.runtime_config.executions.len(),
         },
         diagnostics,
         runtime_config: request.runtime_config.clone(),
-        runtime_targets: compile_runtime_targets_from_mapped(&mapped),
+        runtime_targets,
     }))
 }
 
@@ -80,7 +114,7 @@ async fn compile_strategy_ir_request(
         serde_json::from_value::<StrategyIr>(request.strategy_ir).map_err(|error| {
             json_bad_request_with_details(
                 "strategy_ir_compile_failed",
-                "invalid Strategy IR JSON payload",
+                "无效的 Strategy IR JSON 负载",
                 vec![ApiErrorDetail {
                     code: "QPSTRATJSON001".to_string(),
                     target: Some("strategy_ir".to_string()),
@@ -99,7 +133,7 @@ async fn compile_strategy_ir_request(
             .collect::<Vec<_>>();
         return Err(json_bad_request_with_details(
             "strategy_ir_compile_failed",
-            "Strategy IR validation failed",
+            "Strategy IR 验证失败",
             diagnostics
                 .iter()
                 .map(api_error_detail_from_compile_diagnostic)
@@ -113,7 +147,7 @@ async fn compile_strategy_ir_request(
         )];
         json_bad_request_with_details(
             "strategy_ir_compile_failed",
-            "Strategy IR lowering failed",
+            "Strategy IR 下层转换失败",
             diagnostics
                 .iter()
                 .map(api_error_detail_from_compile_diagnostic)
@@ -172,7 +206,7 @@ async fn compile_formal_quantscript_request(
     if !error_details.is_empty() {
         return Err(json_bad_request_with_details_and_partial(
             "quantscript_compile_failed",
-            "formal QuantScript semantic analysis failed",
+            "形式化 QuantScript 语义分析失败",
             error_details,
             partial_authoring_view.clone(),
         ));
@@ -185,7 +219,7 @@ async fn compile_formal_quantscript_request(
     if !lowering_error_details.is_empty() {
         return Err(json_bad_request_with_details_and_partial(
             "quantscript_lowering_failed",
-            "formal QuantScript lowering failed",
+            "形式化 QuantScript 下层转换失败",
             lowering_error_details,
             partial_authoring_view.clone(),
         ));
@@ -197,14 +231,14 @@ async fn compile_formal_quantscript_request(
             if diagnostic.code != "QPQSLOW999" {
                 return json_bad_request_with_details_and_partial(
                     "quantscript_lowering_failed",
-                    "formal QuantScript lowering failed",
+                    "形式化 QuantScript 下层转换失败",
                     vec![api_error_detail_from_compile_diagnostic(&diagnostic)],
                     partial_authoring_view.clone(),
                 );
             }
             json_bad_request_with_partial(
                 "quantscript_lowering_failed",
-                format!("formal QuantScript lowering failed: {message}"),
+                format!("形式化 QuantScript 下层转换失败: {message}"),
                 partial_authoring_view.clone(),
             )
         })?;

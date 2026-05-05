@@ -24,8 +24,9 @@ export function requestFormalQuantScriptCompile({
   });
 }
 
-export function requestRuntimeCompile(runtimeConfig) {
+export function requestRuntimeCompile(runtimeConfig, graphJson) {
   return postJson("/runtime/compile", {
-    runtime_config: runtimeConfig
+    runtime_config: runtimeConfig,
+    graph_json: graphJson
   });
 }

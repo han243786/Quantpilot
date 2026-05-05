@@ -456,7 +456,7 @@ pub(super) fn validate_graph_id(input: &str) -> anyhow::Result<()> {
     if valid {
         Ok(())
     } else {
-        anyhow::bail!("graph_id must use only ASCII letters, numbers, '_' or '-'")
+        anyhow::bail!("graph_id 只能使用 ASCII 字母、数字、'_' 或 '-'")
     }
 }
 

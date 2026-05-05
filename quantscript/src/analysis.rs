@@ -45,7 +45,7 @@ fn collect_unsupported_construct_diagnostics(
                 if import_decl.names.is_none() && import_decl.module.contains(" as ") {
                     diagnostics.push(Diagnostic::error(
                         "QS0608",
-                        "formal QuantScript does not support plain `import foo as bar`; use `from module import name as alias` instead",
+                        "形式化 QuantScript 不支持简单的 `import foo as bar`；请使用 `from module import name as alias`",
                         Some(Span::module(import_decl.module.clone())),
                     ));
                 }
@@ -54,7 +54,7 @@ fn collect_unsupported_construct_diagnostics(
                 if function.is_async {
                     diagnostics.push(Diagnostic::error(
                         "QS0601",
-                        "formal QuantScript does not support async functions in the executable trunk",
+                        "形式化 QuantScript 不支持可执行主干中的异步函数",
                         Some(Span::function(function.name.clone())),
                     ));
                 }
@@ -66,7 +66,7 @@ fn collect_unsupported_construct_diagnostics(
                 if function_contains_direct_recursion(function, &function.name) {
                     diagnostics.push(Diagnostic::error(
                         "QS0605",
-                        "formal QuantScript does not support recursive helper calls in the executable trunk",
+                        "形式化 QuantScript 不支持可执行主干中的递归辅助调用",
                         Some(Span::function(function.name.clone())),
                     ));
                 }
@@ -120,7 +120,7 @@ fn collect_unsupported_constructs_from_stmts(
             Stmt::While { condition, body } => {
                 diagnostics.push(Diagnostic::error(
                     "QS0603",
-                    "formal QuantScript does not support while loops in the executable trunk",
+                    "形式化 QuantScript 不支持可执行主干中的 while 循环",
                     Some(Span::function(function_name.to_string())),
                 ));
                 collect_unsupported_constructs_from_expr(condition, diagnostics);
@@ -129,7 +129,7 @@ fn collect_unsupported_constructs_from_stmts(
             Stmt::Match { expr, arms } => {
                 diagnostics.push(Diagnostic::error(
                     "QS0604",
-                    "formal QuantScript does not support match statements in the executable trunk",
+                    "形式化 QuantScript 不支持可执行主干中的 match 语句",
                     Some(Span::function(function_name.to_string())),
                 ));
                 collect_unsupported_constructs_from_expr(expr, diagnostics);
@@ -155,7 +155,7 @@ fn collect_unsupported_constructs_from_expr(expr: &Expr, diagnostics: &mut Vec<D
         Expr::Await(inner) => {
             diagnostics.push(Diagnostic::error(
                 "QS0602",
-                "formal QuantScript does not support await expressions in the executable trunk",
+                "形式化 QuantScript 不支持可执行主干中的 await 表达式",
                 Some(Span::expr("await")),
             ));
             collect_unsupported_constructs_from_expr(inner, diagnostics);
@@ -164,7 +164,7 @@ fn collect_unsupported_constructs_from_expr(expr: &Expr, diagnostics: &mut Vec<D
             if !is_supported_formal_try_target(inner) {
                 diagnostics.push(Diagnostic::error(
                     "QS0607",
-                    "formal QuantScript only supports postfix `?` on fetch-like data-source expressions in the executable trunk",
+                    "形式化 QuantScript 在可执行主干中仅支持对 fetch 类数据源表达式使用后缀 `?`",
                     Some(Span::expr("?")),
                 ));
             }
@@ -180,13 +180,13 @@ fn collect_unsupported_constructs_from_expr(expr: &Expr, diagnostics: &mut Vec<D
                 if field == "push" {
                     diagnostics.push(Diagnostic::error(
                         "QS0609",
-                        "formal QuantScript does not support mutable list-building with `.push(...)` in the executable trunk",
+                        "形式化 QuantScript 不支持可执行主干中使用 `.push(...)` 构建可变列表",
                         Some(Span::expr(".push")),
                     ));
                 } else if matches!(field.as_str(), "ok" | "retryable") {
                     diagnostics.push(Diagnostic::error(
                         "QS0610",
-                        "formal QuantScript does not support `.ok()` / `.retryable()` helper conveniences in the executable trunk",
+                        "形式化 QuantScript 不支持可执行主干中的 `.ok()` / `.retryable()` 辅助方法",
                         Some(Span::expr(field.clone())),
                     ));
                 }
@@ -391,7 +391,7 @@ fn collect_non_universe_for_loop_diagnostics_from_hir_stmts(
                 if !matches!(types.get(iterable.ty), Type::Universe) {
                     diagnostics.push(Diagnostic::error(
                         "QS0606",
-                        "formal QuantScript only supports for-loops over Universe in the executable trunk",
+                        "形式化 QuantScript 在可执行主干中仅支持对 Universe 的 for 循环",
                         Some(span.clone()),
                     ));
                 }
@@ -560,7 +560,7 @@ fn collect_series_index_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnostic>
             if expr_integer(index).is_some_and(|value| value < 0) {
                 diagnostics.push(Diagnostic::error(
                     "QS0401",
-                    "look-ahead risk: negative series indices access future bars; use `series[0]` for the latest bar and positive lookbacks for history",
+                    "前视风险: 负数序列索引会访问未来 K 线；请使用 `series[0]` 获取最新 K 线，正数回溯获取历史",
                     None,
                 ));
             }
@@ -576,7 +576,7 @@ fn collect_series_index_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnostic>
                 {
                     diagnostics.push(Diagnostic::error(
                         "QS0401",
-                        "look-ahead risk: negative trailing-window spans imply future access; use `series[20..]` for a 20-bar history window",
+                        "前视风险: 负数 trailing-window 跨度意味着未来访问；请使用 `series[20..]` 获取 20 根 K 线的历史窗口",
                         None,
                     ));
                 } else if start
@@ -586,7 +586,7 @@ fn collect_series_index_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnostic>
                 {
                     diagnostics.push(Diagnostic::error(
                         "QS0403",
-                        "trailing windows require a positive span; use `series[1..]` or larger history windows",
+                        "trailing 窗口需要正数跨度；请使用 `series[1..]` 或更大的历史窗口",
                         None,
                     ));
                 }
@@ -699,7 +699,7 @@ fn collect_centered_window_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnost
     if centered_window_uses_future_bars(expr) {
         diagnostics.push(Diagnostic::error(
             "QS0402",
-            "look-ahead risk: `center=true` windows use future bars",
+            "前视风险: `center=true` 窗口使用了未来 K 线",
             None,
         ));
     }
@@ -799,7 +799,7 @@ fn collect_warmup_from_function(
             diagnostics.push(Diagnostic::error(
                 "QS0501",
                 format!(
-                    "warmup is insufficient: strategy needs at least {required_warmup_bars} bars, but fetch only requests {available_bars}"
+                    "预热不足: 策略至少需要 {required_warmup_bars} 根 K 线，但 fetch 仅请求了 {available_bars}"
                 ),
                 None,
             ));

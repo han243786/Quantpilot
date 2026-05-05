@@ -40,6 +40,10 @@ export function chaosPath() {
   return "/chaos";
 }
 
+export function quantscriptPath() {
+  return "/quantscript";
+}
+
 export function backtestComparePath(backtestIds, strategyId = "") {
   const ids = [...new Set((backtestIds || []).filter(Boolean))];
   const query = new URLSearchParams({ ids: ids.join(",") });
@@ -72,6 +76,10 @@ export function parseRoute(pathname, search = "") {
 
   if (pathname === "/chaos") {
     return { name: "chaos" };
+  }
+
+  if (pathname === "/quantscript") {
+    return { name: "quantscript" };
   }
 
   const strategyBacktestsMatch = pathname.match(/^\/strategies\/([^/]+)\/backtests$/);

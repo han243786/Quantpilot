@@ -28,7 +28,7 @@ fn build_strategy_artifact(
         "source_ref": source_ref,
         "metadata": metadata,
     }))
-    .context("failed to hash strategy artifact")?;
+    .context("计算策略制品哈希失败")?;
     Ok(StrategyArtifact {
         schema_version: STRATEGY_ARTIFACT_V1_VERSION.to_string(),
         artifact_id: artifact_id("strategy_artifact", &digest),
@@ -64,7 +64,7 @@ pub(super) fn build_compile_artifact_bundle(
         extra_metadata,
     )?;
     let core_ir_digest = canonical_json_sha256_digest(&compiled.core_ir)
-        .context("failed to hash core ir artifact")?;
+        .context("计算 Core IR 制品哈希失败")?;
     let core_ir = CoreIrArtifact {
         schema_version: CORE_IR_ARTIFACT_V1_VERSION.to_string(),
         artifact_id: artifact_id("core_ir_artifact", &core_ir_digest),
@@ -83,7 +83,7 @@ pub(super) fn build_compile_artifact_bundle(
         "core_ir_artifact_id": core_ir.artifact_id.clone(),
         "runtime_config": compiled.config.clone(),
     }))
-    .context("failed to hash compile artifact")?;
+    .context("计算编译制品哈希失败")?;
     let compile = CompileArtifact {
         schema_version: COMPILE_ARTIFACT_V1_VERSION.to_string(),
         artifact_id: artifact_id("compile_artifact", &compile_digest),

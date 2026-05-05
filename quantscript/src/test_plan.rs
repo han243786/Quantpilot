@@ -27,6 +27,7 @@ pub enum TestActionDef {
         end: Option<String>,
         seed: Option<u64>,
         save: bool,
+        volatility: Option<f64>,
     },
     Assert(String),
     SaveRun,
@@ -39,6 +40,11 @@ pub enum TestActionDef {
         condition: String,
         timeout_secs: u64,
     },
+    CompareBacktests {
+        left: usize,
+        right: usize,
+    },
+    Debug(Vec<String>),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -67,12 +73,13 @@ impl From<&TestAction> for TestActionDef {
                 duration_secs: *duration_secs,
                 save: *save,
             },
-            TestAction::Backtest { source, start, end, seed, save } => TestActionDef::Backtest {
+            TestAction::Backtest { source, start, end, seed, save, volatility } => TestActionDef::Backtest {
                 source: source.clone(),
                 start: start.clone(),
                 end: end.clone(),
                 seed: *seed,
                 save: *save,
+                volatility: *volatility,
             },
             TestAction::Assert(expr) => TestActionDef::Assert(expr.clone()),
             TestAction::SaveRun => TestActionDef::SaveRun,
@@ -85,6 +92,11 @@ impl From<&TestAction> for TestActionDef {
                 condition: condition.clone(),
                 timeout_secs: *timeout_secs,
             },
+            TestAction::CompareBacktests { left, right } => TestActionDef::CompareBacktests {
+                left: *left,
+                right: *right,
+            },
+            TestAction::Debug(vars) => TestActionDef::Debug(vars.clone()),
         }
     }
 }

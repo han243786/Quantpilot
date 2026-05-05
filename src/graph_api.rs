@@ -123,7 +123,7 @@ pub(super) async fn compare_graph_versions(
         .ok_or_else(|| {
             not_found_io_error(std::io::Error::new(
                 std::io::ErrorKind::NotFound,
-                format!("graph version `{left_version_id}` not found"),
+                format!("未找到图版本 `{left_version_id}`"),
             ))
         })?;
     let right = versions
@@ -133,7 +133,7 @@ pub(super) async fn compare_graph_versions(
         .ok_or_else(|| {
             not_found_io_error(std::io::Error::new(
                 std::io::ErrorKind::NotFound,
-                format!("graph version `{right_version_id}` not found"),
+                format!("未找到图版本 `{right_version_id}`"),
             ))
         })?;
 
@@ -201,7 +201,7 @@ pub(super) async fn delete_graph(
     if !fs::try_exists(&graph_path).await.map_err(io_error)? {
         return Err(not_found_io_error(std::io::Error::new(
             std::io::ErrorKind::NotFound,
-            format!("graph `{}` not found", graph_id),
+            format!("未找到图 `{}`", graph_id),
         )));
     }
 
@@ -225,7 +225,7 @@ pub(super) async fn reveal_graph_file(
     if !fs::try_exists(&graph_path).await.map_err(io_error)? {
         return Err(not_found_io_error(std::io::Error::new(
             std::io::ErrorKind::NotFound,
-            format!("graph `{}` not found", graph_id),
+            format!("未找到图 `{}`", graph_id),
         )));
     }
 
@@ -270,7 +270,21 @@ async fn persist_graph_version(
     let version_dir = graph_version_dir(graph_store_dir, graph_id);
     let version_graph_path = version_dir.join(format!("{}.json", version_id));
     let version_quantscript_path = version_dir.join(format!("{}.qs", version_id));
-    let quantscript = generate_quantscript_from_graph_value(input_graph).map_err(internal_error)?;
+    let quantscript = if input_graph
+        .get("metadata")
+        .and_then(|m| m.get("source_mode"))
+        .and_then(Value::as_str)
+        == Some("quantscript")
+    {
+        let qs_path = graph_store_dir.join(format!("{}.qs", graph_id));
+        if qs_path.exists() {
+            std::fs::read_to_string(&qs_path).unwrap_or_default()
+        } else {
+            generate_quantscript_from_graph_value(input_graph).map_err(internal_error)?
+        }
+    } else {
+        generate_quantscript_from_graph_value(input_graph).map_err(internal_error)?
+    };
     let mut graph = input_graph.clone();
     if let Some(root) = graph.as_object_mut() {
         let metadata = root
@@ -452,7 +466,7 @@ async fn read_graph_versions(
         let version_id = path
             .file_stem()
             .and_then(|item| item.to_str())
-            .ok_or_else(|| internal_error(anyhow::anyhow!("invalid graph version filename")))?;
+            .ok_or_else(|| internal_error(anyhow::anyhow!("无效的图版本文件名")))?;
         let quantscript_path = version_dir.join(format!("{}.qs", version_id));
         let version_label = value
             .get("metadata")
@@ -567,7 +581,7 @@ fn validate_graph_version_id(version_id: &str) -> anyhow::Result<()> {
         || version_id.contains('\\')
         || version_id.contains("..")
     {
-        bail!("graph version id must be a non-empty file-safe token");
+        bail!("图版本 ID 必须是非空且文件安全的令牌");
     }
 
     Ok(())
@@ -633,7 +647,7 @@ pub(super) async fn resolve_graph_reveal_path_from_value(
 async fn canonical_existing_path(path: &FsPath) -> anyhow::Result<PathBuf> {
     fs::canonicalize(path)
         .await
-        .with_context(|| format!("failed to resolve graph reveal path `{}`", path.display()))
+        .with_context(|| format!("未能解析图显示路径 `{}`", path.display()))
 }
 
 fn reveal_path_in_file_manager(path: &FsPath) -> anyhow::Result<()> {
@@ -642,7 +656,7 @@ fn reveal_path_in_file_manager(path: &FsPath) -> anyhow::Result<()> {
         Command::new("explorer")
             .arg(format!("/select,{}", path.display()))
             .spawn()
-            .context("failed to reveal graph file in Explorer")?;
+            .context("未能显示图文件在资源管理器中")?;
     }
 
     #[cfg(target_os = "macos")]
@@ -651,7 +665,7 @@ fn reveal_path_in_file_manager(path: &FsPath) -> anyhow::Result<()> {
             .arg("-R")
             .arg(path)
             .spawn()
-            .context("failed to reveal graph file in Finder")?;
+            .context("未能显示图文件在 Finder 中")?;
     }
 
     #[cfg(all(unix, not(target_os = "macos")))]
@@ -660,7 +674,7 @@ fn reveal_path_in_file_manager(path: &FsPath) -> anyhow::Result<()> {
         Command::new("xdg-open")
             .arg(parent)
             .spawn()
-            .context("failed to open graph directory")?;
+            .context("未能打开图目录")?;
     }
 
     Ok(())

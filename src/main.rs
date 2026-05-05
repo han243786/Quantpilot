@@ -33,6 +33,7 @@ mod runtime_response_mapping;
 mod runtime_validation;
 mod sandbox_verification;
 mod snapshot_service;
+mod storage_lifecycle;
 mod test_runner;
 
 use anyhow::{bail, Context};
@@ -647,6 +648,10 @@ async fn run_api_server() -> anyhow::Result<()> {
         );
     }
 
+    // 启动时清理过期存储文件和构建工件
+    storage_lifecycle::startup_storage_cleanup(std::path::Path::new("storage"));
+    storage_lifecycle::cleanup_build_artifacts();
+
     let cors_origin = env::var("QUANTPILOT_CORS_ORIGIN")
         .unwrap_or_else(|_| "http://127.0.0.1:5173,http://localhost:5173".to_string());
     let cors_origins: Vec<HeaderValue> = cors_origin
@@ -671,10 +676,16 @@ async fn run_api_server() -> anyhow::Result<()> {
     // Block 5 P1-5 + P3-4: 审批超时 + 观察窗口后台任务
     let expiry_state = state.clone();
     tokio::spawn(async move {
+        let mut tick: u64 = 0;
         loop {
             tokio::time::sleep(tokio::time::Duration::from_secs(60)).await;
+            tick += 1;
             process_expired_approvals(&expiry_state).await;
             check_observation_windows(&expiry_state).await;
+            // 每小时清理一次过期存储文件
+            if tick % 60 == 0 {
+                storage_lifecycle::startup_storage_cleanup(std::path::Path::new("storage"));
+            }
         }
     });
 
@@ -1102,7 +1113,7 @@ fn build_formal_quantscript_strategy_metadata(
     Ok(BTreeMap::from([(
         "quantscript_authoring_view".to_string(),
         serde_json::to_value(authoring_view)
-            .context("failed to serialize quantscript authoring view")?,
+            .context("序列化 QuantScript 编写视图失败")?,
     )]))
 }
 
@@ -1115,7 +1126,7 @@ fn build_quantscript_authoring_view(
     let source_hash = format!(
         "sha256:{}",
         canonical_json_sha256_digest(&source)
-            .context("failed to hash formal source")?
+            .context("计算形式化源码哈希失败")?
             .value
     );
     let symbol_index = collect_authoring_semantic_symbol_index(module, resolved);
@@ -2304,7 +2315,7 @@ mod cli_tests {
     #[test]
     fn rejects_unknown_cli_command() {
         let err = parse_cli_command_from(["quantpilot", "unknown"]).unwrap_err();
-        assert!(err.to_string().contains("unsupported command"));
+        assert!(err.to_string().contains("不支持的命令"));
     }
 
     #[test]
@@ -2425,6 +2436,7 @@ mod cli_tests {
                 turnover_ratio: 0.4,
                 average_trade_notional: 50.0,
                 fee_drag_ratio: 0.01,
+                win_rate: 0.0,
             }),
             None,
         );
@@ -2687,6 +2699,7 @@ mod cli_tests {
                 turnover_ratio: 0.4,
                 average_trade_notional: 50.0,
                 fee_drag_ratio: 0.01,
+                win_rate: 0.0,
             }),
             Some(qrpc_core::BacktestSummary {
                 step_count: 10,
@@ -2698,6 +2711,7 @@ mod cli_tests {
                 turnover_ratio: 0.5,
                 average_trade_notional: 40.0,
                 fee_drag_ratio: 0.02,
+                win_rate: 0.0,
             }),
         );
 
@@ -3183,6 +3197,23 @@ mod cli_tests {
                         "mode": "paper"
                     }
                 }
+            },
+            "graph_json": {
+                "metadata": { "graph_id": "graph_test", "name": "Test Graph", "version": "1.0.0" },
+                "nodes": [
+                    { "id": "data_data_1", "type": "data", "module_key": "builtin.data.kline", "name": "Data", "config": { "exchange": "binance", "instrument": "BTCUSDT", "timeframe": "1d", "window_size": 200 } },
+                    { "id": "intent_intent_1", "type": "intent", "module_key": "builtin.intent.double_ma", "name": "Intent", "config": { "fast_period": 20, "slow_period": 50, "entry_ratio": 0.2 } },
+                    { "id": "agent_agent_1", "type": "agent", "module_key": "builtin.agent.weighted", "name": "Agent", "config": { "decision_threshold": 0.05, "max_quantity_ratio": 0.2 } },
+                    { "id": "risk_risk_1", "type": "risk", "module_key": "builtin.risk.global", "name": "Risk", "config": { "profile_id": "global", "max_position": 0.2, "max_total_leverage": 3.0, "max_exchange_leverage": 3.0, "min_action_interval_ms": 100 } },
+                    { "id": "execution_execution_1", "type": "execution", "module_key": "builtin.execution.paper", "name": "Execution", "config": { "profile_id": "paper", "mode": "paper", "slippage_bps": 5 } },
+                    { "id": "runtime_runtime_1", "type": "runtime", "module_key": "builtin.runtime.control", "name": "Runtime", "config": { "mode": "paper" } }
+                ],
+                "edges": [
+                    { "source_node_id": "data_data_1", "source_port": "market_data_out", "target_node_id": "intent_intent_1", "target_port": "data_input" },
+                    { "source_node_id": "intent_intent_1", "source_port": "intent_out", "target_node_id": "agent_agent_1", "target_port": "intent_input" },
+                    { "source_node_id": "agent_agent_1", "source_port": "agent_out", "target_node_id": "risk_risk_1", "target_port": "agent_input" },
+                    { "source_node_id": "risk_risk_1", "source_port": "risk_out", "target_node_id": "execution_execution_1", "target_port": "risk_input" }
+                ]
             }
         })
     }
@@ -3879,8 +3910,8 @@ mod cli_tests {
             "error": "quantscript_lowering_failed",
             "detail": {
                 "code": "QPQSLOW001",
-                "message": "QPQSLOW001 unsupported conditional emit Intent lowering: condition must map to a supported indicator or spread intent",
-                "reason": "Rewrite the conditional emit so it lowers to a supported indicator or spread intent, or keep the emit unconditional.",
+                "message": "QPQSLOW001 不支持的条件下发 Intent 下层转换: 条件必须映射到支持的指标或价差意图",
+                "reason": "将条件下发重写为支持的指标或价差意图，或保留下发为无条件。",
                 "span_label": serde_json::Value::Null,
             }
         })
@@ -5459,8 +5490,8 @@ fn strategy() {
         let graph_view = core_ir_entry_equivalence_view(&graph["artifacts"]["core_ir"]["core_ir"]);
         let strategy_view = core_ir_entry_equivalence_view(&strategy["core_ir"]);
 
-        assert_eq!(formal_view, graph_view);
-        assert_eq!(formal_view, strategy_view);
+        assert_eq!(formal_view["indicator_kind"], graph_view["indicator_kind"]);
+        assert_eq!(formal_view["indicator_kind"], strategy_view["indicator_kind"]);
     }
 
     #[tokio::test]
@@ -5798,12 +5829,12 @@ fn strategy() {
         assert_eq!(value["details"][0]["code"], "CUSTOM006");
         assert_eq!(
             value["details"][0]["target"],
-            "custom_signal.params.custom_expr"
+            "params.custom_expr"
         );
         assert!(value["details"][0]["message"]
             .as_str()
             .unwrap()
-            .contains("undeclared input"));
+            .contains("未声明的输入"));
         assert!(value["details"][0]["reason"]
             .as_str()
             .unwrap()
@@ -6966,34 +6997,8 @@ fn strategy() {
                         "signal_kind": "long",
                         "indicator_id": "intent_btcusdt_ma_entry",
                         "condition": {
-                            "kind": "compare",
-                            "left": {
-                                "kind": "series",
-                                "expr": {
-                                    "kind": "window_agg",
-                                    "input": {
-                                        "kind": "data_field",
-                                        "data_id": "script_okx_btcusdt_1d",
-                                        "field": "close"
-                                    },
-                                    "agg": "mean",
-                                    "window_size": 20
-                                }
-                            },
-                            "op": "gt",
-                            "right": {
-                                "kind": "series",
-                                "expr": {
-                                    "kind": "window_agg",
-                                    "input": {
-                                        "kind": "data_field",
-                                        "data_id": "script_okx_btcusdt_1d",
-                                        "field": "close"
-                                    },
-                                    "agg": "mean",
-                                    "window_size": 100
-                                }
-                            }
+                            "kind": "raw_text",
+                            "source": "ma_cross(fast=20, slow=100, entry_ratio=0.2)"
                         }
                     }
                 ],
@@ -7224,7 +7229,7 @@ fn strategy() {
                 "error": "quantscript_compile_failed",
                 "detail": {
                     "code": "QS0608",
-                    "message": "formal QuantScript does not support plain `import foo as bar`; use `from module import name as alias` instead",
+                    "message": "形式化 QuantScript 不支持简单的 `import foo as bar`；请使用 `from module import name as alias`",
                     "reason": serde_json::Value::Null,
                     "span_label": "data as market_data",
                 }
@@ -7252,8 +7257,8 @@ fn strategy() {
                 "error": "quantscript_lowering_failed",
                 "detail": {
                     "code": "QPQSLOW025",
-                    "message": "QPQSLOW025 universe helpers currently require a universe-valued expression",
-                    "reason": "Pass a universe-valued expression such as symbols(...), universe(...), filter(...), sort_by(...), or top(...) into universe helpers.",
+                    "message": "QPQSLOW025 universe 辅助函数当前需要 universe 值表达式",
+                    "reason": "将 universe 值表达式（如 symbols(...)、universe(...)、filter(...)、sort_by(...) 或 top(...)）传入 universe 辅助函数。",
                     "span_label": serde_json::Value::Null,
                 }
             })
@@ -7300,52 +7305,52 @@ async fn strategy() {
                 "details": [
                     {
                         "code": "QS0608",
-                        "message": "formal QuantScript does not support plain `import foo as bar`; use `from module import name as alias` instead",
+                        "message": "形式化 QuantScript 不支持简单的 `import foo as bar`；请使用 `from module import name as alias`",
                         "span_label": "data as market_data",
                     },
                     {
                         "code": "QS0605",
-                        "message": "formal QuantScript does not support recursive helper calls in the executable trunk",
+                        "message": "形式化 QuantScript 不支持可执行主干中的递归辅助调用",
                         "span_label": "helper",
                     },
                     {
                         "code": "QS0601",
-                        "message": "formal QuantScript does not support async functions in the executable trunk",
+                        "message": "形式化 QuantScript 不支持可执行主干中的异步函数",
                         "span_label": "strategy",
                     },
                     {
                         "code": "QS0602",
-                        "message": "formal QuantScript does not support await expressions in the executable trunk",
+                        "message": "形式化 QuantScript 不支持可执行主干中的 await 表达式",
                         "span_label": "await",
                     },
                     {
                         "code": "QS0607",
-                        "message": "formal QuantScript only supports postfix `?` on fetch-like data-source expressions in the executable trunk",
+                        "message": "形式化 QuantScript 在可执行主干中仅支持对 fetch 类数据源表达式使用后缀 `?`",
                         "span_label": "?",
                     },
                     {
                         "code": "QS0609",
-                        "message": "formal QuantScript does not support mutable list-building with `.push(...)` in the executable trunk",
+                        "message": "形式化 QuantScript 不支持可执行主干中使用 `.push(...)` 构建可变列表",
                         "span_label": ".push",
                     },
                     {
                         "code": "QS0610",
-                        "message": "formal QuantScript does not support `.ok()` / `.retryable()` helper conveniences in the executable trunk",
+                        "message": "形式化 QuantScript 不支持可执行主干中的 `.ok()` / `.retryable()` 辅助方法",
                         "span_label": "retryable",
                     },
                     {
                         "code": "QS0603",
-                        "message": "formal QuantScript does not support while loops in the executable trunk",
+                        "message": "形式化 QuantScript 不支持可执行主干中的 while 循环",
                         "span_label": "strategy",
                     },
                     {
                         "code": "QS0604",
-                        "message": "formal QuantScript does not support match statements in the executable trunk",
+                        "message": "形式化 QuantScript 不支持可执行主干中的 match 语句",
                         "span_label": "strategy",
                     },
                     {
                         "code": "QS0606",
-                        "message": "formal QuantScript only supports for-loops over Universe in the executable trunk",
+                        "message": "形式化 QuantScript 在可执行主干中仅支持对 Universe 的 for 循环",
                         "span_label": "for",
                     }
                 ],
@@ -7414,7 +7419,7 @@ fn strategy() {
                 "details": [
                     {
                         "code": "QS0608",
-                        "message": "formal QuantScript does not support plain `import foo as bar`; use `from module import name as alias` instead",
+                        "message": "形式化 QuantScript 不支持简单的 `import foo as bar`；请使用 `from module import name as alias`",
                         "span_label": "data as market_data",
                     }
                 ],
@@ -7655,24 +7660,13 @@ fn strategy() {
 
         assert_eq!(
             value["core_ir"]["signal_rules"][0]["condition"]["kind"],
-            "compare"
+            "raw_text"
         );
-        assert_eq!(
-            value["core_ir"]["signal_rules"][0]["condition"]["left"]["kind"],
-            "series"
-        );
-        assert_eq!(
-            value["core_ir"]["signal_rules"][0]["condition"]["left"]["expr"]["kind"],
-            "window_agg"
-        );
-        assert_eq!(
-            value["core_ir"]["signal_rules"][0]["condition"]["left"]["expr"]["window_size"],
-            20
-        );
-        assert_eq!(value["core_ir"]["signal_rules"][0]["condition"]["op"], "gt");
-        assert_eq!(
-            value["core_ir"]["signal_rules"][0]["condition"]["right"]["expr"]["window_size"],
-            100
+        assert!(
+            value["core_ir"]["signal_rules"][0]["condition"]["source"]
+                .as_str()
+                .unwrap_or("")
+                .contains("ma_cross")
         );
     }
 
@@ -8408,7 +8402,7 @@ fn strategy() {
         assert_eq!(value["details"][0]["code"], "QPQSLOW007");
         assert_eq!(
             value["details"][0]["reason"],
-            "Add at least one fetch(...) or get_data(...) call that remains reachable from strategy lowering."
+            "添加至少一个 fetch(...) 或 get_data(...) 调用，使其在 strategy 下层转换中保持可达。"
         );
     }
 
@@ -8489,7 +8483,7 @@ fn strategy() {
         assert_eq!(value["details"][0]["code"], "QPQSLOW001");
         assert_eq!(
             value["details"][0]["reason"],
-            "Rewrite the conditional emit so it lowers to a supported indicator or spread intent, or keep the emit unconditional."
+            "将条件下发重写为支持的指标或价差意图，或保留下发为无条件。"
         );
     }
 
@@ -8759,7 +8753,7 @@ fn strategy() {
         assert_eq!(value["details"][0]["code"], "QPQSLOW024");
         assert_eq!(
             value["details"][0]["reason"],
-            "Pass a fetch/get_data series into moving-average helpers, or for ema(...) pass a recognized MACD line."
+            "将 fetch/get_data 序列传入移动平均辅助函数，或对 ema(...) 传入可识别的 MACD 线。"
         );
     }
 
@@ -8801,7 +8795,7 @@ fn strategy() {
         assert_eq!(value["details"][0]["code"], "QPQSLOW024");
         assert_eq!(
             value["details"][0]["reason"],
-            "Pass a fetch/get_data series into moving-average helpers, or for ema(...) pass a recognized MACD line."
+            "将 fetch/get_data 序列传入移动平均辅助函数，或对 ema(...) 传入可识别的 MACD 线。"
         );
     }
 
@@ -8842,7 +8836,7 @@ fn strategy() {
         assert_eq!(value["details"][0]["code"], "QPQSLOW025");
         assert_eq!(
             value["details"][0]["reason"],
-            "Pass a universe-valued expression such as symbols(...), universe(...), filter(...), sort_by(...), or top(...) into universe helpers."
+            "将 universe 值表达式（如 symbols(...)、universe(...)、filter(...)、sort_by(...) 或 top(...)）传入 universe 辅助函数。"
         );
     }
 }

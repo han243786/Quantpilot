@@ -167,7 +167,7 @@ pub fn parse_quant_script_source(input: &str) -> Result<QuantScriptSource> {
     } else if looks_like_script(input) {
         Ok(QuantScriptSource::Script(parse_quant_script_module(input)?))
     } else {
-        bail!("unable to determine QuantScript source kind")
+        bail!("无法确定 QuantScript 源码类型")
     }
 }
 
@@ -220,7 +220,7 @@ pub fn compile_quant_script(input: &str) -> Result<CompiledRuntimeProtocol> {
 pub fn compile_quant_script_file(path: impl AsRef<Path>) -> Result<CompiledRuntimeProtocol> {
     let source = std::fs::read_to_string(path.as_ref()).with_context(|| {
         format!(
-            "failed to read QuantScript file: {}",
+            "读取 QuantScript 文件失败: {}",
             path.as_ref().display()
         )
     })?;
@@ -343,7 +343,7 @@ fn tokenize(input: &str) -> Result<Vec<Token>> {
                         '\\' => {
                             let escaped = chars
                                 .next()
-                                .ok_or_else(|| anyhow!("unterminated escape sequence"))?;
+                                .ok_or_else(|| anyhow!("未终止的转义序列"))?;
                             content.push(match escaped {
                                 'n' => '\n',
                                 't' => '\t',
@@ -377,7 +377,7 @@ fn tokenize(input: &str) -> Result<Vec<Token>> {
                         }
                     }
                 } else {
-                    bail!("unexpected '/' in QuantScript");
+                    bail!("QuantScript 中意外的 '/'");
                 }
             }
             c if c.is_whitespace() => {
@@ -395,7 +395,7 @@ fn tokenize(input: &str) -> Result<Vec<Token>> {
                 }
                 let parsed = number
                     .parse::<f64>()
-                    .with_context(|| format!("invalid number literal: {number}"))?;
+                    .with_context(|| format!("无效的数字字面量: {number}"))?;
                 tokens.push(Token::Number(parsed));
             }
             _ => {
@@ -412,7 +412,7 @@ fn tokenize(input: &str) -> Result<Vec<Token>> {
                     }
                 }
                 match ident.as_str() {
-                    "" => bail!("unexpected character in QuantScript: {ch}"),
+                    "" => bail!("QuantScript 中意外的字符: {ch}"),
                     "true" => tokens.push(Token::Bool(true)),
                     "false" => tokens.push(Token::Bool(false)),
                     _ => tokens.push(Token::Ident(ident)),
@@ -448,7 +448,7 @@ impl Parser {
                 "intent" => intents.push(self.parse_intent_section()?),
                 "agent" => agents.push(self.parse_agent_section()?),
                 "risk" => risks.push(self.parse_risk_section()?),
-                other => bail!("unsupported QuantScript section: {other}"),
+                other => bail!("不支持的 QuantScript 区块: {other}"),
             }
         }
 
@@ -552,7 +552,7 @@ impl Parser {
                 while !self.check(&Token::RBracket) {
                     let value = match self.next_token() {
                         Some(Token::Ident(value)) | Some(Token::String(value)) => value,
-                        other => bail!("expected list item, found {other:?}"),
+                        other => bail!("期望列表项，但遇到 {other:?}"),
                     };
                     items.push(value);
                     if self.check(&Token::Comma) {
@@ -562,14 +562,14 @@ impl Parser {
                 self.expect_token(Token::RBracket, "]")?;
                 Ok(Value::List(items))
             }
-            other => bail!("expected value, found {other:?}"),
+            other => bail!("期望值，但遇到 {other:?}"),
         }
     }
 
     fn expect_ident(&mut self, label: &str) -> Result<String> {
         match self.next_token() {
             Some(Token::Ident(value)) => Ok(value),
-            other => bail!("expected {label}, found {other:?}"),
+            other => bail!("期望 {label}，但遇到 {other:?}"),
         }
     }
 
@@ -578,7 +578,7 @@ impl Parser {
         if token == Some(expected) {
             Ok(())
         } else {
-            bail!("expected token {label}, found {token:?}")
+            bail!("期望令牌 {label}，但遇到 {token:?}")
         }
     }
 
@@ -603,7 +603,7 @@ fn field_number(fields: &BTreeMap<String, Value>, key: &str) -> Result<Option<f6
     match fields.get(key) {
         None => Ok(None),
         Some(Value::Number(value)) => Ok(Some(*value)),
-        other => bail!("field {key} must be a number, found {other:?}"),
+        other => bail!("字段 {key} 必须是数字，但遇到 {other:?}"),
     }
 }
 
@@ -611,7 +611,7 @@ fn field_bool(fields: &BTreeMap<String, Value>, key: &str) -> Result<Option<bool
     match fields.get(key) {
         None => Ok(None),
         Some(Value::Bool(value)) => Ok(Some(*value)),
-        other => bail!("field {key} must be a bool, found {other:?}"),
+        other => bail!("字段 {key} 必须是布尔值，但遇到 {other:?}"),
     }
 }
 
@@ -619,12 +619,12 @@ fn field_string(fields: &BTreeMap<String, Value>, key: &str) -> Result<Option<St
     match fields.get(key) {
         None => Ok(None),
         Some(Value::String(value)) => Ok(Some(value.clone())),
-        other => bail!("field {key} must be a string or identifier, found {other:?}"),
+        other => bail!("字段 {key} 必须是字符串或标识符，但遇到 {other:?}"),
     }
 }
 
 fn field_string_required(fields: &BTreeMap<String, Value>, key: &str) -> Result<String> {
-    field_string(fields, key)?.ok_or_else(|| anyhow!("field {key} is required"))
+    field_string(fields, key)?.ok_or_else(|| anyhow!("字段 {key} 是必需的"))
 }
 
 fn field_ident_required(fields: &BTreeMap<String, Value>, key: &str) -> Result<String> {
@@ -634,8 +634,8 @@ fn field_ident_required(fields: &BTreeMap<String, Value>, key: &str) -> Result<S
 fn field_list_required(fields: &BTreeMap<String, Value>, key: &str) -> Result<Vec<String>> {
     match fields.get(key) {
         Some(Value::List(items)) => Ok(items.clone()),
-        None => bail!("field {key} is required"),
-        other => bail!("field {key} must be a list, found {other:?}"),
+        None => bail!("字段 {key} 是必需的"),
+        other => bail!("字段 {key} 必须是列表，但遇到 {other:?}"),
     }
 }
 
@@ -643,21 +643,21 @@ fn parse_exchange(input: &str) -> Result<Exchange> {
     match input.to_ascii_lowercase().as_str() {
         "binance" => Ok(Exchange::Binance),
         "okx" => Ok(Exchange::Okx),
-        other => bail!("unsupported exchange: {other}"),
+        other => bail!("不支持的交易所: {other}"),
     }
 }
 
 fn parse_symbol(input: &str) -> Result<Symbol> {
     match input.to_ascii_uppercase().as_str() {
         "BTCUSDT" => Ok(Symbol::BtcUsdt),
-        other => bail!("unsupported symbol: {other}"),
+        other => bail!("不支持的交易对: {other}"),
     }
 }
 
 fn parse_market_type(input: &str) -> Result<MarketType> {
     match input.to_ascii_lowercase().as_str() {
         "spot" => Ok(MarketType::Spot),
-        other => bail!("unsupported market_type: {other}"),
+        other => bail!("不支持的市场类型: {other}"),
     }
 }
 
@@ -665,7 +665,7 @@ fn parse_data_kind(input: &str) -> Result<DataKind> {
     match input.to_ascii_lowercase().as_str() {
         "kline" | "klineseries" | "kline_series" => Ok(DataKind::KlineSeries),
         "quote" => Ok(DataKind::Quote),
-        other => bail!("unsupported data kind: {other}"),
+        other => bail!("不支持的数据种类: {other}"),
     }
 }
 
@@ -678,7 +678,8 @@ fn parse_intent_kind(input: &str) -> Result<IntentKind> {
         "momentum" => Ok(IntentKind::Momentum),
         "zscore" | "z_score" => Ok(IntentKind::ZScore),
         "quote_observe" | "quoteobserve" => Ok(IntentKind::QuoteObserve),
-        other => bail!("unsupported intent kind: {other}"),
+        "sma_crossover" => Ok(IntentKind::SmaCrossover),
+        other => bail!("不支持的意图种类: {other}"),
     }
 }
 
@@ -855,7 +856,7 @@ fn strategy() {
         .unwrap();
 
         assert!(analysis.diagnostics.iter().any(|diagnostic| {
-            diagnostic.code == "QS0402" && diagnostic.message.contains("look-ahead risk")
+            diagnostic.code == "QS0402" && diagnostic.message.contains("前视风险")
         }));
     }
 
@@ -878,7 +879,7 @@ fn strategy() {
 
         assert_eq!(analysis.required_warmup_bars, 200);
         assert!(analysis.diagnostics.iter().any(|diagnostic| {
-            diagnostic.code == "QS0501" && diagnostic.message.contains("needs at least 200 bars")
+            diagnostic.code == "QS0501" && diagnostic.message.contains("预热不足: 策略至少需要 200")
         }));
     }
 
@@ -898,7 +899,7 @@ fn strategy() {
         .unwrap();
 
         assert!(analysis.diagnostics.iter().any(|diagnostic| {
-            diagnostic.code == "QS0401" && diagnostic.message.contains("negative series indices")
+            diagnostic.code == "QS0401" && diagnostic.message.contains("前视风险: 负数序列索引")
         }));
     }
 
@@ -919,7 +920,7 @@ fn strategy() {
 
         assert_eq!(analysis.required_warmup_bars, 14);
         assert!(analysis.diagnostics.iter().any(|diagnostic| {
-            diagnostic.code == "QS0501" && diagnostic.message.contains("needs at least 14 bars")
+            diagnostic.code == "QS0501" && diagnostic.message.contains("预热不足: 策略至少需要 14")
         }));
     }
 

@@ -194,7 +194,8 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
           runtime_config: result.runtime_config,
           runtime_targets: resolveRuntimeTargets(result),
           backtest_options: {
-            replay_source: "deterministic_mock"
+            replay_source: "deterministic_mock",
+            volatility: 0.5
           }
         });
         const nextState = buildBacktestCompletionState(
@@ -273,7 +274,8 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
           runtime_config: result.runtime_config,
           runtime_targets: resolveRuntimeTargets(result),
           backtest_options: {
-            replay_source: "deterministic_mock"
+            replay_source: "deterministic_mock",
+            volatility: 0.5
           },
           parameter_grid: parameterGrid
         });

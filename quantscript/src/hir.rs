@@ -42,6 +42,7 @@ pub enum HirTestAction {
         end: Option<String>,
         seed: Option<u64>,
         save: bool,
+        volatility: Option<f64>,
     },
     Assert(String),
     SaveRun,
@@ -54,6 +55,11 @@ pub enum HirTestAction {
         condition: String,
         timeout_secs: u64,
     },
+    CompareBacktests {
+        left: usize,
+        right: usize,
+    },
+    Debug(Vec<String>),
 }
 
 #[derive(Debug, Clone, PartialEq)]

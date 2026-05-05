@@ -89,12 +89,20 @@ export function useWorkspaceActionBarActions({ onNotice } = {}) {
     pushNotice("success", t("编译完成，且已通过后端校验。"), t("编译完成。"));
   }
 
-  async function handleStartRuntime({ graph, capabilitySyncBlocked, capabilityMessage } = {}) {
+  async function handleStartRuntime({ graph, capabilitySyncBlocked, capabilityMessage, mode } = {}) {
     if (capabilitySyncBlocked) {
       pushNotice(
         "error",
         buildActionFailureMessage("simulation", capabilityMessage, t("能力尚未就绪，暂时无法启动模拟。")),
         t("模拟运行暂时被阻止。")
+      );
+      return;
+    }
+    if (mode === "testnet") {
+      pushNotice(
+        "info",
+        t("模拟盘交易请通过 QuantScript 编辑器使用 @run { mode: \"testnet\" } 指令启动。"),
+        t("请使用 QS 编辑器启动模拟盘。")
       );
       return;
     }

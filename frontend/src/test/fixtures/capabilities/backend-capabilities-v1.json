@@ -1,7 +1,7 @@
 {
   "api_version": "quantpilot-capabilities/v1",
   "schema_version": "quantpilot/capabilities-schema/v1",
-  "schema_hash": "sha256:0b98a45b5f0902d861771d0097b0a3b7b2c0b641325276ee131b02f3e8023241",
+  "schema_hash": "sha256:6c294c89c60e8ecd644c6e1b1bedf363d535d49a33a7ccd45ba79abd1524949d",
   "chain_stages": [
     "data",
     "intent",
@@ -18,7 +18,18 @@
       "momentum",
       "spread",
       "z_score",
-      "custom"
+      "custom",
+      "quote_observe",
+      "atr",
+      "bollinger_bands",
+      "obv",
+      "cmf",
+      "adx",
+      "stochastic",
+      "cci",
+      "parabolic_sar",
+      "keltner_channel",
+      "donchian_channel"
     ],
     "supported_indicator_kinds": [
       "ma_cross",
@@ -27,7 +38,18 @@
       "momentum",
       "spread",
       "z_score",
-      "custom"
+      "custom",
+      "quote_observe",
+      "atr",
+      "bollinger_bands",
+      "obv",
+      "cmf",
+      "adx",
+      "stochastic",
+      "cci",
+      "parabolic_sar",
+      "keltner_channel",
+      "donchian_channel"
     ],
     "indicator_support": [
       {
@@ -62,6 +84,61 @@
       },
       {
         "kind": "custom",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "quote_observe",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "atr",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "bollinger_bands",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "obv",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "cmf",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "adx",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "stochastic",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "cci",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "parabolic_sar",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "keltner_channel",
+        "status": "supported",
+        "reason": null
+      },
+      {
+        "kind": "donchian_channel",
         "status": "supported",
         "reason": null
       }

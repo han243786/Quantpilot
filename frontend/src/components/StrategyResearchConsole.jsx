@@ -22,6 +22,16 @@ const RESEARCH_MODES = [
   }
 ];
 
+const EVENT_COLORS = {
+  DataUpdated: "#4af",
+  IntentTriggered: "#fa4",
+  AgentDecisionProduced: "#a4f",
+  ExecutionPlanned: "#4fa",
+  ExecutionFilled: "#4f4",
+  PortfolioUpdated: "#aa4",
+  RiskDecisionProduced: "#f44"
+};
+
 function ResearchMetricCard({ label, value, note, tone = "muted", testId }) {
   return (
     <div
@@ -82,6 +92,20 @@ export default function StrategyResearchConsole({
     ]
   );
 
+  const eventTypeCounts = useMemo(() => {
+    const counts = {};
+    model.filteredEvents.forEach((event) => {
+      const type = event.event_type || "Unknown";
+      counts[type] = (counts[type] || 0) + 1;
+    });
+    return counts;
+  }, [model.filteredEvents]);
+
+  const maxCount = useMemo(
+    () => Math.max(...Object.values(eventTypeCounts), 1),
+    [eventTypeCounts]
+  );
+
   return (
     <section
       className="event-panel event-panel--segmented research-console"
@@ -115,6 +139,27 @@ export default function StrategyResearchConsole({
           ))}
         </div>
       </div>
+
+      {Object.keys(eventTypeCounts).length > 0 ? (
+        <div className="research-console-event-distribution" data-testid="research-event-distribution">
+          <div className="panel-title">事件分布</div>
+          {Object.entries(eventTypeCounts).map(([type, count]) => (
+            <div className="event-distribution-row" key={type}>
+              <span className="event-distribution-label">{type}</span>
+              <div className="event-distribution-bar-container">
+                <div
+                  className="event-distribution-bar"
+                  style={{
+                    width: `${((count / maxCount) * 100).toFixed(0)}%`,
+                    backgroundColor: EVENT_COLORS[type] || "#888"
+                  }}
+                />
+              </div>
+              <span className="event-distribution-count">{count}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       <div
         className="research-console-toolbar"

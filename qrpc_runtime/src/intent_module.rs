@@ -157,6 +157,8 @@ fn intent_kind_from_indicator(indicator: &IndicatorNode) -> Option<IntentKind> {
                 .unwrap_or("long_term_buy");
             Some(if variant == "long_term_sell" {
                 IntentKind::LongTermSell
+            } else if variant == "sma_crossover" {
+                IntentKind::SmaCrossover
             } else {
                 IntentKind::LongTermBuy
             })
@@ -177,6 +179,16 @@ fn intent_kind_from_indicator(indicator: &IndicatorNode) -> Option<IntentKind> {
                 })
         }
         CoreIndicatorKind::QuoteObserve => Some(IntentKind::QuoteObserve),
+        CoreIndicatorKind::Atr => None,
+        CoreIndicatorKind::BollingerBands => Some(IntentKind::Rsi),
+        CoreIndicatorKind::Obv => Some(IntentKind::Rsi),
+        CoreIndicatorKind::Cmf => Some(IntentKind::Rsi),
+        CoreIndicatorKind::Adx => Some(IntentKind::Momentum),
+        CoreIndicatorKind::Stochastic => Some(IntentKind::Rsi),
+        CoreIndicatorKind::Cci => Some(IntentKind::Rsi),
+        CoreIndicatorKind::ParabolicSar => Some(IntentKind::Momentum),
+        CoreIndicatorKind::KeltnerChannel => Some(IntentKind::Rsi),
+        CoreIndicatorKind::DonchianChannel => Some(IntentKind::Momentum),
     }
 }
 

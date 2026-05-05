@@ -281,6 +281,7 @@ fn frontend_intent_module_key(kind: &IntentKind) -> &'static str {
         IntentKind::Momentum => "builtin.intent.momentum",
         IntentKind::ZScore => "builtin.intent.zscore",
         IntentKind::QuoteObserve => "builtin.intent.spread_observer",
+        IntentKind::SmaCrossover => "builtin.intent.double_ma",
     }
 }
 
@@ -328,6 +329,11 @@ fn frontend_intent_config_value(intent: &IntentConfig) -> Value {
             "comparison_op_code": intent.params.get("comparison_op_code").copied().unwrap_or(0.0),
             "comparison_threshold": intent.params.get("comparison_threshold").copied().unwrap_or(0.0)
         }),
+        IntentKind::SmaCrossover => serde_json::json!({
+            "fast_period": intent.params.get("fast_period").copied().unwrap_or(20.0),
+            "slow_period": intent.params.get("slow_period").copied().unwrap_or(50.0),
+            "entry_ratio": intent.params.get("entry_ratio").copied().unwrap_or(0.2)
+        }),
     }
 }
 
@@ -366,13 +372,13 @@ pub(super) fn map_frontend_runtime_config(
 ) -> anyhow::Result<MappedRuntimeConfig> {
     let _ = (&input.metadata.name, &input.metadata.version);
     if !matches!(input.metadata.mode.as_str(), "paper") {
-        anyhow::bail!("unsupported runtime mode: {}", input.metadata.mode);
+        anyhow::bail!("不支持的运行时模式: {}", input.metadata.mode);
     }
     if input.runtime_control.is_none() {
-        anyhow::bail!("missing runtime control node");
+        anyhow::bail!("缺少运行时控制节点");
     }
     if input.executions.len() != 1 {
-        anyhow::bail!("current beta requires exactly one execution node");
+        anyhow::bail!("当前 beta 版本需要且仅需要一个执行节点");
     }
     let mut source_to_node = BTreeMap::new();
     let mut data_sources = Vec::new();
@@ -417,7 +423,7 @@ pub(super) fn map_frontend_runtime_config(
                 request_interval_ms,
                 enabled: true,
             },
-            _ => anyhow::bail!("unsupported data module: {}", data.module_key),
+            _ => anyhow::bail!("不支持的数据模块: {}", data.module_key),
         };
         source_to_node.insert(source.data_id.clone(), original_node_id(&data.id));
         data_sources.push(source);
@@ -448,7 +454,7 @@ pub(super) fn map_frontend_runtime_config(
             "builtin.intent.momentum" => IntentKind::Momentum,
             "builtin.intent.zscore" => IntentKind::ZScore,
             "builtin.intent.spread_observer" => IntentKind::QuoteObserve,
-            _ => anyhow::bail!("unsupported intent module: {}", intent.module_key),
+            _ => anyhow::bail!("不支持的意图模块: {}", intent.module_key),
         };
         let intent_id = intent.id.clone();
         let mut params = config_number_map(&intent.config);
@@ -473,7 +479,7 @@ pub(super) fn map_frontend_runtime_config(
         let agent_id = match agent.module_key.as_str() {
             "builtin.agent.weighted" => agent.id.clone(),
             "builtin.agent.arbitrage" => agent.id.clone(),
-            _ => anyhow::bail!("unsupported agent module: {}", agent.module_key),
+            _ => anyhow::bail!("不支持的代理模块: {}", agent.module_key),
         };
 
         let input_intent_ids = agent
@@ -512,11 +518,11 @@ pub(super) fn map_frontend_runtime_config(
     for risk in &input.risk_controls {
         let risk_id = match risk.module_key.as_str() {
             "builtin.risk.global" => risk.id.clone(),
-            _ => anyhow::bail!("unsupported risk module: {}", risk.module_key),
+            _ => anyhow::bail!("不支持的风险模块: {}", risk.module_key),
         };
         if let Some(profile_id) = config_string(&risk.config, "profile_id") {
             if profile_id != GLOBAL_RISK_PROFILE_ID {
-                anyhow::bail!("unsupported risk profile_id: {}", profile_id);
+                anyhow::bail!("不支持的风险配置 ID: {}", profile_id);
             }
         }
 
@@ -569,14 +575,14 @@ pub(super) fn map_frontend_runtime_config(
     for execution in &input.executions {
         let _ = (&execution.name, &execution.config, &execution.risk_ref);
         if execution.module_key != "builtin.execution.paper" {
-            anyhow::bail!("unsupported execution module: {}", execution.module_key);
+            anyhow::bail!("不支持的执行模块: {}", execution.module_key);
         }
         if execution.risk_ref.is_none() {
-            anyhow::bail!("execution node {} is missing risk input", execution.id);
+            anyhow::bail!("执行节点 {} 缺少风险输入", execution.id);
         }
         if let Some(profile_id) = config_string(&execution.config, "profile_id") {
             if profile_id != PAPER_EXECUTION_PROFILE_ID {
-                anyhow::bail!("unsupported execution profile_id: {}", profile_id);
+                anyhow::bail!("不支持的执行配置 ID: {}", profile_id);
             }
         }
     }
@@ -727,7 +733,7 @@ fn parse_rebalance_schedule(config: &Value) -> anyhow::Result<Option<RebalanceSc
         Some("every_slow") => Ok(Some(RebalanceSchedule::EverySlow)),
         Some("every_1d") => Ok(Some(RebalanceSchedule::Every1d)),
         Some("weekly") => Ok(Some(RebalanceSchedule::Weekly)),
-        Some(other) => anyhow::bail!("unsupported rebalance_schedule: {}", other),
+        Some(other) => anyhow::bail!("不支持的重新平衡计划: {}", other),
     }
 }
 
@@ -751,14 +757,14 @@ fn parse_exchange(input: &str) -> anyhow::Result<Exchange> {
     match input.to_ascii_lowercase().as_str() {
         "binance" => Ok(Exchange::Binance),
         "okx" => Ok(Exchange::Okx),
-        _ => anyhow::bail!("unsupported exchange: {}", input),
+        _ => anyhow::bail!("不支持的交易所: {}", input),
     }
 }
 
 fn parse_symbol(input: &str) -> anyhow::Result<Symbol> {
     let normalized = input.trim();
     if normalized.is_empty() {
-        anyhow::bail!("symbol cannot be empty");
+        anyhow::bail!("标的不能为空");
     }
     Ok(Symbol::parse(normalized))
 }

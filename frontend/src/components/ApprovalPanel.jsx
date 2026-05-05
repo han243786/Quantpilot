@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Block5Nav from "./Block5Nav";
 import { API_BASE } from "../utils/api";
+import { useI18n } from "../i18n";
 import {
   fetchApprovals,
   approveProposal,
@@ -16,6 +17,7 @@ const ACTOR_ID =
   import.meta.env.VITE_ACTOR_ID || "local_operator";
 
 export default function ApprovalPanel() {
+  const { t } = useI18n();
   const [approvals, setApprovals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -45,7 +47,7 @@ export default function ApprovalPanel() {
   const handleClaim = async (proposalId) => {
     try {
       await claimProposal(proposalId, ACTOR_ID);
-      setActionMsg({ type: "success", text: "已认领审批单" });
+      setActionMsg({ type: "success", text: t("已认领审批单") });
       loadApprovals();
     } catch (err) {
       setActionMsg({ type: "error", text: err.message });
@@ -55,7 +57,7 @@ export default function ApprovalPanel() {
   const handleApprove = async (proposalId) => {
     try {
       await approveProposal(proposalId, ACTOR_ID);
-      setActionMsg({ type: "success", text: "审批已通过" });
+      setActionMsg({ type: "success", text: t("审批已通过") });
       loadApprovals();
     } catch (err) {
       setActionMsg({ type: "error", text: err.message });
@@ -70,7 +72,7 @@ export default function ApprovalPanel() {
     }
     try {
       await rejectProposal(proposalId, ACTOR_ID, rejectComment || null);
-      setActionMsg({ type: "success", text: "审批已拒绝" });
+      setActionMsg({ type: "success", text: t("审批已拒绝") });
       setRejectingId(null);
       loadApprovals();
     } catch (err) {
@@ -83,7 +85,7 @@ export default function ApprovalPanel() {
       const report = await fetchSandboxReport(proposalId);
       setSandboxReport(report);
     } catch (err) {
-      setActionMsg({ type: "error", text: "沙箱报告不可用: " + err.message });
+      setActionMsg({ type: "error", text: t("沙箱报告不可用: ") + err.message });
     }
   };
 
@@ -92,13 +94,13 @@ export default function ApprovalPanel() {
       <Block5Nav />
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2 style={{ margin: 0 }}>审批队列</h2>
+        <h2 style={{ margin: 0 }}>{t("审批队列")}</h2>
         <button
           className="qp-btn qp-btn--ghost qp-btn--sm"
           onClick={loadApprovals}
           disabled={loading}
         >
-          {loading ? "加载中..." : "刷新"}
+          {loading ? t("加载中...") : t("刷新")}
         </button>
       </div>
 
@@ -114,20 +116,20 @@ export default function ApprovalPanel() {
             style={{ marginLeft: 12 }}
             onClick={() => setActionMsg(null)}
           >
-            关闭
+            {t("关闭")}
           </button>
         </div>
       )}
 
       {error && (
         <div className="qp-error" role="alert">
-          <span>加载失败: {error}</span>
-          <button className="qp-btn qp-btn--sm" onClick={loadApprovals}>重试</button>
+          <span>{t("加载失败:")} {error}</span>
+          <button className="qp-btn qp-btn--sm" onClick={loadApprovals}>{t("重试")}</button>
         </div>
       )}
 
       {!loading && !error && approvals.length === 0 && (
-        <div className="qp-empty">暂无待审批的 AI 提案</div>
+        <div className="qp-empty">{t("暂无待审批的 AI 提案")}</div>
       )}
 
       {approvals.map((approval) => {
@@ -170,14 +172,14 @@ export default function ApprovalPanel() {
                 <div style={{ display: "flex", gap: 6 }} onClick={(e) => e.stopPropagation()}>
                   {isPending && (
                     <button className="qp-btn qp-btn--primary qp-btn--sm" onClick={() => handleClaim(approval.proposal_id)}>
-                      认领
+                      {t("认领")}
                     </button>
                   )}
                   <button className="qp-btn qp-btn--primary qp-btn--sm" onClick={() => handleApprove(approval.proposal_id)}>
-                    通过
+                    {t("通过")}
                   </button>
                   <button className="qp-btn qp-btn--danger qp-btn--sm" onClick={() => handleReject(approval.proposal_id)}>
-                    {rejectingId === approval.proposal_id ? "确认" : "拒绝"}
+                    {rejectingId === approval.proposal_id ? t("确认") : t("拒绝")}
                   </button>
                 </div>
               )}
@@ -185,11 +187,11 @@ export default function ApprovalPanel() {
 
             <div className="qp-card__meta">
               <span>
-                审批进度: {approval.reviewers_approved?.length || 0}/{approval.reviewers_required}
+                {t("审批进度: ")}{approval.reviewers_approved?.length || 0}/{approval.reviewers_required}
               </span>
-              <span>到期: {new Date(approval.expires_at_ms).toLocaleString()}</span>
+              <span>{t("到期: ")}{new Date(approval.expires_at_ms).toLocaleString()}</span>
               {approval.chain_stage_impact?.length > 0 && (
-                <span>影响: {approval.chain_stage_impact.join(" → ")}</span>
+                <span>{t("影响: ")}{approval.chain_stage_impact.join(" → ")}</span>
               )}
             </div>
 
@@ -198,7 +200,7 @@ export default function ApprovalPanel() {
                 <input
                   className="qp-input"
                   type="text"
-                  placeholder="拒绝原因（可选，Enter 提交）"
+                  placeholder={t("拒绝原因（可选，Enter 提交）")}
                   value={rejectComment}
                   onChange={(e) => setRejectComment(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleReject(approval.proposal_id)}
@@ -206,10 +208,10 @@ export default function ApprovalPanel() {
                 />
                 <div style={{ marginTop: 8, display: "flex", gap: 6 }}>
                   <button className="qp-btn qp-btn--danger qp-btn--sm" onClick={() => handleReject(approval.proposal_id)}>
-                    确认拒绝
+                    {t("确认拒绝")}
                   </button>
                   <button className="qp-btn qp-btn--ghost qp-btn--sm" onClick={() => setRejectingId(null)}>
-                    取消
+                    {t("取消")}
                   </button>
                 </div>
               </div>
@@ -220,20 +222,20 @@ export default function ApprovalPanel() {
                 {approval.sandbox_report_url && (
                   <p>
                     <button className="qp-btn qp-btn--ghost qp-btn--sm" onClick={() => handleViewReport(approval.proposal_id)}>
-                      查看沙箱报告
+                      {t("查看沙箱报告")}
                     </button>
                   </p>
                 )}
-                <p><strong>审批ID:</strong> {approval.approval_id}</p>
-                <p><strong>审批人:</strong> {approval.reviewers_assigned?.join(", ") || "未指定"}</p>
-                <p><strong>已通过:</strong> {approval.reviewers_approved?.join(", ") || "-"}</p>
+                <p><strong>{t("审批ID:")}</strong> {approval.approval_id}</p>
+                <p><strong>{t("审批人:")}</strong> {approval.reviewers_assigned?.join(", ") || t("未指定")}</p>
+                <p><strong>{t("已通过:")}</strong> {approval.reviewers_approved?.join(", ") || "-"}</p>
                 {approval.rollback_plan?.method && (
-                  <p><strong>回滚方案:</strong> {approval.rollback_plan.method} (预计 {approval.rollback_plan.estimated_recovery_ms}ms)</p>
+                  <p><strong>{t("回滚方案:")}</strong> {approval.rollback_plan.method} ({t("预计")} {approval.rollback_plan.estimated_recovery_ms}ms)</p>
                 )}
 
                 {approval.lifecycle?.length > 0 && (
                   <>
-                    <h3>审批时间轴</h3>
+                    <h3>{t("审批时间轴")}</h3>
                     <div className="qp-timeline">
                       {approval.lifecycle.map((entry, idx) => (
                         <div className="qp-timeline__item" key={idx}>
@@ -259,18 +261,18 @@ export default function ApprovalPanel() {
       {sandboxReport && (
         <div className="qp-card" style={{ marginTop: 16, borderColor: "var(--tv-accent)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <h3 style={{ margin: 0 }}>沙箱验证报告</h3>
+            <h3 style={{ margin: 0 }}>{t("沙箱验证报告")}</h3>
             <button className="qp-btn qp-btn--ghost qp-btn--sm" onClick={() => setSandboxReport(null)}>
-              关闭
+              {t("关闭")}
             </button>
           </div>
 
           <div className="qp-card__meta" style={{ marginBottom: 12 }}>
             <span>
-              回放窗口: {sandboxReport.replay_window?.from_ts} → {sandboxReport.replay_window?.to_ts}
+              {t("回放窗口: ")}{sandboxReport.replay_window?.from_ts} → {sandboxReport.replay_window?.to_ts}
             </span>
             <span>
-              判定:{" "}
+              {t("判定: ")}{" "}
               <span
                 className="qp-badge"
                 style={{
@@ -296,10 +298,10 @@ export default function ApprovalPanel() {
           <table className="qp-table">
             <thead>
               <tr>
-                <th>指标</th>
-                <th>基线</th>
-                <th>候选</th>
-                <th>差异</th>
+                <th>{t("指标")}</th>
+                <th>{t("基线")}</th>
+                <th>{t("候选")}</th>
+                <th>{t("差异")}</th>
               </tr>
             </thead>
             <tbody>

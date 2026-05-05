@@ -1,0 +1,137 @@
+# QuantPilot 支持矩阵
+
+## 目的
+
+本文档是当前 QuantPilot beta 边界的 P0 支持矩阵参考。用于保持 README、UI 提示、前端能力门禁、测试 fixture 和验收检查的一致性。
+
+矩阵描述：
+
+- 当前已支持的内容
+- 仅在受限边界条件下存在的内容
+- 哪些内容不得被宣传为已支持平台能力
+- 哪些工具栏操作受能力门禁控制以及它们触及哪些后端路由
+
+## 当前已支持边界
+
+### 运行时
+
+- 已支持的运行模式：`paper`
+- 已支持的执行模块：`builtin.execution.paper`
+- 当前市场边界：
+  - 交易所：`binance`、`okx`
+  - 交易对：`BTCUSDT`、`ETHUSDT`、`SOLUSDT`
+
+### Strategy IR 和 QuantScript 边界
+
+- 已声明的指标类型：
+  - `ma_cross`
+  - `rsi`
+  - `macd`
+  - `momentum`
+  - `spread`
+  - `z_score`
+  - `custom`
+- 当前已支持的指标类型：
+  - `ma_cross`
+  - `rsi`
+  - `macd`
+  - `momentum`
+  - `spread`
+  - `z_score`
+  - `custom`
+
+边界说明：
+
+- `custom` 仅通过降级为 Core IR 的受限 Strategy IR 表达式路径支持。
+- `custom` 不允许任意宿主代码、直接风险变更或绕过执行。
+- `strategy_ir` 仅为语义预检。它不是运行时的真实数据源。
+- 当存在时，`quantscript.formal_source` 负责运行时降级。
+- 当工件不一致时，运行时行为遵循 `/api/runtime/compile`。
+- UI 和文档必须将编译解释呈现为三个独立字段：`Strategy IR 角色`、`运行时来源` 和 `可运行真实结果`。
+- 当前精确的正式 QuantScript 语法和解析与降级限制在 `markdown/guides/quantscript/guide-formal-quantscript-syntax.md` 中定义。
+
+### 已支持的前端模块键
+
+- `builtin.data.kline`
+- `builtin.data.quote`
+- `builtin.intent.double_ma`
+- `builtin.intent.ma_deviation`
+- `builtin.intent.rsi`
+- `builtin.intent.macd`
+- `builtin.intent.momentum`
+- `builtin.intent.zscore`
+- `builtin.intent.spread_observer`
+- `builtin.agent.weighted`
+- `builtin.agent.arbitrage`
+- `builtin.risk.global`
+- `builtin.execution.paper`
+- `builtin.runtime.control`
+
+边界说明：
+
+- 价差相关和套利相关的模块键可能出现在 beta 编译路径中。
+- 它们不得在外部被描述为真实套利平台支持的证据。
+- 前端模块暴露必须与 `/api/capabilities` 保持一致。
+- `builtin.data.kline` 和 `builtin.data.quote` 现在在前端/运行时编译路径中暴露 `ping_enabled` 和 `request_interval_ms`。
+- 这些请求控制字段还不是图生成的正式 QuantScript 面的一部分。
+
+## 能力驱动的 UI 操作
+
+| 操作 | 能力门禁 | 后端路由 | 备注 |
+|---|---|---|---|
+| `编译` | 能力同步加载时或安全回退激活时锁定 | `/api/strategy-ir/compile`、`/api/quantscript/formal/compile`、`/api/runtime/compile` | `strategy_ir` 仅为预检；运行时编译保持权威 |
+| `导出配置` | 能力同步加载时或安全回退激活时锁定 | `/api/runtime/compile` | 导出依赖于可编译的运行时配置 |
+| `启动模拟` | 能力同步加载时或安全回退激活时锁定 | `/api/runtime/test-run`、`/api/runtime/runs/:run_id/events`、`/api/runtime/runs/:run_id/status` | 当前 beta 边界仅为纸面运行时 |
+| `运行回测` | 能力同步加载时或安全回退激活时锁定 | `/api/runtime/backtest`、`/api/runtime/backtests`、`/api/runtime/backtests/:backtest_id` | 当前回测仅为基础回放/回测支持 |
+| `运行参数扫掠` | 能力同步加载时或安全回退激活时锁定 | `/api/runtime/experiments/backtest-sweep`、`/api/runtime/experiments`、`/api/runtime/experiments/:experiment_id` | 在现有回测面上进行窄执行假设扫描；不是第二套实验运行时 |
+| `导出 strategy_graph 源码` | 不受能力门禁控制 | 无 | 仅前端图源草稿导出；这不是正式 QuantScript 语言 |
+
+## 不受 `/api/capabilities` 门禁控制的可见工作区界面
+
+这些界面在当前产品中是真实可见的，但它们的可见性并非全部源自后端能力发现。
+
+| 界面 | 可见性真实数据源 | 后端路由 | 能力驱动？ | 备注 |
+|---|---|---|---|---|
+| `策略模板库` | 前端本地模板注册表 | 无 | 否 | 仅本地启动图界面；加载模板替换内存草稿，不创建后端模板传输 |
+| `版本历史` | 图持久化工作流 | `/api/graphs/:graph_id/versions`、`/api/graphs/:graph_id/versions/:version_id`、`/api/graphs/:graph_id/versions/:version_id/restore`、`/api/graphs/:graph_id/versions/compare` | 否 | 可见是因为存在持久化的图工件，而非因为 `/api/capabilities` 宣传了第二套运行时能力 |
+| `协作与审计` | 图协作元数据和审计投影 | `/api/graphs/:graph_id/audit` | 否 | 当前切片是本地 actor 协作元数据，而非远程账号系统 |
+| `参数扫掠` | 运行时回测面加上能力驱动的触发 | `/api/runtime/experiments/backtest-sweep`、`/api/runtime/experiments`、`/api/runtime/experiments/:experiment_id` | 是 | 作为窄工作区卡片可见，但其提交操作必须遵守与回测相同的能力锁定规则 |
+
+## 能力源行为
+
+### `remote`
+
+- 正常运行状态。
+- 前端应信任 `/api/capabilities` 作为活跃能力参考。
+
+### `cache`
+
+- 降级但仍可使用。
+- 前端可保持操作可用。
+- UI 必须说明最终可用性仍取决于实时后端验证。
+
+### `safe_fallback`
+
+- 风险遏制状态。
+- 前端必须隐藏不支持的模块入口点并锁定风险操作。
+- UI 必须解释能力验证失败，前端已收紧行为以避免暴露虚假能力。
+
+## 允许的声明
+
+- `纸面运行时 beta`
+- `基础回测支持`
+- `受限的 Custom Strategy IR 表达式路径`
+
+## 不得作为正面支持声明出现的表述
+
+- 宣称具备研究级回测能力
+- 宣称支持实盘交易
+- 宣称支持真实套利代理
+- 宣称支持第三方插件市场
+
+## 参考
+
+- [当前状态与发布状态](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/overview/overview-current-status-and-roadmap.md)
+- [编译链合约](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/governance/implementation-compile-chain-contract.md)
+- [已归档功能收口台账](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/archive/planning-retired/implementation-functional-closeout-task-table.md)
+- [首次发布就绪状态](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/planning/implementation-first-release-readiness.md)

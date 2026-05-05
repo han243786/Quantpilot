@@ -1,4 +1,5 @@
 use super::*;
+use quantscript::{parse_quant_script_module, ScriptModule};
 
 pub(super) fn register_graph_quantscript_routes(router: Router<AppState>) -> Router<AppState> {
     router
@@ -31,11 +32,11 @@ pub(super) async fn parse_graph_quantscript(
         .map_err(internal_error)
 }
 
-pub(super) fn generate_quantscript_from_graph_value(graph: &Value) -> anyhow::Result<String> {
+pub(crate) fn generate_quantscript_from_graph_value(graph: &Value) -> anyhow::Result<String> {
     let metadata = graph
         .get("metadata")
         .and_then(Value::as_object)
-        .ok_or_else(|| anyhow::anyhow!("graph.metadata must be an object"))?;
+        .ok_or_else(|| anyhow::anyhow!("graph.metadata 必须是对象"))?;
     let graph_id = metadata
         .get("graph_id")
         .and_then(Value::as_str)
@@ -51,11 +52,11 @@ pub(super) fn generate_quantscript_from_graph_value(graph: &Value) -> anyhow::Re
     let nodes = graph
         .get("nodes")
         .and_then(Value::as_array)
-        .ok_or_else(|| anyhow::anyhow!("graph.nodes must be an array"))?;
+        .ok_or_else(|| anyhow::anyhow!("graph.nodes 必须是数组"))?;
     let edges = graph
         .get("edges")
         .and_then(Value::as_array)
-        .ok_or_else(|| anyhow::anyhow!("graph.edges must be an array"))?;
+        .ok_or_else(|| anyhow::anyhow!("graph.edges 必须是数组"))?;
     let mode = nodes
         .iter()
         .find(|node| node.get("type").and_then(Value::as_str) == Some("runtime"))
@@ -109,6 +110,132 @@ pub(super) fn generate_quantscript_from_graph_value(graph: &Value) -> anyhow::Re
     }
     lines.push("}".to_string());
     Ok(lines.join("\n"))
+}
+
+pub(crate) fn convert_graph_json_to_script_module(graph_value: &Value) -> anyhow::Result<ScriptModule> {
+    let nodes = graph_value
+        .get("nodes")
+        .and_then(Value::as_array)
+        .ok_or_else(|| anyhow::anyhow!("graph.nodes must be an array"))?;
+    let edges = graph_value
+        .get("edges")
+        .and_then(Value::as_array)
+        .ok_or_else(|| anyhow::anyhow!("graph.edges must be an array"))?;
+
+    // Build a minimal QS source from the graph
+    let mut qs_lines: Vec<String> = vec!["fn strategy() {".to_string()];
+
+    // Add fetch calls for data nodes
+    for node in nodes {
+        let node_type = node.get("type").and_then(Value::as_str).unwrap_or("");
+        if node_type == "data" {
+            let cfg = node.get("config").unwrap_or(&Value::Null);
+            let exchange = cfg
+                .get("exchange")
+                .and_then(Value::as_str)
+                .unwrap_or("binance");
+            let instrument = cfg
+                .get("instrument")
+                .and_then(Value::as_str)
+                .unwrap_or("BTCUSDT");
+            let interval = cfg
+                .get("timeframe")
+                .and_then(Value::as_str)
+                .unwrap_or("1d");
+            let lookback = cfg
+                .get("window_size")
+                .and_then(|v| v.as_u64())
+                .unwrap_or(200);
+            let node_id = node.get("id").and_then(Value::as_str).unwrap_or("data");
+            let var_name = node_id.replace('-', "_").replace('.', "_");
+            qs_lines.push(format!(
+                "    let {} = fetch(\"{}\", exchange=\"{}\", interval=\"{}\", lookback={})?",
+                var_name, instrument, exchange, interval, lookback
+            ));
+        }
+    }
+
+    // Add indicator/emit calls for intent nodes
+    for node in nodes {
+        let node_type = node.get("type").and_then(Value::as_str).unwrap_or("");
+        if node_type == "intent" {
+            let module_key = node
+                .get("module_key")
+                .and_then(Value::as_str)
+                .unwrap_or("");
+            let cfg = node.get("config").unwrap_or(&Value::Null);
+            let instrument = cfg
+                .get("instrument")
+                .and_then(Value::as_str)
+                .unwrap_or("BTCUSDT");
+
+            // Find upstream data node
+            let node_id = node.get("id").and_then(Value::as_str).unwrap_or("");
+            let upstream_edge = edges.iter().find(|e| {
+                e.get("target_node_id").and_then(Value::as_str) == Some(node_id)
+            });
+            let source_id = upstream_edge
+                .and_then(|e| e.get("source_node_id").and_then(Value::as_str))
+                .unwrap_or("data");
+            let source_var = source_id.replace('-', "_").replace('.', "_");
+
+            match module_key {
+                "builtin.intent.double_ma" => {
+                    let fast = cfg
+                        .get("fast_period")
+                        .and_then(|v| v.as_u64())
+                        .unwrap_or(20);
+                    let slow = cfg
+                        .get("slow_period")
+                        .and_then(|v| v.as_u64())
+                        .unwrap_or(50);
+                    qs_lines.push(format!("    let fast = sma({}, {})", source_var, fast));
+                    qs_lines.push(format!("    let slow = sma({}, {})", source_var, slow));
+                    qs_lines.push("    if fast > slow {".to_string());
+                    qs_lines.push(format!(
+                        "        emit Intent(\"BUY\", instrument=\"{}\", quantity=1.0)",
+                        instrument
+                    ));
+                    qs_lines.push("    }".to_string());
+                }
+                "builtin.intent.rsi" => {
+                    let period = cfg
+                        .get("period")
+                        .and_then(|v| v.as_u64())
+                        .unwrap_or(14);
+                    qs_lines.push(format!("    let rsi_val = rsi({}, {})", source_var, period));
+                    qs_lines.push("    if rsi_val < 30 {".to_string());
+                    qs_lines.push(format!(
+                        "        emit Intent(\"BUY\", instrument=\"{}\", quantity=1.0)",
+                        instrument
+                    ));
+                    qs_lines.push("    } else if rsi_val > 70 {".to_string());
+                    qs_lines.push(format!(
+                        "        emit Intent(\"SELL\", instrument=\"{}\", quantity=1.0)",
+                        instrument
+                    ));
+                    qs_lines.push("    }".to_string());
+                }
+                _ => {
+                    // Generic intent — use sma crossover as fallback
+                    qs_lines.push(format!("    let fast = sma({}, 20)", source_var));
+                    qs_lines.push(format!("    let slow = sma({}, 50)", source_var));
+                    qs_lines.push("    if fast > slow {".to_string());
+                    qs_lines.push(format!(
+                        "        emit Intent(\"BUY\", instrument=\"{}\", quantity=1.0)",
+                        instrument
+                    ));
+                    qs_lines.push("    }".to_string());
+                }
+            }
+        }
+    }
+
+    qs_lines.push("}".to_string());
+    let qs_source = qs_lines.join("\n");
+
+    // Parse the generated QS source into a ScriptModule
+    parse_quant_script_module(&qs_source)
 }
 
 fn generate_node_quantscript(
@@ -205,9 +332,13 @@ pub(super) fn attach_quantscript_artifacts(
     let Some(metadata) = metadata.as_object_mut() else {
         return;
     };
+    let existing_source_mode = metadata
+        .get("source_mode")
+        .and_then(Value::as_str)
+        .unwrap_or("graph");
     metadata.insert(
         "source_mode".to_string(),
-        Value::String("graph".to_string()),
+        Value::String(existing_source_mode.to_string()),
     );
     let artifacts = metadata
         .entry("artifacts")
@@ -327,7 +458,7 @@ fn build_quantscript_label_targets(graph: &Value) -> serde_json::Map<String, Val
     targets
 }
 
-fn build_quantscript_runtime_targets(graph: &Value) -> Value {
+pub(crate) fn build_quantscript_runtime_targets(graph: &Value) -> Value {
     let nodes = graph
         .get("nodes")
         .and_then(Value::as_array)
@@ -379,6 +510,11 @@ fn build_quantscript_runtime_targets(graph: &Value) -> Value {
         "runtime_node_id": runtime_node_id,
         "execution_node_id": execution_node_id
     })
+}
+
+pub(crate) fn build_compile_runtime_targets_from_graph(graph: &Value) -> CompileRuntimeTargets {
+    let targets_value = build_quantscript_runtime_targets(graph);
+    serde_json::from_value(targets_value).unwrap_or_default()
 }
 
 fn sanitize_quantscript_runtime_id(value: &str) -> String {
@@ -445,14 +581,14 @@ pub(super) fn parse_graph_quantscript_source(source: &str) -> anyhow::Result<Val
 
     let header = lines
         .first()
-        .ok_or_else(|| anyhow::anyhow!("QuantScript source is empty"))?;
+        .ok_or_else(|| anyhow::anyhow!("QuantScript 源码为空"))?;
     let header = header.trim();
     let header = header
         .strip_prefix("strategy_graph ")
-        .ok_or_else(|| anyhow::anyhow!("strategy graph source must start with strategy_graph"))?;
+        .ok_or_else(|| anyhow::anyhow!("策略图源码必须以 strategy_graph 开头"))?;
     let (graph_id, _) = header
         .split_once(" {")
-        .ok_or_else(|| anyhow::anyhow!("invalid strategy graph source header"))?;
+        .ok_or_else(|| anyhow::anyhow!("无效的策略图源码头部"))?;
 
     let mut name = "Imported Strategy".to_string();
     let mut version = "1.0.0".to_string();

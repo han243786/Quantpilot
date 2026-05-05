@@ -21,11 +21,11 @@ use super::shared::{
 use super::source_recovery::gain_loss_source_binding;
 
 const ERR_INDICATOR_SOURCE_REQUIRED: &str =
-    "QPQSLOW022 indicator helper requires a fetch/get_data source as its first arg";
+    "QPQSLOW022 指标辅助函数需要 fetch/get_data 数据源作为第一个参数";
 const ERR_INDICATOR_POSITIVE_WINDOW: &str =
-    "QPQSLOW023 indicator period/lookback/window arguments must be present, numeric, and greater than 0";
+    "QPQSLOW023 指标周期/回看/窗口参数必须存在、为数字且大于 0";
 const ERR_MOVING_AVERAGE_SOURCE_REQUIRED: &str =
-    "QPQSLOW024 moving-average helpers require a fetch/get_data source as their first arg, except ema(...) may also consume a recognized MACD line";
+    "QPQSLOW024 移动平均辅助函数需要 fetch/get_data 数据源作为第一个参数, ema(...) 可接受已识别的 MACD 线";
 
 pub(crate) fn infer_data_sources(
     strategy: &FunctionDecl,

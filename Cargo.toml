@@ -28,6 +28,11 @@ qrpc-compiler = { path = "qrpc_compiler" }
 qrpc-runtime = { path = "qrpc_runtime" }
 quantscript = { path = "quantscript" }
 time = { version = "0.3", features = ["macros", "parsing"] }
+ureq = { version = "2", features = ["json", "native-tls"] }
+hmac = "0.12"
+sha2 = "0.10"
+base64 = "0.22"
+chrono = "0.4"
 
 [dev-dependencies]
 tower = { version = "0.5", features = ["util"] }

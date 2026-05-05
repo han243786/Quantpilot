@@ -167,100 +167,100 @@ pub(super) fn formal_quantscript_diagnostic_from_lowering_error(
         .unwrap_or("QPQSLOW999");
     let hint = match code {
         "QPQSLOW001" => Some(
-            "Rewrite the conditional emit so it lowers to a supported indicator or spread intent, or keep the emit unconditional."
+            "将条件下发重写为支持的指标或价差意图，或保留下发为无条件。"
                 .to_string(),
         ),
         "QPQSLOW002" => Some(
-            "Keep at least one executable emit Intent(...) reachable from strategy, and make sure its condition lowers to a supported runtime intent shape."
+            "保持至少一个可执行的 emit Intent(...) 可从 strategy 到达，并确保其条件下层转换为支持的运行时意图形状。"
                 .to_string(),
         ),
         "QPQSLOW003" | "QPQSLOW007" => Some(
-            "Add at least one fetch(...) or get_data(...) call that remains reachable from strategy lowering."
+            "添加至少一个 fetch(...) 或 get_data(...) 调用，使其在 strategy 下层转换中保持可达。"
                 .to_string(),
         ),
         "QPQSLOW004" => Some(
-            "Use a supported runtime action such as BUY or SELL in emit Intent(...).".to_string(),
+            "在 emit Intent(...) 中使用支持的运行时操作，如 BUY 或 SELL。".to_string(),
         ),
         "QPQSLOW005" => Some(
-            "Provide a non-empty action argument to emit Intent(...).".to_string(),
+            "为 emit Intent(...) 提供非空的 action 参数。".to_string(),
         ),
         "QPQSLOW006" => Some(
-            "Declare a top-level fn strategy() { ... } entrypoint for formal QuantScript."
+            "为正式 QuantScript 声明顶层 fn strategy() { ... } 入口点。"
                 .to_string(),
         ),
         "QPQSLOW008" => Some(
-            "Keep at most one rebalance(...) directive in formal QuantScript strategy()."
+            "在正式 QuantScript strategy() 中保持最多一个 rebalance(...) 指令。"
                 .to_string(),
         ),
         "QPQSLOW009" => Some(
-            "Use only supported rebalance(..., every=...) values such as \"1d\", \"slow\", or \"weekly\"."
+            "仅使用支持的 rebalance(..., every=...) 值，如 \"1d\"、\"slow\" 或 \"weekly\"。"
                 .to_string(),
         ),
         "QPQSLOW010" => Some(
-            "Provide a compile-time universe_snapshot when using snapshot-dependent universe/filter/sort operations."
+            "在使用依赖快照的 universe/filter/sort 操作时提供编译期 universe_snapshot。"
                 .to_string(),
         ),
         "QPQSLOW011" => Some(
-            "Use a supported sort_by key such as symbol, market_cap, volume_24h, or listing_age_days."
+            "使用支持的 sort_by 键，如 symbol、market_cap、volume_24h 或 listing_age_days。"
                 .to_string(),
         ),
         "QPQSLOW012" => Some(
-            "Use a supported sort order such as asc or desc.".to_string(),
+            "使用支持的排序方向，如 asc 或 desc。".to_string(),
         ),
         "QPQSLOW013" => Some(
-            "Pass a supported allocation helper such as equal_weight(...), fixed_weights(...), rank_weight(...), or score_weight(...) into rebalance(...)."
+            "将支持的分配辅助函数（如 equal_weight(...)、fixed_weights(...)、rank_weight(...) 或 score_weight(...)）传入 rebalance(...)。"
                 .to_string(),
         ),
         "QPQSLOW014" => Some(
-            "Pass a universe expression or universe binding into the rebalance allocation helper."
+            "将 universe 表达式或 universe 绑定传入 rebalance 分配辅助函数。"
                 .to_string(),
         ),
         "QPQSLOW015" => Some(
-            "Make sure the rebalance allocation resolves to at least one selected symbol."
+            "确保 rebalance 分配解析为至少一个选中的交易对。"
                 .to_string(),
         ),
         "QPQSLOW016" => Some(
-            "Provide exactly one fixed weight per selected symbol.".to_string(),
+            "为每个选中的交易对提供恰好一个固定权重。".to_string(),
         ),
         "QPQSLOW017" => Some(
-            "Use only non-negative fixed weights.".to_string(),
+            "仅使用非负固定权重。".to_string(),
         ),
         "QPQSLOW018" => Some(
-            "Make the fixed weight total greater than zero.".to_string(),
+            "确保固定权重总和大于零。".to_string(),
         ),
         "QPQSLOW019" => Some(
-            "Use a supported rank_weight method such as linear or inverse_rank.".to_string(),
+            "使用支持的 rank_weight 方法，如 linear 或 inverse_rank。".to_string(),
         ),
         "QPQSLOW020" => Some(
-            "Use the supported score_weight normalize mode \"sum\".".to_string(),
+            "使用支持的 score_weight 归一化模式 \"sum\"。".to_string(),
         ),
         "QPQSLOW021" => Some(
-            "Provide weights as a numeric list literal.".to_string(),
+            "以数字列表字面量形式提供权重。".to_string(),
         ),
         "QPQSLOW022" => Some(
-            "Pass a fetch(...) or get_data(...) series as the first argument to indicator helpers such as rsi, macd, momentum, or zscore."
+            "将 fetch(...) 或 get_data(...) 序列作为第一个参数传入指标辅助函数（如 rsi、macd、momentum 或 zscore）。"
                 .to_string(),
         ),
         "QPQSLOW023" => Some(
-            "Use indicator periods, lookbacks, and windows greater than zero.".to_string(),
+            "使用大于零的指标周期、回看窗口和窗口大小。".to_string(),
         ),
         "QPQSLOW024" => Some(
-            "Pass a fetch/get_data series into moving-average helpers, or for ema(...) pass a recognized MACD line."
+            "将 fetch/get_data 序列传入移动平均辅助函数，或对 ema(...) 传入可识别的 MACD 线。"
                 .to_string(),
         ),
         "QPQSLOW025" => Some(
-            "Pass a universe-valued expression such as symbols(...), universe(...), filter(...), sort_by(...), or top(...) into universe helpers."
+            "将 universe 值表达式（如 symbols(...)、universe(...)、filter(...)、sort_by(...) 或 top(...)）传入 universe 辅助函数。"
                 .to_string(),
         ),
         "QPQSLOW026" => Some(
-            "Pass a list literal into symbols(...), for example symbols([\"BTCUSDT\", \"ETHUSDT\"])."
+            "将列表字面量传入 symbols(...)，例如 symbols([\"BTCUSDT\", \"ETHUSDT\"])。"
                 .to_string(),
         ),
         "QPQSLOW027" => Some(
-            "Use only string literals inside symbols([...]).".to_string(),
+            "仅在 symbols([...]) 内使用字符串字面量。".to_string(),
         ),
         "QPQSLOW028" => Some(
-            "Pass a numeric count as the second positional argument to top(...), for example top(sort_by(...), 10)."
+            "将数字计数作为第二个位置参数传入 top(...)，例如 top(sort_by(...), 10)。"
                 .to_string(),
         ),
         _ => None,

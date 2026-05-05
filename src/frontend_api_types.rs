@@ -597,6 +597,8 @@ pub(super) struct ParseGraphQuantScriptRequest {
 #[derive(Debug, Deserialize)]
 pub(super) struct CompileRuntimeRequest {
     pub(super) runtime_config: FrontendRuntimeConfig,
+    #[serde(default)]
+    pub(super) graph_json: Option<Value>,
 }
 
 #[derive(Debug, Deserialize)]

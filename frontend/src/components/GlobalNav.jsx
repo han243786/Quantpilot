@@ -3,6 +3,7 @@ import { navigateTo } from "../router";
 
 const SECTIONS = [
   { path: "/strategies", label: "策略" },
+  { path: "/quantscript", label: "QS" },
 ];
 
 const BLOCK5 = [

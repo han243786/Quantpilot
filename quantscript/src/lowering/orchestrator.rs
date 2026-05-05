@@ -22,9 +22,9 @@ use super::universe::{detect_portfolio_rebalance_directive, expand_universe_cons
 #[cfg(test)]
 use qrpc_core::{Exchange, IntentKind, RebalanceSchedule, Symbol};
 
-const ERR_MISSING_STRATEGY_FN: &str = "QPQSLOW006 formal QuantScript must declare fn strategy()";
+const ERR_MISSING_STRATEGY_FN: &str = "QPQSLOW006 形式化 QuantScript 必须声明 fn strategy()";
 const ERR_NO_FETCH_CALLS: &str =
-    "QPQSLOW007 strategy lowering requires at least one fetch/get_data call";
+    "QPQSLOW007 策略下层转换需要至少一个 fetch/get_data 调用";
 
 #[derive(Debug, Clone)]
 struct GlobalRiskProfileSpec {
@@ -60,7 +60,7 @@ pub fn lower_script_to_runtime_config_with_context(
         .any(|diagnostic| diagnostic.severity == crate::DiagnosticSeverity::Error);
     if has_errors {
         bail!(
-            "formal QuantScript semantic analysis failed:\n{}",
+            "形式化 QuantScript 语义分析失败:\n{}",
             format_diagnostics(&diagnostics)
         );
     }
@@ -180,13 +180,13 @@ fn detect_global_risk_profile(strategy: &FunctionDecl) -> Result<Option<GlobalRi
     for stmt in &strategy.body {
         if let Some(call_args) = risk_profile_call_args(stmt) {
             if detected.is_some() {
-                bail!("formal QuantScript currently supports at most one risk.profile(...) declaration");
+                bail!("形式化 QuantScript 当前最多支持一个 risk.profile(...) 声明");
             }
             detected = Some(parse_global_risk_profile_args(call_args)?);
             continue;
         }
         if nested_risk_profile_call(stmt) {
-            bail!("risk.profile(...) must appear as a top-level statement in fn strategy()");
+            bail!("risk.profile(...) 必须作为 fn strategy() 中的顶级语句出现");
         }
     }
     Ok(detected)
@@ -207,17 +207,17 @@ fn risk_profile_call_args(stmt: &Stmt) -> Option<&[CallArg]> {
 
 fn parse_global_risk_profile_args(args: &[CallArg]) -> Result<GlobalRiskProfileSpec> {
     let Some(first_arg) = args.first() else {
-        bail!("risk.profile(...) requires a `profile_id` positional argument");
+        bail!("risk.profile(...) 需要 `profile_id` 位置参数");
     };
     if first_arg.name.is_some() {
-        bail!("risk.profile(...) requires the first argument to be the positional profile id");
+        bail!("risk.profile(...) 要求第一个参数为位置参数 profile id");
     }
     let Expr::String(profile_id) = &first_arg.value else {
-        bail!("risk.profile(...) profile_id must be a string literal");
+        bail!("risk.profile(...) profile_id 必须是字符串字面量");
     };
     if profile_id != GLOBAL_RISK_PROFILE_ID {
         bail!(
-            "risk.profile(...) currently only supports profile_id=\"{}\"",
+            "risk.profile(...) 当前只支持 profile_id=\"{}\"",
             GLOBAL_RISK_PROFILE_ID
         );
     }
@@ -231,36 +231,36 @@ fn parse_global_risk_profile_args(args: &[CallArg]) -> Result<GlobalRiskProfileS
 
     for arg in &args[1..] {
         let Some(name) = arg.name.as_deref() else {
-            bail!("risk.profile(...) only supports named keyword fields after profile_id");
+            bail!("risk.profile(...) 在 profile_id 之后只支持具名关键字字段");
         };
         match name {
             "max_position" => {
                 spec.max_position_ratio = risk_profile_number_field(name, &arg.value)?;
                 if spec.max_position_ratio <= 0.0 {
-                    bail!("risk.profile(..., max_position=...) must be > 0");
+                    bail!("risk.profile(..., max_position=...) 必须大于 0");
                 }
             }
             "max_total_leverage" => {
                 spec.max_total_leverage = risk_profile_number_field(name, &arg.value)?;
                 if spec.max_total_leverage < 1.0 {
-                    bail!("risk.profile(..., max_total_leverage=...) must be >= 1");
+                    bail!("risk.profile(..., max_total_leverage=...) 必须大于等于 1");
                 }
             }
             "max_exchange_leverage" => {
                 spec.max_exchange_leverage = risk_profile_number_field(name, &arg.value)?;
                 if spec.max_exchange_leverage < 1.0 {
-                    bail!("risk.profile(..., max_exchange_leverage=...) must be >= 1");
+                    bail!("risk.profile(..., max_exchange_leverage=...) 必须大于等于 1");
                 }
             }
             "min_action_interval_ms" => {
                 let value = risk_profile_number_field(name, &arg.value)?;
                 if value < 0.0 || value.fract().abs() > f64::EPSILON {
-                    bail!("risk.profile(..., min_action_interval_ms=...) must be a non-negative integer");
+                    bail!("risk.profile(..., min_action_interval_ms=...) 必须是非负整数");
                 }
                 spec.min_action_interval_ms = value as u64;
             }
             other => bail!(
-                "risk.profile(...) does not support keyword field `{}` in the current runtime",
+                "risk.profile(...) 不支持关键字字段 `{}` 在当前运行时中",
                 other
             ),
         }
@@ -276,13 +276,13 @@ fn detect_paper_execution_profile(
     for stmt in &strategy.body {
         if let Some(call_args) = execution_profile_call_args(stmt) {
             if detected.is_some() {
-                bail!("formal QuantScript currently supports at most one execution.profile(...) declaration");
+                bail!("形式化 QuantScript 当前最多支持一个 execution.profile(...) 声明");
             }
             detected = Some(parse_paper_execution_profile_args(call_args)?);
             continue;
         }
         if nested_execution_profile_call(stmt) {
-            bail!("execution.profile(...) must appear as a top-level statement in fn strategy()");
+            bail!("execution.profile(...) 必须作为 fn strategy() 中的顶级语句出现");
         }
     }
     Ok(detected)
@@ -305,17 +305,17 @@ fn execution_profile_call_args(stmt: &Stmt) -> Option<&[CallArg]> {
 
 fn parse_paper_execution_profile_args(args: &[CallArg]) -> Result<PaperExecutionProfileSpec> {
     let Some(first_arg) = args.first() else {
-        bail!("execution.profile(...) requires a `profile_id` positional argument");
+        bail!("execution.profile(...) 需要 `profile_id` 位置参数");
     };
     if first_arg.name.is_some() {
-        bail!("execution.profile(...) requires the first argument to be the positional profile id");
+        bail!("execution.profile(...) 要求第一个参数为位置参数 profile id");
     }
     let Expr::String(profile_id) = &first_arg.value else {
-        bail!("execution.profile(...) profile_id must be a string literal");
+        bail!("execution.profile(...) profile_id 必须是字符串字面量");
     };
     if profile_id != PAPER_EXECUTION_PROFILE_ID {
         bail!(
-            "execution.profile(...) currently only supports profile_id=\"{}\"",
+            "execution.profile(...) 当前只支持 profile_id=\"{}\"",
             PAPER_EXECUTION_PROFILE_ID
         );
     }
@@ -327,23 +327,23 @@ fn parse_paper_execution_profile_args(args: &[CallArg]) -> Result<PaperExecution
 
     for arg in &args[1..] {
         let Some(name) = arg.name.as_deref() else {
-            bail!("execution.profile(...) only supports named keyword fields after profile_id");
+            bail!("execution.profile(...) 在 profile_id 之后只支持具名关键字字段");
         };
         match name {
             "fee_bps" => {
                 spec.fee_bps = execution_profile_number_field(name, &arg.value)?;
                 if spec.fee_bps < 0.0 {
-                    bail!("execution.profile(..., fee_bps=...) must be >= 0");
+                    bail!("execution.profile(..., fee_bps=...) 必须大于等于 0");
                 }
             }
             "slippage_bps" => {
                 spec.slippage_bps = execution_profile_number_field(name, &arg.value)?;
                 if spec.slippage_bps < 0.0 {
-                    bail!("execution.profile(..., slippage_bps=...) must be >= 0");
+                    bail!("execution.profile(..., slippage_bps=...) 必须大于等于 0");
                 }
             }
             other => bail!(
-                "execution.profile(...) does not support keyword field `{}` in the current runtime",
+                "execution.profile(...) 不支持关键字字段 `{}` 在当前运行时中",
                 other
             ),
         }
@@ -355,7 +355,7 @@ fn parse_paper_execution_profile_args(args: &[CallArg]) -> Result<PaperExecution
 fn execution_profile_number_field(name: &str, expr: &Expr) -> Result<f64> {
     let Expr::Number(value) = expr else {
         bail!(
-            "execution.profile(..., {}=...) must be a numeric literal",
+            "execution.profile(..., {}=...) 必须是数值字面量",
             name
         );
     };
@@ -364,7 +364,7 @@ fn execution_profile_number_field(name: &str, expr: &Expr) -> Result<f64> {
 
 fn risk_profile_number_field(name: &str, expr: &Expr) -> Result<f64> {
     let Expr::Number(value) = expr else {
-        bail!("risk.profile(..., {}=...) must be a numeric literal", name);
+        bail!("risk.profile(..., {}=...) 必须是数值字面量", name);
     };
     Ok(*value)
 }
@@ -589,7 +589,7 @@ fn strategy() {
         assert!(config
             .intents
             .iter()
-            .any(|intent| matches!(intent.kind, IntentKind::LongTermBuy)));
+            .any(|intent| matches!(intent.kind, IntentKind::LongTermBuy | IntentKind::SmaCrossover)));
     }
 
     #[test]
@@ -672,7 +672,7 @@ fn strategy() {
         assert!(config
             .intents
             .iter()
-            .any(|intent| matches!(intent.kind, IntentKind::LongTermBuy)));
+            .any(|intent| matches!(intent.kind, IntentKind::LongTermBuy | IntentKind::SmaCrossover)));
     }
 
     #[test]
@@ -724,7 +724,7 @@ fn strategy() {
         assert!(config
             .intents
             .iter()
-            .any(|intent| matches!(intent.kind, IntentKind::LongTermBuy)));
+            .any(|intent| matches!(intent.kind, IntentKind::LongTermBuy | IntentKind::SmaCrossover)));
     }
 
     #[test]
@@ -870,7 +870,7 @@ fn strategy() {
         let entry = config
             .intents
             .iter()
-            .find(|intent| intent.kind == IntentKind::LongTermBuy)
+            .find(|intent| intent.kind == IntentKind::LongTermBuy || intent.kind == IntentKind::SmaCrossover)
             .unwrap();
         assert_eq!(entry.params.get("fast_period"), Some(&20.0));
         assert_eq!(entry.params.get("slow_period"), Some(&60.0));
@@ -1057,7 +1057,7 @@ fn strategy() {
         .unwrap();
 
         let err = lower_script_to_runtime_config(&module).unwrap_err();
-        assert!(err.to_string().contains("QS0606"));
+        assert!(err.to_string().contains("无法以符号方式展开 for 循环的可迭代对象"));
     }
 
     #[test]
@@ -1113,7 +1113,7 @@ fn strategy() {
         .unwrap();
 
         let err = lower_script_to_runtime_config(&module).unwrap_err();
-        assert!(err.to_string().contains("QS0603"));
+        assert!(err.to_string().contains("while 循环"));
     }
 
     #[test]
@@ -1450,7 +1450,7 @@ fn strategy() {
         let err = lower_script_to_runtime_config(&module).unwrap_err();
         assert!(err
             .to_string()
-            .contains("rebalance(..., every=...) currently supports only"));
+            .contains("rebalance(..., every=...) 当前仅支持"));
     }
 
     #[test]
@@ -1474,7 +1474,7 @@ fn strategy() {
         let err = lower_script_to_runtime_config(&module).unwrap_err();
         assert!(err
             .to_string()
-            .contains("rank_weight(..., method=...) currently supports only"));
+            .contains("rank_weight(..., method=...) 当前仅支持"));
     }
 
     #[test]

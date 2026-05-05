@@ -95,6 +95,7 @@ pub enum IntentKind {
     Momentum,
     ZScore,
     QuoteObserve,
+    SmaCrossover,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -996,6 +997,8 @@ pub struct BacktestSummary {
     pub average_trade_notional: f64,
     #[serde(default)]
     pub fee_drag_ratio: f64,
+    #[serde(default)]
+    pub win_rate: f64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1007,6 +1010,8 @@ pub struct BacktestOutput {
     pub equity_curve: Vec<BacktestEquityPoint>,
     pub summary: BacktestSummary,
     pub final_portfolio: PortfolioState,
+    #[serde(default)]
+    pub debug_values: Option<Vec<std::collections::BTreeMap<String, f64>>>,
 }
 
 #[cfg(test)]

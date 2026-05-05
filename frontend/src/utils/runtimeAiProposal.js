@@ -150,7 +150,7 @@ export function normalizeRuntimeAiProposal(input = {}) {
     disabled_reason:
       status === "static_check_passed"
         ? null
-        : input.denial_reason || staticCheck.message || "AI proposal is not ready for review"
+        : input.denial_reason || staticCheck.message || "AI 提案尚未准备好审核"
   };
 }
 

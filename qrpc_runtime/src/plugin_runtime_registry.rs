@@ -210,7 +210,7 @@ impl RuntimePluginRegistry {
             Ok(())
         } else {
             Err(vec![format!(
-                "plugin `{}` must declare extension point `{}`",
+                "插件 `{}` 必须声明扩展点 `{}`",
                 manifest.id,
                 extension_point.as_str()
             )])
@@ -298,7 +298,7 @@ mod tests {
             .unwrap_err();
         assert!(err
             .iter()
-            .any(|item| item.contains("must declare extension point")));
+            .any(|item| item.contains("必须声明扩展点")));
     }
 
     #[test]

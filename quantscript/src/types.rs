@@ -92,7 +92,7 @@ impl TypeArena {
 pub fn parse_type_annotation(input: &str) -> Result<Type, String> {
     let input = input.trim();
     if input.is_empty() {
-        return Err("type annotation cannot be empty".into());
+        return Err("类型注解不能为空".into());
     }
 
     match input {
@@ -118,7 +118,7 @@ pub fn parse_type_annotation(input: &str) -> Result<Type, String> {
                 return parse_type_annotation(inner).map(|ty| Type::List(Box::new(ty)));
             }
 
-            Err(format!("unsupported type annotation: {input}"))
+            Err(format!("不支持的类型注解: {input}"))
         }
     }
 }

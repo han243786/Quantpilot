@@ -5,14 +5,14 @@ export async function fetchApprovals({ reviewState } = {}) {
   if (reviewState) params.set("review_state", reviewState);
   const url = `${API_BASE}/api/v1/ai/approvals?${params.toString()}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to fetch approvals: ${res.status}`);
+  if (!res.ok) throw new Error(`获取审批列表失败: ${res.status}`);
   return res.json();
 }
 
 export async function fetchApprovalDetail(approvalId) {
   const url = `${API_BASE}/api/v1/ai/approvals/${approvalId}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to fetch approval: ${res.status}`);
+  if (!res.ok) throw new Error(`获取审批详情失败: ${res.status}`);
   return res.json();
 }
 
@@ -23,7 +23,7 @@ export async function approveProposal(proposalId, actorId, comment) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ actor_id: actorId, comment: comment || null }),
   });
-  if (!res.ok) throw new Error(`Failed to approve: ${res.status}`);
+  if (!res.ok) throw new Error(`审批通过失败: ${res.status}`);
   return res.json();
 }
 
@@ -34,7 +34,7 @@ export async function rejectProposal(proposalId, actorId, comment) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ actor_id: actorId, comment: comment || null }),
   });
-  if (!res.ok) throw new Error(`Failed to reject: ${res.status}`);
+  if (!res.ok) throw new Error(`审批拒绝失败: ${res.status}`);
   return res.json();
 }
 
@@ -45,14 +45,14 @@ export async function claimProposal(proposalId, actorId) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ actor_id: actorId }),
   });
-  if (!res.ok) throw new Error(`Failed to claim: ${res.status}`);
+  if (!res.ok) throw new Error(`认领审批失败: ${res.status}`);
   return res.json();
 }
 
 export async function fetchSandboxReport(proposalId) {
   const url = `${API_BASE}/api/v1/ai/proposals/${proposalId}/sandbox-report`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to fetch sandbox report: ${res.status}`);
+  if (!res.ok) throw new Error(`获取沙箱报告失败: ${res.status}`);
   return res.json();
 }
 

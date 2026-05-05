@@ -93,6 +93,16 @@ pub enum CoreIndicatorKind {
     ZScore,
     Custom,
     QuoteObserve,
+    Atr,
+    BollingerBands,
+    Obv,
+    Cmf,
+    Adx,
+    Stochastic,
+    Cci,
+    ParabolicSar,
+    KeltnerChannel,
+    DonchianChannel,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

@@ -13,6 +13,7 @@ const AlertsPage = lazy(() => import("./pages/AlertsPage"));
 const SnapshotsPage = lazy(() => import("./pages/SnapshotsPage"));
 const RunbookPage = lazy(() => import("./pages/RunbookPage"));
 const ChaosPage = lazy(() => import("./pages/ChaosPage"));
+const QuantScriptEditor = lazy(() => import("./pages/QuantScriptEditor"));
 
 function AppShellFallback() {
   return (
@@ -78,6 +79,8 @@ export default function App() {
     content = <RunbookPage />;
   } else if (route.name === "chaos") {
     content = <ChaosPage />;
+  } else if (route.name === "quantscript") {
+    content = <QuantScriptEditor />;
   } else if (route.name === "strategy-workspace") {
     content = <StrategyWorkspacePage strategyId={route.strategyId} />;
   } else if (route.name === "strategy-backtests") {

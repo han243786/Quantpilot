@@ -52,7 +52,7 @@ impl PluginManifest {
             }
             if !self.kind.supported_extension_points().contains(point) {
                 errors.push(format!(
-                    "plugin kind `{}` cannot attach to extension point `{}`",
+                    "插件类型 `{}` 无法附加到扩展点 `{}`",
                     self.kind.as_str(),
                     point.as_str()
                 ));
@@ -95,7 +95,7 @@ impl PluginManifest {
                     }
                 }
                 None => errors.push(format!(
-                    "unsupported capability contract `{}`",
+                    "不支持的能力合约 `{}`",
                     capability.id
                 )),
             }
@@ -287,7 +287,7 @@ impl PluginRegistry {
         manifest.validate()?;
         if self.manifests.contains_key(&manifest.id) {
             return Err(vec![format!(
-                "plugin `{}` is already registered",
+                "插件 `{}` 已注册",
                 manifest.id
             )]);
         }
@@ -365,7 +365,7 @@ mod tests {
         let errors = manifest.validate().unwrap_err();
         assert!(errors
             .iter()
-            .any(|item| item.contains("unsupported capability contract")));
+            .any(|item| item.contains("不支持的能力合约")));
     }
 
     #[test]
@@ -375,7 +375,7 @@ mod tests {
         let errors = manifest.validate().unwrap_err();
         assert!(errors
             .iter()
-            .any(|item| item.contains("cannot attach to extension point")));
+            .any(|item| item.contains("无法附加到扩展点")));
     }
 
     #[test]
@@ -397,6 +397,6 @@ mod tests {
         let mut registry = PluginRegistry::default();
         registry.register(sample_manifest()).unwrap();
         let err = registry.register(sample_manifest()).unwrap_err();
-        assert!(err.iter().any(|item| item.contains("already registered")));
+        assert!(err.iter().any(|item| item.contains("已注册")));
     }
 }

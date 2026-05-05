@@ -23,7 +23,7 @@ async fn run_test_scenario(
         ));
     }
     let ctx = TestRunnerContext::from_source(&request.source)
-        .map_err(|e| (axum::http::StatusCode::BAD_REQUEST, format!("parse error: {e}")))?;
+        .map_err(|e| (axum::http::StatusCode::BAD_REQUEST, format!("解析错误: {e}")))?;
 
     let mut runner = TestRunner::new();
     let report = runner

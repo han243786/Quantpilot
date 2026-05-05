@@ -139,9 +139,9 @@ async fn donchian_style_report_strategy_is_rejected_by_current_formal_lowering()
     assert!(value["details"][0]["message"]
         .as_str()
         .unwrap_or_default()
-        .contains("unsupported conditional emit Intent lowering"));
+        .contains("不支持的条件下发 Intent 下层转换"));
     assert!(value["details"][0]["reason"]
         .as_str()
         .unwrap_or_default()
-        .contains("Rewrite the conditional emit"));
+        .contains("将条件下发重写为支持的指标或价差意图"));
 }

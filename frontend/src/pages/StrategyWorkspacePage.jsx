@@ -16,6 +16,8 @@ const StrategyWorkspaceOverviewTab = lazy(() => import("./StrategyWorkspaceOverv
 const StrategyWorkspaceCodeTab = lazy(() => import("./StrategyWorkspaceCodeTab"));
 const StrategyWorkspaceDiagnosticsTab = lazy(() => import("./StrategyWorkspaceDiagnosticsTab"));
 const StrategyWorkspaceResearchTab = lazy(() => import("./StrategyWorkspaceResearchTab"));
+const StrategyWorkspaceDebugTab = lazy(() => import("./StrategyWorkspaceDebugTab"));
+const StrategyWorkspaceSourceTab = lazy(() => import("./StrategyWorkspaceSourceTab"));
 
 const WORKSPACE_TABS = [
   {
@@ -37,6 +39,16 @@ const WORKSPACE_TABS = [
     id: "research",
     label: "研究",
     note: "模拟、回测与实时事件流。"
+  },
+  {
+    id: "debug",
+    label: "调试",
+    note: "@debug 指令输出的 per-bar 变量值。"
+  },
+  {
+    id: "source",
+    label: "源码",
+    note: "查看原始 QuantScript 源码并一键运行测试。"
   }
 ];
 
@@ -151,6 +163,11 @@ export default function StrategyWorkspacePage({ strategyId }) {
           </button>
           <div className={`status-pill ${readiness.tone}`}>{readiness.label}</div>
           <div className="status-pill info">{compileSummary.protocol_name || "协议待生成"}</div>
+          {runtime.testnet_status ? (
+            <div className={`status-pill ${runtime.testnet_status === "connecting" ? "warning" : "success"}`}>
+              模拟盘: {runtime.testnet_status === "connecting" ? "连接中..." : `${runtime.testnet_exchange || "OKX"} | 余额 ${runtime.testnet_balance || "0"} USDT`}
+            </div>
+          ) : null}
           <div className="status-pill muted">对比队列 {compareSelection.length}/2</div>
         </div>
       </header>
@@ -231,6 +248,16 @@ export default function StrategyWorkspacePage({ strategyId }) {
       {ui.activeTab === "research" ? (
         <Suspense fallback={null}>
           <StrategyWorkspaceResearchTab strategyId={strategyId} />
+        </Suspense>
+      ) : null}
+      {ui.activeTab === "debug" ? (
+        <Suspense fallback={null}>
+          <StrategyWorkspaceDebugTab debugBars={pageData.debugBars || []} />
+        </Suspense>
+      ) : null}
+      {ui.activeTab === "source" ? (
+        <Suspense fallback={null}>
+          <StrategyWorkspaceSourceTab graphId={graph?.metadata?.graph_id} />
         </Suspense>
       ) : null}
     </div>

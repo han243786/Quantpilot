@@ -40,6 +40,7 @@ pub enum TestAction {
         end: Option<String>,
         seed: Option<u64>,
         save: bool,
+        volatility: Option<f64>,
     },
     Assert(String),
     SaveRun,
@@ -52,6 +53,11 @@ pub enum TestAction {
         condition: String,
         timeout_secs: u64,
     },
+    CompareBacktests {
+        left: usize,
+        right: usize,
+    },
+    Debug(Vec<String>),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -230,7 +236,7 @@ impl ScriptParser {
             } else if line.starts_with("@test ") || line.starts_with("@test{") {
                 items.push(Item::TestBlock(self.parse_test_block()?));
             } else {
-                bail!("unsupported top-level statement: {line}");
+                bail!("不支持的顶级语句: {line}");
             }
         }
         Ok(ScriptModule { items })
@@ -326,6 +332,13 @@ impl ScriptParser {
                 actions.push(self.parse_test_modify_action()?);
             } else if trimmed.starts_with("@wait ") {
                 actions.push(self.parse_test_wait_action()?);
+            } else if trimmed.starts_with("@compare_backtests ") || trimmed.starts_with("@compare ") {
+                actions.push(self.parse_compare_action()?);
+            } else if trimmed.starts_with("@debug(") || trimmed.starts_with("@debug ") {
+                let inner = trimmed.trim_start_matches("@debug(").trim_end_matches(')').trim();
+                let vars: Vec<String> = inner.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect();
+                self.index += 1;
+                actions.push(TestAction::Debug(vars));
             } else {
                 self.index += 1;
             }
@@ -385,6 +398,7 @@ impl ScriptParser {
                 .get("save")
                 .map(|v| v == "true")
                 .unwrap_or(false),
+            volatility: fields.get("volatility").and_then(|v| v.parse::<f64>().ok()),
         })
     }
 
@@ -421,6 +435,23 @@ impl ScriptParser {
             })
             .unwrap_or(TestParamValue::Number(0.0));
         Ok(TestAction::Modify { node, param, value })
+    }
+
+    fn parse_compare_action(&mut self) -> Result<TestAction> {
+        let line = self.take_line()?;
+        let stripped = line.trim_start_matches("@compare_backtests")
+            .trim_start_matches("@compare")
+            .trim();
+        let fields = if stripped.starts_with('{') {
+            let inner = stripped.trim_start_matches('{').trim_end_matches('}').trim();
+            parse_test_inline_fields(inner)
+        } else {
+            parse_test_inline_fields(stripped)
+        };
+        Ok(TestAction::CompareBacktests {
+            left: fields.get("left").and_then(|v| v.parse().ok()).unwrap_or(0),
+            right: fields.get("right").and_then(|v| v.parse().ok()).unwrap_or(1),
+        })
     }
 
     fn parse_test_wait_action(&mut self) -> Result<TestAction> {
@@ -504,7 +535,7 @@ impl ScriptParser {
         let rest = line.trim_start_matches("from ").trim();
         let (module_part, names_part) = rest
             .split_once(" import ")
-            .ok_or_else(|| anyhow!("invalid from-import syntax: {line}"))?;
+            .ok_or_else(|| anyhow!("无效的 from-import 语法: {line}"))?;
         let (module, version) = module_part
             .split_once('@')
             .map(|(m, v)| (m.to_string(), Some(v.to_string())))
@@ -538,16 +569,16 @@ impl ScriptParser {
         let signature = signature
             .strip_suffix('{')
             .map(str::trim_end)
-            .ok_or_else(|| anyhow!("function must open with '{{': {line}"))?;
+            .ok_or_else(|| anyhow!("函数必须以 '{{' 开头: {line}"))?;
         let rest = signature.trim_start_matches("fn ").trim();
         let name_end = rest
             .find('(')
-            .ok_or_else(|| anyhow!("invalid function signature: {line}"))?;
+            .ok_or_else(|| anyhow!("无效的函数签名: {line}"))?;
         let name = rest[..name_end].trim().to_string();
         let after_name = &rest[name_end + 1..];
         let params_end = after_name
             .find(')')
-            .ok_or_else(|| anyhow!("invalid function parameters: {line}"))?;
+            .ok_or_else(|| anyhow!("无效的函数参数: {line}"))?;
         let params_text = &after_name[..params_end];
         let after_params = after_name[params_end + 1..].trim();
         let return_type = after_params
@@ -623,7 +654,7 @@ impl ScriptParser {
             .trim()
             .strip_suffix('{')
             .map(str::trim_end)
-            .ok_or_else(|| anyhow!("if statement must open with '{{': {line}"))?;
+            .ok_or_else(|| anyhow!("if 语句必须以 '{{' 开头: {line}"))?;
         let then_branch = self.parse_block()?;
         let mut else_if_branches = Vec::new();
         let mut else_branch = None;
@@ -637,7 +668,7 @@ impl ScriptParser {
                     .trim()
                     .strip_suffix('{')
                     .map(str::trim_end)
-                    .ok_or_else(|| anyhow!("else if must open with '{{': {line}"))?;
+                    .ok_or_else(|| anyhow!("else if 必须以 '{{' 开头: {line}"))?;
                 else_if_branches.push((parse_expr_lossy(condition), self.parse_block()?));
                 continue;
             }
@@ -662,10 +693,10 @@ impl ScriptParser {
             .trim()
             .strip_suffix('{')
             .map(str::trim_end)
-            .ok_or_else(|| anyhow!("for statement must open with '{{': {line}"))?;
+            .ok_or_else(|| anyhow!("for 语句必须以 '{{' 开头: {line}"))?;
         let (pattern, iterable) = header
             .split_once(" in ")
-            .ok_or_else(|| anyhow!("invalid for syntax: {line}"))?;
+            .ok_or_else(|| anyhow!("无效的 for 语法: {line}"))?;
         Ok(Stmt::For {
             pattern: pattern.trim().to_string(),
             iterable: parse_expr_lossy(iterable.trim()),
@@ -679,7 +710,7 @@ impl ScriptParser {
             .trim()
             .strip_suffix('{')
             .map(str::trim_end)
-            .ok_or_else(|| anyhow!("while statement must open with '{{': {line}"))?;
+            .ok_or_else(|| anyhow!("while 语句必须以 '{{' 开头: {line}"))?;
         Ok(Stmt::While {
             condition: parse_expr_lossy(condition),
             body: self.parse_block()?,
@@ -692,7 +723,7 @@ impl ScriptParser {
             .trim()
             .strip_suffix('{')
             .map(str::trim_end)
-            .ok_or_else(|| anyhow!("match statement must open with '{{': {line}"))?;
+            .ok_or_else(|| anyhow!("match 语句必须以 '{{' 开头: {line}"))?;
         let mut arms = Vec::new();
         while let Some(next) = self.peek_line() {
             if next == "}" {
@@ -702,7 +733,7 @@ impl ScriptParser {
             let line = self.take_line()?;
             let (pattern, body) = line
                 .split_once("=>")
-                .ok_or_else(|| anyhow!("invalid match arm: {line}"))?;
+                .ok_or_else(|| anyhow!("无效的 match 分支: {line}"))?;
             arms.push(MatchArm {
                 pattern: pattern.trim().to_string(),
                 body: parse_match_arm_body(body.trim().trim_end_matches(',').trim())?,
@@ -723,7 +754,7 @@ impl ScriptParser {
             .lines
             .get(self.index)
             .cloned()
-            .ok_or_else(|| anyhow!("unexpected end of input"))?;
+            .ok_or_else(|| anyhow!("意外的输入结束"))?;
         self.index += 1;
         Ok(line)
     }
@@ -791,7 +822,7 @@ fn parse_let_stmt(line: &str) -> Result<Stmt> {
     };
     let (binding, value) = rhs
         .split_once('=')
-        .ok_or_else(|| anyhow!("invalid let statement: {line}"))?;
+        .ok_or_else(|| anyhow!("无效的 let 语句: {line}"))?;
     let (pattern, ty) = binding
         .split_once(':')
         .map(|(pattern, ty)| (pattern.trim().to_string(), Some(ty.trim().to_string())))
@@ -928,7 +959,7 @@ pub fn parse_expr(input: &str) -> Result<Expr> {
     let mut parser = ExprParser { tokens, index: 0 };
     let expr = parser.parse_expression(0)?;
     if !parser.is_eof() {
-        bail!("unexpected trailing expression tokens in: {input}");
+        bail!("表达式末尾存在意外的令牌: {input}");
     }
     Ok(expr)
 }
@@ -1112,7 +1143,7 @@ fn tokenize_expr(input: &str) -> Result<Vec<ExprToken>> {
                     chars.next();
                     tokens.push(ExprToken::AndAnd);
                 } else {
-                    bail!("unsupported '&' in expression: {input}");
+                    bail!("表达式中不支持的 '&': {input}");
                 }
             }
             '|' => {
@@ -1121,7 +1152,7 @@ fn tokenize_expr(input: &str) -> Result<Vec<ExprToken>> {
                     chars.next();
                     tokens.push(ExprToken::OrOr);
                 } else {
-                    bail!("unsupported '|' in expression: {input}");
+                    bail!("表达式中不支持的 '|': {input}");
                 }
             }
             c if c.is_ascii_digit() => {
@@ -1155,7 +1186,7 @@ fn tokenize_expr(input: &str) -> Result<Vec<ExprToken>> {
                     }
                 }
                 if ident.is_empty() {
-                    bail!("unexpected character in expression: {ch}");
+                    bail!("表达式中的意外字符: {ch}");
                 }
                 match ident.as_str() {
                     "true" => tokens.push(ExprToken::Bool(true)),
@@ -1275,7 +1306,7 @@ impl ExprParser {
                 self.expect_token(ExprToken::RBracket, "]")?;
                 Ok(Expr::List(items))
             }
-            other => bail!("expected expression, found {other:?}"),
+            other => bail!("期望表达式，但遇到 {other:?}"),
         }
     }
 
@@ -1396,7 +1427,7 @@ impl ExprParser {
     fn expect_ident(&mut self, label: &str) -> Result<String> {
         match self.next() {
             Some(ExprToken::Ident(value)) => Ok(value),
-            other => bail!("expected {label}, found {other:?}"),
+            other => bail!("期望 {label}，但遇到 {other:?}"),
         }
     }
 
@@ -1405,7 +1436,7 @@ impl ExprParser {
         if token == Some(expected) {
             Ok(())
         } else {
-            bail!("expected token {label}, found {token:?}")
+            bail!("期望令牌 {label}，但遇到 {token:?}")
         }
     }
 

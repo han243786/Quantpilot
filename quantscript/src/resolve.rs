@@ -109,6 +109,16 @@ pub enum KnownIndicatorHelperKind {
     Macd,
     Momentum,
     ZScore,
+    Atr,
+    BollingerBands,
+    Obv,
+    Cmf,
+    Adx,
+    Stochastic,
+    Cci,
+    ParabolicSar,
+    KeltnerChannel,
+    DonchianChannel,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -342,12 +352,14 @@ impl Resolver {
                                         end,
                                         seed,
                                         save,
+                                        volatility,
                                     } => HirTestAction::Backtest {
                                         source: source.clone(),
                                         start: start.clone(),
                                         end: end.clone(),
                                         seed: *seed,
                                         save: *save,
+                                        volatility: *volatility,
                                     },
                                     crate::script::TestAction::Assert(expr) => {
                                         HirTestAction::Assert(expr.clone())
@@ -377,6 +389,15 @@ impl Resolver {
                                         condition: condition.clone(),
                                         timeout_secs: *timeout_secs,
                                     },
+                                    crate::script::TestAction::CompareBacktests { left, right } => {
+                                        HirTestAction::CompareBacktests {
+                                            left: *left,
+                                            right: *right,
+                                        }
+                                    }
+                                    crate::script::TestAction::Debug(vars) => {
+                                        HirTestAction::Debug(vars.clone())
+                                    }
                                 })
                                 .collect(),
                         })
@@ -435,7 +456,7 @@ impl Resolver {
             if self.function_signatures.contains_key(&function.name) {
                 self.diagnostics.push(Diagnostic::error(
                     "QS0001",
-                    format!("duplicate function definition: {}", function.name),
+                    format!("重复的函数定义: {}", function.name),
                     Some(span),
                 ));
                 continue;
@@ -645,7 +666,7 @@ impl Resolver {
                         } else {
                             self.diagnostics.push(Diagnostic::error(
                                 "QS0002",
-                                format!("unresolved identifier: {name}"),
+                                format!("未解析的标识符: {name}"),
                                 Some(Span::binding(name.clone())),
                             ));
                             self.types.unknown()
@@ -821,7 +842,7 @@ impl Resolver {
             Expr::Identifier(name) if scope.contains_key(name) => {
                 self.diagnostics.push(Diagnostic::error(
                     "QS0005",
-                    format!("call target is not a function: {name}"),
+                    format!("调用目标不是函数: {name}"),
                     Some(Span::binding(name.clone())),
                 ));
                 self.lower_expr(expr, scope)
@@ -829,7 +850,7 @@ impl Resolver {
             Expr::Identifier(name) => {
                 self.diagnostics.push(Diagnostic::error(
                     "QS0005",
-                    format!("unknown function call target: {name}"),
+                    format!("未知的函数调用目标: {name}"),
                     Some(Span::binding(name.clone())),
                 ));
                 let ty = self.types.unknown();
@@ -1056,7 +1077,7 @@ impl Resolver {
 
         self.diagnostics.push(Diagnostic::error(
             "QS0006",
-            format!("{label} condition must resolve to Bool"),
+            format!("{label} 条件必须解析为 Bool 类型"),
             Some(condition.span.clone()),
         ));
     }
@@ -2089,6 +2110,26 @@ fn classify_imported_helper(name: &str) -> ResolvedCallableKind {
         )),
         "macd" => ResolvedCallableKind::IndicatorHelper(KnownIndicatorHelperKind::Macd),
         "momentum" => ResolvedCallableKind::IndicatorHelper(KnownIndicatorHelperKind::Momentum),
+        "atr" => ResolvedCallableKind::IndicatorHelper(KnownIndicatorHelperKind::Atr),
+        "bollinger" | "bb" => {
+            ResolvedCallableKind::IndicatorHelper(KnownIndicatorHelperKind::BollingerBands)
+        }
+        "obv" => ResolvedCallableKind::IndicatorHelper(KnownIndicatorHelperKind::Obv),
+        "cmf" => ResolvedCallableKind::IndicatorHelper(KnownIndicatorHelperKind::Cmf),
+        "adx" => ResolvedCallableKind::IndicatorHelper(KnownIndicatorHelperKind::Adx),
+        "stoch" | "stochastic" => {
+            ResolvedCallableKind::IndicatorHelper(KnownIndicatorHelperKind::Stochastic)
+        }
+        "cci" => ResolvedCallableKind::IndicatorHelper(KnownIndicatorHelperKind::Cci),
+        "psar" | "parabolic_sar" => {
+            ResolvedCallableKind::IndicatorHelper(KnownIndicatorHelperKind::ParabolicSar)
+        }
+        "keltner" => {
+            ResolvedCallableKind::IndicatorHelper(KnownIndicatorHelperKind::KeltnerChannel)
+        }
+        "donchian" => {
+            ResolvedCallableKind::IndicatorHelper(KnownIndicatorHelperKind::DonchianChannel)
+        }
         "zscore" | "z_score" => {
             ResolvedCallableKind::IndicatorHelper(KnownIndicatorHelperKind::ZScore)
         }
@@ -2332,7 +2373,7 @@ fn strategy() {
             diagnostic.code == "QS0006"
                 && diagnostic
                     .message
-                    .contains("condition must resolve to Bool")
+                    .contains("条件必须解析为 Bool 类型")
         }));
     }
 

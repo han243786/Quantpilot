@@ -132,7 +132,7 @@ pub(super) fn current_capability_context() -> FrontendCapabilityContext {
     }
 }
 
-pub(super) fn build_capability_contract() -> CapabilityContract {
+pub(crate) fn build_capability_contract() -> CapabilityContract {
     let runtime_boundary = runtime_support_boundary();
     CapabilityContract {
         api_version: CAPABILITY_API_VERSION,
@@ -152,7 +152,7 @@ pub(super) fn build_capability_contract() -> CapabilityContract {
     }
 }
 
-pub(super) fn capability_contract_hash(contract: &CapabilityContract) -> String {
+pub(crate) fn capability_contract_hash(contract: &CapabilityContract) -> String {
     canonical_sha256_hash(contract)
 }
 

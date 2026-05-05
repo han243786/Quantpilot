@@ -1,7 +1,7 @@
 mod agent_module;
 mod compat;
 mod core_ir_evaluator;
-mod data_module;
+pub(crate) mod data_module;
 mod execution_module;
 mod fill_engine;
 mod intent_module;
@@ -64,6 +64,7 @@ pub use sandbox::{
     RuntimeSupportBoundary, Sandbox, SandboxMode, SandboxSnapshot,
     SUPPORTED_RUNTIME_EXECUTION_MODULE_KEYS, SUPPORTED_RUNTIME_MODE_KEYS,
 };
+pub use data_module::MOCK_VOLATILITY;
 
 /// 配置代际记录
 #[derive(Debug, Clone)]

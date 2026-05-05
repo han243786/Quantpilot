@@ -99,24 +99,24 @@ export function capabilityBanner(status, source, message, t) {
 function resolveFormalCompileSourceMeta({ graph, formalQuantScriptOverride }) {
   if (formalQuantScriptOverride !== null) {
     return {
-      text: "Formal source: override",
+      text: "正式源码: 覆盖",
       tone: "warning",
-      title: "Current compile uses the applied Formal QuantScript override."
+      title: "当前编译使用了已应用的正式 QuantScript 覆盖。"
     };
   }
 
   if (graph.metadata?.artifacts?.quantscript?.formal_source) {
     return {
-      text: "Formal source: graph-generated",
+      text: "正式源码: 图谱生成",
       tone: "success",
-      title: "Current compile uses the graph-generated Formal QuantScript source."
+      title: "当前编译使用了图谱生成的正式 QuantScript 源码。"
     };
   }
 
   return {
-    text: "Formal source: unavailable",
+    text: "正式源码: 不可用",
     tone: "danger",
-    title: "No Formal QuantScript source is currently available for compile."
+    title: "当前没有可用的正式 QuantScript 源码用于编译。"
   };
 }
 

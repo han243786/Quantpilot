@@ -56,18 +56,31 @@ export default function BaseNodeCard({ data, selected }) {
       data-node-card-variant={isSimplified ? "simplified" : "full"}
       onClick={() => setSelectedNode(nodeId)}
     >
-      {inputPorts.map((port, index) => (
+      {inputPorts.length > 0 ? (
+        inputPorts.map((port, index) => (
+          <Handle
+            key={port.key}
+            type="target"
+            position={Position.Left}
+            id={port.key}
+            isConnectable={handlesConnectable}
+            style={{ top: 48 + index * 22 }}
+            className={`port-handle port-${nodeType} ${handlesConnectable ? "" : "port-handle-passive"}`.trim()}
+            data-testid={`handle-target-${nodeId}-${port.key}`}
+          />
+        ))
+      ) : (
         <Handle
-          key={port.key}
+          key={`${nodeId}-target-default`}
           type="target"
           position={Position.Left}
-          id={port.key}
-          isConnectable={handlesConnectable}
-          style={{ top: 48 + index * 22 }}
-          className={`port-handle port-${nodeType} ${handlesConnectable ? "" : "port-handle-passive"}`.trim()}
-          data-testid={`handle-target-${nodeId}-${port.key}`}
+          id="default_input"
+          isConnectable={false}
+          style={{ top: 48 }}
+          className={`port-handle port-${nodeType} port-handle-passive`}
+          data-testid={`handle-target-${nodeId}-default`}
         />
-      ))}
+      )}
 
       <div className="node-header">
         <div>
@@ -147,18 +160,31 @@ export default function BaseNodeCard({ data, selected }) {
         {!isSimplified && issueMessage ? <div className="node-issue">{issueMessage}</div> : null}
       </div>
 
-      {outputPorts.map((port, index) => (
+      {outputPorts.length > 0 ? (
+        outputPorts.map((port, index) => (
+          <Handle
+            key={port.key}
+            type="source"
+            position={Position.Right}
+            id={port.key}
+            isConnectable={handlesConnectable}
+            style={{ top: 48 + index * 22 }}
+            className={`port-handle port-${nodeType} ${handlesConnectable ? "" : "port-handle-passive"}`.trim()}
+            data-testid={`handle-source-${nodeId}-${port.key}`}
+          />
+        ))
+      ) : (
         <Handle
-          key={port.key}
+          key={`${nodeId}-source-default`}
           type="source"
           position={Position.Right}
-          id={port.key}
-          isConnectable={handlesConnectable}
-          style={{ top: 48 + index * 22 }}
-          className={`port-handle port-${nodeType} ${handlesConnectable ? "" : "port-handle-passive"}`.trim()}
-          data-testid={`handle-source-${nodeId}-${port.key}`}
+          id="default_output"
+          isConnectable={false}
+          style={{ top: 48 }}
+          className={`port-handle port-${nodeType} port-handle-passive`}
+          data-testid={`handle-source-${nodeId}-default`}
         />
-      ))}
+      )}
     </div>
   );
 }
