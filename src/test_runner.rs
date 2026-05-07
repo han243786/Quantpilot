@@ -650,6 +650,11 @@ impl TestRunner {
         self.last_run_equity = Some(total_eq);
         self.last_run_status = Some(if errors >= max_errors { "error".to_string() } else { "completed".to_string() });
 
+        // 主动释放凭证，立即触发 Zeroizing 的零化 Drop
+        drop(key);
+        drop(secret);
+        drop(passphrase);
+
         if errors >= max_errors {
             Err(format!("testnet 已中止: {} 个连续错误，最后: {}", errors, last_error))
         } else if orders == 0 {

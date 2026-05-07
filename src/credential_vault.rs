@@ -11,9 +11,34 @@ const CREDENTIALS_FILE: &str = "storage/.credentials";
 const NONCE_LEN: usize = 12;
 const TAG_LEN: usize = 16;
 
+const MACHINE_KEY_FILE: &str = "storage/.machine_key";
+
+fn get_or_create_machine_key() -> Result<[u8; 32]> {
+    let path = std::path::Path::new(MACHINE_KEY_FILE);
+    if path.exists() {
+        let bytes = std::fs::read(path)?;
+        bytes.try_into().map_err(|_| anyhow::anyhow!("机器密钥格式错误"))
+    } else {
+        let rng = SystemRandom::new();
+        let mut key = [0u8; 32];
+        rng.fill(&mut key).map_err(|_| anyhow::anyhow!("随机数生成失败"))?;
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+        std::fs::write(path, key)?;
+        Ok(key)
+    }
+}
+
 fn derive_key() -> Result<UnboundKey> {
     let host = hostname::get().unwrap_or_default();
-    let seed = format!("quantpilot-credential-vault-{}", host.to_string_lossy());
+    let machine_key = get_or_create_machine_key().unwrap_or_default();
+    let machine_key_hex: String = machine_key.iter().map(|b| format!("{:02x}", b)).collect();
+    let seed = format!(
+        "quantpilot-credential-vault-{}-{}",
+        host.to_string_lossy(),
+        machine_key_hex
+    );
     let hash = ring::digest::digest(&ring::digest::SHA256, seed.as_bytes());
     let key_bytes: [u8; 32] = hash.as_ref()[..32].try_into().unwrap();
     UnboundKey::new(&AES_256_GCM, &key_bytes)

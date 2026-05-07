@@ -451,10 +451,10 @@ fn arg_as_usize(arg: Option<&CallArg>) -> Result<Option<usize>> {
             if *n < 1.0 {
                 anyhow::bail!("QS0504 指标周期必须 >= 1, 当前值: {}", n);
             }
-            // B1-7: 浮点周期截断警告
+            // B1-7: 浮点周期截断 — 当前为 stderr 输出,待 lowering 管道接入 Diagnostic API
             if n.fract().abs() > f64::EPSILON {
                 eprintln!(
-                    "[QS0502 警告] 指标周期 {} 被截断为整数 {}",
+                    "[QS0502] 指标周期 {} 被截断为整数 {}",
                     n,
                     *n as usize
                 );

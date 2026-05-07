@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, useState, useCallback } from "react";
 import { useI18n } from "../i18n";
+import { useGraphStore } from "../store/graphStore";
 
 function DashboardCard({ title, children, testId }) {
   return (
@@ -19,9 +20,13 @@ export default function StrategyWorkspaceDashboard({
 }) {
   const { t } = useI18n();
 
+  // 直接从 store 订阅最新运行时数据，确保回测后仪表盘自动更新
+  const storeRuntime = useGraphStore((s) => s.runtime);
+  const latestRuntime = storeRuntime ?? runtime;
+
   const backtestCount = useMemo(
-    () => runtime?.backtestHistory?.length || 0,
-    [runtime?.backtestHistory?.length]
+    () => latestRuntime?.backtestHistory?.length || 0,
+    [latestRuntime?.backtestHistory?.length]
   );
 
   return (
@@ -45,13 +50,13 @@ export default function StrategyWorkspaceDashboard({
         <DashboardCard title={t("运行状态")} testId="dashboard-runtime-status">
           <div className="dashboard-metric">
             <span className="dashboard-metric-label">{t("状态")}</span>
-            <span className="dashboard-metric-value">{runtime.status || t("空闲")}</span>
+            <span className="dashboard-metric-value">{latestRuntime.status || t("空闲")}</span>
           </div>
-          {runtime.last_run_equity != null && (
+          {latestRuntime.last_run_equity != null && (
             <div className="dashboard-metric">
               <span className="dashboard-metric-label">{t("最近权益")}</span>
               <span className="dashboard-metric-value">
-                {Number(runtime.last_run_equity).toFixed(2)}
+                {Number(latestRuntime.last_run_equity).toFixed(2)}
               </span>
             </div>
           )}
