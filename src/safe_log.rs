@@ -1,35 +1,57 @@
+use std::sync::Mutex;
+
+static EXTRA_PATTERNS: Mutex<Vec<String>> = Mutex::new(Vec::new());
+
+/// 从 CredentialVault 注册凭证字段名到脱敏模块
+pub fn register_credential_patterns(patterns: Vec<String>) {
+    if let Ok(mut guard) = EXTRA_PATTERNS.lock() {
+        *guard = patterns;
+    }
+}
+
 pub fn sanitize_secrets(input: &str) -> String {
-    let patterns = [
-        "api_key",
-        "secret",
-        "passphrase",
-        "password",
-        "apikey",
-        "api_secret",
+    let builtin = [
+        "api_key", "secret", "passphrase", "password", "apikey", "api_secret",
     ];
+
+    let extra = EXTRA_PATTERNS.lock().unwrap();
+    let all_patterns: Vec<String> = builtin
+        .iter()
+        .map(|s| s.to_string())
+        .chain(extra.iter().cloned())
+        .collect();
+
     let mut result = input.to_string();
-    for pattern in &patterns {
-        let lower = result.to_lowercase();
-        if let Some(pos) = lower.find(pattern) {
-            if let Some(sep_offset) = result[pos..].find(|c: char| c == ':' || c == '=') {
-                let after_sep = pos + sep_offset + 1;
-                // skip whitespace after the separator
-                let trimmed = result[after_sep..].trim_start();
-                let leading_ws = result[after_sep..].len() - trimmed.len();
-                let value_start = after_sep + leading_ws;
-                let rest = &result[value_start..];
-                let end = if rest.starts_with('"') {
-                    // Quoted string — find matching closing quote
-                    rest[1..].find('"').map(|i| i + 2) // +1 for opening quote, +1 for closing quote
-                } else {
-                    // Unquoted value — find next delimiter
-                    rest.find(|c: char| c == ',' || c == ' ' || c == '\n' || c == '}' || c == ']' || c == ')')
-                };
-                if let Some(end) = end {
-                    let before = &result[..value_start];
-                    let after = &result[value_start + end..];
-                    result = format!("{}***{}", before, after);
+    for pattern in &all_patterns {
+        loop {
+            let lower = result.to_lowercase();
+            match lower.find(pattern.as_str()) {
+                Some(pos) => {
+                    if let Some(sep_offset) = result[pos..].find(|c: char| c == ':' || c == '=') {
+                        let after_sep = pos + sep_offset + 1;
+                        let trimmed = result[after_sep..].trim_start();
+                        let leading_ws = result[after_sep..].len() - trimmed.len();
+                        let value_start = after_sep + leading_ws;
+                        let rest = &result[value_start..];
+                        let end = if rest.starts_with('"') {
+                            rest[1..].find('"').map(|i| i + 2)
+                        } else {
+                            rest.find(|c: char| {
+                                c == ',' || c == ' ' || c == '\n' || c == '}' || c == ']' || c == ')'
+                            })
+                        };
+                        if let Some(end) = end {
+                            let before = &result[..value_start];
+                            let after = &result[value_start + end..];
+                            result = format!("{}***{}", before, after);
+                        } else {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
                 }
+                None => break,
             }
         }
     }

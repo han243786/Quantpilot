@@ -91,29 +91,71 @@ pub(super) async fn validate_strategy_ir_file(path: PathBuf) -> anyhow::Result<(
 pub fn handle_credential_command(args: &[String]) -> anyhow::Result<()> {
     if args.len() < 2 {
         eprintln!("用法: quantpilot credential <set|get|list|delete> [参数]");
-        eprintln!("  set <标签> --key=<KEY> --secret=<SECRET> [--passphrase=<PASSPHRASE>] [--<自定义字段>=<值> ...]");
-        eprintln!("  get <标签>");
-        eprintln!("  list");
-        eprintln!("  delete <标签>");
+        eprintln!("  set <标签>          交互式输入 (不在 shell history 中留存凭证明文)");
+        eprintln!("  set <标签> --stdin   从 stdin 读取 JSON: {{\"key\":\"...\",\"secret\":\"...\"}}");
+        eprintln!("  get <标签>           显示标签下的全部字段");
+        eprintln!("  list                 列出所有已存储标签");
+        eprintln!("  delete <标签>         删除指定标签的全部字段");
         return Ok(());
     }
 
     let sub = &args[1];
     let mut vault = crate::credential_vault::CredentialVault::load()?;
+    // 将 vault 中的字段值注册到日志脱敏模块
+    crate::safe_log::register_credential_patterns(vault.extract_secret_patterns());
 
     match sub.as_str() {
         "set" => {
             let service = args.get(2).ok_or_else(|| anyhow::anyhow!("缺少标签名"))?;
-            let mut fields: std::collections::BTreeMap<String, String> = std::collections::BTreeMap::new();
-            for arg in &args[3..] {
-                if let Some(rest) = arg.strip_prefix("--") {
-                    if let Some((k, v)) = rest.split_once('=') {
-                        fields.insert(k.to_string(), v.to_string());
-                    }
+            let use_stdin = args.iter().any(|a| a == "--stdin");
+            let fields: std::collections::BTreeMap<String, String>;
+
+            if use_stdin {
+                let mut input = String::new();
+                std::io::stdin().read_line(&mut input)
+                    .map_err(|e| anyhow::anyhow!("读取 stdin 失败: {}", e))?;
+                fields = serde_json::from_str(&input)
+                    .map_err(|e| anyhow::anyhow!("stdin 格式错误, 需要 JSON 对象: {}", e))?;
+            } else {
+                // 交互式输入: 敏感字段不经过命令行参数或 shell history
+                use std::io::{self, Write};
+                let mut key = String::new();
+                let mut secret = String::new();
+                let mut passphrase = String::new();
+
+                eprint!("请输入 api_key: ");
+                io::stderr().flush().ok();
+                io::stdin().read_line(&mut key)
+                    .map_err(|e| anyhow::anyhow!("读取输入失败: {}", e))?;
+                key = key.trim().to_string();
+
+                eprint!("请输入 secret: ");
+                io::stderr().flush().ok();
+                io::stdin().read_line(&mut secret)
+                    .map_err(|e| anyhow::anyhow!("读取输入失败: {}", e))?;
+                secret = secret.trim().to_string();
+
+                eprint!("请输入 passphrase (可选, 直接回车跳过): ");
+                io::stderr().flush().ok();
+                io::stdin().read_line(&mut passphrase)
+                    .map_err(|e| anyhow::anyhow!("读取输入失败: {}", e))?;
+                passphrase = passphrase.trim().to_string();
+
+                if key.is_empty() || secret.is_empty() {
+                    anyhow::bail!("api_key 和 secret 不能为空");
                 }
+
+                let mut f: std::collections::BTreeMap<String, String> = std::collections::BTreeMap::new();
+                f.insert("key".to_string(), key);
+                f.insert("secret".to_string(), secret);
+                if !passphrase.is_empty() {
+                    f.insert("passphrase".to_string(), passphrase);
+                }
+                fields = f;
             }
+
             if fields.is_empty() {
-                anyhow::bail!("需要至少一个字段, 例如 --key=xxx --secret=yyy");
+                anyhow::bail!("需要至少一个字段");
             }
             vault.set_service(service, fields)?;
             println!("凭证已存储。标签: {}", service);

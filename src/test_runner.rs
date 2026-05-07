@@ -538,6 +538,7 @@ impl TestRunner {
         // Fall back to credential vault
         let vault = CredentialVault::load()
             .map_err(|e| format!("无法加载凭证保险库: {}", e))?;
+        crate::safe_log::register_credential_patterns(vault.extract_secret_patterns());
 
         let fields = vault.get_service("okx")
             .ok_or_else(|| "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_KEY 或在凭证保险库中配置".to_string())?;
@@ -564,8 +565,7 @@ impl TestRunner {
 
         let (key, secret, passphrase) = Self::load_exchange_credentials()?;
 
-        let proxy = std::env::var("QUANTPILOT_PROXY").unwrap_or_else(|_| "http://127.0.0.1:7897".to_string());
-        std::env::set_var("HTTPS_PROXY", &proxy);
+        // proxy 由 testnet_agent() 内部的 AgentBuilder::proxy() 独立配置, 不修改全局环境变量
 
         // Build a simple testnet run
         let mut orders = 0usize;
