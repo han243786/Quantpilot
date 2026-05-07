@@ -24,6 +24,7 @@ export default function ApprovalPanel() {
   const [selected, setSelected] = useState(null);
   const [sandboxReport, setSandboxReport] = useState(null);
   const [actionMsg, setActionMsg] = useState(null);
+  const [actionLoading, setActionLoading] = useState(null);
   const [rejectingId, setRejectingId] = useState(null);
   const [rejectComment, setRejectComment] = useState("");
 
@@ -171,14 +172,14 @@ export default function ApprovalPanel() {
               {isActionable && (
                 <div style={{ display: "flex", gap: 6 }} onClick={(e) => e.stopPropagation()}>
                   {isPending && (
-                    <button className="qp-btn qp-btn--primary qp-btn--sm" onClick={() => handleClaim(approval.proposal_id)}>
+                    <button className="qp-btn qp-btn--primary qp-btn--sm" disabled={actionLoading !== null} onClick={async () => { setActionLoading("claim"); await handleClaim(approval.proposal_id); setActionLoading(null); }}>
                       {t("认领")}
                     </button>
                   )}
-                  <button className="qp-btn qp-btn--primary qp-btn--sm" onClick={() => handleApprove(approval.proposal_id)}>
+                  <button className="qp-btn qp-btn--primary qp-btn--sm" disabled={actionLoading !== null} onClick={async () => { setActionLoading("approve"); await handleApprove(approval.proposal_id); setActionLoading(null); }}>
                     {t("通过")}
                   </button>
-                  <button className="qp-btn qp-btn--danger qp-btn--sm" onClick={() => handleReject(approval.proposal_id)}>
+                  <button className="qp-btn qp-btn--danger qp-btn--sm" disabled={actionLoading !== null} onClick={async () => { setActionLoading("reject"); await handleReject(approval.proposal_id); setActionLoading(null); }}>
                     {rejectingId === approval.proposal_id ? t("确认") : t("拒绝")}
                   </button>
                 </div>

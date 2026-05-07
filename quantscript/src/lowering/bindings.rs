@@ -397,7 +397,7 @@ fn indicator_from_atr_call(
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
     let source = binding_source_from_arg(args.get(0), env, data_sources)?;
-    let period = arg_as_usize(args.get(1)).unwrap_or(14);
+    let period = arg_as_usize(args.get(1))?.unwrap_or(14);
     Ok(Some(IndicatorBinding::Atr { source, period }))
 }
 
@@ -407,7 +407,7 @@ fn indicator_from_bollinger_call(
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
     let source = binding_source_from_arg(args.get(0), env, data_sources)?;
-    let period = arg_as_usize(args.get(1)).unwrap_or(20);
+    let period = arg_as_usize(args.get(1))?.unwrap_or(20);
     let multiplier = arg_as_f64(args.get(2)).unwrap_or(2.0);
     Ok(Some(IndicatorBinding::BollingerBands { source, period, multiplier }))
 }
@@ -427,7 +427,7 @@ fn indicator_from_cmf_call(
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
     let source = binding_source_from_arg(args.get(0), env, data_sources)?;
-    let period = arg_as_usize(args.get(1)).unwrap_or(20);
+    let period = arg_as_usize(args.get(1))?.unwrap_or(20);
     Ok(Some(IndicatorBinding::Cmf { source, period }))
 }
 
@@ -441,10 +441,27 @@ fn binding_source_from_arg(
         .ok_or_else(|| anyhow!("无法从参数解析数据源"))
 }
 
-fn arg_as_usize(arg: Option<&CallArg>) -> Option<usize> {
-    match arg?.value {
-        Expr::Number(n) => Some(n as usize),
-        _ => None,
+fn arg_as_usize(arg: Option<&CallArg>) -> Result<Option<usize>> {
+    match arg {
+        Some(CallArg {
+            value: Expr::Number(n),
+            ..
+        }) => {
+            // B1-6: 负周期参数检查
+            if *n < 1.0 {
+                anyhow::bail!("QS0504 指标周期必须 >= 1, 当前值: {}", n);
+            }
+            // B1-7: 浮点周期截断警告
+            if n.fract().abs() > f64::EPSILON {
+                eprintln!(
+                    "[QS0502 警告] 指标周期 {} 被截断为整数 {}",
+                    n,
+                    *n as usize
+                );
+            }
+            Ok(Some(*n as usize))
+        }
+        _ => Ok(None),
     }
 }
 
@@ -466,7 +483,7 @@ where
     F: FnOnce(DataSourceConfig, usize) -> IndicatorBinding,
 {
     let source = binding_source_from_arg(args.get(0), env, data_sources)?;
-    let period = arg_as_usize(args.get(1)).unwrap_or(14);
+    let period = arg_as_usize(args.get(1))?.unwrap_or(14);
     Ok(Some(make(source, period)))
 }
 
@@ -476,8 +493,8 @@ fn indicator_from_stoch_call(
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
     let source = binding_source_from_arg(args.get(0), env, data_sources)?;
-    let k_period = arg_as_usize(args.get(1)).unwrap_or(14);
-    let d_period = arg_as_usize(args.get(2)).unwrap_or(3);
+    let k_period = arg_as_usize(args.get(1))?.unwrap_or(14);
+    let d_period = arg_as_usize(args.get(2))?.unwrap_or(3);
     Ok(Some(IndicatorBinding::Stochastic { source, k_period, d_period }))
 }
 

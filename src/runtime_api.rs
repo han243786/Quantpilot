@@ -461,7 +461,7 @@ fn normalize_experiment_float_axis(
         if *value < 0.0 {
             return Err(json_bad_request(
                 "bad_request",
-                format!("parameter_grid.{field} must be >= 0"),
+                format!("parameter_grid.{field} 必须 >= 0"),
             ));
         }
         if !normalized.contains(value) {
@@ -723,7 +723,7 @@ async fn discard_backtest_record(
         return Err((
             StatusCode::CONFLICT,
             format!(
-                "backtest `{}` is already saved and cannot be discarded",
+                "回测 `{}` 已保存, 无法丢弃",
                 backtest_id
             ),
         ));
@@ -737,7 +737,7 @@ async fn discard_backtest_record(
     if !removed_memory && !removed_transient {
         return Err((
             StatusCode::NOT_FOUND,
-            format!("backtest `{}` not found", backtest_id),
+            format!("回测 `{}` 不存在", backtest_id),
         ));
     }
 
@@ -870,26 +870,26 @@ fn validate_runtime_parameter_mutation_target(
     if target.node_id.trim().is_empty() {
         return Err(json_bad_request(
             "bad_request",
-            "target.node_id is required for runtime parameter mutation proposals",
+            "target.node_id 是运行时参数变更提案的必填字段",
         ));
     }
     if target.module_key.trim().is_empty() {
         return Err(json_bad_request(
             "bad_request",
-            "target.module_key is required for runtime parameter mutation proposals",
+            "target.module_key 是运行时参数变更提案的必填字段",
         ));
     }
     if target.parameter_path.trim().is_empty() {
         return Err(json_bad_request(
             "bad_request",
-            "target.parameter_path is required for runtime parameter mutation proposals",
+            "target.parameter_path 是运行时参数变更提案的必填字段",
         ));
     }
     if !SUPPORTED_FRONTEND_MODULE_KEYS.contains(&target.module_key.as_str()) {
         return Err(json_bad_request(
             "capability_gated",
             format!(
-                "module `{}` is not enabled for runtime parameter mutation proposals",
+                "模块 `{}` 未启用以支持运行时参数变更提案",
                 target.module_key
             ),
         ));

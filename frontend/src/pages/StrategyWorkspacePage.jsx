@@ -5,6 +5,7 @@ import {
   strategyBacktestsPath,
   strategiesPath
 } from "../router";
+import { useI18n } from "../i18n";
 import { runtimeStatusLabel } from "../utils/runtimeStatus";
 import { buildWorkspaceIssueQueue } from "../utils/strategyWorkspaceIssueQueue";
 import { useStrategyWorkspaceSharedModel } from "../hooks/useStrategyWorkspaceSharedModel";
@@ -12,6 +13,7 @@ import { useStrategyWorkspaceUiState } from "../hooks/useStrategyWorkspaceUiStat
 import { useStrategyWorkspacePageData } from "../hooks/useStrategyWorkspacePageData";
 import { StrategyRouteBar } from "./BacktestAnalysisLayout";
 
+const StrategyWorkspaceDashboard = lazy(() => import("./StrategyWorkspaceDashboard"));
 const StrategyWorkspaceOverviewTab = lazy(() => import("./StrategyWorkspaceOverviewTab"));
 const StrategyWorkspaceCodeTab = lazy(() => import("./StrategyWorkspaceCodeTab"));
 const StrategyWorkspaceDiagnosticsTab = lazy(() => import("./StrategyWorkspaceDiagnosticsTab"));
@@ -20,6 +22,11 @@ const StrategyWorkspaceDebugTab = lazy(() => import("./StrategyWorkspaceDebugTab
 const StrategyWorkspaceSourceTab = lazy(() => import("./StrategyWorkspaceSourceTab"));
 
 const WORKSPACE_TABS = [
+  {
+    id: "dashboard",
+    label: "仪表盘",
+    note: "编译状态、运行状态与快速操作总览。"
+  },
   {
     id: "overview",
     label: "总览",
@@ -71,6 +78,7 @@ const CODE_INSPECTOR_PANELS = [
 ];
 
 export default function StrategyWorkspacePage({ strategyId }) {
+  const { t } = useI18n();
   const {
     graph,
     runtime,
@@ -130,6 +138,9 @@ export default function StrategyWorkspacePage({ strategyId }) {
         <button className="ghost-btn" onClick={() => navigateTo(strategiesPath())}>
           返回策略中心
         </button>
+        <button className="ghost-btn" onClick={() => loadGraphById(strategyId)}>
+          {t("重试")}
+        </button>
       </div>
     );
   }
@@ -186,8 +197,20 @@ export default function StrategyWorkspacePage({ strategyId }) {
         ))}
       </section>
 
+      {ui.activeTab === "dashboard" ? (
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#64748b',textAlign:'center'}}>{t("加载中...")}</div>}>
+          <StrategyWorkspaceDashboard
+            graph={graph}
+            runtime={runtime}
+            compileSummary={compileSummary}
+            readiness={readiness}
+            onNavigate={(tabId) => ui.setActiveTab(tabId)}
+          />
+        </Suspense>
+      ) : null}
+
       {ui.activeTab === "overview" ? (
-        <Suspense fallback={null}>
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#64748b',textAlign:'center'}}>{t("加载中...")}</div>}>
           <StrategyWorkspaceOverviewTab
             strategyId={strategyId}
             graph={graph}
@@ -212,7 +235,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
       ) : null}
 
       {ui.activeTab === "code" ? (
-        <Suspense fallback={null}>
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#64748b',textAlign:'center'}}>{t("加载中...")}</div>}>
           <StrategyWorkspaceCodeTab
             graph={graph}
             ui={ui}
@@ -226,7 +249,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
       ) : null}
 
       {ui.activeTab === "diagnostics" ? (
-        <Suspense fallback={null}>
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#64748b',textAlign:'center'}}>{t("加载中...")}</div>}>
           <StrategyWorkspaceDiagnosticsTab
             graph={graph}
             runtime={runtime}
@@ -246,17 +269,17 @@ export default function StrategyWorkspacePage({ strategyId }) {
       ) : null}
 
       {ui.activeTab === "research" ? (
-        <Suspense fallback={null}>
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#64748b',textAlign:'center'}}>{t("加载中...")}</div>}>
           <StrategyWorkspaceResearchTab strategyId={strategyId} />
         </Suspense>
       ) : null}
       {ui.activeTab === "debug" ? (
-        <Suspense fallback={null}>
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#64748b',textAlign:'center'}}>{t("加载中...")}</div>}>
           <StrategyWorkspaceDebugTab debugBars={pageData.debugBars || []} />
         </Suspense>
       ) : null}
       {ui.activeTab === "source" ? (
-        <Suspense fallback={null}>
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#64748b',textAlign:'center'}}>{t("加载中...")}</div>}>
           <StrategyWorkspaceSourceTab graphId={graph?.metadata?.graph_id} />
         </Suspense>
       ) : null}

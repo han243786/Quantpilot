@@ -53,7 +53,10 @@ fn file_age(meta: &std::fs::Metadata) -> Option<Duration> {
 pub fn startup_storage_cleanup(storage_root: &Path) {
     let entries = match std::fs::read_dir(storage_root) {
         Ok(e) => e,
-        Err(_) => return,
+        Err(e) => {
+            crate::safe_eprintln!("[storage] 无法读取存储目录: {}", e);
+            return;
+        }
     };
     let mut total_size: u64 = 0;
     let mut cleaned_count = 0u64;
@@ -76,7 +79,9 @@ pub fn startup_storage_cleanup(storage_root: &Path) {
                         Err(_) => continue,
                     };
                     let aged = file_age(&meta);
-                    if aged.map_or(false, |age| age > ttl) {
+                    let safety_margin = Duration::from_secs(10 * 60); // 10分钟
+                    if aged.map_or(false, |age| age > ttl + safety_margin) {
+                        // 仅在超过 TTL + 10分钟时才删除（确保不在活跃使用中）
                         if file_path.is_dir() {
                             cleaned_bytes += dir_size_bytes(&file_path);
                             let _ = std::fs::remove_dir_all(&file_path);

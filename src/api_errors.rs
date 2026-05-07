@@ -56,7 +56,7 @@ pub(super) fn json_bad_request_with_details_and_partial(
 }
 
 pub(super) fn internal_error(error: anyhow::Error) -> (StatusCode, String) {
-    json_bad_request("bad_request", error.to_string())
+    (StatusCode::INTERNAL_SERVER_ERROR, "内部服务器错误".to_string())
 }
 
 pub(super) fn io_error(error: std::io::Error) -> (StatusCode, String) {
@@ -65,14 +65,15 @@ pub(super) fn io_error(error: std::io::Error) -> (StatusCode, String) {
 
 pub(super) fn not_found_io_error(error: std::io::Error) -> (StatusCode, String) {
     if error.kind() == std::io::ErrorKind::NotFound {
-        (StatusCode::NOT_FOUND, error.to_string())
+        (StatusCode::NOT_FOUND, "请求的资源不存在".to_string())
     } else {
-        (StatusCode::INTERNAL_SERVER_ERROR, error.to_string())
+        (StatusCode::INTERNAL_SERVER_ERROR, "内部服务器错误".to_string())
     }
 }
 
 // ── RFC 9457 统一错误响应构造函数 ──
 
+#[deprecated(note = "请使用 json_bad_request 系列函数，统一错误格式")]
 pub(super) fn problem_not_found(
     error_code: &str,
     detail: impl Into<String>,
@@ -80,6 +81,7 @@ pub(super) fn problem_not_found(
     problem_response(StatusCode::NOT_FOUND, error_code, detail.into(), None)
 }
 
+#[deprecated(note = "请使用 json_bad_request 系列函数，统一错误格式")]
 pub(super) fn problem_conflict(
     error_code: &str,
     detail: impl Into<String>,
@@ -87,6 +89,7 @@ pub(super) fn problem_conflict(
     problem_response(StatusCode::CONFLICT, error_code, detail.into(), None)
 }
 
+#[deprecated(note = "请使用 json_bad_request 系列函数，统一错误格式")]
 pub(super) fn problem_bad_request(
     error_code: &str,
     detail: impl Into<String>,
@@ -94,6 +97,7 @@ pub(super) fn problem_bad_request(
     problem_response(StatusCode::BAD_REQUEST, error_code, detail.into(), None)
 }
 
+#[deprecated(note = "请使用 internal_error 函数，返回 500")]
 pub(super) fn problem_internal(
     error_code: &str,
     detail: impl Into<String>,

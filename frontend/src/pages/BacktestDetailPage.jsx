@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import EventStreamPanel from "../components/EventStreamPanel";
 import GovernedTimelinePanel from "../components/GovernedTimelinePanel";
 import RuntimeReportPanel from "../components/RuntimeReportPanel";
@@ -115,15 +115,9 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
     [runtime.compactEvidence, runtime.events, runtime.retainedKeyEventIndex, runtime.timeline]
   );
 
-  const summaryItems = [
-    {
-      label: t("协议"),
-      value: manifest?.protocol_name || selectedSummary?.protocol_name || "-"
-    },
-    {
-      label: t("配置哈希"),
-      value: manifest?.config_hash || selectedSummary?.config_hash || "-"
-    },
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
+
+  const visibleSummaryItems = [
     {
       label: t("收益"),
       value: formatRatio(summary?.total_return_ratio)
@@ -133,12 +127,23 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
       value: formatRatio(summary?.max_drawdown_ratio)
     },
     {
-      label: t("成交数"),
-      value: formatValue(summary?.trade_count ?? trades.length)
-    },
-    {
       label: t("胜率"),
       value: summary?.win_rate != null ? `${(summary.win_rate * 100).toFixed(1)}%` : "-"
+    },
+    {
+      label: t("成交数"),
+      value: formatValue(summary?.trade_count ?? trades.length)
+    }
+  ];
+
+  const foldedSummaryItems = [
+    {
+      label: t("协议"),
+      value: manifest?.protocol_name || selectedSummary?.protocol_name || "-"
+    },
+    {
+      label: t("配置哈希"),
+      value: manifest?.config_hash || selectedSummary?.config_hash || "-"
     },
     {
       label: t("最终权益"),
@@ -146,11 +151,23 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
     }
   ];
 
+  const summaryItems = summaryExpanded
+    ? [...visibleSummaryItems, ...foldedSummaryItems]
+    : visibleSummaryItems;
+
   if (runtime.backendError) {
     return (
       <div className="qp-page">
         <div className="qp-error" role="alert">
           <span>{t("加载回测失败:")} {runtime.backendError}</span>
+        </div>
+        <div style={{ display: "flex", gap: 8, marginTop: 12, justifyContent: "center" }}>
+          <button className="ghost-btn" onClick={() => loadBacktestDetail(backtestId)}>
+            {t("重试")}
+          </button>
+          <button className="ghost-btn" onClick={() => navigateTo(strategiesPath())}>
+            {t("返回策略中心")}
+          </button>
         </div>
       </div>
     );
@@ -214,6 +231,14 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
         }
         summaryItems={summaryItems}
       />
+      <div style={{ display: "flex", justifyContent: "flex-end", padding: "0 0 12px" }}>
+        <button
+          className="ghost-btn compact-btn"
+          onClick={() => setSummaryExpanded(!summaryExpanded)}
+        >
+          {summaryExpanded ? t("收起") : t("展开详情")}
+        </button>
+      </div>
 
       <div className="analysis-page-grid">
         <div className="analysis-main-column">

@@ -24,6 +24,7 @@
 
 # Runtime artifacts and local graph snapshots
 /storage/
+/storage/.credentials
 /.quantpilot-tmp/
 
 # Local helper files

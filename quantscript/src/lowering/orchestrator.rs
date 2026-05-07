@@ -3,6 +3,7 @@ use crate::evaluator::normalize_script_module;
 use crate::resolve::lower_script_to_typed_hir;
 use crate::script::{CallArg, Expr, FunctionDecl, Item, ScriptModule, Stmt};
 use anyhow::{anyhow, bail, Result};
+use std::collections::BTreeSet;
 use qrpc_core::{
     AgentConfig, RiskConfig, RuntimeProtocolCoreConfig,
     GLOBAL_RISK_PROFILE_DEFAULT_MAX_EXCHANGE_LEVERAGE, GLOBAL_RISK_PROFILE_DEFAULT_MAX_POSITION,
@@ -75,7 +76,20 @@ pub fn lower_script_to_runtime_config_with_context(
     let risk_profile = detect_global_risk_profile(strategy)?;
     let execution_profile = detect_paper_execution_profile(strategy)?;
 
-    let inferred_data_sources = infer_data_sources(strategy, &resolved.callables)?;
+    let mut inferred_data_sources = infer_data_sources(strategy, &resolved.callables)?;
+    // B1-13: fetch 去重
+    {
+        let mut seen = BTreeSet::new();
+        inferred_data_sources.retain(|ds| {
+            let key = format!(
+                "{}:{:?}:{}",
+                ds.symbol.as_str(),
+                ds.exchange,
+                ds.interval.as_deref().unwrap_or("")
+            );
+            seen.insert(key)
+        });
+    }
     if inferred_data_sources.is_empty() {
         bail!(ERR_NO_FETCH_CALLS);
     }

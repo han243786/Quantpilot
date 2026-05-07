@@ -5,6 +5,7 @@ members = [
     "qrpc_compiler",
     "qrpc_runtime",
     "quantscript",
+    "src-tauri",
 ]
 resolver = "2"
 
@@ -33,6 +34,9 @@ hmac = "0.12"
 sha2 = "0.10"
 base64 = "0.22"
 chrono = "0.4"
+hostname = "0.4"
+ring = "0.17"
+zeroize = { version = "1", features = ["zeroize_derive"] }
 
 [dev-dependencies]
 tower = { version = "0.5", features = ["util"] }

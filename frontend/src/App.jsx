@@ -14,6 +14,9 @@ const SnapshotsPage = lazy(() => import("./pages/SnapshotsPage"));
 const RunbookPage = lazy(() => import("./pages/RunbookPage"));
 const ChaosPage = lazy(() => import("./pages/ChaosPage"));
 const QuantScriptEditor = lazy(() => import("./pages/QuantScriptEditor"));
+import TutorialOverlay from "./components/TutorialOverlay";
+import TUTORIAL_STEPS from "./data/tutorialSteps";
+import { useTutorial } from "./hooks/useTutorial";
 
 function AppShellFallback() {
   return (
@@ -28,6 +31,7 @@ function AppShellFallback() {
 
 export default function App() {
   const initialize = useGraphStore((state) => state.initialize);
+  const { tutorialOpen, closeTutorial } = useTutorial();
   const [isInitialized, setIsInitialized] = useState(false);
   const [route, setRoute] = useState(() =>
     parseRoute(
@@ -100,6 +104,9 @@ export default function App() {
     <>
       <GlobalNav />
       <Suspense fallback={<AppShellFallback />}>{content}</Suspense>
+      {tutorialOpen && (
+        <TutorialOverlay steps={TUTORIAL_STEPS} onClose={closeTutorial} />
+      )}
     </>
   );
 }

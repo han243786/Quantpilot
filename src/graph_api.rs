@@ -1,4 +1,6 @@
 use super::*;
+use std::sync::OnceLock;
+use tokio::sync::Mutex;
 
 pub(super) fn register_graph_routes(router: Router<AppState>) -> Router<AppState> {
     router
@@ -26,6 +28,11 @@ pub(super) fn register_graph_routes(router: Router<AppState>) -> Router<AppState
         )
 }
 
+fn get_save_lock() -> &'static Mutex<()> {
+    static SAVE_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+    SAVE_LOCK.get_or_init(|| Mutex::new(()))
+}
+
 pub(super) async fn save_graph(
     State(state): State<AppState>,
     Json(request): Json<SaveGraphRequest>,
@@ -38,7 +45,7 @@ pub(super) async fn save_graph(
         .filter(|item| !item.trim().is_empty())
         .ok_or((
             StatusCode::BAD_REQUEST,
-            "graph.metadata.graph_id is required".to_string(),
+            "graph.metadata.graph_id 是必需的".to_string(),
         ))?;
     validate_graph_id(graph_id).map_err(internal_error)?;
     let graph_id = graph_id.to_string();
@@ -46,6 +53,7 @@ pub(super) async fn save_graph(
     let existing_graph = read_optional_graph_json(&state.graph_store_dir, &graph_id).await?;
     let collaboration = collaboration_with_saved_actor(existing_graph.as_ref(), &actor)?;
 
+    let _guard = get_save_lock().lock().await;
     let response = persist_graph_version(
         &state.graph_store_dir,
         &graph_id,
@@ -157,6 +165,7 @@ pub(super) async fn restore_graph_version(
     let version_path = graph_version_json_path(&state.graph_store_dir, &graph_id, &version_id);
     let graph = read_graph_json(&version_path).await?;
     let collaboration = collaboration_with_saved_actor(Some(&graph), &actor)?;
+    let _save_guard = get_save_lock().lock().await;
     let response = persist_graph_version(
         &state.graph_store_dir,
         &graph_id,
@@ -254,6 +263,12 @@ async fn read_graph_json(path: &FsPath) -> Result<Value, (StatusCode, String)> {
     serde_json::from_str(&content).map_err(|error| internal_error(error.into()))
 }
 
+async fn atomic_write(path: &FsPath, content: &str) -> Result<(), (StatusCode, String)> {
+    let tmp_path = path.with_extension("tmp");
+    fs::write(&tmp_path, content).await.map_err(io_error)?;
+    fs::rename(&tmp_path, path).await.map_err(io_error)
+}
+
 async fn persist_graph_version(
     graph_store_dir: &FsPath,
     graph_id: &str,
@@ -318,17 +333,30 @@ async fn persist_graph_version(
         serde_json::to_string_pretty(&graph).map_err(|error| internal_error(error.into()))?;
 
     fs::create_dir_all(&version_dir).await.map_err(io_error)?;
-    fs::write(&graph_path, &body).await.map_err(io_error)?;
-    fs::write(&latest_path, &body).await.map_err(io_error)?;
-    fs::write(&quantscript_path, &quantscript)
-        .await
-        .map_err(io_error)?;
-    fs::write(&version_graph_path, &body)
-        .await
-        .map_err(io_error)?;
-    fs::write(&version_quantscript_path, &quantscript)
-        .await
-        .map_err(io_error)?;
+
+    // B2-8: 写入前备份旧文件
+    let bak_path = graph_path.with_extension("json.bak");
+    if fs::try_exists(&graph_path).await.unwrap_or(false) {
+        fs::rename(&graph_path, &bak_path).await.map_err(io_error)?;
+    }
+    match atomic_write(&graph_path, &body).await {
+        Ok(()) => {
+            let _ = fs::remove_file(&bak_path).await;
+        }
+        Err(e) => {
+            let _ = fs::rename(&bak_path, &graph_path).await;
+            return Err(e);
+        }
+    }
+
+    // B2-1: 原子写入 latest.json
+    atomic_write(&latest_path, &body).await?;
+    // B2-1: 原子写入 .qs 文件
+    atomic_write(&quantscript_path, &quantscript).await?;
+    // B2-1: 原子写入版本目录中的图文件
+    atomic_write(&version_graph_path, &body).await?;
+    // B2-1: 原子写入版本目录中的 .qs 文件
+    atomic_write(&version_quantscript_path, &quantscript).await?;
 
     Ok(SaveGraphResponse {
         graph_id: graph_id.to_string(),
@@ -448,8 +476,13 @@ async fn read_graph_versions(
         }
 
         let content = fs::read_to_string(&path).await.map_err(io_error)?;
-        let value: Value =
-            serde_json::from_str(&content).map_err(|error| internal_error(error.into()))?;
+        let value: Value = match serde_json::from_str(&content) {
+            Ok(v) => v,
+            Err(e) => {
+                eprintln!("[graph] 跳过损坏的版本文件 {}: {}", path.display(), e);
+                continue;
+            }
+        };
         let updated_at = value
             .get("metadata")
             .and_then(|item| item.get("updated_at"))
@@ -556,19 +589,33 @@ async fn refresh_latest_graph_after_delete(
 }
 
 async fn remove_file_if_exists(path: &FsPath) -> Result<(), (StatusCode, String)> {
-    match fs::remove_file(path).await {
-        Ok(()) => Ok(()),
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
-        Err(error) => Err(io_error(error)),
+    for attempt in 0..3 {
+        match fs::remove_file(path).await {
+            Ok(()) => return Ok(()),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+            Err(error) if error.kind() == std::io::ErrorKind::PermissionDenied && attempt < 2 => {
+                sleep(Duration::from_millis(100)).await;
+                continue;
+            }
+            Err(error) => return Err(io_error(error)),
+        }
     }
+    Ok(())
 }
 
 async fn remove_dir_if_exists(path: &FsPath) -> Result<(), (StatusCode, String)> {
-    match fs::remove_dir_all(path).await {
-        Ok(()) => Ok(()),
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
-        Err(error) => Err(io_error(error)),
+    for attempt in 0..3 {
+        match fs::remove_dir_all(path).await {
+            Ok(()) => return Ok(()),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+            Err(error) if error.kind() == std::io::ErrorKind::PermissionDenied && attempt < 2 => {
+                sleep(Duration::from_millis(100)).await;
+                continue;
+            }
+            Err(error) => return Err(io_error(error)),
+        }
     }
+    Ok(())
 }
 
 fn graph_version_json_path(graph_store_dir: &FsPath, graph_id: &str, version_id: &str) -> PathBuf {

@@ -1,4 +1,5 @@
 import { translateText } from "../i18n";
+import ErrorBoundary from "./ErrorBoundary";
 import { usePropertyPanelModel } from "../hooks/usePropertyPanelModel";
 import {
   DiagnosticsSection,
@@ -16,6 +17,7 @@ export default function PropertyPanel() {
 
   if (model.selectedEdge) {
     return (
+      <ErrorBoundary fallbackTitle="边详情加载失败" fallbackText="请刷新页面重试">
       <PropertyPanelShell
         title="边详情"
         subtitle="单独查看连线映射，不把边元数据混进节点配置。"
@@ -33,11 +35,13 @@ export default function PropertyPanel() {
           />
         </PropertySection>
       </PropertyPanelShell>
+      </ErrorBoundary>
     );
   }
 
   if (!model.selectedNode) {
     return (
+      <ErrorBoundary fallbackTitle="策略图总览加载失败" fallbackText="请刷新页面重试">
       <PropertyPanelShell
         title={translateText("策略图总览")}
         subtitle={translateText("从图配置、编译健康度和源码工件三条泳道阅读当前策略图。")}
@@ -46,10 +50,12 @@ export default function PropertyPanel() {
         <DiagnosticsSection model={model} />
         <SourceSection model={model} />
       </PropertyPanelShell>
+      </ErrorBoundary>
     );
   }
 
   return (
+    <ErrorBoundary fallbackTitle="节点详情加载失败" fallbackText="请刷新页面重试">
     <PropertyPanelShell
       title="节点详情"
       subtitle="把节点状态拆成配置、编译健康度、运行活动和源码工件来阅读。"
@@ -59,5 +65,6 @@ export default function PropertyPanel() {
       <NodeRuntimeSection model={model} />
       <SourceSection model={model} includeNodeSource />
     </PropertyPanelShell>
+    </ErrorBoundary>
   );
 }

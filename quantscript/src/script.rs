@@ -1186,7 +1186,11 @@ fn tokenize_expr(input: &str) -> Result<Vec<ExprToken>> {
                     }
                 }
                 if ident.is_empty() {
-                    bail!("表达式中的意外字符: {ch}");
+                    if ch as u32 > 127 {
+                        bail!("QuantScript 仅支持 ASCII 标识符（字母、数字、下划线），不支持 Unicode 字符")
+                    } else {
+                        bail!("表达式中的意外字符: {ch}")
+                    }
                 }
                 match ident.as_str() {
                     "true" => tokens.push(ExprToken::Bool(true)),

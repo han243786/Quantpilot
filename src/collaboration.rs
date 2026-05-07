@@ -206,7 +206,7 @@ fn ensure_actor_has_access(
     Err((
         StatusCode::FORBIDDEN,
         format!(
-            "actor `{}` is not allowed to mutate graph `{}`",
+            "操作者 `{}` 无权修改图 `{}`",
             actor.actor_id,
             collaboration
                 .owner

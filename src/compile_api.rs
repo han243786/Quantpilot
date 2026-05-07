@@ -17,7 +17,7 @@ async fn compile_runtime_request(
     validate_runtime_config_capabilities(&request.runtime_config).map_err(|details| {
         json_bad_request_with_details(
             "capability_gated",
-            "runtime config uses capabilities that are not enabled in the current beta",
+            "运行时配置使用了当前 Beta 版本未启用的能力",
             details,
         )
     })?;
@@ -26,7 +26,7 @@ async fn compile_runtime_request(
     if !contract_diagnostics.is_empty() {
         return Err(json_bad_request_with_details(
             "runtime_compile_failed",
-            "runtime graph compile contract validation failed",
+            "运行时图编译合约校验失败",
             contract_diagnostics
                 .iter()
                 .map(api_error_detail_from_compile_diagnostic)

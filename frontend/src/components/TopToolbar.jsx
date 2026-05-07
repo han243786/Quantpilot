@@ -1,6 +1,8 @@
 import { useI18n } from "../i18n";
+import { useState, useCallback } from "react";
 import { runtimeStatusLabel } from "../utils/runtimeStatus";
 import { useWorkspaceActionBarModel } from "../hooks/useWorkspaceActionBarModel";
+import { triggerTutorial } from "../hooks/useTutorial";
 
 function ToolbarNotices({ capabilityAlert, notice, setNotice }) {
   return (
@@ -100,7 +102,8 @@ function DefaultToolbarLayout({
   resetGraph,
   focusFinding,
   capabilitySyncBlocked,
-  capabilityMessage
+  capabilityMessage,
+  saving
 }) {
   return (
     <>
@@ -113,20 +116,28 @@ function DefaultToolbarLayout({
               <div className="toolbar-brand-subtitle">模拟运行沙盒</div>
             </div>
           </div>
+          <button
+            className="ghost-btn tutorial-entry-btn"
+            onClick={() => triggerTutorial()}
+            data-testid="toolbar-tutorial-action"
+            title="查看使用教程"
+          >
+            教程
+          </button>
           <button className="ghost-btn" onClick={resetGraph} data-testid="toolbar-reset-graph-action">
             新建策略图
           </button>
           <button className="ghost-btn" onClick={handleLoadLatestGraph} data-testid="toolbar-load-latest-action">
             加载最新
           </button>
-          <button className="ghost-btn" onClick={handleSaveGraph} data-testid="toolbar-save-graph-action">
+          <button className="ghost-btn" onClick={handleSaveGraph} disabled={saving} data-testid="toolbar-save-graph-action">
             保存策略图
           </button>
           <button
             className="ghost-btn"
             data-testid="toolbar-export-runtime-config-action"
             onClick={() => handleExportRuntimeConfig({ capabilitySyncBlocked, capabilityMessage })}
-            disabled={capabilitySyncBlocked}
+            disabled={capabilitySyncBlocked || saving}
             title={exportConfigTitle}
           >
             导出运行配置
@@ -135,6 +146,7 @@ function DefaultToolbarLayout({
             className="ghost-btn"
             data-testid="toolbar-export-quantscript-action"
             onClick={() => handleExportQuantScript({ graph })}
+            disabled={saving}
           >
             导出策略图源码
           </button>
@@ -246,7 +258,8 @@ function WorkspaceToolbarLayout({
   resetGraph,
   focusFinding,
   capabilitySyncBlocked,
-  capabilityMessage
+  capabilityMessage,
+  saving
 }) {
   return (
     <>
@@ -276,6 +289,14 @@ function WorkspaceToolbarLayout({
         </div>
 
         <div className="toolbar-group toolbar-group--workspace-primary">
+          <button
+            className="ghost-btn tutorial-entry-btn"
+            onClick={() => triggerTutorial()}
+            data-testid="toolbar-tutorial-action"
+            title="查看使用教程"
+          >
+            教程
+          </button>
           <button
             className="ghost-btn"
             data-testid="toolbar-compile-action"
@@ -315,7 +336,7 @@ function WorkspaceToolbarLayout({
       <div className="top-toolbar-utility-row">
         <div className="top-toolbar-utility-row__label">工具</div>
         <div className="toolbar-group toolbar-group--workspace-secondary">
-          <button className="ghost-btn" onClick={handleSaveGraph} data-testid="toolbar-save-graph-action">
+          <button className="ghost-btn" onClick={handleSaveGraph} disabled={saving} data-testid="toolbar-save-graph-action">
             保存策略图
           </button>
           <button className="ghost-btn" onClick={handleLoadLatestGraph} data-testid="toolbar-load-latest-action">
@@ -325,7 +346,7 @@ function WorkspaceToolbarLayout({
             className="ghost-btn"
             data-testid="toolbar-export-runtime-config-action"
             onClick={() => handleExportRuntimeConfig({ capabilitySyncBlocked, capabilityMessage })}
-            disabled={capabilitySyncBlocked}
+            disabled={capabilitySyncBlocked || saving}
             title={exportConfigTitle}
           >
             导出运行配置
@@ -334,6 +355,7 @@ function WorkspaceToolbarLayout({
             className="ghost-btn"
             data-testid="toolbar-export-quantscript-action"
             onClick={() => handleExportQuantScript({ graph })}
+            disabled={saving}
           >
             导出策略图源码
           </button>
@@ -365,10 +387,30 @@ export default function TopToolbar({ variant = "default" }) {
   useI18n();
   const model = useWorkspaceActionBarModel();
   const isWorkspace = variant === "workspace";
+  const [saving, setSaving] = useState(false);
+
+  const guardedSaveGraph = useCallback(async () => {
+    setSaving(true);
+    try { await model.handleSaveGraph(); } finally { setSaving(false); }
+  }, [model.handleSaveGraph]);
+
+  const guardedExportQuantScript = useCallback(async () => {
+    setSaving(true);
+    try { await model.handleExportQuantScript({ graph: model.graph }); } finally { setSaving(false); }
+  }, [model.handleExportQuantScript, model.graph]);
+
+  const guardedExportRuntimeConfig = useCallback(async (opts) => {
+    setSaving(true);
+    try { await model.handleExportRuntimeConfig(opts); } finally { setSaving(false); }
+  }, [model.handleExportRuntimeConfig]);
 
   return (
     <header className={`top-toolbar${isWorkspace ? " top-toolbar--workspace" : ""}`}>
-      {isWorkspace ? <WorkspaceToolbarLayout {...model} /> : <DefaultToolbarLayout {...model} />}
+      {isWorkspace ? (
+        <WorkspaceToolbarLayout {...model} saving={saving} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} />
+      ) : (
+        <DefaultToolbarLayout {...model} saving={saving} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} />
+      )}
     </header>
   );
 }

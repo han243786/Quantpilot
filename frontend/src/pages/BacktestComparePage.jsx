@@ -7,6 +7,7 @@ import {
   strategyBacktestsPath,
   strategyWorkspacePath
 } from "../router";
+import { useI18n } from "../i18n";
 import {
   AnalysisHero,
   AnalysisSection,
@@ -23,6 +24,8 @@ import {
 } from "./backtestAnalysisShared";
 
 export default function BacktestComparePage({ backtestIds = [], strategyId = "" }) {
+  const { t } = useI18n();
+  const [reloadTick, setReloadTick] = useState(0);
   const [state, setState] = useState({
     status: "loading",
     details: [],
@@ -69,7 +72,7 @@ export default function BacktestComparePage({ backtestIds = [], strategyId = "" 
     return () => {
       disposed = true;
     };
-  }, [backtestIds]);
+  }, [backtestIds, reloadTick]);
 
   const summary = useMemo(() => {
     if (state.details.length < 2) return null;
@@ -163,7 +166,17 @@ export default function BacktestComparePage({ backtestIds = [], strategyId = "" 
         <AnalysisStatusBanner>正在加载策略对比...</AnalysisStatusBanner>
       ) : null}
       {state.status === "error" ? (
-        <AnalysisStatusBanner variant="error">{state.error}</AnalysisStatusBanner>
+        <div>
+          <AnalysisStatusBanner variant="error">{state.error}</AnalysisStatusBanner>
+          <div style={{ display: "flex", gap: 8, marginTop: 12, justifyContent: "center" }}>
+            <button className="ghost-btn" onClick={() => setReloadTick((t) => t + 1)}>
+              {t("重试")}
+            </button>
+            <button className="ghost-btn" onClick={() => navigateTo(strategiesPath())}>
+              {t("返回策略中心")}
+            </button>
+          </div>
+        </div>
       ) : null}
 
       {state.status === "ready" ? (

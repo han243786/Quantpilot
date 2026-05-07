@@ -87,3 +87,68 @@ pub(super) async fn validate_strategy_ir_file(path: PathBuf) -> anyhow::Result<(
     print_strategy_ir_summary(&path, &strategy_ir);
     Ok(())
 }
+
+pub fn handle_credential_command(args: &[String]) -> anyhow::Result<()> {
+    // args[0] = "credential", args[1] = subcommand, args[2..] = params
+    if args.len() < 2 {
+        eprintln!("用法: quantpilot credential <set|get|list|delete> [参数]");
+        eprintln!("  set <服务名> --key=<KEY> --secret=<SECRET> [--passphrase=<PASSPHRASE>]");
+        eprintln!("  get <服务名> <键名>");
+        eprintln!("  list");
+        eprintln!("  delete <服务名>");
+        return Ok(());
+    }
+
+    let sub = &args[1];
+    let mut vault = crate::credential_vault::CredentialVault::load()?;
+
+    match sub.as_str() {
+        "set" => {
+            let service = args.get(2).ok_or_else(|| anyhow::anyhow!("缺少服务名"))?;
+            let mut key = String::new();
+            let mut secret = String::new();
+            let mut passphrase = String::new();
+            for arg in &args[3..] {
+                if let Some(v) = arg.strip_prefix("--key=") { key = v.to_string(); }
+                else if let Some(v) = arg.strip_prefix("--secret=") { secret = v.to_string(); }
+                else if let Some(v) = arg.strip_prefix("--passphrase=") { passphrase = v.to_string(); }
+            }
+            if key.is_empty() || secret.is_empty() {
+                anyhow::bail!("需要 --key= 和 --secret= 参数");
+            }
+            vault.set(service, "key", &key)?;
+            vault.set(service, "secret", &secret)?;
+            if !passphrase.is_empty() {
+                vault.set(service, "passphrase", &passphrase)?;
+            }
+            println!("凭证已存储。服务: {}", service);
+        }
+        "get" => {
+            let service = args.get(2).ok_or_else(|| anyhow::anyhow!("缺少服务名"))?;
+            let field = args.get(3).ok_or_else(|| anyhow::anyhow!("缺少字段名 (key/secret/passphrase)"))?;
+            match vault.get(service, field) {
+                Some(v) => println!("{}", v.as_str()),
+                None => println!("(未设置)"),
+            }
+        }
+        "list" => {
+            let services = vault.list_services();
+            if services.is_empty() {
+                println!("(无已存储凭证)");
+            } else {
+                for s in &services {
+                    println!("  {}", s);
+                }
+            }
+        }
+        "delete" => {
+            let service = args.get(2).ok_or_else(|| anyhow::anyhow!("缺少服务名"))?;
+            vault.delete_service(service)?;
+            println!("凭证已删除。服务: {}", service);
+        }
+        _ => {
+            anyhow::bail!("未知子命令: {}。可用: set, get, list, delete", sub);
+        }
+    }
+    Ok(())
+}

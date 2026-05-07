@@ -19,7 +19,7 @@ async fn run_test_scenario(
     if request.source.trim().is_empty() {
         return Err((
             axum::http::StatusCode::BAD_REQUEST,
-            "source is empty — provide a valid quantscript strategy with @test directives".to_string(),
+            "源码为空 —— 请提供包含 @test 指令的有效 QuantScript 策略".to_string(),
         ));
     }
     let ctx = TestRunnerContext::from_source(&request.source)
@@ -32,7 +32,7 @@ async fn run_test_scenario(
         .map_err(|e| {
             (
                 axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-                format!("execution error: {e}"),
+                format!("执行错误: {e}"),
             )
         })?;
 

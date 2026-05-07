@@ -320,7 +320,9 @@ export default function StrategyResearchConsole({
               onOpenBacktestDetail={onOpenBacktestDetail}
             />
           )}
+        </aside>
 
+        <aside className="research-console-events-right" data-testid="research-events-sidebar">
           <StrategyEventsPanel
             className="research-console-panel research-console-panel-events"
             graph={model.graph}

@@ -448,11 +448,16 @@ pub(super) fn resolved_backtest_execution_assumptions(
     assumptions
 }
 
-pub(super) fn validate_graph_id(input: &str) -> anyhow::Result<()> {
-    let valid = !input.is_empty()
-        && input
-            .chars()
-            .all(|ch| ch.is_ascii_alphanumeric() || ch == '_' || ch == '-');
+pub(super) fn validate_graph_id(graph_id: &str) -> anyhow::Result<()> {
+    if graph_id.is_empty() {
+        anyhow::bail!("graph_id 不能为空");
+    }
+    if graph_id.len() > 128 {
+        anyhow::bail!("graph_id 长度不能超过 128 字符");
+    }
+    let valid = graph_id
+        .chars()
+        .all(|ch| ch.is_ascii_alphanumeric() || ch == '_' || ch == '-');
     if valid {
         Ok(())
     } else {

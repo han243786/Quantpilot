@@ -870,6 +870,28 @@ impl Resolver {
                     self.types.maybe(series)
                 }
                 Some(CallableTarget::Builtin) | Some(CallableTarget::Imported) => {
+                    // B1-4: 指标参数类型约束
+                    if matches!(
+                        name.as_str(),
+                        "sma" | "ema" | "rsi" | "macd" | "momentum" | "zscore" | "z_score"
+                    ) {
+                        if let Some(first_arg) = args.first() {
+                            let is_literal_number = matches!(
+                                &first_arg.value.kind,
+                                HirExprKind::Number(_)
+                            );
+                            if is_literal_number {
+                                self.diagnostics.push(Diagnostic::error(
+                                    "QS0007",
+                                    format!(
+                                        "{} 的第一个参数必须是 fetch() 或数据系列",
+                                        name
+                                    ),
+                                    Some(callee.span.clone()),
+                                ));
+                            }
+                        }
+                    }
                     self.infer_named_helper_return_type(name, args.first().map(|arg| arg.value.ty))
                 }
                 Some(CallableTarget::UserFunction(return_type)) => return_type,
@@ -1065,8 +1087,25 @@ impl Resolver {
         name: String,
         ty: TypeId,
         value_expr: Option<Expr>,
-        _span: &Span,
+        span: &Span,
     ) {
+        // B1-10: 重复变量定义诊断
+        if scope.contains_key(&name) {
+            self.diagnostics.push(Diagnostic::warning(
+                "QS0609",
+                format!("重复的变量定义 '{}'", name),
+                Some(span.clone()),
+            ));
+        }
+        // B1-2: 变量遮蔽检测
+        let is_known = self.function_signatures.contains_key(&name);
+        if is_known || is_known_helper_function(&name) {
+            self.diagnostics.push(Diagnostic::warning(
+                "QS0600",
+                format!("变量 '{}' 遮蔽了同名内置函数", name),
+                Some(span.clone()),
+            ));
+        }
         scope.insert(name, BindingInfo { ty, value_expr });
     }
 

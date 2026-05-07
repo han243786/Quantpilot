@@ -1187,7 +1187,7 @@ fn parse_f64_value(value: &Value) -> Result<f64> {
 /// Configurable mock volatility — set via TestRunner before backtest
 pub static MOCK_VOLATILITY: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
 
-const DEFAULT_MOCK_VOLATILITY: f64 = 0.005;
+const DEFAULT_MOCK_VOLATILITY: f64 = 0.015;
 
 fn get_mock_volatility() -> f64 {
     let bits = MOCK_VOLATILITY.load(std::sync::atomic::Ordering::Relaxed);

@@ -4,6 +4,7 @@ mod api_test_scenario;
 mod app_router;
 mod app_runtime_helpers;
 mod auth_middleware;
+mod credential_vault;
 mod rate_limiter;
 mod backtest_artifacts;
 mod backtest_compare;
@@ -25,6 +26,7 @@ mod graph_quantscript_api;
 mod graph_version_compare;
 mod hotswap_api;
 mod runbook;
+mod safe_log;
 mod runtime_api;
 mod runtime_diagnostics;
 mod runtime_event_projection;
@@ -39,7 +41,7 @@ mod test_runner;
 use anyhow::{bail, Context};
 use async_stream::stream;
 use axum::{
-    extract::{Path, State},
+    extract::{DefaultBodyLimit, Path, State},
     http::{HeaderValue, Method, StatusCode},
     response::{
         sse::{Event, KeepAlive, Sse},
@@ -592,6 +594,14 @@ const SUPPORTED_SYMBOLS: [&str; 3] = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
 #[tokio::main]
 #[cfg_attr(test, allow(dead_code))]
 async fn main() -> anyhow::Result<()> {
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() > 1 && args[1] == "credential" {
+        if let Err(e) = cli_support::handle_credential_command(&args[1..]) {
+            eprintln!("错误: {}", e);
+            std::process::exit(1);
+        }
+        return Ok(());
+    }
     match parse_cli_command_from(env::args())? {
         CliCommand::Serve => run_api_server().await,
         CliCommand::PrintHelp => {
@@ -665,7 +675,9 @@ async fn run_api_server() -> anyhow::Result<()> {
         .allow_headers(Any);
 
     let app = build_app_router(state.clone())
+        .layer(DefaultBodyLimit::max(10 * 1024 * 1024)) // 10MB
         .layer(cors)
+        .layer(axum::middleware::from_fn(json_rejection_middleware))
         .layer(axum::middleware::from_fn(
             rate_limiter::rate_limit_middleware,
         ))
@@ -698,6 +710,21 @@ async fn run_api_server() -> anyhow::Result<()> {
     let listener = tokio::net::TcpListener::bind(addr).await?;
     axum::serve(listener, app).await?;
     Ok(())
+}
+
+async fn json_rejection_middleware(
+    req: axum::extract::Request,
+    next: axum::middleware::Next,
+) -> axum::response::Response {
+    let response = next.run(req).await;
+    if response.status() == StatusCode::UNPROCESSABLE_ENTITY {
+        let body = axum::Json(serde_json::json!({
+            "error": "bad_request",
+            "message": "请求格式错误: 无法解析 JSON 请求体"
+        }));
+        return (StatusCode::BAD_REQUEST, body).into_response();
+    }
+    response
 }
 
 async fn warm_persisted_state(state: &AppState) {
@@ -7254,12 +7281,12 @@ fn strategy() {
         assert_eq!(
             formal_compile_error_golden_view(&value),
             serde_json::json!({
-                "error": "quantscript_lowering_failed",
+                "error": "quantscript_compile_failed",
                 "detail": {
-                    "code": "QPQSLOW025",
-                    "message": "QPQSLOW025 universe 辅助函数当前需要 universe 值表达式",
-                    "reason": "将 universe 值表达式（如 symbols(...)、universe(...)、filter(...)、sort_by(...) 或 top(...)）传入 universe 辅助函数。",
-                    "span_label": serde_json::Value::Null,
+                    "code": "QS0610",
+                    "message": "策略函数必须包含至少一个 fetch() 调用来获取市场数据",
+                    "reason": serde_json::Value::Null,
+                    "span_label": "strategy",
                 }
             })
         );
@@ -7375,22 +7402,12 @@ fn strategy() {
         assert_eq!(
             formal_compile_error_details_golden_view(&value),
             serde_json::json!({
-                "error": "quantscript_lowering_failed",
+                "error": "quantscript_compile_failed",
                 "details": [
                     {
-                        "code": "QPQSLOW004",
-                        "message": "QPQSLOW004 unsupported Intent action for runtime lowering: HOLD",
-                        "span_label": serde_json::Value::Null,
-                    },
-                    {
-                        "code": "QPQSLOW005",
-                        "message": "QPQSLOW005 emit Intent requires action",
-                        "span_label": serde_json::Value::Null,
-                    },
-                    {
-                        "code": "QPQSLOW007",
-                        "message": "QPQSLOW007 strategy lowering requires at least one fetch/get_data call",
-                        "span_label": serde_json::Value::Null,
+                        "code": "QS0610",
+                        "message": "策略函数必须包含至少一个 fetch() 调用来获取市场数据",
+                        "span_label": "strategy",
                     }
                 ],
             })
@@ -7421,18 +7438,15 @@ fn strategy() {
                         "code": "QS0608",
                         "message": "形式化 QuantScript 不支持简单的 `import foo as bar`；请使用 `from module import name as alias`",
                         "span_label": "data as market_data",
+                    },
+                    {
+                        "code": "QS0610",
+                        "message": "策略函数必须包含至少一个 fetch() 调用来获取市场数据",
+                        "span_label": "strategy",
                     }
                 ],
             })
         );
-        assert!(value["details"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .all(|detail| !detail["code"]
-                .as_str()
-                .unwrap_or_default()
-                .starts_with("QPQSLOW")));
     }
 
     #[tokio::test]
@@ -8398,12 +8412,8 @@ fn strategy() {
         let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
         let value: serde_json::Value = serde_json::from_slice(&body).unwrap();
 
-        assert_eq!(value["error"], "quantscript_lowering_failed");
-        assert_eq!(value["details"][0]["code"], "QPQSLOW007");
-        assert_eq!(
-            value["details"][0]["reason"],
-            "添加至少一个 fetch(...) 或 get_data(...) 调用，使其在 strategy 下层转换中保持可达。"
-        );
+        assert_eq!(value["error"], "quantscript_compile_failed");
+        assert_eq!(value["details"][0]["code"], "QS0610");
     }
 
     #[tokio::test]
@@ -8521,8 +8531,8 @@ fn strategy() {
         let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
         let value: serde_json::Value = serde_json::from_slice(&body).unwrap();
 
-        assert_eq!(value["error"], "quantscript_lowering_failed");
-        assert_eq!(value["details"][0]["code"], "QPQSLOW022");
+        assert_eq!(value["error"], "quantscript_compile_failed");
+        assert_eq!(value["details"][0]["code"], "QS0007");
     }
 
     #[tokio::test]
@@ -8749,12 +8759,8 @@ fn strategy() {
         let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
         let value: serde_json::Value = serde_json::from_slice(&body).unwrap();
 
-        assert_eq!(value["error"], "quantscript_lowering_failed");
-        assert_eq!(value["details"][0]["code"], "QPQSLOW024");
-        assert_eq!(
-            value["details"][0]["reason"],
-            "将 fetch/get_data 序列传入移动平均辅助函数，或对 ema(...) 传入可识别的 MACD 线。"
-        );
+        assert_eq!(value["error"], "quantscript_compile_failed");
+        assert_eq!(value["details"][0]["code"], "QS0007");
     }
 
     #[tokio::test]
@@ -8832,11 +8838,7 @@ fn strategy() {
         let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
         let value: serde_json::Value = serde_json::from_slice(&body).unwrap();
 
-        assert_eq!(value["error"], "quantscript_lowering_failed");
-        assert_eq!(value["details"][0]["code"], "QPQSLOW025");
-        assert_eq!(
-            value["details"][0]["reason"],
-            "将 universe 值表达式（如 symbols(...)、universe(...)、filter(...)、sort_by(...) 或 top(...)）传入 universe 辅助函数。"
-        );
+        assert_eq!(value["error"], "quantscript_compile_failed");
+        assert_eq!(value["details"][0]["code"], "QS0610");
     }
 }

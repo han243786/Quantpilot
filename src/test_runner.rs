@@ -1,5 +1,7 @@
 use super::*;
 use anyhow::{Context, Result};
+use crate::credential_vault::CredentialVault;
+use zeroize::Zeroizing;
 use qrpc_runtime::{
     DeterministicTestMode, FastBacktestSandbox, RealTimeSandbox, RuntimeCoordinator,
 };
@@ -9,6 +11,7 @@ use quantscript::{
 };
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+use std::sync::OnceLock;
 use std::time::Instant;
 
 // ── Test Report Types ──
@@ -233,10 +236,11 @@ impl TestRunner {
                         }
                     }
                     if node_id.is_empty() && !affected.is_empty() {
-                        eprintln!("[TestRunner] 修改: {}={} 已应用于 {} 个节点: [{}]",
+                        crate::safe_eprintln!("[TestRunner] 修改: {}={} 已应用于 {} 个节点: [{}]",
                             param_name, new_value, affected.len(), affected.join(", "));
                     }
                 }
+                self.pending_modifications.clear();
                 // Route through the graph API compilation path so that
                 // intent/agent/execution modules are configured identically
                 // to the frontend POST /api/runtime/compile pipeline.
@@ -269,7 +273,6 @@ impl TestRunner {
                 );
                 match qrpc_compiler::compile_runtime_protocol_config(&runtime_config) {
                     Ok(compiled) => {
-                        self.pending_modifications.clear();
                         // M5-1: save graph so frontend can load it
                         let graph_id = format!("qs_{}", current_time_ms());
                         let graph_dir = std::path::Path::new("storage").join("graphs");
@@ -296,13 +299,13 @@ impl TestRunner {
                         true
                     }
                     Err(e) => {
-                        eprintln!("[TestRunner] 编译失败: {e:?}");
+                        crate::safe_eprintln!("[TestRunner] 编译失败: {e:?}");
                         false
                     }
                 }
             }
             Err(e) => {
-                eprintln!("[TestRunner] 降级失败: {e:?}");
+                crate::safe_eprintln!("[TestRunner] 降级失败: {e:?}");
                 false
             }
         }
@@ -353,10 +356,17 @@ impl TestRunner {
                         ));
                     }
                     let s = seed.unwrap_or(BACKTEST_TEST_SEED);
-                    let result = if source == "historical_replay" {
-                        self.execute_backtest_historical(s)?
+                    let result = match if source == "historical_replay" {
+                        self.execute_backtest_historical(s)
                     } else {
-                        self.execute_backtest_with_range(s, start.as_deref(), end.as_deref())?
+                        self.execute_backtest_with_range(s, start.as_deref(), end.as_deref())
+                    } {
+                        Ok(r) => r,
+                        Err(e) => {
+                            self.last_backtest_metrics.clear();
+                            self.last_backtest_trades_count = 0;
+                            return Err(e);
+                        }
                     };
                     if let Some(vol) = volatility {
                         let bits = vol.to_bits();
@@ -508,16 +518,35 @@ impl TestRunner {
         Ok(messages.join("; "))
     }
 
-    /// Load exchange credentials from environment — returns (key, secret) or error
-    fn load_exchange_credentials() -> Result<(String, String), String> {
-        let key = std::env::var("QUANTPILOT_EXCHANGE_KEY")
-            .map_err(|_| "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_KEY".to_string())?;
-        let secret = std::env::var("QUANTPILOT_EXCHANGE_SECRET")
-            .map_err(|_| "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_SECRET".to_string())?;
-        if key.is_empty() || secret.is_empty() {
-            return Err("QUANTPILOT_EXCHANGE_KEY 和 QUANTPILOT_EXCHANGE_SECRET 不能为空".to_string());
+    /// Load exchange credentials — tries env vars first, then falls back to CredentialVault
+    fn load_exchange_credentials() -> Result<(Zeroizing<String>, Zeroizing<String>, Zeroizing<String>), String> {
+        // Try environment variables first
+        let key_env = std::env::var("QUANTPILOT_EXCHANGE_KEY").ok();
+        let secret_env = std::env::var("QUANTPILOT_EXCHANGE_SECRET").ok();
+        let passphrase_env = std::env::var("QUANTPILOT_EXCHANGE_PASSPHRASE").ok();
+
+        if let (Some(ref key), Some(ref secret), Some(ref passphrase)) = (&key_env, &secret_env, &passphrase_env) {
+            if !key.is_empty() && !secret.is_empty() && !passphrase.is_empty() {
+                return Ok((
+                    Zeroizing::new(key.clone()),
+                    Zeroizing::new(secret.clone()),
+                    Zeroizing::new(passphrase.clone()),
+                ));
+            }
         }
-        Ok((key, secret))
+
+        // Fall back to credential vault
+        let vault = CredentialVault::load()
+            .map_err(|e| format!("无法加载凭证保险库: {}", e))?;
+
+        let key = vault.get("okx", "key")
+            .ok_or_else(|| "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_KEY 或在凭证保险库中配置".to_string())?;
+        let secret = vault.get("okx", "secret")
+            .ok_or_else(|| "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_SECRET 或在凭证保险库中配置".to_string())?;
+        let passphrase = vault.get("okx", "passphrase")
+            .ok_or_else(|| "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_PASSPHRASE 或在凭证保险库中配置".to_string())?;
+
+        Ok((key, secret, passphrase))
     }
 
     fn execute_testnet_run(&mut self, duration_secs: u64) -> Result<String, String> {
@@ -530,12 +559,7 @@ impl TestRunner {
             ));
         }
 
-        let (key, secret) = Self::load_exchange_credentials()?;
-        let passphrase = std::env::var("QUANTPILOT_EXCHANGE_PASSPHRASE")
-            .unwrap_or_default();
-        if passphrase.is_empty() {
-            return Err("未设置 QUANTPILOT_EXCHANGE_PASSPHRASE".to_string());
-        }
+        let (key, secret, passphrase) = Self::load_exchange_credentials()?;
 
         let proxy = std::env::var("QUANTPILOT_PROXY").unwrap_or_else(|_| "http://127.0.0.1:7897".to_string());
         std::env::set_var("HTTPS_PROXY", &proxy);
@@ -635,6 +659,17 @@ impl TestRunner {
         }
     }
 
+    /// Shared HTTP agent with proxy support for testnet requests
+    fn testnet_agent() -> &'static ureq::Agent {
+        static AGENT: OnceLock<ureq::Agent> = OnceLock::new();
+        AGENT.get_or_init(|| {
+            let proxy_url = std::env::var("QUANTPILOT_PROXY")
+                .unwrap_or_else(|_| "http://127.0.0.1:7897".to_string());
+            let proxy = ureq::Proxy::new(&proxy_url).expect("proxy config error");
+            ureq::AgentBuilder::new().proxy(proxy).build()
+        })
+    }
+
     /// OKX API request with HMAC-SHA256 signing and rate-limit backoff
     fn okx_request(
         api_key: &str,
@@ -661,14 +696,8 @@ impl TestRunner {
         }
         LAST_REQUEST.store(now, std::sync::atomic::Ordering::Relaxed);
 
-        // Build agent with proxy support
-        let proxy_agent = {
-            let proxy_url = std::env::var("QUANTPILOT_PROXY")
-                .unwrap_or_else(|_| "http://127.0.0.1:7897".to_string());
-            let proxy = ureq::Proxy::new(&proxy_url)
-                .map_err(|e| format!("代理错误: {e}"))?;
-            ureq::AgentBuilder::new().proxy(proxy).build()
-        };
+        // Build agent with proxy support (shared static instance)
+        let proxy_agent = Self::testnet_agent();
 
         // Adaptive retry: up to 3 attempts with exponential backoff
         let mut last_err = String::new();

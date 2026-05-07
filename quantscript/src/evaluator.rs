@@ -662,6 +662,10 @@ fn fold_slice(object: Expr, start: Option<Box<Expr>>, end: Option<Box<Expr>>) ->
 
 fn fold_binary(left: Expr, op: BinaryOp, right: Expr) -> Result<Expr> {
     if let (Some(lhs), Some(rhs)) = (expr_number(&left), expr_number(&right)) {
+        // B1-3: 编译期除零/模零检测
+        if matches!(op, BinaryOp::Divide | BinaryOp::Modulo) && rhs.abs() < f64::EPSILON {
+            return Err(anyhow!("QS0403 编译期除零/模零"));
+        }
         return Ok(match op {
             BinaryOp::Add => Expr::Number(lhs + rhs),
             BinaryOp::Subtract => Expr::Number(lhs - rhs),

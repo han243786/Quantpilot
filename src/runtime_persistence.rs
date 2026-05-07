@@ -1,14 +1,20 @@
 use super::*;
 
+async fn atomic_write_json(path: &FsPath, value: &impl serde::Serialize) -> std::io::Result<()> {
+    let tmp = path.with_extension("tmp");
+    let json = serde_json::to_string_pretty(value)
+        .map_err(|error| std::io::Error::other(error.to_string()))?;
+    fs::write(&tmp, json).await?;
+    fs::rename(&tmp, path).await
+}
+
 pub(super) async fn persist_run_record(
     run_store_dir: &FsPath,
     record: &RunRecord,
 ) -> std::io::Result<()> {
     fs::create_dir_all(run_store_dir).await?;
     let path = run_store_dir.join(format!("{}.json", record.run_id));
-    let body = serde_json::to_string_pretty(record)
-        .map_err(|error| std::io::Error::other(error.to_string()))?;
-    fs::write(path, body).await
+    atomic_write_json(&path, record).await
 }
 
 pub(super) async fn persist_backtest_record(
@@ -24,9 +30,7 @@ pub(super) async fn persist_experiment_record(
 ) -> std::io::Result<()> {
     fs::create_dir_all(experiment_store_dir).await?;
     let path = experiment_store_dir.join(format!("{}.json", record.experiment_id));
-    let body = serde_json::to_string_pretty(record)
-        .map_err(|error| std::io::Error::other(error.to_string()))?;
-    fs::write(path, body).await
+    atomic_write_json(&path, record).await
 }
 
 fn sanitize_storage_path_segment(value: &str) -> String {
@@ -116,9 +120,7 @@ pub(super) async fn persist_runtime_report_record(
         "{}.json",
         sanitize_storage_path_segment(&record.report_id)
     ));
-    let body = serde_json::to_string_pretty(record)
-        .map_err(|error| std::io::Error::other(error.to_string()))?;
-    fs::write(path, body).await
+    atomic_write_json(&path, record).await
 }
 
 pub(super) async fn load_runtime_report_record(
@@ -164,9 +166,7 @@ pub(super) async fn persist_runtime_parameter_mutation_record(
         "{}.json",
         sanitize_storage_path_segment(&record.proposal_id)
     ));
-    let body = serde_json::to_string_pretty(record)
-        .map_err(|error| std::io::Error::other(error.to_string()))?;
-    fs::write(path, body).await
+    atomic_write_json(&path, record).await
 }
 
 pub(super) async fn load_runtime_parameter_mutation_record(
@@ -215,9 +215,7 @@ pub(super) async fn persist_runtime_ai_proposal_record(
         "{}.json",
         sanitize_storage_path_segment(&record.ai_proposal_id)
     ));
-    let body = serde_json::to_string_pretty(record)
-        .map_err(|error| std::io::Error::other(error.to_string()))?;
-    fs::write(path, body).await
+    atomic_write_json(&path, record).await
 }
 
 pub(super) async fn load_runtime_ai_proposal_record(
@@ -314,7 +312,7 @@ pub(super) async fn load_backtest_record_from_state(
 
     Err((
         StatusCode::NOT_FOUND,
-        format!("backtest `{}` not found", backtest_id),
+        format!("回测 `{}` 不存在", backtest_id),
     ))
 }
 
@@ -410,9 +408,7 @@ pub(super) async fn persist_json<T: serde::Serialize>(
     id: &str,
     data: &T,
 ) -> std::io::Result<()> {
-    let json = serde_json::to_vec_pretty(data)?;
     fs::create_dir_all(store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", id));
-    fs::write(&file_path, &json).await?;
-    Ok(())
+    atomic_write_json(&file_path, data).await
 }

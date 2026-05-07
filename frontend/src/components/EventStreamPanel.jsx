@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useI18n } from "../i18n";
 import { backtestComparePath, navigateTo } from "../router";
 import {
@@ -487,6 +488,7 @@ export function EventPanelIntro({
   handleDiscardCurrentRuntimeArtifact
 }) {
   const { t } = useI18n();
+  const [expanded, setExpanded] = useState(false);
   const canSaveCurrentArtifact =
     runtime.artifactPersistenceStatus === "transient" &&
     runtime.status === "completed" &&
@@ -505,11 +507,25 @@ export function EventPanelIntro({
           {t("把运行摘要、事件流、历史记录和账户状态放在同一视图里，同时保持清晰分层。")}
         </div>
       </div>
-      <div className="event-summary-grid">
+      <div className="event-summary-grid" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
         <SummaryPill label={t("状态")} value={runtimeStatusLabel(runtime.status)} />
-        <SummaryPill label={t("类型")} value={runKindLabel} />
-        <SummaryPill label={t("运行 ID")} value={runtime.runId || "-"} />
         <SummaryPill label={t("事件数")} value={displayedEvents.length} />
+        <SummaryPill label={t("权益")} value={formatValue(runtime.account?.equity_estimate)} />
+      </div>
+      {expanded ? (
+        <div className="event-summary-grid" style={{ marginTop: "8px" }}>
+          <SummaryPill label={t("类型")} value={runKindLabel} />
+          <SummaryPill label={t("运行 ID")} value={runtime.runId || "-"} />
+        </div>
+      ) : null}
+      <div className="event-panel-actions">
+        <button
+          type="button"
+          className="ghost-btn compact-btn"
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? t("收起") : t("展开详情")}
+        </button>
       </div>
       {canSaveCurrentArtifact ? (
         <div className="event-panel-actions">
@@ -782,6 +798,7 @@ export function BacktestSummarySection({
   backtestEndedAt
 }) {
   const { t } = useI18n();
+  const [expanded, setExpanded] = useState(false);
   if (!runtime.backtestArtifacts) return null;
 
   return (
@@ -792,58 +809,72 @@ export function BacktestSummarySection({
       summary={t("优先显示工件驱动的回测结果摘要，而不是旧式摘要拼接。")}
     >
       <div className="backtest-summary-card" data-testid="backtest-summary-card">
-        <SectionCardHeader
-          title={t("回测结果详情")}
-          summary={t("回测工件和模拟运行分开持久化，详情会恢复权益曲线与事件日志。")}
-          value={`${backtestSummary?.step_count || 0} 步`}
-        />
-        <div className="kv-line">
-          <span>{t("回测 ID")}</span>
-          <strong data-testid="backtest-summary-id">
-            {runtime.selectedBacktestId || runtime.runId || "-"}
-          </strong>
-        </div>
-        <div className="kv-line">
-          <span>{t("协议")}</span>
-          <strong data-testid="backtest-summary-protocol">
-            {selectedBacktestSummary?.protocol_name || "-"}
-          </strong>
-        </div>
-        <div className="kv-line">
-          <span>{t("配置哈希")}</span>
-          <strong data-testid="backtest-summary-config-hash">
-            {selectedBacktestSummary?.config_hash || "-"}
-          </strong>
-        </div>
-        <div className="account-metric-grid" data-testid="backtest-summary-metrics">
+        <div className="account-metric-grid" data-testid="backtest-summary-metrics" style={{gridTemplateColumns: "repeat(3, 1fr)"}}>
           <div className="account-metric-card" data-testid="backtest-summary-total-return">
-            <span>{t("总收益率")}</span>
+            <span>{t("收益")}</span>
             <strong>{formatRatio(backtestSummary?.total_return_ratio)}</strong>
           </div>
           <div className="account-metric-card" data-testid="backtest-summary-max-drawdown">
-            <span>{t("最大回撤")}</span>
+            <span>{t("回撤")}</span>
             <strong>{formatRatio(backtestSummary?.max_drawdown_ratio)}</strong>
           </div>
           <div className="account-metric-card">
-            <span>{t("成交次数")}</span>
+            <span>{t("成交数")}</span>
             <strong>{formatValue(backtestSummary?.trade_count)}</strong>
           </div>
-          <div className="account-metric-card" data-testid="backtest-summary-trade-count">
-            <span>{t("最终权益")}</span>
-            <strong>{formatValue(backtestSummary?.final_equity)}</strong>
+        </div>
+
+        {expanded ? (
+          <div style={{ marginTop: "12px" }}>
+            <SectionCardHeader
+              title={t("回测结果详情")}
+              summary={t("回测工件和模拟运行分开持久化，详情会恢复权益曲线与事件日志。")}
+              value={`${backtestSummary?.step_count || 0} ${t("步")}`}
+            />
+            <div className="kv-line">
+              <span>{t("回测 ID")}</span>
+              <strong data-testid="backtest-summary-id">
+                {runtime.selectedBacktestId || runtime.runId || "-"}
+              </strong>
+            </div>
+            <div className="kv-line">
+              <span>{t("协议")}</span>
+              <strong data-testid="backtest-summary-protocol">
+                {selectedBacktestSummary?.protocol_name || "-"}
+              </strong>
+            </div>
+            <div className="kv-line">
+              <span>{t("配置哈希")}</span>
+              <strong data-testid="backtest-summary-config-hash">
+                {selectedBacktestSummary?.config_hash || "-"}
+              </strong>
+            </div>
+            <div className="account-metric-card" data-testid="backtest-summary-trade-count">
+              <span>{t("最终权益")}</span>
+              <strong>{formatValue(backtestSummary?.final_equity)}</strong>
+            </div>
+            <div className="kv-line">
+              <span>{t("开始时间")}</span>
+              <strong data-testid="backtest-summary-started-at">
+                {backtestStartedAt ? new Date(backtestStartedAt).toLocaleString() : "-"}
+              </strong>
+            </div>
+            <div className="kv-line">
+              <span>{t("结束时间")}</span>
+              <strong data-testid="backtest-summary-ended-at">
+                {backtestEndedAt ? new Date(backtestEndedAt).toLocaleString() : "-"}
+              </strong>
+            </div>
           </div>
-        </div>
-        <div className="kv-line">
-          <span>{t("开始时间")}</span>
-          <strong data-testid="backtest-summary-started-at">
-            {backtestStartedAt ? new Date(backtestStartedAt).toLocaleString() : "-"}
-          </strong>
-        </div>
-        <div className="kv-line">
-          <span>{t("结束时间")}</span>
-          <strong data-testid="backtest-summary-ended-at">
-            {backtestEndedAt ? new Date(backtestEndedAt).toLocaleString() : "-"}
-          </strong>
+        ) : null}
+        <div className="event-panel-actions">
+          <button
+            type="button"
+            className="ghost-btn compact-btn"
+            onClick={() => setExpanded(!expanded)}
+          >
+            {expanded ? t("收起") : t("展开详情")}
+          </button>
         </div>
       </div>
     </EventSection>
@@ -1415,6 +1446,7 @@ export function RunHistorySection({
 
 export function AccountSection({ runtime, openOrders }) {
   const { t } = useI18n();
+  const [expanded, setExpanded] = useState(false);
   return (
     <EventSection
       kicker={t("账户")}
@@ -1424,39 +1456,59 @@ export function AccountSection({ runtime, openOrders }) {
     >
       <div className="open-orders-card">
         <SectionCardHeader title={t("账户摘要")} summary={t("现金、净值、杠杆和名义价值统一展示。")} />
-        <div className="account-metric-grid">
+        <div className="account-metric-grid" style={{gridTemplateColumns: "repeat(3, 1fr)"}}>
           <div className="account-metric-card" data-testid="account-summary-equity">
-            <span>{t("总资产估值")}</span>
+            <span>{t("总权益")}</span>
             <strong>{formatValue(runtime.account?.equity_estimate ?? runtime.account?.cash_balance)}</strong>
-          </div>
-          <div className="account-metric-card">
-            <span>{t("总现金")}</span>
-            <strong>{formatValue(runtime.account?.cash_balance)}</strong>
           </div>
           <div className="account-metric-card">
             <span>{t("可用现金")}</span>
             <strong>{formatValue(runtime.account?.available_cash_balance)}</strong>
           </div>
           <div className="account-metric-card">
-            <span>{t("冻结现金")}</span>
-            <strong>{formatValue(runtime.account?.frozen_cash_balance)}</strong>
-          </div>
-          <div className="account-metric-card">
-            <span>{t("总杠杆")}</span>
-            <strong>{formatValue(runtime.account?.total_leverage ?? runtime.account?.pnl)}</strong>
-          </div>
-          <div className="account-metric-card">
-            <span>{t("持仓数")}</span>
+            <span>{t("持仓")}</span>
             <strong>{formatValue(runtime.account?.positions)}</strong>
           </div>
         </div>
-        <div className="kv-line">
-          <span>{t("总名义价值")}</span>
-          <strong>{formatValue(runtime.account?.total_gross_notional)}</strong>
-        </div>
-        <div className="kv-line">
-          <span>{t("净名义价值")}</span>
-          <strong>{formatValue(runtime.account?.total_net_notional)}</strong>
+
+        {expanded ? (
+          <div style={{ marginTop: "12px" }}>
+            <div className="account-metric-grid">
+              <div className="account-metric-card">
+                <span>{t("总现金")}</span>
+                <strong>{formatValue(runtime.account?.cash_balance)}</strong>
+              </div>
+              <div className="account-metric-card">
+                <span>{t("冻结现金")}</span>
+                <strong>{formatValue(runtime.account?.frozen_cash_balance)}</strong>
+              </div>
+              <div className="account-metric-card">
+                <span>{t("总杠杆")}</span>
+                <strong>{formatValue(runtime.account?.total_leverage ?? runtime.account?.pnl)}</strong>
+              </div>
+              <div className="account-metric-card">
+                <span>{t("持仓数")}</span>
+                <strong>{formatValue(runtime.account?.positions)}</strong>
+              </div>
+            </div>
+            <div className="kv-line">
+              <span>{t("总名义价值")}</span>
+              <strong>{formatValue(runtime.account?.total_gross_notional)}</strong>
+            </div>
+            <div className="kv-line">
+              <span>{t("净名义价值")}</span>
+              <strong>{formatValue(runtime.account?.total_net_notional)}</strong>
+            </div>
+          </div>
+        ) : null}
+        <div className="event-panel-actions">
+          <button
+            type="button"
+            className="ghost-btn compact-btn"
+            onClick={() => setExpanded(!expanded)}
+          >
+            {expanded ? t("收起") : t("展开详情")}
+          </button>
         </div>
       </div>
       <div className="open-orders-card">
@@ -1546,64 +1598,6 @@ export default function EventStreamPanel({ detailMode = false, onOpenBacktestDet
             <EventReplaySection runtime={model.runtime} />
           </div>
 
-          <div className="event-sidebar-history">
-            <BacktestHistorySection
-              detailMode={detailMode}
-              graph={model.graph}
-              runtime={model.runtime}
-              backtestHistoryFilter={model.backtestFilters.backtestHistoryFilter}
-              backtestCompileFilter={model.backtestFilters.backtestCompileFilter}
-              backtestDatasetFilter={model.backtestFilters.backtestDatasetFilter}
-              backtestParameterFilter={model.backtestFilters.backtestParameterFilter}
-              backtestFromTime={model.backtestFilters.backtestFromTime}
-              backtestToTime={model.backtestFilters.backtestToTime}
-              backtestPageSize={model.backtestFilters.backtestPageSize}
-              pagedBacktests={model.pagedBacktests}
-              filteredBacktests={model.filteredBacktests}
-              backtestCurrentPage={model.backtestCurrentPage}
-              backtestTotalPages={model.backtestTotalPages}
-              compareSelection={model.compareSelection}
-              handleRefreshBacktestHistory={model.handleRefreshBacktestHistory}
-              setBacktestHistoryFilter={model.setBacktestHistoryFilter}
-              setBacktestCompileFilter={model.setBacktestCompileFilter}
-              setBacktestDatasetFilter={model.setBacktestDatasetFilter}
-              setBacktestParameterFilter={model.setBacktestParameterFilter}
-              setBacktestFromTime={model.setBacktestFromTime}
-              setBacktestToTime={model.setBacktestToTime}
-              setBacktestPage={model.setBacktestPage}
-              setBacktestPageSize={model.setBacktestPageSize}
-              toggleBacktestCompareSelection={model.toggleBacktestCompareSelection}
-              clearBacktestCompareSelection={model.clearBacktestCompareSelection}
-              loadBacktestDetail={model.loadBacktestDetail}
-              onOpenBacktestDetail={onOpenBacktestDetail}
-            />
-            <RunHistorySection
-              detailMode={detailMode}
-              graph={model.graph}
-              runtime={model.runtime}
-              historyFilter={model.runFilters.historyFilter}
-              historyCompileFilter={model.runFilters.historyCompileFilter}
-              historyFromTime={model.runFilters.historyFromTime}
-              historyToTime={model.runFilters.historyToTime}
-              historyStatusFilter={model.runFilters.historyStatusFilter}
-              historySortOrder={model.runFilters.historySortOrder}
-              historyPageSize={model.runFilters.historyPageSize}
-              pagedHistory={model.pagedHistory}
-              filteredHistory={model.filteredHistory}
-              currentPage={model.currentPage}
-              totalPages={model.totalPages}
-              handleRefreshRunHistory={model.handleRefreshRunHistory}
-              setRunHistoryFilter={model.setRunHistoryFilter}
-              setRunHistoryCompileFilter={model.setRunHistoryCompileFilter}
-              setRunHistoryFromTime={model.setRunHistoryFromTime}
-              setRunHistoryToTime={model.setRunHistoryToTime}
-              setRunHistoryStatusFilter={model.setRunHistoryStatusFilter}
-              setRunHistorySortOrder={model.setRunHistorySortOrder}
-              setRunHistoryPage={model.setRunHistoryPage}
-              setRunHistoryPageSize={model.setRunHistoryPageSize}
-              loadRunDetail={model.loadRunDetail}
-            />
-          </div>
         </div>
       </div>
     </section>

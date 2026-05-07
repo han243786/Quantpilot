@@ -149,7 +149,7 @@ export function useStrategyWorkspaceUiState({
     !strategyId || graphId === strategyId ? "ready" : "loading"
   );
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [activeCodeInspector, setActiveCodeInspector] = useState("params");
   const [codeLaneState, setCodeLaneState] = useState(DEFAULT_CODE_LANE_STATE);
   const [codeLaneNotice, setCodeLaneNotice] = useState(null);

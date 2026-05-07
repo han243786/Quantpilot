@@ -313,7 +313,7 @@ export function validateGraph(graph, registry) {
     if (node.type === "intent" && incoming.length === 0) {
       addNodeIssue(
         node.id,
-        buildIssue("error", "node", node.id, "INTENT_NO_INPUT", "意图节点必须连接上游市场数据。")
+        buildIssue("warning", "node", node.id, "INTENT_NO_INPUT", "意图节点未连接上游数据源，将不会产生信号。")
       );
     }
 
@@ -365,14 +365,14 @@ export function validateGraph(graph, registry) {
     if (node.type === "agent" && incoming.length === 0) {
       addNodeIssue(
         node.id,
-        buildIssue("error", "node", node.id, "AGENT_NO_INPUT", "代理节点必须连接至少一个意图输入。")
+        buildIssue("warning", "node", node.id, "AGENT_NO_INPUT", "代理节点未连接意图输入，将不会参与决策。")
       );
     }
 
     if (node.type === "agent" && outgoing.length === 0) {
       addNodeIssue(
         node.id,
-        buildIssue("error", "node", node.id, "AGENT_NO_OUTPUT", "代理节点必须连接到风控节点。")
+        buildIssue("warning", "node", node.id, "AGENT_NO_OUTPUT", "代理节点未连接到风控节点，决策将不会被执行。")
       );
     }
 
@@ -398,21 +398,21 @@ export function validateGraph(graph, registry) {
     if (node.type === "risk" && incoming.length === 0) {
       addNodeIssue(
         node.id,
-        buildIssue("error", "node", node.id, "RISK_NO_INPUT", "风控节点必须连接代理输入。")
+        buildIssue("warning", "node", node.id, "RISK_NO_INPUT", "风控节点未连接代理输入，将不会执行风控检查。")
       );
     }
 
     if (node.type === "risk" && outgoing.length === 0) {
       addNodeIssue(
         node.id,
-        buildIssue("error", "node", node.id, "RISK_NO_OUTPUT", "风控节点必须连接到执行节点。")
+        buildIssue("warning", "node", node.id, "RISK_NO_OUTPUT", "风控节点未连接到执行节点，决策将不会成交。")
       );
     }
 
     if (node.type === "execution" && incoming.length === 0) {
       addNodeIssue(
         node.id,
-        buildIssue("error", "node", node.id, "EXECUTION_NO_INPUT", "执行节点必须连接风控输入。")
+        buildIssue("warning", "node", node.id, "EXECUTION_NO_INPUT", "执行节点未连接风控输入，将不会发送订单。")
       );
     }
   });
