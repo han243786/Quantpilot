@@ -89,13 +89,12 @@ pub(super) async fn validate_strategy_ir_file(path: PathBuf) -> anyhow::Result<(
 }
 
 pub fn handle_credential_command(args: &[String]) -> anyhow::Result<()> {
-    // args[0] = "credential", args[1] = subcommand, args[2..] = params
     if args.len() < 2 {
         eprintln!("用法: quantpilot credential <set|get|list|delete> [参数]");
-        eprintln!("  set <服务名> --key=<KEY> --secret=<SECRET> [--passphrase=<PASSPHRASE>]");
-        eprintln!("  get <服务名> <键名>");
+        eprintln!("  set <标签> --key=<KEY> --secret=<SECRET> [--passphrase=<PASSPHRASE>] [--<自定义字段>=<值> ...]");
+        eprintln!("  get <标签>");
         eprintln!("  list");
-        eprintln!("  delete <服务名>");
+        eprintln!("  delete <标签>");
         return Ok(());
     }
 
@@ -104,31 +103,30 @@ pub fn handle_credential_command(args: &[String]) -> anyhow::Result<()> {
 
     match sub.as_str() {
         "set" => {
-            let service = args.get(2).ok_or_else(|| anyhow::anyhow!("缺少服务名"))?;
-            let mut key = String::new();
-            let mut secret = String::new();
-            let mut passphrase = String::new();
+            let service = args.get(2).ok_or_else(|| anyhow::anyhow!("缺少标签名"))?;
+            let mut fields: std::collections::BTreeMap<String, String> = std::collections::BTreeMap::new();
             for arg in &args[3..] {
-                if let Some(v) = arg.strip_prefix("--key=") { key = v.to_string(); }
-                else if let Some(v) = arg.strip_prefix("--secret=") { secret = v.to_string(); }
-                else if let Some(v) = arg.strip_prefix("--passphrase=") { passphrase = v.to_string(); }
+                if let Some(rest) = arg.strip_prefix("--") {
+                    if let Some((k, v)) = rest.split_once('=') {
+                        fields.insert(k.to_string(), v.to_string());
+                    }
+                }
             }
-            if key.is_empty() || secret.is_empty() {
-                anyhow::bail!("需要 --key= 和 --secret= 参数");
+            if fields.is_empty() {
+                anyhow::bail!("需要至少一个字段, 例如 --key=xxx --secret=yyy");
             }
-            vault.set(service, "key", &key)?;
-            vault.set(service, "secret", &secret)?;
-            if !passphrase.is_empty() {
-                vault.set(service, "passphrase", &passphrase)?;
-            }
-            println!("凭证已存储。服务: {}", service);
+            vault.set_service(service, fields)?;
+            println!("凭证已存储。标签: {}", service);
         }
         "get" => {
-            let service = args.get(2).ok_or_else(|| anyhow::anyhow!("缺少服务名"))?;
-            let field = args.get(3).ok_or_else(|| anyhow::anyhow!("缺少字段名 (key/secret/passphrase)"))?;
-            match vault.get(service, field) {
-                Some(v) => println!("{}", v.as_str()),
-                None => println!("(未设置)"),
+            let service = args.get(2).ok_or_else(|| anyhow::anyhow!("缺少标签名"))?;
+            match vault.get_service(service) {
+                Some(fields) => {
+                    for (k, v) in &fields {
+                        println!("  {} = {}", k, v);
+                    }
+                }
+                None => println!("标签 '{}' 不存在", service),
             }
         }
         "list" => {
@@ -142,9 +140,9 @@ pub fn handle_credential_command(args: &[String]) -> anyhow::Result<()> {
             }
         }
         "delete" => {
-            let service = args.get(2).ok_or_else(|| anyhow::anyhow!("缺少服务名"))?;
+            let service = args.get(2).ok_or_else(|| anyhow::anyhow!("缺少标签名"))?;
             vault.delete_service(service)?;
-            println!("凭证已删除。服务: {}", service);
+            println!("凭证已删除。标签: {}", service);
         }
         _ => {
             anyhow::bail!("未知子命令: {}。可用: set, get, list, delete", sub);

@@ -1,8 +1,10 @@
 import { useI18n } from "../i18n";
-import { useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { runtimeStatusLabel } from "../utils/runtimeStatus";
 import { useWorkspaceActionBarModel } from "../hooks/useWorkspaceActionBarModel";
 import { triggerTutorial } from "../hooks/useTutorial";
+import { OkxCredentialInput } from "./CredentialInput";
+import { API_BASE } from "../utils/api";
 
 function ToolbarNotices({ capabilityAlert, notice, setNotice }) {
   return (
@@ -103,7 +105,8 @@ function DefaultToolbarLayout({
   focusFinding,
   capabilitySyncBlocked,
   capabilityMessage,
-  saving
+  saving,
+  onOpenCredentials
 }) {
   return (
     <>
@@ -123,6 +126,14 @@ function DefaultToolbarLayout({
             title="查看使用教程"
           >
             教程
+          </button>
+          <button
+            className="ghost-btn"
+            onClick={onOpenCredentials}
+            data-testid="toolbar-credentials-action"
+            title="管理交易所凭证"
+          >
+            凭证
           </button>
           <button className="ghost-btn" onClick={resetGraph} data-testid="toolbar-reset-graph-action">
             新建策略图
@@ -259,7 +270,8 @@ function WorkspaceToolbarLayout({
   focusFinding,
   capabilitySyncBlocked,
   capabilityMessage,
-  saving
+  saving,
+  onOpenCredentials
 }) {
   return (
     <>
@@ -383,11 +395,98 @@ function WorkspaceToolbarLayout({
   );
 }
 
+function CredentialPanel({ onClose }) {
+  const { t } = useI18n();
+  const [services, setServices] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [loaded, setLoaded] = useState(false);
+
+  const loadServices = useCallback(async () => {
+    try {
+      const res = await fetch(API_BASE + "/api/credentials");
+      if (res.ok) {
+        const data = await res.json();
+        setServices(data.services || []);
+      }
+    } catch (_) { /* 凭证 API 可能未就绪 */ }
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => { loadServices(); }, [loadServices]);
+
+  const handleSave = useCallback(async (label, fields) => {
+    try {
+      const res = await fetch(API_BASE + "/api/credentials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ service: label, fields }),
+      });
+      if (res.ok) {
+        setSelected(null);
+        loadServices();
+      }
+    } catch (_) {}
+  }, [loadServices]);
+
+  const handleDelete = useCallback(async (label) => {
+    try {
+      await fetch(API_BASE + "/api/credentials/" + encodeURIComponent(label), { method: "DELETE" });
+      loadServices();
+    } catch (_) {}
+  }, [loadServices]);
+
+  if (selected === "new" || (selected && !services.includes(selected))) {
+    return (
+      <div className="credential-panel" data-testid="credential-panel">
+        <div className="credential-panel-header">
+          <span>{selected === "new" ? t("新增凭证") : t("编辑凭证")}</span>
+          <button className="ghost-btn compact-btn" onClick={() => setSelected(null)}>{t("返回")}</button>
+        </div>
+        <OkxCredentialInput
+          label={selected === "new" ? "" : selected}
+          onSave={handleSave}
+          onCancel={() => setSelected(null)}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="credential-panel" data-testid="credential-panel">
+      <div className="credential-panel-header">
+        <span>{t("凭证管理")}</span>
+        <button className="ghost-btn compact-btn" onClick={onClose}>{t("关闭")}</button>
+      </div>
+      {!loaded ? (
+        <div className="credential-panel-empty">{t("加载中...")}</div>
+      ) : services.length === 0 ? (
+        <div className="credential-panel-empty">{t("暂无已存储凭证")}</div>
+      ) : (
+        <ul className="credential-list">
+          {services.map((s) => (
+            <li key={s} className="credential-list-item">
+              <span>{s}</span>
+              <div>
+                <button className="ghost-btn compact-btn" onClick={() => setSelected(s)}>{t("编辑")}</button>
+                <button className="ghost-btn compact-btn" onClick={() => handleDelete(s)}>{t("删除")}</button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+      <button className="primary-btn" style={{ marginTop: 12 }} onClick={() => setSelected("new")}>
+        {t("新增凭证")}
+      </button>
+    </div>
+  );
+}
+
 export default function TopToolbar({ variant = "default" }) {
   useI18n();
   const model = useWorkspaceActionBarModel();
   const isWorkspace = variant === "workspace";
   const [saving, setSaving] = useState(false);
+  const [showCredentials, setShowCredentials] = useState(false);
 
   const guardedSaveGraph = useCallback(async () => {
     setSaving(true);
@@ -407,10 +506,13 @@ export default function TopToolbar({ variant = "default" }) {
   return (
     <header className={`top-toolbar${isWorkspace ? " top-toolbar--workspace" : ""}`}>
       {isWorkspace ? (
-        <WorkspaceToolbarLayout {...model} saving={saving} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} />
+        <WorkspaceToolbarLayout {...model} saving={saving} onOpenCredentials={() => setShowCredentials(true)} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} />
       ) : (
-        <DefaultToolbarLayout {...model} saving={saving} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} />
+        <DefaultToolbarLayout {...model} saving={saving} onOpenCredentials={() => setShowCredentials(true)} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} />
       )}
+      {showCredentials ? (
+        <CredentialPanel onClose={() => setShowCredentials(false)} />
+      ) : null}
     </header>
   );
 }

@@ -83,6 +83,8 @@ struct VaultData {
     entries: BTreeMap<String, BTreeMap<String, String>>,
 }
 
+pub type CredentialFields = BTreeMap<String, String>;
+
 pub struct CredentialVault {
     path: PathBuf,
     data: Mutex<VaultData>,
@@ -102,31 +104,27 @@ impl CredentialVault {
         Ok(Self { path, data: Mutex::new(data) })
     }
 
-    pub fn set(&self, service: &str, key: &str, value: &str) -> Result<()> {
+    /// 按标签整体设置凭证字段，同一标签下的所有字段原子替换
+    pub fn set_service(&self, service: &str, fields: CredentialFields) -> Result<()> {
+        if fields.is_empty() {
+            anyhow::bail!("凭证字段不能为空");
+        }
         let mut data = self.data.lock().unwrap();
-        data.entries
-            .entry(service.to_string())
-            .or_default()
-            .insert(key.to_string(), value.to_string());
+        data.entries.insert(service.to_string(), fields);
         self.save_inner(&data)
     }
 
-    pub fn get(&self, service: &str, key: &str) -> Option<Zeroizing<String>> {
-        let data = self.data.lock().unwrap();
-        data.entries
-            .get(service)
-            .and_then(|m| m.get(key))
-            .map(|v| Zeroizing::new(v.clone()))
-    }
-
-    pub fn get_service(&self, service: &str) -> Option<BTreeMap<String, String>> {
+    /// 获取标签下的全部凭证字段
+    pub fn get_service(&self, service: &str) -> Option<CredentialFields> {
         let data = self.data.lock().unwrap();
         data.entries.get(service).cloned()
     }
 
     pub fn delete_service(&self, service: &str) -> Result<()> {
         let mut data = self.data.lock().unwrap();
-        data.entries.remove(service);
+        if data.entries.remove(service).is_none() {
+            anyhow::bail!("服务 '{}' 不存在", service);
+        }
         self.save_inner(&data)
     }
 
@@ -143,11 +141,5 @@ impl CredentialVault {
         let encrypted = encrypt(&json)?;
         std::fs::write(&self.path, encrypted)?;
         Ok(())
-    }
-
-    #[allow(dead_code)]
-    fn save(&self) -> Result<()> {
-        let data = self.data.lock().unwrap();
-        self.save_inner(&data)
     }
 }

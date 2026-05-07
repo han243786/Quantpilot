@@ -539,12 +539,15 @@ impl TestRunner {
         let vault = CredentialVault::load()
             .map_err(|e| format!("无法加载凭证保险库: {}", e))?;
 
-        let key = vault.get("okx", "key")
+        let fields = vault.get_service("okx")
             .ok_or_else(|| "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_KEY 或在凭证保险库中配置".to_string())?;
-        let secret = vault.get("okx", "secret")
-            .ok_or_else(|| "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_SECRET 或在凭证保险库中配置".to_string())?;
-        let passphrase = vault.get("okx", "passphrase")
-            .ok_or_else(|| "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_PASSPHRASE 或在凭证保险库中配置".to_string())?;
+
+        let key = Zeroizing::new(fields.get("key").cloned()
+            .ok_or_else(|| "凭证标签 'okx' 中缺少 'key' 字段".to_string())?);
+        let secret = Zeroizing::new(fields.get("secret").cloned()
+            .ok_or_else(|| "凭证标签 'okx' 中缺少 'secret' 字段".to_string())?);
+        let passphrase = Zeroizing::new(fields.get("passphrase").cloned()
+            .ok_or_else(|| "凭证标签 'okx' 中缺少 'passphrase' 字段".to_string())?);
 
         Ok((key, secret, passphrase))
     }
