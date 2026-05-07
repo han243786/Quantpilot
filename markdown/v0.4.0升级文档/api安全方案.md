@@ -90,28 +90,36 @@ MVP 的业务流可以压缩成六步。第一，客户端首启生成实例私�
 │  VaultData {                                     │
 │    entries: BTreeMap<Label, FieldMap>             │
 │  }                                               │
-│  FieldMap = BTreeMap<String, String>              │
-│    (key="api_key"  → value="...",                │
-│     key="secret"   → value="...",                │
-│     key="passphrase" → value="...")              │
+│  FieldMap = BTreeMap<String, SecretString>        │
+│    (key="api_key"  → SecretString("..."),        │
+│     key="secret"   → SecretString("..."),        │
+│     key="passphrase" → SecretString("..."))      │
 │                                                  │
-│  整体序列化为 JSON → AES-256-GCM 加密 → 写入磁盘   │
+│  SecretString: Drop 时调用 zeroize() 清零内存     │
+│  整体序列化为 JSON → AES-256-GCM 加密 → 原子写入  │
 │  密钥 = SHA-256(hostname + machine_key)           │
-│  machine_key 首次启动随机生成，存入 storage/       │
+│  AAD = "storage/.credentials" (绑定密文到路径)    │
+│  machine_key: OnceLock 保护, 首次启动生成, tmp+rename│
+│  写入: .tmp → rename(覆盖) + .bak 回滚            │
 └──────────────────────────────────────────────────┘
 
 ┌─ 调用路径 ───────────────────────────────────────┐
 │  test_runner.rs:                                 │
-│    let creds = vault.get_service("okx_testnet")?;│
-│    // creds = {"api_key": "...", "secret": "...", │
-│    //          "passphrase": "..."}               │
-│    okx_request(&creds, "/api/v5/account/balance") │
+│    let fields = vault.get_service("okx")?;       │
+│    // fields = {"key": "...", "secret": "...",   │
+│    //           "passphrase": "..."}             │
+│    okx_request(&fields, "/api/v5/...")           │
 │                                                  │
-│  CLI:                                            │
-│    quantpilot credential set okx_testnet \        │
-│      --key=xxx --secret=yyy --passphrase=zzz     │
-│    quantpilot credential list                    │
-│    quantpilot credential delete okx_testnet      │
+│  CLI (交互式输入, 不写 shell history):            │
+│    $ quantpilot credential set okx               │
+│      请输入 api_key: [隐匿输入]                    │
+│      请输入 secret: [隐匿输入]                     │
+│      请输入 passphrase (可选): [隐匿输入]          │
+│      凭证已存储。标签: okx                         │
+│                                                  │
+│  或通过 stdin 管道:                               │
+│    $ echo "$SECRET" | quantpilot credential \    │
+│        set okx --stdin                           │
 └──────────────────────────────────────────────────┘
 ```
 
@@ -155,6 +163,46 @@ MVP 的业务流可以压缩成六步。第一，客户端首启生成实例私�
 | 前端输入 | CredentialInput (type=password) | 不变 |
 | 内存保护 | Zeroizing + 主动 drop | 不变 |
 | 传输绑定 | HTTPS (TLS) | DPoP / mTLS |
+
+### 安全边界与已知限制
+
+以下限制已经过安全审查确认，在当前单机 sandbox 场景下属于**可接受的风险**，但在公开部署或管理真实资金前必须修复。
+
+#### CLI 凭证输入
+
+**限制**：通过命令行参数 `--key=` `--secret=` 传递凭证会写入 shell history 并暴露在进程列表中。  
+**缓解**：CLI `set` 命令改为交互式 stdin 输入（隐匿回显），敏感字段不经过命令行参数。  
+**残留风险**：交互式输入仍可能被键盘记录器截获；stdin 管道方式 (`echo $SECRET |`) 仍会写入 shell history 的 `echo` 命令。用户在受信任的本地终端操作时风险可控。
+
+#### 内存残留
+
+**限制**：`get_service()` 返回的字段值在调用方持有期间为明文 `String`，堆内存释放后内容可能残留。  
+**缓解**：VaultData 内部使用 `SecretString` wrapper（Drop 时 zeroize），确保锁内副本被清零。调用方通过 `Zeroizing<String>` 包裹敏感字段，使用完后主动 `drop`。  
+**残留风险**：`String::clone()` 在内存中产生额外副本；Rust allocator 的 `dealloc` 不保证立即覆写。需要通过外部工具（如 `valgrind`）验证残留量。
+
+#### OKX API 凭证传输
+
+**限制**：OKX API 要求 `OK-ACCESS-PASSPHRASE` HTTP 头携带明文 passphrase，仅依赖 HTTPS 传输加密。当前未实施 TLS 证书 pinning。  
+**缓解**：使用 IP 白名单限制 API key 来源；使用子账户 API key 并设置交易权限上限；量子 Pilot 仅支持 testnet（模拟交易），不涉及真实资产。  
+**残留风险**：中间人代理（企业网络、调试代理）可解密 TLS 并提取 passphrase。后续版本应通过 `rustls` 实施证书 pinning。
+
+#### 日志脱敏覆盖范围
+
+**限制**：`safe_eprintln!` 通过硬编码 pattern 列表匹配脱敏，无法覆盖用户自定义字段名；仅覆盖使用该宏的日志点。  
+**缓解**：vault 加载后将实际字段值注册到脱敏模块，动态扩展匹配范围。  
+**残留风险**：直接使用 `eprintln!` / `println!` / `tracing` 的日志点不受保护；错误堆栈中的字符串化凭证值无法脱敏。
+
+#### 单进程信任边界
+
+**限制**：前端（浏览器/WebView）与后端（Rust）之间无认证层，同一台机器上任何进程可向 `localhost:3000` 发送 API 请求并触发 testnet 运行。  
+**缓解**：操作系统用户边界隔离；testnet 仅使用 testnet API key，不涉及主账户；即将添加的 `/api/credentials` 路由需要 API key 认证（`auth_middleware`）。  
+**残留风险**：恶意浏览器扩展可劫持前端请求。后续版本应使用 Tauri 的原生 IPC 通道替代 HTTP。
+
+#### 密钥生命周期
+
+**限制**：`machine_key` 生成后永久不变。如果密钥文件泄露且攻击者留存了历史 `.credentials` 快照，所有历史凭证均可被解密。  
+**缓解**：`.machine_key` 文件权限限制为仅当前用户可读（`0600`）；`.machine_key` 加入 `.gitignore`。  
+**残留风险**：操作系统/文件系统级备份可能复制 `.machine_key`。后续版本应支持密钥轮换 + 旧密钥吊销。
 
 ---
 
