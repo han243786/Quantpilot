@@ -55,6 +55,109 @@ MVP 的业务流可以压缩成六步。第一，客户端首启生成实例私�
 | 蜜罐 | 代码中假密钥 | canary credential / decoy route | decoy service / honeytoken mesh / 取证信号编排 |
 | 运维属性 | 一次性交付 | 可观测、可回滚、可调参 | 可演进、可审计、可做攻防演练 |
 
+## 本地凭证存储设计
+
+### 设计目标
+
+交易所 API 凭证（api_key / secret / passphrase 等）是 QuantPilot 当前最关键的本地秘密。在设计凭证存储方案时，需要满足以下约束：
+
+- **原子性**：同一交易所的多个凭证字段（如 OKX 的 key + secret + passphrase）在加解密、存储、删除时必须作为整体操作，不允许出现字段级不一致
+- **字段无关性**：不同交易所要求的字段名和字段数不同（Binance 不需要 passphrase，某些交易所可能要求额外字段），存储层不应硬编码字段名
+- **调用便利性**：用户按标签（如 `"okx_testnet"`）一键引用全部字段，无需在每次使用时分别指定 key/secret/passphrase
+- **传输保护**：前端 `<input type="password" autocomplete="off">`，不在 localStorage/sessionStorage 缓存
+- **存储加密**：AES-256-GCM 整体加密字段 Map 的 JSON，密钥从主机标识 + 随机机器密钥派生
+- **内存安全**：解密后立即包装为 `Zeroizing<String>`，使用完毕后主动触发 Drop
+- **日志脱敏**：所有日志输出中，凭证字段值被替换为 `***`
+
+### 数据模型
+
+```
+┌─ 用户视图 ──────────────────────────────────────┐
+│  标签: "okx_testnet"                             │
+│  字段:                                           │
+│    api_key    → [****]                           │
+│    secret     → [****]                           │
+│    passphrase → [****]                           │
+│                                                  │
+│  标签: "binance_testnet"                         │
+│  字段:                                           │
+│    api_key    → [****]                           │
+│    secret     → [****]                           │
+│  (无 passphrase — 字段完全由用户定义)              │
+└──────────────────────────────────────────────────┘
+
+┌─ 存储层 (credential_vault.rs) ───────────────────┐
+│  VaultData {                                     │
+│    entries: BTreeMap<Label, FieldMap>             │
+│  }                                               │
+│  FieldMap = BTreeMap<String, String>              │
+│    (key="api_key"  → value="...",                │
+│     key="secret"   → value="...",                │
+│     key="passphrase" → value="...")              │
+│                                                  │
+│  整体序列化为 JSON → AES-256-GCM 加密 → 写入磁盘   │
+│  密钥 = SHA-256(hostname + machine_key)           │
+│  machine_key 首次启动随机生成，存入 storage/       │
+└──────────────────────────────────────────────────┘
+
+┌─ 调用路径 ───────────────────────────────────────┐
+│  test_runner.rs:                                 │
+│    let creds = vault.get_service("okx_testnet")?;│
+│    // creds = {"api_key": "...", "secret": "...", │
+│    //          "passphrase": "..."}               │
+│    okx_request(&creds, "/api/v5/account/balance") │
+│                                                  │
+│  CLI:                                            │
+│    quantpilot credential set okx_testnet \        │
+│      --key=xxx --secret=yyy --passphrase=zzz     │
+│    quantpilot credential list                    │
+│    quantpilot credential delete okx_testnet      │
+└──────────────────────────────────────────────────┘
+```
+
+### 为什么不是逐字段存储
+
+逐字段存储（`vault.set("okx", "api_key", key)`）的问题是：
+1. **部分更新风险** — 用户更新了 `secret` 但忘记更新 `passphrase`，导致调用时字段不匹配
+2. **删除不完整** — 删除一个字段后其余字段残留，下次调用用旧值
+3. **字段名耦合** — 调用方需要知道 `"api_key"`, `"secret"`, `"passphrase"` 三个魔数
+
+整体存储（`vault.set_service("okx_testnet", field_map)`）则天然保证原子性：整个标签作为一个加密单元，set/delete 都是一次操作。
+
+### 前端组件设计
+
+`CredentialInput` 组件接收一个字段定义列表，动态渲染输入框：
+
+```
+<CredentialInput
+  label="okx_testnet"
+  fields={[
+    { name: "api_key",    label: "API Key",    required: true },
+    { name: "secret",     label: "Secret Key", required: true },
+    { name: "passphrase", label: "通行密钥",    required: true },
+  ]}
+  onSubmit={(label, fieldMap) => vault.setService(label, fieldMap)}
+/>
+```
+
+每个 `<input>` 固定 `type="password" autocomplete="off" spellCheck={false}`。组件不关心字段的业务含义，只负责安全输入和整体提交。
+
+### 与 MVP 架构的关系
+
+本地凭证加密存储是 MVP 六层模型中"密钥安全层"的落地实现。在客户端证明、DPoP/mTLS 等机制尚未就绪的当前阶段，AES-256-GCM + 机器密钥绑定提供了单机场景下可达到的最高凭证保护水平。后续 MVP 升级时，`CredentialVault` 的加密密钥可从机器密钥平滑迁移到平台实例私钥。
+
+| 维度 | 当前实现 | MVP 目标 |
+|------|---------|---------|
+| 加密算法 | AES-256-GCM (ring) | 不变 |
+| 密钥派生 | hostname + machine_key | 平台实例私钥 |
+| 存储原子性 | 按标签整体加解密 | 不变 |
+| 调用方式 | `vault.get_service(label)` | 不变 |
+| 前端输入 | CredentialInput (type=password) | 不变 |
+| 内存保护 | Zeroizing + 主动 drop | 不变 |
+| 传输绑定 | HTTPS (TLS) | DPoP / mTLS |
+
+---
+
 ## 最终升级版架构
 
 最终升级版的目标，不是把客户端做成一个“绝对打不开的黑盒”，而是把每一次 API 使用都变成**需要同时满足实例密钥、令牌绑定、内容绑定、平台证明、行为许可与内部最小权限**的组合判断。对外层，原生公有客户端优先使用 DPoP；B2B、合作方服务或受管终端优先使用 mTLS/证书绑定令牌。对高价值场景，比如支付、权益发放、敏感配置变更或企业级回调，再叠加 HTTP Message Signatures 或 FAPI 2.0 Message Signing，让请求和响应在穿过代理或中间件后仍有可验证的消息级完整性。citeturn28view1turn25view0turn10view3turn23view1
