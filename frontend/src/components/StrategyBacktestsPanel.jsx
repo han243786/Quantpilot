@@ -1,7 +1,5 @@
-import {
-  BacktestHistorySection,
-  BacktestSummarySection
-} from "./EventStreamPanel";
+import BacktestHistorySection from "./BacktestHistorySection";
+import { BacktestSummarySection } from "./EventStreamPanel";
 
 export default function StrategyBacktestsPanel({
   detailMode = false,

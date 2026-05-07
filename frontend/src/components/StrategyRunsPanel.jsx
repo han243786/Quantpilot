@@ -1,7 +1,5 @@
-import {
-  AccountSection,
-  RunHistorySection
-} from "./EventStreamPanel";
+import RunHistorySection from "./RunHistorySection";
+import { AccountSection } from "./EventStreamPanel";
 
 export default function StrategyRunsPanel({
   detailMode = false,

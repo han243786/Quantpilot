@@ -11,7 +11,7 @@ import EventReplaySection from "./EventReplaySection";
 import RuntimeMutationPanel from "./RuntimeMutationPanel";
 import { useStrategyResearchModel } from "../hooks/useStrategyResearchModel";
 
-const COPY = {
+export const COPY = {
   backtestListTitle: "\u56de\u6d4b\u8bb0\u5f55",
   backtestListSubtitle:
     "\u6309\u56fe\u3001\u7f16\u8bd1\u3001\u6570\u636e\u96c6\u3001\u53c2\u6570\u548c\u65f6\u95f4\u7a97\u53e3\u7b5b\u9009\u3002",
@@ -81,7 +81,7 @@ const DIRECTION_LABELS = {
   short: "\u505a\u7a7a"
 };
 
-const HISTORY_COPY = {
+export const HISTORY_COPY = {
   refresh: "刷新",
   clear: "清空",
   reset: "重置",
@@ -190,7 +190,7 @@ function CompareDiffTable({ compareDiff }) {
   );
 }
 
-function formatValue(value) {
+export function formatValue(value) {
   if (value === null || value === undefined || value === "") return "-";
   if (typeof value === "number") {
     return Number.isInteger(value) ? String(value) : value.toFixed(4);
@@ -198,14 +198,14 @@ function formatValue(value) {
   return String(value);
 }
 
-function formatRatio(value) {
+export function formatRatio(value) {
   if (!Number.isFinite(value)) return "-";
   const percent = value * 100;
   const sign = percent > 0 ? "+" : "";
   return `${sign}${percent.toFixed(2)}%`;
 }
 
-function backtestExecutionAssumptionsLabel(filters) {
+export function backtestExecutionAssumptionsLabel(filters) {
   if (filters?.execution_assumptions_tag?.label) {
     const tag = filters.execution_assumptions_tag;
     return tag.sources_label ? `${tag.label} (${tag.sources_label})` : tag.label;
@@ -245,24 +245,24 @@ function qualityFlagsText(value) {
   return value.join(", ");
 }
 
-function resolveRunStatus(run, runtime) {
+export function resolveRunStatus(run, runtime) {
   if (runtime.runId === run.run_id && runtime.status && runtime.status !== "idle") {
     return runtime.status;
   }
   return run.status || "completed";
 }
 
-function ratioTone(value) {
+export function ratioTone(value) {
   if (!Number.isFinite(value) || value === 0) return "muted";
   return value > 0 ? "success" : "danger";
 }
 
-function drawdownTone(value) {
+export function drawdownTone(value) {
   if (!Number.isFinite(value) || value === 0) return "muted";
   return Math.abs(value) >= 0.1 ? "danger" : "warning";
 }
 
-function runtimeTone(status) {
+export function runtimeTone(status) {
   return getRuntimeStatusMeta(status).tone;
 }
 
@@ -270,7 +270,7 @@ function eventTypeLabel(type) {
   return EVENT_TYPE_LABELS[type] || type;
 }
 
-function EventSection({ kicker, title, summary, className = "", testId = null, children }) {
+export function EventSection({ kicker, title, summary, className = "", testId = null, children }) {
   return (
     <section
       className={`event-section ${className}`.trim()}
@@ -296,7 +296,7 @@ function SummaryPill({ label, value, tone = "muted" }) {
   );
 }
 
-function HistoryMetaGrid({ items, className = "" }) {
+export function HistoryMetaGrid({ items, className = "" }) {
   return (
     <div className={`history-meta-grid ${className}`.trim()}>
       {items.map((item) => (
@@ -314,7 +314,7 @@ function HistoryMetaGrid({ items, className = "" }) {
   );
 }
 
-function HistoryCardHeader({ id, timestamp }) {
+export function HistoryCardHeader({ id, timestamp }) {
   return (
     <div className="run-history-topline">
       <strong title={id}>{id}</strong>
@@ -325,11 +325,11 @@ function HistoryCardHeader({ id, timestamp }) {
   );
 }
 
-function HistoryNotice({ children, tone = "muted" }) {
+export function HistoryNotice({ children, tone = "muted" }) {
   return <div className={`muted-line history-note history-note-${tone}`}>{children}</div>;
 }
 
-function SectionCardHeader({ title, summary, action = null, value = null }) {
+export function SectionCardHeader({ title, summary, action = null, value = null }) {
   return (
     <div className="open-orders-header">
       <div>
@@ -341,7 +341,7 @@ function SectionCardHeader({ title, summary, action = null, value = null }) {
   );
 }
 
-function HistoryCopyBlock({ title, subtitle }) {
+export function HistoryCopyBlock({ title, subtitle }) {
   return (
     <div className="history-copy-block">
       <div className="mini-list-title history-copy-title">{title}</div>
@@ -350,7 +350,7 @@ function HistoryCopyBlock({ title, subtitle }) {
   );
 }
 
-function HistoryFilterGrid({ className = "", fields }) {
+export function HistoryFilterGrid({ className = "", fields }) {
   return (
     <div className={`history-filter-grid ${className}`.trim()}>
       {fields.map((field) => {
@@ -388,7 +388,7 @@ function HistoryFilterGrid({ className = "", fields }) {
   );
 }
 
-function HistoryMetaRow({ items }) {
+export function HistoryMetaRow({ items }) {
   const visibleItems = items.filter((item) => item && item.value !== undefined && item.value !== null);
   if (visibleItems.length === 0) return null;
 
@@ -403,7 +403,7 @@ function HistoryMetaRow({ items }) {
   );
 }
 
-function HistoryPagination({ currentPage, totalPages, onPrevious, onNext }) {
+export function HistoryPagination({ currentPage, totalPages, onPrevious, onNext }) {
   return (
     <div className="history-pagination">
       <button className="ghost-btn compact-btn" disabled={currentPage <= 1} onClick={onPrevious}>
@@ -417,7 +417,7 @@ function HistoryPagination({ currentPage, totalPages, onPrevious, onNext }) {
   );
 }
 
-function HistoryControlBar({
+export function HistoryControlBar({
   className = "",
   refreshAriaLabel,
   refreshDisabled = false,
@@ -452,7 +452,7 @@ function HistoryControlBar({
   );
 }
 
-function HistoryExplanationCard({ title, summary, entries, testId }) {
+export function HistoryExplanationCard({ title, summary, entries, testId }) {
   if (!entries || entries.length === 0) return null;
 
   return (
@@ -881,7 +881,8 @@ export function BacktestSummarySection({
   );
 }
 
-export function BacktestHistorySection({
+// BacktestHistorySection 已迁移至 ./BacktestHistorySection.jsx
+function BacktestHistorySection({
   detailMode,
   graph,
   runtime,
@@ -1207,7 +1208,8 @@ export function BacktestHistorySection({
   );
 }
 
-export function RunHistorySection({
+// RunHistorySection 已迁移至 ./RunHistorySection.jsx
+function RunHistorySection({
   detailMode,
   graph,
   runtime,
