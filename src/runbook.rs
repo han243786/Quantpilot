@@ -309,9 +309,9 @@ async fn get_scenario(
     if let Some(scenario) = scenarios.into_iter().find(|s| s.scenario_id == scenario_id) {
         return Ok(Json(scenario));
     }
-    Err(problem_not_found(
-        "SCENARIO_NOT_FOUND",
-        format!("No scenario with id '{}'", scenario_id),
+    Err(json_bad_request(
+        "not_found",
+        format!("故障场景 '{}' 不存在", scenario_id),
     ))
 }
 

@@ -142,9 +142,9 @@ async fn restore_snapshot(
         .value;
 
     if current_sig != snapshot.signature {
-        return Err(problem_conflict(
-            "SNAPSHOT_INTEGRITY_FAILED",
-            format!("Snapshot '{}' integrity check failed", snapshot_id),
+        return Err(json_bad_request(
+            "conflict",
+            format!("快照 '{}' 完整性校验失败", snapshot_id),
         ));
     }
 
@@ -161,8 +161,8 @@ async fn restore_snapshot(
         "warning": "恢复操作已记录审计日志，请在观察窗口(60s)内确认系统正常"
     });
 
-    eprintln!(
-        "[snapshot_service] Snapshot {} restored by {} at {}",
+    crate::safe_eprintln!(
+        "[snapshot_service] 快照 {} 由 {} 在 {} 恢复",
         snapshot_id, request.actor_id, now_ms
     );
 
@@ -188,13 +188,13 @@ async fn load_snapshot_from_disk(
 ) -> Result<DeploymentSignatureSnapshot, (StatusCode, String)> {
     let file_path = store_dir.join(format!("{}.json", snapshot_id));
     let json = fs::read(&file_path).await.map_err(|_| {
-        problem_not_found(
-            "SNAPSHOT_NOT_FOUND",
-            format!("No snapshot with id '{}'", snapshot_id),
+        json_bad_request(
+            "not_found",
+            format!("快照 '{}' 不存在", snapshot_id),
         )
     })?;
     serde_json::from_slice(&json).map_err(|error| {
-        problem_internal("DESERIALIZATION_ERROR", format!("{}", error))
+        internal_error(anyhow::anyhow!("{}", error))
     })
 }
 

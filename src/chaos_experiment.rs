@@ -244,13 +244,13 @@ async fn load_chaos_report_from_disk(
 ) -> Result<ChaosExperimentReport, (StatusCode, String)> {
     let file_path = store_dir.join(format!("{}.json", experiment_id));
     let json = fs::read(&file_path).await.map_err(|_| {
-        problem_not_found(
-            "EXPERIMENT_NOT_FOUND",
-            format!("No experiment with id '{}'", experiment_id),
+        json_bad_request(
+            "not_found",
+            format!("混沌实验 '{}' 不存在", experiment_id),
         )
     })?;
     serde_json::from_slice(&json).map_err(|error| {
-        problem_internal("DESERIALIZATION_ERROR", format!("{}", error))
+        internal_error(anyhow::anyhow!("{}", error))
     })
 }
 

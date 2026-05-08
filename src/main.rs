@@ -599,7 +599,7 @@ async fn main() -> anyhow::Result<()> {
     let args: Vec<String> = std::env::args().collect();
     if args.len() > 1 && args[1] == "credential" {
         if let Err(e) = cli_support::handle_credential_command(&args[1..]) {
-            eprintln!("错误: {}", e);
+            crate::safe_eprintln!("错误: {}", e);
             std::process::exit(1);
         }
         return Ok(());
@@ -640,8 +640,8 @@ async fn run_api_server() -> anyhow::Result<()> {
     fs::create_dir_all(&audit_store_dir).await?;
     fs::create_dir_all(&report_store_dir).await?;
     if let Err(error) = cleanup_backtest_promotion_work_dirs(&backtest_store_dir).await {
-        eprintln!(
-            "warning: failed to clean stale backtest promotion temp directories: {}",
+        crate::safe_eprintln!(
+            "warning: 清理回测临时目录失败: {}",
             error
         );
     }
@@ -654,8 +654,8 @@ async fn run_api_server() -> anyhow::Result<()> {
     if let Err(error) =
         cleanup_transient_backtest_records(state.transient_backtest_store_dir.as_ref()).await
     {
-        eprintln!(
-            "warning: failed to clean stale transient backtest directories: {}",
+        crate::safe_eprintln!(
+            "warning: 清理过期回测目录失败: {}",
             error
         );
     }
@@ -800,8 +800,8 @@ async fn warm_persisted_state(state: &AppState) {
             }
         }
     }
-    eprintln!(
-        "[startup] warmed state: {} approvals, {} snapshots, {} alerts, {} sandbox reports, {} chaos experiments",
+    crate::safe_eprintln!(
+        "[startup] 已预热状态: {} 审批单, {} 快照, {} 告警, {} 沙箱报告, {} 混沌实验",
         state.approval_records.read().await.len(),
         state.snapshots.read().await.len(),
         state.alert_firings.read().await.len(),

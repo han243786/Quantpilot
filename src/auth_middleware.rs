@@ -31,9 +31,8 @@ pub(super) async fn api_key_auth(
             // Print warning once per process lifetime
             static WARNED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
             if !WARNED.swap(true, std::sync::atomic::Ordering::Relaxed) {
-                eprintln!(
-                    "[auth] WARNING: QUANTPILOT_API_KEY not set — all API requests allowed. \
-                     Set QUANTPILOT_API_KEY environment variable to enable authentication."
+                crate::safe_eprintln!(
+                    "[auth] 未设置 QUANTPILOT_API_KEY — 所有 API 请求均放行. 设置该环境变量以启用认证."
                 );
             }
             return next.run(request).await;

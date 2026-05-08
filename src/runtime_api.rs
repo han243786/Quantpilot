@@ -824,9 +824,9 @@ async fn discard_run_record(
 
     let removed = state.runs.write().await.remove(&run_id);
     if removed.is_none() {
-        return Err(problem_not_found(
-            "RUN_NOT_FOUND",
-            format!("run '{}' not found", run_id),
+        return Err(json_bad_request(
+            "not_found",
+            format!("运行记录 '{}' 不存在", run_id),
         ));
     }
 
@@ -3096,9 +3096,9 @@ async fn approve_ai_proposal(
     if approval.review_state != RuntimeApprovalReviewState::Pending
         && approval.review_state != RuntimeApprovalReviewState::UnderReview
     {
-        return Err(problem_bad_request(
+        return Err(json_bad_request(
             "INVALID_APPROVAL_STATE",
-            "approval is not in a reviewable state",
+            "审批单不在可审查状态",
         ));
     }
 
@@ -3169,9 +3169,9 @@ async fn reject_ai_proposal(
     if approval.review_state != RuntimeApprovalReviewState::Pending
         && approval.review_state != RuntimeApprovalReviewState::UnderReview
     {
-        return Err(problem_bad_request(
+        return Err(json_bad_request(
             "INVALID_APPROVAL_STATE",
-            "approval is not in a reviewable state",
+            "审批单不在可审查状态",
         ));
     }
 
@@ -3269,9 +3269,9 @@ async fn find_approval_by_proposal(
     if let Some(approval) = approvals.values().find(|a| a.proposal_id == proposal_id) {
         return Ok(approval.clone());
     }
-    Err(problem_not_found(
-        "APPROVAL_NOT_FOUND",
-        format!("No approval for proposal '{}'", proposal_id),
+    Err(json_bad_request(
+        "not_found",
+        format!("提案 '{}' 的审批单不存在", proposal_id),
     ))
 }
 
@@ -3292,13 +3292,13 @@ async fn load_approval_from_disk(
 ) -> Result<RuntimeApprovalRecord, (StatusCode, String)> {
     let file_path = store_dir.join(format!("{}.json", approval_id));
     let json = fs::read(&file_path).await.map_err(|_| {
-        problem_not_found(
-            "APPROVAL_NOT_FOUND",
-            format!("No approval with id '{}'", approval_id),
+        json_bad_request(
+            "not_found",
+            format!("审批单 '{}' 不存在", approval_id),
         )
     })?;
     serde_json::from_slice(&json).map_err(|error| {
-        problem_internal("DESERIALIZATION_ERROR", format!("{}", error))
+        internal_error(anyhow::anyhow!("{}", error))
     })
 }
 

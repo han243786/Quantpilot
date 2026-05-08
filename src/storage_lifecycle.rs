@@ -96,14 +96,14 @@ pub fn startup_storage_cleanup(storage_root: &Path) {
         }
     }
     if total_size > WARN_AT_BYTES {
-        eprintln!(
+        crate::safe_eprintln!(
             "[storage] 告警: 总大小 {} MB 超过 80% 阈值 ({} MB)",
             total_size / (1024 * 1024),
             WARN_AT_BYTES / (1024 * 1024)
         );
     }
     if cleaned_count > 0 {
-        eprintln!(
+        crate::safe_eprintln!(
             "[storage] 启动清理: 删除 {} 项过期文件/目录, 释放 {} KB",
             cleaned_count,
             cleaned_bytes / 1024
@@ -139,7 +139,7 @@ pub fn cleanup_build_artifacts() {
             let name = entry.file_name().to_string_lossy().to_string();
             if name.starts_with("target-test-") && entry.path().is_dir() {
                 let _ = std::fs::remove_dir_all(&entry.path());
-                eprintln!("[storage] 已清理非标准构建目录: {}", name);
+                crate::safe_eprintln!("[storage] 已清理非标准构建目录: {}", name);
             }
         }
     }

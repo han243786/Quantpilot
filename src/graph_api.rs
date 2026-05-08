@@ -479,7 +479,7 @@ async fn read_graph_versions(
         let value: Value = match serde_json::from_str(&content) {
             Ok(v) => v,
             Err(e) => {
-                eprintln!("[graph] 跳过损坏的版本文件 {}: {}", path.display(), e);
+                crate::safe_eprintln!("[graph] 跳过损坏的版本文件 {}: {}", path.display(), e);
                 continue;
             }
         };

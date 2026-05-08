@@ -145,9 +145,9 @@ async fn acknowledge_alert(
         let _ = persist_alert_firing(state.alert_store_dir.as_ref(), &updated).await;
         return Ok(Json(updated));
     }
-    Err(problem_not_found(
-        "ALERT_FIRING_NOT_FOUND",
-        format!("No alert firing with id '{}'", firing_id),
+    Err(json_bad_request(
+        "not_found",
+        format!("告警触发记录 '{}' 不存在", firing_id),
     ))
 }
 

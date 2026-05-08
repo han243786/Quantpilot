@@ -28,9 +28,9 @@ async fn get_sandbox_report(
     // 尝试从磁盘加载
     match load_sandbox_report_from_disk(&state.sandbox_report_store_dir, &proposal_id).await {
         Ok(report) => Ok(Json(report)),
-        Err(_) => Err(problem_not_found(
-            "SANDBOX_REPORT_NOT_FOUND",
-            format!("No sandbox report for proposal '{}'", proposal_id),
+        Err(_) => Err(json_bad_request(
+            "not_found",
+            format!("提案 '{}' 的沙箱报告不存在", proposal_id),
         )),
     }
 }
@@ -52,9 +52,9 @@ pub(super) async fn run_sandbox_verification(
     let ai_proposal = load_or_fetch_ai_proposal(state, &request.proposal_id).await?;
 
     if ai_proposal.status != RuntimeAiProposalStatus::StaticCheckPassed {
-        return Err(problem_bad_request(
+        return Err(json_bad_request(
             "SANDBOX_VERIFICATION_DENIED",
-            "sandbox verification requires a static-check-passed AI proposal",
+            "沙箱验证要求 AI 提案已通过静态检查",
         ));
     }
 
@@ -264,16 +264,13 @@ async fn load_sandbox_report_from_disk(
 ) -> Result<SandboxVerificationReport, (StatusCode, String)> {
     let file_path = store_dir.join(format!("{}.json", proposal_id));
     let json = fs::read(&file_path).await.map_err(|_| {
-        problem_not_found(
-            "SANDBOX_REPORT_NOT_FOUND",
-            format!("No sandbox report for proposal '{}'", proposal_id),
+        json_bad_request(
+            "not_found",
+            format!("提案 '{}' 的沙箱报告不存在", proposal_id),
         )
     })?;
     serde_json::from_slice(&json).map_err(|error| {
-        problem_internal(
-            "DESERIALIZATION_ERROR",
-            format!("{}", error),
-        )
+        internal_error(anyhow::anyhow!("{}", error))
     })
 }
 

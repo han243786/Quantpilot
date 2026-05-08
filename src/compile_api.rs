@@ -56,12 +56,12 @@ async fn compile_runtime_request(
                 }]
             }
             Err(e) => {
-                eprintln!("[compile_api] QS 管道验证（非致命）: {}", e);
+                crate::safe_eprintln!("[compile_api] QS 管道验证（非致命）: {}", e);
                 Vec::new()
             }
         }
     } else {
-        eprintln!("[compile_api] 警告: 未收到 graph_json, 使用旧编译路径 (将在 v0.4.0 移除)");
+        crate::safe_eprintln!("[compile_api] 警告: 未收到 graph_json, 使用旧编译路径 (将在 v0.4.0 移除)");
         Vec::new()
     };
 

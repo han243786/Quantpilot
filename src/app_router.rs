@@ -30,10 +30,8 @@ async fn not_found_fallback() -> (StatusCode, Json<serde_json::Value>) {
     (
         StatusCode::NOT_FOUND,
         Json(serde_json::json!({
-            "type": "https://quantpilot.dev/problems/not-found",
-            "title": "Not Found",
-            "status": 404,
-            "detail": "The requested endpoint does not exist."
+            "error": "not_found",
+            "message": "请求的资源不存在"
         })),
     )
 }
