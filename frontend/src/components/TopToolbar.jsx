@@ -414,6 +414,14 @@ function CredentialPanel({ onClose }) {
 
   useEffect(() => { loadServices(); }, [loadServices]);
 
+  // 关闭面板时主动清零 state，防止凭证明文残留在 React 内存中
+  const clearAndClose = useCallback(() => {
+    setServices([]);
+    setSelected(null);
+    setLoaded(false);
+    onClose?.();
+  }, [onClose]);
+
   const handleSave = useCallback(async (label, fields) => {
     try {
       const res = await fetch(API_BASE + "/api/credentials", {
@@ -455,7 +463,7 @@ function CredentialPanel({ onClose }) {
     <div className="credential-panel" data-testid="credential-panel">
       <div className="credential-panel-header">
         <span>{t("凭证管理")}</span>
-        <button className="ghost-btn compact-btn" onClick={onClose}>{t("关闭")}</button>
+        <button className="ghost-btn compact-btn" onClick={clearAndClose}>{t("关闭")}</button>
       </div>
       {!loaded ? (
         <div className="credential-panel-empty">{t("加载中...")}</div>

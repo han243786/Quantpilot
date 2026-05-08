@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useI18n } from "../i18n";
 
 export default function CredentialInput({
@@ -19,6 +19,14 @@ export default function CredentialInput({
   });
   const [saving, setSaving] = useState(false);
 
+  // 组件卸载时主动清零 state，防止凭证明文残留在 React 内存中
+  useEffect(() => {
+    return () => {
+      setValues({});
+      setSaving(false);
+    };
+  }, []);
+
   const updateField = useCallback((name, value) => {
     setValues((prev) => ({ ...prev, [name]: value }));
   }, []);
@@ -32,6 +40,11 @@ export default function CredentialInput({
       setSaving(false);
     }
   }, [label, values, onSave]);
+
+  const handleCancel = useCallback(() => {
+    setValues({});
+    onCancel?.();
+  }, [onCancel]);
 
   const allRequiredFilled = fields.every(
     (f) => !f.required || (values[f.name] || "").trim()
@@ -82,7 +95,7 @@ export default function CredentialInput({
         {onCancel ? (
           <button
             className="ghost-btn"
-            onClick={onCancel}
+            onClick={handleCancel}
             data-testid="credential-cancel"
           >
             {t("取消")}
