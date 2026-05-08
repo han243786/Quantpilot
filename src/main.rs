@@ -4,6 +4,7 @@ mod api_test_scenario;
 mod app_router;
 mod app_runtime_helpers;
 mod auth_middleware;
+mod credential_api;
 mod credential_vault;
 mod rate_limiter;
 mod backtest_artifacts;
@@ -216,6 +217,7 @@ struct AppState {
     chaos_mode: Arc<std::sync::atomic::AtomicBool>,
     config_generation: Arc<AtomicU64>,
     config_generation_history: Arc<std::sync::Mutex<Vec<qrpc_runtime::ConfigGenerationEntry>>>,
+    credential_vault: Option<Arc<credential_vault::CredentialVault>>,
     #[cfg(test)]
     test_storage_root: Option<Arc<TestStorageRoot>>,
 }

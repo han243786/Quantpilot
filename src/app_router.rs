@@ -18,6 +18,8 @@ pub(super) fn build_app_router(state: AppState) -> Router {
     let router = register_chaos_routes(router);
     // 测试场景路由
     let router = register_test_scenario_routes(router);
+    // 凭证管理路由
+    let router = credential_api::register_credential_routes(router);
 
     router
         .fallback(not_found_fallback)

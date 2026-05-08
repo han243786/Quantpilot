@@ -48,7 +48,20 @@ pub(super) fn new_app_state(
         .parent()
         .map(|path| path.join("chaos"))
         .unwrap_or_else(|| PathBuf::from("storage/chaos"));
+    // 凭证保险库: 加载失败时服务继续运行, 凭证 API 返回 503
+    let credential_vault = crate::credential_vault::CredentialVault::load()
+        .map(Arc::new)
+        .map_err(|e| eprintln!("[启动] 凭证保险库未加载: {} (凭证 API 将不可用)", e))
+        .ok();
+    crate::safe_log::register_credential_patterns(
+        credential_vault
+            .as_ref()
+            .map(|v| v.extract_secret_patterns())
+            .unwrap_or_default(),
+    );
+
     AppState {
+        credential_vault,
         runs: Arc::new(RwLock::new(BTreeMap::new())),
         backtests: Arc::new(RwLock::new(BTreeMap::new())),
         experiments: Arc::new(RwLock::new(BTreeMap::new())),
