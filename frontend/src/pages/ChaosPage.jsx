@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Block5Nav from "../components/Block5Nav";
 import { API_BASE } from "../utils/api";
 
@@ -9,10 +9,13 @@ const TYPE_LABELS = {
   ClockSkewInjection: "时钟偏移注入",
 };
 
+const CHAOS_TYPES = Object.keys(TYPE_LABELS);
+
 export default function ChaosPage() {
   const [experiments, setExperiments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [creating, setCreating] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -31,6 +34,19 @@ export default function ChaosPage() {
 
   useEffect(() => { fetchData(); }, []);
 
+  const handleCreate = useCallback(async (type) => {
+    setCreating(type);
+    try {
+      await fetch(`${API_BASE}/api/v1/chaos/experiments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ experiment_type: type }),
+      });
+      fetchData();
+    } catch (_) {}
+    setCreating(false);
+  }, []);
+
   const fmtTime = (ts) => {
     if (!ts) return "-";
     const d = new Date(ts);
@@ -41,7 +57,21 @@ export default function ChaosPage() {
     <div className="qp-page">
       <Block5Nav />
 
-      <h2>混沌实验</h2>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+        <h2>混沌实验</h2>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          {CHAOS_TYPES.map((type) => (
+            <button
+              key={type}
+              className="qp-btn qp-btn--primary qp-btn--sm"
+              onClick={() => handleCreate(type)}
+              disabled={creating === type}
+            >
+              {creating === type ? "创建中..." : TYPE_LABELS[type]}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {error && (
         <div className="qp-error" role="alert">
@@ -59,7 +89,7 @@ export default function ChaosPage() {
           </button>
 
           {experiments.length === 0 && (
-            <div className="qp-empty">暂无混沌实验记录</div>
+            <div className="qp-empty">暂无混沌实验记录，点击上方按钮创建实验。</div>
           )}
 
           {experiments.map((e) => (

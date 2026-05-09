@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Block5Nav from "../components/Block5Nav";
 import { API_BASE } from "../utils/api";
 import { useI18n } from "../i18n";
+
+const ACTOR_ID = "local_operator";
 
 export default function AlertsPage() {
   const { t } = useI18n();
   const [data, setData] = useState({ firings: [], rules: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [acking, setAcking] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -24,6 +27,19 @@ export default function AlertsPage() {
   };
 
   useEffect(() => { fetchData(); }, []);
+
+  const handleAcknowledge = useCallback(async (firingId) => {
+    setAcking(firingId);
+    try {
+      await fetch(`${API_BASE}/api/v1/alerts/${firingId}/acknowledge`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ actor_id: ACTOR_ID }),
+      });
+      fetchData();
+    } catch (_) {}
+    setAcking(null);
+  }, []);
 
   const badge = (s) => {
     const map = { P1: "err", P2: "warn", P3: "info" };
@@ -72,6 +88,17 @@ export default function AlertsPage() {
                 {f.acknowledged_by && <span>{t("确认人:")} {f.acknowledged_by}</span>}
               </div>
               <div className="qp-card__body">{f.detail}</div>
+              {f.state !== "Acknowledged" && f.state !== "Resolved" && (
+                <div className="qp-card__body" style={{ marginTop: 8 }}>
+                  <button
+                    className="qp-btn qp-btn--primary qp-btn--sm"
+                    onClick={() => handleAcknowledge(f.firing_id)}
+                    disabled={acking === f.firing_id}
+                  >
+                    {acking === f.firing_id ? t("确认中...") : t("确认告警")}
+                  </button>
+                </div>
+              )}
             </div>
           ))}
 
