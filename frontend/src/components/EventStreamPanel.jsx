@@ -147,11 +147,11 @@ function CompareDiffTable({ compareDiff }) {
         }
         .compare-diff-positive {
           background: rgba(0,200,83,0.18);
-          color: #66ffa6;
+          color: #6b9e7a;
         }
         .compare-diff-negative {
           background: rgba(255,68,68,0.18);
-          color: #ff7777;
+          color: #c48888;
         }
       `}</style>
       <table className="compare-table" data-testid="compare-diff-table">

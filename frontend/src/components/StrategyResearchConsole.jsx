@@ -23,13 +23,13 @@ const RESEARCH_MODES = [
 ];
 
 const EVENT_COLORS = {
-  DataUpdated: "#4af",
-  IntentTriggered: "#fa4",
-  AgentDecisionProduced: "#a4f",
-  ExecutionPlanned: "#4fa",
-  ExecutionFilled: "#4f4",
-  PortfolioUpdated: "#aa4",
-  RiskDecisionProduced: "#f44"
+  DataUpdated: "#6a8aaa",
+  IntentTriggered: "#b09050",
+  AgentDecisionProduced: "#8a6aaa",
+  ExecutionPlanned: "#5a9a8a",
+  ExecutionFilled: "#6a9a6a",
+  PortfolioUpdated: "#9a9a60",
+  RiskDecisionProduced: "#b07070"
 };
 
 function ResearchMetricCard({ label, value, note, tone = "muted", testId }) {
@@ -151,7 +151,7 @@ export default function StrategyResearchConsole({
                   className="event-distribution-bar"
                   style={{
                     width: `${((count / maxCount) * 100).toFixed(0)}%`,
-                    backgroundColor: EVENT_COLORS[type] || "#888"
+                    backgroundColor: EVENT_COLORS[type] || "var(--ad-text-muted)"
                   }}
                 />
               </div>

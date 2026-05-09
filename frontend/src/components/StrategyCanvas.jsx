@@ -267,14 +267,14 @@ function FlowInner({
           }`.trim(),
           style: {
             stroke: isSelected
-              ? "#f59e0b"
+              ? "#c4a55a"
               : isHighlighted
-                ? "#38bdf8"
+                ? "#6a9ab4"
                 : isRepairPathEdge
-                  ? "#9ff2b8"
+                  ? "#7aad8a"
                 : isFocusEdge
-                  ? "#8fdcf8"
-                  : "#5f6b7a",
+                  ? "#8ab4c8"
+                  : "#5a6068",
             strokeWidth: isSelected ? 2.4 : isHighlighted || isFocusEdge || isRepairPathEdge ? 2.2 : 1.6,
             opacity: isDimmed ? 0.24 : 1
           }
@@ -381,7 +381,7 @@ function FlowInner({
       panOnDrag
       selectionOnDrag
     >
-      {showCanvasDecorations ? <Background gap={24} color="#1c2631" /> : null}
+      {showCanvasDecorations ? <Background gap={24} color="#1a1e24" /> : null}
       <Suspense fallback={<CanvasOverlayFallback />}>
         {showMiniMap ? (
           <StrategyCanvasMiniMap

@@ -91,10 +91,10 @@ export default function QuantScriptEditor() {
           fontSize: "13px",
           lineHeight: "1.4",
           padding: "12px",
-          border: "1px solid #444",
-          borderRadius: "4px",
-          background: "#1a1a2e",
-          color: "#e0e0e0",
+          border: "1px solid var(--ad-border)",
+          borderRadius: "var(--ad-radius-sm)",
+          background: "var(--ad-panel)",
+          color: "var(--ad-text)",
           resize: "vertical",
         }}
       />
@@ -105,8 +105,8 @@ export default function QuantScriptEditor() {
           style={{
             marginTop: "16px",
             padding: "12px",
-            background: "#3a1a1a",
-            border: "1px solid #a33",
+            background: "var(--ad-error-soft)",
+            border: "1px solid var(--ad-error)",
             borderRadius: "4px",
             color: "#f88",
             fontFamily: "monospace",

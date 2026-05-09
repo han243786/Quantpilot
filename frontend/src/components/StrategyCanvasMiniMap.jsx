@@ -2,12 +2,12 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { Panel, useReactFlow, useStore, useViewport } from "@xyflow/react";
 
 const minimapNodeColors = {
-  data: "#2f81f7",
-  intent: "#16a3b7",
-  agent: "#f97316",
-  risk: "#dc2626",
-  execution: "#22c55e",
-  runtime: "#7c8797"
+  data: "#3a6ab0",
+  intent: "#4a8a9a",
+  agent: "#b07030",
+  risk: "#a06050",
+  execution: "#6b9e7a",
+  runtime: "#6a7078"
 };
 
 const minimapSizes = {
@@ -19,7 +19,7 @@ const NODE_WIDTH = 250;
 const NODE_HEIGHT = 140;
 
 function getMiniMapNodeColor(type) {
-  return minimapNodeColors[type] || "#4b5563";
+  return minimapNodeColors[type] || "#5a6068";
 }
 
 function buildMiniMapCurve(source, target) {

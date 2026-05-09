@@ -12,10 +12,10 @@ export default class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div className="error-boundary-fallback" style={{ padding: 40, textAlign: "center" }}>
-          <h3 style={{ color: "#e2e8f0", margin: 0 }}>
+          <h3 style={{ color: "var(--ad-text)", margin: 0 }}>
             {this.props.fallbackTitle || "界面加载失败"}
           </h3>
-          <p style={{ color: "#64748b", fontSize: 13, marginTop: 8 }}>
+          <p style={{ color: "var(--ad-text-muted)", fontSize: 13, marginTop: 8 }}>
             {this.props.fallbackText || "请刷新页面重试，或返回上一页。"}
           </p>
           {this.props.onRetry ? (
