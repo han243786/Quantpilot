@@ -3,6 +3,7 @@ import { useGraphStore } from "./store/graphStore";
 import { parseRoute, strategiesPath } from "./router";
 import LeftSidebar from "./components/LeftSidebar";
 import CommandPalette from "./components/CommandPalette";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 const StrategyHubPage = lazy(() => import("./pages/StrategyHubPage"));
 const StrategyWorkspacePage = lazy(() => import("./pages/StrategyWorkspacePage"));
@@ -42,15 +43,20 @@ export default function App() {
     typeof navigator !== "undefined" ? !navigator.onLine : false
   );
   const mainRef = useRef(null);
-  const isTauri = typeof window !== "undefined" && ("__TAURI__" in window || "__TAURI_INTERNALS__" in window);
+  const [isMaximized, setIsMaximized] = useState(false);
+  let appWindow = null;
+  try { appWindow = getCurrentWindow(); } catch (_) { /* 非 Tauri 环境 */ }
 
-  function tauriWindow(action) {
-    if (!isTauri) return;
-    // Tauri v2 IPC bridge: 优先 __TAURI__.invoke, 回退 __TAURI_INTERNALS__
-    const invoke = window.__TAURI__?.invoke || window.__TAURI_INTERNALS__?.invoke;
-    if (!invoke) return;
-    invoke(`plugin:window|${action}`).catch(() => {});
-  }
+  // 监听窗口最大化状态
+  useEffect(() => {
+    if (!appWindow) return;
+    let disposed = false;
+    appWindow.isMaximized().then((v) => { if (!disposed) setIsMaximized(v); });
+    const unlisten = appWindow.onResized(() => {
+      appWindow.isMaximized().then((v) => { if (!disposed) setIsMaximized(v); });
+    });
+    return () => { disposed = true; unlisten.then((fn) => fn()); };
+  }, []);
 
   // 离线/在线检测
   useEffect(() => {
@@ -144,13 +150,13 @@ export default function App() {
 
   return (
     <>
-      {isTauri ? (
+      {appWindow ? (
         <div className="ad-titlebar" data-tauri-drag-region>
           <span className="ad-titlebar-title">QuantPilot</span>
           <div className="ad-titlebar-controls">
-            <button className="ad-titlebar-btn" onClick={() => tauriWindow("minimize")} aria-label="最小化">—</button>
-            <button className="ad-titlebar-btn" onClick={() => tauriWindow("internal_toggle_maximize")} aria-label="最大化">□</button>
-            <button className="ad-titlebar-btn ad-titlebar-btn--close" onClick={() => tauriWindow("close")} aria-label="关闭">✕</button>
+            <button className="ad-titlebar-btn" onClick={() => appWindow.minimize()} aria-label="最小化">—</button>
+            <button className="ad-titlebar-btn" onClick={() => appWindow.toggleMaximize()} aria-label="最大化">{isMaximized ? "❐" : "□"}</button>
+            <button className="ad-titlebar-btn ad-titlebar-btn--close" onClick={() => appWindow.close()} aria-label="关闭">✕</button>
           </div>
         </div>
       ) : null}
@@ -161,7 +167,7 @@ export default function App() {
         </div>
       ) : null}
       <a href="#main-content" className="ad-skip-link">跳转到内容</a>
-      <main id="main-content" className="ad-main-content" ref={mainRef} tabIndex={-1} style={isTauri ? { marginTop: 32, height: "calc(100% - 32px)" } : {}}>
+      <main id="main-content" className="ad-main-content" ref={mainRef} tabIndex={-1} style={appWindow ? { marginTop: 32, height: "calc(100% - 32px)" } : {}}>
         <Suspense fallback={<AppShellFallback />}>{content}</Suspense>
       </main>
       {tutorialOpen && (
