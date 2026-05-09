@@ -248,3 +248,139 @@ body {
 .ad-sidebar:hover .ad-sidebar-item__label {
   opacity: 1;
 }
+
+/* ── 工作区页头 (Adobe 紧凑风格) ─────────────────────── */
+
+.ad-workspace-header {
+  padding: var(--ad-space-3) var(--ad-space-4);
+  background: var(--ad-bg-raised);
+  border-bottom: 1px solid var(--ad-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ad-space-1);
+}
+.ad-workspace-header__info {
+  display: flex;
+  align-items: center;
+  gap: var(--ad-space-3);
+}
+.ad-workspace-header__name {
+  font-size: var(--ad-font-size-lg);
+  font-weight: 600;
+  color: var(--ad-text);
+}
+.ad-workspace-header__id {
+  font-size: var(--ad-font-size-xs);
+  font-family: var(--ad-font-mono);
+  color: var(--ad-text-muted);
+}
+
+/* ── 标签栏 (Adobe 风格下划线) ────────────────────────── */
+
+.ad-tabbar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 32px;
+  padding: 0 var(--ad-space-3);
+  background: var(--ad-bg-raised);
+  border-bottom: 1px solid var(--ad-border);
+}
+.ad-tab {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 14px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--ad-text-secondary);
+  font-size: var(--ad-font-size-sm);
+  font-family: var(--ad-font-ui);
+  cursor: pointer;
+  transition: color 0.1s, border-color 0.1s;
+}
+.ad-tab:hover {
+  color: var(--ad-text);
+}
+.ad-tab--active {
+  color: var(--ad-text);
+  border-bottom-color: var(--ad-accent);
+}
+.ad-tabbar__spacer {
+  flex: 1;
+}
+.ad-tabbar__action {
+  padding: 3px 10px;
+  border: 1px solid var(--ad-border);
+  border-radius: var(--ad-radius-sm);
+  background: transparent;
+  color: var(--ad-text-secondary);
+  font-size: var(--ad-font-size-xs);
+  font-family: var(--ad-font-ui);
+  cursor: pointer;
+}
+.ad-tabbar__action:hover {
+  background: var(--ad-panel-hover);
+  color: var(--ad-text);
+}
+
+/* ── 状态圆点 (Adobe 紧凑标签) ───────────────────────── */
+
+.ad-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px;
+  border-radius: var(--ad-radius-sm);
+  font-size: var(--ad-font-size-xs);
+  color: var(--ad-text-secondary);
+  background: var(--ad-card);
+}
+.ad-pill--success { color: var(--ad-success); }
+.ad-pill--warning { color: var(--ad-warning); }
+.ad-pill--error { color: var(--ad-error); }
+.ad-pill--info { color: var(--ad-accent); }
+.ad-pill--muted { color: var(--ad-text-muted); }
+
+/* ── 浮动命令栏 ─────────────────────────────────────── */
+
+.ad-command-bar {
+  position: fixed;
+  bottom: var(--ad-space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 3px;
+  padding: 4px;
+  background: #1a1a1a;
+  border: 1px solid var(--ad-border-strong);
+  border-radius: var(--ad-radius-lg);
+  box-shadow: var(--ad-shadow-lg);
+  z-index: 50;
+}
+.ad-command-bar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: var(--ad-radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--ad-text-secondary);
+  font-size: var(--ad-font-size-sm);
+  font-family: var(--ad-font-ui);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ad-command-bar button:hover {
+  background: #333;
+  color: var(--ad-text);
+}
+.ad-command-bar__primary {
+  background: var(--ad-accent) !important;
+  color: #fff !important;
+}
+.ad-command-bar__primary:hover {
+  background: var(--ad-accent-hover) !important;
+}
