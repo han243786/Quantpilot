@@ -416,6 +416,24 @@ body {
   background: var(--ad-accent-hover) !important;
 }
 
+/* ── Skip-link (A11Y) ────────────────────────────────── */
+
+.ad-skip-link {
+  position: fixed;
+  top: -100px;
+  left: var(--ad-space-3);
+  z-index: 300;
+  padding: 8px 16px;
+  background: var(--ad-accent);
+  color: #fff;
+  border-radius: var(--ad-radius-sm);
+  font-size: var(--ad-font-size-sm);
+  text-decoration: none;
+}
+.ad-skip-link:focus {
+  top: var(--ad-space-3);
+}
+
 /* ── 离线横幅 ────────────────────────────────────────── */
 
 .ad-offline-banner {

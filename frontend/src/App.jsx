@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { useGraphStore } from "./store/graphStore";
 import { parseRoute, strategiesPath } from "./router";
 import LeftSidebar from "./components/LeftSidebar";
@@ -41,6 +41,7 @@ export default function App() {
   const [isOffline, setIsOffline] = useState(
     typeof navigator !== "undefined" ? !navigator.onLine : false
   );
+  const mainRef = useRef(null);
 
   // 离线/在线检测
   useEffect(() => {
@@ -140,7 +141,8 @@ export default function App() {
           网络连接已断开，部分功能不可用。
         </div>
       ) : null}
-      <main className="ad-main-content">
+      <a href="#main-content" className="ad-skip-link">跳转到内容</a>
+      <main id="main-content" className="ad-main-content" ref={mainRef} tabIndex={-1}>
         <Suspense fallback={<AppShellFallback />}>{content}</Suspense>
       </main>
       {tutorialOpen && (

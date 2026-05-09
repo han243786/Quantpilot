@@ -1,0 +1,13 @@
+#!/bin/bash
+# QuantPilot pre-commit hook
+# 提交前门禁: cargo check + frontend build + i18n check
+
+set -e
+
+echo "=== pre-commit: cargo check ==="
+cargo check --bin quantpilot
+
+echo "=== pre-commit: frontend build ==="
+cd frontend && npx vite build
+
+echo "=== pre-commit: done ==="
