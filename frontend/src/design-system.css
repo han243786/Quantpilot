@@ -118,7 +118,7 @@ body {
   background: #555555;
 }
 
-/* ── 旧变量兼容别名 (styles.css 仍引用这些名称) ───────── */
+/* ── 旧变量兼容别名 ──────────────────────────────────── */
 
 :root {
   --bg: var(--ad-bg);
@@ -138,6 +138,15 @@ body {
   --focus-ring: 0 0 0 1px var(--ad-accent);
   --radius-panel: var(--ad-radius-panel);
   --radius-card: var(--ad-radius-md);
+  /* v0.4.0 W1-4 qp-* 旧变量 */
+  --qp-bg: var(--ad-bg);
+  --qp-surface: var(--ad-card);
+  --qp-border: var(--ad-border);
+  --qp-primary: var(--ad-accent);
+  --qp-text: var(--ad-text);
+  --qp-text-muted: var(--ad-text-muted);
+  --qp-radius: var(--ad-radius-md);
+  --qp-gap: var(--ad-space-2);
 }
 
 /* ── 焦点 ─────────────────────────────────────────────── */
