@@ -42,7 +42,12 @@ export default function App() {
     typeof navigator !== "undefined" ? !navigator.onLine : false
   );
   const mainRef = useRef(null);
-  const isTauri = typeof window !== "undefined" && "__TAURI__" in window;
+  const isTauri = typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
+
+  function tauriWindow(action) {
+    if (!isTauri) return;
+    window.__TAURI_INTERNALS__?.invoke?.(`plugin:window|${action}`);
+  }
 
   // 离线/在线检测
   useEffect(() => {
@@ -140,9 +145,9 @@ export default function App() {
         <div className="ad-titlebar" data-tauri-drag-region>
           <span className="ad-titlebar-title">QuantPilot</span>
           <div className="ad-titlebar-controls">
-            <button className="ad-titlebar-btn" onClick={() => window.__TAURI__?.window?.minimize?.()} aria-label="最小化">—</button>
-            <button className="ad-titlebar-btn" onClick={() => window.__TAURI__?.window?.toggleMaximize?.()} aria-label="最大化">□</button>
-            <button className="ad-titlebar-btn ad-titlebar-btn--close" onClick={() => window.__TAURI__?.window?.close?.()} aria-label="关闭">✕</button>
+            <button className="ad-titlebar-btn" onClick={() => tauriWindow("minimize")} aria-label="最小化">—</button>
+            <button className="ad-titlebar-btn" onClick={() => tauriWindow("internal_toggle_maximize")} aria-label="最大化">□</button>
+            <button className="ad-titlebar-btn ad-titlebar-btn--close" onClick={() => tauriWindow("close")} aria-label="关闭">✕</button>
           </div>
         </div>
       ) : null}
