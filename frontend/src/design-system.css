@@ -1,0 +1,133 @@
+/* ── QuantPilot Adobe-Style Design System ──
+   v0.5.0 | 统一设计令牌 | 对标 Photoshop/Illustrator 暗色主题 */
+
+/* ── 全局重置 ─────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  background: #0d0d0d;
+  color: #e6e6e6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── 设计令牌 ─────────────────────────────────────────── */
+
+:root {
+  /* 表面 — Photoshop 暗色主题 */
+  --ad-bg: #0d0d0d;
+  --ad-bg-raised: #181818;
+  --ad-panel: #1e1e1e;
+  --ad-panel-hover: #242424;
+  --ad-card: #2d2d2d;
+  --ad-card-hover: #383838;
+  --ad-border: #404040;
+  --ad-border-strong: #555555;
+
+  /* 文本 */
+  --ad-text: #e6e6e6;
+  --ad-text-secondary: #aaaaaa;
+  --ad-text-muted: #6e6e6e;
+  --ad-text-inverse: #ffffff;
+
+  /* 强调 — Adobe 蓝 */
+  --ad-accent: #1473e6;
+  --ad-accent-hover: #1a7ef5;
+  --ad-accent-soft: rgba(20, 115, 230, 0.15);
+  --ad-accent-border: rgba(20, 115, 230, 0.35);
+
+  /* 语义色 */
+  --ad-success: #2ecc71;
+  --ad-success-soft: rgba(46, 204, 113, 0.12);
+  --ad-warning: #f5a623;
+  --ad-warning-soft: rgba(245, 166, 35, 0.12);
+  --ad-error: #e74c3c;
+  --ad-error-soft: rgba(231, 76, 60, 0.12);
+
+  /* 字体 */
+  --ad-font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  --ad-font-mono: "JetBrains Mono", "Cascadia Code", "SF Mono", "Consolas",
+    monospace;
+  --ad-font-size-xs: 11px;
+  --ad-font-size-sm: 12px;
+  --ad-font-size-md: 13px;
+  --ad-font-size-lg: 15px;
+  --ad-font-size-xl: 18px;
+
+  /* 间距 — 4px 网格 */
+  --ad-space-1: 4px;
+  --ad-space-2: 8px;
+  --ad-space-3: 12px;
+  --ad-space-4: 16px;
+  --ad-space-5: 20px;
+  --ad-space-6: 24px;
+
+  /* 圆角 — Adobe 偏方 */
+  --ad-radius-sm: 2px;
+  --ad-radius-md: 4px;
+  --ad-radius-lg: 6px;
+  --ad-radius-panel: 8px;
+
+  /* 阴影 */
+  --ad-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --ad-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --ad-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+  /* 侧边栏尺寸 */
+  --ad-sidebar-collapsed: 48px;
+  --ad-sidebar-expanded: 160px;
+
+  /* 滚动条 */
+  scrollbar-width: thin;
+  scrollbar-color: #404040 transparent;
+}
+
+/* ── 滚动条 (Webkit) ──────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+/* ── 焦点 ─────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 1px solid var(--ad-accent);
+  outline-offset: 1px;
+}
+
+/* ── 选中 ─────────────────────────────────────────────── */
+
+::selection {
+  background: var(--ad-accent-soft);
+  color: var(--ad-text);
+}
