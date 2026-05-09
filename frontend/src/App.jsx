@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useState } from "react";
 import { useGraphStore } from "./store/graphStore";
 import { parseRoute, strategiesPath } from "./router";
 import LeftSidebar from "./components/LeftSidebar";
+import CommandPalette from "./components/CommandPalette";
 
 const StrategyHubPage = lazy(() => import("./pages/StrategyHubPage"));
 const StrategyWorkspacePage = lazy(() => import("./pages/StrategyWorkspacePage"));
@@ -36,6 +37,19 @@ export default function App() {
   const { t } = useI18n();
   const tutorialSteps = createTutorialSteps(t);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
+
+  // ⌘K / Ctrl+K 全局监听
+  useEffect(() => {
+    const handleKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setCmdPaletteOpen((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
   const [route, setRoute] = useState(() =>
     parseRoute(
       typeof window === "undefined" ? "/" : window.location.pathname,
@@ -112,6 +126,7 @@ export default function App() {
       {tutorialOpen && (
         <TutorialOverlay steps={tutorialSteps} onClose={closeTutorial} />
       )}
+      <CommandPalette open={cmdPaletteOpen} onClose={() => setCmdPaletteOpen(false)} />
     </>
   );
 }
