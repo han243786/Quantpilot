@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useI18n } from "../i18n";
 import {
   buildCompactEvidenceProjection,
   buildRuntimeTimelineItemsFromDetail
@@ -34,6 +35,7 @@ export default function GovernedTimelinePanel({
   summary = "按治理 envelope 组织事件，优先展示关键证据并保留可审计的序号、阶段和治理身份。",
   testId = "governed-timeline-panel"
 }) {
+  const { t } = useI18n();
   const timeline = useMemo(() => buildRuntimeTimelineItemsFromDetail(source), [source]);
   const compactEvidence = useMemo(() => buildCompactEvidenceProjection(source), [source]);
   const [severityFilter, setSeverityFilter] = useState("all");
@@ -77,7 +79,7 @@ export default function GovernedTimelinePanel({
 
       <div className="history-filter-grid history-filter-grid-runtime">
         <label className="field-block">
-          <span>严重度</span>
+          <span>{t("严重度")}</span>
           <select
             value={severityFilter}
             onChange={(event) => setSeverityFilter(event.target.value)}
@@ -92,7 +94,7 @@ export default function GovernedTimelinePanel({
           </select>
         </label>
         <label className="field-block">
-          <span>保留级别</span>
+          <span>{t("保留级别")}</span>
           <select
             value={retentionFilter}
             onChange={(event) => setRetentionFilter(event.target.value)}
@@ -107,7 +109,7 @@ export default function GovernedTimelinePanel({
           </select>
         </label>
         <label className="field-block">
-          <span>模块</span>
+          <span>{t("模块")}</span>
           <select
             value={moduleFilter}
             onChange={(event) => setModuleFilter(event.target.value)}
@@ -156,21 +158,21 @@ export default function GovernedTimelinePanel({
         <div className="mini-list" data-testid={`${testId}-selected-detail`}>
           <div className="mini-list-title">证据详情</div>
           <div className="kv-line">
-            <span>事件</span>
+            <span>{t("事件")}</span>
             <strong>{selectedItem.event_id}</strong>
           </div>
           <div className="kv-line">
-            <span>阶段</span>
+            <span>{t("阶段")}</span>
             <strong>{STAGE_LABELS[selectedItem.stage] || selectedItem.stage}</strong>
           </div>
           <div className="kv-line">
-            <span>治理边界</span>
+            <span>{t("治理边界")}</span>
             <strong title={selectedItem.governance.capability_hash}>
               {formatGovernanceHash(selectedItem.governance.capability_hash)}
             </strong>
           </div>
           <div className="kv-line">
-            <span>原因</span>
+            <span>{t("原因")}</span>
             <strong>{selectedItem.reason_code || "-"}</strong>
           </div>
         </div>

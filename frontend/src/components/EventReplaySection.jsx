@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useI18n } from "../i18n";
 import {
   fetchBacktestReplay,
   fetchRunReplay
@@ -48,6 +49,7 @@ function EventReplayRow({ item }) {
 }
 
 export default function EventReplaySection({ runtime }) {
+  const { t } = useI18n();
   const source = useMemo(() => {
     if (runtime?.selectedBacktestId) {
       return {
@@ -197,23 +199,23 @@ export default function EventReplaySection({ runtime }) {
         <>
           <div className="history-meta-grid">
             <div className="history-meta-chip history-meta-chip-wide">
-              <span>记录</span>
+              <span>{t("记录")}</span>
               <strong>{replay.record_id}</strong>
             </div>
             <div className="history-meta-chip">
-              <span>序列窗口</span>
+              <span>{t("序列窗口")}</span>
               <strong>{replayWindowStart(replay)}</strong>
             </div>
             <div className="history-meta-chip">
-              <span>成交事件</span>
+              <span>{t("成交事件")}</span>
               <strong>{replay.fill_event_count}</strong>
             </div>
             <div className="history-meta-chip">
-              <span>现金</span>
+              <span>{t("现金")}</span>
               <strong>{formatValue(replay.account?.cash_balance)}</strong>
             </div>
             <div className="history-meta-chip">
-              <span>净值估算</span>
+              <span>{t("净值估算")}</span>
               <strong>{formatValue(replay.account?.equity_estimate)}</strong>
             </div>
           </div>

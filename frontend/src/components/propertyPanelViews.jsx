@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { translateText } from "../i18n";
+import { translateText, useI18n } from "../i18n";
 import { StrategyCardNote } from "../pages/StrategyHubSharedComponents";
 import {
   deriveConfigureCardOrder,
@@ -332,11 +332,11 @@ export function QuantScriptAuthoringSourceCard({ authoringView }) {
             高亮源码范围
           </button>
           <div className="kv-line">
-            <span>声明类型</span>
+            <span>{t("声明类型")}</span>
             <strong>{authoringKindLabel(section.declared_kind)}</strong>
           </div>
           <div className="kv-line">
-            <span>实际类型</span>
+            <span>{t("实际类型")}</span>
             <strong>{authoringKindLabel(section.effective_kind)}</strong>
           </div>
           <div className="kv-line">
