@@ -19,6 +19,7 @@ impl StorageLifecycle {
     }
 }
 
+#[allow(dead_code)]
 const GLOBAL_MAX_BYTES: u64 = 500 * 1024 * 1024;
 const WARN_AT_BYTES: u64 = 400 * 1024 * 1024;
 
