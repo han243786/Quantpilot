@@ -76,28 +76,28 @@ export function formatReviewState(state) {
   switch (state) {
     case "Pending":
     case "pending":
-      return { label: "待审批", color: "#faad14" };
+      return { label: "待审批", color: "var(--ad-warning)" };
     case "UnderReview":
     case "under_review":
-      return { label: "审核中", color: "#1890ff" };
+      return { label: "审核中", color: "var(--ad-accent)" };
     case "Approved":
     case "approved":
-      return { label: "已通过", color: "#52c41a" };
+      return { label: "已通过", color: "var(--ad-success)" };
     case "Rejected":
     case "rejected":
-      return { label: "已拒绝", color: "#ff4d4f" };
+      return { label: "已拒绝", color: "var(--ad-error)" };
     case "Expired":
     case "expired":
-      return { label: "已过期", color: "#d9d9d9" };
+      return { label: "已过期", color: "var(--ad-text-secondary)" };
     case "Scheduled":
     case "scheduled":
-      return { label: "已排期", color: "#722ed1" };
+      return { label: "已排期", color: "var(--ad-text-secondary)" };
     case "Activated":
     case "activated":
-      return { label: "已激活", color: "#13c2c2" };
+      return { label: "已激活", color: "var(--ad-success)" };
     case "RolledBack":
     case "rolled_back":
-      return { label: "已回滚", color: "#fa8c16" };
+      return { label: "已回滚", color: "var(--ad-warning)" };
     default:
       return { label: state || "-", color: "#999" };
   }
@@ -107,16 +107,16 @@ export function formatVerdict(verdict) {
   switch (verdict) {
     case "CandidateOutperformsBaseline":
     case "candidate_outperforms_baseline":
-      return { label: "候选方案优于基线", color: "#52c41a" };
+      return { label: "候选方案优于基线", color: "var(--ad-success)" };
     case "CandidateComparable":
     case "candidate_comparable":
-      return { label: "候选方案与基线相当", color: "#faad14" };
+      return { label: "候选方案与基线相当", color: "var(--ad-warning)" };
     case "CandidateUnderperforms":
     case "candidate_underperforms":
-      return { label: "候选方案劣于基线", color: "#ff4d4f" };
+      return { label: "候选方案劣于基线", color: "var(--ad-error)" };
     case "ReplayFidelityPartial":
     case "replay_fidelity_partial":
-      return { label: "部分回放(参考价值有限)", color: "#faad14" };
+      return { label: "部分回放(参考价值有限)", color: "var(--ad-warning)" };
     default:
       return { label: verdict || "-", color: "#999" };
   }

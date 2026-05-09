@@ -6,7 +6,7 @@ const minimapNodeColors = {
   intent: "#4a8a9a",
   agent: "#b07030",
   risk: "#a06050",
-  execution: "#6b9e7a",
+  execution: "var(--ad-success)",
   runtime: "#6a7078"
 };
 
@@ -19,7 +19,7 @@ const NODE_WIDTH = 250;
 const NODE_HEIGHT = 140;
 
 function getMiniMapNodeColor(type) {
-  return minimapNodeColors[type] || "#5a6068";
+  return minimapNodeColors[type] || "var(--ad-text-muted)";
 }
 
 function buildMiniMapCurve(source, target) {

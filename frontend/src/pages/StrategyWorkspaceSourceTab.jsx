@@ -67,8 +67,8 @@ export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
 
       <pre
         style={{
-          background: "#1a1a2e",
-          color: "#e0e0e0",
+          background: "var(--ad-panel)",
+          color: "var(--ad-text)",
           padding: "16px",
           borderRadius: "4px",
           fontFamily: "Consolas, Monaco, monospace",
@@ -86,7 +86,7 @@ export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
       {runResult && (
         <div style={{ marginTop: "16px" }}>
           {runResult.error ? (
-            <div style={{ padding: "12px", background: "#3a1a1a", border: "1px solid #a33", borderRadius: "4px", color: "#f88" }}>
+            <div style={{ padding: "12px", background: "var(--ad-error-soft)", border: "1px solid #a33", borderRadius: "4px", color: "var(--ad-error)" }}>
               {runResult.error}
             </div>
           ) : (
@@ -95,7 +95,7 @@ export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
                 <h4 style={{ margin: 0 }}>{runResult.scenario_name}</h4>
                 <span style={{
                   padding: "2px 8px", borderRadius: "12px", fontSize: "12px",
-                  background: runResult.failed_count > 0 ? "#a33" : "#3a3",
+                  background: runResult.failed_count > 0 ? "var(--ad-error)" : "#3a3",
                   color: "white",
                 }}>
                   {runResult.passed_count}/{runResult.steps?.length || 0} 通过
@@ -115,7 +115,7 @@ export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
                 <tbody>
                   {runResult.steps?.map((step, i) => {
                     const icon = step.status === "passed" ? "✓" : step.status === "failed" ? "✗" : "⊘";
-                    const color = step.status === "passed" ? "#3a3" : step.status === "failed" ? "#a33" : "#888";
+                    const color = step.status === "passed" ? "#3a3" : step.status === "failed" ? "var(--ad-error)" : "#888";
                     return (
                       <tr key={i} style={{ borderBottom: "1px solid #333" }}>
                         <td style={{ padding: "8px", color, fontWeight: "bold" }}>{icon}</td>

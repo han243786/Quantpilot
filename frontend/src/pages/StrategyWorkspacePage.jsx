@@ -160,7 +160,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
 
       {/* 标签页内容 */}
       {ui.activeTab === "dashboard" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#6e6e6e',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
           <StrategyWorkspaceDashboard
             graph={graph}
             runtime={runtime}
@@ -172,7 +172,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
       ) : null}
 
       {ui.activeTab === "overview" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#6e6e6e',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
           <StrategyWorkspaceOverviewTab
             strategyId={strategyId} graph={graph} ui={ui}
             compileSummary={compileSummary} compileCounts={pageData.compileCounts}
@@ -189,7 +189,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
       ) : null}
 
       {ui.activeTab === "code" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#6e6e6e',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
           <StrategyWorkspaceCodeTab
             graph={graph} ui={ui}
             codeInspectorPanels={CODE_INSPECTOR_PANELS}
@@ -202,7 +202,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
       ) : null}
 
       {ui.activeTab === "diagnostics" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#6e6e6e',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
           <StrategyWorkspaceDiagnosticsTab
             graph={graph} runtime={runtime} selectedNodeId={selectedNodeId} ui={ui}
             compileSummary={compileSummary} compileCounts={pageData.compileCounts}
@@ -217,17 +217,17 @@ export default function StrategyWorkspacePage({ strategyId }) {
       ) : null}
 
       {ui.activeTab === "research" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#6e6e6e',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
           <StrategyWorkspaceResearchTab strategyId={strategyId} />
         </Suspense>
       ) : null}
       {ui.activeTab === "debug" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#6e6e6e',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
           <StrategyWorkspaceDebugTab debugBars={pageData.debugBars || []} />
         </Suspense>
       ) : null}
       {ui.activeTab === "source" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'#6e6e6e',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
           <StrategyWorkspaceSourceTab graphId={graph?.metadata?.graph_id} />
         </Suspense>
       ) : null}

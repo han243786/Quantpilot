@@ -103,7 +103,7 @@ export default function StrategyWorkspaceDebugTab({ debugBars }) {
       <div className="property-card" style={{ overflow: "auto", maxHeight: "500px" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
           <thead>
-            <tr style={{ position: "sticky", top: 0, background: "#1a1a2e" }}>
+            <tr style={{ position: "sticky", top: 0, background: "var(--ad-panel)" }}>
               <th style={{ padding: "6px 8px", textAlign: "right", borderBottom: "1px solid #444" }}>bar</th>
               {activeColumns.map((col) => (
                 <th key={col} style={{ padding: "6px 8px", textAlign: "right", borderBottom: "1px solid #444" }}>

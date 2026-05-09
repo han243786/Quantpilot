@@ -73,7 +73,7 @@
 .strategy-inline-note__trigger-text {
   border: none;
   background: transparent;
-  color: #c8d0d8;
+  color: var(--ad-text-secondary);
   font-size: 34px;
   font-weight: 700;
   line-height: 1.05;
@@ -86,7 +86,7 @@
   height: 28px;
   border-radius: var(--ad-radius-sm);
   border: 1px solid rgba(116, 145, 182, 0.2);
-  color: #c0ccd0;
+  color: var(--ad-text-secondary);
   background:
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   font-size: 15px;
@@ -136,7 +136,7 @@
 }
 
 .strategy-inline-note__popup-title {
-  color: #c8d0d8;
+  color: var(--ad-text-secondary);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -171,7 +171,7 @@
 }
 
 .strategy-inline-note__trigger-text:hover {
-  color: #c0ccd0;
+  color: var(--ad-text-secondary);
 }
 
 .strategy-inline-note__trigger-text:focus-visible {
@@ -357,7 +357,7 @@
   height: 26px;
   border-radius: var(--ad-radius-sm);
   border: 1px solid rgba(116, 145, 182, 0.2);
-  color: #c0ccd0;
+  color: var(--ad-text-secondary);
   background:
   cursor: pointer;
   font-size: 14px;
@@ -428,7 +428,7 @@
 }
 
 .strategy-card-note__title {
-  color: #c8d0d8;
+  color: var(--ad-text-secondary);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -762,7 +762,7 @@
 
 .strategy-row:hover,
 .strategy-row--active {
-  color: #c8d0d8;
+  color: var(--ad-text-secondary);
 }
 
 .strategy-row--active {

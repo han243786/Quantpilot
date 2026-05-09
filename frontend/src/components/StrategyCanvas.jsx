@@ -267,14 +267,14 @@ function FlowInner({
           }`.trim(),
           style: {
             stroke: isSelected
-              ? "#c4a55a"
+              ? "var(--ad-warning)"
               : isHighlighted
-                ? "#6a9ab4"
+                ? "var(--ad-text-secondary)"
                 : isRepairPathEdge
-                  ? "#7aad8a"
+                  ? "var(--ad-success)"
                 : isFocusEdge
-                  ? "#8ab4c8"
-                  : "#5a6068",
+                  ? "var(--ad-text-secondary)"
+                  : "var(--ad-text-muted)",
             strokeWidth: isSelected ? 2.4 : isHighlighted || isFocusEdge || isRepairPathEdge ? 2.2 : 1.6,
             opacity: isDimmed ? 0.24 : 1
           }

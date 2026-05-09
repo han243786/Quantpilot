@@ -25,11 +25,11 @@ const RESEARCH_MODES = [
 const EVENT_COLORS = {
   DataUpdated: "#6a8aaa",
   IntentTriggered: "#b09050",
-  AgentDecisionProduced: "#8a6aaa",
+  AgentDecisionProduced: "var(--ad-text-secondary)",
   ExecutionPlanned: "#5a9a8a",
   ExecutionFilled: "#6a9a6a",
-  PortfolioUpdated: "#9a9a60",
-  RiskDecisionProduced: "#b07070"
+  PortfolioUpdated: "var(--ad-warning)",
+  RiskDecisionProduced: "var(--ad-error)"
 };
 
 function ResearchMetricCard({ label, value, note, tone = "muted", testId }) {
