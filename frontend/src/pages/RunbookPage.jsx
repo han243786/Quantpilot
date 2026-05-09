@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Block5Nav from "../components/Block5Nav";
+
 import { API_BASE } from "../utils/api";
 
 export default function RunbookPage() {
@@ -31,7 +31,6 @@ export default function RunbookPage() {
 
   return (
     <div className="qp-page">
-      <Block5Nav />
 
       <h2>故障场景手册</h2>
 

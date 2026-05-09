@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import Block5Nav from "../components/Block5Nav";
+
 import { API_BASE } from "../utils/api";
 
 const ACTOR_ID = "local_operator";
@@ -52,7 +52,6 @@ export default function SnapshotsPage() {
 
   return (
     <div className="qp-page">
-      <Block5Nav />
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h2>签名快照</h2>

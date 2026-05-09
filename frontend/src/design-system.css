@@ -131,3 +131,120 @@ body {
   background: var(--ad-accent-soft);
   color: var(--ad-text);
 }
+
+/* ── App Shell ─────────────────────────────────────────── */
+
+.ad-main-content {
+  margin-left: var(--ad-sidebar-collapsed);
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── 左侧侧边栏 ────────────────────────────────────────── */
+
+.ad-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--ad-sidebar-collapsed);
+  background: #141414;
+  border-right: 1px solid var(--ad-border);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  padding: var(--ad-space-2) 0;
+  transition: width 0.15s ease;
+  overflow: hidden;
+  user-select: none;
+}
+.ad-sidebar:hover {
+  width: var(--ad-sidebar-expanded);
+}
+
+.ad-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--ad-space-3);
+  padding: var(--ad-space-2) var(--ad-space-3);
+  margin-bottom: var(--ad-space-4);
+}
+.ad-sidebar-brand__icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ad-text-inverse);
+  background: var(--ad-accent);
+  border-radius: var(--ad-radius-sm);
+  flex-shrink: 0;
+}
+.ad-sidebar-brand__text {
+  font-size: var(--ad-font-size-sm);
+  font-weight: 600;
+  color: var(--ad-text);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+.ad-sidebar:hover .ad-sidebar-brand__text {
+  opacity: 1;
+}
+
+.ad-sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 var(--ad-space-1);
+}
+
+.ad-sidebar-divider {
+  height: 1px;
+  background: var(--ad-border);
+  margin: var(--ad-space-2) var(--ad-space-2);
+}
+
+.ad-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ad-space-3);
+  padding: 7px var(--ad-space-3);
+  color: var(--ad-text-secondary);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-size: var(--ad-font-size-sm);
+  font-family: var(--ad-font-ui);
+  white-space: nowrap;
+  border-left: 2px solid transparent;
+  border-radius: 0 var(--ad-radius-sm) var(--ad-radius-sm) 0;
+  transition: background 0.08s, color 0.08s;
+}
+.ad-sidebar-item:hover {
+  color: var(--ad-text);
+  background: var(--ad-panel-hover);
+}
+.ad-sidebar-item--active {
+  color: var(--ad-accent);
+  border-left-color: var(--ad-accent);
+  background: var(--ad-accent-soft);
+}
+
+.ad-sidebar-item__icon {
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+  font-size: 15px;
+  line-height: 1;
+}
+.ad-sidebar-item__label {
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+.ad-sidebar:hover .ad-sidebar-item__label {
+  opacity: 1;
+}

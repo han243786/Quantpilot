@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import Block5Nav from "../components/Block5Nav";
+
 import { API_BASE } from "../utils/api";
 import { useI18n } from "../i18n";
 
@@ -53,7 +53,6 @@ export default function AlertsPage() {
 
   return (
     <div className="qp-page">
-      <Block5Nav />
 
       <h2>{t("告警面板")}</h2>
 

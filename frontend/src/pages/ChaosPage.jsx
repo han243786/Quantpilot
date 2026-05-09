@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import Block5Nav from "../components/Block5Nav";
+
 import { API_BASE } from "../utils/api";
 
 const TYPE_LABELS = {
@@ -55,7 +55,6 @@ export default function ChaosPage() {
 
   return (
     <div className="qp-page">
-      <Block5Nav />
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
         <h2>混沌实验</h2>

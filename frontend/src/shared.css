@@ -65,101 +65,6 @@
   color: var(--tv-text-muted);
 }
 
-/* ── 全局导航条 (TradingView 风格顶栏) ── */
-.qp-global-nav {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0 20px;
-  height: 42px;
-  background: var(--tv-panel);
-  border-bottom: 1px solid var(--tv-border);
-  font-size: 12px;
-  flex-shrink: 0;
-}
-
-.qp-global-nav__brand {
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--tv-text);
-  margin-right: 16px;
-  letter-spacing: -0.02em;
-  white-space: nowrap;
-}
-
-.qp-global-nav__brand span {
-  color: var(--tv-accent);
-}
-
-.qp-global-nav__sep {
-  width: 1px;
-  height: 18px;
-  background: var(--tv-border);
-  margin: 0 8px;
-}
-
-.qp-global-nav a,
-.qp-global-nav button {
-  padding: 4px 10px;
-  border-radius: var(--tv-radius-sm);
-  border: none;
-  background: transparent;
-  color: var(--tv-text-secondary);
-  cursor: pointer;
-  font-size: 12px;
-  font-family: var(--tv-font);
-  text-decoration: none;
-  white-space: nowrap;
-  transition: color 0.12s, background 0.12s;
-}
-
-.qp-global-nav a:hover,
-.qp-global-nav button:hover {
-  color: var(--tv-text);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.qp-global-nav .active {
-  color: var(--tv-accent);
-  background: var(--tv-accent-soft);
-  font-weight: 500;
-}
-
-/* ── 区块导航 (Block 5 页面内子导航) ── */
-.qp-subnav {
-  display: flex;
-  gap: 2px;
-  padding: 10px 0 14px;
-  border-bottom: 1px solid var(--tv-border);
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.qp-subnav a,
-.qp-subnav button {
-  padding: 4px 12px;
-  border-radius: var(--tv-radius-sm);
-  border: none;
-  background: transparent;
-  color: var(--tv-text-secondary);
-  cursor: pointer;
-  font-size: 12px;
-  font-family: var(--tv-font);
-  text-decoration: none;
-  transition: all 0.12s;
-}
-
-.qp-subnav a:hover,
-.qp-subnav button:hover {
-  color: var(--tv-text);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.qp-subnav .active {
-  color: var(--tv-accent);
-  background: var(--tv-accent-soft);
-}
-
 /* ── 卡片 ── */
 .qp-card {
   background: var(--tv-panel);
@@ -446,17 +351,6 @@
 @media (max-width: 768px) {
   .qp-page {
     padding: 0 12px;
-  }
-
-  .qp-global-nav {
-    padding: 0 10px;
-    gap: 1px;
-  }
-
-  .qp-global-nav a,
-  .qp-global-nav button {
-    padding: 4px 6px;
-    font-size: 11px;
   }
 
   .qp-card__meta {

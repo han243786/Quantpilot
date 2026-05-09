@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useState } from "react";
 import { useGraphStore } from "./store/graphStore";
 import { parseRoute, strategiesPath } from "./router";
-import GlobalNav from "./components/GlobalNav";
+import LeftSidebar from "./components/LeftSidebar";
 
 const StrategyHubPage = lazy(() => import("./pages/StrategyHubPage"));
 const StrategyWorkspacePage = lazy(() => import("./pages/StrategyWorkspacePage"));
@@ -105,8 +105,10 @@ export default function App() {
 
   return (
     <>
-      <GlobalNav />
-      <Suspense fallback={<AppShellFallback />}>{content}</Suspense>
+      <LeftSidebar />
+      <main className="ad-main-content">
+        <Suspense fallback={<AppShellFallback />}>{content}</Suspense>
+      </main>
       {tutorialOpen && (
         <TutorialOverlay steps={tutorialSteps} onClose={closeTutorial} />
       )}

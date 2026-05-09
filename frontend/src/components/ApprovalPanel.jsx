@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import Block5Nav from "./Block5Nav";
+
 import { API_BASE } from "../utils/api";
 import { useI18n } from "../i18n";
 import {
@@ -92,7 +92,6 @@ export default function ApprovalPanel() {
 
   return (
     <div className="qp-page">
-      <Block5Nav />
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h2 style={{ margin: 0 }}>{t("审批队列")}</h2>
