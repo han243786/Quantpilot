@@ -10,7 +10,7 @@ echo   Starting Tauri dev mode...
 echo   Window will open when ready.
 echo ============================================
 
-cd /d "%~dp0"
+cd /d "%~dp0src-tauri"
 cargo tauri dev
 
 pause
