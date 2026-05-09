@@ -118,6 +118,28 @@ body {
   background: #555555;
 }
 
+/* ── 旧变量兼容别名 (styles.css 仍引用这些名称) ───────── */
+
+:root {
+  --bg: var(--ad-bg);
+  --panel: var(--ad-panel);
+  --panel-2: var(--ad-panel);
+  --panel-3: var(--ad-bg-raised);
+  --border: var(--ad-border);
+  --border-strong: var(--ad-border-strong);
+  --text: var(--ad-text);
+  --muted: var(--ad-text-muted);
+  --shadow-lg: var(--ad-shadow-lg);
+  --shadow-md: var(--ad-shadow-md);
+  --accent-cool: var(--ad-accent-soft);
+  --accent-mint: var(--ad-accent-soft);
+  --accent-warm: var(--ad-warning-soft);
+  --surface-glow: none;
+  --focus-ring: 0 0 0 1px var(--ad-accent);
+  --radius-panel: var(--ad-radius-panel);
+  --radius-card: var(--ad-radius-md);
+}
+
 /* ── 焦点 ─────────────────────────────────────────────── */
 
 :focus-visible {

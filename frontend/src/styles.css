@@ -1,22 +1,7 @@
-/* 旧 :root 已迁移至下方第二个 :root 块，此处保留注释作为历史标记 */
-
-* {
-  box-sizing: border-box;
-}
-
-:root {
-  --qp-bg: #0f1117;
-  --qp-surface: #1a1d27;
-  --qp-border: #2a2d37;
-  --qp-primary: #3b82f6;
-  --qp-success: #22c55e;
-  --qp-warning: #f59e0b;
-  --qp-danger: #ef4444;
-  --qp-text: #e2e8f0;
-  --qp-text-muted: #64748b;
-  --qp-radius: 6px;
-  --qp-gap: 8px;
-}
+/* ═══════════════════════════════════════════════════════
+   QuantPilot Component Styles
+   v0.5.0 | 令牌已迁移至 design-system.css + shared.css
+   ═══════════════════════════════════════════════════════ */
 
 html,
 body,
@@ -2962,44 +2947,11 @@ select {
   }
 }
 
-:root {
-  --bg: #08111f;
-  --panel: rgba(12, 20, 35, 0.84);
-  --panel-2: rgba(9, 16, 29, 0.88);
-  --panel-3: rgba(14, 24, 40, 0.76);
-  --border: rgba(116, 145, 182, 0.18);
-  --border-strong: rgba(130, 163, 206, 0.32);
-  --text: #ecf4ff;
-  --muted: #8ea0b7;
-  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.34);
-  --shadow-md: 0 18px 40px rgba(0, 0, 0, 0.24);
-  --accent-cool: rgba(56, 189, 248, 0.18);
-  --accent-mint: rgba(45, 212, 191, 0.16);
-  --accent-warm: rgba(245, 158, 11, 0.14);
-  --surface-glow: radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 48%);
-  --focus-ring: 0 0 0 1px rgba(143, 220, 248, 0.48), 0 0 0 4px rgba(56, 189, 248, 0.14);
-  --radius-panel: 24px;
-  --radius-card: 18px;
-
-  /* 链阶段色标（从旧 :root 迁移） */
-  --data: #2f81f7;
-  --intent: #16a3b7;
-  --agent: #f97316;
-  --risk: #dc2626;
-  --execution: #22c55e;
-  --fill: #8ea0b7;
-  --runtime: #7c8797;
-}
-
 html,
 body,
 #root {
-  font-family: "Segoe UI Variable Display", "Bahnschrift", "PingFang SC", "Microsoft YaHei", sans-serif;
-  background:
-    radial-gradient(circle at top left, rgba(61, 130, 246, 0.22), transparent 24%),
-    radial-gradient(circle at 85% 12%, rgba(16, 163, 127, 0.18), transparent 20%),
-    radial-gradient(circle at 50% -10%, rgba(250, 204, 21, 0.06), transparent 26%),
-    linear-gradient(180deg, #09111d 0%, #060c16 100%);
+  font-family: var(--ad-font-ui);
+  background: var(--ad-bg);
 }
 
 .editor-page {
