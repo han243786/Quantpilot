@@ -51,7 +51,7 @@ export default function StrategyWorkspaceDebugTab({ debugBars }) {
 
   if (bars.length === 0) {
     return (
-      <div className="property-card" style={{ padding: "24px", textAlign: "center", color: "#888" }}>
+      <div className="property-card" style={{ padding: "24px", textAlign: "center", color: "var(--ad-text-muted)" }}>
         <p>暂无调试数据。</p>
         <p style={{ fontSize: "13px" }}>
           在 QS 策略中添加 <code>@debug(var1, var2)</code> 指令后运行回测即可看到 per-bar 数据。
@@ -79,18 +79,18 @@ export default function StrategyWorkspaceDebugTab({ debugBars }) {
           </div>
           {chartPaths.map(({ col, points, min, max, chartW, chartH }) => (
             <div key={col} style={{ marginBottom: "12px" }}>
-              <div style={{ fontSize: "11px", color: "#888", marginBottom: "4px" }}>
+              <div style={{ fontSize: "11px", color: "var(--ad-text-muted)", marginBottom: "4px" }}>
                 {col} (min={min?.toFixed(4)}, max={max?.toFixed(4)})
               </div>
               <svg
                 width={chartW}
                 height={chartH}
-                style={{ border: "1px solid #333", borderRadius: "4px", background: "#111" }}
+                style={{ border: "1px solid var(--ad-border)", borderRadius: "4px", background: "var(--ad-bg)" }}
               >
                 <polyline
                   points={points}
                   fill="none"
-                  stroke="#4af"
+                  stroke="var(--ad-accent)"
                   strokeWidth="1.5"
                 />
               </svg>
@@ -104,9 +104,9 @@ export default function StrategyWorkspaceDebugTab({ debugBars }) {
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
           <thead>
             <tr style={{ position: "sticky", top: 0, background: "var(--ad-panel)" }}>
-              <th style={{ padding: "6px 8px", textAlign: "right", borderBottom: "1px solid #444" }}>bar</th>
+              <th style={{ padding: "6px 8px", textAlign: "right", borderBottom: "1px solid var(--ad-border-strong)" }}>bar</th>
               {activeColumns.map((col) => (
-                <th key={col} style={{ padding: "6px 8px", textAlign: "right", borderBottom: "1px solid #444" }}>
+                <th key={col} style={{ padding: "6px 8px", textAlign: "right", borderBottom: "1px solid var(--ad-border-strong)" }}>
                   {col}
                 </th>
               ))}
@@ -114,20 +114,20 @@ export default function StrategyWorkspaceDebugTab({ debugBars }) {
           </thead>
           <tbody>
             {rows.map((row, i) => (
-              <tr key={i} style={{ borderBottom: "1px solid #222" }}>
-                <td style={{ padding: "4px 8px", textAlign: "right", color: "#888" }}>{row.bar}</td>
+              <tr key={i} style={{ borderBottom: "1px solid var(--ad-card)" }}>
+                <td style={{ padding: "4px 8px", textAlign: "right", color: "var(--ad-text-muted)" }}>{row.bar}</td>
                 {activeColumns.map((col) => {
                   const val = row[col];
                   return (
                     <td key={col} style={{ padding: "4px 8px", textAlign: "right", fontFamily: "monospace" }}>
                       {val !== null && val !== undefined ? (
                         typeof val === "boolean" ? (
-                          <span style={{ color: val ? "#4a4" : "#a44" }}>{String(val)}</span>
+                          <span style={{ color: val ? "var(--ad-success)" : "var(--ad-error)" }}>{String(val)}</span>
                         ) : (
-                          <span style={{ color: "#ccc" }}>{Number(val).toFixed(4)}</span>
+                          <span style={{ color: "var(--ad-text-secondary)" }}>{Number(val).toFixed(4)}</span>
                         )
                       ) : (
-                        <span style={{ color: "#555" }}>—</span>
+                        <span style={{ color: "var(--ad-text-muted)" }}>—</span>
                       )}
                     </td>
                   );

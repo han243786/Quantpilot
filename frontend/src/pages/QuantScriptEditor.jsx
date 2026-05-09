@@ -108,7 +108,7 @@ export default function QuantScriptEditor() {
             background: "var(--ad-error-soft)",
             border: "1px solid var(--ad-error)",
             borderRadius: "4px",
-            color: "#f88",
+            color: "var(--ad-error)",
             fontFamily: "monospace",
           }}
         >
@@ -122,25 +122,25 @@ export default function QuantScriptEditor() {
             <h3 style={{ margin: 0 }}>{report.scenario_name}</h3>
             <span style={{
               padding: "2px 8px", borderRadius: "12px", fontSize: "12px",
-              background: report.failed_count > 0 ? "#a33" : "#3a3",
+              background: report.failed_count > 0 ? "var(--ad-error)" : "var(--ad-success)",
               color: "white",
             }}>
               {report.passed_count}/{report.steps.length} 通过
               {report.failed_count > 0 && ` ${report.failed_count} 失败`}
               {report.skipped_count > 0 && ` ${report.skipped_count} 跳过`}
             </span>
-            <span style={{ fontSize: "12px", color: "#888" }}>{report.duration_ms}ms</span>
+            <span style={{ fontSize: "12px", color: "var(--ad-text-muted)" }}>{report.duration_ms}ms</span>
           </div>
 
           {report.graph_id && (
-            <div style={{ marginBottom: "12px", fontSize: "12px", color: "#888" }}>
+            <div style={{ marginBottom: "12px", fontSize: "12px", color: "var(--ad-text-muted)" }}>
               策略已保存: <code>{report.graph_id}</code>
             </div>
           )}
 
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
             <thead>
-              <tr style={{ background: "#222" }}>
+              <tr style={{ background: "var(--ad-card)" }}>
                 <th style={{ padding: "8px", textAlign: "left", width: "30px" }}></th>
                 <th style={{ padding: "8px", textAlign: "left" }}>步骤</th>
                 <th style={{ padding: "8px", textAlign: "right", width: "70px" }}>耗时</th>
@@ -150,16 +150,16 @@ export default function QuantScriptEditor() {
             <tbody>
               {report.steps.map((step, i) => {
                 const icon = step.status === "passed" ? "✓" : step.status === "failed" ? "✗" : "⊘";
-                const color = step.status === "passed" ? "#3a3" : step.status === "failed" ? "#a33" : "#888";
+                const color = step.status === "passed" ? "var(--ad-success)" : step.status === "failed" ? "var(--ad-error)" : "var(--ad-text-muted)";
                 return (
-                  <tr key={i} style={{ borderBottom: "1px solid #333" }}>
+                  <tr key={i} style={{ borderBottom: "1px solid var(--ad-border)" }}>
                     <td style={{ padding: "8px", color, fontWeight: "bold" }}>{icon}</td>
                     <td style={{ padding: "8px" }}>{step.name}</td>
-                    <td style={{ padding: "8px", textAlign: "right", color: "#888" }}>{step.duration_ms}ms</td>
-                    <td style={{ padding: "8px", fontSize: "12px", color: "#aaa", maxWidth: "500px", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <td style={{ padding: "8px", textAlign: "right", color: "var(--ad-text-muted)" }}>{step.duration_ms}ms</td>
+                    <td style={{ padding: "8px", fontSize: "12px", color: "var(--ad-text-secondary)", maxWidth: "500px", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {step.message?.slice(0, 200)}
                       {step.status === "failed" && step.message?.includes("actual:") && (
-                        <span style={{ color: "#f44", fontWeight: "bold" }}>
+                        <span style={{ color: "var(--ad-error)", fontWeight: "bold" }}>
                           {" "}[actual: {step.message.match(/actual:\s*([^)]+)/)?.[1] || "?"}]
                         </span>
                       )}
@@ -172,7 +172,7 @@ export default function QuantScriptEditor() {
         </div>
       )}
 
-      <div style={{ marginTop: "24px", fontSize: "11px", color: "#555", borderTop: "1px solid #333", paddingTop: "12px" }}>
+      <div style={{ marginTop: "24px", fontSize: "11px", color: "var(--ad-text-muted)", borderTop: "1px solid var(--ad-border)", paddingTop: "12px" }}>
         <strong>支持指令</strong>: @test @step @compile @run @backtest @assert @save_run @modify @wait @compare_backtests @debug
         {" | "}
         <strong>快捷键</strong>: Tab 缩进, Ctrl+Enter 运行

@@ -674,7 +674,7 @@
 .strategy-row__select input {
   width: 16px;
   height: 16px;
-  accent-color: #3a6ab0;
+  accent-color: var(--ad-accent);
 }
 
 .strategy-row__actions {
@@ -698,7 +698,7 @@
 .strategy-row__action-error {
   grid-column: 1 / -1;
   max-width: 280px;
-  color: #c4a0a0;
+  color: var(--ad-error);
   font-size: 11px;
   line-height: 1.4;
   text-align: right;

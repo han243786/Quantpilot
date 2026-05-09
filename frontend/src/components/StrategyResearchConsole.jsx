@@ -23,11 +23,11 @@ const RESEARCH_MODES = [
 ];
 
 const EVENT_COLORS = {
-  DataUpdated: "#6a8aaa",
-  IntentTriggered: "#b09050",
+  DataUpdated: "var(--ad-accent)",
+  IntentTriggered: "var(--ad-warning)",
   AgentDecisionProduced: "var(--ad-text-secondary)",
-  ExecutionPlanned: "#5a9a8a",
-  ExecutionFilled: "#6a9a6a",
+  ExecutionPlanned: "var(--ad-success)",
+  ExecutionFilled: "var(--ad-success)",
   PortfolioUpdated: "var(--ad-warning)",
   RiskDecisionProduced: "var(--ad-error)"
 };

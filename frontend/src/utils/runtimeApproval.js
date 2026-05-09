@@ -99,7 +99,7 @@ export function formatReviewState(state) {
     case "rolled_back":
       return { label: "已回滚", color: "var(--ad-warning)" };
     default:
-      return { label: state || "-", color: "#999" };
+      return { label: state || "-", color: "var(--ad-text-muted)" };
   }
 }
 
@@ -118,6 +118,6 @@ export function formatVerdict(verdict) {
     case "replay_fidelity_partial":
       return { label: "部分回放(参考价值有限)", color: "var(--ad-warning)" };
     default:
-      return { label: verdict || "-", color: "#999" };
+      return { label: verdict || "-", color: "var(--ad-text-muted)" };
   }
 }

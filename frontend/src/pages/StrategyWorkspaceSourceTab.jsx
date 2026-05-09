@@ -76,7 +76,7 @@ export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
           lineHeight: "1.5",
           overflow: "auto",
           maxHeight: "60vh",
-          border: "1px solid #333",
+          border: "1px solid var(--ad-border)",
         }}
         data-testid="source-tab-code"
       >
@@ -86,7 +86,7 @@ export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
       {runResult && (
         <div style={{ marginTop: "16px" }}>
           {runResult.error ? (
-            <div style={{ padding: "12px", background: "var(--ad-error-soft)", border: "1px solid #a33", borderRadius: "4px", color: "var(--ad-error)" }}>
+            <div style={{ padding: "12px", background: "var(--ad-error-soft)", border: "1px solid var(--ad-error)", borderRadius: "4px", color: "var(--ad-error)" }}>
               {runResult.error}
             </div>
           ) : (
@@ -95,17 +95,17 @@ export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
                 <h4 style={{ margin: 0 }}>{runResult.scenario_name}</h4>
                 <span style={{
                   padding: "2px 8px", borderRadius: "12px", fontSize: "12px",
-                  background: runResult.failed_count > 0 ? "var(--ad-error)" : "#3a3",
+                  background: runResult.failed_count > 0 ? "var(--ad-error)" : "var(--ad-success)",
                   color: "white",
                 }}>
                   {runResult.passed_count}/{runResult.steps?.length || 0} 通过
                   {runResult.failed_count > 0 && ` ${runResult.failed_count} 失败`}
                 </span>
-                <span style={{ fontSize: "12px", color: "#888" }}>{runResult.duration_ms}ms</span>
+                <span style={{ fontSize: "12px", color: "var(--ad-text-muted)" }}>{runResult.duration_ms}ms</span>
               </div>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
                 <thead>
-                  <tr style={{ background: "#222" }}>
+                  <tr style={{ background: "var(--ad-card)" }}>
                     <th style={{ padding: "8px", textAlign: "left", width: "30px" }}></th>
                     <th style={{ padding: "8px", textAlign: "left" }}>步骤</th>
                     <th style={{ padding: "8px", textAlign: "right", width: "70px" }}>耗时</th>
@@ -115,16 +115,16 @@ export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
                 <tbody>
                   {runResult.steps?.map((step, i) => {
                     const icon = step.status === "passed" ? "✓" : step.status === "failed" ? "✗" : "⊘";
-                    const color = step.status === "passed" ? "#3a3" : step.status === "failed" ? "var(--ad-error)" : "#888";
+                    const color = step.status === "passed" ? "var(--ad-success)" : step.status === "failed" ? "var(--ad-error)" : "var(--ad-text-muted)";
                     return (
-                      <tr key={i} style={{ borderBottom: "1px solid #333" }}>
+                      <tr key={i} style={{ borderBottom: "1px solid var(--ad-border)" }}>
                         <td style={{ padding: "8px", color, fontWeight: "bold" }}>{icon}</td>
                         <td style={{ padding: "8px" }}>{step.name}</td>
-                        <td style={{ padding: "8px", textAlign: "right", color: "#888" }}>{step.duration_ms}ms</td>
-                        <td style={{ padding: "8px", fontSize: "12px", color: "#aaa", maxWidth: "500px", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        <td style={{ padding: "8px", textAlign: "right", color: "var(--ad-text-muted)" }}>{step.duration_ms}ms</td>
+                        <td style={{ padding: "8px", fontSize: "12px", color: "var(--ad-text-secondary)", maxWidth: "500px", overflow: "hidden", textOverflow: "ellipsis" }}>
                           {step.message?.slice(0, 200)}
                           {step.status === "failed" && step.message?.includes("actual:") && (
-                            <span style={{ color: "#f44", fontWeight: "bold" }}>
+                            <span style={{ color: "var(--ad-error)", fontWeight: "bold" }}>
                               {" "}[actual: {step.message.match(/actual:\s*([^)]+)/)?.[1] || "?"}]
                             </span>
                           )}

@@ -804,11 +804,11 @@
 }
 
 .workspace-inspector-stack__reason--warning strong {
-  color: #f6c66a;
+  color: var(--ad-warning);
 }
 
 .workspace-inspector-stack__reason--info strong {
-  color: #8fdcf8;
+  color: var(--ad-text-secondary);
 }
 
 .workspace-inspector-stack__reason--faded {
@@ -916,7 +916,7 @@
 }
 
 .workspace-inspector-shell__context-kicker {
-  color: #8fc3df;
+  color: var(--ad-text-secondary);
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;

@@ -381,7 +381,7 @@ function FlowInner({
       panOnDrag
       selectionOnDrag
     >
-      {showCanvasDecorations ? <Background gap={24} color="#1a1e24" /> : null}
+      {showCanvasDecorations ? <Background gap={24} color="var(--ad-card-hover)" /> : null}
       <Suspense fallback={<CanvasOverlayFallback />}>
         {showMiniMap ? (
           <StrategyCanvasMiniMap

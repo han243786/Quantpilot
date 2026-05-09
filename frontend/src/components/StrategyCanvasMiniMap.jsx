@@ -2,12 +2,12 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { Panel, useReactFlow, useStore, useViewport } from "@xyflow/react";
 
 const minimapNodeColors = {
-  data: "#3a6ab0",
-  intent: "#4a8a9a",
-  agent: "#b07030",
-  risk: "#a06050",
+  data: "var(--ad-accent)",
+  intent: "var(--ad-text-secondary)",
+  agent: "var(--ad-warning)",
+  risk: "var(--ad-error)",
   execution: "var(--ad-success)",
-  runtime: "#6a7078"
+  runtime: "var(--ad-text-muted)"
 };
 
 const minimapSizes = {

@@ -182,20 +182,20 @@ select {
 }
 
 .status-pill.success {
-  color: #6b9e7a;
+  color: var(--ad-success);
 }
 
 .status-pill.warning {
-  color: #c4a55a;
+  color: var(--ad-warning);
 }
 
 .status-pill.danger {
-  color: #c48888;
+  color: var(--ad-error);
 }
 
 .status-pill.info
 .runtime-pill.info {
-  color: #8ab4c8;
+  color: var(--ad-text-secondary);
 }
 
 .status-pill.muted
@@ -204,15 +204,15 @@ select {
 }
 
 .runtime-pill.success {
-  color: #6b9e7a;
+  color: var(--ad-success);
 }
 
 .runtime-pill.warning {
-  color: #c4a55a;
+  color: var(--ad-warning);
 }
 
 .runtime-pill.danger {
-  color: #c48888;
+  color: var(--ad-error);
 }
 
 .toolbar-issues {
@@ -570,7 +570,7 @@ select {
   border-radius: var(--ad-radius-sm);
   border: 1px solid rgba(97, 157, 226, 0.22);
   background: rgba(18, 27, 40, 0.76);
-  color: #8ab4c8;
+  color: var(--ad-text-secondary);
   font-size: 10px;
   letter-spacing: 0.02em;
 }
@@ -578,7 +578,7 @@ select {
 .module-group-toggle__badge--selection {
   border-color: rgba(104, 211, 145, 0.24);
   background: rgba(15, 36, 26, 0.84);
-  color: #7aad8a;
+  color: var(--ad-success);
 }
 
 .module-group-toggle__meta {
@@ -586,7 +586,7 @@ select {
   padding: 2px 8px;
   border-radius: var(--ad-radius-sm);
   background: rgba(56, 189, 248, 0.12);
-  color: #8ab4c8;
+  color: var(--ad-text-secondary);
   font-size: 11px;
   text-align: center;
 }
@@ -717,7 +717,7 @@ select {
   margin-top: 10px;
   padding: 10px 12px;
   font-size: 11px;
-  color: #c4b098;
+  color: var(--ad-warning);
   line-height: 1.5;
   border: 1px dashed rgba(245, 158, 11, 0.24);
   border-radius: var(--ad-radius-md);
@@ -864,7 +864,7 @@ select {
 }
 
 .canvas-recommendation-target__note {
-  color: #c4a55a;
+  color: var(--ad-warning);
 }
 
 .canvas-repair-path {
@@ -987,7 +987,7 @@ select {
 }
 
 .canvas-focus-target__note {
-  color: #c4a55a;
+  color: var(--ad-warning);
 }
 
 .canvas-lanes {
@@ -1080,7 +1080,7 @@ select {
   width: 32px;
   height: 32px;
   border-bottom: 1px solid rgba(140, 230, 176, 0.18);
-  color: #d9fff0;
+  color: var(--ad-success-soft);
 }
 
 .quantpilot-flow .react-flow__controls-button:hover {
@@ -1158,12 +1158,12 @@ select {
 
 .quantpilot-flow .quantpilot-minimap-tool-btn:hover {
   background: rgba(255, 255, 255, 0.04);
-  color: #f3f7fd;
+  color: var(--ad-text);
 }
 
 .quantpilot-flow .quantpilot-minimap-size-btn:hover {
   background: rgba(255, 255, 255, 0.04);
-  color: #f3f7fd;
+  color: var(--ad-text);
 }
 
 .quantpilot-flow .quantpilot-minimap-tool-btn:active
@@ -1173,7 +1173,7 @@ select {
 
 .quantpilot-flow .quantpilot-minimap-size-btn.active {
   background: rgba(255, 255, 255, 0.06);
-  color: #eefbf6;
+  color: var(--ad-success-soft);
 }
 
 .quantpilot-flow .size-glyph {
@@ -1261,9 +1261,9 @@ select {
 .validation-banner {
   margin: 12px 14px 0;
   padding: 10px 12px;
-  border: 1px solid #4f2527;
-  background: #2a1416;
-  color: #f1b3b3;
+  border: 1px solid var(--ad-error);
+  background: var(--ad-error-soft);
+  color: var(--ad-error);
   border-radius: 8px;
 }
 
@@ -1283,7 +1283,7 @@ select {
 }
 
 .node-card.selected {
-  box-shadow: 0 0 0 1px #9bb2d1, 0 12px 30px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 0 0 1px var(--ad-text-secondary), 0 12px 30px rgba(0, 0, 0, 0.22);
 }
 
 .node-card.dimmed {
@@ -1341,7 +1341,7 @@ select {
   border-radius: var(--ad-radius-sm);
   border: 1px solid rgba(159, 242, 184, 0.24);
   background: rgba(15, 36, 26, 0.84);
-  color: #7aad8a;
+  color: var(--ad-success);
   font-size: 10px;
   letter-spacing: 0.02em;
 }
@@ -1457,24 +1457,24 @@ select {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #546171;
+  background: var(--ad-text-muted);
 }
 
 .runtime-dot.running { background: var(--success); }
 .runtime-dot.error { background: var(--danger); }
 .runtime-dot.stopped
-.runtime-dot.idle { background: #5b6572; }
+.runtime-dot.idle { background: var(--ad-text-muted); }
 
 .node-issue {
   margin-top: 8px;
   font-size: 11px;
-  color: #c4a55a;
+  color: var(--ad-warning);
 }
 
 .port-handle {
   width: 9px;
   height: 9px;
-  border: 2px solid #dbe6f7;
+  border: 2px solid var(--ad-border);
 }
 
 .port-handle-passive {
@@ -1785,13 +1785,13 @@ select {
 .diagnostic-chip--path {
   border-color: rgba(159, 242, 184, 0.26);
   background: rgba(15, 36, 26, 0.84);
-  color: #7aad8a;
+  color: var(--ad-success);
 }
 
 .diagnostic-chip--segment {
   border-color: rgba(143, 220, 248, 0.22);
   background: rgba(12, 23, 36, 0.88);
-  color: #d9f8ff;
+  color: var(--ad-text-secondary);
 }
 
 .issue-hint {
@@ -1872,19 +1872,19 @@ select {
 }
 
 .event-summary-pill-success strong {
-  color: #6b9e7a;
+  color: var(--ad-success);
 }
 
 .event-summary-pill-warning strong {
-  color: #c4a55a;
+  color: var(--ad-warning);
 }
 
 .event-summary-pill-danger strong {
-  color: #c48888;
+  color: var(--ad-error);
 }
 
 .event-summary-pill-info strong {
-  color: #8ab4c8;
+  color: var(--ad-text-secondary);
 }
 
 .event-panel-body {
@@ -1999,12 +1999,12 @@ select {
 
 .asset-stat-chip.positive strong
 .asset-stat-chip.positive em {
-  color: #6b9e7a;
+  color: var(--ad-success);
 }
 
 .asset-stat-chip.negative strong
 .asset-stat-chip.negative em {
-  color: #c49a9a;
+  color: var(--ad-error);
 }
 
 .asset-chart-body {
@@ -2078,7 +2078,7 @@ select {
 }
 
 .asset-current-tag text {
-  fill: #e5f3ff;
+  fill: var(--ad-text-secondary);
   font-size: 11px;
   font-weight: 700;
 }
@@ -2310,13 +2310,13 @@ select {
 }
 
 .side-pill.buy {
-  color: #6b9e7a;
+  color: var(--ad-success);
   background: rgba(17, 94, 67, 0.22);
   border-color: rgba(34, 197, 94, 0.28);
 }
 
 .side-pill.sell {
-  color: #c49a9a;
+  color: var(--ad-error);
   background: rgba(102, 31, 38, 0.22);
   border-color: rgba(239, 68, 68, 0.3);
 }
@@ -2482,15 +2482,15 @@ select {
 }
 
 .history-meta-chip-success strong {
-  color: #6b9e7a;
+  color: var(--ad-success);
 }
 
 .history-meta-chip-warning strong {
-  color: #c4a55a;
+  color: var(--ad-warning);
 }
 
 .history-meta-chip-danger strong {
-  color: #c48888;
+  color: var(--ad-error);
 }
 
 .history-meta-chip-wide {
@@ -2718,7 +2718,7 @@ select {
   border-color: rgba(56, 189, 248, 0.34);
   background: var(--ad-panel);
     rgba(8, 21, 35, 0.94);
-  color: #8ab4c8;
+  color: var(--ad-text-secondary);
 }
 
 .run-history-item-group-compare-selected .history-compare-chip {
@@ -3152,7 +3152,7 @@ body
   border-radius: var(--ad-radius-sm);
   border: 1px solid rgba(45, 212, 191, 0.22);
   background: rgba(20, 78, 73, 0.26);
-  color: #7aada0;
+  color: var(--ad-success);
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -4290,7 +4290,7 @@ textarea:focus-visible
 }
 
 .governed-timeline-item.is-active {
-  border-color: var(--accent, #2a5ca0);
+  border-color: var(--accent, var(--ad-accent));
   background: rgba(37, 99, 235, 0.08);
 }
 
