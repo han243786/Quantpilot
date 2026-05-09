@@ -14,6 +14,13 @@ pub(super) fn register_compile_routes(router: Router<AppState>) -> Router<AppSta
 async fn compile_runtime_request(
     Json(request): Json<CompileRuntimeRequest>,
 ) -> Result<Json<CompileRuntimeResponse>, (StatusCode, String)> {
+    // 空 intent 保护: 策略必须包含至少一个意图
+    if request.runtime_config.intent_generators.is_empty() {
+        return Err(json_bad_request(
+            "bad_request",
+            "策略必须包含至少一个意图 (intent_generators 不能为空)",
+        ));
+    }
     validate_runtime_config_capabilities(&request.runtime_config).map_err(|details| {
         json_bad_request_with_details(
             "capability_gated",

@@ -455,14 +455,42 @@ pub(super) fn validate_graph_id(graph_id: &str) -> anyhow::Result<()> {
     if graph_id.len() > 128 {
         anyhow::bail!("graph_id 长度不能超过 128 字符");
     }
+    // 防御 URL 编码攻击: 先解码再校验
+    let decoded = percent_decode(graph_id);
+    if decoded.contains('\0') {
+        anyhow::bail!("graph_id 不能包含空字符");
+    }
+    if decoded.contains("..") || decoded.contains('/') || decoded.contains('\\') {
+        anyhow::bail!("graph_id 不能包含路径分隔符");
+    }
     let valid = graph_id
         .chars()
         .all(|ch| ch.is_ascii_alphanumeric() || ch == '_' || ch == '-');
-    if valid {
-        Ok(())
-    } else {
+    if !valid {
         anyhow::bail!("graph_id 只能使用 ASCII 字母、数字、'_' 或 '-'")
     }
+    Ok(())
+}
+
+fn percent_decode(input: &str) -> String {
+    let mut result = String::with_capacity(input.len());
+    let mut i = 0;
+    let bytes = input.as_bytes();
+    while i < bytes.len() {
+        if bytes[i] == b'%' && i + 2 < bytes.len() {
+            if let Ok(decoded) = u8::from_str_radix(
+                &String::from_utf8_lossy(&bytes[i + 1..i + 3]),
+                16,
+            ) {
+                result.push(decoded as char);
+                i += 3;
+                continue;
+            }
+        }
+        result.push(bytes[i] as char);
+        i += 1;
+    }
+    result
 }
 
 #[cfg(test)]
