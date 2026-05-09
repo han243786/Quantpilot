@@ -325,3 +325,111 @@ persist_with_ttl(path, data, Duration::from_secs(7 * 24 * 3600))?;
   瞬间 TTL: 10 分钟（而非 1 小时）
   启动时强制清理所有瞬间数据
 ```
+
+---
+
+## 八、前端设计规范（7 条）
+
+> 生效日期: 2026-05-09 | 对标 Adobe Photoshop/Illustrator 专业暗色面板风格
+
+### 8.1 配色饱和度限制
+
+```
+禁止使用高饱和度颜色作为 UI 主色。
+
+✅ 允许:
+  成功绿: #6b9e7a (鼠尾草绿)
+  错误红: #c48888 (玫瑰灰)
+  警告黄: #c4a55a (琥珀金)
+  强调蓝: #1473e6 (Adobe 蓝)
+  文本色: #e6e6e6 / #aaaaaa / #6e6e6e
+  表面色: #0d0d0d / #1e1e1e / #2d2d2d / #404040
+
+❌ 禁止:
+  #22c55e / #2ecc71 (高饱和绿)
+  #ef4444 / #f23645 / #e74c3c (高饱和红)
+  #f59e0b / #f97316 (高饱和橙)
+  #3b82f6 / #2962ff (高饱和蓝 — 仅允许 Adobe 蓝 #1473e6)
+  #00ff00 / #ff0000 / #ffff00 (纯色 — 仅用于调试)
+
+所有色值必须定义在 design-system.css 的 :root 块中并通过 CSS 变量引用，
+禁止在组件样式或内联 style 中硬编码颜色值。
+```
+
+### 8.2 圆角限制
+
+```
+组件最大圆角: 6px
+面板/卡片圆角: 2-4px
+输入框/按钮: 2px
+
+❌ 禁止:
+  border-radius: > 8px (胶囊、大圆角)
+  border-radius: 999px (完全圆形 — 仅允许头像/图标)
+  backdrop-filter: blur() (毛玻璃/模糊)
+```
+
+### 8.3 背景限制
+
+```
+全局背景: 纯色 #0d0d0d，不使用渐变
+面板背景: 纯色，使用 --ad-* 令牌
+
+❌ 禁止:
+  radial-gradient() (径向渐变)
+  linear-gradient() (线性渐变 — 仅在必要时用于极暗的进度条或分隔线)
+  backdrop-filter (模糊/毛玻璃)
+```
+
+### 8.4 导航与布局
+
+```
+主导航: 左侧图标侧边栏 (48px 折叠 / 160px hover 展开)
+内容区: margin-left: 48px (随侧边栏展开)
+命令面板: ⌘K / Ctrl+K 唤起
+标签栏: 32px 下划线指示器
+
+❌ 禁止:
+  水平顶部导航条
+  页面级子导航 (Block 内导航统一由侧边栏处理)
+```
+
+### 8.5 图标
+
+```
+图标必须使用 SVG 组件 (components/Icons.jsx)，禁止使用 Unicode emoji。
+
+✅ 允许:
+  <IconChart /> <IconPlay /> <IconCheck />
+
+❌ 禁止:
+  📊 📝 ✅ ⚠️ (Unicode emoji)
+  第三方图标库 (无 npm 依赖)
+```
+
+### 8.6 组件令牌
+
+```
+所有组件样式必须通过 CSS 变量引用设计令牌。
+
+✅ 正确:
+  background: var(--ad-panel);
+  border: 1px solid var(--ad-border);
+  color: var(--ad-text);
+
+❌ 错误:
+  background: #1e1e1e;
+  border: 1px solid #404040;
+  color: #e6e6e6;
+```
+
+### 8.7 新增组件检查单
+
+```
+新增任何前端组件前，必须确认:
+  1. 颜色是否通过 --ad-* 变量引用（非硬编码）
+  2. 圆角是否 ≤ 6px
+  3. 是否使用了 SVG 图标而非 emoji
+  4. 用户可见字符串是否用 t() 包裹
+  5. data-testid 属性是否已设置
+```
