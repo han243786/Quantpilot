@@ -6,8 +6,8 @@
   "build": {
     "frontendDist": "../frontend/dist",
     "devUrl": "http://127.0.0.1:5173",
-    "beforeDevCommand": "cd frontend && npm run dev -- --strictPort",
-    "beforeBuildCommand": "cd frontend && npm run build"
+    "beforeDevCommand": "src-tauri\\dev.bat",
+    "beforeBuildCommand": "src-tauri\\build.bat"
   },
   "app": {
     "windows": [
