@@ -28,14 +28,20 @@ pub(super) async fn api_key_auth(
     let api_key = match std::env::var("QUANTPILOT_API_KEY") {
         Ok(key) if !key.is_empty() => key,
         _ => {
-            // Print warning once per process lifetime
-            static WARNED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
-            if !WARNED.swap(true, std::sync::atomic::Ordering::Relaxed) {
-                crate::safe_eprintln!(
-                    "[auth] 未设置 QUANTPILOT_API_KEY — 所有 API 请求均放行. 设置该环境变量以启用认证."
-                );
-            }
-            return next.run(request).await;
+            // 未设置环境变量时自动生成随机 key, 打印到启动日志
+            use ring::rand::{SecureRandom, SystemRandom};
+            static GENERATED_KEY: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+            let key = GENERATED_KEY.get_or_init(|| {
+                let rng = SystemRandom::new();
+                let mut bytes = [0u8; 16];
+                rng.fill(&mut bytes).ok();
+                bytes.iter().map(|b| format!("{:02x}", b)).collect::<String>()
+            });
+            crate::safe_eprintln!(
+                "[auth] QUANTPILOT_API_KEY 未设置, 已生成随机 key: {}. 请求需携带 Authorization: Bearer {}",
+                key, key
+            );
+            key.clone()
         }
     };
 
@@ -52,11 +58,8 @@ pub(super) async fn api_key_auth(
     }
 
     let problem = serde_json::json!({
-        "type": "https://quantpilot.dev/problems/unauthorized",
-        "title": "Unauthorized",
-        "status": 401,
-        "detail": "Valid Bearer token required. Set Authorization: Bearer <your-api-key> header.",
-        "error_code": "UNAUTHORIZED",
+        "error": "unauthorized",
+        "message": "认证失败: 请在 Authorization 头中提供有效的 Bearer token"
     });
 
     let body = axum::body::Body::from(

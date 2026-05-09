@@ -154,7 +154,15 @@ impl CredentialVault {
                 .map_err(|_| anyhow::anyhow!("凭证文件损坏或密钥不匹配, 请重新设置凭证"))?;
             serde_json::from_str(&decrypted).unwrap_or_default()
         } else {
-            VaultData::default()
+            // 首次启动: 创建空 vault 并持久化, 避免 API 返回 503
+            let data = VaultData::default();
+            if let Some(parent) = path.parent() {
+                std::fs::create_dir_all(parent)?;
+            }
+            let json = serde_json::to_string(&data)?;
+            let encrypted = encrypt(&json)?;
+            std::fs::write(&path, encrypted)?;
+            data
         };
         Ok(Self {
             path,

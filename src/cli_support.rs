@@ -162,10 +162,20 @@ pub fn handle_credential_command(args: &[String]) -> anyhow::Result<()> {
         }
         "get" => {
             let service = args.get(2).ok_or_else(|| anyhow::anyhow!("缺少标签名"))?;
+            let reveal = args.iter().any(|a| a == "--reveal");
             match vault.get_service(service) {
                 Some(fields) => {
-                    for (k, v) in &fields {
-                        println!("  {} = {}", k, v);
+                    if reveal {
+                        for (k, v) in &fields {
+                            println!("  {} = {}", k, v);
+                        }
+                    } else {
+                        let names: Vec<&String> = fields.keys().collect();
+                        println!(
+                            "标签 '{}' 包含字段: {} (使用 --reveal 查看值)",
+                            service,
+                            names.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", ")
+                        );
                     }
                 }
                 None => println!("标签 '{}' 不存在", service),
