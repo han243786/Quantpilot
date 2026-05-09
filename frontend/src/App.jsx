@@ -42,11 +42,14 @@ export default function App() {
     typeof navigator !== "undefined" ? !navigator.onLine : false
   );
   const mainRef = useRef(null);
-  const isTauri = typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
+  const isTauri = typeof window !== "undefined" && ("__TAURI__" in window || "__TAURI_INTERNALS__" in window);
 
   function tauriWindow(action) {
     if (!isTauri) return;
-    window.__TAURI_INTERNALS__?.invoke?.(`plugin:window|${action}`);
+    // Tauri v2 IPC bridge: 优先 __TAURI__.invoke, 回退 __TAURI_INTERNALS__
+    const invoke = window.__TAURI__?.invoke || window.__TAURI_INTERNALS__?.invoke;
+    if (!invoke) return;
+    invoke(`plugin:window|${action}`).catch(() => {});
   }
 
   // 离线/在线检测
