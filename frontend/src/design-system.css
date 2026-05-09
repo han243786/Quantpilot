@@ -29,6 +29,36 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── 原生元素暗色主题 ───────────────────────────────── */
+
+input,
+select,
+textarea,
+button {
+  background: var(--ad-panel);
+  color: var(--ad-text);
+  border: 1px solid var(--ad-border);
+  border-radius: var(--ad-radius-sm);
+  font-family: var(--ad-font-ui);
+  font-size: var(--ad-font-size-sm);
+  padding: 4px 8px;
+  transition: border-color 0.1s;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--ad-accent);
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--ad-text-muted);
+}
+select option {
+  background: var(--ad-panel);
+  color: var(--ad-text);
+}
+
 /* ── 设计令牌 ─────────────────────────────────────────── */
 
 :root {
@@ -45,7 +75,7 @@ body {
   /* 文本 */
   --ad-text: #e6e6e6;
   --ad-text-secondary: #aaaaaa;
-  --ad-text-muted: #6e6e6e;
+  --ad-text-muted: #909090;
   --ad-text-inverse: #ffffff;
 
   /* 强调 — Adobe 蓝 */
