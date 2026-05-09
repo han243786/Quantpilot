@@ -321,7 +321,7 @@ select option {
 
 .ad-workspace-header {
   padding: var(--ad-space-3) var(--ad-space-4);
-  background: var(--ad-bg-raised);
+  background: #141414;
   border-bottom: 1px solid var(--ad-border);
   display: flex;
   flex-direction: column;
