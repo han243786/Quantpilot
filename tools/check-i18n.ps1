@@ -7,13 +7,12 @@ $violations = 0
 
 $srcDirs = @("src", "quantscript/src", "qrpc_core/src", "qrpc_core_ir/src", "qrpc_compiler/src", "qrpc_runtime/src")
 
-# Patterns that are English user-facing messages (violations if found)
+# Patterns that are English user-facing messages
+# Only flag bail!/anyhow!/Err( with English content — these are the user-visible strings
 $englishPatterns = @(
-    "bail!\(\"[a-z]{10,}",       # bail!("english message...
-    "anyhow!\(\"[a-z]{10,}",     # anyhow!("english message...
-    "format!\(\"[a-z]{10,}",     # format!("english message...
-    "\.to_string\(\"",           # "english".to_string()
-    "Err\(\"[a-z]{10,}"          # Err("english message...
+    'bail!\("[A-Za-z][a-z\s]{10,}',
+    'anyhow!\("[A-Za-z][a-z\s]{10,}',
+    'Err\("[A-Za-z][a-z\s]{10,}'
 )
 
 # Exceptions: diagnostic codes, identifiers, file paths
