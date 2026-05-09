@@ -151,3 +151,7 @@ curl -X POST http://127.0.0.1:3000/api/runtime/test-run \
 ```
 
 常见错误码：`bad_request` / `not_found` / `unauthorized` / `capability_gated`
+
+## 注意事项
+
+**所有 POST 请求必须携带 `Content-Type: application/json` 头。** 缺少此头时，Axum 在中间件之前拒绝请求，返回英文纯文本而非中文 JSON 错误。前端代码（`postJson()`）自动设置该头，此限制仅影响手动 `curl` 调试场景。
