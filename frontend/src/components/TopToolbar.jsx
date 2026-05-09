@@ -447,9 +447,14 @@ function CredentialPanel({ onClose }) {
     return (
       <div className="credential-panel" data-testid="credential-panel">
         <div className="credential-panel-header">
-          <span>{selected === "new" ? t("新增凭证") : t("编辑凭证")}</span>
+          <span>{selected === "new" ? t("新增凭证") : t("编辑凭证") + ": " + selected}</span>
           <button className="ghost-btn compact-btn" onClick={() => setSelected(null)}>{t("返回")}</button>
         </div>
+        {selected !== "new" ? (
+          <div className="credential-panel-empty" style={{ marginBottom: 12 }}>
+            {t("编辑模式下所有字段均需重新填写, 留空的字段将被清除。")}
+          </div>
+        ) : null}
         <OkxCredentialInput
           label={selected === "new" ? "" : selected}
           onSave={handleSave}

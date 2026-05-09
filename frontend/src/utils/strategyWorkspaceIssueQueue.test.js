@@ -61,7 +61,7 @@ describe("strategyWorkspaceIssueQueue", () => {
     });
     expect(queue[1]).toMatchObject({
       severity: "error",
-      title: "Strategy graph",
+      title: "策略图",
       actionable: false
     });
     expect(queue[2]).toMatchObject({
@@ -77,11 +77,11 @@ describe("strategyWorkspaceIssueQueue", () => {
       { id: "2", severity: "warning", source: "validation", nodeType: "intent", actionable: false }
     ];
 
-    expect(workspaceIssueQueueSeverityLabel("all", 2)).toBe("All 2");
-    expect(workspaceIssueQueueSeverityLabel("error", 1)).toBe("Errors 1");
-    expect(workspaceIssueSeverityText("warning")).toBe("Warning");
-    expect(diagnosticQueueSource({ source: "validation" })).toBe("Validation");
-    expect(diagnosticQueueNodeType({ nodeType: null })).toBe("Graph");
+    expect(workspaceIssueQueueSeverityLabel("all", 2)).toBe("全部 2");
+    expect(workspaceIssueQueueSeverityLabel("error", 1)).toBe("错误 1");
+    expect(workspaceIssueSeverityText("warning")).toBe("警告");
+    expect(diagnosticQueueSource({ source: "validation" })).toBe("校验");
+    expect(diagnosticQueueNodeType({ nodeType: null })).toBe("策略图");
     expect(filterWorkspaceIssueQueue(items, "error", false)).toHaveLength(1);
     expect(filterWorkspaceIssueQueueBySource(items, "runtime")).toHaveLength(1);
     expect(filterWorkspaceIssueQueueByNodeType(items, "intent")).toHaveLength(1);

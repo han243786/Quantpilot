@@ -176,7 +176,17 @@ impl CredentialVault {
         self.save_inner(&data)
     }
 
-    /// 获取标签下的全部凭证字段
+    /// 获取标签下的全部凭证字段。
+    ///
+    /// # 安全
+    ///
+    /// 返回值为 `BTreeMap<String, String>`，其中 value 是从锁内 `SecretString`
+    /// clone 出来的明文副本。锁内原始 `SecretString` 在 `Mutex::unlock` 时已
+    /// 被 Drop 清零，但调用方持有的 clone 副本需要自行管理生命周期：
+    ///
+    /// - 尽快用完，用完后让变量离开作用域
+    /// - 若需长期持有，用 `Zeroizing::new(value)` 包裹
+    /// - 参考 `test_runner.rs:load_exchange_credentials()` 的调用模式
     pub fn get_service(&self, service: &str) -> Option<CredentialFields> {
         let data = self.data.lock().unwrap();
         data.entries.get(service).map(|entry| {

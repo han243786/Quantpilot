@@ -21,7 +21,7 @@ export function diagnosticQueueSource(item) {
 }
 
 export function diagnosticQueueNodeType(item) {
-  if (!item.nodeType) return "Graph";
+  if (!item.nodeType) return "策略图";
   return item.nodeType;
 }
 

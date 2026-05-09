@@ -6,7 +6,7 @@
   "build": {
     "frontendDist": "../frontend/dist",
     "devUrl": "http://127.0.0.1:5173",
-    "beforeDevCommand": "cd /d ..\\frontend && npm run dev",
+    "beforeDevCommand": "cd /d ..\\frontend && npm run dev -- --strictPort",
     "beforeBuildCommand": "cd /d ..\\frontend && npm run build"
   },
   "app": {
