@@ -26,7 +26,7 @@ body
   font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: 0.03em;
-  color: #f4f7fb;
+  color: #c8ccd0;
 }
 
 .app-loading-shell__detail {
@@ -100,13 +100,13 @@ select {
 }
 
 .primary-btn {
-  background: #11352f;
-  border-color: #1c5c4f;
+  background: #1a2a26;
+  border-color: #2a4a40;
 }
 
 .danger-btn {
-  background: #321517;
-  border-color: #5f2125;
+  background: #2a1c1e;
+  border-color: #4a2828;
 }
 
 .primary-btn:disabled
@@ -182,20 +182,20 @@ select {
 }
 
 .status-pill.success {
-  color: #8ce6b0;
+  color: #6b9e7a;
 }
 
 .status-pill.warning {
-  color: #f6c66a;
+  color: #c4a55a;
 }
 
 .status-pill.danger {
-  color: #f69d9d;
+  color: #c48888;
 }
 
 .status-pill.info
 .runtime-pill.info {
-  color: #8fdcf8;
+  color: #8ab4c8;
 }
 
 .status-pill.muted
@@ -204,15 +204,15 @@ select {
 }
 
 .runtime-pill.success {
-  color: #8ce6b0;
+  color: #6b9e7a;
 }
 
 .runtime-pill.warning {
-  color: #f6c66a;
+  color: #c4a55a;
 }
 
 .runtime-pill.danger {
-  color: #f69d9d;
+  color: #c48888;
 }
 
 .toolbar-issues {
@@ -242,8 +242,8 @@ select {
   gap: 10px;
   padding: 8px 12px;
   border-radius: var(--ad-radius-md);
-  border: 1px solid #314053;
-  background: #121922;
+  border: 1px solid #3a4048;
+  background: #181a1e;
   color: var(--text);
   font-size: 12px;
 }
@@ -254,8 +254,8 @@ select {
 }
 
 .toolbar-issue-chip:hover {
-  border-color: #4b6079;
-  background: #16202a;
+  border-color: #4a5460;
+  background: #1a1e22;
 }
 
 .toolbar-issue-chip.issue-error {
@@ -275,7 +275,7 @@ select {
 
 .toolbar-issue-scope {
   flex-shrink: 0;
-  color: #c4d0e0;
+  color: #a0a8b4;
   font-weight: 600;
 }
 
@@ -407,7 +407,7 @@ select {
 }
 
 .property-field-group__title {
-  color: #edf4ff;
+  color: #c8d0d8;
   font-size: 12px;
   font-weight: 600;
   line-height: 1.35;
@@ -509,7 +509,7 @@ select {
 }
 
 .module-sidebar-lane strong {
-  color: #edf4ff;
+  color: #c8d0d8;
   font-size: 15px;
   line-height: 1.2;
 }
@@ -570,7 +570,7 @@ select {
   border-radius: var(--ad-radius-sm);
   border: 1px solid rgba(97, 157, 226, 0.22);
   background: rgba(18, 27, 40, 0.76);
-  color: #8fdcf8;
+  color: #8ab4c8;
   font-size: 10px;
   letter-spacing: 0.02em;
 }
@@ -578,7 +578,7 @@ select {
 .module-group-toggle__badge--selection {
   border-color: rgba(104, 211, 145, 0.24);
   background: rgba(15, 36, 26, 0.84);
-  color: #9ff2b8;
+  color: #7aad8a;
 }
 
 .module-group-toggle__meta {
@@ -586,7 +586,7 @@ select {
   padding: 2px 8px;
   border-radius: var(--ad-radius-sm);
   background: rgba(56, 189, 248, 0.12);
-  color: #8fdcf8;
+  color: #8ab4c8;
   font-size: 11px;
   text-align: center;
 }
@@ -717,7 +717,7 @@ select {
   margin-top: 10px;
   padding: 10px 12px;
   font-size: 11px;
-  color: #ffd9a8;
+  color: #c4b098;
   line-height: 1.5;
   border: 1px dashed rgba(245, 158, 11, 0.24);
   border-radius: var(--ad-radius-md);
@@ -770,7 +770,7 @@ select {
 .canvas-focus-toolbar__tab--active {
   border-color: rgba(143, 220, 248, 0.42);
   background: rgba(56, 189, 248, 0.14);
-  color: #dff7ff;
+  color: #c0ccd0;
   box-shadow: inset 0 0 0 1px rgba(143, 220, 248, 0.18);
 }
 
@@ -852,7 +852,7 @@ select {
 .canvas-repair-path__name {
   font-size: 12px;
   font-weight: 700;
-  color: #edf4ff;
+  color: #c8d0d8;
 }
 
 .canvas-recommendation-target__meta
@@ -864,7 +864,7 @@ select {
 }
 
 .canvas-recommendation-target__note {
-  color: #f6c66a;
+  color: #c4a55a;
 }
 
 .canvas-repair-path {
@@ -976,7 +976,7 @@ select {
 .canvas-focus-target__name {
   font-size: 12px;
   font-weight: 700;
-  color: #edf4ff;
+  color: #c8d0d8;
 }
 
 .canvas-focus-target__meta
@@ -987,7 +987,7 @@ select {
 }
 
 .canvas-focus-target__note {
-  color: #f6c66a;
+  color: #c4a55a;
 }
 
 .canvas-lanes {
@@ -1019,7 +1019,7 @@ select {
 }
 
 .canvas-lane-chip strong {
-  color: #edf4ff;
+  color: #c8d0d8;
   font-size: 14px;
   line-height: 1.2;
 }
@@ -1071,7 +1071,7 @@ select {
 
 .quantpilot-flow .react-flow__controls {
   overflow: hidden;
-  border: 1px solid #1c5c4f;
+  border: 1px solid #2a4a40;
   border-radius: var(--ad-radius-md);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
 }
@@ -1341,7 +1341,7 @@ select {
   border-radius: var(--ad-radius-sm);
   border: 1px solid rgba(159, 242, 184, 0.24);
   background: rgba(15, 36, 26, 0.84);
-  color: #9ff2b8;
+  color: #7aad8a;
   font-size: 10px;
   letter-spacing: 0.02em;
 }
@@ -1468,7 +1468,7 @@ select {
 .node-issue {
   margin-top: 8px;
   font-size: 11px;
-  color: #f6c66a;
+  color: #c4a55a;
 }
 
 .port-handle {
@@ -1566,7 +1566,7 @@ select {
   height: 26px;
   border-radius: var(--ad-radius-sm);
   border: 1px solid rgba(116, 145, 182, 0.2);
-  color: #dff7ff;
+  color: #c0ccd0;
   background: var(--ad-panel);
   cursor: pointer;
   font-size: 14px;
@@ -1637,7 +1637,7 @@ select {
 }
 
 .strategy-card-note__title {
-  color: #edf4ff;
+  color: #c8d0d8;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -1785,7 +1785,7 @@ select {
 .diagnostic-chip--path {
   border-color: rgba(159, 242, 184, 0.26);
   background: rgba(15, 36, 26, 0.84);
-  color: #9ff2b8;
+  color: #7aad8a;
 }
 
 .diagnostic-chip--segment {
@@ -1872,19 +1872,19 @@ select {
 }
 
 .event-summary-pill-success strong {
-  color: #8ce6b0;
+  color: #6b9e7a;
 }
 
 .event-summary-pill-warning strong {
-  color: #f6c66a;
+  color: #c4a55a;
 }
 
 .event-summary-pill-danger strong {
-  color: #f69d9d;
+  color: #c48888;
 }
 
 .event-summary-pill-info strong {
-  color: #8fdcf8;
+  color: #8ab4c8;
 }
 
 .event-panel-body {
@@ -1999,12 +1999,12 @@ select {
 
 .asset-stat-chip.positive strong
 .asset-stat-chip.positive em {
-  color: #8ce6b0;
+  color: #6b9e7a;
 }
 
 .asset-stat-chip.negative strong
 .asset-stat-chip.negative em {
-  color: #f6b6b6;
+  color: #c49a9a;
 }
 
 .asset-chart-body {
@@ -2121,14 +2121,14 @@ select {
   text-align: left;
   background: transparent;
   border: none;
-  border-bottom: 1px solid #1b2430;
+  border-bottom: 1px solid #1e2024;
   color: var(--text);
   padding: 10px 14px;
   cursor: pointer;
 }
 
 .event-row:hover {
-  background: #121922;
+  background: #181a1e;
 }
 
 .event-time
@@ -2310,13 +2310,13 @@ select {
 }
 
 .side-pill.buy {
-  color: #8ce6b0;
+  color: #6b9e7a;
   background: rgba(17, 94, 67, 0.22);
   border-color: rgba(34, 197, 94, 0.28);
 }
 
 .side-pill.sell {
-  color: #f6b6b6;
+  color: #c49a9a;
   background: rgba(102, 31, 38, 0.22);
   border-color: rgba(239, 68, 68, 0.3);
 }
@@ -2478,19 +2478,19 @@ select {
   white-space: nowrap;
   font-size: 12px;
   line-height: 1.35;
-  color: #edf4ff;
+  color: #c8d0d8;
 }
 
 .history-meta-chip-success strong {
-  color: #8ce6b0;
+  color: #6b9e7a;
 }
 
 .history-meta-chip-warning strong {
-  color: #f6c66a;
+  color: #c4a55a;
 }
 
 .history-meta-chip-danger strong {
-  color: #f5a1a1;
+  color: #c48888;
 }
 
 .history-meta-chip-wide {
@@ -2718,7 +2718,7 @@ select {
   border-color: rgba(56, 189, 248, 0.34);
   background: var(--ad-panel);
     rgba(8, 21, 35, 0.94);
-  color: #8fdcf8;
+  color: #8ab4c8;
 }
 
 .run-history-item-group-compare-selected .history-compare-chip {
@@ -3010,7 +3010,7 @@ body
   border-radius: var(--ad-radius-md);
   background: var(--ad-panel);
   border: 1px solid rgba(146, 226, 255, 0.2);
-  color: #f5fbff;
+  color: #ccd4dc;
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -3152,7 +3152,7 @@ body
   border-radius: var(--ad-radius-sm);
   border: 1px solid rgba(45, 212, 191, 0.22);
   background: rgba(20, 78, 73, 0.26);
-  color: #99f6e4;
+  color: #7aada0;
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -3444,7 +3444,7 @@ body
 
 .event-row:hover {
   background: var(--ad-panel);
-    #121922;
+    #181a1e;
 }
 
 .open-order-item:hover
@@ -3968,7 +3968,7 @@ textarea:focus-visible
 }
 
 .research-console-metric strong {
-  color: #edf4ff;
+  color: #c8d0d8;
   font-size: 18px;
   line-height: 1.1;
 }
@@ -4007,7 +4007,7 @@ textarea:focus-visible
 }
 
 .research-console-tab strong {
-  color: #edf4ff;
+  color: #c8d0d8;
   font-size: 14px;
 }
 
@@ -4290,7 +4290,7 @@ textarea:focus-visible
 }
 
 .governed-timeline-item.is-active {
-  border-color: var(--accent, #2563eb);
+  border-color: var(--accent, #2a5ca0);
   background: rgba(37, 99, 235, 0.08);
 }
 

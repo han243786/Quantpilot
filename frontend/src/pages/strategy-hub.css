@@ -78,7 +78,7 @@
 .strategy-inline-note__trigger-text {
   border: none;
   background: transparent;
-  color: #edf4ff;
+  color: #c8d0d8;
   font-size: 34px;
   font-weight: 700;
   line-height: 1.05;
@@ -91,7 +91,7 @@
   height: 28px;
   border-radius: 999px;
   border: 1px solid rgba(116, 145, 182, 0.2);
-  color: #dff7ff;
+  color: #c0ccd0;
   background:
     radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 70%),
     linear-gradient(180deg, rgba(17, 27, 43, 0.94) 0%, rgba(10, 17, 29, 0.98) 100%);
@@ -145,7 +145,7 @@
 }
 
 .strategy-inline-note__popup-title {
-  color: #edf4ff;
+  color: #c8d0d8;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -180,7 +180,7 @@
 }
 
 .strategy-inline-note__trigger-text:hover {
-  color: #dff7ff;
+  color: #c0ccd0;
 }
 
 .strategy-inline-note__trigger-text:focus-visible {
@@ -370,7 +370,7 @@
   height: 26px;
   border-radius: 999px;
   border: 1px solid rgba(116, 145, 182, 0.2);
-  color: #dff7ff;
+  color: #c0ccd0;
   background:
     radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 70%),
     linear-gradient(180deg, rgba(17, 27, 43, 0.94) 0%, rgba(10, 17, 29, 0.98) 100%);
@@ -445,7 +445,7 @@
 }
 
 .strategy-card-note__title {
-  color: #edf4ff;
+  color: #c8d0d8;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -694,7 +694,7 @@
 .strategy-row__select input {
   width: 16px;
   height: 16px;
-  accent-color: #2f81f7;
+  accent-color: #3a6ab0;
 }
 
 .strategy-row__actions {
@@ -718,7 +718,7 @@
 .strategy-row__action-error {
   grid-column: 1 / -1;
   max-width: 280px;
-  color: #fecaca;
+  color: #c4a0a0;
   font-size: 11px;
   line-height: 1.4;
   text-align: right;
@@ -782,7 +782,7 @@
 
 .strategy-row:hover,
 .strategy-row--active {
-  color: #edf4ff;
+  color: #c8d0d8;
 }
 
 .strategy-row--active {

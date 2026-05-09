@@ -55,12 +55,12 @@ body {
   --ad-accent-border: rgba(20, 115, 230, 0.35);
 
   /* 语义色 */
-  --ad-success: #2ecc71;
-  --ad-success-soft: rgba(46, 204, 113, 0.12);
-  --ad-warning: #f5a623;
-  --ad-warning-soft: rgba(245, 166, 35, 0.12);
-  --ad-error: #e74c3c;
-  --ad-error-soft: rgba(231, 76, 60, 0.12);
+  --ad-success: #6b9e7a;
+  --ad-success-soft: rgba(107, 158, 122, 0.12);
+  --ad-warning: #c4a55a;
+  --ad-warning-soft: rgba(196, 165, 90, 0.12);
+  --ad-error: #c48888;
+  --ad-error-soft: rgba(196, 136, 136, 0.12);
 
   /* 字体 */
   --ad-font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
