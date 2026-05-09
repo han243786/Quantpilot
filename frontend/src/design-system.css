@@ -209,6 +209,54 @@ select option {
   overflow-x: hidden;
 }
 
+/* ── 自绘标题栏 (decorations: false) ─────────────────── */
+
+.ad-titlebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  z-index: 200;
+  user-select: none;
+  -webkit-app-region: drag;
+}
+.ad-titlebar-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ad-text-muted);
+  margin-left: 4px;
+}
+.ad-titlebar-controls {
+  display: flex;
+  -webkit-app-region: no-drag;
+}
+.ad-titlebar-btn {
+  width: 36px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--ad-text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+}
+.ad-titlebar-btn:hover {
+  background: var(--ad-panel-hover);
+}
+.ad-titlebar-btn--close:hover {
+  background: #c42b1c;
+  color: #fff;
+}
+
 /* ── 左侧侧边栏 ────────────────────────────────────────── */
 
 .ad-sidebar {
