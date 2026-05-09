@@ -38,6 +38,10 @@ jobs:
         shell: cmd
         run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-governance.ps1
 
+      - name: Check i18n (English user-facing strings)
+        shell: cmd
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-i18n.ps1
+
       - name: Install frontend dependencies
         working-directory: frontend
         shell: cmd

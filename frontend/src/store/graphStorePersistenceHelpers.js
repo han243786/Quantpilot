@@ -35,8 +35,27 @@ const DEFAULT_LOCAL_ACTOR = {
   display_name: "Local operator"
 };
 
+function safeSetItem(key, value) {
+  const data = JSON.stringify(value);
+  // 超过 500KB 时检查 localStorage 配额
+  if (data.length > 500_000 && typeof navigator !== "undefined" && navigator.storage?.estimate) {
+    try {
+      const estimate = JSON.parse(window.localStorage.getItem("__qp_storage_estimate__") || "{}");
+      const quota = estimate.quota || 5_242_880; // 默认 5MB
+      const usage = data.length + (estimate.usage || 0);
+      if (usage > quota * 0.9) {
+        console.warn("[storage] localStorage 使用量接近上限, 请清理旧策略图版本");
+      }
+    } catch { /* 配额检查失败不影响保存 */ }
+    navigator.storage.estimate().then((e) => {
+      window.localStorage.setItem("__qp_storage_estimate__", JSON.stringify(e));
+    }).catch(() => {});
+  }
+  window.localStorage.setItem(key, data);
+}
+
 function saveGraphToStorage(graph) {
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(graph));
+  safeSetItem(STORAGE_KEY, graph);
 }
 
 function loadGraphFromStorage() {
@@ -297,7 +316,7 @@ async function resolveGraphForDetail(graphId, fallbackGraph, registry = defaultR
 }
 
 function saveCapabilitiesToCache(capabilities) {
-  window.localStorage.setItem(CAPABILITY_CACHE_KEY, JSON.stringify(capabilities));
+  safeSetItem(CAPABILITY_CACHE_KEY, capabilities);
 }
 
 function loadCapabilitiesFromCache() {
