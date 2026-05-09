@@ -416,6 +416,21 @@ body {
   background: var(--ad-accent-hover) !important;
 }
 
+/* ── 离线横幅 ────────────────────────────────────────── */
+
+.ad-offline-banner {
+  position: fixed;
+  top: 0;
+  left: var(--ad-sidebar-collapsed);
+  right: 0;
+  z-index: 150;
+  padding: 6px 16px;
+  background: var(--ad-warning-soft);
+  color: var(--ad-warning);
+  text-align: center;
+  font-size: var(--ad-font-size-sm);
+}
+
 /* ── 面板拖拽分隔条 ──────────────────────────────────── */
 
 .ad-panel-divider {

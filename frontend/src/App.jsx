@@ -38,6 +38,21 @@ export default function App() {
   const tutorialSteps = createTutorialSteps(t);
   const [isInitialized, setIsInitialized] = useState(false);
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
+  const [isOffline, setIsOffline] = useState(
+    typeof navigator !== "undefined" ? !navigator.onLine : false
+  );
+
+  // 离线/在线检测
+  useEffect(() => {
+    const goOffline = () => setIsOffline(true);
+    const goOnline = () => setIsOffline(false);
+    window.addEventListener("offline", goOffline);
+    window.addEventListener("online", goOnline);
+    return () => {
+      window.removeEventListener("offline", goOffline);
+      window.removeEventListener("online", goOnline);
+    };
+  }, []);
 
   // ⌘K / Ctrl+K 全局监听
   useEffect(() => {
@@ -120,6 +135,11 @@ export default function App() {
   return (
     <>
       <LeftSidebar />
+      {isOffline ? (
+        <div className="ad-offline-banner" role="alert">
+          网络连接已断开，部分功能不可用。
+        </div>
+      ) : null}
       <main className="ad-main-content">
         <Suspense fallback={<AppShellFallback />}>{content}</Suspense>
       </main>

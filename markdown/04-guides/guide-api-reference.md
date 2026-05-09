@@ -76,12 +76,16 @@ curl -X POST http://127.0.0.1:3000/api/runtime/compile \
     "runtime_config": {
       "metadata": {"graph_id": "my_strategy", "compile_id": "c1", "name": "Test", "version": "1", "mode": "paper"},
       "data_sources": [{"data_id": "btc_1h", "symbol": "BTCUSDT", "exchange": "binance", "interval": "1h", "days": 30}],
-      "intents": [{"intent_id": "ma_cross", "kind": "sma", "params": {"fast_period": 10, "slow_period": 30}}],
-      "risks": []
+      "intent_generators": [{"intent_id": "ma_cross", "kind": "sma", "params": {"fast_period": 10, "slow_period": 30}}],
+      "agents": [],
+      "risk_controls": [],
+      "executions": []
     },
     "graph_json": {"metadata": {"graph_id": "my_strategy"}, "nodes": [...], "edges": [...]}
   }'
 ```
+
+> **字段说明**: `intent_generators` 是意图列表（策略核心），`agents`/`risk_controls`/`executions` 为必填字段（可为空数组）。前端通过 `graphStoreCompileApi.js` 自动填充这些字段。
 
 ### 回测
 

@@ -9,6 +9,7 @@ import { validateGraph } from "../graph/validation";
 import { attachQuantScriptArtifacts } from "../graph/quantscript";
 import { buildActionFailureMessage } from "../utils/actionFailure";
 import { humanizeErrorText, sanitizeDisplayText } from "../utils/errorText";
+import { fetchWithTimeout } from "../utils/api";
 
 const STORAGE_KEY = "quantpilot_frontend_graph";
 const CAPABILITY_CACHE_KEY = "quantpilot_capabilities_cache";
@@ -194,7 +195,7 @@ function normalizeGraphShape(graph) {
 
 
 export async function fetchJson(path) {
-  const response = await fetch(`${API_BASE}${path}`);
+  const response = await fetchWithTimeout(`${API_BASE}${path}`);
   if (!response.ok) {
     const text = await response.text();
     throw new Error(humanizeErrorText(text, `Request failed with status ${response.status}.`));
@@ -203,7 +204,7 @@ export async function fetchJson(path) {
 }
 
 async function postJson(path, body) {
-  const response = await fetch(`${API_BASE}${path}`, {
+  const response = await fetchWithTimeout(`${API_BASE}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
@@ -234,7 +235,7 @@ async function postJson(path, body) {
 }
 
 async function deleteJson(path) {
-  const response = await fetch(`${API_BASE}${path}`, {
+  const response = await fetchWithTimeout(`${API_BASE}${path}`, {
     method: "DELETE"
   });
 
