@@ -147,6 +147,13 @@ body {
   --qp-text-muted: var(--ad-text-muted);
   --qp-radius: var(--ad-radius-md);
   --qp-gap: var(--ad-space-2);
+  /* 链阶段色标 */
+  --data: var(--ad-accent);
+  --intent: #4a8a9a;
+  --agent: var(--ad-warning);
+  --risk: var(--ad-error);
+  --execution: var(--ad-success);
+  --runtime: var(--ad-text-muted);
 }
 
 /* ── 焦点 ─────────────────────────────────────────────── */
