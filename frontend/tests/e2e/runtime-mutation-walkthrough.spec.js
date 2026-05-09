@@ -104,6 +104,8 @@ function mutationWalkthroughRecords() {
 async function enterCurrentWorkspace(page) {
   await page.goto("/");
   await page.getByTestId("strategy-hub-open-current-workspace").click();
+  // v0.4.0: 默认 tab 为仪表盘, 切换到研究标签页获取工具栏
+  await page.getByTestId("workspace-tab-research").click();
   await expect(page.locator(".top-toolbar--workspace")).toBeVisible();
 }
 
