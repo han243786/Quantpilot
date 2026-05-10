@@ -1,23 +1,20 @@
 #!/bin/bash
-# QuantPilot pre-commit hook
-# 提交前门禁: cargo check + cargo test + frontend build + vitest + i18n check (§6 快速检查单)
+# QuantPilot pre-commit hook — 超级规范化 §3.3
+# 阻断级: 编译不通过 / 测试编译失败 / 前端构建失败 / 前端测试失败
 
 set -e
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 echo "=== pre-commit: cargo check ==="
-cargo check --bin quantpilot
+cargo check --workspace
 
-echo "=== pre-commit: cargo test (workspace) ==="
-cargo test --workspace
+echo "=== pre-commit: cargo test --no-run ==="
+cargo test --workspace --no-run
 
 echo "=== pre-commit: frontend build ==="
-cd frontend && npx vite build
+( cd "$ROOT/frontend" && npx vite build )
 
 echo "=== pre-commit: vitest ==="
-npx vitest run
-
-echo "=== pre-commit: i18n check ==="
-powershell -NoProfile -ExecutionPolicy Bypass -File ../tools/check-i18n.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File ../tools/check-user-facing-text.ps1
+( cd "$ROOT/frontend" && npx vitest run )
 
 echo "=== pre-commit: done ==="

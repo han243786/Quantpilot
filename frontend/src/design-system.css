@@ -279,6 +279,12 @@ select option {
   width: var(--ad-sidebar-expanded);
 }
 
+/* Tauri 自绘标题栏 (ad-titlebar, height: 32px, z-index: 200) 覆盖侧边栏顶部,
+   侧边栏需下移以免品牌 Logo 被遮挡 */
+.ad-titlebar ~ .ad-sidebar {
+  top: 32px;
+}
+
 .ad-sidebar-brand {
   display: flex;
   align-items: center;
