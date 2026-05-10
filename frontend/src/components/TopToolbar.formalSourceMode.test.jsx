@@ -31,6 +31,8 @@ function buildGraph(overrides = {}) {
   };
 }
 
+// v0.5.0: General_Policy §2.1 — 用户可见字符串全中文
+
 describe("TopToolbar formal compile source mode", () => {
   const initialState = useGraphStore.getState();
 
@@ -70,11 +72,11 @@ describe("TopToolbar formal compile source mode", () => {
     render(<TopToolbar variant="workspace" />);
 
     expect(screen.getByTestId("toolbar-formal-source-pill")).toHaveTextContent(
-      "Formal source: graph-generated"
+      "正式源码: 图谱生成"
     );
     expect(screen.getByTestId("toolbar-compile-action")).toHaveAttribute(
       "title",
-      expect.stringContaining("graph-generated Formal QuantScript source")
+      expect.stringContaining("图谱生成")
     );
   });
 
@@ -88,11 +90,11 @@ describe("TopToolbar formal compile source mode", () => {
     render(<TopToolbar variant="workspace" />);
 
     expect(screen.getByTestId("toolbar-formal-source-pill")).toHaveTextContent(
-      "Formal source: override"
+      "正式源码: 覆盖"
     );
     expect(screen.getByTestId("toolbar-compile-action")).toHaveAttribute(
       "title",
-      expect.stringContaining("applied Formal QuantScript override")
+      expect.stringContaining("覆盖")
     );
   });
 });

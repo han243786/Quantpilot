@@ -1,4 +1,19 @@
 ﻿use super::*;
+
+/// QS 管道编译: graph JSON → QS 源码 → parse → lower → RuntimeProtocolCoreConfig (§1.1, §1.3)
+pub(super) fn compile_runtime_protocol_via_qs(
+    graph_json: &Value,
+) -> Result<RuntimeProtocolCoreConfig, (StatusCode, String)> {
+    let qs_source = generate_quantscript_from_graph_value(graph_json)
+        .map_err(|e| json_bad_request("qs_generation_failed", format!("从图生成 QS 源码失败: {:#}", e)))?;
+    let graph_value = parse_graph_quantscript_source(&qs_source)
+        .map_err(|e| json_bad_request("qs_parse_failed", format!("QS 解析失败: {:#}", e)))?;
+    let script_module = convert_graph_json_to_script_module(&graph_value)
+        .map_err(|e| json_bad_request("qs_conversion_failed", format!("QS 模块转换失败: {:#}", e)))?;
+    quantscript::lower_script_to_runtime_config(&script_module)
+        .map_err(|e| json_bad_request("qs_lowering_failed", format!("QS 下层转换失败: {:#}", e)))
+}
+
 pub(super) fn register_compile_routes(router: Router<AppState>) -> Router<AppState> {
     router
         .route("/api/runtime/compile", post(compile_runtime_request))
@@ -41,41 +56,12 @@ async fn compile_runtime_request(
         ));
     }
 
-    // Run QS pipeline validation when graph_json is present (supplementary — does not replace legacy compilation)
-    let qs_pipeline_diagnostics = if let Some(ref graph_json) = request.graph_json {
-        match generate_quantscript_from_graph_value(graph_json)
-            .and_then(|qs_source| parse_graph_quantscript_source(&qs_source))
-            .and_then(|graph_value| convert_graph_json_to_script_module(&graph_value))
-            .and_then(|module| quantscript::lower_script_to_runtime_config(&module))
-        {
-            Ok(qs_protocol) => {
-                vec![CompileDiagnostic {
-                    code: "QPCONVOK".to_string(),
-                    severity: CompileDiagnosticSeverity::Warning,
-                    message: format!(
-                        "QS 管道验证通过: {} 个数据源, {} 个意图",
-                        qs_protocol.data_sources.len(),
-                        qs_protocol.intents.len()
-                    ),
-                    target: None,
-                    span_label: None,
-                    hint: None,
-                }]
-            }
-            Err(e) => {
-                crate::safe_eprintln!("[compile_api] QS 管道验证（非致命）: {}", e);
-                Vec::new()
-            }
-        }
-    } else {
-        crate::safe_eprintln!("[compile_api] 警告: 未收到 graph_json, 使用旧编译路径 (将在 v0.4.0 移除)");
-        Vec::new()
-    };
+    // QS 管道是唯一编译路径 (§1.1, §1.3)
+    let qs_protocol = compile_runtime_protocol_via_qs(&request.graph_json)?;
 
-    let mapped = map_frontend_runtime_config(&request.runtime_config).map_err(internal_error)?;
-    let runtime_protocol_counts = (mapped.runtime_protocol.data_sources.len(), mapped.runtime_protocol.intents.len(), mapped.runtime_protocol.agents.len(), mapped.runtime_protocol.risks.len());
-    let runtime_targets = compile_runtime_targets_from_mapped(&mapped);
-    let compiled = compile_runtime_protocol_config(&mapped.runtime_protocol).map_err(internal_error)?;
+    let runtime_protocol_counts = (qs_protocol.data_sources.len(), qs_protocol.intents.len(), qs_protocol.agents.len(), qs_protocol.risks.len());
+    let runtime_targets = build_compile_runtime_targets_from_graph(&request.graph_json);
+    let compiled = compile_runtime_protocol_config(&qs_protocol).map_err(internal_error)?;
     let artifacts = build_compile_artifact_bundle(
         &request.runtime_config.metadata.graph_id,
         &request.runtime_config.metadata.compile_id,
@@ -88,7 +74,20 @@ async fn compile_runtime_request(
     )
     .map_err(internal_error)?;
     let mut diagnostics = collect_compile_diagnostics(&request.runtime_config);
-    diagnostics.extend(qs_pipeline_diagnostics);
+    diagnostics.push(CompileDiagnostic {
+        code: "QSPIPELINE".to_string(),
+        severity: CompileDiagnosticSeverity::Warning,
+        message: format!(
+            "QS 管道编译通过: {} 个数据源, {} 个意图, {} 个代理, {} 个风控",
+            qs_protocol.data_sources.len(),
+            qs_protocol.intents.len(),
+            qs_protocol.agents.len(),
+            qs_protocol.risks.len(),
+        ),
+        target: None,
+        span_label: None,
+        hint: None,
+    });
     let protocol_name = compiled.protocol_name.clone();
     let config_hash = compiled.config_hash.clone();
     let core_ir = compiled.core_ir.clone();

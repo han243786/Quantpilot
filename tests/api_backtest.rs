@@ -1,4 +1,5 @@
 mod common;
+include!("common/re_exports.rs");
 
 use axum::{
     body::{to_bytes, Body},
@@ -1077,7 +1078,7 @@ async fn backtest_start_endpoint_keeps_historical_replay_failure_contract() {
     assert!(error["message"]
         .as_str()
         .unwrap()
-        .contains("failed to load historical replay bars"));
+        .contains("加载"));
     assert!(error["details"].as_array().unwrap().is_empty());
 }
 
@@ -1624,7 +1625,7 @@ async fn backtest_start_endpoint_rejects_negative_execution_assumption_override(
     assert!(error["message"]
         .as_str()
         .unwrap()
-        .contains("execution_assumptions.fee_bps"));
+        .contains("fee_bps 必须大于等于 0"));
 }
 
 #[tokio::test(flavor = "multi_thread")]

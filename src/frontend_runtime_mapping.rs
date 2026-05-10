@@ -1,6 +1,10 @@
 use super::*;
 use qrpc_core::{RebalanceSchedule, Symbol};
 
+/// 动量指标默认阈值比率 (§5.1)
+const DEFAULT_MOMENTUM_THRESHOLD: f64 = 0.02;
+
+#[allow(dead_code)]
 pub(super) fn compile_runtime_targets_from_mapped(
     mapped: &MappedRuntimeConfig,
 ) -> CompileRuntimeTargets {
@@ -11,23 +15,24 @@ pub(super) fn compile_runtime_targets_from_mapped(
     }
 }
 
+/// v0.5.2: 改为接受两个 CompileRuntimeTargets, 消除对 MappedRuntimeConfig 的依赖。
+/// provided 优先级高于 fallback。
 pub(super) fn merge_runtime_targets(
     provided: &CompileRuntimeTargets,
-    mapped: &MappedRuntimeConfig,
+    fallback: &CompileRuntimeTargets,
 ) -> CompileRuntimeTargets {
-    let fallback = compile_runtime_targets_from_mapped(mapped);
-    let mut source_to_node = fallback.source_to_node;
+    let mut source_to_node = fallback.source_to_node.clone();
     source_to_node.extend(provided.source_to_node.clone());
     CompileRuntimeTargets {
         source_to_node,
         runtime_node_id: provided
             .runtime_node_id
             .clone()
-            .or(fallback.runtime_node_id),
+            .or_else(|| fallback.runtime_node_id.clone()),
         execution_node_id: provided
             .execution_node_id
             .clone()
-            .or(fallback.execution_node_id),
+            .or_else(|| fallback.execution_node_id.clone()),
     }
 }
 
@@ -310,7 +315,7 @@ fn frontend_intent_config_value(intent: &IntentConfig) -> Value {
         }),
         IntentKind::Momentum => serde_json::json!({
             "lookback": intent.params.get("lookback").copied().unwrap_or(10.0),
-            "threshold_ratio": intent.params.get("threshold_ratio").copied().unwrap_or(0.02)
+            "threshold_ratio": intent.params.get("threshold_ratio").copied().unwrap_or(DEFAULT_MOMENTUM_THRESHOLD)
         }),
         IntentKind::ZScore => serde_json::json!({
             "window": intent.params.get("window").copied().unwrap_or(20.0),
@@ -360,6 +365,7 @@ fn format_symbol_name(symbol: &Symbol) -> String {
     symbol.as_str().to_string()
 }
 
+#[allow(dead_code)]
 pub(super) struct MappedRuntimeConfig {
     pub(super) runtime_protocol: RuntimeProtocolCoreConfig,
     pub(super) source_to_node: BTreeMap<String, String>,
@@ -367,6 +373,8 @@ pub(super) struct MappedRuntimeConfig {
     pub(super) execution_node_id: Option<String>,
 }
 
+#[allow(dead_code)]
+#[deprecated(since = "0.5.1", note = "禁止用于编译: 请使用 QS 管道 (generate_quantscript_from_graph_value → lower_script_to_runtime_config) 作为唯一编译路径。此函数仅保留用于提取节点映射元数据 (source_to_node/runtime_node_id/execution_node_id)。")]
 pub(super) fn map_frontend_runtime_config(
     input: &FrontendRuntimeConfig,
 ) -> anyhow::Result<MappedRuntimeConfig> {
@@ -910,6 +918,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(deprecated)]
     fn map_frontend_runtime_config_threads_multi_symbol_rebalance_fields() {
         let mapped =
             map_frontend_runtime_config(&sample_runtime_config()).expect("mapping should succeed");

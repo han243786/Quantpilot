@@ -150,38 +150,38 @@ pub(super) fn validate_runtime_event_envelopes(
     for (index, event) in events.iter().enumerate() {
         let envelope = &event.envelope;
         if event.event_id.trim().is_empty() {
-            return Err(format!("event at index {index} has empty event_id"));
+            return Err(format!("索引 {index} 处的事件 event_id 为空"));
         }
         if event.event_type.trim().is_empty() {
-            return Err(format!("event `{}` has empty event_type", event.event_id));
+            return Err(format!("事件 `{}` 的 event_type 为空", event.event_id));
         }
         if !is_known_frontend_event_type(&event.event_type) {
             return Err(format!(
-                "event `{}` has unknown event_type `{}`",
+                "事件 `{}` 的 event_type `{}` 未知",
                 event.event_id, event.event_type
             ));
         }
         if envelope.event_id != event.event_id {
             return Err(format!(
-                "event `{}` envelope event_id mismatch `{}`",
+                "事件 `{}` 的信封 event_id `{}` 不匹配",
                 event.event_id, envelope.event_id
             ));
         }
         if envelope.event_type != event.event_type {
             return Err(format!(
-                "event `{}` envelope event_type mismatch `{}`",
+                "事件 `{}` 的信封 event_type `{}` 不匹配",
                 event.event_id, envelope.event_type
             ));
         }
         if envelope.run_id != run_id {
             return Err(format!(
-                "event `{}` envelope run_id mismatch `{}`",
+                "事件 `{}` 的信封 run_id `{}` 不匹配",
                 event.event_id, envelope.run_id
             ));
         }
         if envelope.sequence_no != previous_sequence + 1 {
             return Err(format!(
-                "event `{}` envelope sequence_no is {}, expected {}",
+                "事件 `{}` 的信封 sequence_no 为 {}，期望 {}",
                 event.event_id,
                 envelope.sequence_no,
                 previous_sequence + 1
@@ -189,13 +189,13 @@ pub(super) fn validate_runtime_event_envelopes(
         }
         if envelope.stage != stage_for_frontend_event(&event.event_type) {
             return Err(format!(
-                "event `{}` envelope stage does not match event_type `{}`",
+                "事件 `{}` 的信封 stage 与 event_type `{}` 不匹配",
                 event.event_id, event.event_type
             ));
         }
         if envelope.retention_class != retention_class_for_frontend_event(&event.event_type) {
             return Err(format!(
-                "event `{}` envelope retention_class does not match event_type `{}`",
+                "事件 `{}` 的信封 retention_class 与 event_type `{}` 不匹配",
                 event.event_id, event.event_type
             ));
         }
@@ -210,25 +210,25 @@ pub(super) fn validate_runtime_event_envelopes(
             || envelope.mode.trim().is_empty()
         {
             return Err(format!(
-                "event `{}` envelope has incomplete governance identity",
+                "事件 `{}` 的信封治理身份不完整",
                 event.event_id
             ));
         }
         if envelope.occurred_at_ms != event.event_time_ms {
             return Err(format!(
-                "event `{}` envelope occurred_at_ms does not match event_time_ms",
+                "事件 `{}` 的信封 occurred_at_ms 与 event_time_ms 不匹配",
                 event.event_id
             ));
         }
         if envelope.capability_hash != governance.capability_hash {
             return Err(format!(
-                "event `{}` envelope capability_hash does not match governance",
+                "事件 `{}` 的信封 capability_hash 与治理不匹配",
                 event.event_id
             ));
         }
         if envelope.deployment_revision != governance.deployment_revision {
             return Err(format!(
-                "event `{}` envelope deployment_revision does not match governance",
+                "事件 `{}` 的信封 deployment_revision 与治理不匹配",
                 event.event_id
             ));
         }

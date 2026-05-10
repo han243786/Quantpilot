@@ -155,7 +155,7 @@ export default function App() {
           <span className="ad-titlebar-title">QuantPilot</span>
           <div className="ad-titlebar-controls">
             <button className="ad-titlebar-btn" onClick={() => appWindow.minimize()} aria-label="最小化">—</button>
-            <button className="ad-titlebar-btn" onClick={() => appWindow.toggleMaximize()} aria-label="最大化">{isMaximized ? "❐" : "□"}</button>
+            <button className="ad-titlebar-btn" onClick={() => appWindow.toggleMaximize()} aria-label="最大化">{isMaximized ? "□" : "❐"}</button>
             <button className="ad-titlebar-btn ad-titlebar-btn--close" onClick={() => appWindow.close()} aria-label="关闭">✕</button>
           </div>
         </div>

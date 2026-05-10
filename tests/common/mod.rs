@@ -7,7 +7,7 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-mod backend {
+pub(crate) mod backend {
     include!("../../src/main.rs");
 
     pub fn test_app_router(

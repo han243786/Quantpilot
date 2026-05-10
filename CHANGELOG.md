@@ -1,5 +1,78 @@
 # Changelog
 
+## 0.5.2
+
+全量排雷收口。16 项 S0/P1/P2 完成。
+
+### S0 测试套件修复
+- 后端测试编译修复: `tests/common/mod.rs` 的 `include!()` 模式断裂修复, 4 模块 `pub` + 重导出, `safe_eprintln!` 宏移入 `main.rs`
+- 前端测试 DOM 修复: 17 文件更新 — CSS 选择器 `.strategy-*` → `.ad-*` / `[aria-label]`, tab 索引重映射, EventStreamPanel 子组件测试重写, supportMatrix 18 指标同步
+- 全量回归验证: `cargo test --workspace` 编译通过, `npm run test` 86/86 文件 243/243 测试通过
+
+### P1 架构排雷
+- 消除 `map_frontend_runtime_config` 剩余调用: 3 处 → 0, `merge_runtime_targets` 改为接受 `CompileRuntimeTargets`
+- 存储配额激活: 核查确认 `ensure_storage_quota` 已含全局 475MB 检查
+- data_module 汉化: 8 处 Binance/OKX 解析错误英文→中文
+- Rust warning 清零: 31 → 0 (quantscript dead_code + quantpilot 死代码清理 + 变量修复)
+- 测试有效性抽检: 3/3 抽检测试能捕获回归
+
+### P2 质量收口
+- 文档同步: README v0.1.0→v0.5.1, overview 状态更新, 里程碑状态更新
+- 告警阈值验证: WARN=400MB / FORCE=450MB / REJECT=475MB 与 §7.2 一致
+- DEV 清理验证: `QUANTPILOT_DEV=true` 强制清理瞬态数据
+- 版本号验证: 4 处一致为 0.5.1
+
+## 0.5.1
+
+全量审计收口排雷。15 项 P0/P1/P2 完成。
+
+### P0 架构排雷
+- 编译路径统一: 删除 `map_frontend_runtime_config` 直接编译路径，QS 管道成为唯一编译入口 (`compile_runtime_protocol_via_qs`)
+- 53 处英文错误消息汉化: 11 个文件中所有 `bail!`/`anyhow!`/`Err()` 用户可读文本改为中文
+- 存储配额强制执行: 激活 `GLOBAL_MAX_BYTES`、新增 450MB/475MB 阈值、每目录配额、`startup_storage_cleanup` 90% 激进清理 + DEV 模式强制清理瞬态数据
+
+### P1 合规收口
+- `persist_with_ttl` + `ensure_storage_quota`: 11 个写入路径全部声明 `StorageLifecycle` 并执行配额检查
+- 6 个缺失的 indicator 单元测试: MA Cross, RSI, MACD, Momentum, Z-Score, QuoteObserve 各新增 smoke test
+- 6 处硬编码魔数消除: 提取为命名常量
+- 3 处英文测试断言 + 2 处文档问题修复
+- CHANGELOG 补全 v0.4.2 ~ v0.5.0
+
+## 0.5.0
+
+Adobe 风格前端全量重构 + 38 项 General_Policy 全量审计。
+
+### 前端重构
+- Adobe 暗色面板设计系统 (`--ad-*` CSS 令牌)
+- App Shell: 左侧 48px 图标侧边栏 + 160px hover 展开
+- 工作区面板化: 策略编辑器 / 回测面板 / 研究控制台
+- 组件重设计: 对标 Adobe Photoshop/Illustrator 专业暗色风格
+- SVG 图标组件库替换 Unicode emoji
+
+### 后端审计
+- §1-§8 38 项全量合规审计
+- 6 角度 30 项扩展审计 + R1/R2/R3 回归审计 13 发现
+- 18 项 S0/P1/P2: 安全加固 / 体验修复 / 质量收口
+
+## 0.4.3
+
+用户体验与安全收口。5 项完成。
+
+- JSON 错误汉化: `json_rejection_middleware` 返回中文错误
+- API 文档字段名同步
+- CLI 安全: 交互式凭证输入替代命令行参数
+- 强制认证: 全局 auth middleware
+- Vault 懒初始化: 避免启动时文件系统依赖
+
+## 0.4.2
+
+收口排雷。10 项完成。
+
+- raw print 迁移: 40 处 `eprintln!`/`println!` → `safe_eprintln!`
+- 废弃 API 清理: `problem_*` 系列全部迁移
+- 测试修复
+- Tauri 启动优化
+
 ## 0.4.1
 
 安全审计全量修复。12 项发现中 11 项已修复，1 项已文档化。

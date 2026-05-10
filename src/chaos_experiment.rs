@@ -231,6 +231,9 @@ async fn persist_chaos_report(
     store_dir: &FsPath,
     report: &ChaosExperimentReport,
 ) -> std::io::Result<()> {
+    crate::storage_lifecycle::ensure_storage_quota(
+        std::path::Path::new("storage"), "chaos", crate::storage_lifecycle::StorageLifecycle::Transient,
+    )?;
     let json = serde_json::to_vec_pretty(report)?;
     fs::create_dir_all(store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", report.experiment_id));

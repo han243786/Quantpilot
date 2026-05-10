@@ -58,13 +58,6 @@ pub fn sanitize_secrets(input: &str) -> String {
     result
 }
 
-#[macro_export]
-macro_rules! safe_eprintln {
-    ($($arg:tt)*) => {
-        eprintln!("{}", $crate::safe_log::sanitize_secrets(&format!($($arg)*)))
-    };
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -35,13 +35,13 @@ const TRANSIENT_BACKTEST_DIR_PREFIX: &str = "transient-backtest-";
 const TRANSIENT_SAVING_DIR_PREFIX: &str = ".saving-transient-backtest-";
 const PROMOTION_WORK_DIR_TTL_MS: u64 = 24 * 60 * 60 * 1000;
 const PROMOTION_WORK_DIR_MAX_COUNT: usize = 32;
-const PROMOTION_WORK_DIR_MAX_BYTES: u64 = 512 * 1024 * 1024;
-const PROMOTION_WORK_DIR_MAX_SINGLE_BYTES: u64 = 256 * 1024 * 1024;
+const PROMOTION_WORK_DIR_MAX_BYTES: u64 = 200 * 1024 * 1024;  // 对齐暂时目录上限 (§7.2)
+const PROMOTION_WORK_DIR_MAX_SINGLE_BYTES: u64 = 50 * 1024 * 1024;
 pub const DEFAULT_TRANSIENT_BACKTEST_SPILL_THRESHOLD_BYTES: u64 = 4 * 1024 * 1024;
 const TRANSIENT_BACKTEST_TTL_MS: u64 = 24 * 60 * 60 * 1000;
 const TRANSIENT_BACKTEST_MAX_COUNT: usize = 32;
-const TRANSIENT_BACKTEST_MAX_BYTES: u64 = 512 * 1024 * 1024;
-const TRANSIENT_BACKTEST_MAX_SINGLE_BYTES: u64 = 256 * 1024 * 1024;
+const TRANSIENT_BACKTEST_MAX_BYTES: u64 = 50 * 1024 * 1024;   // 对齐瞬间目录上限 (§7.2)
+const TRANSIENT_BACKTEST_MAX_SINGLE_BYTES: u64 = 50 * 1024 * 1024;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventLogArtifact {
@@ -484,7 +484,7 @@ async fn ensure_has_room_for_transient_backtest(transient_store_dir: &Path) -> s
     let (count, total_bytes) = transient_backtest_quota_state(transient_store_dir).await?;
     if count >= TRANSIENT_BACKTEST_MAX_COUNT || total_bytes > TRANSIENT_BACKTEST_MAX_BYTES {
         return Err(std::io::Error::other(format!(
-            "transient backtest quota exceeded before spill: count {count}/{TRANSIENT_BACKTEST_MAX_COUNT}, bytes {total_bytes}/{TRANSIENT_BACKTEST_MAX_BYTES}"
+            "瞬态回测工件数量超出配额 (淘汰前): 数量 {count}/{TRANSIENT_BACKTEST_MAX_COUNT}, 字节 {total_bytes}/{TRANSIENT_BACKTEST_MAX_BYTES}"
         )));
     }
     Ok(())
@@ -494,7 +494,7 @@ async fn enforce_transient_backtest_quota(transient_store_dir: &Path) -> std::io
     let (count, total_bytes) = transient_backtest_quota_state(transient_store_dir).await?;
     if count > TRANSIENT_BACKTEST_MAX_COUNT || total_bytes > TRANSIENT_BACKTEST_MAX_BYTES {
         return Err(std::io::Error::other(format!(
-            "transient backtest quota exceeded after spill: count {count}/{TRANSIENT_BACKTEST_MAX_COUNT}, bytes {total_bytes}/{TRANSIENT_BACKTEST_MAX_BYTES}"
+            "瞬态回测工件数量超出配额 (淘汰后): 数量 {count}/{TRANSIENT_BACKTEST_MAX_COUNT}, 字节 {total_bytes}/{TRANSIENT_BACKTEST_MAX_BYTES}"
         )));
     }
     Ok(())
@@ -527,7 +527,7 @@ async fn enforce_single_transient_backtest_quota(path: &Path) -> std::io::Result
     let bytes = directory_size_bytes(path).await?;
     if bytes > TRANSIENT_BACKTEST_MAX_SINGLE_BYTES {
         return Err(std::io::Error::other(format!(
-            "transient backtest exceeds single-artifact quota: bytes {bytes}/{TRANSIENT_BACKTEST_MAX_SINGLE_BYTES}"
+            "瞬态回测单工件超出配额: 字节 {bytes}/{TRANSIENT_BACKTEST_MAX_SINGLE_BYTES}"
         )));
     }
     Ok(())
@@ -617,7 +617,7 @@ async fn validate_backtest_artifact_bundle(
         return Err(std::io::Error::new(
             std::io::ErrorKind::InvalidData,
             format!(
-                "backtest artifact id mismatch: expected `{}`, got `{}`",
+                "回测工件 ID 不匹配: 期望 `{}`, 实际 `{}`",
                 record.backtest_id, loaded.backtest_id
             ),
         ));
@@ -717,7 +717,7 @@ async fn enforce_backtest_promotion_work_quota(store_dir: &Path) -> std::io::Res
 
     if count > PROMOTION_WORK_DIR_MAX_COUNT || total_bytes > PROMOTION_WORK_DIR_MAX_BYTES {
         return Err(std::io::Error::other(format!(
-            "backtest promotion temp quota exceeded: count {count}/{PROMOTION_WORK_DIR_MAX_COUNT}, bytes {total_bytes}/{PROMOTION_WORK_DIR_MAX_BYTES}"
+            "回测提升临时目录配额超出: 数量 {count}/{PROMOTION_WORK_DIR_MAX_COUNT}, 字节 {total_bytes}/{PROMOTION_WORK_DIR_MAX_BYTES}"
         )));
     }
     Ok(())
@@ -727,7 +727,7 @@ async fn enforce_single_promotion_work_dir_quota(path: &Path) -> std::io::Result
     let bytes = directory_size_bytes(path).await?;
     if bytes > PROMOTION_WORK_DIR_MAX_SINGLE_BYTES {
         return Err(std::io::Error::other(format!(
-            "backtest promotion temp artifact exceeds single-artifact quota: bytes {bytes}/{PROMOTION_WORK_DIR_MAX_SINGLE_BYTES}"
+            "回测提升临时单工件超出配额: 字节 {bytes}/{PROMOTION_WORK_DIR_MAX_SINGLE_BYTES}"
         )));
     }
     Ok(())

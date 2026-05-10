@@ -51,7 +51,7 @@ pub(super) fn new_app_state(
     // 凭证保险库: 加载失败时服务继续运行, 凭证 API 返回 503
     let credential_vault = crate::credential_vault::CredentialVault::load()
         .map(Arc::new)
-        .map_err(|e| crate::safe_eprintln!("[启动] 凭证保险库未加载: {} (凭证 API 将不可用)", e))
+        .map_err(|e| safe_eprintln!("[启动] 凭证保险库未加载: {} (凭证 API 将不可用)", e))
         .ok();
     crate::safe_log::register_credential_patterns(
         credential_vault

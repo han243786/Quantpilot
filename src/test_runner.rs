@@ -236,7 +236,7 @@ impl TestRunner {
                         }
                     }
                     if node_id.is_empty() && !affected.is_empty() {
-                        crate::safe_eprintln!("[TestRunner] 修改: {}={} 已应用于 {} 个节点: [{}]",
+                        safe_eprintln!("[TestRunner] 修改: {}={} 已应用于 {} 个节点: [{}]",
                             param_name, new_value, affected.len(), affected.join(", "));
                     }
                 }
@@ -299,13 +299,13 @@ impl TestRunner {
                         true
                     }
                     Err(e) => {
-                        crate::safe_eprintln!("[TestRunner] 编译失败: {e:?}");
+                        safe_eprintln!("[TestRunner] 编译失败: {e:?}");
                         false
                     }
                 }
             }
             Err(e) => {
-                crate::safe_eprintln!("[TestRunner] 降级失败: {e:?}");
+                safe_eprintln!("[TestRunner] 降级失败: {e:?}");
                 false
             }
         }
@@ -613,7 +613,8 @@ impl TestRunner {
                 .unwrap_or(0.0);
 
             if last_price > 0.0 {
-                let trade_notional = (total_eq * 0.005).min(max_trade_qty);
+                const MIN_TRADE_QTY_RATIO: f64 = 0.005;
+                let trade_notional = (total_eq * MIN_TRADE_QTY_RATIO).min(max_trade_qty);
                 let qty = format!("{:.6}", (trade_notional / last_price).min(0.01).max(0.001));
                 let aggressive_px = format!("{:.1}", last_price * 1.002);
                 let order_body = serde_json::json!({

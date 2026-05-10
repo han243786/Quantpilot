@@ -1,106 +1,114 @@
 # QuantPilot
 
-QuantPilot is a single-machine quantitative trading sandbox focused on honest capability boundaries, reproducible runtime behavior, and release-time contract discipline.
+QuantPilot 是一个单机量化交易沙盒, 聚焦于诚实的能力边界、可复现的运行时行为和发布时契约纪律。
 
-The current release target is `v0.1.0`.
+当前版本: **v0.5.1** | 前一版本: [v0.5.0](CHANGELOG.md) | 全局规则: [General_Policy.md](markdown/General_Policy.md)
 
-Current release posture: a private baseline may proceed after the accepted
-baseline gate passes, but public release must not be described as ready until
-the dependency, license, and repository-visibility blockers are closed.
+当前发布姿态: 私有基线已通过接受基线门禁。公开发布前必须完成外向许可证决策和剩余 npm audit 风险接受。
 
-## Beta Scope
+## 产品边界
 
-QuantPilot beta scope today:
+QuantPilot v0.5.1 的实际能力范围:
 
-- paper runtime only
-- sandbox execution only
-- exchanges within the current beta boundary: `binance`, `okx`
-- symbol boundary in the current beta path: `BTCUSDT`, `ETHUSDT`, `SOLUSDT`
-- graph editor, validation, compile, paper run, backtest, run history, and backtest detail/compare views
-- QuantScript runtime lowering when `quantscript.formal_source` is present
+- **运行时模式**: paper (纸面交易), testnet (测试网)
+- **交易所**: `binance`, `okx`
+- **交易对**: `BTCUSDT`, `ETHUSDT`, `SOLUSDT`
+- **桌面应用**: Tauri v2 自绘标题栏 Windows 桌面应用 (`start.bat` 一键启动)
+- **前端**: Adobe 暗色面板设计系统、图编辑器、策略工作区、回测详情/对比、研究控制台
+- **QuantScript**: 语法解析 → HIR → lowering → Core IR 完整编译管道
 
-## Beta Intent Kinds
+### 支持的全部指标 (18 种)
 
-Intent kinds available in the beta path:
+| # | 指标 | 状态 | # | 指标 | 状态 |
+|---|------|:--:|---|------|:--:|
+| 1 | MA Cross (双移动平均) | ✅ | 10 | OBV (能量潮) | ✅ |
+| 2 | MA Deviation (移动平均偏差) | ✅ | 11 | CMF (资金流量) | ✅ |
+| 3 | RSI (相对强弱) | ✅ | 12 | ADX (平均趋向) | ✅ |
+| 4 | MACD | ✅ | 13 | Stochastic (随机) | ✅ |
+| 5 | Momentum (动量) | ✅ | 14 | CCI (商品通道) | ✅ |
+| 6 | ZScore (Z 分数) | ✅ | 15 | Parabolic SAR | ✅ |
+| 7 | Spread (价差) | ✅ | 16 | Keltner Channel | ✅ |
+| 8 | QuoteObserve (报价观察) | ✅ | 17 | Donchian Channel | ✅ |
+| 9 | ATR (真实波幅) | ✅ | 18 | Bollinger Bands (布林带) | ✅ |
 
-- double moving average
-- moving-average deviation
-- RSI
-- MACD
-- Momentum
-- ZScore
+## 非宣称能力
 
-## Non-Claims
+以下项目不得描述为已支持的产品能力:
 
-The following items must not be described as supported product capability:
+- 实盘交易 (live trading)
+- 研究级回测语义 (research-grade backtest)
+- 真正套利平台支持
+- 第三方插件市场
+- 通过 QuantScript 执行任意主机代码
+- 公开 SaaS 服务
 
-- live trading
-- research-grade backtest semantics
-- true arbitrage platform support
-- third-party plugin marketplace support
-- arbitrary host-code execution through QuantScript
+## 编译路径权威
 
-## Compile source of truth
+编译产物优先级固定:
 
-Compile artifact priority is fixed:
+- `strategy_ir` 仅是语义预检工件, 不替代运行时编译
+- `quantscript.formal_source` 存在时拥有运行时 lowering 权威
+- QS 管道 (graph JSON → QS 源码 → parse → lower → Core IR) 是唯一编译入口 (§1.1, §1.3)
+- 可执行输出始终遵循运行时编译, 而非 `strategy_ir` 预检结果
 
-- `strategy_ir` is semantic preflight only
-- `quantscript.formal_source` owns runtime lowering when present
-- otherwise runtime compile uses the graph-generated `runtime_config`
-- runnable output always follows runtime compile, not the `strategy_ir` preflight result
+命名边界也已固定:
 
-Naming boundary is also fixed:
+- `quantscript.formal_source` 是正式的 QuantScript 产品路径
+- `strategy_graph` / graph-source 工件是图序列化和导入/导出辅助, 不是正式的 QuantScript 语言
+- 旧版基于 section 的 QuantScript 配置解析仅作为 crate 内部兼容保留, 不作为主入口
 
-- `quantscript.formal_source` is the formal QuantScript product path
-- `strategy_graph` / graph-source artifacts are graph serialization and import/export helpers, not the formal QuantScript language
-- legacy section-based QuantScript config parsing remains compatibility-only inside the crate and is not the primary product entrypoint
+语法参考:
 
-Current syntax reference:
+- [QuantScript 主干基线](./markdown/04-guides/guide-quantscript-trunk-baseline.md)
+- [正式 QuantScript 语法指南](./markdown/04-guides/guide-formal-quantscript-syntax.md)
 
-- [QuantScript Trunk Baseline](./markdown/guides/quantscript/guide-quantscript-trunk-baseline.md)
-- [Formal QuantScript Syntax Guide](./markdown/guides/quantscript/guide-formal-quantscript-syntax.md)
+## 快速启动
 
-## Quick start
+### 桌面应用 (Tauri)
 
-### Backend
+从仓库根目录运行:
 
-Run from the repository root:
-
-```powershell
-.\start-backend.bat
+```bat
+.\start.bat
 ```
 
-The backend listens on `http://127.0.0.1:3000`.
+Tauri 自动启动后端 (端口 3000) 和前端 Vite dev server (端口 5173), 并在桌面窗口中加载应用。
 
-### Frontend
+要求: Rust 工具链 + Node.js 18+ + WebView2 (Windows 11 已内置)。
 
-Run from the repository root:
+### 仅后端 (无桌面窗口)
 
 ```powershell
-.\frontend\start-frontend.bat
+cargo run
 ```
 
-The frontend dev server listens on `http://127.0.0.1:5173`.
+后端监听 `http://127.0.0.1:3000`。
 
-`frontend\start-frontend.bat` installs frontend dependencies automatically when `node_modules` is missing.
+### 仅前端 (无桌面窗口)
 
-## Environment variables
+```powershell
+cd frontend
+npm install           # 首次需要
+npm run dev
+```
 
-Frontend environment variables:
+前端 dev server 监听 `http://127.0.0.1:5173`。
 
-- `VITE_BACKEND_ORIGIN`
-  Used by the Vite dev proxy. Defaults to `http://127.0.0.1:3000`.
-- `VITE_API_BASE_URL`
-  Optional direct API base. When set, the browser uses this value instead of deriving `/api` from the current origin.
+## 环境变量
 
-See:
+| 变量 | 用途 | 默认值 |
+|------|------|--------|
+| `VITE_BACKEND_ORIGIN` | Vite dev proxy 后端地址 | `http://127.0.0.1:3000` |
+| `VITE_API_BASE_URL` | 浏览器直连 API 地址 | 从当前 origin 派生 `/api` |
+| `QUANTPILOT_DEV` | DEV 模式 (缩短 TTL, 强制清理瞬态数据) | 空 (`false`) |
+| `QUANTPILOT_STORAGE_WATERMARK_MB` | 存储告警阈值 | `400` (80%) |
+
+参见:
 
 - `./.env.example`
 - `./frontend/.env.example`
 
-## Quality gates
-
-Private-baseline candidates should pass all of the following:
+## 质量门禁
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1
@@ -112,101 +120,79 @@ cd frontend; cmd /c npm run build
 cd frontend; cmd /c npm run test:e2e
 ```
 
-Canonical one-shot Windows gate wrapper:
+一键收口门禁包装器:
 
 ```powershell
 .\tools\run-closeout-gates.bat
 ```
 
-Optional local smoke gate when editing the gate scripts themselves:
+E2E 门禁合约:
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-gates-smoke.ps1
-```
+- `cmd /c npm run test:e2e` 从 `frontend` 运行, 无需手动预启动后端
+- Playwright E2E 使用隔离的 API-mock 合约, 不得向 `127.0.0.1:3000` 泄漏请求
 
-E2E gate contract:
+npm 审计:
 
-- `cmd /c npm run test:e2e` must run from `frontend` without manually pre-starting the backend
-- Playwright E2E uses the isolated API-mock contract and must not leak requests to `127.0.0.1:3000`
+- `cd frontend; npm audit --audit-level=moderate` 是公开发布阻断检查
+- 当前 `npm audit` **0 漏洞** (v0.5.1 已清零)
+- 之前的 `postcss <8.5.10` 中等发现通过 lockfile 补丁修复为 `postcss@8.5.12`
 
-Security audit boundary:
+## 仓库卫生
 
-- `cd frontend; cmd /c npm audit --audit-level=moderate` is a public-release
-  blocker check
-- the previous `postcss <8.5.10` moderate finding was removed through a
-  lockfile patch to `postcss@8.5.12`
-- the remaining Vite/esbuild audit chain requires a breaking Vite/Vitest
-  migration path, so it is not part of the private-baseline gate until that
-  migration is explicitly accepted and verified
-- the owner accepts the remaining audit risk only for private-baseline use;
-  this does not authorize public release or public-release-ready wording
+以下内容由 `.gitignore` 忽略:
 
-## Repository hygiene
+- Rust `target/` 输出
+- 前端 `node_modules/`、`dist/`、Playwright 输出、测试结果
+- `storage/runs/`、`storage/backtests/`、`storage/experiments/` 下的运行时工件
+- `storage/graphs/*.json`、`storage/graphs/*.qs`、`storage/graphs/versions/` 下的本地图快照
+- `storage/audit/*.json` 下的本地审计 JSON
+- 本地辅助日志 (如 `codex-vite-dev.log`)
 
-Local build and runtime artifacts are intentionally ignored:
+## 文档入口
 
-- Rust `target/` output
-- frontend `node_modules/`, `dist/`, Playwright output, and test results
-- runtime artifacts under `storage/runs/`, `storage/backtests/`,
-  `storage/experiments/`, and local test artifact directories
-- local graph snapshots under `storage/graphs/*.json`, `storage/graphs/*.qs`,
-  and `storage/graphs/versions/`
-- local audit JSON under `storage/audit/*.json`
-- local helper logs such as `codex-vite-dev.log`
+- [文档根](./markdown/README.md)
+- [文档索引](./markdown/10-overview/overview-docs-index.md)
+- [当前状态与路线图](./markdown/10-overview/overview-current-status-and-roadmap.md)
+- [支持矩阵](./markdown/03-implementation/governance/implementation-support-matrix.md)
+- [编译链合约](./markdown/03-implementation/governance/implementation-compile-chain-contract.md)
+- [QuantScript 保留界面合约](./markdown/03-implementation/governance/implementation-quantscript-retained-surface-contract.md)
+- [运行时/回测解释合约](./markdown/03-implementation/runtime/implementation-runtime-backtest-explanation-contract.md)
+- [持久化/回放合约](./markdown/03-implementation/runtime/implementation-persistence-replay-contract.md)
+- [能力治理](./markdown/03-implementation/governance/implementation-capability-governance.md)
+- [能力治理注册表快照](./markdown/03-implementation/governance/implementation-capability-governance-registry.generated.md)
+- [制品治理](./markdown/03-implementation/governance/implementation-artifact-governance.md)
+- [测试模块实现](./markdown/03-implementation/runtime/implementation-testing-module.md)
+- [交易沙盒实现](./markdown/03-implementation/runtime/implementation-trading-sandbox.md)
+- [活跃 QRPC RFC 索引 (`RFC-001` 至 `RFC-020`)](./markdown/02-protocol/README.md)
+- [API 参考](./markdown/04-guides/guide-api-reference.md)
+- [策略模板库](./markdown/04-guides/guide-strategy-template-library.md)
 
-Artifact cleanup is dry-run by default:
+## 发布状态
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\cleanup-artifacts.ps1
-```
+仓库可进行技术优化而无需猜测法律策略。所有者对公开发布的决策已明确:
 
-Optional flags:
+- 在任何公开发布之前, 仓库保持私有状态, 使用当前保留所有权利的占位声明
+- 仅当重新考虑公开发布资格时, 才将 [LICENSE](./LICENSE) 中的占位文本替换为最终批准的外向许可证文本
+- 仅在通过接受基线门禁后创建私有基线提交
 
-- `-OlderThanDays <N>`
-- `-IncludeLogs`
-- `-IncludeRuntimeArtifacts`
-- `-Mode execute`
+当前发布状态摘要:
 
-## Documentation entry points
+- `LICENSE` 仍为占位文本
+- `tools\run-closeout-gates.bat` 是已接受的私有基线门禁集
+- 前端依赖审计风险已明确接受(仅限私有基线使用); 在 Vite/Vitest 迁移策略被接受并验证之前, 仍为公开发布阻断项
+- 公开发布仍被阻断, 直到做出单独的公开发布批准和外向许可证决策
 
-- [Docs Root](./markdown/README.md)
-- [Docs Index](./markdown/overview/overview-docs-index.md)
-- [Support Matrix](./markdown/implementation/governance/implementation-support-matrix.md)
-- [Compile-Chain Contract](./markdown/implementation/governance/implementation-compile-chain-contract.md)
-- [QuantScript Retained-Surface Contract](./markdown/implementation/governance/implementation-quantscript-retained-surface-contract.md)
-- [Runtime / Backtest Explanation Contract](./markdown/implementation/runtime/implementation-runtime-backtest-explanation-contract.md)
-- [Persistence / Replay Contract](./markdown/implementation/runtime/implementation-persistence-replay-contract.md)
-- [Capability Governance](./markdown/implementation/governance/implementation-capability-governance.md)
-- [Capability Governance Registry Snapshot](./markdown/implementation/governance/implementation-capability-governance-registry.generated.md)
-- [Artifact Governance](./markdown/implementation/governance/implementation-artifact-governance.md)
-- [Current Status And Release State](./markdown/overview/overview-current-status-and-roadmap.md)
-- [Private Baseline Risk Register](./markdown/implementation/planning/implementation-private-baseline-risk-register.md)
-- [Trading Sandbox Implementation](./markdown/implementation/runtime/implementation-trading-sandbox.md)
-- [Testing Module Implementation](./markdown/implementation/runtime/implementation-testing-module.md)
-- [Active QRPC RFC Index (`RFC-001` to `RFC-020`)](./markdown/protocol/README.md)
+## 发布就绪度
 
-## Release checklist items still requiring owner choice
+v0.5.1 发布就绪度总结 (详见 [v0.5.2 里程碑](./markdown/06-milestones/v0.5.2/01-规划方案.md)):
 
-The repository can be optimized technically without guessing legal policy.
-The owner decision for public visibility is now explicit:
+| 维度 | 分数 | 关键风险 |
+|------|:----:|------|
+| 功能开发进度 | 7/10 | 18/18 指标 evaluator; QS 管道主编译路径 |
+| 仓库稳定程度 | 4/10 | 后端测试编译崩溃 (65 错); 前端测试 12 文件失败 |
+| 发布就绪度 | 3/10 | 测试套件全线崩溃; 存储配额未完成 |
+| 用户友好程度 | 6/10 | 主路径全中文; npm audit 清零 |
+| 系统整体稳定性 | 4/10 | 编译通过但回归检测缺失 |
 
-- keep the repository private under the current all-rights-reserved placeholder
-  state before any public release, even though functional development progress,
-  repository stability, and release readiness are owner-scored at least `9/10`
-- replace the placeholder text in [LICENSE](./LICENSE) with final approved
-  outbound license text only when public-release eligibility is reconsidered
-- create private baseline commits only after the accepted baseline gate passes
-
-Shortest current release state list:
-
-- `LICENSE` is still placeholder-only
-- `tools\run-closeout-gates.bat` is the accepted private-baseline gate set
-- remaining frontend dependency audit risk is explicitly accepted only for
-  private baseline use; it remains a public-release blocker until the
-  Vite/Vitest migration strategy is accepted and verified
-- public release remains blocked until a separate public-release approval and
-  outbound license decision are made
-
-See [First Release Readiness](./markdown/implementation/planning/implementation-first-release-readiness.md)
-for the baseline go/no-go list and owner action list.
+**v0.5.2 焦点: 排雷收口为主, 不纳新功能, 不画新饼, 不引入新思想。**
 

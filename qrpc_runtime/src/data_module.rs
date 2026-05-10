@@ -1107,31 +1107,31 @@ fn parse_binance_klines(payload: &Value) -> Result<Vec<RawKline>> {
                 open_time: row
                     .first()
                     .and_then(Value::as_u64)
-                    .ok_or_else(|| anyhow!("Binance K 线缺少 open time"))?,
+                    .ok_or_else(|| anyhow!("Binance K 线缺少开盘时间"))?,
                 open: parse_f64_value(
                     row.get(1)
-                        .ok_or_else(|| anyhow!("Binance K 线缺少 open"))?,
+                        .ok_or_else(|| anyhow!("Binance K 线缺少开盘价"))?,
                 )?,
                 high: parse_f64_value(
                     row.get(2)
-                        .ok_or_else(|| anyhow!("Binance K 线缺少 high"))?,
+                        .ok_or_else(|| anyhow!("Binance K 线缺少最高价"))?,
                 )?,
                 low: parse_f64_value(
                     row.get(3)
-                        .ok_or_else(|| anyhow!("Binance K 线缺少 low"))?,
+                        .ok_or_else(|| anyhow!("Binance K 线缺少最低价"))?,
                 )?,
                 close: parse_f64_value(
                     row.get(4)
-                        .ok_or_else(|| anyhow!("Binance K 线缺少 close"))?,
+                        .ok_or_else(|| anyhow!("Binance K 线缺少收盘价"))?,
                 )?,
                 volume: parse_f64_value(
                     row.get(5)
-                        .ok_or_else(|| anyhow!("Binance K 线缺少 volume"))?,
+                        .ok_or_else(|| anyhow!("Binance K 线缺少成交量"))?,
                 )?,
                 close_time: row
                     .get(6)
                     .and_then(Value::as_u64)
-                    .ok_or_else(|| anyhow!("Binance K 线缺少 close time"))?,
+                    .ok_or_else(|| anyhow!("Binance K 线缺少收盘时间"))?,
             })
         })
         .collect::<Result<Vec<_>>>()?;
@@ -1146,7 +1146,7 @@ fn ensure_okx_success(payload: &Value) -> Result<()> {
     let code = payload
         .get("code")
         .and_then(Value::as_str)
-        .ok_or_else(|| anyhow!("OKX 响应缺少 code"))?;
+        .ok_or_else(|| anyhow!("OKX 响应缺少状态码"))?;
     if code == "0" {
         return Ok(());
     }
@@ -1335,7 +1335,7 @@ fn persist_historical_cache(
     let path = historical_cache_path(source);
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).with_context(|| {
-            format!("failed to create historical cache dir {}", parent.display())
+            format!("创建历史数据缓存目录失败: {}", parent.display())
         })?;
     }
     let body = serde_json::to_string_pretty(&HistoricalBarsCache {
@@ -1408,7 +1408,7 @@ pub(crate) fn historical_kline_bars_for_backtest(
             }
             Err(error).with_context(|| {
                 format!(
-                    "failed to load historical replay bars for {} on {:?}",
+                    "加载 {} (交易所 {:?}) 的历史重放 K 线数据失败",
                     source.data_id, source.exchange
                 )
             })

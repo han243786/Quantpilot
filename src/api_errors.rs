@@ -50,7 +50,7 @@ pub(super) fn json_bad_request_with_details_and_partial(
     (
         StatusCode::BAD_REQUEST,
         serde_json::to_string(&payload).unwrap_or_else(|_| {
-            "{\"error\":\"serialization_failure\",\"message\":\"failed to serialize error response\",\"details\":[]}".to_string()
+            "{\"error\":\"serialization_failure\",\"message\":\"序列化错误响应失败\",\"details\":[]}".to_string()
         }),
     )
 }

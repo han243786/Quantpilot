@@ -1,6 +1,6 @@
 # 当前状态与发布状态
 
-> 最后更新：2026-05-08 | 当前版本：v0.4.1 (已提交) → v0.4.2 (排雷收口中)
+> 最后更新：2026-05-10 | 当前版本：v0.5.1 → v0.5.2 ✅ (16/16 完成)
 
 ## 版本路线
 
@@ -11,25 +11,23 @@
 | v0.3.0 | ✅ | 22 项合规 + 10 信号 |
 | v0.4.0 | ✅ | UI / 教程 / 凭证安全 |
 | v0.4.1 | ✅ | 安全审计 12 项修复 |
-| v0.4.2 | 📋 | 收口排雷 10 项 — 无新功能 |
+| v0.4.2 | ✅ | 收口排雷 10 项 — 无新功能 |
+| v0.4.3 | ✅ | 用户体验与安全收口 5 项 |
+| v0.5.0 | ✅ | Adobe 前端重构 + 38 项全量审计 |
+| v0.5.1 | ✅ | 全量审计收口排雷 15 项 |
+| v0.5.2 | ✅ | 排雷收口 16 项 — 无新功能 |
 
 ## 当前产品真实情况
 
-QuantPilot 已经拥有一条可运行的端到端 beta 链：
+QuantPilot v0.5.1 拥有一条可运行的端到端 beta 链：
 
-- 前端图编辑器、验证、编译、运行时事件显示和回测详情页面
-- 后端 Axum API 用于图保存/加载、编译、paper 运行、回测和能力发现
-- 运行时链用于 data -> intent -> agent -> risk -> execution -> fill
-- QuantScript AST、辅助函数分析、公式 lowering 和运行时支持的指标 Intent
+- 桌面应用: Tauri v2 自绘标题栏 Windows 桌面应用
+- 前端: Adobe 暗色面板设计系统, SVG 图标, 图编辑器, 策略工作区, 回测详情/对比, 研究控制台
+- 后端: Axum API (图保存/加载, 编译, paper 运行, 回测, 能力发现)
+- 运行时链: data → intent → agent → risk → execution → fill
+- QuantScript: 语法解析 → HIR → lowering → Core IR 完整编译管道
 
-当前 K 线驱动的 Intent 支持是真实的：
-
-- 双移动平均
-- 移动平均偏差
-- RSI
-- MACD
-- Momentum
-- ZScore
+当前全部 18 种指标的 K 线驱动 Intent 支持是真实的 (详见 README 指标表)。
 
 当前基本回测支持也是真实的：
 
@@ -45,27 +43,19 @@ QuantPilot 已经拥有一条可运行的端到端 beta 链：
 - 当前现货 beta 中的真正套利代理支持
 - 具有完整市场微观结构语义的研究级回测
 - 任何 paper 策略都可以直接在 QuantScript 中表达
+- 公开 SaaS 服务
 
 前端现在诚实地处理这些差距：
 
 - 不支持的标准模块侧边栏中不显示
 - 旧版图仍可加载，但不支持的模块作为显式验证错误浮现
-- 后端暴露 `/api/capabilities` 作为支持的模块、运行时模式、指标、交易所和交易对的当前真实数据源
-- `/api/capabilities` 现在同时暴露兼容性字段和结构化支持条目：
-  - `strategy_ir.indicator_support`
-  - `runtime.mode_support`
-  - `runtime.execution_module_support`
-  - `market_data.exchange_support`
-  - `market_data.symbol_support`
-  - `frontend.declared_module_keys`
-  - `frontend.module_support`
+- `/api/capabilities` 暴露支持的模块、运行时模式、指标、交易所和交易对的当前真实数据源
 
 当前声明但不支持的真实情况必须按字面理解：
 
 - `Custom` 仅通过受限的 Strategy IR 表达式路径支持，该路径降低到 Core IR
 - `Custom` 不允许任意主机代码、直接风险变异或直接执行绕过
-- 插件清单和注册表支持现在存在于 `qrpc_core` 中，但当前的插件市场切片仍然是仅本地元数据；它还不是远程安装或第三方分发界面
-- 旧消费者仍可读取旧版摘要字段，但新消费者应优先使用结构化支持条目
+- 插件清单和注册表支持存在于 `qrpc_core` 中，但当前仅为本地元数据；尚不是远程安装或第三方分发界面
 
 ## 活跃合约边界
 
@@ -79,10 +69,10 @@ QuantPilot 已经拥有一条可运行的端到端 beta 链：
 
 当前合约详情现在存储在专用文档中，而非在此重复：
 
-- 编译解释：[编译链合约](../implementation/governance/implementation-compile-chain-contract.md)
-- 运行时和回测解释：[运行时/回测解释合约](../implementation/runtime/implementation-runtime-backtest-explanation-contract.md)
-- 持久化和回放：[持久化/回放合约](../implementation/runtime/implementation-persistence-replay-contract.md)
-- QuantScript 保留界面：[QuantScript 保留界面合约](../implementation/governance/implementation-quantscript-retained-surface-contract.md)
+- 编译解释：[编译链合约](../03-implementation/governance/implementation-compile-chain-contract.md)
+- 运行时和回测解释：[运行时/回测解释合约](../03-implementation/runtime/implementation-runtime-backtest-explanation-contract.md)
+- 持久化和回放：[持久化/回放合约](../03-implementation/runtime/implementation-persistence-replay-contract.md)
+- QuantScript 保留界面：[QuantScript 保留界面合约](../03-implementation/governance/implementation-quantscript-retained-surface-contract.md)
 
 ## 当前架构边界
 
@@ -106,39 +96,43 @@ QuantScript 比配置外壳更强，但仍然不是一个完整的研究语言�
 
 使用这些文档作为活跃参考：
 
-- [QuantScript 主干基线](../guides/quantscript/guide-quantscript-trunk-baseline.md)
-- [正式 QuantScript 语法指南](../guides/quantscript/guide-formal-quantscript-syntax.md)
-- [V1 冻结/取消范围清单](../guides/quantscript/guide-v1-freeze-descope-checklist.md)
+- [QuantScript 主干基线](../04-guides/guide-quantscript-trunk-baseline.md)
+- [正式 QuantScript 语法指南](../04-guides/guide-formal-quantscript-syntax.md)
 
 ## 当前收尾/发布状态
 
-当前的优化优先级是发布状态确认，而非能力扩展。
+v0.5.1 已完成 15 项 P0/P1/P2 优化。v0.5.2 聚焦于排雷收口 — 修复测试套件回归、激活存储配额、消除架构违规残存。
+
 使用下面的专用文档作为活跃发布界面：
 
-- [首次发布就绪](../implementation/planning/implementation-first-release-readiness.md)
-- [支持矩阵](../implementation/governance/implementation-support-matrix.md)
-- [测试层期望](../implementation/runtime/implementation-test-layer-expectations.md)
-- [已归档功能收尾台账](../archive/planning-retired/implementation-functional-closeout-task-table.md)
+- [v0.5.2 规划方案](../06-milestones/v0.5.2/01-规划方案.md)
+- [v0.5.2 综合优化清单](../06-milestones/v0.5.2/02-综合优化清单.md)
+- [支持矩阵](../03-implementation/governance/implementation-support-matrix.md)
+- [编译链合约](../03-implementation/governance/implementation-compile-chain-contract.md)
 
-当前仓库级状态：
+当前仓库级状态 (v0.5.1):
 
-- `cargo test --workspace` 通过
-- `cargo clippy --workspace --all-targets -- -D warnings` 通过
-- 前端单元测试通过
-- 规范的 Windows 前端 gate 形式是 `cmd /c npm run ...`
-- 截至最新的 `2026-04-26` P0/P1 收尾，`cmd /c npm run test:e2e` 从 `frontend` 通过，无需手动预启动后端，因为套件保持在隔离的 API 模拟合约上
-- UTF-8 和面向用户文本门禁通过
-- 能力治理快照是最新的
-- P1 历史过滤和保存流程现在使新保存的运行/回测记录在过时过滤器中保持可见，然后重新加载持久化详情状态
-- 已接受的收尾包装器通过；剩余清理是 P2 仓库卫生和公开发布阻塞项处理
-- 可选的视觉审查路由/API fixture 漂移于 `2026-04-26` 修复并于 `2026-04-28` 重新检查；规范现在在设置 `VISUAL_REVIEW=1` 时使用减少运动捕获拍摄策略中心、策略工作区、回测详情和回测比较截图
-- `postcss <8.5.10` 中等审计发现已通过 `postcss@8.5.12` 修复；剩余的 npm 审计风险是 Vite/esbuild 链，仍然仅接受用于私有基线使用，并且仍然阻塞公开发布声明
+| 检查项 | 状态 | 备注 |
+|--------|:--:|------|
+| `cargo check --workspace` | ✅ | 编译通过, 18 warnings |
+| `cargo test --workspace` | ✅ | 编译通过; 1 预存 MACD 测试逻辑问题 |
+| `cargo clippy --workspace` | ✅ | 通过 |
+| 前端 `npm run build` | ✅ | 通过 |
+| 前端 `npm run test` | ✅ | 86 文件 243 测试全部通过 |
+| 前端 `npm audit` | ✅ | 0 漏洞 |
+| 前端 `npm run test:e2e` | ❓ | 待验证 |
+| UTF-8 门禁 | ✅ | 通过 |
+| 面向用户文本门禁 | ✅ | 通过 |
+| 能力治理快照 | ✅ | 最新 |
+| npm audit (moderate+) | ✅ | 0 漏洞 |
+| 存储配额强制执行 | 🟡 | 框架已实现, 核心函数未接入 — v0.5.2 P1-2 |
+| `map_frontend_runtime_config` | ✅ | 仅剩函数定义和测试调用 — P1-1 完成 |
 
 ## V1 冻结方向
 
-- 将当前的正式 QuantScript 主干、已落地的共享核心切片、向外移动的 `risk.profile(...)` / `execution.profile(...)`、第一个狭窄的价差切片和第一个可执行的回测/报告切片视为保留的 `V1` 界面
-- 将更广泛的价差合约、`MACD` 共享核心扩展、通用风险/执行 DSL 增长、每笔交易比较、成交时间线比较和更广泛的研究报告扩展视为延期工作
-- 在宣布 `V1` 关闭之前，优先删除重复的真实数据源、压缩已完成的队列项、保持文档/提示/UI 措辞与保留界面一致，而非扩大功能范围
+- 将当前的正式 QuantScript 主干、已落地的共享核心切片、`risk.profile(...)` / `execution.profile(...)`、价差切片和可执行回测/报告切片视为保留的 `V1` 界面
+- 将更广泛的价差合约、`MACD` 共享核心扩展、通用风险/执行 DSL 增长、每笔交易比较、成交时间线比较视为延期工作
+- 在宣布 `V1` 关闭之前，优先排雷收口、消除重复真实数据源、保持文档/提示/UI 措辞与保留界面一致，而非扩大功能范围
 
 ## 接受规则
 
@@ -148,5 +142,5 @@ QuantScript 比配置外壳更强，但仍然不是一个完整的研究语言�
 - 运行时语义存在
 - 验证可以诚实地拒绝不支持的使用
 - 事件输出可以解释行为
-- 测试覆盖该路径
+- 测试覆盖该路径 (且测试实际可运行)
 - 前端和文档文本保存为 UTF-8 并验证在渲染产品中正确显示

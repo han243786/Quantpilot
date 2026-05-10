@@ -100,7 +100,7 @@ pub fn handle_credential_command(args: &[String]) -> anyhow::Result<()> {
     }
 
     let sub = &args[1];
-    let mut vault = crate::credential_vault::CredentialVault::load()?;
+    let vault = crate::credential_vault::CredentialVault::load()?;
     // 将 vault 中的字段值注册到日志脱敏模块
     crate::safe_log::register_credential_patterns(vault.extract_secret_patterns());
 

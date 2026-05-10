@@ -1,4 +1,5 @@
 mod common;
+include!("common/re_exports.rs");
 
 use axum::{
     body::{to_bytes, Body},
@@ -294,7 +295,7 @@ async fn runtime_parameter_mutation_rejects_noop_with_rejection_event() {
     assert!(proposal["rejection_reason"]
         .as_str()
         .unwrap()
-        .contains("same canonical parameter version"));
+        .contains("相同的规范参数版本"));
 
     let run_detail = request_json(
         app.clone(),

@@ -90,6 +90,11 @@ pub(super) async fn run_sandbox_verification(
         generated_at_ms: now_ms,
     };
 
+    if let Err(e) = crate::storage_lifecycle::ensure_storage_quota(
+        std::path::Path::new("storage"), "sandbox-reports", crate::storage_lifecycle::StorageLifecycle::Transient,
+    ) {
+        return Err(io_error(e));
+    }
     persist_json(&state.sandbox_report_store_dir, &report.proposal_id, &report)
         .await
         .map_err(io_error)?;

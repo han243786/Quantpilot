@@ -1,5 +1,15 @@
 use super::*;
 
+macro_rules! check_storage_quota {
+    ($dir:literal, $lifecycle:ident) => {
+        crate::storage_lifecycle::ensure_storage_quota(
+            std::path::Path::new("storage"),
+            $dir,
+            crate::storage_lifecycle::StorageLifecycle::$lifecycle,
+        )?;
+    };
+}
+
 async fn atomic_write_json(path: &FsPath, value: &impl serde::Serialize) -> std::io::Result<()> {
     let tmp = path.with_extension("tmp");
     let json = serde_json::to_string_pretty(value)
@@ -12,6 +22,7 @@ pub(super) async fn persist_run_record(
     run_store_dir: &FsPath,
     record: &RunRecord,
 ) -> std::io::Result<()> {
+    check_storage_quota!("runs", Temporary);
     fs::create_dir_all(run_store_dir).await?;
     let path = run_store_dir.join(format!("{}.json", record.run_id));
     atomic_write_json(&path, record).await
@@ -21,6 +32,7 @@ pub(super) async fn persist_backtest_record(
     backtest_store_dir: &FsPath,
     record: &BacktestRecord,
 ) -> std::io::Result<BacktestArtifactViews> {
+    check_storage_quota!("backtests", Temporary);
     persist_backtest_artifacts(backtest_store_dir, record).await
 }
 
@@ -28,6 +40,7 @@ pub(super) async fn persist_experiment_record(
     experiment_store_dir: &FsPath,
     record: &ExperimentRecord,
 ) -> std::io::Result<()> {
+    check_storage_quota!("experiments", Temporary);
     fs::create_dir_all(experiment_store_dir).await?;
     let path = experiment_store_dir.join(format!("{}.json", record.experiment_id));
     atomic_write_json(&path, record).await
@@ -115,6 +128,7 @@ pub(super) async fn persist_runtime_report_record(
     report_store_dir: &FsPath,
     record: &RuntimeEvidenceReportRecord,
 ) -> std::io::Result<()> {
+    check_storage_quota!("reports", Temporary);
     fs::create_dir_all(report_store_dir).await?;
     let path = report_store_dir.join(format!(
         "{}.json",
@@ -161,6 +175,7 @@ pub(super) async fn persist_runtime_parameter_mutation_record(
     mutation_store_dir: &FsPath,
     record: &RuntimeParameterMutationRecord,
 ) -> std::io::Result<()> {
+    check_storage_quota!("mutations", Temporary);
     fs::create_dir_all(mutation_store_dir).await?;
     let path = mutation_store_dir.join(format!(
         "{}.json",
@@ -210,6 +225,7 @@ pub(super) async fn persist_runtime_ai_proposal_record(
     ai_proposal_store_dir: &FsPath,
     record: &RuntimeAiProposalRecord,
 ) -> std::io::Result<()> {
+    check_storage_quota!("ai-proposals", Transient);
     fs::create_dir_all(ai_proposal_store_dir).await?;
     let path = ai_proposal_store_dir.join(format!(
         "{}.json",

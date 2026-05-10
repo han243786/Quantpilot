@@ -147,7 +147,7 @@ impl RuntimePluginRegistry {
 
     pub fn activate(&mut self, plugin_id: &str) -> Result<(), String> {
         let Some(lifecycle) = self.lifecycle.get_mut(plugin_id) else {
-            return Err(format!("plugin `{plugin_id}` is not registered"));
+            return Err(format!("插件 `{plugin_id}` 未注册"));
         };
         lifecycle.state = PluginLifecycleState::Active;
         lifecycle.fault_reason = None;
@@ -156,7 +156,7 @@ impl RuntimePluginRegistry {
 
     pub fn deactivate(&mut self, plugin_id: &str) -> Result<(), String> {
         let Some(lifecycle) = self.lifecycle.get_mut(plugin_id) else {
-            return Err(format!("plugin `{plugin_id}` is not registered"));
+            return Err(format!("插件 `{plugin_id}` 未注册"));
         };
         lifecycle.state = PluginLifecycleState::Stopped;
         Ok(())
@@ -168,7 +168,7 @@ impl RuntimePluginRegistry {
         reason: impl Into<String>,
     ) -> Result<(), String> {
         let Some(lifecycle) = self.lifecycle.get_mut(plugin_id) else {
-            return Err(format!("plugin `{plugin_id}` is not registered"));
+            return Err(format!("插件 `{plugin_id}` 未注册"));
         };
         lifecycle.state = PluginLifecycleState::Faulted;
         lifecycle.fault_reason = Some(reason.into());

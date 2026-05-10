@@ -359,10 +359,10 @@ pub(super) fn validate_backtest_execution_assumption_overrides(
     };
 
     if overrides.fee_bps.is_some_and(|value| value < 0.0) {
-        return Err("backtest_options.execution_assumptions.fee_bps must be >= 0".to_string());
+        return Err("backtest_options.execution_assumptions.fee_bps 必须大于等于 0".to_string());
     }
     if overrides.slippage_bps.is_some_and(|value| value < 0.0) {
-        return Err("backtest_options.execution_assumptions.slippage_bps must be >= 0".to_string());
+        return Err("backtest_options.execution_assumptions.slippage_bps 必须大于等于 0".to_string());
     }
 
     Ok(())

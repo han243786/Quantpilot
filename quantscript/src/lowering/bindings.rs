@@ -33,6 +33,7 @@ pub(crate) struct BindingEnv {
 }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub(crate) enum IndicatorBinding {
     MovingAverage {
         source: DataSourceConfig,
@@ -476,7 +477,7 @@ fn indicator_from_generic_call<F>(
     args: &[CallArg],
     env: &BindingEnv,
     data_sources: &[DataSourceConfig],
-    name: &str,
+    _name: &str,
     make: F,
 ) -> Result<Option<IndicatorBinding>>
 where
@@ -504,8 +505,10 @@ fn indicator_from_psar_call(
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
     let source = binding_source_from_arg(args.get(0), env, data_sources)?;
-    let step = arg_as_f64(args.get(1)).unwrap_or(0.02);
-    let max_step = arg_as_f64(args.get(2)).unwrap_or(0.2);
+    const DEFAULT_PSAR_STEP: f64 = 0.02;
+    const DEFAULT_PSAR_MAX_STEP: f64 = 0.2;
+    let step = arg_as_f64(args.get(1)).unwrap_or(DEFAULT_PSAR_STEP);
+    let max_step = arg_as_f64(args.get(2)).unwrap_or(DEFAULT_PSAR_MAX_STEP);
     Ok(Some(IndicatorBinding::ParabolicSar { source, step, max_step }))
 }
 

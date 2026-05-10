@@ -143,6 +143,8 @@ pub(super) struct FrontendRunRequest {
     pub(super) capability_context: Option<FrontendCapabilityContext>,
     pub(super) runtime_config: FrontendRuntimeConfig,
     #[serde(default)]
+    pub(super) graph_json: Option<Value>,
+    #[serde(default)]
     pub(super) runtime_targets: CompileRuntimeTargets,
     #[serde(default)]
     pub(super) backtest_options: FrontendBacktestOptions,
@@ -199,6 +201,8 @@ pub(super) struct FrontendExperimentRequest {
     #[serde(default)]
     pub(super) capability_context: Option<FrontendCapabilityContext>,
     pub(super) runtime_config: FrontendRuntimeConfig,
+    #[serde(default)]
+    pub(super) graph_json: Option<Value>,
     #[serde(default)]
     pub(super) runtime_targets: CompileRuntimeTargets,
     #[serde(default)]
@@ -597,8 +601,7 @@ pub(super) struct ParseGraphQuantScriptRequest {
 #[derive(Debug, Deserialize)]
 pub(super) struct CompileRuntimeRequest {
     pub(super) runtime_config: FrontendRuntimeConfig,
-    #[serde(default)]
-    pub(super) graph_json: Option<Value>,
+    pub(super) graph_json: Value,
 }
 
 #[derive(Debug, Deserialize)]

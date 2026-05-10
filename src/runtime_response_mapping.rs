@@ -1029,19 +1029,19 @@ fn cursor_from_replay_options(
         if options.cursor == 0 && options.sequence_cursor.is_none() {
             return Ok(0);
         }
-        return Err("replay cursor is outside the empty filtered replay window".to_string());
+        return Err("重放游标超出空过滤重放窗口范围".to_string());
     }
     if let Some(sequence_cursor) = options.sequence_cursor {
         return events
             .iter()
             .position(|event| event_sequence_no(event, 0) >= sequence_cursor)
             .ok_or_else(|| {
-                format!("sequence_cursor `{sequence_cursor}` is outside the filtered replay window")
+                format!("sequence_cursor `{sequence_cursor}` 超出过滤重放窗口范围")
             });
     }
     if options.cursor >= events.len() {
         return Err(format!(
-            "cursor `{}` is outside the filtered replay window of {} events",
+            "游标 `{}` 超出 {} 个事件的过滤重放窗口范围",
             options.cursor,
             events.len()
         ));

@@ -37,7 +37,7 @@ pub(super) async fn api_key_auth(
                 rng.fill(&mut bytes).ok();
                 bytes.iter().map(|b| format!("{:02x}", b)).collect::<String>()
             });
-            crate::safe_eprintln!(
+            safe_eprintln!(
                 "[auth] QUANTPILOT_API_KEY 未设置, 已生成随机 key: {}. 请求需携带 Authorization: Bearer {}",
                 key, key
             );

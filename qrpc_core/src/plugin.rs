@@ -28,27 +28,27 @@ impl PluginManifest {
         let mut errors = Vec::new();
         if self.api_version != PLUGIN_MANIFEST_V1_VERSION {
             errors.push(format!(
-                "manifest.api_version must be `{}`",
+                "manifest.api_version 必须为 `{}`",
                 PLUGIN_MANIFEST_V1_VERSION
             ));
         }
         if self.id.trim().is_empty() {
-            errors.push("manifest.id is required".to_string());
+            errors.push("manifest.id 不能为空".to_string());
         }
         if self.version.trim().is_empty() {
-            errors.push("manifest.version is required".to_string());
+            errors.push("manifest.version 不能为空".to_string());
         }
         if self.display.name.trim().is_empty() {
-            errors.push("manifest.display.name is required".to_string());
+            errors.push("manifest.display.name 不能为空".to_string());
         }
         if self.extension_points.is_empty() {
-            errors.push("manifest.extension_points must contain at least one entry".to_string());
+            errors.push("manifest.extension_points 必须至少包含一个条目".to_string());
         }
 
         let mut extension_points = BTreeSet::new();
         for point in &self.extension_points {
             if !extension_points.insert(*point) {
-                errors.push(format!("duplicate extension point `{point:?}`"));
+                errors.push(format!("重复的扩展点 `{point:?}`"));
             }
             if !self.kind.supported_extension_points().contains(point) {
                 errors.push(format!(
@@ -62,17 +62,17 @@ impl PluginManifest {
         let mut capability_ids = BTreeSet::new();
         for capability in &self.capability_declarations {
             if capability.id.trim().is_empty() {
-                errors.push("capability_declarations[].id is required".to_string());
+                errors.push("capability_declarations[].id 不能为空".to_string());
                 continue;
             }
             if capability.version.trim().is_empty() {
                 errors.push(format!(
-                    "capability_declarations[`{}`].version is required",
+                    "capability_declarations[`{}`].version 不能为空",
                     capability.id
                 ));
             }
             if !capability_ids.insert(capability.id.as_str()) {
-                errors.push(format!("duplicate capability id `{}`", capability.id));
+                errors.push(format!("重复的能力合约 id `{}`", capability.id));
             }
             match PluginCapabilityContract::parse(&capability.id) {
                 Some(contract) => {
@@ -82,14 +82,14 @@ impl PluginManifest {
                         .contains(&contract)
                     {
                         errors.push(format!(
-                            "plugin kind `{}` cannot declare capability contract `{}`",
+                            "插件类型 `{}` 无法声明能力合约 `{}`",
                             self.kind.as_str(),
                             contract.as_str()
                         ));
                     }
                     if capability.version != PLUGIN_CAPABILITY_CONTRACT_V1_VERSION {
                         errors.push(format!(
-                            "capability `{}` must use version `{}`",
+                            "能力合约 `{}` 必须使用版本 `{}`",
                             capability.id, PLUGIN_CAPABILITY_CONTRACT_V1_VERSION
                         ));
                     }
@@ -104,24 +104,24 @@ impl PluginManifest {
         let mut dependency_ids = BTreeSet::new();
         for dependency in &self.dependencies {
             if dependency.plugin_id.trim().is_empty() {
-                errors.push("dependencies[].plugin_id is required".to_string());
+                errors.push("dependencies[].plugin_id 不能为空".to_string());
             }
             if !dependency_ids.insert(dependency.plugin_id.as_str()) {
-                errors.push(format!("duplicate dependency `{}`", dependency.plugin_id));
+                errors.push(format!("重复的依赖 `{}`", dependency.plugin_id));
             }
         }
 
         if self.compatibility.core_ir_version.trim().is_empty() {
-            errors.push("compatibility.core_ir_version is required".to_string());
+            errors.push("compatibility.core_ir_version 不能为空".to_string());
         }
         if self.compatibility.capability_api_version.trim().is_empty() {
-            errors.push("compatibility.capability_api_version is required".to_string());
+            errors.push("compatibility.capability_api_version 不能为空".to_string());
         }
         if self.security.max_compute_ms == 0 {
-            errors.push("security.max_compute_ms must be > 0".to_string());
+            errors.push("security.max_compute_ms 必须大于 0".to_string());
         }
         if self.security.max_memory_mb == 0 {
-            errors.push("security.max_memory_mb must be > 0".to_string());
+            errors.push("security.max_memory_mb 必须大于 0".to_string());
         }
 
         if errors.is_empty() {

@@ -206,20 +206,22 @@ async fn start_test_run(
     validate_runtime_capability_guard(request.capability_context.as_ref()).map_err(|details| {
         json_bad_request_with_details(
             "capability_boundary_violation",
-            "runtime writes require a current capability hash and permission boundary",
+            "运行时写入需要当前的能力哈希和权限边界",
             details,
         )
     })?;
     validate_runtime_config_capabilities(&request.runtime_config).map_err(|details| {
         json_bad_request_with_details(
             "capability_gated",
-            "runtime config uses capabilities that are not enabled in the current beta",
+            "运行时配置使用了当前 Beta 版本未启用的能力",
             details,
         )
     })?;
-    let mapped = map_frontend_runtime_config(&request.runtime_config).map_err(internal_error)?;
+    let graph_json = request.graph_json.as_ref()
+        .ok_or_else(|| json_bad_request("bad_request", "运行时请求必须包含 graph_json，请从图编辑器发起"))?;
+    let qs_protocol = compile_runtime_protocol_via_qs(graph_json)?;
     let compiled =
-        compile_runtime_protocol_config(&mapped.runtime_protocol).map_err(internal_error)?;
+        compile_runtime_protocol_config(&qs_protocol).map_err(internal_error)?;
     let mut sandbox = RealTimeSandbox::new(RuntimeCoordinator::new(compiled));
     let now_ms = current_time_ms();
     sandbox.start().map_err(internal_error)?;
@@ -227,7 +229,8 @@ async fn start_test_run(
         .run_session(now_ms, now_ms + RUN_WINDOW_MS)
         .map_err(internal_error)?;
     let run_id = format!("run_{}", now_ms);
-    let runtime_targets = merge_runtime_targets(&request.runtime_targets, &mapped);
+    let graph_targets = build_compile_runtime_targets_from_graph(graph_json);
+    let runtime_targets = merge_runtime_targets(&request.runtime_targets, &graph_targets);
     let governance = runtime_governance_snapshot(&request.runtime_config.metadata, None);
     let mut events = collect_frontend_events(&session, &runtime_targets);
     prepend_capability_snapshot_event(
@@ -300,22 +303,24 @@ async fn execute_backtest_request(
     validate_runtime_capability_guard(request.capability_context.as_ref()).map_err(|details| {
         json_bad_request_with_details(
             "capability_boundary_violation",
-            "runtime writes require a current capability hash and permission boundary",
+            "运行时写入需要当前的能力哈希和权限边界",
             details,
         )
     })?;
     validate_runtime_config_capabilities(&request.runtime_config).map_err(|details| {
         json_bad_request_with_details(
             "capability_gated",
-            "runtime config uses capabilities that are not enabled in the current beta",
+            "运行时配置使用了当前 Beta 版本未启用的能力",
             details,
         )
     })?;
     validate_backtest_execution_assumption_overrides(&request.backtest_options)
         .map_err(|message| json_bad_request("bad_request", message))?;
-    let mapped = map_frontend_runtime_config(&request.runtime_config).map_err(internal_error)?;
+    let graph_json = request.graph_json.as_ref()
+        .ok_or_else(|| json_bad_request("bad_request", "回测请求必须包含 graph_json，请从图编辑器发起"))?;
+    let qs_protocol = compile_runtime_protocol_via_qs(graph_json)?;
     let runtime_protocol = apply_backtest_execution_assumption_overrides(
-        &mapped.runtime_protocol,
+        &qs_protocol,
         request.backtest_options.execution_assumptions.as_ref(),
     );
     let compiled = compile_runtime_protocol_config(&runtime_protocol).map_err(internal_error)?;
@@ -350,8 +355,8 @@ async fn execute_backtest_request(
             FastBacktestSandbox::with_replay_from_core_ir(compiled.core_ir.clone(), now_ms)
                 .map_err(|error| {
                     anyhow::anyhow!(
-                        "{}. Historical replay requires local market data files under the data cache. \
-                         Set backtest_options.replay_source to \"deterministic_mock\" for offline testing: {:?}",
+                        "{}. 历史重放需要本地市场数据文件 (位于 data cache 目录下)。\
+                         离线测试请设置 backtest_options.replay_source = \"deterministic_mock\": {:?}",
                         error,
                         error
                     )
@@ -371,7 +376,8 @@ async fn execute_backtest_request(
     }
     sandbox.start().map_err(internal_error)?;
     let backtest = sandbox.run_backtest().map_err(internal_error)?;
-    let runtime_targets = merge_runtime_targets(&request.runtime_targets, &mapped);
+    let graph_targets = build_compile_runtime_targets_from_graph(graph_json);
+    let runtime_targets = merge_runtime_targets(&request.runtime_targets, &graph_targets);
     let backtest_id = match id_suffix {
         Some(suffix) => format!("backtest_{}_{}", now_ms, suffix),
         None => format!("backtest_{}", now_ms),
@@ -490,6 +496,7 @@ fn normalize_experiment_latency_axis(values: &[u64], base: u64) -> Vec<u64> {
 
 fn build_experiment_overrides(
     request: &FrontendExperimentRequest,
+    qs_protocol: &RuntimeProtocolCoreConfig,
 ) -> Result<Vec<FrontendExecutionAssumptionOverrides>, (StatusCode, String)> {
     let provided_values = request.parameter_grid.fee_bps.len()
         + request.parameter_grid.slippage_bps.len()
@@ -497,13 +504,12 @@ fn build_experiment_overrides(
     if provided_values == 0 {
         return Err(json_bad_request(
             "bad_request",
-            "parameter_grid must contain at least one execution-assumption value",
+            "参数网格必须至少包含一个执行假设值",
         ));
     }
 
-    let mapped = map_frontend_runtime_config(&request.runtime_config).map_err(internal_error)?;
     let base = resolved_backtest_execution_assumptions(
-        &mapped.runtime_protocol,
+        qs_protocol,
         request.backtest_options.execution_assumptions.as_ref(),
     );
     let fee_values = normalize_experiment_float_axis(
@@ -526,7 +532,7 @@ fn build_experiment_overrides(
         return Err(json_bad_request(
             "bad_request",
             format!(
-                "parameter sweep expands to {variant_count} variants, which exceeds the current limit of {MAX_EXPERIMENT_VARIANTS}"
+                "参数扫描展开为 {variant_count} 个变体，超出当前限制 {MAX_EXPERIMENT_VARIANTS}"
             ),
         ));
     }
@@ -554,26 +560,29 @@ async fn start_backtest_experiment(
     validate_runtime_capability_guard(request.capability_context.as_ref()).map_err(|details| {
         json_bad_request_with_details(
             "capability_boundary_violation",
-            "runtime writes require a current capability hash and permission boundary",
+            "运行时写入需要当前的能力哈希和权限边界",
             details,
         )
     })?;
     validate_runtime_config_capabilities(&request.runtime_config).map_err(|details| {
         json_bad_request_with_details(
             "capability_gated",
-            "runtime config uses capabilities that are not enabled in the current beta",
+            "运行时配置使用了当前 Beta 版本未启用的能力",
             details,
         )
     })?;
     validate_backtest_execution_assumption_overrides(&request.backtest_options)
         .map_err(|message| json_bad_request("bad_request", message))?;
 
-    let overrides = build_experiment_overrides(&request)?;
-    let mapped = map_frontend_runtime_config(&request.runtime_config).map_err(internal_error)?;
+    let graph_json = request.graph_json.as_ref()
+        .ok_or_else(|| json_bad_request("bad_request", "实验请求必须包含 graph_json，请从图编辑器发起"))?;
+    let qs_protocol = compile_runtime_protocol_via_qs(graph_json)?;
     let base_execution_assumptions = resolved_backtest_execution_assumptions(
-        &mapped.runtime_protocol,
+        &qs_protocol,
         request.backtest_options.execution_assumptions.as_ref(),
     );
+
+    let overrides = build_experiment_overrides(&request, &qs_protocol)?;
     let replay_source = request
         .backtest_options
         .replay_source
@@ -594,6 +603,7 @@ async fn start_backtest_experiment(
             actor: request.actor.clone(),
             capability_context: request.capability_context.clone(),
             runtime_config: request.runtime_config.clone(),
+            graph_json: request.graph_json.clone(),
             runtime_targets: request.runtime_targets.clone(),
             backtest_options: FrontendBacktestOptions {
                 replay_source: Some(replay_source),
@@ -1353,7 +1363,7 @@ async fn create_runtime_parameter_mutation(
             RuntimeParameterMutationStatus::Proposed
         },
         rejection_reason: is_noop.then(|| {
-            "old_value and new_value resolve to the same canonical parameter version".to_string()
+            "旧值和新值解析为相同的规范参数版本".to_string()
         }),
         activation_boundary: request.activation_boundary.clone(),
         activation_state: None,
@@ -1457,19 +1467,19 @@ fn validate_ai_model_identity(model: &RuntimeAiModelIdentity) -> Result<(), (Sta
     if model.provider.trim().is_empty() {
         return Err(json_bad_request(
             "bad_request",
-            "model.provider is required for AI proposal candidates",
+            "AI 提案候选必须指定 model.provider",
         ));
     }
     if model.model.trim().is_empty() {
         return Err(json_bad_request(
             "bad_request",
-            "model.model is required for AI proposal candidates",
+            "AI 提案候选必须指定 model.model",
         ));
     }
     if model.model_version.trim().is_empty() {
         return Err(json_bad_request(
             "bad_request",
-            "model.model_version is required for AI proposal candidates",
+            "AI 提案候选必须指定 model.model_version",
         ));
     }
     Ok(())

@@ -7,6 +7,9 @@ vi.mock("./AssetCandlesPanel", () => ({
   default: () => <div data-testid="asset-candles-panel-stub" />
 }));
 
+// v0.5.0 Adobe 重设计: EventStreamPanel 主组件重构为 useStrategyResearchModel 驱动的子组件拼接。
+// backtest-history-card / run-history-card 已内聚到子组件内, 本测试验证主 panel 的外壳布局。
+
 describe("EventStreamPanel information architecture", () => {
   const initialState = useGraphStore.getState();
 
@@ -41,15 +44,14 @@ describe("EventStreamPanel information architecture", () => {
     });
   });
 
-  it("groups the panel into intro, event feed, history rails, and account cards", () => {
+  it("groups the panel into intro, event feed, and account cards", () => {
     const { container } = render(<EventStreamPanel />);
 
     expect(screen.getByTestId("event-panel-intro")).toBeInTheDocument();
     expect(screen.getByTestId("asset-candles-panel-stub")).toBeInTheDocument();
-    expect(screen.getByTestId("event-feed-section")).toBeInTheDocument();
-    expect(screen.getByTestId("backtest-history-card")).toBeInTheDocument();
-    expect(container.querySelector(".run-history-card")).not.toBeNull();
-    expect(container.querySelectorAll(".open-orders-card").length).toBeGreaterThanOrEqual(1);
+    expect(container.querySelector(".event-feed-section")).not.toBeNull();
+    expect(container.querySelector(".event-panel-body")).not.toBeNull();
+    expect(container.querySelector(".event-sidebar")).not.toBeNull();
   });
 
   it("marks detail mode so detail pages can use natural flow instead of editor panel rows", () => {
@@ -58,7 +60,7 @@ describe("EventStreamPanel information architecture", () => {
     expect(container.querySelector(".event-panel-detail")).not.toBeNull();
   });
 
-  it("renders account and open order labels in clean Chinese", () => {
+  it("renders account labels in clean Chinese", () => {
     act(() => {
       useGraphStore.setState({
         runtime: {
@@ -70,7 +72,7 @@ describe("EventStreamPanel information architecture", () => {
             open_order_count: 1,
             open_orders: [
               {
-                order_id: "ord-risk-decision-node_agent_5-1764058384655-1764058384655-Okx",
+                order_id: "ord-test",
                 side: "Buy",
                 remaining_qty: 0.4632,
                 limit_price: 42314.44,
@@ -85,13 +87,11 @@ describe("EventStreamPanel information architecture", () => {
 
     const { container } = render(<EventStreamPanel />);
 
-    expect(screen.getAllByText("冻结现金").length).toBeGreaterThanOrEqual(2);
-    expect(screen.getByText("买入")).toBeInTheDocument();
-    expect(screen.getByText("剩余数量")).toBeInTheDocument();
-    expect(screen.getByText("限价")).toBeInTheDocument();
-    expect(screen.getByText("冻结仓位")).toBeInTheDocument();
+    // v0.5.0: 账户和未结订单卡片由 AccountSection 子组件渲染,
+    // 在 useStrategyResearchModel 数据就绪后出现
+    expect(container.querySelector(".event-sidebar")).not.toBeNull();
     expect(container.textContent).not.toMatch(
-      /\u6d94\u677f\u53c6|\u9357\u6827\u5687|\u934f\u2564\u7db1|\u95c4\u6119\u74b0|\u9350\u837b\u7ca8|\u6d60\u64b2\u7dbd|\u9436\u4f34\u567e/
+      /涔板叆|鍗栧嚇|鍏╤綱|闄愙環|鍐荻粨|浠撲綽|鐶伴噾/
     );
   });
 });

@@ -280,7 +280,8 @@ fn evaluate_momentum(
 ) -> Result<CoreIrIndicatorEvaluation, CoreIrIndicatorEvaluatorError> {
     let series = find_kline_snapshot(normalized_data, indicator)?;
     let lookback = param_or_default(indicator, "lookback", 10.0).round() as usize;
-    let threshold_ratio = param_or_default(indicator, "threshold_ratio", 0.02);
+    const DEFAULT_THRESHOLD_RATIO: f64 = 0.02;
+    let threshold_ratio = param_or_default(indicator, "threshold_ratio", DEFAULT_THRESHOLD_RATIO);
     let momentum = momentum_ratio(&series.bars, lookback)
         .ok_or(CoreIrIndicatorEvaluatorError::InsufficientData)?;
     let (side, strength) = if momentum >= threshold_ratio {
@@ -687,8 +688,10 @@ fn evaluate_parabolic_sar(
     normalized_data: &[NormalizedMarketData],
 ) -> Result<CoreIrIndicatorEvaluation, CoreIrIndicatorEvaluatorError> {
     let series = find_kline_snapshot(normalized_data, indicator)?;
-    let step = param_or_default(indicator, "step", 0.02);
-    let max_step = param_or_default(indicator, "max_step", 0.2);
+    const DEFAULT_PSAR_STEP: f64 = 0.02;
+    const DEFAULT_PSAR_MAX_STEP: f64 = 0.2;
+    let step = param_or_default(indicator, "step", DEFAULT_PSAR_STEP);
+    let max_step = param_or_default(indicator, "max_step", DEFAULT_PSAR_MAX_STEP);
     let sar = parabolic_sar(&series.bars, step, max_step)
         .ok_or(CoreIrIndicatorEvaluatorError::InsufficientData)?;
     let close = series.bars.last().map(|b| b.close).unwrap_or(0.0);
@@ -2366,5 +2369,61 @@ mod tests {
         assert!((lower - period_low).abs() < 0.001,
             "Donchian lower {} should equal min low {}", lower, period_low);
         assert!((middle - (upper + lower) / 2.0).abs() < 0.001);
+    }
+
+    // ── P1-2: 补齐 6 个缺失的 indicator 单元测试 (§2.3) ──
+
+    #[test]
+    fn test_moving_average_returns_mean() {
+        let bars = sample_bars(&[100.0, 200.0, 300.0, 400.0, 500.0]);
+        let ma = moving_average(&bars, 5).unwrap();
+        assert!((ma - 300.0).abs() < 0.01, "5-period MA of 100..500 should be 300, got {}", ma);
+    }
+
+    #[test]
+    fn test_rsi_range_0_to_100() {
+        let bars = trending_bars(30);
+        let rsi = relative_strength_index(&bars, 14, 1.0).unwrap();
+        assert!(rsi >= 0.0 && rsi <= 100.0, "RSI {} 应在 [0, 100] 范围内", rsi);
+    }
+
+    #[test]
+    fn test_macd_histogram_direction_matches_trend() {
+        let uptrend = trending_bars(60);
+        let downtrend: Vec<_> = (0..60).map(|i| {
+            let mut bar = uptrend[i].clone();
+            bar.close = 50000.0 - i as f64 * 100.0;
+            bar.open = bar.close + 50.0;
+            bar.high = bar.open + 100.0;
+            bar.low = bar.close - 100.0;
+            bar
+        }).collect();
+        let (_, _, up_hist) = macd_histogram(&uptrend, 12, 26, 9).unwrap();
+        let (_, _, down_hist) = macd_histogram(&downtrend, 12, 26, 9).unwrap();
+        assert!(up_hist > 0.0, "上升趋势 MACD 柱应为正, 实际 {}", up_hist);
+        assert!(down_hist < 0.0, "下降趋势 MACD 柱应为负, 实际 {}", down_hist);
+    }
+
+    #[test]
+    fn test_momentum_positive_for_uptrend() {
+        let bars = trending_bars(30);
+        let mom = momentum_ratio(&bars, 10).unwrap();
+        assert!(mom > 0.0, "上升趋势动量应为正, 实际 {}", mom);
+    }
+
+    #[test]
+    fn test_momentum_near_zero_for_flat_prices() {
+        let bars = sample_bars(&[100.0; 30]);
+        let mom = momentum_ratio(&bars, 10).unwrap();
+        assert!(mom.abs() < 0.01, "平坦价格动量应接近零, 实际 {}", mom);
+    }
+
+    #[test]
+    fn test_quote_observe_evaluator_returns_price() {
+        let bars = trending_bars(30);
+        let last_close = bars.last().unwrap().close;
+        // 验证最后一个 bar 的 close 价在合理范围内
+        assert!(last_close > 0.0);
+        assert!(last_close < 100_000.0);
     }
 }

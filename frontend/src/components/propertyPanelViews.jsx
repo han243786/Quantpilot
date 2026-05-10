@@ -281,6 +281,7 @@ export function WorkspaceInspectorShell({
 }
 
 export function QuantScriptAuthoringSourceCard({ authoringView }) {
+  const { t } = useI18n();
   const activeSectionIds = new Set(authoringView?.activeSectionIds || []);
   const onSelectSection = authoringView?.onSelectSection || null;
 

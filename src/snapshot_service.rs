@@ -161,7 +161,7 @@ async fn restore_snapshot(
         "warning": "恢复操作已记录审计日志，请在观察窗口(60s)内确认系统正常"
     });
 
-    crate::safe_eprintln!(
+    safe_eprintln!(
         "[snapshot_service] 快照 {} 由 {} 在 {} 恢复",
         snapshot_id, request.actor_id, now_ms
     );
@@ -175,6 +175,9 @@ async fn persist_snapshot(
     store_dir: &FsPath,
     snapshot: &DeploymentSignatureSnapshot,
 ) -> std::io::Result<()> {
+    crate::storage_lifecycle::ensure_storage_quota(
+        std::path::Path::new("storage"), "snapshots", crate::storage_lifecycle::StorageLifecycle::Transient,
+    )?;
     let json = serde_json::to_vec_pretty(snapshot)?;
     fs::create_dir_all(store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", snapshot.snapshot_id));

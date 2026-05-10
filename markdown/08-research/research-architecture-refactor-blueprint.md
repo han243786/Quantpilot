@@ -1,7 +1,7 @@
 # QuantPilot 从原型到论文级策略研究平台
 ## 架构重构深度研究报告与实施蓝图
 
-## Executive Summary
+## 执行摘要
 
 QuantPilot 当前已经不再是“只能跑最小策略图”的纯原型。
 

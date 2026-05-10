@@ -253,17 +253,19 @@ describe("StrategyHubPage", () => {
     expect(navigateTo).toHaveBeenCalledWith("/strategies/alpha_strategy/backtests");
 
     fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-reveal-file"));
-    expect(fetchMock).toHaveBeenCalledWith("/api/graphs/alpha_strategy/reveal", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({})
-    });
+    expect(fetchMock).toHaveBeenCalledWith("/api/graphs/alpha_strategy/reveal",
+      expect.objectContaining({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({})
+      })
+    );
 
     fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-delete-strategy"));
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith("/api/graphs/alpha_strategy", {
-        method: "DELETE"
-      });
+      expect(fetchMock).toHaveBeenCalledWith("/api/graphs/alpha_strategy",
+        expect.objectContaining({ method: "DELETE" })
+      );
     });
     expect(confirmMock).toHaveBeenCalledWith(
       "确认删除策略“Alpha strategy”？此操作会移除策略文件和版本记录。"

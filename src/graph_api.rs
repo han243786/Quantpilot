@@ -277,6 +277,11 @@ async fn persist_graph_version(
     save_note: Option<&str>,
     collaboration: GraphCollaborationMetadata,
 ) -> Result<SaveGraphResponse, (StatusCode, String)> {
+    if let Err(e) = crate::storage_lifecycle::ensure_storage_quota(
+        std::path::Path::new("storage"), "graphs", crate::storage_lifecycle::StorageLifecycle::Permanent,
+    ) {
+        return Err((StatusCode::INSUFFICIENT_STORAGE, e.to_string()));
+    }
     let saved_at = current_time_ms();
     let version_id = saved_at.to_string();
     let graph_path = graph_store_dir.join(format!("{}.json", graph_id));
@@ -479,7 +484,7 @@ async fn read_graph_versions(
         let value: Value = match serde_json::from_str(&content) {
             Ok(v) => v,
             Err(e) => {
-                crate::safe_eprintln!("[graph] 跳过损坏的版本文件 {}: {}", path.display(), e);
+                safe_eprintln!("[graph] 跳过损坏的版本文件 {}: {}", path.display(), e);
                 continue;
             }
         };

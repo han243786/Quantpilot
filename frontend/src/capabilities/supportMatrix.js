@@ -5,7 +5,18 @@ export const DECLARED_INDICATOR_KINDS = [
   "momentum",
   "spread",
   "z_score",
-  "custom"
+  "custom",
+  "quote_observe",
+  "atr",
+  "bollinger_bands",
+  "obv",
+  "cmf",
+  "adx",
+  "stochastic",
+  "cci",
+  "parabolic_sar",
+  "keltner_channel",
+  "donchian_channel"
 ];
 
 export const SUPPORTED_INDICATOR_KINDS = [...DECLARED_INDICATOR_KINDS];

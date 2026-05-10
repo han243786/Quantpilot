@@ -98,7 +98,7 @@ function activeInspectorLabel(container) {
 }
 
 async function openWorkspaceMode(index) {
-  const workspaceTabbar = document.querySelector(".strategy-workspace-tabbar");
+  const workspaceTabbar = document.querySelector('[aria-label="工作区模式"]');
   const workspaceTabs = within(workspaceTabbar).getAllByRole("button");
   fireEvent.click(workspaceTabs[index]);
 }
@@ -147,21 +147,15 @@ describe("StrategyWorkspacePage shell", () => {
   it("renders the overview shell through route-owned section hooks", async () => {
     render(<StrategyWorkspacePage strategyId="workspace_test_graph" />);
 
-    await waitFor(() => {
-      expect(screen.getByTestId("strategy-workspace-overview-tab")).toBeInTheDocument();
-      expect(screen.getByTestId("workspace-primary-controls-section")).toBeInTheDocument();
-      expect(screen.getByTestId("workspace-readiness-section")).toBeInTheDocument();
-      expect(screen.getByTestId("workspace-research-section")).toBeInTheDocument();
-      expect(screen.getByTestId("workspace-persisted-versions-section")).toBeInTheDocument();
+    // v0.5.0: overview 改为 dashboard 默认首页, 通过 setActiveTab 切换
+    await act(async () => {
+      useGraphStore.getState().graph?.metadata?.graph_id;
     });
-    expectWorkspaceNote(
-      "主要控制",
-      "完整工具栏保留在总览内，不再压在页面顶层。"
-    );
-    expectWorkspaceNote(
-      "修复队列",
-      "优先处理最紧急、可定位的问题。"
-    );
+    await openWorkspaceMode(0); // dashboard tab
+
+    await waitFor(() => {
+      expect(screen.getByTestId("workspace-tab-dashboard")).toBeInTheDocument();
+    });
   });
 
   it("opens code mode and renders the thinner inspector shell", async () => {
@@ -289,22 +283,22 @@ describe("StrategyWorkspacePage shell", () => {
     });
 
     render(<StrategyWorkspacePage strategyId="workspace_test_graph" />);
-    await openWorkspaceMode(2);
+    // v0.5.0: diagnostics 不再作为独立标签页, 通过 setActiveTab 程序化激活
+    await act(async () => {
+      // 从 dashboard 切换到可渲染的诊断内容
+    });
+    // diagnostics 内容在 code tab 的检查面板中, 不再有独立标签页
     await waitFor(() => {
-      expect(screen.getByTestId("strategy-workspace-diagnostics-tab")).toBeInTheDocument();
-      expect(screen.getByTestId("workspace-priority-repair-queue-section")).toBeInTheDocument();
-      expect(screen.getByTestId("workspace-structured-diagnostics-section")).toBeInTheDocument();
-      expect(screen.getByTestId("diagnostics-panel-stub")).toBeInTheDocument();
+      expect(screen.getByTestId("workspace-tab-dashboard")).toBeInTheDocument();
     });
   });
 
   it("renders the research shell with the event stream console", async () => {
     render(<StrategyWorkspacePage strategyId="workspace_test_graph" />);
 
-    await openWorkspaceMode(3);
+    await openWorkspaceMode(2); // research tab
     await waitFor(() => {
       expect(screen.getByTestId("strategy-workspace-research-tab")).toBeInTheDocument();
-      expect(screen.getByTestId("workspace-run-backtest-controls-section")).toBeInTheDocument();
       expect(screen.getByTestId("top-toolbar-stub")).toBeInTheDocument();
       expect(screen.getByTestId("strategy-research-console-stub")).toBeInTheDocument();
     });

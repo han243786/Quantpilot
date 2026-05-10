@@ -68,10 +68,10 @@ fn default_alert_rules() -> Vec<AlertRule> {
         },
         AlertRule {
             rule_name: "storage_watermark_critical".to_string(),
-            description: "磁盘水位 > 90%".to_string(),
+            description: "存储总大小超过 450MB (90% 阈值)".to_string(),
             trigger_condition: "disk_watermark_ratio > 0.90".to_string(),
             severity: AlertSeverity::P1,
-            action: "强制降级：关 debug -> 采样 DataUpdated -> 暂停新 run".to_string(),
+            action: "强制清理过期数据 + 暂停新写入".to_string(),
             enabled: true,
         },
         AlertRule {
@@ -290,15 +290,16 @@ async fn check_capability_hash_mismatch(state: &AppState) -> bool {
     }
 }
 
-async fn check_storage_watermark(state: &AppState) -> bool {
+async fn check_storage_watermark(_state: &AppState) -> bool {
     let watermark_mb: u64 = std::env::var("QUANTPILOT_STORAGE_WATERMARK_MB")
         .ok()
         .and_then(|v| v.parse().ok())
-        .unwrap_or(90);
+        .unwrap_or(400); // 80% of 500MB (§7.2)
     let watermark_bytes = watermark_mb * 1024 * 1024;
-    let dir = state.report_store_dir.to_path_buf();
+    let storage_root = std::path::PathBuf::from("storage");
     tokio::task::spawn_blocking(move || {
-        compute_dir_size_sync(&dir).unwrap_or(0) > watermark_bytes
+        crate::storage_lifecycle::startup_storage_cleanup(&storage_root);
+        compute_dir_size_sync(&storage_root).unwrap_or(0) > watermark_bytes
     })
     .await
     .unwrap_or(false)
@@ -362,6 +363,9 @@ pub(super) async fn init_alert_rules(state: &AppState) {
 }
 
 async fn persist_alert_firing(store_dir: &FsPath, firing: &AlertFiring) -> std::io::Result<()> {
+    crate::storage_lifecycle::ensure_storage_quota(
+        std::path::Path::new("storage"), "alerts", crate::storage_lifecycle::StorageLifecycle::Transient,
+    )?;
     let json = serde_json::to_vec_pretty(firing)?;
     fs::create_dir_all(store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", firing.firing_id));

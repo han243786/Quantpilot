@@ -1,11 +1,17 @@
+macro_rules! safe_eprintln {
+    ($($arg:tt)*) => {
+        eprintln!("{}", $crate::safe_log::sanitize_secrets(&format!($($arg)*)))
+    };
+}
+
 mod alert_engine;
 mod api_errors;
 mod api_test_scenario;
 mod app_router;
-mod app_runtime_helpers;
+pub mod app_runtime_helpers;
 mod auth_middleware;
 mod credential_api;
-mod credential_vault;
+pub mod credential_vault;
 mod rate_limiter;
 mod backtest_artifacts;
 mod backtest_compare;
@@ -27,7 +33,7 @@ mod graph_quantscript_api;
 mod graph_version_compare;
 mod hotswap_api;
 mod runbook;
-mod safe_log;
+pub mod safe_log;
 mod runtime_api;
 mod runtime_diagnostics;
 mod runtime_event_projection;
@@ -36,7 +42,7 @@ mod runtime_response_mapping;
 mod runtime_validation;
 mod sandbox_verification;
 mod snapshot_service;
-mod storage_lifecycle;
+pub mod storage_lifecycle;
 mod test_runner;
 
 use anyhow::{bail, Context};
@@ -599,7 +605,7 @@ async fn main() -> anyhow::Result<()> {
     let args: Vec<String> = std::env::args().collect();
     if args.len() > 1 && args[1] == "credential" {
         if let Err(e) = cli_support::handle_credential_command(&args[1..]) {
-            crate::safe_eprintln!("错误: {}", e);
+            safe_eprintln!("错误: {}", e);
             std::process::exit(1);
         }
         return Ok(());
@@ -628,6 +634,8 @@ async fn run_api_server() -> anyhow::Result<()> {
     let chaos_store_dir = PathBuf::from("storage/chaos");
     let audit_store_dir = PathBuf::from("storage/audit");
     let report_store_dir = PathBuf::from("storage/reports");
+    let mutation_store_dir = PathBuf::from("storage/mutations");
+    let ai_proposal_store_dir = PathBuf::from("storage/ai-proposals");
     fs::create_dir_all(&graph_store_dir).await?;
     fs::create_dir_all(&run_store_dir).await?;
     fs::create_dir_all(&backtest_store_dir).await?;
@@ -639,8 +647,10 @@ async fn run_api_server() -> anyhow::Result<()> {
     fs::create_dir_all(&chaos_store_dir).await?;
     fs::create_dir_all(&audit_store_dir).await?;
     fs::create_dir_all(&report_store_dir).await?;
+    fs::create_dir_all(&mutation_store_dir).await?;
+    fs::create_dir_all(&ai_proposal_store_dir).await?;
     if let Err(error) = cleanup_backtest_promotion_work_dirs(&backtest_store_dir).await {
-        crate::safe_eprintln!(
+        safe_eprintln!(
             "warning: 清理回测临时目录失败: {}",
             error
         );
@@ -654,7 +664,7 @@ async fn run_api_server() -> anyhow::Result<()> {
     if let Err(error) =
         cleanup_transient_backtest_records(state.transient_backtest_store_dir.as_ref()).await
     {
-        crate::safe_eprintln!(
+        safe_eprintln!(
             "warning: 清理过期回测目录失败: {}",
             error
         );
@@ -805,7 +815,7 @@ async fn warm_persisted_state(state: &AppState) {
             }
         }
     }
-    crate::safe_eprintln!(
+    safe_eprintln!(
         "[startup] 已预热状态: {} 审批单, {} 快照, {} 告警, {} 沙箱报告, {} 混沌实验",
         state.approval_records.read().await.len(),
         state.snapshots.read().await.len(),

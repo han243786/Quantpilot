@@ -61,7 +61,7 @@ impl<'de> Deserialize<'de> for Symbol {
     {
         let value = String::deserialize(deserializer)?;
         if value.trim().is_empty() {
-            return Err(D::Error::custom("symbol cannot be empty"));
+            return Err(D::Error::custom("交易品种符号不能为空"));
         }
         Ok(Symbol::parse(&value))
     }
