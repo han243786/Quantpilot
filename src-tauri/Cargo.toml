@@ -1,6 +1,6 @@
 [package]
 name = "quantpilot-tauri"
-version = "0.5.1"
+version = "1.0.2"
 description = "QuantPilot Desktop - Tauri Shell"
 edition = "2021"
 

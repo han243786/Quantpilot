@@ -157,17 +157,33 @@ impl RuntimePluginRegistry {
         let Some(lifecycle) = self.lifecycle.get_mut(plugin_id) else {
             return Err(format!("插件 `{plugin_id}` 未注册"));
         };
-        lifecycle.state = PluginLifecycleState::Active;
-        lifecycle.fault_reason = None;
-        Ok(())
+        match lifecycle.state {
+            PluginLifecycleState::Registered | PluginLifecycleState::Stopped => {
+                lifecycle.state = PluginLifecycleState::Active;
+                lifecycle.fault_reason = None;
+                Ok(())
+            }
+            PluginLifecycleState::Active => Ok(()), // 幂等
+            PluginLifecycleState::Faulted => {
+                Err(format!("插件 `{plugin_id}` 处于故障状态, 请先修复后重试"))
+            }
+        }
     }
 
     pub fn deactivate(&mut self, plugin_id: &str) -> Result<(), String> {
         let Some(lifecycle) = self.lifecycle.get_mut(plugin_id) else {
             return Err(format!("插件 `{plugin_id}` 未注册"));
         };
-        lifecycle.state = PluginLifecycleState::Stopped;
-        Ok(())
+        match lifecycle.state {
+            PluginLifecycleState::Active => {
+                lifecycle.state = PluginLifecycleState::Stopped;
+                Ok(())
+            }
+            PluginLifecycleState::Stopped => Ok(()), // 幂等
+            PluginLifecycleState::Registered | PluginLifecycleState::Faulted => {
+                Err(format!("插件 `{plugin_id}` 当前状态不允许停用"))
+            }
+        }
     }
 
     pub fn mark_faulted(
@@ -178,9 +194,20 @@ impl RuntimePluginRegistry {
         let Some(lifecycle) = self.lifecycle.get_mut(plugin_id) else {
             return Err(format!("插件 `{plugin_id}` 未注册"));
         };
-        lifecycle.state = PluginLifecycleState::Faulted;
-        lifecycle.fault_reason = Some(reason.into());
-        Ok(())
+        match lifecycle.state {
+            PluginLifecycleState::Registered | PluginLifecycleState::Active => {
+                lifecycle.state = PluginLifecycleState::Faulted;
+                lifecycle.fault_reason = Some(reason.into());
+                Ok(())
+            }
+            PluginLifecycleState::Faulted => {
+                lifecycle.fault_reason = Some(reason.into());
+                Ok(()) // 更新 fault 原因
+            }
+            PluginLifecycleState::Stopped => {
+                Err(format!("插件 `{plugin_id}` 已停用, 无法标记故障"))
+            }
+        }
     }
 
     pub fn lifecycle(&self, plugin_id: &str) -> Option<&RuntimePluginLifecycle> {
@@ -205,7 +232,7 @@ impl RuntimePluginRegistry {
 
     // ── v1.0.0 原子扫描 ──
 
-    /// 从 `plugins/atoms/` 目录扫描 .json manifest 文件并注册。
+    /// 从 `plugins/builtin/` 和 `plugins/installed/` 目录扫描 .json manifest 文件并注册。
     /// v1.0.0: 单个文件失败不阻止其他文件注册，收集全部错误后统一报告。
     pub fn scan_atoms(&mut self, atom_dir: &std::path::Path) -> Result<usize, String> {
         let dir = std::fs::read_dir(atom_dir).map_err(|e| format!("无法读取插件目录: {e}"))?;

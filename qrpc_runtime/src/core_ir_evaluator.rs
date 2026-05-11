@@ -30,31 +30,89 @@ pub enum CoreIrIndicatorEvaluatorError {
     InvalidCustomExpression,
 }
 
+// ── v1.0.2 插件化: IndicatorEvaluator trait + 注册表 ──
+
+use std::sync::{Arc, OnceLock};
+
+/// 指标评估器 trait — v1.0.2 插件化抽象
+pub trait IndicatorEvaluator: Send + Sync {
+    fn evaluate(
+        &self,
+        indicator: &IndicatorNode,
+        signal_rule: Option<&SignalRule>,
+        normalized_data: &[NormalizedMarketData],
+    ) -> Result<CoreIrIndicatorEvaluation, CoreIrIndicatorEvaluatorError>;
+}
+
+/// 全局指标注册表 — 启动时由 builtin 自动注册，后续可追加第三方插件
+static INDICATOR_REGISTRY: OnceLock<BTreeMap<CoreIndicatorKind, Arc<dyn IndicatorEvaluator>>> = OnceLock::new();
+
+pub fn indicator_registry() -> &'static BTreeMap<CoreIndicatorKind, Arc<dyn IndicatorEvaluator>> {
+    INDICATOR_REGISTRY.get_or_init(|| {
+        let mut registry: BTreeMap<CoreIndicatorKind, Arc<dyn IndicatorEvaluator>> = BTreeMap::new();
+        macro_rules! register {
+            ($kind:ident, $fn:ident) => {
+                registry.insert(CoreIndicatorKind::$kind, Arc::new(BuiltinEvaluator {
+                    evaluate: Box::new(move |indicator, _signal_rule, normalized_data| {
+                        $fn(indicator, normalized_data)
+                    })
+                }));
+            };
+            ($kind:ident, $fn:ident, with_signal) => {
+                registry.insert(CoreIndicatorKind::$kind, Arc::new(BuiltinEvaluator {
+                    evaluate: Box::new(move |indicator, signal_rule, normalized_data| {
+                        $fn(indicator, signal_rule, normalized_data)
+                    })
+                }));
+            };
+        }
+        register!(MaCross, evaluate_ma_family, with_signal);
+        register!(Rsi, evaluate_rsi);
+        register!(Macd, evaluate_macd);
+        register!(Momentum, evaluate_momentum);
+        register!(Spread, evaluate_spread);
+        register!(ZScore, evaluate_zscore);
+        register!(Custom, evaluate_custom);
+        register!(QuoteObserve, evaluate_quote_observe);
+        register!(Atr, evaluate_atr);
+        register!(BollingerBands, evaluate_bollinger_bands);
+        register!(Obv, evaluate_obv);
+        register!(Cmf, evaluate_cmf);
+        register!(Adx, evaluate_adx);
+        register!(Stochastic, evaluate_stochastic);
+        register!(Cci, evaluate_cci);
+        register!(ParabolicSar, evaluate_parabolic_sar);
+        register!(KeltnerChannel, evaluate_keltner_channel);
+        register!(DonchianChannel, evaluate_donchian_channel);
+        registry
+    })
+}
+
+struct BuiltinEvaluator {
+    evaluate: Box<dyn Fn(&IndicatorNode, Option<&SignalRule>, &[NormalizedMarketData]) -> Result<CoreIrIndicatorEvaluation, CoreIrIndicatorEvaluatorError> + Send + Sync>,
+}
+
+impl IndicatorEvaluator for BuiltinEvaluator {
+    fn evaluate(
+        &self,
+        indicator: &IndicatorNode,
+        signal_rule: Option<&SignalRule>,
+        normalized_data: &[NormalizedMarketData],
+    ) -> Result<CoreIrIndicatorEvaluation, CoreIrIndicatorEvaluatorError> {
+        (self.evaluate)(indicator, signal_rule, normalized_data)
+    }
+}
+
+/// v1.0.2: 注册表查找替代硬编码 match 分派
 pub fn evaluate_indicator_signal(
     indicator: &IndicatorNode,
     signal_rule: Option<&SignalRule>,
     normalized_data: &[NormalizedMarketData],
 ) -> Result<CoreIrIndicatorEvaluation, CoreIrIndicatorEvaluatorError> {
-    match indicator.kind {
-        CoreIndicatorKind::MaCross => evaluate_ma_family(indicator, signal_rule, normalized_data),
-        CoreIndicatorKind::Rsi => evaluate_rsi(indicator, normalized_data),
-        CoreIndicatorKind::Macd => evaluate_macd(indicator, normalized_data),
-        CoreIndicatorKind::Momentum => evaluate_momentum(indicator, normalized_data),
-        CoreIndicatorKind::Spread => evaluate_spread(indicator, normalized_data),
-        CoreIndicatorKind::ZScore => evaluate_zscore(indicator, normalized_data),
-        CoreIndicatorKind::Custom => evaluate_custom(indicator, normalized_data),
-        CoreIndicatorKind::QuoteObserve => evaluate_quote_observe(indicator, normalized_data),
-        CoreIndicatorKind::Atr => evaluate_atr(indicator, normalized_data),
-        CoreIndicatorKind::BollingerBands => evaluate_bollinger_bands(indicator, normalized_data),
-        CoreIndicatorKind::Obv => evaluate_obv(indicator, normalized_data),
-        CoreIndicatorKind::Cmf => evaluate_cmf(indicator, normalized_data),
-        CoreIndicatorKind::Adx => evaluate_adx(indicator, normalized_data),
-        CoreIndicatorKind::Stochastic => evaluate_stochastic(indicator, normalized_data),
-        CoreIndicatorKind::Cci => evaluate_cci(indicator, normalized_data),
-        CoreIndicatorKind::ParabolicSar => evaluate_parabolic_sar(indicator, normalized_data),
-        CoreIndicatorKind::KeltnerChannel => evaluate_keltner_channel(indicator, normalized_data),
-        CoreIndicatorKind::DonchianChannel => evaluate_donchian_channel(indicator, normalized_data),
-    }
+    indicator_registry()
+        .get(&indicator.kind)
+        .ok_or(CoreIrIndicatorEvaluatorError::UnsupportedIndicator)?
+        .evaluate(indicator, signal_rule, normalized_data)
 }
 
 fn evaluate_ma_family(

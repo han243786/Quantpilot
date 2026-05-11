@@ -1,0 +1,1 @@
+import{j as r}from"./react-vendor-CPjvwER2.js";import{A as i}from"./StrategyHubSharedComponents-C-p3cDfx.js";function s({items:t}){return r.jsx(i,{title:"近期运行活动",subtitle:"不离开策略中心即可跟踪模拟记录与编译 ID。",items:t,emptyText:"暂无近期模拟。",testId:"strategy-hub-activity-card-run"})}export{s as default};

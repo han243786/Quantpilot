@@ -1180,6 +1180,29 @@ pub enum OrderStatus {
     Expired,
 }
 
+impl OrderStatus {
+    /// v1.0.1: 校验状态转移合法性。终态不可再转移。
+    pub fn can_transition_to(&self, next: &OrderStatus) -> bool {
+        // 终态不可转移
+        if matches!(self, Self::Filled | Self::Cancelled | Self::Rejected | Self::Expired) {
+            return false;
+        }
+        matches!(
+            (self, next),
+            (Self::Created, Self::Submitted)
+                | (Self::Submitted, Self::Accepted)
+                | (Self::Submitted, Self::Rejected)
+                | (Self::Accepted, Self::PartiallyFilled)
+                | (Self::Accepted, Self::Cancelled)
+                | (Self::Accepted, Self::Expired)
+                | (Self::PartiallyFilled, Self::PartiallyFilled)
+                | (Self::PartiallyFilled, Self::Filled)
+                | (Self::PartiallyFilled, Self::Cancelled)
+                | (Self::PartiallyFilled, Self::Expired)
+        )
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Order {
     pub order_id: String,

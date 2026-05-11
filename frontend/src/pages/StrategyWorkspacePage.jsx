@@ -1,4 +1,4 @@
-import { Suspense, lazy, useMemo } from "react";
+import { Suspense, lazy, useEffect, useMemo } from "react";
 import "./strategy-workspace.css";
 import {
   navigateTo,
@@ -10,6 +10,7 @@ import { buildWorkspaceIssueQueue } from "../utils/strategyWorkspaceIssueQueue";
 import { useStrategyWorkspaceSharedModel } from "../hooks/useStrategyWorkspaceSharedModel";
 import { useStrategyWorkspaceUiState } from "../hooks/useStrategyWorkspaceUiState";
 import { useStrategyWorkspacePageData } from "../hooks/useStrategyWorkspacePageData";
+import { useGraphStore } from "../store/graphStore";
 import { StrategyRouteBar } from "./BacktestAnalysisLayout";
 
 const StrategyWorkspaceDashboard = lazy(() => import("./StrategyWorkspaceDashboard"));
@@ -59,6 +60,16 @@ export default function StrategyWorkspacePage({ strategyId }) {
     selectedCompileDiagnosticTarget,
     loadGraphById
   } = useStrategyWorkspaceSharedModel();
+  const stopRuntime = useGraphStore((s) => s.stopRuntime);
+
+  // v1.0.1: 组件卸载时清理 SSE 连接, 防止连接泄漏
+  useEffect(() => {
+    return () => {
+      if (runtime?.status === "running") {
+        stopRuntime();
+      }
+    };
+  }, []);
   const graphId = graph.metadata?.graph_id || "";
   const compileSummary = graph.compile_summary || {};
   const compileDiagnostics = Array.isArray(compileSummary.diagnostics)

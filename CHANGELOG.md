@@ -1,5 +1,51 @@
 # Changelog
 
+## v1.0.2
+
+体验优化与发布就绪。
+
+### 优化
+- 插件 trait object 全量重构: 18 个 IndicatorEvaluator 注册表替代硬编码 match
+- CoreIndicatorKind 新增 PartialOrd/Ord/Hash derive
+- DAG 验证接入编译管道 (两个入口)
+- SSE 断开自动重连 (指数退避, 最多 5 次) + "reconnecting" 状态
+- 策略中心新增 "开始使用" CTA 引导按钮
+- 前端骨架屏 (skeleton-pulse 动画)
+- 回测对比页叠加权益曲线 (Recharts)
+- 后端优雅关闭 (bg_handle.abort())
+- 错误提示加操作建议
+- localStorage _schema 版本标记
+- 旧格式兼容代码清理 (normalizeGraphShape fallback 移除)
+- Vec::with_capacity 预分配 (agent/execution/risk/fill_engine)
+- 测试辅助函数去重 (assert_complete_event_envelopes → tests/common)
+
+### 发布
+- Tauri 便携包 (dist/QuantPilot/)
+- 版本号统一为 1.0.2
+
+## v1.0.1
+
+三回合全量审计质量深化。69 发现中 64 项修复。
+
+### S0
+- validate_dag() 接线到编译管道
+
+### P1
+- PluginLifecycleState 转移警卫 (activate/deactivate/mark_faulted)
+- OrderStatus::can_transition_to() 状态机
+- credential_vault 数据降级告警 (unwrap_or_default→unwrap_or_else)
+- SSE EventSource 卸载清理 (useEffect cleanup)
+- 后台任务 JoinHandle 保存
+
+### P2
+- 嵌套锁标注 (锁顺序注释)
+- localStorage _schema: 1
+- workspace sha2 统一
+- Vec::with_capacity 预分配
+- 测试辅助函数去重
+- 旧格式兼容代码清理
+- 前端 "reconnecting" 状态
+
 ## v1.0.0
 
 插件化架构 + 重型策略 + 超级规范化。首个整合包。

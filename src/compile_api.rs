@@ -33,13 +33,13 @@ async fn compile_runtime_request(
     if request.runtime_config.intent_generators.is_empty() {
         return Err(json_bad_request(
             "bad_request",
-            "策略必须包含至少一个意图 (intent_generators 不能为空)",
+            "策略必须包含至少一个意图。请从左侧面板拖入一个意图节点 (如「双均线」) 并连线",
         ));
     }
     validate_runtime_config_capabilities(&request.runtime_config).map_err(|details| {
         json_bad_request_with_details(
             "capability_gated",
-            "运行时配置使用了当前 Beta 版本未启用的能力",
+            "运行时配置使用了当前 Beta 版本未启用的能力。请检查所有节点的 module_key 是否在 /api/capabilities 白名单中",
             details,
         )
     })?;
@@ -48,7 +48,7 @@ async fn compile_runtime_request(
     if !contract_diagnostics.is_empty() {
         return Err(json_bad_request_with_details(
             "runtime_compile_failed",
-            "运行时图编译合约校验失败",
+            "运行时图编译合约校验失败。请检查所有节点已正确连线且 graph_id 不含非法字符",
             contract_diagnostics
                 .iter()
                 .map(api_error_detail_from_compile_diagnostic)

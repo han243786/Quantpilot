@@ -161,7 +161,7 @@ pub struct IndicatorNode {
     pub params: BTreeMap<String, Value>,
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[serde(rename_all = "snake_case")]
 pub enum CoreIndicatorKind {
     MaCross,

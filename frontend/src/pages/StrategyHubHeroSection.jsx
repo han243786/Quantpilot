@@ -39,6 +39,14 @@ export default function StrategyHubHeroSection({ model }) {
             triggerText="策略中心"
             content="这里是策略管理的总入口。先在此查看健康状态、近期研究与运行压力，再只在需要深入编辑或诊断单个策略时进入对应工作区。"
           />
+          <button
+            className="primary-btn"
+            style={{ marginTop: 12, fontSize: 14, padding: "8px 20px" }}
+            onClick={() => void model.openBlankWorkspace()}
+            data-testid="strategy-hub-hero-cta"
+          >
+            开始使用 — 创建第一个策略
+          </button>
         </div>
 
         <div className="strategy-hub-hero__actions">

@@ -38,10 +38,10 @@ pub struct BuiltinAgentModule;
 
 impl AgentModuleProvider for BuiltinAgentModule {
     fn evaluate_agents(&self, request: AgentEvaluationRequest<'_>) -> AgentEvaluationOutput {
-        let mut decisions = Vec::new();
-        let mut events = Vec::new();
-        let mut evaluated_rebalance_agent_ids = BTreeSet::new();
         let agent_policies = &request.core_ir.agent_policies;
+        let mut decisions = Vec::with_capacity(agent_policies.len());
+        let mut events = Vec::with_capacity(agent_policies.len());
+        let mut evaluated_rebalance_agent_ids = BTreeSet::new();
 
         for agent in agent_policies.iter().filter(|item| item.enabled) {
             let related = request

@@ -57,8 +57,9 @@ pub struct BuiltinExecutionModule {
 impl ExecutionModuleProvider for BuiltinExecutionModule {
     fn plan_execution(&self, request: ExecutionPlanningRequest<'_>) -> ExecutionPlanningOutput {
         let quote_map = quote_price_map(request.normalized_data);
-        let mut plans = Vec::new();
-        let mut events = Vec::new();
+        let n = request.risk_decisions.len();
+        let mut plans = Vec::with_capacity(n);
+        let mut events = Vec::with_capacity(n);
         let equity = portfolio_equity(request.portfolio).max(0.0);
         let execution_semantics = resolve_execution_semantics(request.core_ir);
 

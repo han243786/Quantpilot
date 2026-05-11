@@ -1,4 +1,5 @@
 mod common;
+use common::assert_complete_event_envelopes;
 include!("common/re_exports.rs");
 
 use axum::{
@@ -11,44 +12,6 @@ use tower::ServiceExt;
 
 const BTC_DUAL_MA_STABILITY: &str = include_str!("../quantscript/btc_dual_ma_stability.qs");
 
-fn assert_complete_event_envelopes(events: &[Value], record_id: &str, governance: &Value) {
-    for (index, event) in events.iter().enumerate() {
-        let envelope = &event["envelope"];
-        assert_eq!(envelope["event_id"], event["event_id"]);
-        assert_eq!(envelope["event_type"], event["event_type"]);
-        assert_eq!(envelope["run_id"], record_id);
-        assert_eq!(envelope["sequence_no"], Value::from(index as u64 + 1));
-        assert_eq!(envelope["occurred_at_ms"], event["event_time_ms"]);
-        assert_eq!(envelope["capability_hash"], governance["capability_hash"]);
-        assert_eq!(
-            envelope["deployment_revision"],
-            governance["deployment_revision"]
-        );
-
-        for key in [
-            "event_id",
-            "event_type",
-            "run_id",
-            "stage",
-            "strategy_version",
-            "parameter_version",
-            "deployment_revision",
-            "capability_hash",
-            "mode",
-            "severity",
-            "retention_class",
-        ] {
-            assert!(
-                envelope[key]
-                    .as_str()
-                    .map(|value| !value.trim().is_empty())
-                    .unwrap_or(false),
-                "event {} has empty envelope field {key}",
-                event["event_id"]
-            );
-        }
-    }
-}
 
 fn compare_status_for_values(left: &Value, right: &Value) -> &'static str {
     if left.is_null() || right.is_null() {

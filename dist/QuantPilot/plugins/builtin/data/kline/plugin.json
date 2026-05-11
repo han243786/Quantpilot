@@ -1,0 +1,31 @@
+{
+  "api_version": "quantpilot/plugin-manifest/v1",
+  "id": "builtin.data.kline",
+  "version": "1.0.0",
+  "plugin_type": "atom",
+  "kind": "data",
+  "display": {
+    "name": "K 线数据",
+    "summary": "从 OKX / Binance API 获取 K 线序列数据，支持 14 种时间周期"
+  },
+  "capability_declarations": [
+    { "id": "quantpilot.capability.data_module_provider", "version": "v1" }
+  ],
+  "extension_points": ["data_module_provider"],
+  "execution": {
+    "engine": "builtin",
+    "entrypoint": "builtin.data.kline"
+  },
+  "compatibility": {
+    "core_ir_version": "quantpilot/core-ir/v1",
+    "capability_api_version": "quantpilot-capabilities/v1"
+  },
+  "security": {
+    "max_compute_ms": 5000,
+    "max_memory_mb": 128,
+    "allow_network": true
+  },
+  "dependencies": [],
+  "hot_handoff": false,
+  "asset_management": false
+}

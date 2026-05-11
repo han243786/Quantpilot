@@ -38,10 +38,11 @@ pub struct RiskChecker;
 
 impl RiskCheckerProvider for RiskChecker {
     fn evaluate(&self, request: RiskCheckRequest<'_>) -> Result<RiskCheckOutput> {
-        let mut outputs = Vec::new();
-        let mut events = Vec::new();
-        let mut approved_agent_ids = BTreeSet::new();
         let risks = request.core_ir.risk_policies.as_slice();
+        let n = risks.len();
+        let mut outputs = Vec::with_capacity(n);
+        let mut events = Vec::with_capacity(n);
+        let mut approved_agent_ids = BTreeSet::new();
 
         for risk in risks.iter().filter(|item| item.enabled) {
             for decision in request

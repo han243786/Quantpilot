@@ -9,9 +9,12 @@ members = [
 ]
 resolver = "2"
 
+[workspace.dependencies]
+sha2 = "0.10"
+
 [package]
 name = "quantpilot"
-version = "0.5.1"
+version = "1.0.2"
 edition = "2021"
 
 [dependencies]
@@ -31,7 +34,7 @@ quantscript = { path = "quantscript" }
 time = { version = "0.3", features = ["macros", "parsing"] }
 ureq = { version = "2", features = ["json", "native-tls"] }
 hmac = "0.12"
-sha2 = "0.10"
+sha2 = { workspace = true }
 base64 = "0.22"
 chrono = "0.4"
 hostname = "0.4"

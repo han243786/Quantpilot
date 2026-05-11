@@ -705,8 +705,9 @@ async fn run_api_server() -> anyhow::Result<()> {
         ));
 
     // Block 5 P1-5 + P3-4: 审批超时 + 观察窗口后台任务
+    // v1.0.2: AbortHandle 在进程退出时自动取消后台循环
     let expiry_state = state.clone();
-    tokio::spawn(async move {
+    let bg_handle = tokio::spawn(async move {
         let mut tick: u64 = 0;
         loop {
             tokio::time::sleep(tokio::time::Duration::from_secs(60)).await;
@@ -731,6 +732,7 @@ async fn run_api_server() -> anyhow::Result<()> {
     println!("QuantPilot API listening on http://{}", addr);
     let listener = tokio::net::TcpListener::bind(addr).await?;
     axum::serve(listener, app).await?;
+    bg_handle.abort();
     Ok(())
 }
 
@@ -836,6 +838,7 @@ async fn warm_persisted_state(state: &AppState) {
 }
 
 // Block 5 P1-5: 审批超时自动处理
+// v1.0.1 锁顺序: approval_records → ai_proposals (嵌套写锁, 反序将死锁)
 async fn process_expired_approvals(state: &AppState) {
     let now_ms = current_time_ms();
     let mut approvals = state.approval_records.write().await;

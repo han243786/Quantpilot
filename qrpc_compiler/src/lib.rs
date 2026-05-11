@@ -192,6 +192,11 @@ pub fn lower_runtime_protocol_to_core_ir_with_metadata(
         .map(lower_runtime_risk_to_policy)
         .collect();
 
+    // v1.0.1: DAG 环检测 — 编译前校验策略图无环
+    core_ir.validate_dag().map_err(|errs| {
+        anyhow::anyhow!("策略图 DAG 校验失败: {:?}", errs)
+    })?;
+
     Ok(core_ir)
 }
 
@@ -358,6 +363,10 @@ pub fn lower_strategy_ir_to_core_ir(strategy_ir: &StrategyIr) -> Result<CoreStra
         min_action_interval_ms,
         enabled: true,
     });
+
+    core_ir.validate_dag().map_err(|errs| {
+        anyhow::anyhow!("策略图 DAG 校验失败: {:?}", errs)
+    })?;
 
     Ok(core_ir)
 }

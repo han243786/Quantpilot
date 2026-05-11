@@ -1,0 +1,1 @@
+function r(t){return t?new Date(t).toLocaleString():"-"}function i(t){return Number.isFinite(t)?new Intl.NumberFormat().format(t):"0"}function e(t){return Number.isFinite(t)?`${t>0?"+":""}${(t*100).toFixed(2)}%`:"-"}export{r as a,e as b,i as f};

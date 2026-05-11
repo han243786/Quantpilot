@@ -60,15 +60,19 @@ function safeSetItem(key, value) {
   }
 }
 
+const GRAPH_STORAGE_SCHEMA = 1;
+
 function saveGraphToStorage(graph) {
-  safeSetItem(STORAGE_KEY, graph);
+  safeSetItem(STORAGE_KEY, { _schema: GRAPH_STORAGE_SCHEMA, ...graph });
 }
 
 function loadGraphFromStorage() {
   const raw = window.localStorage.getItem(STORAGE_KEY);
   if (!raw) return null;
   try {
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    // 旧格式无 _schema 字段, 经 normalizeGraphShape 兼容
+    return parsed;
   } catch {
     return null;
   }
@@ -157,14 +161,12 @@ function normalizeGraphShape(graph) {
 
   const normalizedNodes = Array.isArray(graph.nodes)
     ? graph.nodes.map((node) => {
-        // Fallback: QS-generated nodes store module_key in data.subtitle
-        const moduleKey = node.module_key || node.data?.subtitle;
+        // v1.0.1: 仅支持新格式, 旧 QS 兼容 fallback 已移除
+        const moduleKey = node.module_key;
         const moduleDef = defaultRegistry.getByKey(moduleKey);
-        // Fallback: QS-generated nodes store ports in data.inputPorts / data.outputPorts
-        const inputPorts = node.input_ports || node.data?.inputPorts;
-        const outputPorts = node.output_ports || node.data?.outputPorts;
-        // Fallback: QS-generated nodes store config in data.config
-        const config = node.config || node.data?.config;
+        const inputPorts = node.input_ports;
+        const outputPorts = node.output_ports;
+        const config = node.config;
         return {
           ...node,
           name: sanitizeText(node.name, moduleDef?.node?.default_name || node.id || "节点"),

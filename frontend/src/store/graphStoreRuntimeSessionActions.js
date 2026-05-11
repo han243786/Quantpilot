@@ -127,6 +127,9 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
         });
 
         source.onerror = () => {
+          set((state) => ({
+            runtime: { ...state.runtime, status: "reconnecting" }
+          }));
           source._reconnect?.();
         };
 

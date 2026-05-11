@@ -25,10 +25,12 @@ import { useI18n } from "./i18n";
 function AppShellFallback() {
   return (
     <div className="app-loading-shell" role="status" aria-live="polite">
-      <div className="app-loading-shell__title">正在加载界面</div>
-      <div className="app-loading-shell__detail">
-        正在准备编辑器或分析页面资源。
+      <div className="app-loading-shell__skeleton">
+        <div className="skeleton-block skeleton-block--wide" />
+        <div className="skeleton-block skeleton-block--medium" />
+        <div className="skeleton-block skeleton-block--short" />
       </div>
+      <div className="app-loading-shell__title">正在加载界面</div>
     </div>
   );
 }

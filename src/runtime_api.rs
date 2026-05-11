@@ -289,9 +289,10 @@ async fn start_backtest_run(
         record.config_hash,
         record.events.len(),
         record.account,
+        // SAFETY: build_backtest_artifact_views 成功才会进入此分支, .backtest_artifacts 必定为 Some
         record
             .backtest_artifacts
-            .expect("backtest artifact views should exist for run responses"),
+            .ok_or_else(|| internal_error(anyhow::anyhow!("回测工件视图缺失")))?,
     )))
 }
 
