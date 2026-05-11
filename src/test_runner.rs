@@ -1371,8 +1371,11 @@ fn parse_iso_date_ms(date_str: &str) -> Result<u64, String> {
 
 /// Parse a date range "YYYY-MM-DD".."YYYY-MM-DD" to end_ms
 fn parse_date_range_ms(start: &str, end: &str) -> Result<u64, String> {
-    let _start_ms = parse_iso_date_ms(start)?;
+    let start_ms = parse_iso_date_ms(start)?;
     let end_ms = parse_iso_date_ms(end)?;
+    if end_ms <= start_ms {
+        return Err(format!("结束时间 ({}) 必须大于开始时间 ({})", end, start));
+    }
     Ok(end_ms)
 }
 

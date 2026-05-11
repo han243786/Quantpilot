@@ -47,6 +47,12 @@ impl PluginMarketClient {
         let index_url = format!("{}/index.json", self.repo_url.trim_end_matches('/'));
         let response = self.client.get(&index_url).send().await
             .map_err(|e| format!("无法连接插件市场: {e}"))?;
+        if response.status() == 404 {
+            return Err("插件市场索引不存在 (404)".to_string());
+        }
+        if !response.status().is_success() {
+            return Err(format!("插件市场返回错误: HTTP {}", response.status()));
+        }
         let body = response
             .text()
             .await
@@ -63,6 +69,12 @@ impl PluginMarketClient {
     pub async fn fetch_manifest(&self, summary: &PluginSummary) -> Result<PluginManifest, String> {
         let response = self.client.get(&summary.download_url).send().await
             .map_err(|e| format!("无法下载插件 {}: {e}", summary.plugin_id))?;
+        if response.status() == 404 {
+            return Err(format!("插件 {} 不存在 (404)", summary.plugin_id));
+        }
+        if !response.status().is_success() {
+            return Err(format!("插件 {} 下载失败: HTTP {}", summary.plugin_id, response.status()));
+        }
         let body = response
             .text()
             .await

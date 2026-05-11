@@ -61,6 +61,7 @@ pub(super) fn new_app_state(
     );
 
     AppState {
+        run_in_progress: Arc::new(std::sync::atomic::AtomicBool::new(false)),
         credential_vault,
         runs: Arc::new(RwLock::new(BTreeMap::new())),
         backtests: Arc::new(RwLock::new(BTreeMap::new())),

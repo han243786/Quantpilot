@@ -203,6 +203,10 @@ async fn start_test_run(
     State(state): State<AppState>,
     Json(request): Json<FrontendRunRequest>,
 ) -> Result<Json<RunStartResponse>, (StatusCode, String)> {
+    // v1.0.3: 运行互斥 — 同一时间只允许一个 Paper 运行
+    if state.run_in_progress.swap(true, std::sync::atomic::Ordering::AcqRel) {
+        return Err((StatusCode::CONFLICT, "已有运行在进行中, 请先停止当前运行后再启动新的运行".to_string()));
+    }
     validate_runtime_capability_guard(request.capability_context.as_ref()).map_err(|details| {
         json_bad_request_with_details(
             "capability_boundary_violation",

@@ -746,16 +746,29 @@ impl BuiltinDataModule {
         let endpoint = endpoint.to_string();
         let endpoint_for_reqwest = endpoint.clone();
         let primary_result = block_on_http(async move {
-            client
-                .get(&endpoint_for_reqwest)
-                .send()
-                .await
-                .with_context(|| format!("请求 {endpoint_for_reqwest} 失败"))?
-                .error_for_status()
-                .with_context(|| format!("从 {endpoint_for_reqwest} 收到非成功响应"))?
-                .json::<Value>()
-                .await
-                .with_context(|| format!("从 {endpoint_for_reqwest} 收到无效 JSON"))
+            let mut last_status = 0u16;
+            for attempt in 0..4 {
+                let resp = client
+                    .get(&endpoint_for_reqwest)
+                    .send()
+                    .await
+                    .with_context(|| format!("请求 {endpoint_for_reqwest} 失败"))?;
+                last_status = resp.status().as_u16();
+                if last_status == 429 && attempt < 3 {
+                    let delay = std::time::Duration::from_secs(1u64 << attempt);
+                    tokio::time::sleep(delay).await;
+                    continue;
+                }
+                let status = resp.status().as_u16();
+                let category = if status >= 500 { "服务端临时错误" } else { "客户端请求错误" };
+                return resp
+                    .error_for_status()
+                    .with_context(|| format!("从 {endpoint_for_reqwest} 收到非成功响应 (HTTP {status}, {category})"))?
+                    .json::<Value>()
+                    .await
+                    .with_context(|| format!("从 {endpoint_for_reqwest} 收到无效 JSON"));
+            }
+            Err(anyhow::anyhow!("请求 {endpoint_for_reqwest} 被限流 (429), 重试 3 次后仍失败"))
         });
 
         match primary_result {

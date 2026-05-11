@@ -129,6 +129,7 @@ fn decrypt(ciphertext: &[u8]) -> Result<Zeroizing<String>> {
 // ── Vault 类型 ────────────────────────────────────────────
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[serde(deny_unknown_fields)]
 struct VaultData {
     entries: BTreeMap<String, BTreeMap<String, SecretString>>,
 }

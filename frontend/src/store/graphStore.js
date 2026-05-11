@@ -156,6 +156,19 @@ export const useGraphStore = create((set, get) => ({
   },
 
   async initialize() {
+    // v1.0.3: 跨标签同步 — 监听其他标签的 localStorage 变更
+    if (typeof window !== "undefined" && !window._qp_storage_listener) {
+      window._qp_storage_listener = true;
+      window.addEventListener("storage", (event) => {
+        if (event.key === "quantpilot_capabilities_cache") {
+          get().refreshCapabilities();
+        }
+        if (event.key === "quantpilot_frontend_graph") {
+          const graph = loadGraphFromStorage();
+          if (graph) get().set({ graph });
+        }
+      });
+    }
     await get().refreshCapabilities();
     const graphIndex = await get().refreshGraphIndex();
 

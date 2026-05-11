@@ -191,6 +191,7 @@ const SUPPORTED_FRONTEND_MODULE_KEYS: [&str; 14] = [
 
 #[derive(Clone)]
 struct AppState {
+    run_in_progress: Arc<std::sync::atomic::AtomicBool>,
     runs: Arc<RwLock<BTreeMap<String, RunRecord>>>,
     backtests: Arc<RwLock<BTreeMap<String, BacktestRecord>>>,
     experiments: Arc<RwLock<BTreeMap<String, ExperimentRecord>>>,
@@ -728,9 +729,14 @@ async fn run_api_server() -> anyhow::Result<()> {
         }),
         Err(_) => 3000,
     };
+    if port == 0 {
+        anyhow::bail!("端口 0 是保留端口, 请使用 1-65535 范围内的有效端口");
+    }
     let addr = SocketAddr::from(([127, 0, 0, 1], port));
     println!("QuantPilot API listening on http://{}", addr);
-    let listener = tokio::net::TcpListener::bind(addr).await?;
+    let listener = tokio::net::TcpListener::bind(addr).await.map_err(|e| {
+        anyhow::anyhow!("端口 {} 已被占用，请检查是否有其他 QuantPilot 实例在运行: {}", port, e)
+    })?;
     axum::serve(listener, app).await?;
     bg_handle.abort();
     Ok(())

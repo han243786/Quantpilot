@@ -603,6 +603,11 @@ impl FastBacktestSandbox {
         if self.replay_timestamps.is_empty() {
             return Err(anyhow!("回测回放帧未配置"));
         }
+        // v1.0.3: 回测 K 线数量上限保护
+        const MAX_BACKTEST_BARS: usize = 500_000;
+        if self.replay_timestamps.len() > MAX_BACKTEST_BARS {
+            return Err(anyhow!("回测 K 线数量超过上限 ({} > {})", self.replay_timestamps.len(), MAX_BACKTEST_BARS));
+        }
 
         let started_at_ms = self
             .replay_timestamps

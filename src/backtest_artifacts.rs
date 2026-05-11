@@ -1213,10 +1213,14 @@ fn payload_string(payload: &Value, key: &str) -> anyhow::Result<String> {
 }
 
 fn payload_number(payload: &Value, key: &str) -> anyhow::Result<f64> {
-    payload
+    let v = payload
         .get(key)
         .and_then(Value::as_f64)
-        .ok_or_else(|| anyhow!("缺少数字字段 {key}"))
+        .ok_or_else(|| anyhow!("缺少数字字段 {key}"))?;
+    if !v.is_finite() {
+        return Err(anyhow!("字段 {key} 的值无效: NaN 或 Infinity"));
+    }
+    Ok(v)
 }
 
 fn payload_number_with_fallback(payload: &Value, keys: &[&str]) -> anyhow::Result<f64> {

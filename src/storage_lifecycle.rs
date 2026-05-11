@@ -69,7 +69,7 @@ pub fn check_storage_quota(storage_root: &Path) -> Result<(), String> {
             GLOBAL_MAX_BYTES / (1024 * 1024)
         ));
     }
-    if total > FORCE_CLEAN_AT_BYTES {
+    if total >= FORCE_CLEAN_AT_BYTES {
         safe_eprintln!(
             "[storage] 严重告警: 总大小 {} MB 超过 90% 阈值 ({} MB), 需要立即清理",
             total / (1024 * 1024),
@@ -146,7 +146,7 @@ pub fn startup_storage_cleanup(storage_root: &Path) {
                     };
                     let aged = file_age(&meta);
                     // 90% 阈值时激进清理: 不添加安全余量
-                    let safety_margin = if total_size > FORCE_CLEAN_AT_BYTES {
+                    let safety_margin = if total_size >= FORCE_CLEAN_AT_BYTES {
                         Duration::from_secs(0)
                     } else {
                         Duration::from_secs(10 * 60) // 10分钟
@@ -172,7 +172,7 @@ pub fn startup_storage_cleanup(storage_root: &Path) {
             WARN_AT_BYTES / (1024 * 1024)
         );
     }
-    if total_size > FORCE_CLEAN_AT_BYTES {
+    if total_size >= FORCE_CLEAN_AT_BYTES {
         safe_eprintln!(
             "[storage] 严重告警: 总大小 {} MB 超过 90% 阈值, 已强制清理过期暂时/瞬间数据",
             total_size / (1024 * 1024)

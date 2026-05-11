@@ -1,4 +1,10 @@
 ﻿use super::*;
+use std::sync::Arc;
+use tokio::sync::Semaphore;
+
+/// v1.0.3: 限制同时编译数为 4, 防止 CPU 密集操作撑爆线程池
+static COMPILE_SEMAPHORE: std::sync::LazyLock<Arc<Semaphore>> =
+    std::sync::LazyLock::new(|| Arc::new(Semaphore::new(4)));
 
 /// QS 管道编译: graph JSON → QS 源码 → parse → lower → RuntimeProtocolCoreConfig (§1.1, §1.3)
 pub(super) fn compile_runtime_protocol_via_qs(
@@ -29,6 +35,9 @@ pub(super) fn register_compile_routes(router: Router<AppState>) -> Router<AppSta
 async fn compile_runtime_request(
     Json(request): Json<CompileRuntimeRequest>,
 ) -> Result<Json<CompileRuntimeResponse>, (StatusCode, String)> {
+    let _permit = COMPILE_SEMAPHORE.acquire().await.map_err(|_| {
+        (StatusCode::SERVICE_UNAVAILABLE, "编译服务已关闭".to_string())
+    })?;
     // 空 intent 保护: 策略必须包含至少一个意图
     if request.runtime_config.intent_generators.is_empty() {
         return Err(json_bad_request(
