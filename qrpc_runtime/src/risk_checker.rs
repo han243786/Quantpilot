@@ -1069,7 +1069,9 @@ mod tests {
                 min_action_interval_ms,
                 enabled: true,
             }],
+            edges: vec![],
             execution: ExecutionRule {
+
                 execution_id: "exec".into(),
                 venue_kind: "paper".into(),
                 sizing_kind: ExecutionSizingKind::EquityNotionalRatio,

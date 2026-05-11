@@ -9,7 +9,7 @@ use crate::RuntimeCoordinator;
 use anyhow::{anyhow, Result};
 use qrpc_core::{
     BacktestEquityPoint, BacktestOutput, BacktestSummary, CompiledRuntimeProtocol, CoreStrategyIr,
-    DataKind, DataSourceConfig, ExecutionPlan, FillResult, KlineSeriesSnapshot,
+    DataKind, DataSourceConfig, ExecutionPlan, FillResult, HandoffSnapshot, KlineSeriesSnapshot,
     NormalizedMarketData, PortfolioState, QuoteSnapshot, RuntimeEvent, SessionOutput,
 };
 use serde::{Deserialize, Serialize};
@@ -134,6 +134,12 @@ pub trait Sandbox {
     fn snapshot(&self, now_ms: u64) -> SandboxSnapshot;
     /// 存储候选模块配置，返回新的 deployment_revision
     fn swap_module_config(&mut self, module_key: &str, config: serde_json::Value) -> Result<String>;
+
+    /// v1.0.0 热接管: 策略 A 提交快照 → Sandbox 校验 → 策略 B 接管
+    /// 默认返回错误，仅支持热接管的 Sandbox 实现重写
+    fn handoff(&mut self, _snapshot: &HandoffSnapshot) -> Result<()> {
+        Err(anyhow::anyhow!("当前 Sandbox 不支持热接管"))
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -474,6 +480,14 @@ impl Sandbox for RealTimeSandbox {
 
     fn swap_module_config(&mut self, module_key: &str, config: serde_json::Value) -> Result<String> {
         self.coordinator.swap_module_config(module_key, config)
+    }
+
+    /// v1.0.0 热接管: 校验快照完整性, 交由调用方使用快照启动接管策略
+    fn handoff(&mut self, snapshot: &HandoffSnapshot) -> Result<()> {
+        snapshot.validate_completeness().map_err(|errs| {
+            anyhow::anyhow!("热接管快照校验失败: {:?}", errs)
+        })?;
+        Ok(())
     }
 }
 

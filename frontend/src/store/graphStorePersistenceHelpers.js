@@ -51,7 +51,13 @@ function safeSetItem(key, value) {
       window.localStorage.setItem("__qp_storage_estimate__", JSON.stringify(e));
     }).catch(() => {});
   }
-  window.localStorage.setItem(key, data);
+  try {
+    window.localStorage.setItem(key, data);
+  } catch (e) {
+    if (e.name === "QuotaExceededError" || e.code === 22) {
+      console.warn("[qp] localStorage 配额已满, 策略图未保存到本地缓存");
+    }
+  }
 }
 
 function saveGraphToStorage(graph) {

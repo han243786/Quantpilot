@@ -35,7 +35,7 @@ fn directory_lifecycle(dir_name: &str) -> StorageLifecycle {
     }
 }
 
-fn dir_size_bytes(path: &Path) -> u64 {
+pub(crate) fn dir_size_bytes(path: &Path) -> u64 {
     let mut total = 0u64;
     if let Ok(entries) = std::fs::read_dir(path) {
         for entry in entries.flatten() {

@@ -31,6 +31,12 @@ impl RateLimiter {
 
     fn check(&self, client_ip: &str, now_ms: u64) -> Result<(), u64> {
         let mut inner = self.inner.lock().unwrap_or_else(|e| e.into_inner());
+        // v1.0.0: 每 1000 次请求清理一次超过 10 分钟未使用的桶, 防止 DoS 内存耗尽
+        if inner.buckets.len() > 1000 {
+            inner.buckets.retain(|_, bucket| {
+                now_ms.saturating_sub(bucket.last_refill_ms) < 600_000
+            });
+        }
         let bucket = inner.buckets.entry(client_ip.to_string()).or_insert_with(|| {
             TokenBucket {
                 tokens: self.max_rps as f64,
@@ -86,9 +92,9 @@ pub(super) async fn rate_limit_middleware(
         Err(retry_after_ms) => {
             let problem = serde_json::json!({
                 "type": "https://quantpilot.dev/problems/rate-limited",
-                "title": "Too Many Requests",
+                "title": "请求过于频繁",
                 "status": 429,
-                "detail": format!("Rate limit exceeded. Retry after {} seconds.", retry_after_ms / 1000),
+                "detail": format!("速率限制已触发, 请在 {} 秒后重试", retry_after_ms / 1000),
                 "error_code": "RATE_LIMITED",
                 "retryable": true,
             });

@@ -66,7 +66,7 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
   const loadBacktestDetail = useGraphStore((state) => state.loadBacktestDetail);
 
   useEffect(() => {
-    void loadBacktestDetail(backtestId);
+    loadBacktestDetail(backtestId)?.catch(() => {});
   }, [backtestId, loadBacktestDetail]);
 
   const selectedSummary = runtime.selectedBacktestId
@@ -128,7 +128,7 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
     },
     {
       label: t("胜率"),
-      value: summary?.win_rate != null ? `${(summary.win_rate * 100).toFixed(1)}%` : "-"
+      value: summary?.win_rate != null && Number.isFinite(summary.win_rate) ? `${(summary.win_rate * 100).toFixed(1)}%` : "-"
     },
     {
       label: t("成交数"),

@@ -2,7 +2,7 @@
 
 QuantPilot 是一个单机量化交易沙盒, 聚焦于诚实的能力边界、可复现的运行时行为和发布时契约纪律。
 
-当前版本: **v0.5.2** | 下一版本: [v1.0.0](./markdown/06-milestones/v1.0.0/01-规划方案.md) | 全局规则: [General_Policy.md](markdown/General_Policy.md)
+当前版本: **v1.0.0** | [系统架构](./markdown/10-overview/overview-system-architecture.md) | [使用指南](./markdown/10-overview/overview-system-architecture.md#十一使用指南) | [General_Policy](./markdown/General_Policy.md)
 
 ## 产品边界
 
@@ -85,9 +85,9 @@ cd frontend; npm audit --audit-level=moderate
 
 `scripts/pre-commit` 在 `git commit` 时自动执行 `cargo check` + `cargo test --no-run` + `vite build` + `vitest run`
 
-## v0.5.2 就绪度
+## v1.0.0 就绪度
 
-| 维度 | v0.5.2 |
+| 维度 | v1.0.0 |
 |------|:------:|
 | 功能开发进度 | 8/10 |
 | 仓库稳定程度 | 8/10 |

@@ -22,6 +22,14 @@
 /frontend/.env
 /frontend/.env.local
 
+# Plugin user data (installed/cache/disabled are user-managed)
+/plugins/installed/*
+/plugins/cache/*
+/plugins/disabled/*
+!/plugins/installed/.gitkeep
+!/plugins/cache/.gitkeep
+!/plugins/disabled/.gitkeep
+
 # Runtime artifacts and local graph snapshots
 /storage/
 /storage/.credentials

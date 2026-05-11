@@ -3027,7 +3027,7 @@ async fn get_storage_health(
     let mut total_mb = 0u64;
 
     for (name, dir) in &dirs {
-        let size = compute_dir_size_sync(dir).unwrap_or(0);
+        let size = crate::storage_lifecycle::dir_size_bytes(dir);
         total_mb += size / (1024 * 1024);
         layers.push(serde_json::json!({
             "name": name,
@@ -3045,21 +3045,6 @@ async fn get_storage_health(
     })))
 }
 
-fn compute_dir_size_sync(dir: &std::path::Path) -> std::io::Result<u64> {
-    let mut total = 0u64;
-    if let Ok(entries) = std::fs::read_dir(dir) {
-        for entry in entries.flatten() {
-            if let Ok(metadata) = entry.metadata() {
-                if metadata.is_file() {
-                    total += metadata.len();
-                } else if metadata.is_dir() {
-                    total += compute_dir_size_sync(&entry.path()).unwrap_or(0);
-                }
-            }
-        }
-    }
-    Ok(total)
-}
 
 // ── Block 5: 合并记录 API ──
 

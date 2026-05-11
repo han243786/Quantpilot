@@ -85,7 +85,18 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
           runtime_config: result.runtime_config,
           runtime_targets: resolveRuntimeTargets(result)
         });
-        const source = createRuntimeEventSource(start.run_id);
+        const source = createRuntimeEventSource(start.run_id, () => {
+          // \u91cd\u8fde\u8017\u5c3d: \u8bbe\u7f6e\u5931\u8d25\u72b6\u6001
+          const message = buildActionFailureMessage(
+            "sse_disconnect",
+            "\u4e8b\u4ef6\u6d41\u8fde\u63a5\u5df2\u5173\u95ed\u3002",
+            "\u91cd\u8fde\u5c1d\u8bd5\u5df2\u8017\u5c3d\uff0c\u8bf7\u68c0\u67e5\u540e\u7aef\u662f\u5426\u4ecd\u5728\u8fd0\u884c\u3002"
+          );
+          set((state) => ({
+            runtimeController: null,
+            runtime: buildRuntimeFailureState(state.runtime, message)
+          }));
+        });
 
         set((state) => ({
           graph: buildRuntimeBindingGraph(
@@ -115,17 +126,8 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
           }));
         });
 
-        source.onerror = async () => {
-          source.close();
-          const message = buildActionFailureMessage(
-            "sse_disconnect",
-            "\u4e8b\u4ef6\u6d41\u8fde\u63a5\u5df2\u5173\u95ed\u3002",
-            "\u4e8b\u4ef6\u6d41\u8fde\u63a5\u5df2\u5173\u95ed\u3002"
-          );
-          set((state) => ({
-            runtimeController: null,
-            runtime: buildRuntimeFailureState(state.runtime, message)
-          }));
+        source.onerror = () => {
+          source._reconnect?.();
         };
 
         set((state) => ({

@@ -175,7 +175,7 @@ impl CredentialVault {
         if fields.is_empty() {
             anyhow::bail!("凭证字段不能为空");
         }
-        let mut data = self.data.lock().unwrap();
+        let mut data = self.data.lock().unwrap_or_else(|e| e.into_inner());
         let entry: BTreeMap<String, SecretString> = fields
             .into_iter()
             .map(|(k, v)| (k, SecretString(v)))
@@ -196,7 +196,7 @@ impl CredentialVault {
     /// - 若需长期持有，用 `Zeroizing::new(value)` 包裹
     /// - 参考 `test_runner.rs:load_exchange_credentials()` 的调用模式
     pub fn get_service(&self, service: &str) -> Option<CredentialFields> {
-        let data = self.data.lock().unwrap();
+        let data = self.data.lock().unwrap_or_else(|e| e.into_inner());
         data.entries.get(service).map(|entry| {
             entry
                 .iter()
@@ -206,7 +206,7 @@ impl CredentialVault {
     }
 
     pub fn delete_service(&self, service: &str) -> Result<()> {
-        let mut data = self.data.lock().unwrap();
+        let mut data = self.data.lock().unwrap_or_else(|e| e.into_inner());
         if data.entries.remove(service).is_none() {
             anyhow::bail!("标签 '{}' 不存在", service);
         }
@@ -214,7 +214,7 @@ impl CredentialVault {
     }
 
     pub fn list_services(&self) -> Vec<String> {
-        let data = self.data.lock().unwrap();
+        let data = self.data.lock().unwrap_or_else(|e| e.into_inner());
         data.entries.keys().cloned().collect()
     }
 
@@ -267,7 +267,7 @@ impl CredentialVault {
 impl CredentialVault {
     /// 提取所有已存储凭证的字段值，供 safe_log 脱敏模块使用
     pub fn extract_secret_patterns(&self) -> Vec<String> {
-        let data = self.data.lock().unwrap();
+        let data = self.data.lock().unwrap_or_else(|e| e.into_inner());
         data.entries
             .values()
             .flat_map(|entry| entry.values().map(|v| v.0.clone()))

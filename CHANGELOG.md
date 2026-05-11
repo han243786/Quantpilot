@@ -1,5 +1,40 @@
 # Changelog
 
+## v1.0.0
+
+插件化架构 + 重型策略 + 超级规范化。首个整合包。
+
+### Phase 1 协议补全
+- RFC-001 DataRequest struct 落地 (MarketScope / PrimaryDataType / SourceType / Timeframe / PrecisionPolicy)
+- RFC-010 Allocation struct 落地 (AllocationMethod: EqualWeight/FixedWeight/RankWeight/ScoreWeight/RiskParity)
+- RFC-012 Order struct 落地 (OrderStatus 生命周期: Created→Expired)
+- RFC-013 ExecutionFeedback struct 落地 (FeedbackKind 7 种)
+- RFC-020 PluginManifest 扩展: PluginType(Atom/Suite) + AtomRef + hot_handoff + asset_management
+- OrderType 扩展: StopLoss/StopLossLimit/TakeProfit/TakeProfitLimit
+- RFC README: 全部 20 RFC 标注实现状态 (19✅ 1🔄 0📋)
+
+### Phase 2 插件架构
+- RuntimePluginRegistry: scan_atoms() / atoms() / validate_suite() / check_security()
+- PluginSecurityAction: AccessCredentials(拒绝) / NetworkCall(需声明) / WriteState
+- PluginMarketClient: 远端拉取 index.json + fetch_manifest() + 本地协议校验
+- PluginManifest::validate() 追加套件校验和热接管前提检查
+
+### Phase 3 重型策略
+- CoreStrategyIr 新增 edges: Vec<CoreIREdge> 支持 DAG 路由
+- validate_dag(): DFS 环检测
+- Sandbox trait 新增 handoff() 方法, RealTimeSandbox 实现热接管
+- HandoffSnapshot: 持仓/未结订单/现金完整快照 + validate_completeness()
+- Allocation::apply_to_targets(): 按权重分配资金 + min/max 约束
+
+### Phase 4 流水线固化
+- Pre-commit hook: cargo check + test --no-run + build + vitest
+- 元流水线: track-gate-metrics.ps1 (6 项门禁耗时追踪)
+- 设计文档模板: design-doc-template.md
+
+### Phase 5 收口整合
+- 全量审计: 0 阻断发现, 加权 7.4/10
+- 文档同步: README / CHANGELOG / 里程碑 / 总览全部更新
+
 ## 0.5.2
 
 全量排雷收口。16 项 S0/P1/P2 完成。

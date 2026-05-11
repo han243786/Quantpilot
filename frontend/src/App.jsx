@@ -3,6 +3,7 @@ import { useGraphStore } from "./store/graphStore";
 import { parseRoute, strategiesPath } from "./router";
 import LeftSidebar from "./components/LeftSidebar";
 import CommandPalette from "./components/CommandPalette";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
 const StrategyHubPage = lazy(() => import("./pages/StrategyHubPage"));
@@ -168,7 +169,9 @@ export default function App() {
       ) : null}
       <a href="#main-content" className="ad-skip-link">跳转到内容</a>
       <main id="main-content" className="ad-main-content" ref={mainRef} tabIndex={-1} style={appWindow ? { marginTop: 32, height: "calc(100% - 32px)" } : {}}>
-        <Suspense fallback={<AppShellFallback />}>{content}</Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<AppShellFallback />}>{content}</Suspense>
+        </ErrorBoundary>
       </main>
       {tutorialOpen && (
         <TutorialOverlay steps={tutorialSteps} onClose={closeTutorial} />

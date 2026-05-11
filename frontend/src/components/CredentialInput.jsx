@@ -80,11 +80,16 @@ export default function CredentialInput({
     }
   }, [t]);
 
+  const [saveError, setSaveError] = useState("");
+
   const handleSave = useCallback(async () => {
     if (!onSave || !parsedFields) return;
     setSaving(true);
+    setSaveError("");
     try {
       await onSave(label, { ...parsedFields });
+    } catch (e) {
+      setSaveError(e?.message || t("保存凭证失败"));
     } finally {
       setSaving(false);
     }
@@ -142,6 +147,12 @@ export default function CredentialInput({
               ))}
             </ul>
           ) : null}
+        </div>
+      ) : null}
+
+      {saveError ? (
+        <div className="panel-feedback panel-feedback-error" style={{ marginTop: 8 }}>
+          {saveError}
         </div>
       ) : null}
 

@@ -801,6 +801,7 @@ mod tests {
             }],
             risk_policies: vec![],
             execution: sample_execution_rule(),
+            edges: vec![],
         }
     }
 

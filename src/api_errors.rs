@@ -1,7 +1,7 @@
 use super::*;
 
 /// @deprecated 遗留错误格式。新代码请使用 `problem_bad_request()` (RFC 9457)。
-pub(super) fn json_bad_request(
+pub(crate) fn json_bad_request(
     error: &'static str,
     message: impl Into<String>,
 ) -> (StatusCode, String) {

@@ -108,7 +108,7 @@ impl Default for BuiltinDataModule {
             .timeout(Duration::from_secs(HTTP_TIMEOUT_SECS))
             .user_agent("quantpilot/0.1")
             .build()
-            .expect("reqwest client should be constructible");
+            .unwrap_or_else(|_| Client::new());
         Self {
             client,
             cache: Mutex::new(BTreeMap::new()),
@@ -564,7 +564,10 @@ impl BuiltinDataModule {
         now_ms: u64,
     ) -> Option<(NormalizedMarketData, FetchDiagnostics)> {
         let min_interval_ms = source.request_interval_ms?;
-        let cache = self.cache.lock().ok()?;
+        let cache = self.cache.lock().unwrap_or_else(|e| {
+            eprintln!("[data_module] 缓存锁中毒, 使用空缓存继续");
+            e.into_inner()
+        });
         let cached = cache.get(&source.data_id)?.clone();
         let age_ms = now_ms.saturating_sub(cached.captured_at_ms);
         if age_ms >= min_interval_ms {
@@ -701,7 +704,10 @@ impl BuiltinDataModule {
         source: &DataSourceConfig,
         now_ms: u64,
     ) -> Option<(NormalizedMarketData, FetchDiagnostics)> {
-        let cache = self.cache.lock().ok()?;
+        let cache = self.cache.lock().unwrap_or_else(|e| {
+            eprintln!("[data_module] 缓存锁中毒, 使用空缓存继续");
+            e.into_inner()
+        });
         let cached = cache.get(&source.data_id)?.clone();
         let age_ms = now_ms.saturating_sub(cached.captured_at_ms);
         if age_ms > cache_ttl_ms(source.kind.clone()) {
@@ -1356,7 +1362,7 @@ fn fetch_historical_raw_klines(source: &DataSourceConfig) -> Result<Vec<RawKline
         .timeout(Duration::from_secs(HTTP_TIMEOUT_SECS))
         .user_agent("quantpilot/0.1")
         .build()
-        .expect("reqwest client should be constructible");
+        .unwrap_or_else(|_| Client::new());
     let endpoint_for_reqwest = endpoint.clone();
     let payload = block_on_http(async move {
         client
@@ -1465,7 +1471,9 @@ mod tests {
             signal_rules: vec![],
             agent_policies: vec![],
             risk_policies: vec![],
+            edges: vec![],
             execution: ExecutionRule {
+
                 execution_id: "exec".into(),
                 venue_kind: "paper".into(),
                 sizing_kind: ExecutionSizingKind::EquityNotionalRatio,

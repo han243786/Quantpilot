@@ -602,6 +602,7 @@ const SUPPORTED_SYMBOLS: [&str; 3] = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
 #[tokio::main]
 #[cfg_attr(test, allow(dead_code))]
 async fn main() -> anyhow::Result<()> {
+    let _ = dotenvy::dotenv(); // 加载 .env 文件 (不存在则静默跳过)
     let args: Vec<String> = std::env::args().collect();
     if args.len() > 1 && args[1] == "credential" {
         if let Err(e) = cli_support::handle_credential_command(&args[1..]) {
@@ -636,19 +637,25 @@ async fn run_api_server() -> anyhow::Result<()> {
     let report_store_dir = PathBuf::from("storage/reports");
     let mutation_store_dir = PathBuf::from("storage/mutations");
     let ai_proposal_store_dir = PathBuf::from("storage/ai-proposals");
-    fs::create_dir_all(&graph_store_dir).await?;
-    fs::create_dir_all(&run_store_dir).await?;
-    fs::create_dir_all(&backtest_store_dir).await?;
-    fs::create_dir_all(&experiment_store_dir).await?;
-    fs::create_dir_all(&approval_store_dir).await?;
-    fs::create_dir_all(&sandbox_report_store_dir).await?;
-    fs::create_dir_all(&alert_store_dir).await?;
-    fs::create_dir_all(&snapshot_store_dir).await?;
-    fs::create_dir_all(&chaos_store_dir).await?;
-    fs::create_dir_all(&audit_store_dir).await?;
-    fs::create_dir_all(&report_store_dir).await?;
-    fs::create_dir_all(&mutation_store_dir).await?;
-    fs::create_dir_all(&ai_proposal_store_dir).await?;
+    for dir in &[
+        &graph_store_dir,
+        &run_store_dir,
+        &backtest_store_dir,
+        &experiment_store_dir,
+        &approval_store_dir,
+        &sandbox_report_store_dir,
+        &alert_store_dir,
+        &snapshot_store_dir,
+        &chaos_store_dir,
+        &audit_store_dir,
+        &report_store_dir,
+        &mutation_store_dir,
+        &ai_proposal_store_dir,
+    ] {
+        if let Err(e) = fs::create_dir_all(dir).await {
+            safe_eprintln!("[启动] 创建存储目录 {} 失败: {} (服务将继续运行)", dir.display(), e);
+        }
+    }
     if let Err(error) = cleanup_backtest_promotion_work_dirs(&backtest_store_dir).await {
         safe_eprintln!(
             "warning: 清理回测临时目录失败: {}",
@@ -713,10 +720,13 @@ async fn run_api_server() -> anyhow::Result<()> {
         }
     });
 
-    let port: u16 = env::var("QUANTPILOT_PORT")
-        .unwrap_or_else(|_| "3000".to_string())
-        .parse()
-        .unwrap_or(3000);
+    let port: u16 = match env::var("QUANTPILOT_PORT") {
+        Ok(val) => val.parse().unwrap_or_else(|_| {
+            safe_eprintln!("[启动] QUANTPILOT_PORT 值 '{}' 无效, 使用默认 3000", val);
+            3000
+        }),
+        Err(_) => 3000,
+    };
     let addr = SocketAddr::from(([127, 0, 0, 1], port));
     println!("QuantPilot API listening on http://{}", addr);
     let listener = tokio::net::TcpListener::bind(addr).await?;

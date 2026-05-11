@@ -16,7 +16,7 @@
 
 | RFC | 类型 | 状态 | 说明 |
 |-----|------|:--:|------|
-| [RFC-001](./RFC-001-data-request-protocol.md) | `DataRequest` | 📋 | 数据请求协议 — 声明所需数据源、时间框架、标的 |
+| [RFC-001](./RFC-001-data-request-protocol.md) | `DataRequest` | ✅ | 数据请求协议 — 声明所需数据源、时间框架、标的 |
 | [RFC-002](./RFC-002-normalized-market-data-protocol.md) | `NormalizedMarketData` / `KlineSeriesSnapshot` | ✅ | 规范化市场数据 — K 线快照、报价快照的统一结构 |
 
 ### 信号层
@@ -34,15 +34,15 @@
 | [RFC-007](./RFC-007-portfolio-protocol.md) | `Portfolio` / `PortfolioTarget` / `PortfolioState` | ✅ | 组合协议 — 目标持仓与当前持仓快照 |
 | [RFC-008](./RFC-008-risk-protocol.md) | `GlobalRiskController` | ✅ | 全局风险控制协议 |
 | [RFC-009](./RFC-009-risk-decision-protocol.md) | `RiskDecision` | ✅ | 风险决策协议 — 组合目标→风险校验后的决策 |
-| [RFC-010](./RFC-010-allocation-protocol.md) | `Allocation` | 📋 | 分配协议 — 组合权重→具体标的分配 |
+| [RFC-010](./RFC-010-allocation-protocol.md) | `Allocation` | ✅ | 分配协议 — 组合权重→具体标的分配 |
 
 ### 执行层
 
 | RFC | 类型 | 状态 | 说明 |
 |-----|------|:--:|------|
 | [RFC-011](./RFC-011-execution-plan-protocol.md) | `ExecutionPlan` | ✅ | 执行计划协议 |
-| [RFC-012](./RFC-012-order-protocol.md) | `Order` | 📋 | 订单协议 — 下单请求的标准结构 |
-| [RFC-013](./RFC-013-execution-feedback-protocol.md) | `ExecutionFeedback` | 📋 | 执行反馈协议 — 成交回报、部分成交、拒绝 |
+| [RFC-012](./RFC-012-order-protocol.md) | `Order` | ✅ | 订单协议 — 下单请求的标准结构 |
+| [RFC-013](./RFC-013-execution-feedback-protocol.md) | `ExecutionFeedback` | ✅ | 执行反馈协议 — 成交回报、部分成交、拒绝 |
 
 ### 运行时层
 
@@ -76,8 +76,8 @@ DataRequest → NormalizedMarketData → Intent → Agent → Portfolio
 
 | 状态 | 数量 |
 |------|:--:|
-| ✅ 已落地 | 15 |
+| ✅ 已落地 | 19 |
 | 🔄 部分 | 1 |
-| 📋 设计 | 4 |
+| 📋 设计 | 0 |
 
-未落地的 4 个 RFC (001/010/012/013) 和部分落地的 RFC-020 是 v1.0.0 插件化架构的协议基础。
+全部 RFC struct 已落地到 `qrpc_core`。RFC-020 插件清单已扩展双层模型字段，待插件注册表落地后更新为 ✅。

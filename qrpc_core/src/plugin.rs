@@ -5,11 +5,30 @@ use std::collections::{BTreeMap, BTreeSet};
 pub const PLUGIN_MANIFEST_V1_VERSION: &str = "quantpilot/plugin-manifest/v1";
 pub const PLUGIN_CAPABILITY_CONTRACT_V1_VERSION: &str = "v1";
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+pub enum PluginType {
+    #[serde(rename = "atom")]
+    Atom,
+    #[serde(rename = "suite")]
+    Suite,
+}
+
+/// 套件中对原子的引用
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct AtomRef {
+    pub atom_id: String,
+    pub version: String,
+    pub kind: PluginKind,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct PluginManifest {
     pub api_version: String,
     pub id: String,
     pub version: String,
+    // v1.0.0: 双层模型 — Atom 或 Suite
+    #[serde(default)]
+    pub plugin_type: Option<PluginType>,
     pub kind: PluginKind,
     pub display: PluginDisplay,
     pub capability_declarations: Vec<PluginCapabilityDeclaration>,
@@ -21,6 +40,15 @@ pub struct PluginManifest {
     pub dependencies: Vec<PluginDependency>,
     #[serde(default)]
     pub params_schema: Option<Value>,
+    // v1.0.0: 套件打包 — 仅 Suite 类型使用
+    #[serde(default)]
+    pub atoms: Vec<AtomRef>,
+    // v1.0.0: 热接管声明
+    #[serde(default)]
+    pub hot_handoff: bool,
+    // v1.0.0: 完整资产管理能力 (热接管前提)
+    #[serde(default)]
+    pub asset_management: bool,
 }
 
 impl PluginManifest {
@@ -122,6 +150,16 @@ impl PluginManifest {
         }
         if self.security.max_memory_mb == 0 {
             errors.push("security.max_memory_mb 必须大于 0".to_string());
+        }
+
+        // v1.0.0: 套件校验 — Suite 类型必须声明 atoms
+        if self.plugin_type == Some(PluginType::Suite) && self.atoms.is_empty() {
+            errors.push("套件插件必须声明 atoms 列表".to_string());
+        }
+
+        // v1.0.0: 热接管声明要求完整资产管理能力
+        if self.hot_handoff && !self.asset_management {
+            errors.push("声明 hot_handoff 的插件必须同时声明 asset_management".to_string());
         }
 
         if errors.is_empty() {
@@ -350,6 +388,10 @@ mod tests {
             },
             dependencies: vec![],
             params_schema: None,
+            plugin_type: None,
+            atoms: vec![],
+            hot_handoff: false,
+            asset_management: false,
         }
     }
 

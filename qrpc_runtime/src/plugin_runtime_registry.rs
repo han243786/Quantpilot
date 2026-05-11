@@ -7,6 +7,14 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::sync::{Arc, Mutex};
 
+/// v1.0.0 插件安全操作类型
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PluginSecurityAction {
+    AccessCredentials,
+    NetworkCall,
+    WriteState,
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum PluginLifecycleState {
@@ -195,6 +203,137 @@ impl RuntimePluginRegistry {
         self.manifests.manifests()
     }
 
+    // ── v1.0.0 原子扫描 ──
+
+    /// 从 `plugins/atoms/` 目录扫描 .json manifest 文件并注册。
+    /// v1.0.0: 单个文件失败不阻止其他文件注册，收集全部错误后统一报告。
+    pub fn scan_atoms(&mut self, atom_dir: &std::path::Path) -> Result<usize, String> {
+        let dir = std::fs::read_dir(atom_dir).map_err(|e| format!("无法读取插件目录: {e}"))?;
+        let mut loaded = 0usize;
+        let mut errors: Vec<String> = Vec::new();
+        for entry in dir.flatten() {
+            let path = entry.path();
+            if path.extension().and_then(|e| e.to_str()) != Some("json") {
+                continue;
+            }
+            let raw = match std::fs::read_to_string(&path) {
+                Ok(r) => r,
+                Err(e) => {
+                    errors.push(format!("读取 {} 失败: {e}", path.display()));
+                    continue;
+                }
+            };
+            let manifest: PluginManifest = match serde_json::from_str(&raw) {
+                Ok(m) => m,
+                Err(e) => {
+                    errors.push(format!("{} JSON 解析失败: {e}", path.display()));
+                    continue;
+                }
+            };
+            if let Err(errs) = manifest.validate() {
+                errors.push(format!("{} 校验失败: {:?}", path.display(), errs));
+                continue;
+            }
+            if let Err(errs) = self.manifests.register(manifest.clone()) {
+                errors.push(format!("注册 {} 失败: {:?}", path.display(), errs));
+                continue;
+            }
+            let plugin_id = manifest.id.clone();
+            self.lifecycle.insert(
+                plugin_id.clone(),
+                RuntimePluginLifecycle {
+                    plugin_id,
+                    state: PluginLifecycleState::Registered,
+                    fault_reason: None,
+                },
+            );
+            loaded += 1;
+        }
+        if !errors.is_empty() {
+            eprintln!("[plugin] 扫描原子时 {} 个文件失败: {:?}", errors.len(), errors);
+        }
+        Ok(loaded)
+    }
+
+    /// 列出所有已注册的原子 (PluginType::Atom)
+    pub fn atoms(&self) -> Vec<&PluginManifest> {
+        self.manifests
+            .manifests()
+            .into_iter()
+            .filter(|m| m.plugin_type == Some(qrpc_core::PluginType::Atom))
+            .collect()
+    }
+
+    // ── v1.0.0 套件校验 ──
+
+    /// 校验套件：所有引用的原子已注册 + exchange/symbol 一致
+    pub fn validate_suite(&self, suite: &PluginManifest) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
+
+        if suite.plugin_type != Some(qrpc_core::PluginType::Suite) {
+            errors.push("套件校验仅适用于 Suite 类型插件".to_string());
+            return Err(errors);
+        }
+
+        if suite.atoms.is_empty() {
+            errors.push("套件必须声明至少一个原子".to_string());
+            return Err(errors);
+        }
+
+        let registered: std::collections::BTreeSet<&str> = self
+            .manifests
+            .manifests()
+            .into_iter()
+            .map(|m| m.id.as_str())
+            .collect();
+
+        for atom in &suite.atoms {
+            if !registered.contains(atom.atom_id.as_str()) {
+                errors.push(format!("套件引用的原子 `{}` 未注册", atom.atom_id));
+            }
+        }
+
+        if !errors.is_empty() {
+            return Err(errors);
+        }
+        Ok(())
+    }
+
+    // ── v1.0.0 安全边界 ──
+
+    /// 检查插件是否被允许执行指定操作
+    pub fn check_security(
+        &self,
+        plugin_id: &str,
+        action: PluginSecurityAction,
+    ) -> Result<(), String> {
+        let manifest = self
+            .manifests
+            .manifests()
+            .into_iter()
+            .find(|m| m.id == plugin_id)
+            .ok_or_else(|| format!("插件 `{plugin_id}` 未注册"))?;
+
+        match action {
+            PluginSecurityAction::AccessCredentials => {
+                return Err(format!(
+                    "插件 `{plugin_id}` 不允许访问凭证管理"
+                ));
+            }
+            PluginSecurityAction::NetworkCall => {
+                if !manifest.security.allow_network {
+                    return Err(format!(
+                        "插件 `{plugin_id}` 未声明 allow_network"
+                    ));
+                }
+            }
+            PluginSecurityAction::WriteState => {
+                // 插件默认允许写入沙盒状态
+            }
+        }
+        Ok(())
+    }
+
     fn is_active(&self, plugin_id: &str) -> bool {
         self.lifecycle
             .get(plugin_id)
@@ -258,6 +397,10 @@ mod tests {
             },
             dependencies: vec![],
             params_schema: None,
+            plugin_type: None,
+            atoms: vec![],
+            hot_handoff: false,
+            asset_management: false,
         }
     }
 

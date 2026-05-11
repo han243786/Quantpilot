@@ -7,6 +7,7 @@ mod fill_engine;
 mod intent_module;
 mod merge;
 mod plugin_runtime_registry;
+mod plugin_market;
 mod reconcile;
 mod risk_checker;
 mod sandbox;
@@ -41,8 +42,9 @@ pub use intent_module::{
     BuiltinIntentModule, IntentEvaluationOutput, IntentEvaluationRequest, IntentModuleProvider,
 };
 pub use plugin_runtime_registry::{
-    PluginLifecycleState, RuntimePluginLifecycle, RuntimePluginRegistry,
+    PluginLifecycleState, PluginSecurityAction, RuntimePluginLifecycle, RuntimePluginRegistry,
 };
+pub use plugin_market::{MarketMetadata, PluginMarketClient, PluginSummary};
 pub use risk_checker::{RiskCheckOutput, RiskCheckRequest, RiskChecker, RiskCheckerProvider};
 pub use hotswap::{
     DefaultHotSwapValidator, HotSwapModuleTarget, HotSwapOrchestrator, HotSwapRequest,

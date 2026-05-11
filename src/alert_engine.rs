@@ -299,26 +299,10 @@ async fn check_storage_watermark(_state: &AppState) -> bool {
     let storage_root = std::path::PathBuf::from("storage");
     tokio::task::spawn_blocking(move || {
         crate::storage_lifecycle::startup_storage_cleanup(&storage_root);
-        compute_dir_size_sync(&storage_root).unwrap_or(0) > watermark_bytes
+        crate::storage_lifecycle::dir_size_bytes(&storage_root) > watermark_bytes
     })
     .await
     .unwrap_or(false)
-}
-
-fn compute_dir_size_sync(dir: &std::path::Path) -> std::io::Result<u64> {
-    let mut total = 0u64;
-    if let Ok(entries) = std::fs::read_dir(dir) {
-        for entry in entries.flatten() {
-            if let Ok(metadata) = entry.metadata() {
-                if metadata.is_file() {
-                    total += metadata.len();
-                } else if metadata.is_dir() {
-                    total += compute_dir_size_sync(&entry.path()).unwrap_or(0);
-                }
-            }
-        }
-    }
-    Ok(total)
 }
 
 async fn check_approval_expiry(state: &AppState) -> bool {

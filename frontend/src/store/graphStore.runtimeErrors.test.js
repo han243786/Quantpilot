@@ -121,13 +121,16 @@ describe("graphStore passive runtime error paths", () => {
   });
 
   it("formats SSE disconnects as a structured runtime failure", async () => {
+    // v1.0.0: SSE 断开后自动重连, 仅重连耗尽时设 failure 状态
+    let exhaustCallback = null;
     const fakeSource = {
       listeners: new Map(),
       addEventListener(type, handler) {
         this.listeners.set(type, handler);
       },
       close: vi.fn(),
-      onerror: null
+      onerror: null,
+      _reconnect: () => { exhaustCallback?.(); }
     };
 
     let runtimeStartBody = null;
@@ -149,7 +152,10 @@ describe("graphStore passive runtime error paths", () => {
     });
 
     vi.stubGlobal("fetch", fetchMock);
-    createRuntimeEventSource.mockReturnValue(fakeSource);
+    createRuntimeEventSource.mockImplementation((runId, onExhausted) => {
+      exhaustCallback = onExhausted;
+      return fakeSource;
+    });
 
     act(() => {
       useGraphStore.setState({
@@ -172,12 +178,16 @@ describe("graphStore passive runtime error paths", () => {
       await useGraphStore.getState().startRuntime();
     });
 
+    // 模拟 SSE 断开 → 触发重连 → 重连耗尽
     await act(async () => {
       await fakeSource.onerror();
     });
+    // 重连耗尽回调被源调用
+    expect(exhaustCallback).toBeTruthy();
+    exhaustCallback();
 
     expect(useGraphStore.getState().runtime.status).toBe("error");
-    expect(createRuntimeEventSource).toHaveBeenCalledWith("run_sse_001");
+    expect(createRuntimeEventSource).toHaveBeenCalledWith("run_sse_001", expect.any(Function));
     expect(runtimeStartBody.capability_context).toEqual({
       schema_hash: backendCapabilitiesFixture.schema_hash,
       permission_boundary: backendCapabilitiesFixture.permission_boundary

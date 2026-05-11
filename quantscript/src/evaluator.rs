@@ -271,11 +271,14 @@ fn maybe_inline_function(
 
 fn should_skip_inline(error: &anyhow::Error) -> bool {
     let message = error.to_string();
-    message.contains("symbolic branching")
-        || message.contains("symbolic while-loop")
-        || message.contains("unable to symbolically expand for-loop iterable")
-        || message.contains("unsupported statement in helper function")
+    message.contains("发散的辅助函数状态")
+        || message.contains("while 循环")
+        || message.contains("无法以符号方式展开")
+        || message.contains("辅助函数中不支持的语句")
 }
+
+const MAX_RECURSION_DEPTH: usize = 256;
+const MAX_FOR_ITERATIONS: usize = 10000;
 
 fn evaluate_function(
     function: &FunctionDecl,
@@ -283,6 +286,9 @@ fn evaluate_function(
     context: &EvalContext,
     stack: &mut BTreeSet<String>,
 ) -> Result<Expr> {
+    if stack.len() > MAX_RECURSION_DEPTH {
+        bail!("QS 函数调用嵌套深度超过限制 ({})", MAX_RECURSION_DEPTH);
+    }
     let mut env = BTreeMap::new();
     for (index, param) in function.params.iter().enumerate() {
         let value = args
@@ -452,6 +458,9 @@ fn execute_for_stmt(
     let normalized_iterable = normalize_expr(iterable, env, context, stack)?;
     let items = expr_iterable_items(&normalized_iterable)
         .ok_or_else(|| anyhow!("无法以符号方式展开 for 循环的可迭代对象"))?;
+    if items.len() > MAX_FOR_ITERATIONS {
+        bail!("for 循环迭代次数超过限制 ({} > {})", items.len(), MAX_FOR_ITERATIONS);
+    }
     for item in items {
         env.insert(pattern.to_string(), item);
         match execute_block_in_place(body, env, context, stack, last_expr)? {

@@ -281,6 +281,10 @@ fn build_execution_plan_payload(
                     }
                 }
                 OrderType::Limit => "fallback_to_resting_limit_without_live_quote",
+                OrderType::StopLoss
+                | OrderType::StopLossLimit
+                | OrderType::TakeProfit
+                | OrderType::TakeProfitLimit => "plugin_execution_algorithm",
             };
             json!({
                 "order_id": order.order_id,
@@ -453,7 +457,9 @@ mod tests {
             signal_rules: vec![],
             agent_policies: vec![],
             risk_policies: vec![],
+            edges: vec![],
             execution: ExecutionRule {
+
                 execution_id: "execution.paper".into(),
                 venue_kind: "paper".into(),
                 sizing_kind: ExecutionSizingKind::EquityNotionalRatio,

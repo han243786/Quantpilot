@@ -666,7 +666,11 @@ fn sim_order_from_open(order: &OpenOrder) -> SimOrder {
 fn is_marketable(order: &SimOrder, market_ref: f64) -> bool {
     match order.order_type {
         OrderType::Market => true,
-        OrderType::Limit => match (order.side.clone(), order.limit_price) {
+        OrderType::Limit
+        | OrderType::StopLoss
+        | OrderType::StopLossLimit
+        | OrderType::TakeProfit
+        | OrderType::TakeProfitLimit => match (order.side.clone(), order.limit_price) {
             (OrderSide::Buy, Some(limit)) => market_ref <= limit,
             (OrderSide::Sell, Some(limit)) => market_ref >= limit,
             _ => false,
@@ -675,7 +679,10 @@ fn is_marketable(order: &SimOrder, market_ref: f64) -> bool {
 }
 
 fn can_rest(order: &SimOrder) -> bool {
-    matches!(order.order_type, OrderType::Limit) && matches!(order.time_in_force, TimeInForce::Gtc)
+    matches!(
+        order.order_type,
+        OrderType::Limit | OrderType::StopLossLimit | OrderType::TakeProfitLimit
+    ) && matches!(order.time_in_force, TimeInForce::Gtc)
 }
 
 fn build_fill_report(
@@ -693,7 +700,11 @@ fn build_fill_report(
     let base_price = order.limit_price.unwrap_or(market_price);
     let fill_price = match order.order_type {
         OrderType::Market => market_price * (1.0 + direction * order.slippage_bps / 10_000.0),
-        OrderType::Limit => base_price,
+        OrderType::Limit
+        | OrderType::StopLoss
+        | OrderType::StopLossLimit
+        | OrderType::TakeProfit
+        | OrderType::TakeProfitLimit => base_price,
     };
     let fee_paid = fill_qty * fill_price * order.fee_bps / 10_000.0;
 

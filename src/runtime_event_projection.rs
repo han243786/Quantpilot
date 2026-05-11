@@ -48,8 +48,9 @@ fn annotate_frontend_event_payload(
     trace_id: &str,
     projection_context: Option<BacktestEventProjectionContext<'_>>,
 ) -> Value {
-    let Value::Object(mut object) = payload.clone() else {
-        return payload.clone();
+    let mut object = match &payload {
+        Value::Object(o) => o.clone(),
+        _ => return payload.clone(),
     };
 
     object.insert("trace_id".to_string(), Value::String(trace_id.to_string()));

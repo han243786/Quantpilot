@@ -40,7 +40,7 @@ async fn set_credential(
 
     let service = body["service"]
         .as_str()
-        .filter(|s| !s.trim().is_empty())
+        .filter(|s| !s.trim().is_empty() && s.len() <= 64 && !s.contains('/') && !s.contains('\\') && !s.contains(".."))
         .ok_or_else(|| {
             (
                 StatusCode::BAD_REQUEST,
@@ -79,6 +79,9 @@ async fn delete_credential(
     State(state): State<AppState>,
     Path(service): Path<String>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
+    if service.is_empty() || service.len() > 64 || service.contains('/') || service.contains('\\') || service.contains("..") {
+        return Err((StatusCode::BAD_REQUEST, "凭证标签无效".to_string()));
+    }
     let vault = state
         .credential_vault
         .as_ref()

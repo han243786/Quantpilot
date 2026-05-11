@@ -165,8 +165,8 @@ function DefaultToolbarLayout({
 
         <div className="toolbar-center">
           <div className="toolbar-graph-meta">
-            <div className="graph-kicker">{graph.metadata.graph_id || "draft_graph"}</div>
-            <div className="graph-title">{graph.metadata.name}</div>
+            <div className="graph-kicker">{graph.metadata?.graph_id || "draft_graph"}</div>
+            <div className="graph-title">{graph.metadata?.name || "未命名策略"}</div>
           </div>
           <div className={`status-pill ${statusLabel.tone}`}>{statusLabel.text}</div>
           <div className={`status-pill ${capabilityLabel.tone}`}>{capabilityLabel.text}</div>
@@ -280,8 +280,8 @@ function WorkspaceToolbarLayout({
           <div className="toolbar-workspace-context">
             <div className="toolbar-workspace-context__label">工作区操作</div>
             <div className="toolbar-graph-meta">
-              <div className="graph-kicker">{graph.metadata.graph_id || "draft_graph"}</div>
-              <div className="graph-title">{graph.metadata.name}</div>
+              <div className="graph-kicker">{graph.metadata?.graph_id || "draft_graph"}</div>
+              <div className="graph-title">{graph.metadata?.name || "未命名策略"}</div>
             </div>
           </div>
           <div className="toolbar-status-strip">

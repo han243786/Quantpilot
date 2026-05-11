@@ -14,7 +14,7 @@ pub fn sanitize_secrets(input: &str) -> String {
         "api_key", "secret", "passphrase", "password", "apikey", "api_secret",
     ];
 
-    let extra = EXTRA_PATTERNS.lock().unwrap();
+    let extra = EXTRA_PATTERNS.lock().unwrap_or_else(|e| e.into_inner());
     let all_patterns: Vec<String> = builtin
         .iter()
         .map(|s| s.to_string())

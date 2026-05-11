@@ -348,6 +348,7 @@ mod tests {
             signal_rules: Vec::new(),
             agent_policies: Vec::new(),
             risk_policies: Vec::new(),
+            edges: vec![],
             execution: qrpc_core_ir::ExecutionRule {
                 execution_id: "exec".into(),
                 venue_kind: "paper".into(),

@@ -292,6 +292,7 @@ mod tests {
             agent_policies: vec![],
             risk_policies: vec![],
             execution: sample_execution_rule(),
+            edges: vec![],
         }
     }
 

@@ -24,7 +24,7 @@ pub(super) async fn persist_run_record(
 ) -> std::io::Result<()> {
     check_storage_quota!("runs", Temporary);
     fs::create_dir_all(run_store_dir).await?;
-    let path = run_store_dir.join(format!("{}.json", record.run_id));
+    let path = run_store_dir.join(format!("{}.json", sanitize_storage_path_segment(&record.run_id)));
     atomic_write_json(&path, record).await
 }
 
@@ -42,7 +42,7 @@ pub(super) async fn persist_experiment_record(
 ) -> std::io::Result<()> {
     check_storage_quota!("experiments", Temporary);
     fs::create_dir_all(experiment_store_dir).await?;
-    let path = experiment_store_dir.join(format!("{}.json", record.experiment_id));
+    let path = experiment_store_dir.join(format!("{}.json", sanitize_storage_path_segment(&record.experiment_id)));
     atomic_write_json(&path, record).await
 }
 
@@ -282,7 +282,7 @@ pub(super) async fn load_run_record_from_state(
         ));
     }
 
-    let path = state.run_store_dir.join(format!("{}.json", run_id));
+    let path = state.run_store_dir.join(format!("{}.json", sanitize_storage_path_segment(run_id)));
     let content = fs::read_to_string(&path)
         .await
         .map_err(not_found_io_error)?;
@@ -342,7 +342,7 @@ pub(super) async fn load_experiment_record_from_state(
 
     let path = state
         .experiment_store_dir
-        .join(format!("{}.json", experiment_id));
+        .join(format!("{}.json", sanitize_storage_path_segment(experiment_id)));
     let content = fs::read_to_string(&path)
         .await
         .map_err(not_found_io_error)?;
@@ -425,6 +425,6 @@ pub(super) async fn persist_json<T: serde::Serialize>(
     data: &T,
 ) -> std::io::Result<()> {
     fs::create_dir_all(store_dir).await?;
-    let file_path = store_dir.join(format!("{}.json", id));
+    let file_path = store_dir.join(format!("{}.json", sanitize_storage_path_segment(id)));
     atomic_write_json(&file_path, data).await
 }

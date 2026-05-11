@@ -267,6 +267,9 @@ async fn load_sandbox_report_from_disk(
     store_dir: &FsPath,
     proposal_id: &str,
 ) -> Result<SandboxVerificationReport, (StatusCode, String)> {
+    if proposal_id.contains("..") || proposal_id.contains('/') || proposal_id.contains('\\') || proposal_id.is_empty() || proposal_id.len() > 128 {
+        return Err((StatusCode::BAD_REQUEST, "proposal_id 无效".to_string()));
+    }
     let file_path = store_dir.join(format!("{}.json", proposal_id));
     let json = fs::read(&file_path).await.map_err(|_| {
         json_bad_request(
