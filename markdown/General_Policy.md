@@ -342,8 +342,9 @@ persist_with_ttl(path, data, Duration::from_secs(7 * 24 * 3600))?;
   错误红: #c48888 (玫瑰灰)
   警告黄: #c4a55a (琥珀金)
   强调蓝: #1473e6 (Adobe 蓝)
-  文本色: #e6e6e6 / #aaaaaa / #6e6e6e
-  表面色: #0d0d0d / #1e1e1e / #2d2d2d / #404040
+  文本色: #e6e6e6 / #aaaaaa / #909090
+  表面色: #0d0d0d (最深背景) / #151515 (抬起) / #1a1a1a (面板) / #242424 (卡片)
+          #2e2e2e (卡片hover) / #4a4a4a (边框) / #5e5e5e (强调边框)
 
 ❌ 禁止:
   #22c55e / #2ecc71 (高饱和绿)
@@ -432,4 +433,45 @@ persist_with_ttl(path, data, Duration::from_secs(7 * 24 * 3600))?;
   3. 是否使用了 SVG 图标而非 emoji
   4. 用户可见字符串是否用 t() 包裹
   5. data-testid 属性是否已设置
+```
+
+### 8.8 CSS 文件结构与质量
+
+```
+前端 CSS 文件分层:
+
+  层级          文件                          职责
+  ────────────  ────────────────────────────  ──────────────────
+  设计令牌      design-system.css             全局 --ad-* 变量、重置、App Shell
+  共享组件      shared.css                    卡片/按钮/徽章/表格/输入框等通用组件
+  页面样式      pages/strategy-hub.css        各页面特有的布局和组件样式
+               pages/strategy-workspace.css
+               pages/backtest-analysis.css
+  全局补充      styles.css                    编辑器页、工具栏、面板等遗留样式
+
+CSS 质量规则:
+
+  1. 禁止空属性值
+     ❌ background:        (无值)
+     ❌ --custom-prop:     (空自定义属性)
+     ✅ background: var(--ad-panel);
+     ✅ background: none;
+
+  2. 禁止跨文件重复样式
+     ❌ .strategy-card-note 在 strategy-hub.css 和 strategy-workspace.css 中重复定义
+     ✅ 通用样式放在 strategy-hub.css，其他文件引用同一套 class
+
+  3. 禁止引用未定义的 CSS 变量
+     ❌ background: var(--analysis-surface-glint);  (变量未在任何地方定义)
+     ✅ 自定义变量必须在对应页面的 :root 或选择器块中定义
+
+  4. 禁止跨文件重复 @keyframes
+     ❌ @keyframes ad-fade-in 在多个文件中定义
+     ✅ 动画定义在 design-system.css 或 shared.css 中
+
+  验收命令:
+    grep -rn "background:\s*$" frontend/src/ --include="*.css"    # 应返回 0
+    grep -rn "^\s*--[^:]*:\s*$" frontend/src/ --include="*.css"   # 空 CSS 变量
+    npx vite build                                                 # 必须通过
+    npx vitest run                                                 # 必须全量通过
 ```

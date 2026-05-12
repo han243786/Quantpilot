@@ -1,4 +1,5 @@
 import { createModuleRegistry } from "../modules/moduleRegistry";
+import { API_BASE } from "../api/client";
 import {
   DEFAULT_CAPABILITIES,
   applyCapabilitiesToModules,
@@ -16,27 +17,21 @@ const CAPABILITY_CACHE_KEY = "quantpilot_capabilities_cache";
 const defaultModules = applyCapabilitiesToModules(DEFAULT_CAPABILITIES);
 const defaultRegistry = createModuleRegistry(defaultModules, DEFAULT_CAPABILITIES);
 
-function resolveApiBase() {
-  const explicitBase = import.meta.env.VITE_API_BASE_URL?.trim();
-  if (explicitBase) {
-    return explicitBase.replace(/\/+$/, "");
-  }
-
-  if (typeof window === "undefined") {
-    return "http://127.0.0.1:3000/api";
-  }
-
-  return "/api";
-}
-
-const API_BASE = resolveApiBase();
+// v1.0.5: API_BASE 来自 src/api/client.js (统一来源)
 const DEFAULT_LOCAL_ACTOR = {
   actor_id: "local_operator",
   display_name: "Local operator"
 };
 
 function safeSetItem(key, value) {
-  const data = JSON.stringify(value);
+  if (typeof window === "undefined") return;
+  let data;
+  try {
+    data = JSON.stringify(value);
+  } catch (e) {
+    console.warn("[storage] JSON.stringify 失败, 跳过 localStorage 写入", e);
+    return;
+  }
   // 超过 500KB 时检查 localStorage 配额
   if (data.length > 500_000 && typeof navigator !== "undefined" && navigator.storage?.estimate) {
     try {
@@ -46,7 +41,7 @@ function safeSetItem(key, value) {
       if (usage > quota * 0.9) {
         console.warn("[storage] localStorage 使用量接近上限, 请清理旧策略图版本");
       }
-    } catch { /* 配额检查失败不影响保存 */ }
+    } catch (e) { console.warn("[storage] 配额检查失败", e); }
     navigator.storage.estimate().then((e) => {
       window.localStorage.setItem("__qp_storage_estimate__", JSON.stringify(e));
     }).catch(() => {});
@@ -56,6 +51,7 @@ function safeSetItem(key, value) {
   } catch (e) {
     if (e.name === "QuotaExceededError" || e.code === 22) {
       console.warn("[qp] localStorage 配额已满, 策略图未保存到本地缓存");
+      window.dispatchEvent(new CustomEvent("qp-storage-quota-exceeded"));
     }
   }
 }
@@ -67,13 +63,18 @@ function saveGraphToStorage(graph) {
 }
 
 function loadGraphFromStorage() {
+  if (typeof window === "undefined") return null;
   const raw = window.localStorage.getItem(STORAGE_KEY);
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw);
-    // 旧格式无 _schema 字段, 经 normalizeGraphShape 兼容
+    if (parsed._schema && parsed._schema !== GRAPH_STORAGE_SCHEMA) {
+      console.warn(`[storage] 策略图缓存 schema 版本不兼容 (存储 ${parsed._schema}, 当前 ${GRAPH_STORAGE_SCHEMA}), 将丢弃旧数据`);
+      return null;
+    }
     return parsed;
-  } catch {
+  } catch (e) {
+    console.warn("[storage] 数据解析失败", e);
     return null;
   }
 }
@@ -227,7 +228,12 @@ export async function fetchJson(path) {
     const text = await response.text();
     throw new Error(humanizeErrorText(text, `Request failed with status ${response.status}.`));
   }
-  return response.json();
+  const json = await response.json();
+  // v1.0.5: 自动解包分页响应 {data, total, limit, offset} → data
+  if (json && typeof json === "object" && Array.isArray(json.data) && typeof json.total === "number") {
+    return json.data;
+  }
+  return json;
 }
 
 async function postJson(path, body) {
@@ -258,7 +264,11 @@ async function postJson(path, body) {
     throw error;
   }
 
-  return response.json();
+  const json = await response.json();
+  if (json && typeof json === "object" && Array.isArray(json.data) && typeof json.total === "number") {
+    return json.data;
+  }
+  return json;
 }
 
 async function deleteJson(path) {
@@ -286,7 +296,11 @@ async function deleteJson(path) {
     throw error;
   }
 
-  return response.json();
+  const json = await response.json();
+  if (json && typeof json === "object" && Array.isArray(json.data) && typeof json.total === "number") {
+    return json.data;
+  }
+  return json;
 }
 
 function buildRegistryFromCapabilities(capabilities) {
@@ -333,7 +347,8 @@ function loadCapabilitiesFromCache() {
   try {
     const parsed = JSON.parse(raw);
     return parsed && typeof parsed === "object" ? parsed : null;
-  } catch {
+  } catch (e) {
+    console.warn("[storage] 数据解析失败", e);
     return null;
   }
 }
@@ -518,7 +533,6 @@ export {
   STORAGE_KEY,
   createSafeFallbackCapabilities,
   deleteJson,
-  defaultModules,
   DEFAULT_CAPABILITIES as defaultCapabilities,
   defaultRegistry,
   fallbackRunnableGraph,
@@ -542,7 +556,6 @@ export {
   saveGraphToStorage,
   withGraphActorMetadata,
   withRecentNodeIds,
-  attachValidation,
   attachValidationWithRegistry,
   buildRegistryFromCapabilities
 };

@@ -164,9 +164,19 @@ export function validateGraph(graph, registry) {
     counts[issue.level] += 1;
   };
 
+  // v1.0.5: 预建边索引, O(E)一次性, 避免节点循环内重复 edges.filter O(N*E)
+  const edgesByTarget = new Map();
+  const edgesBySource = new Map();
+  for (const edge of graph.edges) {
+    if (!edgesByTarget.has(edge.target_node_id)) edgesByTarget.set(edge.target_node_id, []);
+    edgesByTarget.get(edge.target_node_id).push(edge);
+    if (!edgesBySource.has(edge.source_node_id)) edgesBySource.set(edge.source_node_id, []);
+    edgesBySource.get(edge.source_node_id).push(edge);
+  }
+
   graph.nodes.forEach((node) => {
-    const incoming = graph.edges.filter((edge) => edge.target_node_id === node.id);
-    const outgoing = graph.edges.filter((edge) => edge.source_node_id === node.id);
+    const incoming = edgesByTarget.get(node.id) || [];
+    const outgoing = edgesBySource.get(node.id) || [];
 
     const moduleDef = registry.getByKey(node.module_key);
     if (!moduleDef) {
@@ -460,7 +470,7 @@ export function validateGraph(graph, registry) {
 
   graph.nodes.forEach((node) => {
     if (node.type === "intent") {
-      const hasOutput = graph.edges.some((edge) => edge.source_node_id === node.id);
+      const hasOutput = (edgesBySource.get(node.id) || []).length > 0;
       if (!hasOutput) {
         addNodeIssue(
           node.id,

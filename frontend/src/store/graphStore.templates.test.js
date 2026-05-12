@@ -27,7 +27,7 @@ describe("graphStore strategy templates", () => {
         selectedHistoryRunId: "run_alpha_01",
         selectedBacktestId: "bt_alpha_01",
         selectedExperimentId: "exp_alpha_01",
-        backtestCompareSelection: ["bt_alpha_01"],
+        backtestCompareSelection: { _global: ["bt_alpha_01"] },
         events: [{ type: "RuntimeStarted" }]
       }
     }));
@@ -52,7 +52,7 @@ describe("graphStore strategy templates", () => {
     expect(state.runtime.selectedHistoryRunId).toBeNull();
     expect(state.runtime.selectedBacktestId).toBeNull();
     expect(state.runtime.selectedExperimentId).toBeNull();
-    expect(state.runtime.backtestCompareSelection).toEqual([]);
+    expect(state.runtime.backtestCompareSelection).toEqual({});
     expect(state.runtime.events).toEqual([]);
     expect(state.compileResult).toBeNull();
     expect(state.graphVersionPreview).toBeNull();

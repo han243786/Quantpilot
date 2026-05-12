@@ -58,7 +58,7 @@ function buildStoreHarness() {
       historyStatus: "idle",
       backtestHistory: [],
       backtestHistoryStatus: "idle",
-      backtestCompareSelection: [],
+      backtestCompareSelection: {},
       runId: null,
       runKind: null,
       status: "idle",

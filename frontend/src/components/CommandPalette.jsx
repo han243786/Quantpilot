@@ -1,22 +1,26 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useI18n } from "../i18n";
 import { navigateTo } from "../router";
 
-const COMMANDS = [
-  { id: "strategies", label: "策略中心", keys: ["/strategies"], section: "导航" },
-  { id: "quantscript", label: "QuantScript 编辑器", keys: ["/quantscript"], section: "导航" },
-  { id: "approvals", label: "审批队列", keys: ["/approvals"], section: "运维" },
-  { id: "alerts", label: "告警面板", keys: ["/alerts"], section: "运维" },
-  { id: "snapshots", label: "签名快照", keys: ["/snapshots"], section: "运维" },
-  { id: "runbook", label: "故障手册", keys: ["/runbook"], section: "运维" },
-  { id: "chaos", label: "混沌实验", keys: ["/chaos"], section: "运维" },
+const COMMAND_DEFS = [
+  { id: "strategies", labelKey: "策略中心", keys: ["/strategies"], sectionKey: "导航" },
+  { id: "quantscript", labelKey: "QuantScript 编辑器", keys: ["/quantscript"], sectionKey: "导航" },
+  { id: "approvals", labelKey: "审批队列", keys: ["/approvals"], sectionKey: "运维" },
+  { id: "alerts", labelKey: "告警面板", keys: ["/alerts"], sectionKey: "运维" },
+  { id: "snapshots", labelKey: "签名快照", keys: ["/snapshots"], sectionKey: "运维" },
+  { id: "runbook", labelKey: "故障手册", keys: ["/runbook"], sectionKey: "运维" },
+  { id: "chaos", labelKey: "混沌实验", keys: ["/chaos"], sectionKey: "运维" },
 ];
 
 export default function CommandPalette({ open, onClose }) {
   const { t } = useI18n();
+  const COMMANDS = useMemo(() => COMMAND_DEFS.map((c) => ({
+    ...c, label: t(c.labelKey), section: t(c.sectionKey)
+  })), [t]);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef(null);
+  const paletteRef = useRef(null);
 
   const filtered = query.trim()
     ? COMMANDS.filter((c) =>
@@ -81,7 +85,33 @@ export default function CommandPalette({ open, onClose }) {
 
   return (
     <div className="ad-overlay" onClick={onClose} data-testid="command-palette-overlay">
-      <div className="ad-command-palette" onClick={(e) => e.stopPropagation()} data-testid="command-palette">
+      <div
+        className="ad-command-palette"
+        ref={paletteRef}
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === "Tab") {
+            const items = paletteRef.current?.querySelectorAll("button");
+            if (!items || items.length === 0) return;
+            e.preventDefault();
+            if (e.shiftKey) {
+              if (document.activeElement === inputRef.current) {
+                items[items.length - 1].focus();
+              } else {
+                const idx = Array.from(items).indexOf(document.activeElement);
+                (items[idx - 1] || inputRef.current).focus();
+              }
+            } else {
+              if (document.activeElement === items[items.length - 1]) {
+                inputRef.current?.focus();
+              } else {
+                items[0]?.focus();
+              }
+            }
+          }
+        }}
+        data-testid="command-palette"
+      >
         <input
           ref={inputRef}
           className="ad-command-palette__input"

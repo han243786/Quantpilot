@@ -85,7 +85,7 @@ describe("graphStore startup recovery paths", () => {
     expect(recoverLatestRunnableGraph).toHaveBeenCalledTimes(1);
   });
 
-  it("ignores stored runnable graphs that are missing from the real backend graph index", async () => {
+  it("v1.0.5: accepts stored runnable graphs even when missing from backend index (recovery from refresh)", async () => {
     const storedGraph = buildGraph(useGraphStore.getState().registry, (graph) => {
       graph.metadata.name = "Ghost Runnable Graph";
       graph.metadata.graph_id = "ghost_strategy";
@@ -109,6 +109,7 @@ describe("graphStore startup recovery paths", () => {
 
     await useGraphStore.getState().initialize();
 
-    expect(useGraphStore.getState().graph.metadata.graph_id).not.toBe("ghost_strategy");
+    // v1.0.5: localStorage graph is now accepted as third fallback even when not in backend index
+    expect(useGraphStore.getState().graph.metadata.graph_id).toBe("ghost_strategy");
   });
 });

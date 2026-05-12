@@ -35,7 +35,7 @@ QuantPilot 是一个**单机量化策略研发沙盒**。它不是交易执行�
 │  React 18 + Vite 6 + Zustand 4 + React Flow 12                 │
 │  ├── Adobe 暗色面板设计系统 (--ad-* CSS 令牌, 约 50 个变量)       │
 │  ├── SVG 图标组件库 (禁止 Unicode Emoji)                        │
-│  ├── Testing Library + Vitest (86 文件, 243 测试)               │
+│  ├── Testing Library + Vitest (92 文件, 269 测试)               │
 │  └── Playwright (E2E, API-mock 隔离合约)                       │
 ├─ 后端 (Rust Axum) ─────────────────────────────────────────────┤
 │  Axum 0.7 (HTTP) + Tokio (async runtime, multi-thread)          │
@@ -1831,8 +1831,8 @@ cp scripts/pre-commit .git/hooks/pre-commit
 | 指标种类 | 18 (全部有 evaluator 实现) |
 | 支持交易所 | 2 (binance, okx) |
 | 支持交易对 | 3 (BTCUSDT, ETHUSDT, SOLUSDT) |
-| 前端测试文件 | 86 |
-| 前端测试用例 | 243 |
+| 前端测试文件 | 92 |
+| 前端测试用例 | 269 |
 | 后端测试用例 | ~115 (含集成测试) |
 | 存储配额 | 500 MB |
 | CI 门禁步数 | 13 |

@@ -335,6 +335,21 @@ function normalizeExperimentList(entries) {
     .filter((entry) => entry.experiment_id);
 }
 
+/**
+ * v1.0.5 统一锁包装器
+ * 用法: await withLock(set, get, "saving", () => saveGraphInternal())
+ * 若锁已被占用则静默返回 undefined; finally 保证释放
+ */
+export async function withLock(set, get, lockName, fn) {
+  if (get().actionLock) return;
+  set({ actionLock: lockName });
+  try {
+    return await fn();
+  } finally {
+    set({ actionLock: null });
+  }
+}
+
 export {
   accountFromPortfolioPayload,
   applyEventsToGraphNodes,

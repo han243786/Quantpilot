@@ -1,3 +1,4 @@
+import { useState, useCallback } from "react";
 import { translateText } from "../i18n";
 import ErrorBoundary from "./ErrorBoundary";
 import { usePropertyPanelModel } from "../hooks/usePropertyPanelModel";
@@ -14,10 +15,12 @@ import {
 
 export default function PropertyPanel() {
   const model = usePropertyPanelModel();
+  const [retryKey, setRetryKey] = useState(0);
+  const handleRetry = useCallback(() => setRetryKey((k) => k + 1), []);
 
   if (model.selectedEdge) {
     return (
-      <ErrorBoundary fallbackTitle="边详情加载失败" fallbackText="请刷新页面重试">
+      <ErrorBoundary key={`edge-${retryKey}`} fallbackTitle="边详情加载失败" fallbackText="请刷新页面重试" onRetry={handleRetry}>
       <PropertyPanelShell
         title="边详情"
         subtitle="单独查看连线映射，不把边元数据混进节点配置。"
@@ -41,7 +44,7 @@ export default function PropertyPanel() {
 
   if (!model.selectedNode) {
     return (
-      <ErrorBoundary fallbackTitle="策略图总览加载失败" fallbackText="请刷新页面重试">
+      <ErrorBoundary key={`overview-${retryKey}`} fallbackTitle="策略图总览加载失败" fallbackText="请刷新页面重试" onRetry={handleRetry}>
       <PropertyPanelShell
         title={translateText("策略图总览")}
         subtitle={translateText("从图配置、编译健康度和源码工件三条泳道阅读当前策略图。")}
@@ -55,7 +58,7 @@ export default function PropertyPanel() {
   }
 
   return (
-    <ErrorBoundary fallbackTitle="节点详情加载失败" fallbackText="请刷新页面重试">
+    <ErrorBoundary key={`node-${retryKey}`} fallbackTitle="节点详情加载失败" fallbackText="请刷新页面重试" onRetry={handleRetry}>
     <PropertyPanelShell
       title="节点详情"
       subtitle="把节点状态拆成配置、编译健康度、运行活动和源码工件来阅读。"

@@ -1,12 +1,12 @@
 # RFC-020 Plugin Manifest Protocol
 
-## Status
+## 状态
 
 - status: draft
 - version: `quantpilot/plugin-manifest/v1`
 - scope: internal boundary only
 
-## Purpose
+## 目的
 
 本 RFC 定义 QuantPilot 第八周需要的最小插件前置边界。
 
@@ -17,7 +17,7 @@
 - 插件不能绕过 `Data -> Intent -> Agent -> Risk -> Execution -> Fill` 主链路
 - 兼容性检查必须先于加载和注册
 
-## Non-goals
+## 非目标
 
 本 RFC 明确不包含：
 
@@ -27,7 +27,7 @@
 - 动态下载与热更新
 - 市场化分发
 
-## Manifest shape
+## 清单结构
 
 最小 manifest 字段：
 
@@ -44,7 +44,7 @@
 - `dependencies`
 - `params_schema` 可选
 
-## Kind whitelist
+## 种类白名单
 
 当前只允许五类插件：
 
@@ -54,7 +54,7 @@
 - `risk`
 - `execution`
 
-## Extension point whitelist
+## 扩展点白名单
 
 当前只允许五个 extension point：
 
@@ -74,7 +74,7 @@ kind 与 extension point 必须一一对应：
 
 不允许跨层挂接，不允许一个插件直接声明跨多层主链路权限。
 
-## Capability declaration
+## 能力声明
 
 manifest 必须显式声明 capability，而不是隐式暴露代码实现。
 
@@ -87,7 +87,7 @@ manifest 必须显式声明 capability，而不是隐式暴露代码实现。
 }
 ```
 
-## Compatibility
+## 兼容性
 
 manifest 必须声明至少两个兼容性锚点：
 
@@ -96,7 +96,7 @@ manifest 必须声明至少两个兼容性锚点：
 
 第八周阶段只做字面兼容性校验，不做 semver 范围求解。
 
-## Security boundary
+## 安全边界
 
 manifest 必须声明：
 
@@ -110,7 +110,7 @@ manifest 必须声明：
 - 不允许通过 manifest 申请绕过风险控制或执行模块
 - 不允许直接声明交易所下单能力
 
-## Relationship to Custom MVP
+## 与定制 MVP 的关系
 
 受限 `Custom` MVP 仍然优先走内建 lowering 路径，不依赖插件运行。
 
@@ -119,7 +119,7 @@ manifest 必须声明：
 - 为未来把 built-in 能力表达成 plugin-shaped 对象预留边界
 - 把 capability declaration / compatibility / extension point 先固定为稳定协议对象
 
-## Acceptance
+## 验收条件
 
 若某能力满足以下条件，才允许进入更强的插件化阶段：
 

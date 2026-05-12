@@ -51,7 +51,7 @@ export default function StrategyWorkspaceDebugTab({ debugBars }) {
 
   if (bars.length === 0) {
     return (
-      <div className="property-card" style={{ padding: "24px", textAlign: "center", color: "var(--ad-text-muted)" }}>
+      <div className="property-card workspace-debug-empty">
         <p>暂无调试数据。</p>
         <p style={{ fontSize: "13px" }}>
           在 QS 策略中添加 <code>@debug(var1, var2)</code> 指令后运行回测即可看到 per-bar 数据。
@@ -61,8 +61,8 @@ export default function StrategyWorkspaceDebugTab({ debugBars }) {
   }
 
   return (
-    <div style={{ padding: "16px", overflow: "auto" }}>
-      <div className="property-card" style={{ marginBottom: "16px" }}>
+    <div className="workspace-debug-container">
+      <div className="property-card">
         <div className="property-card-heading">
           <div className="property-card-title">调试数据 — Per-Bar 值</div>
           <div className="property-card-caption">
@@ -73,19 +73,19 @@ export default function StrategyWorkspaceDebugTab({ debugBars }) {
 
       {/* Chart section */}
       {chartPaths.length > 0 && (
-        <div className="property-card" style={{ marginBottom: "16px" }}>
+        <div className="property-card">
           <div className="property-card-heading">
             <div className="property-card-title">趋势图</div>
           </div>
           {chartPaths.map(({ col, points, min, max, chartW, chartH }) => (
-            <div key={col} style={{ marginBottom: "12px" }}>
-              <div style={{ fontSize: "11px", color: "var(--ad-text-muted)", marginBottom: "4px" }}>
+            <div key={col} className="workspace-debug-chart">
+              <div className="workspace-debug-chart__label">
                 {col} (min={min?.toFixed(4)}, max={max?.toFixed(4)})
               </div>
               <svg
                 width={chartW}
                 height={chartH}
-                style={{ border: "1px solid var(--ad-border)", borderRadius: "4px", background: "var(--ad-bg)" }}
+                className="workspace-debug-chart__svg"
               >
                 <polyline
                   points={points}
@@ -101,33 +101,31 @@ export default function StrategyWorkspaceDebugTab({ debugBars }) {
 
       {/* Table section */}
       <div className="property-card" style={{ overflow: "auto", maxHeight: "500px" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
+        <table className="workspace-debug-table">
           <thead>
-            <tr style={{ position: "sticky", top: 0, background: "var(--ad-panel)" }}>
-              <th style={{ padding: "6px 8px", textAlign: "right", borderBottom: "1px solid var(--ad-border-strong)" }}>bar</th>
+            <tr className="workspace-debug-table__header">
+              <th>bar</th>
               {activeColumns.map((col) => (
-                <th key={col} style={{ padding: "6px 8px", textAlign: "right", borderBottom: "1px solid var(--ad-border-strong)" }}>
-                  {col}
-                </th>
+                <th key={col}>{col}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {rows.map((row, i) => (
-              <tr key={i} style={{ borderBottom: "1px solid var(--ad-card)" }}>
-                <td style={{ padding: "4px 8px", textAlign: "right", color: "var(--ad-text-muted)" }}>{row.bar}</td>
+              <tr key={i}>
+                <td className="bar-index">{row.bar}</td>
                 {activeColumns.map((col) => {
                   const val = row[col];
                   return (
-                    <td key={col} style={{ padding: "4px 8px", textAlign: "right", fontFamily: "monospace" }}>
+                    <td key={col}>
                       {val !== null && val !== undefined ? (
                         typeof val === "boolean" ? (
                           <span style={{ color: val ? "var(--ad-success)" : "var(--ad-error)" }}>{String(val)}</span>
                         ) : (
-                          <span style={{ color: "var(--ad-text-secondary)" }}>{Number(val).toFixed(4)}</span>
+                          <span className="val-number">{Number(val).toFixed(4)}</span>
                         )
                       ) : (
-                        <span style={{ color: "var(--ad-text-muted)" }}>—</span>
+                        <span className="val-null">—</span>
                       )}
                     </td>
                   );

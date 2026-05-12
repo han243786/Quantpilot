@@ -132,8 +132,11 @@ export function createGraphStoreCompileActions(set, get) {
     async compileCurrentGraph() {
       const graph = get().graph;
       if (!graph.validation_state.is_valid) return null;
-      const capabilityBlockReason = getCapabilityActionBlockReason({
-        actionKey: "compile",
+      if (get().actionLock) return null;
+      set({ actionLock: "compiling" });
+      try {
+        const capabilityBlockReason = getCapabilityActionBlockReason({
+          actionKey: "compile",
         capabilityStatus: get().capabilityStatus,
         capabilitySource: get().capabilitySource,
         capabilityMessage: get().capabilityMessage,
@@ -155,7 +158,16 @@ export function createGraphStoreCompileActions(set, get) {
 
       saveGraphToStorage(outcome.nextGraph);
 
+      // 编译期间graph若被并发修改，放弃过期结果
+      if (get().graph.metadata?.graph_id !== graph.metadata?.graph_id) {
+        return null;
+      }
+
       if (outcome.status === "validation_failure") {
+        const errCount = outcome.localResult?.diagnostics?.length || 0;
+        set({
+          compileResultNotice: { type: "error", text: `编译失败 — ${errCount} 个错误`, time: Date.now() }
+        });
         set(
           buildCompileValidationFailureState(
             outcome.localResult,
@@ -167,6 +179,9 @@ export function createGraphStoreCompileActions(set, get) {
       }
 
       if (outcome.status === "failure") {
+        set({
+          compileResultNotice: { type: "error", text: "编译异常 — 请查看诊断", time: Date.now() }
+        });
         set(
           buildCompileFailureState(
             outcome.localResult,
@@ -178,6 +193,9 @@ export function createGraphStoreCompileActions(set, get) {
         return null;
       }
 
+      set({
+        compileResultNotice: { type: "success", text: "编译成功", time: Date.now() }
+      });
       set(
         buildCompileSuccessState(
           outcome.localResult,
@@ -190,6 +208,9 @@ export function createGraphStoreCompileActions(set, get) {
         )
       );
       return outcome.result;
+      } finally {
+        set({ actionLock: null });
+      }
     }
   };
 }

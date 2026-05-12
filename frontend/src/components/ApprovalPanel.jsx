@@ -91,10 +91,10 @@ export default function ApprovalPanel() {
   };
 
   return (
-    <div className="qp-page">
+    <main className="qp-page">
 
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2 style={{ margin: 0 }}>{t("审批队列")}</h2>
+      <div className="approval-flex-row">
+        <h1 style={{ margin: 0 }}>{t("审批队列")}</h1>
         <button
           className="qp-btn qp-btn--ghost qp-btn--sm"
           onClick={loadApprovals}
@@ -164,7 +164,7 @@ export default function ApprovalPanel() {
                 >
                   {state.label}
                 </span>
-                <span style={{ marginLeft: 8, fontSize: 12, color: "var(--tv-text-muted)" }}>
+                <span style={{ marginLeft: 8, fontSize: 12, color: "var(--ad-text-muted)" }}>
                   {formatApprovalLevel(approval.approval_level)}
                 </span>
               </div>
@@ -197,7 +197,9 @@ export default function ApprovalPanel() {
 
             {rejectingId === approval.proposal_id && (
               <div className="qp-card__body" onClick={(e) => e.stopPropagation()}>
+                <label htmlFor={`reject-reason-${approval.proposal_id}`} style={{position:"absolute",width:"1px",height:"1px",overflow:"hidden",clip:"rect(0,0,0,0)",whiteSpace:"nowrap"}}>{t("拒绝原因")}</label>
                 <input
+                  id={`reject-reason-${approval.proposal_id}`}
                   className="qp-input"
                   type="text"
                   placeholder={t("拒绝原因（可选，Enter 提交）")}
@@ -239,7 +241,7 @@ export default function ApprovalPanel() {
                     <div className="qp-timeline">
                       {approval.lifecycle.map((entry, idx) => (
                         <div className="qp-timeline__item" key={idx}>
-                          <span style={{ color: "var(--tv-text)", fontWeight: 500 }}>
+                          <span style={{ color: "var(--ad-text)", fontWeight: 500 }}>
                             {entry.message}
                           </span>
                           <br />
@@ -259,8 +261,8 @@ export default function ApprovalPanel() {
       })}
 
       {sandboxReport && (
-        <div className="qp-card" style={{ marginTop: 16, borderColor: "var(--tv-accent)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+        <div className="qp-card" style={{ marginTop: 16, borderColor: "var(--ad-accent)" }}>
+          <div className="approval-flex-row" style={{ marginBottom: 12 }}>
             <h3 style={{ margin: 0 }}>{t("沙箱验证报告")}</h3>
             <button className="qp-btn qp-btn--ghost qp-btn--sm" onClick={() => setSandboxReport(null)}>
               {t("关闭")}
@@ -288,7 +290,7 @@ export default function ApprovalPanel() {
           {sandboxReport.warnings?.length > 0 && (
             <div className="qp-card__body" style={{ marginBottom: 12 }}>
               {sandboxReport.warnings.map((w, i) => (
-                <div key={i} style={{ color: "var(--tv-orange)", fontSize: 12 }}>
+                <div key={i} style={{ color: "var(--ad-warning)", fontSize: 12 }}>
                   {w}
                 </div>
               ))}
@@ -312,7 +314,7 @@ export default function ApprovalPanel() {
                   const isDown = typeof diff === "string" && diff.startsWith("-");
                   return (
                     <tr key={key}>
-                      <td style={{ color: "var(--tv-text-secondary)", fontFamily: "var(--tv-font)", fontSize: 12 }}>
+                      <td style={{ color: "var(--ad-text-secondary)", fontFamily: "var(--ad-font-mono)", fontSize: 12 }}>
                         {key}
                       </td>
                       <td className="qp-metric" style={{ fontSize: 12 }}>
@@ -331,6 +333,6 @@ export default function ApprovalPanel() {
           </table>
         </div>
       )}
-    </div>
+    </main>
   );
 }

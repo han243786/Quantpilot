@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-
+import { useI18n } from "../i18n";
 import { API_BASE } from "../utils/api";
 
 export default function RunbookPage() {
+  const { t } = useI18n();
   const [scenarios, setScenarios] = useState([]);
   const [expanded, setExpanded] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,7 +13,7 @@ export default function RunbookPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/api/v1/runbook`);
+      const res = await fetch(`${API_BASE}/v1/runbook`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setScenarios(await res.json());
     } catch (e) {
@@ -30,21 +31,21 @@ export default function RunbookPage() {
   };
 
   return (
-    <div className="qp-page">
+    <main className="qp-page">
 
-      <h2>故障场景手册</h2>
+      <h1>{t("故障场景手册")}</h1>
 
       {error && (
         <div className="qp-error" role="alert">
-          <span>加载失败: {error}</span>
-          <button className="qp-btn qp-btn--sm" onClick={fetchData}>重试</button>
+          <span>{t("加载失败")}: {error}</span>
+          <button className="qp-btn qp-btn--sm" onClick={fetchData}>{t("重试")}</button>
         </div>
       )}
 
-      {loading && <div className="qp-loading">加载场景数据...</div>}
+      {loading && <div className="qp-loading">{t("加载场景数据...")}</div>}
 
       {!loading && !error && scenarios.length === 0 && (
-        <div className="qp-empty">暂无故障场景数据</div>
+        <div className="qp-empty">{t("暂无故障场景数据")}</div>
       )}
 
       {!loading &&
@@ -70,15 +71,15 @@ export default function RunbookPage() {
                 <span className={badge(s.severity)}>{s.severity}</span>
               </div>
               <div className="qp-card__meta">
-                <span>症状: {s.symptoms?.join(" / ")}</span>
+                <span>{t("症状")}: {s.symptoms?.join(" / ")}</span>
               </div>
 
               {isOpen && (
                 <div className="qp-card__body">
-                  <h3>诊断步骤</h3>
+                  <h3>{t("诊断步骤")}</h3>
                   {s.diagnostic_steps?.map((d, i) => (
                     <div key={i} style={{ padding: "2px 0" }}>
-                      <span style={{ color: "var(--tv-accent)", fontWeight: 500 }}>
+                      <span style={{ color: "var(--ad-accent)", fontWeight: 500 }}>
                         {d.step_number}.
                       </span>{" "}
                       {d.description}
@@ -87,7 +88,7 @@ export default function RunbookPage() {
                           style={{
                             marginLeft: 8,
                             fontSize: 11,
-                            color: "var(--tv-accent)",
+                            color: "var(--ad-accent)",
                             background: "rgba(41, 98, 255, 0.08)",
                             padding: "1px 6px",
                             borderRadius: 3,
@@ -99,13 +100,13 @@ export default function RunbookPage() {
                     </div>
                   ))}
 
-                  <h3>恢复步骤</h3>
+                  <h3>{t("恢复步骤")}</h3>
                   {s.recovery_steps?.map((r, i) => (
                     <div key={i} style={{ padding: "2px 0" }}>
-                      <span style={{ color: "var(--tv-orange)", fontWeight: 500 }}>
+                      <span style={{ color: "var(--ad-warning)", fontWeight: 500 }}>
                         {r.step_number}.
                       </span>{" "}
-                      <span style={{ color: "var(--tv-text-secondary)" }}>
+                      <span style={{ color: "var(--ad-text-secondary)" }}>
                         [{r.condition}]
                       </span>{" "}
                       → {r.action}
@@ -114,13 +115,13 @@ export default function RunbookPage() {
 
                   <hr className="qp-divider" />
 
-                  <h3>验证</h3>
-                  <p style={{ color: "var(--tv-green)", margin: 0 }}>{s.verification}</p>
+                  <h3>{t("验证")}</h3>
+                  <p style={{ color: "var(--ad-success)", margin: 0 }}>{s.verification}</p>
                 </div>
               )}
             </div>
           );
         })}
-    </div>
+    </main>
   );
 }

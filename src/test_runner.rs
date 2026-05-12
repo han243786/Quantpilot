@@ -456,6 +456,10 @@ impl TestRunner {
                     condition,
                     timeout_secs,
                 } => {
+                    const MAX_WAIT_SECS: u64 = 3600;
+                    if *timeout_secs > MAX_WAIT_SECS {
+                        return Err(format!("wait 超时不能超过 {} 秒", MAX_WAIT_SECS));
+                    }
                     let start = std::time::Instant::now();
                     let timeout = std::time::Duration::from_secs(*timeout_secs);
                     loop {

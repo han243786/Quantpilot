@@ -164,6 +164,8 @@ struct RuntimeReplayQuery {
 struct RuntimeParameterMutationListQuery {
     source_kind: Option<RuntimeEvidenceSourceKind>,
     source_id: Option<String>,
+    limit: Option<u32>,
+    offset: Option<u32>,
 }
 
 #[derive(Debug, Deserialize, Default)]
@@ -673,7 +675,8 @@ async fn start_backtest_experiment(
 
 async fn list_backtests(
     State(state): State<AppState>,
-) -> Result<Json<Vec<BacktestListItem>>, (StatusCode, String)> {
+    Query(pagination): Query<PaginationQuery>,
+) -> Result<Json<PaginatedResponse<BacktestListItem>>, (StatusCode, String)> {
     let records = list_backtest_records(state.backtest_store_dir.as_ref())
         .await
         .map_err(io_error)?;
@@ -682,7 +685,7 @@ async fn list_backtests(
         .map(backtest_list_item_from_record)
         .collect::<Vec<_>>();
     items.sort_by(|left, right| right.created_at_ms.cmp(&left.created_at_ms));
-    Ok(Json(items))
+    Ok(Json(paginate(items, pagination)))
 }
 
 async fn get_backtest_detail(
@@ -764,7 +767,8 @@ async fn discard_backtest_record(
 
 async fn list_runs(
     State(state): State<AppState>,
-) -> Result<Json<Vec<RunListItem>>, (StatusCode, String)> {
+    Query(pagination): Query<PaginationQuery>,
+) -> Result<Json<PaginatedResponse<RunListItem>>, (StatusCode, String)> {
     let records = list_run_records(state.run_store_dir.as_ref())
         .await
         .map_err(io_error)?;
@@ -773,12 +777,13 @@ async fn list_runs(
         .map(run_list_item_from_record)
         .collect::<Vec<_>>();
     items.sort_by(|left, right| right.created_at_ms.cmp(&left.created_at_ms));
-    Ok(Json(items))
+    Ok(Json(paginate(items, pagination)))
 }
 
 async fn list_experiments(
     State(state): State<AppState>,
-) -> Result<Json<Vec<ExperimentListItem>>, (StatusCode, String)> {
+    Query(pagination): Query<PaginationQuery>,
+) -> Result<Json<PaginatedResponse<ExperimentListItem>>, (StatusCode, String)> {
     let records = list_experiment_records(state.experiment_store_dir.as_ref())
         .await
         .map_err(io_error)?;
@@ -787,7 +792,7 @@ async fn list_experiments(
         .map(experiment_list_item_from_record)
         .collect::<Vec<_>>();
     items.sort_by(|left, right| right.created_at_ms.cmp(&left.created_at_ms));
-    Ok(Json(items))
+    Ok(Json(paginate(items, pagination)))
 }
 
 async fn get_run_detail(
@@ -1409,7 +1414,7 @@ async fn create_runtime_parameter_mutation(
 async fn list_runtime_parameter_mutations(
     State(state): State<AppState>,
     Query(query): Query<RuntimeParameterMutationListQuery>,
-) -> Result<Json<Vec<RuntimeParameterMutationRecord>>, (StatusCode, String)> {
+) -> Result<Json<PaginatedResponse<RuntimeParameterMutationRecord>>, (StatusCode, String)> {
     let mut records = list_runtime_parameter_mutation_records(&state.mutation_store_dir)
         .await
         .map_err(io_error)?;
@@ -1425,7 +1430,8 @@ async fn list_runtime_parameter_mutations(
             .cmp(&left.created_at_ms)
             .then_with(|| right.proposal_id.cmp(&left.proposal_id))
     });
-    Ok(Json(records))
+    let pq = PaginationQuery { limit: query.limit, offset: query.offset };
+    Ok(Json(paginate(records, pq)))
 }
 
 async fn get_runtime_parameter_mutation_detail(
@@ -2638,7 +2644,8 @@ async fn materialize_runtime_report_record(
 
 async fn list_runtime_reports(
     State(state): State<AppState>,
-) -> Result<Json<Vec<RuntimeEvidenceReportRecord>>, (StatusCode, String)> {
+    Query(pagination): Query<PaginationQuery>,
+) -> Result<Json<PaginatedResponse<RuntimeEvidenceReportRecord>>, (StatusCode, String)> {
     let records = list_runtime_report_records(&state.report_store_dir)
         .await
         .map_err(io_error)?;
@@ -2655,7 +2662,7 @@ async fn list_runtime_reports(
             .cmp(&left.created_at_ms)
             .then_with(|| right.report_id.cmp(&left.report_id))
     });
-    Ok(Json(records))
+    Ok(Json(paginate(records, pagination)))
 }
 
 async fn get_runtime_report_detail(

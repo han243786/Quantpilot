@@ -1990,3 +1990,30 @@ pub(super) struct CreateChaosExperimentRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(super) notes: Option<String>,
 }
+
+// ── v1.0.5 分页 ──
+
+#[derive(Debug, Deserialize, Default)]
+pub struct PaginationQuery {
+    pub limit: Option<u32>,
+    pub offset: Option<u32>,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PaginatedResponse<T: Serialize> {
+    pub data: Vec<T>,
+    pub total: usize,
+    pub limit: u32,
+    pub offset: u32,
+}
+
+pub fn paginate<T: Serialize>(mut items: Vec<T>, query: PaginationQuery) -> PaginatedResponse<T> {
+    let total = items.len();
+    let limit = query.limit.unwrap_or(20).min(100) as usize;
+    let offset = query.offset.unwrap_or(0) as usize;
+    if offset > 0 {
+        items = items.into_iter().skip(offset).collect();
+    }
+    items.truncate(limit);
+    PaginatedResponse { data: items, total, limit: limit as u32, offset: offset as u32 }
+}

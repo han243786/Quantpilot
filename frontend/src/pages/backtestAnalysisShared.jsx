@@ -1,20 +1,13 @@
 export function formatValue(value) {
   if (value === null || value === undefined || value === "") return "-";
   if (typeof value === "number") {
+    if (!Number.isFinite(value)) return "-";
     return Number.isInteger(value) ? String(value) : value.toFixed(4);
   }
   return String(value);
 }
 
-export function formatTime(value) {
-  return value ? new Date(value).toLocaleString() : "-";
-}
-
-export function formatPercent(value) {
-  if (!Number.isFinite(value)) return "-";
-  const sign = value > 0 ? "+" : "";
-  return `${sign}${(value * 100).toFixed(2)}%`;
-}
+export { formatTime, formatPercent } from "../utils/strategyHubFormatters";
 
 export function formatRatio(value) {
   if (!Number.isFinite(value)) return "-";

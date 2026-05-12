@@ -115,7 +115,7 @@ export function useStrategyWorkspacePageData({
   );
   const lastRun = recentRuns[0] || null;
   const lastBacktest = recentBacktests[0] || null;
-  const compareSelection = runtime.backtestCompareSelection || [];
+  const compareSelection = runtime.backtestCompareSelection?.[graph?.metadata?.graph_id] || (Array.isArray(runtime.backtestCompareSelection) ? runtime.backtestCompareSelection : []);
   const issueQueueCountsSummary = useMemo(() => workspaceIssueQueueCounts(issueQueue), [issueQueue]);
   const issueQueueSources = useMemo(() => workspaceIssueQueueSourceOrder(issueQueue), [issueQueue]);
   const issueQueueSourceCountsSummary = useMemo(

@@ -24,9 +24,10 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
     "Microsoft YaHei", sans-serif;
   font-size: 13px;
-  line-height: 1.45;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em;
 }
 
 /* ── 原生元素暗色主题 ───────────────────────────────── */
@@ -64,18 +65,23 @@ select option {
 :root {
   /* 表面 — Photoshop 暗色主题 */
   --ad-bg: #0d0d0d;
-  --ad-bg-raised: #181818;
-  --ad-panel: #1e1e1e;
-  --ad-panel-hover: #242424;
-  --ad-card: #2d2d2d;
-  --ad-card-hover: #383838;
-  --ad-border: #404040;
-  --ad-border-strong: #555555;
+  --ad-bg-raised: #151515;
+  --ad-panel: #1a1a1a;
+  --ad-panel-hover: #222222;
+  --ad-card: #242424;
+  --ad-card-hover: #2e2e2e;
+  --ad-border: #4a4a4a;
+  --ad-border-strong: #5e5e5e;
+  --ad-border-rgb: 116, 145, 182;
+
+  /* 图表色 */
+  --ad-chart-line-a: #6b9e7a;
+  --ad-chart-line-b: #1473e6;
 
   /* 文本 */
   --ad-text: #e6e6e6;
   --ad-text-secondary: #aaaaaa;
-  --ad-text-muted: #909090;
+  --ad-text-muted: #9e9e9e;
   --ad-text-inverse: #ffffff;
 
   /* 强调 — Adobe 蓝 */
@@ -102,6 +108,7 @@ select option {
   --ad-font-size-md: 13px;
   --ad-font-size-lg: 15px;
   --ad-font-size-xl: 18px;
+  --ad-font-size-hero: 24px;
 
   /* 间距 — 4px 网格 */
   --ad-space-1: 4px;
@@ -110,6 +117,10 @@ select option {
   --ad-space-4: 16px;
   --ad-space-5: 20px;
   --ad-space-6: 24px;
+  /* 常用中间值 */
+  --ad-space-2-5: 10px;
+  --ad-space-3-5: 14px;
+  --ad-space-4-5: 18px;
 
   /* 圆角 — Adobe 偏方 */
   --ad-radius-sm: 2px;
@@ -128,7 +139,7 @@ select option {
 
   /* 滚动条 */
   scrollbar-width: thin;
-  scrollbar-color: #404040 transparent;
+  scrollbar-color: var(--ad-border) transparent;
 }
 
 /* ── 滚动条 (Webkit) ──────────────────────────────────── */
@@ -141,11 +152,11 @@ select option {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #404040;
+  background: var(--ad-border);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #555555;
+  background: var(--ad-border-strong);
 }
 
 /* ── 旧变量兼容别名 ──────────────────────────────────── */
@@ -164,6 +175,9 @@ select option {
   --accent-cool: var(--ad-accent-soft);
   --accent-mint: var(--ad-accent-soft);
   --accent-warm: var(--ad-warning-soft);
+  --danger: var(--ad-error);
+  --warning: var(--ad-warning);
+  --success: var(--ad-success);
   --surface-glow: none;
   --focus-ring: 0 0 0 1px var(--ad-accent);
   --radius-panel: var(--ad-radius-panel);
@@ -265,13 +279,13 @@ select option {
   top: 0;
   bottom: 0;
   width: var(--ad-sidebar-collapsed);
-  background: #141414;
+  background: #0f0f0f;
   border-right: 1px solid var(--ad-border);
   z-index: 100;
   display: flex;
   flex-direction: column;
   padding: var(--ad-space-2) 0;
-  transition: width 0.15s ease;
+  transition: width 0.15s ease, background 0.15s ease;
   overflow: hidden;
   user-select: none;
 }
@@ -339,6 +353,7 @@ select option {
   cursor: pointer;
   border: none;
   background: transparent;
+  text-decoration: none;
   font-size: var(--ad-font-size-sm);
   font-family: var(--ad-font-ui);
   white-space: nowrap;
@@ -352,7 +367,7 @@ select option {
 }
 .ad-sidebar-item--active {
   color: var(--ad-accent);
-  border-left-color: var(--ad-accent);
+  border-left: 3px solid var(--ad-accent);
   background: var(--ad-accent-soft);
 }
 
@@ -366,6 +381,9 @@ select option {
 .ad-sidebar-item__label {
   opacity: 0;
   transition: opacity 0.1s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .ad-sidebar:hover .ad-sidebar-item__label {
   opacity: 1;
@@ -390,11 +408,19 @@ select option {
   font-size: var(--ad-font-size-lg);
   font-weight: 600;
   color: var(--ad-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 .ad-workspace-header__id {
   font-size: var(--ad-font-size-xs);
   font-family: var(--ad-font-mono);
   color: var(--ad-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 /* ── 标签栏 (Adobe 风格下划线) ────────────────────────── */
@@ -427,7 +453,16 @@ select option {
 }
 .ad-tab--active {
   color: var(--ad-text);
+  border-bottom: 3px solid var(--ad-accent);
+}
+.ad-tab--focus-hint {
+  color: var(--ad-text);
   border-bottom-color: var(--ad-accent);
+  animation: ad-tab-pulse 1.2s ease-in-out infinite;
+}
+@keyframes ad-tab-pulse {
+  0%, 100% { border-bottom-color: var(--ad-accent); }
+  50% { border-bottom-color: transparent; }
 }
 .ad-tabbar__spacer {
   flex: 1;
@@ -628,4 +663,12 @@ select option {
 .ad-command-palette__item-section {
   font-size: var(--ad-font-size-xs);
   color: var(--ad-text-muted);
+}
+
+/* ── 减少动画偏好 ── */
+@media (prefers-reduced-motion: reduce) {
+  .ad-sidebar { transition: none; }
+  .ad-sidebar-item { transition: none; }
+  .ad-tab { transition: none; }
+  .ad-fade-in { animation: none; }
 }

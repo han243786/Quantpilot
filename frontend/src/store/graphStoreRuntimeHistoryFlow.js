@@ -143,6 +143,7 @@ export async function refreshExperimentHistoryFlow(set) {
 }
 
 export async function loadRunDetailFlow(set, get, runId) {
+  set({ selectedRunStatus: "loading" });
   try {
     const detail = await fetchRunDetail(runId);
     const parameterMutations = await fetchRuntimeMutations({
@@ -161,11 +162,13 @@ export async function loadRunDetailFlow(set, get, runId) {
         parameterMutations
       )
     );
+    set({ selectedRunStatus: "ready" });
     return detail;
   } catch (error) {
     set((state) =>
       buildRuntimeHistoryErrorState(state, buildRuntimeHistoryFailureMessage("run_detail", error))
     );
+    set({ selectedRunStatus: "error" });
     return null;
   }
 }

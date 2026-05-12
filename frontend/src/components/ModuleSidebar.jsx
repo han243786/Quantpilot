@@ -295,7 +295,9 @@ export default function ModuleSidebar({ workspaceContext = null }) {
         <div className="panel-title strategy-card-title-note">
           <StrategyCardNote label={sidebarTitle} note={sidebarNote} />
         </div>
+        <label htmlFor="module-sidebar-search" style={{position:"absolute",width:"1px",height:"1px",overflow:"hidden",clip:"rect(0,0,0,0)",whiteSpace:"nowrap"}}>{t("\u641c\u7d22\u6a21\u5757")}</label>
         <input
+          id="module-sidebar-search"
           className="sidebar-search"
           data-testid="module-sidebar-search"
           placeholder={t("\u641c\u7d22\u6a21\u5757")}

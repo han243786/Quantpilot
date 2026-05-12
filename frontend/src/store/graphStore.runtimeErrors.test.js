@@ -187,7 +187,7 @@ describe("graphStore passive runtime error paths", () => {
     exhaustCallback();
 
     expect(useGraphStore.getState().runtime.status).toBe("error");
-    expect(createRuntimeEventSource).toHaveBeenCalledWith("run_sse_001", expect.any(Function));
+    expect(createRuntimeEventSource).toHaveBeenCalledWith("run_sse_001", expect.any(Function), expect.any(Function));
     expect(runtimeStartBody.capability_context).toEqual({
       schema_hash: backendCapabilitiesFixture.schema_hash,
       permission_boundary: backendCapabilitiesFixture.permission_boundary

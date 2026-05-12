@@ -35,8 +35,7 @@ function extractMessageFromJson(raw) {
     const parsed = JSON.parse(raw);
     if (isString(parsed?.message)) return parsed.message;
     if (isString(parsed?.error)) return parsed.error;
-  } catch {
-  }
+  } catch { /* 非 JSON 消息直接返回原文 */ }
   return raw;
 }
 

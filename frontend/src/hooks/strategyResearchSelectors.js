@@ -374,7 +374,7 @@ export function useStrategyResearchSelectors(uiState) {
     backtestTotalPages,
     selectedBacktestSummary,
     dataQualitySummary,
-    compareSelection: runtime.backtestCompareSelection || [],
+    compareSelection: runtime.backtestCompareSelection?.[graph?.metadata?.graph_id] || (Array.isArray(runtime.backtestCompareSelection) ? runtime.backtestCompareSelection : []),
     backtestSummary: runtime.backtestArtifacts?.metrics?.summary || null,
     backtestStartedAt: runtime.backtestArtifacts?.metrics?.started_at_ms || null,
     backtestEndedAt: runtime.backtestArtifacts?.metrics?.ended_at_ms || null,

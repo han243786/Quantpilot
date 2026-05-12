@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { useGraphStore } from "./store/graphStore";
 import { parseRoute, strategiesPath } from "./router";
 import LeftSidebar from "./components/LeftSidebar";
@@ -22,7 +22,13 @@ import { createTutorialSteps } from "./data/tutorialSteps";
 import { useTutorial } from "./hooks/useTutorial";
 import { useI18n } from "./i18n";
 
-function AppShellFallback() {
+function AppShellFallback({ onSkip }) {
+  const [waited, setWaited] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setWaited(true), 8000);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div className="app-loading-shell" role="status" aria-live="polite">
       <div className="app-loading-shell__skeleton">
@@ -31,6 +37,11 @@ function AppShellFallback() {
         <div className="skeleton-block skeleton-block--short" />
       </div>
       <div className="app-loading-shell__title">正在加载界面</div>
+      {waited && onSkip && (
+        <button className="ghost-btn" onClick={onSkip} style={{marginTop:16}}>
+          跳过等待，使用本地缓存
+        </button>
+      )}
     </div>
   );
 }
@@ -41,10 +52,12 @@ export default function App() {
   const { t } = useI18n();
   const tutorialSteps = createTutorialSteps(t);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [forceReady, setForceReady] = useState(false);
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
   const [isOffline, setIsOffline] = useState(
     typeof navigator !== "undefined" ? !navigator.onLine : false
   );
+  const [storageQuotaExceeded, setStorageQuotaExceeded] = useState(false);
   const mainRef = useRef(null);
   const [isMaximized, setIsMaximized] = useState(false);
   let appWindow = null;
@@ -71,6 +84,39 @@ export default function App() {
       window.removeEventListener("offline", goOffline);
       window.removeEventListener("online", goOnline);
     };
+  }, []);
+
+  // v1.0.5: localStorage 配额超限通知
+  useEffect(() => {
+    const handler = () => setStorageQuotaExceeded(true);
+    window.addEventListener("qp-storage-quota-exceeded", handler);
+    return () => window.removeEventListener("qp-storage-quota-exceeded", handler);
+  }, []);
+
+  // v1.0.5: 标签页可见性变化 — 后台时标记, 前台时同步刷新
+  useEffect(() => {
+    const handle = () => {
+      if (!document.hidden) {
+        useGraphStore.getState().refreshGraphIndex?.();
+      }
+    };
+    document.addEventListener("visibilitychange", handle);
+    return () => document.removeEventListener("visibilitychange", handle);
+  }, []);
+
+  // 未保存更改时关闭/刷新提醒
+  const routeRef = useRef(route);
+  routeRef.current = route;
+  useEffect(() => {
+    const handler = (e) => {
+      const name = routeRef.current.name;
+      if (name === "strategy-workspace" || name === "quantscript") {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
   }, []);
 
   // ⌘K / Ctrl+K 全局监听
@@ -119,8 +165,8 @@ export default function App() {
     setRoute(parseRoute(window.location.pathname, window.location.search));
   }, [route.name]);
 
-  if (!isInitialized) {
-    return <AppShellFallback />;
+  if (!isInitialized && !forceReady) {
+    return <AppShellFallback onSkip={() => setForceReady(true)} />;
   }
 
   let content = <StrategyHubPage />;
@@ -167,6 +213,11 @@ export default function App() {
       {isOffline ? (
         <div className="ad-offline-banner" role="alert">
           网络连接已断开，部分功能不可用。
+        </div>
+      ) : null}
+      {storageQuotaExceeded ? (
+        <div className="ad-offline-banner" role="alert" style={{background:"var(--ad-warning-soft)",color:"var(--ad-warning)"}} onClick={() => setStorageQuotaExceeded(false)}>
+          本地存储空间不足，策略图未保存。请清理旧版本后重试。(点击关闭)
         </div>
       ) : null}
       <a href="#main-content" className="ad-skip-link">跳转到内容</a>

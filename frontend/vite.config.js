@@ -41,6 +41,10 @@ export default defineConfig({
             return "state-vendor";
           }
 
+          if (id.includes("recharts")) {
+            return "chart-vendor";
+          }
+
           return "vendor";
         }
       }

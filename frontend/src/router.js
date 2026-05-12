@@ -92,9 +92,13 @@ export function parseRoute(pathname, search = "") {
 
   const strategyMatch = pathname.match(/^\/strategies\/([^/]+)$/);
   if (strategyMatch) {
+    const decoded = decodeURIComponent(strategyMatch[1]);
+    if (decoded.includes("\x00") || decoded.length > 128) {
+      return { name: "strategies" };
+    }
     return {
       name: "strategy-workspace",
-      strategyId: decodeURIComponent(strategyMatch[1])
+      strategyId: decoded
     };
   }
 
@@ -129,9 +133,17 @@ export function parseRoute(pathname, search = "") {
   return { name: "strategies" };
 }
 
+let _lastNavPath = "";
+let _lastNavTime = 0;
+
 export function navigateTo(pathname) {
   if (typeof window === "undefined") return;
   if (window.location.pathname === pathname) return;
-  window.history.pushState({}, "", pathname);
+  // 防 100ms 内重复导航 (快速双击/多链接连击→幽灵历史条目)
+  const now = Date.now();
+  if (pathname === _lastNavPath && now - _lastNavTime < 100) return;
+  _lastNavPath = pathname;
+  _lastNavTime = now;
+  window.history.pushState({}, "", pathname + (window.location.hash || ""));
   window.dispatchEvent(new PopStateEvent("popstate"));
 }

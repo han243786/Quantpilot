@@ -229,11 +229,14 @@ describe("StrategyCanvas focus modes", () => {
       useGraphStore.getState().updateEditorViewport({ x: -90, y: -60, zoom: 0.92 }, false);
     });
 
+    vi.useFakeTimers();
     await act(async () => {
       await new Promise((resolve) => {
-        window.setTimeout(resolve, 50);
+        setTimeout(resolve, 50);
+        vi.advanceTimersByTime(50);
       });
     });
+    vi.useRealTimers();
 
     expect(reactFlowApi.setCenter).toHaveBeenCalledTimes(1);
   });

@@ -52,8 +52,8 @@ function EquityOverlayChart({ details }) {
             formatter={(value) => [value?.toFixed(2), ""]}
           />
           <Legend />
-          <Line name={a?.backtest_id?.slice(0, 8) || "A"} type="monotone" dataKey="a" stroke="#6b9e7a" strokeWidth={1.5} dot={false} connectNulls />
-          <Line name={b?.backtest_id?.slice(0, 8) || "B"} type="monotone" dataKey="b" stroke="#1473e6" strokeWidth={1.5} dot={false} connectNulls />
+          <Line name={a?.backtest_id?.slice(0, 8) || "A"} type="monotone" dataKey="a" stroke="var(--ad-chart-line-a)" strokeWidth={1.5} dot={false} connectNulls />
+          <Line name={b?.backtest_id?.slice(0, 8) || "B"} type="monotone" dataKey="b" stroke="var(--ad-chart-line-b)" strokeWidth={1.5} dot={false} connectNulls />
         </LineChart>
       </ResponsiveContainer>
     </div>

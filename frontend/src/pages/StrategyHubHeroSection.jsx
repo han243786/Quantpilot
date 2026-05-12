@@ -1,5 +1,5 @@
 import StrategyHubInlineNote from "./StrategyHubInlineNote";
-import { StrategyMetricCard, StrategyOpsCard, StrategyTaskGroup } from "./StrategyHubSharedComponents";
+import { StrategyMetricCard, StrategyOpsCard } from "./StrategyHubSharedComponents";
 import { formatCount, formatTime } from "../utils/strategyHubFormatters";
 import { navigateTo, strategyWorkspacePath } from "../router";
 
@@ -40,8 +40,7 @@ export default function StrategyHubHeroSection({ model }) {
             content="这里是策略管理的总入口。先在此查看健康状态、近期研究与运行压力，再只在需要深入编辑或诊断单个策略时进入对应工作区。"
           />
           <button
-            className="primary-btn"
-            style={{ marginTop: 12, fontSize: 14, padding: "8px 20px" }}
+            className="primary-btn strategy-hub-hero__cta"
             onClick={() => void model.openBlankWorkspace()}
             data-testid="strategy-hub-hero-cta"
           >
@@ -50,35 +49,28 @@ export default function StrategyHubHeroSection({ model }) {
         </div>
 
         <div className="strategy-hub-hero__actions">
-          <StrategyTaskGroup label="管理" tone="muted" showLabel={false}>
-            <button
-              className="ghost-btn"
-              onClick={() => void Promise.all([model.refreshRunHistory(), model.refreshBacktestHistory()])}
-            >
-              刷新活动
-            </button>
-            <button className="ghost-btn" onClick={() => void model.loadLatestGraph()}>
-              同步最新策略图
-            </button>
-          </StrategyTaskGroup>
-          <StrategyTaskGroup label="构建" tone="info" showLabel={false}>
-            <button
-              className="primary-btn"
-              data-testid="strategy-hub-open-current-workspace"
-              onClick={() =>
-                navigateTo(strategyWorkspacePath(model.graph.metadata?.graph_id || "draft_graph"))
-              }
-            >
-              打开当前工作区
-            </button>
-            <button
-              className="ghost-btn"
-              data-testid="strategy-hub-open-blank-workspace"
-              onClick={() => void model.openBlankWorkspace()}
-            >
-              打开空白工作区
-            </button>
-          </StrategyTaskGroup>
+          <button
+            className="primary-btn"
+            data-testid="strategy-hub-open-current-workspace"
+            onClick={() =>
+              navigateTo(strategyWorkspacePath(model.graph.metadata?.graph_id || "draft_graph"))
+            }
+          >
+            打开当前工作区
+          </button>
+          <button
+            className="ghost-btn"
+            data-testid="strategy-hub-open-blank-workspace"
+            onClick={() => void model.openBlankWorkspace()}
+          >
+            打开空白工作区
+          </button>
+          <button
+            className="ghost-btn"
+            onClick={() => void Promise.all([model.refreshRunHistory(), model.refreshBacktestHistory()])}
+          >
+            刷新活动
+          </button>
         </div>
       </header>
 

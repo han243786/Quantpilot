@@ -7,7 +7,7 @@
   min-height: 100vh;
   padding: 14px;
   gap: 14px;
-  background:
+  background: var(--ad-bg);
 }
 
 .detail-page::before,
@@ -42,25 +42,26 @@
 }
 
 .strategy-analysis-page {
-  --analysis-surface-border: rgba(116, 145, 182, 0.18);
-  --analysis-surface-bg:
+  --analysis-surface-border: rgba(var(--ad-border-rgb), 0.18);
+  --analysis-surface-bg: var(--ad-panel);
   --analysis-surface-shadow: var(--shadow-md);
   --analysis-summary-border: rgba(122, 153, 194, 0.18);
-  --analysis-summary-bg:
+  --analysis-summary-bg: var(--ad-card);
   --analysis-kicker-color: rgba(125, 211, 252, 0.82);
   --analysis-title-color: #c8d0d8;
   --analysis-copy-color: #a8b0bc;
   --analysis-meta-color: rgba(191, 208, 229, 0.76);
   --analysis-card-title-color: #c4ccd4;
-  --analysis-card-border: rgba(116, 145, 182, 0.16);
-  --analysis-card-bg:
+  --analysis-card-border: rgba(var(--ad-border-rgb), 0.16);
+  --analysis-card-bg: var(--ad-card);
+  --analysis-surface-glint: rgba(255, 255, 255, 0.04);
 }
 
 .strategy-analysis-page--compare {
   --analysis-surface-border: rgba(97, 157, 226, 0.22);
-  --analysis-surface-bg:
+  --analysis-surface-bg: var(--ad-panel);
   --analysis-summary-border: rgba(97, 157, 226, 0.26);
-  --analysis-summary-bg:
+  --analysis-summary-bg: var(--ad-card);
   --analysis-card-border: rgba(97, 157, 226, 0.18);
 }
 
@@ -119,7 +120,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background:
+  background: none;
   pointer-events: none;
   z-index: -1;
 }
@@ -169,11 +170,15 @@
   display: inline-flex;
   align-items: center;
   min-height: 24px;
+  max-width: 200px;
   padding: 0 10px;
   border-radius: var(--ad-radius-sm);
-  border: 1px solid rgba(116, 145, 182, 0.12);
+  border: 1px solid rgba(var(--ad-border-rgb), 0.12);
   background: rgba(9, 16, 26, 0.46);
   color: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .strategy-route-bar__link {
@@ -187,8 +192,7 @@
 
 .strategy-route-bar__current--active {
   border-color: rgba(97, 157, 226, 0.18);
-  background:
-    rgba(12, 20, 32, 0.88);
+  background: rgba(12, 20, 32, 0.88);
   color: #c8d0d8;
 }
 

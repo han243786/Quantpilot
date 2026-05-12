@@ -35,15 +35,17 @@ export default function LeftSidebar() {
         <div key={si} className="ad-sidebar-section">
           {si > 0 && <div className="ad-sidebar-divider" />}
           {section.map(({ path, label, Icon }) => (
-            <button
+            <a
               key={path}
+              href={path}
               className={`ad-sidebar-item${isActive(path) ? " ad-sidebar-item--active" : ""}`}
-              onClick={() => navigateTo(path)}
+              onClick={(e) => { e.preventDefault(); navigateTo(path); }}
+              aria-current={isActive(path) ? "page" : undefined}
               title={label}
             >
-              <span className="ad-sidebar-item__icon"><Icon /></span>
+              <span className="ad-sidebar-item__icon" aria-hidden="true"><Icon /></span>
               <span className="ad-sidebar-item__label">{label}</span>
-            </button>
+            </a>
           ))}
         </div>
       ))}

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   parseQuantScriptDiagnosticsFromMessage,
   resolveCompileDiagnosticTargetFromGraphArtifacts
-} from "./graphStore";
+} from "./graphStoreCompileHelpers";
 import { useGraphStore } from "./graphStore";
 import { buildValidatedSampleGraph } from "../test/fixtures/runtime/buildValidatedSampleGraph";
 

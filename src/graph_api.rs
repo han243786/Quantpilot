@@ -1,4 +1,5 @@
 use super::*;
+use axum::extract::Query;
 use std::sync::OnceLock;
 use tokio::sync::Mutex;
 
@@ -87,8 +88,11 @@ pub(super) async fn load_latest_graph(
 
 pub(super) async fn list_graphs(
     State(state): State<AppState>,
-) -> Result<Json<Vec<GraphListEntry>>, (StatusCode, String)> {
-    read_graph_index(&state.graph_store_dir).await.map(Json)
+    Query(pagination): Query<PaginationQuery>,
+) -> Result<Json<PaginatedResponse<GraphListEntry>>, (StatusCode, String)> {
+    let mut items: Vec<GraphListEntry> = read_graph_index(&state.graph_store_dir).await?;
+    items.sort_by(|a, b| b.updated_at.cmp(&a.updated_at));
+    Ok(Json(paginate(items, pagination)))
 }
 
 pub(super) async fn list_graph_versions(

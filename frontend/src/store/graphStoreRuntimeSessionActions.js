@@ -56,16 +56,19 @@ function setRuntimeCapabilityBlocked(set, runKind, reason) {
 export function createGraphStoreRuntimeSessionActions(set, get) {
   return {
     async startRuntime() {
+      if (get().actionLock) return;
+      set({ actionLock: "runtime" });
       const graph = get().graph;
-      if (!graph.validation_state.is_runnable) return;
+      if (!graph.validation_state.is_runnable) { set({ actionLock: null }); return; }
       const capabilityBlockReason = getCapabilityBlockReason(get, "start_simulation");
       if (capabilityBlockReason) {
         setRuntimeCapabilityBlocked(set, "simulation", capabilityBlockReason);
+        set({ actionLock: null });
         return;
       }
 
       const result = await get().compileCurrentGraph();
-      if (!result) return;
+      if (!result) { set({ actionLock: null }); return; }
       const capabilityContext = buildCapabilityContext(get().capabilities);
 
       get().stopRuntime();
@@ -83,7 +86,8 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
           actor: resolveGraphActor(graph),
           capability_context: capabilityContext,
           runtime_config: result.runtime_config,
-          runtime_targets: resolveRuntimeTargets(result)
+          runtime_targets: resolveRuntimeTargets(result),
+          graph_json: graph
         });
         const source = createRuntimeEventSource(start.run_id, () => {
           // \u91cd\u8fde\u8017\u5c3d: \u8bbe\u7f6e\u5931\u8d25\u72b6\u6001
@@ -96,6 +100,9 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
             runtimeController: null,
             runtime: buildRuntimeFailureState(state.runtime, message)
           }));
+        }, (newSource) => {
+          // \u91cd\u8fde\u540e\u66f4\u65b0 sourceRef, \u786e\u4fdd close() \u5173\u95ed\u7684\u662f\u65b0\u8fde\u63a5
+          sourceRef.current = newSource;
         });
 
         set((state) => ({
@@ -106,35 +113,73 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
           )
         }));
 
-        source.addEventListener("runtime_event", (message) => {
-          const event = JSON.parse(message.data);
-          set((state) => applyRuntimeStreamState(state, start.run_id, event));
-        });
+        // v1.0.5: SSE 微批处理 — 窗口内的事件合并为一次 set()
+        const SSE_BATCH_WINDOW_MS = 50;
+        let batchTimer = null;
+        let batchedEvents = [];
+        const flushBatch = () => {
+          if (batchedEvents.length === 0) return;
+          const events = batchedEvents;
+          batchedEvents = [];
+          batchTimer = null;
+          set((state) => {
+            let s = state;
+            for (const apply of events) s = apply(s);
+            return s;
+          });
+        };
 
-        source.addEventListener("account", (message) => {
-          const account = JSON.parse(message.data);
-          set((state) => ({
-            runtime: buildRuntimeAccountState(state.runtime, account)
-          }));
-        });
+        source._onMessage = (message) => {
+          try {
+            const event = JSON.parse(message.data);
+            event._timeLabel = new Date(event.event_time_ms).toLocaleTimeString();
+            batchedEvents.push((state) => applyRuntimeStreamState(state, start.run_id, event));
+            if (!batchTimer) batchTimer = setTimeout(flushBatch, SSE_BATCH_WINDOW_MS);
+          } catch (e) {
+            console.warn("[sse] runtime_event JSON 解析失败", e);
+          }
+        };
+        source.addEventListener("runtime_event", source._onMessage);
 
-        source.addEventListener("run_completed", async () => {
+        source._onAccount = (message) => {
+          try {
+            const account = JSON.parse(message.data);
+            batchedEvents.push((state) => ({ ...state, runtime: buildRuntimeAccountState(state.runtime, account) }));
+            if (!batchTimer) batchTimer = setTimeout(flushBatch, SSE_BATCH_WINDOW_MS);
+          } catch (e) {
+            console.warn("[sse] account JSON 解析失败", e);
+          }
+        };
+        source.addEventListener("account", source._onAccount);
+
+        source._onComplete = async () => {
           source.close();
           set((state) => ({
             runtimeController: null,
             runtime: buildRuntimeCompletionState(state.runtime)
           }));
-        });
+        };
+        source.addEventListener("run_completed", source._onComplete);
 
-        source.onerror = () => {
+        source._onError = () => {
           set((state) => ({
             runtime: { ...state.runtime, status: "reconnecting" }
           }));
           source._reconnect?.();
         };
+        source.onerror = source._onError;
+
+        // v1.0.5: 用 ref 跟踪活动源, 重连后 close 仍能关闭新连接
+        const sourceRef = { current: source };
+        sourceRef.current = source;
 
         set((state) => ({
-          runtimeController: { close: () => source.close() },
+          runtimeController: {
+            close: () => {
+              if (sourceRef.current?._reconnectTimer) clearTimeout(sourceRef.current._reconnectTimer);
+              sourceRef.current?.close();
+            }
+          },
           runtime: {
             ...state.runtime,
             runId: start.run_id,
@@ -166,20 +211,33 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
             nodes: updateRuntimeNode(state.graph.nodes, "error", message)
           }
         }));
+      } finally {
+        set({ actionLock: null });
       }
     },
 
     async startBacktest() {
+      if (get().actionLock) return;
+      set({ actionLock: "runtime" });
       const graph = get().graph;
-      if (!graph.validation_state.is_runnable) return;
+      if (!graph.validation_state.is_runnable) { set({ actionLock: null }); return; }
       const capabilityBlockReason = getCapabilityBlockReason(get, "run_backtest");
       if (capabilityBlockReason) {
         setRuntimeCapabilityBlocked(set, "backtest", capabilityBlockReason);
+        set({ actionLock: null });
         return;
       }
 
-      const result = await get().compileCurrentGraph();
-      if (!result) return;
+      // 若 graph 自上次编译后未变, 复用缓存跳过冗余编译
+      const lastCompileGraphId = get().compileResult?.backend_compile?.compile_id;
+      const currentGraphId = graph.metadata?.compile_summary?.compile_id;
+      let result;
+      if (lastCompileGraphId && lastCompileGraphId === currentGraphId) {
+        result = get().compileResult;
+      } else {
+        result = await get().compileCurrentGraph();
+      }
+      if (!result) { set({ actionLock: null }); return; }
       const capabilityContext = buildCapabilityContext(get().capabilities);
 
       get().stopRuntime();
@@ -198,6 +256,7 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
           capability_context: capabilityContext,
           runtime_config: result.runtime_config,
           runtime_targets: resolveRuntimeTargets(result),
+          graph_json: graph,
           backtest_options: {
             replay_source: "deterministic_mock",
             volatility: 0.5
@@ -235,6 +294,8 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
             nodes: updateRuntimeNode(state.graph.nodes, "error", message)
           }
         }));
+      } finally {
+        set({ actionLock: null });
       }
     },
 
@@ -278,6 +339,7 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
           capability_context: capabilityContext,
           runtime_config: result.runtime_config,
           runtime_targets: resolveRuntimeTargets(result),
+          graph_json: graph,
           backtest_options: {
             replay_source: "deterministic_mock",
             volatility: 0.5

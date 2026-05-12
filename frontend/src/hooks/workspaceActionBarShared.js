@@ -209,6 +209,12 @@ export function resolveWorkspaceActionState({
       runtime.status !== "running" &&
       runtime.status !== "connecting" &&
       !capabilitySyncBlocked,
-    canStopRuntime: runtime.status === "running" || runtime.status === "connecting"
+    canStopRuntime: runtime.status === "running" || runtime.status === "connecting",
+    issueSummary:
+      (graph.validation_state?.issue_counts?.error || 0) > 0
+        ? `${graph.validation_state.issue_counts.error}E`
+        : (graph.validation_state?.issue_counts?.warning || 0) > 0
+          ? `${graph.validation_state.issue_counts.warning}W`
+          : ""
   };
 }

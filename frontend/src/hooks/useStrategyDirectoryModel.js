@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useGraphStore } from "../store/graphStore";
 import { STRATEGY_TEMPLATE_LIBRARY } from "../templates/strategyTemplates";
 import { navigateTo, strategyWorkspacePath } from "../router";
@@ -246,15 +246,34 @@ export function useStrategyDirectoryModel() {
   const clearBacktestCompareSelection = useGraphStore(
     (state) => state.clearBacktestCompareSelection
   );
-  const storedCompareSelection = runtime.backtestCompareSelection || [];
+  const storedCompareSelection = runtime.backtestCompareSelection?.[graph?.metadata?.graph_id] || (Array.isArray(runtime.backtestCompareSelection) ? runtime.backtestCompareSelection : []);
 
-  const [query, setQuery] = useState("");
-  const [scopeFilter, setScopeFilter] = useState("all");
-  const [healthFilter, setHealthFilter] = useState("all");
-  const [sortMode, setSortMode] = useState("activity");
+  const readFilterFromURL = () => {
+    if (typeof window === "undefined") return {};
+    const p = new URLSearchParams(window.location.search);
+    return { q: p.get("q") || "", scope: p.get("scope") || "all", health: p.get("health") || "all", sort: p.get("sort") || "activity" };
+  };
+  const syncFilterToURL = (q, scope, health, sort) => {
+    if (typeof window === "undefined") return;
+    const p = new URLSearchParams();
+    if (q) p.set("q", q);
+    if (scope !== "all") p.set("scope", scope);
+    if (health !== "all") p.set("health", health);
+    if (sort !== "activity") p.set("sort", sort);
+    const qs = p.toString();
+    window.history.replaceState({}, "", qs ? `?${qs}` : window.location.pathname);
+  };
+
+  const initFilter = readFilterFromURL();
+  const [query, setQuery] = useState(initFilter.q);
+  const [scopeFilter, setScopeFilter] = useState(initFilter.scope);
+  const [healthFilter, setHealthFilter] = useState(initFilter.health);
+  const [sortMode, setSortMode] = useState(initFilter.sort);
   const [selectedStrategyId, setSelectedStrategyId] = useState("");
   const [selectedStrategyIds, setSelectedStrategyIds] = useState([]);
   const deferredQuery = useDeferredValue(query);
+
+  useEffect(() => { syncFilterToURL(query, scopeFilter, healthFilter, sortMode); }, [query, scopeFilter, healthFilter, sortMode]);
 
   useEffect(() => {
     if (graphIndexStatus === "idle") {
@@ -394,13 +413,13 @@ export function useStrategyDirectoryModel() {
   const selectedForWorkspace =
     selectedStrategyCount === 1 ? selectedStrategyIds[0] : selectedStrategy?.graphId || "";
 
-  function toggleStrategySelection(graphId) {
+  const toggleStrategySelection = useCallback((graphId) => {
     setSelectedStrategyIds((current) =>
       current.includes(graphId)
         ? current.filter((item) => item !== graphId)
         : [...current, graphId]
     );
-  }
+  }, []);
 
   async function applyTemplate(templateId) {
     const graph = await loadStrategyTemplate(templateId);
@@ -408,11 +427,11 @@ export function useStrategyDirectoryModel() {
     return graph;
   }
 
-  function openBlankWorkspace() {
+  const openBlankWorkspace = useCallback(() => {
     const graph = resetGraph();
     navigateTo(strategyWorkspacePath(graph.metadata?.graph_id || "draft_graph"));
     return graph;
-  }
+  }, []);
 
   async function deleteStrategy(graphId, strategyName = graphId) {
     if (!graphId) return false;

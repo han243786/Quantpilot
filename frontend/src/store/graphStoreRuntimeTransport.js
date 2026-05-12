@@ -8,7 +8,7 @@ export function buildRuntimeEventStreamUrl(runId) {
  * 创建带自动重连的 EventSource。
  * v1.0.0: 断开后指数退避重连 (最多 5 次, 1s→2s→4s→8s→16s)
  */
-export function createRuntimeEventSource(runId, onRetryExhausted) {
+export function createRuntimeEventSource(runId, onRetryExhausted, onReconnect) {
   const url = buildRuntimeEventStreamUrl(runId);
   let retries = 0;
   const MAX_RETRIES = 5;
@@ -33,13 +33,16 @@ export function createRuntimeEventSource(runId, onRetryExhausted) {
       }
       const delay = BASE_DELAY_MS * Math.pow(2, retries);
       retries++;
-      return setTimeout(() => {
+      const timerId = setTimeout(() => {
         const next = build();
-        // 复制事件监听器
         if (es._onMessage) next.addEventListener("runtime_event", es._onMessage);
+        if (es._onAccount) next.addEventListener("account", es._onAccount);
         if (es._onComplete) next.addEventListener("run_completed", es._onComplete);
         if (es._onError) next.onerror = es._onError;
+        if (onReconnect) onReconnect(next);
       }, delay);
+      es._reconnectTimer = timerId;
+      return timerId;
     };
 
     return es;

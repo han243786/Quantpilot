@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { buildActionFailureMessage } from "../utils/actionFailure";
 import { humanizeErrorText } from "../utils/errorText";
+
+const RECOVERY_MAX_RETRIES = 10;
+const RECOVERY_RETRY_DELAY_MS = 1500;
 import {
   attachValidationWithRegistry,
   buildRegistryFromCapabilities,
@@ -23,11 +26,7 @@ import {
 import { createGraphStoreEditorActions } from "./graphStoreEditorActions";
 import { createGraphStoreRuntimeActions } from "./graphStoreRuntimeActions";
 
-export {
-  fetchJson,
-  parseQuantScriptDiagnosticsFromMessage,
-  resolveCompileDiagnosticTargetFromGraphArtifacts
-} from "./graphStoreHelpers";
+export { fetchJson } from "./graphStoreHelpers";
 
 export const useGraphStore = create((set, get) => ({
   registry: defaultRegistry,
@@ -76,8 +75,12 @@ export const useGraphStore = create((set, get) => ({
     backtestHistoryStatus: "idle",
     experiments: [],
     experimentsStatus: "idle",
-    backtestCompareSelection: [],
+    backtestCompareSelection: {},
+    actionLock: null, // v1.0.5: 统一锁 "compiling"|"saving"|"runtime"
+    compileResultNotice: null,
+    diagnosticFocusRequested: false,
     selectedHistoryRunId: null,
+    selectedRunStatus: "idle",
     selectedBacktestId: null,
     selectedExperimentId: null,
     selectedExperiment: null,
@@ -85,6 +88,7 @@ export const useGraphStore = create((set, get) => ({
     highlightedNodeIds: []
   },
   compileResult: null,
+  compileStatus: "idle",
   runtimeController: null,
   quantScriptDraft: "",
   formalQuantScriptDraft: null,
@@ -165,7 +169,16 @@ export const useGraphStore = create((set, get) => ({
         }
         if (event.key === "quantpilot_frontend_graph") {
           const graph = loadGraphFromStorage();
-          if (graph) get().set({ graph });
+          if (!graph) {
+            // 另一标签页删除了策略图
+            get().set({
+              runtime: { ...get().runtime, backendError: "此策略已被另一标签页删除，请返回策略中心。" }
+            });
+            return;
+          }
+          // 验证后再应用
+          const validated = resolveLoadedGraphWithRegistry(graph, get().registry);
+          if (validated) get().set({ graph: validated });
         }
       });
     }
@@ -201,6 +214,13 @@ export const useGraphStore = create((set, get) => ({
     }
 
     if (!resolvedGraph) {
+      // 第三回退: 使用 localStorage 中的策略图 (即使不在后端索引中)
+      const localGraph = resolveLoadedGraphWithRegistry(loadGraphFromStorage(), registry);
+      if (localGraph?.validation_state?.is_runnable) {
+        resolvedGraph = localGraph;
+      }
+    }
+    if (!resolvedGraph) {
       resolvedGraph = fallbackRunnableGraph(registry);
     }
 
@@ -212,7 +232,7 @@ export const useGraphStore = create((set, get) => ({
       runtime: {
         ...state.runtime,
         backendError: startupRecoveryError,
-        backtestCompareSelection: []
+        backtestCompareSelection: {}
       }
     }));
 
@@ -247,7 +267,7 @@ export const useGraphStore = create((set, get) => ({
   },
   async recoverLatestRunnableGraph() {
     let lastError = null;
-    for (let attempt = 0; attempt < 10; attempt += 1) {
+    for (let attempt = 0; attempt < RECOVERY_MAX_RETRIES; attempt += 1) {
       try {
         const latestGraph = resolveLoadedGraphWithRegistry(
           await fetchJson("/graphs/latest"),
@@ -281,7 +301,7 @@ export const useGraphStore = create((set, get) => ({
             runtime: {
               ...state.runtime,
               backendError: null,
-              backtestCompareSelection: []
+              backtestCompareSelection: {}
             }
           }));
         } else {
@@ -298,7 +318,7 @@ export const useGraphStore = create((set, get) => ({
         lastError = error;
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, RECOVERY_RETRY_DELAY_MS));
     }
 
     const message = buildActionFailureMessage(

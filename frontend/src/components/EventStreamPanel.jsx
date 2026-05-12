@@ -687,7 +687,7 @@ export function EventFeedSection({
               }
             }}
           >
-            <div className="event-time">{new Date(event.event_time_ms).toLocaleTimeString()}</div>
+            <div className="event-time">{event._timeLabel || new Date(event.event_time_ms).toLocaleTimeString()}</div>
             <div className="event-type">{eventTypeLabel(event.event_type)}</div>
             <div className="event-details">
               <div className="event-message">{event.summary}</div>

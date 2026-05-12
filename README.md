@@ -2,7 +2,7 @@
 
 QuantPilot 是一个单机量化交易沙盒, 聚焦于诚实的能力边界、可复现的运行时行为和发布时契约纪律。
 
-当前版本: **v1.0.3** | [系统架构](./markdown/10-overview/overview-system-architecture.md) | [使用指南](./markdown/10-overview/overview-system-architecture.md#十一使用指南) | [General_Policy](./markdown/General_Policy.md) | [版本历史](./CHANGELOG.md)
+当前版本: **v1.0.5** | [系统架构](./markdown/10-overview/overview-system-architecture.md) | [使用指南](./markdown/10-overview/overview-system-architecture.md#十一使用指南) | [General_Policy](./markdown/General_Policy.md) | [版本历史](./CHANGELOG.md)
 
 ## 产品边界
 
@@ -85,16 +85,16 @@ cd frontend; npm audit --audit-level=moderate
 
 `scripts/pre-commit` 在 `git commit` 时自动执行 `cargo check` + `cargo test --no-run` + `vite build` + `vitest run`
 
-## v1.0.3 就绪度
+## v1.0.5 最终状态
 
-| 维度 | v1.0.3 | 说明 |
+| 维度 | v1.0.5 | 说明 |
 |------|:------:|------|
-| 功能开发进度 | 8.5/10 | 插件 trait 化 / DAG 验证接线 / Recharts 图表 |
-| 仓库稳定程度 | 8.5/10 | 0 阻断 / 四回合审计 84 发现 77 已修 |
-| 发布就绪度 | 9.0/10 | Tauri 便携包 / S0 角色测试 39/39 |
-| 用户友好程度 | 8.0/10 | CTA 引导 / 骨架屏 / 错误恢复建议 |
-| 系统整体稳定性 | 8.0/10 | NaN 守卫 / 编译 Semaphore / 运行互斥 / 429 重试 |
-| **加权** | **8.4/10** |
+| 功能开发进度 | 9.5/10 | 18 指标全部实现 / 分页全栈 / API 客户端统一 |
+| 仓库稳定程度 | 9.5/10 | 六轮审计 138 项发现全部闭环 / 0 已知缺陷 |
+| 发布就绪度 | 9.5/10 | S0 19/19 | P1 45/45 | P2 40/40 | 测试 92 文件 269 用例 |
+| 用户友好程度 | 9.0/10 | A11y 全页面语义化 / i18n 覆盖 8 页面 / 骨架屏 / 错误恢复 |
+| 系统整体稳定性 | 9.0/10 | 统一锁 / SSE 重连修复 / 分页兼容 / safe_log 修复 |
+| **加权** | **9.3/10** |
 
 ## 文档入口
 

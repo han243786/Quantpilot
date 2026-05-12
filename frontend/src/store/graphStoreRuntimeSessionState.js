@@ -93,12 +93,12 @@ export function applyRuntimeStreamState(state, runId, event) {
       account: nextAccount,
       backtestArtifacts: null,
       diagnostics: null,
-      events: [event, ...state.runtime.events].slice(0, 500),
+      events: [event, ...state.runtime.events].slice(0, 200),
       backendError: null,
       selectedHistoryRunId: runId,
       selectedBacktestId: null,
       highlightedNodeIds: event.node_id
-        ? [...new Set([...state.runtime.highlightedNodeIds, event.node_id])]
+        ? [...new Set([...state.runtime.highlightedNodeIds, event.node_id])].slice(0, 50)
         : state.runtime.highlightedNodeIds
     }
   };
@@ -116,7 +116,8 @@ export function buildRuntimeCompletionState(runtime) {
     ...runtime,
     status: "completed",
     connectionState: "connected",
-    artifactPersistenceStatus: runtime.runId ? "transient" : runtime.artifactPersistenceStatus
+    artifactPersistenceStatus: runtime.runId ? "transient" : runtime.artifactPersistenceStatus,
+    backendError: null
   };
 }
 
@@ -129,7 +130,7 @@ export function buildRuntimeFailureState(runtime, message) {
 }
 
 export function buildBacktestCompletionState(state, graph, response, compileId) {
-  const events = resolveBacktestEvents(response);
+  const events = resolveBacktestEvents(response).slice(0, 200);
   const highlightedNodeIds = collectHighlightedNodeIds(events);
   const nextGraph = buildRuntimeBindingGraph(
     {
@@ -153,7 +154,7 @@ export function buildBacktestCompletionState(state, graph, response, compileId) 
       diagnostics: response.runtime_diagnostics || null,
       governance: response.governance || response.backtest_artifacts?.manifest?.governance || null,
       events,
-      timeline: response.timeline || [],
+      timeline: (response.timeline || []).slice(0, 200),
       retainedKeyEventIndex: response.retained_key_event_index || null,
       compactEvidence: response.compact_evidence || null,
       selectedHistoryRunId: null,

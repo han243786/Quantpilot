@@ -87,6 +87,7 @@ function DefaultToolbarLayout({
   startSimulationTitle,
   runBacktestTitle,
   exportConfigTitle,
+  issueSummary,
   canCompile,
   canStartRuntime,
   canStartBacktest,
@@ -135,14 +136,14 @@ function DefaultToolbarLayout({
           >
             凭证
           </button>
-          <button className="ghost-btn" onClick={resetGraph} data-testid="toolbar-reset-graph-action">
+          <button className="ghost-btn" onClick={() => { if (window.confirm("确认新建策略图？当前未保存的更改将丢失。")) resetGraph(); }} data-testid="toolbar-reset-graph-action">
             新建策略图
           </button>
           <button className="ghost-btn" onClick={handleLoadLatestGraph} data-testid="toolbar-load-latest-action">
             加载最新
           </button>
           <button className="ghost-btn" onClick={handleSaveGraph} disabled={saving} data-testid="toolbar-save-graph-action">
-            保存策略图
+            {saving ? "保存中..." : "保存策略图"}
           </button>
           <button
             className="ghost-btn"
@@ -190,7 +191,7 @@ function DefaultToolbarLayout({
             disabled={!canCompile}
             title={compileButtonTitle}
           >
-            编译
+            编译{issueSummary ? ` (${issueSummary})` : ""}
           </button>
           <button
             className="primary-btn"
@@ -213,7 +214,7 @@ function DefaultToolbarLayout({
           <button className="ghost-btn" onClick={stopRuntime} disabled={!canStopRuntime} data-testid="toolbar-stop-runtime-action">
             停止
           </button>
-          <button className="ghost-btn" onClick={resetRuntime} data-testid="toolbar-reset-runtime-action">
+          <button className="ghost-btn" onClick={() => { if (window.confirm("确认重置运行时？运行中的模拟将被中断。")) resetRuntime(); }} data-testid="toolbar-reset-runtime-action">
             重置运行时
           </button>
         </div>
@@ -252,6 +253,7 @@ function WorkspaceToolbarLayout({
   startSimulationTitle,
   runBacktestTitle,
   exportConfigTitle,
+  issueSummary,
   canCompile,
   canStartRuntime,
   canStartBacktest,
@@ -316,7 +318,7 @@ function WorkspaceToolbarLayout({
             disabled={!canCompile}
             title={compileButtonTitle}
           >
-            编译
+            编译{issueSummary ? ` (${issueSummary})` : ""}
           </button>
           <button
             className="primary-btn"
@@ -339,7 +341,7 @@ function WorkspaceToolbarLayout({
           <button className="ghost-btn" onClick={stopRuntime} disabled={!canStopRuntime} data-testid="toolbar-stop-runtime-action">
             停止
           </button>
-          <button className="ghost-btn" onClick={resetRuntime} data-testid="toolbar-reset-runtime-action">
+          <button className="ghost-btn" onClick={() => { if (window.confirm("确认重置运行时？运行中的模拟将被中断。")) resetRuntime(); }} data-testid="toolbar-reset-runtime-action">
             重置运行时
           </button>
         </div>
@@ -349,7 +351,7 @@ function WorkspaceToolbarLayout({
         <div className="top-toolbar-utility-row__label">工具</div>
         <div className="toolbar-group toolbar-group--workspace-secondary">
           <button className="ghost-btn" onClick={handleSaveGraph} disabled={saving} data-testid="toolbar-save-graph-action">
-            保存策略图
+            {saving ? "保存中..." : "保存策略图"}
           </button>
           <button className="ghost-btn" onClick={handleLoadLatestGraph} data-testid="toolbar-load-latest-action">
             加载最新
@@ -371,7 +373,7 @@ function WorkspaceToolbarLayout({
           >
             导出策略图源码
           </button>
-          <button className="ghost-btn" onClick={resetGraph} data-testid="toolbar-reset-graph-action">
+          <button className="ghost-btn" onClick={() => { if (window.confirm("确认新建策略图？当前未保存的更改将丢失。")) resetGraph(); }} data-testid="toolbar-reset-graph-action">
             新建策略图
           </button>
         </div>
@@ -400,10 +402,11 @@ function CredentialPanel({ onClose }) {
   const [services, setServices] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [saveError, setSaveError] = useState(null);
 
   const loadServices = useCallback(async () => {
     try {
-      const res = await fetch(API_BASE + "/api/credentials");
+      const res = await fetch(API_BASE + "/credentials");
       if (res.ok) {
         const data = await res.json();
         setServices(data.services || []);
@@ -423,8 +426,9 @@ function CredentialPanel({ onClose }) {
   }, [onClose]);
 
   const handleSave = useCallback(async (label, fields) => {
+    setSaveError(null);
     try {
-      const res = await fetch(API_BASE + "/api/credentials", {
+      const res = await fetch(API_BASE + "/credentials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ service: label, fields }),
@@ -432,15 +436,27 @@ function CredentialPanel({ onClose }) {
       if (res.ok) {
         setSelected(null);
         loadServices();
+      } else {
+        const text = await res.text();
+        setSaveError(text || "保存凭证失败，请重试。");
       }
-    } catch (_) {}
+    } catch (e) {
+      setSaveError(e.message || "网络错误，请检查连接后重试。");
+    }
   }, [loadServices]);
 
   const handleDelete = useCallback(async (label) => {
+    if (!window.confirm(`确认删除凭证 "${label}"？此操作不可撤销。`)) return;
     try {
-      await fetch(API_BASE + "/api/credentials/" + encodeURIComponent(label), { method: "DELETE" });
-      loadServices();
-    } catch (_) {}
+      const res = await fetch(API_BASE + "/credentials/" + encodeURIComponent(label), { method: "DELETE" });
+      if (!res.ok) {
+        setSaveError("删除凭证失败，请重试。");
+      } else {
+        loadServices();
+      }
+    } catch (e) {
+      setSaveError(e.message || "网络错误，删除凭证失败。");
+    }
   }, [loadServices]);
 
   if (selected === "new" || (selected && !services.includes(selected))) {
@@ -455,10 +471,11 @@ function CredentialPanel({ onClose }) {
             {t("编辑模式下所有字段均需重新填写, 留空的字段将被清除。")}
           </div>
         ) : null}
+        {saveError && <div className="qp-error" style={{marginBottom:12}}>{saveError}</div>}
         <OkxCredentialInput
           label={selected === "new" ? "" : selected}
           onSave={handleSave}
-          onCancel={() => setSelected(null)}
+          onCancel={() => { setSelected(null); setSaveError(null); }}
         />
       </div>
     );

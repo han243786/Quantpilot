@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useMemo } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef } from "react";
 import "./strategy-workspace.css";
 import {
   navigateTo,
@@ -61,11 +61,16 @@ export default function StrategyWorkspacePage({ strategyId }) {
     loadGraphById
   } = useStrategyWorkspaceSharedModel();
   const stopRuntime = useGraphStore((s) => s.stopRuntime);
+  const diagnosticFocusRequested = useGraphStore((s) => s.diagnosticFocusRequested);
+  const clearDiagnosticFocus = () => useGraphStore.setState({ diagnosticFocusRequested: false });
 
-  // v1.0.1: 组件卸载时清理 SSE 连接, 防止连接泄漏
+  // v1.0.5: 组件卸载时清理 SSE 连接, 防止连接泄漏
+  // 用 ref 跟踪最新状态以避免过期闭包
+  const runtimeRef = useRef(runtime);
+  runtimeRef.current = runtime;
   useEffect(() => {
     return () => {
-      if (runtime?.status === "running") {
+      if (runtimeRef.current?.status === "running") {
         stopRuntime();
       }
     };
@@ -129,7 +134,9 @@ export default function StrategyWorkspacePage({ strategyId }) {
   }
 
   return (
-    <div className="strategy-workspace-page">
+    <main className="strategy-workspace-page">
+      <h1 style={{position:"absolute",width:"1px",height:"1px",overflow:"hidden",clip:"rect(0,0,0,0)",whiteSpace:"nowrap"}}>策略工作区</h1>
+      <div className="workspace-small-screen-warning">{t("策略图编辑需要较大的屏幕空间，建议使用 ≥1180px 宽度的窗口。")}</div>
       {/* Adobe 风格紧凑页头 */}
       <header className="ad-workspace-header">
         <StrategyRouteBar
@@ -153,8 +160,11 @@ export default function StrategyWorkspacePage({ strategyId }) {
           <button
             key={tab.id}
             data-testid={`workspace-tab-${tab.id}`}
-            className={`ad-tab${ui.activeTab === tab.id ? " ad-tab--active" : ""}`}
-            onClick={() => ui.setActiveTab(tab.id)}
+            className={`ad-tab${ui.activeTab === tab.id ? " ad-tab--active" : ""}${diagnosticFocusRequested && tab.id === "code" && ui.activeTab !== "code" ? " ad-tab--focus-hint" : ""}`}
+            onClick={() => {
+              ui.setActiveTab(tab.id);
+              if (tab.id === "code" && diagnosticFocusRequested) clearDiagnosticFocus();
+            }}
             title={tab.note}
           >
             {tab.label}
@@ -171,7 +181,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
 
       {/* 标签页内容 */}
       {ui.activeTab === "dashboard" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceDashboard
             graph={graph}
             runtime={runtime}
@@ -183,7 +193,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
       ) : null}
 
       {ui.activeTab === "overview" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceOverviewTab
             strategyId={strategyId} graph={graph} ui={ui}
             compileSummary={compileSummary} compileCounts={pageData.compileCounts}
@@ -200,7 +210,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
       ) : null}
 
       {ui.activeTab === "code" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceCodeTab
             graph={graph} ui={ui}
             codeInspectorPanels={CODE_INSPECTOR_PANELS}
@@ -213,7 +223,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
       ) : null}
 
       {ui.activeTab === "diagnostics" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceDiagnosticsTab
             graph={graph} runtime={runtime} selectedNodeId={selectedNodeId} ui={ui}
             compileSummary={compileSummary} compileCounts={pageData.compileCounts}
@@ -228,20 +238,20 @@ export default function StrategyWorkspacePage({ strategyId }) {
       ) : null}
 
       {ui.activeTab === "research" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceResearchTab strategyId={strategyId} />
         </Suspense>
       ) : null}
       {ui.activeTab === "debug" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceDebugTab debugBars={pageData.debugBars || []} />
         </Suspense>
       ) : null}
       {ui.activeTab === "source" ? (
-        <Suspense fallback={<div className="tab-skeleton" style={{padding:40,color:'var(--ad-text-muted)',textAlign:'center'}}>{t("加载中...")}</div>}>
+        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceSourceTab graphId={graph?.metadata?.graph_id} />
         </Suspense>
       ) : null}
-    </div>
+    </main>
   );
 }

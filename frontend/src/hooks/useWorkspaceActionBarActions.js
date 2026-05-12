@@ -201,6 +201,9 @@ export function useWorkspaceActionBarActions({ onNotice } = {}) {
   }
 
   function focusFinding(issue) {
+    // 标记诊断聚焦请求, 用于提示用户切换到代码标签页
+    useGraphStore.setState({ diagnosticFocusRequested: true });
+
     if (issue.scope === "node") {
       setSelectedEdge(null);
       setSelectedNode(issue.target_id);

@@ -35,18 +35,15 @@ pub fn sanitize_secrets(input: &str) -> String {
                         let rest = &result[value_start..];
                         let end = if rest.starts_with('"') {
                             rest[1..].find('"').map(|i| i + 2)
+                                .unwrap_or(rest.len()) // 无闭合引号 → 到字符串末尾
                         } else {
                             rest.find(|c: char| {
                                 c == ',' || c == ' ' || c == '\n' || c == '}' || c == ']' || c == ')'
-                            })
+                            }).unwrap_or(rest.len()) // 无终止符 → 到字符串末尾
                         };
-                        if let Some(end) = end {
-                            let before = &result[..value_start];
-                            let after = &result[value_start + end..];
-                            result = format!("{}***{}", before, after);
-                        } else {
-                            break;
-                        }
+                        let before = &result[..value_start];
+                        let after = &result[value_start + end..];
+                        result = format!("{}***{}", before, after);
                     } else {
                         break;
                     }

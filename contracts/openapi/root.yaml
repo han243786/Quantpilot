@@ -1,14 +1,17 @@
 openapi: 3.1.0
 info:
   title: QuantPilot Runtime API
-  version: 0.2.0
-  summary: QuantPilot v0.2.0 HTTP 控制面契约
+  version: 1.0.5
+  summary: QuantPilot v1.0.5 HTTP 控制面契约
   description: |
     QuantPilot 策略开发与运行平台的 HTTP API 契约。
     覆盖 capability discovery、runtime session、compile、backtest、AI 提案与审批、
     沙箱验证、告警、快照、runbook、混沌实验、运营报表等全部控制面端点。
-    覆盖 capability discovery、runtime session、参数热更新、
-    AI 提案与审批、沙箱验证、告警、快照、报表等全部控制面端点。
+
+    API 版本前缀说明:
+      /api/    — v0.1 遗留, 覆盖编译/图管理/运行时/热插拔等核心策略开发循环
+      /api/v1/ — 较新系统端点 (告警/快照/审批/混沌/runbook/报表/存储)
+    此为有意设计, 见各端点的 x-chain-stage 标注。
 
 servers:
   - url: http://127.0.0.1:3000
@@ -63,6 +66,20 @@ paths:
       x-owner: backend-compile
       x-chain-stage: compile
       x-stability: stable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [runtime_config, graph_json]
+              properties:
+                runtime_config:
+                  type: object
+                  description: 前端运行时配置
+                graph_json:
+                  type: object
+                  description: 策略图 JSON
 
   /api/strategy-ir/compile:
     post:
@@ -72,6 +89,20 @@ paths:
       x-owner: backend-compile
       x-chain-stage: compile
       x-stability: stable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [graph_id, compile_id, strategy_ir]
+              properties:
+                graph_id:
+                  type: string
+                compile_id:
+                  type: string
+                strategy_ir:
+                  type: object
 
   /api/quantscript/formal/compile:
     post:
@@ -81,6 +112,24 @@ paths:
       x-owner: backend-compile
       x-chain-stage: compile
       x-stability: stable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [graph_id, compile_id, source, runtime_template]
+              properties:
+                graph_id:
+                  type: string
+                compile_id:
+                  type: string
+                source:
+                  type: string
+                runtime_template:
+                  type: object
+                runtime_targets:
+                  type: object
 
   # ── 运行时回测与会话 (v0.1 遗留) ──
   /api/runtime/backtest:
@@ -91,6 +140,31 @@ paths:
       x-owner: backend-runtime
       x-chain-stage: runtime
       x-stability: stable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [runtime_config]
+              properties:
+                actor:
+                  type: object
+                capability_context:
+                  type: object
+                runtime_config:
+                  type: object
+                graph_json:
+                  type: object
+                runtime_targets:
+                  type: object
+                backtest_options:
+                  type: object
+                  properties:
+                    replay_source:
+                      type: string
+                    volatility:
+                      type: number
 
   /api/runtime/backtests:
     get:
@@ -109,6 +183,18 @@ paths:
       x-owner: backend-runtime
       x-chain-stage: runtime
       x-stability: beta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [backtest_ids]
+              properties:
+                backtest_ids:
+                  type: array
+                  items:
+                    type: string
 
   /api/runtime/backtests/{backtest_id}:
     get:
@@ -134,6 +220,12 @@ paths:
       x-owner: backend-runtime
       x-chain-stage: runtime
       x-stability: stable
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
 
   /api/runtime/backtests/{backtest_id}/replay:
     get:
@@ -152,6 +244,26 @@ paths:
       x-owner: backend-runtime
       x-chain-stage: runtime
       x-stability: stable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [runtime_config]
+              properties:
+                actor:
+                  type: object
+                capability_context:
+                  type: object
+                runtime_config:
+                  type: object
+                graph_json:
+                  type: object
+                runtime_targets:
+                  type: object
+                backtest_options:
+                  type: object
 
   /api/runtime/runs:
     get:
@@ -186,6 +298,12 @@ paths:
       x-owner: backend-runtime
       x-chain-stage: runtime
       x-stability: stable
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
 
   /api/runtime/runs/{run_id}/events:
     get:
@@ -318,6 +436,28 @@ paths:
       x-owner: backend-runtime
       x-chain-stage: runtime
       x-stability: beta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [runtime_config]
+              properties:
+                experiment_name:
+                  type: string
+                actor:
+                  type: object
+                capability_context:
+                  type: object
+                runtime_config:
+                  type: object
+                runtime_targets:
+                  type: object
+                backtest_options:
+                  type: object
+                parameter_grid:
+                  type: object
 
   /api/runtime/experiments:
     get:
@@ -352,6 +492,12 @@ paths:
       x-owner: backend-runtime
       x-chain-stage: runtime
       x-stability: beta
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
 
   # ── 图管理 (v0.1 遗留) ──
   /api/graphs/save:
@@ -362,6 +508,22 @@ paths:
       x-owner: backend-graph
       x-chain-stage: compile
       x-stability: stable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [graph]
+              properties:
+                graph:
+                  type: object
+                version_label:
+                  type: string
+                save_note:
+                  type: string
+                actor:
+                  type: object
 
   /api/graphs:
     get:
@@ -432,6 +594,16 @@ paths:
       x-owner: backend-graph
       x-chain-stage: compile
       x-stability: stable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [actor]
+              properties:
+                actor:
+                  type: object
 
   /api/graphs/{graph_id}/versions/compare/{left}/{right}:
     get:
@@ -478,6 +650,8 @@ paths:
       x-owner: backend-runtime
       x-chain-stage: runtime
       x-stability: beta
+
+  /api/hotswap/list:
     get:
       operationId: listHotswaps
       summary: 查询热插拔记录
@@ -805,6 +979,16 @@ paths:
       x-owner: backend-runtime
       x-chain-stage: system
       x-stability: beta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [actor_id]
+              properties:
+                actor_id:
+                  type: string
       parameters:
         - name: firing_id
           in: path
@@ -857,6 +1041,18 @@ paths:
       x-owner: backend-runtime
       x-chain-stage: system
       x-stability: beta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [actor_id]
+              properties:
+                actor_id:
+                  type: string
+                reason:
+                  type: string
 
   # ── Runbook ──
   /api/v1/runbook:
@@ -1100,3 +1296,86 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Problem'
+
+  # ── 凭证管理 ──
+  /api/credentials:
+    get:
+      operationId: listCredentials
+      summary: 查询已存储的凭证服务列表
+      tags: [system]
+      x-owner: backend-runtime
+      x-chain-stage: system
+      x-stability: experimental
+      responses:
+        '200':
+          description: 凭证服务列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  services:
+                    type: array
+                    items:
+                      type: string
+    post:
+      operationId: setCredential
+      summary: 存储/更新交易所凭证
+      tags: [system]
+      x-owner: backend-runtime
+      x-chain-stage: system
+      x-stability: experimental
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [service, fields]
+              properties:
+                service:
+                  type: string
+                fields:
+                  type: object
+
+  /api/credentials/{service}:
+    delete:
+      operationId: deleteCredential
+      summary: 删除指定凭证
+      tags: [system]
+      x-owner: backend-runtime
+      x-chain-stage: system
+      x-stability: experimental
+      parameters:
+        - name: service
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 凭证已删除
+
+  # ── 测试场景 ──
+  /api/test/scenario/run:
+    post:
+      operationId: runTestScenario
+      summary: 运行 QuantScript 测试场景
+      tags: [sandbox]
+      x-owner: backend-runtime
+      x-chain-stage: runtime
+      x-stability: experimental
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [source]
+              properties:
+                source:
+                  type: string
+                  description: QuantScript 源码
+      responses:
+        '200':
+          description: 测试报告

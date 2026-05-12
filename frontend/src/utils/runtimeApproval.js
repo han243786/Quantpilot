@@ -1,23 +1,23 @@
-const API_BASE = import.meta.env.VITE_BACKEND_ORIGIN || "http://127.0.0.1:3000";
+import { API_BASE } from "./api";
 
 export async function fetchApprovals({ reviewState } = {}) {
   const params = new URLSearchParams();
   if (reviewState) params.set("review_state", reviewState);
-  const url = `${API_BASE}/api/v1/ai/approvals?${params.toString()}`;
+  const url = `${API_BASE}/v1/ai/approvals?${params.toString()}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`获取审批列表失败: ${res.status}`);
   return res.json();
 }
 
 export async function fetchApprovalDetail(approvalId) {
-  const url = `${API_BASE}/api/v1/ai/approvals/${approvalId}`;
+  const url = `${API_BASE}/v1/ai/approvals/${approvalId}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`获取审批详情失败: ${res.status}`);
   return res.json();
 }
 
 export async function approveProposal(proposalId, actorId, comment) {
-  const url = `${API_BASE}/api/v1/ai/proposals/${proposalId}/approve`;
+  const url = `${API_BASE}/v1/ai/proposals/${proposalId}/approve`;
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -28,7 +28,7 @@ export async function approveProposal(proposalId, actorId, comment) {
 }
 
 export async function rejectProposal(proposalId, actorId, comment) {
-  const url = `${API_BASE}/api/v1/ai/proposals/${proposalId}/reject`;
+  const url = `${API_BASE}/v1/ai/proposals/${proposalId}/reject`;
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -39,7 +39,7 @@ export async function rejectProposal(proposalId, actorId, comment) {
 }
 
 export async function claimProposal(proposalId, actorId) {
-  const url = `${API_BASE}/api/v1/ai/proposals/${proposalId}/claim`;
+  const url = `${API_BASE}/v1/ai/proposals/${proposalId}/claim`;
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -50,7 +50,7 @@ export async function claimProposal(proposalId, actorId) {
 }
 
 export async function fetchSandboxReport(proposalId) {
-  const url = `${API_BASE}/api/v1/ai/proposals/${proposalId}/sandbox-report`;
+  const url = `${API_BASE}/v1/ai/proposals/${proposalId}/sandbox-report`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`获取沙箱报告失败: ${res.status}`);
   return res.json();

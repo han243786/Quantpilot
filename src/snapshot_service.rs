@@ -1,4 +1,5 @@
 use super::*;
+use axum::extract::Query;
 
 // ── 签名快照服务 ──
 // Block 5: deployment_revision 激活时生成不可变签名快照，支持一键恢复
@@ -32,8 +33,10 @@ struct CreateSnapshotRequest {
 
 async fn create_snapshot(
     State(state): State<AppState>,
-    Json(request): Json<CreateSnapshotRequest>,
+    request: Option<Json<CreateSnapshotRequest>>,
 ) -> Result<Json<DeploymentSignatureSnapshot>, (StatusCode, String)> {
+    let Json(request) = request
+        .ok_or_else(|| (StatusCode::BAD_REQUEST, "快照创建需要提供部署签名信息 (deployment_revision 等 10 个字段)".to_string()))?;
     let now_ms = current_time_ms();
     let snapshot_id = format!("snap-{}", now_ms);
 
@@ -92,11 +95,12 @@ async fn create_snapshot(
 
 async fn list_snapshots(
     State(state): State<AppState>,
-) -> Result<Json<Vec<DeploymentSignatureSnapshot>>, (StatusCode, String)> {
+    Query(pagination): Query<PaginationQuery>,
+) -> Result<Json<PaginatedResponse<DeploymentSignatureSnapshot>>, (StatusCode, String)> {
     let mut snapshots: Vec<DeploymentSignatureSnapshot> =
         state.snapshots.read().await.values().cloned().collect();
     snapshots.sort_by(|a, b| b.created_at_ms.cmp(&a.created_at_ms));
-    Ok(Json(snapshots))
+    Ok(Json(paginate(snapshots, pagination)))
 }
 
 async fn get_snapshot(

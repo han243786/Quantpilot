@@ -1,17 +1,24 @@
 import { useState, useEffect, useCallback } from "react";
-
+import { useI18n } from "../i18n";
 import { API_BASE } from "../utils/api";
 
-const TYPE_LABELS = {
-  DataLatencyInjection: "数据延迟注入",
-  EventLossInjection: "事件丢失注入",
-  DiskPressureInjection: "磁盘压力注入",
-  ClockSkewInjection: "时钟偏移注入",
+const CHAOS_TYPE_KEYS = {
+  DataLatencyInjection: "data_latency_injection",
+  EventLossInjection: "event_loss_injection",
+  DiskPressureInjection: "disk_pressure_injection",
+  ClockSkewInjection: "clock_skew_injection",
 };
 
-const CHAOS_TYPES = Object.keys(TYPE_LABELS);
-
 export default function ChaosPage() {
+  const { t } = useI18n();
+
+  const TYPE_LABELS = {
+    DataLatencyInjection: t("数据延迟注入"),
+    EventLossInjection: t("事件丢失注入"),
+    DiskPressureInjection: t("磁盘压力注入"),
+    ClockSkewInjection: t("时钟偏移注入"),
+  };
+
   const [experiments, setExperiments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,7 +28,7 @@ export default function ChaosPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/api/v1/chaos/experiments`);
+      const res = await fetch(`${API_BASE}/v1/chaos/experiments`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setExperiments(Array.isArray(data) ? data : []);
@@ -34,39 +41,45 @@ export default function ChaosPage() {
 
   useEffect(() => { fetchData(); }, []);
 
-  const handleCreate = useCallback(async (type) => {
-    setCreating(type);
+  const handleCreate = useCallback(async (experimentType) => {
+    setCreating(experimentType);
     try {
-      await fetch(`${API_BASE}/api/v1/chaos/experiments`, {
+      const INJECTION_SPECS = {
+        DataLatencyInjection: { target: "data_module", parameter: "latency_ms", value: 500, duration_ms: 30000 },
+        EventLossInjection: { target: "event_stream", parameter: "loss_rate", value: 0.3, duration_ms: 30000 },
+        DiskPressureInjection: { target: "storage", parameter: "fill_mb", value: 400, duration_ms: 30000 },
+        ClockSkewInjection: { target: "system_clock", parameter: "skew_ms", value: 5000, duration_ms: 30000 },
+      };
+      await fetch(`${API_BASE}/v1/chaos/experiments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ experiment_type: type }),
+        body: JSON.stringify({
+          experiment_type: CHAOS_TYPE_KEYS[experimentType],
+          injection: INJECTION_SPECS[experimentType]
+        }),
       });
       fetchData();
     } catch (_) {}
     setCreating(false);
   }, []);
 
-  const fmtTime = (ts) => {
-    if (!ts) return "-";
-    const d = new Date(ts);
-    return isNaN(d.getTime()) ? ts : d.toLocaleString();
-  };
+  const fmtTime = (ts) =>
+    ts ? new Date(ts).toLocaleString() : "-";
 
   return (
-    <div className="qp-page">
+    <main className="qp-page">
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-        <h2>混沌实验</h2>
+        <h1>{t("混沌实验")}</h1>
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-          {CHAOS_TYPES.map((type) => (
+          {Object.keys(CHAOS_TYPE_KEYS).map((type) => (
             <button
               key={type}
               className="qp-btn qp-btn--primary qp-btn--sm"
               onClick={() => handleCreate(type)}
               disabled={creating === type}
             >
-              {creating === type ? "创建中..." : TYPE_LABELS[type]}
+              {creating === type ? t("创建中...") : TYPE_LABELS[type]}
             </button>
           ))}
         </div>
@@ -74,21 +87,21 @@ export default function ChaosPage() {
 
       {error && (
         <div className="qp-error" role="alert">
-          <span>加载失败: {error}</span>
-          <button className="qp-btn qp-btn--sm" onClick={fetchData}>重试</button>
+          <span>{t("加载失败")}: {error}</span>
+          <button className="qp-btn qp-btn--sm" onClick={fetchData}>{t("重试")}</button>
         </div>
       )}
 
-      {loading && <div className="qp-loading">加载实验数据...</div>}
+      {loading && <div className="qp-loading">{t("加载实验数据...")}</div>}
 
       {!loading && !error && (
         <>
           <button className="qp-btn qp-btn--ghost qp-btn--sm" onClick={fetchData} style={{ marginBottom: 16 }}>
-            刷新
+            {t("刷新")}
           </button>
 
           {experiments.length === 0 && (
-            <div className="qp-empty">暂无混沌实验记录，点击上方按钮创建实验。</div>
+            <div className="qp-empty">{t("暂无混沌实验记录")}</div>
           )}
 
           {experiments.map((e) => (
@@ -98,22 +111,22 @@ export default function ChaosPage() {
                   {e.experiment_id}
                 </span>
                 <span className={e.passed ? "qp-badge qp-badge--ok" : "qp-badge qp-badge--err"}>
-                  {e.passed ? "通过" : "失败"}
+                  {e.passed ? t("通过") : t("失败")}
                 </span>
               </div>
               <div className="qp-card__meta">
                 <span>{TYPE_LABELS[e.experiment_type] || e.experiment_type}</span>
                 <span>{fmtTime(e.executed_at)}</span>
-                <span className="qp-metric">恢复 {e.recovery_duration_ms}ms</span>
+                <span className="qp-metric">{t("恢复")} {e.recovery_duration_ms}ms</span>
               </div>
               {e.alerts_triggered?.length > 0 && (
                 <div className="qp-card__body">
-                  <span style={{ color: "var(--tv-orange)" }}>
-                    触发告警: {e.alerts_triggered.join(" / ")}
+                  <span style={{ color: "var(--ad-warning)" }}>
+                    {t("触发告警")}: {e.alerts_triggered.join(" / ")}
                   </span>
-                  {e.degradation_actions?.length > 0 && (
-                    <span style={{ marginLeft: 16, color: "var(--tv-text-secondary)" }}>
-                      降级动作: {e.degradation_actions.join(" / ")}
+                  {e.degradation_summary && (
+                    <span style={{ marginLeft: 16, color: "var(--ad-text-secondary)" }}>
+                      {t("性能下降")}: {e.degradation_summary}
                     </span>
                   )}
                 </div>
@@ -122,6 +135,6 @@ export default function ChaosPage() {
           ))}
         </>
       )}
-    </div>
+    </main>
   );
 }

@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
+const PIN_COUNTDOWN_MS = 3000;
+const PIN_COUNTDOWN_INTERVAL_MS = 50;
+
 export function StrategyCardNote({ label, note }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
@@ -34,8 +37,8 @@ export function StrategyCardNote({ label, note }) {
     const startedAt = Date.now();
     progressIntervalRef.current = window.setInterval(() => {
       const elapsed = Date.now() - startedAt;
-      setProgress(Math.min(elapsed / 3000, 1));
-    }, 50);
+      setProgress(Math.min(elapsed / PIN_COUNTDOWN_MS, 1));
+    }, PIN_COUNTDOWN_INTERVAL_MS);
 
     pinTimeoutRef.current = window.setTimeout(() => {
       clearPinCountdown({ resetProgress: false });

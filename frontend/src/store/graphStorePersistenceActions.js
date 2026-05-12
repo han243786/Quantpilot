@@ -13,10 +13,12 @@ import {
   resolveStrategyIrDraft,
   saveGraphToStorage
 } from "./graphStoreHelpers";
+import { closeController } from "./graphStoreRuntimeHelpers";
 
 export function createGraphStorePersistenceActions(set, get) {
   return {
     resetGraph() {
+      closeController(get().runtimeController);
       const registry = get().registry;
       const history = get().runtime.history;
       const historyStatus = get().runtime.historyStatus;
@@ -32,6 +34,11 @@ export function createGraphStorePersistenceActions(set, get) {
         selectedEdgeId: null,
         selectedCompileDiagnosticTarget: null,
         compileResult: null,
+        formalQuantScriptOverride: null,
+        formalQuantScriptDraft: "",
+        compileResultNotice: null,
+        actionLock: null,
+        actionLock: null,
         runtime: {
           runId: null,
           runKind: null,
@@ -52,13 +59,14 @@ export function createGraphStorePersistenceActions(set, get) {
           backtestHistoryStatus,
           experiments,
           experimentsStatus,
-          backtestCompareSelection: [],
+          backtestCompareSelection: {},
           selectedHistoryRunId: null,
           selectedBacktestId: null,
           selectedExperimentId: null,
           selectedExperiment: null,
           selectedExperimentStatus: "idle",
-          highlightedNodeIds: []
+          highlightedNodeIds: [],
+          parameterMutations: []
         },
         graphVersions: [],
         graphVersionsStatus: "idle",
@@ -79,8 +87,20 @@ export function createGraphStorePersistenceActions(set, get) {
     },
 
     async saveGraph(options = {}) {
+      if (get().actionLock) return;
+      set({ actionLock: "saving" });
+      try {
       const registry = get().registry;
       const currentGraph = get().graph;
+      // 保存前快照，用于 API 失败时回滚
+      const prevGraph = currentGraph;
+      const prevCompileResult = get().compileResult;
+      const prevQuantScriptDraft = get().quantScriptDraft;
+      const prevStrategyIrDraft = get().strategyIrDraft;
+      const prevGraphVersionPreview = get().graphVersionPreview;
+      const prevGraphVersionPreviewStatus = get().graphVersionPreviewStatus;
+      const prevGraphVersionCompare = get().graphVersionCompare;
+      const prevGraphVersionCompareStatus = get().graphVersionCompareStatus;
       const versionLabel =
         Object.prototype.hasOwnProperty.call(options, "versionLabel") ? options.versionLabel : undefined;
       const saveNote =
@@ -155,13 +175,35 @@ export function createGraphStorePersistenceActions(set, get) {
       if (saveNote !== undefined) {
         request.save_note = saveNote;
       }
-      await postJson("/graphs/save", request);
+      try {
+        await postJson("/graphs/save", request);
+      } catch (e) {
+        // 回滚乐观更新
+        saveGraphToStorage(prevGraph);
+        set({
+          graph: prevGraph,
+          compileResult: prevCompileResult,
+          graphVersionPreview: prevGraphVersionPreview,
+          graphVersionPreviewStatus: prevGraphVersionPreviewStatus,
+          graphVersionPreviewMessage: "",
+          graphVersionCompare: prevGraphVersionCompare,
+          graphVersionCompareStatus: prevGraphVersionCompareStatus,
+          graphVersionCompareMessage: "",
+          quantScriptDraft: prevQuantScriptDraft,
+          strategyIrDraft: prevStrategyIrDraft
+        });
+        throw e;
+      }
       await get().refreshGraphIndex();
       await get().refreshGraphVersions(graph.metadata?.graph_id || "");
       await get().refreshGraphAuditHistory(graph.metadata?.graph_id || "");
+    } finally {
+      set({ actionLock: null });
+    }
     },
 
     async loadLatestGraph() {
+      if (get().runtime?.status === "running") get().stopRuntime();
       const finalGraph = resolveLoadedGraphWithRegistry(await fetchJson("/graphs/latest"), get().registry);
       if (!finalGraph) {
         throw new Error("最新保存的策略图不可用。");
@@ -169,6 +211,7 @@ export function createGraphStorePersistenceActions(set, get) {
       saveGraphToStorage(finalGraph);
       set((state) => ({
         graph: finalGraph,
+        compileResult: null,
         selectedNodeId: null,
         selectedEdgeId: null,
         selectedCompileDiagnosticTarget: null,
@@ -211,6 +254,7 @@ export function createGraphStorePersistenceActions(set, get) {
       if (!graphId) {
         throw new Error("需要提供策略图 ID。");
       }
+      if (get().runtime?.status === "running") get().stopRuntime();
 
       const { force = false } = options;
       const currentGraph = get().graph;
@@ -229,6 +273,7 @@ export function createGraphStorePersistenceActions(set, get) {
       saveGraphToStorage(finalGraph);
       set((state) => ({
         graph: finalGraph,
+        compileResult: null,
         selectedNodeId: null,
         selectedEdgeId: null,
         selectedCompileDiagnosticTarget: null,

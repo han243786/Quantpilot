@@ -6,35 +6,53 @@ function sanitizeCompareSelection(backtestIds) {
     : [];
 }
 
+// v1.0.5: 策略作用域 — 用 state.graph.metadata.graph_id 作为 key
+function _strategyId(state) {
+  return state.graph?.metadata?.graph_id || "_global";
+}
+
+export function getCompareSelection(state) {
+  const raw = state.runtime.backtestCompareSelection;
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  return raw[_strategyId(state)] || [];
+}
+
 export function toggleBacktestCompareSelectionState(state, backtestId) {
-  const existing = state.runtime.backtestCompareSelection || [];
+  const existing = getCompareSelection(state);
   const next = existing.includes(backtestId)
     ? existing.filter((id) => id !== backtestId)
     : existing.length >= 2
       ? existing
       : [...existing, backtestId];
+  const raw = state.runtime.backtestCompareSelection;
+  const base = Array.isArray(raw) ? {} : { ...raw };
   return {
     runtime: {
       ...state.runtime,
-      backtestCompareSelection: next
+      backtestCompareSelection: { ...base, [_strategyId(state)]: next }
     }
   };
 }
 
 export function clearBacktestCompareSelectionState(state) {
+  const raw = state.runtime.backtestCompareSelection;
+  const base = Array.isArray(raw) ? {} : { ...raw };
   return {
     runtime: {
       ...state.runtime,
-      backtestCompareSelection: []
+      backtestCompareSelection: { ...base, [_strategyId(state)]: [] }
     }
   };
 }
 
 export function replaceBacktestCompareSelectionState(state, backtestIds) {
+  const raw = state.runtime.backtestCompareSelection;
+  const base = Array.isArray(raw) ? {} : { ...raw };
   return {
     runtime: {
       ...state.runtime,
-      backtestCompareSelection: sanitizeCompareSelection(backtestIds)
+      backtestCompareSelection: { ...base, [_strategyId(state)]: sanitizeCompareSelection(backtestIds) }
     }
   };
 }
@@ -63,7 +81,7 @@ export function buildRunHistoryErrorState(state, message) {
     runtime: {
       ...state.runtime,
       historyStatus: "error",
-      backendError: state.runtime.backendError || message
+      backendError: message
     }
   };
 }
@@ -78,14 +96,17 @@ export function buildBacktestHistoryLoadingState(state) {
 }
 
 export function buildBacktestHistoryReadyState(state, backtestHistory) {
+  const current = getCompareSelection(state);
+  const raw = state.runtime.backtestCompareSelection;
+  const base = Array.isArray(raw) ? {} : { ...raw };
   return {
     runtime: {
       ...state.runtime,
       backtestHistory,
       backtestHistoryStatus: "ready",
-      backtestCompareSelection: (state.runtime.backtestCompareSelection || []).filter(
+      backtestCompareSelection: { ...base, [_strategyId(state)]: current.filter(
         (backtestId) => backtestHistory.some((item) => item.backtest_id === backtestId)
-      )
+      )}
     }
   };
 }
@@ -95,7 +116,7 @@ export function buildBacktestHistoryErrorState(state, message) {
     runtime: {
       ...state.runtime,
       backtestHistoryStatus: "error",
-      backendError: state.runtime.backendError || message
+      backendError: message
     }
   };
 }
@@ -140,7 +161,7 @@ export function buildExperimentHistoryErrorState(state, message) {
     runtime: {
       ...state.runtime,
       experimentsStatus: "error",
-      backendError: state.runtime.backendError || message
+      backendError: message
     }
   };
 }
@@ -172,7 +193,7 @@ export function buildExperimentDetailErrorState(state, message) {
     runtime: {
       ...state.runtime,
       selectedExperimentStatus: "error",
-      backendError: state.runtime.backendError || message
+      backendError: message
     }
   };
 }
@@ -193,7 +214,7 @@ export function buildRunDetailSelectionState(
     diagnostics: detail.runtime_diagnostics || null,
     governance: detail.governance || null,
     events: detail.events,
-    timeline: detail.timeline || [],
+    timeline: (detail.timeline || []).slice(0, 200),
     retainedKeyEventIndex: detail.retained_key_event_index || null,
     compactEvidence: detail.compact_evidence || null,
     parameterMutations,
@@ -219,7 +240,7 @@ export function buildBacktestDetailSelectionState(
     diagnostics: detail.runtime_diagnostics || null,
     governance: detail.governance || detail.backtest_artifacts?.manifest?.governance || null,
     events,
-    timeline: detail.timeline || [],
+    timeline: (detail.timeline || []).slice(0, 200),
     retainedKeyEventIndex: detail.retained_key_event_index || null,
     compactEvidence: detail.compact_evidence || null,
     parameterMutations: [],

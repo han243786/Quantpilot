@@ -174,6 +174,14 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
   }
 
   if (!metrics && !summary && !runtime.backendError) {
+    const isLoaded = runtime.selectedBacktestId && runtime.backtestArtifacts !== undefined;
+    if (isLoaded) {
+      return (
+        <div className="qp-page">
+          <div className="qp-empty">{t("回测数据为空，请尝试重新运行回测。")}</div>
+        </div>
+      );
+    }
     return (
       <div className="qp-page">
         <div className="qp-loading">{t("加载回测数据...")}</div>
@@ -182,7 +190,8 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
   }
 
   return (
-    <div className="detail-page strategy-analysis-page">
+    <main className="detail-page strategy-analysis-page">
+      <h1 style={{position:"absolute",width:"1px",height:"1px",overflow:"hidden",clip:"rect(0,0,0,0)",whiteSpace:"nowrap"}}>回测详情</h1>
       <AnalysisHero
         testId="backtest-detail-hero"
         routeItems={[
@@ -514,6 +523,6 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
       <div className="analysis-followup-section">
         <EventStreamPanel detailMode />
       </div>
-    </div>
+    </main>
   );
 }

@@ -16,7 +16,7 @@ export default function AlertsPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/api/v1/alerts`);
+      const res = await fetch(`${API_BASE}/v1/alerts`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setData(await res.json());
     } catch (e) {
@@ -31,7 +31,7 @@ export default function AlertsPage() {
   const handleAcknowledge = useCallback(async (firingId) => {
     setAcking(firingId);
     try {
-      await fetch(`${API_BASE}/api/v1/alerts/${firingId}/acknowledge`, {
+      await fetch(`${API_BASE}/v1/alerts/${firingId}/acknowledge`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ actor_id: ACTOR_ID }),
@@ -52,9 +52,9 @@ export default function AlertsPage() {
   };
 
   return (
-    <div className="qp-page">
+    <main className="qp-page">
 
-      <h2>{t("告警面板")}</h2>
+      <h1>{t("告警面板")}</h1>
 
       {error && (
         <div className="qp-error" role="alert">
@@ -75,6 +75,7 @@ export default function AlertsPage() {
           {data.firings.length === 0 && (
             <div className="qp-empty">{t("暂无活跃告警，系统运行正常")}</div>
           )}
+          <div role="list">
           {data.firings.map((f) => (
             <div className="qp-card qp-fade-in" key={f.firing_id} role="listitem">
               <div className="qp-card__header">
@@ -100,6 +101,7 @@ export default function AlertsPage() {
               )}
             </div>
           ))}
+          </div>
 
           <h3>{t("告警规则")} ({data.rules.length})</h3>
           {data.rules
@@ -113,13 +115,13 @@ export default function AlertsPage() {
                 <div className="qp-card__meta">
                   <span>{r.description}</span>
                 </div>
-                <div className="qp-card__body" style={{ color: "var(--tv-text-secondary)", fontSize: 12 }}>
+                <div className="qp-card__body" style={{ color: "var(--ad-text-secondary)", fontSize: 12 }}>
                   {r.action}
                 </div>
               </div>
             ))}
         </>
       )}
-    </div>
+    </main>
   );
 }

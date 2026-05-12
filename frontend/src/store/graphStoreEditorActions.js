@@ -140,7 +140,7 @@ export function createGraphStoreEditorActions(set, get) {
         retainedKeyEventIndex: null,
         compactEvidence: null,
         backendError: null,
-        backtestCompareSelection: [],
+        backtestCompareSelection: {},
         selectedHistoryRunId: null,
         selectedBacktestId: null,
         selectedExperimentId: null,
@@ -194,7 +194,7 @@ export function createGraphStoreEditorActions(set, get) {
       registry
     );
     if (persist) saveGraphToStorage(nextGraph);
-    set({ graph: nextGraph, quantScriptDraft: nextGraph.metadata?.artifacts?.quantscript?.graph_source || "" });
+    set({ graph: nextGraph, compileResult: null, quantScriptDraft: nextGraph.metadata?.artifacts?.quantscript?.graph_source || "" });
   },
 
   updateEditorViewport(viewport, persist = false) {
@@ -231,7 +231,7 @@ export function createGraphStoreEditorActions(set, get) {
       registry
     );
     saveGraphToStorage(finalGraph);
-    set({ graph: finalGraph, quantScriptDraft: finalGraph.metadata?.artifacts?.quantscript?.graph_source || "" });
+    set({ graph: finalGraph, compileResult: null, quantScriptDraft: finalGraph.metadata?.artifacts?.quantscript?.graph_source || "" });
   },
 
   updateNodeName(nodeId, value) {
@@ -249,7 +249,7 @@ export function createGraphStoreEditorActions(set, get) {
       registry
     );
     saveGraphToStorage(nextGraph);
-    set({ graph: nextGraph, quantScriptDraft: nextGraph.metadata?.artifacts?.quantscript?.graph_source || "" });
+    set({ graph: nextGraph, compileResult: null, quantScriptDraft: nextGraph.metadata?.artifacts?.quantscript?.graph_source || "" });
   },
 
   toggleNodeCollapse(nodeId) {
@@ -270,7 +270,7 @@ export function createGraphStoreEditorActions(set, get) {
       registry
     );
     saveGraphToStorage(nextGraph);
-    set({ graph: nextGraph, quantScriptDraft: nextGraph.metadata?.artifacts?.quantscript?.graph_source || "" });
+    set({ graph: nextGraph, compileResult: null, quantScriptDraft: nextGraph.metadata?.artifacts?.quantscript?.graph_source || "" });
   },
 
   addEdge(connection) {
@@ -296,7 +296,7 @@ export function createGraphStoreEditorActions(set, get) {
       registry
     );
     saveGraphToStorage(finalGraph);
-    set({ graph: finalGraph, quantScriptDraft: finalGraph.metadata?.artifacts?.quantscript?.graph_source || "" });
+    set({ graph: finalGraph, compileResult: null, quantScriptDraft: finalGraph.metadata?.artifacts?.quantscript?.graph_source || "" });
   },
 
   removeSelected() {
@@ -324,6 +324,7 @@ export function createGraphStoreEditorActions(set, get) {
     saveGraphToStorage(finalGraph);
     set((state) => ({
       graph: finalGraph,
+      compileResult: null,
       selectedNodeId: null,
       selectedEdgeId: null,
       quantScriptDraft: finalGraph.metadata?.artifacts?.quantscript?.graph_source || "",
