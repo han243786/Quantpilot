@@ -171,11 +171,11 @@ pub(super) fn formal_quantscript_diagnostic_from_lowering_error(
                 .to_string(),
         ),
         "QPQSLOW002" => Some(
-            "保持至少一个可执行的 emit Intent(...) 可从 strategy 到达，并确保其条件下层转换为支持的运行时意图形状。"
+            "保持至少一个可执行的 emit Intent(...) 可从 strategy 到达，并确保其条件可编译为支持的运行时意图形状。"
                 .to_string(),
         ),
         "QPQSLOW003" | "QPQSLOW007" => Some(
-            "添加至少一个 fetch(...) 或 get_data(...) 调用，使其在 strategy 下层转换中保持可达。"
+            "添加至少一个 fetch(...) 或 get_data(...) 调用，使其在 strategy 编译中保持可达。"
                 .to_string(),
         ),
         "QPQSLOW004" => Some(
