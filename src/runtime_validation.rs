@@ -44,7 +44,7 @@ pub(super) fn validate_runtime_config_capabilities(
             "unsupported_runtime_mode",
             "metadata.mode",
             format!(
-                "不支持的运行模式 '{}'。当前支持的运行模式: paper",
+                "不支持的运行模式 '{}'。当前已验证的运行模式: paper",
                 input.metadata.mode
             ),
             None,
@@ -84,7 +84,7 @@ pub(super) fn validate_runtime_config_capabilities(
                     "unsupported_exchange",
                     data.id.clone(),
                     format!(
-                        "不支持的交易所 '{}'。当前支持的交易所: binance, okx",
+                        "不支持的交易所 '{}'。当前已验证的交易所: binance, okx",
                         exchange
                     ),
                     None,
@@ -97,7 +97,7 @@ pub(super) fn validate_runtime_config_capabilities(
                 details.push(capability_detail(
                     "unsupported_symbol",
                     data.id.clone(),
-                    format!("不支持的交易对 '{}'。当前支持的交易对: BTCUSDT, ETHUSDT, SOLUSDT", symbol),
+                    format!("不支持的交易对 '{}'。当前已验证的交易对: BTCUSDT, ETHUSDT, SOLUSDT", symbol),
                     None,
                 ));
             }
@@ -137,7 +137,7 @@ pub(super) fn validate_runtime_config_capabilities(
                     "unsupported_symbol",
                     format!("{}.config.rebalance_symbols", agent.id),
                     format!(
-                        "不支持的再平衡交易对 '{}'。当前支持的交易对: BTCUSDT, ETHUSDT, SOLUSDT",
+                        "不支持的再平衡交易对 '{}'。当前已验证的交易对: BTCUSDT, ETHUSDT, SOLUSDT",
                         symbol
                     ),
                     None,
@@ -150,7 +150,7 @@ pub(super) fn validate_runtime_config_capabilities(
                 details.push(capability_detail(
                     "invalid_rebalance_schedule",
                     format!("{}.config.rebalance_schedule", agent.id),
-                    format!("不支持的再平衡频率 '{}'。当前支持的频率: every_slow, every_1d, weekly", schedule),
+                    format!("不支持的再平衡频率 '{}'。当前已验证的频率: every_slow, every_1d, weekly", schedule),
                     None,
                 ));
             }
@@ -242,7 +242,7 @@ pub(super) fn validate_runtime_config_capabilities(
                 "unsupported_execution_module",
                 execution.id.clone(),
                 format!(
-                    "不支持的执行模块 '{}'。当前支持的模块: builtin.execution.paper",
+                    "不支持的执行模块 '{}'。当前已验证的模块: builtin.execution.paper",
                     execution.module_key
                 ),
                 None,

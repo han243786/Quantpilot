@@ -59,11 +59,11 @@ Data → Intent → Agent → Risk → Execution
 | **Risk** | Risk management | Position limits, Leverage caps |
 | **Execution** | Order placement | Paper execution |
 
-### Supported Indicators (18)
+### Verified Indicators (18)
 
 Moving Average (Cross/Deviation), RSI, MACD, Momentum, Z-Score, Spread, Quote Observe, ATR, Bollinger Bands, OBV, CMF, ADX, Stochastic, CCI, Parabolic SAR, Keltner Channel, Donchian Channel.
 
-### Supported Exchanges & Symbols
+### Verified Exchanges & Symbols
 
 - Exchanges: Binance (mock data), OKX (live testnet)
 - Symbols: BTCUSDT, ETHUSDT, SOLUSDT

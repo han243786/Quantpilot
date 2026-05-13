@@ -28,8 +28,8 @@
 | `permission_boundary_mismatch` | 权限边界不匹配 | 刷新 capability 上下文 |
 | `unsupported_runtime_mode` | 不支持的运行模式 | 当前仅支持 `paper` |
 | `unsupported_module` | 模块未启用 | 检查模块是否在 capability 白名单中 |
-| `unsupported_exchange` | 不支持的交易所 | 当前支持: `binance`, `okx` |
-| `unsupported_symbol` | 不支持的交易对 | 当前支持: `BTCUSDT`, `ETHUSDT`, `SOLUSDT` |
+| `unsupported_exchange` | 未验证的交易所 | 已验证: `binance`, `okx` |
+| `unsupported_symbol` | 未验证的交易对 | 已验证: `BTCUSDT`, `ETHUSDT`, `SOLUSDT` |
 | `unsupported_execution_module` | 不支持的执行模块 | 当前仅支持 `builtin.execution.paper` |
 | `invalid_rebalance_schedule` | 不支持的再平衡频率 | 支持: `every_slow`, `every_1d`, `weekly` |
 | `invalid_rebalance_target_weights` | 权重格式错误 | 逗号分隔数字，如 `"0.5, 0.3, 0.2"` |

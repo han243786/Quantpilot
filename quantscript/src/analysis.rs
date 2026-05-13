@@ -1735,7 +1735,7 @@ fn check_fetch_symbol_whitelist_from_expr(
                 if !KNOWN_SYMBOLS.contains(&symbol_str.to_uppercase().as_str()) {
                     diagnostics.push(Diagnostic::warning(
                         "QS0505",
-                        format!("未知交易对 '{}' 不在支持列表中。支持: BTCUSDT, ETHUSDT, SOLUSDT", symbol_str),
+                        format!("未知交易对 '{}' 不在已验证列表中。已验证: BTCUSDT, ETHUSDT, SOLUSDT", symbol_str),
                         Some(Span::expr("instrument")),
                     ));
                 }
