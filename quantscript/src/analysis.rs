@@ -570,7 +570,7 @@ fn collect_series_index_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnostic>
                 diagnostics.push(Diagnostic::error(
                     "QS0401",
                     "前视风险: 负数序列索引会访问未来 K 线；请使用 `series[0]` 获取最新 K 线，正数回溯获取历史",
-                    Some(Span::expr("expression")),
+                    Some(Span::expr("series[index]")),
                 ));
             }
             collect_series_index_from_expr(object, diagnostics);
@@ -586,7 +586,7 @@ fn collect_series_index_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnostic>
                     diagnostics.push(Diagnostic::error(
                         "QS0401",
                         "前视风险: 负数 trailing-window 跨度意味着未来访问；请使用 `series[20..]` 获取 20 根 K 线的历史窗口",
-                        Some(Span::expr("expression")),
+                        Some(Span::expr("series[start..]")),
                     ));
                 } else if start
                     .as_deref()
@@ -596,7 +596,7 @@ fn collect_series_index_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnostic>
                     diagnostics.push(Diagnostic::error(
                         "QS0403",
                         "trailing 窗口需要正数跨度；请使用 `series[1..]` 或更大的历史窗口",
-                        Some(Span::expr("expression")),
+                        Some(Span::expr("series[start..]")),
                     ));
                 }
             }
@@ -709,7 +709,7 @@ fn collect_centered_window_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnost
         diagnostics.push(Diagnostic::error(
             "QS0402",
             "前视风险: `center=true` 窗口使用了未来 K 线",
-            Some(Span::expr("expression")),
+            Some(Span::expr("center=true")),
         ));
     }
 
@@ -810,7 +810,7 @@ fn collect_warmup_from_function(
                 format!(
                     "预热不足: 策略至少需要 {required_warmup_bars} 根 K 线，但 fetch 仅请求了 {available_bars}"
                 ),
-                Some(Span::expr("expression")),
+                Some(Span::expr("fetch")),
             ));
         }
     }
@@ -1214,7 +1214,7 @@ fn collect_fetch_lookback_warnings_from_expr(
                     diagnostics.push(Diagnostic::warning(
                         "QS0503",
                         format!("fetch lookback={} 小于 1, 已自动设为 1", value),
-                        Some(Span::expr("expression")),
+                        Some(Span::expr("fetch.lookback")),
                     ));
                 }
             }
@@ -1598,7 +1598,7 @@ fn check_dead_code_emit_from_stmts(
                     diagnostics.push(Diagnostic::warning(
                         "QS0612",
                         "条件为 false 的 if 分支中的 emit 语句永远不会执行",
-                        Some(Span::expr("expression")),
+                        Some(Span::expr("emit")),
                     ));
                 }
                 check_dead_code_emit_from_stmts(then_branch, diagnostics);
@@ -1736,7 +1736,7 @@ fn check_fetch_symbol_whitelist_from_expr(
                     diagnostics.push(Diagnostic::warning(
                         "QS0505",
                         format!("未知交易对 '{}' 不在支持列表中。支持: BTCUSDT, ETHUSDT, SOLUSDT", symbol_str),
-                        Some(Span::expr("expression")),
+                        Some(Span::expr("instrument")),
                     ));
                 }
             }
