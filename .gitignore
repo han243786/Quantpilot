@@ -52,3 +52,5 @@ markdown/测试/测试报告-*.md
 Thumbs.db
 Desktop.ini
 node_modules/
+frontend/storage/
+frontend/storage/
