@@ -51,3 +51,4 @@ markdown/测试/测试报告-*.md
 # OS files
 Thumbs.db
 Desktop.ini
+node_modules/
