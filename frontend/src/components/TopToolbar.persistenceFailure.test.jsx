@@ -80,7 +80,7 @@ describe("TopToolbar save/load failure notices", () => {
     });
 
     expect(screen.getByRole("status")).toHaveTextContent(
-      "原因：backend unavailable 后续：检查当前策略图校验结果和后端可用性后，再重新保存策略图。"
+      "原因：backend unavailable 后续：检查当前策略图校验结果和后端可用性后，再重新保存策略图关闭"
     );
   });
 
@@ -100,7 +100,7 @@ describe("TopToolbar save/load failure notices", () => {
     });
 
     expect(screen.getByRole("status")).toHaveTextContent(
-      "原因：Latest saved strategy graph is unavailable. 后续：检查后端可用性以及是否存在已保存的可运行策略图后，再重新加载最新图。"
+      "原因：Latest saved strategy graph is unavailable 后续：检查后端可用性以及是否存在已保存的可运行策略图后，再重新加载最新图关闭"
     );
   });
 });

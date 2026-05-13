@@ -30,7 +30,7 @@ describe("graphStore detail load failure paths", () => {
 
     expect(result).toBeNull();
     expect(useGraphStore.getState().runtime.backendError).toContain(
-      "原因：Run record missing. 后续：检查后端可用性，以及所选运行记录是否仍然存在后，再重新加载运行详情。"
+      "原因：Run record missing 后续：检查后端可用性，以及所选运行记录是否仍然存在后，再重新加载运行详情。"
     );
   });
 
@@ -48,7 +48,7 @@ describe("graphStore detail load failure paths", () => {
 
     expect(result).toBeNull();
     expect(useGraphStore.getState().runtime.backendError).toContain(
-      "原因：Backtest record missing. 后续：检查后端可用性，以及所选回测记录是否仍然存在后，再重新加载回测详情。"
+      "原因：Backtest record missing 后续：检查后端可用性，以及所选回测记录是否仍然存在后，再重新加载回测详情。"
     );
   });
 });

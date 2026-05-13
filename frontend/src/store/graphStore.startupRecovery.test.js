@@ -40,7 +40,7 @@ describe("graphStore startup recovery paths", () => {
 
     expect(result).toBeNull();
     expect(useGraphStore.getState().runtime.backendError).toContain(
-      "原因：Latest saved graph is not runnable yet. 后续：检查后端可用性以及是否存在已保存的可运行策略图后，再重新加载编辑器。"
+      "原因：Latest saved graph is not runnable yet 后续：检查后端可用性以及是否存在已保存的可运行策略图后，再重新加载编辑器。"
     );
   });
 

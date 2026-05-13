@@ -21,7 +21,7 @@ describe("buildActionFailureMessage", () => {
         "启动模拟运行失败。"
       )
     ).toContain(
-      "原因：Capability rejected: runtime mode live is not enabled for this beta backend. 后续：检查编译结果、运行模式、执行模块和当前 capability 配置后，再重新启动模拟运行。"
+      "原因：Capability rejected: runtime mode live is not enabled for this beta backend 后续：检查编译结果、运行模式、执行模块和当前 capability 配置后，再重新启动模拟运行。"
     );
   });
 
@@ -33,7 +33,7 @@ describe("buildActionFailureMessage", () => {
         "回测执行失败。"
       )
     ).toContain(
-      "原因：Capability rejected: symbol XRPUSDT is outside the current beta market-data profile. 后续：检查编译结果、回放来源、市场数据边界和当前 capability 配置后，再重新运行回测。"
+      "原因：Capability rejected: symbol XRPUSDT is outside the current beta market-data profile 后续：检查编译结果、回放来源、市场数据边界和当前 capability 配置后，再重新运行回测。"
     );
   });
 
@@ -45,7 +45,7 @@ describe("buildActionFailureMessage", () => {
         "运行配置导出失败。"
       )
     ).toContain(
-      "原因：Runtime compile rejected the generated output. 后续：检查 compile diagnostics，并确认运行时编译成功后再重新导出 runtime_config。"
+      "原因：Runtime compile rejected the generated output 后续：检查 compile diagnostics，并确认运行时编译成功后再重新导出 runtime_config。"
     );
 
     expect(
@@ -55,7 +55,7 @@ describe("buildActionFailureMessage", () => {
         "运行时事件流连接已断开。"
       )
     ).toContain(
-      "原因：Runtime event stream connection closed. 后续：检查后端可用性和当前运行状态；如果事件流未恢复，请重新连接或启动新的模拟运行。"
+      "原因：Runtime event stream connection closed 后续：检查后端可用性和当前运行状态；如果事件流未恢复，请重新连接或启动新的模拟运行。"
     );
   });
 
@@ -77,7 +77,7 @@ describe("buildActionFailureMessage", () => {
         "启动恢复策略图失败。"
       )
     ).toContain(
-      "原因：Latest saved graph is not runnable yet. 后续：检查后端可用性以及是否存在已保存的可运行策略图后，再重新加载编辑器。"
+      "原因：Latest saved graph is not runnable yet 后续：检查后端可用性以及是否存在已保存的可运行策略图后，再重新加载编辑器。"
     );
   });
 });

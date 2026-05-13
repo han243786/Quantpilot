@@ -90,7 +90,7 @@ describe("TopToolbar failure notices", () => {
     });
 
     expect(screen.getByRole("status")).toHaveTextContent(
-      "原因：Runtime compile rejected the generated output. 后续：检查 structured compile diagnostics，并确认 Strategy IR 仅作语义预检、最终可运行结果仍以 /api/runtime/compile 输出为准。"
+      "原因：Runtime compile rejected the generated output 后续：检查 structured compile diagnostics，并确认 Strategy IR 仅作语义预检、最终可运行结果仍以 /api/runtime/compile 输出为准关闭"
     );
   });
 
@@ -118,7 +118,7 @@ describe("TopToolbar failure notices", () => {
     });
 
     expect(screen.getByRole("status")).toHaveTextContent(
-      "原因：Capability rejected: runtime mode live is not enabled for this beta backend. 后续：检查编译结果、运行模式、执行模块和当前 capability 配置后，再重新启动模拟运行。"
+      "原因：Capability rejected: runtime mode live is not enabled for this beta backend 后续：检查编译结果、运行模式、执行模块和当前 capability 配置后，再重新启动模拟运行关闭"
     );
   });
 
@@ -146,7 +146,7 @@ describe("TopToolbar failure notices", () => {
     });
 
     expect(screen.getByRole("status")).toHaveTextContent(
-      "原因：Capability rejected: symbol XRPUSDT is outside the current beta market-data profile. 后续：检查编译结果、回放来源、市场数据边界和当前 capability 配置后，再重新运行回测。"
+      "原因：Capability rejected: symbol XRPUSDT is outside the current beta market-data profile 后续：检查编译结果、回放来源、市场数据边界和当前 capability 配置后，再重新运行回测关闭"
     );
   });
 });

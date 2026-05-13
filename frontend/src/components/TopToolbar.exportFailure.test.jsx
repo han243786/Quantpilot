@@ -76,7 +76,7 @@ describe("TopToolbar export config failure notice", () => {
     });
 
     expect(screen.getByRole("status")).toHaveTextContent(
-      "原因：Runtime compile rejected the generated output. 后续：检查 compile diagnostics，并确认运行时编译成功后再重新导出 runtime_config。"
+      "原因：Runtime compile rejected the generated output 后续：检查 compile diagnostics，并确认运行时编译成功后再重新导出 runtime_config关闭"
     );
   });
 });
