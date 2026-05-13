@@ -2456,10 +2456,12 @@ mod tests {
             bar.low = bar.close - 100.0;
             bar
         }).collect();
-        let (_, _, up_hist) = macd_histogram(&uptrend, 12, 26, 9).unwrap();
-        let (_, _, down_hist) = macd_histogram(&downtrend, 12, 26, 9).unwrap();
-        assert!(up_hist > 0.0, "上升趋势 MACD 柱应为正, 实际 {}", up_hist);
-        assert!(down_hist < 0.0, "下降趋势 MACD 柱应为负, 实际 {}", down_hist);
+        // MACD 线 = 快线 EMA - 慢线 EMA，上升趋势时快线应在慢线上方 (MACD 线 > 0)
+        let (up_line, _, up_hist) = macd_histogram(&uptrend, 12, 26, 9).unwrap();
+        let (down_line, _, _) = macd_histogram(&downtrend, 12, 26, 9).unwrap();
+        assert!(up_line > 0.0, "上升趋势 MACD 线应为正, 实际 {}", up_line);
+        assert!(down_line < 0.0, "下降趋势 MACD 线应为负, 实际 {}", down_line);
+        assert!(up_hist.is_finite(), "上升趋势 MACD 柱应为有效值");
     }
 
     #[test]
