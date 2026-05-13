@@ -1,3 +1,4 @@
+use crate::diagnostics::{Diagnostic, Span};
 use crate::resolve::{
     KnownIndicatorHelperKind, MovingAverageHelperKind, ResolvedCallable, ResolvedExprSemantic,
     ResolvedFunction, ResolvedManualIndicatorFormula, ResolvedSeriesCapabilityKind, RsiHelperKind,
@@ -5,6 +6,7 @@ use crate::resolve::{
 use crate::script::{CallArg, Expr, FunctionDecl};
 use anyhow::{anyhow, bail, Result};
 use qrpc_core::DataSourceConfig;
+use std::cell::RefCell;
 use std::collections::BTreeMap;
 
 use super::binding_sources::{
@@ -22,7 +24,6 @@ use super::semantic::{
 const ERR_MOVING_AVERAGE_SOURCE_REQUIRED: &str =
     "QPQSLOW024 移动平均辅助函数需要 fetch/get_data 数据源作为第一个参数, ema(...) 可接受已识别的 MACD 线";
 
-#[derive(Debug, Clone)]
 pub(crate) struct BindingEnv {
     pub(crate) data_by_name: BTreeMap<String, DataSourceConfig>,
     pub(crate) indicator_by_name: BTreeMap<String, IndicatorBinding>,
@@ -30,6 +31,32 @@ pub(crate) struct BindingEnv {
     pub(crate) expr_semantics: BTreeMap<String, ResolvedExprSemantic>,
     pub(crate) callables: BTreeMap<String, ResolvedCallable>,
     pub(crate) functions: BTreeMap<String, ResolvedFunction>,
+    pub(crate) diagnostics: RefCell<Vec<Diagnostic>>,
+}
+
+impl Clone for BindingEnv {
+    fn clone(&self) -> Self {
+        BindingEnv {
+            data_by_name: self.data_by_name.clone(),
+            indicator_by_name: self.indicator_by_name.clone(),
+            expr_by_name: self.expr_by_name.clone(),
+            expr_semantics: self.expr_semantics.clone(),
+            callables: self.callables.clone(),
+            functions: self.functions.clone(),
+            diagnostics: RefCell::new(Vec::new()),
+        }
+    }
+}
+
+impl std::fmt::Debug for BindingEnv {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("BindingEnv")
+            .field("data_by_name", &self.data_by_name)
+            .field("indicator_by_name", &self.indicator_by_name)
+            .field("expr_by_name", &self.expr_by_name)
+            .field("diagnostics_count", &self.diagnostics.borrow().len())
+            .finish()
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -134,10 +161,11 @@ pub(crate) fn collect_bindings(
     functions: BTreeMap<String, ResolvedFunction>,
     expr_semantics: BTreeMap<String, ResolvedExprSemantic>,
     callables: BTreeMap<String, ResolvedCallable>,
-) -> Result<BindingEnv> {
+) -> Result<(BindingEnv, Vec<Diagnostic>)> {
     let mut env = empty_binding_env(functions, expr_semantics, callables);
     collect_bindings_from_stmts(&strategy.body, &mut env, data_sources)?;
-    Ok(env)
+    let diagnostics = env.diagnostics.take();
+    Ok((env, diagnostics))
 }
 
 pub(crate) fn resolve_indicator_binding(
@@ -398,7 +426,7 @@ fn indicator_from_atr_call(
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
     let source = binding_source_from_arg(args.get(0), env, data_sources)?;
-    let period = arg_as_usize(args.get(1))?.unwrap_or(14);
+    let period = arg_as_usize(args.get(1), env)?.unwrap_or(14);
     Ok(Some(IndicatorBinding::Atr { source, period }))
 }
 
@@ -408,7 +436,7 @@ fn indicator_from_bollinger_call(
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
     let source = binding_source_from_arg(args.get(0), env, data_sources)?;
-    let period = arg_as_usize(args.get(1))?.unwrap_or(20);
+    let period = arg_as_usize(args.get(1), env)?.unwrap_or(20);
     let multiplier = arg_as_f64(args.get(2)).unwrap_or(2.0);
     Ok(Some(IndicatorBinding::BollingerBands { source, period, multiplier }))
 }
@@ -428,7 +456,7 @@ fn indicator_from_cmf_call(
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
     let source = binding_source_from_arg(args.get(0), env, data_sources)?;
-    let period = arg_as_usize(args.get(1))?.unwrap_or(20);
+    let period = arg_as_usize(args.get(1), env)?.unwrap_or(20);
     Ok(Some(IndicatorBinding::Cmf { source, period }))
 }
 
@@ -442,24 +470,21 @@ fn binding_source_from_arg(
         .ok_or_else(|| anyhow!("无法从参数解析数据源"))
 }
 
-fn arg_as_usize(arg: Option<&CallArg>) -> Result<Option<usize>> {
+fn arg_as_usize(arg: Option<&CallArg>, env: &BindingEnv) -> Result<Option<usize>> {
     match arg {
         Some(CallArg {
             value: Expr::Number(n),
             ..
         }) => {
-            // B1-6: 负周期参数检查
             if *n < 1.0 {
                 anyhow::bail!("QS0504 指标周期必须 >= 1, 当前值: {}", n);
             }
-            // B1-7: 浮点周期截断 — 当前为 stderr 输出,待 lowering 管道接入 Diagnostic API
-            // TODO S0-4: 将 QS0502 从 stderr 迁移到 Diagnostic::warning，需在线程化 lowering 管道中传递诊断累加器
             if n.fract().abs() > f64::EPSILON {
-                eprintln!(
-                    "[QS0502] 指标周期 {} 将被截断为整数 {}，小数部分已忽略",
-                    n,
-                    *n as usize
-                );
+                env.diagnostics.borrow_mut().push(Diagnostic::warning(
+                    "QS0502",
+                    format!("指标周期 {} 将被截断为整数 {}，小数部分已忽略", n, *n as usize),
+                    Some(Span::expr("period")),
+                ));
             }
             Ok(Some(*n as usize))
         }
@@ -485,7 +510,7 @@ where
     F: FnOnce(DataSourceConfig, usize) -> IndicatorBinding,
 {
     let source = binding_source_from_arg(args.get(0), env, data_sources)?;
-    let period = arg_as_usize(args.get(1))?.unwrap_or(14);
+    let period = arg_as_usize(args.get(1), env)?.unwrap_or(14);
     Ok(Some(make(source, period)))
 }
 
@@ -495,8 +520,8 @@ fn indicator_from_stoch_call(
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
     let source = binding_source_from_arg(args.get(0), env, data_sources)?;
-    let k_period = arg_as_usize(args.get(1))?.unwrap_or(14);
-    let d_period = arg_as_usize(args.get(2))?.unwrap_or(3);
+    let k_period = arg_as_usize(args.get(1), env)?.unwrap_or(14);
+    let d_period = arg_as_usize(args.get(2), env)?.unwrap_or(3);
     Ok(Some(IndicatorBinding::Stochastic { source, k_period, d_period }))
 }
 

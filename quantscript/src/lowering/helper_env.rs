@@ -1,7 +1,9 @@
+use crate::diagnostics::Diagnostic;
 use crate::resolve::{ResolvedCallable, ResolvedExprSemantic, ResolvedFunction};
 use crate::script::{CallArg, MatchArmBody, Stmt};
 use anyhow::Result;
 use qrpc_core::DataSourceConfig;
+use std::cell::RefCell;
 use std::collections::BTreeMap;
 
 use super::binding_sources::resolve_data_source_ref;
@@ -21,6 +23,7 @@ pub(crate) fn hydrate_helper_function_env(
         expr_semantics: env.expr_semantics.clone(),
         callables: env.callables.clone(),
         functions: env.functions.clone(),
+        diagnostics: RefCell::new(Vec::new()),
     };
 
     for (index, param_name) in function.param_names.iter().enumerate() {
@@ -58,6 +61,7 @@ pub(crate) fn empty_binding_env(
         expr_semantics,
         callables,
         functions,
+        diagnostics: RefCell::new(Vec::new()),
     }
 }
 

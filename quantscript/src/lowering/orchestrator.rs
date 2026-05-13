@@ -94,13 +94,14 @@ pub fn lower_script_to_runtime_config_with_context(
         bail!(ERR_NO_FETCH_CALLS);
     }
 
-    let bindings = collect_bindings(
+    let (bindings, binding_diagnostics) = collect_bindings(
         strategy,
         &inferred_data_sources,
         resolved.functions.clone(),
         resolved.expr_semantics.clone(),
         resolved.callables.clone(),
     )?;
+    diagnostics.extend(binding_diagnostics);
     let data_sources = canonicalize_data_sources(&inferred_data_sources, &bindings);
     let intents = infer_intents(strategy, &bindings, &data_sources)?;
 

@@ -768,7 +768,7 @@ mod tests {
             })
             .unwrap();
         let data_sources = infer_data_sources(&strategy, &resolved.callables).unwrap();
-        let bindings = collect_bindings(
+        let (bindings, _) = collect_bindings(
             &strategy,
             &data_sources,
             resolved.functions.clone(),
