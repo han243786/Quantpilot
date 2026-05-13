@@ -91,10 +91,10 @@ pub(super) async fn rate_limit_middleware(
         Ok(()) => next.run(request).await,
         Err(retry_after_ms) => {
             let problem = serde_json::json!({
-                "type": "https://quantpilot.dev/problems/rate-limited",
+                "type": "rate-limited",
                 "title": "请求过于频繁",
                 "status": 429,
-                "detail": format!("速率限制已触发, 请在 {} 秒后重试", retry_after_ms / 1000),
+                "detail": format!("请求过于频繁（当前限制: 每秒 {} 次）。请在 {} 秒后重试", limiter.max_rps, retry_after_ms / 1000),
                 "error_code": "RATE_LIMITED",
                 "retryable": true,
             });

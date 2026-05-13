@@ -117,40 +117,47 @@ export function buildGovernanceIdentityRows(governance) {
   return [
     {
       key: "capability_hash",
-      label: "能力边界",
+      label: "能力快照哈希",
+      tooltip: "当前后端能力合约的 SHA-256 签名，用于验证前后端能力版本一致",
       value: shortHash(normalized.capability_hash),
       fullValue: normalized.capability_hash
     },
     {
       key: "deployment_revision",
-      label: "部署修订",
+      label: "部署修订号",
+      tooltip: "由策略版本、编译 ID 和能力哈希共同生成的部署唯一标识",
       value: shortHash(normalized.deployment_revision),
       fullValue: normalized.deployment_revision
     },
     {
       key: "strategy_version",
       label: "策略版本",
+      tooltip: "策略图的当前版本标识",
       value: normalized.strategy_version
     },
     {
       key: "parameter_version",
       label: "参数版本",
+      tooltip: "策略参数的当前代际，每次参数变更会递增",
       value: shortHash(normalized.parameter_version),
       fullValue: normalized.parameter_version
     },
     {
       key: "permission_model",
       label: "权限模型",
+      tooltip: "当前生效的权限边界模型版本",
       value: normalized.permission_boundary.model_version
     },
     {
       key: "ai_write_policy",
-      label: "AI 写入",
+      label: "AI 写入策略",
+      tooltip: "AI 自动写入的当前策略：disabled（禁用）/ proposal_only（仅提案）/ auto_apply（自动应用）",
       value: normalized.permission_boundary.ai_write_policy
     },
     {
       key: "governance_source",
       label: "治理来源",
+      tooltip: "当前治理数据的来源：runtime（运行时）/ backtest（回测）/ legacy_default（旧版默认）",
       value: normalized.governance_source
     }
   ];

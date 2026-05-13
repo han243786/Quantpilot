@@ -16,7 +16,7 @@ fn build_default_runbook() -> Vec<RunbookScenario> {
             scenario_id: "data_source_unavailable".to_string(),
             name: "数据源长时间不可用".to_string(),
             symptoms: vec![
-                "data_freshness_p95_ms 持续上升".to_string(),
+                "data_freshness_p95_ms（P95 数据新鲜度，毫秒） 持续上升".to_string(),
                 "DataStale 事件产生".to_string(),
             ],
             severity: AlertSeverity::P1,
@@ -53,14 +53,14 @@ fn build_default_runbook() -> Vec<RunbookScenario> {
                         .to_string(),
                 },
             ],
-            verification: "data_freshness_p95_ms 恢复正常，ExecutionPlanned 恢复产生".to_string(),
+            verification: "data_freshness_p95_ms（P95 数据新鲜度，毫秒） 恢复正常，ExecutionPlanned 恢复产生".to_string(),
         },
         // 场景 2: 风控拒绝率异常飙升
         RunbookScenario {
             scenario_id: "risk_reject_rate_spike".to_string(),
             name: "风控拒绝率异常飙升".to_string(),
             symptoms: vec![
-                "risk_reject_rate_5m > 90%".to_string(),
+                "risk_reject_rate_5m（5 分钟风控拒绝率） > 90%".to_string(),
                 "RiskRejected 事件激增".to_string(),
             ],
             severity: AlertSeverity::P2,
@@ -100,7 +100,7 @@ fn build_default_runbook() -> Vec<RunbookScenario> {
                 RunbookRecoveryStep {
                     step_number: 2,
                     condition: "因市场剧烈波动".to_string(),
-                    action: "切换风险模式为 REDUCE_ONLY".to_string(),
+                    action: "切换风险模式为 REDUCE_ONLY（仅减仓模式）".to_string(),
                 },
             ],
             verification: "回滚后 30s 内风控拒绝率恢复正常水平".to_string(),
@@ -110,7 +110,7 @@ fn build_default_runbook() -> Vec<RunbookScenario> {
             scenario_id: "event_sequence_break".to_string(),
             name: "事件序列断裂".to_string(),
             symptoms: vec![
-                "EventGapDetected 事件产生".to_string(),
+                "EventGapDetected（事件断裂检测） 事件产生".to_string(),
                 "event_orphan_total 计数增长".to_string(),
             ],
             severity: AlertSeverity::P1,
@@ -151,7 +151,7 @@ fn build_default_runbook() -> Vec<RunbookScenario> {
                     action: "手动停止 run + 创建新 run".to_string(),
                 },
             ],
-            verification: "新 run 的 sequence_no 严格递增，无 EventGapDetected".to_string(),
+            verification: "新 run 的 sequence_no 严格递增，无 EventGapDetected（事件断裂检测）".to_string(),
         },
         // 场景 4: 沙箱验证超时
         RunbookScenario {
@@ -225,7 +225,7 @@ fn build_default_runbook() -> Vec<RunbookScenario> {
                 },
                 RunbookDiagnosticStep {
                     step_number: 3,
-                    description: "确认 TTL 淘汰是否触发".to_string(),
+                    description: "确认 TTL（生存时间）淘汰是否触发".to_string(),
                     api_call: None,
                     expected: Some("检查过期数据清理".to_string()),
                 },
@@ -234,7 +234,7 @@ fn build_default_runbook() -> Vec<RunbookScenario> {
                 RunbookRecoveryStep {
                     step_number: 1,
                     condition: "85% 水位".to_string(),
-                    action: "手动触发压缩任务 + 停止 debug 写入".to_string(),
+                    action: "手动触发压缩任务 + 停止 debug（调试）写入".to_string(),
                 },
                 RunbookRecoveryStep {
                     step_number: 2,
@@ -244,7 +244,7 @@ fn build_default_runbook() -> Vec<RunbookScenario> {
                 RunbookRecoveryStep {
                     step_number: 3,
                     condition: "95% 水位".to_string(),
-                    action: "强制清空热层 ring buffer (保留 key/summary)".to_string(),
+                    action: "强制清空热层 ring buffer（环形缓冲区） (保留 key/summary)".to_string(),
                 },
             ],
             verification: "水位降至 70% 以下，压缩任务正常完成".to_string(),
@@ -254,8 +254,8 @@ fn build_default_runbook() -> Vec<RunbookScenario> {
             scenario_id: "hotswap_rollback".to_string(),
             name: "热插拔回滚".to_string(),
             symptoms: vec![
-                "HotSwapRollback 事件产生".to_string(),
-                "deployment_revision 未变更".to_string(),
+                "HotSwapRollback（热插拔回滚事件） 事件产生".to_string(),
+                "deployment_revision（部署修订号） 未变更".to_string(),
             ],
             severity: AlertSeverity::P1,
             diagnostic_steps: vec![
@@ -264,7 +264,7 @@ fn build_default_runbook() -> Vec<RunbookScenario> {
                     description: "检查回滚原因码".to_string(),
                     api_call: None,
                     expected: Some(
-                        "确认 compatibility/safe_window/shadow_replay/observation 中哪个触发".to_string(),
+                        "确认 compatibility（兼容性检查）/ safe_window（安全窗口）/ shadow_replay（影子回放）/ observation（观察窗口）中哪个触发".to_string(),
                     ),
                 },
                 RunbookDiagnosticStep {
@@ -284,7 +284,7 @@ fn build_default_runbook() -> Vec<RunbookScenario> {
                 RunbookRecoveryStep {
                     step_number: 1,
                     condition: "回滚已自动完成".to_string(),
-                    action: "确认已恢复到 pre-swap deployment_revision".to_string(),
+                    action: "确认已恢复到 pre-swap（热插拔前）deployment_revision（部署修订号）".to_string(),
                 },
                 RunbookRecoveryStep {
                     step_number: 2,
@@ -292,7 +292,7 @@ fn build_default_runbook() -> Vec<RunbookScenario> {
                     action: "分析回滚原因并修复后重试".to_string(),
                 },
             ],
-            verification: "原 deployment_revision 继续正常运行，无事件断裂".to_string(),
+            verification: "原 deployment_revision（部署修订号） 继续正常运行，无事件断裂".to_string(),
         },
     ]
 }

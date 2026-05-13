@@ -36,7 +36,10 @@ async fn compile_runtime_request(
     Json(request): Json<CompileRuntimeRequest>,
 ) -> Result<Json<CompileRuntimeResponse>, (StatusCode, String)> {
     let _permit = COMPILE_SEMAPHORE.acquire().await.map_err(|_| {
-        (StatusCode::SERVICE_UNAVAILABLE, "编译服务已关闭".to_string())
+        (StatusCode::SERVICE_UNAVAILABLE, serde_json::json!({
+            "error": "service_unavailable",
+            "message": "编译服务已关闭"
+        }).to_string())
     })?;
     // 空 intent 保护: 策略必须包含至少一个意图
     if request.runtime_config.intent_generators.is_empty() {
@@ -243,19 +246,16 @@ async fn compile_formal_quantscript_request(
         .map_err(|error| {
             let message = format!("{error:#}");
             let diagnostic = formal_quantscript_diagnostic_from_lowering_error(&message);
-            if diagnostic.code != "QPQSLOW999" {
-                return json_bad_request_with_details_and_partial(
-                    "quantscript_lowering_failed",
-                    "形式化 QuantScript 下层转换失败",
-                    vec![api_error_detail_from_compile_diagnostic(&diagnostic)],
-                    partial_authoring_view.clone(),
-                );
-            }
-            json_bad_request_with_partial(
+            return json_bad_request_with_details_and_partial(
                 "quantscript_lowering_failed",
-                format!("形式化 QuantScript 下层转换失败: {message}"),
+                if diagnostic.code == "QPQSLOW999" {
+                    "QuantScript 编译失败：遇到未预期的内部错误，请检查策略语法或联系支持"
+                } else {
+                    "QuantScript 编译失败"
+                },
+                vec![api_error_detail_from_compile_diagnostic(&diagnostic)],
                 partial_authoring_view.clone(),
-            )
+            );
         })?;
     let compiled = compile_runtime_protocol_config_with_metadata(
         &runtime_config,

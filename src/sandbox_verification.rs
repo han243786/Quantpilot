@@ -176,19 +176,18 @@ fn determine_sandbox_verdict(diffs: &SandboxMetricsDiff) -> SandboxVerdict {
 fn compute_sandbox_warnings(diffs: &SandboxMetricsDiff, fidelity: &str) -> Vec<String> {
     let mut warnings = Vec::new();
     if fidelity == "partial" {
-        warnings.push("replay fidelity partial: 候选与基线使用同一数据集，对比参考价值有限".to_string());
-        return warnings;
+        warnings.push("回放忠实度部分覆盖: 候选与基线使用同一数据集，对比参考价值有限。建议使用独立数据集重新验证。".to_string());
     }
     let turnover = diffs.turnover_ratio.parse::<f64>().unwrap_or(0.0);
     if turnover > 0.05 {
         warnings.push(format!(
-            "turnover increase {:.0}%, additional fee impact expected",
+            "换手率增加 {:.0}%，可能产生额外手续费影响",
             turnover * 100.0
         ));
     }
     let drawdown = diffs.max_drawdown_ratio.parse::<f64>().unwrap_or(0.0);
     if drawdown > 0.03 {
-        warnings.push("max drawdown increased, verify risk tolerance".to_string());
+        warnings.push("最大回撤增加，请确认策略风险在可接受范围内".to_string());
     }
     warnings
 }

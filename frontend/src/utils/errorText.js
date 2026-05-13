@@ -64,6 +64,8 @@ function translateMessage(message, fallback) {
 }
 
 export function humanizeErrorText(errorLike, fallback = "操作失败。") {
+  // fallback 支持传入操作名以提供上下文: "操作名 操作失败。"
+  const contextualFallback = typeof fallback === "string" && fallback !== "操作失败。" ? fallback : "操作失败。";
   const raw =
     typeof errorLike === "string"
       ? errorLike
@@ -75,6 +77,8 @@ export function humanizeErrorText(errorLike, fallback = "操作失败。") {
   if (!trimmed) return fallback;
 
   const fromJson = extractMessageFromJson(trimmed);
-  const normalized = translateMessage(stripHtml(fromJson), fallback);
+  // 标准化标点: 去掉尾随句点以确保翻译键匹配
+  const withoutTrailingPunct = stripHtml(fromJson).replace(/[.。！!？?]+$/g, "");
+  const normalized = translateMessage(withoutTrailingPunct, fallback);
   return sanitizeDisplayText(normalized, fallback);
 }

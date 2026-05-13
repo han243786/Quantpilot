@@ -1,11 +1,13 @@
-import { deleteJson, fetchJson, postJson } from "./graphStorePersistenceHelpers";
+import { deleteJson, fetchJson, postJson, unwrapPage } from "./graphStorePersistenceHelpers";
+
+const list = (url) => fetchJson(url).then(unwrapPage);
 
 export function fetchRunHistoryList() {
-  return fetchJson("/runtime/runs");
+  return list("/runtime/runs");
 }
 
 export function fetchBacktestHistoryList() {
-  return fetchJson("/runtime/backtests");
+  return list("/runtime/backtests");
 }
 
 export function fetchRunDetail(runId) {
@@ -33,7 +35,7 @@ export function discardBacktestRecord(backtestId) {
 }
 
 export function fetchExperimentHistoryList() {
-  return fetchJson("/runtime/experiments");
+  return list("/runtime/experiments");
 }
 
 export function fetchExperimentDetail(experimentId) {
@@ -67,7 +69,7 @@ export function fetchBacktestReplay(backtestId, params = {}) {
 }
 
 export function fetchRuntimeReports() {
-  return fetchJson("/runtime/reports");
+  return list("/runtime/reports");
 }
 
 export function createRuntimeReport(request) {
@@ -83,7 +85,7 @@ export function runtimeReportExportPath(reportId) {
 }
 
 export function fetchRuntimeMutations(params = {}) {
-  return fetchJson(withQuery("/runtime/mutations", params));
+  return list(withQuery("/runtime/mutations", params));
 }
 
 export function createRuntimeMutation(request) {

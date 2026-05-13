@@ -1048,6 +1048,23 @@ pub(super) enum RuntimeParameterMutationStatus {
     RollbackFailed,
 }
 
+impl RuntimeParameterMutationStatus {
+    #[allow(dead_code)]
+    pub fn description(&self) -> &'static str {
+        match self {
+            Self::Proposed => "已提案，等待激活",
+            Self::Rejected => "已拒绝（参数无变化）",
+            Self::ActivationScheduled => "激活已排期，等待安全窗口",
+            Self::Activated => "已激活，参数已生效",
+            Self::ActivationFailed => "激活失败",
+            Self::SafeWindowDenied => "安全窗口拒绝（运行时活跃中）",
+            Self::RollbackScheduled => "回滚已排期",
+            Self::RolledBack => "已回滚至先前版本",
+            Self::RollbackFailed => "回滚失败",
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub(super) struct RuntimeParameterMutationTarget {
     pub(super) node_id: String,
@@ -1343,6 +1360,20 @@ pub(super) enum RuntimeReportLifecycleStatus {
     Failed,
     Expired,
     SourceChanged,
+}
+
+impl RuntimeReportLifecycleStatus {
+    #[allow(dead_code)]
+    pub fn description(&self) -> &'static str {
+        match self {
+            Self::Requested => "报告已请求生成",
+            Self::Generating => "报告生成中",
+            Self::Ready => "报告就绪，可以查看",
+            Self::Failed => "报告生成失败",
+            Self::Expired => "报告已过期",
+            Self::SourceChanged => "源数据已变更，报告可能过时",
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
@@ -2016,4 +2047,17 @@ pub fn paginate<T: Serialize>(mut items: Vec<T>, query: PaginationQuery) -> Pagi
     }
     items.truncate(limit);
     PaginatedResponse { data: items, total, limit: limit as u32, offset: offset as u32 }
+}
+
+// ── v1.0.6 统一 API 错误响应 ──
+
+#[derive(Debug, Serialize)]
+#[allow(dead_code)]
+pub struct ApiErrorResponse {
+    pub error: &'static str,
+    pub message: String,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub details: Vec<ApiErrorDetail>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub partial_artifacts: Option<ApiPartialArtifacts>,
 }

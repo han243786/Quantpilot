@@ -17,9 +17,9 @@ use super::shared::{
     format_market_type, sanitize_id, ArgSelector,
 };
 
-const ERR_MISSING_STRATEGY_FN: &str = "QPQSLOW006 形式化 QuantScript 必须声明 fn strategy()";
+const ERR_MISSING_STRATEGY_FN: &str = "QPQSLOW006 rebalance 等 universe 操作必须在 fn strategy() 入口函数内使用。请声明: fn strategy() { ... }";
 const ERR_MULTI_REBALANCE: &str =
-    "QPQSLOW008 形式化 QuantScript 当前最多支持一个 rebalance(...) 指令";
+    "QPQSLOW008 QuantScript 当前最多支持一个 rebalance(...) 指令";
 const ERR_REBALANCE_FREQUENCY: &str =
     "QPQSLOW009 rebalance(..., every=...) 当前仅支持 \"1d\"、\"slow\" 或 \"weekly\"";
 const ERR_UNIVERSE_SNAPSHOT_REQUIRED: &str =
@@ -27,9 +27,9 @@ const ERR_UNIVERSE_SNAPSHOT_REQUIRED: &str =
 const ERR_UNIVERSE_SORT_KEY: &str = "QPQSLOW011 不支持的 universe 排序键";
 const ERR_UNIVERSE_SORT_ORDER: &str = "QPQSLOW012 不支持的 universe 排序顺序";
 const ERR_REBALANCE_ALLOCATION_FORM: &str =
-    "QPQSLOW013 rebalance(...) 当前需要一个分配辅助函数调用";
+    "QPQSLOW013 rebalance(...) 需要分配函数。有效的分配函数: equal_weight(selection), fixed_weights(selection, weights=[...]), rank_weight(selection, method=\"linear\"), score_weight(selection, normalize=\"sum\")";
 const ERR_REBALANCE_ALLOCATION_UNIVERSE: &str =
-    "QPQSLOW014 rebalance 分配当前需要一个 universe 表达式或 universe 绑定";
+    "QPQSLOW014 rebalance 分配需要一个 universe 表达式。有效的 universe 值: symbols([...]), universe(), filter(...), sort_by(...), top(...)";
 const ERR_REBALANCE_EMPTY_SELECTION: &str =
     "QPQSLOW015 rebalance 分配需要至少一个标的";
 const ERR_FIXED_WEIGHTS_COUNT: &str =
@@ -45,7 +45,7 @@ const ERR_SCORE_WEIGHT_NORMALIZE: &str =
 const ERR_FIXED_WEIGHTS_LITERAL: &str =
     "QPQSLOW021 weights=... 当前需要数值列表字面量";
 const ERR_UNIVERSE_VALUE_REQUIRED: &str =
-    "QPQSLOW025 universe 辅助函数当前需要 universe 值表达式";
+    "QPQSLOW025 universe 辅助函数需要 universe 值表达式。请将 symbols(...)、universe(...)、filter(...)、sort_by(...) 或 top(...) 作为参数传入";
 const ERR_SYMBOLS_LIST_LITERAL: &str = "QPQSLOW026 symbols(...) 当前需要列表字面量";
 const ERR_SYMBOLS_STRING_LITERAL: &str =
     "QPQSLOW027 symbols([...]) 当前需要字符串字面量";

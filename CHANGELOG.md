@@ -1,5 +1,67 @@
 # Changelog
 
+## v1.0.6 — 用户困惑点全量优化
+
+基于四维度全量审计（79 项发现），系统性消除用户困惑点。S0/P1 全部闭环，完成率 89%。
+
+### S0 阻断级 (13/13)
+
+- 错误消息全中文化：runtime_validation (12 类)、compile_diagnostics (8 处)、sandbox_verification (3 处)、auth_middleware
+- API 格式统一：compile_api 裸字符串→JSON、auth RFC 9457→标准 JSON、api_errors 保留错误详情
+- 诊断修复：QS0609 代码冲突→QS0613、QS0502 eprintln→中文消息、8 个诊断 None span→Span::expr()
+- App.jsx TDZ 崩溃修复：route 声明移到 routeRef 之前
+- start.bat 完整修复：移除 cargo lock 冲突、QUANTPILOT_DEV=true、端口检测
+- graphStore capability 消息：英文→中文
+- runtime_diagnostics：ms→毫秒、Yes/No→是/否、RuntimeWarning/Error→运行告警/运行错误
+
+### P1 高优 (22/22)
+
+- QS 编译器术语去技术化："形式化 QuantScript"→"QuantScript"、"下层转换"→"编译"、"可执行主干"→"strategy() 函数体"
+- 错误消息指引：auth 告知环境变量名、QPQSLOW 消息列出有效函数/值、QS0603 给出替代方案
+- QPQSLOW999 不再被过滤，附带内部错误提示
+- 分页 total 保留：fetchJson/postJson/deleteJson 移除自动解包，新增 unwrapPage()
+- 客户端错误截断 200→2000 字符
+- loading 阶段动态文本（"正在连接后端..."等），超时 8s→5s
+- 10 条告警规则行动描述全部具体化
+- Runbook 12 个英文术语添加中文注释
+- 9 个诊断 span 补充（1 个 Span::binding + 8 个 Span::expr）
+- QS0404 错误消息 QS0505 消息优化
+- 排序稳定性：4 处 sort 添加 graph_id tie-breaker
+- TutorialOverlay 目标元素缺失检查
+- App.jsx 离线横幅 t() 包裹、存储配额添加导航按钮、beforeunload 自定义消息、Tauri 桌面隐藏离线横幅
+
+### P2 中优 (17/24)
+
+- 速率限制消息含阈值 + 死链接修复
+- 沙箱验证 partial fidelity 不再抑制其他警告
+- CLI 帮助全面中文化 + credential 子命令
+- runbook TTL/debug/compatibility 等术语中文注释
+- errorText.js 标点标准化匹配
+- router 无效 URL console.warn + 反抖日志
+- i18n 缺失翻译 dev 模式 console.warn
+- start.bat taskkill 改为端口精确清理
+- main.rs 窗口 label 健壮化
+- 治理面板 7 个字段添加 tooltip
+- ApiErrorResponse 统一结构体
+
+### P3 低优 (18/20)
+
+- CSS 令牌化：~75 处 font-size/border-radius 硬编码→设计令牌
+- 内联样式迁移：RunbookPage(7)、ChaosPage(6)、SnapshotsPage(4)、AlertsPage(3) → CSS 类
+- en-US.js Unicode 转义→实际字符
+- recoverLatestRunnableGraph 重试提示
+- Tauri API 失败 dev 模式日志
+
+### 延期至 v1.0.7
+- en-US 翻译补齐（~250 键）
+- CSP 生产加固
+- start.bat → PowerShell 迁移
+- actionFailure 结构化返回
+- enum description() 方法
+
+---
+
+
 ## v1.0.5
 
 前端样式深度修复。P0 阻断级 CSS 语法错误修复。

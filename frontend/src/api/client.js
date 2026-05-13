@@ -35,7 +35,7 @@ async function request(method, path, body, { timeoutMs = 30000, headers = {} } =
     const response = await fetch(`${API_BASE}${path}`, options);
     if (!response.ok) {
       const text = await response.text();
-      const error = new Error(text.slice(0, 200) || `HTTP ${response.status}`);
+      const error = new Error(text.slice(0, 2000) || `HTTP ${response.status}`);
       error.status = response.status;
       throw error;
     }

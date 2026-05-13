@@ -11,6 +11,7 @@ export default function TutorialOverlay({ steps = [], onClose }) {
   const { t } = useI18n();
   const [current, setCurrent] = useState(0);
   const [targetRect, setTargetRect] = useState(null);
+  const [targetMissing, setTargetMissing] = useState(false);
 
   const step = steps[current];
   const isFirst = current === 0;
@@ -18,7 +19,9 @@ export default function TutorialOverlay({ steps = [], onClose }) {
 
   const updateRect = useCallback(() => {
     if (step?.target) {
-      setTargetRect(getElementRect(step.target));
+      const rect = getElementRect(step.target);
+      setTargetRect(rect);
+      setTargetMissing(!rect);
     }
   }, [step]);
 
@@ -62,6 +65,11 @@ export default function TutorialOverlay({ steps = [], onClose }) {
         </div>
         <h3 className="tutorial-step-title">{step.title}</h3>
         <p className="tutorial-step-desc">{step.description}</p>
+        {targetMissing && (
+          <p className="tutorial-step-hint" style={{color:"var(--ad-warning)",fontSize:"0.85rem",marginTop:8}}>
+            目标元素未就绪，请等待界面完全加载后再继续。
+          </p>
+        )}
         <div className="tutorial-bubble-actions">
           <button
             className="ghost-btn"

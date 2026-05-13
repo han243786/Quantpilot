@@ -11,8 +11,8 @@ fn event_label(event_type: &str) -> &'static str {
         "ExecutionFilled" => "执行成交",
         "PortfolioUpdated" => "组合更新",
         "RuntimeNotice" => "运行提示",
-        "RuntimeWarning" => "数据告警",
-        "RuntimeError" => "数据错误",
+        "RuntimeWarning" => "运行告警",
+        "RuntimeError" => "运行错误",
         _ => "运行事件",
     }
 }
@@ -25,7 +25,7 @@ fn field_label(key: &str) -> String {
         "endpoint" => "数据端点".to_string(),
         "error" => "错误".to_string(),
         "exec_status" => "执行状态".to_string(),
-        "freshness_ms" => "新鲜度 (ms)".to_string(),
+        "freshness_ms" => "新鲜度（毫秒）".to_string(),
         "gap_count" => "缺口数量".to_string(),
         "kind" => "意图类型".to_string(),
         "latest_bar_time" => "最新 K 线时间".to_string(),
@@ -42,7 +42,7 @@ fn field_label(key: &str) -> String {
         "portfolio_net_exposure_ratio" => "组合净敞口".to_string(),
         "concentration_ratio" => "集中度".to_string(),
         "ping_error" => "Ping 错误".to_string(),
-        "ping_latency_ms" => "Ping 延迟 (ms)".to_string(),
+        "ping_latency_ms" => "探测延迟（毫秒）".to_string(),
         "price" => "成交价格".to_string(),
         "qty" => "数量".to_string(),
         "quality_flags" => "质量标记".to_string(),
@@ -56,10 +56,10 @@ fn field_label(key: &str) -> String {
         "sizing_mode" => "定量模式".to_string(),
         "sizing_source" => "定量来源".to_string(),
         "source_health" => "源健康度".to_string(),
-        "source_latency_ms" => "源延迟 (ms)".to_string(),
+        "source_latency_ms" => "源延迟（毫秒）".to_string(),
         "source_status" => "源状态".to_string(),
         "symbol_net_exposure_ratio" => "单标的净敞口".to_string(),
-        "stale_after_ms" => "过期阈值 (ms)".to_string(),
+        "stale_after_ms" => "过期阈值（毫秒）".to_string(),
         "status" => "状态".to_string(),
         "strength" => "强度".to_string(),
         "time_in_force" => "有效期".to_string(),
@@ -135,9 +135,9 @@ fn format_value(value: &Value) -> String {
         Value::Null => "-".to_string(),
         Value::Bool(flag) => {
             if *flag {
-                "Yes".to_string()
+                "是".to_string()
             } else {
-                "No".to_string()
+                "否".to_string()
             }
         }
         Value::Number(number) => number.to_string(),

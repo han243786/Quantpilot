@@ -22,7 +22,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             trigger_condition: "data_freshness_p95_ms > 3 * poll_interval_ms AND duration >= 300s"
                 .to_string(),
             severity: AlertSeverity::P1,
-            action: "暂停 Execution 产出，通知值班".to_string(),
+            action: "数据新鲜度 P95 超过 3 倍轮询间隔且持续 5 分钟以上。暂停 Execution 模块产出，检查数据源端点连通性，通知值班人员。".to_string(),
             enabled: true,
         },
         AlertRule {
@@ -30,7 +30,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             description: "任意 event_orphan_total 增长".to_string(),
             trigger_condition: "event_orphan_total > 0".to_string(),
             severity: AlertSeverity::P1,
-            action: "标记 run 为审计不可信，通知值班".to_string(),
+            action: "检测到事件序列断裂（event_orphan_total > 0）。将当前运行标记为审计不可信，归档断裂事件证据，通知值班人员 + QA。".to_string(),
             enabled: true,
         },
         AlertRule {
@@ -38,7 +38,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             description: "5min 拒绝率 > 90% 且样本数 > 50".to_string(),
             trigger_condition: "risk_reject_rate_5m > 0.90 AND sample_count > 50".to_string(),
             severity: AlertSeverity::P2,
-            action: "通知策略负责人，检查参数是否异常".to_string(),
+            action: "风控拒绝率 5 分钟内超过 90%（样本数 > 50）。通知策略负责人，检查最近参数变更记录（GET /api/runtime/mutations），对比当前风控限额与持仓敞口。如因参数变更导致，回滚最近一次变更。".to_string(),
             enabled: true,
         },
         AlertRule {
@@ -46,7 +46,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             description: "replay_divergence_total 增长".to_string(),
             trigger_condition: "replay_divergence_total > 0".to_string(),
             severity: AlertSeverity::P1,
-            action: "归档差异证据，通知值班 + QA".to_string(),
+            action: "回放差异增长（replay_divergence_total > 0）。归档当前回放差异证据（事件日志 + 权益曲线对比），通知值班人员 + QA 分析根因。".to_string(),
             enabled: true,
         },
         AlertRule {
@@ -55,7 +55,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             trigger_condition: "ai_proposal_reject_rate_24h > 0.80 AND proposal_count > 5"
                 .to_string(),
             severity: AlertSeverity::P2,
-            action: "检查 AI 模型输出质量，考虑冻结提案".to_string(),
+            action: "AI 提案 24 小时拒绝率超过 80%（提案数 > 5）。检查最近提案的 static_check 报告，如模型输出持续低质量，暂停 AI 提案 24 小时。".to_string(),
             enabled: true,
         },
         AlertRule {
@@ -63,7 +63,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             description: "沙箱验证超 5min 未完成".to_string(),
             trigger_condition: "sandbox_verification_duration_ms > 300000".to_string(),
             severity: AlertSeverity::P2,
-            action: "取消本次验证，通知提交者重试".to_string(),
+            action: "沙箱验证超过 5 分钟未完成。取消本次验证，通知提案提交者优化策略参数后重新提交。".to_string(),
             enabled: true,
         },
         AlertRule {
@@ -71,7 +71,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             description: "存储总大小超过 450MB (90% 阈值)".to_string(),
             trigger_condition: "disk_watermark_ratio > 0.90".to_string(),
             severity: AlertSeverity::P1,
-            action: "强制清理过期数据 + 暂停新写入".to_string(),
+            action: "存储总大小超过 450MB（90% 配额阈值）。立即执行启动清理流程：删除所有过期瞬间/暂时数据，暂停新的非长期写入。".to_string(),
             enabled: true,
         },
         AlertRule {
@@ -79,7 +79,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             description: "审批单 4h 内到期未处理".to_string(),
             trigger_condition: "approval_expires_in_ms < 14400000".to_string(),
             severity: AlertSeverity::P3,
-            action: "提醒审批人".to_string(),
+            action: "审批单将在 4 小时内到期且未被处理。提醒审批人尽快审阅待处理审批（GET /api/v1/approvals?status=pending）。".to_string(),
             enabled: true,
         },
         AlertRule {
@@ -87,7 +87,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             description: "热插拔回滚发生".to_string(),
             trigger_condition: "hotswap_rollback_count > 0".to_string(),
             severity: AlertSeverity::P1,
-            action: "通知值班 + 策略负责人，冻结 AI 提案 24h".to_string(),
+            action: "热插拔回滚发生。通知值班人员 + 策略负责人，冻结 AI 提案 24 小时，检查兼容性报告和 safe_window 状态确认回滚原因。".to_string(),
             enabled: true,
         },
         AlertRule {
@@ -95,7 +95,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             description: "compile/runtime hash 不一致".to_string(),
             trigger_condition: "capability_hash_compile != capability_hash_runtime".to_string(),
             severity: AlertSeverity::P1,
-            action: "阻断启动，通知值班".to_string(),
+            action: "编译时与运行时的 capability 哈希不一致。系统能力合约可能已被篡改或版本不匹配。立即阻断启动，通知值班人员检查部署版本和 capability 签名。".to_string(),
             enabled: true,
         },
     ]

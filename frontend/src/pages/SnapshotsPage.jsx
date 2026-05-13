@@ -55,7 +55,7 @@ export default function SnapshotsPage() {
   return (
     <main className="qp-page">
 
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div className="snapshot-header">
         <h1>{t("签名快照")}</h1>
         <button
           className="qp-btn qp-btn--primary qp-btn--sm"
@@ -77,7 +77,7 @@ export default function SnapshotsPage() {
 
       {!loading && !error && (
         <>
-          <button className="qp-btn qp-btn--ghost qp-btn--sm" onClick={fetchData} style={{ marginBottom: 16 }}>
+          <button className="qp-btn qp-btn--ghost qp-btn--sm chaos-refresh" onClick={fetchData}>
             {t("刷新")}
           </button>
 
@@ -96,10 +96,10 @@ export default function SnapshotsPage() {
                 <span>{t("策略")}: <span className="qp-metric">{s.strategy_version}</span></span>
                 <span>{t("参数")}: <span className="qp-metric">{s.parameter_version}</span></span>
               </div>
-              <div className="qp-card__body" style={{ fontSize: 11, wordBreak: "break-all", fontFamily: "var(--ad-font-mono)" }}>
+              <div className="qp-card__body snapshot-sig">
                 {s.signature?.substring(0, 64)}
               </div>
-              <div className="qp-card__body" style={{ marginTop: 8 }}>
+              <div className="qp-card__body" style={{ marginTop: "var(--ad-space-2)" }}>
                 <button
                   className="qp-btn qp-btn--ghost qp-btn--sm"
                   onClick={() => handleRestore(s.snapshot_id)}

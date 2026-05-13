@@ -16,6 +16,7 @@ pub(super) fn json_bad_request_with_details(
     json_bad_request_with_details_and_partial(error, message, details, None)
 }
 
+#[allow(dead_code)]
 pub(super) fn json_bad_request_with_partial(
     error: &'static str,
     message: impl Into<String>,
@@ -55,8 +56,21 @@ pub(super) fn json_bad_request_with_details_and_partial(
     )
 }
 
-pub(super) fn internal_error(_error: anyhow::Error) -> (StatusCode, String) {
-    (StatusCode::INTERNAL_SERVER_ERROR, "内部服务器错误".to_string())
+pub(super) fn internal_error(error: anyhow::Error) -> (StatusCode, String) {
+    let dev_mode = std::env::var("QUANTPILOT_DEV")
+        .map(|v| v == "true" || v == "1")
+        .unwrap_or(false);
+    let detail = crate::safe_log::sanitize_secrets(&format!("{:#}", error));
+    let message = if dev_mode {
+        format!("内部服务器错误。详情: {}", detail)
+    } else {
+        "内部服务器错误。请重试或联系支持。".to_string()
+    };
+    let payload = serde_json::json!({
+        "error": "internal_error",
+        "message": message,
+    });
+    (StatusCode::INTERNAL_SERVER_ERROR, payload.to_string())
 }
 
 pub(super) fn io_error(error: std::io::Error) -> (StatusCode, String) {

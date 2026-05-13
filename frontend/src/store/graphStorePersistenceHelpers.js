@@ -228,8 +228,10 @@ export async function fetchJson(path) {
     const text = await response.text();
     throw new Error(humanizeErrorText(text, `Request failed with status ${response.status}.`));
   }
-  const json = await response.json();
-  // v1.0.5: 自动解包分页响应 {data, total, limit, offset} → data
+  return response.json();
+}
+
+export function unwrapPage(json) {
   if (json && typeof json === "object" && Array.isArray(json.data) && typeof json.total === "number") {
     return json.data;
   }
@@ -265,9 +267,6 @@ async function postJson(path, body) {
   }
 
   const json = await response.json();
-  if (json && typeof json === "object" && Array.isArray(json.data) && typeof json.total === "number") {
-    return json.data;
-  }
   return json;
 }
 
@@ -297,9 +296,6 @@ async function deleteJson(path) {
   }
 
   const json = await response.json();
-  if (json && typeof json === "object" && Array.isArray(json.data) && typeof json.total === "number") {
-    return json.data;
-  }
   return json;
 }
 

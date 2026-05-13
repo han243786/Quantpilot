@@ -56,7 +56,6 @@ export default function RunbookPage() {
             <div className="qp-card qp-fade-in" key={s.scenario_id} role="listitem">
               <div
                 className="qp-card__header"
-                style={{ cursor: "pointer" }}
                 onClick={() => setExpanded(isOpen ? null : s.scenario_id)}
                 onKeyDown={(e) =>
                   e.key === "Enter" && setExpanded(isOpen ? null : s.scenario_id)
@@ -78,22 +77,13 @@ export default function RunbookPage() {
                 <div className="qp-card__body">
                   <h3>{t("诊断步骤")}</h3>
                   {s.diagnostic_steps?.map((d, i) => (
-                    <div key={i} style={{ padding: "2px 0" }}>
-                      <span style={{ color: "var(--ad-accent)", fontWeight: 500 }}>
+                    <div key={i} className="runbook-step">
+                      <span className="runbook-step-num">
                         {d.step_number}.
                       </span>{" "}
                       {d.description}
                       {d.api_call && (
-                        <code
-                          style={{
-                            marginLeft: 8,
-                            fontSize: 11,
-                            color: "var(--ad-accent)",
-                            background: "rgba(41, 98, 255, 0.08)",
-                            padding: "1px 6px",
-                            borderRadius: 3,
-                          }}
-                        >
+                        <code className="runbook-api">
                           {d.api_call}
                         </code>
                       )}
@@ -102,11 +92,11 @@ export default function RunbookPage() {
 
                   <h3>{t("恢复步骤")}</h3>
                   {s.recovery_steps?.map((r, i) => (
-                    <div key={i} style={{ padding: "2px 0" }}>
-                      <span style={{ color: "var(--ad-warning)", fontWeight: 500 }}>
+                    <div key={i} className="runbook-step">
+                      <span className="runbook-step-num--warn">
                         {r.step_number}.
                       </span>{" "}
-                      <span style={{ color: "var(--ad-text-secondary)" }}>
+                      <span className="runbook-condition">
                         [{r.condition}]
                       </span>{" "}
                       → {r.action}
@@ -116,7 +106,7 @@ export default function RunbookPage() {
                   <hr className="qp-divider" />
 
                   <h3>{t("验证")}</h3>
-                  <p style={{ color: "var(--ad-success)", margin: 0 }}>{s.verification}</p>
+                  <p className="runbook-verify">{s.verification}</p>
                 </div>
               )}
             </div>

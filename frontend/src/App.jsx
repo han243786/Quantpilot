@@ -1,6 +1,6 @@
 import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { useGraphStore } from "./store/graphStore";
-import { parseRoute, strategiesPath } from "./router";
+import { navigateTo, parseRoute, strategiesPath } from "./router";
 import LeftSidebar from "./components/LeftSidebar";
 import CommandPalette from "./components/CommandPalette";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -24,10 +24,17 @@ import { useI18n } from "./i18n";
 
 function AppShellFallback({ onSkip }) {
   const [waited, setWaited] = useState(false);
+  const capabilityStatus = useGraphStore((s) => s.capabilityStatus);
   useEffect(() => {
-    const t = setTimeout(() => setWaited(true), 8000);
+    const t = setTimeout(() => setWaited(true), 5000);
     return () => clearTimeout(t);
   }, []);
+
+  const stageText =
+    capabilityStatus === "loading" ? "正在连接后端..." :
+    capabilityStatus === "degraded" ? "已加载本地缓存" :
+    capabilityStatus === "error" ? "后端连接失败，已进入离线模式" :
+    "正在准备编辑器...";
 
   return (
     <div className="app-loading-shell" role="status" aria-live="polite">
@@ -36,7 +43,7 @@ function AppShellFallback({ onSkip }) {
         <div className="skeleton-block skeleton-block--medium" />
         <div className="skeleton-block skeleton-block--short" />
       </div>
-      <div className="app-loading-shell__title">正在加载界面</div>
+      <div className="app-loading-shell__title">{stageText}</div>
       {waited && onSkip && (
         <button className="ghost-btn" onClick={onSkip} style={{marginTop:16}}>
           跳过等待，使用本地缓存
@@ -61,7 +68,7 @@ export default function App() {
   const mainRef = useRef(null);
   const [isMaximized, setIsMaximized] = useState(false);
   let appWindow = null;
-  try { appWindow = getCurrentWindow(); } catch (_) { /* 非 Tauri 环境 */ }
+  try { appWindow = getCurrentWindow(); } catch (e) { if (import.meta.env.DEV) console.warn("[App] Tauri API 不可用，使用浏览器模式:", e.message); }
 
   // 监听窗口最大化状态
   useEffect(() => {
@@ -104,6 +111,13 @@ export default function App() {
     return () => document.removeEventListener("visibilitychange", handle);
   }, []);
 
+  const [route, setRoute] = useState(() =>
+    parseRoute(
+      typeof window === "undefined" ? "/" : window.location.pathname,
+      typeof window === "undefined" ? "" : window.location.search
+    )
+  );
+
   // 未保存更改时关闭/刷新提醒
   const routeRef = useRef(route);
   routeRef.current = route;
@@ -112,7 +126,7 @@ export default function App() {
       const name = routeRef.current.name;
       if (name === "strategy-workspace" || name === "quantscript") {
         e.preventDefault();
-        e.returnValue = "";
+        e.returnValue = "当前有未保存的策略图更改，离开此页面将丢失更改。";
       }
     };
     window.addEventListener("beforeunload", handler);
@@ -130,12 +144,6 @@ export default function App() {
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, []);
-  const [route, setRoute] = useState(() =>
-    parseRoute(
-      typeof window === "undefined" ? "/" : window.location.pathname,
-      typeof window === "undefined" ? "" : window.location.search
-    )
-  );
 
   useEffect(() => {
     let disposed = false;
@@ -210,14 +218,17 @@ export default function App() {
         </div>
       ) : null}
       <LeftSidebar />
-      {isOffline ? (
+      {!appWindow && isOffline ? (
         <div className="ad-offline-banner" role="alert">
-          网络连接已断开，部分功能不可用。
+          {t("网络连接已断开，部分功能不可用。")}
         </div>
       ) : null}
       {storageQuotaExceeded ? (
-        <div className="ad-offline-banner" role="alert" style={{background:"var(--ad-warning-soft)",color:"var(--ad-warning)"}} onClick={() => setStorageQuotaExceeded(false)}>
-          本地存储空间不足，策略图未保存。请清理旧版本后重试。(点击关闭)
+        <div className="ad-offline-banner" role="alert" style={{background:"var(--ad-warning-soft)",color:"var(--ad-warning)"}}>
+          本地存储空间不足，策略图未保存。请前往策略中心，清理不需要的策略图旧版本以释放空间。
+          <button className="ghost-btn" style={{marginLeft:12,textDecoration:"underline"}} onClick={() => { setStorageQuotaExceeded(false); navigateTo(strategiesPath()); }}>
+            前往策略中心
+          </button>
         </div>
       ) : null}
       <a href="#main-content" className="ad-skip-link">跳转到内容</a>

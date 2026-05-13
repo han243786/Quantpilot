@@ -67,7 +67,7 @@ export default function AlertsPage() {
 
       {!loading && !error && (
         <>
-          <button className="qp-btn qp-btn--ghost qp-btn--sm" onClick={fetchData} style={{ marginBottom: 16 }}>
+          <button className="qp-btn qp-btn--ghost qp-btn--sm chaos-refresh" onClick={fetchData}>
             {t("刷新")}
           </button>
 
@@ -89,7 +89,7 @@ export default function AlertsPage() {
               </div>
               <div className="qp-card__body">{f.detail}</div>
               {f.state !== "Acknowledged" && f.state !== "Resolved" && (
-                <div className="qp-card__body" style={{ marginTop: 8 }}>
+                <div className="qp-card__body" style={{ marginTop: "var(--ad-space-2)" }}>
                   <button
                     className="qp-btn qp-btn--primary qp-btn--sm"
                     onClick={() => handleAcknowledge(f.firing_id)}
@@ -115,7 +115,7 @@ export default function AlertsPage() {
                 <div className="qp-card__meta">
                   <span>{r.description}</span>
                 </div>
-                <div className="qp-card__body" style={{ color: "var(--ad-text-secondary)", fontSize: 12 }}>
+                <div className="qp-card__body alert-rule-desc">
                   {r.action}
                 </div>
               </div>

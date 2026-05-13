@@ -17,9 +17,9 @@ use super::shared::{
 };
 
 const ERR_UNSUPPORTED_CONDITIONAL_EMIT: &str =
-    "QPQSLOW001 不支持的条件下发 Intent 下层转换: 条件必须映射到支持的指标或价差意图";
+    "QPQSLOW001 不支持的条件下发 Intent 编译: 条件必须映射到支持的指标或价差意图";
 const ERR_NO_EXECUTABLE_INTENTS: &str =
-    "QPQSLOW002 无法从策略中下层转换出可执行的 emit Intent(...)";
+    "QPQSLOW002 无法从策略中编译出可执行的 emit Intent(...)";
 const ERR_EMIT_REQUIRES_DATA_SOURCE: &str =
     "QPQSLOW003 emit Intent 需要至少一个数据源";
 const ERR_EMIT_REQUIRES_ACTION: &str = "QPQSLOW005 emit Intent 需要指定动作";
@@ -1349,7 +1349,7 @@ fn legacy_intent_from_emit(
             format!("intent_{}_sell", sanitize_id(&instrument)),
             format!("{instrument} Sell"),
         ),
-        other => bail!("QPQSLOW004 运行时下层转换不支持的 Intent 动作: {other}"),
+        other => bail!("QPQSLOW004 不支持的 Intent 动作 '{other}'。emit Intent(...) 的有效动作: BUY, SELL"),
     };
 
     Ok(IntentConfig {

@@ -44,7 +44,7 @@ pub(super) fn validate_runtime_config_capabilities(
             "unsupported_runtime_mode",
             "metadata.mode",
             format!(
-                "runtime mode `{}` is not supported in the current beta",
+                "不支持的运行模式 '{}'。当前支持的运行模式: paper",
                 input.metadata.mode
             ),
             None,
@@ -57,7 +57,7 @@ pub(super) fn validate_runtime_config_capabilities(
                 "unsupported_module",
                 runtime_control.id.clone(),
                 format!(
-                    "module `{}` is not enabled for compile in the current beta",
+                    "模块 '{}' 未启用编译。请检查模块是否在 /api/capabilities 白名单中",
                     runtime_control.module_key
                 ),
                 frontend_module_support_reason(&runtime_control.module_key),
@@ -71,7 +71,7 @@ pub(super) fn validate_runtime_config_capabilities(
                 "unsupported_module",
                 data.id.clone(),
                 format!(
-                    "module `{}` is not enabled for compile in the current beta",
+                    "模块 '{}' 未启用编译。请检查模块是否在 /api/capabilities 白名单中",
                     data.module_key
                 ),
                 frontend_module_support_reason(&data.module_key),
@@ -84,7 +84,7 @@ pub(super) fn validate_runtime_config_capabilities(
                     "unsupported_exchange",
                     data.id.clone(),
                     format!(
-                        "exchange `{}` is not supported in the current beta",
+                        "不支持的交易所 '{}'。当前支持的交易所: binance, okx",
                         exchange
                     ),
                     None,
@@ -97,7 +97,7 @@ pub(super) fn validate_runtime_config_capabilities(
                 details.push(capability_detail(
                     "unsupported_symbol",
                     data.id.clone(),
-                    format!("symbol `{}` is not supported in the current beta", symbol),
+                    format!("不支持的交易对 '{}'。当前支持的交易对: BTCUSDT, ETHUSDT, SOLUSDT", symbol),
                     None,
                 ));
             }
@@ -110,7 +110,7 @@ pub(super) fn validate_runtime_config_capabilities(
                 "unsupported_module",
                 intent.id.clone(),
                 format!(
-                    "module `{}` is not enabled for compile in the current beta",
+                    "模块 '{}' 未启用编译。请检查模块是否在 /api/capabilities 白名单中",
                     intent.module_key
                 ),
                 frontend_module_support_reason(&intent.module_key),
@@ -124,7 +124,7 @@ pub(super) fn validate_runtime_config_capabilities(
                 "unsupported_module",
                 agent.id.clone(),
                 format!(
-                    "module `{}` is not enabled for compile in the current beta",
+                    "模块 '{}' 未启用编译。请检查模块是否在 /api/capabilities 白名单中",
                     agent.module_key
                 ),
                 frontend_module_support_reason(&agent.module_key),
@@ -137,7 +137,7 @@ pub(super) fn validate_runtime_config_capabilities(
                     "unsupported_symbol",
                     format!("{}.config.rebalance_symbols", agent.id),
                     format!(
-                        "rebalance symbol `{}` is not supported in the current beta",
+                        "不支持的再平衡交易对 '{}'。当前支持的交易对: BTCUSDT, ETHUSDT, SOLUSDT",
                         symbol
                     ),
                     None,
@@ -150,7 +150,7 @@ pub(super) fn validate_runtime_config_capabilities(
                 details.push(capability_detail(
                     "invalid_rebalance_schedule",
                     format!("{}.config.rebalance_schedule", agent.id),
-                    format!("rebalance schedule `{}` is not supported", schedule),
+                    format!("不支持的再平衡频率 '{}'。当前支持的频率: every_slow, every_1d, weekly", schedule),
                     None,
                 ));
             }
@@ -166,7 +166,7 @@ pub(super) fn validate_runtime_config_capabilities(
                 details.push(capability_detail(
                     "invalid_rebalance_target_weights",
                     format!("{}.config.rebalance_target_weights", agent.id),
-                    "rebalance target weights must be comma-separated numbers".to_string(),
+                    "再平衡目标权重必须为逗号分隔的数字，例如 \"0.5, 0.3, 0.2\"".to_string(),
                     None,
                 ));
             }
@@ -179,7 +179,7 @@ pub(super) fn validate_runtime_config_capabilities(
                 "unsupported_module",
                 risk.id.clone(),
                 format!(
-                    "module `{}` is not enabled for compile in the current beta",
+                    "模块 '{}' 未启用编译。请检查模块是否在 /api/capabilities 白名单中",
                     risk.module_key
                 ),
                 frontend_module_support_reason(&risk.module_key),
@@ -198,7 +198,7 @@ pub(super) fn validate_runtime_config_capabilities(
                     details.push(capability_detail(
                         "invalid_risk_limit",
                         format!("{}.config.{}", risk.id, key),
-                        format!("risk field `{}` must be between {} and {}", key, min, max),
+                        format!("风控参数 '{}' 必须在 {} 到 {} 之间", key, min, max),
                         None,
                     ));
                 }
@@ -216,7 +216,7 @@ pub(super) fn validate_runtime_config_capabilities(
                     details.push(capability_detail(
                         "invalid_risk_limit",
                         format!("{}.config.{}", risk.id, key),
-                        format!("risk field `{}` must be >= {}", key, min),
+                        format!("风控参数 '{}' 必须大于等于 {}", key, min),
                         None,
                     ));
                 }
@@ -230,7 +230,7 @@ pub(super) fn validate_runtime_config_capabilities(
                 "unsupported_module",
                 execution.id.clone(),
                 format!(
-                    "module `{}` is not enabled for compile in the current beta",
+                    "模块 '{}' 未启用编译。请检查模块是否在 /api/capabilities 白名单中",
                     execution.module_key
                 ),
                 frontend_module_support_reason(&execution.module_key),
@@ -242,7 +242,7 @@ pub(super) fn validate_runtime_config_capabilities(
                 "unsupported_execution_module",
                 execution.id.clone(),
                 format!(
-                    "execution module `{}` is not supported in the current beta",
+                    "不支持的执行模块 '{}'。当前支持的模块: builtin.execution.paper",
                     execution.module_key
                 ),
                 None,
@@ -275,7 +275,7 @@ pub(super) fn validate_runtime_capability_guard(
         return Err(vec![capability_detail(
             "missing_capability_context",
             "capability_context",
-            "runtime write actions require the current capability context",
+            "运行时写入操作需要附带当前的 capability 上下文。请先调用 GET /api/capabilities 获取 schema_hash 和 permission_boundary",
             Some("Fetch /api/capabilities and include schema_hash plus permission_boundary before creating runtime records."),
         )]);
     };
@@ -284,14 +284,14 @@ pub(super) fn validate_runtime_capability_guard(
         details.push(capability_detail(
             "malformed_capability_hash",
             "capability_context.schema_hash",
-            "capability schema_hash must be formatted as sha256:<64 lowercase hex chars>",
+            "capability schema_hash 格式不正确，必须为 sha256: 后接 64 位小写十六进制字符",
             Some("Capability hashes outside the canonical sha256 namespace are treated as unsafe."),
         ));
     } else if context.schema_hash != expected.schema_hash {
         details.push(capability_detail(
             "stale_capability_hash",
             "capability_context.schema_hash",
-            "capability schema_hash does not match the current backend capability contract",
+            "capability schema_hash 已过期，与当前后端能力合约不匹配。请重新调用 GET /api/capabilities 刷新",
             Some("Refresh /api/capabilities before starting run, backtest, or experiment writes."),
         ));
     }
@@ -329,7 +329,7 @@ pub(super) fn validate_runtime_capability_guard(
             details.push(capability_detail(
                 "permission_boundary_mismatch",
                 target,
-                format!("permission boundary field must be `{expected_value}`"),
+                format!("权限边界字段必须为 '{expected_value}'，当前值不符。请刷新 capability 上下文"),
                 Some("Runtime writes fail closed when the frontend boundary is missing, stale, or less restrictive than the backend contract."),
             ));
         }
@@ -339,7 +339,7 @@ pub(super) fn validate_runtime_capability_guard(
         details.push(capability_detail(
             "permission_boundary_mismatch",
             "capability_context.permission_boundary.live_execution_allowed",
-            "live execution must remain disabled in the current beta",
+            "当前版本仅支持模拟交易（paper），实盘执行功能尚未开放",
             Some("The current runtime boundary only allows paper execution."),
         ));
     }

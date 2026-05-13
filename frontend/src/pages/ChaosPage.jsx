@@ -69,9 +69,9 @@ export default function ChaosPage() {
   return (
     <main className="qp-page">
 
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+      <div className="chaos-header">
         <h1>{t("混沌实验")}</h1>
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        <div className="chaos-actions">
           {Object.keys(CHAOS_TYPE_KEYS).map((type) => (
             <button
               key={type}
@@ -96,7 +96,7 @@ export default function ChaosPage() {
 
       {!loading && !error && (
         <>
-          <button className="qp-btn qp-btn--ghost qp-btn--sm" onClick={fetchData} style={{ marginBottom: 16 }}>
+          <button className="qp-btn qp-btn--ghost qp-btn--sm chaos-refresh" onClick={fetchData}>
             {t("刷新")}
           </button>
 
@@ -107,7 +107,7 @@ export default function ChaosPage() {
           {experiments.map((e) => (
             <div className="qp-card qp-fade-in" key={e.experiment_id} role="listitem">
               <div className="qp-card__header">
-                <span className="qp-card__title qp-metric" style={{ fontSize: 12 }}>
+                <span className="qp-card__title qp-metric chaos-experiment-id">
                   {e.experiment_id}
                 </span>
                 <span className={e.passed ? "qp-badge qp-badge--ok" : "qp-badge qp-badge--err"}>
@@ -121,11 +121,11 @@ export default function ChaosPage() {
               </div>
               {e.alerts_triggered?.length > 0 && (
                 <div className="qp-card__body">
-                  <span style={{ color: "var(--ad-warning)" }}>
+                  <span className="chaos-alert-trigger">
                     {t("触发告警")}: {e.alerts_triggered.join(" / ")}
                   </span>
                   {e.degradation_summary && (
-                    <span style={{ marginLeft: 16, color: "var(--ad-text-secondary)" }}>
+                    <span className="chaos-degradation">
                       {t("性能下降")}: {e.degradation_summary}
                     </span>
                   )}

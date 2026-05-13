@@ -53,6 +53,9 @@ export function getGlobalLocale() {
 export function translateText(baseText, variables = {}, locale = globalLocale) {
   const messages = resolveMessages(locale);
   const translated = messages[baseText] || baseText;
+  if (import.meta.env.DEV && locale !== DEFAULT_LOCALE && !messages[baseText]) {
+    console.warn(`[i18n] 缺少 "${locale}" 翻译: "${baseText}"`);
+  }
   return interpolate(translated, variables);
 }
 

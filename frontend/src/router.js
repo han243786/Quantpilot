@@ -94,7 +94,8 @@ export function parseRoute(pathname, search = "") {
   if (strategyMatch) {
     const decoded = decodeURIComponent(strategyMatch[1]);
     if (decoded.includes("\x00") || decoded.length > 128) {
-      return { name: "strategies" };
+      console.warn("无效的策略图 ID（包含空字符或长度超过 128），已重定向到策略列表");
+      return { name: "strategies", error: "无效的策略图 ID" };
     }
     return {
       name: "strategy-workspace",
@@ -141,7 +142,7 @@ export function navigateTo(pathname) {
   if (window.location.pathname === pathname) return;
   // 防 100ms 内重复导航 (快速双击/多链接连击→幽灵历史条目)
   const now = Date.now();
-  if (pathname === _lastNavPath && now - _lastNavTime < 100) return;
+  if (pathname === _lastNavPath && now - _lastNavTime < 100) { if (import.meta.env.DEV) console.debug("[router] 100ms 内重复导航已忽略:", pathname); return; }
   _lastNavPath = pathname;
   _lastNavTime = now;
   window.history.pushState({}, "", pathname + (window.location.hash || ""));

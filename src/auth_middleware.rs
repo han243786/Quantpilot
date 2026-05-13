@@ -59,7 +59,7 @@ pub(super) async fn api_key_auth(
 
     let problem = serde_json::json!({
         "error": "unauthorized",
-        "message": "认证失败: 请在 Authorization 头中提供有效的 Bearer token"
+        "message": "认证失败: 请设置 QUANTPILOT_API_KEY 环境变量，或设置 QUANTPILOT_DEV=true 跳过认证（仅开发环境）"
     });
 
     let body = axum::body::Body::from(
@@ -70,7 +70,7 @@ pub(super) async fn api_key_auth(
         .status(StatusCode::UNAUTHORIZED)
         .header(
             axum::http::header::CONTENT_TYPE,
-            "application/problem+json",
+            "application/json",
         )
         .body(body)
         .unwrap_or_else(|_| {

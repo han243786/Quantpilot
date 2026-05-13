@@ -114,35 +114,35 @@ pub(super) fn strategy_ir_diagnostic_from_lowering_error(message: &str) -> Compi
         | "CUSTOM012" => (
             Some("params.custom_expr"),
             Some(
-                "Custom indicators are restricted to the admitted expression subset and must lower into Core IR."
+                "自定义指标受限于允许的表达式子集，必须可编译为 Core IR。请检查自定义表达式使用了支持的算术和窗口聚合运算。"
                     .to_string(),
             ),
         ),
         "QPSTRATSPREAD001" => (
             Some("params.spread_output_code"),
             Some(
-                "Use `spread_output_code = 1` so Strategy IR matches the current graph/runtime spread threshold slice."
+                "请设置 `spread_output_code = 1`，使 Strategy IR 与当前图/运行时的价差阈值切片匹配。"
                     .to_string(),
             ),
         ),
         "QPSTRATSPREAD002" => (
             Some("params.max_time_diff_ms"),
             Some(
-                "Set `max_time_diff_ms` to a positive value for the current Strategy IR spread threshold slice."
+                "请将 `max_time_diff_ms` 设置为正值，用于当前 Strategy IR 价差阈值切片。"
                     .to_string(),
             ),
         ),
         "QPSTRATSPREAD003" => (
             Some("condition"),
             Some(
-                "Use a one-sided buy threshold such as `spread_signal > 5` or `spread_signal >= 5`."
+                "请使用单向买入阈值，例如 `spread_signal > 5` 或 `spread_signal >= 5`。"
                     .to_string(),
             ),
         ),
         "QPSTRATSPREAD004" => (
             Some("indicator.inputs"),
             Some(
-                "Provide exactly two spread inputs so Strategy IR matches the current graph/runtime spread threshold slice."
+                "请提供恰好两个价差输入，使 Strategy IR 与当前图/运行时的价差阈值切片匹配。"
                     .to_string(),
             ),
         ),
@@ -295,7 +295,7 @@ pub(super) fn collect_formal_quantscript_pre_lowering_diagnostics(
         && !contains_fetch_like_call_in_stmts(&strategy.body)
     {
         diagnostics.push(formal_quantscript_diagnostic_from_lowering_error(
-            "QPQSLOW007 strategy lowering requires at least one fetch/get_data call",
+            "QPQSLOW007 策略编译需要至少一个 fetch 或 get_data 调用",
         ));
     }
     diagnostics
@@ -349,7 +349,7 @@ pub(super) fn collect_pre_lowering_emit_diagnostics_from_args(
     let action = emit_action_arg_value(args).unwrap_or_default();
     if action.is_empty() {
         diagnostics.push(formal_quantscript_diagnostic_from_lowering_error(
-            "QPQSLOW005 emit Intent requires action",
+            "QPQSLOW005 emit Intent 需要提供 action 参数",
         ));
         return;
     }
@@ -357,7 +357,7 @@ pub(super) fn collect_pre_lowering_emit_diagnostics_from_args(
     let normalized = action.to_ascii_uppercase();
     if normalized != "BUY" && normalized != "SELL" {
         diagnostics.push(formal_quantscript_diagnostic_from_lowering_error(&format!(
-            "QPQSLOW004 unsupported Intent action for runtime lowering: {normalized}"
+            "QPQSLOW004 不支持的 Intent 动作: {normalized}，有效的动作: BUY, SELL"
         )));
     }
 }

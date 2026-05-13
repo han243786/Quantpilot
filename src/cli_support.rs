@@ -8,7 +8,7 @@ pub(super) enum CliCommand {
 }
 
 pub(super) fn cli_usage() -> &'static str {
-    "Usage:\n  quantpilot                      Start the QuantPilot API server\n  quantpilot strategy-ir validate <path>\n                                  Load and validate a Strategy IR JSON file\n  quantpilot --help               Show this help"
+    "用法:\n  quantpilot                              启动 QuantPilot API 服务器\n  quantpilot strategy-ir validate <路径>     加载并验证 Strategy IR JSON 文件\n  quantpilot credential <子命令> [参数]      管理 API 凭证 (set|get|list|delete)\n  quantpilot --help                        显示此帮助"
 }
 
 pub(super) fn parse_cli_command_from<I, S>(args: I) -> anyhow::Result<CliCommand>

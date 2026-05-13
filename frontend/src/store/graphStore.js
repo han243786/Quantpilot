@@ -12,6 +12,7 @@ import {
   defaultRegistry,
   fallbackRunnableGraph,
   fetchJson,
+  unwrapPage,
   graphExistsInIndex,
   isDeprecatedBuiltinSampleGraph,
   loadCapabilitiesFromCache,
@@ -129,8 +130,7 @@ export const useGraphStore = create((set, get) => ({
           capabilities: cachedCapabilities,
           capabilityStatus: "degraded",
           capabilitySource: "cache",
-          capabilityMessage:
-            "Capability fetch failed. Using the latest cached capability snapshot. Final availability still depends on live backend validation.",
+          capabilityMessage: "能力加载失败，已启用本地缓存的能力快照。最终可用性取决于后端实时验证。",
           graph: nextGraph,
           quantScriptDraft:
             nextGraph.metadata?.artifacts?.quantscript?.graph_source || get().quantScriptDraft,
@@ -148,8 +148,7 @@ export const useGraphStore = create((set, get) => ({
         capabilities: safeFallbackCapabilities,
         capabilityStatus: "error",
         capabilitySource: "safe_fallback",
-          capabilityMessage:
-            "Capability fetch failed. Entering safe fallback mode. To avoid exposing fake capabilities, module visibility and compile/run actions were tightened to the safest profile.",
+          capabilityMessage: "能力加载失败，已进入安全回退模式。为避免暴露虚假能力，模块可见性和编译/运行操作已收紧至最安全配置。",
           graph: nextGraph,
           quantScriptDraft:
           nextGraph.metadata?.artifacts?.quantscript?.graph_source || get().quantScriptDraft,
@@ -250,7 +249,7 @@ export const useGraphStore = create((set, get) => ({
     set({ graphIndexStatus: "loading", graphIndexMessage: "" });
 
     try {
-      const graphIndex = normalizeGraphIndex(await fetchJson("/graphs"));
+      const graphIndex = normalizeGraphIndex(unwrapPage(await fetchJson("/graphs")));
       set({
         graphIndex,
         graphIndexStatus: "ready",
@@ -267,6 +266,7 @@ export const useGraphStore = create((set, get) => ({
   },
   async recoverLatestRunnableGraph() {
     let lastError = null;
+    set((s) => ({ runtime: { ...s.runtime, backendError: "正在重试连接后端..." } }));
     for (let attempt = 0; attempt < RECOVERY_MAX_RETRIES; attempt += 1) {
       try {
         const latestGraph = resolveLoadedGraphWithRegistry(

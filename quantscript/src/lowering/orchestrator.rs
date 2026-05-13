@@ -23,9 +23,9 @@ use super::universe::{detect_portfolio_rebalance_directive, expand_universe_cons
 #[cfg(test)]
 use qrpc_core::{Exchange, IntentKind, RebalanceSchedule, Symbol};
 
-const ERR_MISSING_STRATEGY_FN: &str = "QPQSLOW006 形式化 QuantScript 必须声明 fn strategy()";
+const ERR_MISSING_STRATEGY_FN: &str = "QPQSLOW006 QuantScript 必须声明 fn strategy() 入口函数。请在 .qs 文件中添加: fn strategy() { ... }";
 const ERR_NO_FETCH_CALLS: &str =
-    "QPQSLOW007 策略下层转换需要至少一个 fetch/get_data 调用";
+    "QPQSLOW007 策略编译需要至少一个 fetch/get_data 调用";
 
 #[derive(Debug, Clone)]
 struct GlobalRiskProfileSpec {
@@ -61,7 +61,7 @@ pub fn lower_script_to_runtime_config_with_context(
         .any(|diagnostic| diagnostic.severity == crate::DiagnosticSeverity::Error);
     if has_errors {
         bail!(
-            "形式化 QuantScript 语义分析失败:\n{}",
+            "QuantScript 语义分析失败:\n{}",
             format_diagnostics(&diagnostics)
         );
     }
@@ -194,7 +194,7 @@ fn detect_global_risk_profile(strategy: &FunctionDecl) -> Result<Option<GlobalRi
     for stmt in &strategy.body {
         if let Some(call_args) = risk_profile_call_args(stmt) {
             if detected.is_some() {
-                bail!("形式化 QuantScript 当前最多支持一个 risk.profile(...) 声明");
+                bail!("QuantScript 当前最多支持一个 risk.profile(...) 声明");
             }
             detected = Some(parse_global_risk_profile_args(call_args)?);
             continue;
@@ -290,7 +290,7 @@ fn detect_paper_execution_profile(
     for stmt in &strategy.body {
         if let Some(call_args) = execution_profile_call_args(stmt) {
             if detected.is_some() {
-                bail!("形式化 QuantScript 当前最多支持一个 execution.profile(...) 声明");
+                bail!("QuantScript 当前最多支持一个 execution.profile(...) 声明");
             }
             detected = Some(parse_paper_execution_profile_args(call_args)?);
             continue;

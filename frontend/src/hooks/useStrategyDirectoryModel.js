@@ -9,7 +9,7 @@ const MAX_ACTIVITY_ITEMS = 6;
 function pushRecent(list, item, limit = MAX_RECENT_ITEMS) {
   if (!item) return list;
   list.push(item);
-  list.sort((left, right) => (right.created_at_ms || 0) - (left.created_at_ms || 0));
+  list.sort((left, right) => (right.created_at_ms || 0) - (left.created_at_ms || 0) || (left.graph_id || "").localeCompare(right.graph_id || ""));
   return list.slice(0, limit);
 }
 
@@ -169,7 +169,7 @@ function buildStrategyDirectory(graph, visibleRuns, visibleBacktests, graphIndex
       if (left.isCurrent !== right.isCurrent) {
         return left.isCurrent ? -1 : 1;
       }
-      return (right.lastActivityAt || 0) - (left.lastActivityAt || 0);
+      return (right.lastActivityAt || 0) - (left.lastActivityAt || 0) || (left.graph_id || "").localeCompare(right.graph_id || "");
     });
 }
 
@@ -201,7 +201,7 @@ function buildActivityTimeline(visibleRuns, visibleBacktests) {
   ];
 
   return events
-    .sort((left, right) => right.createdAt - left.createdAt)
+    .sort((left, right) => right.createdAt - left.createdAt || (left.id || "").localeCompare(right.id || ""))
     .slice(0, MAX_ACTIVITY_ITEMS);
 }
 
@@ -384,7 +384,7 @@ export function useStrategyDirectoryModel() {
         );
       }
 
-      return (right.lastActivityAt || 0) - (left.lastActivityAt || 0);
+      return (right.lastActivityAt || 0) - (left.lastActivityAt || 0) || (left.graph_id || "").localeCompare(right.graph_id || "");
     });
   }, [deferredQuery, healthFilter, scopeFilter, sortMode, strategies]);
 

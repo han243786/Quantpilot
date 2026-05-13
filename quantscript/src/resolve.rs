@@ -1092,7 +1092,7 @@ impl Resolver {
         // B1-10: 重复变量定义诊断
         if scope.contains_key(&name) {
             self.diagnostics.push(Diagnostic::warning(
-                "QS0609",
+                "QS0613",
                 format!("重复的变量定义 '{}'", name),
                 Some(span.clone()),
             ));

@@ -54,7 +54,7 @@ fn collect_unsupported_construct_diagnostics(
                 if import_decl.names.is_none() && import_decl.module.contains(" as ") {
                     diagnostics.push(Diagnostic::error(
                         "QS0608",
-                        "形式化 QuantScript 不支持简单的 `import foo as bar`；请使用 `from module import name as alias`",
+                        "QuantScript 不支持简单的 `import foo as bar`；请使用 `from module import name as alias`",
                         Some(Span::module(import_decl.module.clone())),
                     ));
                 }
@@ -63,7 +63,7 @@ fn collect_unsupported_construct_diagnostics(
                 if function.is_async {
                     diagnostics.push(Diagnostic::error(
                         "QS0601",
-                        "形式化 QuantScript 不支持可执行主干中的异步函数",
+                        "QuantScript 不支持strategy() 函数体中的异步函数",
                         Some(Span::function(function.name.clone())),
                     ));
                 }
@@ -75,7 +75,7 @@ fn collect_unsupported_construct_diagnostics(
                 if function_contains_direct_recursion(function, &function.name) {
                     diagnostics.push(Diagnostic::error(
                         "QS0605",
-                        "形式化 QuantScript 不支持可执行主干中的递归辅助调用",
+                        "QuantScript 不支持strategy() 函数体中的递归辅助调用",
                         Some(Span::function(function.name.clone())),
                     ));
                 }
@@ -129,7 +129,7 @@ fn collect_unsupported_constructs_from_stmts(
             Stmt::While { condition, body } => {
                 diagnostics.push(Diagnostic::error(
                     "QS0603",
-                    "形式化 QuantScript 不支持可执行主干中的 while 循环",
+                    "QuantScript 不支持 strategy() 函数体中的 while 循环。请改用 for ... in ... 或在数据源上使用窗口聚合",
                     Some(Span::function(function_name.to_string())),
                 ));
                 collect_unsupported_constructs_from_expr(condition, diagnostics);
@@ -138,7 +138,7 @@ fn collect_unsupported_constructs_from_stmts(
             Stmt::Match { expr, arms } => {
                 diagnostics.push(Diagnostic::error(
                     "QS0604",
-                    "形式化 QuantScript 不支持可执行主干中的 match 语句",
+                    "QuantScript 不支持strategy() 函数体中的 match 语句",
                     Some(Span::function(function_name.to_string())),
                 ));
                 collect_unsupported_constructs_from_expr(expr, diagnostics);
@@ -164,7 +164,7 @@ fn collect_unsupported_constructs_from_expr(expr: &Expr, diagnostics: &mut Vec<D
         Expr::Await(inner) => {
             diagnostics.push(Diagnostic::error(
                 "QS0602",
-                "形式化 QuantScript 不支持可执行主干中的 await 表达式",
+                "QuantScript 不支持strategy() 函数体中的 await 表达式",
                 Some(Span::expr("await")),
             ));
             collect_unsupported_constructs_from_expr(inner, diagnostics);
@@ -173,7 +173,7 @@ fn collect_unsupported_constructs_from_expr(expr: &Expr, diagnostics: &mut Vec<D
             if !is_supported_formal_try_target(inner) {
                 diagnostics.push(Diagnostic::error(
                     "QS0607",
-                    "形式化 QuantScript 在可执行主干中仅支持对 fetch 类数据源表达式使用后缀 `?`",
+                    "QuantScript 在strategy() 函数体中仅支持对 fetch 类数据源表达式使用后缀 `?`",
                     Some(Span::expr("?")),
                 ));
             }
@@ -189,13 +189,13 @@ fn collect_unsupported_constructs_from_expr(expr: &Expr, diagnostics: &mut Vec<D
                 if field == "push" {
                     diagnostics.push(Diagnostic::error(
                         "QS0609",
-                        "形式化 QuantScript 不支持可执行主干中使用 `.push(...)` 构建可变列表",
+                        "QuantScript 不支持strategy() 函数体中使用 `.push(...)` 构建可变列表",
                         Some(Span::expr(".push")),
                     ));
                 } else if matches!(field.as_str(), "ok" | "retryable") {
                     diagnostics.push(Diagnostic::error(
                         "QS0610",
-                        "形式化 QuantScript 不支持可执行主干中的 `.ok()` / `.retryable()` 辅助方法",
+                        "QuantScript 不支持strategy() 函数体中的 `.ok()` / `.retryable()` 辅助方法",
                         Some(Span::expr(field.clone())),
                     ));
                 }
@@ -400,7 +400,7 @@ fn collect_non_universe_for_loop_diagnostics_from_hir_stmts(
                 if !matches!(types.get(iterable.ty), Type::Universe) {
                     diagnostics.push(Diagnostic::error(
                         "QS0606",
-                        "形式化 QuantScript 在可执行主干中仅支持对 Universe 的 for 循环",
+                        "QuantScript 在strategy() 函数体中仅支持对 Universe 的 for 循环",
                         Some(span.clone()),
                     ));
                 }
@@ -570,7 +570,7 @@ fn collect_series_index_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnostic>
                 diagnostics.push(Diagnostic::error(
                     "QS0401",
                     "前视风险: 负数序列索引会访问未来 K 线；请使用 `series[0]` 获取最新 K 线，正数回溯获取历史",
-                    None,
+                    Some(Span::expr("expression")),
                 ));
             }
             collect_series_index_from_expr(object, diagnostics);
@@ -586,7 +586,7 @@ fn collect_series_index_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnostic>
                     diagnostics.push(Diagnostic::error(
                         "QS0401",
                         "前视风险: 负数 trailing-window 跨度意味着未来访问；请使用 `series[20..]` 获取 20 根 K 线的历史窗口",
-                        None,
+                        Some(Span::expr("expression")),
                     ));
                 } else if start
                     .as_deref()
@@ -596,7 +596,7 @@ fn collect_series_index_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnostic>
                     diagnostics.push(Diagnostic::error(
                         "QS0403",
                         "trailing 窗口需要正数跨度；请使用 `series[1..]` 或更大的历史窗口",
-                        None,
+                        Some(Span::expr("expression")),
                     ));
                 }
             }
@@ -709,7 +709,7 @@ fn collect_centered_window_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnost
         diagnostics.push(Diagnostic::error(
             "QS0402",
             "前视风险: `center=true` 窗口使用了未来 K 线",
-            None,
+            Some(Span::expr("expression")),
         ));
     }
 
@@ -810,7 +810,7 @@ fn collect_warmup_from_function(
                 format!(
                     "预热不足: 策略至少需要 {required_warmup_bars} 根 K 线，但 fetch 仅请求了 {available_bars}"
                 ),
-                None,
+                Some(Span::expr("expression")),
             ));
         }
     }
@@ -1214,7 +1214,7 @@ fn collect_fetch_lookback_warnings_from_expr(
                     diagnostics.push(Diagnostic::warning(
                         "QS0503",
                         format!("fetch lookback={} 小于 1, 已自动设为 1", value),
-                        None,
+                        Some(Span::expr("expression")),
                     ));
                 }
             }
@@ -1518,10 +1518,10 @@ fn check_index_bounds_from_expr(
                     diagnostics.push(Diagnostic::warning(
                         "QS0404",
                         format!(
-                            "索引 {} 可能超出 {} 的回看窗口 {}",
+                            "索引 {} 可能超出变量 '{}' 的回看窗口 {}",
                             idx, var, lookback
                         ),
-                        None,
+                        Some(Span::binding(var.clone())),
                     ));
                 }
             }
@@ -1598,7 +1598,7 @@ fn check_dead_code_emit_from_stmts(
                     diagnostics.push(Diagnostic::warning(
                         "QS0612",
                         "条件为 false 的 if 分支中的 emit 语句永远不会执行",
-                        None,
+                        Some(Span::expr("expression")),
                     ));
                 }
                 check_dead_code_emit_from_stmts(then_branch, diagnostics);
@@ -1735,8 +1735,8 @@ fn check_fetch_symbol_whitelist_from_expr(
                 if !KNOWN_SYMBOLS.contains(&symbol_str.to_uppercase().as_str()) {
                     diagnostics.push(Diagnostic::warning(
                         "QS0505",
-                        format!("未知交易对 '{}', 运行时可能失败", symbol_str),
-                        None,
+                        format!("未知交易对 '{}' 不在支持列表中。支持: BTCUSDT, ETHUSDT, SOLUSDT", symbol_str),
+                        Some(Span::expr("expression")),
                     ));
                 }
             }
