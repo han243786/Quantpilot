@@ -92,6 +92,7 @@ fn expected_metrics_drilldown(left: &Value, right: &Value) -> Value {
     })
 }
 
+#[allow(dead_code)]
 fn expected_trade_ledger_fields(left: &Value, right: &Value) -> Value {
     let field = |key: &str| {
         json!({

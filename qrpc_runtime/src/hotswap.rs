@@ -604,7 +604,7 @@ mod tests {
     use super::*;
     use crate::risk_checker::RiskChecker;
     use crate::sandbox::SandboxMode;
-    use qrpc_core::{ExecutionPlan, FillResult, NormalizedMarketData, PortfolioState, SessionOutput};
+    use qrpc_core::{ExecutionPlan, FillResult, NormalizedMarketData, PortfolioState};
     use qrpc_core_ir::{
         CoreMetadata, CoreSourceKind, ExecutionRule, ExecutionSizingKind, RiskPolicy,
     };

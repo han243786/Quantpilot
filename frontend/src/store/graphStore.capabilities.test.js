@@ -70,7 +70,7 @@ describe("graphStore capability fallback", () => {
     expect(result).toEqual(cachedCapabilities);
     expect(state.capabilityStatus).toBe("degraded");
     expect(state.capabilitySource).toBe("cache");
-    expect(state.capabilityMessage).toContain("latest cached capability snapshot");
+    expect(state.capabilityMessage).toContain("本地缓存的能力快照");
     expect(state.capabilities.frontend.supported_module_keys).toEqual(
       cachedCapabilities.frontend.supported_module_keys
     );
@@ -92,7 +92,7 @@ describe("graphStore capability fallback", () => {
     expect(result.runtime.supported_modes).toEqual([]);
     expect(state.capabilityStatus).toBe("error");
     expect(state.capabilitySource).toBe("safe_fallback");
-    expect(state.capabilityMessage).toContain("safe fallback mode");
+    expect(state.capabilityMessage).toContain("安全回退模式");
     expect(
       result.frontend.module_support.every((entry) => entry.status === "declared_only")
     ).toBe(true);

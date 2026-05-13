@@ -364,7 +364,7 @@ impl StrategyMergeEngine {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use qrpc_core::{Exchange, OrderSide, RiskReasonCode};
+    use qrpc_core::{Exchange, OrderSide};
 
     fn sample_decision(id: &str, symbol: Symbol, side: SignalSide, strength: f64) -> AgentDecision {
         let order_side = if matches!(side, SignalSide::Long) {

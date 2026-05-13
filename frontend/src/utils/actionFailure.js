@@ -48,11 +48,9 @@ export function buildActionFailureMessage(action, reasonLike, fallbackReason = "
   const fallback = fallbackReason || ACTION_FAILURE_FALLBACKS[action] || "操作失败。";
   const reason = humanizeErrorText(reasonLike, fallback);
   const nextStep = ACTION_FAILURE_NEXT_STEPS[action] || "检查最新错误详情后重试。";
-  return {
-    reason,
-    nextStep,
-    message: translateText("原因：{reason} 后续：{nextStep}", { reason, nextStep }),
-    // toString() 保持向后兼容
-    toString() { return this.message; }
-  };
+  return translateText("原因：{reason} 后续：{nextStep}", { reason, nextStep });
+}
+
+export function getActionFailureNextStep(action) {
+  return ACTION_FAILURE_NEXT_STEPS[action] || "检查最新错误详情后重试。";
 }

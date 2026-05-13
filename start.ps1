@@ -1,5 +1,6 @@
 # QuantPilot Desktop v1.0.7
 # PowerShell 启动脚本 (UTF-8 native)
+# 如遇执行策略限制，运行: Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root

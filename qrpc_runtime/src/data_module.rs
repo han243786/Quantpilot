@@ -746,6 +746,7 @@ impl BuiltinDataModule {
         let endpoint = endpoint.to_string();
         let endpoint_for_reqwest = endpoint.clone();
         let primary_result = block_on_http(async move {
+            #[allow(unused_assignments)]
             let mut last_status = 0u16;
             for attempt in 0..4 {
                 let resp = client

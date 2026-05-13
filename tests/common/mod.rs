@@ -86,6 +86,7 @@ fn unique_test_dir(test_name: &str) -> PathBuf {
 }
 
 // v1.0.1: 共享测试辅助 — 校验事件信封完整性
+#[allow(dead_code)]
 pub(crate) fn assert_complete_event_envelopes(
     events: &[serde_json::Value],
     record_id: &str,

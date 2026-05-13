@@ -9,6 +9,10 @@ echo "=== pre-commit: cargo check ==="
 cargo check --workspace
 
 echo "=== pre-commit: cargo test --no-run ==="
+# 清理残留进程，避免 Windows 文件锁导致 cargo test --no-run 失败
+taskkill /f /im quantpilot.exe >/dev/null 2>&1 || true
+taskkill /f /im quantpilot-tauri.exe >/dev/null 2>&1 || true
+sleep 1
 cargo test --workspace --no-run
 
 echo "=== pre-commit: frontend build ==="

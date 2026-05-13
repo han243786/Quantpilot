@@ -110,7 +110,7 @@ describe("RuntimeDiagnosticsPanel", () => {
 
     expect(screen.getAllByText("Execution rejected").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Rejected").length).toBeGreaterThan(0);
-    expect(screen.getByTestId("runtime-diagnostics-governance")).toHaveTextContent("能力边界");
+    expect(screen.getByTestId("runtime-diagnostics-governance")).toHaveTextContent("能力快照哈希");
     expect(screen.getByTestId("runtime-diagnostics-governance")).toHaveTextContent(
       "sha256:diag-c...abcdef"
     );
