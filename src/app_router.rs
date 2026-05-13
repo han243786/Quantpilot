@@ -1,5 +1,7 @@
 use super::*;
 
+// 路由版本约定: /api/v1/ 用于 Block 5 新增路由 (alerts/snapshots/runbook/chaos),
+// 其余路由使用 /api/ 前缀。后续版本统一迁移至 /api/v1/ 前缀。
 pub(super) fn build_app_router(state: AppState) -> Router {
     let router: Router<AppState> = Router::new()
         .route("/api/health", get(health))

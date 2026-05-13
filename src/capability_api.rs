@@ -152,6 +152,9 @@ pub(crate) fn build_capability_contract() -> CapabilityContract {
     }
 }
 
+/// 计算当前能力合约的 SHA-256 签名。
+/// 前端在创建运行时记录前须携带此哈希以证明其 capability 上下文与服务端一致。
+/// 哈希不匹配时服务端拒绝运行时写入（参见 validate_runtime_capability_guard）。
 pub(crate) fn capability_contract_hash(contract: &CapabilityContract) -> String {
     canonical_sha256_hash(contract)
 }

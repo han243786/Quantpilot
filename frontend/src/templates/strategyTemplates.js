@@ -213,9 +213,11 @@ export const STRATEGY_TEMPLATE_LIBRARY = [
   {
     id: "dual_ma_trend",
     title: "双均线趋势",
+    titleEn: "Dual MA Trend",
     category: "趋势",
     description:
       "双均线入场、均线偏离离场的趋势跟随起始策略图。",
+    descriptionEn: "Trend-following starter with dual-MA entry and MA-deviation exit.",
     defaultName: "双均线趋势起始模板",
     supportedModules: [
       "builtin.data.kline",
@@ -231,9 +233,11 @@ export const STRATEGY_TEMPLATE_LIBRARY = [
   {
     id: "rsi_reversion",
     title: "RSI 均值回归",
+    titleEn: "RSI Mean Reversion",
     category: "均值回归",
     description:
       "面向单一 ETH 市场数据源的轻量 RSI 均值回归起始策略图。",
+    descriptionEn: "Lightweight RSI mean-reversion starter targeting ETH market data.",
     defaultName: "RSI 均值回归起始模板",
     supportedModules: [
       "builtin.runtime.control",
@@ -249,9 +253,11 @@ export const STRATEGY_TEMPLATE_LIBRARY = [
   {
     id: "multi_symbol_rebalance",
     title: "多标的再平衡",
+    titleEn: "Multi-Symbol Rebalance",
     category: "组合",
     description:
       "使用 BTC、ETH、SOL 权重的多标的再平衡起始策略图。",
+    descriptionEn: "Multi-symbol portfolio rebalance starter with BTC, ETH, and SOL weights.",
     defaultName: "多标的再平衡起始模板",
     supportedModules: [
       "builtin.data.kline",
