@@ -1,0 +1,38 @@
+release:
+  app_name: quantpilot
+  package_id: com.quantpilot.app
+  version: 2.0.0
+  channel: stable
+  git_sha: ${GIT_SHA}
+  build_id: ${BUILD_ID}
+
+targets:
+  - os: windows
+    arch: x64
+    kind: nsis
+  - os: linux
+    arch: amd64
+    kind: docker
+
+artifacts:
+  - name: quantpilot
+    path: target/release/quantpilot
+    install_path: /opt/quantpilot/quantpilot
+    service_name: quantpilot.service
+  - name: frontend
+    path: frontend/dist
+    install_path: /opt/quantpilot/dist
+
+runtime:
+  ports:
+    - name: http
+      port: 3000
+      target_port: 3000
+  healthchecks:
+    readiness: /api/health
+    liveness: /api/health
+
+security:
+  checksum: sha256
+  sign: false
+  sbom: none

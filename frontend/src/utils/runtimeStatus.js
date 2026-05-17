@@ -1,15 +1,25 @@
-const RUNTIME_STATUS_META = {
-  idle: { label: "空闲", tone: "muted" },
-  connecting: { label: "连接中", tone: "warning" },
-  running: { label: "运行中", tone: "success" },
-  waiting: { label: "等待中", tone: "warning" },
-  completed: { label: "已完成", tone: "success" },
-  error: { label: "错误", tone: "danger" },
-  stopped: { label: "已停止", tone: "muted" }
+import { translateText } from "../i18n";
+
+const RUNTIME_TONES = {
+  idle: "muted",
+  connecting: "warning",
+  running: "success",
+  waiting: "warning",
+  completed: "success",
+  error: "danger",
+  stopped: "muted"
 };
 
 export function getRuntimeStatusMeta(status) {
-  return RUNTIME_STATUS_META[status] || { label: status || "-", tone: "muted" };
+  const label = translateText(status === "idle" ? "空闲" :
+    status === "connecting" ? "连接中" :
+    status === "running" ? "运行中" :
+    status === "waiting" ? "等待中" :
+    status === "completed" ? "已完成" :
+    status === "error" ? "错误" :
+    status === "stopped" ? "已停止" : (status || "-"));
+  const tone = RUNTIME_TONES[status] || "muted";
+  return { label, tone };
 }
 
 export function runtimeStatusLabel(status) {

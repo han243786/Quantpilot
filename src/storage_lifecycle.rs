@@ -19,17 +19,27 @@ impl StorageLifecycle {
     }
 }
 
-const GLOBAL_MAX_BYTES: u64 = 500 * 1024 * 1024;       // 500 MB
-const WARN_AT_BYTES: u64 = 400 * 1024 * 1024;           // 80%
-const FORCE_CLEAN_AT_BYTES: u64 = 450 * 1024 * 1024;    // 90%
-const REJECT_AT_BYTES: u64 = 475 * 1024 * 1024;         // 95%
 const TEMPORARY_DIR_MAX_BYTES: u64 = 200 * 1024 * 1024; // 200 MB
 const TRANSIENT_DIR_MAX_BYTES: u64 = 50 * 1024 * 1024;  // 50 MB
 
+/// v1.1.1: 从环境变量读取最大存储配额 (MB), 默认 500MB
+fn max_storage_bytes() -> u64 {
+    std::env::var("QUANTPILOT_STORAGE_MAX_MB")
+        .ok()
+        .and_then(|v| v.parse::<u64>().ok())
+        .map(|mb| mb * 1024 * 1024)
+        .unwrap_or(500 * 1024 * 1024)
+}
+
+/// v1.1.1: 根据最大配额计算各阈值
+fn reject_at_bytes() -> u64 { max_storage_bytes() * 95 / 100 }
+fn warn_at_bytes() -> u64 { max_storage_bytes() * 80 / 100 }
+fn force_clean_at_bytes() -> u64 { max_storage_bytes() * 90 / 100 }
+
 fn directory_lifecycle(dir_name: &str) -> StorageLifecycle {
     match dir_name {
-        "graphs" | "audit" => StorageLifecycle::Permanent,
-        "backtests" | "runs" | "experiments" | "approvals" | "reports" | "mutations" => StorageLifecycle::Temporary,
+        "graphs" | "audit" | ".credentials" | ".machine_key" => StorageLifecycle::Permanent,
+        "backtests" | "runs" | "experiments" | "approvals" | "reports" | "mutations" | "cache" => StorageLifecycle::Temporary,
         "ai-proposals" | "alerts" | "snapshots" | "sandbox-reports" | "chaos" => StorageLifecycle::Transient,
         _ => StorageLifecycle::Transient,
     }
@@ -62,18 +72,18 @@ fn storage_total_size(storage_root: &Path) -> u64 {
 /// 检查全局存储配额。返回 Ok(()) 或中文错误消息。
 pub fn check_storage_quota(storage_root: &Path) -> Result<(), String> {
     let total = storage_total_size(storage_root);
-    if total > REJECT_AT_BYTES {
+    if total > reject_at_bytes() {
         return Err(format!(
             "存储空间已满: 当前 {} MB, 上限 {} MB。请清理过期数据后重试",
             total / (1024 * 1024),
-            GLOBAL_MAX_BYTES / (1024 * 1024)
+            500 * 1024 * 1024 / (1024 * 1024)
         ));
     }
-    if total >= FORCE_CLEAN_AT_BYTES {
+    if total >= force_clean_at_bytes() {
         safe_eprintln!(
             "[storage] 严重告警: 总大小 {} MB 超过 90% 阈值 ({} MB), 需要立即清理",
             total / (1024 * 1024),
-            FORCE_CLEAN_AT_BYTES / (1024 * 1024)
+            force_clean_at_bytes() / (1024 * 1024)
         );
     }
     Ok(())
@@ -146,12 +156,12 @@ pub fn startup_storage_cleanup(storage_root: &Path) {
                     };
                     let aged = file_age(&meta);
                     // 90% 阈值时激进清理: 不添加安全余量
-                    let safety_margin = if total_size >= FORCE_CLEAN_AT_BYTES {
+                    let safety_margin = if total_size >= force_clean_at_bytes() {
                         Duration::from_secs(0)
                     } else {
                         Duration::from_secs(10 * 60) // 10分钟
                     };
-                    if aged.map_or(false, |age| age > ttl + safety_margin) {
+                    if aged.is_some_and(|age| age > ttl + safety_margin) {
                         if file_path.is_dir() {
                             cleaned_bytes += dir_size_bytes(&file_path);
                             let _ = std::fs::remove_dir_all(&file_path);
@@ -165,14 +175,14 @@ pub fn startup_storage_cleanup(storage_root: &Path) {
             }
         }
     }
-    if total_size > WARN_AT_BYTES {
+    if total_size > warn_at_bytes() {
         safe_eprintln!(
             "[storage] 告警: 总大小 {} MB 超过 80% 阈值 ({} MB)",
             total_size / (1024 * 1024),
-            WARN_AT_BYTES / (1024 * 1024)
+            warn_at_bytes() / (1024 * 1024)
         );
     }
-    if total_size >= FORCE_CLEAN_AT_BYTES {
+    if total_size >= force_clean_at_bytes() {
         safe_eprintln!(
             "[storage] 严重告警: 总大小 {} MB 超过 90% 阈值, 已强制清理过期暂时/瞬间数据",
             total_size / (1024 * 1024)
@@ -190,14 +200,14 @@ pub fn startup_storage_cleanup(storage_root: &Path) {
 /// 写入前配额检查，返回 io::Error 以兼容异步写入路径
 pub fn ensure_storage_quota(storage_root: &Path, dir_name: &str, lifecycle: StorageLifecycle) -> std::io::Result<()> {
     let total = storage_total_size(storage_root);
-    if total > REJECT_AT_BYTES {
+    if total > reject_at_bytes() {
         return Err(std::io::Error::other(format!(
             "存储空间已满: 当前 {} MB, 上限 {} MB。请清理过期数据后重试",
             total / (1024 * 1024),
-            GLOBAL_MAX_BYTES / (1024 * 1024)
+            500 * 1024 * 1024 / (1024 * 1024)
         )));
     }
-    if total > WARN_AT_BYTES {
+    if total > warn_at_bytes() {
         safe_eprintln!(
             "[storage] 告警: 总大小 {} MB 超过 80% 阈值",
             total / (1024 * 1024)
@@ -249,7 +259,9 @@ pub fn persist_with_ttl(
     }
 
     // 4. 写入数据
-    std::fs::write(&full_path, data).map_err(|e| format!("写入文件失败: {}", e))?;
+    let tmp = full_path.with_extension("tmp");
+    std::fs::write(&tmp, data).map_err(|e| format!("写入临时文件失败: {}", e))?;
+    std::fs::rename(&tmp, &full_path).map_err(|e| format!("重命名文件失败: {}", e))?;
 
     Ok(())
 }
@@ -268,8 +280,8 @@ pub fn cleanup_build_artifacts() {
             let ttl = Duration::from_secs(24 * 3600);
             for entry in entries.flatten() {
                 if let Ok(meta) = entry.metadata() {
-                    if file_age(&meta).map_or(false, |age| age > ttl) {
-                        let _ = std::fs::remove_dir_all(&entry.path());
+                    if file_age(&meta).is_some_and(|age| age > ttl) {
+                        let _ = std::fs::remove_dir_all(entry.path());
                     }
                 }
             }
@@ -281,7 +293,7 @@ pub fn cleanup_build_artifacts() {
         for entry in entries.flatten() {
             let name = entry.file_name().to_string_lossy().to_string();
             if name.starts_with("target-test-") && entry.path().is_dir() {
-                let _ = std::fs::remove_dir_all(&entry.path());
+                let _ = std::fs::remove_dir_all(entry.path());
                 safe_eprintln!("[storage] 已清理非标准构建目录: {}", name);
             }
         }

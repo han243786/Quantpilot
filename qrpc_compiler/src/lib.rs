@@ -19,14 +19,8 @@ use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 
-pub fn load_runtime_protocol_config(yaml: &str) -> Result<RuntimeProtocolCoreConfig> {
-    let config: RuntimeProtocolCoreConfig = serde_yaml::from_str(yaml)?;
-    validate_runtime_protocol_config(&config)?;
-    Ok(config)
-}
-
 pub fn validate_runtime_protocol_config(config: &RuntimeProtocolCoreConfig) -> Result<()> {
-    if config.initial_cash_balance <= 0.0 {
+    if !config.initial_cash_balance.is_finite() || config.initial_cash_balance <= 0.0 {
         bail!("initial_cash_balance 必须大于 0");
     }
     if config.taker_fee_bps < 0.0
@@ -362,6 +356,7 @@ pub fn lower_strategy_ir_to_core_ir(strategy_ir: &StrategyIr) -> Result<CoreStra
         max_exchange_leverage,
         min_action_interval_ms,
         enabled: true,
+                max_cross_symbol_leverage: None,
     });
 
     core_ir.validate_dag().map_err(|errs| {
@@ -664,6 +659,7 @@ fn lower_runtime_risk_to_policy(risk: &RiskConfig) -> RiskPolicy {
         max_exchange_leverage: risk.max_exchange_leverage,
         min_action_interval_ms: risk.min_action_interval_ms,
         enabled: risk.enabled,
+                max_cross_symbol_leverage: None,
     }
 }
 
@@ -1648,7 +1644,7 @@ fn validate_risk(risk: &RiskConfig, agent_ids: &BTreeSet<&str>) -> Result<()> {
     if risk.observed_agent_ids.is_empty() {
         bail!("风险 {} 必须至少观察一个代理", risk.risk_id);
     }
-    if risk.max_total_leverage <= 0.0 || risk.max_exchange_leverage <= 0.0 {
+    if !risk.max_total_leverage.is_finite() || risk.max_total_leverage <= 0.0 || !risk.max_exchange_leverage.is_finite() || risk.max_exchange_leverage <= 0.0 {
         bail!("风险 {} 杠杆限制必须大于 0", risk.risk_id);
     }
     for agent_id in &risk.observed_agent_ids {

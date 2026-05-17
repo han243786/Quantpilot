@@ -5,6 +5,7 @@ use serde::Deserialize;
 use super::test_runner::{TestReport, TestRunner, TestRunnerContext};
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct RunScenarioRequest {
     pub source: String,
 }

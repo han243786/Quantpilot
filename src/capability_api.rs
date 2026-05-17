@@ -234,8 +234,8 @@ pub(super) fn supported_named_capability(key: &'static str) -> NamedCapabilityEn
     }
 }
 
-pub(super) fn indicator_declared_only_reason(kind: IndicatorKind) -> Option<&'static str> {
-    let _ = kind;
+pub(super) fn indicator_declared_only_reason(_kind: IndicatorKind) -> Option<&'static str> {
+    // v1.2.0: 显式使用 _kind 前缀替代 let _ =，明确这是有意忽略
     None
 }
 

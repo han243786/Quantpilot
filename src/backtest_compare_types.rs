@@ -1,6 +1,7 @@
 use super::*;
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(super) struct BacktestCompareRequest {
     pub(super) backtest_ids: Vec<String>,
 }
@@ -72,9 +73,6 @@ pub(super) struct BacktestMetricsFieldDiffs {
     pub(super) max_drawdown_ratio: BacktestMetricsFieldDiff,
     pub(super) final_equity: BacktestMetricsFieldDiff,
     pub(super) net_profit: BacktestMetricsFieldDiff,
-    pub(super) turnover_ratio: BacktestMetricsFieldDiff,
-    pub(super) average_trade_notional: BacktestMetricsFieldDiff,
-    pub(super) fee_drag_ratio: BacktestMetricsFieldDiff,
 }
 
 #[derive(Debug, Serialize, Clone, PartialEq, Eq)]

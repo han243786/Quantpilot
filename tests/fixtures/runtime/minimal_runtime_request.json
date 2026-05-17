@@ -1,4 +1,26 @@
 {
+  "graph_json": {
+    "metadata": {
+      "graph_id": "graph_test",
+      "name": "Test Graph",
+      "version": "1.0.0"
+    },
+    "nodes": [
+      {"id": "data_data_1", "type": "data", "module_key": "builtin.data.kline", "config": {"exchange": "binance", "instrument": "BTCUSDT", "timeframe": "1d", "window_size": 200}},
+      {"id": "intent_intent_1", "type": "intent", "module_key": "builtin.intent.double_ma", "config": {"fast_period": 20, "slow_period": 50, "entry_ratio": 0.2}},
+      {"id": "agent_agent_1", "type": "agent", "module_key": "builtin.agent.weighted", "config": {"decision_threshold": 0.05, "max_quantity_ratio": 0.2}},
+      {"id": "risk_risk_1", "type": "risk", "module_key": "builtin.risk.global", "config": {"max_position": 0.2, "max_total_leverage": 3.0, "max_exchange_leverage": 3.0, "min_action_interval_ms": 100}},
+      {"id": "execution_execution_1", "type": "execution", "module_key": "builtin.execution.paper", "config": {"mode": "paper", "slippage_bps": 5}},
+      {"id": "runtime_runtime_1", "type": "runtime_control", "module_key": "builtin.runtime.control", "config": {"mode": "paper"}}
+    ],
+    "edges": [
+      {"source_node_id": "data_data_1", "target_node_id": "intent_intent_1", "source_port": "market_data_out", "target_port": "data_input"},
+      {"source_node_id": "intent_intent_1", "target_node_id": "agent_agent_1", "source_port": "intent_out", "target_port": "intent_input"},
+      {"source_node_id": "agent_agent_1", "target_node_id": "risk_risk_1", "source_port": "agent_out", "target_port": "agent_input"},
+      {"source_node_id": "risk_risk_1", "target_node_id": "execution_execution_1", "source_port": "risk_out", "target_port": "risk_input"},
+      {"source_node_id": "execution_execution_1", "target_node_id": "runtime_runtime_1", "source_port": "execution_out", "target_port": "runtime_input"}
+    ]
+  },
   "capability_context": {
     "schema_hash": "sha256:6c294c89c60e8ecd644c6e1b1bedf363d535d49a33a7ccd45ba79abd1524949d",
     "permission_boundary": {

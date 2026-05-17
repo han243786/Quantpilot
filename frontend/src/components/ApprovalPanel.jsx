@@ -91,7 +91,7 @@ export default function ApprovalPanel() {
   };
 
   return (
-    <main className="qp-page">
+    <main className="qp-page" role="list">
 
       <div className="approval-flex-row">
         <h1 style={{ margin: 0 }}>{t("审批队列")}</h1>
@@ -148,6 +148,9 @@ export default function ApprovalPanel() {
             onClick={() => setSelected(isExpanded ? null : approval.approval_id)}
             style={{ cursor: "pointer" }}
             role="listitem"
+            tabIndex={0}
+            aria-expanded={isExpanded}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelected(isExpanded ? null : approval.approval_id); }}}
           >
             <div className="qp-card__header">
               <div>

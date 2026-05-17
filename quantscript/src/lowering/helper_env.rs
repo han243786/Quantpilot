@@ -1,4 +1,3 @@
-use crate::diagnostics::Diagnostic;
 use crate::resolve::{ResolvedCallable, ResolvedExprSemantic, ResolvedFunction};
 use crate::script::{CallArg, MatchArmBody, Stmt};
 use anyhow::Result;

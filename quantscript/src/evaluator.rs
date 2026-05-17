@@ -817,7 +817,9 @@ fn fold_identifier_builtin(name: &str, args: &[CallArg]) -> Result<Option<Expr>>
     let positional = args.iter().map(|arg| &arg.value).collect::<Vec<_>>();
     let result = match (name, positional.as_slice()) {
         ("abs", [value]) => expr_number(value).map(|item| Expr::Number(item.abs())),
-        ("sqrt", [value]) => expr_number(value).map(|item| Expr::Number(item.sqrt())),
+        ("sqrt", [value]) => expr_number(value).and_then(|item| {
+            if item < 0.0 { None } else { Some(Expr::Number(item.sqrt())) }
+        }),
         ("sum", [value]) => expr_sum(value).map(Expr::Number),
         ("mean" | "avg", [value]) => expr_mean(value).map(Expr::Number),
         ("min", [value]) => expr_min(value).map(Expr::Number),
@@ -827,7 +829,10 @@ fn fold_identifier_builtin(name: &str, args: &[CallArg]) -> Result<Option<Expr>>
         ("first", [value]) => expr_first(value),
         ("last", [value]) => expr_last(value),
         ("pow", [left, right]) => match (expr_number(left), expr_number(right)) {
-            (Some(base), Some(exp)) => Some(Expr::Number(base.powf(exp))),
+            // v2.1.x: 拒绝负底数+非整数指数, 防止编译时 NaN 注入
+            (Some(base), Some(exp)) if base >= 0.0 || exp.fract() == 0.0 => {
+                Some(Expr::Number(base.powf(exp)))
+            }
             _ => None,
         },
         _ => None,

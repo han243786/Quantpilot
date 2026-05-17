@@ -167,7 +167,7 @@ pub fn handle_credential_command(args: &[String]) -> anyhow::Result<()> {
                 Some(fields) => {
                     if reveal {
                         for (k, v) in &fields {
-                            println!("  {} = {}", k, v);
+                            println!("  {} = {}", k, v.as_str());
                         }
                     } else {
                         let names: Vec<&String> = fields.keys().collect();

@@ -236,7 +236,7 @@ impl ScriptParser {
             } else if line.starts_with("@test ") || line.starts_with("@test{") {
                 items.push(Item::TestBlock(self.parse_test_block()?));
             } else {
-                bail!("不支持的顶级语句: {line}");
+                bail!("不支持的顶级语句 (第{}行): {line}", self.index + 1);
             }
         }
         Ok(ScriptModule { items })
@@ -301,11 +301,10 @@ impl ScriptParser {
         }
 
         // If the line doesn't end with {, the opening brace may be on the next line
-        if !line.trim_end().ends_with('{') {
-            if self.index < self.lines.len() && self.lines[self.index].trim() == "{" {
+        if !line.trim_end().ends_with('{')
+            && self.index < self.lines.len() && self.lines[self.index].trim() == "{" {
                 self.index += 1;
             }
-        }
 
         let mut actions = Vec::new();
         while let Some(peeked) = self.peek_line() {
@@ -501,11 +500,10 @@ impl ScriptParser {
     fn parse_test_action_fields(&mut self) -> Result<BTreeMap<String, String>> {
         let mut fields = BTreeMap::new();
         // Consume opening brace if present
-        if self.index < self.lines.len() {
-            if self.lines[self.index].trim() == "{" {
+        if self.index < self.lines.len()
+            && self.lines[self.index].trim() == "{" {
                 self.index += 1;
             }
-        }
         while self.index < self.lines.len() {
             let trimmed = self.lines[self.index].trim().to_string();
             if trimmed == "}" {
@@ -956,7 +954,7 @@ fn parse_duration_secs(input: &str) -> Option<u64> {
 
 pub fn parse_expr(input: &str) -> Result<Expr> {
     let tokens = tokenize_expr(input)?;
-    let mut parser = ExprParser { tokens, index: 0 };
+    let mut parser = ExprParser { tokens, index: 0, depth: 0 };
     let expr = parser.parse_expression(0)?;
     if !parser.is_eof() {
         bail!("表达式末尾存在意外的令牌: {input}");
@@ -965,7 +963,11 @@ pub fn parse_expr(input: &str) -> Result<Expr> {
 }
 
 fn parse_expr_lossy(input: &str) -> Expr {
-    parse_expr(input).unwrap_or_else(|_| Expr::Raw(input.trim().to_string()))
+    // v1.1.9: 解析失败时产生 Raw 表达式并记录警告（不再完全静默）
+    parse_expr(input).unwrap_or_else(|e| {
+        eprintln!("[quantscript] parse_expr_lossy 降级为 Raw: {} — 输入: {:?}", e, &input[..input.len().min(80)]);
+        Expr::Raw(input.trim().to_string())
+    })
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -1210,10 +1212,23 @@ fn tokenize_expr(input: &str) -> Result<Vec<ExprToken>> {
 struct ExprParser {
     tokens: Vec<ExprToken>,
     index: usize,
+    depth: u32,  // v1.1.9: 递归深度限制防DoS
 }
 
 impl ExprParser {
     fn parse_expression(&mut self, min_prec: u8) -> Result<Expr> {
+        // v1.1.9: 递归深度限制 (MAX_PARSE_DEPTH)
+        const MAX_PARSE_DEPTH: u32 = 256;
+        self.depth += 1;
+        if self.depth > MAX_PARSE_DEPTH {
+            self.depth -= 1;
+            bail!("表达式嵌套深度超过上限 ({})", MAX_PARSE_DEPTH);
+        }
+        let result = self.parse_expression_inner(min_prec);
+        self.depth -= 1;
+        result
+    }
+    fn parse_expression_inner(&mut self, min_prec: u8) -> Result<Expr> {
         let mut left = self.parse_prefix()?;
 
         loop {

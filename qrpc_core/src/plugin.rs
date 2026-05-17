@@ -22,6 +22,7 @@ pub struct AtomRef {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub struct PluginManifest {
     pub api_version: String,
     pub id: String,
@@ -49,6 +50,9 @@ pub struct PluginManifest {
     // v1.0.0: 完整资产管理能力 (热接管前提)
     #[serde(default)]
     pub asset_management: bool,
+    // v2.0.0: Ed25519 签名 (base64 编码), 用于验证 manifest 完整性
+    #[serde(default)]
+    pub signature: Option<String>,
 }
 
 impl PluginManifest {
@@ -151,6 +155,13 @@ impl PluginManifest {
         if self.security.max_memory_mb == 0 {
             errors.push("security.max_memory_mb 必须大于 0".to_string());
         }
+        // v2.1.2: enforce_max_* Some(0) 等同于 None，应拒绝
+        if self.security.enforce_max_compute_ms == Some(0) {
+            errors.push("security.enforce_max_compute_ms 为 Some(0) 无效，请使用 None 表示不限制".to_string());
+        }
+        if self.security.enforce_max_memory_mb == Some(0) {
+            errors.push("security.enforce_max_memory_mb 为 Some(0) 无效，请使用 None 表示不限制".to_string());
+        }
 
         // v1.0.0: 套件校验 — Suite 类型必须声明 atoms
         if self.plugin_type == Some(PluginType::Suite) && self.atoms.is_empty() {
@@ -160,6 +171,37 @@ impl PluginManifest {
         // v1.0.0: 热接管声明要求完整资产管理能力
         if self.hot_handoff && !self.asset_management {
             errors.push("声明 hot_handoff 的插件必须同时声明 asset_management".to_string());
+        }
+
+        // v2.1.0: entrypoint 校验 (非空 + 无路径遍历)
+        if self.execution.entrypoint.trim().is_empty() {
+            errors.push("execution.entrypoint 不能为空".to_string());
+        } else if self.execution.entrypoint.contains("..")
+            || self.execution.entrypoint.contains('/')
+            || self.execution.entrypoint.contains('\\')
+        {
+            errors.push("execution.entrypoint 不能包含路径分隔符".to_string());
+        }
+
+        // v2.1.0: 校验每个依赖的 version_req 格式
+        for dependency in &self.dependencies {
+            if dependency.version_req.trim().is_empty() {
+                errors.push(format!(
+                    "dependencies[{}].version_req 不能为空",
+                    dependency.plugin_id
+                ));
+            } else if !dependency.version_req.starts_with('>')
+                && !dependency.version_req.starts_with('<')
+                && !dependency.version_req.starts_with('=')
+                && !dependency.version_req.starts_with('^')
+                && !dependency.version_req.starts_with('~')
+                && !dependency.version_req.chars().next().unwrap_or('.').is_ascii_digit()
+            {
+                errors.push(format!(
+                    "dependencies[{}].version_req 格式无效: '{}'",
+                    dependency.plugin_id, dependency.version_req
+                ));
+            }
         }
 
         if errors.is_empty() {
@@ -307,6 +349,12 @@ pub struct PluginSecurity {
     pub max_memory_mb: u64,
     #[serde(default)]
     pub allow_network: bool,
+    // v2.0.0: 硬限制 — 子进程沙箱实际执行, 覆盖 max_compute_ms
+    #[serde(default)]
+    pub enforce_max_compute_ms: Option<u64>,
+    // v2.0.0: 硬限制 — 子进程沙箱实际执行, 覆盖 max_memory_mb
+    #[serde(default)]
+    pub enforce_max_memory_mb: Option<u64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -335,6 +383,11 @@ impl PluginRegistry {
 
     pub fn get(&self, plugin_id: &str) -> Option<&PluginManifest> {
         self.manifests.get(plugin_id)
+    }
+
+    // v2.1.0: 卸载插件时移除注册信息
+    pub fn remove(&mut self, plugin_id: &str) -> Option<PluginManifest> {
+        self.manifests.remove(plugin_id)
     }
 
     pub fn manifests_for_extension_point(
@@ -385,6 +438,8 @@ mod tests {
                 max_compute_ms: 50,
                 max_memory_mb: 64,
                 allow_network: false,
+                enforce_max_compute_ms: None,
+                enforce_max_memory_mb: None,
             },
             dependencies: vec![],
             params_schema: None,
@@ -392,6 +447,7 @@ mod tests {
             atoms: vec![],
             hot_handoff: false,
             asset_management: false,
+            signature: None,
         }
     }
 

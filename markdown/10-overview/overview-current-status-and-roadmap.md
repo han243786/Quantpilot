@@ -1,6 +1,6 @@
 # 当前状态与发布状态
 
-> 最后更新：2026-05-11 | 当前版本：v1.0.0 ✅ (19/19 完成)
+> 最后更新：2026-05-17 | 当前版本：v2.3.0 ✅ (错误国际化+TLS+JWT刷新, 31 P1/17 P2修复)
 
 ## 版本路线
 
@@ -17,6 +17,21 @@
 | v0.5.1 | ✅ | 全量审计收口排雷 15 项 |
 | v0.5.2 | ✅ | 排雷收口 16 项 — 无新功能 |
 | v1.0.0 | ✅ | 插件化架构 + 重型策略 + 超级规范化 — 19/19 完成 |
+| v1.0.3 | ✅ | 边界防御 15 项 |
+| v1.0.4 | ✅ | 诱错测试矩阵 38 场景 |
+| v1.0.5 | ✅ | 前端样式深度修复 + 六轮审计 |
+| v1.0.6 | ✅ | 用户困惑点全量优化 70/79 |
+| v1.0.7 | ✅ | 体验收口 + en-US 补齐 9/9 |
+| v1.1.0 | ✅ | 研究级回测 + 多标的策略 — 16/16 完成 |
+| v1.1.x | ✅ | 15轮PATCH: 5轮诱错(570项)S0/P1消化 |
+| v1.2.0 | ✅ | 架构优化: KlineProvider/RiskMonitor/PBKDF2/编译链/main拆分 |
+| v1.2.x | ✅ | 4轮PATCH: 确定性修复+状态机+死代码清理 |
+| v1.3.0 | ✅ | 技术债清零: AbortController/t()包裹/TTL驱逐 |
+| v1.3.x | ✅ | 7轮PATCH: 4轮诱错(80+)S0清零+快速优化 |
+| v1.4.0 | ✅ | 11轮诱错全量消化, S0清零确认, closeout |
+| v2.0.0 | ✅ | MAJOR: OKX实盘+多用户认证+插件市场+前端补全+整合包发布 |
+| v2.1.x | ✅ | 97项P1/P2/P3全量清零: 断路器+备份+checkpoint+NaN防御+死代码清理 |
+| v2.2.x | ✅ | MINOR: 架构重构(Coordinator拆分/QuantPilotError) + i18n完整化(386键/tracing/安全加固) |
 
 ### v1.0.0 三大目标
 
@@ -117,23 +132,24 @@ v0.5.1 已完成 15 项 P0/P1/P2 优化。v0.5.2 聚焦于排雷收口 — 修�
 - [支持矩阵](../03-implementation/governance/implementation-support-matrix.md)
 - [编译链合约](../03-implementation/governance/implementation-compile-chain-contract.md)
 
-当前仓库级状态 (v0.5.1):
+当前仓库级状态 (v2.1.3):
 
 | 检查项 | 状态 | 备注 |
 |--------|:--:|------|
-| `cargo check --workspace` | ✅ | 编译通过, 18 warnings |
-| `cargo test --workspace` | ✅ | 编译通过; 1 预存 MACD 测试逻辑问题 |
+| `cargo check --workspace` | ✅ | 编译通过 |
 | `cargo clippy --workspace` | ✅ | 通过 |
 | 前端 `npm run build` | ✅ | 通过 |
-| 前端 `npm run test` | ✅ | 86 文件 243 测试全部通过 |
-| 前端 `npm audit` | ✅ | 0 漏洞 |
-| 前端 `npm run test:e2e` | ❓ | 待验证 |
-| UTF-8 门禁 | ✅ | 通过 |
-| 面向用户文本门禁 | ✅ | 通过 |
-| 能力治理快照 | ✅ | 最新 |
-| npm audit (moderate+) | ✅ | 0 漏洞 |
-| 存储配额强制执行 | 🟡 | 框架已实现, 核心函数未接入 — v0.5.2 P1-2 |
-| `map_frontend_runtime_config` | ✅ | 仅剩函数定义和测试调用 — P1-1 完成 |
+| P1 消化 | ✅ | 49/49 全部完成 |
+| P2 消化 | ✅ | 28/28 全部完成 |
+| P3 消化 | ✅ | 20/20 全部完成 |
+| 断路器 (CircuitBreaker) | ✅ | 8/8 测试通过 |
+| 自动备份 | ✅ | 每日备份到 storage/backups/ |
+| Checkpoint/Restore | ✅ | Sandbox trait + handoff 实现 |
+| NaN 防御深度 | ✅ | 51 处 is_finite() 守卫 |
+| deny_unknown_fields | ✅ | 28 structs |
+| 存储配额强制执行 | ✅ | 已接入 |
+| `map_frontend_runtime_config` | ✅ | 函数已删除 (450 行死代码清理) |
+| state.rs 重复类型 | ✅ | 900+ 行孤立文件已删除 |
 
 ## V1 冻结方向
 

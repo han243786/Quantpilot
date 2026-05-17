@@ -24,24 +24,29 @@ export default function ChaosPage() {
   const [error, setError] = useState(null);
   const [creating, setCreating] = useState(false);
 
-  const fetchData = async () => {
+  const fetchData = async (signal) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/v1/chaos/experiments`);
+      const res = await fetch(`${API_BASE}/v1/chaos/experiments`, { signal });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setExperiments(Array.isArray(data) ? data : []);
     } catch (e) {
-      setError(e.message);
+      if (!signal?.aborted) setError(e.message);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchData(controller.signal);
+    return () => controller.abort();
+  }, []);
 
   const handleCreate = useCallback(async (experimentType) => {
+    if (!window.confirm("确认启动混沌实验？这可能会影响系统性能。")) return;
     setCreating(experimentType);
     try {
       const INJECTION_SPECS = {

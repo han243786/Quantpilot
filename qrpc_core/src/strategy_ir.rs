@@ -19,6 +19,7 @@ impl<T> KnownOrUnknown<T> {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub struct StrategyIr {
     pub ir_version: String,
     pub metadata: StrategyMetadata,
@@ -169,7 +170,7 @@ impl StrategyIr {
                 );
             }
             if let Some(value) = profile.max_position {
-                if value <= 0.0 {
+                if !value.is_finite() || value <= 0.0 {
                     errors.push("risk_profile.max_position 必须大于 0".to_string());
                 }
             }
@@ -305,6 +306,7 @@ impl fmt::Display for StrategyIrValidationError {
 impl std::error::Error for StrategyIrValidationError {}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct StrategyMetadata {
     pub strategy_id: String,
     pub name: String,
@@ -333,6 +335,7 @@ pub enum StrategySourceType {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub struct SignalDefinition {
     pub signal_id: String,
     pub name: String,
@@ -342,6 +345,7 @@ pub struct SignalDefinition {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub struct IndicatorDefinition {
     pub kind: IndicatorKind,
     pub inputs: Vec<String>,
@@ -423,6 +427,7 @@ pub fn supported_indicator_kinds() -> &'static [IndicatorKind] {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub struct StrategyLogic {
     pub entry_rules: Vec<LogicRule>,
     #[serde(default)]
@@ -482,6 +487,7 @@ pub struct RebalanceRule {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub struct StrategyRiskRules {
     pub max_position_ratio: KnownOrUnknown<f64>,
     pub stop_loss_ratio: KnownOrUnknown<f64>,
@@ -506,6 +512,7 @@ pub struct StrategyRiskProfileRef {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub struct DataRequirement {
     pub data_id: String,
     pub venue: KnownOrUnknown<String>,
@@ -528,6 +535,7 @@ pub enum DataRequirementType {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub struct StrategyExecution {
     pub venue_type: KnownOrUnknown<String>,
     pub order_type: KnownOrUnknown<String>,

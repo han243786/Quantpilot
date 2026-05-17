@@ -602,7 +602,7 @@
   grid-template-columns: 260px minmax(0, 1fr) 340px;
   min-height: 720px;
   height: calc(100vh - 245px);
-  overflow: hidden;
+  overflow: auto;
 }
 
 .strategy-workspace-builder--split {

@@ -282,3 +282,31 @@
   0%, 100% { opacity: 0.4; }
   50% { opacity: 0.8; }
 }
+
+/* v1.1.0 P2: 月度收益率热力图 */
+.monthly-heatmap {
+  border-collapse: collapse;
+  font-size: 12px;
+  width: 100%;
+}
+.monthly-heatmap th,
+.monthly-heatmap td {
+  text-align: center;
+  padding: 4px 6px;
+}
+.heatmap-month-header,
+.heatmap-year-header {
+  color: var(--ad-text-muted);
+  font-weight: 500;
+}
+.heatmap-year-label {
+  color: var(--ad-text);
+  font-weight: 600;
+}
+.heatmap-cell {
+  border-radius: 2px;
+  min-width: 44px;
+}
+.heatmap-year-return {
+  border-left: 2px solid var(--ad-border);
+}

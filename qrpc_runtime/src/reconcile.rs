@@ -89,7 +89,7 @@ impl OrderReconciler {
                 "filled" | "cancelled" | "expired" | "rejected"
             );
 
-            let externally_resolved = external_map.get(&order.order_id).map_or(false, |ext| {
+            let externally_resolved = external_map.get(&order.order_id).is_some_and(|ext| {
                 matches!(
                     ext,
                     ExecutionStatus::Filled
@@ -114,7 +114,7 @@ impl OrderReconciler {
                 }
                 ReconcileStrategy::ReduceOnly => {
                     if matches!(order.side, OrderSide::Sell)
-                        && order.remaining_qty > 0.0
+                        && order.remaining_qty.is_finite() && order.remaining_qty > 0.0
                     {
                         retained.push(order.order_id.clone());
                     } else {
@@ -185,7 +185,7 @@ impl OrderReconciler {
 }
 
 fn order_remaining_status(order: &OpenOrder) -> &'static str {
-    if order.remaining_qty <= 0.0 {
+    if !order.remaining_qty.is_finite() || order.remaining_qty <= 0.0 {
         "filled"
     } else {
         "open"

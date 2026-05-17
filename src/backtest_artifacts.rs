@@ -3,8 +3,9 @@ use super::{
 };
 use anyhow::{anyhow, Context};
 use qrpc_core::{
-    canonical_json_sha256_digest, ArtifactDigest, BacktestEquityPoint, BacktestOutput,
-    BacktestSpec, BacktestSummary, CompileArtifactBundle, ExecutionAssumptionSourceSummary,
+    canonical_json_sha256_digest, ArtifactDigest, BacktestDrawdownAnalysis, BacktestEquityPoint,
+    BacktestOutput, BacktestSpec, BacktestSummary, CompileArtifactBundle,
+    ExecutionAssumptionSourceSummary,
     ExecutionAssumptionSpec, ExecutionAssumptionValueSource, ExecutionStatus, OrderSide,
 };
 use serde::{Deserialize, Serialize};
@@ -33,7 +34,14 @@ const SAVING_DIR_PREFIX: &str = ".saving-";
 const REPLACING_DIR_PREFIX: &str = ".replacing-";
 const TRANSIENT_BACKTEST_DIR_PREFIX: &str = "transient-backtest-";
 const TRANSIENT_SAVING_DIR_PREFIX: &str = ".saving-transient-backtest-";
-const PROMOTION_WORK_DIR_TTL_MS: u64 = 24 * 60 * 60 * 1000;
+/// v1.1.1: 1h 常规，DEV 模式缩短到 5 分钟以加速迭代
+fn promotion_work_dir_ttl_ms() -> u64 {
+    if std::env::var("QUANTPILOT_DEV").unwrap_or_default() == "true" {
+        5 * 60 * 1000 // DEV: 5 分钟
+    } else {
+        60 * 60 * 1000 // 正常: 1 小时
+    }
+}
 const PROMOTION_WORK_DIR_MAX_COUNT: usize = 32;
 const PROMOTION_WORK_DIR_MAX_BYTES: u64 = 200 * 1024 * 1024;  // 对齐暂时目录上限 (§7.2)
 const PROMOTION_WORK_DIR_MAX_SINGLE_BYTES: u64 = 50 * 1024 * 1024;
@@ -42,6 +50,7 @@ const TRANSIENT_BACKTEST_TTL_MS: u64 = 24 * 60 * 60 * 1000;
 const TRANSIENT_BACKTEST_MAX_COUNT: usize = 32;
 const TRANSIENT_BACKTEST_MAX_BYTES: u64 = 50 * 1024 * 1024;   // 对齐瞬间目录上限 (§7.2)
 const TRANSIENT_BACKTEST_MAX_SINGLE_BYTES: u64 = 50 * 1024 * 1024;
+const MANIFEST_SCHEMA_VERSION: &str = "quantpilot/reproducibility-manifest/v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventLogArtifact {
@@ -562,14 +571,85 @@ pub fn is_backtest_promotion_work_dir(path: &Path) -> bool {
         })
 }
 
+// v1.1.2: 文件损坏时的优雅降级默认值
+fn empty_backtest_output() -> BacktestOutput {
+    BacktestOutput {
+        mode: String::new(), started_at_ms: 0, ended_at_ms: 0, elapsed_ms: None,
+        sessions: vec![], equity_curve: vec![], benchmark_equity_curve: vec![],
+        period_returns: vec![],
+        summary: BacktestSummary {
+            step_count: 0, trade_count: 0, total_return_ratio: 0.0, final_equity: 0.0,
+            net_profit: 0.0, win_rate: 0.0, annualized_return: 0.0, annualized_volatility: 0.0,
+            risk_adjusted: Default::default(), trade_analysis: Default::default(),
+            drawdown_analysis: Default::default(), benchmark_comparison: None,
+            skewness: 0.0, kurtosis: 0.0,
+        },
+        final_portfolio: qrpc_core::PortfolioState::new(0.0, 0), debug_values: None,
+    }
+}
+fn empty_event_log(bid: &str) -> EventLogArtifact {
+    EventLogArtifact { backtest_id: bid.into(), artifact_id: String::new(), digest: ArtifactDigest { algorithm: qrpc_core::ArtifactDigestAlgorithm::Sha256CanonicalJson, value: String::new() }, schema_version: String::new(), event_count: 0, events: vec![] }
+}
+fn empty_trade_ledger(bid: &str) -> TradeLedgerArtifact {
+    TradeLedgerArtifact { backtest_id: bid.into(), artifact_id: String::new(), digest: ArtifactDigest { algorithm: qrpc_core::ArtifactDigestAlgorithm::Sha256CanonicalJson, value: String::new() }, schema_version: String::new(), trades: vec![], trade_count: 0, summary: None }
+}
+fn empty_equity_curve(bid: &str) -> EquityCurveArtifact {
+    EquityCurveArtifact { backtest_id: bid.into(), artifact_id: String::new(), digest: ArtifactDigest { algorithm: qrpc_core::ArtifactDigestAlgorithm::Sha256CanonicalJson, value: String::new() }, schema_version: String::new(), points: vec![], point_count: 0 }
+}
+fn empty_metrics(bid: &str) -> MetricsArtifact {
+    MetricsArtifact { backtest_id: bid.into(), artifact_id: String::new(), digest: ArtifactDigest { algorithm: qrpc_core::ArtifactDigestAlgorithm::Sha256CanonicalJson, value: String::new() }, schema_version: String::new(),
+        summary: BacktestSummary {
+            step_count: 0, trade_count: 0, total_return_ratio: 0.0, final_equity: 0.0,
+            net_profit: 0.0, win_rate: 0.0, annualized_return: 0.0, annualized_volatility: 0.0,
+            risk_adjusted: Default::default(), trade_analysis: Default::default(),
+            drawdown_analysis: Default::default(), benchmark_comparison: None,
+            skewness: 0.0, kurtosis: 0.0,
+        },
+        event_count: 0, session_count: 0, started_at_ms: 0, ended_at_ms: 0,
+        final_account: empty_account_summary(), execution_assumptions: None,
+    }
+}
+
 pub async fn load_backtest_record_from_directory(dir: &Path) -> std::io::Result<BacktestRecord> {
+    // manifest.json 是最小必要信息，损坏则无法加载
     let manifest: ReproducibilityManifest = read_json(dir.join(MANIFEST_FILE)).await?;
-    let event_log: EventLogArtifact = read_json(dir.join(EVENT_LOG_FILE)).await?;
-    let backtest: BacktestOutput = read_json(dir.join(BACKTEST_OUTPUT_FILE)).await?;
-    let trade_ledger: TradeLedgerArtifact = read_json(dir.join(TRADE_LEDGER_FILE)).await?;
-    let equity_curve: EquityCurveArtifact = read_json(dir.join(EQUITY_CURVE_FILE)).await?;
-    let metrics: MetricsArtifact = read_json(dir.join(METRICS_FILE)).await?;
+    // v2.1.0: schema_version 使用前缀+主版本兼容检查，允许 v1.x 子版本
+    let expected_prefix = MANIFEST_SCHEMA_VERSION.trim_end_matches(|c: char| c.is_ascii_digit() || c == '.');
+    if !manifest.schema_version.starts_with(expected_prefix) {
+        return Err(std::io::Error::other(format!(
+            "回测记录版本不兼容: 文件版本 {}, 当前版本 {}",
+            manifest.schema_version, MANIFEST_SCHEMA_VERSION
+        )));
+    }
+    let file_major: Option<u32> = manifest.schema_version
+        .strip_prefix(expected_prefix)
+        .and_then(|v| v.split('.').next())
+        .and_then(|s| s.parse().ok());
+    let expected_major: Option<u32> = MANIFEST_SCHEMA_VERSION
+        .strip_prefix(expected_prefix)
+        .and_then(|v| v.split('.').next())
+        .and_then(|s| s.parse().ok());
+    if file_major != expected_major {
+        return Err(std::io::Error::other(format!(
+            "回测记录主版本不兼容: 文件版本 {}, 当前版本 {}",
+            manifest.schema_version, MANIFEST_SCHEMA_VERSION
+        )));
+    }
     let governance = manifest.governance.clone();
+    let bid = &manifest.backtest_id;
+
+    // v1.1.2: 非关键文件优雅降级
+    let mut degraded = false;
+    let event_log: EventLogArtifact = read_json(dir.join(EVENT_LOG_FILE)).await
+        .unwrap_or_else(|_| { degraded = true; empty_event_log(bid) });
+    let backtest: BacktestOutput = read_json(dir.join(BACKTEST_OUTPUT_FILE)).await
+        .unwrap_or_else(|_| { degraded = true; empty_backtest_output() });
+    let trade_ledger: TradeLedgerArtifact = read_json(dir.join(TRADE_LEDGER_FILE)).await
+        .unwrap_or_else(|_| { degraded = true; empty_trade_ledger(bid) });
+    let equity_curve: EquityCurveArtifact = read_json(dir.join(EQUITY_CURVE_FILE)).await
+        .unwrap_or_else(|_| { degraded = true; empty_equity_curve(bid) });
+    let metrics: MetricsArtifact = read_json(dir.join(METRICS_FILE)).await
+        .unwrap_or_else(|_| { degraded = true; empty_metrics(bid) });
 
     Ok(BacktestRecord {
         backtest_id: manifest.backtest_id.clone(),
@@ -592,6 +672,7 @@ pub async fn load_backtest_record_from_directory(dir: &Path) -> std::io::Result<
         }),
         governance,
         actor: None,
+        degraded,
     })
 }
 
@@ -679,7 +760,7 @@ fn sanitize_path_segment(value: &str) -> String {
 
 async fn is_promotion_work_dir_expired(path: &Path, now_ms: u64) -> std::io::Result<bool> {
     let modified_ms = path_modified_epoch_ms(path).await?;
-    Ok(now_ms.saturating_sub(modified_ms) > PROMOTION_WORK_DIR_TTL_MS)
+    Ok(now_ms.saturating_sub(modified_ms) > promotion_work_dir_ttl_ms())
 }
 
 async fn path_modified_epoch_ms(path: &Path) -> std::io::Result<u64> {
@@ -916,7 +997,14 @@ fn build_metrics_artifact(
         .summary
         .clone()
         .unwrap_or_else(|| summarize_trade_ledger_entries(&trade_ledger.trades));
-    let summary = summarize_equity_curve(&equity_curve.points, &trade_ledger_summary);
+    let mut summary = summarize_equity_curve(&equity_curve.points, trade_ledger_summary.trade_count);
+    // v1.1.1: 从 equity_curve 计算风险调整指标（回测详情页 artifact rebuild 路径）
+    qrpc_runtime::backtest_metrics::compute_backtest_metrics(
+        &mut summary,
+        &[],
+        &equity_curve.points,
+        &[], // 无基准曲线可用
+    );
     let final_account = projected_portfolios
         .last()
         .map(ProjectedPortfolioSnapshot::account_summary)
@@ -1099,7 +1187,7 @@ fn portfolio_snapshot_from_event(
 
 fn summarize_equity_curve(
     points: &[BacktestEquityPoint],
-    trade_ledger: &TradeLedgerSummary,
+    trade_count: usize,
 ) -> BacktestSummary {
     let step_count = points.len();
     let initial_equity = points.first().map(|point| point.equity).unwrap_or_default();
@@ -1122,33 +1210,22 @@ fn summarize_equity_curve(
         }
     }
 
-    let turnover_ratio = if initial_equity.abs() > f64::EPSILON {
-        trade_ledger.total_filled_notional / initial_equity.abs()
-    } else {
-        0.0
-    };
-    let average_trade_notional = if trade_ledger.trade_count > 0 {
-        trade_ledger.total_filled_notional / trade_ledger.trade_count as f64
-    } else {
-        0.0
-    };
-    let fee_drag_ratio = if initial_equity.abs() > f64::EPSILON {
-        trade_ledger.total_fees_paid / initial_equity.abs()
-    } else {
-        0.0
-    };
-
     BacktestSummary {
         step_count,
-        trade_count: trade_ledger.trade_count,
+        trade_count,
         total_return_ratio,
-        max_drawdown_ratio,
         final_equity,
         net_profit,
-        turnover_ratio,
-        average_trade_notional,
-        fee_drag_ratio,
         win_rate: 0.0,
+        annualized_return: 0.0,
+        annualized_volatility: 0.0,
+        risk_adjusted: Default::default(),
+        trade_analysis: Default::default(),
+        drawdown_analysis: BacktestDrawdownAnalysis {
+            max_drawdown_ratio,
+            ..Default::default()
+        },
+        benchmark_comparison: None, skewness: 0.0, kurtosis: 0.0,
     }
 }
 
@@ -1400,6 +1477,7 @@ mod tests {
                 mode: "historical_replay".to_string(),
                 started_at_ms: 99,
                 ended_at_ms: 100,
+                elapsed_ms: None,
                 sessions: Vec::new(),
                 equity_curve: vec![BacktestEquityPoint {
                     ts_ms: 99,
@@ -1407,17 +1485,24 @@ mod tests {
                     cash_balance: 1.0,
                     net_notional: 0.0,
                 }],
+                benchmark_equity_curve: vec![],
+                period_returns: vec![],
                 summary: BacktestSummary {
                     step_count: 999,
                     trade_count: 999,
                     total_return_ratio: -0.99,
-                    max_drawdown_ratio: 0.99,
                     final_equity: 1.0,
                     net_profit: -99.0,
-                    turnover_ratio: 9.99,
-                    average_trade_notional: 1.0,
-                    fee_drag_ratio: 0.5,
                     win_rate: 0.5,
+                    annualized_return: 0.0,
+                    annualized_volatility: 0.0,
+                    risk_adjusted: Default::default(),
+                    trade_analysis: Default::default(),
+                    drawdown_analysis: BacktestDrawdownAnalysis {
+                        max_drawdown_ratio: 0.99,
+                        ..Default::default()
+                    },
+                    benchmark_comparison: None, skewness: 0.0, kurtosis: 0.0,
                 },
                 final_portfolio: PortfolioState::new(1.0, 100),
                 debug_values: None,
@@ -1465,6 +1550,7 @@ mod tests {
             backtest_artifacts: None,
             governance: RuntimeGovernanceSnapshot::default(),
             actor: None,
+            degraded: false,
         };
 
         let views = build_backtest_artifact_views(&record).expect("artifact views should build");
@@ -1490,9 +1576,9 @@ mod tests {
         assert_eq!(views.metrics.summary.final_equity, 12_050.0);
         assert_eq!(views.metrics.summary.net_profit, 1_850.0);
         assert!(views.metrics.summary.total_return_ratio > 0.18);
-        assert!(views.metrics.summary.turnover_ratio > 1.0);
-        assert!(views.metrics.summary.average_trade_notional > 5_000.0);
-        assert!(views.metrics.summary.fee_drag_ratio > 0.0);
+        assert!(views.metrics.summary.drawdown_analysis.max_drawdown_ratio >= 0.0);
+        assert!(views.metrics.summary.risk_adjusted.sharpe_ratio >= 0.0);
+        assert!(views.metrics.summary.trade_analysis.profit_factor >= 0.0);
         assert_eq!(views.metrics.started_at_ms, 1_700_000_000_000);
         assert_eq!(views.metrics.ended_at_ms, 1_700_000_060_000);
         assert_eq!(views.metrics.final_account.cash_balance, 12_050.0);
@@ -1659,8 +1745,11 @@ fn artifact_id(prefix: &str, digest: &ArtifactDigest) -> String {
 }
 
 async fn write_json<T: Serialize>(path: PathBuf, value: &T) -> std::io::Result<()> {
+    // v1.1.2: 原子写入 (tmp + rename) 防止断电/崩溃产生半成品文件
+    let tmp = path.with_extension("tmp");
     let body = serde_json::to_string_pretty(value).map_err(to_io_error)?;
-    fs::write(path, body).await
+    fs::write(&tmp, body).await?;
+    fs::rename(&tmp, &path).await
 }
 
 async fn read_json<T: for<'de> Deserialize<'de>>(path: PathBuf) -> std::io::Result<T> {

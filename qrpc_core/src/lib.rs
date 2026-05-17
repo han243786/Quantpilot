@@ -1,3 +1,4 @@
+pub mod error;
 mod plugin;
 mod strategy_ir;
 
@@ -134,6 +135,12 @@ pub enum OrderSide {
     Sell,
 }
 
+impl std::fmt::Display for OrderSide {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", serde_json::to_string(self).unwrap_or_else(|_| format!("{:?}", self)))
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum OrderType {
     Market,
@@ -182,6 +189,10 @@ pub enum RiskReasonCode {
     InsufficientInventory,
     CostNotCovered,
     InvalidAction,
+    /// v1.2.0: 当日累计亏损超过限制（RiskMonitor 触发）
+    ExceedDailyLoss,
+    /// v1.2.0: 实时回撤超过限制（RiskMonitor 触发）
+    ExceedDrawdown,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -216,7 +227,7 @@ pub struct DataQualitySnapshot {
     #[serde(default)]
     pub stale_after_ms: u64,
     #[serde(default)]
-    pub gap_count: u32,
+    pub gap_count: u64, // v2.1.x: u32→u64 防截断
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub quality_flags: Vec<String>,
 }
@@ -407,6 +418,11 @@ pub struct ArtifactDigest {
     pub value: String,
 }
 
+/// 计算规范 JSON 的 SHA-256 摘要。依赖默认 BTreeMap 键排序保证确定性。
+///
+/// **禁止**在依赖链中启用 `serde_json/features = ["preserve_order"]`，
+/// 该 feature 会破坏快照签名和跨版本回测的可重现性。
+/// 验证: `cargo tree -p serde_json -e features | grep preserve_order` 应返回空。
 pub fn canonical_json_sha256_digest<T: Serialize + ?Sized>(
     value: &T,
 ) -> serde_json::Result<ArtifactDigest> {
@@ -986,23 +1002,98 @@ pub struct BacktestEquityPoint {
     pub net_notional: f64,
 }
 
+/// v1.1.0: 风险调整收益指标组
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct BacktestRiskAdjusted {
+    #[serde(default)]
+    pub sharpe_ratio: f64,
+    #[serde(default)]
+    pub sortino_ratio: f64,
+    #[serde(default)]
+    pub calmar_ratio: f64,
+    /// v1.1.0 P2: 95% VaR (日收益率, 历史模拟法)
+    #[serde(default)]
+    pub var_95: f64,
+    /// v1.1.0 P2: 95% CVaR / Expected Shortfall
+    #[serde(default)]
+    pub cvar_95: f64,
+}
+
+/// v1.1.0: 交易分析指标组
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct BacktestTradeAnalysis {
+    #[serde(default)]
+    pub profit_factor: f64,
+    #[serde(default)]
+    pub avg_win: f64,
+    #[serde(default)]
+    pub avg_loss: f64,
+    #[serde(default)]
+    pub max_consecutive_wins: u32,
+    #[serde(default)]
+    pub max_consecutive_losses: u32,
+}
+
+/// v1.1.0: 回撤分析指标组
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct BacktestDrawdownAnalysis {
+    #[serde(default)]
+    pub max_drawdown_ratio: f64,
+    #[serde(default)]
+    pub max_drawdown_duration_days: f64,
+    #[serde(default)]
+    pub avg_drawdown_duration_days: f64,
+}
+
+/// v1.1.0: 基准比较指标组 — None 表示基准未启用
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BacktestBenchmarkComparison {
+    #[serde(default)]
+    pub benchmark_total_return: f64,
+    #[serde(default)]
+    pub alpha: f64,
+    #[serde(default)]
+    pub beta: f64,
+    #[serde(default)]
+    pub information_ratio: f64,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BacktestSummary {
     pub step_count: usize,
     pub trade_count: usize,
     pub total_return_ratio: f64,
-    pub max_drawdown_ratio: f64,
     pub final_equity: f64,
     #[serde(default)]
     pub net_profit: f64,
     #[serde(default)]
-    pub turnover_ratio: f64,
-    #[serde(default)]
-    pub average_trade_notional: f64,
-    #[serde(default)]
-    pub fee_drag_ratio: f64,
-    #[serde(default)]
     pub win_rate: f64,
+    #[serde(default)]
+    pub annualized_return: f64,
+    #[serde(default)]
+    pub annualized_volatility: f64,
+    #[serde(default)]
+    pub risk_adjusted: BacktestRiskAdjusted,
+    #[serde(default)]
+    pub trade_analysis: BacktestTradeAnalysis,
+    #[serde(default)]
+    pub drawdown_analysis: BacktestDrawdownAnalysis,
+    #[serde(default)]
+    pub benchmark_comparison: Option<BacktestBenchmarkComparison>,
+    /// v1.1.0 P2: 日收益率偏度 (正偏 = 多小亏少大赚)
+    #[serde(default)]
+    pub skewness: f64,
+    /// v1.1.0 P2: 日收益率峰度 (高值 = 肥尾风险)
+    #[serde(default)]
+    pub kurtosis: f64,
+}
+
+/// v1.1.0 P2: 月度/季度收益率分解
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PeriodReturn {
+    pub period: String,  // e.g. "2025-01", "2025-Q1", "2025"
+    pub return_ratio: f64,
+    pub trade_count: u32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1010,8 +1101,17 @@ pub struct BacktestOutput {
     pub mode: String,
     pub started_at_ms: u64,
     pub ended_at_ms: u64,
+    /// v1.3.4: 回测实际墙钟耗时（毫秒）
+    #[serde(default)]
+    pub elapsed_ms: Option<u64>,
     pub sessions: Vec<SessionOutput>,
     pub equity_curve: Vec<BacktestEquityPoint>,
+    /// v1.1.0: 买入持有基准权益曲线（等权重持有全部交易标的）
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub benchmark_equity_curve: Vec<BacktestEquityPoint>,
+    /// v1.1.0 P2: 月度/季度/年度收益率分解
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub period_returns: Vec<PeriodReturn>,
     pub summary: BacktestSummary,
     pub final_portfolio: PortfolioState,
     #[serde(default)]

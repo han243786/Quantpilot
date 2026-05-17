@@ -227,28 +227,16 @@ async fn compute_comparison_metrics(
 fn backtest_to_sandbox_metrics(backtest: &BacktestRecord) -> SandboxMetrics {
     let summary = &backtest.backtest.summary;
     let total_return = summary.total_return_ratio;
-    let max_drawdown = summary.max_drawdown_ratio.max(0.001);
+    let max_drawdown = summary.drawdown_analysis.max_drawdown_ratio.max(0.001);
     SandboxMetrics {
         total_return_ratio: total_return,
         max_drawdown_ratio: max_drawdown,
-        sharpe_ratio: if max_drawdown > 0.0 {
-            total_return / max_drawdown * 0.5
-        } else {
-            0.0
-        },
-        win_rate: if summary.trade_count > 0 {
-            summary.trade_count as f64 / (summary.trade_count as f64 + 1.0) * 0.55
-        } else {
-            0.0
-        },
+        sharpe_ratio: summary.risk_adjusted.sharpe_ratio,
+        win_rate: summary.win_rate,
         avg_hold_hours: 48.0,
-        turnover_ratio: summary.turnover_ratio,
-        profit_factor: if summary.net_profit > 0.0 { 1.8 } else { 1.0 },
-        calmar_ratio: if max_drawdown > 0.0 {
-            total_return / max_drawdown
-        } else {
-            0.0
-        },
+        turnover_ratio: 0.0, // 从 BacktestSummary 移除，由 trade ledger 计算
+        profit_factor: summary.trade_analysis.profit_factor,
+        calmar_ratio: summary.risk_adjusted.calmar_ratio,
     }
 }
 

@@ -12,7 +12,7 @@ pub(super) fn compile_diagnostic_from_script_diagnostic(
         message: diagnostic.message.clone(),
         span_label: diagnostic.span.as_ref().map(|span| span.label.clone()),
         target: None,
-        hint: None,
+        hint: diagnostic.hint.clone(),
     }
 }
 
@@ -24,7 +24,7 @@ pub(super) fn api_error_detail_from_script_diagnostic(
         target: None,
         message: diagnostic.message.clone(),
         span_label: diagnostic.span.as_ref().map(|span| span.label.clone()),
-        reason: None,
+        reason: diagnostic.hint.clone(),
     }
 }
 

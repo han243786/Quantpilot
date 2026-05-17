@@ -3,7 +3,7 @@
   "$id": "https://quantpilot.local/schema/strategy_ir.v0.schema.json",
   "title": "QuantPilot Strategy IR v0",
   "type": "object",
-  "additionalProperties": false,
+  "additionalProperties": true,
   "required": [
     "ir_version",
     "metadata",
@@ -68,7 +68,7 @@
             "properties": {
               "kind": {
                 "type": "string",
-                "enum": ["ma_cross", "rsi", "macd", "momentum", "spread", "z_score", "custom"]
+                "enum": ["ma_cross", "rsi", "macd", "momentum", "spread", "z_score", "custom", "quote_observe", "atr", "bollinger_bands", "obv", "cmf", "adx", "stochastic", "cci", "parabolic_sar", "keltner_channel", "donchian_channel"]
               },
               "inputs": {
                 "type": "array",

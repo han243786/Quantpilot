@@ -12,28 +12,48 @@ export default function SnapshotsPage() {
   const [creating, setCreating] = useState(false);
   const [restoring, setRestoring] = useState(null);
 
-  const fetchData = async () => {
+  const fetchData = async (signal) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/v1/snapshots`);
+      const res = await fetch(`${API_BASE}/v1/snapshots`, { signal });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      // v1.0.5: 自动解包分页响应 {data, total, limit, offset}
       setSnapshots(Array.isArray(data) ? data : (data?.data || []));
     } catch (e) {
-      setError(e.message);
+      if (!signal?.aborted) setError(e.message);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  // v1.2.4: AbortController 防止卸载后 setState
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchData(controller.signal);
+    return () => controller.abort();
+  }, []);
 
   const handleCreate = useCallback(async () => {
     setCreating(true);
     try {
-      await fetch(`${API_BASE}/v1/snapshots/create`, { method: "POST" });
+      const now = Date.now();
+      await fetch(`${API_BASE}/v1/snapshots/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          deployment_revision: "frontend-snapshot-" + now,
+          capability_hash: "sha256:none",
+          strategy_version: "v1",
+          parameter_version: "p1",
+          core_ir_digest: "sha256:none",
+          from_event_id: "evt-0",
+          to_event_id: "evt-" + now,
+          from_sequence: 0,
+          to_sequence: 0,
+          event_count: 0,
+        }),
+      });
       fetchData();
     } catch (_) {}
     setCreating(false);

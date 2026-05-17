@@ -8,6 +8,5 @@ anyhow = "1"
 qrpc-core = { path = "../qrpc_core" }
 qrpc-core-ir = { path = "../qrpc_core_ir" }
 serde_json = "1"
-serde_yaml = "0.9"
 sha2 = { workspace = true }
 

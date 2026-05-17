@@ -60,6 +60,19 @@ pub(super) fn new_app_state(
             .unwrap_or_default(),
     );
 
+    // v2.0.0: 初始化认证 SQLite 数据库
+    let db = {
+        let _ = std::fs::create_dir_all("storage");
+        super::auth::init_db(std::path::Path::new("storage/auth.db"))
+            .map_err(|e| {
+                safe_eprintln!("[启动] 认证数据库未加载: {} (用户认证将不可用)", e);
+                e
+            })
+            .ok()
+            .map(std::sync::Mutex::new)
+            .map(Arc::new)
+    };
+
     AppState {
         run_in_progress: Arc::new(std::sync::atomic::AtomicBool::new(false)),
         credential_vault,
@@ -93,34 +106,51 @@ pub(super) fn new_app_state(
         snapshot_store_dir: Arc::new(snapshot_store_dir),
         chaos_store_dir: Arc::new(chaos_store_dir),
         chaos_mode: Arc::new(std::sync::atomic::AtomicBool::new(false)),
+        db,
         config_generation: Arc::new(std::sync::atomic::AtomicU64::new(1)),
-        config_generation_history: Arc::new(std::sync::Mutex::new(Vec::new())),
+        config_generation_history: Arc::new(tokio::sync::Mutex::new(Vec::new())),
         #[cfg(test)]
         test_storage_root: None,
     }
 }
 
 fn transient_backtest_store_dir_from_backtest_store_dir(backtest_store_dir: &FsPath) -> PathBuf {
+    // v2.1.0: 瞬态回测目录移到 storage/ 内纳入配额管理
     let parent = backtest_store_dir
         .parent()
         .unwrap_or_else(|| FsPath::new("."));
-    let project_root = if parent.file_name().is_some_and(|name| name == "storage") {
-        parent
-            .parent()
-            .filter(|path| !path.as_os_str().is_empty())
-            .unwrap_or_else(|| FsPath::new("."))
+    if parent.file_name().is_some_and(|name| name == "storage") {
+        parent.join("transient").join("backtests")
     } else {
-        parent
-    };
-
-    project_root
-        .join(".quantpilot-tmp")
-        .join("runtime-artifacts")
-        .join("backtests")
+        // 回退: 在 storage/ 下创建
+        FsPath::new("storage").join("transient").join("backtests")
+    }
 }
 
-pub(super) async fn health() -> impl IntoResponse {
-    Json(HealthResponse { status: "ok" })
+/// v2.2.1: 健康检查返回组件级状态
+pub(super) async fn health(State(state): State<AppState>) -> impl IntoResponse {
+    static START_TIME: std::sync::OnceLock<std::time::Instant> = std::sync::OnceLock::new();
+    let start = START_TIME.get_or_init(std::time::Instant::now);
+
+    // 检测各组件状态
+    let vault_ok = state.credential_vault.is_some();
+    let db_ok = state.db.is_some();
+    let storage_ok = std::path::Path::new("storage").try_exists().unwrap_or(false);
+    let alert_count = state.alert_firings.read().await.len();
+
+    let overall = if vault_ok && storage_ok { "ok" } else { "degraded" };
+
+    Json(serde_json::json!({
+        "status": overall,
+        "version": env!("CARGO_PKG_VERSION"),
+        "uptime_secs": start.elapsed().as_secs(),
+        "components": {
+            "credential_vault": { "status": if vault_ok { "ok" } else { "unavailable" } },
+            "auth_database": { "status": if db_ok { "ok" } else { "unconfigured" } },
+            "storage": { "status": if storage_ok { "ok" } else { "unavailable" } },
+        },
+        "active_alerts": alert_count,
+    }))
 }
 
 pub(super) fn artifact_replay_source(

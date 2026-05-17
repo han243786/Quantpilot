@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import TopToolbar from "./TopToolbar";
+import { I18nProvider } from "../i18n";
 import { useGraphStore } from "../store/graphStore";
 
 function buildGraph(overrides = {}) {
@@ -74,7 +75,7 @@ describe("TopToolbar save/load failure notices", () => {
       });
     });
 
-    render(<TopToolbar />);
+    render(<I18nProvider><TopToolbar /></I18nProvider>);
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "保存策略图" }));
     });
@@ -94,7 +95,7 @@ describe("TopToolbar save/load failure notices", () => {
       });
     });
 
-    render(<TopToolbar />);
+    render(<I18nProvider><TopToolbar /></I18nProvider>);
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "加载最新" }));
     });

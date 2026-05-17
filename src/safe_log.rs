@@ -1,10 +1,34 @@
-use std::sync::Mutex;
+use std::sync::RwLock;
+use zeroize::Zeroizing;
 
-static EXTRA_PATTERNS: Mutex<Vec<String>> = Mutex::new(Vec::new());
+// v2.1.0: 日志级别配置 (QUANTPILOT_LOG_LEVEL=error|warn|info|debug, 默认info)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum LogLevel {
+    Error = 0,
+    Warn = 1,
+    Info = 2,
+    Debug = 3,
+}
+
+pub fn configured_log_level() -> LogLevel {
+    static LEVEL: std::sync::OnceLock<LogLevel> = std::sync::OnceLock::new();
+    *LEVEL.get_or_init(|| {
+        let env = std::env::var("QUANTPILOT_LOG_LEVEL").unwrap_or_default().to_lowercase();
+        match env.as_str() {
+            "error" => LogLevel::Error,
+            "warn" => LogLevel::Warn,
+            "debug" => LogLevel::Debug,
+            _ => LogLevel::Info,
+        }
+    })
+}
+
+// v2.1.3: RwLock 替代 Mutex — 读多写少(每行日志读取, 仅凭证变更时写入)
+static EXTRA_PATTERNS: RwLock<Vec<Zeroizing<String>>> = RwLock::new(Vec::new());
 
 /// 从 CredentialVault 注册凭证字段名到脱敏模块
-pub fn register_credential_patterns(patterns: Vec<String>) {
-    if let Ok(mut guard) = EXTRA_PATTERNS.lock() {
+pub fn register_credential_patterns(patterns: Vec<Zeroizing<String>>) {
+    if let Ok(mut guard) = EXTRA_PATTERNS.write() {
         *guard = patterns;
     }
 }
@@ -12,13 +36,17 @@ pub fn register_credential_patterns(patterns: Vec<String>) {
 pub fn sanitize_secrets(input: &str) -> String {
     let builtin = [
         "api_key", "secret", "passphrase", "password", "apikey", "api_secret",
+        // v2.0.1: JWT/令牌敏感字段
+        "token", "jwt", "bearer", "authorization", "private_key",
+        "access_key", "signing_key", "credential",
     ];
 
-    let extra = EXTRA_PATTERNS.lock().unwrap_or_else(|e| e.into_inner());
+    let extra = EXTRA_PATTERNS.read().unwrap_or_else(|e| e.into_inner());
+    let extra_strs: Vec<String> = extra.iter().map(|z| z.to_string()).collect();
     let all_patterns: Vec<String> = builtin
         .iter()
         .map(|s| s.to_string())
-        .chain(extra.iter().cloned())
+        .chain(extra_strs.into_iter())
         .collect();
 
     let mut result = input.to_string();
@@ -27,7 +55,7 @@ pub fn sanitize_secrets(input: &str) -> String {
             let lower = result.to_lowercase();
             match lower.find(pattern.as_str()) {
                 Some(pos) => {
-                    if let Some(sep_offset) = result[pos..].find(|c: char| c == ':' || c == '=') {
+                    if let Some(sep_offset) = result[pos..].find([':', '=']) {
                         let after_sep = pos + sep_offset + 1;
                         let trimmed = result[after_sep..].trim_start();
                         let leading_ws = result[after_sep..].len() - trimmed.len();

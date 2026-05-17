@@ -94,7 +94,7 @@ export function parseRoute(pathname, search = "") {
   if (strategyMatch) {
     const decoded = decodeURIComponent(strategyMatch[1]);
     if (decoded.includes("\x00") || decoded.length > 128) {
-      console.warn("无效的策略图 ID（包含空字符或长度超过 128），已重定向到策略列表");
+      if (import.meta.env.DEV) console.warn("无效的策略图 ID（包含空字符或长度超过 128），已重定向到策略列表");
       return { name: "strategies", error: "无效的策略图 ID" };
     }
     return {

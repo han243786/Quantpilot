@@ -1,5 +1,5 @@
 pub use qrpc_compiler::{
-    compile_runtime_protocol_config, load_runtime_protocol_config, validate_runtime_protocol_config,
+    compile_runtime_protocol_config, validate_runtime_protocol_config,
 };
 pub use qrpc_core::*;
 pub use qrpc_runtime::RuntimeCoordinator;

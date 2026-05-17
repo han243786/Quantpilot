@@ -79,7 +79,8 @@ pub(super) fn collect_frontend_events(
         runtime_targets,
         None,
     ));
-    events.sort_by_key(|item| item.event_time_ms);
+    // v1.1.12: 稳定排序 + event_id 二级排序
+    events.sort_by(|a, b| a.event_time_ms.cmp(&b.event_time_ms).then_with(|| a.event_id.cmp(&b.event_id)));
     events
 }
 
@@ -347,7 +348,8 @@ pub(super) fn collect_frontend_events_for_backtest(
             session_events
         })
         .collect::<Vec<_>>();
-    events.sort_by_key(|item| item.event_time_ms);
+    // v1.1.12: 稳定排序 + event_id 二级排序
+    events.sort_by(|a, b| a.event_time_ms.cmp(&b.event_time_ms).then_with(|| a.event_id.cmp(&b.event_id)));
     events
 }
 

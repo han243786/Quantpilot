@@ -1,6 +1,8 @@
 # QuantPilot API 参考
 
-> 面向开发者 | 基于 v0.4.2 | 所有请求需携带 `Content-Type: application/json`
+> **⚠️ 已过时 (v0.4.2)** | 本文档长期未更新，字段名和端点列表与当前版本(v1.x)不一致。
+> **请使用 `contracts/openapi/root.yaml` 作为 API 的单一真相来源。**
+> 本文档保留仅供历史参考，将在 v1.2.0 移除。
 
 ---
 

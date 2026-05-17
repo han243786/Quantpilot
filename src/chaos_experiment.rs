@@ -14,6 +14,7 @@ pub(super) fn register_chaos_routes(router: Router<AppState>) -> Router<AppState
 }
 
 async fn create_experiment(
+    user_id: auth::UserId,
     State(state): State<AppState>,
     Json(request): Json<CreateChaosExperimentRequest>,
 ) -> Result<Json<ChaosExperimentReport>, (StatusCode, String)> {
@@ -188,34 +189,39 @@ async fn create_experiment(
         .chaos_experiments
         .write()
         .await
-        .insert(experiment_id, report.clone());
+        .insert(auth::scoped_key(&user_id, &experiment_id), report.clone());
 
     Ok(Json(report))
 }
 
 async fn list_experiments(
+    user_id: auth::UserId,
     State(state): State<AppState>,
 ) -> Result<Json<Vec<ChaosExperimentReport>>, (StatusCode, String)> {
+    let prefix = auth::scoped_key(&user_id, "");
     let mut experiments: Vec<ChaosExperimentReport> = state
         .chaos_experiments
         .read()
         .await
-        .values()
-        .cloned()
+        .iter()
+        .filter(|(key, _)| key.starts_with(&prefix))
+        .map(|(_, value)| value.clone())
         .collect();
     experiments.sort_by(|a, b| b.executed_at.cmp(&a.executed_at));
     Ok(Json(experiments))
 }
 
 async fn get_experiment(
+    user_id: auth::UserId,
     State(state): State<AppState>,
     Path(experiment_id): Path<String>,
 ) -> Result<Json<ChaosExperimentReport>, (StatusCode, String)> {
+    let scoped = auth::scoped_key(&user_id, &experiment_id);
     if let Some(report) = state
         .chaos_experiments
         .read()
         .await
-        .get(&experiment_id)
+        .get(&scoped)
         .cloned()
     {
         return Ok(Json(report));
@@ -235,9 +241,12 @@ async fn persist_chaos_report(
         std::path::Path::new("storage"), "chaos", crate::storage_lifecycle::StorageLifecycle::Transient,
     )?;
     let json = serde_json::to_vec_pretty(report)?;
-    fs::create_dir_all(store_dir).await?;
+    fs::create_dir_all(&store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", report.experiment_id));
-    fs::write(&file_path, &json).await?;
+    // v1.1.2: 原子写入防止混沌实验报告损坏
+    let tmp = file_path.with_extension("tmp");
+    fs::write(&tmp, &json).await?;
+    fs::rename(&tmp, &file_path).await?;
     Ok(())
 }
 
@@ -245,6 +254,9 @@ async fn load_chaos_report_from_disk(
     store_dir: &FsPath,
     experiment_id: &str,
 ) -> Result<ChaosExperimentReport, (StatusCode, String)> {
+    if let Err(msg) = validate_experiment_id(experiment_id) {
+        return Err(json_bad_request("invalid_experiment_id", msg));
+    }
     let file_path = store_dir.join(format!("{}.json", experiment_id));
     let json = fs::read(&file_path).await.map_err(|_| {
         json_bad_request(
@@ -255,6 +267,22 @@ async fn load_chaos_report_from_disk(
     serde_json::from_slice(&json).map_err(|error| {
         internal_error(anyhow::anyhow!("{}", error))
     })
+}
+
+fn validate_experiment_id(id: &str) -> Result<(), String> {
+    if id.is_empty() {
+        return Err("experiment_id 不能为空".to_string());
+    }
+    if id.len() > 128 {
+        return Err("experiment_id 长度不能超过 128 字符".to_string());
+    }
+    if id.contains("..") || id.contains('/') || id.contains('\\') || id.contains('\0') {
+        return Err("experiment_id 不能包含路径分隔符".to_string());
+    }
+    if !id.chars().all(|ch| ch.is_ascii_alphanumeric() || ch == '_' || ch == '-') {
+        return Err("experiment_id 只能使用 ASCII 字母、数字、'_' 或 '-'".to_string());
+    }
+    Ok(())
 }
 
 #[cfg(test)]

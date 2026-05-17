@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import TopToolbar from "./TopToolbar";
+import { I18nProvider } from "../i18n";
 import { useGraphStore } from "../store/graphStore";
 
 function buildGraph(overrides = {}) {
@@ -84,7 +85,7 @@ describe("TopToolbar failure notices", () => {
       });
     });
 
-    render(<TopToolbar />);
+    render(<I18nProvider><TopToolbar /></I18nProvider>);
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "编译" }));
     });
@@ -112,7 +113,7 @@ describe("TopToolbar failure notices", () => {
       });
     });
 
-    render(<TopToolbar />);
+    render(<I18nProvider><TopToolbar /></I18nProvider>);
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "启动模拟" }));
     });
@@ -140,7 +141,7 @@ describe("TopToolbar failure notices", () => {
       });
     });
 
-    render(<TopToolbar />);
+    render(<I18nProvider><TopToolbar /></I18nProvider>);
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "运行回测" }));
     });

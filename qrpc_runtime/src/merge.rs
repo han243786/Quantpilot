@@ -78,7 +78,7 @@ impl StrategyMergeEngine {
 
     fn merge_weighted(&self, strategy_inputs: &[StrategyInput]) -> Result<MergedOutput> {
         let total_weight: f64 = strategy_inputs.iter().map(|s| s.weight).sum();
-        if total_weight <= 0.0 {
+        if !total_weight.is_finite() || total_weight <= 0.0 {
             return Ok(MergedOutput {
                 decisions: Vec::new(),
                 merge_records: Vec::new(),
@@ -127,7 +127,7 @@ impl StrategyMergeEngine {
                     symbol,
                     (total_strength, weight_sum, actions, source_strategy_ids),
                 )| {
-                    let net_strength = if weight_sum > 0.0 {
+                    let net_strength = if weight_sum.is_finite() && weight_sum > 0.0 {
                         total_strength / weight_sum
                     } else {
                         0.0
@@ -343,12 +343,14 @@ impl StrategyMergeEngine {
         }
 
         if let Some(limit) = self.symbol_concentration_limit {
+            // v2.1.1: limit 为比率 (0.0-1.0), 计算实际允许的最大决策数
             let mut symbol_counts: BTreeMap<Symbol, usize> = BTreeMap::new();
             for decision in &decisions {
                 *symbol_counts.entry(decision.symbol.clone()).or_default() += 1;
             }
             if symbol_counts.values().any(|count| *count as f64 > limit) {
-                decisions.truncate(limit as usize);
+                let max_allowed = (limit * decisions.len() as f64).ceil() as usize;
+                decisions.truncate(max_allowed.max(1));
             }
         }
 

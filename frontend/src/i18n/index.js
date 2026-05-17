@@ -88,7 +88,11 @@ export function I18nProvider({ children, defaultLocale = DEFAULT_LOCALE }) {
       document.documentElement.lang = locale;
     }
     if (typeof window !== "undefined" && window.localStorage) {
-      window.localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+      try {
+        window.localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+      } catch (_) {
+        // 隐私模式或配额限制下 setItem 可能抛出 DOMException, 静默忽略
+      }
     }
   }, [locale]);
 

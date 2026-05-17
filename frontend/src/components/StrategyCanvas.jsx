@@ -351,7 +351,8 @@ function FlowInner({
       reactFlow.setViewport(nextViewport, { duration: 0 });
       appliedViewportRef.current = viewportKey;
     }
-  }, [defaultViewportKey, graph.metadata.editor, reactFlow]);
+  // v1.1.8: defaultViewportKey 已稳定，移除对象引用避免不必要的re-render
+  }, [defaultViewportKey, reactFlow]);
 
   return (
     <ReactFlow

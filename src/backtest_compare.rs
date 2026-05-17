@@ -3,19 +3,20 @@ use super::backtest_compare_narrative::*;
 use super::*;
 
 pub(super) async fn compare_backtests(
+    user_id: auth::UserId,
     State(state): State<AppState>,
     Json(request): Json<BacktestCompareRequest>,
 ) -> Result<Json<BacktestCompareResponse>, (StatusCode, String)> {
     if request.backtest_ids.len() != 2 {
         return Err(json_bad_request(
             "bad_request",
-            "backtest_ids must contain exactly two backtest ids",
+            "回测比较需要恰好两个 backtest_id",
         ));
     }
     let left_backtest_id = request.backtest_ids[0].clone();
     let right_backtest_id = request.backtest_ids[1].clone();
-    let left_record = load_backtest_record_from_state(&state, &left_backtest_id).await?;
-    let right_record = load_backtest_record_from_state(&state, &right_backtest_id).await?;
+    let left_record = load_backtest_record_from_state(&state, &user_id, &left_backtest_id).await?;
+    let right_record = load_backtest_record_from_state(&state, &user_id, &right_backtest_id).await?;
     let left_execution_assumptions = left_record
         .backtest_artifacts
         .as_ref()

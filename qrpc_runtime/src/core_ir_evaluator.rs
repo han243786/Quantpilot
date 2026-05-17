@@ -1,3 +1,4 @@
+#![allow(clippy::type_complexity)]
 use qrpc_core::{
     Exchange, KlineSeriesSnapshot, NormalizedKline, NormalizedMarketData, QuoteSnapshot,
     SignalSide, Symbol,
@@ -1580,7 +1581,7 @@ fn find_quote_snapshots<'a>(
 }
 
 fn moving_average(bars: &[NormalizedKline], window: usize) -> Option<f64> {
-    if bars.len() < window {
+    if window == 0 || bars.len() < window {
         return None;
     }
     let slice = &bars[bars.len() - window..];
@@ -1588,7 +1589,7 @@ fn moving_average(bars: &[NormalizedKline], window: usize) -> Option<f64> {
 }
 
 fn scaled_threshold_strength(upper: f64, lower: f64, range: f64) -> f64 {
-    if range <= 0.0 {
+    if !range.is_finite() || range <= 0.0 {
         return 0.0;
     }
     ((upper - lower) / range).clamp(0.0, 1.0)
@@ -1754,8 +1755,13 @@ fn true_range(bars: &[NormalizedKline]) -> Option<Vec<f64>> {
 
 fn average_true_range(bars: &[NormalizedKline], period: usize) -> Option<f64> {
     let tr = true_range(bars)?;
-    let ema = ema_series(&tr, period)?;
-    ema.last().copied()
+    // v1.3.7: Wilder 平滑 (α=1/N) 替代 EMA，与标准ATR定义一致
+    let n = period as f64;
+    let mut avg = tr[..period].iter().sum::<f64>() / n;
+    for &val in &tr[period..] {
+        avg = (avg * (n - 1.0) + val) / n;
+    }
+    Some(avg)
 }
 
 fn bollinger_bands(
@@ -1845,12 +1851,12 @@ fn average_directional_index(bars: &[NormalizedKline], period: usize) -> Option<
         tr_values.push(tr);
         let up_move = curr.high - prev.high;
         let down_move = prev.low - curr.low;
-        if up_move > down_move && up_move > 0.0 {
+        if up_move.is_finite() && down_move.is_finite() && up_move > down_move && up_move > 0.0 {
             plus_dm.push(up_move);
         } else {
             plus_dm.push(0.0);
         }
-        if down_move > up_move && down_move > 0.0 {
+        if down_move.is_finite() && up_move.is_finite() && down_move > up_move && down_move > 0.0 {
             minus_dm.push(down_move);
         } else {
             minus_dm.push(0.0);

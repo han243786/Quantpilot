@@ -22,13 +22,19 @@ pub(super) fn build_app_router(state: AppState) -> Router {
     let router = register_test_scenario_routes(router);
     // 凭证管理路由
     let router = credential_api::register_credential_routes(router);
+    // v2.0.0: 多用户认证路由
+    let router = auth::register_auth_routes(router);
 
+    // SPA: serve dist/ files, fallback to index.html for client-side routing
     router
-        .fallback(not_found_fallback)
+        .fallback_service(
+            tower_http::services::ServeDir::new("dist")
+                .fallback(tower_http::services::ServeFile::new("dist/index.html"))
+        )
         .with_state(state)
 }
 
-async fn not_found_fallback() -> (StatusCode, Json<serde_json::Value>) {
+async fn _not_found_fallback() -> (StatusCode, Json<serde_json::Value>) {
     (
         StatusCode::NOT_FOUND,
         Json(serde_json::json!({

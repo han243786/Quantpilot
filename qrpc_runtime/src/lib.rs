@@ -1,17 +1,32 @@
 mod agent_module;
+pub mod backtest_metrics;
 mod compat;
+pub mod circuit_breaker;
+mod config_tracker;
 mod core_ir_evaluator;
 pub(crate) mod data_module;
 mod execution_module;
 mod fill_engine;
 mod intent_module;
+pub mod live_execution;
 mod merge;
+mod merge_coordinator;
 mod plugin_runtime_registry;
-mod plugin_market;
+mod runtime_state;
+pub mod plugin_market;
+pub mod plugin_sandbox;
 mod reconcile;
 mod risk_checker;
+pub mod risk_monitor;
 mod sandbox;
+pub mod slippage;
 pub mod hotswap;
+
+pub use slippage::{
+    compute_fill_price, estimate_spread, spread_from_quote, ExecutionAssumptions,
+    ExtendedMarketState, LatencyModel, MarketImpactModel, SlippageModel, SpreadEstimate,
+    SpreadEstimateSource,
+};
 
 use anyhow::Result;
 use qrpc_core::{
@@ -31,12 +46,17 @@ pub use agent_module::{
 pub use core_ir_evaluator::{
     evaluate_indicator_signal, CoreIrIndicatorEvaluation, CoreIrIndicatorEvaluatorError,
 };
+/// v1.1.x: 设置 Mock 数据生成器的波动率(0=使用默认1.5%)
+pub fn set_mock_volatility(vol: f64) {
+    data_module::MOCK_VOLATILITY.store(vol.to_bits(), std::sync::atomic::Ordering::Relaxed);
+}
+
 pub use data_module::{
     BuiltinDataModule, DataCollectionOutput, DataCollectionRequest, DataModuleProvider,
 };
 pub use execution_module::{
-    BuiltinExecutionModule, ExecutionModuleProvider, ExecutionPlanningOutput,
-    ExecutionPlanningRequest,
+    BuiltinExecutionModule, ExecutionModuleProvider, ExecutionPlanner,
+    ExecutionPlanningOutput, ExecutionPlanningRequest, ExecutionSubmitter,
 };
 pub use intent_module::{
     BuiltinIntentModule, IntentEvaluationOutput, IntentEvaluationRequest, IntentModuleProvider,
@@ -79,34 +99,35 @@ pub struct ConfigGenerationEntry {
 
 #[derive(Clone)]
 pub struct RuntimeCoordinator {
+    // v2.2.0: 提取为子结构体的可变状态
+    pub(crate) state: runtime_state::RuntimeState,
+    pub(crate) config: config_tracker::ConfigTracker,
+    pub(crate) merge: merge_coordinator::MergeCoordinator,
+    // 核心编译产物 (不可变引用)
     core_ir: CoreStrategyIr,
-    portfolio: PortfolioState,
-    data_fetch_counts: BTreeMap<String, u32>,
-    last_action_at_ms: BTreeMap<String, u64>,
-    last_rebalance_at_ms: BTreeMap<String, u64>,
+    // 5 个模块提供者 (trait objects, 依赖注入)
     data_module: Arc<dyn DataModuleProvider>,
     intent_module: Arc<dyn IntentModuleProvider>,
     agent_module: Arc<dyn AgentModuleProvider>,
     execution_module: Arc<Mutex<dyn ExecutionModuleProvider>>,
     risk_checker: Arc<dyn RiskCheckerProvider>,
+    // 杂项状态
     risk_mode: RiskDecisionMode,
     pending_module_configs: BTreeMap<String, serde_json::Value>,
-    applied_deployment_revisions: Vec<String>,
-    config_generation: Arc<AtomicU64>,
-    config_generation_history: Arc<std::sync::Mutex<Vec<ConfigGenerationEntry>>>,
-    merge_engine: StrategyMergeEngine,
-    merge_policy: MergePolicy,
-    merge_records: Vec<MergeDecisionRecord>,
+    /// v1.2.0: 独立实时风控监控器（可选）
+    risk_monitor: Option<risk_monitor::RiskMonitor>,
+    /// v1.2.0: RiskMonitor 是否已触发停止
+    risk_stopped: bool,
 }
 
 impl std::fmt::Debug for RuntimeCoordinator {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("RuntimeCoordinator")
             .field("core_ir", &self.core_ir)
-            .field("portfolio", &self.portfolio)
-            .field("data_fetch_counts", &self.data_fetch_counts)
-            .field("last_action_at_ms", &self.last_action_at_ms)
-            .field("last_rebalance_at_ms", &self.last_rebalance_at_ms)
+            .field("portfolio", &self.state.portfolio)
+            .field("data_fetch_counts", &self.state.data_fetch_counts)
+            .field("last_action_at_ms", &self.state.last_action_at_ms)
+            .field("last_rebalance_at_ms", &self.state.last_rebalance_at_ms)
             .field("data_provider_key", &self.data_module.provider_key())
             .field("intent_provider_key", &self.intent_module.provider_key())
             .field("agent_provider_key", &self.agent_module.provider_key())
@@ -115,6 +136,8 @@ impl std::fmt::Debug for RuntimeCoordinator {
                 &self.execution_module_provider_key(),
             )
             .field("risk_provider_key", &self.risk_checker.provider_key())
+            .field("risk_stopped", &self.risk_stopped)
+            .field("risk_monitor_enabled", &self.risk_monitor.is_some())
             .finish()
     }
 }
@@ -132,6 +155,7 @@ impl RuntimeCoordinator {
     }
 
     pub fn new(compiled: CompiledRuntimeProtocol) -> Self {
+        // v2.3.0 TODO: 从 RiskPolicy 接线 RiskMonitor (需在 RiskPolicy 中添加 max_drawdown_ratio/max_daily_loss_ratio 字段)
         Self::from_core_ir(compiled.core_ir)
     }
 
@@ -310,10 +334,22 @@ impl RuntimeCoordinator {
         let portfolio = PortfolioState::new(initial_cash_balance, 0);
         Self {
             core_ir,
-            portfolio,
-            data_fetch_counts: BTreeMap::new(),
-            last_action_at_ms: BTreeMap::new(),
-            last_rebalance_at_ms: BTreeMap::new(),
+            state: runtime_state::RuntimeState {
+                portfolio,
+                data_fetch_counts: BTreeMap::new(),
+                last_action_at_ms: BTreeMap::new(),
+                last_rebalance_at_ms: BTreeMap::new(),
+            },
+            config: config_tracker::ConfigTracker {
+                applied_deployment_revisions: Vec::new(),
+                config_generation: Arc::new(AtomicU64::new(1)),
+                config_generation_history: Arc::new(std::sync::Mutex::new(Vec::new())),
+            },
+            merge: merge_coordinator::MergeCoordinator {
+                engine: StrategyMergeEngine::default(),
+                policy: MergePolicy::WeightedMerge,
+                records: Vec::new(),
+            },
             data_module,
             intent_module,
             agent_module,
@@ -321,12 +357,8 @@ impl RuntimeCoordinator {
             risk_checker,
             risk_mode: RiskDecisionMode::Normal,
             pending_module_configs: BTreeMap::new(),
-            applied_deployment_revisions: Vec::new(),
-            config_generation: Arc::new(AtomicU64::new(1)),
-            config_generation_history: Arc::new(std::sync::Mutex::new(Vec::new())),
-            merge_engine: StrategyMergeEngine::default(),
-            merge_policy: MergePolicy::WeightedMerge,
-            merge_records: Vec::new(),
+            risk_monitor: None,
+            risk_stopped: false,
         }
     }
 
@@ -358,11 +390,19 @@ impl RuntimeCoordinator {
         let slow_cycle = self.run_slow_cycle(slow_now_ms)?;
         let fast_cycle = self.run_fast_cycle(fast_now_ms)?;
 
+        // v1.2.0: RiskMonitor 连续风控 — 每个 session 后检查
+        if let Some(ref mut monitor) = self.risk_monitor {
+            let equity = portfolio_equity_estimate(&self.state.portfolio);
+            if monitor.check(equity).stop {
+                self.risk_stopped = true;
+            }
+        }
+
         Ok(SessionOutput {
             slow_cycle,
             fast_cycle,
-            final_portfolio: self.portfolio.clone(),
-            data_fetch_counts: self.data_fetch_counts.clone(),
+            final_portfolio: self.state.portfolio.clone(),
+            data_fetch_counts: self.state.data_fetch_counts.clone(),
         })
     }
 
@@ -395,8 +435,8 @@ impl RuntimeCoordinator {
         let result = self
             .execution_module
             .lock()
-            .expect("execution module lock should not be poisoned")
-            .submit_plan(plan, normalized_data, &mut self.portfolio, now_ms, trace_id);
+            .unwrap_or_else(|e| e.into_inner())
+            .submit_plan(plan, normalized_data, &mut self.state.portfolio, now_ms, trace_id);
         self.refresh_portfolio_state(normalized_data, now_ms);
         Ok(result)
     }
@@ -410,26 +450,26 @@ impl RuntimeCoordinator {
         let result = self
             .execution_module
             .lock()
-            .expect("execution module lock should not be poisoned")
-            .on_market_update(normalized_data, &mut self.portfolio, now_ms, trace_id);
+            .unwrap_or_else(|e| e.into_inner())
+            .on_market_update(normalized_data, &mut self.state.portfolio, now_ms, trace_id);
         self.refresh_portfolio_state(normalized_data, now_ms);
         Ok(result)
     }
 
     pub fn portfolio_state(&self) -> &PortfolioState {
-        &self.portfolio
+        &self.state.portfolio
     }
 
     pub fn data_fetch_counts(&self) -> &BTreeMap<String, u32> {
-        &self.data_fetch_counts
+        &self.state.data_fetch_counts
     }
 
     pub fn last_action_at_ms(&self) -> &BTreeMap<String, u64> {
-        &self.last_action_at_ms
+        &self.state.last_action_at_ms
     }
 
     pub fn last_rebalance_at_ms(&self) -> &BTreeMap<String, u64> {
-        &self.last_rebalance_at_ms
+        &self.state.last_rebalance_at_ms
     }
 
     pub fn data_module(&self) -> &(dyn DataModuleProvider + Send + Sync) {
@@ -456,6 +496,22 @@ impl RuntimeCoordinator {
         self.risk_mode = mode;
     }
 
+    /// v1.2.0: 设置 RiskMonitor 实时风控监控器
+    pub fn set_risk_monitor(&mut self, monitor: risk_monitor::RiskMonitor) {
+        self.risk_monitor = Some(monitor);
+        self.risk_stopped = false;
+    }
+
+    /// v1.2.0: 查询 RiskMonitor 是否已触发停止
+    pub fn is_risk_stopped(&self) -> bool {
+        self.risk_stopped
+    }
+
+    /// v1.2.0: 重置 RiskMonitor 停止标志（用于恢复运行）
+    pub fn reset_risk_stopped(&mut self) {
+        self.risk_stopped = false;
+    }
+
     /// 存储候选模块配置，在下一次 epoch barrier 激活
     /// 返回新的 deployment_revision（sha256 哈希）
     pub fn swap_module_config(
@@ -465,17 +521,20 @@ impl RuntimeCoordinator {
     ) -> Result<String> {
         self.pending_module_configs
             .insert(module_key.to_string(), config);
+        // v1.2.1: 使用序号替代墙钟时间戳，保证回测确定性
         let revision_input = serde_json::json!({
             "module_key": module_key,
-            "timestamp_ms": std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .unwrap_or_default()
-                .as_millis() as u64,
-            "existing_revisions": self.applied_deployment_revisions.len(),
+            "revision_seq": self.config.applied_deployment_revisions.len(),
         });
         let digest = qrpc_core::canonical_json_sha256_digest(&revision_input)?;
         let revision = format!("rev-hotswap-{}", &digest.value[..16]);
-        self.applied_deployment_revisions.push(revision.clone());
+        self.config.applied_deployment_revisions.push(revision.clone());
+        // v1.1.4: 窗口截断保留最近 1000 条，防止长期运行无界增长
+        const MAX_REVISIONS: usize = 1000;
+        if self.config.applied_deployment_revisions.len() > MAX_REVISIONS {
+            let excess = self.config.applied_deployment_revisions.len() - MAX_REVISIONS;
+            self.config.applied_deployment_revisions.drain(0..excess);
+        }
         Ok(revision)
     }
 
@@ -484,17 +543,21 @@ impl RuntimeCoordinator {
         let count = self.pending_module_configs.len();
         self.pending_module_configs.clear();
         if count > 0 {
-            let gen = self.config_generation.fetch_add(1, Ordering::SeqCst);
-            let now_ms = std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .unwrap_or_default()
-                .as_millis() as u64;
-            let rev = self
+            let gen = self.config.config_generation.fetch_add(1, Ordering::SeqCst);
+            // v1.2.1: 使用代际序号代替墙钟，保证回测确定性
+            let now_ms = gen;
+            let rev = self.config
                 .applied_deployment_revisions
                 .last()
                 .cloned()
                 .unwrap_or_else(|| "rev-unknown".to_string());
-            if let Ok(mut history) = self.config_generation_history.lock() {
+            if let Ok(mut history) = self.config.config_generation_history.lock() {
+                // v2.1.0: 限制历史条目数防止无界增长
+                const MAX_CONFIG_HISTORY: usize = 1000;
+                let len = history.len();
+                if len >= MAX_CONFIG_HISTORY {
+                    history.drain(0..len - MAX_CONFIG_HISTORY + 1);
+                }
                 history.push(ConfigGenerationEntry {
                     generation: gen,
                     activated_at_ms: now_ms,
@@ -510,12 +573,12 @@ impl RuntimeCoordinator {
 
     /// 当前配置代际号
     pub fn current_generation(&self) -> u64 {
-        self.config_generation.load(Ordering::Relaxed)
+        self.config.config_generation.load(Ordering::Relaxed)
     }
 
     /// 配置代际历史
     pub fn generation_history(&self) -> Vec<ConfigGenerationEntry> {
-        self.config_generation_history
+        self.config.config_generation_history
             .lock()
             .map(|h| h.clone())
             .unwrap_or_default()
@@ -524,8 +587,16 @@ impl RuntimeCoordinator {
     pub fn execution_module_provider_key(&self) -> &'static str {
         self.execution_module
             .lock()
-            .expect("execution module lock should not be poisoned")
+            .unwrap_or_else(|e| e.into_inner())
             .provider_key()
+    }
+
+    /// v1.1.0: 设置执行假设（滑点/冲击/价差/延迟模型）
+    pub fn set_execution_assumptions(&self, assumptions: crate::slippage::ExecutionAssumptions) {
+        self.execution_module
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .set_execution_assumptions(assumptions);
     }
 
     pub fn portfolio_update_event(
@@ -534,8 +605,8 @@ impl RuntimeCoordinator {
         trace_id: &str,
         now_ms: u64,
     ) -> RuntimeEvent {
-        let equity_estimate = portfolio_equity_estimate(&self.portfolio);
-        let open_orders = self
+        let equity_estimate = portfolio_equity_estimate(&self.state.portfolio);
+        let open_orders = self.state
             .portfolio
             .open_orders
             .iter()
@@ -557,15 +628,15 @@ impl RuntimeCoordinator {
             source_id: source_id.to_string(),
             ts_ms: now_ms,
             payload: json!({
-                "cash_balance": self.portfolio.cash_balance,
-                "available_cash_balance": self.portfolio.available_cash_balance,
-                "frozen_cash_balance": self.portfolio.frozen_cash_balance,
-                "total_gross_notional": self.portfolio.total_gross_notional,
-                "total_net_notional": self.portfolio.total_net_notional,
-                "total_leverage": self.portfolio.total_leverage,
+                "cash_balance": self.state.portfolio.cash_balance,
+                "available_cash_balance": self.state.portfolio.available_cash_balance,
+                "frozen_cash_balance": self.state.portfolio.frozen_cash_balance,
+                "total_gross_notional": self.state.portfolio.total_gross_notional,
+                "total_net_notional": self.state.portfolio.total_net_notional,
+                "total_leverage": self.state.portfolio.total_leverage,
                 "equity_estimate": equity_estimate,
-                "positions": self.portfolio.positions.len(),
-                "open_order_count": self.portfolio.open_orders.len(),
+                "positions": self.state.portfolio.positions.len(),
+                "open_order_count": self.state.portfolio.open_orders.len(),
                 "open_orders": open_orders,
             }),
         }
@@ -583,6 +654,7 @@ impl RuntimeCoordinator {
             self.collect_normalized_data(cycle_name, now_ms, &trace_id, &mut runtime_events)?;
         let resting_fills =
             self.process_open_orders(&normalized_data, now_ms, &trace_id, &mut runtime_events)?;
+        self.refresh_portfolio_state(&normalized_data, now_ms);
         let intent_signals = self.evaluate_intents(
             intent_kinds,
             &normalized_data,
@@ -606,7 +678,13 @@ impl RuntimeCoordinator {
             &mut runtime_events,
         );
         if let Some(record) = merge_record {
-            self.merge_records.push(record);
+            // v2.1.0: 裁剪超出上限的旧记录，防止无界增长
+            const MAX_MERGE_RECORDS: usize = 500;
+            let len = self.merge.records.len();
+            if len >= MAX_MERGE_RECORDS {
+                self.merge.records.drain(0..len - MAX_MERGE_RECORDS + 1);
+            }
+            self.merge.records.push(record);
         }
 
         let risk_decisions =
@@ -639,9 +717,9 @@ impl RuntimeCoordinator {
             risk_decisions,
             execution_plans,
             fill_reports,
-            portfolio_state: self.portfolio.clone(),
+            portfolio_state: self.state.portfolio.clone(),
             runtime_events,
-            data_fetch_counts: self.data_fetch_counts.clone(),
+            data_fetch_counts: self.state.data_fetch_counts.clone(),
         })
     }
 
@@ -655,7 +733,7 @@ impl RuntimeCoordinator {
         let output = self.data_module.collect(DataCollectionRequest {
             cycle_name,
             core_ir: &self.core_ir,
-            data_fetch_counts: &mut self.data_fetch_counts,
+            data_fetch_counts: &mut self.state.data_fetch_counts,
             now_ms,
             trace_id,
         })?;
@@ -696,13 +774,13 @@ impl RuntimeCoordinator {
             cycle_name,
             signals,
             core_ir: &self.core_ir,
-            portfolio: &self.portfolio,
-            last_rebalance_at_ms: &self.last_rebalance_at_ms,
+            portfolio: &self.state.portfolio,
+            last_rebalance_at_ms: &self.state.last_rebalance_at_ms,
             now_ms,
             trace_id,
         });
         for agent_id in &output.evaluated_rebalance_agent_ids {
-            self.last_rebalance_at_ms.insert(agent_id.clone(), now_ms);
+            self.state.last_rebalance_at_ms.insert(agent_id.clone(), now_ms);
         }
         runtime_events.extend(output.events);
         output.decisions
@@ -730,22 +808,19 @@ impl RuntimeCoordinator {
             weight: 1.0,
             agent_decisions: decisions.to_vec(),
         };
-        match self.merge_engine.merge(&[strategy_input]) {
+        match self.merge.engine.merge(&[strategy_input]) {
             Ok(output) => {
                 runtime_events.push(RuntimeEvent {
                     event_id: format!("evt-merge-{}-{}", cycle_name, runtime_events.len()),
                     event_type: RuntimeEventType::AgentDecisionProduced,
                     trace_id: trace_id.to_string(),
                     source_id: "merge_engine".to_string(),
-                    ts_ms: std::time::SystemTime::now()
-                        .duration_since(std::time::UNIX_EPOCH)
-                        .unwrap_or_default()
-                        .as_millis() as u64,
+                    ts_ms: 0, // v1.2.1: 合成事件不使用墙钟，保证回测确定性
                     payload: serde_json::json!({
                         "message": "merge engine produced unified decisions",
                         "input_count": decisions.len(),
                         "output_count": output.decisions.len(),
-                        "merge_policy": format!("{:?}", self.merge_policy),
+                        "merge_policy": format!("{:?}", self.merge.policy),
                         "conflicts": output.conflict_count,
                         "suppressed": output.suppressed_count,
                     }),
@@ -759,10 +834,7 @@ impl RuntimeCoordinator {
                     event_type: RuntimeEventType::RuntimeWarning,
                     trace_id: trace_id.to_string(),
                     source_id: "merge_engine".to_string(),
-                    ts_ms: std::time::SystemTime::now()
-                        .duration_since(std::time::UNIX_EPOCH)
-                        .unwrap_or_default()
-                        .as_millis() as u64,
+                    ts_ms: 0, // v1.2.1: 合成事件不使用墙钟，保证回测确定性
                     payload: serde_json::json!({
                         "message": "merge engine fallback to pass-through",
                     }),
@@ -774,7 +846,7 @@ impl RuntimeCoordinator {
 
     /// 查询合并记录（供 API 使用）
     pub fn merge_records(&self) -> &[MergeDecisionRecord] {
-        &self.merge_records
+        &self.merge.records
     }
 
     fn evaluate_risks(
@@ -789,8 +861,8 @@ impl RuntimeCoordinator {
             .evaluate(RiskCheckRequest {
                 decisions,
                 core_ir: &self.core_ir,
-                portfolio: &self.portfolio,
-                last_action_at_ms: &self.last_action_at_ms,
+                portfolio: &self.state.portfolio,
+                last_action_at_ms: &self.state.last_action_at_ms,
                 now_ms,
                 trace_id,
                 mode: self.risk_mode,
@@ -798,7 +870,7 @@ impl RuntimeCoordinator {
             .expect("risk checker evaluation should not fail");
 
         for agent_id in &output.approved_agent_ids {
-            self.last_action_at_ms.insert(agent_id.clone(), now_ms);
+            self.state.last_action_at_ms.insert(agent_id.clone(), now_ms);
         }
         runtime_events.extend(output.events);
         output.decisions
@@ -815,12 +887,12 @@ impl RuntimeCoordinator {
         let output = self
             .execution_module
             .lock()
-            .expect("execution module lock should not be poisoned")
+            .unwrap_or_else(|e| e.into_inner())
             .plan_execution(ExecutionPlanningRequest {
                 risk_decisions,
                 core_ir: &self.core_ir,
                 normalized_data,
-                portfolio: &self.portfolio,
+                portfolio: &self.state.portfolio,
                 now_ms,
                 trace_id,
             });
@@ -842,9 +914,10 @@ impl RuntimeCoordinator {
             let result = self
                 .execution_module
                 .lock()
-                .expect("execution module lock should not be poisoned")
-                .submit_plan(plan, normalized_data, &mut self.portfolio, now_ms, trace_id);
-            runtime_events.extend(result.events.clone());
+                .unwrap_or_else(|e| e.into_inner())
+                .submit_plan(plan, normalized_data, &mut self.state.portfolio, now_ms, trace_id);
+            let mut result = result;
+            runtime_events.append(&mut result.events);
             fills.extend(result.fills);
         }
 
@@ -860,20 +933,26 @@ impl RuntimeCoordinator {
         let result = self
             .execution_module
             .lock()
-            .expect("execution module lock should not be poisoned")
-            .on_market_update(normalized_data, &mut self.portfolio, now_ms, trace_id);
-        runtime_events.extend(result.events.clone());
+            .unwrap_or_else(|e| e.into_inner())
+            .on_market_update(normalized_data, &mut self.state.portfolio, now_ms, trace_id);
+        let mut result = result;
+        runtime_events.append(&mut result.events);
         Ok(result.fills)
     }
     fn refresh_portfolio_state(&mut self, normalized_data: &[NormalizedMarketData], now_ms: u64) {
         let quotes = quote_price_map(normalized_data);
         let mut exposures: BTreeMap<Exchange, (f64, f64)> = BTreeMap::new();
 
-        for position in &mut self.portfolio.positions {
+        for position in &mut self.state.portfolio.positions {
+            // v2.3.0: 若无新行情, 保持上次市价并记录陈旧状态
             position.mark_price = quotes
                 .get(&(position.exchange.clone(), position.symbol.clone()))
                 .copied()
-                .unwrap_or(position.mark_price.max(position.avg_entry_price));
+                .unwrap_or(position.mark_price);
+            // 无行情时标记: 使用 avg_entry_price 作为保守估计 (不做多, 也不做空)
+            if position.mark_price <= 0.0 {
+                position.mark_price = position.avg_entry_price.max(0.01);
+            }
             position.unrealized_pnl =
                 (position.mark_price - position.avg_entry_price) * position.net_qty;
             let gross = position.net_qty.abs() * position.mark_price;
@@ -883,7 +962,7 @@ impl RuntimeCoordinator {
             entry.1 += net;
         }
 
-        self.portfolio.exchange_exposures = exposures
+        self.state.portfolio.exchange_exposures = exposures
             .into_iter()
             .map(
                 |(exchange, (gross_notional, net_notional))| ExchangeExposure {
@@ -895,32 +974,35 @@ impl RuntimeCoordinator {
             )
             .collect();
 
-        self.portfolio.total_gross_notional = self
+        self.state.portfolio.total_gross_notional = self.state
             .portfolio
             .exchange_exposures
             .iter()
             .map(|item| item.gross_notional)
             .sum();
-        self.portfolio.total_net_notional = self
+        self.state.portfolio.total_net_notional = self.state
             .portfolio
             .exchange_exposures
             .iter()
             .map(|item| item.net_notional)
             .sum();
-        let equity_estimate = portfolio_equity_estimate(&self.portfolio);
-        self.portfolio.total_leverage = if equity_estimate.abs() > f64::EPSILON {
-            self.portfolio.total_gross_notional / equity_estimate.abs().max(1.0)
+        let equity_estimate = portfolio_equity_estimate(&self.state.portfolio);
+        // v2.3.0: 使用比例下限替代固定 floor(1.0), 避免小额权益时杠杆被低估
+        let initial_equity = 100_000.0;
+        let equity_floor = 1_000.0_f64.max(initial_equity * 0.001);
+        self.state.portfolio.total_leverage = if equity_estimate.abs() > f64::EPSILON {
+            self.state.portfolio.total_gross_notional / equity_estimate.abs().max(equity_floor)
         } else {
             0.0
         };
-        for exposure in &mut self.portfolio.exchange_exposures {
+        for exposure in &mut self.state.portfolio.exchange_exposures {
             exposure.leverage = if equity_estimate.abs() > f64::EPSILON {
-                exposure.gross_notional / equity_estimate.abs().max(1.0)
+                exposure.gross_notional / equity_estimate.abs().max(equity_floor)
             } else {
                 0.0
             };
         }
-        self.portfolio.updated_at_ms = now_ms;
+        self.state.portfolio.updated_at_ms = now_ms;
     }
 }
 
@@ -1009,7 +1091,7 @@ mod tests {
         }
     }
 
-    impl ExecutionModuleProvider for NoopExecutionModule {
+    impl ExecutionPlanner for NoopExecutionModule {
         fn provider_key(&self) -> &'static str {
             "test.execution.noop"
         }
@@ -1023,7 +1105,9 @@ mod tests {
                 events: Vec::new(),
             }
         }
+    }
 
+    impl ExecutionSubmitter for NoopExecutionModule {
         fn submit_plan(
             &mut self,
             plan: &ExecutionPlan,

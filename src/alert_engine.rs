@@ -104,14 +104,17 @@ fn default_alert_rules() -> Vec<AlertRule> {
 // ── API 处理函数 ──
 
 async fn list_alerts(
+    user_id: auth::UserId,
     State(state): State<AppState>,
 ) -> Result<Json<AlertListResponse>, (StatusCode, String)> {
+    let prefix = auth::scoped_key(&user_id, "");
     let firings: Vec<AlertFiring> = state
         .alert_firings
         .read()
         .await
-        .values()
-        .cloned()
+        .iter()
+        .filter(|(key, _)| key.starts_with(&prefix))
+        .map(|(_, value)| value.clone())
         .collect();
     let rules = state.alert_rules.read().await.clone();
     Ok(Json(AlertListResponse { firings, rules }))
@@ -125,21 +128,30 @@ async fn list_alert_rules(
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct AcknowledgeAlertRequest {
     actor_id: String,
 }
 
 async fn acknowledge_alert(
+    user_id: auth::UserId,
     State(state): State<AppState>,
     Path(firing_id): Path<String>,
     Json(request): Json<AcknowledgeAlertRequest>,
 ) -> Result<Json<AlertFiring>, (StatusCode, String)> {
     let now_ms = current_time_ms();
+    let scoped = auth::scoped_key(&user_id, &firing_id);
     let mut firings = state.alert_firings.write().await;
-    if let Some(firing) = firings.get_mut(&firing_id) {
-        firing.state = AlertFiringState::Acknowledged;
-        firing.acknowledged_at_ms = Some(now_ms);
-        firing.acknowledged_by = Some(request.actor_id.clone());
+    if let Some(firing) = firings.get_mut(&scoped) {
+        // v1.2.1: 已确认的告警再次调用时标记为已解决
+        if firing.state == AlertFiringState::Acknowledged {
+            firing.state = AlertFiringState::Resolved;
+            firing.resolved_at_ms = Some(now_ms);
+        } else {
+            firing.state = AlertFiringState::Acknowledged;
+            firing.acknowledged_at_ms = Some(now_ms);
+            firing.acknowledged_by = Some(request.actor_id.clone());
+        }
         let updated = firing.clone();
         // 持久化告警状态变更
         let _ = persist_alert_firing(state.alert_store_dir.as_ref(), &updated).await;
@@ -152,6 +164,7 @@ async fn acknowledge_alert(
 }
 
 async fn trigger_alert_check(
+    user_id: auth::UserId,
     State(state): State<AppState>,
 ) -> Result<Json<Vec<AlertFiring>>, (StatusCode, String)> {
     let rules = state.alert_rules.read().await.clone();
@@ -162,7 +175,7 @@ async fn trigger_alert_check(
         if !rule.enabled {
             continue;
         }
-        if should_fire_alert(&state, rule).await {
+        if should_fire_alert(&state, &user_id, rule).await {
             let firing_id = format!("alert-{}-{}", rule.rule_name, now_ms);
             let firing = AlertFiring {
                 firing_id: firing_id.clone(),
@@ -180,27 +193,32 @@ async fn trigger_alert_check(
                 .alert_firings
                 .write()
                 .await
-                .insert(firing_id.clone(), firing.clone());
+                .insert(auth::scoped_key(&user_id, &firing_id), firing.clone());
             // 持久化告警状态
             let _ = persist_alert_firing(state.alert_store_dir.as_ref(), &firing).await;
         }
     }
 
+    // v2.1.0: 清理已解决的告警记录，防止无限增长
+    state.alert_firings.write().await.retain(|_, firing| {
+        firing.state != AlertFiringState::Resolved
+    });
+
     Ok(Json(new_firings))
 }
 
-async fn should_fire_alert(state: &AppState, rule: &AlertRule) -> bool {
+async fn should_fire_alert(state: &AppState, user_id: &auth::UserId, rule: &AlertRule) -> bool {
     match rule.rule_name.as_str() {
         "data_freshness_critical" => check_data_freshness(state).await,
         "event_orphan_detected" => check_event_orphan(state).await,
         "risk_reject_rate_spike" => check_risk_reject_rate(state).await,
         "replay_divergence_detected" => check_replay_divergence(state).await,
-        "ai_proposal_reject_rate_high" => check_ai_reject_rate(state).await,
-        "sandbox_verification_timeout" => check_sandbox_timeout(state).await,
+        "ai_proposal_reject_rate_high" => check_ai_reject_rate(state, user_id).await,
+        "sandbox_verification_timeout" => check_sandbox_timeout(state, user_id).await,
         "storage_watermark_critical" => check_storage_watermark(state).await,
-        "approval_expiry_warning" => check_approval_expiry(state).await,
-        "hotswap_rollback_occurred" => check_hotswap_rollback(state).await,
-        "capability_hash_mismatch" => check_capability_hash_mismatch(state).await,
+        "approval_expiry_warning" => check_approval_expiry(state, user_id).await,
+        "hotswap_rollback_occurred" => check_hotswap_rollback(state, user_id).await,
+        "capability_hash_mismatch" => check_capability_hash_mismatch(state, user_id).await,
         _ => false,
     }
 }
@@ -247,33 +265,39 @@ async fn check_replay_divergence(state: &AppState) -> bool {
     failures > 0
 }
 
-async fn check_sandbox_timeout(state: &AppState) -> bool {
+async fn check_sandbox_timeout(state: &AppState, user_id: &auth::UserId) -> bool {
     let timeout_secs: u64 = std::env::var("QUANTPILOT_SANDBOX_TIMEOUT_SECS")
         .ok()
         .and_then(|v| v.parse().ok())
         .unwrap_or(300);
+    let prefix = auth::scoped_key(user_id, "");
     let reports = state.sandbox_reports.read().await;
     let now_ms = current_time_ms();
-    reports.values().any(|r| now_ms.saturating_sub(r.generated_at_ms) > timeout_secs * 1000)
-}
-
-async fn check_hotswap_rollback(state: &AppState) -> bool {
-    let hotswaps = state.hotswap_records.read().await;
-    hotswaps.values().any(|h| {
-        h.rollback_reason.is_some()
+    reports.iter().any(|(key, r)| {
+        key.starts_with(&prefix) && now_ms.saturating_sub(r.generated_at_ms) > timeout_secs * 1000
     })
 }
 
-async fn check_capability_hash_mismatch(state: &AppState) -> bool {
+async fn check_hotswap_rollback(state: &AppState, user_id: &auth::UserId) -> bool {
+    let prefix = auth::scoped_key(user_id, "");
+    let hotswaps = state.hotswap_records.read().await;
+    hotswaps.iter().any(|(key, h)| {
+        key.starts_with(&prefix) && h.rollback_reason.is_some()
+    })
+}
+
+async fn check_capability_hash_mismatch(state: &AppState, user_id: &auth::UserId) -> bool {
     // 比较compile_hash与运行时hash
+    let prefix = auth::scoped_key(user_id, "");
     let backtests = state.backtests.read().await;
-    if backtests.is_empty() {
+    let user_backtests: Vec<_> = backtests.iter().filter(|(k, _)| k.starts_with(&prefix)).collect();
+    if user_backtests.is_empty() {
         return false;
     }
     // 检查最近的backtest governance一致性
-    let hashes: Vec<&str> = backtests
-        .values()
-        .filter_map(|b| {
+    let hashes: Vec<&str> = user_backtests
+        .iter()
+        .filter_map(|(_, b)| {
             if b.governance.capability_hash != "unknown" {
                 Some(b.governance.capability_hash.as_str())
             } else {
@@ -305,24 +329,28 @@ async fn check_storage_watermark(_state: &AppState) -> bool {
     .unwrap_or(false)
 }
 
-async fn check_approval_expiry(state: &AppState) -> bool {
+async fn check_approval_expiry(state: &AppState, user_id: &auth::UserId) -> bool {
     let now_ms = current_time_ms();
     let four_hours_ms = 4 * 3600 * 1000;
+    let prefix = auth::scoped_key(user_id, "");
     let approvals = state.approval_records.read().await;
-    approvals.values().any(|a| {
-        a.review_state == RuntimeApprovalReviewState::Pending
+    approvals.iter().any(|(key, a)| {
+        key.starts_with(&prefix)
+            && a.review_state == RuntimeApprovalReviewState::Pending
             && a.expires_at_ms > now_ms
             && a.expires_at_ms.saturating_sub(now_ms) < four_hours_ms
     })
 }
 
-async fn check_ai_reject_rate(state: &AppState) -> bool {
+async fn check_ai_reject_rate(state: &AppState, user_id: &auth::UserId) -> bool {
+    let prefix = auth::scoped_key(user_id, "");
     let proposals = state.ai_proposals.read().await;
     let now_ms = current_time_ms();
     let day_ms = 24 * 3600 * 1000;
     let recent: Vec<_> = proposals
-        .values()
-        .filter(|p| now_ms.saturating_sub(p.created_at_ms) < day_ms)
+        .iter()
+        .filter(|(key, p)| key.starts_with(&prefix) && now_ms.saturating_sub(p.created_at_ms) < day_ms)
+        .map(|(_, p)| p)
         .collect();
     if recent.len() <= 5 {
         return false;
@@ -351,9 +379,12 @@ async fn persist_alert_firing(store_dir: &FsPath, firing: &AlertFiring) -> std::
         std::path::Path::new("storage"), "alerts", crate::storage_lifecycle::StorageLifecycle::Transient,
     )?;
     let json = serde_json::to_vec_pretty(firing)?;
-    fs::create_dir_all(store_dir).await?;
+    fs::create_dir_all(&store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", firing.firing_id));
-    fs::write(&file_path, &json).await?;
+    // v1.1.2: 原子写入防止告警文件损坏
+    let tmp = file_path.with_extension("tmp");
+    fs::write(&tmp, &json).await?;
+    fs::rename(&tmp, &file_path).await?;
     Ok(())
 }
 

@@ -5,6 +5,7 @@ use axum::{Json, Router};
 use std::collections::BTreeMap;
 
 use super::AppState;
+use crate::auth;
 
 pub(super) fn register_credential_routes(router: Router<AppState>) -> Router<AppState> {
     router
@@ -30,6 +31,7 @@ async fn list_credentials(
 
 /// POST /api/credentials ← { "service": "okx", "fields": {"key":"...","secret":"..."} }
 async fn set_credential(
+    user_id: auth::UserId,
     State(state): State<AppState>,
     Json(body): Json<serde_json::Value>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
@@ -71,15 +73,19 @@ async fn set_credential(
         .set_service(service, fields)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, format!("凭证存储失败: {}", e)))?;
 
+    // v2.0.1: 凭证操作审计日志
+    safe_eprintln!("[audit] 用户 {} 设置凭证 service={}", user_id.0, service);
+
     Ok(Json(serde_json::json!({ "stored": service })))
 }
 
 /// DELETE /api/credentials/:service → { "deleted": "okx" }
 async fn delete_credential(
+    user_id: auth::UserId,
     State(state): State<AppState>,
     Path(service): Path<String>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
-    if service.is_empty() || service.len() > 64 || service.contains('/') || service.contains('\\') || service.contains("..") {
+    if service.is_empty() || service.len() > 64 || service.contains('/') || service.contains('\\') || service.contains("..") || service.contains('\0') {
         return Err((StatusCode::BAD_REQUEST, "凭证标签无效".to_string()));
     }
     let vault = state
@@ -97,6 +103,9 @@ async fn delete_credential(
             )
         }
     })?;
+
+    // v2.0.1: 凭证操作审计日志
+    safe_eprintln!("[audit] 用户 {} 删除凭证 service={}", user_id.0, service);
 
     Ok(Json(serde_json::json!({ "deleted": service })))
 }

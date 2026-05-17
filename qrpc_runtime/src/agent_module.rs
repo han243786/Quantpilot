@@ -7,6 +7,12 @@ use qrpc_core_ir::{AgentPolicy, AgentPolicyKind, RebalanceSchedule, SignalKind};
 use serde_json::json;
 use std::collections::{BTreeMap, BTreeSet};
 
+// v2.1.1: 提取魔法数字为命名常量
+const MIN_QUANTITY_RATIO: f64 = 0.01;
+const DEFAULT_DECISION_THRESHOLD: f64 = 0.05;
+const SPREAD_MULTIPLIER: f64 = 20.0;
+const DEFAULT_COST_BUFFER_BPS: f64 = 20.0;
+
 #[derive(Debug, Clone)]
 pub struct AgentEvaluationRequest<'a> {
     pub cycle_name: &'a str,
@@ -52,16 +58,14 @@ impl AgentModuleProvider for BuiltinAgentModule {
                 .collect::<Vec<_>>();
 
             let agent_decisions = match (&agent.kind, request.cycle_name) {
-                (AgentPolicyKind::WeightedSignals, "slow") => build_weighted_agent_decision(
+                (AgentPolicyKind::WeightedSignals, "slow") => build_weighted_agent_decisions(
                     agent,
                     &related,
                     request.core_ir,
                     request.portfolio,
                     request.now_ms,
                     request.trace_id,
-                )
-                .into_iter()
-                .collect(),
+                ),
                 (AgentPolicyKind::PortfolioRebalance, "slow") => {
                     if !portfolio_rebalance_due(agent, request.last_rebalance_at_ms, request.now_ms)
                     {
@@ -142,100 +146,114 @@ fn portfolio_rebalance_due(
     }
 }
 
-fn build_weighted_agent_decision(
+/// v1.1.0: 按标的 (Exchange, Symbol) 分组信号，每个标的独立计算加权得分并生成决策
+fn build_weighted_agent_decisions(
     agent: &AgentPolicy,
     signals: &[IntentSignal],
     core_ir: &CoreStrategyIr,
     portfolio: &PortfolioState,
     now_ms: u64,
     trace_id: &str,
-) -> Option<AgentDecision> {
-    let weighted_signals = signals
+) -> Vec<AgentDecision> {
+    let weighted_signals: Vec<&IntentSignal> = signals
         .iter()
         .filter(|item| {
             signal_kind_for_intent(core_ir, &item.intent_id) != Some(SignalKind::Observe)
                 && !matches!(item.kind, IntentKind::QuoteObserve)
         })
-        .collect::<Vec<_>>();
+        .collect();
     if weighted_signals.is_empty() {
-        return None;
+        return Vec::new();
     }
 
-    let total_weight = weighted_signals
-        .iter()
-        .map(|item| item.confidence.max(0.1))
-        .sum::<f64>();
-    if total_weight <= f64::EPSILON {
-        return None;
-    }
-    let net = weighted_signals
-        .iter()
-        .map(|item| signal_score(item) * item.confidence.max(0.1))
-        .sum::<f64>()
-        / total_weight;
-    let decision_threshold = agent.decision_threshold.unwrap_or(0.05);
-    if net.abs() < decision_threshold {
-        return None;
-    }
+    let decision_threshold = agent.decision_threshold.unwrap_or(DEFAULT_DECISION_THRESHOLD).max(MIN_QUANTITY_RATIO);
+    let max_quantity_ratio = agent.max_quantity_ratio.clamp(MIN_QUANTITY_RATIO, 1.0);
 
-    let reference_price = signals
-        .iter()
-        .find_map(|item| item.reference_price)
-        .unwrap_or(50_000.0);
-    let target_exchange = signals
-        .iter()
-        .find_map(|item| item.exchange_scope.first().cloned())
-        .unwrap_or(Exchange::Binance);
-    let target_symbol = signals
-        .iter()
-        .find_map(|item| item.symbol_scope.first().cloned())
-        .unwrap_or(Symbol::BtcUsdt);
-    let max_quantity_ratio = agent.max_quantity_ratio.clamp(0.01, 1.0);
-    let available_sell_ratio =
-        available_position_ratio(portfolio, &target_exchange, &target_symbol, reference_price);
-    let quantity_ratio = if net > 0.0 {
-        net.abs()
-            .clamp(decision_threshold.max(0.01), max_quantity_ratio)
-    } else {
-        net.abs()
-            .clamp(decision_threshold.max(0.01), max_quantity_ratio)
-            .min(available_sell_ratio)
-    };
-    if quantity_ratio <= 0.01 {
-        return None;
-    }
-    Some(AgentDecision {
-        decision_id: format!("decision-{}-{now_ms}", agent.agent_id),
-        agent_id: agent.agent_id.clone(),
-        symbol: target_symbol,
-        exchange_targets: vec![target_exchange.clone()],
-        net_side: if net > 0.0 {
-            SignalSide::Long
+    // v1.1.0: 按 (Exchange, Symbol) 分组，每组独立计算
+    let grouped = group_signals_by_symbol(&weighted_signals);
+
+    let mut decisions = Vec::with_capacity(grouped.len());
+    for ((exchange, symbol), symbol_signals) in grouped {
+        let total_weight: f64 = symbol_signals.iter().map(|s| s.confidence.max(0.1)).sum();
+        if total_weight <= f64::EPSILON {
+            continue;
+        }
+        let net: f64 = symbol_signals
+            .iter()
+            .map(|s| signal_score(s) * s.confidence.max(0.1))
+            .sum::<f64>()
+            / total_weight;
+
+        if net.abs() < decision_threshold {
+            continue;
+        }
+
+        let reference_price = symbol_signals
+            .iter()
+            .find_map(|s| s.reference_price)
+            .unwrap_or(50_000.0);
+
+        let available_sell_ratio =
+            available_position_ratio(portfolio, &exchange, &symbol, reference_price);
+        let quantity_ratio = if net > 0.0 {
+            net.abs().clamp(decision_threshold, max_quantity_ratio)
         } else {
-            SignalSide::Short
-        },
-        net_strength: net,
-        portfolio_target_decision: None,
-        proposed_actions: vec![ProposedAction {
-            exchange: target_exchange,
-            side: if net > 0.0 {
-                OrderSide::Buy
-            } else {
-                OrderSide::Sell
-            },
-            quantity_ratio,
-            reference_price,
-            strategy_tag: "long_term".into(),
-        }],
-        reason: format!(
-            "net_score {:.4}, signals {}, threshold {:.4}",
-            net,
-            weighted_signals.len(),
-            decision_threshold
-        ),
-        produced_at_ms: now_ms,
-        trace_id: trace_id.to_string(),
-    })
+            net.abs()
+                .clamp(decision_threshold, max_quantity_ratio)
+                .min(available_sell_ratio)
+        };
+        if quantity_ratio <= MIN_QUANTITY_RATIO {
+            continue;
+        }
+
+        decisions.push(AgentDecision {
+            decision_id: format!("decision-{}-{}-{now_ms}", agent.agent_id, symbol.as_str()),
+            agent_id: agent.agent_id.clone(),
+            symbol: symbol.clone(),
+            exchange_targets: vec![exchange.clone()],
+            net_side: if net > 0.0 { SignalSide::Long } else { SignalSide::Short },
+            net_strength: net,
+            portfolio_target_decision: None,
+            proposed_actions: vec![ProposedAction {
+                exchange: exchange.clone(),
+                side: if net > 0.0 { OrderSide::Buy } else { OrderSide::Sell },
+                quantity_ratio,
+                reference_price,
+                strategy_tag: "long_term".into(),
+            }],
+            reason: format!(
+                "net_score {:.4}, signals={}, threshold={:.4}",
+                net,
+                symbol_signals.len(),
+                decision_threshold
+            ),
+            produced_at_ms: now_ms,
+            trace_id: trace_id.to_string(),
+        });
+    }
+
+    decisions
+}
+
+/// v1.1.0: 按 (Exchange, Symbol) 分组信号
+fn group_signals_by_symbol<'a>(
+    signals: &[&'a IntentSignal],
+) -> BTreeMap<(Exchange, Symbol), Vec<&'a IntentSignal>> {
+    let mut map: BTreeMap<(Exchange, Symbol), Vec<&'a IntentSignal>> = BTreeMap::new();
+    for signal in signals {
+        let exchange = signal
+            .exchange_scope
+            .first()
+            .cloned()
+            .unwrap_or(Exchange::Binance);
+        let symbol = signal
+            .symbol_scope
+            .first()
+            .cloned()
+            .unwrap_or(Symbol::BtcUsdt);
+        map.entry((exchange, symbol)).or_default().push(*signal);
+    }
+    map
 }
 
 #[derive(Debug, Clone)]
@@ -267,7 +285,7 @@ fn build_portfolio_rebalance_decision(
         return None;
     }
 
-    let decision_threshold = agent.decision_threshold.unwrap_or(0.05).max(0.0);
+    let decision_threshold = agent.decision_threshold.unwrap_or(DEFAULT_DECISION_THRESHOLD).max(0.0);
     let mut aggregated = BTreeMap::<(Exchange, Symbol), (f64, f64)>::new();
     for signal in weighted_signals {
         let exchange = signal
@@ -285,7 +303,7 @@ fn build_portfolio_rebalance_decision(
             .entry((exchange, symbol))
             .or_insert((0.0_f64, reference_price));
         entry.0 += signal_score(signal) * signal.confidence.max(0.1);
-        if entry.1 <= 0.0 && reference_price > 0.0 {
+        if entry.1 <= 0.0 && reference_price.is_finite() && reference_price > 0.0 {
             entry.1 = reference_price;
         }
     }
@@ -337,7 +355,7 @@ fn build_portfolio_rebalance_decision(
                     portfolio
                         .positions
                         .iter()
-                        .find(|position| position.symbol == symbol && position.mark_price > 0.0)
+                        .find(|position| position.symbol == symbol && position.mark_price.is_finite() && position.mark_price > 0.0)
                         .map(|position| position.mark_price)
                 })
                 .or_else(|| {
@@ -345,7 +363,7 @@ fn build_portfolio_rebalance_decision(
                         .positions
                         .iter()
                         .find(|position| {
-                            position.symbol == symbol && position.avg_entry_price > 0.0
+                            position.symbol == symbol && position.avg_entry_price.is_finite() && position.avg_entry_price > 0.0
                         })
                         .map(|position| position.avg_entry_price)
                 })
@@ -367,7 +385,7 @@ fn build_portfolio_rebalance_decision(
         .iter()
         .map(|plan| (plan.target_weight - plan.current_weight).abs())
         .sum::<f64>();
-    if net_delta <= 0.01 {
+    if net_delta <= MIN_QUANTITY_RATIO {
         return None;
     }
 
@@ -479,16 +497,25 @@ fn assign_target_weights(
                 })
                 .collect::<Vec<_>>();
             let total = raw_weights.iter().sum::<f64>();
+            // v2.1.0: total<=0 时均分权重，避免除零产生 NaN
             if total > f64::EPSILON {
                 for (plan, raw) in selected.into_iter().zip(raw_weights.into_iter()) {
                     plan.target_weight = (raw / total).min(max_quantity_ratio);
+                }
+            } else {
+                let count = selected.len() as f64;
+                if count > 0.0 {
+                    let eq = (1.0 / count).min(max_quantity_ratio);
+                    for plan in selected {
+                        plan.target_weight = eq;
+                    }
                 }
             }
         }
         "score_weight" => {
             let selected = plans
                 .iter_mut()
-                .filter(|plan| selected_symbols.contains(&plan.symbol) && plan.score > 0.0)
+                .filter(|plan| selected_symbols.contains(&plan.symbol) && plan.score.is_finite() && plan.score > 0.0)
                 .collect::<Vec<_>>();
             let total = selected.iter().map(|plan| plan.score).sum::<f64>();
             if total > f64::EPSILON {
@@ -568,10 +595,10 @@ fn build_arb_agent_decision(
     let max_quantity_ratio = agent.max_quantity_ratio.clamp(0.01, 1.0);
     let available_sell_ratio =
         available_position_ratio(portfolio, &sell_exchange, &target_symbol, sell_price);
-    let quantity_ratio = (spread * 20.0)
+    let quantity_ratio = (spread * SPREAD_MULTIPLIER)
         .clamp(0.1, max_quantity_ratio)
         .min(available_sell_ratio);
-    if quantity_ratio <= 0.01 {
+    if !quantity_ratio.is_finite() || quantity_ratio <= 0.01 {
         return None;
     }
 
@@ -641,10 +668,10 @@ fn build_arb_decision_from_spread_signal(
     let max_quantity_ratio = agent.max_quantity_ratio.clamp(0.01, 1.0);
     let available_sell_ratio =
         available_position_ratio(portfolio, &sell_exchange, &target_symbol, sell_price);
-    let quantity_ratio = (spread * 20.0)
+    let quantity_ratio = (spread * SPREAD_MULTIPLIER)
         .clamp(0.1, max_quantity_ratio)
         .min(available_sell_ratio);
-    if quantity_ratio <= 0.01 {
+    if !quantity_ratio.is_finite() || quantity_ratio <= 0.01 {
         return None;
     }
 
@@ -705,7 +732,7 @@ fn available_position_ratio(
     symbol: &Symbol,
     reference_price: f64,
 ) -> f64 {
-    if reference_price <= 0.0 {
+    if !reference_price.is_finite() || reference_price <= 0.0 {
         return 0.0;
     }
     let equity = portfolio_equity(portfolio).abs().max(1.0);
@@ -724,7 +751,7 @@ fn current_position_ratio(
     symbol: &Symbol,
     reference_price: f64,
 ) -> f64 {
-    if reference_price <= 0.0 {
+    if !reference_price.is_finite() || reference_price <= 0.0 {
         return 0.0;
     }
     let equity = portfolio_equity(portfolio).abs().max(1.0);
@@ -758,7 +785,7 @@ mod tests {
             sizing_kind: ExecutionSizingKind::EquityNotionalRatio,
             slippage_bps: 5.0,
             taker_fee_bps: 10.0,
-            total_cost_buffer_bps: 20.0,
+            total_cost_buffer_bps: DEFAULT_COST_BUFFER_BPS,
             time_in_force: CoreTimeInForce::Gtc,
             params: BTreeMap::new(),
         }

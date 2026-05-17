@@ -27,7 +27,7 @@ function ToolbarNotices({ capabilityAlert, notice, setNotice }) {
         >
           <span>{notice.message}</span>
           <button type="button" className="toolbar-notice-close" onClick={() => setNotice(null)} data-testid="toolbar-notice-close">
-            关闭
+            {t("关闭")}
           </button>
         </div>
       ) : null}
@@ -43,12 +43,13 @@ function ToolbarIssues({
   focusFinding,
   className = ""
 }) {
+  const { t } = useI18n();
   if (validationFindings.length === 0) return null;
 
   return (
-    <div className={`toolbar-issues ${className}`.trim()} aria-label="策略图校验问题">
+    <div className={`toolbar-issues ${className}`.trim()} aria-label={t("策略图校验问题")}>
       <div className="toolbar-issues-title">
-        {graph.validation_state.issue_counts?.error > 0 ? "阻塞问题" : "建议修复"}
+        {graph.validation_state.issue_counts?.error > 0 ? t("阻塞问题") : t("建议修复")}
       </div>
       <div className="toolbar-issues-list">
         {visibleFindings.map((issue) => (
@@ -64,7 +65,7 @@ function ToolbarIssues({
           </button>
         ))}
         {hiddenFindingCount > 0 ? (
-          <div className="toolbar-issue-overflow">更多 {hiddenFindingCount} 项</div>
+          <div className="toolbar-issue-overflow">{t("更多")} {hiddenFindingCount} {t("项")}</div>
         ) : null}
       </div>
     </div>
@@ -109,6 +110,7 @@ function DefaultToolbarLayout({
   saving,
   onOpenCredentials
 }) {
+  const { t } = useI18n();
   return (
     <>
       <div className="top-toolbar-main">
@@ -117,33 +119,33 @@ function DefaultToolbarLayout({
             <div className="toolbar-brand-mark">QP</div>
             <div className="toolbar-brand-copy">
               <div className="toolbar-brand-title">QuantPilot</div>
-              <div className="toolbar-brand-subtitle">模拟运行沙盒</div>
+              <div className="toolbar-brand-subtitle">{t("模拟运行沙盒")}</div>
             </div>
           </div>
           <button
             className="ghost-btn tutorial-entry-btn"
             onClick={() => triggerTutorial()}
             data-testid="toolbar-tutorial-action"
-            title="查看使用教程"
+            title={t("查看使用教程")}
           >
-            教程
+            {t("教程")}
           </button>
           <button
             className="ghost-btn"
             onClick={onOpenCredentials}
             data-testid="toolbar-credentials-action"
-            title="管理交易所凭证"
+            title={t("管理交易所凭证")}
           >
-            凭证
+            {t("凭证")}
           </button>
-          <button className="ghost-btn" onClick={() => { if (window.confirm("确认新建策略图？当前未保存的更改将丢失。")) resetGraph(); }} data-testid="toolbar-reset-graph-action">
-            新建策略图
+          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认新建策略图？当前未保存的更改将丢失。"))) resetGraph(); }} data-testid="toolbar-reset-graph-action">
+            {t("新建策略图")}
           </button>
           <button className="ghost-btn" onClick={handleLoadLatestGraph} data-testid="toolbar-load-latest-action">
-            加载最新
+            {t("加载最新")}
           </button>
           <button className="ghost-btn" onClick={handleSaveGraph} disabled={saving} data-testid="toolbar-save-graph-action">
-            {saving ? "保存中..." : "保存策略图"}
+            {saving ? t("保存中...") : t("保存策略图")}
           </button>
           <button
             className="ghost-btn"
@@ -152,7 +154,7 @@ function DefaultToolbarLayout({
             disabled={capabilitySyncBlocked || saving}
             title={exportConfigTitle}
           >
-            导出运行配置
+            {t("导出运行配置")}
           </button>
           <button
             className="ghost-btn"
@@ -160,14 +162,14 @@ function DefaultToolbarLayout({
             onClick={() => handleExportQuantScript({ graph })}
             disabled={saving}
           >
-            导出策略图源码
+            {t("导出策略图源码")}
           </button>
         </div>
 
         <div className="toolbar-center">
           <div className="toolbar-graph-meta">
             <div className="graph-kicker">{graph.metadata?.graph_id || "draft_graph"}</div>
-            <div className="graph-title">{graph.metadata?.name || "未命名策略"}</div>
+            <div className="graph-title">{graph.metadata?.name || t("未命名策略")}</div>
           </div>
           <div className={`status-pill ${statusLabel.tone}`}>{statusLabel.text}</div>
           <div className={`status-pill ${capabilityLabel.tone}`}>{capabilityLabel.text}</div>
@@ -200,7 +202,7 @@ function DefaultToolbarLayout({
             disabled={!canStartRuntime}
             title={startSimulationTitle}
           >
-            启动模拟
+            {t("启动模拟")}
           </button>
           <button
             className="ghost-btn"
@@ -209,13 +211,13 @@ function DefaultToolbarLayout({
             disabled={!canStartBacktest}
             title={runBacktestTitle}
           >
-            运行回测
+            {t("运行回测")}
           </button>
-          <button className="ghost-btn" onClick={stopRuntime} disabled={!canStopRuntime} data-testid="toolbar-stop-runtime-action">
-            停止
+          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认停止当前模拟？"))) stopRuntime(); }} disabled={!canStopRuntime} data-testid="toolbar-stop-runtime-action">
+            {t("停止")}
           </button>
-          <button className="ghost-btn" onClick={() => { if (window.confirm("确认重置运行时？运行中的模拟将被中断。")) resetRuntime(); }} data-testid="toolbar-reset-runtime-action">
-            重置运行时
+          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认重置运行时？运行中的模拟将被中断。"))) resetRuntime(); }} data-testid="toolbar-reset-runtime-action">
+            {t("重置运行时")}
           </button>
         </div>
       </div>
@@ -275,6 +277,7 @@ function WorkspaceToolbarLayout({
   saving,
   onOpenCredentials
 }) {
+  const { t } = useI18n();
   return (
     <>
       <div className="top-toolbar-main top-toolbar-main--workspace">
@@ -283,7 +286,7 @@ function WorkspaceToolbarLayout({
             <div className="toolbar-workspace-context__label">工作区操作</div>
             <div className="toolbar-graph-meta">
               <div className="graph-kicker">{graph.metadata?.graph_id || "draft_graph"}</div>
-              <div className="graph-title">{graph.metadata?.name || "未命名策略"}</div>
+              <div className="graph-title">{graph.metadata?.name || t("未命名策略")}</div>
             </div>
           </div>
           <div className="toolbar-status-strip">
@@ -327,7 +330,7 @@ function WorkspaceToolbarLayout({
             disabled={!canStartRuntime}
             title={startSimulationTitle}
           >
-            启动模拟
+            {t("启动模拟")}
           </button>
           <button
             className="ghost-btn"
@@ -336,13 +339,13 @@ function WorkspaceToolbarLayout({
             disabled={!canStartBacktest}
             title={runBacktestTitle}
           >
-            运行回测
+            {t("运行回测")}
           </button>
-          <button className="ghost-btn" onClick={stopRuntime} disabled={!canStopRuntime} data-testid="toolbar-stop-runtime-action">
-            停止
+          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认停止当前模拟？"))) stopRuntime(); }} disabled={!canStopRuntime} data-testid="toolbar-stop-runtime-action">
+            {t("停止")}
           </button>
-          <button className="ghost-btn" onClick={() => { if (window.confirm("确认重置运行时？运行中的模拟将被中断。")) resetRuntime(); }} data-testid="toolbar-reset-runtime-action">
-            重置运行时
+          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认重置运行时？运行中的模拟将被中断。"))) resetRuntime(); }} data-testid="toolbar-reset-runtime-action">
+            {t("重置运行时")}
           </button>
         </div>
       </div>
@@ -363,7 +366,7 @@ function WorkspaceToolbarLayout({
             disabled={capabilitySyncBlocked || saving}
             title={exportConfigTitle}
           >
-            导出运行配置
+            {t("导出运行配置")}
           </button>
           <button
             className="ghost-btn"
@@ -371,10 +374,10 @@ function WorkspaceToolbarLayout({
             onClick={() => handleExportQuantScript({ graph })}
             disabled={saving}
           >
-            导出策略图源码
+            {t("导出策略图源码")}
           </button>
-          <button className="ghost-btn" onClick={() => { if (window.confirm("确认新建策略图？当前未保存的更改将丢失。")) resetGraph(); }} data-testid="toolbar-reset-graph-action">
-            新建策略图
+          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认新建策略图？当前未保存的更改将丢失。"))) resetGraph(); }} data-testid="toolbar-reset-graph-action">
+            {t("新建策略图")}
           </button>
         </div>
       </div>
@@ -446,7 +449,7 @@ function CredentialPanel({ onClose }) {
   }, [loadServices]);
 
   const handleDelete = useCallback(async (label) => {
-    if (!window.confirm(`确认删除凭证 "${label}"？此操作不可撤销。`)) return;
+    if (!window.confirm(t("确认删除凭证\"{label}\"？此操作不可撤销。", { label }))) return;
     try {
       const res = await fetch(API_BASE + "/credentials/" + encodeURIComponent(label), { method: "DELETE" });
       if (!res.ok) {
@@ -512,7 +515,6 @@ function CredentialPanel({ onClose }) {
 }
 
 export default function TopToolbar({ variant = "default" }) {
-  useI18n();
   const model = useWorkspaceActionBarModel();
   const isWorkspace = variant === "workspace";
   const [saving, setSaving] = useState(false);

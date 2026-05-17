@@ -209,15 +209,27 @@ pub(super) async fn delete_graph(
     State(state): State<AppState>,
     Path(graph_id): Path<String>,
 ) -> Result<Json<DeleteGraphResponse>, (StatusCode, String)> {
+    let _save_guard = get_save_lock().lock().await;
     validate_graph_id(&graph_id).map_err(internal_error)?;
     let graph_path = state.graph_store_dir.join(format!("{}.json", graph_id));
     if !fs::try_exists(&graph_path).await.map_err(io_error)? {
-        return Err(not_found_io_error(std::io::Error::new(
-            std::io::ErrorKind::NotFound,
-            format!("未找到图 `{}`", graph_id),
-        )));
+        // v1.3.7: DELETE幂等 — 已不存在的资源返回200
+        return Ok(Json(DeleteGraphResponse { graph_id, deleted: false }));
     }
 
+    // v1.1.14: 修复审计写入目录 — graph_store_dir→audit_store_dir
+    let _ = persist_graph_audit_entry(
+        &state.audit_store_dir,
+        &GraphAuditEntry {
+            audit_id: format!("audit_{}_{}", graph_id, current_time_ms()),
+            graph_id: graph_id.clone(),
+            action: GraphAuditAction::GraphDeleted,
+            created_at_ms: current_time_ms(),
+            actor: ActorIdentity { actor_id: "system".into(), display_name: "系统".into() },
+            target_id: None,
+            summary: format!("graph_id={} 被删除", graph_id),
+        },
+    ).await;
     remove_file_if_exists(&graph_path).await?;
     remove_file_if_exists(&state.graph_store_dir.join(format!("{}.qs", graph_id))).await?;
     remove_dir_if_exists(&graph_version_dir(&state.graph_store_dir, &graph_id)).await?;
@@ -589,7 +601,10 @@ async fn refresh_latest_graph_after_delete(
         let content = fs::read_to_string(&next_latest_path)
             .await
             .map_err(not_found_io_error)?;
-        fs::write(&latest_path, content).await.map_err(io_error)?;
+        // v1.1.2: 原子写入防止 latest.json 损坏
+        let tmp = latest_path.with_extension("tmp");
+        fs::write(&tmp, &content).await.map_err(io_error)?;
+        fs::rename(&tmp, &latest_path).await.map_err(io_error)?;
     } else {
         remove_file_if_exists(&latest_path).await?;
     }
@@ -681,7 +696,17 @@ pub(super) async fn resolve_graph_reveal_path_from_value(
 
     if let Some(path) = saved_path {
         let candidates = if path.is_absolute() {
-            vec![path]
+            // v1.1.2: 绝对路径需规范化后确认在 storage 内
+            let storage_root = std::path::Path::new("storage")
+                .canonicalize()
+                .unwrap_or_else(|_| std::path::PathBuf::from("storage"));
+            let resolved = path.canonicalize().with_context(|| {
+                format!("saved_path 指向不存在的路径: {}", path.display())
+            })?;
+            if !resolved.starts_with(&storage_root) {
+                anyhow::bail!("saved_path 必须在 storage 目录内: {}", path.display());
+            }
+            vec![resolved]
         } else {
             let mut items = vec![path.clone()];
             if let Some(parent) = fallback_path.parent() {
@@ -692,7 +717,15 @@ pub(super) async fn resolve_graph_reveal_path_from_value(
 
         for candidate in candidates {
             if fs::try_exists(&candidate).await.unwrap_or(false) {
-                return canonical_existing_path(&candidate).await;
+                let resolved = canonical_existing_path(&candidate).await?;
+                // 验证相对路径解析后仍在 storage 内
+                let storage_root = std::path::Path::new("storage")
+                    .canonicalize()
+                    .unwrap_or_else(|_| std::path::PathBuf::from("storage"));
+                if !resolved.starts_with(&storage_root) {
+                    anyhow::bail!("saved_path 必须在 storage 目录内: {}", path.display());
+                }
+                return Ok(resolved);
             }
         }
     }
@@ -710,7 +743,7 @@ fn reveal_path_in_file_manager(path: &FsPath) -> anyhow::Result<()> {
     #[cfg(target_os = "windows")]
     {
         Command::new("explorer")
-            .arg(format!("/select,{}", path.display()))
+            .arg(format!("/select,\"{}\"", path.display()))
             .spawn()
             .context("未能显示图文件在资源管理器中")?;
     }

@@ -596,7 +596,7 @@ fn decode_positive_usize_arg(
     let value =
         expr_number(expr).ok_or_else(|| anyhow!("{ERR_INDICATOR_POSITIVE_WINDOW}: {label}"))?;
     let rounded = value.round();
-    if rounded <= 0.0 {
+    if !rounded.is_finite() || rounded <= 0.0 {
         bail!("{ERR_INDICATOR_POSITIVE_WINDOW}: {label}");
     }
     Ok(rounded as usize)

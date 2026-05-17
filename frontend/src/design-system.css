@@ -63,6 +63,13 @@ select option {
 /* ── 设计令牌 ─────────────────────────────────────────── */
 
 :root {
+  /* v1.1.0 P2: 热力图色阶 */
+  --ad-heat-deep-green: #3d6b4a;
+  --ad-heat-green: #5a8a6a;
+  --ad-heat-light-green: #6b9e7a;
+  --ad-heat-light-red: #a06060;
+  --ad-heat-red: #8a4040;
+  --ad-heat-deep-red: #6b3030;
   /* 表面 — Photoshop 暗色主题 */
   --ad-bg: #0d0d0d;
   --ad-bg-raised: #151515;
@@ -267,7 +274,7 @@ select option {
   background: var(--ad-panel-hover);
 }
 .ad-titlebar-btn--close:hover {
-  background: #c42b1c;
+  background: var(--ad-error);
   color: #fff;
 }
 

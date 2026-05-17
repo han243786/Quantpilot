@@ -1,0 +1,64 @@
+name: package-and-release
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: windows-latest
+    env:
+      APP_NAME: quantpilot
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build backend
+        run: cargo build --release
+
+      - name: Build frontend
+        run: cd frontend && npm ci && npm run build
+
+      - name: Package
+        run: |
+          mkdir -p dist/package
+          cp target/release/quantpilot dist/package/
+          cp -r frontend/dist dist/package/
+          cp config/* dist/package/config/ 2>/dev/null || true
+          tar -C dist/package -czf "dist/${APP_NAME}-${VERSION}-x64.tar.gz" .
+          sha256sum "dist/${APP_NAME}-${VERSION}-x64.tar.gz" > dist/SHA256SUMS
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-${{ env.VERSION }}
+          path: dist/*
+          retention-days: 7
+
+      - name: Publish Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/* \
+            --title "${APP_NAME} ${GITHUB_REF_NAME}" \
+            --generate-notes

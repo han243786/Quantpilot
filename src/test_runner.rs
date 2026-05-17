@@ -197,12 +197,11 @@ impl TestRunner {
                     let mut affected: Vec<String> = Vec::new();
                     // Data sources
                     for ds in &mut runtime_config.data_sources {
-                        if ds.data_id == *node_id || node_id.is_empty() {
-                            if param_name.contains("window") || param_name.contains("days") {
+                        if (ds.data_id == *node_id || node_id.is_empty())
+                            && (param_name.contains("window") || param_name.contains("days")) {
                                 ds.days = Some(*new_value as u32);
                                 affected.push(ds.data_id.clone());
                             }
-                        }
                     }
                     // Risk controls
                     for risk in &mut runtime_config.risks {
@@ -278,21 +277,21 @@ impl TestRunner {
                         let graph_dir = std::path::Path::new("storage").join("graphs");
                         let _ = std::fs::create_dir_all(&graph_dir);
 
-                        // Save QS source
-                        let _ = std::fs::write(
-                            graph_dir.join(format!("{}.qs", graph_id)),
-                            &ctx.original_source,
-                        );
+                        // Save QS source (v2.2.1: 原子写入)
+                        let qs_path = graph_dir.join(format!("{}.qs", graph_id));
+                        let qs_tmp = qs_path.with_extension("qs.tmp");
+                        let _ = std::fs::write(&qs_tmp, &ctx.original_source);
+                        let _ = std::fs::rename(&qs_tmp, &qs_path);
 
                         // Build visual graph JSON from frontend_config
                         let graph_json = build_visual_graph_json(
                             &graph_id,
                             &frontend_config,
                         );
-                        let _ = std::fs::write(
-                            graph_dir.join(format!("{}.json", graph_id)),
-                            serde_json::to_string_pretty(&graph_json).unwrap_or_default(),
-                        );
+                        let json_path = graph_dir.join(format!("{}.json", graph_id));
+                        let json_tmp = json_path.with_extension("json.tmp");
+                        let _ = std::fs::write(&json_tmp, serde_json::to_string_pretty(&graph_json).unwrap_or_default());
+                        let _ = std::fs::rename(&json_tmp, &json_path);
 
                         self.last_graph_id = Some(graph_id);
                         self.compile_result = Some(compiled);
@@ -423,7 +422,10 @@ impl TestRunner {
                         "run_status": self.last_run_status,
                         "backtest_metrics": self.last_backtest_metrics,
                     });
-                    std::fs::write(&path, serde_json::to_string_pretty(&data).unwrap_or_default())
+                    let tmp = path.with_extension("tmp");
+                    std::fs::write(&tmp, serde_json::to_string_pretty(&data).unwrap_or_default())
+                        .map_err(|e| format!("save_run 错误: {e}"))?;
+                    std::fs::rename(&tmp, &path)
                         .map_err(|e| format!("save_run 错误: {e}"))?;
                     messages.push(format!("save_run: 已持久化到 {}", path.display()));
                 }
@@ -547,12 +549,13 @@ impl TestRunner {
         let fields = vault.get_service("okx")
             .ok_or_else(|| "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_KEY 或在凭证保险库中配置".to_string())?;
 
-        let key = Zeroizing::new(fields.get("key").cloned()
-            .ok_or_else(|| "凭证标签 'okx' 中缺少 'key' 字段".to_string())?);
-        let secret = Zeroizing::new(fields.get("secret").cloned()
-            .ok_or_else(|| "凭证标签 'okx' 中缺少 'secret' 字段".to_string())?);
-        let passphrase = Zeroizing::new(fields.get("passphrase").cloned()
-            .ok_or_else(|| "凭证标签 'okx' 中缺少 'passphrase' 字段".to_string())?);
+        // v1.1.11: get_service 已返回 Zeroizing，无需外层再包装
+        let key = fields.get("key").cloned()
+            .ok_or_else(|| "凭证标签 'okx' 中缺少 'key' 字段".to_string())?;
+        let secret = fields.get("secret").cloned()
+            .ok_or_else(|| "凭证标签 'okx' 中缺少 'secret' 字段".to_string())?;
+        let passphrase = fields.get("passphrase").cloned()
+            .ok_or_else(|| "凭证标签 'okx' 中缺少 'passphrase' 字段".to_string())?;
 
         Ok((key, secret, passphrase))
     }
@@ -616,7 +619,7 @@ impl TestRunner {
                 .and_then(|s| s.parse().ok())
                 .unwrap_or(0.0);
 
-            if last_price > 0.0 {
+            if last_price.is_finite() && last_price > 0.0 {
                 const MIN_TRADE_QTY_RATIO: f64 = 0.005;
                 let trade_notional = (total_eq * MIN_TRADE_QTY_RATIO).min(max_trade_qty);
                 let qty = format!("{:.6}", (trade_notional / last_price).min(0.01).max(0.001));
@@ -646,7 +649,7 @@ impl TestRunner {
             }
 
             // Status update every 10 cycles
-            if orders > 0 && orders % 10 == 0 {
+            if orders > 0 && orders.is_multiple_of(10) {
                 status_summary = format!("状态: 已下达 {} 个订单，{} 个错误，equity={:.2}，已耗时 {}s",
                     orders, errors, total_eq, start_instant.elapsed().as_secs());
             }
@@ -676,10 +679,13 @@ impl TestRunner {
     fn testnet_agent() -> &'static ureq::Agent {
         static AGENT: OnceLock<ureq::Agent> = OnceLock::new();
         AGENT.get_or_init(|| {
-            let proxy_url = std::env::var("QUANTPILOT_PROXY")
-                .unwrap_or_else(|_| "http://127.0.0.1:7897".to_string());
-            let proxy = ureq::Proxy::new(&proxy_url).expect("proxy config error");
-            ureq::AgentBuilder::new().proxy(proxy).build()
+            // v1.1.12: 仅显式配置时才启用代理，不再硬编码默认值
+            let mut builder = ureq::AgentBuilder::new();
+            if let Ok(proxy_url) = std::env::var("QUANTPILOT_PROXY") {
+                let proxy = ureq::Proxy::new(&proxy_url).expect("proxy config error");
+                builder = builder.proxy(proxy);
+            }
+            builder.build()
         })
     }
 
@@ -723,7 +729,7 @@ impl TestRunner {
             let result = mac.finalize();
             let sig = base64::Engine::encode(
                 &base64::engine::general_purpose::STANDARD,
-                &result.into_bytes(),
+                result.into_bytes(),
             );
 
             let url = format!("https://www.okx.com{}", path);
@@ -951,7 +957,7 @@ impl TestRunner {
         );
         metrics.insert(
             "max_drawdown_pct".to_string(),
-            summary.max_drawdown_ratio * 100.0,
+            summary.drawdown_analysis.max_drawdown_ratio * 100.0,
         );
         // P1.1: Calculate Sharpe ratio from equity curve
         let (sharpe, annual_return, annual_vol) =
@@ -995,7 +1001,7 @@ impl TestRunner {
                 }
                 serde_json::Value::Object(bar)
             }).collect();
-            self.last_debug_bars = Some(serde_json::Value::Array(bars.iter().map(|b| b.clone()).collect()));
+            self.last_debug_bars = Some(serde_json::Value::Array(bars.iter().cloned().collect()));
         }
 
         self.last_backtest_metrics = metrics.clone();
@@ -1008,7 +1014,7 @@ impl TestRunner {
             buy_fills,
             sell_fills,
             summary.total_return_ratio * 100.0,
-            summary.max_drawdown_ratio * 100.0,
+            summary.drawdown_analysis.max_drawdown_ratio * 100.0,
             initial_equity,
             final_equity,
         ))
@@ -1066,12 +1072,31 @@ impl TestRunner {
         metrics.insert("total_fees_paid".to_string(), total_fees);
         metrics.insert("net_profit".to_string(), summary.net_profit);
         metrics.insert("total_return_pct".to_string(), summary.total_return_ratio * 100.0);
-        metrics.insert("max_drawdown_pct".to_string(), summary.max_drawdown_ratio * 100.0);
+        metrics.insert("max_drawdown_pct".to_string(), summary.drawdown_analysis.max_drawdown_ratio * 100.0);
         metrics.insert("sharpe_ratio".to_string(), sharpe);
         metrics.insert("annual_return_pct".to_string(), annual_return);
         metrics.insert("annual_volatility_pct".to_string(), annual_vol);
         metrics.insert("initial_equity".to_string(), initial_equity);
         metrics.insert("final_equity".to_string(), final_equity);
+        // v1.1.1: 嵌套字段的点分路径，使 .qs 场景支持 @assert backtest.metrics.risk_adjusted.sharpe_ratio
+        metrics.insert("risk_adjusted.sharpe_ratio".to_string(), summary.risk_adjusted.sharpe_ratio);
+        metrics.insert("risk_adjusted.sortino_ratio".to_string(), summary.risk_adjusted.sortino_ratio);
+        metrics.insert("risk_adjusted.calmar_ratio".to_string(), summary.risk_adjusted.calmar_ratio);
+        metrics.insert("risk_adjusted.var_95".to_string(), summary.risk_adjusted.var_95);
+        metrics.insert("risk_adjusted.cvar_95".to_string(), summary.risk_adjusted.cvar_95);
+        metrics.insert("trade_analysis.profit_factor".to_string(), summary.trade_analysis.profit_factor);
+        metrics.insert("trade_analysis.avg_win".to_string(), summary.trade_analysis.avg_win);
+        metrics.insert("trade_analysis.avg_loss".to_string(), summary.trade_analysis.avg_loss);
+        metrics.insert("drawdown_analysis.max_drawdown_ratio".to_string(), summary.drawdown_analysis.max_drawdown_ratio);
+        metrics.insert("drawdown_analysis.max_drawdown_duration_days".to_string(), summary.drawdown_analysis.max_drawdown_duration_days);
+        metrics.insert("drawdown_analysis.avg_drawdown_duration_days".to_string(), summary.drawdown_analysis.avg_drawdown_duration_days);
+        metrics.insert("skewness".to_string(), summary.skewness);
+        metrics.insert("kurtosis".to_string(), summary.kurtosis);
+        if let Some(ref bc) = summary.benchmark_comparison {
+            metrics.insert("benchmark_comparison.alpha".to_string(), bc.alpha);
+            metrics.insert("benchmark_comparison.beta".to_string(), bc.beta);
+            metrics.insert("benchmark_comparison.information_ratio".to_string(), bc.information_ratio);
+        }
         self.last_backtest_metrics = metrics.clone();
         self.last_backtest_trades_count = summary.trade_count;
         self.backtest_history.push(metrics.clone());
@@ -1080,7 +1105,7 @@ impl TestRunner {
             "backtest(historical): steps={}, fills={}, return={:.4}%, drawdown={:.4}%, sharpe={:.2}",
             summary.step_count, total_fills,
             summary.total_return_ratio * 100.0,
-            summary.max_drawdown_ratio * 100.0,
+            summary.drawdown_analysis.max_drawdown_ratio * 100.0,
             sharpe,
         ))
     }
@@ -1089,7 +1114,7 @@ impl TestRunner {
         let expr = expr.trim();
 
         // Resolve metric name aliases (docs use short names, code uses full names)
-        fn resolve_metric<'a>(name: &'a str) -> &'a str {
+        fn resolve_metric(name: &str) -> &str {
             match name {
                 "sharpe" => "sharpe_ratio",
                 "max_drawdown" => "max_drawdown_pct",
@@ -1113,8 +1138,7 @@ impl TestRunner {
         }
 
         // compile.compilable == true/false
-        if expr.starts_with("compile.") {
-            let rest = &expr["compile.".len()..];
+        if let Some(rest) = expr.strip_prefix("compile.") {
             if rest.contains("compilable == true") || rest.contains("compilable==true") {
                 return Ok(self.compile_result.is_some());
             }
@@ -1154,8 +1178,7 @@ impl TestRunner {
         }
 
         // run.*
-        if expr.starts_with("run.") {
-            let rest = &expr["run.".len()..];
+        if let Some(rest) = expr.strip_prefix("run.") {
             if rest.contains("events.length > 0") || rest.contains("events.length>0") {
                 return Ok(self.last_run_events_count > 0);
             }
@@ -1194,11 +1217,8 @@ impl TestRunner {
         }
 
         // backtest.*
-        if expr.starts_with("backtest.") {
-            let rest = &expr["backtest.".len()..];
-            if rest.starts_with("metrics.") {
-                let metric_expr = &rest["metrics.".len()..];
-
+        if let Some(rest) = expr.strip_prefix("backtest.") {
+            if let Some(metric_expr) = rest.strip_prefix("metrics.") {
                 // Support multiple comparison operators with optional tolerance: ==(0.01)
                 for (op_str, op_fn) in &[
                     (">=", (|a: f64, b: f64| a >= b) as fn(f64, f64) -> bool),
@@ -1392,8 +1412,7 @@ fn resolve_assert_actual(runner: &TestRunner, expr: &str) -> String {
         format!("{:.2}", runner.last_run_equity.unwrap_or(f64::NAN))
     } else if expr.starts_with("run.events.length") {
         format!("{}", runner.last_run_events_count)
-    } else if expr.starts_with("backtest.metrics.") {
-        let metric = &expr["backtest.metrics.".len()..];
+    } else if let Some(metric) = expr.strip_prefix("backtest.metrics.") {
         let name = metric.split(|c: char| !c.is_alphanumeric() && c != '_').next().unwrap_or(metric);
         if let Some(val) = runner.last_backtest_metrics.get(name) {
             format!("{:.6}", val)

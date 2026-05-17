@@ -251,7 +251,7 @@ fn parse_global_risk_profile_args(args: &[CallArg]) -> Result<GlobalRiskProfileS
         match name {
             "max_position" => {
                 spec.max_position_ratio = risk_profile_number_field(name, &arg.value)?;
-                if spec.max_position_ratio <= 0.0 {
+                if !spec.max_position_ratio.is_finite() || spec.max_position_ratio <= 0.0 {
                     bail!("risk.profile(..., max_position=...) 必须大于 0");
                 }
             }

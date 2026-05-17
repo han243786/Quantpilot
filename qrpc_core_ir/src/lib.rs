@@ -99,17 +99,17 @@ impl CoreStrategyIr {
         }
 
         for edge in &self.edges {
-            if !visited.contains(edge.source.as_str()) {
-                if dfs(
+            if !visited.contains(edge.source.as_str())
+                && dfs(
                     edge.source.as_str(),
                     &adjacency,
                     &mut visited,
                     &mut in_stack,
                     &mut cycle_path,
-                ) {
-                    cycle_path.reverse();
-                    return Err(vec![format!("DAG 环检测失败: {}", cycle_path.join(" → "))]);
-                }
+                )
+            {
+                cycle_path.reverse();
+                return Err(vec![format!("DAG 环检测失败: {}", cycle_path.join(" → "))]);
             }
         }
         Ok(())
@@ -502,6 +502,9 @@ pub struct RiskPolicy {
     pub min_action_interval_ms: u64,
     #[serde(default = "default_true")]
     pub enabled: bool,
+    /// v1.1.0: 所有标的合计杠杆上限（跨标的联合约束 Phase 2）
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_cross_symbol_leverage: Option<f64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -628,6 +631,7 @@ mod tests {
             max_exchange_leverage: 3.0,
             min_action_interval_ms: 1000,
             enabled: true,
+                        max_cross_symbol_leverage: None,
         });
 
         let encoded = serde_json::to_string(&core_ir).unwrap();

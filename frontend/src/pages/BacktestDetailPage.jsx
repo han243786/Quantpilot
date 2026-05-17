@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import DrawdownChart from "../components/DrawdownChart";
+import MonthlyReturnsHeatmap from "../components/MonthlyReturnsHeatmap";
 import EventStreamPanel from "../components/EventStreamPanel";
 import GovernedTimelinePanel from "../components/GovernedTimelinePanel";
 import RuntimeReportPanel from "../components/RuntimeReportPanel";
@@ -15,6 +17,17 @@ import {
   formatRatio,
   formatTime,
   formatValue,
+  formatSharpeRatio,
+  formatProfitFactor,
+  formatAnnualizedReturn,
+  formatDays,
+  sharpeColor,
+  profitFactorColor,
+  maxDrawdownFromSummary,
+  riskAdjustedFromSummary,
+  tradeAnalysisFromSummary,
+  drawdownAnalysisFromSummary,
+  benchmarkComparisonFromSummary,
   MetricPair
 } from "./backtestAnalysisShared";
 import { buildDiagnosticsExplanationEntries } from "../utils/runtimeExplanation";
@@ -117,15 +130,61 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
 
   const [summaryExpanded, setSummaryExpanded] = useState(false);
 
+  const riskAdj = useMemo(() => riskAdjustedFromSummary(summary), [summary]);
+  const tradeAnaly = useMemo(() => tradeAnalysisFromSummary(summary), [summary]);
+  const drawdownAnaly = useMemo(() => drawdownAnalysisFromSummary(summary), [summary]);
+  const benchComp = useMemo(() => benchmarkComparisonFromSummary(summary), [summary]);
+
   const visibleSummaryItems = [
     {
       label: t("收益"),
       value: formatRatio(summary?.total_return_ratio)
     },
     {
-      label: t("最大回撤"),
-      value: formatRatio(summary?.max_drawdown_ratio)
+      label: t("年化收益"),
+      value: formatAnnualizedReturn(summary?.annualized_return)
     },
+    {
+      label: t("夏普"),
+      value: formatSharpeRatio(riskAdj.sharpe_ratio),
+      color: sharpeColor(riskAdj.sharpe_ratio)
+    },
+    {
+      label: t("最大回撤"),
+      value: formatRatio(maxDrawdownFromSummary(summary))
+    },
+    {
+      label: t("盈亏比"),
+      value: formatProfitFactor(tradeAnaly.profit_factor),
+      color: profitFactorColor(tradeAnaly.profit_factor)
+    }
+  ];
+
+  const foldedSummaryItems = [
+    {
+      label: t("索提诺"),
+      value: formatSharpeRatio(riskAdj.sortino_ratio)
+    },
+    {
+      label: t("卡尔玛"),
+      value: formatSharpeRatio(riskAdj.calmar_ratio)
+    },
+    {
+      label: t("年化波动率"),
+      value: formatAnnualizedReturn(summary?.annualized_volatility)
+    },
+    {
+      label: t("最大回撤持续"),
+      value: formatDays(drawdownAnaly.max_drawdown_duration_days)
+    },
+    benchComp ? {
+      label: "Alpha",
+      value: formatRatio(benchComp.alpha)
+    } : null,
+    benchComp ? {
+      label: "Beta",
+      value: benchComp.beta?.toFixed(2) ?? "-"
+    } : null,
     {
       label: t("胜率"),
       value: summary?.win_rate != null && Number.isFinite(summary.win_rate) ? `${(summary.win_rate * 100).toFixed(1)}%` : "-"
@@ -133,23 +192,16 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
     {
       label: t("成交数"),
       value: formatValue(summary?.trade_count ?? trades.length)
-    }
-  ];
-
-  const foldedSummaryItems = [
+    },
     {
       label: t("协议"),
       value: manifest?.protocol_name || selectedSummary?.protocol_name || "-"
     },
     {
-      label: t("配置哈希"),
-      value: manifest?.config_hash || selectedSummary?.config_hash || "-"
-    },
-    {
       label: t("最终权益"),
       value: formatValue(summary?.final_equity || metrics?.final_account?.equity_estimate)
     }
-  ];
+  ].filter(Boolean);
 
   const summaryItems = summaryExpanded
     ? [...visibleSummaryItems, ...foldedSummaryItems]
@@ -335,6 +387,30 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
                 />
               </div>
             </div>
+          </AnalysisSection>
+
+          <AnalysisSection
+            testId="backtest-detail-drawdown-chart"
+            kicker={t("回撤分析")}
+            title={t("回撤曲线")}
+            summary={t("峰值到谷底的回撤深度可视化，展示策略风险暴露的持续时间。")}
+          >
+            <DrawdownChart
+              equityCurve={equityCurve}
+              title={t("回撤深度")}
+            />
+          </AnalysisSection>
+
+          <AnalysisSection
+            testId="backtest-detail-monthly-returns"
+            kicker={t("收益率分解")}
+            title={t("月度收益率")}
+            summary={t("每月收益率热力图，颜色深浅表示收益大小，用于评估策略在不同月份的一致性。")}
+          >
+            <MonthlyReturnsHeatmap
+              periodReturns={runtime.backtestArtifacts?.period_returns || []}
+              title={t("月度收益")}
+            />
           </AnalysisSection>
 
           <AnalysisSection

@@ -1,1 +1,0 @@
-import{u as t}from"./index-o0JpyeF4.js";function l(){const o=t(e=>e.graph),d=t(e=>e.runtime),s=t(e=>e.selectedNodeId),r=t(e=>e.selectedEdgeId),a=t(e=>e.selectedCompileDiagnosticTarget),c=t(e=>e.loadGraphById);return{graph:o,runtime:d,selectedNodeId:s,selectedEdgeId:r,selectedCompileDiagnosticTarget:a,loadGraphById:c}}export{l as u};

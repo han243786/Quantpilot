@@ -24,37 +24,37 @@ pub struct ExecutionPlanningOutput {
     pub events: Vec<RuntimeEvent>,
 }
 
-pub trait ExecutionModuleProvider: Send {
+/// v2.3.2: ISP拆分 — 执行计划 (只读, 无状态变更)
+pub trait ExecutionPlanner: Send {
     fn provider_key(&self) -> &'static str {
         "builtin.execution.paper"
     }
-
     fn plan_execution(&self, request: ExecutionPlanningRequest<'_>) -> ExecutionPlanningOutput;
-
-    fn submit_plan(
-        &mut self,
-        plan: &ExecutionPlan,
-        normalized_data: &[NormalizedMarketData],
-        portfolio: &mut PortfolioState,
-        now_ms: u64,
-        trace_id: &str,
-    ) -> FillResult;
-
-    fn on_market_update(
-        &mut self,
-        normalized_data: &[NormalizedMarketData],
-        portfolio: &mut PortfolioState,
-        now_ms: u64,
-        trace_id: &str,
-    ) -> FillResult;
 }
+
+/// v2.3.2: ISP拆分 — 执行提交 (有状态变更: 提交计划/市场更新/假设设置)
+pub trait ExecutionSubmitter: Send {
+    fn submit_plan(
+        &mut self, plan: &ExecutionPlan, normalized_data: &[NormalizedMarketData],
+        portfolio: &mut PortfolioState, now_ms: u64, trace_id: &str,
+    ) -> FillResult;
+    fn on_market_update(
+        &mut self, normalized_data: &[NormalizedMarketData],
+        portfolio: &mut PortfolioState, now_ms: u64, trace_id: &str,
+    ) -> FillResult;
+    fn set_execution_assumptions(&mut self, _assumptions: crate::slippage::ExecutionAssumptions) {}
+}
+
+/// 兼容别名: v2.3.2 前使用的组合 trait。新代码应分别使用 ExecutionPlanner 和 ExecutionSubmitter。
+pub trait ExecutionModuleProvider: ExecutionPlanner + ExecutionSubmitter {}
+impl<T: ExecutionPlanner + ExecutionSubmitter> ExecutionModuleProvider for T {}
 
 #[derive(Debug, Clone, Default)]
 pub struct BuiltinExecutionModule {
     fill_engine: FillEngine,
 }
 
-impl ExecutionModuleProvider for BuiltinExecutionModule {
+impl ExecutionPlanner for BuiltinExecutionModule {
     fn plan_execution(&self, request: ExecutionPlanningRequest<'_>) -> ExecutionPlanningOutput {
         let quote_map = quote_price_map(request.normalized_data);
         let n = request.risk_decisions.len();
@@ -113,29 +113,27 @@ impl ExecutionModuleProvider for BuiltinExecutionModule {
         ExecutionPlanningOutput { plans, events }
     }
 
+}
+
+impl ExecutionSubmitter for BuiltinExecutionModule {
     fn submit_plan(
-        &mut self,
-        plan: &ExecutionPlan,
-        normalized_data: &[NormalizedMarketData],
-        portfolio: &mut PortfolioState,
-        now_ms: u64,
-        trace_id: &str,
+        &mut self, plan: &ExecutionPlan, normalized_data: &[NormalizedMarketData],
+        portfolio: &mut PortfolioState, now_ms: u64, trace_id: &str,
     ) -> FillResult {
         let market_prices = quote_market_state_map(normalized_data);
-        self.fill_engine
-            .submit_plan(plan, &market_prices, portfolio, now_ms, trace_id)
+        self.fill_engine.submit_plan(plan, &market_prices, portfolio, now_ms, trace_id)
     }
 
     fn on_market_update(
-        &mut self,
-        normalized_data: &[NormalizedMarketData],
-        portfolio: &mut PortfolioState,
-        now_ms: u64,
-        trace_id: &str,
+        &mut self, normalized_data: &[NormalizedMarketData],
+        portfolio: &mut PortfolioState, now_ms: u64, trace_id: &str,
     ) -> FillResult {
         let market_prices = quote_market_state_map(normalized_data);
-        self.fill_engine
-            .on_market_update(&market_prices, portfolio, now_ms, trace_id)
+        self.fill_engine.on_market_update(&market_prices, portfolio, now_ms, trace_id)
+    }
+
+    fn set_execution_assumptions(&mut self, assumptions: crate::slippage::ExecutionAssumptions) {
+        self.fill_engine.set_assumptions(assumptions);
     }
 }
 
@@ -159,7 +157,11 @@ fn build_action_orders(
             } else {
                 0.0
             };
-            (quantity > 0.0).then(|| {
+            // v2.1.0: NaN/Inf 数量告警，不再静默丢弃
+            if quantity.is_nan() || quantity.is_infinite() {
+                eprintln!("[execution] 警告: 计算出的数量无效 (NaN/Inf), symbol={:?}, action={:?}", decision.symbol, action);
+            }
+            (quantity.is_finite() && quantity > 0.0).then(|| {
                 let should_rest = quote_map.is_empty() && matches!(action.side, OrderSide::Buy);
                 let order_type = if should_rest {
                     OrderType::Limit
@@ -211,12 +213,12 @@ fn build_portfolio_target_orders(
             let current_weight =
                 current_position_ratio(portfolio, &item.exchange, &item.symbol, quote_price);
             let delta_weight = item.target_weight - current_weight;
-            if delta_weight.abs() <= 0.01 || quote_price <= 0.0 {
+            if delta_weight.abs() <= 0.01 || !quote_price.is_finite() || quote_price <= 0.0 {
                 return None;
             }
             let notional_budget = equity * delta_weight.abs();
             let quantity = notional_budget / quote_price;
-            (quantity > 0.0).then(|| SimOrder {
+            (quantity.is_finite() && quantity > 0.0).then(|| SimOrder {
                 order_id: format!(
                     "ord-{}-{}-{:?}",
                     decision.risk_decision_id,
@@ -360,7 +362,7 @@ fn current_position_ratio(
     reference_price: f64,
 ) -> f64 {
     let equity = portfolio_equity(portfolio).abs().max(1.0);
-    if reference_price <= 0.0 {
+    if !reference_price.is_finite() || reference_price <= 0.0 {
         return 0.0;
     }
     let notional = portfolio
@@ -407,6 +409,8 @@ fn quote_market_state_map(
                 (quote.exchange.clone(), quote.symbol.clone()),
                 MarketState {
                     price: quote.mid_price,
+                    bid_price: Some(quote.best_bid),
+                    ask_price: Some(quote.best_ask),
                     buy_liquidity: quote.ask_size,
                     sell_liquidity: quote.bid_size,
                 },

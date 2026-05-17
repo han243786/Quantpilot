@@ -816,7 +816,7 @@ export function BacktestSummarySection({
           </div>
           <div className="account-metric-card" data-testid="backtest-summary-max-drawdown">
             <span>{t("回撤")}</span>
-            <strong>{formatRatio(backtestSummary?.max_drawdown_ratio)}</strong>
+            <strong>{formatRatio(backtestSummary?.drawdown_analysis?.max_drawdown_ratio ?? backtestSummary?.max_drawdown_ratio)}</strong>
           </div>
           <div className="account-metric-card">
             <span>{t("成交数")}</span>
@@ -1114,7 +1114,7 @@ function BacktestHistorySection({
                       },
                       {
                         label: "\u56de\u64a4",
-                        value: formatRatio(item.summary?.max_drawdown_ratio),
+                        value: formatRatio(item.summary?.drawdown_analysis?.max_drawdown_ratio ?? item.summary?.max_drawdown_ratio),
                         tone: drawdownTone(item.summary?.max_drawdown_ratio)
                       },
                       {
@@ -1150,7 +1150,7 @@ function BacktestHistorySection({
                       { label: "图", value: item.graph_id || "-" },
                       { label: "编译", value: item.compile_id || "-" },
                       { label: "收益", value: formatRatio(item.summary?.total_return_ratio) },
-                      { label: "回撤", value: formatRatio(item.summary?.max_drawdown_ratio) },
+                      { label: "回撤", value: formatRatio(item.summary?.drawdown_analysis?.max_drawdown_ratio ?? item.summary?.max_drawdown_ratio) },
                       { label: "成交", value: formatValue(item.summary?.trade_count) }
                     ]}
                   />

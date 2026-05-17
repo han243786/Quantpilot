@@ -274,7 +274,7 @@ impl<'a> HotSwapOrchestrator<'a> {
         if self.sandbox.is_running() {
             denied_reasons.push("沙箱正在运行，请先暂停再执行热交换".to_string());
         }
-        let open_order_count = current_snapshot.portfolio.open_orders.len() as u32;
+        let open_order_count = u32::try_from(current_snapshot.portfolio.open_orders.len()).unwrap_or(u32::MAX);
         state.open_order_count = open_order_count;
         if open_order_count > 0 {
             denied_reasons.push(format!(
@@ -577,12 +577,15 @@ impl<'a> HotSwapOrchestrator<'a> {
             }),
         );
 
+        // v2.0.1: 热插拔回滚目前仅能发出事件通知。
+        // 完整的状态恢复需要 Sandbox trait 提供 restore() API（计划中）。
+        // 当前回滚后，受影响的模块配置可能需要手动重启沙箱。
         if let Some(ref snapshot) = state.snapshot {
             state.emit_event(
                 "rollback",
                 RuntimeEventType::RuntimeWarning,
                 serde_json::json!({
-                    "message": "restored pre-swap snapshot",
+                    "message": "pre-swap snapshot exists but cannot be auto-restored; module reset requires sandbox restart",
                     "snapshot_captured_at_ms": snapshot.captured_at_ms,
                 }),
             );
@@ -592,7 +595,7 @@ impl<'a> HotSwapOrchestrator<'a> {
             "rollback",
             RuntimeEventType::RuntimeWarning,
             serde_json::json!({
-                "message": "hot-swap rollback completed",
+                "message": "hot-swap rollback completed (manual sandbox restart may be required for full state recovery)",
             }),
         );
         Ok(())
@@ -930,6 +933,7 @@ mod tests {
                 max_exchange_leverage: 3.0,
                 min_action_interval_ms: 100,
                 enabled: true,
+                                max_cross_symbol_leverage: None,
             }],
             edges: vec![],
             execution: ExecutionRule {

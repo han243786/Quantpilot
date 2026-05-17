@@ -2,6 +2,7 @@ import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "rea
 import { useGraphStore } from "../store/graphStore";
 import { STRATEGY_TEMPLATE_LIBRARY } from "../templates/strategyTemplates";
 import { navigateTo, strategyWorkspacePath } from "../router";
+import { translateText } from "../i18n";
 
 const MAX_RECENT_ITEMS = 4;
 const MAX_ACTIVITY_ITEMS = 6;
@@ -439,7 +440,7 @@ export function useStrategyDirectoryModel() {
     const confirmed =
       typeof window === "undefined" || typeof window.confirm !== "function"
         ? true
-        : window.confirm(`确认删除策略“${label}”？此操作会移除策略文件和版本记录。`);
+        : window.confirm(translateText('确认删除策略”{label}”？此操作会移除策略文件和版本记录。', { label }));
     if (!confirmed) return false;
 
     await deleteGraph(graphId);

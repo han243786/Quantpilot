@@ -447,15 +447,6 @@ pub(super) fn differing_metrics_fields(metrics: &BacktestMetricsCompareBlock) ->
     if metrics.fields.net_profit.status == BacktestCompareStatus::Different {
         fields.push("net_profit");
     }
-    if metrics.fields.turnover_ratio.status == BacktestCompareStatus::Different {
-        fields.push("turnover_ratio");
-    }
-    if metrics.fields.average_trade_notional.status == BacktestCompareStatus::Different {
-        fields.push("average_trade_notional");
-    }
-    if metrics.fields.fee_drag_ratio.status == BacktestCompareStatus::Different {
-        fields.push("fee_drag_ratio");
-    }
     fields
 }
 
@@ -548,16 +539,15 @@ pub(super) fn format_execution_assumptions_module(module: &ExecutionAssumptionsM
 
 pub(super) fn format_metrics_summary(summary: &qrpc_core::BacktestSummary) -> String {
     format!(
-        "steps={}, trades={}, return={}, drawdown={}, final_equity={}, net_profit={}, turnover_ratio={}, average_trade_notional={}, fee_drag_ratio={}",
+        "steps={}, trades={}, return={}, drawdown={}, final_equity={}, net_profit={}, sharpe={}, profit_factor={}",
         summary.step_count,
         summary.trade_count,
         summary.total_return_ratio,
-        summary.max_drawdown_ratio,
+        summary.drawdown_analysis.max_drawdown_ratio,
         summary.final_equity,
         summary.net_profit,
-        summary.turnover_ratio,
-        summary.average_trade_notional,
-        summary.fee_drag_ratio
+        summary.risk_adjusted.sharpe_ratio,
+        summary.trade_analysis.profit_factor,
     )
 }
 

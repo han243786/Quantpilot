@@ -537,7 +537,7 @@
 .strategy-template-library--collapsed .strategy-template-library__toggle {
   min-height: 26px;
   padding: 3px 9px;
-  border-radius: 9px;
+  border-radius: 6px;
 }
 
 .strategy-template-library__toggle {

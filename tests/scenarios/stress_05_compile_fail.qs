@@ -8,7 +8,7 @@ import math
     cover: ["STRESS-FAIL-001"]
 }
 
-@step("编译应失败") {
+@step("编译应失败 — 验证缺失策略函数被正确拒绝") {
     @compile
-    @assert compile.compilable == true
+    @assert compile.compilable == false
 }

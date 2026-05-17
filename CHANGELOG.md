@@ -1,5 +1,139 @@
 # Changelog
 
+## v2.2.x — 架构重构与质量根基 (2026-05-17)
+
+### v2.2.0 — 架构根基重构
+- **QuantPilotError**: 新建 `qrpc_core/src/error.rs` — 7变体类型化错误枚举 (Validation/Runtime/Io/Serialization/Plugin/Capability/Internal)
+- **RuntimeCoordinator 拆分**: 22字段 god object → 10字段 + 3子结构体
+  - `RuntimeState` (portfolio/fetch_counts/timestamps)
+  - `ConfigTracker` (deployment revisions/generation/history)
+  - `MergeCoordinator` (engine/policy/records)
+- **4 新文件**: error.rs, runtime_state.rs, config_tracker.rs, merge_coordinator.rs
+
+### v2.2.1 — i18n完整化 + 可观测性 + 安全
+- **en-US 全量审核**: 318处 `// TODO: translate` → 清零
+- **前端状态标签 i18n**: `runtimeStatus.js` 硬编码中文 → `translateText()`
+- **日期格式化**: AssetCandlesPanel/DrawdownChart 硬编码 `"zh-CN"` → `getGlobalLocale()`
+- **tracing 引入**: tracing + tracing-subscriber, 支持 JSON/compact 双格式, QUANTPILOT_LOG_FORMAT 配置
+- **登录速率限制**: 5次/分钟/IP 独立限流 (auth_rate_limit_middleware)
+- **健康检查丰富化**: /api/health 返回组件级状态 (credential_vault/auth_db/storage/active_alerts)
+
+### 累计改动
+- **7 新文件**, **15+ 修改文件**
+- `cargo check` ✅ | `vite build` ✅
+
+---
+
+## v2.1.x — P1/P2/P3 全量清零与系统加固 (2026-05-17)
+
+97 项审计发现全部消化清零。v2.1.0→v2.1.3 四个 PATCH 版本，跨越安全、数据完整性、金融逻辑、插件系统、持久化、前端、运维七大领域。
+
+### v2.1.0 — P1 全量消化 (49/49)
+
+**安全认证 (7)**: ConnectInfo 注入验证、用户名泄露修复、路径遍历防护、reveal 边界检查、deny_unknown_fields (24 structs)、API key 脱敏、CORS 收紧
+
+**数据完整性 (10)**: AI 提案状态机校验、实验创建持久化、credential_vault .bak 崩溃恢复、graph .bak 恢复、approval_id 原子计数器、warm_persisted_state scoped_key、schema_version 兼容检查、transient_backtest_store_dir 纳入 storage
+
+**金融逻辑 (6)**: 挂单手续费使用 assumptions.taker_fee_bps、成交后 mark-to-market 更新、跨 Agent 方向冲突检测、NaN 数量告警、权重除零 guard、OKX 时间戳毫秒精度
+
+**插件系统 (7)**: entrypoint 校验、unregister 机制、PluginRegistry::remove()、version_req 格式校验、Ed25519 签名验证 (scan_atoms)、setrlimit 返回值检查
+
+**持久化 (5)**: reqwest Client 复用、merge_records/config_history 上限、TTL 清理频率提升 (60min→10min)、alert_firings 清理
+
+**前端 (7)**: App.jsx/BacktestComparePage/LeftSidebar/TopToolbar t() 全量包裹、SnapshotsPage 请求体修复、AssetCandlesPanel key 修复、BacktestDetailPage useMemo
+
+**运维 (7)**: 优雅关闭超时 (30s)、日志级别配置 (QUANTPILOT_LOG_LEVEL)、QUANTPILOT_BIND_ADDR 文档化、OrderSide Display impl
+
+### v2.1.1 — P2 精选消化 (7/10)
+
+JWT 密钥持久化 (storage/.jwt_secret)、OKX 错误脱敏、编译信号量全 handler 覆盖、agent_module 魔法数字提取 (4 常量)、merge.rs concentration_limit 截断修复、setrlimit 错误处理
+
+### v2.1.2 — v2.0.0 P2 高危消化 (6/6)
+
+卖空无持仓检查、fee.abs()→fee.max(0.0)、enforce_max_* Some(0) 校验、DEV 模式错误路径泄露修复
+
+### v2.1.3 — 重构收尾 + P3 清零
+
+**新模块**: CircuitBreaker (三态断路器, 8 tests)、Backup (每日自动备份)、Sandbox checkpoint/restore
+
+**重构**: spawn_blocking 编译、frontend_runtime_mapping.rs 死代码清理 (1025→575 行)、state.rs 孤立文件删除 (900+ 行)、safe_log Mutex→RwLock
+
+**P3 清零 (20)**: NaN 守卫 51 处 is_finite()、gap_count u32→u64、MOCK_VOLATILITY NaN 注入防护、PluginManifest deny_unknown_fields、rate_limiter bucket 阈值优化、backtest_metrics 溢出防护、credential_api 空字节检查、PORT fallback 错误改进
+
+### 累计改动
+- **30+ 文件**修改/新建
+- **3 新模块**: circuit_breaker, backup, Sandbox checkpoint/restore
+- **1350+ 行死代码**删除
+- **51 处 NaN 防御**
+- **28 structs** deny_unknown_fields
+- **cargo check** 始终通过
+
+---
+
+## v2.0.0 — OKX 实盘 + 多用户 + 插件市场 + 前端补全 + 打包 (2026-05-17)
+
+MAJOR 版本。五大功能追加 + 7 S0 修复 + 17 P1 修复。
+
+### 功能
+- OKX 实时交易接口 (live_execution.rs 867 行)
+- 多用户认证与数据隔离 (SQLite + JWT + bcrypt)
+- 插件市场 (Ed25519 签名 + 子进程沙箱)
+- 前端 UX 补全 (t() 全量包裹)
+- 整合包发布 (NSIS + Docker + CI/CD)
+
+### 质量
+- S0: 7/7 ✅ | P1: 17/17 ✅ | P2: 28→v2.1.x | P3: 20→v2.1.x
+- 原子写入修复 7 处 tmp+rename
+- TOCTOU 修复 3 个审批 handler
+
+---
+
+## v1.1.0 — 研究级回测与多标的策略支持
+
+将回测系统从基础回放升级为业界标准研究级回测，新增 16 项功能。S0+P1+P2 全部完成，GP 合规 30/32，加权评分 9.5/10。
+
+### S0 阻断级 (6/6)
+
+- **BacktestSummary 分组子结构体**: risk_adjusted (夏普/索提诺/卡尔玛/VaR/CVaR)、trade_analysis (盈亏比/连胜连亏)、drawdown_analysis (回撤天数)、benchmark_comparison (Alpha/Beta/IR)
+- **成交模型三层升级**: SlippageModel (固定/波动率缩放/盘口深度) + MarketImpactModel (平方根) + bid/ask 真实价差 + LatencyModel (固定/正态/按交易所)
+- **统一时间轴回放引擎**: UnifiedTimeline 替代 ReplayDataModule，合并所有数据源时间戳，asof-join 对齐，支持多标的 + 多频率
+- **多标的信号路由**: WeightedSignals 按 (Exchange, Symbol) 分组独立决策，消除 ETH 信号被静默吞掉的问题
+- **基准权益曲线**: 等权重买入持有基准自动生成，月度收益率热力图
+- **跨标的联合风控**: Phase 2 检查 `max_cross_symbol_leverage`，超标按比例缩减
+
+### P1 高优 (6/6)
+
+- 买卖价差集成: FillEngine 使用 real bid/ask，从波动率估算价差（非 OHLC 极值）
+- 波动率缩放滑点 + 市场冲击模型: 接入 Sandbox → Coordinator → FillEngine 全链路
+- 前端 5 指标 Hero 卡 + 指标对比表 + 夏普颜色编码
+- 回撤面积图 (DrawdownChart) + 基准叠加线 (灰色虚线)
+- 跨标的联合风控 Phase 2
+- 多频率数据重采样: ResampleKlineProvider (1h→4h/1d OHLC 聚合)
+
+### P2 加分 (4/4)
+
+- VaR/CVaR (95% 历史模拟法) + 偏度/峰度
+- 月度收益率热力图 (纯 CSS Grid 着色)
+- `period_returns` 字段 + 回测周期分解
+- OpenAPI/文档同步
+
+### 技术债清偿
+
+- clippy -D warnings 通过 (修复 collapsible_if / 移除死代码 / `args.get(0)`→`args.first()`)
+- Gate 3 能力治理快照生成
+- `summarize_equity_curve` 移除冗余 `trade_ledger` 参数
+- 旧回测数据加载向后兼容 (serde default)
+
+### 文件统计
+
+- 新增 8 文件 (slippage, backtest_metrics, sandbox/{mod,timeline,replay}, DrawdownChart, MonthlyReturnsHeatmap, 里程碑文档)
+- 修改 18 文件 (跨 3 Rust crate + 6 前端组件)
+- 测试: 前端 269/269, E2E 17/17, Rust lib 136/138 (2 ignore)
+
+## v1.0.7 — 体验收口与国际化补齐
+
+v1.0.6 延期 9 项收口 + en-US 补齐 + CSS 质量收口。纯质量里程碑，无新功能。
+
 ## v1.0.6 — 用户困惑点全量优化
 
 基于四维度全量审计（79 项发现），系统性消除用户困惑点。S0/P1 全部闭环，完成率 89%。

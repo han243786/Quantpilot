@@ -128,6 +128,7 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
             return s;
           });
         };
+        // v1.1.7: 在源上存储 batchTimer，stopRuntime 时可清理
 
         source._onMessage = (message) => {
           try {
@@ -177,6 +178,9 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
           runtimeController: {
             close: () => {
               if (sourceRef.current?._reconnectTimer) clearTimeout(sourceRef.current._reconnectTimer);
+              // v1.1.7: 清理挂起的批次定时器，防止陈旧事件污染
+              if (batchTimer) { clearTimeout(batchTimer); batchTimer = null; }
+              batchedEvents = [];
               sourceRef.current?.close();
             }
           },

@@ -23,15 +23,20 @@ RUN npm run build
 
 # Stage 3: 运行时
 FROM debian:bookworm-slim
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y ca-certificates curl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=backend-builder /app/quantpilot /app/quantpilot
 COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
 COPY config/ /app/config/
 RUN mkdir -p /app/storage
+# v2.3.1: 非 root 用户运行
+RUN useradd -m -u 1000 quantpilot && chown -R quantpilot:quantpilot /app
+USER quantpilot
 
 ENV QUANTPILOT_DEV=false
 ENV QUANTPILOT_RATE_LIMIT_RPS=100
 EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD curl -f http://localhost:3000/api/health || exit 1
 
 CMD ["/app/quantpilot"]

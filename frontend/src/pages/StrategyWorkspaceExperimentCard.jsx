@@ -224,7 +224,7 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
                   <span>滑点 {variant.slippage_bps} bps</span>
                   <span>延迟 {variant.latency_ms} ms</span>
                   <span>收益 {formatPercent(variant.summary.total_return_ratio)}</span>
-                  <span>回撤 {formatPercent(variant.summary.max_drawdown_ratio)}</span>
+                  <span>回撤 {formatPercent(variant.summary.drawdown_analysis?.max_drawdown_ratio ?? variant.summary.max_drawdown_ratio)}</span>
                   <span>交易 {variant.summary.trade_count}</span>
                 </div>
                 <div className="strategy-inspector-actions">

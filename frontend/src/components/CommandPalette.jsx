@@ -22,13 +22,17 @@ export default function CommandPalette({ open, onClose }) {
   const inputRef = useRef(null);
   const paletteRef = useRef(null);
 
-  const filtered = query.trim()
-    ? COMMANDS.filter((c) =>
-        c.label.toLowerCase().includes(query.toLowerCase()) ||
-        c.section.toLowerCase().includes(query.toLowerCase()) ||
-        c.keys.some((k) => k.includes(query.toLowerCase()))
-      )
-    : COMMANDS;
+  // v1.1.8: useMemo 防止每次渲染产生新数组引用
+  const filtered = useMemo(() =>
+    query.trim()
+      ? COMMANDS.filter((c) =>
+          c.label.toLowerCase().includes(query.toLowerCase()) ||
+          c.section.toLowerCase().includes(query.toLowerCase()) ||
+          c.keys.some((k) => k.includes(query.toLowerCase()))
+        )
+      : COMMANDS,
+    [query, COMMANDS]
+  );
 
   const select = useCallback((cmd) => {
     navigateTo(cmd.keys[0]);
@@ -47,24 +51,32 @@ export default function CommandPalette({ open, onClose }) {
     setSelectedIndex(0);
   }, [query]);
 
+  // v1.1.8: 用 ref 持有 filtered，避免 effect 依赖数组抖动
+  const filteredRef = useRef(filtered);
+  filteredRef.current = filtered;
+  const selectedIndexRef = useRef(selectedIndex);
+  selectedIndexRef.current = selectedIndex;
+
   useEffect(() => {
     if (!open) return;
     const handleKey = (e) => {
+      const items = filteredRef.current;
+      const idx = selectedIndexRef.current;
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        setSelectedIndex((i) => Math.min(i + 1, filtered.length - 1));
+        setSelectedIndex((i) => Math.min(i + 1, items.length - 1));
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
         setSelectedIndex((i) => Math.max(i - 1, 0));
-      } else if (e.key === "Enter" && filtered[selectedIndex]) {
-        select(filtered[selectedIndex]);
+      } else if (e.key === "Enter" && items[idx]) {
+        select(items[idx]);
       } else if (e.key === "Escape") {
         onClose();
       }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [open, filtered, selectedIndex, select, onClose]);
+  }, [open, select, onClose]);
 
   // 全局 ⌘K / Ctrl+K 监听
   useEffect(() => {

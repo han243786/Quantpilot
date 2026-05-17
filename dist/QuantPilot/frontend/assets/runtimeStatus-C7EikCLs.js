@@ -1,1 +1,0 @@
-const n={idle:{label:"空闲",tone:"muted"},connecting:{label:"连接中",tone:"warning"},running:{label:"运行中",tone:"success"},waiting:{label:"等待中",tone:"warning"},completed:{label:"已完成",tone:"success"},error:{label:"错误",tone:"danger"},stopped:{label:"已停止",tone:"muted"}};function t(e){return n[e]||{label:e||"-",tone:"muted"}}function l(e){return t(e).label}export{t as g,l as r};

@@ -3,6 +3,7 @@ import { useGraphStore } from "./store/graphStore";
 import { navigateTo, parseRoute, strategiesPath } from "./router";
 import LeftSidebar from "./components/LeftSidebar";
 import CommandPalette from "./components/CommandPalette";
+import { useI18n } from "./i18n";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
@@ -20,9 +21,9 @@ const QuantScriptEditor = lazy(() => import("./pages/QuantScriptEditor"));
 import TutorialOverlay from "./components/TutorialOverlay";
 import { createTutorialSteps } from "./data/tutorialSteps";
 import { useTutorial } from "./hooks/useTutorial";
-import { useI18n } from "./i18n";
 
 function AppShellFallback({ onSkip }) {
+  const { t } = useI18n();
   const [waited, setWaited] = useState(false);
   const capabilityStatus = useGraphStore((s) => s.capabilityStatus);
   useEffect(() => {
@@ -30,11 +31,12 @@ function AppShellFallback({ onSkip }) {
     return () => clearTimeout(t);
   }, []);
 
-  const stageText =
-    capabilityStatus === "loading" ? "正在连接后端..." :
-    capabilityStatus === "degraded" ? "已加载本地缓存" :
-    capabilityStatus === "error" ? "后端连接失败，已进入离线模式" :
-    "正在准备编辑器...";
+  const STAGE_TEXT = {
+    loading: t("正在连接后端..."),
+    degraded: t("已加载本地缓存"),
+    error: t("后端连接失败，已进入离线模式"),
+  };
+  const stageText = STAGE_TEXT[capabilityStatus] || t("正在准备编辑器...");
 
   return (
     <div className="app-loading-shell" role="status" aria-live="polite">
@@ -46,7 +48,7 @@ function AppShellFallback({ onSkip }) {
       <div className="app-loading-shell__title">{stageText}</div>
       {waited && onSkip && (
         <button className="ghost-btn" onClick={onSkip} style={{marginTop:16}}>
-          跳过等待，使用本地缓存
+          {t("跳过等待，使用本地缓存")}
         </button>
       )}
     </div>
@@ -177,27 +179,29 @@ export default function App() {
     return <AppShellFallback onSkip={() => setForceReady(true)} />;
   }
 
-  let content = <StrategyHubPage />;
+  // v1.1.7: 每个路由独立 ErrorBoundary，单页崩溃不影响全局
+  const wrapRoute = (el) => <ErrorBoundary key={route.name}>{el}</ErrorBoundary>;
+  let content = wrapRoute(<StrategyHubPage />);
   if (route.name === "approvals") {
-    content = <ApprovalPage />;
+    content = wrapRoute(<ApprovalPage />);
   } else if (route.name === "alerts") {
-    content = <AlertsPage />;
+    content = wrapRoute(<AlertsPage />);
   } else if (route.name === "snapshots") {
-    content = <SnapshotsPage />;
+    content = wrapRoute(<SnapshotsPage />);
   } else if (route.name === "runbook") {
-    content = <RunbookPage />;
+    content = wrapRoute(<RunbookPage />);
   } else if (route.name === "chaos") {
-    content = <ChaosPage />;
+    content = wrapRoute(<ChaosPage />);
   } else if (route.name === "quantscript") {
-    content = <QuantScriptEditor />;
+    content = wrapRoute(<QuantScriptEditor />);
   } else if (route.name === "strategy-workspace") {
-    content = <StrategyWorkspacePage strategyId={route.strategyId} />;
+    content = wrapRoute(<StrategyWorkspacePage strategyId={route.strategyId} />);
   } else if (route.name === "strategy-backtests") {
-    content = <StrategyBacktestsPage strategyId={route.strategyId} />;
+    content = wrapRoute(<StrategyBacktestsPage strategyId={route.strategyId} />);
   } else if (route.name === "backtest-detail") {
-    content = <BacktestDetailPage backtestId={route.backtestId} strategyId={route.strategyId} />;
+    content = wrapRoute(<BacktestDetailPage backtestId={route.backtestId} strategyId={route.strategyId} />);
   } else if (route.name === "backtest-compare") {
-    content = (
+    content = wrapRoute(
       <BacktestComparePage
         backtestIds={route.backtestIds}
         strategyId={route.strategyId}
@@ -211,9 +215,9 @@ export default function App() {
         <div className="ad-titlebar" data-tauri-drag-region>
           <span className="ad-titlebar-title">QuantPilot</span>
           <div className="ad-titlebar-controls">
-            <button className="ad-titlebar-btn" onClick={() => appWindow.minimize()} aria-label="最小化">—</button>
-            <button className="ad-titlebar-btn" onClick={() => appWindow.toggleMaximize()} aria-label="最大化">{isMaximized ? "□" : "❐"}</button>
-            <button className="ad-titlebar-btn ad-titlebar-btn--close" onClick={() => appWindow.close()} aria-label="关闭">✕</button>
+            <button className="ad-titlebar-btn" onClick={() => appWindow.minimize()} aria-label={t("最小化")}>—</button>
+            <button className="ad-titlebar-btn" onClick={() => appWindow.toggleMaximize()} aria-label={t("最大化")}>{isMaximized ? "□" : "❐"}</button>
+            <button className="ad-titlebar-btn ad-titlebar-btn--close" onClick={() => appWindow.close()} aria-label={t("关闭")}>✕</button>
           </div>
         </div>
       ) : null}
@@ -225,17 +229,15 @@ export default function App() {
       ) : null}
       {storageQuotaExceeded ? (
         <div className="ad-offline-banner" role="alert" style={{background:"var(--ad-warning-soft)",color:"var(--ad-warning)"}}>
-          本地存储空间不足，策略图未保存。请前往策略中心，清理不需要的策略图旧版本以释放空间。
+          {t("本地存储空间不足，策略图未保存。请前往策略中心，清理不需要的策略图旧版本以释放空间。")}
           <button className="ghost-btn" style={{marginLeft:12,textDecoration:"underline"}} onClick={() => { setStorageQuotaExceeded(false); navigateTo(strategiesPath()); }}>
-            前往策略中心
+            {t("前往策略中心")}
           </button>
         </div>
       ) : null}
-      <a href="#main-content" className="ad-skip-link">跳转到内容</a>
+      <a href="#main-content" className="ad-skip-link">{t("跳转到内容")}</a>
       <main id="main-content" className="ad-main-content" ref={mainRef} tabIndex={-1} style={appWindow ? { marginTop: 32, height: "calc(100% - 32px)" } : {}}>
-        <ErrorBoundary>
-          <Suspense fallback={<AppShellFallback />}>{content}</Suspense>
-        </ErrorBoundary>
+        <Suspense fallback={<AppShellFallback />}>{content}</Suspense>
       </main>
       {tutorialOpen && (
         <TutorialOverlay steps={tutorialSteps} onClose={closeTutorial} />

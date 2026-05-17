@@ -111,6 +111,7 @@ export default function StrategyHubHeroSection({ model }) {
             value={model.query}
             onChange={(event) => model.setQuery(event.target.value)}
             placeholder="按策略 ID、名称、编译 ID 或数据集搜索"
+            maxLength={200}
           />
         </label>
 

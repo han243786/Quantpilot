@@ -9,9 +9,11 @@ use serde_json::json;
 use super::frontend_api_types::{
     HotSwapRecord, HotSwapResponse, HotSwapStatusResponse, SubmitHotSwapRequest,
 };
+use super::auth;
 use super::AppState;
 
 pub(super) async fn submit_hotswap(
+    user_id: auth::UserId,
     State(state): State<AppState>,
     Json(body): Json<SubmitHotSwapRequest>,
 ) -> impl IntoResponse {
@@ -66,7 +68,7 @@ pub(super) async fn submit_hotswap(
         .hotswap_records
         .write()
         .await
-        .insert(hotswap_id.clone(), record);
+        .insert(auth::scoped_key(&user_id, &hotswap_id), record);
 
     let response = HotSwapResponse {
         hotswap_id: hotswap_id.clone(),
@@ -82,12 +84,14 @@ pub(super) async fn submit_hotswap(
 }
 
 pub(super) async fn get_hotswap_status(
+    user_id: auth::UserId,
     State(state): State<AppState>,
     Path(hotswap_id): Path<String>,
 ) -> impl IntoResponse {
     let records = state.hotswap_records.read().await;
+    let scoped = auth::scoped_key(&user_id, &hotswap_id);
 
-    match records.get(&hotswap_id) {
+    match records.get(&scoped) {
         Some(record) => {
             let response = HotSwapStatusResponse {
                 hotswap_id: record.hotswap_id.clone(),
@@ -111,10 +115,16 @@ pub(super) async fn get_hotswap_status(
 }
 
 pub(super) async fn list_hotswaps(
+    user_id: auth::UserId,
     State(state): State<AppState>,
 ) -> impl IntoResponse {
+    let prefix = auth::scoped_key(&user_id, "");
     let records = state.hotswap_records.read().await;
-    let items: Vec<&HotSwapRecord> = records.values().collect();
+    let items: Vec<&HotSwapRecord> = records
+        .iter()
+        .filter(|(key, _)| key.starts_with(&prefix))
+        .map(|(_, value)| value)
+        .collect();
 
     (StatusCode::OK, Json(json!({
         "hotswaps": items.iter().map(|r| json!({

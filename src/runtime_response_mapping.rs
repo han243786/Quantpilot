@@ -5,7 +5,7 @@ use super::*;
 fn map_open_order_summary(order: &OpenOrder) -> OpenOrderSummary {
     OpenOrderSummary {
         order_id: order.order_id.clone(),
-        side: format!("{:?}", order.side),
+        side: format!("{}", order.side),
         remaining_qty: order.remaining_qty,
         limit_price: order.limit_price,
         reserved_cash: order.reserved_cash,
@@ -105,7 +105,13 @@ pub(super) fn normalize_backtest_record(
     let should_rebuild_artifacts = record
         .backtest_artifacts
         .as_ref()
-        .map(|artifacts| backtest_artifacts_need_governance_rebuild(artifacts, &record.governance))
+        .map(|artifacts| {
+            // 如果已有有效数据（step_count > 0），跳过重建
+            if artifacts.metrics.summary.step_count > 0 {
+                return false;
+            }
+            backtest_artifacts_need_governance_rebuild(artifacts, &record.governance)
+        })
         .unwrap_or(false);
     if validate_runtime_event_envelopes(&record.events, &record.backtest_id, &record.governance)
         .is_err()

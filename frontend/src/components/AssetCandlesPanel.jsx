@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { getGlobalLocale } from "../i18n";
 
 const SVG_WIDTH = 760;
 const SVG_HEIGHT = 238;
@@ -25,7 +26,7 @@ const LABELS = {
 
 function formatMoney(value) {
   if (!Number.isFinite(value)) return "-";
-  return value.toLocaleString("zh-CN", {
+  return value.toLocaleString(getGlobalLocale(), {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
@@ -71,7 +72,7 @@ function buildSnapshotsFromEvents(events) {
       if (!Number.isFinite(equity)) return null;
       return {
         ts: event.event_time_ms,
-        label: new Date(event.event_time_ms).toLocaleTimeString("zh-CN", {
+        label: new Date(event.event_time_ms).toLocaleTimeString(getGlobalLocale(), {
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit"
@@ -91,7 +92,7 @@ function buildSnapshotsFromHistory(history, graphId) {
       if (!Number.isFinite(equity)) return null;
       return {
         ts: run.created_at_ms,
-        label: new Date(run.created_at_ms).toLocaleString("zh-CN", {
+        label: new Date(run.created_at_ms).toLocaleString(getGlobalLocale(), {
           month: "2-digit",
           day: "2-digit",
           hour: "2-digit",
@@ -109,7 +110,7 @@ function buildSnapshotsFromBacktestArtifacts(backtestArtifacts) {
     .sort((left, right) => left.ts_ms - right.ts_ms)
     .map((point) => ({
       ts: point.ts_ms,
-      label: new Date(point.ts_ms).toLocaleString("zh-CN", {
+      label: new Date(point.ts_ms).toLocaleString(getGlobalLocale(), {
         month: "2-digit",
         day: "2-digit",
         hour: "2-digit",
@@ -381,7 +382,7 @@ export default function AssetCandlesPanel({ graph, runtime }) {
                     : index * chart.xStep);
                 return (
                   <text
-                    key={index}
+                    key={model.candles[index]?.label || `candle-${index}`}
                     className="asset-axis-label"
                     x={x}
                     y={SVG_HEIGHT - 12}

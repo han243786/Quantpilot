@@ -838,12 +838,12 @@ impl PluginMarketClient {
 | 令牌 | 值 | 用途 |
 |------|------|------|
 | `--ad-bg` | `#0d0d0d` | 全局背景 |
-| `--ad-panel` | `#1e1e1e` | 面板背景 |
-| `--ad-card` | `#2d2d2d` | 卡片背景 |
-| `--ad-border` | `#404040` | 边框 |
+| `--ad-panel` | `#1a1a1a` | 面板背景 |
+| `--ad-card` | `#242424` | 卡片背景 |
+| `--ad-border` | `#4a4a4a` | 边框 |
 | `--ad-text` | `#e6e6e6` | 主文本 |
 | `--ad-text-secondary` | `#aaaaaa` | 次要文本 |
-| `--ad-text-muted` | `#909090` | 弱化文本 |
+| `--ad-text-muted` | `#9e9e9e` | 弱化文本 |
 | `--ad-accent` | `#1473e6` | Adobe 蓝 (唯一允许的强调色) |
 | `--ad-success` | `#6b9e7a` | 鼠尾草绿 |
 | `--ad-error` | `#c48888` | 玫瑰灰 |

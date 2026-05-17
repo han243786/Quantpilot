@@ -776,7 +776,7 @@ fn match_formal_admitted_spread_expr(
     let Some(Some(tolerance_ms)) = merge_optional_f64(left.tolerance_ms, right.tolerance_ms) else {
         return Ok(None);
     };
-    if tolerance_ms <= 0.0 {
+    if !tolerance_ms.is_finite() || tolerance_ms <= 0.0 {
         return Ok(None);
     }
 
@@ -819,7 +819,7 @@ fn moving_average_ratio_intent(
     } else {
         threshold
     };
-    if ratio <= 0.0 {
+    if !ratio.is_finite() || ratio <= 0.0 {
         return Ok(None);
     }
 
@@ -1048,7 +1048,7 @@ fn decode_formal_admitted_spread_operand(
     else {
         return Ok(None);
     };
-    if tolerance_ms <= 0.0 {
+    if !tolerance_ms.is_finite() || tolerance_ms <= 0.0 {
         return Ok(None);
     }
     operand.align_direction_code = Some(direction_code);

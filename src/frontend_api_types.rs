@@ -57,6 +57,7 @@ pub(super) enum GraphAuditAction {
     RunCreated,
     BacktestCreated,
     ExperimentCreated,
+    GraphDeleted, // v1.1.9
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
@@ -136,6 +137,7 @@ pub(super) struct RevealGraphResponse {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(super) struct FrontendRunRequest {
     #[serde(default)]
     pub(super) actor: Option<ActorIdentity>,
@@ -170,6 +172,7 @@ pub(super) struct FrontendRuntimeConfig {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
+// 注：未加 deny_unknown_fields，因前端发送 phantom `volatility` 字段需兼容
 pub(super) struct FrontendBacktestOptions {
     pub(super) replay_source: Option<FrontendBacktestReplaySource>,
     pub(super) execution_assumptions: Option<FrontendExecutionAssumptionOverrides>,
@@ -193,6 +196,7 @@ pub(super) struct FrontendExecutionAssumptionSweepGrid {
 }
 
 #[derive(Debug, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct FrontendExperimentRequest {
     #[serde(default)]
     pub(super) experiment_name: Option<String>,
@@ -516,6 +520,7 @@ pub(super) struct AccountSummary {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct RunRecord {
     pub(super) run_id: String,
     pub(super) graph_id: String,
@@ -531,6 +536,7 @@ pub(super) struct RunRecord {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct BacktestRecord {
     pub(super) backtest_id: String,
     pub(super) graph_id: String,
@@ -551,6 +557,9 @@ pub(super) struct BacktestRecord {
     pub(super) governance: RuntimeGovernanceSnapshot,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(super) actor: Option<ActorIdentity>,
+    /// v1.1.1: 非关键文件加载失败时为 true，UI 中标记"部分数据不可用"
+    #[serde(default)]
+    pub(super) degraded: bool,
 }
 
 #[derive(Debug, Serialize)]
@@ -563,6 +572,7 @@ pub(super) struct RunStatusResponse {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(super) struct SaveGraphRequest {
     pub(super) graph: Value,
     #[serde(default)]
@@ -574,6 +584,7 @@ pub(super) struct SaveGraphRequest {
 }
 
 #[derive(Debug, Deserialize, Default)]
+#[serde(deny_unknown_fields)]
 pub(super) struct GraphMutationActorRequest {
     #[serde(default)]
     pub(super) actor: Option<ActorIdentity>,
@@ -594,17 +605,20 @@ pub(super) struct SaveGraphResponse {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(super) struct ParseGraphQuantScriptRequest {
     pub(super) source: String,
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(super) struct CompileRuntimeRequest {
     pub(super) runtime_config: FrontendRuntimeConfig,
     pub(super) graph_json: Value,
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(super) struct CompileStrategyIrRequest {
     pub(super) graph_id: String,
     pub(super) compile_id: String,
@@ -622,6 +636,7 @@ pub(super) struct CompileRuntimeTargets {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(super) struct CompileFormalQuantScriptRequest {
     pub(super) graph_id: String,
     pub(super) compile_id: String,
@@ -876,6 +891,7 @@ pub(super) struct ExperimentDefinitionSummary {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct ExperimentRecord {
     pub(super) experiment_id: String,
     pub(super) graph_id: String,
@@ -1005,6 +1021,7 @@ pub(super) struct RuntimeEvidenceHealthResponse {
 }
 
 #[derive(Debug, Deserialize, Clone, Default)]
+#[serde(deny_unknown_fields)]
 pub(super) struct RuntimeEvidenceCleanupRequest {
     pub(super) max_age_ms: Option<u64>,
 }
@@ -1164,6 +1181,7 @@ pub(super) struct RuntimeParameterMutationLifecycleEntry {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub(super) struct RuntimeParameterMutationRecord {
     pub(super) proposal_id: String,
     pub(super) source_kind: RuntimeEvidenceSourceKind,
@@ -1196,6 +1214,7 @@ pub(super) struct RuntimeParameterMutationRecord {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct CreateRuntimeParameterMutationRequest {
     pub(super) source_kind: RuntimeEvidenceSourceKind,
     pub(super) source_id: String,
@@ -1220,6 +1239,7 @@ pub(super) enum RuntimeAiProposalStatus {
     Submitted,
     StaticCheckFailed,
     StaticCheckPassed,
+    Approved, // v1.2.1: 审批通过，与StaticCheckPassed区分
     Denied,
     Expired,
 }
@@ -1279,6 +1299,7 @@ pub(super) struct RuntimeAiProposalLifecycleEntry {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub(super) struct RuntimeAiProposalRecord {
     pub(super) ai_proposal_id: String,
     pub(super) source_kind: RuntimeEvidenceSourceKind,
@@ -1307,6 +1328,7 @@ pub(super) struct RuntimeAiProposalRecord {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct CreateRuntimeAiProposalRequest {
     pub(super) source_kind: RuntimeEvidenceSourceKind,
     pub(super) source_id: String,
@@ -1324,6 +1346,7 @@ pub(super) struct CreateRuntimeAiProposalRequest {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct ActivateRuntimeParameterMutationRequest {
     #[serde(default)]
     pub(super) activation_boundary: Option<RuntimeParameterMutationBoundary>,
@@ -1336,6 +1359,7 @@ pub(super) struct ActivateRuntimeParameterMutationRequest {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct RollbackRuntimeParameterMutationRequest {
     #[serde(default)]
     pub(super) target_parameter_version: Option<String>,
@@ -1435,6 +1459,7 @@ pub(super) struct RuntimeEvidenceReportArtifact {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub(super) struct RuntimeEvidenceReportRecord {
     pub(super) report_id: String,
     pub(super) source_kind: RuntimeEvidenceSourceKind,
@@ -1459,6 +1484,7 @@ pub(super) struct RuntimeEvidenceReportRecord {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct CreateRuntimeReportRequest {
     pub(super) source_kind: RuntimeEvidenceSourceKind,
     pub(super) source_id: String,
@@ -1507,6 +1533,7 @@ pub(super) struct HotSwapModuleTargetDto {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct SubmitHotSwapRequest {
     pub(super) module_targets: Vec<HotSwapModuleTargetDto>,
     pub(super) reason: String,
@@ -1581,6 +1608,7 @@ pub(super) enum RuntimeApprovalReviewState {
     Approved,
     Rejected,
     Expired,
+    // v1.2.1: 以下变体为 V2 调度-激活-观察生命周期预留，当前未使用
     Scheduled,
     Activated,
     Observing,
@@ -1618,6 +1646,7 @@ pub(super) struct RuntimeApprovalLifecycleEntry {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub(super) struct RuntimeApprovalRecord {
     pub(super) approval_id: String,
     pub(super) proposal_id: String,
@@ -1643,6 +1672,7 @@ pub(super) struct RuntimeApprovalRecord {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct ApprovalActionRequest {
     pub(super) actor_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1721,6 +1751,7 @@ pub(super) struct SandboxVerificationReport {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct RequestSandboxVerificationRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(super) backtest_id: Option<String>,
@@ -1789,6 +1820,7 @@ pub(super) struct EventSliceBounds {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub(super) struct DeploymentSignatureSnapshot {
     pub(super) snapshot_id: String,
     pub(super) deployment_revision: String,
@@ -1802,6 +1834,7 @@ pub(super) struct DeploymentSignatureSnapshot {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct RestoreSnapshotRequest {
     pub(super) actor_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -2015,6 +2048,7 @@ pub(super) struct ChaosExperimentReport {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub(super) struct CreateChaosExperimentRequest {
     pub(super) experiment_type: ChaosExperimentType,
     pub(super) injection: ChaosInjectionSpec,
@@ -2024,10 +2058,48 @@ pub(super) struct CreateChaosExperimentRequest {
 
 // ── v1.0.5 分页 ──
 
-#[derive(Debug, Deserialize, Default)]
+// v2.1.x: 自定义 Deserialize 以返回更具体的参数范围错误 (S0-3 修复)
+#[derive(Debug, Default)]
 pub struct PaginationQuery {
     pub limit: Option<u32>,
     pub offset: Option<u32>,
+}
+
+impl<'de> serde::Deserialize<'de> for PaginationQuery {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use serde::de::Error;
+        let raw = serde_json::Value::deserialize(deserializer)?;
+        let mut query = PaginationQuery::default();
+
+        if let Some(val) = raw.get("limit") {
+            if val.is_null() { /* skip null */ }
+            else if let Some(n) = val.as_u64() {
+                query.limit = Some(n.min(100) as u32);
+            } else if let Some(n) = val.as_i64() {
+                if n < 0 { return Err(Error::custom("分页参数 limit 必须为非负整数 (0-100)")); }
+                query.limit = Some((n as u64).min(100) as u32);
+            } else {
+                return Err(Error::custom("分页参数 limit 必须为非负整数 (0-100)"));
+            }
+        }
+
+        if let Some(val) = raw.get("offset") {
+            if val.is_null() { /* skip null */ }
+            else if let Some(n) = val.as_u64() {
+                query.offset = Some(n.min(10_000) as u32);
+            } else if let Some(n) = val.as_i64() {
+                if n < 0 { return Err(Error::custom("分页参数 offset 必须为非负整数 (0-10000)")); }
+                query.offset = Some((n as u64).min(10_000) as u32);
+            } else {
+                return Err(Error::custom("分页参数 offset 必须为非负整数 (0-10000)"));
+            }
+        }
+
+        Ok(query)
+    }
 }
 
 #[derive(Debug, Serialize)]
@@ -2041,7 +2113,7 @@ pub struct PaginatedResponse<T: Serialize> {
 pub fn paginate<T: Serialize>(mut items: Vec<T>, query: PaginationQuery) -> PaginatedResponse<T> {
     let total = items.len();
     let limit = query.limit.unwrap_or(20).min(100) as usize;
-    let offset = query.offset.unwrap_or(0) as usize;
+    let offset = query.offset.unwrap_or(0).min(10_000) as usize; // v1.2.3: 分页上限防DoS
     if offset > 0 {
         items = items.into_iter().skip(offset).collect();
     }
@@ -2056,6 +2128,9 @@ pub fn paginate<T: Serialize>(mut items: Vec<T>, query: PaginationQuery) -> Pagi
 pub struct ApiErrorResponse {
     pub error: &'static str,
     pub message: String,
+    /// v2.3.0: 语言中立错误码, 前端可映射本地化文本
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error_code: Option<&'static str>,
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub details: Vec<ApiErrorDetail>,
     #[serde(skip_serializing_if = "Option::is_none")]

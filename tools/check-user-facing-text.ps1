@@ -13,12 +13,13 @@ function Get-CapabilityTextGatePolicy {
         throw "Node.js is required to load capability text-gate policy."
     }
 
-    $json = & node --experimental-specifier-resolution=node $renderScript --text-gates-json
+    $raw = & node --experimental-specifier-resolution=node $renderScript --text-gates-json 2>$null 3>$null
     if ($LASTEXITCODE -ne 0) {
         throw "Failed to load capability text-gate policy from capability governance registry."
     }
 
-    return $json | ConvertFrom-Json
+    $text = $raw -join "`n"
+    return $text | ConvertFrom-Json
 }
 
 function Get-TargetFiles {

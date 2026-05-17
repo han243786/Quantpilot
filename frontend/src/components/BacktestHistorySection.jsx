@@ -21,6 +21,7 @@ import {
   formatValue,
   backtestExecutionAssumptionsLabel,
 } from "./EventStreamPanel";
+import { maxDrawdownFromSummary } from "../pages/backtestAnalysisShared";
 
 export default function BacktestHistorySection({
   detailMode,
@@ -254,8 +255,15 @@ export default function BacktestHistorySection({
                       },
                       {
                         label: "回撤",
-                        value: formatRatio(item.summary?.max_drawdown_ratio),
-                        tone: drawdownTone(item.summary?.max_drawdown_ratio)
+                        value: formatRatio(maxDrawdownFromSummary(item.summary)),
+                        tone: drawdownTone(maxDrawdownFromSummary(item.summary))
+                      },
+                      {
+                        label: "夏普",
+                        value: item.summary?.risk_adjusted?.sharpe_ratio != null
+                          ? item.summary.risk_adjusted.sharpe_ratio.toFixed(2) : "-",
+                        tone: item.summary?.risk_adjusted?.sharpe_ratio >= 1.0 ? "success" :
+                              item.summary?.risk_adjusted?.sharpe_ratio >= 0.5 ? "warning" : "muted"
                       },
                       {
                         label: "时间窗",
@@ -290,7 +298,7 @@ export default function BacktestHistorySection({
                       { label: "图", value: item.graph_id || "-" },
                       { label: "编译", value: item.compile_id || "-" },
                       { label: "收益", value: formatRatio(item.summary?.total_return_ratio) },
-                      { label: "回撤", value: formatRatio(item.summary?.max_drawdown_ratio) },
+                      { label: "回撤", value: formatRatio(maxDrawdownFromSummary(item.summary)) },
                       { label: "成交", value: formatValue(item.summary?.trade_count) }
                     ]}
                   />

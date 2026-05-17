@@ -142,16 +142,49 @@ pub(crate) fn convert_graph_json_to_script_module(graph_value: &Value) -> anyhow
                 .get("timeframe")
                 .and_then(Value::as_str)
                 .unwrap_or("1d");
+            // v1.3.6: 拒绝负数窗口大小，防止静默回退默认值
             let lookback = cfg
                 .get("window_size")
-                .and_then(|v| v.as_u64())
+                .and_then(|v| v.as_f64())
+                .filter(|&n| n >= 1.0)
+                .map(|n| n as u64)
                 .unwrap_or(200);
             let node_id = node.get("id").and_then(Value::as_str).unwrap_or("data");
-            let var_name = node_id.replace('-', "_").replace('.', "_");
+            let var_name = node_id.replace(['-', '.'], "_");
             qs_lines.push(format!(
                 "    let {} = fetch(\"{}\", exchange=\"{}\", interval=\"{}\", lookback={})?",
                 var_name, instrument, exchange, interval, lookback
             ));
+        }
+    }
+
+    // Add agent/risk/execution/runtime configuration statements
+    for node in nodes {
+        let node_type = node.get("type").and_then(Value::as_str).unwrap_or("");
+        let cfg = node.get("config").unwrap_or(&Value::Null);
+        match node_type {
+            "agent" => {
+                let strategy = cfg.get("strategy").and_then(Value::as_str).unwrap_or("weighted");
+                let threshold = cfg.get("decision_threshold").and_then(|v| v.as_f64()).unwrap_or(0.05);
+                qs_lines.push(format!("    agent(\"{}\", decision_threshold={})", strategy, threshold));
+            }
+            "risk" => {
+                let profile = cfg.get("profile_name").and_then(Value::as_str).unwrap_or("global");
+                let max_pos = cfg.get("max_position").and_then(|v| v.as_f64()).unwrap_or(0.2);
+                let max_lev = cfg.get("max_total_leverage").and_then(|v| v.as_f64()).unwrap_or(3.0);
+                qs_lines.push(format!("    risk.profile(\"{}\", max_position={}, max_total_leverage={})", profile, max_pos, max_lev));
+            }
+            "execution" => {
+                let profile = cfg.get("profile_name").and_then(Value::as_str).unwrap_or("paper");
+                let fee = cfg.get("fee_bps").and_then(|v| v.as_u64()).unwrap_or(10);
+                let slip = cfg.get("slippage_bps").and_then(|v| v.as_u64()).unwrap_or(5);
+                qs_lines.push(format!("    execution.profile(\"{}\", fee_bps={}, slippage_bps={})", profile, fee, slip));
+            }
+            "runtime" | "runtime_control" => {
+                let mode = cfg.get("mode").and_then(Value::as_str).unwrap_or("paper");
+                qs_lines.push(format!("    runtime.mode(\"{}\")", mode));
+            }
+            _ => {}
         }
     }
 
@@ -177,7 +210,7 @@ pub(crate) fn convert_graph_json_to_script_module(graph_value: &Value) -> anyhow
             let source_id = upstream_edge
                 .and_then(|e| e.get("source_node_id").and_then(Value::as_str))
                 .unwrap_or("data");
-            let source_var = source_id.replace('-', "_").replace('.', "_");
+            let source_var = source_id.replace(['-', '.'], "_");
 
             match module_key {
                 "builtin.intent.double_ma" => {
@@ -216,16 +249,93 @@ pub(crate) fn convert_graph_json_to_script_module(graph_value: &Value) -> anyhow
                     ));
                     qs_lines.push("    }".to_string());
                 }
-                _ => {
-                    // Generic intent — use sma crossover as fallback
-                    qs_lines.push(format!("    let fast = sma({}, 20)", source_var));
-                    qs_lines.push(format!("    let slow = sma({}, 50)", source_var));
-                    qs_lines.push("    if fast > slow {".to_string());
+                "builtin.intent.ma_deviation" => {
+                    let lookback = cfg.get("lookback").and_then(|v| v.as_u64()).unwrap_or(15);
+                    let baseline = cfg.get("baseline_period").and_then(|v| v.as_u64()).unwrap_or(150);
+                    qs_lines.push(format!(
+                        "    let ma_dev = sma({}, {}) / sma({}, {})",
+                        source_var, lookback, source_var, baseline
+                    ));
+                    qs_lines.push("    if ma_dev > 1 {".to_string());
+                    qs_lines.push(format!(
+                        "        emit Intent(\"SELL\", instrument=\"{}\", quantity=1.0)",
+                        instrument
+                    ));
+                    qs_lines.push("    }".to_string());
+                }
+                "builtin.intent.macd" => {
+                    let fast = cfg.get("fast_period").and_then(|v| v.as_u64()).unwrap_or(12);
+                    let slow = cfg.get("slow_period").and_then(|v| v.as_u64()).unwrap_or(26);
+                    let signal_period = cfg.get("signal_period").and_then(|v| v.as_u64()).unwrap_or(9);
+                    qs_lines.push(format!(
+                        "    let macd_val = macd({}, {}, {}, {})",
+                        source_var, fast, slow, signal_period
+                    ));
+                    qs_lines.push("    if macd_val > 0 {".to_string());
+                    qs_lines.push(format!(
+                        "        emit Intent(\"BUY\", instrument=\"{}\", quantity=1.0)",
+                        instrument
+                    ));
+                    qs_lines.push("    } else if macd_val < 0 {".to_string());
+                    qs_lines.push(format!(
+                        "        emit Intent(\"SELL\", instrument=\"{}\", quantity=1.0)",
+                        instrument
+                    ));
+                    qs_lines.push("    }".to_string());
+                }
+                "builtin.intent.momentum" => {
+                    let lookback = cfg.get("lookback").and_then(|v| v.as_u64()).unwrap_or(10);
+                    let threshold = cfg.get("threshold_ratio").and_then(|v| v.as_f64()).unwrap_or(0.02);
+                    qs_lines.push(format!(
+                        "    let mom_val = momentum({}, {})",
+                        source_var, lookback
+                    ));
+                    qs_lines.push(format!("    if mom_val > {} {{", threshold));
+                    qs_lines.push(format!(
+                        "        emit Intent(\"BUY\", instrument=\"{}\", quantity=1.0)",
+                        instrument
+                    ));
+                    qs_lines.push(format!("    }} else if mom_val < -{} {{", threshold.abs()));
+                    qs_lines.push(format!(
+                        "        emit Intent(\"SELL\", instrument=\"{}\", quantity=1.0)",
+                        instrument
+                    ));
+                    qs_lines.push("    }".to_string());
+                }
+                "builtin.intent.zscore" => {
+                    let window = cfg.get("window").and_then(|v| v.as_u64()).unwrap_or(20);
+                    let entry_z = cfg.get("entry_z").and_then(|v| v.as_f64()).unwrap_or(2.0);
+                    qs_lines.push(format!(
+                        "    let z_val = zscore({}, {})",
+                        source_var, window
+                    ));
+                    qs_lines.push(format!("    if z_val > {} {{", entry_z));
+                    qs_lines.push(format!(
+                        "        emit Intent(\"SELL\", instrument=\"{}\", quantity=1.0)",
+                        instrument
+                    ));
+                    qs_lines.push(format!("    }} else if z_val < -{} {{", entry_z.abs()));
                     qs_lines.push(format!(
                         "        emit Intent(\"BUY\", instrument=\"{}\", quantity=1.0)",
                         instrument
                     ));
                     qs_lines.push("    }".to_string());
+                }
+                "builtin.intent.spread_observer" => {
+                    qs_lines.push(format!(
+                        "    let _ = spread_observe({}, field_code={}, align_direction_code={}, spread_output_code={}, max_time_diff_ms={})",
+                        source_var,
+                        cfg.get("field_code").and_then(|v| v.as_u64()).unwrap_or(0),
+                        cfg.get("align_direction_code").and_then(|v| v.as_u64()).unwrap_or(0),
+                        cfg.get("spread_output_code").and_then(|v| v.as_u64()).unwrap_or(0),
+                        cfg.get("max_time_diff_ms").and_then(|v| v.as_u64()).unwrap_or(5000),
+                    ));
+                }
+                _ => {
+                    safe_eprintln!(
+                        "[graph→QS] 未知意图模块键 '{}', 跳过该节点的 QS 生成",
+                        module_key
+                    );
                 }
             }
         }

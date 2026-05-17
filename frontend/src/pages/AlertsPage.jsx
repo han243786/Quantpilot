@@ -12,21 +12,26 @@ export default function AlertsPage() {
   const [error, setError] = useState(null);
   const [acking, setAcking] = useState(null);
 
-  const fetchData = async () => {
+  const fetchData = async (signal) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/v1/alerts`);
+      const res = await fetch(`${API_BASE}/v1/alerts`, { signal });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setData(await res.json());
     } catch (e) {
-      setError(e.message);
+      if (!signal?.aborted) setError(e.message);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  // v1.3.0: AbortController 防止卸载后 setState
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchData(controller.signal);
+    return () => controller.abort();
+  }, []);
 
   const handleAcknowledge = useCallback(async (firingId) => {
     setAcking(firingId);

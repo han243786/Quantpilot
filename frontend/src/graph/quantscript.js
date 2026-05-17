@@ -168,6 +168,31 @@ function formalDataStatements(node) {
   ];
 }
 
+function formalAgentStatement(node) {
+  const strategy = node.config?.strategy || "weighted";
+  const threshold = node.config?.decision_threshold ?? 0.05;
+  return [`    agent(${JSON.stringify(strategy)}, decision_threshold=${threshold})`];
+}
+
+function formalRiskStatement(node) {
+  const profile = node.config?.profile_name || "global";
+  const maxPos = node.config?.max_position ?? 0.2;
+  const maxLev = node.config?.max_total_leverage ?? 3.0;
+  return [`    risk.profile(${JSON.stringify(profile)}, max_position=${maxPos}, max_total_leverage=${maxLev})`];
+}
+
+function formalExecutionStatement(node) {
+  const profile = node.config?.profile_name || "paper";
+  const fee = node.config?.fee_bps ?? 10;
+  const slip = node.config?.slippage_bps ?? 5;
+  return [`    execution.profile(${JSON.stringify(profile)}, fee_bps=${fee}, slippage_bps=${slip})`];
+}
+
+function formalRuntimeStatement(node) {
+  const mode = node.config?.mode || "paper";
+  return [`    runtime.mode(${JSON.stringify(mode)})`];
+}
+
 function canGenerateFormalQuantScript(graph) {
   const dataNodes = formalDataNodes(graph);
   const supportedIntentKeys = new Set([
@@ -176,7 +201,8 @@ function canGenerateFormalQuantScript(graph) {
     "builtin.intent.rsi",
     "builtin.intent.macd",
     "builtin.intent.momentum",
-    "builtin.intent.zscore"
+    "builtin.intent.zscore",
+    "builtin.intent.spread_observer"
   ]);
 
   if (dataNodes.some((node) => node.module_key !== "builtin.data.kline")) return false;
@@ -244,6 +270,15 @@ function formalIntentStatements(graph, node) {
         `        emit Intent("BUY", instrument=${instrument}, quantity=1.0)`,
         "    }"
       ];
+    case "builtin.intent.spread_observer":
+      return [
+        `    let ${signal} = spread_observe(${series}, ` +
+          `field_code=${node.config?.field_code ?? 0}, ` +
+          `align_direction_code=${node.config?.align_direction_code ?? 0}, ` +
+          `spread_output_code=${node.config?.spread_output_code ?? 0}, ` +
+          `max_time_diff_ms=${node.config?.max_time_diff_ms ?? 5000})`,
+        `    let _ = ${signal}`,
+      ];
     default:
       return [];
   }
@@ -257,6 +292,29 @@ export function generateFormalQuantScript(graph) {
   formalDataNodes(graph).forEach((node) => {
     lines.push(...formalDataStatements(node));
   });
+
+  // Agent/Risk/Execution/Runtime configuration statements
+  (graph.nodes || [])
+    .filter((node) => ["agent", "risk", "execution", "runtime", "runtime_control"].includes(node.type))
+    .forEach((node) => {
+      let stmts = [];
+      switch (node.type) {
+        case "agent":
+          stmts = formalAgentStatement(node);
+          break;
+        case "risk":
+          stmts = formalRiskStatement(node);
+          break;
+        case "execution":
+          stmts = formalExecutionStatement(node);
+          break;
+        case "runtime":
+        case "runtime_control":
+          stmts = formalRuntimeStatement(node);
+          break;
+      }
+      if (stmts.length > 0) lines.push(...stmts);
+    });
 
   graph.nodes
     .filter((node) => node.type === "intent")

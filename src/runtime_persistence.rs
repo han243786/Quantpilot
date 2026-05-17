@@ -10,7 +10,7 @@ macro_rules! check_storage_quota {
     };
 }
 
-async fn atomic_write_json(path: &FsPath, value: &impl serde::Serialize) -> std::io::Result<()> {
+pub(super) async fn atomic_write_json(path: &FsPath, value: &impl serde::Serialize) -> std::io::Result<()> {
     let tmp = path.with_extension("tmp");
     let json = serde_json::to_string_pretty(value)
         .map_err(|error| std::io::Error::other(error.to_string()))?;
@@ -46,7 +46,8 @@ pub(super) async fn persist_experiment_record(
     atomic_write_json(&path, record).await
 }
 
-fn sanitize_storage_path_segment(value: &str) -> String {
+pub(super) fn sanitize_storage_path_segment(value: &str) -> String {
+    // v1.1.11: 同时过滤 / 和 \（Windows路径分隔符）
     value
         .chars()
         .map(|ch| {
@@ -273,9 +274,11 @@ pub(super) async fn list_runtime_ai_proposal_records(
 
 pub(super) async fn load_run_record_from_state(
     state: &AppState,
+    user_id: &auth::UserId,
     run_id: &str,
 ) -> Result<RunRecord, (StatusCode, String)> {
-    if let Some(record) = state.runs.read().await.get(run_id).cloned() {
+    let scoped = auth::scoped_key(user_id, run_id);
+    if let Some(record) = state.runs.read().await.get(&scoped).cloned() {
         return Ok(normalize_run_record(
             record,
             RuntimeGovernanceMaterialization::CurrentRuntime,
@@ -295,9 +298,11 @@ pub(super) async fn load_run_record_from_state(
 
 pub(super) async fn load_backtest_record_from_state(
     state: &AppState,
+    user_id: &auth::UserId,
     backtest_id: &str,
 ) -> Result<BacktestRecord, (StatusCode, String)> {
-    if let Some(record) = state.backtests.read().await.get(backtest_id).cloned() {
+    let scoped = auth::scoped_key(user_id, backtest_id);
+    if let Some(record) = state.backtests.read().await.get(&scoped).cloned() {
         return Ok(normalize_backtest_record(
             record,
             RuntimeGovernanceMaterialization::CurrentRuntime,
@@ -334,9 +339,11 @@ pub(super) async fn load_backtest_record_from_state(
 
 pub(super) async fn load_experiment_record_from_state(
     state: &AppState,
+    user_id: &auth::UserId,
     experiment_id: &str,
 ) -> Result<ExperimentRecord, (StatusCode, String)> {
-    if let Some(record) = state.experiments.read().await.get(experiment_id).cloned() {
+    let scoped = auth::scoped_key(user_id, experiment_id);
+    if let Some(record) = state.experiments.read().await.get(&scoped).cloned() {
         return Ok(record);
     }
 

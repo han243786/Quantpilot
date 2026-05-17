@@ -2,11 +2,11 @@
 
 QuantPilot 是一个单机量化交易沙盒, 聚焦于诚实的能力边界、可复现的运行时行为和发布时契约纪律。
 
-当前版本: **v1.0.7** | [系统架构](./markdown/10-overview/overview-system-architecture.md) | [使用指南](./markdown/10-overview/overview-system-architecture.md#十一使用指南) | [General_Policy](./markdown/General_Policy.md) | [超级规范化](./markdown/01-principles/principles-super-standardization.md) | [版本历史](./CHANGELOG.md)
+当前版本: **v2.3.0** (错误国际化 + TLS + JWT刷新 + P1/P2清零) | [系统架构](./markdown/10-overview/overview-system-architecture.md) | [使用指南](./markdown/10-overview/overview-system-architecture.md#十一使用指南) | [General_Policy](./markdown/General_Policy.md) | [超级规范化](./markdown/01-principles/principles-super-standardization.md) | [版本历史](./CHANGELOG.md)
 
 ## 产品边界
 
-- **运行时模式**: paper (纸面交易), testnet (测试网)
+- **运行时模式**: paper (纸面交易), backtest (回测)
 - **已验证交易所**: `binance`, `okx`
 - **已验证交易对**: `BTCUSDT`, `ETHUSDT`, `SOLUSDT`
 - **桌面应用**: Tauri v2 自绘标题栏 Windows 桌面应用 (`start.bat`)

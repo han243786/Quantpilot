@@ -67,6 +67,18 @@ fn get_machine_key() -> Result<&'static [u8; 32]> {
                     .map_err(|e| anyhow::anyhow!("无法写入机器密钥: {}", e))?;
                 std::fs::rename(&tmp, path)
                     .map_err(|e| anyhow::anyhow!("无法保存机器密钥: {}", e))?;
+                #[cfg(unix)]
+                {
+                    use std::os::unix::fs::PermissionsExt;
+                    std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o600)).ok();
+                }
+                #[cfg(windows)]
+                {
+                    let username = std::env::var("USERNAME").unwrap_or_default();
+                    let _ = std::process::Command::new("icacls")
+                        .args([path.to_str().unwrap_or(""), "/inheritance:r", "/grant", &format!("{}:F", username)])
+                        .output();
+                }
             }
             Ok(MACHINE_KEY.get().unwrap())
         }
@@ -91,10 +103,29 @@ fn derive_key() -> Result<UnboundKey> {
         .map_err(|_| anyhow::anyhow!("密钥派生失败"))
 }
 
+// ── PBKDF2 密钥派生 (v2) ─────────────────────────────────
+
+fn derive_key_pbkdf2() -> Result<UnboundKey> {
+    let host = hostname::get().unwrap_or_default();
+    let machine_key = get_machine_key()?;
+    let salt = format!("quantpilot-vault-v2-{}", host.to_string_lossy());
+    let mut key_bytes = [0u8; 32];
+    ring::pbkdf2::derive(
+        ring::pbkdf2::PBKDF2_HMAC_SHA256,
+        std::num::NonZeroU32::new(600_000).unwrap(),
+        salt.as_bytes(),
+        machine_key,
+        &mut key_bytes,
+    );
+    UnboundKey::new(&ring::aead::AES_256_GCM, &key_bytes)
+        .map_err(|_| anyhow::anyhow!("PBKDF2密钥派生失败"))
+}
+
 // ── 加解密 ────────────────────────────────────────────────
 
+/// 使用 PBKDF2 派生密钥加密，输出前 prepend 1 字节版本头 [2]。
 fn encrypt(plaintext: &str) -> Result<Vec<u8>> {
-    let key = derive_key()?;
+    let key = derive_key_pbkdf2()?;
     let key = LessSafeKey::new(key);
     let rng = SystemRandom::new();
     let mut nonce_bytes = [0u8; NONCE_LEN];
@@ -104,20 +135,37 @@ fn encrypt(plaintext: &str) -> Result<Vec<u8>> {
     let mut data = plaintext.as_bytes().to_vec();
     key.seal_in_place_append_tag(nonce, Aad::from(CREDENTIALS_FILE.as_bytes()), &mut data)
         .map_err(|_| anyhow::anyhow!("加密失败"))?;
-    let mut result = nonce_bytes.to_vec();
+    let mut result = vec![2u8]; // version=2: PBKDF2
+    result.extend(nonce_bytes);
     result.extend(data);
     Ok(result)
 }
 
 fn decrypt(ciphertext: &[u8]) -> Result<Zeroizing<String>> {
-    if ciphertext.len() < NONCE_LEN + TAG_LEN {
+    if ciphertext.is_empty() {
+        anyhow::bail!("凭证数据为空");
+    }
+
+    // 读取第一个字节判断版本
+    let version = ciphertext[0];
+
+    // 根据版本选择密钥派生函数和数据偏移
+    let (derive, offset): (fn() -> Result<UnboundKey>, usize) = match version {
+        2 => (derive_key_pbkdf2, 1), // v2: PBKDF2, 跳过版本头
+        1 => (derive_key, 1),        // v1: SHA-256, 跳过版本头
+        _ => (derive_key, 0),        // 无版本头(旧文件): SHA-256
+    };
+
+    let payload = &ciphertext[offset..];
+    if payload.len() < NONCE_LEN + TAG_LEN {
         anyhow::bail!("凭证数据损坏");
     }
-    let key = derive_key()?;
+
+    let key = derive()?;
     let key = LessSafeKey::new(key);
-    let nonce_bytes: [u8; NONCE_LEN] = ciphertext[..NONCE_LEN].try_into().unwrap();
+    let nonce_bytes: [u8; NONCE_LEN] = payload[..NONCE_LEN].try_into().unwrap();
     let nonce = Nonce::assume_unique_for_key(nonce_bytes);
-    let mut data = ciphertext[NONCE_LEN..].to_vec();
+    let mut data = payload[NONCE_LEN..].to_vec();
     let plaintext = key
         .open_in_place(nonce, Aad::from(CREDENTIALS_FILE.as_bytes()), &mut data)
         .map_err(|_| anyhow::anyhow!("凭证解密失败: 密钥不匹配或数据损坏"))?;
@@ -149,11 +197,22 @@ impl CredentialVault {
         get_machine_key()?;
 
         let path = PathBuf::from(CREDENTIALS_FILE);
+        // v2.1.0: 崩溃恢复 — 若 .bak 残留且主文件不存在, 从 bak 恢复
+        let bak = path.with_extension("bak");
+        if !path.exists() && bak.exists() {
+            eprintln!("[vault] 检测到 .bak 残留文件，正在恢复...");
+            std::fs::rename(&bak, &path).map_err(|e| {
+                anyhow::anyhow!("凭证备份恢复失败: {}，请手动检查 {} 和 {}", e, path.display(), bak.display())
+            })?;
+        }
         let data = if path.exists() {
             let encrypted = std::fs::read(&path)?;
             let decrypted = decrypt(&encrypted)
                 .map_err(|_| anyhow::anyhow!("凭证文件损坏或密钥不匹配, 请重新设置凭证"))?;
-            serde_json::from_str(&decrypted).unwrap_or_default()
+            // v2.1.x: JSON损坏时返回错误，不再静默清空凭证数据
+            serde_json::from_str(&decrypted).map_err(|e| {
+                anyhow::anyhow!("凭证JSON解析失败: {}，请重新设置凭证 (备份文件: {})", e, bak.display())
+            })?
         } else {
             // 首次启动: 创建空 vault 并持久化, 避免 API 返回 503
             let data = VaultData::default();
@@ -162,7 +221,21 @@ impl CredentialVault {
             }
             let json = serde_json::to_string(&data)?;
             let encrypted = encrypt(&json)?;
-            std::fs::write(&path, encrypted)?;
+            let tmp = path.with_extension("tmp");
+            std::fs::write(&tmp, encrypted)?;
+            std::fs::rename(&tmp, &path)?;
+            #[cfg(unix)]
+            {
+                use std::os::unix::fs::PermissionsExt;
+                std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o600)).ok();
+            }
+            #[cfg(windows)]
+            {
+                let username = std::env::var("USERNAME").unwrap_or_default();
+                let _ = std::process::Command::new("icacls")
+                    .args([path.to_str().unwrap_or(""), "/inheritance:r", "/grant", &format!("{}:F", username)])
+                    .output();
+            }
             data
         };
         Ok(Self {
@@ -196,12 +269,13 @@ impl CredentialVault {
     /// - 尽快用完，用完后让变量离开作用域
     /// - 若需长期持有，用 `Zeroizing::new(value)` 包裹
     /// - 参考 `test_runner.rs:load_exchange_credentials()` 的调用模式
-    pub fn get_service(&self, service: &str) -> Option<CredentialFields> {
+    pub fn get_service(&self, service: &str) -> Option<BTreeMap<String, Zeroizing<String>>> {
+        // v1.1.11: 返回 Zeroizing 强制调用方在 Drop 时清零明文
         let data = self.data.lock().unwrap_or_else(|e| e.into_inner());
         data.entries.get(service).map(|entry| {
             entry
                 .iter()
-                .map(|(k, v)| (k.clone(), v.0.clone()))
+                .map(|(k, v)| (k.clone(), Zeroizing::new(v.0.clone())))
                 .collect()
         })
     }
@@ -257,8 +331,20 @@ impl CredentialVault {
             return Err(anyhow::anyhow!("凭证保存失败: {}", e));
         }
 
-        // 成功：清理 bak
+        // 成功：清理 bak，设置安全权限
         let _ = std::fs::remove_file(&bak);
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            std::fs::set_permissions(&self.path, std::fs::Permissions::from_mode(0o600)).ok();
+        }
+        #[cfg(windows)]
+        {
+            let username = std::env::var("USERNAME").unwrap_or_default();
+            let _ = std::process::Command::new("icacls")
+                .args([self.path.to_str().unwrap_or(""), "/inheritance:r", "/grant", &format!("{}:F", username)])
+                .output();
+        }
         Ok(())
     }
 }
@@ -267,12 +353,361 @@ impl CredentialVault {
 
 impl CredentialVault {
     /// 提取所有已存储凭证的字段值，供 safe_log 脱敏模块使用
-    pub fn extract_secret_patterns(&self) -> Vec<String> {
+    pub fn extract_secret_patterns(&self) -> Vec<Zeroizing<String>> {
         let data = self.data.lock().unwrap_or_else(|e| e.into_inner());
         data.entries
             .values()
-            .flat_map(|entry| entry.values().map(|v| v.0.clone()))
+            .flat_map(|entry| entry.values().map(|v| Zeroizing::new(v.0.clone())))
             .filter(|v| v.len() >= 8) // 跳过过短的值（可能是占位符）
             .collect()
     }
 }
+
+// ── 单元测试 ──
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::path::PathBuf;
+    use std::sync::{Mutex, OnceLock as SyncOnceLock};
+
+    /// 全局 vault 测试锁：串行化 CWD 敏感的 vault 测试
+    static VAULT_TEST_LOCK: SyncOnceLock<Mutex<()>> = SyncOnceLock::new();
+
+    fn vault_lock() -> &'static Mutex<()> {
+        VAULT_TEST_LOCK.get_or_init(|| Mutex::new(()))
+    }
+
+    struct VaultTestEnv {
+        orig_cwd: PathBuf,
+        temp_dir: PathBuf,
+    }
+
+    impl VaultTestEnv {
+        fn new() -> Self {
+            let orig_cwd = std::env::current_dir().unwrap();
+            let temp_dir = std::env::temp_dir().join(format!(
+                "quantpilot_vault_test_{}",
+                std::process::id()
+            ));
+
+            // 清除旧数据
+            let _ = std::fs::remove_dir_all(&temp_dir);
+            std::fs::create_dir_all(&temp_dir).unwrap();
+
+            // 创建 storage 目录和机器密钥文件（仅首轮初始化时有效）
+            let storage_dir = temp_dir.join("storage");
+            std::fs::create_dir_all(&storage_dir).unwrap();
+
+            let machine_key: [u8; 32] = [0xAB; 32];
+            std::fs::write(storage_dir.join(".machine_key"), machine_key).unwrap();
+
+            // 切换到临时目录
+            std::env::set_current_dir(&temp_dir).unwrap();
+
+            // 尝试初始化机器密钥（若 OnceLock 尚未初始化）
+            // 此调用可能被跳过，不影响后续测试逻辑
+            let _ = get_machine_key();
+
+            Self { orig_cwd, temp_dir }
+        }
+
+        /// 确保凭证文件不存在（模拟首次启动）
+        fn clean_credentials(&self) {
+            let creds = self.temp_dir.join("storage/.credentials");
+            let _ = std::fs::remove_file(&creds);
+            let _ = std::fs::remove_file(self.temp_dir.join("storage/.credentials.tmp"));
+            let _ = std::fs::remove_file(self.temp_dir.join("storage/.credentials.bak"));
+        }
+    }
+
+    impl Drop for VaultTestEnv {
+        fn drop(&mut self) {
+            let _ = std::env::set_current_dir(&self.orig_cwd);
+            let _ = std::fs::remove_dir_all(&self.temp_dir);
+        }
+    }
+
+    /// 运行一个 vault 测试用例（串行化）
+    fn run_vault_test<F>(f: F)
+    where
+        F: FnOnce(),
+    {
+        let guard = vault_lock().lock().unwrap_or_else(|e| e.into_inner());
+        f();
+        drop(guard);
+    }
+
+    // ── CredentialVault::load() ──
+
+    #[test]
+    fn test_load_fresh_vault_creates_file() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+            assert!(
+                !env.temp_dir.join("storage/.credentials").exists(),
+                "测试前置条件：凭证文件不应存在"
+            );
+
+            let vault = CredentialVault::load().unwrap();
+
+            // 加载成功后应创建凭证文件
+            assert!(env.temp_dir.join("storage/.credentials").exists());
+            assert!(vault.list_services().is_empty());
+        });
+    }
+
+    #[test]
+    fn test_load_existing_vault() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            // 首次创建 vault 并写入一个服务
+            let vault = CredentialVault::load().unwrap();
+            let mut fields = CredentialFields::new();
+            fields.insert("api_key".to_string(), "test_secret_value".to_string());
+            vault.set_service("test_service", fields).unwrap();
+
+            // 重新加载 vault（模拟重启）
+            let reloaded = CredentialVault::load().unwrap();
+            let services = reloaded.list_services();
+            assert_eq!(services, vec!["test_service"]);
+        });
+    }
+
+    // ── set_service + get_service ──
+
+    #[test]
+    fn test_set_and_get_service_roundtrip() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            let vault = CredentialVault::load().unwrap();
+            let mut fields = CredentialFields::new();
+            fields.insert("key1".to_string(), "value1".to_string());
+            fields.insert("key2".to_string(), "value2".to_string());
+
+            vault.set_service("my_service", fields).unwrap();
+
+            let result = vault.get_service("my_service");
+            assert!(result.is_some());
+            let entry = result.unwrap();
+            assert_eq!(entry.get("key1").map(|z| z.as_str()), Some("value1"));
+            assert_eq!(entry.get("key2").map(|z| z.as_str()), Some("value2"));
+        });
+    }
+
+    #[test]
+    fn test_set_service_rejects_empty_fields() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            let vault = CredentialVault::load().unwrap();
+            let fields = CredentialFields::new();
+            let result = vault.set_service("empty_service", fields);
+            assert!(result.is_err());
+        });
+    }
+
+    #[test]
+    fn test_set_service_overwrites_existing() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            let vault = CredentialVault::load().unwrap();
+
+            let mut fields1 = CredentialFields::new();
+            fields1.insert("old".to_string(), "old_value".to_string());
+            vault.set_service("svc", fields1).unwrap();
+
+            let mut fields2 = CredentialFields::new();
+            fields2.insert("new".to_string(), "new_value".to_string());
+            vault.set_service("svc", fields2).unwrap();
+
+            let result = vault.get_service("svc").unwrap();
+            assert_eq!(result.get("old"), None);
+            assert_eq!(result.get("new").map(|z| z.as_str()), Some("new_value"));
+        });
+    }
+
+    #[test]
+    fn test_get_service_nonexistent() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            let vault = CredentialVault::load().unwrap();
+            let result = vault.get_service("nonexistent");
+            assert!(result.is_none());
+        });
+    }
+
+    // ── delete_service ──
+
+    #[test]
+    fn test_delete_service_removes_service() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            let vault = CredentialVault::load().unwrap();
+
+            let mut fields = CredentialFields::new();
+            fields.insert("key".to_string(), "value".to_string());
+            vault.set_service("to_delete", fields).unwrap();
+            assert!(vault.get_service("to_delete").is_some());
+
+            vault.delete_service("to_delete").unwrap();
+            assert!(vault.get_service("to_delete").is_none());
+        });
+    }
+
+    #[test]
+    fn test_delete_service_nonexistent_returns_error() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            let vault = CredentialVault::load().unwrap();
+            let result = vault.delete_service("does_not_exist");
+            assert!(result.is_err());
+        });
+    }
+
+    #[test]
+    fn test_delete_service_persists_after_reload() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            let vault1 = CredentialVault::load().unwrap();
+            let mut fields = CredentialFields::new();
+            fields.insert("key".to_string(), "keep".to_string());
+            vault1.set_service("keep_me", fields).unwrap();
+
+            let mut fields2 = CredentialFields::new();
+            fields2.insert("key".to_string(), "remove".to_string());
+            vault1.set_service("remove_me", fields2).unwrap();
+            vault1.delete_service("remove_me").unwrap();
+            drop(vault1);
+
+            let vault2 = CredentialVault::load().unwrap();
+            let services = vault2.list_services();
+            assert_eq!(services, vec!["keep_me"]);
+        });
+    }
+
+    // ── list_services ──
+
+    #[test]
+    fn test_list_services_empty_vault() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            let vault = CredentialVault::load().unwrap();
+            let services = vault.list_services();
+            assert!(services.is_empty());
+        });
+    }
+
+    #[test]
+    fn test_list_services_returns_all_services() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            let vault = CredentialVault::load().unwrap();
+
+            let mut f1 = CredentialFields::new();
+            f1.insert("k".to_string(), "v".to_string());
+            vault.set_service("svc_a", f1).unwrap();
+
+            let mut f2 = CredentialFields::new();
+            f2.insert("k".to_string(), "v".to_string());
+            vault.set_service("svc_b", f2).unwrap();
+
+            let mut f3 = CredentialFields::new();
+            f3.insert("k".to_string(), "v".to_string());
+            vault.set_service("svc_c", f3).unwrap();
+
+            let mut services = vault.list_services();
+            services.sort();
+            assert_eq!(services, vec!["svc_a", "svc_b", "svc_c"]);
+        });
+    }
+
+    // ── extract_secret_patterns ──
+
+    #[test]
+    fn test_extract_secret_patterns_returns_values() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            let vault = CredentialVault::load().unwrap();
+
+            let mut fields = CredentialFields::new();
+            fields.insert(
+                "api_key".to_string(),
+                "my_long_api_key_12345".to_string(),
+            );
+            vault.set_service("exchange", fields).unwrap();
+
+            let patterns = vault.extract_secret_patterns();
+            assert!(!patterns.is_empty());
+            // 返回值应 >= 8 字符
+            for p in &patterns {
+                assert!(p.len() >= 8);
+            }
+            assert!(patterns.iter().any(|p| p.as_str() == "my_long_api_key_12345"));
+        });
+    }
+
+    #[test]
+    fn test_extract_secret_patterns_skips_short_values() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            let vault = CredentialVault::load().unwrap();
+
+            let mut fields = CredentialFields::new();
+            fields.insert("short".to_string(), "abc".to_string()); // 3 chars, < 8
+            vault.set_service("test", fields).unwrap();
+
+            let patterns = vault.extract_secret_patterns();
+            // 只有 >= 8 的值才会返回
+            assert!(patterns.is_empty());
+        });
+    }
+
+    #[test]
+    fn test_extract_secret_patterns_returns_zeroizing() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            let vault = CredentialVault::load().unwrap();
+
+            let mut fields = CredentialFields::new();
+            fields.insert(
+                "secret".to_string(),
+                "very_long_secret_value".to_string(),
+            );
+            vault.set_service("test", fields).unwrap();
+
+            let patterns = vault.extract_secret_patterns();
+            for p in &patterns {
+                // Zeroizing 包装验证：类型应为 Zeroizing<String>
+                let _: &Zeroizing<String> = p;
+            }
+        });
+    }
+}
+

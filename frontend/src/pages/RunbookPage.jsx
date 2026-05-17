@@ -9,21 +9,25 @@ export default function RunbookPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchData = async () => {
+  const fetchData = async (signal) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/v1/runbook`);
+      const res = await fetch(`${API_BASE}/v1/runbook`, { signal });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setScenarios(await res.json());
     } catch (e) {
-      setError(e.message);
+      if (!signal?.aborted) setError(e.message);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchData(controller.signal);
+    return () => controller.abort();
+  }, []);
 
   const badge = (s) => {
     const map = { P1: "err", P2: "warn", P3: "info" };

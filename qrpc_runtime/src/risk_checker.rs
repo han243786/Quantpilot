@@ -1,3 +1,4 @@
+#![allow(clippy::too_many_arguments)]
 use anyhow::Result;
 use qrpc_core::{
     AgentDecision, CoreStrategyIr, DecisionStatus, Exchange, OrderSide, PortfolioState,
@@ -86,12 +87,161 @@ impl RiskCheckerProvider for RiskChecker {
             }
         }
 
+        // v2.1.0: 跨Agent方向冲突检测
+        // 同一标的上有不同Agent同时提出买卖相反方向时触发
+        let outputs = apply_direction_conflict_check(outputs, &mut events, request.now_ms);
+
+        // v1.1.0: Phase 2 — 跨标的联合风控
+        // 在所有标的中检查合计敞口是否超过跨标的限制
+        let outputs = apply_cross_symbol_constraints(
+            risks,
+            outputs,
+            request.portfolio,
+            request.now_ms,
+            self.provider_key(),
+            &mut events,
+        );
+
         Ok(RiskCheckOutput {
             decisions: outputs,
             events,
             approved_agent_ids,
         })
     }
+}
+
+/// v2.1.0: 跨Agent方向冲突检测
+/// 同一标的有多个Agent同时发出买卖相反方向→DirectionConflict拒绝
+fn apply_direction_conflict_check(
+    mut decisions: Vec<RiskDecision>,
+    events: &mut Vec<RuntimeEvent>,
+    now_ms: u64,
+) -> Vec<RiskDecision> {
+    use std::collections::HashMap;
+    // 按标的收集所有已批准的决策
+    let mut by_symbol: HashMap<String, Vec<usize>> = HashMap::new();
+    for (i, d) in decisions.iter().enumerate() {
+        if matches!(d.status, DecisionStatus::Approve | DecisionStatus::Clamp) {
+            by_symbol
+                .entry(format!("{:?}", d.symbol))
+                .or_default()
+                .push(i);
+        }
+    }
+    // 对每个标的有≥2个不同Agent的决策，检查方向冲突
+    for indices in by_symbol.values() {
+        if indices.len() < 2 {
+            continue;
+        }
+        let has_buy = indices.iter().any(|&i| {
+            decisions[i].adjusted_actions.iter().any(|a| matches!(a.side, OrderSide::Buy))
+        });
+        let has_sell = indices.iter().any(|&i| {
+            decisions[i].adjusted_actions.iter().any(|a| matches!(a.side, OrderSide::Sell))
+        });
+        if has_buy && has_sell {
+            for &i in indices {
+                decisions[i].status = DecisionStatus::Reject;
+                decisions[i].reason_codes = vec![RiskReasonCode::DirectionConflict];
+                decisions[i].reason_text =
+                    "方向冲突: 同一标的上存在多个Agent的相反方向操作，已全部拒绝".to_string();
+                decisions[i].adjusted_actions.clear();
+                decisions[i].adjusted_portfolio_target_decision = None;
+                events.push(RuntimeEvent {
+                    event_id: format!("evt-risk-direction-conflict-{}-{}", decisions[i].risk_decision_id, now_ms),
+                    event_type: RuntimeEventType::RiskDecisionProduced,
+                    trace_id: decisions[i].trace_id.clone(),
+                    source_id: decisions[i].risk_id.clone(),
+                    ts_ms: now_ms,
+                    payload: serde_json::json!({
+                        "risk_decision_id": decisions[i].risk_decision_id,
+                        "symbol": decisions[i].symbol,
+                        "reason": "direction_conflict",
+                        "explanation": "同一标的多Agent方向冲突，为避免相互踩踏全部拒绝"
+                    }),
+                });
+            }
+        }
+    }
+    decisions
+}
+
+/// v1.1.0: Phase 2 跨标的联合约束检查
+fn apply_cross_symbol_constraints(
+    risks: &[qrpc_core_ir::RiskPolicy],
+    mut decisions: Vec<RiskDecision>,
+    portfolio: &PortfolioState,
+    now_ms: u64,
+    provider_key: &str,
+    events: &mut Vec<RuntimeEvent>,
+) -> Vec<RiskDecision> {
+    for risk in risks.iter().filter(|r| r.enabled) {
+        let cross_leverage_limit = risk.max_cross_symbol_leverage.unwrap_or(f64::MAX);
+
+        if cross_leverage_limit >= f64::MAX {
+            continue; // 无跨标的约束配置
+        }
+
+        let equity = portfolio_equity(portfolio).max(1.0);
+
+        // 计算所有已批准/clamped 决策的合计敞口
+        // v2.0.1: quantity_ratio 已经是 equity 的比例 (如 0.2 = 20%)，
+        // 所以名义本金 = equity * quantity_ratio，无需再乘价格。
+        let total_notional: f64 = decisions
+            .iter()
+            .filter(|d| !matches!(d.status, DecisionStatus::Reject))
+            .map(|d| {
+                d.adjusted_actions
+                    .iter()
+                    .map(|a| a.quantity_ratio * equity)
+                    .sum::<f64>()
+            })
+            .sum();
+
+        let cross_symbol_leverage = total_notional / equity;
+
+        if cross_symbol_leverage > cross_leverage_limit && cross_leverage_limit.is_finite() {
+            // 按比例缩减所有非 Reject 的 decision
+            let scale = cross_leverage_limit / cross_symbol_leverage;
+            for d in decisions.iter_mut().filter(|d| !matches!(d.status, DecisionStatus::Reject)) {
+                for action in &mut d.adjusted_actions {
+                    action.quantity_ratio *= scale;
+                }
+                if let Some(ref mut target) = d.adjusted_portfolio_target_decision {
+                    for tw in &mut target.target.target_weights {
+                        tw.target_weight = tw.current_weight + (tw.target_weight - tw.current_weight) * scale;
+                    }
+                }
+                // 标记为 Clamp 如果不是 Approve
+                if matches!(d.status, DecisionStatus::Approve) {
+                    d.status = DecisionStatus::Clamp;
+                }
+                d.reason_codes.push(RiskReasonCode::ExceedPortfolioNetExposure);
+                d.reason_text.push_str(&format!(
+                    " 跨标的杠杆 {:.2} 超过限制 {:.2}, 缩减至 {:.0}%",
+                    cross_symbol_leverage,
+                    cross_leverage_limit,
+                    scale * 100.0,
+                ));
+            }
+            events.push(RuntimeEvent {
+                event_id: format!("evt-risk-cross-symbol-{now_ms}"),
+                event_type: RuntimeEventType::RiskDecisionProduced,
+                trace_id: "cross_symbol".to_string(),
+                source_id: risk.policy_id.clone(),
+                ts_ms: now_ms,
+                payload: serde_json::json!({
+                    "provider_key": provider_key,
+                    "status": "clamped_cross_symbol",
+                    "cross_symbol_leverage": cross_symbol_leverage,
+                    "limit": cross_leverage_limit,
+                    "scale": scale,
+                    "reason_text": format!("跨标的合计杠杆 {:.2} 超过限制 {:.2}", cross_symbol_leverage, cross_leverage_limit),
+                }),
+            });
+        }
+    }
+    decisions
 }
 
 fn build_risk_event_payload(
@@ -186,6 +336,8 @@ fn reason_code_name(reason_code: &RiskReasonCode) -> &'static str {
         RiskReasonCode::InsufficientInventory => "available_inventory",
         RiskReasonCode::CostNotCovered => "cost_not_covered",
         RiskReasonCode::InvalidAction => "invalid_action",
+        RiskReasonCode::ExceedDailyLoss => "max_daily_loss",
+        RiskReasonCode::ExceedDrawdown => "max_drawdown",
     }
 }
 
@@ -266,49 +418,21 @@ fn evaluate_risk_decision(
     let symbol = decision.symbol.clone();
     let risk_decision_id = format!("risk-{}-{now_ms}", decision.decision_id);
 
-    // Mode enforcement: restrict actions based on risk decision mode
-    match mode {
-        RiskDecisionMode::EmergencyHalt => {
-            return RiskDecision {
-                risk_decision_id,
-                risk_id,
-                agent_decision_id,
-                symbol,
-                status: DecisionStatus::Reject,
-                mode,
-                adjusted_portfolio_target_decision: None,
-                adjusted_actions: Vec::new(),
-                reason_codes: vec![RiskReasonCode::InvalidAction],
-                reason_text: "emergency halt: all new actions rejected, open orders must be cancelled".into(),
-                produced_at_ms: now_ms,
-                trace_id: trace_id.to_string(),
-            };
-        }
-        RiskDecisionMode::FreezeOpen | RiskDecisionMode::ReduceOnly | RiskDecisionMode::ReconcileOnly => {
-            let has_new_open = decision.proposed_actions.iter().any(|action| {
-                matches!(action.side, OrderSide::Buy)
-            }) || decision.portfolio_target_decision.as_ref().map_or(false, |target| {
-                target.target.target_weights.iter().any(|weight| weight.target_weight > weight.current_weight + 1e-9)
-            });
-            if has_new_open && matches!(mode, RiskDecisionMode::FreezeOpen) {
-                return RiskDecision {
-                    risk_decision_id,
-                    risk_id,
-                    agent_decision_id,
-                    symbol,
-                    status: DecisionStatus::Reject,
-                    mode,
-                    adjusted_portfolio_target_decision: None,
-                    adjusted_actions: Vec::new(),
-                    reason_codes: vec![RiskReasonCode::ExceedNewPositionsLimit],
-                    reason_text: "freeze open: new positions and additions are prohibited".into(),
-                    produced_at_ms: now_ms,
-                    trace_id: trace_id.to_string(),
-                };
-            }
-        }
-        RiskDecisionMode::Normal => {}
+    // 1. Mode enforcement -> return if rejected
+    if let Some(rejected) = enforce_risk_mode(
+        mode,
+        decision,
+        &risk_decision_id,
+        &risk_id,
+        &agent_decision_id,
+        &symbol,
+        now_ms,
+        trace_id,
+    ) {
+        return rejected;
     }
+
+    // 2. Init variables
     let mut adjusted_portfolio_target_decision = decision.portfolio_target_decision.clone();
     let mut adjusted_actions = decision.proposed_actions.clone();
     let mut reason_codes = vec![RiskReasonCode::WithinLimit];
@@ -316,6 +440,7 @@ fn evaluate_risk_decision(
     let mut reason_text = String::from("approved");
     let equity = portfolio_equity(portfolio).abs().max(1.0);
 
+    // 3. Action interval check -> return if too frequent
     if let Some(last_ts) = last_action_at_ms.get(&decision.agent_id) {
         if now_ms.saturating_sub(*last_ts) < risk.min_action_interval_ms {
             return RiskDecision {
@@ -335,108 +460,16 @@ fn evaluate_risk_decision(
         }
     }
 
+    // 4. Portfolio target clamping
     if let Some(target_decision) = adjusted_portfolio_target_decision.as_mut() {
-        let single_weight_limit = risk
-            .max_single_weight
-            .unwrap_or(risk.max_position_ratio)
-            .min(risk.max_position_ratio)
-            .clamp(0.0, 1.0);
-        let total_buy_headroom = (risk.max_total_leverage - portfolio.total_leverage)
-            .max(0.0)
-            .min((portfolio.available_cash_balance / equity).max(0.0));
-        let exchange_headroom = portfolio
-            .exchange_exposures
-            .iter()
-            .map(|item| {
-                (
-                    item.exchange.clone(),
-                    (risk.max_exchange_leverage - item.leverage).max(0.0),
-                )
-            })
-            .collect::<BTreeMap<_, _>>();
-
-        refresh_portfolio_target_current_weights(
-            &mut target_decision.target.target_weights,
+        clamp_portfolio_target_limits(
+            target_decision,
+            risk,
             portfolio,
+            equity,
+            &mut status,
+            &mut reason_codes,
         );
-        if let Some(limit) = risk.max_new_positions_per_rebalance {
-            if clamp_portfolio_target_new_positions(
-                &mut target_decision.target.target_weights,
-                limit as usize,
-            ) {
-                status = DecisionStatus::Clamp;
-                push_reason_code(&mut reason_codes, RiskReasonCode::ExceedNewPositionsLimit);
-            }
-        }
-        if clamp_portfolio_target_single_weight(
-            &mut target_decision.target.target_weights,
-            single_weight_limit,
-        ) {
-            status = DecisionStatus::Clamp;
-            push_reason_code(&mut reason_codes, RiskReasonCode::ExceedSingleWeight);
-        }
-        if let Some(max_concentration_ratio) = risk.max_concentration_ratio {
-            if clamp_portfolio_target_single_weight(
-                &mut target_decision.target.target_weights,
-                max_concentration_ratio.clamp(0.0, 1.0),
-            ) {
-                status = DecisionStatus::Clamp;
-                push_reason_code(&mut reason_codes, RiskReasonCode::ExceedConcentration);
-            }
-        }
-        if let Some(max_symbol_net_exposure_ratio) = risk.max_symbol_net_exposure_ratio {
-            if clamp_portfolio_target_single_weight(
-                &mut target_decision.target.target_weights,
-                max_symbol_net_exposure_ratio.clamp(0.0, 1.0),
-            ) {
-                status = DecisionStatus::Clamp;
-                push_reason_code(&mut reason_codes, RiskReasonCode::ExceedSymbolNetExposure);
-            }
-        }
-        if let Some(max_turnover) = risk.max_turnover {
-            if clamp_portfolio_target_turnover(
-                &mut target_decision.target.target_weights,
-                max_turnover.max(0.0),
-            ) {
-                status = DecisionStatus::Clamp;
-                push_reason_code(&mut reason_codes, RiskReasonCode::ExceedTurnover);
-            }
-        }
-        if let Some(max_portfolio_net_exposure_ratio) = risk.max_portfolio_net_exposure_ratio {
-            if clamp_portfolio_target_portfolio_net_exposure(
-                &mut target_decision.target.target_weights,
-                max_portfolio_net_exposure_ratio.max(0.0),
-            ) {
-                status = DecisionStatus::Clamp;
-                push_reason_code(
-                    &mut reason_codes,
-                    RiskReasonCode::ExceedPortfolioNetExposure,
-                );
-            }
-        }
-        if clamp_portfolio_target_total_buy_headroom(
-            &mut target_decision.target.target_weights,
-            total_buy_headroom,
-        ) {
-            status = DecisionStatus::Clamp;
-            push_reason_code(&mut reason_codes, RiskReasonCode::ExceedTotalLeverage);
-        }
-        if clamp_portfolio_target_exchange_headroom(
-            &mut target_decision.target.target_weights,
-            &exchange_headroom,
-        ) {
-            status = DecisionStatus::Clamp;
-            push_reason_code(&mut reason_codes, RiskReasonCode::ExceedExchangeLeverage);
-        }
-        if let Some(min_trade_weight) = risk.min_trade_weight {
-            if clamp_portfolio_target_min_trade_weight(
-                &mut target_decision.target.target_weights,
-                min_trade_weight.max(0.0),
-            ) {
-                status = DecisionStatus::Clamp;
-                push_reason_code(&mut reason_codes, RiskReasonCode::TradeBelowMinimum);
-            }
-        }
 
         let execution_venue_kind = core_ir.execution.venue_kind.clone();
         reason_text = if matches!(status, DecisionStatus::Clamp) {
@@ -466,72 +499,23 @@ fn evaluate_risk_decision(
         };
     }
 
-    for action in &mut adjusted_actions {
-        action.quantity_ratio = action.quantity_ratio.min(risk.max_position_ratio).max(0.0);
-    }
-    if clamp_sell_actions_to_inventory(&mut adjusted_actions, portfolio, &decision.symbol, equity) {
-        status = DecisionStatus::Clamp;
-        push_reason_code(&mut reason_codes, RiskReasonCode::InsufficientInventory);
-        reason_text = "sell actions clamped to available spot inventory".into();
-    }
+    // 5. Action clamping
+    clamp_actions(
+        &mut adjusted_actions,
+        risk,
+        portfolio,
+        equity,
+        &decision.symbol,
+        &mut status,
+        &mut reason_codes,
+        &mut reason_text,
+    );
 
-    if let Some(max_symbol_net_exposure_ratio) = risk.max_symbol_net_exposure_ratio {
-        if clamp_buy_actions_to_symbol_net_exposure(
-            &mut adjusted_actions,
-            portfolio,
-            &decision.symbol,
-            max_symbol_net_exposure_ratio.max(0.0),
-            equity,
-        ) {
-            status = DecisionStatus::Clamp;
-            push_reason_code(&mut reason_codes, RiskReasonCode::ExceedSymbolNetExposure);
-        }
-    }
-
-    let total_buy_headroom = (risk.max_total_leverage - portfolio.total_leverage)
-        .max(0.0)
-        .min((portfolio.available_cash_balance / equity).max(0.0));
-    if clamp_buy_actions_to_total_headroom(&mut adjusted_actions, total_buy_headroom) {
-        status = DecisionStatus::Clamp;
-        push_reason_code(&mut reason_codes, RiskReasonCode::ExceedTotalLeverage);
-        reason_text = "buy actions clamped to total leverage or cash headroom".into();
-    }
-
-    if let Some(max_portfolio_net_exposure_ratio) = risk.max_portfolio_net_exposure_ratio {
-        if clamp_buy_actions_to_portfolio_net_exposure(
-            &mut adjusted_actions,
-            portfolio,
-            max_portfolio_net_exposure_ratio.max(0.0),
-            equity,
-        ) {
-            status = DecisionStatus::Clamp;
-            push_reason_code(
-                &mut reason_codes,
-                RiskReasonCode::ExceedPortfolioNetExposure,
-            );
-        }
-    }
-
-    let exchange_headroom = portfolio
-        .exchange_exposures
-        .iter()
-        .map(|item| {
-            (
-                item.exchange.clone(),
-                (risk.max_exchange_leverage - item.leverage).max(0.0),
-            )
-        })
-        .collect::<BTreeMap<_, _>>();
-    if clamp_buy_actions_to_exchange_headroom(&mut adjusted_actions, &exchange_headroom) {
-        status = DecisionStatus::Clamp;
-        push_reason_code(&mut reason_codes, RiskReasonCode::ExceedExchangeLeverage);
-        reason_text = "buy actions clamped to exchange leverage headroom".into();
-    }
-
+    // 6. Build result
     adjusted_actions.retain(|item| item.quantity_ratio > 0.01);
     if adjusted_actions.is_empty() {
         status = DecisionStatus::Reject;
-        if portfolio.available_cash_balance <= 0.0 {
+        if !portfolio.available_cash_balance.is_finite() || portfolio.available_cash_balance <= 0.0 {
             reason_codes = vec![RiskReasonCode::InsufficientCash];
             reason_text = "available cash exhausted".into();
         } else if reason_codes == vec![RiskReasonCode::InsufficientInventory] {
@@ -570,6 +554,238 @@ fn evaluate_risk_decision(
         reason_text: format!("{reason_text} (execution_venue={execution_venue_kind})"),
         produced_at_ms: now_ms,
         trace_id: trace_id.to_string(),
+    }
+}
+
+fn enforce_risk_mode(
+    mode: RiskDecisionMode,
+    decision: &AgentDecision,
+    risk_decision_id: &str,
+    risk_id: &str,
+    agent_decision_id: &str,
+    symbol: &Symbol,
+    now_ms: u64,
+    trace_id: &str,
+) -> Option<RiskDecision> {
+    match mode {
+        RiskDecisionMode::EmergencyHalt => Some(RiskDecision {
+            risk_decision_id: risk_decision_id.to_string(),
+            risk_id: risk_id.to_string(),
+            agent_decision_id: agent_decision_id.to_string(),
+            symbol: symbol.clone(),
+            status: DecisionStatus::Reject,
+            mode,
+            adjusted_portfolio_target_decision: None,
+            adjusted_actions: Vec::new(),
+            reason_codes: vec![RiskReasonCode::InvalidAction],
+            reason_text: "emergency halt: all new actions rejected, open orders must be cancelled".into(),
+            produced_at_ms: now_ms,
+            trace_id: trace_id.to_string(),
+        }),
+        RiskDecisionMode::FreezeOpen => {
+            let has_new_open = decision.proposed_actions.iter().any(|action| {
+                matches!(action.side, OrderSide::Buy | OrderSide::Sell)
+            }) || decision.portfolio_target_decision.as_ref().is_some_and(|target| {
+                target.target.target_weights.iter().any(|weight| weight.target_weight > weight.current_weight + 1e-9)
+            });
+            if has_new_open {
+                Some(RiskDecision {
+                    risk_decision_id: risk_decision_id.to_string(),
+                    risk_id: risk_id.to_string(),
+                    agent_decision_id: agent_decision_id.to_string(),
+                    symbol: symbol.clone(),
+                    status: DecisionStatus::Reject,
+                    mode,
+                    adjusted_portfolio_target_decision: None,
+                    adjusted_actions: Vec::new(),
+                    reason_codes: vec![RiskReasonCode::ExceedNewPositionsLimit],
+                    reason_text: "freeze open: new positions and additions are prohibited".into(),
+                    produced_at_ms: now_ms,
+                    trace_id: trace_id.to_string(),
+                })
+            } else {
+                None
+            }
+        }
+        RiskDecisionMode::ReduceOnly | RiskDecisionMode::ReconcileOnly | RiskDecisionMode::Normal => None,
+    }
+}
+
+fn clamp_portfolio_target_limits(
+    target_decision: &mut qrpc_core::PortfolioTargetDecision,
+    risk: &RiskPolicy,
+    portfolio: &PortfolioState,
+    equity: f64,
+    status: &mut DecisionStatus,
+    reason_codes: &mut Vec<RiskReasonCode>,
+) {
+    let single_weight_limit = risk
+        .max_single_weight
+        .unwrap_or(risk.max_position_ratio)
+        .min(risk.max_position_ratio)
+        .clamp(0.0, 1.0);
+    let total_buy_headroom = (risk.max_total_leverage - portfolio.total_leverage)
+        .max(0.0)
+        .min((portfolio.available_cash_balance / equity).max(0.0));
+    let exchange_headroom = portfolio
+        .exchange_exposures
+        .iter()
+        .map(|item| {
+            (
+                item.exchange.clone(),
+                (risk.max_exchange_leverage - item.leverage).max(0.0),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
+
+    refresh_portfolio_target_current_weights(
+        &mut target_decision.target.target_weights,
+        portfolio,
+    );
+    if let Some(limit) = risk.max_new_positions_per_rebalance {
+        if clamp_portfolio_target_new_positions(
+            &mut target_decision.target.target_weights,
+            limit as usize,
+        ) {
+            *status = DecisionStatus::Clamp;
+            push_reason_code(reason_codes, RiskReasonCode::ExceedNewPositionsLimit);
+        }
+    }
+    if clamp_portfolio_target_single_weight(
+        &mut target_decision.target.target_weights,
+        single_weight_limit,
+    ) {
+        *status = DecisionStatus::Clamp;
+        push_reason_code(reason_codes, RiskReasonCode::ExceedSingleWeight);
+    }
+    if let Some(max_concentration_ratio) = risk.max_concentration_ratio {
+        if clamp_portfolio_target_single_weight(
+            &mut target_decision.target.target_weights,
+            max_concentration_ratio.clamp(0.0, 1.0),
+        ) {
+            *status = DecisionStatus::Clamp;
+            push_reason_code(reason_codes, RiskReasonCode::ExceedConcentration);
+        }
+    }
+    if let Some(max_symbol_net_exposure_ratio) = risk.max_symbol_net_exposure_ratio {
+        if clamp_portfolio_target_single_weight(
+            &mut target_decision.target.target_weights,
+            max_symbol_net_exposure_ratio.clamp(0.0, 1.0),
+        ) {
+            *status = DecisionStatus::Clamp;
+            push_reason_code(reason_codes, RiskReasonCode::ExceedSymbolNetExposure);
+        }
+    }
+    if let Some(max_turnover) = risk.max_turnover {
+        if clamp_portfolio_target_turnover(
+            &mut target_decision.target.target_weights,
+            max_turnover.max(0.0),
+        ) {
+            *status = DecisionStatus::Clamp;
+            push_reason_code(reason_codes, RiskReasonCode::ExceedTurnover);
+        }
+    }
+    if let Some(max_portfolio_net_exposure_ratio) = risk.max_portfolio_net_exposure_ratio {
+        if clamp_portfolio_target_portfolio_net_exposure(
+            &mut target_decision.target.target_weights,
+            max_portfolio_net_exposure_ratio.max(0.0),
+        ) {
+            *status = DecisionStatus::Clamp;
+            push_reason_code(reason_codes, RiskReasonCode::ExceedPortfolioNetExposure);
+        }
+    }
+    if clamp_portfolio_target_total_buy_headroom(
+        &mut target_decision.target.target_weights,
+        total_buy_headroom,
+    ) {
+        *status = DecisionStatus::Clamp;
+        push_reason_code(reason_codes, RiskReasonCode::ExceedTotalLeverage);
+    }
+    if clamp_portfolio_target_exchange_headroom(
+        &mut target_decision.target.target_weights,
+        &exchange_headroom,
+    ) {
+        *status = DecisionStatus::Clamp;
+        push_reason_code(reason_codes, RiskReasonCode::ExceedExchangeLeverage);
+    }
+    if let Some(min_trade_weight) = risk.min_trade_weight {
+        if clamp_portfolio_target_min_trade_weight(
+            &mut target_decision.target.target_weights,
+            min_trade_weight.max(0.0),
+        ) {
+            *status = DecisionStatus::Clamp;
+            push_reason_code(reason_codes, RiskReasonCode::TradeBelowMinimum);
+        }
+    }
+}
+
+fn clamp_actions(
+    actions: &mut [qrpc_core::ProposedAction],
+    risk: &RiskPolicy,
+    portfolio: &PortfolioState,
+    equity: f64,
+    symbol: &Symbol,
+    status: &mut DecisionStatus,
+    reason_codes: &mut Vec<RiskReasonCode>,
+    reason_text: &mut String,
+) {
+    for action in actions.iter_mut() {
+        action.quantity_ratio = action.quantity_ratio.min(risk.max_position_ratio).max(0.0);
+    }
+    if clamp_sell_actions_to_inventory(actions, portfolio, symbol, equity) {
+        *status = DecisionStatus::Clamp;
+        push_reason_code(reason_codes, RiskReasonCode::InsufficientInventory);
+        *reason_text = "sell actions clamped to available spot inventory".into();
+    }
+
+    if let Some(max_symbol_net_exposure_ratio) = risk.max_symbol_net_exposure_ratio {
+        if clamp_buy_actions_to_symbol_net_exposure(
+            actions,
+            portfolio,
+            symbol,
+            max_symbol_net_exposure_ratio.max(0.0),
+            equity,
+        ) {
+            *status = DecisionStatus::Clamp;
+            push_reason_code(reason_codes, RiskReasonCode::ExceedSymbolNetExposure);
+        }
+    }
+
+    let total_buy_headroom = (risk.max_total_leverage - portfolio.total_leverage)
+        .max(0.0)
+        .min((portfolio.available_cash_balance / equity).max(0.0));
+    if clamp_buy_actions_to_total_headroom(actions, total_buy_headroom) {
+        *status = DecisionStatus::Clamp;
+        push_reason_code(reason_codes, RiskReasonCode::ExceedTotalLeverage);
+        *reason_text = "buy actions clamped to total leverage or cash headroom".into();
+    }
+
+    if let Some(max_portfolio_net_exposure_ratio) = risk.max_portfolio_net_exposure_ratio {
+        if clamp_buy_actions_to_portfolio_net_exposure(
+            actions,
+            portfolio,
+            max_portfolio_net_exposure_ratio.max(0.0),
+            equity,
+        ) {
+            *status = DecisionStatus::Clamp;
+            push_reason_code(reason_codes, RiskReasonCode::ExceedPortfolioNetExposure);
+        }
+    }
+
+    let exchange_headroom = portfolio
+        .exchange_exposures
+        .iter()
+        .map(|item| {
+            (
+                item.exchange.clone(),
+                (risk.max_exchange_leverage - item.leverage).max(0.0),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
+    if clamp_buy_actions_to_exchange_headroom(actions, &exchange_headroom) {
+        *status = DecisionStatus::Clamp;
+        push_reason_code(reason_codes, RiskReasonCode::ExceedExchangeLeverage);
+        *reason_text = "buy actions clamped to exchange leverage headroom".into();
     }
 }
 
@@ -623,7 +839,7 @@ fn clamp_buy_actions_to_total_headroom(
         return false;
     }
 
-    if total_headroom <= 0.0 {
+    if !total_headroom.is_finite() || total_headroom <= 0.0 {
         for action in actions
             .iter_mut()
             .filter(|item| matches!(item.side, OrderSide::Buy))
@@ -665,7 +881,7 @@ fn clamp_buy_actions_to_exchange_headroom(
             .copied()
             .unwrap_or(f64::INFINITY);
         if total_ratio > headroom + 1e-9 {
-            let scale = if headroom <= 0.0 {
+            let scale = if !headroom.is_finite() || headroom <= 0.0 {
                 0.0
             } else {
                 headroom / total_ratio
@@ -701,7 +917,7 @@ fn clamp_buy_actions_to_symbol_net_exposure(
         .filter(|item| matches!(item.side, OrderSide::Buy))
         .map(|item| item.quantity_ratio)
         .sum::<f64>();
-    if total_buy_ratio <= 0.0 {
+    if !total_buy_ratio.is_finite() || total_buy_ratio <= 0.0 {
         return false;
     }
     let total_sell_ratio = actions
@@ -717,7 +933,7 @@ fn clamp_buy_actions_to_symbol_net_exposure(
         return false;
     }
 
-    let scale = if remaining_headroom <= 0.0 {
+    let scale = if !remaining_headroom.is_finite() || remaining_headroom <= 0.0 {
         0.0
     } else {
         remaining_headroom / total_buy_ratio
@@ -742,7 +958,7 @@ fn clamp_buy_actions_to_portfolio_net_exposure(
         .filter(|item| matches!(item.side, OrderSide::Buy))
         .map(|item| item.quantity_ratio)
         .sum::<f64>();
-    if total_buy_ratio <= 0.0 {
+    if !total_buy_ratio.is_finite() || total_buy_ratio <= 0.0 {
         return false;
     }
     let total_sell_ratio = actions
@@ -758,7 +974,7 @@ fn clamp_buy_actions_to_portfolio_net_exposure(
         return false;
     }
 
-    let scale = if remaining_headroom <= 0.0 {
+    let scale = if !remaining_headroom.is_finite() || remaining_headroom <= 0.0 {
         0.0
     } else {
         remaining_headroom / total_buy_ratio
@@ -870,10 +1086,10 @@ fn clamp_portfolio_target_turnover(
     if total_turnover <= max_turnover + 1e-9 {
         return false;
     }
-    let scale = if max_turnover <= 0.0 {
+    let scale = if !max_turnover.is_finite() || max_turnover <= 0.0 || total_turnover <= 0.0 {
         0.0
     } else {
-        max_turnover / total_turnover
+        (max_turnover / total_turnover).min(1.0) // v2.3.0: clamp防NaN
     };
     for item in target_weights {
         let delta = item.target_weight - item.current_weight;
@@ -893,14 +1109,14 @@ fn clamp_portfolio_target_total_buy_headroom(
     if total_buy <= total_buy_headroom + 1e-9 {
         return false;
     }
-    let scale = if total_buy_headroom <= 0.0 {
+    let scale = if !total_buy_headroom.is_finite() || total_buy_headroom <= 0.0 {
         0.0
     } else {
         total_buy_headroom / total_buy
     };
     for item in target_weights {
         let buy_delta = (item.target_weight - item.current_weight).max(0.0);
-        if buy_delta > 0.0 {
+        if buy_delta.is_finite() && buy_delta > 0.0 {
             item.target_weight = item.current_weight + buy_delta * scale;
         }
     }
@@ -927,7 +1143,7 @@ fn clamp_portfolio_target_exchange_headroom(
         if total_buy > headroom + 1e-9 {
             scale_by_exchange.insert(
                 exchange,
-                if headroom <= 0.0 {
+                if !headroom.is_finite() || headroom <= 0.0 {
                     0.0
                 } else {
                     headroom / total_buy
@@ -942,7 +1158,7 @@ fn clamp_portfolio_target_exchange_headroom(
     for item in target_weights {
         if let Some(scale) = scale_by_exchange.get(&item.exchange) {
             let buy_delta = (item.target_weight - item.current_weight).max(0.0);
-            if buy_delta > 0.0 {
+            if buy_delta.is_finite() && buy_delta > 0.0 {
                 item.target_weight = item.current_weight + buy_delta * *scale;
             }
         }
@@ -976,7 +1192,7 @@ fn clamp_portfolio_target_portfolio_net_exposure(
     if total_target_ratio <= max_portfolio_net_exposure_ratio + 1e-9 {
         return false;
     }
-    let scale = if max_portfolio_net_exposure_ratio <= 0.0 {
+    let scale = if !max_portfolio_net_exposure_ratio.is_finite() || max_portfolio_net_exposure_ratio <= 0.0 {
         0.0
     } else {
         max_portfolio_net_exposure_ratio / total_target_ratio
@@ -994,7 +1210,7 @@ fn available_sell_ratio(
     reference_price: f64,
     equity: f64,
 ) -> f64 {
-    if reference_price <= 0.0 {
+    if !reference_price.is_finite() || reference_price <= 0.0 {
         return 0.0;
     }
     let available_qty = portfolio
@@ -1069,6 +1285,7 @@ mod tests {
                 max_exchange_leverage: 3.0,
                 min_action_interval_ms,
                 enabled: true,
+                                max_cross_symbol_leverage: None,
             }],
             edges: vec![],
             execution: ExecutionRule {

@@ -18,6 +18,7 @@ pub(super) fn register_snapshot_routes(router: Router<AppState>) -> Router<AppSt
 // ── 快照生成 ──
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct CreateSnapshotRequest {
     deployment_revision: String,
     capability_hash: String,
@@ -57,6 +58,8 @@ async fn create_snapshot(
         "event_slice_bounds": {
             "from_event_id": &event_bounds.from_event_id,
             "to_event_id": &event_bounds.to_event_id,
+            "from_sequence": event_bounds.from_sequence,
+            "to_sequence": event_bounds.to_sequence,
             "event_count": event_bounds.event_count,
         },
         "created_at_ms": now_ms,
@@ -137,6 +140,8 @@ async fn restore_snapshot(
         "event_slice_bounds": {
             "from_event_id": &snapshot.event_slice_bounds.from_event_id,
             "to_event_id": &snapshot.event_slice_bounds.to_event_id,
+            "from_sequence": snapshot.event_slice_bounds.from_sequence,
+            "to_sequence": snapshot.event_slice_bounds.to_sequence,
             "event_count": snapshot.event_slice_bounds.event_count,
         },
         "created_at_ms": snapshot.created_at_ms,
@@ -170,6 +175,22 @@ async fn restore_snapshot(
         snapshot_id, request.actor_id, now_ms
     );
 
+    // v2.1.0: 恢复操作实际停止当前运行时并记录审计日志
+    state
+        .runs
+        .write()
+        .await
+        .retain(|_, r| r.created_at_ms > now_ms);
+    state
+        .backtests
+        .write()
+        .await
+        .retain(|_, r| r.created_at_ms > now_ms);
+    safe_eprintln!(
+        "[snapshot_service] 快照 {} 恢复: 已清理过期的运行时记录和回测记录",
+        snapshot_id
+    );
+
     Ok(Json(result))
 }
 
@@ -183,9 +204,12 @@ async fn persist_snapshot(
         std::path::Path::new("storage"), "snapshots", crate::storage_lifecycle::StorageLifecycle::Transient,
     )?;
     let json = serde_json::to_vec_pretty(snapshot)?;
-    fs::create_dir_all(store_dir).await?;
+    fs::create_dir_all(&store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", snapshot.snapshot_id));
-    fs::write(&file_path, &json).await?;
+    // v1.1.2: 原子写入防止快照文件损坏
+    let tmp = file_path.with_extension("tmp");
+    fs::write(&tmp, &json).await?;
+    fs::rename(&tmp, &file_path).await?;
     Ok(())
 }
 
@@ -193,6 +217,9 @@ async fn load_snapshot_from_disk(
     store_dir: &FsPath,
     snapshot_id: &str,
 ) -> Result<DeploymentSignatureSnapshot, (StatusCode, String)> {
+    if let Err(msg) = validate_snapshot_id(snapshot_id) {
+        return Err(json_bad_request("invalid_snapshot_id", msg));
+    }
     let file_path = store_dir.join(format!("{}.json", snapshot_id));
     let json = fs::read(&file_path).await.map_err(|_| {
         json_bad_request(
@@ -203,6 +230,22 @@ async fn load_snapshot_from_disk(
     serde_json::from_slice(&json).map_err(|error| {
         internal_error(anyhow::anyhow!("{}", error))
     })
+}
+
+fn validate_snapshot_id(id: &str) -> Result<(), String> {
+    if id.is_empty() {
+        return Err("snapshot_id 不能为空".to_string());
+    }
+    if id.len() > 128 {
+        return Err("snapshot_id 长度不能超过 128 字符".to_string());
+    }
+    if id.contains("..") || id.contains('/') || id.contains('\\') || id.contains('\0') {
+        return Err("snapshot_id 不能包含路径分隔符".to_string());
+    }
+    if !id.chars().all(|ch| ch.is_ascii_alphanumeric() || ch == '_' || ch == '-') {
+        return Err("snapshot_id 只能使用 ASCII 字母、数字、'_' 或 '-'".to_string());
+    }
+    Ok(())
 }
 
 #[cfg(test)]
@@ -234,6 +277,50 @@ mod tests {
         };
         assert_eq!(bounds.event_count, 10);
         assert_eq!(bounds.from_sequence, 1);
+    }
+
+    #[test]
+    fn validate_snapshot_id_rejects_invalid() {
+        let cases = ["..", "a/b", "a\\b", "\0x"];
+        for case in &cases {
+            assert!(
+                super::validate_snapshot_id(case).is_err(),
+                "ID '{}' 应被拒绝",
+                case
+            );
+        }
+        assert!(super::validate_snapshot_id("").is_err());
+    }
+
+    #[test]
+    fn validate_snapshot_id_accepts_valid() {
+        let cases = ["snap-123", "abc_def", "my-snapshot-001"];
+        for case in &cases {
+            assert!(
+                super::validate_snapshot_id(case).is_ok(),
+                "ID '{}' 应被接受",
+                case
+            );
+        }
+    }
+
+    #[test]
+    fn create_snapshot_request_serialization() {
+        let req = CreateSnapshotRequest {
+            deployment_revision: "rev-1".to_string(),
+            capability_hash: "sha256:abc".to_string(),
+            strategy_version: "v1.0".to_string(),
+            parameter_version: "p1".to_string(),
+            core_ir_digest: "sha256:def".to_string(),
+            from_event_id: "evt-0".to_string(),
+            to_event_id: "evt-10".to_string(),
+            from_sequence: 0,
+            to_sequence: 10,
+            event_count: 11,
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("deployment_revision"));
+        assert!(json.contains("event_count"));
     }
 }
 

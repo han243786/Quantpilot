@@ -7,10 +7,20 @@ edition = "2021"
 anyhow = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls", "blocking"] }
 tokio = { version = "1", features = ["rt", "rt-multi-thread"] }
+hmac = "0.12"
+sha2 = "0.10"
+base64 = "0.22"
+chrono = "0.4"
+zeroize = { version = "1", features = ["zeroize_derive"] }
+ed25519-dalek = "2"
+wait-timeout = "0.2"
 qrpc-core = { path = "../qrpc_core" }
 qrpc-core-ir = { path = "../qrpc_core_ir" }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
 
 [dev-dependencies]
 qrpc-compiler = { path = "../qrpc_compiler" }

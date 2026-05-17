@@ -21,33 +21,17 @@ const StrategyWorkspaceResearchTab = lazy(() => import("./StrategyWorkspaceResea
 const StrategyWorkspaceDebugTab = lazy(() => import("./StrategyWorkspaceDebugTab"));
 const StrategyWorkspaceSourceTab = lazy(() => import("./StrategyWorkspaceSourceTab"));
 
-const WORKSPACE_TABS = [
-  {
-    id: "dashboard",
-    label: "仪表盘",
-    note: "编译状态、运行状态与快速操作总览。"
-  },
-  {
-    id: "code",
-    label: "画布",
-    note: "策略图编辑、节点连线、编译与诊断。"
-  },
-  {
-    id: "research",
-    label: "研究",
-    note: "模拟、回测与实时事件流。"
-  },
-  {
-    id: "source",
-    label: "源码",
-    note: "查看原始 QuantScript 源码并一键运行测试。"
-  }
+// v1.3.3: 常量定义在组件外部，渲染时通过t()包裹
+const WORKSPACE_TAB_DEFS = [
+  { id: "dashboard", labelKey: "仪表盘" },
+  { id: "code", labelKey: "画布" },
+  { id: "research", labelKey: "研究" },
+  { id: "source", labelKey: "源码" }
 ];
-
-const CODE_INSPECTOR_PANELS = [
-  { id: "params", label: "配置", note: "节点配置、策略图身份与结构控制。" },
-  { id: "diagnostics", label: "检查", note: "编译输出、阻塞项与修复路径。" },
-  { id: "code", label: "源码", note: "策略图源码、Strategy IR 与源码工具。" }
+const CODE_INSPECTOR_DEFS = [
+  { id: "params", label: "配置" },
+  { id: "diagnostics", label: "检查" },
+  { id: "code", label: "源码" }
 ];
 
 export default function StrategyWorkspacePage({ strategyId }) {
@@ -91,7 +75,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
     selectedEdgeId,
     selectedCompileDiagnosticTarget,
     issueQueue,
-    codeInspectorPanels: CODE_INSPECTOR_PANELS
+    codeInspectorPanels: CODE_INSPECTOR_DEFS
   });
   const pageData = useStrategyWorkspacePageData({
     graph,
@@ -102,7 +86,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
     issueQueue,
     activeTab: ui.activeTab,
     canvasWorkspaceLaneId: ui.canvasWorkspaceContext.laneId,
-    codeInspectorPanels: CODE_INSPECTOR_PANELS,
+    codeInspectorPanels: CODE_INSPECTOR_DEFS,
     activeCodeInspector: ui.activeCodeInspector
   });
   const { currentGraphId, readiness, compareSelection, formatTime } = pageData;
@@ -156,7 +140,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
 
       {/* Adobe 风格标签栏 */}
       <section className="ad-tabbar" aria-label="工作区模式">
-        {WORKSPACE_TABS.map((tab) => (
+        {WORKSPACE_TAB_DEFS.map((tab) => (
           <button
             key={tab.id}
             data-testid={`workspace-tab-${tab.id}`}
@@ -165,9 +149,9 @@ export default function StrategyWorkspacePage({ strategyId }) {
               ui.setActiveTab(tab.id);
               if (tab.id === "code" && diagnosticFocusRequested) clearDiagnosticFocus();
             }}
-            title={tab.note}
+            title={t(tab.labelKey)}
           >
-            {tab.label}
+            {t(tab.labelKey)}
           </button>
         ))}
         <div className="ad-tabbar__spacer" />
@@ -213,7 +197,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
         <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceCodeTab
             graph={graph} ui={ui}
-            codeInspectorPanels={CODE_INSPECTOR_PANELS}
+            codeInspectorPanels={CODE_INSPECTOR_DEFS}
             canvasRecommendationState={pageData.canvasRecommendationState}
             configureRepairPathState={pageData.configureRepairPathState}
             activeInspectorDefinition={pageData.activeInspectorDefinition}

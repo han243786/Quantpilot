@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, bail, Context, Result};
 use qrpc_core::CoreStrategyIr;
 use qrpc_core::{
     DataKind, DataQualitySnapshot, DataSourceConfig, Exchange, KlineSeriesSnapshot,
@@ -8,6 +8,8 @@ use qrpc_core::{
 use qrpc_core_ir::DataBindingKind;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
+
+use crate::circuit_breaker::CircuitBreaker;
 use serde_json::{json, Value};
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -91,6 +93,7 @@ struct CachedSnapshot {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct HistoricalBarsCache {
     fetched_at_ms: u64,
     bars: Vec<NormalizedKline>,
@@ -100,6 +103,8 @@ struct HistoricalBarsCache {
 pub struct BuiltinDataModule {
     client: Client,
     cache: Mutex<BTreeMap<String, CachedSnapshot>>,
+    /// v2.1.0: 断路器，连续失败5次→熔断60s
+    breaker: Mutex<CircuitBreaker>,
 }
 
 impl Default for BuiltinDataModule {
@@ -112,6 +117,7 @@ impl Default for BuiltinDataModule {
         Self {
             client,
             cache: Mutex::new(BTreeMap::new()),
+            breaker: Mutex::new(CircuitBreaker::new(5, 60_000)),
         }
     }
 }
@@ -323,7 +329,7 @@ fn stale_after_ms_for_source(source: &DataSourceConfig, data: &NormalizedMarketD
     }
 }
 
-fn gap_count_for_data(data: &NormalizedMarketData) -> u32 {
+fn gap_count_for_data(data: &NormalizedMarketData) -> u64 {
     let NormalizedMarketData::KlineSeries(series) = data else {
         return 0;
     };
@@ -332,7 +338,7 @@ fn gap_count_for_data(data: &NormalizedMarketData) -> u32 {
     }
 
     let interval_ms = bar_interval_ms(&series.interval).max(1);
-    let mut gap_count = 0u32;
+    let mut gap_count = 0u64; // v2.1.x: u32→u64 防截断
     for pair in series.bars.windows(2) {
         let left = &pair[0];
         let right = &pair[1];
@@ -340,7 +346,7 @@ fn gap_count_for_data(data: &NormalizedMarketData) -> u32 {
         if observed_delta > interval_ms {
             let missing = observed_delta / interval_ms;
             if missing > 1 {
-                gap_count = gap_count.saturating_add((missing - 1) as u32);
+                gap_count = gap_count.saturating_add((missing - 1) as u64);
             }
         }
     }
@@ -351,7 +357,7 @@ fn build_quality_flags(
     diagnostics: &FetchDiagnostics,
     freshness_ms: u64,
     stale_after_ms: u64,
-    gap_count: u32,
+    gap_count: u64,
 ) -> Vec<String> {
     let delayed_threshold_ms = if stale_after_ms > 0 {
         stale_after_ms / 2
@@ -504,12 +510,47 @@ impl BuiltinDataModule {
         let ping = self.probe_ping(source);
 
         if matches!(source.exchange, Exchange::Okx) {
+            // v2.1.0: 断路器检查 — 熔断时跳过HTTP直接走回退
+            {
+                let mut breaker = self.breaker.lock().unwrap_or_else(|e| e.into_inner());
+                breaker.try_half_open(now_ms);
+                if breaker.is_open() {
+                    // 断路器打开: 跳过HTTP请求, 直接走缓存→mock回退
+                    if let Some((cached, diagnostics)) = self.cached_snapshot(source, now_ms) {
+                        return Ok((
+                            cached,
+                            FetchDiagnostics {
+                                error: Some("断路器已熔断，使用缓存数据".to_string()),
+                                ..diagnostics.with_ping(ping)
+                            },
+                        ));
+                    }
+                    let diagnostics = FetchDiagnostics {
+                        provider_key: "builtin.data.okx_v5_http",
+                        source_status: SourceStatus::Error,
+                        source_latency_ms: 0,
+                        endpoint: Some(endpoint_for_source(source)),
+                        ping_latency_ms: None,
+                        ping_endpoint: None,
+                        ping_error: None,
+                        fallback: Some("mock"),
+                        error: Some("断路器已熔断，使用模拟数据".to_string()),
+                    }
+                    .with_ping(ping);
+                    let data = self.mock_data(source, now_ms, SourceStatus::Error);
+                    self.store_cache(source, &data, now_ms);
+                    return Ok((data, diagnostics));
+                }
+            }
+
             match self.fetch_okx(source, now_ms) {
                 Ok((data, diagnostics)) => {
+                    self.breaker.lock().unwrap_or_else(|e| e.into_inner()).on_success();
                     self.store_cache(source, &data, now_ms);
                     return Ok((data, diagnostics.with_ping(ping)));
                 }
                 Err(error) => {
+                    self.breaker.lock().unwrap_or_else(|e| e.into_inner()).on_failure(now_ms);
                     if let Some((cached, diagnostics)) = self.cached_snapshot(source, now_ms) {
                         return Ok((
                             cached,
@@ -837,20 +878,36 @@ fn normalize_kline_series(
     source_latency_ms: u64,
     source_status: SourceStatus,
 ) -> KlineSeriesSnapshot {
+    // v1.1.14: OHLC 关系验证，拒绝非法K线
     let bars = raw
         .into_iter()
-        .map(|bar| NormalizedKline {
+        .filter_map(|bar| {
+            let high = bar.high.max(bar.open).max(bar.close).max(bar.low);
+            let low = bar.low.min(bar.open).min(bar.close).min(bar.high);
+            // v1.2.1: 记录 OHLC 被 clamp 的情况
+            if high != bar.high || low != bar.low {
+                eprintln!("[data_module] 修正K线 OHLC 关系: open_time={}, O={:.2} H={:.2} L={:.2} C={:.2} (high clamped from {} to {}, low clamped from {} to {})",
+                    bar.open_time, bar.open, bar.high, bar.low, bar.close, bar.high, high, bar.low, low);
+            }
+            if bar.high < bar.open || bar.high < bar.close || bar.low > bar.open || bar.low > bar.close || bar.low > bar.high || bar.volume < 0.0 {
+                eprintln!("[data_module] 跳过非法K线: open_time={}, O={:.2} H={:.2} L={:.2} C={:.2} V={:.2}",
+                    bar.open_time, bar.open, bar.high, bar.low, bar.close, bar.volume);
+                None
+            } else {
+                Some(NormalizedKline {
             exchange: source.exchange.clone(),
             symbol: source.symbol.clone(),
             market_type: source.market_type.clone(),
-            interval: source.interval.clone().unwrap_or_else(|| "1d".into()),
-            open_time_ms: bar.open_time,
-            close_time_ms: bar.close_time,
-            open: bar.open,
-            high: bar.high,
-            low: bar.low,
-            close: bar.close,
-            volume: bar.volume,
+                interval: source.interval.clone().unwrap_or_else(|| "1d".into()),
+                open_time_ms: bar.open_time,
+                close_time_ms: bar.close_time,
+                open: bar.open,
+                high,
+                low,
+                close: bar.close,
+                volume: bar.volume.max(0.0),
+            })
+            }
         })
         .collect::<Vec<_>>();
 
@@ -1197,11 +1254,16 @@ fn parse_u64_value(value: &Value) -> Result<u64> {
 }
 
 fn parse_f64_value(value: &Value) -> Result<f64> {
-    value
+    let v: f64 = value
         .as_str()
         .ok_or_else(|| anyhow!("预期为字符串类型的 f64 值"))?
         .parse::<f64>()
-        .with_context(|| format!("无效的 f64 值: {value}"))
+        .with_context(|| format!("无效的 f64 值: {value}"))?;
+    // v1.1.11: 拒绝 NaN/Inf，防止毒数据传播
+    if !v.is_finite() {
+        bail!("数值必须为有限值 (拒绝 NaN/Inf): {value}");
+    }
+    Ok(v)
 }
 
 /// Configurable mock volatility — set via TestRunner before backtest
@@ -1211,7 +1273,10 @@ const DEFAULT_MOCK_VOLATILITY: f64 = 0.015;
 
 fn get_mock_volatility() -> f64 {
     let bits = MOCK_VOLATILITY.load(std::sync::atomic::Ordering::Relaxed);
-    if bits == 0 { DEFAULT_MOCK_VOLATILITY } else { f64::from_bits(bits) }
+    if bits == 0 { return DEFAULT_MOCK_VOLATILITY; }
+    let vol = f64::from_bits(bits);
+    // v2.1.x: 拒绝 NaN/Inf 注入
+    if !vol.is_finite() { DEFAULT_MOCK_VOLATILITY } else { vol }
 }
 
 fn mock_raw_klines(source: &DataSourceConfig, now_ms: u64) -> Result<Vec<RawKline>> {
@@ -1312,13 +1377,17 @@ pub(crate) fn mock_kline_bars_for_backtest(
 fn historical_cache_path(source: &DataSourceConfig) -> PathBuf {
     let interval = source.interval.as_deref().unwrap_or("1d");
     let days = source.days.unwrap_or(200);
+    // 消毒符号名：仅保留字母数字和下划线，防止路径遍历
+    let safe_symbol = sanitize_filename_component(
+        &binance_symbol(source.symbol.clone()).to_ascii_lowercase()
+    );
     PathBuf::from("storage")
         .join("cache")
         .join("historical")
         .join(format!(
             "{:?}_{}_{}_{}_{}.json",
             source.exchange,
-            binance_symbol(source.symbol.clone()).to_ascii_lowercase(),
+            safe_symbol,
             interval,
             days,
             match source.kind {
@@ -1326,6 +1395,14 @@ fn historical_cache_path(source: &DataSourceConfig) -> PathBuf {
                 DataKind::Quote => "quote",
             }
         ))
+}
+
+/// 移除路径中不安全的字符，防止目录遍历攻击
+fn sanitize_filename_component(input: &str) -> String {
+    input.chars()
+        .filter(|c| c.is_alphanumeric() || *c == '_' || *c == '-')
+        .take(64)
+        .collect()
 }
 
 fn load_historical_cache(source: &DataSourceConfig, now_ms: u64) -> Option<Vec<NormalizedKline>> {
@@ -1353,18 +1430,56 @@ fn persist_historical_cache(
     bars: &[NormalizedKline],
 ) -> Result<()> {
     let path = historical_cache_path(source);
+    // v1.1.1: 写入前检查存储配额（cache 为 Temporary 生命周期，上限 200MB）
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).with_context(|| {
             format!("创建历史数据缓存目录失败: {}", parent.display())
         })?;
+        let cache_dir = PathBuf::from("storage").join("cache").join("historical");
+        if cache_dir.exists() {
+            let dir_size: u64 = std::fs::read_dir(&cache_dir)
+                .map(|entries| {
+                    entries
+                        .filter_map(|e| e.ok())
+                        .filter_map(|e| e.metadata().ok())
+                        .filter(|m| m.is_file())
+                        .map(|m| m.len())
+                        .sum()
+                })
+                .unwrap_or(0);
+            const CACHE_MAX_BYTES: u64 = 200 * 1024 * 1024;
+            if dir_size > CACHE_MAX_BYTES {
+                return Err(anyhow!(
+                    "历史缓存目录已满: 当前 {} MB, 上限 200 MB，跳过缓存写入",
+                    dir_size / (1024 * 1024)
+                ));
+            }
+        }
+    } else {
+        fs::create_dir_all(path.parent().unwrap_or(&path))?;
     }
     let body = serde_json::to_string_pretty(&HistoricalBarsCache {
         fetched_at_ms: now_ms,
         bars: bars.to_vec(),
     })?;
-    fs::write(&path, body)
+    let tmp = path.with_extension("tmp");
+    fs::write(&tmp, body)
         .with_context(|| format!("写入历史缓存 {} 失败", path.display()))?;
+    fs::rename(&tmp, &path)
+        .with_context(|| format!("重命名历史缓存 {} 失败", path.display()))?;
     Ok(())
+}
+
+// v2.1.0: 复用 reqwest Client，避免每次请求重建连接池
+fn shared_http_client() -> &'static Client {
+    static CLIENT: std::sync::OnceLock<Client> = std::sync::OnceLock::new();
+    CLIENT.get_or_init(|| {
+        Client::builder()
+            .timeout(Duration::from_secs(HTTP_TIMEOUT_SECS))
+            .user_agent("quantpilot/0.1")
+            .build()
+            .unwrap_or_else(|_| Client::new())
+    })
 }
 
 fn fetch_historical_raw_klines(source: &DataSourceConfig) -> Result<Vec<RawKline>> {
@@ -1372,11 +1487,7 @@ fn fetch_historical_raw_klines(source: &DataSourceConfig) -> Result<Vec<RawKline
         Exchange::Okx => okx_endpoint_for_source(source),
         Exchange::Binance => binance_endpoint_for_source(source),
     };
-    let client = Client::builder()
-        .timeout(Duration::from_secs(HTTP_TIMEOUT_SECS))
-        .user_agent("quantpilot/0.1")
-        .build()
-        .unwrap_or_else(|_| Client::new());
+    let client = shared_http_client().clone();
     let endpoint_for_reqwest = endpoint.clone();
     let payload = block_on_http(async move {
         client
@@ -1436,6 +1547,7 @@ pub(crate) fn historical_kline_bars_for_backtest(
     }
 }
 
+#[allow(dead_code)]
 pub(crate) fn quote_snapshot_from_price(
     source: &DataSourceConfig,
     mid_price: f64,

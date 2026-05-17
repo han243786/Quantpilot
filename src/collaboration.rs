@@ -86,7 +86,7 @@ pub(super) fn collaboration_with_saved_actor(
     Ok(collaboration)
 }
 
-pub(super) fn authorize_graph_actor(
+pub(super) async fn authorize_graph_actor(
     graph_store_dir: &FsPath,
     graph_id: &str,
     actor: &ActorIdentity,
@@ -96,7 +96,7 @@ pub(super) fn authorize_graph_actor(
         return Ok(GraphCollaborationMetadata::default());
     }
 
-    let body = std::fs::read_to_string(&graph_path).map_err(io_error)?;
+    let body = tokio::fs::read_to_string(&graph_path).await.map_err(io_error)?;
     let graph: Value = serde_json::from_str(&body).map_err(|error| internal_error(error.into()))?;
     let collaboration = collaboration_from_graph(&graph);
     if collaboration.owner.is_some() {
@@ -105,12 +105,12 @@ pub(super) fn authorize_graph_actor(
     Ok(collaboration)
 }
 
-pub(super) fn collaboration_with_run_actor(
+pub(super) async fn collaboration_with_run_actor(
     graph_store_dir: &FsPath,
     graph_id: &str,
     actor: &ActorIdentity,
 ) -> Result<GraphCollaborationMetadata, (StatusCode, String)> {
-    let mut collaboration = authorize_graph_actor(graph_store_dir, graph_id, actor)?;
+    let mut collaboration = authorize_graph_actor(graph_store_dir, graph_id, actor).await?;
     if collaboration.owner.is_none() {
         collaboration.owner = Some(actor.clone());
     }
@@ -146,7 +146,9 @@ pub(super) async fn persist_graph_audit_entry(
     entries.push(entry.clone());
     let body = serde_json::to_string_pretty(&entries)
         .map_err(|error| std::io::Error::other(error.to_string()))?;
-    fs::write(path, body).await
+    let tmp = path.with_extension("tmp");
+    fs::write(&tmp, body).await?;
+    fs::rename(&tmp, &path).await
 }
 
 pub(super) async fn load_graph_audit_entries(

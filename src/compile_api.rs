@@ -35,7 +35,16 @@ pub(super) fn register_compile_routes(router: Router<AppState>) -> Router<AppSta
 async fn compile_runtime_request(
     Json(request): Json<CompileRuntimeRequest>,
 ) -> Result<Json<CompileRuntimeResponse>, (StatusCode, String)> {
-    let _permit = COMPILE_SEMAPHORE.acquire().await.map_err(|_| {
+    // v1.1.10: 编译信号量超时保护，防止请求永久挂起
+    let _permit = tokio::time::timeout(
+        std::time::Duration::from_secs(120),
+        COMPILE_SEMAPHORE.acquire(),
+    ).await.map_err(|_| {
+        (StatusCode::SERVICE_UNAVAILABLE, serde_json::json!({
+            "error": "service_unavailable",
+            "message": "编译服务繁忙，请稍后重试"
+        }).to_string())
+    })?.map_err(|_| {
         (StatusCode::SERVICE_UNAVAILABLE, serde_json::json!({
             "error": "service_unavailable",
             "message": "编译服务已关闭"
@@ -68,23 +77,35 @@ async fn compile_runtime_request(
         ));
     }
 
-    // QS 管道是唯一编译路径 (§1.1, §1.3)
-    let qs_protocol = compile_runtime_protocol_via_qs(&request.graph_json)?;
+    // v2.1.3: CPU密集编译移至 spawn_blocking，不阻塞 tokio runtime (P2-8)
+    let (qs_protocol, runtime_targets, compiled, artifacts) = {
+        let graph_json = request.graph_json.clone();
+        let metadata = request.runtime_config.metadata.clone();
+        let request_graph_json = request.graph_json.clone();
+        let join_result = tokio::task::spawn_blocking(move || -> Result<_, (StatusCode, String)> {
+            // QS 管道是唯一编译路径 (§1.1, §1.3)
+            let qs = compile_runtime_protocol_via_qs(&graph_json)?;
+            let targets = build_compile_runtime_targets_from_graph(&request_graph_json);
+            let comp = compile_runtime_protocol_config(&qs).map_err(internal_error)?;
+            let arts = build_compile_artifact_bundle(
+                &metadata.graph_id, &metadata.compile_id, &metadata.name, &metadata.mode,
+                StrategyArtifactSourceKind::FrontendGraph, &metadata.graph_id,
+                BTreeMap::new(), &comp,
+            ).map_err(internal_error)?;
+            Ok((qs, targets, comp, arts))
+        }).await;
+        match join_result {
+            Ok(Ok(data)) => data,
+            Ok(Err(e)) => return Err(e),
+            Err(_) => return Err((StatusCode::INTERNAL_SERVER_ERROR, "编译任务被取消".to_string())),
+        }
+    };
+
+    // v2.0.1: graph→QS→graph 往返完整性检查
+    let node_count = request.graph_json.get("nodes").and_then(|n| n.as_array()).map(|a| a.len()).unwrap_or(0);
+    let edge_count = request.graph_json.get("edges").and_then(|e| e.as_array()).map(|a| a.len()).unwrap_or(0);
 
     let runtime_protocol_counts = (qs_protocol.data_sources.len(), qs_protocol.intents.len(), qs_protocol.agents.len(), qs_protocol.risks.len());
-    let runtime_targets = build_compile_runtime_targets_from_graph(&request.graph_json);
-    let compiled = compile_runtime_protocol_config(&qs_protocol).map_err(internal_error)?;
-    let artifacts = build_compile_artifact_bundle(
-        &request.runtime_config.metadata.graph_id,
-        &request.runtime_config.metadata.compile_id,
-        &request.runtime_config.metadata.name,
-        &request.runtime_config.metadata.mode,
-        StrategyArtifactSourceKind::FrontendGraph,
-        &request.runtime_config.metadata.graph_id,
-        BTreeMap::new(),
-        &compiled,
-    )
-    .map_err(internal_error)?;
     let mut diagnostics = collect_compile_diagnostics(&request.runtime_config);
     diagnostics.push(CompileDiagnostic {
         code: "QSPIPELINE".to_string(),
@@ -100,6 +121,21 @@ async fn compile_runtime_request(
         span_label: None,
         hint: None,
     });
+    // v2.0.1: graph→QS→graph 往返节点/边计数完整性诊断
+    let intent_count = qs_protocol.intents.len();
+    if intent_count == 0 && node_count > 0 {
+        diagnostics.push(CompileDiagnostic {
+            code: "QSPIPELINE".to_string(),
+            severity: CompileDiagnosticSeverity::Warning,
+            message: format!(
+                "graph→QS 往返: {} 个节点, {} 条边, 但编译后生成 0 个意图。可能部分模块键未被 QS 生成器识别。",
+                node_count, edge_count
+            ),
+            target: None,
+            span_label: None,
+            hint: Some("检查前端模块键是否与 graph_quantscript_api.rs 的 QS 生成分支一致。".to_string()),
+        });
+    }
     let protocol_name = compiled.protocol_name.clone();
     let config_hash = compiled.config_hash.clone();
     let core_ir = compiled.core_ir.clone();
@@ -128,6 +164,21 @@ async fn compile_runtime_request(
 async fn compile_strategy_ir_request(
     Json(request): Json<CompileStrategyIrRequest>,
 ) -> Result<Json<CompileStrategyIrResponse>, (StatusCode, String)> {
+    // v2.1.1: 统一使用编译信号量限流 (P2-7)
+    let _permit = tokio::time::timeout(
+        std::time::Duration::from_secs(120),
+        COMPILE_SEMAPHORE.acquire(),
+    ).await.map_err(|_| {
+        (StatusCode::SERVICE_UNAVAILABLE, serde_json::json!({
+            "error": "service_unavailable",
+            "message": "编译服务繁忙，请稍后重试"
+        }).to_string())
+    })?.map_err(|_| {
+        (StatusCode::SERVICE_UNAVAILABLE, serde_json::json!({
+            "error": "service_unavailable",
+            "message": "编译服务已关闭"
+        }).to_string())
+    })?;
     let strategy_ir =
         serde_json::from_value::<StrategyIr>(request.strategy_ir).map_err(|error| {
             json_bad_request_with_details(
@@ -185,6 +236,21 @@ async fn compile_strategy_ir_request(
 async fn compile_formal_quantscript_request(
     Json(request): Json<CompileFormalQuantScriptRequest>,
 ) -> Result<Json<CompileRuntimeResponse>, (StatusCode, String)> {
+    // v2.1.1: 统一使用编译信号量限流 (P2-7)
+    let _permit = tokio::time::timeout(
+        std::time::Duration::from_secs(120),
+        COMPILE_SEMAPHORE.acquire(),
+    ).await.map_err(|_| {
+        (StatusCode::SERVICE_UNAVAILABLE, serde_json::json!({
+            "error": "service_unavailable",
+            "message": "编译服务繁忙，请稍后重试"
+        }).to_string())
+    })?.map_err(|_| {
+        (StatusCode::SERVICE_UNAVAILABLE, serde_json::json!({
+            "error": "service_unavailable",
+            "message": "编译服务已关闭"
+        }).to_string())
+    })?;
     let module = parse_formal_quant_script_module(&request.source).map_err(internal_error)?;
     let resolved = lower_formal_script_to_typed_hir(&module);
     let analysis = analyze_formal_script_module(&module, &resolved);
@@ -246,7 +312,7 @@ async fn compile_formal_quantscript_request(
         .map_err(|error| {
             let message = format!("{error:#}");
             let diagnostic = formal_quantscript_diagnostic_from_lowering_error(&message);
-            return json_bad_request_with_details_and_partial(
+            json_bad_request_with_details_and_partial(
                 "quantscript_lowering_failed",
                 if diagnostic.code == "QPQSLOW999" {
                     "QuantScript 编译失败：遇到未预期的内部错误，请检查策略语法或联系支持"
@@ -255,7 +321,7 @@ async fn compile_formal_quantscript_request(
                 },
                 vec![api_error_detail_from_compile_diagnostic(&diagnostic)],
                 partial_authoring_view.clone(),
-            );
+            )
         })?;
     let compiled = compile_runtime_protocol_config_with_metadata(
         &runtime_config,

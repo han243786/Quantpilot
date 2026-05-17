@@ -83,10 +83,10 @@ pub(super) fn compare_metrics_summaries(
         max_drawdown_ratio: BacktestMetricsFieldDiff {
             status: compare_optional_status(
                 left.as_ref()
-                    .map(|value| value.max_drawdown_ratio.to_bits()),
+                    .map(|value| value.drawdown_analysis.max_drawdown_ratio.to_bits()),
                 right
                     .as_ref()
-                    .map(|value| value.max_drawdown_ratio.to_bits()),
+                    .map(|value| value.drawdown_analysis.max_drawdown_ratio.to_bits()),
             ),
         },
         final_equity: BacktestMetricsFieldDiff {
@@ -101,27 +101,6 @@ pub(super) fn compare_metrics_summaries(
                 right.as_ref().map(|value| value.net_profit.to_bits()),
             ),
         },
-        turnover_ratio: BacktestMetricsFieldDiff {
-            status: compare_optional_status(
-                left.as_ref().map(|value| value.turnover_ratio.to_bits()),
-                right.as_ref().map(|value| value.turnover_ratio.to_bits()),
-            ),
-        },
-        average_trade_notional: BacktestMetricsFieldDiff {
-            status: compare_optional_status(
-                left.as_ref()
-                    .map(|value| value.average_trade_notional.to_bits()),
-                right
-                    .as_ref()
-                    .map(|value| value.average_trade_notional.to_bits()),
-            ),
-        },
-        fee_drag_ratio: BacktestMetricsFieldDiff {
-            status: compare_optional_status(
-                left.as_ref().map(|value| value.fee_drag_ratio.to_bits()),
-                right.as_ref().map(|value| value.fee_drag_ratio.to_bits()),
-            ),
-        },
     };
     let metric_statuses = [
         fields.step_count.status,
@@ -130,9 +109,6 @@ pub(super) fn compare_metrics_summaries(
         fields.max_drawdown_ratio.status,
         fields.final_equity.status,
         fields.net_profit.status,
-        fields.turnover_ratio.status,
-        fields.average_trade_notional.status,
-        fields.fee_drag_ratio.status,
     ];
     let status = if metric_statuses.contains(&BacktestCompareStatus::Missing) {
         BacktestCompareStatus::Missing
@@ -171,10 +147,10 @@ pub(super) fn compare_metrics_summaries(
                 "max_drawdown_ratio",
                 fields.max_drawdown_ratio.status,
                 left.as_ref()
-                    .map(|value| value.max_drawdown_ratio.to_string()),
+                    .map(|value| value.drawdown_analysis.max_drawdown_ratio.to_string()),
                 right
                     .as_ref()
-                    .map(|value| value.max_drawdown_ratio.to_string()),
+                    .map(|value| value.drawdown_analysis.max_drawdown_ratio.to_string()),
             ),
         ]),
         activity: build_metrics_drilldown_group(&[
@@ -190,28 +166,8 @@ pub(super) fn compare_metrics_summaries(
                 left.as_ref().map(|value| value.trade_count.to_string()),
                 right.as_ref().map(|value| value.trade_count.to_string()),
             ),
-            (
-                "turnover_ratio",
-                fields.turnover_ratio.status,
-                left.as_ref().map(|value| value.turnover_ratio.to_string()),
-                right.as_ref().map(|value| value.turnover_ratio.to_string()),
-            ),
-            (
-                "average_trade_notional",
-                fields.average_trade_notional.status,
-                left.as_ref()
-                    .map(|value| value.average_trade_notional.to_string()),
-                right
-                    .as_ref()
-                    .map(|value| value.average_trade_notional.to_string()),
-            ),
         ]),
-        costs: build_metrics_drilldown_group(&[(
-            "fee_drag_ratio",
-            fields.fee_drag_ratio.status,
-            left.as_ref().map(|value| value.fee_drag_ratio.to_string()),
-            right.as_ref().map(|value| value.fee_drag_ratio.to_string()),
-        )]),
+        costs: build_metrics_drilldown_group(&[]),
     };
     BacktestMetricsCompareBlock {
         status,

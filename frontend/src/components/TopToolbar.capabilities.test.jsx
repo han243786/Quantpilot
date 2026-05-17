@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, render, screen } from "@testing-library/react";
 import TopToolbar from "./TopToolbar";
+import { I18nProvider } from "../i18n";
 import { useGraphStore } from "../store/graphStore";
 
 function buildGraph(overrides = {}) {
@@ -87,7 +88,7 @@ describe("TopToolbar capability fallback UI", () => {
       });
     });
 
-    render(<TopToolbar />);
+    render(<I18nProvider><TopToolbar /></I18nProvider>);
 
     expect(screen.getByTestId("toolbar-capability-alert")).toHaveTextContent(
       /to avoid exposing fake capabilities/i
@@ -105,7 +106,7 @@ describe("TopToolbar capability fallback UI", () => {
       });
     });
 
-    render(<TopToolbar />);
+    render(<I18nProvider><TopToolbar /></I18nProvider>);
 
     expect(screen.getByTestId("toolbar-capability-alert")).toHaveTextContent(
       /latest cached capability snapshot/i
@@ -123,7 +124,7 @@ describe("TopToolbar capability fallback UI", () => {
       });
     });
 
-    render(<TopToolbar />);
+    render(<I18nProvider><TopToolbar /></I18nProvider>);
 
     expect(screen.getByTestId("toolbar-capability-alert")).toHaveTextContent("前端正在同步后端能力快照");
     expectPrimaryActionsDisabled();

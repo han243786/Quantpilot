@@ -23,6 +23,16 @@ const DEFAULT_LOCAL_ACTOR = {
   display_name: "Local operator"
 };
 
+function safeGetItem(key) {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(key);
+  } catch (_) {
+    // 隐私模式或配额限制下 getItem 可能抛出 DOMException
+    return null;
+  }
+}
+
 function safeSetItem(key, value) {
   if (typeof window === "undefined") return;
   let data;
@@ -64,7 +74,7 @@ function saveGraphToStorage(graph) {
 
 function loadGraphFromStorage() {
   if (typeof window === "undefined") return null;
-  const raw = window.localStorage.getItem(STORAGE_KEY);
+  const raw = safeGetItem(STORAGE_KEY);
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw);
@@ -338,7 +348,7 @@ function saveCapabilitiesToCache(capabilities) {
 }
 
 function loadCapabilitiesFromCache() {
-  const raw = window.localStorage.getItem(CAPABILITY_CACHE_KEY);
+  const raw = safeGetItem(CAPABILITY_CACHE_KEY);
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw);

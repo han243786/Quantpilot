@@ -1,3 +1,4 @@
+use crate::slippage::{compute_fill_price, ExecutionAssumptions, ExtendedMarketState};
 use qrpc_core::{
     Exchange, ExecutionPlan, ExecutionStatus, FillReport, FillResult, OpenOrder, OrderSide,
     OrderType, PortfolioState, Position, RuntimeEvent, RuntimeEventType, SimOrder, Symbol,
@@ -6,17 +7,92 @@ use qrpc_core::{
 use serde_json::json;
 use std::collections::BTreeMap;
 
-#[derive(Debug, Clone, Copy, Default)]
+#[derive(Debug, Clone, Copy)]
 pub struct MarketState {
     pub price: f64,
+    pub bid_price: Option<f64>,
+    pub ask_price: Option<f64>,
     pub buy_liquidity: f64,
     pub sell_liquidity: f64,
 }
 
-#[derive(Debug, Clone, Default)]
+impl Default for MarketState {
+    fn default() -> Self {
+        Self {
+            price: 0.0,
+            bid_price: None,
+            ask_price: None,
+            buy_liquidity: f64::MAX,
+            sell_liquidity: f64::MAX,
+        }
+    }
+}
+
+impl MarketState {
+    pub fn from_mid_price(price: f64) -> Self {
+        Self {
+            price,
+            bid_price: None,
+            ask_price: None,
+            buy_liquidity: f64::MAX,
+            sell_liquidity: f64::MAX,
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn from_quote(bid: f64, ask: f64) -> Self {
+        Self {
+            price: (bid + ask) / 2.0,
+            bid_price: Some(bid),
+            ask_price: Some(ask),
+            buy_liquidity: f64::MAX,
+            sell_liquidity: f64::MAX,
+        }
+    }
+
+    fn to_extended(self, volatility: f64, timeframe_minutes: u64) -> ExtendedMarketState {
+        match (self.bid_price, self.ask_price) {
+            (Some(bid), Some(ask)) => ExtendedMarketState::from_quote(bid, ask, self.buy_liquidity, self.sell_liquidity),
+            _ => ExtendedMarketState::from_mid_price(self.price, self.buy_liquidity, self.sell_liquidity, volatility, timeframe_minutes),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct FillEngine {
     processed_results: BTreeMap<String, FillResult>,
     open_orders: BTreeMap<String, OpenOrder>,
+    assumptions: ExecutionAssumptions,
+}
+
+impl Default for FillEngine {
+    fn default() -> Self {
+        Self {
+            processed_results: BTreeMap::new(),
+            open_orders: BTreeMap::new(),
+            assumptions: ExecutionAssumptions::v1_0_7_compat(),
+        }
+    }
+}
+
+impl FillEngine {
+    #[allow(dead_code)]
+    pub fn with_assumptions(assumptions: ExecutionAssumptions) -> Self {
+        Self {
+            processed_results: BTreeMap::new(),
+            open_orders: BTreeMap::new(),
+            assumptions,
+        }
+    }
+
+    pub fn set_assumptions(&mut self, assumptions: ExecutionAssumptions) {
+        self.assumptions = assumptions;
+    }
+
+    #[allow(dead_code)]
+    pub fn assumptions(&self) -> &ExecutionAssumptions {
+        &self.assumptions
+    }
 }
 
 struct RestingOrderOpenRequest<'a> {
@@ -38,6 +114,14 @@ impl FillEngine {
     ) -> FillResult {
         if let Some(existing) = self.processed_results.get(&plan.plan_id) {
             return existing.clone();
+        }
+        // v2.3.0: 缓存上限 1000, 超出时清理最旧条目防止内存泄漏
+        const MAX_PROCESSED_RESULTS: usize = 1000;
+        if self.processed_results.len() >= MAX_PROCESSED_RESULTS {
+            let oldest: Vec<String> = self.processed_results.keys().take(100).cloned().collect();
+            for key in oldest {
+                self.processed_results.remove(&key);
+            }
         }
 
         let mut fills = Vec::new();
@@ -82,7 +166,8 @@ impl FillEngine {
                         plan,
                         order,
                         executable_qty,
-                        state.price,
+                        &state,
+                        &self.assumptions,
                         now_ms,
                         trace_id,
                     );
@@ -91,7 +176,7 @@ impl FillEngine {
                     fills.push(fill);
                 }
                 TimeInForce::Ioc => {
-                    if executable_qty <= 0.0 {
+                    if !executable_qty.is_finite() || executable_qty <= 0.0 {
                         events.push(cancel_event(
                             &plan.plan_id,
                             &order.order_id,
@@ -115,7 +200,8 @@ impl FillEngine {
                         plan,
                         order,
                         executable_qty,
-                        state.price,
+                        &state,
+                        &self.assumptions,
                         now_ms,
                         trace_id,
                     );
@@ -138,7 +224,8 @@ impl FillEngine {
                             plan,
                             order,
                             executable_qty,
-                            state.price,
+                            &state,
+                            &self.assumptions,
                             now_ms,
                             trace_id,
                         );
@@ -221,10 +308,10 @@ impl FillEngine {
                 open_order.symbol.clone(),
                 open_order.reference_price,
             );
-            let order = sim_order_from_open(&open_order);
+            let order = sim_order_from_open(&open_order, self.assumptions.taker_fee_bps);
             let available_sell_qty = available_sell_qty_for_order(portfolio, &order);
             let executable_qty = executable_qty(&order, &state).min(available_sell_qty);
-            if executable_qty <= 0.0 {
+            if !executable_qty.is_finite() || executable_qty <= 0.0 {
                 continue;
             }
 
@@ -232,7 +319,8 @@ impl FillEngine {
             let fill = build_fill_report_from_open(
                 &open_order,
                 executable_qty,
-                state.price,
+                &state,
+                &self.assumptions,
                 now_ms,
                 trace_id,
             );
@@ -265,7 +353,7 @@ impl FillEngine {
                 self.open_orders.remove(&order_id);
                 events.push(RuntimeEvent {
                     event_id: format!("evt-order-filled-{}-{now_ms}", open_order.order_id),
-                    event_type: RuntimeEventType::ExecutionPlanned,
+                    event_type: RuntimeEventType::ExecutionFilled, // v1.1.10: 修正事件类型
                     trace_id: trace_id.to_string(),
                     source_id: open_order.plan_id.clone(),
                     ts_ms: now_ms,
@@ -406,30 +494,25 @@ fn market_state_for(
     symbol: Symbol,
     fallback_price: f64,
 ) -> MarketState {
-    market_state
-        .get(&(exchange, symbol))
-        .copied()
-        .unwrap_or_else(|| {
-            // Fallback: unlimited liquidity at the reference price.
-            // In production, real Quote data populates the market_state map.
-            // This fallback ensures LIMIT orders still fill in mock/test environments.
-            MarketState {
-                price: fallback_price,
-                buy_liquidity: f64::MAX,
-                sell_liquidity: f64::MAX,
-            }
-        })
+    market_state.get(&(exchange, symbol)).cloned().unwrap_or_else(|| {
+        MarketState::from_mid_price(fallback_price)
+    })
 }
 
 fn executable_qty(order: &SimOrder, state: &MarketState) -> f64 {
-    if !is_marketable(order, state.price) {
+    // v1.3.4: 限价单用 ask/bid 判断成交，无报价时回退 mid 价
+    let market_ref = match order.side {
+        OrderSide::Buy => state.ask_price.unwrap_or(state.price),
+        OrderSide::Sell => state.bid_price.unwrap_or(state.price),
+    };
+    if !is_marketable(order, market_ref) {
         return 0.0;
     }
     let liquidity = match order.side {
         OrderSide::Buy => state.buy_liquidity,
         OrderSide::Sell => state.sell_liquidity,
     };
-    if liquidity <= 0.0 {
+    if !liquidity.is_finite() || liquidity <= 0.0 {
         if matches!(order.order_type, OrderType::Market) {
             return order.quantity;
         }
@@ -439,6 +522,7 @@ fn executable_qty(order: &SimOrder, state: &MarketState) -> f64 {
 }
 
 fn reservation_for_order(side: OrderSide, quantity: f64, price: f64, fee_bps: f64) -> (f64, f64) {
+    let fee_bps = fee_bps.max(0.0); // v1.2.1: 拒绝负费率
     match side {
         OrderSide::Buy => (quantity * price * (1.0 + fee_bps / 10_000.0), 0.0),
         OrderSide::Sell => (0.0, quantity),
@@ -497,17 +581,17 @@ fn release_reservation_for_fill(
     open_order: &OpenOrder,
     fill_qty: f64,
 ) {
-    if open_order.remaining_qty <= 0.0 {
+    if !open_order.remaining_qty.is_finite() || open_order.remaining_qty <= 0.0 {
         return;
     }
     let ratio = (fill_qty / open_order.remaining_qty).clamp(0.0, 1.0);
-    if open_order.reserved_cash > 0.0 {
+    if open_order.reserved_cash.is_finite() && open_order.reserved_cash > 0.0 {
         portfolio.frozen_cash_balance =
             (portfolio.frozen_cash_balance - open_order.reserved_cash * ratio).max(0.0);
         portfolio.available_cash_balance =
             (portfolio.cash_balance - portfolio.frozen_cash_balance).max(0.0);
     }
-    if open_order.reserved_qty > 0.0 {
+    if open_order.reserved_qty.is_finite() && open_order.reserved_qty > 0.0 {
         if let Some(position) = portfolio.positions.iter_mut().find(|position| {
             position.exchange == open_order.exchange && position.symbol == open_order.symbol
         }) {
@@ -546,7 +630,7 @@ fn partial_event(
 ) -> RuntimeEvent {
     RuntimeEvent {
         event_id: format!("evt-order-partial-{}-{now_ms}", order_id),
-        event_type: RuntimeEventType::ExecutionPlanned,
+        event_type: RuntimeEventType::ExecutionFilled, // v1.1.10
         trace_id: trace_id.to_string(),
         source_id: plan_id.to_string(),
         ts_ms: now_ms,
@@ -645,7 +729,7 @@ fn fill_event(fill: &FillReport, order_id: &str, now_ms: u64, trace_id: &str) ->
     }
 }
 
-fn sim_order_from_open(order: &OpenOrder) -> SimOrder {
+fn sim_order_from_open(order: &OpenOrder, default_fee_bps: f64) -> SimOrder {
     SimOrder {
         order_id: order.order_id.clone(),
         exchange: order.exchange.clone(),
@@ -658,23 +742,26 @@ fn sim_order_from_open(order: &OpenOrder) -> SimOrder {
         allow_partial: true,
         reference_price: order.reference_price,
         slippage_bps: 0.0,
-        fee_bps: 10.0,
+        fee_bps: default_fee_bps,
         strategy_tag: "resting".into(),
     }
 }
 
 fn is_marketable(order: &SimOrder, market_ref: f64) -> bool {
-    match order.order_type {
-        OrderType::Market => true,
-        OrderType::Limit
-        | OrderType::StopLoss
-        | OrderType::StopLossLimit
-        | OrderType::TakeProfit
-        | OrderType::TakeProfitLimit => match (order.side.clone(), order.limit_price) {
-            (OrderSide::Buy, Some(limit)) => market_ref <= limit,
-            (OrderSide::Sell, Some(limit)) => market_ref >= limit,
-            _ => false,
-        },
+    match (&order.order_type, &order.side, order.limit_price) {
+        (OrderType::Market, _, _) => true,
+        // 限价单: 价格到达指定价格或更优价格时成交
+        (OrderType::Limit, OrderSide::Buy, Some(limit)) => market_ref <= limit,
+        (OrderType::Limit, OrderSide::Sell, Some(limit)) => market_ref >= limit,
+        // 止损单: 价格到达止损价时触发(与限价单方向相反)
+        // Buy StopLoss: 价格上涨到止损价时买入(用于空头止损)
+        (OrderType::StopLoss | OrderType::StopLossLimit, OrderSide::Buy, Some(limit)) => market_ref >= limit,
+        // Sell StopLoss: 价格下跌到止损价时卖出(用于多头止损)
+        (OrderType::StopLoss | OrderType::StopLossLimit, OrderSide::Sell, Some(limit)) => market_ref <= limit,
+        // 止盈单: 价格到达止盈目标时触发
+        (OrderType::TakeProfit | OrderType::TakeProfitLimit, OrderSide::Buy, Some(limit)) => market_ref <= limit,
+        (OrderType::TakeProfit | OrderType::TakeProfitLimit, OrderSide::Sell, Some(limit)) => market_ref >= limit,
+        _ => false,
     }
 }
 
@@ -689,27 +776,25 @@ fn build_fill_report(
     plan: &ExecutionPlan,
     order: &SimOrder,
     fill_qty: f64,
-    market_price: f64,
+    market: &MarketState,
+    assumptions: &ExecutionAssumptions,
     now_ms: u64,
     trace_id: &str,
 ) -> FillReport {
-    let direction = match order.side {
-        OrderSide::Buy => 1.0,
-        OrderSide::Sell => -1.0,
-    };
-    let base_price = order.limit_price.unwrap_or(market_price);
-    let fill_price = match order.order_type {
-        OrderType::Market => market_price * (1.0 + direction * order.slippage_bps / 10_000.0),
-        OrderType::Limit
-        | OrderType::StopLoss
-        | OrderType::StopLossLimit
-        | OrderType::TakeProfit
-        | OrderType::TakeProfitLimit => base_price,
-    };
+    // 日线默认波动率 2%；后续可从市场数据提取实际波动率
+    let volatility = 0.02;
+    let extended = market.to_extended(volatility, 1440);
+
+    let fill_price = compute_fill_price(order, &extended, assumptions, volatility);
     let fee_paid = fill_qty * fill_price * order.fee_bps / 10_000.0;
 
+    // v1.1.1: 延迟模型偏移成交时间
+    let latency_seed = now_ms.wrapping_add(order.order_id.bytes().fold(0u64, |a, b| a.wrapping_mul(31).wrapping_add(b as u64)));
+    let latency_ms = assumptions.latency.delay_ms(&order.exchange, latency_seed);
+    let filled_at = now_ms.saturating_add(latency_ms);
+
     FillReport {
-        fill_id: format!("fill-{}-{}-{}", plan.plan_id, order.order_id, now_ms),
+        fill_id: format!("fill-{}-{}-{}", plan.plan_id, order.order_id, filled_at),
         plan_id: plan.plan_id.clone(),
         exchange: order.exchange.clone(),
         symbol: order.symbol.clone(),
@@ -717,7 +802,7 @@ fn build_fill_report(
         filled_qty: fill_qty,
         filled_price: fill_price,
         fee_paid,
-        filled_at_ms: now_ms,
+        filled_at_ms: filled_at,
         status: if fill_qty + 1e-9 < order.quantity {
             ExecutionStatus::PartiallyFilled
         } else {
@@ -730,21 +815,59 @@ fn build_fill_report(
 fn build_fill_report_from_open(
     order: &OpenOrder,
     fill_qty: f64,
-    market_price: f64,
+    market: &MarketState,
+    assumptions: &ExecutionAssumptions,
     now_ms: u64,
     trace_id: &str,
 ) -> FillReport {
-    let fill_price = order.limit_price.unwrap_or(market_price);
+    // 挂单成交: 优先使用 limit_price，否则使用市价
+    let fill_price = if let Some(limit) = order.limit_price {
+        // Limit 挂单在达到触发条件后以 limit 价成交
+        // 但如果真实价差模型下，成交价可能略差于 limit
+        let volatility = 0.02;
+        let extended = market.to_extended(volatility, 1440);
+        // 构造一个临时 SimOrder 来计算成交价
+        let temp_order = SimOrder {
+            order_id: order.order_id.clone(),
+            exchange: order.exchange.clone(),
+            symbol: order.symbol.clone(),
+            side: order.side.clone(),
+            order_type: OrderType::Limit,
+            quantity: fill_qty,
+            limit_price: order.limit_price,
+            time_in_force: TimeInForce::Gtc,
+            allow_partial: true,
+            reference_price: order.reference_price,
+            slippage_bps: 0.0,
+            fee_bps: assumptions.taker_fee_bps,
+            strategy_tag: "resting".into(),
+        };
+        let computed = compute_fill_price(&temp_order, &extended, assumptions, volatility);
+        // Limit 买单成交价不高于 limit，卖单不低于 limit
+        match order.side {
+            OrderSide::Buy => computed.min(limit),
+            OrderSide::Sell => computed.max(limit),
+        }
+    } else {
+        order.reference_price
+    };
+    // v1.1.1: 延迟模型偏移成交时间
+    let latency_seed = now_ms.wrapping_add(
+        order.order_id.bytes().fold(0u64, |a, b| a.wrapping_mul(31).wrapping_add(b as u64)),
+    );
+    let latency_ms = assumptions.latency.delay_ms(&order.exchange, latency_seed);
+    let filled_at = now_ms.saturating_add(latency_ms);
+
     FillReport {
-        fill_id: format!("fill-{}-{}-{}", order.plan_id, order.order_id, now_ms),
+        fill_id: format!("fill-{}-{}-{}", order.plan_id, order.order_id, filled_at),
         plan_id: order.plan_id.clone(),
         exchange: order.exchange.clone(),
         symbol: order.symbol.clone(),
         side: order.side.clone(),
         filled_qty: fill_qty,
         filled_price: fill_price,
-        fee_paid: fill_qty * fill_price * 10.0 / 10_000.0,
-        filled_at_ms: now_ms,
+        fee_paid: fill_qty * fill_price * assumptions.taker_fee_bps / 10_000.0,
+        filled_at_ms: filled_at,
         status: if fill_qty + 1e-9 < order.remaining_qty {
             ExecutionStatus::PartiallyFilled
         } else {
@@ -790,6 +913,9 @@ pub fn apply_fill_to_portfolio(portfolio: &mut PortfolioState, fill: &FillReport
                     position.frozen_qty = 0.0;
                 }
             }
+            // v2.1.0: 成交后更新 mark_price 和未实现盈亏
+            position.mark_price = fill.filled_price;
+            position.unrealized_pnl = position.net_qty * (position.mark_price - position.avg_entry_price);
             break;
         }
     }
@@ -873,6 +999,8 @@ mod tests {
             (Exchange::Binance, Symbol::BtcUsdt),
             MarketState {
                 price,
+                bid_price: None,
+                ask_price: None,
                 buy_liquidity: 10.0,
                 sell_liquidity: 10.0,
             },

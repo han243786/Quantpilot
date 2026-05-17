@@ -425,7 +425,7 @@ fn indicator_from_atr_call(
     env: &BindingEnv,
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
-    let source = binding_source_from_arg(args.get(0), env, data_sources)?;
+    let source = binding_source_from_arg(args.first(), env, data_sources)?;
     let period = arg_as_usize(args.get(1), env)?.unwrap_or(14);
     Ok(Some(IndicatorBinding::Atr { source, period }))
 }
@@ -435,7 +435,7 @@ fn indicator_from_bollinger_call(
     env: &BindingEnv,
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
-    let source = binding_source_from_arg(args.get(0), env, data_sources)?;
+    let source = binding_source_from_arg(args.first(), env, data_sources)?;
     let period = arg_as_usize(args.get(1), env)?.unwrap_or(20);
     let multiplier = arg_as_f64(args.get(2)).unwrap_or(2.0);
     Ok(Some(IndicatorBinding::BollingerBands { source, period, multiplier }))
@@ -446,7 +446,7 @@ fn indicator_from_obv_call(
     env: &BindingEnv,
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
-    let source = binding_source_from_arg(args.get(0), env, data_sources)?;
+    let source = binding_source_from_arg(args.first(), env, data_sources)?;
     Ok(Some(IndicatorBinding::Obv { source }))
 }
 
@@ -455,7 +455,7 @@ fn indicator_from_cmf_call(
     env: &BindingEnv,
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
-    let source = binding_source_from_arg(args.get(0), env, data_sources)?;
+    let source = binding_source_from_arg(args.first(), env, data_sources)?;
     let period = arg_as_usize(args.get(1), env)?.unwrap_or(20);
     Ok(Some(IndicatorBinding::Cmf { source, period }))
 }
@@ -509,7 +509,7 @@ fn indicator_from_generic_call<F>(
 where
     F: FnOnce(DataSourceConfig, usize) -> IndicatorBinding,
 {
-    let source = binding_source_from_arg(args.get(0), env, data_sources)?;
+    let source = binding_source_from_arg(args.first(), env, data_sources)?;
     let period = arg_as_usize(args.get(1), env)?.unwrap_or(14);
     Ok(Some(make(source, period)))
 }
@@ -519,7 +519,7 @@ fn indicator_from_stoch_call(
     env: &BindingEnv,
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
-    let source = binding_source_from_arg(args.get(0), env, data_sources)?;
+    let source = binding_source_from_arg(args.first(), env, data_sources)?;
     let k_period = arg_as_usize(args.get(1), env)?.unwrap_or(14);
     let d_period = arg_as_usize(args.get(2), env)?.unwrap_or(3);
     Ok(Some(IndicatorBinding::Stochastic { source, k_period, d_period }))
@@ -530,7 +530,7 @@ fn indicator_from_psar_call(
     env: &BindingEnv,
     data_sources: &[DataSourceConfig],
 ) -> Result<Option<IndicatorBinding>> {
-    let source = binding_source_from_arg(args.get(0), env, data_sources)?;
+    let source = binding_source_from_arg(args.first(), env, data_sources)?;
     const DEFAULT_PSAR_STEP: f64 = 0.02;
     const DEFAULT_PSAR_MAX_STEP: f64 = 0.2;
     let step = arg_as_f64(args.get(1)).unwrap_or(DEFAULT_PSAR_STEP);
