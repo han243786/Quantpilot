@@ -5,7 +5,7 @@ use axum::{Json, Router};
 use std::collections::BTreeMap;
 
 use super::AppState;
-use crate::auth;
+use super::auth::{self, UserId};
 
 pub(super) fn register_credential_routes(router: Router<AppState>) -> Router<AppState> {
     router

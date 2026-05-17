@@ -17,7 +17,7 @@ pub(super) fn register_snapshot_routes(router: Router<AppState>) -> Router<AppSt
 
 // ── 快照生成 ──
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct CreateSnapshotRequest {
     deployment_revision: String,

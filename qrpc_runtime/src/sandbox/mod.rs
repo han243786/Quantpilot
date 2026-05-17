@@ -1014,7 +1014,7 @@ mod tests {
         let boundary = runtime_support_boundary();
 
         assert_eq!(boundary.runtime_modes, &["paper"]);
-        assert_eq!(boundary.execution_module_keys, &["builtin.execution.paper"]);
+        assert_eq!(boundary.execution_module_keys, &["builtin.execution.paper", "live.okx"]);
     }
 
     #[test]
