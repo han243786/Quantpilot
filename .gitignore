@@ -42,6 +42,11 @@
 /tmp_runtime_request.json
 /tmp_test.txt
 
+# Redundant startup scripts (use start.bat)
+/启动.vbs
+/启动QuantPilot.bat
+/tmp_test.txt
+
 # Test artifacts (screenshots and reports)
 markdown/测试/screenshots/
 markdown/测试/test-reports/

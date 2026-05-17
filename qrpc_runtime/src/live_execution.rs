@@ -1,6 +1,5 @@
 use crate::{
-    ExecutionModuleProvider, ExecutionPlanner, ExecutionPlanningOutput,
-    ExecutionPlanningRequest, ExecutionSubmitter,
+    ExecutionPlanner, ExecutionPlanningOutput, ExecutionPlanningRequest, ExecutionSubmitter,
 };
 use base64::Engine;
 use chrono::Utc;

@@ -218,7 +218,7 @@ fn compute_trade_analysis(sessions: &[SessionOutput], _initial_equity: f64) -> B
     }
 
     // v2.3.0: 不再使用仅手续费的伪 PnL 回退。若无持仓级已实现盈亏, 返回默认空分析
-    let mut trades: Vec<Trade> = Vec::new();
+    let trades: Vec<Trade> = Vec::new();
 
     // v1.1.13: 使用最终session的持仓级PnL，避免跨session重复累计
     let mut realized_pnls = Vec::new();
