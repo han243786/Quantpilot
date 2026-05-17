@@ -1,5 +1,31 @@
 # Changelog
 
+## v2.3.x — 错误国际化与架构优化 (2026-05-18)
+
+### v2.3.2 — 架构优化
+- **ExecutionModuleProvider ISP 拆分**: 1 trait → 2 (ExecutionPlanner + ExecutionSubmitter)
+- **risk_checker 完整重构**: `evaluate_risk_decision` 322行→154行, 3个提取函数
+- **runtime_api.rs 按域拆分**: 3755行→4文件 (mod/backtest/run/mutation), `src/runtime/` 模块目录
+- jsonwebtoken v9→v10 升级
+- 基准文档化 (compute_benchmark_equity 假设声明)
+- start.bat 版本号+可靠端口检测修复
+
+### v2.3.1 — 部署安全
+- Docker 非 root 用户运行 (useradd quantpilot)
+- NSIS 安装器权限降级 (admin→user, PROGRAMFILES→LOCALAPPDATA)
+- StrategyHubHeroSection 搜索 maxLength=200
+- Docker HEALTHCHECK + curl
+
+### v2.3.0 — 错误国际化 + TLS + JWT刷新
+- `src/error_codes.rs` — 41个语言中立错误码
+- `src/api_errors.rs` — `json_bad_request_with_code()` 向后兼容接线
+- `frontend/src/utils/errorMessages.js` — 30+ en/zh 本地化映射
+- `POST /api/auth/refresh` — JWT 令牌刷新端点
+- `nginx.conf` — TLS 反向代理 (443→3000)
+- P1×3 + P2×5 审计修复
+
+---
+
 ## v2.2.x — 架构重构与质量根基 (2026-05-17)
 
 ### v2.2.0 — 架构根基重构
