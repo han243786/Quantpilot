@@ -16,7 +16,8 @@ export function parseJsonValue(source) {
   if (typeof source !== "string") return null;
   try {
     return JSON.parse(source.trimStart().replace(/^\uFEFF/, ""));
-  } catch {
+  } catch (e) {
+    console.warn("graphStoreCompileProtocolMapping: parseJsonValue failed", e);
     return null;
   }
 }
@@ -25,7 +26,8 @@ export function stringifyJson(value) {
   if (value === null || value === undefined) return "";
   try {
     return JSON.stringify(value, null, 2);
-  } catch {
+  } catch (e) {
+    console.warn("graphStoreCompileProtocolMapping: stringifyJson failed", e);
     return "";
   }
 }

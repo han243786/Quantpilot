@@ -1,11 +1,11 @@
 import { defineLocale } from "../index";
 
 export default defineLocale({
-  'Core IR 工件': 'Core IR 工件',
+  'Core IR 工件': '核心中间表示工件',
   'Formal QuantScript': 'Formal QuantScript',
   'QuantScript 源码': 'QuantScript 源码',
   'QuantScript 编辑器': 'QuantScript 编辑器',
-  'Strategy IR': 'Strategy IR',
+  'Strategy IR': '策略中间表示',
   '\\u4ee3\\u7406\\u6a21\\u5757': '\\u4ee3\\u7406\\u6a21\\u5757',
   '\\u5168\\u90e8\\u5c55\\u5f00': '\\u5168\\u90e8\\u5c55\\u5f00',
   '\\u5168\\u90e8\\u6298\\u53e0': '\\u5168\\u90e8\\u6298\\u53e0',
@@ -323,7 +323,7 @@ export default defineLocale({
   '证据链': '证据链',
   '详情': '详情',
   '详情页只保留高信号的回放切片，让它保持为策略分析视图，而不是原始日志堆叠。': '详情页只保留高信号的回放切片，让它保持为策略分析视图，而不是原始日志堆叠。',
-  '请使用 QS 编辑器启动模拟盘。': '请使用 QS 编辑器启动模拟盘。',
+  '请使用 QuantScript 编辑器启动模拟盘。': '请使用 QuantScript 编辑器启动模拟盘。',
   '账户': '账户',
   '账户与挂单': '账户与挂单',
   '账户摘要': '账户摘要',

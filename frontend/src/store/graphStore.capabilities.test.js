@@ -1,5 +1,6 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import { useGraphStore } from "./graphStore";
+import { SUPPORTED_FRONTEND_MODULE_KEYS } from "../capabilities/supportMatrix";
 import {
   backendCapabilitiesFixture,
   capabilityFallbackFixtures
@@ -88,8 +89,8 @@ describe("graphStore capability fallback", () => {
     const result = await useGraphStore.getState().refreshCapabilities();
     const state = useGraphStore.getState();
 
-    expect(result.frontend.supported_module_keys).toEqual([]);
-    expect(result.runtime.supported_modes).toEqual([]);
+    expect(result.frontend.supported_module_keys).toEqual(SUPPORTED_FRONTEND_MODULE_KEYS);
+    expect(result.runtime.supported_modes).toEqual(["paper"]);
     expect(state.capabilityStatus).toBe("error");
     expect(state.capabilitySource).toBe("safe_fallback");
     expect(state.capabilityMessage).toContain("安全回退模式");

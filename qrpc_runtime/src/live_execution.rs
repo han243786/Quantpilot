@@ -600,10 +600,10 @@ impl Default for ExecutionSemantics {
 // ── 辅助函数 ──────────────────────────────────────────────────────
 
 fn current_position_weight(
-    decision: &qrpc_core::RiskDecision,
-    exchange: &Exchange,
-    symbol: &Symbol,
-    price: f64,
+    _decision: &qrpc_core::RiskDecision,
+    _exchange: &Exchange,
+    _symbol: &Symbol,
+    _price: f64,
 ) -> f64 {
     // 实盘执行模块不做持仓权重追踪（真实仓位由 OKX 管理），
     // 因此始终返回 0.0 表示当前无持仓权重。
@@ -841,8 +841,8 @@ impl ExecutionSubmitter for LiveExecutionModule {
 
     fn on_market_update(
         &mut self,
-        normalized_data: &[qrpc_core::NormalizedMarketData],
-        portfolio: &mut PortfolioState,
+        _normalized_data: &[qrpc_core::NormalizedMarketData],
+        _portfolio: &mut PortfolioState,
         now_ms: u64,
         trace_id: &str,
     ) -> FillResult {

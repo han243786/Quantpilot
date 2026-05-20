@@ -127,7 +127,11 @@ function lowerIntentModuleToCoreKind(moduleKey) {
     case "builtin.intent.spread_observer":
       return "spread";
     default:
-      return "ma_cross";
+      // v2.3.3 修复 S0-6: 未知意图不再静默降级为 ma_cross, 抛出明确错误
+      throw new Error(
+        `[compileGraph] 不支持的意图模块: "${moduleKey}"。` +
+        `当前支持: builtin.intent.double_ma / ma_deviation / rsi / macd / momentum / zscore / spread_observer`
+      );
   }
 }
 

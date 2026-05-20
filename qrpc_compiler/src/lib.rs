@@ -971,6 +971,18 @@ fn lower_strategy_indicator_threshold_condition(
 
 fn parse_strategy_signal_compare(condition: &str) -> Option<(String, ComparisonOp, f64)> {
     let trimmed = condition.trim();
+    // 拒绝复合条件，防止静默忽略 "A > 5 and B > 10" 的第二部分
+    let op_count = trimmed.matches(">=").count()
+        + trimmed.matches("<=").count()
+        + trimmed.chars().filter(|c| *c == '>' || *c == '<').count()
+        - trimmed.matches(">=").count()
+        - trimmed.matches("<=").count();
+    // 分别统计 == (只计独立的 ==, 不计 >= <= 中的 =)
+    let eq_count = trimmed.matches("==").count();
+    let op_count = op_count + eq_count;
+    if op_count > 1 {
+        return None; // 复合条件拒绝，由上层作为 unknown_signal 处理
+    }
     for (needle, op) in [
         (">=", ComparisonOp::Gte),
         ("<=", ComparisonOp::Lte),

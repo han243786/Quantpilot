@@ -78,7 +78,7 @@ function buildArtifactResolutionSummary({ hasStrategyIrArtifact, runtimeSource }
       : "runtime";
   const runtimeSourceLabel =
     resolvedRuntimeSource === "formal_quantscript"
-      ? "Formal QuantScript lowering 输入"
+      ? "Formal QuantScript 代码转换输入"
       : resolvedRuntimeSource === "runtime_fallback"
         ? "图生成的 runtime_config 回退输入"
         : "图生成的 runtime_config 输入";
@@ -87,19 +87,19 @@ function buildArtifactResolutionSummary({ hasStrategyIrArtifact, runtimeSource }
     strategy_ir_role: hasStrategyIrArtifact ? "semantic_preflight" : "not_used",
     strategy_ir_role_label: hasStrategyIrArtifact
       ? "只作语义预检，不决定可运行输出"
-      : "未启用 Strategy IR 预检",
+      : "未启用策略中间表示预检",
     runtime_source: resolvedRuntimeSource,
     runtime_source_label: runtimeSourceLabel,
     source_of_truth: "runtime_compile",
     source_of_truth_label: COMPILE_CONTRACT.runtimeSourceOfTruthLabel,
     notes: [
       hasStrategyIrArtifact
-        ? "Strategy IR 会先执行语义预检。它可以提前阻断编译，但不决定最终可运行输出。"
-        : "当前没有提供 Strategy IR 工件，因此运行时编译会直接从图生成工件开始。",
+        ? "策略中间表示会先执行语义预检。它可以提前阻断编译，但不决定最终可运行输出。"
+        : "当前没有提供策略中间表示工件，因此运行时编译会直接从图生成工件开始。",
       resolvedRuntimeSource === "formal_quantscript"
-        ? "Formal QuantScript lowering 提供运行时编译输入，但最终可运行结果仍以运行时编译输出为准。"
+        ? "Formal QuantScript 代码转换提供运行时编译输入，但最终可运行结果仍以运行时编译输出为准。"
         : resolvedRuntimeSource === "runtime_fallback"
-          ? "Formal QuantScript lowering 不可用，因此运行时编译回退到图生成的 runtime_config；最终可运行结果仍以运行时编译输出为准。"
+          ? "Formal QuantScript 代码转换不可用，因此运行时编译回退到图生成的 runtime_config；最终可运行结果仍以运行时编译输出为准。"
           : "运行时编译直接使用图生成的 runtime_config 作为输入，最终可运行结果仍以运行时编译输出为准。"
     ]
   };

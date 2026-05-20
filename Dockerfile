@@ -34,6 +34,7 @@ RUN useradd -m -u 1000 quantpilot && chown -R quantpilot:quantpilot /app
 USER quantpilot
 
 ENV QUANTPILOT_DEV=false
+ENV QUANTPILOT_BIND_ADDR=0.0.0.0
 ENV QUANTPILOT_RATE_LIMIT_RPS=100
 EXPOSE 3000
 

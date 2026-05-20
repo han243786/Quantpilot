@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { buildRuntimeMutationState } from "../utils/runtimeMutation";
+import { useOrderAnimation } from "../hooks/useOrderAnimation";
 
 function compactIdentity(value) {
   if (!value) return "-";
@@ -26,6 +27,79 @@ function boundaryLabel(proposal) {
   const boundary = state?.requested_boundary || proposal.activation_boundary;
   const resolved = state?.resolved_sequence_no || boundary?.resolved_sequence_no;
   return resolved ? `${boundary.requested} #${resolved}` : boundary?.requested || "-";
+}
+
+function ProposalItem({ proposal, canActivate, capabilityContext, onActivateProposal, onRollbackProposal, testId }) {
+  const animClass = useOrderAnimation(proposal.status === "activated");
+
+  return (
+    <div
+      className={`open-order-item${animClass ? " " + animClass : ""}`}
+      data-testid={`${testId}-proposal-${proposal.proposal_id}`}
+    >
+      <div className="open-order-topline">
+        <strong>{proposal.target.parameter_path}</strong>
+        <span className={`status-pill ${statusTone(proposal.status)}`}>
+          {proposal.status}
+        </span>
+      </div>
+      <div className="muted-line">
+        {proposal.target.module_key} · {boundaryLabel(proposal)}
+      </div>
+      {proposal.safe_window_state ? (
+        <div className="muted-line" data-testid={`${testId}-safe-window-${proposal.proposal_id}`}>
+          安全窗口 {proposal.safe_window_state.status} ·{" "}
+          {proposal.safe_window_state.reason_code}
+        </div>
+      ) : null}
+      {proposal.rollback_of ? (
+        <div className="muted-line">
+          回滚来源 {compactIdentity(proposal.rollback_of)}
+        </div>
+      ) : null}
+      <div className="kv-line">
+        <span>版本</span>
+        <strong title={proposal.proposed_parameter_version}>
+          {compactIdentity(proposal.proposed_parameter_version)}
+        </strong>
+      </div>
+      <div className="inline-actions">
+        <button
+          type="button"
+          className="ghost-btn compact-btn"
+          disabled={
+            !canActivate ||
+            !["proposed", "safe_window_denied"].includes(proposal.status) ||
+            !onActivateProposal
+          }
+          onClick={() =>
+            onActivateProposal?.(proposal, {
+              capability_context: capabilityContext,
+              activation_boundary: proposal.activation_boundary
+            })
+          }
+          data-testid={`${testId}-activate-${proposal.proposal_id}`}
+        >
+          激活
+        </button>
+        <button
+          type="button"
+          className="ghost-btn compact-btn"
+          disabled={!canActivate || proposal.status !== "activated" || !onRollbackProposal}
+          onClick={() =>
+            onRollbackProposal?.(proposal, {
+              capability_context: capabilityContext,
+              activation_boundary: proposal.activation_boundary,
+              target_parameter_version: proposal.old_parameter_version
+            })
+          }
+          data-testid={`${testId}-rollback-${proposal.proposal_id}`}
+        >
+          回滚
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default function RuntimeMutationPanel({
@@ -99,76 +173,21 @@ export default function RuntimeMutationPanel({
 
       <div className="mini-list">
         {mutationState.proposals.map((proposal) => (
-          <div
+          <ProposalItem
             key={proposal.proposal_id}
-            className="open-order-item"
-            data-testid={`${testId}-proposal-${proposal.proposal_id}`}
-          >
-            <div className="open-order-topline">
-              <strong>{proposal.target.parameter_path}</strong>
-              <span className={`status-pill ${statusTone(proposal.status)}`}>
-                {proposal.status}
-              </span>
-            </div>
-            <div className="muted-line">
-              {proposal.target.module_key} · {boundaryLabel(proposal)}
-            </div>
-            {proposal.safe_window_state ? (
-              <div className="muted-line" data-testid={`${testId}-safe-window-${proposal.proposal_id}`}>
-                安全窗口 {proposal.safe_window_state.status} ·{" "}
-                {proposal.safe_window_state.reason_code}
-              </div>
-            ) : null}
-            {proposal.rollback_of ? (
-              <div className="muted-line">
-                回滚来源 {compactIdentity(proposal.rollback_of)}
-              </div>
-            ) : null}
-            <div className="kv-line">
-              <span>版本</span>
-              <strong title={proposal.proposed_parameter_version}>
-                {compactIdentity(proposal.proposed_parameter_version)}
-              </strong>
-            </div>
-            <div className="inline-actions">
-              <button
-                type="button"
-                className="ghost-btn compact-btn"
-                disabled={
-                  !canActivate ||
-                  !["proposed", "safe_window_denied"].includes(proposal.status) ||
-                  !onActivateProposal
-                }
-                onClick={() =>
-                  onActivateProposal?.(proposal, {
-                    capability_context: capabilityContext,
-                    activation_boundary: proposal.activation_boundary
-                  })
-                }
-                data-testid={`${testId}-activate-${proposal.proposal_id}`}
-              >
-                激活
-              </button>
-              <button
-                type="button"
-                className="ghost-btn compact-btn"
-                disabled={!canActivate || proposal.status !== "activated" || !onRollbackProposal}
-                onClick={() =>
-                  onRollbackProposal?.(proposal, {
-                    capability_context: capabilityContext,
-                    activation_boundary: proposal.activation_boundary,
-                    target_parameter_version: proposal.old_parameter_version
-                  })
-                }
-                data-testid={`${testId}-rollback-${proposal.proposal_id}`}
-              >
-                回滚
-              </button>
-            </div>
-          </div>
+            proposal={proposal}
+            canActivate={canActivate}
+            capabilityContext={capabilityContext}
+            onActivateProposal={onActivateProposal}
+            onRollbackProposal={onRollbackProposal}
+            testId={testId}
+          />
         ))}
         {mutationState.proposals.length === 0 ? (
-          <div className="muted-line">暂无参数变更提案。</div>
+          <div>
+            <div className="muted-line">暂无参数变更提案。</div>
+            <div className="muted-line" style={{ marginTop: 4, fontSize: 12 }}>启动模拟后AI提案自动生成，可在此调整运行参数。</div>
+          </div>
         ) : null}
       </div>
     </div>

@@ -931,6 +931,7 @@ pub struct ExchangeExposure {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct PortfolioState {
     pub cash_balance: f64,
     pub available_cash_balance: f64,
@@ -957,6 +958,22 @@ impl PortfolioState {
             total_net_notional: 0.0,
             total_leverage: 0.0,
             updated_at_ms: ts_ms,
+        }
+    }
+
+    /// v2.5.0: debug 模式下验证跨字段一致性
+    pub fn debug_assert_invariants(&self) {
+        if cfg!(debug_assertions) {
+            // 可用现金 + 冻结现金 = 总现金
+            debug_assert!(
+                (self.available_cash_balance + self.frozen_cash_balance - self.cash_balance).abs() < 0.01,
+                "PortfolioState: available({}) + frozen({}) != cash({})",
+                self.available_cash_balance, self.frozen_cash_balance, self.cash_balance
+            );
+            // 杠杆为非负
+            debug_assert!(self.total_leverage >= 0.0, "total_leverage 不能为负");
+            // 余额非负
+            debug_assert!(self.cash_balance >= 0.0, "cash_balance 不能为负");
         }
     }
 }
@@ -1290,14 +1307,18 @@ impl OrderStatus {
         matches!(
             (self, next),
             (Self::Created, Self::Submitted)
+                | (Self::Created, Self::Cancelled)
+                | (Self::Created, Self::Rejected)
                 | (Self::Submitted, Self::Accepted)
                 | (Self::Submitted, Self::Rejected)
                 | (Self::Accepted, Self::PartiallyFilled)
                 | (Self::Accepted, Self::Cancelled)
+                | (Self::Accepted, Self::Rejected)
                 | (Self::Accepted, Self::Expired)
                 | (Self::PartiallyFilled, Self::PartiallyFilled)
                 | (Self::PartiallyFilled, Self::Filled)
                 | (Self::PartiallyFilled, Self::Cancelled)
+                | (Self::PartiallyFilled, Self::Rejected)
                 | (Self::PartiallyFilled, Self::Expired)
         )
     }

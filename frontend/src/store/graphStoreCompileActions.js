@@ -68,7 +68,7 @@ export function createGraphStoreCompileActions(set, get) {
       const draft = source ?? get().strategyIrDraft;
       const parsed = parseJsonValue(draft);
       if (!parsed || typeof parsed !== "object") {
-        throw new Error("Strategy IR JSON 解析失败。");
+        throw new Error("策略中间表示 JSON 解析失败。");
       }
 
       const registry = get().registry;

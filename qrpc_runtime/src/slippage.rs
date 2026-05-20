@@ -188,7 +188,11 @@ pub fn estimate_spread(mid_price: f64, volatility: f64, timeframe_minutes: u64) 
     // 波动率 2% 为基准，vol_adjustment 限制在 0.5x-3x
     let vol_adjustment = (volatility / 0.02).clamp(0.5, 3.0);
     let spread_bps = base_spread_bps * vol_adjustment;
-    let half_spread = mid_price * spread_bps / 20_000.0;
+    let half_spread = if mid_price.is_finite() && mid_price > 0.0 {
+        mid_price * spread_bps / 20_000.0
+    } else {
+        0.0
+    };
 
     SpreadEstimate {
         bid: mid_price - half_spread,

@@ -75,34 +75,41 @@ async fn execute_backtest_request(
     )
     .map_err(internal_error)?;
     let replay_source = request.backtest_replay_source();
-    let mut sandbox = match replay_source {
-        FrontendBacktestReplaySource::HistoricalReplay => {
-            FastBacktestSandbox::with_replay_from_core_ir(compiled.core_ir.clone(), now_ms)
-                .map_err(|error| {
-                    anyhow::anyhow!(
-                        "{}. 历史重放需要本地市场数据文件 (位于 data cache 目录下)。\
-                         离线测试请设置 backtest_options.replay_source = \"deterministic_mock\"",
-                        error,
-                    )
-                })
+    let core_ir = compiled.core_ir.clone();
+    let latency_override = resolved_execution_assumptions.latency_assumption_ms;
+    // v2.3.3: 沙盒回测操作可能阻塞 (数据加载/HTTP请求)，移至 spawn_blocking 避免阻塞 tokio 线程
+    let backtest = tokio::task::spawn_blocking(move || {
+        let mut sandbox = match replay_source {
+            FrontendBacktestReplaySource::HistoricalReplay => {
+                FastBacktestSandbox::with_replay_from_core_ir(core_ir.clone(), now_ms)
+                    .map_err(|error| {
+                        anyhow::anyhow!(
+                            "{}. 历史重放需要本地市场数据文件 (位于 data cache 目录下)。\
+                             离线测试请设置 backtest_options.replay_source = \"deterministic_mock\"",
+                            error,
+                        )
+                    })
+            }
+            FrontendBacktestReplaySource::DeterministicMock => {
+                FastBacktestSandbox::with_mock_replay_from_core_ir_and_test_mode(
+                    core_ir,
+                    now_ms,
+                    DeterministicTestMode::replay_defaults(now_ms, BACKTEST_DETERMINISTIC_SEED),
+                )
+            }
         }
-        FrontendBacktestReplaySource::DeterministicMock => {
-            FastBacktestSandbox::with_mock_replay_from_core_ir_and_test_mode(
-                compiled.core_ir.clone(),
-                now_ms,
-                DeterministicTestMode::replay_defaults(now_ms, BACKTEST_DETERMINISTIC_SEED),
-            )
+        .map_err(|e| internal_error(anyhow::anyhow!(e)))?;
+        if let Some(latency_ms) = latency_override {
+            sandbox.set_execution_assumptions(qrpc_runtime::slippage::ExecutionAssumptions {
+                latency: qrpc_runtime::slippage::LatencyModel::Fixed { delay_ms: latency_ms },
+                ..qrpc_runtime::slippage::ExecutionAssumptions::v1_0_7_compat()
+            });
         }
-    }
-    .map_err(internal_error)?;
-    if let Some(latency_ms) = resolved_execution_assumptions.latency_assumption_ms {
-        sandbox.set_execution_assumptions(qrpc_runtime::slippage::ExecutionAssumptions {
-            latency: qrpc_runtime::slippage::LatencyModel::Fixed { delay_ms: latency_ms },
-            ..qrpc_runtime::slippage::ExecutionAssumptions::v1_0_7_compat()
-        });
-    }
-    sandbox.start().map_err(internal_error)?;
-    let backtest = sandbox.run_backtest().map_err(internal_error)?;
+        sandbox.start().map_err(|e| internal_error(anyhow::anyhow!(e)))?;
+        sandbox.run_backtest().map_err(|e| internal_error(anyhow::anyhow!(e)))
+    })
+    .await
+    .map_err(|e| internal_error(anyhow::anyhow!("回测任务被取消: {}", e)))??;
     let graph_targets = build_compile_runtime_targets_from_graph(graph_json);
     let runtime_targets = merge_runtime_targets(&request.runtime_targets, &graph_targets);
     // v1.3.7: 添加计数器后缀防止同一毫秒内ID碰撞
@@ -178,6 +185,17 @@ async fn execute_backtest_request(
             .await
             .insert(auth::scoped_key(user_id, &backtest_id), record.clone());
     }
+
+    safe_eprintln!(
+        "[audit] 回测完成 — user={} backtest={} graph={} compile={} events={} trades={} return={:.2}%",
+        user_id.0,
+        backtest_id,
+        request.runtime_config.metadata.graph_id,
+        request.runtime_config.metadata.compile_id,
+        record.events.len(),
+        record.backtest.summary.trade_count,
+        record.backtest.summary.total_return_ratio * 100.0
+    );
 
     Ok(record)
 }

@@ -45,8 +45,8 @@ describe("PropertyPanel compile source-of-truth summary", () => {
               source_of_truth: "runtime_compile",
               source_of_truth_label: "以 /api/runtime/compile 输出为准",
               notes: [
-                "Strategy IR 会先执行语义预检。它可以提前阻断编译，但不决定最终可运行输出。",
-                "Formal QuantScript lowering 不可用，因此运行时编译回退到图生成的 runtime_config；最终可运行结果仍以运行时编译输出为准。"
+                "策略中间表示会先执行语义预检。它可以提前阻断编译，但不决定最终可运行输出。",
+                "Formal QuantScript 代码转换不可用，因此运行时编译回退到图生成的 runtime_config；最终可运行结果仍以运行时编译输出为准。"
               ]
             }
           }

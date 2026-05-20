@@ -321,3 +321,6 @@ Also keep the source organized as:
 with explicit section comments, even when the frontend later renders the conceptual pipeline as:
 
 - `Data -> Intent -> Agent -> Risk -> Execution`
+
+---
+> 文档版本: v3.7.0 | 最后更新: 2026-05-21 | QuantPilot v3.7.0

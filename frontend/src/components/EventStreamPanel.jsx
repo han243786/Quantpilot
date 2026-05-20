@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useI18n } from "../i18n";
 import { backtestComparePath, navigateTo } from "../router";
 import {
@@ -660,7 +660,11 @@ export function EventFeedSection({
             className="history-filter-input"
             value={eventSearchTerm ?? runtime.eventSearchTerm ?? ""}
             placeholder={COPY.eventSearchPlaceholder}
-            onChange={(event) => setEventSearchTerm(event.target.value)}
+            onChange={(event) => {
+              const value = event.target.value;
+              if (window._qpEventSearchTimer) clearTimeout(window._qpEventSearchTimer);
+              window._qpEventSearchTimer = setTimeout(() => setEventSearchTerm(value), 200);
+            }}
           />
           <button
             className="ghost-btn compact-btn"

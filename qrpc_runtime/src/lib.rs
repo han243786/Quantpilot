@@ -867,7 +867,11 @@ impl RuntimeCoordinator {
                 trace_id,
                 mode: self.risk_mode,
             })
-            .expect("risk checker evaluation should not fail");
+            .unwrap_or_else(|_| RiskCheckOutput {
+                decisions: vec![],
+                events: vec![],
+                approved_agent_ids: std::collections::BTreeSet::new(),
+            });
 
         for agent_id in &output.approved_agent_ids {
             self.state.last_action_at_ms.insert(agent_id.clone(), now_ms);
@@ -1176,7 +1180,7 @@ mod tests {
                     })
                     .collect(),
                 events: Vec::new(),
-                approved_agent_ids: BTreeSet::new(),
+                approved_agent_ids: std::collections::BTreeSet::new(),
             })
         }
     }

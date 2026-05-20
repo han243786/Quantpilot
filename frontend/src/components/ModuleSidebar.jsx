@@ -52,8 +52,8 @@ function laneRecommendation(laneId, laneLabel, selectedNodeType = null) {
   }
   if (laneId === "code") {
     return selectedNodeType
-      ? `优先处理通常与源码工件或 Strategy IR 联动的模块，再补上与当前选中项相邻的 ${selectedNodeType} 模块。`
-      : "优先处理通常与源码工件或 Strategy IR 联动的模块。";
+      ? `优先处理通常与源码工件或策略中间表示联动的模块，再补上与当前选中项相邻的 ${selectedNodeType} 模块。`
+      : "优先处理通常与源码工件或策略中间表示联动的模块。";
   }
   if (selectedNodeType) {
     return `调整结构时，把最贴近${laneLabel || "当前构建路径"}的模块放在顶部，并让 ${selectedNodeType} 模块贴近当前选中项。`;

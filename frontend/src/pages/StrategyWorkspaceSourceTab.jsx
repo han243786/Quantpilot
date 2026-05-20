@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useI18n } from "../i18n";
 import { useGraphStore } from "../store/graphStore";
 import { API_BASE } from "../store/graphStorePersistenceHelpers";
+import { humanizeErrorText } from "../utils/errorText";
 
 export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
   const { t } = useI18n();
@@ -16,14 +17,14 @@ export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
     setLoading(true);
     fetch(`${API_BASE}/graphs/${encodeURIComponent(graphId)}/quantscript`)
       .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (!res.ok) throw new Error(`服务器错误 (${res.status})`);
         return res.text();
       })
       .then((text) => {
         setSource(text);
         setError(null);
       })
-      .catch((err) => setError(err.message))
+      .catch((err) => setError(humanizeErrorText(err.message, "加载QS源码失败")))
       .finally(() => setLoading(false));
   }, [graphId]);
 
@@ -68,8 +69,13 @@ export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
       </div>
 
       <pre className="qs-source-code" data-testid="source-tab-code">
-        {source || t("无源码")}
+        {source || t("暂无 QuantScript 源码")}
       </pre>
+      {!source && (
+        <p className="muted-line" style={{ padding: "0 12px" }}>
+          {t("请先在画布中搭建策略图并编译，编译成功后源码将在此处自动生成。也可直接编辑此处的 QuantScript 源码并运行。")}
+        </p>
+      )}
 
       {runResult && (
         <div className="qs-editor-report">

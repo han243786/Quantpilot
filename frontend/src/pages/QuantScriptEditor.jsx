@@ -84,6 +84,7 @@ export default function QuantScriptEditor() {
       <textarea
         className="qs-editor-textarea"
         value={source}
+        maxLength={50000}
         onChange={(e) => setSource(e.target.value)}
         onPaste={(e) => {
           if (e.clipboardData.getData("text").length > 100_000) {

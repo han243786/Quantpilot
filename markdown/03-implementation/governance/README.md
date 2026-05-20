@@ -8,4 +8,4 @@
 - [工件治理](./implementation-artifact-governance.md)
 - [运行时治理合约](../runtime/implementation-runtime-governance-contract.md)
 
-对协议边界的治理引用应使用 [../../protocol/README.md](../../protocol/README.md) 中的活跃连续索引 `RFC-001` 至 `RFC-020`。
+对协议边界的治理引用应使用 [../../02-protocol/README.md](../../02-protocol/README.md) 中的活跃连续索引 `RFC-001` 至 `RFC-020`。

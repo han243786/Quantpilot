@@ -12,7 +12,8 @@ export function stringifyJson(value) {
   if (value === null || value === undefined) return "";
   try {
     return JSON.stringify(value, null, 2);
-  } catch {
+  } catch (e) {
+    console.warn("propertyPanelShared: stringify failed", e);
     return "";
   }
 }

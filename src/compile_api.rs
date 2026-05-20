@@ -1,4 +1,5 @@
 ﻿use super::*;
+use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::Semaphore;
 
@@ -6,18 +7,38 @@ use tokio::sync::Semaphore;
 static COMPILE_SEMAPHORE: std::sync::LazyLock<Arc<Semaphore>> =
     std::sync::LazyLock::new(|| Arc::new(Semaphore::new(4)));
 
+// v3.5.0: 编译产物缓存 — 同图同参数跳过QS管道
+const COMPILE_CACHE_MAX: usize = 50;
+static COMPILE_CACHE: std::sync::LazyLock<std::sync::Mutex<HashMap<String, CompileCacheEntry>>> =
+    std::sync::LazyLock::new(|| std::sync::Mutex::new(HashMap::new()));
+
+#[derive(Clone)]
+struct CompileCacheEntry {
+    response: CompileRuntimeResponse,
+    inserted_at_ms: u64,
+}
+
+fn compute_compile_cache_key(graph_json: &Value, _runtime_config: &FrontendRuntimeConfig) -> String {
+    use ring::digest::{digest, SHA256};
+    // v3.5.1: 仅基于graph_json计算缓存键, 排除compile_id等每次变化的字段
+    // graph_json包含节点拓扑/参数/连线, 是编译结果的唯一决定因素
+    let graph_bytes = serde_json::to_vec(graph_json).unwrap_or_default();
+    let hash = digest(&SHA256, &graph_bytes);
+    hash.as_ref().iter().map(|b| format!("{:02x}", b)).collect()
+}
+
 /// QS 管道编译: graph JSON → QS 源码 → parse → lower → RuntimeProtocolCoreConfig (§1.1, §1.3)
 pub(super) fn compile_runtime_protocol_via_qs(
     graph_json: &Value,
 ) -> Result<RuntimeProtocolCoreConfig, (StatusCode, String)> {
     let qs_source = generate_quantscript_from_graph_value(graph_json)
-        .map_err(|e| json_bad_request("qs_generation_failed", format!("从图生成 QS 源码失败: {:#}", e)))?;
+        .map_err(|e| json_bad_request("qs_generation_failed", format!("从图生成 QS 源码失败: {}", e)))?;
     let graph_value = parse_graph_quantscript_source(&qs_source)
-        .map_err(|e| json_bad_request("qs_parse_failed", format!("QS 解析失败: {:#}", e)))?;
+        .map_err(|e| json_bad_request("qs_parse_failed", format!("QS 解析失败: {}", e)))?;
     let script_module = convert_graph_json_to_script_module(&graph_value)
-        .map_err(|e| json_bad_request("qs_conversion_failed", format!("QS 模块转换失败: {:#}", e)))?;
+        .map_err(|e| json_bad_request("qs_conversion_failed", format!("QS 模块转换失败: {}", e)))?;
     quantscript::lower_script_to_runtime_config(&script_module)
-        .map_err(|e| json_bad_request("qs_lowering_failed", format!("QS 下层转换失败: {:#}", e)))
+        .map_err(|e| json_bad_request("qs_lowering_failed", format!("QS 下层转换失败: {}", e)))
 }
 
 pub(super) fn register_compile_routes(router: Router<AppState>) -> Router<AppState> {
@@ -35,6 +56,15 @@ pub(super) fn register_compile_routes(router: Router<AppState>) -> Router<AppSta
 async fn compile_runtime_request(
     Json(request): Json<CompileRuntimeRequest>,
 ) -> Result<Json<CompileRuntimeResponse>, (StatusCode, String)> {
+    // v3.5.0: 编译缓存 — 同图同参数跳过整个QS管道
+    let cache_key = compute_compile_cache_key(&request.graph_json, &request.runtime_config);
+    {
+        let cache = COMPILE_CACHE.lock().unwrap_or_else(|e| e.into_inner());
+        if let Some(entry) = cache.get(&cache_key) {
+            return Ok(Json(entry.response.clone()));
+        }
+    }
+
     // v1.1.10: 编译信号量超时保护，防止请求永久挂起
     let _permit = tokio::time::timeout(
         std::time::Duration::from_secs(120),
@@ -56,6 +86,12 @@ async fn compile_runtime_request(
             "bad_request",
             "策略必须包含至少一个意图。请从左侧面板拖入一个意图节点 (如「双均线」) 并连线",
         ));
+    }
+    // v3.7.x: 节点上限早期检查 (编译前拒绝, 避免浪费CPU)
+    const MAX_COMPILE_NODES: usize = 500;
+    let node_count = request.graph_json.get("nodes").and_then(|n| n.as_array()).map(|a| a.len()).unwrap_or(0);
+    if node_count > MAX_COMPILE_NODES {
+        return Err((StatusCode::PAYLOAD_TOO_LARGE, format!("策略图节点数 ({}) 超过上限 ({})", node_count, MAX_COMPILE_NODES)));
     }
     validate_runtime_config_capabilities(&request.runtime_config).map_err(|details| {
         json_bad_request_with_details(
@@ -97,12 +133,25 @@ async fn compile_runtime_request(
         match join_result {
             Ok(Ok(data)) => data,
             Ok(Err(e)) => return Err(e),
-            Err(_) => return Err((StatusCode::INTERNAL_SERVER_ERROR, "编译任务被取消".to_string())),
+            // v2.4.0 G4: 记录 panic payload, 否则只能看到 "编译任务被取消"
+            Err(join_err) => {
+                let panic_msg = join_err
+                    .try_into_panic()
+                    .map(|payload| {
+                        payload.downcast_ref::<String>()
+                            .map(|s| s.as_str())
+                            .or_else(|| payload.downcast_ref::<&str>().copied())
+                            .unwrap_or("未知 panic")
+                            .to_string()
+                    })
+                    .unwrap_or_else(|_| "非 panic 导致的 JoinError".to_string());
+                safe_eprintln!("[compile] 编译任务 panic: {}", panic_msg);
+                return Err((StatusCode::INTERNAL_SERVER_ERROR, "编译任务被取消".to_string()));
+            }
         }
     };
 
     // v2.0.1: graph→QS→graph 往返完整性检查
-    let node_count = request.graph_json.get("nodes").and_then(|n| n.as_array()).map(|a| a.len()).unwrap_or(0);
     let edge_count = request.graph_json.get("edges").and_then(|e| e.as_array()).map(|a| a.len()).unwrap_or(0);
 
     let runtime_protocol_counts = (qs_protocol.data_sources.len(), qs_protocol.intents.len(), qs_protocol.agents.len(), qs_protocol.risks.len());
@@ -140,7 +189,16 @@ async fn compile_runtime_request(
     let config_hash = compiled.config_hash.clone();
     let core_ir = compiled.core_ir.clone();
 
-    Ok(Json(CompileRuntimeResponse {
+    safe_eprintln!(
+        "[audit] 编译完成 — graph={} compile={} protocol={} intents={} agents={}",
+        request.runtime_config.metadata.graph_id,
+        request.runtime_config.metadata.compile_id,
+        protocol_name,
+        runtime_protocol_counts.1,
+        runtime_protocol_counts.2
+    );
+
+    let response = CompileRuntimeResponse {
         graph_id: request.runtime_config.metadata.graph_id.clone(),
         compile_id: request.runtime_config.metadata.compile_id.clone(),
         compilable: true,
@@ -158,7 +216,33 @@ async fn compile_runtime_request(
         diagnostics,
         runtime_config: request.runtime_config.clone(),
         runtime_targets,
-    }))
+    };
+
+    // v3.5.1: 缓存编译产物 (FIFO淘汰, 双检锁防重复编译)
+    {
+        let mut cache = COMPILE_CACHE.lock().unwrap_or_else(|e| e.into_inner());
+        // 双检: 编译期间其他线程可能已插入相同key, 避免重复写入
+        if cache.contains_key(&cache_key) {
+            return Ok(Json(response));
+        }
+        // FIFO淘汰: 超过上限时移除最旧的半数条目 (不drain全量防panic丢缓存)
+        if cache.len() >= COMPILE_CACHE_MAX {
+            let remove_count = cache.len() - (COMPILE_CACHE_MAX / 2).max(1);
+            let mut oldest: Vec<_> = cache.iter()
+                .map(|(k, v)| (v.inserted_at_ms, k.clone()))
+                .collect();
+            oldest.sort_by_key(|(ts, _)| *ts);
+            for (_, key) in oldest.iter().take(remove_count) {
+                cache.remove(key);
+            }
+        }
+        cache.insert(cache_key, CompileCacheEntry {
+            response: response.clone(),
+            inserted_at_ms: current_time_ms(),
+        });
+    }
+
+    Ok(Json(response))
 }
 
 async fn compile_strategy_ir_request(

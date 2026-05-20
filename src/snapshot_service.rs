@@ -32,6 +32,31 @@ struct CreateSnapshotRequest {
     event_count: usize,
 }
 
+/// v2.5.0: 共享签名输入构建, 消除创建/验证两侧代码重复
+fn build_signature_input(
+    capability_hash: &str,
+    strategy_version: &str,
+    parameter_version: &str,
+    core_ir_digest: &str,
+    event_slice_bounds: &EventSliceBounds,
+    created_at_ms: u64,
+) -> serde_json::Value {
+    json!({
+        "capability_hash": capability_hash,
+        "strategy_version": strategy_version,
+        "parameter_version": parameter_version,
+        "core_ir_digest": core_ir_digest,
+        "event_slice_bounds": {
+            "from_event_id": &event_slice_bounds.from_event_id,
+            "to_event_id": &event_slice_bounds.to_event_id,
+            "from_sequence": event_slice_bounds.from_sequence,
+            "to_sequence": event_slice_bounds.to_sequence,
+            "event_count": event_slice_bounds.event_count,
+        },
+        "created_at_ms": created_at_ms,
+    })
+}
+
 async fn create_snapshot(
     State(state): State<AppState>,
     request: Option<Json<CreateSnapshotRequest>>,
@@ -49,21 +74,15 @@ async fn create_snapshot(
         event_count: request.event_count,
     };
 
-    // 生成 5 项签名指纹
-    let signature_input = json!({
-        "capability_hash": request.capability_hash,
-        "strategy_version": request.strategy_version,
-        "parameter_version": request.parameter_version,
-        "core_ir_digest": request.core_ir_digest,
-        "event_slice_bounds": {
-            "from_event_id": &event_bounds.from_event_id,
-            "to_event_id": &event_bounds.to_event_id,
-            "from_sequence": event_bounds.from_sequence,
-            "to_sequence": event_bounds.to_sequence,
-            "event_count": event_bounds.event_count,
-        },
-        "created_at_ms": now_ms,
-    });
+    // v2.5.0: 抽取共享签名输入构建函数, 消除创建/验证两侧代码重复
+    let signature_input = build_signature_input(
+        &request.capability_hash,
+        &request.strategy_version,
+        &request.parameter_version,
+        &request.core_ir_digest,
+        &event_bounds,
+        now_ms,
+    );
 
     let signature = canonical_json_sha256_digest(&signature_input)
         .map_err(|error| internal_error(anyhow::anyhow!(error)))?
@@ -132,20 +151,14 @@ async fn restore_snapshot(
     };
 
     // 验证签名完整性
-    let verify_input = json!({
-        "capability_hash": snapshot.capability_hash,
-        "strategy_version": snapshot.strategy_version,
-        "parameter_version": snapshot.parameter_version,
-        "core_ir_digest": snapshot.core_ir_digest,
-        "event_slice_bounds": {
-            "from_event_id": &snapshot.event_slice_bounds.from_event_id,
-            "to_event_id": &snapshot.event_slice_bounds.to_event_id,
-            "from_sequence": snapshot.event_slice_bounds.from_sequence,
-            "to_sequence": snapshot.event_slice_bounds.to_sequence,
-            "event_count": snapshot.event_slice_bounds.event_count,
-        },
-        "created_at_ms": snapshot.created_at_ms,
-    });
+    let verify_input = build_signature_input(
+        &snapshot.capability_hash,
+        &snapshot.strategy_version,
+        &snapshot.parameter_version,
+        &snapshot.core_ir_digest,
+        &snapshot.event_slice_bounds,
+        snapshot.created_at_ms,
+    );
     let current_sig = canonical_json_sha256_digest(&verify_input)
         .map_err(|error| internal_error(anyhow::anyhow!(error)))?
         .value;
@@ -203,14 +216,10 @@ async fn persist_snapshot(
     crate::storage_lifecycle::ensure_storage_quota(
         std::path::Path::new("storage"), "snapshots", crate::storage_lifecycle::StorageLifecycle::Transient,
     )?;
-    let json = serde_json::to_vec_pretty(snapshot)?;
     fs::create_dir_all(&store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", snapshot.snapshot_id));
-    // v1.1.2: 原子写入防止快照文件损坏
-    let tmp = file_path.with_extension("tmp");
-    fs::write(&tmp, &json).await?;
-    fs::rename(&tmp, &file_path).await?;
-    Ok(())
+    // v2.3.3: 使用统一原子写入 (含 fsync)
+    crate::runtime_persistence::atomic_write_json(&file_path, snapshot).await
 }
 
 async fn load_snapshot_from_disk(

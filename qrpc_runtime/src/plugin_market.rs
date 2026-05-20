@@ -25,15 +25,29 @@ fn market_public_key() -> String {
 }
 
 /// 启动时校验市场公钥不是测试向量。应在 main 启动阶段调用。
-/// 生产环境下若仍为测试向量则中止进程。
+/// v2.3.4: 未设置时改为告警而非 panic，仅在运行时实际使用市场签名时才报错。
 pub fn assert_market_public_key_is_production() {
     let key = market_public_key();
     if key == RFC8032_TEST_VECTOR_PUBLIC_KEY {
-        panic!(
-            "MARKET_PUBLIC_KEY 仍为 RFC 8032 测试向量，生产环境禁止启动。\
-             请设置 QUANTPILOT_MARKET_PUBLIC_KEY 环境变量为实际市场公钥。"
+        eprintln!(
+            "[启动] 警告: MARKET_PUBLIC_KEY 未设置为生产密钥。\
+             插件市场的签名验证将不可用。\
+             请设置 QUANTPILOT_MARKET_PUBLIC_KEY 环境变量。"
         );
     }
+}
+
+/// 校验公钥有效，若为测试向量则返回错误。在需要实际验证签名的路径中使用。
+pub fn require_production_public_key() -> Result<String, String> {
+    let key = market_public_key();
+    if key == RFC8032_TEST_VECTOR_PUBLIC_KEY {
+        return Err(
+            "MARKET_PUBLIC_KEY 仍为测试向量，签名验证不可用。\
+             请设置 QUANTPILOT_MARKET_PUBLIC_KEY 环境变量为实际市场公钥。"
+                .to_string(),
+        );
+    }
+    Ok(key)
 }
 
 /// 从 JSON 负载提取签名并验证 Ed25519 签名。
@@ -72,8 +86,8 @@ pub(crate) fn verify_manifest_signature(raw_json: &str) -> Result<(), String> {
     let signature = ed25519_dalek::Signature::from_slice(&signature_bytes)
         .map_err(|e| format!("Ed25519 签名解析失败: {e}"))?;
 
-    // 解码公钥
-    let public_key_str = market_public_key();
+    // v3.6.x S0修复: 拒绝测试向量公钥,生产环境强制要求配置 MARKET_PUBLIC_KEY
+    let public_key_str = require_production_public_key()?;
     let pub_key_bytes: [u8; 32] = {
         let decoded = base64::engine::general_purpose::STANDARD
             .decode(&public_key_str)

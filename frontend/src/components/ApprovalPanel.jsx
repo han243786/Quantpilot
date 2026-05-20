@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 
 import { API_BASE } from "../utils/api";
 import { useI18n } from "../i18n";
@@ -28,21 +28,31 @@ export default function ApprovalPanel() {
   const [rejectingId, setRejectingId] = useState(null);
   const [rejectComment, setRejectComment] = useState("");
 
+  const disposedRef = useRef(false);
+
   const loadApprovals = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const data = await fetchApprovals();
-      setApprovals(data || []);
+      if (!disposedRef.current) {
+        setApprovals(data || []);
+      }
     } catch (err) {
-      setError(err.message);
+      if (!disposedRef.current) {
+        setError(err.message);
+      }
     } finally {
-      setLoading(false);
+      if (!disposedRef.current) {
+        setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
+    disposedRef.current = false;
     loadApprovals();
+    return () => { disposedRef.current = true; };
   }, [loadApprovals]);
 
   const handleClaim = async (proposalId) => {
@@ -129,7 +139,10 @@ export default function ApprovalPanel() {
       )}
 
       {!loading && !error && approvals.length === 0 && (
-        <div className="qp-empty">{t("暂无待审批的 AI 提案")}</div>
+        <div className="qp-empty">
+          <div>{t("暂无待审批的 AI 提案")}</div>
+          <div className="muted-line" style={{ marginTop: 8 }}>{t("请先启动模拟运行，AI 提案将在运行过程中自动生成。")}</div>
+        </div>
       )}
 
       {approvals.map((approval) => {

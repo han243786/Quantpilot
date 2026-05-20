@@ -7,6 +7,7 @@ services:
       - "3000:3000"
     environment:
       - QUANTPILOT_DEV=false
+      - QUANTPILOT_BIND_ADDR=0.0.0.0
       - QUANTPILOT_API_KEY=${QUANTPILOT_API_KEY:-}
       - QUANTPILOT_RATE_LIMIT_RPS=100
     volumes:

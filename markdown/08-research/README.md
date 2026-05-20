@@ -5,10 +5,10 @@
 
 当研究措辞与活跃产品或发布状态冲突时，以活跃文档为准：
 
-- [当前状态与发布状态](../overview/overview-current-status-and-roadmap.md)
-- [首次发布就绪](../implementation/planning/implementation-first-release-readiness.md)
-- [支持矩阵](../implementation/governance/implementation-support-matrix.md)
-- [测试层期望](../implementation/runtime/implementation-test-layer-expectations.md)
+- [当前状态与发布状态](../10-overview/overview-current-status-and-roadmap.md)
+- [首次发布就绪](../09-archive/planning-retired/implementation-first-release-readiness.md)
+- [支持矩阵](../03-implementation/governance/implementation-support-matrix.md)
+- [测试层期望](../03-implementation/runtime/implementation-test-layer-expectations.md)
 
 不要将研究笔记中的旧路线图、优先级或能力声明复制回活跃规划中，除非已根据活跃合约文档重新验证。
 

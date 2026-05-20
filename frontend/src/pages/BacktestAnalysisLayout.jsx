@@ -1,8 +1,8 @@
 import "./backtest-analysis.css";
 
-function SummaryCard({ label, value }) {
+function SummaryCard({ label, value, tooltip }) {
   return (
-    <div className="analysis-summary-card">
+    <div className="analysis-summary-card" title={tooltip || undefined}>
       <span>{label}</span>
       <strong>{value}</strong>
     </div>
@@ -71,7 +71,7 @@ export function AnalysisHero({
       {summaryItems.length > 0 ? (
         <div className="analysis-summary-grid">
           {summaryItems.map((item) => (
-            <SummaryCard key={item.label} label={item.label} value={item.value} />
+            <SummaryCard key={item.label} label={item.label} value={item.value} tooltip={item.tooltip} />
           ))}
         </div>
       ) : null}

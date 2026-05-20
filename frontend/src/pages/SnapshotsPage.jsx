@@ -102,7 +102,10 @@ export default function SnapshotsPage() {
           </button>
 
           {snapshots.length === 0 && (
-            <div className="qp-empty">{t("暂无签名快照")}</div>
+            <div className="qp-empty">
+              <div>{t("暂无签名快照")}</div>
+              <div className="muted-line" style={{ marginTop: 8 }}>{t("运行回测或模拟后点击「创建快照」按钮生成签名快照。")}</div>
+            </div>
           )}
 
           {snapshots.map((s) => (

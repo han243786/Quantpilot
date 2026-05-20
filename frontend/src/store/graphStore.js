@@ -182,6 +182,25 @@ export const useGraphStore = create((set, get) => ({
       });
     }
     await get().refreshCapabilities();
+    // v3.6.0 U8: 后端恢复心跳 — 非ready状态每30s轮询一次 (仅初始化一次)
+    if (!window._qp_heartbeat) {
+      window._qp_heartbeat = true;
+      window._qp_heartbeat_interval = setInterval(() => {
+        const status = get().capabilityStatus;
+        if (status !== "ready" && status !== "loading") {
+          get().refreshCapabilities().catch((e) => {
+            console.warn("heartbeat: refreshCapabilities failed", e);
+          });
+        }
+      }, 30_000);
+      window._qp_heartbeat_cleanup = () => {
+        if (window._qp_heartbeat_interval) {
+          clearInterval(window._qp_heartbeat_interval);
+          window._qp_heartbeat_interval = null;
+        }
+        window._qp_heartbeat = false;
+      };
+    }
     const graphIndex = await get().refreshGraphIndex();
 
     const registry = get().registry;

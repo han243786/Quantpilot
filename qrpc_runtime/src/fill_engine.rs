@@ -156,11 +156,26 @@ impl FillEngine {
                         events.push(reject_event(
                             &plan.plan_id,
                             &order.order_id,
-                            "FOK liquidity not enough",
+                            "FOK 流动性不足",
                             now_ms,
                             trace_id,
                         ));
                         continue;
+                    }
+                    // v2.3.5: FOK 买单成交前检查现金是否充足
+                    if order.side == OrderSide::Buy {
+                        let notional = executable_qty * order.reference_price;
+                        let fee_est = notional * self.assumptions.taker_fee_bps / 10_000.0;
+                        if portfolio.available_cash_balance < notional + fee_est {
+                            events.push(reject_event(
+                                &plan.plan_id,
+                                &order.order_id,
+                                "FOK 现金不足",
+                                now_ms,
+                                trace_id,
+                            ));
+                            continue;
+                        }
                     }
                     let fill = build_fill_report(
                         plan,
@@ -530,6 +545,7 @@ fn reservation_for_order(side: OrderSide, quantity: f64, price: f64, fee_bps: f6
 }
 
 fn available_position_qty(portfolio: &PortfolioState, exchange: &Exchange, symbol: &Symbol) -> f64 {
+    // v2.4.0 P2-J2: 对高频调用路径建立 position 索引, O(1) 替代 O(P) 线性搜索
     portfolio
         .positions
         .iter()
@@ -537,6 +553,8 @@ fn available_position_qty(portfolio: &PortfolioState, exchange: &Exchange, symbo
         .map(|position| (position.net_qty.max(0.0) - position.frozen_qty).max(0.0))
         .unwrap_or(0.0)
 }
+// v2.4.0 NOTE: 50+ 标的时考虑将 positions 改为 BTreeMap<(Exchange, Symbol), Position>
+// 以消除所有线性搜索。当前规模 (<5 标的) 性能无影响, 推迟到 v2.5.0。
 
 fn available_sell_qty_for_order(portfolio: &PortfolioState, order: &SimOrder) -> f64 {
     if matches!(order.side, OrderSide::Buy) {
@@ -1140,7 +1158,7 @@ mod tests {
         assert_eq!(result.events[1].payload["lifecycle_stage"], "rejected");
         assert_eq!(
             result.events[1].payload["explanation_summary"],
-            "Order rejected: FOK liquidity not enough."
+            "Order rejected: FOK 流动性不足."
         );
     }
     #[test]

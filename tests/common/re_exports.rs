@@ -1,6 +1,10 @@
-// v0.5.2 S0-1: 将 include!() 中 src/ 文件引用的 crate:: 模块暴露到集成测试 crate root。
-// 每个集成测试文件在 mod common; 之后 include! 本文件。
-pub use common::backend::credential_vault;
-pub use common::backend::storage_lifecycle;
-pub use common::backend::safe_log;
-pub use common::backend::app_runtime_helpers;
+// v3.5.0: 使用 library crate 代替 include!("../../src/main.rs")
+// 各模块现通过 quantpilot::* 路径访问
+pub use quantpilot::compile_api;
+pub use quantpilot::credential_vault;
+pub use quantpilot::migration_sender;
+pub use quantpilot::storage_lifecycle;
+pub use quantpilot::safe_log;
+pub use quantpilot::app_runtime_helpers;
+pub use quantpilot::runtime_persistence;
+pub use quantpilot::runtime_validation;

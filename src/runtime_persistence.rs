@@ -10,12 +10,23 @@ macro_rules! check_storage_quota {
     };
 }
 
-pub(super) async fn atomic_write_json(path: &FsPath, value: &impl serde::Serialize) -> std::io::Result<()> {
+pub(crate) async fn atomic_write_json(path: &FsPath, value: &impl serde::Serialize) -> std::io::Result<()> {
     let tmp = path.with_extension("tmp");
     let json = serde_json::to_string_pretty(value)
         .map_err(|error| std::io::Error::other(error.to_string()))?;
     fs::write(&tmp, json).await?;
-    fs::rename(&tmp, path).await
+    // fsync tmp 文件确保数据落盘后再 rename
+    if let Ok(f) = tokio::fs::File::open(&tmp).await {
+        let _ = f.sync_all().await;
+    }
+    fs::rename(&tmp, path).await?;
+    // fsync 父目录确保 rename 落盘
+    if let Some(parent) = path.parent() {
+        if let Ok(f) = tokio::fs::File::open(parent).await {
+            let _ = f.sync_all().await;
+        }
+    }
+    Ok(())
 }
 
 pub(super) async fn persist_run_record(
@@ -46,7 +57,7 @@ pub(super) async fn persist_experiment_record(
     atomic_write_json(&path, record).await
 }
 
-pub(super) fn sanitize_storage_path_segment(value: &str) -> String {
+pub(crate) fn sanitize_storage_path_segment(value: &str) -> String {
     // v1.1.11: 同时过滤 / 和 \（Windows路径分隔符）
     value
         .chars()

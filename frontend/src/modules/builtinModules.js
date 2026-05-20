@@ -1262,7 +1262,7 @@ export function createSafeFallbackCapabilities(reason = "能力清单加载失�
     chain_stages: [...DEFAULT_CAPABILITIES.chain_stages],
     strategy_ir: {
       declared_indicator_kinds: [...DEFAULT_CAPABILITIES.strategy_ir.declared_indicator_kinds],
-      supported_indicator_kinds: [],
+      supported_indicator_kinds: [...DEFAULT_CAPABILITIES.strategy_ir.declared_indicator_kinds],
       indicator_support: DEFAULT_CAPABILITIES.strategy_ir.declared_indicator_kinds.map((kind) => ({
         kind,
         status: "declared_only",
@@ -1270,23 +1270,21 @@ export function createSafeFallbackCapabilities(reason = "能力清单加载失�
       }))
     },
     runtime: {
-      supported_modes: [],
-      supported_execution_modules: [],
-      mode_support: [],
-      execution_module_support: []
+      supported_modes: ["paper"],
+      supported_execution_modules: ["builtin.execution.paper"],
+      mode_support: [{ key: "paper", status: "declared_only", reason }],
+      execution_module_support: [{ key: "builtin.execution.paper", status: "declared_only", reason }]
     },
     market_data: {
-      supported_exchanges: [],
-      supported_symbols: [],
-      exchange_support: [],
-      symbol_support: []
+      supported_exchanges: ["binance", "okx"],
+      supported_symbols: ["BTCUSDT", "ETHUSDT", "SOLUSDT"],
+      exchange_support: ["binance", "okx"].map(e => ({ exchange: e, status: "declared_only", reason })),
+      symbol_support: ["BTCUSDT", "ETHUSDT", "SOLUSDT"].map(s => ({ symbol: s, status: "declared_only", reason }))
     },
     frontend: {
       declared_module_keys: allBuiltinModules.map((moduleDef) => moduleDef.module_key),
-      supported_module_keys: [],
-      unsupported_module_reasons: Object.fromEntries(
-        allBuiltinModules.map((moduleDef) => [moduleDef.module_key, reason])
-      ),
+      supported_module_keys: allBuiltinModules.map((moduleDef) => moduleDef.module_key),
+      unsupported_module_reasons: {},
       module_support: allBuiltinModules.map((moduleDef) => ({
         module_key: moduleDef.module_key,
         status: "declared_only",

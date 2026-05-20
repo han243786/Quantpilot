@@ -45,10 +45,11 @@ async fn create_experiment(
         execution_planned_rate_per_min: 4.0,
     };
 
+    const DEFAULT_CHAOS_MAX_DURATION_MS: u64 = 10_000;
     let max_duration_ms: u64 = std::env::var("QUANTPILOT_CHAOS_MAX_DURATION_MS")
         .ok()
         .and_then(|v| v.parse().ok())
-        .unwrap_or(10000);
+        .unwrap_or(DEFAULT_CHAOS_MAX_DURATION_MS);
 
     // 执行实际扰动
     match request.experiment_type {
@@ -240,14 +241,10 @@ async fn persist_chaos_report(
     crate::storage_lifecycle::ensure_storage_quota(
         std::path::Path::new("storage"), "chaos", crate::storage_lifecycle::StorageLifecycle::Transient,
     )?;
-    let json = serde_json::to_vec_pretty(report)?;
     fs::create_dir_all(&store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", report.experiment_id));
-    // v1.1.2: 原子写入防止混沌实验报告损坏
-    let tmp = file_path.with_extension("tmp");
-    fs::write(&tmp, &json).await?;
-    fs::rename(&tmp, &file_path).await?;
-    Ok(())
+    // v2.3.3: 使用统一原子写入 (含 fsync)
+    crate::runtime_persistence::atomic_write_json(&file_path, report).await
 }
 
 async fn load_chaos_report_from_disk(

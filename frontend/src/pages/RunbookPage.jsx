@@ -49,7 +49,10 @@ export default function RunbookPage() {
       {loading && <div className="qp-loading">{t("加载场景数据...")}</div>}
 
       {!loading && !error && scenarios.length === 0 && (
-        <div className="qp-empty">{t("暂无故障场景数据")}</div>
+        <div className="qp-empty">
+          <div>{t("暂无故障场景数据")}</div>
+          <div className="muted-line" style={{ marginTop: 8 }}>{t("部署策略运行后故障场景数据将自动生成。")}</div>
+        </div>
       )}
 
       {!loading &&

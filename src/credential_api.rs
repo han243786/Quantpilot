@@ -13,13 +13,28 @@ pub(super) fn register_credential_routes(router: Router<AppState>) -> Router<App
         .route("/api/credentials/{service}", delete(delete_credential))
 }
 
+/// v2.3.3: 按用户隔离凭证 — vault key 格式为 `{user_id}:{service}`
+fn scoped_cv_key(user_id: &UserId, service: &str) -> String {
+    format!("{}:{}", user_id.0, service)
+}
+
+fn unscoped_services_for(vault: &super::credential_vault::CredentialVault, user_id: &UserId) -> Vec<String> {
+    let prefix = format!("{}:", user_id.0);
+    vault.list_services()
+        .into_iter()
+        .filter(|s| s.starts_with(&prefix))
+        .map(|s| s[prefix.len()..].to_string())
+        .collect()
+}
+
 /// GET /api/credentials → { "services": ["okx", "binance"] }
 async fn list_credentials(
+    user_id: auth::UserId,
     State(state): State<AppState>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
     match &state.credential_vault {
         Some(vault) => {
-            let services = vault.list_services();
+            let services = unscoped_services_for(vault, &user_id);
             Ok(Json(serde_json::json!({ "services": services })))
         }
         None => Err((
@@ -69,11 +84,11 @@ async fn set_credential(
         fields.insert(k.clone(), val);
     }
 
+    let scoped_key = scoped_cv_key(&user_id, service);
     vault
-        .set_service(service, fields)
+        .set_service(&scoped_key, fields)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, format!("凭证存储失败: {}", e)))?;
 
-    // v2.0.1: 凭证操作审计日志
     safe_eprintln!("[audit] 用户 {} 设置凭证 service={}", user_id.0, service);
 
     Ok(Json(serde_json::json!({ "stored": service })))
@@ -93,7 +108,8 @@ async fn delete_credential(
         .as_ref()
         .ok_or_else(|| (StatusCode::SERVICE_UNAVAILABLE, "凭证保险库未初始化".to_string()))?;
 
-    vault.delete_service(&service).map_err(|e| {
+    let scoped_key = scoped_cv_key(&user_id, &service);
+    vault.delete_service(&scoped_key).map_err(|e| {
         if e.to_string().contains("不存在") {
             (StatusCode::NOT_FOUND, format!("标签 '{}' 不存在", service))
         } else {
@@ -104,7 +120,6 @@ async fn delete_credential(
         }
     })?;
 
-    // v2.0.1: 凭证操作审计日志
     safe_eprintln!("[audit] 用户 {} 删除凭证 service={}", user_id.0, service);
 
     Ok(Json(serde_json::json!({ "deleted": service })))

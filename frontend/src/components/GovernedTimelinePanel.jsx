@@ -126,7 +126,10 @@ export default function GovernedTimelinePanel({
       </div>
 
       {timeline.length === 0 ? (
-        <div className="muted-line">当前还没有可展示的 governed timeline。</div>
+        <div>
+          <div className="muted-line">当前还没有可展示的 governed timeline。</div>
+          <div className="muted-line" style={{ marginTop: 4, fontSize: 12 }}>启动模拟或加载回测结果后可查看治理时间线。</div>
+        </div>
       ) : null}
 
       {groupedTimeline.map(([stage, items]) => (

@@ -538,3 +538,6 @@ The next step is frontend consumption:
 1. broader frontend interaction and quick-edit affordances
 2. richer pool-feature population once pool semantics move beyond helper-only extraction
 3. more stable failed-compile best-effort coverage beyond current successful parse/resolve cases
+
+---
+> 文档版本: v3.7.0 | 最后更新: 2026-05-21 | QuantPilot v3.7.0

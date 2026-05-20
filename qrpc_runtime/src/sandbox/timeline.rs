@@ -1,4 +1,6 @@
+// v3.5.0: K线/报价提供者中的部分方法是公开API预留接口, 保留供未来使用
 #![allow(dead_code)]
+
 use anyhow::{anyhow, Result};
 use qrpc_core::{DataKind, DataSourceConfig, KlineSeriesSnapshot, NormalizedKline, NormalizedMarketData, QuoteSnapshot};
 use std::collections::BTreeSet;

@@ -1,8 +1,12 @@
 # QuantPilot API 参考
 
-> **⚠️ 已过时 (v0.4.2)** | 本文档长期未更新，字段名和端点列表与当前版本(v1.x)不一致。
-> **请使用 `contracts/openapi/root.yaml` 作为 API 的单一真相来源。**
-> 本文档保留仅供历史参考，将在 v1.2.0 移除。
+> **⚠️ 已废弃 (v2.3.3)** | 本文档自 v0.4.2 起未更新，端点列表严重不完整。
+> **请使用以下权威来源：**
+> - `contracts/openapi/root.yaml` — API 契约的单一真相来源
+> - `markdown/10-overview/overview-system-architecture.md#十api-参考完整` — 最新完整 API 参考 (含全部 50+ 端点)
+> - `src/error_codes.rs` — 当前全部错误码定义 (v2.3.0+ 41个 ERR_* 码)
+>
+> 本文档保留仅供历史参考，计划在 v2.4.0 移除。
 
 ---
 

@@ -7,7 +7,12 @@ const TEMPLATE_LIBRARY_NOTE =
 export default function StrategyHubTemplateLibrarySection({ model }) {
   const [activeTemplateId, setActiveTemplateId] = useState("");
   const [error, setError] = useState("");
-  const [isExpanded, setIsExpanded] = useState(false);
+  // v3.6.0 U5: 首次访问默认展开模板库
+  const [isExpanded, setIsExpanded] = useState(() => {
+    if (localStorage.getItem("quantpilot_template_visited")) return false;
+    localStorage.setItem("quantpilot_template_visited", "1");
+    return true;
+  });
   const templates = Array.isArray(model.templateLibrary) ? model.templateLibrary : [];
 
   async function handleApplyTemplate(templateId) {

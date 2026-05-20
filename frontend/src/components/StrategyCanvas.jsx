@@ -1,6 +1,7 @@
 import {
   Suspense,
   lazy,
+  memo,
   startTransition,
   useCallback,
   useEffect,
@@ -443,7 +444,7 @@ function canvasFocusState(graph, selectedNodeId, focusMode) {
   };
 }
 
-export default function StrategyCanvas({
+const StrategyCanvas = memo(function StrategyCanvas({
   focusMode: controlledFocusMode = null,
   onFocusModeChange = null,
   workspaceContext = null,
@@ -452,6 +453,18 @@ export default function StrategyCanvas({
   const graph = useGraphStore((state) => state.graph);
   const selectedNodeId = useGraphStore((state) => state.selectedNodeId);
   const setSelectedNode = useGraphStore((state) => state.setSelectedNode);
+  // v2.4.0 P1-J3: 节点上限保护, 防止恶意/损坏的图导致浏览器卡死
+  const MAX_CANVAS_NODES = 1000;
+  if (graph.nodes && graph.nodes.length > MAX_CANVAS_NODES) {
+    return (
+      <section className="canvas-viewport canvas-error-viewport">
+        <div className="canvas-error-state">
+          <p>节点数量 ({graph.nodes.length}) 超过上限 ({MAX_CANVAS_NODES})，无法渲染画布。</p>
+          <p>请减少策略图中的节点数后重新打开。</p>
+        </div>
+      </section>
+    );
+  }
   const [localFocusMode, setLocalFocusMode] = useState("selected");
   const focusMode = controlledFocusMode || localFocusMode;
   const handleFocusModeChange = onFocusModeChange || setLocalFocusMode;
@@ -788,4 +801,6 @@ export default function StrategyCanvas({
       </div>
     </section>
   );
-}
+});
+
+export default StrategyCanvas;

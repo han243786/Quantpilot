@@ -4,9 +4,12 @@ import { runtimeStatusLabel } from "../utils/runtimeStatus";
 import { useWorkspaceActionBarModel } from "../hooks/useWorkspaceActionBarModel";
 import { triggerTutorial } from "../hooks/useTutorial";
 import { OkxCredentialInput } from "./CredentialInput";
+import DeployButton from "./DeployButton";
 import { API_BASE } from "../utils/api";
+import { useGraphStore } from "../store/graphStore";
 
 function ToolbarNotices({ capabilityAlert, notice, setNotice }) {
+  const { t } = useI18n();
   return (
     <>
       {capabilityAlert ? (
@@ -108,9 +111,11 @@ function DefaultToolbarLayout({
   capabilitySyncBlocked,
   capabilityMessage,
   saving,
-  onOpenCredentials
+  onOpenCredentials,
+  isCompiling
 }) {
   const { t } = useI18n();
+  const isBusy = runtime.status === "running" || runtime.status === "backtesting";
   return (
     <>
       <div className="top-toolbar-main">
@@ -181,7 +186,7 @@ function DefaultToolbarLayout({
             {formalCompileSourceMeta.text}
           </div>
           <div className={`runtime-pill ${runtimeMeta.tone}`}>
-            运行时：{runtimeStatusLabel(runtime.status)}
+            {isBusy ? (runtime.status === "running" ? t("模拟中...") : t("回测中...")) : `运行时：${runtimeStatusLabel(runtime.status)}`}
           </div>
         </div>
 
@@ -190,28 +195,28 @@ function DefaultToolbarLayout({
             className="ghost-btn"
             data-testid="toolbar-compile-action"
             onClick={() => handleCompile({ capabilitySyncBlocked, capabilityMessage })}
-            disabled={!canCompile}
+            disabled={!canCompile || isBusy || isCompiling}
             title={compileButtonTitle}
           >
-            编译{issueSummary ? ` (${issueSummary})` : ""}
+            {isCompiling ? t("编译中...") : `编译${issueSummary ? ` (${issueSummary})` : ""}`}
           </button>
           <button
             className="primary-btn"
             data-testid="toolbar-start-runtime-action"
             onClick={() => handleStartRuntime({ graph, capabilitySyncBlocked, capabilityMessage })}
-            disabled={!canStartRuntime}
+            disabled={!canStartRuntime || isBusy}
             title={startSimulationTitle}
           >
-            {t("启动模拟")}
+            {runtime.status === "running" ? t("模拟中...") : t("启动模拟")}
           </button>
           <button
             className="ghost-btn"
             data-testid="toolbar-start-backtest-action"
             onClick={() => handleStartBacktest({ graph, capabilitySyncBlocked, capabilityMessage })}
-            disabled={!canStartBacktest}
+            disabled={!canStartBacktest || isBusy}
             title={runBacktestTitle}
           >
-            {t("运行回测")}
+            {runtime.status === "backtesting" ? t("回测中...") : t("运行回测")}
           </button>
           <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认停止当前模拟？"))) stopRuntime(); }} disabled={!canStopRuntime} data-testid="toolbar-stop-runtime-action">
             {t("停止")}
@@ -219,6 +224,7 @@ function DefaultToolbarLayout({
           <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认重置运行时？运行中的模拟将被中断。"))) resetRuntime(); }} data-testid="toolbar-reset-runtime-action">
             {t("重置运行时")}
           </button>
+          <DeployButton graph={graph} canDeploy={canCompile} />
         </div>
       </div>
 
@@ -275,7 +281,8 @@ function WorkspaceToolbarLayout({
   capabilitySyncBlocked,
   capabilityMessage,
   saving,
-  onOpenCredentials
+  onOpenCredentials,
+  isCompiling
 }) {
   const { t } = useI18n();
   return (
@@ -318,10 +325,10 @@ function WorkspaceToolbarLayout({
             className="ghost-btn"
             data-testid="toolbar-compile-action"
             onClick={() => handleCompile({ capabilitySyncBlocked, capabilityMessage })}
-            disabled={!canCompile}
+            disabled={!canCompile || isCompiling}
             title={compileButtonTitle}
           >
-            编译{issueSummary ? ` (${issueSummary})` : ""}
+            {isCompiling ? "编译中..." : `编译${issueSummary ? ` (${issueSummary})` : ""}`}
           </button>
           <button
             className="primary-btn"
@@ -516,6 +523,8 @@ function CredentialPanel({ onClose }) {
 
 export default function TopToolbar({ variant = "default" }) {
   const model = useWorkspaceActionBarModel();
+  const actionLock = useGraphStore((state) => state.actionLock);
+  const isCompiling = actionLock === "compiling";
   const isWorkspace = variant === "workspace";
   const [saving, setSaving] = useState(false);
   const [showCredentials, setShowCredentials] = useState(false);
@@ -538,9 +547,9 @@ export default function TopToolbar({ variant = "default" }) {
   return (
     <header className={`top-toolbar${isWorkspace ? " top-toolbar--workspace" : ""}`}>
       {isWorkspace ? (
-        <WorkspaceToolbarLayout {...model} saving={saving} onOpenCredentials={() => setShowCredentials(true)} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} />
+        <WorkspaceToolbarLayout {...model} saving={saving} isCompiling={isCompiling} onOpenCredentials={() => setShowCredentials(true)} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} />
       ) : (
-        <DefaultToolbarLayout {...model} saving={saving} onOpenCredentials={() => setShowCredentials(true)} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} />
+        <DefaultToolbarLayout {...model} saving={saving} isCompiling={isCompiling} onOpenCredentials={() => setShowCredentials(true)} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} />
       )}
       {showCredentials ? (
         <CredentialPanel onClose={() => setShowCredentials(false)} />

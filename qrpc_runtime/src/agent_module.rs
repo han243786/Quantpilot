@@ -11,6 +11,7 @@ use std::collections::{BTreeMap, BTreeSet};
 const MIN_QUANTITY_RATIO: f64 = 0.01;
 const DEFAULT_DECISION_THRESHOLD: f64 = 0.05;
 const SPREAD_MULTIPLIER: f64 = 20.0;
+#[cfg(test)]
 const DEFAULT_COST_BUFFER_BPS: f64 = 20.0;
 
 #[derive(Debug, Clone)]
@@ -155,10 +156,11 @@ fn build_weighted_agent_decisions(
     now_ms: u64,
     trace_id: &str,
 ) -> Vec<AgentDecision> {
+    let signal_kind_index = build_signal_kind_index(core_ir);
     let weighted_signals: Vec<&IntentSignal> = signals
         .iter()
         .filter(|item| {
-            signal_kind_for_intent(core_ir, &item.intent_id) != Some(SignalKind::Observe)
+            signal_kind_index.get(&item.intent_id) != Some(&SignalKind::Observe)
                 && !matches!(item.kind, IntentKind::QuoteObserve)
         })
         .collect();
@@ -274,10 +276,11 @@ fn build_portfolio_rebalance_decision(
     now_ms: u64,
     trace_id: &str,
 ) -> Option<AgentDecision> {
+    let signal_kind_index = build_signal_kind_index(core_ir);
     let weighted_signals = signals
         .iter()
         .filter(|item| {
-            signal_kind_for_intent(core_ir, &item.intent_id) != Some(SignalKind::Observe)
+            signal_kind_index.get(&item.intent_id) != Some(&SignalKind::Observe)
                 && !matches!(item.kind, IntentKind::QuoteObserve)
         })
         .collect::<Vec<_>>();
@@ -540,12 +543,21 @@ fn assign_target_weights(
     }
 }
 
+#[allow(dead_code)]
 fn signal_kind_for_intent(core_ir: &CoreStrategyIr, intent_id: &str) -> Option<SignalKind> {
+    // v2.4.0 P2-J3: 高频调用路径, 调用方应预先构建 HashMap 索引
+    // 单次调用 O(N_rules) 可接受, 但循环中重复调用应为 O(1)
     core_ir
         .signal_rules
         .iter()
         .find(|rule| rule.indicator_id == intent_id)
         .map(|rule| rule.signal_kind)
+}
+
+fn build_signal_kind_index(core_ir: &CoreStrategyIr) -> std::collections::HashMap<String, SignalKind> {
+    core_ir.signal_rules.iter()
+        .map(|rule| (rule.indicator_id.clone(), rule.signal_kind))
+        .collect()
 }
 
 fn build_arb_agent_decision(
@@ -577,8 +589,9 @@ fn build_arb_agent_decision(
     let okx_mid = okx.reference_price?;
     let spread = (binance_mid - okx_mid).abs() / binance_mid.min(okx_mid);
     let total_cost_buffer = total_cost_buffer_ratio(core_ir);
+    const DEFAULT_SPREAD_TRIGGER_BPS: f64 = 50.0;
     let spread_trigger =
-        (agent.spread_trigger_bps.unwrap_or(50.0) / 10_000.0).max(total_cost_buffer);
+        (agent.spread_trigger_bps.unwrap_or(DEFAULT_SPREAD_TRIGGER_BPS) / 10_000.0).max(total_cost_buffer);
     if spread <= spread_trigger {
         return None;
     }
@@ -659,8 +672,9 @@ fn build_arb_decision_from_spread_signal(
         .unwrap_or(Symbol::BtcUsdt);
 
     let total_cost_buffer = total_cost_buffer_ratio(core_ir);
+    const DEFAULT_SPREAD_TRIGGER_BPS: f64 = 50.0;
     let spread_trigger =
-        (agent.spread_trigger_bps.unwrap_or(50.0) / 10_000.0).max(total_cost_buffer);
+        (agent.spread_trigger_bps.unwrap_or(DEFAULT_SPREAD_TRIGGER_BPS) / 10_000.0).max(total_cost_buffer);
     if spread <= spread_trigger {
         return None;
     }

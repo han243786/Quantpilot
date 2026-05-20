@@ -267,7 +267,9 @@ fn build_explanation_rows(event_type: &str, payload: &Value) -> Vec<RuntimeDiagn
                 }
             }
         }
-        _ => {}
+        _ => {
+            safe_eprintln!("[diagnostics] 未知运行时事件类型，无法映射到前端格式");
+        }
     }
 
     rows

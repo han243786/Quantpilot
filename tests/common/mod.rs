@@ -8,14 +8,13 @@ use std::{
 };
 
 pub(crate) mod backend {
-    include!("../../src/main.rs");
-
+    // v3.5.0: 使用 library crate 代替 include!("../../src/main.rs")
     pub fn test_app_router(
         graph_store_dir: std::path::PathBuf,
         run_store_dir: std::path::PathBuf,
         backtest_store_dir: std::path::PathBuf,
     ) -> axum::Router {
-        build_app_router(new_app_state(
+        quantpilot::build_app_router(quantpilot::new_app_state(
             graph_store_dir,
             run_store_dir,
             backtest_store_dir,

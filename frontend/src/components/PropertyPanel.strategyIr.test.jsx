@@ -110,7 +110,7 @@ describe("PropertyPanel Strategy IR focus", () => {
     render(<PropertyPanel />);
 
     const card = screen.getByTestId("strategy-ir-editor-card");
-    const editor = screen.getByLabelText("Strategy IR JSON");
+    const editor = screen.getByLabelText("策略中间表示 JSON");
     expect(card).toContainElement(editor);
     expect(screen.getByTestId("strategy-ir-focus-target")).toHaveTextContent(
       "custom_signal.params.custom_expr"

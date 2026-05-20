@@ -189,6 +189,10 @@ fn compute_step_returns(equity_curve: &[BacktestEquityPoint]) -> Vec<f64> {
     for window in equity_curve.windows(2) {
         let prev = window[0].equity.max(f64::MIN_POSITIVE);
         let curr = window[1].equity;
+        // v2.4.0 P1-C2: 拒绝 NaN/Inf 毒化下游指标
+        if !curr.is_finite() {
+            return Vec::new();
+        }
         returns.push((curr - prev) / prev);
     }
     returns

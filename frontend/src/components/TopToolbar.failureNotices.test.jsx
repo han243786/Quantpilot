@@ -91,7 +91,7 @@ describe("TopToolbar failure notices", () => {
     });
 
     expect(screen.getByRole("status")).toHaveTextContent(
-      "原因：Runtime compile rejected the generated output 后续：检查 structured compile diagnostics，并确认 Strategy IR 仅作语义预检、最终可运行结果仍以 /api/runtime/compile 输出为准关闭"
+      "原因：Runtime compile rejected the generated output 后续：检查编译诊断信息，确认策略图节点配置完整且参数有效后重新编译关闭"
     );
   });
 

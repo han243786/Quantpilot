@@ -36,7 +36,8 @@ function parseScalar(value) {
   if ((trimmed.startsWith("\"") && trimmed.endsWith("\"")) || (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
     try {
       return JSON.parse(trimmed.replace(/^'/, '"').replace(/'$/, '"'));
-    } catch {
+    } catch (e) {
+      console.warn("quantscript: parseScalar failed", e);
       return trimmed.slice(1, -1);
     }
   }
@@ -62,7 +63,8 @@ function cloneJson(value, fallback) {
   if (value === undefined) return fallback;
   try {
     return JSON.parse(JSON.stringify(value));
-  } catch {
+  } catch (e) {
+    console.warn("quantscript: cloneJson failed", e);
     return fallback;
   }
 }
@@ -359,6 +361,9 @@ function buildQuantScriptLabelTargets(graph) {
   return targets;
 }
 
+// v2.4.0 G7: 此函数仅为前端本地近似, 编译后以 backendCompile.runtime_targets 为准。
+// formalNodeIdentifier 的 sanitize 逻辑可能与后端 sanitize_quantscript_runtime_id 略有差异,
+// 运行时事件映射统一使用后端返回的 CompileRuntimeTargets。
 function buildQuantScriptRuntimeTargets(graph) {
   const runtimeNode = (graph.nodes || []).find((node) => node.type === "runtime");
   const executionNode = (graph.nodes || []).find((node) => node.type === "execution");

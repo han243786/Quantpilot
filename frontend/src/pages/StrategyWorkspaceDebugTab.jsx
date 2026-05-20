@@ -54,7 +54,7 @@ export default function StrategyWorkspaceDebugTab({ debugBars }) {
       <div className="property-card workspace-debug-empty">
         <p>暂无调试数据。</p>
         <p style={{ fontSize: "13px" }}>
-          在 QS 策略中添加 <code>@debug(var1, var2)</code> 指令后运行回测即可看到 per-bar 数据。
+          在 QuantScript 策略中添加 <code>@debug(var1, var2)</code> 指令后运行回测即可看到 per-bar 数据。
         </p>
       </div>
     );

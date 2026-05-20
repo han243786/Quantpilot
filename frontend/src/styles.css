@@ -1221,7 +1221,8 @@ select {
 .quantpilot-flow .quantpilot-minimap-grid {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+  /* v2.3.3: 使用纯色背景替代 radial-gradient (GP §8.3) */
+  background-color: rgba(255,255,255,0.02);
   background-size: 24px 24px;
   opacity: 0.3;
   pointer-events: none;
@@ -1476,6 +1477,25 @@ select {
   color: var(--ad-warning);
 }
 
+/* v2.5.0 P2-5: 价格涌动效果 — data 节点 DOM 覆盖层 */
+.ticker-price-overlay {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  border-radius: 0 var(--ad-radius-md) 0 var(--ad-radius-sm);
+  background: rgba(0, 0, 0, 0.55);
+  color: #7dd3fc;
+  pointer-events: none;
+  z-index: 5;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
 .port-handle {
   width: 9px;
   height: 9px;
@@ -1664,10 +1684,9 @@ select {
   height: 26px;
   border-radius: var(--ad-radius-sm);
   flex: 0 0 auto;
-  background: conic-gradient(
-    rgba(143, 220, 248, 0.96) var(--progress-deg)
-    rgba(143, 220, 248, 0.16) 0deg
-  );
+  /* v2.4.0: 替换 conic-gradient 为纯色背景 (GP §8.3).
+     进度环效果改用 box-shadow inset 模拟, --progress-deg 控制填充度 */
+  background: rgba(143, 220, 248, 0.12);
 }
 
 .strategy-card-note__pin-progress::after {
@@ -2906,6 +2925,36 @@ select {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+/* ── P2-6: Order entry + fill animations ── */
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes flashGreen {
+  from {
+    background-color: rgba(0, 200, 0, 0.15);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.order--entering {
+  animation: slideIn 300ms ease-out forwards;
+}
+
+.order--flash {
+  animation: flashGreen 500ms ease-out forwards;
 }
 
 @keyframes panel-shimmer {
@@ -4218,6 +4267,8 @@ textarea:focus-visible
   .backtest-history-card
   .run-history-card
   .open-orders-card
+  .order--entering
+  .order--flash
   .asset-chart-frame
   .account-metric-card
   .property-card
@@ -4226,6 +4277,12 @@ textarea:focus-visible
   .asset-stat-chip {
     animation: none;
   }
+
+/* v3.5.1: RuntimeMutationPanel 辅助类 */
+.mini-list { display: flex; flex-direction: column; gap: 6px; }
+.history-note { padding: 8px 12px; background: rgba(255,193,7,0.08); border-left: 3px solid var(--ad-warning, #ffc107); border-radius: 0 4px 4px 0; font-size: var(--ad-font-size-xs); color: var(--ad-text-secondary); }
+.history-note-warning { border-left-color: var(--ad-error, #f44336); background: rgba(244,67,54,0.08); }
+.inline-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
   .primary-btn
   .ghost-btn
@@ -4236,6 +4293,8 @@ textarea:focus-visible
   .event-row
   .collapse-btn
   .open-order-item
+  .order--entering
+  .order--flash
   .account-metric-card
   .asset-stat-chip
   .issue-row
@@ -4469,9 +4528,9 @@ textarea:focus-visible
 .qs-editor-report__header h3 { margin: 0; }
 .qs-editor-report__badge {
   padding: 2px 8px;
-  border-radius: 12px;
+  border-radius: var(--ad-radius-lg);
   font-size: var(--ad-font-size-sm);
-  color: white;
+  color: var(--ad-text);
 }
 .qs-editor-report__graph-id {
   margin-bottom: 12px;

@@ -163,3 +163,6 @@ For cross-sectional work, a practical retained rule is:
 
 Treat anything outside that retained trunk as deferred, even if the parser can
 still read it.
+
+---
+> 文档版本: v3.7.0 | 最后更新: 2026-05-21 | QuantPilot v3.7.0

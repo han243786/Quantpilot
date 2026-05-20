@@ -96,7 +96,7 @@ describe("TopToolbar capability fallback UI", () => {
     expectPrimaryActionsDisabled();
   });
 
-  it("shows cache fallback warning with compile locked for safety", () => {
+  it("shows cache fallback warning with compile allowed (v3.5.0: cache does not block)", () => {
     act(() => {
       useGraphStore.setState({
         capabilityStatus: "degraded",
@@ -111,8 +111,8 @@ describe("TopToolbar capability fallback UI", () => {
     expect(screen.getByTestId("toolbar-capability-alert")).toHaveTextContent(
       /latest cached capability snapshot/i
     );
-    // compile action locked when capability is cache-degraded
-    expect(screen.getByTestId("toolbar-compile-action")).toBeDisabled();
+    // v3.5.0: 缓存/降级模式不再阻断编译
+    expect(screen.getByTestId("toolbar-compile-action")).toBeEnabled();
   });
 
   it("shows syncing banner and locks actions while capabilities are loading", () => {

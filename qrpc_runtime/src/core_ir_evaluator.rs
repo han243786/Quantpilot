@@ -148,9 +148,10 @@ fn evaluate_ma_family(
             .ok_or(CoreIrIndicatorEvaluatorError::InsufficientData)?;
         let entry_ratio = param_or_default(indicator, "entry_ratio", 0.8);
         let threshold = entry_ratio * ma_slow;
-        let triggered = ma_fast >= threshold;
+        let triggered = threshold.is_finite() && threshold > 0.0 && ma_fast >= threshold;
         let strength = if triggered {
-            ((ma_fast / threshold) - 1.0).clamp(0.0, 1.0)
+            let raw = (ma_fast / threshold) - 1.0;
+            if raw.is_finite() { raw.clamp(0.0, 1.0) } else { 0.0 }
         } else {
             0.0
         };
@@ -186,9 +187,10 @@ fn evaluate_ma_family(
             .ok_or(CoreIrIndicatorEvaluatorError::InsufficientData)?;
         let threshold_ratio = param_or_default(indicator, "threshold_ratio", 1.4);
         let threshold = threshold_ratio * ma_baseline;
-        let triggered = ma_fast > threshold;
+        let triggered = threshold.is_finite() && threshold > 0.0 && ma_fast > threshold;
         let strength = if triggered {
-            ((ma_fast / threshold) - 1.0).clamp(0.0, 1.0)
+            let raw = (ma_fast / threshold) - 1.0;
+            if raw.is_finite() { raw.clamp(0.0, 1.0) } else { 0.0 }
         } else {
             0.0
         };
@@ -1592,14 +1594,16 @@ fn scaled_threshold_strength(upper: f64, lower: f64, range: f64) -> f64 {
     if !range.is_finite() || range <= 0.0 {
         return 0.0;
     }
-    ((upper - lower) / range).clamp(0.0, 1.0)
+    let raw = (upper - lower) / range;
+    if !raw.is_finite() { 0.0 } else { raw.clamp(0.0, 1.0) }
 }
 
 fn scaled_ratio_strength(value: f64, reference: f64) -> f64 {
     if reference.abs() <= f64::EPSILON {
         return 0.0;
     }
-    (value / reference.abs()).clamp(0.0, 1.0)
+    let raw = value / reference.abs();
+    if !raw.is_finite() { 0.0 } else { raw.clamp(0.0, 1.0) }
 }
 
 fn ema_series(values: &[f64], period: usize) -> Option<Vec<f64>> {
@@ -1620,12 +1624,15 @@ fn simple_moving_average_series(values: &[f64], period: usize) -> Option<Vec<f64
     if period == 0 || values.len() < period {
         return None;
     }
-    Some(
-        values
-            .windows(period)
-            .map(|window| window.iter().sum::<f64>() / period as f64)
-            .collect(),
-    )
+    // v2.4.0 P2-J1: 滑动窗口 O(N) 替代 O(N*period)
+    let mut result = Vec::with_capacity(values.len() - period + 1);
+    let mut sum: f64 = values[..period].iter().sum();
+    result.push(sum / period as f64);
+    for i in period..values.len() {
+        sum += values[i] - values[i - period];
+        result.push(sum / period as f64);
+    }
+    Some(result)
 }
 
 fn relative_strength_index(
@@ -1646,8 +1653,7 @@ fn relative_strength_index(
     }
 
     let average_tail = |series: &[f64]| -> Option<f64> {
-        let window = series.get(series.len().checked_sub(period)?)?;
-        let _ = window;
+        let _ = series.get(series.len().checked_sub(period)?)?; // v2.5.0: 仅校验边界
         Some(series[series.len() - period..].iter().sum::<f64>() / period as f64)
     };
 
@@ -1755,6 +1761,9 @@ fn true_range(bars: &[NormalizedKline]) -> Option<Vec<f64>> {
 
 fn average_true_range(bars: &[NormalizedKline], period: usize) -> Option<f64> {
     let tr = true_range(bars)?;
+    if period == 0 || tr.len() < period {
+        return None;
+    }
     // v1.3.7: Wilder 平滑 (α=1/N) 替代 EMA，与标准ATR定义一致
     let n = period as f64;
     let mut avg = tr[..period].iter().sum::<f64>() / n;
@@ -2015,7 +2024,7 @@ fn keltner_channel(
     period: usize,
     multiplier: f64,
 ) -> Option<(f64, f64, f64)> {
-    if period == 0 || bars.len() < period {
+    if period == 0 || bars.len() <= period {
         return None;
     }
     let closes: Vec<f64> = bars.iter().map(|b| b.close).collect();

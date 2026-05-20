@@ -2,7 +2,7 @@ use crate::analysis::analyze_script_module;
 use crate::evaluator::normalize_script_module;
 use crate::resolve::lower_script_to_typed_hir;
 use crate::script::{CallArg, Expr, FunctionDecl, Item, ScriptModule, Stmt};
-use anyhow::{anyhow, bail, Result};
+use anyhow::{anyhow, bail, Context, Result};
 use std::collections::BTreeSet;
 use qrpc_core::{
     AgentConfig, RiskConfig, RuntimeProtocolCoreConfig,
@@ -49,7 +49,8 @@ pub fn lower_script_to_runtime_config_with_context(
     module: &ScriptModule,
     context: &LoweringContext,
 ) -> Result<RuntimeProtocolCoreConfig> {
-    let normalized_module = normalize_script_module(module)?;
+    let normalized_module = normalize_script_module(module)
+        .context("QPQSLOW000 脚本标准化失败")?;
     let rebalance_directive = detect_portfolio_rebalance_directive(&normalized_module, context)?;
     let expanded_module = expand_universe_constructs(&normalized_module, context)?;
     let resolved = lower_script_to_typed_hir(&expanded_module);

@@ -10,7 +10,7 @@ describe("buildActionFailureMessage", () => {
         "Runtime compile rejected the generated output.",
         "策略图编译失败。"
       )
-    ).toContain(COMPILE_CONTRACT.runtimeSourceOfTruthLabel);
+    ).toContain("检查编译诊断信息，确认策略图节点配置完整且参数有效后重新编译。");
   });
 
   it("formats simulation failures as reason plus next action", () => {

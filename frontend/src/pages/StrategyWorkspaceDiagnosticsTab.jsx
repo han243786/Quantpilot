@@ -46,7 +46,7 @@ export default function StrategyWorkspaceDiagnosticsTab({
         : source === "runtime"
           ? "运行阻塞"
           : source === "strategy_ir"
-            ? "Strategy IR 诊断"
+            ? "策略中间表示诊断"
             : "Formal QuantScript 诊断",
     note:
       source === "validation"
@@ -54,7 +54,7 @@ export default function StrategyWorkspaceDiagnosticsTab({
         : source === "runtime"
           ? "运行路径上发现的编译或执行阻塞。"
           : source === "strategy_ir"
-            ? "与 Strategy IR 字段或生成过程相关的问题。"
+            ? "与策略中间表示字段或生成过程相关的问题。"
             : "Formal 编写与编译管线内发现的问题。",
     meta: `${issueQueueSourceCounts[source] || 0} 项问题`,
     tone:
@@ -237,7 +237,7 @@ export default function StrategyWorkspaceDiagnosticsTab({
               <strong>{compileSummary.protocol_name || "-"}</strong>
             </div>
             <div className="kv-line">
-              <span>Strategy IR 角色</span>
+              <span>策略中间表示角色</span>
               <strong>{compileSummary.artifact_resolution?.strategy_ir_role_label || "-"}</strong>
             </div>
             <div className="kv-line">

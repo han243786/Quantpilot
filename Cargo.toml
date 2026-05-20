@@ -4,6 +4,7 @@ members = [
     "qrpc_core_ir",
     "qrpc_compiler",
     "qrpc_runtime",
+    "qrpc_session",
     "quantscript",
     "src-tauri",
 ]
@@ -14,7 +15,7 @@ sha2 = "0.10"
 
 [package]
 name = "quantpilot"
-version = "2.3.2"
+version = "3.7.0"
 edition = "2021"
 
 [features]
@@ -33,6 +34,7 @@ qrpc-core = { path = "qrpc_core" }
 qrpc-core-ir = { path = "qrpc_core_ir" }
 qrpc-compiler = { path = "qrpc_compiler" }
 qrpc-runtime = { path = "qrpc_runtime" }
+qrpc-session = { path = "qrpc_session" }
 quantscript = { path = "quantscript" }
 time = { version = "0.3", features = ["macros", "parsing"] }
 ureq = { version = "2", features = ["json", "native-tls"] }
@@ -42,13 +44,22 @@ base64 = "0.22"
 chrono = "0.4"
 hostname = "0.4"
 ring = "0.17"
-zeroize = { version = "1", features = ["zeroize_derive"] }
+zeroize = { version = "1", features = ["zeroize_derive", "serde"] }
 rusqlite = { version = "0.31", features = ["bundled"] }
+# v2.3.4: jwt v10 已知 CVE-2024-46583 (alg混淆)，本项目强制 Algorithm::HS256 不受影响
 jsonwebtoken = "10"
 bcrypt = "0.15"
 dotenvy = "0.15"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "json"] }
 
+# v3.0.0: 实时执行端 WebSocket 客户端
+tokio-tungstenite = { version = "0.24", features = ["native-tls"] }
+
 [dev-dependencies]
 tower = { version = "0.5", features = ["util"] }
+
+# v3.0.0: 执行端独立 binary
+[[bin]]
+name = "executor"
+path = "src-executor/main.rs"

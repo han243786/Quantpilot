@@ -11,6 +11,7 @@ pub(crate) fn json_bad_request(
 }
 
 /// v2.3.0: 带语言中立错误码的错误响应
+#[allow(dead_code)]
 pub(crate) fn json_bad_request_with_code(
     error: &'static str,
     code: &'static str,
@@ -97,3 +98,74 @@ pub(super) fn not_found_io_error(error: std::io::Error) -> (StatusCode, String) 
 
 // v0.4.2 D3: RFC 9457 problem_* 系列已移除。json_bad_request* 为当前标准错误格式。
 // v1.2.0: 统一注释，消除 deprecated 声明与实际使用的矛盾。
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn json_bad_request_returns_400_and_json() {
+        let (status, body) = json_bad_request("test_error", "测试错误消息");
+        assert_eq!(status, StatusCode::BAD_REQUEST);
+        assert!(body.contains("test_error"));
+        assert!(body.contains("测试错误消息"));
+    }
+
+    #[test]
+    fn json_bad_request_with_code_includes_error_code() {
+        let (status, body) = json_bad_request_with_code("test", "ERR_TEST", "带码错误");
+        assert_eq!(status, StatusCode::BAD_REQUEST);
+        assert!(body.contains("ERR_TEST"));
+        assert!(body.contains("error_code"));
+    }
+
+    #[test]
+    fn json_bad_request_with_details_serializes_details_array() {
+        let detail = ApiErrorDetail {
+            code: "QS0001".to_string(),
+            target: Some("graph_id".to_string()),
+            message: "graph_id 不能为空".to_string(),
+            span_label: None,
+            reason: Some("不能为空".to_string()),
+        };
+        let (status, body) = json_bad_request_with_details("validation_error", "校验失败", vec![detail]);
+        assert_eq!(status, StatusCode::BAD_REQUEST);
+        assert!(body.contains("validation_error"));
+        assert!(body.contains("graph_id"));
+        assert!(body.contains("QS0001"));
+    }
+
+    #[test]
+    fn internal_error_returns_500_with_chinese_message() {
+        let error = anyhow::anyhow!("内部测试错误");
+        let (status, body) = internal_error(error);
+        assert_eq!(status, StatusCode::INTERNAL_SERVER_ERROR);
+        assert!(body.contains("内部服务器错误"));
+        // 响应应包含 sanitize 后的简短摘要
+        assert!(!body.contains("RUST_BACKTRACE"));
+    }
+
+    #[test]
+    fn io_error_returns_uniform_message() {
+        let error = std::io::Error::new(std::io::ErrorKind::PermissionDenied, "denied");
+        let (status, body) = io_error(error);
+        assert_eq!(status, StatusCode::INTERNAL_SERVER_ERROR);
+        assert!(body.contains("内部服务器错误"));
+    }
+
+    #[test]
+    fn not_found_io_error_detects_not_found_kind() {
+        let error = std::io::Error::new(std::io::ErrorKind::NotFound, "missing");
+        let (status, body) = not_found_io_error(error);
+        assert_eq!(status, StatusCode::NOT_FOUND);
+        assert!(body.contains("不存在"));
+    }
+
+    #[test]
+    fn not_found_io_error_treats_other_errors_as_internal() {
+        let error = std::io::Error::new(std::io::ErrorKind::BrokenPipe, "pipe");
+        let (status, body) = not_found_io_error(error);
+        assert_eq!(status, StatusCode::INTERNAL_SERVER_ERROR);
+        assert!(body.contains("内部服务器错误"));
+    }
+}

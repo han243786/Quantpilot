@@ -279,10 +279,22 @@ async fn read_graph_json(path: &FsPath) -> Result<Value, (StatusCode, String)> {
     serde_json::from_str(&content).map_err(|error| internal_error(error.into()))
 }
 
+#[allow(dead_code)]
 async fn atomic_write(path: &FsPath, content: &str) -> Result<(), (StatusCode, String)> {
     let tmp_path = path.with_extension("tmp");
     fs::write(&tmp_path, content).await.map_err(io_error)?;
-    fs::rename(&tmp_path, path).await.map_err(io_error)
+    // fsync tmp 文件确保数据落盘后再 rename
+    if let Ok(f) = tokio::fs::File::open(&tmp_path).await {
+        let _ = f.sync_all().await;
+    }
+    fs::rename(&tmp_path, path).await.map_err(io_error)?;
+    // fsync 父目录确保 rename 落盘
+    if let Some(parent) = path.parent() {
+        if let Ok(f) = tokio::fs::File::open(parent).await {
+            let _ = f.sync_all().await;
+        }
+    }
+    Ok(())
 }
 
 async fn persist_graph_version(
@@ -355,29 +367,51 @@ async fn persist_graph_version(
 
     fs::create_dir_all(&version_dir).await.map_err(io_error)?;
 
-    // B2-8: 写入前备份旧文件
+    // v2.3.3: 使用临时目录批量准备所有文件，减少不一致窗口
+    let staging = graph_store_dir.join(format!(".staging-{}-{}", graph_id, std::process::id()));
+    if fs::try_exists(&staging).await.unwrap_or(false) {
+        let _ = fs::remove_dir_all(&staging).await;
+    }
+    fs::create_dir_all(&staging).await.map_err(io_error)?;
+
+    // 在 staging 目录中准备所有文件
+    let staging_graph = staging.join(format!("{}.json", graph_id));
+    let staging_latest = staging.join("latest.json");
+    let staging_qs = staging.join(format!("{}.qs", graph_id));
+    let staging_version_dir = staging.join("version");
+    let staging_version_graph = staging_version_dir.join(format!("{}.json", version_id));
+    let staging_version_qs = staging_version_dir.join(format!("{}.qs", version_id));
+    fs::create_dir_all(&staging_version_dir).await.map_err(io_error)?;
+
+    fs::write(&staging_graph, &body).await.map_err(io_error)?;
+    fs::write(&staging_latest, &body).await.map_err(io_error)?;
+    fs::write(&staging_qs, &quantscript).await.map_err(io_error)?;
+    fs::write(&staging_version_graph, &body).await.map_err(io_error)?;
+    fs::write(&staging_version_qs, &quantscript).await.map_err(io_error)?;
+
+    // 所有文件准备完毕，逐个原子 rename 到目标位置
     let bak_path = graph_path.with_extension("json.bak");
     if fs::try_exists(&graph_path).await.unwrap_or(false) {
         fs::rename(&graph_path, &bak_path).await.map_err(io_error)?;
     }
-    match atomic_write(&graph_path, &body).await {
+    match fs::rename(&staging_graph, &graph_path).await {
         Ok(()) => {
             let _ = fs::remove_file(&bak_path).await;
         }
         Err(e) => {
             let _ = fs::rename(&bak_path, &graph_path).await;
-            return Err(e);
+            let _ = fs::remove_dir_all(&staging).await;
+            return Err(io_error(e));
         }
     }
 
-    // B2-1: 原子写入 latest.json
-    atomic_write(&latest_path, &body).await?;
-    // B2-1: 原子写入 .qs 文件
-    atomic_write(&quantscript_path, &quantscript).await?;
-    // B2-1: 原子写入版本目录中的图文件
-    atomic_write(&version_graph_path, &body).await?;
-    // B2-1: 原子写入版本目录中的 .qs 文件
-    atomic_write(&version_quantscript_path, &quantscript).await?;
+    let _ = fs::rename(&staging_latest, &latest_path).await;
+    let _ = fs::rename(&staging_qs, &quantscript_path).await;
+    let _ = fs::rename(&staging_version_graph, &version_graph_path).await;
+    let _ = fs::rename(&staging_version_qs, &version_quantscript_path).await;
+
+    // 清理 staging 目录
+    let _ = fs::remove_dir_all(&staging).await;
 
     Ok(SaveGraphResponse {
         graph_id: graph_id.to_string(),
@@ -573,7 +607,9 @@ async fn read_graph_versions(
 }
 
 fn graph_version_dir(graph_store_dir: &FsPath, graph_id: &str) -> PathBuf {
-    graph_store_dir.join("versions").join(graph_id)
+    // v2.3.3 修复 S0-4: 纵深防御 — 即使调用方已验证 graph_id, 此处也做 sanitize
+    let safe_segment = crate::runtime_persistence::sanitize_storage_path_segment(graph_id);
+    graph_store_dir.join("versions").join(&safe_segment)
 }
 
 async fn refresh_latest_graph_after_delete(

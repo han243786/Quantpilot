@@ -19,7 +19,7 @@ const ACTION_FAILURE_FALLBACKS = {
 
 const ACTION_FAILURE_NEXT_STEPS = {
   compile:
-    `检查 structured compile diagnostics，并确认 Strategy IR 仅作语义预检、最终可运行结果仍${COMPILE_CONTRACT.runtimeSourceOfTruthLabel}。`,
+    `检查编译诊断信息，确认策略图节点配置完整且参数有效后重新编译。`,
   export_config:
     "检查 compile diagnostics，并确认运行时编译成功后再重新导出 runtime_config。",
   save_graph:

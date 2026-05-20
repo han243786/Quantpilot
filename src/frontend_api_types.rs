@@ -648,7 +648,7 @@ pub(super) struct CompileFormalQuantScriptRequest {
     pub(super) runtime_targets: CompileRuntimeTargets,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub(super) struct CompileCounts {
     pub(super) data_sources: usize,
     pub(super) intent_generators: usize,
@@ -691,7 +691,7 @@ pub(super) struct CompileDiagnostic {
     pub(super) hint: Option<String>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub(super) struct CompileRuntimeResponse {
     pub(super) graph_id: String,
     pub(super) compile_id: String,
@@ -1784,6 +1784,9 @@ pub(super) struct AlertRule {
     pub(super) severity: AlertSeverity,
     pub(super) action: String,
     pub(super) enabled: bool,
+    /// v3.5.0 §9.3: 自动恢复条件 (满足后触发 AlertResolved)
+    #[serde(default)]
+    pub(super) resolve_condition: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]

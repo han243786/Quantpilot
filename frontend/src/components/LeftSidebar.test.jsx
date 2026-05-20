@@ -13,7 +13,7 @@ describe("LeftSidebar", () => {
 
   it("renders all 7 navigation items", () => {
     render(<LeftSidebar />);
-    const items = ["策略", "QS", "审批", "告警", "快照", "故障手册", "混沌"];
+    const items = ["策略", "QuantScript", "审批", "告警", "快照", "故障手册", "混沌"];
     for (const label of items) {
       expect(screen.getByTitle(label)).toBeTruthy();
     }

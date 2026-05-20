@@ -62,6 +62,8 @@ pub(super) async fn api_key_auth(
     let token = token.trim();
 
     // ── JWT 认证 (token 包含 '.' 则为 JWT) ──
+    // v2.3.3 修复 S0-2: JWT 验证失败直接返回 401, 不再降级到 API Key 认证
+    // 降级路径允许攻击者用过期/伪造 JWT 绕过认证并回退到弱 API Key
     if token.contains('.') {
         match auth::verify_token(token) {
             Ok(user) => {
@@ -70,12 +72,12 @@ pub(super) async fn api_key_auth(
             }
             Err(e) => {
                 safe_eprintln!("[auth] JWT 验证失败: {}", e);
-                // JWT 验证失败时继续尝试 API Key 认证 (向后兼容)
+                return unauthorized_response();
             }
         }
     }
 
-    // ── API Key 认证 (向后兼容, 使用默认用户) ──
+    // ── API Key 认证 (仅非 JWT token 时使用, 向后兼容) ──
     if token == api_key.trim() {
         request.extensions_mut().insert(auth::UserId(0));
         return next.run(request).await;
@@ -388,6 +390,7 @@ mod tests {
 }
 
 /// 辅助函数：在同步测试中运行异步块
+#[allow(dead_code)]
 fn rt_block_on<F: std::future::Future>(f: F) -> F::Output {
     tokio::runtime::Runtime::new().unwrap().block_on(f)
 }

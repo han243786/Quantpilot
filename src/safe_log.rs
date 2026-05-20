@@ -50,6 +50,8 @@ pub fn sanitize_secrets(input: &str) -> String {
         .collect();
 
     let mut result = input.to_string();
+    // v2.5.0 NOTE: to_lowercase() 用于大小写不敏感匹配, 全 ASCII 模式 (api_key 等)
+    // 不会影响 position 索引。如未来添加含 Unicode 的模式需改用 char_indices 遍历。
     for pattern in &all_patterns {
         loop {
             let lower = result.to_lowercase();

@@ -1,0 +1,172 @@
+/* v3.4.0: 执行端设计系统 — 专业暗色面板, 极简大气 */
+:root {
+  --exec-bg: #0a0a0f;
+  --exec-panel: #12121a;
+  --exec-card: #1a1a24;
+  --exec-border: #2a2a3a;
+  --exec-text: #e0e0e0;
+  --exec-text-secondary: #909090;
+  --exec-text-muted: #606060;
+  --exec-accent: #1473e6;
+  --exec-success: #4caf92;
+  --exec-error: #c46666;
+  --exec-warning: #c4a55a;
+  --exec-buy: #26a69a;
+  --exec-sell: #ef5350;
+  --exec-pulse: #ff6f00;
+  --tab-height: 36px;
+  --sidebar-width: 280px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--exec-bg); color: var(--exec-text); font-family: system-ui, -apple-system, sans-serif; font-size: 13px; }
+
+/* App Shell */
+.exec-app { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+/* Top Bar */
+.exec-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 40px; padding: 0 12px; background: var(--exec-panel);
+  border-bottom: 1px solid var(--exec-border); flex-shrink: 0;
+}
+.exec-topbar-brand { font-weight: 700; font-size: 14px; letter-spacing: 0.5px; color: var(--exec-accent); }
+.exec-topbar-actions { display: flex; gap: 8px; align-items: center; }
+.exec-status { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.exec-status-dot { width: 8px; height: 8px; border-radius: 50%; }
+.exec-status-dot.running { background: var(--exec-success); animation: pulse 2s ease-in-out infinite; }
+.exec-status-dot.stopped { background: var(--exec-text-secondary); }
+.exec-status-dot.error { background: var(--exec-error); }
+.exec-status-msg { font-size: 11px; color: var(--exec-warning); margin-left: 8px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.exec-status-err { color: var(--exec-error); }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* Tab Bar */
+.exec-tabbar { display: flex; height: var(--tab-height); background: var(--exec-panel); flex-shrink: 0; border-bottom: 1px solid var(--exec-border); }
+.exec-tab {
+  padding: 0 16px; display: flex; align-items: center; gap: 6px; cursor: pointer;
+  border-bottom: 2px solid transparent; font-size: 12px; color: var(--exec-text-secondary);
+  transition: all 0.15s; white-space: nowrap;
+}
+.exec-tab:hover { color: var(--exec-text); }
+.exec-tab.active { color: var(--exec-accent); border-bottom-color: var(--exec-accent); }
+.exec-tab-add { padding: 0 12px; display: flex; align-items: center; cursor: pointer; color: var(--exec-text-secondary); font-size: 16px; }
+.exec-tab-btn { margin-left: 6px; padding: 0 4px; background: none; border: none; color: var(--exec-text-secondary); cursor: pointer; font-size: 11px; opacity: 0.6; }
+.exec-tab-btn:hover { opacity: 1; color: var(--exec-accent); }
+
+/* Main Layout */
+.exec-main { display: flex; flex: 1; overflow: hidden; }
+
+/* Sidebar */
+.exec-sidebar { width: var(--sidebar-width); background: var(--exec-panel); border-right: 1px solid var(--exec-border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+.exec-sidebar-section { padding: 8px 12px; border-bottom: 1px solid var(--exec-border); }
+.exec-sidebar-title { font-size: 11px; text-transform: uppercase; color: var(--exec-text-secondary); margin-bottom: 6px; letter-spacing: 0.5px; }
+
+/* Order Table */
+.exec-order-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1.2fr; padding: 4px 0; font-size: 12px; gap: 4px; }
+.exec-order-row.buy { color: var(--exec-buy); }
+.exec-order-row.sell { color: var(--exec-sell); }
+.exec-order-status { font-size: 11px; color: var(--exec-text-secondary); }
+
+/* Asset Section */
+.exec-asset-item { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12px; }
+.exec-asset-value { font-weight: 600; }
+
+/* Content Area */
+.exec-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* Strategy Graph Panel */
+.exec-graph-panel { flex: 1; min-height: 0; position: relative; background: var(--exec-card); border-bottom: 1px solid var(--exec-border); }
+.exec-graph-locked-badge { position: absolute; top: 8px; right: 8px; background: var(--exec-panel); border: 1px solid var(--exec-border); padding: 2px 8px; border-radius: 3px; font-size: 10px; color: var(--exec-text-secondary); z-index: 10; }
+.exec-graph-price-overlay { position: absolute; font-size: 11px; font-weight: 600; pointer-events: none; z-index: 5; }
+/* v3.5.0: 实时价格条 */
+.exec-price-ticker { display: flex; gap: 16px; padding: 4px 12px; background: var(--exec-panel); border-bottom: 1px solid var(--exec-border); font-size: 12px; position: absolute; top: 0; left: 0; right: 0; z-index: 6; }
+.exec-price-item { font-family: monospace; color: var(--exec-accent); min-width: 80px; }
+@keyframes trigger-pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,111,0,0.4); } 50% { transform: scale(1.08); box-shadow: 0 0 12px 3px rgba(255,111,0,0.6); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,111,0,0.2); } }
+.exec-graph-node-pulse { animation: trigger-pulse 0.6s ease-out; border: 2px solid var(--exec-pulse) !important; }
+
+/* Kline Panel */
+.exec-kline-panel { height: 320px; background: var(--exec-card); flex-shrink: 0; }
+
+/* Empty State */
+.exec-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--exec-text-secondary); gap: 12px; }
+.exec-empty-icon { font-size: 48px; opacity: 0.3; }
+.exec-empty-text { font-size: 14px; }
+
+/* Button */
+.exec-btn { padding: 5px 14px; border: 1px solid var(--exec-border); background: var(--exec-card); color: var(--exec-text); border-radius: 3px; cursor: pointer; font-size: 12px; transition: all 0.15s; }
+.exec-btn:hover { background: var(--exec-border); }
+.exec-btn.primary { background: var(--exec-accent); border-color: var(--exec-accent); }
+.exec-btn.danger { background: transparent; border-color: var(--exec-error); color: var(--exec-error); }
+.exec-btn.danger:hover { background: var(--exec-error); color: #fff; }
+.exec-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* v3.5.0: Paper/Live 模式切换按钮 */
+.exec-mode-btn { min-width: 90px; font-weight: 600; }
+.exec-mode-btn.paper { background: rgba(0,200,0,0.12); border-color: #4caf50; color: #4caf50; }
+.exec-mode-btn.paper:hover { background: #4caf50; color: #fff; }
+.exec-mode-btn.live { background: rgba(244,67,54,0.12); border-color: #f44336; color: #f44336; }
+.exec-mode-btn.live:hover { background: #f44336; color: #fff; }
+
+/* v3.5.0: 实盘模式确认对话框 */
+.exec-confirm-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center; z-index: 1000;
+}
+.exec-confirm-dialog {
+  background: var(--exec-card); border: 1px solid var(--exec-border);
+  border-radius: 6px; padding: 24px; max-width: 420px; width: 90%;
+}
+.exec-confirm-dialog h3 { margin: 0 0 12px; color: var(--exec-error); }
+.exec-confirm-dialog p { margin: 4px 0; font-size: 14px; color: var(--exec-text); }
+.exec-confirm-warning { color: var(--exec-error); font-weight: 600; }
+.exec-confirm-dialog ul { margin: 8px 0; padding-left: 20px; color: var(--exec-text-muted); font-size: 13px; }
+.exec-confirm-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+
+/* v3.5.0: 策略参数面板 */
+.params-panel { padding: 12px 16px; }
+.params-panel-empty { padding: 24px; text-align: center; color: var(--exec-text-muted); font-size: 13px; }
+.params-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.params-header h3 { margin: 0; font-size: 13px; color: var(--exec-text); }
+.params-status { font-size: 11px; padding: 2px 8px; border-radius: 3px; }
+.params-status--idle { color: var(--exec-text-muted); }
+.params-status--saving { color: #ffa726; }
+.params-status--saved { color: #4caf50; }
+.params-status--error { color: #f44336; }
+.params-fields { display: flex; flex-direction: column; gap: 10px; }
+.param-field { display: flex; flex-direction: column; gap: 4px; }
+.param-label { font-size: 12px; color: var(--exec-text-muted); display: flex; justify-content: space-between; }
+.param-value { color: var(--exec-accent); font-weight: 600; }
+.param-slider-row { display: flex; align-items: center; gap: 8px; }
+.param-slider-row input[type="range"] { flex: 1; accent-color: var(--exec-accent); }
+.param-number-input { width: 70px; background: var(--exec-card); border: 1px solid var(--exec-border); color: var(--exec-text); border-radius: 3px; padding: 2px 6px; font-size: 12px; text-align: right; }
+.param-text-input { background: var(--exec-card); border: 1px solid var(--exec-border); color: var(--exec-text); border-radius: 3px; padding: 4px 8px; font-size: 12px; }
+.param-toggle { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; color: var(--exec-text); }
+.param-toggle input { accent-color: var(--exec-accent); }
+.params-actions { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--exec-border); border-radius: 3px; }
+
+/* v3.2.0: 响应式断点 */
+@media (max-width: 768px) {
+  :root { --sidebar-width: 100%; }
+  .exec-main { flex-direction: column; overflow-y: auto; }
+  .exec-kline-panel { height: 200px; }
+  .exec-tabbar { overflow-x: auto; }
+  .exec-topbar { padding: 0 8px; font-size: 12px; }
+}
+
+@media (max-width: 560px) {
+  .exec-sidebar { display: none; }
+  .exec-kline-panel { height: 160px; }
+  .exec-tab { padding: 0 8px; font-size: 11px; }
+}
+
+/* v3.5.1: 无障碍 — 尊重用户减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .exec-status-dot.running,
+  .exec-graph-node-pulse { animation: none; }
+}

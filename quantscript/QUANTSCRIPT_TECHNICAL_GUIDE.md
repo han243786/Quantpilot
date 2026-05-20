@@ -418,3 +418,6 @@ The frontend can still render the conceptual pipeline as:
 - `Data -> Intent -> Agent -> Risk -> Execution`
 
 But source authoring should remain stable and predictable.
+
+---
+> 文档版本: v3.7.0 | 最后更新: 2026-05-21 | QuantPilot v3.7.0

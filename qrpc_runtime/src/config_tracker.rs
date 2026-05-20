@@ -24,10 +24,12 @@ impl Default for ConfigTracker {
 }
 
 impl ConfigTracker {
+    #[allow(dead_code)]
     pub fn bump_generation(&self) -> u64 {
         self.config_generation.fetch_add(1, Ordering::Relaxed) + 1
     }
 
+    #[allow(dead_code)]
     pub fn current_generation(&self) -> u64 {
         self.config_generation.load(Ordering::Relaxed)
     }

@@ -235,6 +235,8 @@ pub struct ReproducibilityManifest {
     pub compile_artifacts: Option<CompileArtifactBundle>,
     #[serde(default)]
     pub governance: RuntimeGovernanceSnapshot,
+    #[serde(default)]
+    pub actor: Option<ActorIdentity>,
     pub output_artifacts: Vec<ArtifactFileRef>,
     pub backtest_output_digest: ArtifactDigest,
 }
@@ -663,6 +665,7 @@ pub async fn load_backtest_record_from_directory(dir: &Path) -> std::io::Result<
         backtest,
         backtest_spec: manifest.backtest_spec.clone(),
         artifacts: manifest.compile_artifacts.clone(),
+        actor: manifest.actor.clone(),
         backtest_artifacts: Some(BacktestArtifactViews {
             event_log,
             trade_ledger,
@@ -671,7 +674,6 @@ pub async fn load_backtest_record_from_directory(dir: &Path) -> std::io::Result<
             manifest,
         }),
         governance,
-        actor: None,
         degraded,
     })
 }
@@ -1072,6 +1074,7 @@ fn build_reproducibility_manifest(
         backtest_spec: record.backtest_spec.clone(),
         compile_artifacts: record.artifacts.clone(),
         governance: record.governance.clone(),
+        actor: record.actor.clone(),
         output_artifacts: vec![
             artifact_ref(
                 "event_log",
@@ -1745,11 +1748,8 @@ fn artifact_id(prefix: &str, digest: &ArtifactDigest) -> String {
 }
 
 async fn write_json<T: Serialize>(path: PathBuf, value: &T) -> std::io::Result<()> {
-    // v1.1.2: 原子写入 (tmp + rename) 防止断电/崩溃产生半成品文件
-    let tmp = path.with_extension("tmp");
-    let body = serde_json::to_string_pretty(value).map_err(to_io_error)?;
-    fs::write(&tmp, body).await?;
-    fs::rename(&tmp, &path).await
+    // v2.3.3: 使用统一原子写入 (含 fsync)
+    crate::runtime_persistence::atomic_write_json(&path, value).await
 }
 
 async fn read_json<T: for<'de> Deserialize<'de>>(path: PathBuf) -> std::io::Result<T> {

@@ -9,12 +9,9 @@ export default class ErrorBoundary extends React.Component {
   static getDerivedStateFromError() {
     return { hasError: true };
   }
-  componentDidCatch(error, errorInfo) {
-    if (import.meta.env.DEV) {
-      console.error("[ErrorBoundary]", error, errorInfo?.componentStack);
-    } else {
-      console.error("[ErrorBoundary]", error.message);
-    }
+  componentDidCatch(error, _errorInfo) {
+    // 仅输出 error.message，不泄漏组件栈内部结构
+    console.error("[ErrorBoundary]", error.message);
   }
   render() {
     if (this.state.hasError) {

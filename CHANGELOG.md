@@ -1,5 +1,153 @@
 # Changelog
 
+## v3.3.0 — 全量消化 (2026-05-20)
+- session_crypto: 空payload + 损坏密文 2 tests
+- executor_state: RingBuffer capacity=1 + empty latest 2 tests
+- credential_vault encrypt_vault Vec::with_capacity 预分配
+
+## v3.2.2 — 健壮性收敛 (2026-05-20)
+- stop_strategy 从RunnerPool移除runner
+- start_strategy 幂等保护
+- credential_vault .bak崩溃恢复
+- KlinePool MAX_SYMBOLS=100 + LRU淘汰
+- KLINE_POOL_CAPACITY 命名常量
+
+## v3.2.1 — 紧急修复 (2026-05-20)
+- ExecutorApp error状态自动恢复
+- 版本号统一: package.json(2.0→3.2), src-tauri(2.0→3.2), README(v2.3→v3.2)
+- 前端catch{} → console.warn (4处)
+- StrategyGraphPanel EventSource.onerror
+- main.jsx unhandledrejection处理
+
+## v3.2.0 — 性能达标 (2026-05-20)
+- kline_buffers/pending_params BTreeMap→HashMap
+- KlineChart + ExecutorTopBar React.memo
+- 执行端响应式 CSS (768px/560px)
+- live_runner trigger detection 3 tests
+
+## v3.1.0 — 审计闭环 (2026-05-20)
+- StrategyPackage/MigrationPackage/VaultData deny_unknown_fields
+- 版本号 2.5.0→3.1.0
+
+## v3.0.2
+- MAX_STRATEGIES=50 资源上限
+- HTTP状态码: 签名→401, 锁定→423
+- 中文化: salt/nonce/密钥→全中文
+- migration_api QS溯源验证
+
+### v3.0.1
+- credential_vault_v2 .bak备份+回滚
+- audit_log Mutex守卫修复 + fsync
+- RingBuffer Vec→VecDeque O(1)
+- ws_client saturating_mul防溢出
+- kline_buffer NaN/Inf过滤
+- recent_bars 单次迭代优化
+- ExecutorApp catch→error state
+
+## v3.0.0 — 实时执行端 (2026-05-20)
+- 独立进程 Axum :3001
+- WebSocket 直连交易所
+- lightweight-charts K线引擎
+- 策略迁移 (Core IR + graph JSON + 签名)
+- OKX Paper 模拟盘验证
+- 多策略标签页并发
+- 热调参 API
+- 进程间加密 (AES-256-GCM + HMAC)
+- 凭证保险库 v2 (PBKDF2 1M轮)
+- 审计日志
+- GP v3.0 + 超级规范化 v3.0
+
+## v2.5.0 — P2/P3 消化 (进行中, 2026-05-20)
+
+### 序列化安全
+- PortfolioState: deny_unknown_fields + debug_assert_invariants 跨字段一致性检查
+- snapshot_service: 抽取 build_signature_input 共享函数, 消除创建/验证两侧代码重复
+
+### 安全加固
+- 凭证脱敏阈值 8→4, 防止短 API key 日志明文泄漏
+- 存储错误消息去路径化 (仅显示目录名)
+- safe_log to_lowercase() 安全性注释
+
+### 健壮性
+- merge.rs: truncate 前按 net_strength 降序排序, 保留最强信号
+- 启动流程: 13个存储目录并行创建 (tokio::spawn)
+- 后台任务 BTreeMap 淘汰逻辑标注
+- #[ignore] 测试添加文档注释
+- RateLimiter O(n) retain 标注后台清理改进计划
+
+### 代码质量
+- chaos_experiment: 魔法数值 10000→DEFAULT_CHAOS_MAX_DURATION_MS
+- core_ir_evaluator: 清理无用 `let _ = window`
+- frontend: 全局 unhandledrejection 处理
+- graphStorePersistenceHelpers: schema 版本比较注释
+
+### 规范文档
+- General_Policy v3.0: 33条 🛡️/🔍 两层分层
+- 超级规范化 v3.0: 精简三层流水线 + §7.5 元流水线自进化触发条件
+
+## v2.4.0 — 全量 P1 消化 (2026-05-20)
+
+### 代码安全
+- 空头策略敞口计算修复 (净值 = long - short, 替代 abs() 求和)
+- 回测权益曲线 NaN 防护 (is_finite 检查)
+- Mock 波动率 clamp(1e-6, 1.0) 防极端值注入
+- 硬编码默认值提取为具名常量 (DEFAULT_SPREAD_TRIGGER_BPS)
+- LazyLock<Runtime> 全局单例替代重复创建线程池
+- 沙箱验证 catch_unwind + 3次退避重试
+- RateLimiter max_rps=0 拒绝服务防护 (.max(1))
+- Auth 限流器代理检测 (X-Forwarded-For)
+
+### 编译链
+- 运行时目标反序列化失败改为 warn + default
+- Formal QS 编译降级/5xx 回退添加 console.warn
+- 编译 JoinError 提取 panic payload 日志
+- 前后端 ID sanitize 统一: 后端为权威来源, 前端版本标记为近似
+- normalize 错误添加 QPQSLOW000 分类
+
+### 前端性能
+- StrategyCanvas React.memo 包裹 + 节点上限 1000
+- QS 编辑器 maxLength=50000
+- 事件搜索 200ms 防抖
+- SMA 滑动窗口 O(N) 替代 O(N*period)
+- signal_kind HashMap 预索引 O(1) 替代 O(N*M)
+
+### API/安全
+- CSP base-uri 'self'
+- Permissions-Policy 头
+- CORS 拒绝通配符 origin
+- JWT 失败不降级 API Key
+- graph_version_dir 纵深防御 sanitize
+
+### 交互体验
+- 编译/模拟/回测按钮加载状态 (isBusy + 文字反馈)
+- 技术术语替换 (Strategy IR → 自然语言)
+- 通知延长至 5s (错误持久)
+- beforeunload i18n 双语提示
+
+### 测试
+- api_errors: 7 个单元测试
+- storage_lifecycle: 4 个单元测试 (TTL/Lifecycle)
+
+## v2.3.3 — S0 阻断修复 + P1 关键收敛 (2026-05-20)
+
+### S0 阻断 (9/9)
+- 嵌套写锁拆分: approval_records → ai_proposals 死锁修复
+- JWT 失败直接 401, 移除 API Key 降级
+- CORS 拒绝通配符和非 http(s) scheme
+- graph_version_dir 纵深防御 sanitize
+- 未知意图模块键 → anyhow::bail! 明确报错
+- 前端未知意图 → throw Error 替代静默降级 ma_cross
+- RFC-017/018/019 状态同步 ✅→🔄
+- API 参考文档更新废弃声明
+- 支持矩阵死链接修复
+
+### P1 (15/15)
+- 11 处原子写入统一 fsync (atomic_write_json pub(crate))
+- BTreeMap 无界增长: 淘汰逻辑扩展至 11 个 map
+- CSS: radial-gradient 替换, border-radius:12px→var(--ad-radius-lg)
+- 按钮加载状态, 技术术语替换
+- 测试 re-export + pub mod 修复
+
 ## v2.3.x — 错误国际化与架构优化 (2026-05-18)
 
 ### v2.3.2 — 架构优化

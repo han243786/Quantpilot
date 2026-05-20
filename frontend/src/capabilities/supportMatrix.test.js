@@ -179,10 +179,11 @@ describe("support matrix truth source", () => {
     );
   });
 
-  it("blocks risky actions during capability sync, cache fallback, and safe fallback", () => {
+  it("blocks risky actions during loading and safe fallback only", () => {
+    // v3.5.0: 缓存/降级不再阻止模块操作
     expect(isCapabilitySyncBlocked("loading", "remote")).toBe(true);
     expect(isCapabilitySyncBlocked("error", "safe_fallback")).toBe(true);
-    expect(isCapabilitySyncBlocked("degraded", "cache")).toBe(true);
+    expect(isCapabilitySyncBlocked("degraded", "cache")).toBe(false);
     expect(isCapabilitySyncBlocked("ready", "remote")).toBe(false);
   });
 

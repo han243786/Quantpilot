@@ -14,9 +14,9 @@ function severityRank(severity) {
 
 export function diagnosticQueueSource(item) {
   if (item.source === "validation") return "校验";
-  if (item.source === "strategy_ir") return "策略 IR";
+  if (item.source === "strategy_ir") return "策略中间表示";
   if (item.source === "runtime") return "运行时";
-  if (item.source === "formal_quantscript") return "正式 QS";
+  if (item.source === "formal_quantscript") return "正式 QuantScript";
   return "策略图";
 }
 

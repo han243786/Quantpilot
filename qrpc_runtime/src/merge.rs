@@ -350,6 +350,8 @@ impl StrategyMergeEngine {
             }
             if symbol_counts.values().any(|count| *count as f64 > limit) {
                 let max_allowed = (limit * decisions.len() as f64).ceil() as usize;
+                // v2.5.0: 按 net_strength 降序排序后截断, 保留最强信号
+                decisions.sort_by(|a, b| b.net_strength.partial_cmp(&a.net_strength).unwrap_or(std::cmp::Ordering::Equal));
                 decisions.truncate(max_allowed.max(1));
             }
         }

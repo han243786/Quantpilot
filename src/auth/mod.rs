@@ -133,6 +133,21 @@ pub fn init_db(path: &Path) -> Result<Connection, String> {
     conn.execute_batch("PRAGMA journal_mode=WAL;")
         .map_err(|e| format!("无法设置 WAL 模式: {}", e))?;
 
+    // P2-1: 启用外键约束
+    conn.execute_batch("PRAGMA foreign_keys = ON;")
+        .map_err(|e| format!("无法设置外键约束: {}", e))?;
+
+    // v3.5.1: 读取当前 schema 版本号, 为未来迁移提供基线
+    // 未来迁移用 PRAGMA user_version 判断升级路径
+    let current_version: i32 = conn
+        .pragma_query_value(None, "user_version", |row| row.get(0))
+        .map_err(|e| format!("无法读取 schema 版本: {}", e))?;
+
+    if current_version == 0 {
+        conn.execute_batch("PRAGMA user_version = 1;")
+            .map_err(|e| format!("无法设置 schema 版本: {}", e))?;
+    }
+
     conn.execute_batch(
         "CREATE TABLE IF NOT EXISTS users (
             id       INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -142,6 +157,39 @@ pub fn init_db(path: &Path) -> Result<Connection, String> {
         );",
     )
     .map_err(|e| format!("无法创建 users 表: {}", e))?;
+
+    // v3.5.0: 刷新令牌哈希表 (用于轮换检测与重放防御)
+    conn.execute_batch(
+        "CREATE TABLE IF NOT EXISTS refresh_tokens (
+            token_hash TEXT PRIMARY KEY,
+            user_id    INTEGER NOT NULL,
+            family_id  TEXT    NOT NULL,
+            created_at INTEGER NOT NULL,
+            revoked    INTEGER NOT NULL DEFAULT 0,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+
+        CREATE TABLE IF NOT EXISTS revoked_token_families (
+            family_id  TEXT PRIMARY KEY,
+            revoked_at INTEGER NOT NULL
+        );",
+    )
+    .map_err(|e| format!("无法创建 refresh_tokens 表: {}", e))?;
+
+    // P1-8: refresh_tokens 表索引，优化轮换与清理性能
+    conn.execute_batch(
+        "CREATE INDEX IF NOT EXISTS idx_refresh_tokens_family ON refresh_tokens(family_id);
+         CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user ON refresh_tokens(user_id);
+         CREATE INDEX IF NOT EXISTS idx_refresh_tokens_created ON refresh_tokens(created_at);",
+    )
+    .map_err(|e| format!("无法创建 refresh_tokens 索引: {}", e))?;
+
+    // P1-7: 启动时清理 30 天前的过期令牌 (TTL)
+    conn.execute_batch(
+        "DELETE FROM refresh_tokens WHERE created_at < unixepoch() - 2592000;
+         DELETE FROM revoked_token_families WHERE revoked_at < unixepoch() - 2592000;",
+    )
+    .map_err(|e| format!("清理过期令牌失败: {}", e))?;
 
     // 确保默认用户存在 (user_id=0, 仅用于向后兼容, 不可登录)
     conn.execute(
@@ -195,7 +243,8 @@ pub fn register_user(conn: &Connection, username: &str, password: &str) -> Resul
 
 // ── 登录 & JWT 生成 ──
 
-pub fn login_user(conn: &Connection, username: &str, password: &str) -> Result<String, String> {
+/// 从数据库查询用户凭证 (不验证密码)
+fn query_user_credentials(conn: &Connection, username: &str) -> Result<(i64, String, String), String> {
     let mut stmt = conn
         .prepare("SELECT id, username, password_hash FROM users WHERE username = ?1")
         .map_err(|e| format!("数据库查询失败: {}", e))?;
@@ -205,13 +254,34 @@ pub fn login_user(conn: &Connection, username: &str, password: &str) -> Result<S
             Ok((row.get(0)?, row.get(1)?, row.get(2)?))
         });
 
-    let (id, uname, password_hash) = match result {
-        Ok(data) => data,
+    match result {
+        Ok(data) => Ok(data),
         Err(rusqlite::Error::QueryReturnedNoRows) => {
-            return Err("用户名或密码错误".to_string());
+            Err("用户名或密码错误".to_string())
         }
-        Err(e) => return Err(format!("数据库查询失败: {}", e)),
+        Err(e) => Err(format!("数据库查询失败: {}", e)),
+    }
+}
+
+fn generate_jwt(id: i64, username: &str) -> Result<String, String> {
+    let exp = chrono::Utc::now().timestamp() as usize + 86_400; // 24h
+    let claims = Claims {
+        sub: id,
+        username: username.to_string(),
+        exp,
     };
+    jsonwebtoken::encode(
+        &jsonwebtoken::Header::default(),
+        &claims,
+        &jsonwebtoken::EncodingKey::from_secret(jwt_secret_bytes()),
+    )
+    .map_err(|e| format!("生成 token 失败: {}", e))
+}
+
+/// 同步版本: 在非异步上下文中使用 (测试/内部调用)
+/// 注意: 此函数在调用线程中执行 bcrypt, 异步上下文中请使用 login_handler
+pub fn login_user(conn: &Connection, username: &str, password: &str) -> Result<String, String> {
+    let (id, uname, password_hash) = query_user_credentials(conn, username)?;
 
     let valid =
         bcrypt::verify(password, &password_hash).map_err(|e| format!("密码验证失败: {}", e))?;
@@ -220,21 +290,7 @@ pub fn login_user(conn: &Connection, username: &str, password: &str) -> Result<S
         return Err("用户名或密码错误".to_string());
     }
 
-    let exp = chrono::Utc::now().timestamp() as usize + 86_400; // 24h
-    let claims = Claims {
-        sub: id,
-        username: uname,
-        exp,
-    };
-
-    let token = jsonwebtoken::encode(
-        &jsonwebtoken::Header::default(),
-        &claims,
-        &jsonwebtoken::EncodingKey::from_secret(jwt_secret_bytes()),
-    )
-    .map_err(|e| format!("生成 token 失败: {}", e))?;
-
-    Ok(token)
+    generate_jwt(id, &uname)
 }
 
 // ── JWT 验证 ──
@@ -285,24 +341,84 @@ async fn register_handler(
         }
     };
 
-    let db = db.lock().unwrap_or_else(|e| e.into_inner());
-    match register_user(&db, &req.username, &req.password) {
-        Ok(user) => (
-            StatusCode::CREATED,
-            Json(serde_json::json!({
-                "user": user,
-                "message": "注册成功"
-            })),
-        )
-            .into_response(),
-        Err(msg) => (
+    // 提前验证参数 (不需要锁)
+    let username = req.username.trim().to_string();
+    if username.is_empty() {
+        return (
             StatusCode::BAD_REQUEST,
             Json(serde_json::json!({
-                "error": "registration_failed",
-                "message": msg
+                "error": "bad_request",
+                "message": "用户名不能为空"
             })),
-        )
-            .into_response(),
+        ).into_response();
+    }
+    if req.password.len() < 6 {
+        return (
+            StatusCode::BAD_REQUEST,
+            Json(serde_json::json!({
+                "error": "bad_request",
+                "message": "密码长度不能少于 6 位"
+            })),
+        ).into_response();
+    }
+
+    // bcrypt hash 在 spawn_blocking 中执行, 不阻塞 tokio 工作线程
+    let password = req.password.clone();
+    let password_hash = match tokio::task::spawn_blocking(move || {
+        bcrypt::hash(&password, bcrypt::DEFAULT_COST)
+    }).await {
+        Ok(Ok(hash)) => hash,
+        Ok(Err(e)) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({
+                    "error": "internal_error",
+                    "message": format!("密码加密失败: {}", e)
+                })),
+            ).into_response();
+        }
+        Err(_) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({
+                    "error": "internal_error",
+                    "message": "服务内部错误"
+                })),
+            ).into_response();
+        }
+    };
+
+    // 数据库写入 (需要锁, 快速完成)
+    let db = db.lock().unwrap_or_else(|e| e.into_inner());
+    match db.execute(
+        "INSERT INTO users (username, password_hash) VALUES (?1, ?2)",
+        rusqlite::params![username, password_hash],
+    ) {
+        Ok(_) => {
+            let id = db.last_insert_rowid();
+            let user = User { id, username };
+            (
+                StatusCode::CREATED,
+                Json(serde_json::json!({
+                    "user": user,
+                    "message": "注册成功"
+                })),
+            ).into_response()
+        }
+        Err(e) => {
+            let msg = if e.to_string().contains("UNIQUE") {
+                "注册失败，请稍后重试".to_string()
+            } else {
+                format!("注册失败: {}", e)
+            };
+            (
+                StatusCode::BAD_REQUEST,
+                Json(serde_json::json!({
+                    "error": "registration_failed",
+                    "message": msg
+                })),
+            ).into_response()
+        }
     }
 }
 
@@ -324,24 +440,100 @@ async fn login_handler(
         }
     };
 
-    let db = db.lock().unwrap_or_else(|e| e.into_inner());
-    match login_user(&db, &req.username, &req.password) {
-        Ok(token) => {
-            // 从 claims 解码出用户信息
-            let user = verify_token(&token).ok();
-            (
-                StatusCode::OK,
+    // Step 1: 查询用户凭证 (持锁, 快速完成)
+    let (id, uname, password_hash) = {
+        let db = db.lock().unwrap_or_else(|e| e.into_inner());
+        match query_user_credentials(&db, &req.username) {
+            Ok(data) => data,
+            Err(msg) => {
+                return (
+                    StatusCode::UNAUTHORIZED,
+                    Json(serde_json::json!({
+                        "error": "login_failed",
+                        "message": msg
+                    })),
+                )
+                    .into_response();
+            }
+        }
+    }; // 锁释放
+
+    // Step 2: bcrypt 验证在 spawn_blocking 中执行, 不阻塞 tokio 工作线程
+    let password = req.password.clone();
+    let valid = match tokio::task::spawn_blocking(move || {
+        bcrypt::verify(&password, &password_hash)
+    })
+    .await
+    {
+        Ok(Ok(ok)) => ok,
+        Ok(Err(e)) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
                 Json(serde_json::json!({
-                    "token": token,
-                    "user": user
+                    "error": "internal_error",
+                    "message": format!("密码验证失败: {}", e)
                 })),
             )
-                .into_response()
+                .into_response();
         }
-        Err(msg) => (
+        Err(_) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({
+                    "error": "internal_error",
+                    "message": "服务内部错误"
+                })),
+            )
+                .into_response();
+        }
+    };
+
+    if !valid {
+        return (
             StatusCode::UNAUTHORIZED,
             Json(serde_json::json!({
                 "error": "login_failed",
+                "message": "用户名或密码错误"
+            })),
+        )
+            .into_response();
+    }
+
+    // Step 3: 生成 JWT + 刷新令牌
+    match generate_jwt(id, &uname) {
+        Ok(token) => {
+            // 创建刷新令牌 (需要短暂的数据库锁)
+            let refresh_token = {
+                let db = db.lock().unwrap_or_else(|e| e.into_inner());
+                create_refresh_token(&db, id)
+            };
+            match refresh_token {
+                Ok((rt, _family_id)) => {
+                    let user = User { id, username: uname.clone() };
+                    (
+                        StatusCode::OK,
+                        Json(serde_json::json!({
+                            "token": token,
+                            "refresh_token": rt,
+                            "user": user
+                        })),
+                    )
+                        .into_response()
+                }
+                Err(e) => (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({
+                        "error": "token_creation_failed",
+                        "message": e
+                    })),
+                )
+                    .into_response(),
+            }
+        }
+        Err(msg) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({
+                "error": "jwt_error",
                 "message": msg
             })),
         )
@@ -349,37 +541,88 @@ async fn login_handler(
     }
 }
 
-// v2.3.0: JWT 令牌刷新端点
+// v3.5.0: 刷新令牌轮换 + 重放检测
+// 请求体: {"access_token": "...", "refresh_token": "..."}
+// 成功后返回新的 access_token + refresh_token, 旧 refresh_token 立即失效
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RefreshRequest {
+    access_token: String,
+    refresh_token: String,
+}
+
 async fn refresh_handler(
     State(state): State<AppState>,
-    headers: axum::http::HeaderMap,
+    Json(req): Json<RefreshRequest>,
 ) -> impl IntoResponse {
-    let token = headers
-        .get(axum::http::header::AUTHORIZATION)
-        .and_then(|v| v.to_str().ok())
-        .and_then(|v| v.strip_prefix("Bearer "))
-        .unwrap_or("");
+    // Step 1: 验证 access_token (确认用户身份)
+    let user = match verify_token(&req.access_token) {
+        Ok(user) => user,
+        Err(e) => {
+            return (StatusCode::UNAUTHORIZED, Json(serde_json::json!({
+                "error": "token_invalid",
+                "message": e
+            }))).into_response();
+        }
+    };
 
-    if token.is_empty() {
-        return (StatusCode::UNAUTHORIZED, Json(serde_json::json!({
-            "error": "auth_required",
-            "message": "请提供有效的 Bearer token"
-        }))).into_response();
-    }
+    // Step 2: 获取数据库连接
+    let db = match &state.db {
+        Some(db) => db,
+        None => {
+            return (StatusCode::SERVICE_UNAVAILABLE, Json(serde_json::json!({
+                "error": "auth_unavailable",
+                "message": "认证服务暂不可用"
+            }))).into_response();
+        }
+    };
 
-    match verify_token(token) {
-        Ok(user) => {
-            let username = user.username.clone();
-            let new_token = login_user_by_id(&user.id, &username).unwrap_or_else(|_| token.to_string());
+    // Step 3: 生成新的 access token (在轮换之前, 快速失败)
+    let new_access_token = match login_user_by_id(&user.id, &user.username) {
+        Ok(token) => token,
+        Err(e) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({
+                "error": "jwt_error",
+                "message": e
+            }))).into_response();
+        }
+    };
+
+    // v3.5.0: 刷新令牌轮换 (在 spawn_blocking 中执行 SQLite 操作, 不阻塞 tokio 工作线程)
+    let old_hash = hash_token(&req.refresh_token);
+    let db_arc = db.clone();
+    let user_id = user.id;
+    let rotate_result = tokio::task::spawn_blocking(move || {
+        let db = db_arc.lock().unwrap_or_else(|e| e.into_inner());
+        rotate_refresh_token(&db, user_id, &old_hash)
+    }).await;
+
+    match rotate_result {
+        Ok(Ok((new_refresh_token, _new_hash, _family_id))) => {
             (StatusCode::OK, Json(serde_json::json!({
-                "token": new_token,
+                "token": new_access_token,
+                "refresh_token": new_refresh_token,
                 "user": user
             }))).into_response()
         }
-        Err(e) => (StatusCode::UNAUTHORIZED, Json(serde_json::json!({
-            "error": "token_invalid",
-            "message": e
-        }))).into_response(),
+        Ok(Err(msg)) => {
+            let is_replay = msg.contains("重放");
+            let status = if is_replay {
+                StatusCode::GONE
+            } else {
+                StatusCode::UNAUTHORIZED
+            };
+            (status, Json(serde_json::json!({
+                "error": if is_replay { "token_replay" } else { "refresh_token_invalid" },
+                "message": msg
+            }))).into_response()
+        }
+        Err(_) => {
+            (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({
+                "error": "internal_error",
+                "message": "服务内部错误"
+            }))).into_response()
+        }
     }
 }
 
@@ -397,6 +640,113 @@ fn login_user_by_id(user_id: &i64, username: &str) -> Result<String, String> {
         &jsonwebtoken::EncodingKey::from_secret(jwt_secret_bytes()),
     )
     .map_err(|e| format!("生成 token 失败: {}", e))
+}
+
+// ── v3.5.0: 刷新令牌轮换与重放检测 ──
+
+fn generate_refresh_token() -> String {
+    use ring::rand::SecureRandom;
+    let rng = ring::rand::SystemRandom::new();
+    let mut bytes = [0u8; 32];
+    rng.fill(&mut bytes).expect("刷新令牌生成失败");
+    bytes.iter().map(|b| format!("{:02x}", b)).collect()
+}
+
+fn hash_token(token: &str) -> String {
+    let hash = ring::digest::digest(&ring::digest::SHA256, token.as_bytes());
+    hash.as_ref().iter().map(|b| format!("{:02x}", b)).collect()
+}
+
+fn now_secs() -> i64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs() as i64
+}
+
+fn create_refresh_token(conn: &Connection, user_id: i64) -> Result<(String, String), String> {
+    let token = generate_refresh_token();
+    let token_hash = hash_token(&token);
+    let family_id = format!("fam_{}", generate_refresh_token());
+    let now = now_secs();
+    conn.execute(
+        "INSERT INTO refresh_tokens (token_hash, user_id, family_id, created_at, revoked) VALUES (?1, ?2, ?3, ?4, 0)",
+        rusqlite::params![token_hash, user_id, family_id, now],
+    )
+    .map_err(|e| format!("刷新令牌存储失败: {}", e))?;
+    Ok((token, family_id))
+}
+
+fn rotate_refresh_token(
+    conn: &Connection,
+    user_id: i64,
+    old_token_hash: &str,
+) -> Result<(String, String, String), String> {
+    // 检查旧令牌是否存在且未被撤销
+    let (family_id, revoked): (String, i32) = conn
+        .query_row(
+            "SELECT family_id, revoked FROM refresh_tokens WHERE token_hash = ?1 AND user_id = ?2",
+            rusqlite::params![old_token_hash, user_id],
+            |row| Ok((row.get(0)?, row.get(1)?)),
+        )
+        .map_err(|e| {
+            if matches!(e, rusqlite::Error::QueryReturnedNoRows) {
+                "刷新令牌无效".to_string()
+            } else {
+                format!("令牌查询失败: {}", e)
+            }
+        })?;
+
+    // 重放检测: 令牌已被撤销 → 撤销整个 family
+    if revoked != 0 {
+        let now = now_secs();
+        let _ = conn.execute(
+            "INSERT OR IGNORE INTO revoked_token_families (family_id, revoked_at) VALUES (?1, ?2)",
+            rusqlite::params![family_id, now],
+        );
+        return Err("安全警告: 检测到令牌重放, 该设备的所有会话已失效, 请重新登录".to_string());
+    }
+
+    // P1-1: 事务保护 UPDATE + INSERT，防止崩溃导致用户被锁定
+    conn.execute_batch("BEGIN IMMEDIATE;")
+        .map_err(|e| format!("事务启动失败: {}", e))?;
+
+    // 撤销旧令牌
+    conn.execute(
+        "UPDATE refresh_tokens SET revoked = 1 WHERE token_hash = ?1",
+        rusqlite::params![old_token_hash],
+    )
+    .map_err(|e| {
+        let _ = conn.execute_batch("ROLLBACK;");
+        format!("令牌撤销失败: {}", e)
+    })?;
+
+    // 生成新令牌 (同一 family)
+    let new_token = generate_refresh_token();
+    let new_hash = hash_token(&new_token);
+    let now = now_secs();
+    conn.execute(
+        "INSERT INTO refresh_tokens (token_hash, user_id, family_id, created_at, revoked) VALUES (?1, ?2, ?3, ?4, 0)",
+        rusqlite::params![new_hash, user_id, family_id, now],
+    )
+    .map_err(|e| {
+        let _ = conn.execute_batch("ROLLBACK;");
+        format!("新令牌存储失败: {}", e)
+    })?;
+
+    conn.execute_batch("COMMIT;")
+        .map_err(|e| format!("事务提交失败: {}", e))?;
+
+    Ok((new_token, new_hash, family_id))
+}
+
+/// P1-7: 清理 30 天前的过期刷新令牌和已撤销令牌族
+pub fn cleanup_expired_tokens(conn: &Connection) -> Result<(), String> {
+    conn.execute_batch(
+        "DELETE FROM refresh_tokens WHERE created_at < unixepoch() - 2592000;
+         DELETE FROM revoked_token_families WHERE revoked_at < unixepoch() - 2592000;",
+    )
+    .map_err(|e| format!("清理过期令牌失败: {}", e))
 }
 
 /// 注册认证相关路由 (供 app_router 调用)

@@ -1,5 +1,7 @@
 // v1.1.2: main 函数体已门控为 dev_tools feature
 // 生产构建中此二进制仅打印提示并退出
+// v2.4.0 G8: 此工具直接构造 RuntimeProtocolCoreConfig 绕过 QS 管道,
+// 仅用于开发截图生成, GP §1.1/§1.3 豁免 — 正常编译路径不变。
 
 
 #[cfg(feature = "dev_tools")]

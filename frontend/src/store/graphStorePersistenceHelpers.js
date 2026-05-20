@@ -78,6 +78,7 @@ function loadGraphFromStorage() {
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw);
+    // v2.5.0: 使用 !== 严格匹配, schema 变更时丢弃旧缓存避免格式不兼容
     if (parsed._schema && parsed._schema !== GRAPH_STORAGE_SCHEMA) {
       console.warn(`[storage] 策略图缓存 schema 版本不兼容 (存储 ${parsed._schema}, 当前 ${GRAPH_STORAGE_SCHEMA}), 将丢弃旧数据`);
       return null;
@@ -260,7 +261,8 @@ async function postJson(path, body) {
     let payload = null;
     try {
       payload = JSON.parse(text);
-    } catch {
+    } catch (e) {
+      console.warn("graphStorePersistenceHelpers: postJson parse failed", e);
     }
 
     const error = new Error(
@@ -290,7 +292,8 @@ async function deleteJson(path) {
     let payload = null;
     try {
       payload = JSON.parse(text);
-    } catch {
+    } catch (e) {
+      console.warn("graphStorePersistenceHelpers: deleteJson parse failed", e);
     }
 
     const error = new Error(
@@ -338,7 +341,8 @@ async function resolveGraphForDetail(graphId, fallbackGraph, registry = defaultR
   try {
     const loaded = resolveLoadedGraphWithRegistry(await fetchJson(`/graphs/${graphId}`), registry);
     return loaded || fallbackGraph;
-  } catch {
+  } catch (e) {
+    console.warn("graphStorePersistenceHelpers: resolveGraphForDetail failed", e);
     return fallbackGraph;
   }
 }

@@ -32,6 +32,7 @@ impl RateLimiter {
     fn check(&self, client_ip: &str, now_ms: u64) -> Result<(), u64> {
         let mut inner = self.inner.lock().unwrap_or_else(|e| e.into_inner());
         // v2.1.x: 每 500 次请求清理一次，降低内存峰值
+        // v2.5.0 NOTE: retain O(n) 在持锁时执行, 高频场景可改为后台定期清理任务
         if inner.buckets.len() > 500 {
             inner.buckets.retain(|_, bucket| {
                 now_ms.saturating_sub(bucket.last_refill_ms) < 600_000
@@ -63,6 +64,11 @@ pub(super) async fn rate_limit_middleware(
     request: axum::extract::Request,
     next: axum::middleware::Next,
 ) -> axum::response::Response {
+    // v3.5.0: DEV 模式下跳过速率限制, 方便本地调试
+    if std::env::var("QUANTPILOT_DEV").map_or(false, |v| v == "true" || v == "1") {
+        return next.run(request).await;
+    }
+
     // 从扩展中获取 RateLimiter（由 middleware layer 注入）
     // 简化实现: 直接读取环境变量配置，全局共享
     static LIMITER: std::sync::OnceLock<RateLimiter> = std::sync::OnceLock::new();
@@ -70,23 +76,32 @@ pub(super) async fn rate_limit_middleware(
         let max_rps = std::env::var("QUANTPILOT_RATE_LIMIT_RPS")
             .ok()
             .and_then(|v| v.parse().ok())
-            .unwrap_or(100);
+            .unwrap_or(100)
+            .max(1); // v2.4.0 P1-E2: 拒绝 max_rps=0 导致全部请求 429
         RateLimiter::new(max_rps)
     });
 
-    // v2.0.1: 优先使用真实 TCP 地址，x-forwarded-for 仅作反向代理时的补充
+    // v2.3.4: 仅使用真实 TCP 地址。X-Forwarded-For 可被客户端伪造，
+    // 仅在明确配置反向代理模式且设置了 QUANTPILOT_TRUSTED_PROXY 时使用
     let client_ip = request
         .extensions()
         .get::<axum::extract::ConnectInfo<std::net::SocketAddr>>()
         .map(|ci| ci.0.ip().to_string())
         .unwrap_or_else(|| {
-            request
-                .headers()
-                .get("x-forwarded-for")
-                .and_then(|v| v.to_str().ok())
-                .map(|s| s.split(',').next().unwrap_or("unknown").trim())
-                .unwrap_or("unknown")
-                .to_string()
+            // 仅在 DEV 模式或可信代理模式下回退到 X-Forwarded-For
+            if std::env::var("QUANTPILOT_DEV").map_or(false, |v| v == "true" || v == "1")
+                || std::env::var("QUANTPILOT_TRUSTED_PROXY").map_or(false, |v| v == "true" || v == "1")
+            {
+                request
+                    .headers()
+                    .get("x-forwarded-for")
+                    .and_then(|v| v.to_str().ok())
+                    .map(|s| s.split(',').next().unwrap_or("unknown").trim())
+                    .unwrap_or("unknown")
+                    .to_string()
+            } else {
+                "unknown".to_string()
+            }
         });
 
     let now_ms = std::time::SystemTime::now()
@@ -101,7 +116,7 @@ pub(super) async fn rate_limit_middleware(
                 "type": "rate-limited",
                 "title": "请求过于频繁",
                 "status": 429,
-                "detail": format!("请求过于频繁（当前限制: 每秒 {} 次）。请在 {} 秒后重试", limiter.max_rps, retry_after_ms / 1000),
+                "detail": format!("请求过于频繁，请在 {} 秒后重试", retry_after_ms / 1000),
                 "error_code": "RATE_LIMITED",
                 "retryable": true,
             });
@@ -131,6 +146,11 @@ pub(super) async fn auth_rate_limit_middleware(
     request: axum::extract::Request,
     next: axum::middleware::Next,
 ) -> axum::response::Response {
+    // v3.5.0: DEV 模式下跳过速率限制, 方便本地调试
+    if std::env::var("QUANTPILOT_DEV").map_or(false, |v| v == "true" || v == "1") {
+        return next.run(request).await;
+    }
+
     static AUTH_LIMITER: std::sync::OnceLock<RateLimiter> = std::sync::OnceLock::new();
     // RateLimiter API 以 RPS 为单位: 1 token/s = ~6次/分钟 (u32 最小值为 1)
     let limiter = AUTH_LIMITER.get_or_init(|| RateLimiter::new(1));
@@ -139,7 +159,22 @@ pub(super) async fn auth_rate_limit_middleware(
         .extensions()
         .get::<axum::extract::ConnectInfo<std::net::SocketAddr>>()
         .map(|ci| ci.0.ip().to_string())
-        .unwrap_or_else(|| "unknown".to_string());
+        .unwrap_or_else(|| {
+            // v2.4.0 P1-E4: auth 限流器与全局限流器一致的代理检测
+            if std::env::var("QUANTPILOT_DEV").map_or(false, |v| v == "true" || v == "1")
+                || std::env::var("QUANTPILOT_TRUSTED_PROXY").map_or(false, |v| v == "true" || v == "1")
+            {
+                request
+                    .headers()
+                    .get("x-forwarded-for")
+                    .and_then(|v| v.to_str().ok())
+                    .and_then(|v| v.split(',').next())
+                    .map(|s| s.trim().to_string())
+                    .unwrap_or_else(|| "unknown".to_string())
+            } else {
+                "unknown".to_string()
+            }
+        });
 
     let now_ms = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)

@@ -321,7 +321,7 @@ export default {
   '证据链': 'Evidence Chain',
   '详情': 'Details',
   '详情页只保留高信号的回放切片，让它保持为策略分析视图，而不是原始日志堆叠。': 'Detail page keeps high-signal replay slices.',
-  '请使用 QS 编辑器启动模拟盘。': 'Use QS Editor to start simulation.',
+  '请使用 QuantScript 编辑器启动模拟盘。': 'Use QuantScript Editor to start simulation.',
   '账户': 'Account',
   '账户与挂单': 'Account & Orders',
   '账户摘要': 'Account Summary',
@@ -386,4 +386,8 @@ export default {
   '前往策略中心': 'Go to Strategy Center',
   '跳转到内容': 'Skip to content',
   '等待中': 'Waiting',
+  '请先启动模拟运行，AI 提案将在运行过程中自动生成。': 'Start a simulation first. AI proposals will be generated during execution.',
+  '点击上方按钮创建混沌实验。': 'Click the buttons above to create a chaos experiment.',
+  '运行回测或模拟后点击「创建快照」按钮生成签名快照。': 'Run a backtest or simulation, then click "Create Snapshot".',
+  '部署策略运行后故障场景数据将自动生成。': 'Deploy and run the strategy to generate fault scenario data.',
 };

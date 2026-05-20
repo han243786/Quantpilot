@@ -120,7 +120,7 @@ export const CAPABILITY_ACTION_MAP = {
     ],
     blockedDuringCapabilitySync: true,
     notes: [
-      "Strategy IR 只承担语义预检。",
+      "策略中间表示只承担语义预检。",
       "运行时编译仍然是可运行输出的最终真源。"
     ]
   },
@@ -186,7 +186,7 @@ export const SUPPORT_MATRIX = {
     declaredIndicatorKinds: DECLARED_INDICATOR_KINDS,
     supportedIndicatorKinds: SUPPORTED_INDICATOR_KINDS,
     boundaryNotes: [
-      "Custom 仅限受约束的 Strategy IR 表达式路径，并会 lower 到 Core IR。",
+      "Custom 仅限受约束的策略中间表示表达式路径，并会代码转换到核心中间表示。",
       "Custom 不允许任意宿主代码、直接修改风控或绕过执行链路。"
     ]
   },
@@ -204,13 +204,13 @@ export const SUPPORT_MATRIX = {
     preflightArtifact: "strategy_ir",
     runtimeSourceOfTruth: "/api/runtime/compile",
     boundaryNotes: [
-      "Strategy IR 仅承担语义预检。",
-      "若存在 quantscript.formal_source，则由其执行运行时 lowering。",
+      "策略中间表示仅承担语义预检。",
+      "若存在 quantscript.formal_source，则由其执行运行时代码转换。",
       "当多个工件结论不一致时，运行时行为遵循 /api/runtime/compile 的输出。"
     ]
   },
   userFacingGuardrails: {
-    allowedClaims: ["纸面运行时 Beta", "基础回测支持", "受限的 Custom Strategy IR 表达式路径"],
+    allowedClaims: ["纸面运行时 Beta", "基础回测支持", "受限的 Custom 策略中间表示表达式路径"],
     disallowedClaims: [
       "宣称具备研究级回测能力",
       "宣称支持实盘交易",
@@ -235,11 +235,9 @@ function isTrustedCapabilityHash(value) {
 }
 
 export function isCapabilitySyncBlocked(capabilityStatus, capabilitySource) {
+  // v3.5.0: 缓存/降级模式仍允许模块操作, 仅完整阻断 loading 和 safe_fallback
   return (
     capabilityStatus === "loading" ||
-    capabilityStatus === "degraded" ||
-    capabilityStatus === "error" ||
-    capabilitySource === "cache" ||
     capabilitySource === "safe_fallback"
   );
 }

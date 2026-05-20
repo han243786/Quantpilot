@@ -193,7 +193,7 @@ export default function StrategyWorkspaceOverviewTab({
               <strong>{compileSummary.config_hash || "-"}</strong>
             </div>
             <div className="kv-line">
-              <span>Strategy IR 角色</span>
+              <span>策略中间表示角色</span>
               <strong>{compileSummary.artifact_resolution?.strategy_ir_role_label || "-"}</strong>
             </div>
             <div className="kv-line">

@@ -16,8 +16,8 @@ function severityTone(severity) {
 }
 
 function sourceLabel(source, t) {
-  if (source === "strategy_ir") return t("Strategy IR");
-  if (source === "formal_quantscript") return t("Formal QuantScript");
+  if (source === "strategy_ir") return t("策略预检");
+  if (source === "formal_quantscript") return t("策略脚本");
   if (source === "runtime") return t("运行");
   return t("策略图");
 }
@@ -46,7 +46,7 @@ export default function DiagnosticsPanel({
       </div>
 
       {diagnostics.length === 0 ? (
-        <div className="empty-state diagnostics-empty" data-testid="diagnostics-empty">{t("暂无结构化编译诊断。")}</div>
+        <div className="empty-state diagnostics-empty" data-testid="diagnostics-empty">{t("暂无编译诊断。请先点击顶部\"编译\"按钮生成策略诊断。")}</div>
       ) : (
         <div className="diagnostics-list" data-testid="diagnostics-list">
           {diagnostics.map((diagnostic, index) => {
@@ -112,7 +112,7 @@ export default function DiagnosticsPanel({
                 {diagnostic.target ? (
                   <div className="issue-hint">
                     {t(
-                      "点击后会定位到匹配的节点、连线或 Strategy IR 位置，并同步画布焦点。"
+                      "点击后会定位到匹配的节点、连线或策略中间表示位置，并同步画布焦点。"
                     )}
                   </div>
                 ) : null}

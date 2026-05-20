@@ -222,9 +222,11 @@ pub fn ensure_storage_quota(storage_root: &Path, dir_name: &str, lifecycle: Stor
     if dir_path.exists() {
         let dir_size = dir_size_bytes(&dir_path);
         if dir_size > max_bytes {
+            // v2.5.0: 错误消息仅显示目录名, 不暴露完整路径
+            let dir_name = dir_path.file_name().and_then(|n| n.to_str()).unwrap_or("?");
             return Err(std::io::Error::other(format!(
                 "目录 {} 已满: 当前 {} MB, 上限 {} MB",
-                dir_path.display(),
+                dir_name,
                 dir_size / (1024 * 1024),
                 max_bytes / (1024 * 1024)
             )));
@@ -258,10 +260,20 @@ pub fn persist_with_ttl(
         std::fs::create_dir_all(parent).map_err(|e| format!("创建目录失败: {}", e))?;
     }
 
-    // 4. 写入数据
+    // 4. 原子写入 (tmp + fsync + rename + fsync parent)
     let tmp = full_path.with_extension("tmp");
     std::fs::write(&tmp, data).map_err(|e| format!("写入临时文件失败: {}", e))?;
+    // v2.3.3: fsync tmp 确保数据落盘
+    if let Ok(f) = std::fs::File::open(&tmp) {
+        let _ = f.sync_all();
+    }
     std::fs::rename(&tmp, &full_path).map_err(|e| format!("重命名文件失败: {}", e))?;
+    // v2.3.3: fsync 父目录确保 rename 落盘
+    if let Some(parent) = full_path.parent() {
+        if let Ok(f) = std::fs::File::open(parent) {
+            let _ = f.sync_all();
+        }
+    }
 
     Ok(())
 }
@@ -297,5 +309,46 @@ pub fn cleanup_build_artifacts() {
                 safe_eprintln!("[storage] 已清理非标准构建目录: {}", name);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn permanent_lifecycle_has_no_ttl() {
+        assert_eq!(StorageLifecycle::Permanent.ttl(), None);
+    }
+
+    #[test]
+    fn temporary_lifecycle_has_ttl() {
+        let ttl = StorageLifecycle::Temporary.ttl();
+        assert!(ttl.is_some());
+        let secs = ttl.unwrap().as_secs();
+        // DEV 模式 1天, 正常 7天
+        assert!(secs == 24 * 3600 || secs == 7 * 24 * 3600,
+            "Temporary TTL 应为 1天(DEV) 或 7天, 实际 {}秒", secs);
+    }
+
+    #[test]
+    fn transient_lifecycle_has_short_ttl() {
+        let ttl = StorageLifecycle::Transient.ttl();
+        assert!(ttl.is_some());
+        let secs = ttl.unwrap().as_secs();
+        // DEV 模式 10分钟, 正常 1小时
+        assert!(secs == 10 * 60 || secs == 3600,
+            "Transient TTL 应为 10分钟(DEV) 或 1小时, 实际 {}秒", secs);
+    }
+
+    #[test]
+    fn storage_lifecycle_enum_variants_exist() {
+        // 验证三个变体均可构造
+        let permanent = StorageLifecycle::Permanent;
+        let temporary = StorageLifecycle::Temporary;
+        let transient = StorageLifecycle::Transient;
+        assert_ne!(permanent, temporary);
+        assert_ne!(temporary, transient);
+        assert_ne!(transient, permanent);
     }
 }

@@ -331,3 +331,6 @@ QuantScript `V1` is ready for constrained first-release strategy development if 
 - retained `execution.profile("paper")`
 
 Anything outside that boundary should be treated as deferred, compatibility-only, or parse-only.
+
+---
+> 文档版本: v3.7.0 | 最后更新: 2026-05-21 | QuantPilot v3.7.0

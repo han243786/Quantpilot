@@ -35,7 +35,7 @@ function extractMessageFromJson(raw) {
     const parsed = JSON.parse(raw);
     if (isString(parsed?.message)) return parsed.message;
     if (isString(parsed?.error)) return parsed.error;
-  } catch { /* 非 JSON 消息直接返回原文 */ }
+  } catch (e) { console.warn("errorText: extractMessageFromJson failed", e); /* 非 JSON 消息直接返回原文 */ }
   return raw;
 }
 
@@ -46,9 +46,34 @@ function stripHtml(raw) {
     .trim();
 }
 
+// v3.6.0 U6: 错误码→中文映射
+const ERROR_CODE_MAP = new Map([
+  ["QS0001", "函数名重复"],
+  ["QS0002", "未定义的标识符"],
+  ["QS0403", "除零错误"],
+  ["QS0501", "数据不足，需要更多K线"],
+  ["QS0505", "未知交易对"],
+  ["QS0605", "不支持递归调用"],
+  ["QSPIPELINE", "编译通过"],
+  ["ERR_BAD_REQUEST", "请求格式错误"],
+  ["ERR_COMPILE_FAILED", "编译失败"],
+  ["ERR_RUN_IN_PROGRESS", "已有模拟在运行中"],
+  ["ERR_AUTH_UNAUTHORIZED", "认证失败"],
+  ["auth_failed", "认证失败"],
+  ["token_invalid", "令牌无效，请重新登录"],
+  ["token_replay", "令牌已被重放，请重新登录"],
+  ["refresh_token_invalid", "刷新令牌无效，请重新登录"],
+  ["rate-limited", "请求过于频繁，请稍后再试"],
+]);
+
 function translateMessage(message, fallback) {
   if (!message) return fallback;
   if (DIRECT_TRANSLATIONS.has(message)) return DIRECT_TRANSLATIONS.get(message);
+
+  // v3.6.0: 错误码替换为中文
+  for (const [code, desc] of ERROR_CODE_MAP) {
+    if (message.includes(code)) return desc + "。" + (message.includes(":") ? " 详情: " + message.split(":").slice(1).join(":").trim() : "");
+  }
 
   const unknownNodeMatch = message.match(/^Unknown module for node (.+)$/);
   if (unknownNodeMatch) {
@@ -57,7 +82,7 @@ function translateMessage(message, fallback) {
 
   const httpMatch = message.match(/^HTTP\s+(\d+)$/i);
   if (httpMatch) {
-    return `后端请求失败（HTTP ${httpMatch[1]}）。`;
+    return humanizeHttpError(Number(httpMatch[1]));
   }
 
   return message;
@@ -81,4 +106,23 @@ export function humanizeErrorText(errorLike, fallback = "操作失败。") {
   const withoutTrailingPunct = stripHtml(fromJson).replace(/[.。！!？?]+$/g, "");
   const normalized = translateMessage(withoutTrailingPunct, fallback);
   return sanitizeDisplayText(normalized, fallback);
+}
+
+// v3.6.0 U6: HTTP 状态码→中文描述
+const HTTP_CODE_MAP = {
+  400: "请求格式有误",
+  401: "请先登录",
+  403: "无权访问",
+  404: "请求的资源不存在",
+  409: "资源冲突",
+  422: "无法处理请求",
+  423: "资源已锁定",
+  429: "请求过于频繁，请稍后再试",
+  500: "服务器内部错误",
+  503: "服务暂时不可用",
+};
+
+export function humanizeHttpError(status) {
+  const code = Number(status);
+  return HTTP_CODE_MAP[code] || `后端请求失败（HTTP ${code}）`;
 }

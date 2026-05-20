@@ -832,9 +832,11 @@
         assert_eq!(actual, expected);
     }
 
+    /// v2.5.0: 此测试用于导出能力合约 fixture JSON 快照。
+    /// 仅在手动更新 backend-capabilities-v1.json 时运行, CI 中忽略。
     #[test]
     #[ignore]
-    fn export_capability_fixture_json_snapshot() {
+    fn export_capability_fixture_snapshot() {
         let json = serde_json::to_vec_pretty(&build_capability_response()).unwrap();
         let encoded = json
             .iter()

@@ -144,11 +144,8 @@ pub(super) async fn persist_graph_audit_entry(
     let path = audit_store_dir.join(format!("{}.json", entry.graph_id));
     let mut entries = load_graph_audit_entries(audit_store_dir, &entry.graph_id).await?;
     entries.push(entry.clone());
-    let body = serde_json::to_string_pretty(&entries)
-        .map_err(|error| std::io::Error::other(error.to_string()))?;
-    let tmp = path.with_extension("tmp");
-    fs::write(&tmp, body).await?;
-    fs::rename(&tmp, &path).await
+    // v2.3.3: 使用统一原子写入 (含 fsync)
+    crate::runtime_persistence::atomic_write_json(&path, &entries).await
 }
 
 pub(super) async fn load_graph_audit_entries(

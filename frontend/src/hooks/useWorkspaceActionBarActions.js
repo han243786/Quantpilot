@@ -102,7 +102,7 @@ export function useWorkspaceActionBarActions({ onNotice } = {}) {
       pushNotice(
         "info",
         t("模拟盘交易请通过 QuantScript 编辑器使用 @run { mode: \"testnet\" } 指令启动。"),
-        t("请使用 QS 编辑器启动模拟盘。")
+        t("请使用 QuantScript 编辑器启动模拟盘。")
       );
       return;
     }

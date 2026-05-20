@@ -195,6 +195,15 @@ export function buildNodeCardData({
     collapsed: Boolean(node.ui_state?.collapsed),
     focusMode: hasFocusedTargets && isFocusTarget ? focusMode : null,
     dimmed: hasFocusedTargets && !isFocusTarget,
-    recommendationRole
+    recommendationRole,
+    // v2.5.0 P2-5: 价格涌动效果 — 供 PriceOverlay 组件通过 DOM 直写显示实时价格
+    latestPrice:
+      node.type === "data"
+        ? node.runtime_state?.metrics?.latest_price ?? null
+        : null,
+    symbol:
+      node.type === "data"
+        ? node.config?.instrument ?? null
+        : null
   };
 }

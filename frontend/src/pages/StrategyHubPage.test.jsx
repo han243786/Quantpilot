@@ -268,7 +268,7 @@ describe("StrategyHubPage", () => {
       );
     });
     expect(confirmMock).toHaveBeenCalledWith(
-      "确认删除策略“Alpha strategy”？此操作会移除策略文件和版本记录。"
+      "确认删除策略”Alpha strategy”？此操作会移除策略文件和版本记录。"
     );
   });
 

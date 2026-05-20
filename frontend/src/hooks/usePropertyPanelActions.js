@@ -53,7 +53,7 @@ export function usePropertyPanelActions() {
       applyStrategyIrSource();
       setError?.("");
     } catch (error) {
-      setError?.(error?.message || translateText("Strategy IR JSON 解析失败。"));
+      setError?.(error?.message || translateText("策略中间表示 JSON 解析失败。"));
     }
   }
 

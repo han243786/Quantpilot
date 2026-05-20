@@ -19,19 +19,20 @@ fn default_alert_rules() -> Vec<AlertRule> {
         AlertRule {
             rule_name: "data_freshness_critical".to_string(),
             description: "P95 freshness > 3x poll_interval 持续 5min".to_string(),
-            trigger_condition: "data_freshness_p95_ms > 3 * poll_interval_ms AND duration >= 300s"
-                .to_string(),
+            trigger_condition: "data_freshness_p95_ms > 3 * poll_interval_ms AND duration >= 300s".to_string(),
             severity: AlertSeverity::P1,
-            action: "数据新鲜度 P95 超过 3 倍轮询间隔且持续 5 分钟以上。暂停 Execution 模块产出，检查数据源端点连通性，通知值班人员。".to_string(),
+            action: "数据新鲜度 P95 超过 3 倍轮询间隔且持续 5 分钟以上。".to_string(),
             enabled: true,
+            resolve_condition: Some("data_freshness_p95_ms < poll_interval_ms".to_string()),
         },
         AlertRule {
             rule_name: "event_orphan_detected".to_string(),
             description: "任意 event_orphan_total 增长".to_string(),
             trigger_condition: "event_orphan_total > 0".to_string(),
             severity: AlertSeverity::P1,
-            action: "检测到事件序列断裂（event_orphan_total > 0）。将当前运行标记为审计不可信，归档断裂事件证据，通知值班人员 + QA。".to_string(),
+            action: "检测到事件序列断裂。将当前运行标记为审计不可信。".to_string(),
             enabled: true,
+            resolve_condition: Some("event_orphan_total == 0".to_string()),
         },
         AlertRule {
             rule_name: "risk_reject_rate_spike".to_string(),
@@ -40,6 +41,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             severity: AlertSeverity::P2,
             action: "风控拒绝率 5 分钟内超过 90%（样本数 > 50）。通知策略负责人，检查最近参数变更记录（GET /api/runtime/mutations），对比当前风控限额与持仓敞口。如因参数变更导致，回滚最近一次变更。".to_string(),
             enabled: true,
+            resolve_condition: Some("risk_reject_rate_5m < 0.50 AND sample_count < 10".to_string()),
         },
         AlertRule {
             rule_name: "replay_divergence_detected".to_string(),
@@ -48,6 +50,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             severity: AlertSeverity::P1,
             action: "回放差异增长（replay_divergence_total > 0）。归档当前回放差异证据（事件日志 + 权益曲线对比），通知值班人员 + QA 分析根因。".to_string(),
             enabled: true,
+            resolve_condition: Some("replay_divergence_total == 0".to_string()),
         },
         AlertRule {
             rule_name: "ai_proposal_reject_rate_high".to_string(),
@@ -57,6 +60,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             severity: AlertSeverity::P2,
             action: "AI 提案 24 小时拒绝率超过 80%（提案数 > 5）。检查最近提案的 static_check 报告，如模型输出持续低质量，暂停 AI 提案 24 小时。".to_string(),
             enabled: true,
+            resolve_condition: Some("ai_proposal_reject_rate_24h < 0.30".to_string()),
         },
         AlertRule {
             rule_name: "sandbox_verification_timeout".to_string(),
@@ -65,6 +69,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             severity: AlertSeverity::P2,
             action: "沙箱验证超过 5 分钟未完成。取消本次验证，通知提案提交者优化策略参数后重新提交。".to_string(),
             enabled: true,
+            resolve_condition: Some("sandbox_verification_duration_ms < 30000".to_string()),
         },
         AlertRule {
             rule_name: "storage_watermark_critical".to_string(),
@@ -73,6 +78,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             severity: AlertSeverity::P1,
             action: "存储总大小超过 450MB（90% 配额阈值）。立即执行启动清理流程：删除所有过期瞬间/暂时数据，暂停新的非长期写入。".to_string(),
             enabled: true,
+            resolve_condition: Some("disk_watermark_ratio < 0.80".to_string()),
         },
         AlertRule {
             rule_name: "approval_expiry_warning".to_string(),
@@ -81,6 +87,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             severity: AlertSeverity::P3,
             action: "审批单将在 4 小时内到期且未被处理。提醒审批人尽快审阅待处理审批（GET /api/v1/approvals?status=pending）。".to_string(),
             enabled: true,
+            resolve_condition: Some("approval_expires_in_ms > 14400000".to_string()),
         },
         AlertRule {
             rule_name: "hotswap_rollback_occurred".to_string(),
@@ -89,6 +96,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             severity: AlertSeverity::P1,
             action: "热插拔回滚发生。通知值班人员 + 策略负责人，冻结 AI 提案 24 小时，检查兼容性报告和 safe_window 状态确认回滚原因。".to_string(),
             enabled: true,
+            resolve_condition: Some("hotswap_rollback_count == 0 AND 24h 窗口已过".to_string()),
         },
         AlertRule {
             rule_name: "capability_hash_mismatch".to_string(),
@@ -97,6 +105,7 @@ fn default_alert_rules() -> Vec<AlertRule> {
             severity: AlertSeverity::P1,
             action: "编译时与运行时的 capability 哈希不一致。系统能力合约可能已被篡改或版本不匹配。立即阻断启动，通知值班人员检查部署版本和 capability 签名。".to_string(),
             enabled: true,
+            resolve_condition: Some("capability_hash_compile == capability_hash_runtime".to_string()),
         },
     ]
 }
@@ -175,34 +184,101 @@ async fn trigger_alert_check(
         if !rule.enabled {
             continue;
         }
-        if should_fire_alert(&state, &user_id, rule).await {
-            let firing_id = format!("alert-{}-{}", rule.rule_name, now_ms);
-            let firing = AlertFiring {
-                firing_id: firing_id.clone(),
-                rule_name: rule.rule_name.clone(),
-                severity: rule.severity,
-                state: AlertFiringState::Firing,
-                fired_at_ms: now_ms,
-                acknowledged_at_ms: None,
-                resolved_at_ms: None,
-                acknowledged_by: None,
-                detail: format!("{}: {}", rule.description, rule.action),
-            };
-            new_firings.push(firing.clone());
-            state
-                .alert_firings
-                .write()
-                .await
-                .insert(auth::scoped_key(&user_id, &firing_id), firing.clone());
-            // 持久化告警状态
-            let _ = persist_alert_firing(state.alert_store_dir.as_ref(), &firing).await;
+        // v2.3.5: 告警去重 — 已存在同规则名的未处理告警则跳过 (持写锁防 TOCTOU)
+        let firing = {
+            let mut firings = state.alert_firings.write().await;
+            let already_firing = firings.values().any(|f| {
+                f.rule_name == rule.rule_name && matches!(f.state, AlertFiringState::Firing)
+            });
+            if already_firing {
+                continue;
+            }
+            if should_fire_alert(&state, &user_id, rule).await {
+                let firing_id = format!("alert-{}-{}", rule.rule_name, now_ms);
+                let firing = AlertFiring {
+                    firing_id: firing_id.clone(),
+                    rule_name: rule.rule_name.clone(),
+                    severity: rule.severity,
+                    state: AlertFiringState::Firing,
+                    fired_at_ms: now_ms,
+                    acknowledged_at_ms: None,
+                    resolved_at_ms: None,
+                    acknowledged_by: None,
+                    detail: format!("{}: {}", rule.description, rule.action),
+                };
+                firings.insert(auth::scoped_key(&user_id, &firing_id), firing.clone());
+                firing
+            } else {
+                continue;
+            }
+        }; // write lock dropped
+        new_firings.push(firing.clone());
+        // 持久化告警状态 (no lock)
+        let _ = persist_alert_firing(state.alert_store_dir.as_ref(), &firing).await;
+    }
+
+    // v3.5.0 §9.3: 自动恢复 — 触发条件不再成立时自动 Resolved (两阶段: 先检查再 I/O)
+    for rule in &rules {
+        if rule.resolve_condition.is_none() && rule.rule_name != "event_orphan_detected" {
+            continue; // 跳过未配置恢复条件的规则 (一次性事件类告警需手动确认)
+        }
+        // Phase 1: 检查恢复条件 (no lock)
+        if !is_condition_resolved(&state, &user_id, rule).await {
+            continue;
+        }
+        // Phase 1b: 收集待恢复 key (read lock, short)
+        let to_resolve: Vec<String> = {
+            let firings = state.alert_firings.read().await;
+            firings
+                .iter()
+                .filter(|(_, f)| {
+                    f.rule_name == rule.rule_name && f.state == AlertFiringState::Firing
+                })
+                .map(|(k, _)| k.clone())
+                .collect()
+        };
+        if to_resolve.is_empty() {
+            continue;
+        }
+        // Phase 2: 更新状态 (write lock, short hold)
+        let resolved_firings: Vec<AlertFiring> = {
+            let mut firings = state.alert_firings.write().await;
+            to_resolve
+                .iter()
+                .filter_map(|key| {
+                    let f = firings.get_mut(key)?;
+                    f.state = AlertFiringState::Resolved;
+                    f.resolved_at_ms = Some(current_time_ms());
+                    Some(f.clone())
+                })
+                .collect()
+        };
+        // Phase 3: 持久化 (no lock)
+        for f in &resolved_firings {
+            let _ = persist_alert_firing(state.alert_store_dir.as_ref(), f).await;
         }
     }
 
     // v2.1.0: 清理已解决的告警记录，防止无限增长
+    // P2-6: 先收集已解决告警的 key, 删除内存记录后同时清理磁盘文件
+    let resolved_keys: Vec<String> = {
+        let firings = state.alert_firings.read().await;
+        firings
+            .iter()
+            .filter(|(_, f)| f.state == AlertFiringState::Resolved)
+            .map(|(k, _)| k.clone())
+            .collect()
+    };
+
     state.alert_firings.write().await.retain(|_, firing| {
         firing.state != AlertFiringState::Resolved
     });
+
+    // P2-6: 删除已解决告警对应的磁盘文件
+    for key in &resolved_keys {
+        let file_path = state.alert_store_dir.join(format!("{}.json", key));
+        let _ = tokio::fs::remove_file(&file_path).await;
+    }
 
     Ok(Json(new_firings))
 }
@@ -378,14 +454,24 @@ async fn persist_alert_firing(store_dir: &FsPath, firing: &AlertFiring) -> std::
     crate::storage_lifecycle::ensure_storage_quota(
         std::path::Path::new("storage"), "alerts", crate::storage_lifecycle::StorageLifecycle::Transient,
     )?;
-    let json = serde_json::to_vec_pretty(firing)?;
     fs::create_dir_all(&store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", firing.firing_id));
-    // v1.1.2: 原子写入防止告警文件损坏
-    let tmp = file_path.with_extension("tmp");
-    fs::write(&tmp, &json).await?;
-    fs::rename(&tmp, &file_path).await?;
-    Ok(())
+    // v2.3.3: 使用统一原子写入 (含 fsync)
+    crate::runtime_persistence::atomic_write_json(&file_path, firing).await
+}
+
+/// v3.5.0 §9.3: 检查告警恢复条件
+/// 核心原则: 触发条件不再成立时告警自动恢复
+/// resolve_condition 字段作为人类可读文档描述"已恢复"的含义。
+/// 当前实现采用触发条件取反策略: 触发条件不成立即视为已恢复。
+/// 这是正确的语义, 因为若触发条件已不再满足则问题已解决。
+async fn is_condition_resolved(
+    state: &AppState,
+    user_id: &auth::UserId,
+    rule: &AlertRule,
+) -> bool {
+    // 告警恢复 = 触发条件不再成立
+    !should_fire_alert(state, user_id, rule).await
 }
 
 #[cfg(test)]

@@ -131,7 +131,6 @@
 
 ## 参考
 
-- [当前状态与发布状态](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/overview/overview-current-status-and-roadmap.md)
-- [编译链合约](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/governance/implementation-compile-chain-contract.md)
-- [已归档功能收口台账](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/archive/planning-retired/implementation-functional-closeout-task-table.md)
-- [首次发布就绪状态](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/planning/implementation-first-release-readiness.md)
+- [当前状态与发布状态](../10-overview/overview-current-status-and-roadmap.md)
+- [编译链合约](implementation-compile-chain-contract.md)
+- [首次发布就绪状态](../../09-archive/planning-retired/implementation-first-release-readiness.md)

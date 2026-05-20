@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: QuantPilot Runtime API
-  version: 1.0.5
-  summary: QuantPilot v1.0.5 HTTP 控制面契约
+  version: 2.3.3
+  summary: QuantPilot v2.3.3 HTTP 控制面契约
   description: |
     QuantPilot 策略开发与运行平台的 HTTP API 契约。
     覆盖 capability discovery、runtime session、compile、backtest、AI 提案与审批、

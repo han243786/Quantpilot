@@ -106,7 +106,10 @@ export default function ChaosPage() {
           </button>
 
           {experiments.length === 0 && (
-            <div className="qp-empty">{t("暂无混沌实验记录")}</div>
+            <div className="qp-empty">
+              <div>{t("暂无混沌实验记录")}</div>
+              <div className="muted-line" style={{ marginTop: 8 }}>{t("点击上方按钮创建混沌实验。")}</div>
+            </div>
           )}
 
           {experiments.map((e) => (

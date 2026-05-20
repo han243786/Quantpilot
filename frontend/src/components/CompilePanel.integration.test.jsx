@@ -164,7 +164,7 @@ describe("Compile panel integration", () => {
 
     expect(compileSummaryCard).toBeInTheDocument();
     expect(diagnosticsMeta).toHaveTextContent("CUSTOM006");
-    expect(diagnosticsMeta).toHaveTextContent("Strategy IR");
+    expect(diagnosticsMeta).toHaveTextContent("策略预检");
     expect(diagnosticsMessage).toHaveTextContent(
       "CUSTOM006 signal `custom_signal` uses undeclared input `other_data` in custom_expr"
     );

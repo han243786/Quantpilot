@@ -5,7 +5,7 @@ export const COMPILE_CONTRACT = {
     "runtime compile runnable truth"
   ],
   conflictMessage:
-    "Strategy IR 预检通过并不等于最终可运行。只要运行时编译拒绝输出，就必须以运行时编译结果为准。",
+    "策略中间表示预检通过并不等于最终可运行。只要运行时编译拒绝输出，就必须以运行时编译结果为准。",
   conflictHint:
     "先看“最终可运行输出遵循”字段，再按 structured diagnostics 修正真正进入运行时编译的工件。",
   runtimeSourceOfTruthLabel: "以 /api/runtime/compile 输出为准"

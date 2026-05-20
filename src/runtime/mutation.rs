@@ -1049,6 +1049,7 @@ async fn create_runtime_ai_proposal(
             .insert(auth::scoped_key(&user_id, &approval_id), approval);
 
         // v1.1.2: 异步触发沙箱验证，JoinHandle 存入 state 防止 panic 静默丢失
+        // v2.4.0 P1-B2: 添加 catch_unwind + 3次退避重试
         let state_clone = state.clone();
         let pid = proposal_id.clone();
         let handle = tokio::spawn(async move {
@@ -1056,11 +1057,35 @@ async fn create_runtime_ai_proposal(
                 backtest_id: None,
                 proposal_id: pid.clone(),
             };
-            let result = sandbox_verification::run_sandbox_verification(
-                &state_clone, &sandbox_request,
-            )
-            .await;
-            if let Ok(_report) = result {
+            let mut success = false;
+            for attempt in 0u32..3 {
+                let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                    let rt = tokio::runtime::Handle::current();
+                    rt.block_on(sandbox_verification::run_sandbox_verification(
+                        &state_clone, &sandbox_request,
+                    ))
+                }));
+                match result {
+                    Ok(Ok(_report)) => {
+                        success = true;
+                        break;
+                    }
+                    Ok(Err(e)) => {
+                        safe_eprintln!("[sandbox] 验证尝试 {}/3 失败: {}", attempt + 1, e.1);
+                    }
+                    Err(panic_err) => {
+                        let msg = panic_err.downcast_ref::<String>()
+                            .map(|s| s.as_str())
+                            .or_else(|| panic_err.downcast_ref::<&str>().copied())
+                            .unwrap_or("未知 panic");
+                        safe_eprintln!("[sandbox] 验证尝试 {}/3 panic: {}", attempt + 1, msg);
+                    }
+                }
+                if attempt < 2 {
+                    tokio::time::sleep(std::time::Duration::from_millis(500 * (attempt + 1) as u64)).await;
+                }
+            }
+            if success {
                 // 更新审批单的沙箱报告 URL
                 let mut approvals = state_clone.approval_records.write().await;
                 for approval in approvals.values_mut() {
@@ -1077,6 +1102,8 @@ async fn create_runtime_ai_proposal(
                         break;
                     }
                 }
+            } else {
+                safe_eprintln!("[sandbox] 沙箱验证 3 次尝试全部失败, proposal={}", pid);
             }
         });
         // v1.1.2: 监视 JoinHandle 防止 panic 静默丢失
@@ -1371,6 +1398,7 @@ async fn auto_snapshot_on_activation(
     let gen = state
         .config_generation
         .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+    const MAX_GENERATION_HISTORY: usize = 100;
     let mut history = state.config_generation_history.lock().await;
     history.push(qrpc_runtime::ConfigGenerationEntry {
         generation: gen,
@@ -1378,6 +1406,10 @@ async fn auto_snapshot_on_activation(
         deployment_revision: mutation.governance.deployment_revision.clone(),
         parameter_version: mutation.proposed_parameter_version.clone(),
     });
+    let overflow = history.len().saturating_sub(MAX_GENERATION_HISTORY);
+    if overflow > 0 {
+        history.drain(0..overflow);
+    }
 
     // P3-3: Shadow Evaluation — 记录激活前指标基线
     let _pre_activation_risk_reject = state
@@ -1418,18 +1450,11 @@ async fn auto_snapshot_on_activation(
         .unwrap_or_else(|_| "signature-unavailable".to_string()),
     };
     // 持久化并存入内存
-    let json = serde_json::to_vec_pretty(&snapshot).unwrap_or_default();
     let dir = state.snapshot_store_dir.to_path_buf();
     let path = dir.join(format!("{}.json", snapshot_id));
-    tokio::fs::create_dir_all(&dir).await.unwrap_or_else(|e| {
-        safe_eprintln!("[snapshot] 创建快照目录失败: {}", e);
-    });
-    let tmp = path.with_extension("tmp");
-    tokio::fs::write(&tmp, &json).await.unwrap_or_else(|e| {
-        safe_eprintln!("[snapshot] 写入快照失败: {}", e);
-    });
-    tokio::fs::rename(&tmp, &path).await.unwrap_or_else(|e| {
-        safe_eprintln!("[snapshot] 重命名快照文件失败: {}", e);
+    // v2.3.3: 使用统一原子写入 (含 fsync)
+    crate::runtime_persistence::atomic_write_json(&path, &snapshot).await.unwrap_or_else(|e| {
+        safe_eprintln!("[snapshot] 原子写入快照失败: {}", e);
     });
     state
         .snapshots
@@ -1946,13 +1971,10 @@ async fn persist_approval(
     store_dir: &FsPath,
     approval: &RuntimeApprovalRecord,
 ) -> std::io::Result<()> {
-    let json = serde_json::to_vec_pretty(approval)?;
     fs::create_dir_all(store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", approval.approval_id));
-    let tmp = file_path.with_extension("tmp");
-    fs::write(&tmp, &json).await?;
-    fs::rename(&tmp, &file_path).await?;
-    Ok(())
+    // v2.3.3: 使用统一原子写入 (含 fsync)
+    crate::runtime_persistence::atomic_write_json(&file_path, approval).await
 }
 
 async fn load_approval_from_disk(

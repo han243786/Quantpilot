@@ -1185,10 +1185,15 @@ fn clamp_portfolio_target_portfolio_net_exposure(
     target_weights: &mut [qrpc_core::TargetWeight],
     max_portfolio_net_exposure_ratio: f64,
 ) -> bool {
-    let total_target_ratio = target_weights
+    // v2.4.0 P1-C1: 净敞口不使用 abs(), 分别计算多头和空头后取净值
+    // abs() 求和会将空头转为正敞口, 导致含空头仓位的策略被不当限制
+    let (long_sum, short_sum): (f64, f64) = target_weights
         .iter()
-        .map(|item| item.target_weight.abs())
-        .sum::<f64>();
+        .map(|item| item.target_weight)
+        .fold((0.0, 0.0), |(long, short), w| {
+            if w > 0.0 { (long + w, short) } else { (long, short + w.abs()) }
+        });
+    let total_target_ratio = (long_sum - short_sum).abs();
     if total_target_ratio <= max_portfolio_net_exposure_ratio + 1e-9 {
         return false;
     }

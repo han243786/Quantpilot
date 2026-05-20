@@ -328,7 +328,11 @@ impl RuntimePluginRegistry {
 
     // ── v1.0.0 安全边界 ──
 
-    /// 检查插件是否被允许执行指定操作
+    /// 检查插件是否被允许执行指定操作。
+    ///
+    /// v2.3.4 注意: 本方法已实现但尚未在生产执行路径中接线。
+    /// 当前插件通过 PluginSandbox 以子进程方式运行，安全边界依赖 OS 级隔离。
+    /// 在 PluginSandbox::execute() 调用处接线本方法可完成声明式策略强制执行。
     pub fn check_security(
         &self,
         plugin_id: &str,

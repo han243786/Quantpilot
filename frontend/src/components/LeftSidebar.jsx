@@ -5,7 +5,7 @@ import { IconChart, IconCode, IconCheck, IconAlert, IconCamera, IconBook, IconFl
 const NAV_ITEMS = [
   [
     { path: "/strategies", labelKey: "策略", Icon: IconChart },
-    { path: "/quantscript", labelKey: "QS", Icon: IconCode },
+    { path: "/quantscript", labelKey: "QuantScript", Icon: IconCode },
   ],
   [
     { path: "/approvals", labelKey: "审批", Icon: IconCheck },

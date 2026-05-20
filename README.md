@@ -1,18 +1,24 @@
 # QuantPilot
 
+> ⚠️ **实验性软件声明**  
+> 当前版本 (v3.7.0) 仍处于密集开发阶段。尽管已完成三轮全维度诱错审计 (53+ 发现, P1 清零), 但系统中仍然存在大量未被发现的阻断性缺陷和边界问题。本版本仅适用于实验、研究和离线模拟, **不可用于实盘交易或生产环境**。开发者需要自行精细打磨, 并结合自身使用场景进行充分验证。
+
 QuantPilot 是一个单机量化交易沙盒, 聚焦于诚实的能力边界、可复现的运行时行为和发布时契约纪律。
 
-当前版本: **v2.3.2** (架构优化 + ISP拆分 + 模块重构 + 全量审计闭环) | [系统架构](./markdown/10-overview/overview-system-architecture.md) | [使用指南](./markdown/10-overview/overview-system-architecture.md#十一使用指南) | [General_Policy](./markdown/General_Policy.md) | [超级规范化](./markdown/01-principles/principles-super-standardization.md) | [版本历史](./CHANGELOG.md)
+当前版本: **v3.7.0** (实时执行端 + OKX testnet + 多策略并发 + 审计闭环 + 用户体验优化) | [系统架构](./markdown/10-overview/overview-system-architecture.md) | [使用指南](./markdown/10-overview/overview-system-architecture.md#十一使用指南) | [General_Policy](./markdown/General_Policy.md) | [超级规范化](./markdown/01-principles/principles-super-standardization.md) | [版本历史](./CHANGELOG.md)
 
 ## 产品边界
 
-- **运行时模式**: paper (纸面交易), backtest (回测)
+- **运行时模式**: paper (纸面交易), backtest (回测), live (OKX testnet 模拟盘)
+- **执行端**: 独立进程 (:3001), 策略部署/启动/停止/热调参
 - **已验证交易所**: `binance`, `okx`
 - **已验证交易对**: `BTCUSDT`, `ETHUSDT`, `SOLUSDT`
 - **桌面应用**: Tauri v2 自绘标题栏 Windows 桌面应用 (`start.bat`)
-- **前端**: Adobe 暗色面板设计系统、图编辑器、策略工作区、回测详情/对比、研究控制台
-- **QuantScript**: 语法解析 → HIR → lowering → Core IR 完整编译管道
+- **前端**: Adobe 暗色面板设计系统、图编辑器、策略工作区、回测详情/对比、研究控制台、Toast 通知
+- **QuantScript**: 语法解析 → HIR → lowering → Core IR 完整编译管道, 策略脚本一站式编辑
 - **插件**: 18 种指标全部有 evaluator 实现, 零 stub
+- **安全**: AES-256-GCM 凭证保险库, bcrypt(12轮) 用户认证, JWT + 刷新令牌轮换+重放检测, 进程间加密通道
+- **告警**: 10 条默认规则, 自动恢复 (resolve_condition), 去重
 
 ### 已验证的全部指标 (18 种)
 
@@ -58,9 +64,25 @@ cd frontend && npm install && npm run dev
 
 | 变量 | 用途 | 默认值 |
 |------|------|--------|
-| `VITE_BACKEND_ORIGIN` | Vite dev proxy 后端地址 | `http://127.0.0.1:3000` |
-| `VITE_API_BASE_URL` | 浏览器直连 API 地址 | 从当前 origin 派生 `/api` |
-| `QUANTPILOT_DEV` | DEV 模式 (缩短 TTL, 强制清理瞬态) | `false` |
+| `QUANTPILOT_DEV` | DEV 模式 (跳过认证+限速, 缩短TTL) | `false` |
+| `QUANTPILOT_STORAGE_ROOT` | 存储根目录 | `storage` |
+| `QUANTPILOT_EXECUTOR_URL` | 执行端地址 | `http://127.0.0.1:3001` |
+| `QUANTPILOT_EXECUTOR_INSECURE` | 跳过执行端 API 守卫 | `false` |
+| `QUANTPILOT_JWT_SECRET` | JWT 密钥 (留空自动生成) | (随机) |
+| `QUANTPILOT_API_KEY` | API 密钥 | (无) |
+| `QUANTPILOT_MARKET_PUBLIC_KEY` | 插件市场 Ed25519 公钥 | (测试向量) |
+| `QUANTPILOT_RATE_LIMIT_RPS` | 全局限速 (请求/秒) | `100` |
+| `QUANTPILOT_LOG_FORMAT` | 日志格式 (compact/json) | `compact` |
+| `QUANTPILOT_TRUSTED_PROXY` | 反向代理模式 | `false` |
+
+详见 `.env.example`。
+
+## 执行端
+
+```powershell
+# 启动执行端 (端口 3001)
+cargo run --bin executor
+```
 
 ## CI / 质量门禁
 
@@ -72,6 +94,7 @@ cd frontend && npm install && npm run dev
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-user-facing-text.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-governance.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-i18n.ps1
 cargo check --workspace
 cargo test --workspace
 cargo clippy --workspace --all-targets -- -D warnings

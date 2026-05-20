@@ -580,20 +580,21 @@ impl BuiltinDataModule {
             }
         }
 
-        let data = self.mock_data(source, now_ms, SourceStatus::Healthy);
-        self.store_cache(source, &data, now_ms);
+        // v2.3.5: Binance 实盘数据尚未实现，返回明确错误而非静默 mock
+        let fallback_data = self.mock_data(source, now_ms, SourceStatus::Error);
+        self.store_cache(source, &fallback_data, now_ms);
         Ok((
-            data,
+            fallback_data,
             FetchDiagnostics {
                 provider_key: "builtin.data.mock",
-                source_status: SourceStatus::Healthy,
+                source_status: SourceStatus::Error,
                 source_latency_ms: 0,
                 endpoint: None,
                 ping_latency_ms: None,
                 ping_endpoint: None,
                 ping_error: None,
                 fallback: Some("mock"),
-                error: None,
+                error: Some("Binance 实盘数据尚未支持，已回退到模拟数据。请使用 OKX 或 deterministic_mock 回放源。".to_string()),
             }
             .with_ping(ping),
         ))
@@ -837,13 +838,18 @@ where
 {
     match Handle::try_current() {
         Ok(handle) => task::block_in_place(|| handle.block_on(future)),
-        Err(_) => tokio::runtime::Builder::new_current_thread()
-            .enable_all()
-            .build()
-            .context("创建 tokio 运行时用于 HTTP 请求失败")?
-            .block_on(future),
+        // v2.4.0 P1-B3: 使用 LazyLock 全局单例 Runtime, 避免每次创建新线程池
+        Err(_) => FALLBACK_RT.block_on(future),
     }
 }
+
+static FALLBACK_RT: std::sync::LazyLock<tokio::runtime::Runtime> =
+    std::sync::LazyLock::new(|| {
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .expect("创建 Fallback tokio 运行时失败")
+    });
 
 #[cfg(target_os = "windows")]
 fn fetch_json_via_powershell(endpoint: String) -> Result<Value> {
@@ -1275,8 +1281,8 @@ fn get_mock_volatility() -> f64 {
     let bits = MOCK_VOLATILITY.load(std::sync::atomic::Ordering::Relaxed);
     if bits == 0 { return DEFAULT_MOCK_VOLATILITY; }
     let vol = f64::from_bits(bits);
-    // v2.1.x: 拒绝 NaN/Inf 注入
-    if !vol.is_finite() { DEFAULT_MOCK_VOLATILITY } else { vol }
+    // v2.1.x: 拒绝 NaN/Inf 注入; v2.4.0 P1-C3: 加 clamp 上限防止极端值
+    if !vol.is_finite() { DEFAULT_MOCK_VOLATILITY } else { vol.clamp(1e-6, 1.0) }
 }
 
 fn mock_raw_klines(source: &DataSourceConfig, now_ms: u64) -> Result<Vec<RawKline>> {
@@ -1436,9 +1442,8 @@ fn persist_historical_cache(
             format!("创建历史数据缓存目录失败: {}", parent.display())
         })?;
         let cache_dir = PathBuf::from("storage").join("cache").join("historical");
-        if cache_dir.exists() {
-            let dir_size: u64 = std::fs::read_dir(&cache_dir)
-                .map(|entries| {
+        let dir_size: u64 = std::fs::read_dir(&cache_dir)
+            .map(|entries| {
                     entries
                         .filter_map(|e| e.ok())
                         .filter_map(|e| e.metadata().ok())
@@ -1447,13 +1452,12 @@ fn persist_historical_cache(
                         .sum()
                 })
                 .unwrap_or(0);
-            const CACHE_MAX_BYTES: u64 = 200 * 1024 * 1024;
-            if dir_size > CACHE_MAX_BYTES {
-                return Err(anyhow!(
-                    "历史缓存目录已满: 当前 {} MB, 上限 200 MB，跳过缓存写入",
-                    dir_size / (1024 * 1024)
-                ));
-            }
+        const CACHE_MAX_BYTES: u64 = 200 * 1024 * 1024;
+        if dir_size > CACHE_MAX_BYTES {
+            return Err(anyhow!(
+                "历史缓存目录已满: 当前 {} MB, 上限 200 MB，跳过缓存写入",
+                dir_size / (1024 * 1024)
+            ));
         }
     } else {
         fs::create_dir_all(path.parent().unwrap_or(&path))?;
@@ -1463,10 +1467,20 @@ fn persist_historical_cache(
         bars: bars.to_vec(),
     })?;
     let tmp = path.with_extension("tmp");
-    fs::write(&tmp, body)
+    fs::write(&tmp, &body)
         .with_context(|| format!("写入历史缓存 {} 失败", path.display()))?;
+    // v2.3.3: fsync tmp 确保数据落盘
+    if let Ok(f) = std::fs::File::open(&tmp) {
+        let _ = f.sync_all();
+    }
     fs::rename(&tmp, &path)
         .with_context(|| format!("重命名历史缓存 {} 失败", path.display()))?;
+    // v2.3.3: fsync 父目录确保 rename 落盘
+    if let Some(parent) = path.parent() {
+        if let Ok(f) = std::fs::File::open(parent) {
+            let _ = f.sync_all();
+        }
+    }
     Ok(())
 }
 

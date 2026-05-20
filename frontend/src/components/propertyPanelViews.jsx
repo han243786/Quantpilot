@@ -712,7 +712,7 @@ export function CompileSummaryCard({ compileSummary }) {
         ) : null}
       </PropertySubsection>
 
-      <PropertySubsection title="Strategy IR 预检">
+      <PropertySubsection title="策略中间表示预检">
         <div className="kv-line">
           <span>是否执行</span>
           <strong>{strategyIrCheck?.performed ? "是" : "否"}</strong>
@@ -730,7 +730,7 @@ export function CompileSummaryCard({ compileSummary }) {
           <strong>{strategyIrCheck?.compile_id || "-"}</strong>
         </div>
         <div className="kv-line">
-          <span>已生成 Core IR</span>
+          <span>已生成核心中间表示</span>
           <strong>
             <StatusChip tone={booleanStatusTone(strategyIrCheck?.has_core_ir)}>
               {booleanStatusText(strategyIrCheck?.has_core_ir)}
@@ -741,7 +741,7 @@ export function CompileSummaryCard({ compileSummary }) {
 
       <PropertySubsection title="运行真源">
         <div className="kv-line">
-          <span>Strategy IR 角色</span>
+          <span>策略中间表示角色</span>
           <strong>{strategyIrRoleText(artifactResolution)}</strong>
         </div>
         <div className="kv-line">
@@ -925,12 +925,12 @@ export function StrategyIrEditorCard({
   return (
     <div className="property-card" data-testid="strategy-ir-editor-card">
       <div className="property-card-heading">
-        <div className="property-card-title">Strategy IR JSON</div>
+        <div className="property-card-title">策略中间表示 JSON</div>
         <div className="property-card-caption">保持语义预检工件可读，并允许直接编辑。</div>
       </div>
       <textarea
         ref={strategyIrEditorRef}
-        aria-label="Strategy IR JSON"
+        aria-label="策略中间表示 JSON"
         value={strategyIrSource}
         rows={14}
         onChange={(event) => updateStrategyIrDraft(event.target.value)}
@@ -956,7 +956,7 @@ export function StrategyIrEditorCard({
             handleResetStrategyIr(setStrategyIrApplyError);
           }}
         >
-          重置 Strategy IR
+          重置策略中间表示
         </button>
         <button
           className="primary-btn"
@@ -965,7 +965,7 @@ export function StrategyIrEditorCard({
             handleApplyStrategyIr(setStrategyIrApplyError);
           }}
         >
-          应用 Strategy IR
+          应用策略中间表示
         </button>
       </div>
     </div>

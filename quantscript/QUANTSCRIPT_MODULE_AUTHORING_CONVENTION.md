@@ -377,3 +377,6 @@ For `V1`, a QuantScript strategy should be considered well-structured only if:
 - AI can revise one module without rewriting unrelated modules
 
 That is the current definition of readable, frontend-friendly QuantScript authoring.
+
+---
+> 文档版本: v3.7.0 | 最后更新: 2026-05-21 | QuantPilot v3.7.0

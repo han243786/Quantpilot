@@ -19,6 +19,7 @@ const RunbookPage = lazy(() => import("./pages/RunbookPage"));
 const ChaosPage = lazy(() => import("./pages/ChaosPage"));
 const QuantScriptEditor = lazy(() => import("./pages/QuantScriptEditor"));
 import TutorialOverlay from "./components/TutorialOverlay";
+import ToastContainer from "./components/ToastContainer";
 import { createTutorialSteps } from "./data/tutorialSteps";
 import { useTutorial } from "./hooks/useTutorial";
 
@@ -128,7 +129,11 @@ export default function App() {
       const name = routeRef.current.name;
       if (name === "strategy-workspace" || name === "quantscript") {
         e.preventDefault();
-        e.returnValue = "当前有未保存的策略图更改，离开此页面将丢失更改。";
+        // v2.4.0 U7: 根据当前 locale 选择提示语言
+        const locale = localStorage.getItem("quantpilot.locale") || "zh-CN";
+        e.returnValue = locale === "en-US"
+          ? "You have unsaved strategy changes. Leaving this page will discard your changes."
+          : "当前有未保存的策略图更改，离开此页面将丢失更改。";
       }
     };
     window.addEventListener("beforeunload", handler);
@@ -243,6 +248,7 @@ export default function App() {
         <TutorialOverlay steps={tutorialSteps} onClose={closeTutorial} />
       )}
       <CommandPalette open={cmdPaletteOpen} onClose={() => setCmdPaletteOpen(false)} />
+      <ToastContainer />
     </>
   );
 }

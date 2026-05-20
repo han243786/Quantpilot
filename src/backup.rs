@@ -74,14 +74,10 @@ pub async fn backup_permanent_storage() {
     };
 
     match serde_json::to_string_pretty(&manifest) {
-        Ok(json) => {
+        Ok(_json) => {
             let manifest_path = backup_dir.join("backup_manifest.json");
-            let tmp = manifest_path.with_extension("tmp");
-            if let Err(e) = tokio::fs::write(&tmp, &json).await {
-                safe_eprintln!("[backup] 写入清单失败: {}", e);
-            } else {
-                let _ = tokio::fs::rename(&tmp, &manifest_path).await;
-            }
+            // v2.3.3: 使用统一原子写入 (含 fsync)
+            let _ = crate::runtime_persistence::atomic_write_json(&manifest_path, &manifest).await;
         }
         Err(e) => {
             safe_eprintln!("[backup] 序列化清单失败: {}", e);
@@ -144,7 +140,7 @@ async fn cleanup_old_backups() {
     let cutoff = chrono::Utc::now()
         .checked_sub_signed(chrono::Duration::days(MAX_BACKUP_AGE_DAYS as i64));
 
-    let Some(cutoff) = cutoff else {
+    let Some(_cutoff) = cutoff else {
         return;
     };
 

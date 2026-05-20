@@ -1,0 +1,9 @@
+[package]
+name = "qrpc-session"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1"
+base64 = "0.22"
+ring = "0.17"

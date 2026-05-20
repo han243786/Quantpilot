@@ -250,7 +250,10 @@ export default function EventReplaySection({ runtime }) {
 
           <div className="event-list" data-testid="event-replay-events">
             {replay.events.length === 0 ? (
-              <div className="empty-state">当前回放窗口没有事件。</div>
+              <div>
+                <div className="empty-state">当前回放窗口没有事件。</div>
+                <div className="empty-state" style={{ fontSize: 12, marginTop: 4 }}>选择包含事件的回放窗口查看，或调整筛选条件。</div>
+              </div>
             ) : null}
             {replay.events.map((item) => (
               <EventReplayRow key={item.sequence_no} item={item} />

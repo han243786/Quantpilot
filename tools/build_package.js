@@ -1,11 +1,13 @@
 const fs=require('fs');
+const path=require('path');
 const execSync = require('child_process').execSync;
 
 // Kill old processes
 try { execSync('taskkill /f /im quantpilot.exe 2>nul', {stdio:'ignore'}); } catch(e) {}
 
-const SRC = 'D:/rust-js-pr/QuantPilot/quantpilot';
-const DST = 'D:/rust-js-pr/quantpilot-v1.1.1';
+// v2.3.4: 使用项目根目录相对路径，不再硬编码 D:/rust-js-pr/...
+const SRC = path.resolve(__dirname, '..');
+const DST = path.resolve(SRC, '..', 'quantpilot-release');
 
 // Remove old
 if(fs.existsSync(DST)) { fs.rmSync(DST, {recursive:true, force:true}); console.log('old removed'); }

@@ -5,14 +5,14 @@ export function buildRuntimeEventStreamUrl(runId) {
 }
 
 /**
- * 创建带自动重连的 EventSource。
- * v1.0.0: 断开后指数退避重连 (最多 5 次, 1s→2s→4s→8s→16s)
+ * v3.6.0 U9: 无限重连 + 浏览器online事件联动
+ * 断开后指数退避 (1s→2s→4s...→max 60s), 不限次数
  */
 export function createRuntimeEventSource(runId, onRetryExhausted, onReconnect) {
   const url = buildRuntimeEventStreamUrl(runId);
   let retries = 0;
-  const MAX_RETRIES = 5;
   const BASE_DELAY_MS = 1000;
+  const MAX_DELAY_MS = 60_000;
 
   function build() {
     const es = new EventSource(url);
@@ -25,13 +25,8 @@ export function createRuntimeEventSource(runId, onRetryExhausted, onReconnect) {
     };
 
     es._reconnect = () => {
-      if (es._manualClose || retries >= MAX_RETRIES) {
-        if (retries >= MAX_RETRIES && onRetryExhausted) {
-          onRetryExhausted();
-        }
-        return null;
-      }
-      const delay = BASE_DELAY_MS * Math.pow(2, retries);
+      if (es._manualClose) return null;
+      const delay = Math.min(BASE_DELAY_MS * Math.pow(2, retries), MAX_DELAY_MS);
       retries++;
       const timerId = setTimeout(() => {
         const next = build();
@@ -44,6 +39,11 @@ export function createRuntimeEventSource(runId, onRetryExhausted, onReconnect) {
       es._reconnectTimer = timerId;
       return timerId;
     };
+
+    // v3.6.0: 浏览器恢复在线时立即重连
+    const onlineHandler = () => { if (!es._manualClose) { es._reconnectTimer = es._reconnect(); } };
+    window.addEventListener("online", onlineHandler);
+    es._onlineHandler = onlineHandler;
 
     return es;
   }

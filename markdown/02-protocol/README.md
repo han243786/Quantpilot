@@ -57,9 +57,9 @@
 | RFC | 类型 | 状态 | 说明 |
 |-----|------|:--:|------|
 | [RFC-016](./RFC-016-capability-discovery-protocol.md) | `CapabilityResponse` | ✅ | 能力发现协议 — `/api/capabilities` 的响应结构 |
-| [RFC-017](./RFC-017-backtest-artifact-protocol.md) | `BacktestArtifact` | ✅ | 回测工件协议 — 编译工件包与回测工件标识 |
-| [RFC-018](./RFC-018-backtest-input-protocol.md) | `RunSpec` / `BacktestSpec` | ✅ | 回测输入协议 — 运行规格、回测规格与回放模式 |
-| [RFC-019](./RFC-019-backtest-output-artifact-protocol.md) | `EventLogArtifact` | ✅ | 回测输出工件协议 — 事件日志工件与投影 |
+| [RFC-017](./RFC-017-backtest-artifact-protocol.md) | `BacktestArtifact` | 🔄 | 回测工件协议 — 编译工件包与回测工件标识 |
+| [RFC-018](./RFC-018-backtest-input-protocol.md) | `RunSpec` / `BacktestSpec` | 🔄 | 回测输入协议 — 运行规格、回测规格与回放模式 |
+| [RFC-019](./RFC-019-backtest-output-artifact-protocol.md) | `EventLogArtifact` | 🔄 | 回测输出工件协议 — 事件日志工件与投影 |
 | [RFC-020](./RFC-020-plugin-manifest-protocol.md) | `PluginManifest` | 🔄 | 插件清单协议 — 最小清单、兼容性边界、扩展点白名单 |
 
 ## 核心链路

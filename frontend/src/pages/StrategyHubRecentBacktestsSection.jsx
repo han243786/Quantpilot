@@ -52,7 +52,12 @@ export default function StrategyHubRecentBacktestsSection({
             </div>
           );
         })}
-        {items.length === 0 ? <div className="muted-line">这条策略还没有持久化回测。</div> : null}
+        {items.length === 0 ? (
+          <div>
+            <div className="muted-line">这条策略还没有持久化回测。</div>
+            <div className="muted-line" style={{ marginTop: 4, fontSize: 12 }}>请先编译策略，然后点击工具栏"运行回测"按钮。</div>
+          </div>
+        ) : null}
       </div>
     </section>
   );

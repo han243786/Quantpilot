@@ -1,6 +1,6 @@
 use super::*;
 
-pub(super) fn new_app_state(
+pub fn new_app_state(
     graph_store_dir: PathBuf,
     run_store_dir: PathBuf,
     backtest_store_dir: PathBuf,

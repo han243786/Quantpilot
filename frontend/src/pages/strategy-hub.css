@@ -163,10 +163,7 @@
   height: 28px;
   border-radius: var(--ad-radius-sm);
   flex: 0 0 auto;
-  background: conic-gradient(
-    rgba(143, 220, 248, 0.96) var(--progress-deg),
-    rgba(143, 220, 248, 0.16) 0deg
-  );
+  background: rgba(143, 220, 248, 0.12);
 }
 
 .strategy-inline-note__pin-progress::after {
@@ -453,10 +450,7 @@
   height: 26px;
   border-radius: var(--ad-radius-sm);
   flex: 0 0 auto;
-  background: conic-gradient(
-    rgba(143, 220, 248, 0.96) var(--progress-deg),
-    rgba(143, 220, 248, 0.16) 0deg
-  );
+  background: rgba(143, 220, 248, 0.12);
 }
 
 .strategy-card-note__pin-progress::after {

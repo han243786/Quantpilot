@@ -1,6 +1,6 @@
 # QuantPilot 文档
 
-> v0.5.2 → v1.0.0 | [项目 README](../README.md) | [General_Policy](./General_Policy.md)
+> v3.7.0 | [项目 README](../README.md) | [General_Policy](./General_Policy.md)
 
 ## 快速导航
 

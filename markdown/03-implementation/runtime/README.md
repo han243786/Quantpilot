@@ -12,4 +12,4 @@
 - [持久化/回放合约](./implementation-persistence-replay-contract.md)
 - [运行时工件保留与保存门禁](./implementation-runtime-artifact-retention.md)
 
-运行时协议引用应仅映射到 [../../protocol/README.md](../../protocol/README.md) 中的活跃连续集 `RFC-001` 至 `RFC-020`。
+运行时协议引用应仅映射到 [../../02-protocol/README.md](../../02-protocol/README.md) 中的活跃连续集 `RFC-001` 至 `RFC-020`。

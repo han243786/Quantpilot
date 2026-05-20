@@ -79,7 +79,9 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
   const loadBacktestDetail = useGraphStore((state) => state.loadBacktestDetail);
 
   useEffect(() => {
-    loadBacktestDetail(backtestId)?.catch(() => {});
+    loadBacktestDetail(backtestId)?.catch((err) => {
+      console.warn("[BacktestDetail] 加载回测详情失败:", err.message);
+    });
   }, [backtestId, loadBacktestDetail]);
 
   const selectedSummary = runtime.selectedBacktestId
@@ -147,7 +149,8 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
     {
       label: t("夏普"),
       value: formatSharpeRatio(riskAdj.sharpe_ratio),
-      color: sharpeColor(riskAdj.sharpe_ratio)
+      color: sharpeColor(riskAdj.sharpe_ratio),
+      tooltip: t("风险调整后收益。>1 良好, >2 优秀, <0 表示收益低于无风险利率")
     },
     {
       label: t("最大回撤"),
@@ -163,15 +166,17 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
   const foldedSummaryItems = [
     {
       label: t("索提诺"),
-      value: formatSharpeRatio(riskAdj.sortino_ratio)
+      value: formatSharpeRatio(riskAdj.sortino_ratio),
+      tooltip: t("下行风险调整收益。仅惩罚负波动, 更适合评估下跌风险")
     },
     {
       label: t("卡尔玛"),
-      value: formatSharpeRatio(riskAdj.calmar_ratio)
+      value: formatSharpeRatio(riskAdj.calmar_ratio),
+      tooltip: t("年化收益÷最大回撤。衡量每单位最大亏损能产生多少收益")
     },
     {
       label: t("年化波动率"),
-      value: formatAnnualizedReturn(summary?.annualized_volatility)
+      value: formatAnnualizedReturn(summary?.annualized_volatility),
     },
     {
       label: t("最大回撤持续"),
@@ -344,7 +349,7 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
                   testId="backtest-detail-manifest-compile-artifact"
                 />
                 <MetricPair
-                  label={t("Core IR 工件")}
+                  label={t("核心中间表示工件")}
                   value={manifest?.compile_artifacts?.core_ir?.artifact_id || "-"}
                   testId="backtest-detail-manifest-core-ir-artifact"
                 />

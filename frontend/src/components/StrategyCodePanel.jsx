@@ -22,7 +22,7 @@ export default function StrategyCodePanel({ onActivateSourceLane = null }) {
         : "当前编译默认使用图生成的 Formal 源码。"
     },
     {
-      label: "Strategy IR",
+      label: "策略中间表示",
       value: model.strategyIrSource ? `${model.strategyIrSource.length} 字符` : "空",
       note: model.selectedNode
         ? `节点源码：${model.selectedNode.name || model.selectedNode.id}`
@@ -63,7 +63,7 @@ export default function StrategyCodePanel({ onActivateSourceLane = null }) {
   return (
     <WorkspaceInspectorShell
       title="源码"
-      subtitle="策略图源码、Strategy IR 与节点级源码工件。"
+      subtitle="策略图源码、策略中间表示与节点级源码工件。"
       summaryItems={summaryItems}
       actions={actions}
     >

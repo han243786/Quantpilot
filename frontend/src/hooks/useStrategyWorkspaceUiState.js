@@ -44,7 +44,8 @@ function readStoredWorkspaceIssueFilters(scope) {
       ...DEFAULT_WORKSPACE_ISSUE_FILTERS,
       ...storedFilters
     };
-  } catch {
+  } catch (e) {
+    console.warn("useStrategyWorkspaceUiState: read filters failed", e);
     return DEFAULT_WORKSPACE_ISSUE_FILTERS;
   }
 }
@@ -66,8 +67,8 @@ function persistWorkspaceIssueFilters(scope, filters) {
       WORKSPACE_ISSUE_FILTERS_STORAGE_KEY,
       JSON.stringify(nextPayload)
     );
-  } catch {
-    // Keep the workspace usable if storage is unavailable.
+  } catch (e) {
+    console.warn("useStrategyWorkspaceUiState: persist filters failed", e);
   }
 }
 
@@ -331,7 +332,7 @@ export function useStrategyWorkspaceUiState({
     if (target?.scope === "strategy_ir") {
       activateCodeInspector("code", {
         priority: "high",
-        reason: "该诊断指向策略 IR，工作区已打开源码栏位以便直接审查。",
+        reason: "该诊断指向策略中间表示，工作区已打开源码栏位以便直接审查。",
         tone: "info",
         focusMode: "selected",
         focusChanged: true
@@ -354,7 +355,7 @@ export function useStrategyWorkspaceUiState({
     setActiveTab("code");
     activateCodeInspector("code", {
       priority: "high",
-      reason: "源码栏位保持可用，用于策略 IR 审查、图谱源码编辑和代码修复工作。",
+      reason: "源码栏位保持可用，用于策略中间表示审查、图谱源码编辑和代码修复工作。",
       tone: "info",
       focusMode: canvasFocusMode,
       focusChanged: false
@@ -379,7 +380,7 @@ export function useStrategyWorkspaceUiState({
       if (selectedCompileDiagnosticTarget.scope === "strategy_ir") {
         activateCodeInspector("code", {
           priority: "high",
-          reason: "已从诊断目标中选择策略 IR，工作区已切换回源码栏位。",
+          reason: "已从诊断目标中选择策略中间表示，工作区已切换回源码栏位。",
           tone: "info",
           focusMode: "selected",
           focusChanged: true

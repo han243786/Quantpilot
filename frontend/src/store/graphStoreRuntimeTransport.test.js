@@ -73,19 +73,17 @@ describe("createRuntimeEventSource", () => {
     vi.useRealTimers();
   });
 
-  it("calls onRetryExhausted after 5 reconnect attempts", () => {
+  it("retries reconnect indefinitely without exhausting (v3.6.0 U9)", () => {
     vi.useFakeTimers();
     const onExhausted = vi.fn();
     createRuntimeEventSource("run_001", onExhausted);
 
-    for (let i = 0; i < 5; i++) {
+    // 无限重连：不限次数 — 模拟10+次重连 onExhausted 也不应被调用
+    for (let i = 0; i < 12; i++) {
       mockInstances[i]._reconnect?.();
-      vi.advanceTimersByTime(1000 * Math.pow(2, i));
+      vi.advanceTimersByTime(Math.min(1000 * Math.pow(2, i), 60000));
     }
-    // 第6次 → retries>=MAX_RETRIES → exhausted
-    const last = mockInstances[mockInstances.length - 1];
-    last._reconnect?.();
-    expect(onExhausted).toHaveBeenCalledTimes(1);
+    expect(onExhausted).not.toHaveBeenCalled();
     vi.useRealTimers();
   });
 

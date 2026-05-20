@@ -28,12 +28,18 @@ async fn start_test_run(
     let qs_protocol = compile_runtime_protocol_via_qs(graph_json)?;
     let compiled =
         compile_runtime_protocol_config(&qs_protocol).map_err(internal_error)?;
-    let mut sandbox = RealTimeSandbox::new(RuntimeCoordinator::new(compiled));
     let now_ms = current_time_ms();
-    sandbox.start().map_err(internal_error)?;
-    let session = sandbox
-        .run_session(now_ms, now_ms + RUN_WINDOW_MS)
-        .map_err(internal_error)?;
+    // v2.3.3: 沙盒操作可能阻塞 (HTTP请求/sleep)，移至 spawn_blocking 避免阻塞 tokio 线程
+    let (_sandbox, session) = tokio::task::spawn_blocking(move || {
+        let mut sandbox = RealTimeSandbox::new(RuntimeCoordinator::new(compiled));
+        sandbox.start().map_err(|e| internal_error(anyhow::anyhow!(e)))?;
+        let session = sandbox
+            .run_session(now_ms, now_ms + RUN_WINDOW_MS)
+            .map_err(|e| internal_error(anyhow::anyhow!(e)))?;
+        Ok::<_, (StatusCode, String)>((sandbox, session))
+    })
+    .await
+    .map_err(|e| internal_error(anyhow::anyhow!("运行任务被取消: {}", e)))??;
     let run_id = format!("run_{}", now_ms);
     let graph_targets = build_compile_runtime_targets_from_graph(graph_json);
     let runtime_targets = merge_runtime_targets(&request.runtime_targets, &graph_targets);
@@ -81,6 +87,8 @@ async fn start_test_run(
         events.len(),
     )))
 }
+// v2.4.0: 单机桌面应用, 所有记录属于本机用户, 无需多用户隔离。
+// 如未来部署为服务端多用户, 需按 UserId 过滤 + 存储路径前缀隔离。
 async fn list_runs(
     State(state): State<AppState>,
     Query(pagination): Query<PaginationQuery>,
@@ -209,6 +217,9 @@ async fn stream_run_events(
         })));
     };
 
+    // v2.4.0 NOTE: SSE 超时保护需要 tokio-stream 依赖或 stream 级别 timeout wrapper,
+    // Axum 0.7 的 Sse 类型不提供 max_age。当前由 TCP keepalive + 浏览器端超时处理。
+    // 计划 v2.5.0 添加 tokio-stream 依赖后实现。
     Ok(Sse::new(stream).keep_alive(
         KeepAlive::new()
             .interval(Duration::from_secs(5))

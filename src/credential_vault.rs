@@ -3,14 +3,15 @@ use ring::aead::{Aad, LessSafeKey, Nonce, UnboundKey, AES_256_GCM};
 use ring::rand::{SecureRandom, SystemRandom};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::sync::{Mutex, OnceLock};
 use zeroize::{Zeroize, Zeroizing};
 
-const CREDENTIALS_FILE: &str = "storage/.credentials";
+fn storage_root() -> String { std::env::var("QUANTPILOT_STORAGE_ROOT").unwrap_or_else(|_| "storage".into()) }
+fn credentials_file() -> PathBuf { PathBuf::from(storage_root()).join(".credentials") }
 const NONCE_LEN: usize = 12;
 const TAG_LEN: usize = 16;
-const MACHINE_KEY_FILE: &str = "storage/.machine_key";
+fn machine_key_file() -> PathBuf { PathBuf::from(storage_root()).join(".machine_key") }
 
 // ── SecretString: Drop 时自动 Zeroize ──────────────────────
 
@@ -43,9 +44,10 @@ fn get_machine_key() -> Result<&'static [u8; 32]> {
     if let Some(key) = MACHINE_KEY.get() {
         return Ok(key);
     }
-    let path = Path::new(MACHINE_KEY_FILE);
-    let key: [u8; 32] = if path.exists() {
-        std::fs::read(path)?
+    let path = machine_key_file();
+    let exists = path.exists();
+    let key: [u8; 32] = if exists {
+        std::fs::read(&path)?
             .try_into()
             .map_err(|_| anyhow::anyhow!("机器密钥格式错误"))?
     } else {
@@ -65,7 +67,7 @@ fn get_machine_key() -> Result<&'static [u8; 32]> {
                 let tmp = path.with_extension("tmp");
                 std::fs::write(&tmp, key)
                     .map_err(|e| anyhow::anyhow!("无法写入机器密钥: {}", e))?;
-                std::fs::rename(&tmp, path)
+                std::fs::rename(&tmp, &path)
                     .map_err(|e| anyhow::anyhow!("无法保存机器密钥: {}", e))?;
                 #[cfg(unix)]
                 {
@@ -133,7 +135,7 @@ fn encrypt(plaintext: &str) -> Result<Vec<u8>> {
         .map_err(|_| anyhow::anyhow!("随机数生成失败"))?;
     let nonce = Nonce::assume_unique_for_key(nonce_bytes);
     let mut data = plaintext.as_bytes().to_vec();
-    key.seal_in_place_append_tag(nonce, Aad::from(CREDENTIALS_FILE.as_bytes()), &mut data)
+    key.seal_in_place_append_tag(nonce, Aad::from(".credentials".as_bytes()), &mut data)
         .map_err(|_| anyhow::anyhow!("加密失败"))?;
     let mut result = vec![2u8]; // version=2: PBKDF2
     result.extend(nonce_bytes);
@@ -167,7 +169,7 @@ fn decrypt(ciphertext: &[u8]) -> Result<Zeroizing<String>> {
     let nonce = Nonce::assume_unique_for_key(nonce_bytes);
     let mut data = payload[NONCE_LEN..].to_vec();
     let plaintext = key
-        .open_in_place(nonce, Aad::from(CREDENTIALS_FILE.as_bytes()), &mut data)
+        .open_in_place(nonce, Aad::from(".credentials".as_bytes()), &mut data)
         .map_err(|_| anyhow::anyhow!("凭证解密失败: 密钥不匹配或数据损坏"))?;
     let plaintext_len = plaintext.len();
     data.truncate(plaintext_len);
@@ -196,7 +198,7 @@ impl CredentialVault {
         // 触发机器密钥初始化（可能失败，不再静默降级）
         get_machine_key()?;
 
-        let path = PathBuf::from(CREDENTIALS_FILE);
+        let path = credentials_file();
         // v2.1.0: 崩溃恢复 — 若 .bak 残留且主文件不存在, 从 bak 恢复
         let bak = path.with_extension("bak");
         if !path.exists() && bak.exists() {
@@ -320,6 +322,10 @@ impl CredentialVault {
             }
             return Err(anyhow::anyhow!("凭证写入失败: {}", e));
         }
+        // fsync tmp 文件确保密文落盘后再 rename
+        if let Ok(f) = std::fs::File::open(&tmp) {
+            let _ = f.sync_all();
+        }
 
         // 原子替换
         if let Err(e) = std::fs::rename(&tmp, &self.path) {
@@ -329,6 +335,12 @@ impl CredentialVault {
             }
             let _ = std::fs::remove_file(&tmp);
             return Err(anyhow::anyhow!("凭证保存失败: {}", e));
+        }
+        // fsync 父目录确保 rename 落盘
+        if let Some(parent) = self.path.parent() {
+            if let Ok(f) = std::fs::File::open(parent) {
+                let _ = f.sync_all();
+            }
         }
 
         // 成功：清理 bak，设置安全权限
@@ -358,7 +370,7 @@ impl CredentialVault {
         data.entries
             .values()
             .flat_map(|entry| entry.values().map(|v| Zeroizing::new(v.0.clone())))
-            .filter(|v| v.len() >= 8) // 跳过过短的值（可能是占位符）
+            .filter(|v| v.len() >= 4) // v2.5.0: 阈值 8→4, 防止短 API key 在日志中明文出现
             .collect()
     }
 }

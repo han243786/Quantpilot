@@ -184,7 +184,9 @@ pub(crate) fn convert_graph_json_to_script_module(graph_value: &Value) -> anyhow
                 let mode = cfg.get("mode").and_then(Value::as_str).unwrap_or("paper");
                 qs_lines.push(format!("    runtime.mode(\"{}\")", mode));
             }
-            _ => {}
+            _ => {
+                safe_eprintln!("[graph->QS] 未知节点类型 '{}', 跳过 QS 生成", node_type);
+            }
         }
     }
 
@@ -332,9 +334,12 @@ pub(crate) fn convert_graph_json_to_script_module(graph_value: &Value) -> anyhow
                     ));
                 }
                 _ => {
-                    safe_eprintln!(
-                        "[graph→QS] 未知意图模块键 '{}', 跳过该节点的 QS 生成",
-                        module_key
+                    // v2.3.3 修复 S0-5: 未知意图模块键不再静默丢弃, 返回明确错误
+                    let supported = "double_ma/ma_deviation/rsi/macd/momentum/zscore/spread_observer";
+                    anyhow::bail!(
+                        "不支持的意图模块 '{}': 当前版本仅支持 {}。请升级到支持该模块的版本。",
+                        module_key,
+                        supported
                     );
                 }
             }
@@ -624,7 +629,14 @@ pub(crate) fn build_quantscript_runtime_targets(graph: &Value) -> Value {
 
 pub(crate) fn build_compile_runtime_targets_from_graph(graph: &Value) -> CompileRuntimeTargets {
     let targets_value = build_quantscript_runtime_targets(graph);
-    serde_json::from_value(targets_value).unwrap_or_default()
+    // v2.4.0 G1: 反序列化失败时记录警告而非静默降级为空结构体
+    match serde_json::from_value(targets_value) {
+        Ok(targets) => targets,
+        Err(e) => {
+            safe_eprintln!("[runtime_targets] 反序列化 CompileRuntimeTargets 失败: {}, 降级为空映射", e);
+            CompileRuntimeTargets::default()
+        }
+    }
 }
 
 fn sanitize_quantscript_runtime_id(value: &str) -> String {
