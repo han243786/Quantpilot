@@ -47,7 +47,8 @@ ring = "0.17"
 zeroize = { version = "1", features = ["zeroize_derive", "serde"] }
 rusqlite = { version = "0.31", features = ["bundled"] }
 # v2.3.4: jwt v10 已知 CVE-2024-46583 (alg混淆)，本项目强制 Algorithm::HS256 不受影响
-jsonwebtoken = "10"
+# v3.7.1: 启用 rust_crypto feature, 防止 JWT 编码在异步运行时中 hang
+jsonwebtoken = { version = "10", features = ["rust_crypto"] }
 bcrypt = "0.15"
 dotenvy = "0.15"
 tracing = "0.1"

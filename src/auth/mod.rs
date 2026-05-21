@@ -499,45 +499,43 @@ async fn login_handler(
             .into_response();
     }
 
-    // Step 3: 生成 JWT + 刷新令牌
-    match generate_jwt(id, &uname) {
-        Ok(token) => {
-            // 创建刷新令牌 (需要短暂的数据库锁)
-            let refresh_token = {
-                let db = db.lock().unwrap_or_else(|e| e.into_inner());
-                create_refresh_token(&db, id)
-            };
-            match refresh_token {
-                Ok((rt, _family_id)) => {
-                    let user = User { id, username: uname.clone() };
-                    (
-                        StatusCode::OK,
-                        Json(serde_json::json!({
-                            "token": token,
-                            "refresh_token": rt,
-                            "user": user
-                        })),
-                    )
-                        .into_response()
-                }
-                Err(e) => (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    Json(serde_json::json!({
-                        "error": "token_creation_failed",
-                        "message": e
-                    })),
-                )
-                    .into_response(),
-            }
+    // Step 3: 生成 JWT + 刷新令牌 (spawn_blocking, 包含CPU密集+DB操作)
+    let db_clone = db.clone();
+    let uname_clone = uname.clone();
+    let token_result = tokio::task::spawn_blocking(move || {
+        let token = generate_jwt(id, &uname_clone)?;
+        let db = db_clone.lock().unwrap_or_else(|e| e.into_inner());
+        let (rt, _) = create_refresh_token(&db, id)
+            .unwrap_or_else(|_| (String::new(), String::new()));
+        Ok::<_, String>((token, rt))
+    }).await;
+
+    match token_result {
+        Ok(Ok((token, rt))) => {
+            let user = User { id, username: uname };
+            (
+                StatusCode::OK,
+                Json(serde_json::json!({
+                    "token": token,
+                    "refresh_token": if rt.is_empty() { serde_json::Value::Null } else { serde_json::json!(rt) },
+                    "user": user
+                })),
+            ).into_response()
         }
-        Err(msg) => (
+        Ok(Err(msg)) => (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(serde_json::json!({
                 "error": "jwt_error",
                 "message": msg
             })),
-        )
-            .into_response(),
+        ).into_response(),
+        Err(_) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({
+                "error": "internal_error",
+                "message": "服务内部错误"
+            })),
+        ).into_response(),
     }
 }
 
@@ -646,7 +644,9 @@ fn login_user_by_id(user_id: &i64, username: &str) -> Result<String, String> {
 
 fn generate_refresh_token() -> String {
     use ring::rand::SecureRandom;
-    let rng = ring::rand::SystemRandom::new();
+    // v3.7.1: 全局缓存 SystemRandom, 避免每次调用创建新的 CSPRNG 句柄 (Windows BCryptOpenAlgorithmProvider)
+    static RNG: OnceLock<ring::rand::SystemRandom> = OnceLock::new();
+    let rng = RNG.get_or_init(|| ring::rand::SystemRandom::new());
     let mut bytes = [0u8; 32];
     rng.fill(&mut bytes).expect("刷新令牌生成失败");
     bytes.iter().map(|b| format!("{:02x}", b)).collect()
@@ -667,7 +667,8 @@ fn now_secs() -> i64 {
 fn create_refresh_token(conn: &Connection, user_id: i64) -> Result<(String, String), String> {
     let token = generate_refresh_token();
     let token_hash = hash_token(&token);
-    let family_id = format!("fam_{}", generate_refresh_token());
+    // v3.7.1: 从 token_hash 前缀派生 family_id, 避免第二次 CSPRNG 调用
+    let family_id = format!("fam_{}", &token_hash[..16]);
     let now = now_secs();
     conn.execute(
         "INSERT INTO refresh_tokens (token_hash, user_id, family_id, created_at, revoked) VALUES (?1, ?2, ?3, ?4, 0)",

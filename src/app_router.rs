@@ -50,7 +50,7 @@ fn register_hotswap_routes(router: Router<AppState>) -> Router<AppState> {
     router
         .route("/api/hotswap", post(hotswap_api::submit_hotswap))
         .route("/api/hotswap/list", get(hotswap_api::list_hotswaps))
-        .route("/api/hotswap/{hotswap_id}", get(hotswap_api::get_hotswap_status))
+        .route("/api/hotswap/:hotswap_id", get(hotswap_api::get_hotswap_status))
 }
 
 // Block 5 路由注册

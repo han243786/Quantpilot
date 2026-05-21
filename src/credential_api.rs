@@ -10,7 +10,7 @@ use super::auth::{self, UserId};
 pub(super) fn register_credential_routes(router: Router<AppState>) -> Router<AppState> {
     router
         .route("/api/credentials", get(list_credentials).post(set_credential))
-        .route("/api/credentials/{service}", delete(delete_credential))
+        .route("/api/credentials/:service", delete(delete_credential))
 }
 
 /// v2.3.3: 按用户隔离凭证 — vault key 格式为 `{user_id}:{service}`
