@@ -15,8 +15,8 @@
 
 ### 运行时
 
-- 已支持的运行模式：`paper`
-- 已支持的执行模块：`builtin.execution.paper`
+- 已支持的运行模式：`paper`、`live`（OKX testnet 模拟盘边界）
+- 已支持的执行模块：`builtin.execution.paper`、`live.okx`
 - 当前市场边界：
   - 交易所：`binance`、`okx`
   - 交易对：`BTCUSDT`、`ETHUSDT`、`SOLUSDT`
@@ -31,6 +31,17 @@
   - `spread`
   - `z_score`
   - `custom`
+  - `quote_observe`
+  - `atr`
+  - `bollinger_bands`
+  - `obv`
+  - `cmf`
+  - `adx`
+  - `stochastic`
+  - `cci`
+  - `parabolic_sar`
+  - `keltner_channel`
+  - `donchian_channel`
 - 当前已支持的指标类型：
   - `ma_cross`
   - `rsi`
@@ -39,6 +50,17 @@
   - `spread`
   - `z_score`
   - `custom`
+  - `quote_observe`
+  - `atr`
+  - `bollinger_bands`
+  - `obv`
+  - `cmf`
+  - `adx`
+  - `stochastic`
+  - `cci`
+  - `parabolic_sar`
+  - `keltner_channel`
+  - `donchian_channel`
 
 边界说明：
 

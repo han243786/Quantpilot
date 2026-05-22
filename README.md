@@ -1,11 +1,11 @@
 # QuantPilot
 
 > ⚠️ **实验性软件声明**  
-> 当前版本 (v3.7.0) 仍处于密集开发阶段。尽管已完成三轮全维度诱错审计 (53+ 发现, P1 清零), 但系统中仍然存在大量未被发现的阻断性缺陷和边界问题。本版本仅适用于实验、研究和离线模拟, **不可用于实盘交易或生产环境**。开发者需要自行精细打磨, 并结合自身使用场景进行充分验证。
+> 当前版本 (v3.7.1) 仍处于密集开发阶段。尽管已完成三轮全维度诱错审计 (53+ 发现, P1 清零), 但系统中仍然存在大量未被发现的阻断性缺陷和边界问题。本版本仅适用于实验、研究和离线模拟, **不可用于实盘交易或生产环境**。开发者需要自行精细打磨, 并结合自身使用场景进行充分验证。
 
 QuantPilot 是一个单机量化交易沙盒, 聚焦于诚实的能力边界、可复现的运行时行为和发布时契约纪律。
 
-当前版本: **v3.7.0** (实时执行端 + OKX testnet + 多策略并发 + 审计闭环 + 用户体验优化) | [系统架构](./markdown/10-overview/overview-system-architecture.md) | [使用指南](./markdown/10-overview/overview-system-architecture.md#十一使用指南) | [General_Policy](./markdown/General_Policy.md) | [超级规范化](./markdown/01-principles/principles-super-standardization.md) | [版本历史](./CHANGELOG.md)
+当前版本: **v3.7.1** (实时执行端 + OKX testnet + 多策略并发 + 审计闭环 + 流程收口) | [系统架构](./markdown/10-overview/overview-system-architecture.md) | [使用指南](./markdown/10-overview/overview-system-architecture.md#十一使用指南) | [General_Policy](./markdown/General_Policy.md) | [超级规范化](./markdown/01-principles/principles-super-standardization.md) | [版本历史](./CHANGELOG.md)
 
 ## 产品边界
 
@@ -95,30 +95,37 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-user-facing-text.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-governance.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-i18n.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-version-consistency.ps1
 cargo check --workspace
-cargo test --workspace
-cargo clippy --workspace --all-targets -- -D warnings
+.\scripts\test.ps1 test --workspace
+cargo clippy --workspace --all-targets
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-executor-warning-budget.ps1 -MaxWarnings 49
 cd frontend; npm run build
 cd frontend; npm run test
 cd frontend; npm run test:e2e
 cd frontend; npm audit --audit-level=moderate
+cd ..\frontend-executor; npm run build
+cd ..
+cargo check --bin executor
+.\scripts\test.ps1 test --bin executor
+.\scripts\scenario-smoke.ps1
 ```
 
 ### Pre-commit hook
 
-`scripts/pre-commit` 在 `git commit` 时自动执行 `cargo check` + `cargo test --no-run` + `vite build` + `vitest run`
+`scripts/pre-commit` 在 `git commit` 时自动执行 UTF-8 检查、`cargo check`、`cargo test --no-run`、`vite build`、`vitest run`。
 
-## v3.7.0 五维度评分
+## v3.7.1 流程收口状态
 
-| 维度 | 评分 | 说明 |
-|------|:--:|------|
-| 功能开发进度 | **9.5/10** | 18 指标全实现 / 实时执行端 + OKX testnet / Paper/Live 切换 / 编译缓存 / ParamsPanel 热调参 / Toast 系统 |
-| 仓库稳定程度 | **9.2/10** | cargo check 0 错误 / test 182/185 / vitest 269/269 / executor 36 预存警告 |
-| 发布就绪度 | **9.0/10** | P1 清零 / GP+超规范化 v3.7.0 对齐 / 版本一致性 / 5 P2 延后 |
-| 用户友好程度 | **9.5/10** | 术语全中文化 / 空状态引导 / 进度反馈 / 错误码映射 / ARIA 无障碍 |
-| 系统整体稳定性 | **9.3/10** | 事务保护 / TOCTOU 修复 / 三阶段无锁恢复 / 状态持久化 / Zeroizing / api_guard 强制 |
-| **加权** | **9.3/10** | = 9.5×0.3 + 9.2×0.3 + 9.0×0.2 + 9.5×0.1 + 9.3×0.1 |
-| **加权** | **9.6/10** |
+| 项 | 状态 | 说明 |
+|----|:--:|------|
+| S0 登录挂起 | ✅ | `ring::rand::SystemRandom` 缓存 + refresh token 生成移出 DB 锁 |
+| P1 凭证 DELETE 405 | ✅ | Axum 0.7 路由参数语法修正为 `:service` |
+| P2 测试进程文件锁 | ✅ | `scripts/test.ps1` / `scripts/test.sh` 在测试前停止本仓库运行进程 |
+| 三层工作流门禁 | ✅ | pre-commit / CI / closeout-release 三层已统一 |
+| 版本一致性 | ✅ | Cargo、Tauri、前端 package、lockfile 和关键文档统一到 `3.7.1` |
+| executor warning 债务 | ⚠️ | 当前预算 49；新增 warning 会失败，清零后恢复 `-D warnings` |
+| 完整 closeout | ⚠️ | `tools\run-closeout-gates.bat` 已收口为 17 项门禁，发布前仍需完整跑通 |
 
 ## 文档入口
 

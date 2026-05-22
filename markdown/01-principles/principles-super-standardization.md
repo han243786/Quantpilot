@@ -1,22 +1,22 @@
-# 超级规范化 v3.7.0
+# 超级规范化 v3.7.1
 
-> 生效日期: 2026-05-21 | 本文件是项目开发、检查、审计、优化的唯一执行标准
+> 生效日期: 2026-05-22 | 本文件是项目开发、检查、审计、优化的唯一执行标准
 > 重构: v1.0→v3.0 精简三层流水线、元流水线自进化触发条件
-> 更新: v3.4.0 新增 §8.4 | v3.7.0 新增 §8.5 自由维度诱错审计常态化, 更新元流水线, 扩展CI门禁
+> 更新: v3.4.0 新增 §8.4 | v3.7.0 新增 §8.5 自由维度诱错审计常态化 | v3.7.1 收口 pre-commit / CI / closeout 三层门禁
 
 ---
 
 ## 一、总纲
 
-QuantPilot 的开发过程受 **三层流水线** 约束：
+QuantPilot 的开发过程受 **三层门禁流水线** 约束：
 
 ```
-开发 → 自动门禁(pre-commit + CI) → AI并行审计(自由维度诱错) → 发布前检查单(3角色) → closeout
+开发 → 日常开发门禁(pre-commit) → PR/CI门禁 → AI并行审计(自由维度诱错) → 发布前检查单(3角色) → closeout/release
   │                │                         │                         │               │
-  │                │                         │                         │               └── 五维度评分 + GP合规矩阵
+  │                │                         │                         │               └── 五维度评分 + GP合规矩阵 + release dry-run
   │                │                         │                         └────────────────── 3角色手动验证
   │                │                         └────────────────────────────────────────── 11维度 AI并行诱错
-  │                └──────────────────────────────────────────────────────────────────── 13项自动化门禁
+  │                └──────────────────────────────────────────────────────────────────── 17项 closeout 门禁
   └────────────────────────────────────────────────────────────────────────────────────── 代码 + 测试 + 文档
 ```
 
@@ -44,20 +44,23 @@ QuantPilot 的开发过程受 **三层流水线** 约束：
 
 ## 二、第一层：自动门禁
 
-### 2.1 Pre-commit Hook
+### 2.1 日常开发门禁：Pre-commit Hook
 
 `scripts/pre-commit` 在 `git commit` 时自动执行：
 
 ```
+powershell tools/check-utf8.ps1
 cargo check --workspace
-cargo test --workspace --no-run
+./scripts/test.sh test --workspace --no-run
 cd frontend && npx vite build
 cd frontend && npx vitest run
 ```
 
 任何一步失败则提交被拒。
 
-### 2.2 CI 门禁矩阵
+日常开发门禁只拦截明显破坏，避免把 E2E、audit、完整场景测试放进每次提交。
+
+### 2.2 PR / CI 门禁矩阵
 
 | # | 检查项 | 命令 | 阻断级别 |
 |---|--------|------|:--:|
@@ -65,23 +68,36 @@ cd frontend && npx vitest run
 | 2 | 面向用户文本 | `powershell tools/check-user-facing-text.ps1` | 阻断 |
 | 3 | 能力治理快照 | `powershell tools/check-capability-governance.ps1` | 阻断 |
 | 4 | i18n 覆盖 | `powershell tools/check-i18n.ps1` | 阻断 |
-| 5 | Rust 编译 | `cargo check --workspace` | 阻断 |
-| 6 | Rust 测试全量 | `cargo test --workspace` | 阻断 |
-| 7 | Clippy | `cargo clippy --workspace --all-targets -- -D warnings` | 高 |
-| 8 | 前端构建 | `cd frontend && npm run build` | 阻断 |
-| 9 | 前端测试 | `cd frontend && npm run test` | 阻断 |
-| 10 | 前端 E2E | `cd frontend && npm run test:e2e` | 阻断 |
-| 11 | npm 审计 | `cd frontend && npm audit --audit-level=moderate` | 阻断 |
-| 12 | 执行端编译 | `cargo check --bin executor` | 阻断 |
-| 13 | 执行端测试 | `cargo test --bin executor` | 阻断 |
+| 5 | 版本号一致性 | `powershell tools/check-version-consistency.ps1` | 阻断 |
+| 6 | Rust 编译 | `cargo check --workspace` | 阻断 |
+| 7 | Rust 测试全量 | `powershell scripts/test.ps1 test --workspace` | 阻断 |
+| 8 | Clippy | `cargo clippy --workspace --all-targets` | 阻断 |
+| 9 | 执行端 warning budget | `powershell tools/check-executor-warning-budget.ps1 -MaxWarnings 49` | 阻断 |
+| 10 | 前端构建 | `cd frontend && npm run build` | 阻断 |
+| 11 | 前端测试 | `cd frontend && npm run test` | 阻断 |
+| 12 | 前端 E2E | `cd frontend && npm run test:e2e` | 阻断 |
+| 13 | npm 审计 | `cd frontend && npm audit --audit-level=moderate` | 阻断 |
+| 14 | 执行端前端构建 | `cd frontend-executor && npm run build` | 阻断 |
+| 15 | 执行端编译 | `cargo check --bin executor` | 阻断 |
+| 16 | 执行端测试 | `powershell scripts/test.ps1 test --bin executor` | 阻断 |
 
-### 2.3 收口包装器
+说明：v3.7.1 起，执行端已有 warning 债务用预算脚本显式追踪。预算当前为 49，任何新增 warning 都会阻断；当债务清零后，将 `cargo clippy` 升级回 `-D warnings`。
+
+说明：面向用户文本门禁默认扫描 README、前端源码、当前规范、实现契约、用户指南和总览。历史里程碑与归档报告不作为当前产品文案扫描；需要专项审计时可显式传入 `-Paths`。
+
+### 2.3 Closeout / Release 门禁
 
 ```powershell
 .\tools\run-closeout-gates.bat
 ```
 
-执行全部 13 项门禁，任一失败则整体不通过。
+执行 17 项 closeout 门禁，任一失败则整体不通过。Closeout 比 PR/CI 额外执行 QS 场景 smoke：
+
+```
+powershell scripts/scenario-smoke.ps1
+```
+
+Release workflow 必须至少完成一次手动 dry-run，确认 Windows runner 上能构建、打包、生成 SHA256SUMS。只有 tag 触发时才允许发布 GitHub Release。
 
 ---
 
@@ -283,7 +299,7 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 - 发布前检查单 3 角色未通过
 - GP 合规矩阵有 ❌ 项未修复
 - CHANGELOG 缺失当前版本条目
-- **版本号一致性检查未通过** (v3.7.0 新增): `grep -r "旧版本号" --include="*.toml" --include="*.json" --include="*.rs" --include="*.md" . | grep -v "target\|node_modules\|\.git\|CHANGELOG\|milestones\|closeout\|v[0-9]\.[0-9].*✅\|v[0-9]\.[0-9].*已"` 返回非预期结果。每个 closeout 前必须验证所有文件的版本号已递增至当前版本。
+- **版本号一致性检查未通过** (v3.7.1 收口): `powershell tools/check-version-consistency.ps1` 必须通过。每个 closeout 前必须验证 Cargo、Tauri、前端 package、package-lock、README、文档索引、超级规范化、overview 和执行端 HTML 标题均已递增至当前版本。
 
 ### 8.2 紧急豁免
 

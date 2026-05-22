@@ -1,6 +1,6 @@
 # 当前状态与发布状态
 
-> 最后更新：2026-05-21 | 当前版本：v3.7.0 ✅ (架构优化+模块拆分+全量审计闭环, 9版本150+修复)
+> 最后更新：2026-05-22 | 当前版本：v3.7.1 ⚠️ (S0/P1 回归修复 + 流程收口；完整 closeout 门禁待执行)
 
 ## 版本路线
 
@@ -42,7 +42,7 @@
 
 ## 当前产品真实情况
 
-QuantPilot v3.7.0 拥有一条完整的端到端量化交易沙盒链：
+QuantPilot v3.7.1 继承 v3.7.0 的端到端量化交易沙盒链，并在回归修复后补齐流程门禁基线：
 
 - **桌面应用**: Tauri v2 自绘标题栏 Windows 桌面应用
 - **前端**: Adobe 暗色面板设计系统, 图编辑器, 策略工作区, 回测详情/对比, 研究控制台, Toast 通知
@@ -99,7 +99,7 @@ QuantPilot v3.7.0 拥有一条完整的端到端量化交易沙盒链：
 
 ## 当前架构边界
 
-v3.7.0 系统应被理解为：
+v3.7.1 系统应被理解为：
 
 - 支持的交易所: `binance`, `okx`
 - 支持的交易对: `BTCUSDT`, `ETHUSDT`, `SOLUSDT`
@@ -113,22 +113,30 @@ v3.7.0 系统应被理解为：
 
 v3.7.0 完成 v3.5.0→v3.7.0 全版本演进 (12 项新功能 + 32 项审计修复 + 12 项 UX 优化 + 14 项 P3 消化)。
 
+v3.7.1 是其后的 PATCH 收口：已修复 S0 登录挂起、P1 凭证 DELETE 405 和 P2 测试进程文件锁问题，并把 pre-commit、CI、closeout/release 三层门禁重新对齐。完整 closeout 门禁尚未作为发布结论跑完，因此当前状态是“流程基线已落地，发布绿灯待验证”。
+
 使用下面的专用文档作为活跃发布界面：
 
 - [v3.7.0 规划方案](../06-milestones/v3.7.0/01-规划方案.md)
 - [v3.7.0 综合优化清单](../06-milestones/v3.7.0/02-综合优化清单.md)
+- [v3.7.1 规划方案](../06-milestones/v3.7.1/01-规划方案.md)
+- [v3.7.1 综合优化清单](../06-milestones/v3.7.1/02-综合优化清单.md)
+- [v3.7.1 closeout 基线](../06-milestones/v3.7.1/03-closeout.md)
 - [支持矩阵](../03-implementation/governance/implementation-support-matrix.md)
 - [编译链合约](../03-implementation/governance/implementation-compile-chain-contract.md)
 
-当前仓库级状态 (v3.7.0):
+当前仓库级状态 (v3.7.1 流程基线):
 
 | 检查项 | 状态 | 备注 |
 |--------|:--:|------|
 | `cargo check --workspace` | ✅ | 0 错误 |
-| `cargo test --workspace` | ✅ | 182/185 通过 (3 预存) |
-| `cargo clippy --workspace` | ⚠️ | lib 0 warning, executor 36 预存 |
-| 前端 `npm run build` ×2 | ✅ | main + executor 通过 |
+| `scripts/test.ps1 test --workspace` | ⚠️ | 已纳入门禁，完整结果待本轮 closeout 执行 |
+| `cargo clippy --workspace --all-targets` | ⚠️ | 不再假装 0 warning；executor warning 由预算脚本追踪 |
+| executor warning budget | ⚠️ | 当前预算 49，新增 warning 阻断 |
+| 前端 `npm run build` | ✅ | main frontend 已纳入 CI/closeout |
+| 执行端前端 `npm run build` | ✅ | `frontend-executor` 已纳入 CI/closeout |
 | 前端 `npx vitest run` | ✅ | 269/269 (92 文件) |
+| npm audit | ✅ | frontend transitive `ws` 已通过 audit fix 清零 |
 | P1 消化 | ✅ | 14/14 全部完成 (v3.5.1) |
 | P2 消化 | ✅ | 18/23 完成 (5 延后至 v3.7.0+) |
 | P3 消化 | ✅ | 14 项完成 (v3.7.0) |
@@ -139,9 +147,12 @@ v3.7.0 完成 v3.5.0→v3.7.0 全版本演进 (12 项新功能 + 32 项审计修
 | 凭证 Zeroizing | ✅ | executor CredentialEntry |
 | api_guard 强制 | ✅ | 缺头→401 |
 | .unwrap() 清零 | ✅ | executor main.rs 0 处 |
-| 版本号一致性 | ✅ | 全文件 3.7.0 |
-| GP 合规 | ✅ | v3.7.0 对齐 |
-| 超级规范化 | ✅ | v3.7.0 对齐 (新增 §8.5~§8.7) |
+| S0/P1 回归修复 | ✅ | 登录挂起、凭证 DELETE 405 已修复 |
+| P2 测试进程锁 | ✅ | `scripts/test.ps1` / `scripts/test.sh` |
+| 版本号一致性 | ✅ | 关键元数据和用户可见入口统一到 3.7.1 |
+| GP 合规 | ✅ | 继续沿用 v3.7.0 GP，v3.7.1 不扩大功能声明 |
+| 超级规范化 | ✅ | v3.7.1 对齐 pre-commit / CI / closeout 三层门禁 |
+| 完整 closeout | ⚠️ | `tools\run-closeout-gates.bat` 17 项发布前仍需完整跑通 |
 
 ## 五维度评分 (v3.7.0 closeout)
 

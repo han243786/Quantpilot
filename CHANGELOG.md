@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.7.1 — 回归修复 + 流程收口基线 (2026-05-22)
+- S0 登录挂起修复: 缓存 `ring::rand::SystemRandom`, refresh token 生成移出 DB 锁范围。
+- P1 凭证 DELETE 405 修复: Axum 0.7 路由参数改为 `:service`。
+- P2 测试文件锁收口: 新增 `scripts/test.ps1` / `scripts/test.sh`, 测试前停止本仓库运行进程。
+- 门禁收口: pre-commit / CI / `tools\run-closeout-gates.bat` 统一接入 UTF-8、版本一致性、executor warning 预算和 QS 场景 smoke。
+- 发布流水线修正: Windows release workflow 改为 PowerShell 打包路径, 支持手动 dry-run 构建。
+- 已知状态: executor warning 债务预算为 49；完整 17 项 closeout 门禁仍需发布前跑通。
+
 ## v3.3.0 — 全量消化 (2026-05-20)
 - session_crypto: 空payload + 损坏密文 2 tests
 - executor_state: RingBuffer capacity=1 + empty latest 2 tests

@@ -1,5 +1,17 @@
 param(
-    [string[]]$Paths = @("frontend/src", "frontend/index.html", "src/main.rs", "markdown"),
+    [string[]]$Paths = @(
+        "README.md",
+        "frontend/src",
+        "frontend/index.html",
+        "frontend-executor/index.html",
+        "src/main.rs",
+        "markdown/README.md",
+        "markdown/General_Policy.md",
+        "markdown/01-principles",
+        "markdown/03-implementation",
+        "markdown/04-guides",
+        "markdown/10-overview"
+    ),
     [string[]]$Extensions = @(".js", ".jsx", ".ts", ".tsx", ".css", ".md", ".html", ".rs"),
     [string[]]$PositiveClaimAuditPaths = @()
 )

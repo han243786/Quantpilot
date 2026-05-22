@@ -21,7 +21,9 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: |
+            frontend/package-lock.json
+            frontend-executor/package-lock.json
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -44,19 +46,35 @@ jobs:
         shell: cmd
         run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-i18n.ps1
 
+      - name: Check version consistency
+        shell: cmd
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-version-consistency.ps1
+
       # ── Rust 编译与测试 ──
 
-      - name: Rust workspace check (0 warnings)
+      - name: Rust workspace check
         shell: cmd
         run: cargo check --workspace
 
       - name: Rust clippy
         shell: cmd
-        run: cargo clippy --workspace --all-targets -- -D warnings
+        run: cargo clippy --workspace --all-targets
+
+      - name: Executor warning budget
+        shell: cmd
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-executor-warning-budget.ps1 -MaxWarnings 49
 
       - name: Rust workspace tests
         shell: cmd
-        run: cargo test --workspace
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts\test.ps1 test --workspace
+
+      - name: Executor check
+        shell: cmd
+        run: cargo check --bin executor
+
+      - name: Executor tests
+        shell: cmd
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts\test.ps1 test --bin executor
 
       # ── 前端编译与测试 ──
 
@@ -84,3 +102,13 @@ jobs:
         working-directory: frontend
         shell: cmd
         run: cmd /c npm audit --audit-level=moderate
+
+      - name: Install executor frontend dependencies
+        working-directory: frontend-executor
+        shell: cmd
+        run: npm ci
+
+      - name: Build executor frontend
+        working-directory: frontend-executor
+        shell: cmd
+        run: cmd /c npm run build

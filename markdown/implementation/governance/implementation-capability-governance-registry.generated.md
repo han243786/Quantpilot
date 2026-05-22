@@ -110,7 +110,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-gover
 | --- | --- | --- | --- | --- | --- | --- |
 | ui.action.export_runtime_config | export_runtime_config | supported | frontend editor owner | action gating, reason text, E2E | frontend:CAPABILITY_ACTION_MAP | 只在当前策略图编译通过后导出图生成的 runtime_config。; 当前端正在同步后端能力快照或进入安全回退模式时，该操作会被锁定。 |
 | ui.action.export_quantscript | export_quantscript | supported | frontend editor owner | action gating, reason text, E2E | frontend:CAPABILITY_ACTION_MAP | 只导出当前 strategy_graph 草稿，不依赖后端能力门禁，也不会替代 formal QuantScript 编译链路。 |
-| ui.action.compile | compile | supported | frontend editor owner | action gating, reason text, E2E | frontend:CAPABILITY_ACTION_MAP | Strategy IR 只承担语义预检。; 运行时编译仍然是可运行输出的最终真源。 |
+| ui.action.compile | compile | supported | frontend editor owner | action gating, reason text, E2E | frontend:CAPABILITY_ACTION_MAP | 策略中间表示只承担语义预检。; 运行时编译仍然是可运行输出的最终真源。 |
 | ui.action.start_simulation | start_simulation | supported | frontend editor owner | action gating, reason text, E2E | frontend:CAPABILITY_ACTION_MAP | 当前 Beta 边界内仅支持纸面模拟运行时。; 缓存回退模式下仍可见，但依旧受后端校验约束。 |
 | ui.action.run_backtest | run_backtest | supported | frontend editor owner | action gating, reason text, E2E | frontend:CAPABILITY_ACTION_MAP | 当前仅提供基础回放/回测支持，不宣称研究级回测能力。; 缓存回退模式下仍可见，但依旧受后端校验约束。 |
 | ui.action.run_parameter_sweep | run_parameter_sweep | supported | frontend editor owner | action gating, reason text, E2E | frontend:CAPABILITY_ACTION_MAP | 参数扫掠建立在现有回测能力边界之上，能力未同步或 safe fallback 时不得继续暴露为可执行入口。; 该入口只表示窄执行假设扫描，不表示通用优化器或第二套实验运行时。 |
@@ -138,7 +138,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-gover
 | --- | --- | --- | --- | --- | --- | --- |
 | claim.allowed.纸面运行时_Beta | 纸面运行时 Beta | supported | docs and QA owner | README, markdown, UI copy, text gates | frontend:support-matrix.userFacingGuardrails.allowedClaims |  |
 | claim.allowed.基础回测支持 | 基础回测支持 | supported | docs and QA owner | README, markdown, UI copy, text gates | frontend:support-matrix.userFacingGuardrails.allowedClaims |  |
-| claim.allowed.受限的_Custom_Strategy_IR_表达式路径 | 受限的 Custom Strategy IR 表达式路径 | supported | docs and QA owner | README, markdown, UI copy, text gates | frontend:support-matrix.userFacingGuardrails.allowedClaims |  |
+| claim.allowed.受限的_Custom_策略中间表示表达式路径 | 受限的 Custom 策略中间表示表达式路径 | supported | docs and QA owner | README, markdown, UI copy, text gates | frontend:support-matrix.userFacingGuardrails.allowedClaims |  |
 | claim.disallowed.claiming_research-grade_backtest_support | 宣称具备研究级回测能力 | disallowed_claim | docs and QA owner | README, markdown, UI copy, text gates | frontend:support-matrix.userFacingGuardrails.disallowedClaims |  |
 | claim.disallowed.claiming_live_trading_support | 宣称支持实盘交易 | disallowed_claim | docs and QA owner | README, markdown, UI copy, text gates | frontend:support-matrix.userFacingGuardrails.disallowedClaims |  |
 | claim.disallowed.claiming_true_arbitrage_agent_support | 宣称支持真实套利代理 | disallowed_claim | docs and QA owner | README, markdown, UI copy, text gates | frontend:support-matrix.userFacingGuardrails.disallowedClaims |  |

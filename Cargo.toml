@@ -15,7 +15,7 @@ sha2 = "0.10"
 
 [package]
 name = "quantpilot"
-version = "3.7.0"
+version = "3.7.1"
 edition = "2021"
 
 [features]

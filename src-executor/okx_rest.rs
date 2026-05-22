@@ -137,8 +137,11 @@ mod tests {
     #[test]
     fn test_okx_timestamp_is_valid() {
         let ts = okx_timestamp();
-        let parsed: u64 = ts.parse().unwrap();
+        let parsed = chrono::DateTime::parse_from_rfc3339(&ts)
+            .expect("OKX 时间戳应为 RFC3339/ISO8601 格式");
+        assert!(ts.ends_with('Z'));
+        assert!(ts.contains('.'));
         // 2024年之后的时间戳
-        assert!(parsed > 1700000000);
+        assert!(parsed.timestamp() > 1_700_000_000);
     }
 }

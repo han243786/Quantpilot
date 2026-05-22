@@ -19,44 +19,9 @@ jobs:
         with: { node-version: "22" }
       - uses: dtolnay/rust-toolchain@stable
 
-      - name: Build
-        run: cargo build --release
-
-      - name: Test
+      - name: Scenario smoke
         shell: pwsh
-        run: |
-          $env:QUANTPILOT_PORT = "3000"
-          $env:QUANTPILOT_DEV = "true"
-          $env:QUANTPILOT_API_KEY = ""
-
-          Write-Host "Starting backend..."
-          $proc = Start-Process -FilePath ".\target\release\quantpilot.exe" -PassThru -WindowStyle Hidden
-
-          Write-Host "Waiting for backend..."
-          for ($i = 0; $i -lt 30; $i++) {
-            try {
-              (Invoke-RestMethod "http://127.0.0.1:3000/api/health" -TimeoutSec 3) | Out-Null
-              Write-Host "Ready"
-              break
-            } catch { Start-Sleep -Seconds 3 }
-          }
-
-          $failed = 0
-          @(
-            "tests/scenarios/scenario_01_btc_dual_ma.qs",
-            "tests/scenarios/scenario_02_backtest_compare.qs",
-            "tests/scenarios/scenario_08_multi_symbol.qs"
-          ) | ForEach-Object {
-            Write-Host "=== $_ ==="
-            node tools/run-scenario.js $_
-            if ($LASTEXITCODE -ne 0) { $failed++ }
-          }
-
-          Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
-          Write-Host "========================================"
-          Write-Host " Scenarios: $(3 - $failed)/3 passed"
-          Write-Host "========================================"
-          exit $failed
+        run: .\scripts\scenario-smoke.ps1
 
       - uses: actions/upload-artifact@v4
         if: always()
