@@ -90,8 +90,9 @@ pub use sandbox::{
 };
 pub use v4_runtime::{
     V4CachedMachineOutput, V4MachineRuntimeSnapshot, V4MachineRuntimeStatus,
-    V4PaperSimulatedRunOutput, V4PaperSimulatedRuntime, V4RuntimeEventEnvelope,
-    V4RuntimeInputEvent, V4RuntimeMemorySnapshot,
+    V4PaperSimulatedRunOutput, V4PaperSimulatedRuntime, V4RiskPlaneRuntimeDecision,
+    V4RiskPlaneRuntimeSnapshot, V4RuntimeEventEnvelope, V4RuntimeEventOrigin, V4RuntimeInputEvent,
+    V4RuntimeMemorySnapshot,
 };
 
 /// 配置代际记录

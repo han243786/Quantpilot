@@ -1,11 +1,11 @@
 use anyhow::{anyhow, Result};
 use qrpc_core_ir::v4::{
-    EventFreshnessRequirement, MachineCachePolicy, MachineRecoveryPolicy, MachineSilencePolicy,
-    MachineTemplateKind, RuntimeTradingMode, V4MachineGraphContract,
+    EventFreshnessRequirement, MachineCachePolicy, MachineEventSourceKind, MachineRecoveryPolicy,
+    MachineSilencePolicy, MachineTemplateKind, RuntimeTradingMode, V4MachineGraphContract,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use std::collections::{BTreeMap, VecDeque};
+use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
 const V4_RUNTIME_MAX_EVENT_STEPS: usize = 1_024;
 const EVENT_DOWNSTREAM_PULL: &str = "downstream_pull";
@@ -15,6 +15,8 @@ const EVENT_CACHE_RETURNED: &str = "cache_returned";
 const EVENT_RECOVERY_STARTED: &str = "recovery_started";
 const EVENT_RECOVERY_COMPLETED: &str = "recovery_completed";
 const EVENT_TRANSITION_APPLIED: &str = "machine_transition_applied";
+const EVENT_RISK_PLANE_APPROVED: &str = "risk_plane_approved";
+const EVENT_RISK_PLANE_REJECTED: &str = "risk_plane_rejected";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct V4RuntimeInputEvent {
@@ -30,11 +32,27 @@ pub struct V4RuntimeEventEnvelope {
     pub sequence: u64,
     pub event_type: String,
     pub source: String,
+    #[serde(default)]
+    pub origin: V4RuntimeEventOrigin,
     pub ts_ms: u64,
     #[serde(default)]
     pub payload: Value,
     #[serde(default)]
     pub replayable: bool,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum V4RuntimeEventOrigin {
+    ExternalInput,
+    MachineEmit,
+    RuntimeControl,
+}
+
+impl Default for V4RuntimeEventOrigin {
+    fn default() -> Self {
+        Self::ExternalInput
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -53,6 +71,7 @@ pub struct V4RuntimeMemorySnapshot {
     pub ts_ms: u64,
     #[serde(default)]
     pub machines: Vec<V4MachineRuntimeSnapshot>,
+    pub risk_plane: V4RiskPlaneRuntimeSnapshot,
     pub event_sequence: u64,
     pub provider_order_submission_attached: bool,
 }
@@ -94,6 +113,31 @@ pub enum V4MachineRuntimeStatus {
     Recovering,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct V4RiskPlaneRuntimeSnapshot {
+    pub required: bool,
+    #[serde(default)]
+    pub machine_ids: Vec<String>,
+    pub min_priority: i32,
+    pub approved_event_count: u64,
+    pub rejected_event_count: u64,
+    pub real_order_path_unlocked: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub last_decision: Option<V4RiskPlaneRuntimeDecision>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct V4RiskPlaneRuntimeDecision {
+    pub decision_id: String,
+    pub target_machine_id: String,
+    pub source_machine_id: String,
+    pub event_type: String,
+    pub approved: bool,
+    pub reason: String,
+    pub ts_ms: u64,
+    pub sequence: u64,
+}
+
 #[derive(Debug, Clone)]
 struct MachineRuntimeState {
     state_id: String,
@@ -106,10 +150,21 @@ struct MachineRuntimeState {
 }
 
 #[derive(Debug, Clone)]
+struct V4RiskPlaneRuntimeState {
+    required: bool,
+    machine_ids: BTreeSet<String>,
+    min_priority: i32,
+    approved_event_count: u64,
+    rejected_event_count: u64,
+    last_decision: Option<V4RiskPlaneRuntimeDecision>,
+}
+
+#[derive(Debug, Clone)]
 pub struct V4PaperSimulatedRuntime {
     graph: V4MachineGraphContract,
     runtime_mode: RuntimeTradingMode,
     machines: BTreeMap<String, MachineRuntimeState>,
+    risk_plane: V4RiskPlaneRuntimeState,
     event_queue: VecDeque<V4RuntimeEventEnvelope>,
     event_log: Vec<V4RuntimeEventEnvelope>,
     sequence: u64,
@@ -168,11 +223,31 @@ impl V4PaperSimulatedRuntime {
                 },
             );
         }
+        let risk_plane = graph
+            .risk_plane
+            .as_ref()
+            .map(|risk_plane| V4RiskPlaneRuntimeState {
+                required: risk_plane.required,
+                machine_ids: risk_plane.machine_ids.iter().cloned().collect(),
+                min_priority: risk_plane.min_priority,
+                approved_event_count: 0,
+                rejected_event_count: 0,
+                last_decision: None,
+            })
+            .unwrap_or_else(|| V4RiskPlaneRuntimeState {
+                required: false,
+                machine_ids: BTreeSet::new(),
+                min_priority: 0,
+                approved_event_count: 0,
+                rejected_event_count: 0,
+                last_decision: None,
+            });
 
         Ok(Self {
             graph,
             runtime_mode,
             machines,
+            risk_plane,
             event_queue: VecDeque::new(),
             event_log: Vec::new(),
             sequence: 0,
@@ -191,6 +266,7 @@ impl V4PaperSimulatedRuntime {
             event.payload,
             event.ts_ms,
             true,
+            V4RuntimeEventOrigin::ExternalInput,
         );
         self.run_until_idle()?;
         Ok(self.output_since(start_index, event.ts_ms))
@@ -355,6 +431,7 @@ impl V4PaperSimulatedRuntime {
                     })
                 })
                 .collect(),
+            risk_plane: self.risk_plane_snapshot(),
             event_sequence: self.sequence,
             provider_order_submission_attached: self.provider_order_submission_attached,
         }
@@ -372,6 +449,19 @@ impl V4PaperSimulatedRuntime {
 
     pub fn event_log(&self) -> &[V4RuntimeEventEnvelope] {
         &self.event_log
+    }
+
+    pub fn risk_plane_snapshot(&self) -> V4RiskPlaneRuntimeSnapshot {
+        V4RiskPlaneRuntimeSnapshot {
+            required: self.risk_plane.required,
+            machine_ids: self.risk_plane.machine_ids.iter().cloned().collect(),
+            min_priority: self.risk_plane.min_priority,
+            approved_event_count: self.risk_plane.approved_event_count,
+            rejected_event_count: self.risk_plane.rejected_event_count,
+            real_order_path_unlocked: self.risk_plane.approved_event_count > 0
+                && self.risk_plane.rejected_event_count == 0,
+            last_decision: self.risk_plane.last_decision.clone(),
+        }
     }
 
     fn output_since(&self, start_index: usize, now_ms: u64) -> V4PaperSimulatedRunOutput {
@@ -430,6 +520,14 @@ impl V4PaperSimulatedRuntime {
             let Some(machine) = self.machine_spec(&machine_id).cloned() else {
                 continue;
             };
+            if matches!(machine.template, MachineTemplateKind::Execution) {
+                let decision = self.evaluate_risk_plane_for_execution(&machine_id, &event);
+                let approved = decision.approved;
+                self.record_risk_plane_decision(decision, event.ts_ms);
+                if !approved {
+                    continue;
+                }
+            }
             let emitted_events = transition
                 .action
                 .as_ref()
@@ -523,11 +621,121 @@ impl V4PaperSimulatedRuntime {
                     payload,
                     event.ts_ms,
                     true,
+                    V4RuntimeEventOrigin::MachineEmit,
                 );
             }
         }
 
         Ok(())
+    }
+
+    fn evaluate_risk_plane_for_execution(
+        &self,
+        target_machine_id: &str,
+        event: &V4RuntimeEventEnvelope,
+    ) -> V4RiskPlaneRuntimeDecision {
+        let reject = |reason: String| V4RiskPlaneRuntimeDecision {
+            decision_id: format!("risk-decision-{}", self.sequence + 1),
+            target_machine_id: target_machine_id.to_string(),
+            source_machine_id: event.source.clone(),
+            event_type: event.event_type.clone(),
+            approved: false,
+            reason,
+            ts_ms: event.ts_ms,
+            sequence: self.sequence + 1,
+        };
+
+        if !self.risk_plane.required {
+            return reject(
+                "execution transition requires a runtime Risk Plane, but none is required"
+                    .to_string(),
+            );
+        }
+        if !self.risk_plane.machine_ids.contains(event.source.as_str()) {
+            return reject(format!(
+                "execution event source `{}` is not a runtime Risk Plane machine",
+                event.source
+            ));
+        }
+        if event.origin != V4RuntimeEventOrigin::MachineEmit {
+            return reject(
+                "execution event must be emitted by a Risk Plane machine transition".to_string(),
+            );
+        }
+        if self.event_source_kind(&event.event_type) != Some(MachineEventSourceKind::RiskPlane) {
+            return reject(format!(
+                "execution event `{}` is not declared as a Risk Plane event",
+                event.event_type
+            ));
+        }
+        if event.payload.get("risk_plane_approved") != Some(&Value::Bool(true)) {
+            return reject("Risk Plane event payload does not carry explicit approval".to_string());
+        }
+
+        let Some(source_machine) = self.machine_spec(event.source.as_str()) else {
+            return reject(format!(
+                "runtime Risk Plane source `{}` is not a declared machine",
+                event.source
+            ));
+        };
+        if !matches!(source_machine.template, MachineTemplateKind::Decision) {
+            return reject(format!(
+                "runtime Risk Plane source `{}` is not a Decision machine",
+                event.source
+            ));
+        }
+        if source_machine.priority < self.risk_plane.min_priority {
+            return reject(format!(
+                "runtime Risk Plane source `{}` priority {} is below min_priority {}",
+                event.source, source_machine.priority, self.risk_plane.min_priority
+            ));
+        }
+        match self.machines.get(event.source.as_str()) {
+            Some(state) if state.status == V4MachineRuntimeStatus::Active => {}
+            Some(state) => {
+                return reject(format!(
+                    "runtime Risk Plane source `{}` is not active: {:?}",
+                    event.source, state.status
+                ));
+            }
+            None => {
+                return reject(format!(
+                    "runtime Risk Plane source `{}` has no runtime state",
+                    event.source
+                ));
+            }
+        }
+
+        V4RiskPlaneRuntimeDecision {
+            decision_id: format!("risk-decision-{}", self.sequence + 1),
+            target_machine_id: target_machine_id.to_string(),
+            source_machine_id: event.source.clone(),
+            event_type: event.event_type.clone(),
+            approved: true,
+            reason: "Risk Plane approved execution transition".to_string(),
+            ts_ms: event.ts_ms,
+            sequence: self.sequence + 1,
+        }
+    }
+
+    fn record_risk_plane_decision(&mut self, decision: V4RiskPlaneRuntimeDecision, ts_ms: u64) {
+        if decision.approved {
+            self.risk_plane.approved_event_count += 1;
+        } else {
+            self.risk_plane.rejected_event_count += 1;
+        }
+        self.risk_plane.last_decision = Some(decision.clone());
+
+        self.record_control_event(
+            if decision.approved {
+                EVENT_RISK_PLANE_APPROVED
+            } else {
+                EVENT_RISK_PLANE_REJECTED
+            },
+            "runtime.risk_plane",
+            json!({ "decision": decision }),
+            ts_ms,
+        );
     }
 
     fn payload_for_emitted_event(
@@ -580,9 +788,30 @@ impl V4PaperSimulatedRuntime {
                     );
                 }
             }
+            if spec.source_kind == MachineEventSourceKind::RiskPlane {
+                payload.insert("risk_plane_approved".to_string(), Value::Bool(true));
+                payload.insert(
+                    "risk_plane_machine_id".to_string(),
+                    Value::String(machine_id.to_string()),
+                );
+                payload.insert(
+                    "risk_plane_decision".to_string(),
+                    Value::String("approved".to_string()),
+                );
+            }
         }
 
         Value::Object(payload)
+    }
+
+    fn event_source_kind(&self, event_type: &str) -> Option<MachineEventSourceKind> {
+        self.graph
+            .event_catalog
+            .as_ref()?
+            .events
+            .iter()
+            .find(|candidate| candidate.event_type == event_type)
+            .map(|event| event.source_kind.clone())
     }
 
     fn enqueue_graph_event(
@@ -592,12 +821,14 @@ impl V4PaperSimulatedRuntime {
         payload: Value,
         ts_ms: u64,
         replayable: bool,
+        origin: V4RuntimeEventOrigin,
     ) {
         self.sequence += 1;
         let event = V4RuntimeEventEnvelope {
             sequence: self.sequence,
             event_type: event_type.into(),
             source: source.into(),
+            origin,
             ts_ms,
             payload,
             replayable,
@@ -618,6 +849,7 @@ impl V4PaperSimulatedRuntime {
             sequence: self.sequence,
             event_type: event_type.into(),
             source: source.into(),
+            origin: V4RuntimeEventOrigin::RuntimeControl,
             ts_ms,
             payload,
             replayable: true,
@@ -662,7 +894,7 @@ fn recovery_policy_allows_async(policy: &MachineRecoveryPolicy) -> bool {
 mod tests {
     use super::*;
     use qrpc_core_ir::v4::{
-        bridge_core_ir_to_v4_machine_graph, V4_COMPAT_CORE_IR_LOADED_EVENT,
+        bridge_core_ir_to_v4_machine_graph, V4MachineGraphContract, V4_COMPAT_CORE_IR_LOADED_EVENT,
         V4_COMPAT_DECISION_MACHINE_ID, V4_COMPAT_EXECUTION_MACHINE_ID,
         V4_COMPAT_OBSERVATION_MACHINE_ID, V4_COMPAT_RISK_APPROVED_EVENT,
     };
@@ -749,9 +981,13 @@ mod tests {
         core_ir
     }
 
-    fn sample_runtime() -> V4PaperSimulatedRuntime {
+    fn sample_compat_graph() -> V4MachineGraphContract {
         let bridge_report = bridge_core_ir_to_v4_machine_graph(&sample_core_ir_for_v4_runtime());
-        V4PaperSimulatedRuntime::new(bridge_report.graph.unwrap()).unwrap()
+        bridge_report.graph.unwrap()
+    }
+
+    fn sample_runtime() -> V4PaperSimulatedRuntime {
+        V4PaperSimulatedRuntime::new(sample_compat_graph()).unwrap()
     }
 
     #[test]
@@ -789,6 +1025,13 @@ mod tests {
             event.event_type == EVENT_TRANSITION_APPLIED
                 && event.source == V4_COMPAT_EXECUTION_MACHINE_ID
         }));
+        assert!(output
+            .events
+            .iter()
+            .any(|event| event.event_type == EVENT_RISK_PLANE_APPROVED));
+        assert_eq!(output.memory_snapshot.risk_plane.approved_event_count, 1);
+        assert_eq!(output.memory_snapshot.risk_plane.rejected_event_count, 0);
+        assert!(output.memory_snapshot.risk_plane.real_order_path_unlocked);
     }
 
     #[test]
@@ -877,5 +1120,83 @@ mod tests {
         assert!(error
             .to_string()
             .contains("only accepts PaperSimulated mode"));
+    }
+
+    #[test]
+    fn v4_runtime_rejects_forged_external_risk_plane_event_for_execution() {
+        let mut graph = sample_compat_graph();
+        let execution = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == V4_COMPAT_EXECUTION_MACHINE_ID)
+            .unwrap();
+        execution.transitions[0].event.source = None;
+
+        let mut runtime = V4PaperSimulatedRuntime::new(graph).unwrap();
+        let output = runtime
+            .submit_event(V4RuntimeInputEvent {
+                event_type: V4_COMPAT_RISK_APPROVED_EVENT.to_string(),
+                source: V4_COMPAT_DECISION_MACHINE_ID.to_string(),
+                payload: json!({ "risk_plane_approved": true }),
+                ts_ms: 1,
+            })
+            .unwrap();
+
+        assert_eq!(
+            runtime.machine_state_id(V4_COMPAT_EXECUTION_MACHINE_ID),
+            Some("idle")
+        );
+        assert!(output
+            .events
+            .iter()
+            .any(|event| event.event_type == EVENT_RISK_PLANE_REJECTED));
+        assert_eq!(output.memory_snapshot.risk_plane.approved_event_count, 0);
+        assert_eq!(output.memory_snapshot.risk_plane.rejected_event_count, 1);
+        assert!(output
+            .memory_snapshot
+            .risk_plane
+            .last_decision
+            .as_ref()
+            .unwrap()
+            .reason
+            .contains("must be emitted"));
+    }
+
+    #[test]
+    fn v4_runtime_rejects_execution_event_from_non_risk_plane_source() {
+        let mut graph = sample_compat_graph();
+        let execution = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == V4_COMPAT_EXECUTION_MACHINE_ID)
+            .unwrap();
+        execution.transitions[0].event.source = None;
+
+        let mut runtime = V4PaperSimulatedRuntime::new(graph).unwrap();
+        let output = runtime
+            .submit_event(V4RuntimeInputEvent {
+                event_type: V4_COMPAT_RISK_APPROVED_EVENT.to_string(),
+                source: "runtime".to_string(),
+                payload: json!({ "risk_plane_approved": true }),
+                ts_ms: 1,
+            })
+            .unwrap();
+
+        assert_eq!(
+            runtime.machine_state_id(V4_COMPAT_EXECUTION_MACHINE_ID),
+            Some("idle")
+        );
+        assert!(output
+            .events
+            .iter()
+            .any(|event| event.event_type == EVENT_RISK_PLANE_REJECTED));
+        assert!(output
+            .memory_snapshot
+            .risk_plane
+            .last_decision
+            .as_ref()
+            .unwrap()
+            .reason
+            .contains("not a runtime Risk Plane machine"));
     }
 }

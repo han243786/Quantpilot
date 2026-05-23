@@ -6,7 +6,7 @@
 
 ## 目标
 
-本契约为 v4 状态机化 QuantScript 和 ExecutionMachine 能力矩阵提供第一批静态类型锚点，并在 Phase 2 增加编译期能力报告入口，在 Phase 3 增加 v4 QS 静态 parse/analyze/report 入口，在 Phase 4 增加 Core IR 兼容桥，在 Phase 5 增加独立的 v4 PaperSimulated 事件循环骨架。v4 runtime 骨架不接入现有 v3.7.1 `RuntimeCoordinator`，不改变旧策略行为。
+本契约为 v4 状态机化 QuantScript 和 ExecutionMachine 能力矩阵提供第一批静态类型锚点，并在 Phase 2 增加编译期能力报告入口，在 Phase 3 增加 v4 QS 静态 parse/analyze/report 入口，在 Phase 4 增加 Core IR 兼容桥，在 Phase 5 增加独立的 v4 PaperSimulated 事件循环骨架，在 Phase 6 增加 Risk Plane 运行时安全平面。v4 runtime 骨架不接入现有 v3.7.1 `RuntimeCoordinator`，不改变旧策略行为。
 
 ## 状态机契约
 
@@ -678,6 +678,44 @@ Phase 5 硬边界:
 - 不扩展订单能力语义。
 - 不改变旧 sandbox 行为。
 
+## Risk Plane 运行时安全平面
+
+Phase 6 在 `V4PaperSimulatedRuntime` 内增加独立 Risk Plane runtime decision。静态图约束只能证明拓扑上存在 Risk Plane；运行时安全平面负责证明进入 `ExecutionMachine` 的事件确实由 Risk Plane machine 在当前事件循环中发出。
+
+ExecutionMachine transition 前置门禁:
+
+- graph 必须声明 `risk_plane.required=true`。
+- 输入事件 source 必须属于 `risk_plane.machine_ids`。
+- 输入事件 origin 必须为 `machine_emit`，外部输入伪造 Risk Plane source 也必须拒绝。
+- 输入事件必须在 event catalog 中声明为 `RiskPlane` source kind。
+- 输入事件 payload 必须带 `risk_plane_approved=true`。
+- Risk Plane source machine 必须是 `DecisionMachine`。
+- Risk Plane source machine priority 必须不低于 graph risk plane `min_priority`。
+- Risk Plane source machine runtime status 必须为 `Active`。
+
+运行时输出:
+
+- 通过时记录 `risk_plane_approved` control event。
+- 拒绝时记录 `risk_plane_rejected` control event，ExecutionMachine transition 不执行。
+- `V4RuntimeMemorySnapshot.risk_plane` 记录 required、machine ids、min priority、approved/rejected count、最后一次 decision。
+- `real_order_path_unlocked` 只有在已有 Risk Plane approval 且没有 runtime rejection 时才为 true。
+
+Phase 6 拒绝规则:
+
+- 非 Risk Plane source 的执行事件拒绝。
+- 外部输入伪造 Risk Plane source 的执行事件拒绝。
+- 未声明为 RiskPlane source kind 的执行事件拒绝。
+- 缺少显式 `risk_plane_approved=true` 的执行事件拒绝。
+- Risk Plane machine 非 active、非 Decision 或 priority 不足时拒绝。
+
+Phase 6 硬边界:
+
+- 仍不接真实 VenueAdapter。
+- 仍不提交 provider order。
+- 仍不执行真实成交撮合。
+- 仍不扩展订单能力语义。
+- 仍不改变旧 `RuntimeCoordinator` / sandbox 行为。
+
 ## 当前非目标
 
 - 不把 v4 QS 静态 parser 接入现有编译 API 或 runtime lowering。
@@ -746,6 +784,9 @@ cargo test -p quantscript v4_static
 - soft-silent machine 被下游拉取时会返回最后缓存并进入 recovery。
 - memory snapshot 会记录 machine state、runtime status、memory 和 cache。
 - Phase 5 runtime 会拒绝非 PaperSimulated mode。
+- ExecutionMachine transition 必须经过 Risk Plane runtime approval。
+- 外部输入伪造 Risk Plane source 时会被 runtime Risk Plane 拒绝。
+- 非 Risk Plane source 触发执行事件时会被 runtime Risk Plane 拒绝。
 - v4 QS 静态审计可接受受支持的状态机脚本，且不接 runtime / lowering。
 - v4 QS 静态审计会拒绝 unsupported required capability。
 - v4 QS 静态审计会拒绝嵌套 machine block。
