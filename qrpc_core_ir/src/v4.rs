@@ -5,6 +5,8 @@ use std::collections::{BTreeMap, BTreeSet};
 pub const V4_MACHINE_CONTRACT_VERSION: &str = "quantpilot/machine-contract/v1";
 pub const V4_VENUE_CAPABILITY_MATRIX_VERSION: &str = "quantpilot/venue-capability-matrix/v1";
 pub const V4_QS_STATE_MACHINE_PROFILE_VERSION: &str = "quantpilot/qs-state-machine-profile/v1";
+pub const V4_MACHINE_GRAPH_CONTRACT_VERSION: &str = "quantpilot/machine-graph-contract/v1";
+pub const V4_RISK_PLANE_MIN_PRIORITY: i32 = 9_000;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[serde(rename_all = "snake_case")]
@@ -285,6 +287,287 @@ impl V4MachineContract {
         } else {
             Err(errors)
         }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct V4MachineGraphContract {
+    #[serde(default = "default_machine_graph_contract_version")]
+    pub schema_version: String,
+    pub graph_id: String,
+    #[serde(default)]
+    pub machines: Vec<V4MachineContract>,
+    #[serde(default)]
+    pub edges: Vec<MachineGraphEdge>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub risk_plane: Option<MachineGraphRiskPlane>,
+    #[serde(default)]
+    pub metadata: BTreeMap<String, Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct MachineGraphEdge {
+    pub edge_id: String,
+    pub source_machine_id: String,
+    pub target_machine_id: String,
+    pub event_type: String,
+    #[serde(default = "default_machine_graph_edge_activation")]
+    pub activation: MachineGraphEdgeActivation,
+    #[serde(default = "default_true")]
+    pub required: bool,
+    #[serde(default)]
+    pub metadata: BTreeMap<String, Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum MachineGraphEdgeActivation {
+    Always,
+    RuntimeGated,
+    MutedWhenUnpulled,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineGraphRiskPlane {
+    #[serde(default = "default_true")]
+    pub required: bool,
+    #[serde(default)]
+    pub machine_ids: Vec<String>,
+    #[serde(default = "default_risk_plane_min_priority")]
+    pub min_priority: i32,
+}
+
+impl V4MachineGraphContract {
+    pub fn validate_static_contract(&self) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
+
+        if self.schema_version != V4_MACHINE_GRAPH_CONTRACT_VERSION {
+            errors.push(format!(
+                "schema_version must be `{}`",
+                V4_MACHINE_GRAPH_CONTRACT_VERSION
+            ));
+        }
+        if self.graph_id.trim().is_empty() {
+            errors.push("graph_id is required".to_string());
+        }
+        if self.machines.is_empty() {
+            errors.push("at least one machine is required".to_string());
+        }
+
+        let mut machines_by_id = BTreeMap::new();
+        for machine in &self.machines {
+            if machine.machine_id.trim().is_empty() {
+                errors.push("machine_id is required".to_string());
+            } else if machines_by_id
+                .insert(machine.machine_id.as_str(), machine)
+                .is_some()
+            {
+                errors.push(format!("duplicate machine `{}`", machine.machine_id));
+            }
+
+            if let Err(machine_errors) = machine.validate_static_contract() {
+                for machine_error in machine_errors {
+                    errors.push(format!(
+                        "machine `{}` failed static contract: {}",
+                        machine.machine_id, machine_error
+                    ));
+                }
+            }
+        }
+
+        let mut edge_ids = BTreeSet::new();
+        for edge in &self.edges {
+            if edge.edge_id.trim().is_empty() {
+                errors.push("edge_id is required".to_string());
+            } else if !edge_ids.insert(edge.edge_id.as_str()) {
+                errors.push(format!("duplicate edge `{}`", edge.edge_id));
+            }
+            if edge.event_type.trim().is_empty() {
+                errors.push(format!(
+                    "edge `{}` must declare an event_type",
+                    edge.edge_id
+                ));
+            }
+            if !machines_by_id.contains_key(edge.source_machine_id.as_str()) {
+                errors.push(format!(
+                    "edge `{}` references unknown source_machine_id `{}`",
+                    edge.edge_id, edge.source_machine_id
+                ));
+            }
+            if !machines_by_id.contains_key(edge.target_machine_id.as_str()) {
+                errors.push(format!(
+                    "edge `{}` references unknown target_machine_id `{}`",
+                    edge.edge_id, edge.target_machine_id
+                ));
+            }
+            if edge.source_machine_id == edge.target_machine_id {
+                errors.push(format!(
+                    "edge `{}` must not connect a machine to itself",
+                    edge.edge_id
+                ));
+            }
+        }
+
+        errors.extend(self.validate_graph_acyclic().err().unwrap_or_default());
+        errors.extend(self.validate_risk_plane(&machines_by_id));
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
+
+    fn validate_graph_acyclic(&self) -> Result<(), Vec<String>> {
+        let mut adjacency: BTreeMap<&str, Vec<&str>> = BTreeMap::new();
+        for edge in &self.edges {
+            adjacency
+                .entry(edge.source_machine_id.as_str())
+                .or_default()
+                .push(edge.target_machine_id.as_str());
+        }
+
+        let mut visited = BTreeSet::new();
+        let mut in_stack = BTreeSet::new();
+        let mut cycle_path = Vec::new();
+
+        fn dfs<'a>(
+            node: &'a str,
+            adjacency: &BTreeMap<&'a str, Vec<&'a str>>,
+            visited: &mut BTreeSet<&'a str>,
+            in_stack: &mut BTreeSet<&'a str>,
+            cycle_path: &mut Vec<String>,
+        ) -> bool {
+            visited.insert(node);
+            in_stack.insert(node);
+            if let Some(neighbors) = adjacency.get(node) {
+                for &next in neighbors {
+                    if !visited.contains(next) {
+                        if dfs(next, adjacency, visited, in_stack, cycle_path) {
+                            cycle_path.push(node.to_string());
+                            return true;
+                        }
+                    } else if in_stack.contains(next) {
+                        cycle_path.push(next.to_string());
+                        cycle_path.push(node.to_string());
+                        return true;
+                    }
+                }
+            }
+            in_stack.remove(node);
+            false
+        }
+
+        for edge in &self.edges {
+            let source = edge.source_machine_id.as_str();
+            if !visited.contains(source)
+                && dfs(
+                    source,
+                    &adjacency,
+                    &mut visited,
+                    &mut in_stack,
+                    &mut cycle_path,
+                )
+            {
+                cycle_path.reverse();
+                return Err(vec![format!(
+                    "machine graph must be acyclic, cycle: {}",
+                    cycle_path.join(" -> ")
+                )]);
+            }
+        }
+
+        Ok(())
+    }
+
+    fn validate_risk_plane(
+        &self,
+        machines_by_id: &BTreeMap<&str, &V4MachineContract>,
+    ) -> Vec<String> {
+        let mut errors = Vec::new();
+        let execution_machine_ids = self
+            .machines
+            .iter()
+            .filter(|machine| matches!(machine.template, MachineTemplateKind::Execution))
+            .map(|machine| machine.machine_id.as_str())
+            .collect::<BTreeSet<_>>();
+
+        let Some(risk_plane) = &self.risk_plane else {
+            if !execution_machine_ids.is_empty() {
+                errors.push(
+                    "execution machine graphs must declare a dedicated risk_plane".to_string(),
+                );
+            }
+            return errors;
+        };
+
+        if !execution_machine_ids.is_empty() && !risk_plane.required {
+            errors.push("execution machine graphs must require the risk_plane".to_string());
+        }
+        if risk_plane.required && risk_plane.machine_ids.is_empty() {
+            errors.push("required risk_plane must list at least one machine_id".to_string());
+        }
+        if risk_plane.min_priority < V4_RISK_PLANE_MIN_PRIORITY {
+            errors.push(format!(
+                "risk_plane min_priority must be at least {}",
+                V4_RISK_PLANE_MIN_PRIORITY
+            ));
+        }
+
+        let risk_machine_ids = risk_plane
+            .machine_ids
+            .iter()
+            .map(String::as_str)
+            .collect::<BTreeSet<_>>();
+
+        for machine_id in &risk_plane.machine_ids {
+            match machines_by_id.get(machine_id.as_str()) {
+                Some(machine) => {
+                    if !matches!(machine.template, MachineTemplateKind::Decision) {
+                        errors.push(format!(
+                            "risk_plane machine `{}` must use Decision template",
+                            machine_id
+                        ));
+                    }
+                    if machine.priority < risk_plane.min_priority {
+                        errors.push(format!(
+                            "risk_plane machine `{}` priority {} is below min_priority {}",
+                            machine_id, machine.priority, risk_plane.min_priority
+                        ));
+                    }
+                }
+                None => errors.push(format!(
+                    "risk_plane references unknown machine `{}`",
+                    machine_id
+                )),
+            }
+        }
+
+        for execution_machine_id in &execution_machine_ids {
+            let mut has_risk_inbound_edge = false;
+            for edge in self
+                .edges
+                .iter()
+                .filter(|edge| edge.target_machine_id == *execution_machine_id)
+            {
+                if risk_machine_ids.contains(edge.source_machine_id.as_str()) {
+                    has_risk_inbound_edge = true;
+                } else {
+                    errors.push(format!(
+                        "execution machine `{}` inbound edge `{}` must originate from risk_plane",
+                        execution_machine_id, edge.edge_id
+                    ));
+                }
+            }
+            if !has_risk_inbound_edge {
+                errors.push(format!(
+                    "execution machine `{}` must have an inbound edge from risk_plane",
+                    execution_machine_id
+                ));
+            }
+        }
+
+        errors
     }
 }
 
@@ -824,6 +1107,10 @@ fn default_machine_contract_version() -> String {
     V4_MACHINE_CONTRACT_VERSION.to_string()
 }
 
+fn default_machine_graph_contract_version() -> String {
+    V4_MACHINE_GRAPH_CONTRACT_VERSION.to_string()
+}
+
 fn default_venue_capability_matrix_version() -> String {
     V4_VENUE_CAPABILITY_MATRIX_VERSION.to_string()
 }
@@ -842,6 +1129,14 @@ fn default_qs_machine_templates() -> Vec<MachineTemplateKind> {
 
 fn default_transition_conflict_policy() -> TransitionConflictPolicy {
     TransitionConflictPolicy::Error
+}
+
+fn default_machine_graph_edge_activation() -> MachineGraphEdgeActivation {
+    MachineGraphEdgeActivation::Always
+}
+
+fn default_risk_plane_min_priority() -> i32 {
+    V4_RISK_PLANE_MIN_PRIORITY
 }
 
 fn default_true() -> bool {
@@ -908,6 +1203,55 @@ mod tests {
         }
     }
 
+    fn sample_machine_with(
+        machine_id: &str,
+        template: MachineTemplateKind,
+        priority: i32,
+    ) -> V4MachineContract {
+        let mut machine = sample_machine();
+        machine.machine_id = machine_id.to_string();
+        machine.template = template;
+        machine.priority = priority;
+        machine.transitions[0].transition_id = format!("{machine_id}.transition");
+        machine
+    }
+
+    fn sample_graph_edge(source_machine_id: &str, target_machine_id: &str) -> MachineGraphEdge {
+        MachineGraphEdge {
+            edge_id: format!("{source_machine_id}->{target_machine_id}"),
+            source_machine_id: source_machine_id.to_string(),
+            target_machine_id: target_machine_id.to_string(),
+            event_type: "machine_event".to_string(),
+            activation: MachineGraphEdgeActivation::Always,
+            required: true,
+            metadata: BTreeMap::new(),
+        }
+    }
+
+    fn sample_machine_graph() -> V4MachineGraphContract {
+        V4MachineGraphContract {
+            schema_version: V4_MACHINE_GRAPH_CONTRACT_VERSION.to_string(),
+            graph_id: "strategy.v4.sample".to_string(),
+            machines: vec![
+                sample_machine_with("data.market", MachineTemplateKind::Observation, 8_000),
+                sample_machine_with("intent.trend", MachineTemplateKind::Decision, 5_200),
+                sample_machine_with("risk.guard", MachineTemplateKind::Decision, 9_500),
+                sample_machine_with("execution.router", MachineTemplateKind::Execution, 4_000),
+            ],
+            edges: vec![
+                sample_graph_edge("data.market", "intent.trend"),
+                sample_graph_edge("intent.trend", "risk.guard"),
+                sample_graph_edge("risk.guard", "execution.router"),
+            ],
+            risk_plane: Some(MachineGraphRiskPlane {
+                required: true,
+                machine_ids: vec!["risk.guard".to_string()],
+                min_priority: V4_RISK_PLANE_MIN_PRIORITY,
+            }),
+            metadata: BTreeMap::new(),
+        }
+    }
+
     #[test]
     fn machine_contract_accepts_flat_state_group() {
         let machine = sample_machine();
@@ -934,6 +1278,77 @@ mod tests {
         assert!(errors
             .iter()
             .any(|message| message.contains("unknown to_state")));
+    }
+
+    #[test]
+    fn machine_graph_accepts_top_level_dag_with_risk_plane() {
+        let graph = sample_machine_graph();
+
+        assert_eq!(graph.validate_static_contract(), Ok(()));
+    }
+
+    #[test]
+    fn machine_graph_rejects_cycle() {
+        let mut graph = sample_machine_graph();
+        graph
+            .edges
+            .push(sample_graph_edge("execution.router", "intent.trend"));
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("machine graph must be acyclic")));
+    }
+
+    #[test]
+    fn machine_graph_rejects_unknown_edge_target() {
+        let mut graph = sample_machine_graph();
+        graph.edges[0].target_machine_id = "missing.machine".to_string();
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("unknown target_machine_id")));
+    }
+
+    #[test]
+    fn machine_graph_requires_risk_plane_for_execution() {
+        let mut graph = sample_machine_graph();
+        graph.risk_plane = None;
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("dedicated risk_plane")));
+    }
+
+    #[test]
+    fn machine_graph_rejects_execution_bypass_edge() {
+        let mut graph = sample_machine_graph();
+        graph
+            .edges
+            .push(sample_graph_edge("intent.trend", "execution.router"));
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("must originate from risk_plane")));
+    }
+
+    #[test]
+    fn machine_graph_requires_high_priority_decision_risk_machine() {
+        let mut graph = sample_machine_graph();
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        risk.priority = 100;
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("below min_priority")));
     }
 
     #[test]

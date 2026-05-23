@@ -14,12 +14,15 @@
 
 - `qrpc_core_ir/src/v4.rs`
 - `V4MachineContract`
+- `V4MachineGraphContract`
 - `QsStateMachineProfile`
 - `MachineTemplateKind`
 - `MachineState`
 - `StateGroup`
 - `MachineTransition`
 - `MachineMemoryField`
+- `MachineGraphEdge`
+- `MachineGraphRiskPlane`
 
 第一版模板:
 
@@ -41,6 +44,40 @@
 - transition 必须声明 `event_type`。
 - memory 字段必须声明 `type_name`。
 - 非 nullable memory 字段必须有默认值。
+
+## 顶层 machine graph
+
+profile 版本:
+
+```text
+quantpilot/machine-graph-contract/v1
+```
+
+v4 顶层 graph 仍然必须是有向无环图。每个顶层节点可以是状态机，但顶层连接不得形成环。
+
+静态校验必须保证:
+
+- `schema_version` 为 `quantpilot/machine-graph-contract/v1`。
+- `graph_id` 非空。
+- 至少一个 machine。
+- machine id 不能重复。
+- edge id 不能重复。
+- edge 必须声明 `event_type`。
+- edge 的 source 和 target 必须引用已声明 machine。
+- edge 不能自连接。
+- 顶层 machine graph 必须无环。
+
+执行路径还必须满足 Risk Plane 约束:
+
+- 含 `Execution` machine 的 graph 必须声明 `risk_plane`。
+- `risk_plane.required` 必须为 true。
+- `risk_plane` 至少包含一个 machine。
+- `risk_plane` machine 必须使用 `Decision` 模板。
+- `risk_plane` machine priority 必须不低于 `9000`。
+- `Execution` machine 的顶层入边必须来自 `risk_plane`。
+- `Execution` machine 必须至少有一条来自 `risk_plane` 的入边。
+
+该约束用于保证 DecisionMachine 可以表达风控，但真实执行路径仍不能绕过 runtime 独立高优先级安全平面。
 
 ## QS 状态机 profile
 
@@ -179,6 +216,12 @@ cargo test -p qrpc-core-ir v4
 - 扁平 state group 可通过。
 - transition 缺少事件会失败。
 - transition 指向未知 state 会失败。
+- 顶层 machine graph 可通过 DAG 校验。
+- 顶层 machine graph 出现环会失败。
+- 顶层 edge 指向未知 machine 会失败。
+- 含 Execution machine 的 graph 缺少 Risk Plane 会失败。
+- Execution machine 被非 Risk Plane 入边直连会失败。
+- Risk Plane machine priority 过低会失败。
 - 默认 QS 状态机 profile 可通过。
 - QS profile 必须允许三种标准模板。
 - QS action block 不能直接提交订单。
