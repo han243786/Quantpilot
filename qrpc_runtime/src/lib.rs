@@ -21,6 +21,7 @@ pub mod risk_monitor;
 mod runtime_state;
 mod sandbox;
 pub mod slippage;
+pub mod v4_runtime;
 
 pub use slippage::{
     compute_fill_price, estimate_spread, spread_from_quote, ExecutionAssumptions,
@@ -86,6 +87,11 @@ pub use sandbox::{
     DeterministicParallelismPolicy, DeterministicTestMode, FastBacktestSandbox, RealTimeSandbox,
     RuntimeSupportBoundary, Sandbox, SandboxMode, SandboxSnapshot,
     SUPPORTED_RUNTIME_EXECUTION_MODULE_KEYS, SUPPORTED_RUNTIME_MODE_KEYS,
+};
+pub use v4_runtime::{
+    V4CachedMachineOutput, V4MachineRuntimeSnapshot, V4MachineRuntimeStatus,
+    V4PaperSimulatedRunOutput, V4PaperSimulatedRuntime, V4RuntimeEventEnvelope,
+    V4RuntimeInputEvent, V4RuntimeMemorySnapshot,
 };
 
 /// 配置代际记录

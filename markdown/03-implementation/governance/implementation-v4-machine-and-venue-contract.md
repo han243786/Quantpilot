@@ -6,7 +6,7 @@
 
 ## 目标
 
-本契约为 v4 状态机化 QuantScript 和 ExecutionMachine 能力矩阵提供第一批静态类型锚点，并在 Phase 2 增加编译期能力报告入口，在 Phase 3 增加 v4 QS 静态 parse/analyze/report 入口。当前阶段只定义可序列化结构、静态校验和报告生成，不接入现有 v3.7.1 runtime，不改变旧策略行为。
+本契约为 v4 状态机化 QuantScript 和 ExecutionMachine 能力矩阵提供第一批静态类型锚点，并在 Phase 2 增加编译期能力报告入口，在 Phase 3 增加 v4 QS 静态 parse/analyze/report 入口，在 Phase 4 增加 Core IR 兼容桥，在 Phase 5 增加独立的 v4 PaperSimulated 事件循环骨架。v4 runtime 骨架不接入现有 v3.7.1 `RuntimeCoordinator`，不改变旧策略行为。
 
 ## 状态机契约
 
@@ -644,11 +644,45 @@ Phase 4 硬边界:
 - `CoreIrV4CompatibilityReport.runtime_attached` 必须为 false。
 - `CoreIrV4CompatibilityReport.lowering_attached` 必须为 false。
 
+## v4 PaperSimulated 事件循环
+
+`V4PaperSimulatedRuntime` 是 v4 Phase 5 的验收入口。它接收已经通过静态契约的 `V4MachineGraphContract`，只允许以 `RuntimeTradingMode::PaperSimulated` 启动，并提供:
+
+- event queue: 外部事件进入队列后按 machine priority 和 transition event 匹配执行。
+- cache: `ReturnLastThenRecover` machine 会保存最后一次状态转换输出。
+- soft silence: `SoftDormantAfter` machine 在长时间未被下游拉取或未收到事件时进入 `SoftSilent`。
+- recovery: 下游再次拉取 soft-silent machine 时先返回最后缓存，再进入 `Recovering`，随后可显式完成恢复。
+- memory snapshot: 输出每个 machine 的当前 state、runtime status、memory、cached output、last pulled/event 时间。
+
+Phase 5 当前运行语义:
+
+- runtime event envelope 包含 `sequence`、`event_type`、`source`、`ts_ms`、`payload`、`replayable`。
+- transition 只消费显式 `event_type`，并尊重 transition source 约束。
+- action emit 会继续入队，直到事件队列为空。
+- control event 只记录，不重新入队，包括 `downstream_pull`、`silence_entered`、`silence_exited`、`cache_returned`、`recovery_started`、`recovery_completed`、`machine_transition_applied`。
+- `provider_order_submission_attached` 必须保持 false。
+
+Phase 5 拒绝规则:
+
+- 非 `PaperSimulated` mode 启动时拒绝。
+- 输入 graph 不能通过 `V4MachineGraphContract::validate_static_contract` 时拒绝。
+- 拉取或恢复未知 machine 时拒绝。
+- 事件循环超过最大步数时拒绝，防止错误事件图导致无限循环。
+
+Phase 5 硬边界:
+
+- 不接入 `RuntimeCoordinator`。
+- 不接真实 VenueAdapter。
+- 不提交 provider order。
+- 不执行真实成交撮合。
+- 不扩展订单能力语义。
+- 不改变旧 sandbox 行为。
+
 ## 当前非目标
 
 - 不把 v4 QS 静态 parser 接入现有编译 API 或 runtime lowering。
-- 不把 Core IR 兼容桥接入 runtime lowering。
-- 不接入 RuntimeCoordinator。
+- 不把 Core IR 兼容桥接入旧 runtime lowering。
+- 不把 v4 runtime 骨架接入 `RuntimeCoordinator`。
 - 不接入真实 VenueAdapter。
 - 不改变现有 `OrderType`、`TimeInForce`、`ExecutionPlan` 行为。
 
@@ -658,6 +692,7 @@ Phase 4 硬边界:
 
 ```powershell
 cargo test -p qrpc-core-ir v4
+cargo test -p qrpc-runtime v4_runtime
 cargo test -p quantscript v4_static
 ```
 
@@ -707,6 +742,10 @@ cargo test -p quantscript v4_static
 - 旧 Core IR 可映射为 Observation / Decision / Execution 三个默认 machine 实例。
 - 缺少数据源或风控策略的旧 Core IR 不能进入兼容桥。
 - 显式 Core IR edge 指向未知节点或形成环时不能进入兼容桥。
+- v4 PaperSimulated runtime 可运行兼容桥默认图直到 Execution machine ready。
+- soft-silent machine 被下游拉取时会返回最后缓存并进入 recovery。
+- memory snapshot 会记录 machine state、runtime status、memory 和 cache。
+- Phase 5 runtime 会拒绝非 PaperSimulated mode。
 - v4 QS 静态审计可接受受支持的状态机脚本，且不接 runtime / lowering。
 - v4 QS 静态审计会拒绝 unsupported required capability。
 - v4 QS 静态审计会拒绝嵌套 machine block。
