@@ -122,6 +122,14 @@ markdown/learning/YYYY-MM-DD-topic.md
 
 学习流水线不进入每次强制门禁。
 
+Phase 8 起，closeout 包装器会调用:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-learning-closeout.ps1
+```
+
+该检查只验证学习流水线的 closeout 结构和本地记录边界，不检查每次日常提交是否完成学习循环。
+
 大版本 closeout 必须检查:
 
 ```text
@@ -166,4 +174,3 @@ staleness_rule
 ```
 
 当 `covered_files` 变化时，学习解释需要复核。
-

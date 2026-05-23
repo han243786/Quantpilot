@@ -4,6 +4,7 @@ import { getRuntimeStatusMeta, runtimeStatusLabel } from "../utils/runtimeStatus
 import { buildRuntimeDiagnosticsProjection } from "../utils/runtimeDiagnosticsProjection";
 import GovernedTimelinePanel from "./GovernedTimelinePanel";
 import RuntimeReportPanel from "./RuntimeReportPanel";
+import V4RuntimeEvidencePanel from "./V4RuntimeEvidencePanel";
 
 function DiagnosticsRows({ rows, emptyText }) {
   if (!rows || rows.length === 0) {
@@ -124,6 +125,8 @@ export default function RuntimeDiagnosticsPanel({
           <DiagnosticsRows rows={projection.governanceRows} emptyText="当前没有治理身份。" />
         </div>
       ) : null}
+
+      <V4RuntimeEvidencePanel source={runtime} testId="runtime-diagnostics-v4-evidence" />
 
       <GovernedTimelinePanel
         source={runtime}

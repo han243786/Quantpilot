@@ -123,4 +123,22 @@ describe("runtimeEvidenceSummary", () => {
     expect(compare.risk_decision_delta).toBe(0);
     expect(compare.source_event_delta).toBe(10);
   });
+
+  it("counts v4 runtime risk plane and execution capability control events", () => {
+    const cards = buildEvidenceSummaryCards(
+      source([
+        item(1, "risk_plane_approved", "system", "Risk Plane approved"),
+        item(2, "execution_capability_rejected", "system", "Capability rejected")
+      ])
+    );
+
+    expect(cards.find((card) => card.id === "risk_decisions")).toMatchObject({
+      count: 1,
+      latest_event_type: "risk_plane_approved"
+    });
+    expect(cards.find((card) => card.id === "execution_outcomes")).toMatchObject({
+      count: 1,
+      latest_event_type: "execution_capability_rejected"
+    });
+  });
 });

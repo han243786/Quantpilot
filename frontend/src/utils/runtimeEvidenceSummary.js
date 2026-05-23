@@ -20,7 +20,11 @@ const SUMMARY_DEFINITIONS = [
   {
     id: "risk_decisions",
     label: "风控决策",
-    matches: (item) => item.stage === "risk" || item.event_type === "RiskDecisionProduced"
+    matches: (item) =>
+      item.stage === "risk" ||
+      item.event_type === "RiskDecisionProduced" ||
+      item.event_type === "risk_plane_approved" ||
+      item.event_type === "risk_plane_rejected"
   },
   {
     id: "execution_outcomes",
@@ -28,7 +32,9 @@ const SUMMARY_DEFINITIONS = [
     matches: (item) =>
       item.stage === "execution" ||
       item.stage === "fill" ||
-      item.event_type?.startsWith?.("Execution")
+      item.event_type?.startsWith?.("Execution") ||
+      item.event_type === "execution_capability_accepted" ||
+      item.event_type === "execution_capability_rejected"
   },
   {
     id: "portfolio_updates",

@@ -96,7 +96,57 @@ describe("RuntimeDiagnosticsPanel", () => {
             quality_flags: ["delayed_update", "gaps_detected"]
           }
         }
-      ]
+      ],
+      memory_snapshot: {
+        runtime_mode: "paper_simulated",
+        machines: [
+          {
+            machine_id: "compat.execution",
+            template: "execution_machine",
+            state_id: "ready",
+            status: "active",
+            cached_output: null
+          }
+        ],
+        risk_plane: {
+          required: true,
+          machine_ids: ["compat.decision"],
+          min_priority: 9000,
+          approved_event_count: 1,
+          rejected_event_count: 0,
+          real_order_path_unlocked: true,
+          last_decision: {
+            accepted: true,
+            source_machine_id: "compat.decision",
+            target_machine_id: "compat.execution",
+            reason: "Risk Plane approved execution transition"
+          }
+        },
+        execution: {
+          venue_id: "paper-local",
+          required_capabilities: ["market"],
+          accepted_count: 1,
+          rejected_count: 0,
+          last_decision: {
+            accepted: true,
+            target_machine_id: "compat.execution",
+            venue_id: "paper-local",
+            runtime_mode: "paper_simulated",
+            reason: "Execution capabilities accepted for runtime mode",
+            provider_order_submission_attached: false,
+            entries: [
+              {
+                capability: "market",
+                source: "runtime_simulated",
+                status: "accepted",
+                reason: "accepted"
+              }
+            ]
+          }
+        },
+        event_sequence: 8,
+        provider_order_submission_attached: false
+      }
     };
 
     render(
@@ -119,6 +169,9 @@ describe("RuntimeDiagnosticsPanel", () => {
     );
     expect(screen.getByTestId("runtime-diagnostics-governance")).toHaveTextContent(
       "current_runtime"
+    );
+    expect(screen.getByTestId("runtime-diagnostics-v4-evidence")).toHaveTextContent(
+      "runtime_simulated"
     );
     fireEvent.click(screen.getByRole("button", { name: "Price Feed" }));
     expect(onSelectNode).toHaveBeenCalledWith("data_feed");

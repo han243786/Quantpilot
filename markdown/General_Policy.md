@@ -111,7 +111,7 @@ QS 源码 → graph JSON → 前端可视化
 - 学习记录只能在用户明确要求“记录本轮学习”“生成学习记录”等指令时写入。
 - 学习流水线不进入每次强制门禁，但 MAJOR closeout 必须检查是否存在 owner 必学核心机制。
 - 面向所有开发者的学习流水线版本必须在 owner 多轮体验后另行设计，不得在第一版中提前泛化。
-- **审计**: closeout 报告必须包含 Developer Learning Closeout 或明确说明本版本无新增 owner 必学机制。
+- **审计**: closeout 报告必须包含 Developer Learning Closeout 或明确说明本版本无新增 owner 必学机制；`tools/check-learning-closeout.ps1` 负责检查结构入口和本地学习记录边界。
 
 ---
 

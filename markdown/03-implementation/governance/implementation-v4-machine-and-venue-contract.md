@@ -1,12 +1,12 @@
 # v4 状态机与交易场所能力静态契约
 
-> 生效目标: v4.0.0 Phase 1-7 | 实现锚点: `qrpc_core_ir::v4`, `quantscript::v4_static_audit`, `qrpc_runtime::v4_runtime`
+> 生效目标: v4.0.0 Phase 1-8 | 实现锚点: `qrpc_core_ir::v4`, `quantscript::v4_static_audit`, `qrpc_runtime::v4_runtime`, `frontend/src/utils/v4RuntimeEvidence.js`
 
 ---
 
 ## 目标
 
-本契约为 v4 状态机化 QuantScript 和 ExecutionMachine 能力矩阵提供第一批静态类型锚点，并在 Phase 2 增加编译期能力报告入口，在 Phase 3 增加 v4 QS 静态 parse/analyze/report 入口，在 Phase 4 增加 Core IR 兼容桥，在 Phase 5 增加独立的 v4 PaperSimulated 事件循环骨架，在 Phase 6 增加 Risk Plane 运行时安全平面，在 Phase 7 增加 ExecutionMachine 能力来源运行时门禁。v4 runtime 骨架不接入现有 v3.7.1 `RuntimeCoordinator`，不改变旧策略行为。
+本契约为 v4 状态机化 QuantScript 和 ExecutionMachine 能力矩阵提供第一批静态类型锚点，并在 Phase 2 增加编译期能力报告入口，在 Phase 3 增加 v4 QS 静态 parse/analyze/report 入口，在 Phase 4 增加 Core IR 兼容桥，在 Phase 5 增加独立的 v4 PaperSimulated 事件循环骨架，在 Phase 6 增加 Risk Plane 运行时安全平面，在 Phase 7 增加 ExecutionMachine 能力来源运行时门禁，在 Phase 8 增加 v4 runtime evidence UI 投影与 Developer Learning Closeout 检查入口。v4 runtime 骨架不接入现有 v3.7.1 `RuntimeCoordinator`，不改变旧策略行为。
 
 ## 状态机契约
 
@@ -15,6 +15,9 @@
 - `qrpc_core_ir/src/v4.rs`
 - `quantscript/src/v4_static_audit.rs`
 - `qrpc_runtime/src/v4_runtime.rs`
+- `frontend/src/utils/v4RuntimeEvidence.js`
+- `frontend/src/components/V4RuntimeEvidencePanel.jsx`
+- `tools/check-learning-closeout.ps1`
 - `V4MachineContract`
 - `V4MachineGraphContract`
 - `QsStateMachineProfile`
@@ -767,6 +770,53 @@ Phase 7 硬边界:
 - 仍不改变旧 `RuntimeCoordinator` / sandbox 行为。
 - 当前只把第一批订单能力来源接入运行时拒绝边界，不等同于 provider 适配层。
 
+## v4 runtime evidence UI 与学习 closeout 接入
+
+Phase 8 在前端增加 v4 runtime memory snapshot 的只读投影，并把 Developer Learning Closeout 结构检查接入 closeout 包装器。
+
+UI 当前入口:
+
+- `buildV4RuntimeEvidenceProjection(...)`
+- `V4RuntimeEvidencePanel`
+- `RuntimeDiagnosticsPanel` 内的 `runtime-diagnostics-v4-evidence`
+
+UI 展示范围:
+
+- runtime mode。
+- provider order submission 是否接入。
+- machine 当前 state、template、runtime status、cache 是否存在。
+- Risk Plane required、approval/rejection 计数、real order path lock/unlock、最后一次 runtime decision。
+- Execution capability venue、accepted/rejected 计数、最后一次 runtime decision。
+- 每个 capability entry 的 `capability`、`source`、`status`、`reason`。
+
+UI 硬边界:
+
+- UI 只展示已有 `memory_snapshot` 或 v4 runtime output wrapper，不创建 runtime。
+- UI 不启动 v4 QS、Core IR 兼容桥或 PaperSimulated runtime。
+- UI 不把 `provider_native` 显示为可在 `PaperSimulated` 执行。
+- UI 文案必须说明该面板是只读投影，不代表真实下单接入。
+- 缺少 v4 snapshot 时不渲染，不伪造默认通过状态。
+
+学习流水线 closeout 当前入口:
+
+- `tools/check-learning-closeout.ps1`
+- `tools/run-closeout-gates.bat`
+
+学习流水线检查范围:
+
+- `.gitignore` 必须忽略 `/markdown/learning/`。
+- `git ls-files -- markdown/learning` 不得出现个人学习记录。
+- 开发者学习流水线文档必须保留大版本 closeout 问题、显式写入规则、staleness metadata。
+- v4 里程碑必须保留大版本 closeout 学习检查项。
+- 超级规范化必须保留 Developer Learning Closeout 规则。
+
+学习流水线硬边界:
+
+- 不进入 pre-commit。
+- 不进入 PR/CI 常规门禁。
+- 不自动生成个人学习记录。
+- 只有用户明确说“记录本轮学习”或“生成学习记录”等指令时，才能写入 `markdown/learning/`。
+
 ## 当前非目标
 
 - 不把 v4 QS 静态 parser 接入现有编译 API 或 runtime lowering。
@@ -775,6 +825,7 @@ Phase 7 硬边界:
 - 不接入真实 VenueAdapter。
 - 不提交 provider order。
 - 不执行真实成交撮合、资产记账、手续费计算、滑点模型或订单路由。
+- 不把 v4 UI 面板外推为真实运行入口。
 - 不改变现有 `OrderType`、`TimeInForce`、`ExecutionPlan` 行为。
 
 ## 验证
@@ -785,6 +836,9 @@ Phase 7 硬边界:
 cargo test -p qrpc-core-ir v4
 cargo test -p qrpc-runtime v4_runtime
 cargo test -p quantscript v4_static
+cd frontend
+cmd /c npx vitest run src/utils/v4RuntimeEvidence.test.js src/components/V4RuntimeEvidencePanel.test.jsx src/components/RuntimeDiagnosticsPanel.test.jsx src/utils/runtimeEvidenceSummary.test.js
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-learning-closeout.ps1
 ```
 
 该测试覆盖:
@@ -844,6 +898,10 @@ cargo test -p quantscript v4_static
 - v4 PaperSimulated runtime 会在 `Unsupported` required capability 时拒绝 ExecutionMachine transition。
 - v4 PaperSimulated runtime 会在 `provider_native` required capability 被用于 `PaperSimulated` 时拒绝 ExecutionMachine transition。
 - v4 PaperSimulated runtime 会在缺失 execution capability policy 时拒绝 ExecutionMachine transition。
+- v4 UI evidence panel 会展示 machine state、Risk Plane decision 和 Execution capability source/status。
+- v4 runtime evidence summary 会把 `risk_plane_*` 和 `execution_capability_*` control event 计入摘要。
+- Developer Learning Closeout 检查会阻断 tracked `markdown/learning/` 个人学习记录。
+- Developer Learning Closeout 检查会确认 v4 closeout 学习问题与显式写入规则仍在规范中。
 - v4 QS 静态审计可接受受支持的状态机脚本，且不接 runtime / lowering。
 - v4 QS 静态审计会拒绝 unsupported required capability。
 - v4 QS 静态审计会拒绝嵌套 machine block。
