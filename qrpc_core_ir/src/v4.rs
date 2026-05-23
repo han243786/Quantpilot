@@ -6,6 +6,7 @@ pub const V4_MACHINE_CONTRACT_VERSION: &str = "quantpilot/machine-contract/v1";
 pub const V4_VENUE_CAPABILITY_MATRIX_VERSION: &str = "quantpilot/venue-capability-matrix/v1";
 pub const V4_QS_STATE_MACHINE_PROFILE_VERSION: &str = "quantpilot/qs-state-machine-profile/v1";
 pub const V4_MACHINE_GRAPH_CONTRACT_VERSION: &str = "quantpilot/machine-graph-contract/v1";
+pub const V4_MACHINE_EVENT_CATALOG_VERSION: &str = "quantpilot/machine-event-catalog/v1";
 pub const V4_RISK_PLANE_MIN_PRIORITY: i32 = 9_000;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -300,6 +301,8 @@ pub struct V4MachineGraphContract {
     #[serde(default)]
     pub edges: Vec<MachineGraphEdge>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub event_catalog: Option<MachineEventCatalog>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub risk_plane: Option<MachineGraphRiskPlane>,
     #[serde(default)]
     pub metadata: BTreeMap<String, Value>,
@@ -335,6 +338,118 @@ pub struct MachineGraphRiskPlane {
     pub machine_ids: Vec<String>,
     #[serde(default = "default_risk_plane_min_priority")]
     pub min_priority: i32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct MachineEventCatalog {
+    #[serde(default = "default_machine_event_catalog_version")]
+    pub schema_version: String,
+    #[serde(default)]
+    pub events: Vec<MachineEventTypeSpec>,
+    #[serde(default)]
+    pub metadata: BTreeMap<String, Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineEventTypeSpec {
+    pub event_type: String,
+    pub source_kind: MachineEventSourceKind,
+    pub scope: MachineEventScope,
+    #[serde(default)]
+    pub payload_fields: Vec<MachineEventPayloadField>,
+    #[serde(default)]
+    pub allowed_emitters: Vec<String>,
+    #[serde(default)]
+    pub allowed_consumers: Vec<String>,
+    #[serde(default = "default_true")]
+    pub replayable: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineEventPayloadField {
+    pub name: String,
+    pub type_name: String,
+    #[serde(default = "default_true")]
+    pub required: bool,
+    #[serde(default)]
+    pub nullable: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum MachineEventSourceKind {
+    MarketData,
+    Machine,
+    RiskPlane,
+    VenueProvider,
+    Runtime,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum MachineEventScope {
+    MachineInternal,
+    Graph,
+    Runtime,
+    Venue,
+}
+
+impl MachineEventCatalog {
+    pub fn validate_static_contract(&self) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
+
+        if self.schema_version != V4_MACHINE_EVENT_CATALOG_VERSION {
+            errors.push(format!(
+                "schema_version must be `{}`",
+                V4_MACHINE_EVENT_CATALOG_VERSION
+            ));
+        }
+        if self.events.is_empty() {
+            errors.push("event catalog must declare at least one event".to_string());
+        }
+
+        let mut event_types = BTreeSet::new();
+        for event in &self.events {
+            if event.event_type.trim().is_empty() {
+                errors.push("event_type is required".to_string());
+            } else if !event_types.insert(event.event_type.as_str()) {
+                errors.push(format!("duplicate event_type `{}`", event.event_type));
+            }
+
+            let mut payload_names = BTreeSet::new();
+            for field in &event.payload_fields {
+                if field.name.trim().is_empty() {
+                    errors.push(format!(
+                        "event `{}` payload field name is required",
+                        event.event_type
+                    ));
+                } else if !payload_names.insert(field.name.as_str()) {
+                    errors.push(format!(
+                        "event `{}` has duplicate payload field `{}`",
+                        event.event_type, field.name
+                    ));
+                }
+                if field.type_name.trim().is_empty() {
+                    errors.push(format!(
+                        "event `{}` payload field `{}` must declare a type_name",
+                        event.event_type, field.name
+                    ));
+                }
+                if field.required && field.nullable {
+                    errors.push(format!(
+                        "event `{}` payload field `{}` cannot be required and nullable",
+                        event.event_type, field.name
+                    ));
+                }
+            }
+        }
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
 }
 
 impl V4MachineGraphContract {
@@ -409,6 +524,7 @@ impl V4MachineGraphContract {
         }
 
         errors.extend(self.validate_graph_acyclic().err().unwrap_or_default());
+        errors.extend(self.validate_event_catalog(&machines_by_id));
         errors.extend(self.validate_risk_plane(&machines_by_id));
 
         if errors.is_empty() {
@@ -478,6 +594,134 @@ impl V4MachineGraphContract {
         }
 
         Ok(())
+    }
+
+    fn validate_event_catalog(
+        &self,
+        machines_by_id: &BTreeMap<&str, &V4MachineContract>,
+    ) -> Vec<String> {
+        let mut errors = Vec::new();
+        let mut referenced_events = BTreeSet::new();
+
+        for machine in &self.machines {
+            for transition in &machine.transitions {
+                if !transition.event.event_type.trim().is_empty() {
+                    referenced_events.insert(transition.event.event_type.as_str());
+                }
+                if let Some(action) = &transition.action {
+                    for event_type in &action.emits {
+                        if event_type.trim().is_empty() {
+                            errors.push(format!(
+                                "machine `{}` transition `{}` action emits an empty event_type",
+                                machine.machine_id, transition.transition_id
+                            ));
+                        } else {
+                            referenced_events.insert(event_type.as_str());
+                        }
+                    }
+                }
+            }
+        }
+        for edge in &self.edges {
+            if !edge.event_type.trim().is_empty() {
+                referenced_events.insert(edge.event_type.as_str());
+            }
+        }
+
+        let Some(catalog) = &self.event_catalog else {
+            if !referenced_events.is_empty() {
+                errors.push(
+                    "machine graph with transition or edge events must declare event_catalog"
+                        .to_string(),
+                );
+            }
+            return errors;
+        };
+
+        errors.extend(catalog.validate_static_contract().err().unwrap_or_default());
+
+        let event_specs = catalog
+            .events
+            .iter()
+            .map(|event| (event.event_type.as_str(), event))
+            .collect::<BTreeMap<_, _>>();
+
+        for event_type in referenced_events {
+            if !event_specs.contains_key(event_type) {
+                errors.push(format!(
+                    "event_type `{}` must be declared in event_catalog",
+                    event_type
+                ));
+            }
+        }
+
+        for machine in &self.machines {
+            for transition in &machine.transitions {
+                let Some(spec) = event_specs.get(transition.event.event_type.as_str()) else {
+                    continue;
+                };
+
+                if !machine_event_party_allowed(&spec.allowed_consumers, &machine.machine_id) {
+                    errors.push(format!(
+                        "machine `{}` transition `{}` is not an allowed consumer of event `{}`",
+                        machine.machine_id, transition.transition_id, transition.event.event_type
+                    ));
+                }
+                if let Some(source) = &transition.event.source {
+                    if !machine_event_party_allowed(&spec.allowed_emitters, source) {
+                        errors.push(format!(
+                            "machine `{}` transition `{}` source `{}` is not an allowed emitter of event `{}`",
+                            machine.machine_id,
+                            transition.transition_id,
+                            source,
+                            transition.event.event_type
+                        ));
+                    }
+                }
+
+                if let Some(action) = &transition.action {
+                    for event_type in &action.emits {
+                        let Some(emitted_spec) = event_specs.get(event_type.as_str()) else {
+                            continue;
+                        };
+                        if !machine_event_party_allowed(
+                            &emitted_spec.allowed_emitters,
+                            &machine.machine_id,
+                        ) {
+                            errors.push(format!(
+                                "machine `{}` transition `{}` cannot emit event `{}`",
+                                machine.machine_id, transition.transition_id, event_type
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+
+        for edge in &self.edges {
+            let Some(spec) = event_specs.get(edge.event_type.as_str()) else {
+                continue;
+            };
+            if !machines_by_id.contains_key(edge.source_machine_id.as_str())
+                || !machines_by_id.contains_key(edge.target_machine_id.as_str())
+            {
+                continue;
+            }
+            if !machine_event_party_allowed(&spec.allowed_emitters, &edge.source_machine_id) {
+                errors.push(format!(
+                    "edge `{}` source `{}` is not an allowed emitter of event `{}`",
+                    edge.edge_id, edge.source_machine_id, edge.event_type
+                ));
+            }
+            if !machine_event_party_allowed(&spec.allowed_consumers, &edge.target_machine_id) {
+                errors.push(format!(
+                    "edge `{}` target `{}` is not an allowed consumer of event `{}`",
+                    edge.edge_id, edge.target_machine_id, edge.event_type
+                ));
+            }
+        }
+
+        errors
     }
 
     fn validate_risk_plane(
@@ -569,6 +813,10 @@ impl V4MachineGraphContract {
 
         errors
     }
+}
+
+fn machine_event_party_allowed(allowed_parties: &[String], party: &str) -> bool {
+    allowed_parties.is_empty() || allowed_parties.iter().any(|allowed| allowed == party)
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -1111,6 +1359,10 @@ fn default_machine_graph_contract_version() -> String {
     V4_MACHINE_GRAPH_CONTRACT_VERSION.to_string()
 }
 
+fn default_machine_event_catalog_version() -> String {
+    V4_MACHINE_EVENT_CATALOG_VERSION.to_string()
+}
+
 fn default_venue_capability_matrix_version() -> String {
     V4_VENUE_CAPABILITY_MATRIX_VERSION.to_string()
 }
@@ -1216,33 +1468,136 @@ mod tests {
         machine
     }
 
-    fn sample_graph_edge(source_machine_id: &str, target_machine_id: &str) -> MachineGraphEdge {
+    fn sample_graph_edge(
+        source_machine_id: &str,
+        target_machine_id: &str,
+        event_type: &str,
+    ) -> MachineGraphEdge {
         MachineGraphEdge {
             edge_id: format!("{source_machine_id}->{target_machine_id}"),
             source_machine_id: source_machine_id.to_string(),
             target_machine_id: target_machine_id.to_string(),
-            event_type: "machine_event".to_string(),
+            event_type: event_type.to_string(),
             activation: MachineGraphEdgeActivation::Always,
             required: true,
             metadata: BTreeMap::new(),
         }
     }
 
+    fn sample_event_spec(
+        event_type: &str,
+        source_kind: MachineEventSourceKind,
+        scope: MachineEventScope,
+        allowed_emitters: &[&str],
+        allowed_consumers: &[&str],
+    ) -> MachineEventTypeSpec {
+        MachineEventTypeSpec {
+            event_type: event_type.to_string(),
+            source_kind,
+            scope,
+            payload_fields: vec![MachineEventPayloadField {
+                name: "symbol".to_string(),
+                type_name: "string".to_string(),
+                required: true,
+                nullable: false,
+            }],
+            allowed_emitters: allowed_emitters
+                .iter()
+                .map(|emitter| emitter.to_string())
+                .collect(),
+            allowed_consumers: allowed_consumers
+                .iter()
+                .map(|consumer| consumer.to_string())
+                .collect(),
+            replayable: true,
+        }
+    }
+
+    fn sample_event_catalog() -> MachineEventCatalog {
+        MachineEventCatalog {
+            schema_version: V4_MACHINE_EVENT_CATALOG_VERSION.to_string(),
+            events: vec![
+                sample_event_spec(
+                    "market.tick",
+                    MachineEventSourceKind::MarketData,
+                    MachineEventScope::Runtime,
+                    &["market.btc_1m"],
+                    &["data.market"],
+                ),
+                sample_event_spec(
+                    "bar_closed",
+                    MachineEventSourceKind::Machine,
+                    MachineEventScope::Graph,
+                    &["data.market"],
+                    &["intent.trend"],
+                ),
+                sample_event_spec(
+                    "intent.long",
+                    MachineEventSourceKind::Machine,
+                    MachineEventScope::Graph,
+                    &["intent.trend"],
+                    &["risk.guard"],
+                ),
+                sample_event_spec(
+                    "risk.approved",
+                    MachineEventSourceKind::RiskPlane,
+                    MachineEventScope::Graph,
+                    &["risk.guard"],
+                    &["execution.router"],
+                ),
+            ],
+            metadata: BTreeMap::new(),
+        }
+    }
+
     fn sample_machine_graph() -> V4MachineGraphContract {
+        let mut data = sample_machine_with("data.market", MachineTemplateKind::Observation, 8_000);
+        data.transitions[0].event.event_type = "market.tick".to_string();
+        data.transitions[0].event.source = Some("market.btc_1m".to_string());
+        data.transitions[0].action = Some(MachineActionSpec {
+            emits: vec!["bar_closed".to_string()],
+            memory_writes: vec!["last_signal_at".to_string()],
+            diagnostics: vec!["market_bar".to_string()],
+        });
+
+        let mut intent = sample_machine_with("intent.trend", MachineTemplateKind::Decision, 5_200);
+        intent.transitions[0].event.event_type = "bar_closed".to_string();
+        intent.transitions[0].event.source = Some("data.market".to_string());
+        intent.transitions[0].action = Some(MachineActionSpec {
+            emits: vec!["intent.long".to_string()],
+            memory_writes: vec!["last_signal_at".to_string()],
+            diagnostics: vec!["trend_score".to_string()],
+        });
+
+        let mut risk = sample_machine_with("risk.guard", MachineTemplateKind::Decision, 9_500);
+        risk.transitions[0].event.event_type = "intent.long".to_string();
+        risk.transitions[0].event.source = Some("intent.trend".to_string());
+        risk.transitions[0].action = Some(MachineActionSpec {
+            emits: vec!["risk.approved".to_string()],
+            memory_writes: vec!["last_signal_at".to_string()],
+            diagnostics: vec!["risk_decision".to_string()],
+        });
+
+        let mut execution =
+            sample_machine_with("execution.router", MachineTemplateKind::Execution, 4_000);
+        execution.transitions[0].event.event_type = "risk.approved".to_string();
+        execution.transitions[0].event.source = Some("risk.guard".to_string());
+        execution.transitions[0].action = Some(MachineActionSpec {
+            emits: Vec::new(),
+            memory_writes: vec!["last_signal_at".to_string()],
+            diagnostics: vec!["route_order".to_string()],
+        });
+
         V4MachineGraphContract {
             schema_version: V4_MACHINE_GRAPH_CONTRACT_VERSION.to_string(),
             graph_id: "strategy.v4.sample".to_string(),
-            machines: vec![
-                sample_machine_with("data.market", MachineTemplateKind::Observation, 8_000),
-                sample_machine_with("intent.trend", MachineTemplateKind::Decision, 5_200),
-                sample_machine_with("risk.guard", MachineTemplateKind::Decision, 9_500),
-                sample_machine_with("execution.router", MachineTemplateKind::Execution, 4_000),
-            ],
+            machines: vec![data, intent, risk, execution],
             edges: vec![
-                sample_graph_edge("data.market", "intent.trend"),
-                sample_graph_edge("intent.trend", "risk.guard"),
-                sample_graph_edge("risk.guard", "execution.router"),
+                sample_graph_edge("data.market", "intent.trend", "bar_closed"),
+                sample_graph_edge("intent.trend", "risk.guard", "intent.long"),
+                sample_graph_edge("risk.guard", "execution.router", "risk.approved"),
             ],
+            event_catalog: Some(sample_event_catalog()),
             risk_plane: Some(MachineGraphRiskPlane {
                 required: true,
                 machine_ids: vec!["risk.guard".to_string()],
@@ -1290,9 +1645,11 @@ mod tests {
     #[test]
     fn machine_graph_rejects_cycle() {
         let mut graph = sample_machine_graph();
-        graph
-            .edges
-            .push(sample_graph_edge("execution.router", "intent.trend"));
+        graph.edges.push(sample_graph_edge(
+            "execution.router",
+            "intent.trend",
+            "risk.approved",
+        ));
 
         let errors = graph.validate_static_contract().unwrap_err();
         assert!(errors
@@ -1325,9 +1682,11 @@ mod tests {
     #[test]
     fn machine_graph_rejects_execution_bypass_edge() {
         let mut graph = sample_machine_graph();
-        graph
-            .edges
-            .push(sample_graph_edge("intent.trend", "execution.router"));
+        graph.edges.push(sample_graph_edge(
+            "intent.trend",
+            "execution.router",
+            "intent.long",
+        ));
 
         let errors = graph.validate_static_contract().unwrap_err();
         assert!(errors
@@ -1349,6 +1708,65 @@ mod tests {
         assert!(errors
             .iter()
             .any(|message| message.contains("below min_priority")));
+    }
+
+    #[test]
+    fn machine_event_catalog_accepts_strong_events() {
+        let catalog = sample_event_catalog();
+
+        assert_eq!(catalog.validate_static_contract(), Ok(()));
+    }
+
+    #[test]
+    fn machine_event_catalog_rejects_untyped_payload_field() {
+        let mut catalog = sample_event_catalog();
+        catalog.events[0].payload_fields[0].type_name.clear();
+
+        let errors = catalog.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("must declare a type_name")));
+    }
+
+    #[test]
+    fn machine_graph_requires_event_catalog_for_events() {
+        let mut graph = sample_machine_graph();
+        graph.event_catalog = None;
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("must declare event_catalog")));
+    }
+
+    #[test]
+    fn machine_graph_rejects_unknown_transition_event() {
+        let mut graph = sample_machine_graph();
+        graph.machines[0].transitions[0].event.event_type = "unknown.event".to_string();
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("must be declared in event_catalog")));
+    }
+
+    #[test]
+    fn machine_graph_rejects_event_emitter_not_allowed() {
+        let mut graph = sample_machine_graph();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .iter_mut()
+            .find(|event| event.event_type == "risk.approved")
+            .unwrap()
+            .allowed_emitters = vec!["other.risk".to_string()];
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("not an allowed emitter")));
     }
 
     #[test]
