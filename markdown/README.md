@@ -39,5 +39,6 @@
 | 支持矩阵 | `03-implementation/governance/implementation-support-matrix.md` |
 | 编译链合约 | `03-implementation/governance/implementation-compile-chain-contract.md` |
 | 功能演进契约 | `03-implementation/governance/implementation-feature-evolution-contract.md` |
+| 开发者学习流水线 | `03-implementation/governance/implementation-developer-learning-pipeline.md` |
 | API 参考 | `04-guides/guide-api-reference.md` |
 | 当前状态 | `10-overview/overview-current-status-and-roadmap.md` |

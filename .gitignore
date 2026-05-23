@@ -51,6 +51,9 @@
 markdown/测试/screenshots/
 markdown/测试/test-reports/
 markdown/测试/测试报告-*.md
+
+# Local owner learning notes (not pushed to GitHub)
+/markdown/learning/
 /tmp/
 
 # OS files

@@ -1,13 +1,14 @@
-# QuantPilot 项目总规则 v3.7.1
+# QuantPilot 项目总规则 v3.7.1 → v4.0.0 演化版
 
 > 生效日期: 2026-05-21 | 所有开发者必须遵守 | 违反的 PR 不予合并
 > 重构: v2.0→v3.0 拆分为阻断规则(门禁可查) + 审计规则(里程碑审查)
 > 每个条款标注 **检查方式**: 🛡️门禁 / 🔍审计 / 🛡️+🔍
 > 更新: v3.7.1 增加 Rust 格式基线、功能演进登记和防回退规则，`cargo fmt --check` 纳入 pre-commit / CI / closeout
+> v4.0.0 规划补充: 增加状态机化 QuantScript、Risk Plane、ExecutionMachine 能力来源、开发者学习流水线边界
 
 ---
 
-## 一、架构铁律（4 条）
+## 一、架构铁律（11 条）
 
 ### §1.1 QS 是唯一策略定义路径 🛡️
 
@@ -56,6 +57,61 @@ QS 源码 → graph JSON → 前端可视化
 - 每个新增能力必须有“回归保护矩阵”，明确受影响的既有能力、风险、保护证据和验证命令。
 - 不新增功能的 PATCH 版本必须在“非目标”中明确写明“不新增功能”或“不扩大功能范围”。
 - **门禁**: `powershell tools/check-feature-evolution.ps1` 必须通过。
+
+### §1.6 顶层 DAG 必须保留，复杂度只能下沉到可治理状态机 🔍 (v4.0.0 新增)
+
+- 量化基准链路仍为 `data -> intent -> agent -> risk -> execution -> fill`。
+- 顶层图必须保持有向无环；新增状态机能力不得让顶层图出现循环依赖。
+- 节点内部可以状态机化，但必须使用登记过的 `ObservationMachine` / `DecisionMachine` / `ExecutionMachine` 或后续正式登记模板。
+- 旧链路必须能通过兼容桥映射到默认 machine 实例，不得破坏旧图、旧 QS、旧运行记录的读取边界。
+- **审计**: MAJOR closeout 必须检查 Core IR DAG、旧图加载、旧 QS 编译和旧运行记录回放。
+
+### §1.7 QS 状态机 DSL 不是通用脚本语言 🛡️+🔍 (v4.0.0 新增)
+
+- QS 状态机语义必须以声明式 `transition` 为主，受控 `action block` 为辅。
+- `action block` 只能读取声明输入、事件上下文、局部变量和本节点 typed memory。
+- `action block` 只能写本节点 memory、emit 输出和 diagnostic 记录。
+- 禁止 QS 直接访问文件、网络、系统 API、密钥或真实下单接口。
+- 禁止无限循环、递归、动态 eval、跨节点直接修改状态或 memory。
+- 解析器接受不等于产品支持；任何新语法必须进入保留面合约、静态审计和拒绝路径。
+- **门禁**: 新 QS 状态机语义必须有 parse/analyze 拒绝测试；unsupported 路径必须产生结构化诊断。
+
+### §1.8 状态迁移必须事件驱动并可解释 🛡️+🔍 (v4.0.0 新增)
+
+- 任何 machine 的 `transition` 必须绑定明确事件来源。
+- 没有事件来源的状态迁移禁止进入 runtime。
+- 事件必须携带 `event_id`, `event_type`, `event_time`, `source`, `payload`, `freshness`, `sequence`, `replayable`。
+- `memory` 变化、cache 返回、silence 进入/退出、recovery 开始/完成必须形成事件或可回放证据。
+- 用户自定义优先级不能覆盖因果顺序、安全层级、DAG 依赖和确定性兜底排序。
+- **审计**: 运行/回放详情必须能解释状态为何迁移、由哪个事件触发、输入新鲜度如何。
+
+### §1.9 Risk Plane 不可绕过 🛡️+🔍 (v4.0.0 新增)
+
+- 风控逻辑可以用 `DecisionMachine` 表达，但运行时必须有独立高优先级 Risk Plane。
+- 所有真实下单路径必须经过 `risk_precheck -> risk_order_check -> risk_postcheck`。
+- `LiveActual` 模式下，ExecutionMachine 不得直接调用 VenueAdapter。
+- `emergency_halt` 高于所有 QS 逻辑；`reduce_only` 只允许降低敞口；`freeze_open` 禁止新开仓。
+- `stale` 或 `recovering` 数据默认不得扩大真实风险敞口，除非 Risk Plane 明确允许。
+- **门禁**: 真实订单发送路径必须有 Risk Plane 拦截测试；缺失风控上下文时必须拒绝。
+
+### §1.10 Execution 能力来源必须显式标记 🛡️+🔍 (v4.0.0 新增)
+
+- 每个订单能力必须标记为 `provider_native`、`runtime_simulated` 或 `unsupported`。
+- `provider_native` 表示交易所/券商原生支持。
+- `runtime_simulated` 表示 QuantPilot 本地模拟或合成，必须在事件、日志、UI 和报告中显式标记。
+- `unsupported` 表示不支持且未模拟，必须在编译期或运行前拒绝。
+- 不允许把 `unsupported` 静默降级为其他订单语义。
+- 不允许把本地触发逻辑描述为交易所原生支持。
+- **门禁**: VenueCapabilityMatrix 与 `/api/capabilities`、支持矩阵、前端文案必须一致。
+
+### §1.11 开发者学习流水线边界 🔍 (v4.0.0 新增)
+
+- 核心学习元流水线进入仓库，个人学习记录放入 `markdown/learning/`。
+- `markdown/learning/` 必须保持本地忽略，不推 GitHub。
+- 学习记录只能在用户明确要求“记录本轮学习”“生成学习记录”等指令时写入。
+- 学习流水线不进入每次强制门禁，但 MAJOR closeout 必须检查是否存在 owner 必学核心机制。
+- 面向所有开发者的学习流水线版本必须在 owner 多轮体验后另行设计，不得在第一版中提前泛化。
+- **审计**: closeout 报告必须包含 Developer Learning Closeout 或明确说明本版本无新增 owner 必学机制。
 
 ---
 
@@ -228,6 +284,12 @@ cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 | §1.3 编译不可绕过 | 阻断 | 🛡️ |
 | §1.4 数据流单向 | 高 | 🔍 |
 | §1.5 功能演进先登记 | 阻断 | 🛡️+🔍 |
+| §1.6 顶层DAG与状态机边界 | 高 | 🔍 |
+| §1.7 QS状态机DSL边界 | 阻断 | 🛡️+🔍 |
+| §1.8 事件驱动迁移 | 阻断 | 🛡️+🔍 |
+| §1.9 Risk Plane不可绕过 | 阻断 | 🛡️+🔍 |
+| §1.10 Execution能力来源 | 阻断 | 🛡️+🔍 |
+| §1.11 学习流水线边界 | 中 | 🔍 |
 | §2.1 错误全中文 | 高 | 🔍 |
 | §2.2 测试断言中文 | 中 | 🔍 |
 | §2.3 indicator 测试 | 中 | 🔍 |
@@ -260,9 +322,10 @@ cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 | §9.3 告警引擎 | 高 | 🔍 |
 | §9.4 审批工作流 | 高 | 🔍 |
 | §10.4 功能演进回归保护 | 阻断 | 🛡️+🔍 |
+| §10.5 v4演化回归保护 | 阻断 | 🛡️+🔍 |
 
-**总计: 36 条** (阻断 17 / 高 12 / 中 7)
-🛡️ 门禁可查: 21 条 | 🔍 审计人工: 16 条
+**总计: 43 条** (阻断 22 / 高 13 / 中 8)
+🛡️ 门禁可查: 26 条 | 🔍 审计人工: 23 条
 
 ---
 
@@ -343,3 +406,23 @@ Paper运行时 ← 回测引擎 ← 执行端(独立进程)
 
 **门禁**: `powershell tools/check-feature-evolution.ps1`。
 **审计**: closeout 报告必须记录新增能力证据和旧能力回归结果。
+
+### §10.5 v4 演化回归保护 🛡️+🔍 (v4.0.0 新增)
+
+v4.0.0 状态机化演化必须在 v3.7.1 稳定线之上侧向生长。每个实现阶段必须确认旧能力不回退。
+
+| 项 | 要求 |
+|----|------|
+| V1 QS 保留面 | 旧 `fn strategy()` 可执行主干保持稳定；新语法不得静默扩大 V1 支持面 |
+| Core IR DAG | 顶层图仍可验证无环；状态机内部复杂度不得污染顶层 DAG |
+| 兼容桥 | 旧 data/intent/agent/risk/execution/fill 链路可映射为三大 machine 默认实例 |
+| 事件证据 | transition、memory、cache、silence、recovery 均有事件或回放证据 |
+| Risk Plane | 真实订单路径无法绕过 precheck/order_check/postcheck |
+| Execution 能力矩阵 | 每个订单能力有 `provider_native` / `runtime_simulated` / `unsupported` 来源 |
+| 四种实时模式 | `PaperActual` / `PaperSimulated` / `LiveActual` / `LiveSimulated` 的账户域和成交来源不可混淆 |
+| UI 诚实展示 | planned/beta/restricted 不得被显示为 supported |
+| 学习流水线 | MAJOR closeout 检查 owner 必学机制；个人学习记录不入 Git |
+
+**门禁**: 能自动化的部分必须逐步纳入 `tools/check-*.ps1` 或 Rust/前端测试；未自动化前由 closeout GP 合规矩阵和自由维度审计覆盖。
+
+**审计**: v4.0.0 每个阶段 closeout 必须列出本节各项状态、证据文件和未覆盖风险。

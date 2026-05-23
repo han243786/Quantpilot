@@ -1,8 +1,9 @@
-# 超级规范化 v3.7.1
+# 超级规范化 v3.7.1 → v4.0.0 演化版
 
 > 生效日期: 2026-05-22 | 本文件是项目开发、检查、审计、优化的唯一执行标准
 > 重构: v1.0→v3.0 精简三层流水线、元流水线自进化触发条件
 > 更新: v3.4.0 新增 §8.4 | v3.7.0 新增 §8.5 自由维度诱错审计常态化 | v3.7.1 收口 pre-commit / CI / closeout 三层门禁 + 功能演进通道 + Rust 格式基线
+> v4.0.0 规划: 新增 MAJOR 演化通道、状态机化 QS/Risk Plane/ExecutionMachine 治理、开发者学习流水线 closeout 检查
 
 ---
 
@@ -11,13 +12,14 @@
 QuantPilot 的开发过程受 **三层门禁流水线** 约束：
 
 ```
-功能演进提案/登记 → 开发 → 日常开发门禁(pre-commit) → PR/CI门禁 → AI并行审计(自由维度诱错) → 发布前检查单(3角色) → closeout/release
-  │                │                         │                         │               │
-  │                │                         │                         │               └── 五维度评分 + GP合规矩阵 + release dry-run
-  │                │                         │                         └────────────────── 3角色手动验证
-  │                │                         └────────────────────────────────────────── 11维度 AI并行诱错
-  │                └──────────────────────────────────────────────────────────────────── 21项 closeout 门禁
-  └────────────────────────────────────────────────────────────────────────────────────── 代码 + 测试 + 文档
+功能演进提案/登记 → MAJOR演化终稿(如适用) → 分阶段开发 → 日常开发门禁(pre-commit) → PR/CI门禁 → AI并行审计(自由维度诱错) → 发布前检查单 → closeout/release
+  │                         │                    │                              │                         │               │
+  │                         │                    │                              │                         │               └── 五维度评分 + GP合规矩阵 + 学习流水线检查 + release dry-run
+  │                         │                    │                              │                         └────────────────── 3角色/十角色手动验证
+  │                         │                    │                              └────────────────────────────────────────── 11维度 AI并行诱错
+  │                         │                    └──────────────────────────────────────────────────────────────────────────── 21项 closeout 门禁
+  │                         └──────────────────────────────────────────────────────────────────────────────────────────────── v4演化边界/兼容桥/非目标
+  └────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 代码 + 测试 + 文档
 ```
 
 ### 版本号规则
@@ -195,6 +197,7 @@ ls markdown/05-testing/自由维度诱错审计-*.md
 - S0/P1/P2/P3 完成率
 - 五维度评分
 - GP 合规矩阵
+- Developer Learning Closeout（MAJOR 版本必须填写）
 - 遗留项（流向下一里程碑）
 
 ---
@@ -254,6 +257,8 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 | 误报率 | 手动 override 的门禁失败记录和原因 |
 | GP §10.3 回归检查 | 重大功能覆盖回归检查执行记录 |
 | 功能演进登记完整性 | 新增能力是否有登记、回归保护矩阵、兼容性与迁移说明 |
+| v4 MAJOR 演化通道 | 状态机 DSL、Risk Plane、ExecutionMachine、学习流水线是否按阶段推进 |
+| 学习流水线同步 | 新核心机制是否需要 owner 学习材料、复述和本地学习记录 |
 
 数据记录到 `markdown/05-testing/meta-pipeline-log.md`。
 
@@ -308,6 +313,29 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 
 执行契约见 `markdown/03-implementation/governance/implementation-feature-evolution-contract.md`。自动检查由 `tools/check-feature-evolution.ps1` 执行。
 
+### 7.7 MAJOR 演化通道 🆕 (v4.0.0)
+
+MAJOR 版本不得直接从终稿进入大规模实现。凡涉及 QS 语义、Core IR、runtime、Risk Plane、ExecutionMachine、交易模式或学习流水线的架构演化，必须先通过 MAJOR 演化通道。
+
+| 阶段 | 产物 | 阻断条件 |
+|------|------|----------|
+| Phase 0: 终稿规划 | `vX.0.0/01-规划方案.md`、能力登记、非目标、回归保护矩阵 | 缺少兼容桥、非目标或拒绝行为 |
+| Phase 1: 元契约 | QS profile、MachineTemplate、VenueCapabilityMatrix、Learning Pipeline 契约 | 未说明与 V1 保留面的关系 |
+| Phase 2: 类型与能力矩阵 | 强类型、能力来源、provider_native/runtime_simulated/unsupported | 能力来源不明确或静默降级 |
+| Phase 3: 静态审计 | parse/analyze/report，不接真实运行 | 新语法无法静态拒绝不支持路径 |
+| Phase 4: 兼容桥 | 旧链路映射到默认 machine 实例 | 旧图、旧 QS 或旧运行记录兼容性未说明 |
+| Phase 5: 事件循环 | event、cache、soft silence、memory snapshot | 状态迁移无事件来源或不可解释 |
+| Phase 6: Risk Plane | precheck/order_check/postcheck | 真实下单路径可能绕过风控 |
+| Phase 7: ExecutionMachine | 主流订单语义和 VenueAdapter 能力矩阵 | unsupported 能力未拒绝 |
+| Phase 8: UI / 学习流水线 | 状态可视化、能力来源标识、大版本学习检查 | UI 宣称先于真实能力或学习检查缺失 |
+
+执行原则:
+
+- V1 QuantScript 保留面必须稳定保留，不得被状态机 DSL 静默扩大。
+- V2 状态机语义应侧向生长，先静态审计，再接 Core IR，再接 runtime。
+- 旧链路必须通过兼容桥映射到 `ObservationMachine` / `DecisionMachine` / `ExecutionMachine` 默认实例。
+- 任一阶段发现旧能力退化，必须停止继续推进并回到回归保护矩阵修复。
+
 ---
 
 ## 八、执行规则
@@ -324,6 +352,8 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 - **版本号一致性检查未通过** (v3.7.1 收口): `powershell tools/check-version-consistency.ps1` 必须通过。每个 closeout 前必须验证 Cargo、Tauri、前端 package、package-lock、README、文档索引、超级规范化、overview 和执行端 HTML 标题均已递增至当前版本。
 - **功能演进契约检查未通过** (v3.7.1 元流水线): `powershell tools/check-feature-evolution.ps1` 必须通过。新增能力若没有功能演进登记、回归保护矩阵、兼容性与迁移说明，禁止进入 closeout。
 - **Rust 格式基线检查未通过** (v3.7.1 收口): `cargo fmt --check` 必须通过。若失败，必须先执行 `cargo fmt` 形成格式基线，再继续功能或发布流程。
+- **MAJOR 演化通道未完成** (v4.0.0 起): 涉及状态机 DSL、Risk Plane、ExecutionMachine、交易模式、学习流水线的 MAJOR 版本，必须按 §7.7 逐阶段留下产物和拒绝行为；不得越过静态审计直接接入真实运行。
+- **Developer Learning Closeout 缺失** (v4.0.0 起): MAJOR 版本 closeout 必须回答“本版本是否引入 owner 必学核心机制”，并记录学习材料、涉及文件、调用链、复述/校准状态。
 
 ### 8.2 紧急豁免
 
@@ -452,3 +482,28 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 | 文档宣称 supported，但实现仍是 beta / restricted / planned | 阻断 |
 
 **验收路径**: `tools/check-feature-evolution.ps1` 负责检查契约与里程碑结构；`tools/run-closeout-gates.bat` 负责执行回归门禁；GP §10.3 与自由维度审计负责发现无法自动化覆盖的功能退化。
+
+### 8.9 v4 状态机化演化防偏规则 🆕 (v4.0.0)
+
+**原则**: v4 状态机化不是推倒重来，而是在 v3.7.1 稳定线之上建立第二代语义层。任何实现必须保持“顶层 DAG 可审计、节点内部状态机化、Risk Plane 不可绕过、Execution 能力来源显式、学习流水线本地私有”的边界。
+
+**阻断规则**:
+
+| 情况 | 处理 |
+|------|------|
+| 直接修改 V1 QS 保留面导致旧策略语义变化 | 阻断 |
+| 新状态机 transition 无事件来源 | 阻断 |
+| `memory` 变化不进入快照、事件或回放证据 | 阻断 |
+| `stale` / `recovering` 数据可扩大真实风险敞口但无风控授权 | 阻断 |
+| 真实订单路径未经过 Risk Plane | 阻断 |
+| Execution 能力未标记 `provider_native` / `runtime_simulated` / `unsupported` | 阻断 |
+| `unsupported` 能力被静默降级或假装支持 | 阻断 |
+| UI 或文档把 planned/beta 能力描述为 supported | 阻断 |
+| `markdown/learning/` 个人学习记录进入 Git | 阻断 |
+
+**学习流水线规则**:
+
+- 学习流水线不进入每次强制门禁。
+- MAJOR closeout 必须增加 Developer Learning Closeout。
+- 个人学习记录只在用户明确要求“记录本轮学习”或“生成学习记录”时写入。
+- `markdown/learning/` 必须保持本地忽略，不推 GitHub。
