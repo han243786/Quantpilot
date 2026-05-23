@@ -9,6 +9,12 @@ pub const V4_MACHINE_GRAPH_CONTRACT_VERSION: &str = "quantpilot/machine-graph-co
 pub const V4_MACHINE_EVENT_CATALOG_VERSION: &str = "quantpilot/machine-event-catalog/v1";
 pub const V4_RUNTIME_MODE_CONTRACT_VERSION: &str = "quantpilot/runtime-mode-contract/v1";
 pub const V4_QS_TYPE_SYSTEM_VERSION: &str = "quantpilot/qs-type-system/v1";
+pub const V4_STATIC_CONTRACT_BUNDLE_VERSION: &str = "quantpilot/static-contract-bundle/v1";
+pub const V4_VERSION_MANIFEST_VERSION: &str = "quantpilot/version-manifest/v1";
+pub const V4_PLUGIN_GOVERNANCE_VERSION: &str = "quantpilot/plugin-governance/v1";
+pub const V4_REPRODUCIBILITY_CONTRACT_VERSION: &str = "quantpilot/reproducibility-contract/v1";
+pub const V4_COMPLEXITY_BUDGET_CONTRACT_VERSION: &str = "quantpilot/complexity-budget/v1";
+pub const V4_LEARNING_PIPELINE_CONTRACT_VERSION: &str = "quantpilot/learning-pipeline/v1";
 pub const V4_RISK_PLANE_MIN_PRIORITY: i32 = 9_000;
 pub const V4_QS_TYPE_MAX_NESTING_DEPTH: u8 = 8;
 
@@ -1604,6 +1610,896 @@ impl QsTypeSystemContract {
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct V4VersionManifest {
+    #[serde(default = "default_version_manifest_version")]
+    pub schema_version: String,
+    #[serde(default = "default_qs_language_version")]
+    pub qs_language_version: String,
+    #[serde(default = "default_qs_type_system_version")]
+    pub type_schema_version: String,
+    #[serde(default = "default_machine_contract_version")]
+    pub machine_template_version: String,
+    #[serde(default = "default_venue_capability_matrix_version")]
+    pub capability_matrix_version: String,
+    #[serde(default = "default_true")]
+    pub additive_types_are_compatible: bool,
+    #[serde(default = "default_true")]
+    pub additive_defaulted_fields_are_compatible: bool,
+    #[serde(default = "default_true")]
+    pub type_tightening_requires_migration: bool,
+    #[serde(default = "default_true")]
+    pub type_deletion_requires_deprecation_first: bool,
+    #[serde(default = "default_true")]
+    pub semantic_change_requires_schema_bump: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct PluginGovernanceContract {
+    #[serde(default = "default_plugin_governance_version")]
+    pub schema_version: String,
+    #[serde(default = "default_plugin_kinds")]
+    pub allowed_kinds: Vec<PluginKind>,
+    #[serde(default = "default_plugin_required_fields")]
+    pub required_fields: Vec<PluginManifestField>,
+    #[serde(default = "default_true")]
+    pub qs_declares_capabilities_only: bool,
+    #[serde(default = "default_true")]
+    pub real_order_requires_venue_plugin_and_risk_plane: bool,
+    #[serde(default = "default_true")]
+    pub pure_plugins_must_be_deterministic: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct PluginManifestSpec {
+    pub plugin_id: String,
+    pub name: String,
+    pub version: String,
+    pub kind: PluginKind,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub input_schema: Option<QsTypeRef>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub output_schema: Option<QsTypeRef>,
+    #[serde(default)]
+    pub deterministic: bool,
+    pub side_effect: PluginSideEffect,
+    pub runtime_permission: PluginRuntimePermission,
+    pub network_permission: PluginNetworkPermission,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub capability_matrix: Option<VenueCapabilityMatrix>,
+    pub test_fixture_id: String,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[serde(rename_all = "snake_case")]
+pub enum PluginKind {
+    Pure,
+    Runtime,
+    Venue,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[serde(rename_all = "snake_case")]
+pub enum PluginManifestField {
+    Name,
+    Version,
+    InputSchema,
+    OutputSchema,
+    Deterministic,
+    SideEffect,
+    RuntimePermission,
+    NetworkPermission,
+    CapabilityMatrix,
+    TestFixture,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum PluginSideEffect {
+    None,
+    LocalRuntimeState,
+    ProviderNetwork,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum PluginRuntimePermission {
+    None,
+    LocalSimulation,
+    RuntimeState,
+    VenueAdapter,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum PluginNetworkPermission {
+    None,
+    ProviderOnly,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ReproducibilityContract {
+    #[serde(default = "default_reproducibility_contract_version")]
+    pub schema_version: String,
+    #[serde(default = "default_reproducibility_evidence")]
+    pub required_evidence: Vec<RunEvidenceKind>,
+    #[serde(default = "default_event_envelope_fields")]
+    pub required_event_envelope_fields: Vec<EventEnvelopeField>,
+    #[serde(default = "default_true")]
+    pub key_decision_path_replay_required: bool,
+    #[serde(default)]
+    pub full_tick_replay_required: bool,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[serde(rename_all = "snake_case")]
+pub enum RunEvidenceKind {
+    StrategyRunId,
+    EventSequence,
+    InputSnapshotId,
+    MemoryChangeLog,
+    CapabilityHash,
+    DeploymentRevision,
+    OrderCapabilitySource,
+    RiskDecisionEvidence,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[serde(rename_all = "snake_case")]
+pub enum EventEnvelopeField {
+    EventId,
+    EventType,
+    EventTime,
+    Source,
+    Payload,
+    Freshness,
+    Sequence,
+    Replayable,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ComplexityBudgetContract {
+    #[serde(default = "default_complexity_budget_contract_version")]
+    pub schema_version: String,
+    pub max_state_count: u32,
+    pub max_transition_count: u32,
+    pub max_memory_field_count: u32,
+    pub max_plugin_call_count: u32,
+    pub max_mode_count: u32,
+    pub max_stale_dependency_count: u32,
+    pub max_estimated_order_paths: u32,
+    pub max_event_rate_estimate: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ComplexityMetrics {
+    pub state_count: u32,
+    pub transition_count: u32,
+    pub memory_field_count: u32,
+    pub plugin_call_count: u32,
+    pub mode_count: u32,
+    pub stale_dependency_count: u32,
+    pub estimated_order_paths: u32,
+    pub event_rate_estimate: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct DeveloperLearningPipelineContract {
+    #[serde(default = "default_learning_pipeline_contract_version")]
+    pub schema_version: String,
+    #[serde(default = "default_true")]
+    pub core_pipeline_in_repo: bool,
+    #[serde(default = "default_learning_dir")]
+    pub local_learning_dir: String,
+    #[serde(default = "default_true")]
+    pub local_learning_dir_gitignored: bool,
+    #[serde(default = "default_true")]
+    pub write_requires_explicit_user_command: bool,
+    #[serde(default)]
+    pub included_in_regular_gates: bool,
+    #[serde(default = "default_true")]
+    pub major_closeout_question_required: bool,
+    #[serde(default = "default_true")]
+    pub owner_first_iteration_only: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct V4StaticContractBundle {
+    #[serde(default = "default_static_contract_bundle_version")]
+    pub schema_version: String,
+    #[serde(default)]
+    pub version_manifest: V4VersionManifest,
+    #[serde(default)]
+    pub qs_profile: QsStateMachineProfile,
+    #[serde(default)]
+    pub type_system: QsTypeSystemContract,
+    #[serde(default)]
+    pub runtime_modes: RuntimeModeContract,
+    #[serde(default)]
+    pub plugin_governance: PluginGovernanceContract,
+    #[serde(default)]
+    pub reproducibility: ReproducibilityContract,
+    #[serde(default)]
+    pub complexity_budget: ComplexityBudgetContract,
+    #[serde(default)]
+    pub learning_pipeline: DeveloperLearningPipelineContract,
+    #[serde(default)]
+    pub machine_graphs: Vec<V4MachineGraphContract>,
+    #[serde(default)]
+    pub venue_matrices: Vec<VenueCapabilityMatrix>,
+    #[serde(default)]
+    pub plugin_manifests: Vec<PluginManifestSpec>,
+    #[serde(default)]
+    pub metadata: BTreeMap<String, Value>,
+}
+
+impl Default for V4VersionManifest {
+    fn default() -> Self {
+        Self {
+            schema_version: V4_VERSION_MANIFEST_VERSION.to_string(),
+            qs_language_version: default_qs_language_version(),
+            type_schema_version: V4_QS_TYPE_SYSTEM_VERSION.to_string(),
+            machine_template_version: V4_MACHINE_CONTRACT_VERSION.to_string(),
+            capability_matrix_version: V4_VENUE_CAPABILITY_MATRIX_VERSION.to_string(),
+            additive_types_are_compatible: true,
+            additive_defaulted_fields_are_compatible: true,
+            type_tightening_requires_migration: true,
+            type_deletion_requires_deprecation_first: true,
+            semantic_change_requires_schema_bump: true,
+        }
+    }
+}
+
+impl Default for PluginGovernanceContract {
+    fn default() -> Self {
+        Self {
+            schema_version: V4_PLUGIN_GOVERNANCE_VERSION.to_string(),
+            allowed_kinds: default_plugin_kinds(),
+            required_fields: default_plugin_required_fields(),
+            qs_declares_capabilities_only: true,
+            real_order_requires_venue_plugin_and_risk_plane: true,
+            pure_plugins_must_be_deterministic: true,
+        }
+    }
+}
+
+impl Default for ReproducibilityContract {
+    fn default() -> Self {
+        Self {
+            schema_version: V4_REPRODUCIBILITY_CONTRACT_VERSION.to_string(),
+            required_evidence: default_reproducibility_evidence(),
+            required_event_envelope_fields: default_event_envelope_fields(),
+            key_decision_path_replay_required: true,
+            full_tick_replay_required: false,
+        }
+    }
+}
+
+impl Default for ComplexityBudgetContract {
+    fn default() -> Self {
+        Self {
+            schema_version: V4_COMPLEXITY_BUDGET_CONTRACT_VERSION.to_string(),
+            max_state_count: 512,
+            max_transition_count: 1_024,
+            max_memory_field_count: 512,
+            max_plugin_call_count: 256,
+            max_mode_count: 4,
+            max_stale_dependency_count: 128,
+            max_estimated_order_paths: 512,
+            max_event_rate_estimate: 100_000,
+        }
+    }
+}
+
+impl Default for DeveloperLearningPipelineContract {
+    fn default() -> Self {
+        Self {
+            schema_version: V4_LEARNING_PIPELINE_CONTRACT_VERSION.to_string(),
+            core_pipeline_in_repo: true,
+            local_learning_dir: default_learning_dir(),
+            local_learning_dir_gitignored: true,
+            write_requires_explicit_user_command: true,
+            included_in_regular_gates: false,
+            major_closeout_question_required: true,
+            owner_first_iteration_only: true,
+        }
+    }
+}
+
+impl Default for V4StaticContractBundle {
+    fn default() -> Self {
+        Self {
+            schema_version: V4_STATIC_CONTRACT_BUNDLE_VERSION.to_string(),
+            version_manifest: V4VersionManifest::default(),
+            qs_profile: QsStateMachineProfile::default(),
+            type_system: QsTypeSystemContract::default(),
+            runtime_modes: RuntimeModeContract::default(),
+            plugin_governance: PluginGovernanceContract::default(),
+            reproducibility: ReproducibilityContract::default(),
+            complexity_budget: ComplexityBudgetContract::default(),
+            learning_pipeline: DeveloperLearningPipelineContract::default(),
+            machine_graphs: Vec::new(),
+            venue_matrices: Vec::new(),
+            plugin_manifests: Vec::new(),
+            metadata: BTreeMap::new(),
+        }
+    }
+}
+
+impl V4VersionManifest {
+    pub fn validate_static_contract(&self) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
+
+        if self.schema_version != V4_VERSION_MANIFEST_VERSION {
+            errors.push(format!(
+                "schema_version must be `{}`",
+                V4_VERSION_MANIFEST_VERSION
+            ));
+        }
+        if self.qs_language_version.trim().is_empty() {
+            errors.push("qs_language_version is required".to_string());
+        }
+        if self.type_schema_version != V4_QS_TYPE_SYSTEM_VERSION {
+            errors.push(format!(
+                "type_schema_version must be `{}`",
+                V4_QS_TYPE_SYSTEM_VERSION
+            ));
+        }
+        if self.machine_template_version != V4_MACHINE_CONTRACT_VERSION {
+            errors.push(format!(
+                "machine_template_version must be `{}`",
+                V4_MACHINE_CONTRACT_VERSION
+            ));
+        }
+        if self.capability_matrix_version != V4_VENUE_CAPABILITY_MATRIX_VERSION {
+            errors.push(format!(
+                "capability_matrix_version must be `{}`",
+                V4_VENUE_CAPABILITY_MATRIX_VERSION
+            ));
+        }
+        if !self.additive_types_are_compatible {
+            errors.push("additive types must stay compatible".to_string());
+        }
+        if !self.additive_defaulted_fields_are_compatible {
+            errors.push("additive defaulted fields must stay compatible".to_string());
+        }
+        if !self.type_tightening_requires_migration {
+            errors.push("type tightening must require migration".to_string());
+        }
+        if !self.type_deletion_requires_deprecation_first {
+            errors.push("type deletion must require deprecation first".to_string());
+        }
+        if !self.semantic_change_requires_schema_bump {
+            errors.push("semantic changes must require a schema bump".to_string());
+        }
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
+}
+
+impl PluginGovernanceContract {
+    pub fn validate_static_contract(&self) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
+
+        if self.schema_version != V4_PLUGIN_GOVERNANCE_VERSION {
+            errors.push(format!(
+                "schema_version must be `{}`",
+                V4_PLUGIN_GOVERNANCE_VERSION
+            ));
+        }
+
+        let allowed = self.allowed_kinds.iter().copied().collect::<BTreeSet<_>>();
+        for kind in [PluginKind::Pure, PluginKind::Runtime, PluginKind::Venue] {
+            if !allowed.contains(&kind) {
+                errors.push(format!("plugin governance must allow `{:?}` plugins", kind));
+            }
+        }
+
+        let fields = self
+            .required_fields
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        for field in default_plugin_required_fields() {
+            if !fields.contains(&field) {
+                errors.push(format!(
+                    "plugin governance must require manifest field `{:?}`",
+                    field
+                ));
+            }
+        }
+
+        if !self.qs_declares_capabilities_only {
+            errors.push("QS must declare capabilities only; plugins implement them".to_string());
+        }
+        if !self.real_order_requires_venue_plugin_and_risk_plane {
+            errors.push(
+                "real order paths must require a venue plugin and runtime risk plane".to_string(),
+            );
+        }
+        if !self.pure_plugins_must_be_deterministic {
+            errors.push("pure plugins must be deterministic".to_string());
+        }
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
+
+    pub fn validate_plugin_manifest(
+        &self,
+        manifest: &PluginManifestSpec,
+        type_system: &QsTypeSystemContract,
+        runtime_modes: &RuntimeModeContract,
+    ) -> Result<(), Vec<String>> {
+        let mut errors = self.validate_static_contract().err().unwrap_or_default();
+
+        if manifest.plugin_id.trim().is_empty() {
+            errors.push("plugin_id is required".to_string());
+        }
+        if manifest.name.trim().is_empty() {
+            errors.push("plugin name is required".to_string());
+        }
+        if manifest.version.trim().is_empty() {
+            errors.push("plugin version is required".to_string());
+        }
+        if manifest.test_fixture_id.trim().is_empty() {
+            errors.push("plugin test_fixture_id is required".to_string());
+        }
+        if !self.allowed_kinds.contains(&manifest.kind) {
+            errors.push(format!("plugin kind `{:?}` is not allowed", manifest.kind));
+        }
+        match &manifest.input_schema {
+            Some(type_ref) => {
+                errors.extend(
+                    type_system
+                        .validate_type_ref(type_ref)
+                        .err()
+                        .unwrap_or_default(),
+                );
+            }
+            None => errors.push("plugin input_schema is required".to_string()),
+        }
+        match &manifest.output_schema {
+            Some(type_ref) => {
+                errors.extend(
+                    type_system
+                        .validate_type_ref(type_ref)
+                        .err()
+                        .unwrap_or_default(),
+                );
+            }
+            None => errors.push("plugin output_schema is required".to_string()),
+        }
+
+        match manifest.kind {
+            PluginKind::Pure => {
+                if self.pure_plugins_must_be_deterministic && !manifest.deterministic {
+                    errors.push("pure plugins must be deterministic".to_string());
+                }
+                if !matches!(manifest.side_effect, PluginSideEffect::None) {
+                    errors.push("pure plugins must not declare side effects".to_string());
+                }
+                if !matches!(manifest.runtime_permission, PluginRuntimePermission::None) {
+                    errors.push("pure plugins must not require runtime permission".to_string());
+                }
+                if !matches!(manifest.network_permission, PluginNetworkPermission::None) {
+                    errors.push("pure plugins must not require network permission".to_string());
+                }
+                if manifest.capability_matrix.is_some() {
+                    errors.push(
+                        "pure plugins must not declare a venue capability matrix".to_string(),
+                    );
+                }
+            }
+            PluginKind::Runtime => {
+                if matches!(
+                    manifest.network_permission,
+                    PluginNetworkPermission::ProviderOnly
+                ) {
+                    errors.push("runtime plugins must not access provider network".to_string());
+                }
+                if !matches!(
+                    manifest.runtime_permission,
+                    PluginRuntimePermission::LocalSimulation
+                        | PluginRuntimePermission::RuntimeState
+                ) {
+                    errors.push(
+                        "runtime plugins must declare local simulation or runtime state permission"
+                            .to_string(),
+                    );
+                }
+            }
+            PluginKind::Venue => {
+                if !matches!(manifest.side_effect, PluginSideEffect::ProviderNetwork) {
+                    errors.push(
+                        "venue plugins must declare provider network side effects".to_string(),
+                    );
+                }
+                if !matches!(
+                    manifest.runtime_permission,
+                    PluginRuntimePermission::VenueAdapter
+                ) {
+                    errors.push(
+                        "venue plugins must require venue_adapter runtime permission".to_string(),
+                    );
+                }
+                if !matches!(
+                    manifest.network_permission,
+                    PluginNetworkPermission::ProviderOnly
+                ) {
+                    errors.push(
+                        "venue plugins must use provider_only network permission".to_string(),
+                    );
+                }
+                match &manifest.capability_matrix {
+                    Some(matrix) => {
+                        errors.extend(
+                            matrix
+                                .validate_v4_first_wave_contract()
+                                .err()
+                                .unwrap_or_default(),
+                        );
+                        for capability in v4_first_wave_execution_capabilities() {
+                            for mode in required_runtime_trading_modes() {
+                                let _ = matrix.require_supported_for_mode(
+                                    capability,
+                                    mode,
+                                    runtime_modes,
+                                );
+                            }
+                        }
+                    }
+                    None => errors.push("venue plugins must declare capability_matrix".to_string()),
+                }
+            }
+        }
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
+}
+
+impl ReproducibilityContract {
+    pub fn validate_static_contract(&self) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
+
+        if self.schema_version != V4_REPRODUCIBILITY_CONTRACT_VERSION {
+            errors.push(format!(
+                "schema_version must be `{}`",
+                V4_REPRODUCIBILITY_CONTRACT_VERSION
+            ));
+        }
+
+        let evidence = self
+            .required_evidence
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        for kind in default_reproducibility_evidence() {
+            if !evidence.contains(&kind) {
+                errors.push(format!("reproducibility evidence `{:?}` is required", kind));
+            }
+        }
+
+        let fields = self
+            .required_event_envelope_fields
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        for field in default_event_envelope_fields() {
+            if !fields.contains(&field) {
+                errors.push(format!("event envelope field `{:?}` is required", field));
+            }
+        }
+
+        if !self.key_decision_path_replay_required {
+            errors.push("key decision path replay must be required".to_string());
+        }
+        if self.full_tick_replay_required {
+            errors.push("full tick replay is reserved for a later phase".to_string());
+        }
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
+}
+
+impl ComplexityBudgetContract {
+    pub fn validate_static_contract(&self) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
+
+        if self.schema_version != V4_COMPLEXITY_BUDGET_CONTRACT_VERSION {
+            errors.push(format!(
+                "schema_version must be `{}`",
+                V4_COMPLEXITY_BUDGET_CONTRACT_VERSION
+            ));
+        }
+        for (name, value) in [
+            ("max_state_count", self.max_state_count),
+            ("max_transition_count", self.max_transition_count),
+            ("max_memory_field_count", self.max_memory_field_count),
+            ("max_plugin_call_count", self.max_plugin_call_count),
+            ("max_mode_count", self.max_mode_count),
+            (
+                "max_stale_dependency_count",
+                self.max_stale_dependency_count,
+            ),
+            ("max_estimated_order_paths", self.max_estimated_order_paths),
+            ("max_event_rate_estimate", self.max_event_rate_estimate),
+        ] {
+            if value == 0 {
+                errors.push(format!("{name} must be greater than 0"));
+            }
+        }
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
+
+    pub fn validate_metrics(&self, metrics: &ComplexityMetrics) -> Result<(), Vec<String>> {
+        let mut errors = self.validate_static_contract().err().unwrap_or_default();
+
+        for (name, value, limit) in [
+            ("state_count", metrics.state_count, self.max_state_count),
+            (
+                "transition_count",
+                metrics.transition_count,
+                self.max_transition_count,
+            ),
+            (
+                "memory_field_count",
+                metrics.memory_field_count,
+                self.max_memory_field_count,
+            ),
+            (
+                "plugin_call_count",
+                metrics.plugin_call_count,
+                self.max_plugin_call_count,
+            ),
+            ("mode_count", metrics.mode_count, self.max_mode_count),
+            (
+                "stale_dependency_count",
+                metrics.stale_dependency_count,
+                self.max_stale_dependency_count,
+            ),
+            (
+                "estimated_order_paths",
+                metrics.estimated_order_paths,
+                self.max_estimated_order_paths,
+            ),
+            (
+                "event_rate_estimate",
+                metrics.event_rate_estimate,
+                self.max_event_rate_estimate,
+            ),
+        ] {
+            if value > limit {
+                errors.push(format!("{name} {value} exceeds budget {limit}"));
+            }
+        }
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
+}
+
+impl DeveloperLearningPipelineContract {
+    pub fn validate_static_contract(&self) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
+
+        if self.schema_version != V4_LEARNING_PIPELINE_CONTRACT_VERSION {
+            errors.push(format!(
+                "schema_version must be `{}`",
+                V4_LEARNING_PIPELINE_CONTRACT_VERSION
+            ));
+        }
+        if !self.core_pipeline_in_repo {
+            errors.push("core learning pipeline must live in the repository".to_string());
+        }
+        if self.local_learning_dir != default_learning_dir() {
+            errors.push(format!(
+                "local_learning_dir must be `{}`",
+                default_learning_dir()
+            ));
+        }
+        if !self.local_learning_dir_gitignored {
+            errors.push("local learning records must stay gitignored".to_string());
+        }
+        if !self.write_requires_explicit_user_command {
+            errors.push("learning records must require explicit user command".to_string());
+        }
+        if self.included_in_regular_gates {
+            errors.push("learning pipeline must not enter regular mandatory gates".to_string());
+        }
+        if !self.major_closeout_question_required {
+            errors.push("MAJOR closeout must ask the learning pipeline question".to_string());
+        }
+        if !self.owner_first_iteration_only {
+            errors.push("first learning pipeline iteration must stay owner-first".to_string());
+        }
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
+}
+
+impl V4StaticContractBundle {
+    pub fn validate_static_contract(&self) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
+
+        if self.schema_version != V4_STATIC_CONTRACT_BUNDLE_VERSION {
+            errors.push(format!(
+                "schema_version must be `{}`",
+                V4_STATIC_CONTRACT_BUNDLE_VERSION
+            ));
+        }
+        errors.extend(
+            self.version_manifest
+                .validate_static_contract()
+                .err()
+                .unwrap_or_default(),
+        );
+        errors.extend(
+            self.qs_profile
+                .validate_static_contract()
+                .err()
+                .unwrap_or_default(),
+        );
+        errors.extend(
+            self.type_system
+                .validate_static_contract()
+                .err()
+                .unwrap_or_default(),
+        );
+        errors.extend(
+            self.runtime_modes
+                .validate_static_contract()
+                .err()
+                .unwrap_or_default(),
+        );
+        errors.extend(
+            self.plugin_governance
+                .validate_static_contract()
+                .err()
+                .unwrap_or_default(),
+        );
+        errors.extend(
+            self.reproducibility
+                .validate_static_contract()
+                .err()
+                .unwrap_or_default(),
+        );
+        errors.extend(
+            self.complexity_budget
+                .validate_static_contract()
+                .err()
+                .unwrap_or_default(),
+        );
+        errors.extend(
+            self.learning_pipeline
+                .validate_static_contract()
+                .err()
+                .unwrap_or_default(),
+        );
+
+        if self.machine_graphs.is_empty() {
+            errors
+                .push("static contract bundle must include at least one machine graph".to_string());
+        }
+        if self.venue_matrices.is_empty() {
+            errors
+                .push("static contract bundle must include at least one venue matrix".to_string());
+        }
+
+        for graph in &self.machine_graphs {
+            errors.extend(graph.validate_static_contract().err().unwrap_or_default());
+            let metrics = ComplexityMetrics::from_machine_graph(
+                graph,
+                self.runtime_modes.modes.len() as u32,
+                self.plugin_manifests.len() as u32,
+            );
+            errors.extend(
+                self.complexity_budget
+                    .validate_metrics(&metrics)
+                    .err()
+                    .unwrap_or_default(),
+            );
+        }
+
+        for matrix in &self.venue_matrices {
+            errors.extend(
+                matrix
+                    .validate_v4_first_wave_contract()
+                    .err()
+                    .unwrap_or_default(),
+            );
+        }
+
+        for manifest in &self.plugin_manifests {
+            errors.extend(
+                self.plugin_governance
+                    .validate_plugin_manifest(manifest, &self.type_system, &self.runtime_modes)
+                    .err()
+                    .unwrap_or_default(),
+            );
+        }
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
+}
+
+impl ComplexityMetrics {
+    pub fn from_machine_graph(
+        graph: &V4MachineGraphContract,
+        mode_count: u32,
+        plugin_call_count: u32,
+    ) -> Self {
+        let state_count = graph
+            .machines
+            .iter()
+            .map(|machine| machine.states.len() as u32)
+            .sum();
+        let transition_count = graph
+            .machines
+            .iter()
+            .map(|machine| machine.transitions.len() as u32)
+            .sum();
+        let memory_field_count = graph
+            .machines
+            .iter()
+            .map(|machine| machine.memory.len() as u32)
+            .sum();
+        let event_rate_estimate = graph
+            .event_catalog
+            .as_ref()
+            .map(|catalog| catalog.events.len() as u32)
+            .unwrap_or_default()
+            .saturating_mul(1_000);
+        let estimated_order_paths = graph
+            .machines
+            .iter()
+            .filter(|machine| matches!(machine.template, MachineTemplateKind::Execution))
+            .count() as u32;
+
+        Self {
+            state_count,
+            transition_count,
+            memory_field_count,
+            plugin_call_count,
+            mode_count,
+            stale_dependency_count: 0,
+            estimated_order_paths,
+            event_rate_estimate,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[serde(rename_all = "snake_case")]
 pub enum ExecutionCapabilityKind {
@@ -1999,6 +2895,18 @@ fn default_machine_contract_version() -> String {
     V4_MACHINE_CONTRACT_VERSION.to_string()
 }
 
+fn default_static_contract_bundle_version() -> String {
+    V4_STATIC_CONTRACT_BUNDLE_VERSION.to_string()
+}
+
+fn default_version_manifest_version() -> String {
+    V4_VERSION_MANIFEST_VERSION.to_string()
+}
+
+fn default_qs_language_version() -> String {
+    "quantpilot/qs-language/v4".to_string()
+}
+
 fn default_machine_graph_contract_version() -> String {
     V4_MACHINE_GRAPH_CONTRACT_VERSION.to_string()
 }
@@ -2013,6 +2921,22 @@ fn default_runtime_mode_contract_version() -> String {
 
 fn default_qs_type_system_version() -> String {
     V4_QS_TYPE_SYSTEM_VERSION.to_string()
+}
+
+fn default_plugin_governance_version() -> String {
+    V4_PLUGIN_GOVERNANCE_VERSION.to_string()
+}
+
+fn default_reproducibility_contract_version() -> String {
+    V4_REPRODUCIBILITY_CONTRACT_VERSION.to_string()
+}
+
+fn default_complexity_budget_contract_version() -> String {
+    V4_COMPLEXITY_BUDGET_CONTRACT_VERSION.to_string()
+}
+
+fn default_learning_pipeline_contract_version() -> String {
+    V4_LEARNING_PIPELINE_CONTRACT_VERSION.to_string()
 }
 
 fn default_venue_capability_matrix_version() -> String {
@@ -2072,6 +2996,55 @@ fn default_qs_composite_type_specs() -> Vec<QsCompositeTypeSpec> {
 
 fn default_qs_type_max_nesting_depth() -> u8 {
     V4_QS_TYPE_MAX_NESTING_DEPTH
+}
+
+fn default_plugin_kinds() -> Vec<PluginKind> {
+    vec![PluginKind::Pure, PluginKind::Runtime, PluginKind::Venue]
+}
+
+fn default_plugin_required_fields() -> Vec<PluginManifestField> {
+    vec![
+        PluginManifestField::Name,
+        PluginManifestField::Version,
+        PluginManifestField::InputSchema,
+        PluginManifestField::OutputSchema,
+        PluginManifestField::Deterministic,
+        PluginManifestField::SideEffect,
+        PluginManifestField::RuntimePermission,
+        PluginManifestField::NetworkPermission,
+        PluginManifestField::CapabilityMatrix,
+        PluginManifestField::TestFixture,
+    ]
+}
+
+fn default_reproducibility_evidence() -> Vec<RunEvidenceKind> {
+    vec![
+        RunEvidenceKind::StrategyRunId,
+        RunEvidenceKind::EventSequence,
+        RunEvidenceKind::InputSnapshotId,
+        RunEvidenceKind::MemoryChangeLog,
+        RunEvidenceKind::CapabilityHash,
+        RunEvidenceKind::DeploymentRevision,
+        RunEvidenceKind::OrderCapabilitySource,
+        RunEvidenceKind::RiskDecisionEvidence,
+    ]
+}
+
+fn default_event_envelope_fields() -> Vec<EventEnvelopeField> {
+    vec![
+        EventEnvelopeField::EventId,
+        EventEnvelopeField::EventType,
+        EventEnvelopeField::EventTime,
+        EventEnvelopeField::Source,
+        EventEnvelopeField::Payload,
+        EventEnvelopeField::Freshness,
+        EventEnvelopeField::Sequence,
+        EventEnvelopeField::Replayable,
+    ]
+}
+
+fn default_learning_dir() -> String {
+    "markdown/learning/".to_string()
 }
 
 fn default_transition_conflict_policy() -> TransitionConflictPolicy {
@@ -2303,6 +3276,38 @@ mod tests {
                 min_priority: V4_RISK_PLANE_MIN_PRIORITY,
             }),
             metadata: BTreeMap::new(),
+        }
+    }
+
+    fn sample_static_contract_bundle() -> V4StaticContractBundle {
+        V4StaticContractBundle {
+            machine_graphs: vec![sample_machine_graph()],
+            venue_matrices: vec![unsupported_v4_first_wave_matrix("paper-local")],
+            ..V4StaticContractBundle::default()
+        }
+    }
+
+    fn sample_pure_plugin_manifest() -> PluginManifestSpec {
+        PluginManifestSpec {
+            plugin_id: "pure.indicator.zscore".to_string(),
+            name: "ZScore".to_string(),
+            version: "0.1.0".to_string(),
+            kind: PluginKind::Pure,
+            input_schema: Some(QsTypeRef::List {
+                item: Box::new(QsTypeRef::Scalar {
+                    scalar: QsScalarTypeKind::Price,
+                }),
+                max_items: 256,
+            }),
+            output_schema: Some(QsTypeRef::Scalar {
+                scalar: QsScalarTypeKind::Decimal,
+            }),
+            deterministic: true,
+            side_effect: PluginSideEffect::None,
+            runtime_permission: PluginRuntimePermission::None,
+            network_permission: PluginNetworkPermission::None,
+            capability_matrix: None,
+            test_fixture_id: "fixture.zscore.basic".to_string(),
         }
     }
 
@@ -2675,6 +3680,80 @@ mod tests {
         assert!(errors
             .iter()
             .any(|message| message.contains("exceeds max_nesting_depth")));
+    }
+
+    #[test]
+    fn static_contract_bundle_accepts_complete_phase_one_bundle() {
+        let bundle = sample_static_contract_bundle();
+
+        assert_eq!(bundle.validate_static_contract(), Ok(()));
+    }
+
+    #[test]
+    fn version_manifest_requires_schema_bump_for_semantic_change() {
+        let manifest = V4VersionManifest {
+            semantic_change_requires_schema_bump: false,
+            ..V4VersionManifest::default()
+        };
+
+        let errors = manifest.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("semantic changes")));
+    }
+
+    #[test]
+    fn plugin_governance_rejects_pure_plugin_with_network_permission() {
+        let governance = PluginGovernanceContract::default();
+        let mut manifest = sample_pure_plugin_manifest();
+        manifest.network_permission = PluginNetworkPermission::ProviderOnly;
+
+        let errors = governance
+            .validate_plugin_manifest(
+                &manifest,
+                &default_v4_qs_type_system_contract(),
+                &default_v4_runtime_mode_contract(),
+            )
+            .unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("pure plugins must not require network permission")));
+    }
+
+    #[test]
+    fn reproducibility_contract_requires_risk_decision_evidence() {
+        let mut contract = ReproducibilityContract::default();
+        contract
+            .required_evidence
+            .retain(|kind| *kind != RunEvidenceKind::RiskDecisionEvidence);
+
+        let errors = contract.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("RiskDecisionEvidence")));
+    }
+
+    #[test]
+    fn complexity_budget_rejects_over_budget_graph() {
+        let budget = ComplexityBudgetContract {
+            max_state_count: 1,
+            ..ComplexityBudgetContract::default()
+        };
+        let metrics = ComplexityMetrics::from_machine_graph(&sample_machine_graph(), 4, 0);
+
+        let errors = budget.validate_metrics(&metrics).unwrap_err();
+        assert!(errors.iter().any(|message| message.contains("state_count")));
+    }
+
+    #[test]
+    fn learning_pipeline_contract_keeps_local_records_out_of_git() {
+        let contract = DeveloperLearningPipelineContract {
+            local_learning_dir_gitignored: false,
+            ..DeveloperLearningPipelineContract::default()
+        };
+
+        let errors = contract.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| message.contains("gitignored")));
     }
 
     #[test]

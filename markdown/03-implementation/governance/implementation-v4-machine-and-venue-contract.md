@@ -30,6 +30,13 @@
 - `RuntimeTradingModeSpec`
 - `QsTypeSystemContract`
 - `QsTypeRef`
+- `V4VersionManifest`
+- `PluginGovernanceContract`
+- `PluginManifestSpec`
+- `ReproducibilityContract`
+- `ComplexityBudgetContract`
+- `DeveloperLearningPipelineContract`
+- `V4StaticContractBundle`
 
 第一版模板:
 
@@ -329,6 +336,165 @@ quantpilot/runtime-mode-contract/v1
 - 所有模式都必须要求 runtime Risk Plane。
 - 每个模式都必须声明完整执行事件集合。
 
+## 版本演进 Manifest
+
+profile 版本:
+
+```text
+quantpilot/version-manifest/v1
+```
+
+版本 manifest 固定静态契约阶段所依赖的版本字段:
+
+- `qs_language_version`
+- `type_schema_version`
+- `machine_template_version`
+- `capability_matrix_version`
+
+静态校验必须保证:
+
+- 类型 schema 指向 `quantpilot/qs-type-system/v1`。
+- machine template 指向 `quantpilot/machine-contract/v1`。
+- capability matrix 指向 `quantpilot/venue-capability-matrix/v1`。
+- 新增类型兼容。
+- 新增默认字段兼容。
+- 收紧类型必须要求 migration。
+- 删除类型必须先 deprecated。
+- 语义变化必须提升 schema version。
+
+## 插件治理契约
+
+profile 版本:
+
+```text
+quantpilot/plugin-governance/v1
+```
+
+第一版允许三类插件:
+
+- `Pure`
+- `Runtime`
+- `Venue`
+
+插件 manifest 必须表达:
+
+- name
+- version
+- input schema
+- output schema
+- deterministic
+- side effect
+- runtime permission
+- network permission
+- capability matrix
+- test fixture
+
+静态校验必须保证:
+
+- QS 只声明能力，插件实现能力。
+- 真实下单只能通过 venue plugin + Risk Plane。
+- pure plugin 必须 deterministic。
+- pure plugin 不得有 side effect、runtime permission、network permission。
+- runtime plugin 不得访问 provider network。
+- venue plugin 必须声明 provider network side effect。
+- venue plugin 必须使用 venue adapter runtime permission。
+- venue plugin 必须声明 v4 第一批能力矩阵。
+
+## 复现证据契约
+
+profile 版本:
+
+```text
+quantpilot/reproducibility-contract/v1
+```
+
+v4.0.0 第一版目标是关键决策路径复现。静态校验必须要求以下 evidence:
+
+- `strategy_run_id`
+- `event_sequence`
+- `input_snapshot_id`
+- `memory_change_log`
+- `capability_hash`
+- `deployment_revision`
+- `order_capability_source`
+- `risk_decision_evidence`
+
+事件 envelope 必须携带:
+
+- `event_id`
+- `event_type`
+- `event_time`
+- `source`
+- `payload`
+- `freshness`
+- `sequence`
+- `replayable`
+
+逐 tick 完全复现第一版仍是非目标，不能提前作为必备能力声明。
+
+## 复杂度预算契约
+
+profile 版本:
+
+```text
+quantpilot/complexity-budget/v1
+```
+
+静态阶段必须能表达并校验:
+
+- `state_count`
+- `transition_count`
+- `memory_field_count`
+- `plugin_call_count`
+- `mode_count`
+- `stale_dependency_count`
+- `estimated_order_paths`
+- `event_rate_estimate`
+
+预算为 0 或实际指标超过预算时静态校验失败。未来若启用嵌套状态机，必须在该预算层增加嵌套深度和回放成本警告。
+
+## 学习流水线静态契约
+
+profile 版本:
+
+```text
+quantpilot/learning-pipeline/v1
+```
+
+静态校验必须保证:
+
+- 核心学习流水线在仓库中。
+- 本地个人学习目录为 `markdown/learning/`。
+- `markdown/learning/` 必须 gitignored。
+- 写入个人学习记录必须有用户明确指令。
+- 学习流水线不进入常规强制门禁。
+- MAJOR closeout 必须询问 owner 必学机制。
+- 第一版保持 owner-first，不提前泛化给所有开发者。
+
+## 静态契约总包
+
+profile 版本:
+
+```text
+quantpilot/static-contract-bundle/v1
+```
+
+`V4StaticContractBundle` 是 Phase 1 静态契约收口入口。它聚合:
+
+- `V4VersionManifest`
+- `QsStateMachineProfile`
+- `QsTypeSystemContract`
+- `RuntimeModeContract`
+- `PluginGovernanceContract`
+- `ReproducibilityContract`
+- `ComplexityBudgetContract`
+- `DeveloperLearningPipelineContract`
+- `V4MachineGraphContract`
+- `VenueCapabilityMatrix`
+- `PluginManifestSpec`
+
+静态总包必须至少包含一个 machine graph 和一个 venue matrix，并逐项调用子契约校验。该总包只证明 v4 语义边界完整，不接 parser、lowering、runtime 或 UI。
+
 ## 当前非目标
 
 - 不接入 QuantScript parser。
@@ -377,6 +543,12 @@ cargo test -p qrpc-core-ir v4
 - QS 强类型系统 composite 类型重复会失败。
 - `list` / `map` 缺少或超出 `max_items` 会失败。
 - 类型嵌套超过预算会失败。
+- 静态总包可整体验证通过。
+- 版本 manifest 缺少语义变更升 schema 要求会失败。
+- pure plugin 申请 provider network 会失败。
+- 复现契约缺少 risk decision evidence 会失败。
+- 复杂度指标超预算会失败。
+- 学习记录目录未 gitignored 会失败。
 - Venue capability 重复声明会失败。
 - 缺失能力不会被当作 supported。
 - v4 第一批能力必须显式标记来源。
