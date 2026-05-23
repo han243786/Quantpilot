@@ -601,10 +601,53 @@ Phase 3 拒绝规则:
 - graph 静态契约失败时拒绝。
 - Phase 2 编译期能力报告 rejected 时拒绝，包括 required capability 为 `unsupported`、运行模式与能力来源不匹配、required plugin 缺失等。
 
+## Core IR 兼容桥
+
+profile 版本:
+
+```text
+quantpilot/core-ir-compat-bridge/v1
+```
+
+`bridge_core_ir_to_v4_machine_graph(...)` 是 v4 Phase 4 的验收入口。它接收旧 `CoreStrategyIr`，只构造一个静态 `V4MachineGraphContract`，把旧链路压入默认 machine 实例:
+
+- `data_bindings` / `indicators` -> `compat.observation`，模板为 `ObservationMachine`。
+- `signal_rules` / `agent_policies` / `risk_policies` -> `compat.decision`，模板为 `DecisionMachine`，同时作为独立高优先级 Risk Plane machine。
+- `execution` -> `compat.execution`，模板为 `ExecutionMachine`。
+
+兼容桥生成的默认图固定为:
+
+```text
+compat.observation --compat.observation_ready--> compat.decision --compat.risk_approved--> compat.execution
+```
+
+图级契约仍然保持顶层 DAG。含 `ExecutionMachine` 的图必须声明 Risk Plane，且进入执行机的边必须来自 Risk Plane machine。旧 Core IR 的细粒度节点 id、原始边数量、原始边标签和 execution 配置会写入 metadata，用于后续迁移、审计和 UI 展示。
+
+Phase 4 拒绝规则:
+
+- `ir_version` 不是 `quantpilot/core-ir/v1` 时拒绝。
+- 缺少 `strategy_id`、数据源、风控策略、执行 id 或交易 venue 时拒绝。
+- Core IR 节点 id 为空或重复时拒绝。
+- 显式 Core IR edge 指向未声明节点时拒绝。
+- Core IR DAG 校验失败时拒绝。
+- signal / agent / risk 的结构化引用指向未声明节点时拒绝。
+- 生成的 `V4MachineGraphContract` 无法通过 v4 静态契约时拒绝。
+
+Phase 4 硬边界:
+
+- 不调用 QS parser。
+- 不调用 QS v1 lowering。
+- 不把兼容桥接入 runtime lowering。
+- 不创建 `RuntimeCoordinator`。
+- 不运行 PaperSimulated。
+- 不提交订单。
+- `CoreIrV4CompatibilityReport.runtime_attached` 必须为 false。
+- `CoreIrV4CompatibilityReport.lowering_attached` 必须为 false。
+
 ## 当前非目标
 
 - 不把 v4 QS 静态 parser 接入现有编译 API 或 runtime lowering。
-- 不接入 Core IR lowering。
+- 不把 Core IR 兼容桥接入 runtime lowering。
 - 不接入 RuntimeCoordinator。
 - 不接入真实 VenueAdapter。
 - 不改变现有 `OrderType`、`TimeInForce`、`ExecutionPlan` 行为。
@@ -661,6 +704,9 @@ cargo test -p quantscript v4_static
 - 编译期能力报告会拒绝 local_simulated 模式下误用 provider_native 能力。
 - 编译期能力报告会拒绝无效强类型引用。
 - 编译期能力报告会拒绝缺失的 required plugin。
+- 旧 Core IR 可映射为 Observation / Decision / Execution 三个默认 machine 实例。
+- 缺少数据源或风控策略的旧 Core IR 不能进入兼容桥。
+- 显式 Core IR edge 指向未知节点或形成环时不能进入兼容桥。
 - v4 QS 静态审计可接受受支持的状态机脚本，且不接 runtime / lowering。
 - v4 QS 静态审计会拒绝 unsupported required capability。
 - v4 QS 静态审计会拒绝嵌套 machine block。
