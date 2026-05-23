@@ -14,6 +14,7 @@
 
 - `qrpc_core_ir/src/v4.rs`
 - `V4MachineContract`
+- `QsStateMachineProfile`
 - `MachineTemplateKind`
 - `MachineState`
 - `StateGroup`
@@ -40,6 +41,56 @@
 - transition 必须声明 `event_type`。
 - memory 字段必须声明 `type_name`。
 - 非 nullable memory 字段必须有默认值。
+
+## QS 状态机 profile
+
+实现入口:
+
+- `QsStateMachineProfile`
+- `QsStatePolicy`
+- `QsActionBlockPolicy`
+- `QsMemoryPolicy`
+- `QsEventPolicy`
+- `QsPriorityPolicy`
+- `QsRiskPlanePolicy`
+- `default_v4_qs_state_machine_profile()`
+
+profile 版本:
+
+```text
+quantpilot/qs-state-machine-profile/v1
+```
+
+第一版 QS 状态机 profile 必须保持强 DSL，且只允许受控 action block。action block 可以:
+
+- 发出事件。
+- 写入本机强类型 memory。
+- 写入诊断信息。
+
+action block 禁止:
+
+- 直接访问网络。
+- 直接访问文件系统。
+- 直接提交订单。
+- 写入其他 machine 的 memory。
+- 无界循环。
+- 动态 eval。
+
+第一版 profile 必须允许三种标准模板:
+
+- `Observation`
+- `Decision`
+- `Execution`
+
+同时必须保留以下边界:
+
+- 允许用户自定义 priority。
+- transition 必须由强类型事件驱动。
+- machine memory 必须强类型。
+- machine memory 必须有默认值或显式 nullable。
+- DecisionMachine 可以表达风控判断。
+- runtime 必须保留独立高优先级 Risk Plane。
+- QS 不能绕过 runtime Risk Plane。
 
 ## 扁平状态与 state group
 
@@ -128,6 +179,11 @@ cargo test -p qrpc-core-ir v4
 - 扁平 state group 可通过。
 - transition 缺少事件会失败。
 - transition 指向未知 state 会失败。
+- 默认 QS 状态机 profile 可通过。
+- QS profile 必须允许三种标准模板。
+- QS action block 不能直接提交订单。
+- 嵌套状态机在第一版保持 reserved。
+- runtime 必须保留独立高优先级 Risk Plane。
 - Venue capability 重复声明会失败。
 - 缺失能力不会被当作 supported。
 - v4 第一批能力必须显式标记来源。
