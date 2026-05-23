@@ -26,6 +26,8 @@
 - `MachineEventCatalog`
 - `MachineEventTypeSpec`
 - `MachineEventPayloadField`
+- `RuntimeModeContract`
+- `RuntimeTradingModeSpec`
 
 第一版模板:
 
@@ -199,6 +201,7 @@ quantpilot/machine-event-catalog/v1
 - `ExecutionCapabilityKind`
 - `CapabilitySupportSource`
 - `RuntimeTradingMode`
+- `RuntimeModeContract`
 
 能力来源:
 
@@ -218,11 +221,52 @@ quantpilot/machine-event-catalog/v1
 
 缺失能力默认视为 `Unsupported`，不得静默降级。
 
+运行模式与能力来源必须匹配:
+
+- `provider_actual` 模式只接受 `provider_native` 能力。
+- `local_simulated` 模式只接受 `runtime_simulated` 能力。
+- 能力必须显式包含当前 `RuntimeTradingMode`，否则运行前拒绝。
+
 默认构造:
 
 - `unsupported_v4_first_wave_matrix(...)` 会为 v4 第一批执行能力全部生成 `Unsupported` 条目。
 - 后续 VenueAdapter 只能逐项把能力提升为 `ProviderNative` 或 `RuntimeSimulated`。
 - 不允许通过省略能力来表达“稍后再说”；省略只能触发静态校验失败。
+
+## 四种运行模式契约
+
+profile 版本:
+
+```text
+quantpilot/runtime-mode-contract/v1
+```
+
+第一版必须显式声明四种模式:
+
+| 模式 | Account Domain | Settlement Authority | 事件来源 | 真实下单 |
+|------|----------------|----------------------|----------|----------|
+| `PaperActual` | `paper` | `provider_actual` | `provider_actual` | 允许 |
+| `PaperSimulated` | `paper` | `local_simulated` | `local_simulated` | 禁止 |
+| `LiveActual` | `live` | `provider_actual` | `provider_actual` | 允许 |
+| `LiveSimulated` | `live` | `local_simulated` | `local_simulated` | 禁止 |
+
+四种模式必须共享执行事件:
+
+- `order_acknowledged`
+- `order_rejected`
+- `order_partially_filled`
+- `order_filled`
+- `fee_charged`
+- `portfolio_changed`
+
+静态校验必须保证:
+
+- 四种模式全部声明，不能重复。
+- `PaperActual` 和 `LiveActual` 必须使用 provider 实际成交与 provider 事件来源。
+- `PaperSimulated` 和 `LiveSimulated` 必须使用本地成交引擎、本地账本与本地模拟事件来源。
+- `LiveSimulated` 必须读取真实账户上下文，但禁止真实下单。
+- 所有模式都必须要求 runtime Risk Plane。
+- 每个模式都必须声明完整执行事件集合。
 
 ## 当前非目标
 
@@ -261,6 +305,12 @@ cargo test -p qrpc-core-ir v4
 - QS action block 不能直接提交订单。
 - 嵌套状态机在第一版保持 reserved。
 - runtime 必须保留独立高优先级 Risk Plane。
+- 默认四模式契约可通过。
+- 四模式契约缺少任一模式会失败。
+- `LiveSimulated` 允许真实下单会失败。
+- 四模式契约缺少执行事件会失败。
+- `provider_actual` 模式不能使用 `runtime_simulated` 能力。
+- `local_simulated` 模式必须使用 `runtime_simulated` 能力。
 - Venue capability 重复声明会失败。
 - 缺失能力不会被当作 supported。
 - v4 第一批能力必须显式标记来源。
