@@ -1,18 +1,19 @@
 # v4 状态机与交易场所能力静态契约
 
-> 生效目标: v4.0.0 Phase 1-2 | 实现锚点: `qrpc_core_ir::v4`
+> 生效目标: v4.0.0 Phase 1-3 | 实现锚点: `qrpc_core_ir::v4`, `quantscript::v4_static_audit`
 
 ---
 
 ## 目标
 
-本契约为 v4 状态机化 QuantScript 和 ExecutionMachine 能力矩阵提供第一批静态类型锚点，并在 Phase 2 增加编译期能力报告入口。当前阶段只定义可序列化结构、静态校验和报告生成，不接入现有 v3.7.1 runtime，不改变旧策略行为。
+本契约为 v4 状态机化 QuantScript 和 ExecutionMachine 能力矩阵提供第一批静态类型锚点，并在 Phase 2 增加编译期能力报告入口，在 Phase 3 增加 v4 QS 静态 parse/analyze/report 入口。当前阶段只定义可序列化结构、静态校验和报告生成，不接入现有 v3.7.1 runtime，不改变旧策略行为。
 
 ## 状态机契约
 
 实现入口:
 
 - `qrpc_core_ir/src/v4.rs`
+- `quantscript/src/v4_static_audit.rs`
 - `V4MachineContract`
 - `V4MachineGraphContract`
 - `QsStateMachineProfile`
@@ -39,6 +40,8 @@
 - `V4StaticContractBundle`
 - `V4CompileTimeCapabilityRequest`
 - `V4CompileTimeCapabilityReport`
+- `audit_v4_quant_script_static`
+- `V4QsStaticAuditReport`
 
 第一版模板:
 
@@ -541,9 +544,66 @@ Phase 2 拒绝规则:
 
 该阶段只证明“编译前可以生成能力报告并拒绝不支持路径”。Phase 2 不执行新订单能力，不接 QS parser，不接 Core IR lowering，不接 runtime。
 
+## v4 QS 静态审计
+
+profile 版本:
+
+```text
+quantpilot/qs-v4-static-audit-report/v1
+```
+
+`audit_v4_quant_script_static(...)` 是 v4 Phase 3 的验收入口。它接收 v4 QS 源码和 `V4StaticContractBundle`，完成:
+
+- parse: 解析 `v4_strategy`、`machine`、`state`、`state_group`、`memory`、`on event`、`edge`、`risk_plane`、`require capability/type/plugin`。
+- analyze: 构造 `V4MachineGraphContract`，派生 `MachineEventCatalog`，执行 graph 静态校验。
+- report: 生成 `V4CompileTimeCapabilityRequest`，调用 Phase 2 编译期能力报告，并返回 `V4QsStaticAuditReport`。
+
+Phase 3 硬边界:
+
+- 不调用 QS v1 lowering。
+- 不调用 Core IR lowering。
+- 不创建 `RuntimeCoordinator`。
+- 不运行 PaperSimulated。
+- 不提交订单。
+- `V4QsStaticAuditReport.runtime_attached` 必须为 false。
+- `V4QsStaticAuditReport.lowering_attached` 必须为 false。
+
+第一版 v4 QS 静态语法只支持扁平状态机:
+
+```text
+v4_strategy <graph_id> {
+  venue <venue_id>
+  mode <paper_actual|paper_simulated|live_actual|live_simulated>
+  require capability <capability>
+  require type <type-ref>
+  require plugin <plugin_id>
+
+  machine <machine_id> <observation|decision|execution> priority <n> {
+    state <state_id> [initial] [terminal]
+    state_group <group_id> <state_id...>
+    memory <name>: <type> [nullable]
+    on <event_type> from <state_id> to <state_id> [emit <event...>] [write <memory...>]
+  }
+
+  edge <source_machine_id> -> <target_machine_id> on <event_type>
+  risk_plane <machine_id...> priority <n>
+}
+```
+
+Phase 3 拒绝规则:
+
+- 顶层不是 `v4_strategy <graph_id> {` 时拒绝。
+- 缺少 `venue` 或 `mode` 时拒绝。
+- 未知 runtime mode、execution capability 或 QS type ref 时拒绝。
+- machine header、state、state_group、memory、transition、edge、risk_plane 语法不符合静态语法时拒绝。
+- machine 内再次声明 `machine` 时拒绝，嵌套状态机仍为 reserved。
+- 不以 `on <event>` 表达的 transition 语法拒绝。
+- graph 静态契约失败时拒绝。
+- Phase 2 编译期能力报告 rejected 时拒绝，包括 required capability 为 `unsupported`、运行模式与能力来源不匹配、required plugin 缺失等。
+
 ## 当前非目标
 
-- 不接入 QuantScript parser。
+- 不把 v4 QS 静态 parser 接入现有编译 API 或 runtime lowering。
 - 不接入 Core IR lowering。
 - 不接入 RuntimeCoordinator。
 - 不接入真实 VenueAdapter。
@@ -555,6 +615,7 @@ Phase 2 拒绝规则:
 
 ```powershell
 cargo test -p qrpc-core-ir v4
+cargo test -p quantscript v4_static
 ```
 
 该测试覆盖:
@@ -600,6 +661,11 @@ cargo test -p qrpc-core-ir v4
 - 编译期能力报告会拒绝 local_simulated 模式下误用 provider_native 能力。
 - 编译期能力报告会拒绝无效强类型引用。
 - 编译期能力报告会拒绝缺失的 required plugin。
+- v4 QS 静态审计可接受受支持的状态机脚本，且不接 runtime / lowering。
+- v4 QS 静态审计会拒绝 unsupported required capability。
+- v4 QS 静态审计会拒绝嵌套 machine block。
+- v4 QS 静态审计会拒绝非 `on event` transition 语法。
+- v4 QS 静态审计会拒绝 runtime mode 与 capability source 不匹配。
 - Venue capability 重复声明会失败。
 - 缺失能力不会被当作 supported。
 - v4 第一批能力必须显式标记来源。

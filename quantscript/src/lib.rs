@@ -7,6 +7,7 @@ mod resolve;
 mod script;
 mod test_plan;
 mod types;
+mod v4_static_audit;
 
 use anyhow::{anyhow, bail, Context, Result};
 use qrpc_compiler::compile_runtime_protocol_config;
@@ -49,6 +50,9 @@ pub use test_plan::{
     extract_test_plan, split_test_items, TestActionDef, TestParamValueDef, TestPlan, TestStep,
 };
 pub use types::{parse_type_annotation, Type, TypeArena, TypeId};
+pub use v4_static_audit::{
+    audit_v4_quant_script_static, V4QsStaticAuditReport, V4QsStaticAuditVerdict,
+};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct QuantScriptProgram {

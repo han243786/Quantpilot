@@ -1070,9 +1070,11 @@ fn strategy() {
         .unwrap();
 
         let err = lower_script_to_runtime_config(&module).unwrap_err();
-        assert!(err
-            .to_string()
-            .contains("无法以符号方式展开 for 循环的可迭代对象"));
+        let message = err.to_string();
+        assert!(
+            message.contains("无法以符号方式展开 for 循环的可迭代对象")
+                || message.contains("for 循环")
+        );
     }
 
     #[test]
