@@ -28,6 +28,8 @@
 - `MachineEventPayloadField`
 - `RuntimeModeContract`
 - `RuntimeTradingModeSpec`
+- `QsTypeSystemContract`
+- `QsTypeRef`
 
 第一版模板:
 
@@ -192,6 +194,65 @@ quantpilot/machine-event-catalog/v1
 
 `Pinned` machine 不应使用 `return_last_then_recover` 语义。该约束已经进入静态校验。
 
+## QS 强类型系统
+
+profile 版本:
+
+```text
+quantpilot/qs-type-system/v1
+```
+
+第一批 scalar 类型:
+
+```text
+bool
+int
+decimal
+time
+duration
+price
+quantity
+notional
+percent
+ratio
+fee
+slippage
+leverage
+symbol
+venue
+account
+side
+position_side
+order_type
+time_in_force
+freshness
+runtime_mode
+order_permission
+```
+
+第一批 composite 类型:
+
+```text
+optional<T>
+list<T, max=N>
+map<K, V, max=N>
+fresh<T>
+stale<T>
+```
+
+静态校验必须保证:
+
+- `schema_version` 为 `quantpilot/qs-type-system/v1`。
+- 第一批 scalar 类型全部显式声明。
+- 第一批 composite 类型全部显式声明。
+- scalar 和 composite 类型不能重复。
+- `list` 与 `map` 必须声明 `max_items`，且不能超过上限。
+- composite 类型必须 `replay_safe`。
+- 类型嵌套深度不能超过 `max_nesting_depth`。
+- map key 必须是已声明 scalar 类型。
+
+该契约先建立类型系统边界，不接入 QS parser。后续 parser/analyzer 只能引用该类型目录，不得用普通字符串绕过强类型校验。
+
 ## 交易场所能力矩阵
 
 实现入口:
@@ -311,6 +372,11 @@ cargo test -p qrpc-core-ir v4
 - 四模式契约缺少执行事件会失败。
 - `provider_actual` 模式不能使用 `runtime_simulated` 能力。
 - `local_simulated` 模式必须使用 `runtime_simulated` 能力。
+- 默认 QS 强类型系统可通过。
+- QS 强类型系统缺少第一批 scalar 类型会失败。
+- QS 强类型系统 composite 类型重复会失败。
+- `list` / `map` 缺少或超出 `max_items` 会失败。
+- 类型嵌套超过预算会失败。
 - Venue capability 重复声明会失败。
 - 缺失能力不会被当作 supported。
 - v4 第一批能力必须显式标记来源。
