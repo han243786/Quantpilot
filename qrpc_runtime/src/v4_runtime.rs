@@ -1,7 +1,9 @@
 use anyhow::{anyhow, Result};
 use qrpc_core_ir::v4::{
-    EventFreshnessRequirement, MachineCachePolicy, MachineEventSourceKind, MachineRecoveryPolicy,
+    default_v4_runtime_mode_contract, CapabilitySupportSource, EventFreshnessRequirement,
+    ExecutionCapabilityKind, MachineCachePolicy, MachineEventSourceKind, MachineRecoveryPolicy,
     MachineSilencePolicy, MachineTemplateKind, RuntimeTradingMode, V4MachineGraphContract,
+    VenueCapabilityMatrix,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -17,6 +19,8 @@ const EVENT_RECOVERY_COMPLETED: &str = "recovery_completed";
 const EVENT_TRANSITION_APPLIED: &str = "machine_transition_applied";
 const EVENT_RISK_PLANE_APPROVED: &str = "risk_plane_approved";
 const EVENT_RISK_PLANE_REJECTED: &str = "risk_plane_rejected";
+const EVENT_EXECUTION_CAPABILITY_ACCEPTED: &str = "execution_capability_accepted";
+const EVENT_EXECUTION_CAPABILITY_REJECTED: &str = "execution_capability_rejected";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct V4RuntimeInputEvent {
@@ -72,6 +76,7 @@ pub struct V4RuntimeMemorySnapshot {
     #[serde(default)]
     pub machines: Vec<V4MachineRuntimeSnapshot>,
     pub risk_plane: V4RiskPlaneRuntimeSnapshot,
+    pub execution: V4ExecutionRuntimeSnapshot,
     pub event_sequence: u64,
     pub provider_order_submission_attached: bool,
 }
@@ -138,6 +143,51 @@ pub struct V4RiskPlaneRuntimeDecision {
     pub sequence: u64,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct V4ExecutionRuntimeSnapshot {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub venue_id: Option<String>,
+    #[serde(default)]
+    pub required_capabilities: Vec<ExecutionCapabilityKind>,
+    pub accepted_count: u64,
+    pub rejected_count: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub last_decision: Option<V4ExecutionRuntimeDecision>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct V4ExecutionRuntimeDecision {
+    pub decision_id: String,
+    pub target_machine_id: String,
+    pub venue_id: String,
+    pub runtime_mode: RuntimeTradingMode,
+    pub accepted: bool,
+    pub reason: String,
+    #[serde(default)]
+    pub entries: Vec<V4ExecutionCapabilityRuntimeEntry>,
+    pub provider_order_submission_attached: bool,
+    pub ts_ms: u64,
+    pub sequence: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct V4ExecutionCapabilityRuntimeEntry {
+    pub capability: ExecutionCapabilityKind,
+    pub source: CapabilitySupportSource,
+    pub status: V4ExecutionCapabilityRuntimeStatus,
+    pub reason: String,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum V4ExecutionCapabilityRuntimeStatus {
+    Accepted,
+    Unsupported,
+    NotDeclared,
+    ModeRejected,
+    PolicyMissing,
+}
+
 #[derive(Debug, Clone)]
 struct MachineRuntimeState {
     state_id: String,
@@ -160,11 +210,26 @@ struct V4RiskPlaneRuntimeState {
 }
 
 #[derive(Debug, Clone)]
+struct V4ExecutionCapabilityRuntimePolicy {
+    venue_matrix: VenueCapabilityMatrix,
+    required_capabilities: Vec<ExecutionCapabilityKind>,
+}
+
+#[derive(Debug, Clone)]
+struct V4ExecutionRuntimeState {
+    capability_policy: Option<V4ExecutionCapabilityRuntimePolicy>,
+    accepted_count: u64,
+    rejected_count: u64,
+    last_decision: Option<V4ExecutionRuntimeDecision>,
+}
+
+#[derive(Debug, Clone)]
 pub struct V4PaperSimulatedRuntime {
     graph: V4MachineGraphContract,
     runtime_mode: RuntimeTradingMode,
     machines: BTreeMap<String, MachineRuntimeState>,
     risk_plane: V4RiskPlaneRuntimeState,
+    execution: V4ExecutionRuntimeState,
     event_queue: VecDeque<V4RuntimeEventEnvelope>,
     event_log: Vec<V4RuntimeEventEnvelope>,
     sequence: u64,
@@ -248,11 +313,45 @@ impl V4PaperSimulatedRuntime {
             runtime_mode,
             machines,
             risk_plane,
+            execution: V4ExecutionRuntimeState {
+                capability_policy: None,
+                accepted_count: 0,
+                rejected_count: 0,
+                last_decision: None,
+            },
             event_queue: VecDeque::new(),
             event_log: Vec::new(),
             sequence: 0,
             provider_order_submission_attached: false,
         })
+    }
+
+    pub fn new_with_execution_capabilities(
+        graph: V4MachineGraphContract,
+        venue_matrix: VenueCapabilityMatrix,
+        required_capabilities: Vec<ExecutionCapabilityKind>,
+    ) -> Result<Self> {
+        Self::new(graph)?.with_execution_capabilities(venue_matrix, required_capabilities)
+    }
+
+    pub fn with_execution_capabilities(
+        mut self,
+        venue_matrix: VenueCapabilityMatrix,
+        required_capabilities: Vec<ExecutionCapabilityKind>,
+    ) -> Result<Self> {
+        venue_matrix
+            .validate_required_capability_sources(&required_capabilities)
+            .map_err(|errors| {
+                anyhow!(
+                    "v4 execution capability policy failed static contract: {:?}",
+                    errors
+                )
+            })?;
+        self.execution.capability_policy = Some(V4ExecutionCapabilityRuntimePolicy {
+            venue_matrix,
+            required_capabilities,
+        });
+        Ok(self)
     }
 
     pub fn submit_event(
@@ -432,6 +531,7 @@ impl V4PaperSimulatedRuntime {
                 })
                 .collect(),
             risk_plane: self.risk_plane_snapshot(),
+            execution: self.execution_snapshot(),
             event_sequence: self.sequence,
             provider_order_submission_attached: self.provider_order_submission_attached,
         }
@@ -461,6 +561,25 @@ impl V4PaperSimulatedRuntime {
             real_order_path_unlocked: self.risk_plane.approved_event_count > 0
                 && self.risk_plane.rejected_event_count == 0,
             last_decision: self.risk_plane.last_decision.clone(),
+        }
+    }
+
+    pub fn execution_snapshot(&self) -> V4ExecutionRuntimeSnapshot {
+        V4ExecutionRuntimeSnapshot {
+            venue_id: self
+                .execution
+                .capability_policy
+                .as_ref()
+                .map(|policy| policy.venue_matrix.venue_id.clone()),
+            required_capabilities: self
+                .execution
+                .capability_policy
+                .as_ref()
+                .map(|policy| policy.required_capabilities.clone())
+                .unwrap_or_default(),
+            accepted_count: self.execution.accepted_count,
+            rejected_count: self.execution.rejected_count,
+            last_decision: self.execution.last_decision.clone(),
         }
     }
 
@@ -525,6 +644,14 @@ impl V4PaperSimulatedRuntime {
                 let approved = decision.approved;
                 self.record_risk_plane_decision(decision, event.ts_ms);
                 if !approved {
+                    continue;
+                }
+
+                let execution_decision =
+                    self.evaluate_execution_capabilities_for_execution(&machine_id, event.ts_ms);
+                let execution_accepted = execution_decision.accepted;
+                self.record_execution_decision(execution_decision, event.ts_ms);
+                if !execution_accepted {
                     continue;
                 }
             }
@@ -738,6 +865,151 @@ impl V4PaperSimulatedRuntime {
         );
     }
 
+    fn evaluate_execution_capabilities_for_execution(
+        &self,
+        target_machine_id: &str,
+        ts_ms: u64,
+    ) -> V4ExecutionRuntimeDecision {
+        let decision_id = format!("execution-capability-decision-{}", self.sequence + 1);
+
+        let Some(policy) = &self.execution.capability_policy else {
+            return V4ExecutionRuntimeDecision {
+                decision_id,
+                target_machine_id: target_machine_id.to_string(),
+                venue_id: "<missing>".to_string(),
+                runtime_mode: self.runtime_mode,
+                accepted: false,
+                reason: "Execution capability policy is missing".to_string(),
+                entries: vec![V4ExecutionCapabilityRuntimeEntry {
+                    capability: ExecutionCapabilityKind::Market,
+                    source: CapabilitySupportSource::Unsupported,
+                    status: V4ExecutionCapabilityRuntimeStatus::PolicyMissing,
+                    reason: "Execution capability policy is missing".to_string(),
+                }],
+                provider_order_submission_attached: self.provider_order_submission_attached,
+                ts_ms,
+                sequence: self.sequence + 1,
+            };
+        };
+
+        if policy.required_capabilities.is_empty() {
+            return V4ExecutionRuntimeDecision {
+                decision_id,
+                target_machine_id: target_machine_id.to_string(),
+                venue_id: policy.venue_matrix.venue_id.clone(),
+                runtime_mode: self.runtime_mode,
+                accepted: false,
+                reason: "ExecutionMachine requires at least one declared execution capability"
+                    .to_string(),
+                entries: Vec::new(),
+                provider_order_submission_attached: self.provider_order_submission_attached,
+                ts_ms,
+                sequence: self.sequence + 1,
+            };
+        }
+
+        let runtime_mode_contract = default_v4_runtime_mode_contract();
+        let mut entries = Vec::new();
+        let mut errors = Vec::new();
+
+        for capability in &policy.required_capabilities {
+            let entry = match policy.venue_matrix.capability_entry(capability) {
+                Some(entry) => entry,
+                None => {
+                    let reason = format!(
+                        "execution capability `{:?}` is not declared for venue `{}`",
+                        capability, policy.venue_matrix.venue_id
+                    );
+                    errors.push(reason.clone());
+                    entries.push(V4ExecutionCapabilityRuntimeEntry {
+                        capability: *capability,
+                        source: CapabilitySupportSource::Unsupported,
+                        status: V4ExecutionCapabilityRuntimeStatus::NotDeclared,
+                        reason,
+                    });
+                    continue;
+                }
+            };
+
+            if matches!(entry.source, CapabilitySupportSource::Unsupported) {
+                let reason = format!(
+                    "execution capability `{:?}` is unsupported for venue `{}`",
+                    capability, policy.venue_matrix.venue_id
+                );
+                errors.push(reason.clone());
+                entries.push(V4ExecutionCapabilityRuntimeEntry {
+                    capability: *capability,
+                    source: entry.source,
+                    status: V4ExecutionCapabilityRuntimeStatus::Unsupported,
+                    reason,
+                });
+                continue;
+            }
+
+            match policy.venue_matrix.require_supported_for_mode(
+                capability,
+                self.runtime_mode,
+                &runtime_mode_contract,
+            ) {
+                Ok(source) => entries.push(V4ExecutionCapabilityRuntimeEntry {
+                    capability: *capability,
+                    source,
+                    status: V4ExecutionCapabilityRuntimeStatus::Accepted,
+                    reason: format!(
+                        "execution capability `{:?}` is accepted as `{:?}` in `{:?}`",
+                        capability, source, self.runtime_mode
+                    ),
+                }),
+                Err(reason) => {
+                    errors.push(reason.clone());
+                    entries.push(V4ExecutionCapabilityRuntimeEntry {
+                        capability: *capability,
+                        source: entry.source,
+                        status: V4ExecutionCapabilityRuntimeStatus::ModeRejected,
+                        reason,
+                    });
+                }
+            }
+        }
+
+        V4ExecutionRuntimeDecision {
+            decision_id,
+            target_machine_id: target_machine_id.to_string(),
+            venue_id: policy.venue_matrix.venue_id.clone(),
+            runtime_mode: self.runtime_mode,
+            accepted: errors.is_empty(),
+            reason: if errors.is_empty() {
+                "Execution capabilities accepted for runtime mode".to_string()
+            } else {
+                errors.join("; ")
+            },
+            entries,
+            provider_order_submission_attached: self.provider_order_submission_attached,
+            ts_ms,
+            sequence: self.sequence + 1,
+        }
+    }
+
+    fn record_execution_decision(&mut self, decision: V4ExecutionRuntimeDecision, ts_ms: u64) {
+        if decision.accepted {
+            self.execution.accepted_count += 1;
+        } else {
+            self.execution.rejected_count += 1;
+        }
+        self.execution.last_decision = Some(decision.clone());
+
+        self.record_control_event(
+            if decision.accepted {
+                EVENT_EXECUTION_CAPABILITY_ACCEPTED
+            } else {
+                EVENT_EXECUTION_CAPABILITY_REJECTED
+            },
+            "runtime.execution_capability",
+            json!({ "decision": decision }),
+            ts_ms,
+        );
+    }
+
     fn payload_for_emitted_event(
         &self,
         event_type: &str,
@@ -894,9 +1166,11 @@ fn recovery_policy_allows_async(policy: &MachineRecoveryPolicy) -> bool {
 mod tests {
     use super::*;
     use qrpc_core_ir::v4::{
-        bridge_core_ir_to_v4_machine_graph, V4MachineGraphContract, V4_COMPAT_CORE_IR_LOADED_EVENT,
-        V4_COMPAT_DECISION_MACHINE_ID, V4_COMPAT_EXECUTION_MACHINE_ID,
-        V4_COMPAT_OBSERVATION_MACHINE_ID, V4_COMPAT_RISK_APPROVED_EVENT,
+        bridge_core_ir_to_v4_machine_graph, unsupported_v4_first_wave_matrix,
+        CapabilitySupportSource, ExecutionCapabilityKind, V4MachineGraphContract,
+        VenueCapabilityMatrix, V4_COMPAT_CORE_IR_LOADED_EVENT, V4_COMPAT_DECISION_MACHINE_ID,
+        V4_COMPAT_EXECUTION_MACHINE_ID, V4_COMPAT_OBSERVATION_MACHINE_ID,
+        V4_COMPAT_RISK_APPROVED_EVENT,
     };
     use qrpc_core_ir::{
         moving_average_compare_expr, AgentPolicy, AgentPolicyKind, ComparisonOp, CoreIndicatorKind,
@@ -986,8 +1260,37 @@ mod tests {
         bridge_report.graph.unwrap()
     }
 
+    fn runtime_simulated_market_matrix() -> VenueCapabilityMatrix {
+        let mut matrix = unsupported_v4_first_wave_matrix("paper-local");
+        let market = matrix
+            .capabilities
+            .iter_mut()
+            .find(|entry| entry.capability == ExecutionCapabilityKind::Market)
+            .unwrap();
+        market.source = CapabilitySupportSource::RuntimeSimulated;
+        market.supported_modes = vec![RuntimeTradingMode::PaperSimulated];
+        matrix
+    }
+
+    fn provider_native_market_matrix_for_paper() -> VenueCapabilityMatrix {
+        let mut matrix = unsupported_v4_first_wave_matrix("paper-local");
+        let market = matrix
+            .capabilities
+            .iter_mut()
+            .find(|entry| entry.capability == ExecutionCapabilityKind::Market)
+            .unwrap();
+        market.source = CapabilitySupportSource::ProviderNative;
+        market.supported_modes = vec![RuntimeTradingMode::PaperSimulated];
+        matrix
+    }
+
     fn sample_runtime() -> V4PaperSimulatedRuntime {
-        V4PaperSimulatedRuntime::new(sample_compat_graph()).unwrap()
+        V4PaperSimulatedRuntime::new_with_execution_capabilities(
+            sample_compat_graph(),
+            runtime_simulated_market_matrix(),
+            vec![ExecutionCapabilityKind::Market],
+        )
+        .unwrap()
     }
 
     #[test]
@@ -1029,9 +1332,30 @@ mod tests {
             .events
             .iter()
             .any(|event| event.event_type == EVENT_RISK_PLANE_APPROVED));
+        assert!(output
+            .events
+            .iter()
+            .any(|event| event.event_type == EVENT_EXECUTION_CAPABILITY_ACCEPTED));
         assert_eq!(output.memory_snapshot.risk_plane.approved_event_count, 1);
         assert_eq!(output.memory_snapshot.risk_plane.rejected_event_count, 0);
         assert!(output.memory_snapshot.risk_plane.real_order_path_unlocked);
+        assert_eq!(output.memory_snapshot.execution.accepted_count, 1);
+        assert_eq!(output.memory_snapshot.execution.rejected_count, 0);
+        let execution_decision = output
+            .memory_snapshot
+            .execution
+            .last_decision
+            .as_ref()
+            .unwrap();
+        assert!(execution_decision.accepted);
+        assert_eq!(
+            execution_decision.entries[0].source,
+            CapabilitySupportSource::RuntimeSimulated
+        );
+        assert_eq!(
+            execution_decision.entries[0].status,
+            V4ExecutionCapabilityRuntimeStatus::Accepted
+        );
     }
 
     #[test]
@@ -1120,6 +1444,121 @@ mod tests {
         assert!(error
             .to_string()
             .contains("only accepts PaperSimulated mode"));
+    }
+
+    #[test]
+    fn v4_runtime_rejects_unsupported_execution_capability_before_execution() {
+        let mut runtime = V4PaperSimulatedRuntime::new_with_execution_capabilities(
+            sample_compat_graph(),
+            unsupported_v4_first_wave_matrix("paper-local"),
+            vec![ExecutionCapabilityKind::Market],
+        )
+        .unwrap();
+
+        let output = runtime
+            .submit_event(V4RuntimeInputEvent {
+                event_type: V4_COMPAT_CORE_IR_LOADED_EVENT.to_string(),
+                source: "runtime".to_string(),
+                payload: json!({ "strategy_id": "runtime.compat.sample" }),
+                ts_ms: 1,
+            })
+            .unwrap();
+
+        assert_eq!(
+            runtime.machine_state_id(V4_COMPAT_EXECUTION_MACHINE_ID),
+            Some("idle")
+        );
+        assert!(output
+            .events
+            .iter()
+            .any(|event| event.event_type == EVENT_EXECUTION_CAPABILITY_REJECTED));
+        assert_eq!(output.memory_snapshot.execution.accepted_count, 0);
+        assert_eq!(output.memory_snapshot.execution.rejected_count, 1);
+        let decision = output
+            .memory_snapshot
+            .execution
+            .last_decision
+            .as_ref()
+            .unwrap();
+        assert!(!decision.accepted);
+        assert_eq!(
+            decision.entries[0].status,
+            V4ExecutionCapabilityRuntimeStatus::Unsupported
+        );
+    }
+
+    #[test]
+    fn v4_runtime_rejects_provider_native_capability_in_paper_simulated() {
+        let mut runtime = V4PaperSimulatedRuntime::new_with_execution_capabilities(
+            sample_compat_graph(),
+            provider_native_market_matrix_for_paper(),
+            vec![ExecutionCapabilityKind::Market],
+        )
+        .unwrap();
+
+        let output = runtime
+            .submit_event(V4RuntimeInputEvent {
+                event_type: V4_COMPAT_CORE_IR_LOADED_EVENT.to_string(),
+                source: "runtime".to_string(),
+                payload: json!({ "strategy_id": "runtime.compat.sample" }),
+                ts_ms: 1,
+            })
+            .unwrap();
+
+        assert_eq!(
+            runtime.machine_state_id(V4_COMPAT_EXECUTION_MACHINE_ID),
+            Some("idle")
+        );
+        assert!(output
+            .events
+            .iter()
+            .any(|event| event.event_type == EVENT_EXECUTION_CAPABILITY_REJECTED));
+        let decision = output
+            .memory_snapshot
+            .execution
+            .last_decision
+            .as_ref()
+            .unwrap();
+        assert!(!decision.accepted);
+        assert_eq!(
+            decision.entries[0].status,
+            V4ExecutionCapabilityRuntimeStatus::ModeRejected
+        );
+        assert!(decision.reason.contains("requires runtime_simulated"));
+    }
+
+    #[test]
+    fn v4_runtime_rejects_missing_execution_capability_policy() {
+        let mut runtime = V4PaperSimulatedRuntime::new(sample_compat_graph()).unwrap();
+
+        let output = runtime
+            .submit_event(V4RuntimeInputEvent {
+                event_type: V4_COMPAT_CORE_IR_LOADED_EVENT.to_string(),
+                source: "runtime".to_string(),
+                payload: json!({ "strategy_id": "runtime.compat.sample" }),
+                ts_ms: 1,
+            })
+            .unwrap();
+
+        assert_eq!(
+            runtime.machine_state_id(V4_COMPAT_EXECUTION_MACHINE_ID),
+            Some("idle")
+        );
+        assert!(output
+            .events
+            .iter()
+            .any(|event| event.event_type == EVENT_EXECUTION_CAPABILITY_REJECTED));
+        let decision = output
+            .memory_snapshot
+            .execution
+            .last_decision
+            .as_ref()
+            .unwrap();
+        assert!(!decision.accepted);
+        assert_eq!(
+            decision.entries[0].status,
+            V4ExecutionCapabilityRuntimeStatus::PolicyMissing
+        );
     }
 
     #[test]

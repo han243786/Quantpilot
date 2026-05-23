@@ -1,12 +1,12 @@
 # v4 状态机与交易场所能力静态契约
 
-> 生效目标: v4.0.0 Phase 1-3 | 实现锚点: `qrpc_core_ir::v4`, `quantscript::v4_static_audit`
+> 生效目标: v4.0.0 Phase 1-7 | 实现锚点: `qrpc_core_ir::v4`, `quantscript::v4_static_audit`, `qrpc_runtime::v4_runtime`
 
 ---
 
 ## 目标
 
-本契约为 v4 状态机化 QuantScript 和 ExecutionMachine 能力矩阵提供第一批静态类型锚点，并在 Phase 2 增加编译期能力报告入口，在 Phase 3 增加 v4 QS 静态 parse/analyze/report 入口，在 Phase 4 增加 Core IR 兼容桥，在 Phase 5 增加独立的 v4 PaperSimulated 事件循环骨架，在 Phase 6 增加 Risk Plane 运行时安全平面。v4 runtime 骨架不接入现有 v3.7.1 `RuntimeCoordinator`，不改变旧策略行为。
+本契约为 v4 状态机化 QuantScript 和 ExecutionMachine 能力矩阵提供第一批静态类型锚点，并在 Phase 2 增加编译期能力报告入口，在 Phase 3 增加 v4 QS 静态 parse/analyze/report 入口，在 Phase 4 增加 Core IR 兼容桥，在 Phase 5 增加独立的 v4 PaperSimulated 事件循环骨架，在 Phase 6 增加 Risk Plane 运行时安全平面，在 Phase 7 增加 ExecutionMachine 能力来源运行时门禁。v4 runtime 骨架不接入现有 v3.7.1 `RuntimeCoordinator`，不改变旧策略行为。
 
 ## 状态机契约
 
@@ -14,6 +14,7 @@
 
 - `qrpc_core_ir/src/v4.rs`
 - `quantscript/src/v4_static_audit.rs`
+- `qrpc_runtime/src/v4_runtime.rs`
 - `V4MachineContract`
 - `V4MachineGraphContract`
 - `QsStateMachineProfile`
@@ -38,6 +39,9 @@
 - `ComplexityBudgetContract`
 - `DeveloperLearningPipelineContract`
 - `V4StaticContractBundle`
+- `V4PaperSimulatedRuntime`
+- `V4ExecutionRuntimeDecision`
+- `V4ExecutionRuntimeSnapshot`
 - `V4CompileTimeCapabilityRequest`
 - `V4CompileTimeCapabilityReport`
 - `audit_v4_quant_script_static`
@@ -716,12 +720,61 @@ Phase 6 硬边界:
 - 仍不扩展订单能力语义。
 - 仍不改变旧 `RuntimeCoordinator` / sandbox 行为。
 
+## ExecutionMachine 能力来源运行语义
+
+Phase 7 在 `V4PaperSimulatedRuntime` 内增加 ExecutionMachine capability runtime decision。静态能力矩阵只能证明 venue 对第一批能力做了 `provider_native` / `runtime_simulated` / `unsupported` 显式标记；运行时门禁负责证明当前 runtime mode 只执行匹配来源的能力。
+
+ExecutionMachine transition 现在需要两层门禁:
+
+- 先通过 Phase 6 Risk Plane runtime approval。
+- 再通过 Phase 7 Execution capability runtime decision。
+
+Phase 7 当前入口:
+
+- `V4PaperSimulatedRuntime::new_with_execution_capabilities(...)`
+- `V4PaperSimulatedRuntime::with_execution_capabilities(...)`
+- `V4PaperSimulatedRuntime::execution_snapshot()`
+
+运行时能力规则:
+
+- capability policy 缺失时拒绝执行，记录 `execution_capability_rejected`。
+- required capabilities 为空时拒绝执行。
+- required capability 在 venue matrix 中未声明时拒绝执行。
+- `Unsupported` 能力拒绝执行。
+- `PaperSimulated` 属于 local simulated account domain，只接受 `runtime_simulated` 能力。
+- `provider_native` 能力即使被 venue 声明，也不能在 `PaperSimulated` 本地模拟 runtime 中执行。
+- 通过时记录 `execution_capability_accepted`，随后才允许 ExecutionMachine transition 应用。
+
+运行时输出:
+
+- `V4RuntimeMemorySnapshot.execution` 记录 venue id、required capabilities、accepted/rejected count 和最后一次 decision。
+- `V4ExecutionRuntimeDecision` 记录 target machine、runtime mode、venue、decision reason、entry 明细和 provider order submission 状态。
+- `V4ExecutionCapabilityRuntimeEntry` 逐项记录 capability、source、status 和 reason。
+
+Phase 7 拒绝规则:
+
+- 缺失 capability policy 时拒绝。
+- `Unsupported` required capability 拒绝。
+- `provider_native` required capability 在 `PaperSimulated` 模式下拒绝，原因必须指向 `requires runtime_simulated`。
+- 拒绝时 ExecutionMachine 保持原 state，不进入 ready。
+
+Phase 7 硬边界:
+
+- 仍不接真实 VenueAdapter。
+- 仍不提交 provider order。
+- 仍不执行真实成交撮合。
+- 仍不实现资产账本、手续费、滑点或订单路由。
+- 仍不改变旧 `RuntimeCoordinator` / sandbox 行为。
+- 当前只把第一批订单能力来源接入运行时拒绝边界，不等同于 provider 适配层。
+
 ## 当前非目标
 
 - 不把 v4 QS 静态 parser 接入现有编译 API 或 runtime lowering。
 - 不把 Core IR 兼容桥接入旧 runtime lowering。
 - 不把 v4 runtime 骨架接入 `RuntimeCoordinator`。
 - 不接入真实 VenueAdapter。
+- 不提交 provider order。
+- 不执行真实成交撮合、资产记账、手续费计算、滑点模型或订单路由。
 - 不改变现有 `OrderType`、`TimeInForce`、`ExecutionPlan` 行为。
 
 ## 验证
@@ -787,6 +840,10 @@ cargo test -p quantscript v4_static
 - ExecutionMachine transition 必须经过 Risk Plane runtime approval。
 - 外部输入伪造 Risk Plane source 时会被 runtime Risk Plane 拒绝。
 - 非 Risk Plane source 触发执行事件时会被 runtime Risk Plane 拒绝。
+- v4 PaperSimulated runtime 会接受 `runtime_simulated` execution capability，并记录 execution capability decision。
+- v4 PaperSimulated runtime 会在 `Unsupported` required capability 时拒绝 ExecutionMachine transition。
+- v4 PaperSimulated runtime 会在 `provider_native` required capability 被用于 `PaperSimulated` 时拒绝 ExecutionMachine transition。
+- v4 PaperSimulated runtime 会在缺失 execution capability policy 时拒绝 ExecutionMachine transition。
 - v4 QS 静态审计可接受受支持的状态机脚本，且不接 runtime / lowering。
 - v4 QS 静态审计会拒绝 unsupported required capability。
 - v4 QS 静态审计会拒绝嵌套 machine block。

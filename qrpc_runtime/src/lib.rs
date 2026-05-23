@@ -89,10 +89,11 @@ pub use sandbox::{
     SUPPORTED_RUNTIME_EXECUTION_MODULE_KEYS, SUPPORTED_RUNTIME_MODE_KEYS,
 };
 pub use v4_runtime::{
-    V4CachedMachineOutput, V4MachineRuntimeSnapshot, V4MachineRuntimeStatus,
-    V4PaperSimulatedRunOutput, V4PaperSimulatedRuntime, V4RiskPlaneRuntimeDecision,
-    V4RiskPlaneRuntimeSnapshot, V4RuntimeEventEnvelope, V4RuntimeEventOrigin, V4RuntimeInputEvent,
-    V4RuntimeMemorySnapshot,
+    V4CachedMachineOutput, V4ExecutionCapabilityRuntimeEntry, V4ExecutionCapabilityRuntimeStatus,
+    V4ExecutionRuntimeDecision, V4ExecutionRuntimeSnapshot, V4MachineRuntimeSnapshot,
+    V4MachineRuntimeStatus, V4PaperSimulatedRunOutput, V4PaperSimulatedRuntime,
+    V4RiskPlaneRuntimeDecision, V4RiskPlaneRuntimeSnapshot, V4RuntimeEventEnvelope,
+    V4RuntimeEventOrigin, V4RuntimeInputEvent, V4RuntimeMemorySnapshot,
 };
 
 /// 配置代际记录
