@@ -1,12 +1,12 @@
 # v4 状态机与交易场所能力静态契约
 
-> 生效目标: v4.0.0 Phase 1 | 实现锚点: `qrpc_core_ir::v4`
+> 生效目标: v4.0.0 Phase 1-2 | 实现锚点: `qrpc_core_ir::v4`
 
 ---
 
 ## 目标
 
-本契约为 v4 状态机化 QuantScript 和 ExecutionMachine 能力矩阵提供第一批静态类型锚点。该阶段只定义可序列化结构和静态校验，不接入现有 v3.7.1 runtime，不改变旧策略行为。
+本契约为 v4 状态机化 QuantScript 和 ExecutionMachine 能力矩阵提供第一批静态类型锚点，并在 Phase 2 增加编译期能力报告入口。当前阶段只定义可序列化结构、静态校验和报告生成，不接入现有 v3.7.1 runtime，不改变旧策略行为。
 
 ## 状态机契约
 
@@ -37,6 +37,8 @@
 - `ComplexityBudgetContract`
 - `DeveloperLearningPipelineContract`
 - `V4StaticContractBundle`
+- `V4CompileTimeCapabilityRequest`
+- `V4CompileTimeCapabilityReport`
 
 第一版模板:
 
@@ -495,6 +497,50 @@ quantpilot/static-contract-bundle/v1
 
 静态总包必须至少包含一个 machine graph 和一个 venue matrix，并逐项调用子契约校验。该总包只证明 v4 语义边界完整，不接 parser、lowering、runtime 或 UI。
 
+## 编译期能力报告
+
+profile 版本:
+
+```text
+quantpilot/compile-time-capability-request/v1
+quantpilot/compile-time-capability-report/v1
+```
+
+`V4CompileTimeCapabilityReport` 是 v4 Phase 2 的验收入口。它只生成静态报告，不接真实 runtime，不提交订单，也不改变旧策略行为。
+
+报告输入:
+
+- `graph_id`
+- `venue_id`
+- `runtime_mode`
+- `required_execution_capabilities`
+- `required_type_refs`
+- `required_plugin_ids`
+
+报告输出必须包含:
+
+- graph、venue、runtime mode 是否可解析。
+- 复杂度指标。
+- 强类型引用检查结果。
+- v4 第一批执行能力在目标 venue 与目标 runtime mode 下的来源、支持状态和拒绝原因。
+- 插件 manifest 检查结果。
+- 结构化诊断。
+- `Accepted` / `Rejected` verdict。
+
+Phase 2 拒绝规则:
+
+- 请求 schema version 不匹配时拒绝。
+- graph、venue 或 runtime mode 无法解析时拒绝。
+- `required_type_refs` 不能通过 QS type system 时拒绝。
+- `required_execution_capabilities` 为 `unsupported` 时拒绝。
+- `provider_actual` 模式请求非 `provider_native` 能力时拒绝。
+- `local_simulated` 模式请求非 `runtime_simulated` 能力时拒绝。
+- 请求的能力未在 venue matrix 中显式声明时拒绝。
+- 请求的插件不存在或 manifest 不通过治理契约时拒绝。
+- 报告若附带 execution submission，必须拒绝。
+
+该阶段只证明“编译前可以生成能力报告并拒绝不支持路径”。Phase 2 不执行新订单能力，不接 QS parser，不接 Core IR lowering，不接 runtime。
+
 ## 当前非目标
 
 - 不接入 QuantScript parser。
@@ -549,6 +595,11 @@ cargo test -p qrpc-core-ir v4
 - 复现契约缺少 risk decision evidence 会失败。
 - 复杂度指标超预算会失败。
 - 学习记录目录未 gitignored 会失败。
+- 编译期能力报告可接受受支持的 Phase 2 请求。
+- 编译期能力报告会拒绝 required 但 unsupported 的执行能力。
+- 编译期能力报告会拒绝 local_simulated 模式下误用 provider_native 能力。
+- 编译期能力报告会拒绝无效强类型引用。
+- 编译期能力报告会拒绝缺失的 required plugin。
 - Venue capability 重复声明会失败。
 - 缺失能力不会被当作 supported。
 - v4 第一批能力必须显式标记来源。
