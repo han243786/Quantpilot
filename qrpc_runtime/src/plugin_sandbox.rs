@@ -116,8 +116,7 @@ impl PluginSandbox {
             });
         }
 
-        cmd.spawn()
-            .map_err(|e| format!("无法启动插件子进程: {e}"))
+        cmd.spawn().map_err(|e| format!("无法启动插件子进程: {e}"))
     }
 
     /// Windows: 使用 `std::process::Command` 直接启动, 不设置内存硬限制。
@@ -129,8 +128,7 @@ impl PluginSandbox {
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit());
 
-        cmd.spawn()
-            .map_err(|e| format!("无法启动插件子进程: {e}"))
+        cmd.spawn().map_err(|e| format!("无法启动插件子进程: {e}"))
     }
 }
 
@@ -198,7 +196,10 @@ mod tests {
         let result = sandbox.execute(path, b"");
         assert!(result.is_err());
         let err = result.unwrap_err();
-        assert!(err.contains("退出码"), "错误消息应包含'退出码', 实际: {err}");
+        assert!(
+            err.contains("退出码"),
+            "错误消息应包含'退出码', 实际: {err}"
+        );
     }
 
     /// Windows 平台基本验证: 确认 cmd 能正常启动

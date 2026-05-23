@@ -39,7 +39,15 @@ const RATE_LIMIT_MS: u64 = 200;
 
 // v2.1.1: 脱敏OKX错误消息，防止泄露API密钥/签名等敏感信息
 fn sanitize_error_for_event(raw: &str) -> String {
-    let sensitive_keys = ["api_key", "secret", "sign", "passphrase", "password", "token", "key"];
+    let sensitive_keys = [
+        "api_key",
+        "secret",
+        "sign",
+        "passphrase",
+        "password",
+        "token",
+        "key",
+    ];
     let lower = raw.to_lowercase();
     for key in &sensitive_keys {
         if lower.contains(key) {
@@ -71,6 +79,7 @@ pub struct LiveExecutionModule {
 
     /// 全局请求限流（最后请求时刻 ms）
     last_request_ms: AtomicU64,
+    rate_limit_lock: Mutex<()>,
 }
 
 impl std::fmt::Debug for LiveExecutionModule {
@@ -110,6 +119,7 @@ impl LiveExecutionModule {
             daily_order_count: Mutex::new(0),
             daily_reset_at_ms: Mutex::new(0),
             last_request_ms: AtomicU64::new(0),
+            rate_limit_lock: Mutex::new(()),
         }
     }
 
@@ -139,11 +149,7 @@ impl LiveExecutionModule {
 
     // ── 风控检查 ─────────────────────────────────────────────
 
-    fn check_risk_limits(
-        &self,
-        order_value: f64,
-        now_ms: u64,
-    ) -> Result<(), String> {
+    fn check_risk_limits(&self, order_value: f64, now_ms: u64) -> Result<(), String> {
         // 1) 单笔名义价值上限
         if order_value > MAX_NOTIONAL_PER_ORDER {
             return Err(format!(
@@ -175,6 +181,10 @@ impl LiveExecutionModule {
     // ── 请求限流 ─────────────────────────────────────────────
 
     fn rate_limit(&self) {
+        let _guard = self
+            .rate_limit_lock
+            .lock()
+            .unwrap_or_else(|error| error.into_inner());
         let now = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap_or_default()
@@ -190,8 +200,7 @@ impl LiveExecutionModule {
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap_or_default()
             .as_millis() as u64;
-        self.last_request_ms
-            .store(now_after, Ordering::Relaxed);
+        self.last_request_ms.store(now_after, Ordering::Relaxed);
     }
 
     // ── OKX API 请求 ─────────────────────────────────────────
@@ -218,8 +227,7 @@ impl LiveExecutionModule {
             let mut req = self
                 .client
                 .request(
-                    reqwest::Method::from_bytes(method.as_bytes())
-                        .unwrap_or(reqwest::Method::GET),
+                    reqwest::Method::from_bytes(method.as_bytes()).unwrap_or(reqwest::Method::GET),
                     &url,
                 )
                 .header("OK-ACCESS-KEY", self.api_key.as_str())
@@ -245,17 +253,11 @@ impl LiveExecutionModule {
                     let text = r.text().unwrap_or_default();
                     let v: serde_json::Value =
                         serde_json::from_str(&text).unwrap_or(serde_json::Value::Null);
-                    let code = v
-                        .get("code")
-                        .and_then(|c| c.as_str())
-                        .unwrap_or("?");
+                    let code = v.get("code").and_then(|c| c.as_str()).unwrap_or("?");
                     if code == "0" {
                         return Ok(v);
                     }
-                    let msg = v
-                        .get("msg")
-                        .and_then(|m| m.as_str())
-                        .unwrap_or("?");
+                    let msg = v.get("msg").and_then(|m| m.as_str()).unwrap_or("?");
                     // 限流或服务器错误 -> 重试
                     if code == "1" || status == 429 || status >= 500 {
                         let delay = BASE_BACKOFF_MS * (attempt + 1) as u64;
@@ -302,8 +304,10 @@ impl LiveExecutionModule {
         let ord_type = match order.order_type {
             OrderType::Market => "market",
             OrderType::Limit => "limit",
-            OrderType::StopLoss | OrderType::StopLossLimit
-            | OrderType::TakeProfit | OrderType::TakeProfitLimit => {
+            OrderType::StopLoss
+            | OrderType::StopLossLimit
+            | OrderType::TakeProfit
+            | OrderType::TakeProfitLimit => {
                 return Err(format!(
                     "实盘执行不支持订单类型 {:?}，仅支持 market/limit",
                     order.order_type
@@ -311,7 +315,7 @@ impl LiveExecutionModule {
             }
         };
 
-        // 风控：检查可用资金
+        // 风控：检查可用资金或可卖持仓
         let order_value = order.quantity * order.reference_price;
         if !order_value.is_finite() || order_value > MAX_NOTIONAL_PER_ORDER {
             return Err(format!(
@@ -319,11 +323,27 @@ impl LiveExecutionModule {
                 order_value, MAX_NOTIONAL_PER_ORDER
             ));
         }
-        if portfolio.available_cash_balance < order_value {
-            return Err(format!(
-                "可用资金 ${:.2} 不足，订单需 ${:.2}",
-                portfolio.available_cash_balance, order_value
-            ));
+        match order.side {
+            OrderSide::Buy => {
+                let fee_est = order_value * order.fee_bps.max(0.0) / 10_000.0;
+                if portfolio.available_cash_balance + f64::EPSILON < order_value + fee_est {
+                    return Err(format!(
+                        "可用资金 ${:.2} 不足，订单需 ${:.2}",
+                        portfolio.available_cash_balance,
+                        order_value + fee_est
+                    ));
+                }
+            }
+            OrderSide::Sell => {
+                let available_qty =
+                    available_live_position_qty(portfolio, &order.exchange, &order.symbol);
+                if available_qty + f64::EPSILON < order.quantity {
+                    return Err(format!(
+                        "可卖持仓 {:.8} 不足，订单需 {:.8}",
+                        available_qty, order.quantity
+                    ));
+                }
+            }
         }
 
         self.check_risk_limits(order_value, now_ms)?;
@@ -353,9 +373,7 @@ impl LiveExecutionModule {
             .get("data")
             .and_then(|d| d.as_array())
             .and_then(|arr| arr.first())
-            .ok_or_else(|| {
-                format!("OKX 下单返回缺少 data 字段: {}", resp)
-            })?;
+            .ok_or_else(|| format!("OKX 下单返回缺少 data 字段: {}", resp))?;
 
         let ord_id = data
             .get("ordId")
@@ -384,10 +402,7 @@ impl LiveExecutionModule {
         now_ms: u64,
         trace_id: &str,
     ) -> Result<FillReport, String> {
-        let path = format!(
-            "/api/v5/trade/order?instId={}&ordId={}",
-            inst_id, ord_id
-        );
+        let path = format!("/api/v5/trade/order?instId={}&ordId={}", inst_id, ord_id);
 
         // 市价单：等待 500ms 让其成交
         if matches!(order.order_type, OrderType::Market) {
@@ -482,7 +497,8 @@ impl LiveExecutionModule {
                     if !price.is_finite() || price <= 0.0 {
                         continue;
                     }
-                    let current_weight = current_position_weight(decision, &tw.exchange, &tw.symbol, price);
+                    let current_weight =
+                        current_position_weight(decision, &tw.exchange, &tw.symbol, price);
                     let delta = tw.target_weight - current_weight;
                     if delta.abs() <= 0.01 {
                         continue;
@@ -639,6 +655,19 @@ fn portfolio_equity(portfolio: &PortfolioState) -> f64 {
     portfolio.cash_balance + portfolio.total_net_notional
 }
 
+fn available_live_position_qty(
+    portfolio: &PortfolioState,
+    exchange: &Exchange,
+    symbol: &Symbol,
+) -> f64 {
+    portfolio
+        .positions
+        .iter()
+        .find(|position| &position.exchange == exchange && &position.symbol == symbol)
+        .map(|position| (position.net_qty.max(0.0) - position.frozen_qty).max(0.0))
+        .unwrap_or(0.0)
+}
+
 // ── ExecutionModuleProvider 实现 ─────────────────────────────────
 
 impl ExecutionPlanner for LiveExecutionModule {
@@ -728,10 +757,7 @@ impl ExecutionSubmitter for LiveExecutionModule {
             // 只处理 OKX 交易所的订单
             if !matches!(order.exchange, Exchange::Okx) {
                 events.push(RuntimeEvent {
-                    event_id: format!(
-                        "evt-live-skip-{}-{}",
-                        order.order_id, now_ms
-                    ),
+                    event_id: format!("evt-live-skip-{}-{}", order.order_id, now_ms),
                     event_type: RuntimeEventType::RuntimeWarning,
                     trace_id: trace_id.to_string(),
                     source_id: "live_execution".to_string(),
@@ -767,13 +793,17 @@ impl ExecutionSubmitter for LiveExecutionModule {
 
                     // v2.1.2: 卖单成交前检查是否有足够持仓
                     if fill.side == OrderSide::Sell {
-                        let pos_qty = portfolio.positions.iter()
+                        let pos_qty = portfolio
+                            .positions
+                            .iter()
                             .find(|p| p.exchange == fill.exchange && p.symbol == fill.symbol)
                             .map(|p| p.net_qty)
                             .unwrap_or(0.0);
                         if pos_qty < fill.filled_qty && pos_qty < 1e-9 {
-                            eprintln!("[live_exec] 警告: 卖单 {} 成交但无对应持仓 (symbol={:?}, qty={})",
-                                fill.fill_id, fill.symbol, fill.filled_qty);
+                            eprintln!(
+                                "[live_exec] 警告: 卖单 {} 成交但无对应持仓 (symbol={:?}, qty={})",
+                                fill.fill_id, fill.symbol, fill.filled_qty
+                            );
                         }
                     }
                     // 更新持仓
@@ -822,7 +852,10 @@ impl ExecutionSubmitter for LiveExecutionModule {
             ExecutionStatus::Rejected
         } else if fills.iter().all(|f| f.status == ExecutionStatus::Filled) {
             ExecutionStatus::Filled
-        } else if fills.iter().any(|f| f.status == ExecutionStatus::PartiallyFilled) {
+        } else if fills
+            .iter()
+            .any(|f| f.status == ExecutionStatus::PartiallyFilled)
+        {
             ExecutionStatus::PartiallyFilled
         } else if all_succeeded {
             ExecutionStatus::Accepted
@@ -881,8 +914,8 @@ fn update_position(portfolio: &mut PortfolioState, fill: &FillReport) {
     match fill.side {
         OrderSide::Buy => {
             if let Some(p) = pos {
-                let total_cost = p.avg_entry_price * p.net_qty.abs()
-                    + fill.filled_qty * fill.filled_price;
+                let total_cost =
+                    p.avg_entry_price * p.net_qty.abs() + fill.filled_qty * fill.filled_price;
                 let total_qty = p.net_qty + fill.filled_qty;
                 p.avg_entry_price = if total_qty.abs() > f64::EPSILON {
                     total_cost / total_qty.abs()
@@ -933,7 +966,7 @@ mod tests {
     use super::*;
     use base64::Engine;
     use hmac::{Hmac, Mac};
-    use qrpc_core::Symbol;
+    use qrpc_core::{Position, Symbol};
     use sha2::Sha256;
 
     type TestHmacSha256 = Hmac<Sha256>;
@@ -941,8 +974,7 @@ mod tests {
     /// 辅助：计算 HMAC-SHA256 签名用于验证
     fn expected_signature(secret: &str, ts: &str, method: &str, path: &str, body: &str) -> String {
         let sign_str = format!("{}{}{}{}", ts, method, path, body);
-        let mut mac =
-            TestHmacSha256::new_from_slice(secret.as_bytes()).expect("HMAC 初始化失败");
+        let mut mac = TestHmacSha256::new_from_slice(secret.as_bytes()).expect("HMAC 初始化失败");
         mac.update(sign_str.as_bytes());
         let result = mac.finalize();
         base64::engine::general_purpose::STANDARD.encode(result.into_bytes())
@@ -953,32 +985,44 @@ mod tests {
         LiveExecutionModule::new("test_key", "test_secret", "test_passphrase", true)
     }
 
+    fn live_order(side: OrderSide) -> SimOrder {
+        SimOrder {
+            order_id: "order_1234567890".into(),
+            exchange: Exchange::Okx,
+            symbol: Symbol::BtcUsdt,
+            side,
+            order_type: OrderType::Market,
+            quantity: 1.0,
+            limit_price: None,
+            time_in_force: TimeInForce::Gtc,
+            allow_partial: false,
+            reference_price: 100.0,
+            slippage_bps: 0.0,
+            fee_bps: 10.0,
+            strategy_tag: "test".into(),
+        }
+    }
+
     // ── build_signature ──
 
     #[test]
     fn test_build_signature_deterministic() {
-        let sig1 =
-            LiveExecutionModule::build_signature("secret", "ts1", "GET", "/path", "");
-        let sig2 =
-            LiveExecutionModule::build_signature("secret", "ts1", "GET", "/path", "");
+        let sig1 = LiveExecutionModule::build_signature("secret", "ts1", "GET", "/path", "");
+        let sig2 = LiveExecutionModule::build_signature("secret", "ts1", "GET", "/path", "");
         assert_eq!(sig1, sig2);
     }
 
     #[test]
     fn test_build_signature_different_secret() {
-        let sig1 =
-            LiveExecutionModule::build_signature("secret_a", "ts", "GET", "/path", "");
-        let sig2 =
-            LiveExecutionModule::build_signature("secret_b", "ts", "GET", "/path", "");
+        let sig1 = LiveExecutionModule::build_signature("secret_a", "ts", "GET", "/path", "");
+        let sig2 = LiveExecutionModule::build_signature("secret_b", "ts", "GET", "/path", "");
         assert_ne!(sig1, sig2);
     }
 
     #[test]
     fn test_build_signature_different_body() {
-        let sig1 =
-            LiveExecutionModule::build_signature("s", "ts", "POST", "/path", "body1");
-        let sig2 =
-            LiveExecutionModule::build_signature("s", "ts", "POST", "/path", "body2");
+        let sig1 = LiveExecutionModule::build_signature("s", "ts", "POST", "/path", "body1");
+        let sig2 = LiveExecutionModule::build_signature("s", "ts", "POST", "/path", "body2");
         assert_ne!(sig1, sig2);
     }
 
@@ -990,8 +1034,7 @@ mod tests {
         let path = "/api/v5/account/balance";
         let body = "";
 
-        let actual =
-            LiveExecutionModule::build_signature(secret, ts, method, path, body);
+        let actual = LiveExecutionModule::build_signature(secret, ts, method, path, body);
         let expected = expected_signature(secret, ts, method, path, body);
         assert_eq!(actual, expected);
     }
@@ -999,23 +1042,16 @@ mod tests {
     #[test]
     fn test_build_signature_valid_base64() {
         let sig = LiveExecutionModule::build_signature("s", "t", "GET", "/p", "b");
-        let decoded =
-            base64::engine::general_purpose::STANDARD.decode(&sig);
+        let decoded = base64::engine::general_purpose::STANDARD.decode(&sig);
         assert!(decoded.is_ok());
         assert!(!decoded.unwrap().is_empty());
     }
 
     #[test]
     fn test_build_signature_includes_all_parts() {
-        let with_body = LiveExecutionModule::build_signature(
-            "s",
-            "t",
-            "POST",
-            "/order",
-            r#"{"sz":"1"}"#,
-        );
-        let without_body =
-            LiveExecutionModule::build_signature("s", "t", "POST", "/order", "");
+        let with_body =
+            LiveExecutionModule::build_signature("s", "t", "POST", "/order", r#"{"sz":"1"}"#);
+        let without_body = LiveExecutionModule::build_signature("s", "t", "POST", "/order", "");
         assert_ne!(with_body, without_body);
     }
 
@@ -1023,40 +1059,31 @@ mod tests {
 
     #[test]
     fn test_symbol_to_inst_id_btc_usdt() {
-        let result =
-            LiveExecutionModule::symbol_to_inst_id(&Symbol::BtcUsdt);
+        let result = LiveExecutionModule::symbol_to_inst_id(&Symbol::BtcUsdt);
         assert_eq!(result, "BTC-USDT");
     }
 
     #[test]
     fn test_symbol_to_inst_id_eth_usdt() {
-        let result = LiveExecutionModule::symbol_to_inst_id(
-            &Symbol::Other("ETHUSDT".into()),
-        );
+        let result = LiveExecutionModule::symbol_to_inst_id(&Symbol::Other("ETHUSDT".into()));
         assert_eq!(result, "ETH-USDT");
     }
 
     #[test]
     fn test_symbol_to_inst_id_sol_usdt() {
-        let result = LiveExecutionModule::symbol_to_inst_id(
-            &Symbol::Other("SOLUSDT".into()),
-        );
+        let result = LiveExecutionModule::symbol_to_inst_id(&Symbol::Other("SOLUSDT".into()));
         assert_eq!(result, "SOL-USDT");
     }
 
     #[test]
     fn test_symbol_to_inst_id_no_usdt_suffix() {
-        let result = LiveExecutionModule::symbol_to_inst_id(
-            &Symbol::Other("ETHBTC".into()),
-        );
+        let result = LiveExecutionModule::symbol_to_inst_id(&Symbol::Other("ETHBTC".into()));
         assert_eq!(result, "ETHBTC");
     }
 
     #[test]
     fn test_symbol_to_inst_id_just_usdt() {
-        let result = LiveExecutionModule::symbol_to_inst_id(
-            &Symbol::Other("USDT".into()),
-        );
+        let result = LiveExecutionModule::symbol_to_inst_id(&Symbol::Other("USDT".into()));
         assert_eq!(result, "USDT");
     }
 
@@ -1163,5 +1190,41 @@ mod tests {
         let module = test_module();
         let result = module.check_risk_limits(-100.0, 1000);
         assert!(result.is_ok());
+    }
+
+    #[test]
+    fn place_order_rejects_sell_without_available_position() {
+        let module = test_module();
+        let order = live_order(OrderSide::Sell);
+        let portfolio = PortfolioState::new(10_000.0, 0);
+
+        let err = module
+            .place_order(&order, &portfolio, 1000, "trace")
+            .unwrap_err();
+
+        assert!(err.contains("可卖持仓"));
+    }
+
+    #[test]
+    fn place_order_rejects_buy_without_available_cash() {
+        let module = test_module();
+        let order = live_order(OrderSide::Buy);
+        let mut portfolio = PortfolioState::new(0.0, 0);
+        portfolio.positions.push(Position {
+            exchange: Exchange::Okx,
+            symbol: Symbol::BtcUsdt,
+            net_qty: 10.0,
+            frozen_qty: 0.0,
+            avg_entry_price: 100.0,
+            mark_price: 100.0,
+            unrealized_pnl: 0.0,
+            realized_pnl: 0.0,
+        });
+
+        let err = module
+            .place_order(&order, &portfolio, 1000, "trace")
+            .unwrap_err();
+
+        assert!(err.contains("可用资金"));
     }
 }

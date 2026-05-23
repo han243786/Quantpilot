@@ -1,6 +1,7 @@
 use super::*;
 use axum::extract::Query;
 use std::sync::OnceLock;
+use tokio::io::AsyncWriteExt;
 use tokio::sync::Mutex;
 
 pub(super) fn register_graph_routes(router: Router<AppState>) -> Router<AppState> {
@@ -214,7 +215,10 @@ pub(super) async fn delete_graph(
     let graph_path = state.graph_store_dir.join(format!("{}.json", graph_id));
     if !fs::try_exists(&graph_path).await.map_err(io_error)? {
         // v1.3.7: DELETE幂等 — 已不存在的资源返回200
-        return Ok(Json(DeleteGraphResponse { graph_id, deleted: false }));
+        return Ok(Json(DeleteGraphResponse {
+            graph_id,
+            deleted: false,
+        }));
     }
 
     // v1.1.14: 修复审计写入目录 — graph_store_dir→audit_store_dir
@@ -225,11 +229,15 @@ pub(super) async fn delete_graph(
             graph_id: graph_id.clone(),
             action: GraphAuditAction::GraphDeleted,
             created_at_ms: current_time_ms(),
-            actor: ActorIdentity { actor_id: "system".into(), display_name: "系统".into() },
+            actor: ActorIdentity {
+                actor_id: "system".into(),
+                display_name: "系统".into(),
+            },
             target_id: None,
             summary: format!("graph_id={} 被删除", graph_id),
         },
-    ).await;
+    )
+    .await;
     remove_file_if_exists(&graph_path).await?;
     remove_file_if_exists(&state.graph_store_dir.join(format!("{}.qs", graph_id))).await?;
     remove_dir_if_exists(&graph_version_dir(&state.graph_store_dir, &graph_id)).await?;
@@ -306,7 +314,9 @@ async fn persist_graph_version(
     collaboration: GraphCollaborationMetadata,
 ) -> Result<SaveGraphResponse, (StatusCode, String)> {
     if let Err(e) = crate::storage_lifecycle::ensure_storage_quota(
-        std::path::Path::new("storage"), "graphs", crate::storage_lifecycle::StorageLifecycle::Permanent,
+        std::path::Path::new("storage"),
+        "graphs",
+        crate::storage_lifecycle::StorageLifecycle::Permanent,
     ) {
         return Err((StatusCode::INSUFFICIENT_STORAGE, e.to_string()));
     }
@@ -381,36 +391,75 @@ async fn persist_graph_version(
     let staging_version_dir = staging.join("version");
     let staging_version_graph = staging_version_dir.join(format!("{}.json", version_id));
     let staging_version_qs = staging_version_dir.join(format!("{}.qs", version_id));
-    fs::create_dir_all(&staging_version_dir).await.map_err(io_error)?;
+    fs::create_dir_all(&staging_version_dir)
+        .await
+        .map_err(io_error)?;
 
-    fs::write(&staging_graph, &body).await.map_err(io_error)?;
-    fs::write(&staging_latest, &body).await.map_err(io_error)?;
-    fs::write(&staging_qs, &quantscript).await.map_err(io_error)?;
-    fs::write(&staging_version_graph, &body).await.map_err(io_error)?;
-    fs::write(&staging_version_qs, &quantscript).await.map_err(io_error)?;
-
-    // 所有文件准备完毕，逐个原子 rename 到目标位置
-    let bak_path = graph_path.with_extension("json.bak");
-    if fs::try_exists(&graph_path).await.unwrap_or(false) {
-        fs::rename(&graph_path, &bak_path).await.map_err(io_error)?;
+    let stage_result = async {
+        write_synced_staging_file(&staging_graph, body.as_bytes()).await?;
+        write_synced_staging_file(&staging_latest, body.as_bytes()).await?;
+        write_synced_staging_file(&staging_qs, quantscript.as_bytes()).await?;
+        write_synced_staging_file(&staging_version_graph, body.as_bytes()).await?;
+        write_synced_staging_file(&staging_version_qs, quantscript.as_bytes()).await?;
+        sync_directory_for_graph_commit(&staging)?;
+        sync_directory_for_graph_commit(&staging_version_dir)?;
+        Ok::<(), (StatusCode, String)>(())
     }
-    match fs::rename(&staging_graph, &graph_path).await {
-        Ok(()) => {
-            let _ = fs::remove_file(&bak_path).await;
-        }
-        Err(e) => {
-            let _ = fs::rename(&bak_path, &graph_path).await;
-            let _ = fs::remove_dir_all(&staging).await;
-            return Err(io_error(e));
-        }
+    .await;
+    if let Err(error) = stage_result {
+        let _ = fs::remove_dir_all(&staging).await;
+        return Err(error);
     }
 
-    let _ = fs::rename(&staging_latest, &latest_path).await;
-    let _ = fs::rename(&staging_qs, &quantscript_path).await;
-    let _ = fs::rename(&staging_version_graph, &version_graph_path).await;
-    let _ = fs::rename(&staging_version_qs, &version_quantscript_path).await;
+    let mut replacements = Vec::new();
+    let commit_result = async {
+        replace_graph_artifact(&staging_graph, &graph_path, &mut replacements, &version_id).await?;
+        replace_graph_artifact(
+            &staging_latest,
+            &latest_path,
+            &mut replacements,
+            &version_id,
+        )
+        .await?;
+        replace_graph_artifact(
+            &staging_qs,
+            &quantscript_path,
+            &mut replacements,
+            &version_id,
+        )
+        .await?;
+        replace_graph_artifact(
+            &staging_version_graph,
+            &version_graph_path,
+            &mut replacements,
+            &version_id,
+        )
+        .await?;
+        replace_graph_artifact(
+            &staging_version_qs,
+            &version_quantscript_path,
+            &mut replacements,
+            &version_id,
+        )
+        .await?;
+        sync_directory_for_graph_commit(graph_store_dir)?;
+        sync_directory_for_graph_commit(&version_dir)?;
+        Ok::<(), (StatusCode, String)>(())
+    }
+    .await;
+    if let Err(error) = commit_result {
+        rollback_graph_replacements(&replacements).await;
+        let _ = fs::remove_dir_all(&staging).await;
+        return Err(error);
+    }
 
-    // 清理 staging 目录
+    for replacement in &replacements {
+        if let Some(backup) = &replacement.backup_path {
+            let _ = fs::remove_file(backup).await;
+        }
+    }
+    sync_directory_for_graph_commit(graph_store_dir)?;
+    sync_directory_for_graph_commit(&version_dir)?;
     let _ = fs::remove_dir_all(&staging).await;
 
     Ok(SaveGraphResponse {
@@ -423,6 +472,96 @@ async fn persist_graph_version(
         quantscript_path: quantscript_path.to_string_lossy().to_string(),
         collaboration,
     })
+}
+
+#[derive(Debug)]
+struct GraphArtifactReplacement {
+    target_path: PathBuf,
+    backup_path: Option<PathBuf>,
+}
+
+async fn write_synced_staging_file(
+    path: &FsPath,
+    content: &[u8],
+) -> Result<(), (StatusCode, String)> {
+    let mut file = tokio::fs::File::create(path).await.map_err(io_error)?;
+    file.write_all(content).await.map_err(io_error)?;
+    file.sync_all().await.map_err(io_error)?;
+    Ok(())
+}
+
+fn graph_backup_path(
+    target_path: &FsPath,
+    version_id: &str,
+) -> Result<PathBuf, (StatusCode, String)> {
+    let parent = target_path.parent().ok_or_else(|| {
+        internal_error(anyhow::anyhow!(
+            "图工件路径缺少父目录: {}",
+            target_path.display()
+        ))
+    })?;
+    let file_name = target_path
+        .file_name()
+        .and_then(|item| item.to_str())
+        .ok_or_else(|| {
+            internal_error(anyhow::anyhow!(
+                "图工件路径缺少文件名: {}",
+                target_path.display()
+            ))
+        })?;
+    Ok(parent.join(format!(".{}.{}.bak", file_name, version_id)))
+}
+
+async fn replace_graph_artifact(
+    staged_path: &FsPath,
+    target_path: &FsPath,
+    replacements: &mut Vec<GraphArtifactReplacement>,
+    version_id: &str,
+) -> Result<(), (StatusCode, String)> {
+    if let Some(parent) = target_path.parent() {
+        fs::create_dir_all(parent).await.map_err(io_error)?;
+    }
+
+    let backup_path = if fs::try_exists(target_path).await.map_err(io_error)? {
+        let backup = graph_backup_path(target_path, version_id)?;
+        remove_file_if_exists(&backup).await?;
+        fs::rename(target_path, &backup).await.map_err(io_error)?;
+        Some(backup)
+    } else {
+        None
+    };
+
+    if let Err(error) = fs::rename(staged_path, target_path).await {
+        if let Some(backup) = &backup_path {
+            let _ = fs::rename(backup, target_path).await;
+        }
+        let _ = fs::remove_file(staged_path).await;
+        return Err(io_error(error));
+    }
+
+    replacements.push(GraphArtifactReplacement {
+        target_path: target_path.to_path_buf(),
+        backup_path,
+    });
+    Ok(())
+}
+
+async fn rollback_graph_replacements(replacements: &[GraphArtifactReplacement]) {
+    for replacement in replacements.iter().rev() {
+        let _ = fs::remove_file(&replacement.target_path).await;
+        if let Some(backup) = &replacement.backup_path {
+            if fs::try_exists(backup).await.unwrap_or(false) {
+                if let Some(parent) = replacement.target_path.parent() {
+                    let _ = fs::create_dir_all(parent).await;
+                }
+                let _ = fs::rename(backup, &replacement.target_path).await;
+            }
+        }
+    }
+}
+
+fn sync_directory_for_graph_commit(path: &FsPath) -> Result<(), (StatusCode, String)> {
+    crate::storage_lifecycle::sync_directory(path).map_err(io_error)
 }
 
 async fn read_optional_graph_json(
@@ -731,16 +870,27 @@ pub(super) async fn resolve_graph_reveal_path_from_value(
         .map(PathBuf::from);
 
     if let Some(path) = saved_path {
-        let candidates = if path.is_absolute() {
-            // v1.1.2: 绝对路径需规范化后确认在 storage 内
-            let storage_root = std::path::Path::new("storage")
-                .canonicalize()
-                .unwrap_or_else(|_| std::path::PathBuf::from("storage"));
-            let resolved = path.canonicalize().with_context(|| {
-                format!("saved_path 指向不存在的路径: {}", path.display())
+        let allowed_root = fallback_path
+            .parent()
+            .map(std::path::Path::to_path_buf)
+            .unwrap_or_else(|| PathBuf::from("."))
+            .canonicalize()
+            .with_context(|| {
+                format!(
+                    "无法解析图存储目录: {}",
+                    fallback_path
+                        .parent()
+                        .unwrap_or_else(|| std::path::Path::new("."))
+                        .display()
+                )
             })?;
-            if !resolved.starts_with(&storage_root) {
-                anyhow::bail!("saved_path 必须在 storage 目录内: {}", path.display());
+        let candidates = if path.is_absolute() {
+            // v1.1.2/v3.7.1: 绝对路径需规范化后确认在当前图存储目录内
+            let resolved = path
+                .canonicalize()
+                .with_context(|| format!("saved_path 指向不存在的路径: {}", path.display()))?;
+            if !resolved.starts_with(&allowed_root) {
+                anyhow::bail!("saved_path 必须在图存储目录内: {}", path.display());
             }
             vec![resolved]
         } else {
@@ -754,12 +904,9 @@ pub(super) async fn resolve_graph_reveal_path_from_value(
         for candidate in candidates {
             if fs::try_exists(&candidate).await.unwrap_or(false) {
                 let resolved = canonical_existing_path(&candidate).await?;
-                // 验证相对路径解析后仍在 storage 内
-                let storage_root = std::path::Path::new("storage")
-                    .canonicalize()
-                    .unwrap_or_else(|_| std::path::PathBuf::from("storage"));
-                if !resolved.starts_with(&storage_root) {
-                    anyhow::bail!("saved_path 必须在 storage 目录内: {}", path.display());
+                // 验证相对路径解析后仍在当前图存储目录内
+                if !resolved.starts_with(&allowed_root) {
+                    anyhow::bail!("saved_path 必须在图存储目录内: {}", path.display());
                 }
                 return Ok(resolved);
             }
@@ -803,4 +950,41 @@ fn reveal_path_in_file_manager(path: &FsPath) -> anyhow::Result<()> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn temp_graph_test_dir() -> PathBuf {
+        let dir = std::env::temp_dir().join(format!(
+            "quantpilot_graph_txn_test_{}_{}",
+            std::process::id(),
+            current_time_ms()
+        ));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        dir
+    }
+
+    #[tokio::test]
+    async fn rollback_restores_replaced_graph_artifact() {
+        let dir = temp_graph_test_dir();
+        let target = dir.join("graph.json");
+        let staged = dir.join("staged.json");
+        std::fs::write(&target, "old").unwrap();
+        std::fs::write(&staged, "new").unwrap();
+
+        let mut replacements = Vec::new();
+        replace_graph_artifact(&staged, &target, &mut replacements, "test-version")
+            .await
+            .unwrap();
+        assert_eq!(std::fs::read_to_string(&target).unwrap(), "new");
+
+        rollback_graph_replacements(&replacements).await;
+        assert_eq!(std::fs::read_to_string(&target).unwrap(), "old");
+        assert!(!staged.exists());
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
 }

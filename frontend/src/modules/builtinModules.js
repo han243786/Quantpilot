@@ -31,7 +31,7 @@ const commonNode = (category, name, quickFields, summaryFields) => ({
 export const DEFAULT_CAPABILITIES = {
   api_version: "quantpilot-capabilities/v1",
   schema_version: "quantpilot/capabilities-schema/v1",
-  schema_hash: "sha256:6c294c89c60e8ecd644c6e1b1bedf363d535d49a33a7ccd45ba79abd1524949d",
+  schema_hash: "sha256:fa1979f17b9fc96d845a943d11f02128ef244feac6ac142f930c9cb0259b4683",
   chain_stages: ["data", "intent", "agent", "risk", "execution", "fill"],
   strategy_ir: {
     declared_indicator_kinds: DECLARED_INDICATOR_KINDS,

@@ -46,25 +46,33 @@ pub trait IndicatorEvaluator: Send + Sync {
 }
 
 /// 全局指标注册表 — 启动时由 builtin 自动注册，后续可追加第三方插件
-static INDICATOR_REGISTRY: OnceLock<BTreeMap<CoreIndicatorKind, Arc<dyn IndicatorEvaluator>>> = OnceLock::new();
+static INDICATOR_REGISTRY: OnceLock<BTreeMap<CoreIndicatorKind, Arc<dyn IndicatorEvaluator>>> =
+    OnceLock::new();
 
 pub fn indicator_registry() -> &'static BTreeMap<CoreIndicatorKind, Arc<dyn IndicatorEvaluator>> {
     INDICATOR_REGISTRY.get_or_init(|| {
-        let mut registry: BTreeMap<CoreIndicatorKind, Arc<dyn IndicatorEvaluator>> = BTreeMap::new();
+        let mut registry: BTreeMap<CoreIndicatorKind, Arc<dyn IndicatorEvaluator>> =
+            BTreeMap::new();
         macro_rules! register {
             ($kind:ident, $fn:ident) => {
-                registry.insert(CoreIndicatorKind::$kind, Arc::new(BuiltinEvaluator {
-                    evaluate: Box::new(move |indicator, _signal_rule, normalized_data| {
-                        $fn(indicator, normalized_data)
-                    })
-                }));
+                registry.insert(
+                    CoreIndicatorKind::$kind,
+                    Arc::new(BuiltinEvaluator {
+                        evaluate: Box::new(move |indicator, _signal_rule, normalized_data| {
+                            $fn(indicator, normalized_data)
+                        }),
+                    }),
+                );
             };
             ($kind:ident, $fn:ident, with_signal) => {
-                registry.insert(CoreIndicatorKind::$kind, Arc::new(BuiltinEvaluator {
-                    evaluate: Box::new(move |indicator, signal_rule, normalized_data| {
-                        $fn(indicator, signal_rule, normalized_data)
-                    })
-                }));
+                registry.insert(
+                    CoreIndicatorKind::$kind,
+                    Arc::new(BuiltinEvaluator {
+                        evaluate: Box::new(move |indicator, signal_rule, normalized_data| {
+                            $fn(indicator, signal_rule, normalized_data)
+                        }),
+                    }),
+                );
             };
         }
         register!(MaCross, evaluate_ma_family, with_signal);
@@ -90,7 +98,15 @@ pub fn indicator_registry() -> &'static BTreeMap<CoreIndicatorKind, Arc<dyn Indi
 }
 
 struct BuiltinEvaluator {
-    evaluate: Box<dyn Fn(&IndicatorNode, Option<&SignalRule>, &[NormalizedMarketData]) -> Result<CoreIrIndicatorEvaluation, CoreIrIndicatorEvaluatorError> + Send + Sync>,
+    evaluate: Box<
+        dyn Fn(
+                &IndicatorNode,
+                Option<&SignalRule>,
+                &[NormalizedMarketData],
+            ) -> Result<CoreIrIndicatorEvaluation, CoreIrIndicatorEvaluatorError>
+            + Send
+            + Sync,
+    >,
 }
 
 impl IndicatorEvaluator for BuiltinEvaluator {
@@ -151,7 +167,11 @@ fn evaluate_ma_family(
         let triggered = threshold.is_finite() && threshold > 0.0 && ma_fast >= threshold;
         let strength = if triggered {
             let raw = (ma_fast / threshold) - 1.0;
-            if raw.is_finite() { raw.clamp(0.0, 1.0) } else { 0.0 }
+            if raw.is_finite() {
+                raw.clamp(0.0, 1.0)
+            } else {
+                0.0
+            }
         } else {
             0.0
         };
@@ -190,7 +210,11 @@ fn evaluate_ma_family(
         let triggered = threshold.is_finite() && threshold > 0.0 && ma_fast > threshold;
         let strength = if triggered {
             let raw = (ma_fast / threshold) - 1.0;
-            if raw.is_finite() { raw.clamp(0.0, 1.0) } else { 0.0 }
+            if raw.is_finite() {
+                raw.clamp(0.0, 1.0)
+            } else {
+                0.0
+            }
         } else {
             0.0
         };
@@ -487,10 +511,7 @@ fn evaluate_atr(
         strength: 0.0,
         confidence: 0.88,
         reference_price: series.bars.last().map(|item| item.close),
-        derived_metrics: BTreeMap::from([
-            ("atr".into(), atr),
-            ("period".into(), period as f64),
-        ]),
+        derived_metrics: BTreeMap::from([("atr".into(), atr), ("period".into(), period as f64)]),
         reason: format!("ATR{} {:.2}", period, atr),
         ttl_ms: 86_400_000,
     })
@@ -593,10 +614,7 @@ fn evaluate_cmf(
     let (side, strength) = if cmf > 0.0 {
         (SignalSide::Long, scaled_ratio_strength(cmf.abs(), 1.0))
     } else if cmf < 0.0 {
-        (
-            SignalSide::Short,
-            -scaled_ratio_strength(cmf.abs(), 1.0),
-        )
+        (SignalSide::Short, -scaled_ratio_strength(cmf.abs(), 1.0))
     } else {
         (SignalSide::Neutral, 0.0)
     };
@@ -608,10 +626,7 @@ fn evaluate_cmf(
         strength,
         confidence: 0.82,
         reference_price: series.bars.last().map(|item| item.close),
-        derived_metrics: BTreeMap::from([
-            ("cmf".into(), cmf),
-            ("period".into(), period as f64),
-        ]),
+        derived_metrics: BTreeMap::from([("cmf".into(), cmf), ("period".into(), period as f64)]),
         reason: format!("CMF({}) {:.4}", period, cmf),
         ttl_ms: 86_400_000,
     })
@@ -623,9 +638,8 @@ fn evaluate_adx(
 ) -> Result<CoreIrIndicatorEvaluation, CoreIrIndicatorEvaluatorError> {
     let series = find_kline_snapshot(normalized_data, indicator)?;
     let period = param_or_default(indicator, "period", 14.0).round() as usize;
-    let (adx, plus_di, minus_di) =
-        average_directional_index(&series.bars, period)
-            .ok_or(CoreIrIndicatorEvaluatorError::InsufficientData)?;
+    let (adx, plus_di, minus_di) = average_directional_index(&series.bars, period)
+        .ok_or(CoreIrIndicatorEvaluatorError::InsufficientData)?;
     let (side, strength) = if plus_di > minus_di {
         let str = if adx > 25.0 {
             scaled_ratio_strength(adx, 50.0)
@@ -694,10 +708,7 @@ fn evaluate_stochastic(
         strength,
         confidence: 0.86,
         reference_price: series.bars.last().map(|item| item.close),
-        derived_metrics: BTreeMap::from([
-            ("k_pct".into(), k_pct),
-            ("d_pct".into(), d_pct),
-        ]),
+        derived_metrics: BTreeMap::from([("k_pct".into(), k_pct), ("d_pct".into(), d_pct)]),
         reason: format!(
             "Stoch({},{}) %K {:.2} %D {:.2}",
             k_period, d_period, k_pct, d_pct
@@ -735,10 +746,7 @@ fn evaluate_cci(
         strength,
         confidence: 0.84,
         reference_price: series.bars.last().map(|item| item.close),
-        derived_metrics: BTreeMap::from([
-            ("cci".into(), cci),
-            ("period".into(), period as f64),
-        ]),
+        derived_metrics: BTreeMap::from([("cci".into(), cci), ("period".into(), period as f64)]),
         reason: format!("CCI({}) {:.2}", period, cci),
         ttl_ms: 86_400_000,
     })
@@ -777,10 +785,7 @@ fn evaluate_parabolic_sar(
         strength,
         confidence: 0.88,
         reference_price: series.bars.last().map(|item| item.close),
-        derived_metrics: BTreeMap::from([
-            ("sar".into(), sar),
-            ("close".into(), close),
-        ]),
+        derived_metrics: BTreeMap::from([("sar".into(), sar), ("close".into(), close)]),
         reason: format!("PSAR close={:.2} SAR={:.2}", close, sar),
         ttl_ms: 86_400_000,
     })
@@ -1595,7 +1600,11 @@ fn scaled_threshold_strength(upper: f64, lower: f64, range: f64) -> f64 {
         return 0.0;
     }
     let raw = (upper - lower) / range;
-    if !raw.is_finite() { 0.0 } else { raw.clamp(0.0, 1.0) }
+    if !raw.is_finite() {
+        0.0
+    } else {
+        raw.clamp(0.0, 1.0)
+    }
 }
 
 fn scaled_ratio_strength(value: f64, reference: f64) -> f64 {
@@ -1603,7 +1612,11 @@ fn scaled_ratio_strength(value: f64, reference: f64) -> f64 {
         return 0.0;
     }
     let raw = value / reference.abs();
-    if !raw.is_finite() { 0.0 } else { raw.clamp(0.0, 1.0) }
+    if !raw.is_finite() {
+        0.0
+    } else {
+        raw.clamp(0.0, 1.0)
+    }
 }
 
 fn ema_series(values: &[f64], period: usize) -> Option<Vec<f64>> {
@@ -1963,7 +1976,10 @@ fn commodity_channel_index(bars: &[NormalizedKline], period: usize) -> Option<f6
         return None;
     }
     let slice = &bars[bars.len() - period..];
-    let typical_prices: Vec<f64> = slice.iter().map(|b| (b.high + b.low + b.close) / 3.0).collect();
+    let typical_prices: Vec<f64> = slice
+        .iter()
+        .map(|b| (b.high + b.low + b.close) / 3.0)
+        .collect();
     let sma_tp = typical_prices.iter().sum::<f64>() / period as f64;
     let mean_dev = typical_prices
         .iter()
@@ -2045,10 +2061,7 @@ fn donchian_channel(bars: &[NormalizedKline], period: usize) -> Option<(f64, f64
         .iter()
         .map(|b| b.high)
         .fold(f64::NEG_INFINITY, f64::max);
-    let lower = slice
-        .iter()
-        .map(|b| b.low)
-        .fold(f64::INFINITY, f64::min);
+    let lower = slice.iter().map(|b| b.low).fold(f64::INFINITY, f64::min);
     let middle = (upper + lower) / 2.0;
     Some((upper, middle, lower))
 }
@@ -2323,24 +2336,44 @@ mod tests {
     // ── R0-2: Smoke tests for new indicator helpers ──
 
     fn sample_bars(prices: &[f64]) -> Vec<NormalizedKline> {
-        prices.iter().enumerate().map(|(i, &close)| NormalizedKline {
-            exchange: Exchange::Binance, symbol: Symbol::BtcUsdt,
-            market_type: MarketType::Spot, interval: "1d".into(),
-            open_time_ms: i as u64 * 86400000, close_time_ms: (i as u64 + 1) * 86400000,
-            open: close, high: close * 1.02, low: close * 0.98, close, volume: 100.0,
-        }).collect()
+        prices
+            .iter()
+            .enumerate()
+            .map(|(i, &close)| NormalizedKline {
+                exchange: Exchange::Binance,
+                symbol: Symbol::BtcUsdt,
+                market_type: MarketType::Spot,
+                interval: "1d".into(),
+                open_time_ms: i as u64 * 86400000,
+                close_time_ms: (i as u64 + 1) * 86400000,
+                open: close,
+                high: close * 1.02,
+                low: close * 0.98,
+                close,
+                volume: 100.0,
+            })
+            .collect()
     }
 
     fn trending_bars(length: usize) -> Vec<NormalizedKline> {
-        (0..length).map(|i| {
-            let close = 40000.0 + i as f64 * 100.0 + (i as f64 * 0.3).sin() * 500.0;
-            NormalizedKline {
-                exchange: Exchange::Binance, symbol: Symbol::BtcUsdt,
-                market_type: MarketType::Spot, interval: "1d".into(),
-                open_time_ms: i as u64 * 86400000, close_time_ms: (i as u64 + 1) * 86400000,
-                open: close - 50.0, high: close + 200.0, low: close - 200.0, close, volume: 100.0,
-            }
-        }).collect()
+        (0..length)
+            .map(|i| {
+                let close = 40000.0 + i as f64 * 100.0 + (i as f64 * 0.3).sin() * 500.0;
+                NormalizedKline {
+                    exchange: Exchange::Binance,
+                    symbol: Symbol::BtcUsdt,
+                    market_type: MarketType::Spot,
+                    interval: "1d".into(),
+                    open_time_ms: i as u64 * 86400000,
+                    close_time_ms: (i as u64 + 1) * 86400000,
+                    open: close - 50.0,
+                    high: close + 200.0,
+                    low: close - 200.0,
+                    close,
+                    volume: 100.0,
+                }
+            })
+            .collect()
     }
 
     #[test]
@@ -2348,7 +2381,10 @@ mod tests {
         let bars = trending_bars(30);
         let tr = true_range(&bars).unwrap();
         assert_eq!(tr.len(), bars.len() - 1);
-        assert!(tr.iter().all(|&v| v > 0.0), "True Range must always be positive");
+        assert!(
+            tr.iter().all(|&v| v > 0.0),
+            "True Range must always be positive"
+        );
     }
 
     #[test]
@@ -2364,11 +2400,29 @@ mod tests {
         // Use very flat prices so bands are tight and symmetrical
         let bars = sample_bars(&vec![100.0; 30]);
         let (upper, middle, lower) = bollinger_bands(&bars, 20, 2.0).unwrap();
-        assert!(upper >= middle, "upper {} should be >= middle {}", upper, middle);
-        assert!(middle >= lower, "middle {} should be >= lower {}", middle, lower);
+        assert!(
+            upper >= middle,
+            "upper {} should be >= middle {}",
+            upper,
+            middle
+        );
+        assert!(
+            middle >= lower,
+            "middle {} should be >= lower {}",
+            middle,
+            lower
+        );
         // All three values should be near 100 for flat prices
-        assert!((upper - 100.0).abs() < 5.0, "bands should be near 100, upper={}", upper);
-        assert!((lower - 100.0).abs() < 5.0, "bands should be near 100, lower={}", lower);
+        assert!(
+            (upper - 100.0).abs() < 5.0,
+            "bands should be near 100, upper={}",
+            upper
+        );
+        assert!(
+            (lower - 100.0).abs() < 5.0,
+            "bands should be near 100, lower={}",
+            lower
+        );
     }
 
     #[test]
@@ -2377,8 +2431,10 @@ mod tests {
         let obv = on_balance_volume(&bars).unwrap();
         assert!(obv.len() >= 2);
         // In an uptrend, OBV should generally increase
-        assert!(obv.last().unwrap() > obv.first().unwrap(),
-            "OBV should increase in uptrend");
+        assert!(
+            obv.last().unwrap() > obv.first().unwrap(),
+            "OBV should increase in uptrend"
+        );
     }
 
     #[test]
@@ -2396,7 +2452,11 @@ mod tests {
     fn test_adx_range_and_di_sum() {
         let bars = trending_bars(50);
         let (adx, plus_di, minus_di) = average_directional_index(&bars, 14).unwrap();
-        assert!(adx >= 0.0 && adx <= 100.0, "ADX {} should be in [0, 100]", adx);
+        assert!(
+            adx >= 0.0 && adx <= 100.0,
+            "ADX {} should be in [0, 100]",
+            adx
+        );
         assert!(plus_di >= 0.0 && plus_di <= 100.0);
         assert!(minus_di >= 0.0 && minus_di <= 100.0);
     }
@@ -2413,7 +2473,11 @@ mod tests {
     fn test_cci_near_zero_for_flat_prices() {
         let bars = sample_bars(&vec![100.0; 30]);
         let cci = commodity_channel_index(&bars, 20).unwrap();
-        assert!(cci.abs() < 10.0, "CCI {} should be near 0 for flat prices", cci);
+        assert!(
+            cci.abs() < 10.0,
+            "CCI {} should be near 0 for flat prices",
+            cci
+        );
     }
 
     #[test]
@@ -2427,20 +2491,48 @@ mod tests {
     fn test_keltner_channel_upper_above_lower() {
         let bars = trending_bars(30);
         let (upper, middle, lower) = keltner_channel(&bars, 20, 2.0).unwrap();
-        assert!(upper > middle, "upper {} should be > middle {}", upper, middle);
-        assert!(middle > lower, "middle {} should be > lower {}", middle, lower);
+        assert!(
+            upper > middle,
+            "upper {} should be > middle {}",
+            upper,
+            middle
+        );
+        assert!(
+            middle > lower,
+            "middle {} should be > lower {}",
+            middle,
+            lower
+        );
     }
 
     #[test]
     fn test_donchian_channel_upper_is_max_high() {
         let bars = trending_bars(30);
         let (upper, middle, lower) = donchian_channel(&bars, 20).unwrap();
-        let period_high = bars.iter().rev().take(20).map(|b| b.high).fold(f64::MIN, f64::max);
-        assert!((upper - period_high).abs() < 0.001,
-            "Donchian upper {} should equal max high {}", upper, period_high);
-        let period_low = bars.iter().rev().take(20).map(|b| b.low).fold(f64::MAX, f64::min);
-        assert!((lower - period_low).abs() < 0.001,
-            "Donchian lower {} should equal min low {}", lower, period_low);
+        let period_high = bars
+            .iter()
+            .rev()
+            .take(20)
+            .map(|b| b.high)
+            .fold(f64::MIN, f64::max);
+        assert!(
+            (upper - period_high).abs() < 0.001,
+            "Donchian upper {} should equal max high {}",
+            upper,
+            period_high
+        );
+        let period_low = bars
+            .iter()
+            .rev()
+            .take(20)
+            .map(|b| b.low)
+            .fold(f64::MAX, f64::min);
+        assert!(
+            (lower - period_low).abs() < 0.001,
+            "Donchian lower {} should equal min low {}",
+            lower,
+            period_low
+        );
         assert!((middle - (upper + lower) / 2.0).abs() < 0.001);
     }
 
@@ -2450,32 +2542,46 @@ mod tests {
     fn test_moving_average_returns_mean() {
         let bars = sample_bars(&[100.0, 200.0, 300.0, 400.0, 500.0]);
         let ma = moving_average(&bars, 5).unwrap();
-        assert!((ma - 300.0).abs() < 0.01, "5-period MA of 100..500 should be 300, got {}", ma);
+        assert!(
+            (ma - 300.0).abs() < 0.01,
+            "5-period MA of 100..500 should be 300, got {}",
+            ma
+        );
     }
 
     #[test]
     fn test_rsi_range_0_to_100() {
         let bars = trending_bars(30);
         let rsi = relative_strength_index(&bars, 14, 1.0).unwrap();
-        assert!(rsi >= 0.0 && rsi <= 100.0, "RSI {} 应在 [0, 100] 范围内", rsi);
+        assert!(
+            rsi >= 0.0 && rsi <= 100.0,
+            "RSI {} 应在 [0, 100] 范围内",
+            rsi
+        );
     }
 
     #[test]
     fn test_macd_histogram_direction_matches_trend() {
         let uptrend = trending_bars(60);
-        let downtrend: Vec<_> = (0..60).map(|i| {
-            let mut bar = uptrend[i].clone();
-            bar.close = 50000.0 - i as f64 * 100.0;
-            bar.open = bar.close + 50.0;
-            bar.high = bar.open + 100.0;
-            bar.low = bar.close - 100.0;
-            bar
-        }).collect();
+        let downtrend: Vec<_> = (0..60)
+            .map(|i| {
+                let mut bar = uptrend[i].clone();
+                bar.close = 50000.0 - i as f64 * 100.0;
+                bar.open = bar.close + 50.0;
+                bar.high = bar.open + 100.0;
+                bar.low = bar.close - 100.0;
+                bar
+            })
+            .collect();
         // MACD 线 = 快线 EMA - 慢线 EMA，上升趋势时快线应在慢线上方 (MACD 线 > 0)
         let (up_line, _, up_hist) = macd_histogram(&uptrend, 12, 26, 9).unwrap();
         let (down_line, _, _) = macd_histogram(&downtrend, 12, 26, 9).unwrap();
         assert!(up_line > 0.0, "上升趋势 MACD 线应为正, 实际 {}", up_line);
-        assert!(down_line < 0.0, "下降趋势 MACD 线应为负, 实际 {}", down_line);
+        assert!(
+            down_line < 0.0,
+            "下降趋势 MACD 线应为负, 实际 {}",
+            down_line
+        );
         assert!(up_hist.is_finite(), "上升趋势 MACD 柱应为有效值");
     }
 

@@ -297,8 +297,7 @@ fn build_default_runbook() -> Vec<RunbookScenario> {
     ]
 }
 
-async fn list_scenarios(
-) -> Result<Json<Vec<RunbookScenario>>, (StatusCode, String)> {
+async fn list_scenarios() -> Result<Json<Vec<RunbookScenario>>, (StatusCode, String)> {
     Ok(Json(build_default_runbook()))
 }
 
@@ -317,8 +316,6 @@ async fn get_scenario(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn default_runbook_has_six_scenarios() {
         let scenarios = super::build_default_runbook();
@@ -328,12 +325,21 @@ mod tests {
     #[test]
     fn each_scenario_has_diagnostic_and_recovery_steps() {
         for scenario in &super::build_default_runbook() {
-            assert!(!scenario.diagnostic_steps.is_empty(),
-                "scenario {} has no diagnostic steps", scenario.scenario_id);
-            assert!(!scenario.recovery_steps.is_empty(),
-                "scenario {} has no recovery steps", scenario.scenario_id);
-            assert!(!scenario.verification.is_empty(),
-                "scenario {} has no verification", scenario.scenario_id);
+            assert!(
+                !scenario.diagnostic_steps.is_empty(),
+                "scenario {} has no diagnostic steps",
+                scenario.scenario_id
+            );
+            assert!(
+                !scenario.recovery_steps.is_empty(),
+                "scenario {} has no recovery steps",
+                scenario.scenario_id
+            );
+            assert!(
+                !scenario.verification.is_empty(),
+                "scenario {} has no verification",
+                scenario.scenario_id
+            );
         }
     }
 

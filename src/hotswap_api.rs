@@ -6,10 +6,10 @@ use axum::{
 };
 use serde_json::json;
 
+use super::auth;
 use super::frontend_api_types::{
     HotSwapRecord, HotSwapResponse, HotSwapStatusResponse, SubmitHotSwapRequest,
 };
-use super::auth;
 use super::AppState;
 
 pub(super) async fn submit_hotswap(
@@ -80,7 +80,10 @@ pub(super) async fn submit_hotswap(
         event_count: 0,
     };
 
-    (StatusCode::OK, Json(serde_json::to_value(response).unwrap_or_default()))
+    (
+        StatusCode::OK,
+        Json(serde_json::to_value(response).unwrap_or_default()),
+    )
 }
 
 pub(super) async fn get_hotswap_status(
@@ -100,7 +103,10 @@ pub(super) async fn get_hotswap_status(
                 started_at_ms: record.started_at_ms,
                 events: record.events.clone(),
             };
-            (StatusCode::OK, Json(serde_json::to_value(response).unwrap_or_default()))
+            (
+                StatusCode::OK,
+                Json(serde_json::to_value(response).unwrap_or_default()),
+            )
         }
         None => (
             StatusCode::NOT_FOUND,
@@ -126,13 +132,16 @@ pub(super) async fn list_hotswaps(
         .map(|(_, value)| value)
         .collect();
 
-    (StatusCode::OK, Json(json!({
-        "hotswaps": items.iter().map(|r| json!({
-            "hotswap_id": r.hotswap_id,
-            "status": r.status,
-            "step": r.step,
-            "started_at_ms": r.started_at_ms,
-            "success": r.success,
-        })).collect::<Vec<_>>(),
-    })))
+    (
+        StatusCode::OK,
+        Json(json!({
+            "hotswaps": items.iter().map(|r| json!({
+                "hotswap_id": r.hotswap_id,
+                "status": r.status,
+                "step": r.step,
+                "started_at_ms": r.started_at_ms,
+                "success": r.success,
+            })).collect::<Vec<_>>(),
+        })),
+    )
 }

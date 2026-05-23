@@ -123,10 +123,7 @@ impl StrategyMergeEngine {
         let decisions: Vec<AgentDecision> = merged_by_symbol
             .into_iter()
             .map(
-                |(
-                    symbol,
-                    (total_strength, weight_sum, actions, source_strategy_ids),
-                )| {
+                |(symbol, (total_strength, weight_sum, actions, source_strategy_ids))| {
                     let net_strength = if weight_sum.is_finite() && weight_sum > 0.0 {
                         total_strength / weight_sum
                     } else {
@@ -230,7 +227,10 @@ impl StrategyMergeEngine {
         })
     }
 
-    fn merge_conflict_suppression(&self, strategy_inputs: &[StrategyInput]) -> Result<MergedOutput> {
+    fn merge_conflict_suppression(
+        &self,
+        strategy_inputs: &[StrategyInput],
+    ) -> Result<MergedOutput> {
         let mut records = Vec::new();
         let mut conflict_count = 0;
         let mut suppressed_count = 0;
@@ -255,9 +255,12 @@ impl StrategyMergeEngine {
         let mut decisions = Vec::new();
 
         for (_symbol, entries) in signals_by_symbol {
-            let has_long = entries.iter().any(|(side, _, _, _)| matches!(side, SignalSide::Long));
-            let has_short =
-                entries.iter().any(|(side, _, _, _)| matches!(side, SignalSide::Short));
+            let has_long = entries
+                .iter()
+                .any(|(side, _, _, _)| matches!(side, SignalSide::Long));
+            let has_short = entries
+                .iter()
+                .any(|(side, _, _, _)| matches!(side, SignalSide::Short));
 
             if has_long && has_short {
                 conflict_count += 1;
@@ -351,7 +354,11 @@ impl StrategyMergeEngine {
             if symbol_counts.values().any(|count| *count as f64 > limit) {
                 let max_allowed = (limit * decisions.len() as f64).ceil() as usize;
                 // v2.5.0: 按 net_strength 降序排序后截断, 保留最强信号
-                decisions.sort_by(|a, b| b.net_strength.partial_cmp(&a.net_strength).unwrap_or(std::cmp::Ordering::Equal));
+                decisions.sort_by(|a, b| {
+                    b.net_strength
+                        .partial_cmp(&a.net_strength)
+                        .unwrap_or(std::cmp::Ordering::Equal)
+                });
                 decisions.truncate(max_allowed.max(1));
             }
         }
@@ -404,22 +411,12 @@ mod tests {
             StrategyInput {
                 strategy_id: "strategy_a".to_string(),
                 weight: 1.0,
-                agent_decisions: vec![sample_decision(
-                    "a",
-                    Symbol::BtcUsdt,
-                    SignalSide::Long,
-                    0.6,
-                )],
+                agent_decisions: vec![sample_decision("a", Symbol::BtcUsdt, SignalSide::Long, 0.6)],
             },
             StrategyInput {
                 strategy_id: "strategy_b".to_string(),
                 weight: 1.0,
-                agent_decisions: vec![sample_decision(
-                    "b",
-                    Symbol::BtcUsdt,
-                    SignalSide::Long,
-                    0.2,
-                )],
+                agent_decisions: vec![sample_decision("b", Symbol::BtcUsdt, SignalSide::Long, 0.2)],
             },
         ];
 
@@ -436,22 +433,12 @@ mod tests {
             StrategyInput {
                 strategy_id: "weak".to_string(),
                 weight: 1.0,
-                agent_decisions: vec![sample_decision(
-                    "w",
-                    Symbol::BtcUsdt,
-                    SignalSide::Long,
-                    0.3,
-                )],
+                agent_decisions: vec![sample_decision("w", Symbol::BtcUsdt, SignalSide::Long, 0.3)],
             },
             StrategyInput {
                 strategy_id: "strong".to_string(),
                 weight: 1.0,
-                agent_decisions: vec![sample_decision(
-                    "s",
-                    Symbol::BtcUsdt,
-                    SignalSide::Long,
-                    0.9,
-                )],
+                agent_decisions: vec![sample_decision("s", Symbol::BtcUsdt, SignalSide::Long, 0.9)],
             },
         ];
 
@@ -554,22 +541,12 @@ mod tests {
             StrategyInput {
                 strategy_id: "strat_x".to_string(),
                 weight: 2.0,
-                agent_decisions: vec![sample_decision(
-                    "x",
-                    Symbol::BtcUsdt,
-                    SignalSide::Long,
-                    0.5,
-                )],
+                agent_decisions: vec![sample_decision("x", Symbol::BtcUsdt, SignalSide::Long, 0.5)],
             },
             StrategyInput {
                 strategy_id: "strat_y".to_string(),
                 weight: 1.0,
-                agent_decisions: vec![sample_decision(
-                    "y",
-                    Symbol::BtcUsdt,
-                    SignalSide::Long,
-                    0.3,
-                )],
+                agent_decisions: vec![sample_decision("y", Symbol::BtcUsdt, SignalSide::Long, 0.3)],
             },
         ];
 

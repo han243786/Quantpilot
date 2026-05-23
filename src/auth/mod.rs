@@ -2,9 +2,9 @@
 // SQLite + JWT + bcrypt, 向后兼容默认用户 (user_id=0)
 
 use std::path::Path;
-use std::sync::OnceLock;
+use std::sync::{Mutex, OnceLock};
 
-use axum::{extract::State, http::StatusCode, response::IntoResponse, Json, routing::post, Router};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::post, Json, Router};
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 
@@ -86,48 +86,64 @@ pub struct AuthErrorResponse {
 // ── JWT 密钥 (全局缓存, v2.1.1 持久化) ──
 
 const JWT_SECRET_FILE: &str = "storage/.jwt_secret";
+static JWT_SECRET_INIT_LOCK: Mutex<()> = Mutex::new(());
 
-fn jwt_secret_bytes() -> &'static [u8] {
+fn jwt_secret_bytes() -> Result<&'static [u8], String> {
     static JWT_SECRET: OnceLock<Vec<u8>> = OnceLock::new();
-    JWT_SECRET.get_or_init(|| {
-        let env_key = std::env::var("QUANTPILOT_JWT_SECRET").unwrap_or_default();
-        if !env_key.is_empty() {
-            return env_key.into_bytes();
-        }
-        // 从 API_KEY 派生 (若存在)
+    if let Some(secret) = JWT_SECRET.get() {
+        return Ok(secret);
+    }
+    let _guard = JWT_SECRET_INIT_LOCK
+        .lock()
+        .unwrap_or_else(|error| error.into_inner());
+    if let Some(secret) = JWT_SECRET.get() {
+        return Ok(secret);
+    }
+
+    let env_key = std::env::var("QUANTPILOT_JWT_SECRET").unwrap_or_default();
+    let secret = if !env_key.is_empty() {
+        env_key.into_bytes()
+    } else {
         let api_key = std::env::var("QUANTPILOT_API_KEY").unwrap_or_default();
         if !api_key.is_empty() {
             let hash = ring::digest::digest(&ring::digest::SHA256, api_key.as_bytes());
-            return hash.as_ref().to_vec();
-        }
-        // v2.1.1: 持久化JWT密钥到磁盘，确保重启后token仍然有效
-        let path = std::path::Path::new(JWT_SECRET_FILE);
-        if let Ok(existing) = std::fs::read(path) {
-            if existing.len() >= 32 {
-                return existing;
+            hash.as_ref().to_vec()
+        } else {
+            let path = std::path::Path::new(JWT_SECRET_FILE);
+            if let Ok(existing) = std::fs::read(path) {
+                if existing.len() >= 32 {
+                    existing
+                } else {
+                    generate_and_persist_jwt_secret(path)?
+                }
+            } else {
+                generate_and_persist_jwt_secret(path)?
             }
         }
-        // 生成随机 32 字节并持久化
-        use ring::rand::SecureRandom;
-        let rng = ring::rand::SystemRandom::new();
-        let mut bytes = vec![0u8; 32];
-        rng.fill(&mut bytes).expect("JWT 密钥生成失败: 系统熵池不足");
-        if let Some(parent) = path.parent() {
-            let _ = std::fs::create_dir_all(parent);
-        }
-        let tmp = path.with_extension("tmp");
-        if std::fs::write(&tmp, &bytes).is_ok() {
-            let _ = std::fs::rename(&tmp, path);
-        }
-        bytes
-    })
+    };
+
+    let _ = JWT_SECRET.set(secret);
+    JWT_SECRET
+        .get()
+        .map(|secret| secret.as_slice())
+        .ok_or_else(|| "JWT 密钥初始化失败".to_string())
+}
+
+fn generate_and_persist_jwt_secret(path: &Path) -> Result<Vec<u8>, String> {
+    use ring::rand::SecureRandom;
+    let rng = ring::rand::SystemRandom::new();
+    let mut bytes = vec![0u8; 32];
+    rng.fill(&mut bytes)
+        .map_err(|_| "JWT 密钥生成失败: 系统熵池不足".to_string())?;
+    crate::storage_lifecycle::atomic_write_secret_file(path, &bytes)
+        .map_err(|error| format!("JWT 密钥持久化失败: {}", error))?;
+    Ok(bytes)
 }
 
 // ── 数据库初始化 ──
 
 pub fn init_db(path: &Path) -> Result<Connection, String> {
-    let conn =
-        Connection::open(path).map_err(|e| format!("无法打开 SQLite 数据库: {}", e))?;
+    let conn = Connection::open(path).map_err(|e| format!("无法打开 SQLite 数据库: {}", e))?;
 
     // WAL 模式提升并发性能
     conn.execute_batch("PRAGMA journal_mode=WAL;")
@@ -244,21 +260,22 @@ pub fn register_user(conn: &Connection, username: &str, password: &str) -> Resul
 // ── 登录 & JWT 生成 ──
 
 /// 从数据库查询用户凭证 (不验证密码)
-fn query_user_credentials(conn: &Connection, username: &str) -> Result<(i64, String, String), String> {
+fn query_user_credentials(
+    conn: &Connection,
+    username: &str,
+) -> Result<(i64, String, String), String> {
     let mut stmt = conn
         .prepare("SELECT id, username, password_hash FROM users WHERE username = ?1")
         .map_err(|e| format!("数据库查询失败: {}", e))?;
 
-    let result: Result<(i64, String, String), rusqlite::Error> =
-        stmt.query_row(rusqlite::params![username], |row| {
+    let result: Result<(i64, String, String), rusqlite::Error> = stmt
+        .query_row(rusqlite::params![username], |row| {
             Ok((row.get(0)?, row.get(1)?, row.get(2)?))
         });
 
     match result {
         Ok(data) => Ok(data),
-        Err(rusqlite::Error::QueryReturnedNoRows) => {
-            Err("用户名或密码错误".to_string())
-        }
+        Err(rusqlite::Error::QueryReturnedNoRows) => Err("用户名或密码错误".to_string()),
         Err(e) => Err(format!("数据库查询失败: {}", e)),
     }
 }
@@ -273,7 +290,7 @@ fn generate_jwt(id: i64, username: &str) -> Result<String, String> {
     jsonwebtoken::encode(
         &jsonwebtoken::Header::default(),
         &claims,
-        &jsonwebtoken::EncodingKey::from_secret(jwt_secret_bytes()),
+        &jsonwebtoken::EncodingKey::from_secret(jwt_secret_bytes()?),
     )
     .map_err(|e| format!("生成 token 失败: {}", e))
 }
@@ -298,7 +315,7 @@ pub fn login_user(conn: &Connection, username: &str, password: &str) -> Result<S
 pub fn verify_token(token: &str) -> Result<User, String> {
     let token_data = jsonwebtoken::decode::<Claims>(
         token,
-        &jsonwebtoken::DecodingKey::from_secret(jwt_secret_bytes()),
+        &jsonwebtoken::DecodingKey::from_secret(jwt_secret_bytes()?),
         &{
             let mut validation = jsonwebtoken::Validation::new(jsonwebtoken::Algorithm::HS256);
             validation.leeway = 0;
@@ -306,9 +323,7 @@ pub fn verify_token(token: &str) -> Result<User, String> {
         },
     )
     .map_err(|e| match e.kind() {
-        jsonwebtoken::errors::ErrorKind::ExpiredSignature => {
-            "token 已过期，请重新登录".to_string()
-        }
+        jsonwebtoken::errors::ErrorKind::ExpiredSignature => "token 已过期，请重新登录".to_string(),
         jsonwebtoken::errors::ErrorKind::InvalidToken => "无效的 token".to_string(),
         _ => format!("token 验证失败: {}", e),
     })?;
@@ -350,7 +365,8 @@ async fn register_handler(
                 "error": "bad_request",
                 "message": "用户名不能为空"
             })),
-        ).into_response();
+        )
+            .into_response();
     }
     if req.password.len() < 6 {
         return (
@@ -359,34 +375,38 @@ async fn register_handler(
                 "error": "bad_request",
                 "message": "密码长度不能少于 6 位"
             })),
-        ).into_response();
+        )
+            .into_response();
     }
 
     // bcrypt hash 在 spawn_blocking 中执行, 不阻塞 tokio 工作线程
     let password = req.password.clone();
-    let password_hash = match tokio::task::spawn_blocking(move || {
-        bcrypt::hash(&password, bcrypt::DEFAULT_COST)
-    }).await {
-        Ok(Ok(hash)) => hash,
-        Ok(Err(e)) => {
-            return (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({
-                    "error": "internal_error",
-                    "message": format!("密码加密失败: {}", e)
-                })),
-            ).into_response();
-        }
-        Err(_) => {
-            return (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({
-                    "error": "internal_error",
-                    "message": "服务内部错误"
-                })),
-            ).into_response();
-        }
-    };
+    let password_hash =
+        match tokio::task::spawn_blocking(move || bcrypt::hash(&password, bcrypt::DEFAULT_COST))
+            .await
+        {
+            Ok(Ok(hash)) => hash,
+            Ok(Err(e)) => {
+                return (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({
+                        "error": "internal_error",
+                        "message": format!("密码加密失败: {}", e)
+                    })),
+                )
+                    .into_response();
+            }
+            Err(_) => {
+                return (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({
+                        "error": "internal_error",
+                        "message": "服务内部错误"
+                    })),
+                )
+                    .into_response();
+            }
+        };
 
     // 数据库写入 (需要锁, 快速完成)
     let db = db.lock().unwrap_or_else(|e| e.into_inner());
@@ -403,7 +423,8 @@ async fn register_handler(
                     "user": user,
                     "message": "注册成功"
                 })),
-            ).into_response()
+            )
+                .into_response()
         }
         Err(e) => {
             let msg = if e.to_string().contains("UNIQUE") {
@@ -417,7 +438,8 @@ async fn register_handler(
                     "error": "registration_failed",
                     "message": msg
                 })),
-            ).into_response()
+            )
+                .into_response()
         }
     }
 }
@@ -460,10 +482,8 @@ async fn login_handler(
 
     // Step 2: bcrypt 验证在 spawn_blocking 中执行, 不阻塞 tokio 工作线程
     let password = req.password.clone();
-    let valid = match tokio::task::spawn_blocking(move || {
-        bcrypt::verify(&password, &password_hash)
-    })
-    .await
+    let valid = match tokio::task::spawn_blocking(move || bcrypt::verify(&password, &password_hash))
+        .await
     {
         Ok(Ok(ok)) => ok,
         Ok(Err(e)) => {
@@ -505,14 +525,18 @@ async fn login_handler(
     let token_result = tokio::task::spawn_blocking(move || {
         let token = generate_jwt(id, &uname_clone)?;
         let db = db_clone.lock().unwrap_or_else(|e| e.into_inner());
-        let (rt, _) = create_refresh_token(&db, id)
-            .unwrap_or_else(|_| (String::new(), String::new()));
+        let (rt, _) =
+            create_refresh_token(&db, id).unwrap_or_else(|_| (String::new(), String::new()));
         Ok::<_, String>((token, rt))
-    }).await;
+    })
+    .await;
 
     match token_result {
         Ok(Ok((token, rt))) => {
-            let user = User { id, username: uname };
+            let user = User {
+                id,
+                username: uname,
+            };
             (
                 StatusCode::OK,
                 Json(serde_json::json!({
@@ -528,14 +552,16 @@ async fn login_handler(
                 "error": "jwt_error",
                 "message": msg
             })),
-        ).into_response(),
+        )
+            .into_response(),
         Err(_) => (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(serde_json::json!({
                 "error": "internal_error",
                 "message": "服务内部错误"
             })),
-        ).into_response(),
+        )
+            .into_response(),
     }
 }
 
@@ -557,10 +583,14 @@ async fn refresh_handler(
     let user = match verify_token(&req.access_token) {
         Ok(user) => user,
         Err(e) => {
-            return (StatusCode::UNAUTHORIZED, Json(serde_json::json!({
-                "error": "token_invalid",
-                "message": e
-            }))).into_response();
+            return (
+                StatusCode::UNAUTHORIZED,
+                Json(serde_json::json!({
+                    "error": "token_invalid",
+                    "message": e
+                })),
+            )
+                .into_response();
         }
     };
 
@@ -568,10 +598,14 @@ async fn refresh_handler(
     let db = match &state.db {
         Some(db) => db,
         None => {
-            return (StatusCode::SERVICE_UNAVAILABLE, Json(serde_json::json!({
-                "error": "auth_unavailable",
-                "message": "认证服务暂不可用"
-            }))).into_response();
+            return (
+                StatusCode::SERVICE_UNAVAILABLE,
+                Json(serde_json::json!({
+                    "error": "auth_unavailable",
+                    "message": "认证服务暂不可用"
+                })),
+            )
+                .into_response();
         }
     };
 
@@ -579,10 +613,14 @@ async fn refresh_handler(
     let new_access_token = match login_user_by_id(&user.id, &user.username) {
         Ok(token) => token,
         Err(e) => {
-            return (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({
-                "error": "jwt_error",
-                "message": e
-            }))).into_response();
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({
+                    "error": "jwt_error",
+                    "message": e
+                })),
+            )
+                .into_response();
         }
     };
 
@@ -593,16 +631,19 @@ async fn refresh_handler(
     let rotate_result = tokio::task::spawn_blocking(move || {
         let db = db_arc.lock().unwrap_or_else(|e| e.into_inner());
         rotate_refresh_token(&db, user_id, &old_hash)
-    }).await;
+    })
+    .await;
 
     match rotate_result {
-        Ok(Ok((new_refresh_token, _new_hash, _family_id))) => {
-            (StatusCode::OK, Json(serde_json::json!({
+        Ok(Ok((new_refresh_token, _new_hash, _family_id))) => (
+            StatusCode::OK,
+            Json(serde_json::json!({
                 "token": new_access_token,
                 "refresh_token": new_refresh_token,
                 "user": user
-            }))).into_response()
-        }
+            })),
+        )
+            .into_response(),
         Ok(Err(msg)) => {
             let is_replay = msg.contains("重放");
             let status = if is_replay {
@@ -610,17 +651,23 @@ async fn refresh_handler(
             } else {
                 StatusCode::UNAUTHORIZED
             };
-            (status, Json(serde_json::json!({
-                "error": if is_replay { "token_replay" } else { "refresh_token_invalid" },
-                "message": msg
-            }))).into_response()
+            (
+                status,
+                Json(serde_json::json!({
+                    "error": if is_replay { "token_replay" } else { "refresh_token_invalid" },
+                    "message": msg
+                })),
+            )
+                .into_response()
         }
-        Err(_) => {
-            (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({
+        Err(_) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({
                 "error": "internal_error",
                 "message": "服务内部错误"
-            }))).into_response()
-        }
+            })),
+        )
+            .into_response(),
     }
 }
 
@@ -635,7 +682,7 @@ fn login_user_by_id(user_id: &i64, username: &str) -> Result<String, String> {
     jsonwebtoken::encode(
         &jsonwebtoken::Header::default(),
         &claims,
-        &jsonwebtoken::EncodingKey::from_secret(jwt_secret_bytes()),
+        &jsonwebtoken::EncodingKey::from_secret(jwt_secret_bytes()?),
     )
     .map_err(|e| format!("生成 token 失败: {}", e))
 }
@@ -754,13 +801,14 @@ pub fn cleanup_expired_tokens(conn: &Connection) -> Result<(), String> {
 /// v2.2.1: 添加独立的登录速率限制
 /// v2.3.0: 添加 JWT 刷新端点
 pub(crate) fn register_auth_routes(router: Router<AppState>) -> Router<AppState> {
-    router
+    let auth_router = Router::new()
         .route("/api/auth/register", post(register_handler))
         .route("/api/auth/login", post(login_handler))
         .route("/api/auth/refresh", post(refresh_handler))
         .layer(axum::middleware::from_fn(
             super::rate_limiter::auth_rate_limit_middleware,
-        ))
+        ));
+    router.merge(auth_router)
 }
 
 // ── 单元测试 ──
@@ -916,7 +964,7 @@ mod tests {
         let token = encode(
             &Header::default(),
             &claims,
-            &EncodingKey::from_secret(jwt_secret_bytes()),
+            &EncodingKey::from_secret(jwt_secret_bytes().unwrap()),
         )
         .unwrap();
         let result = verify_token(&token);
@@ -951,8 +999,8 @@ mod tests {
 
     #[test]
     fn test_jwt_secret_consistent_across_calls() {
-        let first = jwt_secret_bytes().to_vec();
-        let second = jwt_secret_bytes().to_vec();
+        let first = jwt_secret_bytes().unwrap().to_vec();
+        let second = jwt_secret_bytes().unwrap().to_vec();
         assert_eq!(first, second);
         assert!(!first.is_empty());
         // 随机生成的 secret 应为 32 字节
@@ -963,10 +1011,7 @@ mod tests {
 
     #[test]
     fn test_init_db_creates_tables_and_default_user() {
-        let dir = std::env::temp_dir().join(format!(
-            "quantpilot_auth_test_{}",
-            std::process::id()
-        ));
+        let dir = std::env::temp_dir().join(format!("quantpilot_auth_test_{}", std::process::id()));
         std::fs::create_dir_all(&dir).ok();
         let db_path = dir.join("test_init.db");
         // 清理上次测试遗留文件
@@ -986,11 +1031,9 @@ mod tests {
 
         // 验证默认用户存在
         let (id, username): (i64, String) = conn
-            .query_row(
-                "SELECT id, username FROM users WHERE id = 0",
-                [],
-                |row| Ok((row.get(0)?, row.get(1)?)),
-            )
+            .query_row("SELECT id, username FROM users WHERE id = 0", [], |row| {
+                Ok((row.get(0)?, row.get(1)?))
+            })
             .unwrap();
         assert_eq!(id, 0);
         assert_eq!(username, "__default__");

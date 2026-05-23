@@ -137,7 +137,11 @@ pub enum OrderSide {
 
 impl std::fmt::Display for OrderSide {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", serde_json::to_string(self).unwrap_or_else(|_| format!("{:?}", self)))
+        write!(
+            f,
+            "{}",
+            serde_json::to_string(self).unwrap_or_else(|_| format!("{:?}", self))
+        )
     }
 }
 
@@ -896,6 +900,10 @@ pub struct OpenOrder {
     pub reserved_qty: f64,
     pub limit_price: Option<f64>,
     pub reference_price: f64,
+    #[serde(default)]
+    pub slippage_bps: f64,
+    #[serde(default)]
+    pub fee_bps: f64,
     pub created_at_ms: u64,
     pub updated_at_ms: u64,
     pub trace_id: String,
@@ -966,9 +974,12 @@ impl PortfolioState {
         if cfg!(debug_assertions) {
             // 可用现金 + 冻结现金 = 总现金
             debug_assert!(
-                (self.available_cash_balance + self.frozen_cash_balance - self.cash_balance).abs() < 0.01,
+                (self.available_cash_balance + self.frozen_cash_balance - self.cash_balance).abs()
+                    < 0.01,
                 "PortfolioState: available({}) + frozen({}) != cash({})",
-                self.available_cash_balance, self.frozen_cash_balance, self.cash_balance
+                self.available_cash_balance,
+                self.frozen_cash_balance,
+                self.cash_balance
             );
             // 杠杆为非负
             debug_assert!(self.total_leverage >= 0.0, "total_leverage 不能为负");
@@ -1108,7 +1119,7 @@ pub struct BacktestSummary {
 /// v1.1.0 P2: 月度/季度收益率分解
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PeriodReturn {
-    pub period: String,  // e.g. "2025-01", "2025-Q1", "2025"
+    pub period: String, // e.g. "2025-01", "2025-Q1", "2025"
     pub return_ratio: f64,
     pub trade_count: u32,
 }
@@ -1257,10 +1268,7 @@ pub struct Allocation {
 
 impl Allocation {
     /// v1.0.0: 对一组目标仓位按权重分配资金
-    pub fn apply_to_targets(
-        &self,
-        targets: &[PortfolioTarget],
-    ) -> BTreeMap<Symbol, f64> {
+    pub fn apply_to_targets(&self, targets: &[PortfolioTarget]) -> BTreeMap<Symbol, f64> {
         let mut allocated: BTreeMap<Symbol, f64> = BTreeMap::new();
         for target in targets {
             for tw in &target.target_weights {
@@ -1271,7 +1279,9 @@ impl Allocation {
                     .unwrap_or(tw.target_weight);
                 let amount = self.total_budget * weight;
                 let clamped = match (self.min_weight, self.max_weight) {
-                    (Some(min), Some(max)) => amount.max(min * self.total_budget).min(max * self.total_budget),
+                    (Some(min), Some(max)) => amount
+                        .max(min * self.total_budget)
+                        .min(max * self.total_budget),
                     (Some(min), None) => amount.max(min * self.total_budget),
                     (None, Some(max)) => amount.min(max * self.total_budget),
                     (None, None) => amount,
@@ -1301,7 +1311,10 @@ impl OrderStatus {
     /// v1.0.1: 校验状态转移合法性。终态不可再转移。
     pub fn can_transition_to(&self, next: &OrderStatus) -> bool {
         // 终态不可转移
-        if matches!(self, Self::Filled | Self::Cancelled | Self::Rejected | Self::Expired) {
+        if matches!(
+            self,
+            Self::Filled | Self::Cancelled | Self::Rejected | Self::Expired
+        ) {
             return false;
         }
         matches!(

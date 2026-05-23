@@ -1041,9 +1041,7 @@ fn cursor_from_replay_options(
         return events
             .iter()
             .position(|event| event_sequence_no(event, 0) >= sequence_cursor)
-            .ok_or_else(|| {
-                format!("sequence_cursor `{sequence_cursor}` 超出过滤重放窗口范围")
-            });
+            .ok_or_else(|| format!("sequence_cursor `{sequence_cursor}` 超出过滤重放窗口范围"));
     }
     if options.cursor >= events.len() {
         return Err(format!(

@@ -10,7 +10,10 @@ macro_rules! check_storage_quota {
     };
 }
 
-pub(crate) async fn atomic_write_json(path: &FsPath, value: &impl serde::Serialize) -> std::io::Result<()> {
+pub(crate) async fn atomic_write_json(
+    path: &FsPath,
+    value: &impl serde::Serialize,
+) -> std::io::Result<()> {
     let tmp = path.with_extension("tmp");
     let json = serde_json::to_string_pretty(value)
         .map_err(|error| std::io::Error::other(error.to_string()))?;
@@ -35,7 +38,10 @@ pub(super) async fn persist_run_record(
 ) -> std::io::Result<()> {
     check_storage_quota!("runs", Temporary);
     fs::create_dir_all(run_store_dir).await?;
-    let path = run_store_dir.join(format!("{}.json", sanitize_storage_path_segment(&record.run_id)));
+    let path = run_store_dir.join(format!(
+        "{}.json",
+        sanitize_storage_path_segment(&record.run_id)
+    ));
     atomic_write_json(&path, record).await
 }
 
@@ -53,7 +59,10 @@ pub(super) async fn persist_experiment_record(
 ) -> std::io::Result<()> {
     check_storage_quota!("experiments", Temporary);
     fs::create_dir_all(experiment_store_dir).await?;
-    let path = experiment_store_dir.join(format!("{}.json", sanitize_storage_path_segment(&record.experiment_id)));
+    let path = experiment_store_dir.join(format!(
+        "{}.json",
+        sanitize_storage_path_segment(&record.experiment_id)
+    ));
     atomic_write_json(&path, record).await
 }
 
@@ -296,7 +305,9 @@ pub(super) async fn load_run_record_from_state(
         ));
     }
 
-    let path = state.run_store_dir.join(format!("{}.json", sanitize_storage_path_segment(run_id)));
+    let path = state
+        .run_store_dir
+        .join(format!("{}.json", sanitize_storage_path_segment(run_id)));
     let content = fs::read_to_string(&path)
         .await
         .map_err(not_found_io_error)?;
@@ -312,6 +323,8 @@ pub(super) async fn load_backtest_record_from_state(
     user_id: &auth::UserId,
     backtest_id: &str,
 ) -> Result<BacktestRecord, (StatusCode, String)> {
+    crate::backtest_artifacts::validate_backtest_id_segment(backtest_id)
+        .map_err(|error| json_bad_request("invalid_backtest_id", error.to_string()))?;
     let scoped = auth::scoped_key(user_id, backtest_id);
     if let Some(record) = state.backtests.read().await.get(&scoped).cloned() {
         return Ok(normalize_backtest_record(
@@ -320,7 +333,9 @@ pub(super) async fn load_backtest_record_from_state(
         ));
     }
 
-    let dir = state.backtest_store_dir.join(backtest_id);
+    let dir = state
+        .backtest_store_dir
+        .join(sanitize_storage_path_segment(backtest_id));
     if fs::try_exists(&dir).await.map_err(io_error)? {
         let record = load_backtest_record_from_directory(&dir)
             .await
@@ -358,9 +373,10 @@ pub(super) async fn load_experiment_record_from_state(
         return Ok(record);
     }
 
-    let path = state
-        .experiment_store_dir
-        .join(format!("{}.json", sanitize_storage_path_segment(experiment_id)));
+    let path = state.experiment_store_dir.join(format!(
+        "{}.json",
+        sanitize_storage_path_segment(experiment_id)
+    ));
     let content = fs::read_to_string(&path)
         .await
         .map_err(not_found_io_error)?;

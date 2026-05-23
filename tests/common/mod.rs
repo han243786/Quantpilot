@@ -96,18 +96,36 @@ pub(crate) fn assert_complete_event_envelopes(
         assert_eq!(envelope["event_id"], event["event_id"]);
         assert_eq!(envelope["event_type"], event["event_type"]);
         assert_eq!(envelope["run_id"], record_id);
-        assert_eq!(envelope["sequence_no"], serde_json::Value::from(index as u64 + 1));
+        assert_eq!(
+            envelope["sequence_no"],
+            serde_json::Value::from(index as u64 + 1)
+        );
         assert_eq!(envelope["occurred_at_ms"], event["event_time_ms"]);
         assert_eq!(envelope["capability_hash"], governance["capability_hash"]);
-        assert_eq!(envelope["deployment_revision"], governance["deployment_revision"]);
+        assert_eq!(
+            envelope["deployment_revision"],
+            governance["deployment_revision"]
+        );
         for key in [
-            "event_id", "event_type", "run_id", "stage", "strategy_version",
-            "parameter_version", "deployment_revision", "capability_hash",
-            "mode", "severity", "retention_class",
+            "event_id",
+            "event_type",
+            "run_id",
+            "stage",
+            "strategy_version",
+            "parameter_version",
+            "deployment_revision",
+            "capability_hash",
+            "mode",
+            "severity",
+            "retention_class",
         ] {
             assert!(
-                envelope[key].as_str().map(|v| !v.trim().is_empty()).unwrap_or(false),
-                "event {} has empty envelope field {key}", event["event_id"]
+                envelope[key]
+                    .as_str()
+                    .map(|v| !v.trim().is_empty())
+                    .unwrap_or(false),
+                "event {} has empty envelope field {key}",
+                event["event_id"]
             );
         }
     }

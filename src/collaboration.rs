@@ -96,7 +96,9 @@ pub(super) async fn authorize_graph_actor(
         return Ok(GraphCollaborationMetadata::default());
     }
 
-    let body = tokio::fs::read_to_string(&graph_path).await.map_err(io_error)?;
+    let body = tokio::fs::read_to_string(&graph_path)
+        .await
+        .map_err(io_error)?;
     let graph: Value = serde_json::from_str(&body).map_err(|error| internal_error(error.into()))?;
     let collaboration = collaboration_from_graph(&graph);
     if collaboration.owner.is_some() {

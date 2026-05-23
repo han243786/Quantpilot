@@ -1167,7 +1167,7 @@ components:
   schemas:
     CapabilityResponse:
       type: object
-      required: [api_version, schema_version, schema_hash, chain_stages]
+      required: [api_version, schema_version, schema_hash, chain_stages, strategy_ir, runtime, market_data, frontend, versioning, permission_boundary]
       properties:
         api_version:
           type: string
@@ -1180,6 +1180,146 @@ components:
           type: array
           items:
             type: string
+        strategy_ir:
+          type: object
+          required: [declared_indicator_kinds, supported_indicator_kinds, indicator_support]
+          properties:
+            declared_indicator_kinds:
+              type: array
+              items:
+                type: string
+            supported_indicator_kinds:
+              type: array
+              items:
+                type: string
+            indicator_support:
+              type: array
+              items:
+                type: object
+                required: [kind, status]
+                properties:
+                  kind:
+                    type: string
+                  status:
+                    type: string
+                    enum: [supported, declared_only]
+                  reason:
+                    type: string
+                    nullable: true
+        runtime:
+          type: object
+          required: [supported_modes, supported_execution_modules, mode_support, execution_module_support]
+          properties:
+            supported_modes:
+              type: array
+              items:
+                type: string
+            supported_execution_modules:
+              type: array
+              items:
+                type: string
+            mode_support:
+              type: array
+              items:
+                $ref: '#/components/schemas/NamedCapabilityEntry'
+            execution_module_support:
+              type: array
+              items:
+                $ref: '#/components/schemas/NamedCapabilityEntry'
+        market_data:
+          type: object
+          required: [supported_exchanges, supported_symbols, exchange_support, symbol_support]
+          properties:
+            supported_exchanges:
+              type: array
+              items:
+                type: string
+            supported_symbols:
+              type: array
+              items:
+                type: string
+            exchange_support:
+              type: array
+              items:
+                $ref: '#/components/schemas/NamedCapabilityEntry'
+            symbol_support:
+              type: array
+              items:
+                $ref: '#/components/schemas/NamedCapabilityEntry'
+        frontend:
+          type: object
+          required: [declared_module_keys, supported_module_keys, unsupported_module_reasons, module_support]
+          properties:
+            declared_module_keys:
+              type: array
+              items:
+                type: string
+            supported_module_keys:
+              type: array
+              items:
+                type: string
+            unsupported_module_reasons:
+              type: object
+              additionalProperties:
+                type: string
+            module_support:
+              type: array
+              items:
+                type: object
+                required: [module_key, status]
+                properties:
+                  module_key:
+                    type: string
+                  status:
+                    type: string
+                    enum: [supported, declared_only]
+                  reason:
+                    type: string
+                    nullable: true
+        versioning:
+          type: object
+          required: [model_version, strategy_version_source, parameter_version_policy, deployment_revision_policy]
+          properties:
+            model_version:
+              type: string
+            strategy_version_source:
+              type: string
+            parameter_version_policy:
+              type: string
+            deployment_revision_policy:
+              type: string
+        permission_boundary:
+          type: object
+          required: [model_version, execution_owner_module, live_execution_allowed, ai_write_policy, plugin_network_default, non_execution_order_access]
+          properties:
+            model_version:
+              type: string
+            execution_owner_module:
+              type: string
+            live_execution_allowed:
+              type: boolean
+            ai_write_policy:
+              type: string
+              enum: [proposal_only, disabled]
+            plugin_network_default:
+              type: string
+              enum: [deny, allow]
+            non_execution_order_access:
+              type: string
+              enum: [deny, allow]
+
+    NamedCapabilityEntry:
+      type: object
+      required: [key, status]
+      properties:
+        key:
+          type: string
+        status:
+          type: string
+          enum: [supported, declared_only]
+        reason:
+          type: string
+          nullable: true
 
     AiProposalRecord:
       type: object

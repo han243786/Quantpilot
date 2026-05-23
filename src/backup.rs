@@ -10,10 +10,14 @@ const MAX_BACKUP_TOTAL_MB: u64 = 200;
 
 /// Permanent 级数据源（需要备份的目录和文件）
 const PERMANENT_SOURCES: &[(&str, bool)] = &[
-    ("storage/graphs", true),       // true = 目录
+    ("storage/graphs", true), // true = 目录
     ("storage/audit", true),
     ("storage/.credentials", false), // false = 单个文件
     ("storage/.machine_key", false),
+    ("storage/.jwt_secret", false),
+    ("storage/.executor-state.json", false),
+    ("storage/.executor-credentials", false),
+    ("storage/.executor-machine-key", false),
     ("storage/auth.db", false),
 ];
 
@@ -117,11 +121,7 @@ async fn copy_dir_recursive(
             let dest = dest_dir.join(name);
             let bytes = tokio::fs::copy(&path, &dest).await?;
             files.push(BackupFileEntry {
-                path: format!(
-                    "{}/{}",
-                    dir_name.to_string_lossy(),
-                    name.to_string_lossy()
-                ),
+                path: format!("{}/{}", dir_name.to_string_lossy(), name.to_string_lossy()),
                 size_bytes: bytes,
             });
             total += bytes;
@@ -137,14 +137,14 @@ async fn cleanup_old_backups() {
         return;
     };
 
-    let cutoff = chrono::Utc::now()
-        .checked_sub_signed(chrono::Duration::days(MAX_BACKUP_AGE_DAYS as i64));
+    let cutoff =
+        chrono::Utc::now().checked_sub_signed(chrono::Duration::days(MAX_BACKUP_AGE_DAYS as i64));
 
     let Some(_cutoff) = cutoff else {
         return;
     };
 
-    let mut total_backup_bytes: u64 = 0;
+    let mut backups: Vec<(std::path::PathBuf, std::time::SystemTime, u64)> = Vec::new();
     let mut to_remove = Vec::new();
 
     while let Ok(Some(entry)) = entries.next_entry().await {
@@ -161,18 +161,17 @@ async fn cleanup_old_backups() {
                     to_remove.push(path.clone());
                     continue;
                 }
+                let size = dir_size_bytes(&path).await.unwrap_or(0);
+                backups.push((path.clone(), modified, size));
             }
-            total_backup_bytes += metadata.len();
         }
 
         // 从目录名推断时间
         if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
-            if let Ok(date_part) = chrono::NaiveDate::parse_from_str(
-                &name[..name.len().min(10)],
-                "%Y-%m-%d",
-            ) {
-                let age_days = (chrono::Utc::now().naive_utc().date() - date_part)
-                    .num_days();
+            if let Ok(date_part) =
+                chrono::NaiveDate::parse_from_str(&name[..name.len().min(10)], "%Y-%m-%d")
+            {
+                let age_days = (chrono::Utc::now().naive_utc().date() - date_part).num_days();
                 if age_days > MAX_BACKUP_AGE_DAYS as i64 {
                     to_remove.push(path.clone());
                 }
@@ -182,12 +181,21 @@ async fn cleanup_old_backups() {
 
     // 检查总大小
     let max_bytes = MAX_BACKUP_TOTAL_MB * 1024 * 1024;
+    let mut total_backup_bytes: u64 = backups.iter().map(|(_, _, size)| *size).sum();
     if total_backup_bytes > max_bytes {
         safe_eprintln!(
             "[backup] 备份总大小 {} MB 超出 {} MB 限制，将删除最旧备份",
             total_backup_bytes / (1024 * 1024),
             MAX_BACKUP_TOTAL_MB
         );
+        backups.sort_by_key(|(_, modified, _)| *modified);
+        for (path, _, size) in backups {
+            if total_backup_bytes <= max_bytes {
+                break;
+            }
+            total_backup_bytes = total_backup_bytes.saturating_sub(size);
+            to_remove.push(path);
+        }
     }
 
     for path in to_remove {
@@ -197,6 +205,21 @@ async fn cleanup_old_backups() {
             safe_eprintln!("[backup] 已删除过期备份: {}", path.display());
         }
     }
+}
+
+async fn dir_size_bytes(path: &Path) -> std::io::Result<u64> {
+    let mut total = 0u64;
+    let mut entries = tokio::fs::read_dir(path).await?;
+    while let Some(entry) = entries.next_entry().await? {
+        let entry_path = entry.path();
+        let metadata = entry.metadata().await?;
+        if metadata.is_dir() {
+            total = total.saturating_add(Box::pin(dir_size_bytes(&entry_path)).await?);
+        } else {
+            total = total.saturating_add(metadata.len());
+        }
+    }
+    Ok(total)
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -266,5 +289,17 @@ mod tests {
         let json = r#"{"path":"test.json","size_bytes":100,"unknown_field":42}"#;
         let result = serde_json::from_str::<BackupFileEntry>(json);
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn permanent_sources_include_auth_and_executor_state() {
+        let paths = PERMANENT_SOURCES
+            .iter()
+            .map(|(path, _)| *path)
+            .collect::<std::collections::BTreeSet<_>>();
+        assert!(paths.contains("storage/.jwt_secret"));
+        assert!(paths.contains("storage/.executor-state.json"));
+        assert!(paths.contains("storage/.executor-credentials"));
+        assert!(paths.contains("storage/.executor-machine-key"));
     }
 }

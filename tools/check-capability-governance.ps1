@@ -1,5 +1,5 @@
 ﻿param(
-    [string]$SnapshotPath = "markdown\implementation\governance\implementation-capability-governance-registry.generated.md",
+    [string]$SnapshotPath = "markdown\03-implementation\governance\implementation-capability-governance-registry.generated.md",
     [switch]$WriteSnapshot
 )
 

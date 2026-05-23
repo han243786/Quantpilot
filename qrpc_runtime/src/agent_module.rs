@@ -168,7 +168,10 @@ fn build_weighted_agent_decisions(
         return Vec::new();
     }
 
-    let decision_threshold = agent.decision_threshold.unwrap_or(DEFAULT_DECISION_THRESHOLD).max(MIN_QUANTITY_RATIO);
+    let decision_threshold = agent
+        .decision_threshold
+        .unwrap_or(DEFAULT_DECISION_THRESHOLD)
+        .max(MIN_QUANTITY_RATIO);
     let max_quantity_ratio = agent.max_quantity_ratio.clamp(MIN_QUANTITY_RATIO, 1.0);
 
     // v1.1.0: 按 (Exchange, Symbol) 分组，每组独立计算
@@ -213,12 +216,20 @@ fn build_weighted_agent_decisions(
             agent_id: agent.agent_id.clone(),
             symbol: symbol.clone(),
             exchange_targets: vec![exchange.clone()],
-            net_side: if net > 0.0 { SignalSide::Long } else { SignalSide::Short },
+            net_side: if net > 0.0 {
+                SignalSide::Long
+            } else {
+                SignalSide::Short
+            },
             net_strength: net,
             portfolio_target_decision: None,
             proposed_actions: vec![ProposedAction {
                 exchange: exchange.clone(),
-                side: if net > 0.0 { OrderSide::Buy } else { OrderSide::Sell },
+                side: if net > 0.0 {
+                    OrderSide::Buy
+                } else {
+                    OrderSide::Sell
+                },
                 quantity_ratio,
                 reference_price,
                 strategy_tag: "long_term".into(),
@@ -288,7 +299,10 @@ fn build_portfolio_rebalance_decision(
         return None;
     }
 
-    let decision_threshold = agent.decision_threshold.unwrap_or(DEFAULT_DECISION_THRESHOLD).max(0.0);
+    let decision_threshold = agent
+        .decision_threshold
+        .unwrap_or(DEFAULT_DECISION_THRESHOLD)
+        .max(0.0);
     let mut aggregated = BTreeMap::<(Exchange, Symbol), (f64, f64)>::new();
     for signal in weighted_signals {
         let exchange = signal
@@ -358,7 +372,11 @@ fn build_portfolio_rebalance_decision(
                     portfolio
                         .positions
                         .iter()
-                        .find(|position| position.symbol == symbol && position.mark_price.is_finite() && position.mark_price > 0.0)
+                        .find(|position| {
+                            position.symbol == symbol
+                                && position.mark_price.is_finite()
+                                && position.mark_price > 0.0
+                        })
                         .map(|position| position.mark_price)
                 })
                 .or_else(|| {
@@ -366,7 +384,9 @@ fn build_portfolio_rebalance_decision(
                         .positions
                         .iter()
                         .find(|position| {
-                            position.symbol == symbol && position.avg_entry_price.is_finite() && position.avg_entry_price > 0.0
+                            position.symbol == symbol
+                                && position.avg_entry_price.is_finite()
+                                && position.avg_entry_price > 0.0
                         })
                         .map(|position| position.avg_entry_price)
                 })
@@ -518,7 +538,11 @@ fn assign_target_weights(
         "score_weight" => {
             let selected = plans
                 .iter_mut()
-                .filter(|plan| selected_symbols.contains(&plan.symbol) && plan.score.is_finite() && plan.score > 0.0)
+                .filter(|plan| {
+                    selected_symbols.contains(&plan.symbol)
+                        && plan.score.is_finite()
+                        && plan.score > 0.0
+                })
                 .collect::<Vec<_>>();
             let total = selected.iter().map(|plan| plan.score).sum::<f64>();
             if total > f64::EPSILON {
@@ -554,8 +578,12 @@ fn signal_kind_for_intent(core_ir: &CoreStrategyIr, intent_id: &str) -> Option<S
         .map(|rule| rule.signal_kind)
 }
 
-fn build_signal_kind_index(core_ir: &CoreStrategyIr) -> std::collections::HashMap<String, SignalKind> {
-    core_ir.signal_rules.iter()
+fn build_signal_kind_index(
+    core_ir: &CoreStrategyIr,
+) -> std::collections::HashMap<String, SignalKind> {
+    core_ir
+        .signal_rules
+        .iter()
         .map(|rule| (rule.indicator_id.clone(), rule.signal_kind))
         .collect()
 }
@@ -590,8 +618,11 @@ fn build_arb_agent_decision(
     let spread = (binance_mid - okx_mid).abs() / binance_mid.min(okx_mid);
     let total_cost_buffer = total_cost_buffer_ratio(core_ir);
     const DEFAULT_SPREAD_TRIGGER_BPS: f64 = 50.0;
-    let spread_trigger =
-        (agent.spread_trigger_bps.unwrap_or(DEFAULT_SPREAD_TRIGGER_BPS) / 10_000.0).max(total_cost_buffer);
+    let spread_trigger = (agent
+        .spread_trigger_bps
+        .unwrap_or(DEFAULT_SPREAD_TRIGGER_BPS)
+        / 10_000.0)
+        .max(total_cost_buffer);
     if spread <= spread_trigger {
         return None;
     }
@@ -673,8 +704,11 @@ fn build_arb_decision_from_spread_signal(
 
     let total_cost_buffer = total_cost_buffer_ratio(core_ir);
     const DEFAULT_SPREAD_TRIGGER_BPS: f64 = 50.0;
-    let spread_trigger =
-        (agent.spread_trigger_bps.unwrap_or(DEFAULT_SPREAD_TRIGGER_BPS) / 10_000.0).max(total_cost_buffer);
+    let spread_trigger = (agent
+        .spread_trigger_bps
+        .unwrap_or(DEFAULT_SPREAD_TRIGGER_BPS)
+        / 10_000.0)
+        .max(total_cost_buffer);
     if spread <= spread_trigger {
         return None;
     }

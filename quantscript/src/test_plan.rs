@@ -1,4 +1,4 @@
-use crate::script::{ScriptModule, Item, StepBlock, TestAction, TestParamValue};
+use crate::script::{Item, ScriptModule, StepBlock, TestAction, TestParamValue};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TestPlan {
@@ -68,12 +68,23 @@ impl From<&TestAction> for TestActionDef {
     fn from(action: &TestAction) -> Self {
         match action {
             TestAction::Compile => TestActionDef::Compile,
-            TestAction::Run { mode, duration_secs, save } => TestActionDef::Run {
+            TestAction::Run {
+                mode,
+                duration_secs,
+                save,
+            } => TestActionDef::Run {
                 mode: mode.clone(),
                 duration_secs: *duration_secs,
                 save: *save,
             },
-            TestAction::Backtest { source, start, end, seed, save, volatility } => TestActionDef::Backtest {
+            TestAction::Backtest {
+                source,
+                start,
+                end,
+                seed,
+                save,
+                volatility,
+            } => TestActionDef::Backtest {
                 source: source.clone(),
                 start: start.clone(),
                 end: end.clone(),
@@ -88,7 +99,10 @@ impl From<&TestAction> for TestActionDef {
                 param: param.clone(),
                 value: value.into(),
             },
-            TestAction::Wait { condition, timeout_secs } => TestActionDef::Wait {
+            TestAction::Wait {
+                condition,
+                timeout_secs,
+            } => TestActionDef::Wait {
                 condition: condition.clone(),
                 timeout_secs: *timeout_secs,
             },
@@ -141,7 +155,12 @@ pub fn split_test_items(module: &ScriptModule) -> (ScriptModule, Vec<TestPlan>) 
         }
     }
 
-    (ScriptModule { items: strategy_items }, test_plans)
+    (
+        ScriptModule {
+            items: strategy_items,
+        },
+        test_plans,
+    )
 }
 
 #[cfg(test)]

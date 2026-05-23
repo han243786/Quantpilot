@@ -28,6 +28,18 @@ export async function createApiMockHarness(page) {
     expectedPatterns.push(patternToRegex(pattern));
   }
 
+  function requestPathname(url) {
+    try {
+      return new URL(url).pathname;
+    } catch {
+      return "";
+    }
+  }
+
+  function isApiRequestUrl(url) {
+    return requestPathname(url).startsWith("/api/");
+  }
+
   return {
     async fulfill(pattern, response) {
       rememberPattern(pattern);
@@ -66,13 +78,18 @@ export async function createApiMockHarness(page) {
         guardRouteInstalled = true;
         await page.route("**/api/**", async (route) => {
           const url = route.request().url();
+          if (!isApiRequestUrl(url)) {
+            await route.fallback();
+            return;
+          }
+
           const isExpected = expectedPatterns.some((pattern) => pattern.test(url));
           if (isExpected) {
             await route.fallback();
             return;
           }
 
-          const pathname = new URL(url).pathname;
+          const pathname = requestPathname(url);
           unexpectedRequests.push(`${route.request().method()} ${pathname}`);
           await route.fulfill(jsonResponse({
             error: "unexpected_e2e_request",
@@ -82,11 +99,11 @@ export async function createApiMockHarness(page) {
       }
       page.on("request", (request) => {
         const url = request.url();
-        if (!url.includes("/api/")) return;
+        if (!isApiRequestUrl(url)) return;
         const isExpected = expectedPatterns.some((pattern) => pattern.test(url));
         if (isExpected) return;
 
-        const pathname = new URL(url).pathname;
+        const pathname = requestPathname(url);
         unexpectedRequests.push(`${request.method()} ${pathname}`);
       });
     },

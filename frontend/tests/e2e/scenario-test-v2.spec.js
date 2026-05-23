@@ -177,7 +177,7 @@ test.describe("场景七：策略工作区标签页 (v2)", () => {
       await page.waitForTimeout(2000);
     }
 
-    for (const tab of ["overview", "code", "diagnostics", "research"]) {
+    for (const tab of ["dashboard", "code", "research", "source"]) {
       await step(page, `切换到 ${tab} 标签`, async () => {
         const tabEl = page.getByTestId(`workspace-tab-${tab}`);
         if (await tabEl.isVisible().catch(() => false)) {

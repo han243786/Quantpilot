@@ -1,7 +1,7 @@
 use crate::diagnostics::{Diagnostic, DiagnosticSeverity, Span};
 use crate::hir::{
     DefId, ExprId, HirBindingPattern, HirCallArg, HirExpr, HirExprKind, HirFunction, HirImport,
-    HirImportName, HirLetStmt, HirMatchArm, HirMatchArmBody, HirParam, HirStmt, HirStepBlock,
+    HirImportName, HirLetStmt, HirMatchArm, HirMatchArmBody, HirParam, HirStepBlock, HirStmt,
     HirTestAction, HirTestBlock, HirTestParamValue, TypedHirModule,
 };
 use crate::script::{
@@ -876,17 +876,12 @@ impl Resolver {
                         "sma" | "ema" | "rsi" | "macd" | "momentum" | "zscore" | "z_score"
                     ) {
                         if let Some(first_arg) = args.first() {
-                            let is_literal_number = matches!(
-                                &first_arg.value.kind,
-                                HirExprKind::Number(_)
-                            );
+                            let is_literal_number =
+                                matches!(&first_arg.value.kind, HirExprKind::Number(_));
                             if is_literal_number {
                                 self.diagnostics.push(Diagnostic::error(
                                     "QS0007",
-                                    format!(
-                                        "{} 的第一个参数必须是 fetch() 或数据系列",
-                                        name
-                                    ),
+                                    format!("{} 的第一个参数必须是 fetch() 或数据系列", name),
                                     Some(callee.span.clone()),
                                 ));
                             }
@@ -2409,10 +2404,7 @@ fn strategy() {
         let resolved = lower_script_to_typed_hir(&module);
         assert!(resolved.has_errors());
         assert!(resolved.diagnostics.iter().any(|diagnostic| {
-            diagnostic.code == "QS0006"
-                && diagnostic
-                    .message
-                    .contains("条件必须解析为 Bool 类型")
+            diagnostic.code == "QS0006" && diagnostic.message.contains("条件必须解析为 Bool 类型")
         }));
     }
 

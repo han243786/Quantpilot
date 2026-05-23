@@ -613,8 +613,13 @@ pub(super) struct ParseGraphQuantScriptRequest {
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(super) struct CompileRuntimeRequest {
+    #[serde(default, rename = "compile_id")]
+    pub(super) _compile_id: Option<String>,
+    #[serde(default, rename = "capability_context")]
+    pub(super) _capability_context: Option<Value>,
     pub(super) runtime_config: FrontendRuntimeConfig,
-    pub(super) graph_json: Value,
+    #[serde(default, rename = "graph_json")]
+    pub(super) _graph_json: Option<Value>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -2078,11 +2083,13 @@ impl<'de> serde::Deserialize<'de> for PaginationQuery {
         let mut query = PaginationQuery::default();
 
         if let Some(val) = raw.get("limit") {
-            if val.is_null() { /* skip null */ }
-            else if let Some(n) = val.as_u64() {
+            if val.is_null() { /* skip null */
+            } else if let Some(n) = val.as_u64() {
                 query.limit = Some(n.min(100) as u32);
             } else if let Some(n) = val.as_i64() {
-                if n < 0 { return Err(Error::custom("分页参数 limit 必须为非负整数 (0-100)")); }
+                if n < 0 {
+                    return Err(Error::custom("分页参数 limit 必须为非负整数 (0-100)"));
+                }
                 query.limit = Some((n as u64).min(100) as u32);
             } else {
                 return Err(Error::custom("分页参数 limit 必须为非负整数 (0-100)"));
@@ -2090,11 +2097,13 @@ impl<'de> serde::Deserialize<'de> for PaginationQuery {
         }
 
         if let Some(val) = raw.get("offset") {
-            if val.is_null() { /* skip null */ }
-            else if let Some(n) = val.as_u64() {
+            if val.is_null() { /* skip null */
+            } else if let Some(n) = val.as_u64() {
                 query.offset = Some(n.min(10_000) as u32);
             } else if let Some(n) = val.as_i64() {
-                if n < 0 { return Err(Error::custom("分页参数 offset 必须为非负整数 (0-10000)")); }
+                if n < 0 {
+                    return Err(Error::custom("分页参数 offset 必须为非负整数 (0-10000)"));
+                }
                 query.offset = Some((n as u64).min(10_000) as u32);
             } else {
                 return Err(Error::custom("分页参数 offset 必须为非负整数 (0-10000)"));
@@ -2121,7 +2130,12 @@ pub fn paginate<T: Serialize>(mut items: Vec<T>, query: PaginationQuery) -> Pagi
         items = items.into_iter().skip(offset).collect();
     }
     items.truncate(limit);
-    PaginatedResponse { data: items, total, limit: limit as u32, offset: offset as u32 }
+    PaginatedResponse {
+        data: items,
+        total,
+        limit: limit as u32,
+        offset: offset as u32,
+    }
 }
 
 // ── v1.0.6 统一 API 错误响应 ──

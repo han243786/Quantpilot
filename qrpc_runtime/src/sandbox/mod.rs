@@ -130,7 +130,8 @@ pub trait Sandbox {
         now_ms: u64,
     ) -> Result<Vec<RuntimeEvent>>;
     fn snapshot(&self, now_ms: u64) -> SandboxSnapshot;
-    fn swap_module_config(&mut self, module_key: &str, config: serde_json::Value) -> Result<String>;
+    fn swap_module_config(&mut self, module_key: &str, config: serde_json::Value)
+        -> Result<String>;
 
     fn handoff(&mut self, _snapshot: &HandoffSnapshot) -> Result<()> {
         Err(anyhow::anyhow!("当前 Sandbox 不支持热接管"))
@@ -256,37 +257,53 @@ impl Sandbox for RealTimeSandbox {
         )
     }
 
-    fn swap_module_config(&mut self, module_key: &str, config: serde_json::Value) -> Result<String> {
+    fn swap_module_config(
+        &mut self,
+        module_key: &str,
+        config: serde_json::Value,
+    ) -> Result<String> {
         self.coordinator.swap_module_config(module_key, config)
     }
 
     fn handoff(&mut self, snapshot: &HandoffSnapshot) -> Result<()> {
-        snapshot.validate_completeness().map_err(|errs| {
-            anyhow::anyhow!("热接管快照校验失败: {:?}", errs)
-        })?;
+        snapshot
+            .validate_completeness()
+            .map_err(|errs| anyhow::anyhow!("热接管快照校验失败: {:?}", errs))?;
         // v2.1.0: 实际恢复 portfolio 状态
         self.coordinator.state.portfolio.cash_balance = snapshot.cash_balance;
         self.coordinator.state.portfolio.available_cash_balance = snapshot.available_cash_balance;
         self.coordinator.state.portfolio.frozen_cash_balance = snapshot.frozen_cash_balance;
         // 恢复持仓: HandoffSnapshot.positions 是 BTreeMap<Symbol, f64>
-        self.coordinator.state.portfolio.positions.retain(|p| {
-            !snapshot.positions.contains_key(&p.symbol)
-        });
+        self.coordinator
+            .state
+            .portfolio
+            .positions
+            .retain(|p| !snapshot.positions.contains_key(&p.symbol));
         for (symbol, qty) in &snapshot.positions {
-            let found = self.coordinator.state.portfolio.positions.iter_mut().find(|p| p.symbol == *symbol);
+            let found = self
+                .coordinator
+                .state
+                .portfolio
+                .positions
+                .iter_mut()
+                .find(|p| p.symbol == *symbol);
             if let Some(pos) = found {
                 pos.net_qty = *qty;
             } else {
-                self.coordinator.state.portfolio.positions.push(qrpc_core::Position {
-                    exchange: qrpc_core::Exchange::Binance,
-                    symbol: symbol.clone(),
-                    net_qty: *qty,
-                    frozen_qty: 0.0,
-                    avg_entry_price: 0.0,
-                    mark_price: 0.0,
-                    unrealized_pnl: 0.0,
-                    realized_pnl: 0.0,
-                });
+                self.coordinator
+                    .state
+                    .portfolio
+                    .positions
+                    .push(qrpc_core::Position {
+                        exchange: qrpc_core::Exchange::Binance,
+                        symbol: symbol.clone(),
+                        net_qty: *qty,
+                        frozen_qty: 0.0,
+                        avg_entry_price: 0.0,
+                        mark_price: 0.0,
+                        unrealized_pnl: 0.0,
+                        realized_pnl: 0.0,
+                    });
             }
         }
         // 清除未结订单
@@ -298,7 +315,11 @@ impl Sandbox for RealTimeSandbox {
 
     fn restore(&mut self, snapshot: &SandboxSnapshot) -> Result<()> {
         if snapshot.mode != self.mode() {
-            anyhow::bail!("快照模式 ({:?}) 与当前沙箱模式 ({:?}) 不匹配", snapshot.mode, self.mode());
+            anyhow::bail!(
+                "快照模式 ({:?}) 与当前沙箱模式 ({:?}) 不匹配",
+                snapshot.mode,
+                self.mode()
+            );
         }
         self.running = snapshot.is_running;
         self.test_mode = snapshot.deterministic_test_mode.clone();
@@ -356,9 +377,14 @@ impl FastBacktestSandbox {
     }
 
     /// v1.1.0: 使用统一时间轴构建回测沙箱
-    pub fn with_unified_timeline_from_core_ir(core_ir: CoreStrategyIr, end_ms: u64) -> Result<Self> {
+    pub fn with_unified_timeline_from_core_ir(
+        core_ir: CoreStrategyIr,
+        end_ms: u64,
+    ) -> Result<Self> {
         Self::with_unified_timeline_from_core_ir_and_test_mode(
-            core_ir, end_ms, DeterministicTestMode::default(),
+            core_ir,
+            end_ms,
+            DeterministicTestMode::default(),
         )
     }
 
@@ -379,9 +405,14 @@ impl FastBacktestSandbox {
     }
 
     /// v1.1.0: 使用 mock 统一时间轴
-    pub fn with_mock_unified_timeline_from_core_ir(core_ir: CoreStrategyIr, end_ms: u64) -> Result<Self> {
+    pub fn with_mock_unified_timeline_from_core_ir(
+        core_ir: CoreStrategyIr,
+        end_ms: u64,
+    ) -> Result<Self> {
         Self::with_mock_unified_timeline_from_core_ir_and_test_mode(
-            core_ir, end_ms, DeterministicTestMode::default(),
+            core_ir,
+            end_ms,
+            DeterministicTestMode::default(),
         )
     }
 
@@ -462,7 +493,10 @@ impl FastBacktestSandbox {
 
     /// v1.0.7 兼容：保留旧 replay_timestamps 用于延迟假设测试
     pub fn replay_timestamps(&self) -> &[u64] {
-        self.timeline.as_ref().map(|t| t.timestamps.as_slice()).unwrap_or(&self.v1_0_7_replay_timestamps)
+        self.timeline
+            .as_ref()
+            .map(|t| t.timestamps.as_slice())
+            .unwrap_or(&self.v1_0_7_replay_timestamps)
     }
 
     pub fn run_backtest(&mut self) -> Result<BacktestOutput> {
@@ -494,10 +528,7 @@ impl FastBacktestSandbox {
             ));
         }
 
-        let started_at_ms = slow_triggers
-            .first()
-            .copied()
-            .unwrap_or(0);
+        let started_at_ms = slow_triggers.first().copied().unwrap_or(0);
         let ended_at_ms = slow_triggers
             .last()
             .copied()
@@ -523,9 +554,10 @@ impl FastBacktestSandbox {
                     .filter_map(|p| {
                         let data = p.value_at(*t.timestamps.first().unwrap_or(&0));
                         match data {
-                            Some(NormalizedMarketData::KlineSeries(series)) => {
-                                series.bars.first().map(|b| (p.data_id().to_string(), b.close))
-                            }
+                            Some(NormalizedMarketData::KlineSeries(series)) => series
+                                .bars
+                                .first()
+                                .map(|b| (p.data_id().to_string(), b.close)),
                             _ => None,
                         }
                     })
@@ -537,8 +569,8 @@ impl FastBacktestSandbox {
             let slow_now_ms = ts_ms;
             let fast_now_ms = slow_now_ms.saturating_add(1);
             let session = self.coordinator.run_session(slow_now_ms, fast_now_ms)?;
-            let equity = session.final_portfolio.cash_balance
-                + session.final_portfolio.total_net_notional;
+            let equity =
+                session.final_portfolio.cash_balance + session.final_portfolio.total_net_notional;
 
             // v1.2.0: RiskMonitor 实时监控 — 触发停止时提前结束回测
             if self.coordinator.is_risk_stopped() {
@@ -560,8 +592,7 @@ impl FastBacktestSandbox {
 
             peak_equity = peak_equity.max(equity);
             if peak_equity.is_finite() && peak_equity > 0.0 {
-                max_drawdown_ratio =
-                    max_drawdown_ratio.max((peak_equity - equity) / peak_equity);
+                max_drawdown_ratio = max_drawdown_ratio.max((peak_equity - equity) / peak_equity);
             }
             trade_count +=
                 session.slow_cycle.fill_reports.len() + session.fast_cycle.fill_reports.len();
@@ -756,13 +787,21 @@ impl Sandbox for FastBacktestSandbox {
         )
     }
 
-    fn swap_module_config(&mut self, module_key: &str, config: serde_json::Value) -> Result<String> {
+    fn swap_module_config(
+        &mut self,
+        module_key: &str,
+        config: serde_json::Value,
+    ) -> Result<String> {
         self.coordinator.swap_module_config(module_key, config)
     }
 
     fn restore(&mut self, snapshot: &SandboxSnapshot) -> Result<()> {
         if snapshot.mode != self.mode() {
-            anyhow::bail!("快照模式 ({:?}) 与当前沙箱模式 ({:?}) 不匹配", snapshot.mode, self.mode());
+            anyhow::bail!(
+                "快照模式 ({:?}) 与当前沙箱模式 ({:?}) 不匹配",
+                snapshot.mode,
+                self.mode()
+            );
         }
         self.running = snapshot.is_running;
         self.test_mode = snapshot.deterministic_test_mode.clone();
@@ -812,15 +851,20 @@ fn compute_benchmark_equity(
                 return None;
             }
             provider.value_at(ts_ms).and_then(|data| match data {
-                NormalizedMarketData::KlineSeries(series) => {
-                    series.bars.last().map(|bar| (initial_cash / n) * (bar.close / initial_price))
-                }
+                NormalizedMarketData::KlineSeries(series) => series
+                    .bars
+                    .last()
+                    .map(|bar| (initial_cash / n) * (bar.close / initial_price)),
                 _ => None,
             })
         })
         .sum::<f64>();
 
-    if total > 0.0 { total } else { initial_cash }
+    if total > 0.0 {
+        total
+    } else {
+        initial_cash
+    }
 }
 
 fn snapshot_from(
@@ -953,13 +997,14 @@ mod tests {
 
         let without_latency =
             FastBacktestSandbox::with_mock_replay(compiled_without_latency, end_ms).unwrap();
-        let with_latency =
-            FastBacktestSandbox::with_mock_replay(compiled_with_latency, end_ms)
-                .unwrap()
-                .with_execution_assumptions(ExecutionAssumptions {
-                    latency: LatencyModel::Fixed { delay_ms: latency_ms },
-                    ..Default::default()
-                });
+        let with_latency = FastBacktestSandbox::with_mock_replay(compiled_with_latency, end_ms)
+            .unwrap()
+            .with_execution_assumptions(ExecutionAssumptions {
+                latency: LatencyModel::Fixed {
+                    delay_ms: latency_ms,
+                },
+                ..Default::default()
+            });
 
         let mut without_latency = without_latency;
         let mut with_latency = with_latency;
@@ -1014,7 +1059,10 @@ mod tests {
         let boundary = runtime_support_boundary();
 
         assert_eq!(boundary.runtime_modes, &["paper"]);
-        assert_eq!(boundary.execution_module_keys, &["builtin.execution.paper", "live.okx"]);
+        assert_eq!(
+            boundary.execution_module_keys,
+            &["builtin.execution.paper", "live.okx"]
+        );
     }
 
     #[test]

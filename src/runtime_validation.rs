@@ -97,7 +97,10 @@ pub(super) fn validate_runtime_config_capabilities(
                 details.push(capability_detail(
                     "unsupported_symbol",
                     data.id.clone(),
-                    format!("不支持的交易对 '{}'。当前已验证的交易对: BTCUSDT, ETHUSDT, SOLUSDT", symbol),
+                    format!(
+                        "不支持的交易对 '{}'。当前已验证的交易对: BTCUSDT, ETHUSDT, SOLUSDT",
+                        symbol
+                    ),
                     None,
                 ));
             }
@@ -150,7 +153,10 @@ pub(super) fn validate_runtime_config_capabilities(
                 details.push(capability_detail(
                     "invalid_rebalance_schedule",
                     format!("{}.config.rebalance_schedule", agent.id),
-                    format!("不支持的再平衡频率 '{}'。当前已验证的频率: every_slow, every_1d, weekly", schedule),
+                    format!(
+                        "不支持的再平衡频率 '{}'。当前已验证的频率: every_slow, every_1d, weekly",
+                        schedule
+                    ),
                     None,
                 ));
             }
@@ -362,7 +368,9 @@ pub(super) fn validate_backtest_execution_assumption_overrides(
         return Err("backtest_options.execution_assumptions.fee_bps 必须大于等于 0".to_string());
     }
     if overrides.slippage_bps.is_some_and(|value| value < 0.0) {
-        return Err("backtest_options.execution_assumptions.slippage_bps 必须大于等于 0".to_string());
+        return Err(
+            "backtest_options.execution_assumptions.slippage_bps 必须大于等于 0".to_string(),
+        );
     }
 
     Ok(())
@@ -478,10 +486,9 @@ fn percent_decode(input: &str) -> String {
     let bytes = input.as_bytes();
     while i < bytes.len() {
         if bytes[i] == b'%' && i + 2 < bytes.len() {
-            if let Ok(decoded) = u8::from_str_radix(
-                &String::from_utf8_lossy(&bytes[i + 1..i + 3]),
-                16,
-            ) {
+            if let Ok(decoded) =
+                u8::from_str_radix(&String::from_utf8_lossy(&bytes[i + 1..i + 3]), 16)
+            {
                 result.push(decoded as char);
                 i += 3;
                 continue;

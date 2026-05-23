@@ -120,8 +120,11 @@ test("run simulation smoke covers start, SSE, and history refresh", async ({ pag
 
   await openResearchMode(page);
   await openRunsPrimaryMode(page);
-  await expect(page.locator(".event-summary-grid")).toContainText("run_smoke_001");
-  await expect(page.locator(".event-summary-grid")).toContainText("4");
+  await expect(page.locator(".event-summary-grid").first()).toContainText("已完成");
+  await expect(page.locator(".event-summary-grid").first()).toContainText("4");
+  await expect(page.locator(".event-summary-grid").first()).toContainText("10250");
+  await page.getByTestId("event-panel-intro").getByRole("button", { name: "展开详情" }).click();
+  await expect(page.getByTestId("event-panel-intro")).toContainText("run_smoke_001");
   await expect(page.getByTestId("event-feed-row-evt_run_exec_1")).toBeVisible();
   await expect(page.getByTestId("runtime-artifact-save")).toBeVisible();
   await Promise.all([
@@ -138,7 +141,7 @@ test("run simulation smoke covers start, SSE, and history refresh", async ({ pag
     .click();
 
   await expect(page.getByTestId("asset-candles-panel")).toContainText("10,250.00");
-  await expect(page.locator(".event-summary-grid")).toContainText("4");
+  await expect(page.locator(".event-summary-grid").first()).toContainText("4");
 
   api.expectNoUnexpectedApiRequests();
 });

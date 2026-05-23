@@ -21,7 +21,7 @@ export const DECLARED_INDICATOR_KINDS = [
 
 export const SUPPORTED_INDICATOR_KINDS = [...DECLARED_INDICATOR_KINDS];
 export const SUPPORTED_RUNTIME_MODES = ["paper"];
-export const SUPPORTED_RUNTIME_EXECUTION_MODULES = ["builtin.execution.paper"];
+export const SUPPORTED_RUNTIME_EXECUTION_MODULES = ["builtin.execution.paper", "live.okx"];
 export const SUPPORTED_EXCHANGES = ["binance", "okx"];
 export const SUPPORTED_SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
 export const SUPPORTED_FRONTEND_MODULE_KEYS = [

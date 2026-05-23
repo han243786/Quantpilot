@@ -44,9 +44,7 @@ impl CircuitBreaker {
         match self.state {
             CircuitState::Closed => false,
             CircuitState::Open => true,
-            CircuitState::HalfOpen => {
-                self.half_open_successes >= self.half_open_limit
-            }
+            CircuitState::HalfOpen => self.half_open_successes >= self.half_open_limit,
         }
     }
 

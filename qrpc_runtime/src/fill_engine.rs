@@ -1,4 +1,6 @@
-use crate::slippage::{compute_fill_price, ExecutionAssumptions, ExtendedMarketState};
+use crate::slippage::{
+    compute_fill_price, ExecutionAssumptions, ExtendedMarketState, SlippageModel,
+};
 use qrpc_core::{
     Exchange, ExecutionPlan, ExecutionStatus, FillReport, FillResult, OpenOrder, OrderSide,
     OrderType, PortfolioState, Position, RuntimeEvent, RuntimeEventType, SimOrder, Symbol,
@@ -52,8 +54,16 @@ impl MarketState {
 
     fn to_extended(self, volatility: f64, timeframe_minutes: u64) -> ExtendedMarketState {
         match (self.bid_price, self.ask_price) {
-            (Some(bid), Some(ask)) => ExtendedMarketState::from_quote(bid, ask, self.buy_liquidity, self.sell_liquidity),
-            _ => ExtendedMarketState::from_mid_price(self.price, self.buy_liquidity, self.sell_liquidity, volatility, timeframe_minutes),
+            (Some(bid), Some(ask)) => {
+                ExtendedMarketState::from_quote(bid, ask, self.buy_liquidity, self.sell_liquidity)
+            }
+            _ => ExtendedMarketState::from_mid_price(
+                self.price,
+                self.buy_liquidity,
+                self.sell_liquidity,
+                volatility,
+                timeframe_minutes,
+            ),
         }
     }
 }
@@ -148,7 +158,9 @@ impl FillEngine {
                 order.reference_price,
             );
             let available_sell_qty = available_sell_qty_for_order(portfolio, order);
-            let executable_qty = executable_qty(order, &state).min(available_sell_qty);
+            let executable_qty =
+                cash_limited_executable_qty(portfolio, order, &state, &self.assumptions)
+                    .min(available_sell_qty);
 
             match order.time_in_force {
                 TimeInForce::Fok => {
@@ -161,21 +173,6 @@ impl FillEngine {
                             trace_id,
                         ));
                         continue;
-                    }
-                    // v2.3.5: FOK 买单成交前检查现金是否充足
-                    if order.side == OrderSide::Buy {
-                        let notional = executable_qty * order.reference_price;
-                        let fee_est = notional * self.assumptions.taker_fee_bps / 10_000.0;
-                        if portfolio.available_cash_balance < notional + fee_est {
-                            events.push(reject_event(
-                                &plan.plan_id,
-                                &order.order_id,
-                                "FOK 现金不足",
-                                now_ms,
-                                trace_id,
-                            ));
-                            continue;
-                        }
                     }
                     let fill = build_fill_report(
                         plan,
@@ -350,7 +347,7 @@ impl FillEngine {
                     updated.side.clone(),
                     remaining_after,
                     reserve_price,
-                    10.0,
+                    updated.fee_bps,
                 );
                 updated.reserved_cash = reserved_cash;
                 updated.reserved_qty = reserved_qty;
@@ -477,6 +474,8 @@ impl FillEngine {
             created_at_ms: now_ms,
             updated_at_ms: now_ms,
             trace_id: trace_id.to_string(),
+            slippage_bps: order.slippage_bps,
+            fee_bps: order.fee_bps,
         };
         self.open_orders
             .insert(open_order.order_id.clone(), open_order.clone());
@@ -509,9 +508,10 @@ fn market_state_for(
     symbol: Symbol,
     fallback_price: f64,
 ) -> MarketState {
-    market_state.get(&(exchange, symbol)).cloned().unwrap_or_else(|| {
-        MarketState::from_mid_price(fallback_price)
-    })
+    market_state
+        .get(&(exchange, symbol))
+        .cloned()
+        .unwrap_or_else(|| MarketState::from_mid_price(fallback_price))
 }
 
 fn executable_qty(order: &SimOrder, state: &MarketState) -> f64 {
@@ -534,6 +534,44 @@ fn executable_qty(order: &SimOrder, state: &MarketState) -> f64 {
         return 0.0;
     }
     order.quantity.min(liquidity)
+}
+
+fn execution_assumptions_for_order(
+    order: &SimOrder,
+    assumptions: &ExecutionAssumptions,
+) -> ExecutionAssumptions {
+    let mut scoped = assumptions.clone();
+    if order.slippage_bps.is_finite() && order.slippage_bps >= 0.0 {
+        scoped.slippage = SlippageModel::FixedBps {
+            bps: order.slippage_bps,
+        };
+    }
+    if order.fee_bps.is_finite() && order.fee_bps >= 0.0 {
+        scoped.taker_fee_bps = order.fee_bps;
+    }
+    scoped
+}
+
+fn cash_limited_executable_qty(
+    portfolio: &PortfolioState,
+    order: &SimOrder,
+    state: &MarketState,
+    assumptions: &ExecutionAssumptions,
+) -> f64 {
+    let executable = executable_qty(order, state);
+    if !matches!(order.side, OrderSide::Buy) || !executable.is_finite() || executable <= 0.0 {
+        return executable;
+    }
+
+    let scoped_assumptions = execution_assumptions_for_order(order, assumptions);
+    let extended = state.to_extended(0.02, 1440);
+    let fill_price = compute_fill_price(order, &extended, &scoped_assumptions, 0.02);
+    if !fill_price.is_finite() || fill_price <= 0.0 {
+        return 0.0;
+    }
+    let fee_multiplier = 1.0 + order.fee_bps.max(0.0) / 10_000.0;
+    let max_qty = portfolio.available_cash_balance.max(0.0) / (fill_price * fee_multiplier);
+    executable.min(max_qty)
 }
 
 fn reservation_for_order(side: OrderSide, quantity: f64, price: f64, fee_bps: f64) -> (f64, f64) {
@@ -759,8 +797,12 @@ fn sim_order_from_open(order: &OpenOrder, default_fee_bps: f64) -> SimOrder {
         time_in_force: order.time_in_force.clone(),
         allow_partial: true,
         reference_price: order.reference_price,
-        slippage_bps: 0.0,
-        fee_bps: default_fee_bps,
+        slippage_bps: order.slippage_bps,
+        fee_bps: if order.fee_bps.is_finite() && order.fee_bps >= 0.0 {
+            order.fee_bps
+        } else {
+            default_fee_bps
+        },
         strategy_tag: "resting".into(),
     }
 }
@@ -773,12 +815,20 @@ fn is_marketable(order: &SimOrder, market_ref: f64) -> bool {
         (OrderType::Limit, OrderSide::Sell, Some(limit)) => market_ref >= limit,
         // 止损单: 价格到达止损价时触发(与限价单方向相反)
         // Buy StopLoss: 价格上涨到止损价时买入(用于空头止损)
-        (OrderType::StopLoss | OrderType::StopLossLimit, OrderSide::Buy, Some(limit)) => market_ref >= limit,
+        (OrderType::StopLoss | OrderType::StopLossLimit, OrderSide::Buy, Some(limit)) => {
+            market_ref >= limit
+        }
         // Sell StopLoss: 价格下跌到止损价时卖出(用于多头止损)
-        (OrderType::StopLoss | OrderType::StopLossLimit, OrderSide::Sell, Some(limit)) => market_ref <= limit,
+        (OrderType::StopLoss | OrderType::StopLossLimit, OrderSide::Sell, Some(limit)) => {
+            market_ref <= limit
+        }
         // 止盈单: 价格到达止盈目标时触发
-        (OrderType::TakeProfit | OrderType::TakeProfitLimit, OrderSide::Buy, Some(limit)) => market_ref <= limit,
-        (OrderType::TakeProfit | OrderType::TakeProfitLimit, OrderSide::Sell, Some(limit)) => market_ref >= limit,
+        (OrderType::TakeProfit | OrderType::TakeProfitLimit, OrderSide::Buy, Some(limit)) => {
+            market_ref <= limit
+        }
+        (OrderType::TakeProfit | OrderType::TakeProfitLimit, OrderSide::Sell, Some(limit)) => {
+            market_ref >= limit
+        }
         _ => false,
     }
 }
@@ -802,13 +852,20 @@ fn build_fill_report(
     // 日线默认波动率 2%；后续可从市场数据提取实际波动率
     let volatility = 0.02;
     let extended = market.to_extended(volatility, 1440);
-
-    let fill_price = compute_fill_price(order, &extended, assumptions, volatility);
-    let fee_paid = fill_qty * fill_price * order.fee_bps / 10_000.0;
+    let scoped_assumptions = execution_assumptions_for_order(order, assumptions);
+    let fill_price = compute_fill_price(order, &extended, &scoped_assumptions, volatility);
+    let fee_paid = fill_qty * fill_price * order.fee_bps.max(0.0) / 10_000.0;
 
     // v1.1.1: 延迟模型偏移成交时间
-    let latency_seed = now_ms.wrapping_add(order.order_id.bytes().fold(0u64, |a, b| a.wrapping_mul(31).wrapping_add(b as u64)));
-    let latency_ms = assumptions.latency.delay_ms(&order.exchange, latency_seed);
+    let latency_seed = now_ms.wrapping_add(
+        order
+            .order_id
+            .bytes()
+            .fold(0u64, |a, b| a.wrapping_mul(31).wrapping_add(b as u64)),
+    );
+    let latency_ms = scoped_assumptions
+        .latency
+        .delay_ms(&order.exchange, latency_seed);
     let filled_at = now_ms.saturating_add(latency_ms);
 
     FillReport {
@@ -856,11 +913,12 @@ fn build_fill_report_from_open(
             time_in_force: TimeInForce::Gtc,
             allow_partial: true,
             reference_price: order.reference_price,
-            slippage_bps: 0.0,
-            fee_bps: assumptions.taker_fee_bps,
+            slippage_bps: order.slippage_bps,
+            fee_bps: order.fee_bps,
             strategy_tag: "resting".into(),
         };
-        let computed = compute_fill_price(&temp_order, &extended, assumptions, volatility);
+        let scoped_assumptions = execution_assumptions_for_order(&temp_order, assumptions);
+        let computed = compute_fill_price(&temp_order, &extended, &scoped_assumptions, volatility);
         // Limit 买单成交价不高于 limit，卖单不低于 limit
         match order.side {
             OrderSide::Buy => computed.min(limit),
@@ -871,9 +929,18 @@ fn build_fill_report_from_open(
     };
     // v1.1.1: 延迟模型偏移成交时间
     let latency_seed = now_ms.wrapping_add(
-        order.order_id.bytes().fold(0u64, |a, b| a.wrapping_mul(31).wrapping_add(b as u64)),
+        order
+            .order_id
+            .bytes()
+            .fold(0u64, |a, b| a.wrapping_mul(31).wrapping_add(b as u64)),
     );
-    let latency_ms = assumptions.latency.delay_ms(&order.exchange, latency_seed);
+    let scoped_assumptions = execution_assumptions_for_order(
+        &sim_order_from_open(order, assumptions.taker_fee_bps),
+        assumptions,
+    );
+    let latency_ms = scoped_assumptions
+        .latency
+        .delay_ms(&order.exchange, latency_seed);
     let filled_at = now_ms.saturating_add(latency_ms);
 
     FillReport {
@@ -884,7 +951,7 @@ fn build_fill_report_from_open(
         side: order.side.clone(),
         filled_qty: fill_qty,
         filled_price: fill_price,
-        fee_paid: fill_qty * fill_price * assumptions.taker_fee_bps / 10_000.0,
+        fee_paid: fill_qty * fill_price * order.fee_bps.max(0.0) / 10_000.0,
         filled_at_ms: filled_at,
         status: if fill_qty + 1e-9 < order.remaining_qty {
             ExecutionStatus::PartiallyFilled
@@ -903,6 +970,8 @@ pub fn apply_fill_to_portfolio(portfolio: &mut PortfolioState, fill: &FillReport
     let cash_delta = signed_qty * fill.filled_price;
     portfolio.cash_balance -= cash_delta;
     portfolio.cash_balance -= fill.fee_paid;
+    portfolio.available_cash_balance =
+        (portfolio.cash_balance - portfolio.frozen_cash_balance).max(0.0);
 
     let mut found = false;
     for position in &mut portfolio.positions {
@@ -933,7 +1002,8 @@ pub fn apply_fill_to_portfolio(portfolio: &mut PortfolioState, fill: &FillReport
             }
             // v2.1.0: 成交后更新 mark_price 和未实现盈亏
             position.mark_price = fill.filled_price;
-            position.unrealized_pnl = position.net_qty * (position.mark_price - position.avg_entry_price);
+            position.unrealized_pnl =
+                position.net_qty * (position.mark_price - position.avg_entry_price);
             break;
         }
     }
@@ -1045,6 +1115,61 @@ mod tests {
     }
 
     #[test]
+    fn order_level_slippage_changes_market_fill_price() {
+        let mut low_slippage = FillEngine::default();
+        let mut high_slippage = FillEngine::default();
+        let mut base_order = sample_order(OrderType::Market, None);
+        base_order.fee_bps = 0.0;
+
+        let mut low_order = base_order.clone();
+        low_order.slippage_bps = 0.0;
+        let mut high_order = base_order;
+        high_order.slippage_bps = 100.0;
+
+        let low = low_slippage.submit_plan(
+            &sample_plan(low_order),
+            &sample_market(50_000.0),
+            &mut sample_portfolio(),
+            10,
+            "trace_low",
+        );
+        let high = high_slippage.submit_plan(
+            &sample_plan(high_order),
+            &sample_market(50_000.0),
+            &mut sample_portfolio(),
+            10,
+            "trace_high",
+        );
+
+        assert!(high.fills[0].filled_price > low.fills[0].filled_price);
+    }
+
+    #[test]
+    fn gtc_buy_order_is_capped_by_available_cash() {
+        let mut engine = FillEngine::default();
+        let mut order = sample_order(OrderType::Market, None);
+        order.quantity = 3.0;
+        order.allow_partial = true;
+        order.fee_bps = 10.0;
+        order.slippage_bps = 10.0;
+        let plan = sample_plan(order);
+        let mut portfolio = PortfolioState::new(50_000.0, 0);
+
+        let result = engine.submit_plan(
+            &plan,
+            &sample_market(50_000.0),
+            &mut portfolio,
+            10,
+            "trace_1",
+        );
+
+        assert_eq!(result.fills.len(), 1);
+        assert!(result.fills[0].filled_qty < 1.0);
+        assert!(portfolio.cash_balance >= -1e-6);
+        assert!(portfolio.available_cash_balance <= 1e-6);
+    }
+
+    #[test]
     fn resting_limit_order_stays_open_when_not_marketable() {
         let mut engine = FillEngine::default();
         let plan = sample_plan(sample_order(OrderType::Limit, Some(49_000.0)));
@@ -1122,7 +1247,7 @@ mod tests {
         order.time_in_force = TimeInForce::Ioc;
         order.allow_partial = true;
         let plan = sample_plan(order);
-        let mut portfolio = sample_portfolio();
+        let mut portfolio = PortfolioState::new(1_000_000.0, 0);
         let result = engine.submit_plan(
             &plan,
             &sample_market(50_000.0),

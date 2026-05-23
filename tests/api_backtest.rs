@@ -12,7 +12,6 @@ use tower::ServiceExt;
 
 const BTC_DUAL_MA_STABILITY: &str = include_str!("../quantscript/btc_dual_ma_stability.qs");
 
-
 fn compare_status_for_values(left: &Value, right: &Value) -> &'static str {
     if left.is_null() || right.is_null() {
         "missing"
@@ -796,12 +795,21 @@ async fn backtest_start_endpoint_supports_deterministic_mock_happy_path() {
     let detail_summary = &detail["backtest_artifacts"]["metrics"]["summary"];
     let created_summary = &created["backtest_artifacts"]["metrics"]["summary"];
     assert_eq!(detail_summary["step_count"], created_summary["step_count"]);
-    assert_eq!(detail_summary["trade_count"], created_summary["trade_count"]);
-    assert!(
-        (detail_summary["final_equity"].as_f64().unwrap() - created_summary["final_equity"].as_f64().unwrap()).abs() < 1e-10
+    assert_eq!(
+        detail_summary["trade_count"],
+        created_summary["trade_count"]
     );
     assert!(
-        (detail_summary["net_profit"].as_f64().unwrap() - created_summary["net_profit"].as_f64().unwrap()).abs() < 1e-10
+        (detail_summary["final_equity"].as_f64().unwrap()
+            - created_summary["final_equity"].as_f64().unwrap())
+        .abs()
+            < 1e-10
+    );
+    assert!(
+        (detail_summary["net_profit"].as_f64().unwrap()
+            - created_summary["net_profit"].as_f64().unwrap())
+        .abs()
+            < 1e-10
     );
     assert_eq!(
         detail["execution_assumptions"],
@@ -1039,10 +1047,7 @@ async fn backtest_start_endpoint_keeps_historical_replay_failure_contract() {
     let error: Value = serde_json::from_slice(&body).unwrap();
 
     assert_eq!(error["error"], "bad_request");
-    assert!(error["message"]
-        .as_str()
-        .unwrap()
-        .contains("加载"));
+    assert!(error["message"].as_str().unwrap().contains("加载"));
     assert!(error["details"].as_array().unwrap().is_empty());
 }
 
@@ -1517,7 +1522,11 @@ async fn backtest_start_endpoint_applies_latency_override_to_execution_timestamp
     let status = response.status();
     let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
     let body_str = String::from_utf8_lossy(&body).to_string();
-    assert_eq!(status, StatusCode::OK, "backtest returned {status}: {body_str}");
+    assert_eq!(
+        status,
+        StatusCode::OK,
+        "backtest returned {status}: {body_str}"
+    );
 
     let created: Value = serde_json::from_slice(&body).unwrap();
     let events = created["backtest_artifacts"]["event_log"]["events"]
@@ -1527,14 +1536,21 @@ async fn backtest_start_endpoint_applies_latency_override_to_execution_timestamp
     // 验证后端正确处理 latency_ms 参数：
     // 1. manifest 记录了延迟值
     // 2. 执行计划事件不含延迟偏移（只 fill 级别有延迟）
-    let manifest_latency = created["backtest_artifacts"]["manifest"]["backtest_spec"]
-        ["run_spec"]["execution_assumptions"]["latency_assumption_ms"]
+    let manifest_latency = created["backtest_artifacts"]["manifest"]["backtest_spec"]["run_spec"]
+        ["execution_assumptions"]["latency_assumption_ms"]
         .as_u64();
-    assert_eq!(manifest_latency, Some(250), "manifest 应记录 latency_assumption_ms=250");
+    assert_eq!(
+        manifest_latency,
+        Some(250),
+        "manifest 应记录 latency_assumption_ms=250"
+    );
 
     // 验证回测正常产生事件且延迟参数被记录
     assert!(!events.is_empty(), "backtest should produce events");
-    assert!(manifest_latency.is_some(), "manifest must record latency_assumption_ms");
+    assert!(
+        manifest_latency.is_some(),
+        "manifest must record latency_assumption_ms"
+    );
 }
 
 #[tokio::test(flavor = "multi_thread")]
@@ -1740,18 +1756,30 @@ async fn backtest_compare_endpoint_reports_same_execution_assumptions() {
     );
     // Metrics may be "same" or "different" depending on mock data variance, both are valid
     let status = compared["metrics"]["status"].as_str().unwrap_or("");
-    assert!(status == "same" || status == "different", "unexpected metrics status: {status}");
+    assert!(
+        status == "same" || status == "different",
+        "unexpected metrics status: {status}"
+    );
     assert!(compared["metrics"]["fields"].is_object());
     // drilldown structure may vary — just verify it exists
-    assert!(!compared["metrics"]["drilldown"].is_null(), "drilldown should exist");
+    assert!(
+        !compared["metrics"]["drilldown"].is_null(),
+        "drilldown should exist"
+    );
     // Verify left/right summaries exist with expected structure
     let left_summary = &compared["metrics"]["left"];
     let right_summary = &compared["metrics"]["right"];
     assert!(left_summary["step_count"].as_u64().unwrap() > 0);
     assert!(right_summary["step_count"].as_u64().unwrap() > 0);
     assert_eq!(left_summary["trade_count"], right_summary["trade_count"]);
-    assert!(compared["trade_ledger"]["status"].as_str().map(|s| s == "same" || s == "different").unwrap_or(false));
-    assert!(compared["equity_curve"]["status"].as_str().map(|s| s == "same" || s == "different").unwrap_or(false));
+    assert!(compared["trade_ledger"]["status"]
+        .as_str()
+        .map(|s| s == "same" || s == "different")
+        .unwrap_or(false));
+    assert!(compared["equity_curve"]["status"]
+        .as_str()
+        .map(|s| s == "same" || s == "different")
+        .unwrap_or(false));
     assert_eq!(
         compared["equity_curve"]["fields"],
         expected_equity_curve_fields(&first_equity_summary, &second_equity_summary)
@@ -1760,8 +1788,14 @@ async fn backtest_compare_endpoint_reports_same_execution_assumptions() {
         !compared["equity_curve"]["drilldown"].is_null(),
         "equity_curve drilldown should exist"
     );
-    assert!(!compared["report_narrative"].is_null(), "report_narrative should exist");
-    assert!(!compared["compare_report"].is_null(), "compare_report should exist");
+    assert!(
+        !compared["report_narrative"].is_null(),
+        "report_narrative should exist"
+    );
+    assert!(
+        !compared["compare_report"].is_null(),
+        "compare_report should exist"
+    );
 }
 
 #[tokio::test(flavor = "multi_thread")]
@@ -1933,20 +1967,44 @@ async fn backtest_compare_endpoint_reports_different_execution_assumptions() {
     );
     // Metrics may be "same" or "different" depending on mock data variance, both are valid
     let status = compared["metrics"]["status"].as_str().unwrap_or("");
-    assert!(status == "same" || status == "different", "unexpected metrics status: {status}");
+    assert!(
+        status == "same" || status == "different",
+        "unexpected metrics status: {status}"
+    );
     assert!(compared["metrics"]["fields"].is_object());
     // drilldown structure may vary — just verify it exists
-    assert!(!compared["metrics"]["drilldown"].is_null(), "drilldown should exist");
+    assert!(
+        !compared["metrics"]["drilldown"].is_null(),
+        "drilldown should exist"
+    );
     // Verify left/right summaries exist
     assert!(compared["metrics"]["left"]["step_count"].as_u64().unwrap() > 0);
     assert!(compared["metrics"]["right"]["step_count"].as_u64().unwrap() > 0);
     // Trade ledger and equity curve status may vary with mock data
-    assert!(compared["trade_ledger"]["status"].as_str().map(|s| s == "same" || s == "different").unwrap_or(false));
-    assert!(compared["equity_curve"]["status"].as_str().map(|s| s == "same" || s == "different").unwrap_or(false));
-    assert!(compared["equity_curve"]["fields"].is_object(), "equity_curve fields should exist");
-    assert!(!compared["equity_curve"]["drilldown"].is_null(), "equity_curve drilldown should exist");
-    assert!(!compared["report_narrative"].is_null(), "report_narrative should exist");
-    assert!(!compared["compare_report"].is_null(), "compare_report should exist");
+    assert!(compared["trade_ledger"]["status"]
+        .as_str()
+        .map(|s| s == "same" || s == "different")
+        .unwrap_or(false));
+    assert!(compared["equity_curve"]["status"]
+        .as_str()
+        .map(|s| s == "same" || s == "different")
+        .unwrap_or(false));
+    assert!(
+        compared["equity_curve"]["fields"].is_object(),
+        "equity_curve fields should exist"
+    );
+    assert!(
+        !compared["equity_curve"]["drilldown"].is_null(),
+        "equity_curve drilldown should exist"
+    );
+    assert!(
+        !compared["report_narrative"].is_null(),
+        "report_narrative should exist"
+    );
+    assert!(
+        !compared["compare_report"].is_null(),
+        "compare_report should exist"
+    );
 }
 
 #[tokio::test(flavor = "multi_thread")]

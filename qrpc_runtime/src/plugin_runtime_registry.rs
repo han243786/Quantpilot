@@ -277,7 +277,11 @@ impl RuntimePluginRegistry {
             loaded += 1;
         }
         if !errors.is_empty() {
-            eprintln!("[plugin] 扫描原子时 {} 个文件失败: {:?}", errors.len(), errors);
+            eprintln!(
+                "[plugin] 扫描原子时 {} 个文件失败: {:?}",
+                errors.len(),
+                errors
+            );
         }
         Ok(loaded)
     }
@@ -347,15 +351,11 @@ impl RuntimePluginRegistry {
 
         match action {
             PluginSecurityAction::AccessCredentials => {
-                return Err(format!(
-                    "插件 `{plugin_id}` 不允许访问凭证管理"
-                ));
+                return Err(format!("插件 `{plugin_id}` 不允许访问凭证管理"));
             }
             PluginSecurityAction::NetworkCall => {
                 if !manifest.security.allow_network {
-                    return Err(format!(
-                        "插件 `{plugin_id}` 未声明 allow_network"
-                    ));
+                    return Err(format!("插件 `{plugin_id}` 未声明 allow_network"));
                 }
             }
             PluginSecurityAction::WriteState => {
@@ -473,9 +473,7 @@ mod tests {
         let err = registry
             .register_data_provider(manifest, Arc::new(BuiltinDataModule::default()))
             .unwrap_err();
-        assert!(err
-            .iter()
-            .any(|item| item.contains("必须声明扩展点")));
+        assert!(err.iter().any(|item| item.contains("必须声明扩展点")));
     }
 
     #[test]

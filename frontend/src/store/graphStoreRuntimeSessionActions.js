@@ -57,21 +57,20 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
   return {
     async startRuntime() {
       if (get().actionLock) return;
-      set({ actionLock: "runtime" });
       const graph = get().graph;
-      if (!graph.validation_state.is_runnable) { set({ actionLock: null }); return; }
+      if (!graph.validation_state.is_runnable) return;
       const capabilityBlockReason = getCapabilityBlockReason(get, "start_simulation");
       if (capabilityBlockReason) {
         setRuntimeCapabilityBlocked(set, "simulation", capabilityBlockReason);
-        set({ actionLock: null });
         return;
       }
 
       const result = await get().compileCurrentGraph();
-      if (!result) { set({ actionLock: null }); return; }
+      if (!result) return;
       const capabilityContext = buildCapabilityContext(get().capabilities);
 
       get().stopRuntime();
+      set({ actionLock: "runtime" });
 
       set((state) =>
         buildRuntimeConnectingState(
@@ -155,9 +154,10 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
 
         source._onComplete = async () => {
           source.close();
+          flushBatch();
           set((state) => ({
             runtimeController: null,
-            runtime: buildRuntimeCompletionState(state.runtime)
+            runtime: buildRuntimeCompletionState(state.runtime, start.run_id)
           }));
         };
         source.addEventListener("run_completed", source._onComplete);
@@ -222,13 +222,11 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
 
     async startBacktest() {
       if (get().actionLock) return;
-      set({ actionLock: "runtime" });
       const graph = get().graph;
-      if (!graph.validation_state.is_runnable) { set({ actionLock: null }); return; }
+      if (!graph.validation_state.is_runnable) return;
       const capabilityBlockReason = getCapabilityBlockReason(get, "run_backtest");
       if (capabilityBlockReason) {
         setRuntimeCapabilityBlocked(set, "backtest", capabilityBlockReason);
-        set({ actionLock: null });
         return;
       }
 
@@ -241,10 +239,11 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
       } else {
         result = await get().compileCurrentGraph();
       }
-      if (!result) { set({ actionLock: null }); return; }
+      if (!result) return;
       const capabilityContext = buildCapabilityContext(get().capabilities);
 
       get().stopRuntime();
+      set({ actionLock: "runtime" });
 
       set((state) =>
         buildRuntimeConnectingState(

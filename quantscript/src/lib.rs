@@ -218,12 +218,8 @@ pub fn compile_quant_script(input: &str) -> Result<CompiledRuntimeProtocol> {
 )]
 #[allow(deprecated)]
 pub fn compile_quant_script_file(path: impl AsRef<Path>) -> Result<CompiledRuntimeProtocol> {
-    let source = std::fs::read_to_string(path.as_ref()).with_context(|| {
-        format!(
-            "读取 QuantScript 文件失败: {}",
-            path.as_ref().display()
-        )
-    })?;
+    let source = std::fs::read_to_string(path.as_ref())
+        .with_context(|| format!("读取 QuantScript 文件失败: {}", path.as_ref().display()))?;
     compile_quant_script(&source)
 }
 
@@ -341,9 +337,8 @@ fn tokenize(input: &str) -> Result<Vec<Token>> {
                     match next {
                         '"' => break,
                         '\\' => {
-                            let escaped = chars
-                                .next()
-                                .ok_or_else(|| anyhow!("未终止的转义序列"))?;
+                            let escaped =
+                                chars.next().ok_or_else(|| anyhow!("未终止的转义序列"))?;
                             content.push(match escaped {
                                 'n' => '\n',
                                 't' => '\t',

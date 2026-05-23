@@ -1,6 +1,5 @@
 /// v3.7.0: 执行端审计日志
 /// 追加写入, JSON Lines 格式, 不可删除
-
 use anyhow::Result;
 use serde_json::Value;
 use std::path::PathBuf;
@@ -27,7 +26,10 @@ pub struct AuditLog {
 impl AuditLog {
     pub fn new(storage_dir: &std::path::Path) -> Result<Self> {
         let path = storage_dir.join(AUDIT_LOG_FILE);
-        Ok(Self { path, writer: Mutex::new(()) })
+        Ok(Self {
+            path,
+            writer: Mutex::new(()),
+        })
     }
 
     /// 追加审计条目 (JSON Lines) — v3.0.1 D-2: Mutex守卫生命周期修复
@@ -35,7 +37,9 @@ impl AuditLog {
         let _guard = self.writer.lock().unwrap(); // 守卫在此作用域内保持
         let line = serde_json::to_string(entry).unwrap_or_default();
         if let Ok(mut file) = std::fs::OpenOptions::new()
-            .create(true).append(true).open(&self.path)
+            .create(true)
+            .append(true)
+            .open(&self.path)
         {
             use std::io::Write;
             if let Err(e) = writeln!(file, "{}", line) {

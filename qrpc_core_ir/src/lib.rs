@@ -631,7 +631,7 @@ mod tests {
             max_exchange_leverage: 3.0,
             min_action_interval_ms: 1000,
             enabled: true,
-                        max_cross_symbol_leverage: None,
+            max_cross_symbol_leverage: None,
         });
 
         let encoded = serde_json::to_string(&core_ir).unwrap();

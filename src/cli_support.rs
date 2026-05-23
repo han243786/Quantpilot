@@ -92,7 +92,9 @@ pub fn handle_credential_command(args: &[String]) -> anyhow::Result<()> {
     if args.len() < 2 {
         eprintln!("用法: quantpilot credential <set|get|list|delete> [参数]");
         eprintln!("  set <标签>          交互式输入 (不在 shell history 中留存凭证明文)");
-        eprintln!("  set <标签> --stdin   从 stdin 读取 JSON: {{\"key\":\"...\",\"secret\":\"...\"}}");
+        eprintln!(
+            "  set <标签> --stdin   从 stdin 读取 JSON: {{\"key\":\"...\",\"secret\":\"...\"}}"
+        );
         eprintln!("  get <标签>           显示标签下的全部字段");
         eprintln!("  list                 列出所有已存储标签");
         eprintln!("  delete <标签>         删除指定标签的全部字段");
@@ -112,7 +114,8 @@ pub fn handle_credential_command(args: &[String]) -> anyhow::Result<()> {
 
             if use_stdin {
                 let mut input = String::new();
-                std::io::stdin().read_line(&mut input)
+                std::io::stdin()
+                    .read_line(&mut input)
                     .map_err(|e| anyhow::anyhow!("读取 stdin 失败: {}", e))?;
                 fields = serde_json::from_str(&input)
                     .map_err(|e| anyhow::anyhow!("stdin 格式错误, 需要 JSON 对象: {}", e))?;
@@ -125,19 +128,22 @@ pub fn handle_credential_command(args: &[String]) -> anyhow::Result<()> {
 
                 eprint!("请输入 api_key: ");
                 io::stderr().flush().ok();
-                io::stdin().read_line(&mut key)
+                io::stdin()
+                    .read_line(&mut key)
                     .map_err(|e| anyhow::anyhow!("读取输入失败: {}", e))?;
                 key = key.trim().to_string();
 
                 eprint!("请输入 secret: ");
                 io::stderr().flush().ok();
-                io::stdin().read_line(&mut secret)
+                io::stdin()
+                    .read_line(&mut secret)
                     .map_err(|e| anyhow::anyhow!("读取输入失败: {}", e))?;
                 secret = secret.trim().to_string();
 
                 eprint!("请输入 passphrase (可选, 直接回车跳过): ");
                 io::stderr().flush().ok();
-                io::stdin().read_line(&mut passphrase)
+                io::stdin()
+                    .read_line(&mut passphrase)
                     .map_err(|e| anyhow::anyhow!("读取输入失败: {}", e))?;
                 passphrase = passphrase.trim().to_string();
 
@@ -145,7 +151,8 @@ pub fn handle_credential_command(args: &[String]) -> anyhow::Result<()> {
                     anyhow::bail!("api_key 和 secret 不能为空");
                 }
 
-                let mut f: std::collections::BTreeMap<String, String> = std::collections::BTreeMap::new();
+                let mut f: std::collections::BTreeMap<String, String> =
+                    std::collections::BTreeMap::new();
                 f.insert("key".to_string(), key);
                 f.insert("secret".to_string(), secret);
                 if !passphrase.is_empty() {
@@ -174,7 +181,11 @@ pub fn handle_credential_command(args: &[String]) -> anyhow::Result<()> {
                         println!(
                             "标签 '{}' 包含字段: {} (使用 --reveal 查看值)",
                             service,
-                            names.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", ")
+                            names
+                                .iter()
+                                .map(|s| s.as_str())
+                                .collect::<Vec<_>>()
+                                .join(", ")
                         );
                     }
                 }

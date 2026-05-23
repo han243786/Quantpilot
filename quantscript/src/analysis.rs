@@ -1004,22 +1004,17 @@ fn contains_fetch_like_call_in_stmts(stmts: &[Stmt]) -> bool {
             contains_fetch_like_call_in_expr(condition)
                 || contains_fetch_like_call_in_stmts(then_branch)
                 || else_if_branches.iter().any(|(c, b)| {
-                    contains_fetch_like_call_in_expr(c)
-                        || contains_fetch_like_call_in_stmts(b)
+                    contains_fetch_like_call_in_expr(c) || contains_fetch_like_call_in_stmts(b)
                 })
                 || else_branch
                     .as_ref()
                     .is_some_and(|b| contains_fetch_like_call_in_stmts(b))
         }
-        Stmt::For {
-            iterable, body, ..
-        } => {
-            contains_fetch_like_call_in_expr(iterable)
-                || contains_fetch_like_call_in_stmts(body)
+        Stmt::For { iterable, body, .. } => {
+            contains_fetch_like_call_in_expr(iterable) || contains_fetch_like_call_in_stmts(body)
         }
         Stmt::While { condition, body } => {
-            contains_fetch_like_call_in_expr(condition)
-                || contains_fetch_like_call_in_stmts(body)
+            contains_fetch_like_call_in_expr(condition) || contains_fetch_like_call_in_stmts(body)
         }
         Stmt::Match { expr, arms } => {
             contains_fetch_like_call_in_expr(expr)
@@ -1053,8 +1048,7 @@ fn contains_fetch_like_call_in_expr(expr: &Expr) -> bool {
         | Expr::Try(object)
         | Expr::Unary { expr: object, .. } => contains_fetch_like_call_in_expr(object),
         Expr::Index { object, index } => {
-            contains_fetch_like_call_in_expr(object)
-                || contains_fetch_like_call_in_expr(index)
+            contains_fetch_like_call_in_expr(object) || contains_fetch_like_call_in_expr(index)
         }
         Expr::Slice { object, start, end } => {
             contains_fetch_like_call_in_expr(object)
@@ -1069,10 +1063,7 @@ fn contains_fetch_like_call_in_expr(expr: &Expr) -> bool {
         | Expr::Range {
             start: left,
             end: right,
-        } => {
-            contains_fetch_like_call_in_expr(left)
-                || contains_fetch_like_call_in_expr(right)
-        }
+        } => contains_fetch_like_call_in_expr(left) || contains_fetch_like_call_in_expr(right),
         Expr::Raw(_) | Expr::Identifier(_) | Expr::Number(_) | Expr::String(_) | Expr::Bool(_) => {
             false
         }
@@ -1138,10 +1129,7 @@ fn collect_fetch_lookback_warnings(module: &ScriptModule) -> Vec<Diagnostic> {
     diagnostics
 }
 
-fn collect_fetch_lookback_warnings_from_stmts(
-    stmts: &[Stmt],
-    diagnostics: &mut Vec<Diagnostic>,
-) {
+fn collect_fetch_lookback_warnings_from_stmts(stmts: &[Stmt], diagnostics: &mut Vec<Diagnostic>) {
     for stmt in stmts {
         match stmt {
             Stmt::Let { value, .. } | Stmt::Expr(value) | Stmt::Return(Some(value)) => {
@@ -1169,9 +1157,7 @@ fn collect_fetch_lookback_warnings_from_stmts(
                     collect_fetch_lookback_warnings_from_stmts(branch, diagnostics);
                 }
             }
-            Stmt::For {
-                iterable, body, ..
-            } => {
+            Stmt::For { iterable, body, .. } => {
                 collect_fetch_lookback_warnings_from_expr(iterable, diagnostics);
                 collect_fetch_lookback_warnings_from_stmts(body, diagnostics);
             }
@@ -1199,10 +1185,7 @@ fn collect_fetch_lookback_warnings_from_stmts(
     }
 }
 
-fn collect_fetch_lookback_warnings_from_expr(
-    expr: &Expr,
-    diagnostics: &mut Vec<Diagnostic>,
-) {
+fn collect_fetch_lookback_warnings_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnostic>) {
     if let Expr::Call { callee, args } = expr {
         let callee_name = match callee.as_ref() {
             Expr::Identifier(name) => name.as_str(),
@@ -1299,10 +1282,7 @@ fn detect_indirect_recursion(module: &ScriptModule) -> Vec<Diagnostic> {
                     if callee == start && start != &current {
                         diagnostics.push(Diagnostic::error(
                             "QS0605",
-                            format!(
-                                "检测到递归调用循环: {} 间接调用自身",
-                                start
-                            ),
+                            format!("检测到递归调用循环: {} 间接调用自身", start),
                             Some(Span::function(start.clone())),
                         ));
                     }
@@ -1342,9 +1322,7 @@ fn collect_callee_names_from_stmts(stmts: &[Stmt], out: &mut BTreeSet<String>) {
                     collect_callee_names_from_stmts(branch, out);
                 }
             }
-            Stmt::For {
-                iterable, body, ..
-            } => {
+            Stmt::For { iterable, body, .. } => {
                 collect_callee_names_from_expr(iterable, out);
                 collect_callee_names_from_stmts(body, out);
             }
@@ -1477,9 +1455,7 @@ fn check_index_bounds_from_stmts(
                     check_index_bounds_from_stmts(branch, data_sources, diagnostics);
                 }
             }
-            Stmt::For {
-                iterable, body, ..
-            } => {
+            Stmt::For { iterable, body, .. } => {
                 check_index_bounds_from_expr(iterable, data_sources, diagnostics);
                 check_index_bounds_from_stmts(body, data_sources, diagnostics);
             }
@@ -1582,10 +1558,7 @@ fn check_dead_code_emit(module: &ScriptModule) -> Vec<Diagnostic> {
     diagnostics
 }
 
-fn check_dead_code_emit_from_stmts(
-    stmts: &[Stmt],
-    diagnostics: &mut Vec<Diagnostic>,
-) {
+fn check_dead_code_emit_from_stmts(stmts: &[Stmt], diagnostics: &mut Vec<Diagnostic>) {
     for stmt in stmts {
         match stmt {
             Stmt::If {
@@ -1638,13 +1611,7 @@ fn is_constant_false(expr: &Expr) -> bool {
 
 // B1-15: 交易对白名单校验
 const KNOWN_SYMBOLS: &[&str] = &[
-    "BTCUSDT",
-    "ETHUSDT",
-    "BNBUSDT",
-    "SOLUSDT",
-    "ADAUSDT",
-    "DOGEUSDT",
-    "XRPUSDT",
+    "BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "ADAUSDT", "DOGEUSDT", "XRPUSDT",
 ];
 
 fn check_fetch_symbol_whitelist(module: &ScriptModule) -> Vec<Diagnostic> {
@@ -1657,10 +1624,7 @@ fn check_fetch_symbol_whitelist(module: &ScriptModule) -> Vec<Diagnostic> {
     diagnostics
 }
 
-fn check_fetch_symbol_whitelist_from_stmts(
-    stmts: &[Stmt],
-    diagnostics: &mut Vec<Diagnostic>,
-) {
+fn check_fetch_symbol_whitelist_from_stmts(stmts: &[Stmt], diagnostics: &mut Vec<Diagnostic>) {
     for stmt in stmts {
         match stmt {
             Stmt::Let { value, .. } | Stmt::Expr(value) | Stmt::Return(Some(value)) => {
@@ -1688,9 +1652,7 @@ fn check_fetch_symbol_whitelist_from_stmts(
                     check_fetch_symbol_whitelist_from_stmts(branch, diagnostics);
                 }
             }
-            Stmt::For {
-                iterable, body, ..
-            } => {
+            Stmt::For { iterable, body, .. } => {
                 check_fetch_symbol_whitelist_from_expr(iterable, diagnostics);
                 check_fetch_symbol_whitelist_from_stmts(body, diagnostics);
             }
@@ -1718,10 +1680,7 @@ fn check_fetch_symbol_whitelist_from_stmts(
     }
 }
 
-fn check_fetch_symbol_whitelist_from_expr(
-    expr: &Expr,
-    diagnostics: &mut Vec<Diagnostic>,
-) {
+fn check_fetch_symbol_whitelist_from_expr(expr: &Expr, diagnostics: &mut Vec<Diagnostic>) {
     if let Expr::Call { callee, args } = expr {
         let callee_name = match callee.as_ref() {
             Expr::Identifier(name) => name.as_str(),
@@ -1735,7 +1694,10 @@ fn check_fetch_symbol_whitelist_from_expr(
                 if !KNOWN_SYMBOLS.contains(&symbol_str.to_uppercase().as_str()) {
                     diagnostics.push(Diagnostic::warning(
                         "QS0505",
-                        format!("未知交易对 '{}' 不在已验证列表中。已验证: BTCUSDT, ETHUSDT, SOLUSDT", symbol_str),
+                        format!(
+                            "未知交易对 '{}' 不在已验证列表中。已验证: BTCUSDT, ETHUSDT, SOLUSDT",
+                            symbol_str
+                        ),
                         Some(Span::expr("instrument")),
                     ));
                 }

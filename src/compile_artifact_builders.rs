@@ -63,8 +63,8 @@ pub(super) fn build_compile_artifact_bundle(
         source_ref,
         extra_metadata,
     )?;
-    let core_ir_digest = canonical_json_sha256_digest(&compiled.core_ir)
-        .context("计算 Core IR 制品哈希失败")?;
+    let core_ir_digest =
+        canonical_json_sha256_digest(&compiled.core_ir).context("计算 Core IR 制品哈希失败")?;
     let core_ir = CoreIrArtifact {
         schema_version: CORE_IR_ARTIFACT_V1_VERSION.to_string(),
         artifact_id: artifact_id("core_ir_artifact", &core_ir_digest),

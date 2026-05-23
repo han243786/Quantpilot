@@ -8,6 +8,9 @@ set -e
 echo "=== pre-commit: UTF-8 check ==="
 powershell -NoProfile -ExecutionPolicy Bypass -File tools/check-utf8.ps1
 
+echo "=== pre-commit: cargo fmt --check ==="
+cargo fmt --check
+
 echo "=== pre-commit: cargo check ==="
 cargo check --workspace
 

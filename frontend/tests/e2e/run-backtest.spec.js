@@ -104,8 +104,11 @@ test("run backtest smoke covers start, history refresh, and detail page", async 
 
   await openResearchMode(page);
   await page.getByTestId("research-tab-backtests").click();
-  await expect(page.locator(".event-summary-grid")).toContainText("backtest_smoke_001");
-  await expect(page.locator(".event-summary-grid")).toContainText("3");
+  await expect(page.locator(".event-summary-grid").first()).toContainText("已完成");
+  await expect(page.locator(".event-summary-grid").first()).toContainText("3");
+  await expect(page.locator(".event-summary-grid").first()).toContainText("12050");
+  await page.getByTestId("event-panel-intro").getByRole("button", { name: "展开详情" }).click();
+  await expect(page.getByTestId("event-panel-intro")).toContainText("backtest_smoke_001");
   await expect(page.getByTestId("runtime-artifact-save")).toBeVisible();
   await Promise.all([
     page.waitForResponse((response) =>
@@ -123,10 +126,10 @@ test("run backtest smoke covers start, history refresh, and detail page", async 
 
   await expect(page).toHaveURL(/\/backtests\/backtest_smoke_001(\?strategy=draft_graph)?$/);
   await expect(page.locator(".detail-page")).toBeVisible();
-  await expect(page.getByTestId("backtest-detail-hero")).toContainText("quantpilot/runtime-config/v1");
-  await expect(page.getByTestId("backtest-detail-hero")).toContainText("smoke_backtest_config_hash");
   await expect(page.getByTestId("backtest-detail-hero")).toContainText("+12.50%");
-  await expect(page.getByTestId("backtest-detail-hero")).toContainText("12050");
+  await expect(page.getByTestId("backtest-detail-context-card")).toContainText("quantpilot/runtime-config/v1");
+  await expect(page.getByTestId("backtest-detail-context-card")).toContainText("smoke_backtest_config_hash");
+  await expect(page.getByTestId("account-summary-equity")).toContainText("12050");
 
   api.expectNoUnexpectedApiRequests();
 });

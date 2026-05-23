@@ -1,8 +1,7 @@
+use crate::executor_state::{ActiveStrategy, ExecutionMode, ExecutorState, StrategyStatus};
 /// v3.7.0: 策略迁移 API — 接收测试端部署的策略包
 /// 验证签名 → 解密 → 反序列化 → 注册到执行端
-
 use anyhow::{bail, Result};
-use crate::executor_state::{ActiveStrategy, ExecutionMode, ExecutorState, StrategyStatus};
 use qrpc_core::CoreStrategyIr;
 use std::collections::BTreeMap;
 use std::sync::Arc;
@@ -49,8 +48,11 @@ pub fn verify_package_signature(pkg: &StrategyPackage) -> Result<()> {
     }
 
     // 构建签名输入 (不含 signature 字段本身) — v3.2.0 S0修复: 与发送端字段对齐
-    let qs_source_hash = pkg.qs_proof.as_ref()
-        .map(|p| p.qs_source_hash.clone()).unwrap_or_default();
+    let qs_source_hash = pkg
+        .qs_proof
+        .as_ref()
+        .map(|p| p.qs_source_hash.clone())
+        .unwrap_or_default();
     let sig_input = serde_json::json!({
         "strategy_id": pkg.strategy_id,
         "name": pkg.name,
@@ -84,7 +86,10 @@ pub fn decrypt_package(encrypted: &[u8]) -> Result<StrategyPackage> {
 pub fn load_strategy(state: &Arc<ExecutorState>, pkg: StrategyPackage) -> Result<()> {
     verify_package_signature(&pkg)?;
 
-    let symbols: Vec<qrpc_core::Symbol> = pkg.core_ir.data_bindings.iter()
+    let symbols: Vec<qrpc_core::Symbol> = pkg
+        .core_ir
+        .data_bindings
+        .iter()
         .filter_map(|d| d.source_hints.get("symbol").cloned())
         .map(|s| qrpc_core::Symbol::Other(s))
         .collect();

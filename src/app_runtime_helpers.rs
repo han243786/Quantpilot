@@ -5,51 +5,52 @@ pub fn new_app_state(
     run_store_dir: PathBuf,
     backtest_store_dir: PathBuf,
 ) -> AppState {
+    let storage_root = app_storage_root(&graph_store_dir, &run_store_dir, &backtest_store_dir);
     let experiment_store_dir = backtest_store_dir
         .parent()
         .map(|path| path.join("experiments"))
-        .unwrap_or_else(|| PathBuf::from("storage/experiments"));
+        .unwrap_or_else(|| storage_root.join("experiments"));
     let audit_store_dir = backtest_store_dir
         .parent()
         .map(|path| path.join("audit"))
-        .unwrap_or_else(|| PathBuf::from("storage/audit"));
+        .unwrap_or_else(|| storage_root.join("audit"));
     let report_store_dir = backtest_store_dir
         .parent()
         .map(|path| path.join("reports"))
-        .unwrap_or_else(|| PathBuf::from("storage/reports"));
+        .unwrap_or_else(|| storage_root.join("reports"));
     let mutation_store_dir = backtest_store_dir
         .parent()
         .map(|path| path.join("mutations"))
-        .unwrap_or_else(|| PathBuf::from("storage/mutations"));
+        .unwrap_or_else(|| storage_root.join("mutations"));
     let ai_proposal_store_dir = backtest_store_dir
         .parent()
         .map(|path| path.join("ai-proposals"))
-        .unwrap_or_else(|| PathBuf::from("storage/ai-proposals"));
+        .unwrap_or_else(|| storage_root.join("ai-proposals"));
     let transient_backtest_store_dir =
         transient_backtest_store_dir_from_backtest_store_dir(&backtest_store_dir);
     // Block 5 新存储目录
     let approval_store_dir = backtest_store_dir
         .parent()
         .map(|path| path.join("approvals"))
-        .unwrap_or_else(|| PathBuf::from("storage/approvals"));
+        .unwrap_or_else(|| storage_root.join("approvals"));
     let sandbox_report_store_dir = backtest_store_dir
         .parent()
         .map(|path| path.join("sandbox-reports"))
-        .unwrap_or_else(|| PathBuf::from("storage/sandbox-reports"));
+        .unwrap_or_else(|| storage_root.join("sandbox-reports"));
     let alert_store_dir = backtest_store_dir
         .parent()
         .map(|path| path.join("alerts"))
-        .unwrap_or_else(|| PathBuf::from("storage/alerts"));
+        .unwrap_or_else(|| storage_root.join("alerts"));
     let snapshot_store_dir = backtest_store_dir
         .parent()
         .map(|path| path.join("snapshots"))
-        .unwrap_or_else(|| PathBuf::from("storage/snapshots"));
+        .unwrap_or_else(|| storage_root.join("snapshots"));
     let chaos_store_dir = backtest_store_dir
         .parent()
         .map(|path| path.join("chaos"))
-        .unwrap_or_else(|| PathBuf::from("storage/chaos"));
+        .unwrap_or_else(|| storage_root.join("chaos"));
     // 凭证保险库: 加载失败时服务继续运行, 凭证 API 返回 503
-    let credential_vault = crate::credential_vault::CredentialVault::load()
+    let credential_vault = load_credential_vault_for_storage_root(&storage_root)
         .map(Arc::new)
         .map_err(|e| safe_eprintln!("[启动] 凭证保险库未加载: {} (凭证 API 将不可用)", e))
         .ok();
@@ -62,8 +63,8 @@ pub fn new_app_state(
 
     // v2.0.0: 初始化认证 SQLite 数据库
     let db = {
-        let _ = std::fs::create_dir_all("storage");
-        super::auth::init_db(std::path::Path::new("storage/auth.db"))
+        let _ = std::fs::create_dir_all(&storage_root);
+        super::auth::init_db(&storage_root.join("auth.db"))
             .map_err(|e| {
                 safe_eprintln!("[启动] 认证数据库未加载: {} (用户认证将不可用)", e);
                 e
@@ -115,16 +116,36 @@ pub fn new_app_state(
 }
 
 fn transient_backtest_store_dir_from_backtest_store_dir(backtest_store_dir: &FsPath) -> PathBuf {
-    // v2.1.0: 瞬态回测目录移到 storage/ 内纳入配额管理
+    // v2.1.0: 瞬态回测目录跟随当前存储根, 测试与生产目录不混用。
     let parent = backtest_store_dir
         .parent()
         .unwrap_or_else(|| FsPath::new("."));
-    if parent.file_name().is_some_and(|name| name == "storage") {
-        parent.join("transient").join("backtests")
-    } else {
-        // 回退: 在 storage/ 下创建
-        FsPath::new("storage").join("transient").join("backtests")
+    parent.join("transient").join("backtests")
+}
+
+fn app_storage_root(
+    graph_store_dir: &FsPath,
+    run_store_dir: &FsPath,
+    backtest_store_dir: &FsPath,
+) -> PathBuf {
+    let graph_parent = graph_store_dir.parent();
+    if graph_parent.is_some()
+        && graph_parent == run_store_dir.parent()
+        && graph_parent == backtest_store_dir.parent()
+    {
+        return graph_parent.unwrap().to_path_buf();
     }
+
+    std::env::var_os("QUANTPILOT_STORAGE_ROOT")
+        .filter(|value| !value.is_empty())
+        .map(PathBuf::from)
+        .unwrap_or_else(|| PathBuf::from("storage"))
+}
+
+fn load_credential_vault_for_storage_root(
+    storage_root: &FsPath,
+) -> anyhow::Result<crate::credential_vault::CredentialVault> {
+    crate::credential_vault::CredentialVault::load_from_storage_root(storage_root)
 }
 
 /// v2.2.1: 健康检查返回组件级状态
@@ -135,10 +156,18 @@ pub(super) async fn health(State(state): State<AppState>) -> impl IntoResponse {
     // 检测各组件状态
     let vault_ok = state.credential_vault.is_some();
     let db_ok = state.db.is_some();
-    let storage_ok = std::path::Path::new("storage").try_exists().unwrap_or(false);
+    let storage_ok = state
+        .backtest_store_dir
+        .parent()
+        .and_then(|path| path.try_exists().ok())
+        .unwrap_or(false);
     let alert_count = state.alert_firings.read().await.len();
 
-    let overall = if vault_ok && storage_ok { "ok" } else { "degraded" };
+    let overall = if vault_ok && storage_ok {
+        "ok"
+    } else {
+        "degraded"
+    };
 
     Json(serde_json::json!({
         "status": overall,
@@ -251,7 +280,10 @@ pub(super) fn epoch_ms_to_iso8601(epoch_ms: u64) -> String {
         month += 1;
     }
     let day = days + 1;
-    format!("{:04}-{:02}-{:02}T{:02}:{:02}:{:02}Z", year, month, day, hours, minutes, secs_remaining)
+    format!(
+        "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}Z",
+        year, month, day, hours, minutes, secs_remaining
+    )
 }
 
 fn is_leap_year(year: i64) -> bool {

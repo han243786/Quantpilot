@@ -109,10 +109,9 @@ impl CompatibilityChecker {
         }
 
         // 4. Schema compatibility
-        if let (Some(current_in), Some(candidate_in)) = (
-            &current.input_schema_hash,
-            &candidate.input_schema_hash,
-        ) {
+        if let (Some(current_in), Some(candidate_in)) =
+            (&current.input_schema_hash, &candidate.input_schema_hash)
+        {
             if current_in != candidate_in {
                 warnings.push(
                     "input schema hash changed — verify that new inputs are a superset".to_string(),
@@ -120,14 +119,12 @@ impl CompatibilityChecker {
             }
         }
 
-        if let (Some(current_out), Some(candidate_out)) = (
-            &current.output_schema_hash,
-            &candidate.output_schema_hash,
-        ) {
+        if let (Some(current_out), Some(candidate_out)) =
+            (&current.output_schema_hash, &candidate.output_schema_hash)
+        {
             if current_out != candidate_out {
-                warnings.push(
-                    "output schema hash changed — verify downstream consumers".to_string(),
-                );
+                warnings
+                    .push("output schema hash changed — verify downstream consumers".to_string());
             }
         }
 
@@ -147,8 +144,9 @@ impl CompatibilityChecker {
             }
             (None, Some(_)) => {
                 migration_required = true;
-                migration_steps
-                    .push("candidate introduces state schema — initial state will be empty".to_string());
+                migration_steps.push(
+                    "candidate introduces state schema — initial state will be empty".to_string(),
+                );
             }
             (Some(_), None) => {
                 violations.push(

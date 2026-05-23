@@ -35,12 +35,19 @@ pub trait ExecutionPlanner: Send {
 /// v2.3.2: ISP拆分 — 执行提交 (有状态变更: 提交计划/市场更新/假设设置)
 pub trait ExecutionSubmitter: Send {
     fn submit_plan(
-        &mut self, plan: &ExecutionPlan, normalized_data: &[NormalizedMarketData],
-        portfolio: &mut PortfolioState, now_ms: u64, trace_id: &str,
+        &mut self,
+        plan: &ExecutionPlan,
+        normalized_data: &[NormalizedMarketData],
+        portfolio: &mut PortfolioState,
+        now_ms: u64,
+        trace_id: &str,
     ) -> FillResult;
     fn on_market_update(
-        &mut self, normalized_data: &[NormalizedMarketData],
-        portfolio: &mut PortfolioState, now_ms: u64, trace_id: &str,
+        &mut self,
+        normalized_data: &[NormalizedMarketData],
+        portfolio: &mut PortfolioState,
+        now_ms: u64,
+        trace_id: &str,
     ) -> FillResult;
     fn set_execution_assumptions(&mut self, _assumptions: crate::slippage::ExecutionAssumptions) {}
 }
@@ -112,24 +119,32 @@ impl ExecutionPlanner for BuiltinExecutionModule {
 
         ExecutionPlanningOutput { plans, events }
     }
-
 }
 
 impl ExecutionSubmitter for BuiltinExecutionModule {
     fn submit_plan(
-        &mut self, plan: &ExecutionPlan, normalized_data: &[NormalizedMarketData],
-        portfolio: &mut PortfolioState, now_ms: u64, trace_id: &str,
+        &mut self,
+        plan: &ExecutionPlan,
+        normalized_data: &[NormalizedMarketData],
+        portfolio: &mut PortfolioState,
+        now_ms: u64,
+        trace_id: &str,
     ) -> FillResult {
         let market_prices = quote_market_state_map(normalized_data);
-        self.fill_engine.submit_plan(plan, &market_prices, portfolio, now_ms, trace_id)
+        self.fill_engine
+            .submit_plan(plan, &market_prices, portfolio, now_ms, trace_id)
     }
 
     fn on_market_update(
-        &mut self, normalized_data: &[NormalizedMarketData],
-        portfolio: &mut PortfolioState, now_ms: u64, trace_id: &str,
+        &mut self,
+        normalized_data: &[NormalizedMarketData],
+        portfolio: &mut PortfolioState,
+        now_ms: u64,
+        trace_id: &str,
     ) -> FillResult {
         let market_prices = quote_market_state_map(normalized_data);
-        self.fill_engine.on_market_update(&market_prices, portfolio, now_ms, trace_id)
+        self.fill_engine
+            .on_market_update(&market_prices, portfolio, now_ms, trace_id)
     }
 
     fn set_execution_assumptions(&mut self, assumptions: crate::slippage::ExecutionAssumptions) {
@@ -159,7 +174,10 @@ fn build_action_orders(
             };
             // v2.1.0: NaN/Inf 数量告警，不再静默丢弃
             if quantity.is_nan() || quantity.is_infinite() {
-                eprintln!("[execution] 警告: 计算出的数量无效 (NaN/Inf), symbol={:?}, action={:?}", decision.symbol, action);
+                eprintln!(
+                    "[execution] 警告: 计算出的数量无效 (NaN/Inf), symbol={:?}, action={:?}",
+                    decision.symbol, action
+                );
             }
             (quantity.is_finite() && quantity > 0.0).then(|| {
                 let should_rest = quote_map.is_empty() && matches!(action.side, OrderSide::Buy);
@@ -425,8 +443,8 @@ mod tests {
     use super::*;
     use qrpc_core::{
         DataQualitySnapshot, Exchange, ExecutionStatus, MarketType, PortfolioTarget,
-        PortfolioTargetDecision, QuoteSnapshot, RiskDecisionMode, RiskReasonCode,
-        SourceStatus, TargetWeight,
+        PortfolioTargetDecision, QuoteSnapshot, RiskDecisionMode, RiskReasonCode, SourceStatus,
+        TargetWeight,
     };
     use qrpc_core_ir::{CoreMetadata, CoreSourceKind, CoreTimeInForce, ExecutionRule};
     use std::collections::BTreeMap;
@@ -464,7 +482,6 @@ mod tests {
             risk_policies: vec![],
             edges: vec![],
             execution: ExecutionRule {
-
                 execution_id: "execution.paper".into(),
                 venue_kind: "paper".into(),
                 sizing_kind: ExecutionSizingKind::EquityNotionalRatio,

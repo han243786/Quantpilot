@@ -4,7 +4,6 @@ use qrpc_core::{RebalanceSchedule, Symbol};
 /// 动量指标默认阈值比率 (§5.1)
 const DEFAULT_MOMENTUM_THRESHOLD: f64 = 0.02;
 
-
 /// v0.5.2: 改为接受两个 CompileRuntimeTargets, 消除对 MappedRuntimeConfig 的依赖。
 /// provided 优先级高于 fallback。
 pub(super) fn merge_runtime_targets(
@@ -355,18 +354,13 @@ fn format_symbol_name(symbol: &Symbol) -> String {
     symbol.as_str().to_string()
 }
 
-
-
-
 pub(super) fn config_str<'a>(config: &'a Value, key: &str) -> Option<&'a str> {
     config.get(key)?.as_str()
 }
 
-
 pub(super) fn config_f64(config: &Value, key: &str) -> Option<f64> {
     config.get(key)?.as_f64()
 }
-
 
 fn format_rebalance_symbols(symbols: &[Symbol]) -> String {
     symbols
@@ -403,7 +397,6 @@ fn format_rebalance_target_weights(weights: &[f64]) -> String {
         .collect::<Vec<_>>()
         .join(", ")
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -501,7 +494,6 @@ mod tests {
             }),
         }
     }
-
 
     #[test]
     fn frontend_runtime_config_from_core_restores_multi_symbol_agent_fields() {

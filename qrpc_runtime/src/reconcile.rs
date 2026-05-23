@@ -114,7 +114,8 @@ impl OrderReconciler {
                 }
                 ReconcileStrategy::ReduceOnly => {
                     if matches!(order.side, OrderSide::Sell)
-                        && order.remaining_qty.is_finite() && order.remaining_qty > 0.0
+                        && order.remaining_qty.is_finite()
+                        && order.remaining_qty > 0.0
                     {
                         retained.push(order.order_id.clone());
                     } else {
@@ -209,10 +210,16 @@ mod tests {
             order_type: OrderType::Limit,
             time_in_force: TimeInForce::Gtc,
             remaining_qty,
-            reserved_cash: if is_buy { remaining_qty * 50_000.0 } else { 0.0 },
+            reserved_cash: if is_buy {
+                remaining_qty * 50_000.0
+            } else {
+                0.0
+            },
             reserved_qty: if is_sell { remaining_qty } else { 0.0 },
             limit_price: Some(50_000.0),
             reference_price: 50_000.0,
+            slippage_bps: 5.0,
+            fee_bps: 10.0,
             created_at_ms: 0,
             updated_at_ms: 0,
             trace_id: "trace".to_string(),
@@ -263,8 +270,7 @@ mod tests {
     fn detects_external_discrepancies() {
         let orders = vec![sample_order("o1", OrderSide::Buy, 0.5)];
         let externals = vec![("o1".to_string(), ExecutionStatus::Filled)];
-        let result =
-            OrderReconciler::reconcile(&orders, &externals, ReconcileStrategy::CancelOpen);
+        let result = OrderReconciler::reconcile(&orders, &externals, ReconcileStrategy::CancelOpen);
         assert_eq!(result.discrepancies.len(), 1);
         assert_eq!(result.discrepancies[0].order_id, "o1");
         assert_eq!(result.discrepancies[0].resolved_action, "accept_external");
@@ -288,8 +294,7 @@ mod tests {
         let events = OrderReconciler::build_reconciliation_events(&result, 1_000, "trace");
         assert!(!events.is_empty());
         // Should have at least the summary event
-        assert!(events.iter().any(|e| e
-            .payload["event"]
+        assert!(events.iter().any(|e| e.payload["event"]
             .as_str()
             .map_or(false, |s| s == "reconciliation_summary")));
     }

@@ -134,10 +134,16 @@ fn apply_direction_conflict_check(
             continue;
         }
         let has_buy = indices.iter().any(|&i| {
-            decisions[i].adjusted_actions.iter().any(|a| matches!(a.side, OrderSide::Buy))
+            decisions[i]
+                .adjusted_actions
+                .iter()
+                .any(|a| matches!(a.side, OrderSide::Buy))
         });
         let has_sell = indices.iter().any(|&i| {
-            decisions[i].adjusted_actions.iter().any(|a| matches!(a.side, OrderSide::Sell))
+            decisions[i]
+                .adjusted_actions
+                .iter()
+                .any(|a| matches!(a.side, OrderSide::Sell))
         });
         if has_buy && has_sell {
             for &i in indices {
@@ -148,7 +154,10 @@ fn apply_direction_conflict_check(
                 decisions[i].adjusted_actions.clear();
                 decisions[i].adjusted_portfolio_target_decision = None;
                 events.push(RuntimeEvent {
-                    event_id: format!("evt-risk-direction-conflict-{}-{}", decisions[i].risk_decision_id, now_ms),
+                    event_id: format!(
+                        "evt-risk-direction-conflict-{}-{}",
+                        decisions[i].risk_decision_id, now_ms
+                    ),
                     event_type: RuntimeEventType::RiskDecisionProduced,
                     trace_id: decisions[i].trace_id.clone(),
                     source_id: decisions[i].risk_id.clone(),
@@ -203,20 +212,25 @@ fn apply_cross_symbol_constraints(
         if cross_symbol_leverage > cross_leverage_limit && cross_leverage_limit.is_finite() {
             // 按比例缩减所有非 Reject 的 decision
             let scale = cross_leverage_limit / cross_symbol_leverage;
-            for d in decisions.iter_mut().filter(|d| !matches!(d.status, DecisionStatus::Reject)) {
+            for d in decisions
+                .iter_mut()
+                .filter(|d| !matches!(d.status, DecisionStatus::Reject))
+            {
                 for action in &mut d.adjusted_actions {
                     action.quantity_ratio *= scale;
                 }
                 if let Some(ref mut target) = d.adjusted_portfolio_target_decision {
                     for tw in &mut target.target.target_weights {
-                        tw.target_weight = tw.current_weight + (tw.target_weight - tw.current_weight) * scale;
+                        tw.target_weight =
+                            tw.current_weight + (tw.target_weight - tw.current_weight) * scale;
                     }
                 }
                 // 标记为 Clamp 如果不是 Approve
                 if matches!(d.status, DecisionStatus::Approve) {
                     d.status = DecisionStatus::Clamp;
                 }
-                d.reason_codes.push(RiskReasonCode::ExceedPortfolioNetExposure);
+                d.reason_codes
+                    .push(RiskReasonCode::ExceedPortfolioNetExposure);
                 d.reason_text.push_str(&format!(
                     " 跨标的杠杆 {:.2} 超过限制 {:.2}, 缩减至 {:.0}%",
                     cross_symbol_leverage,
@@ -515,7 +529,8 @@ fn evaluate_risk_decision(
     adjusted_actions.retain(|item| item.quantity_ratio > 0.01);
     if adjusted_actions.is_empty() {
         status = DecisionStatus::Reject;
-        if !portfolio.available_cash_balance.is_finite() || portfolio.available_cash_balance <= 0.0 {
+        if !portfolio.available_cash_balance.is_finite() || portfolio.available_cash_balance <= 0.0
+        {
             reason_codes = vec![RiskReasonCode::InsufficientCash];
             reason_text = "available cash exhausted".into();
         } else if reason_codes == vec![RiskReasonCode::InsufficientInventory] {
@@ -578,16 +593,26 @@ fn enforce_risk_mode(
             adjusted_portfolio_target_decision: None,
             adjusted_actions: Vec::new(),
             reason_codes: vec![RiskReasonCode::InvalidAction],
-            reason_text: "emergency halt: all new actions rejected, open orders must be cancelled".into(),
+            reason_text: "emergency halt: all new actions rejected, open orders must be cancelled"
+                .into(),
             produced_at_ms: now_ms,
             trace_id: trace_id.to_string(),
         }),
         RiskDecisionMode::FreezeOpen => {
-            let has_new_open = decision.proposed_actions.iter().any(|action| {
-                matches!(action.side, OrderSide::Buy | OrderSide::Sell)
-            }) || decision.portfolio_target_decision.as_ref().is_some_and(|target| {
-                target.target.target_weights.iter().any(|weight| weight.target_weight > weight.current_weight + 1e-9)
-            });
+            let has_new_open = decision
+                .proposed_actions
+                .iter()
+                .any(|action| matches!(action.side, OrderSide::Buy | OrderSide::Sell))
+                || decision
+                    .portfolio_target_decision
+                    .as_ref()
+                    .is_some_and(|target| {
+                        target
+                            .target
+                            .target_weights
+                            .iter()
+                            .any(|weight| weight.target_weight > weight.current_weight + 1e-9)
+                    });
             if has_new_open {
                 Some(RiskDecision {
                     risk_decision_id: risk_decision_id.to_string(),
@@ -607,7 +632,9 @@ fn enforce_risk_mode(
                 None
             }
         }
-        RiskDecisionMode::ReduceOnly | RiskDecisionMode::ReconcileOnly | RiskDecisionMode::Normal => None,
+        RiskDecisionMode::ReduceOnly
+        | RiskDecisionMode::ReconcileOnly
+        | RiskDecisionMode::Normal => None,
     }
 }
 
@@ -638,10 +665,7 @@ fn clamp_portfolio_target_limits(
         })
         .collect::<BTreeMap<_, _>>();
 
-    refresh_portfolio_target_current_weights(
-        &mut target_decision.target.target_weights,
-        portfolio,
-    );
+    refresh_portfolio_target_current_weights(&mut target_decision.target.target_weights, portfolio);
     if let Some(limit) = risk.max_new_positions_per_rebalance {
         if clamp_portfolio_target_new_positions(
             &mut target_decision.target.target_weights,
@@ -1191,13 +1215,19 @@ fn clamp_portfolio_target_portfolio_net_exposure(
         .iter()
         .map(|item| item.target_weight)
         .fold((0.0, 0.0), |(long, short), w| {
-            if w > 0.0 { (long + w, short) } else { (long, short + w.abs()) }
+            if w > 0.0 {
+                (long + w, short)
+            } else {
+                (long, short + w.abs())
+            }
         });
     let total_target_ratio = (long_sum - short_sum).abs();
     if total_target_ratio <= max_portfolio_net_exposure_ratio + 1e-9 {
         return false;
     }
-    let scale = if !max_portfolio_net_exposure_ratio.is_finite() || max_portfolio_net_exposure_ratio <= 0.0 {
+    let scale = if !max_portfolio_net_exposure_ratio.is_finite()
+        || max_portfolio_net_exposure_ratio <= 0.0
+    {
         0.0
     } else {
         max_portfolio_net_exposure_ratio / total_target_ratio
@@ -1290,11 +1320,10 @@ mod tests {
                 max_exchange_leverage: 3.0,
                 min_action_interval_ms,
                 enabled: true,
-                                max_cross_symbol_leverage: None,
+                max_cross_symbol_leverage: None,
             }],
             edges: vec![],
             execution: ExecutionRule {
-
                 execution_id: "exec".into(),
                 venue_kind: "paper".into(),
                 sizing_kind: ExecutionSizingKind::EquityNotionalRatio,

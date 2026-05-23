@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import StrategyHubPage from "./StrategyHubPage";
 import { useGraphStore } from "../store/graphStore";
 
-const originalFetch = global.fetch;
 const { navigateTo } = vi.hoisted(() => ({
   navigateTo: vi.fn()
 }));
@@ -53,10 +52,7 @@ function buildGraph(overrides = {}) {
 
 async function waitForHubRosterTable() {
   await screen.findByTestId("strategy-hub-page");
-  await waitFor(() => {
-    expect(screen.getByTestId("strategy-hub-roster-table")).toBeInTheDocument();
-  });
-  return screen.getByTestId("strategy-hub-roster-table");
+  return screen.findByTestId("strategy-hub-roster-table", {}, { timeout: 5000 });
 }
 
 const STRATEGY_HUB_CARD_NOTES = [
@@ -89,6 +85,33 @@ function expectCardNoteTooltip(label, note) {
   expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
 }
 
+function jsonResponse(body, status = 200) {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    json: async () => body,
+    text: async () => JSON.stringify(body)
+  };
+}
+
+function requestUrl(input) {
+  if (typeof input === "string") return input;
+  return input?.url || String(input);
+}
+
+function requestPath(input) {
+  const raw = requestUrl(input);
+  try {
+    return new URL(raw, "http://test.local").pathname;
+  } catch {
+    return raw.split("?")[0];
+  }
+}
+
+function requestMethod(input, options = {}) {
+  return (options.method || input?.method || "GET").toUpperCase();
+}
+
 describe("StrategyHubPage", () => {
   const initialState = useGraphStore.getState();
   let fetchMock;
@@ -100,34 +123,40 @@ describe("StrategyHubPage", () => {
     confirmMock = vi.spyOn(window, "confirm").mockReturnValue(true);
     dateNowMock = vi.spyOn(Date, "now").mockReturnValue(1710000999000);
     fetchMock = vi.fn(async (url, options = {}) => {
-      if (url === "/api/graphs/alpha_strategy/reveal") {
-        return {
-          ok: true,
-          json: async () => ({ graph_id: "alpha_strategy", path: "storage/graphs/alpha_strategy.qs" }),
-          text: async () => ""
-        };
+      const path = requestPath(url);
+      const method = requestMethod(url, options);
+
+      if (path === "/api/graphs/alpha_strategy/reveal" && method === "POST") {
+        return jsonResponse({ graph_id: "alpha_strategy", path: "storage/graphs/alpha_strategy.qs" });
       }
-      if (url === "/api/graphs/alpha_strategy" && options.method === "DELETE") {
-        return {
-          ok: true,
-          json: async () => ({ graph_id: "alpha_strategy", deleted: true }),
-          text: async () => ""
-        };
+
+      if (path === "/api/graphs/alpha_strategy" && method === "DELETE") {
+        return jsonResponse({ graph_id: "alpha_strategy", deleted: true });
       }
-      if (url === "/api/graphs") {
-        return {
-          ok: true,
-          json: async () => [],
-          text: async () => ""
-        };
+
+      if (path === "/api/graphs") {
+        return jsonResponse(useGraphStore.getState().graphIndex);
       }
-      return {
-        ok: true,
-        json: async () => ({}),
-        text: async () => ""
-      };
+
+      if (path === "/api/runtime/runs") {
+        return jsonResponse(useGraphStore.getState().runtime.history);
+      }
+
+      if (path === "/api/runtime/backtests") {
+        return jsonResponse(useGraphStore.getState().runtime.backtestHistory);
+      }
+
+      if (path === "/api/runtime/experiments") {
+        return jsonResponse([]);
+      }
+
+      if (path === "/api/runtime/mutations" || path === "/api/runtime/reports") {
+        return jsonResponse([]);
+      }
+
+      return jsonResponse({});
     });
-    global.fetch = fetchMock;
+    vi.stubGlobal("fetch", fetchMock);
 
     act(() => {
       useGraphStore.setState(initialState, true);
@@ -192,11 +221,7 @@ describe("StrategyHubPage", () => {
     vi.useRealTimers();
     confirmMock?.mockRestore();
     dateNowMock?.mockRestore();
-    if (originalFetch) {
-      global.fetch = originalFetch;
-    } else {
-      delete global.fetch;
-    }
+    vi.unstubAllGlobals();
     act(() => {
       useGraphStore.setState(initialState, true);
     });

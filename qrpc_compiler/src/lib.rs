@@ -187,9 +187,9 @@ pub fn lower_runtime_protocol_to_core_ir_with_metadata(
         .collect();
 
     // v1.0.1: DAG 环检测 — 编译前校验策略图无环
-    core_ir.validate_dag().map_err(|errs| {
-        anyhow::anyhow!("策略图 DAG 校验失败: {:?}", errs)
-    })?;
+    core_ir
+        .validate_dag()
+        .map_err(|errs| anyhow::anyhow!("策略图 DAG 校验失败: {:?}", errs))?;
 
     Ok(core_ir)
 }
@@ -356,12 +356,12 @@ pub fn lower_strategy_ir_to_core_ir(strategy_ir: &StrategyIr) -> Result<CoreStra
         max_exchange_leverage,
         min_action_interval_ms,
         enabled: true,
-                max_cross_symbol_leverage: None,
+        max_cross_symbol_leverage: None,
     });
 
-    core_ir.validate_dag().map_err(|errs| {
-        anyhow::anyhow!("策略图 DAG 校验失败: {:?}", errs)
-    })?;
+    core_ir
+        .validate_dag()
+        .map_err(|errs| anyhow::anyhow!("策略图 DAG 校验失败: {:?}", errs))?;
 
     Ok(core_ir)
 }
@@ -659,7 +659,7 @@ fn lower_runtime_risk_to_policy(risk: &RiskConfig) -> RiskPolicy {
         max_exchange_leverage: risk.max_exchange_leverage,
         min_action_interval_ms: risk.min_action_interval_ms,
         enabled: risk.enabled,
-                max_cross_symbol_leverage: None,
+        max_cross_symbol_leverage: None,
     }
 }
 
@@ -1298,10 +1298,7 @@ fn validate_custom_value_expr(
             if matches!(op, ArithmeticOp::Div)
                 && matches!(right.as_ref(), CustomValueExpr::Number { value } if value.abs() <= f64::EPSILON)
             {
-                bail!(
-                    "CUSTOM010 信号 `{}` 不能除以字面零值",
-                    signal.signal_id
-                );
+                bail!("CUSTOM010 信号 `{}` 不能除以字面零值", signal.signal_id);
             }
             Ok(())
         }
@@ -1536,11 +1533,7 @@ fn validate_intent(
 
     for data_id in &intent.input_data_ids {
         let Some(kind) = enabled_sources.get(data_id) else {
-            bail!(
-                "意图 {} 引用了缺失的数据源 {}",
-                intent.intent_id,
-                data_id
-            );
+            bail!("意图 {} 引用了缺失的数据源 {}", intent.intent_id, data_id);
         };
         match intent.kind {
             IntentKind::LongTermBuy
@@ -1570,10 +1563,7 @@ fn validate_intent(
     }
 
     if runtime_intent_is_spread(intent) && intent.input_data_ids.len() < 2 {
-        bail!(
-            "意图 {} spread 观察需要至少两个输入",
-            intent.intent_id
-        );
+        bail!("意图 {} spread 观察需要至少两个输入", intent.intent_id);
     }
 
     Ok(())
@@ -1607,11 +1597,7 @@ fn validate_agent(agent: &AgentConfig, intent_ids: &BTreeSet<&str>) -> Result<()
     }
     for intent_id in &agent.input_intent_ids {
         if !intent_ids.contains(intent_id.as_str()) {
-            bail!(
-                "代理 {} 引用了缺失的意图 {}",
-                agent.agent_id,
-                intent_id
-            );
+            bail!("代理 {} 引用了缺失的意图 {}", agent.agent_id, intent_id);
         }
     }
     Ok(())
@@ -1639,10 +1625,7 @@ fn validate_risks(config: &RuntimeProtocolCoreConfig) -> Result<()> {
 
     for agent_id in agent_ids {
         if observed_once.get(agent_id).copied().unwrap_or_default() != 1 {
-            bail!(
-                "已启用的代理 {} 必须被恰好一个已启用的风险观察",
-                agent_id
-            );
+            bail!("已启用的代理 {} 必须被恰好一个已启用的风险观察", agent_id);
         }
     }
 
@@ -1656,16 +1639,16 @@ fn validate_risk(risk: &RiskConfig, agent_ids: &BTreeSet<&str>) -> Result<()> {
     if risk.observed_agent_ids.is_empty() {
         bail!("风险 {} 必须至少观察一个代理", risk.risk_id);
     }
-    if !risk.max_total_leverage.is_finite() || risk.max_total_leverage <= 0.0 || !risk.max_exchange_leverage.is_finite() || risk.max_exchange_leverage <= 0.0 {
+    if !risk.max_total_leverage.is_finite()
+        || risk.max_total_leverage <= 0.0
+        || !risk.max_exchange_leverage.is_finite()
+        || risk.max_exchange_leverage <= 0.0
+    {
         bail!("风险 {} 杠杆限制必须大于 0", risk.risk_id);
     }
     for agent_id in &risk.observed_agent_ids {
         if !agent_ids.contains(agent_id.as_str()) {
-            bail!(
-                "风险 {} 引用了缺失的代理 {}",
-                risk.risk_id,
-                agent_id
-            );
+            bail!("风险 {} 引用了缺失的代理 {}", risk.risk_id, agent_id);
         }
     }
     Ok(())

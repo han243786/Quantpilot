@@ -9,20 +9,17 @@ macro_rules! safe_eprintln {
 
 mod alert_engine;
 mod api_errors;
-mod backup;
 mod api_test_scenario;
 pub mod app_router;
 pub mod app_runtime_helpers;
 pub mod auth;
 mod auth_middleware;
-mod credential_api;
-pub mod credential_vault;
-mod rate_limiter;
 mod backtest_artifacts;
 mod backtest_compare;
 mod backtest_compare_core;
 mod backtest_compare_narrative;
 mod backtest_compare_types;
+mod backup;
 mod capability_api;
 mod chaos_experiment;
 mod cli_support;
@@ -30,6 +27,8 @@ mod collaboration;
 pub mod compile_api;
 mod compile_artifact_builders;
 mod compile_diagnostics;
+mod credential_api;
+pub mod credential_vault;
 mod error_codes;
 mod formal_quantscript_authoring_types;
 mod frontend_api_types;
@@ -39,14 +38,15 @@ mod graph_quantscript_api;
 mod graph_version_compare;
 mod hotswap_api;
 pub mod migration_sender;
+mod rate_limiter;
 mod runbook;
-pub mod safe_log;
 mod runtime;
 mod runtime_diagnostics;
 mod runtime_event_projection;
 pub mod runtime_persistence;
 mod runtime_response_mapping;
 pub mod runtime_validation;
+pub mod safe_log;
 mod sandbox_verification;
 mod snapshot_service;
 pub mod storage_lifecycle;
@@ -300,25 +300,32 @@ impl RuntimeEvidenceMetrics {
                     .fetch_add(1, Ordering::Relaxed);
             }
             RuntimeParameterMutationStatus::ActivationScheduled => {
-                self.mutation_activation_scheduled_count.fetch_add(1, Ordering::Relaxed);
+                self.mutation_activation_scheduled_count
+                    .fetch_add(1, Ordering::Relaxed);
             }
             RuntimeParameterMutationStatus::Activated => {
-                self.mutation_activation_applied_count.fetch_add(1, Ordering::Relaxed);
+                self.mutation_activation_applied_count
+                    .fetch_add(1, Ordering::Relaxed);
             }
             RuntimeParameterMutationStatus::ActivationFailed => {
-                self.mutation_activation_failed_count.fetch_add(1, Ordering::Relaxed);
+                self.mutation_activation_failed_count
+                    .fetch_add(1, Ordering::Relaxed);
             }
             RuntimeParameterMutationStatus::SafeWindowDenied => {
-                self.mutation_safe_window_denied_count.fetch_add(1, Ordering::Relaxed);
+                self.mutation_safe_window_denied_count
+                    .fetch_add(1, Ordering::Relaxed);
             }
             RuntimeParameterMutationStatus::RollbackScheduled => {
-                self.mutation_rollback_scheduled_count.fetch_add(1, Ordering::Relaxed);
+                self.mutation_rollback_scheduled_count
+                    .fetch_add(1, Ordering::Relaxed);
             }
             RuntimeParameterMutationStatus::RolledBack => {
-                self.mutation_rollback_applied_count.fetch_add(1, Ordering::Relaxed);
+                self.mutation_rollback_applied_count
+                    .fetch_add(1, Ordering::Relaxed);
             }
             RuntimeParameterMutationStatus::RollbackFailed => {
-                self.mutation_rollback_failed_count.fetch_add(1, Ordering::Relaxed);
+                self.mutation_rollback_failed_count
+                    .fetch_add(1, Ordering::Relaxed);
             }
         }
     }
@@ -631,12 +638,13 @@ const SUPPORTED_SYMBOLS: [&str; 3] = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
 
 pub async fn run_server() -> anyhow::Result<()> {
     let _ = dotenvy::dotenv(); // 加载 .env 文件 (不存在则静默跳过)
-    // v2.2.1: 初始化 tracing 订阅器 (JSON 格式输出到 stderr, 生产环境)
-    let log_format = std::env::var("QUANTPILOT_LOG_FORMAT").unwrap_or_else(|_| "compact".to_string());
+                               // v2.2.1: 初始化 tracing 订阅器 (JSON 格式输出到 stderr, 生产环境)
+    let log_format =
+        std::env::var("QUANTPILOT_LOG_FORMAT").unwrap_or_else(|_| "compact".to_string());
     let subscriber = tracing_subscriber::fmt()
         .with_env_filter(
             tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info"))
+                .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info")),
         )
         .with_writer(std::io::stderr);
     if log_format == "json" {
@@ -652,7 +660,10 @@ pub async fn run_server() -> anyhow::Result<()> {
     // v1.1.11: 全局 panic hook，防止 panic 静默丢失
     std::panic::set_hook(Box::new(|info| {
         let msg = format!("{}", info);
-        eprintln!("[panic] {} — 服务将退出", crate::safe_log::sanitize_secrets(&msg));
+        eprintln!(
+            "[panic] {} — 服务将退出",
+            crate::safe_log::sanitize_secrets(&msg)
+        );
     }));
     let args: Vec<String> = std::env::args().collect();
     if args.len() > 1 && args[1] == "credential" {
@@ -702,22 +713,29 @@ async fn run_api_server() -> anyhow::Result<()> {
         &report_store_dir,
         &mutation_store_dir,
         &ai_proposal_store_dir,
-    ].iter().map(|d| d.to_path_buf()).collect();
-    let tasks: Vec<_> = dirs.into_iter().map(|dir| {
-        tokio::spawn(async move {
-            if let Err(e) = fs::create_dir_all(&dir).await {
-                safe_eprintln!("[启动] 创建存储目录 {} 失败: {} (服务将继续运行)", dir.display(), e);
-            }
+    ]
+    .iter()
+    .map(|d| d.to_path_buf())
+    .collect();
+    let tasks: Vec<_> = dirs
+        .into_iter()
+        .map(|dir| {
+            tokio::spawn(async move {
+                if let Err(e) = fs::create_dir_all(&dir).await {
+                    safe_eprintln!(
+                        "[启动] 创建存储目录 {} 失败: {} (服务将继续运行)",
+                        dir.display(),
+                        e
+                    );
+                }
+            })
         })
-    }).collect();
+        .collect();
     for task in tasks {
         let _ = task.await;
     }
     if let Err(error) = cleanup_backtest_promotion_work_dirs(&backtest_store_dir).await {
-        safe_eprintln!(
-            "warning: 清理回测临时目录失败: {}",
-            error
-        );
+        safe_eprintln!("warning: 清理回测临时目录失败: {}", error);
     }
 
     // v2.0.0: 启动时校验市场公钥不是测试向量
@@ -731,10 +749,7 @@ async fn run_api_server() -> anyhow::Result<()> {
     if let Err(error) =
         cleanup_transient_backtest_records(state.transient_backtest_store_dir.as_ref()).await
     {
-        safe_eprintln!(
-            "warning: 清理过期回测目录失败: {}",
-            error
-        );
+        safe_eprintln!("warning: 清理过期回测目录失败: {}", error);
     }
 
     // 启动时清理过期存储文件和构建工件
@@ -811,9 +826,7 @@ async fn run_api_server() -> anyhow::Result<()> {
         .layer(axum::middleware::from_fn(
             rate_limiter::rate_limit_middleware,
         ))
-        .layer(axum::middleware::from_fn(
-            auth_middleware::api_key_auth,
-        ));
+        .layer(axum::middleware::from_fn(auth_middleware::api_key_auth));
 
     // Block 5 P1-5 + P3-4: 审批超时 + 观察窗口后台任务
     // v1.0.2: AbortHandle 在进程退出时自动取消后台循环
@@ -826,21 +839,19 @@ async fn run_api_server() -> anyhow::Result<()> {
             tick += 1;
             let current_tick = tick;
             let state_ref = &expiry_state;
-            let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(move || {
-                let rt = tokio::runtime::Handle::current();
-                rt.block_on(async {
-                    process_expired_approvals(state_ref).await;
-                    check_observation_windows(state_ref).await;
-                    if current_tick.is_multiple_of(1440) {
-                        backup::backup_permanent_storage().await;
-                    }
-                    storage_lifecycle::startup_storage_cleanup(std::path::Path::new("storage"));
-                });
+            process_expired_approvals(state_ref).await;
+            check_observation_windows(state_ref).await;
+            if current_tick.is_multiple_of(1440) {
+                backup::backup_permanent_storage().await;
+            }
+            let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                storage_lifecycle::startup_storage_cleanup(std::path::Path::new("storage"));
             }));
             if let Err(e) = result {
                 safe_eprintln!(
                     "[后台任务] panic 已恢复: {} (tick {})",
-                    e.downcast_ref::<String>().map(|s| s.as_str())
+                    e.downcast_ref::<String>()
+                        .map(|s| s.as_str())
                         .or_else(|| e.downcast_ref::<&str>().copied())
                         .unwrap_or("未知 panic"),
                     current_tick
@@ -855,8 +866,11 @@ async fn run_api_server() -> anyhow::Result<()> {
                         let mut guard = $map.write().await;
                         if guard.len() > MAX_CACHED_RECORDS {
                             let excess = guard.len() - MAX_CACHED_RECORDS;
-                            let to_remove: Vec<_> = guard.iter().take(excess).map(|(k, _)| k.clone()).collect();
-                            for k in to_remove { guard.remove(&k); }
+                            let to_remove: Vec<_> =
+                                guard.iter().take(excess).map(|(k, _)| k.clone()).collect();
+                            for k in to_remove {
+                                guard.remove(&k);
+                            }
                         }
                     };
                 }
@@ -877,7 +891,11 @@ async fn run_api_server() -> anyhow::Result<()> {
 
     let port: u16 = match env::var("QUANTPILOT_PORT") {
         Ok(val) => val.parse().unwrap_or_else(|e| {
-            safe_eprintln!("[启动] QUANTPILOT_PORT 值 '{}' 无效 ({}), 使用默认 3000", val, e);
+            safe_eprintln!(
+                "[启动] QUANTPILOT_PORT 值 '{}' 无效 ({}), 使用默认 3000",
+                val,
+                e
+            );
             3000
         }),
         Err(_) => 3000,
@@ -886,15 +904,27 @@ async fn run_api_server() -> anyhow::Result<()> {
         anyhow::bail!("端口 0 是保留端口, 请使用 1-65535 范围内的有效端口");
     }
     // v2.0.1: 绑定地址可通过环境变量配置，容器部署需设为 0.0.0.0
-    let bind_host = std::env::var("QUANTPILOT_BIND_ADDR").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let bind_host =
+        std::env::var("QUANTPILOT_BIND_ADDR").unwrap_or_else(|_| "127.0.0.1".to_string());
     let bind_ip: std::net::Ipv4Addr = bind_host.parse().unwrap_or_else(|_| {
-        safe_eprintln!("[启动] QUANTPILOT_BIND_ADDR 无效 ({}), 回退到 127.0.0.1", bind_host);
+        safe_eprintln!(
+            "[启动] QUANTPILOT_BIND_ADDR 无效 ({}), 回退到 127.0.0.1",
+            bind_host
+        );
         [127, 0, 0, 1].into()
     });
     let addr = SocketAddr::from((bind_ip, port));
-    println!("QuantPilot v{} API → http://{}", env!("CARGO_PKG_VERSION"), addr);
+    println!(
+        "QuantPilot v{} API → http://{}",
+        env!("CARGO_PKG_VERSION"),
+        addr
+    );
     let listener = tokio::net::TcpListener::bind(addr).await.map_err(|e| {
-        anyhow::anyhow!("端口 {} 已被占用，请检查是否有其他 QuantPilot 实例在运行: {}", port, e)
+        anyhow::anyhow!(
+            "端口 {} 已被占用，请检查是否有其他 QuantPilot 实例在运行: {}",
+            port,
+            e
+        )
     })?;
     // v1.1.11: 优雅关闭 — 监听 ctrl_c 信号
     let shutdown_signal = async {
@@ -903,10 +933,11 @@ async fn run_api_server() -> anyhow::Result<()> {
     };
     #[cfg(unix)]
     let sigterm = {
-        let mut sig = tokio::signal::unix::signal(
-            tokio::signal::unix::SignalKind::terminate()
-        ).expect("无法注册 SIGTERM 处理器");
-        async move { sig.recv().await; }
+        let mut sig = tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+            .expect("无法注册 SIGTERM 处理器");
+        async move {
+            sig.recv().await;
+        }
     };
     #[cfg(not(unix))]
     let sigterm = std::future::pending::<()>();
@@ -943,6 +974,14 @@ async fn json_rejection_middleware(
         || status == StatusCode::BAD_REQUEST
         || status == StatusCode::UNSUPPORTED_MEDIA_TYPE
     {
+        let content_type = response
+            .headers()
+            .get(axum::http::header::CONTENT_TYPE)
+            .and_then(|value| value.to_str().ok())
+            .unwrap_or("");
+        if content_type.starts_with("application/json") {
+            return response;
+        }
         let body = axum::Json(serde_json::json!({
             "error": "bad_request",
             "message": "请求格式错误: 请使用 Content-Type: application/json 并确保请求体为有效 JSON"
@@ -950,6 +989,44 @@ async fn json_rejection_middleware(
         return (StatusCode::BAD_REQUEST, body).into_response();
     }
     response
+}
+
+#[cfg(test)]
+mod json_rejection_middleware_tests {
+    use super::*;
+    use axum::{body::Body, http::Request, middleware, routing::get, Json, Router};
+    use tower::ServiceExt;
+
+    #[tokio::test]
+    async fn preserves_structured_handler_bad_request_json() {
+        let app = Router::new()
+            .route(
+                "/bad",
+                get(|| async {
+                    (
+                        StatusCode::BAD_REQUEST,
+                        Json(serde_json::json!({
+                            "error": "structured_error",
+                            "details": [{"code": "kept"}],
+                        })),
+                    )
+                }),
+            )
+            .layer(middleware::from_fn(json_rejection_middleware));
+
+        let response = app
+            .oneshot(Request::builder().uri("/bad").body(Body::empty()).unwrap())
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+        let body = axum::body::to_bytes(response.into_body(), usize::MAX)
+            .await
+            .unwrap();
+        let value: serde_json::Value = serde_json::from_slice(&body).unwrap();
+        assert_eq!(value["error"], "structured_error");
+        assert_eq!(value["details"][0]["code"], "kept");
+    }
 }
 
 // v2.1.0: 启动时恢复因崩溃残留的 .bak 文件
@@ -987,11 +1064,7 @@ async fn warm_persisted_state(state: &AppState) {
             if let Ok(data) = fs::read(entry.path()).await {
                 if let Ok(record) = serde_json::from_slice::<RuntimeApprovalRecord>(&data) {
                     let key = auth::scoped_key(&auth::UserId(0), &record.approval_id);
-                    state
-                        .approval_records
-                        .write()
-                        .await
-                        .insert(key, record);
+                    state.approval_records.write().await.insert(key, record);
                 } else {
                     safe_eprintln!("[startup] 跳过不可读的审批记录: {}", entry.path().display());
                 }
@@ -1004,11 +1077,7 @@ async fn warm_persisted_state(state: &AppState) {
             if let Ok(data) = fs::read(entry.path()).await {
                 if let Ok(snapshot) = serde_json::from_slice::<DeploymentSignatureSnapshot>(&data) {
                     let key = auth::scoped_key(&auth::UserId(0), &snapshot.snapshot_id);
-                    state
-                        .snapshots
-                        .write()
-                        .await
-                        .insert(key, snapshot);
+                    state.snapshots.write().await.insert(key, snapshot);
                 }
             }
         }
@@ -1019,11 +1088,7 @@ async fn warm_persisted_state(state: &AppState) {
             if let Ok(data) = fs::read(entry.path()).await {
                 if let Ok(firing) = serde_json::from_slice::<AlertFiring>(&data) {
                     let key = auth::scoped_key(&auth::UserId(0), &firing.firing_id);
-                    state
-                        .alert_firings
-                        .write()
-                        .await
-                        .insert(key, firing);
+                    state.alert_firings.write().await.insert(key, firing);
                 }
             }
         }
@@ -1034,11 +1099,7 @@ async fn warm_persisted_state(state: &AppState) {
             if let Ok(data) = fs::read(entry.path()).await {
                 if let Ok(report) = serde_json::from_slice::<SandboxVerificationReport>(&data) {
                     let key = auth::scoped_key(&auth::UserId(0), &report.proposal_id);
-                    state
-                        .sandbox_reports
-                        .write()
-                        .await
-                        .insert(key, report);
+                    state.sandbox_reports.write().await.insert(key, report);
                 }
             }
         }
@@ -1080,51 +1141,52 @@ async fn process_expired_approvals(state: &AppState) {
         for approval in approvals.values_mut() {
             if (approval.review_state == RuntimeApprovalReviewState::Pending
                 || approval.review_state == RuntimeApprovalReviewState::UnderReview)
-                && now_ms > approval.expires_at_ms {
-                    approval.review_state = RuntimeApprovalReviewState::Expired;
-                    approval.lifecycle.push(RuntimeApprovalLifecycleEntry {
-                        review_state: RuntimeApprovalReviewState::Expired,
-                        event_id: format!("event_apr_expired_{}", now_ms),
-                        sequence_no: approval.lifecycle.len() as u64 + 1,
-                        occurred_at_ms: now_ms,
-                        reason_code: "APPROVAL_EXPIRED".to_string(),
-                        message: format!(
-                            "审批单已过期 (L{}审批, {}h超时)",
-                            match approval.approval_level {
-                                RuntimeApprovalLevel::L1SingleReviewer => 1,
-                                RuntimeApprovalLevel::L2DualReviewer => 2,
-                                RuntimeApprovalLevel::L3RiskOwnerReview => 3,
-                            },
-                            match approval.approval_level {
-                                RuntimeApprovalLevel::L1SingleReviewer => 24,
-                                RuntimeApprovalLevel::L2DualReviewer => 48,
-                                RuntimeApprovalLevel::L3RiskOwnerReview => 72,
-                            },
-                        ),
-                        actor_id: None,
+                && now_ms > approval.expires_at_ms
+            {
+                approval.review_state = RuntimeApprovalReviewState::Expired;
+                approval.lifecycle.push(RuntimeApprovalLifecycleEntry {
+                    review_state: RuntimeApprovalReviewState::Expired,
+                    event_id: format!("event_apr_expired_{}", now_ms),
+                    sequence_no: approval.lifecycle.len() as u64 + 1,
+                    occurred_at_ms: now_ms,
+                    reason_code: "APPROVAL_EXPIRED".to_string(),
+                    message: format!(
+                        "审批单已过期 (L{}审批, {}h超时)",
+                        match approval.approval_level {
+                            RuntimeApprovalLevel::L1SingleReviewer => 1,
+                            RuntimeApprovalLevel::L2DualReviewer => 2,
+                            RuntimeApprovalLevel::L3RiskOwnerReview => 3,
+                        },
+                        match approval.approval_level {
+                            RuntimeApprovalLevel::L1SingleReviewer => 24,
+                            RuntimeApprovalLevel::L2DualReviewer => 48,
+                            RuntimeApprovalLevel::L3RiskOwnerReview => 72,
+                        },
+                    ),
+                    actor_id: None,
+                });
+                ids.push(approval.proposal_id.clone());
+                // 持久化在锁内完成, 但使用克隆数据避免长时间持锁
+                if let Some(json) = serde_json::to_vec_pretty(&*approval).ok() {
+                    let dir = state.approval_store_dir.to_path_buf();
+                    let id = approval.approval_id.clone();
+                    let approval_dir = dir.clone();
+                    let approval_id = id.clone();
+                    let approval_json = json.clone();
+                    // spawn 到后台执行 I/O, 不持锁等待
+                    tokio::spawn(async move {
+                        let _ = tokio::fs::create_dir_all(&approval_dir).await;
+                        let tmp = approval_dir.join(format!("{}.json.tmp", approval_id));
+                        let final_path = approval_dir.join(format!("{}.json", approval_id));
+                        let _ = tokio::fs::write(&tmp, &approval_json).await;
+                        let _ = tokio::fs::rename(&tmp, &final_path).await;
                     });
-                    ids.push(approval.proposal_id.clone());
-                    // 持久化在锁内完成, 但使用克隆数据避免长时间持锁
-                    if let Some(json) = serde_json::to_vec_pretty(&*approval).ok() {
-                        let dir = state.approval_store_dir.to_path_buf();
-                        let id = approval.approval_id.clone();
-                        let approval_dir = dir.clone();
-                        let approval_id = id.clone();
-                        let approval_json = json.clone();
-                        // spawn 到后台执行 I/O, 不持锁等待
-                        tokio::spawn(async move {
-                            let _ = tokio::fs::create_dir_all(&approval_dir).await;
-                            let tmp = approval_dir.join(format!("{}.json.tmp", approval_id));
-                            let final_path = approval_dir.join(format!("{}.json", approval_id));
-                            let _ = tokio::fs::write(&tmp, &approval_json).await;
-                            let _ = tokio::fs::rename(&tmp, &final_path).await;
-                        });
-                    }
                 }
+            }
         }
         ids
     }; // approval_records 写锁在此释放
-    // 阶段2: 在 ai_proposals 写锁内更新提案状态 (独立锁, 无嵌套)
+       // 阶段2: 在 ai_proposals 写锁内更新提案状态 (独立锁, 无嵌套)
     if !expired_proposal_ids.is_empty() {
         let mut proposals = state.ai_proposals.write().await;
         for proposal_id in &expired_proposal_ids {
@@ -1156,10 +1218,8 @@ async fn check_observation_windows(state: &AppState) {
                     // 仍在观察窗口内
                     if risk_reject > 100 || rollback_count > 0 {
                         // 异常检测：触发告警
-                        let alert_id = format!(
-                            "alert-observation-{}-{}",
-                            mutation.proposal_id, now_ms
-                        );
+                        let alert_id =
+                            format!("alert-observation-{}-{}", mutation.proposal_id, now_ms);
                         let firing = AlertFiring {
                             firing_id: alert_id.clone(),
                             rule_name: "hotswap_rollback_occurred".to_string(),
@@ -1174,11 +1234,7 @@ async fn check_observation_windows(state: &AppState) {
                                 mutation.proposal_id
                             ),
                         };
-                        state
-                            .alert_firings
-                            .write()
-                            .await
-                            .insert(alert_id, firing);
+                        state.alert_firings.write().await.insert(alert_id, firing);
                     }
                 }
             }
@@ -1415,8 +1471,7 @@ fn build_formal_quantscript_strategy_metadata(
         build_quantscript_authoring_view(source, module, resolved, lowering_context)?;
     Ok(BTreeMap::from([(
         "quantscript_authoring_view".to_string(),
-        serde_json::to_value(authoring_view)
-            .context("序列化 QuantScript 编写视图失败")?,
+        serde_json::to_value(authoring_view).context("序列化 QuantScript 编写视图失败")?,
     )]))
 }
 

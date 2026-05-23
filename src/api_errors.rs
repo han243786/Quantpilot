@@ -24,9 +24,12 @@ pub(crate) fn json_bad_request_with_code(
         details: Vec::new(),
         partial_artifacts: None,
     };
-    (StatusCode::BAD_REQUEST, serde_json::to_string(&payload).unwrap_or_else(|_| {
-        "{\"error\":\"bad_request\",\"message\":\"序列化错误响应失败\"}".to_string()
-    }))
+    (
+        StatusCode::BAD_REQUEST,
+        serde_json::to_string(&payload).unwrap_or_else(|_| {
+            "{\"error\":\"bad_request\",\"message\":\"序列化错误响应失败\"}".to_string()
+        }),
+    )
 }
 
 pub(super) fn json_bad_request_with_details(
@@ -85,14 +88,20 @@ pub(super) fn internal_error(error: anyhow::Error) -> (StatusCode, String) {
 pub(super) fn io_error(error: std::io::Error) -> (StatusCode, String) {
     // v1.2.0: 不向用户泄露 OS 路径详情，仅记录日志
     safe_eprintln!("[io_error] {}", error);
-    (StatusCode::INTERNAL_SERVER_ERROR, "内部服务器错误，请重试".to_string())
+    (
+        StatusCode::INTERNAL_SERVER_ERROR,
+        "内部服务器错误，请重试".to_string(),
+    )
 }
 
 pub(super) fn not_found_io_error(error: std::io::Error) -> (StatusCode, String) {
     if error.kind() == std::io::ErrorKind::NotFound {
         (StatusCode::NOT_FOUND, "请求的资源不存在".to_string())
     } else {
-        (StatusCode::INTERNAL_SERVER_ERROR, "内部服务器错误".to_string())
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "内部服务器错误".to_string(),
+        )
     }
 }
 
@@ -128,7 +137,8 @@ mod tests {
             span_label: None,
             reason: Some("不能为空".to_string()),
         };
-        let (status, body) = json_bad_request_with_details("validation_error", "校验失败", vec![detail]);
+        let (status, body) =
+            json_bad_request_with_details("validation_error", "校验失败", vec![detail]);
         assert_eq!(status, StatusCode::BAD_REQUEST);
         assert!(body.contains("validation_error"));
         assert!(body.contains("graph_id"));

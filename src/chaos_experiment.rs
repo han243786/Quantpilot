@@ -150,7 +150,9 @@ async fn create_experiment(
     let alerts_triggered = match request.experiment_type {
         ChaosExperimentType::DataLatencyInjection => vec!["data_freshness_critical".to_string()],
         ChaosExperimentType::EventLossInjection => vec!["event_orphan_detected".to_string()],
-        ChaosExperimentType::DiskPressureInjection => vec!["storage_watermark_critical".to_string()],
+        ChaosExperimentType::DiskPressureInjection => {
+            vec!["storage_watermark_critical".to_string()]
+        }
         ChaosExperimentType::ClockSkewInjection => vec!["data_freshness_critical".to_string()],
     };
 
@@ -218,13 +220,7 @@ async fn get_experiment(
     Path(experiment_id): Path<String>,
 ) -> Result<Json<ChaosExperimentReport>, (StatusCode, String)> {
     let scoped = auth::scoped_key(&user_id, &experiment_id);
-    if let Some(report) = state
-        .chaos_experiments
-        .read()
-        .await
-        .get(&scoped)
-        .cloned()
-    {
+    if let Some(report) = state.chaos_experiments.read().await.get(&scoped).cloned() {
         return Ok(Json(report));
     }
     load_chaos_report_from_disk(&state.chaos_store_dir, &experiment_id)
@@ -239,7 +235,9 @@ async fn persist_chaos_report(
     report: &ChaosExperimentReport,
 ) -> std::io::Result<()> {
     crate::storage_lifecycle::ensure_storage_quota(
-        std::path::Path::new("storage"), "chaos", crate::storage_lifecycle::StorageLifecycle::Transient,
+        std::path::Path::new("storage"),
+        "chaos",
+        crate::storage_lifecycle::StorageLifecycle::Transient,
     )?;
     fs::create_dir_all(&store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", report.experiment_id));
@@ -256,14 +254,9 @@ async fn load_chaos_report_from_disk(
     }
     let file_path = store_dir.join(format!("{}.json", experiment_id));
     let json = fs::read(&file_path).await.map_err(|_| {
-        json_bad_request(
-            "not_found",
-            format!("混沌实验 '{}' 不存在", experiment_id),
-        )
+        json_bad_request("not_found", format!("混沌实验 '{}' 不存在", experiment_id))
     })?;
-    serde_json::from_slice(&json).map_err(|error| {
-        internal_error(anyhow::anyhow!("{}", error))
-    })
+    serde_json::from_slice(&json).map_err(|error| internal_error(anyhow::anyhow!("{}", error)))
 }
 
 fn validate_experiment_id(id: &str) -> Result<(), String> {
@@ -276,7 +269,10 @@ fn validate_experiment_id(id: &str) -> Result<(), String> {
     if id.contains("..") || id.contains('/') || id.contains('\\') || id.contains('\0') {
         return Err("experiment_id 不能包含路径分隔符".to_string());
     }
-    if !id.chars().all(|ch| ch.is_ascii_alphanumeric() || ch == '_' || ch == '-') {
+    if !id
+        .chars()
+        .all(|ch| ch.is_ascii_alphanumeric() || ch == '_' || ch == '-')
+    {
         return Err("experiment_id 只能使用 ASCII 字母、数字、'_' 或 '-'".to_string());
     }
     Ok(())

@@ -61,8 +61,12 @@ async fn create_snapshot(
     State(state): State<AppState>,
     request: Option<Json<CreateSnapshotRequest>>,
 ) -> Result<Json<DeploymentSignatureSnapshot>, (StatusCode, String)> {
-    let Json(request) = request
-        .ok_or_else(|| (StatusCode::BAD_REQUEST, "快照创建需要提供部署签名信息 (deployment_revision 等 10 个字段)".to_string()))?;
+    let Json(request) = request.ok_or_else(|| {
+        (
+            StatusCode::BAD_REQUEST,
+            "快照创建需要提供部署签名信息 (deployment_revision 等 10 个字段)".to_string(),
+        )
+    })?;
     let now_ms = current_time_ms();
     let snapshot_id = format!("snap-{}", now_ms);
 
@@ -171,6 +175,9 @@ async fn restore_snapshot(
     }
 
     let now_ms = current_time_ms();
+    persist_snapshot_restore_audit(&state.audit_store_dir, &snapshot, &request, now_ms)
+        .await
+        .map_err(io_error)?;
     let result = json!({
         "restored_snapshot_id": snapshot_id,
         "deployment_revision": snapshot.deployment_revision,
@@ -185,7 +192,9 @@ async fn restore_snapshot(
 
     safe_eprintln!(
         "[snapshot_service] 快照 {} 由 {} 在 {} 恢复",
-        snapshot_id, request.actor_id, now_ms
+        snapshot_id,
+        request.actor_id,
+        now_ms
     );
 
     // v2.1.0: 恢复操作实际停止当前运行时并记录审计日志
@@ -209,12 +218,38 @@ async fn restore_snapshot(
 
 // ── 持久化辅助函数 ──
 
+async fn persist_snapshot_restore_audit(
+    audit_store_dir: &FsPath,
+    snapshot: &DeploymentSignatureSnapshot,
+    request: &RestoreSnapshotRequest,
+    restored_at_ms: u64,
+) -> std::io::Result<()> {
+    fs::create_dir_all(audit_store_dir).await?;
+    let path = audit_store_dir.join(format!(
+        "snapshot-restore-{}-{}.json",
+        snapshot.snapshot_id, restored_at_ms
+    ));
+    let entry = json!({
+        "event_type": "snapshot_restore",
+        "snapshot_id": snapshot.snapshot_id,
+        "deployment_revision": snapshot.deployment_revision,
+        "strategy_version": snapshot.strategy_version,
+        "parameter_version": snapshot.parameter_version,
+        "actor_id": request.actor_id,
+        "reason": request.reason.clone().unwrap_or_default(),
+        "restored_at_ms": restored_at_ms,
+    });
+    crate::runtime_persistence::atomic_write_json(&path, &entry).await
+}
+
 async fn persist_snapshot(
     store_dir: &FsPath,
     snapshot: &DeploymentSignatureSnapshot,
 ) -> std::io::Result<()> {
     crate::storage_lifecycle::ensure_storage_quota(
-        std::path::Path::new("storage"), "snapshots", crate::storage_lifecycle::StorageLifecycle::Transient,
+        std::path::Path::new("storage"),
+        "snapshots",
+        crate::storage_lifecycle::StorageLifecycle::Transient,
     )?;
     fs::create_dir_all(&store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", snapshot.snapshot_id));
@@ -230,15 +265,10 @@ async fn load_snapshot_from_disk(
         return Err(json_bad_request("invalid_snapshot_id", msg));
     }
     let file_path = store_dir.join(format!("{}.json", snapshot_id));
-    let json = fs::read(&file_path).await.map_err(|_| {
-        json_bad_request(
-            "not_found",
-            format!("快照 '{}' 不存在", snapshot_id),
-        )
-    })?;
-    serde_json::from_slice(&json).map_err(|error| {
-        internal_error(anyhow::anyhow!("{}", error))
-    })
+    let json = fs::read(&file_path)
+        .await
+        .map_err(|_| json_bad_request("not_found", format!("快照 '{}' 不存在", snapshot_id)))?;
+    serde_json::from_slice(&json).map_err(|error| internal_error(anyhow::anyhow!("{}", error)))
 }
 
 fn validate_snapshot_id(id: &str) -> Result<(), String> {
@@ -251,7 +281,10 @@ fn validate_snapshot_id(id: &str) -> Result<(), String> {
     if id.contains("..") || id.contains('/') || id.contains('\\') || id.contains('\0') {
         return Err("snapshot_id 不能包含路径分隔符".to_string());
     }
-    if !id.chars().all(|ch| ch.is_ascii_alphanumeric() || ch == '_' || ch == '-') {
+    if !id
+        .chars()
+        .all(|ch| ch.is_ascii_alphanumeric() || ch == '_' || ch == '-')
+    {
         return Err("snapshot_id 只能使用 ASCII 字母、数字、'_' 或 '-'".to_string());
     }
     Ok(())
@@ -332,4 +365,3 @@ mod tests {
         assert!(json.contains("event_count"));
     }
 }
-

@@ -52,9 +52,11 @@ pub fn compute_backtest_metrics(
     // v1.1.13: 索提诺比率 — 修正为标准下行偏差公式
     // DD = sqrt(1/N * Σ min(0, R_i)^2)，包含全部观测值
     let n = daily_returns.len().max(1) as f64;
-    let downside_var: f64 = daily_returns.iter()
+    let downside_var: f64 = daily_returns
+        .iter()
         .map(|&r| r.min(0.0).powi(2))
-        .sum::<f64>() / n;
+        .sum::<f64>()
+        / n;
     let downside_vol = downside_var.sqrt() * 252.0_f64.sqrt();
     let sortino_ratio = if downside_vol.is_finite() && downside_vol > 0.0 {
         annualized_return / downside_vol
@@ -96,7 +98,8 @@ pub fn compute_backtest_metrics(
     if benchmark_curve.len() >= 2 {
         let benchmark_returns = compute_step_returns(benchmark_curve);
         let benchmark_total_return = compute_total_return(benchmark_curve);
-        let (alpha, beta) = compute_alpha_beta(&daily_returns, &benchmark_returns, annualized_return);
+        let (alpha, beta) =
+            compute_alpha_beta(&daily_returns, &benchmark_returns, annualized_return);
         let ir = information_ratio(&daily_returns, &benchmark_returns);
 
         summary.benchmark_comparison = Some(BacktestBenchmarkComparison {
@@ -144,7 +147,13 @@ fn days_in_month(year: i64, month: i64) -> i64 {
     match month {
         1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
         4 | 6 | 9 | 11 => 30,
-        2 => if is_leap(year) { 29 } else { 28 },
+        2 => {
+            if is_leap(year) {
+                29
+            } else {
+                28
+            }
+        }
         _ => 30,
     }
 }
@@ -154,19 +163,24 @@ fn is_leap(year: i64) -> bool {
 }
 
 /// v1.1.0 P2: 计算月度/季度/年度收益率分解
-pub fn compute_period_returns(equity_curve: &[BacktestEquityPoint]) -> Vec<qrpc_core::PeriodReturn> {
+pub fn compute_period_returns(
+    equity_curve: &[BacktestEquityPoint],
+) -> Vec<qrpc_core::PeriodReturn> {
     if equity_curve.len() < 2 {
         return Vec::new();
     }
 
-    let mut periods: std::collections::BTreeMap<String, (f64, f64, u32)> = std::collections::BTreeMap::new();
+    let mut periods: std::collections::BTreeMap<String, (f64, f64, u32)> =
+        std::collections::BTreeMap::new();
     // key: "YYYY-MM", value: (start_equity, end_equity, trade_count)
 
     for window in equity_curve.windows(2) {
         let ts_ms = window[1].ts_ms;
         let period = epoch_ms_to_year_month(ts_ms);
 
-        let entry = periods.entry(period).or_insert((window[0].equity, window[1].equity, 0));
+        let entry = periods
+            .entry(period)
+            .or_insert((window[0].equity, window[1].equity, 0));
         entry.1 = window[1].equity; // 更新为该月最新的权益
         entry.2 += 1; // 该月内的 step 数
     }
@@ -175,7 +189,11 @@ pub fn compute_period_returns(equity_curve: &[BacktestEquityPoint]) -> Vec<qrpc_
         .into_iter()
         .map(|(period, (start, end, steps))| qrpc_core::PeriodReturn {
             period,
-            return_ratio: if start.is_finite() && start > 0.0 { (end - start) / start } else { 0.0 },
+            return_ratio: if start.is_finite() && start > 0.0 {
+                (end - start) / start
+            } else {
+                0.0
+            },
             trade_count: steps,
         })
         .collect()
@@ -199,7 +217,11 @@ fn compute_step_returns(equity_curve: &[BacktestEquityPoint]) -> Vec<f64> {
 }
 
 fn compute_total_return(equity_curve: &[BacktestEquityPoint]) -> f64 {
-    let first = equity_curve.first().map(|p| p.equity).unwrap_or(1.0).max(f64::MIN_POSITIVE);
+    let first = equity_curve
+        .first()
+        .map(|p| p.equity)
+        .unwrap_or(1.0)
+        .max(f64::MIN_POSITIVE);
     let last = equity_curve.last().map(|p| p.equity).unwrap_or(first);
     (last - first) / first
 }
@@ -215,7 +237,10 @@ fn std_deviation(values: &[f64]) -> f64 {
 }
 
 /// 从成交记录计算交易分析指标
-fn compute_trade_analysis(sessions: &[SessionOutput], _initial_equity: f64) -> BacktestTradeAnalysis {
+fn compute_trade_analysis(
+    sessions: &[SessionOutput],
+    _initial_equity: f64,
+) -> BacktestTradeAnalysis {
     // 从所有 session 的 fill_reports 提取逐笔 PnL
     struct Trade {
         pnl: f64,
@@ -259,8 +284,16 @@ fn compute_trade_analysis(sessions: &[SessionOutput], _initial_equity: f64) -> B
         0.0
     };
 
-    let avg_win = if !wins.is_empty() { total_profit / wins.len() as f64 } else { 0.0 };
-    let avg_loss = if !losses.is_empty() { total_loss / losses.len() as f64 } else { 0.0 };
+    let avg_win = if !wins.is_empty() {
+        total_profit / wins.len() as f64
+    } else {
+        0.0
+    };
+    let avg_loss = if !losses.is_empty() {
+        total_loss / losses.len() as f64
+    } else {
+        0.0
+    };
 
     let mut max_consecutive_wins: u32 = 0;
     let mut max_consecutive_losses: u32 = 0;
@@ -277,7 +310,9 @@ fn compute_trade_analysis(sessions: &[SessionOutput], _initial_equity: f64) -> B
             _ => {
                 match current_is_win {
                     Some(true) => max_consecutive_wins = max_consecutive_wins.max(current_streak),
-                    Some(false) => max_consecutive_losses = max_consecutive_losses.max(current_streak),
+                    Some(false) => {
+                        max_consecutive_losses = max_consecutive_losses.max(current_streak)
+                    }
                     None => {}
                 }
                 current_streak = 1;
@@ -316,8 +351,7 @@ fn compute_drawdown_analysis(equity_curve: &[BacktestEquityPoint]) -> BacktestDr
         if point.equity > peak_equity {
             // 创新高：结束当前回撤
             if let Some(start_ms) = drawdown_start_ms {
-                let duration_days =
-                    (point.ts_ms.saturating_sub(start_ms)) as f64 / 86_400_000.0;
+                let duration_days = (point.ts_ms.saturating_sub(start_ms)) as f64 / 86_400_000.0;
                 drawdown_durations.push(duration_days);
                 max_drawdown_duration_days = max_drawdown_duration_days.max(duration_days);
                 drawdown_start_ms = None;
@@ -371,10 +405,20 @@ fn compute_alpha_beta(
     let sr_mean = sr.iter().sum::<f64>() / n as f64;
     let br_mean = br.iter().sum::<f64>() / n as f64;
 
-    let covariance: f64 = sr.iter().zip(br.iter()).map(|(s, b)| (s - sr_mean) * (b - br_mean)).sum::<f64>() / (n - 1) as f64;
-    let bench_variance: f64 = br.iter().map(|b| (b - br_mean).powi(2)).sum::<f64>() / (n - 1) as f64;
+    let covariance: f64 = sr
+        .iter()
+        .zip(br.iter())
+        .map(|(s, b)| (s - sr_mean) * (b - br_mean))
+        .sum::<f64>()
+        / (n - 1) as f64;
+    let bench_variance: f64 =
+        br.iter().map(|b| (b - br_mean).powi(2)).sum::<f64>() / (n - 1) as f64;
 
-    let beta = if bench_variance.is_finite() && bench_variance > 0.0 { covariance / bench_variance } else { 1.0 };
+    let beta = if bench_variance.is_finite() && bench_variance > 0.0 {
+        covariance / bench_variance
+    } else {
+        1.0
+    };
     // 年化 Alpha
     let alpha = annualized_return - beta * (compute_annualized_from_daily(&br));
 
@@ -397,9 +441,13 @@ fn compute_var_cvar(daily_returns: &[f64]) -> (f64, f64) {
     // 5% 分位数 = 第 5 个百分位
     let idx = ((sorted.len() as f64 * 0.05).ceil() as usize).saturating_sub(1);
     let var_95 = sorted[idx.min(sorted.len().saturating_sub(1))]; // 负值表示损失
-    // CVaR = 低于 VaR 的所有收益的平均值
+                                                                  // CVaR = 低于 VaR 的所有收益的平均值
     let tail: Vec<f64> = sorted.iter().take(idx + 1).copied().collect();
-    let cvar_95 = if tail.is_empty() { var_95 } else { tail.iter().sum::<f64>() / tail.len() as f64 };
+    let cvar_95 = if tail.is_empty() {
+        var_95
+    } else {
+        tail.iter().sum::<f64>() / tail.len() as f64
+    };
     (var_95, cvar_95)
 }
 
@@ -410,19 +458,30 @@ fn compute_skewness_kurtosis(daily_returns: &[f64]) -> (f64, f64) {
         return (0.0, 0.0);
     }
     let mean = daily_returns.iter().sum::<f64>() / n as f64;
-    let variance: f64 = daily_returns.iter().map(|r| (r - mean).powi(2)).sum::<f64>() / (n - 1) as f64;
+    let variance: f64 = daily_returns
+        .iter()
+        .map(|r| (r - mean).powi(2))
+        .sum::<f64>()
+        / (n - 1) as f64;
     let std = variance.sqrt();
     if std < 1e-12 {
         return (0.0, 0.0);
     }
     // 偏度: E[(X-μ)³] / σ³
-    let skewness = daily_returns.iter()
+    let skewness = daily_returns
+        .iter()
         .map(|r| ((r - mean) / std).powi(3))
-        .sum::<f64>() * n as f64 / ((n - 1) * (n - 2)) as f64;
+        .sum::<f64>()
+        * n as f64
+        / ((n - 1) * (n - 2)) as f64;
     // 峰度(超额): E[(X-μ)⁴] / σ⁴ - 3
-    let kurtosis = daily_returns.iter()
+    let kurtosis = daily_returns
+        .iter()
         .map(|r| ((r - mean) / std).powi(4))
-        .sum::<f64>() * n as f64 * (n as f64 + 1.0) / ((n - 1) * (n - 2) * (n - 3)) as f64
+        .sum::<f64>()
+        * n as f64
+        * (n as f64 + 1.0)
+        / ((n - 1) * (n - 2) * (n - 3)) as f64
         - 3.0 * (n - 1) as f64 * (n - 1) as f64 / ((n - 2) * (n - 3)) as f64;
     (skewness, kurtosis.max(-3.0))
 }
@@ -460,7 +519,9 @@ mod tests {
         let mut total_return = 0.0;
         for i in 0..=100 {
             let eq = 100_000.0 * (1.0 + 0.00182_f64).powf(i as f64);
-            if i == 100 { total_return = (eq - 100_000.0) / 100_000.0; }
+            if i == 100 {
+                total_return = (eq - 100_000.0) / 100_000.0;
+            }
             equity.push(BacktestEquityPoint {
                 ts_ms: i as u64 * day_ms,
                 equity: eq,
@@ -483,12 +544,18 @@ mod tests {
                 max_drawdown_ratio: 0.0,
                 ..Default::default()
             },
-            benchmark_comparison: None, skewness: 0.0, kurtosis: 0.0,
+            benchmark_comparison: None,
+            skewness: 0.0,
+            kurtosis: 0.0,
         };
 
         compute_backtest_metrics(&mut summary, &[], &equity, &[]);
 
-        assert!(summary.risk_adjusted.sharpe_ratio > 0.0, "夏普比率应为正: {}", summary.risk_adjusted.sharpe_ratio);
+        assert!(
+            summary.risk_adjusted.sharpe_ratio > 0.0,
+            "夏普比率应为正: {}",
+            summary.risk_adjusted.sharpe_ratio
+        );
         // sortino 在单调上涨时可能为 0（无下行波动），这是正确的
         assert!(summary.annualized_return > 0.0);
         assert!(summary.annualized_volatility > 0.0);
@@ -502,9 +569,19 @@ mod tests {
         for i in 0..=30 {
             let ts = i as u64 * day_ms;
             let seq = 100_000.0 * (1.0 + 0.0046_f64).powf(i as f64);
-            strategy_equity.push(BacktestEquityPoint { ts_ms: ts, equity: seq, cash_balance: seq, net_notional: 0.0 });
+            strategy_equity.push(BacktestEquityPoint {
+                ts_ms: ts,
+                equity: seq,
+                cash_balance: seq,
+                net_notional: 0.0,
+            });
             let beq = 100_000.0 * (1.0 + 0.0019_f64).powf(i as f64);
-            benchmark_equity.push(BacktestEquityPoint { ts_ms: ts, equity: beq, cash_balance: beq, net_notional: 0.0 });
+            benchmark_equity.push(BacktestEquityPoint {
+                ts_ms: ts,
+                equity: beq,
+                cash_balance: beq,
+                net_notional: 0.0,
+            });
         }
         let total_return = (strategy_equity.last().unwrap().equity - 100_000.0) / 100_000.0;
         let mut summary = BacktestSummary {
@@ -522,13 +599,19 @@ mod tests {
                 max_drawdown_ratio: 0.01,
                 ..Default::default()
             },
-            benchmark_comparison: None, skewness: 0.0, kurtosis: 0.0,
+            benchmark_comparison: None,
+            skewness: 0.0,
+            kurtosis: 0.0,
         };
 
         compute_backtest_metrics(&mut summary, &[], &strategy_equity, &benchmark_equity);
 
         let bc = summary.benchmark_comparison.expect("应有基准对比数据");
-        assert!(bc.benchmark_total_return > 0.0, "基准收益应为正: {}", bc.benchmark_total_return);
+        assert!(
+            bc.benchmark_total_return > 0.0,
+            "基准收益应为正: {}",
+            bc.benchmark_total_return
+        );
         // 策略跑赢基准，Alpha 应为正
         assert!(bc.alpha > 0.0, "跑赢基准时 Alpha 应为正: {}", bc.alpha);
         assert!(bc.information_ratio > 0.0, "跑赢基准时 IR 应为正");
@@ -542,9 +625,15 @@ mod tests {
             (172_800_000, 92_000.0),
             (259_200_000, 98_000.0),
             (345_600_000, 102_000.0),
-        ].iter().map(|(ts, eq)| BacktestEquityPoint {
-            ts_ms: *ts, equity: *eq, cash_balance: *eq, net_notional: 0.0,
-        }).collect();
+        ]
+        .iter()
+        .map(|(ts, eq)| BacktestEquityPoint {
+            ts_ms: *ts,
+            equity: *eq,
+            cash_balance: *eq,
+            net_notional: 0.0,
+        })
+        .collect();
         let result = compute_drawdown_analysis(&equity);
         assert!(result.max_drawdown_ratio >= 0.07);
         // 回撤持续 ≈ 3 天 (从 day 1 到 day 3 开始恢复)
@@ -565,7 +654,9 @@ mod tests {
             risk_adjusted: Default::default(),
             trade_analysis: Default::default(),
             drawdown_analysis: Default::default(),
-            benchmark_comparison: None, skewness: 0.0, kurtosis: 0.0,
+            benchmark_comparison: None,
+            skewness: 0.0,
+            kurtosis: 0.0,
         };
         compute_backtest_metrics(&mut summary, &[], &[], &[]);
         // 不 panic 即通过

@@ -8,15 +8,9 @@ pub enum SlippageModel {
     /// 固定 bps（v1.0.7 现有行为）
     FixedBps { bps: f64 },
     /// 波动率缩放: slippage = base_bps + vol_coefficient * volatility_bps
-    VolatilityScaled {
-        base_bps: f64,
-        vol_coefficient: f64,
-    },
+    VolatilityScaled { base_bps: f64, vol_coefficient: f64 },
     /// 订单簿深度: 滑点 ∝ order_qty / estimated_depth
-    OrderBookDepth {
-        tick_size: f64,
-        depth_factor: f64,
-    },
+    OrderBookDepth { tick_size: f64, depth_factor: f64 },
 }
 
 impl Default for SlippageModel {
@@ -112,7 +106,6 @@ pub struct ExecutionAssumptions {
     pub taker_fee_bps: f64,
 }
 
-
 impl Default for ExecutionAssumptions {
     fn default() -> Self {
         Self {
@@ -141,10 +134,16 @@ impl ExecutionAssumptions {
     pub fn label(&self) -> String {
         let slippage_label = match &self.slippage {
             SlippageModel::FixedBps { bps } => format!("固定滑点 {}bps", bps),
-            SlippageModel::VolatilityScaled { base_bps, vol_coefficient } => {
+            SlippageModel::VolatilityScaled {
+                base_bps,
+                vol_coefficient,
+            } => {
                 format!("波动率缩放 {}+{}bps", base_bps, vol_coefficient)
             }
-            SlippageModel::OrderBookDepth { tick_size, depth_factor } => {
+            SlippageModel::OrderBookDepth {
+                tick_size,
+                depth_factor,
+            } => {
                 format!("盘口深度 tick={} factor={}", tick_size, depth_factor)
             }
         };
@@ -152,7 +151,11 @@ impl ExecutionAssumptions {
             MarketImpactModel::None => "无冲击".to_string(),
             MarketImpactModel::SquareRoot { eta } => format!("平方根 η={}", eta),
         };
-        let spread_label = if self.use_bid_ask { "真实价差" } else { "估算价差" };
+        let spread_label = if self.use_bid_ask {
+            "真实价差"
+        } else {
+            "估算价差"
+        };
         let latency_label = match &self.latency {
             LatencyModel::Fixed { delay_ms } => format!("延迟 {}ms", delay_ms),
             LatencyModel::Normal { mean_ms, std_ms: _ } => format!("延迟 ~{}ms", mean_ms),
@@ -160,7 +163,10 @@ impl ExecutionAssumptions {
                 format!("延迟 B:{}ms O:{}ms", binance_ms, okx_ms)
             }
         };
-        format!("{} / {} / {} / {}", slippage_label, impact_label, spread_label, latency_label)
+        format!(
+            "{} / {} / {} / {}",
+            slippage_label, impact_label, spread_label, latency_label
+        )
     }
 }
 
@@ -180,10 +186,10 @@ pub fn estimate_spread(mid_price: f64, volatility: f64, timeframe_minutes: u64) 
         };
     }
     let base_spread_bps = match timeframe_minutes {
-        0..=5 => 0.5,       // 分钟线: 极紧
-        6..=60 => 1.0,      // 小时线
-        61..=240 => 1.5,    // 4 小时线
-        _ => 2.0,           // 日线及以上
+        0..=5 => 0.5,    // 分钟线: 极紧
+        6..=60 => 1.0,   // 小时线
+        61..=240 => 1.5, // 4 小时线
+        _ => 2.0,        // 日线及以上
     };
     // 波动率 2% 为基准，vol_adjustment 限制在 0.5x-3x
     let vol_adjustment = (volatility / 0.02).clamp(0.5, 3.0);
@@ -205,7 +211,11 @@ pub fn estimate_spread(mid_price: f64, volatility: f64, timeframe_minutes: u64) 
 
 /// 从真实报价构建价差
 pub fn spread_from_quote(bid: f64, ask: f64, mid: f64) -> SpreadEstimate {
-    let spread_bps = if mid > 0.0 { (ask - bid) / mid * 10_000.0 } else { 0.0 };
+    let spread_bps = if mid > 0.0 {
+        (ask - bid) / mid * 10_000.0
+    } else {
+        0.0
+    };
     SpreadEstimate {
         bid,
         ask,
@@ -283,12 +293,18 @@ fn compute_slippage_bps(
 ) -> f64 {
     match model {
         SlippageModel::FixedBps { bps } => *bps,
-        SlippageModel::VolatilityScaled { base_bps, vol_coefficient } => {
+        SlippageModel::VolatilityScaled {
+            base_bps,
+            vol_coefficient,
+        } => {
             // 年化波动率 → bps
             let vol_bps = volatility * 10_000.0;
             base_bps + vol_coefficient * vol_bps
         }
-        SlippageModel::OrderBookDepth { tick_size, depth_factor } => {
+        SlippageModel::OrderBookDepth {
+            tick_size,
+            depth_factor,
+        } => {
             let depth = match order.side {
                 OrderSide::Buy => market.buy_liquidity.max(1e-9),
                 OrderSide::Sell => market.sell_liquidity.max(1e-9),
@@ -305,7 +321,12 @@ fn compute_slippage_bps(
 }
 
 /// 计算市场冲击对价格的永久影响（返回价格调整值，正数表示价格被推高）
-fn compute_market_impact(order: &SimOrder, _market: &ExtendedMarketState, model: &MarketImpactModel, volatility: f64) -> f64 {
+fn compute_market_impact(
+    order: &SimOrder,
+    _market: &ExtendedMarketState,
+    model: &MarketImpactModel,
+    volatility: f64,
+) -> f64 {
     match model {
         MarketImpactModel::None => 0.0,
         MarketImpactModel::SquareRoot { eta } => {
@@ -322,8 +343,8 @@ fn compute_market_impact(order: &SimOrder, _market: &ExtendedMarketState, model:
             let participation = q / daily_volume;
             let impact_ratio = sigma_price * participation.sqrt() * eta;
             match order.side {
-                OrderSide::Buy => impact_ratio,       // 买单推高价格
-                OrderSide::Sell => -impact_ratio,     // 卖单压低价格
+                OrderSide::Buy => impact_ratio,   // 买单推高价格
+                OrderSide::Sell => -impact_ratio, // 卖单压低价格
             }
         }
     }
@@ -358,7 +379,10 @@ pub fn compute_fill_price(
     // 4. Limit 单约束: 买方不高于 limit，卖方不低于 limit
     let filled = with_slippage + impact;
     if let Some(limit) = order.limit_price {
-        if matches!(order.order_type, OrderType::Limit | OrderType::StopLossLimit | OrderType::TakeProfitLimit) {
+        if matches!(
+            order.order_type,
+            OrderType::Limit | OrderType::StopLossLimit | OrderType::TakeProfitLimit
+        ) {
             return match order.side {
                 OrderSide::Buy => filled.min(limit),
                 OrderSide::Sell => filled.max(limit),
@@ -375,8 +399,12 @@ pub fn compute_fill_price(
 /// 相同的 seed 始终产生相同的输出（确定性回放保证）。
 fn pseudo_random_normal(seed: u64) -> f64 {
     // 从 seed 派生两个独立值
-    let s1 = seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
-    let s2 = s1.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+    let s1 = seed
+        .wrapping_mul(6364136223846793005)
+        .wrapping_add(1442695040888963407);
+    let s2 = s1
+        .wrapping_mul(6364136223846793005)
+        .wrapping_add(1442695040888963407);
     // 映射到 (0, 1] 避免 ln(0)
     let u1 = (s1 as f64) / (u64::MAX as f64) * 0.999 + 0.0005;
     let u2 = (s2 as f64) / (u64::MAX as f64) * 0.999 + 0.0005;
@@ -429,7 +457,11 @@ mod tests {
         };
         let price = compute_fill_price(&order, &market, &assumptions, 0.02);
         // 买方成交价 > mid price（不利方向）
-        assert!(price > market.price, "买方成交价应高于 mid: {price} > {}", market.price);
+        assert!(
+            price > market.price,
+            "买方成交价应高于 mid: {price} > {}",
+            market.price
+        );
     }
 
     #[test]
@@ -444,7 +476,11 @@ mod tests {
         };
         let price = compute_fill_price(&order, &market, &assumptions, 0.02);
         // 卖方成交价 < mid price（不利方向）
-        assert!(price < market.price, "卖方成交价应低于 mid: {price} < {}", market.price);
+        assert!(
+            price < market.price,
+            "卖方成交价应低于 mid: {price} < {}",
+            market.price
+        );
     }
 
     #[test]
@@ -458,8 +494,11 @@ mod tests {
         };
         let price = compute_fill_price(&order, &market, &assumptions, 0.02);
         // 无滑点时，买单价 ≈ ask
-        assert!((price - market.ask_price).abs() < 0.01,
-            "零滑点买单价应等于 ask: {price} ≈ {}", market.ask_price);
+        assert!(
+            (price - market.ask_price).abs() < 0.01,
+            "零滑点买单价应等于 ask: {price} ≈ {}",
+            market.ask_price
+        );
     }
 
     #[test]
@@ -473,8 +512,11 @@ mod tests {
             ..ExecutionAssumptions::v1_0_7_compat()
         };
         let price = compute_fill_price(&order, &market, &assumptions, 0.02);
-        assert!((price - market.bid_price).abs() < 0.01,
-            "零滑点卖单价应等于 bid: {price} ≈ {}", market.bid_price);
+        assert!(
+            (price - market.bid_price).abs() < 0.01,
+            "零滑点卖单价应等于 bid: {price} ≈ {}",
+            market.bid_price
+        );
     }
 
     #[test]
@@ -482,15 +524,20 @@ mod tests {
         let order = sample_buy_order(1.0);
         let market = sample_market();
         let assumptions = ExecutionAssumptions {
-            slippage: SlippageModel::VolatilityScaled { base_bps: 5.0, vol_coefficient: 2.0 },
+            slippage: SlippageModel::VolatilityScaled {
+                base_bps: 5.0,
+                vol_coefficient: 2.0,
+            },
             use_bid_ask: false,
             ..ExecutionAssumptions::v1_0_7_compat()
         };
-        let low_vol = compute_fill_price(&order, &market, &assumptions, 0.01);  // 1% vol
+        let low_vol = compute_fill_price(&order, &market, &assumptions, 0.01); // 1% vol
         let high_vol = compute_fill_price(&order, &market, &assumptions, 0.05); // 5% vol
-        // 高波动时滑点更大 → 买得更高
-        assert!(high_vol > low_vol,
-            "高波动滑点应更大: high({high_vol}) > low({low_vol})");
+                                                                                // 高波动时滑点更大 → 买得更高
+        assert!(
+            high_vol > low_vol,
+            "高波动滑点应更大: high({high_vol}) > low({low_vol})"
+        );
     }
 
     #[test]
@@ -509,16 +556,22 @@ mod tests {
         let assumptions = ExecutionAssumptions::v1_0_7_compat();
         let price = compute_fill_price(&order, &market, &assumptions, 0.02);
         // Limit 买单成交价不高于 limit_price
-        assert!(price <= order.limit_price.unwrap() + 1e-9,
-            "Limit 买单价 {price} 不应超过 limit {}", order.limit_price.unwrap());
+        assert!(
+            price <= order.limit_price.unwrap() + 1e-9,
+            "Limit 买单价 {price} 不应超过 limit {}",
+            order.limit_price.unwrap()
+        );
     }
 
     #[test]
     fn estimate_spread_reasonable_range() {
         let spread = estimate_spread(50_000.0, 0.02, 1440);
         // 日线 BTC 典型价差 1-5 bps
-        assert!(spread.spread_bps >= 0.5 && spread.spread_bps <= 15.0,
-            "日线价差 {:.1} bps 应在合理范围 0.5-15", spread.spread_bps);
+        assert!(
+            spread.spread_bps >= 0.5 && spread.spread_bps <= 15.0,
+            "日线价差 {:.1} bps 应在合理范围 0.5-15",
+            spread.spread_bps
+        );
         assert!(spread.bid < spread.ask, "bid < ask");
         assert!(spread.ask > spread.mid, "ask > mid");
         assert_eq!(spread.source, SpreadEstimateSource::VolatilityBased);
@@ -528,8 +581,12 @@ mod tests {
     fn estimate_spread_tighter_for_shorter_timeframes() {
         let spread_1m = estimate_spread(50_000.0, 0.02, 1);
         let spread_1d = estimate_spread(50_000.0, 0.02, 1440);
-        assert!(spread_1m.spread_bps < spread_1d.spread_bps,
-            "分钟线价差应小于日线: {:.1} < {:.1}", spread_1m.spread_bps, spread_1d.spread_bps);
+        assert!(
+            spread_1m.spread_bps < spread_1d.spread_bps,
+            "分钟线价差应小于日线: {:.1} < {:.1}",
+            spread_1m.spread_bps,
+            spread_1d.spread_bps
+        );
     }
 
     #[test]
@@ -549,7 +606,9 @@ mod tests {
         // v1.0.7 行为: mid_price * (1 + direction * slippage_bps / 10000)
         let expected = market.price * (1.0 + 5.0 / 10_000.0);
         let actual = compute_fill_price(&order, &market, &assumptions, 0.0);
-        assert!((actual - expected).abs() < 0.01,
-            "v1.0.7 兼容模式应与旧行为一致: {actual} ≈ {expected}");
+        assert!(
+            (actual - expected).abs() < 0.01,
+            "v1.0.7 兼容模式应与旧行为一致: {actual} ≈ {expected}"
+        );
     }
 }

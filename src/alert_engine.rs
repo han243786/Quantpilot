@@ -270,9 +270,11 @@ async fn trigger_alert_check(
             .collect()
     };
 
-    state.alert_firings.write().await.retain(|_, firing| {
-        firing.state != AlertFiringState::Resolved
-    });
+    state
+        .alert_firings
+        .write()
+        .await
+        .retain(|_, firing| firing.state != AlertFiringState::Resolved);
 
     // P2-6: 删除已解决告警对应的磁盘文件
     for key in &resolved_keys {
@@ -357,16 +359,19 @@ async fn check_sandbox_timeout(state: &AppState, user_id: &auth::UserId) -> bool
 async fn check_hotswap_rollback(state: &AppState, user_id: &auth::UserId) -> bool {
     let prefix = auth::scoped_key(user_id, "");
     let hotswaps = state.hotswap_records.read().await;
-    hotswaps.iter().any(|(key, h)| {
-        key.starts_with(&prefix) && h.rollback_reason.is_some()
-    })
+    hotswaps
+        .iter()
+        .any(|(key, h)| key.starts_with(&prefix) && h.rollback_reason.is_some())
 }
 
 async fn check_capability_hash_mismatch(state: &AppState, user_id: &auth::UserId) -> bool {
     // 比较compile_hash与运行时hash
     let prefix = auth::scoped_key(user_id, "");
     let backtests = state.backtests.read().await;
-    let user_backtests: Vec<_> = backtests.iter().filter(|(k, _)| k.starts_with(&prefix)).collect();
+    let user_backtests: Vec<_> = backtests
+        .iter()
+        .filter(|(k, _)| k.starts_with(&prefix))
+        .collect();
     if user_backtests.is_empty() {
         return false;
     }
@@ -425,7 +430,9 @@ async fn check_ai_reject_rate(state: &AppState, user_id: &auth::UserId) -> bool 
     let day_ms = 24 * 3600 * 1000;
     let recent: Vec<_> = proposals
         .iter()
-        .filter(|(key, p)| key.starts_with(&prefix) && now_ms.saturating_sub(p.created_at_ms) < day_ms)
+        .filter(|(key, p)| {
+            key.starts_with(&prefix) && now_ms.saturating_sub(p.created_at_ms) < day_ms
+        })
         .map(|(_, p)| p)
         .collect();
     if recent.len() <= 5 {
@@ -452,7 +459,9 @@ pub(super) async fn init_alert_rules(state: &AppState) {
 
 async fn persist_alert_firing(store_dir: &FsPath, firing: &AlertFiring) -> std::io::Result<()> {
     crate::storage_lifecycle::ensure_storage_quota(
-        std::path::Path::new("storage"), "alerts", crate::storage_lifecycle::StorageLifecycle::Transient,
+        std::path::Path::new("storage"),
+        "alerts",
+        crate::storage_lifecycle::StorageLifecycle::Transient,
     )?;
     fs::create_dir_all(&store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", firing.firing_id));
@@ -465,11 +474,7 @@ async fn persist_alert_firing(store_dir: &FsPath, firing: &AlertFiring) -> std::
 /// resolve_condition 字段作为人类可读文档描述"已恢复"的含义。
 /// 当前实现采用触发条件取反策略: 触发条件不成立即视为已恢复。
 /// 这是正确的语义, 因为若触发条件已不再满足则问题已解决。
-async fn is_condition_resolved(
-    state: &AppState,
-    user_id: &auth::UserId,
-    rule: &AlertRule,
-) -> bool {
+async fn is_condition_resolved(state: &AppState, user_id: &auth::UserId, rule: &AlertRule) -> bool {
     // 告警恢复 = 触发条件不再成立
     !should_fire_alert(state, user_id, rule).await
 }
@@ -501,7 +506,11 @@ mod tests {
     fn all_rules_have_severity_and_action() {
         let rules = super::default_alert_rules();
         for rule in &rules {
-            assert!(!rule.action.is_empty(), "rule {} has no action", rule.rule_name);
+            assert!(
+                !rule.action.is_empty(),
+                "rule {} has no action",
+                rule.rule_name
+            );
         }
     }
 }

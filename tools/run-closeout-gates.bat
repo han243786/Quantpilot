@@ -10,75 +10,95 @@ echo   Started at %time%
 echo ============================================
 set START_TIME=%time%
 
-echo [1/17] UTF-8 encoding check...
+echo [1/21] UTF-8 encoding check...
 powershell -NoProfile -ExecutionPolicy Bypass -File "tools\check-utf8.ps1"
 if errorlevel 1 goto :fail
 echo        PASS
 
-echo [2/17] User-facing text check...
+echo [2/21] User-facing text check...
 powershell -NoProfile -ExecutionPolicy Bypass -File "tools\check-user-facing-text.ps1"
 if errorlevel 1 goto :fail
 echo        PASS
 
-echo [3/17] Capability governance check...
+echo [3/21] Capability governance check...
 powershell -NoProfile -ExecutionPolicy Bypass -File "tools\check-capability-governance.ps1"
 if errorlevel 1 goto :fail
 echo        PASS
 
-echo [4/17] i18n check...
+echo [4/21] i18n check...
 powershell -NoProfile -ExecutionPolicy Bypass -File "tools\check-i18n.ps1"
 if errorlevel 1 goto :fail
 echo        PASS
 
-echo [5/17] Version consistency check...
+echo [5/21] Version consistency check...
 powershell -NoProfile -ExecutionPolicy Bypass -File "tools\check-version-consistency.ps1"
 if errorlevel 1 goto :fail
 echo        PASS
 
-echo [6/17] cargo check --workspace...
+echo [6/21] Feature evolution contract check...
+powershell -NoProfile -ExecutionPolicy Bypass -File "tools\check-feature-evolution.ps1"
+if errorlevel 1 goto :fail
+echo        PASS
+
+echo [7/21] Pre-commit hook sync check...
+powershell -NoProfile -ExecutionPolicy Bypass -File "tools\check-pre-commit-hook.ps1"
+if errorlevel 1 goto :fail
+echo        PASS
+
+echo [8/21] Cleanup boundary check...
+powershell -NoProfile -ExecutionPolicy Bypass -File "tools\check-cleanup-boundary.ps1"
+if errorlevel 1 goto :fail
+echo        PASS
+
+echo [9/21] cargo fmt --check...
+cargo fmt --check
+if errorlevel 1 goto :fail
+echo        PASS
+
+echo [10/21] cargo check --workspace...
 cargo check --workspace
 if errorlevel 1 goto :fail
 echo        PASS
 
-echo [7/17] cargo test --workspace...
+echo [11/21] cargo test --workspace...
 powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\test.ps1" test --workspace
 if errorlevel 1 goto :fail
 echo        PASS
 
-echo [8/17] cargo clippy --workspace...
+echo [12/21] cargo clippy --workspace...
 cargo clippy --workspace --all-targets
 if errorlevel 1 goto :fail
 echo        PASS
 
-echo [9/17] Executor warning budget...
-powershell -NoProfile -ExecutionPolicy Bypass -File "tools\check-executor-warning-budget.ps1" -MaxWarnings 49
+echo [13/21] Executor warning budget...
+powershell -NoProfile -ExecutionPolicy Bypass -File "tools\check-executor-warning-budget.ps1" -MaxWarnings 47
 if errorlevel 1 goto :fail
 echo        PASS
 
-echo [10/17] npx vite build...
+echo [14/21] npx vite build...
 pushd "frontend" || goto :fail
 call npx vite build
 if errorlevel 1 goto :fail_frontend
 echo        PASS
 
-echo [11/17] npx vitest run...
+echo [15/21] npx vitest run...
 call npx vitest run
 if errorlevel 1 goto :fail_frontend
 echo        PASS
 
-echo [12/17] npm run test:e2e...
+echo [16/21] npm run test:e2e...
 call npm run test:e2e
 if errorlevel 1 goto :fail_frontend
 echo        PASS
 
-echo [13/17] npm audit...
+echo [17/21] npm audit...
 call npm audit --audit-level=moderate
 if errorlevel 1 goto :fail_frontend
 echo        PASS
 
 popd
 
-echo [14/17] executor frontend build...
+echo [18/21] executor frontend build...
 pushd "frontend-executor" || goto :fail
 call npm run build
 if errorlevel 1 goto :fail_frontend
@@ -86,17 +106,17 @@ echo        PASS
 
 popd
 
-echo [15/17] cargo check --bin executor...
+echo [19/21] cargo check --bin executor...
 cargo check --bin executor
 if errorlevel 1 goto :fail
 echo        PASS
 
-echo [16/17] cargo test --bin executor...
+echo [20/21] cargo test --bin executor...
 powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\test.ps1" test --bin executor
 if errorlevel 1 goto :fail
 echo        PASS
 
-echo [17/17] QS scenario smoke...
+echo [21/21] QS scenario smoke...
 powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\scenario-smoke.ps1"
 if errorlevel 1 goto :fail
 echo        PASS

@@ -1,7 +1,6 @@
 /// v3.5.0: OKX REST API 客户端 (testnet)
 /// 文档: https://www.okx.com/docs-v5/
 /// Testnet: https://www.okx.com/api/v5 (需在 headers 中设置 x-simulated-trading: 1)
-
 use anyhow::{bail, Result};
 use ring::hmac;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -31,19 +30,18 @@ fn okx_timestamp() -> String {
     let millis = dur.subsec_millis();
     // OKX API v5 要求 ISO 8601 格式: 2025-05-21T00:00:00.000Z
     // 使用 chrono (已是项目依赖) 进行格式化
-    let dt = chrono::DateTime::from_timestamp(secs as i64, millis * 1_000_000)
-        .unwrap_or_default();
+    let dt = chrono::DateTime::from_timestamp(secs as i64, millis * 1_000_000).unwrap_or_default();
     dt.format("%Y-%m-%dT%H:%M:%S.%3fZ").to_string()
 }
 
 /// 下单请求
 #[derive(Debug, serde::Serialize)]
 pub struct OkxOrderRequest {
-    pub inst_id: String,   // BTC-USDT
-    pub td_mode: String,   // cash (现货)
-    pub side: String,      // buy / sell
-    pub ord_type: String,  // market / limit
-    pub sz: String,        // 数量
+    pub inst_id: String,  // BTC-USDT
+    pub td_mode: String,  // cash (现货)
+    pub side: String,     // buy / sell
+    pub ord_type: String, // market / limit
+    pub sz: String,       // 数量
     #[serde(skip_serializing_if = "Option::is_none")]
     pub px: Option<String>, // 限价单价格
 }
@@ -82,18 +80,20 @@ pub fn place_order(
     if res.get("code").and_then(|c| c.as_str()) == Some("0") {
         Ok(res)
     } else {
-        let code = res.get("code").and_then(|c| c.as_str()).unwrap_or("unknown");
-        let msg = res.get("msg").and_then(|m| m.as_str()).unwrap_or("未知错误");
+        let code = res
+            .get("code")
+            .and_then(|c| c.as_str())
+            .unwrap_or("unknown");
+        let msg = res
+            .get("msg")
+            .and_then(|m| m.as_str())
+            .unwrap_or("未知错误");
         bail!("OKX 下单失败 [code={}]: {}", code, msg)
     }
 }
 
 /// 查询账户余额
-pub fn fetch_balance(
-    api_key: &str,
-    secret: &str,
-    passphrase: &str,
-) -> Result<serde_json::Value> {
+pub fn fetch_balance(api_key: &str, secret: &str, passphrase: &str) -> Result<serde_json::Value> {
     validate_credentials(api_key, secret, passphrase)?;
     let request_path = "/api/v5/account/balance";
     let body = "";
@@ -113,8 +113,14 @@ pub fn fetch_balance(
     if res.get("code").and_then(|c| c.as_str()) == Some("0") {
         Ok(res)
     } else {
-        let code = res.get("code").and_then(|c| c.as_str()).unwrap_or("unknown");
-        let msg = res.get("msg").and_then(|m| m.as_str()).unwrap_or("未知错误");
+        let code = res
+            .get("code")
+            .and_then(|c| c.as_str())
+            .unwrap_or("unknown");
+        let msg = res
+            .get("msg")
+            .and_then(|m| m.as_str())
+            .unwrap_or("未知错误");
         bail!("OKX 查询余额失败 [code={}]: {}", code, msg)
     }
 }
@@ -125,7 +131,13 @@ mod tests {
 
     #[test]
     fn test_format_okx_sign_string() {
-        let sig = sign_okx("2024-01-01T00:00:00.000Z", "POST", "/api/v5/trade/order", "{}", "test_secret");
+        let sig = sign_okx(
+            "2024-01-01T00:00:00.000Z",
+            "POST",
+            "/api/v5/trade/order",
+            "{}",
+            "test_secret",
+        );
         assert!(sig.is_ok());
         // 签名应为 base64 编码字符串
         let sig_str = sig.unwrap();
@@ -137,8 +149,8 @@ mod tests {
     #[test]
     fn test_okx_timestamp_is_valid() {
         let ts = okx_timestamp();
-        let parsed = chrono::DateTime::parse_from_rfc3339(&ts)
-            .expect("OKX 时间戳应为 RFC3339/ISO8601 格式");
+        let parsed =
+            chrono::DateTime::parse_from_rfc3339(&ts).expect("OKX 时间戳应为 RFC3339/ISO8601 格式");
         assert!(ts.ends_with('Z'));
         assert!(ts.contains('.'));
         // 2024年之后的时间戳

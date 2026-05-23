@@ -111,12 +111,15 @@ export function buildRuntimeAccountState(runtime, account) {
   };
 }
 
-export function buildRuntimeCompletionState(runtime) {
+export function buildRuntimeCompletionState(runtime, runId = null) {
+  const resolvedRunId = runtime.runId || runId;
   return {
     ...runtime,
+    runId: resolvedRunId,
+    selectedHistoryRunId: runtime.selectedHistoryRunId || resolvedRunId,
     status: "completed",
     connectionState: "connected",
-    artifactPersistenceStatus: runtime.runId ? "transient" : runtime.artifactPersistenceStatus,
+    artifactPersistenceStatus: resolvedRunId ? "transient" : runtime.artifactPersistenceStatus,
     backendError: null
   };
 }

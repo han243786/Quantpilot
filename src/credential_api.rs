@@ -4,12 +4,15 @@ use axum::routing::{delete, get};
 use axum::{Json, Router};
 use std::collections::BTreeMap;
 
-use super::AppState;
 use super::auth::{self, UserId};
+use super::AppState;
 
 pub(super) fn register_credential_routes(router: Router<AppState>) -> Router<AppState> {
     router
-        .route("/api/credentials", get(list_credentials).post(set_credential))
+        .route(
+            "/api/credentials",
+            get(list_credentials).post(set_credential),
+        )
         .route("/api/credentials/:service", delete(delete_credential))
 }
 
@@ -18,9 +21,13 @@ fn scoped_cv_key(user_id: &UserId, service: &str) -> String {
     format!("{}:{}", user_id.0, service)
 }
 
-fn unscoped_services_for(vault: &super::credential_vault::CredentialVault, user_id: &UserId) -> Vec<String> {
+fn unscoped_services_for(
+    vault: &super::credential_vault::CredentialVault,
+    user_id: &UserId,
+) -> Vec<String> {
     let prefix = format!("{}:", user_id.0);
-    vault.list_services()
+    vault
+        .list_services()
         .into_iter()
         .filter(|s| s.starts_with(&prefix))
         .map(|s| s[prefix.len()..].to_string())
@@ -50,27 +57,27 @@ async fn set_credential(
     State(state): State<AppState>,
     Json(body): Json<serde_json::Value>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
-    let vault = state
-        .credential_vault
-        .as_ref()
-        .ok_or_else(|| (StatusCode::SERVICE_UNAVAILABLE, "凭证保险库未初始化".to_string()))?;
+    let vault = state.credential_vault.as_ref().ok_or_else(|| {
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            "凭证保险库未初始化".to_string(),
+        )
+    })?;
 
     let service = body["service"]
         .as_str()
-        .filter(|s| !s.trim().is_empty() && s.len() <= 64 && !s.contains('/') && !s.contains('\\') && !s.contains(".."))
-        .ok_or_else(|| {
-            (
-                StatusCode::BAD_REQUEST,
-                "缺少 'service' 字段".to_string(),
-            )
-        })?;
+        .filter(|s| {
+            !s.trim().is_empty()
+                && s.len() <= 64
+                && !s.contains('/')
+                && !s.contains('\\')
+                && !s.contains("..")
+        })
+        .ok_or_else(|| (StatusCode::BAD_REQUEST, "缺少 'service' 字段".to_string()))?;
 
-    let fields_obj = body["fields"].as_object().ok_or_else(|| {
-        (
-            StatusCode::BAD_REQUEST,
-            "缺少 'fields' 对象".to_string(),
-        )
-    })?;
+    let fields_obj = body["fields"]
+        .as_object()
+        .ok_or_else(|| (StatusCode::BAD_REQUEST, "缺少 'fields' 对象".to_string()))?;
 
     let mut fields: BTreeMap<String, String> = BTreeMap::new();
     for (k, v) in fields_obj {
@@ -85,9 +92,12 @@ async fn set_credential(
     }
 
     let scoped_key = scoped_cv_key(&user_id, service);
-    vault
-        .set_service(&scoped_key, fields)
-        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, format!("凭证存储失败: {}", e)))?;
+    vault.set_service(&scoped_key, fields).map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("凭证存储失败: {}", e),
+        )
+    })?;
 
     safe_eprintln!("[audit] 用户 {} 设置凭证 service={}", user_id.0, service);
 
@@ -100,13 +110,21 @@ async fn delete_credential(
     State(state): State<AppState>,
     Path(service): Path<String>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
-    if service.is_empty() || service.len() > 64 || service.contains('/') || service.contains('\\') || service.contains("..") || service.contains('\0') {
+    if service.is_empty()
+        || service.len() > 64
+        || service.contains('/')
+        || service.contains('\\')
+        || service.contains("..")
+        || service.contains('\0')
+    {
         return Err((StatusCode::BAD_REQUEST, "凭证标签无效".to_string()));
     }
-    let vault = state
-        .credential_vault
-        .as_ref()
-        .ok_or_else(|| (StatusCode::SERVICE_UNAVAILABLE, "凭证保险库未初始化".to_string()))?;
+    let vault = state.credential_vault.as_ref().ok_or_else(|| {
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            "凭证保险库未初始化".to_string(),
+        )
+    })?;
 
     let scoped_key = scoped_cv_key(&user_id, &service);
     vault.delete_service(&scoped_key).map_err(|e| {

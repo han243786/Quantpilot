@@ -9,7 +9,10 @@ pub fn build_app_router(state: AppState) -> Router {
 
     let router = register_compile_routes(router);
     // v3.0.0: 部署策略到执行端
-    let router = router.route("/api/executor/deploy", axum::routing::post(crate::migration_sender::deploy_strategy));
+    let router = router.route(
+        "/api/executor/deploy",
+        axum::routing::post(crate::migration_sender::deploy_strategy),
+    );
     let router = register_runtime_routes(router);
     let router = register_graph_routes(router);
     let router = register_graph_quantscript_routes(router);
@@ -26,12 +29,13 @@ pub fn build_app_router(state: AppState) -> Router {
     let router = credential_api::register_credential_routes(router);
     // v2.0.0: 多用户认证路由
     let router = auth::register_auth_routes(router);
+    let router = router.route("/api/*path", axum::routing::any(_not_found_fallback));
 
     // SPA: serve dist/ files, fallback to index.html for client-side routing
     router
         .fallback_service(
             tower_http::services::ServeDir::new("dist")
-                .fallback(tower_http::services::ServeFile::new("dist/index.html"))
+                .fallback(tower_http::services::ServeFile::new("dist/index.html")),
         )
         .with_state(state)
 }
@@ -50,7 +54,10 @@ fn register_hotswap_routes(router: Router<AppState>) -> Router<AppState> {
     router
         .route("/api/hotswap", post(hotswap_api::submit_hotswap))
         .route("/api/hotswap/list", get(hotswap_api::list_hotswaps))
-        .route("/api/hotswap/:hotswap_id", get(hotswap_api::get_hotswap_status))
+        .route(
+            "/api/hotswap/:hotswap_id",
+            get(hotswap_api::get_hotswap_status),
+        )
 }
 
 // Block 5 路由注册

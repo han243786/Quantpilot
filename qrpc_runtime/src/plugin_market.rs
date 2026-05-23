@@ -1,5 +1,5 @@
-use qrpc_core::PluginManifest;
 use ed25519_dalek::Verifier;
+use qrpc_core::PluginManifest;
 use serde::{Deserialize, Serialize};
 
 // ── Ed25519 签名验证 ──────────────────────────────────
@@ -41,11 +41,9 @@ pub fn assert_market_public_key_is_production() {
 pub fn require_production_public_key() -> Result<String, String> {
     let key = market_public_key();
     if key == RFC8032_TEST_VECTOR_PUBLIC_KEY {
-        return Err(
-            "MARKET_PUBLIC_KEY 仍为测试向量，签名验证不可用。\
+        return Err("MARKET_PUBLIC_KEY 仍为测试向量，签名验证不可用。\
              请设置 QUANTPILOT_MARKET_PUBLIC_KEY 环境变量为实际市场公钥。"
-                .to_string(),
-        );
+            .to_string());
     }
     Ok(key)
 }
@@ -75,8 +73,7 @@ pub(crate) fn verify_manifest_signature(raw_json: &str) -> Result<(), String> {
     }
 
     // 规范序列化 (依赖 BTreeMap 保证确定性, 与 canonical_json_sha256_digest 一致)
-    let canonical =
-        serde_json::to_vec(&value).map_err(|e| format!("规范 JSON 序列化失败: {e}"))?;
+    let canonical = serde_json::to_vec(&value).map_err(|e| format!("规范 JSON 序列化失败: {e}"))?;
 
     // 解码签名 (Ed25519 签名 = 64 字节)
     use base64::Engine;
@@ -218,19 +215,11 @@ impl PluginMarketClient {
         }
 
         // v2.0.0: Ed25519 签名验证 (在协议校验之前, 拒绝篡改的 manifest)
-        verify_manifest_signature(&body).map_err(|e| {
-            format!(
-                "插件 {} Ed25519 签名验证失败: {}",
-                summary.plugin_id, e
-            )
-        })?;
+        verify_manifest_signature(&body)
+            .map_err(|e| format!("插件 {} Ed25519 签名验证失败: {}", summary.plugin_id, e))?;
 
-        let manifest: PluginManifest = serde_json::from_str(&body).map_err(|e| {
-            format!(
-                "插件 {} manifest JSON 解析失败: {e}",
-                summary.plugin_id
-            )
-        })?;
+        let manifest: PluginManifest = serde_json::from_str(&body)
+            .map_err(|e| format!("插件 {} manifest JSON 解析失败: {e}", summary.plugin_id))?;
 
         manifest.validate().map_err(|errs| {
             format!(
@@ -251,16 +240,42 @@ mod tests {
     use base64::Engine;
     use ed25519_dalek::Signer;
 
-    // RFC 8032 Test #1 私钥 (仅用于测试签名生成)
-    const TEST_SECRET_KEY: [u8; 32] = [
-        0x9d, 0x61, 0xb1, 0x9d, 0xef, 0xfd, 0x5a, 0x60, 0xba, 0x84, 0x4a, 0xf4,
-        0x92, 0xec, 0x2c, 0xc4, 0x44, 0x49, 0xc5, 0x69, 0x7b, 0x32, 0x69, 0x19,
-        0x70, 0x3b, 0xac, 0x03, 0x1c, 0xae, 0x7f, 0x60,
+    static MARKET_KEY_ENV_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+    // 非 RFC 8032 向量的测试私钥，避免测试绕过生产密钥保护。
+    const TEST_MARKET_SECRET_KEY: [u8; 32] = [
+        0x42, 0x21, 0x37, 0x7a, 0x91, 0x0c, 0x5e, 0xd4, 0x66, 0x81, 0xf3, 0x28, 0x0f, 0xa7, 0xbc,
+        0x19, 0xde, 0x43, 0x55, 0x69, 0x8a, 0xf0, 0x16, 0x2b, 0xc1, 0xd8, 0x3e, 0x04, 0x75, 0x99,
+        0xaa, 0x10,
     ];
+
+    fn test_market_public_key_b64() -> String {
+        let signing_key = ed25519_dalek::SigningKey::from_bytes(&TEST_MARKET_SECRET_KEY);
+        base64::engine::general_purpose::STANDARD.encode(signing_key.verifying_key().to_bytes())
+    }
+
+    fn with_test_market_public_key<T>(test: impl FnOnce() -> T) -> T {
+        let _guard = MARKET_KEY_ENV_LOCK.lock().expect("测试公钥环境锁应可获取");
+        let previous = std::env::var("QUANTPILOT_MARKET_PUBLIC_KEY").ok();
+        std::env::set_var("QUANTPILOT_MARKET_PUBLIC_KEY", test_market_public_key_b64());
+
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(test));
+
+        if let Some(previous) = previous {
+            std::env::set_var("QUANTPILOT_MARKET_PUBLIC_KEY", previous);
+        } else {
+            std::env::remove_var("QUANTPILOT_MARKET_PUBLIC_KEY");
+        }
+
+        match result {
+            Ok(value) => value,
+            Err(payload) => std::panic::resume_unwind(payload),
+        }
+    }
 
     /// 使用测试密钥对 JSON 负载生成 Ed25519 签名, 返回完整 manifest JSON
     fn sign_manifest_json(payload: &serde_json::Value) -> String {
-        let signing_key = ed25519_dalek::SigningKey::from_bytes(&TEST_SECRET_KEY);
+        let signing_key = ed25519_dalek::SigningKey::from_bytes(&TEST_MARKET_SECRET_KEY);
         let canonical = serde_json::to_vec(payload).expect("JSON 序列化");
         let signature = signing_key.sign(&canonical);
         let sig_b64 = base64::engine::general_purpose::STANDARD.encode(signature.to_bytes());
@@ -268,21 +283,18 @@ mod tests {
         // 构造带 signature 的完整 JSON
         let mut with_sig = payload.clone();
         if let serde_json::Value::Object(ref mut map) = with_sig {
-            map.insert(
-                "signature".to_string(),
-                serde_json::Value::String(sig_b64),
-            );
+            map.insert("signature".to_string(), serde_json::Value::String(sig_b64));
         }
         serde_json::to_string(&with_sig).expect("JSON 序列化")
     }
 
     #[test]
-    fn verify_signature_with_test_vector() {
+    fn verify_signature_with_configured_test_key() {
         // 使用测试密钥对空对象签名并验证
         let payload = serde_json::json!({});
         let manifest_json = sign_manifest_json(&payload);
 
-        let result = verify_manifest_signature(&manifest_json);
+        let result = with_test_market_public_key(|| verify_manifest_signature(&manifest_json));
         assert!(result.is_ok(), "签名验证应通过: {:?}", result.err());
     }
 
@@ -296,7 +308,7 @@ mod tests {
         });
         let manifest_json = sign_manifest_json(&payload);
 
-        let result = verify_manifest_signature(&manifest_json);
+        let result = with_test_market_public_key(|| verify_manifest_signature(&manifest_json));
         assert!(result.is_ok(), "复杂负载签名验证应通过: {:?}", result.err());
     }
 
@@ -319,7 +331,7 @@ mod tests {
         // 篡改: 将 id 改为 "tampered"
         let tampered = manifest_json.replace("\"original\"", "\"tampered\"");
 
-        let result = verify_manifest_signature(&tampered);
+        let result = with_test_market_public_key(|| verify_manifest_signature(&tampered));
         assert!(result.is_err(), "篡改后的签名应被拒绝");
         let err = result.unwrap_err();
         assert!(
@@ -344,7 +356,7 @@ mod tests {
         // 篡改: 将 "msg" 从 "hello" 改为 "tampered"
         let tampered = manifest_json.replace("\"hello\"", "\"tampered\"");
 
-        let result = verify_manifest_signature(&tampered);
+        let result = with_test_market_public_key(|| verify_manifest_signature(&tampered));
         assert!(result.is_err());
     }
 }

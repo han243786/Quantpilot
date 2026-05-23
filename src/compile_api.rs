@@ -1,4 +1,4 @@
-﻿use super::*;
+use super::*;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::Semaphore;
@@ -18,11 +18,13 @@ struct CompileCacheEntry {
     inserted_at_ms: u64,
 }
 
-fn compute_compile_cache_key(graph_json: &Value, _runtime_config: &FrontendRuntimeConfig) -> String {
+fn compute_compile_cache_key(graph_json: &Value, runtime_config: &FrontendRuntimeConfig) -> String {
     use ring::digest::{digest, SHA256};
-    // v3.5.1: 仅基于graph_json计算缓存键, 排除compile_id等每次变化的字段
-    // graph_json包含节点拓扑/参数/连线, 是编译结果的唯一决定因素
-    let graph_bytes = serde_json::to_vec(graph_json).unwrap_or_default();
+    let cache_payload = serde_json::json!({
+        "graph_json": graph_json,
+        "runtime_config": runtime_config,
+    });
+    let graph_bytes = serde_json::to_vec(&cache_payload).unwrap_or_default();
     let hash = digest(&SHA256, &graph_bytes);
     hash.as_ref().iter().map(|b| format!("{:02x}", b)).collect()
 }
@@ -31,8 +33,12 @@ fn compute_compile_cache_key(graph_json: &Value, _runtime_config: &FrontendRunti
 pub(super) fn compile_runtime_protocol_via_qs(
     graph_json: &Value,
 ) -> Result<RuntimeProtocolCoreConfig, (StatusCode, String)> {
-    let qs_source = generate_quantscript_from_graph_value(graph_json)
-        .map_err(|e| json_bad_request("qs_generation_failed", format!("从图生成 QS 源码失败: {}", e)))?;
+    let qs_source = generate_quantscript_from_graph_value(graph_json).map_err(|e| {
+        json_bad_request(
+            "qs_generation_failed",
+            format!("从图生成 QS 源码失败: {}", e),
+        )
+    })?;
     let graph_value = parse_graph_quantscript_source(&qs_source)
         .map_err(|e| json_bad_request("qs_parse_failed", format!("QS 解析失败: {}", e)))?;
     let script_module = convert_graph_json_to_script_module(&graph_value)
@@ -56,8 +62,9 @@ pub(super) fn register_compile_routes(router: Router<AppState>) -> Router<AppSta
 async fn compile_runtime_request(
     Json(request): Json<CompileRuntimeRequest>,
 ) -> Result<Json<CompileRuntimeResponse>, (StatusCode, String)> {
+    let graph_json = graph_json_from_runtime_config(&request.runtime_config);
     // v3.5.0: 编译缓存 — 同图同参数跳过整个QS管道
-    let cache_key = compute_compile_cache_key(&request.graph_json, &request.runtime_config);
+    let cache_key = compute_compile_cache_key(&graph_json, &request.runtime_config);
     {
         let cache = COMPILE_CACHE.lock().unwrap_or_else(|e| e.into_inner());
         if let Some(entry) = cache.get(&cache_key) {
@@ -69,16 +76,27 @@ async fn compile_runtime_request(
     let _permit = tokio::time::timeout(
         std::time::Duration::from_secs(120),
         COMPILE_SEMAPHORE.acquire(),
-    ).await.map_err(|_| {
-        (StatusCode::SERVICE_UNAVAILABLE, serde_json::json!({
-            "error": "service_unavailable",
-            "message": "编译服务繁忙，请稍后重试"
-        }).to_string())
-    })?.map_err(|_| {
-        (StatusCode::SERVICE_UNAVAILABLE, serde_json::json!({
-            "error": "service_unavailable",
-            "message": "编译服务已关闭"
-        }).to_string())
+    )
+    .await
+    .map_err(|_| {
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            serde_json::json!({
+                "error": "service_unavailable",
+                "message": "编译服务繁忙，请稍后重试"
+            })
+            .to_string(),
+        )
+    })?
+    .map_err(|_| {
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            serde_json::json!({
+                "error": "service_unavailable",
+                "message": "编译服务已关闭"
+            })
+            .to_string(),
+        )
     })?;
     // 空 intent 保护: 策略必须包含至少一个意图
     if request.runtime_config.intent_generators.is_empty() {
@@ -89,9 +107,19 @@ async fn compile_runtime_request(
     }
     // v3.7.x: 节点上限早期检查 (编译前拒绝, 避免浪费CPU)
     const MAX_COMPILE_NODES: usize = 500;
-    let node_count = request.graph_json.get("nodes").and_then(|n| n.as_array()).map(|a| a.len()).unwrap_or(0);
+    let node_count = graph_json
+        .get("nodes")
+        .and_then(|n| n.as_array())
+        .map(|a| a.len())
+        .unwrap_or(0);
     if node_count > MAX_COMPILE_NODES {
-        return Err((StatusCode::PAYLOAD_TOO_LARGE, format!("策略图节点数 ({}) 超过上限 ({})", node_count, MAX_COMPILE_NODES)));
+        return Err((
+            StatusCode::PAYLOAD_TOO_LARGE,
+            format!(
+                "策略图节点数 ({}) 超过上限 ({})",
+                node_count, MAX_COMPILE_NODES
+            ),
+        ));
     }
     validate_runtime_config_capabilities(&request.runtime_config).map_err(|details| {
         json_bad_request_with_details(
@@ -115,21 +143,29 @@ async fn compile_runtime_request(
 
     // v2.1.3: CPU密集编译移至 spawn_blocking，不阻塞 tokio runtime (P2-8)
     let (qs_protocol, runtime_targets, compiled, artifacts) = {
-        let graph_json = request.graph_json.clone();
+        let graph_json = graph_json.clone();
         let metadata = request.runtime_config.metadata.clone();
-        let request_graph_json = request.graph_json.clone();
-        let join_result = tokio::task::spawn_blocking(move || -> Result<_, (StatusCode, String)> {
-            // QS 管道是唯一编译路径 (§1.1, §1.3)
-            let qs = compile_runtime_protocol_via_qs(&graph_json)?;
-            let targets = build_compile_runtime_targets_from_graph(&request_graph_json);
-            let comp = compile_runtime_protocol_config(&qs).map_err(internal_error)?;
-            let arts = build_compile_artifact_bundle(
-                &metadata.graph_id, &metadata.compile_id, &metadata.name, &metadata.mode,
-                StrategyArtifactSourceKind::FrontendGraph, &metadata.graph_id,
-                BTreeMap::new(), &comp,
-            ).map_err(internal_error)?;
-            Ok((qs, targets, comp, arts))
-        }).await;
+        let request_graph_json = graph_json.clone();
+        let join_result =
+            tokio::task::spawn_blocking(move || -> Result<_, (StatusCode, String)> {
+                // QS 管道是唯一编译路径 (§1.1, §1.3)
+                let qs = compile_runtime_protocol_via_qs(&graph_json)?;
+                let targets = build_compile_runtime_targets_from_graph(&request_graph_json);
+                let comp = compile_runtime_protocol_config(&qs).map_err(internal_error)?;
+                let arts = build_compile_artifact_bundle(
+                    &metadata.graph_id,
+                    &metadata.compile_id,
+                    &metadata.name,
+                    &metadata.mode,
+                    StrategyArtifactSourceKind::FrontendGraph,
+                    &metadata.graph_id,
+                    BTreeMap::new(),
+                    &comp,
+                )
+                .map_err(internal_error)?;
+                Ok((qs, targets, comp, arts))
+            })
+            .await;
         match join_result {
             Ok(Ok(data)) => data,
             Ok(Err(e)) => return Err(e),
@@ -138,7 +174,8 @@ async fn compile_runtime_request(
                 let panic_msg = join_err
                     .try_into_panic()
                     .map(|payload| {
-                        payload.downcast_ref::<String>()
+                        payload
+                            .downcast_ref::<String>()
                             .map(|s| s.as_str())
                             .or_else(|| payload.downcast_ref::<&str>().copied())
                             .unwrap_or("未知 panic")
@@ -146,15 +183,27 @@ async fn compile_runtime_request(
                     })
                     .unwrap_or_else(|_| "非 panic 导致的 JoinError".to_string());
                 safe_eprintln!("[compile] 编译任务 panic: {}", panic_msg);
-                return Err((StatusCode::INTERNAL_SERVER_ERROR, "编译任务被取消".to_string()));
+                return Err((
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "编译任务被取消".to_string(),
+                ));
             }
         }
     };
 
     // v2.0.1: graph→QS→graph 往返完整性检查
-    let edge_count = request.graph_json.get("edges").and_then(|e| e.as_array()).map(|a| a.len()).unwrap_or(0);
+    let edge_count = graph_json
+        .get("edges")
+        .and_then(|e| e.as_array())
+        .map(|a| a.len())
+        .unwrap_or(0);
 
-    let runtime_protocol_counts = (qs_protocol.data_sources.len(), qs_protocol.intents.len(), qs_protocol.agents.len(), qs_protocol.risks.len());
+    let runtime_protocol_counts = (
+        qs_protocol.data_sources.len(),
+        qs_protocol.intents.len(),
+        qs_protocol.agents.len(),
+        qs_protocol.risks.len(),
+    );
     let mut diagnostics = collect_compile_diagnostics(&request.runtime_config);
     diagnostics.push(CompileDiagnostic {
         code: "QSPIPELINE".to_string(),
@@ -228,7 +277,8 @@ async fn compile_runtime_request(
         // FIFO淘汰: 超过上限时移除最旧的半数条目 (不drain全量防panic丢缓存)
         if cache.len() >= COMPILE_CACHE_MAX {
             let remove_count = cache.len() - (COMPILE_CACHE_MAX / 2).max(1);
-            let mut oldest: Vec<_> = cache.iter()
+            let mut oldest: Vec<_> = cache
+                .iter()
                 .map(|(k, v)| (v.inserted_at_ms, k.clone()))
                 .collect();
             oldest.sort_by_key(|(ts, _)| *ts);
@@ -236,13 +286,179 @@ async fn compile_runtime_request(
                 cache.remove(key);
             }
         }
-        cache.insert(cache_key, CompileCacheEntry {
-            response: response.clone(),
-            inserted_at_ms: current_time_ms(),
-        });
+        cache.insert(
+            cache_key,
+            CompileCacheEntry {
+                response: response.clone(),
+                inserted_at_ms: current_time_ms(),
+            },
+        );
     }
 
     Ok(Json(response))
+}
+
+fn graph_json_from_runtime_config(runtime_config: &FrontendRuntimeConfig) -> Value {
+    let runtime_value = serde_json::to_value(runtime_config).unwrap_or_else(|_| Value::Null);
+    let mut nodes = Vec::<Value>::new();
+    let mut edges = Vec::<Value>::new();
+
+    for node in runtime_value
+        .get("data_sources")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        nodes.push(serde_json::json!({
+            "id": node["id"].clone(),
+            "type": "data",
+            "module_key": node["module_key"].clone(),
+            "name": node["name"].clone(),
+            "config": node["config"].clone(),
+        }));
+    }
+
+    for node in runtime_value
+        .get("intent_generators")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        nodes.push(serde_json::json!({
+            "id": node["id"].clone(),
+            "type": "intent",
+            "module_key": node["module_key"].clone(),
+            "name": node["name"].clone(),
+            "config": node["config"].clone(),
+        }));
+        for input_ref in node
+            .get("input_refs")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            edges.push(serde_json::json!({
+                "source_node_id": input_ref["source_id"].clone(),
+                "source_port": input_ref["source_port"].clone(),
+                "target_node_id": node["id"].clone(),
+                "target_port": input_ref["target_port"].clone(),
+            }));
+        }
+    }
+
+    for node in runtime_value
+        .get("agents")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        nodes.push(serde_json::json!({
+            "id": node["id"].clone(),
+            "type": "agent",
+            "module_key": node["module_key"].clone(),
+            "name": node["name"].clone(),
+            "config": node["config"].clone(),
+        }));
+        for intent_ref in node
+            .get("intent_refs")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            edges.push(serde_json::json!({
+                "source_node_id": intent_ref.clone(),
+                "source_port": "intent_out",
+                "target_node_id": node["id"].clone(),
+                "target_port": "intent_input",
+            }));
+        }
+    }
+
+    for node in runtime_value
+        .get("risk_controls")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        nodes.push(serde_json::json!({
+            "id": node["id"].clone(),
+            "type": "risk",
+            "module_key": node["module_key"].clone(),
+            "name": node["name"].clone(),
+            "config": node["config"].clone(),
+        }));
+        for agent_ref in node
+            .get("agent_refs")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            edges.push(serde_json::json!({
+                "source_node_id": agent_ref.clone(),
+                "source_port": "agent_out",
+                "target_node_id": node["id"].clone(),
+                "target_port": "agent_input",
+            }));
+        }
+    }
+
+    for node in runtime_value
+        .get("executions")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        nodes.push(serde_json::json!({
+            "id": node["id"].clone(),
+            "type": "execution",
+            "module_key": node["module_key"].clone(),
+            "name": node["name"].clone(),
+            "config": node["config"].clone(),
+        }));
+        if !node.get("risk_ref").unwrap_or(&Value::Null).is_null() {
+            edges.push(serde_json::json!({
+                "source_node_id": node["risk_ref"].clone(),
+                "source_port": "risk_out",
+                "target_node_id": node["id"].clone(),
+                "target_port": "risk_input",
+            }));
+        }
+    }
+
+    if let Some(node) = runtime_value
+        .get("runtime_control")
+        .filter(|node| !node.is_null())
+    {
+        nodes.push(serde_json::json!({
+            "id": node["id"].clone(),
+            "type": "runtime",
+            "module_key": node["module_key"].clone(),
+            "name": node["name"].clone(),
+            "config": node["config"].clone(),
+        }));
+        if let Some(execution_node) = runtime_value
+            .get("executions")
+            .and_then(Value::as_array)
+            .and_then(|items| items.first())
+        {
+            edges.push(serde_json::json!({
+                "source_node_id": execution_node["id"].clone(),
+                "source_port": "execution_out",
+                "target_node_id": node["id"].clone(),
+                "target_port": "execution_input",
+            }));
+        }
+    }
+
+    serde_json::json!({
+        "metadata": {
+            "graph_id": runtime_config.metadata.graph_id.clone(),
+            "name": runtime_config.metadata.name.clone(),
+            "version": runtime_config.metadata.version.clone(),
+        },
+        "nodes": nodes,
+        "edges": edges,
+    })
 }
 
 async fn compile_strategy_ir_request(
@@ -252,16 +468,27 @@ async fn compile_strategy_ir_request(
     let _permit = tokio::time::timeout(
         std::time::Duration::from_secs(120),
         COMPILE_SEMAPHORE.acquire(),
-    ).await.map_err(|_| {
-        (StatusCode::SERVICE_UNAVAILABLE, serde_json::json!({
-            "error": "service_unavailable",
-            "message": "编译服务繁忙，请稍后重试"
-        }).to_string())
-    })?.map_err(|_| {
-        (StatusCode::SERVICE_UNAVAILABLE, serde_json::json!({
-            "error": "service_unavailable",
-            "message": "编译服务已关闭"
-        }).to_string())
+    )
+    .await
+    .map_err(|_| {
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            serde_json::json!({
+                "error": "service_unavailable",
+                "message": "编译服务繁忙，请稍后重试"
+            })
+            .to_string(),
+        )
+    })?
+    .map_err(|_| {
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            serde_json::json!({
+                "error": "service_unavailable",
+                "message": "编译服务已关闭"
+            })
+            .to_string(),
+        )
     })?;
     let strategy_ir =
         serde_json::from_value::<StrategyIr>(request.strategy_ir).map_err(|error| {
@@ -317,6 +544,39 @@ async fn compile_strategy_ir_request(
     }))
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    fn runtime_config(mode: &str) -> FrontendRuntimeConfig {
+        FrontendRuntimeConfig {
+            metadata: FrontendMetadata {
+                graph_id: "graph_cache".to_string(),
+                compile_id: "compile_cache".to_string(),
+                name: "Cache".to_string(),
+                version: "1.0.0".to_string(),
+                mode: mode.to_string(),
+            },
+            data_sources: vec![],
+            intent_generators: vec![],
+            agents: vec![],
+            risk_controls: vec![],
+            executions: vec![],
+            runtime_control: None,
+        }
+    }
+
+    #[test]
+    fn compile_cache_key_includes_runtime_config() {
+        let graph = json!({"metadata": {"graph_id": "same_graph"}});
+        let paper_key = compute_compile_cache_key(&graph, &runtime_config("paper"));
+        let live_key = compute_compile_cache_key(&graph, &runtime_config("live"));
+
+        assert_ne!(paper_key, live_key);
+    }
+}
+
 async fn compile_formal_quantscript_request(
     Json(request): Json<CompileFormalQuantScriptRequest>,
 ) -> Result<Json<CompileRuntimeResponse>, (StatusCode, String)> {
@@ -324,16 +584,27 @@ async fn compile_formal_quantscript_request(
     let _permit = tokio::time::timeout(
         std::time::Duration::from_secs(120),
         COMPILE_SEMAPHORE.acquire(),
-    ).await.map_err(|_| {
-        (StatusCode::SERVICE_UNAVAILABLE, serde_json::json!({
-            "error": "service_unavailable",
-            "message": "编译服务繁忙，请稍后重试"
-        }).to_string())
-    })?.map_err(|_| {
-        (StatusCode::SERVICE_UNAVAILABLE, serde_json::json!({
-            "error": "service_unavailable",
-            "message": "编译服务已关闭"
-        }).to_string())
+    )
+    .await
+    .map_err(|_| {
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            serde_json::json!({
+                "error": "service_unavailable",
+                "message": "编译服务繁忙，请稍后重试"
+            })
+            .to_string(),
+        )
+    })?
+    .map_err(|_| {
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            serde_json::json!({
+                "error": "service_unavailable",
+                "message": "编译服务已关闭"
+            })
+            .to_string(),
+        )
     })?;
     let module = parse_formal_quant_script_module(&request.source).map_err(internal_error)?;
     let resolved = lower_formal_script_to_typed_hir(&module);

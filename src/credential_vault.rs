@@ -3,15 +3,25 @@ use ring::aead::{Aad, LessSafeKey, Nonce, UnboundKey, AES_256_GCM};
 use ring::rand::{SecureRandom, SystemRandom};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::{Mutex, OnceLock};
 use zeroize::{Zeroize, Zeroizing};
 
-fn storage_root() -> String { std::env::var("QUANTPILOT_STORAGE_ROOT").unwrap_or_else(|_| "storage".into()) }
-fn credentials_file() -> PathBuf { PathBuf::from(storage_root()).join(".credentials") }
+fn storage_root() -> String {
+    std::env::var("QUANTPILOT_STORAGE_ROOT").unwrap_or_else(|_| "storage".into())
+}
 const NONCE_LEN: usize = 12;
 const TAG_LEN: usize = 16;
-fn machine_key_file() -> PathBuf { PathBuf::from(storage_root()).join(".machine_key") }
+
+fn absolute_path(path: &Path) -> PathBuf {
+    if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        std::env::current_dir()
+            .unwrap_or_else(|_| PathBuf::from("."))
+            .join(path)
+    }
+}
 
 // ── SecretString: Drop 时自动 Zeroize ──────────────────────
 
@@ -38,15 +48,32 @@ impl Drop for SecretString {
 
 // ── 机器密钥: OnceLock 保护，消除 TOCTOU 竞态 ──────────────
 
-static MACHINE_KEY: OnceLock<[u8; 32]> = OnceLock::new();
+static MACHINE_KEYS: OnceLock<Mutex<BTreeMap<PathBuf, [u8; 32]>>> = OnceLock::new();
+static MACHINE_KEY_INIT_LOCK: Mutex<()> = Mutex::new(());
 
-fn get_machine_key() -> Result<&'static [u8; 32]> {
-    if let Some(key) = MACHINE_KEY.get() {
+fn get_machine_key_for_path(path: &Path) -> Result<[u8; 32]> {
+    let path = absolute_path(path);
+    let keys = MACHINE_KEYS.get_or_init(|| Mutex::new(BTreeMap::new()));
+    if let Some(key) = keys
+        .lock()
+        .unwrap_or_else(|error| error.into_inner())
+        .get(&path)
+        .copied()
+    {
         return Ok(key);
     }
-    let path = machine_key_file();
-    let exists = path.exists();
-    let key: [u8; 32] = if exists {
+    let _guard = MACHINE_KEY_INIT_LOCK
+        .lock()
+        .unwrap_or_else(|error| error.into_inner());
+    if let Some(key) = keys
+        .lock()
+        .unwrap_or_else(|error| error.into_inner())
+        .get(&path)
+        .copied()
+    {
+        return Ok(key);
+    }
+    let key: [u8; 32] = if path.exists() {
         std::fs::read(&path)?
             .try_into()
             .map_err(|_| anyhow::anyhow!("机器密钥格式错误"))?
@@ -55,44 +82,20 @@ fn get_machine_key() -> Result<&'static [u8; 32]> {
         let mut k = [0u8; 32];
         rng.fill(&mut k)
             .map_err(|_| anyhow::anyhow!("随机数生成失败"))?;
+        crate::storage_lifecycle::atomic_write_secret_file(&path, &k)
+            .map_err(|e| anyhow::anyhow!("无法保存机器密钥: {}", e))?;
         k
     };
-    // 只有一个线程能 set 成功：它负责持久化，其他线程复用它的 key
-    match MACHINE_KEY.set(key) {
-        Ok(()) => {
-            if !path.exists() {
-                if let Some(parent) = path.parent() {
-                    std::fs::create_dir_all(parent)?;
-                }
-                let tmp = path.with_extension("tmp");
-                std::fs::write(&tmp, key)
-                    .map_err(|e| anyhow::anyhow!("无法写入机器密钥: {}", e))?;
-                std::fs::rename(&tmp, &path)
-                    .map_err(|e| anyhow::anyhow!("无法保存机器密钥: {}", e))?;
-                #[cfg(unix)]
-                {
-                    use std::os::unix::fs::PermissionsExt;
-                    std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o600)).ok();
-                }
-                #[cfg(windows)]
-                {
-                    let username = std::env::var("USERNAME").unwrap_or_default();
-                    let _ = std::process::Command::new("icacls")
-                        .args([path.to_str().unwrap_or(""), "/inheritance:r", "/grant", &format!("{}:F", username)])
-                        .output();
-                }
-            }
-            Ok(MACHINE_KEY.get().unwrap())
-        }
-        Err(_) => Ok(MACHINE_KEY.get().unwrap()),
-    }
+    keys.lock()
+        .unwrap_or_else(|error| error.into_inner())
+        .insert(path, key);
+    Ok(key)
 }
 
 // ── 密钥派生 ──────────────────────────────────────────────
 
-fn derive_key() -> Result<UnboundKey> {
+fn derive_key_from_machine_key(machine_key: &[u8; 32]) -> Result<UnboundKey> {
     let host = hostname::get().unwrap_or_default();
-    let machine_key = get_machine_key()?;
     let hex: String = machine_key.iter().map(|b| format!("{:02x}", b)).collect();
     let seed = format!(
         "quantpilot-credential-vault-{}-{}",
@@ -101,15 +104,13 @@ fn derive_key() -> Result<UnboundKey> {
     );
     let hash = ring::digest::digest(&ring::digest::SHA256, seed.as_bytes());
     let key_bytes: [u8; 32] = hash.as_ref()[..32].try_into().unwrap();
-    UnboundKey::new(&AES_256_GCM, &key_bytes)
-        .map_err(|_| anyhow::anyhow!("密钥派生失败"))
+    UnboundKey::new(&AES_256_GCM, &key_bytes).map_err(|_| anyhow::anyhow!("密钥派生失败"))
 }
 
 // ── PBKDF2 密钥派生 (v2) ─────────────────────────────────
 
-fn derive_key_pbkdf2() -> Result<UnboundKey> {
+fn derive_key_pbkdf2_from_machine_key(machine_key: &[u8; 32]) -> Result<UnboundKey> {
     let host = hostname::get().unwrap_or_default();
-    let machine_key = get_machine_key()?;
     let salt = format!("quantpilot-vault-v2-{}", host.to_string_lossy());
     let mut key_bytes = [0u8; 32];
     ring::pbkdf2::derive(
@@ -126,8 +127,8 @@ fn derive_key_pbkdf2() -> Result<UnboundKey> {
 // ── 加解密 ────────────────────────────────────────────────
 
 /// 使用 PBKDF2 派生密钥加密，输出前 prepend 1 字节版本头 [2]。
-fn encrypt(plaintext: &str) -> Result<Vec<u8>> {
-    let key = derive_key_pbkdf2()?;
+fn encrypt_with_machine_key(plaintext: &str, machine_key: &[u8; 32]) -> Result<Vec<u8>> {
+    let key = derive_key_pbkdf2_from_machine_key(machine_key)?;
     let key = LessSafeKey::new(key);
     let rng = SystemRandom::new();
     let mut nonce_bytes = [0u8; NONCE_LEN];
@@ -143,7 +144,10 @@ fn encrypt(plaintext: &str) -> Result<Vec<u8>> {
     Ok(result)
 }
 
-fn decrypt(ciphertext: &[u8]) -> Result<Zeroizing<String>> {
+fn decrypt_with_machine_key(
+    ciphertext: &[u8],
+    machine_key: &[u8; 32],
+) -> Result<Zeroizing<String>> {
     if ciphertext.is_empty() {
         anyhow::bail!("凭证数据为空");
     }
@@ -152,10 +156,10 @@ fn decrypt(ciphertext: &[u8]) -> Result<Zeroizing<String>> {
     let version = ciphertext[0];
 
     // 根据版本选择密钥派生函数和数据偏移
-    let (derive, offset): (fn() -> Result<UnboundKey>, usize) = match version {
-        2 => (derive_key_pbkdf2, 1), // v2: PBKDF2, 跳过版本头
-        1 => (derive_key, 1),        // v1: SHA-256, 跳过版本头
-        _ => (derive_key, 0),        // 无版本头(旧文件): SHA-256
+    let (key, offset): (UnboundKey, usize) = match version {
+        2 => (derive_key_pbkdf2_from_machine_key(machine_key)?, 1), // v2: PBKDF2, 跳过版本头
+        1 => (derive_key_from_machine_key(machine_key)?, 1),        // v1: SHA-256, 跳过版本头
+        _ => (derive_key_from_machine_key(machine_key)?, 0),        // 无版本头(旧文件): SHA-256
     };
 
     let payload = &ciphertext[offset..];
@@ -163,7 +167,6 @@ fn decrypt(ciphertext: &[u8]) -> Result<Zeroizing<String>> {
         anyhow::bail!("凭证数据损坏");
     }
 
-    let key = derive()?;
     let key = LessSafeKey::new(key);
     let nonce_bytes: [u8; NONCE_LEN] = payload[..NONCE_LEN].try_into().unwrap();
     let nonce = Nonce::assume_unique_for_key(nonce_bytes);
@@ -188,6 +191,7 @@ pub type CredentialFields = BTreeMap<String, String>;
 
 pub struct CredentialVault {
     path: PathBuf,
+    machine_key: [u8; 32],
     data: Mutex<VaultData>,
 }
 
@@ -195,25 +199,40 @@ pub struct CredentialVault {
 
 impl CredentialVault {
     pub fn load() -> Result<Self> {
-        // 触发机器密钥初始化（可能失败，不再静默降级）
-        get_machine_key()?;
+        Self::load_from_storage_root(storage_root())
+    }
 
-        let path = credentials_file();
+    pub(crate) fn load_from_storage_root<P: AsRef<Path>>(storage_root: P) -> Result<Self> {
+        let storage_root = storage_root.as_ref();
+        // 触发机器密钥初始化（可能失败，不再静默降级）
+        let machine_key_path = storage_root.join(".machine_key");
+        let machine_key = get_machine_key_for_path(&machine_key_path)?;
+
+        let path = storage_root.join(".credentials");
         // v2.1.0: 崩溃恢复 — 若 .bak 残留且主文件不存在, 从 bak 恢复
         let bak = path.with_extension("bak");
         if !path.exists() && bak.exists() {
             eprintln!("[vault] 检测到 .bak 残留文件，正在恢复...");
             std::fs::rename(&bak, &path).map_err(|e| {
-                anyhow::anyhow!("凭证备份恢复失败: {}，请手动检查 {} 和 {}", e, path.display(), bak.display())
+                anyhow::anyhow!(
+                    "凭证备份恢复失败: {}，请手动检查 {} 和 {}",
+                    e,
+                    path.display(),
+                    bak.display()
+                )
             })?;
         }
         let data = if path.exists() {
             let encrypted = std::fs::read(&path)?;
-            let decrypted = decrypt(&encrypted)
+            let decrypted = decrypt_with_machine_key(&encrypted, &machine_key)
                 .map_err(|_| anyhow::anyhow!("凭证文件损坏或密钥不匹配, 请重新设置凭证"))?;
             // v2.1.x: JSON损坏时返回错误，不再静默清空凭证数据
             serde_json::from_str(&decrypted).map_err(|e| {
-                anyhow::anyhow!("凭证JSON解析失败: {}，请重新设置凭证 (备份文件: {})", e, bak.display())
+                anyhow::anyhow!(
+                    "凭证JSON解析失败: {}，请重新设置凭证 (备份文件: {})",
+                    e,
+                    bak.display()
+                )
             })?
         } else {
             // 首次启动: 创建空 vault 并持久化, 避免 API 返回 503
@@ -222,26 +241,13 @@ impl CredentialVault {
                 std::fs::create_dir_all(parent)?;
             }
             let json = serde_json::to_string(&data)?;
-            let encrypted = encrypt(&json)?;
-            let tmp = path.with_extension("tmp");
-            std::fs::write(&tmp, encrypted)?;
-            std::fs::rename(&tmp, &path)?;
-            #[cfg(unix)]
-            {
-                use std::os::unix::fs::PermissionsExt;
-                std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o600)).ok();
-            }
-            #[cfg(windows)]
-            {
-                let username = std::env::var("USERNAME").unwrap_or_default();
-                let _ = std::process::Command::new("icacls")
-                    .args([path.to_str().unwrap_or(""), "/inheritance:r", "/grant", &format!("{}:F", username)])
-                    .output();
-            }
+            let encrypted = encrypt_with_machine_key(&json, &machine_key)?;
+            crate::storage_lifecycle::atomic_write_secret_file(&path, &encrypted)?;
             data
         };
         Ok(Self {
             path,
+            machine_key,
             data: Mutex::new(data),
         })
     }
@@ -302,7 +308,7 @@ impl CredentialVault {
             std::fs::create_dir_all(parent)?;
         }
         let json = serde_json::to_string(data)?;
-        let encrypted = encrypt(&json)?;
+        let encrypted = encrypt_with_machine_key(&json, &self.machine_key)?;
 
         let tmp = self.path.with_extension("tmp");
         let bak = self.path.with_extension("bak");
@@ -354,7 +360,12 @@ impl CredentialVault {
         {
             let username = std::env::var("USERNAME").unwrap_or_default();
             let _ = std::process::Command::new("icacls")
-                .args([self.path.to_str().unwrap_or(""), "/inheritance:r", "/grant", &format!("{}:F", username)])
+                .args([
+                    self.path.to_str().unwrap_or(""),
+                    "/inheritance:r",
+                    "/grant",
+                    &format!("{}:F", username),
+                ])
                 .output();
         }
         Ok(())
@@ -391,17 +402,13 @@ mod tests {
     }
 
     struct VaultTestEnv {
-        orig_cwd: PathBuf,
         temp_dir: PathBuf,
     }
 
     impl VaultTestEnv {
         fn new() -> Self {
-            let orig_cwd = std::env::current_dir().unwrap();
-            let temp_dir = std::env::temp_dir().join(format!(
-                "quantpilot_vault_test_{}",
-                std::process::id()
-            ));
+            let temp_dir =
+                std::env::temp_dir().join(format!("quantpilot_vault_test_{}", std::process::id()));
 
             // 清除旧数据
             let _ = std::fs::remove_dir_all(&temp_dir);
@@ -414,14 +421,15 @@ mod tests {
             let machine_key: [u8; 32] = [0xAB; 32];
             std::fs::write(storage_dir.join(".machine_key"), machine_key).unwrap();
 
-            // 切换到临时目录
-            std::env::set_current_dir(&temp_dir).unwrap();
+            Self { temp_dir }
+        }
 
-            // 尝试初始化机器密钥（若 OnceLock 尚未初始化）
-            // 此调用可能被跳过，不影响后续测试逻辑
-            let _ = get_machine_key();
+        fn storage_dir(&self) -> PathBuf {
+            self.temp_dir.join("storage")
+        }
 
-            Self { orig_cwd, temp_dir }
+        fn load_vault(&self) -> CredentialVault {
+            CredentialVault::load_from_storage_root(self.storage_dir()).unwrap()
         }
 
         /// 确保凭证文件不存在（模拟首次启动）
@@ -435,7 +443,6 @@ mod tests {
 
     impl Drop for VaultTestEnv {
         fn drop(&mut self) {
-            let _ = std::env::set_current_dir(&self.orig_cwd);
             let _ = std::fs::remove_dir_all(&self.temp_dir);
         }
     }
@@ -462,7 +469,7 @@ mod tests {
                 "测试前置条件：凭证文件不应存在"
             );
 
-            let vault = CredentialVault::load().unwrap();
+            let vault = env.load_vault();
 
             // 加载成功后应创建凭证文件
             assert!(env.temp_dir.join("storage/.credentials").exists());
@@ -477,13 +484,13 @@ mod tests {
             env.clean_credentials();
 
             // 首次创建 vault 并写入一个服务
-            let vault = CredentialVault::load().unwrap();
+            let vault = env.load_vault();
             let mut fields = CredentialFields::new();
             fields.insert("api_key".to_string(), "test_secret_value".to_string());
             vault.set_service("test_service", fields).unwrap();
 
             // 重新加载 vault（模拟重启）
-            let reloaded = CredentialVault::load().unwrap();
+            let reloaded = env.load_vault();
             let services = reloaded.list_services();
             assert_eq!(services, vec!["test_service"]);
         });
@@ -497,7 +504,7 @@ mod tests {
             let env = VaultTestEnv::new();
             env.clean_credentials();
 
-            let vault = CredentialVault::load().unwrap();
+            let vault = env.load_vault();
             let mut fields = CredentialFields::new();
             fields.insert("key1".to_string(), "value1".to_string());
             fields.insert("key2".to_string(), "value2".to_string());
@@ -518,7 +525,7 @@ mod tests {
             let env = VaultTestEnv::new();
             env.clean_credentials();
 
-            let vault = CredentialVault::load().unwrap();
+            let vault = env.load_vault();
             let fields = CredentialFields::new();
             let result = vault.set_service("empty_service", fields);
             assert!(result.is_err());
@@ -531,7 +538,7 @@ mod tests {
             let env = VaultTestEnv::new();
             env.clean_credentials();
 
-            let vault = CredentialVault::load().unwrap();
+            let vault = env.load_vault();
 
             let mut fields1 = CredentialFields::new();
             fields1.insert("old".to_string(), "old_value".to_string());
@@ -553,7 +560,7 @@ mod tests {
             let env = VaultTestEnv::new();
             env.clean_credentials();
 
-            let vault = CredentialVault::load().unwrap();
+            let vault = env.load_vault();
             let result = vault.get_service("nonexistent");
             assert!(result.is_none());
         });
@@ -567,7 +574,7 @@ mod tests {
             let env = VaultTestEnv::new();
             env.clean_credentials();
 
-            let vault = CredentialVault::load().unwrap();
+            let vault = env.load_vault();
 
             let mut fields = CredentialFields::new();
             fields.insert("key".to_string(), "value".to_string());
@@ -585,7 +592,7 @@ mod tests {
             let env = VaultTestEnv::new();
             env.clean_credentials();
 
-            let vault = CredentialVault::load().unwrap();
+            let vault = env.load_vault();
             let result = vault.delete_service("does_not_exist");
             assert!(result.is_err());
         });
@@ -597,7 +604,7 @@ mod tests {
             let env = VaultTestEnv::new();
             env.clean_credentials();
 
-            let vault1 = CredentialVault::load().unwrap();
+            let vault1 = env.load_vault();
             let mut fields = CredentialFields::new();
             fields.insert("key".to_string(), "keep".to_string());
             vault1.set_service("keep_me", fields).unwrap();
@@ -608,7 +615,7 @@ mod tests {
             vault1.delete_service("remove_me").unwrap();
             drop(vault1);
 
-            let vault2 = CredentialVault::load().unwrap();
+            let vault2 = env.load_vault();
             let services = vault2.list_services();
             assert_eq!(services, vec!["keep_me"]);
         });
@@ -622,7 +629,7 @@ mod tests {
             let env = VaultTestEnv::new();
             env.clean_credentials();
 
-            let vault = CredentialVault::load().unwrap();
+            let vault = env.load_vault();
             let services = vault.list_services();
             assert!(services.is_empty());
         });
@@ -634,7 +641,7 @@ mod tests {
             let env = VaultTestEnv::new();
             env.clean_credentials();
 
-            let vault = CredentialVault::load().unwrap();
+            let vault = env.load_vault();
 
             let mut f1 = CredentialFields::new();
             f1.insert("k".to_string(), "v".to_string());
@@ -662,13 +669,10 @@ mod tests {
             let env = VaultTestEnv::new();
             env.clean_credentials();
 
-            let vault = CredentialVault::load().unwrap();
+            let vault = env.load_vault();
 
             let mut fields = CredentialFields::new();
-            fields.insert(
-                "api_key".to_string(),
-                "my_long_api_key_12345".to_string(),
-            );
+            fields.insert("api_key".to_string(), "my_long_api_key_12345".to_string());
             vault.set_service("exchange", fields).unwrap();
 
             let patterns = vault.extract_secret_patterns();
@@ -677,7 +681,9 @@ mod tests {
             for p in &patterns {
                 assert!(p.len() >= 8);
             }
-            assert!(patterns.iter().any(|p| p.as_str() == "my_long_api_key_12345"));
+            assert!(patterns
+                .iter()
+                .any(|p| p.as_str() == "my_long_api_key_12345"));
         });
     }
 
@@ -687,7 +693,7 @@ mod tests {
             let env = VaultTestEnv::new();
             env.clean_credentials();
 
-            let vault = CredentialVault::load().unwrap();
+            let vault = env.load_vault();
 
             let mut fields = CredentialFields::new();
             fields.insert("short".to_string(), "abc".to_string()); // 3 chars, < 8
@@ -705,13 +711,10 @@ mod tests {
             let env = VaultTestEnv::new();
             env.clean_credentials();
 
-            let vault = CredentialVault::load().unwrap();
+            let vault = env.load_vault();
 
             let mut fields = CredentialFields::new();
-            fields.insert(
-                "secret".to_string(),
-                "very_long_secret_value".to_string(),
-            );
+            fields.insert("secret".to_string(), "very_long_secret_value".to_string());
             vault.set_service("test", fields).unwrap();
 
             let patterns = vault.extract_secret_patterns();
@@ -722,4 +725,3 @@ mod tests {
         });
     }
 }
-

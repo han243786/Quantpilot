@@ -1,14 +1,13 @@
-use super::timeline::{KlineProvider, QuoteProvider, ResampleKlineProvider, TimelineDataProvider, UnifiedTimeline};
+use super::timeline::{
+    KlineProvider, QuoteProvider, ResampleKlineProvider, TimelineDataProvider, UnifiedTimeline,
+};
 use crate::data_module::data_sources_from_core_ir;
 use anyhow::{anyhow, Result};
 use qrpc_core::{CoreStrategyIr, DataKind};
 use std::sync::Arc;
 
 /// 从 CoreStrategyIr 构建统一时间轴所需的 K 线数据提供者列表
-pub fn build_kline_providers(
-    core_ir: &CoreStrategyIr,
-    end_ms: u64,
-) -> Result<Vec<KlineProvider>> {
+pub fn build_kline_providers(core_ir: &CoreStrategyIr, end_ms: u64) -> Result<Vec<KlineProvider>> {
     use crate::data_module::historical_kline_bars_for_backtest;
 
     let sources = data_sources_from_core_ir(core_ir);
@@ -56,7 +55,9 @@ pub fn build_quote_providers(
             let matching_kline = kline_providers.iter().find(|kp| {
                 // 通过 data_id 前缀匹配（如 "binance_btc_quote" 匹配 "binance_btc_150d_1d"）
                 let quote_base = source.data_id.replace("_quote", "");
-                let kline_base = TimelineDataProvider::data_id(*kp).replace("_150d_1d", "").replace("_200d_1d", "");
+                let kline_base = TimelineDataProvider::data_id(*kp)
+                    .replace("_150d_1d", "")
+                    .replace("_200d_1d", "");
                 quote_base == kline_base
             });
 
@@ -71,12 +72,18 @@ pub fn build_quote_providers(
 }
 
 /// v1.1.1: 为亚日频 K 线源创建日频重采样提供者
-fn build_resampled_providers(kline_providers: &[KlineProvider]) -> Vec<Arc<dyn TimelineDataProvider>> {
+fn build_resampled_providers(
+    kline_providers: &[KlineProvider],
+) -> Vec<Arc<dyn TimelineDataProvider>> {
     let mut resampled: Vec<Arc<dyn TimelineDataProvider>> = Vec::new();
     for provider in kline_providers {
         let interval = &provider.interval;
-        if interval == "1m" || interval == "5m" || interval == "15m"
-            || interval == "30m" || interval == "1h" || interval == "4h"
+        if interval == "1m"
+            || interval == "5m"
+            || interval == "15m"
+            || interval == "30m"
+            || interval == "1h"
+            || interval == "4h"
         {
             let id = format!("{}_resampled_1d", TimelineDataProvider::data_id(provider));
             resampled.push(Arc::new(ResampleKlineProvider::new(&id, provider, "1d")));
@@ -86,17 +93,18 @@ fn build_resampled_providers(kline_providers: &[KlineProvider]) -> Vec<Arc<dyn T
 }
 
 /// 从 CoreStrategyIr 构建完整的统一时间轴（包含数据提供者 + 自动日频重采样）
-pub fn build_unified_timeline(
-    core_ir: &CoreStrategyIr,
-    end_ms: u64,
-) -> Result<UnifiedTimeline> {
+pub fn build_unified_timeline(core_ir: &CoreStrategyIr, end_ms: u64) -> Result<UnifiedTimeline> {
     let kline_providers = build_kline_providers(core_ir, end_ms)?;
     let resampled = build_resampled_providers(&kline_providers);
     let quote_providers = build_quote_providers(core_ir, &kline_providers);
     let mut all: Vec<Arc<dyn TimelineDataProvider>> = Vec::new();
-    for kp in &kline_providers { all.push(Arc::new(kp.clone())); }
+    for kp in &kline_providers {
+        all.push(Arc::new(kp.clone()));
+    }
     all.extend(resampled);
-    for qp in &quote_providers { all.push(Arc::new(qp.clone())); }
+    for qp in &quote_providers {
+        all.push(Arc::new(qp.clone()));
+    }
     UnifiedTimeline::from_providers(all)
 }
 
@@ -127,20 +135,24 @@ pub fn build_mock_unified_timeline(
     let resampled = build_resampled_providers(&kline_providers);
     let quote_providers = build_quote_providers(core_ir, &kline_providers);
     let mut all: Vec<Arc<dyn TimelineDataProvider>> = Vec::new();
-    for kp in &kline_providers { all.push(Arc::new(kp.clone())); }
+    for kp in &kline_providers {
+        all.push(Arc::new(kp.clone()));
+    }
     all.extend(resampled);
-    for qp in &quote_providers { all.push(Arc::new(qp.clone())); }
+    for qp in &quote_providers {
+        all.push(Arc::new(qp.clone()));
+    }
     UnifiedTimeline::from_providers(all)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use qrpc_core::{
-        AgentConfig, DataSourceConfig, Exchange, IntentConfig, IntentKind, MarketType,
-        RiskConfig, RuntimeProtocolCoreConfig, Symbol,
-    };
     use qrpc_compiler::compile_runtime_protocol_config;
+    use qrpc_core::{
+        AgentConfig, DataSourceConfig, Exchange, IntentConfig, IntentKind, MarketType, RiskConfig,
+        RuntimeProtocolCoreConfig, Symbol,
+    };
     use std::collections::BTreeMap;
 
     fn sample_config() -> RuntimeProtocolCoreConfig {

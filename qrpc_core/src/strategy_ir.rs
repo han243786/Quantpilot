@@ -165,9 +165,7 @@ impl StrategyIr {
         );
         if let Some(profile) = &self.risk_profile {
             if profile.profile_id.trim() != "global" {
-                errors.push(
-                    "risk_profile.profile_id 在当前运行时中必须为 \"global\"".to_string(),
-                );
+                errors.push("risk_profile.profile_id 在当前运行时中必须为 \"global\"".to_string());
             }
             if let Some(value) = profile.max_position {
                 if !value.is_finite() || value <= 0.0 {
@@ -250,8 +248,7 @@ impl StrategyIr {
         if let Some(profile) = &self.execution_profile {
             if profile.profile_id.trim() != "paper" {
                 errors.push(
-                    "execution_profile.profile_id 在当前运行时中必须为 \"paper\""
-                        .to_string(),
+                    "execution_profile.profile_id 在当前运行时中必须为 \"paper\"".to_string(),
                 );
             }
             if let Some(value) = profile.fee_bps {

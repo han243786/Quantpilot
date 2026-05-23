@@ -36,6 +36,8 @@ export async function installWorkspaceBootstrapMocks(
   await api.json(`**/api/graphs/${graphId}`, graphFixture);
   await api.json("**/api/runtime/runs", runHistory);
   await api.json("**/api/runtime/backtests", backtestHistory);
+  await api.json("**/api/runtime/mutations**", []);
+  await api.json("**/api/runtime/reports**", []);
   await api.json("**/api/runtime/experiments", experiments);
   await api.json("**/api/runtime/experiments/*", {
     experiment_id: "",

@@ -23,19 +23,20 @@ async fn run_test_scenario(
             "源码为空 —— 请提供包含 @test 指令的有效 QuantScript 策略".to_string(),
         ));
     }
-    let ctx = TestRunnerContext::from_source(&request.source)
-        .map_err(|e| (axum::http::StatusCode::BAD_REQUEST, format!("解析错误: {e}")))?;
+    let ctx = TestRunnerContext::from_source(&request.source).map_err(|e| {
+        (
+            axum::http::StatusCode::BAD_REQUEST,
+            format!("解析错误: {e}"),
+        )
+    })?;
 
     let mut runner = TestRunner::new();
-    let report = runner
-        .execute(&ctx)
-        .await
-        .map_err(|e| {
-            (
-                axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-                format!("执行错误: {e}"),
-            )
-        })?;
+    let report = runner.execute(&ctx).await.map_err(|e| {
+        (
+            axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+            format!("执行错误: {e}"),
+        )
+    })?;
 
     Ok(Json(report))
 }

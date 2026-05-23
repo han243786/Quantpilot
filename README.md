@@ -96,10 +96,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-user-facing-text
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-governance.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-i18n.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-version-consistency.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-feature-evolution.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-pre-commit-hook.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-cleanup-boundary.ps1
+cargo fmt --check
 cargo check --workspace
 .\scripts\test.ps1 test --workspace
 cargo clippy --workspace --all-targets
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-executor-warning-budget.ps1 -MaxWarnings 49
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-executor-warning-budget.ps1 -MaxWarnings 47
 cd frontend; npm run build
 cd frontend; npm run test
 cd frontend; npm run test:e2e
@@ -113,7 +117,7 @@ cargo check --bin executor
 
 ### Pre-commit hook
 
-`scripts/pre-commit` 在 `git commit` 时自动执行 UTF-8 检查、`cargo check`、`cargo test --no-run`、`vite build`、`vitest run`。
+`scripts/pre-commit` 在 `git commit` 时自动执行 UTF-8 检查、`cargo fmt --check`、`cargo check`、`cargo test --no-run`、`vite build`、`vitest run`。
 
 ## v3.7.1 流程收口状态
 
@@ -123,9 +127,11 @@ cargo check --bin executor
 | P1 凭证 DELETE 405 | ✅ | Axum 0.7 路由参数语法修正为 `:service` |
 | P2 测试进程文件锁 | ✅ | `scripts/test.ps1` / `scripts/test.sh` 在测试前停止本仓库运行进程 |
 | 三层工作流门禁 | ✅ | pre-commit / CI / closeout-release 三层已统一 |
+| 功能演进契约 | ✅ | 新能力必须登记能力边界、回归保护矩阵、兼容性与迁移说明 |
+| Rust 格式基线 | ✅ | 全仓 `cargo fmt` 已落地，pre-commit / CI / closeout 均执行 `cargo fmt --check` |
 | 版本一致性 | ✅ | Cargo、Tauri、前端 package、lockfile 和关键文档统一到 `3.7.1` |
-| executor warning 债务 | ⚠️ | 当前预算 49；新增 warning 会失败，清零后恢复 `-D warnings` |
-| 完整 closeout | ⚠️ | `tools\run-closeout-gates.bat` 已收口为 17 项门禁，发布前仍需完整跑通 |
+| executor warning 债务 | ⚠️ | 当前预算 47；新增 warning 会失败，清零后恢复 `-D warnings` |
+| 完整 closeout | ✅ | `tools\run-closeout-gates.bat` 21/21 通过，可作为 v3.7.1 稳定线归档 |
 
 ## 文档入口
 
@@ -136,6 +142,7 @@ cargo check --bin executor
 | 超级规范化 | `./markdown/01-principles/principles-super-standardization.md` |
 | RFC 索引 (001-020) | `./markdown/02-protocol/README.md` |
 | 编译链合约 | `./markdown/03-implementation/governance/implementation-compile-chain-contract.md` |
+| 功能演进契约 | `./markdown/03-implementation/governance/implementation-feature-evolution-contract.md` |
 | 支持矩阵 | `./markdown/03-implementation/governance/implementation-support-matrix.md` |
 | API 参考 | `./markdown/04-guides/guide-api-reference.md` |
 | v1.0.0 规划 | `./markdown/06-milestones/v1.0.0/01-规划方案.md` |

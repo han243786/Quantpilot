@@ -2,7 +2,10 @@
 #![allow(dead_code)]
 
 use anyhow::{anyhow, Result};
-use qrpc_core::{DataKind, DataSourceConfig, KlineSeriesSnapshot, NormalizedKline, NormalizedMarketData, QuoteSnapshot};
+use qrpc_core::{
+    DataKind, DataSourceConfig, KlineSeriesSnapshot, NormalizedKline, NormalizedMarketData,
+    QuoteSnapshot,
+};
 use std::collections::BTreeSet;
 use std::sync::Arc;
 
@@ -12,7 +15,9 @@ pub trait TimelineDataProvider: Send + Sync + std::fmt::Debug {
     fn kind(&self) -> DataKind;
     fn value_at(&self, ts_ms: u64) -> Option<NormalizedMarketData>;
     /// v1.1.1: 返回此提供者拥有的全部时间戳（用于构建统一时间轴）
-    fn timestamps(&self) -> Vec<u64> { Vec::new() }
+    fn timestamps(&self) -> Vec<u64> {
+        Vec::new()
+    }
 }
 
 /// K 线数据提供者 — 从 NormalizedKline 序列按 asof 提供 KlineSeriesSnapshot
@@ -54,9 +59,15 @@ impl KlineProvider {
 }
 
 impl TimelineDataProvider for KlineProvider {
-    fn data_id(&self) -> &str { &self.data_id }
-    fn kind(&self) -> DataKind { DataKind::KlineSeries }
-    fn timestamps(&self) -> Vec<u64> { self.close_timestamps() }
+    fn data_id(&self) -> &str {
+        &self.data_id
+    }
+    fn kind(&self) -> DataKind {
+        DataKind::KlineSeries
+    }
+    fn timestamps(&self) -> Vec<u64> {
+        self.close_timestamps()
+    }
 
     fn value_at(&self, ts_ms: u64) -> Option<NormalizedMarketData> {
         // v1.2.0: 滑动窗口截断为最近500条，解决 O(N²) 内存
@@ -109,7 +120,11 @@ impl QuoteProvider {
         }
     }
 
-    pub fn from_kline_fallback(source: &DataSourceConfig, kline_provider: &KlineProvider, _end_ms: u64) -> Self {
+    pub fn from_kline_fallback(
+        source: &DataSourceConfig,
+        kline_provider: &KlineProvider,
+        _end_ms: u64,
+    ) -> Self {
         // 从 K 线 close 值生成合成报价（用于回测环境无真实报价数据时）
         let quotes: Vec<(u64, QuoteSnapshot)> = kline_provider
             .bars
@@ -117,24 +132,32 @@ impl QuoteProvider {
             .map(|bar| {
                 let mid = bar.close;
                 let ts = bar.close_time_ms;
-                (ts, QuoteSnapshot {
-                    data_id: source.data_id.clone(),
-                    exchange: source.exchange.clone(),
-                    symbol: source.symbol.clone(),
-                    market_type: qrpc_core::MarketType::Spot,
-                    best_bid: mid * 0.9999,
-                    best_ask: mid * 1.0001,
-                    bid_size: 100.0,
-                    ask_size: 100.0,
-                    mid_price: mid,
-                    ts_ms: ts,
-                    source_latency_ms: 0,
-                    source_status: qrpc_core::SourceStatus::Healthy,
-                    data_quality: qrpc_core::DataQualitySnapshot::default(),
-                })
+                (
+                    ts,
+                    QuoteSnapshot {
+                        data_id: source.data_id.clone(),
+                        exchange: source.exchange.clone(),
+                        symbol: source.symbol.clone(),
+                        market_type: qrpc_core::MarketType::Spot,
+                        best_bid: mid * 0.9999,
+                        best_ask: mid * 1.0001,
+                        bid_size: 100.0,
+                        ask_size: 100.0,
+                        mid_price: mid,
+                        ts_ms: ts,
+                        source_latency_ms: 0,
+                        source_status: qrpc_core::SourceStatus::Healthy,
+                        data_quality: qrpc_core::DataQualitySnapshot::default(),
+                    },
+                )
             })
             .collect();
-        Self { data_id: source.data_id.clone(), exchange: source.exchange.clone(), symbol: source.symbol.clone(), quotes }
+        Self {
+            data_id: source.data_id.clone(),
+            exchange: source.exchange.clone(),
+            symbol: source.symbol.clone(),
+            quotes,
+        }
     }
 
     pub fn timestamps(&self) -> Vec<u64> {
@@ -143,8 +166,12 @@ impl QuoteProvider {
 }
 
 impl TimelineDataProvider for QuoteProvider {
-    fn data_id(&self) -> &str { &self.data_id }
-    fn kind(&self) -> DataKind { DataKind::Quote }
+    fn data_id(&self) -> &str {
+        &self.data_id
+    }
+    fn kind(&self) -> DataKind {
+        DataKind::Quote
+    }
     fn timestamps(&self) -> Vec<u64> {
         self.quotes.iter().map(|(ts, _)| *ts).collect()
     }
@@ -174,11 +201,7 @@ pub struct ResampleKlineProvider {
 }
 
 impl ResampleKlineProvider {
-    pub fn new(
-        data_id: &str,
-        source: &KlineProvider,
-        target_interval: &str,
-    ) -> Self {
+    pub fn new(data_id: &str, source: &KlineProvider, target_interval: &str) -> Self {
         let target_interval_ms = bar_interval_ms(target_interval);
         let source_interval_ms = bar_interval_ms(&source.interval);
 
@@ -219,8 +242,14 @@ impl ResampleKlineProvider {
                             open_time_ms: bucket_start,
                             close_time_ms: bucket_start + target_interval_ms,
                             open: bucket_open,
-                            high: bucket_high.max(bucket_low).max(bucket_open).max(bucket_close),
-                            low: bucket_low.min(bucket_high).min(bucket_open).min(bucket_close),
+                            high: bucket_high
+                                .max(bucket_low)
+                                .max(bucket_open)
+                                .max(bucket_close),
+                            low: bucket_low
+                                .min(bucket_high)
+                                .min(bucket_open)
+                                .min(bucket_close),
                             close: bucket_close,
                             volume: bucket_volume,
                             exchange: source.exchange.clone(),
@@ -257,8 +286,14 @@ impl ResampleKlineProvider {
                     open_time_ms: bucket_start,
                     close_time_ms: bucket_start + target_interval_ms,
                     open: bucket_open,
-                    high: bucket_high.max(bucket_low).max(bucket_open).max(bucket_close),
-                    low: bucket_low.min(bucket_high).min(bucket_open).min(bucket_close),
+                    high: bucket_high
+                        .max(bucket_low)
+                        .max(bucket_open)
+                        .max(bucket_close),
+                    low: bucket_low
+                        .min(bucket_high)
+                        .min(bucket_open)
+                        .min(bucket_close),
                     close: bucket_close,
                     volume: bucket_volume,
                     exchange: source.exchange.clone(),
@@ -303,9 +338,15 @@ fn bar_interval_ms(interval: &str) -> u64 {
 }
 
 impl TimelineDataProvider for ResampleKlineProvider {
-    fn data_id(&self) -> &str { &self.data_id }
-    fn kind(&self) -> DataKind { DataKind::KlineSeries }
-    fn timestamps(&self) -> Vec<u64> { self.close_timestamps() }
+    fn data_id(&self) -> &str {
+        &self.data_id
+    }
+    fn kind(&self) -> DataKind {
+        DataKind::KlineSeries
+    }
+    fn timestamps(&self) -> Vec<u64> {
+        self.close_timestamps()
+    }
 
     fn value_at(&self, ts_ms: u64) -> Option<NormalizedMarketData> {
         // v1.2.0: 滑动窗口截断
@@ -417,9 +458,7 @@ impl UnifiedTimeline {
     }
 
     /// v1.1.1: 从统一提供者列表构建时间轴（支持 Kline + ResampleKline + Quote）
-    pub fn from_providers(
-        providers: Vec<Arc<dyn TimelineDataProvider>>,
-    ) -> Result<Self> {
+    pub fn from_providers(providers: Vec<Arc<dyn TimelineDataProvider>>) -> Result<Self> {
         if providers.is_empty() {
             return Err(anyhow!("统一时间轴需要至少一个数据提供者"));
         }
@@ -430,10 +469,14 @@ impl UnifiedTimeline {
         for p in &providers {
             match p.kind() {
                 DataKind::KlineSeries => {
-                    for ts in p.timestamps() { kline_close_set.insert(ts); }
+                    for ts in p.timestamps() {
+                        kline_close_set.insert(ts);
+                    }
                 }
                 DataKind::Quote => {
-                    for ts in p.timestamps() { quote_ts_set.insert(ts); }
+                    for ts in p.timestamps() {
+                        quote_ts_set.insert(ts);
+                    }
                 }
             }
         }
@@ -446,17 +489,29 @@ impl UnifiedTimeline {
         let mut slow_triggers = Vec::new();
         let mut fast_triggers = Vec::new();
         for (idx, ts) in timestamps.iter().enumerate() {
-            if kline_close_set.contains(ts) { slow_triggers.push(idx); }
-            if quote_ts_set.contains(ts) { fast_triggers.push(idx); }
+            if kline_close_set.contains(ts) {
+                slow_triggers.push(idx);
+            }
+            if quote_ts_set.contains(ts) {
+                fast_triggers.push(idx);
+            }
         }
 
-        Ok(Self { timestamps, slow_triggers, fast_triggers, providers })
+        Ok(Self {
+            timestamps,
+            slow_triggers,
+            fast_triggers,
+            providers,
+        })
     }
 
     /// 获取某个时间索引的全部数据快照
     pub fn collect_at(&self, ts_idx: usize) -> Vec<NormalizedMarketData> {
         let ts_ms = self.timestamps.get(ts_idx).copied().unwrap_or(0);
-        self.providers.iter().filter_map(|p| p.value_at(ts_ms)).collect()
+        self.providers
+            .iter()
+            .filter_map(|p| p.value_at(ts_ms))
+            .collect()
     }
 
     pub fn len(&self) -> usize {
@@ -483,7 +538,13 @@ mod tests {
         }
     }
 
-    fn sample_kline_provider(data_id: &str, symbol: &Symbol, count: usize, start_ts: u64, interval_ms: u64) -> KlineProvider {
+    fn sample_kline_provider(
+        data_id: &str,
+        symbol: &Symbol,
+        count: usize,
+        start_ts: u64,
+        interval_ms: u64,
+    ) -> KlineProvider {
         let interval_label = interval_to_label(interval_ms);
         let bars: Vec<NormalizedKline> = (0..count)
             .map(|i| {
@@ -533,12 +594,21 @@ mod tests {
     #[test]
     fn unified_timeline_merges_multiple_sources() {
         let btc = sample_kline_provider("btc_1d", &Symbol::BtcUsdt, 3, 1_000_000, 86_400_000);
-        let eth = sample_kline_provider("eth_1d", &Symbol::Other("ETHUSDT".into()), 5, 1_000_000, 86_400_000);
+        let eth = sample_kline_provider(
+            "eth_1d",
+            &Symbol::Other("ETHUSDT".into()),
+            5,
+            1_000_000,
+            86_400_000,
+        );
         let timeline = UnifiedTimeline::new(&[btc.clone(), eth.clone()], &[]).unwrap();
 
         // 时间轴长度: min(3,5)=3 不再适用，实际是 5 个时间戳（取并集）
-        assert_eq!(timeline.timestamps.len(), 5,
-            "统一时间轴应取所有数据源时间戳的并集");
+        assert_eq!(
+            timeline.timestamps.len(),
+            5,
+            "统一时间轴应取所有数据源时间戳的并集"
+        );
         assert!(!timeline.slow_triggers.is_empty());
     }
 
@@ -571,7 +641,11 @@ mod tests {
         // 同日频数据不需要重采样
         let source = sample_kline_provider("btc_1d", &Symbol::BtcUsdt, 5, 1_000_000, 86_400_000);
         let resampled = ResampleKlineProvider::new("btc_1d_copy", &source, "1d");
-        assert_eq!(resampled.bar_count(), source.bar_count(), "同频重采样应保持 bar 数不变");
+        assert_eq!(
+            resampled.bar_count(),
+            source.bar_count(),
+            "同频重采样应保持 bar 数不变"
+        );
     }
 
     #[test]

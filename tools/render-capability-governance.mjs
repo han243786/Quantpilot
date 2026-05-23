@@ -3,6 +3,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { CAPABILITY_GOVERNANCE } from "../frontend/src/capabilities/capabilityGovernance.js";
+import {
+  DECLARED_INDICATOR_KINDS,
+  SUPPORTED_EXCHANGES,
+  SUPPORTED_FRONTEND_MODULE_KEYS,
+  SUPPORTED_RUNTIME_EXECUTION_MODULES,
+  SUPPORTED_RUNTIME_MODES,
+  SUPPORTED_SYMBOLS
+} from "../frontend/src/capabilities/supportMatrix.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,6 +42,34 @@ function summarizeBy(items, keyFn) {
   return Array.from(counts.entries()).sort(([left], [right]) => left.localeCompare(right));
 }
 
+const classLabels = new Map([
+  ["supported", "supported（已支持）"],
+  ["restricted", "restricted（受限）"],
+  ["trace_only", "trace_only（仅追踪）"],
+  ["disallowed_claim", "disallowed_claim（禁止声明）"]
+]);
+
+const familyLabels = new Map([
+  ["runtime_mode", "runtime_mode（运行模式）"],
+  ["execution_module", "execution_module（执行模块）"],
+  ["exchange", "exchange（交易所）"],
+  ["symbol", "symbol（交易对）"],
+  ["strategy_ir_indicator_kind", "strategy_ir_indicator_kind（策略 IR 指标类型）"],
+  ["frontend_module", "frontend_module（前端模块）"],
+  ["ui_action", "ui_action（UI 操作）"],
+  ["workspace_surface", "workspace_surface（工作区界面）"],
+  ["compile_boundary", "compile_boundary（编译边界）"],
+  ["user_facing_claim", "user_facing_claim（面向用户声明）"]
+]);
+
+function renderClassLabel(className) {
+  return classLabels.get(className) || className;
+}
+
+function renderFamilyLabel(family) {
+  return familyLabels.get(family) || family;
+}
+
 function renderRegistrySnapshot() {
   const registry = CAPABILITY_GOVERNANCE.registry;
   const classSummary = summarizeBy(registry, (entry) => entry.class);
@@ -41,31 +77,31 @@ function renderRegistrySnapshot() {
   const familyOrder = [...new Set(registry.map((entry) => entry.family))];
 
   const lines = [
-    "# Generated Capability Governance Registry",
+    "# 生成的能力治理注册表",
     "",
-    "This file is generated from `frontend/src/capabilities/capabilityGovernance.js`.",
-    "Do not edit it by hand.",
+    "此文件由 `frontend/src/capabilities/capabilityGovernance.js` 生成。",
+    "请勿手动编辑。",
     "",
-    `Schema version: \`${CAPABILITY_GOVERNANCE.schemaVersion}\``,
+    `模式版本：\`${CAPABILITY_GOVERNANCE.schemaVersion}\``,
     "",
-    "Regenerate this snapshot with:",
+    "使用以下命令重新生成此快照：",
     "",
     "```powershell",
     "powershell -NoProfile -ExecutionPolicy Bypass -File tools\\check-capability-governance.ps1 -WriteSnapshot",
     "```",
     "",
-    "## Summary By Class",
+    "## 按类别汇总",
     "",
     renderTable(
-      ["Class", "Entry Count"],
-      classSummary.map(([className, count]) => [className, count])
+      ["类别", "条目数"],
+      classSummary.map(([className, count]) => [renderClassLabel(className), count])
     ),
     "",
-    "## Summary By Family",
+    "## 按系列汇总",
     "",
     renderTable(
-      ["Family", "Entry Count"],
-      familySummary.map(([family, count]) => [family, count])
+      ["系列", "条目数"],
+      familySummary.map(([family, count]) => [renderFamilyLabel(family), count])
     )
   ];
 
@@ -73,10 +109,10 @@ function renderRegistrySnapshot() {
     const familyEntries = registry.filter((entry) => entry.family === family);
     lines.push(
       "",
-      `## ${family}`,
+      `## ${renderFamilyLabel(family)}`,
       "",
       renderTable(
-        ["ID", "Value", "Class", "Owner Role", "Review Responsibility", "Source Of Truth", "Notes"],
+        ["ID", "值", "类别", "负责人角色", "审查责任", "真实数据源", "备注"],
         familyEntries.map((entry) => [
           entry.id,
           entry.value,
@@ -133,6 +169,92 @@ function renderTextGatePayload() {
   );
 }
 
+function assertArrayEqual(name, actual, expected) {
+  const actualJson = JSON.stringify(actual);
+  const expectedJson = JSON.stringify(expected);
+  if (actualJson !== expectedJson) {
+    throw new Error(`${name} drift detected. expected=${expectedJson} actual=${actualJson}`);
+  }
+}
+
+function readJson(relativePath) {
+  return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), "utf8"));
+}
+
+function readUtf8(relativePath) {
+  return fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
+}
+
+function assertOpenApiCapabilityResponseAligned() {
+  const openapi = normalizeNewlines(readUtf8("contracts/openapi/root.yaml"));
+  const start = openapi.indexOf("    CapabilityResponse:\n");
+  const end = openapi.indexOf("    AiProposalRecord:\n", start);
+  if (start < 0 || end < 0 || end <= start) {
+    throw new Error("OpenAPI CapabilityResponse schema block is missing.");
+  }
+
+  const block = openapi.slice(start, end);
+  const requiredFields = [
+    "api_version",
+    "schema_version",
+    "schema_hash",
+    "chain_stages",
+    "strategy_ir",
+    "runtime",
+    "market_data",
+    "frontend",
+    "versioning",
+    "permission_boundary"
+  ];
+
+  for (const field of requiredFields) {
+    if (!block.includes(`        ${field}:`)) {
+      throw new Error(`OpenAPI CapabilityResponse schema is missing property: ${field}`);
+    }
+    if (!block.includes(field)) {
+      throw new Error(`OpenAPI CapabilityResponse schema is missing required field: ${field}`);
+    }
+  }
+
+  for (const enumValue of ["supported", "declared_only", "proposal_only", "disabled", "deny", "allow"]) {
+    if (!block.includes(enumValue)) {
+      throw new Error(`OpenAPI CapabilityResponse schema is missing enum value: ${enumValue}`);
+    }
+  }
+}
+
+function assertSupportMatrixAligned() {
+  const fixture = readJson("frontend/src/test/fixtures/capabilities/backend-capabilities-v1.json");
+  assertArrayEqual("runtime.supported_modes", fixture.runtime.supported_modes, SUPPORTED_RUNTIME_MODES);
+  assertArrayEqual(
+    "runtime.supported_execution_modules",
+    fixture.runtime.supported_execution_modules,
+    SUPPORTED_RUNTIME_EXECUTION_MODULES
+  );
+  assertArrayEqual("market_data.supported_exchanges", fixture.market_data.supported_exchanges, SUPPORTED_EXCHANGES);
+  assertArrayEqual("market_data.supported_symbols", fixture.market_data.supported_symbols, SUPPORTED_SYMBOLS);
+  assertArrayEqual(
+    "strategy_ir.declared_indicator_kinds",
+    fixture.strategy_ir.declared_indicator_kinds,
+    DECLARED_INDICATOR_KINDS
+  );
+  assertArrayEqual(
+    "strategy_ir.supported_indicator_kinds",
+    fixture.strategy_ir.supported_indicator_kinds,
+    DECLARED_INDICATOR_KINDS
+  );
+  assertArrayEqual(
+    "frontend.supported_module_keys",
+    fixture.frontend.supported_module_keys,
+    SUPPORTED_FRONTEND_MODULE_KEYS
+  );
+}
+
+function assertCapabilityContractAlignment() {
+  assertSupportMatrixAligned();
+  assertOpenApiCapabilityResponseAligned();
+}
+
 function resolveOutputPath(targetPath) {
   if (!targetPath) {
     throw new Error("Missing output path.");
@@ -141,6 +263,7 @@ function resolveOutputPath(targetPath) {
 }
 
 function writeSnapshot(targetPath) {
+  assertCapabilityContractAlignment();
   const resolvedPath = resolveOutputPath(targetPath);
   fs.mkdirSync(path.dirname(resolvedPath), { recursive: true });
   fs.writeFileSync(resolvedPath, renderRegistrySnapshot(), "utf8");
@@ -148,6 +271,7 @@ function writeSnapshot(targetPath) {
 }
 
 function checkSnapshot(targetPath) {
+  assertCapabilityContractAlignment();
   const resolvedPath = resolveOutputPath(targetPath);
   if (!fs.existsSync(resolvedPath)) {
     process.stderr.write(

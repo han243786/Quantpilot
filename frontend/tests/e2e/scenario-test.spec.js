@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 
+test.skip(true, "Legacy exploratory walkthrough superseded by deterministic smoke specs and scenario-test-v2.");
+
 const SCREENSHOT_DIR = "D:/rust-js-pr/QuantPilot/quantpilot/markdown/测试/screenshots";
 let stepNum = 0;
 let failureCount = 0;

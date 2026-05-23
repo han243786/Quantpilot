@@ -16,7 +16,8 @@ pub(super) async fn compare_backtests(
     let left_backtest_id = request.backtest_ids[0].clone();
     let right_backtest_id = request.backtest_ids[1].clone();
     let left_record = load_backtest_record_from_state(&state, &user_id, &left_backtest_id).await?;
-    let right_record = load_backtest_record_from_state(&state, &user_id, &right_backtest_id).await?;
+    let right_record =
+        load_backtest_record_from_state(&state, &user_id, &right_backtest_id).await?;
     let left_execution_assumptions = left_record
         .backtest_artifacts
         .as_ref()

@@ -10,7 +10,6 @@ use serde_json::{json, Value};
 use std::fs;
 use tower::ServiceExt;
 
-
 #[tokio::test(flavor = "multi_thread")]
 async fn runtime_write_rejects_missing_capability_context_without_creating_run() {
     let (app, _dirs) = common::test_app_with_dirs("api_run_capability_guard");

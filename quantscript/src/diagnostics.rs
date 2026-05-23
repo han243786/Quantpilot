@@ -62,15 +62,38 @@ pub struct Diagnostic {
 
 impl Diagnostic {
     pub fn error(code: &'static str, message: impl Into<String>, span: Option<Span>) -> Self {
-        Self { severity: DiagnosticSeverity::Error, code, message: message.into(), span, hint: None }
+        Self {
+            severity: DiagnosticSeverity::Error,
+            code,
+            message: message.into(),
+            span,
+            hint: None,
+        }
     }
 
     pub fn warning(code: &'static str, message: impl Into<String>, span: Option<Span>) -> Self {
-        Self { severity: DiagnosticSeverity::Warning, code, message: message.into(), span, hint: None }
+        Self {
+            severity: DiagnosticSeverity::Warning,
+            code,
+            message: message.into(),
+            span,
+            hint: None,
+        }
     }
 
     /// v1.2.4: 带修复提示的错误
-    pub fn error_with_hint(code: &'static str, message: impl Into<String>, span: Option<Span>, hint: impl Into<String>) -> Self {
-        Self { severity: DiagnosticSeverity::Error, code, message: message.into(), span, hint: Some(hint.into()) }
+    pub fn error_with_hint(
+        code: &'static str,
+        message: impl Into<String>,
+        span: Option<Span>,
+        hint: impl Into<String>,
+    ) -> Self {
+        Self {
+            severity: DiagnosticSeverity::Error,
+            code,
+            message: message.into(),
+            span,
+            hint: Some(hint.into()),
+        }
     }
 }

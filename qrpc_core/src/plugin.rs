@@ -126,10 +126,7 @@ impl PluginManifest {
                         ));
                     }
                 }
-                None => errors.push(format!(
-                    "不支持的能力合约 `{}`",
-                    capability.id
-                )),
+                None => errors.push(format!("不支持的能力合约 `{}`", capability.id)),
             }
         }
 
@@ -157,10 +154,16 @@ impl PluginManifest {
         }
         // v2.1.2: enforce_max_* Some(0) 等同于 None，应拒绝
         if self.security.enforce_max_compute_ms == Some(0) {
-            errors.push("security.enforce_max_compute_ms 为 Some(0) 无效，请使用 None 表示不限制".to_string());
+            errors.push(
+                "security.enforce_max_compute_ms 为 Some(0) 无效，请使用 None 表示不限制"
+                    .to_string(),
+            );
         }
         if self.security.enforce_max_memory_mb == Some(0) {
-            errors.push("security.enforce_max_memory_mb 为 Some(0) 无效，请使用 None 表示不限制".to_string());
+            errors.push(
+                "security.enforce_max_memory_mb 为 Some(0) 无效，请使用 None 表示不限制"
+                    .to_string(),
+            );
         }
 
         // v1.0.0: 套件校验 — Suite 类型必须声明 atoms
@@ -195,7 +198,12 @@ impl PluginManifest {
                 && !dependency.version_req.starts_with('=')
                 && !dependency.version_req.starts_with('^')
                 && !dependency.version_req.starts_with('~')
-                && !dependency.version_req.chars().next().unwrap_or('.').is_ascii_digit()
+                && !dependency
+                    .version_req
+                    .chars()
+                    .next()
+                    .unwrap_or('.')
+                    .is_ascii_digit()
             {
                 errors.push(format!(
                     "dependencies[{}].version_req 格式无效: '{}'",
@@ -372,10 +380,7 @@ impl PluginRegistry {
     pub fn register(&mut self, manifest: PluginManifest) -> Result<(), Vec<String>> {
         manifest.validate()?;
         if self.manifests.contains_key(&manifest.id) {
-            return Err(vec![format!(
-                "插件 `{}` 已注册",
-                manifest.id
-            )]);
+            return Err(vec![format!("插件 `{}` 已注册", manifest.id)]);
         }
         self.manifests.insert(manifest.id.clone(), manifest);
         Ok(())
@@ -461,9 +466,7 @@ mod tests {
         let mut manifest = sample_manifest();
         manifest.capability_declarations[0].id = "quantpilot.capability.unknown".into();
         let errors = manifest.validate().unwrap_err();
-        assert!(errors
-            .iter()
-            .any(|item| item.contains("不支持的能力合约")));
+        assert!(errors.iter().any(|item| item.contains("不支持的能力合约")));
     }
 
     #[test]
@@ -471,9 +474,7 @@ mod tests {
         let mut manifest = sample_manifest();
         manifest.extension_points = vec![ExtensionPoint::ExecutionModuleProvider];
         let errors = manifest.validate().unwrap_err();
-        assert!(errors
-            .iter()
-            .any(|item| item.contains("无法附加到扩展点")));
+        assert!(errors.iter().any(|item| item.contains("无法附加到扩展点")));
     }
 
     #[test]

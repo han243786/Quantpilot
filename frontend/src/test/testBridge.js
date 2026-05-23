@@ -80,7 +80,7 @@ export function installTestBridge() {
     getActiveTab() {
       // The active tab is stored in a separate UI store
       // We look for the tab button with the --active class
-      const activeTab = document.querySelector(".workspace-tab--active");
+      const activeTab = document.querySelector(".ad-tab--active, .workspace-tab--active");
       if (activeTab) {
         const testId = activeTab.getAttribute("data-testid");
         return testId?.replace("workspace-tab-", "") ?? null;

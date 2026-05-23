@@ -1,8 +1,9 @@
-# QuantPilot 项目总规则 v3.7.0
+# QuantPilot 项目总规则 v3.7.1
 
 > 生效日期: 2026-05-21 | 所有开发者必须遵守 | 违反的 PR 不予合并
 > 重构: v2.0→v3.0 拆分为阻断规则(门禁可查) + 审计规则(里程碑审查)
 > 每个条款标注 **检查方式**: 🛡️门禁 / 🔍审计 / 🛡️+🔍
+> 更新: v3.7.1 增加 Rust 格式基线、功能演进登记和防回退规则，`cargo fmt --check` 纳入 pre-commit / CI / closeout
 
 ---
 
@@ -47,6 +48,14 @@ QS 源码 → graph JSON → 前端可视化
 ```
 - **禁止**：保存 graph 时无条件覆盖原始 QS 源码
 - 若 `source_mode="quantscript"`，保留原始 QS
+
+### §1.5 功能演进必须先登记 🛡️+🔍 (v3.7.1 新增)
+
+- 新增功能、能力扩展、语义变更必须先写入里程碑 `01-规划方案.md` 的“功能演进登记”。
+- 每个新增能力必须列出能力 ID、生命周期、用户可见入口、涉及层、依赖能力、非目标、fallback / 拒绝行为。
+- 每个新增能力必须有“回归保护矩阵”，明确受影响的既有能力、风险、保护证据和验证命令。
+- 不新增功能的 PATCH 版本必须在“非目标”中明确写明“不新增功能”或“不扩大功能范围”。
+- **门禁**: `powershell tools/check-feature-evolution.ps1` 必须通过。
 
 ---
 
@@ -121,7 +130,7 @@ bail!("backtest requires at least one enabled kline data source");
 
 ---
 
-## 五、禁止事项（5 条）
+## 五、禁止事项（6 条）
 
 ### §5.1 禁止硬编码 🛡️+🔍
 
@@ -134,6 +143,7 @@ bail!("backtest requires at least one enabled kline data source");
 ### §5.5 禁止跳过端到端验证 🛡️
 
 ```bash
+cargo fmt --check
 cargo check --workspace
 cargo test --workspace
 cargo clippy --workspace --all-targets -- -D warnings
@@ -141,6 +151,12 @@ cd frontend && npm run build
 cd frontend && npm run test
 cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 ```
+
+### §5.6 禁止 Rust 格式漂移 🛡️
+
+- **规则**: Rust 源码必须通过 `cargo fmt --check`。格式化基线只允许由 `cargo fmt` 生成，不允许手工维护局部风格。
+- **门禁**: `cargo fmt --check` 在 pre-commit、CI 和 closeout 三层执行。
+- **处理**: 若失败，单独执行 `cargo fmt` 并作为格式基线提交；不得把格式漂移带入功能变更。
 
 ---
 
@@ -150,6 +166,7 @@ cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 
 | 11 | npm audit 清零 | `cd frontend && npm audit --audit-level=moderate` |
 | 12 | E2E 关键路径通过 | `cd frontend && npm run test:e2e` |
+| 13 | Rust 格式无漂移 | `cargo fmt --check` |
 
 ---
 
@@ -210,6 +227,7 @@ cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 | §1.2 跨三层验证 | 阻断 | 🔍 |
 | §1.3 编译不可绕过 | 阻断 | 🛡️ |
 | §1.4 数据流单向 | 高 | 🔍 |
+| §1.5 功能演进先登记 | 阻断 | 🛡️+🔍 |
 | §2.1 错误全中文 | 高 | 🔍 |
 | §2.2 测试断言中文 | 中 | 🔍 |
 | §2.3 indicator 测试 | 中 | 🔍 |
@@ -230,6 +248,7 @@ cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 | §5.3 禁止 stub | 阻断 | 🔍 |
 | §5.4 禁止绕过QS | 阻断 | 🛡️ |
 | §5.5 端到端验证 | 阻断 | 🛡️ |
+| §5.6 禁止格式漂移 | 阻断 | 🛡️ |
 | §7.1 三级分类 | 高 | 🛡️ |
 | §7.2 存储配额 | 高 | 🛡️ |
 | §7.3 启动清理 | 高 | 🛡️ |
@@ -240,9 +259,10 @@ cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 | §9.2 签名快照 | 阻断 | 🛡️ |
 | §9.3 告警引擎 | 高 | 🔍 |
 | §9.4 审批工作流 | 高 | 🔍 |
+| §10.4 功能演进回归保护 | 阻断 | 🛡️+🔍 |
 
-**总计: 33 条** (阻断 14 / 高 12 / 中 7)
-🛡️ 门禁可查: 18 条 | 🔍 审计人工: 15 条
+**总计: 36 条** (阻断 17 / 高 12 / 中 7)
+🛡️ 门禁可查: 21 条 | 🔍 审计人工: 16 条
 
 ---
 
@@ -307,3 +327,19 @@ Paper运行时 ← 回测引擎 ← 执行端(独立进程)
 | 8 | 告警规则是否10条全部存在 | `GET /api/v1/alerts/rules` |
 | 9 | 前端能力加载三级降级是否正常 | 离线→缓存→远程 |
 | 10 | 模板库是否可展开/加载/应用 | 展开模板库→点击加载→画布出现节点 |
+
+### §10.4 功能演进回归保护 🛡️+🔍 (v3.7.1 新增)
+
+每次 MAJOR/MINOR 版本推进、或任何 PATCH 版本扩大能力范围时，必须执行功能演进回归保护：
+
+| 项 | 要求 |
+|----|------|
+| 功能演进登记 | 新能力 / 能力扩展 / 语义变更必须写入里程碑规划 |
+| 回归保护矩阵 | 必须列出受影响的既有能力和验证命令 |
+| 支持矩阵同步 | `implementation-support-matrix.md` 必须与真实 capability 一致 |
+| 用户入口同步 | README、当前状态总览、UI 文案不得先于真实能力宣称 supported |
+| 兼容性说明 | 旧图、旧策略、旧凭证、旧运行记录受影响时必须有迁移或拒绝行为 |
+| 测试证据 | 新能力至少一个自动化测试；核心工作流必须有场景 / E2E / 手动验证记录 |
+
+**门禁**: `powershell tools/check-feature-evolution.ps1`。
+**审计**: closeout 报告必须记录新增能力证据和旧能力回归结果。

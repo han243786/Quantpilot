@@ -11,6 +11,14 @@ pub(super) async fn json_rejection_middleware(
         || status == StatusCode::BAD_REQUEST
         || status == StatusCode::UNSUPPORTED_MEDIA_TYPE
     {
+        let content_type = response
+            .headers()
+            .get(axum::http::header::CONTENT_TYPE)
+            .and_then(|value| value.to_str().ok())
+            .unwrap_or("");
+        if content_type.starts_with("application/json") {
+            return response;
+        }
         let body = axum::Json(serde_json::json!({
             "error": "bad_request",
             "message": "请求格式错误: 请使用 Content-Type: application/json 并确保请求体为有效 JSON"

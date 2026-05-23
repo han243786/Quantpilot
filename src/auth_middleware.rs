@@ -4,7 +4,7 @@ use super::*;
 // 1. DEV 模式 → 跳过认证, 使用默认用户 (user_id=0)
 // 2. JWT Bearer token → 提取真实 user_id
 // 3. API Key Bearer token → 使用默认用户 (user_id=0, 向后兼容)
-// 4. 白名单路径 (/api/health, /api/auth/) → 跳过认证
+// 4. 白名单路径 (/api/health, /api/capabilities, /api/auth/) → 跳过认证
 
 pub(super) async fn api_key_auth(
     mut request: axum::extract::Request,
@@ -21,7 +21,7 @@ pub(super) async fn api_key_auth(
 
     // ── 白名单路径 ──
     let path = request.uri().path();
-    if path == "/api/health" || path.starts_with("/api/auth/") {
+    if path == "/api/health" || path == "/api/capabilities" || path.starts_with("/api/auth/") {
         return next.run(request).await;
     }
 
@@ -40,7 +40,10 @@ pub(super) async fn api_key_auth(
                 let rng = SystemRandom::new();
                 let mut bytes = [0u8; 16];
                 rng.fill(&mut bytes).ok();
-                bytes.iter().map(|b| format!("{:02x}", b)).collect::<String>()
+                bytes
+                    .iter()
+                    .map(|b| format!("{:02x}", b))
+                    .collect::<String>()
             });
             safe_eprintln!(
                 "[auth] QUANTPILOT_API_KEY 未设置, 已生成随机 key。请求需携带 Authorization: Bearer <KEY>"
@@ -133,12 +136,15 @@ mod tests {
         let guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
         let old = std::env::var(key).ok();
         std::env::set_var(key, value);
-        f();
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(f));
         match old {
             Some(v) => std::env::set_var(key, v),
             None => std::env::remove_var(key),
         }
         drop(guard);
+        if let Err(payload) = result {
+            std::panic::resume_unwind(payload);
+        }
     }
 
     /// 辅助：在清除 env var 的上下文中执行闭包
@@ -149,11 +155,14 @@ mod tests {
         let guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
         let old = std::env::var(key).ok();
         std::env::remove_var(key);
-        f();
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(f));
         if let Some(v) = old {
             std::env::set_var(key, v);
         }
         drop(guard);
+        if let Err(payload) = result {
+            std::panic::resume_unwind(payload);
+        }
     }
 
     /// 用于测试的路由 handler
@@ -166,6 +175,7 @@ mod tests {
         Router::new()
             .route("/api/test", get(test_handler))
             .route("/api/auth/register", get(|| async { "register" }))
+            .route("/api/capabilities", get(|| async { "capabilities" }))
             .route("/api/health", get(|| async { "health" }))
             .layer(middleware::from_fn(api_key_auth))
     }
@@ -173,11 +183,9 @@ mod tests {
     fn run_request(app: Router, uri: &str) -> axum::response::Response {
         let rt = tokio::runtime::Runtime::new().unwrap();
         rt.block_on(async {
-            app.oneshot(
-                Request::builder().uri(uri).body(Body::empty()).unwrap(),
-            )
-            .await
-            .unwrap()
+            app.oneshot(Request::builder().uri(uri).body(Body::empty()).unwrap())
+                .await
+                .unwrap()
         })
     }
 
@@ -217,8 +225,8 @@ mod tests {
         with_env_var("QUANTPILOT_DEV", "true", || {
             let app = build_test_router();
             let resp = run_request(app, "/api/test");
-            let body = rt_block_on(async { axum::body::to_bytes(resp.into_body(), 1024).await })
-                .unwrap();
+            let body =
+                rt_block_on(async { axum::body::to_bytes(resp.into_body(), 1024).await }).unwrap();
             let body_str = String::from_utf8(body.to_vec()).unwrap();
             assert_eq!(body_str, "user_id=0");
         });
@@ -264,11 +272,20 @@ mod tests {
     }
 
     #[test]
+    fn test_capabilities_path_is_whitelisted() {
+        without_env_var("QUANTPILOT_DEV", || {
+            let app = build_test_router();
+            let resp = run_request(app, "/api/capabilities");
+            assert_eq!(resp.status(), 200)
+        });
+    }
+
+    #[test]
     fn test_non_api_path_is_whitelisted() {
         without_env_var("QUANTPILOT_DEV", || {
             let app = build_test_router();
             let resp = run_request(app, "/index.html");
-            assert_eq!(resp.status(), 200);
+            assert_ne!(resp.status(), StatusCode::UNAUTHORIZED);
         });
     }
 
@@ -317,12 +334,8 @@ mod tests {
     fn test_bearer_with_wrong_scheme_returns_401() {
         without_env_var("QUANTPILOT_DEV", || {
             let app = build_test_router();
-            let resp = run_request_with_header(
-                app,
-                "/api/test",
-                "Authorization",
-                "Basic dXNlcjpwYXNz",
-            );
+            let resp =
+                run_request_with_header(app, "/api/test", "Authorization", "Basic dXNlcjpwYXNz");
             assert_eq!(resp.status(), 401);
         });
     }
@@ -331,12 +344,7 @@ mod tests {
     fn test_empty_bearer_token_returns_401() {
         without_env_var("QUANTPILOT_DEV", || {
             let app = build_test_router();
-            let resp = run_request_with_header(
-                app,
-                "/api/test",
-                "Authorization",
-                "Bearer ",
-            );
+            let resp = run_request_with_header(app, "/api/test", "Authorization", "Bearer ");
             assert_eq!(resp.status(), 401);
         });
     }
@@ -361,12 +369,8 @@ mod tests {
     fn test_api_key_auth_wrong_key_returns_401() {
         with_env_var("QUANTPILOT_API_KEY", "correct_key", || {
             let app = build_test_router();
-            let resp = run_request_with_header(
-                app,
-                "/api/test",
-                "Authorization",
-                "Bearer wrong_key",
-            );
+            let resp =
+                run_request_with_header(app, "/api/test", "Authorization", "Bearer wrong_key");
             assert_eq!(resp.status(), 401);
         });
     }

@@ -3,7 +3,6 @@ use crate::evaluator::normalize_script_module;
 use crate::resolve::lower_script_to_typed_hir;
 use crate::script::{CallArg, Expr, FunctionDecl, Item, ScriptModule, Stmt};
 use anyhow::{anyhow, bail, Context, Result};
-use std::collections::BTreeSet;
 use qrpc_core::{
     AgentConfig, RiskConfig, RuntimeProtocolCoreConfig,
     GLOBAL_RISK_PROFILE_DEFAULT_MAX_EXCHANGE_LEVERAGE, GLOBAL_RISK_PROFILE_DEFAULT_MAX_POSITION,
@@ -12,6 +11,7 @@ use qrpc_core::{
     PAPER_EXECUTION_PROFILE_DEFAULT_FEE_BPS, PAPER_EXECUTION_PROFILE_DEFAULT_SLIPPAGE_BPS,
     PAPER_EXECUTION_PROFILE_ID,
 };
+use std::collections::BTreeSet;
 
 use super::binding_sources::infer_data_sources;
 use super::bindings::collect_bindings;
@@ -24,8 +24,7 @@ use super::universe::{detect_portfolio_rebalance_directive, expand_universe_cons
 use qrpc_core::{Exchange, IntentKind, RebalanceSchedule, Symbol};
 
 const ERR_MISSING_STRATEGY_FN: &str = "QPQSLOW006 QuantScript 必须声明 fn strategy() 入口函数。请在 .qs 文件中添加: fn strategy() { ... }";
-const ERR_NO_FETCH_CALLS: &str =
-    "QPQSLOW007 策略编译需要至少一个 fetch/get_data 调用";
+const ERR_NO_FETCH_CALLS: &str = "QPQSLOW007 策略编译需要至少一个 fetch/get_data 调用";
 
 #[derive(Debug, Clone)]
 struct GlobalRiskProfileSpec {
@@ -49,8 +48,7 @@ pub fn lower_script_to_runtime_config_with_context(
     module: &ScriptModule,
     context: &LoweringContext,
 ) -> Result<RuntimeProtocolCoreConfig> {
-    let normalized_module = normalize_script_module(module)
-        .context("QPQSLOW000 脚本标准化失败")?;
+    let normalized_module = normalize_script_module(module).context("QPQSLOW000 脚本标准化失败")?;
     let rebalance_directive = detect_portfolio_rebalance_directive(&normalized_module, context)?;
     let expanded_module = expand_universe_constructs(&normalized_module, context)?;
     let resolved = lower_script_to_typed_hir(&expanded_module);
@@ -370,10 +368,7 @@ fn parse_paper_execution_profile_args(args: &[CallArg]) -> Result<PaperExecution
 
 fn execution_profile_number_field(name: &str, expr: &Expr) -> Result<f64> {
     let Expr::Number(value) = expr else {
-        bail!(
-            "execution.profile(..., {}=...) 必须是数值字面量",
-            name
-        );
+        bail!("execution.profile(..., {}=...) 必须是数值字面量", name);
     };
     Ok(*value)
 }
@@ -602,10 +597,10 @@ fn strategy() {
         let config = lower_script_to_runtime_config(&module).unwrap();
         assert_eq!(config.data_sources.len(), 1);
         assert_eq!(config.intents.len(), 2);
-        assert!(config
-            .intents
-            .iter()
-            .any(|intent| matches!(intent.kind, IntentKind::LongTermBuy | IntentKind::SmaCrossover)));
+        assert!(config.intents.iter().any(|intent| matches!(
+            intent.kind,
+            IntentKind::LongTermBuy | IntentKind::SmaCrossover
+        )));
     }
 
     #[test]
@@ -685,10 +680,10 @@ fn strategy() {
         .unwrap();
 
         let config = lower_script_to_runtime_config(&module).unwrap();
-        assert!(config
-            .intents
-            .iter()
-            .any(|intent| matches!(intent.kind, IntentKind::LongTermBuy | IntentKind::SmaCrossover)));
+        assert!(config.intents.iter().any(|intent| matches!(
+            intent.kind,
+            IntentKind::LongTermBuy | IntentKind::SmaCrossover
+        )));
     }
 
     #[test]
@@ -737,10 +732,10 @@ fn strategy() {
         .unwrap();
 
         let config = lower_script_to_runtime_config(&module).unwrap();
-        assert!(config
-            .intents
-            .iter()
-            .any(|intent| matches!(intent.kind, IntentKind::LongTermBuy | IntentKind::SmaCrossover)));
+        assert!(config.intents.iter().any(|intent| matches!(
+            intent.kind,
+            IntentKind::LongTermBuy | IntentKind::SmaCrossover
+        )));
     }
 
     #[test]
@@ -886,7 +881,9 @@ fn strategy() {
         let entry = config
             .intents
             .iter()
-            .find(|intent| intent.kind == IntentKind::LongTermBuy || intent.kind == IntentKind::SmaCrossover)
+            .find(|intent| {
+                intent.kind == IntentKind::LongTermBuy || intent.kind == IntentKind::SmaCrossover
+            })
             .unwrap();
         assert_eq!(entry.params.get("fast_period"), Some(&20.0));
         assert_eq!(entry.params.get("slow_period"), Some(&60.0));
@@ -1073,7 +1070,9 @@ fn strategy() {
         .unwrap();
 
         let err = lower_script_to_runtime_config(&module).unwrap_err();
-        assert!(err.to_string().contains("无法以符号方式展开 for 循环的可迭代对象"));
+        assert!(err
+            .to_string()
+            .contains("无法以符号方式展开 for 循环的可迭代对象"));
     }
 
     #[test]

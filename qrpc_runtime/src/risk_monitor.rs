@@ -55,11 +55,7 @@ impl RiskMonitor {
     /// * `initial_equity` — 监控起始权益（通常为初始现金余额）
     /// * `max_daily_loss_ratio` — 最大当日亏损比例，`0.0` 表示禁用此项检查
     /// * `max_drawdown_ratio` — 最大回撤比例，`0.0` 表示禁用此项检查
-    pub fn new(
-        initial_equity: f64,
-        max_daily_loss_ratio: f64,
-        max_drawdown_ratio: f64,
-    ) -> Self {
+    pub fn new(initial_equity: f64, max_daily_loss_ratio: f64, max_drawdown_ratio: f64) -> Self {
         Self {
             initial_equity,
             peak_equity: initial_equity,

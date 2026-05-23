@@ -1,7 +1,6 @@
 /// v3.7.0: K线环形缓冲区
 /// 每标的最近 1000 条 K 线, OHLC 聚合, 一字线生成
 /// 无交易时生成一字线 (O=H=L=C=last_close)
-
 use crate::executor_state::{KlineBar, RingBuffer};
 use std::collections::HashMap;
 
@@ -17,7 +16,11 @@ impl KlinePool {
     const DEFAULT_MAX_SYMBOLS: usize = 100;
 
     pub fn new(capacity: usize) -> Self {
-        Self { buffers: HashMap::new(), capacity, max_symbols: Self::DEFAULT_MAX_SYMBOLS }
+        Self {
+            buffers: HashMap::new(),
+            capacity,
+            max_symbols: Self::DEFAULT_MAX_SYMBOLS,
+        }
     }
 
     /// 获取或创建标的缓冲区 — v3.2.2: 超限时LRU淘汰
@@ -28,14 +31,22 @@ impl KlinePool {
                 self.buffers.remove(&oldest);
             }
         }
-        self.buffers.entry(symbol.to_string())
+        self.buffers
+            .entry(symbol.to_string())
             .or_insert_with(|| RingBuffer::new(self.capacity))
     }
 
     /// 插入新K线 (同分钟更新 OHLC)
     pub fn update_kline(&mut self, symbol: &str, bar: KlineBar) {
         // v3.6.x: 拒绝含 NaN/Inf 的K线 (全部OHLCV字段)
-        if !bar.open.is_finite() || !bar.high.is_finite() || !bar.low.is_finite() || !bar.close.is_finite() || !bar.volume.is_finite() { return; }
+        if !bar.open.is_finite()
+            || !bar.high.is_finite()
+            || !bar.low.is_finite()
+            || !bar.close.is_finite()
+            || !bar.volume.is_finite()
+        {
+            return;
+        }
         let buffer = self.get_or_create(symbol);
         if let Some(last) = buffer.bars.back_mut() {
             if last.open_time_ms == bar.open_time_ms {
@@ -53,7 +64,9 @@ impl KlinePool {
     /// Ticker 更新: 无交易时生成一字线
     pub fn update_from_ticker(&mut self, symbol: &str, price: f64, ts_ms: u64) {
         // v3.0.1 C-3: 拒绝 NaN/Inf 价格
-        if !price.is_finite() { return; }
+        if !price.is_finite() {
+            return;
+        }
         let buffer = self.get_or_create(symbol);
         let minute_start = ts_ms / 60_000 * 60_000;
         let minute_end = minute_start + 59_999;
@@ -102,12 +115,20 @@ impl KlinePool {
         // v3.0.1 J-1: 单次正向迭代, 无需双次反转+分配
         self.buffers
             .get(symbol)
-            .map(|buf| buf.bars.iter().skip(buf.bars.len().saturating_sub(count)).collect())
+            .map(|buf| {
+                buf.bars
+                    .iter()
+                    .skip(buf.bars.len().saturating_sub(count))
+                    .collect()
+            })
             .unwrap_or_default()
     }
 
     /// 获取最新价格
     pub fn latest_price(&self, symbol: &str) -> Option<f64> {
-        self.buffers.get(symbol).and_then(|buf| buf.latest()).map(|b| b.close)
+        self.buffers
+            .get(symbol)
+            .and_then(|buf| buf.latest())
+            .map(|b| b.close)
     }
 }

@@ -13,14 +13,18 @@ impl StorageLifecycle {
         let dev_mode = std::env::var("QUANTPILOT_DEV").unwrap_or_default() == "true";
         match self {
             Self::Permanent => None,
-            Self::Temporary => Some(Duration::from_secs(if dev_mode { 24 * 3600 } else { 7 * 24 * 3600 })),
+            Self::Temporary => Some(Duration::from_secs(if dev_mode {
+                24 * 3600
+            } else {
+                7 * 24 * 3600
+            })),
             Self::Transient => Some(Duration::from_secs(if dev_mode { 10 * 60 } else { 3600 })),
         }
     }
 }
 
 const TEMPORARY_DIR_MAX_BYTES: u64 = 200 * 1024 * 1024; // 200 MB
-const TRANSIENT_DIR_MAX_BYTES: u64 = 50 * 1024 * 1024;  // 50 MB
+const TRANSIENT_DIR_MAX_BYTES: u64 = 50 * 1024 * 1024; // 50 MB
 
 /// v1.1.1: 从环境变量读取最大存储配额 (MB), 默认 500MB
 fn max_storage_bytes() -> u64 {
@@ -32,15 +36,25 @@ fn max_storage_bytes() -> u64 {
 }
 
 /// v1.1.1: 根据最大配额计算各阈值
-fn reject_at_bytes() -> u64 { max_storage_bytes() * 95 / 100 }
-fn warn_at_bytes() -> u64 { max_storage_bytes() * 80 / 100 }
-fn force_clean_at_bytes() -> u64 { max_storage_bytes() * 90 / 100 }
+fn reject_at_bytes() -> u64 {
+    max_storage_bytes() * 95 / 100
+}
+fn warn_at_bytes() -> u64 {
+    max_storage_bytes() * 80 / 100
+}
+fn force_clean_at_bytes() -> u64 {
+    max_storage_bytes() * 90 / 100
+}
 
 fn directory_lifecycle(dir_name: &str) -> StorageLifecycle {
     match dir_name {
         "graphs" | "audit" | ".credentials" | ".machine_key" => StorageLifecycle::Permanent,
-        "backtests" | "runs" | "experiments" | "approvals" | "reports" | "mutations" | "cache" => StorageLifecycle::Temporary,
-        "ai-proposals" | "alerts" | "snapshots" | "sandbox-reports" | "chaos" => StorageLifecycle::Transient,
+        "backtests" | "runs" | "experiments" | "approvals" | "reports" | "mutations" | "cache" => {
+            StorageLifecycle::Temporary
+        }
+        "ai-proposals" | "alerts" | "snapshots" | "sandbox-reports" | "chaos" => {
+            StorageLifecycle::Transient
+        }
         _ => StorageLifecycle::Transient,
     }
 }
@@ -59,6 +73,159 @@ pub(crate) fn dir_size_bytes(path: &Path) -> u64 {
         }
     }
     total
+}
+
+pub fn sync_directory(path: &Path) -> std::io::Result<()> {
+    #[cfg(windows)]
+    {
+        use std::os::windows::fs::OpenOptionsExt;
+        const GENERIC_WRITE: u32 = 0x4000_0000;
+        const FILE_FLAG_BACKUP_SEMANTICS: u32 = 0x0200_0000;
+        const FILE_SHARE_READ: u32 = 0x0000_0001;
+        const FILE_SHARE_WRITE: u32 = 0x0000_0002;
+        const FILE_SHARE_DELETE: u32 = 0x0000_0004;
+        let file = std::fs::OpenOptions::new()
+            .access_mode(GENERIC_WRITE)
+            .share_mode(FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE)
+            .custom_flags(FILE_FLAG_BACKUP_SEMANTICS)
+            .open(path)?;
+        file.sync_all()
+    }
+
+    #[cfg(not(windows))]
+    {
+        std::fs::File::open(path)?.sync_all()
+    }
+}
+
+pub fn sync_parent_directory(path: &Path) -> std::io::Result<()> {
+    if let Some(parent) = path.parent() {
+        sync_directory(parent)?;
+    }
+    Ok(())
+}
+
+fn secret_temp_path(path: &Path) -> std::io::Result<std::path::PathBuf> {
+    let parent = path.parent().unwrap_or_else(|| Path::new("."));
+    let file_name = path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or_else(|| {
+            std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                "secret path has no file name",
+            )
+        })?;
+    let nonce = SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_nanos();
+    Ok(parent.join(format!(
+        ".{}.{}.{}.tmp",
+        file_name,
+        std::process::id(),
+        nonce
+    )))
+}
+
+fn set_private_file_permissions(path: &Path) -> std::io::Result<()> {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o600))?;
+    }
+
+    #[cfg(windows)]
+    {
+        let username = std::env::var("USERNAME").unwrap_or_default();
+        if !username.is_empty() {
+            let _ = std::process::Command::new("icacls")
+                .args([
+                    path.to_str().unwrap_or(""),
+                    "/inheritance:r",
+                    "/grant",
+                    &format!("{}:F", username),
+                ])
+                .output();
+        }
+    }
+
+    Ok(())
+}
+
+pub fn atomic_write_secret_file(path: &Path, data: &[u8]) -> std::io::Result<()> {
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).map_err(|error| {
+            std::io::Error::new(
+                error.kind(),
+                format!("create secret parent {}: {}", parent.display(), error),
+            )
+        })?;
+    }
+
+    let tmp = secret_temp_path(path)?;
+    let write_result = (|| -> std::io::Result<()> {
+        let mut file = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&tmp)
+            .map_err(|error| {
+                std::io::Error::new(
+                    error.kind(),
+                    format!("open secret tmp {}: {}", tmp.display(), error),
+                )
+            })?;
+        set_private_file_permissions(&tmp).map_err(|error| {
+            std::io::Error::new(
+                error.kind(),
+                format!("set secret tmp permissions {}: {}", tmp.display(), error),
+            )
+        })?;
+        use std::io::Write;
+        file.write_all(data).map_err(|error| {
+            std::io::Error::new(
+                error.kind(),
+                format!("write secret tmp {}: {}", tmp.display(), error),
+            )
+        })?;
+        file.sync_all().map_err(|error| {
+            std::io::Error::new(
+                error.kind(),
+                format!("sync secret tmp {}: {}", tmp.display(), error),
+            )
+        })?;
+        drop(file);
+        std::fs::rename(&tmp, path).map_err(|error| {
+            std::io::Error::new(
+                error.kind(),
+                format!(
+                    "rename secret tmp {} to {}: {}",
+                    tmp.display(),
+                    path.display(),
+                    error
+                ),
+            )
+        })?;
+        sync_parent_directory(path).map_err(|error| {
+            std::io::Error::new(
+                error.kind(),
+                format!("sync secret parent {}: {}", path.display(), error),
+            )
+        })?;
+        set_private_file_permissions(path).map_err(|error| {
+            std::io::Error::new(
+                error.kind(),
+                format!("set secret permissions {}: {}", path.display(), error),
+            )
+        })?;
+        Ok(())
+    })();
+
+    if write_result.is_err() {
+        let _ = std::fs::remove_file(&tmp);
+    }
+
+    write_result
 }
 
 fn file_age(meta: &std::fs::Metadata) -> Option<Duration> {
@@ -198,7 +365,11 @@ pub fn startup_storage_cleanup(storage_root: &Path) {
 }
 
 /// 写入前配额检查，返回 io::Error 以兼容异步写入路径
-pub fn ensure_storage_quota(storage_root: &Path, dir_name: &str, lifecycle: StorageLifecycle) -> std::io::Result<()> {
+pub fn ensure_storage_quota(
+    storage_root: &Path,
+    dir_name: &str,
+    lifecycle: StorageLifecycle,
+) -> std::io::Result<()> {
     let total = storage_total_size(storage_root);
     if total > reject_at_bytes() {
         return Err(std::io::Error::other(format!(
@@ -327,8 +498,11 @@ mod tests {
         assert!(ttl.is_some());
         let secs = ttl.unwrap().as_secs();
         // DEV 模式 1天, 正常 7天
-        assert!(secs == 24 * 3600 || secs == 7 * 24 * 3600,
-            "Temporary TTL 应为 1天(DEV) 或 7天, 实际 {}秒", secs);
+        assert!(
+            secs == 24 * 3600 || secs == 7 * 24 * 3600,
+            "Temporary TTL 应为 1天(DEV) 或 7天, 实际 {}秒",
+            secs
+        );
     }
 
     #[test]
@@ -337,8 +511,11 @@ mod tests {
         assert!(ttl.is_some());
         let secs = ttl.unwrap().as_secs();
         // DEV 模式 10分钟, 正常 1小时
-        assert!(secs == 10 * 60 || secs == 3600,
-            "Transient TTL 应为 10分钟(DEV) 或 1小时, 实际 {}秒", secs);
+        assert!(
+            secs == 10 * 60 || secs == 3600,
+            "Transient TTL 应为 10分钟(DEV) 或 1小时, 实际 {}秒",
+            secs
+        );
     }
 
     #[test]
@@ -350,5 +527,30 @@ mod tests {
         assert_ne!(permanent, temporary);
         assert_ne!(temporary, transient);
         assert_ne!(transient, permanent);
+    }
+
+    #[test]
+    fn atomic_secret_write_persists_data_without_stale_tmp() {
+        let dir = std::env::temp_dir().join(format!(
+            "quantpilot_secret_write_test_{}_{}",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = dir.join(".secret");
+
+        atomic_write_secret_file(&path, b"persisted-secret").unwrap();
+
+        assert_eq!(std::fs::read(&path).unwrap(), b"persisted-secret");
+        let stale_tmp = std::fs::read_dir(&dir)
+            .unwrap()
+            .flatten()
+            .any(|entry| entry.file_name().to_string_lossy().ends_with(".tmp"));
+        assert!(!stale_tmp, "secret atomic write left a temporary file");
+
+        let _ = std::fs::remove_dir_all(&dir);
     }
 }

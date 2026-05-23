@@ -1,5 +1,4 @@
 /// v3.7.0: 实时策略运行器 — OKX Paper 模式
-
 use crate::executor_state::{ActiveStrategy, ExecutionMode, TriggerEvent};
 use crate::kline_buffer::KlinePool;
 use crate::ws_client::WsEvent;
@@ -9,10 +8,13 @@ use std::collections::{BTreeMap, HashMap};
 use tokio::sync::{broadcast, mpsc};
 
 pub struct LiveRunner {
-    pub strategy_id: String, pub coordinator: RuntimeCoordinator,
-    pub subscribed_symbols: Vec<Symbol>, pub kline_pool: KlinePool,
+    pub strategy_id: String,
+    pub coordinator: RuntimeCoordinator,
+    pub subscribed_symbols: Vec<Symbol>,
+    pub kline_pool: KlinePool,
     pub trigger_broadcast: broadcast::Sender<TriggerEvent>,
-    pub status: RunnerStatus, pub execution_mode: ExecutionMode,
+    pub status: RunnerStatus,
+    pub execution_mode: ExecutionMode,
     /// v3.0.0 A-2: 速率限制 — 最后周期执行时间戳
     pub last_cycle_at_ms: u64,
     /// v3.0.0 A-2: 每日订单计数器
@@ -20,41 +22,71 @@ pub struct LiveRunner {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum RunnerStatus { Idle, Running, Stopped, Faulted(String) }
+pub enum RunnerStatus {
+    Idle,
+    Running,
+    Stopped,
+    Faulted(String),
+}
 
 impl LiveRunner {
     const KLINE_POOL_CAPACITY: usize = 1000;
 
     pub fn from_strategy(s: &ActiveStrategy, bc: broadcast::Sender<TriggerEvent>) -> Self {
-        Self { coordinator: RuntimeCoordinator::from_core_ir(s.core_ir.clone()),
-            strategy_id: s.strategy_id.clone(), subscribed_symbols: s.subscribed_symbols.clone(),
-            kline_pool: KlinePool::new(Self::KLINE_POOL_CAPACITY), trigger_broadcast: bc,
+        Self {
+            coordinator: RuntimeCoordinator::from_core_ir(s.core_ir.clone()),
+            strategy_id: s.strategy_id.clone(),
+            subscribed_symbols: s.subscribed_symbols.clone(),
+            kline_pool: KlinePool::new(Self::KLINE_POOL_CAPACITY),
+            trigger_broadcast: bc,
             // v3.6.x: Paper模式启动即Running, 不依赖Connected事件
-            status: if s.execution_mode == ExecutionMode::Paper { RunnerStatus::Running } else { RunnerStatus::Idle },
+            status: if s.execution_mode == ExecutionMode::Paper {
+                RunnerStatus::Running
+            } else {
+                RunnerStatus::Idle
+            },
             execution_mode: s.execution_mode.clone(),
-            last_cycle_at_ms: 0, daily_order_count: 0 }
+            last_cycle_at_ms: 0,
+            daily_order_count: 0,
+        }
     }
 
     pub fn handle_ws_event(&mut self, event: WsEvent) {
         match event {
-            WsEvent::Ticker { symbol, price, ts_ms } => {
+            WsEvent::Ticker {
+                symbol,
+                price,
+                ts_ms,
+            } => {
                 self.kline_pool.update_from_ticker(&symbol, price, ts_ms);
-                self.run_fast_cycle(ts_ms); }
+                self.run_fast_cycle(ts_ms);
+            }
             WsEvent::Kline { symbol, bar } => {
                 let close_ms = bar.close_time_ms;
                 self.kline_pool.update_kline(&symbol, bar);
-                self.run_slow_cycle(close_ms); }
-            WsEvent::Connected { .. } => { if self.status == RunnerStatus::Idle { self.status = RunnerStatus::Running; } }
-            WsEvent::Disconnected { ref reason, .. } => { self.status = RunnerStatus::Faulted(reason.clone()); }
+                self.run_slow_cycle(close_ms);
+            }
+            WsEvent::Connected { .. } => {
+                if self.status == RunnerStatus::Idle {
+                    self.status = RunnerStatus::Running;
+                }
+            }
+            WsEvent::Disconnected { ref reason, .. } => {
+                self.status = RunnerStatus::Faulted(reason.clone());
+            }
         }
     }
 
     const MIN_CYCLE_INTERVAL_MS: u64 = 200;
 
     fn run_fast_cycle(&mut self, now_ms: u64) {
-        if self.status != RunnerStatus::Running { return; }
+        if self.status != RunnerStatus::Running {
+            return;
+        }
         // v3.0.0 A-2: 速率限制 (≥200ms 间隔)
-        if now_ms.saturating_sub(self.last_cycle_at_ms) < Self::MIN_CYCLE_INTERVAL_MS { return; }
+        if now_ms.saturating_sub(self.last_cycle_at_ms) < Self::MIN_CYCLE_INTERVAL_MS {
+            return;
+        }
         self.last_cycle_at_ms = now_ms;
         if let Err(e) = self.coordinator.run_fast_cycle(now_ms) {
             eprintln!("[runner:{}] fast_cycle error: {:?}", self.strategy_id, e);
@@ -62,14 +94,16 @@ impl LiveRunner {
     }
 
     fn run_slow_cycle(&mut self, now_ms: u64) {
-        if self.status != RunnerStatus::Running { return; }
+        if self.status != RunnerStatus::Running {
+            return;
+        }
         match self.coordinator.run_slow_cycle(now_ms) {
             Ok(cycle) => {
-            for event in &cycle.runtime_events {
-                if let Some(t) = Self::detect_trigger(&self.strategy_id, event) {
-                    let _ = self.trigger_broadcast.send(t);
+                for event in &cycle.runtime_events {
+                    if let Some(t) = Self::detect_trigger(&self.strategy_id, event) {
+                        let _ = self.trigger_broadcast.send(t);
+                    }
                 }
-            }
             }
             Err(e) => {
                 eprintln!("[runner:{}] slow_cycle error: {:?}", self.strategy_id, e);
@@ -79,14 +113,38 @@ impl LiveRunner {
 
     fn detect_trigger(sid: &str, event: &RuntimeEvent) -> Option<TriggerEvent> {
         let (tt, strength) = match event.event_type {
-            RuntimeEventType::IntentTriggered => ("intent_triggered", event.payload.get("strength").and_then(|v| v.as_f64()).unwrap_or(0.5)),
-            RuntimeEventType::AgentDecisionProduced => ("agent_decided", event.payload.get("net_strength").and_then(|v| v.as_f64()).unwrap_or(0.5)),
+            RuntimeEventType::IntentTriggered => (
+                "intent_triggered",
+                event
+                    .payload
+                    .get("strength")
+                    .and_then(|v| v.as_f64())
+                    .unwrap_or(0.5),
+            ),
+            RuntimeEventType::AgentDecisionProduced => (
+                "agent_decided",
+                event
+                    .payload
+                    .get("net_strength")
+                    .and_then(|v| v.as_f64())
+                    .unwrap_or(0.5),
+            ),
             RuntimeEventType::ExecutionFilled => ("order_filled", 1.0),
             _ => return None,
         };
-        Some(TriggerEvent { strategy_id: sid.to_string(), trigger_type: tt.into(),
-            node_id: event.payload.get("indicator_id").or_else(|| event.payload.get("agent_id")).and_then(|v| v.as_str()).unwrap_or("?").into(),
-            strength, occurred_at_ms: event.ts_ms })
+        Some(TriggerEvent {
+            strategy_id: sid.to_string(),
+            trigger_type: tt.into(),
+            node_id: event
+                .payload
+                .get("indicator_id")
+                .or_else(|| event.payload.get("agent_id"))
+                .and_then(|v| v.as_str())
+                .unwrap_or("?")
+                .into(),
+            strength,
+            occurred_at_ms: event.ts_ms,
+        })
     }
 }
 
@@ -100,7 +158,12 @@ pub struct RunnerPool {
 
 impl RunnerPool {
     pub fn new(bc: broadcast::Sender<TriggerEvent>) -> Self {
-        Self { runners: BTreeMap::new(), trigger_broadcast: bc, ws_tx_map: HashMap::new(), symbol_index: HashMap::new() }
+        Self {
+            runners: BTreeMap::new(),
+            trigger_broadcast: bc,
+            ws_tx_map: HashMap::new(),
+            symbol_index: HashMap::new(),
+        }
     }
     pub fn register_exchange(&mut self, exchange: &str, tx: mpsc::UnboundedSender<WsEvent>) {
         self.ws_tx_map.insert(exchange.into(), tx);
@@ -112,7 +175,10 @@ impl RunnerPool {
             let key = sym.as_str().to_uppercase();
             self.symbol_index.entry(key).or_default().push(sid.clone());
         }
-        self.runners.insert(sid, LiveRunner::from_strategy(s, self.trigger_broadcast.clone()));
+        self.runners.insert(
+            sid,
+            LiveRunner::from_strategy(s, self.trigger_broadcast.clone()),
+        );
     }
     /// v3.2.2: 从RunnerPool移除停止的策略
     pub fn remove(&mut self, strategy_id: &str) {
@@ -127,7 +193,8 @@ impl RunnerPool {
         match &event {
             WsEvent::Ticker { symbol, .. } | WsEvent::Kline { symbol, .. } => {
                 let key = symbol.to_uppercase();
-                let target_ids: Vec<String> = self.symbol_index.get(&key).cloned().unwrap_or_default();
+                let target_ids: Vec<String> =
+                    self.symbol_index.get(&key).cloned().unwrap_or_default();
                 for id in &target_ids {
                     if let Some(runner) = self.runners.get_mut(id) {
                         runner.handle_ws_event(event.clone());
@@ -151,8 +218,11 @@ mod tests {
     #[test]
     fn detect_trigger_intent_signal() {
         let event = RuntimeEvent {
-            event_id: "evt-1".into(), event_type: RuntimeEventType::IntentTriggered,
-            trace_id: "t1".into(), source_id: "ind_1".into(), ts_ms: 1000,
+            event_id: "evt-1".into(),
+            event_type: RuntimeEventType::IntentTriggered,
+            trace_id: "t1".into(),
+            source_id: "ind_1".into(),
+            ts_ms: 1000,
             payload: serde_json::json!({"strength": 0.85, "indicator_id": "ma_cross"}),
         };
         let t = LiveRunner::detect_trigger("s1", &event).unwrap();
@@ -165,8 +235,11 @@ mod tests {
     #[test]
     fn detect_trigger_agent_decision() {
         let event = RuntimeEvent {
-            event_id: "evt-2".into(), event_type: RuntimeEventType::AgentDecisionProduced,
-            trace_id: "t2".into(), source_id: "agent_1".into(), ts_ms: 2000,
+            event_id: "evt-2".into(),
+            event_type: RuntimeEventType::AgentDecisionProduced,
+            trace_id: "t2".into(),
+            source_id: "agent_1".into(),
+            ts_ms: 2000,
             payload: serde_json::json!({"net_strength": 0.6, "agent_id": "a1"}),
         };
         let t = LiveRunner::detect_trigger("s1", &event).unwrap();
@@ -177,8 +250,11 @@ mod tests {
     #[test]
     fn detect_trigger_unknown_returns_none() {
         let event = RuntimeEvent {
-            event_id: "evt-3".into(), event_type: RuntimeEventType::DataUpdated,
-            trace_id: "t3".into(), source_id: "d1".into(), ts_ms: 3000,
+            event_id: "evt-3".into(),
+            event_type: RuntimeEventType::DataUpdated,
+            trace_id: "t3".into(),
+            source_id: "d1".into(),
+            ts_ms: 3000,
             payload: serde_json::json!({}),
         };
         assert!(LiveRunner::detect_trigger("s1", &event).is_none());

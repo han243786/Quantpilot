@@ -2,7 +2,7 @@
 
 > 生效日期: 2026-05-22 | 本文件是项目开发、检查、审计、优化的唯一执行标准
 > 重构: v1.0→v3.0 精简三层流水线、元流水线自进化触发条件
-> 更新: v3.4.0 新增 §8.4 | v3.7.0 新增 §8.5 自由维度诱错审计常态化 | v3.7.1 收口 pre-commit / CI / closeout 三层门禁
+> 更新: v3.4.0 新增 §8.4 | v3.7.0 新增 §8.5 自由维度诱错审计常态化 | v3.7.1 收口 pre-commit / CI / closeout 三层门禁 + 功能演进通道 + Rust 格式基线
 
 ---
 
@@ -11,12 +11,12 @@
 QuantPilot 的开发过程受 **三层门禁流水线** 约束：
 
 ```
-开发 → 日常开发门禁(pre-commit) → PR/CI门禁 → AI并行审计(自由维度诱错) → 发布前检查单(3角色) → closeout/release
+功能演进提案/登记 → 开发 → 日常开发门禁(pre-commit) → PR/CI门禁 → AI并行审计(自由维度诱错) → 发布前检查单(3角色) → closeout/release
   │                │                         │                         │               │
   │                │                         │                         │               └── 五维度评分 + GP合规矩阵 + release dry-run
   │                │                         │                         └────────────────── 3角色手动验证
   │                │                         └────────────────────────────────────────── 11维度 AI并行诱错
-  │                └──────────────────────────────────────────────────────────────────── 17项 closeout 门禁
+  │                └──────────────────────────────────────────────────────────────────── 21项 closeout 门禁
   └────────────────────────────────────────────────────────────────────────────────────── 代码 + 测试 + 文档
 ```
 
@@ -50,6 +50,7 @@ QuantPilot 的开发过程受 **三层门禁流水线** 约束：
 
 ```
 powershell tools/check-utf8.ps1
+cargo fmt --check
 cargo check --workspace
 ./scripts/test.sh test --workspace --no-run
 cd frontend && npx vite build
@@ -69,19 +70,25 @@ cd frontend && npx vitest run
 | 3 | 能力治理快照 | `powershell tools/check-capability-governance.ps1` | 阻断 |
 | 4 | i18n 覆盖 | `powershell tools/check-i18n.ps1` | 阻断 |
 | 5 | 版本号一致性 | `powershell tools/check-version-consistency.ps1` | 阻断 |
-| 6 | Rust 编译 | `cargo check --workspace` | 阻断 |
-| 7 | Rust 测试全量 | `powershell scripts/test.ps1 test --workspace` | 阻断 |
-| 8 | Clippy | `cargo clippy --workspace --all-targets` | 阻断 |
-| 9 | 执行端 warning budget | `powershell tools/check-executor-warning-budget.ps1 -MaxWarnings 49` | 阻断 |
-| 10 | 前端构建 | `cd frontend && npm run build` | 阻断 |
-| 11 | 前端测试 | `cd frontend && npm run test` | 阻断 |
-| 12 | 前端 E2E | `cd frontend && npm run test:e2e` | 阻断 |
-| 13 | npm 审计 | `cd frontend && npm audit --audit-level=moderate` | 阻断 |
-| 14 | 执行端前端构建 | `cd frontend-executor && npm run build` | 阻断 |
-| 15 | 执行端编译 | `cargo check --bin executor` | 阻断 |
-| 16 | 执行端测试 | `powershell scripts/test.ps1 test --bin executor` | 阻断 |
+| 6 | 功能演进契约 | `powershell tools/check-feature-evolution.ps1` | 阻断 |
+| 7 | Pre-commit hook 同步 | `powershell tools/check-pre-commit-hook.ps1` | 阻断 |
+| 8 | 清理边界 | `powershell tools/check-cleanup-boundary.ps1` | 阻断 |
+| 9 | Rust 格式 | `cargo fmt --check` | 阻断 |
+| 10 | Rust 编译 | `cargo check --workspace` | 阻断 |
+| 11 | Rust 测试全量 | `powershell scripts/test.ps1 test --workspace` | 阻断 |
+| 12 | Clippy | `cargo clippy --workspace --all-targets` | 阻断 |
+| 13 | 执行端 warning budget | `powershell tools/check-executor-warning-budget.ps1 -MaxWarnings 47` | 阻断 |
+| 14 | 前端构建 | `cd frontend && npm run build` | 阻断 |
+| 15 | 前端测试 | `cd frontend && npm run test` | 阻断 |
+| 16 | 前端 E2E | `cd frontend && npm run test:e2e` | 阻断 |
+| 17 | npm 审计 | `cd frontend && npm audit --audit-level=moderate` | 阻断 |
+| 18 | 执行端前端构建 | `cd frontend-executor && npm run build` | 阻断 |
+| 19 | 执行端编译 | `cargo check --bin executor` | 阻断 |
+| 20 | 执行端测试 | `powershell scripts/test.ps1 test --bin executor` | 阻断 |
 
-说明：v3.7.1 起，执行端已有 warning 债务用预算脚本显式追踪。预算当前为 49，任何新增 warning 都会阻断；当债务清零后，将 `cargo clippy` 升级回 `-D warnings`。
+说明：v3.7.1 起，Rust 格式基线由 `cargo fmt` 生成，`cargo fmt --check` 在 pre-commit / CI / closeout 三层阻断格式漂移。
+
+说明：v3.7.1 起，执行端已有 warning 债务用预算脚本显式追踪。预算当前为 47，任何新增 warning 都会阻断；当债务清零后，将 `cargo clippy` 升级回 `-D warnings`。
 
 说明：面向用户文本门禁默认扫描 README、前端源码、当前规范、实现契约、用户指南和总览。历史里程碑与归档报告不作为当前产品文案扫描；需要专项审计时可显式传入 `-Paths`。
 
@@ -91,7 +98,7 @@ cd frontend && npx vitest run
 .\tools\run-closeout-gates.bat
 ```
 
-执行 17 项 closeout 门禁，任一失败则整体不通过。Closeout 比 PR/CI 额外执行 QS 场景 smoke：
+执行 21 项 closeout 门禁，任一失败则整体不通过。Closeout 比 PR/CI 额外执行 QS 场景 smoke：
 
 ```
 powershell scripts/scenario-smoke.ps1
@@ -246,6 +253,7 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 | 门禁耗时 | 每次 CI 全量耗时，超过 10 分钟必须分析 |
 | 误报率 | 手动 override 的门禁失败记录和原因 |
 | GP §10.3 回归检查 | 重大功能覆盖回归检查执行记录 |
+| 功能演进登记完整性 | 新增能力是否有登记、回归保护矩阵、兼容性与迁移说明 |
 
 数据记录到 `markdown/05-testing/meta-pipeline-log.md`。
 
@@ -286,6 +294,20 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 - MINOR: 新增/删除条款
 - PATCH: 措辞修正、链接修复
 
+### 7.6 功能演进通道 🆕 (v3.7.1)
+
+新增功能不再直接进入实现清单，必须先通过功能演进通道：
+
+| 阶段 | 产物 | 阻断条件 |
+|------|------|----------|
+| 能力提案 | 功能 ID、用户入口、非目标、生命周期 | 未说明能力边界 |
+| 功能演进登记 | `01-规划方案.md` 的“功能演进登记” | 缺少涉及层、依赖能力、fallback/拒绝行为 |
+| 回归保护矩阵 | `01-规划方案.md` 的“回归保护矩阵” | 未列出受影响旧能力和验证命令 |
+| 实现 | 代码、测试、文档、支持矩阵同步 | UI/文档宣称先于 capability 和测试 |
+| closeout | `03-closeout.md` 记录新增能力证据 | 证据缺失或旧能力回归未修复 |
+
+执行契约见 `markdown/03-implementation/governance/implementation-feature-evolution-contract.md`。自动检查由 `tools/check-feature-evolution.ps1` 执行。
+
 ---
 
 ## 八、执行规则
@@ -300,6 +322,8 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 - GP 合规矩阵有 ❌ 项未修复
 - CHANGELOG 缺失当前版本条目
 - **版本号一致性检查未通过** (v3.7.1 收口): `powershell tools/check-version-consistency.ps1` 必须通过。每个 closeout 前必须验证 Cargo、Tauri、前端 package、package-lock、README、文档索引、超级规范化、overview 和执行端 HTML 标题均已递增至当前版本。
+- **功能演进契约检查未通过** (v3.7.1 元流水线): `powershell tools/check-feature-evolution.ps1` 必须通过。新增能力若没有功能演进登记、回归保护矩阵、兼容性与迁移说明，禁止进入 closeout。
+- **Rust 格式基线检查未通过** (v3.7.1 收口): `cargo fmt --check` 必须通过。若失败，必须先执行 `cargo fmt` 形成格式基线，再继续功能或发布流程。
 
 ### 8.2 紧急豁免
 
@@ -332,7 +356,7 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 | 规则 | 说明 |
 |------|------|
 | **触发时机** | 任何新增模块(如执行端)/新增子系统(如进程间加密)/重大重构(如存储路径配置化)完成后 |
-| **检查内容** | 对照 GP §10.1 功能覆盖矩阵, 逐项验证 15 个已覆盖系统是否仍正常工作 |
+| **检查内容** | 对照 GP §10.1 功能覆盖矩阵, 逐项验证全部已覆盖系统是否仍正常工作 |
 | **检查方法** | 执行 GP §10.3 的 10 项快速验证, 任何一项失败 → 阻断 closeout |
 | **发现处理** | 若某项已覆盖功能退化或失效, 必须修复后方可 closeout, 并在 closeout 报告中记录退化原因和修复方案 |
 
@@ -411,3 +435,20 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 **策略**: 对同一文件的 Edit 尝试 **3 次失败** 后, 必须立即回退到基于脚本的替换方式 (sed/awk/python 脚本), 不再继续尝试 Edit。此规则适用于 Agent 和开发者操作。
 
 **实践经验**: v3.7.0 开发中 `auth/mod.rs` 的 Edit 操作连续 6 次失败, 最终通过 sed + awk 脚本完成替换。3 次阈值基于"2 次可能是格式问题可调整, 3 次以上大概率是工具限制"的经验判断。
+
+### 8.8 功能演进防回退规则 🆕 (v3.7.1)
+
+**原则**: 项目允许在版本推进中追加更丰富功能，但新增功能必须是可登记、可验证、可拒绝、可回滚的能力演进，而不是散落在代码和文档中的正向宣称。
+
+**阻断规则**:
+
+| 情况 | 处理 |
+|------|------|
+| 新增用户可见入口但无 capability / 支持矩阵更新 | 阻断 |
+| 新增 QS / runtime / executor 语义但无 Rust 测试 | 阻断 |
+| 新增主要用户工作流但无场景、E2E 或手动验证记录 | 阻断 |
+| 修改持久化格式但无兼容性和迁移说明 | 阻断 |
+| 删除或弱化既有测试 / 场景但无 retired 记录 | 阻断 |
+| 文档宣称 supported，但实现仍是 beta / restricted / planned | 阻断 |
+
+**验收路径**: `tools/check-feature-evolution.ps1` 负责检查契约与里程碑结构；`tools/run-closeout-gates.bat` 负责执行回归门禁；GP §10.3 与自由维度审计负责发现无法自动化覆盖的功能退化。

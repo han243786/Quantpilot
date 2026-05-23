@@ -1,5 +1,5 @@
-use crate::sandbox::{Sandbox, SandboxSnapshot};
 use crate::risk_checker::RiskCheckerProvider;
+use crate::sandbox::{Sandbox, SandboxSnapshot};
 use anyhow::{anyhow, Result};
 use qrpc_core::{CoreStrategyIr, RiskDecisionMode, RuntimeEvent, RuntimeEventType};
 use serde::{Deserialize, Serialize};
@@ -72,11 +72,7 @@ impl HotSwapState {
 
     fn emit_event(&mut self, source_id: &str, event_type: RuntimeEventType, payload: Value) {
         self.events.push(RuntimeEvent {
-            event_id: format!(
-                "evt-hotswap-{}-{}",
-                source_id,
-                self.events.len()
-            ),
+            event_id: format!("evt-hotswap-{}-{}", source_id, self.events.len()),
             event_type,
             trace_id: format!("hotswap-{}", self.started_at_ms),
             source_id: source_id.to_string(),
@@ -164,10 +160,7 @@ impl<'a> HotSwapOrchestrator<'a> {
         validator: &'a dyn HotSwapValidator,
         _core_ir: &'a CoreStrategyIr,
     ) -> Self {
-        Self {
-            sandbox,
-            validator,
-        }
+        Self { sandbox, validator }
     }
 
     pub fn execute(&mut self, request: HotSwapRequest) -> Result<HotSwapResult> {
@@ -243,17 +236,12 @@ impl<'a> HotSwapOrchestrator<'a> {
 
     fn step_compatibility_check(&mut self, state: &mut HotSwapState) -> Result<()> {
         state.record_step(HotSwapStep::CompatibilityCheck);
-        let result = self
-            .validator
-            .validate(&state.request.module_targets);
+        let result = self.validator.validate(&state.request.module_targets);
         if !result.compatible {
             for violation in &result.violations {
                 state.risk_violations.push(violation.clone());
             }
-            return Err(anyhow!(
-                "兼容性检查失败: {}",
-                result.violations.join("; ")
-            ));
+            return Err(anyhow!("兼容性检查失败: {}", result.violations.join("; ")));
         }
         state.emit_event(
             "compatibility",
@@ -274,7 +262,8 @@ impl<'a> HotSwapOrchestrator<'a> {
         if self.sandbox.is_running() {
             denied_reasons.push("沙箱正在运行，请先暂停再执行热交换".to_string());
         }
-        let open_order_count = u32::try_from(current_snapshot.portfolio.open_orders.len()).unwrap_or(u32::MAX);
+        let open_order_count =
+            u32::try_from(current_snapshot.portfolio.open_orders.len()).unwrap_or(u32::MAX);
         state.open_order_count = open_order_count;
         if open_order_count > 0 {
             denied_reasons.push(format!(
@@ -359,10 +348,7 @@ impl<'a> HotSwapOrchestrator<'a> {
                     "action": "所有开仓订单必须在对账前解决，热交换才能继续",
                 }),
             );
-            return Err(anyhow!(
-                "订单对账失败: {} 个未解决的开仓订单",
-                unresolved
-            ));
+            return Err(anyhow!("订单对账失败: {} 个未解决的开仓订单", unresolved));
         }
 
         state.emit_event(
@@ -655,7 +641,11 @@ mod tests {
             SandboxMode::RealTimeSimulation
         }
 
-        fn run_session(&mut self, _now_ms: u64, _fast_now_ms: u64) -> Result<qrpc_core::SessionOutput> {
+        fn run_session(
+            &mut self,
+            _now_ms: u64,
+            _fast_now_ms: u64,
+        ) -> Result<qrpc_core::SessionOutput> {
             Ok(qrpc_core::SessionOutput {
                 slow_cycle: qrpc_core::RuntimeCycleOutput {
                     cycle_name: "slow".into(),
@@ -777,10 +767,7 @@ mod tests {
         let result = orchestrator.execute(request).unwrap();
         assert!(!result.success);
         assert!(result.rollback_reason.is_some());
-        assert!(result
-            .rollback_reason
-            .unwrap()
-            .contains("未指定模块目标"));
+        assert!(result.rollback_reason.unwrap().contains("未指定模块目标"));
     }
 
     #[test]
@@ -933,11 +920,10 @@ mod tests {
                 max_exchange_leverage: 3.0,
                 min_action_interval_ms: 100,
                 enabled: true,
-                                max_cross_symbol_leverage: None,
+                max_cross_symbol_leverage: None,
             }],
             edges: vec![],
             execution: ExecutionRule {
-
                 execution_id: "exec".into(),
                 venue_kind: "paper".into(),
                 sizing_kind: ExecutionSizingKind::EquityNotionalRatio,

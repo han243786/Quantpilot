@@ -242,21 +242,18 @@ fn indicator_from_call(
         Some(KnownIndicatorHelperKind::ZScore) => {
             indicator_from_zscore_call(args, env, data_sources)
         }
-        Some(KnownIndicatorHelperKind::Atr) => {
-            indicator_from_atr_call(args, env, data_sources)
-        }
+        Some(KnownIndicatorHelperKind::Atr) => indicator_from_atr_call(args, env, data_sources),
         Some(KnownIndicatorHelperKind::BollingerBands) => {
             indicator_from_bollinger_call(args, env, data_sources)
         }
-        Some(KnownIndicatorHelperKind::Obv) => {
-            indicator_from_obv_call(args, env, data_sources)
-        }
-        Some(KnownIndicatorHelperKind::Cmf) => {
-            indicator_from_cmf_call(args, env, data_sources)
-        }
+        Some(KnownIndicatorHelperKind::Obv) => indicator_from_obv_call(args, env, data_sources),
+        Some(KnownIndicatorHelperKind::Cmf) => indicator_from_cmf_call(args, env, data_sources),
         Some(KnownIndicatorHelperKind::Adx) => {
             indicator_from_generic_call(args, env, data_sources, "adx", |s, p| {
-                IndicatorBinding::Adx { source: s, period: p }
+                IndicatorBinding::Adx {
+                    source: s,
+                    period: p,
+                }
             })
         }
         Some(KnownIndicatorHelperKind::Stochastic) => {
@@ -264,7 +261,10 @@ fn indicator_from_call(
         }
         Some(KnownIndicatorHelperKind::Cci) => {
             indicator_from_generic_call(args, env, data_sources, "cci", |s, p| {
-                IndicatorBinding::Cci { source: s, period: p }
+                IndicatorBinding::Cci {
+                    source: s,
+                    period: p,
+                }
             })
         }
         Some(KnownIndicatorHelperKind::ParabolicSar) => {
@@ -272,12 +272,19 @@ fn indicator_from_call(
         }
         Some(KnownIndicatorHelperKind::KeltnerChannel) => {
             indicator_from_generic_call(args, env, data_sources, "keltner", |s, p| {
-                IndicatorBinding::KeltnerChannel { source: s, period: p, multiplier: 2.0 }
+                IndicatorBinding::KeltnerChannel {
+                    source: s,
+                    period: p,
+                    multiplier: 2.0,
+                }
             })
         }
         Some(KnownIndicatorHelperKind::DonchianChannel) => {
             indicator_from_generic_call(args, env, data_sources, "donchian", |s, p| {
-                IndicatorBinding::DonchianChannel { source: s, period: p }
+                IndicatorBinding::DonchianChannel {
+                    source: s,
+                    period: p,
+                }
             })
         }
         None => helper_function_indicator_binding(&fn_name, args, env, data_sources),
@@ -438,7 +445,11 @@ fn indicator_from_bollinger_call(
     let source = binding_source_from_arg(args.first(), env, data_sources)?;
     let period = arg_as_usize(args.get(1), env)?.unwrap_or(20);
     let multiplier = arg_as_f64(args.get(2)).unwrap_or(2.0);
-    Ok(Some(IndicatorBinding::BollingerBands { source, period, multiplier }))
+    Ok(Some(IndicatorBinding::BollingerBands {
+        source,
+        period,
+        multiplier,
+    }))
 }
 
 fn indicator_from_obv_call(
@@ -465,9 +476,10 @@ fn binding_source_from_arg(
     env: &BindingEnv,
     data_sources: &[DataSourceConfig],
 ) -> Result<DataSourceConfig> {
-    let expr = arg.map(|a| &a.value).ok_or_else(|| anyhow!("缺少必需的参数"))?;
-    resolve_data_source_ref(expr, env, data_sources)?
-        .ok_or_else(|| anyhow!("无法从参数解析数据源"))
+    let expr = arg
+        .map(|a| &a.value)
+        .ok_or_else(|| anyhow!("缺少必需的参数"))?;
+    resolve_data_source_ref(expr, env, data_sources)?.ok_or_else(|| anyhow!("无法从参数解析数据源"))
 }
 
 fn arg_as_usize(arg: Option<&CallArg>, env: &BindingEnv) -> Result<Option<usize>> {
@@ -482,7 +494,10 @@ fn arg_as_usize(arg: Option<&CallArg>, env: &BindingEnv) -> Result<Option<usize>
             if n.fract().abs() > f64::EPSILON {
                 env.diagnostics.borrow_mut().push(Diagnostic::warning(
                     "QS0502",
-                    format!("指标周期 {} 将被截断为整数 {}，小数部分已忽略", n, *n as usize),
+                    format!(
+                        "指标周期 {} 将被截断为整数 {}，小数部分已忽略",
+                        n, *n as usize
+                    ),
                     Some(Span::expr("period")),
                 ));
             }
@@ -522,7 +537,11 @@ fn indicator_from_stoch_call(
     let source = binding_source_from_arg(args.first(), env, data_sources)?;
     let k_period = arg_as_usize(args.get(1), env)?.unwrap_or(14);
     let d_period = arg_as_usize(args.get(2), env)?.unwrap_or(3);
-    Ok(Some(IndicatorBinding::Stochastic { source, k_period, d_period }))
+    Ok(Some(IndicatorBinding::Stochastic {
+        source,
+        k_period,
+        d_period,
+    }))
 }
 
 fn indicator_from_psar_call(
@@ -535,7 +554,11 @@ fn indicator_from_psar_call(
     const DEFAULT_PSAR_MAX_STEP: f64 = 0.2;
     let step = arg_as_f64(args.get(1)).unwrap_or(DEFAULT_PSAR_STEP);
     let max_step = arg_as_f64(args.get(2)).unwrap_or(DEFAULT_PSAR_MAX_STEP);
-    Ok(Some(IndicatorBinding::ParabolicSar { source, step, max_step }))
+    Ok(Some(IndicatorBinding::ParabolicSar {
+        source,
+        step,
+        max_step,
+    }))
 }
 
 fn resolved_indicator_kind(env: &BindingEnv, fn_name: &str) -> Option<KnownIndicatorHelperKind> {

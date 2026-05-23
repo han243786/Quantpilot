@@ -50,7 +50,19 @@ jobs:
         shell: cmd
         run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-version-consistency.ps1
 
+      - name: Check feature evolution contract
+        shell: cmd
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-feature-evolution.ps1
+
+      - name: Check cleanup boundary
+        shell: cmd
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-cleanup-boundary.ps1
+
       # ── Rust 编译与测试 ──
+
+      - name: Rust format check
+        shell: cmd
+        run: cargo fmt --check
 
       - name: Rust workspace check
         shell: cmd
@@ -62,7 +74,7 @@ jobs:
 
       - name: Executor warning budget
         shell: cmd
-        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-executor-warning-budget.ps1 -MaxWarnings 49
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-executor-warning-budget.ps1 -MaxWarnings 47
 
       - name: Rust workspace tests
         shell: cmd

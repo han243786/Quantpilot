@@ -1,26 +1,26 @@
 mod agent_module;
 pub mod backtest_metrics;
-mod compat;
 pub mod circuit_breaker;
+mod compat;
 mod config_tracker;
 mod core_ir_evaluator;
 pub(crate) mod data_module;
 mod execution_module;
 mod fill_engine;
+pub mod hotswap;
 mod intent_module;
 pub mod live_execution;
 mod merge;
 mod merge_coordinator;
-mod plugin_runtime_registry;
-mod runtime_state;
 pub mod plugin_market;
+mod plugin_runtime_registry;
 pub mod plugin_sandbox;
 mod reconcile;
 mod risk_checker;
 pub mod risk_monitor;
+mod runtime_state;
 mod sandbox;
 pub mod slippage;
-pub mod hotswap;
 
 pub use slippage::{
     compute_fill_price, estimate_spread, spread_from_quote, ExecutionAssumptions,
@@ -51,42 +51,42 @@ pub fn set_mock_volatility(vol: f64) {
     data_module::MOCK_VOLATILITY.store(vol.to_bits(), std::sync::atomic::Ordering::Relaxed);
 }
 
-pub use data_module::{
-    BuiltinDataModule, DataCollectionOutput, DataCollectionRequest, DataModuleProvider,
-};
-pub use execution_module::{
-    BuiltinExecutionModule, ExecutionModuleProvider, ExecutionPlanner,
-    ExecutionPlanningOutput, ExecutionPlanningRequest, ExecutionSubmitter,
-};
-pub use intent_module::{
-    BuiltinIntentModule, IntentEvaluationOutput, IntentEvaluationRequest, IntentModuleProvider,
-};
-pub use plugin_runtime_registry::{
-    PluginLifecycleState, PluginSecurityAction, RuntimePluginLifecycle, RuntimePluginRegistry,
-};
-pub use plugin_market::{MarketMetadata, PluginMarketClient, PluginSummary};
-pub use risk_checker::{RiskCheckOutput, RiskCheckRequest, RiskChecker, RiskCheckerProvider};
-pub use hotswap::{
-    DefaultHotSwapValidator, HotSwapModuleTarget, HotSwapOrchestrator, HotSwapRequest,
-    HotSwapResult, HotSwapState, HotSwapStep, HotSwapValidationResult, HotSwapValidator,
-};
 pub use compat::{
     CompatibilityChecker, CompatibilityContext, CompatibilityReport, CompatibilityVerdict,
     ModuleSurface,
 };
-pub use reconcile::{
-    OrderReconciler, ReconciliationDiscrepancy, ReconciliationResult, ReconcileStrategy,
+pub use data_module::MOCK_VOLATILITY;
+pub use data_module::{
+    BuiltinDataModule, DataCollectionOutput, DataCollectionRequest, DataModuleProvider,
+};
+pub use execution_module::{
+    BuiltinExecutionModule, ExecutionModuleProvider, ExecutionPlanner, ExecutionPlanningOutput,
+    ExecutionPlanningRequest, ExecutionSubmitter,
+};
+pub use hotswap::{
+    DefaultHotSwapValidator, HotSwapModuleTarget, HotSwapOrchestrator, HotSwapRequest,
+    HotSwapResult, HotSwapState, HotSwapStep, HotSwapValidationResult, HotSwapValidator,
+};
+pub use intent_module::{
+    BuiltinIntentModule, IntentEvaluationOutput, IntentEvaluationRequest, IntentModuleProvider,
 };
 pub use merge::{
     MergeDecisionRecord, MergePolicy, MergedOutput, StrategyInput, StrategyMergeEngine,
 };
+pub use plugin_market::{MarketMetadata, PluginMarketClient, PluginSummary};
+pub use plugin_runtime_registry::{
+    PluginLifecycleState, PluginSecurityAction, RuntimePluginLifecycle, RuntimePluginRegistry,
+};
+pub use reconcile::{
+    OrderReconciler, ReconcileStrategy, ReconciliationDiscrepancy, ReconciliationResult,
+};
+pub use risk_checker::{RiskCheckOutput, RiskCheckRequest, RiskChecker, RiskCheckerProvider};
 pub use sandbox::{
     runtime_support_boundary, DeterministicClockMode, DeterministicEventOrdering,
     DeterministicParallelismPolicy, DeterministicTestMode, FastBacktestSandbox, RealTimeSandbox,
     RuntimeSupportBoundary, Sandbox, SandboxMode, SandboxSnapshot,
     SUPPORTED_RUNTIME_EXECUTION_MODULE_KEYS, SUPPORTED_RUNTIME_MODE_KEYS,
 };
-pub use data_module::MOCK_VOLATILITY;
 
 /// 配置代际记录
 #[derive(Debug, Clone)]
@@ -436,7 +436,13 @@ impl RuntimeCoordinator {
             .execution_module
             .lock()
             .unwrap_or_else(|e| e.into_inner())
-            .submit_plan(plan, normalized_data, &mut self.state.portfolio, now_ms, trace_id);
+            .submit_plan(
+                plan,
+                normalized_data,
+                &mut self.state.portfolio,
+                now_ms,
+                trace_id,
+            );
         self.refresh_portfolio_state(normalized_data, now_ms);
         Ok(result)
     }
@@ -528,7 +534,9 @@ impl RuntimeCoordinator {
         });
         let digest = qrpc_core::canonical_json_sha256_digest(&revision_input)?;
         let revision = format!("rev-hotswap-{}", &digest.value[..16]);
-        self.config.applied_deployment_revisions.push(revision.clone());
+        self.config
+            .applied_deployment_revisions
+            .push(revision.clone());
         // v1.1.4: 窗口截断保留最近 1000 条，防止长期运行无界增长
         const MAX_REVISIONS: usize = 1000;
         if self.config.applied_deployment_revisions.len() > MAX_REVISIONS {
@@ -546,7 +554,8 @@ impl RuntimeCoordinator {
             let gen = self.config.config_generation.fetch_add(1, Ordering::SeqCst);
             // v1.2.1: 使用代际序号代替墙钟，保证回测确定性
             let now_ms = gen;
-            let rev = self.config
+            let rev = self
+                .config
                 .applied_deployment_revisions
                 .last()
                 .cloned()
@@ -578,7 +587,8 @@ impl RuntimeCoordinator {
 
     /// 配置代际历史
     pub fn generation_history(&self) -> Vec<ConfigGenerationEntry> {
-        self.config.config_generation_history
+        self.config
+            .config_generation_history
             .lock()
             .map(|h| h.clone())
             .unwrap_or_default()
@@ -606,7 +616,8 @@ impl RuntimeCoordinator {
         now_ms: u64,
     ) -> RuntimeEvent {
         let equity_estimate = portfolio_equity_estimate(&self.state.portfolio);
-        let open_orders = self.state
+        let open_orders = self
+            .state
             .portfolio
             .open_orders
             .iter()
@@ -780,7 +791,9 @@ impl RuntimeCoordinator {
             trace_id,
         });
         for agent_id in &output.evaluated_rebalance_agent_ids {
-            self.state.last_rebalance_at_ms.insert(agent_id.clone(), now_ms);
+            self.state
+                .last_rebalance_at_ms
+                .insert(agent_id.clone(), now_ms);
         }
         runtime_events.extend(output.events);
         output.decisions
@@ -874,7 +887,9 @@ impl RuntimeCoordinator {
             });
 
         for agent_id in &output.approved_agent_ids {
-            self.state.last_action_at_ms.insert(agent_id.clone(), now_ms);
+            self.state
+                .last_action_at_ms
+                .insert(agent_id.clone(), now_ms);
         }
         runtime_events.extend(output.events);
         output.decisions
@@ -919,7 +934,13 @@ impl RuntimeCoordinator {
                 .execution_module
                 .lock()
                 .unwrap_or_else(|e| e.into_inner())
-                .submit_plan(plan, normalized_data, &mut self.state.portfolio, now_ms, trace_id);
+                .submit_plan(
+                    plan,
+                    normalized_data,
+                    &mut self.state.portfolio,
+                    now_ms,
+                    trace_id,
+                );
             let mut result = result;
             runtime_events.append(&mut result.events);
             fills.extend(result.fills);
@@ -978,13 +999,15 @@ impl RuntimeCoordinator {
             )
             .collect();
 
-        self.state.portfolio.total_gross_notional = self.state
+        self.state.portfolio.total_gross_notional = self
+            .state
             .portfolio
             .exchange_exposures
             .iter()
             .map(|item| item.gross_notional)
             .sum();
-        self.state.portfolio.total_net_notional = self.state
+        self.state.portfolio.total_net_notional = self
+            .state
             .portfolio
             .exchange_exposures
             .iter()

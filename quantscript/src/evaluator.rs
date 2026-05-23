@@ -459,7 +459,11 @@ fn execute_for_stmt(
     let items = expr_iterable_items(&normalized_iterable)
         .ok_or_else(|| anyhow!("无法以符号方式展开 for 循环的可迭代对象"))?;
     if items.len() > MAX_FOR_ITERATIONS {
-        bail!("for 循环迭代次数超过限制 ({} > {})", items.len(), MAX_FOR_ITERATIONS);
+        bail!(
+            "for 循环迭代次数超过限制 ({} > {})",
+            items.len(),
+            MAX_FOR_ITERATIONS
+        );
     }
     for item in items {
         env.insert(pattern.to_string(), item);
@@ -818,7 +822,11 @@ fn fold_identifier_builtin(name: &str, args: &[CallArg]) -> Result<Option<Expr>>
     let result = match (name, positional.as_slice()) {
         ("abs", [value]) => expr_number(value).map(|item| Expr::Number(item.abs())),
         ("sqrt", [value]) => expr_number(value).and_then(|item| {
-            if item < 0.0 { None } else { Some(Expr::Number(item.sqrt())) }
+            if item < 0.0 {
+                None
+            } else {
+                Some(Expr::Number(item.sqrt()))
+            }
         }),
         ("sum", [value]) => expr_sum(value).map(Expr::Number),
         ("mean" | "avg", [value]) => expr_mean(value).map(Expr::Number),

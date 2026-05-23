@@ -61,7 +61,9 @@ impl IntentModuleProvider for BuiltinIntentModule {
                         "confidence": signal.confidence,
                     }),
                 });
-                if (signal.strength.is_finite() && signal.strength.abs() > 0.0) || matches!(signal.kind, IntentKind::QuoteObserve) {
+                if (signal.strength.is_finite() && signal.strength.abs() > 0.0)
+                    || matches!(signal.kind, IntentKind::QuoteObserve)
+                {
                     events.push(RuntimeEvent {
                         event_id: format!(
                             "evt-intent-triggered-{}-{}",

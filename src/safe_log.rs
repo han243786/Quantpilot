@@ -13,7 +13,9 @@ pub enum LogLevel {
 pub fn configured_log_level() -> LogLevel {
     static LEVEL: std::sync::OnceLock<LogLevel> = std::sync::OnceLock::new();
     *LEVEL.get_or_init(|| {
-        let env = std::env::var("QUANTPILOT_LOG_LEVEL").unwrap_or_default().to_lowercase();
+        let env = std::env::var("QUANTPILOT_LOG_LEVEL")
+            .unwrap_or_default()
+            .to_lowercase();
         match env.as_str() {
             "error" => LogLevel::Error,
             "warn" => LogLevel::Warn,
@@ -35,10 +37,21 @@ pub fn register_credential_patterns(patterns: Vec<Zeroizing<String>>) {
 
 pub fn sanitize_secrets(input: &str) -> String {
     let builtin = [
-        "api_key", "secret", "passphrase", "password", "apikey", "api_secret",
+        "api_key",
+        "secret",
+        "passphrase",
+        "password",
+        "apikey",
+        "api_secret",
         // v2.0.1: JWT/令牌敏感字段
-        "token", "jwt", "bearer", "authorization", "private_key",
-        "access_key", "signing_key", "credential",
+        "token",
+        "jwt",
+        "bearer",
+        "authorization",
+        "private_key",
+        "access_key",
+        "signing_key",
+        "credential",
     ];
 
     let extra = EXTRA_PATTERNS.read().unwrap_or_else(|e| e.into_inner());
@@ -53,29 +66,47 @@ pub fn sanitize_secrets(input: &str) -> String {
     // v2.5.0 NOTE: to_lowercase() 用于大小写不敏感匹配, 全 ASCII 模式 (api_key 等)
     // 不会影响 position 索引。如未来添加含 Unicode 的模式需改用 char_indices 遍历。
     for pattern in &all_patterns {
+        let mut search_start = 0;
         loop {
             let lower = result.to_lowercase();
-            match lower.find(pattern.as_str()) {
-                Some(pos) => {
+            if search_start >= lower.len() {
+                break;
+            }
+
+            match lower[search_start..].find(pattern.as_str()) {
+                Some(offset) => {
+                    let pos = search_start + offset;
                     if let Some(sep_offset) = result[pos..].find([':', '=']) {
                         let after_sep = pos + sep_offset + 1;
                         let trimmed = result[after_sep..].trim_start();
                         let leading_ws = result[after_sep..].len() - trimmed.len();
                         let value_start = after_sep + leading_ws;
                         let rest = &result[value_start..];
-                        let end = if rest.starts_with('"') {
-                            rest[1..].find('"').map(|i| i + 2)
-                                .unwrap_or(rest.len()) // 无闭合引号 → 到字符串末尾
+                        let end = if pattern == "authorization" {
+                            rest.find(|c: char| {
+                                c == '\n' || c == ',' || c == '}' || c == ']' || c == ')'
+                            })
+                            .unwrap_or(rest.len())
+                        } else if rest.starts_with('"') {
+                            rest[1..].find('"').map(|i| i + 2).unwrap_or(rest.len())
+                        // 无闭合引号 → 到字符串末尾
                         } else {
                             rest.find(|c: char| {
-                                c == ',' || c == ' ' || c == '\n' || c == '}' || c == ']' || c == ')'
-                            }).unwrap_or(rest.len()) // 无终止符 → 到字符串末尾
+                                c == ','
+                                    || c == ' '
+                                    || c == '\n'
+                                    || c == '}'
+                                    || c == ']'
+                                    || c == ')'
+                            })
+                            .unwrap_or(rest.len()) // 无终止符 → 到字符串末尾
                         };
                         let before = &result[..value_start];
                         let after = &result[value_start + end..];
                         result = format!("{}***{}", before, after);
+                        search_start = value_start + 3;
                     } else {
-                        break;
+                        search_start = pos + pattern.len();
                     }
                 }
                 None => break,
@@ -103,6 +134,13 @@ mod tests {
         let input = r#"secret="my-secret-value", quantity=1.0"#;
         let result = sanitize_secrets(input);
         assert!(!result.contains("my-secret-value"), "secret 值应被替换");
+    }
+
+    #[test]
+    fn sanitize_secrets_masks_authorization_without_looping() {
+        let input = "[auth] Authorization: Bearer generated-secret-token";
+        let result = sanitize_secrets(input);
+        assert_eq!(result, "[auth] Authorization: ***");
     }
 
     #[test]

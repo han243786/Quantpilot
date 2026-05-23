@@ -21,7 +21,10 @@ fn wait_for_backend() {
             }
             Err(_) => {
                 if start.elapsed().as_secs() > MAX_WAIT_SECS {
-                    eprintln!("[tauri] Backend not detected within {}s, proceeding anyway", MAX_WAIT_SECS);
+                    eprintln!(
+                        "[tauri] Backend not detected within {}s, proceeding anyway",
+                        MAX_WAIT_SECS
+                    );
                     return;
                 }
                 std::thread::sleep(Duration::from_millis(1000));

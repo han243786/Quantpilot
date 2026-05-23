@@ -80,7 +80,11 @@ pub(super) fn collect_frontend_events(
         None,
     ));
     // v1.1.12: 稳定排序 + event_id 二级排序
-    events.sort_by(|a, b| a.event_time_ms.cmp(&b.event_time_ms).then_with(|| a.event_id.cmp(&b.event_id)));
+    events.sort_by(|a, b| {
+        a.event_time_ms
+            .cmp(&b.event_time_ms)
+            .then_with(|| a.event_id.cmp(&b.event_id))
+    });
     events
 }
 
@@ -211,10 +215,7 @@ pub(super) fn validate_runtime_event_envelopes(
             || envelope.parameter_version.trim().is_empty()
             || envelope.mode.trim().is_empty()
         {
-            return Err(format!(
-                "事件 `{}` 的信封治理身份不完整",
-                event.event_id
-            ));
+            return Err(format!("事件 `{}` 的信封治理身份不完整", event.event_id));
         }
         if envelope.occurred_at_ms != event.event_time_ms {
             return Err(format!(
@@ -349,7 +350,11 @@ pub(super) fn collect_frontend_events_for_backtest(
         })
         .collect::<Vec<_>>();
     // v1.1.12: 稳定排序 + event_id 二级排序
-    events.sort_by(|a, b| a.event_time_ms.cmp(&b.event_time_ms).then_with(|| a.event_id.cmp(&b.event_id)));
+    events.sort_by(|a, b| {
+        a.event_time_ms
+            .cmp(&b.event_time_ms)
+            .then_with(|| a.event_id.cmp(&b.event_id))
+    });
     events
 }
 
@@ -713,7 +718,7 @@ mod tests {
 
         let error = validate_runtime_event_envelopes(&events, "run-test", &governance)
             .expect_err("missing envelope id should be rejected");
-        assert!(error.contains("event_id mismatch"));
+        assert!(error.contains("信封 event_id") && error.contains("不匹配"));
     }
 
     #[test]
@@ -724,7 +729,7 @@ mod tests {
 
         let error = validate_runtime_event_envelopes(&events, "run-test", &governance)
             .expect_err("unknown event type should be rejected");
-        assert!(error.contains("unknown event_type"));
+        assert!(error.contains("event_type") && error.contains("未知"));
     }
 
     #[test]

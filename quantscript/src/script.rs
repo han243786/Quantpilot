@@ -258,7 +258,11 @@ impl ScriptParser {
         let cover = fields
             .get("cover")
             .map(|v| {
-                let inner = v.trim().trim_start_matches('[').trim_end_matches(']').trim();
+                let inner = v
+                    .trim()
+                    .trim_start_matches('[')
+                    .trim_end_matches(']')
+                    .trim();
                 if inner.is_empty() {
                     return Vec::new();
                 }
@@ -302,9 +306,11 @@ impl ScriptParser {
 
         // If the line doesn't end with {, the opening brace may be on the next line
         if !line.trim_end().ends_with('{')
-            && self.index < self.lines.len() && self.lines[self.index].trim() == "{" {
-                self.index += 1;
-            }
+            && self.index < self.lines.len()
+            && self.lines[self.index].trim() == "{"
+        {
+            self.index += 1;
+        }
 
         let mut actions = Vec::new();
         while let Some(peeked) = self.peek_line() {
@@ -331,11 +337,19 @@ impl ScriptParser {
                 actions.push(self.parse_test_modify_action()?);
             } else if trimmed.starts_with("@wait ") {
                 actions.push(self.parse_test_wait_action()?);
-            } else if trimmed.starts_with("@compare_backtests ") || trimmed.starts_with("@compare ") {
+            } else if trimmed.starts_with("@compare_backtests ") || trimmed.starts_with("@compare ")
+            {
                 actions.push(self.parse_compare_action()?);
             } else if trimmed.starts_with("@debug(") || trimmed.starts_with("@debug ") {
-                let inner = trimmed.trim_start_matches("@debug(").trim_end_matches(')').trim();
-                let vars: Vec<String> = inner.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect();
+                let inner = trimmed
+                    .trim_start_matches("@debug(")
+                    .trim_end_matches(')')
+                    .trim();
+                let vars: Vec<String> = inner
+                    .split(',')
+                    .map(|s| s.trim().to_string())
+                    .filter(|s| !s.is_empty())
+                    .collect();
                 self.index += 1;
                 actions.push(TestAction::Debug(vars));
             } else {
@@ -360,15 +374,15 @@ impl ScriptParser {
             self.parse_test_action_fields()?
         };
         Ok(TestAction::Run {
-            mode: fields.get("mode").cloned().unwrap_or_else(|| "paper".to_string()),
+            mode: fields
+                .get("mode")
+                .cloned()
+                .unwrap_or_else(|| "paper".to_string()),
             duration_secs: fields
                 .get("duration")
                 .and_then(|v| parse_duration_secs(v))
                 .unwrap_or(0), // 0 triggers validation error in runner
-            save: fields
-                .get("save")
-                .map(|v| v == "true")
-                .unwrap_or(false),
+            save: fields.get("save").map(|v| v == "true").unwrap_or(false),
         })
     }
 
@@ -393,10 +407,7 @@ impl ScriptParser {
             start: fields.get("start").cloned(),
             end: fields.get("end").cloned(),
             seed: fields.get("seed").and_then(|v| v.parse::<u64>().ok()),
-            save: fields
-                .get("save")
-                .map(|v| v == "true")
-                .unwrap_or(false),
+            save: fields.get("save").map(|v| v == "true").unwrap_or(false),
             volatility: fields.get("volatility").and_then(|v| v.parse::<f64>().ok()),
         })
     }
@@ -413,14 +424,8 @@ impl ScriptParser {
         } else {
             parse_test_inline_fields(stripped)
         };
-        let node = fields
-            .get("node")
-            .cloned()
-            .unwrap_or_default();
-        let param = fields
-            .get("param")
-            .cloned()
-            .unwrap_or_default();
+        let node = fields.get("node").cloned().unwrap_or_default();
+        let param = fields.get("param").cloned().unwrap_or_default();
         let value = fields
             .get("value")
             .map(|v| {
@@ -438,18 +443,25 @@ impl ScriptParser {
 
     fn parse_compare_action(&mut self) -> Result<TestAction> {
         let line = self.take_line()?;
-        let stripped = line.trim_start_matches("@compare_backtests")
+        let stripped = line
+            .trim_start_matches("@compare_backtests")
             .trim_start_matches("@compare")
             .trim();
         let fields = if stripped.starts_with('{') {
-            let inner = stripped.trim_start_matches('{').trim_end_matches('}').trim();
+            let inner = stripped
+                .trim_start_matches('{')
+                .trim_end_matches('}')
+                .trim();
             parse_test_inline_fields(inner)
         } else {
             parse_test_inline_fields(stripped)
         };
         Ok(TestAction::CompareBacktests {
             left: fields.get("left").and_then(|v| v.parse().ok()).unwrap_or(0),
-            right: fields.get("right").and_then(|v| v.parse().ok()).unwrap_or(1),
+            right: fields
+                .get("right")
+                .and_then(|v| v.parse().ok())
+                .unwrap_or(1),
         })
     }
 
@@ -466,10 +478,7 @@ impl ScriptParser {
             parse_test_inline_fields(stripped)
         };
         Ok(TestAction::Wait {
-            condition: fields
-                .get("condition")
-                .cloned()
-                .unwrap_or_default(),
+            condition: fields.get("condition").cloned().unwrap_or_default(),
             timeout_secs: fields
                 .get("timeout")
                 .and_then(|v| parse_duration_secs(v))
@@ -490,7 +499,13 @@ impl ScriptParser {
             }
             self.index += 1;
             if let Some((key, value)) = trimmed.split_once(':') {
-                let val = value.trim().trim_end_matches(',').trim().trim_matches('"').trim().to_string();
+                let val = value
+                    .trim()
+                    .trim_end_matches(',')
+                    .trim()
+                    .trim_matches('"')
+                    .trim()
+                    .to_string();
                 fields.insert(key.trim().to_string(), val);
             }
         }
@@ -500,10 +515,9 @@ impl ScriptParser {
     fn parse_test_action_fields(&mut self) -> Result<BTreeMap<String, String>> {
         let mut fields = BTreeMap::new();
         // Consume opening brace if present
-        if self.index < self.lines.len()
-            && self.lines[self.index].trim() == "{" {
-                self.index += 1;
-            }
+        if self.index < self.lines.len() && self.lines[self.index].trim() == "{" {
+            self.index += 1;
+        }
         while self.index < self.lines.len() {
             let trimmed = self.lines[self.index].trim().to_string();
             if trimmed == "}" {
@@ -512,7 +526,13 @@ impl ScriptParser {
             }
             self.index += 1;
             if let Some((key, value)) = trimmed.split_once(':') {
-                let val = value.trim().trim_end_matches(',').trim().trim_matches('"').trim().to_string();
+                let val = value
+                    .trim()
+                    .trim_end_matches(',')
+                    .trim()
+                    .trim_matches('"')
+                    .trim()
+                    .to_string();
                 fields.insert(key.trim().to_string(), val);
             }
         }
@@ -954,7 +974,11 @@ fn parse_duration_secs(input: &str) -> Option<u64> {
 
 pub fn parse_expr(input: &str) -> Result<Expr> {
     let tokens = tokenize_expr(input)?;
-    let mut parser = ExprParser { tokens, index: 0, depth: 0 };
+    let mut parser = ExprParser {
+        tokens,
+        index: 0,
+        depth: 0,
+    };
     let expr = parser.parse_expression(0)?;
     if !parser.is_eof() {
         bail!("表达式末尾存在意外的令牌: {input}");
@@ -965,7 +989,11 @@ pub fn parse_expr(input: &str) -> Result<Expr> {
 fn parse_expr_lossy(input: &str) -> Expr {
     // v1.1.9: 解析失败时产生 Raw 表达式并记录警告（不再完全静默）
     parse_expr(input).unwrap_or_else(|e| {
-        eprintln!("[quantscript] parse_expr_lossy 降级为 Raw: {} — 输入: {:?}", e, &input[..input.len().min(80)]);
+        eprintln!(
+            "[quantscript] parse_expr_lossy 降级为 Raw: {} — 输入: {:?}",
+            e,
+            &input[..input.len().min(80)]
+        );
         Expr::Raw(input.trim().to_string())
     })
 }
@@ -1212,7 +1240,7 @@ fn tokenize_expr(input: &str) -> Result<Vec<ExprToken>> {
 struct ExprParser {
     tokens: Vec<ExprToken>,
     index: usize,
-    depth: u32,  // v1.1.9: 递归深度限制防DoS
+    depth: u32, // v1.1.9: 递归深度限制防DoS
 }
 
 impl ExprParser {

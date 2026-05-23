@@ -97,10 +97,7 @@ pub(super) fn register_runtime_routes(router: Router<AppState>) -> Router<AppSta
             get(get_experiment_detail).delete(discard_experiment_record),
         )
         // Block 5: 审批流引擎
-        .route(
-            "/api/v1/ai/approvals",
-            get(list_runtime_approvals),
-        )
+        .route("/api/v1/ai/approvals", get(list_runtime_approvals))
         .route(
             "/api/v1/ai/approvals/:approval_id",
             get(get_runtime_approval_detail),
@@ -118,29 +115,14 @@ pub(super) fn register_runtime_routes(router: Router<AppState>) -> Router<AppSta
             post(claim_ai_proposal_review),
         )
         // Block 5: 合并引擎
-        .route(
-            "/api/v1/merge/records",
-            get(list_merge_records),
-        )
+        .route("/api/v1/merge/records", get(list_merge_records))
         // Block 5 P3-2: 配置代际
-        .route(
-            "/api/v1/runtime/generations",
-            get(list_config_generations),
-        )
+        .route("/api/v1/runtime/generations", get(list_config_generations))
         // Block 5 P3-5: 存储健康
-        .route(
-            "/api/v1/storage/health",
-            get(get_storage_health),
-        )
+        .route("/api/v1/storage/health", get(get_storage_health))
         // Block 5: 运营报表
-        .route(
-            "/api/v1/reports/ops/daily",
-            get(get_ops_daily_report),
-        )
-        .route(
-            "/api/v1/reports/audit/weekly",
-            get(get_audit_weekly_report),
-        )
+        .route("/api/v1/reports/ops/daily", get(get_ops_daily_report))
+        .route("/api/v1/reports/audit/weekly", get(get_audit_weekly_report))
         .route(
             "/api/v1/reports/research/monthly",
             get(get_research_monthly_report),
@@ -216,12 +198,6 @@ impl Drop for RunInProgressGuard<'_> {
     }
 }
 
-
-
-
-
-
-
 async fn create_runtime_report(
     user_id: auth::UserId,
     State(state): State<AppState>,
@@ -234,7 +210,8 @@ async fn create_runtime_report(
             runtime_report_record_from_run_record(record, now_ms, request.generation_policy)
         }
         RuntimeEvidenceSourceKind::Backtest => {
-            let record = load_backtest_record_from_state(&state, &user_id, &request.source_id).await?;
+            let record =
+                load_backtest_record_from_state(&state, &user_id, &request.source_id).await?;
             runtime_report_record_from_backtest_record(record, now_ms, request.generation_policy)
         }
     };
@@ -463,7 +440,11 @@ async fn list_merge_records(
     let mut total_conflicts = 0usize;
     let mut total_suppressed = 0usize;
 
-    for run in runs.iter().filter(|(k, _)| k.starts_with(&prefix)).map(|(_, v)| v) {
+    for run in runs
+        .iter()
+        .filter(|(k, _)| k.starts_with(&prefix))
+        .map(|(_, v)| v)
+    {
         for event in &run.events {
             if event.source_id == "merge_engine" {
                 if let Some(payload) = event.payload.as_object() {
@@ -571,7 +552,6 @@ async fn get_storage_health(
         "archive_enabled": true,
     })))
 }
-
 
 // ── Block 5: 合并记录 API ──
 
@@ -832,7 +812,9 @@ async fn get_research_monthly_report(
             strategy_id: bt.backtest_id.clone(),
             total_return: summary.total_return_ratio,
             max_drawdown: summary.drawdown_analysis.max_drawdown_ratio,
-            sharpe_ratio: if summary.drawdown_analysis.max_drawdown_ratio.is_finite() && summary.drawdown_analysis.max_drawdown_ratio > 0.0 {
+            sharpe_ratio: if summary.drawdown_analysis.max_drawdown_ratio.is_finite()
+                && summary.drawdown_analysis.max_drawdown_ratio > 0.0
+            {
                 summary.total_return_ratio / summary.drawdown_analysis.max_drawdown_ratio * 0.5
             } else {
                 0.0

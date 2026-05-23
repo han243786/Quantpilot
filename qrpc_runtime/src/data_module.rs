@@ -545,12 +545,18 @@ impl BuiltinDataModule {
 
             match self.fetch_okx(source, now_ms) {
                 Ok((data, diagnostics)) => {
-                    self.breaker.lock().unwrap_or_else(|e| e.into_inner()).on_success();
+                    self.breaker
+                        .lock()
+                        .unwrap_or_else(|e| e.into_inner())
+                        .on_success();
                     self.store_cache(source, &data, now_ms);
                     return Ok((data, diagnostics.with_ping(ping)));
                 }
                 Err(error) => {
-                    self.breaker.lock().unwrap_or_else(|e| e.into_inner()).on_failure(now_ms);
+                    self.breaker
+                        .lock()
+                        .unwrap_or_else(|e| e.into_inner())
+                        .on_failure(now_ms);
                     if let Some((cached, diagnostics)) = self.cached_snapshot(source, now_ms) {
                         return Ok((
                             cached,
@@ -803,15 +809,25 @@ impl BuiltinDataModule {
                     continue;
                 }
                 let status = resp.status().as_u16();
-                let category = if status >= 500 { "服务端临时错误" } else { "客户端请求错误" };
+                let category = if status >= 500 {
+                    "服务端临时错误"
+                } else {
+                    "客户端请求错误"
+                };
                 return resp
                     .error_for_status()
-                    .with_context(|| format!("从 {endpoint_for_reqwest} 收到非成功响应 (HTTP {status}, {category})"))?
+                    .with_context(|| {
+                        format!(
+                            "从 {endpoint_for_reqwest} 收到非成功响应 (HTTP {status}, {category})"
+                        )
+                    })?
                     .json::<Value>()
                     .await
                     .with_context(|| format!("从 {endpoint_for_reqwest} 收到无效 JSON"));
             }
-            Err(anyhow::anyhow!("请求 {endpoint_for_reqwest} 被限流 (429), 重试 3 次后仍失败"))
+            Err(anyhow::anyhow!(
+                "请求 {endpoint_for_reqwest} 被限流 (429), 重试 3 次后仍失败"
+            ))
         });
 
         match primary_result {
@@ -843,13 +859,12 @@ where
     }
 }
 
-static FALLBACK_RT: std::sync::LazyLock<tokio::runtime::Runtime> =
-    std::sync::LazyLock::new(|| {
-        tokio::runtime::Builder::new_current_thread()
-            .enable_all()
-            .build()
-            .expect("创建 Fallback tokio 运行时失败")
-    });
+static FALLBACK_RT: std::sync::LazyLock<tokio::runtime::Runtime> = std::sync::LazyLock::new(|| {
+    tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .expect("创建 Fallback tokio 运行时失败")
+});
 
 #[cfg(target_os = "windows")]
 fn fetch_json_via_powershell(endpoint: String) -> Result<Value> {
@@ -1135,9 +1150,7 @@ fn parse_okx_candles(payload: &Value, source: &DataSourceConfig) -> Result<Vec<R
         .collect::<Vec<_>>();
 
     if bars.is_empty() {
-        return Err(anyhow!(
-            "OKX K 线响应未包含已确认的 K 线数据"
-        ));
+        return Err(anyhow!("OKX K 线响应未包含已确认的 K 线数据"));
     }
 
     bars.sort_by_key(|bar| bar.open_time);
@@ -1170,10 +1183,7 @@ fn parse_okx_ticker(payload: &Value) -> Result<RawQuote> {
             row.get("askSz")
                 .ok_or_else(|| anyhow!("OKX ticker 缺少 askSz"))?,
         )?,
-        ts: parse_u64_value(
-            row.get("ts")
-                .ok_or_else(|| anyhow!("OKX ticker 缺少 ts"))?,
-        )?,
+        ts: parse_u64_value(row.get("ts").ok_or_else(|| anyhow!("OKX ticker 缺少 ts"))?)?,
     })
 }
 
@@ -1279,10 +1289,16 @@ const DEFAULT_MOCK_VOLATILITY: f64 = 0.015;
 
 fn get_mock_volatility() -> f64 {
     let bits = MOCK_VOLATILITY.load(std::sync::atomic::Ordering::Relaxed);
-    if bits == 0 { return DEFAULT_MOCK_VOLATILITY; }
+    if bits == 0 {
+        return DEFAULT_MOCK_VOLATILITY;
+    }
     let vol = f64::from_bits(bits);
     // v2.1.x: 拒绝 NaN/Inf 注入; v2.4.0 P1-C3: 加 clamp 上限防止极端值
-    if !vol.is_finite() { DEFAULT_MOCK_VOLATILITY } else { vol.clamp(1e-6, 1.0) }
+    if !vol.is_finite() {
+        DEFAULT_MOCK_VOLATILITY
+    } else {
+        vol.clamp(1e-6, 1.0)
+    }
 }
 
 fn mock_raw_klines(source: &DataSourceConfig, now_ms: u64) -> Result<Vec<RawKline>> {
@@ -1291,7 +1307,9 @@ fn mock_raw_klines(source: &DataSourceConfig, now_ms: u64) -> Result<Vec<RawKlin
     let interval_ms = 86_400_000_u64;
     // Deterministic pseudo-random seed from symbol debug name hash
     let symbol_bytes = format!("{:?}", source.symbol).into_bytes();
-    let symbol_seed = symbol_bytes.iter().fold(0u64, |acc, &b| acc.wrapping_mul(31).wrapping_add(b as u64));
+    let symbol_seed = symbol_bytes
+        .iter()
+        .fold(0u64, |acc, &b| acc.wrapping_mul(31).wrapping_add(b as u64));
     let seed = symbol_seed.wrapping_add(days as u64);
 
     for idx in 0..days {
@@ -1342,7 +1360,8 @@ fn mock_raw_klines(source: &DataSourceConfig, now_ms: u64) -> Result<Vec<RawKlin
 
 /// Deterministic pseudo-random in [-1.0, 1.0] based on index and seed
 fn pseudo_random(idx: u64, seed: u64) -> f64 {
-    let val = idx.wrapping_mul(6364136223846793005)
+    let val = idx
+        .wrapping_mul(6364136223846793005)
         .wrapping_add(seed.wrapping_mul(1442695040888963407))
         .wrapping_add(1);
     let mixed = (val ^ (val >> 33)).wrapping_mul(0xFF51AFD7ED558CCD);
@@ -1384,9 +1403,8 @@ fn historical_cache_path(source: &DataSourceConfig) -> PathBuf {
     let interval = source.interval.as_deref().unwrap_or("1d");
     let days = source.days.unwrap_or(200);
     // 消毒符号名：仅保留字母数字和下划线，防止路径遍历
-    let safe_symbol = sanitize_filename_component(
-        &binance_symbol(source.symbol.clone()).to_ascii_lowercase()
-    );
+    let safe_symbol =
+        sanitize_filename_component(&binance_symbol(source.symbol.clone()).to_ascii_lowercase());
     PathBuf::from("storage")
         .join("cache")
         .join("historical")
@@ -1405,7 +1423,8 @@ fn historical_cache_path(source: &DataSourceConfig) -> PathBuf {
 
 /// 移除路径中不安全的字符，防止目录遍历攻击
 fn sanitize_filename_component(input: &str) -> String {
-    input.chars()
+    input
+        .chars()
         .filter(|c| c.is_alphanumeric() || *c == '_' || *c == '-')
         .take(64)
         .collect()
@@ -1438,20 +1457,19 @@ fn persist_historical_cache(
     let path = historical_cache_path(source);
     // v1.1.1: 写入前检查存储配额（cache 为 Temporary 生命周期，上限 200MB）
     if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).with_context(|| {
-            format!("创建历史数据缓存目录失败: {}", parent.display())
-        })?;
+        fs::create_dir_all(parent)
+            .with_context(|| format!("创建历史数据缓存目录失败: {}", parent.display()))?;
         let cache_dir = PathBuf::from("storage").join("cache").join("historical");
         let dir_size: u64 = std::fs::read_dir(&cache_dir)
             .map(|entries| {
-                    entries
-                        .filter_map(|e| e.ok())
-                        .filter_map(|e| e.metadata().ok())
-                        .filter(|m| m.is_file())
-                        .map(|m| m.len())
-                        .sum()
-                })
-                .unwrap_or(0);
+                entries
+                    .filter_map(|e| e.ok())
+                    .filter_map(|e| e.metadata().ok())
+                    .filter(|m| m.is_file())
+                    .map(|m| m.len())
+                    .sum()
+            })
+            .unwrap_or(0);
         const CACHE_MAX_BYTES: u64 = 200 * 1024 * 1024;
         if dir_size > CACHE_MAX_BYTES {
             return Err(anyhow!(
@@ -1467,14 +1485,12 @@ fn persist_historical_cache(
         bars: bars.to_vec(),
     })?;
     let tmp = path.with_extension("tmp");
-    fs::write(&tmp, &body)
-        .with_context(|| format!("写入历史缓存 {} 失败", path.display()))?;
+    fs::write(&tmp, &body).with_context(|| format!("写入历史缓存 {} 失败", path.display()))?;
     // v2.3.3: fsync tmp 确保数据落盘
     if let Ok(f) = std::fs::File::open(&tmp) {
         let _ = f.sync_all();
     }
-    fs::rename(&tmp, &path)
-        .with_context(|| format!("重命名历史缓存 {} 失败", path.display()))?;
+    fs::rename(&tmp, &path).with_context(|| format!("重命名历史缓存 {} 失败", path.display()))?;
     // v2.3.3: fsync 父目录确保 rename 落盘
     if let Some(parent) = path.parent() {
         if let Ok(f) = std::fs::File::open(parent) {
@@ -1613,7 +1629,6 @@ mod tests {
             risk_policies: vec![],
             edges: vec![],
             execution: ExecutionRule {
-
                 execution_id: "exec".into(),
                 venue_kind: "paper".into(),
                 sizing_kind: ExecutionSizingKind::EquityNotionalRatio,

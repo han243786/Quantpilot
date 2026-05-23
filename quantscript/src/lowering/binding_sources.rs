@@ -183,8 +183,8 @@ fn fetch_like_data_source_from_call(
             kind: DataKind::KlineSeries,
             days: Some(request.lookback.max(1)),
             interval: Some(request.interval),
-            ping_enabled: false,
-            request_interval_ms: None,
+            ping_enabled: request.ping_enabled,
+            request_interval_ms: request.request_interval_ms,
             enabled: true,
         })),
     }
@@ -251,6 +251,8 @@ struct FetchRequest {
     exchange_name: String,
     interval: String,
     lookback: u32,
+    ping_enabled: bool,
+    request_interval_ms: Option<u64>,
 }
 
 #[derive(Debug, Clone)]
@@ -333,12 +335,33 @@ fn decode_fetch_request(args: &[CallArg]) -> FetchRequest {
     let lookback = arg_number_optional(args, ArgSelector::Named("lookback"))
         .map(|value| value.round().max(1.0) as u32)
         .unwrap_or(200);
+    let ping_enabled = arg_bool_optional(args, ArgSelector::Named("ping_enabled")).unwrap_or(false);
+    let request_interval_ms = arg_number_optional(args, ArgSelector::Named("request_interval_ms"))
+        .map(|value| value.round().max(0.0) as u64);
 
     FetchRequest {
         symbol_name,
         exchange_name,
         interval,
         lookback,
+        ping_enabled,
+        request_interval_ms,
+    }
+}
+
+fn arg_bool_optional(args: &[CallArg], selector: ArgSelector<'_>) -> Option<bool> {
+    find_arg(args, selector).and_then(expr_bool)
+}
+
+fn expr_bool(expr: &Expr) -> Option<bool> {
+    match expr {
+        Expr::Bool(value) => Some(*value),
+        Expr::String(value) | Expr::Identifier(value) | Expr::Raw(value) => match value.as_str() {
+            "true" => Some(true),
+            "false" => Some(false),
+            _ => None,
+        },
+        _ => None,
     }
 }
 

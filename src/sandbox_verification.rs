@@ -3,9 +3,7 @@ use super::*;
 // ── 沙箱验证服务 ──
 // Block 5 核心技术闸门：AI 提案必须经过独立沙箱回放验证方可提交审批
 
-pub(super) fn register_sandbox_verification_routes(
-    router: Router<AppState>,
-) -> Router<AppState> {
+pub(super) fn register_sandbox_verification_routes(router: Router<AppState>) -> Router<AppState> {
     router
         .route(
             "/api/v1/ai/proposals/:proposal_id/sandbox-report",
@@ -91,13 +89,19 @@ pub(super) async fn run_sandbox_verification(
     };
 
     if let Err(e) = crate::storage_lifecycle::ensure_storage_quota(
-        std::path::Path::new("storage"), "sandbox-reports", crate::storage_lifecycle::StorageLifecycle::Transient,
+        std::path::Path::new("storage"),
+        "sandbox-reports",
+        crate::storage_lifecycle::StorageLifecycle::Transient,
     ) {
         return Err(io_error(e));
     }
-    persist_json(&state.sandbox_report_store_dir, &report.proposal_id, &report)
-        .await
-        .map_err(io_error)?;
+    persist_json(
+        &state.sandbox_report_store_dir,
+        &report.proposal_id,
+        &report,
+    )
+    .await
+    .map_err(io_error)?;
     state
         .sandbox_reports
         .write()
@@ -114,7 +118,10 @@ pub(super) async fn run_sandbox_verification(
 
 // ── 指标计算函数 ──
 
-fn compute_metrics_diff(baseline: &SandboxMetrics, candidate: &SandboxMetrics) -> SandboxMetricsDiff {
+fn compute_metrics_diff(
+    baseline: &SandboxMetrics,
+    candidate: &SandboxMetrics,
+) -> SandboxMetricsDiff {
     SandboxMetricsDiff {
         total_return_ratio: format_diff(candidate.total_return_ratio - baseline.total_return_ratio),
         max_drawdown_ratio: format_diff(candidate.max_drawdown_ratio - baseline.max_drawdown_ratio),
@@ -152,10 +159,7 @@ fn determine_sandbox_verdict(diffs: &SandboxMetricsDiff) -> SandboxVerdict {
         }
     }
 
-    for diff_str in [
-        &diffs.max_drawdown_ratio,
-        &diffs.turnover_ratio,
-    ] {
+    for diff_str in [&diffs.max_drawdown_ratio, &diffs.turnover_ratio] {
         let val = diff_str.parse::<f64>().unwrap_or(0.0);
         if val < 0.0 {
             improved += 1;
@@ -254,7 +258,12 @@ async fn load_sandbox_report_from_disk(
     store_dir: &FsPath,
     proposal_id: &str,
 ) -> Result<SandboxVerificationReport, (StatusCode, String)> {
-    if proposal_id.contains("..") || proposal_id.contains('/') || proposal_id.contains('\\') || proposal_id.is_empty() || proposal_id.len() > 128 {
+    if proposal_id.contains("..")
+        || proposal_id.contains('/')
+        || proposal_id.contains('\\')
+        || proposal_id.is_empty()
+        || proposal_id.len() > 128
+    {
         return Err((StatusCode::BAD_REQUEST, "proposal_id 无效".to_string()));
     }
     let file_path = store_dir.join(format!("{}.json", proposal_id));
@@ -264,9 +273,7 @@ async fn load_sandbox_report_from_disk(
             format!("提案 '{}' 的沙箱报告不存在", proposal_id),
         )
     })?;
-    serde_json::from_slice(&json).map_err(|error| {
-        internal_error(anyhow::anyhow!("{}", error))
-    })
+    serde_json::from_slice(&json).map_err(|error| internal_error(anyhow::anyhow!("{}", error)))
 }
 
 #[cfg(test)]

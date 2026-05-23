@@ -1,18 +1,18 @@
 use super::*;
-use anyhow::{Context, Result};
 use crate::credential_vault::CredentialVault;
-use zeroize::Zeroizing;
+use anyhow::{Context, Result};
 use qrpc_runtime::{
     DeterministicTestMode, FastBacktestSandbox, RealTimeSandbox, RuntimeCoordinator,
 };
 use quantscript::{
-    lower_script_to_runtime_config, parse_quant_script_module,
-    split_test_items, TestActionDef, TestPlan, TestStep,
+    lower_script_to_runtime_config, parse_quant_script_module, split_test_items, TestActionDef,
+    TestPlan, TestStep,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::sync::OnceLock;
 use std::time::Instant;
+use zeroize::Zeroizing;
 
 // ── Test Report Types ──
 
@@ -59,8 +59,7 @@ pub struct TestRunnerContext {
 
 impl TestRunnerContext {
     pub fn from_source(source: &str) -> Result<Self> {
-        let module = parse_quant_script_module(source)
-            .context("无法解析 QuantScript 源码")?;
+        let module = parse_quant_script_module(source).context("无法解析 QuantScript 源码")?;
         let (strategy_module, test_plans) = split_test_items(&module);
         Ok(TestRunnerContext {
             module: strategy_module,
@@ -198,10 +197,11 @@ impl TestRunner {
                     // Data sources
                     for ds in &mut runtime_config.data_sources {
                         if (ds.data_id == *node_id || node_id.is_empty())
-                            && (param_name.contains("window") || param_name.contains("days")) {
-                                ds.days = Some(*new_value as u32);
-                                affected.push(ds.data_id.clone());
-                            }
+                            && (param_name.contains("window") || param_name.contains("days"))
+                        {
+                            ds.days = Some(*new_value as u32);
+                            affected.push(ds.data_id.clone());
+                        }
                     }
                     // Risk controls
                     for risk in &mut runtime_config.risks {
@@ -235,8 +235,13 @@ impl TestRunner {
                         }
                     }
                     if node_id.is_empty() && !affected.is_empty() {
-                        safe_eprintln!("[TestRunner] 修改: {}={} 已应用于 {} 个节点: [{}]",
-                            param_name, new_value, affected.len(), affected.join(", "));
+                        safe_eprintln!(
+                            "[TestRunner] 修改: {}={} 已应用于 {} 个节点: [{}]",
+                            param_name,
+                            new_value,
+                            affected.len(),
+                            affected.join(", ")
+                        );
                     }
                 }
                 self.pending_modifications.clear();
@@ -284,13 +289,13 @@ impl TestRunner {
                         let _ = std::fs::rename(&qs_tmp, &qs_path);
 
                         // Build visual graph JSON from frontend_config
-                        let graph_json = build_visual_graph_json(
-                            &graph_id,
-                            &frontend_config,
-                        );
+                        let graph_json = build_visual_graph_json(&graph_id, &frontend_config);
                         let json_path = graph_dir.join(format!("{}.json", graph_id));
                         let json_tmp = json_path.with_extension("json.tmp");
-                        let _ = std::fs::write(&json_tmp, serde_json::to_string_pretty(&graph_json).unwrap_or_default());
+                        let _ = std::fs::write(
+                            &json_tmp,
+                            serde_json::to_string_pretty(&graph_json).unwrap_or_default(),
+                        );
                         let _ = std::fs::rename(&json_tmp, &json_path);
 
                         self.last_graph_id = Some(graph_id);
@@ -336,7 +341,10 @@ impl TestRunner {
                         ));
                     };
                     if *save {
-                        messages.push(format!("保存: 运行数据已捕获 ({} 个事件)", self.last_run_events_count));
+                        messages.push(format!(
+                            "保存: 运行数据已捕获 ({} 个事件)",
+                            self.last_run_events_count
+                        ));
                     }
                     messages.push(result);
                 }
@@ -355,11 +363,13 @@ impl TestRunner {
                         ));
                     }
                     let s = seed.unwrap_or(BACKTEST_TEST_SEED);
-                    let result = match if source == "historical_replay" {
-                        self.execute_backtest_historical(s)
-                    } else {
-                        self.execute_backtest_with_range(s, start.as_deref(), end.as_deref())
-                    } {
+                    let result = match with_mock_volatility(*volatility, || {
+                        if source == "historical_replay" {
+                            self.execute_backtest_historical(s)
+                        } else {
+                            self.execute_backtest_with_range(s, start.as_deref(), end.as_deref())
+                        }
+                    }) {
                         Ok(r) => r,
                         Err(e) => {
                             self.last_backtest_metrics.clear();
@@ -368,15 +378,13 @@ impl TestRunner {
                         }
                     };
                     if let Some(vol) = volatility {
-                        let bits = vol.to_bits();
-                        qrpc_runtime::MOCK_VOLATILITY.store(bits, std::sync::atomic::Ordering::Relaxed);
                         messages.push(format!("volatility={} (已应用)", vol));
-                    } else {
-                        qrpc_runtime::MOCK_VOLATILITY.store(0, std::sync::atomic::Ordering::Relaxed);
                     }
                     messages.push(result);
                     if *save {
-                        let backtest_dir = std::path::Path::new("storage").join("backtests").join(format!("backtest_{}", current_time_ms()));
+                        let backtest_dir = std::path::Path::new("storage")
+                            .join("backtests")
+                            .join(format!("backtest_{}", current_time_ms()));
                         let _ = std::fs::create_dir_all(&backtest_dir);
                         let artifact = serde_json::json!({
                             "saved_at_ms": current_time_ms(),
@@ -391,24 +399,17 @@ impl TestRunner {
                         }
                     }
                 }
-                TestActionDef::Assert(expr) => {
-                    match self.evaluate_assert(expr) {
-                        Ok(true) => messages.push(format!("assert({}) = true", expr)),
-                        Ok(false) => {
-                            let actual = resolve_assert_actual(self, expr);
-                            return Err(format!(
-                                "断言失败: {} (实际值: {})",
-                                expr, actual
-                            ));
-                        }
-                        Err(e) => return Err(format!("断言错误: {} — {}", expr, e)),
+                TestActionDef::Assert(expr) => match self.evaluate_assert(expr) {
+                    Ok(true) => messages.push(format!("assert({}) = true", expr)),
+                    Ok(false) => {
+                        let actual = resolve_assert_actual(self, expr);
+                        return Err(format!("断言失败: {} (实际值: {})", expr, actual));
                     }
-                }
+                    Err(e) => return Err(format!("断言错误: {} — {}", expr, e)),
+                },
                 TestActionDef::SaveRun => {
                     if self.backtest_history.is_empty() && self.last_run_equity.is_none() {
-                        return Err(
-                            "save_run: 没有先前的运行或回测可供保存".to_string()
-                        );
+                        return Err("save_run: 没有先前的运行或回测可供保存".to_string());
                     }
                     // L2-3: persist to storage/test-runs/
                     let dir = std::path::Path::new("storage").join("test-runs");
@@ -423,25 +424,28 @@ impl TestRunner {
                         "backtest_metrics": self.last_backtest_metrics,
                     });
                     let tmp = path.with_extension("tmp");
-                    std::fs::write(&tmp, serde_json::to_string_pretty(&data).unwrap_or_default())
-                        .map_err(|e| format!("save_run 错误: {e}"))?;
-                    std::fs::rename(&tmp, &path)
-                        .map_err(|e| format!("save_run 错误: {e}"))?;
+                    std::fs::write(
+                        &tmp,
+                        serde_json::to_string_pretty(&data).unwrap_or_default(),
+                    )
+                    .map_err(|e| format!("save_run 错误: {e}"))?;
+                    std::fs::rename(&tmp, &path).map_err(|e| format!("save_run 错误: {e}"))?;
                     messages.push(format!("save_run: 已持久化到 {}", path.display()));
                 }
-                TestActionDef::Modify {
-                    node,
-                    param,
-                    value,
-                } => {
+                TestActionDef::Modify { node, param, value } => {
                     let num_val = match value {
                         quantscript::TestParamValueDef::Number(n) => *n,
                         quantscript::TestParamValueDef::String(s) => s.parse().unwrap_or(0.0),
                         quantscript::TestParamValueDef::Bool(b) => {
-                            if *b { 1.0 } else { 0.0 }
+                            if *b {
+                                1.0
+                            } else {
+                                0.0
+                            }
                         }
                     };
-                    self.pending_modifications.push((node.clone(), param.clone(), num_val));
+                    self.pending_modifications
+                        .push((node.clone(), param.clone(), num_val));
                     if node.is_empty() {
                         messages.push(format!(
                             "modify: {} = {} (警告: 未指定节点，将在下次编译时应用于所有匹配的节点)",
@@ -487,13 +491,20 @@ impl TestRunner {
                 }
                 TestActionDef::Debug(vars) => {
                     self.last_debug_vars = Some(vars.clone());
-                    messages.push(format!("debug: 将在回测后追踪 {} 个变量: {}", vars.len(), vars.join(", ")));
+                    messages.push(format!(
+                        "debug: 将在回测后追踪 {} 个变量: {}",
+                        vars.len(),
+                        vars.join(", ")
+                    ));
                 }
                 TestActionDef::CompareBacktests { left, right } => {
-                    if *left >= self.backtest_history.len() || *right >= self.backtest_history.len() {
+                    if *left >= self.backtest_history.len() || *right >= self.backtest_history.len()
+                    {
                         return Err(format!(
                             "比较: 索引越界 (left={}, right={}, history_len={})",
-                            left, right, self.backtest_history.len()
+                            left,
+                            right,
+                            self.backtest_history.len()
                         ));
                     }
                     let left_metrics = &self.backtest_history[*left];
@@ -505,18 +516,25 @@ impl TestRunner {
                         let rv = right_metrics.get(key).copied().unwrap_or(0.0);
                         if (lv - rv).abs() > f64::EPSILON {
                             diffs.push(format!("{}: {} vs {}", key, lv, rv));
-                            diff_map.insert(key.clone(), serde_json::json!({
-                                "left": lv,
-                                "right": rv,
-                                "diff": rv - lv
-                            }));
+                            diff_map.insert(
+                                key.clone(),
+                                serde_json::json!({
+                                    "left": lv,
+                                    "right": rv,
+                                    "diff": rv - lv
+                                }),
+                            );
                         }
                     }
                     self.last_compare_diff = Some(serde_json::Value::Object(diff_map));
                     if diffs.is_empty() {
                         messages.push("比较: 相同".to_string());
                     } else {
-                        messages.push(format!("比较: {} 处差异 — {}", diffs.len(), diffs.join(", ")));
+                        messages.push(format!(
+                            "比较: {} 处差异 — {}",
+                            diffs.len(),
+                            diffs.join(", ")
+                        ));
                     }
                 }
             }
@@ -525,13 +543,16 @@ impl TestRunner {
     }
 
     /// Load exchange credentials — tries env vars first, then falls back to CredentialVault
-    fn load_exchange_credentials() -> Result<(Zeroizing<String>, Zeroizing<String>, Zeroizing<String>), String> {
+    fn load_exchange_credentials(
+    ) -> Result<(Zeroizing<String>, Zeroizing<String>, Zeroizing<String>), String> {
         // Try environment variables first
         let key_env = std::env::var("QUANTPILOT_EXCHANGE_KEY").ok();
         let secret_env = std::env::var("QUANTPILOT_EXCHANGE_SECRET").ok();
         let passphrase_env = std::env::var("QUANTPILOT_EXCHANGE_PASSPHRASE").ok();
 
-        if let (Some(ref key), Some(ref secret), Some(ref passphrase)) = (&key_env, &secret_env, &passphrase_env) {
+        if let (Some(ref key), Some(ref secret), Some(ref passphrase)) =
+            (&key_env, &secret_env, &passphrase_env)
+        {
             if !key.is_empty() && !secret.is_empty() && !passphrase.is_empty() {
                 return Ok((
                     Zeroizing::new(key.clone()),
@@ -542,19 +563,25 @@ impl TestRunner {
         }
 
         // Fall back to credential vault
-        let vault = CredentialVault::load()
-            .map_err(|e| format!("无法加载凭证保险库: {}", e))?;
+        let vault = CredentialVault::load().map_err(|e| format!("无法加载凭证保险库: {}", e))?;
         crate::safe_log::register_credential_patterns(vault.extract_secret_patterns());
 
-        let fields = vault.get_service("okx")
-            .ok_or_else(|| "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_KEY 或在凭证保险库中配置".to_string())?;
+        let fields = vault.get_service("okx").ok_or_else(|| {
+            "testnet 模式需要设置环境变量 QUANTPILOT_EXCHANGE_KEY 或在凭证保险库中配置".to_string()
+        })?;
 
         // v1.1.11: get_service 已返回 Zeroizing，无需外层再包装
-        let key = fields.get("key").cloned()
+        let key = fields
+            .get("key")
+            .cloned()
             .ok_or_else(|| "凭证标签 'okx' 中缺少 'key' 字段".to_string())?;
-        let secret = fields.get("secret").cloned()
+        let secret = fields
+            .get("secret")
+            .cloned()
             .ok_or_else(|| "凭证标签 'okx' 中缺少 'secret' 字段".to_string())?;
-        let passphrase = fields.get("passphrase").cloned()
+        let passphrase = fields
+            .get("passphrase")
+            .cloned()
             .ok_or_else(|| "凭证标签 'okx' 中缺少 'passphrase' 字段".to_string())?;
 
         Ok((key, secret, passphrase))
@@ -582,7 +609,12 @@ impl TestRunner {
 
         // Get balance
         let balance = match Self::okx_request(
-            &key, &secret, &passphrase, "GET", "/api/v5/account/balance", "",
+            &key,
+            &secret,
+            &passphrase,
+            "GET",
+            "/api/v5/account/balance",
+            "",
         ) {
             Ok(v) => v,
             Err(e) => return Err(format!("testnet 余额检查失败: {e}")),
@@ -604,7 +636,12 @@ impl TestRunner {
         while start_instant.elapsed().as_secs() < duration_secs && errors < max_errors {
             // Get latest ticker
             let ticker = match Self::okx_request(
-                &key, &secret, &passphrase, "GET", "/api/v5/market/ticker?instId=BTC-USDT", "",
+                &key,
+                &secret,
+                &passphrase,
+                "GET",
+                "/api/v5/market/ticker?instId=BTC-USDT",
+                "",
             ) {
                 Ok(v) => v,
                 Err(e) => {
@@ -633,13 +670,20 @@ impl TestRunner {
                     "px": aggressive_px,
                 });
                 match Self::okx_request(
-                    &key, &secret, &passphrase, "POST", "/api/v5/trade/order",
+                    &key,
+                    &secret,
+                    &passphrase,
+                    "POST",
+                    "/api/v5/trade/order",
                     &serde_json::to_string(&order_body).unwrap_or_default(),
                 ) {
                     Ok(v) => {
                         orders += 1;
                         let ord_id = v["data"][0]["ordId"].as_str().unwrap_or("?");
-                        status_summary = format!("order #{}: {} BTC @ {} (id={})", orders, qty, aggressive_px, ord_id);
+                        status_summary = format!(
+                            "order #{}: {} BTC @ {} (id={})",
+                            orders, qty, aggressive_px, ord_id
+                        );
                     }
                     Err(e) => {
                         errors += 1;
@@ -650,8 +694,13 @@ impl TestRunner {
 
             // Status update every 10 cycles
             if orders > 0 && orders.is_multiple_of(10) {
-                status_summary = format!("状态: 已下达 {} 个订单，{} 个错误，equity={:.2}，已耗时 {}s",
-                    orders, errors, total_eq, start_instant.elapsed().as_secs());
+                status_summary = format!(
+                    "状态: 已下达 {} 个订单，{} 个错误，equity={:.2}，已耗时 {}s",
+                    orders,
+                    errors,
+                    total_eq,
+                    start_instant.elapsed().as_secs()
+                );
             }
 
             std::thread::sleep(cycle_interval);
@@ -659,7 +708,11 @@ impl TestRunner {
 
         self.last_run_events_count = orders;
         self.last_run_equity = Some(total_eq);
-        self.last_run_status = Some(if errors >= max_errors { "error".to_string() } else { "completed".to_string() });
+        self.last_run_status = Some(if errors >= max_errors {
+            "error".to_string()
+        } else {
+            "completed".to_string()
+        });
 
         // 主动释放凭证，立即触发 Zeroizing 的零化 Drop
         drop(key);
@@ -667,11 +720,20 @@ impl TestRunner {
         drop(passphrase);
 
         if errors >= max_errors {
-            Err(format!("testnet 已中止: {} 个连续错误，最后: {}", errors, last_error))
+            Err(format!(
+                "testnet 已中止: {} 个连续错误，最后: {}",
+                errors, last_error
+            ))
         } else if orders == 0 {
-            Ok(format!("testnet: 未下达订单 (duration={}s, equity={:.2})", duration_secs, total_eq))
+            Ok(format!(
+                "testnet: 未下达订单 (duration={}s, equity={:.2})",
+                duration_secs, total_eq
+            ))
         } else {
-            Ok(format!("testnet: 已下达 {} 个订单，耗时 {}s，equity={:.2}，最后: {}", orders, duration_secs, total_eq, status_summary))
+            Ok(format!(
+                "testnet: 已下达 {} 个订单，耗时 {}s，equity={:.2}，最后: {}",
+                orders, duration_secs, total_eq, status_summary
+            ))
         }
     }
 
@@ -702,18 +764,18 @@ impl TestRunner {
         use sha2::Sha256;
         type HmacSha256 = Hmac<Sha256>;
 
-        // Rate limit: ensure at least 500ms between requests (OKX testnet limit ~2 req/s)
-        static LAST_REQUEST: std::sync::atomic::AtomicI64 = std::sync::atomic::AtomicI64::new(0);
-        let now = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap_or_default()
-            .as_millis() as i64;
-        let last = LAST_REQUEST.load(std::sync::atomic::Ordering::Relaxed);
-        let elapsed = now - last;
+        static LAST_REQUEST: OnceLock<std::sync::Mutex<i64>> = OnceLock::new();
+        let mut last_request = LAST_REQUEST
+            .get_or_init(|| std::sync::Mutex::new(0))
+            .lock()
+            .unwrap_or_else(|error| error.into_inner());
+        let now = current_time_ms() as i64;
+        let elapsed = now.saturating_sub(*last_request);
         if elapsed < 1000 {
             std::thread::sleep(std::time::Duration::from_millis((1000 - elapsed) as u64));
         }
-        LAST_REQUEST.store(now, std::sync::atomic::Ordering::Relaxed);
+        *last_request = current_time_ms() as i64;
+        drop(last_request);
 
         // Build agent with proxy support (shared static instance)
         let proxy_agent = Self::testnet_agent();
@@ -721,7 +783,9 @@ impl TestRunner {
         // Adaptive retry: up to 3 attempts with exponential backoff
         let mut last_err = String::new();
         for attempt in 0..3 {
-            let ts = chrono::Utc::now().format("%Y-%m-%dT%H:%M:%S.000Z").to_string();
+            let ts = chrono::Utc::now()
+                .format("%Y-%m-%dT%H:%M:%S.000Z")
+                .to_string();
             let sign_str = format!("{}{}{}{}", ts, method, path, body);
             let mut mac = HmacSha256::new_from_slice(secret_key.as_bytes())
                 .map_err(|e| format!("HMAC 错误: {e}"))?;
@@ -733,7 +797,8 @@ impl TestRunner {
             );
 
             let url = format!("https://www.okx.com{}", path);
-            let req = proxy_agent.request(method, &url)
+            let req = proxy_agent
+                .request(method, &url)
                 .set("OK-ACCESS-KEY", api_key)
                 .set("OK-ACCESS-SIGN", &sig)
                 .set("OK-ACCESS-TIMESTAMP", &ts)
@@ -761,7 +826,14 @@ impl TestRunner {
                     // Rate-limited or transient → retry with backoff
                     if code == "1" || status == 429 || status >= 500 {
                         let delay_ms = 1000 * (attempt + 1) as u64;
-                        last_err = format!("OKX {}/{}: {} (重试 {}/3, 退避 {}ms)", code, status, msg, attempt + 1, delay_ms);
+                        last_err = format!(
+                            "OKX {}/{}: {} (重试 {}/3, 退避 {}ms)",
+                            code,
+                            status,
+                            msg,
+                            attempt + 1,
+                            delay_ms
+                        );
                         std::thread::sleep(std::time::Duration::from_millis(delay_ms));
                         continue;
                     }
@@ -769,7 +841,9 @@ impl TestRunner {
                 }
                 Err(e) => {
                     last_err = format!("请求失败: {} (重试 {}/3)", e, attempt + 1);
-                    std::thread::sleep(std::time::Duration::from_millis(500 * (attempt + 1) as u64));
+                    std::thread::sleep(std::time::Duration::from_millis(
+                        500 * (attempt + 1) as u64,
+                    ));
                 }
             }
         }
@@ -782,9 +856,7 @@ impl TestRunner {
             .clone()
             .ok_or_else(|| "无编译结果".to_string())?;
         let mut sandbox = RealTimeSandbox::new(RuntimeCoordinator::new(compiled));
-        sandbox
-            .start()
-            .map_err(|e| format!("沙盒启动失败: {e}"))?;
+        sandbox.start().map_err(|e| format!("沙盒启动失败: {e}"))?;
         let now_ms = current_time_ms();
         let run_duration = std::cmp::min(duration_secs * 1000, RUN_WINDOW_MS);
         let session = sandbox
@@ -805,19 +877,29 @@ impl TestRunner {
             }
             // Infer events from other cycle data
             if !cycle.fill_reports.is_empty() {
-                *event_counts.entry("ExecutionFilled".to_string()).or_insert(0) += cycle.fill_reports.len();
+                *event_counts
+                    .entry("ExecutionFilled".to_string())
+                    .or_insert(0) += cycle.fill_reports.len();
             }
             if !cycle.execution_plans.is_empty() {
-                *event_counts.entry("ExecutionPlanned".to_string()).or_insert(0) += cycle.execution_plans.len();
+                *event_counts
+                    .entry("ExecutionPlanned".to_string())
+                    .or_insert(0) += cycle.execution_plans.len();
             }
             if !cycle.agent_decisions.is_empty() {
-                *event_counts.entry("AgentDecisionProduced".to_string()).or_insert(0) += cycle.agent_decisions.len();
+                *event_counts
+                    .entry("AgentDecisionProduced".to_string())
+                    .or_insert(0) += cycle.agent_decisions.len();
             }
             if !cycle.risk_decisions.is_empty() {
-                *event_counts.entry("RiskDecisionProduced".to_string()).or_insert(0) += cycle.risk_decisions.len();
+                *event_counts
+                    .entry("RiskDecisionProduced".to_string())
+                    .or_insert(0) += cycle.risk_decisions.len();
             }
             if !cycle.intent_signals.is_empty() {
-                *event_counts.entry("IntentTriggered".to_string()).or_insert(0) += cycle.intent_signals.len();
+                *event_counts
+                    .entry("IntentTriggered".to_string())
+                    .or_insert(0) += cycle.intent_signals.len();
             }
         }
         self.last_run_event_types = event_types;
@@ -839,11 +921,10 @@ impl TestRunner {
         end_date: Option<&str>,
     ) -> Result<String, String> {
         let now_ms = if let (Some(start), Some(end)) = (start_date, end_date) {
-            parse_date_range_ms(start, end)
-                .map_err(|e| format!("无效的日期范围: {e}"))?
+            parse_date_range_ms(start, end).map_err(|e| format!("无效的日期范围: {e}"))?
         } else if let Some(start) = start_date {
-            let start_ms = parse_iso_date_ms(start)
-                .map_err(|e| format!("无效的开始日期 '{}': {e}", start))?;
+            let start_ms =
+                parse_iso_date_ms(start).map_err(|e| format!("无效的开始日期 '{}': {e}", start))?;
             start_ms + 365 * 24 * 3600 * 1000
         } else {
             current_time_ms()
@@ -856,21 +937,17 @@ impl TestRunner {
             .compile_result
             .clone()
             .ok_or_else(|| "无编译结果".to_string())?;
-        let test_mode =
-            DeterministicTestMode::replay_defaults(now_ms, seed);
-        let mut sandbox =
-            FastBacktestSandbox::with_mock_replay_from_core_ir_and_test_mode(
-                compiled.core_ir.clone(),
-                now_ms,
-                test_mode,
-            )
-            .map_err(|e| format!("回测初始化失败: {e}"))?;
+        let test_mode = DeterministicTestMode::replay_defaults(now_ms, seed);
+        let mut sandbox = FastBacktestSandbox::with_mock_replay_from_core_ir_and_test_mode(
+            compiled.core_ir.clone(),
+            now_ms,
+            test_mode,
+        )
+        .map_err(|e| format!("回测初始化失败: {e}"))?;
         if let Some(ref debug_vars) = self.last_debug_vars {
             sandbox.debug_var_names = debug_vars.clone();
         }
-        sandbox
-            .start()
-            .map_err(|e| format!("回测启动失败: {e}"))?;
+        sandbox.start().map_err(|e| format!("回测启动失败: {e}"))?;
         let backtest = sandbox
             .run_backtest()
             .map_err(|e| format!("回测运行失败: {e}"))?;
@@ -884,18 +961,17 @@ impl TestRunner {
             .sum();
 
         // Count buy/sell fills and aggregate fees
-        let (buy_fills, sell_fills, total_fees, total_notional): (usize, usize, f64, f64) = backtest
-            .sessions
-            .iter()
-            .flat_map(|s| {
-                s.slow_cycle
-                    .fill_reports
-                    .iter()
-                    .chain(s.fast_cycle.fill_reports.iter())
-            })
-            .fold(
-                (0, 0, 0.0, 0.0),
-                |(buys, sells, fees, notional), fill| {
+        let (buy_fills, sell_fills, total_fees, total_notional): (usize, usize, f64, f64) =
+            backtest
+                .sessions
+                .iter()
+                .flat_map(|s| {
+                    s.slow_cycle
+                        .fill_reports
+                        .iter()
+                        .chain(s.fast_cycle.fill_reports.iter())
+                })
+                .fold((0, 0, 0.0, 0.0), |(buys, sells, fees, notional), fill| {
                     let fee = fill.fee_paid;
                     let qty = fill.filled_qty;
                     let price = fill.filled_price;
@@ -904,22 +980,22 @@ impl TestRunner {
                     } else {
                         (buys, sells + 1, fees + fee, notional + qty.abs() * price)
                     }
-                },
-            );
+                });
 
         // Compute win_rate from equity curve: count sessions where equity increased
-        let (ewins, elosses): (usize, usize) = backtest
-            .equity_curve
-            .windows(2)
-            .fold((0, 0), |(w, l), window| {
-                if window[1].equity > window[0].equity {
-                    (w + 1, l)
-                } else if window[1].equity < window[0].equity {
-                    (w, l + 1)
-                } else {
-                    (w, l)
-                }
-            });
+        let (ewins, elosses): (usize, usize) =
+            backtest
+                .equity_curve
+                .windows(2)
+                .fold((0, 0), |(w, l), window| {
+                    if window[1].equity > window[0].equity {
+                        (w + 1, l)
+                    } else if window[1].equity < window[0].equity {
+                        (w, l + 1)
+                    } else {
+                        (w, l)
+                    }
+                });
         let win_rate = if ewins + elosses > 0 {
             ewins as f64 / (ewins + elosses) as f64
         } else {
@@ -967,14 +1043,20 @@ impl TestRunner {
         metrics.insert("annual_volatility_pct".to_string(), annual_vol);
         metrics.insert("win_rate".to_string(), win_rate);
         if initial_equity > f64::EPSILON {
-            metrics.insert("fee_drag_pct".to_string(), total_fees / initial_equity * 100.0);
+            metrics.insert(
+                "fee_drag_pct".to_string(),
+                total_fees / initial_equity * 100.0,
+            );
             metrics.insert(
                 "turnover_ratio".to_string(),
                 total_notional / initial_equity,
             );
         }
         if total_fills > 0 {
-            metrics.insert("avg_fee_per_fill".to_string(), total_fees / total_fills as f64);
+            metrics.insert(
+                "avg_fee_per_fill".to_string(),
+                total_fees / total_fills as f64,
+            );
             metrics.insert(
                 "avg_trade_notional".to_string(),
                 total_notional / total_fills as f64,
@@ -984,23 +1066,28 @@ impl TestRunner {
         // Populate @debug per-bar data from equity curve + debug values
         if let Some(ref debug_vars) = self.last_debug_vars {
             let debug_rows = backtest.debug_values.as_ref();
-            let bars: Vec<_> = backtest.equity_curve.iter().enumerate().map(|(i, pt)| {
-                let mut bar = serde_json::Map::new();
-                bar.insert("bar".to_string(), serde_json::json!(i));
-                bar.insert("equity".to_string(), serde_json::json!(pt.equity));
-                bar.insert("timestamp_ms".to_string(), serde_json::json!(pt.ts_ms));
-                for var in debug_vars {
-                    let value = debug_rows
-                        .and_then(|rows| rows.get(i))
-                        .and_then(|row| {
-                            row.iter().find(|(k, _)| {
-                                k.contains(var.as_str()) || var.as_str().contains(k.as_str())
-                            }).map(|(_, v)| *v)
+            let bars: Vec<_> = backtest
+                .equity_curve
+                .iter()
+                .enumerate()
+                .map(|(i, pt)| {
+                    let mut bar = serde_json::Map::new();
+                    bar.insert("bar".to_string(), serde_json::json!(i));
+                    bar.insert("equity".to_string(), serde_json::json!(pt.equity));
+                    bar.insert("timestamp_ms".to_string(), serde_json::json!(pt.ts_ms));
+                    for var in debug_vars {
+                        let value = debug_rows.and_then(|rows| rows.get(i)).and_then(|row| {
+                            row.iter()
+                                .find(|(k, _)| {
+                                    k.contains(var.as_str()) || var.as_str().contains(k.as_str())
+                                })
+                                .map(|(_, v)| *v)
                         });
-                    bar.insert(var.clone(), serde_json::json!(value));
-                }
-                serde_json::Value::Object(bar)
-            }).collect();
+                        bar.insert(var.clone(), serde_json::json!(value));
+                    }
+                    serde_json::Value::Object(bar)
+                })
+                .collect();
             self.last_debug_bars = Some(serde_json::Value::Array(bars.iter().cloned().collect()));
         }
 
@@ -1027,16 +1114,12 @@ impl TestRunner {
             .ok_or_else(|| "无编译结果".to_string())?;
         let now_ms = current_time_ms();
         // Use historical_replay — requires local cache files
-        let mut sandbox = FastBacktestSandbox::with_replay_from_core_ir(
-            compiled.core_ir.clone(),
-            now_ms,
-        )
-        .map_err(|e| format!(
-            "历史回放需要缓存的市场数据。请先运行 paper 仿真来填充缓存。详情: {e}"
-        ))?;
-        sandbox
-            .start()
-            .map_err(|e| format!("回测启动失败: {e}"))?;
+        let mut sandbox =
+            FastBacktestSandbox::with_replay_from_core_ir(compiled.core_ir.clone(), now_ms)
+                .map_err(|e| {
+                    format!("历史回放需要缓存的市场数据。请先运行 paper 仿真来填充缓存。详情: {e}")
+                })?;
+        sandbox.start().map_err(|e| format!("回测启动失败: {e}"))?;
         let backtest = sandbox
             .run_backtest()
             .map_err(|e| format!("回测运行失败: {e}"))?;
@@ -1058,7 +1141,10 @@ impl TestRunner {
             .sessions
             .iter()
             .flat_map(|s| {
-                s.slow_cycle.fill_reports.iter().chain(s.fast_cycle.fill_reports.iter())
+                s.slow_cycle
+                    .fill_reports
+                    .iter()
+                    .chain(s.fast_cycle.fill_reports.iter())
             })
             .map(|f| f.fee_paid)
             .sum();
@@ -1071,31 +1157,73 @@ impl TestRunner {
         metrics.insert("total_fills".to_string(), total_fills as f64);
         metrics.insert("total_fees_paid".to_string(), total_fees);
         metrics.insert("net_profit".to_string(), summary.net_profit);
-        metrics.insert("total_return_pct".to_string(), summary.total_return_ratio * 100.0);
-        metrics.insert("max_drawdown_pct".to_string(), summary.drawdown_analysis.max_drawdown_ratio * 100.0);
+        metrics.insert(
+            "total_return_pct".to_string(),
+            summary.total_return_ratio * 100.0,
+        );
+        metrics.insert(
+            "max_drawdown_pct".to_string(),
+            summary.drawdown_analysis.max_drawdown_ratio * 100.0,
+        );
         metrics.insert("sharpe_ratio".to_string(), sharpe);
         metrics.insert("annual_return_pct".to_string(), annual_return);
         metrics.insert("annual_volatility_pct".to_string(), annual_vol);
         metrics.insert("initial_equity".to_string(), initial_equity);
         metrics.insert("final_equity".to_string(), final_equity);
         // v1.1.1: 嵌套字段的点分路径，使 .qs 场景支持 @assert backtest.metrics.risk_adjusted.sharpe_ratio
-        metrics.insert("risk_adjusted.sharpe_ratio".to_string(), summary.risk_adjusted.sharpe_ratio);
-        metrics.insert("risk_adjusted.sortino_ratio".to_string(), summary.risk_adjusted.sortino_ratio);
-        metrics.insert("risk_adjusted.calmar_ratio".to_string(), summary.risk_adjusted.calmar_ratio);
-        metrics.insert("risk_adjusted.var_95".to_string(), summary.risk_adjusted.var_95);
-        metrics.insert("risk_adjusted.cvar_95".to_string(), summary.risk_adjusted.cvar_95);
-        metrics.insert("trade_analysis.profit_factor".to_string(), summary.trade_analysis.profit_factor);
-        metrics.insert("trade_analysis.avg_win".to_string(), summary.trade_analysis.avg_win);
-        metrics.insert("trade_analysis.avg_loss".to_string(), summary.trade_analysis.avg_loss);
-        metrics.insert("drawdown_analysis.max_drawdown_ratio".to_string(), summary.drawdown_analysis.max_drawdown_ratio);
-        metrics.insert("drawdown_analysis.max_drawdown_duration_days".to_string(), summary.drawdown_analysis.max_drawdown_duration_days);
-        metrics.insert("drawdown_analysis.avg_drawdown_duration_days".to_string(), summary.drawdown_analysis.avg_drawdown_duration_days);
+        metrics.insert(
+            "risk_adjusted.sharpe_ratio".to_string(),
+            summary.risk_adjusted.sharpe_ratio,
+        );
+        metrics.insert(
+            "risk_adjusted.sortino_ratio".to_string(),
+            summary.risk_adjusted.sortino_ratio,
+        );
+        metrics.insert(
+            "risk_adjusted.calmar_ratio".to_string(),
+            summary.risk_adjusted.calmar_ratio,
+        );
+        metrics.insert(
+            "risk_adjusted.var_95".to_string(),
+            summary.risk_adjusted.var_95,
+        );
+        metrics.insert(
+            "risk_adjusted.cvar_95".to_string(),
+            summary.risk_adjusted.cvar_95,
+        );
+        metrics.insert(
+            "trade_analysis.profit_factor".to_string(),
+            summary.trade_analysis.profit_factor,
+        );
+        metrics.insert(
+            "trade_analysis.avg_win".to_string(),
+            summary.trade_analysis.avg_win,
+        );
+        metrics.insert(
+            "trade_analysis.avg_loss".to_string(),
+            summary.trade_analysis.avg_loss,
+        );
+        metrics.insert(
+            "drawdown_analysis.max_drawdown_ratio".to_string(),
+            summary.drawdown_analysis.max_drawdown_ratio,
+        );
+        metrics.insert(
+            "drawdown_analysis.max_drawdown_duration_days".to_string(),
+            summary.drawdown_analysis.max_drawdown_duration_days,
+        );
+        metrics.insert(
+            "drawdown_analysis.avg_drawdown_duration_days".to_string(),
+            summary.drawdown_analysis.avg_drawdown_duration_days,
+        );
         metrics.insert("skewness".to_string(), summary.skewness);
         metrics.insert("kurtosis".to_string(), summary.kurtosis);
         if let Some(ref bc) = summary.benchmark_comparison {
             metrics.insert("benchmark_comparison.alpha".to_string(), bc.alpha);
             metrics.insert("benchmark_comparison.beta".to_string(), bc.beta);
-            metrics.insert("benchmark_comparison.information_ratio".to_string(), bc.information_ratio);
+            metrics.insert(
+                "benchmark_comparison.information_ratio".to_string(),
+                bc.information_ratio,
+            );
         }
         self.last_backtest_metrics = metrics.clone();
         self.last_backtest_trades_count = summary.trade_count;
@@ -1152,10 +1280,16 @@ impl TestRunner {
                 if let Some(ref compiled) = self.compile_result {
                     let count_name = rest.trim_start_matches("counts.").trim();
                     let actual = match count_name {
-                        s if s.starts_with("data_sources") => compiled.config.data_sources.len() as f64,
-                        s if s.starts_with("intent_generators") || s.starts_with("intents") => compiled.config.intents.len() as f64,
+                        s if s.starts_with("data_sources") => {
+                            compiled.config.data_sources.len() as f64
+                        }
+                        s if s.starts_with("intent_generators") || s.starts_with("intents") => {
+                            compiled.config.intents.len() as f64
+                        }
                         s if s.starts_with("agents") => compiled.config.agents.len() as f64,
-                        s if s.starts_with("risks") || s.starts_with("risk_controls") => compiled.config.risks.len() as f64,
+                        s if s.starts_with("risks") || s.starts_with("risk_controls") => {
+                            compiled.config.risks.len() as f64
+                        }
                         _ => return Err(format!("未知的计数字段: {}", count_name)),
                     };
                     // Evaluate comparison against actual
@@ -1208,7 +1342,8 @@ impl TestRunner {
             }
             if rest.contains("events.length ==") || rest.contains("events.length==") {
                 let expected: usize = rest
-                    .split("==").nth(1)
+                    .split("==")
+                    .nth(1)
                     .and_then(|s| s.trim().parse().ok())
                     .unwrap_or(0);
                 return Ok(self.last_run_events_count == expected);
@@ -1223,7 +1358,10 @@ impl TestRunner {
                 for (op_str, op_fn) in &[
                     (">=", (|a: f64, b: f64| a >= b) as fn(f64, f64) -> bool),
                     ("<=", (|a, b| a <= b) as fn(f64, f64) -> bool),
-                    ("!=", (|a, b| (a - b).abs() > f64::EPSILON) as fn(f64, f64) -> bool),
+                    (
+                        "!=",
+                        (|a, b| (a - b).abs() > f64::EPSILON) as fn(f64, f64) -> bool,
+                    ),
                     (">", (|a, b| a > b) as fn(f64, f64) -> bool),
                     ("<", (|a, b| a < b) as fn(f64, f64) -> bool),
                 ] {
@@ -1255,9 +1393,7 @@ impl TestRunner {
                         .copied()
                         .unwrap_or(f64::NAN);
                     if actual.is_nan() {
-                        return Err(format!(
-                            "未知的回测指标: {}", metric_name
-                        ));
+                        return Err(format!("未知的回测指标: {}", metric_name));
                     }
                     return Ok((actual - expected).abs() < tolerance);
                 }
@@ -1317,7 +1453,10 @@ impl TestRunner {
                     event_map.insert(k.clone(), serde_json::Value::Number((*v as u64).into()));
                 }
                 if !event_map.is_empty() {
-                    snapshot.insert("event_types".to_string(), serde_json::Value::Object(event_map));
+                    snapshot.insert(
+                        "event_types".to_string(),
+                        serde_json::Value::Object(event_map),
+                    );
                 }
             }
             if let Some(ref status) = self.last_run_status {
@@ -1332,9 +1471,7 @@ impl TestRunner {
             for (k, v) in &self.last_backtest_metrics {
                 snapshot.insert(
                     format!("backtest_{}", k),
-                    serde_json::Value::Number(
-                        serde_json::Number::from_f64(*v).unwrap_or(0.into()),
-                    ),
+                    serde_json::Value::Number(serde_json::Number::from_f64(*v).unwrap_or(0.into())),
                 );
             }
         }
@@ -1345,7 +1482,9 @@ impl TestRunner {
             for (node_id, param, val) in &self.pending_modifications {
                 mod_map.insert(
                     format!("{}.{}", node_id, param),
-                    serde_json::Value::Number(serde_json::Number::from_f64(*val).unwrap_or(0.into())),
+                    serde_json::Value::Number(
+                        serde_json::Number::from_f64(*val).unwrap_or(0.into()),
+                    ),
                 );
             }
             snapshot.insert(
@@ -1376,6 +1515,26 @@ impl Default for TestRunner {
     fn default() -> Self {
         Self::new()
     }
+}
+
+fn with_mock_volatility<T>(
+    volatility: Option<f64>,
+    run: impl FnOnce() -> Result<T, String>,
+) -> Result<T, String> {
+    static MOCK_VOLATILITY_LOCK: OnceLock<std::sync::Mutex<()>> = OnceLock::new();
+    let _guard = MOCK_VOLATILITY_LOCK
+        .get_or_init(|| std::sync::Mutex::new(()))
+        .lock()
+        .unwrap_or_else(|error| error.into_inner());
+    let previous = qrpc_runtime::MOCK_VOLATILITY.load(std::sync::atomic::Ordering::Relaxed);
+    let active = volatility
+        .filter(|value| value.is_finite())
+        .map(f64::to_bits)
+        .unwrap_or(0);
+    qrpc_runtime::MOCK_VOLATILITY.store(active, std::sync::atomic::Ordering::Relaxed);
+    let result = run();
+    qrpc_runtime::MOCK_VOLATILITY.store(previous, std::sync::atomic::Ordering::Relaxed);
+    result
 }
 
 /// Parse ISO date "YYYY-MM-DD" to Unix millisecond timestamp
@@ -1413,7 +1572,10 @@ fn resolve_assert_actual(runner: &TestRunner, expr: &str) -> String {
     } else if expr.starts_with("run.events.length") {
         format!("{}", runner.last_run_events_count)
     } else if let Some(metric) = expr.strip_prefix("backtest.metrics.") {
-        let name = metric.split(|c: char| !c.is_alphanumeric() && c != '_').next().unwrap_or(metric);
+        let name = metric
+            .split(|c: char| !c.is_alphanumeric() && c != '_')
+            .next()
+            .unwrap_or(metric);
         if let Some(val) = runner.last_backtest_metrics.get(name) {
             format!("{:.6}", val)
         } else {
@@ -1444,10 +1606,7 @@ fn evaluate_numeric_assert(field_name: &str, actual: f64, rest: &str) -> Result<
 }
 
 /// Build a visual strategy graph JSON from frontend config for workspace rendering
-fn build_visual_graph_json(
-    graph_id: &str,
-    config: &FrontendRuntimeConfig,
-) -> serde_json::Value {
+fn build_visual_graph_json(graph_id: &str, config: &FrontendRuntimeConfig) -> serde_json::Value {
     let mut nodes = Vec::new();
     let mut edges = Vec::new();
     let mut y_offset = 50.0;
@@ -1609,52 +1768,69 @@ fn build_visual_graph_json(
     // Normalize nodes to frontend store format:
     // - Add top-level `config` (required by graph_api save→QS generation)
     // - Add top-level `module_key`, `input_ports`, `output_ports` (required by isValidConnection validation)
-    let nodes_normalized: Vec<_> = nodes.into_iter().map(|mut node| {
-        if let Some(obj) = node.as_object_mut() {
-            // Copy module_key from data.subtitle to top level
-            if !obj.contains_key("module_key") {
-                if let Some(subtitle) = obj.get("data").and_then(|d| d.get("subtitle")).and_then(|v| v.as_str()) {
-                    obj.insert("module_key".to_string(), serde_json::json!(subtitle));
+    let nodes_normalized: Vec<_> = nodes
+        .into_iter()
+        .map(|mut node| {
+            if let Some(obj) = node.as_object_mut() {
+                // Copy module_key from data.subtitle to top level
+                if !obj.contains_key("module_key") {
+                    if let Some(subtitle) = obj
+                        .get("data")
+                        .and_then(|d| d.get("subtitle"))
+                        .and_then(|v| v.as_str())
+                    {
+                        obj.insert("module_key".to_string(), serde_json::json!(subtitle));
+                    }
+                }
+                // Copy input_ports from data.inputPorts to top level
+                if !obj.contains_key("input_ports") {
+                    if let Some(ports) = obj.get("data").and_then(|d| d.get("inputPorts")).cloned()
+                    {
+                        obj.insert("input_ports".to_string(), ports);
+                    }
+                }
+                // Copy output_ports from data.outputPorts to top level
+                if !obj.contains_key("output_ports") {
+                    if let Some(ports) = obj.get("data").and_then(|d| d.get("outputPorts")).cloned()
+                    {
+                        obj.insert("output_ports".to_string(), ports);
+                    }
+                }
+                // Copy config from data.config to top level
+                if let Some(data_config) = obj.get("data").and_then(|d| d.get("config")).cloned() {
+                    obj.insert("config".to_string(), data_config);
+                }
+                if obj.get("type").and_then(|t| t.as_str()) == Some("runtime") {
+                    obj.entry("config").or_insert_with(|| {
+                        serde_json::json!({
+                            "mode": config.metadata.mode
+                        })
+                    });
+                }
+                // Ensure ui_state and runtime_state exist at top level
+                if !obj.contains_key("ui_state") {
+                    obj.insert(
+                        "ui_state".to_string(),
+                        serde_json::json!({"collapsed": false}),
+                    );
+                }
+                if !obj.contains_key("runtime_state") {
+                    obj.insert(
+                        "runtime_state".to_string(),
+                        serde_json::json!({
+                            "status": "idle",
+                            "last_event_type": null,
+                            "last_event_time": null,
+                            "last_message": "",
+                            "metrics": {},
+                            "error": null
+                        }),
+                    );
                 }
             }
-            // Copy input_ports from data.inputPorts to top level
-            if !obj.contains_key("input_ports") {
-                if let Some(ports) = obj.get("data").and_then(|d| d.get("inputPorts")).cloned() {
-                    obj.insert("input_ports".to_string(), ports);
-                }
-            }
-            // Copy output_ports from data.outputPorts to top level
-            if !obj.contains_key("output_ports") {
-                if let Some(ports) = obj.get("data").and_then(|d| d.get("outputPorts")).cloned() {
-                    obj.insert("output_ports".to_string(), ports);
-                }
-            }
-            // Copy config from data.config to top level
-            if let Some(data_config) = obj.get("data").and_then(|d| d.get("config")).cloned() {
-                obj.insert("config".to_string(), data_config);
-            }
-            if obj.get("type").and_then(|t| t.as_str()) == Some("runtime") {
-                obj.entry("config").or_insert_with(|| serde_json::json!({
-                    "mode": config.metadata.mode
-                }));
-            }
-            // Ensure ui_state and runtime_state exist at top level
-            if !obj.contains_key("ui_state") {
-                obj.insert("ui_state".to_string(), serde_json::json!({"collapsed": false}));
-            }
-            if !obj.contains_key("runtime_state") {
-                obj.insert("runtime_state".to_string(), serde_json::json!({
-                    "status": "idle",
-                    "last_event_type": null,
-                    "last_event_time": null,
-                    "last_message": "",
-                    "metrics": {},
-                    "error": null
-                }));
-            }
-        }
-        node
-    }).collect();
+            node
+        })
+        .collect();
 
     serde_json::json!({
         "metadata": {
@@ -1685,7 +1861,10 @@ fn parse_value_with_tolerance(input: &str) -> (f64, f64) {
     if let Some(open) = input.find('(') {
         if let Some(close) = input.find(')') {
             let value: f64 = input[..open].trim().parse().unwrap_or(0.0);
-            let tol: f64 = input[open + 1..close].trim().parse().unwrap_or(f64::EPSILON);
+            let tol: f64 = input[open + 1..close]
+                .trim()
+                .parse()
+                .unwrap_or(f64::EPSILON);
             return (value, tol);
         }
     }
