@@ -113,7 +113,7 @@ v3.7.1 系统应被理解为：
 
 v3.7.0 完成 v3.5.0→v3.7.0 全版本演进 (12 项新功能 + 32 项审计修复 + 12 项 UX 优化 + 14 项 P3 消化)。
 
-v3.7.1 是其后的 PATCH 收口：已修复 S0 登录挂起、P1 凭证 DELETE 405 和 P2 测试进程文件锁问题，并把 pre-commit、CI、closeout/release 三层门禁重新对齐。2026-05-24 全量复查后，v3.7.2 被定义为质量补丁：保持 strict safe fallback，修复 E2E 预期，新增 workspace clippy warning budget，并把 closeout 升级为 23 项，最终归档以 v3.7.2 closeout 复跑为准。
+v3.7.1 是其后的 PATCH 收口：已修复 S0 登录挂起、P1 凭证 DELETE 405 和 P2 测试进程文件锁问题，并把 pre-commit、CI、closeout/release 三层门禁重新对齐。2026-05-24 全量复查后，v3.7.2 被定义为质量补丁：保持 strict safe fallback，修复 E2E 预期，新增 workspace clippy warning budget，并把 closeout 升级为 23 项；本地 closeout 已 23/23 通过。
 
 使用下面的专用文档作为活跃发布界面：
 
@@ -159,7 +159,7 @@ v3.7.1 是其后的 PATCH 收口：已修复 S0 登录挂起、P1 凭证 DELETE 
 | 版本号一致性 | ✅ | 关键元数据和用户可见入口统一到 3.7.1 |
 | GP 合规 | ✅ | 当前 GP 已同步到 v3.7.1，v3.7.1 不扩大功能声明 |
 | 超级规范化 | ✅ | v3.7.1 对齐 pre-commit / CI / closeout 三层门禁 |
-| 完整 closeout | 📋 | v3.7.2 已升级为 23 项；最终归档需在提交后复跑并通过干净工作区检查 |
+| 完整 closeout | ✅ | v3.7.2 已升级为 23 项；2026-05-24 本地复跑 23/23 通过，最终 `git status --short` 为空 |
 
 ## 五维度评分 (v3.7.1 final closeout)
 
@@ -167,7 +167,7 @@ v3.7.1 是其后的 PATCH 收口：已修复 S0 登录挂起、P1 凭证 DELETE 
 |------|:--:|------|
 | **功能开发进度** | **9.5/10** | 18 指标全实现 / 实时执行端 + OKX testnet / Paper/Live 切换 / 编译缓存 / Toast 系统 |
 | **仓库稳定程度** | **9.4/10** | workspace test 通过 / vitest 289/289 / executor warning 0 / closeout 正在 v3.7.2 收口 |
-| **发布就绪度** | **9.3/10** | P1 清零 / GP+超规范化 v3.7.1 对齐 / 版本一致性 / v3.7.2 closeout 待最终复跑 |
+| **发布就绪度** | **9.6/10** | P1 清零 / GP+超规范化 v3.7.1 对齐 / 版本一致性 / v3.7.2 closeout 23/23 通过 |
 | **用户友好程度** | **9.5/10** | 术语全中文化 / 空状态引导 / 进度反馈 / 错误码映射 / ARIA 无障碍 / prefers-reduced-motion |
 | **系统整体稳定性** | **9.3/10** | 事务保护 / TOCTOU 修复 / 三阶段无锁恢复 / 状态持久化 / Zeroizing / api_guard 强制 |
 | **加权** | **9.4/10** | 加权 = 9.5×0.3 + 9.4×0.3 + 9.3×0.2 + 9.5×0.1 + 9.3×0.1 |

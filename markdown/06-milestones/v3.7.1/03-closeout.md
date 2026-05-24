@@ -48,7 +48,7 @@ v3.7.1 不是功能扩张版本，而是 v3.7.0 后的回归修复与工作流�
 
 | 门禁 | 状态 | 记录 |
 |------|:--:|------|
-| `tools/check-utf8.ps1` | ✅ | 最新 v3.7.2 本地复验为 566 文件 UTF-8 校验通过 |
+| `tools/check-utf8.ps1` | ✅ | 最新 v3.7.2 本地复验为 570 文件 UTF-8 校验通过 |
 | `tools/check-user-facing-text.ps1` | ✅ | 348 个当前用户可见入口 / 活跃规范文件通过 |
 | `tools/check-capability-governance.ps1` | ✅ | 快照已更新并复验通过 |
 | `tools/check-i18n.ps1` | ✅ | 未发现英文用户可见字符串 |
@@ -62,11 +62,11 @@ v3.7.1 不是功能扩张版本，而是 v3.7.0 后的回归修复与工作流�
 | `tools/check-executor-warning-budget.ps1 -MaxWarnings 0` | ✅ | 0/0，通过；新增 warning 会阻断 |
 | `frontend npm run build` | ✅ | 构建通过；保留既有 circular chunk warning |
 | `frontend npm run test` | ✅ | 最新本地复验为 96 文件 / 289 测试通过 |
-| `frontend npm run test:e2e` | ✅ | 2026-05-24 v3.7.2 本地复验 21/21 通过；最终归档仍以 23 项 closeout 为准 |
+| `frontend npm run test:e2e` | ✅ | 2026-05-24 v3.7.2 本地复验 21/21 通过 |
 | `frontend npm audit --audit-level=moderate` | ✅ | `npm audit fix` 后 0 vulnerability |
 | `frontend-executor npm run build` | ✅ | 构建通过，`dist/index.html` 已刷新到 v3.7.1 |
 | `cargo test --bin executor -- --test-threads=1` | ✅ | 21/21 通过 |
-| `tools/run-closeout-gates.bat` | 🚧 | v3.7.2 已升级为 23 项；最终归档需在提交后复跑并通过干净工作区检查 |
+| `tools/run-closeout-gates.bat` | ✅ | v3.7.2 已升级为 23 项；2026-05-24 本地复跑 23/23 通过 |
 
 ## 四、剩余风险
 

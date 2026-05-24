@@ -141,7 +141,7 @@ cd frontend; npm run test:perf:react-flow
 | Rust 格式基线 | ✅ | 全仓 `cargo fmt` 已落地，pre-commit / CI / closeout 均执行 `cargo fmt --check` |
 | 版本一致性 | ✅ | Cargo、Tauri、前端 package、lockfile 和关键文档统一到 `3.7.1` |
 | executor warning 债务 | ✅ | 当前预算 0；新增 warning 会失败 |
-| 完整 closeout | 📋 | v3.7.2 已将 closeout 升级为 23 项；最终归档以 v3.7.2 复跑结果为准 |
+| 完整 closeout | ✅ | v3.7.2 已将 closeout 升级为 23 项，2026-05-24 本地复跑 23/23 通过 |
 
 ## 文档入口
 
