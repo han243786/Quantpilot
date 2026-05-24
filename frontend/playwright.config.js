@@ -2,6 +2,10 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  testIgnore: [
+    "**/perf-*-review.spec.js",
+    "**/visual-responsive-review.spec.js"
+  ],
   timeout: 30_000,
   fullyParallel: false,
   use: {

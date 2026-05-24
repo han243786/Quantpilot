@@ -24,15 +24,30 @@ describe("strategyHubInspectorActions", () => {
     expect(groups).toEqual([
       expect.objectContaining({
         key: "build",
-        items: [expect.objectContaining({ key: "open-workspace", ariaLabel: "打开 Alpha strategy 工作区" })]
+        items: [
+          expect.objectContaining({
+            key: "open-workspace",
+            ariaLabel: "打开策略 Alpha strategy（alpha_strategy）的工作区"
+          })
+        ]
       }),
       expect.objectContaining({
         key: "research",
-        items: [expect.objectContaining({ key: "open-backtests", ariaLabel: "打开 Alpha strategy 回测页" })]
+        items: [
+          expect.objectContaining({
+            key: "open-backtests",
+            ariaLabel: "打开策略 Alpha strategy（alpha_strategy）的回测页"
+          })
+        ]
       }),
       expect.objectContaining({
         key: "manage",
-        items: [expect.objectContaining({ key: "refresh-strategy-data", ariaLabel: "刷新 Alpha strategy 策略数据" })]
+        items: [
+          expect.objectContaining({
+            key: "refresh-strategy-data",
+            ariaLabel: "刷新策略 Alpha strategy（alpha_strategy）的数据"
+          })
+        ]
       })
     ]);
   });

@@ -15,6 +15,9 @@
 /frontend/playwright-report/
 /frontend/.playwright-browsers/
 /frontend/.vite/
+/frontend-executor/node_modules/
+/frontend-executor/dist/
+/frontend-executor/.vite/
 
 # Local environment overrides
 /.env

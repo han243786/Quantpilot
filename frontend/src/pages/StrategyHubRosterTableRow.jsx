@@ -1,6 +1,9 @@
+import { buildStrategyIdentity } from "../utils/strategyHubStrategyIdentity";
 import StrategyHubRosterRowActions from "./StrategyHubRosterRowActions";
 
 export default function StrategyHubRosterTableRow({ model, row }) {
+  const strategyIdentity = buildStrategyIdentity(row);
+
   return (
     <div
       className={`strategy-row-shell${row.active ? " strategy-row-shell--active" : ""}`}
@@ -11,7 +14,7 @@ export default function StrategyHubRosterTableRow({ model, row }) {
           type="checkbox"
           checked={row.selected}
           onChange={() => model.toggleStrategySelection(row.graphId)}
-          aria-label={`选择 ${row.name}`}
+          aria-label={`选择策略 ${strategyIdentity}`}
         />
       </label>
       <button

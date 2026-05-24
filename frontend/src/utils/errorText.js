@@ -31,11 +31,15 @@ export function sanitizeDisplayText(value, fallback = "") {
 }
 
 function extractMessageFromJson(raw) {
+  const trimmed = raw.trim();
+  if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) return raw;
   try {
-    const parsed = JSON.parse(raw);
+    const parsed = JSON.parse(trimmed);
     if (isString(parsed?.message)) return parsed.message;
     if (isString(parsed?.error)) return parsed.error;
-  } catch (e) { console.warn("errorText: extractMessageFromJson failed", e); /* 非 JSON 消息直接返回原文 */ }
+  } catch {
+    // 非结构化或截断响应按原文展示。这里不打印 warning，避免负向错误路径污染测试和 CI 日志。
+  }
   return raw;
 }
 

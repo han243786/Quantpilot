@@ -3,9 +3,11 @@ import {
   strategyBacktestsPath,
   strategyWorkspacePath
 } from "../router";
+import { buildStrategyIdentity } from "./strategyHubStrategyIdentity";
 
 export function projectStrategyHubInspectorActionGroups(selectedStrategy) {
   if (!selectedStrategy) return [];
+  const strategyIdentity = buildStrategyIdentity(selectedStrategy);
 
   return [
     {
@@ -16,7 +18,7 @@ export function projectStrategyHubInspectorActionGroups(selectedStrategy) {
         {
           key: "open-workspace",
           label: "打开工作区",
-          ariaLabel: `打开 ${selectedStrategy.name} 工作区`
+          ariaLabel: `打开策略 ${strategyIdentity}的工作区`
         }
       ]
     },
@@ -28,7 +30,7 @@ export function projectStrategyHubInspectorActionGroups(selectedStrategy) {
         {
           key: "open-backtests",
           label: "打开回测页",
-          ariaLabel: `打开 ${selectedStrategy.name} 回测页`
+          ariaLabel: `打开策略 ${strategyIdentity}的回测页`
         }
       ]
     },
@@ -40,7 +42,7 @@ export function projectStrategyHubInspectorActionGroups(selectedStrategy) {
         {
           key: "refresh-strategy-data",
           label: "刷新策略数据",
-          ariaLabel: `刷新 ${selectedStrategy.name} 策略数据`
+          ariaLabel: `刷新策略 ${strategyIdentity}的数据`
         }
       ]
     }

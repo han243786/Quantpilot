@@ -1,6 +1,8 @@
 import { navigateTo, strategyBacktestsPath, strategyWorkspacePath } from "../router";
+import { buildStrategyIdentity } from "./strategyHubStrategyIdentity";
 
 export function projectStrategyHubRosterRowActionGroups(row) {
+  const strategyIdentity = buildStrategyIdentity(row);
   return [
     {
       key: "build",
@@ -10,7 +12,7 @@ export function projectStrategyHubRosterRowActionGroups(row) {
         {
           key: "open-workspace",
           label: "打开工作区",
-          ariaLabel: `打开 ${row.name} 工作区`,
+          ariaLabel: `打开策略 ${strategyIdentity}的工作区`,
           disabled: false
         }
       ]
@@ -23,7 +25,7 @@ export function projectStrategyHubRosterRowActionGroups(row) {
         {
           key: "open-backtests",
           label: "打开回测页",
-          ariaLabel: `打开 ${row.name} 回测页`,
+          ariaLabel: `打开策略 ${strategyIdentity}的回测页`,
           disabled: false
         }
       ]
@@ -36,7 +38,7 @@ export function projectStrategyHubRosterRowActionGroups(row) {
         {
           key: "reveal-file",
           label: "打开文件位置",
-          ariaLabel: `打开 ${row.name} 文件位置`,
+          ariaLabel: `打开策略 ${strategyIdentity}的文件位置`,
           disabled: !row.hasFilePath
         }
       ]
@@ -49,7 +51,7 @@ export function projectStrategyHubRosterRowActionGroups(row) {
         {
           key: "delete-strategy",
           label: "删除策略",
-          ariaLabel: `删除 ${row.name} 策略`,
+          ariaLabel: `删除策略 ${strategyIdentity}`,
           disabled: false,
           buttonClassName: "danger-btn compact-btn"
         }

@@ -44,7 +44,9 @@ describe("strategyHubRosterRowActions", () => {
         items: [expect.objectContaining({ key: "delete-strategy", disabled: false })]
       })
     ]);
-    expect(groups[0].items[0].ariaLabel).toBe("打开 Alpha strategy 工作区");
+    expect(groups[0].items[0].ariaLabel).toBe(
+      "打开策略 Alpha strategy（alpha_strategy）的工作区"
+    );
   });
 
   it("routes row actions through the extracted semantic dispatcher", async () => {

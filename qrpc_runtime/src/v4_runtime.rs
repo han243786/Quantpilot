@@ -487,13 +487,13 @@ impl V4PaperSimulatedRuntime {
     ) -> Result<Self> {
         if runtime_mode != RuntimeTradingMode::PaperSimulated {
             return Err(anyhow!(
-                "v4 Phase 5 runtime only accepts PaperSimulated mode, got {:?}",
+                "v4 Phase 5 runtime 只允许 PaperSimulated 模式，实际收到 {:?}",
                 runtime_mode
             ));
         }
         graph.validate_static_contract().map_err(|errors| {
             anyhow!(
-                "v4 machine graph failed static contract before PaperSimulated runtime: {:?}",
+                "v4 machine graph 在进入 PaperSimulated runtime 前未通过静态契约: {:?}",
                 errors
             )
         })?;
@@ -504,7 +504,7 @@ impl V4PaperSimulatedRuntime {
                 .states
                 .iter()
                 .find(|state| state.initial)
-                .ok_or_else(|| anyhow!("machine `{}` has no initial state", machine.machine_id))?;
+                .ok_or_else(|| anyhow!("machine `{}` 缺少初始状态", machine.machine_id))?;
             let memory = machine
                 .memory
                 .iter()
@@ -587,7 +587,7 @@ impl V4PaperSimulatedRuntime {
             .validate_required_capability_sources(&required_capabilities)
             .map_err(|errors| {
                 anyhow!(
-                    "v4 execution capability policy failed static contract: {:?}",
+                    "v4 execution capability policy 未通过静态契约: {:?}",
                     errors
                 )
             })?;
@@ -676,7 +676,7 @@ impl V4PaperSimulatedRuntime {
         let start_index = self.event_log.len();
         let cache_policy = self
             .machine_spec(machine_id)
-            .ok_or_else(|| anyhow!("unknown machine `{machine_id}`"))?
+            .ok_or_else(|| anyhow!("未知 machine `{machine_id}`"))?
             .cache_policy
             .clone();
         let mut cached_to_return = None;
@@ -685,7 +685,7 @@ impl V4PaperSimulatedRuntime {
             let state = self
                 .machines
                 .get_mut(machine_id)
-                .ok_or_else(|| anyhow!("unknown machine `{machine_id}`"))?;
+                .ok_or_else(|| anyhow!("未知 machine `{machine_id}`"))?;
             state.last_pulled_at_ms = Some(now_ms);
             if state.status == V4MachineRuntimeStatus::SoftSilent {
                 if matches!(cache_policy, MachineCachePolicy::ReturnLastThenRecover) {
@@ -733,7 +733,7 @@ impl V4PaperSimulatedRuntime {
             let state = self
                 .machines
                 .get_mut(machine_id)
-                .ok_or_else(|| anyhow!("unknown machine `{machine_id}`"))?;
+                .ok_or_else(|| anyhow!("未知 machine `{machine_id}`"))?;
             let should_complete = state.status == V4MachineRuntimeStatus::Recovering;
             if should_complete {
                 state.status = V4MachineRuntimeStatus::Active;
@@ -768,9 +768,7 @@ impl V4PaperSimulatedRuntime {
         now_ms: u64,
     ) -> Result<Vec<V4RuntimeEventEnvelope>> {
         if !price.is_finite() || price <= 0.0 {
-            return Err(anyhow!(
-                "simulated market price must be finite and greater than zero"
-            ));
+            return Err(anyhow!("模拟行情价格必须是有限数且大于 0"));
         }
 
         let start_index = self.event_log.len();
@@ -875,9 +873,9 @@ impl V4PaperSimulatedRuntime {
             live_actual_submission_allowed: false,
             rejection_before_provider_submit: !self.provider_order_submission_attached,
             reason: if self.provider_order_submission_attached {
-                "provider order submission is attached by runtime configuration".to_string()
+                "运行时配置已接入 provider 下单提交".to_string()
             } else {
-                "v4 PaperSimulated runtime keeps VenueAdapter submission detached; provider-native order submission must be rejected before provider submit".to_string()
+                "v4 PaperSimulated runtime 保持 VenueAdapter 提交断开；provider_native 下单必须在提交 provider 前拒绝".to_string()
             },
         }
     }
@@ -897,7 +895,7 @@ impl V4PaperSimulatedRuntime {
             steps += 1;
             if steps > V4_RUNTIME_MAX_EVENT_STEPS {
                 return Err(anyhow!(
-                    "v4 runtime exceeded max event steps {}",
+                    "v4 runtime 超过最大事件步数 {}",
                     V4_RUNTIME_MAX_EVENT_STEPS
                 ));
             }
@@ -1187,12 +1185,12 @@ impl V4PaperSimulatedRuntime {
                 venue_id: "<missing>".to_string(),
                 runtime_mode: self.runtime_mode,
                 accepted: false,
-                reason: "Execution capability policy is missing".to_string(),
+                reason: "缺少 execution capability policy".to_string(),
                 entries: vec![V4ExecutionCapabilityRuntimeEntry {
                     capability: ExecutionCapabilityKind::Market,
                     source: CapabilitySupportSource::Unsupported,
                     status: V4ExecutionCapabilityRuntimeStatus::PolicyMissing,
-                    reason: "Execution capability policy is missing".to_string(),
+                    reason: "缺少 execution capability policy".to_string(),
                 }],
                 provider_order_submission_attached: self.provider_order_submission_attached,
                 ts_ms,
@@ -1207,8 +1205,7 @@ impl V4PaperSimulatedRuntime {
                 venue_id: policy.venue_matrix.venue_id.clone(),
                 runtime_mode: self.runtime_mode,
                 accepted: false,
-                reason: "ExecutionMachine requires at least one declared execution capability"
-                    .to_string(),
+                reason: "ExecutionMachine 至少需要声明一个 execution capability".to_string(),
                 entries: Vec::new(),
                 provider_order_submission_attached: self.provider_order_submission_attached,
                 ts_ms,
@@ -1225,7 +1222,7 @@ impl V4PaperSimulatedRuntime {
                 Some(entry) => entry,
                 None => {
                     let reason = format!(
-                        "execution capability `{:?}` is not declared for venue `{}`",
+                        "execution capability `{:?}` 未在 venue `{}` 中声明",
                         capability, policy.venue_matrix.venue_id
                     );
                     errors.push(reason.clone());
@@ -1241,7 +1238,7 @@ impl V4PaperSimulatedRuntime {
 
             if matches!(entry.source, CapabilitySupportSource::Unsupported) {
                 let reason = format!(
-                    "execution capability `{:?}` is unsupported for venue `{}`",
+                    "execution capability `{:?}` 在 venue `{}` 中不受支持",
                     capability, policy.venue_matrix.venue_id
                 );
                 errors.push(reason.clone());
@@ -1264,8 +1261,8 @@ impl V4PaperSimulatedRuntime {
                     source,
                     status: V4ExecutionCapabilityRuntimeStatus::Accepted,
                     reason: format!(
-                        "execution capability `{:?}` is accepted as `{:?}` in `{:?}`",
-                        capability, source, self.runtime_mode
+                        "execution capability `{:?}` 在 runtime mode `{:?}` 下以 `{:?}` 来源通过",
+                        capability, self.runtime_mode, source
                     ),
                 }),
                 Err(reason) => {
@@ -1287,7 +1284,7 @@ impl V4PaperSimulatedRuntime {
             runtime_mode: self.runtime_mode,
             accepted: errors.is_empty(),
             reason: if errors.is_empty() {
-                "Execution capabilities accepted for runtime mode".to_string()
+                "execution capabilities 已通过当前 runtime mode 校验".to_string()
             } else {
                 errors.join("; ")
             },
@@ -1327,7 +1324,7 @@ impl V4PaperSimulatedRuntime {
         let runtime_mode_contract = default_v4_runtime_mode_contract();
         let mode_spec = runtime_mode_contract
             .mode_spec(self.runtime_mode)
-            .ok_or_else(|| anyhow!("runtime mode `{:?}` is not declared", self.runtime_mode))?;
+            .ok_or_else(|| anyhow!("未声明 runtime mode `{:?}`", self.runtime_mode))?;
 
         if mode_spec.settlement_authority != RuntimeSettlementAuthority::LocalSimulated {
             let request = self.build_simulated_order_request(machine_id, event);
@@ -1335,7 +1332,7 @@ impl V4PaperSimulatedRuntime {
                 request,
                 event.sequence,
                 ts_ms,
-                "runtime mode is not local_simulated; provider submission is detached".to_string(),
+                "runtime mode 不是 local_simulated；provider submission 已断开".to_string(),
             ));
         }
 
@@ -1430,7 +1427,7 @@ impl V4PaperSimulatedRuntime {
         request: &V4SimulatedOrderRequest,
     ) -> Result<(), String> {
         let Some(policy) = &self.execution.capability_policy else {
-            return Err("Execution capability policy is missing".to_string());
+            return Err("缺少 execution capability policy".to_string());
         };
         let runtime_mode_contract = default_v4_runtime_mode_contract();
         let mut errors = Vec::new();
@@ -1650,7 +1647,7 @@ impl V4SimulatedExecutionRuntimeState {
                 request,
                 source_event_sequence,
                 ts_ms,
-                "local simulated liquidity is zero".to_string(),
+                "本地模拟流动性为 0".to_string(),
             );
         }
         if fill_quantity + f64::EPSILON < requested_quantity {
@@ -1659,7 +1656,7 @@ impl V4SimulatedExecutionRuntimeState {
                     request,
                     source_event_sequence,
                     ts_ms,
-                    "FOK order cannot be fully filled by local simulated liquidity".to_string(),
+                    "FOK 订单无法被本地模拟流动性完全成交".to_string(),
                 );
             }
             if !request.allow_partial_fill {
@@ -1667,7 +1664,7 @@ impl V4SimulatedExecutionRuntimeState {
                     request,
                     source_event_sequence,
                     ts_ms,
-                    "partial fill is disabled for this local simulated order".to_string(),
+                    "当前本地模拟订单未启用部分成交".to_string(),
                 );
             }
         }
@@ -1839,39 +1836,30 @@ impl V4SimulatedExecutionRuntimeState {
         match request.action {
             V4SimulatedPositionAction::CloseLong => {
                 if current_qty <= 0.0 {
-                    return Err("close_long requires an existing long position".to_string());
+                    return Err("close_long 需要已有多头持仓".to_string());
                 }
                 if request.quantity > current_qty + f64::EPSILON && !request.allow_partial_fill {
-                    return Err(
-                        "close_long quantity exceeds existing long position and partial fill is disabled"
-                            .to_string(),
-                    );
+                    return Err("close_long 数量超过已有多头持仓，且未启用部分成交".to_string());
                 }
             }
             V4SimulatedPositionAction::CloseShort => {
                 if current_qty >= 0.0 {
-                    return Err("close_short requires an existing short position".to_string());
+                    return Err("close_short 需要已有空头持仓".to_string());
                 }
                 if request.quantity > current_qty.abs() + f64::EPSILON
                     && !request.allow_partial_fill
                 {
-                    return Err(
-                        "close_short quantity exceeds existing short position and partial fill is disabled"
-                            .to_string(),
-                    );
+                    return Err("close_short 数量超过已有空头持仓，且未启用部分成交".to_string());
                 }
             }
             V4SimulatedPositionAction::Sell => {
                 if current_qty <= 0.0 && (request.reduce_only || request.close_only) {
-                    return Err(
-                        "sell reduce_only/close_only requires an existing long position"
-                            .to_string(),
-                    );
+                    return Err("卖出 reduce_only/close_only 需要已有多头持仓".to_string());
                 }
             }
             V4SimulatedPositionAction::Buy => {
                 if current_qty >= 0.0 && request.close_only {
-                    return Err("buy close_only requires an existing short position".to_string());
+                    return Err("buy close_only 需要已有空头持仓".to_string());
                 }
             }
             V4SimulatedPositionAction::OpenLong | V4SimulatedPositionAction::OpenShort => {}
@@ -1880,7 +1868,7 @@ impl V4SimulatedExecutionRuntimeState {
         if request.reduce_only {
             match request.action {
                 V4SimulatedPositionAction::OpenLong | V4SimulatedPositionAction::OpenShort => {
-                    return Err("reduce_only cannot open a new position".to_string());
+                    return Err("reduce_only 不能打开新持仓".to_string());
                 }
                 _ => {}
             }
@@ -1898,7 +1886,7 @@ impl V4SimulatedExecutionRuntimeState {
             && request.order_type == V4SimulatedOrderType::Limit
             && limit_order_is_marketable(request, side)
         {
-            return Some("post_only limit order would cross the local simulated book".to_string());
+            return Some("post_only 限价单会在本地模拟盘口中主动吃单".to_string());
         }
         None
     }
@@ -1914,7 +1902,7 @@ impl V4SimulatedExecutionRuntimeState {
                 if limit_order_is_marketable(request, side) {
                     None
                 } else {
-                    Some("limit order is registered as resting; open-order trigger engine is not attached in this local runtime path".to_string())
+                    Some("限价单已登记为挂单；当前本地 runtime 路径尚未接入 open-order trigger engine".to_string())
                 }
             }
             V4SimulatedOrderType::StopMarket
@@ -1924,12 +1912,9 @@ impl V4SimulatedExecutionRuntimeState {
             | V4SimulatedOrderType::OcoBracket
             | V4SimulatedOrderType::TrailingStop => {
                 if request.trigger_price.is_some() {
-                    Some("conditional order is registered; trigger engine is not attached in this local runtime path".to_string())
+                    Some("条件单已登记；当前本地 runtime 路径尚未接入 trigger engine".to_string())
                 } else {
-                    Some(
-                        "conditional order requires trigger_price before local simulated fill"
-                            .to_string(),
-                    )
+                    Some("条件单在本地模拟成交前需要提供 trigger_price".to_string())
                 }
             }
         }
@@ -2079,60 +2064,56 @@ impl V4SimulatedPositionAction {
 
 fn validate_simulated_execution_config(config: &V4SimulatedExecutionConfig) -> Result<()> {
     if !config.starting_cash.is_finite() {
-        return Err(anyhow!("simulated execution starting_cash must be finite"));
+        return Err(anyhow!("模拟执行 starting_cash 必须是有限数"));
     }
     if config.quote_asset.trim().is_empty() {
-        return Err(anyhow!("simulated execution quote_asset is required"));
+        return Err(anyhow!("模拟执行 quote_asset 不能为空"));
     }
     if config.default_venue_id.trim().is_empty() {
-        return Err(anyhow!("simulated execution default_venue_id is required"));
+        return Err(anyhow!("模拟执行 default_venue_id 不能为空"));
     }
     if config.default_symbol.trim().is_empty() {
-        return Err(anyhow!("simulated execution default_symbol is required"));
+        return Err(anyhow!("模拟执行 default_symbol 不能为空"));
     }
     if !config.default_quantity.is_finite() || config.default_quantity <= 0.0 {
-        return Err(anyhow!(
-            "simulated execution default_quantity must be finite and greater than zero"
-        ));
+        return Err(anyhow!("模拟执行 default_quantity 必须是有限数且大于 0"));
     }
     if !config.default_price.is_finite() || config.default_price <= 0.0 {
-        return Err(anyhow!(
-            "simulated execution default_price must be finite and greater than zero"
-        ));
+        return Err(anyhow!("模拟执行 default_price 必须是有限数且大于 0"));
     }
     Ok(())
 }
 
 fn validate_simulated_order_request(request: &V4SimulatedOrderRequest) -> Result<(), String> {
     if request.venue_id.trim().is_empty() {
-        return Err("venue_id is required for local simulated order".to_string());
+        return Err("本地模拟订单 venue_id 不能为空".to_string());
     }
     if request.symbol.trim().is_empty() {
-        return Err("symbol is required for local simulated order".to_string());
+        return Err("本地模拟订单 symbol 不能为空".to_string());
     }
     if !request.quantity.is_finite() || request.quantity <= 0.0 {
-        return Err("quantity must be finite and greater than zero".to_string());
+        return Err("quantity 必须是有限数且大于 0".to_string());
     }
     if !request.reference_price.is_finite() || request.reference_price <= 0.0 {
-        return Err("reference_price must be finite and greater than zero".to_string());
+        return Err("reference_price 必须是有限数且大于 0".to_string());
     }
     if request
         .limit_price
         .is_some_and(|value| !value.is_finite() || value <= 0.0)
     {
-        return Err("limit_price must be finite and greater than zero when provided".to_string());
+        return Err("提供 limit_price 时必须是有限数且大于 0".to_string());
     }
     if request
         .trigger_price
         .is_some_and(|value| !value.is_finite() || value <= 0.0)
     {
-        return Err("trigger_price must be finite and greater than zero when provided".to_string());
+        return Err("提供 trigger_price 时必须是有限数且大于 0".to_string());
     }
     if !request.fee_bps.is_finite() || request.fee_bps < 0.0 {
-        return Err("fee_bps must be finite and non-negative".to_string());
+        return Err("fee_bps 必须是有限数且不小于 0".to_string());
     }
     if !request.slippage_bps.is_finite() || request.slippage_bps < 0.0 {
-        return Err("slippage_bps must be finite and non-negative".to_string());
+        return Err("slippage_bps 必须是有限数且不小于 0".to_string());
     }
     Ok(())
 }
@@ -2761,9 +2742,7 @@ mod tests {
         )
         .unwrap_err();
 
-        assert!(error
-            .to_string()
-            .contains("only accepts PaperSimulated mode"));
+        assert!(error.to_string().contains("只允许 PaperSimulated 模式"));
     }
 
     #[test]

@@ -24,6 +24,8 @@
 | 有针对性的前端测试 | 聚焦的 `cmd /c npm run test -- src/...` 命令 | 命名的组件、存储或工具合约仍按预期表现 | 完整前端基线健康 |
 | 前端构建 | `cd frontend; cmd /c npm run build` | 生产资产可编译，路由级别块可发出 | 运行时正确性或 E2E 行为 |
 | 前端 E2E | `cd frontend; cmd /c npm run test:e2e` | 浏览器入口流程、能力回退行为、编译/运行/回测冒烟路径和阻塞路径浮出在隔离的模拟合约下工作 | 实时后端集成、交易所连接性、研究级行为或不支持的产品能力 |
+| 前端视觉 review | `cd frontend; cmd /c npm run test:e2e:visual-review` | closeout/review 层的响应式截图采样与人工视觉审查证据 | 常规 PR/CI 阻断级 E2E |
+| 前端性能 review | `cd frontend; cmd /c npm run test:perf:first-screen` / `cmd /c npm run test:perf:react-flow` | closeout/review 层的首屏和 React Flow 挂载采样 | 常规 PR/CI 阻断级 E2E |
 | 收尾包装器 | `cmd /c tools\run-closeout-gates.bat` | 当前基线门禁集在文档化的 Windows 形式上通过 | 风险本地更改不需要更窄的针对性测试 |
 
 ## E2E 解释规则

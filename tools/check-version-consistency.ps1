@@ -63,7 +63,6 @@ $textFiles = @(
     "CHANGELOG.md",
     "README.md",
     "frontend-executor/index.html",
-    "frontend-executor/dist/index.html",
     "markdown/README.md",
     "markdown/01-principles/README.md",
     "markdown/01-principles/principles-super-standardization.md",

@@ -115,6 +115,14 @@ cargo check --bin executor
 .\scripts\scenario-smoke.ps1
 ```
 
+常规 `test:e2e` 只包含阻断级用户路径。视觉响应式审查和性能采样属于 closeout/review 层级，按需显式执行：
+
+```bash
+cd frontend; npm run test:e2e:visual-review
+cd frontend; npm run test:perf:first-screen
+cd frontend; npm run test:perf:react-flow
+```
+
 ### Pre-commit hook
 
 `scripts/pre-commit` 在 `git commit` 时自动执行 UTF-8 检查、`cargo fmt --check`、`cargo check`、`cargo test --no-run`、`vite build`、`vitest run`。

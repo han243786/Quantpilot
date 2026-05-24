@@ -25,23 +25,20 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (!id.includes("node_modules")) {
+          const normalizedId = id.replace(/\\/g, "/");
+          if (!normalizedId.includes("node_modules")) {
             return undefined;
           }
 
-          if (id.includes("@xyflow/react")) {
+          if (normalizedId.includes("node_modules/@xyflow/react")) {
             return "flow-vendor";
           }
 
-          if (id.includes("react") || id.includes("scheduler")) {
-            return "react-vendor";
-          }
-
-          if (id.includes("zustand")) {
+          if (normalizedId.includes("node_modules/zustand")) {
             return "state-vendor";
           }
 
-          if (id.includes("recharts")) {
+          if (normalizedId.includes("node_modules/recharts")) {
             return "chart-vendor";
           }
 

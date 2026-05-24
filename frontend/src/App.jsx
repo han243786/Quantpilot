@@ -23,6 +23,20 @@ import ToastContainer from "./components/ToastContainer";
 import { createTutorialSteps } from "./data/tutorialSteps";
 import { useTutorial } from "./hooks/useTutorial";
 
+function resolveTauriWindow() {
+  const isTauriRuntime =
+    typeof window !== "undefined" && Boolean(window.__TAURI_INTERNALS__);
+  if (!isTauriRuntime) return null;
+  try {
+    return getCurrentWindow();
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn("[App] Tauri 窗口 API 初始化失败:", error.message);
+    }
+    return null;
+  }
+}
+
 function AppShellFallback({ onSkip }) {
   const { t } = useI18n();
   const [waited, setWaited] = useState(false);
@@ -70,8 +84,7 @@ export default function App() {
   const [storageQuotaExceeded, setStorageQuotaExceeded] = useState(false);
   const mainRef = useRef(null);
   const [isMaximized, setIsMaximized] = useState(false);
-  let appWindow = null;
-  try { appWindow = getCurrentWindow(); } catch (e) { if (import.meta.env.DEV) console.warn("[App] Tauri API 不可用，使用浏览器模式:", e.message); }
+  const appWindow = resolveTauriWindow();
 
   // 监听窗口最大化状态
   useEffect(() => {
