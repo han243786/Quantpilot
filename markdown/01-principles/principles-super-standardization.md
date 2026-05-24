@@ -78,7 +78,7 @@ cd frontend && npx vitest run
 | 9 | Rust 格式 | `cargo fmt --check` | 阻断 |
 | 10 | Rust 编译 | `cargo check --workspace` | 阻断 |
 | 11 | Rust 测试全量 | `powershell scripts/test.ps1 test --workspace` | 阻断 |
-| 12 | Clippy | `cargo clippy --workspace --all-targets` | 阻断 |
+| 12 | Clippy warning budget | `powershell tools/check-clippy-warning-budget.ps1 -MaxWarnings 58` | 阻断 |
 | 13 | 执行端 warning budget | `powershell tools/check-executor-warning-budget.ps1 -MaxWarnings 0` | 阻断 |
 | 14 | 前端构建 | `cd frontend && npm run build` | 阻断 |
 | 15 | 前端测试 | `cd frontend && npm run test` | 阻断 |
@@ -87,10 +87,13 @@ cd frontend && npx vitest run
 | 18 | 执行端前端构建 | `cd frontend-executor && npm run build` | 阻断 |
 | 19 | 执行端编译 | `cargo check --bin executor` | 阻断 |
 | 20 | 执行端测试 | `powershell scripts/test.ps1 test --bin executor` | 阻断 |
+| 21 | QS 场景 smoke | `powershell scripts/scenario-smoke.ps1` | Closeout 阻断 |
+| 22 | Developer Learning Closeout | `powershell tools/check-learning-closeout.ps1` | Closeout 阻断 |
+| 23 | 干净工作区 | `powershell tools/check-clean-worktree.ps1` | Closeout/CI 阻断 |
 
 说明：v3.7.1 起，Rust 格式基线由 `cargo fmt` 生成，`cargo fmt --check` 在 pre-commit / CI / closeout 三层阻断格式漂移。
 
-说明：v3.7.1 起，执行端已有 warning 债务用预算脚本显式追踪。预算当前为 47，任何新增 warning 都会阻断；当债务清零后，将 `cargo clippy` 升级回 `-D warnings`。
+说明：v3.7.2 起，workspace clippy warning 进入预算门禁，当前预算为 58，只降不升；executor warning 预算为 0，任何新增 executor warning 都会阻断。
 
 说明：面向用户文本门禁默认扫描 README、前端源码、当前规范、实现契约、用户指南和总览。历史里程碑与归档报告不作为当前产品文案扫描；需要专项审计时可显式传入 `-Paths`。
 
@@ -100,11 +103,12 @@ cd frontend && npx vitest run
 .\tools\run-closeout-gates.bat
 ```
 
-执行 22 项 closeout 门禁，任一失败则整体不通过。Closeout 比 PR/CI 额外执行 QS 场景 smoke，并在 v4.0.0 起执行 Developer Learning Closeout 结构检查：
+执行 23 项 closeout 门禁，任一失败则整体不通过。Closeout 比 PR/CI 额外执行 QS 场景 smoke、Developer Learning Closeout 结构检查和干净工作区检查：
 
 ```
 powershell tools/check-learning-closeout.ps1
 powershell scripts/scenario-smoke.ps1
+powershell tools/check-clean-worktree.ps1
 ```
 
 Release workflow 必须至少完成一次手动 dry-run，确认 Windows runner 上能构建、打包、生成 SHA256SUMS。只有 tag 触发时才允许发布 GitHub Release。

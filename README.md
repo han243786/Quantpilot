@@ -97,12 +97,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-gover
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-i18n.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-version-consistency.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-feature-evolution.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-learning-closeout.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-pre-commit-hook.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-cleanup-boundary.ps1
 cargo fmt --check
 cargo check --workspace
 .\scripts\test.ps1 test --workspace
-cargo clippy --workspace --all-targets
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-clippy-warning-budget.ps1 -MaxWarnings 58
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-executor-warning-budget.ps1 -MaxWarnings 0
 cd frontend; npm run build
 cd frontend; npm run test
@@ -113,6 +114,7 @@ cd ..
 cargo check --bin executor
 .\scripts\test.ps1 test --bin executor
 .\scripts\scenario-smoke.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-clean-worktree.ps1
 ```
 
 常规 `test:e2e` 只包含阻断级用户路径。视觉响应式审查和性能采样属于 closeout/review 层级，按需显式执行：
@@ -139,7 +141,7 @@ cd frontend; npm run test:perf:react-flow
 | Rust 格式基线 | ✅ | 全仓 `cargo fmt` 已落地，pre-commit / CI / closeout 均执行 `cargo fmt --check` |
 | 版本一致性 | ✅ | Cargo、Tauri、前端 package、lockfile 和关键文档统一到 `3.7.1` |
 | executor warning 债务 | ✅ | 当前预算 0；新增 warning 会失败 |
-| 完整 closeout | ✅ | `tools\run-closeout-gates.bat` 21/21 通过，可作为 v3.7.1 稳定线归档 |
+| 完整 closeout | 📋 | v3.7.2 已将 closeout 升级为 23 项；最终归档以 v3.7.2 复跑结果为准 |
 
 ## 文档入口
 

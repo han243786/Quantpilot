@@ -235,7 +235,15 @@ mod tests {
 
     fn ensure_key() {
         TEST_SESSION_KEY_READY.get_or_init(|| {
+            let key_path = std::env::temp_dir()
+                .join(format!("quantpilot-session-test-{}", std::process::id()))
+                .join(".executor-session-key");
+            std::env::set_var("QUANTPILOT_SESSION_KEY_PATH", &key_path);
             init_session_key().ok();
+            let _ = std::fs::remove_file(&key_path);
+            if let Some(parent) = key_path.parent() {
+                let _ = std::fs::remove_dir_all(parent);
+            }
         });
     }
 

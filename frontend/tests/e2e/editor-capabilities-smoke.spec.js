@@ -13,8 +13,7 @@ import { installWorkspaceBootstrapMocks } from "./support/workspaceBootstrapMock
 async function enterCurrentWorkspace(page) {
   await page.goto("/");
   await page.getByTestId("strategy-hub-open-current-workspace").click();
-  // v3.7.1: 默认 tab 为仪表盘, 主运行工具栏提升为工作区页级常驻入口
-  await page.getByTestId("workspace-tab-research").click();
+  // v3.7.2: 默认 tab 为仪表盘, 主运行工具栏是工作区页级常驻入口。
   await expect(page.locator(".top-toolbar--workspace")).toBeVisible();
 }
 
@@ -128,6 +127,13 @@ test("editor enters safe fallback mode when capability fetch fails without cache
 
   await expect(page.getByTestId("toolbar-capability-alert")).toContainText(
     /安全回退模式.*避免暴露虚假能力/
+  );
+  await expect(page.getByTestId("workspace-tab-code")).toBeDisabled();
+  await expect(page.getByTestId("workspace-tab-research")).toBeDisabled();
+  await expect(page.getByTestId("workspace-tab-monitor")).toBeDisabled();
+  await expect(page.getByTestId("workspace-tab-research")).toHaveAttribute(
+    "title",
+    /capability service unavailable/
   );
   await expect(page.getByTestId("toolbar-compile-action")).toBeDisabled();
   await openWorkspaceTools(page);

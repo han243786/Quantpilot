@@ -1,6 +1,6 @@
 # v3.7.1 Closeout 基线
 
-> 日期: 2026-05-23 | 类型: PATCH | 状态: 流程基线已落地，完整 closeout 已通过
+> 日期: 2026-05-23 | 类型: PATCH | 状态: 历史 closeout 基线；当前最新全量检查与归档以 v3.7.2 为准
 
 ---
 
@@ -38,7 +38,7 @@ v3.7.1 不是功能扩张版本，而是 v3.7.0 后的回归修复与工作流�
 | Pre-commit hook 同步 | `tools/check-pre-commit-hook.ps1` | ✅ | 实际安装 hook 必须与版本化 `scripts/pre-commit` 一致 |
 | 清理边界门禁 | `tools/check-cleanup-boundary.ps1` | ✅ | 清理脚本仅允许旧测试工件和日志，拒绝已废弃的运行工件清理开关 |
 | Rust 格式基线 | `cargo fmt --check` | ✅ | 全仓 rustfmt drift 已清理，三层门禁阻断新增漂移 |
-| closeout 门禁脚本 | `tools/run-closeout-gates.bat` | ✅ | 脚本已收口为 21 项，包含 hook 同步、清理边界、Rust 格式、执行端前端构建和 QS 场景 smoke |
+| closeout 门禁脚本 | `tools/run-closeout-gates.bat` | 🚧 | v3.7.2 已升级为 23 项，新增 workspace clippy warning budget 和干净工作区检查 |
 | CI | `.github/workflows/ci.yml` | ✅ | 接入版本一致性、功能演进、Rust 格式、测试包装、warning 预算、执行端前端构建 |
 | 场景 CI | `.github/workflows/scenario-test.yml` | ✅ | 复用 `scripts/scenario-smoke.ps1` |
 | Release | `.github/workflows/release.yml` | ✅ | Windows PowerShell 打包路径修复，tag 才发布 |
@@ -48,7 +48,7 @@ v3.7.1 不是功能扩张版本，而是 v3.7.0 后的回归修复与工作流�
 
 | 门禁 | 状态 | 记录 |
 |------|:--:|------|
-| `tools/check-utf8.ps1` | ✅ | 545 文件 UTF-8 校验通过 |
+| `tools/check-utf8.ps1` | ✅ | 最新 v3.7.2 本地复验为 566 文件 UTF-8 校验通过 |
 | `tools/check-user-facing-text.ps1` | ✅ | 348 个当前用户可见入口 / 活跃规范文件通过 |
 | `tools/check-capability-governance.ps1` | ✅ | 快照已更新并复验通过 |
 | `tools/check-i18n.ps1` | ✅ | 未发现英文用户可见字符串 |
@@ -61,12 +61,12 @@ v3.7.1 不是功能扩张版本，而是 v3.7.0 后的回归修复与工作流�
 | `scripts/test.ps1 test --workspace` | ✅ | workspace 测试包装器串行通过，覆盖 Windows 文件锁场景 |
 | `tools/check-executor-warning-budget.ps1 -MaxWarnings 0` | ✅ | 0/0，通过；新增 warning 会阻断 |
 | `frontend npm run build` | ✅ | 构建通过；保留既有 circular chunk warning |
-| `frontend npm run test` | ✅ | 92 文件 / 272 测试通过 |
-| `frontend npm run test:e2e` | ✅ | 21 passed / 18 skipped；视觉回归已固定 API fixture，避免本地运维状态污染截图 |
+| `frontend npm run test` | ✅ | 最新本地复验为 96 文件 / 289 测试通过 |
+| `frontend npm run test:e2e` | ✅ | 2026-05-24 v3.7.2 本地复验 21/21 通过；最终归档仍以 23 项 closeout 为准 |
 | `frontend npm audit --audit-level=moderate` | ✅ | `npm audit fix` 后 0 vulnerability |
 | `frontend-executor npm run build` | ✅ | 构建通过，`dist/index.html` 已刷新到 v3.7.1 |
 | `cargo test --bin executor -- --test-threads=1` | ✅ | 21/21 通过 |
-| `tools/run-closeout-gates.bat` | ✅ | 2026-05-23 本地复跑 21/21 通过；覆盖 Rust workspace、前端 build/test/e2e、executor、QS scenario smoke 与全部元流水线检查 |
+| `tools/run-closeout-gates.bat` | 🚧 | v3.7.2 已升级为 23 项；最终归档需在提交后复跑并通过干净工作区检查 |
 
 ## 四、剩余风险
 

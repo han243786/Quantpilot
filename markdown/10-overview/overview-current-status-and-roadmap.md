@@ -1,6 +1,6 @@
 # 当前状态与发布状态
 
-> 最后更新：2026-05-23 | 当前版本：v3.7.1 ✅ (S0/P1 回归修复 + 流程收口；完整 closeout 21/21 通过)
+> 最后更新：2026-05-24 | 当前版本：v3.7.1 ✅ | 当前补丁规划：v3.7.2 closeout 真实性与安全回退收口
 
 ## 版本路线
 
@@ -113,7 +113,7 @@ v3.7.1 系统应被理解为：
 
 v3.7.0 完成 v3.5.0→v3.7.0 全版本演进 (12 项新功能 + 32 项审计修复 + 12 项 UX 优化 + 14 项 P3 消化)。
 
-v3.7.1 是其后的 PATCH 收口：已修复 S0 登录挂起、P1 凭证 DELETE 405 和 P2 测试进程文件锁问题，并把 pre-commit、CI、closeout/release 三层门禁重新对齐。随后元流水线补充“功能演进通道”，要求新增能力先登记能力边界、回归保护矩阵、兼容性与迁移说明；Rust 格式基线已通过 `cargo fmt` 落地，并由 `cargo fmt --check` 在三层门禁阻断回退。2026-05-23 完整 closeout 已复跑通过 21/21 项，覆盖 Rust workspace 测试、前端 build/test/e2e、executor、QS scenario smoke 与全部元流水线检查；当前状态是“v3.7.1 稳定线可归档，下一大版本进入规划前置”。
+v3.7.1 是其后的 PATCH 收口：已修复 S0 登录挂起、P1 凭证 DELETE 405 和 P2 测试进程文件锁问题，并把 pre-commit、CI、closeout/release 三层门禁重新对齐。2026-05-24 全量复查后，v3.7.2 被定义为质量补丁：保持 strict safe fallback，修复 E2E 预期，新增 workspace clippy warning budget，并把 closeout 升级为 23 项，最终归档以 v3.7.2 closeout 复跑为准。
 
 使用下面的专用文档作为活跃发布界面：
 
@@ -132,12 +132,13 @@ v3.7.1 是其后的 PATCH 收口：已修复 S0 登录挂起、P1 凭证 DELETE 
 |--------|:--:|------|
 | `cargo fmt --check` | ✅ | 全仓 rustfmt drift 已清理，pre-commit / CI / closeout 均已接入 |
 | `cargo check --workspace` | ✅ | 0 错误 |
-| `scripts/test.ps1 test --workspace` | ✅ | closeout [11/21] 已复跑通过 |
-| `cargo clippy --workspace --all-targets` | ⚠️ | 不再假装 0 warning；executor warning 由预算脚本追踪 |
+| `scripts/test.ps1 test --workspace` | ✅ | closeout [12/23] 覆盖 |
+| workspace clippy warning budget | ✅ | 当前预算 58，只降不升；不再把 clippy 退出码通过误读为 warning-free |
 | executor warning budget | ✅ | 当前预算 0，新增 warning 阻断 |
 | 前端 `npm run build` | ✅ | main frontend 已纳入 CI/closeout |
 | 执行端前端 `npm run build` | ✅ | `frontend-executor` 已纳入 CI/closeout |
-| 前端 `npx vitest run` | ✅ | 272/272 (92 文件) |
+| 前端 `npx vitest run` | ✅ | 最新本地复验 289/289 (96 文件) |
+| 前端 `npm run test:e2e` | ✅ | 2026-05-24 本地复验 21/21 通过，safe fallback 用例已按 strict fallback 收口 |
 | npm audit | ✅ | frontend transitive `ws` 已通过 audit fix 清零 |
 | P1 消化 | ✅ | 14/14 全部完成 (v3.5.1) |
 | P2 消化 | ✅ | 18/23 完成 (5 延后至 v3.7.0+) |
@@ -158,15 +159,15 @@ v3.7.1 是其后的 PATCH 收口：已修复 S0 登录挂起、P1 凭证 DELETE 
 | 版本号一致性 | ✅ | 关键元数据和用户可见入口统一到 3.7.1 |
 | GP 合规 | ✅ | 当前 GP 已同步到 v3.7.1，v3.7.1 不扩大功能声明 |
 | 超级规范化 | ✅ | v3.7.1 对齐 pre-commit / CI / closeout 三层门禁 |
-| 完整 closeout | ✅ | `tools\run-closeout-gates.bat` 已执行并通过 21/21 |
+| 完整 closeout | 📋 | v3.7.2 已升级为 23 项；最终归档需在提交后复跑并通过干净工作区检查 |
 
 ## 五维度评分 (v3.7.1 final closeout)
 
 | 维度 | 评分 | 说明 |
 |------|:--:|------|
 | **功能开发进度** | **9.5/10** | 18 指标全实现 / 实时执行端 + OKX testnet / Paper/Live 切换 / 编译缓存 / Toast 系统 |
-| **仓库稳定程度** | **9.4/10** | closeout 21/21 / workspace test 通过 / vitest 272/272 / E2E 21 passed / executor warning 预算化 |
-| **发布就绪度** | **9.3/10** | P1 清零 / GP+超规范化 v3.7.1 对齐 / 版本一致性 / 完整 closeout 通过 |
+| **仓库稳定程度** | **9.4/10** | workspace test 通过 / vitest 289/289 / executor warning 0 / closeout 正在 v3.7.2 收口 |
+| **发布就绪度** | **9.3/10** | P1 清零 / GP+超规范化 v3.7.1 对齐 / 版本一致性 / v3.7.2 closeout 待最终复跑 |
 | **用户友好程度** | **9.5/10** | 术语全中文化 / 空状态引导 / 进度反馈 / 错误码映射 / ARIA 无障碍 / prefers-reduced-motion |
 | **系统整体稳定性** | **9.3/10** | 事务保护 / TOCTOU 修复 / 三阶段无锁恢复 / 状态持久化 / Zeroizing / api_guard 强制 |
 | **加权** | **9.4/10** | 加权 = 9.5×0.3 + 9.4×0.3 + 9.3×0.2 + 9.5×0.1 + 9.3×0.1 |

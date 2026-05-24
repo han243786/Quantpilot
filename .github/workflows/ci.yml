@@ -68,9 +68,9 @@ jobs:
         shell: cmd
         run: cargo check --workspace
 
-      - name: Rust clippy
+      - name: Workspace clippy warning budget
         shell: cmd
-        run: cargo clippy --workspace --all-targets
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-clippy-warning-budget.ps1 -MaxWarnings 58
 
       - name: Executor warning budget
         shell: cmd
@@ -124,3 +124,7 @@ jobs:
         working-directory: frontend-executor
         shell: cmd
         run: cmd /c npm run build
+
+      - name: Check clean worktree
+        shell: cmd
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-clean-worktree.ps1
