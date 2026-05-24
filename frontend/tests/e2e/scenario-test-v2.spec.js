@@ -168,7 +168,7 @@ test.describe("场景六：画布操作深度测试 (v2)", () => {
 // 场景七：策略工作区标签页
 // ═══════════════════════════════════════════════════
 test.describe("场景七：策略工作区标签页 (v2)", () => {
-  test("7.1 四个标签页切换 + test bridge 验证", async ({ page }) => {
+  test("7.1 五个标签页切换 + test bridge 验证", async ({ page }) => {
     await page.goto("/strategies");
     await page.waitForTimeout(1500);
     const wsBtn = page.getByTestId("strategy-hub-open-current-workspace");
@@ -177,7 +177,7 @@ test.describe("场景七：策略工作区标签页 (v2)", () => {
       await page.waitForTimeout(2000);
     }
 
-    for (const tab of ["dashboard", "code", "research", "source"]) {
+    for (const tab of ["dashboard", "code", "research", "monitor", "source"]) {
       await step(page, `切换到 ${tab} 标签`, async () => {
         const tabEl = page.getByTestId(`workspace-tab-${tab}`);
         if (await tabEl.isVisible().catch(() => false)) {

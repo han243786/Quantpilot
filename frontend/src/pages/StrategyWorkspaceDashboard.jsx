@@ -82,14 +82,21 @@ export default function StrategyWorkspaceDashboard({
               onClick={() => onNavigate?.("code")}
               data-testid="dashboard-goto-build"
             >
-              {t("编辑策略图")}
+              {t("进入构建")}
             </button>
             <button
               className="ghost-btn"
               onClick={() => onNavigate?.("research")}
               data-testid="dashboard-goto-research"
             >
-              {t("查看研究")}
+              {t("研究回测")}
+            </button>
+            <button
+              className="ghost-btn"
+              onClick={() => onNavigate?.("monitor")}
+              data-testid="dashboard-goto-monitor"
+            >
+              {t("运行监控")}
             </button>
             <button
               className="ghost-btn"

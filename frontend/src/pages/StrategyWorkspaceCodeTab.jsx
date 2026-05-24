@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "react";
 import { StrategyCardNote } from "./StrategyHubSharedComponents";
 import { WorkspacePanelFallback } from "./StrategyWorkspacePanelFallbacks";
+import { useI18n } from "../i18n";
 
 const TASK_LANES_NOTE =
   "一次只保持一个主通道活跃，必要时再展开辅助通道。";
@@ -38,14 +39,18 @@ export default function StrategyWorkspaceCodeTab({
   activeInspectorDefinition,
   secondaryInspectorDefinitions
 }) {
+  const { t } = useI18n();
+
   return (
     <Suspense fallback={<WorkspacePanelFallback title="正在加载工作区构建面板" />}>
       <div className="strategy-workspace-code" data-testid="strategy-workspace-code-tab">
-        <div className="workspace-mode-banner">
-          <strong>高级策略图模式</strong>
-          <span>
-            仅在需要结构调整、连线或源码修复时使用此模式。
-          </span>
+        <div className="workspace-mode-strip">
+          <strong>{t("构建工作区")}</strong>
+          <div className="workspace-mode-strip__pills">
+            <span className="status-pill muted">{t("模块库")}</span>
+            <span className="status-pill info">{t("策略图")}</span>
+            <span className="status-pill muted">{t("检查器")}</span>
+          </div>
         </div>
         <div className="strategy-workspace-builder strategy-workspace-builder--split">
           <ModuleSidebar workspaceContext={ui.canvasWorkspaceContext} />

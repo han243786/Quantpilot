@@ -155,6 +155,7 @@ describe("StrategyWorkspacePage shell", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("workspace-tab-dashboard")).toBeInTheDocument();
+      expect(screen.getByTestId("workspace-tab-monitor")).toBeInTheDocument();
     });
   });
 
@@ -302,5 +303,45 @@ describe("StrategyWorkspacePage shell", () => {
       expect(screen.getByTestId("top-toolbar-stub")).toBeInTheDocument();
       expect(screen.getByTestId("strategy-research-console-stub")).toBeInTheDocument();
     });
+  });
+
+  it("renders the run monitor shell as a first-class workspace mode", async () => {
+    act(() => {
+      useGraphStore.setState({
+        runtime: {
+          ...useGraphStore.getState().runtime,
+          status: "running",
+          runKind: "simulation",
+          runId: "run_workspace_001",
+          account: {
+            equity_estimate: 100240.25,
+            available_cash_balance: 99000,
+            frozen_cash_balance: 1240.25,
+            open_order_count: 1,
+            open_orders: [{ order_id: "order_1" }]
+          },
+          events: [
+            {
+              id: "event_1",
+              stage: "risk",
+              summary: "risk passed"
+            }
+          ],
+          diagnostics: { connected: true }
+        }
+      });
+    });
+
+    render(<StrategyWorkspacePage strategyId="workspace_test_graph" />);
+
+    await openWorkspaceMode(3); // monitor tab
+    await waitFor(() => {
+      expect(screen.getByTestId("strategy-workspace-monitor-tab")).toBeInTheDocument();
+      expect(screen.getByTestId("workspace-monitor-runtime-card")).toBeInTheDocument();
+      expect(screen.getByTestId("workspace-monitor-account-card")).toBeInTheDocument();
+      expect(screen.getByTestId("workspace-monitor-risk-card")).toBeInTheDocument();
+      expect(screen.getByTestId("workspace-monitor-events-card")).toBeInTheDocument();
+    });
+    expect(screen.getByText("run_workspace_001")).toBeInTheDocument();
   });
 });

@@ -19,15 +19,17 @@ const StrategyWorkspaceOverviewTab = lazy(() => import("./StrategyWorkspaceOverv
 const StrategyWorkspaceCodeTab = lazy(() => import("./StrategyWorkspaceCodeTab"));
 const StrategyWorkspaceDiagnosticsTab = lazy(() => import("./StrategyWorkspaceDiagnosticsTab"));
 const StrategyWorkspaceResearchTab = lazy(() => import("./StrategyWorkspaceResearchTab"));
+const StrategyWorkspaceMonitorTab = lazy(() => import("./StrategyWorkspaceMonitorTab"));
 const StrategyWorkspaceDebugTab = lazy(() => import("./StrategyWorkspaceDebugTab"));
 const StrategyWorkspaceSourceTab = lazy(() => import("./StrategyWorkspaceSourceTab"));
 
 // v1.3.3: 常量定义在组件外部，渲染时通过t()包裹
 const WORKSPACE_TAB_DEFS = [
-  { id: "dashboard", labelKey: "仪表盘" },
-  { id: "code", labelKey: "画布" },
-  { id: "research", labelKey: "研究" },
-  { id: "source", labelKey: "源码" }
+  { id: "dashboard", labelKey: "总览", kickerKey: "任务总览" },
+  { id: "code", labelKey: "构建", kickerKey: "构建工作区" },
+  { id: "research", labelKey: "研究回测", kickerKey: "研究回测工作区" },
+  { id: "monitor", labelKey: "运行监控", kickerKey: "运行监控工作区" },
+  { id: "source", labelKey: "源码", kickerKey: "源码工作区" }
 ];
 const CODE_INSPECTOR_DEFS = [
   { id: "params", label: "配置" },
@@ -144,19 +146,20 @@ export default function StrategyWorkspacePage({ strategyId }) {
       </div>
 
       {/* Adobe 风格标签栏 */}
-      <section className="ad-tabbar" aria-label="工作区模式">
+      <section className="ad-tabbar ad-tabbar--workspace-modes" aria-label="工作区模式">
         {WORKSPACE_TAB_DEFS.map((tab) => (
           <button
             key={tab.id}
             data-testid={`workspace-tab-${tab.id}`}
-            className={`ad-tab${ui.activeTab === tab.id ? " ad-tab--active" : ""}${diagnosticFocusRequested && tab.id === "code" && ui.activeTab !== "code" ? " ad-tab--focus-hint" : ""}`}
+            className={`ad-tab ad-tab--workspace-mode${ui.activeTab === tab.id ? " ad-tab--active" : ""}${diagnosticFocusRequested && tab.id === "code" && ui.activeTab !== "code" ? " ad-tab--focus-hint" : ""}`}
             onClick={() => {
               ui.setActiveTab(tab.id);
               if (tab.id === "code" && diagnosticFocusRequested) clearDiagnosticFocus();
             }}
             title={t(tab.labelKey)}
           >
-            {t(tab.labelKey)}
+            <span className="ad-tab__kicker">{t(tab.kickerKey)}</span>
+            <strong className="ad-tab__label">{t(tab.labelKey)}</strong>
           </button>
         ))}
         <div className="ad-tabbar__spacer" />
@@ -229,6 +232,17 @@ export default function StrategyWorkspacePage({ strategyId }) {
       {ui.activeTab === "research" ? (
         <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceResearchTab strategyId={strategyId} />
+        </Suspense>
+      ) : null}
+      {ui.activeTab === "monitor" ? (
+        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
+          <StrategyWorkspaceMonitorTab
+            graph={graph}
+            runtime={runtime}
+            recentRuns={pageData.recentRuns}
+            issueQueue={issueQueue}
+            formatTime={pageData.formatTime}
+          />
         </Suspense>
       ) : null}
       {ui.activeTab === "debug" ? (
