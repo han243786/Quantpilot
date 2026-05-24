@@ -93,7 +93,13 @@ pub use v4_runtime::{
     V4ExecutionRuntimeDecision, V4ExecutionRuntimeSnapshot, V4MachineRuntimeSnapshot,
     V4MachineRuntimeStatus, V4PaperSimulatedRunOutput, V4PaperSimulatedRuntime,
     V4RiskPlaneRuntimeDecision, V4RiskPlaneRuntimeSnapshot, V4RuntimeEventEnvelope,
-    V4RuntimeEventOrigin, V4RuntimeInputEvent, V4RuntimeMemorySnapshot,
+    V4RuntimeEventOrigin, V4RuntimeInputEvent, V4RuntimeMemorySnapshot, V4SimulatedAssetPoint,
+    V4SimulatedExecutionConfig, V4SimulatedExecutionSnapshot, V4SimulatedFill, V4SimulatedOrder,
+    V4SimulatedOrderRequest, V4SimulatedOrderSide, V4SimulatedOrderStatus, V4SimulatedOrderType,
+    V4SimulatedPosition, V4SimulatedPositionAction, V4SimulatedTimeInForce,
+    V4VenueAdapterRuntimeBoundary, EVENT_EXECUTION_FEE_CHARGED, EVENT_EXECUTION_ORDER_ACKNOWLEDGED,
+    EVENT_EXECUTION_ORDER_FILLED, EVENT_EXECUTION_ORDER_PARTIALLY_FILLED,
+    EVENT_EXECUTION_ORDER_REJECTED, EVENT_EXECUTION_PORTFOLIO_CHANGED,
 };
 
 /// 配置代际记录

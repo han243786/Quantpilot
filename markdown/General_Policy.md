@@ -102,6 +102,7 @@ QS 源码 → graph JSON → 前端可视化
 - `unsupported` 表示不支持且未模拟，必须在编译期或运行前拒绝。
 - 不允许把 `unsupported` 静默降级为其他订单语义。
 - 不允许把本地触发逻辑描述为交易所原生支持。
+- `runtime_simulated` 执行路径必须有本地订单、成交、手续费、资产账本和 provider submission detached 证据。
 - **门禁**: VenueCapabilityMatrix 与 `/api/capabilities`、支持矩阵、前端文案必须一致。
 
 ### §1.11 开发者学习流水线边界 🔍 (v4.0.0 新增)

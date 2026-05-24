@@ -4,6 +4,12 @@ function yesNo(value) {
   return value ? "是" : "否";
 }
 
+function fmtNumber(value) {
+  return Number(value || 0).toLocaleString("zh-CN", {
+    maximumFractionDigits: 8
+  });
+}
+
 function CapabilityEntry({ entry, testId }) {
   return (
     <div className="open-order-item" data-testid={testId}>
@@ -32,6 +38,10 @@ export default function V4RuntimeEvidencePanel({
   const riskDecision = projection.risk_plane?.last_decision;
   const executionDecision = projection.execution?.last_decision;
   const executionEntries = projection.execution?.entries || [];
+  const simulated = projection.simulated_execution;
+  const lastOrder = simulated?.last_order;
+  const lastFill = simulated?.last_fill;
+  const boundary = projection.venue_adapter_boundary;
 
   return (
     <div className="open-orders-card" data-testid={testId}>
@@ -63,6 +73,14 @@ export default function V4RuntimeEvidencePanel({
         <div className="history-meta-chip history-meta-chip-wide">
           <span>Provider order</span>
           <strong>{projection.boundary_label}</strong>
+        </div>
+        <div className="history-meta-chip">
+          <span>Orders</span>
+          <strong>{simulated.order_count}</strong>
+        </div>
+        <div className="history-meta-chip">
+          <span>Fills</span>
+          <strong>{simulated.fill_count}</strong>
         </div>
       </div>
 
@@ -134,6 +152,98 @@ export default function V4RuntimeEvidencePanel({
         ) : (
           <div className="muted-line">当前没有 execution capability decision entry。</div>
         )}
+      </div>
+
+      <div className="mini-list" data-testid={`${testId}-simulated-execution`}>
+        <div className="mini-list-title">本地模拟执行</div>
+        <div className="kv-line">
+          <span>portfolio</span>
+          <strong>
+            {fmtNumber(simulated.portfolio_value)} {simulated.quote_asset}
+          </strong>
+        </div>
+        <div className="kv-line">
+          <span>cash / fee</span>
+          <strong>
+            {fmtNumber(simulated.cash_balance)} / {fmtNumber(simulated.realized_fees)}
+          </strong>
+        </div>
+        <div className="kv-line">
+          <span>open / rejected</span>
+          <strong>
+            {simulated.open_order_count}/{simulated.rejected_order_count}
+          </strong>
+        </div>
+        <div className="kv-line">
+          <span>asset points</span>
+          <strong>{simulated.asset_curve_points}</strong>
+        </div>
+        {lastOrder ? (
+          <div className="mini-item">
+            <div className="kv-line">
+              <span>{lastOrder.order_id}</span>
+              <strong>{lastOrder.status}</strong>
+            </div>
+            <div className="muted-line">
+              {lastOrder.symbol} · {lastOrder.action} · {lastOrder.order_type} ·{" "}
+              {fmtNumber(lastOrder.filled_quantity)}/{fmtNumber(lastOrder.requested_quantity)}
+            </div>
+            {lastOrder.rejection_reason ? (
+              <div className="history-note history-note-danger">
+                {lastOrder.rejection_reason}
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <div className="muted-line">当前没有 simulated order。</div>
+        )}
+        {lastFill ? (
+          <div className="mini-item">
+            <div className="kv-line">
+              <span>{lastFill.fill_id}</span>
+              <strong>{fmtNumber(lastFill.notional)}</strong>
+            </div>
+            <div className="muted-line">
+              {lastFill.symbol} · {fmtNumber(lastFill.quantity)} @ {fmtNumber(lastFill.price)} ·
+              fee {fmtNumber(lastFill.fee)} {lastFill.fee_asset}
+            </div>
+          </div>
+        ) : null}
+        {simulated.positions.length > 0 ? (
+          simulated.positions.map((position) => (
+            <div
+              key={`${position.venue_id}-${position.symbol}`}
+              className="mini-item"
+              data-testid={`${testId}-position-${position.symbol}`}
+            >
+              <div className="kv-line">
+                <span>{position.symbol}</span>
+                <strong>{fmtNumber(position.net_quantity)}</strong>
+              </div>
+              <div className="muted-line">
+                {position.venue_id} · mark {fmtNumber(position.market_price)} · value{" "}
+                {fmtNumber(position.market_value)}
+              </div>
+            </div>
+          ))
+        ) : null}
+      </div>
+
+      <div className="mini-list" data-testid={`${testId}-venue-boundary`}>
+        <div className="mini-list-title">VenueAdapter 边界</div>
+        <div className="kv-line">
+          <span>submission allowed</span>
+          <strong>{yesNo(boundary.provider_order_submission_allowed)}</strong>
+        </div>
+        <div className="kv-line">
+          <span>settlement</span>
+          <strong>{boundary.settlement_authority}</strong>
+        </div>
+        <div className="kv-line">
+          <span>pre-submit reject</span>
+          <strong>{yesNo(boundary.rejection_before_provider_submit)}</strong>
+        </div>
+        <div className="muted-line">{boundary.reason}</div>
       </div>
     </div>
   );

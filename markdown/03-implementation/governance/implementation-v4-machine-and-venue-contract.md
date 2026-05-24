@@ -828,6 +828,73 @@ UI 硬边界:
 - 不把 v4 UI 面板外推为真实运行入口。
 - 不改变现有 `OrderType`、`TimeInForce`、`ExecutionPlan` 行为。
 
+## v4 本地模拟执行主线
+
+Phase 9 在不接真实 VenueAdapter 的前提下，把 `PaperSimulated` 的本地执行主线补齐到可审计状态。该阶段的目标不是开放真实下单，而是让 ExecutionMachine 在通过 Risk Plane 与 capability runtime gate 后，可以产出本地模拟订单、成交、费用和资产账本证据。
+
+新增运行时对象:
+
+- `V4SimulatedExecutionConfig`: 起始现金、计价资产、默认 venue/symbol/quantity/price、默认 fee/slippage、partial fill 上限。
+- `V4SimulatedOrderRequest`: 本地模拟订单请求，包含 `market` / `limit` / 条件单类型、`buy` / `sell` / `open_long` / `close_long` / `open_short` / `close_short`、TIF、post/reduce/close only、client order id、fee/slippage。
+- `V4SimulatedOrder`: 订单生命周期证据，状态为 `accepted` / `rejected` / `partially_filled` / `filled`。
+- `V4SimulatedFill`: 本地成交证据，记录 quantity、price、notional、fee、fee asset。
+- `V4SimulatedPosition`: 本地持仓净额、均价、mark price 和 market value。
+- `V4SimulatedExecutionSnapshot`: cash、fee、position market value、portfolio value、order/fill/reject/open 计数、asset curve、last order/fill。
+- `V4VenueAdapterRuntimeBoundary`: provider submission 是否附着、当前 mode 是否允许 provider submission、结算权威和 pre-submit reject 原因。
+
+运行时事件:
+
+- `execution_order_acknowledged`
+- `execution_order_rejected`
+- `execution_order_partially_filled`
+- `execution_order_filled`
+- `execution_fee_charged`
+- `execution_portfolio_changed`
+
+Phase 9 执行规则:
+
+- 只有 `RuntimeSettlementAuthority::LocalSimulated` 才能进入本地 fill / ledger。
+- 每个订单实际用到的 order type、TIF、position action、post/reduce/close only、client order id 都会再次映射为 `ExecutionCapabilityKind` 并按当前 `VenueCapabilityMatrix` 与 runtime mode 校验。
+- 未声明、`unsupported`、或 mode/source 不匹配的实际订单能力必须记录 `execution_order_rejected`，不得静默降级。
+- `market` 与可立即成交的 `limit` 可由本地引擎模拟成交。
+- partial fill 受 `max_fill_quantity`、`allow_partial_fill` 与 `FOK` 约束。
+- fee 按 quote asset 记账；slippage 按买入加价、卖出减价计算。
+- `update_simulated_market_price(...)` 可接收本地价格更新并重算 mark value 与 asset curve。
+- provider order submission 在该阶段必须保持 detached；`V4VenueAdapterRuntimeBoundary.rejection_before_provider_submit=true` 是硬证据。
+
+Phase 9 硬边界:
+
+- 不接真实券商/交易所 adapter。
+- 不向 provider 提交订单。
+- 不声明真实成交撮合已支持。
+- 条件单、OCO、Trailing 等复杂 provider 行为即使进入请求结构，也只能在本地模拟范围内登记或拒绝，不能伪装为 provider-native 行为。
+- 不把 v4 runtime 接入旧 `RuntimeCoordinator`。
+- 不改变 v1/v3 执行模块、fill engine、sandbox 的既有行为。
+
+## QS 静态审计到 runtime handoff
+
+Phase 9 新增 `build_v4_qs_runtime_handoff(...)` 作为静态审计后的安全交接产物。它只做契约判断，不启动 runtime、不执行 lowering、不提交订单。
+
+handoff 通过条件:
+
+- `V4QsStaticAuditReport.verdict=Accepted`。
+- 存在 parsed `V4MachineGraphContract`。
+- compile-time capability report 为 `Accepted`。
+- capability report 没有携带 execution submission attachment。
+- 当前只允许 `RuntimeTradingMode::PaperSimulated`。
+
+handoff 输出:
+
+- `accepted_for_runtime_handoff`
+- `paper_simulated_start_allowed`
+- `graph_id`
+- `venue_id`
+- `runtime_mode`
+- `provider_order_submission_attached=false`
+- `runtime_attached=false`
+- `lowering_attached=false`
+- 结构化拒绝原因列表
+
 ## 验证
 
 针对性验证:
@@ -898,11 +965,17 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-learning-closeou
 - v4 PaperSimulated runtime 会在 `Unsupported` required capability 时拒绝 ExecutionMachine transition。
 - v4 PaperSimulated runtime 会在 `provider_native` required capability 被用于 `PaperSimulated` 时拒绝 ExecutionMachine transition。
 - v4 PaperSimulated runtime 会在缺失 execution capability policy 时拒绝 ExecutionMachine transition。
-- v4 UI evidence panel 会展示 machine state、Risk Plane decision 和 Execution capability source/status。
+- v4 PaperSimulated runtime 会在 ExecutionMachine transition 通过后生成本地模拟订单、成交、手续费和资产账本事件。
+- v4 PaperSimulated runtime 会根据 `V4SimulatedExecutionConfig` 产生 partial fill、fee、slippage 和 asset curve。
+- v4 PaperSimulated runtime 会根据本地市场价格更新重算 position mark value 和 portfolio value。
+- v4 PaperSimulated runtime 会拒绝实际订单请求中未被 capability matrix 声明/支持的能力。
+- v4 `VenueAdapterRuntimeBoundary` 会证明 provider order submission 仍 detached，并在 provider submit 前拒绝。
+- v4 UI evidence panel 会展示 machine state、Risk Plane decision、Execution capability source/status、本地模拟订单/成交/资产账本和 VenueAdapter 边界。
 - v4 runtime evidence summary 会把 `risk_plane_*` 和 `execution_capability_*` control event 计入摘要。
 - Developer Learning Closeout 检查会阻断 tracked `markdown/learning/` 个人学习记录。
 - Developer Learning Closeout 检查会确认 v4 closeout 学习问题与显式写入规则仍在规范中。
 - v4 QS 静态审计可接受受支持的状态机脚本，且不接 runtime / lowering。
+- v4 QS 静态审计可生成安全 PaperSimulated runtime handoff，且该 handoff 不接 execution submission。
 - v4 QS 静态审计会拒绝 unsupported required capability。
 - v4 QS 静态审计会拒绝嵌套 machine block。
 - v4 QS 静态审计会拒绝非 `on event` transition 语法。

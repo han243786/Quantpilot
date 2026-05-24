@@ -14,6 +14,7 @@ use qrpc_core_ir::v4::{
 use std::collections::{BTreeMap, BTreeSet};
 
 pub const V4_QS_STATIC_AUDIT_REPORT_VERSION: &str = "quantpilot/qs-v4-static-audit-report/v1";
+pub const V4_QS_RUNTIME_HANDOFF_REPORT_VERSION: &str = "quantpilot/qs-v4-runtime-handoff-report/v1";
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct V4QsStaticAuditReport {
@@ -26,6 +27,20 @@ pub struct V4QsStaticAuditReport {
     pub diagnostics: Vec<Diagnostic>,
     pub runtime_attached: bool,
     pub lowering_attached: bool,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct V4QsRuntimeHandoffReport {
+    pub schema_version: String,
+    pub accepted_for_runtime_handoff: bool,
+    pub graph_id: Option<String>,
+    pub venue_id: Option<String>,
+    pub runtime_mode: Option<RuntimeTradingMode>,
+    pub paper_simulated_start_allowed: bool,
+    pub provider_order_submission_attached: bool,
+    pub runtime_attached: bool,
+    pub lowering_attached: bool,
+    pub diagnostics: Vec<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -128,6 +143,52 @@ pub fn audit_v4_quant_script_static(
         diagnostics,
         runtime_attached: false,
         lowering_attached: false,
+    }
+}
+
+pub fn build_v4_qs_runtime_handoff(report: &V4QsStaticAuditReport) -> V4QsRuntimeHandoffReport {
+    let mut diagnostics = Vec::new();
+    if report.verdict != V4QsStaticAuditVerdict::Accepted {
+        diagnostics.push("v4 QS static audit must be accepted before runtime handoff".to_string());
+    }
+    if report.parsed_graph.is_none() {
+        diagnostics.push("runtime handoff requires a parsed v4 machine graph".to_string());
+    }
+    let capability_report = report.capability_report.as_ref();
+    if capability_report
+        .map(|item| item.verdict != V4CapabilityReportVerdict::Accepted)
+        .unwrap_or(true)
+    {
+        diagnostics.push(
+            "runtime handoff requires an accepted compile-time capability report".to_string(),
+        );
+    }
+    if capability_report
+        .map(|item| item.execution_submission_attached)
+        .unwrap_or(false)
+    {
+        diagnostics
+            .push("runtime handoff must not carry execution submission attachment".to_string());
+    }
+
+    let request = report.capability_request.as_ref();
+    let runtime_mode = request.map(|item| item.runtime_mode);
+    if runtime_mode != Some(RuntimeTradingMode::PaperSimulated) {
+        diagnostics.push("current v4 runtime handoff only allows PaperSimulated start".to_string());
+    }
+
+    let accepted = diagnostics.is_empty();
+    V4QsRuntimeHandoffReport {
+        schema_version: V4_QS_RUNTIME_HANDOFF_REPORT_VERSION.to_string(),
+        accepted_for_runtime_handoff: accepted,
+        graph_id: report.graph_id.clone(),
+        venue_id: request.map(|item| item.venue_id.clone()),
+        runtime_mode,
+        paper_simulated_start_allowed: accepted,
+        provider_order_submission_attached: false,
+        runtime_attached: false,
+        lowering_attached: false,
+        diagnostics,
     }
 }
 
@@ -1034,6 +1095,25 @@ v4_strategy strategy.v4.sample {
     }
 
     #[test]
+    fn v4_static_audit_builds_safe_paper_simulated_runtime_handoff() {
+        let report = audit_v4_quant_script_static(SAMPLE_V4_QS, &bundle_with_market_support());
+        let handoff = build_v4_qs_runtime_handoff(&report);
+
+        assert!(handoff.accepted_for_runtime_handoff);
+        assert!(handoff.paper_simulated_start_allowed);
+        assert_eq!(handoff.graph_id.as_deref(), Some("strategy.v4.sample"));
+        assert_eq!(handoff.venue_id.as_deref(), Some("paper-local"));
+        assert_eq!(
+            handoff.runtime_mode,
+            Some(RuntimeTradingMode::PaperSimulated)
+        );
+        assert!(!handoff.provider_order_submission_attached);
+        assert!(!handoff.runtime_attached);
+        assert!(!handoff.lowering_attached);
+        assert!(handoff.diagnostics.is_empty());
+    }
+
+    #[test]
     fn v4_static_audit_rejects_unsupported_required_capability() {
         let bundle = V4StaticContractBundle {
             venue_matrices: vec![qrpc_core_ir::v4::unsupported_v4_first_wave_matrix(
@@ -1050,6 +1130,12 @@ v4_strategy strategy.v4.sample {
             .diagnostics
             .iter()
             .any(|diagnostic| diagnostic.code == "QSV4300"));
+        let handoff = build_v4_qs_runtime_handoff(&report);
+        assert!(!handoff.accepted_for_runtime_handoff);
+        assert!(handoff
+            .diagnostics
+            .iter()
+            .any(|message| message.contains("static audit must be accepted")));
     }
 
     #[test]

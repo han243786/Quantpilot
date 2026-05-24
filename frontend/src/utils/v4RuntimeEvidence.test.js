@@ -64,6 +64,64 @@ function sampleSource(overrides = {}) {
           ]
         }
       },
+      simulated_execution: {
+        enabled: true,
+        quote_asset: "USDT",
+        cash_balance: 899.3995,
+        realized_fees: 0.1005,
+        position_market_value: 100.5,
+        portfolio_value: 999.8995,
+        order_count: 1,
+        open_order_count: 0,
+        rejected_order_count: 0,
+        fill_count: 1,
+        positions: [
+          {
+            venue_id: "paper-local",
+            symbol: "ETHUSDT",
+            net_quantity: 1,
+            average_price: 100.5,
+            market_price: 100.5,
+            market_value: 100.5
+          }
+        ],
+        asset_curve: [{ ts_ms: 1, portfolio_value: 999.8995 }],
+        last_order: {
+          order_id: "v4-sim-order-1",
+          venue_id: "paper-local",
+          symbol: "ETHUSDT",
+          action: "buy",
+          side: "buy",
+          order_type: "market",
+          requested_quantity: 1,
+          filled_quantity: 1,
+          remaining_quantity: 0,
+          reference_price: 100,
+          fill_price: 100.5,
+          status: "filled"
+        },
+        last_fill: {
+          fill_id: "fill-v4-sim-order-1-1",
+          order_id: "v4-sim-order-1",
+          venue_id: "paper-local",
+          symbol: "ETHUSDT",
+          side: "buy",
+          action: "buy",
+          quantity: 1,
+          price: 100.5,
+          notional: 100.5,
+          fee: 0.1005,
+          fee_asset: "USDT"
+        }
+      },
+      venue_adapter_boundary: {
+        provider_order_submission_attached: false,
+        provider_order_submission_allowed: false,
+        settlement_authority: "local_simulated",
+        live_actual_submission_allowed: false,
+        rejection_before_provider_submit: true,
+        reason: "provider-native order submission must be rejected before provider submit"
+      },
       event_sequence: 8,
       provider_order_submission_attached: false,
       ...overrides
@@ -106,6 +164,24 @@ describe("v4RuntimeEvidence", () => {
       status: "accepted",
       status_tone: "success",
       source_tone: "warning"
+    });
+    expect(projection.simulated_execution).toMatchObject({
+      quote_asset: "USDT",
+      cash_balance: 899.3995,
+      realized_fees: 0.1005,
+      portfolio_value: 999.8995,
+      order_count: 1,
+      fill_count: 1,
+      asset_curve_points: 1
+    });
+    expect(projection.simulated_execution.last_order).toMatchObject({
+      order_id: "v4-sim-order-1",
+      symbol: "ETHUSDT",
+      status: "filled"
+    });
+    expect(projection.venue_adapter_boundary).toMatchObject({
+      settlement_authority: "local_simulated",
+      rejection_before_provider_submit: true
     });
   });
 

@@ -499,6 +499,7 @@ MAJOR 版本不得直接从终稿进入大规模实现。凡涉及 QS 语义、C
 | 真实订单路径未经过 Risk Plane | 阻断 |
 | Execution 能力未标记 `provider_native` / `runtime_simulated` / `unsupported` | 阻断 |
 | `unsupported` 能力被静默降级或假装支持 | 阻断 |
+| `runtime_simulated` 执行没有订单、成交、手续费、资产账本或 provider detached 证据 | 阻断 |
 | UI 或文档把 planned/beta 能力描述为 supported | 阻断 |
 | `markdown/learning/` 个人学习记录进入 Git | 阻断 |
 

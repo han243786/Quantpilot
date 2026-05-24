@@ -51,7 +51,8 @@ pub use test_plan::{
 };
 pub use types::{parse_type_annotation, Type, TypeArena, TypeId};
 pub use v4_static_audit::{
-    audit_v4_quant_script_static, V4QsStaticAuditReport, V4QsStaticAuditVerdict,
+    audit_v4_quant_script_static, build_v4_qs_runtime_handoff, V4QsRuntimeHandoffReport,
+    V4QsStaticAuditReport, V4QsStaticAuditVerdict, V4_QS_RUNTIME_HANDOFF_REPORT_VERSION,
 };
 
 #[derive(Debug, Clone, PartialEq)]
