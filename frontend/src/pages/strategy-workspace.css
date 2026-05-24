@@ -523,6 +523,17 @@
   background: transparent;
 }
 
+.workspace-toolbar-shell--persistent {
+  margin: 12px 0 14px;
+}
+
+.workspace-toolbar-shell--persistent .top-toolbar {
+  padding: 14px;
+  border: 1px solid rgba(var(--ad-border-rgb), 0.14);
+  border-radius: var(--ad-radius-md);
+  background: rgba(8, 14, 23, 0.48);
+}
+
 .workspace-toolbar-shell .top-toolbar--workspace {
   display: grid;
   gap: 12px;
@@ -566,12 +577,14 @@
 }
 
 .top-toolbar-utility-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   gap: 12px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(var(--ad-border-rgb), 0.14);
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid rgba(var(--ad-border-rgb), 0.14);
+  border-radius: var(--ad-radius-md);
+  background: rgba(13, 20, 31, 0.58);
 }
 
 .toolbar-issues--workspace {

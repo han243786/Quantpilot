@@ -11,6 +11,7 @@ import { useStrategyWorkspaceSharedModel } from "../hooks/useStrategyWorkspaceSh
 import { useStrategyWorkspaceUiState } from "../hooks/useStrategyWorkspaceUiState";
 import { useStrategyWorkspacePageData } from "../hooks/useStrategyWorkspacePageData";
 import { useGraphStore } from "../store/graphStore";
+import TopToolbar from "../components/TopToolbar";
 import { StrategyRouteBar } from "./BacktestAnalysisLayout";
 
 const StrategyWorkspaceDashboard = lazy(() => import("./StrategyWorkspaceDashboard"));
@@ -137,6 +138,10 @@ export default function StrategyWorkspacePage({ strategyId }) {
           <span className="ad-pill ad-pill--muted">{compileSummary.protocol_name || "协议待生成"}</span>
         </div>
       </header>
+
+      <div className="workspace-toolbar-shell workspace-toolbar-shell--persistent">
+        <TopToolbar variant="workspace" />
+      </div>
 
       {/* Adobe 风格标签栏 */}
       <section className="ad-tabbar" aria-label="工作区模式">

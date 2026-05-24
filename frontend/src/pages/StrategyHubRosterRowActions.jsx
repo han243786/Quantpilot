@@ -8,6 +8,7 @@ import { buildActionFailureMessage } from "../utils/actionFailure";
 export default function StrategyHubRosterRowActions({ model, row }) {
   const [pendingActionKey, setPendingActionKey] = useState("");
   const [errorText, setErrorText] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   const actionGroups = projectStrategyHubRosterRowActionGroups(row);
   const actionItems = actionGroups.flatMap((group) =>
     group.items.map((item) => ({
@@ -16,6 +17,9 @@ export default function StrategyHubRosterRowActions({ model, row }) {
       groupLabel: group.label
     }))
   );
+  const primaryItem = actionItems.find((item) => item.key === "open-workspace") || actionItems[0];
+  const secondaryItems = actionItems.filter((item) => item.key !== primaryItem?.key);
+  const menuId = `strategy-hub-roster-action-${row.graphId}-menu`;
 
   async function handleActionClick(item) {
     setErrorText("");
@@ -34,26 +38,54 @@ export default function StrategyHubRosterRowActions({ model, row }) {
     }
   }
 
+  function renderActionButton(item) {
+    return (
+      <button
+        key={item.key}
+        className={`strategy-row__action-button ${
+          item.buttonClassName || "ghost-btn compact-btn"
+        }`.trim()}
+        data-testid={`strategy-hub-roster-action-${row.graphId}-${item.key}`}
+        data-action-group={item.groupKey}
+        aria-label={item.ariaLabel}
+        disabled={item.disabled || pendingActionKey === item.key}
+        onClick={(event) => {
+          event.stopPropagation();
+          setMenuOpen(false);
+          void handleActionClick(item);
+        }}
+      >
+        {pendingActionKey === item.key ? "处理中" : item.label}
+      </button>
+    );
+  }
+
   return (
     <div className="strategy-row__actions">
-      {actionItems.map((item) => (
-        <button
-          key={item.key}
-          className={`strategy-row__action-button ${
-            item.buttonClassName || "ghost-btn compact-btn"
-          }`.trim()}
-          data-testid={`strategy-hub-roster-action-${row.graphId}-${item.key}`}
-          data-action-group={item.groupKey}
-          aria-label={item.ariaLabel}
-          disabled={item.disabled || pendingActionKey === item.key}
-          onClick={(event) => {
-            event.stopPropagation();
-            void handleActionClick(item);
-          }}
+      {primaryItem ? renderActionButton(primaryItem) : null}
+      <button
+        type="button"
+        className="strategy-row__action-more ghost-btn compact-btn"
+        data-testid={`strategy-hub-roster-action-${row.graphId}-more`}
+        aria-label={`打开策略 ${row.name}（${row.graphId}）的更多操作`}
+        aria-expanded={menuOpen}
+        aria-controls={menuId}
+        onClick={(event) => {
+          event.stopPropagation();
+          setMenuOpen((value) => !value);
+        }}
+      >
+        更多
+      </button>
+      {menuOpen ? (
+        <div
+          id={menuId}
+          className="strategy-row__action-menu"
+          aria-label={`策略 ${row.name}（${row.graphId}）更多操作`}
         >
-          {pendingActionKey === item.key ? "处理中" : item.label}
-        </button>
-      ))}
+          {secondaryItems.map((item) => renderActionButton(item))}
+        </div>
+      ) : null}
       {errorText ? (
         <div className="strategy-row__action-error" role="alert">
           {errorText}

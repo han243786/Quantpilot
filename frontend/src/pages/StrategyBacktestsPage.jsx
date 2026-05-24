@@ -133,11 +133,6 @@ export default function StrategyBacktestsPage({ strategyId }) {
             kicker="策略回测"
             title="回测索引"
             summary="查看持久化实验，按编译或数据集筛选，并在不重新打开完整研究控制台的前提下直接进入详情或对比。"
-            actions={
-              <button className="ghost-btn compact-btn" onClick={() => void actions.handleRefreshBacktestHistory()}>
-                刷新历史
-              </button>
-            }
           >
             <StrategyBacktestsPanel
               graph={selectors.graph}

@@ -16,10 +16,8 @@ export default function StrategyHubRosterTableSection({ model, rosterRows }) {
         <span>模拟</span>
         <span>回测</span>
         <span>最近收益</span>
-        <span>构建</span>
-        <span>研究</span>
-        <span>文件</span>
-        <span>管理</span>
+        <span>主操作</span>
+        <span>更多</span>
       </div>
 
       <div className="strategy-directory-table__body" data-testid="strategy-hub-roster-table-body">

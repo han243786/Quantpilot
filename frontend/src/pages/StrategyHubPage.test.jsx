@@ -274,9 +274,11 @@ describe("StrategyHubPage", () => {
     fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-open-workspace"));
     expect(navigateTo).toHaveBeenCalledWith("/strategies/alpha_strategy");
 
+    fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-more"));
     fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-open-backtests"));
     expect(navigateTo).toHaveBeenCalledWith("/strategies/alpha_strategy/backtests");
 
+    fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-more"));
     fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-reveal-file"));
     expect(fetchMock).toHaveBeenCalledWith("/api/graphs/alpha_strategy/reveal",
       expect.objectContaining({
@@ -286,6 +288,7 @@ describe("StrategyHubPage", () => {
       })
     );
 
+    fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-more"));
     fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-delete-strategy"));
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith("/api/graphs/alpha_strategy",

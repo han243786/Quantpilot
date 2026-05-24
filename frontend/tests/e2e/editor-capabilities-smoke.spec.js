@@ -13,9 +13,14 @@ import { installWorkspaceBootstrapMocks } from "./support/workspaceBootstrapMock
 async function enterCurrentWorkspace(page) {
   await page.goto("/");
   await page.getByTestId("strategy-hub-open-current-workspace").click();
-  // v0.4.0: 默认 tab 为仪表盘, 运行工具栏收敛在研究标签页内
+  // v3.7.1: 默认 tab 为仪表盘, 主运行工具栏提升为工作区页级常驻入口
   await page.getByTestId("workspace-tab-research").click();
   await expect(page.locator(".top-toolbar--workspace")).toBeVisible();
+}
+
+async function openWorkspaceTools(page) {
+  await page.getByTestId("toolbar-workspace-tools-toggle").click();
+  await expect(page.getByTestId("toolbar-export-runtime-config-action")).toBeVisible();
 }
 
 async function openCodeMode(page) {
@@ -96,6 +101,7 @@ test("editor falls back to cached capabilities when capability fetch fails", asy
     /本地缓存的能力快照/
   );
   await expect(page.getByTestId("toolbar-compile-action")).toBeEnabled();
+  await openWorkspaceTools(page);
   await expect(page.getByTestId("toolbar-export-runtime-config-action")).toBeEnabled();
   await expect(page.getByTestId("toolbar-start-runtime-action")).toBeEnabled();
   await expect(page.getByTestId("toolbar-start-backtest-action")).toBeEnabled();
@@ -124,6 +130,7 @@ test("editor enters safe fallback mode when capability fetch fails without cache
     /安全回退模式.*避免暴露虚假能力/
   );
   await expect(page.getByTestId("toolbar-compile-action")).toBeDisabled();
+  await openWorkspaceTools(page);
   await expect(page.getByTestId("toolbar-export-runtime-config-action")).toBeDisabled();
   await expect(page.getByTestId("toolbar-start-runtime-action")).toBeDisabled();
   await expect(page.getByTestId("toolbar-start-backtest-action")).toBeDisabled();

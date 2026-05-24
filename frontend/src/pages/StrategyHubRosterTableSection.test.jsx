@@ -52,12 +52,10 @@ describe("StrategyHubRosterTableSection", () => {
       "模拟",
       "回测",
       "最近收益",
-      "构建",
-      "研究",
-      "文件",
-      "管理"
+      "主操作",
+      "更多"
     ]);
-    expect(container.querySelectorAll(".strategy-row__actions > button")).toHaveLength(4);
+    expect(container.querySelectorAll(".strategy-row__actions > button")).toHaveLength(2);
 
     fireEvent.click(screen.getByLabelText("选择策略 Alpha strategy（alpha_strategy）"));
     expect(model.toggleStrategySelection).toHaveBeenCalledWith("alpha_strategy");
@@ -68,11 +66,17 @@ describe("StrategyHubRosterTableSection", () => {
     fireEvent.click(screen.getByRole("button", { name: "打开策略 Alpha strategy（alpha_strategy）的工作区" }));
     expect(navigateTo).toHaveBeenCalledWith("/strategies/alpha_strategy");
 
+    fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-more"));
+
     fireEvent.click(screen.getByRole("button", { name: "打开策略 Alpha strategy（alpha_strategy）的回测页" }));
     expect(navigateTo).toHaveBeenCalledWith("/strategies/alpha_strategy/backtests");
 
+    fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-more"));
+
     fireEvent.click(screen.getByRole("button", { name: "打开策略 Alpha strategy（alpha_strategy）的文件位置" }));
     expect(model.revealGraphFile).toHaveBeenCalledWith("alpha_strategy");
+
+    fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-more"));
 
     fireEvent.click(screen.getByRole("button", { name: "删除策略 Alpha strategy（alpha_strategy）" }));
     await waitFor(() => {
@@ -110,6 +114,7 @@ describe("StrategyHubRosterTableSection", () => {
       />
     );
 
+    fireEvent.click(screen.getByTestId("strategy-hub-roster-action-alpha_strategy-more"));
     fireEvent.click(screen.getByRole("button", { name: "删除策略 Alpha strategy（alpha_strategy）" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent("DELETE /api/graphs failed");

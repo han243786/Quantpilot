@@ -1,4 +1,3 @@
-import TopToolbar from "../components/TopToolbar";
 import {
   backtestComparePath,
   backtestDetailPath,
@@ -100,16 +99,6 @@ export default function StrategyWorkspaceOverviewTab({
             <WorkspaceActionCard key={item.kicker} {...item} />
           ))}
         </section>
-
-        <WorkspaceSection
-          title="主要控制"
-          subtitle="完整工具栏保留在总览内，不再压在页面顶层。"
-          testId="workspace-primary-controls-section"
-        >
-          <div className="workspace-toolbar-shell">
-            <TopToolbar variant="workspace" />
-          </div>
-        </WorkspaceSection>
 
         <WorkspaceSection
           title="就绪度与阻塞项"
