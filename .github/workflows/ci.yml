@@ -74,7 +74,7 @@ jobs:
 
       - name: Executor warning budget
         shell: cmd
-        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-executor-warning-budget.ps1 -MaxWarnings 47
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-executor-warning-budget.ps1 -MaxWarnings 0
 
       - name: Rust workspace tests
         shell: cmd

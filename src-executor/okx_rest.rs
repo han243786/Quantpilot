@@ -1,10 +1,15 @@
 /// v3.5.0: OKX REST API 客户端 (testnet)
 /// 文档: https://www.okx.com/docs-v5/
 /// Testnet: https://www.okx.com/api/v5 (需在 headers 中设置 x-simulated-trading: 1)
-use anyhow::{bail, Result};
+#[cfg(test)]
+use anyhow::bail;
+use anyhow::Result;
+use base64::Engine;
 use ring::hmac;
+#[cfg(test)]
 use std::time::{SystemTime, UNIX_EPOCH};
 
+#[cfg(test)]
 const OKX_REST_BASE: &str = "https://www.okx.com";
 
 /// 生成 OKX API 签名 (HMAC-SHA256)
@@ -19,7 +24,7 @@ fn sign_okx(
     let sign_str = format!("{}{}{}{}", timestamp, method, request_path, body);
     let key = hmac::Key::new(hmac::HMAC_SHA256, secret.as_bytes());
     let signature = hmac::sign(&key, sign_str.as_bytes());
-    Ok(base64::encode(signature.as_ref()))
+    Ok(base64::engine::general_purpose::STANDARD.encode(signature.as_ref()))
 }
 
 fn okx_timestamp() -> String {
@@ -46,6 +51,7 @@ pub struct OkxOrderRequest {
     pub px: Option<String>, // 限价单价格
 }
 
+#[cfg(test)]
 fn validate_credentials(api_key: &str, secret: &str, passphrase: &str) -> Result<()> {
     if api_key.is_empty() || secret.is_empty() || passphrase.is_empty() {
         bail!("OKX API 凭证不能为空: api_key/secret/passphrase 必须全部提供");
@@ -54,6 +60,7 @@ fn validate_credentials(api_key: &str, secret: &str, passphrase: &str) -> Result
 }
 
 /// 提交订单到 OKX testnet
+#[cfg(test)]
 pub fn place_order(
     api_key: &str,
     secret: &str,
@@ -93,6 +100,7 @@ pub fn place_order(
 }
 
 /// 查询账户余额
+#[cfg(test)]
 pub fn fetch_balance(api_key: &str, secret: &str, passphrase: &str) -> Result<serde_json::Value> {
     validate_credentials(api_key, secret, passphrase)?;
     let request_path = "/api/v5/account/balance";
@@ -143,7 +151,9 @@ mod tests {
         let sig_str = sig.unwrap();
         assert!(!sig_str.is_empty());
         // base64 decode 应该成功
-        base64::decode(&sig_str).expect("签名应为有效 base64");
+        base64::engine::general_purpose::STANDARD
+            .decode(&sig_str)
+            .expect("签名应为有效 base64");
     }
 
     #[test]
@@ -155,5 +165,31 @@ mod tests {
         assert!(ts.contains('.'));
         // 2024年之后的时间戳
         assert!(parsed.timestamp() > 1_700_000_000);
+    }
+
+    #[test]
+    fn okx_order_request_serializes_optional_limit_price() {
+        let request = OkxOrderRequest {
+            inst_id: "BTC-USDT".to_string(),
+            td_mode: "cash".to_string(),
+            side: "buy".to_string(),
+            ord_type: "limit".to_string(),
+            sz: "0.01".to_string(),
+            px: Some("70000".to_string()),
+        };
+
+        let value = serde_json::to_value(request).unwrap();
+        assert_eq!(value["inst_id"], "BTC-USDT");
+        assert_eq!(value["px"], "70000");
+    }
+
+    #[test]
+    fn live_rest_function_items_remain_compilable_without_network_calls() {
+        let _base = OKX_REST_BASE;
+        let _place: fn(&str, &str, &str, &OkxOrderRequest) -> Result<serde_json::Value> =
+            place_order;
+        let _balance: fn(&str, &str, &str) -> Result<serde_json::Value> = fetch_balance;
+        assert!(validate_credentials("", "secret", "passphrase").is_err());
+        assert!(validate_credentials("key", "secret", "passphrase").is_ok());
     }
 }

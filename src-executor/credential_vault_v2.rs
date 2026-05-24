@@ -127,12 +127,18 @@ impl ExecutorCredentialVault {
             std::fs::rename(&vault_path, &bak)?;
         }
         let result = (|| -> std::io::Result<()> {
-            std::fs::write(&tmp, &encrypted)?;
-            std::fs::File::open(&tmp)?.sync_all()?;
-            std::fs::rename(&tmp, &vault_path)?;
-            if let Some(p) = vault_path.parent() {
-                std::fs::File::open(p)?.sync_all()?;
+            {
+                use std::io::Write;
+                let mut file = std::fs::OpenOptions::new()
+                    .create(true)
+                    .write(true)
+                    .truncate(true)
+                    .open(&tmp)?;
+                file.write_all(&encrypted)?;
+                file.sync_all()?;
             }
+            std::fs::rename(&tmp, &vault_path)?;
+            sync_parent_directory(&vault_path)?;
             Ok(())
         })();
         match result {
@@ -226,4 +232,64 @@ fn decrypt_vault(encrypted: &[u8], machine_key: &[u8; 32]) -> Result<VaultData> 
         .open_in_place(nonce, Aad::empty(), &mut in_out)
         .map_err(|_| anyhow::anyhow!("解密失败: 密钥不匹配或数据损坏"))?;
     Ok(serde_json::from_slice(plaintext)?)
+}
+
+#[cfg(unix)]
+fn sync_parent_directory(path: &Path) -> std::io::Result<()> {
+    if let Some(parent) = path.parent() {
+        std::fs::File::open(parent)?.sync_all()?;
+    }
+    Ok(())
+}
+
+#[cfg(not(unix))]
+fn sync_parent_directory(_path: &Path) -> std::io::Result<()> {
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn temp_dir(name: &str) -> PathBuf {
+        std::env::temp_dir().join(format!(
+            "quantpilot-executor-vault-{name}-{}",
+            std::process::id()
+        ))
+    }
+
+    #[test]
+    fn credential_vault_roundtrips_and_deletes_service() {
+        let dir = temp_dir("roundtrip");
+        let _ = std::fs::remove_dir_all(&dir);
+        let vault = ExecutorCredentialVault::load(&dir).unwrap();
+        vault
+            .set_service(
+                "okx",
+                BTreeMap::from([
+                    ("api_key".to_string(), "key".to_string()),
+                    ("secret".to_string(), "secret".to_string()),
+                    ("passphrase".to_string(), "pass".to_string()),
+                ]),
+            )
+            .unwrap();
+
+        assert_eq!(vault.list_services().unwrap(), vec!["okx".to_string()]);
+        let service = vault.get_service("okx").unwrap();
+        assert_eq!(service.get("api_key").map(String::as_str), Some("key"));
+
+        vault.delete_service("okx").unwrap();
+        assert!(vault.list_services().unwrap().is_empty());
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn vault_encrypt_decrypt_rejects_truncated_ciphertext() {
+        let key = [7u8; 32];
+        let plaintext = serde_json::to_vec(&VaultData::default()).unwrap();
+        let encrypted = encrypt_vault(&plaintext, &key).unwrap();
+        let decrypted = decrypt_vault(&encrypted, &key).unwrap();
+        assert!(decrypted.entries.is_empty());
+        assert!(decrypt_vault(&encrypted[..8], &key).is_err());
+    }
 }

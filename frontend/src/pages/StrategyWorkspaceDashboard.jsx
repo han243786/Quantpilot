@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState, useCallback } from "react";
+import { useMemo } from "react";
 import { useI18n } from "../i18n";
 import { useGraphStore } from "../store/graphStore";
 
@@ -17,6 +17,7 @@ export default function StrategyWorkspaceDashboard({
   compileSummary,
   readiness,
   onNavigate,
+  workspaceSurfaces = {}
 }) {
   const { t } = useI18n();
 
@@ -28,6 +29,11 @@ export default function StrategyWorkspaceDashboard({
     () => latestRuntime?.backtestHistory?.length || 0,
     [latestRuntime?.backtestHistory?.length]
   );
+  const canNavigateTo = (surfaceKey) => workspaceSurfaces[surfaceKey]?.enabled !== false;
+  const navigationTitle = (surfaceKey) =>
+    workspaceSurfaces[surfaceKey]?.blockReason ||
+    workspaceSurfaces[surfaceKey]?.reason ||
+    undefined;
 
   return (
     <div className="strategy-workspace-dashboard" data-testid="strategy-workspace-dashboard">
@@ -80,6 +86,8 @@ export default function StrategyWorkspaceDashboard({
             <button
               className="primary-btn"
               onClick={() => onNavigate?.("code")}
+              disabled={!canNavigateTo("code")}
+              title={navigationTitle("code")}
               data-testid="dashboard-goto-build"
             >
               {t("进入构建")}
@@ -87,6 +95,8 @@ export default function StrategyWorkspaceDashboard({
             <button
               className="ghost-btn"
               onClick={() => onNavigate?.("research")}
+              disabled={!canNavigateTo("research")}
+              title={navigationTitle("research")}
               data-testid="dashboard-goto-research"
             >
               {t("研究回测")}
@@ -94,6 +104,8 @@ export default function StrategyWorkspaceDashboard({
             <button
               className="ghost-btn"
               onClick={() => onNavigate?.("monitor")}
+              disabled={!canNavigateTo("monitor")}
+              title={navigationTitle("monitor")}
               data-testid="dashboard-goto-monitor"
             >
               {t("运行监控")}
@@ -101,6 +113,8 @@ export default function StrategyWorkspaceDashboard({
             <button
               className="ghost-btn"
               onClick={() => onNavigate?.("source")}
+              disabled={!canNavigateTo("source")}
+              title={navigationTitle("source")}
               data-testid="dashboard-goto-source"
             >
               {t("查看源码")}

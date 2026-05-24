@@ -471,6 +471,8 @@ struct CapabilityResponse {
     runtime: RuntimeCapabilitySummary,
     market_data: MarketDataCapabilitySummary,
     frontend: FrontendCapabilitySummary,
+    workspace: WorkspaceCapabilitySummary,
+    ui_actions: UiActionCapabilitySummary,
     versioning: CapabilityVersioningSummary,
     permission_boundary: CapabilityPermissionBoundarySummary,
 }
@@ -576,6 +578,16 @@ struct FrontendCapabilitySummary {
     module_support: Vec<ModuleCapabilityEntry>,
 }
 
+#[derive(Debug, Serialize)]
+struct WorkspaceCapabilitySummary {
+    surfaces: Vec<UiCapabilityEntry>,
+}
+
+#[derive(Debug, Serialize)]
+struct UiActionCapabilitySummary {
+    actions: Vec<UiCapabilityEntry>,
+}
+
 #[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 enum CapabilitySupportStatus {
@@ -602,6 +614,14 @@ struct ModuleCapabilityEntry {
     module_key: &'static str,
     status: CapabilitySupportStatus,
     reason: Option<&'static str>,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+struct UiCapabilityEntry {
+    key: &'static str,
+    status: CapabilitySupportStatus,
+    reason: Option<&'static str>,
+    source: &'static str,
 }
 
 #[derive(Debug, Serialize)]

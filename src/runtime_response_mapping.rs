@@ -891,6 +891,7 @@ pub(super) fn experiment_list_item_from_record(record: ExperimentRecord) -> Expe
         graph_id: record.graph_id,
         compile_id: record.compile_id,
         created_at_ms: record.created_at_ms,
+        saved: record.saved,
         experiment_name: record.definition.experiment_name.clone(),
         replay_source: record.definition.replay_source,
         variant_count: record.variants.len(),
@@ -908,6 +909,7 @@ pub(super) fn experiment_detail_response_from_record(
         graph_id: record.graph_id,
         compile_id: record.compile_id,
         created_at_ms: record.created_at_ms,
+        saved: record.saved,
         definition: record.definition,
         variants: record.variants,
     }

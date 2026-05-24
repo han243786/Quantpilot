@@ -4,11 +4,11 @@
 > 重构: v2.0→v3.0 拆分为阻断规则(门禁可查) + 审计规则(里程碑审查)
 > 每个条款标注 **检查方式**: 🛡️门禁 / 🔍审计 / 🛡️+🔍
 > 更新: v3.7.1 增加 Rust 格式基线、功能演进登记和防回退规则，`cargo fmt --check` 纳入 pre-commit / CI / closeout
-> v4.0.0 规划补充: 增加状态机化 QuantScript、Risk Plane、ExecutionMachine 能力来源、开发者学习流水线边界
+> v4.0.0 规划补充: 增加状态机化 QuantScript、Risk Plane、ExecutionMachine 能力来源、前端以后端 capability 为真源、开发者学习流水线边界
 
 ---
 
-## 一、架构铁律（11 条）
+## 一、架构铁律（12 条）
 
 ### §1.1 QS 是唯一策略定义路径 🛡️
 
@@ -113,6 +113,17 @@ QS 源码 → graph JSON → 前端可视化
 - 学习流水线不进入每次强制门禁，但 MAJOR closeout 必须检查是否存在 owner 必学核心机制。
 - 面向所有开发者的学习流水线版本必须在 owner 多轮体验后另行设计，不得在第一版中提前泛化。
 - **审计**: closeout 报告必须包含 Developer Learning Closeout 或明确说明本版本无新增 owner 必学机制；`tools/check-learning-closeout.ps1` 负责检查结构入口和本地学习记录边界。
+
+### §1.12 前端能力入口必须以后端 capability 为唯一真源 🛡️+🔍 (v4.0.0 新增)
+
+- 前端可以定义布局、排序、i18n 标签和视图投影，但不得自行决定某个工作区、工具栏动作、模块、运行模式或执行语义是否可用。
+- 工作区 tab、工作区 surface、工具栏 action、模块面板可见性、启用状态、禁用原因和能力来源必须从 `GET /api/capabilities` 的结构化响应投影而来。
+- 新增用户可见入口时，必须先扩展后端 `CapabilityResponse`、OpenAPI、capability fixture、支持矩阵、能力治理注册表和回归测试；禁止只新增 React 静态数组或 CSS 入口。
+- `loading`、`cache`、`safe_fallback` 三种能力加载状态必须有明确 UI 行为。`safe_fallback` 不得恢复上一版本完整工作区，只能保留最小只读或明确禁用入口。
+- 前端不得把 `declared_only`、`unsupported`、`planned`、`restricted` 或 `runtime_simulated` 显示为无条件 `supported`。
+- 本地静态列表只允许作为骨架、排序偏好、文案 fallback 或旧版本兼容桥；不得作为能力边界真源。
+- **门禁**: `tools/check-capability-governance.ps1`、后端 capability fixture 测试、前端能力投影测试必须同时覆盖；新增 UI surface/action 必须有“后端移除或降级后前端禁用/隐藏”的回归测试。
+- **审计**: closeout 必须抽查至少一个工作区入口和一个工具栏 action，确认其状态来自后端 capability snapshot 而非前端硬编码。
 
 ---
 
@@ -253,6 +264,14 @@ cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 - 运行、回测、执行、订单等时间型或状态型视图必须显式区分输入、当前结果、历史/时间线和详情上下文。
 - Workspace 布局调整不得制造能力宣称；真实支持边界仍以 capability、编译器、运行时和风控为准。
 
+### §8.11 能力驱动的工作区设计 🛡️+🔍
+
+- 工作区设计稿只能定义信息架构和交互层级，不能直接定义“能力已支持”。
+- 工作区一级入口必须消费 capability projection；后端未声明的入口不得可点击，后端降级的入口必须展示禁用原因。
+- 工具栏按钮、快捷动作、卡片 CTA 和面板内二级入口必须共用同一份 capability projection，禁止各组件分别维护支持判断。
+- 视觉状态必须区分 `supported`、`declared_only`、`unsupported`、`cache`、`safe_fallback`，并在需要时展示能力来源或拒绝原因。
+- 前端新增工作区入口时，必须同时补 E2E 或组件测试，验证该入口可访问；同时补诱错测试，验证后端 capability 缺失时入口不会假装可用。
+
 ---
 
 ## 九、治理系统约束（4 条 v3.0 新增）
@@ -305,6 +324,7 @@ cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 | §1.9 Risk Plane不可绕过 | 阻断 | 🛡️+🔍 |
 | §1.10 Execution能力来源 | 阻断 | 🛡️+🔍 |
 | §1.11 学习流水线边界 | 中 | 🔍 |
+| §1.12 前端能力以后端为真源 | 阻断 | 🛡️+🔍 |
 | §2.1 错误全中文 | 高 | 🔍 |
 | §2.2 测试断言中文 | 中 | 🔍 |
 | §2.3 indicator 测试 | 中 | 🔍 |
@@ -331,7 +351,7 @@ cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 | §7.3 启动清理 | 高 | 🛡️ |
 | §7.4 写入声明生命周期 | 高 | 🛡️ |
 | §7.5 DEV 激进清理 | 中 | 🛡️ |
-| §8.1-8.10 前端设计 | 中 | 🛡️+🔍 |
+| §8.1-8.11 前端设计 | 中 | 🛡️+🔍 |
 | §9.1 沙箱验证 | 阻断 | 🛡️ |
 | §9.2 签名快照 | 阻断 | 🛡️ |
 | §9.3 告警引擎 | 高 | 🔍 |
@@ -339,8 +359,8 @@ cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 | §10.4 功能演进回归保护 | 阻断 | 🛡️+🔍 |
 | §10.5 v4演化回归保护 | 阻断 | 🛡️+🔍 |
 
-**总计: 43 条** (阻断 22 / 高 13 / 中 8)
-🛡️ 门禁可查: 26 条 | 🔍 审计人工: 23 条
+**总计: 44 条** (阻断 23 / 高 13 / 中 8)
+🛡️ 门禁可查: 27 条 | 🔍 审计人工: 24 条
 
 ---
 
@@ -405,6 +425,7 @@ Paper运行时 ← 回测引擎 ← 执行端(独立进程)
 | 8 | 告警规则是否10条全部存在 | `GET /api/v1/alerts/rules` |
 | 9 | 前端能力加载三级降级是否正常 | 离线→缓存→远程 |
 | 10 | 模板库是否可展开/加载/应用 | 展开模板库→点击加载→画布出现节点 |
+| 11 | 工作区入口是否完全由后端 capability 驱动 | 移除或降级 fixture 中某个 workspace surface/action → 前端入口隐藏或禁用 |
 
 ### §10.4 功能演进回归保护 🛡️+🔍 (v3.7.1 新增)
 
@@ -415,6 +436,7 @@ Paper运行时 ← 回测引擎 ← 执行端(独立进程)
 | 功能演进登记 | 新能力 / 能力扩展 / 语义变更必须写入里程碑规划 |
 | 回归保护矩阵 | 必须列出受影响的既有能力和验证命令 |
 | 支持矩阵同步 | `implementation-support-matrix.md` 必须与真实 capability 一致 |
+| 后端真源同步 | 新 UI surface/action 必须进入 `CapabilityResponse`、OpenAPI、fixture 和 capability governance |
 | 用户入口同步 | README、当前状态总览、UI 文案不得先于真实能力宣称 supported |
 | 兼容性说明 | 旧图、旧策略、旧凭证、旧运行记录受影响时必须有迁移或拒绝行为 |
 | 测试证据 | 新能力至少一个自动化测试；核心工作流必须有场景 / E2E / 手动验证记录 |

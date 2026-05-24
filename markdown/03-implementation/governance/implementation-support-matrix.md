@@ -99,25 +99,41 @@
 
 ## 能力驱动的 UI 操作
 
+所有用户可见 UI 操作必须先出现在 `/api/capabilities.ui_actions.actions`。前端的 `CAPABILITY_ACTION_MAP` 只保留按钮文案、排序、路由备注和测试定位，不再作为操作可用性的真源。
+
 | 操作 | 能力门禁 | 后端路由 | 备注 |
 |---|---|---|---|
+| `打开教程` | 由 `/api/capabilities.ui_actions.actions` 控制 | 无 | 本地教程入口；可见不等于产品能力扩展 |
+| `管理凭证` | 由 `/api/capabilities.ui_actions.actions` 控制 | `/api/credentials` | 凭证面板不代表实盘执行已开放 |
+| `新建策略图` | 由 `/api/capabilities.ui_actions.actions` 控制 | 无 | 重置本地草稿 |
+| `加载最新` | 由 `/api/capabilities.ui_actions.actions` 控制 | `/api/graphs/latest` | 图持久化读取路径 |
+| `保存策略图` | 由 `/api/capabilities.ui_actions.actions` 控制 | `/api/graphs` | 图持久化写入路径，不代表运行时写入 |
 | `编译` | 能力同步加载时或安全回退激活时锁定 | `/api/strategy-ir/compile`、`/api/quantscript/formal/compile`、`/api/runtime/compile` | `strategy_ir` 仅为预检；运行时编译保持权威 |
 | `导出配置` | 能力同步加载时或安全回退激活时锁定 | `/api/runtime/compile` | 导出依赖于可编译的运行时配置 |
 | `启动模拟` | 能力同步加载时或安全回退激活时锁定 | `/api/runtime/test-run`、`/api/runtime/runs/:run_id/events`、`/api/runtime/runs/:run_id/status` | 当前 beta 边界仅为纸面运行时 |
 | `运行回测` | 能力同步加载时或安全回退激活时锁定 | `/api/runtime/backtest`、`/api/runtime/backtests`、`/api/runtime/backtests/:backtest_id` | 当前回测仅为基础回放/回测支持 |
 | `运行参数扫掠` | 能力同步加载时或安全回退激活时锁定 | `/api/runtime/experiments/backtest-sweep`、`/api/runtime/experiments`、`/api/runtime/experiments/:experiment_id` | 在现有回测面上进行窄执行假设扫描；不是第二套实验运行时 |
-| `导出 strategy_graph 源码` | 不受能力门禁控制 | 无 | 仅前端图源草稿导出；这不是正式 QuantScript 语言 |
+| `停止` | 由 `/api/capabilities.ui_actions.actions` 控制 | `/api/runtime/runs/:run_id/status` | 只对当前运行中会话可用 |
+| `重置运行时` | 由 `/api/capabilities.ui_actions.actions` 控制 | 无 | 清理前端运行态投影和连接状态 |
+| `打开回测` | 由 `/api/capabilities.ui_actions.actions` 控制 | `/api/runtime/backtests` | 进入回测列表，不直接触发回测写入 |
+| `导出 strategy_graph 源码` | 由 `/api/capabilities.ui_actions.actions` 控制 | 无 | 仅前端图源草稿导出；这不是正式 QuantScript 语言 |
 
-## 不受 `/api/capabilities` 门禁控制的可见工作区界面
+## 能力驱动的可见工作区界面
 
-这些界面在当前产品中是真实可见的，但它们的可见性并非全部源自后端能力发现。
+所有工作区入口必须先出现在 `/api/capabilities.workspace.surfaces`。前端的 `WORKSPACE_SURFACE_MAP` 只保留排序、标签、说明和路由备注，不再作为显隐或可点击状态的真源。
 
 | 界面 | 可见性真实数据源 | 后端路由 | 能力驱动？ | 备注 |
 |---|---|---|---|---|
-| `策略模板库` | 前端本地模板注册表 | 无 | 否 | 仅本地启动图界面；加载模板替换内存草稿，不创建后端模板传输 |
-| `版本历史` | 图持久化工作流 | `/api/graphs/:graph_id/versions`、`/api/graphs/:graph_id/versions/:version_id`、`/api/graphs/:graph_id/versions/:version_id/restore`、`/api/graphs/:graph_id/versions/compare` | 否 | 可见是因为存在持久化的图工件，而非因为 `/api/capabilities` 宣传了第二套运行时能力 |
-| `协作与审计` | 图协作元数据和审计投影 | `/api/graphs/:graph_id/audit` | 否 | 当前切片是本地 actor 协作元数据，而非远程账号系统 |
-| `参数扫掠` | 运行时回测面加上能力驱动的触发 | `/api/runtime/experiments/backtest-sweep`、`/api/runtime/experiments`、`/api/runtime/experiments/:experiment_id` | 是 | 作为窄工作区卡片可见，但其提交操作必须遵守与回测相同的能力锁定规则 |
+| `总览` | `/api/capabilities.workspace.surfaces` | 无 | 是 | 聚合当前图、编译和运行摘要 |
+| `构建` | `/api/capabilities.workspace.surfaces` | `/api/runtime/compile` | 是 | 图编辑、诊断和源码审查主工作区 |
+| `检查` | `/api/capabilities.workspace.surfaces` | `/api/runtime/compile` | 是 | 可由问题队列程序化进入，不一定作为一级标签展示 |
+| `研究回测` | `/api/capabilities.workspace.surfaces` | `/api/runtime/backtest`、`/api/runtime/backtests` | 是 | 仅代表基础回放/回测支持 |
+| `运行监控` | `/api/capabilities.workspace.surfaces` | `/api/runtime/runs/:run_id/events`、`/api/runtime/runs/:run_id/status` | 是 | 运行时只读投影和事件流摘要 |
+| `源码` | `/api/capabilities.workspace.surfaces` | 无 | 是 | 图谱源码和 Strategy IR 审查材料 |
+| `策略模板库` | `/api/capabilities.workspace.surfaces` | 无 | 是 | 本地模板注册表提供内容，后端 capability 决定入口状态 |
+| `版本历史` | `/api/capabilities.workspace.surfaces` | `/api/graphs/:graph_id/versions`、`/api/graphs/:graph_id/versions/:version_id`、`/api/graphs/:graph_id/versions/:version_id/restore`、`/api/graphs/:graph_id/versions/compare` | 是 | 可见不代表扩展新的 runtime capability |
+| `协作与审计` | `/api/capabilities.workspace.surfaces` | `/api/graphs/:graph_id/audit` | 是 | 当前切片是本地 actor 协作元数据，而非远程账号系统 |
+| `参数扫掠` | `/api/capabilities.workspace.surfaces` | `/api/runtime/experiments/backtest-sweep`、`/api/runtime/experiments`、`/api/runtime/experiments/:experiment_id` | 是 | 作为窄工作区卡片可见，但其提交操作必须遵守与回测相同的能力锁定规则 |
 
 ## 能力源行为
 
@@ -135,7 +151,7 @@
 ### `safe_fallback`
 
 - 风险遏制状态。
-- 前端必须隐藏不支持的模块入口点并锁定风险操作。
+- 前端必须隐藏未声明入口，将 `declared_only` 工作区或操作保留为禁用态，并锁定风险操作。
 - UI 必须解释能力验证失败，前端已收紧行为以避免暴露虚假能力。
 
 ## 允许的声明

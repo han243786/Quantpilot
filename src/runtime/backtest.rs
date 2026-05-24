@@ -392,6 +392,7 @@ async fn start_backtest_experiment(
         graph_id: request.runtime_config.metadata.graph_id.clone(),
         compile_id: request.runtime_config.metadata.compile_id.clone(),
         created_at_ms,
+        saved: false,
         definition: ExperimentDefinitionSummary {
             experiment_name,
             replay_source,
@@ -544,7 +545,7 @@ async fn save_experiment_record(
     State(state): State<AppState>,
     Path(experiment_id): Path<String>,
 ) -> Result<Json<ExperimentDetailResponse>, (StatusCode, String)> {
-    let record = load_experiment_record_from_state(&state, &user_id, &experiment_id).await?;
+    let mut record = load_experiment_record_from_state(&state, &user_id, &experiment_id).await?;
 
     for variant in &record.variants {
         let variant_record = load_backtest_record_from_state(&state, &user_id, &variant.backtest_id).await?;
@@ -559,9 +560,15 @@ async fn save_experiment_record(
         .map_err(io_error)?;
     }
 
+    record.saved = true;
     persist_experiment_record(state.experiment_store_dir.as_ref(), &record)
         .await
         .map_err(io_error)?;
+    state
+        .experiments
+        .write()
+        .await
+        .insert(auth::scoped_key(&user_id, &experiment_id), record.clone());
 
     if let Some(actor) = &record.actor {
         persist_graph_audit_entry(
@@ -586,12 +593,8 @@ async fn discard_experiment_record(
     State(state): State<AppState>,
     Path(experiment_id): Path<String>,
 ) -> Result<Json<DiscardRuntimeArtifactResponse>, (StatusCode, String)> {
-    // v1.1.9: 路径遍历防护
-    let safe_id = sanitize_storage_path_segment(&experiment_id);
-    let path = state
-        .experiment_store_dir
-        .join(format!("{}.json", safe_id));
-    if fs::try_exists(&path).await.map_err(io_error)? {
+    let record = load_experiment_record_from_state(&state, &user_id, &experiment_id).await?;
+    if record.saved {
         return Err((
             StatusCode::CONFLICT,
             format!(
@@ -601,14 +604,15 @@ async fn discard_experiment_record(
         ));
     }
 
+    // v1.1.9: 路径遍历防护
+    let safe_id = sanitize_storage_path_segment(&experiment_id);
+    let path = state.experiment_store_dir.join(format!("{}.json", safe_id));
+
     let scoped_experiment_id = auth::scoped_key(&user_id, &experiment_id);
-    let removed = state.experiments.write().await.remove(&scoped_experiment_id);
-    let Some(record) = removed else {
-        return Err((
-            StatusCode::NOT_FOUND,
-            format!("experiment `{}` not found", experiment_id),
-        ));
-    };
+    state.experiments.write().await.remove(&scoped_experiment_id);
+    if fs::try_exists(&path).await.map_err(io_error)? {
+        fs::remove_file(&path).await.map_err(io_error)?;
+    }
 
     let mut transient_variant_ids = Vec::new();
     for variant in &record.variants {
@@ -653,4 +657,3 @@ async fn get_backtest_replay(
         .record_replay_page(started.elapsed().as_millis() as u64);
     Ok(Json(response))
 }
-

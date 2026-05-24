@@ -8,6 +8,14 @@ use axum::{
 use serde_json::Value;
 use tower::ServiceExt;
 
+fn paginated_items(value: &Value) -> &[Value] {
+    value
+        .get("data")
+        .and_then(Value::as_array)
+        .or_else(|| value.as_array())
+        .expect("response should contain an item array")
+}
+
 #[tokio::test(flavor = "multi_thread")]
 async fn experiment_endpoints_expose_parameter_grid_and_variant_summaries() {
     let app = common::test_app("api_experiments_contract");
@@ -81,9 +89,10 @@ async fn experiment_endpoints_expose_parameter_grid_and_variant_summaries() {
         .await
         .unwrap();
     let list: Value = serde_json::from_slice(&list_body).unwrap();
-    let items = list.as_array().unwrap();
+    let items = paginated_items(&list);
     assert_eq!(items.len(), 1);
     assert_eq!(items[0]["experiment_id"], experiment_id);
+    assert_eq!(items[0]["saved"], true);
     assert_eq!(items[0]["variant_count"], 4);
     assert!(items[0]["sweep_axes"]
         .as_array()
@@ -114,6 +123,7 @@ async fn experiment_endpoints_expose_parameter_grid_and_variant_summaries() {
         .unwrap();
     let loaded_detail: Value = serde_json::from_slice(&detail_body).unwrap();
     assert_eq!(loaded_detail["experiment_id"], experiment_id);
+    assert_eq!(loaded_detail["saved"], true);
     assert_eq!(loaded_detail["variants"].as_array().unwrap().len(), 4);
 }
 
@@ -146,6 +156,7 @@ async fn experiment_preview_can_be_discarded_before_save_only() {
     let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
     let detail: Value = serde_json::from_slice(&body).unwrap();
     let experiment_id = detail["experiment_id"].as_str().unwrap().to_string();
+    assert_eq!(detail["saved"], false);
     let variant_backtest_id = detail["variants"][0]["backtest_id"]
         .as_str()
         .unwrap()

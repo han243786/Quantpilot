@@ -5,7 +5,9 @@ import {
   SUPPORTED_INDICATOR_KINDS,
   SUPPORTED_RUNTIME_EXECUTION_MODULES,
   SUPPORTED_RUNTIME_MODES,
-  SUPPORTED_SYMBOLS
+  SUPPORTED_SYMBOLS,
+  WORKSPACE_SURFACE_MAP,
+  CAPABILITY_ACTION_MAP
 } from "../capabilities/supportMatrix";
 import { sanitizeDisplayText } from "../utils/errorText";
 
@@ -31,7 +33,7 @@ const commonNode = (category, name, quickFields, summaryFields) => ({
 export const DEFAULT_CAPABILITIES = {
   api_version: "quantpilot-capabilities/v1",
   schema_version: "quantpilot/capabilities-schema/v1",
-  schema_hash: "sha256:fa1979f17b9fc96d845a943d11f02128ef244feac6ac142f930c9cb0259b4683",
+  schema_hash: "sha256:71f7f2d11a54d186649ce0207e48b4b3849bc35ce6aa0ddab8949ddb5890f9b6",
   chain_stages: ["data", "intent", "agent", "risk", "execution", "fill"],
   strategy_ir: {
     declared_indicator_kinds: DECLARED_INDICATOR_KINDS,
@@ -48,6 +50,22 @@ export const DEFAULT_CAPABILITIES = {
   frontend: {
     supported_module_keys: SUPPORTED_FRONTEND_MODULE_KEYS,
     unsupported_module_reasons: {}
+  },
+  workspace: {
+    surfaces: Object.keys(WORKSPACE_SURFACE_MAP).map((key) => ({
+      key,
+      status: "supported",
+      reason: null,
+      source: "backend:/api/capabilities.workspace.surfaces"
+    }))
+  },
+  ui_actions: {
+    actions: Object.keys(CAPABILITY_ACTION_MAP).map((key) => ({
+      key,
+      status: "supported",
+      reason: null,
+      source: "backend:/api/capabilities.ui_actions.actions"
+    }))
   },
   versioning: {
     model_version: "quantpilot/versioning-model/v1",
@@ -1019,7 +1037,9 @@ export const allBuiltinModules = [
 ];
 
 function normalizeSupportStatus(status) {
-  return status === "supported" ? "supported" : "declared_only";
+  if (status === "supported") return "supported";
+  if (status === "declared_only") return "declared_only";
+  return "unsupported";
 }
 
 function normalizeNamedSupportEntries(entries, fallbackKeys = []) {
@@ -1149,6 +1169,45 @@ function normalizeFrontendCapabilities(frontendCapabilities = {}) {
   };
 }
 
+function normalizeUiCapabilityEntries(entries, fallbackMap, source) {
+  const fallbackEntries = Object.keys(fallbackMap).map((key) => ({
+    key,
+    status: "supported",
+    reason: "",
+    source
+  }));
+  const sourceEntries = Array.isArray(entries) && entries.length > 0 ? entries : fallbackEntries;
+
+  return sourceEntries
+    .filter((entry) => entry && typeof entry === "object" && entry.key)
+    .map((entry) => ({
+      key: entry.key,
+      status: normalizeSupportStatus(entry.status),
+      reason: sanitizeDisplayText(entry.reason, ""),
+      source: sanitizeDisplayText(entry.source, source)
+    }));
+}
+
+function normalizeWorkspaceCapabilities(workspaceCapabilities = {}) {
+  return {
+    surfaces: normalizeUiCapabilityEntries(
+      workspaceCapabilities.surfaces,
+      WORKSPACE_SURFACE_MAP,
+      "backend:/api/capabilities.workspace.surfaces"
+    )
+  };
+}
+
+function normalizeUiActionCapabilities(uiActionCapabilities = {}) {
+  return {
+    actions: normalizeUiCapabilityEntries(
+      uiActionCapabilities.actions,
+      CAPABILITY_ACTION_MAP,
+      "backend:/api/capabilities.ui_actions.actions"
+    )
+  };
+}
+
 export function normalizeCapabilities(capabilities) {
   if (!capabilities || typeof capabilities !== "object") {
     return DEFAULT_CAPABILITIES;
@@ -1198,6 +1257,8 @@ export function normalizeCapabilities(capabilities) {
       )
     },
     frontend: normalizeFrontendCapabilities(capabilities.frontend),
+    workspace: normalizeWorkspaceCapabilities(capabilities.workspace),
+    ui_actions: normalizeUiActionCapabilities(capabilities.ui_actions),
     permission_boundary: normalizePermissionBoundary(capabilities.permission_boundary)
   };
 }
@@ -1289,6 +1350,22 @@ export function createSafeFallbackCapabilities(reason = "能力清单加载失�
         module_key: moduleDef.module_key,
         status: "declared_only",
         reason
+      }))
+    },
+    workspace: {
+      surfaces: Object.keys(WORKSPACE_SURFACE_MAP).map((key) => ({
+        key,
+        status: "declared_only",
+        reason,
+        source: "safe_fallback"
+      }))
+    },
+    ui_actions: {
+      actions: Object.keys(CAPABILITY_ACTION_MAP).map((key) => ({
+        key,
+        status: "declared_only",
+        reason,
+        source: "safe_fallback"
       }))
     },
     versioning: { ...DEFAULT_CAPABILITIES.versioning },

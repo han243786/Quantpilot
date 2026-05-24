@@ -683,6 +683,71 @@ fn capability_response_keeps_legacy_frontend_fields_and_adds_module_support_entr
 }
 
 #[test]
+fn capability_response_declares_workspace_surfaces_and_ui_actions() {
+    let response = build_capability_response();
+
+    let workspace_surface_keys = response
+        .workspace
+        .surfaces
+        .iter()
+        .map(|entry| entry.key)
+        .collect::<Vec<_>>();
+    assert_eq!(
+        workspace_surface_keys,
+        vec![
+            "dashboard",
+            "code",
+            "diagnostics",
+            "research",
+            "monitor",
+            "source",
+            "template_library",
+            "version_history",
+            "collaboration_audit",
+            "parameter_sweep",
+        ]
+    );
+    assert!(response
+        .workspace
+        .surfaces
+        .iter()
+        .all(|entry| entry.status == CapabilitySupportStatus::Supported
+            && entry.source == "backend:/api/capabilities.workspace.surfaces"));
+
+    let ui_action_keys = response
+        .ui_actions
+        .actions
+        .iter()
+        .map(|entry| entry.key)
+        .collect::<Vec<_>>();
+    assert_eq!(
+        ui_action_keys,
+        vec![
+            "open_tutorial",
+            "manage_credentials",
+            "reset_graph",
+            "load_latest_graph",
+            "save_graph",
+            "export_runtime_config",
+            "export_quantscript",
+            "compile",
+            "start_simulation",
+            "run_backtest",
+            "stop_runtime",
+            "reset_runtime",
+            "open_backtests",
+            "run_parameter_sweep",
+        ]
+    );
+    assert!(response
+        .ui_actions
+        .actions
+        .iter()
+        .all(|entry| entry.status == CapabilitySupportStatus::Supported
+            && entry.source == "backend:/api/capabilities.ui_actions.actions"));
+}
+
+#[test]
 fn capability_response_serializes_new_support_sections() {
     let value = serde_json::to_value(build_capability_response()).unwrap();
 
@@ -692,6 +757,16 @@ fn capability_response_serializes_new_support_sections() {
     assert!(value["market_data"]["exchange_support"].is_array());
     assert!(value["frontend"]["module_support"].is_array());
     assert!(value["frontend"]["supported_module_keys"].is_array());
+    assert!(value["workspace"]["surfaces"].is_array());
+    assert!(value["ui_actions"]["actions"].is_array());
+    assert_eq!(
+        value["workspace"]["surfaces"][0]["source"],
+        "backend:/api/capabilities.workspace.surfaces"
+    );
+    assert_eq!(
+        value["ui_actions"]["actions"][0]["source"],
+        "backend:/api/capabilities.ui_actions.actions"
+    );
     assert_eq!(
         value["chain_stages"],
         serde_json::json!(RUNTIME_CHAIN_STAGES)
@@ -743,6 +818,18 @@ fn capability_contract_hash_changes_when_governed_fields_change() {
         .supported_module_keys
         .push("builtin.intent.contract_test");
     assert_ne!(capability_contract_hash(&changed_module), base_hash);
+
+    let mut changed_workspace_surface = base.clone();
+    changed_workspace_surface
+        .workspace_surfaces
+        .push(ui_capability_entry(
+            "contract_test_surface",
+            "backend:/api/capabilities.workspace.surfaces",
+        ));
+    assert_ne!(
+        capability_contract_hash(&changed_workspace_surface),
+        base_hash
+    );
 
     let mut changed_symbol = base.clone();
     changed_symbol.supported_symbols.push("DOGEUSDT");

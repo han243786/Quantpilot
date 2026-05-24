@@ -19,10 +19,10 @@ v3.7.1 不是功能扩张版本，而是 v3.7.0 后的回归修复与工作流�
 - executor 时间戳测试修复：OKX v5 时间戳按 RFC3339/ISO8601 格式校验，不再误按 Unix 秒解析。
 - 自由维度诱错 S0 收口：清理脚本不再触碰真实运行/图版本工件，图保存改为事务式提交，密钥/JWT secret 统一先原子落盘再进入内存缓存。
 - E2E 视觉回归确定性收口：视觉截图固定 API fixture 并启用未声明 API 守卫，避免 alerts/snapshots/runbook 受本地后端状态漂移。
+- executor warning 债务已清零，默认预算和 CI/closeout 显式预算均为 0。
 
 未宣称：
 
-- 不宣称 executor warning 债务已清零。
 - 不新增 QuantScript、回测、交易、插件或 UI 平台能力。
 
 ## 二、交付清单
@@ -33,7 +33,7 @@ v3.7.1 不是功能扩张版本，而是 v3.7.0 后的回归修复与工作流�
 | 测试包装 | `scripts/test.sh` | ✅ | Git Bash / Unix 测试入口，默认 `cargo test --workspace` |
 | 场景 smoke | `scripts/scenario-smoke.ps1` | ✅ | 构建后端、启动 DEV 服务、执行 QS 场景 |
 | 版本一致性 | `tools/check-version-consistency.ps1` | ✅ | Cargo、Tauri、前端、lockfile 和用户可见入口统一校验 |
-| warning 预算 | `tools/check-executor-warning-budget.ps1` | ✅ | 当前 executor warning budget 固定为 47 |
+| warning 预算 | `tools/check-executor-warning-budget.ps1` | ✅ | 当前 executor warning budget 固定为 0 |
 | 功能演进契约 | `tools/check-feature-evolution.ps1` | ✅ | 新增能力需登记和提供回归保护矩阵 |
 | Pre-commit hook 同步 | `tools/check-pre-commit-hook.ps1` | ✅ | 实际安装 hook 必须与版本化 `scripts/pre-commit` 一致 |
 | 清理边界门禁 | `tools/check-cleanup-boundary.ps1` | ✅ | 清理脚本仅允许旧测试工件和日志，拒绝已废弃的运行工件清理开关 |
@@ -49,7 +49,7 @@ v3.7.1 不是功能扩张版本，而是 v3.7.0 后的回归修复与工作流�
 | 门禁 | 状态 | 记录 |
 |------|:--:|------|
 | `tools/check-utf8.ps1` | ✅ | 545 文件 UTF-8 校验通过 |
-| `tools/check-user-facing-text.ps1` | ✅ | 337 个当前用户可见入口 / 活跃规范文件通过 |
+| `tools/check-user-facing-text.ps1` | ✅ | 348 个当前用户可见入口 / 活跃规范文件通过 |
 | `tools/check-capability-governance.ps1` | ✅ | 快照已更新并复验通过 |
 | `tools/check-i18n.ps1` | ✅ | 未发现英文用户可见字符串 |
 | `tools/check-version-consistency.ps1` | ✅ | Cargo、Tauri、前端、lockfile 和关键文档均为 3.7.1 |
@@ -57,22 +57,22 @@ v3.7.1 不是功能扩张版本，而是 v3.7.0 后的回归修复与工作流�
 | `tools/check-pre-commit-hook.ps1` | ✅ | `.git/hooks/pre-commit` 与 `scripts/pre-commit` 已同步 |
 | `tools/check-cleanup-boundary.ps1` | ✅ | 临时夹具确认旧测试工件会被清理，runs/backtests/experiments/graphs/version 工件不被枚举或删除 |
 | `cargo fmt --check` | ✅ | 全仓 Rust 格式基线通过；pre-commit、CI、closeout 均已接入 |
-| `cargo check --workspace` | ✅ | 2026-05-23 本地通过，仍有 executor warning 债务 |
+| `cargo check --workspace` | ✅ | 2026-05-24 本地通过，executor warning 债务已清零 |
 | `scripts/test.ps1 test --workspace` | ✅ | workspace 测试包装器串行通过，覆盖 Windows 文件锁场景 |
-| `tools/check-executor-warning-budget.ps1 -MaxWarnings 47` | ✅ | 47/47，通过；新增 warning 会阻断 |
+| `tools/check-executor-warning-budget.ps1 -MaxWarnings 0` | ✅ | 0/0，通过；新增 warning 会阻断 |
 | `frontend npm run build` | ✅ | 构建通过；保留既有 circular chunk warning |
 | `frontend npm run test` | ✅ | 92 文件 / 272 测试通过 |
 | `frontend npm run test:e2e` | ✅ | 21 passed / 18 skipped；视觉回归已固定 API fixture，避免本地运维状态污染截图 |
 | `frontend npm audit --audit-level=moderate` | ✅ | `npm audit fix` 后 0 vulnerability |
 | `frontend-executor npm run build` | ✅ | 构建通过，`dist/index.html` 已刷新到 v3.7.1 |
-| `scripts/test.ps1 test --bin executor` | ✅ | 9/9 通过 |
+| `cargo test --bin executor -- --test-threads=1` | ✅ | 21/21 通过 |
 | `tools/run-closeout-gates.bat` | ✅ | 2026-05-23 本地复跑 21/21 通过；覆盖 Rust workspace、前端 build/test/e2e、executor、QS scenario smoke 与全部元流水线检查 |
 
 ## 四、剩余风险
 
 | 风险 | 级别 | 处理 |
 |------|:--:|------|
-| executor warning 债务仍为 47 | P2 | 预算化阻断新增，后续单独清债 |
+| executor warning 债务 | P2 | 已清零，预算 0 阻断新增 warning |
 | 新增能力若缺少回归矩阵 | P1 | `tools/check-feature-evolution.ps1` 阻断 closeout |
 | 前端构建仍有 circular chunk warning | P3 | 当前不阻断，后续优化 manualChunks |
 | release workflow 只做过静态修正 | P2 | 下一次发布前先用 workflow_dispatch dry-run 验证 |

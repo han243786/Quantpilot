@@ -42,13 +42,76 @@ export const SUPPORTED_FRONTEND_MODULE_KEYS = [
 ];
 
 export const WORKSPACE_SURFACE_MAP = {
+  dashboard: {
+    label: "总览",
+    apiPaths: [],
+    capabilityDriven: true,
+    sourceOfTruth: "backend:/api/capabilities.workspace.surfaces",
+    notes: [
+      "工作区总览入口由后端 capability 快照决定是否可见和可点击。",
+      "前端只保留排序、标签和布局投影。"
+    ]
+  },
+  code: {
+    label: "构建",
+    apiPaths: ["/api/runtime/compile"],
+    capabilityDriven: true,
+    sourceOfTruth: "backend:/api/capabilities.workspace.surfaces",
+    notes: [
+      "构建工作区承载图编辑、诊断和源码审查入口。",
+      "入口可用性来自后端 workspace surface 声明。"
+    ]
+  },
+  diagnostics: {
+    label: "检查",
+    apiPaths: ["/api/runtime/compile"],
+    capabilityDriven: true,
+    sourceOfTruth: "backend:/api/capabilities.workspace.surfaces",
+    notes: [
+      "诊断工作区由问题队列和编译诊断触发，不一定作为一级标签展示。",
+      "程序化导航仍必须通过后端 workspace surface 声明。"
+    ]
+  },
+  research: {
+    label: "研究回测",
+    apiPaths: ["/api/runtime/backtest", "/api/runtime/backtests"],
+    capabilityDriven: true,
+    sourceOfTruth: "backend:/api/capabilities.workspace.surfaces",
+    notes: [
+      "研究回测入口仅代表当前基础回放/回测工作区。",
+      "不得外推为研究级回测平台。"
+    ]
+  },
+  monitor: {
+    label: "运行监控",
+    apiPaths: [
+      "/api/runtime/runs/:run_id/events",
+      "/api/runtime/runs/:run_id/status"
+    ],
+    capabilityDriven: true,
+    sourceOfTruth: "backend:/api/capabilities.workspace.surfaces",
+    notes: [
+      "运行监控入口展示运行时只读投影和事件流摘要。",
+      "入口可用性必须跟随后端 workspace surface。"
+    ]
+  },
+  source: {
+    label: "源码",
+    apiPaths: [],
+    capabilityDriven: true,
+    sourceOfTruth: "backend:/api/capabilities.workspace.surfaces",
+    notes: [
+      "源码工作区仅投影当前图谱源码和 Strategy IR 审查材料。",
+      "可见不代表绕过正式编译链路。"
+    ]
+  },
   template_library: {
     label: "策略模板库",
     apiPaths: [],
-    capabilityDriven: false,
-    sourceOfTruth: "frontend_local_template_registry",
+    capabilityDriven: true,
+    sourceOfTruth: "backend:/api/capabilities.workspace.surfaces",
     notes: [
-      "模板库是前端本地 starter graph 入口，不依赖 /api/capabilities 显隐。",
+      "模板库是前端本地 starter graph 入口，但入口显隐仍必须由 /api/capabilities 声明。",
       "加载模板只替换当前内存工作草稿，不创建第二套后端模板传输。"
     ]
   },
@@ -60,20 +123,20 @@ export const WORKSPACE_SURFACE_MAP = {
       "/api/graphs/:graph_id/versions/:version_id/restore",
       "/api/graphs/:graph_id/versions/compare"
     ],
-    capabilityDriven: false,
-    sourceOfTruth: "graph_persistence_routes",
+    capabilityDriven: true,
+    sourceOfTruth: "backend:/api/capabilities.workspace.surfaces",
     notes: [
-      "版本历史属于图持久化工作流，不由 /api/capabilities 决定显隐。",
+      "版本历史属于图持久化工作流，入口显隐由 /api/capabilities 决定。",
       "可见不代表扩展了新的 runtime capability，只代表当前图版本工件可管理。"
     ]
   },
   collaboration_audit: {
     label: "协作与审计",
     apiPaths: ["/api/graphs/:graph_id/audit"],
-    capabilityDriven: false,
-    sourceOfTruth: "graph_collaboration_metadata",
+    capabilityDriven: true,
+    sourceOfTruth: "backend:/api/capabilities.workspace.surfaces",
     notes: [
-      "协作与审计属于当前图元数据和审计记录投影，不由 /api/capabilities 决定显隐。",
+      "协作与审计属于当前图元数据和审计记录投影，入口显隐由 /api/capabilities 决定。",
       "当前边界仍是本地 actor 协作切片，不应外推成远程账号系统能力。"
     ]
   },
@@ -85,7 +148,7 @@ export const WORKSPACE_SURFACE_MAP = {
       "/api/runtime/experiments/:experiment_id"
     ],
     capabilityDriven: true,
-    sourceOfTruth: "runtime_backtest_surface",
+    sourceOfTruth: "backend:/api/capabilities.workspace.surfaces",
     notes: [
       "参数扫掠是现有 backtest surface 上的窄执行假设扫描，不是第二套实验运行时。",
       "发起扫掠必须遵守与回测相同的 capability 同步和 safe-fallback 锁定规则。"
@@ -94,6 +157,46 @@ export const WORKSPACE_SURFACE_MAP = {
 };
 
 export const CAPABILITY_ACTION_MAP = {
+  open_tutorial: {
+    label: "打开教程",
+    apiPaths: [],
+    blockedDuringCapabilitySync: false,
+    notes: [
+      "教程入口是本地前端辅助面板，但其可见和可点击状态仍由后端 ui_actions 声明。"
+    ]
+  },
+  manage_credentials: {
+    label: "管理凭证",
+    apiPaths: ["/api/credentials"],
+    blockedDuringCapabilitySync: false,
+    notes: [
+      "凭证面板只管理交易提供方凭证，不代表实盘执行已开放。"
+    ]
+  },
+  reset_graph: {
+    label: "新建策略图",
+    apiPaths: [],
+    blockedDuringCapabilitySync: false,
+    notes: [
+      "新建策略图只重置本地草稿，入口可用性由后端 ui_actions 声明。"
+    ]
+  },
+  load_latest_graph: {
+    label: "加载最新",
+    apiPaths: ["/api/graphs/latest"],
+    blockedDuringCapabilitySync: false,
+    notes: [
+      "加载最新策略图属于图持久化读取路径。"
+    ]
+  },
+  save_graph: {
+    label: "保存策略图",
+    apiPaths: ["/api/graphs"],
+    blockedDuringCapabilitySync: false,
+    notes: [
+      "保存策略图属于图持久化写入路径，不代表运行时写入。"
+    ]
+  },
   export_runtime_config: {
     label: "导出运行配置",
     apiPaths: ["/api/runtime/compile"],
@@ -155,6 +258,30 @@ export const CAPABILITY_ACTION_MAP = {
     notes: [
       "当前仅提供基础回放/回测支持，不宣称研究级回测能力。",
       "缓存回退模式下仍可见，但依旧受后端校验约束。"
+    ]
+  },
+  stop_runtime: {
+    label: "停止",
+    apiPaths: ["/api/runtime/runs/:run_id/status"],
+    blockedDuringCapabilitySync: false,
+    notes: [
+      "停止入口只对当前运行中会话可用。"
+    ]
+  },
+  reset_runtime: {
+    label: "重置运行时",
+    apiPaths: [],
+    blockedDuringCapabilitySync: false,
+    notes: [
+      "重置运行时清理前端运行态投影和连接状态。"
+    ]
+  },
+  open_backtests: {
+    label: "打开回测",
+    apiPaths: ["/api/runtime/backtests"],
+    blockedDuringCapabilitySync: false,
+    notes: [
+      "打开回测进入回测列表视图，不直接触发回测写入。"
     ]
   },
   run_parameter_sweep: {
@@ -234,6 +361,47 @@ function isTrustedCapabilityHash(value) {
   return typeof value === "string" && /^sha256:[0-9a-f]{64}$/.test(value);
 }
 
+function normalizeUiActionStatus(actionKey, capabilities) {
+  const action = CAPABILITY_ACTION_MAP[actionKey];
+  if (!action) {
+    return {
+      status: "unsupported",
+      reason: "未知操作。"
+    };
+  }
+
+  const entries = capabilities?.ui_actions?.actions;
+  if (!Array.isArray(entries)) {
+    return {
+      status: "unsupported",
+      reason: "后端能力快照缺少 ui_actions.actions。"
+    };
+  }
+
+  const entry = entries.find((item) => item?.key === actionKey);
+  if (!entry) {
+    return {
+      status: "unsupported",
+      reason: "后端能力快照未声明该操作。"
+    };
+  }
+
+  if (entry.status === "supported") {
+    return {
+      status: "supported",
+      reason: ""
+    };
+  }
+
+  return {
+    status: entry.status === "declared_only" ? "declared_only" : "unsupported",
+    reason:
+      typeof entry.reason === "string" && entry.reason.trim().length > 0
+        ? entry.reason.trim()
+        : "后端已声明该操作，但当前版本未开放。"
+  };
+}
+
 export function isCapabilitySyncBlocked(capabilityStatus, capabilitySource) {
   // v3.5.0: 缓存/降级模式仍允许模块操作, 仅完整阻断 loading 和 safe_fallback
   return (
@@ -290,13 +458,13 @@ export function getCapabilityActionBlockReason({
   capabilities
 }) {
   const action = CAPABILITY_ACTION_MAP[actionKey];
-  if (!action?.blockedDuringCapabilitySync) return "";
+  if (!action) return "";
 
-  if (capabilityStatus === "loading") {
+  if (action.blockedDuringCapabilitySync && capabilityStatus === "loading") {
     return `${action.label}暂时锁定，前端正在同步后端能力快照。`;
   }
 
-  if (capabilitySource === "safe_fallback") {
+  if (action.blockedDuringCapabilitySync && capabilitySource === "safe_fallback") {
     const detail =
       typeof capabilityMessage === "string" && capabilityMessage.trim().length > 0
         ? capabilityMessage.trim()
@@ -304,11 +472,19 @@ export function getCapabilityActionBlockReason({
     return `${action.label}在安全回退模式下不可用。${detail}`;
   }
 
-  if (capabilityStatus === "degraded" || capabilitySource === "cache") {
-    return `${action.label}暂时锁定，能力服务不可用，仅检测到缓存能力快照。`;
+  const uiActionStatus = normalizeUiActionStatus(actionKey, capabilities);
+  if (uiActionStatus.status !== "supported") {
+    return `${action.label}暂时不可用，${uiActionStatus.reason}`;
   }
 
-  if (capabilityStatus === "error") {
+  if (
+    action.blockedDuringCapabilitySync &&
+    (capabilityStatus === "degraded" || capabilitySource === "cache")
+  ) {
+    return `${action.label}正在使用缓存能力快照，最终可用性仍由后端实时校验。`;
+  }
+
+  if (action.blockedDuringCapabilitySync && capabilityStatus === "error") {
     const detail =
       typeof capabilityMessage === "string" && capabilityMessage.trim().length > 0
         ? capabilityMessage.trim()

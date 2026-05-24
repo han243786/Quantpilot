@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import StrategyWorkspacePage from "./StrategyWorkspacePage";
 import { useGraphStore } from "../store/graphStore";
+import { backendCapabilitiesFixture } from "../test/fixtures/capabilities/capabilityFallbacks";
 
 vi.mock("../components/ModuleSidebar", () => ({
   default: () => <div data-testid="module-sidebar-stub" />
@@ -343,5 +344,30 @@ describe("StrategyWorkspacePage shell", () => {
       expect(screen.getByTestId("workspace-monitor-events-card")).toBeInTheDocument();
     });
     expect(screen.getByText("run_workspace_001")).toBeInTheDocument();
+  });
+
+  it("hides workspace tabs that backend capabilities do not declare", async () => {
+    act(() => {
+      useGraphStore.setState({
+        capabilities: {
+          ...backendCapabilitiesFixture,
+          workspace: {
+            surfaces: backendCapabilitiesFixture.workspace.surfaces.filter(
+              (entry) => entry.key !== "monitor"
+            )
+          }
+        },
+        capabilityStatus: "ready",
+        capabilitySource: "remote",
+        capabilityMessage: ""
+      });
+    });
+
+    render(<StrategyWorkspacePage strategyId="workspace_test_graph" />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("workspace-tab-dashboard")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("workspace-tab-monitor")).not.toBeInTheDocument();
   });
 });

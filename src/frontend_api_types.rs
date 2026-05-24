@@ -902,6 +902,8 @@ pub(super) struct ExperimentRecord {
     pub(super) graph_id: String,
     pub(super) compile_id: String,
     pub(super) created_at_ms: u64,
+    #[serde(default)]
+    pub(super) saved: bool,
     pub(super) definition: ExperimentDefinitionSummary,
     #[serde(default)]
     pub(super) variants: Vec<ExperimentVariantSummary>,
@@ -915,6 +917,7 @@ pub(super) struct ExperimentListItem {
     pub(super) graph_id: String,
     pub(super) compile_id: String,
     pub(super) created_at_ms: u64,
+    pub(super) saved: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(super) experiment_name: Option<String>,
     pub(super) replay_source: FrontendBacktestReplaySource,
@@ -933,6 +936,7 @@ pub(super) struct ExperimentDetailResponse {
     pub(super) graph_id: String,
     pub(super) compile_id: String,
     pub(super) created_at_ms: u64,
+    pub(super) saved: bool,
     pub(super) definition: ExperimentDefinitionSummary,
     #[serde(default)]
     pub(super) variants: Vec<ExperimentVariantSummary>,

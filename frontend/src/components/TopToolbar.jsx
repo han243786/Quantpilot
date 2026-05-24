@@ -91,11 +91,27 @@ function DefaultToolbarLayout({
   startSimulationTitle,
   runBacktestTitle,
   exportConfigTitle,
+  saveGraphTitle,
+  loadLatestTitle,
+  resetGraphTitle,
+  exportQuantScriptTitle,
+  stopRuntimeTitle,
+  resetRuntimeTitle,
+  tutorialTitle,
+  credentialsTitle,
   issueSummary,
   canCompile,
   canStartRuntime,
   canStartBacktest,
   canStopRuntime,
+  canSaveGraph,
+  canLoadLatestGraph,
+  canResetGraph,
+  canResetRuntime,
+  canExportRuntimeConfig,
+  canExportQuantScript,
+  canOpenTutorial,
+  canOpenCredentials,
   setNotice,
   handleLoadLatestGraph,
   handleSaveGraph,
@@ -131,7 +147,8 @@ function DefaultToolbarLayout({
             className="ghost-btn tutorial-entry-btn"
             onClick={() => triggerTutorial()}
             data-testid="toolbar-tutorial-action"
-            title={t("查看使用教程")}
+            disabled={!canOpenTutorial}
+            title={tutorialTitle}
           >
             {t("教程")}
           </button>
@@ -139,24 +156,25 @@ function DefaultToolbarLayout({
             className="ghost-btn"
             onClick={onOpenCredentials}
             data-testid="toolbar-credentials-action"
-            title={t("管理交易所凭证")}
+            disabled={!canOpenCredentials}
+            title={credentialsTitle}
           >
             {t("凭证")}
           </button>
-          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认新建策略图？当前未保存的更改将丢失。"))) resetGraph(); }} data-testid="toolbar-reset-graph-action">
+          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认新建策略图？当前未保存的更改将丢失。"))) resetGraph(); }} disabled={!canResetGraph} title={resetGraphTitle} data-testid="toolbar-reset-graph-action">
             {t("新建策略图")}
           </button>
-          <button className="ghost-btn" onClick={handleLoadLatestGraph} data-testid="toolbar-load-latest-action">
+          <button className="ghost-btn" onClick={handleLoadLatestGraph} disabled={!canLoadLatestGraph} title={loadLatestTitle} data-testid="toolbar-load-latest-action">
             {t("加载最新")}
           </button>
-          <button className="ghost-btn" onClick={handleSaveGraph} disabled={saving} data-testid="toolbar-save-graph-action">
+          <button className="ghost-btn" onClick={handleSaveGraph} disabled={saving || !canSaveGraph} title={saveGraphTitle} data-testid="toolbar-save-graph-action">
             {saving ? t("保存中...") : t("保存策略图")}
           </button>
           <button
             className="ghost-btn"
             data-testid="toolbar-export-runtime-config-action"
             onClick={() => handleExportRuntimeConfig({ capabilitySyncBlocked, capabilityMessage })}
-            disabled={capabilitySyncBlocked || saving}
+            disabled={!canExportRuntimeConfig || saving}
             title={exportConfigTitle}
           >
             {t("导出运行配置")}
@@ -165,7 +183,8 @@ function DefaultToolbarLayout({
             className="ghost-btn"
             data-testid="toolbar-export-quantscript-action"
             onClick={() => handleExportQuantScript({ graph })}
-            disabled={saving}
+            disabled={saving || !canExportQuantScript}
+            title={exportQuantScriptTitle}
           >
             {t("导出策略图源码")}
           </button>
@@ -218,10 +237,10 @@ function DefaultToolbarLayout({
           >
             {runtime.status === "backtesting" ? t("回测中...") : t("运行回测")}
           </button>
-          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认停止当前模拟？"))) stopRuntime(); }} disabled={!canStopRuntime} data-testid="toolbar-stop-runtime-action">
+          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认停止当前模拟？"))) stopRuntime(); }} disabled={!canStopRuntime} title={stopRuntimeTitle} data-testid="toolbar-stop-runtime-action">
             {t("停止")}
           </button>
-          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认重置运行时？运行中的模拟将被中断。"))) resetRuntime(); }} data-testid="toolbar-reset-runtime-action">
+          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认重置运行时？运行中的模拟将被中断。"))) resetRuntime(); }} disabled={!canResetRuntime} title={resetRuntimeTitle} data-testid="toolbar-reset-runtime-action">
             {t("重置运行时")}
           </button>
           <DeployButton graph={graph} canDeploy={canCompile} />
@@ -261,11 +280,27 @@ function WorkspaceToolbarLayout({
   startSimulationTitle,
   runBacktestTitle,
   exportConfigTitle,
+  saveGraphTitle,
+  loadLatestTitle,
+  resetGraphTitle,
+  exportQuantScriptTitle,
+  stopRuntimeTitle,
+  resetRuntimeTitle,
+  tutorialTitle,
+  credentialsTitle,
   issueSummary,
   canCompile,
   canStartRuntime,
   canStartBacktest,
   canStopRuntime,
+  canSaveGraph,
+  canLoadLatestGraph,
+  canResetGraph,
+  canResetRuntime,
+  canExportRuntimeConfig,
+  canExportQuantScript,
+  canOpenTutorial,
+  canOpenCredentials,
   setNotice,
   handleLoadLatestGraph,
   handleSaveGraph,
@@ -342,7 +377,7 @@ function WorkspaceToolbarLayout({
           >
             {t("运行回测")}
           </button>
-          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认停止当前模拟？"))) stopRuntime(); }} disabled={!canStopRuntime} data-testid="toolbar-stop-runtime-action">
+          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认停止当前模拟？"))) stopRuntime(); }} disabled={!canStopRuntime} title={stopRuntimeTitle} data-testid="toolbar-stop-runtime-action">
             {t("停止")}
           </button>
           <button
@@ -369,7 +404,8 @@ function WorkspaceToolbarLayout({
                 triggerTutorial();
               }}
               data-testid="toolbar-tutorial-action"
-              title="查看使用教程"
+              disabled={!canOpenTutorial}
+              title={tutorialTitle}
             >
               教程
             </button>
@@ -380,21 +416,22 @@ function WorkspaceToolbarLayout({
                 onOpenCredentials?.();
               }}
               data-testid="toolbar-credentials-action"
-              title={t("管理交易所凭证")}
+              disabled={!canOpenCredentials}
+              title={credentialsTitle}
             >
               {t("凭证")}
             </button>
-            <button className="ghost-btn" onClick={handleSaveGraph} disabled={saving} data-testid="toolbar-save-graph-action">
+            <button className="ghost-btn" onClick={handleSaveGraph} disabled={saving || !canSaveGraph} title={saveGraphTitle} data-testid="toolbar-save-graph-action">
               {saving ? "保存中..." : "保存策略图"}
             </button>
-            <button className="ghost-btn" onClick={handleLoadLatestGraph} data-testid="toolbar-load-latest-action">
+            <button className="ghost-btn" onClick={handleLoadLatestGraph} disabled={!canLoadLatestGraph} title={loadLatestTitle} data-testid="toolbar-load-latest-action">
               加载最新
             </button>
             <button
               className="ghost-btn"
               data-testid="toolbar-export-runtime-config-action"
               onClick={() => handleExportRuntimeConfig({ capabilitySyncBlocked, capabilityMessage })}
-              disabled={capabilitySyncBlocked || saving}
+              disabled={!canExportRuntimeConfig || saving}
               title={exportConfigTitle}
             >
               {t("导出运行配置")}
@@ -403,14 +440,15 @@ function WorkspaceToolbarLayout({
               className="ghost-btn"
               data-testid="toolbar-export-quantscript-action"
               onClick={() => handleExportQuantScript({ graph })}
-              disabled={saving}
+              disabled={saving || !canExportQuantScript}
+              title={exportQuantScriptTitle}
             >
               {t("导出策略图源码")}
             </button>
-            <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认新建策略图？当前未保存的更改将丢失。"))) resetGraph(); }} data-testid="toolbar-reset-graph-action">
+            <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认新建策略图？当前未保存的更改将丢失。"))) resetGraph(); }} disabled={!canResetGraph} title={resetGraphTitle} data-testid="toolbar-reset-graph-action">
               {t("新建策略图")}
             </button>
-            <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认重置运行时？运行中的模拟将被中断。"))) resetRuntime(); }} data-testid="toolbar-reset-runtime-action">
+            <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认重置运行时？运行中的模拟将被中断。"))) resetRuntime(); }} disabled={!canResetRuntime} title={resetRuntimeTitle} data-testid="toolbar-reset-runtime-action">
               {t("重置运行时")}
             </button>
           </div>

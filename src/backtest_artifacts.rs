@@ -43,12 +43,12 @@ fn promotion_work_dir_ttl_ms() -> u64 {
     }
 }
 const PROMOTION_WORK_DIR_MAX_COUNT: usize = 32;
-const PROMOTION_WORK_DIR_MAX_BYTES: u64 = 200 * 1024 * 1024; // 对齐暂时目录上限 (§7.2)
+const PROMOTION_WORK_DIR_MAX_BYTES: u64 = 200 * 1024 * 1024; // 对齐瞬态目录上限 (§7.2)
 const PROMOTION_WORK_DIR_MAX_SINGLE_BYTES: u64 = 50 * 1024 * 1024;
 pub const DEFAULT_TRANSIENT_BACKTEST_SPILL_THRESHOLD_BYTES: u64 = 4 * 1024 * 1024;
 const TRANSIENT_BACKTEST_TTL_MS: u64 = 24 * 60 * 60 * 1000;
 const TRANSIENT_BACKTEST_MAX_COUNT: usize = 32;
-const TRANSIENT_BACKTEST_MAX_BYTES: u64 = 50 * 1024 * 1024; // 对齐瞬间目录上限 (§7.2)
+const TRANSIENT_BACKTEST_MAX_BYTES: u64 = 200 * 1024 * 1024; // 允许 compare 同时持有多个未保存回测
 const TRANSIENT_BACKTEST_MAX_SINGLE_BYTES: u64 = 50 * 1024 * 1024;
 const MANIFEST_SCHEMA_VERSION: &str = "quantpilot/reproducibility-manifest/v1";
 

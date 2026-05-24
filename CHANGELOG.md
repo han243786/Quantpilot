@@ -6,7 +6,7 @@
 - P2 测试文件锁收口: 新增 `scripts/test.ps1` / `scripts/test.sh`, 测试前停止本仓库运行进程。
 - 门禁收口: pre-commit / CI / `tools\run-closeout-gates.bat` 统一接入 UTF-8、版本一致性、executor warning 预算和 QS 场景 smoke。
 - 发布流水线修正: Windows release workflow 改为 PowerShell 打包路径, 支持手动 dry-run 构建。
-- 已知状态: executor warning 债务预算为 49；完整 17 项 closeout 门禁仍需发布前跑通。
+- 已知状态: executor warning 债务已清零，预算固定为 0；完整 22 项 closeout 门禁需发布前跑通。
 
 ## v3.3.0 — 全量消化 (2026-05-20)
 - session_crypto: 空payload + 损坏密文 2 tests

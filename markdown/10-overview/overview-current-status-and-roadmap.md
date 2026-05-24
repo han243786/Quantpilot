@@ -134,7 +134,7 @@ v3.7.1 是其后的 PATCH 收口：已修复 S0 登录挂起、P1 凭证 DELETE 
 | `cargo check --workspace` | ✅ | 0 错误 |
 | `scripts/test.ps1 test --workspace` | ✅ | closeout [11/21] 已复跑通过 |
 | `cargo clippy --workspace --all-targets` | ⚠️ | 不再假装 0 warning；executor warning 由预算脚本追踪 |
-| executor warning budget | ⚠️ | 当前预算 47，新增 warning 阻断 |
+| executor warning budget | ✅ | 当前预算 0，新增 warning 阻断 |
 | 前端 `npm run build` | ✅ | main frontend 已纳入 CI/closeout |
 | 执行端前端 `npm run build` | ✅ | `frontend-executor` 已纳入 CI/closeout |
 | 前端 `npx vitest run` | ✅ | 272/272 (92 文件) |

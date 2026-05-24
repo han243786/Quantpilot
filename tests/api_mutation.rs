@@ -177,7 +177,7 @@ async fn runtime_parameter_mutation_requires_capability_context_without_ledger()
         None,
     )
     .await;
-    assert_eq!(list.as_array().unwrap().len(), 0);
+    assert_eq!(list["data"].as_array().unwrap().len(), 0);
 }
 
 #[tokio::test(flavor = "multi_thread")]
@@ -262,7 +262,7 @@ async fn runtime_parameter_mutation_creates_persisted_proposal_and_key_event() {
         None,
     )
     .await;
-    assert_eq!(list.as_array().unwrap().len(), 1);
+    assert_eq!(list["data"].as_array().unwrap().len(), 1);
 
     let reloaded = common::test_app_from_dirs(dirs);
     let reloaded_detail = request_json(

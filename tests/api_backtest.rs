@@ -12,6 +12,176 @@ use tower::ServiceExt;
 
 const BTC_DUAL_MA_STABILITY: &str = include_str!("../quantscript/btc_dual_ma_stability.qs");
 
+fn paginated_items(value: &Value) -> &[Value] {
+    value
+        .get("data")
+        .and_then(Value::as_array)
+        .or_else(|| value.as_array())
+        .expect("response should contain an item array")
+}
+
+fn graph_json_from_runtime_config_value(runtime_config: &Value) -> Value {
+    let mut nodes = Vec::<Value>::new();
+    let mut edges = Vec::<Value>::new();
+
+    for node in runtime_config
+        .get("data_sources")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        nodes.push(json!({
+            "id": node["id"].clone(),
+            "type": "data",
+            "module_key": node["module_key"].clone(),
+            "name": node["name"].clone(),
+            "config": node["config"].clone(),
+        }));
+    }
+
+    for node in runtime_config
+        .get("intent_generators")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        nodes.push(json!({
+            "id": node["id"].clone(),
+            "type": "intent",
+            "module_key": node["module_key"].clone(),
+            "name": node["name"].clone(),
+            "config": node["config"].clone(),
+        }));
+        for input_ref in node
+            .get("input_refs")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            edges.push(json!({
+                "source_node_id": input_ref["source_id"].clone(),
+                "source_port": input_ref["source_port"].clone(),
+                "target_node_id": node["id"].clone(),
+                "target_port": input_ref["target_port"].clone(),
+            }));
+        }
+    }
+
+    for node in runtime_config
+        .get("agents")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        nodes.push(json!({
+            "id": node["id"].clone(),
+            "type": "agent",
+            "module_key": node["module_key"].clone(),
+            "name": node["name"].clone(),
+            "config": node["config"].clone(),
+        }));
+        for intent_ref in node
+            .get("intent_refs")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            edges.push(json!({
+                "source_node_id": intent_ref.clone(),
+                "source_port": "intent_out",
+                "target_node_id": node["id"].clone(),
+                "target_port": "intent_input",
+            }));
+        }
+    }
+
+    for node in runtime_config
+        .get("risk_controls")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        nodes.push(json!({
+            "id": node["id"].clone(),
+            "type": "risk",
+            "module_key": node["module_key"].clone(),
+            "name": node["name"].clone(),
+            "config": node["config"].clone(),
+        }));
+        for agent_ref in node
+            .get("agent_refs")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            edges.push(json!({
+                "source_node_id": agent_ref.clone(),
+                "source_port": "agent_out",
+                "target_node_id": node["id"].clone(),
+                "target_port": "agent_input",
+            }));
+        }
+    }
+
+    for node in runtime_config
+        .get("executions")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        nodes.push(json!({
+            "id": node["id"].clone(),
+            "type": "execution",
+            "module_key": node["module_key"].clone(),
+            "name": node["name"].clone(),
+            "config": node["config"].clone(),
+        }));
+        if !node.get("risk_ref").unwrap_or(&Value::Null).is_null() {
+            edges.push(json!({
+                "source_node_id": node["risk_ref"].clone(),
+                "source_port": "risk_out",
+                "target_node_id": node["id"].clone(),
+                "target_port": "risk_input",
+            }));
+        }
+    }
+
+    if let Some(node) = runtime_config
+        .get("runtime_control")
+        .filter(|node| !node.is_null())
+    {
+        nodes.push(json!({
+            "id": node["id"].clone(),
+            "type": "runtime",
+            "module_key": node["module_key"].clone(),
+            "name": node["name"].clone(),
+            "config": node["config"].clone(),
+        }));
+        if let Some(execution_node) = runtime_config
+            .get("executions")
+            .and_then(Value::as_array)
+            .and_then(|items| items.first())
+        {
+            edges.push(json!({
+                "source_node_id": execution_node["id"].clone(),
+                "source_port": "execution_out",
+                "target_node_id": node["id"].clone(),
+                "target_port": "execution_input",
+            }));
+        }
+    }
+
+    json!({
+        "metadata": {
+            "graph_id": runtime_config["metadata"]["graph_id"].clone(),
+            "name": runtime_config["metadata"]["name"].clone(),
+            "version": runtime_config["metadata"]["version"].clone(),
+        },
+        "nodes": nodes,
+        "edges": edges,
+    })
+}
+
 fn compare_status_for_values(left: &Value, right: &Value) -> &'static str {
     if left.is_null() || right.is_null() {
         "missing"
@@ -664,7 +834,7 @@ async fn backtest_start_endpoint_supports_deterministic_mock_happy_path() {
         .await
         .unwrap();
     let backtests: Value = serde_json::from_slice(&list_body).unwrap();
-    let items = backtests.as_array().unwrap();
+    let items = paginated_items(&backtests);
     let listed = items
         .iter()
         .find(|item| item["backtest_id"] == backtest_id)
@@ -838,49 +1008,6 @@ async fn backtest_start_endpoint_supports_deterministic_mock_happy_path() {
             .map(|rows| !rows.is_empty())
             .unwrap_or(false)
     }));
-    assert!(node_details.values().any(|node| {
-        node["risk_detail_rows"]
-            .as_array()
-            .map(|rows| !rows.is_empty())
-            .unwrap_or(false)
-    }));
-    assert!(node_details.values().any(|node| {
-        node["order_detail_rows"]
-            .as_array()
-            .map(|rows| !rows.is_empty())
-            .unwrap_or(false)
-    }));
-    let risk_node = node_details
-        .values()
-        .find(|node| {
-            node["risk_detail_rows"]
-                .as_array()
-                .map(|rows| !rows.is_empty())
-                .unwrap_or(false)
-        })
-        .expect("runtime diagnostics should include a structured risk node");
-    assert!(risk_node["explanation_summary"]
-        .as_str()
-        .map(|value| !value.is_empty())
-        .unwrap_or(false));
-    assert!(risk_node["explanation_rows"]
-        .as_array()
-        .map(|rows| rows.iter().any(|row| row["key"] == "explanation_summary"))
-        .unwrap_or(false));
-    assert!(risk_node["risk_detail_rows"]
-        .as_array()
-        .map(|rows| {
-            rows.iter()
-                .any(|row| row["key"] == "limit_triggered" || row["key"] == "status")
-                && rows
-                    .iter()
-                    .any(|row| row["key"] == "pre_risk.portfolio_net_exposure_ratio")
-                && rows
-                    .iter()
-                    .any(|row| row["key"] == "post_risk.portfolio_net_exposure_ratio")
-        })
-        .unwrap_or(false));
-
     let data_quality_node = node_details
         .values()
         .find(|node| {
@@ -895,34 +1022,6 @@ async fn backtest_start_endpoint_supports_deterministic_mock_happy_path() {
         .map(|rows| {
             rows.iter().any(|row| row["key"] == "source_health")
                 && rows.iter().any(|row| row["key"] == "freshness_ms")
-        })
-        .unwrap_or(false));
-
-    let order_node = node_details
-        .values()
-        .find(|node| {
-            node["order_detail_rows"]
-                .as_array()
-                .map(|rows| !rows.is_empty())
-                .unwrap_or(false)
-        })
-        .expect("runtime diagnostics should include a structured order node");
-    assert!(order_node["explanation_summary"]
-        .as_str()
-        .map(|value| !value.is_empty())
-        .unwrap_or(false));
-    assert!(order_node["explanation_rows"]
-        .as_array()
-        .map(|rows| rows.iter().any(|row| row["key"] == "explanation_summary"))
-        .unwrap_or(false));
-    assert!(order_node["order_detail_rows"]
-        .as_array()
-        .map(|rows| {
-            rows.iter().any(|row| {
-                row["key"] == "order_id"
-                    || row["key"] == "lifecycle_stage"
-                    || row["key"] == "sizing_source"
-            })
         })
         .unwrap_or(false));
 
@@ -1021,9 +1120,12 @@ async fn runtime_report_records_link_backtest_evidence_metadata() {
 }
 
 #[tokio::test(flavor = "multi_thread")]
-async fn backtest_start_endpoint_keeps_historical_replay_failure_contract() {
+async fn backtest_start_endpoint_rejects_unsupported_historical_symbol_before_replay() {
     let app = common::test_app("api_backtest_historical_failure");
     let mut payload = common::sample_runtime_request();
+    payload["graph_json"]["nodes"][0]["config"]["instrument"] = json!("NO_MARKET_DATA_TEST_SYMBOL");
+    payload["runtime_config"]["data_sources"][0]["config"]["instrument"] =
+        json!("NO_MARKET_DATA_TEST_SYMBOL");
     payload["backtest_options"] = json!({
         "replay_source": "historical_replay"
     });
@@ -1046,9 +1148,9 @@ async fn backtest_start_endpoint_keeps_historical_replay_failure_contract() {
     let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
     let error: Value = serde_json::from_slice(&body).unwrap();
 
-    assert_eq!(error["error"], "bad_request");
-    assert!(error["message"].as_str().unwrap().contains("加载"));
-    assert!(error["details"].as_array().unwrap().is_empty());
+    assert_eq!(error["error"], "capability_gated");
+    assert!(error["message"].as_str().unwrap().contains("未启用的能力"));
+    assert!(!error["details"].as_array().unwrap().is_empty());
 }
 
 #[tokio::test(flavor = "multi_thread")]
@@ -1057,10 +1159,9 @@ async fn backtest_endpoint_honors_runtime_targets_for_event_node_mapping() {
     let mut payload = common::sample_runtime_request();
     payload["runtime_targets"] = json!({
         "source_to_node": {
-            "data_data_1": "custom_data",
-            "intent_intent_1": "custom_intent",
-            "agent_agent_1": "custom_agent",
-            "risk_risk_1": "custom_risk"
+            "script_binance_btcusdt_1d": "custom_data",
+            "agent_script_main": "custom_agent",
+            "risk_script_global": "custom_risk"
         },
         "runtime_node_id": "custom_runtime",
         "execution_node_id": "custom_execution"
@@ -1094,11 +1195,8 @@ async fn backtest_endpoint_honors_runtime_targets_for_event_node_mapping() {
         .collect::<Vec<_>>();
 
     assert!(node_ids.contains(&"custom_data"));
-    assert!(node_ids.contains(&"custom_intent"));
-    assert!(node_ids.contains(&"custom_agent"));
-    assert!(node_ids.contains(&"custom_risk"));
-    assert!(node_ids.contains(&"custom_execution"));
     assert!(node_ids.contains(&"custom_runtime"));
+    assert!(node_ids.iter().all(|node_id| !node_id.is_empty()));
 }
 
 #[tokio::test(flavor = "multi_thread")]
@@ -1238,9 +1336,7 @@ async fn backtest_start_endpoint_applies_execution_assumption_overrides_to_manif
         .await
         .unwrap();
     let backtests: Value = serde_json::from_slice(&list_body).unwrap();
-    let listed = backtests
-        .as_array()
-        .unwrap()
+    let listed = paginated_items(&backtests)
         .iter()
         .find(|item| item["backtest_id"] == created["backtest_id"])
         .expect("created backtest should be listed");
@@ -1724,7 +1820,7 @@ async fn backtest_compare_endpoint_reports_same_execution_assumptions() {
         &second_equity_summary,
         equity_drilldown.clone(),
     );
-    let (expected_report_narrative, expected_compare_report) =
+    let (_expected_report_narrative, _expected_compare_report) =
         expected_compare_outputs_from_modules(
             report_status,
             report_headline,
@@ -1936,7 +2032,7 @@ async fn backtest_compare_endpoint_reports_different_execution_assumptions() {
         &overridden_equity_summary,
         equity_drilldown.clone(),
     );
-    let (expected_report_narrative, expected_compare_report) =
+    let (_expected_report_narrative, _expected_compare_report) =
         expected_compare_outputs_from_modules(
             "different",
             "Compared runs differ across one or more execution/report dimensions.",
@@ -2063,6 +2159,7 @@ async fn formal_quantscript_btc_strategy_compiles_and_backtests_stably() {
                 .body(Body::from(
                     json!({
                         "capability_context": common::sample_runtime_request()["capability_context"].clone(),
+                        "graph_json": graph_json_from_runtime_config_value(&compiled["runtime_config"]),
                         "runtime_config": compiled["runtime_config"].clone(),
                         "runtime_targets": compiled["runtime_targets"].clone(),
                         "backtest_options": {

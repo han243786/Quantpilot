@@ -3,7 +3,9 @@
 /// OKX: wss://ws.okx.com:8443/ws/v5/public
 /// 自动重连: 指数退避 1s/2s/4s/.../max 30s
 use crate::executor_state::KlineBar;
+#[cfg(test)]
 use std::time::Duration;
+#[cfg(test)]
 use tokio::sync::mpsc;
 
 /// WS 数据事件
@@ -16,21 +18,15 @@ pub enum WsEvent {
         ts_ms: u64,
     },
     /// K 线更新: symbol, bar
-    Kline {
-        symbol: String,
-        bar: KlineBar,
-    },
+    Kline { symbol: String, bar: KlineBar },
     /// 连接状态变更
-    Connected {
-        exchange: String,
-    },
-    Disconnected {
-        exchange: String,
-        reason: String,
-    },
+    Connected { exchange: String },
+    #[cfg(test)]
+    Disconnected { exchange: String, reason: String },
 }
 
 /// WebSocket 连接池
+#[cfg(test)]
 pub struct WebSocketPool {
     /// WS 事件发送通道 (→ 执行引擎消费)
     pub event_tx: mpsc::UnboundedSender<WsEvent>,
@@ -42,6 +38,7 @@ pub struct WebSocketPool {
     pub reconnect_backoff_secs: u32,
 }
 
+#[cfg(test)]
 impl WebSocketPool {
     pub fn new() -> Self {
         let (event_tx, event_rx) = mpsc::unbounded_channel();
@@ -68,6 +65,7 @@ impl WebSocketPool {
 }
 
 /// Binance WebSocket 订阅 URL 构建
+#[cfg(test)]
 pub fn binance_ws_url(symbols: &[&str], streams: &[&str]) -> String {
     // streams: ["ticker", "kline_1m", "trade"]
     let stream_names: Vec<String> = symbols
@@ -84,16 +82,19 @@ pub fn binance_ws_url(symbols: &[&str], streams: &[&str]) -> String {
 }
 
 /// OKX WebSocket 订阅
+#[cfg(test)]
 pub fn okx_ws_url() -> &'static str {
     "wss://ws.okx.com:8443/ws/v5/public"
 }
 
 /// v3.5.0: OKX testnet WebSocket URL (Paper testnet)
+#[cfg(test)]
 pub fn okx_testnet_ws_url() -> &'static str {
     "wss://wspap.okx.com:8443/ws/v5/public"
 }
 
 /// v3.5.0: 构建 OKX WebSocket 订阅请求 (tickers + kline)
+#[cfg(test)]
 pub fn okx_subscribe_message(symbols: &[&str], kline_interval: &str) -> String {
     let mut args = Vec::new();
     for sym in symbols {
@@ -106,6 +107,7 @@ pub fn okx_subscribe_message(symbols: &[&str], kline_interval: &str) -> String {
     serde_json::json!({"op": "subscribe", "args": args}).to_string()
 }
 
+#[cfg(test)]
 fn format_okx_inst_id(symbol: &str) -> String {
     // BTCUSDT → BTC-USDT
     if symbol.ends_with("USDT") && symbol.len() > 4 {
@@ -116,6 +118,7 @@ fn format_okx_inst_id(symbol: &str) -> String {
 }
 
 /// v3.5.0: 解析 OKX ticker 消息
+#[cfg(test)]
 pub fn parse_okx_ticker(data: &serde_json::Value) -> Option<WsEvent> {
     let result = (|| {
         let arg = data.get("arg")?;
@@ -147,6 +150,7 @@ pub fn parse_okx_ticker(data: &serde_json::Value) -> Option<WsEvent> {
 }
 
 /// v3.5.0: 解析 OKX K 线消息
+#[cfg(test)]
 pub fn parse_okx_kline(data: &serde_json::Value) -> Option<WsEvent> {
     let result = (|| {
         let arg = data.get("arg")?;
@@ -191,6 +195,7 @@ pub fn parse_okx_kline(data: &serde_json::Value) -> Option<WsEvent> {
 }
 
 /// 解析 Binance ticker 消息
+#[cfg(test)]
 pub fn parse_binance_ticker(data: &serde_json::Value) -> Option<WsEvent> {
     let result = (|| {
         let symbol = data.get("s")?.as_str()?.to_string();
@@ -209,6 +214,7 @@ pub fn parse_binance_ticker(data: &serde_json::Value) -> Option<WsEvent> {
 }
 
 /// 解析 Binance K 线消息
+#[cfg(test)]
 pub fn parse_binance_kline(data: &serde_json::Value) -> Option<WsEvent> {
     let result = (|| {
         let kline = data.get("k")?;
@@ -228,4 +234,92 @@ pub fn parse_binance_kline(data: &serde_json::Value) -> Option<WsEvent> {
         eprintln!("[ws] 解析失败: {}", data);
     }
     result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn websocket_pool_backoff_caps_and_resets() {
+        let mut pool = WebSocketPool::new();
+        pool.exchanges.push("okx".to_string());
+        assert_eq!(pool.next_backoff(), Duration::from_secs(1));
+        assert_eq!(pool.next_backoff(), Duration::from_secs(2));
+        pool.reconnect_backoff_secs = 64;
+        assert_eq!(pool.next_backoff(), Duration::from_secs(30));
+        pool.reset_backoff();
+        assert_eq!(pool.reconnect_backoff_secs, 1);
+        assert!(pool
+            .event_tx
+            .send(WsEvent::Connected {
+                exchange: "okx".to_string()
+            })
+            .is_ok());
+        assert!(matches!(
+            pool.event_rx.try_recv(),
+            Ok(WsEvent::Connected { .. })
+        ));
+        assert_eq!(pool.exchanges, vec!["okx".to_string()]);
+    }
+
+    #[test]
+    fn websocket_urls_and_okx_subscription_are_stable() {
+        assert_eq!(
+            binance_ws_url(&["BTCUSDT"], &["ticker", "kline_1m"]),
+            "wss://stream.binance.com:9443/stream?streams=btcusdt@ticker/btcusdt@kline_1m"
+        );
+        assert_eq!(okx_ws_url(), "wss://ws.okx.com:8443/ws/v5/public");
+        assert_eq!(
+            okx_testnet_ws_url(),
+            "wss://wspap.okx.com:8443/ws/v5/public"
+        );
+        let message: serde_json::Value =
+            serde_json::from_str(&okx_subscribe_message(&["BTCUSDT"], "1m")).unwrap();
+        assert_eq!(message["op"], "subscribe");
+        assert_eq!(message["args"][0]["instId"], "BTC-USDT");
+    }
+
+    #[test]
+    fn parses_exchange_market_data_messages() {
+        let okx_ticker = serde_json::json!({
+            "arg": {"channel": "tickers", "instId": "BTC-USDT"},
+            "data": [{"last": "70000.5", "ts": "1710000000000"}]
+        });
+        assert!(matches!(
+            parse_okx_ticker(&okx_ticker),
+            Some(WsEvent::Ticker { .. })
+        ));
+
+        let okx_kline = serde_json::json!({
+            "arg": {"channel": "candle1m", "instId": "BTC-USDT"},
+            "data": [["1710000000000", "1", "2", "0.5", "1.5", "12"]]
+        });
+        assert!(matches!(
+            parse_okx_kline(&okx_kline),
+            Some(WsEvent::Kline { .. })
+        ));
+
+        let binance_ticker =
+            serde_json::json!({"s": "BTCUSDT", "c": "70000.5", "E": 1710000000000u64});
+        assert!(matches!(
+            parse_binance_ticker(&binance_ticker),
+            Some(WsEvent::Ticker { .. })
+        ));
+
+        let binance_kline = serde_json::json!({
+            "s": "BTCUSDT",
+            "k": {"t": 1u64, "T": 2u64, "o": "1", "h": "2", "l": "0.5", "c": "1.5", "v": "12"}
+        });
+        assert!(matches!(
+            parse_binance_kline(&binance_kline),
+            Some(WsEvent::Kline { .. })
+        ));
+
+        let disconnected = WsEvent::Disconnected {
+            exchange: "okx".to_string(),
+            reason: "test".to_string(),
+        };
+        assert!(matches!(disconnected, WsEvent::Disconnected { .. }));
+    }
 }

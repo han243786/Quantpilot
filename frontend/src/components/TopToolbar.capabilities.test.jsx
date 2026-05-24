@@ -3,6 +3,7 @@ import { act, render, screen } from "@testing-library/react";
 import TopToolbar from "./TopToolbar";
 import { I18nProvider } from "../i18n";
 import { useGraphStore } from "../store/graphStore";
+import { backendCapabilitiesFixture } from "../test/fixtures/capabilities/capabilityFallbacks";
 
 function buildGraph(overrides = {}) {
   return {
@@ -128,5 +129,29 @@ describe("TopToolbar capability fallback UI", () => {
 
     expect(screen.getByTestId("toolbar-capability-alert")).toHaveTextContent("前端正在同步后端能力快照");
     expectPrimaryActionsDisabled();
+  });
+
+  it("disables toolbar actions when backend capability projection removes the action", () => {
+    act(() => {
+      useGraphStore.setState({
+        capabilities: {
+          ...backendCapabilitiesFixture,
+          ui_actions: {
+            actions: backendCapabilitiesFixture.ui_actions.actions.filter(
+              (entry) => entry.key !== "compile"
+            )
+          }
+        },
+        capabilityStatus: "ready",
+        capabilitySource: "remote",
+        capabilityMessage: ""
+      });
+    });
+
+    render(<I18nProvider><TopToolbar /></I18nProvider>);
+
+    expect(screen.getByTestId("toolbar-compile-action")).toBeDisabled();
+    expect(screen.getByTestId("toolbar-compile-action").getAttribute("title")).toContain("未声明");
+    expect(screen.getByTestId("toolbar-start-runtime-action")).toBeEnabled();
   });
 });

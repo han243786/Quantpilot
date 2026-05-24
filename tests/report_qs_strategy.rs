@@ -90,7 +90,12 @@ async fn formal_quantscript_source_cannot_be_parsed_as_strategy_graph_source() {
 
     let status = response.status();
     let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
-    assert_eq!(status, StatusCode::BAD_REQUEST);
+    assert_eq!(
+        status,
+        StatusCode::BAD_REQUEST,
+        "{}",
+        String::from_utf8_lossy(&body)
+    );
 
     let value: Value = serde_json::from_slice(&body).unwrap();
     assert_eq!(value["error"], "bad_request");
@@ -140,7 +145,7 @@ async fn donchian_style_report_strategy_is_rejected_by_current_formal_lowering()
     assert!(value["details"][0]["message"]
         .as_str()
         .unwrap_or_default()
-        .contains("不支持的条件下发 Intent 下层转换"));
+        .contains("不支持的条件下发 Intent 编译"));
     assert!(value["details"][0]["reason"]
         .as_str()
         .unwrap_or_default()

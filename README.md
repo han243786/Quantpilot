@@ -103,7 +103,7 @@ cargo fmt --check
 cargo check --workspace
 .\scripts\test.ps1 test --workspace
 cargo clippy --workspace --all-targets
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-executor-warning-budget.ps1 -MaxWarnings 47
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-executor-warning-budget.ps1 -MaxWarnings 0
 cd frontend; npm run build
 cd frontend; npm run test
 cd frontend; npm run test:e2e
@@ -138,7 +138,7 @@ cd frontend; npm run test:perf:react-flow
 | 功能演进契约 | ✅ | 新能力必须登记能力边界、回归保护矩阵、兼容性与迁移说明 |
 | Rust 格式基线 | ✅ | 全仓 `cargo fmt` 已落地，pre-commit / CI / closeout 均执行 `cargo fmt --check` |
 | 版本一致性 | ✅ | Cargo、Tauri、前端 package、lockfile 和关键文档统一到 `3.7.1` |
-| executor warning 债务 | ⚠️ | 当前预算 47；新增 warning 会失败，清零后恢复 `-D warnings` |
+| executor warning 债务 | ✅ | 当前预算 0；新增 warning 会失败 |
 | 完整 closeout | ✅ | `tools\run-closeout-gates.bat` 21/21 通过，可作为 v3.7.1 稳定线归档 |
 
 ## 文档入口

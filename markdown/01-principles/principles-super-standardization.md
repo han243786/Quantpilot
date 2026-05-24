@@ -3,7 +3,7 @@
 > 生效日期: 2026-05-22 | 本文件是项目开发、检查、审计、优化的唯一执行标准
 > 重构: v1.0→v3.0 精简三层流水线、元流水线自进化触发条件
 > 更新: v3.4.0 新增 §8.4 | v3.7.0 新增 §8.5 自由维度诱错审计常态化 | v3.7.1 收口 pre-commit / CI / closeout 三层门禁 + 功能演进通道 + Rust 格式基线
-> v4.0.0 规划: 新增 MAJOR 演化通道、状态机化 QS/Risk Plane/ExecutionMachine 治理、开发者学习流水线 closeout 检查
+> v4.0.0 规划: 新增 MAJOR 演化通道、状态机化 QS/Risk Plane/ExecutionMachine 治理、前端以后端 capability 为真源、开发者学习流水线 closeout 检查
 
 ---
 
@@ -12,7 +12,7 @@
 QuantPilot 的开发过程受 **三层门禁流水线** 约束：
 
 ```
-功能演进提案/登记 → MAJOR演化终稿(如适用) → 分阶段开发 → 日常开发门禁(pre-commit) → PR/CI门禁 → AI并行审计(自由维度诱错) → 发布前检查单 → closeout/release
+功能演进提案/登记 → 后端能力真源登记 → MAJOR演化终稿(如适用) → 分阶段开发 → 日常开发门禁(pre-commit) → PR/CI门禁 → AI并行审计(自由维度诱错) → 发布前检查单 → closeout/release
   │                         │                    │                              │                         │               │
   │                         │                    │                              │                         │               └── 五维度评分 + GP合规矩阵 + 学习流水线检查 + release dry-run
   │                         │                    │                              │                         └────────────────── 3角色/十角色手动验证
@@ -69,7 +69,7 @@ cd frontend && npx vitest run
 |---|--------|------|:--:|
 | 1 | UTF-8 编码 | `powershell tools/check-utf8.ps1` | 阻断 |
 | 2 | 面向用户文本 | `powershell tools/check-user-facing-text.ps1` | 阻断 |
-| 3 | 能力治理快照 | `powershell tools/check-capability-governance.ps1` | 阻断 |
+| 3 | 能力治理快照与后端真源对齐 | `powershell tools/check-capability-governance.ps1` | 阻断 |
 | 4 | i18n 覆盖 | `powershell tools/check-i18n.ps1` | 阻断 |
 | 5 | 版本号一致性 | `powershell tools/check-version-consistency.ps1` | 阻断 |
 | 6 | 功能演进契约 | `powershell tools/check-feature-evolution.ps1` | 阻断 |
@@ -79,7 +79,7 @@ cd frontend && npx vitest run
 | 10 | Rust 编译 | `cargo check --workspace` | 阻断 |
 | 11 | Rust 测试全量 | `powershell scripts/test.ps1 test --workspace` | 阻断 |
 | 12 | Clippy | `cargo clippy --workspace --all-targets` | 阻断 |
-| 13 | 执行端 warning budget | `powershell tools/check-executor-warning-budget.ps1 -MaxWarnings 47` | 阻断 |
+| 13 | 执行端 warning budget | `powershell tools/check-executor-warning-budget.ps1 -MaxWarnings 0` | 阻断 |
 | 14 | 前端构建 | `cd frontend && npm run build` | 阻断 |
 | 15 | 前端测试 | `cd frontend && npm run test` | 阻断 |
 | 16 | 前端 E2E | `cd frontend && npm run test:e2e` | 阻断 |
@@ -258,6 +258,7 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 | 误报率 | 手动 override 的门禁失败记录和原因 |
 | GP §10.3 回归检查 | 重大功能覆盖回归检查执行记录 |
 | 功能演进登记完整性 | 新增能力是否有登记、回归保护矩阵、兼容性与迁移说明 |
+| 前端入口真源对齐 | 工作区、工具栏、模块面板是否由后端 capability projection 驱动 |
 | v4 MAJOR 演化通道 | 状态机 DSL、Risk Plane、ExecutionMachine、学习流水线是否按阶段推进 |
 | 学习流水线同步 | 新核心机制是否需要 owner 学习材料、复述和本地学习记录 |
 
@@ -309,7 +310,7 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 | 能力提案 | 功能 ID、用户入口、非目标、生命周期 | 未说明能力边界 |
 | 功能演进登记 | `01-规划方案.md` 的“功能演进登记” | 缺少涉及层、依赖能力、fallback/拒绝行为 |
 | 回归保护矩阵 | `01-规划方案.md` 的“回归保护矩阵” | 未列出受影响旧能力和验证命令 |
-| 实现 | 代码、测试、文档、支持矩阵同步 | UI/文档宣称先于 capability 和测试 |
+| 实现 | 代码、测试、文档、后端 capability、支持矩阵同步 | UI 入口未由后端 capability 驱动，或文档宣称先于 capability 和测试 |
 | closeout | `03-closeout.md` 记录新增能力证据 | 证据缺失或旧能力回归未修复 |
 
 执行契约见 `markdown/03-implementation/governance/implementation-feature-evolution-contract.md`。自动检查由 `tools/check-feature-evolution.ps1` 执行。
@@ -337,6 +338,26 @@ MAJOR 版本不得直接从终稿进入大规模实现。凡涉及 QS 语义、C
 - 旧链路必须通过兼容桥映射到 `ObservationMachine` / `DecisionMachine` / `ExecutionMachine` 默认实例。
 - 任一阶段发现旧能力退化，必须停止继续推进并回到回归保护矩阵修复。
 
+### 7.8 前端后端能力真源通道 🆕 (v4.0.0)
+
+凡新增或调整用户可见入口，尤其是工作区 tab、工作区 surface、工具栏 action、模块面板项、运行模式和执行语义，必须先通过前端后端能力真源通道。
+
+| 阶段 | 产物 | 阻断条件 |
+|------|------|----------|
+| 后端能力契约 | `CapabilityResponse`、OpenAPI、fixture、Rust snapshot 测试 | 后端未声明 surface/action，前端已显示可用入口 |
+| 前端投影层 | `normalizeCapabilitySnapshot` / capability projection / 类型化 view model | 组件直接读取静态数组判断支持状态 |
+| UI 消费点 | 工作区、工具栏、模块面板共用同一 projection | 各组件维护不同支持判断或禁用原因 |
+| 诱错回归 | 移除/降级 fixture 中某 surface/action 的前端测试 | 后端缺失能力时入口仍可点击或文案仍显示 supported |
+| 治理同步 | `check-capability-governance.ps1`、支持矩阵、用户文案门禁 | snapshot drift、文档/README/UI 先于真实能力宣称支持 |
+
+执行原则:
+
+- 后端 capability response 是能力存在性、启用状态、拒绝原因和来源标记的唯一真源。
+- 前端静态定义只允许保存排序、布局、骨架和本地化标签，不得决定能力是否 supported。
+- `safe_fallback` 只能保留最小只读或禁用态入口，禁止恢复上一版本完整工作区。
+- cache 模式可以显示缓存来源，但写操作必须继续携带 capability hash，由后端最终校验。
+- 工作区视觉优化不得绕过本通道；视觉完成不等于能力对齐完成。
+
 ---
 
 ## 八、执行规则
@@ -354,6 +375,7 @@ MAJOR 版本不得直接从终稿进入大规模实现。凡涉及 QS 语义、C
 - **功能演进契约检查未通过** (v3.7.1 元流水线): `powershell tools/check-feature-evolution.ps1` 必须通过。新增能力若没有功能演进登记、回归保护矩阵、兼容性与迁移说明，禁止进入 closeout。
 - **Rust 格式基线检查未通过** (v3.7.1 收口): `cargo fmt --check` 必须通过。若失败，必须先执行 `cargo fmt` 形成格式基线，再继续功能或发布流程。
 - **MAJOR 演化通道未完成** (v4.0.0 起): 涉及状态机 DSL、Risk Plane、ExecutionMachine、交易模式、学习流水线的 MAJOR 版本，必须按 §7.7 逐阶段留下产物和拒绝行为；不得越过静态审计直接接入真实运行。
+- **前端后端能力真源通道未完成** (v4.0.0 起): 新增或调整工作区、工具栏、模块面板、运行/回测/执行入口时，必须按 §7.8 留下后端 capability 契约、前端 projection、诱错回归和治理同步证据。
 - **Developer Learning Closeout 缺失** (v4.0.0 起): MAJOR 版本 closeout 必须回答“本版本是否引入 owner 必学核心机制”，并记录学习材料、涉及文件、调用链、复述/校准状态。
 
 ### 8.2 紧急豁免
@@ -476,6 +498,7 @@ MAJOR 版本不得直接从终稿进入大规模实现。凡涉及 QS 语义、C
 | 情况 | 处理 |
 |------|------|
 | 新增用户可见入口但无 capability / 支持矩阵更新 | 阻断 |
+| 新增用户可见入口未由后端 capability projection 驱动 | 阻断 |
 | 新增 QS / runtime / executor 语义但无 Rust 测试 | 阻断 |
 | 新增主要用户工作流但无场景、E2E 或手动验证记录 | 阻断 |
 | 修改持久化格式但无兼容性和迁移说明 | 阻断 |
@@ -501,6 +524,7 @@ MAJOR 版本不得直接从终稿进入大规模实现。凡涉及 QS 语义、C
 | `unsupported` 能力被静默降级或假装支持 | 阻断 |
 | `runtime_simulated` 执行没有订单、成交、手续费、资产账本或 provider detached 证据 | 阻断 |
 | UI 或文档把 planned/beta 能力描述为 supported | 阻断 |
+| 工作区、工具栏或模块面板绕过 capability projection 直接声明可用 | 阻断 |
 | `markdown/learning/` 个人学习记录进入 Git | 阻断 |
 
 **学习流水线规则**:

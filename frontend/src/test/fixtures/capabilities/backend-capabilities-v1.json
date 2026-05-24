@@ -1,336 +1,490 @@
 {
-  "api_version": "quantpilot-capabilities/v1",
-  "schema_version": "quantpilot/capabilities-schema/v1",
-  "schema_hash": "sha256:fa1979f17b9fc96d845a943d11f02128ef244feac6ac142f930c9cb0259b4683",
-  "chain_stages": [
-    "data",
-    "intent",
-    "agent",
-    "risk",
-    "execution",
-    "fill"
-  ],
-  "strategy_ir": {
-    "declared_indicator_kinds": [
-      "ma_cross",
-      "rsi",
-      "macd",
-      "momentum",
-      "spread",
-      "z_score",
-      "custom",
-      "quote_observe",
-      "atr",
-      "bollinger_bands",
-      "obv",
-      "cmf",
-      "adx",
-      "stochastic",
-      "cci",
-      "parabolic_sar",
-      "keltner_channel",
-      "donchian_channel"
-    ],
-    "supported_indicator_kinds": [
-      "ma_cross",
-      "rsi",
-      "macd",
-      "momentum",
-      "spread",
-      "z_score",
-      "custom",
-      "quote_observe",
-      "atr",
-      "bollinger_bands",
-      "obv",
-      "cmf",
-      "adx",
-      "stochastic",
-      "cci",
-      "parabolic_sar",
-      "keltner_channel",
-      "donchian_channel"
-    ],
-    "indicator_support": [
-      {
-        "kind": "ma_cross",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "rsi",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "macd",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "momentum",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "spread",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "z_score",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "custom",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "quote_observe",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "atr",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "bollinger_bands",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "obv",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "cmf",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "adx",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "stochastic",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "cci",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "parabolic_sar",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "keltner_channel",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "kind": "donchian_channel",
-        "status": "supported",
-        "reason": null
-      }
-    ]
-  },
-  "runtime": {
-    "supported_modes": [
-      "paper"
-    ],
-    "supported_execution_modules": [
-      "builtin.execution.paper",
-      "live.okx"
-    ],
-    "mode_support": [
-      {
-        "key": "paper",
-        "status": "supported",
-        "reason": null
-      }
-    ],
-    "execution_module_support": [
-      {
-        "key": "builtin.execution.paper",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "key": "live.okx",
-        "status": "supported",
-        "reason": null
-      }
-    ]
-  },
-  "market_data": {
-    "supported_exchanges": [
-      "binance",
-      "okx"
-    ],
-    "supported_symbols": [
-      "BTCUSDT",
-      "ETHUSDT",
-      "SOLUSDT"
-    ],
-    "exchange_support": [
-      {
-        "key": "binance",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "key": "okx",
-        "status": "supported",
-        "reason": null
-      }
-    ],
-    "symbol_support": [
-      {
-        "key": "BTCUSDT",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "key": "ETHUSDT",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "key": "SOLUSDT",
-        "status": "supported",
-        "reason": null
-      }
-    ]
-  },
-  "frontend": {
-    "declared_module_keys": [
-      "builtin.data.kline",
-      "builtin.data.quote",
-      "builtin.intent.double_ma",
-      "builtin.intent.ma_deviation",
-      "builtin.intent.rsi",
-      "builtin.intent.macd",
-      "builtin.intent.momentum",
-      "builtin.intent.zscore",
-      "builtin.intent.spread_observer",
-      "builtin.agent.weighted",
-      "builtin.agent.arbitrage",
-      "builtin.risk.global",
-      "builtin.execution.paper",
-      "builtin.runtime.control"
-    ],
-    "supported_module_keys": [
-      "builtin.data.kline",
-      "builtin.data.quote",
-      "builtin.intent.double_ma",
-      "builtin.intent.ma_deviation",
-      "builtin.intent.rsi",
-      "builtin.intent.macd",
-      "builtin.intent.momentum",
-      "builtin.intent.zscore",
-      "builtin.intent.spread_observer",
-      "builtin.agent.weighted",
-      "builtin.agent.arbitrage",
-      "builtin.risk.global",
-      "builtin.execution.paper",
-      "builtin.runtime.control"
-    ],
-    "unsupported_module_reasons": {},
-    "module_support": [
-      {
-        "module_key": "builtin.data.kline",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "module_key": "builtin.data.quote",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "module_key": "builtin.intent.double_ma",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "module_key": "builtin.intent.ma_deviation",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "module_key": "builtin.intent.rsi",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "module_key": "builtin.intent.macd",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "module_key": "builtin.intent.momentum",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "module_key": "builtin.intent.zscore",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "module_key": "builtin.intent.spread_observer",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "module_key": "builtin.agent.weighted",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "module_key": "builtin.agent.arbitrage",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "module_key": "builtin.risk.global",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "module_key": "builtin.execution.paper",
-        "status": "supported",
-        "reason": null
-      },
-      {
-        "module_key": "builtin.runtime.control",
-        "status": "supported",
-        "reason": null
-      }
-    ]
-  },
-  "versioning": {
-    "model_version": "quantpilot/versioning-model/v1",
-    "strategy_version_source": "frontend_runtime_config.metadata.version",
-    "parameter_version_policy": "immutable_generation_pointer",
-    "deployment_revision_policy": "strategy_version_plus_compile_id_plus_capability_hash"
-  },
-  "permission_boundary": {
-    "model_version": "quantpilot/permission-boundary/v1",
-    "execution_owner_module": "builtin.execution.paper",
-    "live_execution_allowed": false,
-    "ai_write_policy": "proposal_only",
-    "plugin_network_default": "deny",
-    "non_execution_order_access": "deny"
-  }
+    "api_version":  "quantpilot-capabilities/v1",
+    "schema_version":  "quantpilot/capabilities-schema/v1",
+    "schema_hash":  "sha256:71f7f2d11a54d186649ce0207e48b4b3849bc35ce6aa0ddab8949ddb5890f9b6",
+    "chain_stages":  [
+                         "data",
+                         "intent",
+                         "agent",
+                         "risk",
+                         "execution",
+                         "fill"
+                     ],
+    "strategy_ir":  {
+                        "declared_indicator_kinds":  [
+                                                         "ma_cross",
+                                                         "rsi",
+                                                         "macd",
+                                                         "momentum",
+                                                         "spread",
+                                                         "z_score",
+                                                         "custom",
+                                                         "quote_observe",
+                                                         "atr",
+                                                         "bollinger_bands",
+                                                         "obv",
+                                                         "cmf",
+                                                         "adx",
+                                                         "stochastic",
+                                                         "cci",
+                                                         "parabolic_sar",
+                                                         "keltner_channel",
+                                                         "donchian_channel"
+                                                     ],
+                        "supported_indicator_kinds":  [
+                                                          "ma_cross",
+                                                          "rsi",
+                                                          "macd",
+                                                          "momentum",
+                                                          "spread",
+                                                          "z_score",
+                                                          "custom",
+                                                          "quote_observe",
+                                                          "atr",
+                                                          "bollinger_bands",
+                                                          "obv",
+                                                          "cmf",
+                                                          "adx",
+                                                          "stochastic",
+                                                          "cci",
+                                                          "parabolic_sar",
+                                                          "keltner_channel",
+                                                          "donchian_channel"
+                                                      ],
+                        "indicator_support":  [
+                                                  {
+                                                      "kind":  "ma_cross",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "rsi",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "macd",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "momentum",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "spread",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "z_score",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "custom",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "quote_observe",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "atr",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "bollinger_bands",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "obv",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "cmf",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "adx",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "stochastic",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "cci",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "parabolic_sar",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "keltner_channel",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  },
+                                                  {
+                                                      "kind":  "donchian_channel",
+                                                      "status":  "supported",
+                                                      "reason":  null
+                                                  }
+                                              ]
+                    },
+    "runtime":  {
+                    "supported_modes":  [
+                                            "paper"
+                                        ],
+                    "supported_execution_modules":  [
+                                                        "builtin.execution.paper",
+                                                        "live.okx"
+                                                    ],
+                    "mode_support":  [
+                                         {
+                                             "key":  "paper",
+                                             "status":  "supported",
+                                             "reason":  null
+                                         }
+                                     ],
+                    "execution_module_support":  [
+                                                     {
+                                                         "key":  "builtin.execution.paper",
+                                                         "status":  "supported",
+                                                         "reason":  null
+                                                     },
+                                                     {
+                                                         "key":  "live.okx",
+                                                         "status":  "supported",
+                                                         "reason":  null
+                                                     }
+                                                 ]
+                },
+    "market_data":  {
+                        "supported_exchanges":  [
+                                                    "binance",
+                                                    "okx"
+                                                ],
+                        "supported_symbols":  [
+                                                  "BTCUSDT",
+                                                  "ETHUSDT",
+                                                  "SOLUSDT"
+                                              ],
+                        "exchange_support":  [
+                                                 {
+                                                     "key":  "binance",
+                                                     "status":  "supported",
+                                                     "reason":  null
+                                                 },
+                                                 {
+                                                     "key":  "okx",
+                                                     "status":  "supported",
+                                                     "reason":  null
+                                                 }
+                                             ],
+                        "symbol_support":  [
+                                               {
+                                                   "key":  "BTCUSDT",
+                                                   "status":  "supported",
+                                                   "reason":  null
+                                               },
+                                               {
+                                                   "key":  "ETHUSDT",
+                                                   "status":  "supported",
+                                                   "reason":  null
+                                               },
+                                               {
+                                                   "key":  "SOLUSDT",
+                                                   "status":  "supported",
+                                                   "reason":  null
+                                               }
+                                           ]
+                    },
+    "frontend":  {
+                     "declared_module_keys":  [
+                                                  "builtin.data.kline",
+                                                  "builtin.data.quote",
+                                                  "builtin.intent.double_ma",
+                                                  "builtin.intent.ma_deviation",
+                                                  "builtin.intent.rsi",
+                                                  "builtin.intent.macd",
+                                                  "builtin.intent.momentum",
+                                                  "builtin.intent.zscore",
+                                                  "builtin.intent.spread_observer",
+                                                  "builtin.agent.weighted",
+                                                  "builtin.agent.arbitrage",
+                                                  "builtin.risk.global",
+                                                  "builtin.execution.paper",
+                                                  "builtin.runtime.control"
+                                              ],
+                     "supported_module_keys":  [
+                                                   "builtin.data.kline",
+                                                   "builtin.data.quote",
+                                                   "builtin.intent.double_ma",
+                                                   "builtin.intent.ma_deviation",
+                                                   "builtin.intent.rsi",
+                                                   "builtin.intent.macd",
+                                                   "builtin.intent.momentum",
+                                                   "builtin.intent.zscore",
+                                                   "builtin.intent.spread_observer",
+                                                   "builtin.agent.weighted",
+                                                   "builtin.agent.arbitrage",
+                                                   "builtin.risk.global",
+                                                   "builtin.execution.paper",
+                                                   "builtin.runtime.control"
+                                               ],
+                     "unsupported_module_reasons":  {
+
+                                                    },
+                     "module_support":  [
+                                            {
+                                                "module_key":  "builtin.data.kline",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            },
+                                            {
+                                                "module_key":  "builtin.data.quote",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            },
+                                            {
+                                                "module_key":  "builtin.intent.double_ma",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            },
+                                            {
+                                                "module_key":  "builtin.intent.ma_deviation",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            },
+                                            {
+                                                "module_key":  "builtin.intent.rsi",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            },
+                                            {
+                                                "module_key":  "builtin.intent.macd",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            },
+                                            {
+                                                "module_key":  "builtin.intent.momentum",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            },
+                                            {
+                                                "module_key":  "builtin.intent.zscore",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            },
+                                            {
+                                                "module_key":  "builtin.intent.spread_observer",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            },
+                                            {
+                                                "module_key":  "builtin.agent.weighted",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            },
+                                            {
+                                                "module_key":  "builtin.agent.arbitrage",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            },
+                                            {
+                                                "module_key":  "builtin.risk.global",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            },
+                                            {
+                                                "module_key":  "builtin.execution.paper",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            },
+                                            {
+                                                "module_key":  "builtin.runtime.control",
+                                                "status":  "supported",
+                                                "reason":  null
+                                            }
+                                        ]
+                 },
+    "workspace":  {
+                      "surfaces":  [
+                                       {
+                                           "key":  "dashboard",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.workspace.surfaces"
+                                       },
+                                       {
+                                           "key":  "code",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.workspace.surfaces"
+                                       },
+                                       {
+                                           "key":  "diagnostics",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.workspace.surfaces"
+                                       },
+                                       {
+                                           "key":  "research",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.workspace.surfaces"
+                                       },
+                                       {
+                                           "key":  "monitor",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.workspace.surfaces"
+                                       },
+                                       {
+                                           "key":  "source",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.workspace.surfaces"
+                                       },
+                                       {
+                                           "key":  "template_library",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.workspace.surfaces"
+                                       },
+                                       {
+                                           "key":  "version_history",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.workspace.surfaces"
+                                       },
+                                       {
+                                           "key":  "collaboration_audit",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.workspace.surfaces"
+                                       },
+                                       {
+                                           "key":  "parameter_sweep",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.workspace.surfaces"
+                                       }
+                                   ]
+                  },
+    "ui_actions":  {
+                       "actions":  [
+                                       {
+                                           "key":  "open_tutorial",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       },
+                                       {
+                                           "key":  "manage_credentials",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       },
+                                       {
+                                           "key":  "reset_graph",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       },
+                                       {
+                                           "key":  "load_latest_graph",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       },
+                                       {
+                                           "key":  "save_graph",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       },
+                                       {
+                                           "key":  "export_runtime_config",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       },
+                                       {
+                                           "key":  "export_quantscript",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       },
+                                       {
+                                           "key":  "compile",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       },
+                                       {
+                                           "key":  "start_simulation",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       },
+                                       {
+                                           "key":  "run_backtest",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       },
+                                       {
+                                           "key":  "stop_runtime",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       },
+                                       {
+                                           "key":  "reset_runtime",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       },
+                                       {
+                                           "key":  "open_backtests",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       },
+                                       {
+                                           "key":  "run_parameter_sweep",
+                                           "status":  "supported",
+                                           "reason":  null,
+                                           "source":  "backend:/api/capabilities.ui_actions.actions"
+                                       }
+                                   ]
+                   },
+    "versioning":  {
+                       "model_version":  "quantpilot/versioning-model/v1",
+                       "strategy_version_source":  "frontend_runtime_config.metadata.version",
+                       "parameter_version_policy":  "immutable_generation_pointer",
+                       "deployment_revision_policy":  "strategy_version_plus_compile_id_plus_capability_hash"
+                   },
+    "permission_boundary":  {
+                                "model_version":  "quantpilot/permission-boundary/v1",
+                                "execution_owner_module":  "builtin.execution.paper",
+                                "live_execution_allowed":  false,
+                                "ai_write_policy":  "proposal_only",
+                                "plugin_network_default":  "deny",
+                                "non_execution_order_access":  "deny"
+                            }
 }

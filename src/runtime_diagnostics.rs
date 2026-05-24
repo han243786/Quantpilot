@@ -13,6 +13,7 @@ fn event_label(event_type: &str) -> &'static str {
         "RuntimeNotice" => "运行提示",
         "RuntimeWarning" => "运行告警",
         "RuntimeError" => "运行错误",
+        "CapabilitySnapshotTaken" => "能力快照",
         _ => "运行事件",
     }
 }
@@ -44,6 +45,10 @@ fn field_label(key: &str) -> String {
         "ping_error" => "Ping 错误".to_string(),
         "ping_latency_ms" => "探测延迟（毫秒）".to_string(),
         "price" => "成交价格".to_string(),
+        "cash_balance" => "现金余额".to_string(),
+        "equity_estimate" => "权益估值".to_string(),
+        "total_net_notional" => "净名义敞口".to_string(),
+        "positions" => "持仓数量".to_string(),
         "qty" => "数量".to_string(),
         "quality_flags" => "质量标记".to_string(),
         "reason_text" => "原因".to_string(),
@@ -64,6 +69,10 @@ fn field_label(key: &str) -> String {
         "strength" => "强度".to_string(),
         "time_in_force" => "有效期".to_string(),
         "fallback" => "回退路径".to_string(),
+        "capability_hash" => "能力哈希".to_string(),
+        "schema_version" => "契约版本".to_string(),
+        "permission_boundary_model_version" => "权限边界版本".to_string(),
+        "runtime_mode" => "运行模式".to_string(),
         _ => key.to_string(),
     }
 }
@@ -86,6 +95,12 @@ fn input_fields(event_type: &str) -> &'static [&'static str] {
         "RiskDecisionProduced" => &["status", "risk_score"],
         "ExecutionPlanned" => &["side", "qty", "limit_price", "remaining_qty"],
         "ExecutionFilled" => &["side", "qty", "price", "exec_status"],
+        "PortfolioUpdated" => &[
+            "cash_balance",
+            "equity_estimate",
+            "total_net_notional",
+            "positions",
+        ],
         "RuntimeWarning" | "RuntimeError" => &[
             "source_health",
             "source_status",
@@ -112,6 +127,7 @@ fn output_fields(event_type: &str) -> &'static [&'static str] {
         "RiskDecisionProduced" => &["status", "risk_score"],
         "ExecutionPlanned" => &["exec_status", "order_id", "remaining_qty"],
         "ExecutionFilled" => &["exec_status", "order_id", "price", "qty"],
+        "PortfolioUpdated" => &["equity_estimate", "total_net_notional", "positions"],
         "RuntimeWarning" | "RuntimeError" => &[
             "source_health",
             "source_status",
@@ -259,6 +275,36 @@ fn build_explanation_rows(event_type: &str, payload: &Value) -> Vec<RuntimeDiagn
         }
         "DataUpdated" | "RuntimeWarning" | "RuntimeError" => {
             for key in ["source_health", "quality_flags", "fallback", "error"] {
+                if let Some(row) = payload
+                    .get(key)
+                    .and_then(|value| diagnostics_row(key, value))
+                {
+                    rows.push(row);
+                }
+            }
+        }
+        "PortfolioUpdated" => {
+            for key in [
+                "cash_balance",
+                "equity_estimate",
+                "total_net_notional",
+                "positions",
+            ] {
+                if let Some(row) = payload
+                    .get(key)
+                    .and_then(|value| diagnostics_row(key, value))
+                {
+                    rows.push(row);
+                }
+            }
+        }
+        "CapabilitySnapshotTaken" => {
+            for key in [
+                "capability_hash",
+                "schema_version",
+                "permission_boundary_model_version",
+                "runtime_mode",
+            ] {
                 if let Some(row) = payload
                     .get(key)
                     .and_then(|value| diagnostics_row(key, value))

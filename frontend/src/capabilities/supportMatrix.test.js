@@ -40,6 +40,12 @@ describe("support matrix truth source", () => {
     expect(DEFAULT_CAPABILITIES.frontend.supported_module_keys).toEqual(
       SUPPORTED_FRONTEND_MODULE_KEYS
     );
+    expect(DEFAULT_CAPABILITIES.workspace.surfaces.map((entry) => entry.key)).toEqual(
+      Object.keys(WORKSPACE_SURFACE_MAP)
+    );
+    expect(DEFAULT_CAPABILITIES.ui_actions.actions.map((entry) => entry.key)).toEqual(
+      Object.keys(CAPABILITY_ACTION_MAP)
+    );
     expect(DEFAULT_CAPABILITIES.schema_hash).toEqual(backendCapabilitiesFixture.schema_hash);
     expect(DEFAULT_CAPABILITIES.chain_stages).toEqual([
       "data",
@@ -78,6 +84,12 @@ describe("support matrix truth source", () => {
     );
     expect(normalized.frontend.supported_module_keys).toEqual(
       SUPPORT_MATRIX.frontend.supportedModuleKeys
+    );
+    expect(normalized.workspace.surfaces.map((entry) => entry.key)).toEqual(
+      Object.keys(SUPPORT_MATRIX.workspace.surfaces)
+    );
+    expect(normalized.ui_actions.actions.map((entry) => entry.key)).toEqual(
+      Object.keys(SUPPORT_MATRIX.uiActionMap)
     );
     expect(normalized.schema_hash).toMatch(/^sha256:[0-9a-f]{64}$/);
     expect(normalized.permission_boundary.non_execution_order_access).toBe("deny");
@@ -165,15 +177,21 @@ describe("support matrix truth source", () => {
     expect(CAPABILITY_ACTION_MAP.run_parameter_sweep.apiPaths).toContain(
       "/api/runtime/experiments/backtest-sweep"
     );
+    expect(CAPABILITY_ACTION_MAP.save_graph.apiPaths).toContain("/api/graphs");
+    expect(CAPABILITY_ACTION_MAP.open_backtests.apiPaths).toContain("/api/runtime/backtests");
     expect(CAPABILITY_ACTION_MAP.export_quantscript.apiPaths).toEqual([]);
   });
 
   it("classifies workspace-visible surfaces against their real source of truth", () => {
     expect(SUPPORT_MATRIX.workspace.surfaces).toEqual(WORKSPACE_SURFACE_MAP);
-    expect(WORKSPACE_SURFACE_MAP.template_library.capabilityDriven).toBe(false);
-    expect(WORKSPACE_SURFACE_MAP.version_history.capabilityDriven).toBe(false);
-    expect(WORKSPACE_SURFACE_MAP.collaboration_audit.capabilityDriven).toBe(false);
-    expect(WORKSPACE_SURFACE_MAP.parameter_sweep.capabilityDriven).toBe(true);
+    expect(
+      Object.values(WORKSPACE_SURFACE_MAP).every(
+        (surface) =>
+          surface.capabilityDriven === true &&
+          surface.sourceOfTruth === "backend:/api/capabilities.workspace.surfaces"
+      )
+    ).toBe(true);
+    expect(WORKSPACE_SURFACE_MAP.dashboard.apiPaths).toEqual([]);
     expect(WORKSPACE_SURFACE_MAP.parameter_sweep.apiPaths).toContain(
       "/api/runtime/experiments/backtest-sweep"
     );
@@ -266,8 +284,18 @@ describe("support matrix truth source", () => {
         capabilityStatus: "loading",
         capabilitySource: "remote",
         capabilityMessage: "",
-        capabilities: null
+        capabilities: backendCapabilitiesFixture
       })
     ).toBe("");
+
+    expect(
+      getCapabilityActionBlockReason({
+        actionKey: "export_quantscript",
+        capabilityStatus: "ready",
+        capabilitySource: "remote",
+        capabilityMessage: "",
+        capabilities: null
+      })
+    ).toContain("缺少 ui_actions.actions");
   });
 });

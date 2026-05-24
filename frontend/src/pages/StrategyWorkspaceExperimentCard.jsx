@@ -3,6 +3,7 @@ import {
   getCapabilityActionBlockReason,
   isCapabilitySyncBlocked
 } from "../capabilities/supportMatrix";
+import { projectUiActions } from "../capabilities/capabilityProjection";
 import { useGraphStore } from "../store/graphStore";
 import { backtestDetailPath, navigateTo } from "../router";
 
@@ -31,6 +32,7 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
   const capabilityStatus = useGraphStore((state) => state.capabilityStatus);
   const capabilitySource = useGraphStore((state) => state.capabilitySource);
   const capabilityMessage = useGraphStore((state) => state.capabilityMessage);
+  const capabilities = useGraphStore((state) => state.capabilities);
 
   const [experimentName, setExperimentName] = useState("");
   const [feeGridDraft, setFeeGridDraft] = useState("5, 10, 20");
@@ -49,15 +51,22 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
       ? selectedExperiment
       : null;
   const capabilitySyncBlocked = isCapabilitySyncBlocked(capabilityStatus, capabilitySource);
+  const runSweepAction = projectUiActions({
+    capabilities,
+    capabilityStatus,
+    capabilitySource,
+    capabilityMessage
+  }).run_parameter_sweep;
   const runSweepBlockedReason = getCapabilityActionBlockReason({
     actionKey: "run_parameter_sweep",
     capabilityStatus,
     capabilitySource,
-    capabilityMessage
+    capabilityMessage,
+    capabilities
   });
 
   async function handleStartExperiment() {
-    if (capabilitySyncBlocked) {
+    if (capabilitySyncBlocked || !runSweepAction?.enabled) {
       return;
     }
 
@@ -131,7 +140,7 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
             type="button"
             className="ghost-btn compact-btn"
             data-testid="workspace-experiment-run-action"
-            disabled={capabilitySyncBlocked}
+            disabled={capabilitySyncBlocked || !runSweepAction?.enabled}
             title={runSweepBlockedReason || undefined}
             onClick={handleStartExperiment}
           >

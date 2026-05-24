@@ -1,5 +1,5 @@
 param(
-    [int]$MaxWarnings = 49
+    [int]$MaxWarnings = 0
 )
 
 $ErrorActionPreference = "Continue"

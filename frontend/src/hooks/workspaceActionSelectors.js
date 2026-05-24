@@ -11,6 +11,7 @@ export function useWorkspaceActionSelectors() {
   const capabilityStatus = useGraphStore((state) => state.capabilityStatus);
   const capabilitySource = useGraphStore((state) => state.capabilitySource);
   const capabilityMessage = useGraphStore((state) => state.capabilityMessage);
+  const capabilities = useGraphStore((state) => state.capabilities);
   const formalQuantScriptOverride = useGraphStore((state) => state.formalQuantScriptOverride);
 
   return useMemo(
@@ -21,11 +22,21 @@ export function useWorkspaceActionSelectors() {
         capabilityStatus,
         capabilitySource,
         capabilityMessage,
+        capabilities,
         formalQuantScriptOverride,
         t
       }),
       runtimeMeta: getRuntimeStatusMeta(runtime.status)
     }),
-    [capabilityMessage, capabilitySource, capabilityStatus, formalQuantScriptOverride, graph, runtime, t]
+    [
+      capabilities,
+      capabilityMessage,
+      capabilitySource,
+      capabilityStatus,
+      formalQuantScriptOverride,
+      graph,
+      runtime,
+      t
+    ]
   );
 }

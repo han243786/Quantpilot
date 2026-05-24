@@ -8,6 +8,10 @@ export function useStrategyWorkspaceSharedModel() {
   const selectedCompileDiagnosticTarget = useGraphStore(
     (state) => state.selectedCompileDiagnosticTarget
   );
+  const capabilities = useGraphStore((state) => state.capabilities);
+  const capabilityStatus = useGraphStore((state) => state.capabilityStatus);
+  const capabilitySource = useGraphStore((state) => state.capabilitySource);
+  const capabilityMessage = useGraphStore((state) => state.capabilityMessage);
   const loadGraphById = useGraphStore((state) => state.loadGraphById);
 
   return {
@@ -16,6 +20,10 @@ export function useStrategyWorkspaceSharedModel() {
     selectedNodeId,
     selectedEdgeId,
     selectedCompileDiagnosticTarget,
+    capabilities,
+    capabilityStatus,
+    capabilitySource,
+    capabilityMessage,
     loadGraphById
   };
 }

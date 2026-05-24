@@ -1,6 +1,7 @@
+/// v3.7.0: 执行端状态管理
+use crate::audit_log::AuditLog;
 use crate::live_runner::RunnerPool;
 use crate::ws_client::WsEvent;
-/// v3.7.0: 执行端状态管理
 use qrpc_core::{CoreStrategyIr, Symbol};
 use qrpc_core_ir::{
     CoreMetadata, CoreSourceKind, CoreTimeInForce, ExecutionRule, ExecutionSizingKind,
@@ -98,6 +99,7 @@ pub struct ExecutorState {
     pub ws_tx_map: RwLock<BTreeMap<String, mpsc::UnboundedSender<WsEvent>>>,
     /// v3.5.0: 全局执行模式 (Paper/Live), 影响WS连接和下单路径
     pub global_mode: RwLock<ExecutionMode>,
+    pub audit_log: AuditLog,
 }
 
 impl ExecutorState {
@@ -111,7 +113,12 @@ impl ExecutorState {
             runner_pool: Mutex::new(None),
             ws_tx_map: RwLock::new(BTreeMap::new()),
             global_mode: RwLock::new(ExecutionMode::Paper),
+            audit_log: AuditLog::new(&default_storage_dir()),
         })
+    }
+
+    pub fn load_default_or_new() -> Arc<Self> {
+        Self::load_state(&default_state_path()).unwrap_or_else(Self::new)
     }
 
     /// v3.5.0: 读取当前全局执行模式
@@ -177,6 +184,7 @@ impl ExecutorState {
     }
 
     /// v3.7.0 S3: 持久化策略状态到指定路径，供测试与迁移门禁复用。
+    #[cfg(test)]
     pub fn persist_to_path(&self, path: &Path) -> anyhow::Result<()> {
         let strategies = self
             .strategies
@@ -201,7 +209,7 @@ impl ExecutorState {
     }
 
     /// v3.7.0 S3: 从持久化文件加载策略状态
-    pub fn load_from_file(path: &str) -> anyhow::Result<Arc<Self>> {
+    pub fn load_from_file(path: &Path) -> anyhow::Result<Arc<Self>> {
         let content = std::fs::read_to_string(path)?;
         let data: BTreeMap<String, serde_json::Value> = serde_json::from_str(&content)?;
         let mut strategies = BTreeMap::new();
@@ -255,23 +263,27 @@ impl ExecutorState {
             runner_pool: Mutex::new(None),
             ws_tx_map: RwLock::new(BTreeMap::new()),
             global_mode: RwLock::new(ExecutionMode::Paper),
+            audit_log: AuditLog::new(path.parent().unwrap_or_else(|| Path::new("storage"))),
         }))
     }
 
     /// v3.7.0 S3: 尝试从磁盘恢复状态, 不存在则返回 None
-    pub fn load_state(path: &str) -> Option<Arc<Self>> {
-        if !Path::new(path).exists() {
+    pub fn load_state(path: &Path) -> Option<Arc<Self>> {
+        if !path.exists() {
             return None;
         }
         Self::load_from_file(path).ok()
     }
 }
 
-fn default_state_path() -> PathBuf {
+fn default_storage_dir() -> PathBuf {
     std::env::var_os("QUANTPILOT_STORAGE_ROOT")
         .map(PathBuf::from)
         .unwrap_or_else(|| PathBuf::from("storage"))
-        .join(".executor-state.json")
+}
+
+fn default_state_path() -> PathBuf {
+    default_storage_dir().join(".executor-state.json")
 }
 
 fn write_file_atomically(path: &Path, bytes: &[u8]) -> anyhow::Result<()> {

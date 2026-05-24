@@ -1,4 +1,5 @@
 import { getCapabilityActionBlockReason, isCapabilitySyncBlocked } from "../capabilities/supportMatrix";
+import { projectUiActions } from "../capabilities/capabilityProjection";
 import { humanizeErrorText } from "../utils/errorText";
 
 export function formatScopeLabel(issue, graph, t) {
@@ -126,6 +127,7 @@ export function resolveWorkspaceActionState({
   capabilityStatus,
   capabilitySource,
   capabilityMessage,
+  capabilities,
   formalQuantScriptOverride,
   t
 }) {
@@ -139,29 +141,40 @@ export function resolveWorkspaceActionState({
   const visibleFindings = validationFindings.slice(0, 5);
   const hiddenFindingCount = Math.max(validationFindings.length - visibleFindings.length, 0);
   const capabilitySyncBlocked = isCapabilitySyncBlocked(capabilityStatus, capabilitySource);
+  const actionStates = projectUiActions({
+    capabilities,
+    capabilityStatus,
+    capabilitySource,
+    capabilityMessage
+  });
+  const isActionEnabled = (actionKey) => actionStates[actionKey]?.enabled !== false;
   const exportConfigCapabilityReason = getCapabilityActionBlockReason({
     actionKey: "export_runtime_config",
     capabilityStatus,
     capabilitySource,
-    capabilityMessage
+    capabilityMessage,
+    capabilities
   });
   const compileCapabilityReason = getCapabilityActionBlockReason({
     actionKey: "compile",
     capabilityStatus,
     capabilitySource,
-    capabilityMessage
+    capabilityMessage,
+    capabilities
   });
   const startSimulationCapabilityReason = getCapabilityActionBlockReason({
     actionKey: "start_simulation",
     capabilityStatus,
     capabilitySource,
-    capabilityMessage
+    capabilityMessage,
+    capabilities
   });
   const runBacktestCapabilityReason = getCapabilityActionBlockReason({
     actionKey: "run_backtest",
     capabilityStatus,
     capabilitySource,
-    capabilityMessage
+    capabilityMessage,
+    capabilities
   });
   const formalCompileSourceMeta = resolveFormalCompileSourceMeta({
     graph,
@@ -186,6 +199,7 @@ export function resolveWorkspaceActionState({
     validationFindings,
     visibleFindings,
     hiddenFindingCount,
+    actionStates,
     capabilitySyncBlocked,
     formalCompileSourceMeta,
     compileButtonTitle: compileButtonTitle || undefined,
@@ -200,16 +214,52 @@ export function resolveWorkspaceActionState({
         ? t("运行时执行期间不能启动新的回测。")
         : undefined),
     exportConfigTitle: exportConfigCapabilityReason || undefined,
-    canCompile: graph.validation_state.is_valid && !capabilitySyncBlocked,
+    saveGraphTitle: actionStates.save_graph?.blockReason || actionStates.save_graph?.reason || undefined,
+    loadLatestTitle:
+      actionStates.load_latest_graph?.blockReason ||
+      actionStates.load_latest_graph?.reason ||
+      undefined,
+    resetGraphTitle: actionStates.reset_graph?.blockReason || actionStates.reset_graph?.reason || undefined,
+    exportQuantScriptTitle:
+      actionStates.export_quantscript?.blockReason ||
+      actionStates.export_quantscript?.reason ||
+      undefined,
+    stopRuntimeTitle: actionStates.stop_runtime?.blockReason || actionStates.stop_runtime?.reason || undefined,
+    resetRuntimeTitle:
+      actionStates.reset_runtime?.blockReason || actionStates.reset_runtime?.reason || undefined,
+    tutorialTitle: actionStates.open_tutorial?.blockReason || t("查看使用教程"),
+    credentialsTitle:
+      actionStates.manage_credentials?.blockReason ||
+      actionStates.manage_credentials?.reason ||
+      t("管理交易所凭证"),
+    openBacktestsTitle:
+      actionStates.open_backtests?.blockReason || actionStates.open_backtests?.reason || undefined,
+    canCompile:
+      graph.validation_state.is_valid &&
+      !capabilitySyncBlocked &&
+      isActionEnabled("compile"),
     canStartRuntime:
       runtime.status !== "running" &&
       runtime.status !== "connecting" &&
-      !capabilitySyncBlocked,
+      !capabilitySyncBlocked &&
+      isActionEnabled("start_simulation"),
     canStartBacktest:
       runtime.status !== "running" &&
       runtime.status !== "connecting" &&
-      !capabilitySyncBlocked,
-    canStopRuntime: runtime.status === "running" || runtime.status === "connecting",
+      !capabilitySyncBlocked &&
+      isActionEnabled("run_backtest"),
+    canStopRuntime:
+      (runtime.status === "running" || runtime.status === "connecting") &&
+      isActionEnabled("stop_runtime"),
+    canSaveGraph: isActionEnabled("save_graph"),
+    canLoadLatestGraph: isActionEnabled("load_latest_graph"),
+    canResetGraph: isActionEnabled("reset_graph"),
+    canResetRuntime: isActionEnabled("reset_runtime"),
+    canExportRuntimeConfig: !capabilitySyncBlocked && isActionEnabled("export_runtime_config"),
+    canExportQuantScript: isActionEnabled("export_quantscript"),
+    canOpenTutorial: isActionEnabled("open_tutorial"),
+    canOpenCredentials: isActionEnabled("manage_credentials"),
+    canOpenBacktests: isActionEnabled("open_backtests"),
     issueSummary:
       (graph.validation_state?.issue_counts?.error || 0) > 0
         ? `${graph.validation_state.issue_counts.error}E`

@@ -76,7 +76,7 @@ if errorlevel 1 goto :fail
 echo        PASS
 
 echo [14/22] Executor warning budget...
-powershell -NoProfile -ExecutionPolicy Bypass -File "tools\check-executor-warning-budget.ps1" -MaxWarnings 47
+powershell -NoProfile -ExecutionPolicy Bypass -File "tools\check-executor-warning-budget.ps1" -MaxWarnings 0
 if errorlevel 1 goto :fail
 echo        PASS
 

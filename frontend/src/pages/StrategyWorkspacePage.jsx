@@ -11,6 +11,7 @@ import { useStrategyWorkspaceSharedModel } from "../hooks/useStrategyWorkspaceSh
 import { useStrategyWorkspaceUiState } from "../hooks/useStrategyWorkspaceUiState";
 import { useStrategyWorkspacePageData } from "../hooks/useStrategyWorkspacePageData";
 import { useGraphStore } from "../store/graphStore";
+import { projectCapabilityView } from "../capabilities/capabilityProjection";
 import TopToolbar from "../components/TopToolbar";
 import { StrategyRouteBar } from "./BacktestAnalysisLayout";
 
@@ -45,6 +46,10 @@ export default function StrategyWorkspacePage({ strategyId }) {
     selectedNodeId,
     selectedEdgeId,
     selectedCompileDiagnosticTarget,
+    capabilities,
+    capabilityStatus,
+    capabilitySource,
+    capabilityMessage,
     loadGraphById
   } = useStrategyWorkspaceSharedModel();
   const stopRuntime = useGraphStore((s) => s.stopRuntime);
@@ -93,6 +98,36 @@ export default function StrategyWorkspacePage({ strategyId }) {
     activeCodeInspector: ui.activeCodeInspector
   });
   const { currentGraphId, readiness, compareSelection, formatTime } = pageData;
+  const capabilityView = useMemo(
+    () =>
+      projectCapabilityView({
+        capabilities,
+        capabilityStatus,
+        capabilitySource,
+        capabilityMessage
+      }),
+    [capabilities, capabilityMessage, capabilitySource, capabilityStatus]
+  );
+  const workspaceTabs = useMemo(
+    () =>
+      WORKSPACE_TAB_DEFS.map((tab) => ({
+        ...tab,
+        capability: capabilityView.workspace.surfaces[tab.id]
+      })).filter((tab) => tab.capability?.visible),
+    [capabilityView.workspace.surfaces]
+  );
+  const openBacktestsAction = capabilityView.uiActions.actions.open_backtests;
+  const isWorkspaceSurfaceVisible = (surfaceKey) =>
+    capabilityView.workspace.surfaces[surfaceKey]?.visible === true;
+
+  useEffect(() => {
+    if (ui.status !== "ready") return;
+    if (isWorkspaceSurfaceVisible(ui.activeTab)) return;
+    const nextTab = workspaceTabs.find((tab) => tab.capability?.visible);
+    if (nextTab) {
+      ui.setActiveTab(nextTab.id);
+    }
+  }, [capabilityView.workspace.surfaces, ui.activeTab, ui.status, ui.setActiveTab, workspaceTabs]);
 
   if (ui.status === "loading") {
     return (
@@ -147,16 +182,19 @@ export default function StrategyWorkspacePage({ strategyId }) {
 
       {/* Adobe 风格标签栏 */}
       <section className="ad-tabbar ad-tabbar--workspace-modes" aria-label="工作区模式">
-        {WORKSPACE_TAB_DEFS.map((tab) => (
+        {workspaceTabs.map((tab) => (
           <button
             key={tab.id}
             data-testid={`workspace-tab-${tab.id}`}
-            className={`ad-tab ad-tab--workspace-mode${ui.activeTab === tab.id ? " ad-tab--active" : ""}${diagnosticFocusRequested && tab.id === "code" && ui.activeTab !== "code" ? " ad-tab--focus-hint" : ""}`}
+            className={`ad-tab ad-tab--workspace-mode${ui.activeTab === tab.id ? " ad-tab--active" : ""}${tab.capability?.enabled ? "" : " ad-tab--disabled"}${diagnosticFocusRequested && tab.id === "code" && ui.activeTab !== "code" ? " ad-tab--focus-hint" : ""}`}
+            disabled={!tab.capability?.enabled}
+            aria-disabled={!tab.capability?.enabled}
             onClick={() => {
+              if (!tab.capability?.enabled) return;
               ui.setActiveTab(tab.id);
               if (tab.id === "code" && diagnosticFocusRequested) clearDiagnosticFocus();
             }}
-            title={t(tab.labelKey)}
+            title={tab.capability?.reason || t(tab.labelKey)}
           >
             <span className="ad-tab__kicker">{t(tab.kickerKey)}</span>
             <strong className="ad-tab__label">{t(tab.labelKey)}</strong>
@@ -166,13 +204,15 @@ export default function StrategyWorkspacePage({ strategyId }) {
         <button
           className="ad-tabbar__action"
           onClick={() => navigateTo(strategyBacktestsPath(strategyId))}
+          disabled={!openBacktestsAction?.enabled}
+          title={openBacktestsAction?.blockReason || openBacktestsAction?.reason || undefined}
         >
           打开回测
         </button>
       </section>
 
       {/* 标签页内容 */}
-      {ui.activeTab === "dashboard" ? (
+      {ui.activeTab === "dashboard" && isWorkspaceSurfaceVisible("dashboard") ? (
         <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceDashboard
             graph={graph}
@@ -180,11 +220,12 @@ export default function StrategyWorkspacePage({ strategyId }) {
             compileSummary={compileSummary}
             readiness={readiness}
             onNavigate={(tabId) => ui.setActiveTab(tabId)}
+            workspaceSurfaces={capabilityView.workspace.surfaces}
           />
         </Suspense>
       ) : null}
 
-      {ui.activeTab === "overview" ? (
+      {ui.activeTab === "overview" && isWorkspaceSurfaceVisible("overview") ? (
         <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceOverviewTab
             strategyId={strategyId} graph={graph} ui={ui}
@@ -201,7 +242,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
         </Suspense>
       ) : null}
 
-      {ui.activeTab === "code" ? (
+      {ui.activeTab === "code" && isWorkspaceSurfaceVisible("code") ? (
         <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceCodeTab
             graph={graph} ui={ui}
@@ -214,7 +255,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
         </Suspense>
       ) : null}
 
-      {ui.activeTab === "diagnostics" ? (
+      {ui.activeTab === "diagnostics" && isWorkspaceSurfaceVisible("diagnostics") ? (
         <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceDiagnosticsTab
             graph={graph} runtime={runtime} selectedNodeId={selectedNodeId} ui={ui}
@@ -229,12 +270,12 @@ export default function StrategyWorkspacePage({ strategyId }) {
         </Suspense>
       ) : null}
 
-      {ui.activeTab === "research" ? (
+      {ui.activeTab === "research" && isWorkspaceSurfaceVisible("research") ? (
         <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceResearchTab strategyId={strategyId} />
         </Suspense>
       ) : null}
-      {ui.activeTab === "monitor" ? (
+      {ui.activeTab === "monitor" && isWorkspaceSurfaceVisible("monitor") ? (
         <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceMonitorTab
             graph={graph}
@@ -245,12 +286,12 @@ export default function StrategyWorkspacePage({ strategyId }) {
           />
         </Suspense>
       ) : null}
-      {ui.activeTab === "debug" ? (
+      {ui.activeTab === "debug" && isWorkspaceSurfaceVisible("debug") ? (
         <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceDebugTab debugBars={pageData.debugBars || []} />
         </Suspense>
       ) : null}
-      {ui.activeTab === "source" ? (
+      {ui.activeTab === "source" && isWorkspaceSurfaceVisible("source") ? (
         <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
           <StrategyWorkspaceSourceTab graphId={graph?.metadata?.graph_id} />
         </Suspense>

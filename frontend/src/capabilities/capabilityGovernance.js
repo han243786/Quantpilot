@@ -175,7 +175,7 @@ const frontendModuleEntries = SUPPORTED_FRONTEND_MODULE_KEYS.map((moduleKey) =>
     className: frontendModuleClassMap[moduleKey] || CAPABILITY_CLASSES.supported,
     ownerRole: CAPABILITY_OWNER_ROLES.frontend_editor_owner,
     reviewResponsibility: "sidebar exposure, disabled reasons, UX",
-    sourceOfTruth: "frontend:support-matrix.frontend.supportedModuleKeys",
+    sourceOfTruth: "backend:/api/capabilities.frontend.module_support",
     notes: frontendModuleNotesMap[moduleKey] || []
   })
 );
@@ -188,7 +188,7 @@ const actionEntries = Object.entries(CAPABILITY_ACTION_MAP).map(([actionKey, act
     className: CAPABILITY_CLASSES.supported,
     ownerRole: CAPABILITY_OWNER_ROLES.frontend_editor_owner,
     reviewResponsibility: "action gating, reason text, E2E",
-    sourceOfTruth: "frontend:CAPABILITY_ACTION_MAP",
+    sourceOfTruth: "backend:/api/capabilities.ui_actions.actions",
     notes: action.notes || []
   })
 );
@@ -205,7 +205,7 @@ const workspaceSurfaceEntries = Object.entries(WORKSPACE_SURFACE_MAP).map(([surf
     className: workspaceSurfaceClassMap[surfaceKey] || CAPABILITY_CLASSES.supported,
     ownerRole: CAPABILITY_OWNER_ROLES.frontend_editor_owner,
     reviewResponsibility: "workspace exposure, backend route honesty, closeout audit",
-    sourceOfTruth: `frontend:support-matrix.workspace.surfaces.${surfaceKey}`,
+    sourceOfTruth: "backend:/api/capabilities.workspace.surfaces",
     notes: surface.notes || []
   })
 );

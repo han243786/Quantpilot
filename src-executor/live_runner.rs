@@ -31,6 +31,7 @@ pub enum RunnerStatus {
 
 impl LiveRunner {
     const KLINE_POOL_CAPACITY: usize = 1000;
+    const MAX_DAILY_ORDER_COUNT: u32 = 5_000;
 
     pub fn from_strategy(s: &ActiveStrategy, bc: broadcast::Sender<TriggerEvent>) -> Self {
         Self {
@@ -58,20 +59,35 @@ impl LiveRunner {
                 price,
                 ts_ms,
             } => {
+                if !self.is_subscribed_to(&symbol) {
+                    return;
+                }
                 self.kline_pool.update_from_ticker(&symbol, price, ts_ms);
                 self.run_fast_cycle(ts_ms);
             }
             WsEvent::Kline { symbol, bar } => {
+                if !self.is_subscribed_to(&symbol) {
+                    return;
+                }
                 let close_ms = bar.close_time_ms;
                 self.kline_pool.update_kline(&symbol, bar);
                 self.run_slow_cycle(close_ms);
             }
-            WsEvent::Connected { .. } => {
+            WsEvent::Connected { exchange } => {
+                eprintln!(
+                    "[runner:{}] {} websocket connected",
+                    self.strategy_id, exchange
+                );
                 if self.status == RunnerStatus::Idle {
                     self.status = RunnerStatus::Running;
                 }
             }
-            WsEvent::Disconnected { ref reason, .. } => {
+            #[cfg(test)]
+            WsEvent::Disconnected { exchange, reason } => {
+                eprintln!(
+                    "[runner:{}] {} websocket disconnected: {}",
+                    self.strategy_id, exchange, reason
+                );
                 self.status = RunnerStatus::Faulted(reason.clone());
             }
         }
@@ -97,9 +113,18 @@ impl LiveRunner {
         if self.status != RunnerStatus::Running {
             return;
         }
+        if self.execution_mode == ExecutionMode::Live
+            && self.daily_order_count >= Self::MAX_DAILY_ORDER_COUNT
+        {
+            self.status = RunnerStatus::Faulted("daily_order_count_exceeded".to_string());
+            return;
+        }
         match self.coordinator.run_slow_cycle(now_ms) {
             Ok(cycle) => {
                 for event in &cycle.runtime_events {
+                    if matches!(event.event_type, RuntimeEventType::ExecutionFilled) {
+                        self.daily_order_count = self.daily_order_count.saturating_add(1);
+                    }
                     if let Some(t) = Self::detect_trigger(&self.strategy_id, event) {
                         let _ = self.trigger_broadcast.send(t);
                     }
@@ -146,6 +171,14 @@ impl LiveRunner {
             occurred_at_ms: event.ts_ms,
         })
     }
+
+    fn is_subscribed_to(&self, symbol: &str) -> bool {
+        self.subscribed_symbols.is_empty()
+            || self
+                .subscribed_symbols
+                .iter()
+                .any(|item| item.as_str().eq_ignore_ascii_case(symbol))
+    }
 }
 
 pub struct RunnerPool {
@@ -186,6 +219,9 @@ impl RunnerPool {
         for ids in self.symbol_index.values_mut() {
             ids.retain(|id| id != strategy_id);
         }
+        if let Some(runner) = self.runners.get_mut(strategy_id) {
+            runner.status = RunnerStatus::Stopped;
+        }
         self.runners.remove(strategy_id);
     }
     pub fn broadcast_ws_event(&mut self, event: WsEvent) {
@@ -201,7 +237,13 @@ impl RunnerPool {
                     }
                 }
             }
-            WsEvent::Connected { .. } | WsEvent::Disconnected { .. } => {
+            WsEvent::Connected { .. } => {
+                for runner in self.runners.values_mut() {
+                    runner.handle_ws_event(event.clone());
+                }
+            }
+            #[cfg(test)]
+            WsEvent::Disconnected { .. } => {
                 for runner in self.runners.values_mut() {
                     runner.handle_ws_event(event.clone());
                 }

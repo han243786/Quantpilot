@@ -9,7 +9,7 @@ $endMarker = "__CAPABILITY_FIXTURE_END__"
 
 $previousErrorActionPreference = $ErrorActionPreference
 $ErrorActionPreference = "Continue"
-$commandOutput = & cargo test export_capability_fixture_json_snapshot -- --ignored --nocapture 2>&1
+$commandOutput = & cargo test export_capability_fixture_snapshot -- --ignored --nocapture 2>&1
 $ErrorActionPreference = $previousErrorActionPreference
 $text = ($commandOutput | Out-String)
 

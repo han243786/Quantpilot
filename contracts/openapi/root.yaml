@@ -1167,7 +1167,7 @@ components:
   schemas:
     CapabilityResponse:
       type: object
-      required: [api_version, schema_version, schema_hash, chain_stages, strategy_ir, runtime, market_data, frontend, versioning, permission_boundary]
+      required: [api_version, schema_version, schema_hash, chain_stages, strategy_ir, runtime, market_data, frontend, workspace, ui_actions, versioning, permission_boundary]
       properties:
         api_version:
           type: string
@@ -1276,6 +1276,22 @@ components:
                   reason:
                     type: string
                     nullable: true
+        workspace:
+          type: object
+          required: [surfaces]
+          properties:
+            surfaces:
+              type: array
+              items:
+                $ref: '#/components/schemas/UiCapabilityEntry'
+        ui_actions:
+          type: object
+          required: [actions]
+          properties:
+            actions:
+              type: array
+              items:
+                $ref: '#/components/schemas/UiCapabilityEntry'
         versioning:
           type: object
           required: [model_version, strategy_version_source, parameter_version_policy, deployment_revision_policy]
@@ -1320,6 +1336,21 @@ components:
         reason:
           type: string
           nullable: true
+
+    UiCapabilityEntry:
+      type: object
+      required: [key, status, source]
+      properties:
+        key:
+          type: string
+        status:
+          type: string
+          enum: [supported, declared_only]
+        reason:
+          type: string
+          nullable: true
+        source:
+          type: string
 
     AiProposalRecord:
       type: object

@@ -1,10 +1,14 @@
 * text=auto
+.gitattributes text eol=lf
 *.rs text eol=lf
 *.js text eol=lf
 *.jsx text eol=lf
 *.qs text eol=lf
 *.json text eol=lf
+*.yaml text eol=lf
 *.md text eol=lf
+*.ps1 text eol=lf
+*.bat text eol=lf
 *.sh text eol=lf
 *.yml text eol=lf
 *.css text eol=lf

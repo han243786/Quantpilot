@@ -29,7 +29,12 @@ pub(super) async fn parse_graph_quantscript(
 ) -> Result<Json<Value>, (StatusCode, String)> {
     parse_graph_quantscript_source(&request.source)
         .map(Json)
-        .map_err(internal_error)
+        .map_err(|error| {
+            json_bad_request(
+                "bad_request",
+                format!("strategy_graph QuantScript 解析失败: {error:#}"),
+            )
+        })
 }
 
 pub(crate) fn generate_quantscript_from_graph_value(graph: &Value) -> anyhow::Result<String> {
@@ -680,6 +685,9 @@ pub(crate) fn build_quantscript_runtime_targets(graph: &Value) -> Value {
                     format!("data_{sanitized}"),
                     Value::String(node_id.to_string()),
                 );
+                if let Some(script_source_id) = script_data_source_id_from_graph_node(&node) {
+                    source_to_node.insert(script_source_id, Value::String(node_id.to_string()));
+                }
             }
             "intent" => {
                 source_to_node.insert(
@@ -699,7 +707,7 @@ pub(crate) fn build_quantscript_runtime_targets(graph: &Value) -> Value {
                     Value::String(node_id.to_string()),
                 );
             }
-            "runtime" => runtime_node_id = Value::String(node_id.to_string()),
+            "runtime" | "runtime_control" => runtime_node_id = Value::String(node_id.to_string()),
             "execution" => execution_node_id = Value::String(node_id.to_string()),
             _ => {}
         }
@@ -724,6 +732,44 @@ pub(crate) fn build_compile_runtime_targets_from_graph(graph: &Value) -> Compile
             );
             CompileRuntimeTargets::default()
         }
+    }
+}
+
+fn script_data_source_id_from_graph_node(node: &Value) -> Option<String> {
+    let config = node.get("config")?;
+    let exchange = config
+        .get("exchange")
+        .and_then(Value::as_str)
+        .unwrap_or("binance");
+    let instrument = config
+        .get("instrument")
+        .and_then(Value::as_str)
+        .unwrap_or("BTCUSDT");
+    let interval = config
+        .get("timeframe")
+        .or_else(|| config.get("interval"))
+        .and_then(Value::as_str)
+        .unwrap_or("1d");
+
+    Some(format!(
+        "script_{}_{}_{}",
+        sanitize_quantscript_source_segment(exchange),
+        sanitize_quantscript_source_segment(instrument),
+        sanitize_quantscript_source_segment(interval)
+    ))
+}
+
+fn sanitize_quantscript_source_segment(value: &str) -> String {
+    let sanitized = value
+        .trim()
+        .to_ascii_lowercase()
+        .chars()
+        .map(|ch| if ch.is_ascii_alphanumeric() { ch } else { '_' })
+        .collect::<String>();
+    if sanitized.is_empty() {
+        "unknown".to_string()
+    } else {
+        sanitized
     }
 }
 

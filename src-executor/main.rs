@@ -2,11 +2,13 @@
 /// OKX Paper 模式 — 每交易所独立WS, 策略启动后 RunnerPool 激活
 mod api_guard;
 mod audit_log;
+#[cfg(test)]
 mod credential_vault_v2;
 mod executor_state;
 mod kline_buffer;
 mod live_runner;
 mod migration_api;
+#[cfg(test)]
 mod okx_rest;
 mod ws_client;
 
@@ -46,7 +48,7 @@ async fn main() {
         println!("[executor] 会话密钥已生成");
     }
 
-    let state = ExecutorState::new();
+    let state = ExecutorState::load_default_or_new();
 
     // v3.7.0: 广播通道 (SSE trigger推送) + OKX Paper WS 事件通道
     let (trigger_broadcast, _) = broadcast::channel::<TriggerEvent>(256);
@@ -203,6 +205,15 @@ async fn set_mode(
     let old_mode = state.set_mode(new_mode.clone());
     let mode_str = format!("{:?}", new_mode).to_lowercase();
     eprintln!("[executor] 模式切换: {:?} → {:?}", old_mode, new_mode);
+    append_audit(
+        &state,
+        "set_mode",
+        None,
+        serde_json::json!({
+            "previous_mode": format!("{:?}", old_mode).to_lowercase(),
+            "current_mode": mode_str.clone(),
+        }),
+    );
     Ok(Json(serde_json::json!({
         "previous_mode": format!("{:?}", old_mode).to_lowercase(),
         "current_mode": mode_str,
@@ -232,8 +243,29 @@ async fn get_strategy_detail(
     let s = s
         .get(&id)
         .ok_or((axum::http::StatusCode::NOT_FOUND, "策略不存在".into()))?;
+    let graph_node_count = s
+        .graph_json
+        .get("nodes")
+        .and_then(|nodes| nodes.as_array())
+        .map_or(0, |nodes| nodes.len());
+    let recent_trigger_count = state
+        .trigger_events
+        .read()
+        .unwrap_or_else(|e| e.into_inner())
+        .iter()
+        .filter(|event| event.strategy_id == id)
+        .count();
+    let recent_audit_count = state
+        .audit_log
+        .recent(50)
+        .into_iter()
+        .filter(|entry| entry.strategy_id.as_deref() == Some(id.as_str()))
+        .count();
     Ok(Json(serde_json::json!({
         "strategy_id": s.strategy_id, "name": s.name,
+        "graph_node_count": graph_node_count,
+        "recent_trigger_count": recent_trigger_count,
+        "recent_audit_count": recent_audit_count,
         "open_orders": [], "portfolio": {"cash_balance": 100000.0, "available_cash_balance": 100000.0, "frozen_cash_balance": 0.0, "total_net_notional": 0.0},
     })))
 }
@@ -265,6 +297,12 @@ async fn recv_strategy(
         };
         (status, msg)
     })?;
+    append_audit(
+        &state,
+        "load_strategy",
+        Some(strategy_id.clone()),
+        serde_json::json!({ "source": "migration_api" }),
+    );
     Ok(Json(
         serde_json::json!({"status": "loaded", "strategy_id": strategy_id}),
     ))
@@ -306,6 +344,17 @@ async fn start_strategy(
                     )
                 })?
                 .register(strategy);
+        } else {
+            drop(pool_opt);
+            if let Ok(mut strategies) = state.strategies.write() {
+                if let Some(strategy) = strategies.get_mut(&strategy_id) {
+                    strategy.status = StrategyStatus::Error("runner_pool_unavailable".to_string());
+                }
+            }
+            return Err((
+                axum::http::StatusCode::SERVICE_UNAVAILABLE,
+                "执行端运行池不可用".into(),
+            ));
         }
     }
     state
@@ -319,6 +368,12 @@ async fn start_strategy(
         })?
         .get_mut(&strategy_id)
         .map(|s| s.status = StrategyStatus::Running);
+    append_audit(
+        &state,
+        "start_strategy",
+        Some(strategy_id.clone()),
+        serde_json::json!({ "status": "running" }),
+    );
     Ok(Json(
         serde_json::json!({"status": "running", "strategy_id": strategy_id}),
     ))
@@ -371,6 +426,12 @@ async fn stop_strategy(
         })?
         .get_mut(&strategy_id)
         .map(|s| s.status = StrategyStatus::Stopped);
+    append_audit(
+        &state,
+        "stop_strategy",
+        Some(strategy_id.clone()),
+        serde_json::json!({ "status": "stopped" }),
+    );
     Ok(Json(
         serde_json::json!({"status": "stopped", "strategy_id": strategy_id}),
     ))
@@ -380,16 +441,63 @@ async fn get_klines(
     State(state): State<Arc<ExecutorState>>,
     Path(strategy_id): Path<String>,
 ) -> Result<Json<serde_json::Value>, (axum::http::StatusCode, String)> {
-    {
+    let subscribed_symbols = {
         let strategies = state.strategies.read().map_err(|e| {
             (
                 axum::http::StatusCode::INTERNAL_SERVER_ERROR,
                 format!("锁: {}", e),
             )
         })?;
-        if !strategies.contains_key(&strategy_id) {
-            return Err((axum::http::StatusCode::NOT_FOUND, "策略不存在".into()));
+        let strategy = strategies
+            .get(&strategy_id)
+            .ok_or((axum::http::StatusCode::NOT_FOUND, "策略不存在".into()))?;
+        strategy
+            .subscribed_symbols
+            .iter()
+            .map(|symbol| symbol.as_str().to_string())
+            .collect::<Vec<_>>()
+    };
+    let mut bars = Vec::new();
+    let mut latest_prices = serde_json::Map::new();
+    if let Some(pool_arc) = state
+        .runner_pool
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .as_ref()
+        .cloned()
+    {
+        let pool = pool_arc.lock().unwrap_or_else(|e| e.into_inner());
+        if let Some(runner) = pool.runners.get(&strategy_id) {
+            let symbols = if subscribed_symbols.is_empty() {
+                runner
+                    .kline_pool
+                    .buffers
+                    .keys()
+                    .cloned()
+                    .collect::<Vec<_>>()
+            } else {
+                subscribed_symbols.clone()
+            };
+            for symbol in symbols {
+                bars.extend(
+                    runner
+                        .kline_pool
+                        .recent_bars(&symbol, 1_000)
+                        .into_iter()
+                        .cloned(),
+                );
+                if let Some(price) = runner.kline_pool.latest_price(&symbol) {
+                    latest_prices.insert(symbol, serde_json::json!(price));
+                }
+            }
         }
+    }
+    if !bars.is_empty() {
+        return Ok(Json(serde_json::json!({
+            "strategy_id": strategy_id,
+            "bars": bars,
+            "latest_prices": latest_prices,
+        })));
     }
     let buffers = state
         .kline_buffers
@@ -400,9 +508,11 @@ async fn get_klines(
         .flat_map(|b| b.bars.iter())
         .cloned()
         .collect();
-    Ok(Json(
-        serde_json::json!({"strategy_id": strategy_id, "bars": bars}),
-    ))
+    Ok(Json(serde_json::json!({
+        "strategy_id": strategy_id,
+        "bars": bars,
+        "latest_prices": latest_prices,
+    })))
 }
 
 async fn strategy_events_sse(
@@ -443,9 +553,17 @@ async fn strategy_events_sse(
                 trigger = rx.recv() => {
                     match trigger {
                         Ok(t) if t.strategy_id == strategy_id => {
+                            if let Ok(mut events) = state.trigger_events.write() {
+                                events.push(t.clone());
+                                if events.len() > 1_000 {
+                                    events.remove(0);
+                                }
+                            }
                             let json = serde_json::json!({
                                 "type": "trigger", "strategy_id": t.strategy_id,
+                                "trigger_type": t.trigger_type,
                                 "node_id": t.node_id, "strength": t.strength,
+                                "occurred_at_ms": t.occurred_at_ms,
                             });
                             yield Ok(Event::default().data(json.to_string()));
                         }
@@ -477,9 +595,22 @@ async fn get_params(
     let s = s
         .get(&strategy_id)
         .ok_or((axum::http::StatusCode::NOT_FOUND, "策略不存在".into()))?;
-    Ok(Json(
-        serde_json::json!({"strategy_id": strategy_id, "params": s.params}),
-    ))
+    let snapshot_count = state
+        .params_snapshots
+        .read()
+        .map_err(|e| {
+            (
+                axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                format!("锁: {}", e),
+            )
+        })?
+        .get(&strategy_id)
+        .map_or(0, |snapshots| snapshots.len());
+    Ok(Json(serde_json::json!({
+        "strategy_id": strategy_id,
+        "params": s.params,
+        "snapshot_count": snapshot_count,
+    })))
 }
 
 async fn update_params(
@@ -545,6 +676,20 @@ async fn update_params(
         validate_hot_param_value(key, existing_params.get(key), value)?;
     }
 
+    {
+        let mut snapshots = state.params_snapshots.write().map_err(|e| {
+            (
+                axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                format!("锁: {}", e),
+            )
+        })?;
+        let history = snapshots.entry(strategy_id.clone()).or_default();
+        history.push(existing_params);
+        if history.len() > 20 {
+            history.remove(0);
+        }
+    }
+
     state
         .pending_params
         .write()
@@ -555,9 +700,30 @@ async fn update_params(
             )
         })?
         .insert(strategy_id.clone(), new_params);
+    append_audit(
+        &state,
+        "update_params",
+        Some(strategy_id.clone()),
+        serde_json::json!({ "status": "pending" }),
+    );
     Ok(Json(
         serde_json::json!({"status": "pending", "strategy_id": strategy_id}),
     ))
+}
+
+fn append_audit(
+    state: &ExecutorState,
+    operation: &str,
+    strategy_id: Option<String>,
+    details: serde_json::Value,
+) {
+    state.audit_log.append(&audit_log::AuditEntry {
+        timestamp: chrono::Utc::now().to_rfc3339(),
+        operation: operation.to_string(),
+        actor: "executor_api".to_string(),
+        strategy_id,
+        details,
+    });
 }
 
 fn validate_hot_param_value(

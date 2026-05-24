@@ -45,6 +45,8 @@ describe("graphStore capability fallback", () => {
     expect(state.capabilityMessage).toBe("");
     expect(state.capabilities.runtime.supported_modes).toEqual(["paper"]);
     expect(state.capabilities.frontend.module_support).toEqual(remoteCapabilities.frontend.module_support);
+    expect(state.capabilities.workspace.surfaces).toEqual(remoteCapabilities.workspace.surfaces);
+    expect(state.capabilities.ui_actions.actions).toEqual(remoteCapabilities.ui_actions.actions);
     expect(
       JSON.parse(window.localStorage.getItem(capabilityFallbackFixtures.cacheKey))
     ).toEqual(remoteCapabilities);
@@ -96,6 +98,12 @@ describe("graphStore capability fallback", () => {
     expect(state.capabilityMessage).toContain("安全回退模式");
     expect(
       result.frontend.module_support.every((entry) => entry.status === "declared_only")
+    ).toBe(true);
+    expect(
+      result.workspace.surfaces.every((entry) => entry.status === "declared_only")
+    ).toBe(true);
+    expect(
+      result.ui_actions.actions.every((entry) => entry.status === "declared_only")
     ).toBe(true);
   });
 });

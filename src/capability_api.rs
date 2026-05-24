@@ -14,6 +14,8 @@ pub(super) struct CapabilityContract {
     pub(super) declared_module_keys: Vec<&'static str>,
     pub(super) supported_module_keys: Vec<&'static str>,
     pub(super) unsupported_module_reasons: BTreeMap<&'static str, &'static str>,
+    pub(super) workspace_surfaces: Vec<UiCapabilityEntry>,
+    pub(super) ui_actions: Vec<UiCapabilityEntry>,
     pub(super) versioning: CapabilityVersioningSummary,
     pub(super) permission_boundary: CapabilityPermissionBoundarySummary,
 }
@@ -105,6 +107,12 @@ pub(super) fn build_capability_response() -> CapabilityResponse {
                 })
                 .collect(),
         },
+        workspace: WorkspaceCapabilitySummary {
+            surfaces: contract.workspace_surfaces,
+        },
+        ui_actions: UiActionCapabilitySummary {
+            actions: contract.ui_actions,
+        },
         versioning: contract.versioning,
         permission_boundary: contract.permission_boundary,
     }
@@ -147,6 +155,8 @@ pub(crate) fn build_capability_contract() -> CapabilityContract {
         declared_module_keys: DECLARED_FRONTEND_MODULE_KEYS.to_vec(),
         supported_module_keys: SUPPORTED_FRONTEND_MODULE_KEYS.to_vec(),
         unsupported_module_reasons: unsupported_frontend_module_reasons(),
+        workspace_surfaces: workspace_surface_capabilities(),
+        ui_actions: ui_action_capabilities(),
         versioning: capability_versioning_summary(),
         permission_boundary: capability_permission_boundary_summary(),
     }
@@ -241,4 +251,55 @@ pub(super) fn indicator_declared_only_reason(_kind: IndicatorKind) -> Option<&'s
 
 pub(super) fn unsupported_frontend_module_reasons() -> BTreeMap<&'static str, &'static str> {
     BTreeMap::new()
+}
+
+pub(super) fn ui_capability_entry(key: &'static str, source: &'static str) -> UiCapabilityEntry {
+    UiCapabilityEntry {
+        key,
+        status: CapabilitySupportStatus::Supported,
+        reason: None,
+        source,
+    }
+}
+
+pub(super) fn workspace_surface_capabilities() -> Vec<UiCapabilityEntry> {
+    const WORKSPACE_SURFACE_SOURCE: &str = "backend:/api/capabilities.workspace.surfaces";
+    [
+        "dashboard",
+        "code",
+        "diagnostics",
+        "research",
+        "monitor",
+        "source",
+        "template_library",
+        "version_history",
+        "collaboration_audit",
+        "parameter_sweep",
+    ]
+    .into_iter()
+    .map(|key| ui_capability_entry(key, WORKSPACE_SURFACE_SOURCE))
+    .collect()
+}
+
+pub(super) fn ui_action_capabilities() -> Vec<UiCapabilityEntry> {
+    const UI_ACTION_SOURCE: &str = "backend:/api/capabilities.ui_actions.actions";
+    [
+        "open_tutorial",
+        "manage_credentials",
+        "reset_graph",
+        "load_latest_graph",
+        "save_graph",
+        "export_runtime_config",
+        "export_quantscript",
+        "compile",
+        "start_simulation",
+        "run_backtest",
+        "stop_runtime",
+        "reset_runtime",
+        "open_backtests",
+        "run_parameter_sweep",
+    ]
+    .into_iter()
+    .map(|key| ui_capability_entry(key, UI_ACTION_SOURCE))
+    .collect()
 }

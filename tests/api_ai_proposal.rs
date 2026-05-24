@@ -228,7 +228,7 @@ async fn runtime_ai_proposal_denies_missing_capability_without_mutation_ledger()
         None,
     )
     .await;
-    assert_eq!(mutation_list.as_array().unwrap().len(), 0);
+    assert_eq!(mutation_list["data"].as_array().unwrap().len(), 0);
 }
 
 #[tokio::test(flavor = "multi_thread")]
