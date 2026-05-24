@@ -1,11 +1,11 @@
 # QuantPilot
 
 > ⚠️ **实验性软件声明**  
-> 当前版本 (v3.7.1) 仍处于密集开发阶段。尽管已完成三轮全维度诱错审计 (53+ 发现, P1 清零), 但系统中仍然存在大量未被发现的阻断性缺陷和边界问题。本版本仅适用于实验、研究和离线模拟, **不可用于实盘交易或生产环境**。开发者需要自行精细打磨, 并结合自身使用场景进行充分验证。
+> 当前版本 (v4.0.0) 仍处于密集开发阶段。尽管已完成多轮全维度诱错审计并进入状态机化架构收口, 但系统中仍然可能存在未被发现的阻断性缺陷和边界问题。本版本仅适用于实验、研究和离线模拟, **不可用于实盘交易或生产环境**。开发者需要自行精细打磨, 并结合自身使用场景进行充分验证。
 
 QuantPilot 是一个单机量化交易沙盒, 聚焦于诚实的能力边界、可复现的运行时行为和发布时契约纪律。
 
-当前版本: **v3.7.1** (实时执行端 + OKX testnet + 多策略并发 + 审计闭环 + 流程收口) | [系统架构](./markdown/10-overview/overview-system-architecture.md) | [使用指南](./markdown/10-overview/overview-system-architecture.md#十一使用指南) | [General_Policy](./markdown/General_Policy.md) | [超级规范化](./markdown/01-principles/principles-super-standardization.md) | [版本历史](./CHANGELOG.md)
+当前版本: **v4.0.0** (状态机化架构 + Risk Plane + ExecutionMachine 能力来源 + 开发者学习流水线) | [系统架构](./markdown/10-overview/overview-system-architecture.md) | [使用指南](./markdown/10-overview/overview-system-architecture.md#十一使用指南) | [General_Policy](./markdown/General_Policy.md) | [超级规范化](./markdown/01-principles/principles-super-standardization.md) | [版本历史](./CHANGELOG.md)
 
 ## 产品边界
 
@@ -129,7 +129,7 @@ cd frontend; npm run test:perf:react-flow
 
 `scripts/pre-commit` 在 `git commit` 时自动执行 UTF-8 检查、`cargo fmt --check`、`cargo check`、`cargo test --no-run`、`vite build`、`vitest run`。
 
-## v3.7.1 流程收口状态
+## v4.0.0 流程收口状态
 
 | 项 | 状态 | 说明 |
 |----|:--:|------|
@@ -139,9 +139,9 @@ cd frontend; npm run test:perf:react-flow
 | 三层工作流门禁 | ✅ | pre-commit / CI / closeout-release 三层已统一 |
 | 功能演进契约 | ✅ | 新能力必须登记能力边界、回归保护矩阵、兼容性与迁移说明 |
 | Rust 格式基线 | ✅ | 全仓 `cargo fmt` 已落地，pre-commit / CI / closeout 均执行 `cargo fmt --check` |
-| 版本一致性 | ✅ | Cargo、Tauri、前端 package、lockfile 和关键文档统一到 `3.7.1` |
+| 版本一致性 | ✅ | Cargo、Tauri、前端 package、lockfile 和关键文档统一到 `4.0.0` |
 | executor warning 债务 | ✅ | 当前预算 0；新增 warning 会失败 |
-| 完整 closeout | ✅ | v3.7.2 已将 closeout 升级为 23 项，2026-05-24 本地复跑 23/23 通过 |
+| 完整 closeout | ⏳ | v4.0.0 按 `04-Codex执行规范.md` 执行 V1-V10 全量收口 |
 
 ## 文档入口
 

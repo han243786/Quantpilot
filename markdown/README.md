@@ -1,6 +1,6 @@
 # QuantPilot 文档
 
-> v3.7.1 | [项目 README](../README.md) | [General_Policy](./General_Policy.md)
+> v4.0.0 | [项目 README](../README.md) | [General_Policy](./General_Policy.md)
 
 ## 快速导航
 
@@ -24,7 +24,7 @@
 03-implementation/  实现规范 — 能力治理、运行时契约、QS 设计笔记
 04-guides/          操作指南 — 面向用户的 how-to 文档
 05-testing/         测试 — 审计报告 + 测试方案
-06-milestones/      里程碑 — 版本规划 (v3.7.1 当前, V1 收口下一站)
+06-milestones/      里程碑 — 版本规划 (v4.0.0 当前, 状态机化架构收口)
 08-research/        研究 — 深度研究与背景分析
 09-archive/         归档 — 历史文档
 10-overview/        总览 — 当前状态与路线图

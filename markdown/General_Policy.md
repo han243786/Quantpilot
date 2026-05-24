@@ -1,10 +1,10 @@
-# QuantPilot 项目总规则 v3.7.1 → v4.0.0 演化版
+# QuantPilot 项目总规则 v4.0.0
 
-> 生效日期: 2026-05-21 | 所有开发者必须遵守 | 违反的 PR 不予合并
+> 生效日期: 2026-05-24 | 所有开发者必须遵守 | 违反的 PR 不予合并
 > 重构: v2.0→v3.0 拆分为阻断规则(门禁可查) + 审计规则(里程碑审查)
 > 每个条款标注 **检查方式**: 🛡️门禁 / 🔍审计 / 🛡️+🔍
 > 更新: v3.7.1 增加 Rust 格式基线、功能演进登记和防回退规则，`cargo fmt --check` 纳入 pre-commit / CI / closeout
-> v4.0.0 规划补充: 增加状态机化 QuantScript、Risk Plane、ExecutionMachine 能力来源、前端以后端 capability 为真源、开发者学习流水线边界
+> v4.0.0: 状态机化 QuantScript, Risk Plane, ExecutionMachine 能力来源, 前端以后端 capability 为真源, 开发者学习流水线边界已实施
 
 ---
 

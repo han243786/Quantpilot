@@ -1,6 +1,6 @@
 # 当前状态与发布状态
 
-> 最后更新：2026-05-24 | 当前版本：v3.7.1 ✅ | 当前补丁规划：v3.7.2 closeout 真实性与安全回退收口
+> 最后更新：2026-05-24 | 当前版本：v4.0.0 ✅ | 当前 closeout：状态机化架构 + 开发者学习流水线收口
 
 ## 版本路线
 
@@ -42,7 +42,7 @@
 
 ## 当前产品真实情况
 
-QuantPilot v3.7.1 继承 v3.7.0 的端到端量化交易沙盒链，并在回归修复后补齐流程门禁基线：
+QuantPilot v4.0.0 继承 v3.7.1 的端到端量化交易沙盒链，并在稳定线之上侧向新增状态机化架构、Risk Plane、ExecutionMachine 能力来源和开发者学习流水线：
 
 - **桌面应用**: Tauri v2 自绘标题栏 Windows 桌面应用
 - **前端**: Adobe 暗色面板设计系统, 图编辑器, 策略工作区, 回测详情/对比, 研究控制台, Toast 通知
@@ -99,7 +99,7 @@ QuantPilot v3.7.1 继承 v3.7.0 的端到端量化交易沙盒链，并在回归
 
 ## 当前架构边界
 
-v3.7.1 系统应被理解为：
+v4.0.0 系统应被理解为：
 
 - 支持的交易所: `binance`, `okx`
 - 支持的交易对: `BTCUSDT`, `ETHUSDT`, `SOLUSDT`
@@ -113,7 +113,7 @@ v3.7.1 系统应被理解为：
 
 v3.7.0 完成 v3.5.0→v3.7.0 全版本演进 (12 项新功能 + 32 项审计修复 + 12 项 UX 优化 + 14 项 P3 消化)。
 
-v3.7.1 是其后的 PATCH 收口：已修复 S0 登录挂起、P1 凭证 DELETE 405 和 P2 测试进程文件锁问题，并把 pre-commit、CI、closeout/release 三层门禁重新对齐。2026-05-24 全量复查后，v3.7.2 被定义为质量补丁：保持 strict safe fallback，修复 E2E 预期，新增 workspace clippy warning budget，并把 closeout 升级为 23 项；本地 closeout 已 23/23 通过。
+v4.0.0 是当前 MAJOR 收口：在 v3.7.1 稳定基线上落地状态机化 QuantScript、事件模型、Risk Plane、ExecutionMachine 能力来源、前端 capability 真源和 Developer Learning Pipeline。closeout 按 v4.0.0 `04-Codex执行规范.md` 执行 V1-V10 全量验证。
 
 使用下面的专用文档作为活跃发布界面：
 
@@ -122,11 +122,13 @@ v3.7.1 是其后的 PATCH 收口：已修复 S0 登录挂起、P1 凭证 DELETE 
 - [v3.7.1 规划方案](../06-milestones/v3.7.1/01-规划方案.md)
 - [v3.7.1 综合优化清单](../06-milestones/v3.7.1/02-综合优化清单.md)
 - [v3.7.1 closeout 基线](../06-milestones/v3.7.1/03-closeout.md)
+- [v4.0.0 规划方案](../06-milestones/v4.0.0/01-规划方案.md)
+- [v4.0.0 closeout 报告](../06-milestones/v4.0.0/03-closeout.md)
 - [支持矩阵](../03-implementation/governance/implementation-support-matrix.md)
 - [编译链合约](../03-implementation/governance/implementation-compile-chain-contract.md)
 - [功能演进契约](../03-implementation/governance/implementation-feature-evolution-contract.md)
 
-当前仓库级状态 (v3.7.1 流程基线):
+当前仓库级状态 (v4.0.0 closeout 执行中):
 
 | 检查项 | 状态 | 备注 |
 |--------|:--:|------|
@@ -156,18 +158,18 @@ v3.7.1 是其后的 PATCH 收口：已修复 S0 登录挂起、P1 凭证 DELETE 
 | Pre-commit hook 同步 | ✅ | `tools/check-pre-commit-hook.ps1` 已进入 closeout，防止 `.git/hooks/pre-commit` 与 `scripts/pre-commit` 再次漂移 |
 | 清理边界门禁 | ✅ | `tools/check-cleanup-boundary.ps1` 已进入 CI/closeout，防止清理脚本触碰真实运行/图版本工件 |
 | Rust 格式基线 | ✅ | `cargo fmt --check` 已进入三层门禁 |
-| 版本号一致性 | ✅ | 关键元数据和用户可见入口统一到 3.7.1 |
-| GP 合规 | ✅ | 当前 GP 已同步到 v3.7.1，v3.7.1 不扩大功能声明 |
-| 超级规范化 | ✅ | v3.7.1 对齐 pre-commit / CI / closeout 三层门禁 |
-| 完整 closeout | ✅ | v3.7.2 已升级为 23 项；2026-05-24 本地复跑 23/23 通过，最终 `git status --short` 为空 |
+| 版本号一致性 | ✅ | 关键元数据和用户可见入口统一到 4.0.0 |
+| GP 合规 | ⏳ | 当前 GP 已同步到 v4.0.0，V6/V9 将复核 v4 演化保护矩阵 |
+| 超级规范化 | ✅ | v4.0.0 对齐 MAJOR 演化通道、前端真源通道和学习流水线 closeout |
+| 完整 closeout | ⏳ | v4.0.0 按 23 项 closeout 门禁和 V1-V10 执行规范复跑 |
 
-## 五维度评分 (v3.7.1 final closeout)
+## 五维度评分 (v4.0.0 closeout 待最终定稿)
 
 | 维度 | 评分 | 说明 |
 |------|:--:|------|
 | **功能开发进度** | **9.5/10** | 18 指标全实现 / 实时执行端 + OKX testnet / Paper/Live 切换 / 编译缓存 / Toast 系统 |
 | **仓库稳定程度** | **9.4/10** | workspace test 通过 / vitest 289/289 / executor warning 0 / closeout 正在 v3.7.2 收口 |
-| **发布就绪度** | **9.6/10** | P1 清零 / GP+超规范化 v3.7.1 对齐 / 版本一致性 / v3.7.2 closeout 23/23 通过 |
+| **发布就绪度** | **待定** | P1 清零 / GP+超规范化 v4.0.0 对齐 / 版本一致性 / v4.0.0 closeout 正在复跑 |
 | **用户友好程度** | **9.5/10** | 术语全中文化 / 空状态引导 / 进度反馈 / 错误码映射 / ARIA 无障碍 / prefers-reduced-motion |
 | **系统整体稳定性** | **9.3/10** | 事务保护 / TOCTOU 修复 / 三阶段无锁恢复 / 状态持久化 / Zeroizing / api_guard 强制 |
 | **加权** | **9.4/10** | 加权 = 9.5×0.3 + 9.4×0.3 + 9.3×0.2 + 9.5×0.1 + 9.3×0.1 |
