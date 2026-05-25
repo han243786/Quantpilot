@@ -4,7 +4,7 @@ cd /d "%~dp0"
 chcp 65001 >nul
 set QUANTPILOT_DEV=true
 echo ============================================
-echo   QuantPilot Desktop v4.3.0
+echo   QuantPilot Desktop v4.4.0
 echo   QUANTPILOT_DEV = true
 echo ============================================
 taskkill /f /im quantpilot.exe 2>nul

@@ -1,11 +1,11 @@
 # QuantPilot
 
 > ⚠️ **实验性软件声明**  
-> 当前版本 (v4.3.0) 仍处于密集开发阶段。尽管已完成多轮全维度诱错审计并进入 v4 回测与多交易对策略收口, 但系统中仍然可能存在未被发现的阻断性缺陷和边界问题。本版本仅适用于实验、研究和离线模拟, **不可用于实盘交易或生产环境**。开发者需要自行精细打磨, 并结合自身使用场景进行充分验证。
+> 当前版本 (v4.4.0) 仍处于密集开发阶段。尽管已完成多轮全维度诱错审计并进入嵌套状态机第一波收口, 但系统中仍然可能存在未被发现的阻断性缺陷和边界问题。本版本仅适用于实验、研究和离线模拟, **不可用于实盘交易或生产环境**。开发者需要自行精细打磨, 并结合自身使用场景进行充分验证。
 
 QuantPilot 是一个单机量化交易沙盒, 聚焦于诚实的能力边界、可复现的运行时行为和发布时契约纪律。
 
-当前版本: **v4.3.0** (v4 回测 + 多交易对策略) | [版本历史](./CHANGELOG.md)
+当前版本: **v4.4.0** (嵌套状态机第一波) | [版本历史](./CHANGELOG.md)
 
 ## 项目治理体系
 
@@ -219,7 +219,7 @@ cd frontend; npm run test:perf:react-flow
 
 `scripts/pre-commit` 在 `git commit` 时自动执行 UTF-8 检查、`cargo fmt --check`、`cargo check`、`cargo test --no-run`、`vite build`、`vitest run`。
 
-## v4.3.0 流程收口状态
+## v4.4.0 流程收口状态
 
 | 项 | 状态 | 说明 |
 |----|:--:|------|
@@ -232,9 +232,10 @@ cd frontend; npm run test:perf:react-flow
 | v4 runtime 入口 | ✅ | 后端 `/api/runtime/v4/run`、CLI `v4-run`、前端 `start_v4_simulation` capability 已接入 |
 | 执行端 v4 集成 | ✅ | RunnerPool、部署 API、OKX Market 事件、SSE evidence 和执行端前端面板按 v4.2.0 规划落实 |
 | v4 回测 + 多交易对 | ✅ | `/api/runtime/backtest` 可走 `runtime_kind=v4`, 回测工件包含 `v4_artifact`, v4 模板和多交易对 MachineGraph 展开已接入 |
-| 版本一致性 | ✅ | Cargo、Tauri、前端 package、lockfile、release manifest、OpenAPI 和启动横幅统一到 `4.3.0` |
+| 嵌套状态机第一波 | ✅ | `MachineState.child_machine`、v4 QS state 内嵌套 machine、父优先 runtime 路由、层级 snapshot 和复杂度预算面板已接入 |
+| 版本一致性 | ✅ | Cargo、Tauri、前端 package、lockfile、release manifest、OpenAPI 和启动横幅统一到 `4.4.0` |
 | executor warning 债务 | ✅ | 当前预算 0；新增 warning 会失败 |
-| 完整 closeout | ⏳ | v4.3.0 正在按规划方案执行针对性验证和全量门禁收口 |
+| 完整 closeout | ✅ | v4.4.0 嵌套状态机规划方案已通过 24/24 closeout 门禁 |
 
 ## 更多文档
 

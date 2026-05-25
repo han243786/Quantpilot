@@ -252,6 +252,7 @@ export const CAPABILITY_ACTION_MAP = {
     blockedDuringCapabilitySync: true,
     notes: [
       "v4 模拟运行只接收 v4 QS 静态审计通过后的 machine graph handoff。",
+      "嵌套状态机当前为 beta，深度上限为 2，并必须输出复杂度预算与层级 evidence。",
       "该入口固定使用 PaperSimulated，本地模拟成交不会连接 provider submission。"
     ]
   },

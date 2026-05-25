@@ -1,4 +1,4 @@
-# QuantPilot 全量树 v4.3.0
+# QuantPilot 全量树 v4.4.0
 
 > 本文档是 QuantPilot 的"源代码地图"——开发者通过这棵树可以彻底了解项目的每一个模块、每一个文件、每一个功能。
 > 与 GP (实现约束) 和超级规范化 (流程约束) 配合使用: GP 管代码写成什么样, 超级规范化管开发怎么管, 全量树管项目里有什么。
@@ -620,6 +620,7 @@ Cargo.toml [workspace]
 - 事件拒绝: `v4.runtime.event_rejected` 记录 payload/type/guard/memory 写入 fail-closed 证据 🆕 v4.1.0
 - 执行端接入: v4 runner 消费 OKX Market 事件并输出 `v4RuntimeMemorySnapshot` SSE 证据 🆕 v4.2.0
 - v4 回测: `/api/runtime/backtest` 可按 `runtime_kind=v4` 执行 deterministic bar replay, 生成 machine trajectory / Risk Plane / Execution capability artifact 🆕 v4.3.0
+- 嵌套状态机: `MachineState.child_machine` 支持同模板二级 child machine, 静态契约拒绝三级嵌套、重复 id 与模板漂移 🆕 v4.4.0
 - Risk Plane: `MachineGraphRiskPlane`, priority ≥9000
 - 24 种执行能力: `ExecutionCapabilityKind`, `CapabilitySupportSource`
 - 四种运行时模式: `RuntimeTradingMode` (PaperActual/PaperSimulated/LiveActual/LiveSimulated)
@@ -629,7 +630,7 @@ Cargo.toml [workspace]
 - 兼容桥: `bridge_core_ir_to_v4_machine_graph()`
 - 插件治理: `PluginGovernanceContract`, `PluginManifestSpec`
 - 复现契约: `ReproducibilityContract` (8 项证据)
-- 复杂度预算: `ComplexityBudgetContract` (8 项上限)
+- 复杂度预算: `ComplexityBudgetContract` (10 项上限, 含嵌套深度与事件处理路径)
 - 学习流水线: `DeveloperLearningPipelineContract`
 - 版本 Manifest: `V4VersionManifest`
 
@@ -669,7 +670,7 @@ qrpc_runtime/src/
   │   ├── evaluate_risk_plane_for_execution() — Risk Plane 门禁
   │   ├── evaluate_execution_capabilities_for_execution() — 能力检查
   │   ├── V4SimulatedExecutionRuntimeState — 模拟撮合引擎
-  │   └── memory_snapshot()           — 内存快照
+  │   └── memory_snapshot()           — 内存快照, v4.4.0 起包含 active child machine 层级和 complexity_metrics
   ├── compat.rs               — 模块热替换兼容性检查 🆕 v4.0.0
   │   ├── CompatibilityChecker        — 7 维度检查 (identity/version/schema/capability/ABI)
   │   └── validate_module_surface()   — 模块表面验证; 改模块热替换规则时改这里
@@ -868,7 +869,8 @@ RunHistorySection.jsx        — 运行历史
 BacktestHistorySection.jsx   — 回测历史
 EvidenceSummaryCards.jsx     — 证据摘要卡片
 GovernedTimelinePanel.jsx    — 治理时间线
-V4RuntimeEvidencePanel.jsx   — v4 状态机证据面板
+V4RuntimeEvidencePanel.jsx   — v4 状态机证据面板, 递归展示嵌套 machine
+ComplexityBudgetPanel.jsx    — v4 复杂度预算面板, 展示状态/transition/memory/嵌套深度/事件路径使用率
 ```
 
 ### 5.6 运维面板
@@ -994,7 +996,7 @@ runtimeGovernance.js                — 运行时治理
 runtimeMutation.js                  — 运行时变更
 runtimeStatus.js                    — 运行时状态
 runtimeTimeline.js                  — 运行时时间线
-v4RuntimeEvidence.js                — v4 运行时证据投影
+v4RuntimeEvidence.js                — v4 运行时证据投影, 递归 normalize child machine 并输出 complexity_metrics
 strategyHubCompareQueueActions.js   — 策略中心对比队列
 strategyHubFormatters.js            — 策略中心格式化
 strategyHubInspectorActions.js      — 策略中心检查器动作
@@ -1234,12 +1236,16 @@ guide-strategy-template-library.md           — 策略模板库使用
 手动全量实机测试检查单.md
 自由维度诱错审计-v3.7.1-第1轮.md
 自由维度诱错审计-v4.0.0-第1轮.md           — v4 审计报告
+自由维度诱错审计-v4.4.0-第1轮.md           — 嵌套状态机 5 维诱错审计
 meta-pipeline-log.md                         — 元流水线日志
 ```
 
 ### 7.6 里程碑归档 (markdown/06-milestones/)
 
-50+ 版本目录, 从 `v0.2.0` 到 `v4.0.0`, 每个含 `01-规划方案.md` + `02-综合优化清单.md` (或等效文档) + `03-closeout.md` (或等效文档)。
+50+ 版本目录, 从 `v0.2.0` 到 `v4.4.0`, 每个含 `01-规划方案.md` + `02-综合优化清单.md` (或等效文档) + `03-closeout.md` / `02-closeout.md` (或等效文档)。
+
+活跃归档:
+- `markdown/06-milestones/v4.4.0/02-closeout.md` — v4.4.0 嵌套状态机第一波 closeout 归档
 
 当前活跃: `v4.0.0/` — MAJOR 状态机化架构。
 
@@ -1446,7 +1452,7 @@ storage/
 **qrpc_core_ir**:
 - `qrpc_core_ir/Cargo.toml` — qrpc_core_ir 包配置
 - `qrpc_core_ir/src/lib.rs` — v3 类型定义 + v4 模块导出
-- `qrpc_core_ir/src/v4.rs` — v4 全量类型 (47+ struct/enum, 40+ 验证, 兼容桥, backtest artifact, memory type_ref/memory_writes 校验); 改 v4 类型系统或 artifact schema 时改这里 🆕 v4.3.0
+- `qrpc_core_ir/src/v4.rs` — v4 全量类型 (47+ struct/enum, 40+ 验证, 兼容桥, backtest artifact, memory type_ref/memory_writes 校验, `MachineState.child_machine` 与复杂度预算); 改 v4 类型系统、嵌套状态机或 artifact schema 时改这里 🆕 v4.4.0
 
 **qrpc_compiler**:
 - `qrpc_compiler/Cargo.toml` — qrpc_compiler 包配置
@@ -1455,7 +1461,7 @@ storage/
 **qrpc_runtime**:
 - `qrpc_runtime/Cargo.toml` — qrpc_runtime 包配置
 - `qrpc_runtime/src/lib.rs` — 运行时入口
-- `qrpc_runtime/src/v4_runtime.rs` — v4 PaperSimulated 运行时; 改 event payload 校验、memory fail-closed、条件单模拟、Market 事件注入、v4 backtest replay、多交易对 machine 展开或 v4 运行时行为时改这里 🆕 v4.3.0
+- `qrpc_runtime/src/v4_runtime.rs` — v4 PaperSimulated 运行时; 改 event payload 校验、memory fail-closed、条件单模拟、Market 事件注入、v4 backtest replay、多交易对 machine 展开、嵌套 machine 路由/snapshot 或 v4 运行时行为时改这里 🆕 v4.4.0
 - `qrpc_runtime/src/compat.rs` — 模块热替换兼容性检查; 改热替换规则时改这里
 - `qrpc_runtime/src/core_ir_evaluator.rs` — Core IR 求值器, 18 种指标 evaluator; 改指标计算时改这里
 - `qrpc_runtime/src/backtest_metrics.rs` — 回测 12 项指标; 改回测公式或 equity_curve 诊断时改这里
@@ -1497,7 +1503,7 @@ storage/
 - `quantscript/src/evaluator.rs` — 表达式求值; 改表达式语义时改这里
 - `quantscript/src/diagnostics.rs` — QS 诊断码; 新增诊断时改这里
 - `quantscript/src/test_plan.rs` — 测试计划生成; 改场景生成时改这里
-- `quantscript/src/v4_static_audit.rs` — v4 状态机静态审计; 改 v4 QS 审计、memory `QsTypeRef` 解析或 QSV 诊断码时改这里 🆕 v4.1.0
+- `quantscript/src/v4_static_audit.rs` — v4 状态机静态审计; 改 v4 QS 审计、state 内嵌套 machine、memory `QsTypeRef` 解析或 QSV 诊断码时改这里 🆕 v4.4.0
 - `quantscript/src/lowering/mod.rs` — lowering 模块入口
 - `quantscript/src/lowering/orchestrator.rs` — 降级编排器; 改降级流程时改这里
 - `quantscript/src/lowering/bindings.rs` — 绑定降级; 改 HIR→Core IR 绑定时改这里
@@ -1701,7 +1707,8 @@ storage/
 - `frontend/src/components/TopToolbar.failureNotices.test.jsx` — 顶栏失败提示测试
 - `frontend/src/components/TopToolbar.formalSourceMode.test.jsx` — 顶栏正式源模式测试
 - `frontend/src/components/TopToolbar.persistenceFailure.test.jsx` — 顶栏持久化失败测试
-- `frontend/src/components/V4RuntimeEvidencePanel.jsx` — v4 运行证据面板; 改 v4 evidence UI 时改这里
+- `frontend/src/components/ComplexityBudgetPanel.jsx` — v4 复杂度预算面板; 改嵌套状态机预算展示时改这里 🆕 v4.4.0
+- `frontend/src/components/V4RuntimeEvidencePanel.jsx` — v4 运行证据面板; 改 v4 evidence UI 或嵌套 machine 层级展示时改这里
 - `frontend/src/components/V4RuntimeEvidencePanel.test.jsx` — v4 运行证据面板测试
 - `frontend/src/hooks/propertyPanelSelectors.js` — 属性面板 selector; 改面板数据投影时改这里
 - `frontend/src/hooks/propertyPanelShared.js` — 属性面板共享逻辑
@@ -1854,7 +1861,7 @@ storage/
 - `frontend/src/utils/strategyHubStrategyIdentity.js` — 策略身份工具
 - `frontend/src/utils/strategyWorkspaceIssueQueue.js` — 工作区问题队列工具
 - `frontend/src/utils/strategyWorkspaceIssueQueue.test.js` — 工作区问题队列测试
-- `frontend/src/utils/v4RuntimeEvidence.js` — v4 runtime evidence 投影工具
+- `frontend/src/utils/v4RuntimeEvidence.js` — v4 runtime evidence 投影工具; 改层级 machine 或 complexity_metrics 前端投影时改这里
 - `frontend/src/utils/v4RuntimeEvidence.test.js` — v4 runtime evidence 测试
 - `frontend/src/utils/workspaceContextLabels.js` — 工作区上下文标签工具
 - `frontend/tests/e2e/support/analysisReviewFixtures.js` — 分析审查 E2E fixture
@@ -1938,7 +1945,7 @@ storage/
 
 ### E.9 合约与配置
 
-- `contracts/openapi/root.yaml` — OpenAPI 根定义, 含 `/api/runtime/v4/run` 与 `/api/runtime/backtest` v4 artifact 契约 🆕 v4.3.0
+- `contracts/openapi/root.yaml` — OpenAPI 根定义, 含 `/api/runtime/v4/run` 与 `/api/runtime/backtest` v4 artifact 契约 🆕 v4.4.0
 - `contracts/asyncapi/runtime-events.yaml` — AsyncAPI 运行时事件
 - `contracts/governance/.spectral.yaml` — API 治理规则
 - `config/runtime_protocol.example.yaml` — 运行时协议示例

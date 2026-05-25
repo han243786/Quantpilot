@@ -176,7 +176,7 @@ pub struct V4MachineContract {
     pub metadata: BTreeMap<String, Value>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct MachineState {
     pub state_id: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -185,6 +185,8 @@ pub struct MachineState {
     pub initial: bool,
     #[serde(default)]
     pub terminal: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub child_machine: Option<Box<V4MachineContract>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -371,6 +373,53 @@ impl V4MachineContract {
                             transition.transition_id, memory_name
                         ));
                     }
+                }
+            }
+        }
+
+        let mut child_machine_ids = BTreeSet::new();
+        for state in &self.states {
+            let Some(child_machine) = state.child_machine.as_ref() else {
+                continue;
+            };
+            if child_machine.machine_id.trim().is_empty() {
+                errors.push(format!(
+                    "state `{}` child_machine must declare machine_id",
+                    state.state_id
+                ));
+            } else if child_machine.machine_id == self.machine_id {
+                errors.push(format!(
+                    "state `{}` child_machine `{}` must not reuse parent machine_id",
+                    state.state_id, child_machine.machine_id
+                ));
+            } else if !child_machine_ids.insert(child_machine.machine_id.as_str()) {
+                errors.push(format!(
+                    "duplicate child_machine `{}` under machine `{}`",
+                    child_machine.machine_id, self.machine_id
+                ));
+            }
+            if child_machine.template != self.template {
+                errors.push(format!(
+                    "state `{}` child_machine `{}` template must match parent machine template",
+                    state.state_id, child_machine.machine_id
+                ));
+            }
+            if child_machine
+                .states
+                .iter()
+                .any(|child_state| child_state.child_machine.is_some())
+            {
+                errors.push(format!(
+                    "state `{}` child_machine `{}` exceeds max nested machine depth 2",
+                    state.state_id, child_machine.machine_id
+                ));
+            }
+            if let Err(child_errors) = child_machine.validate_static_contract() {
+                for child_error in child_errors {
+                    errors.push(format!(
+                        "state `{}` child_machine `{}` failed static contract: {}",
+                        state.state_id, child_machine.machine_id, child_error
+                    ));
                 }
             }
         }
@@ -571,6 +620,7 @@ impl V4MachineGraphContract {
         }
 
         let mut machines_by_id = BTreeMap::new();
+        let mut all_machines_by_id = BTreeMap::new();
         for machine in &self.machines {
             if machine.machine_id.trim().is_empty() {
                 errors.push("machine_id is required".to_string());
@@ -579,6 +629,22 @@ impl V4MachineGraphContract {
                 .is_some()
             {
                 errors.push(format!("duplicate machine `{}`", machine.machine_id));
+            }
+            let mut family = Vec::new();
+            collect_machine_family(machine, &mut family);
+            for family_machine in family {
+                if family_machine.machine_id.trim().is_empty() {
+                    continue;
+                }
+                if all_machines_by_id
+                    .insert(family_machine.machine_id.as_str(), family_machine)
+                    .is_some()
+                {
+                    errors.push(format!(
+                        "duplicate machine `{}` across top-level and nested machines",
+                        family_machine.machine_id
+                    ));
+                }
             }
 
             if let Err(machine_errors) = machine.validate_static_contract() {
@@ -625,7 +691,7 @@ impl V4MachineGraphContract {
         }
 
         errors.extend(self.validate_graph_acyclic().err().unwrap_or_default());
-        errors.extend(self.validate_event_catalog(&machines_by_id));
+        errors.extend(self.validate_event_catalog(&all_machines_by_id));
         errors.extend(self.validate_risk_plane(&machines_by_id));
 
         if errors.is_empty() {
@@ -704,7 +770,17 @@ impl V4MachineGraphContract {
         let mut errors = Vec::new();
         let mut referenced_events = BTreeSet::new();
 
-        for machine in &self.machines {
+        let all_machines = self
+            .machines
+            .iter()
+            .flat_map(|machine| {
+                let mut family = Vec::new();
+                collect_machine_family(machine, &mut family);
+                family
+            })
+            .collect::<Vec<_>>();
+
+        for machine in &all_machines {
             for transition in &machine.transitions {
                 if !transition.event.event_type.trim().is_empty() {
                     referenced_events.insert(transition.event.event_type.as_str());
@@ -756,7 +832,7 @@ impl V4MachineGraphContract {
             }
         }
 
-        for machine in &self.machines {
+        for machine in &all_machines {
             for transition in &machine.transitions {
                 let Some(spec) = event_specs.get(transition.event.event_type.as_str()) else {
                     continue;
@@ -920,6 +996,29 @@ fn machine_event_party_allowed(allowed_parties: &[String], party: &str) -> bool 
     allowed_parties.is_empty() || allowed_parties.iter().any(|allowed| allowed == party)
 }
 
+fn collect_machine_family<'a>(
+    machine: &'a V4MachineContract,
+    out: &mut Vec<&'a V4MachineContract>,
+) {
+    out.push(machine);
+    for state in &machine.states {
+        if let Some(child_machine) = state.child_machine.as_deref() {
+            collect_machine_family(child_machine, out);
+        }
+    }
+}
+
+fn machine_nested_depth(machine: &V4MachineContract) -> u32 {
+    let child_depth = machine
+        .states
+        .iter()
+        .filter_map(|state| state.child_machine.as_deref())
+        .map(machine_nested_depth)
+        .max()
+        .unwrap_or(0);
+    1 + child_depth
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct QsStateMachineProfile {
     #[serde(default = "default_qs_state_machine_profile_version")]
@@ -960,7 +1059,7 @@ impl Default for QsStatePolicy {
     fn default() -> Self {
         Self {
             allow_state_groups: true,
-            allow_nested_state_machines: false,
+            allow_nested_state_machines: true,
             nested_state_machine_warning_required: true,
             max_states: Some(256),
             max_state_groups: Some(64),
@@ -1142,11 +1241,8 @@ impl QsStateMachineProfile {
         if !self.state_policy.allow_state_groups {
             errors.push("QS state machine profile must allow state_group".to_string());
         }
-        if self.state_policy.allow_nested_state_machines {
-            errors.push(
-                "nested state machines are reserved for future versions and must stay disabled"
-                    .to_string(),
-            );
+        if !self.state_policy.allow_nested_state_machines {
+            errors.push("QS state machine profile must allow v4 nested state machines".to_string());
         }
         if !self.state_policy.nested_state_machine_warning_required {
             errors.push(
@@ -1856,6 +1952,10 @@ pub struct ComplexityBudgetContract {
     pub max_state_count: u32,
     pub max_transition_count: u32,
     pub max_memory_field_count: u32,
+    #[serde(default = "default_max_nested_machine_depth")]
+    pub max_nested_machine_depth: u32,
+    #[serde(default = "default_max_event_processing_path_count")]
+    pub max_event_processing_path_count: u32,
     pub max_plugin_call_count: u32,
     pub max_mode_count: u32,
     pub max_stale_dependency_count: u32,
@@ -1868,6 +1968,10 @@ pub struct ComplexityMetrics {
     pub state_count: u32,
     pub transition_count: u32,
     pub memory_field_count: u32,
+    #[serde(default)]
+    pub nested_machine_depth: u32,
+    #[serde(default)]
+    pub event_processing_path_count: u32,
     pub plugin_call_count: u32,
     pub mode_count: u32,
     pub stale_dependency_count: u32,
@@ -2129,9 +2233,11 @@ impl Default for ComplexityBudgetContract {
     fn default() -> Self {
         Self {
             schema_version: V4_COMPLEXITY_BUDGET_CONTRACT_VERSION.to_string(),
-            max_state_count: 512,
-            max_transition_count: 1_024,
-            max_memory_field_count: 512,
+            max_state_count: 1_024,
+            max_transition_count: 2_048,
+            max_memory_field_count: 1_024,
+            max_nested_machine_depth: 2,
+            max_event_processing_path_count: 4_096,
             max_plugin_call_count: 256,
             max_mode_count: 4,
             max_stale_dependency_count: 128,
@@ -2481,6 +2587,11 @@ impl ComplexityBudgetContract {
             ("max_state_count", self.max_state_count),
             ("max_transition_count", self.max_transition_count),
             ("max_memory_field_count", self.max_memory_field_count),
+            ("max_nested_machine_depth", self.max_nested_machine_depth),
+            (
+                "max_event_processing_path_count",
+                self.max_event_processing_path_count,
+            ),
             ("max_plugin_call_count", self.max_plugin_call_count),
             ("max_mode_count", self.max_mode_count),
             (
@@ -2516,6 +2627,16 @@ impl ComplexityBudgetContract {
                 "memory_field_count",
                 metrics.memory_field_count,
                 self.max_memory_field_count,
+            ),
+            (
+                "nested_machine_depth",
+                metrics.nested_machine_depth,
+                self.max_nested_machine_depth,
+            ),
+            (
+                "event_processing_path_count",
+                metrics.event_processing_path_count,
+                self.max_event_processing_path_count,
             ),
             (
                 "plugin_call_count",
@@ -3951,12 +4072,14 @@ fn compat_machine(
                 group_id: Some("compat_flow".to_string()),
                 initial: true,
                 terminal: false,
+                child_machine: None,
             },
             MachineState {
                 state_id: "ready".to_string(),
                 group_id: Some("compat_flow".to_string()),
                 initial: false,
                 terminal: false,
+                child_machine: None,
             },
         ],
         state_groups: vec![StateGroup {
@@ -4122,37 +4245,47 @@ impl ComplexityMetrics {
         mode_count: u32,
         plugin_call_count: u32,
     ) -> Self {
-        let state_count = graph
-            .machines
+        let mut all_machines = Vec::new();
+        for machine in &graph.machines {
+            collect_machine_family(machine, &mut all_machines);
+        }
+        let state_count: u32 = all_machines
             .iter()
             .map(|machine| machine.states.len() as u32)
             .sum();
-        let transition_count = graph
-            .machines
+        let transition_count: u32 = all_machines
             .iter()
             .map(|machine| machine.transitions.len() as u32)
             .sum();
-        let memory_field_count = graph
-            .machines
+        let memory_field_count: u32 = all_machines
             .iter()
             .map(|machine| machine.memory.len() as u32)
             .sum();
+        let nested_machine_depth = graph
+            .machines
+            .iter()
+            .map(machine_nested_depth)
+            .max()
+            .unwrap_or(0);
         let event_rate_estimate = graph
             .event_catalog
             .as_ref()
             .map(|catalog| catalog.events.len() as u32)
             .unwrap_or_default()
             .saturating_mul(1_000);
-        let estimated_order_paths = graph
-            .machines
+        let estimated_order_paths = all_machines
             .iter()
             .filter(|machine| matches!(machine.template, MachineTemplateKind::Execution))
             .count() as u32;
+        let event_processing_path_count =
+            transition_count.saturating_mul(nested_machine_depth.max(1));
 
         Self {
             state_count,
             transition_count,
             memory_field_count,
+            nested_machine_depth,
+            event_processing_path_count,
             plugin_call_count,
             mode_count,
             stale_dependency_count: 0,
@@ -4600,6 +4733,14 @@ fn default_complexity_budget_contract_version() -> String {
     V4_COMPLEXITY_BUDGET_CONTRACT_VERSION.to_string()
 }
 
+fn default_max_nested_machine_depth() -> u32 {
+    2
+}
+
+fn default_max_event_processing_path_count() -> u32 {
+    4_096
+}
+
 fn default_learning_pipeline_contract_version() -> String {
     V4_LEARNING_PIPELINE_CONTRACT_VERSION.to_string()
 }
@@ -4799,12 +4940,14 @@ mod tests {
                     group_id: Some("signal_flow".to_string()),
                     initial: true,
                     terminal: false,
+                    child_machine: None,
                 },
                 MachineState {
                     state_id: "long_bias".to_string(),
                     group_id: Some("signal_flow".to_string()),
                     initial: false,
                     terminal: false,
+                    child_machine: None,
                 },
             ],
             state_groups: vec![StateGroup {
@@ -5252,6 +5395,32 @@ mod tests {
     }
 
     #[test]
+    fn machine_contract_accepts_depth_two_child_machine() {
+        let mut parent = sample_machine();
+        let mut child = sample_machine();
+        child.machine_id = "intent.trend.child".to_string();
+        parent.states[0].child_machine = Some(Box::new(child));
+
+        assert_eq!(parent.validate_static_contract(), Ok(()));
+    }
+
+    #[test]
+    fn machine_contract_rejects_depth_three_child_machine() {
+        let mut parent = sample_machine();
+        let mut child = sample_machine();
+        child.machine_id = "intent.trend.child".to_string();
+        let mut grandchild = sample_machine();
+        grandchild.machine_id = "intent.trend.grandchild".to_string();
+        child.states[0].child_machine = Some(Box::new(grandchild));
+        parent.states[0].child_machine = Some(Box::new(child));
+
+        let errors = parent.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("max nested machine depth 2")));
+    }
+
+    #[test]
     fn machine_contract_rejects_transition_without_event() {
         let mut machine = sample_machine();
         machine.transitions[0].event.event_type.clear();
@@ -5413,7 +5582,7 @@ mod tests {
 
         assert_eq!(profile.validate_static_contract(), Ok(()));
         assert!(profile.state_policy.allow_state_groups);
-        assert!(!profile.state_policy.allow_nested_state_machines);
+        assert!(profile.state_policy.allow_nested_state_machines);
         assert!(
             profile
                 .risk_plane_policy
@@ -5446,14 +5615,14 @@ mod tests {
     }
 
     #[test]
-    fn qs_state_machine_profile_keeps_nested_state_machines_reserved() {
+    fn qs_state_machine_profile_requires_nested_state_machines_enabled() {
         let mut profile = default_v4_qs_state_machine_profile();
-        profile.state_policy.allow_nested_state_machines = true;
+        profile.state_policy.allow_nested_state_machines = false;
 
         let errors = profile.validate_static_contract().unwrap_err();
-        assert!(errors.iter().any(|message| {
-            message.contains("nested state machines") && message.contains("reserved")
-        }));
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("nested state machines")));
     }
 
     #[test]

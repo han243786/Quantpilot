@@ -3171,7 +3171,7 @@ dependencies = [
 
 [[package]]
 name = "quantpilot"
-version = "4.3.0"
+version = "4.4.0"
 dependencies = [
  "anyhow",
  "async-stream",
@@ -3208,7 +3208,7 @@ dependencies = [
 
 [[package]]
 name = "quantpilot-tauri"
-version = "4.3.0"
+version = "4.4.0"
 dependencies = [
  "serde",
  "serde_json",

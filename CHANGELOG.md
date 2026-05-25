@@ -1,5 +1,23 @@
 # Changelog
 
+## v4.4.0 — 嵌套状态机第一波 (2026-05-25)
+
+### Core IR 与 QuantScript
+
+- `MachineState` 新增 `child_machine`，支持同模板二级嵌套 machine，并在静态契约中拒绝三级嵌套、重复 machine id 和模板不一致。
+- v4 QS 静态审计接受 `state { machine ... }` 语法，新增 `QSV4118` 深度超限诊断，并继续拒绝 state 外直接嵌套 machine。
+- `ComplexityBudgetContract` 与 `ComplexityMetrics` 增加嵌套深度、事件处理路径等预算指标。
+
+### Runtime 与证据
+
+- v4 PaperSimulated runtime 支持父优先事件路由、子 machine 独立 memory、层级 snapshot 和 v4 backtest 子 machine 轨迹展开。
+- runtime memory snapshot 新增 `complexity_metrics`，用于解释嵌套状态机状态空间与回放成本。
+
+### 前端、契约与治理
+
+- `V4RuntimeEvidencePanel` 支持层级 machine 展示，并新增复杂度预算面板。
+- OpenAPI、能力治理快照、全量树、版本门禁同步到 v4.4.0。
+
 ## v4.3.0 — v4 回测 + 多交易对策略 (2026-05-25)
 
 ### v4 回测

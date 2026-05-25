@@ -1,4 +1,4 @@
-# QuantPilot Desktop v4.3.0
+# QuantPilot Desktop v4.4.0
 # PowerShell 启动脚本 (UTF-8 native)
 # 如遇执行策略限制，运行: Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 $ErrorActionPreference = "Stop"
@@ -8,7 +8,7 @@ Set-Location $root
 $env:QUANTPILOT_DEV = "true"
 
 Write-Host "============================================"
-Write-Host "  QuantPilot Desktop v4.3.0"
+Write-Host "  QuantPilot Desktop v4.4.0"
 Write-Host "  QUANTPILOT_DEV = $env:QUANTPILOT_DEV"
 Write-Host "============================================"
 

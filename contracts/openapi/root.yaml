@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: QuantPilot Runtime API
-  version: 4.3.0
-  summary: QuantPilot v4.3.0 HTTP 控制面契约
+  version: 4.4.0
+  summary: QuantPilot v4.4.0 HTTP 控制面契约
   description: |
     QuantPilot 策略开发与运行平台的 HTTP API 契约。
     覆盖 capability discovery、runtime session、compile、backtest、AI 提案与审批、
@@ -302,6 +302,10 @@ paths:
       responses:
         '200':
           description: v4 runtime 运行完成
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V4RuntimeRunResponse'
         '400':
           $ref: '#/components/responses/Problem'
 
@@ -1303,8 +1307,111 @@ components:
           items:
             type: object
         final_snapshot:
-          type: object
+          $ref: '#/components/schemas/V4RuntimeMemorySnapshot'
           description: v4 runtime memory snapshot captured after replay completion.
+    V4RuntimeRunResponse:
+      type: object
+      required: [run_id, graph_id, event_count, output, diagnostics]
+      properties:
+        run_id:
+          type: string
+        graph_id:
+          type: string
+        event_count:
+          type: integer
+        output:
+          $ref: '#/components/schemas/V4PaperSimulatedRunOutput'
+        handoff:
+          type: object
+          nullable: true
+        diagnostics:
+          type: array
+          items:
+            type: object
+    V4PaperSimulatedRunOutput:
+      type: object
+      required: [runtime_mode, events, memory_snapshot, provider_order_submission_attached]
+      properties:
+        runtime_mode:
+          type: string
+        events:
+          type: array
+          items:
+            type: object
+        memory_snapshot:
+          $ref: '#/components/schemas/V4RuntimeMemorySnapshot'
+        provider_order_submission_attached:
+          type: boolean
+    V4RuntimeMemorySnapshot:
+      type: object
+      required: [graph_id, runtime_mode, ts_ms, machines, risk_plane, execution, simulated_execution, venue_adapter_boundary, event_sequence, provider_order_submission_attached]
+      properties:
+        graph_id:
+          type: string
+        runtime_mode:
+          type: string
+        ts_ms:
+          type: integer
+          format: int64
+        machines:
+          type: array
+          items:
+            $ref: '#/components/schemas/V4MachineRuntimeSnapshot'
+        risk_plane:
+          type: object
+        execution:
+          type: object
+        simulated_execution:
+          type: object
+        venue_adapter_boundary:
+          type: object
+        complexity_metrics:
+          $ref: '#/components/schemas/V4ComplexityMetrics'
+        event_sequence:
+          type: integer
+          format: int64
+        provider_order_submission_attached:
+          type: boolean
+    V4MachineRuntimeSnapshot:
+      type: object
+      required: [machine_id, template, state_id, status]
+      properties:
+        machine_id:
+          type: string
+        template:
+          type: string
+        state_id:
+          type: string
+        status:
+          type: string
+        memory:
+          type: object
+        cached_output:
+          type: object
+        last_pulled_at_ms:
+          type: integer
+          format: int64
+        last_event_at_ms:
+          type: integer
+          format: int64
+        children:
+          type: array
+          description: v4.4.0 nested child machine snapshots for the active parent state.
+          items:
+            $ref: '#/components/schemas/V4MachineRuntimeSnapshot'
+    V4ComplexityMetrics:
+      type: object
+      properties:
+        state_count:
+          type: integer
+        transition_count:
+          type: integer
+        memory_field_count:
+          type: integer
+        nested_machine_depth:
+          type: integer
+        event_processing_path_count:
+          type: integer
     CapabilityResponse:
       type: object
       required: [api_version, schema_version, schema_hash, chain_stages, strategy_ir, runtime, market_data, frontend, workspace, ui_actions, versioning, permission_boundary]

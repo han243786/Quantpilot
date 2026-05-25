@@ -1,12 +1,13 @@
 use anyhow::{anyhow, Result};
 use qrpc_core_ir::v4::{
-    default_v4_runtime_mode_contract, CapabilitySupportSource, EventFreshnessRequirement,
-    ExecutionCapabilityKind, MachineCachePolicy, MachineEventPayloadField, MachineEventSourceKind,
-    MachineGraphEdge, MachineRecoveryPolicy, MachineSilencePolicy, MachineTemplateKind,
-    RuntimeSettlementAuthority, RuntimeTradingMode, V4BacktestArtifact,
-    V4BacktestExecutionCapabilitySourceRecord, V4BacktestMachineTrajectoryPoint,
-    V4BacktestRiskPlaneDecisionRecord, V4MachineGraphContract, VenueCapabilityMatrix,
-    V4_BACKTEST_ARTIFACT_VERSION, V4_RUNTIME_EVENT_REJECTED_EVENT,
+    default_v4_runtime_mode_contract, CapabilitySupportSource, ComplexityMetrics,
+    EventFreshnessRequirement, ExecutionCapabilityKind, MachineCachePolicy,
+    MachineEventPayloadField, MachineEventSourceKind, MachineGraphEdge, MachineRecoveryPolicy,
+    MachineSilencePolicy, MachineTemplateKind, MachineTransition, RuntimeSettlementAuthority,
+    RuntimeTradingMode, V4BacktestArtifact, V4BacktestExecutionCapabilitySourceRecord,
+    V4BacktestMachineTrajectoryPoint, V4BacktestRiskPlaneDecisionRecord, V4MachineContract,
+    V4MachineGraphContract, VenueCapabilityMatrix, V4_BACKTEST_ARTIFACT_VERSION,
+    V4_RUNTIME_EVENT_REJECTED_EVENT,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -99,6 +100,8 @@ pub struct V4RuntimeMemorySnapshot {
     pub execution: V4ExecutionRuntimeSnapshot,
     pub simulated_execution: V4SimulatedExecutionSnapshot,
     pub venue_adapter_boundary: V4VenueAdapterRuntimeBoundary,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub complexity_metrics: Option<ComplexityMetrics>,
     pub event_sequence: u64,
     pub provider_order_submission_attached: bool,
 }
@@ -117,6 +120,8 @@ pub struct V4MachineRuntimeSnapshot {
     pub last_pulled_at_ms: Option<u64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub last_event_at_ms: Option<u64>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub children: Vec<V4MachineRuntimeSnapshot>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -434,6 +439,54 @@ struct MachineRuntimeState {
 }
 
 #[derive(Debug, Clone)]
+struct RuntimeTransitionCandidate {
+    priority: i32,
+    sort_id: String,
+    machine_id: String,
+    transition: MachineTransition,
+}
+
+fn initialize_machine_family_state(
+    machine: &V4MachineContract,
+    machines: &mut BTreeMap<String, MachineRuntimeState>,
+) -> Result<()> {
+    let initial_state = machine
+        .states
+        .iter()
+        .find(|state| state.initial)
+        .ok_or_else(|| anyhow!("machine `{}` 缺少初始状态", machine.machine_id))?;
+    let memory = machine
+        .memory
+        .iter()
+        .map(|field| {
+            (
+                field.name.clone(),
+                field.default_value.clone().unwrap_or(Value::Null),
+            )
+        })
+        .collect();
+    machines.insert(
+        machine.machine_id.clone(),
+        MachineRuntimeState {
+            state_id: initial_state.state_id.clone(),
+            status: V4MachineRuntimeStatus::Active,
+            memory,
+            cached_output: None,
+            last_pulled_at_ms: None,
+            last_event_at_ms: None,
+            initialized_at_ms: 0,
+        },
+    );
+
+    for state in &machine.states {
+        if let Some(child_machine) = state.child_machine.as_deref() {
+            initialize_machine_family_state(child_machine, machines)?;
+        }
+    }
+    Ok(())
+}
+
+#[derive(Debug, Clone)]
 struct V4RiskPlaneRuntimeState {
     required: bool,
     machine_ids: BTreeSet<String>,
@@ -494,11 +547,7 @@ pub fn expand_v4_graph_for_symbols(
         return Ok(single);
     }
 
-    let machine_ids = graph
-        .machines
-        .iter()
-        .map(|machine| machine.machine_id.clone())
-        .collect::<BTreeSet<_>>();
+    let machine_ids = collect_v4_machine_family_ids(&graph.machines);
     let mut expanded = graph.clone();
     expanded.graph_id = format!(
         "{}::universe_{}",
@@ -521,7 +570,7 @@ pub fn expand_v4_graph_for_symbols(
         for machine in &graph.machines {
             let mut cloned = machine.clone();
             let original_machine_id = machine.machine_id.clone();
-            cloned.machine_id = expanded_v4_machine_id(symbol, &original_machine_id);
+            prefix_v4_machine_family_for_symbol(&mut cloned, symbol, &machine_ids);
             cloned
                 .metadata
                 .insert("symbol".to_string(), Value::String(symbol.clone()));
@@ -529,15 +578,6 @@ pub fn expand_v4_graph_for_symbols(
                 "base_machine_id".to_string(),
                 Value::String(original_machine_id.clone()),
             );
-            for transition in &mut cloned.transitions {
-                transition.transition_id =
-                    expanded_v4_machine_id(symbol, &transition.transition_id);
-                if let Some(source) = transition.event.source.as_mut() {
-                    if machine_ids.contains(source.as_str()) {
-                        *source = expanded_v4_machine_id(symbol, source);
-                    }
-                }
-            }
             expanded.machines.push(cloned);
         }
     }
@@ -623,6 +663,44 @@ pub fn normalize_v4_backtest_symbols(symbols: &[String]) -> Vec<String> {
 
 fn expanded_v4_machine_id(symbol: &str, base: &str) -> String {
     format!("{}::{}", sanitize_v4_symbol_for_id(symbol), base)
+}
+
+fn collect_v4_machine_family_ids(machines: &[V4MachineContract]) -> BTreeSet<String> {
+    let mut ids = BTreeSet::new();
+    for machine in machines {
+        collect_v4_machine_family_ids_inner(machine, &mut ids);
+    }
+    ids
+}
+
+fn collect_v4_machine_family_ids_inner(machine: &V4MachineContract, ids: &mut BTreeSet<String>) {
+    ids.insert(machine.machine_id.clone());
+    for state in &machine.states {
+        if let Some(child_machine) = state.child_machine.as_deref() {
+            collect_v4_machine_family_ids_inner(child_machine, ids);
+        }
+    }
+}
+
+fn prefix_v4_machine_family_for_symbol(
+    machine: &mut V4MachineContract,
+    symbol: &str,
+    machine_ids: &BTreeSet<String>,
+) {
+    machine.machine_id = expanded_v4_machine_id(symbol, &machine.machine_id);
+    for transition in &mut machine.transitions {
+        transition.transition_id = expanded_v4_machine_id(symbol, &transition.transition_id);
+        if let Some(source) = transition.event.source.as_mut() {
+            if machine_ids.contains(source.as_str()) {
+                *source = expanded_v4_machine_id(symbol, source);
+            }
+        }
+    }
+    for state in &mut machine.states {
+        if let Some(child_machine) = state.child_machine.as_deref_mut() {
+            prefix_v4_machine_family_for_symbol(child_machine, symbol, machine_ids);
+        }
+    }
 }
 
 fn sanitize_v4_symbol_for_id(symbol: &str) -> String {
@@ -718,33 +796,7 @@ impl V4PaperSimulatedRuntime {
 
         let mut machines = BTreeMap::new();
         for machine in &graph.machines {
-            let initial_state = machine
-                .states
-                .iter()
-                .find(|state| state.initial)
-                .ok_or_else(|| anyhow!("machine `{}` 缺少初始状态", machine.machine_id))?;
-            let memory = machine
-                .memory
-                .iter()
-                .map(|field| {
-                    (
-                        field.name.clone(),
-                        field.default_value.clone().unwrap_or(Value::Null),
-                    )
-                })
-                .collect();
-            machines.insert(
-                machine.machine_id.clone(),
-                MachineRuntimeState {
-                    state_id: initial_state.state_id.clone(),
-                    status: V4MachineRuntimeStatus::Active,
-                    memory,
-                    cached_output: None,
-                    last_pulled_at_ms: None,
-                    last_event_at_ms: None,
-                    initialized_at_ms: 0,
-                },
-            );
+            initialize_machine_family_state(machine, &mut machines)?;
         }
         let risk_plane = graph
             .risk_plane
@@ -863,7 +915,7 @@ impl V4PaperSimulatedRuntime {
             self.advance_time(bar.ts_ms);
             let snapshot = self.memory_snapshot(bar.ts_ms);
 
-            for machine in &snapshot.machines {
+            for machine in flatten_machine_snapshots(&snapshot.machines) {
                 trajectory.push(V4BacktestMachineTrajectoryPoint {
                     ts_ms: snapshot.ts_ms,
                     event_sequence: snapshot.event_sequence,
@@ -1194,27 +1246,43 @@ impl V4PaperSimulatedRuntime {
                 .graph
                 .machines
                 .iter()
-                .filter_map(|machine| {
-                    let state = self.machines.get(&machine.machine_id)?;
-                    Some(V4MachineRuntimeSnapshot {
-                        machine_id: machine.machine_id.clone(),
-                        template: machine.template.clone(),
-                        state_id: state.state_id.clone(),
-                        status: state.status,
-                        memory: state.memory.clone(),
-                        cached_output: state.cached_output.clone(),
-                        last_pulled_at_ms: state.last_pulled_at_ms,
-                        last_event_at_ms: state.last_event_at_ms,
-                    })
-                })
+                .filter_map(|machine| self.machine_snapshot(machine))
                 .collect(),
             risk_plane: self.risk_plane_snapshot(),
             execution: self.execution_snapshot(),
             simulated_execution: self.simulated_execution_snapshot(),
             venue_adapter_boundary: self.venue_adapter_boundary(),
+            complexity_metrics: Some(ComplexityMetrics::from_machine_graph(
+                &self.graph,
+                default_v4_runtime_mode_contract().modes.len() as u32,
+                0,
+            )),
             event_sequence: self.sequence,
             provider_order_submission_attached: self.provider_order_submission_attached,
         }
+    }
+
+    fn machine_snapshot(&self, machine: &V4MachineContract) -> Option<V4MachineRuntimeSnapshot> {
+        let state = self.machines.get(&machine.machine_id)?;
+        let children = machine
+            .states
+            .iter()
+            .find(|candidate| candidate.state_id == state.state_id)
+            .and_then(|active_state| active_state.child_machine.as_deref())
+            .and_then(|child_machine| self.machine_snapshot(child_machine))
+            .into_iter()
+            .collect();
+        Some(V4MachineRuntimeSnapshot {
+            machine_id: machine.machine_id.clone(),
+            template: machine.template.clone(),
+            state_id: state.state_id.clone(),
+            status: state.status,
+            memory: state.memory.clone(),
+            cached_output: state.cached_output.clone(),
+            last_pulled_at_ms: state.last_pulled_at_ms,
+            last_event_at_ms: state.last_event_at_ms,
+            children,
+        })
     }
 
     pub fn machine_status(&self, machine_id: &str) -> Option<V4MachineRuntimeStatus> {
@@ -1326,24 +1394,18 @@ impl V4PaperSimulatedRuntime {
             .graph
             .machines
             .iter()
-            .filter_map(|machine| {
-                let runtime_state = self.machines.get(machine.machine_id.as_str())?;
-                let transition = machine.transitions.iter().find(|transition| {
-                    transition.from_state == runtime_state.state_id
-                        && transition.event.event_type == event.event_type
-                        && transition_source_matches(transition.event.source.as_deref(), &event)
-                        && transition_freshness_matches(transition.event.freshness.clone(), &event)
-                })?;
-                Some((
-                    machine.priority,
-                    machine.machine_id.clone(),
-                    transition.clone(),
-                ))
-            })
+            .filter_map(|machine| self.transition_candidate_for_machine(machine, &event))
             .collect::<Vec<_>>();
-        candidates.sort_by(|left, right| right.0.cmp(&left.0).then_with(|| left.1.cmp(&right.1)));
+        candidates.sort_by(|left, right| {
+            right
+                .priority
+                .cmp(&left.priority)
+                .then_with(|| left.sort_id.cmp(&right.sort_id))
+        });
 
-        for (_, machine_id, transition) in candidates {
+        for candidate in candidates {
+            let machine_id = candidate.machine_id;
+            let transition = candidate.transition;
             let Some(machine) = self.machine_spec(&machine_id).cloned() else {
                 continue;
             };
@@ -2087,12 +2149,80 @@ impl V4PaperSimulatedRuntime {
         });
     }
 
-    fn machine_spec(&self, machine_id: &str) -> Option<&qrpc_core_ir::v4::V4MachineContract> {
+    fn transition_candidate_for_machine(
+        &self,
+        machine: &V4MachineContract,
+        event: &V4RuntimeEventEnvelope,
+    ) -> Option<RuntimeTransitionCandidate> {
+        let runtime_state = self.machines.get(machine.machine_id.as_str())?;
+        if let Some(transition) = matching_transition(machine, runtime_state, event) {
+            return Some(RuntimeTransitionCandidate {
+                priority: machine.priority,
+                sort_id: machine.machine_id.clone(),
+                machine_id: machine.machine_id.clone(),
+                transition: transition.clone(),
+            });
+        }
+
+        let child_machine = machine
+            .states
+            .iter()
+            .find(|state| state.state_id == runtime_state.state_id)
+            .and_then(|state| state.child_machine.as_deref())?;
+        let child_state = self.machines.get(child_machine.machine_id.as_str())?;
+        let transition = matching_transition(child_machine, child_state, event)?;
+        Some(RuntimeTransitionCandidate {
+            priority: machine.priority.saturating_sub(1),
+            sort_id: format!("{}::{}", machine.machine_id, child_machine.machine_id),
+            machine_id: child_machine.machine_id.clone(),
+            transition: transition.clone(),
+        })
+    }
+
+    fn machine_spec(&self, machine_id: &str) -> Option<&V4MachineContract> {
         self.graph
             .machines
             .iter()
-            .find(|machine| machine.machine_id == machine_id)
+            .find_map(|machine| find_machine_spec(machine, machine_id))
     }
+}
+
+fn matching_transition<'a>(
+    machine: &'a V4MachineContract,
+    runtime_state: &MachineRuntimeState,
+    event: &V4RuntimeEventEnvelope,
+) -> Option<&'a MachineTransition> {
+    machine.transitions.iter().find(|transition| {
+        transition.from_state == runtime_state.state_id
+            && transition.event.event_type == event.event_type
+            && transition_source_matches(transition.event.source.as_deref(), event)
+            && transition_freshness_matches(transition.event.freshness.clone(), event)
+    })
+}
+
+fn find_machine_spec<'a>(
+    machine: &'a V4MachineContract,
+    machine_id: &str,
+) -> Option<&'a V4MachineContract> {
+    if machine.machine_id == machine_id {
+        return Some(machine);
+    }
+    machine
+        .states
+        .iter()
+        .filter_map(|state| state.child_machine.as_deref())
+        .find_map(|child_machine| find_machine_spec(child_machine, machine_id))
+}
+
+fn flatten_machine_snapshots<'a>(
+    machines: &'a [V4MachineRuntimeSnapshot],
+) -> Vec<&'a V4MachineRuntimeSnapshot> {
+    let mut flattened = Vec::new();
+    for machine in machines {
+        flattened.push(machine);
+        flattened.extend(flatten_machine_snapshots(&machine.children));
+    }
+    flattened
 }
 
 impl V4SimulatedExecutionRuntimeState {
@@ -3116,9 +3246,11 @@ mod tests {
     use super::*;
     use qrpc_core_ir::v4::{
         bridge_core_ir_to_v4_machine_graph, unsupported_v4_first_wave_matrix,
-        CapabilitySupportSource, ExecutionCapabilityKind, V4MachineGraphContract,
-        VenueCapabilityMatrix, V4_COMPAT_CORE_IR_LOADED_EVENT, V4_COMPAT_DECISION_MACHINE_ID,
-        V4_COMPAT_EXECUTION_MACHINE_ID, V4_COMPAT_OBSERVATION_MACHINE_ID,
+        CapabilitySupportSource, ExecutionCapabilityKind, MachineActionSpec, MachineEventSelector,
+        MachineMemoryField, MachineState, MachineTransition, StateGroup, V4MachineContract,
+        V4MachineGraphContract, VenueCapabilityMatrix, V4_COMPAT_CORE_IR_LOADED_EVENT,
+        V4_COMPAT_DECISION_MACHINE_ID, V4_COMPAT_EXECUTION_MACHINE_ID,
+        V4_COMPAT_OBSERVATION_MACHINE_ID, V4_COMPAT_OBSERVATION_READY_EVENT,
         V4_COMPAT_RISK_APPROVED_EVENT,
     };
     use qrpc_core_ir::{
@@ -3270,6 +3402,144 @@ mod tests {
             vec![ExecutionCapabilityKind::Market],
         )
         .unwrap()
+    }
+
+    fn nested_observation_graph(parent_matches: bool) -> V4MachineGraphContract {
+        let mut graph = sample_compat_graph();
+        let observation = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == V4_COMPAT_OBSERVATION_MACHINE_ID)
+            .unwrap();
+        observation.transitions[0].to_state = "idle".to_string();
+        observation.transitions[0].event.event_type = if parent_matches {
+            V4_COMPAT_CORE_IR_LOADED_EVENT.to_string()
+        } else {
+            V4_COMPAT_OBSERVATION_READY_EVENT.to_string()
+        };
+        observation.states[0].child_machine = Some(Box::new(V4MachineContract {
+            schema_version: qrpc_core_ir::v4::V4_MACHINE_CONTRACT_VERSION.to_string(),
+            machine_id: "data.market.child".to_string(),
+            template: observation.template.clone(),
+            states: vec![
+                MachineState {
+                    state_id: "idle".to_string(),
+                    group_id: Some("child_flow".to_string()),
+                    initial: true,
+                    terminal: false,
+                    child_machine: None,
+                },
+                MachineState {
+                    state_id: "ready".to_string(),
+                    group_id: Some("child_flow".to_string()),
+                    initial: false,
+                    terminal: false,
+                    child_machine: None,
+                },
+            ],
+            state_groups: vec![StateGroup {
+                group_id: "child_flow".to_string(),
+                state_ids: vec!["idle".to_string(), "ready".to_string()],
+                conflict_policy: qrpc_core_ir::v4::TransitionConflictPolicy::FirstMatch,
+                timeout_ms: None,
+            }],
+            transitions: vec![MachineTransition {
+                transition_id: "data.market.child.t0".to_string(),
+                from_state: "idle".to_string(),
+                to_state: "ready".to_string(),
+                event: MachineEventSelector {
+                    event_type: V4_COMPAT_CORE_IR_LOADED_EVENT.to_string(),
+                    source: None,
+                    freshness: None,
+                },
+                guard: None,
+                priority: 0,
+                action: Some(MachineActionSpec {
+                    emits: Vec::new(),
+                    memory_writes: vec!["price".to_string()],
+                    diagnostics: Vec::new(),
+                }),
+            }],
+            memory: vec![MachineMemoryField {
+                name: "price".to_string(),
+                type_name: "price".to_string(),
+                type_ref: None,
+                default_value: Some(json!(0.0)),
+                nullable: false,
+            }],
+            cache_policy: MachineCachePolicy::ReturnLastThenRecover,
+            silence_policy: MachineSilencePolicy::SoftDormantAfter { ttl_ms: 60_000 },
+            recovery_policy: MachineRecoveryPolicy::AsyncRecover,
+            priority: 0,
+            metadata: BTreeMap::new(),
+        }));
+        let catalog = graph.event_catalog.as_mut().unwrap();
+        for event in &mut catalog.events {
+            if event.event_type == V4_COMPAT_CORE_IR_LOADED_EVENT {
+                event
+                    .allowed_consumers
+                    .push("data.market.child".to_string());
+            }
+            if event.event_type == V4_COMPAT_OBSERVATION_READY_EVENT {
+                event
+                    .allowed_consumers
+                    .push(V4_COMPAT_OBSERVATION_MACHINE_ID.to_string());
+            }
+        }
+        graph
+    }
+
+    #[test]
+    fn v4_nested_machine_parent_transition_wins_over_child_transition() {
+        let mut runtime = V4PaperSimulatedRuntime::new(nested_observation_graph(true)).unwrap();
+        let output = runtime
+            .submit_event(V4RuntimeInputEvent {
+                event_type: V4_COMPAT_CORE_IR_LOADED_EVENT.to_string(),
+                source: "runtime".to_string(),
+                payload: json!({
+                    "strategy_id": "runtime.compat.sample",
+                    "price": 70_000.0
+                }),
+                ts_ms: 123,
+            })
+            .unwrap();
+
+        let parent = output
+            .memory_snapshot
+            .machines
+            .iter()
+            .find(|machine| machine.machine_id == V4_COMPAT_OBSERVATION_MACHINE_ID)
+            .unwrap();
+        assert_eq!(parent.state_id, "idle");
+        assert_eq!(parent.children[0].machine_id, "data.market.child");
+        assert_eq!(parent.children[0].state_id, "idle");
+    }
+
+    #[test]
+    fn v4_nested_machine_memory_is_isolated_and_visible_in_snapshot() {
+        let mut runtime = V4PaperSimulatedRuntime::new(nested_observation_graph(false)).unwrap();
+        let output = runtime
+            .submit_event(V4RuntimeInputEvent {
+                event_type: V4_COMPAT_CORE_IR_LOADED_EVENT.to_string(),
+                source: "runtime".to_string(),
+                payload: json!({
+                    "strategy_id": "runtime.compat.sample",
+                    "price": 70_000.0
+                }),
+                ts_ms: 123,
+            })
+            .unwrap();
+
+        let parent = output
+            .memory_snapshot
+            .machines
+            .iter()
+            .find(|machine| machine.machine_id == V4_COMPAT_OBSERVATION_MACHINE_ID)
+            .unwrap();
+        let child = &parent.children[0];
+        assert!(!parent.memory.contains_key("price"));
+        assert_eq!(child.state_id, "ready", "{:?}", output.events);
+        assert_eq!(child.memory.get("price"), Some(&json!(70_000.0)));
     }
 
     #[test]

@@ -54,17 +54,41 @@ function runtimeModeLabel(mode) {
   return MODE_LABELS[mode] || compactValue(mode, "unknown");
 }
 
-function normalizeMachine(machine = {}) {
+function normalizeMachine(machine = {}, depth = 0) {
   const cachedOutput = machine.cached_output || null;
+  const children = Array.isArray(machine.children)
+    ? machine.children.map((child) => normalizeMachine(child, depth + 1))
+    : [];
   return {
     machine_id: compactValue(machine.machine_id, "unknown"),
     template: compactValue(machine.template, "unknown"),
     state_id: compactValue(machine.state_id, "unknown"),
     status: compactValue(machine.status, "unknown"),
+    depth,
     has_cache: Boolean(cachedOutput),
     cache_event_type: cachedOutput?.event_type || null,
-    last_event_ts_ms: machine.last_event_ts_ms || null,
-    last_pull_ts_ms: machine.last_pull_ts_ms || null
+    last_event_ts_ms: machine.last_event_at_ms || machine.last_event_ts_ms || null,
+    last_pull_ts_ms: machine.last_pulled_at_ms || machine.last_pull_ts_ms || null,
+    children
+  };
+}
+
+function flattenMachines(machines = []) {
+  return machines.flatMap((machine) => [machine, ...flattenMachines(machine.children)]);
+}
+
+function normalizeComplexityMetrics(metrics = {}) {
+  return {
+    state_count: Number(metrics.state_count) || 0,
+    transition_count: Number(metrics.transition_count) || 0,
+    memory_field_count: Number(metrics.memory_field_count) || 0,
+    nested_machine_depth: Number(metrics.nested_machine_depth) || 0,
+    event_processing_path_count: Number(metrics.event_processing_path_count) || 0,
+    plugin_call_count: Number(metrics.plugin_call_count) || 0,
+    mode_count: Number(metrics.mode_count) || 0,
+    stale_dependency_count: Number(metrics.stale_dependency_count) || 0,
+    estimated_order_paths: Number(metrics.estimated_order_paths) || 0,
+    event_rate_estimate: Number(metrics.event_rate_estimate) || 0
   };
 }
 
@@ -250,9 +274,14 @@ export function buildV4RuntimeEvidenceProjection(source = {}) {
 
   const root = asObject(source);
   const runtimeMode = snapshot.runtime_mode || root.runtime_mode || root.runtimeMode;
-  const machines = snapshot.machines.map(normalizeMachine);
-  const softSilentCount = machines.filter((machine) => machine.status === "soft_silent").length;
-  const activeCount = machines.filter((machine) => machine.status === "active").length;
+  const machines = snapshot.machines.map((machine) => normalizeMachine(machine, 0));
+  const flatMachines = flattenMachines(machines);
+  const softSilentCount = flatMachines.filter(
+    (machine) => machine.status === "soft_silent" || machine.status === "SoftSilent"
+  ).length;
+  const activeCount = flatMachines.filter(
+    (machine) => machine.status === "active" || machine.status === "Active"
+  ).length;
   const riskPlane = normalizeRiskPlane(snapshot.risk_plane);
   const execution = normalizeExecution(snapshot.execution);
   const simulatedExecution = normalizeSimulatedExecution(snapshot.simulated_execution || {});
@@ -265,10 +294,12 @@ export function buildV4RuntimeEvidenceProjection(source = {}) {
     available: true,
     runtime_mode: runtimeModeLabel(runtimeMode),
     provider_order_submission_attached: providerOrderSubmissionAttached,
-    machine_count: machines.length,
+    machine_count: flatMachines.length,
     active_machine_count: activeCount,
     soft_silent_machine_count: softSilentCount,
     machines,
+    flat_machines: flatMachines,
+    complexity_metrics: normalizeComplexityMetrics(snapshot.complexity_metrics || {}),
     risk_plane: riskPlane,
     execution,
     simulated_execution: simulatedExecution,

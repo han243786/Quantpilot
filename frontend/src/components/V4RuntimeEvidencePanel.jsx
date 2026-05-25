@@ -1,4 +1,5 @@
 import { buildV4RuntimeEvidenceProjection } from "../utils/v4RuntimeEvidence";
+import ComplexityBudgetPanel from "./ComplexityBudgetPanel";
 
 function yesNo(value) {
   return value ? "是" : "否";
@@ -24,6 +25,23 @@ function CapabilityEntry({ entry, testId }) {
         </strong>
       </div>
       <div className="muted-line">{entry.reason}</div>
+    </div>
+  );
+}
+
+function MachineRow({ machine }) {
+  return (
+    <div className="mini-item" style={{ marginLeft: `${machine.depth * 16}px` }}>
+      <div className="kv-line">
+        <span>{machine.machine_id}</span>
+        <strong>{machine.state_id}</strong>
+      </div>
+      <div className="muted-line">
+        {machine.template} 路 {machine.status} 路 cache {yesNo(machine.has_cache)}
+      </div>
+      {machine.children.map((child) => (
+        <MachineRow key={child.machine_id} machine={child} />
+      ))}
     </div>
   );
 }
@@ -87,17 +105,14 @@ export default function V4RuntimeEvidencePanel({
       <div className="mini-list" data-testid={`${testId}-machines`}>
         <div className="mini-list-title">状态机状态</div>
         {projection.machines.map((machine) => (
-          <div key={machine.machine_id} className="mini-item">
-            <div className="kv-line">
-              <span>{machine.machine_id}</span>
-              <strong>{machine.state_id}</strong>
-            </div>
-            <div className="muted-line">
-              {machine.template} · {machine.status} · cache {yesNo(machine.has_cache)}
-            </div>
-          </div>
+          <MachineRow key={machine.machine_id} machine={machine} />
         ))}
       </div>
+
+      <ComplexityBudgetPanel
+        metrics={projection.complexity_metrics}
+        testId={`${testId}-complexity-budget`}
+      />
 
       <div className="mini-list" data-testid={`${testId}-risk-plane`}>
         <div className="mini-list-title">Risk Plane</div>

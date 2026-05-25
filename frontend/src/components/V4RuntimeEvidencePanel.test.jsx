@@ -12,7 +12,16 @@ const source = {
         template: "observation_machine",
         state_id: "ready",
         status: "active",
-        cached_output: { event_type: "compat.observation_ready" }
+        cached_output: { event_type: "compat.observation_ready" },
+        children: [
+          {
+            machine_id: "compat.observation.child",
+            template: "observation_machine",
+            state_id: "child_ready",
+            status: "active",
+            cached_output: null
+          }
+        ]
       },
       {
         machine_id: "compat.execution",
@@ -116,6 +125,13 @@ const source = {
       rejection_before_provider_submit: true,
       reason: "provider-native order submission must be rejected before provider submit"
     },
+    complexity_metrics: {
+      state_count: 6,
+      transition_count: 4,
+      memory_field_count: 3,
+      nested_machine_depth: 2,
+      event_processing_path_count: 8
+    },
     event_sequence: 9,
     provider_order_submission_attached: false
   }
@@ -131,7 +147,13 @@ describe("V4RuntimeEvidencePanel", () => {
     expect(screen.getByTestId("v4-runtime-evidence-panel-machines")).toHaveTextContent(
       "compat.observation"
     );
+    expect(screen.getByTestId("v4-runtime-evidence-panel-machines")).toHaveTextContent(
+      "compat.observation.child"
+    );
     expect(screen.getByTestId("v4-runtime-evidence-panel-machines")).toHaveTextContent("ready");
+    expect(screen.getByTestId("v4-runtime-evidence-panel-complexity-budget")).toHaveTextContent(
+      "复杂度预算"
+    );
     expect(screen.getByTestId("v4-runtime-evidence-panel-risk-plane")).toHaveTextContent(
       "Risk Plane approved execution transition"
     );
