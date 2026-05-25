@@ -3227,6 +3227,7 @@ dependencies = [
  "qrpc-core",
  "qrpc-core-ir",
  "qrpc-runtime",
+ "serde_json",
 ]
 
 [[package]]

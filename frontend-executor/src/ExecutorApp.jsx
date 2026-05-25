@@ -16,10 +16,10 @@ export default function ExecutorApp() {
   const [activeTab, setActiveTab] = useState(null);
   const [execStatus, setExecStatus] = useState("idle"); // idle | running | error
   const [statusMsg, setStatusMsg] = useState(""); // v3.5.1: 错误详情
-  const [mode, setMode] = useState("paper"); // v3.5.0: paper | live
+  const [mode, setMode] = useState("paper_simulated");
   const [modeError, setModeError] = useState(""); // v3.5.1: 模式切换错误
 
-  // v3.5.0: 加载当前执行模式
+  // v4.8.0: 加载当前双模拟盘执行模式
   useEffect(() => {
     fetch(`${API}/mode`).then(r => r.json()).then(d => {
       if (d.mode) setMode(d.mode);
@@ -37,12 +37,16 @@ export default function ExecutorApp() {
       if (res.ok) {
         const data = await res.json();
         setMode(data.current_mode);
+        setModeError("");
         // 模式切换后刷新策略列表 (WS连接会重建)
         const stratRes = await fetch(`${API}/strategies`);
         if (stratRes.ok) {
           const stratData = await stratRes.json();
           setStrategies(stratData.strategies || []);
         }
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setModeError(data.message || "模式切换失败");
       }
     } catch (e) { console.warn("executor: mode switch", e); setModeError("模式切换失败，请检查后端连接"); }
   }, []);

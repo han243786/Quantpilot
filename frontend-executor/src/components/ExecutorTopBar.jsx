@@ -1,7 +1,7 @@
 /// v3.4.0: 执行端顶部工具栏 — 品牌、状态、紧急停止
-/// v3.5.0: 新增 Paper/Live 模式切换
+/// v4.8.0: 双模拟盘模式边界
 
-import { memo, useState, useEffect, useRef } from "react";
+import { memo } from "react";
 
 const ExecutorTopBar = memo(function ExecutorTopBar({
   status,
@@ -15,28 +15,7 @@ const ExecutorTopBar = memo(function ExecutorTopBar({
 }) {
   const statusLabel = status === "running" ? "运行中" : status === "error" ? "错误" : "空闲";
   const statusClass = status === "running" ? "running" : status === "error" ? "error" : "stopped";
-  const isLive = mode === "live";
-  const [showConfirm, setShowConfirm] = useState(false);
-  const cancelRef = useRef(null);
-
-  // v3.5.1: ESC 关闭 + 焦点管理 (无障碍)
-  useEffect(() => {
-    if (!showConfirm) return;
-    const handleKey = (e) => { if (e.key === "Escape") setShowConfirm(false); };
-    document.addEventListener("keydown", handleKey);
-    cancelRef.current?.focus();
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [showConfirm]);
-
-  const handleModeToggle = () => {
-    if (isLive) {
-      // Live → Paper 无需确认
-      onModeSwitch?.("paper");
-    } else {
-      // Paper → Live 需确认
-      setShowConfirm(true);
-    }
-  };
+  const normalizedMode = mode || "paper_simulated";
 
   return (
     <div className="exec-topbar">
@@ -54,14 +33,22 @@ const ExecutorTopBar = memo(function ExecutorTopBar({
           {(runtimeKind || "v3").toUpperCase()}
         </span>
 
-        {/* v3.5.0: Paper/Live 模式切换 */}
-        <button
-          className={`exec-btn exec-mode-btn ${isLive ? "live" : "paper"}`}
-          onClick={handleModeToggle}
-          title={isLive ? "切换到模拟盘模式" : "切换到实盘模式"}
-        >
-          {isLive ? "🔴 Live" : "🟢 Paper"}
-        </button>
+        <div className="exec-mode-segment" role="group" aria-label="执行模式">
+          <button
+            className={`exec-btn exec-mode-btn ${normalizedMode === "paper_simulated" ? "active" : ""}`}
+            onClick={() => onModeSwitch?.("paper_simulated")}
+            title="实时模拟盘 / 本地撮合 / 无 provider 下单"
+          >
+            实时模拟盘
+          </button>
+          <button
+            className={`exec-btn exec-mode-btn ${normalizedMode === "paper_actual" ? "active" : ""}`}
+            disabled
+            title="OKX 模拟盘 provider 回执路径将在 W0-2 接线"
+          >
+            OKX 模拟盘
+          </button>
+        </div>
 
         <button
           className="exec-btn danger"
@@ -72,30 +59,6 @@ const ExecutorTopBar = memo(function ExecutorTopBar({
         </button>
       </div>
 
-      {/* v3.5.0: 实盘模式确认对话框 */}
-      {showConfirm && (
-        <div className="exec-confirm-overlay" onClick={() => setShowConfirm(false)}>
-          <div className="exec-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="exec-confirm-title" onClick={(e) => e.stopPropagation()}>
-            <h3 id="exec-confirm-title">切换到实盘模式</h3>
-            <p>切换到实盘模式将向真实交易所下单。</p>
-            <p className="exec-confirm-warning">请确认已完成以下检查：</p>
-            <ul>
-              <li>已配置交易所 API 凭证</li>
-              <li>策略参数已经过模拟盘验证</li>
-              <li>了解实盘交易的风险</li>
-            </ul>
-            <div className="exec-confirm-actions">
-              <button className="exec-btn" ref={cancelRef} onClick={() => setShowConfirm(false)}>取消</button>
-              <button
-                className="exec-btn danger"
-                onClick={() => { setShowConfirm(false); onModeSwitch?.("live"); }}
-              >
-                确认切换
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 });

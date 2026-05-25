@@ -214,9 +214,14 @@ function v4Field(name, typeName, required = true) {
   return { name, type_name: typeName, required, nullable: false };
 }
 
+const V4_DEFAULT_MARKET_DATA_SOURCE = "market.data";
+const V4_DEFAULT_PAPER_SIMULATED_VENUE_ID = "paper-simulated";
+
 function createV4TemplateMachineGraph(template, variant = {}) {
   const graphId = `v4_${template.id}`;
   const symbols = template.symbols || ["BTCUSDT"];
+  const venueId = variant.venueId || V4_DEFAULT_PAPER_SIMULATED_VENUE_ID;
+  const marketSource = variant.marketSource || V4_DEFAULT_MARKET_DATA_SOURCE;
   const observationId = `${graphId}.observation`;
   const decisionId = `${graphId}.decision`;
   const executionId = `${graphId}.execution`;
@@ -247,7 +252,9 @@ function createV4TemplateMachineGraph(template, variant = {}) {
       action: variant.action || "buy",
       order_type: variant.orderType || "market",
       quantity: variant.quantity || 1,
-      time_in_force: variant.timeInForce || "gtc"
+      time_in_force: variant.timeInForce || "gtc",
+      default_venue_id: venueId,
+      market_event_source: marketSource
     },
     machines: [
       {
@@ -266,7 +273,7 @@ function createV4TemplateMachineGraph(template, variant = {}) {
             to_state: "observed",
             event: {
               event_type: marketEvent,
-              source: "market.okx",
+              source: marketSource,
               freshness: "fresh_or_stale"
             },
             priority: 100,
@@ -284,7 +291,7 @@ function createV4TemplateMachineGraph(template, variant = {}) {
             field.name === "symbol"
               ? symbols[0]
               : field.name === "venue_id"
-                ? "paper-local"
+                ? venueId
                 : field.name === "price" || field.name === "close"
                   ? 20000
                   : 0,
@@ -338,7 +345,7 @@ function createV4TemplateMachineGraph(template, variant = {}) {
                     : field.name === "symbol"
                       ? symbols[0]
                       : field.name === "venue_id"
-                        ? "paper-local"
+                        ? venueId
                         : field.name === "price" || field.name === "close"
                           ? 20000
                           : 0,
@@ -383,8 +390,8 @@ function createV4TemplateMachineGraph(template, variant = {}) {
         recovery_policy: "manual_recover",
         priority: 100,
         metadata: {
-          core_execution_id: "paper-local",
-          core_venue_kind: "paper-local",
+          core_execution_id: venueId,
+          core_venue_kind: venueId,
           symbols
         }
       }
@@ -417,7 +424,7 @@ function createV4TemplateMachineGraph(template, variant = {}) {
           source_kind: "market_data",
           scope: "graph",
           payload_fields: baseFields,
-          allowed_emitters: ["market.okx"],
+          allowed_emitters: [marketSource],
           allowed_consumers: [observationId],
           replayable: true
         },

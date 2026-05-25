@@ -539,7 +539,10 @@ fn empty_core_ir(strategy_id: &str) -> CoreStrategyIr {
 
 fn executor_v4_static_bundle() -> V4StaticContractBundle {
     V4StaticContractBundle {
-        venue_matrices: vec![executor_v4_market_matrix("paper-local")],
+        venue_matrices: vec![
+            executor_v4_market_matrix("paper-local"),
+            executor_v4_market_matrix("paper-simulated"),
+        ],
         plugin_manifests: vec![executor_v4_sample_plugin_manifest()],
         ..V4StaticContractBundle::default()
     }
@@ -718,24 +721,32 @@ async fn start_strategy(
         })?
         .get_mut(&strategy_id)
         .map(|s| s.status = StrategyStatus::Running);
-    append_audit(
-        &state,
-        "start_strategy",
-        Some(strategy_id.clone()),
-        serde_json::json!({ "status": "running" }),
-    );
-    let runtime_kind = state
+    let (runtime_kind, execution_mode) = state
         .strategies
         .read()
         .unwrap_or_else(|e| e.into_inner())
         .get(&strategy_id)
-        .map(|s| s.runtime_kind.as_str())
-        .unwrap_or("v3");
+        .map(|s| (s.runtime_kind.as_str(), s.execution_mode))
+        .unwrap_or(("v3", ExecutionMode::PaperSimulated));
+    append_audit(
+        &state,
+        "start_strategy",
+        Some(strategy_id.clone()),
+        serde_json::json!({
+            "status": "running",
+            "execution_mode": execution_mode.as_str(),
+            "execution_mode_label": execution_mode.display_label(),
+            "provider_order_submission_attached": execution_mode.provider_order_submission_attached(),
+        }),
+    );
     Ok(Json(serde_json::json!({
         "status": "running",
         "strategy_id": strategy_id,
         "runtime_kind": runtime_kind,
         "runtime_version": runtime_kind,
+        "execution_mode": execution_mode.as_str(),
+        "execution_mode_label": execution_mode.display_label(),
+        "provider_order_submission_attached": execution_mode.provider_order_submission_attached(),
     })))
 }
 

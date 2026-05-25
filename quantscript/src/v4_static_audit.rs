@@ -11,10 +11,12 @@ use qrpc_core_ir::v4::{
     V4_COMPILE_TIME_CAPABILITY_REQUEST_VERSION, V4_MACHINE_CONTRACT_VERSION,
     V4_MACHINE_EVENT_CATALOG_VERSION, V4_MACHINE_GRAPH_CONTRACT_VERSION,
 };
+use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
 pub const V4_QS_STATIC_AUDIT_REPORT_VERSION: &str = "quantpilot/qs-v4-static-audit-report/v1";
 pub const V4_QS_RUNTIME_HANDOFF_REPORT_VERSION: &str = "quantpilot/qs-v4-runtime-handoff-report/v1";
+const V4_DEFAULT_MARKET_DATA_SOURCE: &str = "market.data";
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct V4QsStaticAuditReport {
@@ -332,6 +334,17 @@ fn parse_v4_static_document(input: &str) -> Result<ParsedV4QsStaticDocument, Vec
         return Err(diagnostics);
     }
 
+    let resolved_venue_id = venue_id.unwrap_or_default();
+    let mut graph_metadata = BTreeMap::new();
+    graph_metadata.insert(
+        "default_venue_id".to_string(),
+        Value::String(resolved_venue_id.clone()),
+    );
+    graph_metadata.insert(
+        "market_event_source".to_string(),
+        Value::String(V4_DEFAULT_MARKET_DATA_SOURCE.to_string()),
+    );
+
     let mut graph = V4MachineGraphContract {
         schema_version: V4_MACHINE_GRAPH_CONTRACT_VERSION.to_string(),
         graph_id: graph_id.clone(),
@@ -339,7 +352,7 @@ fn parse_v4_static_document(input: &str) -> Result<ParsedV4QsStaticDocument, Vec
         edges,
         event_catalog: None,
         risk_plane,
-        metadata: BTreeMap::new(),
+        metadata: graph_metadata,
     };
     graph.event_catalog = Some(derive_event_catalog(&graph));
 
@@ -347,7 +360,7 @@ fn parse_v4_static_document(input: &str) -> Result<ParsedV4QsStaticDocument, Vec
         request: V4CompileTimeCapabilityRequest {
             schema_version: V4_COMPILE_TIME_CAPABILITY_REQUEST_VERSION.to_string(),
             graph_id,
-            venue_id: venue_id.unwrap_or_default(),
+            venue_id: resolved_venue_id,
             runtime_mode: runtime_mode.unwrap(),
             required_execution_capabilities,
             required_type_refs,
@@ -1295,7 +1308,22 @@ v4_strategy strategy.v4.sample {
             report.capability_report.as_ref().unwrap().verdict,
             V4CapabilityReportVerdict::Accepted
         );
-        assert_eq!(report.parsed_graph.as_ref().unwrap().machines.len(), 4);
+        let graph = report.parsed_graph.as_ref().unwrap();
+        assert_eq!(graph.machines.len(), 4);
+        assert_eq!(
+            graph
+                .metadata
+                .get("default_venue_id")
+                .and_then(|value| value.as_str()),
+            Some("paper-local")
+        );
+        assert_eq!(
+            graph
+                .metadata
+                .get("market_event_source")
+                .and_then(|value| value.as_str()),
+            Some(V4_DEFAULT_MARKET_DATA_SOURCE)
+        );
     }
 
     #[test]

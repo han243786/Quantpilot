@@ -111,27 +111,15 @@ body { background: var(--exec-bg); color: var(--exec-text); font-family: system-
 .exec-btn.danger:hover { background: var(--exec-error); color: #fff; }
 .exec-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-/* v3.5.0: Paper/Live 模式切换按钮 */
-.exec-mode-btn { min-width: 90px; font-weight: 600; }
-.exec-mode-btn.paper { background: rgba(0,200,0,0.12); border-color: #4caf50; color: #4caf50; }
-.exec-mode-btn.paper:hover { background: #4caf50; color: #fff; }
-.exec-mode-btn.live { background: rgba(244,67,54,0.12); border-color: #f44336; color: #f44336; }
-.exec-mode-btn.live:hover { background: #f44336; color: #fff; }
-
-/* v3.5.0: 实盘模式确认对话框 */
-.exec-confirm-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-  display: flex; align-items: center; justify-content: center; z-index: 1000;
+/* v4.8.0: 双模拟盘模式切换 */
+.exec-mode-segment {
+  display: flex; align-items: center; gap: 2px;
+  padding: 2px; border: 1px solid var(--exec-border); border-radius: 4px;
+  background: rgba(255,255,255,0.03);
 }
-.exec-confirm-dialog {
-  background: var(--exec-card); border: 1px solid var(--exec-border);
-  border-radius: 6px; padding: 24px; max-width: 420px; width: 90%;
-}
-.exec-confirm-dialog h3 { margin: 0 0 12px; color: var(--exec-error); }
-.exec-confirm-dialog p { margin: 4px 0; font-size: 14px; color: var(--exec-text); }
-.exec-confirm-warning { color: var(--exec-error); font-weight: 600; }
-.exec-confirm-dialog ul { margin: 8px 0; padding-left: 20px; color: var(--exec-text-muted); font-size: 13px; }
-.exec-confirm-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+.exec-mode-btn { min-width: 92px; font-weight: 600; border-radius: 3px; }
+.exec-mode-btn.active { background: rgba(76,175,80,0.14); border-color: #4caf50; color: #4caf50; }
+.exec-mode-btn.active:hover { background: rgba(76,175,80,0.22); color: #7bd67f; }
 
 /* v3.5.0: 策略参数面板 */
 .params-panel { padding: 12px 16px; }

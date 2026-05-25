@@ -31,6 +31,7 @@ const EVENT_RISK_PLANE_APPROVED: &str = "risk_plane_approved";
 const EVENT_RISK_PLANE_REJECTED: &str = "risk_plane_rejected";
 const EVENT_EXECUTION_CAPABILITY_ACCEPTED: &str = "execution_capability_accepted";
 const EVENT_EXECUTION_CAPABILITY_REJECTED: &str = "execution_capability_rejected";
+pub const V4_DEFAULT_MARKET_DATA_SOURCE: &str = "market.data";
 pub const EVENT_EXECUTION_ORDER_ACKNOWLEDGED: &str = "execution_order_acknowledged";
 pub const EVENT_EXECUTION_ORDER_REJECTED: &str = "execution_order_rejected";
 pub const EVENT_EXECUTION_ORDER_CANCELED: &str = "execution_order_canceled";
@@ -1221,7 +1222,7 @@ impl V4PaperSimulatedRuntime {
         self.record_simulated_execution_events(outcome, ts_ms);
         self.enqueue_graph_event(
             event_type,
-            "market.okx",
+            V4_DEFAULT_MARKET_DATA_SOURCE,
             json!({
                 "venue_id": venue_id,
                 "symbol": symbol,
@@ -1257,7 +1258,7 @@ impl V4PaperSimulatedRuntime {
         self.record_simulated_execution_events(outcome, ts_ms);
         self.enqueue_graph_event(
             event_type,
-            "market.okx",
+            V4_DEFAULT_MARKET_DATA_SOURCE,
             json!({
                 "venue_id": venue_id,
                 "symbol": symbol,
@@ -4091,6 +4092,9 @@ mod tests {
             .events
             .iter()
             .any(|event| event.event_type == "price_tick"));
+        assert!(output.events.iter().any(|event| {
+            event.event_type == "price_tick" && event.source == V4_DEFAULT_MARKET_DATA_SOURCE
+        }));
         assert_eq!(
             output.memory_snapshot.simulated_execution.portfolio_value,
             100_000.0

@@ -15,13 +15,21 @@ function latestMachine(snapshot) {
     || null;
 }
 
+function latestExecutionEvent(events) {
+  return asArray(events).findLast?.((event) => String(event?.event_type || "").startsWith("execution_"))
+    || asArray(events).slice().reverse().find((event) => String(event?.event_type || "").startsWith("execution_"))
+    || null;
+}
+
 export default function V4EvidencePanel({ strategyId, runtimeKind }) {
   const [snapshot, setSnapshot] = useState(null);
+  const [runtimeEvents, setRuntimeEvents] = useState([]);
   const [streamStatus, setStreamStatus] = useState("idle");
 
   useEffect(() => {
     if (!strategyId || runtimeKind !== "v4") {
       setSnapshot(null);
+      setRuntimeEvents([]);
       setStreamStatus("idle");
       return undefined;
     }
@@ -35,6 +43,7 @@ export default function V4EvidencePanel({ strategyId, runtimeKind }) {
         const payload = JSON.parse(event.data);
         if (payload.type === "v4RuntimeMemorySnapshot" && payload.memory_snapshot) {
           setSnapshot(payload.memory_snapshot);
+          setRuntimeEvents(asArray(payload.runtime_events));
         }
       } catch (error) {
         console.warn("executor: v4 evidence parse", error);
@@ -57,9 +66,11 @@ export default function V4EvidencePanel({ strategyId, runtimeKind }) {
       simulated,
       boundary,
       lastOrder: simulated?.last_order || null,
+      latestExecutionEvent: latestExecutionEvent(runtimeEvents),
+      runtimeEventCount: runtimeEvents.length,
       machineCount: asArray(snapshot?.machines).length
     };
-  }, [snapshot]);
+  }, [runtimeEvents, snapshot]);
 
   if (runtimeKind !== "v4") {
     return null;
@@ -78,6 +89,18 @@ export default function V4EvidencePanel({ strategyId, runtimeKind }) {
         <div className="params-panel-empty">等待 v4 runtime memory_snapshot</div>
       ) : (
         <div className="v4-evidence-grid">
+          <div className="v4-evidence-row">
+            <span>Slice</span>
+            <strong>实时模拟盘</strong>
+          </div>
+          <div className="v4-evidence-row">
+            <span>Settlement</span>
+            <strong>本地撮合</strong>
+          </div>
+          <div className="v4-evidence-row">
+            <span>Provider</span>
+            <strong>{projection.boundary.provider_order_submission_attached ? "provider 下单" : "无 provider 下单"}</strong>
+          </div>
           <div className="v4-evidence-row">
             <span>Machine</span>
             <strong>{projection.machine?.machine_id || "-"}</strong>
@@ -109,6 +132,14 @@ export default function V4EvidencePanel({ strategyId, runtimeKind }) {
           <div className="v4-evidence-row">
             <span>Portfolio</span>
             <strong>{formatNumber(projection.simulated.portfolio_value)}</strong>
+          </div>
+          <div className="v4-evidence-row">
+            <span>Runtime events</span>
+            <strong>{projection.runtimeEventCount}</strong>
+          </div>
+          <div className="v4-evidence-row">
+            <span>Last execution</span>
+            <strong>{projection.latestExecutionEvent?.event_type || "-"}</strong>
           </div>
           <div className="v4-evidence-row">
             <span>Source</span>
