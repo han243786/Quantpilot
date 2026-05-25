@@ -270,6 +270,7 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 | 结构化指标来源 | `tools/track-gate-metrics.ps1` 以 NDJSON 记录门禁耗时、通过状态和失败摘要；closeout 前必须通过 DryRun |
 | 前端入口真源对齐 | 工作区、工具栏、模块面板是否由后端 capability projection 驱动 |
 | v4 MAJOR 演化通道 | 状态机 DSL、Risk Plane、ExecutionMachine、学习流水线是否按阶段推进 |
+| v4/v5 provider 切面分层 | v4 是否只保留 OKX 单一 provider; 多交易提供方、多资产类别和全双工 WS 覆盖是否延后登记到 v5 |
 | 学习流水线同步 | 新核心机制是否需要 owner 学习材料、复述和本地学习记录 |
 
 数据记录到 `markdown/05-testing/meta-pipeline-log.md`。
@@ -389,6 +390,7 @@ MAJOR 版本不得直接从终稿进入大规模实现。凡涉及 QS 语义、C
 - **前端后端能力真源通道未完成** (v4.0.0 起): 新增或调整工作区、工具栏、模块面板、运行/回测/执行入口时，必须按 §7.8 留下后端 capability 契约、前端 projection、诱错回归和治理同步证据。
 - **Developer Learning Closeout 缺失** (v4.0.0 起): MAJOR 版本 closeout 必须回答“本版本是否引入 owner 必学核心机制”，并记录学习材料、涉及文件、调用链、复述/校准状态。
 - **元流水线耗时追踪 DryRun 未通过** (v4.7.0 起): `powershell tools/track-gate-metrics.ps1 -DryRun` 必须在 closeout 前通过；脚本不可解析、门禁定义缺失或输出 schema 异常时禁止 closeout。
+- **v4 provider 范围漂移** (v4.8.0 起): v4 阶段禁止引入非 OKX provider 或多资产 provider 适配; 美股、港股、A股、贵金属、大宗商品、期货、期权等统一延后到 v5。缺少 WebSocket 全双工或等效实时订单/行情事件回执的 provider 视为关键基础设施缺失, 不进入适配支持。
 
 ### 8.2 紧急豁免
 
@@ -545,3 +547,24 @@ MAJOR 版本不得直接从终稿进入大规模实现。凡涉及 QS 语义、C
 - MAJOR closeout 必须增加 Developer Learning Closeout。
 - 个人学习记录只在用户明确要求“记录本轮学习”或“生成学习记录”时写入。
 - `markdown/learning/` 必须保持本地忽略，不推 GitHub。
+
+### 8.10 v4/v5 交易提供方切面分层 🆕 (v4.8.0)
+
+**原则**: v4 的目标不是扩大交易提供方覆盖面，而是把 OKX 单一 provider 的模拟盘回执路径打穿, 证明执行端抽象可以承载 provider-native 回执。多 provider、多资产类别和真实资金扩张统一进入 v5。
+
+**范围规则**:
+
+| 范围 | 决策 |
+|------|------|
+| v4 provider | 只确保 OKX 单一 provider 切面 |
+| v4 `PaperSimulated` | 实时行情 + 本地模拟撮合, provider order submission 必须 detached |
+| v4 `PaperActual` | OKX 模拟盘, demo flag=1, REST 固定 `x-simulated-trading: 1`, 审计标注"OKX 模拟盘 / 非真实资金" |
+| v4 `LiveSimulated` / `LiveActual` | 延后, 不进入 v4.8.0 执行端切面 |
+| v5 provider 扩张 | 美股、港股、A股、贵金属、大宗商品、期货、期权和其他主流支持 WebSocket 的 provider |
+
+**准入规则**:
+
+- 模拟盘与真实资金 API schema 基本一致、仅 demo/prod flag 或环境参数不同的 provider, 模拟盘切面可视为 API schema 通过。
+- API schema 通过不等于真实资金通道开放; 真实资金仍必须单独通过 Risk Plane、凭证保险库、审计、额度和 production gate。
+- 不支持 WebSocket 全双工或等效实时订单/行情事件回执的 provider, 视为关键基础设施缺失, 本产品不做适配。
+- v4 文档、代码、UI 和 OpenAPI 若宣称非 OKX provider supported, 一律视为范围漂移并阻断。

@@ -39,6 +39,20 @@
 
 ---
 
+### v4.8.0 GP 矩阵增补: provider 切面分层
+
+| 条款 | v4.8.0 决策 | 验证 |
+|------|-------------|------|
+| §5.1 禁止硬编码/边界漂移 | v4 只允许 OKX 单一 provider profile; 非 OKX provider、多资产 provider 适配不得提前进入 v4 | `rg "market\\.okx|okx-paper|binance|alpaca|ibkr|futu"` 结合代码审查 |
+| §5.2 禁止静默忽略 | 不支持 provider 必须 fail-closed, 不得 fallback 到 generic provider | provider mode 校验、OpenAPI 423/502 响应 |
+| §5.5 端到端验证 | W0-2 必须证明 OKX 模拟盘 submit/query/cancel 回执路径和审计摘要 | `cargo test --bin executor okx` + 手动 demo 凭证 smoke |
+| §7.1 三级分类 | v5 多 provider/多资产/全双工 WS 覆盖归类为 MAJOR provider program | v5 规划单独登记 |
+| §8.x UI 文案 | UI、日志和文档只能写"OKX 模拟盘 / 非真实资金", 不得写成真实实盘 | `tools/check-user-facing-text.ps1` + 人审 |
+
+v4.8.0 通过标准: OKX 模拟盘 provider 回执路径可用; 美股、港股、A股、贵金属、大宗商品、期货、期权等 provider 扩张全部延后到 v5。若 provider 不支持 WebSocket 全双工或等效实时订单/行情事件回执, 视为关键基础设施缺失, 不进入适配支持。
+
+---
+
 ### 五轮自由维度诱错审计 (v1.1.2~v1.1.14)
 
 | 轮次 | 维度 | 发现 | S0修复 | P1修复 |

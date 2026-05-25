@@ -43,8 +43,8 @@ const ExecutorTopBar = memo(function ExecutorTopBar({
           </button>
           <button
             className={`exec-btn exec-mode-btn ${normalizedMode === "paper_actual" ? "active" : ""}`}
-            disabled
-            title="OKX 模拟盘 provider 回执路径将在 W0-2 接线"
+            onClick={() => onModeSwitch?.("paper_actual")}
+            title="OKX 模拟盘 / 非真实资金 / provider 回执"
           >
             OKX 模拟盘
           </button>

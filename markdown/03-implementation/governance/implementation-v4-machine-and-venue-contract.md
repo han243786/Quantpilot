@@ -337,6 +337,13 @@ v4.8.0 实施顺序:
 - 延后 `LiveSimulated`: 该模式需要读取真实账户上下文, 暂不进入 v4.8.0 执行端切面。
 - 延后 `LiveActual`: 该模式存在真实资金下单风险, production flag=0 不进入 v4.8.0 执行端切面。
 
+v4/v5 provider 切面分层:
+
+- v4 只确保 OKX 单一 provider 切面; `PaperActual` 的验收范围固定为 OKX 模拟盘 provider 回执路径。
+- 美股、港股、A股、贵金属、大宗商品、期货、期权等交易提供方适配统一延后到 v5, 不进入 v4.8.0 的实现与验收范围。
+- v5 provider 计划只接受支持 WebSocket 全双工或等效实时订单/行情事件回执的交易提供方; 不支持实时双向协议的 provider 视为关键基础设施缺失, 本产品不做适配。
+- 若某 provider 的模拟盘与真实资金 API schema 基本一致, 仅 demo/prod flag 或环境参数不同, 则模拟盘切面可视为 API schema 通过; 真实资金通道仍必须单独通过 Risk Plane、凭证、审计和 production gate。
+
 四种模式必须共享执行事件:
 
 - `order_acknowledged`

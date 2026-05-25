@@ -363,6 +363,157 @@ paths:
         '200':
           description: SSE 事件流
 
+  /api/executor/mode:
+    get:
+      operationId: getExecutorMode
+      summary: 查询执行端双模拟盘模式
+      tags: [executor]
+      x-owner: executor
+      x-chain-stage: executor
+      x-stability: beta
+      responses:
+        '200':
+          description: 当前执行模式
+    post:
+      operationId: setExecutorMode
+      summary: 切换执行端双模拟盘模式
+      tags: [executor]
+      x-owner: executor
+      x-chain-stage: executor
+      x-stability: beta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mode]
+              properties:
+                mode:
+                  type: string
+                  enum: [paper_simulated, paper_actual]
+                  description: paper_actual 固定为 OKX 模拟盘 / 非真实资金
+      responses:
+        '200':
+          description: 模式已切换
+        '400':
+          $ref: '#/components/responses/Problem'
+
+  /api/executor/provider/okx-demo/orders:
+    post:
+      operationId: submitOkxDemoProviderOrder
+      summary: 提交 OKX 模拟盘 provider 订单
+      tags: [executor]
+      x-owner: executor
+      x-chain-stage: executor
+      x-stability: beta
+      description: |
+        v4.8.0 PaperActual 唯一 provider 回执路径。请求固定使用 OKX 模拟盘，
+        REST header 必须包含 `x-simulated-trading: 1`，production flag=0 不进入该端点。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [inst_id, side, sz]
+              properties:
+                strategy_id:
+                  type: string
+                inst_id:
+                  type: string
+                  example: BTC-USDT
+                side:
+                  type: string
+                  enum: [buy, sell]
+                sz:
+                  type: string
+                td_mode:
+                  type: string
+                  enum: [cash]
+                  default: cash
+                ord_type:
+                  type: string
+                  enum: [market, limit]
+                  default: limit
+                px:
+                  type: string
+                cl_ord_id:
+                  type: string
+      responses:
+        '200':
+          description: OKX 模拟盘已返回 provider 回执
+        '400':
+          $ref: '#/components/responses/Problem'
+        '423':
+          description: 当前不是 paper_actual 模式
+        '502':
+          description: OKX 模拟盘 provider 返回错误
+
+  /api/executor/provider/okx-demo/orders/query:
+    post:
+      operationId: queryOkxDemoProviderOrder
+      summary: 查询 OKX 模拟盘 provider 订单回执
+      tags: [executor]
+      x-owner: executor
+      x-chain-stage: executor
+      x-stability: beta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [inst_id]
+              properties:
+                strategy_id:
+                  type: string
+                inst_id:
+                  type: string
+                ord_id:
+                  type: string
+                cl_ord_id:
+                  type: string
+      responses:
+        '200':
+          description: OKX 模拟盘订单查询回执
+        '423':
+          description: 当前不是 paper_actual 模式
+        '502':
+          description: OKX 模拟盘 provider 返回错误
+
+  /api/executor/provider/okx-demo/orders/cancel:
+    post:
+      operationId: cancelOkxDemoProviderOrder
+      summary: 撤销 OKX 模拟盘 provider 订单
+      tags: [executor]
+      x-owner: executor
+      x-chain-stage: executor
+      x-stability: beta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [inst_id]
+              properties:
+                strategy_id:
+                  type: string
+                inst_id:
+                  type: string
+                ord_id:
+                  type: string
+                cl_ord_id:
+                  type: string
+      responses:
+        '200':
+          description: OKX 模拟盘撤单回执
+        '423':
+          description: 当前不是 paper_actual 模式
+        '502':
+          description: OKX 模拟盘 provider 返回错误
+
   /api/runtime/runs:
     get:
       operationId: listRuns

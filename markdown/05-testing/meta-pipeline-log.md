@@ -78,3 +78,17 @@
 | `check-full-feature-tree.ps1` | 通过 | 新增脚本已纳入全量树覆盖 |
 
 结构化原始指标落点: `storage/audit/gate-metrics.ndjson`。DryRun 不写入指标文件，只验证定义与 schema。
+
+### v4.8.0 provider 切面分层元流水线执行 (2026-05-25)
+
+本轮把用户提案固化为 v4/v5 provider 边界: v4 只确保 OKX 单一模拟盘 provider 切面; 多交易提供方、多资产类别和全双工 WebSocket 覆盖统一延后到 v5。模拟盘与真实资金 API schema 基本一致、仅 demo/prod flag 或环境参数不同的 provider, 模拟盘切面可视为 API schema 通过, 但真实资金通道仍需单独 gate。
+
+| 检查项 | 状态 | 落点 |
+|--------|:--:|------|
+| 超级规范化 | 已同步 | §7.2 自审计、§8.1 阻断规则、§8.10 provider 切面分层 |
+| GP 矩阵 | 已同步 | v4.8.0 provider 切面分层增补 |
+| 全量树 | 已同步 | 执行端 OKX demo provider 路由、OpenAPI 和前端入口登记 |
+| v4 venue 契约 | 已同步 | v4 只 OKX, v5 扩 provider/多资产/全双工 WS |
+| W0-2 入口 | 已接线 | `/api/executor/provider/okx-demo/orders*` submit/query/cancel |
+
+后续验证命令: `powershell tools/track-gate-metrics.ps1 -DryRun`, `powershell tools/check-full-feature-tree.ps1`, `powershell tools/check-user-facing-text.ps1`, `powershell tools/check-utf8.ps1`, `cargo test --bin executor okx`。

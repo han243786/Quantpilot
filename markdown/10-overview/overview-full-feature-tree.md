@@ -174,8 +174,9 @@ Cargo.toml [[bin]] name="executor", path="src-executor/main.rs"
 
 执行端是**独立进程**, 与后端分离运行。职责:
 - 策略部署/启动/停止/热调参
-- OKX testnet WebSocket 行情连接
-- 模拟成交 (Live Runner)
+- OKX WebSocket 行情连接
+- `PaperSimulated` 实时模拟盘: 本地模拟成交 (Live Runner)
+- `PaperActual` OKX 模拟盘: provider submit/query/cancel 回执路径, 固定 demo flag=1 与 `x-simulated-trading: 1`
 - 独立凭证保险库 (v2, PBKDF2 100 万轮)
 
 **启动逻辑** (`src-executor/main.rs`):
@@ -217,14 +218,16 @@ Vite 6 dev server → http://localhost:5173
 │                                   ┌───────┴────────┐│
 │                                   │ 执行端 :3001     ││
 │                                   │ 独立进程         ││
-│                                   │ OKX testnet     ││
+│                                   │ OKX 模拟盘      ││
 │                                   └────────────────┘│
 └─────────────────────────────────────────────────────┘
 ```
 
 - **前端 ↔ 后端**: HTTP REST API (`/api/*`), SSE 事件流
 - **后端 ↔ 执行端**: `qrpc_session` crate 提供 AES-256-GCM + HMAC-SHA256 加密通道
-- **执行端 ↔ OKX**: WebSocket (行情) + REST (下单)
+- **执行端 ↔ OKX**: WebSocket (行情) + REST (OKX 模拟盘 provider 回执)
+
+v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A股、贵金属、大宗商品、期货、期权和其他主流 provider 适配统一延后到 v5。v5 只接受支持 WebSocket 全双工或等效实时订单/行情事件回执的 provider。
 
 ---
 
@@ -493,7 +496,7 @@ hotswap_api.rs                  — 模块热替换
 
 ## 根3: 执行端 (:3001)
 
-**一句话**: 独立进程, 负责策略部署/启停/热调参, 对接 OKX testnet 行情与模拟成交。
+**一句话**: 独立进程, 负责策略部署/启停/热调参, 对接 OKX 行情、实时模拟盘本地成交与 OKX 模拟盘 provider 回执。
 
 **编译与启动**:
 ```
@@ -508,11 +511,11 @@ src-executor/main.rs             — 执行端入口 (tokio::main)
   ├── 初始化 qrpc_session (进程间加密通道)
   ├── 构建 Axum Router → 绑定 :3001
   ├── SSE 端点 /api/executor/events — 向后端推送策略状态变更
-  └── REST 端点: deploy / start / stop / status / params
+  └── REST 端点: deploy / start / stop / status / params / okx-demo submit-query-cancel
 
 src-executor/executor_state.rs   — 执行端核心状态
   ├── ExecutorState: 全局执行端状态
-  ├── ExecutionMode: Paper / Live
+  ├── ExecutionMode: PaperSimulated / PaperActual
   ├── StrategyStatus: 策略生命周期
   └── TriggerEvent: 触发事件定义
 ```
@@ -531,8 +534,9 @@ src-executor/ws_client.rs        — OKX WebSocket 客户端; 改 WS 连接/订�
   └── 自动重连
 
 src-executor/okx_rest.rs         — OKX REST API; 改下单/撤单逻辑时改这里
-  ├── 下单 / 撤单 / 查询
-  └── HMAC-SHA256 签名
+  ├── OKX 模拟盘 submit / query / cancel
+  ├── demo flag=1 + x-simulated-trading=1
+  └── HMAC-SHA256 签名与 provider 回执解析
 
 src-executor/kline_buffer.rs     — K线缓冲池; 改 K 线缓存策略时改这里
   ├── KlinePool: MAX_SYMBOLS=100, LRU 淘汰
@@ -1288,7 +1292,7 @@ research-spread-custom-plugin-sequencing.md  — Spread 自定义插件排序
 运行时 (runtime/mod.rs → qrpc_runtime)
   ├── Paper 运行 → 事件流 → SSE 推送 → EventStreamPanel
   ├── 回测 → 历史数据回放 → 12 项指标 → BacktestDetailPage
-  └── 执行端 (:3001) → OKX testnet → 实时成交
+  └── 执行端 (:3001) → OKX 模拟盘 → provider 回执 / 实时模拟成交
        │
        └── SSE /api/executor/events → 后端 → 前端监控面板
 ```
@@ -1429,11 +1433,11 @@ storage/
 
 ### E.3 执行端: `src-executor/`
 
-- `src-executor/main.rs` — 执行端入口, Axum Router :3001; 改执行端启动时改这里
+- `src-executor/main.rs` — 执行端入口, Axum Router :3001, 含 OKX demo provider submit/query/cancel 路由; 改执行端启动或 provider 回执入口时改这里 🆕 v4.8.0
 - `src-executor/executor_state.rs` — 执行端核心状态, ExecutionMode/StrategyStatus; 改状态机时改这里
 - `src-executor/live_runner.rs` — 实时运行器, RunnerPool v3/v4 双 runner、OKX Market→v4 event 转换、v4 evidence 广播; 改策略执行循环时改这里 🆕 v4.2.0
 - `src-executor/ws_client.rs` — OKX WebSocket 客户端; 改 WS 连接/行情订阅时改这里
-- `src-executor/okx_rest.rs` — OKX REST API; 改下单/撤单逻辑时改这里
+- `src-executor/okx_rest.rs` — OKX REST API, 固定 OKX 模拟盘 demo profile、submit/query/cancel 回执和签名; 改 OKX provider 适配时改这里 🆕 v4.8.0
 - `src-executor/kline_buffer.rs` — K线缓冲池; 改 K 线缓存策略时改这里
 - `src-executor/credential_vault_v2.rs` — 凭证保险库 v2, PBKDF2 1M 轮; 改执行端加密时改这里
 - `src-executor/api_guard.rs` — API 守卫; 改执行端认证时改这里
@@ -1618,6 +1622,7 @@ storage/
 
 **模板**:
 - `frontend/src/templates/strategyTemplates.js` — 策略模板库; 改 v3/v4 starter graph、v4 MachineGraph metadata 或模板入口时改这里 🆕 v4.3.0
+- `frontend/src/templates/strategyTemplates.test.js` — 策略模板边界测试; 改 v4 `market.data` / `default_venue_id` / provider 去耦合断言时改这里 🆕 v4.8.0
 
 **模块**:
 - `frontend/src/modules/builtinModules.js` — 18 种内置指标模块定义; 新增指标模块时改这里
@@ -1877,8 +1882,8 @@ storage/
 - `frontend-executor/src/main.jsx` — React 入口
 - `frontend-executor/src/ExecutorApp.jsx` — 执行端 App Shell, 多策略标签页/状态轮询/模式切换
 - `frontend-executor/src/design-system.css` — 执行端设计系统
-- `frontend-executor/src/components/ExecutorTopBar.jsx` — 顶部工具栏, 模式切换/策略选择/v3-v4 runtime 标识 🆕 v4.2.0
-- `frontend-executor/src/components/V4EvidencePanel.jsx` — v4 状态机证据面板, 展示 machine/Risk Plane/Execution/模拟订单/LiveActual provider 边界摘要 🆕 v4.7.0
+- `frontend-executor/src/components/ExecutorTopBar.jsx` — 顶部工具栏, PaperSimulated / OKX 模拟盘模式切换、策略选择、v3-v4 runtime 标识 🆕 v4.8.0
+- `frontend-executor/src/components/V4EvidencePanel.jsx` — v4 状态机证据面板, 展示 machine/Risk Plane/Execution/模拟订单/双模拟盘 provider 边界摘要 🆕 v4.8.0
 - `frontend-executor/src/components/StrategyGraphPanel.jsx` — 策略图只读预览
 - `frontend-executor/src/components/KlineChart.jsx` — K线图表, lightweight-charts
 - `frontend-executor/src/components/OrderPanel.jsx` — 订单面板
@@ -1946,7 +1951,7 @@ storage/
 
 ### E.9 合约与配置
 
-- `contracts/openapi/root.yaml` — OpenAPI 根定义, 含 `/api/runtime/v4/run` 与 `/api/runtime/backtest` v4 artifact 契约 🆕 v4.7.0
+- `contracts/openapi/root.yaml` — OpenAPI 根定义, 含 `/api/runtime/v4/run`、`/api/runtime/backtest` 与 OKX demo provider submit/query/cancel 契约 🆕 v4.8.0
 - `contracts/asyncapi/runtime-events.yaml` — AsyncAPI 运行时事件
 - `contracts/governance/.spectral.yaml` — API 治理规则
 - `config/runtime_protocol.example.yaml` — 运行时协议示例
