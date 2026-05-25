@@ -23,11 +23,14 @@ pub fn validate_runtime_protocol_config(config: &RuntimeProtocolCoreConfig) -> R
     if !config.initial_cash_balance.is_finite() || config.initial_cash_balance <= 0.0 {
         bail!("initial_cash_balance 必须大于 0");
     }
-    if config.taker_fee_bps < 0.0
+    if !config.taker_fee_bps.is_finite()
+        || !config.default_slippage_bps.is_finite()
+        || !config.total_cost_buffer_bps.is_finite()
+        || config.taker_fee_bps < 0.0
         || config.default_slippage_bps < 0.0
         || config.total_cost_buffer_bps < 0.0
     {
-        bail!("手续费和滑点参数必须大于等于 0");
+        bail!("手续费和滑点参数必须是有限数且大于等于 0");
     }
 
     ensure_unique_ids(config)?;
@@ -1672,6 +1675,19 @@ mod tests {
         config.risks[0].observed_agent_ids.clear();
         let err = validate_runtime_protocol_config(&config).unwrap_err();
         assert!(err.to_string().contains("必须至少观察一个代理"));
+    }
+
+    #[test]
+    fn rejects_non_finite_execution_costs() {
+        let mut config = sample_config();
+        config.taker_fee_bps = f64::INFINITY;
+        let err = validate_runtime_protocol_config(&config).unwrap_err();
+        assert!(err.to_string().contains("有限数"));
+
+        let mut config = sample_config();
+        config.default_slippage_bps = f64::NAN;
+        let err = validate_runtime_protocol_config(&config).unwrap_err();
+        assert!(err.to_string().contains("有限数"));
     }
 
     #[test]

@@ -52,7 +52,7 @@ pub fn verify_package_signature(pkg: &StrategyPackage) -> Result<()> {
             }
         }
         None => {
-            bail!("策略包缺少QS编译溯源证明: 请通过测试端 /api/executor/deploy 部署，该端点自动附加QS管道溯源信息");
+            bail!("策略包缺少QS编译溯源证明: 请通过测试端 /api/executor/strategies 部署，该端点自动附加QS管道溯源信息");
         }
     }
 

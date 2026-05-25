@@ -361,7 +361,8 @@ fn parse_v4_static_document(input: &str) -> Result<ParsedV4QsStaticDocument, Vec
             schema_version: V4_COMPILE_TIME_CAPABILITY_REQUEST_VERSION.to_string(),
             graph_id,
             venue_id: resolved_venue_id,
-            runtime_mode: runtime_mode.unwrap(),
+            runtime_mode: runtime_mode
+                .expect("runtime_mode is validated before graph construction"),
             required_execution_capabilities,
             required_type_refs,
             required_plugin_ids,
@@ -1261,7 +1262,7 @@ v4_strategy strategy.v4.sample {
             .capabilities
             .iter_mut()
             .find(|entry| entry.capability == ExecutionCapabilityKind::Market)
-            .unwrap();
+            .expect("first-wave matrix should include market capability");
         market.source = CapabilitySupportSource::RuntimeSimulated;
         market.supported_modes = vec![RuntimeTradingMode::PaperSimulated];
         matrix
@@ -1291,6 +1292,317 @@ v4_strategy strategy.v4.sample {
         }
     }
 
+    fn diagnostic_codes(source: &str, bundle: &V4StaticContractBundle) -> BTreeSet<&'static str> {
+        audit_v4_quant_script_static(source, bundle)
+            .diagnostics
+            .iter()
+            .map(|diagnostic| diagnostic.code)
+            .collect()
+    }
+
+    struct DiagnosticMatrixCase<'a> {
+        name: &'a str,
+        source: String,
+        bundle: &'a V4StaticContractBundle,
+        expected_codes: &'a [&'static str],
+    }
+
+    #[test]
+    fn v4_static_audit_diagnostic_matrix_covers_declared_qsv_codes() {
+        let supported_bundle = bundle_with_market_support();
+        let unsupported_market_bundle = V4StaticContractBundle {
+            venue_matrices: vec![qrpc_core_ir::v4::unsupported_v4_first_wave_matrix(
+                "paper-local",
+            )],
+            plugin_manifests: vec![sample_pure_plugin_manifest()],
+            ..V4StaticContractBundle::default()
+        };
+        let cases = vec![
+            DiagnosticMatrixCase {
+                name: "empty document",
+                source: "".to_string(),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4000"],
+            },
+            DiagnosticMatrixCase {
+                name: "invalid strategy header",
+                source: "strategy bad {".to_string(),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4001"],
+            },
+            DiagnosticMatrixCase {
+                name: "unknown runtime mode",
+                source: SAMPLE_V4_QS.replace("mode paper_simulated", "mode paper_unknown"),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4002"],
+            },
+            DiagnosticMatrixCase {
+                name: "unknown execution capability",
+                source: SAMPLE_V4_QS.replace("require capability market", "require capability pegged"),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4003"],
+            },
+            DiagnosticMatrixCase {
+                name: "unknown qs type",
+                source: SAMPLE_V4_QS.replace(
+                    "require type fresh<list<price,max=256>>",
+                    "require type fresh<unknown_type>",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4004"],
+            },
+            DiagnosticMatrixCase {
+                name: "unsupported top-level statement",
+                source: SAMPLE_V4_QS.replace(
+                    "  risk_plane risk.guard priority 9000",
+                    "  unsupported top level\n  risk_plane risk.guard priority 9000",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4006"],
+            },
+            DiagnosticMatrixCase {
+                name: "content after graph close",
+                source: format!("{SAMPLE_V4_QS}\nextra_after_close"),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4007"],
+            },
+            DiagnosticMatrixCase {
+                name: "missing venue",
+                source: SAMPLE_V4_QS.replace("  venue paper-local\n", ""),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4008"],
+            },
+            DiagnosticMatrixCase {
+                name: "missing runtime mode",
+                source: SAMPLE_V4_QS.replace("  mode paper_simulated\n", ""),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4009"],
+            },
+            DiagnosticMatrixCase {
+                name: "invalid machine header",
+                source: SAMPLE_V4_QS.replace(
+                    "machine data.market observation priority 8000 {",
+                    "machine data.market {",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4100"],
+            },
+            DiagnosticMatrixCase {
+                name: "unknown machine template",
+                source: SAMPLE_V4_QS.replace(
+                    "machine data.market observation priority 8000 {",
+                    "machine data.market sensor priority 8000 {",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4101"],
+            },
+            DiagnosticMatrixCase {
+                name: "invalid machine header modifier",
+                source: SAMPLE_V4_QS.replace(
+                    "machine data.market observation priority 8000 {",
+                    "machine data.market observation rank 8000 {",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4102"],
+            },
+            DiagnosticMatrixCase {
+                name: "non-integer machine priority",
+                source: SAMPLE_V4_QS.replace(
+                    "machine data.market observation priority 8000 {",
+                    "machine data.market observation priority high {",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4103"],
+            },
+            DiagnosticMatrixCase {
+                name: "machine nested outside state block",
+                source: SAMPLE_V4_QS.replacen(
+                    "    state idle initial",
+                    "    machine data.market.child observation priority 7000 {\n      state idle initial\n    }\n    state idle initial",
+                    1,
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4104"],
+            },
+            DiagnosticMatrixCase {
+                name: "unsupported machine statement",
+                source: SAMPLE_V4_QS.replacen(
+                    "    on risk.approved from idle to ready write last_signal_at",
+                    "    transition idle -> ready",
+                    1,
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4105"],
+            },
+            DiagnosticMatrixCase {
+                name: "invalid state block header",
+                source: SAMPLE_V4_QS.replacen("    state idle initial", "    state {", 1),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4110"],
+            },
+            DiagnosticMatrixCase {
+                name: "nested state group block",
+                source: SAMPLE_V4_QS.replace(
+                    "state_group active idle ready",
+                    "state_group active {",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4111"],
+            },
+            DiagnosticMatrixCase {
+                name: "state group without members",
+                source: SAMPLE_V4_QS.replace(
+                    "state_group active idle ready",
+                    "state_group active",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4112"],
+            },
+            DiagnosticMatrixCase {
+                name: "memory without colon",
+                source: SAMPLE_V4_QS.replace(
+                    "memory last_signal_at: time nullable",
+                    "memory last_signal_at time nullable",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4113"],
+            },
+            DiagnosticMatrixCase {
+                name: "memory without type",
+                source: SAMPLE_V4_QS.replace(
+                    "memory last_signal_at: time nullable",
+                    "memory last_signal_at:",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4114"],
+            },
+            DiagnosticMatrixCase {
+                name: "transition without from-to syntax",
+                source: SAMPLE_V4_QS.replacen(
+                    "on market.tick from idle to ready emit bar_closed write last_signal_at",
+                    "on market.tick idle ready",
+                    1,
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4115"],
+            },
+            DiagnosticMatrixCase {
+                name: "transition with unsupported modifier",
+                source: SAMPLE_V4_QS.replacen(
+                    "on market.tick from idle to ready emit bar_closed write last_signal_at",
+                    "on market.tick from idle to ready using custom",
+                    1,
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4116"],
+            },
+            DiagnosticMatrixCase {
+                name: "unknown memory type",
+                source: SAMPLE_V4_QS.replace(
+                    "memory last_signal_at: time nullable",
+                    "memory last_signal_at: made_up nullable",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4117"],
+            },
+            DiagnosticMatrixCase {
+                name: "third-level nested machine",
+                source: SAMPLE_V4_QS.replacen(
+                    "state ready\n    state_group active idle ready",
+                    "state ready {\n      machine data.market.child observation priority 7000 {\n        state idle {\n          machine data.market.grandchild observation priority 6000 {\n            state idle initial\n          }\n        }\n      }\n    }\n    state_group active idle ready",
+                    1,
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4118"],
+            },
+            DiagnosticMatrixCase {
+                name: "nested machine template mismatch",
+                source: SAMPLE_V4_QS.replacen(
+                    "state ready\n    state_group active idle ready",
+                    "state ready {\n      machine data.market.child decision priority 7000 {\n        state idle initial\n      }\n    }\n    state_group active idle ready",
+                    1,
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4119"],
+            },
+            DiagnosticMatrixCase {
+                name: "invalid edge syntax",
+                source: SAMPLE_V4_QS.replace(
+                    "edge data.market -> intent.trend on bar_closed",
+                    "edge data.market intent.trend bar_closed",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4120"],
+            },
+            DiagnosticMatrixCase {
+                name: "unsupported state block content",
+                source: SAMPLE_V4_QS.replacen(
+                    "state ready\n    state_group active idle ready",
+                    "state ready {\n      unsupported line\n    }\n    state_group active idle ready",
+                    1,
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4121"],
+            },
+            DiagnosticMatrixCase {
+                name: "risk plane priority without value",
+                source: SAMPLE_V4_QS.replace(
+                    "risk_plane risk.guard priority 9000",
+                    "risk_plane risk.guard priority",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4122"],
+            },
+            DiagnosticMatrixCase {
+                name: "risk plane priority not integer",
+                source: SAMPLE_V4_QS.replace(
+                    "risk_plane risk.guard priority 9000",
+                    "risk_plane risk.guard priority high",
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4123"],
+            },
+            DiagnosticMatrixCase {
+                name: "static graph validation failure",
+                source: SAMPLE_V4_QS.replacen(
+                    "on risk.approved from idle to ready write last_signal_at",
+                    "on risk.approved from idle to ready write unknown_memory",
+                    1,
+                ),
+                bundle: &supported_bundle,
+                expected_codes: &["QSV4200"],
+            },
+            DiagnosticMatrixCase {
+                name: "compile-time capability rejection",
+                source: SAMPLE_V4_QS.to_string(),
+                bundle: &unsupported_market_bundle,
+                expected_codes: &["QSV4300"],
+            },
+        ];
+
+        let mut covered_codes = BTreeSet::new();
+        for case in cases {
+            let codes = diagnostic_codes(&case.source, case.bundle);
+            for expected_code in case.expected_codes {
+                assert!(
+                    codes.contains(expected_code),
+                    "case `{}` expected `{}` in {:?}",
+                    case.name,
+                    expected_code,
+                    codes
+                );
+                covered_codes.insert(*expected_code);
+            }
+        }
+
+        assert!(
+            covered_codes.len() >= 30,
+            "expected at least 30 QSV codes covered, got {}: {:?}",
+            covered_codes.len(),
+            covered_codes
+        );
+    }
+
     #[test]
     fn v4_static_audit_accepts_supported_state_machine_script_without_runtime() {
         let report = audit_v4_quant_script_static(SAMPLE_V4_QS, &bundle_with_market_support());
@@ -1305,10 +1617,17 @@ v4_strategy strategy.v4.sample {
         assert!(!report.runtime_attached);
         assert!(!report.lowering_attached);
         assert_eq!(
-            report.capability_report.as_ref().unwrap().verdict,
+            report
+                .capability_report
+                .as_ref()
+                .expect("accepted report should include capability report")
+                .verdict,
             V4CapabilityReportVerdict::Accepted
         );
-        let graph = report.parsed_graph.as_ref().unwrap();
+        let graph = report
+            .parsed_graph
+            .as_ref()
+            .expect("accepted report should include parsed graph");
         assert_eq!(graph.machines.len(), 4);
         assert_eq!(
             graph
@@ -1386,10 +1705,15 @@ v4_strategy strategy.v4.sample {
             "{:?}",
             report.diagnostics
         );
-        let child_machine = report.parsed_graph.as_ref().unwrap().machines[0].states[1]
+        let child_machine = report
+            .parsed_graph
+            .as_ref()
+            .expect("accepted report should include parsed graph")
+            .machines[0]
+            .states[1]
             .child_machine
             .as_ref()
-            .unwrap();
+            .expect("nested ready state should include child machine");
         assert_eq!(child_machine.machine_id, "data.market.child");
     }
 
@@ -1465,7 +1789,7 @@ v4_strategy strategy.v4.sample {
             .capabilities
             .iter_mut()
             .find(|entry| entry.capability == ExecutionCapabilityKind::Market)
-            .unwrap();
+            .expect("first-wave matrix should include market capability");
         market.source = CapabilitySupportSource::ProviderNative;
         let bundle = V4StaticContractBundle {
             venue_matrices: vec![matrix],

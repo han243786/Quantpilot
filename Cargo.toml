@@ -30,6 +30,7 @@ axum = { version = "0.7", features = ["json"] }
 tower-http = { version = "0.6", features = ["cors", "fs"] }
 async-stream = "0.3"
 futures-core = "0.3"
+futures-util = "0.3"
 qrpc-core = { path = "qrpc_core" }
 qrpc-core-ir = { path = "qrpc_core_ir" }
 qrpc-compiler = { path = "qrpc_compiler" }
@@ -37,7 +38,7 @@ qrpc-runtime = { path = "qrpc_runtime" }
 qrpc-session = { path = "qrpc_session" }
 quantscript = { path = "quantscript" }
 time = { version = "0.3", features = ["macros", "parsing"] }
-ureq = { version = "2", features = ["json", "native-tls"] }
+ureq = { version = "2", features = ["json", "native-tls", "socks-proxy"] }
 hmac = "0.12"
 sha2 = { workspace = true }
 base64 = "0.22"

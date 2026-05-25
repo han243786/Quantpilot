@@ -1964,7 +1964,11 @@ async fn write_json<T: Serialize>(path: PathBuf, value: &T) -> std::io::Result<(
 }
 
 async fn read_json<T: for<'de> Deserialize<'de>>(path: PathBuf) -> std::io::Result<T> {
-    let content = fs::read_to_string(path).await?;
+    let content = crate::runtime_persistence::read_to_string_bounded(
+        &path,
+        crate::runtime_persistence::MAX_BOUNDED_JSON_READ_BYTES,
+    )
+    .await?;
     serde_json::from_str(&content).map_err(to_io_error)
 }
 

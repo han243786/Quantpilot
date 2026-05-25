@@ -364,12 +364,22 @@ pub(super) fn validate_backtest_execution_assumption_overrides(
         return Ok(());
     };
 
-    if overrides.fee_bps.is_some_and(|value| value < 0.0) {
-        return Err("backtest_options.execution_assumptions.fee_bps 必须大于等于 0".to_string());
-    }
-    if overrides.slippage_bps.is_some_and(|value| value < 0.0) {
+    if overrides
+        .fee_bps
+        .is_some_and(|value| !value.is_finite() || value < 0.0)
+    {
         return Err(
-            "backtest_options.execution_assumptions.slippage_bps 必须大于等于 0".to_string(),
+            "backtest_options.execution_assumptions.fee_bps 必须大于等于 0 且必须是有限数"
+                .to_string(),
+        );
+    }
+    if overrides
+        .slippage_bps
+        .is_some_and(|value| !value.is_finite() || value < 0.0)
+    {
+        return Err(
+            "backtest_options.execution_assumptions.slippage_bps 必须大于等于 0 且必须是有限数"
+                .to_string(),
         );
     }
 
@@ -582,5 +592,27 @@ mod tests {
                 && detail.target.as_deref()
                     == Some("capability_context.permission_boundary.live_execution_allowed")
         }));
+    }
+
+    #[test]
+    fn validate_backtest_execution_assumption_overrides_rejects_non_finite_costs() {
+        let mut options = FrontendBacktestOptions::default();
+        options.execution_assumptions = Some(FrontendExecutionAssumptionOverrides {
+            fee_bps: Some(f64::INFINITY),
+            slippage_bps: None,
+            latency_ms: None,
+        });
+        let error = validate_backtest_execution_assumption_overrides(&options)
+            .expect_err("non-finite fee should be rejected");
+        assert!(error.contains("fee_bps"));
+
+        options.execution_assumptions = Some(FrontendExecutionAssumptionOverrides {
+            fee_bps: None,
+            slippage_bps: Some(f64::NAN),
+            latency_ms: None,
+        });
+        let error = validate_backtest_execution_assumption_overrides(&options)
+            .expect_err("non-finite slippage should be rejected");
+        assert!(error.contains("slippage_bps"));
     }
 }

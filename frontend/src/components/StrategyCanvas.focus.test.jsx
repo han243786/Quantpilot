@@ -240,4 +240,26 @@ describe("StrategyCanvas focus modes", () => {
 
     expect(reactFlowApi.setCenter).toHaveBeenCalledTimes(1);
   });
+
+  it("summarizes issue focus by lane without stealing the selected node", async () => {
+    const { container } = render(<StrategyCanvas focusMode="issues" />);
+
+    await waitFor(() => {
+      expect(reactFlowApi.fitBounds).toHaveBeenCalledTimes(1);
+    });
+
+    expect(screen.getByTestId("canvas-focus-target-node_2")).toHaveTextContent("Signal");
+    expect(screen.getByTestId("canvas-focus-target-node_3")).toHaveTextContent("Paper");
+    expect(useGraphStore.getState().selectedNodeId).toBe("node_1");
+
+    const laneChips = Array.from(container.querySelectorAll(".canvas-lane-chip"));
+    expect(laneChips).toHaveLength(6);
+    expect(laneChips[0]).toHaveClass("canvas-lane-chip--active");
+    expect(laneChips[0]).not.toHaveClass("canvas-lane-chip--warning");
+    expect(laneChips[0].querySelector("strong")).toHaveTextContent("1");
+    expect(laneChips[1]).toHaveClass("canvas-lane-chip--warning");
+    expect(laneChips[1].querySelector("strong")).toHaveTextContent("1");
+    expect(laneChips[4]).toHaveClass("canvas-lane-chip--warning");
+    expect(laneChips[4].querySelector("strong")).toHaveTextContent("1");
+  });
 });

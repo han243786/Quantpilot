@@ -47,9 +47,15 @@ pub const ERR_BACKTEST_COMPARE_TWO_IDS: &str = "BACKTEST_COMPARE_TWO_IDS";
 
 // 认证
 pub const ERR_AUTH_UNAUTHORIZED: &str = "AUTH_UNAUTHORIZED";
+pub const ERR_AUTH_UNAVAILABLE: &str = "AUTH_UNAVAILABLE";
 pub const ERR_AUTH_LOGIN_FAILED: &str = "AUTH_LOGIN_FAILED";
 pub const ERR_AUTH_REGISTER_FAILED: &str = "AUTH_REGISTER_FAILED";
+pub const ERR_AUTH_INVALID_CREDENTIALS: &str = "AUTH_INVALID_CREDENTIALS";
+pub const ERR_AUTH_TOKEN_INVALID: &str = "AUTH_TOKEN_INVALID";
 pub const ERR_AUTH_TOKEN_EXPIRED: &str = "AUTH_TOKEN_EXPIRED";
+pub const ERR_AUTH_REFRESH_INVALID: &str = "AUTH_REFRESH_INVALID";
+pub const ERR_AUTH_REPLAY_DETECTED: &str = "AUTH_REPLAY_DETECTED";
+pub const ERR_AUTH_JWT_FAILED: &str = "AUTH_JWT_FAILED";
 pub const ERR_AUTH_RATE_LIMITED: &str = "AUTH_RATE_LIMITED";
 
 // 凭证
@@ -61,6 +67,7 @@ pub const ERR_CREDENTIAL_NOT_FOUND: &str = "CREDENTIAL_NOT_FOUND";
 // 存储
 pub const ERR_STORAGE_FULL: &str = "STORAGE_FULL";
 pub const ERR_STORAGE_IO: &str = "STORAGE_IO";
+pub const ERR_FILE_TOO_LARGE: &str = "ERR_FILE_TOO_LARGE";
 
 // 插件
 pub const ERR_PLUGIN_MANIFEST_INVALID: &str = "PLUGIN_MANIFEST_INVALID";
@@ -122,6 +129,7 @@ mod tests {
             ERR_CREDENTIAL_NOT_FOUND,
             ERR_STORAGE_FULL,
             ERR_STORAGE_IO,
+            ERR_FILE_TOO_LARGE,
             ERR_PLUGIN_MANIFEST_INVALID,
             ERR_PLUGIN_NOT_FOUND,
             ERR_PLUGIN_VALIDATION,
@@ -129,6 +137,12 @@ mod tests {
             ERR_PARAM_PAGINATION,
             ERR_PORT_IN_USE,
             ERR_PORT_RESERVED,
+            ERR_AUTH_UNAVAILABLE,
+            ERR_AUTH_INVALID_CREDENTIALS,
+            ERR_AUTH_TOKEN_INVALID,
+            ERR_AUTH_REFRESH_INVALID,
+            ERR_AUTH_REPLAY_DETECTED,
+            ERR_AUTH_JWT_FAILED,
         ];
         for code in &codes {
             assert!(!code.is_empty(), "错误码不能为空");
@@ -193,6 +207,7 @@ mod tests {
             ERR_CREDENTIAL_NOT_FOUND,
             ERR_STORAGE_FULL,
             ERR_STORAGE_IO,
+            ERR_FILE_TOO_LARGE,
             ERR_PLUGIN_MANIFEST_INVALID,
             ERR_PLUGIN_NOT_FOUND,
             ERR_PLUGIN_VALIDATION,

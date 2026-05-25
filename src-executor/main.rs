@@ -1,5 +1,5 @@
 /// v4.7.0: QuantPilot 实时执行端
-/// OKX Paper 模式 — 每交易所独立WS, 策略启动后 RunnerPool 激活
+/// 双切面执行端 — PaperSimulated 拉取 OKX 公共行情并本地模拟, PaperActual 仅接 OKX demo 回执
 mod api_guard;
 mod audit_log;
 mod credential_vault_v2;
@@ -65,7 +65,7 @@ async fn main() {
 
     let state = ExecutorState::load_default_or_new();
 
-    // v3.7.0: 广播通道 (SSE trigger推送) + OKX Paper WS 事件通道
+    // v3.7.0/v4.8.0: 广播通道 (SSE trigger 推送) + OKX 公共行情事件通道
     let (trigger_broadcast, _) = broadcast::channel::<TriggerEvent>(256);
     let (okx_tx, mut okx_rx) = mpsc::unbounded_channel::<crate::ws_client::WsEvent>();
 
@@ -88,7 +88,10 @@ async fn main() {
             }
         }
     });
-    let _feed_handle = tokio::spawn(run_okx_paper_feed(okx_tx));
+    let _feed_handle = tokio::spawn(crate::ws_client::run_okx_public_market_feed(
+        okx_tx,
+        crate::ws_client::okx_public_feed_symbols_from_env(),
+    ));
 
     let app = Router::new()
         .route("/api/executor/health", get(health_check))
@@ -144,56 +147,21 @@ async fn main() {
         eprintln!("[executor] 绑定 {} 失败: {}", addr, e);
         std::process::exit(1);
     });
-    println!("[executor] ✓ 实时执行端已就绪 → {} (OKX Paper)", addr);
+    println!("[executor] ✓ 实时执行端已就绪 → {} (双执行切面)", addr);
     if let Err(e) = axum::serve(listener, app).await {
         eprintln!("[executor] 服务运行失败: {}", e);
         std::process::exit(1);
     }
 }
 
-// ── OKX Paper 模拟行情 ──
-
-async fn run_okx_paper_feed(tx: mpsc::UnboundedSender<crate::ws_client::WsEvent>) {
-    let _ = tx.send(crate::ws_client::WsEvent::Connected {
-        exchange: "okx".into(),
-    });
-    let mut price = 87234.0;
-    let mut tick_count: u64 = 0;
-    loop {
-        tokio::time::sleep(Duration::from_secs(1)).await;
-        tick_count += 1;
-        let ts = now_ms();
-        // 简单确定性价格模拟
-        let pseudo = ((ts % 1000) as f64 / 1000.0 - 0.5) * 20.0;
-        price = (price + pseudo).max(100.0_f64);
-        let _ = tx.send(crate::ws_client::WsEvent::Ticker {
-            symbol: "BTCUSDT".into(),
-            price,
-            ts_ms: ts,
-        });
-        // v3.2.0 S0修复: 每60秒合成一个Kline事件触发慢周期执行
-        if tick_count % 60 == 0 {
-            let minute_start = ts / 60_000 * 60_000;
-            let _ = tx.send(crate::ws_client::WsEvent::Kline {
-                symbol: "BTCUSDT".into(),
-                bar: crate::executor_state::KlineBar {
-                    open_time_ms: minute_start,
-                    close_time_ms: minute_start + 59_999,
-                    open: price,
-                    high: price * 1.002,
-                    low: price * 0.998,
-                    close: price,
-                    volume: 1.5,
-                },
-            });
-        }
-    }
-}
-
 // ── 端点实现 ──
 
-async fn health_check() -> &'static str {
-    "executor_ok"
+async fn health_check(State(state): State<Arc<ExecutorState>>) -> Json<serde_json::Value> {
+    Json(serde_json::json!({
+        "status": "executor_ok",
+        "mode": state.current_mode().as_str(),
+        "sse_lagged_event_count": state.sse_lagged_count(),
+    }))
 }
 
 // v3.5.0: 全局执行模式查询与切换
@@ -586,15 +554,9 @@ fn load_okx_demo_credentials() -> Result<OkxDemoCredentialSet, (StatusCode, Stri
 }
 
 fn credentials_from_env() -> Option<OkxDemoCredentialSet> {
-    let api_key = std::env::var("QUANTPILOT_OKX_DEMO_API_KEY")
-        .or_else(|_| std::env::var("QUANTPILOT_EXCHANGE_KEY"))
-        .ok()?;
-    let secret = std::env::var("QUANTPILOT_OKX_DEMO_SECRET")
-        .or_else(|_| std::env::var("QUANTPILOT_EXCHANGE_SECRET"))
-        .ok()?;
-    let passphrase = std::env::var("QUANTPILOT_OKX_DEMO_PASSPHRASE")
-        .or_else(|_| std::env::var("QUANTPILOT_EXCHANGE_PASSPHRASE"))
-        .ok()?;
+    let api_key = std::env::var("QUANTPILOT_OKX_DEMO_API_KEY").ok()?;
+    let secret = std::env::var("QUANTPILOT_OKX_DEMO_SECRET").ok()?;
+    let passphrase = std::env::var("QUANTPILOT_OKX_DEMO_PASSPHRASE").ok()?;
     if api_key.trim().is_empty() || secret.trim().is_empty() || passphrase.trim().is_empty() {
         return None;
     }
@@ -1443,20 +1405,19 @@ async fn strategy_events_sse(
         }
     };
     let stream = async_stream::stream! {
-        yield Ok(Event::default().data(r#"{"type":"connected"}"#));
+        yield Ok(Event::default().event("connected").data("{}"));
         if let Some(snapshot) = initial_v4_snapshot {
             let json = serde_json::json!({
-                "type": "v4RuntimeMemorySnapshot",
                 "strategy_id": strategy_id,
                 "memory_snapshot": snapshot,
                 "runtime_events": [],
             });
-            yield Ok(Event::default().data(json.to_string()));
+            yield Ok(Event::default().event("v4RuntimeMemorySnapshot").data(json.to_string()));
         }
         loop {
             tokio::select! {
                 _ = tokio::time::sleep(Duration::from_secs(30)) => {
-                    yield Ok(Event::default().data(":keepalive"));
+                    yield Ok(Event::default().event("keepalive").data("{}"));
                 }
                 trigger = rx.recv() => {
                     match trigger {
@@ -1468,15 +1429,18 @@ async fn strategy_events_sse(
                                 }
                             }
                             let json = serde_json::json!({
-                                "type": "trigger", "strategy_id": t.strategy_id,
+                                "strategy_id": t.strategy_id,
                                 "trigger_type": t.trigger_type,
                                 "node_id": t.node_id, "strength": t.strength,
                                 "occurred_at_ms": t.occurred_at_ms,
                             });
-                            yield Ok(Event::default().data(json.to_string()));
+                            yield Ok(Event::default().event("trigger").data(json.to_string()));
                         }
                         Ok(_) => continue,
-                        Err(broadcast::error::RecvError::Lagged(_)) => continue,
+                        Err(broadcast::error::RecvError::Lagged(dropped)) => {
+                            state.record_sse_lagged("trigger", dropped);
+                            continue;
+                        }
                         Err(_) => break,
                     }
                 }
@@ -1484,15 +1448,17 @@ async fn strategy_events_sse(
                     match evidence {
                         Ok(e) if e.strategy_id == strategy_id => {
                             let json = serde_json::json!({
-                                "type": e.event_type,
                                 "strategy_id": e.strategy_id,
                                 "memory_snapshot": e.memory_snapshot,
                                 "runtime_events": e.runtime_events,
                             });
-                            yield Ok(Event::default().data(json.to_string()));
+                            yield Ok(Event::default().event(e.event_type).data(json.to_string()));
                         }
                         Ok(_) => continue,
-                        Err(broadcast::error::RecvError::Lagged(_)) => continue,
+                        Err(broadcast::error::RecvError::Lagged(dropped)) => {
+                            state.record_sse_lagged("v4_evidence", dropped);
+                            continue;
+                        }
                         Err(_) => break,
                     }
                 }

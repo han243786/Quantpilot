@@ -309,6 +309,7 @@ graph_api.rs                    — 图 CRUD API
   ├── GET    /api/graph/list           — 列出全部策略
   ├── DELETE /api/graph/:id            — 删除策略图
   └── GET    /api/graph/versions/:id   — 版本历史
+  └── bundle commit: staging 文件齐全校验 + 多文件失败回滚 🆕 v4.8.0
 
 [存储]: graphs/ 目录 (Permanent 级)
   └── 原子写入: write(.tmp) → fsync → rename → fsync(parent)
@@ -342,7 +343,7 @@ runtime/backtest.rs             — 回测引擎
   └── 回测工件: 事件序列 + 权益曲线 + 成交记录
 
 runtime_persistence.rs          — 运行时持久化
-  └── 运行记录/回测工件/实验数据的读写
+  └── 运行记录/回测工件/实验数据的读写, 大文件读取 100MB 上限 🆕 v4.8.0
 
 runtime_diagnostics.rs          — 运行时诊断
   └── 运行时健康检查、性能诊断
@@ -400,7 +401,7 @@ auth/mod.rs                     — 用户认证
   ├── POST /api/auth/register  — 注册 (bcrypt 12 轮)
   ├── POST /api/auth/login     — 登录 (JWT HS256, 24h 过期)
   ├── POST /api/auth/refresh   — 刷新令牌轮换 + 重放检测
-  ├── bcrypt verify → tokio::spawn_blocking (不阻塞工作线程)
+  ├── bcrypt verify → tokio::spawn_blocking + 30s timeout (不阻塞工作线程) 🆕 v4.8.0
   └── 注册限流: 6 次/分钟/IP
 
 auth_middleware.rs              — 认证中间件
@@ -665,6 +666,9 @@ Cargo.toml [workspace]
 qrpc_runtime/src/
   ├── lib.rs                  — 运行时入口
   ├── v4_runtime.rs           — v4.0.0 PaperSimulated 运行时 🆕 v4.0.0
+  ├── v4_runtime_types.rs     — v4 runtime 类型/初始化辅助 🆕 v4.8.0
+  ├── v4_simulated_execution.rs — v4 模拟撮合/订单/持仓/资产曲线 🆕 v4.8.0
+  ├── v4_runtime_tests.rs     — v4 runtime 单元测试模块 🆕 v4.8.0
   │   ├── V4PaperSimulatedRuntime     — 核心结构体; 改 v4 运行时行为时改这里
   │   ├── submit_event()              — 事件提交 → process_event()
   │   ├── advance_time()              — 静默检测
@@ -1465,7 +1469,10 @@ storage/
 **qrpc_runtime**:
 - `qrpc_runtime/Cargo.toml` — qrpc_runtime 包配置
 - `qrpc_runtime/src/lib.rs` — 运行时入口
-- `qrpc_runtime/src/v4_runtime.rs` — v4 runtime; 改 PaperSimulated/LiveActual 边界、OCO/trailing/GTD/amend 模拟订单、tick replay、微结构指标、Market 事件注入、多交易对 machine 展开、嵌套 machine 路由/snapshot 或 v4 运行时行为时改这里 🆕 v4.7.0
+- `qrpc_runtime/src/v4_runtime.rs` — v4 runtime 主事件循环; 改 PaperSimulated/LiveActual 边界、tick replay、Market 事件注入、多交易对 machine 展开、嵌套 machine 路由/snapshot 或 v4 运行时行为时改这里 🆕 v4.7.0
+- `qrpc_runtime/src/v4_runtime_types.rs` — v4 runtime 类型定义与初始化辅助; 改 runtime snapshot/input/output 类型或 machine 初始化时改这里 🆕 v4.8.0
+- `qrpc_runtime/src/v4_simulated_execution.rs` — v4 模拟撮合引擎; 改 OCO/trailing/GTD/amend、订单/成交/持仓/资产曲线时改这里 🆕 v4.8.0
+- `qrpc_runtime/src/v4_runtime_tests.rs` — v4 runtime 单元测试模块; 改 v4 runtime 行为测试时改这里 🆕 v4.8.0
 - `qrpc_runtime/src/compat.rs` — 模块热替换兼容性检查; 改热替换规则时改这里
 - `qrpc_runtime/src/core_ir_evaluator.rs` — Core IR 求值器, 18 种指标 evaluator; 改指标计算时改这里
 - `qrpc_runtime/src/backtest_metrics.rs` — 回测 12 项指标; 改回测公式或 equity_curve 诊断时改这里
@@ -1647,6 +1654,7 @@ storage/
 - `frontend/tests/e2e/run-simulation.spec.js` — 模拟运行 E2E
 - `frontend/tests/e2e/runtime-mutation-walkthrough.spec.js` — 运行时变更遍历
 - `frontend/tests/e2e/scenario-test-v2.spec.js` — 场景测试 v2
+- `frontend/tests/e2e/v4-runtime-contracts.spec.js` — v4 runtime 契约 E2E
 - `frontend/tests/e2e/visual-regression.spec.js` — 视觉回归
 - `frontend/tests/e2e/visual-responsive-review.spec.js` — 响应式审查
 - `frontend/tests/e2e/support/*.js` — E2E 辅助 (apiHarness, workspaceBootstrapMocks, workspaceGraphFixture, analysisReviewFixtures)
@@ -1693,6 +1701,7 @@ storage/
 - `frontend/src/components/RuntimeReportPanel.test.jsx` — 运行报告测试
 - `frontend/src/components/StrategyBacktestsPanel.jsx` — 策略回测面板; 改回测入口时改这里
 - `frontend/src/components/StrategyCanvas.focus.test.jsx` — 策略画布焦点测试
+- `frontend/src/components/StrategyCanvas.interaction.test.jsx` — 策略画布交互测试
 - `frontend/src/components/StrategyCanvas.jsx` — 策略画布; 改 React Flow 画布时改这里
 - `frontend/src/components/strategyCanvasFocus.js` — 画布焦点工具; 改焦点规则时改这里
 - `frontend/src/components/strategyCanvasFocus.test.js` — 画布焦点工具测试
@@ -1898,6 +1907,7 @@ storage/
 - `tests/common/mod.rs` — 测试公共模块
 - `tests/common/re_exports.rs` — 测试重导出
 - `tests/api_ai_proposal.rs` — AI 提案 API 测试
+- `tests/api_auth.rs` — 认证 API 错误响应测试
 - `tests/api_backtest.rs` — 回测 API 测试
 - `tests/api_collaboration.rs` — 协作 API 测试
 - `tests/api_evidence_contract.rs` — 证据契约 API 测试

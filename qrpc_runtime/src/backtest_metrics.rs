@@ -116,7 +116,7 @@ pub fn compute_backtest_metrics(
     // v2.0.1: 当 total_return < -1.0 时底数为负，powf 返回 NaN。
     // 使用 max(MIN_POSITIVE) 夹紧以防止 NaN 传播到下游指标。
     let base = (1.0 + total_return).max(f64::MIN_POSITIVE);
-    let annualized_return = if days_covered >= 30.0 {
+    let annualized_return_raw = if days_covered >= 30.0 {
         base.powf(365.0 / days_covered) - 1.0
     } else {
         total_return // 短回测直接报告总收益率
@@ -124,10 +124,14 @@ pub fn compute_backtest_metrics(
 
     // 年化波动率
     let daily_vol = std_deviation(&daily_returns);
-    let annualized_volatility = daily_vol * 252.0_f64.sqrt();
+    let annualized_return = finite_or_zero(annualized_return_raw);
+    let annualized_volatility = finite_or_zero(daily_vol * 252.0_f64.sqrt());
 
     // 夏普比率
-    let sharpe_ratio = if annualized_volatility.is_finite() && annualized_volatility > 0.0 {
+    let sharpe_ratio = if annualized_return.is_finite()
+        && annualized_volatility.is_finite()
+        && annualized_volatility > 0.0
+    {
         annualized_return / annualized_volatility
     } else {
         0.0
@@ -142,19 +146,21 @@ pub fn compute_backtest_metrics(
         .sum::<f64>()
         / n;
     let downside_vol = downside_var.sqrt() * 252.0_f64.sqrt();
-    let sortino_ratio = if downside_vol.is_finite() && downside_vol > 0.0 {
-        annualized_return / downside_vol
-    } else {
-        0.0
-    };
+    let sortino_ratio =
+        if annualized_return.is_finite() && downside_vol.is_finite() && downside_vol > 0.0 {
+            annualized_return / downside_vol
+        } else {
+            0.0
+        };
 
     // 卡尔玛比率
     let max_dd = summary.drawdown_analysis.max_drawdown_ratio;
-    let calmar_ratio = if max_dd > f64::EPSILON {
-        annualized_return / max_dd
-    } else {
-        0.0
-    };
+    let calmar_ratio =
+        if annualized_return.is_finite() && max_dd.is_finite() && max_dd > f64::EPSILON {
+            annualized_return / max_dd
+        } else {
+            0.0
+        };
 
     summary.annualized_return = annualized_return;
     summary.annualized_volatility = annualized_volatility;
@@ -308,10 +314,10 @@ pub fn compute_period_returns(
 fn compute_step_returns(equity_curve: &[BacktestEquityPoint]) -> Vec<f64> {
     let mut returns = Vec::with_capacity(equity_curve.len().saturating_sub(1));
     for window in equity_curve.windows(2) {
-        let prev = window[0].equity.max(f64::MIN_POSITIVE);
+        let prev = window[0].equity;
         let curr = window[1].equity;
         // v2.4.0 P1-C2: 拒绝 NaN/Inf 毒化下游指标
-        if !curr.is_finite() {
+        if !prev.is_finite() || !curr.is_finite() || prev <= f64::EPSILON {
             return Vec::new();
         }
         returns.push((curr - prev) / prev);
@@ -327,6 +333,14 @@ fn compute_total_return(equity_curve: &[BacktestEquityPoint]) -> f64 {
         .max(f64::MIN_POSITIVE);
     let last = equity_curve.last().map(|p| p.equity).unwrap_or(first);
     (last - first) / first
+}
+
+fn finite_or_zero(value: f64) -> f64 {
+    if value.is_finite() {
+        value
+    } else {
+        0.0
+    }
 }
 
 fn std_deviation(values: &[f64]) -> f64 {
@@ -613,6 +627,58 @@ fn information_ratio(strategy_returns: &[f64], benchmark_returns: &[f64]) -> f64
 mod tests {
     use super::*;
     use qrpc_core::BacktestSummary;
+
+    fn point(ts_ms: u64, equity: f64) -> BacktestEquityPoint {
+        BacktestEquityPoint {
+            ts_ms,
+            equity,
+            cash_balance: equity,
+            net_notional: 0.0,
+        }
+    }
+
+    #[test]
+    fn compute_step_returns_rejects_non_finite_previous_equity() {
+        let equity = vec![point(0, f64::INFINITY), point(86_400_000, 100_000.0)];
+
+        assert!(compute_step_returns(&equity).is_empty());
+    }
+
+    #[test]
+    fn compute_metrics_zeroes_non_finite_annualized_return_before_ratios() {
+        let equity = vec![
+            point(0, 100_000.0),
+            point(86_400_000, 90_000.0),
+            point(31 * 86_400_000, 110_000.0),
+        ];
+        let mut summary = BacktestSummary {
+            step_count: 3,
+            trade_count: 2,
+            total_return_ratio: f64::INFINITY,
+            final_equity: 110_000.0,
+            net_profit: 10_000.0,
+            win_rate: 0.5,
+            annualized_return: 0.0,
+            annualized_volatility: 0.0,
+            risk_adjusted: Default::default(),
+            trade_analysis: Default::default(),
+            drawdown_analysis: BacktestDrawdownAnalysis {
+                max_drawdown_ratio: 0.1,
+                ..Default::default()
+            },
+            benchmark_comparison: None,
+            skewness: 0.0,
+            kurtosis: 0.0,
+        };
+
+        compute_backtest_metrics(&mut summary, &[], &equity, &[]);
+
+        assert_eq!(summary.annualized_return, 0.0);
+        assert!(summary.annualized_volatility.is_finite());
+        assert_eq!(summary.risk_adjusted.sharpe_ratio, 0.0);
+        assert_eq!(summary.risk_adjusted.sortino_ratio, 0.0);
+        assert_eq!(summary.risk_adjusted.calmar_ratio, 0.0);
+    }
 
     #[test]
     fn compute_metrics_populates_risk_adjusted() {

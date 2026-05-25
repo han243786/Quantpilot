@@ -370,6 +370,9 @@ fn execution_profile_number_field(name: &str, expr: &Expr) -> Result<f64> {
     let Expr::Number(value) = expr else {
         bail!("execution.profile(..., {}=...) 必须是数值字面量", name);
     };
+    if !value.is_finite() {
+        bail!("execution.profile(..., {}=...) 必须是有限数", name);
+    }
     Ok(*value)
 }
 

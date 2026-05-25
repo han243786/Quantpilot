@@ -252,13 +252,15 @@ impl StrategyIr {
                 );
             }
             if let Some(value) = profile.fee_bps {
-                if value < 0.0 {
-                    errors.push("execution_profile.fee_bps 必须大于等于 0".to_string());
+                if !value.is_finite() || value < 0.0 {
+                    errors.push("execution_profile.fee_bps 必须是有限数且大于等于 0".to_string());
                 }
             }
             if let Some(value) = profile.slippage_bps {
-                if value < 0.0 {
-                    errors.push("execution_profile.slippage_bps 必须大于等于 0".to_string());
+                if !value.is_finite() || value < 0.0 {
+                    errors.push(
+                        "execution_profile.slippage_bps 必须是有限数且大于等于 0".to_string(),
+                    );
                 }
             }
         }
@@ -760,6 +762,32 @@ mod tests {
         ir.signals.push(ir.signals[0].clone());
         let err = ir.validate().unwrap_err();
         assert!(err.errors.iter().any(|item| item.contains("重复的 id")));
+    }
+
+    #[test]
+    fn rejects_non_finite_execution_profile_costs() {
+        let mut ir: StrategyIr = serde_json::from_str(SAMPLE_JSON).unwrap();
+        ir.execution_profile = Some(StrategyExecutionProfileRef {
+            profile_id: "paper".to_string(),
+            fee_bps: Some(f64::INFINITY),
+            slippage_bps: None,
+        });
+        let err = ir.validate().unwrap_err();
+        assert!(err
+            .errors
+            .iter()
+            .any(|item| item.contains("execution_profile.fee_bps")));
+
+        ir.execution_profile = Some(StrategyExecutionProfileRef {
+            profile_id: "paper".to_string(),
+            fee_bps: None,
+            slippage_bps: Some(f64::NAN),
+        });
+        let err = ir.validate().unwrap_err();
+        assert!(err
+            .errors
+            .iter()
+            .any(|item| item.contains("execution_profile.slippage_bps")));
     }
 
     #[test]

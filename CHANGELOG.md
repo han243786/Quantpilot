@@ -2,9 +2,22 @@
 
 ## v4.7.0 — v4 execution replay, LiveActual boundary, and AI proposal analysis (2026-05-25)
 
-- v4.5.0: added advanced simulated orders (OCO bracket, trailing stop, GTD expiry, cancel-replace-amend), tick replay, and microstructure metrics in `v4_artifact`.
-- v4.6.0: opened the v4 LiveActual runtime boundary with required Risk Plane enforcement and ProviderNative capability gating; OKX testnet submission remains deferred to credentialed E2E.
 - v4.7.0: added v4 AI proposal trajectory analysis, v4 sandbox replay-shape comparison, executor/frontend evidence updates, OpenAPI/schema updates, and version/governance sync.
+
+## v4.6.0 — v4 LiveActual + OKX execution boundary (2026-05-25)
+
+- Opened the v4 `LiveActual` runtime construction boundary while keeping the real-order path gated by Risk Plane and ProviderNative capability checks.
+- Required `risk_plane.required = true` for `LiveActual`; runtime-simulated execution capabilities are rejected in ProviderActual settlement.
+- Updated executor v4 evidence UI to expose provider-allowed and real-path lock status.
+- Deferred credentialed OKX testnet submit/cancel E2E to an environment with valid external credentials and network access.
+
+## v4.5.0 — advanced simulated orders + tick replay (2026-05-25)
+
+- Added local simulated evidence for OCO bracket, trailing stop, GTD expiry, and cancel-replace-amend order paths.
+- Added v4 tick replay via `run_backtest_ticks` and explicit `replay_mode = "tick_replay"`.
+- Added microstructure metrics and optional `input_tick_count` / `microstructure_metrics` fields in `v4_artifact`.
+- Updated backtest detail UI to display tick counts and microstructure metrics.
+- Deferred real exchange tick ingestion; tick replay remains deterministic-input or mock driven.
 
 ## v4.4.0 — 嵌套状态机第一波 (2026-05-25)
 

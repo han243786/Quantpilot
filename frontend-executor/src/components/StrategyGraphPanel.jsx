@@ -42,14 +42,15 @@ const StrategyGraphPanel = memo(function StrategyGraphPanel({ strategy }) {
   useEffect(() => {
     if (!strategy?.strategy_id) return;
     const es = new EventSource(`${API}/strategies/${strategy.strategy_id}/events`);
-    es.onmessage = (event) => {
+    const handleStreamEvent = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data.type === "ticker") {
+        const eventType = event.type === "message" ? data.type : event.type;
+        if (eventType === "ticker") {
           const el = priceOverlaysRef.current[data.symbol];
           if (el) el.textContent = `$${Number(data.price).toFixed(2)}`;
         }
-        if (data.type === "trigger") {
+        if (eventType === "trigger") {
           setPulsingNodes(prev => new Set([...prev, data.node_id]));
           setTimeout(() => setPulsingNodes(prev => {
             const next = new Set(prev); next.delete(data.node_id); return next;
@@ -57,8 +58,15 @@ const StrategyGraphPanel = memo(function StrategyGraphPanel({ strategy }) {
         }
       } catch (e) { console.warn("[StrategyGraph] SSE parse error:", e.message); }
     };
+    es.addEventListener("trigger", handleStreamEvent);
+    es.addEventListener("ticker", handleStreamEvent);
+    es.onmessage = handleStreamEvent;
     es.onerror = () => console.warn("[StrategyGraph] SSE 连接错误, 将自动重连");
-    return () => es.close();
+    return () => {
+      es.removeEventListener("trigger", handleStreamEvent);
+      es.removeEventListener("ticker", handleStreamEvent);
+      es.close();
+    };
   }, [strategy?.strategy_id]);
 
   const nodeTypes = {}; // 使用默认节点类型

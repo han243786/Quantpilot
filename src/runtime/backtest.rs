@@ -538,6 +538,7 @@ fn build_v4_backtest_output(
     } else {
         0.0
     };
+    let win_rate = v4_win_rate_from_equity_curve(&equity_curve);
     qrpc_core::BacktestOutput {
         mode: "v4_backtest".to_string(),
         started_at_ms: artifact.started_at_ms,
@@ -555,7 +556,7 @@ fn build_v4_backtest_output(
             total_return_ratio,
             final_equity,
             net_profit,
-            win_rate: 0.0,
+            win_rate,
             annualized_return: 0.0,
             annualized_volatility: 0.0,
             risk_adjusted: Default::default(),
@@ -568,6 +569,29 @@ fn build_v4_backtest_output(
         final_portfolio: v4_portfolio_from_artifact(artifact),
         v4_artifact: Some(artifact.clone()),
         debug_values: None,
+    }
+}
+
+fn v4_win_rate_from_equity_curve(equity_curve: &[qrpc_core::BacktestEquityPoint]) -> f64 {
+    let mut wins = 0_u64;
+    let mut losses = 0_u64;
+    for window in equity_curve.windows(2) {
+        let prev = window[0].equity;
+        let curr = window[1].equity;
+        if !prev.is_finite() || !curr.is_finite() {
+            continue;
+        }
+        if curr > prev {
+            wins += 1;
+        } else if curr < prev {
+            losses += 1;
+        }
+    }
+    let decisions = wins + losses;
+    if decisions > 0 {
+        wins as f64 / decisions as f64
+    } else {
+        0.0
     }
 }
 
@@ -1215,6 +1239,28 @@ async fn get_backtest_replay(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn point(ts_ms: u64, equity: f64) -> qrpc_core::BacktestEquityPoint {
+        qrpc_core::BacktestEquityPoint {
+            ts_ms,
+            equity,
+            cash_balance: equity,
+            net_notional: 0.0,
+        }
+    }
+
+    #[test]
+    fn v4_win_rate_counts_up_steps_over_directional_steps() {
+        let equity_curve = vec![
+            point(0, 100.0),
+            point(1, 110.0),
+            point(2, 110.0),
+            point(3, 90.0),
+            point(4, 120.0),
+        ];
+
+        assert_eq!(v4_win_rate_from_equity_curve(&equity_curve), 2.0 / 3.0);
+    }
 
     #[test]
     fn v4_equity_curve_empty_artifact_does_not_fabricate_zero_point() {

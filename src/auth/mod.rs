@@ -3,12 +3,39 @@
 
 use std::path::Path;
 use std::sync::{Mutex, OnceLock};
+use std::time::Duration;
 
-use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::post, Json, Router};
+use axum::{
+    extract::State,
+    http::StatusCode,
+    response::{IntoResponse, Response},
+    routing::post,
+    Json, Router,
+};
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 
 // ── 核心类型 ──
+
+const AUTH_BLOCKING_TIMEOUT: Duration = Duration::from_secs(30);
+
+#[derive(Debug)]
+enum AuthBlockingFailure {
+    Timeout,
+    Join(tokio::task::JoinError),
+}
+
+async fn auth_spawn_blocking<T, F>(task: F) -> Result<T, AuthBlockingFailure>
+where
+    T: Send + 'static,
+    F: FnOnce() -> T + Send + 'static,
+{
+    match tokio::time::timeout(AUTH_BLOCKING_TIMEOUT, tokio::task::spawn_blocking(task)).await {
+        Ok(Ok(value)) => Ok(value),
+        Ok(Err(error)) => Err(AuthBlockingFailure::Join(error)),
+        Err(_) => Err(AuthBlockingFailure::Timeout),
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct User {
@@ -80,7 +107,9 @@ pub struct AuthSuccessResponse {
 #[derive(Debug, Serialize)]
 pub struct AuthErrorResponse {
     pub error: String,
+    pub error_code: String,
     pub message: String,
+    pub details: Vec<serde_json::Value>,
 }
 
 // ── JWT 密钥 (全局缓存, v2.1.1 持久化) ──
@@ -338,6 +367,44 @@ pub fn verify_token(token: &str) -> Result<User, String> {
 
 use super::AppState;
 
+fn auth_error_response(
+    status: StatusCode,
+    error: &str,
+    error_code: &str,
+    message: impl Into<String>,
+) -> Response {
+    (
+        status,
+        Json(serde_json::json!({
+            "error": error,
+            "error_code": error_code,
+            "message": message.into(),
+            "details": []
+        })),
+    )
+        .into_response()
+}
+
+fn auth_blocking_failure_response(error: AuthBlockingFailure) -> Response {
+    let message = match error {
+        AuthBlockingFailure::Timeout => "认证后台任务超时",
+        AuthBlockingFailure::Join(error) => {
+            return auth_error_response(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "internal_error",
+                crate::error_codes::ERR_INTERNAL,
+                format!("认证后台任务失败: {}", error),
+            );
+        }
+    };
+    auth_error_response(
+        StatusCode::INTERNAL_SERVER_ERROR,
+        "internal_error",
+        crate::error_codes::ERR_INTERNAL,
+        message,
+    )
+}
+
 async fn register_handler(
     State(state): State<AppState>,
     Json(req): Json<RegisterRequest>,
@@ -345,73 +412,54 @@ async fn register_handler(
     let db = match &state.db {
         Some(db) => db,
         None => {
-            return (
+            return auth_error_response(
                 StatusCode::SERVICE_UNAVAILABLE,
-                Json(serde_json::json!({
-                    "error": "auth_unavailable",
-                    "message": "认证服务暂不可用 (数据库未加载)"
-                })),
-            )
-                .into_response();
+                "auth_unavailable",
+                crate::error_codes::ERR_AUTH_UNAVAILABLE,
+                "认证服务暂不可用 (数据库未加载)",
+            );
         }
     };
 
     // 提前验证参数 (不需要锁)
     let username = req.username.trim().to_string();
     if username.is_empty() {
-        return (
+        return auth_error_response(
             StatusCode::BAD_REQUEST,
-            Json(serde_json::json!({
-                "error": "bad_request",
-                "message": "用户名不能为空"
-            })),
-        )
-            .into_response();
+            "bad_request",
+            crate::error_codes::ERR_AUTH_REGISTER_FAILED,
+            "用户名不能为空",
+        );
     }
     if req.password.len() < 6 {
-        return (
+        return auth_error_response(
             StatusCode::BAD_REQUEST,
-            Json(serde_json::json!({
-                "error": "bad_request",
-                "message": "密码长度不能少于 6 位"
-            })),
-        )
-            .into_response();
+            "bad_request",
+            crate::error_codes::ERR_AUTH_REGISTER_FAILED,
+            "密码长度不能少于 6 位",
+        );
     }
 
     // bcrypt hash 在 spawn_blocking 中执行, 不阻塞 tokio 工作线程
     let password = req.password.clone();
     let password_hash =
-        match tokio::task::spawn_blocking(move || bcrypt::hash(&password, bcrypt::DEFAULT_COST))
-            .await
-        {
+        match auth_spawn_blocking(move || bcrypt::hash(&password, bcrypt::DEFAULT_COST)).await {
             Ok(Ok(hash)) => hash,
             Ok(Err(e)) => {
-                return (
+                return auth_error_response(
                     StatusCode::INTERNAL_SERVER_ERROR,
-                    Json(serde_json::json!({
-                        "error": "internal_error",
-                        "message": format!("密码加密失败: {}", e)
-                    })),
-                )
-                    .into_response();
+                    "internal_error",
+                    crate::error_codes::ERR_INTERNAL,
+                    format!("密码加密失败: {}", e),
+                );
             }
-            Err(_) => {
-                return (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    Json(serde_json::json!({
-                        "error": "internal_error",
-                        "message": "服务内部错误"
-                    })),
-                )
-                    .into_response();
-            }
+            Err(error) => return auth_blocking_failure_response(error),
         };
 
     // 数据库写入在 spawn_blocking 中执行, 不阻塞 tokio 工作线程
     let db_clone = db.clone();
     let username_for_db = username.clone();
-    let insert_result = tokio::task::spawn_blocking(move || {
+    let insert_result = match auth_spawn_blocking(move || {
         let db = db_clone.lock().unwrap_or_else(|e| e.into_inner());
         db.execute(
             "INSERT INTO users (username, password_hash) VALUES (?1, ?2)",
@@ -419,10 +467,14 @@ async fn register_handler(
         )?;
         Ok::<i64, rusqlite::Error>(db.last_insert_rowid())
     })
-    .await;
+    .await
+    {
+        Ok(result) => result,
+        Err(error) => return auth_blocking_failure_response(error),
+    };
 
     match insert_result {
-        Ok(Ok(id)) => {
+        Ok(id) => {
             let user = User { id, username };
             (
                 StatusCode::CREATED,
@@ -433,29 +485,19 @@ async fn register_handler(
             )
                 .into_response()
         }
-        Ok(Err(e)) => {
+        Err(e) => {
             let msg = if e.to_string().contains("UNIQUE") {
                 "注册失败，请稍后重试".to_string()
             } else {
                 format!("注册失败: {}", e)
             };
-            (
+            auth_error_response(
                 StatusCode::BAD_REQUEST,
-                Json(serde_json::json!({
-                    "error": "registration_failed",
-                    "message": msg
-                })),
+                "registration_failed",
+                crate::error_codes::ERR_AUTH_REGISTER_FAILED,
+                msg,
             )
-                .into_response()
         }
-        Err(_) => (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "error": "internal_error",
-                "message": "服务内部错误"
-            })),
-        )
-            .into_response(),
     }
 }
 
@@ -466,102 +508,81 @@ async fn login_handler(
     let db = match &state.db {
         Some(db) => db,
         None => {
-            return (
+            return auth_error_response(
                 StatusCode::SERVICE_UNAVAILABLE,
-                Json(serde_json::json!({
-                    "error": "auth_unavailable",
-                    "message": "认证服务暂不可用 (数据库未加载)"
-                })),
-            )
-                .into_response();
+                "auth_unavailable",
+                crate::error_codes::ERR_AUTH_UNAVAILABLE,
+                "认证服务暂不可用 (数据库未加载)",
+            );
         }
     };
 
     // Step 1: 查询用户凭证 (SQLite 在 spawn_blocking 中执行)
     let db_clone = db.clone();
     let username_for_lookup = req.username.clone();
-    let credentials_result = tokio::task::spawn_blocking(move || {
+    let credentials_result = match auth_spawn_blocking(move || {
         let db = db_clone.lock().unwrap_or_else(|e| e.into_inner());
         query_user_credentials(&db, &username_for_lookup)
     })
-    .await;
+    .await
+    {
+        Ok(result) => result,
+        Err(error) => return auth_blocking_failure_response(error),
+    };
     let (id, uname, password_hash) = match credentials_result {
-        Ok(Ok(data)) => data,
-        Ok(Err(msg)) => {
-            return (
+        Ok(data) => data,
+        Err(msg) => {
+            return auth_error_response(
                 StatusCode::UNAUTHORIZED,
-                Json(serde_json::json!({
-                    "error": "login_failed",
-                    "message": msg
-                })),
-            )
-                .into_response();
-        }
-        Err(_) => {
-            return (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({
-                    "error": "internal_error",
-                    "message": "服务内部错误"
-                })),
-            )
-                .into_response();
+                "login_failed",
+                crate::error_codes::ERR_AUTH_INVALID_CREDENTIALS,
+                msg,
+            );
         }
     };
 
     // Step 2: bcrypt 验证在 spawn_blocking 中执行, 不阻塞 tokio 工作线程
     let password = req.password.clone();
-    let valid = match tokio::task::spawn_blocking(move || bcrypt::verify(&password, &password_hash))
-        .await
-    {
+    let valid = match auth_spawn_blocking(move || bcrypt::verify(&password, &password_hash)).await {
         Ok(Ok(ok)) => ok,
         Ok(Err(e)) => {
-            return (
+            return auth_error_response(
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({
-                    "error": "internal_error",
-                    "message": format!("密码验证失败: {}", e)
-                })),
-            )
-                .into_response();
+                "internal_error",
+                crate::error_codes::ERR_INTERNAL,
+                format!("密码验证失败: {}", e),
+            );
         }
-        Err(_) => {
-            return (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({
-                    "error": "internal_error",
-                    "message": "服务内部错误"
-                })),
-            )
-                .into_response();
-        }
+        Err(error) => return auth_blocking_failure_response(error),
     };
 
     if !valid {
-        return (
+        return auth_error_response(
             StatusCode::UNAUTHORIZED,
-            Json(serde_json::json!({
-                "error": "login_failed",
-                "message": "用户名或密码错误"
-            })),
-        )
-            .into_response();
+            "login_failed",
+            crate::error_codes::ERR_AUTH_INVALID_CREDENTIALS,
+            "用户名或密码错误",
+        );
     }
 
     // Step 3: 生成 JWT + 刷新令牌 (spawn_blocking, 包含CPU密集+DB操作)
     let db_clone = db.clone();
     let uname_clone = uname.clone();
-    let token_result = tokio::task::spawn_blocking(move || {
+    let token_result = match auth_spawn_blocking(move || {
         let token = generate_jwt(id, &uname_clone)?;
         let db = db_clone.lock().unwrap_or_else(|e| e.into_inner());
         let (rt, _) =
             create_refresh_token(&db, id).unwrap_or_else(|_| (String::new(), String::new()));
         Ok::<_, String>((token, rt))
     })
-    .await;
+    .await
+    {
+        Ok(result) => result,
+        Err(error) => return auth_blocking_failure_response(error),
+    };
 
     match token_result {
-        Ok(Ok((token, rt))) => {
+        Ok((token, rt)) => {
             let user = User {
                 id,
                 username: uname,
@@ -575,22 +596,12 @@ async fn login_handler(
                 })),
             ).into_response()
         }
-        Ok(Err(msg)) => (
+        Err(msg) => auth_error_response(
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "error": "jwt_error",
-                "message": msg
-            })),
-        )
-            .into_response(),
-        Err(_) => (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "error": "internal_error",
-                "message": "服务内部错误"
-            })),
-        )
-            .into_response(),
+            "jwt_error",
+            crate::error_codes::ERR_AUTH_JWT_FAILED,
+            msg,
+        ),
     }
 }
 
@@ -612,14 +623,12 @@ async fn refresh_handler(
     let user = match verify_token(&req.access_token) {
         Ok(user) => user,
         Err(e) => {
-            return (
+            return auth_error_response(
                 StatusCode::UNAUTHORIZED,
-                Json(serde_json::json!({
-                    "error": "token_invalid",
-                    "message": e
-                })),
-            )
-                .into_response();
+                "token_invalid",
+                crate::error_codes::ERR_AUTH_TOKEN_INVALID,
+                e,
+            );
         }
     };
 
@@ -627,14 +636,12 @@ async fn refresh_handler(
     let db = match &state.db {
         Some(db) => db,
         None => {
-            return (
+            return auth_error_response(
                 StatusCode::SERVICE_UNAVAILABLE,
-                Json(serde_json::json!({
-                    "error": "auth_unavailable",
-                    "message": "认证服务暂不可用"
-                })),
-            )
-                .into_response();
+                "auth_unavailable",
+                crate::error_codes::ERR_AUTH_UNAVAILABLE,
+                "认证服务暂不可用",
+            );
         }
     };
 
@@ -642,14 +649,12 @@ async fn refresh_handler(
     let new_access_token = match login_user_by_id(&user.id, &user.username) {
         Ok(token) => token,
         Err(e) => {
-            return (
+            return auth_error_response(
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({
-                    "error": "jwt_error",
-                    "message": e
-                })),
-            )
-                .into_response();
+                "jwt_error",
+                crate::error_codes::ERR_AUTH_JWT_FAILED,
+                e,
+            );
         }
     };
 
@@ -657,14 +662,18 @@ async fn refresh_handler(
     let old_hash = hash_token(&req.refresh_token);
     let db_arc = db.clone();
     let user_id = user.id;
-    let rotate_result = tokio::task::spawn_blocking(move || {
+    let rotate_result = match auth_spawn_blocking(move || {
         let db = db_arc.lock().unwrap_or_else(|e| e.into_inner());
         rotate_refresh_token(&db, user_id, &old_hash)
     })
-    .await;
+    .await
+    {
+        Ok(result) => result,
+        Err(error) => return auth_blocking_failure_response(error),
+    };
 
     match rotate_result {
-        Ok(Ok((new_refresh_token, _new_hash, _family_id))) => (
+        Ok((new_refresh_token, _new_hash, _family_id)) => (
             StatusCode::OK,
             Json(serde_json::json!({
                 "token": new_access_token,
@@ -673,7 +682,7 @@ async fn refresh_handler(
             })),
         )
             .into_response(),
-        Ok(Err(msg)) => {
+        Err(msg) => {
             let is_replay = msg.contains("重放");
             let status = if is_replay {
                 StatusCode::GONE
@@ -684,19 +693,17 @@ async fn refresh_handler(
                 status,
                 Json(serde_json::json!({
                     "error": if is_replay { "token_replay" } else { "refresh_token_invalid" },
-                    "message": msg
+                    "error_code": if is_replay {
+                        crate::error_codes::ERR_AUTH_REPLAY_DETECTED
+                    } else {
+                        crate::error_codes::ERR_AUTH_REFRESH_INVALID
+                    },
+                    "message": msg,
+                    "details": []
                 })),
             )
                 .into_response()
         }
-        Err(_) => (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "error": "internal_error",
-                "message": "服务内部错误"
-            })),
-        )
-            .into_response(),
     }
 }
 

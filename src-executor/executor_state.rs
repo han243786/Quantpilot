@@ -10,7 +10,10 @@ use qrpc_core_ir::{
 use std::collections::{BTreeMap, HashMap, VecDeque};
 use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::{
+    atomic::{AtomicU64, Ordering},
+    Arc, Mutex, RwLock,
+};
 use tokio::sync::mpsc;
 
 #[derive(Debug, Clone, serde::Serialize)]
@@ -172,6 +175,8 @@ pub struct ExecutorState {
     pub ws_tx_map: RwLock<BTreeMap<String, mpsc::UnboundedSender<WsEvent>>>,
     /// v4.8.0: 全局执行模式固定为两个模拟盘切面。
     pub global_mode: RwLock<ExecutionMode>,
+    /// v4.8.0: SSE 客户端消费落后计数, 用于 health 暴露慢客户端风险。
+    pub sse_lagged_event_count: AtomicU64,
     pub audit_log: AuditLog,
 }
 
@@ -186,6 +191,7 @@ impl ExecutorState {
             runner_pool: Mutex::new(None),
             ws_tx_map: RwLock::new(BTreeMap::new()),
             global_mode: RwLock::new(ExecutionMode::PaperSimulated),
+            sse_lagged_event_count: AtomicU64::new(0),
             audit_log: AuditLog::new(&default_storage_dir()),
         })
     }
@@ -208,6 +214,21 @@ impl ExecutorState {
         let old = current.clone();
         *current = mode;
         old
+    }
+
+    pub fn record_sse_lagged(&self, stream: &str, dropped: u64) {
+        let total = self
+            .sse_lagged_event_count
+            .fetch_add(dropped, Ordering::Relaxed)
+            + dropped;
+        eprintln!(
+            "[executor] SSE lagged: stream={}, dropped={}, total={}",
+            stream, dropped, total
+        );
+    }
+
+    pub fn sse_lagged_count(&self) -> u64 {
+        self.sse_lagged_event_count.load(Ordering::Relaxed)
     }
 
     const MAX_STRATEGIES: usize = 50;
@@ -345,6 +366,7 @@ impl ExecutorState {
             runner_pool: Mutex::new(None),
             ws_tx_map: RwLock::new(BTreeMap::new()),
             global_mode: RwLock::new(ExecutionMode::PaperSimulated),
+            sse_lagged_event_count: AtomicU64::new(0),
             audit_log: AuditLog::new(path.parent().unwrap_or_else(|| Path::new("storage"))),
         }))
     }
@@ -433,6 +455,15 @@ mod tests {
         assert!(!ExecutionMode::PaperSimulated.provider_order_submission_attached());
         assert!(!ExecutionMode::PaperActual.starts_without_provider_connection());
         assert!(ExecutionMode::PaperActual.provider_order_submission_attached());
+    }
+
+    #[test]
+    fn sse_lagged_counter_accumulates_dropped_events() {
+        let state = ExecutorState::new();
+        state.record_sse_lagged("test", 2);
+        state.record_sse_lagged("test", 3);
+
+        assert_eq!(state.sse_lagged_count(), 5);
     }
 
     #[test]

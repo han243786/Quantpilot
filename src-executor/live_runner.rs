@@ -1,4 +1,4 @@
-/// v3.7.0: 实时策略运行器 — OKX Paper 模式
+/// v3.7.0/v4.8.0: 实时策略运行器 — PaperSimulated 本地撮合 / PaperActual provider 回执
 use crate::executor_state::{ActiveStrategy, ExecutionMode, RuntimeKind, TriggerEvent};
 use crate::kline_buffer::KlinePool;
 use crate::ws_client::WsEvent;

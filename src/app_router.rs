@@ -10,7 +10,7 @@ pub fn build_app_router(state: AppState) -> Router {
     let router = register_compile_routes(router);
     // v3.0.0: 部署策略到执行端
     let router = router.route(
-        "/api/executor/deploy",
+        "/api/executor/strategies",
         axum::routing::post(crate::migration_sender::deploy_strategy),
     );
     let router = register_runtime_routes(router);

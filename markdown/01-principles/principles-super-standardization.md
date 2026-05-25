@@ -557,14 +557,15 @@ MAJOR 版本不得直接从终稿进入大规模实现。凡涉及 QS 语义、C
 | 范围 | 决策 |
 |------|------|
 | v4 provider | 只确保 OKX 单一 provider 切面 |
-| v4 `PaperSimulated` | 实时行情 + 本地模拟撮合, provider order submission 必须 detached |
-| v4 `PaperActual` | OKX 模拟盘, demo flag=1, REST 固定 `x-simulated-trading: 1`, 审计标注"OKX 模拟盘 / 非真实资金" |
+| v4 `PaperSimulated` | OKX production market-data WebSocket (public tickers + business candles) 或归档/回放数据 + 本地模拟撮合, provider order submission 必须 detached; 不需要交易 API key |
+| v4 `PaperActual` | OKX 模拟盘下单 API, demo flag=1, REST 固定 `x-simulated-trading: 1`, 审计标注"OKX 模拟盘 / 非真实资金"; 只验证执行 API schema 和回执 |
 | v4 `LiveSimulated` / `LiveActual` | 延后, 不进入 v4.8.0 执行端切面 |
 | v5 provider 扩张 | 美股、港股、A股、贵金属、大宗商品、期货、期权和其他主流支持 WebSocket 的 provider |
 
 **准入规则**:
 
 - 模拟盘与真实资金 API schema 基本一致、仅 demo/prod flag 或环境参数不同的 provider, 模拟盘切面可视为 API schema 通过。
+- 模拟盘行情不可作为策略质量验收依据。OKX demo / testnet K 线与 ticker 只可做 provider 连通性观察; 实时模拟优先使用无需交易 API key 的 OKX production market-data WebSocket (public tickers + business candles); 策略回测、参数优化和策略有效性验收必须使用真实公共行情源或已归档、可复现、通过质量校验的回放数据。
 - API schema 通过不等于真实资金通道开放; 真实资金仍必须单独通过 Risk Plane、凭证保险库、审计、额度和 production gate。
 - 不支持 WebSocket 全双工或等效实时订单/行情事件回执的 provider, 视为关键基础设施缺失, 本产品不做适配。
 - v4 文档、代码、UI 和 OpenAPI 若宣称非 OKX provider supported, 一律视为范围漂移并阻断。

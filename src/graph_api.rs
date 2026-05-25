@@ -283,7 +283,12 @@ pub(super) async fn load_graph(
 }
 
 async fn read_graph_json(path: &FsPath) -> Result<Value, (StatusCode, String)> {
-    let content = fs::read_to_string(path).await.map_err(not_found_io_error)?;
+    let content = crate::runtime_persistence::read_to_string_bounded(
+        path,
+        crate::runtime_persistence::MAX_BOUNDED_JSON_READ_BYTES,
+    )
+    .await
+    .map_err(crate::runtime_persistence::bounded_read_not_found_api_error)?;
     serde_json::from_str(&content).map_err(|error| internal_error(error.into()))
 }
 
@@ -336,7 +341,12 @@ async fn persist_graph_version(
     {
         let qs_path = graph_store_dir.join(format!("{}.qs", graph_id));
         if qs_path.exists() {
-            std::fs::read_to_string(&qs_path).unwrap_or_default()
+            crate::runtime_persistence::read_to_string_bounded(
+                &qs_path,
+                crate::runtime_persistence::MAX_BOUNDED_JSON_READ_BYTES,
+            )
+            .await
+            .unwrap_or_default()
         } else {
             generate_quantscript_from_graph_value(input_graph).map_err(internal_error)?
         }
@@ -411,46 +421,28 @@ async fn persist_graph_version(
         return Err(error);
     }
 
-    let mut replacements = Vec::new();
-    let commit_result = async {
-        replace_graph_artifact(&staging_graph, &graph_path, &mut replacements, &version_id).await?;
-        replace_graph_artifact(
-            &staging_latest,
-            &latest_path,
-            &mut replacements,
-            &version_id,
-        )
-        .await?;
-        replace_graph_artifact(
-            &staging_qs,
-            &quantscript_path,
-            &mut replacements,
-            &version_id,
-        )
-        .await?;
-        replace_graph_artifact(
-            &staging_version_graph,
-            &version_graph_path,
-            &mut replacements,
-            &version_id,
-        )
-        .await?;
-        replace_graph_artifact(
-            &staging_version_qs,
-            &version_quantscript_path,
-            &mut replacements,
-            &version_id,
-        )
-        .await?;
-        sync_directory_for_graph_commit(graph_store_dir)?;
-        sync_directory_for_graph_commit(&version_dir)?;
-        Ok::<(), (StatusCode, String)>(())
-    }
-    .await;
-    if let Err(error) = commit_result {
-        rollback_graph_replacements(&replacements).await;
+    let commit_items = vec![
+        GraphArtifactCommitItem::new(staging_graph, graph_path.clone()),
+        GraphArtifactCommitItem::new(staging_latest, latest_path.clone()),
+        GraphArtifactCommitItem::new(staging_qs, quantscript_path.clone()),
+        GraphArtifactCommitItem::new(staging_version_graph, version_graph_path),
+        GraphArtifactCommitItem::new(staging_version_qs, version_quantscript_path),
+    ];
+    let replacements = match commit_graph_artifact_bundle(
+        &commit_items,
+        &version_id,
+        &[graph_store_dir, &version_dir],
+    )
+    .await
+    {
+        Ok(replacements) => replacements,
+        Err(error) => {
+            let _ = fs::remove_dir_all(&staging).await;
+            return Err(error);
+        }
+    };
+    if replacements.is_empty() {
         let _ = fs::remove_dir_all(&staging).await;
-        return Err(error);
     }
 
     for replacement in &replacements {
@@ -478,6 +470,60 @@ async fn persist_graph_version(
 struct GraphArtifactReplacement {
     target_path: PathBuf,
     backup_path: Option<PathBuf>,
+}
+
+#[derive(Debug)]
+struct GraphArtifactCommitItem {
+    staged_path: PathBuf,
+    target_path: PathBuf,
+}
+
+impl GraphArtifactCommitItem {
+    fn new(staged_path: PathBuf, target_path: PathBuf) -> Self {
+        Self {
+            staged_path,
+            target_path,
+        }
+    }
+}
+
+async fn commit_graph_artifact_bundle(
+    items: &[GraphArtifactCommitItem],
+    version_id: &str,
+    sync_dirs: &[&FsPath],
+) -> Result<Vec<GraphArtifactReplacement>, (StatusCode, String)> {
+    for item in items {
+        if !fs::try_exists(&item.staged_path).await.map_err(io_error)? {
+            return Err(internal_error(anyhow::anyhow!(
+                "图工件提交缺少 staging 文件: {}",
+                item.staged_path.display()
+            )));
+        }
+    }
+
+    let mut replacements = Vec::new();
+    for item in items {
+        if let Err(error) = replace_graph_artifact(
+            &item.staged_path,
+            &item.target_path,
+            &mut replacements,
+            version_id,
+        )
+        .await
+        {
+            rollback_graph_replacements(&replacements).await;
+            return Err(error);
+        }
+    }
+
+    for dir in sync_dirs {
+        if let Err(error) = sync_directory_for_graph_commit(dir) {
+            rollback_graph_replacements(&replacements).await;
+            return Err(error);
+        }
+    }
+
+    Ok(replacements)
 }
 
 async fn write_synced_staging_file(
@@ -590,7 +636,12 @@ async fn read_graph_index(
             continue;
         }
 
-        let content = fs::read_to_string(&path).await.map_err(io_error)?;
+        let content = crate::runtime_persistence::read_to_string_bounded(
+            &path,
+            crate::runtime_persistence::MAX_BOUNDED_JSON_READ_BYTES,
+        )
+        .await
+        .map_err(crate::runtime_persistence::bounded_read_api_error)?;
         let value: Value =
             serde_json::from_str(&content).map_err(|error| internal_error(error.into()))?;
         let reveal_path = resolve_graph_reveal_path_from_value(&value, &path)
@@ -651,7 +702,12 @@ async fn read_graph_versions(
     }
 
     let latest_path = graph_store_dir.join(format!("{}.json", graph_id));
-    let latest_body = fs::read_to_string(&latest_path).await.ok();
+    let latest_body = crate::runtime_persistence::read_to_string_bounded(
+        &latest_path,
+        crate::runtime_persistence::MAX_BOUNDED_JSON_READ_BYTES,
+    )
+    .await
+    .ok();
     let latest_value = latest_body
         .as_deref()
         .and_then(|body| serde_json::from_str::<Value>(body).ok());
@@ -669,7 +725,12 @@ async fn read_graph_versions(
             continue;
         }
 
-        let content = fs::read_to_string(&path).await.map_err(io_error)?;
+        let content = crate::runtime_persistence::read_to_string_bounded(
+            &path,
+            crate::runtime_persistence::MAX_BOUNDED_JSON_READ_BYTES,
+        )
+        .await
+        .map_err(crate::runtime_persistence::bounded_read_api_error)?;
         let value: Value = match serde_json::from_str(&content) {
             Ok(v) => v,
             Err(e) => {
@@ -773,9 +834,12 @@ async fn refresh_latest_graph_after_delete(
     let remaining = read_graph_index(graph_store_dir).await?;
     if let Some(next_latest) = remaining.first() {
         let next_latest_path = graph_store_dir.join(format!("{}.json", next_latest.graph_id));
-        let content = fs::read_to_string(&next_latest_path)
-            .await
-            .map_err(not_found_io_error)?;
+        let content = crate::runtime_persistence::read_to_string_bounded(
+            &next_latest_path,
+            crate::runtime_persistence::MAX_BOUNDED_JSON_READ_BYTES,
+        )
+        .await
+        .map_err(crate::runtime_persistence::bounded_read_not_found_api_error)?;
         // v4.7.1: 原子写入包含 tmp fsync + rename + 父目录 fsync。
         atomic_write(&latest_path, &content).await?;
     } else {
@@ -848,7 +912,11 @@ fn apply_optional_metadata_text(
 }
 
 async fn resolve_graph_reveal_path(graph_json_path: &FsPath) -> anyhow::Result<PathBuf> {
-    let content = fs::read_to_string(graph_json_path).await?;
+    let content = crate::runtime_persistence::read_to_string_bounded(
+        graph_json_path,
+        crate::runtime_persistence::MAX_BOUNDED_JSON_READ_BYTES,
+    )
+    .await?;
     let value: Value = serde_json::from_str(&content)?;
     resolve_graph_reveal_path_from_value(&value, graph_json_path).await
 }
@@ -955,10 +1023,14 @@ mod tests {
     use super::*;
 
     fn temp_graph_test_dir() -> PathBuf {
+        let unique = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
         let dir = std::env::temp_dir().join(format!(
             "quantpilot_graph_txn_test_{}_{}",
             std::process::id(),
-            current_time_ms()
+            unique
         ));
         let _ = std::fs::remove_dir_all(&dir);
         std::fs::create_dir_all(&dir).unwrap();
@@ -982,6 +1054,39 @@ mod tests {
         rollback_graph_replacements(&replacements).await;
         assert_eq!(std::fs::read_to_string(&target).unwrap(), "old");
         assert!(!staged.exists());
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[tokio::test]
+    async fn rollback_restores_multiple_replaced_graph_artifacts() {
+        let dir = temp_graph_test_dir();
+        let target_a = dir.join("a.json");
+        let target_b = dir.join("b.json");
+        let staged_a = dir.join("staged-a.json");
+        let staged_b = dir.join("staged-b.json");
+        std::fs::write(&target_a, "old-a").unwrap();
+        std::fs::write(&target_b, "old-b").unwrap();
+        std::fs::write(&staged_a, "new-a").unwrap();
+        std::fs::write(&staged_b, "new-b").unwrap();
+
+        let replacements = commit_graph_artifact_bundle(
+            &[
+                GraphArtifactCommitItem::new(staged_a, target_a.clone()),
+                GraphArtifactCommitItem::new(staged_b, target_b.clone()),
+            ],
+            "test-version",
+            &[],
+        )
+        .await
+        .unwrap();
+
+        assert_eq!(std::fs::read_to_string(&target_a).unwrap(), "new-a");
+        assert_eq!(std::fs::read_to_string(&target_b).unwrap(), "new-b");
+
+        rollback_graph_replacements(&replacements).await;
+        assert_eq!(std::fs::read_to_string(&target_a).unwrap(), "old-a");
+        assert_eq!(std::fs::read_to_string(&target_b).unwrap(), "old-b");
 
         let _ = std::fs::remove_dir_all(&dir);
     }

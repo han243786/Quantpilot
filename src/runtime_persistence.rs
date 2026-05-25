@@ -10,6 +10,60 @@ macro_rules! check_storage_quota {
     };
 }
 
+pub(crate) const MAX_BOUNDED_JSON_READ_BYTES: u64 = 100 * 1024 * 1024;
+
+pub(crate) async fn read_to_string_bounded(
+    path: &FsPath,
+    max_bytes: u64,
+) -> std::io::Result<String> {
+    let metadata = fs::metadata(path).await?;
+    if metadata.len() > max_bytes {
+        return Err(file_too_large_error(path, metadata.len(), max_bytes));
+    }
+
+    let content = fs::read_to_string(path).await?;
+    if content.len() as u64 > max_bytes {
+        return Err(file_too_large_error(path, content.len() as u64, max_bytes));
+    }
+    Ok(content)
+}
+
+pub(crate) fn bounded_read_api_error(error: std::io::Error) -> (StatusCode, String) {
+    if error.kind() == std::io::ErrorKind::InvalidData
+        && error
+            .to_string()
+            .contains(crate::error_codes::ERR_FILE_TOO_LARGE)
+    {
+        return crate::api_errors::json_bad_request_with_code(
+            "file_too_large",
+            crate::error_codes::ERR_FILE_TOO_LARGE,
+            error.to_string(),
+        );
+    }
+    io_error(error)
+}
+
+pub(crate) fn bounded_read_not_found_api_error(error: std::io::Error) -> (StatusCode, String) {
+    if error.kind() == std::io::ErrorKind::NotFound {
+        not_found_io_error(error)
+    } else {
+        bounded_read_api_error(error)
+    }
+}
+
+fn file_too_large_error(path: &FsPath, actual_bytes: u64, max_bytes: u64) -> std::io::Error {
+    std::io::Error::new(
+        std::io::ErrorKind::InvalidData,
+        format!(
+            "{}: `{}` is {} bytes, limit is {} bytes",
+            crate::error_codes::ERR_FILE_TOO_LARGE,
+            path.display(),
+            actual_bytes,
+            max_bytes
+        ),
+    )
+}
+
 pub(crate) async fn atomic_write_json(
     path: &FsPath,
     value: &impl serde::Serialize,
@@ -163,9 +217,9 @@ pub(super) async fn load_runtime_report_record(
     report_id: &str,
 ) -> Result<RuntimeEvidenceReportRecord, (StatusCode, String)> {
     let path = report_store_dir.join(format!("{}.json", sanitize_storage_path_segment(report_id)));
-    let content = fs::read_to_string(&path)
+    let content = read_to_string_bounded(&path, MAX_BOUNDED_JSON_READ_BYTES)
         .await
-        .map_err(not_found_io_error)?;
+        .map_err(bounded_read_not_found_api_error)?;
     let record = serde_json::from_str(&content).map_err(|error| internal_error(error.into()))?;
     Ok(record)
 }
@@ -183,7 +237,8 @@ pub(super) async fn list_runtime_report_records(
         if entry.path().extension().and_then(|ext| ext.to_str()) != Some("json") {
             continue;
         }
-        let content = fs::read_to_string(entry.path()).await?;
+        let path = entry.path();
+        let content = read_to_string_bounded(&path, MAX_BOUNDED_JSON_READ_BYTES).await?;
         if let Ok(record) = serde_json::from_str::<RuntimeEvidenceReportRecord>(&content) {
             records.push(record);
         }
@@ -213,9 +268,9 @@ pub(super) async fn load_runtime_parameter_mutation_record(
         "{}.json",
         sanitize_storage_path_segment(proposal_id)
     ));
-    let content = fs::read_to_string(&path)
+    let content = read_to_string_bounded(&path, MAX_BOUNDED_JSON_READ_BYTES)
         .await
-        .map_err(not_found_io_error)?;
+        .map_err(bounded_read_not_found_api_error)?;
     let record = serde_json::from_str(&content).map_err(|error| internal_error(error.into()))?;
     Ok(record)
 }
@@ -233,7 +288,8 @@ pub(super) async fn list_runtime_parameter_mutation_records(
         if entry.path().extension().and_then(|ext| ext.to_str()) != Some("json") {
             continue;
         }
-        let content = fs::read_to_string(entry.path()).await?;
+        let path = entry.path();
+        let content = read_to_string_bounded(&path, MAX_BOUNDED_JSON_READ_BYTES).await?;
         if let Ok(record) = serde_json::from_str::<RuntimeParameterMutationRecord>(&content) {
             records.push(record);
         }
@@ -263,9 +319,9 @@ pub(super) async fn load_runtime_ai_proposal_record(
         "{}.json",
         sanitize_storage_path_segment(ai_proposal_id)
     ));
-    let content = fs::read_to_string(&path)
+    let content = read_to_string_bounded(&path, MAX_BOUNDED_JSON_READ_BYTES)
         .await
-        .map_err(not_found_io_error)?;
+        .map_err(bounded_read_not_found_api_error)?;
     let record = serde_json::from_str(&content).map_err(|error| internal_error(error.into()))?;
     Ok(record)
 }
@@ -283,7 +339,8 @@ pub(super) async fn list_runtime_ai_proposal_records(
         if entry.path().extension().and_then(|ext| ext.to_str()) != Some("json") {
             continue;
         }
-        let content = fs::read_to_string(entry.path()).await?;
+        let path = entry.path();
+        let content = read_to_string_bounded(&path, MAX_BOUNDED_JSON_READ_BYTES).await?;
         if let Ok(record) = serde_json::from_str::<RuntimeAiProposalRecord>(&content) {
             records.push(record);
         }
@@ -308,9 +365,9 @@ pub(super) async fn load_run_record_from_state(
     let path = state
         .run_store_dir
         .join(format!("{}.json", sanitize_storage_path_segment(run_id)));
-    let content = fs::read_to_string(&path)
+    let content = read_to_string_bounded(&path, MAX_BOUNDED_JSON_READ_BYTES)
         .await
-        .map_err(not_found_io_error)?;
+        .map_err(bounded_read_not_found_api_error)?;
     let record = serde_json::from_str(&content).map_err(|error| internal_error(error.into()))?;
     Ok(normalize_run_record(
         record,
@@ -377,9 +434,9 @@ pub(super) async fn load_experiment_record_from_state(
         "{}.json",
         sanitize_storage_path_segment(experiment_id)
     ));
-    let content = fs::read_to_string(&path)
+    let content = read_to_string_bounded(&path, MAX_BOUNDED_JSON_READ_BYTES)
         .await
-        .map_err(not_found_io_error)?;
+        .map_err(bounded_read_not_found_api_error)?;
     let record = serde_json::from_str(&content).map_err(|error| internal_error(error.into()))?;
     Ok(record)
 }
@@ -392,7 +449,8 @@ pub(super) async fn list_run_records(run_store_dir: &PathBuf) -> std::io::Result
         if entry.path().extension().and_then(|ext| ext.to_str()) != Some("json") {
             continue;
         }
-        let content = fs::read_to_string(entry.path()).await?;
+        let path = entry.path();
+        let content = read_to_string_bounded(&path, MAX_BOUNDED_JSON_READ_BYTES).await?;
         if let Ok(record) = serde_json::from_str::<RunRecord>(&content) {
             records.push(normalize_run_record(
                 record,
@@ -442,7 +500,8 @@ pub(super) async fn list_experiment_records(
         if entry.path().extension().and_then(|ext| ext.to_str()) != Some("json") {
             continue;
         }
-        let content = fs::read_to_string(entry.path()).await?;
+        let path = entry.path();
+        let content = read_to_string_bounded(&path, MAX_BOUNDED_JSON_READ_BYTES).await?;
         if let Ok(record) = serde_json::from_str::<ExperimentRecord>(&content) {
             records.push(record);
         }
@@ -461,4 +520,30 @@ pub(super) async fn persist_json<T: serde::Serialize>(
     fs::create_dir_all(store_dir).await?;
     let file_path = store_dir.join(format!("{}.json", sanitize_storage_path_segment(id)));
     atomic_write_json(&file_path, data).await
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn bounded_read_rejects_files_above_limit() {
+        let dir = std::env::temp_dir().join(format!(
+            "quantpilot_bounded_read_test_{}_{}",
+            std::process::id(),
+            chrono::Utc::now().timestamp_millis()
+        ));
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("large.json");
+        std::fs::write(&path, "12345").unwrap();
+
+        let error = read_to_string_bounded(&path, 4).await.unwrap_err();
+
+        assert_eq!(error.kind(), std::io::ErrorKind::InvalidData);
+        assert!(error
+            .to_string()
+            .contains(crate::error_codes::ERR_FILE_TOO_LARGE));
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
 }

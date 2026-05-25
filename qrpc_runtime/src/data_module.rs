@@ -26,6 +26,7 @@ const HTTP_TIMEOUT_SECS: u64 = 10;
 const QUOTE_CACHE_TTL_MS: u64 = 5_000;
 const KLINE_CACHE_TTL_MS: u64 = 60_000;
 const HISTORICAL_CACHE_TTL_MS: u64 = 6 * 60 * 60 * 1000;
+const HISTORICAL_CACHE_MAX_BYTES: u64 = 100 * 1024 * 1024;
 const BINANCE_BASE_URL: &str = "https://api.binance.com";
 
 #[derive(Debug)]
@@ -1432,7 +1433,7 @@ fn sanitize_filename_component(input: &str) -> String {
 
 fn load_historical_cache(source: &DataSourceConfig, now_ms: u64) -> Option<Vec<NormalizedKline>> {
     let path = historical_cache_path(source);
-    let body = fs::read_to_string(path).ok()?;
+    let body = read_historical_cache_body(&path)?;
     let cache = serde_json::from_str::<HistoricalBarsCache>(&body).ok()?;
     let is_fresh = now_ms.saturating_sub(cache.fetched_at_ms) <= HISTORICAL_CACHE_TTL_MS;
     if is_fresh && !cache.bars.is_empty() {
@@ -1444,9 +1445,18 @@ fn load_historical_cache(source: &DataSourceConfig, now_ms: u64) -> Option<Vec<N
 
 fn load_stale_historical_cache(source: &DataSourceConfig) -> Option<Vec<NormalizedKline>> {
     let path = historical_cache_path(source);
-    let body = fs::read_to_string(path).ok()?;
+    let body = read_historical_cache_body(&path)?;
     let cache = serde_json::from_str::<HistoricalBarsCache>(&body).ok()?;
     (!cache.bars.is_empty()).then_some(cache.bars)
+}
+
+fn read_historical_cache_body(path: &std::path::Path) -> Option<String> {
+    let metadata = fs::metadata(path).ok()?;
+    if metadata.len() > HISTORICAL_CACHE_MAX_BYTES {
+        return None;
+    }
+    let body = fs::read_to_string(path).ok()?;
+    (body.len() as u64 <= HISTORICAL_CACHE_MAX_BYTES).then_some(body)
 }
 
 fn persist_historical_cache(

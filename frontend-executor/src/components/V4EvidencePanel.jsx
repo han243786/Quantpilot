@@ -38,10 +38,11 @@ export default function V4EvidencePanel({ strategyId, runtimeKind }) {
     const source = new EventSource(`/api/executor/strategies/${strategyId}/events`);
     source.onopen = () => setStreamStatus("connected");
     source.onerror = () => setStreamStatus("error");
-    source.onmessage = (event) => {
+    const handleEvidenceEvent = (event) => {
       try {
         const payload = JSON.parse(event.data);
-        if (payload.type === "v4RuntimeMemorySnapshot" && payload.memory_snapshot) {
+        const eventType = event.type === "message" ? payload.type : event.type;
+        if (eventType === "v4RuntimeMemorySnapshot" && payload.memory_snapshot) {
           setSnapshot(payload.memory_snapshot);
           setRuntimeEvents(asArray(payload.runtime_events));
         }
@@ -49,8 +50,13 @@ export default function V4EvidencePanel({ strategyId, runtimeKind }) {
         console.warn("executor: v4 evidence parse", error);
       }
     };
+    source.addEventListener("v4RuntimeMemorySnapshot", handleEvidenceEvent);
+    source.onmessage = handleEvidenceEvent;
 
-    return () => source.close();
+    return () => {
+      source.removeEventListener("v4RuntimeMemorySnapshot", handleEvidenceEvent);
+      source.close();
+    };
   }, [strategyId, runtimeKind]);
 
   const projection = useMemo(() => {

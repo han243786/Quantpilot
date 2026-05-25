@@ -92,3 +92,21 @@
 | W0-2 入口 | 已接线 | `/api/executor/provider/okx-demo/orders*` submit/query/cancel |
 
 后续验证命令: `powershell tools/track-gate-metrics.ps1 -DryRun`, `powershell tools/check-full-feature-tree.ps1`, `powershell tools/check-user-facing-text.ps1`, `powershell tools/check-utf8.ps1`, `cargo test --bin executor okx`。
+
+### v4.8.0 W4 收口元流水线执行 (2026-05-25)
+
+本轮在 W4 代码质量与运维收口后执行元流水线，重点检查能力栈一致性、门禁定义可解析性和全量树覆盖。首次全量树检查发现 6 个新增 active 文件未登记，已同步到 `markdown/10-overview/overview-full-feature-tree.md`。
+
+| 检查项 | 状态 | 说明 |
+|--------|:--:|------|
+| `tools/track-gate-metrics.ps1 -DryRun` | 通过 | 6 个门禁定义完成结构校验 |
+| `tools/check-capability-stack.ps1` | 通过 | schema hash、模块 key、后端 fixture、前端 projection 与元流水线 DryRun 对齐 |
+| `tools/check-full-feature-tree.ps1` | 通过 | 已登记新增 v4 runtime 拆分文件、StrategyCanvas 交互测试、v4 E2E、auth API 测试 |
+
+新增全量树登记路径:
+- `qrpc_runtime/src/v4_runtime_types.rs`
+- `qrpc_runtime/src/v4_simulated_execution.rs`
+- `qrpc_runtime/src/v4_runtime_tests.rs`
+- `frontend/src/components/StrategyCanvas.interaction.test.jsx`
+- `frontend/tests/e2e/v4-runtime-contracts.spec.js`
+- `tests/api_auth.rs`
