@@ -10,6 +10,7 @@ const ExecutorTopBar = memo(function ExecutorTopBar({
   onEmergencyStop,
   mode,
   modeError,
+  runtimeKind,
   onModeSwitch,
 }) {
   const statusLabel = status === "running" ? "运行中" : status === "error" ? "错误" : "空闲";
@@ -48,6 +49,10 @@ const ExecutorTopBar = memo(function ExecutorTopBar({
           {statusMsg && <span className="exec-status-msg" title={statusMsg}>{statusMsg}</span>}
           {modeError && <span className="exec-status-msg exec-status-err" title={modeError}>{modeError}</span>}
         </div>
+
+        <span className={`exec-runtime-badge ${(runtimeKind || "v3").toLowerCase()}`}>
+          {(runtimeKind || "v3").toUpperCase()}
+        </span>
 
         {/* v3.5.0: Paper/Live 模式切换 */}
         <button

@@ -43,6 +43,9 @@ async fn execute_backtest_request(
         .map_err(|message| json_bad_request("bad_request", message))?;
     let graph_json = request.graph_json.as_ref()
         .ok_or_else(|| json_bad_request("bad_request", "回测请求必须包含 graph_json，请从图编辑器发起"))?;
+    if is_v4_backtest_request(request, graph_json) {
+        return execute_v4_backtest_request(state, user_id, request, graph_json, id_suffix).await;
+    }
     let qs_protocol = compile_runtime_protocol_via_qs(graph_json)?;
     let runtime_protocol = apply_backtest_execution_assumption_overrides(
         &qs_protocol,
@@ -198,6 +201,523 @@ async fn execute_backtest_request(
     );
 
     Ok(record)
+}
+
+async fn execute_v4_backtest_request(
+    state: &AppState,
+    user_id: &auth::UserId,
+    request: &FrontendRunRequest,
+    graph_json: &Value,
+    id_suffix: Option<&str>,
+) -> Result<BacktestRecord, (StatusCode, String)> {
+    let now_ms = current_time_ms();
+    let actor = normalize_actor_identity(request.actor.clone());
+    let _collaboration = collaboration_with_run_actor(
+        &state.graph_store_dir,
+        &request.runtime_config.metadata.graph_id,
+        &actor,
+    )
+    .await?;
+
+    static V4_BACKTEST_SEQ: std::sync::atomic::AtomicU64 =
+        std::sync::atomic::AtomicU64::new(0);
+    let backtest_id = match id_suffix {
+        Some(suffix) => format!("backtest_{}_{}", now_ms, suffix),
+        None => format!(
+            "backtest_{}_v4_{}",
+            now_ms,
+            V4_BACKTEST_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+        ),
+    };
+
+    let graph = resolve_v4_backtest_graph(graph_json)?;
+    let symbols = resolve_v4_backtest_symbols(request, graph_json, &graph);
+    let expanded_graph =
+        qrpc_runtime::expand_v4_graph_for_symbols(&graph, &symbols).map_err(internal_error)?;
+    let event_type = resolve_v4_backtest_market_event_type(&expanded_graph)?;
+    let bars = qrpc_runtime::build_v4_deterministic_replay_bars(&symbols, now_ms, &event_type);
+
+    let v4_artifact = tokio::task::spawn_blocking(move || {
+        let mut runtime = qrpc_runtime::V4PaperSimulatedRuntime::new_for_backtest(
+            expanded_graph,
+            runtime_simulated_v4_matrix("paper-local"),
+            vec![qrpc_core_ir::v4::ExecutionCapabilityKind::Market],
+        )
+        .map_err(internal_error)?;
+        runtime
+            .run_backtest_bars(&bars)
+            .map_err(|error| internal_error(anyhow::anyhow!(error)))
+    })
+    .await
+    .map_err(|error| internal_error(anyhow::anyhow!("v4 backtest task cancelled: {error}")))??;
+
+    let config_hash = qrpc_core::canonical_json_sha256_digest(graph_json)
+        .map(|digest| digest.value)
+        .unwrap_or_else(|_| format!("v4_backtest_{}", now_ms));
+    let governance =
+        runtime_governance_snapshot(&request.runtime_config.metadata, Some(config_hash.as_str()));
+    let mut events = frontend_events_from_v4_backtest_artifact(&backtest_id, &v4_artifact);
+    prepend_capability_snapshot_event(
+        &mut events,
+        &backtest_id,
+        &request.runtime_config.metadata.mode,
+        now_ms,
+        &governance,
+    );
+    attach_runtime_event_envelopes(
+        &mut events,
+        &backtest_id,
+        &request.runtime_config.metadata.mode,
+        &governance,
+    );
+    validate_runtime_event_envelopes(&events, &backtest_id, &governance)
+        .map_err(|message| internal_error(anyhow::anyhow!(message)))?;
+
+    let backtest = build_v4_backtest_output(&v4_artifact);
+    let account = account_summary_from_portfolio(&backtest.final_portfolio);
+    let record = BacktestRecord {
+        backtest_id: backtest_id.clone(),
+        graph_id: request.runtime_config.metadata.graph_id.clone(),
+        compile_id: request.runtime_config.metadata.compile_id.clone(),
+        created_at_ms: now_ms,
+        protocol_name: "quantpilot/v4-backtest-runtime".to_string(),
+        config_hash: config_hash.clone(),
+        account: account.clone(),
+        events: events.clone(),
+        backtest,
+        backtest_spec: None,
+        artifacts: None,
+        backtest_artifacts: None,
+        governance,
+        actor: Some(actor.clone()),
+        degraded: false,
+    };
+
+    let backtest_artifacts = build_backtest_artifact_views(&record).map_err(internal_error)?;
+    let record = BacktestRecord {
+        backtest_artifacts: Some(backtest_artifacts.clone()),
+        ..record
+    };
+    let spilled = maybe_spill_transient_backtest_record(
+        state.transient_backtest_store_dir.as_ref(),
+        &record,
+        state.transient_backtest_spill_threshold_bytes,
+    )
+    .await
+    .map_err(io_error)?;
+    if !spilled {
+        state
+            .backtests
+            .write()
+            .await
+            .insert(auth::scoped_key(user_id, &backtest_id), record.clone());
+    }
+
+    safe_eprintln!(
+        "[audit] v4 backtest complete user={} backtest={} graph={} symbols={} events={} trajectory={}",
+        user_id.0,
+        backtest_id,
+        request.runtime_config.metadata.graph_id,
+        v4_artifact.symbols.len(),
+        record.events.len(),
+        v4_artifact.machine_trajectory.len()
+    );
+
+    Ok(record)
+}
+
+fn is_v4_backtest_request(request: &FrontendRunRequest, graph_json: &Value) -> bool {
+    request
+        .backtest_options
+        .runtime_kind
+        .as_deref()
+        .is_some_and(|kind| kind.eq_ignore_ascii_case("v4"))
+        || graph_json
+            .pointer("/metadata/artifacts/v4_machine_graph")
+            .is_some()
+        || graph_json
+            .pointer("/metadata/v4_machine_graph")
+            .is_some()
+        || graph_json
+            .pointer("/metadata/artifacts/quantscript/formal_source")
+            .and_then(Value::as_str)
+            .is_some_and(|source| source.trim_start().starts_with("v4_strategy"))
+}
+
+fn resolve_v4_backtest_graph(
+    graph_json: &Value,
+) -> Result<qrpc_core_ir::v4::V4MachineGraphContract, (StatusCode, String)> {
+    for pointer in [
+        "/metadata/artifacts/v4_machine_graph",
+        "/metadata/v4_machine_graph",
+        "/artifacts/v4_machine_graph",
+    ] {
+        if let Some(value) = graph_json.pointer(pointer) {
+            let graph = serde_json::from_value::<qrpc_core_ir::v4::V4MachineGraphContract>(
+                value.clone(),
+            )
+            .map_err(|error| {
+                json_bad_request(
+                    "v4_graph_invalid",
+                    format!("failed to parse {pointer}: {error}"),
+                )
+            })?;
+            graph.validate_static_contract().map_err(|errors| {
+                json_bad_request_with_code(
+                    "v4_graph_invalid",
+                    crate::error_codes::ERR_QSC_CONTRACT_INVALID,
+                    format!("v4 machine graph failed static validation: {}", errors.join("; ")),
+                )
+            })?;
+            return Ok(graph);
+        }
+    }
+
+    if let Some(source) = graph_json
+        .pointer("/metadata/artifacts/quantscript/formal_source")
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .filter(|source| !source.is_empty())
+    {
+        let audit = quantscript::audit_v4_quant_script_static(source, &runtime_v4_static_bundle());
+        let handoff = quantscript::build_v4_qs_runtime_handoff(&audit);
+        if !handoff.accepted_for_runtime_handoff {
+            return Err(json_bad_request_with_code(
+                "v4_runtime_handoff_rejected",
+                crate::error_codes::ERR_QSC_CONTRACT_INVALID,
+                format!(
+                    "v4 QS backtest handoff rejected: {}",
+                    handoff.diagnostics.join("; ")
+                ),
+            ));
+        }
+        return audit.parsed_graph.ok_or_else(|| {
+            json_bad_request_with_code(
+                "v4_graph_missing",
+                crate::error_codes::ERR_QSC_CONTRACT_INVALID,
+                "v4 QS static audit did not produce a machine graph",
+            )
+        });
+    }
+
+    let qs_protocol = compile_runtime_protocol_via_qs(graph_json)?;
+    let compiled = compile_runtime_protocol_config(&qs_protocol).map_err(internal_error)?;
+    let bridge = qrpc_core_ir::v4::bridge_core_ir_to_v4_machine_graph(&compiled.core_ir);
+    bridge.graph.ok_or_else(|| {
+        json_bad_request_with_code(
+            "v4_graph_missing",
+            crate::error_codes::ERR_QSC_CONTRACT_INVALID,
+            format!(
+                "core IR compatibility bridge could not produce a v4 graph: {:?}",
+                bridge.diagnostics
+            ),
+        )
+    })
+}
+
+fn resolve_v4_backtest_symbols(
+    request: &FrontendRunRequest,
+    graph_json: &Value,
+    graph: &qrpc_core_ir::v4::V4MachineGraphContract,
+) -> Vec<String> {
+    let request_symbols = request
+        .backtest_options
+        .symbols
+        .iter()
+        .cloned()
+        .collect::<Vec<_>>();
+    if !request_symbols.is_empty() {
+        return qrpc_runtime::normalize_v4_backtest_symbols(&request_symbols);
+    }
+    for value in [
+        graph_json.pointer("/metadata/artifacts/v4_symbols"),
+        graph.metadata.get("symbols"),
+    ]
+    .into_iter()
+    .flatten()
+    {
+        if let Some(values) = value.as_array() {
+            let symbols = values
+                .iter()
+                .filter_map(Value::as_str)
+                .map(ToString::to_string)
+                .collect::<Vec<_>>();
+            if !symbols.is_empty() {
+                return qrpc_runtime::normalize_v4_backtest_symbols(&symbols);
+            }
+        }
+    }
+    qrpc_runtime::normalize_v4_backtest_symbols(&[])
+}
+
+fn resolve_v4_backtest_market_event_type(
+    graph: &qrpc_core_ir::v4::V4MachineGraphContract,
+) -> Result<String, (StatusCode, String)> {
+    let Some(catalog) = &graph.event_catalog else {
+        return Err(json_bad_request_with_code(
+            "v4_event_catalog_missing",
+            crate::error_codes::ERR_QSC_CONTRACT_INVALID,
+            "v4 backtest requires MachineEventCatalog",
+        ));
+    };
+    catalog
+        .events
+        .iter()
+        .filter(|event| {
+            event.source_kind == qrpc_core_ir::v4::MachineEventSourceKind::MarketData
+        })
+        .find(|event| event.event_type.contains("bar") || event.event_type.contains("price"))
+        .or_else(|| {
+            catalog.events.iter().find(|event| {
+                event.source_kind == qrpc_core_ir::v4::MachineEventSourceKind::MarketData
+            })
+        })
+        .or_else(|| catalog.events.first())
+        .map(|event| event.event_type.clone())
+        .ok_or_else(|| {
+            json_bad_request_with_code(
+                "v4_event_catalog_missing",
+                crate::error_codes::ERR_QSC_CONTRACT_INVALID,
+                "v4 backtest requires at least one replayable event",
+            )
+        })
+}
+
+fn build_v4_backtest_output(
+    artifact: &qrpc_core_ir::v4::V4BacktestArtifact,
+) -> qrpc_core::BacktestOutput {
+    let equity_curve = v4_equity_curve_from_artifact(artifact);
+    let initial_equity = equity_curve
+        .first()
+        .map(|point| point.equity)
+        .unwrap_or_default();
+    let final_equity = equity_curve
+        .last()
+        .map(|point| point.equity)
+        .unwrap_or(initial_equity);
+    let net_profit = final_equity - initial_equity;
+    let total_return_ratio = if initial_equity.abs() > f64::EPSILON {
+        net_profit / initial_equity
+    } else {
+        0.0
+    };
+    qrpc_core::BacktestOutput {
+        mode: "v4_backtest".to_string(),
+        started_at_ms: artifact.started_at_ms,
+        ended_at_ms: artifact.ended_at_ms,
+        elapsed_ms: Some(artifact.ended_at_ms.saturating_sub(artifact.started_at_ms)),
+        sessions: Vec::new(),
+        equity_curve,
+        benchmark_equity_curve: Vec::new(),
+        period_returns: Vec::new(),
+        summary: qrpc_core::BacktestSummary {
+            step_count: artifact.input_bar_count,
+            trade_count: artifact.execution_capability_sources.len(),
+            total_return_ratio,
+            final_equity,
+            net_profit,
+            win_rate: 0.0,
+            annualized_return: 0.0,
+            annualized_volatility: 0.0,
+            risk_adjusted: Default::default(),
+            trade_analysis: Default::default(),
+            drawdown_analysis: Default::default(),
+            benchmark_comparison: None,
+            skewness: 0.0,
+            kurtosis: 0.0,
+        },
+        final_portfolio: v4_portfolio_from_artifact(artifact),
+        v4_artifact: Some(artifact.clone()),
+        debug_values: None,
+    }
+}
+
+fn v4_equity_curve_from_artifact(
+    artifact: &qrpc_core_ir::v4::V4BacktestArtifact,
+) -> Vec<qrpc_core::BacktestEquityPoint> {
+    let points = artifact
+        .final_snapshot
+        .as_ref()
+        .and_then(|snapshot| snapshot.pointer("/simulated_execution/asset_curve"))
+        .and_then(Value::as_array)
+        .map(|points| {
+            points
+                .iter()
+                .filter_map(|point| {
+                    Some(qrpc_core::BacktestEquityPoint {
+                        ts_ms: point.get("ts_ms")?.as_u64()?,
+                        equity: point.get("portfolio_value")?.as_f64()?,
+                        cash_balance: point.get("cash_balance")?.as_f64()?,
+                        net_notional: point.get("position_market_value")?.as_f64()?,
+                    })
+                })
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+    if points.is_empty() {
+        vec![qrpc_core::BacktestEquityPoint {
+            ts_ms: artifact.ended_at_ms,
+            equity: 0.0,
+            cash_balance: 0.0,
+            net_notional: 0.0,
+        }]
+    } else {
+        points
+    }
+}
+
+fn v4_portfolio_from_artifact(
+    artifact: &qrpc_core_ir::v4::V4BacktestArtifact,
+) -> qrpc_core::PortfolioState {
+    let simulated = artifact
+        .final_snapshot
+        .as_ref()
+        .and_then(|snapshot| snapshot.get("simulated_execution"));
+    let cash = simulated
+        .and_then(|value| value.get("cash_balance"))
+        .and_then(Value::as_f64)
+        .unwrap_or_default();
+    let net_notional = simulated
+        .and_then(|value| value.get("position_market_value"))
+        .and_then(Value::as_f64)
+        .unwrap_or_default();
+    let mut portfolio = qrpc_core::PortfolioState::new(cash, artifact.ended_at_ms);
+    portfolio.total_net_notional = net_notional;
+    portfolio.total_gross_notional = net_notional.abs();
+    portfolio
+}
+
+fn frontend_events_from_v4_backtest_artifact(
+    backtest_id: &str,
+    artifact: &qrpc_core_ir::v4::V4BacktestArtifact,
+) -> Vec<FrontendRuntimeEvent> {
+    let mut events = Vec::new();
+    for (index, point) in v4_equity_curve_from_artifact(artifact).into_iter().enumerate() {
+        events.push(v4_frontend_event(
+            backtest_id,
+            format!("{}_v4_portfolio_{}", backtest_id, index),
+            "PortfolioUpdated",
+            "v4.runtime",
+            "v4.execution",
+            point.ts_ms,
+            "Info",
+            format!("v4 portfolio updated equity {:.2}", point.equity),
+            json!({
+                "cash_balance": point.cash_balance,
+                "available_cash_balance": point.cash_balance,
+                "frozen_cash_balance": 0.0,
+                "total_gross_notional": point.net_notional.abs(),
+                "total_net_notional": point.net_notional,
+                "total_leverage": 0.0,
+                "positions": 0,
+                "open_orders": [],
+                "equity_estimate": point.equity,
+                "trace_id": format!("{}_v4_portfolio_trace_{}", backtest_id, index),
+                "projection": {
+                    "session_index": index,
+                    "cycle_name": "v4",
+                    "session_started_at_ms": point.ts_ms
+                }
+            }),
+        ));
+    }
+    for (index, decision) in artifact.risk_plane_decisions.iter().enumerate() {
+        events.push(v4_frontend_event(
+            backtest_id,
+            format!("{}_v4_risk_{}", backtest_id, index),
+            "RiskDecisionProduced",
+            "v4.risk_plane",
+            decision.target_machine_id.clone(),
+            decision.ts_ms,
+            if decision.approved { "Info" } else { "Warn" },
+            decision.reason.clone(),
+            json!({
+                "status": if decision.approved { "APPROVED" } else { "REJECTED" },
+                "reason_code": if decision.approved { "V4_RISK_APPROVED" } else { "V4_RISK_REJECTED" },
+                "decision": decision,
+                "trace_id": format!("{}_v4_risk_trace_{}", backtest_id, index),
+                "projection": {
+                    "session_index": index,
+                    "cycle_name": "v4",
+                    "session_started_at_ms": decision.ts_ms
+                }
+            }),
+        ));
+    }
+    for (index, source) in artifact.execution_capability_sources.iter().enumerate() {
+        events.push(v4_frontend_event(
+            backtest_id,
+            format!("{}_v4_execution_capability_{}", backtest_id, index),
+            "ExecutionPlanned",
+            "v4.execution_capability",
+            source.target_machine_id.clone(),
+            source.ts_ms,
+            if source.accepted { "Info" } else { "Warn" },
+            source.reason.clone(),
+            json!({
+                "orders": if source.accepted { 1 } else { 0 },
+                "capability_source": source,
+                "trace_id": format!("{}_v4_execution_trace_{}", backtest_id, index),
+                "projection": {
+                    "session_index": index,
+                    "cycle_name": "v4",
+                    "session_started_at_ms": source.ts_ms
+                }
+            }),
+        ));
+    }
+    for (index, point) in artifact.machine_trajectory.iter().enumerate() {
+        events.push(v4_frontend_event(
+            backtest_id,
+            format!("{}_v4_machine_{}", backtest_id, index),
+            "V4MachineTrajectoryObserved",
+            "v4.machine_graph",
+            point.machine_id.clone(),
+            point.ts_ms,
+            "Info",
+            format!("{} reached {}", point.machine_id, point.state_id),
+            json!({
+                "trajectory": point,
+                "trace_id": format!("{}_v4_machine_trace_{}", backtest_id, index),
+                "projection": {
+                    "session_index": index,
+                    "cycle_name": "v4",
+                    "session_started_at_ms": point.ts_ms
+                }
+            }),
+        ));
+    }
+    events.sort_by(|left, right| {
+        left.event_time_ms
+            .cmp(&right.event_time_ms)
+            .then_with(|| left.event_id.cmp(&right.event_id))
+    });
+    events
+}
+
+#[allow(clippy::too_many_arguments)]
+fn v4_frontend_event(
+    _backtest_id: &str,
+    event_id: String,
+    event_type: &str,
+    source_id: impl Into<String>,
+    node_id: impl Into<String>,
+    event_time_ms: u64,
+    severity: &str,
+    summary: impl Into<String>,
+    payload: Value,
+) -> FrontendRuntimeEvent {
+    FrontendRuntimeEvent {
+        event_id,
+        event_type: event_type.to_string(),
+        source_id: source_id.into(),
+        node_id: node_id.into(),
+        event_time_ms,
+        severity: severity.to_string(),
+        summary: summary.into(),
+        payload,
+        envelope: RuntimeEventEnvelope::default(),
+    }
 }
 
 fn normalize_experiment_float_axis(
@@ -356,6 +876,8 @@ async fn start_backtest_experiment(
             backtest_options: FrontendBacktestOptions {
                 replay_source: Some(replay_source),
                 execution_assumptions: Some(override_values.clone()),
+                runtime_kind: request.backtest_options.runtime_kind.clone(),
+                symbols: request.backtest_options.symbols.clone(),
             },
         };
         let record = execute_backtest_request(

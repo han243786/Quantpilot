@@ -176,6 +176,9 @@ pub(super) struct FrontendRuntimeConfig {
 pub(super) struct FrontendBacktestOptions {
     pub(super) replay_source: Option<FrontendBacktestReplaySource>,
     pub(super) execution_assumptions: Option<FrontendExecutionAssumptionOverrides>,
+    pub(super) runtime_kind: Option<String>,
+    #[serde(default)]
+    pub(super) symbols: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]

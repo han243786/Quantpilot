@@ -1142,6 +1142,8 @@ pub struct BacktestOutput {
     pub period_returns: Vec<PeriodReturn>,
     pub summary: BacktestSummary,
     pub final_portfolio: PortfolioState,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub v4_artifact: Option<qrpc_core_ir::v4::V4BacktestArtifact>,
     #[serde(default)]
     pub debug_values: Option<Vec<std::collections::BTreeMap<String, f64>>>,
 }

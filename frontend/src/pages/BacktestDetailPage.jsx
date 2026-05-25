@@ -4,6 +4,7 @@ import MonthlyReturnsHeatmap from "../components/MonthlyReturnsHeatmap";
 import EventStreamPanel from "../components/EventStreamPanel";
 import GovernedTimelinePanel from "../components/GovernedTimelinePanel";
 import RuntimeReportPanel from "../components/RuntimeReportPanel";
+import V4RuntimeEvidencePanel from "../components/V4RuntimeEvidencePanel";
 import { useGraphStore } from "../store/graphStore";
 import {
   navigateTo,
@@ -95,6 +96,7 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
   const equityCurve = runtime.backtestArtifacts?.equity_curve?.points || [];
   const trades = runtime.backtestArtifacts?.trade_ledger?.trades || [];
   const outputArtifacts = manifest?.output_artifacts || [];
+  const v4Artifact = runtime.backtestArtifacts?.v4_artifact || null;
   const summary = metrics?.summary || null;
   const startedAt = metrics?.started_at_ms || null;
   const endedAt = metrics?.ended_at_ms || null;
@@ -431,6 +433,43 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
               testId="backtest-detail-timeline"
             />
           </AnalysisSection>
+
+          {v4Artifact ? (
+            <AnalysisSection
+              testId="backtest-detail-v4-evidence"
+              kicker="v4"
+              title="v4 Machine Evidence"
+              summary="State-machine trajectory, Risk Plane decisions, and execution capability sources captured by the v4 backtest artifact."
+            >
+              <V4RuntimeEvidencePanel
+                source={v4Artifact}
+                testId="backtest-detail-v4-evidence-panel"
+              />
+              <div className="open-orders-card" data-testid="backtest-detail-v4-artifact-card">
+                <div className="open-orders-header">
+                  <div>
+                    <div className="mini-list-title">v4 Backtest Artifact</div>
+                    <div className="muted-line">{v4Artifact.schema_version}</div>
+                  </div>
+                  <strong>{v4Artifact.symbols?.join(", ") || "-"}</strong>
+                </div>
+                <MetricPair label="Replay" value={v4Artifact.replay_mode || "-"} />
+                <MetricPair label="Bars" value={formatValue(v4Artifact.input_bar_count)} />
+                <MetricPair
+                  label="Trajectory"
+                  value={formatValue(v4Artifact.machine_trajectory?.length || 0)}
+                />
+                <MetricPair
+                  label="Risk decisions"
+                  value={formatValue(v4Artifact.risk_plane_decisions?.length || 0)}
+                />
+                <MetricPair
+                  label="Capability sources"
+                  value={formatValue(v4Artifact.execution_capability_sources?.length || 0)}
+                />
+              </div>
+            </AnalysisSection>
+          ) : null}
 
           <AnalysisSection
             testId="backtest-detail-report-lifecycle"

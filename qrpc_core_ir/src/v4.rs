@@ -20,12 +20,14 @@ pub const V4_COMPILE_TIME_CAPABILITY_REQUEST_VERSION: &str =
 pub const V4_COMPILE_TIME_CAPABILITY_REPORT_VERSION: &str =
     "quantpilot/compile-time-capability-report/v1";
 pub const V4_CORE_IR_COMPAT_BRIDGE_VERSION: &str = "quantpilot/core-ir-compat-bridge/v1";
+pub const V4_BACKTEST_ARTIFACT_VERSION: &str = "quantpilot/v4-backtest-artifact/v1";
 pub const V4_COMPAT_OBSERVATION_MACHINE_ID: &str = "compat.observation";
 pub const V4_COMPAT_DECISION_MACHINE_ID: &str = "compat.decision";
 pub const V4_COMPAT_EXECUTION_MACHINE_ID: &str = "compat.execution";
 pub const V4_COMPAT_CORE_IR_LOADED_EVENT: &str = "compat.core_ir_loaded";
 pub const V4_COMPAT_OBSERVATION_READY_EVENT: &str = "compat.observation_ready";
 pub const V4_COMPAT_RISK_APPROVED_EVENT: &str = "compat.risk_approved";
+pub const V4_RUNTIME_EVENT_REJECTED_EVENT: &str = "v4.runtime.event_rejected";
 pub const V4_RISK_PLANE_MIN_PRIORITY: i32 = 9_000;
 pub const V4_QS_TYPE_MAX_NESTING_DEPTH: u8 = 8;
 
@@ -35,6 +37,70 @@ pub enum MachineTemplateKind {
     Observation,
     Decision,
     Execution,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct V4BacktestArtifact {
+    #[serde(default = "default_v4_backtest_artifact_version")]
+    pub schema_version: String,
+    pub graph_id: String,
+    pub started_at_ms: u64,
+    pub ended_at_ms: u64,
+    pub replay_mode: String,
+    pub input_bar_count: usize,
+    #[serde(default)]
+    pub symbols: Vec<String>,
+    #[serde(default)]
+    pub machine_trajectory: Vec<V4BacktestMachineTrajectoryPoint>,
+    #[serde(default)]
+    pub risk_plane_decisions: Vec<V4BacktestRiskPlaneDecisionRecord>,
+    #[serde(default)]
+    pub execution_capability_sources: Vec<V4BacktestExecutionCapabilitySourceRecord>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub final_snapshot: Option<Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct V4BacktestMachineTrajectoryPoint {
+    pub ts_ms: u64,
+    pub event_sequence: u64,
+    pub machine_id: String,
+    pub template: MachineTemplateKind,
+    pub state_id: String,
+    pub status: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub symbol: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct V4BacktestRiskPlaneDecisionRecord {
+    pub decision_id: String,
+    pub target_machine_id: String,
+    pub source_machine_id: String,
+    pub event_type: String,
+    pub approved: bool,
+    pub reason: String,
+    pub ts_ms: u64,
+    pub sequence: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub symbol: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct V4BacktestExecutionCapabilitySourceRecord {
+    pub decision_id: String,
+    pub target_machine_id: String,
+    pub venue_id: String,
+    pub runtime_mode: RuntimeTradingMode,
+    pub accepted: bool,
+    pub reason: String,
+    pub capability: ExecutionCapabilityKind,
+    pub source: CapabilitySupportSource,
+    pub status: String,
+    pub ts_ms: u64,
+    pub sequence: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub symbol: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -170,6 +236,8 @@ pub struct MachineMemoryField {
     pub name: String,
     pub type_name: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub type_ref: Option<QsTypeRef>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub default_value: Option<Value>,
     #[serde(default)]
     pub nullable: bool,
@@ -291,6 +359,19 @@ impl V4MachineContract {
                     "memory field `{}` needs a default_value or nullable=true",
                     field.name
                 ));
+            }
+        }
+
+        for transition in &self.transitions {
+            if let Some(action) = &transition.action {
+                for memory_name in &action.memory_writes {
+                    if !memory_names.contains(memory_name.as_str()) {
+                        errors.push(format!(
+                            "transition `{}` writes undeclared memory field `{}`",
+                            transition.transition_id, memory_name
+                        ));
+                    }
+                }
             }
         }
 
@@ -3836,6 +3917,9 @@ fn build_core_ir_execution_machine(core_ir: &crate::CoreStrategyIr) -> V4Machine
         vec![MachineMemoryField {
             name: "execution_config_present".to_string(),
             type_name: "bool".to_string(),
+            type_ref: Some(QsTypeRef::Scalar {
+                scalar: QsScalarTypeKind::Bool,
+            }),
             default_value: Some(Value::Bool(true)),
             nullable: false,
         }],
@@ -3994,6 +4078,7 @@ fn count_memory_field(name: &str, count: usize) -> MachineMemoryField {
     MachineMemoryField {
         name: name.to_string(),
         type_name: "u64".to_string(),
+        type_ref: None,
         default_value: Some(Value::from(count as u64)),
         nullable: false,
     }
@@ -4531,6 +4616,10 @@ fn default_core_ir_compat_bridge_version() -> String {
     V4_CORE_IR_COMPAT_BRIDGE_VERSION.to_string()
 }
 
+fn default_v4_backtest_artifact_version() -> String {
+    V4_BACKTEST_ARTIFACT_VERSION.to_string()
+}
+
 fn default_venue_capability_matrix_version() -> String {
     V4_VENUE_CAPABILITY_MATRIX_VERSION.to_string()
 }
@@ -4744,6 +4833,11 @@ mod tests {
             memory: vec![MachineMemoryField {
                 name: "last_signal_at".to_string(),
                 type_name: "time?".to_string(),
+                type_ref: Some(QsTypeRef::Optional {
+                    inner: Box::new(QsTypeRef::Scalar {
+                        scalar: QsScalarTypeKind::Time,
+                    }),
+                }),
                 default_value: None,
                 nullable: true,
             }],

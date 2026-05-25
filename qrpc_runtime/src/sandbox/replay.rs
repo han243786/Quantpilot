@@ -6,6 +6,37 @@ use anyhow::{anyhow, Result};
 use qrpc_core::{CoreStrategyIr, DataKind};
 use std::sync::Arc;
 
+pub fn build_v4_deterministic_replay_bars(
+    symbols: &[String],
+    end_ms: u64,
+    event_type: &str,
+) -> Vec<crate::V4BacktestBarInput> {
+    let normalized_symbols = crate::normalize_v4_backtest_symbols(symbols);
+    let step_ms = 60_000;
+    let bar_count = 16_u64;
+    let start_ms = end_ms.saturating_sub((bar_count - 1) * step_ms);
+    let mut bars = Vec::new();
+    for (symbol_index, symbol) in normalized_symbols.iter().enumerate() {
+        let base = 20_000.0 + (symbol_index as f64 * 1_000.0);
+        for step in 0..bar_count {
+            let wave = if step % 2 == 0 { 1.0 } else { -0.35 };
+            bars.push(crate::V4BacktestBarInput {
+                venue_id: "paper-local".to_string(),
+                symbol: symbol.clone(),
+                close: base + (step as f64 * 37.0) + wave,
+                ts_ms: start_ms + step * step_ms,
+                event_type: event_type.to_string(),
+            });
+        }
+    }
+    bars.sort_by(|left, right| {
+        left.ts_ms
+            .cmp(&right.ts_ms)
+            .then_with(|| left.symbol.cmp(&right.symbol))
+    });
+    bars
+}
+
 /// 从 CoreStrategyIr 构建统一时间轴所需的 K 线数据提供者列表
 pub fn build_kline_providers(core_ir: &CoreStrategyIr, end_ms: u64) -> Result<Vec<KlineProvider>> {
     use crate::data_module::historical_kline_bars_for_backtest;

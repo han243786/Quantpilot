@@ -3,6 +3,8 @@ use qrpc_core::{
     BacktestRiskAdjusted, BacktestSummary, BacktestTradeAnalysis, SessionOutput,
 };
 
+pub const QPRT_EQUITY_CURVE_NON_MONOTONIC: &str = "QPRT4101";
+
 /// 从回测输出计算全部风险调整收益指标
 pub fn compute_backtest_metrics(
     summary: &mut BacktestSummary,
@@ -22,7 +24,7 @@ pub fn compute_backtest_metrics(
     let days_covered = if equity_curve.len() >= 2 {
         let start_ms = equity_curve.first().map(|p| p.ts_ms).unwrap_or(0);
         let end_ms = equity_curve.last().map(|p| p.ts_ms).unwrap_or(0);
-        ((end_ms - start_ms) as f64 / 86_400_000.0).max(1.0)
+        (end_ms.saturating_sub(start_ms) as f64 / 86_400_000.0).max(1.0)
     } else {
         1.0
     };
@@ -119,6 +121,25 @@ pub fn compute_backtest_metrics(
     let (skew, kurt) = compute_skewness_kurtosis(&daily_returns);
     summary.skewness = skew;
     summary.kurtosis = kurt;
+}
+
+pub fn equity_curve_monotonicity_diagnostics(equity_curve: &[BacktestEquityPoint]) -> Vec<String> {
+    equity_curve
+        .windows(2)
+        .enumerate()
+        .filter_map(|(index, window)| {
+            let left = &window[0];
+            let right = &window[1];
+            (right.ts_ms < left.ts_ms).then(|| {
+                format!(
+                    "{QPRT_EQUITY_CURVE_NON_MONOTONIC}: equity_curve timestamp regressed at index {} ({} -> {})",
+                    index + 1,
+                    left.ts_ms,
+                    right.ts_ms
+                )
+            })
+        })
+        .collect()
 }
 
 /// 从毫秒时间戳计算年月字符串 (确定性的，无外部库依赖)
@@ -619,7 +640,7 @@ mod tests {
 
     #[test]
     fn drawdown_analysis_detects_recovery() {
-        let equity: Vec<BacktestEquityPoint> = vec![
+        let equity: Vec<BacktestEquityPoint> = [
             (0, 100_000.0),
             (86_400_000, 95_000.0),
             (172_800_000, 92_000.0),
@@ -661,5 +682,40 @@ mod tests {
         compute_backtest_metrics(&mut summary, &[], &[], &[]);
         // 不 panic 即通过
         assert_eq!(summary.risk_adjusted.sharpe_ratio, 0.0);
+    }
+
+    #[test]
+    fn non_monotonic_equity_curve_reports_diagnostic_and_does_not_panic() {
+        let equity: Vec<BacktestEquityPoint> =
+            [(2000, 100_000.0), (1000, 99_000.0), (3000, 101_000.0)]
+                .iter()
+                .map(|(ts, eq)| BacktestEquityPoint {
+                    ts_ms: *ts,
+                    equity: *eq,
+                    cash_balance: *eq,
+                    net_notional: 0.0,
+                })
+                .collect();
+        let mut summary = BacktestSummary {
+            step_count: 3,
+            trade_count: 0,
+            total_return_ratio: 0.01,
+            final_equity: 101_000.0,
+            net_profit: 1_000.0,
+            win_rate: 0.0,
+            annualized_return: 0.0,
+            annualized_volatility: 0.0,
+            risk_adjusted: Default::default(),
+            trade_analysis: Default::default(),
+            drawdown_analysis: Default::default(),
+            benchmark_comparison: None,
+            skewness: 0.0,
+            kurtosis: 0.0,
+        };
+
+        compute_backtest_metrics(&mut summary, &[], &equity, &[]);
+        let diagnostics = equity_curve_monotonicity_diagnostics(&equity);
+        assert_eq!(diagnostics.len(), 1);
+        assert!(diagnostics[0].contains(QPRT_EQUITY_CURVE_NON_MONOTONIC));
     }
 }

@@ -150,8 +150,15 @@ async fn acknowledge_alert(
 ) -> Result<Json<AlertFiring>, (StatusCode, String)> {
     let now_ms = current_time_ms();
     let scoped = auth::scoped_key(&user_id, &firing_id);
-    let mut firings = state.alert_firings.write().await;
-    if let Some(firing) = firings.get_mut(&scoped) {
+    let updated = {
+        let mut firings = state.alert_firings.write().await;
+        let Some(firing) = firings.get_mut(&scoped) else {
+            return Err(json_not_found(
+                "not_found",
+                crate::error_codes::ERR_ALERT_NOT_FOUND,
+                format!("告警触发记录 '{}' 不存在", firing_id),
+            ));
+        };
         // v1.2.1: 已确认的告警再次调用时标记为已解决
         if firing.state == AlertFiringState::Acknowledged {
             firing.state = AlertFiringState::Resolved;
@@ -161,15 +168,11 @@ async fn acknowledge_alert(
             firing.acknowledged_at_ms = Some(now_ms);
             firing.acknowledged_by = Some(request.actor_id.clone());
         }
-        let updated = firing.clone();
-        // 持久化告警状态变更
-        let _ = persist_alert_firing(state.alert_store_dir.as_ref(), &updated).await;
-        return Ok(Json(updated));
-    }
-    Err(json_bad_request(
-        "not_found",
-        format!("告警触发记录 '{}' 不存在", firing_id),
-    ))
+        firing.clone()
+    };
+    // v4.2.0: 文件 I/O 放在 alert_firings 写锁外，避免锁内 await。
+    let _ = persist_alert_firing(state.alert_store_dir.as_ref(), &updated).await;
+    Ok(Json(updated))
 }
 
 async fn trigger_alert_check(

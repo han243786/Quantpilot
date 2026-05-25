@@ -44,6 +44,7 @@ export function resolveV4RuntimeMemorySnapshot(source = {}) {
     source?.v4_runtime?.memory_snapshot,
     source?.run_output?.memory_snapshot,
     source?.output?.memory_snapshot,
+    source?.final_snapshot,
     source
   ];
   return candidates.find(isV4RuntimeMemorySnapshot) || null;

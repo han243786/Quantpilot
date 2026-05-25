@@ -293,6 +293,7 @@ pub(super) fn ui_action_capabilities() -> Vec<UiCapabilityEntry> {
         "export_quantscript",
         "compile",
         "start_simulation",
+        "start_v4_simulation",
         "run_backtest",
         "stop_runtime",
         "reset_runtime",

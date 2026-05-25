@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: QuantPilot Runtime API
-  version: 2.3.3
-  summary: QuantPilot v2.3.3 HTTP 控制面契约
+  version: 4.3.0
+  summary: QuantPilot v4.3.0 HTTP 控制面契约
   description: |
     QuantPilot 策略开发与运行平台的 HTTP API 契约。
     覆盖 capability discovery、runtime session、compile、backtest、AI 提案与审批、
@@ -33,6 +33,8 @@ tags:
     x-chain-stage: runtime
   - name: runtime
     description: 运行时会话
+  - name: executor
+    description: 独立执行端控制面
     x-chain-stage: runtime
   - name: ai-proposals
     description: AI 提案与审批
@@ -163,6 +165,14 @@ paths:
                   properties:
                     replay_source:
                       type: string
+                    runtime_kind:
+                      type: string
+                      enum: [v3, v4]
+                      description: v4 enables deterministic MachineGraph replay and emits backtest_artifacts.v4_artifact
+                    symbols:
+                      type: array
+                      items:
+                        type: string
                     volatility:
                       type: number
 
@@ -264,6 +274,87 @@ paths:
                   type: object
                 backtest_options:
                   type: object
+
+  /api/runtime/v4/run:
+    post:
+      operationId: startV4RuntimeRun
+      summary: 启动 v4 PaperSimulated 状态机运行
+      tags: [runtime]
+      x-owner: backend-runtime
+      x-chain-stage: runtime
+      x-stability: beta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source:
+                  type: string
+                  description: v4 QuantScript 源码；提供时后端执行静态审计并生成运行时 handoff
+                graph:
+                  type: object
+                  description: 已静态校验过的 v4 runtime graph
+                initial_event:
+                  type: object
+                  description: 可选初始事件；缺省时后端按事件目录生成首个可用事件
+      responses:
+        '200':
+          description: v4 runtime 运行完成
+        '400':
+          $ref: '#/components/responses/Problem'
+
+  /api/executor/strategies:
+    post:
+      operationId: deployExecutorStrategy
+      summary: 部署执行端策略，支持 v3 策略包与 v4 graph/QS source
+      tags: [executor]
+      x-owner: executor
+      x-chain-stage: executor
+      x-stability: beta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                runtime_kind:
+                  type: string
+                  enum: [v3, v4]
+                runtime_version:
+                  type: string
+                  enum: [v3, v4]
+                graph:
+                  type: object
+                  description: v4 MachineGraphContract
+                source:
+                  type: string
+                  description: v4 QuantScript 源码
+      responses:
+        '201':
+          description: 策略已部署
+        '400':
+          $ref: '#/components/responses/Problem'
+
+  /api/executor/strategies/{strategy_id}/events:
+    get:
+      operationId: streamExecutorStrategyEvents
+      summary: 执行端策略 SSE，v4 策略包含 v4RuntimeMemorySnapshot
+      tags: [executor]
+      x-owner: executor
+      x-chain-stage: executor
+      x-stability: beta
+      parameters:
+        - name: strategy_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: SSE 事件流
 
   /api/runtime/runs:
     get:
@@ -456,6 +547,16 @@ paths:
                   type: object
                 backtest_options:
                   type: object
+                  properties:
+                    replay_source:
+                      type: string
+                    runtime_kind:
+                      type: string
+                      enum: [v3, v4]
+                    symbols:
+                      type: array
+                      items:
+                        type: string
                 parameter_grid:
                   type: object
 
@@ -1165,6 +1266,45 @@ paths:
 
 components:
   schemas:
+    V4BacktestArtifact:
+      type: object
+      required: [schema_version, graph_id, started_at_ms, ended_at_ms, replay_mode, input_bar_count, symbols, machine_trajectory, risk_plane_decisions, execution_capability_sources]
+      properties:
+        schema_version:
+          type: string
+          example: quantpilot/v4-backtest-artifact/v1
+        graph_id:
+          type: string
+        started_at_ms:
+          type: integer
+          format: int64
+        ended_at_ms:
+          type: integer
+          format: int64
+        replay_mode:
+          type: string
+          example: deterministic_bar_replay
+        input_bar_count:
+          type: integer
+        symbols:
+          type: array
+          items:
+            type: string
+        machine_trajectory:
+          type: array
+          items:
+            type: object
+        risk_plane_decisions:
+          type: array
+          items:
+            type: object
+        execution_capability_sources:
+          type: array
+          items:
+            type: object
+        final_snapshot:
+          type: object
+          description: v4 runtime memory snapshot captured after replay completion.
     CapabilityResponse:
       type: object
       required: [api_version, schema_version, schema_hash, chain_stages, strategy_ir, runtime, market_data, frontend, workspace, ui_actions, versioning, permission_boundary]

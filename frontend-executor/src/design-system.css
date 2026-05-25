@@ -53,6 +53,16 @@ body { background: var(--exec-bg); color: var(--exec-text); font-family: system-
 .exec-tab-add { padding: 0 12px; display: flex; align-items: center; cursor: pointer; color: var(--exec-text-secondary); font-size: 16px; }
 .exec-tab-btn { margin-left: 6px; padding: 0 4px; background: none; border: none; color: var(--exec-text-secondary); cursor: pointer; font-size: 11px; opacity: 0.6; }
 .exec-tab-btn:hover { opacity: 1; color: var(--exec-accent); }
+.exec-runtime-pill,
+.exec-runtime-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 18px; padding: 0 6px; border-radius: 3px;
+  border: 1px solid var(--exec-border); font-size: 10px; font-weight: 700;
+  line-height: 1; text-transform: uppercase;
+}
+.exec-runtime-pill { color: var(--exec-text-secondary); background: var(--exec-card); }
+.exec-runtime-badge.v3 { color: var(--exec-text-secondary); background: var(--exec-card); }
+.exec-runtime-badge.v4 { color: var(--exec-success); border-color: rgba(76,175,146,0.45); background: rgba(76,175,146,0.12); }
 
 /* Main Layout */
 .exec-main { display: flex; flex: 1; overflow: hidden; }
@@ -144,6 +154,18 @@ body { background: var(--exec-bg); color: var(--exec-text); font-family: system-
 .param-toggle { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; color: var(--exec-text); }
 .param-toggle input { accent-color: var(--exec-accent); }
 .params-actions { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+
+/* v4.2.0: 执行端 v4 runtime 证据面板 */
+.v4-evidence-panel { background: rgba(20,115,230,0.04); }
+.v4-evidence-grid { display: flex; flex-direction: column; gap: 6px; }
+.v4-evidence-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  min-height: 22px; font-size: 12px; color: var(--exec-text-secondary);
+}
+.v4-evidence-row strong {
+  color: var(--exec-text); font-size: 11px; font-weight: 700;
+  max-width: 138px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }

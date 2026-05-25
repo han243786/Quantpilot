@@ -89,6 +89,7 @@ function DefaultToolbarLayout({
   formalCompileSourceMeta,
   compileButtonTitle,
   startSimulationTitle,
+  startV4SimulationTitle,
   runBacktestTitle,
   exportConfigTitle,
   saveGraphTitle,
@@ -102,6 +103,7 @@ function DefaultToolbarLayout({
   issueSummary,
   canCompile,
   canStartRuntime,
+  canStartV4Simulation,
   canStartBacktest,
   canStopRuntime,
   canSaveGraph,
@@ -119,6 +121,7 @@ function DefaultToolbarLayout({
   handleExportQuantScript,
   handleCompile,
   handleStartRuntime,
+  handleStartV4Simulation,
   handleStartBacktest,
   stopRuntime,
   resetRuntime,
@@ -230,6 +233,15 @@ function DefaultToolbarLayout({
           </button>
           <button
             className="ghost-btn"
+            data-testid="toolbar-start-v4-runtime-action"
+            onClick={() => handleStartV4Simulation({ capabilitySyncBlocked, capabilityMessage })}
+            disabled={!canStartV4Simulation || isBusy}
+            title={startV4SimulationTitle}
+          >
+            v4 模拟
+          </button>
+          <button
+            className="ghost-btn"
             data-testid="toolbar-start-backtest-action"
             onClick={() => handleStartBacktest({ graph, capabilitySyncBlocked, capabilityMessage })}
             disabled={!canStartBacktest || isBusy}
@@ -278,6 +290,7 @@ function WorkspaceToolbarLayout({
   formalCompileSourceMeta,
   compileButtonTitle,
   startSimulationTitle,
+  startV4SimulationTitle,
   runBacktestTitle,
   exportConfigTitle,
   saveGraphTitle,
@@ -291,6 +304,7 @@ function WorkspaceToolbarLayout({
   issueSummary,
   canCompile,
   canStartRuntime,
+  canStartV4Simulation,
   canStartBacktest,
   canStopRuntime,
   canSaveGraph,
@@ -308,6 +322,7 @@ function WorkspaceToolbarLayout({
   handleExportQuantScript,
   handleCompile,
   handleStartRuntime,
+  handleStartV4Simulation,
   handleStartBacktest,
   stopRuntime,
   resetRuntime,
@@ -367,6 +382,15 @@ function WorkspaceToolbarLayout({
             title={startSimulationTitle}
           >
             {t("启动模拟")}
+          </button>
+          <button
+            className="ghost-btn"
+            data-testid="toolbar-start-v4-runtime-action"
+            onClick={() => handleStartV4Simulation({ capabilitySyncBlocked, capabilityMessage })}
+            disabled={!canStartV4Simulation}
+            title={startV4SimulationTitle}
+          >
+            v4 模拟
           </button>
           <button
             className="ghost-btn"

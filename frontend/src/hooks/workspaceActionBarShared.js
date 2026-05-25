@@ -121,6 +121,14 @@ function resolveFormalCompileSourceMeta({ graph, formalQuantScriptOverride }) {
   };
 }
 
+function hasRunnableV4QuantScriptSource({ graph, formalQuantScriptOverride }) {
+  const source =
+    typeof formalQuantScriptOverride === "string" && formalQuantScriptOverride.trim()
+      ? formalQuantScriptOverride
+      : graph.metadata?.artifacts?.quantscript?.formal_source || "";
+  return /^\s*v4_strategy\s+\S+\s*\{/m.test(source);
+}
+
 export function resolveWorkspaceActionState({
   graph,
   runtime,
@@ -169,6 +177,13 @@ export function resolveWorkspaceActionState({
     capabilityMessage,
     capabilities
   });
+  const startV4SimulationCapabilityReason = getCapabilityActionBlockReason({
+    actionKey: "start_v4_simulation",
+    capabilityStatus,
+    capabilitySource,
+    capabilityMessage,
+    capabilities
+  });
   const runBacktestCapabilityReason = getCapabilityActionBlockReason({
     actionKey: "run_backtest",
     capabilityStatus,
@@ -177,6 +192,10 @@ export function resolveWorkspaceActionState({
     capabilities
   });
   const formalCompileSourceMeta = resolveFormalCompileSourceMeta({
+    graph,
+    formalQuantScriptOverride
+  });
+  const hasV4RuntimeSource = hasRunnableV4QuantScriptSource({
     graph,
     formalQuantScriptOverride
   });
@@ -208,6 +227,13 @@ export function resolveWorkspaceActionState({
       (runtime.status === "running" || runtime.status === "connecting"
         ? t("运行时已经在执行中，不能重复启动。")
         : undefined),
+    startV4SimulationTitle:
+      startV4SimulationCapabilityReason ||
+      (!hasV4RuntimeSource
+        ? "当前没有可运行的 v4 QuantScript 源码。"
+        : runtime.status === "running" || runtime.status === "connecting"
+          ? "运行时正在执行中，不能重复启动 v4 模拟。"
+          : undefined),
     runBacktestTitle:
       runBacktestCapabilityReason ||
       (runtime.status === "running" || runtime.status === "connecting"
@@ -243,6 +269,12 @@ export function resolveWorkspaceActionState({
       runtime.status !== "connecting" &&
       !capabilitySyncBlocked &&
       isActionEnabled("start_simulation"),
+    canStartV4Simulation:
+      runtime.status !== "running" &&
+      runtime.status !== "connecting" &&
+      !capabilitySyncBlocked &&
+      isActionEnabled("start_v4_simulation") &&
+      hasV4RuntimeSource,
     canStartBacktest:
       runtime.status !== "running" &&
       runtime.status !== "connecting" &&

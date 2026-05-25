@@ -25,6 +25,7 @@ export function useWorkspaceActionBarActions({ onNotice } = {}) {
   const exportQuantScript = useGraphStore((state) => state.exportQuantScript);
   const compileCurrentGraph = useGraphStore((state) => state.compileCurrentGraph);
   const startRuntime = useGraphStore((state) => state.startRuntime);
+  const startV4Simulation = useGraphStore((state) => state.startV4Simulation);
   const startBacktest = useGraphStore((state) => state.startBacktest);
   const stopRuntime = useGraphStore((state) => state.stopRuntime);
   const resetRuntime = useGraphStore((state) => state.resetRuntime);
@@ -130,6 +131,31 @@ export function useWorkspaceActionBarActions({ onNotice } = {}) {
     pushNotice("info", t("模拟运行已启动，正在等待运行时事件。"), t("模拟运行已启动。"));
   }
 
+  async function handleStartV4Simulation({ capabilitySyncBlocked, capabilityMessage } = {}) {
+    if (capabilitySyncBlocked) {
+      pushNotice(
+        "error",
+        buildActionFailureMessage("v4_simulation", capabilityMessage, "v4 模拟运行暂时被阻止。"),
+        "v4 模拟运行暂时被阻止。"
+      );
+      return;
+    }
+
+    await startV4Simulation();
+
+    const { runtime: nextRuntime } = useGraphStore.getState();
+    if (nextRuntime.status === "error" && nextRuntime.backendError) {
+      pushNotice(
+        "error",
+        buildActionFailureMessage("v4_simulation", nextRuntime.backendError, "v4 模拟运行失败。"),
+        "v4 模拟运行失败。"
+      );
+      return;
+    }
+
+    pushNotice("success", "v4 模拟运行已完成。", "v4 模拟运行已完成。");
+  }
+
   async function handleStartBacktest({ graph, capabilitySyncBlocked, capabilityMessage } = {}) {
     if (capabilitySyncBlocked) {
       pushNotice(
@@ -225,6 +251,7 @@ export function useWorkspaceActionBarActions({ onNotice } = {}) {
     handleLoadLatestGraph,
     handleCompile,
     handleStartRuntime,
+    handleStartV4Simulation,
     handleStartBacktest,
     handleExportRuntimeConfig,
     handleExportQuantScript,

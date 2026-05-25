@@ -1,8 +1,11 @@
-use crate::executor_state::{ActiveStrategy, ExecutionMode, ExecutorState, StrategyStatus};
+use crate::executor_state::{
+    ActiveStrategy, ExecutionMode, ExecutorState, RuntimeKind, StrategyStatus,
+};
 /// v3.7.0: 策略迁移 API — 接收测试端部署的策略包
 /// 验证签名 → 解密 → 反序列化 → 注册到执行端
 use anyhow::{bail, Result};
 use qrpc_core::CoreStrategyIr;
+use qrpc_core_ir::v4::V4MachineGraphContract;
 use std::collections::BTreeMap;
 use std::sync::Arc;
 
@@ -24,6 +27,12 @@ pub struct StrategyPackage {
     /// v3.7.0 S5: 执行模式, 默认 Paper
     #[serde(default)]
     pub execution_mode: ExecutionMode,
+    /// v4.2.0: 执行端 runtime 选择，默认保持 v3 兼容。
+    #[serde(default)]
+    pub runtime_kind: RuntimeKind,
+    /// v4.2.0: v4 策略部署时携带 ObservationMachine graph。
+    #[serde(default)]
+    pub v4_graph: Option<V4MachineGraphContract>,
 }
 
 /// v3.7.0: QS编译溯源证明 — 验证策略经过完整QS管道编译
@@ -85,6 +94,9 @@ pub fn decrypt_package(encrypted: &[u8]) -> Result<StrategyPackage> {
 /// 加载策略到执行端状态
 pub fn load_strategy(state: &Arc<ExecutorState>, pkg: StrategyPackage) -> Result<()> {
     verify_package_signature(&pkg)?;
+    if pkg.runtime_kind == RuntimeKind::V4 && pkg.v4_graph.is_none() {
+        bail!("v4 策略包缺少 v4_graph");
+    }
 
     let symbols: Vec<qrpc_core::Symbol> = pkg
         .core_ir
@@ -97,7 +109,9 @@ pub fn load_strategy(state: &Arc<ExecutorState>, pkg: StrategyPackage) -> Result
     let strategy = ActiveStrategy {
         strategy_id: pkg.strategy_id.clone(),
         name: pkg.name,
+        runtime_kind: pkg.runtime_kind,
         core_ir: pkg.core_ir,
+        v4_graph: pkg.v4_graph,
         graph_json: pkg.graph_json,
         params: pkg.params_snapshot,
         status: StrategyStatus::Loaded,

@@ -99,7 +99,7 @@
 - `cargo check --workspace` ✅ 0 error
 - `cargo fmt --check` ✅ 格式基线通过
 - `cargo test --workspace --no-run` ✅ 全部测试可编译
-- 23 项 closeout 门禁待全量复跑
+- 24 项 closeout 门禁待全量复跑
 ```
 
 ---

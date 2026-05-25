@@ -7,6 +7,7 @@ import KlineChart from "./components/KlineChart";
 import OrderPanel from "./components/OrderPanel";
 import AssetPanel from "./components/AssetPanel";
 import StrategyParamsPanel from "./components/StrategyParamsPanel";
+import V4EvidencePanel from "./components/V4EvidencePanel";
 
 const API = "/api/executor";
 
@@ -65,6 +66,7 @@ export default function ExecutorApp() {
   }, [activeTab]);
 
   const activeStrategy = strategies.find(s => s.strategy_id === activeTab);
+  const activeRuntimeKind = (activeStrategy?.runtime_kind || activeStrategy?.runtime_version || "v3").toLowerCase();
 
   // v3.4.0: 使用 ref 避免 useCallback 依赖 strategies 导致每3秒重建
   const strategiesRef = useRef(strategies);
@@ -86,6 +88,7 @@ export default function ExecutorApp() {
         onEmergencyStop={handleEmergencyStop}
         mode={mode}
         modeError={modeError}
+        runtimeKind={activeRuntimeKind}
         onModeSwitch={handleModeSwitch}
       />
 
@@ -98,6 +101,7 @@ export default function ExecutorApp() {
           >
             <span className={`exec-status-dot ${(s.status || "").toLowerCase() === "running" ? "running" : "stopped"}`} />
             {s.name || s.strategy_id}
+            <span className="exec-runtime-pill">{(s.runtime_kind || s.runtime_version || "v3").toLowerCase()}</span>
             {/* v3.6.0 U10: 内联start/stop按钮 */}
             <button className="exec-tab-btn"
               onClick={(e) => { e.stopPropagation();
@@ -119,6 +123,7 @@ export default function ExecutorApp() {
           <>
             <div className="exec-sidebar">
               <StrategyParamsPanel strategyId={activeTab} />
+              <V4EvidencePanel strategyId={activeTab} runtimeKind={activeRuntimeKind} />
               <OrderPanel strategyId={activeTab} />
               <AssetPanel strategyId={activeTab} />
             </div>

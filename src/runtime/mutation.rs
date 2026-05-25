@@ -1087,20 +1087,23 @@ async fn create_runtime_ai_proposal(
             }
             if success {
                 // 更新审批单的沙箱报告 URL
-                let mut approvals = state_clone.approval_records.write().await;
-                for approval in approvals.values_mut() {
-                    if approval.proposal_id == pid {
-                        approval.sandbox_report_url = Some(format!(
-                            "/api/v1/ai/proposals/{}/sandbox-report",
-                            pid
-                        ));
-                        let _ = persist_approval(
-                            &state_clone.approval_store_dir,
-                            approval,
-                        )
-                        .await;
-                        break;
+                let approval_to_persist = {
+                    let mut approvals = state_clone.approval_records.write().await;
+                    let mut updated = None;
+                    for approval in approvals.values_mut() {
+                        if approval.proposal_id == pid {
+                            approval.sandbox_report_url = Some(format!(
+                                "/api/v1/ai/proposals/{}/sandbox-report",
+                                pid
+                            ));
+                            updated = Some(approval.clone());
+                            break;
+                        }
                     }
+                    updated
+                };
+                if let Some(approval) = approval_to_persist {
+                    let _ = persist_approval(&state_clone.approval_store_dir, &approval).await;
                 }
             } else {
                 safe_eprintln!("[sandbox] 沙箱验证 3 次尝试全部失败, proposal={}", pid);
@@ -2009,4 +2012,3 @@ struct AuditWeeklyQuery {
 struct ResearchMonthlyQuery {
     month: Option<String>,
 }
-

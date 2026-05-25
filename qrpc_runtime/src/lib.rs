@@ -83,12 +83,13 @@ pub use reconcile::{
 };
 pub use risk_checker::{RiskCheckOutput, RiskCheckRequest, RiskChecker, RiskCheckerProvider};
 pub use sandbox::{
-    runtime_support_boundary, DeterministicClockMode, DeterministicEventOrdering,
-    DeterministicParallelismPolicy, DeterministicTestMode, FastBacktestSandbox, RealTimeSandbox,
-    RuntimeSupportBoundary, Sandbox, SandboxMode, SandboxSnapshot,
-    SUPPORTED_RUNTIME_EXECUTION_MODULE_KEYS, SUPPORTED_RUNTIME_MODE_KEYS,
+    build_v4_deterministic_replay_bars, runtime_support_boundary, DeterministicClockMode,
+    DeterministicEventOrdering, DeterministicParallelismPolicy, DeterministicTestMode,
+    FastBacktestSandbox, RealTimeSandbox, RuntimeSupportBoundary, Sandbox, SandboxMode,
+    SandboxSnapshot, SUPPORTED_RUNTIME_EXECUTION_MODULE_KEYS, SUPPORTED_RUNTIME_MODE_KEYS,
 };
 pub use v4_runtime::{
+    expand_v4_graph_for_symbols, normalize_v4_backtest_symbols, V4BacktestBarInput,
     V4CachedMachineOutput, V4ExecutionCapabilityRuntimeEntry, V4ExecutionCapabilityRuntimeStatus,
     V4ExecutionRuntimeDecision, V4ExecutionRuntimeSnapshot, V4MachineRuntimeSnapshot,
     V4MachineRuntimeStatus, V4PaperSimulatedRunOutput, V4PaperSimulatedRuntime,

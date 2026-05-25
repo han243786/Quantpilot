@@ -141,7 +141,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-learning-closeou
 .\tools\run-closeout-gates.bat
 ```
 
-- **通过标准**: 23 项全部通过
+- **通过标准**: 24 项全部通过
 - **阻断**: S0
 
 ---

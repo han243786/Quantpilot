@@ -21,6 +21,7 @@ pub(super) async fn json_rejection_middleware(
         }
         let body = axum::Json(serde_json::json!({
             "error": "bad_request",
+            "error_code": crate::error_codes::ERR_QSC_BAD_REQUEST,
             "message": "请求格式错误: 请使用 Content-Type: application/json 并确保请求体为有效 JSON"
         }));
         return (StatusCode::BAD_REQUEST, body).into_response();

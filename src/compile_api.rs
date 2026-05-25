@@ -34,17 +34,33 @@ pub(super) fn compile_runtime_protocol_via_qs(
     graph_json: &Value,
 ) -> Result<RuntimeProtocolCoreConfig, (StatusCode, String)> {
     let qs_source = generate_quantscript_from_graph_value(graph_json).map_err(|e| {
-        json_bad_request(
+        json_bad_request_with_code(
             "qs_generation_failed",
+            crate::error_codes::ERR_QS_GENERATION_FAILED,
             format!("从图生成 QS 源码失败: {}", e),
         )
     })?;
-    let graph_value = parse_graph_quantscript_source(&qs_source)
-        .map_err(|e| json_bad_request("qs_parse_failed", format!("QS 解析失败: {}", e)))?;
-    let script_module = convert_graph_json_to_script_module(&graph_value)
-        .map_err(|e| json_bad_request("qs_conversion_failed", format!("QS 模块转换失败: {}", e)))?;
-    quantscript::lower_script_to_runtime_config(&script_module)
-        .map_err(|e| json_bad_request("qs_lowering_failed", format!("QS 下层转换失败: {}", e)))
+    let graph_value = parse_graph_quantscript_source(&qs_source).map_err(|e| {
+        json_bad_request_with_code(
+            "qs_parse_failed",
+            crate::error_codes::ERR_QS_PARSE_FAILED,
+            format!("QS 解析失败: {}", e),
+        )
+    })?;
+    let script_module = convert_graph_json_to_script_module(&graph_value).map_err(|e| {
+        json_bad_request_with_code(
+            "qs_conversion_failed",
+            crate::error_codes::ERR_QS_LOWER_FAILED,
+            format!("QS 模块转换失败: {}", e),
+        )
+    })?;
+    quantscript::lower_script_to_runtime_config(&script_module).map_err(|e| {
+        json_bad_request_with_code(
+            "qs_lowering_failed",
+            crate::error_codes::ERR_QS_LOWER_FAILED,
+            format!("QS 下层转换失败: {}", e),
+        )
+    })
 }
 
 pub(super) fn register_compile_routes(router: Router<AppState>) -> Router<AppState> {
@@ -83,6 +99,7 @@ async fn compile_runtime_request(
             StatusCode::SERVICE_UNAVAILABLE,
             serde_json::json!({
                 "error": "service_unavailable",
+                "error_code": crate::error_codes::ERR_COMPILE_BUSY,
                 "message": "编译服务繁忙，请稍后重试"
             })
             .to_string(),
@@ -93,6 +110,7 @@ async fn compile_runtime_request(
             StatusCode::SERVICE_UNAVAILABLE,
             serde_json::json!({
                 "error": "service_unavailable",
+                "error_code": crate::error_codes::ERR_COMPILE_BUSY,
                 "message": "编译服务已关闭"
             })
             .to_string(),
@@ -100,8 +118,9 @@ async fn compile_runtime_request(
     })?;
     // 空 intent 保护: 策略必须包含至少一个意图
     if request.runtime_config.intent_generators.is_empty() {
-        return Err(json_bad_request(
+        return Err(json_bad_request_with_code(
             "bad_request",
+            crate::error_codes::ERR_QSC_EMPTY_INTENT,
             "策略必须包含至少一个意图。请从左侧面板拖入一个意图节点 (如「双均线」) 并连线",
         ));
     }
@@ -475,6 +494,7 @@ async fn compile_strategy_ir_request(
             StatusCode::SERVICE_UNAVAILABLE,
             serde_json::json!({
                 "error": "service_unavailable",
+                "error_code": crate::error_codes::ERR_COMPILE_BUSY,
                 "message": "编译服务繁忙，请稍后重试"
             })
             .to_string(),
@@ -485,6 +505,7 @@ async fn compile_strategy_ir_request(
             StatusCode::SERVICE_UNAVAILABLE,
             serde_json::json!({
                 "error": "service_unavailable",
+                "error_code": crate::error_codes::ERR_COMPILE_BUSY,
                 "message": "编译服务已关闭"
             })
             .to_string(),

@@ -1,6 +1,7 @@
 pub mod replay;
 pub mod timeline;
 
+pub use self::replay::build_v4_deterministic_replay_bars;
 use self::replay::{build_mock_unified_timeline, build_unified_timeline};
 use self::timeline::UnifiedTimeline;
 use crate::slippage::ExecutionAssumptions;
@@ -710,6 +711,7 @@ impl FastBacktestSandbox {
             period_returns,
             summary,
             final_portfolio: self.coordinator.portfolio_state().clone(),
+            v4_artifact: None,
             debug_values: if self.debug_var_names.is_empty() {
                 None
             } else {

@@ -69,7 +69,12 @@ export default function StrategyHubTemplateLibrarySection({ model }) {
                     <div className="strategy-hub-kicker">{template.category}</div>
                     <strong>{template.title}</strong>
                   </div>
-                  <span className="status-pill info">{template.symbols.join(", ")}</span>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                    {template.runtimeVersion ? (
+                      <span className="status-pill warning">{template.runtimeVersion}</span>
+                    ) : null}
+                    <span className="status-pill info">{template.symbols.join(", ")}</span>
+                  </div>
                 </div>
                 <p>{template.description}</p>
                 <div className="strategy-template-meta">

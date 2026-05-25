@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/nicehash/tauri/dev/crates/tauri-config-schema/schema.json",
   "productName": "QuantPilot",
-  "version": "4.0.0",
+  "version": "4.3.0",
   "identifier": "com.quantpilot.app",
   "build": {
     "frontendDist": "../frontend/dist",

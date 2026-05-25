@@ -1,0 +1,18 @@
+# full-feature-tree-excludes.txt
+# 全量树覆盖检查排除列表
+# 每行一个 glob 模式, # 开头为注释
+# 用法: powershell tools\check-full-feature-tree.ps1
+
+# ── 生成文件 ──
+src-tauri/gen/schemas/*.json
+src-tauri/capabilities/default.json
+
+# ── 测试结果 (生成物) ──
+frontend/test-results/*
+markdown/测试/test-reports/*.json
+
+# ── 学习记录 (GP §1.11: 不入 Git) ──
+markdown/learning/*
+
+# ── 构建/依赖目录 (已有目录级排除) ──
+# target, node_modules, dist 已在 find 命令中排除

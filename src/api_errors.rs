@@ -3,6 +3,7 @@ use super::*;
 /// QuantPilot 标准错误格式。所有 API handler 使用此格式返回错误。
 /// 格式: `{"error": "<type>", "error_code": "<code>", "message": "<message>", "details": [...]}`
 /// v2.3.0: 新增 json_bad_request_with_code 支持语言中立 error_code, 旧函数保持兼容
+/// v4.1.0: 默认结构化错误也必须携带稳定 error_code, 避免前端只能解析中文 message。
 pub(crate) fn json_bad_request(
     error: &'static str,
     message: impl Into<String>,
@@ -32,6 +33,26 @@ pub(crate) fn json_bad_request_with_code(
     )
 }
 
+pub(crate) fn json_not_found(
+    error: &'static str,
+    code: &'static str,
+    message: impl Into<String>,
+) -> (StatusCode, String) {
+    let payload = ApiErrorResponse {
+        error,
+        error_code: Some(code),
+        message: message.into(),
+        details: Vec::new(),
+        partial_artifacts: None,
+    };
+    (
+        StatusCode::NOT_FOUND,
+        serde_json::to_string(&payload).unwrap_or_else(|_| {
+            "{\"error\":\"not_found\",\"error_code\":\"NOT_FOUND\",\"message\":\"序列化错误响应失败\",\"details\":[]}".to_string()
+        }),
+    )
+}
+
 pub(super) fn json_bad_request_with_details(
     error: &'static str,
     message: impl Into<String>,
@@ -48,7 +69,7 @@ pub(super) fn json_bad_request_with_details_and_partial(
 ) -> (StatusCode, String) {
     let payload = ApiErrorResponse {
         error,
-        error_code: None,
+        error_code: Some(crate::error_codes::ERR_BAD_REQUEST),
         message: message.into(),
         details,
         partial_artifacts: if quantscript_authoring_view.is_some() {
@@ -78,11 +99,19 @@ pub(super) fn internal_error(error: anyhow::Error) -> (StatusCode, String) {
         safe_eprintln!("[internal_error] {}", full);
     }
     let message = format!("内部服务器错误: {}。如问题持续请重试或联系支持。", short);
-    let payload = serde_json::json!({
-        "error": "internal_error",
-        "message": message,
-    });
-    (StatusCode::INTERNAL_SERVER_ERROR, payload.to_string())
+    let payload = ApiErrorResponse {
+        error: "internal_error",
+        error_code: Some(crate::error_codes::ERR_INTERNAL),
+        message,
+        details: Vec::new(),
+        partial_artifacts: None,
+    };
+    (
+        StatusCode::INTERNAL_SERVER_ERROR,
+        serde_json::to_string(&payload).unwrap_or_else(|_| {
+            "{\"error\":\"internal_error\",\"error_code\":\"INTERNAL_ERROR\",\"message\":\"序列化错误响应失败\",\"details\":[]}".to_string()
+        }),
+    )
 }
 
 pub(super) fn io_error(error: std::io::Error) -> (StatusCode, String) {
@@ -117,6 +146,7 @@ mod tests {
         let (status, body) = json_bad_request("test_error", "测试错误消息");
         assert_eq!(status, StatusCode::BAD_REQUEST);
         assert!(body.contains("test_error"));
+        assert!(body.contains("BAD_REQUEST"));
         assert!(body.contains("测试错误消息"));
     }
 
@@ -141,8 +171,17 @@ mod tests {
             json_bad_request_with_details("validation_error", "校验失败", vec![detail]);
         assert_eq!(status, StatusCode::BAD_REQUEST);
         assert!(body.contains("validation_error"));
+        assert!(body.contains("BAD_REQUEST"));
         assert!(body.contains("graph_id"));
         assert!(body.contains("QS0001"));
+    }
+
+    #[test]
+    fn json_not_found_returns_404_with_code() {
+        let (status, body) = json_not_found("not_found", "ALERT_NOT_FOUND", "告警不存在");
+        assert_eq!(status, StatusCode::NOT_FOUND);
+        assert!(body.contains("ALERT_NOT_FOUND"));
+        assert!(body.contains("告警不存在"));
     }
 
     #[test]
@@ -151,6 +190,7 @@ mod tests {
         let (status, body) = internal_error(error);
         assert_eq!(status, StatusCode::INTERNAL_SERVER_ERROR);
         assert!(body.contains("内部服务器错误"));
+        assert!(body.contains("INTERNAL_ERROR"));
         // 响应应包含 sanitize 后的简短摘要
         assert!(!body.contains("RUST_BACKTRACE"));
     }

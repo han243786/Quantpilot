@@ -4,7 +4,8 @@ use crate::live_runner::RunnerPool;
 use crate::ws_client::WsEvent;
 use qrpc_core::{CoreStrategyIr, Symbol};
 use qrpc_core_ir::{
-    CoreMetadata, CoreSourceKind, CoreTimeInForce, ExecutionRule, ExecutionSizingKind,
+    v4::V4MachineGraphContract, CoreMetadata, CoreSourceKind, CoreTimeInForce, ExecutionRule,
+    ExecutionSizingKind,
 };
 use std::collections::{BTreeMap, HashMap, VecDeque};
 use std::io::Write;
@@ -50,12 +51,36 @@ impl RingBuffer {
 pub struct ActiveStrategy {
     pub strategy_id: String,
     pub name: String,
+    pub runtime_kind: RuntimeKind,
     pub core_ir: CoreStrategyIr,
+    pub v4_graph: Option<V4MachineGraphContract>,
     pub graph_json: serde_json::Value,
     pub params: BTreeMap<String, serde_json::Value>,
     pub status: StrategyStatus,
     pub subscribed_symbols: Vec<Symbol>,
     pub execution_mode: ExecutionMode,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum RuntimeKind {
+    V3,
+    V4,
+}
+
+impl RuntimeKind {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::V3 => "v3",
+            Self::V4 => "v4",
+        }
+    }
+}
+
+impl Default for RuntimeKind {
+    fn default() -> Self {
+        Self::V3
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -172,6 +197,7 @@ impl ExecutorState {
                     serde_json::json!({
                         "strategy_id": s.strategy_id,
                         "name": s.name,
+                        "runtime_kind": s.runtime_kind,
                         "params": s.params,
                     }),
                 )
@@ -198,6 +224,7 @@ impl ExecutorState {
                     serde_json::json!({
                         "strategy_id": s.strategy_id,
                         "name": s.name,
+                        "runtime_kind": s.runtime_kind,
                         "params": s.params,
                     }),
                 )
@@ -224,11 +251,17 @@ impl ExecutorState {
                 .and_then(|v| v.as_object())
                 .map(|o| o.iter().map(|(k, v)| (k.clone(), v.clone())).collect())
                 .unwrap_or_default();
+            let runtime_kind = val
+                .get("runtime_kind")
+                .cloned()
+                .and_then(|value| serde_json::from_value(value).ok())
+                .unwrap_or_default();
             strategies.insert(
                 id.clone(),
                 ActiveStrategy {
                     strategy_id: id.clone(),
                     name,
+                    runtime_kind,
                     core_ir: CoreStrategyIr::new(
                         CoreMetadata {
                             strategy_id: id.clone(),
@@ -246,6 +279,7 @@ impl ExecutorState {
                             params: BTreeMap::new(),
                         },
                     ),
+                    v4_graph: None,
                     graph_json: serde_json::Value::Null,
                     params,
                     status: StrategyStatus::Loaded,

@@ -1,9 +1,12 @@
 /// v3.7.0: 实时策略运行器 — OKX Paper 模式
-use crate::executor_state::{ActiveStrategy, ExecutionMode, TriggerEvent};
+use crate::executor_state::{ActiveStrategy, ExecutionMode, RuntimeKind, TriggerEvent};
 use crate::kline_buffer::KlinePool;
 use crate::ws_client::WsEvent;
 use qrpc_core::{RuntimeEvent, RuntimeEventType, Symbol};
-use qrpc_runtime::RuntimeCoordinator;
+use qrpc_core_ir::v4::MachineEventSourceKind;
+use qrpc_runtime::{
+    RuntimeCoordinator, V4PaperSimulatedRunOutput, V4PaperSimulatedRuntime, V4RuntimeMemorySnapshot,
+};
 use std::collections::{BTreeMap, HashMap};
 use tokio::sync::{broadcast, mpsc};
 
@@ -182,18 +185,238 @@ impl LiveRunner {
 }
 
 pub struct RunnerPool {
-    pub runners: BTreeMap<String, LiveRunner>,
+    pub runners: BTreeMap<String, RunnerInstance>,
     pub trigger_broadcast: broadcast::Sender<TriggerEvent>,
+    pub v4_evidence_broadcast: broadcast::Sender<V4ExecutorEvidenceEvent>,
     pub ws_tx_map: HashMap<String, mpsc::UnboundedSender<WsEvent>>,
     /// v3.3.0: symbol→[strategy_id] 反向索引, O(1)查找替代O(N*M)遍历
     pub symbol_index: HashMap<String, Vec<String>>,
 }
 
+pub enum RunnerInstance {
+    V3(LiveRunner),
+    V4(V4Runner),
+}
+
+impl RunnerInstance {
+    fn from_strategy(
+        s: &ActiveStrategy,
+        trigger_broadcast: broadcast::Sender<TriggerEvent>,
+        v4_evidence_broadcast: broadcast::Sender<V4ExecutorEvidenceEvent>,
+    ) -> anyhow::Result<Self> {
+        match s.runtime_kind {
+            RuntimeKind::V3 => Ok(Self::V3(LiveRunner::from_strategy(s, trigger_broadcast))),
+            RuntimeKind::V4 => Ok(Self::V4(V4Runner::from_strategy(s, v4_evidence_broadcast)?)),
+        }
+    }
+
+    fn handle_ws_event(&mut self, event: WsEvent) {
+        match self {
+            Self::V3(runner) => runner.handle_ws_event(event),
+            Self::V4(runner) => runner.handle_ws_event(event),
+        }
+    }
+
+    fn subscribed_symbols(&self) -> &[Symbol] {
+        match self {
+            Self::V3(runner) => &runner.subscribed_symbols,
+            Self::V4(runner) => &runner.subscribed_symbols,
+        }
+    }
+
+    pub fn kline_pool(&self) -> Option<&KlinePool> {
+        match self {
+            Self::V3(runner) => Some(&runner.kline_pool),
+            Self::V4(runner) => Some(&runner.kline_pool),
+        }
+    }
+
+    pub fn v4_memory_snapshot(&self, now_ms: u64) -> Option<V4RuntimeMemorySnapshot> {
+        match self {
+            Self::V3(_) => None,
+            Self::V4(runner) => Some(runner.runtime.memory_snapshot(now_ms)),
+        }
+    }
+
+    fn set_stopped(&mut self) {
+        match self {
+            Self::V3(runner) => runner.status = RunnerStatus::Stopped,
+            Self::V4(runner) => runner.status = RunnerStatus::Stopped,
+        }
+    }
+}
+
+pub struct V4Runner {
+    pub strategy_id: String,
+    pub runtime: V4PaperSimulatedRuntime,
+    pub subscribed_symbols: Vec<Symbol>,
+    pub kline_pool: KlinePool,
+    pub status: RunnerStatus,
+    pub market_event_type: String,
+    pub evidence_broadcast: broadcast::Sender<V4ExecutorEvidenceEvent>,
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct V4ExecutorEvidenceEvent {
+    pub strategy_id: String,
+    pub event_type: String,
+    pub memory_snapshot: V4RuntimeMemorySnapshot,
+    pub runtime_events: Vec<qrpc_runtime::V4RuntimeEventEnvelope>,
+}
+
+impl V4Runner {
+    const KLINE_POOL_CAPACITY: usize = 1000;
+
+    pub fn from_strategy(
+        s: &ActiveStrategy,
+        evidence_broadcast: broadcast::Sender<V4ExecutorEvidenceEvent>,
+    ) -> anyhow::Result<Self> {
+        let graph = s
+            .v4_graph
+            .clone()
+            .ok_or_else(|| anyhow::anyhow!("v4 runner requires v4_graph"))?;
+        let market_event_type = graph
+            .event_catalog
+            .as_ref()
+            .and_then(|catalog| {
+                catalog
+                    .events
+                    .iter()
+                    .find(|event| event.event_type == "price_tick")
+                    .or_else(|| {
+                        catalog
+                            .events
+                            .iter()
+                            .find(|event| event.event_type == "market.tick")
+                    })
+                    .or_else(|| {
+                        catalog
+                            .events
+                            .iter()
+                            .find(|event| event.source_kind == MachineEventSourceKind::MarketData)
+                    })
+            })
+            .map(|event| event.event_type.clone())
+            .unwrap_or_else(|| "price_tick".to_string());
+        let runtime = V4PaperSimulatedRuntime::new_with_execution_capabilities(
+            graph,
+            executor_v4_market_matrix("okx-paper"),
+            vec![qrpc_core_ir::v4::ExecutionCapabilityKind::Market],
+        )?;
+
+        Ok(Self {
+            strategy_id: s.strategy_id.clone(),
+            runtime,
+            subscribed_symbols: s.subscribed_symbols.clone(),
+            kline_pool: KlinePool::new(Self::KLINE_POOL_CAPACITY),
+            status: if s.execution_mode == ExecutionMode::Paper {
+                RunnerStatus::Running
+            } else {
+                RunnerStatus::Idle
+            },
+            market_event_type,
+            evidence_broadcast,
+        })
+    }
+
+    pub fn handle_ws_event(&mut self, event: WsEvent) {
+        match event {
+            WsEvent::Ticker {
+                symbol,
+                price,
+                ts_ms,
+            } => {
+                if self.status != RunnerStatus::Running || !self.is_subscribed_to(&symbol) {
+                    return;
+                }
+                self.kline_pool.update_from_ticker(&symbol, price, ts_ms);
+                match self.runtime.submit_market_price_tick(
+                    "okx-paper",
+                    &symbol,
+                    price,
+                    ts_ms,
+                    &self.market_event_type,
+                ) {
+                    Ok(output) => self.broadcast_evidence(output),
+                    Err(e) => {
+                        self.status = RunnerStatus::Faulted(e.to_string());
+                        eprintln!("[runner:{}] v4 price_tick error: {:?}", self.strategy_id, e);
+                    }
+                }
+            }
+            WsEvent::Kline { symbol, bar } => {
+                if self.status != RunnerStatus::Running || !self.is_subscribed_to(&symbol) {
+                    return;
+                }
+                let close_ms = bar.close_time_ms;
+                let close = bar.close;
+                self.kline_pool.update_kline(&symbol, bar);
+                match self.runtime.submit_market_bar_closed(
+                    "okx-paper",
+                    &symbol,
+                    close,
+                    close_ms,
+                    &self.market_event_type,
+                ) {
+                    Ok(output) => self.broadcast_evidence(output),
+                    Err(e) => {
+                        self.status = RunnerStatus::Faulted(e.to_string());
+                        eprintln!("[runner:{}] v4 bar_closed error: {:?}", self.strategy_id, e);
+                    }
+                }
+            }
+            WsEvent::Connected { exchange } => {
+                eprintln!(
+                    "[runner:{}] {} websocket connected for v4 runtime",
+                    self.strategy_id, exchange
+                );
+                if self.status == RunnerStatus::Idle {
+                    self.status = RunnerStatus::Running;
+                }
+                let snapshot = self.runtime.memory_snapshot(0);
+                let _ = self.evidence_broadcast.send(V4ExecutorEvidenceEvent {
+                    strategy_id: self.strategy_id.clone(),
+                    event_type: "v4RuntimeMemorySnapshot".to_string(),
+                    memory_snapshot: snapshot,
+                    runtime_events: Vec::new(),
+                });
+            }
+            #[cfg(test)]
+            WsEvent::Disconnected { exchange, reason } => {
+                eprintln!(
+                    "[runner:{}] {} websocket disconnected: {}",
+                    self.strategy_id, exchange, reason
+                );
+                self.status = RunnerStatus::Faulted(reason);
+            }
+        }
+    }
+
+    fn broadcast_evidence(&self, output: V4PaperSimulatedRunOutput) {
+        let _ = self.evidence_broadcast.send(V4ExecutorEvidenceEvent {
+            strategy_id: self.strategy_id.clone(),
+            event_type: "v4RuntimeMemorySnapshot".to_string(),
+            memory_snapshot: output.memory_snapshot,
+            runtime_events: output.events,
+        });
+    }
+
+    fn is_subscribed_to(&self, symbol: &str) -> bool {
+        self.subscribed_symbols.is_empty()
+            || self
+                .subscribed_symbols
+                .iter()
+                .any(|item| item.as_str().eq_ignore_ascii_case(symbol))
+    }
+}
+
 impl RunnerPool {
     pub fn new(bc: broadcast::Sender<TriggerEvent>) -> Self {
+        let (v4_evidence_broadcast, _) = broadcast::channel(256);
         Self {
             runners: BTreeMap::new(),
             trigger_broadcast: bc,
+            v4_evidence_broadcast,
             ws_tx_map: HashMap::new(),
             symbol_index: HashMap::new(),
         }
@@ -201,7 +424,7 @@ impl RunnerPool {
     pub fn register_exchange(&mut self, exchange: &str, tx: mpsc::UnboundedSender<WsEvent>) {
         self.ws_tx_map.insert(exchange.into(), tx);
     }
-    pub fn register(&mut self, s: &ActiveStrategy) {
+    pub fn register(&mut self, s: &ActiveStrategy) -> anyhow::Result<()> {
         let sid = s.strategy_id.clone();
         // v3.3.0: 建立反向索引
         for sym in &s.subscribed_symbols {
@@ -210,8 +433,13 @@ impl RunnerPool {
         }
         self.runners.insert(
             sid,
-            LiveRunner::from_strategy(s, self.trigger_broadcast.clone()),
+            RunnerInstance::from_strategy(
+                s,
+                self.trigger_broadcast.clone(),
+                self.v4_evidence_broadcast.clone(),
+            )?,
         );
+        Ok(())
     }
     /// v3.2.2: 从RunnerPool移除停止的策略
     pub fn remove(&mut self, strategy_id: &str) {
@@ -220,7 +448,7 @@ impl RunnerPool {
             ids.retain(|id| id != strategy_id);
         }
         if let Some(runner) = self.runners.get_mut(strategy_id) {
-            runner.status = RunnerStatus::Stopped;
+            runner.set_stopped();
         }
         self.runners.remove(strategy_id);
     }
@@ -229,8 +457,13 @@ impl RunnerPool {
         match &event {
             WsEvent::Ticker { symbol, .. } | WsEvent::Kline { symbol, .. } => {
                 let key = symbol.to_uppercase();
-                let target_ids: Vec<String> =
+                let mut target_ids: Vec<String> =
                     self.symbol_index.get(&key).cloned().unwrap_or_default();
+                for (id, runner) in &self.runners {
+                    if runner.subscribed_symbols().is_empty() && !target_ids.contains(id) {
+                        target_ids.push(id.clone());
+                    }
+                }
                 for id in &target_ids {
                     if let Some(runner) = self.runners.get_mut(id) {
                         runner.handle_ws_event(event.clone());
@@ -250,6 +483,24 @@ impl RunnerPool {
             }
         }
     }
+}
+
+fn executor_v4_market_matrix(
+    venue_id: impl Into<String>,
+) -> qrpc_core_ir::v4::VenueCapabilityMatrix {
+    let mut matrix = qrpc_core_ir::v4::unsupported_v4_first_wave_matrix(venue_id);
+    for entry in &mut matrix.capabilities {
+        if matches!(
+            entry.capability,
+            qrpc_core_ir::v4::ExecutionCapabilityKind::Market
+                | qrpc_core_ir::v4::ExecutionCapabilityKind::Gtc
+                | qrpc_core_ir::v4::ExecutionCapabilityKind::ClientOrderId
+        ) {
+            entry.source = qrpc_core_ir::v4::CapabilitySupportSource::RuntimeSimulated;
+            entry.supported_modes = vec![qrpc_core_ir::v4::RuntimeTradingMode::PaperSimulated];
+        }
+    }
+    matrix
 }
 
 #[cfg(test)]

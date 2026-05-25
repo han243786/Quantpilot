@@ -507,8 +507,8 @@ fn parse_state(input: &str, line_number: usize) -> Result<MachineState, Diagnost
     Ok(MachineState {
         state_id: (*state_id).to_string(),
         group_id: None,
-        initial: parts.iter().any(|part| *part == "initial"),
-        terminal: parts.iter().any(|part| *part == "terminal"),
+        initial: parts.contains(&"initial"),
+        terminal: parts.contains(&"terminal"),
     })
 }
 
@@ -551,11 +551,19 @@ fn parse_memory(input: &str, line_number: usize) -> Result<MachineMemoryField, D
     let Some(type_name) = parts.first() else {
         return Err(diag("QSV4114", "memory 必须声明类型", line_number));
     };
+    let type_ref = parse_qs_type_ref(type_name).map_err(|message| {
+        diag(
+            "QSV4117",
+            format!("memory 类型不在 v4 QS 类型系统中: {message}"),
+            line_number,
+        )
+    })?;
     Ok(MachineMemoryField {
         name: name.trim().to_string(),
         type_name: (*type_name).to_string(),
+        type_ref: Some(type_ref),
         default_value: None,
-        nullable: parts.iter().any(|part| *part == "nullable"),
+        nullable: parts.contains(&"nullable"),
     })
 }
 
@@ -1168,6 +1176,38 @@ v4_strategy strategy.v4.sample {
             .diagnostics
             .iter()
             .any(|diagnostic| diagnostic.code == "QSV4105"));
+    }
+
+    #[test]
+    fn v4_static_audit_rejects_unknown_memory_type() {
+        let source = SAMPLE_V4_QS.replace(
+            "memory last_signal_at: time nullable",
+            "memory last_signal_at: made_up nullable",
+        );
+
+        let report = audit_v4_quant_script_static(&source, &bundle_with_market_support());
+
+        assert_eq!(report.verdict, V4QsStaticAuditVerdict::Rejected);
+        assert!(report
+            .diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic.code == "QSV4117"));
+    }
+
+    #[test]
+    fn v4_static_audit_rejects_memory_write_to_undeclared_field() {
+        let source = SAMPLE_V4_QS.replace(
+            "on risk.approved from idle to ready write last_signal_at",
+            "on risk.approved from idle to ready write unknown_memory",
+        );
+
+        let report = audit_v4_quant_script_static(&source, &bundle_with_market_support());
+
+        assert_eq!(report.verdict, V4QsStaticAuditVerdict::Rejected);
+        assert!(report
+            .diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic.message.contains("unknown_memory")));
     }
 
     #[test]

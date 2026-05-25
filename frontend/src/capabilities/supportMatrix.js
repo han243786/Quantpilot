@@ -246,6 +246,15 @@ export const CAPABILITY_ACTION_MAP = {
       "缓存回退模式下仍可见，但依旧受后端校验约束。"
     ]
   },
+  start_v4_simulation: {
+    label: "v4 模拟运行",
+    apiPaths: ["/api/runtime/v4/run"],
+    blockedDuringCapabilitySync: true,
+    notes: [
+      "v4 模拟运行只接收 v4 QS 静态审计通过后的 machine graph handoff。",
+      "该入口固定使用 PaperSimulated，本地模拟成交不会连接 provider submission。"
+    ]
+  },
   run_backtest: {
     label: "运行回测",
     apiPaths: [
@@ -256,6 +265,7 @@ export const CAPABILITY_ACTION_MAP = {
     ],
     blockedDuringCapabilitySync: true,
     notes: [
+      "v4 backtest uses /api/runtime/backtest with runtime_kind=v4 and exposes v4_artifact evidence without enabling provider submission.",
       "当前仅提供基础回放/回测支持，不宣称研究级回测能力。",
       "缓存回退模式下仍可见，但依旧受后端校验约束。"
     ]

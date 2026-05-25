@@ -1,5 +1,61 @@
 # Changelog
 
+## v4.3.0 — v4 回测 + 多交易对策略 (2026-05-25)
+
+### v4 回测
+
+- `/api/runtime/backtest` 新增 `runtime_kind = "v4"` 分支，基于 v4 MachineGraph 执行确定性 bar replay。
+- `BacktestOutput` 与 artifact bundle 新增 `v4_artifact`，记录 machine trajectory、Risk Plane decision、Execution capability source 与最终 memory snapshot。
+- `qrpc_runtime` 新增 v4 回测 replay API 与多交易对 machine graph 展开，保证同输入得到同轨迹。
+
+### 前端入口
+
+- 策略模板库新增 v4 Dual MA、Grid、Stop Loss、Multi Symbol 模板，并在模板卡片展示 v4 badge。
+- 回测请求自动携带 v4 runtime kind 与 symbols，回测详情页展示 v4 runtime evidence 和 artifact 摘要。
+
+### 治理与契约
+
+- OpenAPI、能力治理快照、全量树、版本门禁同步到 v4.3.0。
+
+## v4.2.0 — 执行端 v4 集成 + P3 消化 (2026-05-25)
+
+### 执行端 v4 runtime
+
+- 执行端策略元数据新增 `runtime_kind/runtime_version`，`RunnerPool` 支持 v3 LiveRunner 与 v4 PaperSimulated runner 并存。
+- `POST /api/executor/strategies` 支持 v4 graph/QS source 部署，start/stop 生命周期复用执行端策略 API。
+- OKX Paper 行情可转换为 v4 Market 事件并注入 ObservationMachine，同时推送 `v4RuntimeMemorySnapshot` SSE 证据。
+
+### P3 审计消化
+
+- sandbox verification 与 alert acknowledge 的持久化 I/O 移出写锁范围。
+- 执行端启动横幅改为 `env!("CARGO_PKG_VERSION")` 注入，版本门禁统一到 v4.2.0。
+
+### 执行端前端
+
+- 新增执行端 v4 状态机证据面板，展示 machine 状态、Risk Plane、Execution 能力来源和模拟订单/资产摘要。
+- 顶栏和策略标签展示 v3/v4 runtime 标识。
+
+## v4.1.0 — v4 运行时加固 + P2 审计消化 (2026-05-24)
+
+### v4 runtime 用户入口
+
+- 新增 `POST /api/runtime/v4/run`，支持从 v4 QuantScript 源码或已校验 v4 graph 启动 PaperSimulated 状态机运行。
+- 前端 capability 真源新增 `start_v4_simulation`，策略工作区工具栏可对 v4 QS 启动“v4 模拟运行”。
+- CLI 新增 `v4-run <graph_id|path>`，可从 `storage/graphs/*.qs` 或显式路径启动 v4 PaperSimulated 策略。
+
+### 运行时与静态校验加固
+
+- event payload 按 `MachineEventCatalog.payload_fields` 校验 required / nullable / type，不合规则记录 `v4.runtime.event_rejected` 且不推进状态。
+- `memory` 声明解析为 `QsTypeRef`，未知类型返回 `QSV4117`；`memory_writes` 静态和运行时双层 fail-closed。
+- 本地模拟执行补齐 stop/take-profit 条件单触发，价格更新后按能力来源记录 runtime_simulated 证据。
+
+### P2 审计消化
+
+- API 错误响应稳定携带 `error_code`，v4 编译/运行路径新增结构化诊断码。
+- 告警 acknowledge 不存在 ID 时返回 HTTP 404 + `ALERT_NOT_FOUND`。
+- 回测 `equity_curve` 非单调输入不再 debug panic，改为诊断警告。
+- 版本一致性脚本覆盖 release manifest、OpenAPI、启动脚本和执行端 banner。
+
 ## v4.0.0 — 状态机化架构 + 开发者学习流水线 (2026-05-24)
 
 ### 架构升级 (MAJOR)

@@ -30,6 +30,7 @@ pub(super) fn register_runtime_routes(router: Router<AppState>) -> Router<AppSta
             get(get_backtest_replay),
         )
         .route("/api/runtime/test-run", post(start_test_run))
+        .route("/api/runtime/v4/run", post(start_v4_runtime_run))
         .route("/api/runtime/runs", get(list_runs))
         .route("/api/runtime/runs/:run_id/save", post(save_run_record))
         .route(

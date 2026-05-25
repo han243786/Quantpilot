@@ -1,7 +1,8 @@
 release:
   app_name: quantpilot
   package_id: com.quantpilot.app
-  version: 2.0.0
+  version: 4.3.0
+  display_version: v4.3.0
   channel: stable
   git_sha: ${GIT_SHA}
   build_id: ${BUILD_ID}

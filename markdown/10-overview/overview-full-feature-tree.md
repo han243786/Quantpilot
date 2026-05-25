@@ -1,0 +1,1991 @@
+# QuantPilot 全量树 v4.3.0
+
+> 本文档是 QuantPilot 的"源代码地图"——开发者通过这棵树可以彻底了解项目的每一个模块、每一个文件、每一个功能。
+> 与 GP (实现约束) 和超级规范化 (流程约束) 配合使用: GP 管代码写成什么样, 超级规范化管开发怎么管, 全量树管项目里有什么。
+
+---
+
+## 0. 使用说明与边界
+
+### 0.1 本文档回答什么
+
+| 问题 | 如何回答 |
+|------|---------|
+| 项目里有什么？ | 7 个根节点覆盖全部 active 源文件 |
+| 某个功能在哪？ | 从功能反查代码路径 (见附录 C: GP 约束快速索引) |
+| 改一个文件会影响什么？ | 每个文件节点标注了"什么时候改这里"和所属子系统 |
+| 新增文件要改哪？ | 参见 §0.4 维护规则 |
+| 这个文件为什么存在？ | 每个子系统有"职责"说明, 每个文件有"做什么"一行说明 |
+
+### 0.2 与 GP / 超级规范化的分工
+
+| | 全量树 | GP | 超级规范化 |
+|---|---|---|---|
+| 管什么 | 全局透明 | 实现约束 | 流程约束 |
+| 类型 | 地图 | 实体法 | 程序法 |
+| 读者 | 所有开发者 | 写代码的人 | 管流程的人 |
+| 更新触发 | 文件变更时 | 条款变更时 | 流程优化时 |
+
+**互不重复**: 全量树不抄 GP 条款全文, 只在相关节点标注 `[GP §x.x]` 和一句影响说明。超级规范化不在全量树中重复解释, 只在根6/根7说明流程入口。
+
+### 0.3 覆盖范围
+
+**必须覆盖的 active 文件**:
+- `src/**/*.rs`
+- `src-executor/**/*.rs`
+- `qrpc_*/src/**/*.rs`
+- `quantscript/src/**/*.rs`
+- `src-tauri/**/*.rs`
+- `frontend/src/**/*.{js,jsx}`
+- `frontend-executor/src/**/*.{js,jsx}`
+- `tools/**/*.{ps1,bat,js,rs}`
+- `scripts/**/*.{ps1,bat,js}`
+- `contracts/**/*.yaml`
+- `config/**/*.{yaml,json}`
+- `release/*.yaml`
+- `tests/**/*.rs`
+- `frontend/tests/**/*.{js,jsx}`
+- 根目录活配置: `Cargo.toml`, `start.bat`, `start.ps1`, `package.json` 等
+
+**不要求逐文件展开**:
+- `target/`, `node_modules/`, `frontend/dist/`, `storage/`, `tmp/`
+- `markdown/learning/` (GP §1.11: 本地忽略)
+- 历史里程碑归档 (`markdown/06-milestones/vX.Y.Z/`) 按版本目录摘要
+- `frontend/test-results/`, `markdown/测试/test-reports/` (生成物)
+
+### 0.4 维护规则 (阻断级)
+
+1. **代码变更必须同步全量树** — 新增/删除/重命名 active 文件时, 必须更新对应树节点和附录 E。
+
+2. **树结构跟代码结构走** — 不创造代码里不存在的抽象层级; 抽象分组必须能落到真实路径。
+
+3. **每个 active 文件至少一行说明** — 说明它做什么、属于哪个子系统、什么时候需要改它。
+
+4. **GP 标注挂在功能节点上** — 全量树不复制 GP 条款全文, 只在相关节点标注受哪些 GP 条款约束, 格式: `[GP §x.x]: 约束说明`。
+
+5. **新增能力标注引入版本** — 新增功能节点使用 `🆕 vX.Y.Z` 标注。
+
+6. **路径必须 repo-relative 完整路径** — 使用 `src/runtime/run.rs`, 禁止 `runtime/run.rs` 这种上下文相对路径。
+
+7. **行数不手写为事实来源** — 不使用具体行数。若保留统计数字, 必须来自脚本输出; 否则只写功能描述。
+
+8. **禁止占位符** — 文档中不得出现待处理标记、工程占位标记或错误版本号。
+
+### 0.5 节点标注规范
+
+**子系统节点** (固定格式):
+
+```
+### X.Y 子系统名
+
+**职责**: 一句话说明这个子系统做什么。
+**入口文件**: 关键公共入口和跨层边界。
+**关键数据流**: 数据在这个子系统中的流转路径。
+**主要约束**: 适用的 GP 条款和约束说明。
+**验证命令**: 如何验证这个子系统正常工作。
+```
+
+**文件叶子节点** (固定格式):
+
+```
+- `path/to/file.ext` — 做什么; 什么时候改这里。
+```
+
+---
+
+## 根1: 系统入口与进程拓扑
+
+**一句话**: 系统由 4 个可独立运行的进程/服务器组成, 通过 `start.bat` 一键编排启动。
+
+```
+用户桌面
+  │
+  └─ start.bat (编排脚本)
+       │
+       ├── Step 1: cargo build --bin quantpilot
+       ├── Step 2: 启动后端 quantpilot.exe → 监听 :3000
+       └── Step 3: cargo tauri dev → Tauri 壳 → 等待后端就绪 → 打开桌面窗口
+                                                      │
+                                                    WebView2 加载前端 → 连接 :3000
+```
+
+### 1.1 编排脚本: `start.bat`
+
+**文件**: `start.bat` (根目录)
+
+开发环境一键启动脚本。做的事:
+- 设置 `QUANTPILOT_DEV=true` — 跳过认证和限速, 缩短 TTL
+- 杀掉旧进程 (quantpilot.exe on :5173, quantpilot-tauri.exe)
+- Step 1: `cargo build --bin quantpilot` — 编译后端
+- Step 2: 后台启动后端, 轮询 `:3000 LISTENING` (最多 30 次 x 2s)
+- Step 3: `cd src-tauri && cargo tauri dev` — 启动 Tauri 桌面壳
+
+**替代启动方式** (`start.ps1`): PowerShell 版本, 同样逻辑。
+
+### 1.2 Tauri 桌面壳
+
+**文件**: `src-tauri/src/main.rs`
+
+Tauri v2 桌面壳入口。做的事:
+- 等待后端 `127.0.0.1:3000` 就绪 (最多 30s, 每秒尝试一次 TCP 连接)
+- 构建 Tauri 应用: 自绘标题栏 (`decorations: false`), 窗口 1400×900, 最小 960×600
+- 开发模式下自动打开 WebView2 DevTools
+
+**配置文件**: `src-tauri/tauri.conf.json`
+- `productName`: "QuantPilot"
+- `identifier`: "com.quantpilot.app"
+- CSP (内容安全策略): 只允许 `'self'` + `localhost:5173` + `127.0.0.1:3000`
+- NSIS 安装器: `currentUser` 模式
+
+**前端目录**: `src-tauri/` 的 `build.frontendDist` 指向 `../frontend/dist`
+
+### 1.3 后端服务 (:3000)
+
+**文件**: `src/main.rs` → `src/lib.rs` → `src/app_router.rs`
+
+```
+src/main.rs          →  tokio::main, 调用 run_server()
+src/lib.rs           →  run_server() 函数, 加载全部后端模块
+                        构建 Axum Router, 绑定 :3000
+src/app_router.rs    →  build_app_router(), 定义所有 HTTP 路由
+```
+
+后端是单进程 Axum 0.7 HTTP 服务器, 使用 tokio 多线程运行时。所有功能通过模块化组织在 `src/` 下的 Rust 文件中。
+
+**启动逻辑** (`src/lib.rs`):
+- 加载 `.env` (dotenvy)
+- 初始化 tracing-subscriber (日志格式 compact/json)
+- 初始化凭证保险库 (`CredentialVault`)
+- 初始化存储生命周期
+- 调用 `build_app_router()` 构建路由
+- `axum::serve` 绑定 `127.0.0.1:3000`
+
+**测试入口**: `src/tests_backend.rs` — 集成测试入口, 使用 `tower::ServiceExt` 发送 HTTP 请求。
+
+**详细模块展开**: 见 [根2: 后端服务](#根2-后端服务-3000)
+
+### 1.4 执行端 (:3001)
+
+**文件**: `src-executor/main.rs` → 独立 binary `cargo run --bin executor`
+
+```
+Cargo.toml [[bin]] name="executor", path="src-executor/main.rs"
+```
+
+执行端是**独立进程**, 与后端分离运行。职责:
+- 策略部署/启动/停止/热调参
+- OKX testnet WebSocket 行情连接
+- 模拟成交 (Live Runner)
+- 独立凭证保险库 (v2, PBKDF2 100 万轮)
+
+**启动逻辑** (`src-executor/main.rs`):
+- 初始化 `qrpc_session` 会话密钥 (进程间加密通道)
+- 构建 Axum Router, 绑定 `127.0.0.1:3001`
+- SSE 端点 `/api/executor/events` — 向后端推送策略状态变更
+
+**详细模块展开**: 见 [根3: 执行端](#根3-执行端-3001)
+
+### 1.5 前端开发服务器 (:5173)
+
+**文件**: `frontend/package.json` → `npm run dev` → Vite
+
+```
+Vite 6 dev server → http://localhost:5173
+  │
+  ├── 代理 /api → http://127.0.0.1:3000 (后端)
+  └── HMR (热模块替换) 实时刷新
+```
+
+开发时前端独立运行, 通过 Vite proxy 转发 API 请求到后端。生产构建 (`npm run build`) 产出静态文件到 `frontend/dist/`, Tauri 壳直接加载。
+
+**详细模块展开**: 见 [根5: 前端 React SPA](#根5-前端-react-spa)
+
+### 1.6 进程间通信
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   Tauri 壳 (WebView2)                │
+│  ┌──────────────────┐    HTTP     ┌────────────────┐│
+│  │  前端 React SPA   │ ←────────→ │ 后端 :3000      ││
+│  │  localhost:5173   │  /api/*    │  Axum HTTP      ││
+│  └──────────────────┘            │  47 模块        ││
+│                                   └───────┬────────┘│
+│                                           │          │
+│                                    qrpc_session     │
+│                                    (加密通道)        │
+│                                           │          │
+│                                   ┌───────┴────────┐│
+│                                   │ 执行端 :3001     ││
+│                                   │ 独立进程         ││
+│                                   │ OKX testnet     ││
+│                                   └────────────────┘│
+└─────────────────────────────────────────────────────┘
+```
+
+- **前端 ↔ 后端**: HTTP REST API (`/api/*`), SSE 事件流
+- **后端 ↔ 执行端**: `qrpc_session` crate 提供 AES-256-GCM + HMAC-SHA256 加密通道
+- **执行端 ↔ OKX**: WebSocket (行情) + REST (下单)
+
+---
+
+## 根2: 后端服务 (:3000)
+
+**一句话**: Axum 0.7 HTTP 服务器, Rust 模块按功能分为 7 个子系统, 是整个 QuantPilot 的核心。
+
+### 2.0 路由总表
+
+**文件**: `src/app_router.rs`
+
+`build_app_router()` 函数定义了全部 HTTP 端点。路由按功能分组:
+
+| 路由前缀 | 功能域 | 关键模块 |
+|---------|--------|---------|
+| `/api/graph/*` | 策略图 CRUD | `graph_api.rs` |
+| `/api/runtime/compile` | 编译 | `compile_api.rs` |
+| `/api/runtime/run` | 纸面运行 | `runtime/mod.rs` |
+| `/api/runtime/backtest/*` | 回测 | `runtime/backtest.rs` |
+| `/api/runtime/experiments/*` | 实验/参数扫描 | — |
+| `/api/auth/*` | 用户认证 | `auth/mod.rs` |
+| `/api/credentials/*` | 凭证管理 | `credential_api.rs` |
+| `/api/v1/alerts/*` | 告警 | `alert_engine.rs` |
+| `/api/v1/snapshots/*` | 快照 | `snapshot_service.rs` |
+| `/api/v1/approvals/*` | 审批 | `runtime/mutation.rs` |
+| `/api/v1/chaos/*` | 混沌实验 | `chaos_experiment.rs` |
+| `/api/v1/runbook/*` | 运行手册 | `runbook.rs` |
+| `/api/capabilities` | 能力声明 | `capability_api.rs` |
+| `/api/quantscript/formal/*` | QS 正式编译 | `compile_api.rs` |
+| `/api/collaboration/*` | 协作 | `collaboration.rs` |
+| `/api/hotswap/*` | 模块热替换 | `hotswap_api.rs` |
+| `/api/migration/*` | 数据迁移 | `migration_sender.rs` |
+| SPA fallback | 前端静态文件 | `dist/index.html` |
+
+[GP §4.4]: 新增路由必须在 `app_router.rs` 注册, SPA fallback 不可删除。
+
+### 2.1 编译系统
+
+**职责**: 将策略图 (graph JSON) 或 QuantScript 源码编译为可执行的 Core IR。
+
+**数据流**: `graph JSON → QS 源码 → parse → HIR → lower → Core IR → sandbox`
+
+```
+compile_api.rs                  — 编译入口, /api/runtime/compile
+  ├── compile_runtime_protocol_via_qs()  — QS 路径编译 (主路径)
+  ├── compile_runtime_protocol()         — graph 直接编译 (内部路径)
+  └── 编译缓存: LRU 50 条, key=(graph_hash, compile_options_hash)
+
+compile_diagnostics.rs          — 编译诊断生成
+  └── 结构化诊断: 错误码 + 文件位置 + 修复建议
+
+compile_artifact_builders.rs    — 编译产物构建
+  └── 组装 RuntimeProtocolCoreConfig, StrategyPackage, MigrationPackage
+
+graph_quantscript_api.rs        — graph JSON → QS 源码
+  └── generate_quantscript_from_graph_value() — 前端图编辑器的唯一合法出口
+
+graph_version_compare.rs        — 图版本对比
+  └── 比较两个图版本的差异, 用于版本历史
+
+error_codes.rs                  — 全局错误码注册表
+  └── QSxxxx, QPQSxxxx 诊断码定义
+
+formal_quantscript_authoring_types.rs — QS 正式编写类型定义
+```
+
+[GP §1.1]: QS 是唯一策略定义路径 — 前端 graph 编辑器不能产出独立编译路径
+[GP §1.3]: 编译路径不可绕过 — 所有 compile_runtime_protocol_config 必须来自 compile_runtime_protocol_via_qs
+[GP §5.4]: 禁止在图编辑器中绕过 QS 编译
+
+### 2.2 图存储系统
+
+**职责**: 策略图的 CRUD、版本管理、持久化。
+
+```
+graph_api.rs                    — 图 CRUD API
+  ├── POST   /api/graph/save           — 保存策略图
+  ├── GET    /api/graph/load/:id       — 加载策略图
+  ├── GET    /api/graph/list           — 列出全部策略
+  ├── DELETE /api/graph/:id            — 删除策略图
+  └── GET    /api/graph/versions/:id   — 版本历史
+
+[存储]: graphs/ 目录 (Permanent 级)
+  └── 原子写入: write(.tmp) → fsync → rename → fsync(parent)
+```
+
+[GP §1.4]: 数据流单向 — QS 源码 → graph JSON → 前端可视化, 保存时不覆盖原始 QS
+[GP §7.1]: 图存储属于 Permanent 级, 不可被启动清理删除
+
+### 2.3 运行时系统
+
+**职责**: Paper 运行、策略调度、事件流、诊断。
+
+```
+runtime/mod.rs                  — 运行时主模块
+  ├── Paper 运行: 启动/停止/暂停/恢复
+  ├── 事件流: SSE 推送 (EventStream)
+  └── 策略生命周期管理
+
+runtime/run.rs                  — 单次运行执行
+  └── 沙盒内执行策略, 产出事件序列
+
+runtime/mutation.rs             — 运行时变更 (审批 + AI 提案)
+  ├── AI 提案: 策略参数/结构自动优化建议
+  ├── 审批工作流: L1/L2/L3 三级
+  ├── 沙箱验证: run_sandbox_verification()
+  └── 锁顺序: approval_records → ai_proposals (防死锁)
+
+runtime/backtest.rs             — 回测引擎
+  ├── 历史回放/确定性 Mock
+  ├── 12 项指标: 夏普/索提诺/卡尔玛/最大回撤/胜率/盈亏比/...
+  └── 回测工件: 事件序列 + 权益曲线 + 成交记录
+
+runtime_persistence.rs          — 运行时持久化
+  └── 运行记录/回测工件/实验数据的读写
+
+runtime_diagnostics.rs          — 运行时诊断
+  └── 运行时健康检查、性能诊断
+
+runtime_event_projection.rs     — 运行时事件投影 (v4)
+  └── 将 v4 runtime 事件映射为前端可消费的格式
+
+runtime_response_mapping.rs     — 运行时响应映射
+  └── 后端内部类型 → 前端 API 响应类型
+
+runtime_validation.rs           — 运行时验证
+  └── graph_id, compile_id, 参数合法性校验
+
+sandbox_verification.rs         — 沙箱验证
+  └── AI 提案独立回放验证, catch_unwind + 3 重试
+
+frontend_runtime_mapping.rs     — 前端运行时映射
+frontend_api_types.rs           — 前端 API 类型定义
+```
+
+[GP §9.1]: 沙箱验证 — AI 提案必须通过独立沙箱回放, CandidateUnderperforms 阻断
+[GP §9.2]: 签名快照 — SHA-256 5 项指纹, 恢复前验签, 原子写入
+[GP §9.3]: 告警引擎 — 10 条规则全部有 resolve_condition, 双重去重
+[GP §9.4]: 审批工作流 — 过期自动 Expired, 状态联动, 锁顺序反序死锁
+
+### 2.4 回测系统
+
+**职责**: 回测执行、结果分析、回测对比。
+
+```
+backtest_artifacts.rs           — 回测工件管理
+  └── 工件创建、读取、列表
+
+backtest_compare.rs             — 回测对比入口
+  └── 多回测并行对比 API
+
+backtest_compare_core.rs        — 回测对比核心逻辑
+  └── 指标对比、权益曲线叠加、相关性分析
+
+backtest_compare_narrative.rs   — 回测对比叙述生成
+  └── 将对比数据转化为人类可读的中文分析文本
+
+backtest_compare_types.rs       — 回测对比类型定义
+```
+
+**回测 12 项指标** (来自 `qrpc_runtime/src/backtest_metrics.rs`):
+夏普比率、索提诺比率、卡尔玛比率、最大回撤、胜率、盈亏比、总收益率、年化收益率、波动率、下行波动率、平均持仓时间、成交数
+
+### 2.5 安全系统
+
+**职责**: 用户认证、凭证加密存储、速率限制、中间件。
+
+```
+auth/mod.rs                     — 用户认证
+  ├── POST /api/auth/register  — 注册 (bcrypt 12 轮)
+  ├── POST /api/auth/login     — 登录 (JWT HS256, 24h 过期)
+  ├── POST /api/auth/refresh   — 刷新令牌轮换 + 重放检测
+  ├── bcrypt verify → tokio::spawn_blocking (不阻塞工作线程)
+  └── 注册限流: 6 次/分钟/IP
+
+auth_middleware.rs              — 认证中间件
+  └── JWT 验证, 注入用户上下文
+
+credential_vault.rs             — 凭证保险库
+  ├── AES-256-GCM 加密 (ring crate)
+  ├── 原子写入: write(.tmp) → fsync → rename → fsync(parent) → .bak 回滚
+  ├── 内存清零: Zeroizing (密钥/凭证 Drop 时)
+  └── PBKDF2 ≥600,000 轮 (测试端)
+
+credential_api.rs               — 凭证管理 API
+  ├── POST /api/credentials/set
+  ├── GET  /api/credentials/list
+  └── DELETE /api/credentials/:service
+
+rate_limiter.rs                 — 速率限制
+  └── 全局限速: 默认 100 请求/秒 (QUANTPILOT_RATE_LIMIT_RPS)
+
+middleware.rs                   — 通用中间件
+safe_log.rs                     — 安全日志
+  └── 日志输出前清除 secret/key/sign/passphrase 字段
+```
+
+[GP §2.6]: 凭证保险库安全 — AES-256-GCM 禁止降级, Zeroizing, 原子写入
+[GP §2.7]: 实时执行安全 — HMAC-SHA256 签名, 每日 ≤100 单/≤$1000, 错误清洗
+[GP §2.8]: 用户认证安全 — bcrypt ≥12 轮, JWT HS256, 刷新令牌轮换, 重放检测 410 GONE
+
+### 2.6 运维系统
+
+**职责**: 告警、快照、审批、混沌实验、运行手册。
+
+```
+alert_engine.rs                 — 告警引擎
+  ├── 10 条默认告警规则 (不可删除, 仅可追加)
+  ├── resolve_condition 自动恢复
+  ├── 双重去重: INSERT OR IGNORE + 内存 HashSet<AlertFingerprint>
+  └── 三阶段无锁恢复: 内存更新 → 写锁释放 → 磁盘 I/O
+
+snapshot_service.rs             — 快照服务
+  ├── SHA-256 签名: (capability_hash + strategy_version + parameter_version
+  │                   + core_ir_digest + event_slice_bounds + created_at_ms)
+  ├── 恢复前验证签名完整性
+  └── 原子写入 + fsync
+
+chaos_experiment.rs             — 混沌实验
+  └── 实验定义、执行、报告
+
+runbook.rs                      — 运行手册
+  └── 运维操作手册定义与执行
+
+collaboration.rs                — 协作
+  └── 多人协作相关功能
+
+backup.rs                       — 备份
+  └── 数据备份与恢复
+```
+
+### 2.7 能力与诊断系统
+
+**职责**: capability 声明、API 错误格式、测试场景、CLI 支持。
+
+```
+capability_api.rs               — 能力声明 API
+  ├── GET /api/capabilities     — 后端能力真源
+  └── CapabilityResponse: workspace.surfaces + ui_actions.actions
+      + runtime.modes + market_data + strategy_ir + permission_boundary
+
+api_errors.rs                   — API 错误格式
+  ├── json_bad_request()        — 400 错误 (用户侧)
+  ├── internal_error()          — 500 错误 (服务器侧)
+  └── 统一 JSON 格式: {"error":"...","message":"...","details":[...]}
+
+api_test_scenario.rs            — 测试场景 API
+  └── 自动化测试场景定义与执行
+
+test_runner.rs                  — 测试运行器
+  └── 测试用例调度
+
+cli_support.rs                  — CLI 支持
+  └── 命令行工具辅助函数
+
+migration_sender.rs             — 数据迁移
+  └── 跨版本数据迁移逻辑
+
+hotswap_api.rs                  — 模块热替换
+  └── 运行时模块替换 API
+```
+
+[GP §1.12]: 前端能力入口必须以后端 `/api/capabilities` 为唯一真源
+
+---
+
+## 根3: 执行端 (:3001)
+
+**一句话**: 独立进程, 负责策略部署/启停/热调参, 对接 OKX testnet 行情与模拟成交。
+
+**编译与启动**:
+```
+Cargo.toml [[bin]] name="executor", path="src-executor/main.rs"
+cargo run --bin executor    →    监听 127.0.0.1:3001
+```
+
+### 3.1 入口与状态管理
+
+```
+src-executor/main.rs             — 执行端入口 (tokio::main)
+  ├── 初始化 qrpc_session (进程间加密通道)
+  ├── 构建 Axum Router → 绑定 :3001
+  ├── SSE 端点 /api/executor/events — 向后端推送策略状态变更
+  └── REST 端点: deploy / start / stop / status / params
+
+src-executor/executor_state.rs   — 执行端核心状态
+  ├── ExecutorState: 全局执行端状态
+  ├── ExecutionMode: Paper / Live
+  ├── StrategyStatus: 策略生命周期
+  └── TriggerEvent: 触发事件定义
+```
+
+### 3.2 实时运行
+
+```
+src-executor/live_runner.rs      — 实时运行器 (RunnerPool v3/v4 双 runner); 改策略执行逻辑时改这里
+  ├── 策略启动后激活 Runner
+  ├── 行情事件 → 策略求值 → 模拟成交
+  └── RunnerPool 管理多策略并发
+
+src-executor/ws_client.rs        — OKX WebSocket 客户端; 改 WS 连接/订阅时改这里
+  ├── 每交易所独立 WS 连接
+  ├── 行情订阅: ticker / kline / orderbook
+  └── 自动重连
+
+src-executor/okx_rest.rs         — OKX REST API; 改下单/撤单逻辑时改这里
+  ├── 下单 / 撤单 / 查询
+  └── HMAC-SHA256 签名
+
+src-executor/kline_buffer.rs     — K线缓冲池; 改 K 线缓存策略时改这里
+  ├── KlinePool: MAX_SYMBOLS=100, LRU 淘汰
+  └── KLINE_POOL_CAPACITY 命名常量
+```
+
+### 3.3 安全与审计
+
+```
+src-executor/credential_vault_v2.rs — 凭证保险库 v2 (执行端专用)
+  ├── PBKDF2 ≥1,000,000 轮 (比测试端更严格)
+  ├── 独立随机机器密钥 (.executor-machine-key)
+  ├── Zeroizing<String> (CredentialEntry)
+  └── 原子写入 + .bak 回滚
+
+src-executor/api_guard.rs        — API 守卫
+  └── 执行端 API 认证/授权
+
+src-executor/audit_log.rs        — 审计日志
+  └── 操作审计记录
+
+src-executor/migration_api.rs    — 迁移 API
+  └── 执行端数据迁移接口
+```
+
+[GP §2.6]: 凭证保险库 — 执行端 PBKDF2 ≥1M 轮, Zeroizing, 独立机器密钥
+[GP §2.7]: 实时执行安全 — OKX HMAC-SHA256, 错误清洗, 速率限制
+
+### 3.4 执行端前端 (frontend-executor/)
+
+**文件**: `frontend-executor/` — 执行端的独立前端 SPA, Vite + React, 端口 5174。
+
+```
+frontend-executor/
+  ├── package.json            — 项目配置 (quantpilot-executor)
+  ├── vite.config.js          — Vite 构建配置
+  ├── index.html              — HTML 入口 (<title>QuantPilot 实时执行端 v4.0.0</title>)
+  └── src/
+      ├── main.jsx            — React 入口, 挂载 ExecutorApp
+      ├── ExecutorApp.jsx     — 执行端 App Shell: 多策略标签页 + 状态轮询 + 模式切换
+      ├── design-system.css   — 执行端专用设计系统 (暗色面板)
+      └── components/
+          ├── ExecutorTopBar.jsx      — 顶部工具栏: 模式切换 (Paper/Live) + 策略选择
+          ├── StrategyGraphPanel.jsx  — 策略图面板: React Flow 只读预览
+          ├── KlineChart.jsx          — K线图表: lightweight-charts 实时行情
+          ├── OrderPanel.jsx          — 订单面板: 挂单/成交/历史显示
+          ├── AssetPanel.jsx          — 资产面板: 持仓/余额/权益曲线
+          └── StrategyParamsPanel.jsx — 策略参数面板: 热调参 pending→commit/rollback
+```
+
+**与后端的关系**: 执行端前端通过 `/api/executor/*` 与执行端 (:3001) 通信, 不经过主后端 (:3000)。
+
+---
+
+## 根4: Cargo 工作区
+
+**一句话**: 7 个 crate 构成 Rust 类型系统、编译管道、运行时和工具链。
+
+```
+Cargo.toml [workspace]
+  ├── qrpc_core_ir     — 类型定义层 (含 v4.1.0 全量类型, v4.rs)
+  ├── qrpc_core         — 核心抽象
+  ├── qrpc_compiler     — 编译层
+  ├── qrpc_runtime      — 运行时层 (含 v4_runtime + compat)
+  ├── qrpc_session      — 进程间加密
+  ├── quantscript       — QS 语言 (含 v4_static_audit)
+  └── src-tauri         — Tauri 桌面壳
+```
+
+### 4.1 qrpc_core_ir — 类型定义层
+
+**文件**: `qrpc_core_ir/src/lib.rs` + `qrpc_core_ir/src/v4.rs`
+
+整个项目最底层的类型基石。定义了所有跨 crate 共享的数据结构。
+
+**v3 类型** (lib.rs):
+- `CoreStrategyIr` — 策略中间表示
+- `RuntimeProtocolCoreConfig` — 运行时协议核心配置
+- 20 种 RFC 协议类型 (001-020)
+
+**v4 类型** (`v4.rs`):
+- 47+ struct/enum, 40+ 验证函数
+- 三大 Machine 模板: `ObservationMachine` / `DecisionMachine` / `ExecutionMachine`
+- 事件模型: `MachineEventCatalog`, `MachineEventTypeSpec`, 5 事件域
+- 事件拒绝: `v4.runtime.event_rejected` 记录 payload/type/guard/memory 写入 fail-closed 证据 🆕 v4.1.0
+- 执行端接入: v4 runner 消费 OKX Market 事件并输出 `v4RuntimeMemorySnapshot` SSE 证据 🆕 v4.2.0
+- v4 回测: `/api/runtime/backtest` 可按 `runtime_kind=v4` 执行 deterministic bar replay, 生成 machine trajectory / Risk Plane / Execution capability artifact 🆕 v4.3.0
+- Risk Plane: `MachineGraphRiskPlane`, priority ≥9000
+- 24 种执行能力: `ExecutionCapabilityKind`, `CapabilitySupportSource`
+- 四种运行时模式: `RuntimeTradingMode` (PaperActual/PaperSimulated/LiveActual/LiveSimulated)
+- QS 类型系统: 23 标量类型 + 5 复合类型
+- 静态契约束: `V4StaticContractBundle` 聚合 10 子契约
+- 编译期能力报告: `V4CompileTimeCapabilityReport`
+- 兼容桥: `bridge_core_ir_to_v4_machine_graph()`
+- 插件治理: `PluginGovernanceContract`, `PluginManifestSpec`
+- 复现契约: `ReproducibilityContract` (8 项证据)
+- 复杂度预算: `ComplexityBudgetContract` (8 项上限)
+- 学习流水线: `DeveloperLearningPipelineContract`
+- 版本 Manifest: `V4VersionManifest`
+
+### 4.2 qrpc_core — 核心抽象
+
+**文件**: `qrpc_core/src/`
+
+运行时协议核心抽象层:
+- `qrpc_core/src/lib.rs` — crate 入口, 核心 trait 定义
+- `qrpc_core/src/error.rs` — 核心错误类型; 改跨 crate 错误定义时改这里
+- `qrpc_core/src/plugin.rs` — 插件 trait 定义; 改插件接口时改这里
+- `qrpc_core/src/strategy_ir.rs` — 策略 IR 核心类型; 改策略中间表示时改这里
+
+### 4.3 qrpc_compiler — 编译层
+
+**文件**: `qrpc_compiler/src/lib.rs`
+
+将 Core IR 编译为可执行指令。负责:
+- 策略图 → Core IR 转换
+- 优化 pass
+- 代码生成
+
+### 4.4 qrpc_runtime — 运行时层
+
+**文件**: `qrpc_runtime/src/`
+
+```
+qrpc_runtime/src/
+  ├── lib.rs                  — 运行时入口
+  ├── v4_runtime.rs           — v4.0.0 PaperSimulated 运行时 🆕 v4.0.0
+  │   ├── V4PaperSimulatedRuntime     — 核心结构体; 改 v4 运行时行为时改这里
+  │   ├── submit_event()              — 事件提交 → process_event()
+  │   ├── advance_time()              — 静默检测
+  │   ├── pull_machine()              — 缓存返回/恢复
+  │   ├── complete_recovery()         — 恢复完成
+  │   ├── update_simulated_market_price() — 模拟行情
+  │   ├── evaluate_risk_plane_for_execution() — Risk Plane 门禁
+  │   ├── evaluate_execution_capabilities_for_execution() — 能力检查
+  │   ├── V4SimulatedExecutionRuntimeState — 模拟撮合引擎
+  │   └── memory_snapshot()           — 内存快照
+  ├── compat.rs               — 模块热替换兼容性检查 🆕 v4.0.0
+  │   ├── CompatibilityChecker        — 7 维度检查 (identity/version/schema/capability/ABI)
+  │   └── validate_module_surface()   — 模块表面验证; 改模块热替换规则时改这里
+  ├── core_ir_evaluator.rs    — Core IR 求值器 (18 种指标 evaluator 全实现, 零 stub)
+  │                           改指标计算逻辑或新增指标 evaluator 时改这里
+  ├── backtest_metrics.rs     — 回测指标计算 (12 项); 改回测指标公式时改这里
+  ├── sandbox/                — 沙盒模块
+  │   ├── mod.rs              — 沙盒调度器; 改沙盒执行流程时改这里
+  │   ├── replay.rs           — 确定性回放; 改回放机制时改这里
+  │   └── timeline.rs         — 时间线管理; 改事件时序时改这里
+  ├── data_module.rs          — 数据模块; 改市场数据接入时改这里
+  ├── intent_module.rs        — 意图模块; 改意图生成逻辑时改这里
+  ├── agent_module.rs         — 代理模块; 改代理决策时改这里
+  ├── execution_module.rs     — 执行模块; 改执行路径时改这里
+  ├── fill_engine.rs          — 模拟成交引擎; 改成交逻辑时改这里
+  ├── live_execution.rs       — 实时执行 (OKX); 改 OKX 对接时改这里
+  ├── circuit_breaker.rs      — 熔断器; 改异常保护逻辑时改这里
+  ├── config_tracker.rs       — 配置追踪; 改配置变更检测时改这里
+  ├── hotswap.rs              — 模块热替换; 改运行时模块替换时改这里
+  ├── merge.rs                — 合并逻辑; 改多策略合并时改这里
+  ├── merge_coordinator.rs    — 合并协调; 改合并调度时改这里
+  ├── reconcile.rs            — 对账; 改运行结果对账时改这里
+  ├── runtime_state.rs        — 运行时状态; 改状态管理时改这里
+  ├── risk_checker.rs         — 风控检查; 改风控规则时改这里
+  ├── risk_monitor.rs         — 风控监控; 改风控监控逻辑时改这里
+  ├── slippage.rs             — 滑点计算; 改滑点模型时改这里
+  ├── plugin_market.rs        — 插件市场 (Ed25519 签名验证); 改插件验证时改这里
+  ├── plugin_runtime_registry.rs — 插件注册表; 改插件加载时改这里
+  └── plugin_sandbox.rs       — 插件沙盒; 改插件隔离时改这里
+```
+
+### 4.5 qrpc_session — 进程间加密
+
+**文件**: `qrpc_session/src/lib.rs`
+
+后端 ↔ 执行端之间的加密通道:
+- AES-256-GCM 加密
+- HMAC-SHA256 完整性验证
+- 临时密钥交换
+
+### 4.6 quantscript — QS 语言编译器
+
+**文件**: `quantscript/src/`
+
+```
+quantscript/src/
+  ├── lib.rs                  — crate 入口
+  ├── script.rs               — QS 词法/语法解析; 改 QS 语法时改这里
+  ├── hir.rs                  — 高级中间表示 (HIR); 改 QS 语义模型时改这里
+  ├── analysis.rs             — 语义分析; 改类型检查/符号解析时改这里
+  ├── resolve.rs              — 符号解析, 新语法可解析, 未知函数拒绝; 改 QS 函数注册时改这里
+  ├── types.rs                — QS 类型系统; 改 QS 类型定义时改这里
+  ├── evaluator.rs            — 表达式求值; 改 QS 表达式语义时改这里
+  ├── diagnostics.rs          — QS 诊断码 (QSxxxx); 新增错误/警告时改这里
+  ├── test_plan.rs            — 测试计划生成; 改测试场景生成逻辑时改这里
+  ├── v4_static_audit.rs      — v4 状态机静态审计 🆕 v4.0.0
+  │   ├── audit_v4_quant_script_static()    — 审计入口: parse → analyze → report
+  │   ├── parse_v4_static_document()        — 解析 v4 QS 脚本 (v4_strategy/machine/state/transition)
+  │   ├── derive_event_catalog()            — 从 transition 和 edge 自动推导事件目录
+  │   ├── build_compile_time_capability_report() — 编译期能力报告
+  │   ├── build_v4_qs_runtime_handoff()     — 运行时交接: 验证审计通过 + 模式=PaperSimulated
+  │   └── 30 个诊断码: QSV4000-QSV4300
+  └── lowering/               — Lowering 降级: HIR → Core IR
+      ├── mod.rs              — lowering 模块入口
+      ├── orchestrator.rs     — 降级编排器: 协调全部 lowering pass; 改降级流程时改这里
+      ├── bindings.rs         — 绑定降级: HIR binding → Core IR data_binding
+      ├── binding_sources.rs  — 绑定来源处理
+      ├── context.rs          — 降级上下文: 符号表/类型环境
+      ├── diagnostics.rs      — lowering 诊断: 降级过程中的错误和警告
+      ├── fallback.rs         — 降级回退: 无法降级时的 fallback 策略
+      ├── helper_env.rs       — 辅助环境: lowering 辅助函数
+      ├── intents.rs          — 意图降级: HIR intent → Core IR intent
+      ├── semantic.rs         — 语义降级: 语义分析结果 → Core IR
+      ├── shared.rs           — 共享工具: lowering 阶段共用函数
+      ├── source_recovery.rs  — 源码恢复: 从 Core IR 反推 QS 源码位置
+      └── universe.rs         — 交易对展开: 多交易对策略展开
+```
+
+**QS 编译管道**: `QS 源码 → parse → HIR → semantic analysis → type check → lowering → Core IR`
+
+[GP §1.2]: 新功能跨三层验证 — QS parse, Core IR 枚举, runtime evaluator
+
+### 4.7 src-tauri — Tauri 桌面壳
+
+**文件**: `src-tauri/`
+
+- `src/main.rs` — Tauri 壳入口, 等待后端 :3000 就绪
+- `src-tauri/tauri.conf.json` — Tauri 配置 (窗口/CSP/打包)
+- `Cargo.toml` — 依赖 `tauri` v2
+- `icons/` — 应用图标
+- 开发/构建脚本: `dev.bat`, `build.bat`
+
+---
+
+## 根5: 前端 React SPA
+
+**一句话**: React 18 + Vite 6 + Zustand 4 + React Flow 12, Adobe 暗色面板设计系统, 11 个路由, 160+ 文件。
+
+### 5.1 路由与页面 (11 路由)
+
+**路由定义**: `frontend/src/router.js`
+**路由挂载**: `frontend/src/App.jsx`
+
+```
+/                                           → StrategyHubPage (策略中心)
+/strategies/:strategyId                      → StrategyWorkspacePage (策略工作区)
+/strategies/:strategyId/backtests            → StrategyBacktestsPage (回测列表)
+/backtests/:backtestId?strategy=:id          → BacktestDetailPage (回测详情)
+/backtests/compare?ids=...&strategy=:id      → BacktestComparePage (回测对比)
+/approvals                                   → ApprovalPanel (审批面板)
+/alerts                                      → AlertsPage (告警页面)
+/snapshots                                   → SnapshotsPage (快照页面)
+/runbook                                     → RunbookPage (运行手册)
+/chaos                                       → ChaosPage (混沌工程)
+/quantscript                                 → QuantScriptEditor (QS 编辑器)
+```
+
+**全局 UI**:
+- `frontend/src/components/LeftSidebar.jsx` — 左侧导航栏
+- `frontend/src/components/TopToolbar.jsx` — 顶部工具栏 (含 capability 同步状态和 v4 模拟运行入口) 🆕 v4.1.0
+- `frontend/src/components/CommandPalette.jsx` — ⌘K 命令面板
+- `frontend/src/components/TutorialOverlay.jsx` — 教程覆盖层
+- `frontend/src/components/ToastContainer.jsx` — Toast 通知容器
+- `frontend/src/components/ErrorBoundary.jsx` — 每个路由独立的错误边界
+
+### 5.2 策略工作区 (StrategyWorkspacePage)
+
+**文件**: `StrategyWorkspacePage.jsx` — 策略工作区主容器
+
+工作区有 9 个表面 (workspace surfaces), 由后端 `/api/capabilities` 能力声明驱动:
+
+```
+工作区表面 (Workspace Surfaces):
+  ├── dashboard           — 仪表盘: 编译状态/运行状态/最近回测/快速操作
+  ├── code                — 代码视图: QS 编辑器 + 编译面板
+  ├── research            — 研究控制台: 回测/运行/事件流
+  ├── monitor             — 监控面板: 运行时状态/诊断 (v4)
+  ├── source              — 源码视图: 图 JSON 原始数据
+  ├── template_library    — 模板库: 策略模板浏览/加载/应用
+  ├── version_history     — 版本历史: 图版本对比/回滚
+  ├── collaboration_audit — 协作审计
+  └── parameter_sweep     — 参数扫描 (v4)
+```
+
+[GP §8.11]: 工作区表面入口必须由后端 capability projection 驱动
+[GP §8.10]: 工作区职责分区稳定 — 导航/控制/主对象/inspector/时间线
+
+### 5.3 策略图编辑器
+
+**文件**: `StrategyCanvas.jsx` — React Flow 画布
+
+```
+图编辑器:
+  ├── 6 类节点: data / intent / agent / risk / execution / fill
+  ├── 节点拖拽、连线、参数配置
+  ├── 小地图: StrategyCanvasMiniMap.jsx
+  ├── 视口管理: strategyCanvasViewport.js
+  ├── 焦点管理: strategyCanvasFocus.js
+  └── 模块侧栏: ModuleSidebar.jsx
+```
+
+**节点配置面板** (`PropertyPanel.jsx`):
+- 属性编辑、编译摘要、策略 IR 检查
+- 属性选择器: `propertyPanelSelectors.js`
+- 属性动作: `usePropertyPanelActions.js`
+
+**18 种内置指标模块** (`builtinModules.js`):
+MA Cross, MA Deviation, RSI, MACD, Momentum, ZScore, Spread, QuoteObserve, ATR, OBV, CMF, ADX, Stochastic, CCI, Parabolic SAR, Keltner Channel, Donchian Channel, Bollinger Bands
+
+### 5.4 回测系统 (前端)
+
+```
+BacktestDetailPage.jsx       — 回测详情: 权益曲线/成交记录/指标面板
+BacktestComparePage.jsx      — 回测对比: 多回测叠加/相关性
+BacktestAnalysisLayout.jsx   — 回测分析布局
+backtestAnalysisShared.jsx   — 回测分析共享逻辑
+StrategyBacktestsPage.jsx    — 策略回测列表
+```
+
+**可视化组件**:
+- `frontend/src/components/DrawdownChart.jsx` — 回撤曲线
+- `frontend/src/components/MonthlyReturnsHeatmap.jsx` — 月收益热力图
+- `frontend/src/components/AssetCandlesPanel.jsx` — K 线面板
+
+### 5.5 事件流与运行时展示
+
+```
+EventStreamPanel.jsx         — 事件流面板 (核心)
+  ├── 运行时事件实时展示
+  ├── 回测历史事件回放
+  ├── 事件详情/诊断
+  └── 运行时工件操作
+
+EventReplaySection.jsx       — 事件回放区
+RunHistorySection.jsx        — 运行历史
+BacktestHistorySection.jsx   — 回测历史
+EvidenceSummaryCards.jsx     — 证据摘要卡片
+GovernedTimelinePanel.jsx    — 治理时间线
+V4RuntimeEvidencePanel.jsx   — v4 状态机证据面板
+```
+
+### 5.6 运维面板
+
+```
+ApprovalPanel.jsx            — 审批面板 (L1/L2/L3)
+RuntimeMutationPanel.jsx     — 运行时变更面板 (AI 提案)
+RuntimeDiagnosticsPanel.jsx  — 运行时诊断面板
+RuntimeReportPanel.jsx       — 运行时报告面板
+StrategyDiagnosticsPanel.jsx — 策略诊断面板
+StrategyParamsPanel.jsx      — 策略参数面板 (热调参)
+StrategyRunsPanel.jsx        — 策略运行面板
+StrategyBacktestsPanel.jsx   — 策略回测面板
+StrategyResearchConsole.jsx  — 策略研究控制台
+DeployButton.jsx             — 部署按钮 (策略→执行端)
+CredentialInput.jsx          — 凭证输入组件
+```
+
+### 5.7 状态管理 (Zustand)
+
+**文件**: `frontend/src/store/graphStore.js` — 主 store
+
+```
+graphStore 模块体系 (40+ 模块):
+  ├── graphStore.js                     — 主 store (Zustand)
+  ├── graphStoreCompileState.js         — 编译状态
+  ├── graphStoreCompileActions.js       — 编译动作
+  ├── graphStoreCompileApi.js           — 编译 API 调用
+  ├── graphStoreCompileFlow.js          — 编译流程
+  ├── graphStoreCompileHelpers.js       — 编译辅助
+  ├── graphStoreCompileOutcomeMapping.js — 编译结果映射
+  ├── graphStoreCompileOutcomeProjection.js — 编译结果投影
+  ├── graphStoreCompileProtocolFlow.js  — 协议编译流程
+  ├── graphStoreCompileProtocolMapping.js — 协议编译映射
+  ├── graphStoreEditorActions.js        — 编辑器动作
+  ├── graphStoreHelpers.js              — 通用辅助
+  ├── graphStorePersistenceActions.js   — 持久化动作
+  ├── graphStorePersistenceHelpers.js   — 持久化辅助
+  ├── graphStoreRuntimeActions.js       — 运行时动作
+  ├── graphStoreRuntimeHelpers.js       — 运行时辅助
+  ├── graphStoreRuntimeTransport.js     — 运行时传输 (SSE)
+  ├── graphStoreRuntimeSessionState.js  — 运行时会话状态
+  ├── graphStoreRuntimeSelectionState.js — 运行时选择状态
+  ├── graphStoreRuntimeHistoryActions.js — 运行时历史动作
+  ├── graphStoreRuntimeHistoryApi.js    — 运行时历史 API
+  ├── graphStoreRuntimeHistoryFlow.js   — 运行时历史流程
+  ├── graphStoreRuntimeHistoryProjection.js — 运行时历史投影
+  └── graphStoreRuntimeHistoryState.js  — 运行时历史状态
+```
+
+**测试覆盖**: graphStore 有 20+ 测试文件, 覆盖编译/编辑器动作/运行时/持久化/模板/版本历史/回退
+
+### 5.8 能力投影层
+
+**文件**: `frontend/src/capabilities/`
+
+```
+capabilityProjection.js      — 能力投影核心
+  ├── projectWorkspaceSurfaces()  — 工作区表面投影
+  ├── projectUiActions()          — UI 动作投影 (含 capability 同步阻塞)
+  ├── projectCapabilityView()     — 顶层组合
+  └── projectEntry()              — 投影原子: {visible, enabled, status, reason, source}
+
+supportMatrix.js              — 支持矩阵
+  ├── WORKSPACE_SURFACE_MAP  — 9 个工作区表面定义
+  ├── CAPABILITY_ACTION_MAP  — 14 个能力动作定义
+  ├── EXPECTED_PERMISSION_BOUNDARY — 6 项权限约束
+  ├── normalizeUiActionStatus()    — 能力状态标准化
+  ├── getCapabilityActionBlockReason() — 阻塞原因判断
+  └── isCapabilitySyncBlocked()    — 同步阻塞检测
+
+capabilityGovernance.js       — 能力治理
+  ├── 4 个 CAPABILITY_CLASSES: supported / restricted / trace_only / disallowed_claim
+  ├── 63 supported / 6 restricted / 1 trace_only / 4 disallowed_claim
+  └── positiveClaimAudit — 用户声明文本门控
+```
+
+[GP §1.12]: 前端 static list 只允许骨架, 能力边界真源只能是后端 CapabilityResponse
+
+### 5.9 Hooks 层 (24 个自定义 Hook)
+
+```
+useStrategyWorkspaceSharedModel.js   — 工作区共享数据模型
+useStrategyWorkspaceUiState.js       — 工作区 UI 状态
+useStrategyWorkspacePageData.js      — 工作区页面数据
+useStrategyHubBodyData.js            — 策略中心主体数据
+useStrategyHubInspectorData.js       — 策略中心检查器数据
+useStrategyHubRosterData.js          — 策略中心列表数据
+useStrategyDirectoryModel.js         — 策略目录模型
+useStrategyResearchModel.js          — 研究模型
+useStrategyResearchActions.js        — 研究动作
+useStrategyResearchUiState.js        — 研究 UI 状态
+usePropertyPanelModel.js             — 属性面板模型
+usePropertyPanelActions.js           — 属性面板动作
+useWorkspaceActionBarActions.js      — 工作区动作栏动作
+useWorkspaceActionBarModel.js        — 工作区动作栏模型
+workspaceActionBarShared.js          — 工作区动作栏共享
+workspaceActionSelectors.js          — 工作区动作选择器
+propertyPanelSelectors.js            — 属性面板选择器
+propertyPanelShared.js               — 属性面板共享
+strategyResearchSelectors.js         — 研究选择器
+useNotification.js                   — 通知
+useOrderAnimation.js                 — 订单动画
+usePanelResize.js                    — 面板缩放
+useTutorial.js                       — 教程
+```
+
+### 5.10 工具函数层 (utils/)
+
+```
+api.js                              — API 调用封装
+compileContract.js                  — 编译契约
+errorMessages.js / errorText.js    — 错误消息/文本
+actionFailure.js                    — 操作失败处理
+configureFieldPriority.js           — 字段优先级配置
+repairPathInsights.js               — 路径修复洞察
+runtimeAiProposal.js                — AI 提案
+runtimeApproval.js                  — 审批
+runtimeDiagnosticsProjection.js     — 诊断投影
+runtimeEvidenceSummary.js           — 证据摘要
+runtimeExplanation.js               — 运行时解释
+runtimeGovernance.js                — 运行时治理
+runtimeMutation.js                  — 运行时变更
+runtimeStatus.js                    — 运行时状态
+runtimeTimeline.js                  — 运行时时间线
+v4RuntimeEvidence.js                — v4 运行时证据投影
+strategyHubCompareQueueActions.js   — 策略中心对比队列
+strategyHubFormatters.js            — 策略中心格式化
+strategyHubInspectorActions.js      — 策略中心检查器动作
+strategyHubInspectorProjection.js   — 策略中心检查器投影
+strategyHubRecentBacktestsActions.js — 策略中心最近回测
+strategyHubRecentRunsView.js        — 策略中心最近运行
+strategyHubRosterProjection.js      — 策略中心列表投影
+strategyHubRosterRowActions.js      — 策略中心行动作
+strategyHubStrategyIdentity.js      — 策略中心策略身份
+strategyWorkspaceIssueQueue.js      — 工作区问题队列
+workspaceContextLabels.js           — 工作区上下文标签
+```
+
+### 5.11 国际化 (i18n)
+
+```
+frontend/src/i18n/
+  ├── index.js              — i18n 入口 (useI18n hook)
+  ├── locales/zh-CN.js      — 中文翻译
+  └── locales/en-US.js      — 英文翻译
+```
+
+[GP §2.5]: 前端字符串使用 `t()` 包裹
+[GP §2.1]: 错误消息必须是中文
+
+### 5.12 设计系统
+
+```
+frontend/src/
+  ├── styles.css            — 全局样式 + :root CSS 变量
+  ├── shared.css            — 共享样式
+  └── design-system.css     — Adobe 暗色面板设计系统
+      └── --ad-* CSS 令牌 (~50 个变量): 颜色/间距/圆角/字号/阴影
+```
+
+[GP §8.1-§8.8]: 前端设计规范 — Adobe 暗色面板, 响应式, 空状态引导
+
+---
+
+## 根6: 工具链与质量门禁
+
+**一句话**: 三层流水线 (pre-commit → PR/CI → closeout-release), 10+ 门禁脚本, 24 项 closeout gates。
+
+### 6.1 Pre-commit Hook
+
+**文件**: `scripts/pre-commit`
+
+`git commit` 时自动执行:
+```
+powershell tools/check-utf8.ps1
+cargo fmt --check
+cargo check --workspace
+./scripts/test.sh test --workspace --no-run
+cd frontend && npx vite build
+cd frontend && npx vitest run
+```
+
+任何一步失败 → 提交被拒。
+
+### 6.2 PR/CI 与 closeout 共享基础门禁 (21 项)
+
+| # | 检查项 | 命令/工具 |
+|---|--------|---------|
+| 1 | UTF-8 编码 | `tools/check-utf8.ps1` |
+| 2 | 面向用户文本 | `tools/check-user-facing-text.ps1` |
+| 3 | 能力治理 | `tools/check-capability-governance.ps1` |
+| 4 | i18n 覆盖 | `tools/check-i18n.ps1` |
+| 5 | 版本一致性 | `tools/check-version-consistency.ps1` |
+| 6 | 功能演进 | `tools/check-feature-evolution.ps1` |
+| 7 | 学习流水线 closeout | `tools/check-learning-closeout.ps1` |
+| 8 | Pre-commit 同步 | `tools/check-pre-commit-hook.ps1` |
+| 9 | 清理边界 | `tools/check-cleanup-boundary.ps1` |
+| 10 | Rust 格式 | `cargo fmt --check` |
+| 11 | Rust 编译 | `cargo check --workspace` |
+| 12 | Rust 测试 | `scripts/test.ps1 test --workspace` |
+| 13 | Clippy budget | `tools/check-clippy-warning-budget.ps1 -MaxWarnings 58` |
+| 14 | 执行端 warning | `tools/check-executor-warning-budget.ps1 -MaxWarnings 0` |
+| 15 | 前端构建 | `npm run build` (frontend) |
+| 16 | 前端测试 | `npm run test` (frontend) |
+| 17 | E2E | `npm run test:e2e` (frontend) |
+| 18 | npm 审计 | `npm audit --audit-level=moderate` |
+| 19 | 执行端前端 | `npm run build` (frontend-executor) |
+| 20 | 执行端编译 | `cargo check --bin executor` |
+| 21 | 执行端测试 | `scripts/test.ps1 test --bin executor` |
+
+### 6.3 Closeout/Release 门禁 (额外 3 项)
+
+在 PR/CI 基础上增加:
+```
+#22 QS 场景 smoke       → scripts/scenario-smoke.ps1
+#23 干净工作区           → tools/check-clean-worktree.ps1
+#24 全量树完整性         → tools/check-full-feature-tree.ps1
+```
+
+### 6.4 一键收口
+
+```powershell
+.\tools\run-closeout-gates.bat      # 24 项全量
+```
+
+### 6.5 测试脚本
+
+```
+scripts/test.ps1 / test.sh          — 测试运行 (自动停止旧进程)
+scripts/scenario-smoke.ps1          — QS 场景测试
+```
+
+### 6.6 CI/CD
+
+**文件**: `.github/workflows/ci.yml`
+
+Windows runner, tag 触发 Release, 构建/打包/生成 SHA256SUMS.
+
+### 6.7 其他脚本
+
+```
+tools/export-capability-fixture.ps1 — 能力 fixture 导出
+```
+
+[超级规范化 §2.1-§2.3]: 三层门禁流水线定义
+[超级规范化 §8.1]: 阻断规则 — 任何阻断级门禁未通过禁止进入下一阶段
+
+---
+
+## 根7: 治理文档体系
+
+**一句话**: 原则 → 协议 → 契约 → 指南 → 测试审计 → 里程碑归档, 全部中文。
+
+### 7.1 原则层 (markdown/01-principles/)
+
+```
+principles-super-standardization.md    — 超级规范化
+  ├── 三层门禁流水线
+  ├── AI 并行审计 (自由维度诱错)
+  ├── 五维度评分 + GP 合规矩阵
+  ├── 元流水线 (自进化)
+  ├── §7.7 MAJOR 演化通道 (8 Phase)
+  ├── §7.8 前端后端能力真源通道 (5 阶段)
+  └── §8.9 v4 状态机化演化防偏规则
+
+General_Policy.md (父级)              — GP 项目总规则
+  ├── §1.1-§1.12: 12 条架构铁律
+  ├── §2.1-§2.8: 8 条代码规范
+  ├── §3.1-§3.3: 3 条文档规范
+  ├── §4.1-§4.4: 4 条变更管理
+  ├── §5.1-§5.6: 6 条禁止事项
+  ├── §7.1-§7.5: 5 条存储生命周期
+  ├── §8.1-§8.11: 11 条前端设计规范
+  ├── §9.1-§9.4: 4 条治理系统约束
+  └── §10.1-§10.5: 功能覆盖矩阵 + 回归保护
+
+principles-data-and-intent-layer.md    — 数据与意图层原则
+principles-quantpilot-design.md        — QuantPilot 设计原则
+```
+
+### 7.2 协议层 (markdown/02-protocol/)
+
+20 份 RFC, 19 份已落地:
+
+```
+RFC-001  data-request-protocol            — 数据请求协议
+RFC-002  normalized-market-data-protocol   — 标准化市场数据协议
+RFC-003  runtime-state-protocol            — 运行时状态协议
+RFC-004  agent-protocol                    — 代理协议
+RFC-005  intent-protocol                   — 意图协议
+RFC-006  intent-generator-protocol         — 意图生成器协议
+RFC-007  portfolio-protocol                — 投资组合协议
+RFC-008  risk-protocol                     — 风控协议
+RFC-009  risk-decision-protocol            — 风控决策协议
+RFC-010  allocation-protocol               — 分配协议
+RFC-011  execution-plan-protocol           — 执行计划协议
+RFC-012  order-protocol                    — 订单协议
+RFC-013  execution-feedback-protocol       — 执行反馈协议
+RFC-014  runtime-mode-protocol             — 运行时模式协议
+RFC-015  runtime-event-protocol            — 运行时事件协议
+RFC-016  capability-discovery-protocol     — 能力发现协议
+RFC-017  backtest-artifact-protocol        — 回测工件协议
+RFC-018  backtest-input-protocol           — 回测输入协议
+RFC-019  backtest-output-artifact-protocol — 回测输出工件协议
+```
+
+### 7.3 实现契约层 (markdown/03-implementation/)
+
+```
+governance/
+  ├── implementation-v4-machine-and-venue-contract.md — v4 状态机静态契约
+  ├── implementation-developer-learning-pipeline.md   — 学习流水线契约
+  ├── implementation-compile-chain-contract.md        — 编译链契约
+  ├── implementation-quantscript-retained-surface-contract.md — QS 保留面契约
+  ├── implementation-feature-evolution-contract.md    — 功能演进契约
+  ├── implementation-capability-governance.md         — 能力治理
+  ├── implementation-capability-governance-registry.generated.md — 能力注册表 (自动生成)
+  ├── implementation-support-matrix.md                — 支持矩阵
+  ├── implementation-artifact-governance.md           — 工件治理
+  └── implementation-plugin-storage-standard.md       — 插件存储标准
+
+runtime/
+  ├── implementation-persistence-replay-contract.md   — 持久化回放契约
+  ├── implementation-runtime-governance-contract.md   — 运行时治理契约
+  ├── implementation-runtime-evidence-contract.md     — 运行时证据契约
+  ├── implementation-runtime-mutation-contract.md     — 运行时变更契约
+  ├── implementation-runtime-ai-approval-contract.md  — AI 审批契约
+  ├── implementation-runtime-backtest-explanation-contract.md — 回测解释契约
+  ├── implementation-runtime-artifact-retention.md    — 工件保留
+  ├── implementation-testing-module.md                — 测试模块
+  ├── implementation-test-mode.md                     — 测试模式
+  ├── implementation-trading-sandbox.md               — 交易沙盒
+  └── implementation-storage-lifecycle.md             — 存储生命周期
+
+quantscript/
+  ├── guide-backtest-execution-assumptions-minimal-contract.md
+  ├── guide-execution-profile-minimal-contract.md
+  ├── guide-risk-profile-minimal-contract.md
+  ├── quantscript-checklist.md
+  └── quantscript-resolve-lowering-boundary.md
+
+frontend/
+  └── README.md
+```
+
+### 7.4 指南层 (markdown/04-guides/)
+
+```
+guide-formal-quantscript-syntax.md           — QS 正式语法指南
+guide-quantscript-trunk-baseline.md          — QS 主干基线
+guide-paper-to-strategy-development.md       — 从论文到策略开发
+guide-strategy-template-library.md           — 策略模板库使用
+```
+
+### 7.5 测试与审计 (markdown/05-testing/)
+
+```
+全量审计报告.md
+测试报告-latest.md
+测试自动化脚本化方案.md
+实机场景化测试指南.md
+手动全量实机测试检查单.md
+自由维度诱错审计-v3.7.1-第1轮.md
+自由维度诱错审计-v4.0.0-第1轮.md           — v4 审计报告
+meta-pipeline-log.md                         — 元流水线日志
+```
+
+### 7.6 里程碑归档 (markdown/06-milestones/)
+
+50+ 版本目录, 从 `v0.2.0` 到 `v4.0.0`, 每个含 `01-规划方案.md` + `02-综合优化清单.md` (或等效文档) + `03-closeout.md` (或等效文档)。
+
+当前活跃: `v4.0.0/` — MAJOR 状态机化架构。
+
+### 7.7 总览 (markdown/10-overview/)
+
+```
+overview-system-architecture.md              — 系统架构总览
+overview-current-status-and-roadmap.md       — 当前状态与路线图
+overview-full-feature-tree.md                — 本文档 (全量树)
+```
+
+### 7.8 研究层 (markdown/08-research/)
+
+```
+deep-research-report.md                      — 深度研究报告
+research-backtest-artifact-protocol.md       — 回测工件协议研究
+research-frontend-backend-e2e-plan.md        — 前后端 E2E 计划
+research-quantscript-typed-hir-diagnostics.md — QS 类型化 HIR 诊断
+research-spread-custom-plugin-sequencing.md  — Spread 自定义插件排序
+```
+
+### 7.9 归档层 (markdown/09-archive/)
+
+退役的实现文档、规划文档、追踪清单的历史归档。
+
+---
+
+## 附录 A: 项目数据流全景
+
+```
+用户操作 (React 前端 :5173)
+  │  拖拽节点、连线、配置参数、编写 QS
+  ▼
+策略图 (graph JSON) / QuantScript 源码
+  │  POST /api/runtime/compile
+  ▼
+编译管道 (compile_api.rs → quantscript)
+  │  graph → QS 源码 → parse → HIR → lower → Core IR
+  ▼
+运行时 (runtime/mod.rs → qrpc_runtime)
+  ├── Paper 运行 → 事件流 → SSE 推送 → EventStreamPanel
+  ├── 回测 → 历史数据回放 → 12 项指标 → BacktestDetailPage
+  └── 执行端 (:3001) → OKX testnet → 实时成交
+       │
+       └── SSE /api/executor/events → 后端 → 前端监控面板
+```
+
+## 附录 B: 存储目录结构
+
+```
+storage/
+  ├── graphs/         (Permanent)  策略图和 QS 源码
+  ├── runs/           (Temporary)  Paper 运行记录
+  ├── backtests/      (Temporary)  回测工件
+  ├── experiments/    (Temporary)  实验记录
+  ├── snapshots/      (Transient)  快照
+  ├── alerts/         (Transient)  告警
+  ├── chaos/          (Transient)  混沌实验报告
+  ├── audit/          (Permanent)  审计日志
+  └── .credentials    (Permanent)  AES-256-GCM 加密凭证
+```
+
+[GP §7.1-§7.5]: 存储生命周期 — 三级分类 (Permanent/Temporary/Transient), 500MB 配额
+
+## 附录 C: GP 约束快速索引
+
+| GP 条款 | 主题 | 约束对象 |
+|---------|------|---------|
+| §1.1 | QS 唯一策略定义路径 | 编译系统 (根2.1) |
+| §1.2 | 跨三层验证 | 编译 + Core IR + 运行时 (根2.1, 根4.1, 根4.4) |
+| §1.3 | 编译路径不可绕过 | 编译系统 (根2.1) |
+| §1.4 | 数据流单向 | 图存储 (根2.2) |
+| §1.5 | 功能演进先登记 | 全项目 |
+| §1.6 | 顶层 DAG + 状态机边界 | v4 runtime (根4.4) |
+| §1.7 | QS 状态机 DSL 边界 | v4 静态审计 (根4.6) |
+| §1.8 | 事件驱动迁移 | v4 runtime (根4.4) |
+| §1.9 | Risk Plane 不可绕过 | v4 runtime (根4.4) |
+| §1.10 | Execution 能力来源 | VenueCapabilityMatrix (根4.1) |
+| §1.11 | 学习流水线边界 | 治理文档 (根7.3) |
+| §1.12 | 前端以后端 capability 为真源 | 能力投影层 (根5.8) |
+| §2.6 | 凭证保险库安全 | 安全系统 (根2.5, 根3.3) |
+| §2.7 | 实时执行安全 | 执行端 (根3) |
+| §2.8 | 用户认证安全 | 安全系统 (根2.5) |
+| §5.5 | 端到端验证 | 工具链 (根6) |
+| §5.6 | 禁止格式漂移 | 工具链 (根6) |
+| §7.1-7.5 | 存储生命周期 | 存储系统 |
+| §8.9-8.11 | 前端设计规范 | 前端 (根5) |
+| §9.1-9.4 | 治理系统 | 运行时 (根2.3) |
+| §10.1-10.5 | 功能覆盖 + 回归保护 | 全项目 |
+
+## 附录 D: 超级规范化约束快速索引
+
+| 超级规范化章节 | 主题 | 约束对象 |
+|--------------|------|---------|
+| 第二章 | 三层门禁流水线 | 工具链 (根6) |
+| 第三章 | AI 并行审计 | 质量流程 |
+| 第四章 | 发布前检查单 | Release 流程 |
+| 第五章 | Closeout 审计 (五维度评分 + GP 矩阵) | 里程碑流程 |
+| 第六章 | 优化流水线 | 持续改进 |
+| 第七章 | 元流水线 (自进化) | 流程自身 |
+| §7.7 | MAJOR 演化通道 (8 Phase) | MAJOR 版本 |
+| §7.8 | 前端后端能力真源通道 | 能力系统 |
+| §8.1 | 阻断规则 | 全项目 |
+| §8.5 | 自由维度诱错审计常态化 | 质量流程 |
+| §8.8 | 功能演进防回退 | 功能演进 |
+| §8.9 | v4 状态机化演化防偏规则 | v4 实现 |
+
+---
+
+## 附录 E: 全文件覆盖清单
+
+> 每个 active 源文件至少一行说明。按目录分组。
+> 由 `tools/check-full-feature-tree.ps1` 自动校验覆盖率。
+
+### E.1 根目录配置
+
+- `Cargo.toml` — Rust workspace 定义, 7 个 crate + 1 个 binary; 改依赖/版本时改这里
+- `start.bat` — Windows 一键启动脚本 (编译+后端+Tauri); 改启动流程时改这里
+- `start.ps1` — PowerShell 启动脚本
+- `Dockerfile` — Docker 镜像构建; 改容器化部署时改这里
+- `docker-compose.yml` — Docker 编排
+- `nginx.conf` — Nginx 反向代理配置
+- `.env.example` — 环境变量模板; 新增环境变量时改这里
+- `.gitignore` — Git 忽略规则
+- `.gitattributes` — Git 属性
+
+### E.2 后端: `src/`
+
+- `src/main.rs` — 二进制入口, 调用 `run_server()`
+- `src/lib.rs` — 核心库入口, 全部模块声明 + `run_server()` 函数
+- `src/app_router.rs` — 路由构建, `build_app_router()` 定义全部 HTTP 端点; 新增 API 时改这里
+- `src/alert_engine.rs` — 告警引擎, 10 条默认规则; 改告警规则/去重/恢复/404 语义时改这里
+- `src/api_errors.rs` — API 错误格式, `json_bad_request()`/`json_not_found()`/`internal_error()`; 改错误响应格式或 error_code 时改这里
+- `src/api_test_scenario.rs` — 测试场景 API; 新增自动化测试场景时改这里
+- `src/app_runtime_helpers.rs` — 应用状态工厂, `new_app_state()`; 改存储路径/应用初始化时改这里
+- `src/auth/mod.rs` — 用户认证 (注册/登录/刷新/JWT/bcrypt); 改认证逻辑时改这里
+- `src/auth_middleware.rs` — 认证中间件, JWT 验证; 改认证拦截时改这里
+- `src/backtest_artifacts.rs` — 回测工件管理; 改回测工件格式/存储或 v4 artifact 持久化时改这里 🆕 v4.3.0
+- `src/backtest_compare.rs` — 回测对比入口 API; 改对比功能时改这里
+- `src/backtest_compare_core.rs` — 回测对比核心; 改对比算法时改这里
+- `src/backtest_compare_narrative.rs` — 回测对比中文叙述生成; 改分析文案时改这里
+- `src/backtest_compare_types.rs` — 回测对比类型定义; 改对比数据结构时改这里
+- `src/backup.rs` — 数据备份与恢复; 改备份策略时改这里
+- `src/capability_api.rs` — 能力声明 API (`GET /api/capabilities`); 新增能力声明时改这里
+- `src/chaos_experiment.rs` — 混沌实验; 改混沌测试定义/执行时改这里
+- `src/cli_support.rs` — CLI 辅助; 改命令行参数或 `v4-run` 时改这里 🆕 v4.1.0
+- `src/collaboration.rs` — 协作功能; 改多人协作时改这里
+- `src/compile_api.rs` — 编译入口, `/api/runtime/compile`; 改编译流程或 v4 诊断码映射时改这里
+- `src/compile_artifact_builders.rs` — 编译产物组装; 改策略包/迁移包结构时改这里
+- `src/compile_diagnostics.rs` — 编译诊断; 改编译错误/警告格式时改这里
+- `src/credential_api.rs` — 凭证管理 API (set/list/delete); 改凭证 CRUD 时改这里
+- `src/credential_vault.rs` — 凭证保险库, AES-256-GCM; 改加密/存储/原子写入时改这里
+- `src/error_codes.rs` — 全局错误码注册表; 新增诊断码或 API error_code 时改这里
+- `src/formal_quantscript_authoring_types.rs` — QS 正式编写类型; 改 QS 编写 API 类型时改这里
+- `src/frontend_api_types.rs` — 前端 API 类型定义; 改前后端接口类型时改这里
+- `src/frontend_runtime_mapping.rs` — 前端运行时映射; 改后端→前端数据映射时改这里
+- `src/graph_api.rs` — 图 CRUD API (save/load/list/delete/versions); 改图存储 API 时改这里
+- `src/graph_quantscript_api.rs` — graph JSON → QS 源码, `generate_quantscript_from_graph_value()`; 改图→QS 转换时改这里
+- `src/graph_version_compare.rs` — 图版本对比; 改版本 diff 算法时改这里
+- `src/hotswap_api.rs` — 模块热替换 API; 改热替换接口时改这里
+- `src/middleware.rs` — 通用中间件; 改请求处理管道时改这里
+- `src/migration_sender.rs` — 数据迁移; 改跨版本迁移时改这里
+- `src/rate_limiter.rs` — 速率限制; 改限速策略时改这里
+- `src/runbook.rs` — 运行手册; 改运维操作定义时改这里
+- `src/runtime/mod.rs` — 运行时主模块, Paper 运行/事件流 SSE/v4 run 路由; 改运行时 API 时改这里 🆕 v4.1.0
+- `src/runtime/run.rs` — 单次运行执行和 `POST /api/runtime/v4/run`; 改运行事件/账户快照/run record/v4 handoff 时改这里 🆕 v4.1.0
+- `src/runtime/backtest.rs` — 回测引擎, 历史回放/确定性 Mock/v4 deterministic MachineGraph replay; 改回测执行时改这里 🆕 v4.3.0
+- `src/runtime/mutation.rs` — 运行时变更, AI 提案/审批/沙箱验证; 改审批流时改这里
+- `src/runtime_diagnostics.rs` — 运行时诊断; 改健康检查/性能诊断时改这里
+- `src/runtime_event_projection.rs` — v4 运行时事件投影; 改 v4 事件→前端映射时改这里
+- `src/runtime_persistence.rs` — 运行时持久化; 改运行记录/回测工件读写时改这里
+- `src/runtime_response_mapping.rs` — 运行时响应映射; 改后端→前端响应格式时改这里
+- `src/runtime_validation.rs` — 运行时验证; 改参数校验时改这里
+- `src/safe_log.rs` — 安全日志, 输出前清除 secret/key; 改日志脱敏时改这里
+- `src/sandbox_verification.rs` — 沙箱验证, AI 提案回放; 改验证逻辑时改这里
+- `src/snapshot_service.rs` — 快照服务, SHA-256 签名; 改快照/验签时改这里
+- `src/storage_lifecycle.rs` — 存储生命周期, 三级分类 (Permanent/Temporary/Transient); 改存储策略时改这里
+- `src/test_runner.rs` — 测试运行器; 改测试调度时改这里
+- `src/tests_backend.rs` — 后端集成测试入口; 新增集成测试时改这里
+- `src/bin/gen_screenshots.rs` — 截图生成工具; 改截图生成逻辑时改这里
+
+### E.3 执行端: `src-executor/`
+
+- `src-executor/main.rs` — 执行端入口, Axum Router :3001; 改执行端启动时改这里
+- `src-executor/executor_state.rs` — 执行端核心状态, ExecutionMode/StrategyStatus; 改状态机时改这里
+- `src-executor/live_runner.rs` — 实时运行器, RunnerPool v3/v4 双 runner、OKX Market→v4 event 转换、v4 evidence 广播; 改策略执行循环时改这里 🆕 v4.2.0
+- `src-executor/ws_client.rs` — OKX WebSocket 客户端; 改 WS 连接/行情订阅时改这里
+- `src-executor/okx_rest.rs` — OKX REST API; 改下单/撤单逻辑时改这里
+- `src-executor/kline_buffer.rs` — K线缓冲池; 改 K 线缓存策略时改这里
+- `src-executor/credential_vault_v2.rs` — 凭证保险库 v2, PBKDF2 1M 轮; 改执行端加密时改这里
+- `src-executor/api_guard.rs` — API 守卫; 改执行端认证时改这里
+- `src-executor/audit_log.rs` — 审计日志; 改操作审计时改这里
+- `src-executor/migration_api.rs` — 迁移 API; 改执行端数据迁移时改这里
+
+### E.4 Cargo 工作区 crates
+
+**qrpc_core**:
+- `qrpc_core/Cargo.toml` — qrpc_core 包配置
+- `qrpc_core/src/lib.rs` — 核心 trait 定义
+- `qrpc_core/src/error.rs` — 核心错误类型; 改跨 crate 错误时改这里
+- `qrpc_core/src/plugin.rs` — 插件 trait; 改插件接口时改这里
+- `qrpc_core/src/strategy_ir.rs` — 策略 IR 核心类型; 改策略中间表示时改这里
+
+**qrpc_core_ir**:
+- `qrpc_core_ir/Cargo.toml` — qrpc_core_ir 包配置
+- `qrpc_core_ir/src/lib.rs` — v3 类型定义 + v4 模块导出
+- `qrpc_core_ir/src/v4.rs` — v4 全量类型 (47+ struct/enum, 40+ 验证, 兼容桥, backtest artifact, memory type_ref/memory_writes 校验); 改 v4 类型系统或 artifact schema 时改这里 🆕 v4.3.0
+
+**qrpc_compiler**:
+- `qrpc_compiler/Cargo.toml` — qrpc_compiler 包配置
+- `qrpc_compiler/src/lib.rs` — 编译层入口; 改 Core IR 编译逻辑时改这里
+
+**qrpc_runtime**:
+- `qrpc_runtime/Cargo.toml` — qrpc_runtime 包配置
+- `qrpc_runtime/src/lib.rs` — 运行时入口
+- `qrpc_runtime/src/v4_runtime.rs` — v4 PaperSimulated 运行时; 改 event payload 校验、memory fail-closed、条件单模拟、Market 事件注入、v4 backtest replay、多交易对 machine 展开或 v4 运行时行为时改这里 🆕 v4.3.0
+- `qrpc_runtime/src/compat.rs` — 模块热替换兼容性检查; 改热替换规则时改这里
+- `qrpc_runtime/src/core_ir_evaluator.rs` — Core IR 求值器, 18 种指标 evaluator; 改指标计算时改这里
+- `qrpc_runtime/src/backtest_metrics.rs` — 回测 12 项指标; 改回测公式或 equity_curve 诊断时改这里
+- `qrpc_runtime/src/sandbox/mod.rs` — 沙盒调度器; 改沙盒流程时改这里
+- `qrpc_runtime/src/sandbox/replay.rs` — 确定性回放; 改 v3 timeline 或 v4 deterministic bar replay 机制时改这里 🆕 v4.3.0
+- `qrpc_runtime/src/sandbox/timeline.rs` — 时间线管理; 改事件时序时改这里
+- `qrpc_runtime/src/data_module.rs` — 数据模块; 改市场数据接入时改这里
+- `qrpc_runtime/src/intent_module.rs` — 意图模块; 改意图生成时改这里
+- `qrpc_runtime/src/agent_module.rs` — 代理模块; 改代理决策时改这里
+- `qrpc_runtime/src/execution_module.rs` — 执行模块; 改执行路径时改这里
+- `qrpc_runtime/src/fill_engine.rs` — 模拟成交引擎; 改成交逻辑时改这里
+- `qrpc_runtime/src/live_execution.rs` — 实时执行 (OKX); 改 OKX 对接时改这里
+- `qrpc_runtime/src/circuit_breaker.rs` — 熔断器; 改异常保护时改这里
+- `qrpc_runtime/src/config_tracker.rs` — 配置追踪; 改配置变更检测时改这里
+- `qrpc_runtime/src/hotswap.rs` — 模块热替换; 改运行时替换时改这里
+- `qrpc_runtime/src/merge.rs` — 合并逻辑; 改多策略合并时改这里
+- `qrpc_runtime/src/merge_coordinator.rs` — 合并协调; 改合并调度时改这里
+- `qrpc_runtime/src/reconcile.rs` — 对账; 改运行结果对账时改这里
+- `qrpc_runtime/src/runtime_state.rs` — 运行时状态; 改状态管理时改这里
+- `qrpc_runtime/src/risk_checker.rs` — 风控检查; 改风控规则时改这里
+- `qrpc_runtime/src/risk_monitor.rs` — 风控监控; 改风控监控时改这里
+- `qrpc_runtime/src/slippage.rs` — 滑点计算; 改滑点模型时改这里
+- `qrpc_runtime/src/plugin_market.rs` — 插件市场, Ed25519 签名; 改插件验证时改这里
+- `qrpc_runtime/src/plugin_runtime_registry.rs` — 插件注册表; 改插件加载时改这里
+- `qrpc_runtime/src/plugin_sandbox.rs` — 插件沙盒; 改插件隔离时改这里
+
+**qrpc_session**:
+- `qrpc_session/Cargo.toml` — qrpc_session 包配置
+- `qrpc_session/src/lib.rs` — 进程间加密 (AES-256-GCM + HMAC-SHA256); 改进程通信安全时改这里
+
+**quantscript**:
+- `quantscript/Cargo.toml` — quantscript 包配置
+- `quantscript/src/lib.rs` — crate 入口
+- `quantscript/src/script.rs` — QS 词法/语法解析; 改 QS 语法时改这里
+- `quantscript/src/hir.rs` — 高级中间表示; 改 QS 语义模型时改这里
+- `quantscript/src/analysis.rs` — 语义分析; 改类型检查时改这里
+- `quantscript/src/resolve.rs` — 符号解析; 改 QS 函数注册时改这里
+- `quantscript/src/types.rs` — QS 类型系统; 改类型定义时改这里
+- `quantscript/src/evaluator.rs` — 表达式求值; 改表达式语义时改这里
+- `quantscript/src/diagnostics.rs` — QS 诊断码; 新增诊断时改这里
+- `quantscript/src/test_plan.rs` — 测试计划生成; 改场景生成时改这里
+- `quantscript/src/v4_static_audit.rs` — v4 状态机静态审计; 改 v4 QS 审计、memory `QsTypeRef` 解析或 QSV 诊断码时改这里 🆕 v4.1.0
+- `quantscript/src/lowering/mod.rs` — lowering 模块入口
+- `quantscript/src/lowering/orchestrator.rs` — 降级编排器; 改降级流程时改这里
+- `quantscript/src/lowering/bindings.rs` — 绑定降级; 改 HIR→Core IR 绑定时改这里
+- `quantscript/src/lowering/binding_sources.rs` — 绑定来源处理
+- `quantscript/src/lowering/context.rs` — 降级上下文, 符号表/类型环境
+- `quantscript/src/lowering/diagnostics.rs` — lowering 诊断
+- `quantscript/src/lowering/fallback.rs` — 降级回退策略
+- `quantscript/src/lowering/helper_env.rs` — 辅助环境
+- `quantscript/src/lowering/intents.rs` — 意图降级; 改 HIR intent→Core IR 时改这里
+- `quantscript/src/lowering/semantic.rs` — 语义降级; 改语义→Core IR 时改这里
+- `quantscript/src/lowering/shared.rs` — 共享工具
+- `quantscript/src/lowering/source_recovery.rs` — 源码恢复, Core IR→QS 源码位置
+- `quantscript/src/lowering/universe.rs` — 交易对展开; 改多交易对策略时改这里
+
+**src-tauri**:
+- `src-tauri/Cargo.toml` — Tauri 包配置
+- `src-tauri/src/main.rs` — Tauri 壳入口, 等待后端 :3000; 改桌面壳行为时改这里
+- `src-tauri/tauri.conf.json` — Tauri 配置, 窗口/CSP/打包; 改桌面配置时改这里
+- `src-tauri/build.rs` — Tauri 构建脚本
+- `src-tauri/build.bat` — 前端构建脚本
+- `src-tauri/dev.bat` — 前端开发脚本
+
+### E.5 前端: `frontend/src/`
+
+**入口**:
+- `frontend/src/main.jsx` — React 入口, 挂载 App
+- `frontend/src/App.jsx` — App Shell, 路由匹配/全局状态/教程/命令面板/Toast; 改全局 UI 时改这里
+- `frontend/src/router.js` — 路由定义, 11 路由 + `navigateTo()`/`parseRoute()`; 新增路由时改这里
+- `frontend/src/router.test.js` — 路由单元测试
+- `frontend/index.html` — HTML 入口
+- `frontend/package.json` — 前端包配置, 依赖/脚本; 改依赖时改这里
+- `frontend/vite.config.js` — Vite 构建配置
+- `frontend/vitest.config.js` — Vitest 测试配置
+- `frontend/playwright.config.js` — Playwright E2E 配置
+- `frontend/playwright.ci.config.js` — CI E2E 配置
+- `frontend/playwright.perf.config.js` — 性能测试配置
+- `frontend/playwright.visual.config.js` — 视觉回归配置
+- `frontend/playwright.real.config.js` — 真实环境 E2E 配置
+
+**设计系统**:
+- `frontend/src/styles.css` — 全局样式, `:root` CSS 变量
+- `frontend/src/shared.css` — 共享样式
+- `frontend/src/design-system.css` — Adobe 暗色面板设计系统, `--ad-*` CSS 令牌
+
+**API**:
+- `frontend/src/api/client.js` — HTTP 客户端封装; 改 API 调用方式时改这里
+
+**能力投影层**:
+- `frontend/src/capabilities/capabilityProjection.js` — 能力投影核心, 3 函数流水线; 改能力→UI 映射时改这里
+- `frontend/src/capabilities/capabilityProjection.test.js` — 能力投影测试
+- `frontend/src/capabilities/supportMatrix.js` — 支持矩阵, 9 surface + 14 action + 权限边界; 新增能力入口时改这里
+- `frontend/src/capabilities/supportMatrix.test.js` — 支持矩阵测试
+- `frontend/src/capabilities/capabilityGovernance.js` — 能力治理, 4 类 74 项; 改能力分类时改这里
+- `frontend/src/capabilities/capabilityGovernance.test.js` — 能力治理测试
+
+**状态管理**:
+- `frontend/src/store/graphStore.js` — 主 Zustand store; 改全局状态时改这里
+- `frontend/src/store/graphStoreCompileState.js` — 编译状态
+- `frontend/src/store/graphStoreCompileActions.js` — 编译动作
+- `frontend/src/store/graphStoreCompileApi.js` — 编译 API 调用
+- `frontend/src/store/graphStoreCompileFlow.js` — 编译流程
+- `frontend/src/store/graphStoreCompileHelpers.js` — 编译辅助
+- `frontend/src/store/graphStoreCompileOutcomeMapping.js` — 编译结果映射
+- `frontend/src/store/graphStoreCompileOutcomeProjection.js` — 编译结果投影
+- `frontend/src/store/graphStoreCompileOutcomeProjection.test.js` — 编译结果投影测试
+- `frontend/src/store/graphStoreCompileProtocolFlow.js` — 协议编译流程
+- `frontend/src/store/graphStoreCompileProtocolMapping.js` — 协议编译映射
+- `frontend/src/store/graphStoreEditorActions.js` — 编辑器动作
+- `frontend/src/store/graphStoreHelpers.js` — 通用辅助
+- `frontend/src/store/graphStorePersistenceActions.js` — 持久化动作
+- `frontend/src/store/graphStorePersistenceHelpers.js` — 持久化辅助
+- `frontend/src/store/graphStorePersistenceConsistency.test.js` — 持久化一致性测试
+- `frontend/src/store/graphStoreRuntimeActions.js` — 运行时动作
+- `frontend/src/store/graphStoreRuntimeHelpers.js` — 运行时辅助
+- `frontend/src/store/graphStoreRuntimeTransport.js` — 运行时 SSE 传输
+- `frontend/src/store/graphStoreRuntimeTransport.test.js` — SSE 传输测试
+- `frontend/src/store/graphStoreRuntimeSessionActions.js` — 运行时会话动作, 含 v4 QS 模拟启动与 v4 backtest runtime_kind/symbols 透传 🆕 v4.3.0
+- `frontend/src/store/graphStoreRuntimeSessionState.js` — 运行时会话状态, 含 v4 memory snapshot/handoff 清理 🆕 v4.1.0
+- `frontend/src/store/graphStoreRuntimeSelectionState.js` — 运行时选择状态
+- `frontend/src/store/graphStoreRuntimeSelectionState.test.js` — 运行时选择测试
+- `frontend/src/store/graphStoreRuntimeHistoryActions.js` — 运行时历史动作
+- `frontend/src/store/graphStoreRuntimeHistoryApi.js` — 运行时历史 API
+- `frontend/src/store/graphStoreRuntimeHistoryFlow.js` — 运行时历史流程
+- `frontend/src/store/graphStoreRuntimeHistoryFlow.test.js` — 运行时历史流程测试
+- `frontend/src/store/graphStoreRuntimeHistoryProjection.js` — 运行时历史投影
+- `frontend/src/store/graphStoreRuntimeHistoryState.js` — 运行时历史状态
+- 以及 `graphStore.*.test.js` 测试文件 (backtestArtifacts, capabilities, detailLoadErrors, diagnostics, editorActions, export, recentNodes, runtimeActionLock, runtimeErrors, saveGraphRollback, startupRecovery, strategyIrCompile, strategyIrDraft, templates, versionHistory)
+
+**图编辑**:
+- `frontend/src/graph/compileGraph.js` — 图编译逻辑; 改编译流程时改这里
+- `frontend/src/graph/compileGraph.diagnostics.test.js` — 编译诊断测试
+- `frontend/src/graph/compileGraph.multiSymbol.test.js` — 多交易对编译测试
+- `frontend/src/graph/createGraph.js` — 图创建; 改图初始化时改这里
+- `frontend/src/graph/createNode.js` — 节点创建; 改节点初始化时改这里
+- `frontend/src/graph/quantscript.js` — QS 集成; 改 QS 前端交互时改这里
+- `frontend/src/graph/quantscript.test.js` — QS 测试
+- `frontend/src/graph/spread.test.js` — Spread 测试
+- `frontend/src/graph/validation.js` — 图验证; 改验证规则时改这里
+
+**国际化**:
+- `frontend/src/i18n/index.js` — i18n 入口, `useI18n` hook; 改翻译机制时改这里
+- `frontend/src/i18n/i18n.test.js` — i18n 测试
+- `frontend/src/i18n/locales/zh-CN.js` — 中文翻译; 新增/修改中文文本时改这里
+- `frontend/src/i18n/locales/en-US.js` — 英文翻译; 新增/修改英文文本时改这里
+
+**测试 fixtures**:
+- `frontend/src/test/setup.js` — 测试环境初始化
+- `frontend/src/test/testBridge.js` — 测试桥接, mock API
+- `frontend/src/test/fixtures/capabilities/backend-capabilities-v1.json` — 能力 API mock
+- `frontend/src/test/fixtures/capabilities/capabilityFallbacks.js` — 能力降级 mock
+- `frontend/src/test/fixtures/runtime/*.js` — 运行时 mock (backtestSuccess, buildValidatedSampleGraph, capabilityRejections, editorBootstrap, runSuccess)
+
+**模板**:
+- `frontend/src/templates/strategyTemplates.js` — 策略模板库; 改 v3/v4 starter graph、v4 MachineGraph metadata 或模板入口时改这里 🆕 v4.3.0
+
+**模块**:
+- `frontend/src/modules/builtinModules.js` — 18 种内置指标模块定义; 新增指标模块时改这里
+- `frontend/src/modules/moduleRegistry.js` — 模块注册表; 改模块加载时改这里
+- `frontend/src/modules/moduleRegistry.test.js` — 模块注册表测试
+
+**Node**:
+- `frontend/src/nodes/BaseNodeCard.jsx` — 节点卡片基础组件; 改节点外观时改这里
+- `frontend/src/nodes/BaseNodeCard.test.jsx` — 节点卡片测试
+- `frontend/src/nodes/nodeCardPresentation.js` — 节点卡片展示逻辑; 改节点颜色/布局时改这里
+- `frontend/src/nodes/nodeCardPresentation.test.js` — 节点展示测试
+
+**教程**:
+- `frontend/src/data/tutorialSteps.js` — 教程步骤定义; 改教程内容时改这里
+
+**E2E 测试**:
+- `frontend/tests/e2e/editor-capabilities-smoke.spec.js` — 编辑器能力冒烟
+- `frontend/tests/e2e/evidence-contract-walkthrough.spec.js` — 证据契约遍历
+- `frontend/tests/e2e/perf-first-screen-review.spec.js` — 首屏性能审查
+- `frontend/tests/e2e/perf-react-flow-mount-review.spec.js` — React Flow 挂载性能
+- `frontend/tests/e2e/run-backtest.spec.js` — 回测 E2E
+- `frontend/tests/e2e/run-simulation.spec.js` — 模拟运行 E2E
+- `frontend/tests/e2e/runtime-mutation-walkthrough.spec.js` — 运行时变更遍历
+- `frontend/tests/e2e/scenario-test-v2.spec.js` — 场景测试 v2
+- `frontend/tests/e2e/visual-regression.spec.js` — 视觉回归
+- `frontend/tests/e2e/visual-responsive-review.spec.js` — 响应式审查
+- `frontend/tests/e2e/support/*.js` — E2E 辅助 (apiHarness, workspaceBootstrapMocks, workspaceGraphFixture, analysisReviewFixtures)
+
+**精确路径补充索引**:
+- `frontend/src/components/ApprovalPanel.jsx` — 审批面板组件; 改审批展示时改这里
+- `frontend/src/components/AssetCandlesPanel.test.jsx` — K 线面板测试
+- `frontend/src/components/BacktestHistorySection.jsx` — 回测历史组件; 改历史展示时改这里
+- `frontend/src/components/CompilePanel.integration.test.jsx` — 编译面板集成测试
+- `frontend/src/components/CredentialInput.jsx` — 凭证输入组件; 改凭证表单时改这里
+- `frontend/src/components/DeployButton.jsx` — 部署按钮; 改部署入口时改这里
+- `frontend/src/components/DiagnosticsPanel.jsx` — 诊断面板; 改诊断展示时改这里
+- `frontend/src/components/DiagnosticsPanel.test.jsx` — 诊断面板测试
+- `frontend/src/components/EventReplaySection.jsx` — 事件回放组件; 改回放 UI 时改这里
+- `frontend/src/components/EventReplaySection.test.jsx` — 事件回放测试
+- `frontend/src/components/EventStreamPanel.backtestArtifacts.test.jsx` — 事件流回测工件测试
+- `frontend/src/components/EventStreamPanel.backtestHistory.test.jsx` — 事件流回测历史测试
+- `frontend/src/components/EventStreamPanel.dataQuality.test.jsx` — 事件流数据质量测试
+- `frontend/src/components/EventStreamPanel.executionExplanation.test.jsx` — 事件流执行解释测试
+- `frontend/src/components/EventStreamPanel.historyExplanation.test.jsx` — 事件流历史解释测试
+- `frontend/src/components/EventStreamPanel.jsx` — 事件流面板; 改运行事件展示时改这里
+- `frontend/src/components/EventStreamPanel.layout.test.jsx` — 事件流布局测试
+- `frontend/src/components/EventStreamPanel.nodeFocus.test.jsx` — 事件流节点聚焦测试
+- `frontend/src/components/EventStreamPanel.refreshFeedback.test.jsx` — 事件流刷新反馈测试
+- `frontend/src/components/EventStreamPanel.runtimeArtifactActions.test.jsx` — 事件流运行工件动作测试
+- `frontend/src/components/EvidenceSummaryCards.jsx` — 证据摘要卡片; 改证据概览时改这里
+- `frontend/src/components/GovernedTimelinePanel.jsx` — 治理时间线面板; 改治理时间线时改这里
+- `frontend/src/components/GovernedTimelinePanel.test.jsx` — 治理时间线测试
+- `frontend/src/components/Icons.jsx` — 前端共享图标; 改本地 icon 时改这里
+- `frontend/src/components/LeftSidebar.test.jsx` — 左侧导航测试
+- `frontend/src/components/ModuleSidebar.jsx` — 模块侧栏; 改模块列表/拖拽入口时改这里
+- `frontend/src/components/ModuleSidebar.test.jsx` — 模块侧栏测试
+- `frontend/src/components/PropertyPanel.compileSummary.test.jsx` — 属性面板编译摘要测试
+- `frontend/src/components/PropertyPanel.jsx` — 属性面板; 改节点/边配置面板时改这里
+- `frontend/src/components/PropertyPanel.layout.test.jsx` — 属性面板布局测试
+- `frontend/src/components/PropertyPanel.strategyIr.test.jsx` — 属性面板 Strategy IR 测试
+- `frontend/src/components/propertyPanelViews.jsx` — 属性面板视图拆分; 改面板子视图时改这里
+- `frontend/src/components/RunHistorySection.jsx` — 运行历史组件; 改运行历史时改这里
+- `frontend/src/components/RuntimeDiagnosticsPanel.jsx` — 运行时诊断面板; 改运行诊断时改这里
+- `frontend/src/components/RuntimeDiagnosticsPanel.test.jsx` — 运行时诊断测试
+- `frontend/src/components/RuntimeMutationPanel.jsx` — 运行时变更面板; 改 AI 提案/审批入口时改这里
+- `frontend/src/components/RuntimeMutationPanel.test.jsx` — 运行时变更测试
+- `frontend/src/components/RuntimeReportPanel.jsx` — 运行报告面板; 改报告展示时改这里
+- `frontend/src/components/RuntimeReportPanel.test.jsx` — 运行报告测试
+- `frontend/src/components/StrategyBacktestsPanel.jsx` — 策略回测面板; 改回测入口时改这里
+- `frontend/src/components/StrategyCanvas.focus.test.jsx` — 策略画布焦点测试
+- `frontend/src/components/StrategyCanvas.jsx` — 策略画布; 改 React Flow 画布时改这里
+- `frontend/src/components/strategyCanvasFocus.js` — 画布焦点工具; 改焦点规则时改这里
+- `frontend/src/components/strategyCanvasFocus.test.js` — 画布焦点工具测试
+- `frontend/src/components/StrategyCanvasMiniMap.jsx` — 策略画布小地图; 改小地图时改这里
+- `frontend/src/components/strategyCanvasViewport.js` — 画布视口工具; 改缩放/定位时改这里
+- `frontend/src/components/strategyCanvasViewport.test.js` — 画布视口工具测试
+- `frontend/src/components/StrategyCodePanel.authoringView.test.jsx` — 策略代码面板编写视图测试
+- `frontend/src/components/StrategyCodePanel.jsx` — 策略代码面板; 改 QS 编写/预览时改这里
+- `frontend/src/components/StrategyDiagnosticsPanel.jsx` — 策略诊断面板; 改策略诊断时改这里
+- `frontend/src/components/StrategyEventsPanel.jsx` — 策略事件面板; 改事件摘要时改这里
+- `frontend/src/components/StrategyParamsPanel.jsx` — 策略参数面板; 改参数编辑时改这里
+- `frontend/src/components/StrategyResearchConsole.jsx` — 策略研究控制台; 改研究工作流时改这里
+- `frontend/src/components/StrategyResearchConsole.test.jsx` — 策略研究控制台测试
+- `frontend/src/components/StrategyRunsPanel.jsx` — 策略运行面板; 改运行入口时改这里
+- `frontend/src/components/TopToolbar.capabilities.test.jsx` — 顶栏 capability 测试
+- `frontend/src/components/TopToolbar.exportFailure.test.jsx` — 顶栏导出失败测试
+- `frontend/src/components/TopToolbar.failureNotices.test.jsx` — 顶栏失败提示测试
+- `frontend/src/components/TopToolbar.formalSourceMode.test.jsx` — 顶栏正式源模式测试
+- `frontend/src/components/TopToolbar.persistenceFailure.test.jsx` — 顶栏持久化失败测试
+- `frontend/src/components/V4RuntimeEvidencePanel.jsx` — v4 运行证据面板; 改 v4 evidence UI 时改这里
+- `frontend/src/components/V4RuntimeEvidencePanel.test.jsx` — v4 运行证据面板测试
+- `frontend/src/hooks/propertyPanelSelectors.js` — 属性面板 selector; 改面板数据投影时改这里
+- `frontend/src/hooks/propertyPanelShared.js` — 属性面板共享逻辑
+- `frontend/src/hooks/strategyResearchSelectors.js` — 研究页 selector; 改研究数据选择时改这里
+- `frontend/src/hooks/strategyResearchSelectors.test.js` — 研究 selector 测试
+- `frontend/src/hooks/useNotification.js` — 通知 hook; 改 Toast 状态时改这里
+- `frontend/src/hooks/useOrderAnimation.js` — 订单动画 hook
+- `frontend/src/hooks/usePanelResize.js` — 面板 resize hook
+- `frontend/src/hooks/usePropertyPanelActions.js` — 属性面板动作 hook
+- `frontend/src/hooks/usePropertyPanelModel.js` — 属性面板模型 hook
+- `frontend/src/hooks/useStrategyDirectoryModel.js` — 策略目录模型 hook
+- `frontend/src/hooks/useStrategyHubBodyData.js` — 策略中心主体数据 hook
+- `frontend/src/hooks/useStrategyHubInspectorData.js` — 策略中心 inspector 数据 hook
+- `frontend/src/hooks/useStrategyHubRosterData.js` — 策略中心列表数据 hook
+- `frontend/src/hooks/useStrategyResearchActions.js` — 策略研究动作 hook
+- `frontend/src/hooks/useStrategyResearchModel.js` — 策略研究模型 hook
+- `frontend/src/hooks/useStrategyResearchUiState.js` — 策略研究 UI 状态 hook
+- `frontend/src/hooks/useStrategyWorkspacePageData.js` — 工作区页面数据 hook
+- `frontend/src/hooks/useStrategyWorkspaceSharedModel.js` — 工作区共享模型 hook
+- `frontend/src/hooks/useStrategyWorkspaceUiState.js` — 工作区 UI 状态 hook
+- `frontend/src/hooks/useTutorial.js` — 教程 hook
+- `frontend/src/hooks/useWorkspaceActionBarActions.js` — 工作区动作栏动作 hook
+- `frontend/src/hooks/useWorkspaceActionBarModel.js` — 工作区动作栏模型 hook
+- `frontend/src/hooks/workspaceActionBarShared.js` — 工作区动作栏共享工具
+- `frontend/src/hooks/workspaceActionSelectors.js` — 工作区动作 selector
+- `frontend/src/pages/AlertsPage.jsx` — 告警页; 改告警 UI 时改这里
+- `frontend/src/pages/backtest-analysis.css` — 回测分析样式
+- `frontend/src/pages/BacktestAnalysisLayout.jsx` — 回测分析布局
+- `frontend/src/pages/backtestAnalysisShared.jsx` — 回测分析共享组件
+- `frontend/src/pages/backtestAnalysisShared.test.jsx` — 回测分析共享测试
+- `frontend/src/pages/BacktestComparePage.jsx` — 回测对比页
+- `frontend/src/pages/BacktestComparePage.test.jsx` — 回测对比页测试
+- `frontend/src/pages/BacktestDetailPage.jsx` — 回测详情页, 展示 v4 backtest artifact/evidence; 改回测分析入口时改这里 🆕 v4.3.0
+- `frontend/src/pages/BacktestDetailPage.test.jsx` — 回测详情页测试
+- `frontend/src/pages/ChaosPage.jsx` — 混沌实验页
+- `frontend/src/pages/EditorPage.jsx` — 编辑器页
+- `frontend/src/pages/QuantScriptEditor.jsx` — QuantScript 编辑页
+- `frontend/src/pages/RunbookPage.jsx` — 运行手册页
+- `frontend/src/pages/SnapshotsPage.jsx` — 快照页
+- `frontend/src/pages/StrategyBacktestsPage.jsx` — 策略回测页
+- `frontend/src/pages/StrategyBacktestsPage.test.jsx` — 策略回测页测试
+- `frontend/src/pages/strategy-hub.css` — 策略中心样式
+- `frontend/src/pages/StrategyHubActivityPanelsSection.jsx` — 策略中心活动面板区
+- `frontend/src/pages/StrategyHubBacktestActivityCard.jsx` — 策略中心回测活动卡片
+- `frontend/src/pages/StrategyHubBodySection.jsx` — 策略中心主体区
+- `frontend/src/pages/StrategyHubCompareQueueSection.jsx` — 策略中心对比队列区
+- `frontend/src/pages/StrategyHubHeroSection.jsx` — 策略中心头部区
+- `frontend/src/pages/StrategyHubInlineNote.jsx` — 策略中心内联提示
+- `frontend/src/pages/StrategyHubInspectorOverviewSection.jsx` — 策略中心 inspector 概览
+- `frontend/src/pages/StrategyHubInspectorSection.jsx` — 策略中心 inspector 区
+- `frontend/src/pages/StrategyHubPage.jsx` — 策略中心页
+- `frontend/src/pages/StrategyHubPage.test.jsx` — 策略中心页测试
+- `frontend/src/pages/StrategyHubPanelFallbacks.jsx` — 策略中心 fallback 面板
+- `frontend/src/pages/StrategyHubRecentBacktestsSection.jsx` — 最近回测区
+- `frontend/src/pages/StrategyHubRecentRunItem.jsx` — 最近运行项
+- `frontend/src/pages/StrategyHubRecentRunsSection.jsx` — 最近运行区
+- `frontend/src/pages/StrategyHubRosterDirectorySection.jsx` — 策略目录区
+- `frontend/src/pages/StrategyHubRosterRowActions.jsx` — 策略行操作
+- `frontend/src/pages/StrategyHubRosterSection.jsx` — 策略列表区
+- `frontend/src/pages/StrategyHubRosterTableRow.jsx` — 策略表格行
+- `frontend/src/pages/StrategyHubRosterTableSection.jsx` — 策略表格区
+- `frontend/src/pages/StrategyHubRosterTableSection.test.jsx` — 策略表格区测试
+- `frontend/src/pages/StrategyHubRosterToolbar.jsx` — 策略列表工具栏
+- `frontend/src/pages/StrategyHubRunActivityCard.jsx` — 运行活动卡片
+- `frontend/src/pages/StrategyHubSectionFallbacks.jsx` — 策略中心区块 fallback
+- `frontend/src/pages/StrategyHubSharedComponents.jsx` — 策略中心共享组件
+- `frontend/src/pages/StrategyHubTemplateLibrarySection.jsx` — 模板库区
+- `frontend/src/pages/StrategyHubTemplateLibrarySection.test.jsx` — 模板库测试
+- `frontend/src/pages/strategy-workspace.css` — 策略工作区样式
+- `frontend/src/pages/StrategyWorkspaceCodeTab.jsx` — 工作区代码页签
+- `frontend/src/pages/StrategyWorkspaceCollaborationCard.jsx` — 工作区协作卡片
+- `frontend/src/pages/StrategyWorkspaceCollaborationCard.test.jsx` — 工作区协作卡片测试
+- `frontend/src/pages/StrategyWorkspaceDashboard.jsx` — 工作区仪表盘
+- `frontend/src/pages/StrategyWorkspaceDebugTab.jsx` — 工作区调试页签
+- `frontend/src/pages/StrategyWorkspaceDiagnosticsTab.jsx` — 工作区诊断页签
+- `frontend/src/pages/StrategyWorkspaceExperimentCard.jsx` — 工作区实验卡片
+- `frontend/src/pages/StrategyWorkspaceExperimentCard.test.jsx` — 工作区实验卡片测试
+- `frontend/src/pages/StrategyWorkspaceIssueQueueCard.jsx` — 工作区问题队列卡片
+- `frontend/src/pages/StrategyWorkspaceMonitorTab.jsx` — 工作区监控页签
+- `frontend/src/pages/StrategyWorkspaceOverviewTab.jsx` — 工作区概览页签
+- `frontend/src/pages/StrategyWorkspacePage.codeMode.test.jsx` — 工作区代码模式测试
+- `frontend/src/pages/StrategyWorkspacePage.jsx` — 策略工作区页
+- `frontend/src/pages/StrategyWorkspacePageSections.jsx` — 工作区分区组件
+- `frontend/src/pages/StrategyWorkspacePanelFallbacks.jsx` — 工作区面板 fallback
+- `frontend/src/pages/StrategyWorkspaceResearchTab.jsx` — 工作区研究页签
+- `frontend/src/pages/StrategyWorkspaceSourceTab.jsx` — 工作区源码页签
+- `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.jsx` — 工作区版本历史卡片
+- `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.test.jsx` — 工作区版本历史测试
+- `frontend/src/store/graphStore.backtestArtifacts.test.js` — graphStore 回测工件测试
+- `frontend/src/store/graphStore.capabilities.test.js` — graphStore capability 测试
+- `frontend/src/store/graphStore.detailLoadErrors.test.js` — graphStore 详情加载错误测试
+- `frontend/src/store/graphStore.diagnostics.test.js` — graphStore 诊断测试
+- `frontend/src/store/graphStore.editorActions.test.js` — graphStore 编辑动作测试
+- `frontend/src/store/graphStore.export.test.js` — graphStore 导出测试
+- `frontend/src/store/graphStore.recentNodes.test.js` — graphStore 最近节点测试
+- `frontend/src/store/graphStore.runtimeActionLock.test.js` — graphStore 运行时动作锁测试
+- `frontend/src/store/graphStore.runtimeErrors.test.js` — graphStore 运行时错误测试
+- `frontend/src/store/graphStore.saveGraphRollback.test.js` — graphStore 保存回滚测试
+- `frontend/src/store/graphStore.startupRecovery.test.js` — graphStore 启动恢复测试
+- `frontend/src/store/graphStore.strategyIrCompile.test.js` — graphStore Strategy IR 编译测试
+- `frontend/src/store/graphStore.strategyIrDraft.test.js` — graphStore Strategy IR 草稿测试
+- `frontend/src/store/graphStore.templates.test.js` — graphStore 模板测试
+- `frontend/src/store/graphStore.versionHistory.test.js` — graphStore 版本历史测试
+- `frontend/src/test/fixtures/runtime/backtestSuccess.js` — 回测成功 fixture
+- `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js` — 已验证样例图 fixture
+- `frontend/src/test/fixtures/runtime/capabilityRejections.js` — capability 拒绝 fixture
+- `frontend/src/test/fixtures/runtime/editorBootstrap.js` — 编辑器启动 fixture
+- `frontend/src/test/fixtures/runtime/runSuccess.js` — 运行成功 fixture
+- `frontend/src/utils/actionFailure.js` — 动作失败工具
+- `frontend/src/utils/actionFailure.test.js` — 动作失败工具测试
+- `frontend/src/utils/api.js` — 前端 API 辅助
+- `frontend/src/utils/compileContract.js` — 编译契约工具
+- `frontend/src/utils/configureFieldPriority.js` — 字段优先级工具
+- `frontend/src/utils/configureFieldPriority.test.js` — 字段优先级测试
+- `frontend/src/utils/errorMessages.js` — 错误消息工具
+- `frontend/src/utils/errorText.js` — 错误文本工具
+- `frontend/src/utils/errorText.test.js` — 错误文本测试
+- `frontend/src/utils/repairPathInsights.js` — 修复路径洞察工具
+- `frontend/src/utils/runtimeAiProposal.js` — 运行时 AI 提案工具
+- `frontend/src/utils/runtimeAiProposal.test.js` — 运行时 AI 提案测试
+- `frontend/src/utils/runtimeApproval.js` — 运行时审批工具
+- `frontend/src/utils/runtimeDiagnosticsProjection.js` — 运行时诊断投影
+- `frontend/src/utils/runtimeDiagnosticsProjection.test.js` — 运行时诊断投影测试
+- `frontend/src/utils/runtimeEvidenceSummary.js` — 运行证据摘要工具
+- `frontend/src/utils/runtimeEvidenceSummary.test.js` — 运行证据摘要测试
+- `frontend/src/utils/runtimeExplanation.js` — 运行解释工具
+- `frontend/src/utils/runtimeExplanation.test.js` — 运行解释测试
+- `frontend/src/utils/runtimeGovernance.js` — 运行治理工具
+- `frontend/src/utils/runtimeGovernance.test.js` — 运行治理测试
+- `frontend/src/utils/runtimeMutation.js` — 运行时变更工具
+- `frontend/src/utils/runtimeMutation.test.js` — 运行时变更测试
+- `frontend/src/utils/runtimeStatus.js` — 运行状态工具
+- `frontend/src/utils/runtimeTimeline.js` — 运行时间线工具
+- `frontend/src/utils/runtimeTimeline.test.js` — 运行时间线测试
+- `frontend/src/utils/strategyHubCompareQueueActions.js` — 策略中心对比队列动作
+- `frontend/src/utils/strategyHubCompareQueueActions.test.js` — 策略中心对比队列动作测试
+- `frontend/src/utils/strategyHubFormatters.js` — 策略中心格式化工具
+- `frontend/src/utils/strategyHubInspectorActions.js` — 策略中心 inspector 动作
+- `frontend/src/utils/strategyHubInspectorActions.test.js` — 策略中心 inspector 动作测试
+- `frontend/src/utils/strategyHubInspectorProjection.js` — 策略中心 inspector 投影
+- `frontend/src/utils/strategyHubInspectorProjection.test.js` — 策略中心 inspector 投影测试
+- `frontend/src/utils/strategyHubRecentBacktestsActions.js` — 最近回测动作
+- `frontend/src/utils/strategyHubRecentBacktestsActions.test.js` — 最近回测动作测试
+- `frontend/src/utils/strategyHubRecentRunsView.js` — 最近运行视图工具
+- `frontend/src/utils/strategyHubRecentRunsView.test.js` — 最近运行视图测试
+- `frontend/src/utils/strategyHubRosterProjection.js` — 策略列表投影
+- `frontend/src/utils/strategyHubRosterProjection.test.js` — 策略列表投影测试
+- `frontend/src/utils/strategyHubRosterRowActions.js` — 策略列表行动作
+- `frontend/src/utils/strategyHubRosterRowActions.test.js` — 策略列表行动作测试
+- `frontend/src/utils/strategyHubStrategyIdentity.js` — 策略身份工具
+- `frontend/src/utils/strategyWorkspaceIssueQueue.js` — 工作区问题队列工具
+- `frontend/src/utils/strategyWorkspaceIssueQueue.test.js` — 工作区问题队列测试
+- `frontend/src/utils/v4RuntimeEvidence.js` — v4 runtime evidence 投影工具
+- `frontend/src/utils/v4RuntimeEvidence.test.js` — v4 runtime evidence 测试
+- `frontend/src/utils/workspaceContextLabels.js` — 工作区上下文标签工具
+- `frontend/tests/e2e/support/analysisReviewFixtures.js` — 分析审查 E2E fixture
+- `frontend/tests/e2e/support/apiHarness.js` — E2E API harness
+- `frontend/tests/e2e/support/workspaceBootstrapMocks.js` — 工作区启动 mock
+- `frontend/tests/e2e/support/workspaceGraphFixture.js` — 工作区图 fixture
+- `tests/fixtures/runtime/evidence_contract_snapshot.json` — runtime evidence 契约快照 fixture
+- `tests/fixtures/runtime/minimal_runtime_request.json` — 最小运行请求 fixture
+- `tests/fixtures/runtime/mutation_contract_snapshot.json` — runtime mutation 契约快照 fixture
+
+### E.6 执行端前端: `frontend-executor/src/`
+
+- `frontend-executor/src/main.jsx` — React 入口
+- `frontend-executor/src/ExecutorApp.jsx` — 执行端 App Shell, 多策略标签页/状态轮询/模式切换
+- `frontend-executor/src/design-system.css` — 执行端设计系统
+- `frontend-executor/src/components/ExecutorTopBar.jsx` — 顶部工具栏, 模式切换/策略选择/v3-v4 runtime 标识 🆕 v4.2.0
+- `frontend-executor/src/components/V4EvidencePanel.jsx` — v4 状态机证据面板, 展示 machine/Risk Plane/Execution/模拟订单摘要 🆕 v4.2.0
+- `frontend-executor/src/components/StrategyGraphPanel.jsx` — 策略图只读预览
+- `frontend-executor/src/components/KlineChart.jsx` — K线图表, lightweight-charts
+- `frontend-executor/src/components/OrderPanel.jsx` — 订单面板
+- `frontend-executor/src/components/AssetPanel.jsx` — 资产面板, 持仓/余额/权益曲线
+- `frontend-executor/src/components/StrategyParamsPanel.jsx` — 热调参面板
+- `frontend-executor/index.html` — HTML 入口
+- `frontend-executor/package.json` — 包配置
+- `frontend-executor/vite.config.js` — Vite 配置
+
+### E.7 测试: `tests/`
+
+- `tests/common/mod.rs` — 测试公共模块
+- `tests/common/re_exports.rs` — 测试重导出
+- `tests/api_ai_proposal.rs` — AI 提案 API 测试
+- `tests/api_backtest.rs` — 回测 API 测试
+- `tests/api_collaboration.rs` — 协作 API 测试
+- `tests/api_evidence_contract.rs` — 证据契约 API 测试
+- `tests/api_experiments.rs` — 实验 API 测试
+- `tests/api_graph_versions.rs` — 图版本 API 测试
+- `tests/api_mutation.rs` — 变更 API 测试
+- `tests/api_run.rs` — 运行 API 测试
+- `tests/api_sse.rs` — SSE API 测试
+- `tests/quantscript_real_strategy_authoring.rs` — QS 真实策略编写测试
+- `tests/quantscript_universe_strategy.rs` — QS 多交易对策略测试
+- `tests/report_qs_strategy.rs` — QS 策略报告测试
+- `tests/test_deploy.json` — 部署测试配置
+- `tests/fixtures/runtime/*.json` — 运行时测试 fixtures
+
+### E.8 工具与脚本
+
+**门禁脚本** (`tools/check-*.ps1`):
+- `tools/check-utf8.ps1` — UTF-8 编码检查
+- `tools/check-user-facing-text.ps1` — 面向用户文本检查
+- `tools/check-capability-governance.ps1` — 能力治理检查
+- `tools/check-i18n.ps1` — i18n 覆盖检查
+- `tools/check-version-consistency.ps1` — 版本一致性检查, 覆盖 release manifest/OpenAPI/启动横幅 🆕 v4.1.0
+- `tools/check-feature-evolution.ps1` — 功能演进检查
+- `tools/check-learning-closeout.ps1` — 学习流水线 closeout
+- `tools/check-pre-commit-hook.ps1` — Pre-commit hook 同步检查
+- `tools/check-cleanup-boundary.ps1` — 清理边界检查
+- `tools/check-clippy-warning-budget.ps1` — Clippy warning 预算
+- `tools/check-executor-warning-budget.ps1` — 执行端 warning 预算
+- `tools/check-clean-worktree.ps1` — 干净工作区检查
+- `tools/check-gates-smoke.ps1` — 门禁冒烟
+- `tools/check-full-feature-tree.ps1` — 全量树校验 🆕 v4.0.0
+
+**其他工具**:
+- `tools/run-closeout-gates.bat` — 一键 24 项 closeout
+- `tools/export-capability-fixture.ps1` — 能力 fixture 导出
+- `tools/cleanup-artifacts.ps1` — 工件清理
+- `tools/track-gate-metrics.ps1` — 门禁指标追踪
+- `tools/build_package.js` — 打包脚本
+- `tools/check-qs.js` — QS 检查
+- `tools/destructive_test.js` — 破坏性测试
+- `tools/gen_screenshot_data.js` — 截图数据生成
+- `tools/generate-test-report.js` — 测试报告生成
+- `tools/run-all-scenarios.js` — 全场景运行
+- `tools/run-scenario.js` — 单场景运行
+- `tools/testnet_long_test.js` — 测试网长时间测试
+
+**脚本** (`scripts/`):
+- `scripts/test.ps1` — Rust 测试 PowerShell 脚本
+- `scripts/scenario-smoke.ps1` — QS 场景冒烟
+
+### E.9 合约与配置
+
+- `contracts/openapi/root.yaml` — OpenAPI 根定义, 含 `/api/runtime/v4/run` 与 `/api/runtime/backtest` v4 artifact 契约 🆕 v4.3.0
+- `contracts/asyncapi/runtime-events.yaml` — AsyncAPI 运行时事件
+- `contracts/governance/.spectral.yaml` — API 治理规则
+- `config/runtime_protocol.example.yaml` — 运行时协议示例
+- `config/strategy_ir.v0.example.json` — 策略 IR 示例
+- `config/strategy_ir.v0.schema.json` — 策略 IR JSON Schema
+- `release/release-manifest.yaml` — 发布清单
+- `plugins/builtin/data/kline/plugin.json` — K线插件清单
+
+---
+
+## 附录 F: 全量树维护检查命令
+
+### F.1 校验全量树完整性
+
+```powershell
+# 全量树校验 (路径存在性 / 文件覆盖率 / 占位符 / 版本号)
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1
+```
+
+### F.2 检查新增文件是否已在全量树中
+
+```powershell
+# 列出未被全量树覆盖的 active 文件
+# (check-full-feature-tree.ps1 第5步自动输出)
+```
+
+### F.3 手动检查某个功能是否可反查
+
+```bash
+# 示例: 从"凭证保险库"反查代码路径
+grep -n "凭证保险库" markdown/10-overview/overview-full-feature-tree.md
+
+# 示例: 从文件反查其在全量树中的说明
+grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
+```
+
+### F.4 新增文件后的维护流程
+
+1. 确定文件属于哪个根节点/子系统
+2. 在对应章节的文件列表中新增一行: `- path/to/file.ext — 做什么; 什么时候改这里`
+3. 如文件引入新功能, 在附录 E 对应分组中新增条目
+4. 运行 `check-full-feature-tree.ps1` 确认通过
+5. 若文件在排除列表中, 更新 `tools/full-feature-tree-excludes.txt`
+
+### F.5 删除/重命名文件后的维护流程
+
+1. 在全量树中搜索旧文件名/路径
+2. 更新或删除对应节点
+3. 若重命名, 同时更新附录 E 中的条目
+4. 运行 `check-full-feature-tree.ps1` 确认通过

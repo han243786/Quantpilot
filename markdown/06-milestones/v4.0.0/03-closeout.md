@@ -45,7 +45,7 @@
 |------|:----:|------|
 | **功能开发进度** | 8/10 | Phase 0-8 全部实现; v4 PaperSimulated 运行骨架完成; 旧链路兼容桥验证; 前端能力投影层完成 |
 | **仓库稳定程度** | 8/10 | `cargo test --workspace`, warning budget, frontend/executor build/test, npm audit 均通过；V9 剩余 P1/P2 不阻断当前 closeout |
-| **发布就绪度** | 7/10 | 版本号 14 项、CHANGELOG、V8 23 项门禁、V9 审计均完成；release manifest/OpenAPI 活版本漂移列为 P1 |
+| **发布就绪度** | 7/10 | 版本号 14 项、CHANGELOG、V8 24 项门禁、V9 审计均完成；release manifest/OpenAPI 活版本漂移列为 P1 |
 | **用户友好程度** | 7/10 | capability 驱动入口、v4 evidence 面板、前端 E2E 已验证；API 错误结构和 E2E step 吞错列为 P1 |
 | **系统整体稳定性** | 7/10 | GP §10.3 11 项回归通过；v4 event/freshness、Risk Plane approval、runtime evidence 持久化列为 v4.0.1 修复项 |
 
@@ -217,7 +217,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-learning-closeou
 | 1 | 自由维度诱错审计 | S0 | MAJOR 必须至少一轮, 按超级规范化 §8.5 |
 | 2 | GP §10.3 全量回归手动验证 | S0 | 11 项检查需手动执行 |
 | 3 | 版本号一致性门禁全量通过 | S0 | `check-version-consistency.ps1` |
-| 4 | 23 项 closeout 门禁全量通过 | S0 | `run-closeout-gates.bat` |
+| 4 | 24 项 closeout 门禁全量通过 | S0 | `run-closeout-gates.bat` |
 | 5 | 前端 E2E 测试通过 | P1 | `npm run test:e2e` |
 | 6 | npm audit 清零 | P1 | `npm audit --audit-level=moderate` |
 | 7 | Clippy warning budget | P1 | `check-clippy-warning-budget.ps1 -MaxWarnings 58` |

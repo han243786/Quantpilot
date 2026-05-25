@@ -62,6 +62,17 @@ fn parses_strategy_ir_validate_command() {
 }
 
 #[test]
+fn parses_v4_run_command() {
+    let command = parse_cli_command_from(["quantpilot", "v4-run", "demo_v4"]).unwrap();
+    assert_eq!(
+        command,
+        CliCommand::V4Run {
+            graph_id_or_path: "demo_v4".to_string(),
+        }
+    );
+}
+
+#[test]
 fn rejects_unknown_cli_command() {
     let err = parse_cli_command_from(["quantpilot", "unknown"]).unwrap_err();
     assert!(err.to_string().contains("不支持的命令"));
@@ -732,6 +743,7 @@ fn capability_response_declares_workspace_surfaces_and_ui_actions() {
             "export_quantscript",
             "compile",
             "start_simulation",
+            "start_v4_simulation",
             "run_backtest",
             "stop_runtime",
             "reset_runtime",

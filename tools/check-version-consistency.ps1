@@ -34,6 +34,15 @@ function Read-TomlPackageVersion($path) {
     $match.Groups[1].Value
 }
 
+function Read-YamlIndentedVersion($path) {
+    $content = Get-Content -Raw -Encoding UTF8 $path
+    $match = [regex]::Match($content, '(?m)^\s+version:\s*([0-9]+\.[0-9]+\.[0-9]+)\s*$')
+    if (-not $match.Success) {
+        throw "version not found in $path"
+    }
+    $match.Groups[1].Value
+}
+
 $expected = Read-TomlPackageVersion "Cargo.toml"
 $checks = @(
     @{ Name = "Cargo.toml"; Value = $expected },
@@ -46,7 +55,9 @@ $checks = @(
     @{ Name = "frontend/package-lock.json packages['']"; Value = Read-PackageLockPackageVersion "frontend/package-lock.json" },
     @{ Name = "frontend-executor/package.json"; Value = (Read-JsonFile "frontend-executor/package.json").version },
     @{ Name = "frontend-executor/package-lock.json"; Value = Read-JsonTopLevelVersion "frontend-executor/package-lock.json" },
-    @{ Name = "frontend-executor/package-lock.json packages['']"; Value = Read-PackageLockPackageVersion "frontend-executor/package-lock.json" }
+    @{ Name = "frontend-executor/package-lock.json packages['']"; Value = Read-PackageLockPackageVersion "frontend-executor/package-lock.json" },
+    @{ Name = "release/release-manifest.yaml"; Value = Read-YamlIndentedVersion "release/release-manifest.yaml" },
+    @{ Name = "contracts/openapi/root.yaml info.version"; Value = Read-YamlIndentedVersion "contracts/openapi/root.yaml" }
 )
 
 $failed = 0
@@ -67,7 +78,12 @@ $textFiles = @(
     "markdown/01-principles/README.md",
     "markdown/01-principles/principles-super-standardization.md",
     "markdown/06-milestones/README.md",
-    "markdown/10-overview/overview-current-status-and-roadmap.md"
+    "markdown/10-overview/overview-current-status-and-roadmap.md",
+    "release/release-manifest.yaml",
+    "contracts/openapi/root.yaml",
+    "start.ps1",
+    "start.bat",
+    "src-executor/main.rs"
 )
 
 foreach ($file in $textFiles) {

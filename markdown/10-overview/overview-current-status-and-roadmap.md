@@ -1,6 +1,6 @@
 # 当前状态与发布状态
 
-> 最后更新：2026-05-24 | 当前版本：v4.0.0 ✅ | 当前 closeout：状态机化架构 + 开发者学习流水线收口
+> 最后更新：2026-05-25 | 当前版本：v4.3.0 🔧 | 当前 closeout：v4 回测 + 多交易对策略
 
 ## 版本路线
 
@@ -42,7 +42,7 @@
 
 ## 当前产品真实情况
 
-QuantPilot v4.0.0 继承 v3.7.1 的端到端量化交易沙盒链，并在稳定线之上侧向新增状态机化架构、Risk Plane、ExecutionMachine 能力来源和开发者学习流水线：
+QuantPilot v4.3.0 继承 v4.2.0 的执行端 v4 集成，并把 v4 runtime 接入回测链路、多交易对模板和 artifact evidence：
 
 - **桌面应用**: Tauri v2 自绘标题栏 Windows 桌面应用
 - **前端**: Adobe 暗色面板设计系统, 图编辑器, 策略工作区, 回测详情/对比, 研究控制台, Toast 通知
@@ -50,12 +50,13 @@ QuantPilot v4.0.0 继承 v3.7.1 的端到端量化交易沙盒链，并在稳定
 - **执行端**: 独立 Axum 进程 (:3001), 策略部署/启动/停止/热调参, lightweight-charts K 线
 - **运行时链**: data → intent → agent → risk → execution → fill
 - **QuantScript**: 语法解析 → HIR → lowering → Core IR 完整编译管道
+- **v4 runtime**: 后端 `/api/runtime/v4/run`、CLI `v4-run`、前端 `start_v4_simulation` 入口；执行端 `RunnerPool` 可部署/启动/停止 v4 graph；`/api/runtime/backtest` 可用 `runtime_kind=v4` 生成 `v4_artifact`
 - **安全**: AES-256-GCM 凭证保险库 (PBKDF2 1M/600K 轮), bcrypt 12 轮用户认证, JWT + 刷新令牌轮换+重放检测, 进程间加密通道
 - **告警**: 10 条默认规则, resolve_condition 自动恢复, 去重
 
 当前全部 18 种指标的 K 线驱动 Intent 支持是真实的 (详见 README 指标表)。
 
-当前回测支持也是真实的：历史回放, 持久化回测记录, 权益曲线, 夏普/索提诺/卡尔玛等 12 项指标。
+当前回测支持也是真实的：历史回放, 持久化回测记录, 权益曲线, 夏普/索提诺/卡尔玛等 12 项指标, 以及 v4 deterministic MachineGraph replay 的 `v4_artifact`。
 
 执行端支持：OKX Paper 模拟行情 + OKX testnet 实盘模拟 (REST + WebSocket), Paper/Live 模式切换, 策略迁移验证。
 
@@ -99,7 +100,7 @@ QuantPilot v4.0.0 继承 v3.7.1 的端到端量化交易沙盒链，并在稳定
 
 ## 当前架构边界
 
-v4.0.0 系统应被理解为：
+v4.3.0 系统应被理解为：
 
 - 支持的交易所: `binance`, `okx`
 - 支持的交易对: `BTCUSDT`, `ETHUSDT`, `SOLUSDT`
@@ -108,12 +109,15 @@ v4.0.0 系统应被理解为：
 - 全部已覆盖系统以 GP §10 功能覆盖矩阵为准
 - 前端 Toast 通知系统, 术语全中文化, 空状态引导
 - 执行端独立进程 (:3001), ParamsPanel 热调参, Paper/Live 切换
+- v4 PaperSimulated runtime 已具备本地用户启动入口和执行端 v4 runner 集成；真实下单仍由 Risk Plane 和 ExecutionMachine 能力来源约束
 
 ## 当前收尾/发布状态
 
 v3.7.0 完成 v3.5.0→v3.7.0 全版本演进 (12 项新功能 + 32 项审计修复 + 12 项 UX 优化 + 14 项 P3 消化)。
 
-v4.0.0 是当前 MAJOR 收口：在 v3.7.1 稳定基线上落地状态机化 QuantScript、事件模型、Risk Plane、ExecutionMachine 能力来源、前端 capability 真源和 Developer Learning Pipeline。closeout 按 v4.0.0 `04-Codex执行规范.md` 执行 V1-V10 全量验证。
+v4.0.0 是 MAJOR 架构收口：在 v3.7.1 稳定基线上落地状态机化 QuantScript、事件模型、Risk Plane、ExecutionMachine 能力来源、前端 capability 真源和 Developer Learning Pipeline。
+
+v4.3.0 是当前 MINOR 集成收口：v4 runtime 从实时 Paper 扩展到历史回测，新增 deterministic bar replay、v4 backtest artifact、回测详情 evidence、多交易对 MachineGraph 展开和 v4 模板入口。当前按 `v4.3.0/01-规划方案.md` 执行实现与验证。
 
 使用下面的专用文档作为活跃发布界面：
 
@@ -124,17 +128,18 @@ v4.0.0 是当前 MAJOR 收口：在 v3.7.1 稳定基线上落地状态机化 Qua
 - [v3.7.1 closeout 基线](../06-milestones/v3.7.1/03-closeout.md)
 - [v4.0.0 规划方案](../06-milestones/v4.0.0/01-规划方案.md)
 - [v4.0.0 closeout 报告](../06-milestones/v4.0.0/03-closeout.md)
+- [v4.3.0 规划方案](../06-milestones/v4.3.0/01-规划方案.md)
 - [支持矩阵](../03-implementation/governance/implementation-support-matrix.md)
 - [编译链合约](../03-implementation/governance/implementation-compile-chain-contract.md)
 - [功能演进契约](../03-implementation/governance/implementation-feature-evolution-contract.md)
 
-当前仓库级状态 (v4.0.0 closeout 执行中):
+当前仓库级状态 (v4.3.0 实施验证中):
 
 | 检查项 | 状态 | 备注 |
 |--------|:--:|------|
 | `cargo fmt --check` | ✅ | 全仓 rustfmt drift 已清理，pre-commit / CI / closeout 均已接入 |
 | `cargo check --workspace` | ✅ | 0 错误 |
-| `scripts/test.ps1 test --workspace` | ✅ | closeout [12/23] 覆盖 |
+| `scripts/test.ps1 test --workspace` | ✅ | closeout [12/24] 覆盖 |
 | workspace clippy warning budget | ✅ | 当前预算 58，只降不升；不再把 clippy 退出码通过误读为 warning-free |
 | executor warning budget | ✅ | 当前预算 0，新增 warning 阻断 |
 | 前端 `npm run build` | ✅ | main frontend 已纳入 CI/closeout |
@@ -158,18 +163,21 @@ v4.0.0 是当前 MAJOR 收口：在 v3.7.1 稳定基线上落地状态机化 Qua
 | Pre-commit hook 同步 | ✅ | `tools/check-pre-commit-hook.ps1` 已进入 closeout，防止 `.git/hooks/pre-commit` 与 `scripts/pre-commit` 再次漂移 |
 | 清理边界门禁 | ✅ | `tools/check-cleanup-boundary.ps1` 已进入 CI/closeout，防止清理脚本触碰真实运行/图版本工件 |
 | Rust 格式基线 | ✅ | `cargo fmt --check` 已进入三层门禁 |
-| 版本号一致性 | ✅ | 关键元数据和用户可见入口统一到 4.0.0 |
-| GP 合规 | ⏳ | 当前 GP 已同步到 v4.0.0，V6/V9 将复核 v4 演化保护矩阵 |
+| v4 runtime 入口 | ✅ | `/api/runtime/v4/run`、CLI `v4-run`、前端 `start_v4_simulation` 已接入 |
+| 执行端 v4 集成 | ✅ | RunnerPool、OKX Market 事件、部署 API、SSE evidence、执行端面板按 v4.2.0 规划落实 |
+| v4 回测 + 多交易对 | ✅ | `runtime_kind=v4` 回测、`v4_artifact`、回测详情 evidence、v4 模板和多交易对展开按 v4.3.0 规划落实 |
+| 版本号一致性 | ✅ | 关键元数据和用户可见入口统一到 4.3.0 |
+| GP 合规 | ⏳ | 当前 GP 已同步到 v4.0.0，v4.3.0 将复核 v4 回测与多交易对保护矩阵 |
 | 超级规范化 | ✅ | v4.0.0 对齐 MAJOR 演化通道、前端真源通道和学习流水线 closeout |
-| 完整 closeout | ⏳ | v4.0.0 按 23 项 closeout 门禁和 V1-V10 执行规范复跑 |
+| 完整 closeout | ⏳ | v4.3.0 按规划新增验证和 24 项 closeout 门禁复跑 |
 
-## 五维度评分 (v4.0.0 closeout 待最终定稿)
+## 五维度评分 (v4.3.0 closeout 待最终定稿)
 
 | 维度 | 评分 | 说明 |
 |------|:--:|------|
 | **功能开发进度** | **9.5/10** | 18 指标全实现 / 实时执行端 + OKX testnet / Paper/Live 切换 / 编译缓存 / Toast 系统 |
 | **仓库稳定程度** | **9.4/10** | workspace test 通过 / vitest 289/289 / executor warning 0 / closeout 正在 v3.7.2 收口 |
-| **发布就绪度** | **待定** | P1 清零 / GP+超规范化 v4.0.0 对齐 / 版本一致性 / v4.0.0 closeout 正在复跑 |
+| **发布就绪度** | **待定** | P1 清零 / GP+超规范化 v4.0.0 对齐 / v4.3.0 版本一致性 / v4.3.0 closeout 正在复跑 |
 | **用户友好程度** | **9.5/10** | 术语全中文化 / 空状态引导 / 进度反馈 / 错误码映射 / ARIA 无障碍 / prefers-reduced-motion |
 | **系统整体稳定性** | **9.3/10** | 事务保护 / TOCTOU 修复 / 三阶段无锁恢复 / 状态持久化 / Zeroizing / api_guard 强制 |
 | **加权** | **9.4/10** | 加权 = 9.5×0.3 + 9.4×0.3 + 9.3×0.2 + 9.5×0.1 + 9.3×0.1 |

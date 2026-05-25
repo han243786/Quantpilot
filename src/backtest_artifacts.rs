@@ -28,6 +28,7 @@ const EVENT_LOG_FILE: &str = "event_log.json";
 const TRADE_LEDGER_FILE: &str = "trade_ledger.json";
 const EQUITY_CURVE_FILE: &str = "equity_curve.json";
 const METRICS_FILE: &str = "metrics.json";
+const V4_BACKTEST_ARTIFACT_FILE: &str = "v4_backtest_artifact.json";
 const BACKTEST_OUTPUT_FILE: &str = "backtest_output.json";
 const TRANSIENT_METADATA_FILE: &str = "transient_metadata.json";
 const SAVING_DIR_PREFIX: &str = ".saving-";
@@ -247,6 +248,8 @@ pub struct BacktestArtifactViews {
     pub trade_ledger: TradeLedgerArtifact,
     pub equity_curve: EquityCurveArtifact,
     pub metrics: MetricsArtifact,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub v4_artifact: Option<qrpc_core_ir::v4::V4BacktestArtifact>,
     pub manifest: ReproducibilityManifest,
 }
 
@@ -280,12 +283,19 @@ pub fn build_backtest_artifact_views(
     )?;
     let backtest_output_digest =
         canonical_backtest_output_digest(&record.backtest).context("计算回测输出哈希失败")?;
+    let v4_artifact = record.backtest.v4_artifact.clone();
+    let v4_artifact_digest = v4_artifact
+        .as_ref()
+        .map(canonical_serializable_digest)
+        .transpose()
+        .context("failed to calculate v4 backtest artifact digest")?;
     let manifest = build_reproducibility_manifest(
         record,
         &event_log,
         &trade_ledger,
         &equity_curve,
         &metrics,
+        v4_artifact_digest,
         backtest_output_digest,
     );
 
@@ -294,6 +304,7 @@ pub fn build_backtest_artifact_views(
         trade_ledger,
         equity_curve,
         metrics,
+        v4_artifact,
         manifest,
     })
 }
@@ -303,6 +314,11 @@ fn canonical_backtest_output_digest(
 ) -> serde_json::Result<ArtifactDigest> {
     let persisted_json = serde_json::to_string_pretty(backtest)?;
     let value: serde_json::Value = serde_json::from_str(&persisted_json)?;
+    canonical_json_sha256_digest(&value)
+}
+
+fn canonical_serializable_digest<T: Serialize>(value: &T) -> serde_json::Result<ArtifactDigest> {
+    let value = serde_json::to_value(value)?;
     canonical_json_sha256_digest(&value)
 }
 
@@ -614,6 +630,7 @@ fn empty_backtest_output() -> BacktestOutput {
             kurtosis: 0.0,
         },
         final_portfolio: qrpc_core::PortfolioState::new(0.0, 0),
+        v4_artifact: None,
         debug_values: None,
     }
 }
@@ -752,6 +769,25 @@ pub async fn load_backtest_record_from_directory(dir: &Path) -> std::io::Result<
     )?;
     let metrics: MetricsArtifact = read_json(dir.join(METRICS_FILE)).await?;
     validate_manifest_artifact_ref(&manifest, "metrics", METRICS_FILE, &metrics.digest)?;
+    let v4_artifact = if manifest
+        .output_artifacts
+        .iter()
+        .any(|artifact| artifact.kind == "v4_backtest_artifact")
+    {
+        let artifact: qrpc_core_ir::v4::V4BacktestArtifact =
+            read_json(dir.join(V4_BACKTEST_ARTIFACT_FILE)).await?;
+        let digest = canonical_serializable_digest(&artifact)
+            .map_err(|error| std::io::Error::other(error.to_string()))?;
+        validate_manifest_artifact_ref(
+            &manifest,
+            "v4_backtest_artifact",
+            V4_BACKTEST_ARTIFACT_FILE,
+            &digest,
+        )?;
+        Some(artifact)
+    } else {
+        backtest.v4_artifact.clone()
+    };
 
     Ok(BacktestRecord {
         backtest_id: manifest.backtest_id.clone(),
@@ -771,6 +807,7 @@ pub async fn load_backtest_record_from_directory(dir: &Path) -> std::io::Result<
             trade_ledger,
             equity_curve,
             metrics,
+            v4_artifact,
             manifest,
         }),
         governance,
@@ -806,6 +843,9 @@ async fn write_backtest_artifact_bundle(
     write_json(dir.join(TRADE_LEDGER_FILE), &views.trade_ledger).await?;
     write_json(dir.join(EQUITY_CURVE_FILE), &views.equity_curve).await?;
     write_json(dir.join(METRICS_FILE), &views.metrics).await?;
+    if let Some(v4_artifact) = &views.v4_artifact {
+        write_json(dir.join(V4_BACKTEST_ARTIFACT_FILE), v4_artifact).await?;
+    }
     write_json(dir.join(BACKTEST_OUTPUT_FILE), &record.backtest).await?;
     write_json(dir.join(MANIFEST_FILE), &views.manifest).await
 }
@@ -1205,8 +1245,44 @@ fn build_reproducibility_manifest(
     trade_ledger: &TradeLedgerArtifact,
     equity_curve: &EquityCurveArtifact,
     metrics: &MetricsArtifact,
+    v4_artifact_digest: Option<ArtifactDigest>,
     backtest_output_digest: ArtifactDigest,
 ) -> ReproducibilityManifest {
+    let mut output_artifacts = vec![
+        artifact_ref(
+            "event_log",
+            event_log.artifact_id.clone(),
+            event_log.digest.clone(),
+            EVENT_LOG_FILE,
+        ),
+        artifact_ref(
+            "trade_ledger",
+            trade_ledger.artifact_id.clone(),
+            trade_ledger.digest.clone(),
+            TRADE_LEDGER_FILE,
+        ),
+        artifact_ref(
+            "equity_curve",
+            equity_curve.artifact_id.clone(),
+            equity_curve.digest.clone(),
+            EQUITY_CURVE_FILE,
+        ),
+        artifact_ref(
+            "metrics",
+            metrics.artifact_id.clone(),
+            metrics.digest.clone(),
+            METRICS_FILE,
+        ),
+    ];
+    if let Some(digest) = v4_artifact_digest {
+        output_artifacts.push(artifact_ref(
+            "v4_backtest_artifact",
+            artifact_id("v4_backtest_artifact", &digest),
+            digest,
+            V4_BACKTEST_ARTIFACT_FILE,
+        ));
+    }
+
     ReproducibilityManifest {
         schema_version: REPRODUCIBILITY_MANIFEST_V1_VERSION.to_string(),
         manifest_id: format!("manifest_{}", record.backtest_id),
@@ -1222,32 +1298,7 @@ fn build_reproducibility_manifest(
         compile_artifacts: record.artifacts.clone(),
         governance: record.governance.clone(),
         actor: record.actor.clone(),
-        output_artifacts: vec![
-            artifact_ref(
-                "event_log",
-                event_log.artifact_id.clone(),
-                event_log.digest.clone(),
-                EVENT_LOG_FILE,
-            ),
-            artifact_ref(
-                "trade_ledger",
-                trade_ledger.artifact_id.clone(),
-                trade_ledger.digest.clone(),
-                TRADE_LEDGER_FILE,
-            ),
-            artifact_ref(
-                "equity_curve",
-                equity_curve.artifact_id.clone(),
-                equity_curve.digest.clone(),
-                EQUITY_CURVE_FILE,
-            ),
-            artifact_ref(
-                "metrics",
-                metrics.artifact_id.clone(),
-                metrics.digest.clone(),
-                METRICS_FILE,
-            ),
-        ],
+        output_artifacts,
         backtest_output_digest,
     }
 }
@@ -1667,6 +1718,7 @@ mod tests {
                     kurtosis: 0.0,
                 },
                 final_portfolio: PortfolioState::new(1.0, 100),
+                v4_artifact: None,
                 debug_values: None,
             },
             backtest_spec: Some(BacktestSpec::new(

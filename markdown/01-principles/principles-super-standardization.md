@@ -1,9 +1,10 @@
-# 超级规范化 v4.0.0
+# 超级规范化 v4.3.0
 
 > 生效日期: 2026-05-24 | 本文件是项目开发、检查、审计、优化的唯一执行标准
 > 重构: v1.0→v3.0 精简三层流水线、元流水线自进化触发条件
 > 更新: v3.4.0 新增 §8.4 | v3.7.0 新增 §8.5 自由维度诱错审计常态化 | v3.7.1 收口 pre-commit / CI / closeout 三层门禁 + 功能演进通道 + Rust 格式基线
 > v4.0.0: MAJOR 演化通道已实施, 状态机化 QS/Risk Plane/ExecutionMachine 已落地, 前端以后端 capability 为真源, 开发者学习流水线 closeout 检查已接入
+> v4.3.0: v4 回测引擎、`v4_artifact`、多交易对 MachineGraph 展开、v4 模板入口、OpenAPI/治理快照/全量树同步已接入
 
 ---
 
@@ -90,6 +91,7 @@ cd frontend && npx vitest run
 | 21 | QS 场景 smoke | `powershell scripts/scenario-smoke.ps1` | Closeout 阻断 |
 | 22 | Developer Learning Closeout | `powershell tools/check-learning-closeout.ps1` | Closeout 阻断 |
 | 23 | 干净工作区 | `powershell tools/check-clean-worktree.ps1` | Closeout/CI 阻断 |
+| 24 | 全量树完整性 | `powershell tools/check-full-feature-tree.ps1` | Closeout 阻断 | 🆕 v4.0.0 |
 
 说明：v3.7.1 起，Rust 格式基线由 `cargo fmt` 生成，`cargo fmt --check` 在 pre-commit / CI / closeout 三层阻断格式漂移。
 
@@ -103,12 +105,13 @@ cd frontend && npx vitest run
 .\tools\run-closeout-gates.bat
 ```
 
-执行 23 项 closeout 门禁，任一失败则整体不通过。Closeout 比 PR/CI 额外执行 QS 场景 smoke、Developer Learning Closeout 结构检查和干净工作区检查：
+执行 24 项 closeout 门禁，任一失败则整体不通过。Closeout 比 PR/CI 额外执行 QS 场景 smoke、Developer Learning Closeout 结构检查、干净工作区检查和全量树完整性检查：
 
 ```
 powershell tools/check-learning-closeout.ps1
 powershell scripts/scenario-smoke.ps1
 powershell tools/check-clean-worktree.ps1
+powershell tools/check-full-feature-tree.ps1
 ```
 
 Release workflow 必须至少完成一次手动 dry-run，确认 Windows runner 上能构建、打包、生成 SHA256SUMS。只有 tag 触发时才允许发布 GitHub Release。
