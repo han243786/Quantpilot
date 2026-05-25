@@ -92,6 +92,7 @@ cd frontend && npx vitest run
 | 22 | Developer Learning Closeout | `powershell tools/check-learning-closeout.ps1` | Closeout 阻断 |
 | 23 | 干净工作区 | `powershell tools/check-clean-worktree.ps1` | Closeout/CI 阻断 |
 | 24 | 全量树完整性 | `powershell tools/check-full-feature-tree.ps1` | Closeout 阻断 | 🆕 v4.0.0 |
+| 25 | 能力栈一致性与元流水线 DryRun | `powershell tools/check-capability-stack.ps1` | Closeout 阻断 | 🆕 v4.7.0 |
 
 说明：v3.7.1 起，Rust 格式基线由 `cargo fmt` 生成，`cargo fmt --check` 在 pre-commit / CI / closeout 三层阻断格式漂移。
 
@@ -105,13 +106,14 @@ cd frontend && npx vitest run
 .\tools\run-closeout-gates.bat
 ```
 
-执行 24 项 closeout 门禁，任一失败则整体不通过。Closeout 比 PR/CI 额外执行 QS 场景 smoke、Developer Learning Closeout 结构检查、干净工作区检查和全量树完整性检查：
+执行 25 项 closeout 门禁，任一失败则整体不通过。Closeout 比 PR/CI 额外执行 QS 场景 smoke、Developer Learning Closeout 结构检查、干净工作区检查、全量树完整性检查和能力栈一致性检查：
 
 ```
 powershell tools/check-learning-closeout.ps1
 powershell scripts/scenario-smoke.ps1
 powershell tools/check-clean-worktree.ps1
 powershell tools/check-full-feature-tree.ps1
+powershell tools/check-capability-stack.ps1
 ```
 
 Release workflow 必须至少完成一次手动 dry-run，确认 Windows runner 上能构建、打包、生成 SHA256SUMS。只有 tag 触发时才允许发布 GitHub Release。
@@ -265,11 +267,13 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 | 误报率 | 手动 override 的门禁失败记录和原因 |
 | GP §10.3 回归检查 | 重大功能覆盖回归检查执行记录 |
 | 功能演进登记完整性 | 新增能力是否有登记、回归保护矩阵、兼容性与迁移说明 |
+| 结构化指标来源 | `tools/track-gate-metrics.ps1` 以 NDJSON 记录门禁耗时、通过状态和失败摘要；closeout 前必须通过 DryRun |
 | 前端入口真源对齐 | 工作区、工具栏、模块面板是否由后端 capability projection 驱动 |
 | v4 MAJOR 演化通道 | 状态机 DSL、Risk Plane、ExecutionMachine、学习流水线是否按阶段推进 |
 | 学习流水线同步 | 新核心机制是否需要 owner 学习材料、复述和本地学习记录 |
 
 数据记录到 `markdown/05-testing/meta-pipeline-log.md`。
+结构化原始指标写入 `storage/audit/gate-metrics.ndjson`，`meta-pipeline-log.md` 只记录版本级摘要、异常分析和流程改进决策。
 
 ### 7.3 审计脚本版本管理
 
@@ -281,7 +285,7 @@ Closeout 审计报告中的发现转化为下个里程碑的优化项。
 
 ### 7.4 策略检查工具质量跟踪
 
-当前检查工具: `check-utf8.ps1`, `check-user-facing-text.ps1`, `check-capability-governance.ps1`, `check-i18n.ps1`
+当前检查工具: `check-utf8.ps1`, `check-user-facing-text.ps1`, `check-capability-governance.ps1`, `check-capability-stack.ps1`, `check-i18n.ps1`, `track-gate-metrics.ps1`
 
 | 指标 | 说明 |
 |------|------|
@@ -384,6 +388,7 @@ MAJOR 版本不得直接从终稿进入大规模实现。凡涉及 QS 语义、C
 - **MAJOR 演化通道未完成** (v4.0.0 起): 涉及状态机 DSL、Risk Plane、ExecutionMachine、交易模式、学习流水线的 MAJOR 版本，必须按 §7.7 逐阶段留下产物和拒绝行为；不得越过静态审计直接接入真实运行。
 - **前端后端能力真源通道未完成** (v4.0.0 起): 新增或调整工作区、工具栏、模块面板、运行/回测/执行入口时，必须按 §7.8 留下后端 capability 契约、前端 projection、诱错回归和治理同步证据。
 - **Developer Learning Closeout 缺失** (v4.0.0 起): MAJOR 版本 closeout 必须回答“本版本是否引入 owner 必学核心机制”，并记录学习材料、涉及文件、调用链、复述/校准状态。
+- **元流水线耗时追踪 DryRun 未通过** (v4.7.0 起): `powershell tools/track-gate-metrics.ps1 -DryRun` 必须在 closeout 前通过；脚本不可解析、门禁定义缺失或输出 schema 异常时禁止 closeout。
 
 ### 8.2 紧急豁免
 

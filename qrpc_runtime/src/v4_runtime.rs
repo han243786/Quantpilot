@@ -17,6 +17,9 @@ use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
 const V4_RUNTIME_MAX_EVENT_STEPS: usize = 1_024;
+const V4_RUNTIME_MAX_EVENT_LOG_ENTRIES: usize = 100_000;
+const V4_SIMULATED_MAX_ORDER_HISTORY: usize = 10_000;
+const V4_SIMULATED_MAX_FILL_HISTORY: usize = 10_000;
 const EVENT_DOWNSTREAM_PULL: &str = "downstream_pull";
 const EVENT_SILENCE_ENTERED: &str = "silence_entered";
 const EVENT_SILENCE_EXITED: &str = "silence_exited";
@@ -1162,7 +1165,7 @@ impl V4PaperSimulatedRuntime {
         }
 
         let final_snapshot = serde_json::to_value(self.memory_snapshot(ended_at_ms))
-            .map_err(|error| anyhow!("搴忓垪鍖?v4 tick 鍥炴祴鏈€缁堝揩鐓уけ璐? {error}"))?;
+            .map_err(|error| anyhow!("序列化 v4 tick 回测最终快照失败: {error}"))?;
 
         Ok(V4BacktestArtifact {
             schema_version: V4_BACKTEST_ARTIFACT_VERSION.to_string(),
@@ -1314,7 +1317,7 @@ impl V4PaperSimulatedRuntime {
         let expiration_outcome = self.simulated_execution.expire_orders(now_ms);
         self.record_simulated_execution_events(expiration_outcome, now_ms);
 
-        self.event_log[start_index..].to_vec()
+        self.events_since_and_trim(start_index)
     }
 
     pub fn pull_machine(
@@ -1369,7 +1372,7 @@ impl V4PaperSimulatedRuntime {
             );
         }
 
-        Ok(self.event_log[start_index..].to_vec())
+        Ok(self.events_since_and_trim(start_index))
     }
 
     pub fn complete_recovery(
@@ -1406,7 +1409,7 @@ impl V4PaperSimulatedRuntime {
             );
         }
 
-        Ok(self.event_log[start_index..].to_vec())
+        Ok(self.events_since_and_trim(start_index))
     }
 
     pub fn update_simulated_market_price(
@@ -1425,7 +1428,7 @@ impl V4PaperSimulatedRuntime {
             .simulated_execution
             .update_market_price(venue_id, symbol, price, now_ms);
         self.record_simulated_execution_events(outcome, now_ms);
-        Ok(self.event_log[start_index..].to_vec())
+        Ok(self.events_since_and_trim(start_index))
     }
 
     pub fn memory_snapshot(&self, now_ms: u64) -> V4RuntimeMemorySnapshot {
@@ -1545,12 +1548,30 @@ impl V4PaperSimulatedRuntime {
         }
     }
 
-    fn output_since(&self, start_index: usize, now_ms: u64) -> V4PaperSimulatedRunOutput {
+    fn output_since(&mut self, start_index: usize, now_ms: u64) -> V4PaperSimulatedRunOutput {
+        let events = self.events_since_and_trim(start_index);
         V4PaperSimulatedRunOutput {
             runtime_mode: self.runtime_mode,
-            events: self.event_log[start_index..].to_vec(),
+            events,
             memory_snapshot: self.memory_snapshot(now_ms),
             provider_order_submission_attached: self.provider_order_submission_attached,
+        }
+    }
+
+    fn events_since_and_trim(&mut self, start_index: usize) -> Vec<V4RuntimeEventEnvelope> {
+        let events = self
+            .event_log
+            .get(start_index..)
+            .map(|slice| slice.to_vec())
+            .unwrap_or_default();
+        self.trim_event_log();
+        events
+    }
+
+    fn trim_event_log(&mut self) {
+        if self.event_log.len() > V4_RUNTIME_MAX_EVENT_LOG_ENTRIES {
+            let overflow = self.event_log.len() - V4_RUNTIME_MAX_EVENT_LOG_ENTRIES;
+            self.event_log.drain(0..overflow);
         }
     }
 
@@ -1844,46 +1865,43 @@ impl V4PaperSimulatedRuntime {
 
         if !self.risk_plane.required {
             return reject(
-                "execution transition requires a runtime Risk Plane, but none is required"
-                    .to_string(),
+                "执行转换必须启用运行时 Risk Plane，但当前未要求 Risk Plane".to_string(),
             );
         }
         if !self.risk_plane.machine_ids.contains(event.source.as_str()) {
             return reject(format!(
-                "execution event source `{}` is not a runtime Risk Plane machine",
+                "执行事件来源 `{}` 不是运行时 Risk Plane 机器",
                 event.source
             ));
         }
         if event.origin != V4RuntimeEventOrigin::MachineEmit {
-            return reject(
-                "execution event must be emitted by a Risk Plane machine transition".to_string(),
-            );
+            return reject("执行事件必须由 Risk Plane 机器转换发出".to_string());
         }
         if self.event_source_kind(&event.event_type) != Some(MachineEventSourceKind::RiskPlane) {
             return reject(format!(
-                "execution event `{}` is not declared as a Risk Plane event",
+                "执行事件 `{}` 未声明为 Risk Plane 事件",
                 event.event_type
             ));
         }
         if event.payload.get("risk_plane_approved") != Some(&Value::Bool(true)) {
-            return reject("Risk Plane event payload does not carry explicit approval".to_string());
+            return reject("Risk Plane 事件负载缺少显式批准标记".to_string());
         }
 
         let Some(source_machine) = self.machine_spec(event.source.as_str()) else {
             return reject(format!(
-                "runtime Risk Plane source `{}` is not a declared machine",
+                "运行时 Risk Plane 来源 `{}` 不是已声明机器",
                 event.source
             ));
         };
         if !matches!(source_machine.template, MachineTemplateKind::Decision) {
             return reject(format!(
-                "runtime Risk Plane source `{}` is not a Decision machine",
+                "运行时 Risk Plane 来源 `{}` 不是 Decision 机器",
                 event.source
             ));
         }
         if source_machine.priority < self.risk_plane.min_priority {
             return reject(format!(
-                "runtime Risk Plane source `{}` priority {} is below min_priority {}",
+                "运行时 Risk Plane 来源 `{}` 优先级 {} 低于 min_priority {}",
                 event.source, source_machine.priority, self.risk_plane.min_priority
             ));
         }
@@ -1891,13 +1909,13 @@ impl V4PaperSimulatedRuntime {
             Some(state) if state.status == V4MachineRuntimeStatus::Active => {}
             Some(state) => {
                 return reject(format!(
-                    "runtime Risk Plane source `{}` is not active: {:?}",
+                    "运行时 Risk Plane 来源 `{}` 当前不是 Active 状态: {:?}",
                     event.source, state.status
                 ));
             }
             None => {
                 return reject(format!(
-                    "runtime Risk Plane source `{}` has no runtime state",
+                    "运行时 Risk Plane 来源 `{}` 缺少运行时状态",
                     event.source
                 ));
             }
@@ -1909,7 +1927,7 @@ impl V4PaperSimulatedRuntime {
             source_machine_id: event.source.clone(),
             event_type: event.event_type.clone(),
             approved: true,
-            reason: "Risk Plane approved execution transition".to_string(),
+            reason: "Risk Plane 已批准执行转换".to_string(),
             ts_ms: event.ts_ms,
             sequence: self.sequence + 1,
         }
@@ -2251,7 +2269,7 @@ impl V4PaperSimulatedRuntime {
         capability: ExecutionCapabilityKind,
     ) -> Result<(), String> {
         let Some(policy) = &self.execution.capability_policy else {
-            return Err("缂哄皯 execution capability policy".to_string());
+            return Err("缺少 execution capability policy".to_string());
         };
         let runtime_mode_contract = default_v4_runtime_mode_contract();
         policy
@@ -2504,6 +2522,7 @@ impl V4SimulatedExecutionRuntimeState {
         if let Some(reason) = self.non_executable_resting_reason(&request, side) {
             let order = self.accepted_order(&request, source_event_sequence, ts_ms);
             self.orders.push(order.clone());
+            self.trim_history();
             return V4SimulatedExecutionOutcome {
                 events: vec![
                     (
@@ -2584,6 +2603,7 @@ impl V4SimulatedExecutionRuntimeState {
         self.apply_fill_to_ledger(&fill);
         self.orders.push(order.clone());
         self.fills.push(fill.clone());
+        self.trim_history();
         self.record_asset_point(ts_ms);
 
         let mut events = vec![(
@@ -2659,6 +2679,7 @@ impl V4SimulatedExecutionRuntimeState {
         self.orders.push(parent.clone());
         self.orders.push(take_profit.clone());
         self.orders.push(stop_loss.clone());
+        self.trim_history();
         self.record_asset_point(ts_ms);
 
         V4SimulatedExecutionOutcome {
@@ -2817,6 +2838,7 @@ impl V4SimulatedExecutionRuntimeState {
         order.remaining_quantity = order.requested_quantity;
         self.rejected_order_count += 1;
         self.orders.push(order.clone());
+        self.trim_history();
         self.record_asset_point(ts_ms);
 
         V4SimulatedExecutionOutcome {
@@ -2860,7 +2882,27 @@ impl V4SimulatedExecutionRuntimeState {
                 json!({ "snapshot": self.snapshot() }),
             ));
         }
+        self.trim_history();
         V4SimulatedExecutionOutcome { events }
+    }
+
+    fn trim_history(&mut self) {
+        if self.fills.len() > V4_SIMULATED_MAX_FILL_HISTORY {
+            let overflow = self.fills.len() - V4_SIMULATED_MAX_FILL_HISTORY;
+            self.fills.drain(0..overflow);
+        }
+
+        if self.orders.len() > V4_SIMULATED_MAX_ORDER_HISTORY {
+            let mut remaining = self.orders.len() - V4_SIMULATED_MAX_ORDER_HISTORY;
+            self.orders.retain(|order| {
+                if remaining > 0 && order.status != V4SimulatedOrderStatus::Accepted {
+                    remaining -= 1;
+                    false
+                } else {
+                    true
+                }
+            });
+        }
     }
 
     fn update_market_price(
@@ -3147,6 +3189,7 @@ impl V4SimulatedExecutionRuntimeState {
         self.apply_fill_to_ledger(&fill);
         self.orders[index] = order.clone();
         self.fills.push(fill.clone());
+        self.trim_history();
         self.record_asset_point(ts_ms);
 
         let mut events = Vec::new();
@@ -5215,7 +5258,7 @@ mod tests {
             .as_ref()
             .unwrap()
             .reason
-            .contains("must be emitted"));
+            .contains("必须由 Risk Plane 机器转换发出"));
     }
 
     #[test]
@@ -5256,6 +5299,6 @@ mod tests {
             .as_ref()
             .unwrap()
             .reason
-            .contains("not a runtime Risk Plane machine"));
+            .contains("不是运行时 Risk Plane 机器"));
     }
 }

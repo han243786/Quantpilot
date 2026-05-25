@@ -139,7 +139,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 |--------|:--:|------|
 | `cargo fmt --check` | ✅ | 全仓 rustfmt drift 已清理，pre-commit / CI / closeout 均已接入 |
 | `cargo check --workspace` | ✅ | 0 错误 |
-| `scripts/test.ps1 test --workspace` | ✅ | closeout [12/24] 覆盖 |
+| `scripts/test.ps1 test --workspace` | ✅ | closeout [12/25] 覆盖 |
 | workspace clippy warning budget | ✅ | 当前预算 58，只降不升；不再把 clippy 退出码通过误读为 warning-free |
 | executor warning budget | ✅ | 当前预算 0，新增 warning 阻断 |
 | 前端 `npm run build` | ✅ | main frontend 已纳入 CI/closeout |
@@ -172,7 +172,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 | 版本号一致性 | ✅ | 关键元数据和用户可见入口统一到 4.7.0 |
 | GP 合规 | ✅ | 当前 GP 已同步到 v4.0.0，v4.7.0 已复核执行回放、LiveActual 边界、AI 提案和 evidence 保护矩阵 |
 | 超级规范化 | ✅ | v4.0.0 对齐 MAJOR 演化通道、前端真源通道和学习流水线 closeout |
-| 完整 closeout | ✅ | v4.7.0 已通过 24/24 closeout 门禁 |
+| 完整 closeout | ✅ | closeout 门禁已扩展为 25 项，第 25 项覆盖能力栈一致性与元流水线 DryRun |
 
 ## 五维度评分 (v4.7.0 closeout)
 
@@ -180,7 +180,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 |------|:--:|------|
 | **功能开发进度** | **9.5/10** | 18 指标全实现 / 实时执行端 + OKX testnet / Paper/Live 切换 / 编译缓存 / Toast 系统 |
 | **仓库稳定程度** | **9.4/10** | workspace test 通过 / vitest 289/289 / executor warning 0 / closeout 正在 v3.7.2 收口 |
-| **发布就绪度** | **9.4/10** | P1 清零 / GP+超规范化 v4.0.0 对齐 / v4.7.0 版本一致性 / 24/24 closeout 已通过 |
+| **发布就绪度** | **9.4/10** | P1 清零 / GP+超规范化 v4.0.0 对齐 / v4.7.0 版本一致性 / 25 项 closeout 门禁已接入 |
 | **用户友好程度** | **9.5/10** | 术语全中文化 / 空状态引导 / 进度反馈 / 错误码映射 / ARIA 无障碍 / prefers-reduced-motion |
 | **系统整体稳定性** | **9.3/10** | 事务保护 / TOCTOU 修复 / 三阶段无锁恢复 / 状态持久化 / Zeroizing / api_guard 强制 |
 | **加权** | **9.4/10** | 加权 = 9.5×0.3 + 9.4×0.3 + 9.3×0.2 + 9.5×0.1 + 9.3×0.1 |

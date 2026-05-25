@@ -68,7 +68,17 @@ try {
         throw "Expected check-capability-governance.ps1 to fail for a drifted snapshot."
     }
 
-    Write-Host "Quality gate smoke passed: encoding, text, and capability-governance gates rejected the seeded bad samples." -ForegroundColor Green
+    powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "track-gate-metrics.ps1") -DryRun -OutputDir $tmpRoot
+    if ($LASTEXITCODE -ne 0) {
+        throw "Expected track-gate-metrics.ps1 DryRun to pass."
+    }
+
+    powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "check-capability-stack.ps1")
+    if ($LASTEXITCODE -ne 0) {
+        throw "Expected check-capability-stack.ps1 to pass for the current capability stack."
+    }
+
+    Write-Host "Quality gate smoke passed: encoding, text, capability, and meta-pipeline gates behaved as expected." -ForegroundColor Green
 }
 finally {
     if (Test-Path -LiteralPath $tmpRoot) {

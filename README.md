@@ -99,7 +99,8 @@ GP 是项目的"代码宪法"。44 条规则分为架构铁律、代码规范、
 
 ## 产品边界
 
-- **运行时模式**: paper (纸面交易), backtest (回测), live (OKX testnet 模拟盘)
+- **运行时模式**: paper (纸面交易); 回测通过 runtime backtest 请求执行
+- **执行模块**: `builtin.execution.paper`, `live.okx` (OKX testnet 模拟盘)
 - **执行端**: 独立进程 (:3001), 策略部署/启动/停止/热调参
 - **已验证交易所**: `binance`, `okx`
 - **已验证交易对**: `BTCUSDT`, `ETHUSDT`, `SOLUSDT`
@@ -114,15 +115,15 @@ GP 是项目的"代码宪法"。44 条规则分为架构铁律、代码规范、
 
 | # | 指标 | # | 指标 |
 |---|------|---|------|
-| 1 | MA Cross | 10 | OBV |
-| 2 | MA Deviation | 11 | CMF |
-| 3 | RSI | 12 | ADX |
-| 4 | MACD | 13 | Stochastic |
-| 5 | Momentum | 14 | CCI |
-| 6 | ZScore | 15 | Parabolic SAR |
-| 7 | Spread | 16 | Keltner Channel |
-| 8 | QuoteObserve | 17 | Donchian Channel |
-| 9 | ATR | 18 | Bollinger Bands |
+| 1 | MA Cross | 10 | Bollinger Bands |
+| 2 | RSI | 11 | OBV |
+| 3 | MACD | 12 | CMF |
+| 4 | Momentum | 13 | ADX |
+| 5 | Spread | 14 | Stochastic |
+| 6 | ZScore | 15 | CCI |
+| 7 | Custom | 16 | Parabolic SAR |
+| 8 | QuoteObserve | 17 | Keltner Channel |
+| 9 | ATR | 18 | Donchian Channel |
 
 ## 非宣称能力
 
@@ -184,6 +185,7 @@ cargo run --bin executor
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-user-facing-text.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-governance.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-stack.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-i18n.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-version-consistency.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-feature-evolution.ps1
@@ -205,6 +207,7 @@ cargo check --bin executor
 .\scripts\test.ps1 test --bin executor
 .\scripts\scenario-smoke.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-clean-worktree.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1
 ```
 
 常规 `test:e2e` 只包含阻断级用户路径。视觉响应式审查和性能采样属于 closeout/review 层级，按需显式执行：
@@ -237,7 +240,7 @@ cd frontend; npm run test:perf:react-flow
 | v4 AI 提案与回放分析 | ✅ | v4 AI proposal 仅接受回测工件来源，沙箱比较报告输出轨迹、成交率和风险拒绝摘要 |
 | 版本一致性 | ✅ | Cargo、Tauri、前端 package、lockfile、release manifest、OpenAPI 和启动横幅统一到 `4.7.0` |
 | executor warning 债务 | ✅ | 当前预算 0；新增 warning 会失败 |
-| 完整 closeout | ✅ | v4.7.0 集成规划方案已通过 24/24 closeout 门禁 |
+| 完整 closeout | ✅ | closeout 门禁已扩展为 25 项，第 25 项覆盖能力栈一致性与元流水线 DryRun |
 
 ## 更多文档
 

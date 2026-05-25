@@ -968,7 +968,7 @@ async fn run_api_server() -> anyhow::Result<()> {
     let sigterm = std::future::pending::<()>();
 
     tokio::select! {
-        result = axum::serve(listener, app) => { result?; }
+        result = axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()) => { result?; }
         _ = shutdown_signal => {}
         _ = sigterm => {}
     }

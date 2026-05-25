@@ -1060,8 +1060,6 @@ async fn create_runtime_ai_proposal(
         None,
     )
     .await?;
-    persist_runtime_ai_proposal_transition(&state, &user_id, &record).await?;
-
     // Block 5 P1-4: 静态校验通过后自动创建审批单并触发沙箱验证
     if status == RuntimeAiProposalStatus::StaticCheckPassed {
         let proposal_id = record.ai_proposal_id.clone();
@@ -1105,6 +1103,9 @@ async fn create_runtime_ai_proposal(
             .write()
             .await
             .insert(auth::scoped_key(&user_id, &approval_id), approval);
+
+        // GP §9.4: 与 approve 路径保持 approval_records -> ai_proposals 锁顺序。
+        persist_runtime_ai_proposal_transition(&state, &user_id, &record).await?;
 
         // v1.1.2: 异步触发沙箱验证，JoinHandle 存入 state 防止 panic 静默丢失
         // v2.4.0 P1-B2: 添加 catch_unwind + 3次退避重试
@@ -1173,6 +1174,9 @@ async fn create_runtime_ai_proposal(
                 safe_eprintln!("[sandbox] 沙箱验证任务异常: {}", e);
             }
         });
+    }
+    if status != RuntimeAiProposalStatus::StaticCheckPassed {
+        persist_runtime_ai_proposal_transition(&state, &user_id, &record).await?;
     }
 
     Ok(Json(record))

@@ -65,3 +65,16 @@
 **本次自进化版本**: 超级规范化 v3.7.0 → 新增 §8.5 (诱错常态化), §8.6 (共同决策), §8.7 (编辑回退)。更新 §3.3 (Agent验证+隔离), §8.1 (版本一致性阻断)。
 
 **当前超级规范化版本**: v3.7.0 | 条款数: 8 章 33 条规则 + 5 项执行规则
+
+### v4.7.0 元流水线能力栈门禁落地 (2026-05-25)
+
+本轮把元流水线审计提案落到可执行门禁：`track-gate-metrics.ps1` 修复为可解析脚本并新增 `-DryRun`；`check-capability-stack.ps1` 新增为第 25 项 closeout 阻断门禁；超级规范化 §2.2、§7.2、§8.1 已同步。
+
+| 检查项 | 结果 | 说明 |
+|--------|:--:|------|
+| `track-gate-metrics.ps1 -DryRun` | 通过 | 6 个门禁定义完成结构校验 |
+| `check-capability-stack.ps1` | 通过 | schema hash、模块 key、后端 fixture、前端 projection 与元流水线 DryRun 对齐 |
+| `check-gates-smoke.ps1` | 通过 | 编码、用户文本、能力治理和元流水线门禁均能拒绝投喂坏样本 |
+| `check-full-feature-tree.ps1` | 通过 | 新增脚本已纳入全量树覆盖 |
+
+结构化原始指标落点: `storage/audit/gate-metrics.ndjson`。DryRun 不写入指标文件，只验证定义与 schema。

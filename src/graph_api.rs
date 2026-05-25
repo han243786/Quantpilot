@@ -776,10 +776,8 @@ async fn refresh_latest_graph_after_delete(
         let content = fs::read_to_string(&next_latest_path)
             .await
             .map_err(not_found_io_error)?;
-        // v1.1.2: 原子写入防止 latest.json 损坏
-        let tmp = latest_path.with_extension("tmp");
-        fs::write(&tmp, &content).await.map_err(io_error)?;
-        fs::rename(&tmp, &latest_path).await.map_err(io_error)?;
+        // v4.7.1: 原子写入包含 tmp fsync + rename + 父目录 fsync。
+        atomic_write(&latest_path, &content).await?;
     } else {
         remove_file_if_exists(&latest_path).await?;
     }

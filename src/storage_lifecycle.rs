@@ -37,7 +37,7 @@ fn max_storage_bytes() -> u64 {
 
 /// v1.1.1: 根据最大配额计算各阈值
 fn reject_at_bytes() -> u64 {
-    max_storage_bytes() * 95 / 100
+    max_storage_bytes() * 90 / 100
 }
 fn warn_at_bytes() -> u64 {
     max_storage_bytes() * 80 / 100
@@ -243,7 +243,7 @@ pub fn check_storage_quota(storage_root: &Path) -> Result<(), String> {
         return Err(format!(
             "存储空间已满: 当前 {} MB, 上限 {} MB。请清理过期数据后重试",
             total / (1024 * 1024),
-            500 * 1024 * 1024 / (1024 * 1024)
+            reject_at_bytes() / (1024 * 1024)
         ));
     }
     if total >= force_clean_at_bytes() {
@@ -375,7 +375,7 @@ pub fn ensure_storage_quota(
         return Err(std::io::Error::other(format!(
             "存储空间已满: 当前 {} MB, 上限 {} MB。请清理过期数据后重试",
             total / (1024 * 1024),
-            500 * 1024 * 1024 / (1024 * 1024)
+            reject_at_bytes() / (1024 * 1024)
         )));
     }
     if total > warn_at_bytes() {

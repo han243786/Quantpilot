@@ -408,14 +408,21 @@ async fn register_handler(
             }
         };
 
-    // 数据库写入 (需要锁, 快速完成)
-    let db = db.lock().unwrap_or_else(|e| e.into_inner());
-    match db.execute(
-        "INSERT INTO users (username, password_hash) VALUES (?1, ?2)",
-        rusqlite::params![username, password_hash],
-    ) {
-        Ok(_) => {
-            let id = db.last_insert_rowid();
+    // 数据库写入在 spawn_blocking 中执行, 不阻塞 tokio 工作线程
+    let db_clone = db.clone();
+    let username_for_db = username.clone();
+    let insert_result = tokio::task::spawn_blocking(move || {
+        let db = db_clone.lock().unwrap_or_else(|e| e.into_inner());
+        db.execute(
+            "INSERT INTO users (username, password_hash) VALUES (?1, ?2)",
+            rusqlite::params![username_for_db, password_hash],
+        )?;
+        Ok::<i64, rusqlite::Error>(db.last_insert_rowid())
+    })
+    .await;
+
+    match insert_result {
+        Ok(Ok(id)) => {
             let user = User { id, username };
             (
                 StatusCode::CREATED,
@@ -426,7 +433,7 @@ async fn register_handler(
             )
                 .into_response()
         }
-        Err(e) => {
+        Ok(Err(e)) => {
             let msg = if e.to_string().contains("UNIQUE") {
                 "注册失败，请稍后重试".to_string()
             } else {
@@ -441,6 +448,14 @@ async fn register_handler(
             )
                 .into_response()
         }
+        Err(_) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({
+                "error": "internal_error",
+                "message": "服务内部错误"
+            })),
+        )
+            .into_response(),
     }
 }
 
@@ -462,23 +477,37 @@ async fn login_handler(
         }
     };
 
-    // Step 1: 查询用户凭证 (持锁, 快速完成)
-    let (id, uname, password_hash) = {
-        let db = db.lock().unwrap_or_else(|e| e.into_inner());
-        match query_user_credentials(&db, &req.username) {
-            Ok(data) => data,
-            Err(msg) => {
-                return (
-                    StatusCode::UNAUTHORIZED,
-                    Json(serde_json::json!({
-                        "error": "login_failed",
-                        "message": msg
-                    })),
-                )
-                    .into_response();
-            }
+    // Step 1: 查询用户凭证 (SQLite 在 spawn_blocking 中执行)
+    let db_clone = db.clone();
+    let username_for_lookup = req.username.clone();
+    let credentials_result = tokio::task::spawn_blocking(move || {
+        let db = db_clone.lock().unwrap_or_else(|e| e.into_inner());
+        query_user_credentials(&db, &username_for_lookup)
+    })
+    .await;
+    let (id, uname, password_hash) = match credentials_result {
+        Ok(Ok(data)) => data,
+        Ok(Err(msg)) => {
+            return (
+                StatusCode::UNAUTHORIZED,
+                Json(serde_json::json!({
+                    "error": "login_failed",
+                    "message": msg
+                })),
+            )
+                .into_response();
         }
-    }; // 锁释放
+        Err(_) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({
+                    "error": "internal_error",
+                    "message": "服务内部错误"
+                })),
+            )
+                .into_response();
+        }
+    };
 
     // Step 2: bcrypt 验证在 spawn_blocking 中执行, 不阻塞 tokio 工作线程
     let password = req.password.clone();

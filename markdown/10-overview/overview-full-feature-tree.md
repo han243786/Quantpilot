@@ -800,7 +800,7 @@ quantscript/src/
 
 **文件**: `StrategyWorkspacePage.jsx` — 策略工作区主容器
 
-工作区有 9 个表面 (workspace surfaces), 由后端 `/api/capabilities` 能力声明驱动:
+工作区有 10 个表面 (workspace surfaces), 由后端 `/api/capabilities` 能力声明驱动:
 
 ```
 工作区表面 (Workspace Surfaces):
@@ -838,7 +838,7 @@ quantscript/src/
 - 属性动作: `usePropertyPanelActions.js`
 
 **18 种内置指标模块** (`builtinModules.js`):
-MA Cross, MA Deviation, RSI, MACD, Momentum, ZScore, Spread, QuoteObserve, ATR, OBV, CMF, ADX, Stochastic, CCI, Parabolic SAR, Keltner Channel, Donchian Channel, Bollinger Bands
+MA Cross, RSI, MACD, Momentum, Spread, ZScore, Custom, QuoteObserve, ATR, Bollinger Bands, OBV, CMF, ADX, Stochastic, CCI, Parabolic SAR, Keltner Channel, Donchian Channel
 
 ### 5.4 回测系统 (前端)
 
@@ -935,8 +935,8 @@ capabilityProjection.js      — 能力投影核心
   └── projectEntry()              — 投影原子: {visible, enabled, status, reason, source}
 
 supportMatrix.js              — 支持矩阵
-  ├── WORKSPACE_SURFACE_MAP  — 9 个工作区表面定义
-  ├── CAPABILITY_ACTION_MAP  — 14 个能力动作定义
+  ├── WORKSPACE_SURFACE_MAP  — 10 个工作区表面定义
+  ├── CAPABILITY_ACTION_MAP  — 15 个能力动作定义
   ├── EXPECTED_PERMISSION_BOUNDARY — 6 项权限约束
   ├── normalizeUiActionStatus()    — 能力状态标准化
   ├── getCapabilityActionBlockReason() — 阻塞原因判断
@@ -944,7 +944,7 @@ supportMatrix.js              — 支持矩阵
 
 capabilityGovernance.js       — 能力治理
   ├── 4 个 CAPABILITY_CLASSES: supported / restricted / trace_only / disallowed_claim
-  ├── 63 supported / 6 restricted / 1 trace_only / 4 disallowed_claim
+  ├── 66 supported / 6 restricted / 1 trace_only / 4 disallowed_claim
   └── positiveClaimAudit — 用户声明文本门控
 ```
 
@@ -1038,7 +1038,7 @@ frontend/src/
 
 ## 根6: 工具链与质量门禁
 
-**一句话**: 三层流水线 (pre-commit → PR/CI → closeout-release), 10+ 门禁脚本, 24 项 closeout gates。
+**一句话**: 三层流水线 (pre-commit → PR/CI → closeout-release), 10+ 门禁脚本, 25 项 closeout gates。
 
 ### 6.1 Pre-commit Hook
 
@@ -1913,6 +1913,7 @@ storage/
 - `tools/check-utf8.ps1` — UTF-8 编码检查
 - `tools/check-user-facing-text.ps1` — 面向用户文本检查
 - `tools/check-capability-governance.ps1` — 能力治理检查
+- `tools/check-capability-stack.ps1` — 能力栈一致性检查, 校验 schema hash、模块 key、fixture 和元流水线 DryRun
 - `tools/check-i18n.ps1` — i18n 覆盖检查
 - `tools/check-version-consistency.ps1` — 版本一致性检查, 覆盖 release manifest/OpenAPI/启动横幅 🆕 v4.1.0
 - `tools/check-feature-evolution.ps1` — 功能演进检查
@@ -1926,10 +1927,10 @@ storage/
 - `tools/check-full-feature-tree.ps1` — 全量树校验 🆕 v4.0.0
 
 **其他工具**:
-- `tools/run-closeout-gates.bat` — 一键 24 项 closeout
+- `tools/run-closeout-gates.bat` — 一键 25 项 closeout
 - `tools/export-capability-fixture.ps1` — 能力 fixture 导出
 - `tools/cleanup-artifacts.ps1` — 工件清理
-- `tools/track-gate-metrics.ps1` — 门禁指标追踪
+- `tools/track-gate-metrics.ps1` — 门禁指标追踪, 支持 closeout 前 DryRun 和 NDJSON 记录
 - `tools/build_package.js` — 打包脚本
 - `tools/check-qs.js` — QS 检查
 - `tools/destructive_test.js` — 破坏性测试

@@ -1,85 +1,213 @@
-# QuantPilot 元流水线 — 门禁耗时追踪 (§7.2)
-# 记录每次 CI 门禁的耗时、通过/失败状态
-
 param(
-    [string]$OutputDir = "storage\audit"
+    [string]$OutputDir = "storage\audit",
+    [switch]$DryRun
 )
 
-$ErrorActionPreference = "Continue"
-$now = Get-Date -Format "yyyy-MM-ddTHH:mm:ss"
-$outputFile = Join-Path $OutputDir "gate-metrics.json"
-$metrics = @{
-    recorded_at = $now
-    gates = @()
+$ErrorActionPreference = "Stop"
+$OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+
+$repoRoot = Split-Path -Parent $PSScriptRoot
+$schemaVersion = "quantpilot/gate-metrics/v1"
+
+$gateDefinitions = @(
+    @{
+        name = "utf8-check"
+        command = "powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1"
+        working_dir = $null
+    },
+    @{
+        name = "cargo-check"
+        command = "cargo check --workspace"
+        working_dir = $null
+    },
+    @{
+        name = "cargo-test-no-run"
+        command = "cargo test --workspace --no-run"
+        working_dir = $null
+    },
+    @{
+        name = "frontend-build"
+        command = "npm run build"
+        working_dir = "frontend"
+    },
+    @{
+        name = "frontend-test"
+        command = "npx vitest run"
+        working_dir = "frontend"
+    },
+    @{
+        name = "npm-audit"
+        command = "npm audit --audit-level=moderate"
+        working_dir = "frontend"
+    }
+)
+
+function Get-ShortError {
+    param([string]$Text)
+
+    if ([string]::IsNullOrWhiteSpace($Text)) {
+        return ""
+    }
+
+    $normalized = ($Text -replace "\s+", " ").Trim()
+    if ($normalized.Length -gt 400) {
+        return $normalized.Substring(0, 400) + "..."
+    }
+
+    return $normalized
+}
+
+function Test-GateDefinition {
+    param(
+        [hashtable]$Gate,
+        [int]$Index
+    )
+
+    $errors = @()
+
+    if ([string]::IsNullOrWhiteSpace($Gate.name)) {
+        $errors += "gate[$Index] has empty name"
+    }
+
+    if ([string]::IsNullOrWhiteSpace($Gate.command)) {
+        $errors += "gate[$Index] has empty command"
+    }
+
+    if ($Gate.working_dir) {
+        $resolvedWorkingDir = Join-Path $repoRoot $Gate.working_dir
+        if (-not (Test-Path -LiteralPath $resolvedWorkingDir -PathType Container)) {
+            $errors += "gate[$Index] working_dir does not exist: $($Gate.working_dir)"
+        }
+    }
+
+    return $errors
 }
 
 function Measure-Gate {
     param(
-        [string]$Name,
-        [string]$Command,
-        [string]$WorkingDir = $null
+        [hashtable]$Gate
     )
-    Write-Host "=== $Name ===" -ForegroundColor Cyan
+
+    Write-Host "=== $($Gate.name) ===" -ForegroundColor Cyan
     $sw = [System.Diagnostics.Stopwatch]::StartNew()
     $success = $false
-    $errorMsg = ""
+    $exitCode = 0
+    $errorText = ""
+    $pushed = $false
+
     try {
-        if ($WorkingDir) {
-            Push-Location $WorkingDir
-        }
-        $result = Invoke-Expression $Command 2>&1
-        $exitCode = $LASTEXITCODE
-        if ($exitCode -eq 0) {
-            $success = $true
+        if ($Gate.working_dir) {
+            Push-Location (Join-Path $repoRoot $Gate.working_dir)
+            $pushed = $true
         } else {
-            $errorMsg = "$result" | Out-String
+            Push-Location $repoRoot
+            $pushed = $true
         }
-        if ($WorkingDir) {
-            Pop-Location
+
+        $global:LASTEXITCODE = 0
+        $result = Invoke-Expression $Gate.command 2>&1
+        $exitCode = if ($null -eq $global:LASTEXITCODE) { 0 } else { $global:LASTEXITCODE }
+        $success = ($exitCode -eq 0)
+        if (-not $success) {
+            $errorText = Get-ShortError ($result | Out-String)
         }
     } catch {
-        $errorMsg = $_.Exception.Message
+        $exitCode = 1
+        $errorText = Get-ShortError $_.Exception.Message
+    } finally {
+        if ($pushed) {
+            Pop-Location
+        }
+        $sw.Stop()
     }
-    $sw.Stop()
 
-    $gate = @{
-        name = $Name
+    $statusText = if ($success) { "PASS" } else { "FAIL" }
+    $statusColor = if ($success) { "Green" } else { "Red" }
+    Write-Host ("  {0}: {1}ms {2}" -f $Gate.name, $sw.ElapsedMilliseconds, $statusText) -ForegroundColor $statusColor
+
+    return @{
+        name = $Gate.name
         elapsed_ms = $sw.ElapsedMilliseconds
         success = $success
-        error = if ($errorMsg.Length -gt 200) { $errorMsg.Substring(0, 200) + "..." } else { $errorMsg }
+        exit_code = $exitCode
+        error = $errorText
     }
-    Write-Host "  ${Name}: $($sw.ElapsedMilliseconds)ms $($if($success){'PASS'}else{'FAIL'})" -ForegroundColor $(if($success){'Green'}else{'Red'})
-    return $gate
 }
 
-# 仅记录模式: 运行收口门禁但不阻断
+$definitionErrors = @()
+for ($i = 0; $i -lt $gateDefinitions.Count; $i++) {
+    $definitionErrors += Test-GateDefinition -Gate $gateDefinitions[$i] -Index $i
+}
+
+if ($definitionErrors.Count -gt 0) {
+    Write-Host "Gate metrics definition check failed:" -ForegroundColor Red
+    $definitionErrors | ForEach-Object { Write-Host "  - $_" -ForegroundColor Red }
+    exit 1
+}
+
+if ($DryRun) {
+    $dryRunRecord = @{
+        schema_version = $schemaVersion
+        mode = "dry-run"
+        recorded_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+        gates = $gateDefinitions | ForEach-Object {
+            @{
+                name = $_.name
+                command = $_.command
+                working_dir = $_.working_dir
+            }
+        }
+        summary = @{
+            total = $gateDefinitions.Count
+            validated = $gateDefinitions.Count
+        }
+    }
+
+    $null = $dryRunRecord | ConvertTo-Json -Depth 8 -Compress
+    Write-Host "Gate metrics DryRun passed: $($gateDefinitions.Count) gate definitions validated." -ForegroundColor Green
+    exit 0
+}
+
+$overallSw = [System.Diagnostics.Stopwatch]::StartNew()
 $allGates = @()
-$allGates += Measure-Gate "utf8-check" "powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1"
-$allGates += Measure-Gate "cargo-check" "cargo check --workspace"
-$allGates += Measure-Gate "cargo-test-no-run" "cargo test --workspace --no-run"
-$allGates += Measure-Gate "frontend-build" "npm run build" "frontend"
-$allGates += Measure-Gate "frontend-test" "npx vitest run" "frontend"
-$allGates += Measure-Gate "npm-audit" "npm audit --audit-level=moderate" "frontend"
+foreach ($gateDefinition in $gateDefinitions) {
+    $allGates += Measure-Gate -Gate $gateDefinition
+}
+$overallSw.Stop()
 
-$metrics.gates = $allGates
-$metrics.total_elapsed_ms = ($allGates | Measure-Object -Property elapsed_ms -Sum).Sum
-$passed = ($allGates | Where-Object { $_.success }).Count
-$failed = ($allGates | Where-Object { -not $_.success }).Count
-$metrics.summary = @{
-    passed = $passed
-    failed = $failed
-    total = $allGates.Count
+$passed = @($allGates | Where-Object { $_.success }).Count
+$failed = @($allGates | Where-Object { -not $_.success }).Count
+$metrics = @{
+    schema_version = $schemaVersion
+    mode = "record"
+    recorded_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+    total_elapsed_ms = $overallSw.ElapsedMilliseconds
+    gates = $allGates
+    summary = @{
+        passed = $passed
+        failed = $failed
+        total = $allGates.Count
+    }
 }
 
-# 确保输出目录存在
-if (-not (Test-Path $OutputDir)) {
+if (-not (Test-Path -LiteralPath $OutputDir)) {
     New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
 }
 
-# 追加到 JSON 数组 (简单追加, 不完整 JSON 解析)
-$record = $metrics | ConvertTo-Json -Compress
-Add-Content -Path $outputFile -Value $record
+$outputFile = Join-Path $OutputDir "gate-metrics.ndjson"
+$record = $metrics | ConvertTo-Json -Depth 8 -Compress
+[System.IO.File]::AppendAllText(
+    $outputFile,
+    $record + [Environment]::NewLine,
+    [System.Text.UTF8Encoding]::new($false)
+)
 
+$summaryColor = if ($failed -eq 0) { "Green" } else { "Red" }
 Write-Host ""
-Write-Host "门禁追踪: ${passed}/${($allGates.Count)} 通过, $($metrics.total_elapsed_ms)ms 总耗时" -ForegroundColor $(if($failed -eq 0){'Green'}else{'Red'})
-Write-Host "记录写入: $outputFile"
+Write-Host ("Gate metrics recorded: {0}/{1} passed, {2}ms total." -f $passed, $allGates.Count, $metrics.total_elapsed_ms) -ForegroundColor $summaryColor
+Write-Host "Record appended to: $outputFile"
+
+if ($failed -gt 0) {
+    exit 1
+}

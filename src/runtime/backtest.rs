@@ -284,7 +284,16 @@ async fn execute_v4_backtest_request(
         .unwrap_or_else(|_| format!("v4_backtest_{}", now_ms));
     let governance =
         runtime_governance_snapshot(&request.runtime_config.metadata, Some(config_hash.as_str()));
-    let mut events = frontend_events_from_v4_backtest_artifact(&backtest_id, &v4_artifact);
+    let equity_curve = v4_equity_curve_from_artifact(&v4_artifact);
+    if equity_curve.is_empty() {
+        return Err(json_bad_request(
+            "v4_backtest_no_execution_data",
+            "v4 回测没有执行数据：最终快照缺少 simulated_execution.asset_curve",
+        ));
+    }
+
+    let mut events =
+        frontend_events_from_v4_backtest_artifact(&backtest_id, &v4_artifact, &equity_curve);
     prepend_capability_snapshot_event(
         &mut events,
         &backtest_id,
@@ -301,7 +310,7 @@ async fn execute_v4_backtest_request(
     validate_runtime_event_envelopes(&events, &backtest_id, &governance)
         .map_err(|message| internal_error(anyhow::anyhow!(message)))?;
 
-    let backtest = build_v4_backtest_output(&v4_artifact);
+    let backtest = build_v4_backtest_output(&v4_artifact, equity_curve);
     let account = account_summary_from_portfolio(&backtest.final_portfolio);
     let record = BacktestRecord {
         backtest_id: backtest_id.clone(),
@@ -513,8 +522,8 @@ fn resolve_v4_backtest_market_event_type(
 
 fn build_v4_backtest_output(
     artifact: &qrpc_core_ir::v4::V4BacktestArtifact,
+    equity_curve: Vec<qrpc_core::BacktestEquityPoint>,
 ) -> qrpc_core::BacktestOutput {
-    let equity_curve = v4_equity_curve_from_artifact(artifact);
     let initial_equity = equity_curve
         .first()
         .map(|point| point.equity)
@@ -584,16 +593,7 @@ fn v4_equity_curve_from_artifact(
                 .collect::<Vec<_>>()
         })
         .unwrap_or_default();
-    if points.is_empty() {
-        vec![qrpc_core::BacktestEquityPoint {
-            ts_ms: artifact.ended_at_ms,
-            equity: 0.0,
-            cash_balance: 0.0,
-            net_notional: 0.0,
-        }]
-    } else {
-        points
-    }
+    points
 }
 
 fn v4_portfolio_from_artifact(
@@ -620,9 +620,10 @@ fn v4_portfolio_from_artifact(
 fn frontend_events_from_v4_backtest_artifact(
     backtest_id: &str,
     artifact: &qrpc_core_ir::v4::V4BacktestArtifact,
+    equity_curve: &[qrpc_core::BacktestEquityPoint],
 ) -> Vec<FrontendRuntimeEvent> {
     let mut events = Vec::new();
-    for (index, point) in v4_equity_curve_from_artifact(artifact).into_iter().enumerate() {
+    for (index, point) in equity_curve.iter().enumerate() {
         events.push(v4_frontend_event(
             backtest_id,
             format!("{}_v4_portfolio_{}", backtest_id, index),
@@ -1209,4 +1210,30 @@ async fn get_backtest_replay(
         .evidence_metrics
         .record_replay_page(started.elapsed().as_millis() as u64);
     Ok(Json(response))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn v4_equity_curve_empty_artifact_does_not_fabricate_zero_point() {
+        let artifact = qrpc_core_ir::v4::V4BacktestArtifact {
+            schema_version: "quantpilot/v4-backtest-artifact/v1".to_string(),
+            graph_id: "graph_empty".to_string(),
+            started_at_ms: 1,
+            ended_at_ms: 2,
+            replay_mode: "deterministic_bar_replay".to_string(),
+            input_bar_count: 0,
+            input_tick_count: None,
+            symbols: Vec::new(),
+            machine_trajectory: Vec::new(),
+            risk_plane_decisions: Vec::new(),
+            execution_capability_sources: Vec::new(),
+            microstructure_metrics: None,
+            final_snapshot: None,
+        };
+
+        assert!(v4_equity_curve_from_artifact(&artifact).is_empty());
+    }
 }
