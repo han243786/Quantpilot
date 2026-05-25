@@ -1,18 +1,32 @@
 # 里程碑文档
 
-> 当前版本: v4.4.0 | 当前 closeout: 嵌套状态机第一波 ✅
-> 状态: v2.x✅ v3.0.x✅ v3.1.0✅ v3.2.x✅ v3.3.0✅ v3.4.x✅ v3.5.x✅ v3.7.0✅ v3.7.1✅ v3.7.2✅ v4.0.0📋 v4.1.0✅ v4.2.0✅ v4.3.0✅ v4.4.0✅
+> 当前版本: v4.7.0 | 当前 closeout: v4 执行回放 / LiveActual 安全边界 / AI 提案分析 ✅
+> 状态: v2.x✅ v3.x✅ v4.0.0📋 v4.1.0✅ v4.2.0✅ v4.3.0✅ v4.4.0✅ v4.5.0✅ v4.6.0✅ v4.7.0✅
 
 ---
 
 ## 当前活跃
 
-### v4.4.0 — 嵌套状态机第一波 (MINOR, 已完成) ✅
+### v4.7.0 — v4 AI 提案 + 性能优化 (MINOR, 已完成) ✅
 
 | # | 文档 | 内容 | 状态 |
 |---|------|------|:--:|
-| 01 | `v4.4.0/01-规划方案.md` | Core IR 二级 child machine、v4 QS 嵌套语法、父优先 runtime 路由、层级 evidence 和复杂度预算面板 | ✅ 已落实 |
-| 02 | `v4.4.0/02-closeout.md` | v4.4.0 实施摘要、验证证据和 24/24 closeout 结果 | ✅ 已归档 |
+| 01 | `v4.7.0/01-规划方案.md` | v4 AI 提案、v4 沙箱回放验证、runtime 性能优化规划 | ✅ 已落实 |
+| 02 | `v4.7.0/02-closeout.md` | v4.7.0 实施摘要、验证证据和延后项 | ✅ 已归档 |
+
+### v4.6.0 — v4 LiveActual + OKX 实盘边界 (MINOR, 已完成) ✅
+
+| # | 文档 | 内容 | 状态 |
+|---|------|------|:--:|
+| 01 | `v4.6.0/01-规划方案.md` | LiveActual runtime、Risk Plane 强制、ProviderNative 门禁 | ✅ 已落实 |
+| 02 | `v4.6.0/02-closeout.md` | 本地安全边界验证与 OKX testnet E2E 延后项 | ✅ 已归档 |
+
+### v4.5.0 — 高级订单类型 + Tick 级回放 (MINOR, 已完成) ✅
+
+| # | 文档 | 内容 | 状态 |
+|---|------|------|:--:|
+| 01 | `v4.5.0/01-规划方案.md` | OCO/trailing/GTD/amend、tick replay、microstructure metrics | ✅ 已落实 |
+| 02 | `v4.5.0/02-closeout.md` | 本地模拟订单与 tick replay 验证证据 | ✅ 已归档 |
 
 ### v3.7.2 — Closeout 真实性与安全回退收口 (PATCH) ✅
 

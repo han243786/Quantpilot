@@ -83,24 +83,27 @@ pub use reconcile::{
 };
 pub use risk_checker::{RiskCheckOutput, RiskCheckRequest, RiskChecker, RiskCheckerProvider};
 pub use sandbox::{
-    build_v4_deterministic_replay_bars, runtime_support_boundary, DeterministicClockMode,
-    DeterministicEventOrdering, DeterministicParallelismPolicy, DeterministicTestMode,
-    FastBacktestSandbox, RealTimeSandbox, RuntimeSupportBoundary, Sandbox, SandboxMode,
-    SandboxSnapshot, SUPPORTED_RUNTIME_EXECUTION_MODULE_KEYS, SUPPORTED_RUNTIME_MODE_KEYS,
+    build_v4_deterministic_replay_bars, runtime_support_boundary,
+    sort_v4_replay_ticks_deterministically, DeterministicClockMode, DeterministicEventOrdering,
+    DeterministicParallelismPolicy, DeterministicTestMode, FastBacktestSandbox, RealTimeSandbox,
+    RuntimeSupportBoundary, Sandbox, SandboxMode, SandboxSnapshot,
+    SUPPORTED_RUNTIME_EXECUTION_MODULE_KEYS, SUPPORTED_RUNTIME_MODE_KEYS,
 };
 pub use v4_runtime::{
     expand_v4_graph_for_symbols, normalize_v4_backtest_symbols, V4BacktestBarInput,
-    V4CachedMachineOutput, V4ExecutionCapabilityRuntimeEntry, V4ExecutionCapabilityRuntimeStatus,
-    V4ExecutionRuntimeDecision, V4ExecutionRuntimeSnapshot, V4MachineRuntimeSnapshot,
-    V4MachineRuntimeStatus, V4PaperSimulatedRunOutput, V4PaperSimulatedRuntime,
-    V4RiskPlaneRuntimeDecision, V4RiskPlaneRuntimeSnapshot, V4RuntimeEventEnvelope,
-    V4RuntimeEventOrigin, V4RuntimeInputEvent, V4RuntimeMemorySnapshot, V4SimulatedAssetPoint,
-    V4SimulatedExecutionConfig, V4SimulatedExecutionSnapshot, V4SimulatedFill, V4SimulatedOrder,
-    V4SimulatedOrderRequest, V4SimulatedOrderSide, V4SimulatedOrderStatus, V4SimulatedOrderType,
-    V4SimulatedPosition, V4SimulatedPositionAction, V4SimulatedTimeInForce,
-    V4VenueAdapterRuntimeBoundary, EVENT_EXECUTION_FEE_CHARGED, EVENT_EXECUTION_ORDER_ACKNOWLEDGED,
-    EVENT_EXECUTION_ORDER_FILLED, EVENT_EXECUTION_ORDER_PARTIALLY_FILLED,
-    EVENT_EXECUTION_ORDER_REJECTED, EVENT_EXECUTION_PORTFOLIO_CHANGED,
+    V4BacktestTickInput, V4CachedMachineOutput, V4ExecutionCapabilityRuntimeEntry,
+    V4ExecutionCapabilityRuntimeStatus, V4ExecutionRuntimeDecision, V4ExecutionRuntimeSnapshot,
+    V4MachineRuntimeSnapshot, V4MachineRuntimeStatus, V4PaperSimulatedRunOutput,
+    V4PaperSimulatedRuntime, V4RiskPlaneRuntimeDecision, V4RiskPlaneRuntimeSnapshot, V4Runtime,
+    V4RuntimeEventEnvelope, V4RuntimeEventOrigin, V4RuntimeInputEvent, V4RuntimeMemorySnapshot,
+    V4SimulatedAssetPoint, V4SimulatedExecutionConfig, V4SimulatedExecutionSnapshot,
+    V4SimulatedFill, V4SimulatedOrder, V4SimulatedOrderRequest, V4SimulatedOrderSide,
+    V4SimulatedOrderStatus, V4SimulatedOrderType, V4SimulatedPosition, V4SimulatedPositionAction,
+    V4SimulatedTimeInForce, V4VenueAdapterRuntimeBoundary, EVENT_EXECUTION_FEE_CHARGED,
+    EVENT_EXECUTION_ORDER_ACKNOWLEDGED, EVENT_EXECUTION_ORDER_AMENDED,
+    EVENT_EXECUTION_ORDER_CANCELED, EVENT_EXECUTION_ORDER_EXPIRED, EVENT_EXECUTION_ORDER_FILLED,
+    EVENT_EXECUTION_ORDER_PARTIALLY_FILLED, EVENT_EXECUTION_ORDER_REJECTED,
+    EVENT_EXECUTION_PORTFOLIO_CHANGED,
 };
 
 /// 配置代际记录

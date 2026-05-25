@@ -22,7 +22,7 @@
     ]
   },
   "capability_context": {
-    "schema_hash": "sha256:7ad77d31eac3be61fc25354895d26644837157f979046ec3286de83016c1bd5c",
+    "schema_hash": "sha256:86c21d2a4193728bc3332b29910f1d9934ab71b710342698bb82e96fad478a45",
     "permission_boundary": {
       "model_version": "quantpilot/permission-boundary/v1",
       "execution_owner_module": "builtin.execution.paper",

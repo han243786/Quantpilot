@@ -1,10 +1,10 @@
-# 超级规范化 v4.4.0
+# 超级规范化 v4.7.0
 
 > 生效日期: 2026-05-24 | 本文件是项目开发、检查、审计、优化的唯一执行标准
 > 重构: v1.0→v3.0 精简三层流水线、元流水线自进化触发条件
 > 更新: v3.4.0 新增 §8.4 | v3.7.0 新增 §8.5 自由维度诱错审计常态化 | v3.7.1 收口 pre-commit / CI / closeout 三层门禁 + 功能演进通道 + Rust 格式基线
 > v4.0.0: MAJOR 演化通道已实施, 状态机化 QS/Risk Plane/ExecutionMachine 已落地, 前端以后端 capability 为真源, 开发者学习流水线 closeout 检查已接入
-> v4.4.0: 嵌套状态机第一波、`MachineState.child_machine`、父优先 runtime 路由、复杂度预算面板、OpenAPI/治理快照/全量树同步已接入
+> v4.7.0: v4 高级订单/tick replay、LiveActual 安全边界、v4 AI 提案分析、OpenAPI/治理快照/全量树同步已接入
 
 ---
 

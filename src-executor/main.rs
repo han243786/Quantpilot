@@ -1,4 +1,4 @@
-/// v4.4.0: QuantPilot 实时执行端
+/// v4.7.0: QuantPilot 实时执行端
 /// OKX Paper 模式 — 每交易所独立WS, 策略启动后 RunnerPool 激活
 mod api_guard;
 mod audit_log;

@@ -657,6 +657,16 @@ fn ai_proposal_static_check_result(
         });
     }
 
+    if is_v4_ai_proposal_target(&request.target)
+        && request.source_kind != RuntimeEvidenceSourceKind::Backtest
+    {
+        details.push(RuntimeAiProposalStaticCheckDetail {
+            code: "v4_proposal_requires_backtest_artifact".to_string(),
+            target: "source_kind".to_string(),
+            message: "v4 AI proposals must be anchored to a v4 backtest artifact and machine trajectory.".to_string(),
+        });
+    }
+
     if details.is_empty() {
         RuntimeAiProposalStaticCheckResult {
             status: RuntimeAiProposalStatus::StaticCheckPassed,
@@ -674,6 +684,54 @@ fn ai_proposal_static_check_result(
             details,
         }
     }
+}
+
+fn is_v4_ai_proposal_target(target: &RuntimeParameterMutationTarget) -> bool {
+    target.module_key.starts_with("v4.") || target.parameter_path.starts_with("v4.")
+}
+
+#[allow(dead_code)]
+fn analyze_v4_backtest_artifact_for_ai(
+    artifact: &qrpc_core_ir::v4::V4BacktestArtifact,
+) -> Value {
+    let mut state_counts = std::collections::BTreeMap::<String, u64>::new();
+    let mut machine_counts = std::collections::BTreeMap::<String, u64>::new();
+    for point in &artifact.machine_trajectory {
+        *state_counts
+            .entry(format!("{}:{}", point.machine_id, point.state_id))
+            .or_default() += 1;
+        *machine_counts.entry(point.machine_id.clone()).or_default() += 1;
+    }
+    let risk_decision_count = artifact.risk_plane_decisions.len() as u64;
+    let risk_rejected_count = artifact
+        .risk_plane_decisions
+        .iter()
+        .filter(|decision| !decision.approved)
+        .count() as u64;
+    let risk_reject_ratio = if risk_decision_count == 0 {
+        0.0
+    } else {
+        risk_rejected_count as f64 / risk_decision_count as f64
+    };
+    let fill_rate = artifact
+        .microstructure_metrics
+        .as_ref()
+        .map(|metrics| metrics.fill_rate)
+        .unwrap_or(0.0);
+
+    json!({
+        "analysis_version": "quantpilot/v4-ai-trajectory-analysis/v1",
+        "graph_id": artifact.graph_id,
+        "replay_mode": artifact.replay_mode,
+        "machine_count": machine_counts.len(),
+        "trajectory_point_count": artifact.machine_trajectory.len(),
+        "state_visit_counts": state_counts,
+        "machine_visit_counts": machine_counts,
+        "risk_decision_count": risk_decision_count,
+        "risk_rejected_count": risk_rejected_count,
+        "risk_reject_ratio": risk_reject_ratio,
+        "execution_fill_rate": fill_rate,
+    })
 }
 
 fn runtime_ai_proposal_governance(
@@ -2011,4 +2069,86 @@ struct AuditWeeklyQuery {
 #[derive(Debug, Deserialize)]
 struct ResearchMonthlyQuery {
     month: Option<String>,
+}
+
+#[cfg(test)]
+mod v4_ai_proposal_tests {
+    use super::*;
+
+    fn v4_target() -> RuntimeParameterMutationTarget {
+        RuntimeParameterMutationTarget {
+            node_id: "compat.execution".to_string(),
+            module_key: "v4.machine.param".to_string(),
+            parameter_path: "v4.machine.timeout_ms".to_string(),
+        }
+    }
+
+    #[test]
+    fn v4_ai_proposal_static_check_requires_backtest_source() {
+        let request = CreateRuntimeAiProposalRequest {
+            source_kind: RuntimeEvidenceSourceKind::Run,
+            source_id: "run-1".to_string(),
+            target: v4_target(),
+            old_value: json!(1),
+            new_value: json!(2),
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: "sha256:prompt".to_string(),
+            evidence_hash: "sha256:evidence".to_string(),
+            actor: None,
+            reason: "Tune v4 machine timeout from trajectory evidence".to_string(),
+            capability_context: None,
+        };
+
+        let result = ai_proposal_static_check_result(&request, "old", "new", 1, 1);
+
+        assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckFailed);
+        assert!(result
+            .details
+            .iter()
+            .any(|detail| detail.code == "v4_proposal_requires_backtest_artifact"));
+    }
+
+    #[test]
+    fn v4_artifact_analysis_summarizes_trajectory_and_fill_rate() {
+        let artifact = qrpc_core_ir::v4::V4BacktestArtifact {
+            schema_version: qrpc_core_ir::v4::V4_BACKTEST_ARTIFACT_VERSION.to_string(),
+            graph_id: "graph-v4".to_string(),
+            started_at_ms: 1,
+            ended_at_ms: 2,
+            replay_mode: "tick_replay".to_string(),
+            input_bar_count: 0,
+            input_tick_count: Some(2),
+            symbols: vec!["BTCUSDT".to_string()],
+            machine_trajectory: vec![qrpc_core_ir::v4::V4BacktestMachineTrajectoryPoint {
+                ts_ms: 1,
+                event_sequence: 1,
+                machine_id: "compat.execution".to_string(),
+                template: qrpc_core_ir::v4::MachineTemplateKind::Execution,
+                state_id: "ready".to_string(),
+                status: "active".to_string(),
+                symbol: Some("BTCUSDT".to_string()),
+            }],
+            risk_plane_decisions: Vec::new(),
+            execution_capability_sources: Vec::new(),
+            microstructure_metrics: Some(qrpc_core_ir::v4::V4BacktestMicrostructureMetrics {
+                submitted_order_count: 1,
+                filled_order_count: 1,
+                fill_rate: 1.0,
+                average_slippage_bps: 2.0,
+                queue_position_estimate: 0.0,
+                vwap_deviation_bps: 2.0,
+            }),
+            final_snapshot: None,
+        };
+
+        let analysis = analyze_v4_backtest_artifact_for_ai(&artifact);
+
+        assert_eq!(analysis["analysis_version"], "quantpilot/v4-ai-trajectory-analysis/v1");
+        assert_eq!(analysis["machine_count"], 1);
+        assert_eq!(analysis["execution_fill_rate"], 1.0);
+    }
 }

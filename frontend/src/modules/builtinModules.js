@@ -33,7 +33,7 @@ const commonNode = (category, name, quickFields, summaryFields) => ({
 export const DEFAULT_CAPABILITIES = {
   api_version: "quantpilot-capabilities/v1",
   schema_version: "quantpilot/capabilities-schema/v1",
-  schema_hash: "sha256:7ad77d31eac3be61fc25354895d26644837157f979046ec3286de83016c1bd5c",
+  schema_hash: "sha256:86c21d2a4193728bc3332b29910f1d9934ab71b710342698bb82e96fad478a45",
   chain_stages: ["data", "intent", "agent", "risk", "execution", "fill"],
   strategy_ir: {
     declared_indicator_kinds: DECLARED_INDICATOR_KINDS,
@@ -1343,11 +1343,11 @@ export function createSafeFallbackCapabilities(reason = "能力清单加载失�
       symbol_support: ["BTCUSDT", "ETHUSDT", "SOLUSDT"].map(s => ({ symbol: s, status: "declared_only", reason }))
     },
     frontend: {
-      declared_module_keys: allBuiltinModules.map((moduleDef) => moduleDef.module_key),
-      supported_module_keys: allBuiltinModules.map((moduleDef) => moduleDef.module_key),
+      declared_module_keys: [...SUPPORTED_FRONTEND_MODULE_KEYS],
+      supported_module_keys: [...SUPPORTED_FRONTEND_MODULE_KEYS],
       unsupported_module_reasons: {},
-      module_support: allBuiltinModules.map((moduleDef) => ({
-        module_key: moduleDef.module_key,
+      module_support: SUPPORTED_FRONTEND_MODULE_KEYS.map((moduleKey) => ({
+        module_key: moduleKey,
         status: "declared_only",
         reason
       }))

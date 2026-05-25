@@ -158,7 +158,7 @@ const CAPABILITY_VERSIONING_MODEL_VERSION: &str = "quantpilot/versioning-model/v
 const RUNTIME_GOVERNANCE_SCHEMA_VERSION: &str = "quantpilot/runtime-governance/v1";
 const RUNTIME_CHAIN_STAGES: [&str; 6] = ["data", "intent", "agent", "risk", "execution", "fill"];
 
-const DECLARED_FRONTEND_MODULE_KEYS: [&str; 14] = [
+const DECLARED_FRONTEND_MODULE_KEYS: [&str; 16] = [
     "builtin.data.kline",
     "builtin.data.quote",
     "builtin.intent.double_ma",
@@ -173,9 +173,11 @@ const DECLARED_FRONTEND_MODULE_KEYS: [&str; 14] = [
     "builtin.risk.global",
     "builtin.execution.paper",
     "builtin.runtime.control",
+    "v4.machine.param",
+    "v4.transition.guard",
 ];
 
-const SUPPORTED_FRONTEND_MODULE_KEYS: [&str; 14] = [
+const SUPPORTED_FRONTEND_MODULE_KEYS: [&str; 16] = [
     "builtin.data.kline",
     "builtin.data.quote",
     "builtin.intent.double_ma",
@@ -190,6 +192,8 @@ const SUPPORTED_FRONTEND_MODULE_KEYS: [&str; 14] = [
     "builtin.risk.global",
     "builtin.execution.paper",
     "builtin.runtime.control",
+    "v4.machine.param",
+    "v4.transition.guard",
 ];
 
 #[derive(Clone)]

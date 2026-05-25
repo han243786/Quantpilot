@@ -97,6 +97,7 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
   const trades = runtime.backtestArtifacts?.trade_ledger?.trades || [];
   const outputArtifacts = manifest?.output_artifacts || [];
   const v4Artifact = runtime.backtestArtifacts?.v4_artifact || null;
+  const v4MicroMetrics = v4Artifact?.microstructure_metrics || null;
   const summary = metrics?.summary || null;
   const startedAt = metrics?.started_at_ms || null;
   const endedAt = metrics?.ended_at_ms || null;
@@ -455,6 +456,7 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
                 </div>
                 <MetricPair label="Replay" value={v4Artifact.replay_mode || "-"} />
                 <MetricPair label="Bars" value={formatValue(v4Artifact.input_bar_count)} />
+                <MetricPair label="Ticks" value={formatValue(v4Artifact.input_tick_count || 0)} />
                 <MetricPair
                   label="Trajectory"
                   value={formatValue(v4Artifact.machine_trajectory?.length || 0)}
@@ -468,6 +470,30 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
                   value={formatValue(v4Artifact.execution_capability_sources?.length || 0)}
                 />
               </div>
+              {v4MicroMetrics ? (
+                <div className="open-orders-card" data-testid="backtest-detail-v4-microstructure-card">
+                  <div className="open-orders-header">
+                    <div>
+                      <div className="mini-list-title">Microstructure Metrics</div>
+                      <div className="muted-line">v4.5.0 tick replay execution evidence</div>
+                    </div>
+                    <strong>{formatValue(v4MicroMetrics.submitted_order_count)}</strong>
+                  </div>
+                  <MetricPair label="Fill rate" value={formatRatio(v4MicroMetrics.fill_rate)} />
+                  <MetricPair
+                    label="Avg slippage bps"
+                    value={formatValue(v4MicroMetrics.average_slippage_bps)}
+                  />
+                  <MetricPair
+                    label="Queue estimate"
+                    value={formatRatio(v4MicroMetrics.queue_position_estimate)}
+                  />
+                  <MetricPair
+                    label="VWAP deviation bps"
+                    value={formatValue(v4MicroMetrics.vwap_deviation_bps)}
+                  />
+                </div>
+              ) : null}
             </AnalysisSection>
           ) : null}
 

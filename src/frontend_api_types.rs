@@ -175,6 +175,7 @@ pub(super) struct FrontendRuntimeConfig {
 // 注：未加 deny_unknown_fields，因前端发送 phantom `volatility` 字段需兼容
 pub(super) struct FrontendBacktestOptions {
     pub(super) replay_source: Option<FrontendBacktestReplaySource>,
+    pub(super) replay_mode: Option<String>,
     pub(super) execution_assumptions: Option<FrontendExecutionAssumptionOverrides>,
     pub(super) runtime_kind: Option<String>,
     #[serde(default)]

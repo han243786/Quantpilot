@@ -38,7 +38,9 @@ export const SUPPORTED_FRONTEND_MODULE_KEYS = [
   "builtin.agent.arbitrage",
   "builtin.risk.global",
   "builtin.execution.paper",
-  "builtin.runtime.control"
+  "builtin.runtime.control",
+  "v4.machine.param",
+  "v4.transition.guard"
 ];
 
 export const WORKSPACE_SURFACE_MAP = {
@@ -267,6 +269,7 @@ export const CAPABILITY_ACTION_MAP = {
     blockedDuringCapabilitySync: true,
     notes: [
       "v4 backtest uses /api/runtime/backtest with runtime_kind=v4 and exposes v4_artifact evidence without enabling provider submission.",
+      "v4.5.0 adds beta tick_replay artifacts, advanced simulated order evidence, and microstructure metrics under the same PaperSimulated boundary.",
       "当前仅提供基础回放/回测支持，不宣称研究级回测能力。",
       "缓存回退模式下仍可见，但依旧受后端校验约束。"
     ]

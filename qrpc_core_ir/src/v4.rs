@@ -48,6 +48,8 @@ pub struct V4BacktestArtifact {
     pub ended_at_ms: u64,
     pub replay_mode: String,
     pub input_bar_count: usize,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub input_tick_count: Option<usize>,
     #[serde(default)]
     pub symbols: Vec<String>,
     #[serde(default)]
@@ -57,7 +59,19 @@ pub struct V4BacktestArtifact {
     #[serde(default)]
     pub execution_capability_sources: Vec<V4BacktestExecutionCapabilitySourceRecord>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub microstructure_metrics: Option<V4BacktestMicrostructureMetrics>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub final_snapshot: Option<Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
+pub struct V4BacktestMicrostructureMetrics {
+    pub submitted_order_count: u64,
+    pub filled_order_count: u64,
+    pub fill_rate: f64,
+    pub average_slippage_bps: f64,
+    pub queue_position_estimate: f64,
+    pub vwap_deviation_bps: f64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

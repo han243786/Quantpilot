@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: QuantPilot Runtime API
-  version: 4.4.0
-  summary: QuantPilot v4.4.0 HTTP 控制面契约
+  version: 4.7.0
+  summary: QuantPilot v4.7.0 HTTP 控制面契约
   description: |
     QuantPilot 策略开发与运行平台的 HTTP API 契约。
     覆盖 capability discovery、runtime session、compile、backtest、AI 提案与审批、
@@ -1290,6 +1290,9 @@ components:
           example: deterministic_bar_replay
         input_bar_count:
           type: integer
+        input_tick_count:
+          type: integer
+          nullable: true
         symbols:
           type: array
           items:
@@ -1306,6 +1309,22 @@ components:
           type: array
           items:
             type: object
+        microstructure_metrics:
+          type: object
+          nullable: true
+          properties:
+            submitted_order_count:
+              type: integer
+            filled_order_count:
+              type: integer
+            fill_rate:
+              type: number
+            average_slippage_bps:
+              type: number
+            queue_position_estimate:
+              type: number
+            vwap_deviation_bps:
+              type: number
         final_snapshot:
           $ref: '#/components/schemas/V4RuntimeMemorySnapshot'
           description: v4 runtime memory snapshot captured after replay completion.
@@ -1396,7 +1415,7 @@ components:
           format: int64
         children:
           type: array
-          description: v4.4.0 nested child machine snapshots for the active parent state.
+          description: v4.7.0 nested child machine snapshots for the active parent state.
           items:
             $ref: '#/components/schemas/V4MachineRuntimeSnapshot'
     V4ComplexityMetrics:

@@ -2,8 +2,90 @@ use qrpc_core::{
     BacktestBenchmarkComparison, BacktestDrawdownAnalysis, BacktestEquityPoint,
     BacktestRiskAdjusted, BacktestSummary, BacktestTradeAnalysis, SessionOutput,
 };
+use qrpc_core_ir::v4::V4BacktestMicrostructureMetrics;
 
 pub const QPRT_EQUITY_CURVE_NON_MONOTONIC: &str = "QPRT4101";
+
+#[derive(Debug, Clone, Copy)]
+pub struct MicrostructureOrderSample {
+    pub requested_quantity: f64,
+    pub filled_quantity: f64,
+    pub reference_price: f64,
+    pub is_open: bool,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct MicrostructureFillSample {
+    pub quantity: f64,
+    pub price: f64,
+    pub reference_price: f64,
+}
+
+pub fn compute_microstructure_metrics(
+    orders: &[MicrostructureOrderSample],
+    fills: &[MicrostructureFillSample],
+) -> V4BacktestMicrostructureMetrics {
+    let requested_quantity = orders
+        .iter()
+        .map(|order| order.requested_quantity.max(0.0))
+        .sum::<f64>();
+    let filled_quantity = orders
+        .iter()
+        .map(|order| order.filled_quantity.max(0.0))
+        .sum::<f64>();
+    let fill_rate = if requested_quantity > f64::EPSILON {
+        (filled_quantity / requested_quantity).clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
+
+    let mut slippage_weight = 0.0;
+    let mut slippage_sum = 0.0;
+    let mut fill_notional = 0.0;
+    let mut reference_notional = 0.0;
+    for fill in fills {
+        if fill.quantity <= 0.0 || fill.reference_price <= 0.0 {
+            continue;
+        }
+        let weight = fill.quantity;
+        let slippage_bps =
+            ((fill.price - fill.reference_price).abs() / fill.reference_price) * 10_000.0;
+        slippage_sum += slippage_bps * weight;
+        slippage_weight += weight;
+        fill_notional += fill.price * weight;
+        reference_notional += fill.reference_price * weight;
+    }
+
+    let average_slippage_bps = if slippage_weight > f64::EPSILON {
+        slippage_sum / slippage_weight
+    } else {
+        0.0
+    };
+    let vwap_deviation_bps = if slippage_weight > f64::EPSILON && reference_notional > 0.0 {
+        let fill_vwap = fill_notional / slippage_weight;
+        let reference_vwap = reference_notional / slippage_weight;
+        ((fill_vwap - reference_vwap) / reference_vwap) * 10_000.0
+    } else {
+        0.0
+    };
+    let open_ratio = if orders.is_empty() {
+        0.0
+    } else {
+        orders.iter().filter(|order| order.is_open).count() as f64 / orders.len() as f64
+    };
+
+    V4BacktestMicrostructureMetrics {
+        submitted_order_count: orders.len() as u64,
+        filled_order_count: orders
+            .iter()
+            .filter(|order| order.filled_quantity > f64::EPSILON)
+            .count() as u64,
+        fill_rate,
+        average_slippage_bps,
+        queue_position_estimate: open_ratio,
+        vwap_deviation_bps,
+    }
+}
 
 /// 从回测输出计算全部风险调整收益指标
 pub fn compute_backtest_metrics(

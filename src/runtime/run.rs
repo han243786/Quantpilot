@@ -254,6 +254,8 @@ fn runtime_simulated_v4_matrix(venue_id: impl Into<String>) -> qrpc_core_ir::v4:
                 | qrpc_core_ir::v4::ExecutionCapabilityKind::StopLimit
                 | qrpc_core_ir::v4::ExecutionCapabilityKind::TakeProfitMarket
                 | qrpc_core_ir::v4::ExecutionCapabilityKind::TakeProfitLimit
+                | qrpc_core_ir::v4::ExecutionCapabilityKind::OcoBracket
+                | qrpc_core_ir::v4::ExecutionCapabilityKind::TrailingStop
                 | qrpc_core_ir::v4::ExecutionCapabilityKind::Gtc
                 | qrpc_core_ir::v4::ExecutionCapabilityKind::Ioc
                 | qrpc_core_ir::v4::ExecutionCapabilityKind::Fok
@@ -267,6 +269,7 @@ fn runtime_simulated_v4_matrix(venue_id: impl Into<String>) -> qrpc_core_ir::v4:
                 | qrpc_core_ir::v4::ExecutionCapabilityKind::CloseLong
                 | qrpc_core_ir::v4::ExecutionCapabilityKind::OpenShort
                 | qrpc_core_ir::v4::ExecutionCapabilityKind::CloseShort
+                | qrpc_core_ir::v4::ExecutionCapabilityKind::CancelReplaceAmend
         ) {
             entry.source = qrpc_core_ir::v4::CapabilitySupportSource::RuntimeSimulated;
             entry.supported_modes = vec![qrpc_core_ir::v4::RuntimeTradingMode::PaperSimulated];

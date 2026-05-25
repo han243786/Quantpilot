@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.7.0 — v4 execution replay, LiveActual boundary, and AI proposal analysis (2026-05-25)
+
+- v4.5.0: added advanced simulated orders (OCO bracket, trailing stop, GTD expiry, cancel-replace-amend), tick replay, and microstructure metrics in `v4_artifact`.
+- v4.6.0: opened the v4 LiveActual runtime boundary with required Risk Plane enforcement and ProviderNative capability gating; OKX testnet submission remains deferred to credentialed E2E.
+- v4.7.0: added v4 AI proposal trajectory analysis, v4 sandbox replay-shape comparison, executor/frontend evidence updates, OpenAPI/schema updates, and version/governance sync.
+
 ## v4.4.0 — 嵌套状态机第一波 (2026-05-25)
 
 ### Core IR 与 QuantScript

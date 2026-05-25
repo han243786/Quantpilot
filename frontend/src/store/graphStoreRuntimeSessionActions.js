@@ -290,6 +290,7 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
           graph_json: graph,
           backtest_options: {
             replay_source: "deterministic_mock",
+            replay_mode: graph.metadata?.backtest_replay_mode || graph.metadata?.replay_mode,
             volatility: 0.5,
             runtime_kind: graph.metadata?.runtime_kind || graph.metadata?.template_runtime_version,
             symbols:
@@ -454,6 +455,7 @@ export function createGraphStoreRuntimeSessionActions(set, get) {
           graph_json: graph,
           backtest_options: {
             replay_source: "deterministic_mock",
+            replay_mode: graph.metadata?.backtest_replay_mode || graph.metadata?.replay_mode,
             volatility: 0.5,
             runtime_kind: graph.metadata?.runtime_kind || graph.metadata?.template_runtime_version,
             symbols:

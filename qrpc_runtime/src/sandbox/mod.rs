@@ -1,8 +1,10 @@
 pub mod replay;
 pub mod timeline;
 
-pub use self::replay::build_v4_deterministic_replay_bars;
 use self::replay::{build_mock_unified_timeline, build_unified_timeline};
+pub use self::replay::{
+    build_v4_deterministic_replay_bars, sort_v4_replay_ticks_deterministically,
+};
 use self::timeline::UnifiedTimeline;
 use crate::slippage::ExecutionAssumptions;
 use crate::RuntimeCoordinator;

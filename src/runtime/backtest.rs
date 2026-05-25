@@ -236,6 +236,28 @@ async fn execute_v4_backtest_request(
         qrpc_runtime::expand_v4_graph_for_symbols(&graph, &symbols).map_err(internal_error)?;
     let event_type = resolve_v4_backtest_market_event_type(&expanded_graph)?;
     let bars = qrpc_runtime::build_v4_deterministic_replay_bars(&symbols, now_ms, &event_type);
+    let tick_replay = request
+        .backtest_options
+        .replay_mode
+        .as_deref()
+        .map(|mode| mode.eq_ignore_ascii_case("tick_replay"))
+        .unwrap_or(false);
+    let ticks = if tick_replay {
+        bars.iter()
+            .enumerate()
+            .map(|(index, bar)| qrpc_runtime::V4BacktestTickInput {
+                venue_id: bar.venue_id.clone(),
+                symbol: bar.symbol.clone(),
+                price: bar.close,
+                size: 1.0,
+                ts_ms: bar.ts_ms,
+                sequence: index as u64,
+                event_type: event_type.clone(),
+            })
+            .collect::<Vec<_>>()
+    } else {
+        Vec::new()
+    };
 
     let v4_artifact = tokio::task::spawn_blocking(move || {
         let mut runtime = qrpc_runtime::V4PaperSimulatedRuntime::new_for_backtest(
@@ -244,9 +266,15 @@ async fn execute_v4_backtest_request(
             vec![qrpc_core_ir::v4::ExecutionCapabilityKind::Market],
         )
         .map_err(internal_error)?;
-        runtime
-            .run_backtest_bars(&bars)
-            .map_err(|error| internal_error(anyhow::anyhow!(error)))
+        if tick_replay {
+            runtime
+                .run_backtest_ticks(&ticks)
+                .map_err(|error| internal_error(anyhow::anyhow!(error)))
+        } else {
+            runtime
+                .run_backtest_bars(&bars)
+                .map_err(|error| internal_error(anyhow::anyhow!(error)))
+        }
     })
     .await
     .map_err(|error| internal_error(anyhow::anyhow!("v4 backtest task cancelled: {error}")))??;
@@ -511,7 +539,9 @@ fn build_v4_backtest_output(
         benchmark_equity_curve: Vec::new(),
         period_returns: Vec::new(),
         summary: qrpc_core::BacktestSummary {
-            step_count: artifact.input_bar_count,
+            step_count: artifact
+                .input_tick_count
+                .unwrap_or(artifact.input_bar_count),
             trade_count: artifact.execution_capability_sources.len(),
             total_return_ratio,
             final_equity,
@@ -875,6 +905,7 @@ async fn start_backtest_experiment(
             runtime_targets: request.runtime_targets.clone(),
             backtest_options: FrontendBacktestOptions {
                 replay_source: Some(replay_source),
+                replay_mode: request.backtest_options.replay_mode.clone(),
                 execution_assumptions: Some(override_values.clone()),
                 runtime_kind: request.backtest_options.runtime_kind.clone(),
                 symbols: request.backtest_options.symbols.clone(),

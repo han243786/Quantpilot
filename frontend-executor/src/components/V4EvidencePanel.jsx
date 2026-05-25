@@ -49,11 +49,14 @@ export default function V4EvidencePanel({ strategyId, runtimeKind }) {
     const risk = snapshot?.risk_plane || {};
     const execution = snapshot?.execution || {};
     const simulated = snapshot?.simulated_execution || {};
+    const boundary = snapshot?.venue_adapter_boundary || {};
     return {
       machine,
       risk,
       execution,
       simulated,
+      boundary,
+      lastOrder: simulated?.last_order || null,
       machineCount: asArray(snapshot?.machines).length
     };
   }, [snapshot]);
@@ -100,12 +103,20 @@ export default function V4EvidencePanel({ strategyId, runtimeKind }) {
             <strong>{projection.simulated.order_count || 0} / {projection.simulated.fill_count || 0}</strong>
           </div>
           <div className="v4-evidence-row">
+            <span>Last order</span>
+            <strong>{projection.lastOrder?.provider_order_id || projection.lastOrder?.order_id || "-"}</strong>
+          </div>
+          <div className="v4-evidence-row">
             <span>Portfolio</span>
             <strong>{formatNumber(projection.simulated.portfolio_value)}</strong>
           </div>
           <div className="v4-evidence-row">
             <span>Source</span>
-            <strong>{snapshot.provider_order_submission_attached ? "provider" : "runtime_simulated"}</strong>
+            <strong>{projection.boundary.provider_order_submission_allowed ? "provider_allowed" : snapshot.provider_order_submission_attached ? "provider" : "runtime_simulated"}</strong>
+          </div>
+          <div className="v4-evidence-row">
+            <span>Real path</span>
+            <strong>{projection.risk.real_order_path_unlocked ? "unlocked" : "locked"}</strong>
           </div>
         </div>
       )}

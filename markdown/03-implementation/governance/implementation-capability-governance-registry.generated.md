@@ -17,7 +17,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-gover
 | --- | --- |
 | disallowed_claim（禁止声明） | 4 |
 | restricted（受限） | 6 |
-| supported（已支持） | 64 |
+| supported（已支持） | 66 |
 | trace_only（仅追踪） | 1 |
 
 ## 按系列汇总
@@ -27,7 +27,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-gover
 | compile_boundary（编译边界） | 3 |
 | exchange（交易所） | 2 |
 | execution_module（执行模块） | 2 |
-| frontend_module（前端模块） | 14 |
+| frontend_module（前端模块） | 16 |
 | runtime_mode（运行模式） | 1 |
 | strategy_ir_indicator_kind（策略 IR 指标类型） | 18 |
 | symbol（交易对） | 3 |
@@ -104,6 +104,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-gover
 | frontend.module.builtin.risk.global | builtin.risk.global | supported | frontend editor owner | sidebar exposure, disabled reasons, UX | backend:/api/capabilities.frontend.module_support |  |
 | frontend.module.builtin.execution.paper | builtin.execution.paper | supported | frontend editor owner | sidebar exposure, disabled reasons, UX | backend:/api/capabilities.frontend.module_support |  |
 | frontend.module.builtin.runtime.control | builtin.runtime.control | supported | frontend editor owner | sidebar exposure, disabled reasons, UX | backend:/api/capabilities.frontend.module_support |  |
+| frontend.module.v4.machine.param | v4.machine.param | supported | frontend editor owner | sidebar exposure, disabled reasons, UX | backend:/api/capabilities.frontend.module_support |  |
+| frontend.module.v4.transition.guard | v4.transition.guard | supported | frontend editor owner | sidebar exposure, disabled reasons, UX | backend:/api/capabilities.frontend.module_support |  |
 
 ## ui_action（UI 操作）
 
@@ -119,7 +121,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-gover
 | ui.action.compile | compile | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | 策略中间表示只承担语义预检。; 运行时编译仍然是可运行输出的最终真源。 |
 | ui.action.start_simulation | start_simulation | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | 当前 Beta 边界内仅支持纸面模拟运行时。; 缓存回退模式下仍可见，但依旧受后端校验约束。 |
 | ui.action.start_v4_simulation | start_v4_simulation | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | v4 模拟运行只接收 v4 QS 静态审计通过后的 machine graph handoff。; 嵌套状态机当前为 beta，深度上限为 2，并必须输出复杂度预算与层级 evidence。; 该入口固定使用 PaperSimulated，本地模拟成交不会连接 provider submission。 |
-| ui.action.run_backtest | run_backtest | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | v4 backtest uses /api/runtime/backtest with runtime_kind=v4 and exposes v4_artifact evidence without enabling provider submission.; 当前仅提供基础回放/回测支持，不宣称研究级回测能力。; 缓存回退模式下仍可见，但依旧受后端校验约束。 |
+| ui.action.run_backtest | run_backtest | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | v4 backtest uses /api/runtime/backtest with runtime_kind=v4 and exposes v4_artifact evidence without enabling provider submission.; v4.5.0 adds beta tick_replay artifacts, advanced simulated order evidence, and microstructure metrics under the same PaperSimulated boundary.; 当前仅提供基础回放/回测支持，不宣称研究级回测能力。; 缓存回退模式下仍可见，但依旧受后端校验约束。 |
 | ui.action.stop_runtime | stop_runtime | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | 停止入口只对当前运行中会话可用。 |
 | ui.action.reset_runtime | reset_runtime | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | 重置运行时清理前端运行态投影和连接状态。 |
 | ui.action.open_backtests | open_backtests | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | 打开回测进入回测列表视图，不直接触发回测写入。 |

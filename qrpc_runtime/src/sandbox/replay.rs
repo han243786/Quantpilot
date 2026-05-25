@@ -37,6 +37,16 @@ pub fn build_v4_deterministic_replay_bars(
     bars
 }
 
+pub fn sort_v4_replay_ticks_deterministically(ticks: &mut [crate::V4BacktestTickInput]) {
+    ticks.sort_by(|left, right| {
+        left.ts_ms
+            .cmp(&right.ts_ms)
+            .then_with(|| left.sequence.cmp(&right.sequence))
+            .then_with(|| left.symbol.cmp(&right.symbol))
+            .then_with(|| left.venue_id.cmp(&right.venue_id))
+    });
+}
+
 /// 从 CoreStrategyIr 构建统一时间轴所需的 K 线数据提供者列表
 pub fn build_kline_providers(core_ir: &CoreStrategyIr, end_ms: u64) -> Result<Vec<KlineProvider>> {
     use crate::data_module::historical_kline_bars_for_backtest;

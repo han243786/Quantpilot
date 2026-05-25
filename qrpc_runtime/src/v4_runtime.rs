@@ -1,3 +1,6 @@
+use crate::backtest_metrics::{
+    compute_microstructure_metrics, MicrostructureFillSample, MicrostructureOrderSample,
+};
 use anyhow::{anyhow, Result};
 use qrpc_core_ir::v4::{
     default_v4_runtime_mode_contract, CapabilitySupportSource, ComplexityMetrics,
@@ -27,6 +30,9 @@ const EVENT_EXECUTION_CAPABILITY_ACCEPTED: &str = "execution_capability_accepted
 const EVENT_EXECUTION_CAPABILITY_REJECTED: &str = "execution_capability_rejected";
 pub const EVENT_EXECUTION_ORDER_ACKNOWLEDGED: &str = "execution_order_acknowledged";
 pub const EVENT_EXECUTION_ORDER_REJECTED: &str = "execution_order_rejected";
+pub const EVENT_EXECUTION_ORDER_CANCELED: &str = "execution_order_canceled";
+pub const EVENT_EXECUTION_ORDER_EXPIRED: &str = "execution_order_expired";
+pub const EVENT_EXECUTION_ORDER_AMENDED: &str = "execution_order_amended";
 pub const EVENT_EXECUTION_ORDER_PARTIALLY_FILLED: &str = "execution_order_partially_filled";
 pub const EVENT_EXECUTION_ORDER_FILLED: &str = "execution_order_filled";
 pub const EVENT_EXECUTION_FEE_CHARGED: &str = "execution_fee_charged";
@@ -49,6 +55,18 @@ pub struct V4BacktestBarInput {
     pub symbol: String,
     pub close: f64,
     pub ts_ms: u64,
+    pub event_type: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct V4BacktestTickInput {
+    pub venue_id: String,
+    pub symbol: String,
+    pub price: f64,
+    pub size: f64,
+    pub ts_ms: u64,
+    #[serde(default)]
+    pub sequence: u64,
     pub event_type: String,
 }
 
@@ -265,6 +283,14 @@ pub struct V4SimulatedOrderRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub trigger_price: Option<f64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub take_profit_price: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub stop_loss_price: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub trailing_offset_bps: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub expire_at_ms: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub time_in_force: Option<V4SimulatedTimeInForce>,
     #[serde(default)]
     pub post_only: bool,
@@ -300,6 +326,24 @@ pub struct V4SimulatedOrder {
     pub limit_price: Option<f64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub trigger_price: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub take_profit_price: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub stop_loss_price: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub trailing_offset_bps: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub expire_at_ms: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub parent_order_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub oco_group_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub trailing_peak_price: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub trailing_trough_price: Option<f64>,
+    #[serde(default)]
+    pub amend_revision: u32,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub fill_price: Option<f64>,
     pub status: V4SimulatedOrderStatus,
@@ -425,6 +469,8 @@ pub enum V4SimulatedOrderStatus {
     Rejected,
     PartiallyFilled,
     Filled,
+    Canceled,
+    Expired,
 }
 
 #[derive(Debug, Clone)]
@@ -772,6 +818,8 @@ pub struct V4PaperSimulatedRuntime {
     provider_order_submission_attached: bool,
 }
 
+pub type V4Runtime = V4PaperSimulatedRuntime;
+
 impl V4PaperSimulatedRuntime {
     pub fn new(graph: V4MachineGraphContract) -> Result<Self> {
         Self::new_for_mode(graph, RuntimeTradingMode::PaperSimulated)
@@ -781,10 +829,24 @@ impl V4PaperSimulatedRuntime {
         graph: V4MachineGraphContract,
         runtime_mode: RuntimeTradingMode,
     ) -> Result<Self> {
-        if runtime_mode != RuntimeTradingMode::PaperSimulated {
+        if !matches!(
+            runtime_mode,
+            RuntimeTradingMode::PaperSimulated | RuntimeTradingMode::LiveActual
+        ) {
             return Err(anyhow!(
                 "v4 Phase 5 runtime 只允许 PaperSimulated 模式，实际收到 {:?}",
                 runtime_mode
+            ));
+        }
+        if runtime_mode == RuntimeTradingMode::LiveActual
+            && !graph
+                .risk_plane
+                .as_ref()
+                .map(|plane| plane.required)
+                .unwrap_or(false)
+        {
+            return Err(anyhow!(
+                "v4 LiveActual runtime requires an explicit required Risk Plane"
             ));
         }
         graph.validate_static_contract().map_err(|errors| {
@@ -846,6 +908,16 @@ impl V4PaperSimulatedRuntime {
         required_capabilities: Vec<ExecutionCapabilityKind>,
     ) -> Result<Self> {
         Self::new(graph)?.with_execution_capabilities(venue_matrix, required_capabilities)
+    }
+
+    pub fn new_for_mode_with_execution_capabilities(
+        graph: V4MachineGraphContract,
+        runtime_mode: RuntimeTradingMode,
+        venue_matrix: VenueCapabilityMatrix,
+        required_capabilities: Vec<ExecutionCapabilityKind>,
+    ) -> Result<Self> {
+        Self::new_for_mode(graph, runtime_mode)?
+            .with_execution_capabilities(venue_matrix, required_capabilities)
     }
 
     pub fn new_for_backtest(
@@ -985,10 +1057,126 @@ impl V4PaperSimulatedRuntime {
             ended_at_ms,
             replay_mode: "deterministic_bar_replay".to_string(),
             input_bar_count: sorted_bars.len(),
+            input_tick_count: None,
             symbols: symbols.into_iter().collect(),
             machine_trajectory: trajectory,
             risk_plane_decisions,
             execution_capability_sources,
+            microstructure_metrics: Some(self.simulated_execution.microstructure_metrics()),
+            final_snapshot: Some(final_snapshot),
+        })
+    }
+
+    pub fn run_backtest_ticks(
+        &mut self,
+        ticks: &[V4BacktestTickInput],
+    ) -> Result<V4BacktestArtifact> {
+        let started_at_ms = ticks.first().map(|tick| tick.ts_ms).unwrap_or(0);
+        let mut ended_at_ms = started_at_ms;
+        let mut trajectory = Vec::new();
+        let mut risk_plane_decisions = Vec::new();
+        let mut execution_capability_sources = Vec::new();
+        let mut seen_risk_decisions = BTreeSet::new();
+        let mut seen_execution_entries = BTreeSet::new();
+        let mut symbols = BTreeSet::new();
+        let mut sorted_ticks = ticks.to_vec();
+        crate::sandbox::replay::sort_v4_replay_ticks_deterministically(&mut sorted_ticks);
+
+        for tick in &sorted_ticks {
+            if !tick.price.is_finite() || tick.price <= 0.0 {
+                return Err(anyhow!("v4 tick replay requires finite positive prices"));
+            }
+            if !tick.size.is_finite() || tick.size < 0.0 {
+                return Err(anyhow!("v4 tick replay requires finite non-negative sizes"));
+            }
+            symbols.insert(tick.symbol.clone());
+            ended_at_ms = ended_at_ms.max(tick.ts_ms);
+            self.submit_market_price_tick(
+                &tick.venue_id,
+                &tick.symbol,
+                tick.price,
+                tick.ts_ms,
+                &tick.event_type,
+            )?;
+            self.advance_time(tick.ts_ms);
+            let snapshot = self.memory_snapshot(tick.ts_ms);
+
+            for machine in flatten_machine_snapshots(&snapshot.machines) {
+                trajectory.push(V4BacktestMachineTrajectoryPoint {
+                    ts_ms: snapshot.ts_ms,
+                    event_sequence: snapshot.event_sequence,
+                    machine_id: machine.machine_id.clone(),
+                    template: machine.template.clone(),
+                    state_id: machine.state_id.clone(),
+                    status: v4_machine_status_label(machine.status).to_string(),
+                    symbol: symbol_for_machine_id(&machine.machine_id),
+                });
+            }
+
+            if let Some(decision) = &snapshot.risk_plane.last_decision {
+                if seen_risk_decisions.insert(decision.decision_id.clone()) {
+                    risk_plane_decisions.push(V4BacktestRiskPlaneDecisionRecord {
+                        decision_id: decision.decision_id.clone(),
+                        target_machine_id: decision.target_machine_id.clone(),
+                        source_machine_id: decision.source_machine_id.clone(),
+                        event_type: decision.event_type.clone(),
+                        approved: decision.approved,
+                        reason: decision.reason.clone(),
+                        ts_ms: decision.ts_ms,
+                        sequence: decision.sequence,
+                        symbol: symbol_for_machine_id(&decision.target_machine_id),
+                    });
+                }
+            }
+
+            if let Some(decision) = &snapshot.execution.last_decision {
+                for entry in &decision.entries {
+                    let key = format!(
+                        "{}:{}:{:?}:{:?}",
+                        decision.decision_id,
+                        decision.target_machine_id,
+                        entry.capability,
+                        entry.status
+                    );
+                    if seen_execution_entries.insert(key) {
+                        execution_capability_sources.push(
+                            V4BacktestExecutionCapabilitySourceRecord {
+                                decision_id: decision.decision_id.clone(),
+                                target_machine_id: decision.target_machine_id.clone(),
+                                venue_id: decision.venue_id.clone(),
+                                runtime_mode: decision.runtime_mode,
+                                accepted: decision.accepted,
+                                reason: decision.reason.clone(),
+                                capability: entry.capability,
+                                source: entry.source,
+                                status: v4_execution_capability_status_label(entry.status)
+                                    .to_string(),
+                                ts_ms: decision.ts_ms,
+                                sequence: decision.sequence,
+                                symbol: symbol_for_machine_id(&decision.target_machine_id),
+                            },
+                        );
+                    }
+                }
+            }
+        }
+
+        let final_snapshot = serde_json::to_value(self.memory_snapshot(ended_at_ms))
+            .map_err(|error| anyhow!("搴忓垪鍖?v4 tick 鍥炴祴鏈€缁堝揩鐓уけ璐? {error}"))?;
+
+        Ok(V4BacktestArtifact {
+            schema_version: V4_BACKTEST_ARTIFACT_VERSION.to_string(),
+            graph_id: self.graph.graph_id.clone(),
+            started_at_ms,
+            ended_at_ms,
+            replay_mode: "tick_replay".to_string(),
+            input_bar_count: 0,
+            input_tick_count: Some(sorted_ticks.len()),
+            symbols: symbols.into_iter().collect(),
+            machine_trajectory: trajectory,
+            risk_plane_decisions,
+            execution_capability_sources,
+            microstructure_metrics: Some(self.simulated_execution.microstructure_metrics()),
             final_snapshot: Some(final_snapshot),
         })
     }
@@ -1122,6 +1310,9 @@ impl V4PaperSimulatedRuntime {
                 );
             }
         }
+
+        let expiration_outcome = self.simulated_execution.expire_orders(now_ms);
+        self.record_simulated_execution_events(expiration_outcome, now_ms);
 
         self.event_log[start_index..].to_vec()
     }
@@ -1909,6 +2100,33 @@ impl V4PaperSimulatedRuntime {
             ));
         }
 
+        if let Some(amend_order_id) =
+            payload_string(&event.payload, &["amend_order_id", "replace_order_id"])
+        {
+            if let Err(reason) = self
+                .validate_single_execution_capability(ExecutionCapabilityKind::CancelReplaceAmend)
+            {
+                let request = self.build_simulated_order_request(machine_id, event);
+                return Ok(self.simulated_execution.reject_order(
+                    request,
+                    event.sequence,
+                    ts_ms,
+                    reason,
+                ));
+            }
+            return Ok(self.simulated_execution.amend_order(
+                &amend_order_id,
+                payload_f64(
+                    &event.payload,
+                    &["new_reference_price", "reference_price", "price"],
+                ),
+                payload_f64(&event.payload, &["new_limit_price", "limit_price"]),
+                payload_f64(&event.payload, &["new_trigger_price", "trigger_price"]),
+                payload_f64(&event.payload, &["new_quantity", "quantity", "qty"]),
+                ts_ms,
+            ));
+        }
+
         let request = self.build_simulated_order_request(machine_id, event);
         if let Err(reason) = self.validate_simulated_order_capabilities(&request) {
             return Ok(self.simulated_execution.reject_order(
@@ -1972,6 +2190,13 @@ impl V4PaperSimulatedRuntime {
             reference_price,
             limit_price: payload_f64(&event.payload, &["limit_price"]),
             trigger_price: payload_f64(&event.payload, &["trigger_price", "stop_price"]),
+            take_profit_price: payload_f64(&event.payload, &["take_profit_price", "tp_price"]),
+            stop_loss_price: payload_f64(&event.payload, &["stop_loss_price", "sl_price"]),
+            trailing_offset_bps: payload_f64(
+                &event.payload,
+                &["trailing_offset_bps", "trail_offset_bps"],
+            ),
+            expire_at_ms: payload_u64(&event.payload, &["expire_at_ms", "expires_at_ms"]),
             time_in_force: payload_string(&event.payload, &["time_in_force", "tif"])
                 .or_else(|| metadata_string(machine_metadata, "core_time_in_force"))
                 .and_then(|raw| parse_time_in_force(raw.as_str())),
@@ -2019,6 +2244,20 @@ impl V4PaperSimulatedRuntime {
         } else {
             Err(errors.join("; "))
         }
+    }
+
+    fn validate_single_execution_capability(
+        &self,
+        capability: ExecutionCapabilityKind,
+    ) -> Result<(), String> {
+        let Some(policy) = &self.execution.capability_policy else {
+            return Err("缂哄皯 execution capability policy".to_string());
+        };
+        let runtime_mode_contract = default_v4_runtime_mode_contract();
+        policy
+            .venue_matrix
+            .require_supported_for_mode(&capability, self.runtime_mode, &runtime_mode_contract)
+            .map(|_| ())
     }
 
     fn record_simulated_execution_events(
@@ -2259,6 +2498,9 @@ impl V4SimulatedExecutionRuntimeState {
         if let Some(reason) = self.pre_execution_rejection_reason(&request, side) {
             return self.reject_order(request, source_event_sequence, ts_ms, reason);
         }
+        if request.order_type == V4SimulatedOrderType::OcoBracket {
+            return self.submit_oco_bracket(request, source_event_sequence, ts_ms);
+        }
         if let Some(reason) = self.non_executable_resting_reason(&request, side) {
             let order = self.accepted_order(&request, source_event_sequence, ts_ms);
             self.orders.push(order.clone());
@@ -2370,6 +2612,198 @@ impl V4SimulatedExecutionRuntimeState {
         V4SimulatedExecutionOutcome { events }
     }
 
+    fn submit_oco_bracket(
+        &mut self,
+        request: V4SimulatedOrderRequest,
+        source_event_sequence: u64,
+        ts_ms: u64,
+    ) -> V4SimulatedExecutionOutcome {
+        let (Some(take_profit_price), Some(stop_loss_price)) =
+            (request.take_profit_price, request.stop_loss_price)
+        else {
+            return self.reject_order(
+                request,
+                source_event_sequence,
+                ts_ms,
+                "OCO bracket requires take_profit_price and stop_loss_price".to_string(),
+            );
+        };
+
+        let parent = self.accepted_order(&request, source_event_sequence, ts_ms);
+        let group_id = parent.order_id.clone();
+        let mut take_profit = self.accepted_order(
+            &V4SimulatedOrderRequest {
+                order_id: Some(format!("{}-take-profit", group_id)),
+                order_type: V4SimulatedOrderType::TakeProfitMarket,
+                trigger_price: Some(take_profit_price),
+                ..request.clone()
+            },
+            source_event_sequence,
+            ts_ms,
+        );
+        take_profit.parent_order_id = Some(parent.order_id.clone());
+        take_profit.oco_group_id = Some(group_id.clone());
+        let mut stop_loss = self.accepted_order(
+            &V4SimulatedOrderRequest {
+                order_id: Some(format!("{}-stop-loss", group_id)),
+                order_type: V4SimulatedOrderType::StopMarket,
+                trigger_price: Some(stop_loss_price),
+                ..request
+            },
+            source_event_sequence,
+            ts_ms,
+        );
+        stop_loss.parent_order_id = Some(parent.order_id.clone());
+        stop_loss.oco_group_id = Some(group_id);
+
+        self.orders.push(parent.clone());
+        self.orders.push(take_profit.clone());
+        self.orders.push(stop_loss.clone());
+        self.record_asset_point(ts_ms);
+
+        V4SimulatedExecutionOutcome {
+            events: vec![
+                (
+                    EVENT_EXECUTION_ORDER_ACKNOWLEDGED,
+                    json!({
+                        "order": parent,
+                        "oco_legs": [take_profit, stop_loss],
+                        "resting_reason": "OCO bracket registered as linked take-profit and stop-loss legs",
+                    }),
+                ),
+                (
+                    EVENT_EXECUTION_PORTFOLIO_CHANGED,
+                    json!({ "snapshot": self.snapshot() }),
+                ),
+            ],
+        }
+    }
+
+    fn amend_order(
+        &mut self,
+        order_id: &str,
+        new_reference_price: Option<f64>,
+        new_limit_price: Option<f64>,
+        new_trigger_price: Option<f64>,
+        new_quantity: Option<f64>,
+        ts_ms: u64,
+    ) -> V4SimulatedExecutionOutcome {
+        let Some(index) = self
+            .orders
+            .iter()
+            .position(|order| order.order_id == order_id)
+        else {
+            let request = V4SimulatedOrderRequest {
+                order_id: Some(order_id.to_string()),
+                client_order_id: None,
+                venue_id: self.config.default_venue_id.clone(),
+                symbol: self.config.default_symbol.clone(),
+                action: V4SimulatedPositionAction::Buy,
+                order_type: V4SimulatedOrderType::Limit,
+                quantity: self.config.default_quantity,
+                reference_price: self.config.default_price,
+                limit_price: None,
+                trigger_price: None,
+                take_profit_price: None,
+                stop_loss_price: None,
+                trailing_offset_bps: None,
+                expire_at_ms: None,
+                time_in_force: None,
+                post_only: false,
+                reduce_only: false,
+                close_only: false,
+                allow_partial_fill: true,
+                fee_bps: self.config.default_fee_bps,
+                slippage_bps: self.config.default_slippage_bps,
+                max_fill_quantity: None,
+            };
+            return self.reject_order(
+                request,
+                0,
+                ts_ms,
+                format!("amend target order `{order_id}` not found"),
+            );
+        };
+
+        let mut order = self.orders[index].clone();
+        if order.status != V4SimulatedOrderStatus::Accepted {
+            return V4SimulatedExecutionOutcome {
+                events: self.reject_existing_order(
+                    index,
+                    "cancel-replace-amend only supports open accepted orders".to_string(),
+                    ts_ms,
+                ),
+            };
+        }
+        if let Some(value) = new_reference_price {
+            if !value.is_finite() || value <= 0.0 {
+                return V4SimulatedExecutionOutcome {
+                    events: self.reject_existing_order(
+                        index,
+                        "new_reference_price must be finite and positive".to_string(),
+                        ts_ms,
+                    ),
+                };
+            }
+            order.reference_price = value;
+        }
+        if let Some(value) = new_limit_price {
+            if !value.is_finite() || value <= 0.0 {
+                return V4SimulatedExecutionOutcome {
+                    events: self.reject_existing_order(
+                        index,
+                        "new_limit_price must be finite and positive".to_string(),
+                        ts_ms,
+                    ),
+                };
+            }
+            order.limit_price = Some(value);
+        }
+        if let Some(value) = new_trigger_price {
+            if !value.is_finite() || value <= 0.0 {
+                return V4SimulatedExecutionOutcome {
+                    events: self.reject_existing_order(
+                        index,
+                        "new_trigger_price must be finite and positive".to_string(),
+                        ts_ms,
+                    ),
+                };
+            }
+            order.trigger_price = Some(value);
+        }
+        if let Some(value) = new_quantity {
+            if !value.is_finite() || value <= 0.0 || value + f64::EPSILON < order.filled_quantity {
+                return V4SimulatedExecutionOutcome {
+                    events: self.reject_existing_order(
+                        index,
+                        "new_quantity must be finite, positive, and not below filled quantity"
+                            .to_string(),
+                        ts_ms,
+                    ),
+                };
+            }
+            order.requested_quantity = value;
+            order.remaining_quantity = (value - order.filled_quantity).max(0.0);
+        }
+        order.amend_revision = order.amend_revision.saturating_add(1);
+        order.ts_ms = ts_ms;
+        self.orders[index] = order.clone();
+        self.record_asset_point(ts_ms);
+
+        V4SimulatedExecutionOutcome {
+            events: vec![
+                (
+                    EVENT_EXECUTION_ORDER_AMENDED,
+                    json!({ "order": order, "reason": "cancel_replace_amend" }),
+                ),
+                (
+                    EVENT_EXECUTION_PORTFOLIO_CHANGED,
+                    json!({ "snapshot": self.snapshot() }),
+                ),
+            ],
+        }
+    }
+
     fn reject_order(
         &mut self,
         request: V4SimulatedOrderRequest,
@@ -2399,6 +2833,36 @@ impl V4SimulatedExecutionRuntimeState {
         }
     }
 
+    fn expire_orders(&mut self, now_ms: u64) -> V4SimulatedExecutionOutcome {
+        let mut events = Vec::new();
+        for index in 0..self.orders.len() {
+            let Some(expire_at_ms) = self.orders[index].expire_at_ms else {
+                continue;
+            };
+            if self.orders[index].status != V4SimulatedOrderStatus::Accepted
+                || expire_at_ms > now_ms
+            {
+                continue;
+            }
+            let mut order = self.orders[index].clone();
+            order.status = V4SimulatedOrderStatus::Expired;
+            order.ts_ms = now_ms;
+            self.orders[index] = order.clone();
+            events.push((
+                EVENT_EXECUTION_ORDER_EXPIRED,
+                json!({ "order": order, "expire_at_ms": expire_at_ms }),
+            ));
+        }
+        if !events.is_empty() {
+            self.record_asset_point(now_ms);
+            events.push((
+                EVENT_EXECUTION_PORTFOLIO_CHANGED,
+                json!({ "snapshot": self.snapshot() }),
+            ));
+        }
+        V4SimulatedExecutionOutcome { events }
+    }
+
     fn update_market_price(
         &mut self,
         venue_id: &str,
@@ -2417,6 +2881,7 @@ impl V4SimulatedExecutionRuntimeState {
         }
         self.record_asset_point(ts_ms);
         let mut events = Vec::new();
+        events.extend(self.expire_orders(ts_ms).events);
         events.extend(self.check_order_triggers(venue_id, symbol, price, ts_ms));
         events.push((
             EVENT_EXECUTION_PORTFOLIO_CHANGED,
@@ -2464,6 +2929,13 @@ impl V4SimulatedExecutionRuntimeState {
                 }
                 continue;
             }
+
+            if order.order_type == V4SimulatedOrderType::TrailingStop {
+                events.extend(self.update_trailing_stop(index, price, ts_ms));
+            }
+            let Some(order) = self.orders.get(index).cloned() else {
+                continue;
+            };
 
             if !is_conditional_order_type(order.order_type) {
                 continue;
@@ -2516,6 +2988,72 @@ impl V4SimulatedExecutionRuntimeState {
         events
     }
 
+    fn update_trailing_stop(
+        &mut self,
+        index: usize,
+        price: f64,
+        ts_ms: u64,
+    ) -> Vec<(&'static str, Value)> {
+        let Some(mut order) = self.orders.get(index).cloned() else {
+            return Vec::new();
+        };
+        if order.status != V4SimulatedOrderStatus::Accepted
+            || order.order_type != V4SimulatedOrderType::TrailingStop
+        {
+            return Vec::new();
+        }
+        let Some(offset_bps) = order.trailing_offset_bps else {
+            return Vec::new();
+        };
+        let offset = offset_bps / 10_000.0;
+        let old_trigger = order.trigger_price;
+        match order.side {
+            V4SimulatedOrderSide::Sell => {
+                let peak = order
+                    .trailing_peak_price
+                    .unwrap_or(order.reference_price)
+                    .max(price);
+                order.trailing_peak_price = Some(peak);
+                let next_trigger = peak * (1.0 - offset);
+                order.trigger_price = Some(
+                    order
+                        .trigger_price
+                        .unwrap_or(next_trigger)
+                        .max(next_trigger),
+                );
+            }
+            V4SimulatedOrderSide::Buy => {
+                let trough = order
+                    .trailing_trough_price
+                    .unwrap_or(order.reference_price)
+                    .min(price);
+                order.trailing_trough_price = Some(trough);
+                let next_trigger = trough * (1.0 + offset);
+                order.trigger_price = Some(
+                    order
+                        .trigger_price
+                        .unwrap_or(next_trigger)
+                        .min(next_trigger),
+                );
+            }
+        }
+        order.reference_price = price;
+        order.ts_ms = ts_ms;
+        if old_trigger == order.trigger_price {
+            self.orders[index] = order;
+            return Vec::new();
+        }
+        self.orders[index] = order.clone();
+        vec![(
+            EVENT_EXECUTION_ORDER_AMENDED,
+            json!({
+                "order": order,
+                "reason": "trailing_stop_adjusted",
+                "previous_trigger_price": old_trigger,
+            }),
+        )]
+    }
+
     fn request_from_order(
         &self,
         order: &V4SimulatedOrder,
@@ -2533,6 +3071,10 @@ impl V4SimulatedExecutionRuntimeState {
             reference_price,
             limit_price: order.limit_price,
             trigger_price: order.trigger_price,
+            take_profit_price: order.take_profit_price,
+            stop_loss_price: order.stop_loss_price,
+            trailing_offset_bps: order.trailing_offset_bps,
+            expire_at_ms: order.expire_at_ms,
             time_in_force: order.time_in_force,
             post_only: false,
             reduce_only: order.action.is_reducing(),
@@ -2623,10 +3165,55 @@ impl V4SimulatedExecutionRuntimeState {
             EVENT_EXECUTION_FEE_CHARGED,
             json!({ "order_id": fill.order_id, "fee": fill.fee, "fee_asset": fill.fee_asset }),
         ));
+        if order.status == V4SimulatedOrderStatus::Filled {
+            events.extend(self.cancel_oco_siblings(&order, ts_ms));
+        }
         events.push((
             EVENT_EXECUTION_PORTFOLIO_CHANGED,
             json!({ "snapshot": self.snapshot() }),
         ));
+        events
+    }
+
+    fn cancel_oco_siblings(
+        &mut self,
+        filled_order: &V4SimulatedOrder,
+        ts_ms: u64,
+    ) -> Vec<(&'static str, Value)> {
+        let Some(group_id) = filled_order
+            .oco_group_id
+            .clone()
+            .or_else(|| filled_order.parent_order_id.clone())
+        else {
+            return Vec::new();
+        };
+        let mut events = Vec::new();
+        for index in 0..self.orders.len() {
+            let should_cancel = {
+                let order = &self.orders[index];
+                order.status == V4SimulatedOrderStatus::Accepted
+                    && order.order_id != filled_order.order_id
+                    && (order.order_id == group_id
+                        || order.oco_group_id.as_deref() == Some(group_id.as_str())
+                        || order.parent_order_id.as_deref() == Some(group_id.as_str()))
+            };
+            if !should_cancel {
+                continue;
+            }
+            let mut order = self.orders[index].clone();
+            order.status = V4SimulatedOrderStatus::Canceled;
+            order.ts_ms = ts_ms;
+            self.orders[index] = order.clone();
+            events.push((
+                EVENT_EXECUTION_ORDER_CANCELED,
+                json!({
+                    "order": order,
+                    "reason": "oco_sibling_filled",
+                    "filled_order_id": filled_order.order_id,
+                    "oco_group_id": group_id.clone(),
+                }),
+            ));
+        }
         events
     }
 
@@ -2682,6 +3269,23 @@ impl V4SimulatedExecutionRuntimeState {
             reference_price: request.reference_price,
             limit_price: request.limit_price,
             trigger_price: request.trigger_price,
+            take_profit_price: request.take_profit_price,
+            stop_loss_price: request.stop_loss_price,
+            trailing_offset_bps: request.trailing_offset_bps,
+            expire_at_ms: request.expire_at_ms,
+            parent_order_id: None,
+            oco_group_id: None,
+            trailing_peak_price: if request.order_type == V4SimulatedOrderType::TrailingStop {
+                Some(request.reference_price)
+            } else {
+                None
+            },
+            trailing_trough_price: if request.order_type == V4SimulatedOrderType::TrailingStop {
+                Some(request.reference_price)
+            } else {
+                None
+            },
+            amend_revision: 0,
             fill_price: None,
             status: V4SimulatedOrderStatus::Accepted,
             rejection_reason: None,
@@ -2887,6 +3491,37 @@ impl V4SimulatedExecutionRuntimeState {
             last_fill: self.fills.last().cloned(),
         }
     }
+
+    fn microstructure_metrics(&self) -> qrpc_core_ir::v4::V4BacktestMicrostructureMetrics {
+        let orders = self
+            .orders
+            .iter()
+            .map(|order| MicrostructureOrderSample {
+                requested_quantity: order.requested_quantity,
+                filled_quantity: order.filled_quantity,
+                reference_price: order.reference_price,
+                is_open: order.status == V4SimulatedOrderStatus::Accepted,
+            })
+            .collect::<Vec<_>>();
+        let fills = self
+            .fills
+            .iter()
+            .filter_map(|fill| {
+                let reference_price = self
+                    .orders
+                    .iter()
+                    .find(|order| order.order_id == fill.order_id)
+                    .map(|order| order.reference_price)
+                    .unwrap_or(fill.price);
+                (reference_price > 0.0).then_some(MicrostructureFillSample {
+                    quantity: fill.quantity,
+                    price: fill.price,
+                    reference_price,
+                })
+            })
+            .collect::<Vec<_>>();
+        compute_microstructure_metrics(&orders, &fills)
+    }
 }
 
 fn transition_source_matches(
@@ -2983,6 +3618,7 @@ fn is_conditional_order_type(order_type: V4SimulatedOrderType) -> bool {
             | V4SimulatedOrderType::StopLimit
             | V4SimulatedOrderType::TakeProfitMarket
             | V4SimulatedOrderType::TakeProfitLimit
+            | V4SimulatedOrderType::TrailingStop
     )
 }
 
@@ -2991,6 +3627,7 @@ fn conditional_order_execution_type(order_type: V4SimulatedOrderType) -> V4Simul
         V4SimulatedOrderType::StopMarket | V4SimulatedOrderType::TakeProfitMarket => {
             V4SimulatedOrderType::Market
         }
+        V4SimulatedOrderType::TrailingStop => V4SimulatedOrderType::Market,
         V4SimulatedOrderType::StopLimit | V4SimulatedOrderType::TakeProfitLimit => {
             V4SimulatedOrderType::Limit
         }
@@ -3004,7 +3641,9 @@ fn conditional_order_is_triggered(
     trigger_price: f64,
 ) -> bool {
     match order.order_type {
-        V4SimulatedOrderType::StopMarket | V4SimulatedOrderType::StopLimit => match order.side {
+        V4SimulatedOrderType::StopMarket
+        | V4SimulatedOrderType::StopLimit
+        | V4SimulatedOrderType::TrailingStop => match order.side {
             V4SimulatedOrderSide::Buy => market_price >= trigger_price,
             V4SimulatedOrderSide::Sell => market_price <= trigger_price,
         },
@@ -3064,6 +3703,29 @@ fn validate_simulated_order_request(request: &V4SimulatedOrderRequest) -> Result
         .is_some_and(|value| !value.is_finite() || value <= 0.0)
     {
         return Err("提供 trigger_price 时必须是有限数且大于 0".to_string());
+    }
+    if request
+        .take_profit_price
+        .is_some_and(|value| !value.is_finite() || value <= 0.0)
+    {
+        return Err("take_profit_price must be finite and positive".to_string());
+    }
+    if request
+        .stop_loss_price
+        .is_some_and(|value| !value.is_finite() || value <= 0.0)
+    {
+        return Err("stop_loss_price must be finite and positive".to_string());
+    }
+    if request
+        .trailing_offset_bps
+        .is_some_and(|value| !value.is_finite() || value <= 0.0)
+    {
+        return Err("trailing_offset_bps must be finite and positive".to_string());
+    }
+    if matches!(request.time_in_force, Some(V4SimulatedTimeInForce::Gtd))
+        && request.expire_at_ms.is_none()
+    {
+        return Err("GTD order requires expire_at_ms".to_string());
     }
     if !request.fee_bps.is_finite() || request.fee_bps < 0.0 {
         return Err("fee_bps 必须是有限数且不小于 0".to_string());
@@ -3171,6 +3833,15 @@ fn payload_f64(payload: &Value, names: &[&str]) -> Option<f64> {
         value
             .as_f64()
             .or_else(|| value.as_str().and_then(|raw| raw.parse::<f64>().ok()))
+    })
+}
+
+fn payload_u64(payload: &Value, names: &[&str]) -> Option<u64> {
+    names.iter().find_map(|name| {
+        let value = payload.get(*name)?;
+        value
+            .as_u64()
+            .or_else(|| value.as_str().and_then(|raw| raw.parse::<u64>().ok()))
     })
 }
 
@@ -3392,6 +4063,30 @@ mod tests {
             .unwrap();
         market.source = CapabilitySupportSource::ProviderNative;
         market.supported_modes = vec![RuntimeTradingMode::PaperSimulated];
+        matrix
+    }
+
+    fn provider_native_market_matrix_for_live_actual() -> VenueCapabilityMatrix {
+        let mut matrix = unsupported_v4_first_wave_matrix("paper-local");
+        let market = matrix
+            .capabilities
+            .iter_mut()
+            .find(|entry| entry.capability == ExecutionCapabilityKind::Market)
+            .unwrap();
+        market.source = CapabilitySupportSource::ProviderNative;
+        market.supported_modes = vec![RuntimeTradingMode::LiveActual];
+        matrix
+    }
+
+    fn runtime_simulated_market_matrix_for_live_actual() -> VenueCapabilityMatrix {
+        let mut matrix = unsupported_v4_first_wave_matrix("paper-local");
+        let market = matrix
+            .capabilities
+            .iter_mut()
+            .find(|entry| entry.capability == ExecutionCapabilityKind::Market)
+            .unwrap();
+        market.source = CapabilitySupportSource::RuntimeSimulated;
+        market.supported_modes = vec![RuntimeTradingMode::LiveActual];
         matrix
     }
 
@@ -3874,6 +4569,10 @@ mod tests {
             reference_price: 100.0,
             limit_price: None,
             trigger_price: Some(95.0),
+            take_profit_price: None,
+            stop_loss_price: None,
+            trailing_offset_bps: None,
+            expire_at_ms: None,
             time_in_force: Some(V4SimulatedTimeInForce::Gtc),
             post_only: false,
             reduce_only: true,
@@ -3904,6 +4603,246 @@ mod tests {
         assert_eq!(snapshot.open_order_count, 0);
         assert_eq!(snapshot.fill_count, 2);
         assert!(snapshot.positions[0].net_quantity.abs() < 1e-9);
+    }
+
+    #[test]
+    fn v4_runtime_oco_bracket_fills_one_leg_and_cancels_the_other() {
+        let mut runtime = sample_runtime();
+        runtime
+            .submit_event(V4RuntimeInputEvent {
+                event_type: V4_COMPAT_CORE_IR_LOADED_EVENT.to_string(),
+                source: "runtime".to_string(),
+                payload: json!({ "strategy_id": "runtime.compat.sample" }),
+                ts_ms: 1,
+            })
+            .unwrap();
+
+        let request = V4SimulatedOrderRequest {
+            order_id: Some("bracket-1".to_string()),
+            client_order_id: None,
+            venue_id: "paper-local".to_string(),
+            symbol: "BTCUSDT".to_string(),
+            action: V4SimulatedPositionAction::CloseLong,
+            order_type: V4SimulatedOrderType::OcoBracket,
+            quantity: 1.0,
+            reference_price: 100.0,
+            limit_price: None,
+            trigger_price: None,
+            take_profit_price: Some(110.0),
+            stop_loss_price: Some(95.0),
+            trailing_offset_bps: None,
+            expire_at_ms: None,
+            time_in_force: Some(V4SimulatedTimeInForce::Gtc),
+            post_only: false,
+            reduce_only: true,
+            close_only: true,
+            allow_partial_fill: true,
+            fee_bps: 10.0,
+            slippage_bps: 0.0,
+            max_fill_quantity: None,
+        };
+        runtime.simulated_execution.submit_order(request, 1, 2);
+
+        let events = runtime
+            .update_simulated_market_price("paper-local", "BTCUSDT", 111.0, 3)
+            .unwrap();
+        let snapshot = runtime.simulated_execution_snapshot();
+
+        assert!(events
+            .iter()
+            .any(|event| event.event_type == EVENT_EXECUTION_ORDER_CANCELED));
+        assert_eq!(snapshot.open_order_count, 0);
+        assert_eq!(snapshot.fill_count, 2);
+        assert!(snapshot.positions[0].net_quantity.abs() < 1e-9);
+    }
+
+    #[test]
+    fn v4_runtime_trailing_stop_updates_trigger_then_fills() {
+        let mut runtime = sample_runtime();
+        runtime
+            .submit_event(V4RuntimeInputEvent {
+                event_type: V4_COMPAT_CORE_IR_LOADED_EVENT.to_string(),
+                source: "runtime".to_string(),
+                payload: json!({ "strategy_id": "runtime.compat.sample" }),
+                ts_ms: 1,
+            })
+            .unwrap();
+
+        let request = V4SimulatedOrderRequest {
+            order_id: Some("trail-1".to_string()),
+            client_order_id: None,
+            venue_id: "paper-local".to_string(),
+            symbol: "BTCUSDT".to_string(),
+            action: V4SimulatedPositionAction::CloseLong,
+            order_type: V4SimulatedOrderType::TrailingStop,
+            quantity: 1.0,
+            reference_price: 100.0,
+            limit_price: None,
+            trigger_price: None,
+            take_profit_price: None,
+            stop_loss_price: None,
+            trailing_offset_bps: Some(100.0),
+            expire_at_ms: None,
+            time_in_force: Some(V4SimulatedTimeInForce::Gtc),
+            post_only: false,
+            reduce_only: true,
+            close_only: true,
+            allow_partial_fill: true,
+            fee_bps: 10.0,
+            slippage_bps: 0.0,
+            max_fill_quantity: None,
+        };
+        runtime.simulated_execution.submit_order(request, 1, 2);
+
+        let first_update = runtime
+            .update_simulated_market_price("paper-local", "BTCUSDT", 110.0, 3)
+            .unwrap();
+        assert!(first_update
+            .iter()
+            .any(|event| event.event_type == EVENT_EXECUTION_ORDER_AMENDED));
+        let last_order = runtime.simulated_execution_snapshot().last_order.unwrap();
+        assert_eq!(last_order.trigger_price, Some(108.9));
+
+        let fill_events = runtime
+            .update_simulated_market_price("paper-local", "BTCUSDT", 108.0, 4)
+            .unwrap();
+        assert!(fill_events
+            .iter()
+            .any(|event| event.event_type == EVENT_EXECUTION_ORDER_FILLED));
+        assert!(
+            runtime.simulated_execution_snapshot().positions[0]
+                .net_quantity
+                .abs()
+                < 1e-9
+        );
+    }
+
+    #[test]
+    fn v4_runtime_gtd_order_expires_on_advance_time() {
+        let mut runtime = sample_runtime();
+        let request = V4SimulatedOrderRequest {
+            order_id: Some("gtd-1".to_string()),
+            client_order_id: None,
+            venue_id: "paper-local".to_string(),
+            symbol: "BTCUSDT".to_string(),
+            action: V4SimulatedPositionAction::Buy,
+            order_type: V4SimulatedOrderType::Limit,
+            quantity: 1.0,
+            reference_price: 100.0,
+            limit_price: Some(90.0),
+            trigger_price: None,
+            take_profit_price: None,
+            stop_loss_price: None,
+            trailing_offset_bps: None,
+            expire_at_ms: Some(10),
+            time_in_force: Some(V4SimulatedTimeInForce::Gtd),
+            post_only: false,
+            reduce_only: false,
+            close_only: false,
+            allow_partial_fill: true,
+            fee_bps: 10.0,
+            slippage_bps: 0.0,
+            max_fill_quantity: None,
+        };
+        runtime.simulated_execution.submit_order(request, 1, 2);
+
+        let events = runtime.advance_time(10);
+
+        assert!(events
+            .iter()
+            .any(|event| event.event_type == EVENT_EXECUTION_ORDER_EXPIRED));
+        assert_eq!(runtime.simulated_execution_snapshot().open_order_count, 0);
+    }
+
+    #[test]
+    fn v4_runtime_amends_open_order_without_replacing_order_id() {
+        let mut runtime = sample_runtime();
+        let request = V4SimulatedOrderRequest {
+            order_id: Some("amendable-1".to_string()),
+            client_order_id: None,
+            venue_id: "paper-local".to_string(),
+            symbol: "BTCUSDT".to_string(),
+            action: V4SimulatedPositionAction::Buy,
+            order_type: V4SimulatedOrderType::Limit,
+            quantity: 1.0,
+            reference_price: 100.0,
+            limit_price: Some(90.0),
+            trigger_price: None,
+            take_profit_price: None,
+            stop_loss_price: None,
+            trailing_offset_bps: None,
+            expire_at_ms: None,
+            time_in_force: Some(V4SimulatedTimeInForce::Gtc),
+            post_only: false,
+            reduce_only: false,
+            close_only: false,
+            allow_partial_fill: true,
+            fee_bps: 10.0,
+            slippage_bps: 0.0,
+            max_fill_quantity: None,
+        };
+        runtime.simulated_execution.submit_order(request, 1, 2);
+
+        let outcome = runtime.simulated_execution.amend_order(
+            "amendable-1",
+            Some(100.0),
+            Some(91.0),
+            None,
+            Some(0.5),
+            3,
+        );
+        let order = runtime.simulated_execution_snapshot().last_order.unwrap();
+
+        assert!(outcome
+            .events
+            .iter()
+            .any(|(event_type, _)| *event_type == EVENT_EXECUTION_ORDER_AMENDED));
+        assert_eq!(order.order_id, "amendable-1");
+        assert_eq!(order.limit_price, Some(91.0));
+        assert_eq!(order.requested_quantity, 0.5);
+        assert_eq!(order.amend_revision, 1);
+    }
+
+    #[test]
+    fn v4_backtest_tick_replay_is_deterministic_and_reports_micro_metrics() {
+        let ticks = vec![
+            V4BacktestTickInput {
+                venue_id: "paper-local".to_string(),
+                symbol: "BTCUSDT".to_string(),
+                price: 70_250.0,
+                size: 1.0,
+                ts_ms: 1_700_000_060_000,
+                sequence: 2,
+                event_type: V4_COMPAT_CORE_IR_LOADED_EVENT.to_string(),
+            },
+            V4BacktestTickInput {
+                venue_id: "paper-local".to_string(),
+                symbol: "BTCUSDT".to_string(),
+                price: 70_000.0,
+                size: 1.0,
+                ts_ms: 1_700_000_000_000,
+                sequence: 1,
+                event_type: V4_COMPAT_CORE_IR_LOADED_EVENT.to_string(),
+            },
+        ];
+        let run_once = || {
+            let mut runtime = V4PaperSimulatedRuntime::new_for_backtest(
+                sample_compat_graph(),
+                runtime_simulated_market_matrix(),
+                vec![ExecutionCapabilityKind::Market],
+            )
+            .unwrap();
+            runtime.run_backtest_ticks(&ticks).unwrap()
+        };
+
+        let left = run_once();
+        let right = run_once();
+
+        assert_eq!(left.machine_trajectory, right.machine_trajectory);
+        assert_eq!(left.replay_mode, "tick_replay");
+        assert_eq!(left.input_tick_count, Some(2));
+        assert_eq!(left.input_bar_count, 0);
+        assert!(left.microstructure_metrics.is_some());
     }
 
     #[test]
@@ -3944,6 +4883,10 @@ mod tests {
             reference_price: 100.0,
             limit_price: Some(99.0),
             trigger_price: None,
+            take_profit_price: None,
+            stop_loss_price: None,
+            trailing_offset_bps: None,
+            expire_at_ms: None,
             time_in_force: None,
             post_only: false,
             reduce_only: false,
@@ -4034,15 +4977,87 @@ mod tests {
     }
 
     #[test]
-    fn v4_runtime_rejects_non_paper_simulated_mode_in_phase_five() {
+    fn v4_runtime_rejects_live_simulated_mode_until_supported() {
         let bridge_report = bridge_core_ir_to_v4_machine_graph(&sample_core_ir_for_v4_runtime());
         let error = V4PaperSimulatedRuntime::new_for_mode(
             bridge_report.graph.unwrap(),
-            RuntimeTradingMode::LiveActual,
+            RuntimeTradingMode::LiveSimulated,
         )
         .unwrap_err();
 
         assert!(error.to_string().contains("只允许 PaperSimulated 模式"));
+    }
+
+    #[test]
+    fn v4_live_actual_boundary_allows_provider_actual_mode_but_keeps_submit_detached() {
+        let runtime = V4Runtime::new_for_mode_with_execution_capabilities(
+            sample_compat_graph(),
+            RuntimeTradingMode::LiveActual,
+            provider_native_market_matrix_for_live_actual(),
+            vec![ExecutionCapabilityKind::Market],
+        )
+        .unwrap();
+        let snapshot = runtime.memory_snapshot(1);
+
+        assert_eq!(snapshot.runtime_mode, RuntimeTradingMode::LiveActual);
+        assert!(
+            snapshot
+                .venue_adapter_boundary
+                .provider_order_submission_allowed
+        );
+        assert!(
+            !snapshot
+                .venue_adapter_boundary
+                .provider_order_submission_attached
+        );
+        assert_eq!(
+            snapshot.venue_adapter_boundary.settlement_authority,
+            RuntimeSettlementAuthority::ProviderActual
+        );
+    }
+
+    #[test]
+    fn v4_live_actual_rejects_runtime_simulated_capability_source() {
+        let mut runtime = V4Runtime::new_for_mode_with_execution_capabilities(
+            sample_compat_graph(),
+            RuntimeTradingMode::LiveActual,
+            runtime_simulated_market_matrix_for_live_actual(),
+            vec![ExecutionCapabilityKind::Market],
+        )
+        .unwrap();
+
+        let output = runtime
+            .submit_event(V4RuntimeInputEvent {
+                event_type: V4_COMPAT_CORE_IR_LOADED_EVENT.to_string(),
+                source: "runtime".to_string(),
+                payload: json!({ "strategy_id": "runtime.compat.sample" }),
+                ts_ms: 1,
+            })
+            .unwrap();
+
+        assert!(output
+            .events
+            .iter()
+            .any(|event| event.event_type == EVENT_EXECUTION_CAPABILITY_REJECTED));
+        assert_eq!(output.memory_snapshot.execution.accepted_count, 0);
+        assert_eq!(output.memory_snapshot.execution.rejected_count, 1);
+        assert!(output
+            .memory_snapshot
+            .execution
+            .last_decision
+            .as_ref()
+            .unwrap()
+            .reason
+            .contains("provider_native"));
+    }
+
+    #[test]
+    fn v4_live_actual_without_risk_plane_is_rejected() {
+        let mut graph = sample_compat_graph();
+        graph.risk_plane = None;
+        let error = V4Runtime::new_for_mode(graph, RuntimeTradingMode::LiveActual).unwrap_err();
+
+        assert!(error.to_string().contains("Risk Plane"));
     }
 
     #[test]
