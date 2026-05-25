@@ -44,7 +44,7 @@ impl LiveRunner {
             kline_pool: KlinePool::new(Self::KLINE_POOL_CAPACITY),
             trigger_broadcast: bc,
             // v3.6.x: Paper模式启动即Running, 不依赖Connected事件
-            status: if s.execution_mode == ExecutionMode::Paper {
+            status: if s.execution_mode.starts_without_provider_connection() {
                 RunnerStatus::Running
             } else {
                 RunnerStatus::Idle
@@ -116,7 +116,7 @@ impl LiveRunner {
         if self.status != RunnerStatus::Running {
             return;
         }
-        if self.execution_mode == ExecutionMode::Live
+        if self.execution_mode.provider_order_submission_attached()
             && self.daily_order_count >= Self::MAX_DAILY_ORDER_COUNT
         {
             self.status = RunnerStatus::Faulted("daily_order_count_exceeded".to_string());
@@ -309,7 +309,7 @@ impl V4Runner {
             runtime,
             subscribed_symbols: s.subscribed_symbols.clone(),
             kline_pool: KlinePool::new(Self::KLINE_POOL_CAPACITY),
-            status: if s.execution_mode == ExecutionMode::Paper {
+            status: if s.execution_mode.starts_without_provider_connection() {
                 RunnerStatus::Running
             } else {
                 RunnerStatus::Idle

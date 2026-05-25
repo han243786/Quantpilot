@@ -91,15 +91,63 @@ pub enum StrategyStatus {
     Error(String),
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum ExecutionMode {
-    Paper,
-    Live,
+    #[serde(alias = "paper", alias = "Paper", alias = "PaperSimulated")]
+    PaperSimulated,
+    #[serde(
+        alias = "paper_actual",
+        alias = "PaperActual",
+        alias = "testnet",
+        alias = "okx_demo"
+    )]
+    PaperActual,
+}
+
+impl ExecutionMode {
+    pub const ALL: [Self; 2] = [Self::PaperSimulated, Self::PaperActual];
+
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::PaperSimulated => "paper_simulated",
+            Self::PaperActual => "paper_actual",
+        }
+    }
+
+    pub fn display_label(self) -> &'static str {
+        match self {
+            Self::PaperSimulated => "实时模拟盘 / 本地撮合",
+            Self::PaperActual => "OKX 模拟盘 / 非真实资金",
+        }
+    }
+
+    pub fn starts_without_provider_connection(self) -> bool {
+        matches!(self, Self::PaperSimulated)
+    }
+
+    pub fn provider_order_submission_attached(self) -> bool {
+        matches!(self, Self::PaperActual)
+    }
+
+    pub fn from_api_label(value: &str) -> Option<Self> {
+        match value.trim().to_ascii_lowercase().as_str() {
+            "" | "paper" | "paper_simulated" | "runtime_simulated" | "simulated" => {
+                Some(Self::PaperSimulated)
+            }
+            "paper_actual" | "okx_demo" | "testnet" | "demo" => Some(Self::PaperActual),
+            _ => None,
+        }
+    }
+
+    pub fn available_mode_keys() -> Vec<&'static str> {
+        Self::ALL.iter().map(|mode| mode.as_str()).collect()
+    }
 }
 
 impl Default for ExecutionMode {
     fn default() -> Self {
-        Self::Paper
+        Self::PaperSimulated
     }
 }
 
@@ -122,7 +170,7 @@ pub struct ExecutorState {
     pub runner_pool: Mutex<Option<Arc<Mutex<RunnerPool>>>>,
     /// WS事件发送端: exchange_name -> tx
     pub ws_tx_map: RwLock<BTreeMap<String, mpsc::UnboundedSender<WsEvent>>>,
-    /// v3.5.0: 全局执行模式 (Paper/Live), 影响WS连接和下单路径
+    /// v4.8.0: 全局执行模式固定为两个模拟盘切面。
     pub global_mode: RwLock<ExecutionMode>,
     pub audit_log: AuditLog,
 }
@@ -137,7 +185,7 @@ impl ExecutorState {
             params_snapshots: RwLock::new(BTreeMap::new()),
             runner_pool: Mutex::new(None),
             ws_tx_map: RwLock::new(BTreeMap::new()),
-            global_mode: RwLock::new(ExecutionMode::Paper),
+            global_mode: RwLock::new(ExecutionMode::PaperSimulated),
             audit_log: AuditLog::new(&default_storage_dir()),
         })
     }
@@ -284,7 +332,7 @@ impl ExecutorState {
                     params,
                     status: StrategyStatus::Loaded,
                     subscribed_symbols: vec![],
-                    execution_mode: ExecutionMode::Paper,
+                    execution_mode: ExecutionMode::PaperSimulated,
                 },
             );
         }
@@ -296,7 +344,7 @@ impl ExecutorState {
             params_snapshots: RwLock::new(BTreeMap::new()),
             runner_pool: Mutex::new(None),
             ws_tx_map: RwLock::new(BTreeMap::new()),
-            global_mode: RwLock::new(ExecutionMode::Paper),
+            global_mode: RwLock::new(ExecutionMode::PaperSimulated),
             audit_log: AuditLog::new(path.parent().unwrap_or_else(|| Path::new("storage"))),
         }))
     }
@@ -357,6 +405,35 @@ fn write_file_atomically(path: &Path, bytes: &[u8]) -> anyhow::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn execution_mode_api_labels_are_explicit_simulated_slices() {
+        assert_eq!(
+            ExecutionMode::from_api_label("paper"),
+            Some(ExecutionMode::PaperSimulated)
+        );
+        assert_eq!(
+            ExecutionMode::from_api_label("paper_simulated"),
+            Some(ExecutionMode::PaperSimulated)
+        );
+        assert_eq!(
+            ExecutionMode::from_api_label("paper_actual"),
+            Some(ExecutionMode::PaperActual)
+        );
+        assert_eq!(ExecutionMode::from_api_label("live"), None);
+        assert_eq!(
+            ExecutionMode::available_mode_keys(),
+            vec!["paper_simulated", "paper_actual"]
+        );
+    }
+
+    #[test]
+    fn execution_mode_provider_submission_boundary_is_visible() {
+        assert!(ExecutionMode::PaperSimulated.starts_without_provider_connection());
+        assert!(!ExecutionMode::PaperSimulated.provider_order_submission_attached());
+        assert!(!ExecutionMode::PaperActual.starts_without_provider_connection());
+        assert!(ExecutionMode::PaperActual.provider_order_submission_attached());
+    }
 
     #[test]
     fn ring_buffer_capacity_enforced() {

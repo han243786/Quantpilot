@@ -8,8 +8,7 @@ mod executor_state;
 mod kline_buffer;
 mod live_runner;
 mod migration_api;
-#[cfg(test)]
-mod okx_rest;
+pub mod okx_rest;
 mod ws_client;
 
 use axum::{
@@ -188,8 +187,10 @@ async fn health_check() -> &'static str {
 async fn get_mode(State(state): State<Arc<ExecutorState>>) -> Json<serde_json::Value> {
     let mode = state.current_mode();
     Json(serde_json::json!({
-        "mode": format!("{:?}", mode).to_lowercase(),
-        "available_modes": ["paper", "live"]
+        "mode": mode.as_str(),
+        "mode_label": mode.display_label(),
+        "available_modes": ExecutionMode::available_mode_keys(),
+        "deferred_modes": ["live_simulated", "live_actual"]
     }))
 }
 
@@ -202,37 +203,56 @@ async fn set_mode(
     State(state): State<Arc<ExecutorState>>,
     Json(req): Json<SetModeRequest>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
-    let new_mode = match req.mode.to_lowercase().as_str() {
-        "paper" => ExecutionMode::Paper,
-        "live" => ExecutionMode::Live,
-        other => {
+    let new_mode = match ExecutionMode::from_api_label(&req.mode) {
+        Some(mode) => mode,
+        None if req.mode.eq_ignore_ascii_case("live")
+            || req.mode.eq_ignore_ascii_case("live_actual")
+            || req.mode.eq_ignore_ascii_case("live_simulated") =>
+        {
+            return Err((
+                StatusCode::BAD_REQUEST,
+                serde_json::json!({
+                    "error": "deferred_mode",
+                    "message": "真实资金或真实账户上下文模式已延后；v4.8.0 仅允许 paper_simulated / paper_actual",
+                    "available_modes": ExecutionMode::available_mode_keys(),
+                    "deferred_modes": ["live_simulated", "live_actual"]
+                })
+                .to_string(),
+            ));
+        }
+        None => {
+            let other = req.mode.as_str();
             return Err((
                 StatusCode::BAD_REQUEST,
                 serde_json::json!({
                     "error": "invalid_mode",
-                    "message": format!("不支持的模式: '{}', 仅支持 paper/live", other),
-                    "available_modes": ["paper", "live"]
+                    "message": format!("不支持的模式: '{}', 仅支持 paper_simulated / paper_actual", other),
+                    "available_modes": ExecutionMode::available_mode_keys(),
+                    "deferred_modes": ["live_simulated", "live_actual"]
                 })
                 .to_string(),
             ));
         }
     };
     let old_mode = state.set_mode(new_mode.clone());
-    let mode_str = format!("{:?}", new_mode).to_lowercase();
+    let mode_str = new_mode.as_str();
     eprintln!("[executor] 模式切换: {:?} → {:?}", old_mode, new_mode);
     append_audit(
         &state,
         "set_mode",
         None,
         serde_json::json!({
-            "previous_mode": format!("{:?}", old_mode).to_lowercase(),
-            "current_mode": mode_str.clone(),
+            "previous_mode": old_mode.as_str(),
+            "current_mode": mode_str,
+            "current_mode_label": new_mode.display_label(),
+            "provider_order_submission_attached": new_mode.provider_order_submission_attached(),
         }),
     );
     Ok(Json(serde_json::json!({
-        "previous_mode": format!("{:?}", old_mode).to_lowercase(),
+        "previous_mode": old_mode.as_str(),
         "current_mode": mode_str,
-        "message": format!("执行端已切换到 {} 模式", if new_mode == ExecutionMode::Live { "实盘" } else { "模拟盘" })
+        "current_mode_label": new_mode.display_label(),
+        "message": format!("执行端已切换到 {} 模式", new_mode.display_label())
     })))
 }
 
@@ -243,7 +263,8 @@ async fn list_strategies(State(state): State<Arc<ExecutorState>>) -> Json<serde_
         .map(|s| {
             serde_json::json!({
                 "strategy_id": s.strategy_id, "name": s.name,
-                "status": format!("{:?}", s.status), "mode": format!("{:?}", s.execution_mode),
+                "status": format!("{:?}", s.status), "mode": s.execution_mode.as_str(),
+                "mode_label": s.execution_mode.display_label(),
                 "runtime_kind": s.runtime_kind.as_str(),
                 "runtime_version": s.runtime_kind.as_str(),
             })
@@ -373,6 +394,7 @@ fn deploy_v4_strategy(
             format!("v4 graph 序列化失败: {}", e),
         )
     })?;
+    let execution_mode = parse_execution_mode(request.execution_mode.as_deref())?;
     let strategy = ActiveStrategy {
         strategy_id: strategy_id.clone(),
         name,
@@ -383,7 +405,7 @@ fn deploy_v4_strategy(
         params,
         status: StrategyStatus::Loaded,
         subscribed_symbols,
-        execution_mode: parse_execution_mode(request.execution_mode.as_deref())?,
+        execution_mode,
     };
     state.register(strategy).map_err(|e| {
         (
@@ -395,13 +417,19 @@ fn deploy_v4_strategy(
         state,
         "load_strategy",
         Some(strategy_id.clone()),
-        serde_json::json!({ "source": "executor_v4_deploy", "runtime_kind": "v4" }),
+        serde_json::json!({
+            "source": "executor_v4_deploy",
+            "runtime_kind": "v4",
+            "execution_mode": execution_mode.as_str(),
+            "execution_mode_label": execution_mode.display_label(),
+        }),
     );
     Ok(serde_json::json!({
         "status": "loaded",
         "strategy_id": strategy_id,
         "runtime_kind": "v4",
         "runtime_version": "v4",
+        "execution_mode": execution_mode.as_str(),
         "graph_id": graph_id,
     }))
 }
@@ -409,12 +437,22 @@ fn deploy_v4_strategy(
 fn parse_execution_mode(
     value: Option<&str>,
 ) -> Result<ExecutionMode, (axum::http::StatusCode, String)> {
-    match value.unwrap_or("paper").to_ascii_lowercase().as_str() {
-        "paper" => Ok(ExecutionMode::Paper),
-        "live" => Ok(ExecutionMode::Live),
-        other => Err((
+    let raw = value.unwrap_or("paper_simulated");
+    match ExecutionMode::from_api_label(raw) {
+        Some(mode) => Ok(mode),
+        None if raw.eq_ignore_ascii_case("live")
+            || raw.eq_ignore_ascii_case("live_actual")
+            || raw.eq_ignore_ascii_case("live_simulated") =>
+        {
+            Err((
+                axum::http::StatusCode::BAD_REQUEST,
+                "真实资金或真实账户上下文 execution_mode 已延后；请使用 paper_simulated / paper_actual"
+                    .to_string(),
+            ))
+        }
+        None => Err((
             axum::http::StatusCode::BAD_REQUEST,
-            format!("不支持的 execution_mode: {}", other),
+            format!("不支持的 execution_mode: {}", raw),
         )),
     }
 }
@@ -625,6 +663,13 @@ async fn start_strategy(
         if strategy.status == StrategyStatus::Running {
             return Ok(Json(
                 serde_json::json!({"status": "already_running", "strategy_id": strategy_id}),
+            ));
+        }
+        if strategy.execution_mode.provider_order_submission_attached() {
+            return Err((
+                axum::http::StatusCode::NOT_IMPLEMENTED,
+                "PaperActual 的 OKX 模拟盘 provider 回执路径尚未接线；v4.8.0 W0-2 完成前保持 fail-closed"
+                    .to_string(),
             ));
         }
         let pool_opt = state.runner_pool.lock().map_err(|e| {

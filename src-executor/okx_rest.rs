@@ -1,16 +1,36 @@
 /// v3.5.0: OKX REST API 客户端 (testnet)
 /// 文档: https://www.okx.com/docs-v5/
 /// Testnet: https://www.okx.com/api/v5 (需在 headers 中设置 x-simulated-trading: 1)
-#[cfg(test)]
 use anyhow::bail;
 use anyhow::Result;
 use base64::Engine;
 use ring::hmac;
-#[cfg(test)]
 use std::time::{SystemTime, UNIX_EPOCH};
 
-#[cfg(test)]
 const OKX_REST_BASE: &str = "https://www.okx.com";
+const OKX_DEMO_SDK_FLAG: &str = "1";
+#[cfg(test)]
+const OKX_PRODUCTION_SDK_FLAG: &str = "0";
+const OKX_SIMULATED_TRADING_HEADER: (&str, &str) = ("x-simulated-trading", "1");
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct OkxTradingProfile {
+    pub rest_base_url: &'static str,
+    pub sdk_flag: &'static str,
+    pub simulated_trading_header: Option<(&'static str, &'static str)>,
+    pub audit_environment: &'static str,
+}
+
+impl OkxTradingProfile {
+    pub const fn demo() -> Self {
+        Self {
+            rest_base_url: OKX_REST_BASE,
+            sdk_flag: OKX_DEMO_SDK_FLAG,
+            simulated_trading_header: Some(OKX_SIMULATED_TRADING_HEADER),
+            audit_environment: "okx_demo_non_real_funds",
+        }
+    }
+}
 
 /// 生成 OKX API 签名 (HMAC-SHA256)
 /// 签名消息: timestamp + method + request_path + body
@@ -51,7 +71,6 @@ pub struct OkxOrderRequest {
     pub px: Option<String>, // 限价单价格
 }
 
-#[cfg(test)]
 fn validate_credentials(api_key: &str, secret: &str, passphrase: &str) -> Result<()> {
     if api_key.is_empty() || secret.is_empty() || passphrase.is_empty() {
         bail!("OKX API 凭证不能为空: api_key/secret/passphrase 必须全部提供");
@@ -59,9 +78,24 @@ fn validate_credentials(api_key: &str, secret: &str, passphrase: &str) -> Result
     Ok(())
 }
 
-/// 提交订单到 OKX testnet
-#[cfg(test)]
+/// 提交订单到 OKX 模拟盘。
 pub fn place_order(
+    api_key: &str,
+    secret: &str,
+    passphrase: &str,
+    order: &OkxOrderRequest,
+) -> Result<serde_json::Value> {
+    place_order_with_profile(
+        OkxTradingProfile::demo(),
+        api_key,
+        secret,
+        passphrase,
+        order,
+    )
+}
+
+pub fn place_order_with_profile(
+    profile: OkxTradingProfile,
     api_key: &str,
     secret: &str,
     passphrase: &str,
@@ -73,16 +107,17 @@ pub fn place_order(
     let timestamp = okx_timestamp();
     let signature = sign_okx(&timestamp, "POST", request_path, &body, secret)?;
 
-    let url = format!("{}{}", OKX_REST_BASE, request_path);
-    let res: serde_json::Value = ureq::post(&url)
+    let url = format!("{}{}", profile.rest_base_url, request_path);
+    let mut req = ureq::post(&url)
         .set("OK-ACCESS-KEY", api_key)
         .set("OK-ACCESS-SIGN", &signature)
         .set("OK-ACCESS-TIMESTAMP", &timestamp)
         .set("OK-ACCESS-PASSPHRASE", passphrase)
-        .set("x-simulated-trading", "1")
-        .set("Content-Type", "application/json")
-        .send_string(&body)?
-        .into_json()?;
+        .set("Content-Type", "application/json");
+    if let Some((name, value)) = profile.simulated_trading_header {
+        req = req.set(name, value);
+    }
+    let res: serde_json::Value = req.send_string(&body)?.into_json()?;
 
     if res.get("code").and_then(|c| c.as_str()) == Some("0") {
         Ok(res)
@@ -99,24 +134,34 @@ pub fn place_order(
     }
 }
 
-/// 查询账户余额
-#[cfg(test)]
+/// 查询 OKX 模拟盘账户余额。
 pub fn fetch_balance(api_key: &str, secret: &str, passphrase: &str) -> Result<serde_json::Value> {
+    fetch_balance_with_profile(OkxTradingProfile::demo(), api_key, secret, passphrase)
+}
+
+pub fn fetch_balance_with_profile(
+    profile: OkxTradingProfile,
+    api_key: &str,
+    secret: &str,
+    passphrase: &str,
+) -> Result<serde_json::Value> {
     validate_credentials(api_key, secret, passphrase)?;
     let request_path = "/api/v5/account/balance";
     let body = "";
     let timestamp = okx_timestamp();
     let signature = sign_okx(&timestamp, "GET", request_path, body, secret)?;
 
-    let url = format!("{}{}", OKX_REST_BASE, request_path);
-    let res: serde_json::Value = ureq::get(&url)
+    let url = format!("{}{}", profile.rest_base_url, request_path);
+    let mut req = ureq::get(&url)
         .set("OK-ACCESS-KEY", api_key)
         .set("OK-ACCESS-SIGN", &signature)
         .set("OK-ACCESS-TIMESTAMP", &timestamp)
         .set("OK-ACCESS-PASSPHRASE", passphrase)
-        .set("x-simulated-trading", "1")
-        .call()?
-        .into_json()?;
+        .set("Content-Type", "application/json");
+    if let Some((name, value)) = profile.simulated_trading_header {
+        req = req.set(name, value);
+    }
+    let res: serde_json::Value = req.call()?.into_json()?;
 
     if res.get("code").and_then(|c| c.as_str()) == Some("0") {
         Ok(res)
@@ -184,11 +229,38 @@ mod tests {
     }
 
     #[test]
-    fn live_rest_function_items_remain_compilable_without_network_calls() {
+    fn okx_demo_profile_pins_non_real_funds_markers() {
+        let profile = OkxTradingProfile::demo();
+        assert_eq!(profile.rest_base_url, OKX_REST_BASE);
+        assert_eq!(profile.sdk_flag, OKX_DEMO_SDK_FLAG);
+        assert_eq!(OKX_PRODUCTION_SDK_FLAG, "0");
+        assert_eq!(
+            profile.simulated_trading_header,
+            Some(OKX_SIMULATED_TRADING_HEADER)
+        );
+        assert_eq!(profile.audit_environment, "okx_demo_non_real_funds");
+    }
+
+    #[test]
+    fn okx_demo_rest_function_items_remain_compilable_without_network_calls() {
         let _base = OKX_REST_BASE;
+        let _profile = OkxTradingProfile::demo();
         let _place: fn(&str, &str, &str, &OkxOrderRequest) -> Result<serde_json::Value> =
             place_order;
+        let _place_with_profile: fn(
+            OkxTradingProfile,
+            &str,
+            &str,
+            &str,
+            &OkxOrderRequest,
+        ) -> Result<serde_json::Value> = place_order_with_profile;
         let _balance: fn(&str, &str, &str) -> Result<serde_json::Value> = fetch_balance;
+        let _balance_with_profile: fn(
+            OkxTradingProfile,
+            &str,
+            &str,
+            &str,
+        ) -> Result<serde_json::Value> = fetch_balance_with_profile;
         assert!(validate_credentials("", "secret", "passphrase").is_err());
         assert!(validate_credentials("key", "secret", "passphrase").is_ok());
     }

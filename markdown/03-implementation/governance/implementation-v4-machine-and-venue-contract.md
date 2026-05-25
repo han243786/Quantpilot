@@ -330,6 +330,13 @@ quantpilot/runtime-mode-contract/v1
 | `LiveActual` | `live` | `provider_actual` | `provider_actual` | 允许 |
 | `LiveSimulated` | `live` | `local_simulated` | `local_simulated` | 禁止 |
 
+v4.8.0 实施顺序:
+
+- 先完成 `PaperSimulated`: 实时行情输入, 本地模拟撮合、本地账本、本地手续费和本地资产曲线; provider order submission 必须保持 detached。
+- 先完成 `PaperActual`: 只允许接 OKX 模拟盘 API, provider profile 固定 demo flag=1, REST 请求必须带 `x-simulated-trading: 1`, UI、日志和审计必须标注"OKX 模拟盘 / 非真实资金"。
+- 延后 `LiveSimulated`: 该模式需要读取真实账户上下文, 暂不进入 v4.8.0 执行端切面。
+- 延后 `LiveActual`: 该模式存在真实资金下单风险, production flag=0 不进入 v4.8.0 执行端切面。
+
 四种模式必须共享执行事件:
 
 - `order_acknowledged`
