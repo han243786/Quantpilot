@@ -113,7 +113,7 @@ v4.7.0 系统应被理解为：
 - 前端 Toast 通知系统, 术语全中文化, 空状态引导
 - 执行端独立进程 (:3001), ParamsPanel 热调参, Paper/Live 切换
 - v4 PaperSimulated runtime 已具备本地用户启动入口和执行端 v4 runner 集成；真实下单仍由 Risk Plane 和 ExecutionMachine 能力来源约束
-- v4.16.0 模块化抽离已完成 system 入口抽离: `run_server`、`run_api_server` 和启动期 helper 归入 `system.entry.backend_process`，`quantpilot::run_server` 兼容入口保持不变；system 经验已回填为后续抽离准则，10 个叶子的等价基线已铺好，S1/S3/S4/S10 单叶 closeout 已完成，递归模块化流程已明确
+- v4.16.0 模块化抽离已完成 system 入口抽离: `run_server`、`run_api_server` 和启动期 helper 归入 `system.entry.backend_process`，`quantpilot::run_server` 兼容入口保持不变；system 经验已回填为后续抽离准则，10 个叶子的等价基线已铺好，S1/S3/S4/S7/S10 单叶 closeout 已完成，递归模块化流程已明确
 
 ## 当前收尾/发布状态
 
@@ -137,7 +137,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 | v4.13.0 | MINOR governance | 模块树白箱扩面，覆盖 active 模块、关键 public 方法和模块化重构通道 | 已落地 |
 | v4.14.0 | MINOR governance | 治理门禁自动化，检查三矩阵声明、引导坐标、模块树漂移和发布过渡保护 | 已落地 |
 | v4.15.0 | MINOR governance | 三矩阵完全接管 closeout，旧入口导流并形成治理收口报告 | 当前治理基线 |
-| v4.16.0 | MINOR architecture / governance | 模块化抽离第一波，已完成 system 试水、经验回填、10 叶等价基线、递归模块化流程、S1/S3/S4/S10 单叶 closeout，后续六大顶层模块按同一算法推进 | 控制面落地中 |
+| v4.16.0 | MINOR architecture / governance | 模块化抽离第一波，已完成 system 试水、经验回填、10 叶等价基线、递归模块化流程、S1/S3/S4/S7/S10 单叶 closeout，后续六大顶层模块按同一算法推进 | 控制面落地中 |
 
 使用下面的专用文档作为活跃发布与治理界面：
 

@@ -283,6 +283,45 @@ JSON parse；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-ma
 **幻觉检查点**:
 AI 声称 S10 完成时，必须指出本批次没有修改 `.env.example`、`config/runtime_protocol.example.yaml`、`config/strategy_ir.v0.schema.json` 或 `config/strategy_ir.v0.example.json`，只完成配置样例等价 closeout。
 
+### 3.1.6 `system.build_delivery.desktop_build_scripts`
+
+**层级路径**: `root.system.build_delivery.desktop_build_scripts`
+**父模块**: `system.build_delivery`
+**状态**: v4.16 S7 单叶 closeout 完成。Desktop build/dev scripts 已完成白箱登记，不改脚本语义，不继续细分。
+**真实文件**:
+- `src-tauri/build.rs`
+- `src-tauri/build.bat`
+- `src-tauri/dev.bat`
+- `src-tauri/tauri.conf.json`
+- `frontend/package.json`
+
+**职责**:
+承载 Tauri build/dev 前置脚本和 Rust build script，负责把 Tauri CLI 的 build/dev 生命周期连接到前端 build/dev server。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `src-tauri/build.rs` | Cargo build script lifecycle | Tauri build metadata | Cargo / Tauri build | 不得拥有业务构建产物语义 |
+| `src-tauri/build.bat` | Tauri `beforeBuildCommand` | `frontend/dist` production build | Tauri CLI | 不得改变 frontend build 命令或产物路径 |
+| `src-tauri/dev.bat` | Tauri `beforeDevCommand` | Vite dev server on 5173 | Tauri CLI | 不得改变 dev server 端口或 strictPort 语义 |
+
+**关键内部启动实现**:
+| 实现 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `tauri_build::build()` | Tauri build config | build script side effects | `src-tauri/build.rs` | 不得混入 runtime 初始化 |
+| `npm run build` | `frontend/package.json` | Vite production bundle | `src-tauri/build.bat` | 不得绕过 frontend build owner |
+| `npm run dev -- --strictPort` | `frontend/package.json` | Vite dev server 5173 | `src-tauri/dev.bat` | 不得改端口抢占策略 |
+| `beforeBuildCommand` / `beforeDevCommand` | Tauri config | build/dev hook wiring | Tauri CLI | 不得混入 S4 config 变更 |
+
+**父级通信规则**:
+`system.build_delivery.desktop_build_scripts` 只能通过 `system.build_delivery` 提供 desktop build/dev 脚本入口，不拥有根启动脚本、Tauri runtime、Tauri config、CI/release、container proxy、后端 API 或前端业务模块。
+
+**回归保护**:
+`cargo check -p quantpilot-tauri`；`cmd /c src-tauri\build.bat`；受控 `src-tauri\dev.bat` 5173 smoke；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
+
+**幻觉检查点**:
+AI 声称 S7 完成时，必须指出本批次没有修改 `src-tauri/build.rs`、`src-tauri/build.bat` 或 `src-tauri/dev.bat`，只完成 desktop build/dev scripts 等价 closeout。
+
 ### 3.2 `backend.router`
 
 **层级路径**: `root.backend.router`
@@ -799,6 +838,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 - `markdown/06-milestones/v4.16.0/16-system.runtime_profile.config_examples单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/17-system.desktop_shell.tauri_runtime-readiness等价检查.md`
 - `markdown/06-milestones/v4.16.0/18-system.desktop_shell.tauri_runtime单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/19-system.build_delivery.desktop_build_scripts单叶closeout.md`
 
 **职责**:
 作为三矩阵治理控制面，定义提案、判档、父子通信、引导坐标、模块树和发布过渡协议。
@@ -828,6 +868,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/16-system.runtime_profile.config_examples单叶closeout.md` S10 closeout | `system.runtime_profile.config_examples` | 环境变量、runtime protocol、strategy_ir schema/example 等价证据 | system 单叶 closeout | 不得把样例当 runtime 真源 |
 | `markdown/06-milestones/v4.16.0/17-system.desktop_shell.tauri_runtime-readiness等价检查.md` S3 readiness | `system.desktop_shell.tauri_runtime` | Tauri `main`、`wait_for_backend`、3000 readiness 等价证据 | system 单叶 readiness 检查 | 不得把 readiness 检查宣告为完整 S3 closeout |
 | `markdown/06-milestones/v4.16.0/18-system.desktop_shell.tauri_runtime单叶closeout.md` S3 closeout | `system.desktop_shell.tauri_runtime` | 桌面启动 smoke、主窗口生命周期、`CloseMainWindow` 退出证据 | system 单叶 closeout | 不得改 Tauri runtime 代码或继续细分 |
+| `markdown/06-milestones/v4.16.0/19-system.build_delivery.desktop_build_scripts单叶closeout.md` S7 closeout | `system.build_delivery.desktop_build_scripts` | `src-tauri/build.rs`、`src-tauri/build.bat`、`src-tauri/dev.bat`、5173 dev smoke | system 单叶 closeout | 不得改脚本或混入启动脚本语义 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

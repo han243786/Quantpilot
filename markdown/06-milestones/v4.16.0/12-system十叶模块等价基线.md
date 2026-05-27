@@ -55,7 +55,7 @@
 | S4 `system.desktop_shell.tauri_config` | 已完成单叶 closeout | `15-system.desktop_shell.tauri_config单叶closeout.md` 已确认 Tauri 配置等价，不继续细分 |
 | S5 `system.desktop_shell.assets_schema` | 只需登记，不主动抽离 | 作为资产叶子管理 |
 | S6 `system.build_delivery.workspace_manifest` | 需要决策暂停 | 依赖/workspace 影响大，不主动抽 |
-| S7 `system.build_delivery.desktop_build_scripts` | 可低风险登记 | 不与启动脚本混批 |
+| S7 `system.build_delivery.desktop_build_scripts` | 已完成单叶 closeout | `19-system.build_delivery.desktop_build_scripts单叶closeout.md` 已确认 build/dev scripts 等价，不继续细分 |
 | S8 `system.build_delivery.container_proxy` | 按变更触发 | 非桌面默认路径，不主动抽 |
 | S9 `system.build_delivery.ci_release` | 需要决策暂停 | 与测试汰换/发布流程耦合 |
 | S10 `system.runtime_profile.config_examples` | 已完成单叶 closeout | `16-system.runtime_profile.config_examples单叶closeout.md` 已确认配置样例等价，不继续细分 |
@@ -158,8 +158,8 @@
 | 兼容入口 | Tauri build/dev 命令入口不变 |
 | 关键内部实现 | build.rs 编译期逻辑、Windows desktop build/dev 批处理 |
 | 保留外部边界 | 根启动脚本、CI workflow、release packaging、业务构建产物语义 |
-| 等价证据 | `cargo check -p quantpilot-tauri`、脚本参数人工核查、可选 desktop dev smoke |
-| 当前判定 | 可低风险登记；不和 `system.entry.launch_scripts` 混成一批 |
+| 等价证据 | `cargo check -p quantpilot-tauri`、`cmd /c src-tauri\build.bat`、受控 `src-tauri\dev.bat` 5173 smoke、`19-system.build_delivery.desktop_build_scripts单叶closeout.md` |
+| 当前判定 | 已完成单叶 closeout；不改脚本，不继续细分 |
 | 暂停点 | 构建产物路径、dev 命令、环境变量或 Tauri bundling 行为变化 |
 
 ### S8 `system.build_delivery.container_proxy`
@@ -210,13 +210,12 @@
 
 | 优先级 | 叶子 | 动作 |
 | --- | --- | --- |
-| P1 | S7 `system.build_delivery.desktop_build_scripts` | 单独批次登记 desktop build/dev scripts |
 | P2 | S6 `system.build_delivery.workspace_manifest` | 决策暂停后再碰 |
 | P2 | S8 `system.build_delivery.container_proxy` | 按容器相关变更触发 |
 | P2 | S9 `system.build_delivery.ci_release` | 等测试资产汰换策略更稳定后再推进 |
 | P3 | S5 `system.desktop_shell.assets_schema` | 只登记，不主动细分 |
 
-S2 和 S3 已完成，不进入下一步抽离队列。
+S2、S3 和 S7 已完成，不进入下一步抽离队列。
 
 ---
 

@@ -120,4 +120,4 @@
 2. S4 的关键内部配置和保留外部边界已登记。
 3. S4 的 JSON parse 等价证据已登记。
 4. S4 明确不继续细分。
-5. 后续 system 推进可转向 S7 desktop build scripts。
+5. 后续 system 推进可转向 S5 assets/schema、S6 workspace manifest、S8 container proxy 或 S9 ci/release。

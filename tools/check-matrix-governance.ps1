@@ -163,7 +163,8 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/15-*.md", "v4.16 system tauri config leaf closeout"),
     @("markdown/06-milestones/v4.16.0/16-*.md", "v4.16 system runtime profile config examples closeout"),
     @("markdown/06-milestones/v4.16.0/17-*.md", "v4.16 system tauri runtime readiness equivalence check"),
-    @("markdown/06-milestones/v4.16.0/18-*.md", "v4.16 system tauri runtime leaf closeout")
+    @("markdown/06-milestones/v4.16.0/18-*.md", "v4.16 system tauri runtime leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/19-*.md", "v4.16 system desktop build scripts leaf closeout")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -203,6 +204,7 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/16-", "full feature tree v4.16 system runtime profile closeout"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/17-", "full feature tree v4.16 system tauri runtime readiness check"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/18-", "full feature tree v4.16 system tauri runtime closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/19-", "full feature tree v4.16 system desktop build scripts closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/03-", "module tree v4.16 backend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/04-", "module tree v4.16 frontend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/05-", "module tree v4.16 test asset register"),
@@ -219,6 +221,7 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/16-", "module tree v4.16 system runtime profile closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/17-", "module tree v4.16 system tauri runtime readiness check"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/18-", "module tree v4.16 system tauri runtime closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/19-", "module tree v4.16 system desktop build scripts closeout"),
     @("markdown/10-overview/overview-docs-index.md", "v4.16.0", "docs index v4.16 plan"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "v4.16.0", "current roadmap v4.16 plan")
 )
@@ -430,6 +433,21 @@ $v416LandingFiles = @(
         @("quantpilot-tauri.exe", "tauri window process"),
         @("cargo check -p quantpilot-tauri", "tauri check gate"),
         @("tools/check-matrix-governance.ps1", "matrix governance gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/19-*.md", @(
+        @("system.build_delivery.desktop_build_scripts", "system desktop build scripts leaf"),
+        @("src-tauri/build.rs", "tauri build rs file"),
+        @("src-tauri/build.bat", "tauri build bat file"),
+        @("src-tauri/dev.bat", "tauri dev bat file"),
+        @("src-tauri/tauri.conf.json", "tauri config relation"),
+        @("frontend/package.json", "frontend package scripts"),
+        @("tauri_build::build()", "tauri build script call"),
+        @("npm run build", "frontend build command"),
+        @("npm run dev -- --strictPort", "frontend dev strict port command"),
+        @("5173", "frontend dev server port"),
+        @("cmd /c src-tauri\build.bat", "build bat smoke"),
+        @("cargo check -p quantpilot-tauri", "tauri check gate"),
+        @("tools/check-matrix-governance.ps1", "matrix governance gate")
     ))
 )
 
@@ -492,6 +510,7 @@ $requiredModules = @(
     "system.desktop_shell.tauri_runtime",
     "system.desktop_shell.tauri_config",
     "system.runtime_profile.config_examples",
+    "system.build_delivery.desktop_build_scripts",
     "backend.router",
     "backend.capability",
     "backend.strategy_config",

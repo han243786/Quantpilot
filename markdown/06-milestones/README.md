@@ -30,6 +30,7 @@
 | 16 | `v4.16.0/16-system.runtime_profile.config_examples单叶closeout.md` | S10 配置样例白箱 closeout，确认环境、runtime protocol 和 strategy_ir 样例等价并停止继续细分 | ✅ 已完成 |
 | 17 | `v4.16.0/17-system.desktop_shell.tauri_runtime-readiness等价检查.md` | S3 Tauri runtime readiness 等价检查，确认 3000 wait 与启动顺序等价 | ✅ 已完成 |
 | 18 | `v4.16.0/18-system.desktop_shell.tauri_runtime单叶closeout.md` | S3 Tauri runtime 白箱 closeout，确认桌面启动 smoke、窗口生命周期和关闭路径等价并停止继续细分 | ✅ 已完成 |
+| 19 | `v4.16.0/19-system.build_delivery.desktop_build_scripts单叶closeout.md` | S7 desktop build/dev scripts 白箱 closeout，确认 `build.rs`、`build.bat`、`dev.bat` 等价并停止继续细分 | ✅ 已完成 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
