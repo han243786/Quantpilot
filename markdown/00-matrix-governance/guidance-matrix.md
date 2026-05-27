@@ -45,7 +45,7 @@
 | 模块树节点 | 例如 `backend.runtime.mutation` |
 | 真实文件 | `src/runtime/mutation.rs` |
 | public 方法 | `activate_ai_proposal` |
-| 测试/门禁 | `cargo test -p quantpilot api_ai_proposal` |
+| 测试/门禁 | `cargo test -p quantpilot --test api_ai_proposal` |
 | 同步文档 | `implementation-support-matrix.md` |
 ```
 
@@ -71,4 +71,3 @@
 新增、删除或重命名 active 文件时，仍按全量树维护规则更新 `overview-full-feature-tree.md`。
 
 新增、拆分、合并模块或修改关键 public 方法时，必须更新 `module-tree.md`。
-

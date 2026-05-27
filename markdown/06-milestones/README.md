@@ -31,6 +31,16 @@
 | 17 | `v4.16.0/17-system.desktop_shell.tauri_runtime-readiness等价检查.md` | S3 Tauri runtime readiness 等价检查，确认 3000 wait 与启动顺序等价 | ✅ 已完成 |
 | 18 | `v4.16.0/18-system.desktop_shell.tauri_runtime单叶closeout.md` | S3 Tauri runtime 白箱 closeout，确认桌面启动 smoke、窗口生命周期和关闭路径等价并停止继续细分 | ✅ 已完成 |
 | 19 | `v4.16.0/19-system.build_delivery.desktop_build_scripts单叶closeout.md` | S7 desktop build/dev scripts 白箱 closeout，确认 `build.rs`、`build.bat`、`dev.bat` 等价并停止继续细分 | ✅ 已完成 |
+| 20 | `v4.16.0/20-system.entry.backend_process单叶closeout.md` | S2 backend process 白箱 closeout，正式收束启动进程边界并保持 API owner 外置 | ✅ 已完成 |
+| 21 | `v4.16.0/21-system.desktop_shell.assets_schema单叶closeout.md` | S5 assets/schema 白箱 closeout，确认桌面图标和 Tauri generated schema 等价并停止继续细分 | ✅ 已完成 |
+| 22 | `v4.16.0/22-system.build_delivery.container_proxy单叶closeout.md` | S8 container/proxy 静态白箱 closeout，登记 Dockerfile、compose 和 nginx proxy 边界 | ✅ 已完成 |
+| 23 | `v4.16.0/23-system.build_delivery.S6-S9暂停决策记录.md` | S6 workspace manifest 与 S9 CI/release 暂停决策记录，明确不算 closeout 完成 | ✅ 已采纳 |
+| 24 | `v4.16.0/24-system顶层阶段性closeout.md` | system 顶层阶段性 closeout，收束当前允许范围；S1-S10 已完成 closeout 或静态 closeout | ✅ 已完成 |
+| 25 | `v4.16.0/25-system.build_delivery.S6-S9恢复提案与适配性校验.md` | S6/S9 恢复提案与适配性校验，确认只做文档级 closeout，不改 manifest/workflow/release 语义 | ✅ 已完成 |
+| 26 | `v4.16.0/26-system.build_delivery.workspace_manifest单叶closeout.md` | S6 workspace manifest 白箱 closeout，确认 Cargo workspace/package manifest 与 lockfile 边界 | ✅ 已完成 |
+| 27 | `v4.16.0/27-system.build_delivery.ci_release单叶closeout.md` | S9 CI/release 白箱 closeout，确认 workflow、packaging 和 release manifest 边界 | ✅ 已完成 |
+| 28 | `v4.16.0/28-backend大模块分层统计.md` | backend 顶层分层统计，确认 `root.backend` 的 3 层网络和 9 个 L2 叶子候选 | 📋 已创建 |
+| 29 | `v4.16.0/29-backend.interface_boundary等价基线.md` | BE-001A `backend.interface_boundary` 等价基线，锁定 route owner、public 入口和未迁移边界 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

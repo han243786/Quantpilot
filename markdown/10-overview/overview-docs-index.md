@@ -1,6 +1,6 @@
 # QuantPilot 文档索引
 
-> v4.7.0 代码基线 / v4.15.0 三矩阵完全接管 / v4.16.0 模块化抽离规划 | 最后更新 2026-05-27
+> v4.7.0 代码基线 / v4.15.0 三矩阵完全接管 / v4.16.0 模块化抽离规划 | 最后更新 2026-05-28
 
 ## 从这里开始
 
@@ -74,7 +74,7 @@
 
 | 版本 | 状态 |
 |------|:--:|
-| v4.16.0 | 推进中: 模块化抽离第一波，已完成 system.entry.backend_process 抽离、经验回填、10 叶等价基线、递归模块化流程、S1/S3/S4/S7/S10 单叶 closeout |
+| v4.16.0 | 推进中: 模块化抽离第一波，已完成 system.entry.backend_process 抽离、经验回填、递归模块化流程、S1-S10 closeout 或静态 closeout、`root.system` 顶层阶段性 closeout；backend 已启动 R1 叶子划分和 BE-001A `backend.interface_boundary` 等价基线 |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |

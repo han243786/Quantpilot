@@ -50,14 +50,14 @@
 | 叶子 | 当前状态 | 下一步建议 |
 | --- | --- | --- |
 | S1 `system.entry.launch_scripts` | 已完成单叶 closeout | `14-system.entry.launch_scripts单叶closeout.md` 已确认脚本入口等价，不继续细分 |
-| S2 `system.entry.backend_process` | 已抽离完成 | 只维护，不继续扩大 owner |
+| S2 `system.entry.backend_process` | 已完成单叶 closeout | `20-system.entry.backend_process单叶closeout.md` 已正式收束启动进程边界，不扩大到 API route owner |
 | S3 `system.desktop_shell.tauri_runtime` | 已完成单叶 closeout | `18-system.desktop_shell.tauri_runtime单叶closeout.md` 已确认 readiness wait、桌面启动 smoke 和窗口生命周期等价，不继续细分 |
 | S4 `system.desktop_shell.tauri_config` | 已完成单叶 closeout | `15-system.desktop_shell.tauri_config单叶closeout.md` 已确认 Tauri 配置等价，不继续细分 |
-| S5 `system.desktop_shell.assets_schema` | 只需登记，不主动抽离 | 作为资产叶子管理 |
-| S6 `system.build_delivery.workspace_manifest` | 需要决策暂停 | 依赖/workspace 影响大，不主动抽 |
+| S5 `system.desktop_shell.assets_schema` | 已完成单叶 closeout | `21-system.desktop_shell.assets_schema单叶closeout.md` 已确认资产/schema 等价，不继续细分 |
+| S6 `system.build_delivery.workspace_manifest` | 已完成单叶 closeout | `26-system.build_delivery.workspace_manifest单叶closeout.md` 已确认 manifest/lockfile 边界，不改依赖 |
 | S7 `system.build_delivery.desktop_build_scripts` | 已完成单叶 closeout | `19-system.build_delivery.desktop_build_scripts单叶closeout.md` 已确认 build/dev scripts 等价，不继续细分 |
-| S8 `system.build_delivery.container_proxy` | 按变更触发 | 非桌面默认路径，不主动抽 |
-| S9 `system.build_delivery.ci_release` | 需要决策暂停 | 与测试汰换/发布流程耦合 |
+| S8 `system.build_delivery.container_proxy` | 已完成静态单叶 closeout | `22-system.build_delivery.container_proxy单叶closeout.md` 已确认容器/proxy 静态边界；未宣称 Docker runtime smoke |
+| S9 `system.build_delivery.ci_release` | 已完成单叶 closeout | `27-system.build_delivery.ci_release单叶closeout.md` 已确认 CI/release 边界，不改 workflow/release 语义 |
 | S10 `system.runtime_profile.config_examples` | 已完成单叶 closeout | `16-system.runtime_profile.config_examples单叶closeout.md` 已确认配置样例等价，不继续细分 |
 
 ---
@@ -88,8 +88,8 @@
 | 兼容入口 | `quantpilot::run_server` re-export |
 | 关键内部实现 | `run_api_server`、启动目录创建、CORS、安全头、JSON rejection middleware、后台观察任务、优雅关闭、关闭刷盘 |
 | 保留外部边界 | `new_app_state`、`build_app_router`、handler、response schema、runtime state、executor state |
-| 等价证据 | `cargo check -p quantpilot`、`cargo test -p quantpilot defaults_to_server_when_no_cli_args_are_provided`、旧 public 入口检查 |
-| 当前判定 | 已抽离完成；不继续扩大到 API route owner |
+| 等价证据 | `cargo check -p quantpilot`、`cargo test -p quantpilot defaults_to_server_when_no_cli_args_are_provided`、旧 public 入口检查、`20-system.entry.backend_process单叶closeout.md` |
+| 当前判定 | 已完成单叶 closeout；不继续扩大到 API route owner |
 | 暂停点 | 任何 AppState 工厂、router、handler、schema 或锁顺序迁移 |
 
 ### S3 `system.desktop_shell.tauri_runtime`
@@ -130,8 +130,8 @@
 | 兼容入口 | 资产路径和生成物消费方式不变 |
 | 关键内部实现 | 图标资源、Tauri generated schema 资产 |
 | 保留外部边界 | UI 设计系统、业务 schema、API response schema |
-| 等价证据 | 资产路径存在性、生成物未漂移检查、打包前人工核查 |
-| 当前判定 | 只需登记，不主动抽离到更细叶子 |
+| 等价证据 | 资产路径存在性、4 个 generated schema JSON parse、Tauri config 图标引用核查、`21-system.desktop_shell.assets_schema单叶closeout.md` |
+| 当前判定 | 已完成单叶 closeout；不改资产或 generated schema，不继续细分 |
 | 暂停点 | 重新生成 schema、替换图标体系、改打包资产路径 |
 
 ### S6 `system.build_delivery.workspace_manifest`
@@ -144,9 +144,9 @@
 | 兼容入口 | workspace 成员、crate 名称、package metadata 和 lockfile 语义不变 |
 | 关键内部实现 | 依赖版本、feature、workspace member、crate package 配置 |
 | 保留外部边界 | 业务模块 API、编译链行为、发布版本过渡决策 |
-| 等价证据 | `cargo metadata`、`cargo check -p quantpilot`、`cargo check -p quantpilot-tauri`、lockfile diff 人工核查 |
-| 当前判定 | 需要决策暂停；影响面大，不主动抽离 |
-| 暂停点 | 依赖升级、workspace 成员变化、feature 默认值变化、lockfile 大幅漂移 |
+| 等价证据 | `cargo metadata --format-version 1 --no-deps`、`cargo check --workspace`、manifest/lockfile diff clean、`26-system.build_delivery.workspace_manifest单叶closeout.md` |
+| 当前判定 | 已完成单叶 closeout；不改依赖、workspace 成员、feature 或 lockfile |
+| 暂停点 | 后续依赖升级、workspace 成员变化、feature 默认值变化、lockfile 大幅漂移 |
 
 ### S7 `system.build_delivery.desktop_build_scripts`
 
@@ -172,9 +172,9 @@
 | 兼容入口 | container build、compose service、nginx proxy 路径不变 |
 | 关键内部实现 | 镜像构建步骤、服务编排、反向代理规则 |
 | 保留外部边界 | 桌面默认运行路径、后端 API handler、前端路由语义 |
-| 等价证据 | Docker/compose config 人工核查、可选 `docker compose config`、proxy route 对照 |
-| 当前判定 | 按变更触发；不作为当前桌面默认路径主动抽离 |
-| 暂停点 | 暴露端口、代理路径、镜像构建阶段、环境变量或服务依赖变化 |
+| 等价证据 | Dockerfile/compose/nginx 静态核查、proxy route 对照、`22-system.build_delivery.container_proxy单叶closeout.md`；当前不是版本发布/发布验收，未执行 Docker runtime smoke |
+| 当前判定 | 已完成静态单叶 closeout；不作为当前桌面默认路径，不宣称容器 runtime smoke |
+| 暂停点 | 暴露端口、代理路径、镜像构建阶段、环境变量、服务依赖变化，或开发者明确决定进入版本发布/发布验收 |
 
 ### S9 `system.build_delivery.ci_release`
 
@@ -186,9 +186,9 @@
 | 兼容入口 | GitHub Actions workflow 名称、触发条件、artifact 命名和 release 路径不变 |
 | 关键内部实现 | CI job、release job、scenario job、打包脚本和 release 资产 |
 | 保留外部边界 | 测试资产汰换策略、业务测试语义、发布版本过渡决策 |
-| 等价证据 | workflow YAML 人工核查、pre-commit 本地门禁、release dry-run 方案 |
-| 当前判定 | 需要决策暂停；与测试汰换/发布流程耦合 |
-| 暂停点 | workflow 触发条件、测试矩阵、artifact 名称、release 权限或发布步骤变化 |
+| 等价证据 | workflow static review、packaging/release file existence、target diff clean、`27-system.build_delivery.ci_release单叶closeout.md` |
+| 当前判定 | 已完成单叶 closeout；不改 workflow、测试矩阵、artifact、release 权限或发布步骤 |
+| 暂停点 | 后续 workflow 触发条件、测试矩阵、artifact 名称、release 权限或发布步骤变化 |
 
 ### S10 `system.runtime_profile.config_examples`
 
@@ -210,12 +210,9 @@
 
 | 优先级 | 叶子 | 动作 |
 | --- | --- | --- |
-| P2 | S6 `system.build_delivery.workspace_manifest` | 决策暂停后再碰 |
-| P2 | S8 `system.build_delivery.container_proxy` | 按容器相关变更触发 |
-| P2 | S9 `system.build_delivery.ci_release` | 等测试资产汰换策略更稳定后再推进 |
-| P3 | S5 `system.desktop_shell.assets_schema` | 只登记，不主动细分 |
+| P0 | S1-S10 | 当前均已完成 closeout 或静态 closeout；不进入下一步抽离队列 |
 
-S2、S3 和 S7 已完成，不进入下一步抽离队列。
+S1-S10 已完成单叶 closeout 或静态 closeout。`24-system顶层阶段性closeout.md` 已刷新为 `root.system` 当前抽离控制面收束；后续若继续 system，必须另起整理、重构、发布验收或具体变更方案。
 
 ---
 
@@ -236,5 +233,6 @@ S2、S3 和 S7 已完成，不进入下一步抽离队列。
 1. 10 个 system 叶子都有等价基线。
 2. 每个叶子都标明 public 入口、关键内部实现和保留外部边界。
 3. 每个叶子都有继续抽离状态和暂停点。
-4. S2 已完成抽离，其他叶子不被误宣称完成。
-5. 后续实际抽离可按本文件逐个叶子 closeout。
+4. S1、S2、S3、S4、S5、S7、S8 和 S10 已完成单叶 closeout 或静态 closeout。
+5. S6/S9 已按恢复协议完成 closeout，且不被误宣称为发布验收或测试汰换完成。
+6. `root.system` 顶层阶段性 closeout 已完成，后续实际工作必须另起整理、重构、发布验收或具体变更方案。

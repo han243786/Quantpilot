@@ -1,7 +1,7 @@
 # 模块树
 
 > 职责: 以白箱网络描述模块的输入、输出、关键 public 方法、父子关系和通信边界。
-> 状态: v4.13.0 第一波白箱扩面中。后续重型变更必须逐步补齐受影响模块。
+> 状态: v4.16.0 模块化抽离白箱扩面中。后续重型变更必须逐步补齐受影响模块。
 
 ---
 
@@ -65,6 +65,52 @@ AI 提到本模块时，必须能指出真实文件、真实方法、真实测�
 
 ## 3. 种子模块树
 
+### 3.0 `system`
+
+**层级路径**: `root.system`
+**父模块**: `root`
+**子模块**: `system.entry`、`system.desktop_shell`、`system.build_delivery`、`system.runtime_profile`
+**状态**: v4.16 顶层阶段性 closeout 完成。S1-S10 已完成 closeout 或静态 closeout；整理、重构、发布验收和 Docker runtime smoke 仍未启动。
+**真实文件**:
+- `src/system/mod.rs`
+- `src/system/entry/mod.rs`
+- `src/system/entry/backend_process.rs`
+- `src/main.rs`
+- `src/lib.rs`
+- `src-tauri/src/main.rs`
+- `src-tauri/tauri.conf.json`
+- `src-tauri/build.rs`
+- `Dockerfile`
+- `docker-compose.yml`
+- `nginx.conf`
+- `.env.example`
+
+**职责**:
+承载系统级启动、进程编排、桌面壳、构建交付、容器代理和运行配置样例的顶层父模块。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `quantpilot::run_server` | CLI / 环境变量 | 后端进程启动 | `src/main.rs`、旧 crate public 入口 | 不得绕过 `system.entry.backend_process` 或后端接口边界 |
+| 启动脚本入口 | shell / Windows CMD / PowerShell | 本地桌面开发启动 | 开发者 | 不得拥有业务能力真源 |
+| Tauri `main` | 桌面启动 | Tauri runtime | Tauri CLI / 桌面入口 | 不得拥有后端 API 或前端路由语义 |
+| build/delivery config | Cargo/Tauri/Docker/compose/nginx 输入 | 构建、dev server、容器和代理配置 | 开发者、构建工具 | 不得主动进入发布版本过渡 |
+
+**父级通信规则**:
+`system` 作为顶层父模块，只协调启动、桌面壳、构建交付和运行配置样例。子模块对外必须经对应父域或明确入口通信，不得横向拥有后端业务 API、frontend 业务状态、executor 状态、contracts 真源或 release transition。
+
+**允许调用的子模块**:
+`system.entry.launch_scripts`、`system.entry.backend_process`、`system.desktop_shell.tauri_runtime`、`system.desktop_shell.tauri_config`、`system.desktop_shell.assets_schema`、`system.build_delivery.desktop_build_scripts`、`system.build_delivery.container_proxy`、`system.runtime_profile.config_examples`。
+
+**已收束子模块**:
+S1-S10 已完成 closeout 或静态 closeout。S6/S9 的历史暂停已由 `markdown/06-milestones/v4.16.0/25-system.build_delivery.S6-S9恢复提案与适配性校验.md` 解除并收束。
+
+**回归保护**:
+`cargo check -p quantpilot`；`cargo check -p quantpilot-tauri`；`cargo test -p quantpilot defaults_to_server_when_no_cli_args_are_provided`；schema JSON parse；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
+
+**幻觉检查点**:
+AI 声称 system 顶层 closeout 完成时，必须指出这是阶段性 closeout；整理、重构、发布验收和 Docker runtime smoke 均未启动。
+
 ### 3.1 `system.entry`
 
 **层级路径**: `root.system.entry`
@@ -97,7 +143,7 @@ AI 提到本模块时，必须能指出真实文件、真实方法、真实测�
 
 **层级路径**: `root.system.entry.backend_process`
 **父模块**: `system.entry`
-**状态**: v4.16 system 抽离完成。public 启动入口和 API server 启动实现已迁入 system 模块，旧 crate 入口通过 re-export 兼容。
+**状态**: v4.16 S2 单叶 closeout 完成。public 启动入口和 API server 启动实现已迁入 system 模块，旧 crate 入口通过 re-export 兼容；不扩大到 API route owner。
 **真实文件**:
 - `src/system/mod.rs`
 - `src/system/entry/mod.rs`
@@ -139,7 +185,7 @@ AI 提到本模块时，必须能指出真实文件、真实方法、真实测�
 `cargo check -p quantpilot`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 
 **幻觉检查点**:
-AI 声称 system 已经抽离时，必须指出完成范围是 `system.entry.backend_process` 启动边界；`build_app_router` 仍属 `backend.interface_boundary`，`new_app_state` 仍属 `app_runtime_helpers`。
+AI 声称 S2 已完成时，必须指出完成范围是 `system.entry.backend_process` 启动边界；`build_app_router` 仍属 `backend.interface_boundary`，`new_app_state` 仍属 `app_runtime_helpers`。
 
 ### 3.1.2 `system.entry.launch_scripts`
 
@@ -245,7 +291,47 @@ JSON parse；`cargo check -p quantpilot-tauri`；`powershell -NoProfile -Executi
 **幻觉检查点**:
 AI 声称 S4 完成时，必须指出本批次没有修改 `src-tauri/tauri.conf.json` 或 `src-tauri/capabilities/default.json`，只完成 Tauri config 等价 closeout。
 
-### 3.1.5 `system.runtime_profile.config_examples`
+### 3.1.5 `system.desktop_shell.assets_schema`
+
+**层级路径**: `root.system.desktop_shell.assets_schema`
+**父模块**: `system.desktop_shell`
+**状态**: v4.16 S5 单叶 closeout 完成。桌面图标和 Tauri generated schema 已完成白箱登记，不改资产，不重新生成 schema，不继续细分。
+**真实文件**:
+- `src-tauri/icons/32x32.png`
+- `src-tauri/icons/128x128.png`
+- `src-tauri/icons/128x128@2x.png`
+- `src-tauri/icons/icon.ico`
+- `src-tauri/gen/schemas/acl-manifests.json`
+- `src-tauri/gen/schemas/capabilities.json`
+- `src-tauri/gen/schemas/desktop-schema.json`
+- `src-tauri/gen/schemas/windows-schema.json`
+- `src-tauri/tauri.conf.json`
+
+**职责**:
+承载桌面壳打包图标和 Tauri generated schema 资产，保证资产路径和生成物消费方式可追踪。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| Tauri icon asset paths | Tauri config | 桌面打包图标 | Tauri CLI / bundler | 不得借资产 closeout 改品牌或窗口配置 |
+| Tauri generated schema files | Tauri tooling | ACL/capability/desktop/window schema | Tauri 工具链、文档核查 | 不得手改生成物并当业务 schema 真源 |
+
+**关键内部启动实现**:
+| 实现 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| icon files | image assets | app icon resources | Tauri bundler | 不得改 `src-tauri/tauri.conf.json` icon path |
+| generated schema JSON | Tauri generator | schema artifacts | Tauri tooling | 不得和后端 API response schema 混用 |
+
+**父级通信规则**:
+`system.desktop_shell.assets_schema` 只能经 `system.desktop_shell` 提供桌面资产和 generated schema；不得直接横向连接后端 schema、前端 UI 设计系统、Tauri runtime 权限语义或 release packaging。
+
+**回归保护**:
+JSON parse；资产存在性检查；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。涉及 schema 重新生成或图标替换时必须补 diff 和人工验收。
+
+**幻觉检查点**:
+AI 声称 S5 完成时，必须指出本批次没有改图标、没有重新生成 schema、没有把 generated schema 当业务 schema 真源。
+
+### 3.1.6 `system.runtime_profile.config_examples`
 
 **层级路径**: `root.system.runtime_profile.config_examples`
 **父模块**: `system.runtime_profile`
@@ -283,7 +369,7 @@ JSON parse；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-ma
 **幻觉检查点**:
 AI 声称 S10 完成时，必须指出本批次没有修改 `.env.example`、`config/runtime_protocol.example.yaml`、`config/strategy_ir.v0.schema.json` 或 `config/strategy_ir.v0.example.json`，只完成配置样例等价 closeout。
 
-### 3.1.6 `system.build_delivery.desktop_build_scripts`
+### 3.1.7 `system.build_delivery.desktop_build_scripts`
 
 **层级路径**: `root.system.build_delivery.desktop_build_scripts`
 **父模块**: `system.build_delivery`
@@ -321,6 +407,98 @@ AI 声称 S10 完成时，必须指出本批次没有修改 `.env.example`、`co
 
 **幻觉检查点**:
 AI 声称 S7 完成时，必须指出本批次没有修改 `src-tauri/build.rs`、`src-tauri/build.bat` 或 `src-tauri/dev.bat`，只完成 desktop build/dev scripts 等价 closeout。
+
+### 3.1.8 `system.build_delivery.workspace_manifest`
+
+**层级路径**: `root.system.build_delivery.workspace_manifest`
+**父模块**: `system.build_delivery`
+**状态**: v4.16 S6 单叶 closeout 完成。workspace manifest、package manifest 和 lockfile 已登记边界，不改依赖、workspace 成员、feature 或 lockfile。
+**真实文件**:
+- `Cargo.toml`
+- `Cargo.lock`
+- `src-tauri/Cargo.toml`
+
+**职责**:
+承载 Rust workspace/package manifest、crate metadata、依赖版本、feature 和 lockfile 的交付边界。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `Cargo.toml` workspace manifest | workspace 成员、依赖、profile | Rust workspace 编译图 | Cargo、CI、开发者 | 不得顺手升级依赖或改 workspace member |
+| `src-tauri/Cargo.toml` package manifest | Tauri package metadata、依赖、features | desktop crate 编译图 | Cargo、Tauri CLI | 不得混入 Tauri runtime 或 config 语义 |
+| `Cargo.lock` lockfile | dependency resolution | 固定依赖版本图 | Cargo、CI | 不得无说明制造大幅漂移 |
+
+**父级通信规则**:
+`system.build_delivery.workspace_manifest` 只能经 `system.build_delivery` 管理编译图和依赖边界。它不得直接改变后端 API、Tauri runtime、CI/release workflow、发布版本过渡或业务模块行为。
+
+**回归保护**:
+`cargo metadata --format-version 1 --no-deps`；`cargo check -p quantpilot`；`cargo check -p quantpilot-tauri`；lockfile diff 人工核查；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
+
+**幻觉检查点**:
+AI 声称 S6 已完成时，必须指出这是文档级 closeout，不是依赖升级；本批次未改 `Cargo.toml`、`Cargo.lock` 或 `src-tauri/Cargo.toml`。
+
+### 3.1.9 `system.build_delivery.container_proxy`
+
+**层级路径**: `root.system.build_delivery.container_proxy`
+**父模块**: `system.build_delivery`
+**状态**: v4.16 S8 静态单叶 closeout 完成。Dockerfile、compose 和 nginx proxy 已登记；Docker runtime smoke 只有在开发者明确决定进入版本发布/发布验收时才执行。
+**真实文件**:
+- `Dockerfile`
+- `docker-compose.yml`
+- `nginx.conf`
+
+**职责**:
+承载容器镜像构建、compose 本地编排和 nginx TLS 反向代理配置。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| Docker build context | repo source | backend/frontend/runtime image | Docker build | 不得改变桌面默认运行路径 |
+| compose `backend` service | image build、env、volume | backend container on 3000 | docker compose | 不得改端口或环境语义 |
+| compose `frontend-dev` service | frontend source、backend origin | Vite dev server on 5173 | docker compose dev profile | 不得替代 S7 desktop dev script |
+| nginx proxy config | TLS cert、HTTP request | proxy to `quantpilot:3000` | nginx | 不得改后端 handler 或 route 语义 |
+
+**父级通信规则**:
+`system.build_delivery.container_proxy` 只能经 `system.build_delivery` 提供容器和代理配置；不得直接拥有启动脚本、桌面壳、后端 API handler、前端路由、CI/release workflow 或发布版本过渡决策。Docker runtime smoke 不由 AI 主动触发，只能由开发者版本发布/发布验收决策或明确 S8 runtime 验收要求触发。
+
+**回归保护**:
+Docker/compose static review；发布验收触发的 `docker compose config`；版本发布/发布验收时补 runtime smoke；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
+
+**幻觉检查点**:
+AI 声称 S8 完成时，必须指出这是静态 closeout；当前未进入版本发布/发布验收，未执行 `docker compose config` 或容器启动 smoke。
+
+### 3.1.10 `system.build_delivery.ci_release`
+
+**层级路径**: `root.system.build_delivery.ci_release`
+**父模块**: `system.build_delivery`
+**状态**: v4.16 S9 单叶 closeout 完成。CI/release workflow、packaging 和 release manifest 已登记边界，不改 workflow、测试矩阵、artifact、release 权限或 packaging 语义。
+**真实文件**:
+- `.github/workflows/ci.yml`
+- `.github/workflows/release.yml`
+- `.github/workflows/scenario-test.yml`
+- `packaging/windows/installer.nsi`
+- `release/release-manifest.yaml`
+
+**职责**:
+承载 GitHub Actions CI、release workflow、scenario test workflow、Windows packaging 和 release manifest 的交付边界。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `.github/workflows/ci.yml` | push/PR workflow event | CI job result | GitHub Actions | 不得静默删除测试门禁 |
+| `.github/workflows/release.yml` | release/tag workflow event | release artifact | GitHub Actions | 不得无 dry-run 改 release 权限或 artifact |
+| `.github/workflows/scenario-test.yml` | scenario workflow event | scenario test result | GitHub Actions | 不得和测试资产汰换混成一批 |
+| `packaging/windows/installer.nsi` | release packaging inputs | Windows installer script | release workflow | 不得改安装路径或打包语义 |
+| `release/release-manifest.yaml` | release metadata | release manifest | release workflow、开发者 | 不得伪造发布状态 |
+
+**父级通信规则**:
+`system.build_delivery.ci_release` 只能经 `system.build_delivery` 管理 CI/release 交付边界。它不得直接改变测试资产汰换策略、业务测试语义、发布版本过渡或运行时能力声明。
+
+**回归保护**:
+workflow YAML review；pre-commit 本地门禁；release dry-run 方案；测试资产汰换登记；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
+
+**幻觉检查点**:
+AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布验收；本批次未改 `.github/workflows/*.yml`、`packaging/` 或 `release/`。
 
 ### 3.2 `backend.router`
 
@@ -427,6 +605,53 @@ AI 声称 S7 完成时，必须指出本批次没有修改 `src-tauri/build.rs`�
 | `contracts` | `root.contracts` | OpenAPI、RFC、artifact、QS/Core IR 和事件契约 | 不在无迁移方案时改数据结构 |
 | `docs` | `root.docs` | 三矩阵、全量树、GP、超级规范化、里程碑和治理索引 | 不删除旧主干，不让新文档成为孤岛 |
 
+### 4.1 `backend`
+
+**层级路径**: `root.backend`
+**父模块**: `root`
+**状态**: v4.16 R1 已启动。`markdown/06-milestones/v4.16.0/28-backend大模块分层统计.md` 已登记 9 个 L2 叶子候选；BE-001A `backend.interface_boundary` 已建立等价基线，但 backend 代码抽离、整理和重构仍未完成。
+**真实文件**:
+- `src/app_router.rs`
+- `src/app_runtime_helpers.rs`
+- `src/lib.rs`
+- `src/capability_api.rs`
+- `src/strategy_config_api.rs`
+- `src/runtime/mod.rs`
+- `src/runtime/run.rs`
+- `src/runtime/backtest.rs`
+- `src/runtime/mutation.rs`
+- `src/graph_api.rs`
+- `src/graph_quantscript_api.rs`
+- `src/compile_api.rs`
+- `src/storage_lifecycle.rs`
+- `src/credential_vault.rs`
+- `src/tests_backend.rs`
+
+**职责**:
+承载后端 API、运行、编译、配置、能力真源、存储安全、运维治理、AppState wiring 和后端测试支撑的顶层父模块。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `build_app_router` | `AppState` | Axum Router | system 启动链、测试入口 | 不得绕过 `backend.interface_boundary` |
+| `get_capabilities` | capability source | capability snapshot | 前端 capability projection、治理检查 | 不得由前端静态判断替代 |
+| `register_runtime_routes` | Axum Router | runtime routes | `build_app_router` | 不得迁移 runtime state owner |
+| `register_graph_routes` / `register_graph_quantscript_routes` | Axum Router | graph/QS routes | `build_app_router` | 不得绕过 graph version 和 QS 安全边界 |
+| `register_compile_routes` | Axum Router | compile routes | `build_app_router` | 不得把 strategy_ir 当 runtime 真源 |
+| `register_strategy_config_routes` | Axum Router | strategy config routes | `build_app_router` | 不得改变 preflight 或 artifact 语义 |
+
+**父级通信规则**:
+`backend` 的子叶必须经 `backend.interface_boundary`、明确 API/facade、storage helper 或契约边界通信。子叶不得横向抢 route owner、handler、state owner、response schema、artifact schema 或测试资产归属。
+
+**允许调用的子模块**:
+`backend.interface_boundary`、`backend.runtime`、`backend.graph_compile`、`backend.capability`、`backend.strategy_config`、`backend.storage_security`；`backend.ops_governance`、`backend.app_state_wiring`、`backend.test_support` 目前只作为候选叶子登记，进入代码批次前必须另起提案。
+
+**回归保护**:
+`cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_graph_versions`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
+
+**幻觉检查点**:
+AI 声称 backend 已推进时，必须说明当前只是 R1 叶子划分和 BE-001A 等价基线；不得宣称 runtime、compile、storage/security 或测试资产已经抽离完成。
+
 ---
 
 ## 5. v4.13 第一波白箱节点
@@ -488,7 +713,7 @@ AI 声称 S7 完成时，必须指出本批次没有修改 `src-tauri/build.rs`�
 BE-001 不迁移状态所有权，不改变 AppState、runtime state、executor state、锁顺序或事务边界。
 
 **回归保护**:
-`cargo test api_run`；`cargo test api_backtest`；`cargo test api_graph_versions`；`cargo test api_evidence_contract`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
+`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_graph_versions`；`cargo test -p quantpilot --test api_evidence_contract`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
 
 **幻觉检查点**:
 AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_router`、对应 `register_*_routes`、旧 handler 保留方式和回退点。
@@ -545,7 +770,7 @@ runtime 对外必须经过 `backend.router` 注册的 HTTP API、事件流或持
 涉及运行记录、事件流、backtest artifact 和 transient spill 时，必须保留状态归属和清理边界。
 
 **回归保护**:
-`cargo test api_run`；`cargo test api_backtest`；涉及 v4 evidence 时跑 `cargo test api_evidence_contract`。
+`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；涉及 v4 evidence 时跑 `cargo test -p quantpilot --test api_evidence_contract`。
 
 **幻觉检查点**:
 AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifact 字段和测试。
@@ -591,7 +816,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端只消费 compile summary 和 diagnostics。
 
 **回归保护**:
-`cargo test api_graph_versions`；`cargo test quantscript_real_strategy_authoring`；涉及 compile 时跑相关 compile/graph 测试。
+`cargo test -p quantpilot --test api_graph_versions`；`cargo test -p quantpilot --test quantscript_real_strategy_authoring`；涉及 compile 时跑相关 compile/graph 测试。
 
 **幻觉检查点**:
 任何“编译链已支持”的结论必须同时指出 graph route、compile route 和诊断测试。
@@ -839,6 +1064,16 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 - `markdown/06-milestones/v4.16.0/17-system.desktop_shell.tauri_runtime-readiness等价检查.md`
 - `markdown/06-milestones/v4.16.0/18-system.desktop_shell.tauri_runtime单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/19-system.build_delivery.desktop_build_scripts单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/20-system.entry.backend_process单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/21-system.desktop_shell.assets_schema单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/22-system.build_delivery.container_proxy单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/23-system.build_delivery.S6-S9暂停决策记录.md`
+- `markdown/06-milestones/v4.16.0/24-system顶层阶段性closeout.md`
+- `markdown/06-milestones/v4.16.0/25-system.build_delivery.S6-S9恢复提案与适配性校验.md`
+- `markdown/06-milestones/v4.16.0/26-system.build_delivery.workspace_manifest单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/27-system.build_delivery.ci_release单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/28-backend大模块分层统计.md`
+- `markdown/06-milestones/v4.16.0/29-backend.interface_boundary等价基线.md`
 
 **职责**:
 作为三矩阵治理控制面，定义提案、判档、父子通信、引导坐标、模块树和发布过渡协议。
@@ -869,6 +1104,16 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/17-system.desktop_shell.tauri_runtime-readiness等价检查.md` S3 readiness | `system.desktop_shell.tauri_runtime` | Tauri `main`、`wait_for_backend`、3000 readiness 等价证据 | system 单叶 readiness 检查 | 不得把 readiness 检查宣告为完整 S3 closeout |
 | `markdown/06-milestones/v4.16.0/18-system.desktop_shell.tauri_runtime单叶closeout.md` S3 closeout | `system.desktop_shell.tauri_runtime` | 桌面启动 smoke、主窗口生命周期、`CloseMainWindow` 退出证据 | system 单叶 closeout | 不得改 Tauri runtime 代码或继续细分 |
 | `markdown/06-milestones/v4.16.0/19-system.build_delivery.desktop_build_scripts单叶closeout.md` S7 closeout | `system.build_delivery.desktop_build_scripts` | `src-tauri/build.rs`、`src-tauri/build.bat`、`src-tauri/dev.bat`、5173 dev smoke | system 单叶 closeout | 不得改脚本或混入启动脚本语义 |
+| `markdown/06-milestones/v4.16.0/20-system.entry.backend_process单叶closeout.md` S2 closeout | `system.entry.backend_process` | `run_server`、`run_api_server`、兼容入口、未迁移边界 | system 单叶 closeout | 不得扩大到 API route owner |
+| `markdown/06-milestones/v4.16.0/21-system.desktop_shell.assets_schema单叶closeout.md` S5 closeout | `system.desktop_shell.assets_schema` | icons、Tauri generated schema、JSON parse 证据 | system 单叶 closeout | 不得把 generated schema 当业务 schema 真源 |
+| `markdown/06-milestones/v4.16.0/22-system.build_delivery.container_proxy单叶closeout.md` S8 closeout | `system.build_delivery.container_proxy` | Dockerfile、compose、nginx proxy 静态证据 | system 静态单叶 closeout | 不得宣称 Docker runtime smoke |
+| `markdown/06-milestones/v4.16.0/23-system.build_delivery.S6-S9暂停决策记录.md` S6/S9 pause | `system.build_delivery.workspace_manifest`、`system.build_delivery.ci_release` | manifest、workflow、packaging、release 暂停历史边界 | system 暂停历史登记 | 不得把暂停期误判为 closeout 完成 |
+| `markdown/06-milestones/v4.16.0/24-system顶层阶段性closeout.md` system top closeout | `root.system` | 10 叶收束、阶段性完成边界 | system 顶层阶段性 closeout | 不得宣称 system 全量最终完成 |
+| `markdown/06-milestones/v4.16.0/25-system.build_delivery.S6-S9恢复提案与适配性校验.md` S6/S9 resume | `system.build_delivery.workspace_manifest`、`system.build_delivery.ci_release` | 暂停恢复、适配性校验、分批 closeout 设计 | system 恢复提案 | 不得改真实 manifest/workflow 文件 |
+| `markdown/06-milestones/v4.16.0/26-system.build_delivery.workspace_manifest单叶closeout.md` S6 closeout | `system.build_delivery.workspace_manifest` | Cargo workspace/package manifest、lockfile、cargo metadata/check 证据 | system 单叶 closeout | 不得改依赖、feature 或 lockfile |
+| `markdown/06-milestones/v4.16.0/27-system.build_delivery.ci_release单叶closeout.md` S9 closeout | `system.build_delivery.ci_release` | CI/release/scenario workflow、packaging、release manifest 证据 | system 单叶 closeout | 不得宣称发布验收完成 |
+| `markdown/06-milestones/v4.16.0/28-backend大模块分层统计.md` backend 分层 | `root.backend` | 3 层网络、9 个 L2 叶子候选、后续递归顺序 | backend 抽离批次 | 不得宣称 backend 代码抽离完成 |
+| `markdown/06-milestones/v4.16.0/29-backend.interface_boundary等价基线.md` BE-001A baseline | `backend.interface_boundary` | route owner、public/接口入口、保留 handler/state/schema 边界 | backend 接口边界批次 | 不得迁移 handler 或状态所有权 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

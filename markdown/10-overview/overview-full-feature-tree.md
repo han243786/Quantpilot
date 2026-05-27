@@ -1338,9 +1338,19 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/17-system.desktop_shell.tauri_runtime-readiness等价检查.md` — v4.16.0 S3 Tauri runtime readiness 等价检查，确认 3000 wait、30 秒超时和 Tauri Builder 启动顺序等价
 - `markdown/06-milestones/v4.16.0/18-system.desktop_shell.tauri_runtime单叶closeout.md` — v4.16.0 S3 Tauri runtime 单叶 closeout，确认桌面启动 smoke、主窗口生命周期和关闭路径等价并停止继续细分
 - `markdown/06-milestones/v4.16.0/19-system.build_delivery.desktop_build_scripts单叶closeout.md` — v4.16.0 S7 desktop build/dev scripts 单叶 closeout，确认 `build.rs`、`build.bat`、`dev.bat` 等价并停止继续细分
+- `markdown/06-milestones/v4.16.0/20-system.entry.backend_process单叶closeout.md` — v4.16.0 S2 backend process 单叶 closeout，正式收束启动进程边界并保持 API owner 外置
+- `markdown/06-milestones/v4.16.0/21-system.desktop_shell.assets_schema单叶closeout.md` — v4.16.0 S5 assets/schema 单叶 closeout，确认桌面图标和 Tauri generated schema 等价并停止继续细分
+- `markdown/06-milestones/v4.16.0/22-system.build_delivery.container_proxy单叶closeout.md` — v4.16.0 S8 container/proxy 静态单叶 closeout，登记 Dockerfile、compose 和 nginx proxy 边界
+- `markdown/06-milestones/v4.16.0/23-system.build_delivery.S6-S9暂停决策记录.md` — v4.16.0 S6 workspace manifest 与 S9 CI/release 暂停决策记录，明确不算 closeout 完成
+- `markdown/06-milestones/v4.16.0/24-system顶层阶段性closeout.md` — v4.16.0 `root.system` 顶层阶段性 closeout，收束当前允许范围；S1-S10 已完成 closeout 或静态 closeout
+- `markdown/06-milestones/v4.16.0/25-system.build_delivery.S6-S9恢复提案与适配性校验.md` — v4.16.0 S6/S9 恢复提案与适配性校验，确认只做文档级 closeout，不改 manifest/workflow/release 语义
+- `markdown/06-milestones/v4.16.0/26-system.build_delivery.workspace_manifest单叶closeout.md` — v4.16.0 S6 workspace manifest 单叶 closeout，确认 Cargo workspace/package manifest 与 lockfile 边界
+- `markdown/06-milestones/v4.16.0/27-system.build_delivery.ci_release单叶closeout.md` — v4.16.0 S9 CI/release 单叶 closeout，确认 workflow、packaging 和 release manifest 边界
+- `markdown/06-milestones/v4.16.0/28-backend大模块分层统计.md` — v4.16.0 backend 顶层分层统计，确认 `root.backend` 的 3 层网络和 9 个 L2 叶子候选
+- `markdown/06-milestones/v4.16.0/29-backend.interface_boundary等价基线.md` — v4.16.0 BE-001A `backend.interface_boundary` 等价基线，锁定 route owner、public 入口和未迁移边界
 
 当前治理基线: `v4.15.0/` — 三矩阵完全接管，后续常态维护模块树、全量树和治理 gate。
-当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；已决策先走 BE-001 后端接口边界，system 抽离经验已回填为后续抽离准则，system 10 叶等价基线已铺好，S1/S3/S4/S7/S10 closeout 已完成，递归模块化流程已明确，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
+当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；system 抽离经验已回填为后续抽离准则，S1-S10 closeout 或静态 closeout 已完成，`root.system` 顶层阶段性 closeout 已刷新，递归模块化流程已明确；backend 已进入 R1 叶子划分与 BE-001A `backend.interface_boundary` 等价基线，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
 
 ### 7.7 总览 (markdown/10-overview/)
 

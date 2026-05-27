@@ -164,7 +164,17 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/16-*.md", "v4.16 system runtime profile config examples closeout"),
     @("markdown/06-milestones/v4.16.0/17-*.md", "v4.16 system tauri runtime readiness equivalence check"),
     @("markdown/06-milestones/v4.16.0/18-*.md", "v4.16 system tauri runtime leaf closeout"),
-    @("markdown/06-milestones/v4.16.0/19-*.md", "v4.16 system desktop build scripts leaf closeout")
+    @("markdown/06-milestones/v4.16.0/19-*.md", "v4.16 system desktop build scripts leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/20-*.md", "v4.16 system backend process leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/21-*.md", "v4.16 system assets schema leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/22-*.md", "v4.16 system container proxy leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/23-*.md", "v4.16 system workspace manifest and ci release pause record"),
+    @("markdown/06-milestones/v4.16.0/24-*.md", "v4.16 system top stage closeout"),
+    @("markdown/06-milestones/v4.16.0/25-*.md", "v4.16 system s6 s9 resume proposal"),
+    @("markdown/06-milestones/v4.16.0/26-*.md", "v4.16 system workspace manifest closeout"),
+    @("markdown/06-milestones/v4.16.0/27-*.md", "v4.16 system ci release closeout"),
+    @("markdown/06-milestones/v4.16.0/28-*.md", "v4.16 backend module split statistics"),
+    @("markdown/06-milestones/v4.16.0/29-*.md", "v4.16 backend interface boundary equivalence baseline")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -205,6 +215,16 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/17-", "full feature tree v4.16 system tauri runtime readiness check"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/18-", "full feature tree v4.16 system tauri runtime closeout"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/19-", "full feature tree v4.16 system desktop build scripts closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/20-", "full feature tree v4.16 system backend process closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/21-", "full feature tree v4.16 system assets schema closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/22-", "full feature tree v4.16 system container proxy closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/23-", "full feature tree v4.16 system s6 s9 pause record"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/24-", "full feature tree v4.16 system top stage closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/25-", "full feature tree v4.16 system s6 s9 resume proposal"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/26-", "full feature tree v4.16 system workspace manifest closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/27-", "full feature tree v4.16 system ci release closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/28-", "full feature tree v4.16 backend module split statistics"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/29-", "full feature tree v4.16 backend interface baseline"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/03-", "module tree v4.16 backend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/04-", "module tree v4.16 frontend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/05-", "module tree v4.16 test asset register"),
@@ -222,6 +242,16 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/17-", "module tree v4.16 system tauri runtime readiness check"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/18-", "module tree v4.16 system tauri runtime closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/19-", "module tree v4.16 system desktop build scripts closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/20-", "module tree v4.16 system backend process closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/21-", "module tree v4.16 system assets schema closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/22-", "module tree v4.16 system container proxy closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/23-", "module tree v4.16 system s6 s9 pause record"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/24-", "module tree v4.16 system top stage closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/25-", "module tree v4.16 system s6 s9 resume proposal"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/26-", "module tree v4.16 system workspace manifest closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/27-", "module tree v4.16 system ci release closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/28-", "module tree v4.16 backend module split statistics"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/29-", "module tree v4.16 backend interface baseline"),
     @("markdown/10-overview/overview-docs-index.md", "v4.16.0", "docs index v4.16 plan"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "v4.16.0", "current roadmap v4.16 plan")
 )
@@ -448,6 +478,119 @@ $v416LandingFiles = @(
         @("cmd /c src-tauri\build.bat", "build bat smoke"),
         @("cargo check -p quantpilot-tauri", "tauri check gate"),
         @("tools/check-matrix-governance.ps1", "matrix governance gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/20-*.md", @(
+        @("system.entry.backend_process", "system backend process leaf"),
+        @("src/system/entry/backend_process.rs", "system backend process file"),
+        @("src/app_runtime_helpers.rs", "app state retained file"),
+        @("src/app_router.rs", "router retained file"),
+        @("run_server", "run server public entry"),
+        @("quantpilot::run_server", "compatible crate root entry"),
+        @("run_api_server", "run api server internal startup"),
+        @("new_app_state", "state factory retained boundary"),
+        @("build_app_router", "router retained boundary"),
+        @("cargo test -p quantpilot defaults_to_server_when_no_cli_args_are_provided", "default server behavior test")
+    )),
+    @("markdown/06-milestones/v4.16.0/21-*.md", @(
+        @("system.desktop_shell.assets_schema", "system assets schema leaf"),
+        @("src-tauri/icons/32x32.png", "tauri icon file"),
+        @("src-tauri/icons/128x128.png", "tauri icon file"),
+        @("src-tauri/icons/icon.ico", "tauri ico file"),
+        @("src-tauri/gen/schemas/acl-manifests.json", "tauri acl schema"),
+        @("src-tauri/gen/schemas/capabilities.json", "tauri capabilities schema"),
+        @("src-tauri/gen/schemas/desktop-schema.json", "tauri desktop schema"),
+        @("src-tauri/gen/schemas/windows-schema.json", "tauri windows schema"),
+        @("ConvertFrom-Json", "json parse evidence")
+    )),
+    @("markdown/06-milestones/v4.16.0/22-*.md", @(
+        @("system.build_delivery.container_proxy", "system container proxy leaf"),
+        @("Dockerfile", "dockerfile"),
+        @("docker-compose.yml", "docker compose file"),
+        @("nginx.conf", "nginx config file"),
+        @("3000", "backend port"),
+        @("5173", "frontend dev port"),
+        @("443", "https proxy port"),
+        @("docker compose config", "optional docker compose config evidence"),
+        @("Docker runtime smoke requires developer release decision", "docker runtime release decision gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/23-*.md", @(
+        @("system.build_delivery.workspace_manifest", "system workspace manifest leaf"),
+        @("system.build_delivery.ci_release", "system ci release leaf"),
+        @("Cargo.toml", "cargo manifest"),
+        @("Cargo.lock", "cargo lockfile"),
+        @("src-tauri/Cargo.toml", "tauri manifest"),
+        @(".github/workflows/ci.yml", "ci workflow"),
+        @(".github/workflows/release.yml", "release workflow"),
+        @(".github/workflows/scenario-test.yml", "scenario workflow"),
+        @("cargo metadata --format-version 1 --no-deps", "cargo metadata gate"),
+        @("S6/S9 pause is not closeout", "pause is not closeout marker")
+    )),
+    @("markdown/06-milestones/v4.16.0/24-*.md", @(
+        @("root.system", "root system module"),
+        @("system top stage closeout is not full final completion", "system top stage closeout marker"),
+        @("S1-S10", "completed system leaf set"),
+        @("system.entry.backend_process", "system backend process leaf"),
+        @("system.desktop_shell.assets_schema", "system assets schema leaf"),
+        @("system.build_delivery.container_proxy", "system container proxy leaf"),
+        @("Docker runtime smoke", "docker runtime boundary"),
+        @("tools/check-matrix-governance.ps1", "matrix governance gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/25-*.md", @(
+        @("S6/S9 resume proposal passed", "s6 s9 resume proposal marker"),
+        @("system.build_delivery.workspace_manifest", "system workspace manifest leaf"),
+        @("system.build_delivery.ci_release", "system ci release leaf"),
+        @("proposal compatibility optimization continue design", "proposal flow marker"),
+        @("git diff -- Cargo.toml Cargo.lock src-tauri/Cargo.toml", "target diff clean command"),
+        @("no real manifest workflow edits", "no real manifest edits")
+    )),
+    @("markdown/06-milestones/v4.16.0/26-*.md", @(
+        @("S6 workspace manifest closeout complete", "s6 closeout marker"),
+        @("system.build_delivery.workspace_manifest", "system workspace manifest leaf"),
+        @("Cargo.toml", "cargo manifest"),
+        @("Cargo.lock", "cargo lockfile"),
+        @("src-tauri/Cargo.toml", "tauri manifest"),
+        @("cargo metadata --format-version 1 --no-deps", "cargo metadata gate"),
+        @("cargo check --workspace", "cargo workspace check"),
+        @("git diff -- Cargo.toml Cargo.lock src-tauri/Cargo.toml", "manifest diff clean")
+    )),
+    @("markdown/06-milestones/v4.16.0/27-*.md", @(
+        @("S9 ci release closeout complete", "s9 closeout marker"),
+        @("system.build_delivery.ci_release", "system ci release leaf"),
+        @(".github/workflows/ci.yml", "ci workflow"),
+        @(".github/workflows/release.yml", "release workflow"),
+        @(".github/workflows/scenario-test.yml", "scenario workflow"),
+        @("packaging/windows/installer.nsi", "windows installer script"),
+        @("release/release-manifest.yaml", "release manifest"),
+        @("release dry-run", "release dry run boundary"),
+        @("not release approval", "not release approval marker")
+    )),
+    @("markdown/06-milestones/v4.16.0/28-*.md", @(
+        @("root.backend", "backend root module"),
+        @("backend.interface_boundary", "backend interface boundary"),
+        @("backend.runtime", "backend runtime leaf"),
+        @("backend.graph_compile", "backend graph compile leaf"),
+        @("backend.storage_security", "backend storage security leaf"),
+        @("backend.app_state_wiring", "backend app state wiring candidate"),
+        @("backend.test_support", "backend test support candidate"),
+        @("9", "backend leaf candidate count"),
+        @("build_app_router", "backend router parent entry"),
+        @("register_runtime_routes", "runtime route registration"),
+        @("cargo check -p quantpilot", "backend check gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/29-*.md", @(
+        @("BE-001A", "backend interface baseline marker"),
+        @("backend.interface_boundary", "backend interface boundary"),
+        @("route owner", "route owner baseline"),
+        @("build_app_router", "backend router parent entry"),
+        @("get_capabilities", "capability entry"),
+        @("register_strategy_config_routes", "strategy config route registration"),
+        @("register_runtime_routes", "runtime route registration"),
+        @("register_graph_routes", "graph route registration"),
+        @("register_graph_quantscript_routes", "quantscript graph route registration"),
+        @("register_compile_routes", "compile route registration"),
+        @("existing handler", "handler retention marker"),
+        @("existing state owner", "state owner retention marker"),
+        @("cargo test -p quantpilot --test api_run", "api run test gate")
     ))
 )
 
@@ -504,13 +647,19 @@ foreach ($check in $releaseTokens) {
 $moduleTreePath = "markdown/00-matrix-governance/module-tree.md"
 $moduleTreeContent = Read-RepoText $moduleTreePath
 $requiredModules = @(
+    "system",
     "system.entry",
     "system.entry.launch_scripts",
     "system.entry.backend_process",
     "system.desktop_shell.tauri_runtime",
     "system.desktop_shell.tauri_config",
+    "system.desktop_shell.assets_schema",
     "system.runtime_profile.config_examples",
+    "system.build_delivery.workspace_manifest",
     "system.build_delivery.desktop_build_scripts",
+    "system.build_delivery.container_proxy",
+    "system.build_delivery.ci_release",
+    "backend",
     "backend.router",
     "backend.capability",
     "backend.strategy_config",
