@@ -9,10 +9,11 @@ QuantPilot 是一个单机量化交易沙盒, 聚焦于诚实的能力边界、�
 
 ## 项目治理体系
 
-v4.12.0 起，QuantPilot 的开发治理入口升级为三矩阵治理。新开发者和 AI 辅助流程应先进入三矩阵，再回到旧主干文档查证细节。
+v4.15.0 起，QuantPilot 的默认开发治理入口已经完全切换为三矩阵治理。新开发者和 AI 辅助流程应先进入三矩阵，再回到旧主干文档查证细节。
 
 - [三矩阵治理入口](./markdown/00-matrix-governance/README.md)
 - [三矩阵治理完全落地路线](./markdown/00-matrix-governance/landing-roadmap.md)
+- [三档提案样例](./markdown/00-matrix-governance/proposal-examples.md)
 
 旧主干仍由三份文档构成完整的项目知识体系。**新开发者必须理解这三份文档**才能开始贡献代码。
 

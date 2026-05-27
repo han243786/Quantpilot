@@ -1,6 +1,6 @@
 # 当前状态与发布状态
 
-> 最后更新：2026-05-27 | 当前版本：v4.7.0 ✅ | 当前治理里程碑：v4.14.0 治理门禁自动化
+> 最后更新：2026-05-27 | 当前版本：v4.7.0 ✅ | 当前治理基线：v4.15.0 三矩阵完全接管
 
 ## 版本路线
 
@@ -134,8 +134,8 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 | v4.11.0 | MINOR | v4 策略配置系统一等化，聚合 artifact、preflight、diff、AI proposal 配置域绑定 | 推进中 |
 | v4.12.0 | MINOR governance | 三矩阵治理入口启用，建立流程矩阵、规范矩阵、引导矩阵、模块树和完全落地路线 | 已落地 |
 | v4.13.0 | MINOR governance | 模块树白箱扩面，覆盖 active 模块、关键 public 方法和模块化重构通道 | 已落地 |
-| v4.14.0 | MINOR governance | 治理门禁自动化，检查三矩阵声明、引导坐标、模块树漂移和发布过渡保护 | 当前治理里程碑 |
-| v4.15.0 | MINOR governance | 三矩阵完全接管 closeout，旧入口导流并形成治理收口报告 | 规划 |
+| v4.14.0 | MINOR governance | 治理门禁自动化，检查三矩阵声明、引导坐标、模块树漂移和发布过渡保护 | 已落地 |
+| v4.15.0 | MINOR governance | 三矩阵完全接管 closeout，旧入口导流并形成治理收口报告 | 当前治理基线 |
 
 使用下面的专用文档作为活跃发布与治理界面：
 
@@ -164,6 +164,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - [v4.14.0 规划方案](../06-milestones/v4.14.0/01-规划方案.md)
 - [v4.14.0 落地记录](../06-milestones/v4.14.0/02-落地记录.md)
 - [v4.15.0 规划方案](../06-milestones/v4.15.0/01-规划方案.md)
+- [v4.15.0 治理 closeout](../06-milestones/v4.15.0/02-治理closeout.md)
 - [Claude 产品/UX/功能完整度审计核查](../05-testing/Claude产品UX功能完整度审计核查-v4.7.0-2026-05-26.md)
 - [支持矩阵](../03-implementation/governance/implementation-support-matrix.md)
 - [编译链合约](../03-implementation/governance/implementation-compile-chain-contract.md)
@@ -198,7 +199,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 | 功能演进契约 | ✅ | 新增能力必须有登记、回归保护矩阵、兼容性与迁移说明 |
 | Pre-commit hook 同步 | ✅ | `tools/check-pre-commit-hook.ps1` 已进入 closeout，防止 `.git/hooks/pre-commit` 与 `scripts/pre-commit` 再次漂移 |
 | 清理边界门禁 | ✅ | `tools/check-cleanup-boundary.ps1` 已进入 CI/closeout，防止清理脚本触碰真实运行/图版本工件 |
-| 三矩阵治理门禁 | 🚧 | `tools/check-matrix-governance.ps1` 已接入 closeout [7/26]，用于检查治理入口、提案模板、模块树漂移和发布过渡协议 |
+| 三矩阵治理门禁 | ✅ | `tools/check-matrix-governance.ps1` 已接入 closeout [7/26]，用于检查治理入口、提案模板、模块树漂移和发布过渡协议 |
 | Rust 格式基线 | ✅ | `cargo fmt --check` 已进入三层门禁 |
 | v4 runtime 入口 | ✅ | `/api/runtime/v4/run`、CLI `v4-run`、前端 `start_v4_simulation` 已接入 |
 | 执行端 v4 集成 | ✅ | RunnerPool、OKX Market 事件、部署 API、SSE evidence、执行端面板按 v4.2.0 规划落实 |
@@ -209,7 +210,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 | 版本号一致性 | ✅ | 关键元数据和用户可见入口统一到 4.7.0 |
 | GP 合规 | ✅ | 当前 GP 已同步到 v4.0.0，v4.7.0 已复核执行回放、PaperActual 边界、AI 提案和 evidence 保护矩阵 |
 | 超级规范化 | ✅ | v4.0.0 对齐 MAJOR 演化通道、前端真源通道和学习流水线 closeout |
-| 完整 closeout | 🚧 | closeout 门禁已扩展为 26 项，第 7 项覆盖三矩阵治理，第 26 项覆盖能力栈一致性与元流水线 DryRun |
+| 完整 closeout | ✅ | closeout 门禁已扩展为 26 项，第 7 项覆盖三矩阵治理，第 26 项覆盖能力栈一致性与元流水线 DryRun |
 
 ## 五维度评分 (v4.7.0 closeout)
 

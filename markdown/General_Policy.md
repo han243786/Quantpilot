@@ -6,6 +6,7 @@
 > 更新: v3.7.1 增加 Rust 格式基线、功能演进登记和防回退规则，`cargo fmt --check` 纳入 pre-commit / CI / closeout
 > v4.0.0: 状态机化 QuantScript, Risk Plane, ExecutionMachine 能力来源, 前端以后端 capability 为真源, 开发者学习流水线边界已实施
 > v4.10.0: 固化单机交易工具产品边界；账户系统与策略中心搜索/筛选标记为 unsupported
+> v4.15.0: 本文件由三矩阵治理接管；变更入口先走 `00-matrix-governance/README.md`，再引用本文件查证实现约束
 
 ---
 

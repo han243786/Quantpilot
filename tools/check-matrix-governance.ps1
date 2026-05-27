@@ -128,6 +128,7 @@ $requiredCoreDocs = @(
     "markdown/00-matrix-governance/guidance-matrix.md",
     "markdown/00-matrix-governance/module-tree.md",
     "markdown/00-matrix-governance/proposal-flow.md",
+    "markdown/00-matrix-governance/proposal-examples.md",
     "markdown/00-matrix-governance/release-transition-protocol.md",
     "markdown/00-matrix-governance/landing-roadmap.md"
 )
@@ -143,7 +144,8 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.13.0/02-*.md", "v4.13 landing record"),
     @("markdown/06-milestones/v4.14.0/01-*.md", "v4.14 plan"),
     @("markdown/06-milestones/v4.14.0/02-*.md", "v4.14 landing record"),
-    @("markdown/06-milestones/v4.15.0/01-*.md", "v4.15 plan")
+    @("markdown/06-milestones/v4.15.0/01-*.md", "v4.15 plan"),
+    @("markdown/06-milestones/v4.15.0/02-*.md", "v4.15 governance closeout")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -153,12 +155,18 @@ foreach ($entry in $requiredMilestonePatterns) {
 $indexChecks = @(
     @("README.md", "markdown/00-matrix-governance/README.md", "root matrix governance entry"),
     @("markdown/README.md", "00-matrix-governance/README.md", "markdown matrix governance entry"),
+    @("markdown/General_Policy.md", "00-matrix-governance/README.md", "general policy matrix governance handoff"),
+    @("markdown/01-principles/principles-super-standardization.md", "00-matrix-governance/README.md", "super standardization matrix governance handoff"),
+    @("markdown/00-matrix-governance/README.md", "proposal-examples.md", "matrix proposal examples entry"),
     @("markdown/10-overview/README.md", "../00-matrix-governance/README.md", "overview matrix governance entry"),
     @("markdown/10-overview/overview-docs-index.md", "../00-matrix-governance/README.md", "docs index matrix governance entry"),
+    @("markdown/10-overview/overview-docs-index.md", "proposal-examples.md", "docs index proposal examples"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "../00-matrix-governance/landing-roadmap.md", "current roadmap matrix landing roadmap"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/00-matrix-governance/", "full feature tree matrix directory"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/00-matrix-governance/proposal-examples.md", "full feature tree proposal examples"),
     @("markdown/10-overview/overview-full-feature-tree.md", "tools/check-matrix-governance.ps1", "full feature tree matrix gate"),
-    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.14.0/02-", "full feature tree v4.14 record")
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.14.0/02-", "full feature tree v4.14 record"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.15.0/02-", "full feature tree v4.15 closeout")
 )
 
 foreach ($check in $indexChecks) {

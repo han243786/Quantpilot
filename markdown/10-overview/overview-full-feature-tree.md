@@ -1152,11 +1152,13 @@ standard-matrix.md                — 规范矩阵: 硬规则、禁止项、父�
 guidance-matrix.md                — 引导矩阵: 全量树 + 模块树定位流程
 module-tree.md                    — 模块树: 白箱网络、输入输出、关键 public 方法、父子通信边界
 proposal-flow.md                  — 提案状态机、三档执行判定表、提案模板
+proposal-examples.md              — 轻量、标准、重型三档提案样例
 release-transition-protocol.md    — 发布过渡期连接协议
 landing-roadmap.md                — v4.12.0 至 v4.15.0 治理完全落地路线
 ```
 
 自动化门禁: `tools/check-matrix-governance.ps1` 校验三矩阵入口、提案模板、模块树漂移、里程碑索引和发布过渡协议。
+提案样例库: `markdown/00-matrix-governance/proposal-examples.md` 提供轻量、标准、重型三档最小样例。
 
 治理接管路线:
 
@@ -1314,8 +1316,9 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.14.0/01-规划方案.md` — v4.14.0 治理门禁自动化规划
 - `markdown/06-milestones/v4.14.0/02-落地记录.md` — v4.14.0 治理门禁自动化记录
 - `markdown/06-milestones/v4.15.0/01-规划方案.md` — v4.15.0 三矩阵完全接管 closeout 规划
+- `markdown/06-milestones/v4.15.0/02-治理closeout.md` — v4.15.0 三矩阵完全接管治理 closeout
 
-当前治理基线: `v4.14.0/` — 治理门禁自动化，后续通过 v4.15.0 完成三矩阵全局接管。
+当前治理基线: `v4.15.0/` — 三矩阵完全接管，后续常态维护模块树、全量树和治理 gate。
 
 ### 7.7 总览 (markdown/10-overview/)
 

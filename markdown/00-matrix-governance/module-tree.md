@@ -523,6 +523,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 - `markdown/00-matrix-governance/guidance-matrix.md`
 - `markdown/00-matrix-governance/module-tree.md`
 - `markdown/00-matrix-governance/proposal-flow.md`
+- `markdown/00-matrix-governance/proposal-examples.md`
 - `markdown/00-matrix-governance/release-transition-protocol.md`
 - `markdown/00-matrix-governance/landing-roadmap.md`
 
@@ -533,6 +534,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
 | --- | --- | --- | --- | --- |
 | `markdown/00-matrix-governance/proposal-flow.md` 提案模板 | 变更意图 | 提案状态机 | 所有开发者、AI 辅助流程 | 不得跳过适配性校验和方案优化 |
+| `markdown/00-matrix-governance/proposal-examples.md` 三档样例 | 新开发者学习 | 轻量/标准/重型样例 | 所有开发者、AI 辅助流程 | 不得把样例当真实提案证据 |
 | `markdown/00-matrix-governance/guidance-matrix.md` 引导坐标 | 需求、模块、文件 | 全量树和模块树定位 | 重型变更 | 不得找不到父模块仍继续 |
 | `markdown/00-matrix-governance/module-tree.md` 白箱节点 | 模块事实 | 输入输出、public 方法、边界 | 重型变更 | 不得登记虚构模块 |
 | `markdown/00-matrix-governance/release-transition-protocol.md` 发布过渡协议 | 开发者显式声明 | 横向连接例外方案 | 发布过渡提案 | AI 不得主动触发 |

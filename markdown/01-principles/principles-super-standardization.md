@@ -5,6 +5,7 @@
 > 更新: v3.4.0 新增 §8.4 | v3.7.0 新增 §8.5 自由维度诱错审计常态化 | v3.7.1 收口 pre-commit / CI / closeout 三层门禁 + 功能演进通道 + Rust 格式基线
 > v4.0.0: MAJOR 演化通道已实施, 状态机化 QS/Risk Plane/ExecutionMachine 已落地, 前端以后端 capability 为真源, 开发者学习流水线 closeout 检查已接入
 > v4.7.0: v4 高级订单/tick replay、LiveActual 安全边界、v4 AI 提案分析、OpenAPI/治理快照/全量树同步已接入
+> v4.15.0: 本文件由三矩阵治理接管；变更入口先走 `../00-matrix-governance/README.md`，再引用本文件查证流程约束
 
 ---
 
@@ -18,7 +19,7 @@ QuantPilot 的开发过程受 **三层门禁流水线** 约束：
   │                         │                    │                              │                         │               └── 五维度评分 + GP合规矩阵 + 学习流水线检查 + release dry-run
   │                         │                    │                              │                         └────────────────── 3角色/十角色手动验证
   │                         │                    │                              └────────────────────────────────────────── 11维度 AI并行诱错
-  │                         │                    └──────────────────────────────────────────────────────────────────────────── 22项 closeout 门禁
+  │                         │                    └──────────────────────────────────────────────────────────────────────────── 26项 closeout 门禁
   │                         └──────────────────────────────────────────────────────────────────────────────────────────────── v4演化边界/兼容桥/非目标
   └────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 代码 + 测试 + 文档
 ```
@@ -74,25 +75,26 @@ cd frontend && npx vitest run
 | 4 | i18n 覆盖 | `powershell tools/check-i18n.ps1` | 阻断 |
 | 5 | 版本号一致性 | `powershell tools/check-version-consistency.ps1` | 阻断 |
 | 6 | 功能演进契约 | `powershell tools/check-feature-evolution.ps1` | 阻断 |
-| 7 | Pre-commit hook 同步 | `powershell tools/check-pre-commit-hook.ps1` | 阻断 |
-| 8 | 清理边界 | `powershell tools/check-cleanup-boundary.ps1` | 阻断 |
-| 9 | Rust 格式 | `cargo fmt --check` | 阻断 |
-| 10 | Rust 编译 | `cargo check --workspace` | 阻断 |
-| 11 | Rust 测试全量 | `powershell scripts/test.ps1 test --workspace` | 阻断 |
-| 12 | Clippy warning budget | `powershell tools/check-clippy-warning-budget.ps1 -MaxWarnings 58` | 阻断 |
-| 13 | 执行端 warning budget | `powershell tools/check-executor-warning-budget.ps1 -MaxWarnings 0` | 阻断 |
-| 14 | 前端构建 | `cd frontend && npm run build` | 阻断 |
-| 15 | 前端测试 | `cd frontend && npm run test` | 阻断 |
-| 16 | 前端 E2E | `cd frontend && npm run test:e2e` | 阻断 |
-| 17 | npm 审计 | `cd frontend && npm audit --audit-level=moderate` | 阻断 |
-| 18 | 执行端前端构建 | `cd frontend-executor && npm run build` | 阻断 |
-| 19 | 执行端编译 | `cargo check --bin executor` | 阻断 |
-| 20 | 执行端测试 | `powershell scripts/test.ps1 test --bin executor` | 阻断 |
-| 21 | QS 场景 smoke | `powershell scripts/scenario-smoke.ps1` | Closeout 阻断 |
-| 22 | Developer Learning Closeout | `powershell tools/check-learning-closeout.ps1` | Closeout 阻断 |
-| 23 | 干净工作区 | `powershell tools/check-clean-worktree.ps1` | Closeout/CI 阻断 |
-| 24 | 全量树完整性 | `powershell tools/check-full-feature-tree.ps1` | Closeout 阻断 | 🆕 v4.0.0 |
-| 25 | 能力栈一致性与元流水线 DryRun | `powershell tools/check-capability-stack.ps1` | Closeout 阻断 | 🆕 v4.7.0 |
+| 7 | 三矩阵治理 | `powershell tools/check-matrix-governance.ps1` | Closeout 阻断 |
+| 8 | Developer Learning Closeout | `powershell tools/check-learning-closeout.ps1` | Closeout 阻断 |
+| 9 | Pre-commit hook 同步 | `powershell tools/check-pre-commit-hook.ps1` | 阻断 |
+| 10 | 清理边界 | `powershell tools/check-cleanup-boundary.ps1` | 阻断 |
+| 11 | Rust 格式 | `cargo fmt --check` | 阻断 |
+| 12 | Rust 编译 | `cargo check --workspace` | 阻断 |
+| 13 | Rust 测试全量 | `powershell scripts/test.ps1 test --workspace` | 阻断 |
+| 14 | Clippy warning budget | `powershell tools/check-clippy-warning-budget.ps1 -MaxWarnings 58` | 阻断 |
+| 15 | 执行端 warning budget | `powershell tools/check-executor-warning-budget.ps1 -MaxWarnings 0` | 阻断 |
+| 16 | 前端构建 | `cd frontend && npm run build` | 阻断 |
+| 17 | 前端测试 | `cd frontend && npm run test` | 阻断 |
+| 18 | 前端 E2E | `cd frontend && npm run test:e2e` | 阻断 |
+| 19 | npm 审计 | `cd frontend && npm audit --audit-level=moderate` | 阻断 |
+| 20 | 执行端前端构建 | `cd frontend-executor && npm run build` | 阻断 |
+| 21 | 执行端编译 | `cargo check --bin executor` | 阻断 |
+| 22 | 执行端测试 | `powershell scripts/test.ps1 test --bin executor` | 阻断 |
+| 23 | QS 场景 smoke | `powershell scripts/scenario-smoke.ps1` | Closeout 阻断 |
+| 24 | 干净工作区 | `powershell tools/check-clean-worktree.ps1` | Closeout/CI 阻断 |
+| 25 | 全量树完整性 | `powershell tools/check-full-feature-tree.ps1` | Closeout 阻断 | 🆕 v4.0.0 |
+| 26 | 能力栈一致性与元流水线 DryRun | `powershell tools/check-capability-stack.ps1` | Closeout 阻断 | 🆕 v4.7.0 |
 
 说明：v3.7.1 起，Rust 格式基线由 `cargo fmt` 生成，`cargo fmt --check` 在 pre-commit / CI / closeout 三层阻断格式漂移。
 
@@ -106,9 +108,10 @@ cd frontend && npx vitest run
 .\tools\run-closeout-gates.bat
 ```
 
-执行 25 项 closeout 门禁，任一失败则整体不通过。Closeout 比 PR/CI 额外执行 QS 场景 smoke、Developer Learning Closeout 结构检查、干净工作区检查、全量树完整性检查和能力栈一致性检查：
+执行 26 项 closeout 门禁，任一失败则整体不通过。Closeout 额外执行三矩阵治理、Developer Learning Closeout、QS 场景 smoke、干净工作区、全量树完整性和能力栈一致性检查：
 
 ```
+powershell tools/check-matrix-governance.ps1
 powershell tools/check-learning-closeout.ps1
 powershell scripts/scenario-smoke.ps1
 powershell tools/check-clean-worktree.ps1
