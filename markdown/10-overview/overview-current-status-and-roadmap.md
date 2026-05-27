@@ -1,6 +1,6 @@
 # 当前状态与发布状态
 
-> 最后更新：2026-05-27 | 当前版本：v4.7.0 ✅ | 当前治理里程碑：v4.13.0 模块树白箱扩面
+> 最后更新：2026-05-27 | 当前版本：v4.7.0 ✅ | 当前治理里程碑：v4.14.0 治理门禁自动化
 
 ## 版本路线
 
@@ -133,8 +133,8 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 | v4.10.0 | MINOR | 亮色主题、执行端 i18n 收口、教程自动触发、Tab keep-alive、产品边界 unsupported 固化 | 已落地 |
 | v4.11.0 | MINOR | v4 策略配置系统一等化，聚合 artifact、preflight、diff、AI proposal 配置域绑定 | 推进中 |
 | v4.12.0 | MINOR governance | 三矩阵治理入口启用，建立流程矩阵、规范矩阵、引导矩阵、模块树和完全落地路线 | 已落地 |
-| v4.13.0 | MINOR governance | 模块树白箱扩面，覆盖 active 模块、关键 public 方法和模块化重构通道 | 当前治理里程碑 |
-| v4.14.0 | MINOR governance | 治理门禁自动化，检查三矩阵声明、引导坐标、模块树漂移和发布过渡保护 | 规划 |
+| v4.13.0 | MINOR governance | 模块树白箱扩面，覆盖 active 模块、关键 public 方法和模块化重构通道 | 已落地 |
+| v4.14.0 | MINOR governance | 治理门禁自动化，检查三矩阵声明、引导坐标、模块树漂移和发布过渡保护 | 当前治理里程碑 |
 | v4.15.0 | MINOR governance | 三矩阵完全接管 closeout，旧入口导流并形成治理收口报告 | 规划 |
 
 使用下面的专用文档作为活跃发布与治理界面：
@@ -162,6 +162,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - [v4.13.0 规划方案](../06-milestones/v4.13.0/01-规划方案.md)
 - [v4.13.0 落地记录](../06-milestones/v4.13.0/02-落地记录.md)
 - [v4.14.0 规划方案](../06-milestones/v4.14.0/01-规划方案.md)
+- [v4.14.0 落地记录](../06-milestones/v4.14.0/02-落地记录.md)
 - [v4.15.0 规划方案](../06-milestones/v4.15.0/01-规划方案.md)
 - [Claude 产品/UX/功能完整度审计核查](../05-testing/Claude产品UX功能完整度审计核查-v4.7.0-2026-05-26.md)
 - [支持矩阵](../03-implementation/governance/implementation-support-matrix.md)
@@ -174,7 +175,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 |--------|:--:|------|
 | `cargo fmt --check` | ✅ | 全仓 rustfmt drift 已清理，pre-commit / CI / closeout 均已接入 |
 | `cargo check --workspace` | ✅ | 0 错误 |
-| `scripts/test.ps1 test --workspace` | ✅ | closeout [12/25] 覆盖 |
+| `scripts/test.ps1 test --workspace` | ✅ | closeout [13/26] 覆盖 |
 | workspace clippy warning budget | ✅ | 当前预算 58，只降不升；不再把 clippy 退出码通过误读为 warning-free |
 | executor warning budget | ✅ | 当前预算 0，新增 warning 阻断 |
 | 前端 `npm run build` | ✅ | main frontend 已纳入 CI/closeout |
@@ -197,6 +198,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 | 功能演进契约 | ✅ | 新增能力必须有登记、回归保护矩阵、兼容性与迁移说明 |
 | Pre-commit hook 同步 | ✅ | `tools/check-pre-commit-hook.ps1` 已进入 closeout，防止 `.git/hooks/pre-commit` 与 `scripts/pre-commit` 再次漂移 |
 | 清理边界门禁 | ✅ | `tools/check-cleanup-boundary.ps1` 已进入 CI/closeout，防止清理脚本触碰真实运行/图版本工件 |
+| 三矩阵治理门禁 | 🚧 | `tools/check-matrix-governance.ps1` 已接入 closeout [7/26]，用于检查治理入口、提案模板、模块树漂移和发布过渡协议 |
 | Rust 格式基线 | ✅ | `cargo fmt --check` 已进入三层门禁 |
 | v4 runtime 入口 | ✅ | `/api/runtime/v4/run`、CLI `v4-run`、前端 `start_v4_simulation` 已接入 |
 | 执行端 v4 集成 | ✅ | RunnerPool、OKX Market 事件、部署 API、SSE evidence、执行端面板按 v4.2.0 规划落实 |
@@ -207,7 +209,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 | 版本号一致性 | ✅ | 关键元数据和用户可见入口统一到 4.7.0 |
 | GP 合规 | ✅ | 当前 GP 已同步到 v4.0.0，v4.7.0 已复核执行回放、PaperActual 边界、AI 提案和 evidence 保护矩阵 |
 | 超级规范化 | ✅ | v4.0.0 对齐 MAJOR 演化通道、前端真源通道和学习流水线 closeout |
-| 完整 closeout | ✅ | closeout 门禁已扩展为 25 项，第 25 项覆盖能力栈一致性与元流水线 DryRun |
+| 完整 closeout | 🚧 | closeout 门禁已扩展为 26 项，第 7 项覆盖三矩阵治理，第 26 项覆盖能力栈一致性与元流水线 DryRun |
 
 ## 五维度评分 (v4.7.0 closeout)
 
@@ -215,7 +217,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 |------|:--:|------|
 | **功能开发进度** | **9.5/10** | 18 指标全实现 / 实时执行端 + OKX testnet / Paper/Live 切换 / 编译缓存 / Toast 系统 |
 | **仓库稳定程度** | **9.4/10** | workspace test 通过 / vitest 289/289 / executor warning 0 / closeout 正在 v3.7.2 收口 |
-| **发布就绪度** | **9.4/10** | P1 清零 / GP+超规范化 v4.0.0 对齐 / v4.7.0 版本一致性 / 25 项 closeout 门禁已接入 |
+| **发布就绪度** | **9.4/10** | P1 清零 / GP+超规范化 v4.0.0 对齐 / v4.7.0 版本一致性 / 26 项 closeout 门禁已接入 |
 | **用户友好程度** | **9.5/10** | 术语全中文化 / 空状态引导 / 进度反馈 / 错误码映射 / ARIA 无障碍 / prefers-reduced-motion |
 | **系统整体稳定性** | **9.3/10** | 事务保护 / TOCTOU 修复 / 三阶段无锁恢复 / 状态持久化 / Zeroizing / api_guard 强制 |
 | **加权** | **9.4/10** | 加权 = 9.5×0.3 + 9.4×0.3 + 9.3×0.2 + 9.5×0.1 + 9.3×0.1 |

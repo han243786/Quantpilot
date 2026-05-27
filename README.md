@@ -197,6 +197,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-stack
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-i18n.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-version-consistency.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-feature-evolution.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-learning-closeout.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-pre-commit-hook.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-cleanup-boundary.ps1
@@ -248,7 +249,7 @@ cd frontend; npm run test:perf:react-flow
 | v4 AI 提案与回放分析 | ✅ | v4 AI proposal 仅接受回测工件来源，沙箱比较报告输出轨迹、成交率和风险拒绝摘要 |
 | 版本一致性 | ✅ | Cargo、Tauri、前端 package、lockfile、release manifest、OpenAPI 和启动横幅统一到 `4.7.0` |
 | executor warning 债务 | ✅ | 当前预算 0；新增 warning 会失败 |
-| 完整 closeout | ✅ | closeout 门禁已扩展为 25 项，第 25 项覆盖能力栈一致性与元流水线 DryRun |
+| 完整 closeout | 🚧 | closeout 门禁已扩展为 26 项，第 7 项覆盖三矩阵治理，第 26 项覆盖能力栈一致性与元流水线 DryRun |
 
 ## 更多文档
 

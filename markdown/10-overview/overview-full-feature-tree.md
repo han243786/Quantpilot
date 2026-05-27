@@ -1052,7 +1052,7 @@ frontend/src/
 
 ## 根6: 工具链与质量门禁
 
-**一句话**: 三层流水线 (pre-commit → PR/CI → closeout-release), 10+ 门禁脚本, 25 项 closeout gates。
+**一句话**: 三层流水线 (pre-commit → PR/CI → closeout-release), 10+ 门禁脚本, 26 项 closeout gates。
 
 ### 6.1 Pre-commit Hook
 
@@ -1070,7 +1070,7 @@ cd frontend && npx vitest run
 
 任何一步失败 → 提交被拒。
 
-### 6.2 PR/CI 与 closeout 共享基础门禁 (21 项)
+### 6.2 closeout 基础门禁 (22 项)
 
 | # | 检查项 | 命令/工具 |
 |---|--------|---------|
@@ -1080,35 +1080,37 @@ cd frontend && npx vitest run
 | 4 | i18n 覆盖 | `tools/check-i18n.ps1` |
 | 5 | 版本一致性 | `tools/check-version-consistency.ps1` |
 | 6 | 功能演进 | `tools/check-feature-evolution.ps1` |
-| 7 | 学习流水线 closeout | `tools/check-learning-closeout.ps1` |
-| 8 | Pre-commit 同步 | `tools/check-pre-commit-hook.ps1` |
-| 9 | 清理边界 | `tools/check-cleanup-boundary.ps1` |
-| 10 | Rust 格式 | `cargo fmt --check` |
-| 11 | Rust 编译 | `cargo check --workspace` |
-| 12 | Rust 测试 | `scripts/test.ps1 test --workspace` |
-| 13 | Clippy budget | `tools/check-clippy-warning-budget.ps1 -MaxWarnings 58` |
-| 14 | 执行端 warning | `tools/check-executor-warning-budget.ps1 -MaxWarnings 0` |
-| 15 | 前端构建 | `npm run build` (frontend) |
-| 16 | 前端测试 | `npm run test` (frontend) |
-| 17 | E2E | `npm run test:e2e` (frontend) |
-| 18 | npm 审计 | `npm audit --audit-level=moderate` |
-| 19 | 执行端前端 | `npm run build` (frontend-executor) |
-| 20 | 执行端编译 | `cargo check --bin executor` |
-| 21 | 执行端测试 | `scripts/test.ps1 test --bin executor` |
+| 7 | 三矩阵治理 | `tools/check-matrix-governance.ps1` |
+| 8 | 学习流水线 closeout | `tools/check-learning-closeout.ps1` |
+| 9 | Pre-commit 同步 | `tools/check-pre-commit-hook.ps1` |
+| 10 | 清理边界 | `tools/check-cleanup-boundary.ps1` |
+| 11 | Rust 格式 | `cargo fmt --check` |
+| 12 | Rust 编译 | `cargo check --workspace` |
+| 13 | Rust 测试 | `scripts/test.ps1 test --workspace` |
+| 14 | Clippy budget | `tools/check-clippy-warning-budget.ps1 -MaxWarnings 58` |
+| 15 | 执行端 warning | `tools/check-executor-warning-budget.ps1 -MaxWarnings 0` |
+| 16 | 前端构建 | `npm run build` (frontend) |
+| 17 | 前端测试 | `npm run test` (frontend) |
+| 18 | E2E | `npm run test:e2e` (frontend) |
+| 19 | npm 审计 | `npm audit --audit-level=moderate` |
+| 20 | 执行端前端 | `npm run build` (frontend-executor) |
+| 21 | 执行端编译 | `cargo check --bin executor` |
+| 22 | 执行端测试 | `scripts/test.ps1 test --bin executor` |
 
-### 6.3 Closeout/Release 门禁 (额外 3 项)
+### 6.3 Closeout/Release 门禁 (额外 4 项)
 
 在 PR/CI 基础上增加:
 ```
-#22 QS 场景 smoke       → scripts/scenario-smoke.ps1
-#23 干净工作区           → tools/check-clean-worktree.ps1
-#24 全量树完整性         → tools/check-full-feature-tree.ps1
+#23 QS 场景 smoke       → scripts/scenario-smoke.ps1
+#24 干净工作区           → tools/check-clean-worktree.ps1
+#25 全量树完整性         → tools/check-full-feature-tree.ps1
+#26 能力栈一致性         → tools/check-capability-stack.ps1
 ```
 
 ### 6.4 一键收口
 
 ```powershell
-.\tools\run-closeout-gates.bat      # 24 项全量
+.\tools\run-closeout-gates.bat      # 26 项全量
 ```
 
 ### 6.5 测试脚本
@@ -1153,6 +1155,8 @@ proposal-flow.md                  — 提案状态机、三档执行判定表、
 release-transition-protocol.md    — 发布过渡期连接协议
 landing-roadmap.md                — v4.12.0 至 v4.15.0 治理完全落地路线
 ```
+
+自动化门禁: `tools/check-matrix-governance.ps1` 校验三矩阵入口、提案模板、模块树漂移、里程碑索引和发布过渡协议。
 
 治理接管路线:
 
@@ -1308,9 +1312,10 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.13.0/01-规划方案.md` — v4.13.0 模块树白箱扩面规划
 - `markdown/06-milestones/v4.13.0/02-落地记录.md` — v4.13.0 模块树白箱扩面记录
 - `markdown/06-milestones/v4.14.0/01-规划方案.md` — v4.14.0 治理门禁自动化规划
+- `markdown/06-milestones/v4.14.0/02-落地记录.md` — v4.14.0 治理门禁自动化记录
 - `markdown/06-milestones/v4.15.0/01-规划方案.md` — v4.15.0 三矩阵完全接管 closeout 规划
 
-当前治理基线: `v4.13.0/` — 模块树白箱扩面，后续通过 v4.14.0 至 v4.15.0 完成门禁自动化和全局接管。
+当前治理基线: `v4.14.0/` — 治理门禁自动化，后续通过 v4.15.0 完成三矩阵全局接管。
 
 ### 7.7 总览 (markdown/10-overview/)
 
@@ -1995,6 +2000,7 @@ storage/
 - `tools/check-version-consistency.ps1` — 版本一致性检查, 覆盖 release manifest/OpenAPI/启动横幅 🆕 v4.1.0
 - `tools/check-openapi-route-diff.ps1` — OpenAPI path 与 Rust route 基线 diff, 可用 `-FailOnDiff` 阻断 🆕 v4.8.1
 - `tools/check-feature-evolution.ps1` — 功能演进检查
+- `tools/check-matrix-governance.ps1` — 三矩阵治理检查, 校验治理入口、提案模板、模块树漂移和发布过渡协议 🆕 v4.14.0
 - `tools/check-learning-closeout.ps1` — 学习流水线 closeout
 - `tools/check-pre-commit-hook.ps1` — Pre-commit hook 同步检查
 - `tools/check-cleanup-boundary.ps1` — 清理边界检查
@@ -2005,7 +2011,7 @@ storage/
 - `tools/check-full-feature-tree.ps1` — 全量树校验 🆕 v4.0.0
 
 **其他工具**:
-- `tools/run-closeout-gates.bat` — 一键 25 项 closeout
+- `tools/run-closeout-gates.bat` — 一键 26 项 closeout
 - `tools/export-capability-fixture.ps1` — 能力 fixture 导出
 - `tools/cleanup-artifacts.ps1` — 工件清理
 - `tools/track-gate-metrics.ps1` — 门禁指标追踪, 支持 closeout 前 DryRun 和 NDJSON 记录
