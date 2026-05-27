@@ -49,16 +49,16 @@
 
 | 叶子 | 当前状态 | 下一步建议 |
 | --- | --- | --- |
-| S1 `system.entry.launch_scripts` | 可低风险抽离 | 可做脚本入口白箱 closeout，不改脚本语义 |
+| S1 `system.entry.launch_scripts` | 已完成单叶 closeout | `14-system.entry.launch_scripts单叶closeout.md` 已确认脚本入口等价，不继续细分 |
 | S2 `system.entry.backend_process` | 已抽离完成 | 只维护，不继续扩大 owner |
 | S3 `system.desktop_shell.tauri_runtime` | 可登记，代码抽离需暂停 | 先补 readiness wait 等价检查 |
-| S4 `system.desktop_shell.tauri_config` | 可低风险登记 | 配置变更必须单独批次 |
+| S4 `system.desktop_shell.tauri_config` | 已完成单叶 closeout | `15-system.desktop_shell.tauri_config单叶closeout.md` 已确认 Tauri 配置等价，不继续细分 |
 | S5 `system.desktop_shell.assets_schema` | 只需登记，不主动抽离 | 作为资产叶子管理 |
 | S6 `system.build_delivery.workspace_manifest` | 需要决策暂停 | 依赖/workspace 影响大，不主动抽 |
 | S7 `system.build_delivery.desktop_build_scripts` | 可低风险登记 | 不与启动脚本混批 |
 | S8 `system.build_delivery.container_proxy` | 按变更触发 | 非桌面默认路径，不主动抽 |
 | S9 `system.build_delivery.ci_release` | 需要决策暂停 | 与测试汰换/发布流程耦合 |
-| S10 `system.runtime_profile.config_examples` | 可低风险登记 | 不把示例配置当 runtime 真源 |
+| S10 `system.runtime_profile.config_examples` | 已完成单叶 closeout | `16-system.runtime_profile.config_examples单叶closeout.md` 已确认配置样例等价，不继续细分 |
 
 ---
 
@@ -75,7 +75,7 @@
 | 关键内部实现 | 环境准备、端口/进程启动编排、后端/前端启动顺序 |
 | 保留外部边界 | 后端 API、前端 dev server、业务 capability、runtime state |
 | 等价证据 | 脚本存在性检查、参数/环境变量人工核查、可选本地启动 smoke |
-| 当前判定 | 可低风险抽离；只登记脚本入口，不改脚本行为 |
+| 当前判定 | 已完成单叶 closeout；只登记脚本入口，不改脚本行为，不继续细分 |
 | 暂停点 | 任何端口、进程启动顺序、默认环境变量或用户命令变化 |
 
 ### S2 `system.entry.backend_process`
@@ -117,7 +117,7 @@
 | 关键内部实现 | CSP、capability allowlist、窗口/打包配置 |
 | 保留外部边界 | 前端 capability 投影、后端 API 权限语义、业务 supported/unsupported 声明 |
 | 等价证据 | JSON parse、`cargo check -p quantpilot-tauri`、人工核查 CSP/capability diff |
-| 当前判定 | 可低风险登记；实际配置变更必须单独批次 |
+| 当前判定 | 已完成单叶 closeout；实际配置变更必须单独批次 |
 | 暂停点 | CSP 放宽、权限新增、窗口行为变化或 capability 声明变化 |
 
 ### S5 `system.desktop_shell.assets_schema`
@@ -201,7 +201,7 @@
 | 关键内部实现 | 环境变量模板、runtime protocol 示例、strategy_ir schema/example |
 | 保留外部边界 | runtime 行为真源、编译器真源、能力声明真源 |
 | 等价证据 | JSON/YAML parse、schema/example 人工对照、相关 compile/runtime 测试 |
-| 当前判定 | 可低风险登记；不把示例配置当 runtime 行为真源 |
+| 当前判定 | 已完成单叶 closeout；不把示例配置当 runtime 行为真源 |
 | 暂停点 | schema 字段变化、默认环境变量变化、协议样例改变 runtime 支持范围 |
 
 ---
@@ -210,9 +210,6 @@
 
 | 优先级 | 叶子 | 动作 |
 | --- | --- | --- |
-| P0 | S1 `system.entry.launch_scripts` | 做脚本入口白箱 closeout，确认不改命令语义 |
-| P0 | S4 `system.desktop_shell.tauri_config` | 做配置白箱 closeout，确认 CSP/capability 不变 |
-| P0 | S10 `system.runtime_profile.config_examples` | 做配置样例白箱 closeout，确认示例不冒充 runtime 真源 |
 | P1 | S3 `system.desktop_shell.tauri_runtime` | 先补 readiness wait 等价检查，再考虑抽离 |
 | P1 | S7 `system.build_delivery.desktop_build_scripts` | 单独批次登记 desktop build/dev scripts |
 | P2 | S6 `system.build_delivery.workspace_manifest` | 决策暂停后再碰 |

@@ -1332,9 +1332,12 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/11-system抽离经验回填.md` — v4.16.0 system 抽离经验回填，固化 public/内部实现分类、owner 复核和未迁移边界准则
 - `markdown/06-milestones/v4.16.0/12-system十叶模块等价基线.md` — v4.16.0 system 10 叶模块等价基线，标定 S1-S10 的功能等价证据、继续抽离状态和暂停点
 - `markdown/06-milestones/v4.16.0/13-递归模块化全局根流程.md` — v4.16.0 递归模块化全局根流程，定义顶层模块、叶子抽离、叶子整理、细分价值判断和全量模块树收束
+- `markdown/06-milestones/v4.16.0/14-system.entry.launch_scripts单叶closeout.md` — v4.16.0 S1 启动脚本单叶 closeout，确认 `start.bat` / `start.ps1` 等价并停止继续细分
+- `markdown/06-milestones/v4.16.0/15-system.desktop_shell.tauri_config单叶closeout.md` — v4.16.0 S4 Tauri config 单叶 closeout，确认 CSP、窗口配置和 capability allowlist 等价并停止继续细分
+- `markdown/06-milestones/v4.16.0/16-system.runtime_profile.config_examples单叶closeout.md` — v4.16.0 S10 配置样例单叶 closeout，确认环境变量、runtime protocol 和 strategy_ir schema/example 等价并停止继续细分
 
 当前治理基线: `v4.15.0/` — 三矩阵完全接管，后续常态维护模块树、全量树和治理 gate。
-当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；已决策先走 BE-001 后端接口边界，system 抽离经验已回填为后续抽离准则，system 10 叶等价基线已铺好，递归模块化流程已明确，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
+当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；已决策先走 BE-001 后端接口边界，system 抽离经验已回填为后续抽离准则，system 10 叶等价基线已铺好，S1/S4/S10 closeout 已完成，递归模块化流程已明确，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
 
 ### 7.7 总览 (markdown/10-overview/)
 

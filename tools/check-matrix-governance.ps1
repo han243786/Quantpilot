@@ -158,7 +158,10 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/10-*.md", "v4.16 system extraction completion record"),
     @("markdown/06-milestones/v4.16.0/11-*.md", "v4.16 system extraction lessons backfill"),
     @("markdown/06-milestones/v4.16.0/12-*.md", "v4.16 system ten leaf equivalence baseline"),
-    @("markdown/06-milestones/v4.16.0/13-*.md", "v4.16 recursive modularization global root flow")
+    @("markdown/06-milestones/v4.16.0/13-*.md", "v4.16 recursive modularization global root flow"),
+    @("markdown/06-milestones/v4.16.0/14-*.md", "v4.16 system launch scripts leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/15-*.md", "v4.16 system tauri config leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/16-*.md", "v4.16 system runtime profile config examples closeout")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -193,6 +196,9 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/11-", "full feature tree v4.16 system extraction lessons backfill"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/12-", "full feature tree v4.16 system ten leaf baseline"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/13-", "full feature tree v4.16 recursive modularization flow"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/14-", "full feature tree v4.16 system launch scripts closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/15-", "full feature tree v4.16 system tauri config closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/16-", "full feature tree v4.16 system runtime profile closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/03-", "module tree v4.16 backend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/04-", "module tree v4.16 frontend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/05-", "module tree v4.16 test asset register"),
@@ -204,6 +210,9 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/11-", "module tree v4.16 system extraction lessons backfill"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/12-", "module tree v4.16 system ten leaf baseline"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/13-", "module tree v4.16 recursive modularization flow"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/14-", "module tree v4.16 system launch scripts closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/15-", "module tree v4.16 system tauri config closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/16-", "module tree v4.16 system runtime profile closeout"),
     @("markdown/10-overview/overview-docs-index.md", "v4.16.0", "docs index v4.16 plan"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "v4.16.0", "current roadmap v4.16 plan")
 )
@@ -348,6 +357,42 @@ $v416LandingFiles = @(
         @((U "5YWo5bGA5qC5"), "global root marker"),
         @((U "57uG5YiG5Lu35YC8"), "split value marker"),
         @("tools/check-full-feature-tree.ps1", "full feature tree gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/14-*.md", @(
+        @("system.entry.launch_scripts", "system launch scripts leaf"),
+        @("start.bat", "batch launch script"),
+        @("start.ps1", "powershell launch script"),
+        @("QUANTPILOT_DEV=true", "dev mode environment"),
+        @("cargo build --bin quantpilot", "backend build command"),
+        @("target\debug\quantpilot.exe", "backend executable"),
+        @("cargo tauri dev", "tauri dev command"),
+        @("3000", "backend readiness port"),
+        @("5173", "frontend dev port cleanup"),
+        @("tools/check-matrix-governance.ps1", "matrix governance gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/15-*.md", @(
+        @("system.desktop_shell.tauri_config", "system tauri config leaf"),
+        @("src-tauri/tauri.conf.json", "tauri config file"),
+        @("src-tauri/capabilities/default.json", "tauri capability file"),
+        @("QuantPilot", "product name"),
+        @("com.quantpilot.app", "app identifier"),
+        @("http://localhost:5173", "tauri dev url"),
+        @("http://127.0.0.1:3000", "backend api csp target"),
+        @("core:default", "default capability permission"),
+        @("shell:allow-open", "shell open permission"),
+        @("cargo check -p quantpilot-tauri", "tauri check gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/16-*.md", @(
+        @("system.runtime_profile.config_examples", "system runtime profile config examples leaf"),
+        @(".env.example", "env example file"),
+        @("config/runtime_protocol.example.yaml", "runtime protocol example file"),
+        @("config/strategy_ir.v0.schema.json", "strategy ir schema file"),
+        @("config/strategy_ir.v0.example.json", "strategy ir example file"),
+        @("QUANTPILOT_DEV", "dev env example"),
+        @("QUANTPILOT_LOG_FORMAT", "log env example"),
+        @("generators", "runtime protocol generators"),
+        @("global_risk", "runtime protocol risk"),
+        @("tools/check-matrix-governance.ps1", "matrix governance gate")
     ))
 )
 
@@ -405,7 +450,10 @@ $moduleTreePath = "markdown/00-matrix-governance/module-tree.md"
 $moduleTreeContent = Read-RepoText $moduleTreePath
 $requiredModules = @(
     "system.entry",
+    "system.entry.launch_scripts",
     "system.entry.backend_process",
+    "system.desktop_shell.tauri_config",
+    "system.runtime_profile.config_examples",
     "backend.router",
     "backend.capability",
     "backend.strategy_config",

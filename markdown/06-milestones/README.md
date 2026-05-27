@@ -25,6 +25,9 @@
 | 11 | `v4.16.0/11-system抽离经验回填.md` | 将 system 试水经验回填为 public/内部实现分类、owner 复核和未迁移边界准则 | ✅ 已完成 |
 | 12 | `v4.16.0/12-system十叶模块等价基线.md` | 为 system 10 个叶子模块建立功能等价证据、继续抽离状态和暂停点 | ✅ 已完成 |
 | 13 | `v4.16.0/13-递归模块化全局根流程.md` | 固化顶层模块、叶子抽离、叶子整理、细分价值判断和全局根收束流程 | ✅ 已完成 |
+| 14 | `v4.16.0/14-system.entry.launch_scripts单叶closeout.md` | S1 启动脚本入口白箱 closeout，确认脚本等价并停止继续细分 | ✅ 已完成 |
+| 15 | `v4.16.0/15-system.desktop_shell.tauri_config单叶closeout.md` | S4 Tauri config 白箱 closeout，确认 CSP、窗口和 capability allowlist 等价并停止继续细分 | ✅ 已完成 |
+| 16 | `v4.16.0/16-system.runtime_profile.config_examples单叶closeout.md` | S10 配置样例白箱 closeout，确认环境、runtime protocol 和 strategy_ir 样例等价并停止继续细分 | ✅ 已完成 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
