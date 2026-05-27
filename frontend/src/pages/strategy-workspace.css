@@ -118,6 +118,10 @@
   text-align: center;
 }
 
+.workspace-tab-panel[hidden] {
+  display: none !important;
+}
+
 .strategy-workspace-loading {
   min-height: 100vh;
   display: grid;
@@ -1450,8 +1454,8 @@
     align-items: stretch;
   }
 
-  .workspace-section-card__header > .ghost-btn,
-  .workspace-section-card__header > .primary-btn,
+  .workspace-section-card__header > .ad-btn--ghost,
+  .workspace-section-card__header > .ad-btn--primary,
   .workspace-issue-queue__actions,
   .workspace-issue-queue__severity,
   .workspace-issue-queue__sources,

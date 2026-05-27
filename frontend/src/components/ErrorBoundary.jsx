@@ -15,23 +15,22 @@ export default class ErrorBoundary extends React.Component {
   }
   render() {
     if (this.state.hasError) {
+      const retry = this.props.onRetry || (() => {
+        this.setState({ hasError: false });
+        window.location.reload();
+      });
       return (
-        <div className="error-boundary-fallback" style={{ padding: 40, textAlign: "center" }}>
-          <h3 style={{ color: "var(--ad-text)", margin: 0 }}>
+        <div className="error-boundary-fallback" role="alert">
+          <div className="error-boundary-fallback__icon" aria-hidden="true">!</div>
+          <h3>
             {this.props.fallbackTitle || translateText("界面加载失败")}
           </h3>
-          <p style={{ color: "var(--ad-text-muted)", fontSize: 13, marginTop: 8 }}>
+          <p>
             {this.props.fallbackText || translateText("请刷新页面重试，或返回上一页。")}
           </p>
-          {this.props.onRetry ? (
-            <button
-              className="ghost-btn"
-              onClick={this.props.onRetry}
-              style={{ marginTop: 12 }}
-            >
-              {translateText("重试")}
-            </button>
-          ) : null}
+          <button className="ad-btn ad-btn--ghost" onClick={retry}>
+            {translateText("重试")}
+          </button>
         </div>
       );
     }

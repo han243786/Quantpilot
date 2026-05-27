@@ -62,6 +62,7 @@ pub struct ActiveStrategy {
     pub status: StrategyStatus,
     pub subscribed_symbols: Vec<Symbol>,
     pub execution_mode: ExecutionMode,
+    pub strategy_config_preflight: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -202,16 +203,13 @@ impl ExecutorState {
 
     /// v3.5.0: 读取当前全局执行模式
     pub fn current_mode(&self) -> ExecutionMode {
-        self.global_mode
-            .read()
-            .unwrap_or_else(|e| e.into_inner())
-            .clone()
+        *self.global_mode.read().unwrap_or_else(|e| e.into_inner())
     }
 
     /// v3.5.0: 设置全局执行模式, 返回旧模式
     pub fn set_mode(&self, mode: ExecutionMode) -> ExecutionMode {
         let mut current = self.global_mode.write().unwrap_or_else(|e| e.into_inner());
-        let old = current.clone();
+        let old = *current;
         *current = mode;
         old
     }
@@ -268,6 +266,7 @@ impl ExecutorState {
                         "name": s.name,
                         "runtime_kind": s.runtime_kind,
                         "params": s.params,
+                        "strategy_config_preflight": s.strategy_config_preflight,
                     }),
                 )
             })
@@ -295,6 +294,7 @@ impl ExecutorState {
                         "name": s.name,
                         "runtime_kind": s.runtime_kind,
                         "params": s.params,
+                        "strategy_config_preflight": s.strategy_config_preflight,
                     }),
                 )
             })
@@ -325,6 +325,7 @@ impl ExecutorState {
                 .cloned()
                 .and_then(|value| serde_json::from_value(value).ok())
                 .unwrap_or_default();
+            let strategy_config_preflight = val.get("strategy_config_preflight").cloned();
             strategies.insert(
                 id.clone(),
                 ActiveStrategy {
@@ -354,6 +355,7 @@ impl ExecutorState {
                     status: StrategyStatus::Loaded,
                     subscribed_symbols: vec![],
                     execution_mode: ExecutionMode::PaperSimulated,
+                    strategy_config_preflight,
                 },
             );
         }

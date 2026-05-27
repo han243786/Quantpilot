@@ -90,14 +90,14 @@ function WorkspaceIssueQueueCard({
           {isDirty ? (
             <button
               type="button"
-              className="ghost-btn compact-btn"
+              className="ad-btn ad-btn--ghost compact-btn"
               onClick={() => updateFilters(DEFAULT_WORKSPACE_ISSUE_FILTERS)}
             >
               重置筛选
             </button>
           ) : null}
           {actionLabel && onAction ? (
-            <button className="ghost-btn compact-btn" onClick={onAction}>
+            <button className="ad-btn ad-btn--ghost compact-btn" onClick={onAction}>
               {actionLabel}
             </button>
           ) : null}
@@ -114,7 +114,7 @@ function WorkspaceIssueQueueCard({
             <button
               key={option.id}
               type="button"
-              className={`ghost-btn compact-btn workspace-issue-queue__filter${
+              className={`ad-btn ad-btn--ghost compact-btn workspace-issue-queue__filter${
                 severityFilter === option.id ? " workspace-issue-queue__filter--active" : ""
               }`}
               onClick={() => updateFilters({ severityFilter: option.id })}
@@ -125,7 +125,7 @@ function WorkspaceIssueQueueCard({
         </div>
         <button
           type="button"
-          className={`ghost-btn compact-btn workspace-issue-queue__filter${
+          className={`ad-btn ad-btn--ghost compact-btn workspace-issue-queue__filter${
             actionableOnly ? " workspace-issue-queue__filter--active" : ""
           }`}
           onClick={() => updateFilters((current) => ({ actionableOnly: !current.actionableOnly }))}
@@ -134,7 +134,7 @@ function WorkspaceIssueQueueCard({
         </button>
         <button
           type="button"
-          className={`ghost-btn compact-btn workspace-issue-queue__filter${
+          className={`ad-btn ad-btn--ghost compact-btn workspace-issue-queue__filter${
             showSourceFilters ? " workspace-issue-queue__filter--active" : ""
           }`}
           onClick={() => updateFilters((current) => ({ showSourceFilters: !current.showSourceFilters }))}
@@ -147,7 +147,7 @@ function WorkspaceIssueQueueCard({
         <div className="workspace-issue-queue__sources">
           <button
             type="button"
-            className={`ghost-btn compact-btn workspace-issue-queue__filter${
+            className={`ad-btn ad-btn--ghost compact-btn workspace-issue-queue__filter${
               sourceFilter === "all" ? " workspace-issue-queue__filter--active" : ""
             }`}
             onClick={() => updateFilters({ sourceFilter: "all", nodeTypeFilter: "all" })}
@@ -158,7 +158,7 @@ function WorkspaceIssueQueueCard({
             <button
               key={source}
               type="button"
-              className={`ghost-btn compact-btn workspace-issue-queue__filter${
+              className={`ad-btn ad-btn--ghost compact-btn workspace-issue-queue__filter${
                 sourceFilter === source ? " workspace-issue-queue__filter--active" : ""
               }`}
               onClick={() => updateFilters({ sourceFilter: source, nodeTypeFilter: "all" })}
@@ -173,7 +173,7 @@ function WorkspaceIssueQueueCard({
         <div className="workspace-issue-queue__node-types">
           <button
             type="button"
-            className={`ghost-btn compact-btn workspace-issue-queue__filter${
+            className={`ad-btn ad-btn--ghost compact-btn workspace-issue-queue__filter${
               nodeTypeFilter === "all" ? " workspace-issue-queue__filter--active" : ""
             }`}
             onClick={() => updateFilters({ nodeTypeFilter: "all" })}
@@ -184,7 +184,7 @@ function WorkspaceIssueQueueCard({
             <button
               key={nodeType}
               type="button"
-              className={`ghost-btn compact-btn workspace-issue-queue__filter${
+              className={`ad-btn ad-btn--ghost compact-btn workspace-issue-queue__filter${
                 nodeTypeFilter === nodeType ? " workspace-issue-queue__filter--active" : ""
               }`}
               onClick={() => updateFilters({ nodeTypeFilter: nodeType })}

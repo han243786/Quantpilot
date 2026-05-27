@@ -1,5 +1,5 @@
 import { useI18n } from "../i18n";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { runtimeStatusLabel } from "../utils/runtimeStatus";
 import { useWorkspaceActionBarModel } from "../hooks/useWorkspaceActionBarModel";
 import { triggerTutorial } from "../hooks/useTutorial";
@@ -96,6 +96,8 @@ function DefaultToolbarLayout({
   loadLatestTitle,
   resetGraphTitle,
   exportQuantScriptTitle,
+  exportStrategyPackageTitle,
+  importStrategyPackageTitle,
   stopRuntimeTitle,
   resetRuntimeTitle,
   tutorialTitle,
@@ -119,6 +121,8 @@ function DefaultToolbarLayout({
   handleSaveGraph,
   handleExportRuntimeConfig,
   handleExportQuantScript,
+  handleExportStrategyPackage,
+  handleImportStrategyPackageClick,
   handleCompile,
   handleStartRuntime,
   handleStartV4Simulation,
@@ -147,7 +151,7 @@ function DefaultToolbarLayout({
             </div>
           </div>
           <button
-            className="ghost-btn tutorial-entry-btn"
+            className="ad-btn ad-btn--ghost tutorial-entry-btn"
             onClick={() => triggerTutorial()}
             data-testid="toolbar-tutorial-action"
             disabled={!canOpenTutorial}
@@ -156,7 +160,7 @@ function DefaultToolbarLayout({
             {t("教程")}
           </button>
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             onClick={onOpenCredentials}
             data-testid="toolbar-credentials-action"
             disabled={!canOpenCredentials}
@@ -164,17 +168,17 @@ function DefaultToolbarLayout({
           >
             {t("凭证")}
           </button>
-          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认新建策略图？当前未保存的更改将丢失。"))) resetGraph(); }} disabled={!canResetGraph} title={resetGraphTitle} data-testid="toolbar-reset-graph-action">
+          <button className="ad-btn ad-btn--ghost" onClick={() => { if (window.confirm(t("确认新建策略图？当前未保存的更改将丢失。"))) resetGraph(); }} disabled={!canResetGraph} title={resetGraphTitle} data-testid="toolbar-reset-graph-action">
             {t("新建策略图")}
           </button>
-          <button className="ghost-btn" onClick={handleLoadLatestGraph} disabled={!canLoadLatestGraph} title={loadLatestTitle} data-testid="toolbar-load-latest-action">
+          <button className="ad-btn ad-btn--ghost" onClick={handleLoadLatestGraph} disabled={!canLoadLatestGraph} title={loadLatestTitle} data-testid="toolbar-load-latest-action">
             {t("加载最新")}
           </button>
-          <button className="ghost-btn" onClick={handleSaveGraph} disabled={saving || !canSaveGraph} title={saveGraphTitle} data-testid="toolbar-save-graph-action">
+          <button className="ad-btn ad-btn--ghost" onClick={handleSaveGraph} disabled={saving || !canSaveGraph} title={saveGraphTitle} data-testid="toolbar-save-graph-action">
             {saving ? t("保存中...") : t("保存策略图")}
           </button>
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             data-testid="toolbar-export-runtime-config-action"
             onClick={() => handleExportRuntimeConfig({ capabilitySyncBlocked, capabilityMessage })}
             disabled={!canExportRuntimeConfig || saving}
@@ -183,13 +187,31 @@ function DefaultToolbarLayout({
             {t("导出运行配置")}
           </button>
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             data-testid="toolbar-export-quantscript-action"
             onClick={() => handleExportQuantScript({ graph })}
             disabled={saving || !canExportQuantScript}
             title={exportQuantScriptTitle}
           >
             {t("导出策略图源码")}
+          </button>
+          <button
+            className="ad-btn ad-btn--ghost"
+            data-testid="toolbar-export-strategy-package-action"
+            onClick={() => handleExportStrategyPackage({ graph })}
+            disabled={saving}
+            title={exportStrategyPackageTitle}
+          >
+            {t("导出策略包")}
+          </button>
+          <button
+            className="ad-btn ad-btn--ghost"
+            data-testid="toolbar-import-strategy-package-action"
+            onClick={handleImportStrategyPackageClick}
+            disabled={saving}
+            title={importStrategyPackageTitle}
+          >
+            {t("导入策略包")}
           </button>
         </div>
 
@@ -214,7 +236,7 @@ function DefaultToolbarLayout({
 
         <div className="toolbar-group">
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             data-testid="toolbar-compile-action"
             onClick={() => handleCompile({ capabilitySyncBlocked, capabilityMessage })}
             disabled={!canCompile || isBusy || isCompiling}
@@ -223,7 +245,7 @@ function DefaultToolbarLayout({
             {isCompiling ? t("编译中...") : `编译${issueSummary ? ` (${issueSummary})` : ""}`}
           </button>
           <button
-            className="primary-btn"
+            className="ad-btn ad-btn--primary"
             data-testid="toolbar-start-runtime-action"
             onClick={() => handleStartRuntime({ graph, capabilitySyncBlocked, capabilityMessage })}
             disabled={!canStartRuntime || isBusy}
@@ -232,7 +254,7 @@ function DefaultToolbarLayout({
             {runtime.status === "running" ? t("模拟中...") : t("启动模拟")}
           </button>
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             data-testid="toolbar-start-v4-runtime-action"
             onClick={() => handleStartV4Simulation({ capabilitySyncBlocked, capabilityMessage })}
             disabled={!canStartV4Simulation || isBusy}
@@ -241,7 +263,7 @@ function DefaultToolbarLayout({
             v4 模拟
           </button>
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             data-testid="toolbar-start-backtest-action"
             onClick={() => handleStartBacktest({ graph, capabilitySyncBlocked, capabilityMessage })}
             disabled={!canStartBacktest || isBusy}
@@ -249,10 +271,10 @@ function DefaultToolbarLayout({
           >
             {runtime.status === "backtesting" ? t("回测中...") : t("运行回测")}
           </button>
-          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认停止当前模拟？"))) stopRuntime(); }} disabled={!canStopRuntime} title={stopRuntimeTitle} data-testid="toolbar-stop-runtime-action">
+          <button className="ad-btn ad-btn--ghost" onClick={() => { if (window.confirm(t("确认停止当前模拟？"))) stopRuntime(); }} disabled={!canStopRuntime} title={stopRuntimeTitle} data-testid="toolbar-stop-runtime-action">
             {t("停止")}
           </button>
-          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认重置运行时？运行中的模拟将被中断。"))) resetRuntime(); }} disabled={!canResetRuntime} title={resetRuntimeTitle} data-testid="toolbar-reset-runtime-action">
+          <button className="ad-btn ad-btn--ghost" onClick={() => { if (window.confirm(t("确认重置运行时？运行中的模拟将被中断。"))) resetRuntime(); }} disabled={!canResetRuntime} title={resetRuntimeTitle} data-testid="toolbar-reset-runtime-action">
             {t("重置运行时")}
           </button>
           <DeployButton graph={graph} canDeploy={canCompile} />
@@ -297,6 +319,8 @@ function WorkspaceToolbarLayout({
   loadLatestTitle,
   resetGraphTitle,
   exportQuantScriptTitle,
+  exportStrategyPackageTitle,
+  importStrategyPackageTitle,
   stopRuntimeTitle,
   resetRuntimeTitle,
   tutorialTitle,
@@ -320,6 +344,8 @@ function WorkspaceToolbarLayout({
   handleSaveGraph,
   handleExportRuntimeConfig,
   handleExportQuantScript,
+  handleExportStrategyPackage,
+  handleImportStrategyPackageClick,
   handleCompile,
   handleStartRuntime,
   handleStartV4Simulation,
@@ -366,7 +392,7 @@ function WorkspaceToolbarLayout({
 
         <div className="toolbar-group toolbar-group--workspace-primary">
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             data-testid="toolbar-compile-action"
             onClick={() => handleCompile({ capabilitySyncBlocked, capabilityMessage })}
             disabled={!canCompile || isCompiling}
@@ -375,7 +401,7 @@ function WorkspaceToolbarLayout({
             {isCompiling ? "编译中..." : `编译${issueSummary ? ` (${issueSummary})` : ""}`}
           </button>
           <button
-            className="primary-btn"
+            className="ad-btn ad-btn--primary"
             data-testid="toolbar-start-runtime-action"
             onClick={() => handleStartRuntime({ graph, capabilitySyncBlocked, capabilityMessage })}
             disabled={!canStartRuntime}
@@ -384,7 +410,7 @@ function WorkspaceToolbarLayout({
             {t("启动模拟")}
           </button>
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             data-testid="toolbar-start-v4-runtime-action"
             onClick={() => handleStartV4Simulation({ capabilitySyncBlocked, capabilityMessage })}
             disabled={!canStartV4Simulation}
@@ -393,7 +419,7 @@ function WorkspaceToolbarLayout({
             v4 模拟
           </button>
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             data-testid="toolbar-start-backtest-action"
             onClick={() => handleStartBacktest({ graph, capabilitySyncBlocked, capabilityMessage })}
             disabled={!canStartBacktest}
@@ -401,12 +427,12 @@ function WorkspaceToolbarLayout({
           >
             {t("运行回测")}
           </button>
-          <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认停止当前模拟？"))) stopRuntime(); }} disabled={!canStopRuntime} title={stopRuntimeTitle} data-testid="toolbar-stop-runtime-action">
+          <button className="ad-btn ad-btn--ghost" onClick={() => { if (window.confirm(t("确认停止当前模拟？"))) stopRuntime(); }} disabled={!canStopRuntime} title={stopRuntimeTitle} data-testid="toolbar-stop-runtime-action">
             {t("停止")}
           </button>
           <button
             type="button"
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             data-testid="toolbar-workspace-tools-toggle"
             aria-expanded={toolsOpen}
             aria-controls={toolsPanelId}
@@ -422,7 +448,7 @@ function WorkspaceToolbarLayout({
           <div className="top-toolbar-utility-row__label">工具</div>
           <div className="toolbar-group toolbar-group--workspace-secondary">
             <button
-              className="ghost-btn tutorial-entry-btn"
+              className="ad-btn ad-btn--ghost tutorial-entry-btn"
               onClick={() => {
                 setToolsOpen(false);
                 triggerTutorial();
@@ -434,7 +460,7 @@ function WorkspaceToolbarLayout({
               教程
             </button>
             <button
-              className="ghost-btn"
+              className="ad-btn ad-btn--ghost"
               onClick={() => {
                 setToolsOpen(false);
                 onOpenCredentials?.();
@@ -445,14 +471,14 @@ function WorkspaceToolbarLayout({
             >
               {t("凭证")}
             </button>
-            <button className="ghost-btn" onClick={handleSaveGraph} disabled={saving || !canSaveGraph} title={saveGraphTitle} data-testid="toolbar-save-graph-action">
+            <button className="ad-btn ad-btn--ghost" onClick={handleSaveGraph} disabled={saving || !canSaveGraph} title={saveGraphTitle} data-testid="toolbar-save-graph-action">
               {saving ? "保存中..." : "保存策略图"}
             </button>
-            <button className="ghost-btn" onClick={handleLoadLatestGraph} disabled={!canLoadLatestGraph} title={loadLatestTitle} data-testid="toolbar-load-latest-action">
+            <button className="ad-btn ad-btn--ghost" onClick={handleLoadLatestGraph} disabled={!canLoadLatestGraph} title={loadLatestTitle} data-testid="toolbar-load-latest-action">
               加载最新
             </button>
             <button
-              className="ghost-btn"
+              className="ad-btn ad-btn--ghost"
               data-testid="toolbar-export-runtime-config-action"
               onClick={() => handleExportRuntimeConfig({ capabilitySyncBlocked, capabilityMessage })}
               disabled={!canExportRuntimeConfig || saving}
@@ -461,7 +487,7 @@ function WorkspaceToolbarLayout({
               {t("导出运行配置")}
             </button>
             <button
-              className="ghost-btn"
+              className="ad-btn ad-btn--ghost"
               data-testid="toolbar-export-quantscript-action"
               onClick={() => handleExportQuantScript({ graph })}
               disabled={saving || !canExportQuantScript}
@@ -469,10 +495,28 @@ function WorkspaceToolbarLayout({
             >
               {t("导出策略图源码")}
             </button>
-            <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认新建策略图？当前未保存的更改将丢失。"))) resetGraph(); }} disabled={!canResetGraph} title={resetGraphTitle} data-testid="toolbar-reset-graph-action">
+            <button
+              className="ad-btn ad-btn--ghost"
+              data-testid="toolbar-export-strategy-package-action"
+              onClick={() => handleExportStrategyPackage({ graph })}
+              disabled={saving}
+              title={exportStrategyPackageTitle}
+            >
+              {t("导出策略包")}
+            </button>
+            <button
+              className="ad-btn ad-btn--ghost"
+              data-testid="toolbar-import-strategy-package-action"
+              onClick={handleImportStrategyPackageClick}
+              disabled={saving}
+              title={importStrategyPackageTitle}
+            >
+              {t("导入策略包")}
+            </button>
+            <button className="ad-btn ad-btn--ghost" onClick={() => { if (window.confirm(t("确认新建策略图？当前未保存的更改将丢失。"))) resetGraph(); }} disabled={!canResetGraph} title={resetGraphTitle} data-testid="toolbar-reset-graph-action">
               {t("新建策略图")}
             </button>
-            <button className="ghost-btn" onClick={() => { if (window.confirm(t("确认重置运行时？运行中的模拟将被中断。"))) resetRuntime(); }} disabled={!canResetRuntime} title={resetRuntimeTitle} data-testid="toolbar-reset-runtime-action">
+            <button className="ad-btn ad-btn--ghost" onClick={() => { if (window.confirm(t("确认重置运行时？运行中的模拟将被中断。"))) resetRuntime(); }} disabled={!canResetRuntime} title={resetRuntimeTitle} data-testid="toolbar-reset-runtime-action">
               {t("重置运行时")}
             </button>
           </div>
@@ -564,7 +608,7 @@ function CredentialPanel({ onClose }) {
       <div className="credential-panel" data-testid="credential-panel">
         <div className="credential-panel-header">
           <span>{selected === "new" ? t("新增凭证") : t("编辑凭证") + ": " + selected}</span>
-          <button className="ghost-btn compact-btn" onClick={() => setSelected(null)}>{t("返回")}</button>
+          <button className="ad-btn ad-btn--ghost compact-btn" onClick={() => setSelected(null)}>{t("返回")}</button>
         </div>
         {selected !== "new" ? (
           <div className="credential-panel-empty" style={{ marginBottom: 12 }}>
@@ -585,7 +629,7 @@ function CredentialPanel({ onClose }) {
     <div className="credential-panel" data-testid="credential-panel">
       <div className="credential-panel-header">
         <span>{t("凭证管理")}</span>
-        <button className="ghost-btn compact-btn" onClick={clearAndClose}>{t("关闭")}</button>
+        <button className="ad-btn ad-btn--ghost compact-btn" onClick={clearAndClose}>{t("关闭")}</button>
       </div>
       {!loaded ? (
         <div className="credential-panel-empty">{t("加载中...")}</div>
@@ -597,27 +641,52 @@ function CredentialPanel({ onClose }) {
             <li key={s} className="credential-list-item">
               <span>{s}</span>
               <div>
-                <button className="ghost-btn compact-btn" onClick={() => setSelected(s)}>{t("编辑")}</button>
-                <button className="ghost-btn compact-btn" onClick={() => handleDelete(s)}>{t("删除")}</button>
+                <button className="ad-btn ad-btn--ghost compact-btn" onClick={() => setSelected(s)}>{t("编辑")}</button>
+                <button className="ad-btn ad-btn--ghost compact-btn" onClick={() => handleDelete(s)}>{t("删除")}</button>
               </div>
             </li>
           ))}
         </ul>
       )}
-      <button className="primary-btn" style={{ marginTop: 12 }} onClick={() => setSelected("new")}>
+      <button className="ad-btn ad-btn--primary" style={{ marginTop: 12 }} onClick={() => setSelected("new")}>
         {t("新增凭证")}
       </button>
     </div>
   );
 }
 
+function downloadJson(filename, payload) {
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function buildStrategyPackage(graph) {
+  return {
+    schema_version: "quantpilot/strategy-package/v1",
+    exported_at: new Date().toISOString(),
+    graph_id: graph.metadata?.graph_id || "draft_graph",
+    name: graph.metadata?.name || "Untitled Strategy",
+    graph
+  };
+}
+
 export default function TopToolbar({ variant = "default" }) {
   const model = useWorkspaceActionBarModel();
   const actionLock = useGraphStore((state) => state.actionLock);
+  const importStrategyPackage = useGraphStore((state) => state.importStrategyPackage);
   const isCompiling = actionLock === "compiling";
   const isWorkspace = variant === "workspace";
   const [saving, setSaving] = useState(false);
   const [showCredentials, setShowCredentials] = useState(false);
+  const importFileRef = useRef(null);
+  const { t } = useI18n();
 
   const guardedSaveGraph = useCallback(async () => {
     setSaving(true);
@@ -634,12 +703,63 @@ export default function TopToolbar({ variant = "default" }) {
     try { await model.handleExportRuntimeConfig(opts); } finally { setSaving(false); }
   }, [model.handleExportRuntimeConfig]);
 
+  const handleExportStrategyPackage = useCallback(({ graph }) => {
+    const payload = buildStrategyPackage(graph);
+    const safeName = String(payload.name || payload.graph_id || "strategy")
+      .replace(/[^\w.-]+/g, "_")
+      .slice(0, 80);
+    downloadJson(`${safeName || "strategy"}_strategy_package.json`, payload);
+    model.setNotice?.({
+      id: Date.now(),
+      type: "success",
+      message: t("策略包已导出。")
+    });
+  }, [model, t]);
+
+  const handleImportStrategyPackageClick = useCallback(() => {
+    importFileRef.current?.click();
+  }, []);
+
+  const handleImportStrategyPackageFile = useCallback(async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setSaving(true);
+    try {
+      const payload = JSON.parse(await file.text());
+      const graph = importStrategyPackage(payload);
+      model.setNotice?.({
+        id: Date.now(),
+        type: "success",
+        message: t("策略包已导入为新草稿：{name}", {
+          name: graph.metadata?.name || graph.metadata?.graph_id || "Imported Strategy"
+        })
+      });
+    } catch (error) {
+      model.setNotice?.({
+        id: Date.now(),
+        type: "error",
+        message: error?.message || t("策略包导入失败。")
+      });
+    } finally {
+      setSaving(false);
+    }
+  }, [importStrategyPackage, model, t]);
+
   return (
     <header className={`top-toolbar${isWorkspace ? " top-toolbar--workspace" : ""}`}>
+      <input
+        ref={importFileRef}
+        type="file"
+        accept="application/json,.json"
+        hidden
+        onChange={handleImportStrategyPackageFile}
+        data-testid="toolbar-import-strategy-package-input"
+      />
       {isWorkspace ? (
-        <WorkspaceToolbarLayout {...model} saving={saving} isCompiling={isCompiling} onOpenCredentials={() => setShowCredentials(true)} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} />
+        <WorkspaceToolbarLayout {...model} saving={saving} isCompiling={isCompiling} onOpenCredentials={() => setShowCredentials(true)} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} handleExportStrategyPackage={handleExportStrategyPackage} handleImportStrategyPackageClick={handleImportStrategyPackageClick} exportStrategyPackageTitle={t("导出当前策略图、工件摘要与元数据为可分享 JSON 包。")} importStrategyPackageTitle={t("从 JSON 策略包导入为新的草稿策略图。")} />
       ) : (
-        <DefaultToolbarLayout {...model} saving={saving} isCompiling={isCompiling} onOpenCredentials={() => setShowCredentials(true)} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} />
+        <DefaultToolbarLayout {...model} saving={saving} isCompiling={isCompiling} onOpenCredentials={() => setShowCredentials(true)} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} handleExportStrategyPackage={handleExportStrategyPackage} handleImportStrategyPackageClick={handleImportStrategyPackageClick} exportStrategyPackageTitle={t("导出当前策略图、工件摘要与元数据为可分享 JSON 包。")} importStrategyPackageTitle={t("从 JSON 策略包导入为新的草稿策略图。")} />
       )}
       {showCredentials ? (
         <CredentialPanel onClose={() => setShowCredentials(false)} />

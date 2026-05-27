@@ -9,23 +9,23 @@ export default function StrategyHubRosterToolbar({ model, toolbar }) {
       </div>
       <div className="strategy-roster-toolbar__actions">
         <button
-          className="ghost-btn compact-btn"
+          className="ad-btn ad-btn--ghost compact-btn"
           onClick={() =>
             model.setSelectedStrategyIds(model.filteredStrategies.map((entry) => entry.graphId))
           }
           disabled={!toolbar.hasFilteredStrategies}
         >
-          选择当前结果
+          选择全部策略
         </button>
         <button
-          className="ghost-btn compact-btn"
+          className="ad-btn ad-btn--ghost compact-btn"
           onClick={() => model.setSelectedStrategyIds([])}
           disabled={!toolbar.hasSelectedStrategies}
         >
           清空选择
         </button>
         <button
-          className="primary-btn compact-btn"
+          className="ad-btn ad-btn--primary compact-btn"
           disabled={!toolbar.canOpenWorkspace}
           onClick={() => navigateTo(strategyWorkspacePath(model.selectedForWorkspace))}
         >

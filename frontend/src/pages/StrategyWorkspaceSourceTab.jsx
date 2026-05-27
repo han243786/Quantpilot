@@ -59,7 +59,7 @@ export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
       <div className="qs-source-tab__header">
         <h3>{t("QuantScript 源码")}</h3>
         <button
-          className="primary-btn"
+          className="ad-btn ad-btn--primary"
           onClick={handleRunScenario}
           disabled={running || !source}
           data-testid="source-tab-run-scenario"

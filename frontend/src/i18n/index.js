@@ -1,11 +1,12 @@
 import { createContext, createElement, useContext, useEffect, useMemo, useState } from "react";
 import enUS from "./locales/en-US";
+import zhCN from "./locales/zh-CN";
 
 const LOCALE_STORAGE_KEY = "quantpilot.locale";
 export const DEFAULT_LOCALE = "zh-CN";
 
 const localeRegistry = new Map([
-  [DEFAULT_LOCALE, {}],
+  [DEFAULT_LOCALE, zhCN],
   ["en-US", enUS]
 ]);
 
@@ -68,6 +69,13 @@ function resolveInitialLocale(defaultLocale) {
   const injectedLocale = window.__QUANTPILOT_LOCALE__;
   if (typeof injectedLocale === "string" && injectedLocale.trim()) {
     return normalizeLocale(injectedLocale.trim());
+  }
+
+  try {
+    const storedLocale = window.localStorage?.getItem(LOCALE_STORAGE_KEY);
+    if (storedLocale) return normalizeLocale(storedLocale);
+  } catch (_) {
+    // 隐私模式或受限 WebView 下 localStorage 可能不可读, 回退到默认语言
   }
 
   return normalizeLocale(defaultLocale);

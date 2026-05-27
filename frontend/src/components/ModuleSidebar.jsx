@@ -313,7 +313,7 @@ export default function ModuleSidebar({ workspaceContext = null }) {
           <div className="module-sidebar-toolbar__actions">
             <button
               type="button"
-              className="ghost-btn compact-btn"
+              className="ad-btn ad-btn--ghost compact-btn"
               onClick={() => setAllGroups(true)}
               disabled={hasSearch}
             >
@@ -321,7 +321,7 @@ export default function ModuleSidebar({ workspaceContext = null }) {
             </button>
             <button
               type="button"
-              className="ghost-btn compact-btn"
+              className="ad-btn ad-btn--ghost compact-btn"
               onClick={() => setAllGroups(false)}
               disabled={hasSearch}
             >

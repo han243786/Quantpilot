@@ -50,7 +50,7 @@ impl LiveRunner {
             } else {
                 RunnerStatus::Idle
             },
-            execution_mode: s.execution_mode.clone(),
+            execution_mode: s.execution_mode,
             last_cycle_at_ms: 0,
             daily_order_count: 0,
         }
@@ -194,6 +194,7 @@ pub struct RunnerPool {
     pub symbol_index: HashMap<String, Vec<String>>,
 }
 
+#[allow(clippy::large_enum_variant)]
 pub enum RunnerInstance {
     V3(LiveRunner),
     V4(V4Runner),
@@ -698,6 +699,7 @@ v4_strategy strategy.v4.w0_1 {
             status: crate::executor_state::StrategyStatus::Loaded,
             subscribed_symbols: vec![Symbol::Other("BTCUSDT".to_string())],
             execution_mode: ExecutionMode::PaperSimulated,
+            strategy_config_preflight: None,
         };
         let (trigger_broadcast, _) = broadcast::channel(16);
         let mut pool = RunnerPool::new(trigger_broadcast);

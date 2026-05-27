@@ -151,7 +151,7 @@ export default function RuntimeReportPanel({
       <div className="history-filter-row history-control-bar">
         <button
           type="button"
-          className="ghost-btn compact-btn"
+          className="ad-btn ad-btn--ghost compact-btn"
           data-testid="runtime-report-generate"
           disabled={status === "creating" || status === "loading"}
           onClick={generateReport}
@@ -160,7 +160,7 @@ export default function RuntimeReportPanel({
         </button>
         <button
           type="button"
-          className="ghost-btn compact-btn"
+          className="ad-btn ad-btn--ghost compact-btn"
           data-testid="runtime-report-refresh"
           disabled={status === "creating" || status === "loading"}
           onClick={refreshReports}
@@ -170,7 +170,7 @@ export default function RuntimeReportPanel({
         {currentReport?.status === "ready" ? (
           <>
             <a
-              className="ghost-btn compact-btn"
+              className="ad-btn ad-btn--ghost compact-btn"
               data-testid="runtime-report-export"
               href={reportExportUrl(currentReport.report_id)}
               target="_blank"
@@ -179,7 +179,7 @@ export default function RuntimeReportPanel({
               导出 JSON
             </a>
             <a
-              className="ghost-btn compact-btn"
+              className="ad-btn ad-btn--ghost compact-btn"
               data-testid="runtime-report-reveal"
               href={reportExportUrl(currentReport.report_id)}
               target="_blank"

@@ -68,7 +68,7 @@ export default function RuntimeDiagnosticsPanel({
             <button
               key={node.nodeId}
               type="button"
-              className={`ghost-btn compact-btn${
+              className={`ad-btn ad-btn--ghost compact-btn${
                 node.nodeId === projection.selectedNodeId ? " is-active" : ""
               }`}
               aria-pressed={node.nodeId === projection.selectedNodeId}

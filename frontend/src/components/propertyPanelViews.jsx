@@ -326,7 +326,7 @@ export function QuantScriptAuthoringSourceCard({ authoringView }) {
           </div>
           <button
             type="button"
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             data-testid={`authoring-section-highlight-${section.id}`}
             onClick={() => onSelectSection?.([section.id])}
           >
@@ -526,7 +526,7 @@ export function QuantScriptAuthoringPoolCard({ authoringView }) {
             </div>
             <button
               type="button"
-              className="ghost-btn compact-btn"
+              className="ad-btn ad-btn--ghost compact-btn"
               data-testid={`authoring-pool-stage-highlight-${stage.kind}`}
               disabled={stage.related_section_ids.length === 0}
               onClick={() => {
@@ -822,7 +822,7 @@ export function QuantScriptEditorCard({
       </div>
       <div className="toolbar-group">
         <button
-          className="ghost-btn"
+          className="ad-btn ad-btn--ghost"
           onClick={() => {
             onActivateSourceLane?.();
             handleResetQuantScript(setApplyError);
@@ -831,7 +831,7 @@ export function QuantScriptEditorCard({
           重置策略图源码
         </button>
         <button
-          className="primary-btn"
+          className="ad-btn ad-btn--primary"
           onClick={() => {
             onActivateSourceLane?.();
             handleApplyQuantScript(setApplyError);
@@ -889,7 +889,7 @@ export function FormalQuantScriptEditorCard({
       </div>
       <div className="toolbar-group">
         <button
-          className="ghost-btn"
+          className="ad-btn ad-btn--ghost"
           onClick={() => {
             onActivateSourceLane?.();
             handleResetFormalQuantScript(setFormalApplyError);
@@ -898,7 +898,7 @@ export function FormalQuantScriptEditorCard({
           重置 Formal QuantScript
         </button>
         <button
-          className="primary-btn"
+          className="ad-btn ad-btn--primary"
           onClick={() => {
             onActivateSourceLane?.();
             handleApplyFormalQuantScript(setFormalApplyError);
@@ -950,7 +950,7 @@ export function StrategyIrEditorCard({
       ) : null}
       <div className="toolbar-group">
         <button
-          className="ghost-btn"
+          className="ad-btn ad-btn--ghost"
           onClick={() => {
             onActivateSourceLane?.();
             handleResetStrategyIr(setStrategyIrApplyError);
@@ -959,7 +959,7 @@ export function StrategyIrEditorCard({
           重置策略中间表示
         </button>
         <button
-          className="primary-btn"
+          className="ad-btn ad-btn--primary"
           onClick={() => {
             onActivateSourceLane?.();
             handleApplyStrategyIr(setStrategyIrApplyError);
@@ -1238,7 +1238,7 @@ export function EdgeOverviewCard({ selectedEdge, sourceNode, targetNode, removeS
           {selectedEdge.source_port} -&gt; {selectedEdge.target_port}
         </strong>
       </div>
-      <button className="danger-btn" onClick={removeSelected} data-testid="prop-action-delete-edge">
+      <button className="ad-btn ad-btn--danger" onClick={removeSelected} data-testid="prop-action-delete-edge">
         删除边
       </button>
     </div>
@@ -1394,7 +1394,7 @@ export function NodeParamsSection({ model, prioritizePathFields = false }) {
       />
       <ConnectionsCard graph={model.graph} selectedNode={model.selectedNode} />
       <ValidationCard issues={model.nodeIssues} />
-      <button className="danger-btn full-width" onClick={model.removeSelected} data-testid="prop-action-delete-node">
+      <button className="ad-btn ad-btn--danger full-width" onClick={model.removeSelected} data-testid="prop-action-delete-node">
         删除节点
       </button>
     </PropertySection>
@@ -1468,7 +1468,7 @@ export function LaneAwareNodeParamsSection({ model, prioritizePathFields = false
           {orderedCards[cardId]}
         </div>
       ))}
-      <button className="danger-btn full-width" onClick={model.removeSelected} data-testid="prop-action-delete-node">
+      <button className="ad-btn ad-btn--danger full-width" onClick={model.removeSelected} data-testid="prop-action-delete-node">
         删除节点
       </button>
     </PropertySection>

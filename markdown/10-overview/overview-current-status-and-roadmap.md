@@ -1,6 +1,6 @@
 # 当前状态与发布状态
 
-> 最后更新：2026-05-25 | 当前版本：v4.7.0 ✅ | 当前 closeout：v4 执行回放 / LiveActual 安全边界 / AI 提案分析
+> 最后更新：2026-05-26 | 当前版本：v4.7.0 ✅ | 当前优化里程碑：v4.10.0 UX 收口与产品边界固化
 
 ## 版本路线
 
@@ -42,7 +42,7 @@
 
 ## 当前产品真实情况
 
-QuantPilot v4.7.0 继承 v4.4.0 的嵌套状态机能力，并补齐 v4 执行回放、LiveActual 安全边界和 AI 提案分析：
+QuantPilot v4.7.0 继承 v4.4.0 的嵌套状态机能力，并补齐 v4 执行回放、PaperActual 安全边界和 AI 提案分析：
 
 - **桌面应用**: Tauri v2 自绘标题栏 Windows 桌面应用
 - **前端**: Adobe 暗色面板设计系统, 图编辑器, 策略工作区, 回测详情/对比, 研究控制台, Toast 通知
@@ -51,8 +51,9 @@ QuantPilot v4.7.0 继承 v4.4.0 的嵌套状态机能力，并补齐 v4 执行�
 - **运行时链**: data → intent → agent → risk → execution → fill
 - **QuantScript**: 语法解析 → HIR → lowering → Core IR 完整编译管道
 - **v4 runtime**: 后端 `/api/runtime/v4/run`、CLI `v4-run`、前端 `start_v4_simulation` 入口；执行端 `RunnerPool` 可部署/启动/停止 v4 graph；`/api/runtime/backtest` 可用 `runtime_kind=v4` 生成 `v4_artifact`；嵌套状态机支持深度 ≤2，tick replay 支持确定性排序、微结构指标和高级订单 evidence
-- **安全**: AES-256-GCM 凭证保险库 (PBKDF2 1M/600K 轮), bcrypt 12 轮用户认证, JWT + 刷新令牌轮换+重放检测, 进程间加密通道
+- **安全**: AES-256-GCM 凭证保险库 (PBKDF2 1M/600K 轮), 本地会话/JWT 边界, 刷新令牌轮换+重放检测, 进程间加密通道
 - **告警**: 10 条默认规则, resolve_condition 自动恢复, 去重
+- **产品定位**: 单人本地桌面工具; 账户系统、2FA/RBAC、用户资料页和策略中心搜索/筛选均为 unsupported
 
 当前全部 18 种指标的 K 线驱动 Intent 支持是真实的 (详见 README 指标表)。
 
@@ -68,6 +69,8 @@ QuantPilot v4.7.0 继承 v4.4.0 的嵌套状态机能力，并补齐 v4 执行�
 - 具有完整市场微观结构语义的研究级回测
 - 任何 paper 策略都可以直接在 QuantScript 中表达
 - 公开 SaaS 服务
+- 多用户账户系统、注销/密码找回/2FA/RBAC
+- 策略中心搜索、筛选、分页或排序工作台
 
 前端现在诚实地处理这些差距：
 
@@ -117,7 +120,17 @@ v3.7.0 完成 v3.5.0→v3.7.0 全版本演进 (12 项新功能 + 32 项审计修
 
 v4.0.0 是 MAJOR 架构收口：在 v3.7.1 稳定基线上落地状态机化 QuantScript、事件模型、Risk Plane、ExecutionMachine 能力来源、前端 capability 真源和 Developer Learning Pipeline。
 
-v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v4.6.0 LiveActual 安全边界基础上，补齐 v4 AI 提案静态约束、沙箱回放比较和回测工件分析。当前按 `v4.7.0/01-规划方案.md` 执行实现与验证。
+v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v4.6.0 PaperActual 安全边界基础上，补齐 v4 AI 提案静态约束、沙箱回放比较和回测工件分析。当前按 `v4.7.0/01-规划方案.md` 执行实现与验证。
+
+后续优化路线按超级规范化的审计→优化闭环推进：
+
+| 版本 | 类型 | 目标 | 状态 |
+|------|------|------|:--:|
+| v4.8.0 | MINOR | 双执行切面 + P2 质量收敛；用户侧统一为 `PaperSimulated` 和 `PaperActual`，真实资金自动交易不作为当前能力宣称 | 规划与 W1-W4 落地记录已归档 |
+| v4.8.1 | PATCH | OpenAPI 凭证路径结构、route diff 基线、部署 profile 矩阵、四平面治理；账户相关项按用户要求裁出 | 已落地 |
+| v4.8.2 | PATCH | zh-CN 转义修复、执行端 i18n、QS 编辑器、CSS 收敛、首次体验、404、中文用户指南 | 已落地 |
+| v4.9.0 | MINOR | PaperActual 安全启动门禁、插件执行安全、策略包导入导出、设置页、API 版本治理、AI 沙箱队列、执行端图表控制 | 已落地 |
+| v4.10.0 | MINOR | 亮色主题、执行端 i18n 收口、教程自动触发、Tab keep-alive、产品边界 unsupported 固化 | 已落地 |
 
 使用下面的专用文档作为活跃发布界面：
 
@@ -129,6 +142,14 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - [v4.0.0 规划方案](../06-milestones/v4.0.0/01-规划方案.md)
 - [v4.0.0 closeout 报告](../06-milestones/v4.0.0/03-closeout.md)
 - [v4.7.0 规划方案](../06-milestones/v4.7.0/01-规划方案.md)
+- [v4.8.0 规划方案](../06-milestones/v4.8.0/01-规划方案.md)
+- [v4.8.1 规划方案](../06-milestones/v4.8.1/01-规划方案.md)
+- [v4.8.1 综合优化清单](../06-milestones/v4.8.1/02-综合优化清单.md)
+- [v4.8.2 规划方案](../06-milestones/v4.8.2/01-规划方案.md)
+- [v4.9.0 规划方案](../06-milestones/v4.9.0/01-规划方案.md)
+- [v4.10.0 规划方案](../06-milestones/v4.10.0/01-规划方案.md)
+- [v4.10.0 落地记录](../06-milestones/v4.10.0/02-落地记录.md)
+- [Claude 产品/UX/功能完整度审计核查](../05-testing/Claude产品UX功能完整度审计核查-v4.7.0-2026-05-26.md)
 - [支持矩阵](../03-implementation/governance/implementation-support-matrix.md)
 - [编译链合约](../03-implementation/governance/implementation-compile-chain-contract.md)
 - [功能演进契约](../03-implementation/governance/implementation-feature-evolution-contract.md)
@@ -167,10 +188,10 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 | 执行端 v4 集成 | ✅ | RunnerPool、OKX Market 事件、部署 API、SSE evidence、执行端面板按 v4.2.0 规划落实 |
 | v4 回测 + 多交易对 | ✅ | `runtime_kind=v4` 回测、`v4_artifact`、回测详情 evidence、v4 模板和多交易对展开按 v4.3.0 规划落实 |
 | v4 执行回放与高级订单 | ✅ | tick replay、OCO bracket、trailing stop、GTD 过期、cancel/replace amend 和微结构指标按 v4.5.0 规划落实 |
-| LiveActual 安全边界 | ✅ | v4 LiveActual provider-actual 边界、Risk Plane 强制和 runtime_simulated 阻断按 v4.6.0 规划落实 |
+| PaperActual 安全边界 | ✅ | v4 PaperActual demo 边界、Risk Plane 强制和 runtime_simulated 阻断按 v4.6.0 规划落实 |
 | v4 AI 提案与回放分析 | ✅ | v4 AI proposal 回测来源约束、沙箱回放比较和工件分析摘要按 v4.7.0 规划落实 |
 | 版本号一致性 | ✅ | 关键元数据和用户可见入口统一到 4.7.0 |
-| GP 合规 | ✅ | 当前 GP 已同步到 v4.0.0，v4.7.0 已复核执行回放、LiveActual 边界、AI 提案和 evidence 保护矩阵 |
+| GP 合规 | ✅ | 当前 GP 已同步到 v4.0.0，v4.7.0 已复核执行回放、PaperActual 边界、AI 提案和 evidence 保护矩阵 |
 | 超级规范化 | ✅ | v4.0.0 对齐 MAJOR 演化通道、前端真源通道和学习流水线 closeout |
 | 完整 closeout | ✅ | closeout 门禁已扩展为 25 项，第 25 项覆盖能力栈一致性与元流水线 DryRun |
 

@@ -138,7 +138,7 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
         <div className="strategy-inspector-actions">
           <button
             type="button"
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             data-testid="workspace-experiment-run-action"
             disabled={capabilitySyncBlocked || !runSweepAction?.enabled}
             title={runSweepBlockedReason || undefined}
@@ -193,7 +193,7 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
             <div className="strategy-inspector-actions">
               <button
                 type="button"
-                className="ghost-btn compact-btn"
+                className="ad-btn ad-btn--ghost compact-btn"
                 data-testid={`workspace-experiment-open-${entry.experiment_id}`}
                 onClick={() => loadExperimentDetail(entry.experiment_id)}
               >
@@ -239,7 +239,7 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
                 <div className="strategy-inspector-actions">
                   <button
                     type="button"
-                    className="ghost-btn compact-btn"
+                    className="ad-btn ad-btn--ghost compact-btn"
                     data-testid={`workspace-experiment-detail-${variant.variant_id}`}
                     onClick={() => navigateTo(backtestDetailPath(variant.backtest_id, strategyId))}
                   >

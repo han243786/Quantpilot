@@ -49,7 +49,7 @@ export default function StrategyHubInspectorOverviewSection({ model, selectedStr
             {group.items.map((item) => (
               <button
                 key={item.key}
-                className={group.key === "build" ? "primary-btn" : "ghost-btn"}
+                className={group.key === "build" ? "ad-btn ad-btn--primary" : "ad-btn ad-btn--ghost"}
                 aria-label={item.ariaLabel}
                 onClick={() => void runStrategyHubInspectorAction(model, selectedStrategy, item.key)}
               >

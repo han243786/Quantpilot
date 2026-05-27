@@ -30,7 +30,7 @@ export default function StrategyHubCompareQueueSection({
           {view.actions.map((action) => (
             <button
               key={action.key}
-              className={action.tone === "primary" ? "primary-btn" : "ghost-btn"}
+              className={action.tone === "primary" ? "ad-btn ad-btn--primary" : "ad-btn ad-btn--ghost"}
               aria-label={action.ariaLabel}
               disabled={action.disabled}
               onClick={() =>

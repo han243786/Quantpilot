@@ -5,6 +5,7 @@
 > 每个条款标注 **检查方式**: 🛡️门禁 / 🔍审计 / 🛡️+🔍
 > 更新: v3.7.1 增加 Rust 格式基线、功能演进登记和防回退规则，`cargo fmt --check` 纳入 pre-commit / CI / closeout
 > v4.0.0: 状态机化 QuantScript, Risk Plane, ExecutionMachine 能力来源, 前端以后端 capability 为真源, 开发者学习流水线边界已实施
+> v4.10.0: 固化单机交易工具产品边界；账户系统与策略中心搜索/筛选标记为 unsupported
 
 ---
 
@@ -118,6 +119,15 @@ QS 源码 → graph JSON → 前端可视化
 
 - 前端可以定义布局、排序、i18n 标签和视图投影，但不得自行决定某个工作区、工具栏动作、模块、运行模式或执行语义是否可用。
 - 工作区 tab、工作区 surface、工具栏 action、模块面板可见性、启用状态、禁用原因和能力来源必须从 `GET /api/capabilities` 的结构化响应投影而来。
+
+### §1.13 产品定位边界: 单机交易工具 🔍 (v4.10.0 新增)
+
+- QuantPilot 当前定位为单人本地使用的专业量化策略研究与交易桌面工具，不按 SaaS、团队协作后台或多租户账号系统设计。
+- 现有 `register` / `login` / `refresh` 仅服务本地会话、凭证隔离和桌面壳内部访问边界，不得扩展描述为完整账户系统。
+- 明确 unsupported: `auth.logout`, `auth.password_reset`, `auth.2fa`, `account.profile`, RBAC / 管理员用户管理 UI。
+- 策略中心保持全量可滚动列表，不新增搜索、筛选、分页或排序能力；明确 unsupported: `hub.search`, `hub.filter`。
+- 如果未来产品定位转向 SaaS、团队协作或大量策略目录管理，必须以独立 MAJOR/MINOR 规划重新登记，不得在小版本中顺手加入。
+- **审计**: README、支持矩阵、里程碑、UI 文案不得把上述 unsupported 项描述为已支持、计划中或缺陷待修。
 - 新增用户可见入口时，必须先扩展后端 `CapabilityResponse`、OpenAPI、capability fixture、支持矩阵、能力治理注册表和回归测试；禁止只新增 React 静态数组或 CSS 入口。
 - `loading`、`cache`、`safe_fallback` 三种能力加载状态必须有明确 UI 行为。`safe_fallback` 不得恢复上一版本完整工作区，只能保留最小只读或明确禁用入口。
 - 前端不得把 `declared_only`、`unsupported`、`planned`、`restricted` 或 `runtime_simulated` 显示为无条件 `supported`。
@@ -166,14 +176,16 @@ bail!("backtest requires at least one enabled kline data source");
 - 错误清洗: 所有 API 响应在日志输出前清除 secret/key/sign/passphrase 字段
 - **门禁**: `grep -r "secret\|api_key\|passphrase" qrpc_runtime/src/live_execution.rs | grep -v "safe_\|sanitize\|clear\|清洗\|遮蔽"` 应返回 0
 
-### §2.8 用户认证安全 🛡️ (v3.0 新增)
+### §2.8 本地会话认证安全 🛡️ (v3.0 新增, v4.10.0 边界重命名)
 
+- 该条只约束现有本地会话和凭证隔离端点, 不代表完整账户系统支持。
 - 密码: bcrypt ≥12 轮, 禁止明文存储; bcrypt verify 使用 `tokio::spawn_blocking` 避免阻塞工作线程 (v3.5.0 P2-1)
 - JWT: HS256, 24h 过期, 密钥来自环境变量/持久化随机文件
 - 刷新令牌轮换: 每次刷新生成新 token, 旧 token 立即失效; SHA-256 哈希存储用于重放检测 (v3.5.0 P1-1)
 - 重放检测: 旧 token 重放 → `410 GONE` + 撤销整个 token family, 强制重新登录 (v3.5.1 P2-3)
 - Token family 撤销: 重放检测触发后, 该 family 下全部活跃 token 被标记为已撤销; 后续任何刷新请求均拒绝
 - 注册限流: auth 端点独立 6次/分钟/IP
+- 不新增注销、密码找回、2FA、RBAC、用户资料页或远程账户恢复语义。
 - DEV 模式: `QUANTPILOT_DEV=true` 跳过认证 + 跳过速率限制 (v3.5.0 P2-3)
 - **门禁**: `grep "spawn_blocking" src/auth/mod.rs` 确认 bcrypt verify 异步化
 
@@ -332,7 +344,7 @@ cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 | §2.5 前端 t() | 中 | 🔍 |
 | §2.6 凭证保险库 | 阻断 | 🛡️ |
 | §2.7 实时执行 | 阻断 | 🛡️ |
-| §2.8 用户认证 | 阻断 | 🛡️ |
+| §2.8 本地会话认证 | 阻断 | 🛡️ |
 | §3.1 文档分层 | 中 | 🔍 |
 | §3.2 文档全中文 | 中 | 🔍 |
 | §3.3 里程碑命名 | 中 | 🔍 |
@@ -383,7 +395,7 @@ cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 | **OKX testnet** | `ExchangeConnectorOKX`, WS 连接 OKX testnet, REST 下单, 根据 `execution_mode` 切换 (v3.5.0 P2-9) | `ws_client.rs`, `okx_rest.rs` | §2.7 |
 | **ParamsPanel 热调参** | 参数 schema 加载, 数值滑块/枚举下拉/布尔开关, pending→commit/rollback (v3.5.0 P2-7) | `StrategyParamsPanel.jsx` | §8.1 |
 | **凭证保险库** | AES-256-GCM, PBKDF2 1M轮(执行端)/600K轮(测试端), Zeroizing全量覆盖, .bak回滚, 独立随机机器密钥(不依赖hostname) | `credential_vault.rs`, `credential_vault_v2.rs` | §2.6 |
-| **用户认证** | bcrypt(12轮, spawn_blocking异步), JWT HS256 24h, 刷新令牌轮换+重放检测(410 GONE), 令牌族撤销, 注册限流, DEV模式跳过认证+限速 | `auth/mod.rs`, `auth_middleware.rs`, `rate_limiter.rs` | §2.8 |
+| **本地会话认证** | bcrypt(12轮, spawn_blocking异步), JWT HS256 24h, 刷新令牌轮换+重放检测(410 GONE), 令牌族撤销, 注册限流, DEV模式跳过认证+限速; 不代表完整账户系统 | `auth/mod.rs`, `auth_middleware.rs`, `rate_limiter.rs` | §2.8 |
 | **告警引擎** | 10条默认规则全部有resolve_condition, INSERT OR IGNORE+内存指纹双重去重(TOCTOU已修复), 三阶段无锁恢复, 持久化 | `alert_engine.rs`, `AlertsPage.jsx` | §9.3 |
 | **签名快照** | SHA-256签名, 5项指纹, 恢复前验签, 原子写入 | `snapshot_service.rs`, `SnapshotsPage.jsx` | §9.2 |
 | **沙箱验证** | AI提案独立回放, catch_unwind+3重试, CandidateUnderperforms阻断 | `sandbox_verification.rs`, `mutation.rs` | §9.1 |
@@ -402,7 +414,7 @@ Paper运行时 ← 回测引擎 ← 执行端(独立进程)
     ↓              ↓
 告警引擎    签名快照/沙箱验证/审批工作流
     ↓
-凭证保险库 ← 用户认证 → 进程间加密
+凭证保险库 ← 本地会话认证 → 进程间加密
     ↓
 存储生命周期(所有子系统)
     ↓

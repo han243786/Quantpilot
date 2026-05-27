@@ -92,21 +92,21 @@ export default function StrategyBacktestsPage({ strategyId }) {
         actions={
           <>
             <button
-              className="ghost-btn"
+              className="ad-btn ad-btn--ghost"
               data-testid="strategy-backtests-list-button"
               onClick={() => navigateTo(strategiesPath())}
             >
               返回策略列表
             </button>
             <button
-              className="ghost-btn"
+              className="ad-btn ad-btn--ghost"
               data-testid="strategy-backtests-workspace-button"
               onClick={() => navigateTo(strategyWorkspacePath(strategyId))}
             >
               打开工作区
             </button>
             <button
-              className="primary-btn"
+              className="ad-btn ad-btn--primary"
               data-testid="strategy-backtests-compare-button"
               disabled={compareButtonDisabled}
               onClick={() => navigateTo(backtestComparePath(selectors.compareSelection, strategyId))}
@@ -202,13 +202,13 @@ export default function StrategyBacktestsPage({ strategyId }) {
               <MetricPair label="可开始对比" value={compareButtonDisabled ? "否" : "是"} />
               <div className="toolbar-group">
                 <button
-                  className="ghost-btn compact-btn"
+                  className="ad-btn ad-btn--ghost compact-btn"
                   onClick={() => actions.clearBacktestCompareSelection()}
                 >
                   清空选择
                 </button>
                 <button
-                  className="primary-btn compact-btn"
+                  className="ad-btn ad-btn--primary compact-btn"
                   disabled={compareButtonDisabled}
                   onClick={() =>
                     navigateTo(backtestComparePath(selectors.compareSelection, strategyId))

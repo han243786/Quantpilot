@@ -8,16 +8,19 @@ import OrderPanel from "./components/OrderPanel";
 import AssetPanel from "./components/AssetPanel";
 import StrategyParamsPanel from "./components/StrategyParamsPanel";
 import V4EvidencePanel from "./components/V4EvidencePanel";
+import { useI18n } from "./i18n";
 
 const API = "/api/executor";
 
 export default function ExecutorApp() {
+  const { t } = useI18n();
   const [strategies, setStrategies] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
   const [execStatus, setExecStatus] = useState("idle"); // idle | running | error
   const [statusMsg, setStatusMsg] = useState(""); // v3.5.1: 错误详情
   const [mode, setMode] = useState("paper_simulated");
   const [modeError, setModeError] = useState(""); // v3.5.1: 模式切换错误
+  const [strategyActionMessage, setStrategyActionMessage] = useState("");
 
   // v4.8.0: 加载当前双模拟盘执行模式
   useEffect(() => {
@@ -46,10 +49,10 @@ export default function ExecutorApp() {
         }
       } else {
         const data = await res.json().catch(() => ({}));
-        setModeError(data.message || "模式切换失败");
+        setModeError(data.message || t("模式切换失败"));
       }
-    } catch (e) { console.warn("executor: mode switch", e); setModeError("模式切换失败，请检查后端连接"); }
-  }, []);
+    } catch (e) { console.warn("executor: mode switch", e); setModeError(t("模式切换失败，请检查后端连接")); }
+  }, [t]);
 
   // 轮询活跃策略列表
   useEffect(() => {
@@ -64,10 +67,10 @@ export default function ExecutorApp() {
             setActiveTab(data.strategies[0].strategy_id);
           }
         }
-      } catch (e) { console.warn("executor: strategies poll", e); setExecStatus("error"); setStatusMsg("策略数据获取失败，请检查后端连接"); }
+      } catch (e) { console.warn("executor: strategies poll", e); setExecStatus("error"); setStatusMsg(t("策略数据获取失败，请检查后端连接")); }
     }, 3000);
     return () => clearInterval(interval);
-  }, [activeTab]);
+  }, [activeTab, t]);
 
   const activeStrategy = strategies.find(s => s.strategy_id === activeTab);
   const activeRuntimeKind = (activeStrategy?.runtime_kind || activeStrategy?.runtime_version || "v3").toLowerCase();
@@ -76,12 +79,50 @@ export default function ExecutorApp() {
   const strategiesRef = useRef(strategies);
   strategiesRef.current = strategies;
   const handleEmergencyStop = useCallback(async () => {
-    if (!confirm("确认紧急停止所有策略并撤销全部挂单？")) return;
+    if (!confirm(t("确认紧急停止所有策略并撤销全部挂单？"))) return;
     for (const s of strategiesRef.current) {
       await fetch(`${API}/strategies/${s.strategy_id}/stop`, { method: "POST" }).catch((e) => { console.warn("executor: emergency stop", e); });
     }
     setExecStatus("idle");
-  }, []);
+  }, [t]);
+
+  const readExecutorError = useCallback(async (response) => {
+    const text = await response.text().catch(() => "");
+    try {
+      const parsed = JSON.parse(text);
+      return parsed.message || parsed.error || text || t("执行端操作失败");
+    } catch (_) {
+      return text || t("执行端操作失败");
+    }
+  }, [t]);
+
+  const handleStrategyToggle = useCallback(async (strategy) => {
+    const isRunning = (strategy.status || "").toLowerCase() === "running";
+    const action = isRunning ? "stop" : "start";
+    try {
+      const response = await fetch(`${API}/strategies/${strategy.strategy_id}/${action}`, { method: "POST" });
+      if (!response.ok) {
+        const message = await readExecutorError(response);
+        setExecStatus("error");
+        setStrategyActionMessage(message);
+        setStatusMsg(message);
+        return;
+      }
+      setStrategyActionMessage("");
+      setStatusMsg("");
+      const stratRes = await fetch(`${API}/strategies`);
+      if (stratRes.ok) {
+        const stratData = await stratRes.json();
+        setStrategies(stratData.strategies || []);
+      }
+    } catch (error) {
+      console.warn("executor: start/stop", error);
+      const message = t("执行端操作失败，请检查后端连接");
+      setExecStatus("error");
+      setStrategyActionMessage(message);
+      setStatusMsg(message);
+    }
+  }, [readExecutorError, t]);
 
   return (
     <div className="exec-app">
@@ -97,6 +138,11 @@ export default function ExecutorApp() {
       />
 
       <div className="exec-tabbar">
+        {strategyActionMessage && (
+          <div className="exec-tab" style={{ color: "var(--exec-error)" }}>
+            {strategyActionMessage}
+          </div>
+        )}
         {strategies.map(s => (
           <div
             key={s.strategy_id}
@@ -108,16 +154,14 @@ export default function ExecutorApp() {
             <span className="exec-runtime-pill">{(s.runtime_kind || s.runtime_version || "v3").toLowerCase()}</span>
             {/* v3.6.0 U10: 内联start/stop按钮 */}
             <button className="exec-tab-btn"
-              onClick={(e) => { e.stopPropagation();
-                fetch(`${API}/strategies/${s.strategy_id}/${(s.status||"").toLowerCase()==="running"?"stop":"start"}`, {method:"POST"}).catch((e)=>{ console.warn("executor: start/stop", e); });
-              }}
-              title={(s.status||"").toLowerCase()==="running" ? "停止" : "启动"}
+              onClick={(e) => { e.stopPropagation(); handleStrategyToggle(s); }}
+              title={(s.status||"").toLowerCase()==="running" ? t("停止") : t("启动")}
             >{(s.status||"").toLowerCase()==="running" ? "⏹" : "▶"}</button>
           </div>
         ))}
         {strategies.length === 0 && (
           <div className="exec-tab" style={{ color: "var(--exec-text-secondary)" }}>
-            等待策略部署...
+            {t("等待策略部署...")}
           </div>
         )}
       </div>
@@ -133,7 +177,7 @@ export default function ExecutorApp() {
             </div>
             <div className="exec-content">
               <div className="exec-graph-panel">
-                <div className="exec-graph-locked-badge">🔒 拓扑锁定 · 仅热调参</div>
+                <div className="exec-graph-locked-badge">🔒 {t("拓扑锁定 · 仅热调参")}</div>
                 <StrategyGraphPanel strategy={activeStrategy} />
               </div>
               <div className="exec-kline-panel">
@@ -144,9 +188,9 @@ export default function ExecutorApp() {
         ) : (
           <div className="exec-empty">
             <div className="exec-empty-icon">⊞</div>
-            <div className="exec-empty-text">等待策略部署</div>
+            <div className="exec-empty-text">{t("等待策略部署")}</div>
             <div style={{ fontSize: 12, color: "var(--exec-text-secondary)" }}>
-              在测试端编译策略后点击"部署到执行区"
+              {t("在测试端编译策略后点击\"部署到执行区\"")}
             </div>
           </div>
         )}

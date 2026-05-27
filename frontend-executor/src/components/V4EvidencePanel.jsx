@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useI18n } from "../i18n";
 
 function asArray(value) {
   return Array.isArray(value) ? value : [];
@@ -22,6 +23,7 @@ function latestExecutionEvent(events) {
 }
 
 export default function V4EvidencePanel({ strategyId, runtimeKind }) {
+  const { t } = useI18n();
   const [snapshot, setSnapshot] = useState(null);
   const [runtimeEvents, setRuntimeEvents] = useState([]);
   const [streamStatus, setStreamStatus] = useState("idle");
@@ -85,27 +87,27 @@ export default function V4EvidencePanel({ strategyId, runtimeKind }) {
   return (
     <section className="exec-sidebar-section v4-evidence-panel">
       <div className="params-header">
-        <h3>v4 状态机证据</h3>
+        <h3>{t("v4 状态机证据")}</h3>
         <span className={`params-status params-status--${streamStatus === "connected" ? "saved" : streamStatus === "error" ? "error" : "idle"}`}>
           {streamStatus}
         </span>
       </div>
 
       {!snapshot ? (
-        <div className="params-panel-empty">等待 v4 runtime memory_snapshot</div>
+        <div className="params-panel-empty">{t("等待 v4 runtime memory_snapshot")}</div>
       ) : (
         <div className="v4-evidence-grid">
           <div className="v4-evidence-row">
             <span>Slice</span>
-            <strong>实时模拟盘</strong>
+            <strong>{t("实时模拟盘")}</strong>
           </div>
           <div className="v4-evidence-row">
             <span>Settlement</span>
-            <strong>本地撮合</strong>
+            <strong>{t("本地撮合")}</strong>
           </div>
           <div className="v4-evidence-row">
             <span>Provider</span>
-            <strong>{projection.boundary.provider_order_submission_attached ? "provider 下单" : "无 provider 下单"}</strong>
+            <strong>{projection.boundary.provider_order_submission_attached ? t("provider 下单") : t("无 provider 下单")}</strong>
           </div>
           <div className="v4-evidence-row">
             <span>Machine</span>

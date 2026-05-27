@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useMemo, useRef } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import "./strategy-workspace.css";
 import {
   navigateTo,
@@ -97,6 +97,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
     codeInspectorPanels: CODE_INSPECTOR_DEFS,
     activeCodeInspector: ui.activeCodeInspector
   });
+  const [visitedTabs, setVisitedTabs] = useState(() => new Set([ui.activeTab]));
   const { currentGraphId, readiness, compareSelection, formatTime } = pageData;
   const capabilityView = useMemo(
     () =>
@@ -119,6 +120,23 @@ export default function StrategyWorkspacePage({ strategyId }) {
   const openBacktestsAction = capabilityView.uiActions.actions.open_backtests;
   const isWorkspaceSurfaceVisible = (surfaceKey) =>
     capabilityView.workspace.surfaces[surfaceKey]?.visible === true;
+  const shouldMountTab = (surfaceKey) =>
+    isWorkspaceSurfaceVisible(surfaceKey) &&
+    (ui.activeTab === surfaceKey || visitedTabs.has(surfaceKey));
+  const tabPanelProps = (surfaceKey) => ({
+    className: "workspace-tab-panel",
+    style: { display: ui.activeTab === surfaceKey ? "block" : "none" },
+    "aria-hidden": ui.activeTab !== surfaceKey
+  });
+
+  useEffect(() => {
+    setVisitedTabs((previous) => {
+      if (previous.has(ui.activeTab)) return previous;
+      const next = new Set(previous);
+      next.add(ui.activeTab);
+      return next;
+    });
+  }, [ui.activeTab]);
 
   useEffect(() => {
     if (ui.status !== "ready") return;
@@ -132,9 +150,9 @@ export default function StrategyWorkspacePage({ strategyId }) {
   if (ui.status === "loading") {
     return (
       <div className="strategy-workspace-loading" role="status" aria-live="polite">
-        <div className="strategy-workspace-loading__title">正在加载策略工作区</div>
+        <div className="strategy-workspace-loading__title">{t("正在加载策略工作区")}</div>
         <div className="strategy-workspace-loading__detail">
-          正在解析请求的策略图，并准备工作区界面。
+          {t("正在解析请求的策略图，并准备工作区界面。")}
         </div>
       </div>
     );
@@ -143,12 +161,12 @@ export default function StrategyWorkspacePage({ strategyId }) {
   if (ui.status === "error") {
     return (
       <div className="strategy-workspace-loading strategy-workspace-loading--error">
-        <div className="strategy-workspace-loading__title">策略工作区不可用</div>
+        <div className="strategy-workspace-loading__title">{t("策略工作区不可用")}</div>
         <div className="strategy-workspace-loading__detail">{ui.error}</div>
-        <button className="ghost-btn" onClick={() => navigateTo(strategiesPath())}>
-          返回策略中心
+        <button className="ad-btn ad-btn--ghost" onClick={() => navigateTo(strategiesPath())}>
+          {t("返回策略中心")}
         </button>
-        <button className="ghost-btn" onClick={() => loadGraphById(strategyId)}>
+        <button className="ad-btn ad-btn--ghost" onClick={() => loadGraphById(strategyId)}>
           {t("重试")}
         </button>
       </div>
@@ -157,22 +175,22 @@ export default function StrategyWorkspacePage({ strategyId }) {
 
   return (
     <main className="strategy-workspace-page">
-      <h1 style={{position:"absolute",width:"1px",height:"1px",overflow:"hidden",clip:"rect(0,0,0,0)",whiteSpace:"nowrap"}}>策略工作区</h1>
+      <h1 style={{position:"absolute",width:"1px",height:"1px",overflow:"hidden",clip:"rect(0,0,0,0)",whiteSpace:"nowrap"}}>{t("策略工作区")}</h1>
       <div className="workspace-small-screen-warning">{t("策略图编辑需要较大的屏幕空间，建议使用 ≥1180px 宽度的窗口。")}</div>
       {/* Adobe 风格紧凑页头 */}
       <header className="ad-workspace-header">
         <StrategyRouteBar
           items={[
-            { label: "策略中心", onClick: () => navigateTo(strategiesPath()) },
+            { label: t("策略中心"), onClick: () => navigateTo(strategiesPath()) },
             { label: graph.metadata?.name || currentGraphId },
-            { label: "工作区", current: true }
+            { label: t("工作区"), current: true }
           ]}
         />
         <div className="ad-workspace-header__info">
           <span className="ad-workspace-header__name">{graph.metadata?.name || currentGraphId}</span>
           <span className="ad-workspace-header__id">{currentGraphId}</span>
           <span className={`ad-pill ad-pill--${readiness.tone}`}>{readiness.label}</span>
-          <span className="ad-pill ad-pill--muted">{compileSummary.protocol_name || "协议待生成"}</span>
+          <span className="ad-pill ad-pill--muted">{compileSummary.protocol_name || t("协议待生成")}</span>
         </div>
       </header>
 
@@ -207,94 +225,110 @@ export default function StrategyWorkspacePage({ strategyId }) {
           disabled={!openBacktestsAction?.enabled}
           title={openBacktestsAction?.blockReason || openBacktestsAction?.reason || undefined}
         >
-          打开回测
+          {t("打开回测")}
         </button>
       </section>
 
       {/* 标签页内容 */}
-      {ui.activeTab === "dashboard" && isWorkspaceSurfaceVisible("dashboard") ? (
-        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
-          <StrategyWorkspaceDashboard
-            graph={graph}
-            runtime={runtime}
-            compileSummary={compileSummary}
-            readiness={readiness}
-            onNavigate={(tabId) => ui.setActiveTab(tabId)}
-            workspaceSurfaces={capabilityView.workspace.surfaces}
-          />
-        </Suspense>
+      {shouldMountTab("dashboard") ? (
+        <section {...tabPanelProps("dashboard")}>
+          <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
+            <StrategyWorkspaceDashboard
+              graph={graph}
+              runtime={runtime}
+              compileSummary={compileSummary}
+              readiness={readiness}
+              onNavigate={(tabId) => ui.setActiveTab(tabId)}
+              workspaceSurfaces={capabilityView.workspace.surfaces}
+            />
+          </Suspense>
+        </section>
       ) : null}
 
-      {ui.activeTab === "overview" && isWorkspaceSurfaceVisible("overview") ? (
-        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
-          <StrategyWorkspaceOverviewTab
-            strategyId={strategyId} graph={graph} ui={ui}
-            compileSummary={compileSummary} compileCounts={pageData.compileCounts}
-            readiness={pageData.readiness} recentRuns={pageData.recentRuns}
-            recentBacktests={pageData.recentBacktests} compareSelection={pageData.compareSelection}
-            issueQueue={issueQueue} canvasRecommendationState={pageData.canvasRecommendationState}
-            overviewMetrics={pageData.overviewMetrics} runPreviewItems={pageData.runPreviewItems}
-            overviewStatusHighlights={pageData.overviewStatusHighlights}
-            backtestPreviewItems={pageData.backtestPreviewItems}
-            lastRun={pageData.lastRun} lastBacktest={pageData.lastBacktest}
-            formatTime={pageData.formatTime}
-          />
-        </Suspense>
+      {shouldMountTab("overview") ? (
+        <section {...tabPanelProps("overview")}>
+          <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
+            <StrategyWorkspaceOverviewTab
+              strategyId={strategyId} graph={graph} ui={ui}
+              compileSummary={compileSummary} compileCounts={pageData.compileCounts}
+              readiness={pageData.readiness} recentRuns={pageData.recentRuns}
+              recentBacktests={pageData.recentBacktests} compareSelection={pageData.compareSelection}
+              issueQueue={issueQueue} canvasRecommendationState={pageData.canvasRecommendationState}
+              overviewMetrics={pageData.overviewMetrics} runPreviewItems={pageData.runPreviewItems}
+              overviewStatusHighlights={pageData.overviewStatusHighlights}
+              backtestPreviewItems={pageData.backtestPreviewItems}
+              lastRun={pageData.lastRun} lastBacktest={pageData.lastBacktest}
+              formatTime={pageData.formatTime}
+            />
+          </Suspense>
+        </section>
       ) : null}
 
-      {ui.activeTab === "code" && isWorkspaceSurfaceVisible("code") ? (
-        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
-          <StrategyWorkspaceCodeTab
-            graph={graph} ui={ui}
-            codeInspectorPanels={CODE_INSPECTOR_DEFS}
-            canvasRecommendationState={pageData.canvasRecommendationState}
-            configureRepairPathState={pageData.configureRepairPathState}
-            activeInspectorDefinition={pageData.activeInspectorDefinition}
-            secondaryInspectorDefinitions={pageData.secondaryInspectorDefinitions}
-          />
-        </Suspense>
+      {shouldMountTab("code") ? (
+        <section {...tabPanelProps("code")}>
+          <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
+            <StrategyWorkspaceCodeTab
+              graph={graph} ui={ui}
+              codeInspectorPanels={CODE_INSPECTOR_DEFS}
+              canvasRecommendationState={pageData.canvasRecommendationState}
+              configureRepairPathState={pageData.configureRepairPathState}
+              activeInspectorDefinition={pageData.activeInspectorDefinition}
+              secondaryInspectorDefinitions={pageData.secondaryInspectorDefinitions}
+            />
+          </Suspense>
+        </section>
       ) : null}
 
-      {ui.activeTab === "diagnostics" && isWorkspaceSurfaceVisible("diagnostics") ? (
-        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
-          <StrategyWorkspaceDiagnosticsTab
-            graph={graph} runtime={runtime} selectedNodeId={selectedNodeId} ui={ui}
-            compileSummary={compileSummary} compileCounts={pageData.compileCounts}
-            readiness={pageData.readiness} issueQueue={issueQueue}
-            issueQueueCounts={pageData.issueQueueCounts}
-            issueQueueSources={pageData.issueQueueSources}
-            issueQueueSourceCounts={pageData.issueQueueSourceCounts}
-            diagnosticsStatusHighlights={pageData.diagnosticsStatusHighlights}
-            canvasRecommendationState={pageData.canvasRecommendationState}
-          />
-        </Suspense>
+      {shouldMountTab("diagnostics") ? (
+        <section {...tabPanelProps("diagnostics")}>
+          <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
+            <StrategyWorkspaceDiagnosticsTab
+              graph={graph} runtime={runtime} selectedNodeId={selectedNodeId} ui={ui}
+              compileSummary={compileSummary} compileCounts={pageData.compileCounts}
+              readiness={pageData.readiness} issueQueue={issueQueue}
+              issueQueueCounts={pageData.issueQueueCounts}
+              issueQueueSources={pageData.issueQueueSources}
+              issueQueueSourceCounts={pageData.issueQueueSourceCounts}
+              diagnosticsStatusHighlights={pageData.diagnosticsStatusHighlights}
+              canvasRecommendationState={pageData.canvasRecommendationState}
+            />
+          </Suspense>
+        </section>
       ) : null}
 
-      {ui.activeTab === "research" && isWorkspaceSurfaceVisible("research") ? (
-        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
-          <StrategyWorkspaceResearchTab strategyId={strategyId} />
-        </Suspense>
+      {shouldMountTab("research") ? (
+        <section {...tabPanelProps("research")}>
+          <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
+            <StrategyWorkspaceResearchTab strategyId={strategyId} />
+          </Suspense>
+        </section>
       ) : null}
-      {ui.activeTab === "monitor" && isWorkspaceSurfaceVisible("monitor") ? (
-        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
-          <StrategyWorkspaceMonitorTab
-            graph={graph}
-            runtime={runtime}
-            recentRuns={pageData.recentRuns}
-            issueQueue={issueQueue}
-            formatTime={pageData.formatTime}
-          />
-        </Suspense>
+      {shouldMountTab("monitor") ? (
+        <section {...tabPanelProps("monitor")}>
+          <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
+            <StrategyWorkspaceMonitorTab
+              graph={graph}
+              runtime={runtime}
+              recentRuns={pageData.recentRuns}
+              issueQueue={issueQueue}
+              formatTime={pageData.formatTime}
+            />
+          </Suspense>
+        </section>
       ) : null}
-      {ui.activeTab === "debug" && isWorkspaceSurfaceVisible("debug") ? (
-        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
-          <StrategyWorkspaceDebugTab debugBars={pageData.debugBars || []} />
-        </Suspense>
+      {shouldMountTab("debug") ? (
+        <section {...tabPanelProps("debug")}>
+          <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
+            <StrategyWorkspaceDebugTab debugBars={pageData.debugBars || []} />
+          </Suspense>
+        </section>
       ) : null}
-      {ui.activeTab === "source" && isWorkspaceSurfaceVisible("source") ? (
-        <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
-          <StrategyWorkspaceSourceTab graphId={graph?.metadata?.graph_id} />
-        </Suspense>
+      {shouldMountTab("source") ? (
+        <section {...tabPanelProps("source")}>
+          <Suspense fallback={<div className="tab-skeleton">{t("加载中...")}</div>}>
+            <StrategyWorkspaceSourceTab graphId={graph?.metadata?.graph_id} />
+          </Suspense>
+        </section>
       ) : null}
     </main>
   );

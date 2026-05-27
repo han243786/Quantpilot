@@ -22,6 +22,9 @@ tags:
     description: 健康检查
   - name: capabilities
     description: 能力发现
+  - name: strategy-config
+    description: v4 策略配置契约、运行前核验和配置差异
+    x-chain-stage: compile
   - name: auth
     description: 用户认证
     x-chain-stage: system
@@ -344,6 +347,121 @@ paths:
           description: 策略已部署
         '400':
           $ref: '#/components/responses/Problem'
+
+  /api/executor/health:
+    get:
+      operationId: getExecutorHealth
+      summary: 执行端健康检查
+      tags: [executor]
+      x-owner: executor
+      x-chain-stage: executor
+      x-stability: beta
+      responses:
+        '200':
+          description: 执行端健康状态
+
+  /api/executor/strategies/{strategy_id}:
+    get:
+      operationId: getExecutorStrategy
+      summary: 查询执行端策略详情
+      tags: [executor]
+      x-owner: executor
+      x-chain-stage: executor
+      x-stability: beta
+      parameters:
+        - name: strategy_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 执行端策略详情
+
+  /api/executor/strategies/{strategy_id}/start:
+    post:
+      operationId: startExecutorStrategy
+      summary: 启动执行端策略 runner，v4 策略必须通过 strategy config preflight
+      tags: [executor]
+      x-owner: executor
+      x-chain-stage: executor
+      x-stability: beta
+      parameters:
+        - name: strategy_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 策略 runner 已启动
+        '423':
+          description: strategy config preflight 阻断启动，或 PaperActual demo 边界未满足
+
+  /api/executor/strategies/{strategy_id}/stop:
+    post:
+      operationId: stopExecutorStrategy
+      summary: 停止执行端策略 runner
+      tags: [executor]
+      x-owner: executor
+      x-chain-stage: executor
+      x-stability: beta
+      parameters:
+        - name: strategy_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 策略 runner 已停止
+
+  /api/executor/strategies/{strategy_id}/klines:
+    get:
+      operationId: getExecutorStrategyKlines
+      summary: 查询执行端策略 K 线缓存
+      tags: [executor]
+      x-owner: executor
+      x-chain-stage: executor
+      x-stability: beta
+      parameters:
+        - name: strategy_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: count
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - name: interval
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: K 线缓存与最新价格
+
+  /api/executor/params/{strategy_id}:
+    post:
+      operationId: updateExecutorStrategyParams
+      summary: 热更新执行端策略参数
+      tags: [executor]
+      x-owner: executor
+      x-chain-stage: executor
+      x-stability: beta
+      parameters:
+        - name: strategy_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 参数已提交
 
   /api/executor/strategies/{strategy_id}/events:
     get:
@@ -864,7 +982,7 @@ paths:
                 actor:
                   type: object
 
-  /api/graphs/{graph_id}/versions/compare/{left}/{right}:
+  /api/graphs/{graph_id}/versions/compare/{left_version_id}/{right_version_id}:
     get:
       operationId: compareGraphVersions
       summary: 对比两个版本
@@ -872,6 +990,33 @@ paths:
       x-owner: backend-graph
       x-chain-stage: compile
       x-stability: stable
+      parameters:
+        - name: left_backtest_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: 左侧版本显式绑定的 v4 backtest artifact；缺省时返回缺失诊断，不自动猜测
+        - name: right_backtest_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: 右侧版本显式绑定的 v4 backtest artifact；缺省时返回缺失诊断，不自动猜测
+      responses:
+        '200':
+          description: 持久化图版本对比结果，包含策略配置契约差异
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  graph_id:
+                    type: string
+                  strategy_config_diff:
+                    $ref: '#/components/schemas/StrategyConfigDiffReport'
+                  strategy_config_evidence_diff:
+                    $ref: '#/components/schemas/StrategyConfigEvidenceDiffReport'
 
   /api/graphs/{graph_id}/reveal:
     post:
@@ -1213,6 +1358,8 @@ paths:
       responses:
         '200':
           description: 审批通过
+        '423':
+          description: AI proposal 缺少策略配置域绑定、静态检查或沙箱验证时拒绝审批通过
         '409':
           $ref: '#/components/responses/Problem'
 
@@ -1316,6 +1463,73 @@ paths:
       responses:
         '200':
           description: 沙箱验证已触发
+
+  # ── v4 策略配置系统 ──
+  /api/v1/strategy-config/artifact:
+    post:
+      operationId: createStrategyConfigArtifact
+      summary: 生成 v4 策略配置 artifact
+      tags: [strategy-config]
+      x-owner: backend-runtime
+      x-chain-stage: compile
+      x-stability: beta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StrategyConfigArtifactRequest'
+      responses:
+        '200':
+          description: v4 策略配置 artifact
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StrategyConfigArtifact'
+
+  /api/v1/strategy-config/preflight:
+    post:
+      operationId: preflightStrategyConfig
+      summary: 核验 v4 策略配置运行边界
+      tags: [strategy-config]
+      x-owner: backend-runtime
+      x-chain-stage: runtime
+      x-stability: beta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StrategyConfigArtifactRequest'
+      responses:
+        '200':
+          description: v4 策略配置运行前核验报告
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StrategyConfigPreflightReport'
+
+  /api/v1/strategy-config/diff:
+    post:
+      operationId: diffStrategyConfig
+      summary: 对比两个 v4 策略配置 artifact
+      tags: [strategy-config]
+      x-owner: backend-runtime
+      x-chain-stage: compile
+      x-stability: beta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StrategyConfigDiffRequest'
+      responses:
+        '200':
+          description: v4 策略配置差异报告
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StrategyConfigDiffReport'
 
   # ── 告警 ──
   /api/v1/alerts:
@@ -1530,6 +1744,65 @@ paths:
       x-owner: backend-runtime
       x-chain-stage: system
       x-stability: beta
+
+  # ── 凭证管理 ──
+  /api/credentials:
+    get:
+      operationId: listCredentials
+      summary: 查询已存储的凭证服务列表
+      tags: [system]
+      x-owner: backend-runtime
+      x-chain-stage: system
+      x-stability: experimental
+      responses:
+        '200':
+          description: 凭证服务列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  services:
+                    type: array
+                    items:
+                      type: string
+    post:
+      operationId: setCredential
+      summary: 存储/更新交易所凭证
+      tags: [system]
+      x-owner: backend-runtime
+      x-chain-stage: system
+      x-stability: experimental
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [service, fields]
+              properties:
+                service:
+                  type: string
+                fields:
+                  type: object
+
+  /api/credentials/{service}:
+    delete:
+      operationId: deleteCredential
+      summary: 删除指定凭证
+      tags: [system]
+      x-owner: backend-runtime
+      x-chain-stage: system
+      x-stability: experimental
+      parameters:
+        - name: service
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 凭证已删除
 
 components:
   schemas:
@@ -1973,9 +2246,11 @@ components:
           type: string
         status:
           type: string
-          enum: [draft, submitted, static_check_passed, static_check_failed, denied, expired]
+          enum: [draft, submitted, static_check_passed, static_check_failed, approved, denied, expired]
         target:
           type: object
+        config_domain_binding:
+          $ref: '#/components/schemas/AiProposalConfigDomainBinding'
 
     CreateAiProposalRequest:
       type: object
@@ -1983,6 +2258,7 @@ components:
       properties:
         source_kind:
           type: string
+          enum: [run, backtest]
         source_id:
           type: string
         target:
@@ -1999,6 +2275,26 @@ components:
         reason:
           type: string
           maxLength: 512
+        config_domain_binding:
+          $ref: '#/components/schemas/AiProposalConfigDomainBinding'
+
+    AiProposalConfigDomainBinding:
+      type: object
+      required: [target_domain, before_digest, after_digest, evidence_anchor_ids]
+      properties:
+        target_domain:
+          type: string
+          enum: [market, observation, state_machine, risk, execution, ai_governance]
+        before_digest:
+          type: string
+          pattern: '^sha256:[0-9a-f]{64}$'
+        after_digest:
+          type: string
+          pattern: '^sha256:[0-9a-f]{64}$'
+        evidence_anchor_ids:
+          type: array
+          items:
+            type: string
 
     SandboxReport:
       type: object
@@ -2051,6 +2347,301 @@ components:
         calmar_ratio:
           type: number
 
+    StrategyConfigArtifactRequest:
+      type: object
+      properties:
+        strategy_id:
+          type: string
+        strategy_version:
+          type: string
+        source_mode:
+          type: string
+        graph_json:
+          type: object
+        runtime_config:
+          type: object
+        qs_source:
+          type: string
+        core_ir:
+          type: object
+        v4_graph:
+          type: object
+        capability_snapshot_hash:
+          type: string
+          description: 前端当前使用的 capability schema_hash；后端会与当前 hash 比对 freshness
+        capability_source:
+          type: string
+          description: frontend_snapshot、safe_fallback 或 backend_current
+        runtime_mode:
+          type: string
+          description: 用户侧仅使用 PaperSimulated 或 PaperActual；不得用 live 描述 OKX demo/testnet
+        evidence_anchors:
+          type: array
+          items:
+            $ref: '#/components/schemas/StrategyConfigEvidenceAnchorInput'
+        proposal_bindings:
+          type: array
+          items:
+            $ref: '#/components/schemas/StrategyConfigProposalBindingInput'
+        required_execution_capability_sources:
+          type: array
+          items:
+            type: string
+            enum: [provider_native, runtime_simulated, unsupported]
+
+    StrategyConfigEvidenceAnchorInput:
+      type: object
+      required: [anchor_type]
+      properties:
+        anchor_type:
+          type: string
+        anchor_id:
+          type: string
+        digest:
+          type: string
+        summary:
+          type: string
+
+    StrategyConfigProposalBindingInput:
+      type: object
+      required: [proposal_id, target_domain]
+      properties:
+        proposal_id:
+          type: string
+        target_domain:
+          $ref: '#/components/schemas/StrategyConfigDomainId'
+        before_digest:
+          type: string
+        after_digest:
+          type: string
+        evidence_anchor_ids:
+          type: array
+          items:
+            type: string
+        sandbox_status:
+          type: string
+        approval_status:
+          type: string
+
+    StrategyConfigArtifact:
+      type: object
+      required: [schema_version, artifact_id, strategy_id, strategy_version, source, capability, config_domains, runtime_boundary, artifact_digest]
+      properties:
+        schema_version:
+          type: string
+        artifact_id:
+          type: string
+        strategy_id:
+          type: string
+        strategy_version:
+          type: string
+        created_at_ms:
+          type: integer
+          format: int64
+        source:
+          type: object
+        capability:
+          $ref: '#/components/schemas/StrategyConfigCapabilitySummary'
+        config_domains:
+          type: array
+          items:
+            $ref: '#/components/schemas/StrategyConfigDomainStatus'
+        runtime_boundary:
+          $ref: '#/components/schemas/StrategyConfigRuntimeBoundary'
+        evidence_anchors:
+          type: array
+          items:
+            type: object
+        proposal_bindings:
+          type: array
+          items:
+            type: object
+        artifact_digest:
+          type: string
+
+    StrategyConfigCapabilitySummary:
+      type: object
+      required: [capability_snapshot_hash, capability_expected_hash, capability_snapshot_status, capability_source, frontend_module_keys, ui_actions, workspace_surfaces]
+      properties:
+        capability_snapshot_hash:
+          type: string
+        capability_expected_hash:
+          type: string
+        capability_snapshot_status:
+          type: string
+          enum: [current, stale, safe_fallback]
+        capability_source:
+          type: string
+        frontend_module_keys:
+          type: array
+          items:
+            type: string
+        ui_actions:
+          type: array
+          items:
+            type: string
+        workspace_surfaces:
+          type: array
+          items:
+            type: string
+
+    StrategyConfigDomainId:
+      type: string
+      enum: [market, observation, state_machine, risk, execution, evidence, ai_governance, snapshot]
+
+    StrategyConfigDomainStatus:
+      type: object
+      required: [domain_id, lifecycle, readiness, source_refs, findings]
+      properties:
+        domain_id:
+          $ref: '#/components/schemas/StrategyConfigDomainId'
+        lifecycle:
+          type: string
+          enum: [implemented, documentable, milestone, unsupported]
+        readiness:
+          type: string
+          enum: [ready, incomplete, restricted, stale, blocked]
+        source_refs:
+          type: array
+          items:
+            type: object
+        findings:
+          type: array
+          items:
+            $ref: '#/components/schemas/StrategyConfigFinding'
+        primary_action:
+          type: string
+
+    StrategyConfigRuntimeBoundary:
+      type: object
+      required: [mode_label, provider_order_submission_attached, provider_order_submission_allowed, live_execution_allowed, execution_capability_sources, rejection_reasons]
+      properties:
+        mode_label:
+          type: string
+          enum: [PaperSimulated, PaperActual]
+        provider_order_submission_attached:
+          type: boolean
+        provider_order_submission_allowed:
+          type: boolean
+        live_execution_allowed:
+          type: boolean
+          const: false
+        execution_capability_sources:
+          type: array
+          items:
+            type: string
+        rejection_reasons:
+          type: array
+          items:
+            type: string
+
+    StrategyConfigFinding:
+      type: object
+      required: [severity, code, message]
+      properties:
+        severity:
+          type: string
+        code:
+          type: string
+        message:
+          type: string
+
+    StrategyConfigPreflightReport:
+      type: object
+      required: [schema_version, artifact, decision, can_compile, can_paper_simulated, can_backtest, can_paper_actual_demo, can_live_execution]
+      properties:
+        schema_version:
+          type: string
+        artifact:
+          $ref: '#/components/schemas/StrategyConfigArtifact'
+        decision:
+          type: string
+          enum: [ready, restricted, blocked]
+        can_compile:
+          type: boolean
+        can_paper_simulated:
+          type: boolean
+        can_backtest:
+          type: boolean
+        can_paper_actual_demo:
+          type: boolean
+        can_live_execution:
+          type: boolean
+          const: false
+        allowed_actions:
+          type: array
+          items:
+            type: string
+        blocked_actions:
+          type: array
+          items:
+            type: object
+        findings:
+          type: array
+          items:
+            $ref: '#/components/schemas/StrategyConfigFinding'
+
+    StrategyConfigDiffRequest:
+      type: object
+      required: [left, right]
+      properties:
+        left:
+          $ref: '#/components/schemas/StrategyConfigArtifact'
+        right:
+          $ref: '#/components/schemas/StrategyConfigArtifact'
+
+    StrategyConfigDiffReport:
+      type: object
+      required: [schema_version, left_artifact_id, right_artifact_id, changed]
+      properties:
+        schema_version:
+          type: string
+        left_artifact_id:
+          type: string
+        right_artifact_id:
+          type: string
+        source_digest_changes:
+          type: array
+          items:
+            type: object
+        domain_changes:
+          type: array
+          items:
+            type: object
+        runtime_boundary_changed:
+          type: boolean
+        changed:
+          type: boolean
+
+    StrategyConfigEvidenceDiffReport:
+      type: object
+      required: [schema_version, status, changed, diagnostics]
+      properties:
+        schema_version:
+          type: string
+          example: quantpilot/v4-strategy-config-evidence-diff/v1
+        left_backtest_id:
+          type: string
+        right_backtest_id:
+          type: string
+        status:
+          type: string
+          enum: [same, different, missing]
+        changed:
+          type: boolean
+        diagnostics:
+          type: array
+          items:
+            $ref: '#/components/schemas/StrategyConfigFinding'
+        machine_trajectory:
+          type: object
+        risk_plane:
+          type: object
+        execution_capability:
+          type: object
+        metrics:
+          type: object
+
     Problem:
       type: object
       required: [type, title, status]
@@ -2080,65 +2671,6 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Problem'
-
-  # ── 凭证管理 ──
-  /api/credentials:
-    get:
-      operationId: listCredentials
-      summary: 查询已存储的凭证服务列表
-      tags: [system]
-      x-owner: backend-runtime
-      x-chain-stage: system
-      x-stability: experimental
-      responses:
-        '200':
-          description: 凭证服务列表
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  services:
-                    type: array
-                    items:
-                      type: string
-    post:
-      operationId: setCredential
-      summary: 存储/更新交易所凭证
-      tags: [system]
-      x-owner: backend-runtime
-      x-chain-stage: system
-      x-stability: experimental
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [service, fields]
-              properties:
-                service:
-                  type: string
-                fields:
-                  type: object
-
-  /api/credentials/{service}:
-    delete:
-      operationId: deleteCredential
-      summary: 删除指定凭证
-      tags: [system]
-      x-owner: backend-runtime
-      x-chain-stage: system
-      x-stability: experimental
-      parameters:
-        - name: service
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: 凭证已删除
 
   # ── 测试场景 ──
   /api/test/scenario/run:

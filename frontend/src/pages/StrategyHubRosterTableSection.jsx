@@ -27,8 +27,8 @@ export default function StrategyHubRosterTableSection({ model, rosterRows }) {
 
         {rosterRows.length === 0 ? (
           <div>
-            <div className="strategy-directory-empty">当前筛选条件下没有匹配的策略。</div>
-            <div className="strategy-directory-empty" style={{ fontSize: 12, opacity: 0.7, marginTop: 4 }}>尝试调整筛选条件或在策略中心创建新策略。</div>
+            <div className="strategy-directory-empty">当前还没有可显示的策略。</div>
+            <div className="strategy-directory-empty" style={{ fontSize: 12, opacity: 0.7, marginTop: 4 }}>在策略中心创建第一个策略后，这里会显示策略文件和近期活动。</div>
           </div>
         ) : null}
       </div>

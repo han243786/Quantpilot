@@ -81,7 +81,7 @@ export default function StrategyWorkspaceCodeTab({
                   </span>
                   {ui.codeLaneState.mode === "manual" ? (
                     <button
-                      className="ghost-btn compact-btn"
+                      className="ad-btn ad-btn--ghost compact-btn"
                       onClick={ui.resumeCodeLaneAutoFollow}
                     >
                       恢复自动跟随
@@ -143,7 +143,7 @@ export default function StrategyWorkspaceCodeTab({
                   return (
                     <div key={panel.id} className="workspace-inspector-disclosure">
                       <button
-                        className={`ghost-btn compact-btn workspace-inspector-disclosure__toggle${
+                        className={`ad-btn ad-btn--ghost compact-btn workspace-inspector-disclosure__toggle${
                           isExpanded
                             ? " workspace-inspector-disclosure__toggle--active"
                             : ""

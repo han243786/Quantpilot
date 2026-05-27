@@ -1,45 +1,26 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useNotification } from "../hooks/useNotification";
+import { useI18n } from "../i18n";
 
 // v3.6.0 U7: Global toast notification container
 // Listens for 'qp-toast' custom events and renders toast notifications
 
-const TOAST_STYLES = {
-  success: { background: "#16a34a", color: "#fff" },
-  error: { background: "#dc2626", color: "#fff" },
-  info: { background: "#2563eb", color: "#fff" },
-};
-
 const AUTO_DISMISS_MS = 3000;
 
-function ToastItem({ toast, onDismiss }) {
-  const style = TOAST_STYLES[toast.type] || TOAST_STYLES.info;
+function ToastItem({ toast, onDismiss, dismissLabel }) {
+  const toastType = ["success", "error", "info"].includes(toast.type) ? toast.type : "info";
   const isPersistent = toast.type === "error";
 
   return (
     <div
       role="alert"
       onClick={() => isPersistent && onDismiss(toast.id)}
-      style={{
-        ...style,
-        padding: "10px 16px",
-        borderRadius: 6,
-        marginBottom: 8,
-        cursor: isPersistent ? "pointer" : "default",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-        fontSize: 14,
-        lineHeight: 1.4,
-        minWidth: 260,
-        maxWidth: 400,
-        wordBreak: "break-word",
-        transition: "opacity 0.2s",
-        pointerEvents: "auto",
-      }}
+      className={`toast-item toast-item--${toastType}${isPersistent ? " toast-item--persistent" : ""}`}
     >
       {toast.message}
       {isPersistent && (
-        <span style={{ marginLeft: 8, opacity: 0.7, fontSize: 12 }}>
-          (点击关闭)
+        <span className="toast-item__dismiss-hint">
+          {dismissLabel}
         </span>
       )}
     </div>
@@ -47,6 +28,7 @@ function ToastItem({ toast, onDismiss }) {
 }
 
 export default function ToastContainer() {
+  const { t } = useI18n();
   const { toasts, removeToast } = useNotification();
   const timersRef = useRef({});
 
@@ -81,20 +63,14 @@ export default function ToastContainer() {
   }, []);
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 48,
-        right: 16,
-        zIndex: 9999,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-end",
-        pointerEvents: "none",
-      }}
-    >
+    <div className="toast-container">
       {toasts.map((toast) => (
-        <ToastItem key={toast.id} toast={toast} onDismiss={removeToast} />
+        <ToastItem
+          key={toast.id}
+          toast={toast}
+          onDismiss={removeToast}
+          dismissLabel={t("(点击关闭)")}
+        />
       ))}
     </div>
   );

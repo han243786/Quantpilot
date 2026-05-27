@@ -215,7 +215,7 @@ async fn set_mode(
             ));
         }
     };
-    let old_mode = state.set_mode(new_mode.clone());
+    let old_mode = state.set_mode(new_mode);
     let mode_str = new_mode.as_str();
     eprintln!("[executor] 模式切换: {:?} → {:?}", old_mode, new_mode);
     append_audit(
@@ -756,6 +756,7 @@ async fn list_strategies(State(state): State<Arc<ExecutorState>>) -> Json<serde_
                 "mode_label": s.execution_mode.display_label(),
                 "runtime_kind": s.runtime_kind.as_str(),
                 "runtime_version": s.runtime_kind.as_str(),
+                "strategy_config_preflight": s.strategy_config_preflight,
             })
         })
         .collect();
@@ -795,6 +796,7 @@ async fn get_strategy_detail(
         "graph_node_count": graph_node_count,
         "recent_trigger_count": recent_trigger_count,
         "recent_audit_count": recent_audit_count,
+        "strategy_config_preflight": s.strategy_config_preflight,
         "open_orders": [], "portfolio": {"cash_balance": 100000.0, "available_cash_balance": 100000.0, "frozen_cash_balance": 0.0, "total_net_notional": 0.0},
     })))
 }
@@ -819,6 +821,8 @@ struct V4StrategyDeployRequest {
     params_snapshot: Option<BTreeMap<String, serde_json::Value>>,
     #[serde(default)]
     execution_mode: Option<String>,
+    #[serde(default)]
+    strategy_config_preflight: Option<serde_json::Value>,
 }
 
 fn is_v4_deploy_request(body: &serde_json::Value) -> bool {
@@ -895,6 +899,7 @@ fn deploy_v4_strategy(
         status: StrategyStatus::Loaded,
         subscribed_symbols,
         execution_mode,
+        strategy_config_preflight: request.strategy_config_preflight,
     };
     state.register(strategy).map_err(|e| {
         (
@@ -1026,6 +1031,137 @@ fn empty_core_ir(strategy_id: &str) -> CoreStrategyIr {
     )
 }
 
+fn ensure_strategy_config_preflight_allows_start(
+    strategy: &ActiveStrategy,
+) -> Result<(), (StatusCode, String)> {
+    if strategy.runtime_kind != RuntimeKind::V4 {
+        return Ok(());
+    }
+
+    let Some(preflight) = strategy.strategy_config_preflight.as_ref() else {
+        return Err(strategy_config_preflight_error(
+            strategy,
+            "strategy_config_preflight_missing",
+            "v4 策略启动前缺少 strategy config preflight，已拒绝启动。",
+            None,
+        ));
+    };
+
+    let decision = json_path_str(preflight, &["decision"]).unwrap_or("blocked");
+    if decision == "blocked" {
+        return Err(strategy_config_preflight_error(
+            strategy,
+            "strategy_config_preflight_blocked",
+            "strategy config preflight 已阻断启动。",
+            Some(preflight),
+        ));
+    }
+
+    if json_path_bool(preflight, &["can_live_execution"]).unwrap_or(false)
+        || json_path_bool(
+            preflight,
+            &["artifact", "runtime_boundary", "live_execution_allowed"],
+        )
+        .unwrap_or(false)
+    {
+        return Err(strategy_config_preflight_error(
+            strategy,
+            "strategy_config_live_execution_forbidden",
+            "live_execution_allowed=false 是执行端硬边界，已拒绝启动。",
+            Some(preflight),
+        ));
+    }
+
+    let mode_label = json_path_str(preflight, &["artifact", "runtime_boundary", "mode_label"])
+        .unwrap_or("PaperSimulated");
+    let (expected_mode_label, can_field, required_action) = match strategy.execution_mode {
+        ExecutionMode::PaperSimulated => (
+            "PaperSimulated",
+            "can_paper_simulated",
+            "start_paper_simulated",
+        ),
+        ExecutionMode::PaperActual => (
+            "PaperActual",
+            "can_paper_actual_demo",
+            "start_paper_actual_demo",
+        ),
+    };
+
+    if mode_label != expected_mode_label {
+        return Err(strategy_config_preflight_error(
+            strategy,
+            "strategy_config_runtime_boundary_mismatch",
+            "strategy config preflight 的运行边界与执行端策略模式不一致，已拒绝启动。",
+            Some(preflight),
+        ));
+    }
+
+    if !json_path_bool(preflight, &[can_field]).unwrap_or(false)
+        || !json_array_contains(preflight, &["allowed_actions"], required_action)
+    {
+        return Err(strategy_config_preflight_error(
+            strategy,
+            "strategy_config_start_action_not_allowed",
+            "strategy config preflight 未允许当前执行端启动动作，已拒绝启动。",
+            Some(preflight),
+        ));
+    }
+
+    Ok(())
+}
+
+fn strategy_config_preflight_error(
+    strategy: &ActiveStrategy,
+    code: &str,
+    message: &str,
+    preflight: Option<&serde_json::Value>,
+) -> (StatusCode, String) {
+    (
+        StatusCode::LOCKED,
+        serde_json::json!({
+            "error": code,
+            "message": message,
+            "strategy_id": strategy.strategy_id,
+            "runtime_kind": strategy.runtime_kind.as_str(),
+            "execution_mode": strategy.execution_mode.as_str(),
+            "execution_mode_label": strategy.execution_mode.display_label(),
+            "preflight_decision": preflight.and_then(|value| json_path_str(value, &["decision"])),
+            "artifact_digest": preflight
+                .and_then(|value| json_path_str(value, &["artifact", "artifact_digest"])),
+        })
+        .to_string(),
+    )
+}
+
+fn json_path_str<'a>(value: &'a serde_json::Value, path: &[&str]) -> Option<&'a str> {
+    let mut current = value;
+    for key in path {
+        current = current.get(*key)?;
+    }
+    current.as_str()
+}
+
+fn json_path_bool(value: &serde_json::Value, path: &[&str]) -> Option<bool> {
+    let mut current = value;
+    for key in path {
+        current = current.get(*key)?;
+    }
+    current.as_bool()
+}
+
+fn json_array_contains(value: &serde_json::Value, path: &[&str], expected: &str) -> bool {
+    let mut current = value;
+    for key in path {
+        let Some(next) = current.get(*key) else {
+            return false;
+        };
+        current = next;
+    }
+    current
+        .as_array()
+        .is_some_and(|items| items.iter().any(|item| item.as_str() == Some(expected)))
+}
+
 fn executor_v4_static_bundle() -> V4StaticContractBundle {
     V4StaticContractBundle {
         venue_matrices: vec![
@@ -1142,7 +1278,7 @@ async fn start_strategy(
     Path(strategy_id): Path<String>,
 ) -> Result<Json<serde_json::Value>, (axum::http::StatusCode, String)> {
     // v3.2.2: 幂等保护 — Running状态不允许重复启动
-    {
+    let strategy = {
         let s = state.strategies.read().map_err(|e| {
             (
                 axum::http::StatusCode::INTERNAL_SERVER_ERROR,
@@ -1157,13 +1293,29 @@ async fn start_strategy(
                 serde_json::json!({"status": "already_running", "strategy_id": strategy_id}),
             ));
         }
-        if strategy.execution_mode.provider_order_submission_attached() {
-            return Err((
-                axum::http::StatusCode::NOT_IMPLEMENTED,
-                "PaperActual 策略自动 runner 尚未接入 provider order router；W0-2 已提供 OKX 模拟盘 submit/query/cancel 回执路由，策略自动提交仍保持 fail-closed"
-                    .to_string(),
-            ));
-        }
+        strategy.clone()
+    };
+    if let Err(error) = ensure_strategy_config_preflight_allows_start(&strategy) {
+        append_audit(
+            &state,
+            "strategy_config_preflight_blocked",
+            Some(strategy_id.clone()),
+            serde_json::json!({
+                "status": "blocked",
+                "runtime_kind": strategy.runtime_kind.as_str(),
+                "execution_mode": strategy.execution_mode.as_str(),
+                "reason": &error.1,
+            }),
+        );
+        return Err(error);
+    }
+    if strategy.execution_mode.provider_order_submission_attached() {
+        // PaperActual is non-real-funds only. Verify demo credentials before allowing the
+        // automatic runner to leave Loaded state; provider submit/query/cancel routes stay
+        // explicit audited boundaries for order-router integration.
+        load_okx_demo_credentials()?;
+    }
+    {
         let pool_opt = state.runner_pool.lock().map_err(|e| {
             (
                 axum::http::StatusCode::INTERNAL_SERVER_ERROR,
@@ -1179,7 +1331,7 @@ async fn start_strategy(
                         format!("锁: {}", e),
                     )
                 })?
-                .register(strategy)
+                .register(&strategy)
                 .map_err(|e| {
                     (
                         axum::http::StatusCode::BAD_REQUEST,
@@ -1199,7 +1351,7 @@ async fn start_strategy(
             ));
         }
     }
-    state
+    if let Some(strategy) = state
         .strategies
         .write()
         .map_err(|e| {
@@ -1209,7 +1361,9 @@ async fn start_strategy(
             )
         })?
         .get_mut(&strategy_id)
-        .map(|s| s.status = StrategyStatus::Running);
+    {
+        strategy.status = StrategyStatus::Running;
+    }
     let (runtime_kind, execution_mode) = state
         .strategies
         .read()
@@ -1226,6 +1380,13 @@ async fn start_strategy(
             "execution_mode": execution_mode.as_str(),
             "execution_mode_label": execution_mode.display_label(),
             "provider_order_submission_attached": execution_mode.provider_order_submission_attached(),
+            "provider_order_submission_policy": if execution_mode.provider_order_submission_attached() {
+                "okx_demo_credentials_verified_manual_provider_routes_available"
+            } else {
+                "runtime_simulated"
+            },
+            "strategy_config_preflight_decision": strategy.strategy_config_preflight.as_ref().and_then(|value| json_path_str(value, &["decision"])),
+            "strategy_config_artifact_digest": strategy.strategy_config_preflight.as_ref().and_then(|value| json_path_str(value, &["artifact", "artifact_digest"])),
         }),
     );
     Ok(Json(serde_json::json!({
@@ -1236,6 +1397,13 @@ async fn start_strategy(
         "execution_mode": execution_mode.as_str(),
         "execution_mode_label": execution_mode.display_label(),
         "provider_order_submission_attached": execution_mode.provider_order_submission_attached(),
+        "provider_order_submission_policy": if execution_mode.provider_order_submission_attached() {
+            "okx_demo_credentials_verified_manual_provider_routes_available"
+        } else {
+            "runtime_simulated"
+        },
+        "strategy_config_preflight_decision": strategy.strategy_config_preflight.as_ref().and_then(|value| json_path_str(value, &["decision"])),
+        "strategy_config_artifact_digest": strategy.strategy_config_preflight.as_ref().and_then(|value| json_path_str(value, &["artifact", "artifact_digest"])),
     })))
 }
 
@@ -1275,7 +1443,7 @@ async fn stop_strategy(
                 .remove(&strategy_id);
         }
     }
-    state
+    if let Some(strategy) = state
         .strategies
         .write()
         .map_err(|e| {
@@ -1285,7 +1453,9 @@ async fn stop_strategy(
             )
         })?
         .get_mut(&strategy_id)
-        .map(|s| s.status = StrategyStatus::Stopped);
+    {
+        strategy.status = StrategyStatus::Stopped;
+    }
     append_audit(
         &state,
         "stop_strategy",
@@ -1659,6 +1829,121 @@ fn validate_hot_param_value(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn sample_v4_strategy(preflight: Option<serde_json::Value>) -> ActiveStrategy {
+        ActiveStrategy {
+            strategy_id: "strategy_preflight_test".to_string(),
+            name: "Strategy preflight test".to_string(),
+            runtime_kind: RuntimeKind::V4,
+            core_ir: empty_core_ir("strategy_preflight_test"),
+            v4_graph: None,
+            graph_json: serde_json::Value::Null,
+            params: BTreeMap::new(),
+            status: StrategyStatus::Loaded,
+            subscribed_symbols: vec![],
+            execution_mode: ExecutionMode::PaperSimulated,
+            strategy_config_preflight: preflight,
+        }
+    }
+
+    fn preflight_report(
+        mode_label: &str,
+        decision: &str,
+        can_paper_simulated: bool,
+        can_paper_actual_demo: bool,
+        live_execution_allowed: bool,
+        allowed_actions: Vec<&str>,
+    ) -> serde_json::Value {
+        serde_json::json!({
+            "schema_version": "quantpilot/v4-strategy-config-preflight/v1",
+            "decision": decision,
+            "can_paper_simulated": can_paper_simulated,
+            "can_paper_actual_demo": can_paper_actual_demo,
+            "can_live_execution": live_execution_allowed,
+            "allowed_actions": allowed_actions,
+            "artifact": {
+                "artifact_digest": "sha256:test",
+                "runtime_boundary": {
+                    "mode_label": mode_label,
+                    "live_execution_allowed": live_execution_allowed
+                }
+            }
+        })
+    }
+
+    #[test]
+    fn v4_start_requires_strategy_config_preflight() {
+        let strategy = sample_v4_strategy(None);
+        let error = ensure_strategy_config_preflight_allows_start(&strategy).unwrap_err();
+        assert_eq!(error.0, StatusCode::LOCKED);
+        assert!(error.1.contains("strategy_config_preflight_missing"));
+    }
+
+    #[test]
+    fn v4_start_rejects_blocked_or_live_execution_preflight() {
+        let blocked = sample_v4_strategy(Some(preflight_report(
+            "PaperSimulated",
+            "blocked",
+            false,
+            false,
+            false,
+            vec![],
+        )));
+        let error = ensure_strategy_config_preflight_allows_start(&blocked).unwrap_err();
+        assert_eq!(error.0, StatusCode::LOCKED);
+        assert!(error.1.contains("strategy_config_preflight_blocked"));
+
+        let live_allowed = sample_v4_strategy(Some(preflight_report(
+            "PaperSimulated",
+            "ready",
+            true,
+            false,
+            true,
+            vec!["start_paper_simulated"],
+        )));
+        let error = ensure_strategy_config_preflight_allows_start(&live_allowed).unwrap_err();
+        assert!(error.1.contains("strategy_config_live_execution_forbidden"));
+    }
+
+    #[test]
+    fn v4_start_accepts_matching_paper_simulated_preflight() {
+        let strategy = sample_v4_strategy(Some(preflight_report(
+            "PaperSimulated",
+            "restricted",
+            true,
+            false,
+            false,
+            vec!["compile", "start_paper_simulated"],
+        )));
+        ensure_strategy_config_preflight_allows_start(&strategy).unwrap();
+    }
+
+    #[test]
+    fn v4_paper_actual_start_requires_matching_demo_preflight() {
+        let mut strategy = sample_v4_strategy(Some(preflight_report(
+            "PaperSimulated",
+            "ready",
+            true,
+            false,
+            false,
+            vec!["start_paper_simulated"],
+        )));
+        strategy.execution_mode = ExecutionMode::PaperActual;
+        let error = ensure_strategy_config_preflight_allows_start(&strategy).unwrap_err();
+        assert!(error
+            .1
+            .contains("strategy_config_runtime_boundary_mismatch"));
+
+        strategy.strategy_config_preflight = Some(preflight_report(
+            "PaperActual",
+            "ready",
+            true,
+            true,
+            false,
+            vec!["start_paper_actual_demo"],
+        ));
+        ensure_strategy_config_preflight_allows_start(&strategy).unwrap();
+    }
 
     #[test]
     fn okx_demo_provider_route_requires_paper_actual_mode() {

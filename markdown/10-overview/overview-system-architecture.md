@@ -897,7 +897,7 @@ StrategyHubPage
 │   └── 操作卡片: 待修复 / 运行就绪 / 对比队列 / 已选策略
 ├── StrategyHubBodySection
 │   ├── StrategyHubTemplateLibrarySection (策略模板库: 折叠态/展开态)
-│   ├── StrategyHubRosterSection (策略清单表: 搜索/筛选/排序)
+│   ├── StrategyHubRosterSection (策略清单表: 全量可滚动列表, 不做搜索/筛选/排序)
 │   └── StrategyHubInspectorSection (策略驾驶舱: 选中策略的操作面板)
 ```
 

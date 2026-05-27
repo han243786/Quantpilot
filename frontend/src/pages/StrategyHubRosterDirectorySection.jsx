@@ -6,7 +6,7 @@ const StrategyHubRosterToolbar = lazy(() => import("./StrategyHubRosterToolbar")
 const StrategyHubRosterTableSection = lazy(() => import("./StrategyHubRosterTableSection"));
 
 const ROSTER_DIRECTORY_NOTE =
-  "让列表保持在总览管理层面：先筛查策略，再只在必要时深入到单个工作区。";
+  "让列表保持在总览管理层面：先浏览策略，再只在必要时深入到单个工作区。";
 
 export default function StrategyHubRosterDirectorySection({ model, toolbar, rosterRows }) {
   return (

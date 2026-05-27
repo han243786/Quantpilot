@@ -18,6 +18,38 @@
   --sidebar-width: 280px;
 }
 
+:root[data-theme="light"] {
+  --exec-bg: #f4f5f7;
+  --exec-panel: #ffffff;
+  --exec-card: #ffffff;
+  --exec-border: #c7cdd6;
+  --exec-text: #1c2430;
+  --exec-text-secondary: #566174;
+  --exec-text-muted: #778193;
+  --exec-accent: #1473e6;
+  --exec-success: #3e8f68;
+  --exec-error: #b94f4f;
+  --exec-warning: #9a741d;
+  --exec-pulse: #d26a00;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --exec-bg: #f4f5f7;
+    --exec-panel: #ffffff;
+    --exec-card: #ffffff;
+    --exec-border: #c7cdd6;
+    --exec-text: #1c2430;
+    --exec-text-secondary: #566174;
+    --exec-text-muted: #778193;
+    --exec-accent: #1473e6;
+    --exec-success: #3e8f68;
+    --exec-error: #b94f4f;
+    --exec-warning: #9a741d;
+    --exec-pulse: #d26a00;
+  }
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--exec-bg); color: var(--exec-text); font-family: system-ui, -apple-system, sans-serif; font-size: 13px; }
 
@@ -97,6 +129,42 @@ body { background: var(--exec-bg); color: var(--exec-text); font-family: system-
 
 /* Kline Panel */
 .exec-kline-panel { height: 320px; background: var(--exec-card); flex-shrink: 0; }
+.exec-kline-toolbar {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  background: rgba(10, 10, 16, 0.84);
+  border: 1px solid var(--exec-border);
+  border-radius: var(--exec-radius);
+}
+.exec-kline-toolbar__divider {
+  width: 1px;
+  height: 18px;
+  background: var(--exec-border);
+}
+.exec-kline-toolbar__source {
+  padding: 0 6px;
+  color: var(--exec-text-secondary);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.exec-kline-toolbar button {
+  min-width: 34px;
+  padding: 2px 6px;
+  border: 0;
+  color: var(--exec-text-secondary);
+  background: transparent;
+  border-radius: 3px;
+}
+.exec-kline-toolbar button.active {
+  color: var(--exec-text);
+  background: var(--exec-accent);
+}
 
 /* Empty State */
 .exec-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--exec-text-secondary); gap: 12px; }

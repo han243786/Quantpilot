@@ -40,6 +40,10 @@ export function chaosPath() {
   return "/chaos";
 }
 
+export function settingsPath() {
+  return "/settings";
+}
+
 export function quantscriptPath() {
   return "/quantscript";
 }
@@ -76,6 +80,10 @@ export function parseRoute(pathname, search = "") {
 
   if (pathname === "/chaos") {
     return { name: "chaos" };
+  }
+
+  if (pathname === "/settings") {
+    return { name: "settings" };
   }
 
   if (pathname === "/quantscript") {
@@ -131,7 +139,7 @@ export function parseRoute(pathname, search = "") {
     };
   }
 
-  return { name: "strategies" };
+  return { name: "not-found", pathname };
 }
 
 let _lastNavPath = "";

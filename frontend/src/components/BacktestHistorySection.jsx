@@ -78,7 +78,7 @@ export default function BacktestHistorySection({
           summary={t("按图、编译、数据集、参数和时间窗口筛选历史结果。")}
           action={
             <button
-              className="ghost-btn compact-btn"
+              className="ad-btn ad-btn--ghost compact-btn"
               aria-label={t("刷新回测历史")}
               data-testid="backtest-history-refresh"
               disabled={runtime.backtestHistoryStatus === "loading"}
@@ -171,7 +171,7 @@ export default function BacktestHistorySection({
           actions={
             <>
           <button
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             data-testid="backtest-history-open-compare"
             disabled={compareSelection.length !== 2}
             onClick={() =>
@@ -180,17 +180,17 @@ export default function BacktestHistorySection({
           >
             {t("打开对比")} ({compareSelection.length}/2)
           </button>
-          <button className="ghost-btn compact-btn" onClick={() => clearBacktestCompareSelection()}>
+          <button className="ad-btn ad-btn--ghost compact-btn" onClick={() => clearBacktestCompareSelection()}>
             {HISTORY_COPY.clearCompare}
           </button>
           <button
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             onClick={() => setBacktestHistoryFilter(graph.metadata?.graph_id || "")}
           >
             {HISTORY_COPY.currentGraph}
           </button>
           <button
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             data-testid="backtest-history-reset"
             onClick={() => {
               setBacktestHistoryFilter("");
@@ -331,7 +331,7 @@ export default function BacktestHistorySection({
                 </button>
                 <div className="history-item-actions">
                   <button
-                    className={`ghost-btn compact-btn history-compare-chip ${
+                    className={`ad-btn ad-btn--ghost compact-btn history-compare-chip ${
                       isCompareSelected ? "active" : ""
                     }`.trim()}
                     data-testid={`backtest-history-compare-toggle-${item.backtest_id}`}

@@ -5,6 +5,7 @@ import { I18nProvider } from "./i18n";
 import { installTestBridge } from "./test/testBridge";
 import "./design-system.css";
 import "./styles.css";
+import "./styles-responsive-panels.css";
 import "./shared.css";
 import "@xyflow/react/dist/style.css";
 

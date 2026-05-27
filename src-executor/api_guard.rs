@@ -1,7 +1,6 @@
 use axum::{extract::Request, http::StatusCode, middleware::Next, response::Response};
 /// v3.7.0: API 守卫中间件
 /// 解密请求体 (AES-256-GCM) → 验证 HMAC 签名 → 时间窗口防重放 (±5s)
-use qrpc_session;
 use std::collections::BTreeMap;
 use std::sync::{Mutex, OnceLock};
 
@@ -14,7 +13,7 @@ pub async fn api_guard_middleware(
         return Ok(next.run(request).await);
     }
     // v3.7.0: 开发环境可降级, 生产强制验证
-    if std::env::var("QUANTPILOT_EXECUTOR_INSECURE").map_or(false, |v| v == "true" || v == "1") {
+    if std::env::var("QUANTPILOT_EXECUTOR_INSECURE").is_ok_and(|v| v == "true" || v == "1") {
         return Ok(next.run(request).await);
     }
     let sig_header = request

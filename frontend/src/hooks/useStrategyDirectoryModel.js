@@ -1,4 +1,4 @@
-import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGraphStore } from "../store/graphStore";
 import { STRATEGY_TEMPLATE_LIBRARY } from "../templates/strategyTemplates";
 import { navigateTo, strategyWorkspacePath } from "../router";
@@ -249,32 +249,8 @@ export function useStrategyDirectoryModel() {
   );
   const storedCompareSelection = runtime.backtestCompareSelection?.[graph?.metadata?.graph_id] || (Array.isArray(runtime.backtestCompareSelection) ? runtime.backtestCompareSelection : []);
 
-  const readFilterFromURL = () => {
-    if (typeof window === "undefined") return {};
-    const p = new URLSearchParams(window.location.search);
-    return { q: p.get("q") || "", scope: p.get("scope") || "all", health: p.get("health") || "all", sort: p.get("sort") || "activity" };
-  };
-  const syncFilterToURL = (q, scope, health, sort) => {
-    if (typeof window === "undefined") return;
-    const p = new URLSearchParams();
-    if (q) p.set("q", q);
-    if (scope !== "all") p.set("scope", scope);
-    if (health !== "all") p.set("health", health);
-    if (sort !== "activity") p.set("sort", sort);
-    const qs = p.toString();
-    window.history.replaceState({}, "", qs ? `?${qs}` : window.location.pathname);
-  };
-
-  const initFilter = readFilterFromURL();
-  const [query, setQuery] = useState(initFilter.q);
-  const [scopeFilter, setScopeFilter] = useState(initFilter.scope);
-  const [healthFilter, setHealthFilter] = useState(initFilter.health);
-  const [sortMode, setSortMode] = useState(initFilter.sort);
   const [selectedStrategyId, setSelectedStrategyId] = useState("");
   const [selectedStrategyIds, setSelectedStrategyIds] = useState([]);
-  const deferredQuery = useDeferredValue(query);
-
-  useEffect(() => { syncFilterToURL(query, scopeFilter, healthFilter, sortMode); }, [query, scopeFilter, healthFilter, sortMode]);
 
   useEffect(() => {
     if (graphIndexStatus === "idle") {
@@ -332,62 +308,7 @@ export function useStrategyDirectoryModel() {
     }
   }, [compareSelection, replaceBacktestCompareSelection, storedCompareSelection.length]);
 
-  const filteredStrategies = useMemo(() => {
-    const keyword = deferredQuery.trim().toLowerCase();
-    const filtered = strategies.filter((entry) => {
-      const matchesKeyword =
-        !keyword ||
-        [entry.name, entry.graphId, entry.lastCompileId, ...entry.datasetLabels]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase()
-          .includes(keyword);
-
-      const matchesScope =
-        scopeFilter === "all"
-          ? true
-          : scopeFilter === "current"
-            ? entry.isCurrent
-            : scopeFilter === "active"
-              ? entry.runCount > 0
-              : entry.backtestCount > 0;
-
-      const matchesHealth =
-        healthFilter === "all"
-          ? true
-          : healthFilter === "runnable"
-            ? entry.health.tone === "success"
-            : healthFilter === "issues"
-              ? entry.health.tone === "danger"
-              : entry.health.tone === "info";
-
-      return matchesKeyword && matchesScope && matchesHealth;
-    });
-
-    return filtered.sort((left, right) => {
-      if (sortMode === "health") {
-        const healthRank = { danger: 0, warning: 1, success: 2, info: 3, muted: 4 };
-        return (
-          (healthRank[left.health.tone] ?? 99) - (healthRank[right.health.tone] ?? 99) ||
-          (right.lastActivityAt || 0) - (left.lastActivityAt || 0)
-        );
-      }
-
-      if (sortMode === "return") {
-        return (right.latestReturnRatio ?? -Infinity) - (left.latestReturnRatio ?? -Infinity);
-      }
-
-      if (sortMode === "research") {
-        return (
-          right.backtestCount - left.backtestCount ||
-          right.runCount - left.runCount ||
-          (right.lastActivityAt || 0) - (left.lastActivityAt || 0)
-        );
-      }
-
-      return (right.lastActivityAt || 0) - (left.lastActivityAt || 0) || (left.graph_id || "").localeCompare(right.graph_id || "");
-    });
-  }, [deferredQuery, healthFilter, scopeFilter, sortMode, strategies]);
+  const filteredStrategies = strategies;
 
   useEffect(() => {
     if (filteredStrategies.length === 0) {
@@ -465,14 +386,6 @@ export function useStrategyDirectoryModel() {
     openBlankWorkspace,
     toggleBacktestCompareSelection,
     clearBacktestCompareSelection,
-    query,
-    setQuery,
-    scopeFilter,
-    setScopeFilter,
-    healthFilter,
-    setHealthFilter,
-    sortMode,
-    setSortMode,
     selectedStrategyId,
     setSelectedStrategyId,
     selectedStrategyIds,

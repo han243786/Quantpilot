@@ -1,5 +1,14 @@
 # Changelog
 
+## v4.10.0 — UX closeout and product boundary hardening (2026-05-26)
+
+- Added auto/dark/light theme handling across the main frontend and executor, with `prefers-color-scheme: light` support.
+- Completed executor i18n coverage for `StrategyGraphPanel`.
+- Added first-visit tutorial trigger with `qp.tutorial.seen` and a visible Strategy Center tutorial entry.
+- Kept strategy workspace tabs mounted after first visit and switched inactive panels through display state.
+- Solidified unsupported product decisions: no account system expansion, no logout/password reset/2FA/RBAC/profile UI, and no Strategy Center search/filter/sort workflow.
+- Migrated legacy `primary-btn` / `ghost-btn` / `danger-btn` usage to the shared `ad-btn` button variants.
+
 ## v4.7.0 — v4 execution replay, LiveActual boundary, and AI proposal analysis (2026-05-25)
 
 - v4.7.0: added v4 AI proposal trajectory analysis, v4 sandbox replay-shape comparison, executor/frontend evidence updates, OpenAPI/schema updates, and version/governance sync.

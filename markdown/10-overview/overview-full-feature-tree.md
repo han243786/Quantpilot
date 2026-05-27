@@ -177,6 +177,7 @@ Cargo.toml [[bin]] name="executor", path="src-executor/main.rs"
 - OKX WebSocket 行情连接
 - `PaperSimulated` 实时模拟盘: 本地模拟成交 (Live Runner)
 - `PaperActual` OKX 模拟盘: provider submit/query/cancel 回执路径, 固定 demo flag=1 与 `x-simulated-trading: 1`
+- v4 策略启动前消费后端生成的 `strategy_config_preflight`, 不在执行端重新推断 capability
 - 独立凭证保险库 (v2, PBKDF2 100 万轮)
 
 **启动逻辑** (`src-executor/main.rs`):
@@ -245,10 +246,11 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 |---------|--------|---------|
 | `/api/graph/*` | 策略图 CRUD | `graph_api.rs` |
 | `/api/runtime/compile` | 编译 | `compile_api.rs` |
+| `/api/v1/strategy-config/*` | v4 策略配置契约 / preflight / diff / evidence diff helper | `strategy_config_api.rs` |
 | `/api/runtime/run` | 纸面运行 | `runtime/mod.rs` |
 | `/api/runtime/backtest/*` | 回测 | `runtime/backtest.rs` |
 | `/api/runtime/experiments/*` | 实验/参数扫描 | — |
-| `/api/auth/*` | 用户认证 | `auth/mod.rs` |
+| `/api/auth/*` | 本地会话认证 | `auth/mod.rs` |
 | `/api/credentials/*` | 凭证管理 | `credential_api.rs` |
 | `/api/v1/alerts/*` | 告警 | `alert_engine.rs` |
 | `/api/v1/snapshots/*` | 快照 | `snapshot_service.rs` |
@@ -286,7 +288,7 @@ graph_quantscript_api.rs        — graph JSON → QS 源码
   └── generate_quantscript_from_graph_value() — 前端图编辑器的唯一合法出口
 
 graph_version_compare.rs        — 图版本对比
-  └── 比较两个图版本的差异, 用于版本历史
+  └── 比较两个图版本的差异, 用于版本历史；图版本 compare 响应会附带 `strategy_config_diff` 配置契约差异，并在显式绑定左右 v4 backtest 时附带 `strategy_config_evidence_diff`
 
 error_codes.rs                  — 全局错误码注册表
   └── QSxxxx, QPQSxxxx 诊断码定义
@@ -394,10 +396,10 @@ backtest_compare_types.rs       — 回测对比类型定义
 
 ### 2.5 安全系统
 
-**职责**: 用户认证、凭证加密存储、速率限制、中间件。
+**职责**: 本地会话认证、凭证加密存储、速率限制、中间件；不代表完整账户系统。
 
 ```
-auth/mod.rs                     — 用户认证
+auth/mod.rs                     — 本地会话认证
   ├── POST /api/auth/register  — 注册 (bcrypt 12 轮)
   ├── POST /api/auth/login     — 登录 (JWT HS256, 24h 过期)
   ├── POST /api/auth/refresh   — 刷新令牌轮换 + 重放检测
@@ -428,7 +430,7 @@ safe_log.rs                     — 安全日志
 
 [GP §2.6]: 凭证保险库安全 — AES-256-GCM 禁止降级, Zeroizing, 原子写入
 [GP §2.7]: 实时执行安全 — HMAC-SHA256 签名, 每日 ≤100 单/≤$1000, 错误清洗
-[GP §2.8]: 用户认证安全 — bcrypt ≥12 轮, JWT HS256, 刷新令牌轮换, 重放检测 410 GONE
+[GP §2.8]: 本地会话认证安全 — bcrypt ≥12 轮, JWT HS256, 刷新令牌轮换, 重放检测 410 GONE; 账户系统扩展为 unsupported
 
 ### 2.6 运维系统
 
@@ -578,11 +580,12 @@ frontend-executor/
   └── src/
       ├── main.jsx            — React 入口, 挂载 ExecutorApp
       ├── ExecutorApp.jsx     — 执行端 App Shell: 多策略标签页 + 状态轮询 + 模式切换
-      ├── design-system.css   — 执行端专用设计系统 (暗色面板)
+      ├── i18n.js             — 执行端轻量 i18n provider, zh-CN/en-US
+      ├── design-system.css   — 执行端专用设计系统 (暗色/亮色面板) 🆕 v4.10.0
       └── components/
           ├── ExecutorTopBar.jsx      — 顶部工具栏: 模式切换 (Paper/Live) + 策略选择
           ├── StrategyGraphPanel.jsx  — 策略图面板: React Flow 只读预览
-          ├── KlineChart.jsx          — K线图表: lightweight-charts 实时行情
+          ├── KlineChart.jsx          — K线图表: lightweight-charts 实时行情 + bars 预设
           ├── OrderPanel.jsx          — 订单面板: 挂单/成交/历史显示
           ├── AssetPanel.jsx          — 资产面板: 持仓/余额/权益曲线
           └── StrategyParamsPanel.jsx — 策略参数面板: 热调参 pending→commit/rollback
@@ -628,7 +631,7 @@ Cargo.toml [workspace]
 - 嵌套状态机: `MachineState.child_machine` 支持同模板二级 child machine, 静态契约拒绝三级嵌套、重复 id 与模板漂移 🆕 v4.7.0
 - Risk Plane: `MachineGraphRiskPlane`, priority ≥9000
 - 24 种执行能力: `ExecutionCapabilityKind`, `CapabilitySupportSource`
-- 四种运行时模式: `RuntimeTradingMode` (PaperActual/PaperSimulated/LiveActual/LiveSimulated)
+- 运行时模式: 用户侧公开命名统一为 `PaperActual` / `PaperSimulated`；历史内部 enum 需经兼容层归一化，不直出给用户
 - QS 类型系统: 23 标量类型 + 5 复合类型
 - 静态契约束: `V4StaticContractBundle` 聚合 10 子契约
 - 编译期能力报告: `V4CompileTimeCapabilityReport`
@@ -706,8 +709,8 @@ qrpc_runtime/src/
   ├── risk_monitor.rs         — 风控监控; 改风控监控逻辑时改这里
   ├── slippage.rs             — 滑点计算; 改滑点模型时改这里
   ├── plugin_market.rs        — 插件市场 (Ed25519 签名验证); 改插件验证时改这里
-  ├── plugin_runtime_registry.rs — 插件注册表; 改插件加载时改这里
-  └── plugin_sandbox.rs       — 插件沙盒; 改插件隔离时改这里
+  ├── plugin_runtime_registry.rs — 插件注册表和安全策略检查; 改插件加载时改这里
+  └── plugin_sandbox.rs       — 插件沙盒, execute_checked 接入安全门禁; 改插件隔离时改这里
 ```
 
 ### 4.5 qrpc_session — 进程间加密
@@ -775,9 +778,9 @@ quantscript/src/
 
 ## 根5: 前端 React SPA
 
-**一句话**: React 18 + Vite 6 + Zustand 4 + React Flow 12, Adobe 暗色面板设计系统, 11 个路由, 160+ 文件。
+**一句话**: React 18 + Vite 6 + Zustand 4 + React Flow 12, Adobe 暗色面板设计系统, 12 个用户路由 + 404, 160+ 文件。
 
-### 5.1 路由与页面 (11 路由)
+### 5.1 路由与页面 (12 路由 + 404)
 
 **路由定义**: `frontend/src/router.js`
 **路由挂载**: `frontend/src/App.jsx`
@@ -793,16 +796,18 @@ quantscript/src/
 /snapshots                                   → SnapshotsPage (快照页面)
 /runbook                                     → RunbookPage (运行手册)
 /chaos                                       → ChaosPage (混沌工程)
+/settings                                    → SettingsPage (设置)
 /quantscript                                 → QuantScriptEditor (QS 编辑器)
+unknown                                      → NotFoundPage (404)
 ```
 
 **全局 UI**:
 - `frontend/src/components/LeftSidebar.jsx` — 左侧导航栏
-- `frontend/src/components/TopToolbar.jsx` — 顶部工具栏 (含 capability 同步状态和 v4 模拟运行入口) 🆕 v4.1.0
-- `frontend/src/components/CommandPalette.jsx` — ⌘K 命令面板
+- `frontend/src/components/TopToolbar.jsx` — 顶部工具栏 (含 capability 同步状态、v4 模拟运行入口、策略包导入/导出) 🆕 v4.9.0
+- `frontend/src/components/CommandPalette.jsx` — ⌘K 命令面板 (页面跳转 + 保存/编译/运行/回测命令)
 - `frontend/src/components/TutorialOverlay.jsx` — 教程覆盖层
 - `frontend/src/components/ToastContainer.jsx` — Toast 通知容器
-- `frontend/src/components/ErrorBoundary.jsx` — 每个路由独立的错误边界
+- `frontend/src/components/ErrorBoundary.jsx` — 每个路由独立的错误边界与结构化回退 UI
 
 ### 5.2 策略工作区 (StrategyWorkspacePage)
 
@@ -818,7 +823,7 @@ quantscript/src/
   ├── monitor             — 监控面板: 运行时状态/诊断 (v4)
   ├── source              — 源码视图: 图 JSON 原始数据
   ├── template_library    — 模板库: 策略模板浏览/加载/应用
-  ├── version_history     — 版本历史: 图版本对比/回滚
+  ├── version_history     — 版本历史: 图版本对比/回滚/配置契约 diff
   ├── collaboration_audit — 协作审计
   └── parameter_sweep     — 参数扫描 (v4)
 ```
@@ -915,7 +920,7 @@ graphStore 模块体系 (40+ 模块):
   ├── graphStoreCompileProtocolMapping.js — 协议编译映射
   ├── graphStoreEditorActions.js        — 编辑器动作
   ├── graphStoreHelpers.js              — 通用辅助
-  ├── graphStorePersistenceActions.js   — 持久化动作
+  ├── graphStorePersistenceActions.js   — 持久化动作 + 策略包导入
   ├── graphStorePersistenceHelpers.js   — 持久化辅助
   ├── graphStoreRuntimeActions.js       — 运行时动作
   ├── graphStoreRuntimeHelpers.js       — 运行时辅助
@@ -983,7 +988,7 @@ strategyResearchSelectors.js         — 研究选择器
 useNotification.js                   — 通知
 useOrderAnimation.js                 — 订单动画
 usePanelResize.js                    — 面板缩放
-useTutorial.js                       — 教程
+useTutorial.js                       — 教程; 首次访问使用 `qp.tutorial.seen`, 可由策略中心入口重开 🆕 v4.10.0
 ```
 
 ### 5.10 工具函数层 (utils/)
@@ -1035,6 +1040,7 @@ frontend/src/i18n/
 ```
 frontend/src/
   ├── styles.css            — 全局样式 + :root CSS 变量
+  ├── styles-responsive-panels.css — 响应式面板、减少动效和教程覆盖层样式 🆕 v4.10.0
   ├── shared.css            — 共享样式
   └── design-system.css     — Adobe 暗色面板设计系统
       └── --ad-* CSS 令牌 (~50 个变量): 颜色/间距/圆角/字号/阴影
@@ -1232,6 +1238,8 @@ guide-formal-quantscript-syntax.md           — QS 正式语法指南
 guide-quantscript-trunk-baseline.md          — QS 主干基线
 guide-paper-to-strategy-development.md       — 从论文到策略开发
 guide-strategy-template-library.md           — 策略模板库使用
+guide-user-guide-zh.md                       — 中文用户指南
+guide-user-guide-en.md                       — English user guide
 ```
 
 ### 7.5 测试与审计 (markdown/05-testing/)
@@ -1245,17 +1253,31 @@ guide-strategy-template-library.md           — 策略模板库使用
 自由维度诱错审计-v3.7.1-第1轮.md
 自由维度诱错审计-v4.0.0-第1轮.md           — v4 审计报告
 自由维度诱错审计-v4.7.0-第1轮.md           — 嵌套状态机 5 维诱错审计
+Claude产品UX功能完整度审计核查-v4.7.0-2026-05-26.md — Claude 产品/UX/功能完整度发现的代码侧核查与里程碑分流
 meta-pipeline-log.md                         — 元流水线日志
 ```
 
 ### 7.6 里程碑归档 (markdown/06-milestones/)
 
-50+ 版本目录, 从 `v0.2.0` 到 `v4.7.0`, 每个含 `01-规划方案.md` + `02-综合优化清单.md` (或等效文档) + `03-closeout.md` / `02-closeout.md` (或等效文档)。
+50+ 版本目录, 从 `v0.2.0` 到 `v4.10.0`, 每个含 `01-规划方案.md` + `02-综合优化清单.md` (或等效文档) + `03-closeout.md` / `02-closeout.md` / `02-落地记录.md` (或等效文档)。
 
 活跃归档:
 - `markdown/06-milestones/v4.7.0/02-closeout.md` — v4.7.0 嵌套状态机第一波 closeout 归档
+- `markdown/06-milestones/v4.8.0/01-规划方案.md` — v4.8.0 双执行切面 + P2 质量收敛规划
+- `markdown/06-milestones/v4.8.0/02-综合优化清单.md` — v4.8.0 W0-W4 优化清单
+- `markdown/06-milestones/v4.8.1/01-规划方案.md` — v4.8.1 API 契约与部署治理超级规范化规划
+- `markdown/06-milestones/v4.8.1/02-综合优化清单.md` — v4.8.1 P1/P2/P3 优化清单
+- `markdown/06-milestones/v4.8.1/03-落地记录.md` — v4.8.1 API 契约落地记录
+- `markdown/06-milestones/v4.8.2/01-规划方案.md` — v4.8.2 产品/UX/i18n 收敛规划
+- `markdown/06-milestones/v4.8.2/02-综合优化清单.md` — v4.8.2 UX 与 i18n 优化清单
+- `markdown/06-milestones/v4.8.2/03-落地记录.md` — v4.8.2 UX/i18n 落地记录
+- `markdown/06-milestones/v4.9.0/01-规划方案.md` — v4.9.0 产品功能完整度与插件执行安全规划
+- `markdown/06-milestones/v4.9.0/02-综合优化清单.md` — v4.9.0 功能完整度与安全优化清单
+- `markdown/06-milestones/v4.9.0/03-落地记录.md` — v4.9.0 功能完整度落地记录
+- `markdown/06-milestones/v4.10.0/01-规划方案.md` — v4.10.0 UX 收口与产品边界固化规划
+- `markdown/06-milestones/v4.10.0/02-落地记录.md` — v4.10.0 UX 收口与产品边界固化落地记录
 
-当前活跃: `v4.0.0/` — MAJOR 状态机化架构。
+当前活跃基线: `v4.10.0/` — UX 收口、亮色主题、教程入口和产品边界 unsupported 固化。
 
 ### 7.7 总览 (markdown/10-overview/)
 
@@ -1336,7 +1358,7 @@ storage/
 | §1.12 | 前端以后端 capability 为真源 | 能力投影层 (根5.8) |
 | §2.6 | 凭证保险库安全 | 安全系统 (根2.5, 根3.3) |
 | §2.7 | 实时执行安全 | 执行端 (根3) |
-| §2.8 | 用户认证安全 | 安全系统 (根2.5) |
+| §2.8 | 本地会话认证安全 | 安全系统 (根2.5) |
 | §5.5 | 端到端验证 | 工具链 (根6) |
 | §5.6 | 禁止格式漂移 | 工具链 (根6) |
 | §7.1-7.5 | 存储生命周期 | 存储系统 |
@@ -1389,7 +1411,7 @@ storage/
 - `src/api_errors.rs` — API 错误格式, `json_bad_request()`/`json_not_found()`/`internal_error()`; 改错误响应格式或 error_code 时改这里
 - `src/api_test_scenario.rs` — 测试场景 API; 新增自动化测试场景时改这里
 - `src/app_runtime_helpers.rs` — 应用状态工厂, `new_app_state()`; 改存储路径/应用初始化时改这里
-- `src/auth/mod.rs` — 用户认证 (注册/登录/刷新/JWT/bcrypt); 改认证逻辑时改这里
+- `src/auth/mod.rs` — 本地会话认证 (注册/登录/刷新/JWT/bcrypt); 改本地会话边界时改这里, 不扩展为完整账户系统
 - `src/auth_middleware.rs` — 认证中间件, JWT 验证; 改认证拦截时改这里
 - `src/backtest_artifacts.rs` — 回测工件管理; 改回测工件格式/存储或 v4 artifact 持久化时改这里 🆕 v4.3.0
 - `src/backtest_compare.rs` — 回测对比入口 API; 改对比功能时改这里
@@ -1412,7 +1434,7 @@ storage/
 - `src/frontend_runtime_mapping.rs` — 前端运行时映射; 改后端→前端数据映射时改这里
 - `src/graph_api.rs` — 图 CRUD API (save/load/list/delete/versions); 改图存储 API 时改这里
 - `src/graph_quantscript_api.rs` — graph JSON → QS 源码, `generate_quantscript_from_graph_value()`; 改图→QS 转换时改这里
-- `src/graph_version_compare.rs` — 图版本对比; 改版本 diff 算法时改这里
+- `src/graph_version_compare.rs` — 图版本对比; 改版本 diff 算法、配置契约 diff 或 evidence diff 响应挂接时改这里
 - `src/hotswap_api.rs` — 模块热替换 API; 改热替换接口时改这里
 - `src/middleware.rs` — 通用中间件; 改请求处理管道时改这里
 - `src/migration_sender.rs` — 数据迁移; 改跨版本迁移时改这里
@@ -1421,15 +1443,16 @@ storage/
 - `src/runtime/mod.rs` — 运行时主模块, Paper 运行/事件流 SSE/v4 run 路由; 改运行时 API 时改这里 🆕 v4.1.0
 - `src/runtime/run.rs` — 单次运行执行和 `POST /api/runtime/v4/run`; 改运行事件/账户快照/run record/v4 handoff 时改这里 🆕 v4.1.0
 - `src/runtime/backtest.rs` — 回测引擎, 历史回放/确定性 Mock/v4 deterministic MachineGraph replay; 改回测执行时改这里 🆕 v4.3.0
-- `src/runtime/mutation.rs` — 运行时变更, AI 提案/审批/沙箱验证, v4 trajectory 提案静态约束; 改审批流或 v4 AI 提案分析时改这里 🆕 v4.7.0
+- `src/runtime/mutation.rs` — 运行时变更, AI 提案/审批/沙箱验证, v4 trajectory 提案静态约束与 strategy config domain binding 审批阻断; 改审批流或 v4 AI 提案分析时改这里 🆕 v4.11.0
 - `src/runtime_diagnostics.rs` — 运行时诊断; 改健康检查/性能诊断时改这里
 - `src/runtime_event_projection.rs` — v4 运行时事件投影; 改 v4 事件→前端映射时改这里
 - `src/runtime_persistence.rs` — 运行时持久化; 改运行记录/回测工件读写时改这里
 - `src/runtime_response_mapping.rs` — 运行时响应映射; 改后端→前端响应格式时改这里
 - `src/runtime_validation.rs` — 运行时验证; 改参数校验时改这里
 - `src/safe_log.rs` — 安全日志, 输出前清除 secret/key; 改日志脱敏时改这里
-- `src/sandbox_verification.rs` — 沙箱验证, AI 提案回放, v4 artifact replay-shape 对比; 改验证逻辑或 CandidateUnderperforms 判定时改这里 🆕 v4.7.0
+- `src/sandbox_verification.rs` — 沙箱验证, AI 提案回放, v4 artifact replay-shape 对比, 提供 proposal sandbox report 读取给审批阻断; 改验证逻辑或 CandidateUnderperforms 判定时改这里 🆕 v4.11.0
 - `src/snapshot_service.rs` — 快照服务, SHA-256 签名; 改快照/验签时改这里
+- `src/strategy_config_api.rs` — v4 策略配置 artifact、preflight、artifact diff、正式版本配置契约 diff 和显式 v4 backtest evidence diff API; 改策略配置契约、PaperSimulated/PaperActual 边界、capability freshness、Risk Plane 静态契约、配置域状态或证据差异口径时改这里 🆕 v4.11.0
 - `src/storage_lifecycle.rs` — 存储生命周期, 三级分类 (Permanent/Temporary/Transient); 改存储策略时改这里
 - `src/test_runner.rs` — 测试运行器; 改测试调度时改这里
 - `src/tests_backend.rs` — 后端集成测试入口; 新增集成测试时改这里
@@ -1437,7 +1460,7 @@ storage/
 
 ### E.3 执行端: `src-executor/`
 
-- `src-executor/main.rs` — 执行端入口, Axum Router :3001, 含 OKX demo provider submit/query/cancel 路由; 改执行端启动或 provider 回执入口时改这里 🆕 v4.8.0
+- `src-executor/main.rs` — 执行端入口, Axum Router :3001, 含 OKX demo provider submit/query/cancel 路由、PaperActual 启动前 demo 凭证校验与 v4 strategy_config_preflight 启动阻断; 改执行端启动或 provider 回执入口时改这里 🆕 v4.11.0
 - `src-executor/executor_state.rs` — 执行端核心状态, ExecutionMode/StrategyStatus; 改状态机时改这里
 - `src-executor/live_runner.rs` — 实时运行器, RunnerPool v3/v4 双 runner、OKX Market→v4 event 转换、v4 evidence 广播; 改策略执行循环时改这里 🆕 v4.2.0
 - `src-executor/ws_client.rs` — OKX WebSocket 客户端; 改 WS 连接/行情订阅时改这里
@@ -1469,7 +1492,7 @@ storage/
 **qrpc_runtime**:
 - `qrpc_runtime/Cargo.toml` — qrpc_runtime 包配置
 - `qrpc_runtime/src/lib.rs` — 运行时入口
-- `qrpc_runtime/src/v4_runtime.rs` — v4 runtime 主事件循环; 改 PaperSimulated/LiveActual 边界、tick replay、Market 事件注入、多交易对 machine 展开、嵌套 machine 路由/snapshot 或 v4 运行时行为时改这里 🆕 v4.7.0
+- `qrpc_runtime/src/v4_runtime.rs` — v4 runtime 主事件循环; 改 PaperSimulated/PaperActual 边界、tick replay、Market 事件注入、多交易对 machine 展开、嵌套 machine 路由/snapshot 或 v4 运行时行为时改这里 🆕 v4.7.0
 - `qrpc_runtime/src/v4_runtime_types.rs` — v4 runtime 类型定义与初始化辅助; 改 runtime snapshot/input/output 类型或 machine 初始化时改这里 🆕 v4.8.0
 - `qrpc_runtime/src/v4_simulated_execution.rs` — v4 模拟撮合引擎; 改 OCO/trailing/GTD/amend、订单/成交/持仓/资产曲线时改这里 🆕 v4.8.0
 - `qrpc_runtime/src/v4_runtime_tests.rs` — v4 runtime 单元测试模块; 改 v4 runtime 行为测试时改这里 🆕 v4.8.0
@@ -1496,8 +1519,8 @@ storage/
 - `qrpc_runtime/src/risk_monitor.rs` — 风控监控; 改风控监控时改这里
 - `qrpc_runtime/src/slippage.rs` — 滑点计算; 改滑点模型时改这里
 - `qrpc_runtime/src/plugin_market.rs` — 插件市场, Ed25519 签名; 改插件验证时改这里
-- `qrpc_runtime/src/plugin_runtime_registry.rs` — 插件注册表; 改插件加载时改这里
-- `qrpc_runtime/src/plugin_sandbox.rs` — 插件沙盒; 改插件隔离时改这里
+- `qrpc_runtime/src/plugin_runtime_registry.rs` — 插件注册表和安全策略检查; 改插件加载或 action 安全门禁时改这里
+- `qrpc_runtime/src/plugin_sandbox.rs` — 插件沙盒, 提供 `execute_checked` 接入注册表安全策略; 改插件隔离时改这里 🆕 v4.9.0
 
 **qrpc_session**:
 - `qrpc_session/Cargo.toml` — qrpc_session 包配置
@@ -1542,7 +1565,7 @@ storage/
 **入口**:
 - `frontend/src/main.jsx` — React 入口, 挂载 App
 - `frontend/src/App.jsx` — App Shell, 路由匹配/全局状态/教程/命令面板/Toast; 改全局 UI 时改这里
-- `frontend/src/router.js` — 路由定义, 11 路由 + `navigateTo()`/`parseRoute()`; 新增路由时改这里
+- `frontend/src/router.js` — 路由定义, 12 用户路由 + 404 + `navigateTo()`/`parseRoute()`; 新增路由时改这里
 - `frontend/src/router.test.js` — 路由单元测试
 - `frontend/index.html` — HTML 入口
 - `frontend/package.json` — 前端包配置, 依赖/脚本; 改依赖时改这里
@@ -1555,7 +1578,8 @@ storage/
 - `frontend/playwright.real.config.js` — 真实环境 E2E 配置
 
 **设计系统**:
-- `frontend/src/styles.css` — 全局样式, `:root` CSS 变量
+- `frontend/src/styles.css` — 全局样式, `:root` CSS 变量; v4.10.0 后主文件已拆分瘦身
+- `frontend/src/styles-responsive-panels.css` — 响应式面板、减少动效和教程覆盖层样式 🆕 v4.10.0
 - `frontend/src/shared.css` — 共享样式
 - `frontend/src/design-system.css` — Adobe 暗色面板设计系统, `--ad-*` CSS 令牌
 
@@ -1584,7 +1608,7 @@ storage/
 - `frontend/src/store/graphStoreCompileProtocolMapping.js` — 协议编译映射
 - `frontend/src/store/graphStoreEditorActions.js` — 编辑器动作
 - `frontend/src/store/graphStoreHelpers.js` — 通用辅助
-- `frontend/src/store/graphStorePersistenceActions.js` — 持久化动作
+- `frontend/src/store/graphStorePersistenceActions.js` — 持久化动作, 含策略包导入入口
 - `frontend/src/store/graphStorePersistenceHelpers.js` — 持久化辅助
 - `frontend/src/store/graphStorePersistenceConsistency.test.js` — 持久化一致性测试
 - `frontend/src/store/graphStoreRuntimeActions.js` — 运行时动作
@@ -1733,7 +1757,7 @@ storage/
 - `frontend/src/hooks/usePanelResize.js` — 面板 resize hook
 - `frontend/src/hooks/usePropertyPanelActions.js` — 属性面板动作 hook
 - `frontend/src/hooks/usePropertyPanelModel.js` — 属性面板模型 hook
-- `frontend/src/hooks/useStrategyDirectoryModel.js` — 策略目录模型 hook
+- `frontend/src/hooks/useStrategyDirectoryModel.js` — 策略目录模型 hook; 策略中心保持全量可滚动列表, 不做搜索/筛选/排序 🆕 v4.10.0
 - `frontend/src/hooks/useStrategyHubBodyData.js` — 策略中心主体数据 hook
 - `frontend/src/hooks/useStrategyHubInspectorData.js` — 策略中心 inspector 数据 hook
 - `frontend/src/hooks/useStrategyHubRosterData.js` — 策略中心列表数据 hook
@@ -1743,7 +1767,7 @@ storage/
 - `frontend/src/hooks/useStrategyWorkspacePageData.js` — 工作区页面数据 hook
 - `frontend/src/hooks/useStrategyWorkspaceSharedModel.js` — 工作区共享模型 hook
 - `frontend/src/hooks/useStrategyWorkspaceUiState.js` — 工作区 UI 状态 hook
-- `frontend/src/hooks/useTutorial.js` — 教程 hook
+- `frontend/src/hooks/useTutorial.js` — 教程 hook, 首次访问自动触发与可见入口事件 🆕 v4.10.0
 - `frontend/src/hooks/useWorkspaceActionBarActions.js` — 工作区动作栏动作 hook
 - `frontend/src/hooks/useWorkspaceActionBarModel.js` — 工作区动作栏模型 hook
 - `frontend/src/hooks/workspaceActionBarShared.js` — 工作区动作栏共享工具
@@ -1759,8 +1783,10 @@ storage/
 - `frontend/src/pages/BacktestDetailPage.test.jsx` — 回测详情页测试
 - `frontend/src/pages/ChaosPage.jsx` — 混沌实验页
 - `frontend/src/pages/EditorPage.jsx` — 编辑器页
-- `frontend/src/pages/QuantScriptEditor.jsx` — QuantScript 编辑页
+- `frontend/src/pages/NotFoundPage.jsx` — 404 页面, 未知路由返回策略中心或设置入口 🆕 v4.8.2
+- `frontend/src/pages/QuantScriptEditor.jsx` — QuantScript 编辑页, 含草稿持久化、humanized error 和粘贴超限 Toast
 - `frontend/src/pages/RunbookPage.jsx` — 运行手册页
+- `frontend/src/pages/SettingsPage.jsx` — 设置页, 管理语言、auto/dark/light 主题和 QS 草稿策略; 不含账户功能 🆕 v4.10.0
 - `frontend/src/pages/SnapshotsPage.jsx` — 快照页
 - `frontend/src/pages/StrategyBacktestsPage.jsx` — 策略回测页
 - `frontend/src/pages/StrategyBacktestsPage.test.jsx` — 策略回测页测试
@@ -1769,7 +1795,7 @@ storage/
 - `frontend/src/pages/StrategyHubBacktestActivityCard.jsx` — 策略中心回测活动卡片
 - `frontend/src/pages/StrategyHubBodySection.jsx` — 策略中心主体区
 - `frontend/src/pages/StrategyHubCompareQueueSection.jsx` — 策略中心对比队列区
-- `frontend/src/pages/StrategyHubHeroSection.jsx` — 策略中心头部区
+- `frontend/src/pages/StrategyHubHeroSection.jsx` — 策略中心头部区, 含新手指引可见入口; 不含搜索/筛选入口 🆕 v4.10.0
 - `frontend/src/pages/StrategyHubInlineNote.jsx` — 策略中心内联提示
 - `frontend/src/pages/StrategyHubInspectorOverviewSection.jsx` — 策略中心 inspector 概览
 - `frontend/src/pages/StrategyHubInspectorSection.jsx` — 策略中心 inspector 区
@@ -1795,6 +1821,8 @@ storage/
 - `frontend/src/pages/StrategyWorkspaceCodeTab.jsx` — 工作区代码页签
 - `frontend/src/pages/StrategyWorkspaceCollaborationCard.jsx` — 工作区协作卡片
 - `frontend/src/pages/StrategyWorkspaceCollaborationCard.test.jsx` — 工作区协作卡片测试
+- `frontend/src/pages/StrategyConfigCockpit.jsx` — v4 策略配置台, 展示 preflight、配置域导航、单域来源/诊断、runtime boundary、真实资金未开放边界、证据锚点、AI 提案绑定、当前 artifact JSON 导出和本地 artifact diff 🆕 v4.11.0
+- `frontend/src/pages/StrategyConfigCockpit.test.jsx` — v4 策略配置台测试, 锁定 PaperSimulated 请求、真实资金未开放文案、配置域深钻、artifact 导出、证据锚点和 AI 提案绑定展示 🆕 v4.11.0
 - `frontend/src/pages/StrategyWorkspaceDashboard.jsx` — 工作区仪表盘
 - `frontend/src/pages/StrategyWorkspaceDebugTab.jsx` — 工作区调试页签
 - `frontend/src/pages/StrategyWorkspaceDiagnosticsTab.jsx` — 工作区诊断页签
@@ -1809,8 +1837,8 @@ storage/
 - `frontend/src/pages/StrategyWorkspacePanelFallbacks.jsx` — 工作区面板 fallback
 - `frontend/src/pages/StrategyWorkspaceResearchTab.jsx` — 工作区研究页签
 - `frontend/src/pages/StrategyWorkspaceSourceTab.jsx` — 工作区源码页签
-- `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.jsx` — 工作区版本历史卡片
-- `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.test.jsx` — 工作区版本历史测试
+- `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.jsx` — 工作区版本历史卡片, 展示图版本 diff、正式版本间配置契约 diff 与显式 v4 backtest evidence diff
+- `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.test.jsx` — 工作区版本历史测试, 覆盖正式版本配置 diff 与显式证据 diff
 - `frontend/src/store/graphStore.backtestArtifacts.test.js` — graphStore 回测工件测试
 - `frontend/src/store/graphStore.capabilities.test.js` — graphStore capability 测试
 - `frontend/src/store/graphStore.detailLoadErrors.test.js` — graphStore 详情加载错误测试
@@ -1841,7 +1869,7 @@ storage/
 - `frontend/src/utils/errorText.js` — 错误文本工具
 - `frontend/src/utils/errorText.test.js` — 错误文本测试
 - `frontend/src/utils/repairPathInsights.js` — 修复路径洞察工具
-- `frontend/src/utils/runtimeAiProposal.js` — 运行时 AI 提案工具
+- `frontend/src/utils/runtimeAiProposal.js` — 运行时 AI 提案工具, 保留 strategy config domain binding 投影
 - `frontend/src/utils/runtimeAiProposal.test.js` — 运行时 AI 提案测试
 - `frontend/src/utils/runtimeApproval.js` — 运行时审批工具
 - `frontend/src/utils/runtimeDiagnosticsProjection.js` — 运行时诊断投影
@@ -1889,12 +1917,13 @@ storage/
 ### E.6 执行端前端: `frontend-executor/src/`
 
 - `frontend-executor/src/main.jsx` — React 入口
-- `frontend-executor/src/ExecutorApp.jsx` — 执行端 App Shell, 多策略标签页/状态轮询/模式切换
-- `frontend-executor/src/design-system.css` — 执行端设计系统
+- `frontend-executor/src/ExecutorApp.jsx` — 执行端 App Shell, 多策略标签页/状态轮询/模式切换和启动阻断错误展示
+- `frontend-executor/src/i18n.js` — 执行端轻量 i18n provider, 支持 `zh-CN` / `en-US` 🆕 v4.8.2
+- `frontend-executor/src/design-system.css` — 执行端设计系统, 支持 auto/dark/light 主题令牌 🆕 v4.10.0
 - `frontend-executor/src/components/ExecutorTopBar.jsx` — 顶部工具栏, PaperSimulated / OKX 模拟盘模式切换、策略选择、v3-v4 runtime 标识 🆕 v4.8.0
 - `frontend-executor/src/components/V4EvidencePanel.jsx` — v4 状态机证据面板, 展示 machine/Risk Plane/Execution/模拟订单/双模拟盘 provider 边界摘要 🆕 v4.8.0
-- `frontend-executor/src/components/StrategyGraphPanel.jsx` — 策略图只读预览
-- `frontend-executor/src/components/KlineChart.jsx` — K线图表, lightweight-charts
+- `frontend-executor/src/components/StrategyGraphPanel.jsx` — 策略图只读预览, 已接入执行端 i18n 🆕 v4.10.0
+- `frontend-executor/src/components/KlineChart.jsx` — K线图表, lightweight-charts, 含 bars 预设和数据源说明
 - `frontend-executor/src/components/OrderPanel.jsx` — 订单面板
 - `frontend-executor/src/components/AssetPanel.jsx` — 资产面板, 持仓/余额/权益曲线
 - `frontend-executor/src/components/StrategyParamsPanel.jsx` — 热调参面板
@@ -1931,6 +1960,7 @@ storage/
 - `tools/check-capability-stack.ps1` — 能力栈一致性检查, 校验 schema hash、模块 key、fixture 和元流水线 DryRun
 - `tools/check-i18n.ps1` — i18n 覆盖检查
 - `tools/check-version-consistency.ps1` — 版本一致性检查, 覆盖 release manifest/OpenAPI/启动横幅 🆕 v4.1.0
+- `tools/check-openapi-route-diff.ps1` — OpenAPI path 与 Rust route 基线 diff, 可用 `-FailOnDiff` 阻断 🆕 v4.8.1
 - `tools/check-feature-evolution.ps1` — 功能演进检查
 - `tools/check-learning-closeout.ps1` — 学习流水线 closeout
 - `tools/check-pre-commit-hook.ps1` — Pre-commit hook 同步检查

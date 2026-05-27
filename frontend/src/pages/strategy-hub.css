@@ -241,7 +241,6 @@
 }
 
 .strategy-kpi-card span,
-.strategy-hub-toolbar span,
 .strategy-row__main small,
 .strategy-row__activity small,
 .strategy-kpi-card small {
@@ -471,28 +470,6 @@
 .strategy-card-note__close:hover {
   border-color: rgba(97, 157, 226, 0.32);
   background: var(--ad-panel-hover);
-}
-
-.strategy-hub-toolbar {
-  display: grid;
-  grid-template-columns: minmax(0, 1.7fr) repeat(3, minmax(180px, 0.6fr));
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.strategy-hub-search,
-.strategy-hub-filter {
-  display: grid;
-  gap: 6px;
-}
-
-.strategy-hub-search input,
-.strategy-hub-filter select {
-  min-height: 44px;
-  border-radius: var(--ad-radius-md);
-  border: 1px solid rgba(var(--ad-border-rgb), 0.18);
-  color: var(--text);
-  padding: 0 14px;
 }
 
 .strategy-hub-grid {
@@ -984,9 +961,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .strategy-hub-toolbar {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 960px) {
@@ -1011,7 +985,6 @@
   .strategy-hub-status-strip,
   .strategy-hub-kpis,
   .strategy-hub-ops,
-  .strategy-hub-toolbar,
   .strategy-hub-grid,
   .strategy-template-grid,
   .strategy-activity-grid {
@@ -1073,8 +1046,8 @@
     justify-items: stretch;
   }
 
-  .strategy-row__actions .ghost-btn,
-  .strategy-row__actions .danger-btn {
+  .strategy-row__actions .ad-btn--ghost,
+  .strategy-row__actions .ad-btn--danger {
     min-width: 0;
   }
 

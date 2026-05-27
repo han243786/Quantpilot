@@ -719,7 +719,7 @@ const StrategyCanvas = memo(function StrategyCanvas({
               <div className="canvas-focus-nav__actions">
                 <button
                   type="button"
-                  className="ghost-btn compact-btn"
+                  className="ad-btn ad-btn--ghost compact-btn"
                   onClick={() => handleCycleFocusTarget(-1)}
                   disabled={focusTargets.length <= 1}
                 >
@@ -730,7 +730,7 @@ const StrategyCanvas = memo(function StrategyCanvas({
                 </span>
                 <button
                   type="button"
-                  className="ghost-btn compact-btn"
+                  className="ad-btn ad-btn--ghost compact-btn"
                   onClick={() => handleCycleFocusTarget(1)}
                   disabled={focusTargets.length <= 1}
                 >

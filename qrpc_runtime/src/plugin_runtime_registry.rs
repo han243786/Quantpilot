@@ -334,9 +334,8 @@ impl RuntimePluginRegistry {
 
     /// 检查插件是否被允许执行指定操作。
     ///
-    /// v2.3.4 注意: 本方法已实现但尚未在生产执行路径中接线。
-    /// 当前插件通过 PluginSandbox 以子进程方式运行，安全边界依赖 OS 级隔离。
-    /// 在 PluginSandbox::execute() 调用处接线本方法可完成声明式策略强制执行。
+    /// 插件子进程执行路径应通过 `PluginSandbox::execute_checked()` 进入, 由该方法
+    /// 先调用本检查再启动子进程，确保声明式安全策略不是旁路文档。
     pub fn check_security(
         &self,
         plugin_id: &str,
@@ -496,5 +495,50 @@ mod tests {
         assert!(registry
             .active_data_provider("quantpilot.data.alt_feed")
             .is_none());
+    }
+
+    #[test]
+    fn security_rejects_network_when_manifest_does_not_allow_it() {
+        let mut registry = RuntimePluginRegistry::default();
+        let manifest = sample_data_manifest();
+        let plugin_id = manifest.id.clone();
+        registry
+            .register_data_provider(manifest, Arc::new(BuiltinDataModule::default()))
+            .unwrap();
+
+        let err = registry
+            .check_security(&plugin_id, PluginSecurityAction::NetworkCall)
+            .unwrap_err();
+        assert!(err.contains("allow_network"));
+    }
+
+    #[test]
+    fn security_allows_network_when_manifest_declares_it() {
+        let mut registry = RuntimePluginRegistry::default();
+        let mut manifest = sample_data_manifest();
+        manifest.security.allow_network = true;
+        let plugin_id = manifest.id.clone();
+        registry
+            .register_data_provider(manifest, Arc::new(BuiltinDataModule::default()))
+            .unwrap();
+
+        assert!(registry
+            .check_security(&plugin_id, PluginSecurityAction::NetworkCall)
+            .is_ok());
+    }
+
+    #[test]
+    fn security_always_rejects_credential_access() {
+        let mut registry = RuntimePluginRegistry::default();
+        let manifest = sample_data_manifest();
+        let plugin_id = manifest.id.clone();
+        registry
+            .register_data_provider(manifest, Arc::new(BuiltinDataModule::default()))
+            .unwrap();
+
+        let err = registry
+            .check_security(&plugin_id, PluginSecurityAction::AccessCredentials)
+            .unwrap_err();
+        assert!(err.contains("不允许访问凭证管理"));
     }
 }

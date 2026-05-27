@@ -30,6 +30,8 @@ pub(super) fn build_graph_version_compare_response(
         node_diff,
         edge_diff,
         config_diffs,
+        strategy_config_diff: None,
+        strategy_config_evidence_diff: None,
         has_changes,
     }
 }

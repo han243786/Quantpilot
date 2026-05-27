@@ -406,11 +406,11 @@ export function HistoryMetaRow({ items }) {
 export function HistoryPagination({ currentPage, totalPages, onPrevious, onNext }) {
   return (
     <div className="history-pagination">
-      <button className="ghost-btn compact-btn" disabled={currentPage <= 1} onClick={onPrevious}>
+      <button className="ad-btn ad-btn--ghost compact-btn" disabled={currentPage <= 1} onClick={onPrevious}>
         {HISTORY_COPY.previousPage}
       </button>
       <span>{HISTORY_COPY.pageLabel(currentPage, totalPages)}</span>
-      <button className="ghost-btn compact-btn" disabled={currentPage >= totalPages} onClick={onNext}>
+      <button className="ad-btn ad-btn--ghost compact-btn" disabled={currentPage >= totalPages} onClick={onNext}>
         {HISTORY_COPY.nextPage}
       </button>
     </div>
@@ -430,7 +430,7 @@ export function HistoryControlBar({
   return (
     <div className={`history-filter-row history-control-bar ${className}`.trim()}>
       <button
-        className="ghost-btn compact-btn"
+        className="ad-btn ad-btn--ghost compact-btn"
         aria-label={refreshAriaLabel}
         disabled={refreshDisabled}
         onClick={onRefresh}
@@ -521,7 +521,7 @@ export function EventPanelIntro({
       <div className="event-panel-actions">
         <button
           type="button"
-          className="ghost-btn compact-btn"
+          className="ad-btn ad-btn--ghost compact-btn"
           onClick={() => setExpanded(!expanded)}
         >
           {expanded ? t("收起") : t("展开详情")}
@@ -531,7 +531,7 @@ export function EventPanelIntro({
         <div className="event-panel-actions">
           <button
             type="button"
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             data-testid="runtime-artifact-save"
             onClick={() => handleSaveCurrentRuntimeArtifact?.()}
           >
@@ -539,7 +539,7 @@ export function EventPanelIntro({
           </button>
           <button
             type="button"
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             data-testid="runtime-artifact-discard"
             onClick={() => handleDiscardCurrentRuntimeArtifact?.()}
           >
@@ -607,7 +607,7 @@ export function EventFeedSection({
           >
             <button
               type="button"
-              className={`ghost-btn compact-btn${selectedEventNodeId ? "" : " is-active"}`}
+              className={`ad-btn ad-btn--ghost compact-btn${selectedEventNodeId ? "" : " is-active"}`}
               data-testid="event-feed-node-chip-all"
               aria-pressed={!selectedEventNodeId}
               onClick={() => {
@@ -621,7 +621,7 @@ export function EventFeedSection({
               <button
                 key={node.nodeId}
                 type="button"
-                className={`ghost-btn compact-btn${
+                className={`ad-btn ad-btn--ghost compact-btn${
                   node.nodeId === selectedEventNodeId ? " is-active" : ""
                 }`}
                 data-testid={`event-feed-node-chip-${node.nodeId}`}
@@ -667,7 +667,7 @@ export function EventFeedSection({
             }}
           />
           <button
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             onClick={() => {
               setEventTypeFilter("all");
               setEventSearchTerm("");
@@ -874,7 +874,7 @@ export function BacktestSummarySection({
         <div className="event-panel-actions">
           <button
             type="button"
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             onClick={() => setExpanded(!expanded)}
           >
             {expanded ? t("收起") : t("展开详情")}
@@ -941,7 +941,7 @@ function BacktestHistorySection({
           summary={t("按图、编译、数据集、参数和时间窗口筛选历史结果。")}
           action={
             <button
-              className="ghost-btn compact-btn"
+              className="ad-btn ad-btn--ghost compact-btn"
               aria-label={t("刷新回测历史")}
               data-testid="backtest-history-refresh"
               disabled={runtime.backtestHistoryStatus === "loading"}
@@ -1034,7 +1034,7 @@ function BacktestHistorySection({
           actions={
             <>
           <button
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             data-testid="backtest-history-open-compare"
             disabled={compareSelection.length !== 2}
             onClick={() =>
@@ -1043,17 +1043,17 @@ function BacktestHistorySection({
           >
             {t("打开对比")} ({compareSelection.length}/2)
           </button>
-          <button className="ghost-btn compact-btn" onClick={() => clearBacktestCompareSelection()}>
+          <button className="ad-btn ad-btn--ghost compact-btn" onClick={() => clearBacktestCompareSelection()}>
             {HISTORY_COPY.clearCompare}
           </button>
           <button
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             onClick={() => setBacktestHistoryFilter(graph.metadata?.graph_id || "")}
           >
             {HISTORY_COPY.currentGraph}
           </button>
           <button
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             data-testid="backtest-history-reset"
             onClick={() => {
               setBacktestHistoryFilter("");
@@ -1187,7 +1187,7 @@ function BacktestHistorySection({
                 </button>
                 <div className="history-item-actions">
                   <button
-                    className={`ghost-btn compact-btn history-compare-chip ${
+                    className={`ad-btn ad-btn--ghost compact-btn history-compare-chip ${
                       isCompareSelected ? "active" : ""
                     }`.trim()}
                     data-testid={`backtest-history-compare-toggle-${item.backtest_id}`}
@@ -1264,7 +1264,7 @@ function RunHistorySection({
           summary={t("查看后端已保存的运行结果，并恢复指定运行详情。")}
           action={
             <button
-              className="ghost-btn compact-btn"
+              className="ad-btn ad-btn--ghost compact-btn"
               aria-label={t("刷新运行记录")}
               data-testid="run-history-refresh"
               disabled={runtime.historyStatus === "loading"}
@@ -1371,13 +1371,13 @@ function RunHistorySection({
           actions={
             <>
               <button
-                className="ghost-btn compact-btn"
+                className="ad-btn ad-btn--ghost compact-btn"
                 onClick={() => setRunHistoryFilter(graph.metadata?.graph_id || "")}
               >
                 {HISTORY_COPY.currentGraph}
               </button>
               <button
-                className="ghost-btn compact-btn"
+                className="ad-btn ad-btn--ghost compact-btn"
                 onClick={() => {
                   setRunHistoryFilter("");
                   setRunHistoryCompileFilter("");
@@ -1510,7 +1510,7 @@ export function AccountSection({ runtime, openOrders }) {
         <div className="event-panel-actions">
           <button
             type="button"
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             onClick={() => setExpanded(!expanded)}
           >
             {expanded ? t("收起") : t("展开详情")}

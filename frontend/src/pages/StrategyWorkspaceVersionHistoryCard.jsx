@@ -37,6 +37,187 @@ function DiffList({ title, diff, testId }) {
   );
 }
 
+function configDomainLabel(domainId) {
+  const labels = {
+    market: "市场与数据",
+    observation: "观察与信号",
+    state_machine: "状态机",
+    risk: "Risk Plane",
+    execution: "执行边界",
+    evidence: "证据",
+    ai_governance: "AI 治理",
+    snapshot: "快照"
+  };
+  return labels[domainId] || domainId || "-";
+}
+
+function configChangeLabels(change) {
+  const labels = [];
+  if (change.lifecycle_changed) labels.push("生命周期");
+  if (change.readiness_changed) labels.push("就绪状态");
+  if (change.source_refs_changed) labels.push("来源证据");
+  if (change.findings_changed) labels.push("诊断");
+  return labels.length ? labels.join(" / ") : "-";
+}
+
+function StrategyConfigVersionDiff({ diff }) {
+  if (!diff) {
+    return null;
+  }
+  return (
+    <div className="workspace-version-compare-group" data-testid="workspace-version-strategy-config-diff">
+      <div className="mini-list-title">策略配置契约差异</div>
+      {!diff.changed ? (
+        <div className="muted-line">所选版本之间没有配置域变化。</div>
+      ) : (
+        <>
+          <div className="strategy-inspector-metrics">
+            <div className="kv-line">
+              <span>配置契约</span>
+              <strong>
+                {diff.left_artifact_id || "-"} {"->"} {diff.right_artifact_id || "-"}
+              </strong>
+            </div>
+            <div className="kv-line">
+              <span>运行边界</span>
+              <strong>{diff.runtime_boundary_changed ? "已变化" : "未变化"}</strong>
+            </div>
+            <div className="kv-line">
+              <span>来源摘要</span>
+              <strong>
+                {(diff.source_digest_changes || []).map((change) => change.field).filter(Boolean).join(", ") || "-"}
+              </strong>
+            </div>
+          </div>
+          {(diff.domain_changes || []).length === 0 ? (
+            <div className="muted-line">配置摘要有变化，但配置域状态没有结构化变化。</div>
+          ) : (
+            <div className="workspace-version-config-list">
+              {diff.domain_changes.map((change) => (
+                <div
+                  className="open-order-item"
+                  key={change.domain_id}
+                  data-testid={`workspace-version-strategy-config-domain-${change.domain_id}`}
+                >
+                  <div className="open-order-topline">
+                    <strong>{configDomainLabel(change.domain_id)}</strong>
+                    <span>{configChangeLabels(change)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+function formatCountChanges(changes = []) {
+  return changes.length
+    ? changes.map((change) => `${change.key}: ${change.left_count}->${change.right_count}`).join(" / ")
+    : "-";
+}
+
+function StrategyConfigEvidenceDiff({ diff }) {
+  if (!diff) {
+    return null;
+  }
+  const diagnostics = diff.diagnostics || [];
+  return (
+    <div className="workspace-version-compare-group" data-testid="workspace-version-strategy-config-evidence-diff">
+      <div className="mini-list-title">回测证据差异</div>
+      <div className="muted-line">
+        {diff.left_backtest_id || "左侧未绑定"} {"->"} {diff.right_backtest_id || "右侧未绑定"}
+      </div>
+      {diff.status === "missing" ? (
+        <div className="workspace-version-config-list">
+          {diagnostics.length === 0 ? (
+            <div className="muted-line">缺少 A/B v4 回测证据，无法生成证据差异。</div>
+          ) : (
+            diagnostics.map((finding) => (
+              <div className="open-order-item" key={`${finding.code}-${finding.message}`}>
+                <div className="open-order-topline">
+                  <strong>{finding.code || "evidence_missing"}</strong>
+                  <span>{finding.severity || "info"}</span>
+                </div>
+                <div className="muted-line">{finding.message}</div>
+              </div>
+            ))
+          )}
+        </div>
+      ) : (
+        <>
+          <div className="strategy-inspector-metrics" data-testid="workspace-version-evidence-machine">
+            <div className="kv-line">
+              <span>机器轨迹</span>
+              <strong>
+                {diff.machine_trajectory?.left_point_count || 0} / {diff.machine_trajectory?.right_point_count || 0}
+              </strong>
+            </div>
+            <div className="kv-line">
+              <span>首次分叉</span>
+              <strong>{diff.machine_trajectory?.first_divergence?.index ?? "-"}</strong>
+            </div>
+            <div className="kv-line">
+              <span>Transition</span>
+              <strong>{formatCountChanges(diff.machine_trajectory?.transition_hit_changes)}</strong>
+            </div>
+          </div>
+
+          <div className="strategy-inspector-metrics" data-testid="workspace-version-evidence-risk-plane">
+            <div className="kv-line">
+              <span>Risk Plane</span>
+              <strong>
+                {diff.risk_plane?.left_decision_count || 0} / {diff.risk_plane?.right_decision_count || 0}
+              </strong>
+            </div>
+            <div className="kv-line">
+              <span>Allow / Reject</span>
+              <strong>{formatCountChanges(diff.risk_plane?.action_count_changes)}</strong>
+            </div>
+            <div className="kv-line">
+              <span>原因分布</span>
+              <strong>{formatCountChanges(diff.risk_plane?.reason_count_changes)}</strong>
+            </div>
+          </div>
+
+          <div className="strategy-inspector-metrics" data-testid="workspace-version-evidence-execution">
+            <div className="kv-line">
+              <span>执行能力</span>
+              <strong>
+                {diff.execution_capability?.left_source_count || 0} / {diff.execution_capability?.right_source_count || 0}
+              </strong>
+            </div>
+            <div className="kv-line">
+              <span>Runtime</span>
+              <strong>{formatCountChanges(diff.execution_capability?.runtime_mode_changes)}</strong>
+            </div>
+            <div className="kv-line">
+              <span>Capability</span>
+              <strong>{formatCountChanges(diff.execution_capability?.capability_source_changes)}</strong>
+            </div>
+          </div>
+
+          <div className="workspace-version-config-list" data-testid="workspace-version-evidence-metrics">
+            {(diff.metrics?.fields || []).filter((field) => field.status !== "same").slice(0, 6).map((field) => (
+              <div className="open-order-item" key={field.key}>
+                <div className="open-order-topline">
+                  <strong>{field.key}</strong>
+                  <span>{field.status}</span>
+                </div>
+                <div className="muted-line">
+                  {field.left_value || "-"} {"->"} {field.right_value || "-"}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGraph }) {
   const graphVersions = useGraphStore((state) => state.graphVersions);
   const graphVersionsStatus = useGraphStore((state) => state.graphVersionsStatus);
@@ -53,10 +234,13 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
   const compareGraphVersions = useGraphStore((state) => state.compareGraphVersions);
   const clearGraphVersionCompare = useGraphStore((state) => state.clearGraphVersionCompare);
   const saveGraph = useGraphStore((state) => state.saveGraph);
+  const backtestHistory = useGraphStore((state) => state.runtime.backtestHistory);
 
   const [versionLabelDraft, setVersionLabelDraft] = useState("");
   const [saveNoteDraft, setSaveNoteDraft] = useState("");
   const [compareSelection, setCompareSelection] = useState([]);
+  const [leftEvidenceBacktestId, setLeftEvidenceBacktestId] = useState("");
+  const [rightEvidenceBacktestId, setRightEvidenceBacktestId] = useState("");
 
   useEffect(() => {
     setVersionLabelDraft(currentGraph?.metadata?.version_label || "");
@@ -82,6 +266,17 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
   const selectedCompareEntries = compareSelection
     .map((versionId) => graphVersions.find((entry) => entry.version_id === versionId))
     .filter(Boolean);
+  const evidenceBacktestOptions = useMemo(
+    () =>
+      (backtestHistory || [])
+        .filter((entry) => !entry.graph_id || entry.graph_id === graphId)
+        .map((entry) => ({
+          id: entry.backtest_id,
+          label: `${entry.backtest_id}${entry.created_at_ms ? ` · ${formatTime(entry.created_at_ms)}` : ""}`
+        }))
+        .filter((entry) => entry.id),
+    [backtestHistory, graphId]
+  );
 
   async function handleSaveVersion() {
     await saveGraph({
@@ -106,7 +301,10 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
     if (compareSelection.length !== 2) {
       return;
     }
-    await compareGraphVersions(graphId, compareSelection[0], compareSelection[1]);
+    await compareGraphVersions(graphId, compareSelection[0], compareSelection[1], {
+      leftBacktestId: leftEvidenceBacktestId,
+      rightBacktestId: rightEvidenceBacktestId
+    });
   }
 
   return (
@@ -164,7 +362,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
         <div className="strategy-inspector-actions">
           <button
             type="button"
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             data-testid="workspace-version-save-action"
             onClick={handleSaveVersion}
           >
@@ -234,7 +432,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
               <div className="strategy-inspector-actions">
                 <button
                   type="button"
-                  className="ghost-btn compact-btn"
+                  className="ad-btn ad-btn--ghost compact-btn"
                   data-testid={`workspace-version-preview-${entry.version_id}`}
                   onClick={() => loadGraphVersionPreview(graphId, entry.version_id)}
                 >
@@ -242,7 +440,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
                 </button>
                 <button
                   type="button"
-                  className="ghost-btn compact-btn"
+                  className="ad-btn ad-btn--ghost compact-btn"
                   data-testid={`workspace-version-restore-${entry.version_id}`}
                   onClick={() => restoreGraphVersion(graphId, entry.version_id)}
                 >
@@ -250,7 +448,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
                 </button>
                 <button
                   type="button"
-                  className={`ghost-btn compact-btn ${isSelected ? "active" : ""}`}
+                  className={`ad-btn ad-btn--ghost compact-btn ${isSelected ? "active" : ""}`}
                   data-testid={`workspace-version-compare-toggle-${entry.version_id}`}
                   onClick={() => toggleCompareSelection(entry.version_id)}
                 >
@@ -268,10 +466,41 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
         </div>
       ) : null}
 
+      <div className="workspace-version-save-form" data-testid="workspace-version-evidence-binding">
+        <label className="field-label">
+          左侧回测证据
+          <select
+            className="field-input"
+            value={leftEvidenceBacktestId}
+            data-testid="workspace-version-left-evidence-select"
+            onChange={(event) => setLeftEvidenceBacktestId(event.target.value)}
+          >
+            <option value="">不绑定证据</option>
+            {evidenceBacktestOptions.map((entry) => (
+              <option key={`left-${entry.id}`} value={entry.id}>{entry.label}</option>
+            ))}
+          </select>
+        </label>
+        <label className="field-label">
+          右侧回测证据
+          <select
+            className="field-input"
+            value={rightEvidenceBacktestId}
+            data-testid="workspace-version-right-evidence-select"
+            onChange={(event) => setRightEvidenceBacktestId(event.target.value)}
+          >
+            <option value="">不绑定证据</option>
+            {evidenceBacktestOptions.map((entry) => (
+              <option key={`right-${entry.id}`} value={entry.id}>{entry.label}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+
       <div className="strategy-inspector-actions">
         <button
           type="button"
-          className="ghost-btn compact-btn"
+          className="ad-btn ad-btn--ghost compact-btn"
           data-testid="workspace-version-open-compare"
           disabled={compareSelection.length !== 2}
           onClick={handleCompareVersions}
@@ -280,7 +509,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
         </button>
         <button
           type="button"
-          className="ghost-btn compact-btn"
+          className="ad-btn ad-btn--ghost compact-btn"
           data-testid="workspace-version-clear-compare"
           onClick={() => {
             setCompareSelection([]);
@@ -354,6 +583,9 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
               </div>
             )}
           </div>
+
+          <StrategyConfigVersionDiff diff={graphVersionCompare.strategy_config_diff} />
+          <StrategyConfigEvidenceDiff diff={graphVersionCompare.strategy_config_evidence_diff} />
         </div>
       ) : null}
 
@@ -361,7 +593,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
         <div className="strategy-inspector-actions">
           <button
             type="button"
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             onClick={clearGraphVersionPreview}
           >
             清空预览

@@ -105,7 +105,7 @@ export default function StrategyWorkspaceOverviewTab({
           subtitle="先查看当前编译与校验队列，必要时再打开完整诊断。"
           testId="workspace-readiness-section"
           actions={
-            <button className="ghost-btn compact-btn" onClick={() => ui.setActiveTab("diagnostics")}>
+            <button className="ad-btn ad-btn--ghost compact-btn" onClick={() => ui.setActiveTab("diagnostics")}>
               打开诊断
             </button>
           }
@@ -131,7 +131,7 @@ export default function StrategyWorkspaceOverviewTab({
           testId="workspace-research-section"
           actions={
             <button
-              className="ghost-btn compact-btn"
+              className="ad-btn ad-btn--ghost compact-btn"
               onClick={() => navigateTo(strategyBacktestsPath(strategyId))}
             >
               打开回测索引
@@ -150,7 +150,7 @@ export default function StrategyWorkspaceOverviewTab({
               emptyText="该策略暂无最近回测。"
               renderActions={(item) => (
                 <button
-                  className="ghost-btn compact-btn"
+                  className="ad-btn ad-btn--ghost compact-btn"
                   onClick={() => navigateTo(backtestDetailPath(item.backtest_id, strategyId))}
                 >
                   详情
@@ -241,13 +241,13 @@ export default function StrategyWorkspaceOverviewTab({
           subtitle="直接给出下一步入口，减少寻找成本。"
         >
           <div className="strategy-inspector-actions">
-            <button className="primary-btn" onClick={() => ui.setActiveTab("code")}>
+            <button className="ad-btn ad-btn--primary" onClick={() => ui.setActiveTab("code")}>
               打开构建模式
             </button>
-            <button className="ghost-btn" onClick={() => ui.setActiveTab("diagnostics")}>
+            <button className="ad-btn ad-btn--ghost" onClick={() => ui.setActiveTab("diagnostics")}>
               查看诊断
             </button>
-            <button className="ghost-btn" onClick={() => ui.setActiveTab("research")}>
+            <button className="ad-btn ad-btn--ghost" onClick={() => ui.setActiveTab("research")}>
               打开研究
             </button>
           </div>
@@ -271,14 +271,14 @@ export default function StrategyWorkspaceOverviewTab({
             </div>
             <div className="strategy-inspector-actions">
               <button
-                className="primary-btn"
+                className="ad-btn ad-btn--primary"
                 disabled={compareSelection.length !== 2}
                 onClick={() => navigateTo(backtestComparePath(compareSelection, strategyId))}
               >
                 打开对比
               </button>
               <button
-                className="ghost-btn"
+                className="ad-btn ad-btn--ghost"
                 onClick={() => navigateTo(strategyBacktestsPath(strategyId))}
               >
                 打开回测索引

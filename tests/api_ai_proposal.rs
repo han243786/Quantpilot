@@ -49,17 +49,29 @@ fn hash(ch: char) -> String {
     format!("sha256:{}", ch.to_string().repeat(64))
 }
 
+fn parameter_version(target: &Value, value: &Value) -> String {
+    let digest = qrpc_core::canonical_json_sha256_digest(&json!({
+        "target": target,
+        "value": value,
+    }))
+    .unwrap();
+    format!("sha256:{}", digest.value)
+}
+
 fn ai_proposal_payload(source_id: &str, request: &Value) -> Value {
+    let target = json!({
+        "node_id": "risk_risk_1",
+        "module_key": "builtin.risk.global",
+        "parameter_path": "max_position"
+    });
+    let old_value = json!(0.2);
+    let new_value = json!(0.15);
     json!({
         "source_kind": "run",
         "source_id": source_id,
-        "target": {
-            "node_id": "risk_risk_1",
-            "module_key": "builtin.risk.global",
-            "parameter_path": "max_position"
-        },
-        "old_value": 0.2,
-        "new_value": 0.15,
+        "target": target,
+        "old_value": old_value,
+        "new_value": new_value,
         "model": {
             "provider": "openai",
             "model": "proposal-model",
@@ -72,7 +84,13 @@ fn ai_proposal_payload(source_id: &str, request: &Value) -> Value {
             "display_name": "AI Assistant 1"
         },
         "reason": "Reduce max position before a volatile replay window.",
-        "capability_context": request["capability_context"].clone()
+        "capability_context": request["capability_context"].clone(),
+        "config_domain_binding": {
+            "target_domain": "risk",
+            "before_digest": parameter_version(&target, &old_value),
+            "after_digest": parameter_version(&target, &new_value),
+            "evidence_anchor_ids": [format!("run:{source_id}")]
+        }
     })
 }
 
@@ -101,6 +119,7 @@ async fn runtime_ai_proposal_creates_static_checked_record_and_key_events() {
     assert_eq!(proposal["source_kind"], "run");
     assert_eq!(proposal["source_id"], run_id);
     assert_eq!(proposal["target"]["module_key"], "builtin.risk.global");
+    assert_eq!(proposal["config_domain_binding"]["target_domain"], "risk");
     assert_eq!(proposal["model"]["model"], "proposal-model");
     assert_eq!(proposal["prompt_hash"], hash('a'));
     assert_eq!(proposal["evidence_hash"], hash('b'));

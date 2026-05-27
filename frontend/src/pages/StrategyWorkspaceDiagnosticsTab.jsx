@@ -137,10 +137,10 @@ export default function StrategyWorkspaceDiagnosticsTab({
           testId="workspace-structured-diagnostics-section"
           actions={
             <div className="strategy-inspector-actions">
-              <button className="ghost-btn compact-btn" onClick={() => ui.setActiveTab("code")}>
+              <button className="ad-btn ad-btn--ghost compact-btn" onClick={() => ui.setActiveTab("code")}>
                 打开构建模式
               </button>
-              <button className="ghost-btn compact-btn" onClick={() => ui.setActiveTab("research")}>
+              <button className="ad-btn ad-btn--ghost compact-btn" onClick={() => ui.setActiveTab("research")}>
                 打开研究
               </button>
             </div>
@@ -256,10 +256,10 @@ export default function StrategyWorkspaceDiagnosticsTab({
           subtitle="在结构修复和结果复盘之间快速切换。"
         >
           <div className="strategy-inspector-actions">
-            <button className="primary-btn" onClick={() => ui.setActiveTab("code")}>
+            <button className="ad-btn ad-btn--primary" onClick={() => ui.setActiveTab("code")}>
               在构建模式修复
             </button>
-            <button className="ghost-btn" onClick={() => ui.setActiveTab("research")}>
+            <button className="ad-btn ad-btn--ghost" onClick={() => ui.setActiveTab("research")}>
               打开研究
             </button>
           </div>

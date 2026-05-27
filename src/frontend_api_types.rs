@@ -127,6 +127,10 @@ pub(super) struct GraphVersionCompareResponse {
     pub(super) edge_diff: GraphVersionCollectionDiff,
     #[serde(default)]
     pub(super) config_diffs: Vec<GraphVersionConfigDiffEntry>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(super) strategy_config_diff: Option<StrategyConfigDiffReport>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(super) strategy_config_evidence_diff: Option<StrategyConfigEvidenceDiffReport>,
     pub(super) has_changes: bool,
 }
 
@@ -1284,6 +1288,26 @@ pub(super) struct RuntimeAiProposalGovernance {
     pub(super) ai_write_policy: String,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub(super) enum StrategyConfigProposalDomain {
+    Market,
+    Observation,
+    StateMachine,
+    Risk,
+    Execution,
+    AiGovernance,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+pub(super) struct RuntimeAiProposalConfigDomainBinding {
+    pub(super) target_domain: StrategyConfigProposalDomain,
+    pub(super) before_digest: String,
+    pub(super) after_digest: String,
+    #[serde(default)]
+    pub(super) evidence_anchor_ids: Vec<String>,
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub(super) struct RuntimeAiProposalStaticCheckDetail {
     pub(super) code: String,
@@ -1334,6 +1358,8 @@ pub(super) struct RuntimeAiProposalRecord {
     pub(super) actor: ActorIdentity,
     pub(super) reason: String,
     pub(super) governance: RuntimeAiProposalGovernance,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(super) config_domain_binding: Option<RuntimeAiProposalConfigDomainBinding>,
     #[serde(default)]
     pub(super) lifecycle: Vec<RuntimeAiProposalLifecycleEntry>,
     pub(super) created_at_ms: u64,
@@ -1356,6 +1382,8 @@ pub(super) struct CreateRuntimeAiProposalRequest {
     pub(super) reason: String,
     #[serde(default)]
     pub(super) capability_context: Option<FrontendCapabilityContext>,
+    #[serde(default)]
+    pub(super) config_domain_binding: Option<RuntimeAiProposalConfigDomainBinding>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

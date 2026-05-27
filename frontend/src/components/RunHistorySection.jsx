@@ -72,7 +72,7 @@ export default function RunHistorySection({
           summary={t("查看后端已保存的运行结果，并恢复指定运行详情。")}
           action={
             <button
-              className="ghost-btn compact-btn"
+              className="ad-btn ad-btn--ghost compact-btn"
               aria-label={t("刷新运行记录")}
               data-testid="run-history-refresh"
               disabled={runtime.historyStatus === "loading"}
@@ -179,13 +179,13 @@ export default function RunHistorySection({
           actions={
             <>
               <button
-                className="ghost-btn compact-btn"
+                className="ad-btn ad-btn--ghost compact-btn"
                 onClick={() => setRunHistoryFilter(graph.metadata?.graph_id || "")}
               >
                 {HISTORY_COPY.currentGraph}
               </button>
               <button
-                className="ghost-btn compact-btn"
+                className="ad-btn ad-btn--ghost compact-btn"
                 onClick={() => {
                   setRunHistoryFilter("");
                   setRunHistoryCompileFilter("");

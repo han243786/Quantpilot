@@ -99,11 +99,11 @@ export default function StrategyParamsPanel({ repairPathState = null }) {
         ];
 
   const actions = model.selectedEdge ? (
-    <button className="danger-btn compact-btn" onClick={model.removeSelected}>
+    <button className="ad-btn ad-btn--danger compact-btn" onClick={model.removeSelected}>
       删除边
     </button>
   ) : model.selectedNode ? (
-    <button className="danger-btn compact-btn" onClick={model.removeSelected}>
+    <button className="ad-btn ad-btn--danger compact-btn" onClick={model.removeSelected}>
       删除节点
     </button>
   ) : null;

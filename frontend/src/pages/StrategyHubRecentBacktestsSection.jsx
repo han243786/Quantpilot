@@ -33,7 +33,7 @@ export default function StrategyHubRecentBacktestsSection({
                   {actionGroup.items.map((action) => (
                     <button
                       key={action.key}
-                      className={`ghost-btn compact-btn${action.selected ? " compact-btn--selected" : ""}`}
+                      className={`ad-btn ad-btn--ghost compact-btn${action.selected ? " compact-btn--selected" : ""}`}
                       aria-label={action.ariaLabel}
                       onClick={() =>
                         runStrategyHubRecentBacktestAction(

@@ -43,7 +43,7 @@ export default function StrategyHubRosterRowActions({ model, row }) {
       <button
         key={item.key}
         className={`strategy-row__action-button ${
-          item.buttonClassName || "ghost-btn compact-btn"
+          item.buttonClassName || "ad-btn ad-btn--ghost compact-btn"
         }`.trim()}
         data-testid={`strategy-hub-roster-action-${row.graphId}-${item.key}`}
         data-action-group={item.groupKey}
@@ -65,7 +65,7 @@ export default function StrategyHubRosterRowActions({ model, row }) {
       {primaryItem ? renderActionButton(primaryItem) : null}
       <button
         type="button"
-        className="strategy-row__action-more ghost-btn compact-btn"
+        className="strategy-row__action-more ad-btn ad-btn--ghost compact-btn"
         data-testid={`strategy-hub-roster-action-${row.graphId}-more`}
         aria-label={`打开策略 ${row.name}（${row.graphId}）的更多操作`}
         aria-expanded={menuOpen}

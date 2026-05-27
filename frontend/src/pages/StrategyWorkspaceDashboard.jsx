@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useI18n } from "../i18n";
 import { useGraphStore } from "../store/graphStore";
+import StrategyConfigCockpit from "./StrategyConfigCockpit";
 
 function DashboardCard({ title, children, testId }) {
   return (
@@ -38,6 +39,12 @@ export default function StrategyWorkspaceDashboard({
   return (
     <div className="strategy-workspace-dashboard" data-testid="strategy-workspace-dashboard">
       <div className="dashboard-grid">
+        <StrategyConfigCockpit
+          graph={graph}
+          runtime={latestRuntime}
+          compileSummary={compileSummary}
+        />
+
         <DashboardCard title={t("编译状态")} testId="dashboard-compile-status">
           <div className="dashboard-metric">
             <span className="dashboard-metric-label">{t("协议")}</span>
@@ -84,7 +91,7 @@ export default function StrategyWorkspaceDashboard({
         <DashboardCard title={t("快速操作")} testId="dashboard-quick-actions">
           <div className="dashboard-actions">
             <button
-              className="primary-btn"
+              className="ad-btn ad-btn--primary"
               onClick={() => onNavigate?.("code")}
               disabled={!canNavigateTo("code")}
               title={navigationTitle("code")}
@@ -93,7 +100,7 @@ export default function StrategyWorkspaceDashboard({
               {t("进入构建")}
             </button>
             <button
-              className="ghost-btn"
+              className="ad-btn ad-btn--ghost"
               onClick={() => onNavigate?.("research")}
               disabled={!canNavigateTo("research")}
               title={navigationTitle("research")}
@@ -102,7 +109,7 @@ export default function StrategyWorkspaceDashboard({
               {t("研究回测")}
             </button>
             <button
-              className="ghost-btn"
+              className="ad-btn ad-btn--ghost"
               onClick={() => onNavigate?.("monitor")}
               disabled={!canNavigateTo("monitor")}
               title={navigationTitle("monitor")}
@@ -111,7 +118,7 @@ export default function StrategyWorkspaceDashboard({
               {t("运行监控")}
             </button>
             <button
-              className="ghost-btn"
+              className="ad-btn ad-btn--ghost"
               onClick={() => onNavigate?.("source")}
               disabled={!canNavigateTo("source")}
               title={navigationTitle("source")}

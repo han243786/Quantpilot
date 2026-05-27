@@ -18,6 +18,8 @@ const SnapshotsPage = lazy(() => import("./pages/SnapshotsPage"));
 const RunbookPage = lazy(() => import("./pages/RunbookPage"));
 const ChaosPage = lazy(() => import("./pages/ChaosPage"));
 const QuantScriptEditor = lazy(() => import("./pages/QuantScriptEditor"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 import TutorialOverlay from "./components/TutorialOverlay";
 import ToastContainer from "./components/ToastContainer";
 import { createTutorialSteps } from "./data/tutorialSteps";
@@ -62,7 +64,7 @@ function AppShellFallback({ onSkip }) {
       </div>
       <div className="app-loading-shell__title">{stageText}</div>
       {waited && onSkip && (
-        <button className="ghost-btn" onClick={onSkip} style={{marginTop:16}}>
+        <button className="ad-btn ad-btn--ghost" onClick={onSkip} style={{marginTop:16}}>
           {t("跳过等待，使用本地缓存")}
         </button>
       )}
@@ -85,6 +87,24 @@ export default function App() {
   const mainRef = useRef(null);
   const [isMaximized, setIsMaximized] = useState(false);
   const appWindow = resolveTauriWindow();
+
+  useEffect(() => {
+    const applyStoredTheme = () => {
+      try {
+        const theme = window.localStorage?.getItem("quantpilot.theme") || "auto";
+        if (theme === "light" || theme === "dark") {
+          document.documentElement.dataset.theme = theme;
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      } catch (_) {
+        document.documentElement.removeAttribute("data-theme");
+      }
+    };
+    applyStoredTheme();
+    window.addEventListener("qp-theme-change", applyStoredTheme);
+    return () => window.removeEventListener("qp-theme-change", applyStoredTheme);
+  }, []);
 
   // 监听窗口最大化状态
   useEffect(() => {
@@ -212,6 +232,8 @@ export default function App() {
     content = wrapRoute(<ChaosPage />);
   } else if (route.name === "quantscript") {
     content = wrapRoute(<QuantScriptEditor />);
+  } else if (route.name === "settings") {
+    content = wrapRoute(<SettingsPage />);
   } else if (route.name === "strategy-workspace") {
     content = wrapRoute(<StrategyWorkspacePage strategyId={route.strategyId} />);
   } else if (route.name === "strategy-backtests") {
@@ -225,6 +247,8 @@ export default function App() {
         strategyId={route.strategyId}
       />
     );
+  } else if (route.name === "not-found") {
+    content = wrapRoute(<NotFoundPage pathname={route.pathname} />);
   }
 
   return (
@@ -248,7 +272,7 @@ export default function App() {
       {storageQuotaExceeded ? (
         <div className="ad-offline-banner" role="alert" style={{background:"var(--ad-warning-soft)",color:"var(--ad-warning)"}}>
           {t("本地存储空间不足，策略图未保存。请前往策略中心，清理不需要的策略图旧版本以释放空间。")}
-          <button className="ghost-btn" style={{marginLeft:12,textDecoration:"underline"}} onClick={() => { setStorageQuotaExceeded(false); navigateTo(strategiesPath()); }}>
+          <button className="ad-btn ad-btn--ghost" style={{marginLeft:12,textDecoration:"underline"}} onClick={() => { setStorageQuotaExceeded(false); navigateTo(strategiesPath()); }}>
             {t("前往策略中心")}
           </button>
         </div>

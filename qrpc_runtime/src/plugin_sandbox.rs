@@ -4,6 +4,8 @@ use std::process::{Child, Command, Stdio};
 use std::time::Duration;
 use wait_timeout::ChildExt;
 
+use crate::plugin_runtime_registry::{PluginSecurityAction, RuntimePluginRegistry};
+
 /// v2.0.0 插件沙箱子进程隔离
 ///
 /// 将插件调用隔离在独立的子进程中执行, 通过 stdin/stdout 传递数据。
@@ -13,8 +15,6 @@ use wait_timeout::ChildExt;
 ///   - Windows: 当前版本不设置内存硬限制(需 Job Object API), 超时限制仍然生效
 ///
 /// ## 已知安全限制
-/// - **无网络隔离**: 子进程继承宿主全部网络能力。manifest中`allow_network: false`仅为声明式策略,
-///   无OS级强制(net namespace/job object), v2.1.0计划实现。
 /// - **无文件系统隔离**: 子进程可访问宿主机所有文件。v2.1.0计划引入chroot/命名空间隔离。
 pub struct PluginSandbox {
     /// 单次执行最大耗时(毫秒), 超时则 kill
@@ -81,6 +81,22 @@ impl PluginSandbox {
         }
 
         Ok(output)
+    }
+
+    /// 执行插件前先通过运行时注册表强制执行 manifest 安全策略。
+    ///
+    /// 该入口用于生产调用路径: 调用方必须声明本次插件动作类型, 注册表会根据
+    /// manifest.security 与运行时禁用项拒绝危险能力, 之后才进入子进程沙箱。
+    pub fn execute_checked(
+        &self,
+        registry: &RuntimePluginRegistry,
+        plugin_id: &str,
+        action: PluginSecurityAction,
+        plugin_path: &Path,
+        input: &[u8],
+    ) -> Result<Vec<u8>, String> {
+        registry.check_security(plugin_id, action)?;
+        self.execute(plugin_path, input)
     }
 
     // ── 子进程启动 (平台相关) ──────────────────────────

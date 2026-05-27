@@ -40,7 +40,7 @@ export default function StrategyCodePanel({ onActivateSourceLane = null }) {
   const actions = (
     <>
       <button
-        className="ghost-btn compact-btn"
+        className="ad-btn ad-btn--ghost compact-btn"
         onClick={() => {
           onActivateSourceLane?.();
           model.handleResetQuantScript(model.setApplyError);
@@ -49,7 +49,7 @@ export default function StrategyCodePanel({ onActivateSourceLane = null }) {
         重置脚本
       </button>
       <button
-        className="ghost-btn compact-btn"
+        className="ad-btn ad-btn--ghost compact-btn"
         onClick={() => {
           onActivateSourceLane?.();
           model.handleResetStrategyIr(model.setStrategyIrApplyError);

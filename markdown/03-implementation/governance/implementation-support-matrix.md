@@ -13,13 +13,43 @@
 
 ## 当前已支持边界
 
+### 产品定位与 unsupported 边界
+
+QuantPilot 当前固定为单机交易工具: 面向单人本地桌面使用, 通过 Tauri / localhost 访问本地后端和执行端。以下能力不进入后续里程碑, 不作为缺陷排期:
+
+| 能力 ID | 状态 | 说明 |
+|---|---|---|
+| `auth.logout` | `unsupported` | 单机本地会话边界, 不做多设备注销语义 |
+| `auth.password_reset` | `unsupported` | 不提供远程账户找回或邮件重置流程 |
+| `auth.2fa` | `unsupported` | 不做 2FA / TOTP / WebAuthn |
+| `account.profile` | `unsupported` | 不做用户资料页或团队账号资料管理 |
+| `auth.rbac` | `unsupported` | 不做管理员角色、权限组或多租户 RBAC |
+| `hub.search` | `unsupported` | 单机策略数保持在可滚动范围内 |
+| `hub.filter` | `unsupported` | 策略中心不做筛选、分页或排序工作台 |
+
+现有 `register` / `login` / `refresh` 端点只保留为本地会话和凭证隔离机制, 不代表完整账户系统支持。
+
 ### 运行时
 
-- 已支持的运行模式：`paper`、`live`（OKX testnet 模拟盘边界）
+- 主应用 API runtime mode：`paper`
+- 用户侧与执行端统一命名：
+  - `PaperSimulated`：本地仿真，本地模拟成交，不连接 provider submission。
+  - `PaperActual`：OKX demo / testnet 边界，仅代表演示盘提交，不代表真实资金。
+- `live_execution_allowed=false` 是当前硬边界。用户文案、README、总览和里程碑不得再用 `live` 描述 OKX demo / testnet。
+- v4 策略进入执行端启动前必须消费后端生成的 `strategy_config_preflight`；执行端不得自行推断 capability。缺失、blocked、真实资金字段打开、模式不匹配或 action 未允许时直接拒绝启动。
 - 已支持的执行模块：`builtin.execution.paper`、`live.okx`
+  - `live.okx` 仅作为当前内部能力键保留；用户侧必须显示为 `PaperActual` / `OKX demo` 边界，不得显示为实盘或 live trading。
 - 当前市场边界：
   - 交易所：`binance`、`okx`
   - 交易对：`BTCUSDT`、`ETHUSDT`、`SOLUSDT`
+
+### AI proposal 与策略配置域
+
+- AI proposal 只能停留在 `proposal_only` 治理边界，不能直接写 QS、不能直接启动运行、不能绕过审批。
+- `ai.proposal.config_domain_binding` 已进入 v4 策略配置系统主线：proposal 静态检查要求 `target_domain`、`before_digest`、`after_digest` 和 `evidence_anchor_ids`；缺失时保留为不可审批通过的失败候选。
+- v4 proposal 必须绑定 backtest evidence；非 v4 proposal 仍绑定 run evidence。
+- 审批通过前必须验证配置域绑定存在、静态检查通过、沙箱报告存在且未判定为 underperform；否则返回 `423 Locked`。
+- 沙箱自动重试失败必须进入审批生命周期，不能静默变成可审批状态。
 
 ### Strategy IR 和 QuantScript 边界
 
@@ -88,11 +118,14 @@
 - `builtin.risk.global`
 - `builtin.execution.paper`
 - `builtin.runtime.control`
+- `v4.machine.param`
+- `v4.transition.guard`
 
 边界说明：
 
 - 价差相关和套利相关的模块键可能出现在 beta 编译路径中。
 - 它们不得在外部被描述为真实套利平台支持的证据。
+- `v4.machine.param` 和 `v4.transition.guard` 属于 v4 策略配置系统的配置域能力，不代表新增 Machine 模板，也不代表真实资金执行能力。
 - 前端模块暴露必须与 `/api/capabilities` 保持一致。
 - `builtin.data.kline` 和 `builtin.data.quote` 现在在前端/运行时编译路径中暴露 `ping_enabled` 和 `request_interval_ms`。
 - 这些请求控制字段还不是图生成的正式 QuantScript 面的一部分。
@@ -111,6 +144,7 @@
 | `编译` | 能力同步加载时或安全回退激活时锁定 | `/api/strategy-ir/compile`、`/api/quantscript/formal/compile`、`/api/runtime/compile` | `strategy_ir` 仅为预检；运行时编译保持权威 |
 | `导出配置` | 能力同步加载时或安全回退激活时锁定 | `/api/runtime/compile` | 导出依赖于可编译的运行时配置 |
 | `启动模拟` | 能力同步加载时或安全回退激活时锁定 | `/api/runtime/test-run`、`/api/runtime/runs/:run_id/events`、`/api/runtime/runs/:run_id/status` | 当前 beta 边界仅为纸面运行时 |
+| `启动 v4 模拟运行` | 能力同步加载时或安全回退激活时锁定 | `/api/runtime/v4/run` | 固定使用 `PaperSimulated`；只接收 v4 QS 静态审计通过后的 machine graph handoff |
 | `运行回测` | 能力同步加载时或安全回退激活时锁定 | `/api/runtime/backtest`、`/api/runtime/backtests`、`/api/runtime/backtests/:backtest_id` | 当前回测仅为基础回放/回测支持 |
 | `运行参数扫掠` | 能力同步加载时或安全回退激活时锁定 | `/api/runtime/experiments/backtest-sweep`、`/api/runtime/experiments`、`/api/runtime/experiments/:experiment_id` | 在现有回测面上进行窄执行假设扫描；不是第二套实验运行时 |
 | `停止` | 由 `/api/capabilities.ui_actions.actions` 控制 | `/api/runtime/runs/:run_id/status` | 只对当前运行中会话可用 |

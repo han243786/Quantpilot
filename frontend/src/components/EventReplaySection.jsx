@@ -137,7 +137,7 @@ export default function EventReplaySection({ runtime }) {
       <div className="history-filter-row history-control-bar">
         <button
           type="button"
-          className="ghost-btn compact-btn"
+          className="ad-btn ad-btn--ghost compact-btn"
           data-testid="event-replay-load"
           disabled={status === "loading"}
           onClick={() => loadReplay({ sequenceCursor: FIRST_SEQUENCE_CURSOR })}
@@ -156,7 +156,7 @@ export default function EventReplaySection({ runtime }) {
         </select>
         <button
           type="button"
-          className="ghost-btn compact-btn"
+          className="ad-btn ad-btn--ghost compact-btn"
           data-testid="event-replay-prev"
           disabled={
             !hasCursorValue(replay?.previous_sequence_cursor) &&
@@ -173,7 +173,7 @@ export default function EventReplaySection({ runtime }) {
         </button>
         <button
           type="button"
-          className="ghost-btn compact-btn"
+          className="ad-btn ad-btn--ghost compact-btn"
           data-testid="event-replay-next"
           disabled={
             !hasCursorValue(replay?.next_sequence_cursor) && !hasCursorValue(replay?.next_cursor)
@@ -229,7 +229,7 @@ export default function EventReplaySection({ runtime }) {
                 <button
                   key={`${checkpoint.sequence_cursor ?? checkpoint.cursor}-${checkpoint.label}`}
                   type="button"
-                  className={`ghost-btn compact-btn${
+                  className={`ad-btn ad-btn--ghost compact-btn${
                     checkpointWindowStart(checkpoint) === replayWindowStart(replay)
                       ? " is-active"
                       : ""

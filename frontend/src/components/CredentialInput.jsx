@@ -131,7 +131,7 @@ export default function CredentialInput({
       {parsedFields && rawInput.trim() ? (
         <div style={{ marginTop: 8 }}>
           <button
-            className="ghost-btn compact-btn"
+            className="ad-btn ad-btn--ghost compact-btn"
             onClick={() => setShowPreview(!showPreview)}
             data-testid="credential-toggle-preview"
           >
@@ -159,7 +159,7 @@ export default function CredentialInput({
       <div className="credential-form-actions" style={{ marginTop: 12 }}>
         {onSave ? (
           <button
-            className="primary-btn"
+            className="ad-btn ad-btn--primary"
             onClick={handleSave}
             disabled={!parsedFields || saving}
             data-testid="credential-save"
@@ -169,7 +169,7 @@ export default function CredentialInput({
         ) : null}
         {onDelete ? (
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             onClick={() => onDelete(label)}
             data-testid="credential-delete"
           >
@@ -178,7 +178,7 @@ export default function CredentialInput({
         ) : null}
         {onCancel ? (
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             onClick={handleCancel}
             data-testid="credential-cancel"
           >

@@ -117,8 +117,10 @@ pub(super) async fn load_graph_version(
 }
 
 pub(super) async fn compare_graph_versions(
+    user_id: auth::UserId,
     State(state): State<AppState>,
     Path((graph_id, left_version_id, right_version_id)): Path<(String, String, String)>,
+    axum::extract::Query(query): axum::extract::Query<GraphVersionCompareQuery>,
 ) -> Result<Json<GraphVersionCompareResponse>, (StatusCode, String)> {
     validate_graph_id(&graph_id).map_err(internal_error)?;
     validate_graph_version_id(&left_version_id).map_err(internal_error)?;
@@ -128,6 +130,18 @@ pub(super) async fn compare_graph_versions(
     let right_path = graph_version_json_path(&state.graph_store_dir, &graph_id, &right_version_id);
     let left_graph = read_graph_json(&left_path).await?;
     let right_graph = read_graph_json(&right_path).await?;
+    let left_qs_source = read_optional_graph_version_quantscript(
+        &state.graph_store_dir,
+        &graph_id,
+        &left_version_id,
+    )
+    .await?;
+    let right_qs_source = read_optional_graph_version_quantscript(
+        &state.graph_store_dir,
+        &graph_id,
+        &right_version_id,
+    )
+    .await?;
     let versions = read_graph_versions(&state.graph_store_dir, &graph_id).await?;
     let left = versions
         .iter()
@@ -150,13 +164,44 @@ pub(super) async fn compare_graph_versions(
             ))
         })?;
 
-    Ok(Json(build_graph_version_compare_response(
+    let mut response = build_graph_version_compare_response(
         &graph_id,
-        left,
+        left.clone(),
         &left_graph,
-        right,
+        right.clone(),
         &right_graph,
-    )))
+    );
+    let strategy_config_diff = build_strategy_config_version_diff(
+        &graph_id,
+        &left,
+        &left_graph,
+        left_qs_source,
+        &right,
+        &right_graph,
+        right_qs_source,
+    )?;
+    response.has_changes = response.has_changes || strategy_config_diff.changed;
+    response.strategy_config_diff = Some(strategy_config_diff);
+    let strategy_config_evidence_diff = build_strategy_config_evidence_diff_for_backtests(
+        &state,
+        &user_id,
+        &graph_id,
+        query.left_backtest_id.as_deref(),
+        query.right_backtest_id.as_deref(),
+    )
+    .await;
+    response.has_changes = response.has_changes || strategy_config_evidence_diff.changed;
+    response.strategy_config_evidence_diff = Some(strategy_config_evidence_diff);
+
+    Ok(Json(response))
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub(super) struct GraphVersionCompareQuery {
+    #[serde(default)]
+    left_backtest_id: Option<String>,
+    #[serde(default)]
+    right_backtest_id: Option<String>,
 }
 
 pub(super) async fn restore_graph_version(
@@ -810,6 +855,24 @@ fn graph_version_dir(graph_store_dir: &FsPath, graph_id: &str) -> PathBuf {
     // v2.3.3 修复 S0-4: 纵深防御 — 即使调用方已验证 graph_id, 此处也做 sanitize
     let safe_segment = crate::runtime_persistence::sanitize_storage_path_segment(graph_id);
     graph_store_dir.join("versions").join(&safe_segment)
+}
+
+async fn read_optional_graph_version_quantscript(
+    graph_store_dir: &FsPath,
+    graph_id: &str,
+    version_id: &str,
+) -> Result<Option<String>, (StatusCode, String)> {
+    let path = graph_version_dir(graph_store_dir, graph_id).join(format!("{version_id}.qs"));
+    if !fs::try_exists(&path).await.map_err(io_error)? {
+        return Ok(None);
+    }
+    crate::runtime_persistence::read_to_string_bounded(
+        &path,
+        crate::runtime_persistence::MAX_BOUNDED_JSON_READ_BYTES,
+    )
+    .await
+    .map(Some)
+    .map_err(crate::runtime_persistence::bounded_read_api_error)
 }
 
 async fn refresh_latest_graph_after_delete(

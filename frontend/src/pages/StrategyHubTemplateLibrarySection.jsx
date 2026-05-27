@@ -41,7 +41,7 @@ export default function StrategyHubTemplateLibrarySection({ model }) {
         </div>
         <button
           type="button"
-          className="ghost-btn strategy-template-library__toggle"
+          className="ad-btn ad-btn--ghost strategy-template-library__toggle"
           aria-controls="strategy-template-library-grid"
           aria-expanded={isExpanded}
           data-testid="strategy-template-library-toggle"
@@ -83,7 +83,7 @@ export default function StrategyHubTemplateLibrarySection({ model }) {
                 </div>
                 <button
                   type="button"
-                  className="primary-btn"
+                  className="ad-btn ad-btn--primary"
                   data-testid={`strategy-template-load-${template.id}`}
                   disabled={Boolean(activeTemplateId)}
                   onClick={() => void handleApplyTemplate(template.id)}

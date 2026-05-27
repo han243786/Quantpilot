@@ -1,6 +1,6 @@
 import { navigateTo } from "../router";
 import { useI18n } from "../i18n";
-import { IconChart, IconCode, IconCheck, IconAlert, IconCamera, IconBook, IconFlask } from "./Icons";
+import { IconChart, IconCode, IconCheck, IconAlert, IconCamera, IconBook, IconFlask, IconSettings } from "./Icons";
 
 const NAV_ITEMS = [
   [
@@ -13,6 +13,7 @@ const NAV_ITEMS = [
     { path: "/snapshots", labelKey: "快照", Icon: IconCamera },
     { path: "/runbook", labelKey: "故障手册", Icon: IconBook },
     { path: "/chaos", labelKey: "混沌", Icon: IconFlask },
+    { path: "/settings", labelKey: "设置", Icon: IconSettings },
   ],
 ];
 

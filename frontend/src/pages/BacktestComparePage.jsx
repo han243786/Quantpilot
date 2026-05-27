@@ -184,7 +184,7 @@ export default function BacktestComparePage({ backtestIds = [], strategyId = "" 
         actions={
           <div className="toolbar-group" data-testid="backtest-compare-hero-actions">
             <button
-              className="ghost-btn"
+              className="ad-btn ad-btn--ghost"
               data-testid="backtest-compare-return-button"
               onClick={() =>
                 navigateTo(
@@ -196,7 +196,7 @@ export default function BacktestComparePage({ backtestIds = [], strategyId = "" 
             </button>
             {resolvedStrategyId ? (
               <button
-                className="ghost-btn"
+                className="ad-btn ad-btn--ghost"
                 data-testid="backtest-compare-workspace-button"
                 onClick={() => navigateTo(strategyWorkspacePath(resolvedStrategyId))}
               >
@@ -216,10 +216,10 @@ export default function BacktestComparePage({ backtestIds = [], strategyId = "" 
         <div>
           <AnalysisStatusBanner variant="error">{state.error}</AnalysisStatusBanner>
           <div style={{ display: "flex", gap: 8, marginTop: 12, justifyContent: "center" }}>
-            <button className="ghost-btn" onClick={() => setReloadTick((tick) => tick + 1)}>
+            <button className="ad-btn ad-btn--ghost" onClick={() => setReloadTick((tick) => tick + 1)}>
               {t("重试")}
             </button>
-            <button className="ghost-btn" onClick={() => navigateTo(strategiesPath())}>
+            <button className="ad-btn ad-btn--ghost" onClick={() => navigateTo(strategiesPath())}>
               {t("返回策略中心")}
             </button>
           </div>
@@ -256,7 +256,7 @@ export default function BacktestComparePage({ backtestIds = [], strategyId = "" 
                           </div>
                         </div>
                         <button
-                          className="ghost-btn compact-btn"
+                          className="ad-btn ad-btn--ghost compact-btn"
                           data-testid={`backtest-compare-open-detail-${detail.backtest_id}`}
                           onClick={() =>
                             navigateTo(backtestDetailPath(detail.backtest_id, resolvedStrategyId))

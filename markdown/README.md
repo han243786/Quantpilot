@@ -1,6 +1,6 @@
 # QuantPilot 文档
 
-> v4.7.0 | [项目 README](../README.md) | [General_Policy](./General_Policy.md)
+> v4.7.0 代码基线 / v4.10.0 优化里程碑 | [项目 README](../README.md) | [General_Policy](./General_Policy.md)
 
 ## 快速导航
 
@@ -24,7 +24,7 @@
 03-implementation/  实现规范 — 能力治理、运行时契约、QS 设计笔记
 04-guides/          操作指南 — 面向用户的 how-to 文档
 05-testing/         测试 — 审计报告 + 测试方案
-06-milestones/      里程碑 — 版本规划 (v4.7.0 当前, 嵌套状态机第一波收口)
+06-milestones/      里程碑 — 版本规划 (v4.10.0 当前优化里程碑, UX 收口与产品边界固化)
 08-research/        研究 — 深度研究与背景分析
 09-archive/         归档 — 历史文档
 10-overview/        总览 — 当前状态与路线图
@@ -42,4 +42,5 @@
 | 开发者学习流水线 | `03-implementation/governance/implementation-developer-learning-pipeline.md` |
 | v4 状态机/交易场所能力契约 | `03-implementation/governance/implementation-v4-machine-and-venue-contract.md` |
 | API 参考 | `04-guides/guide-api-reference.md` |
+| 中文用户指南 | `04-guides/guide-user-guide-zh.md` |
 | 当前状态 | `10-overview/overview-current-status-and-roadmap.md` |

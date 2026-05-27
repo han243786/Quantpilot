@@ -56,6 +56,17 @@ export async function fetchSandboxReport(proposalId) {
   return res.json();
 }
 
+export async function requestSandboxVerification(proposalId) {
+  const url = `${API_BASE}/v1/ai/proposals/${proposalId}/request-sandbox`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ proposal_id: proposalId, backtest_id: null }),
+  });
+  if (!res.ok) throw new Error(`请求沙箱重试失败: ${res.status}`);
+  return res.json();
+}
+
 export function formatApprovalLevel(level) {
   switch (level) {
     case "L1SingleReviewer":

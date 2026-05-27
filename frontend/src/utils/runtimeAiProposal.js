@@ -76,6 +76,18 @@ function normalizeGovernance(governance = {}) {
   };
 }
 
+function normalizeConfigDomainBinding(binding = null) {
+  if (!binding) return null;
+  return {
+    target_domain: nonEmptyString(binding.target_domain, "unknown"),
+    before_digest: nonEmptyString(binding.before_digest, "unknown"),
+    after_digest: nonEmptyString(binding.after_digest, "unknown"),
+    evidence_anchor_ids: Array.isArray(binding.evidence_anchor_ids)
+      ? binding.evidence_anchor_ids.filter((anchor) => typeof anchor === "string" && anchor.trim())
+      : []
+  };
+}
+
 function normalizeSourceEvidence(evidence = {}) {
   return {
     source_kind: nonEmptyString(evidence.source_kind, "unknown"),
@@ -140,6 +152,7 @@ export function normalizeRuntimeAiProposal(input = {}) {
     actor: normalizeActor(input.actor),
     reason: nonEmptyString(input.reason, "-"),
     governance: normalizeGovernance(input.governance),
+    config_domain_binding: normalizeConfigDomainBinding(input.config_domain_binding),
     lifecycle: Array.isArray(input.lifecycle)
       ? input.lifecycle.map((entry) => normalizeLifecycleEntry(entry))
       : [],
@@ -191,6 +204,7 @@ export function aiProposalEventPayloadToRecord(event = {}) {
     actor: payload.actor,
     reason: payload.reason,
     governance: payload.governance,
+    config_domain_binding: payload.config_domain_binding,
     created_at_ms: event.event_time_ms || payload.created_at_ms,
     updated_at_ms: event.event_time_ms || payload.updated_at_ms
   });

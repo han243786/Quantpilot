@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useI18n } from "../i18n";
 import { navigateTo } from "../router";
+import { useGraphStore } from "../store/graphStore";
+import { humanizeErrorText } from "../utils/errorText";
 
 const COMMAND_DEFS = [
   { id: "strategies", labelKey: "策略中心", keys: ["/strategies"], sectionKey: "导航" },
@@ -10,7 +12,16 @@ const COMMAND_DEFS = [
   { id: "snapshots", labelKey: "签名快照", keys: ["/snapshots"], sectionKey: "运维" },
   { id: "runbook", labelKey: "故障手册", keys: ["/runbook"], sectionKey: "运维" },
   { id: "chaos", labelKey: "混沌实验", keys: ["/chaos"], sectionKey: "运维" },
+  { id: "save-graph", labelKey: "保存策略图", keys: ["save"], sectionKey: "操作", action: "saveGraph" },
+  { id: "compile-graph", labelKey: "编译当前策略", keys: ["compile"], sectionKey: "操作", action: "compileCurrentGraph" },
+  { id: "run-runtime", labelKey: "运行模拟", keys: ["run"], sectionKey: "操作", action: "startRuntime" },
+  { id: "run-backtest", labelKey: "运行回测", keys: ["backtest"], sectionKey: "操作", action: "startBacktest" },
 ];
+
+function toast(type, message) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent("qp-toast", { detail: { type, message } }));
+}
 
 export default function CommandPalette({ open, onClose }) {
   const { t } = useI18n();
@@ -35,9 +46,22 @@ export default function CommandPalette({ open, onClose }) {
   );
 
   const select = useCallback((cmd) => {
+    if (cmd.action) {
+      const action = useGraphStore.getState()[cmd.action];
+      if (typeof action !== "function") {
+        toast("error", t("当前命令不可用"));
+        onClose();
+        return;
+      }
+      Promise.resolve(action())
+        .then(() => toast("success", t("命令已完成")))
+        .catch((error) => toast("error", humanizeErrorText(error?.message || String(error))));
+      onClose();
+      return;
+    }
     navigateTo(cmd.keys[0]);
     onClose();
-  }, [onClose]);
+  }, [onClose, t]);
 
   useEffect(() => {
     if (!open) return;

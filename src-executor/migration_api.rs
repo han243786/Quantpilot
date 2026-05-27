@@ -33,6 +33,8 @@ pub struct StrategyPackage {
     /// v4.2.0: v4 策略部署时携带 ObservationMachine graph。
     #[serde(default)]
     pub v4_graph: Option<V4MachineGraphContract>,
+    #[serde(default)]
+    pub strategy_config_preflight: Option<serde_json::Value>,
 }
 
 /// v3.7.0: QS编译溯源证明 — 验证策略经过完整QS管道编译
@@ -103,7 +105,7 @@ pub fn load_strategy(state: &Arc<ExecutorState>, pkg: StrategyPackage) -> Result
         .data_bindings
         .iter()
         .filter_map(|d| d.source_hints.get("symbol").cloned())
-        .map(|s| qrpc_core::Symbol::Other(s))
+        .map(qrpc_core::Symbol::Other)
         .collect();
 
     let strategy = ActiveStrategy {
@@ -117,6 +119,7 @@ pub fn load_strategy(state: &Arc<ExecutorState>, pkg: StrategyPackage) -> Result
         status: StrategyStatus::Loaded,
         subscribed_symbols: symbols,
         execution_mode: pkg.execution_mode,
+        strategy_config_preflight: pkg.strategy_config_preflight,
     };
 
     state.register(strategy)?;

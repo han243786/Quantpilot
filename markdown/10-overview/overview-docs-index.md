@@ -1,6 +1,6 @@
 # QuantPilot 文档索引
 
-> v0.5.2 → v1.0.0 | 最后更新 2026-05-11
+> v4.7.0 代码基线 / v4.10.0 优化里程碑 | 最后更新 2026-05-26
 
 ## 从这里开始
 
@@ -8,6 +8,7 @@
 |------|------|------|
 | 项目 README | `../README.md` | 产品边界、快速启动、质量门禁 |
 | 当前状态 | `./overview-current-status-and-roadmap.md` | 版本路线、仓库状态 |
+| 支持矩阵 | `../03-implementation/governance/implementation-support-matrix.md` | supported / restricted / unsupported 产品边界 |
 | General_Policy | `../General_Policy.md` | §1-§8 全部开发规范 |
 | 超级规范化 | `../01-principles/principles-super-standardization.md` | 五条流水线的执行标准 |
 
@@ -44,6 +45,8 @@
 | `guide-quantscript-trunk-baseline.md` | QuantScript 主干基线 |
 | `guide-paper-to-strategy-development.md` | Paper 运行到策略开发 |
 | `guide-strategy-template-library.md` | 策略模板库 |
+| `guide-user-guide-zh.md` | 中文用户指南 |
+| `guide-user-guide-en.md` | English user guide |
 
 ## 测试 (`05-testing/`)
 
@@ -56,6 +59,9 @@
 
 | 版本 | 状态 |
 |------|:--:|
+| v4.10.0 | ✅ UX 收口与产品边界固化 |
+| v4.9.0 | ✅ 产品功能完整度 + 插件执行安全 |
+| v4.8.x | ✅ UX/i18n/API 契约收敛 |
 | v0.5.2 | ✅ 16/16 |
 | v0.5.1 | ✅ 15/15 |
 | v0.5.0 | ✅ |

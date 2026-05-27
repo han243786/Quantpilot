@@ -72,7 +72,7 @@ export default function TutorialOverlay({ steps = [], onClose }) {
         )}
         <div className="tutorial-bubble-actions">
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             onClick={handleClose}
             data-testid="tutorial-close"
           >
@@ -80,7 +80,7 @@ export default function TutorialOverlay({ steps = [], onClose }) {
           </button>
           <div className="tutorial-nav">
             <button
-              className="ghost-btn"
+              className="ad-btn ad-btn--ghost"
               onClick={goPrev}
               disabled={isFirst}
               data-testid="tutorial-prev"
@@ -89,7 +89,7 @@ export default function TutorialOverlay({ steps = [], onClose }) {
             </button>
             {isLast ? (
               <button
-                className="primary-btn"
+                className="ad-btn ad-btn--primary"
                 onClick={handleClose}
                 data-testid="tutorial-finish"
               >
@@ -97,7 +97,7 @@ export default function TutorialOverlay({ steps = [], onClose }) {
               </button>
             ) : (
               <button
-                className="primary-btn"
+                className="ad-btn ad-btn--primary"
                 onClick={goNext}
                 data-testid="tutorial-next"
               >

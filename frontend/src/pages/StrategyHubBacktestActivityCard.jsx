@@ -14,13 +14,13 @@ export default function StrategyHubBacktestActivityCard({ model, items }) {
         return (
           <StrategyTaskGroup label="研究" tone="info" className="strategy-task-group--inline">
             <button
-              className="ghost-btn compact-btn"
+              className="ad-btn ad-btn--ghost compact-btn"
               onClick={() => navigateTo(backtestDetailPath(item.id, item.graphId))}
             >
               详情
             </button>
             <button
-              className={`ghost-btn compact-btn${checked ? " compact-btn--selected" : ""}`}
+              className={`ad-btn ad-btn--ghost compact-btn${checked ? " compact-btn--selected" : ""}`}
               onClick={() => model.toggleBacktestCompareSelection(item.id)}
             >
               {checked ? "已选择" : "加入对比"}

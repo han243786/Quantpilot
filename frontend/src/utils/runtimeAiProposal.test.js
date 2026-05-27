@@ -58,6 +58,12 @@ const proposal = {
     permission_boundary_model_version: "quantpilot/permission-boundary/v1",
     ai_write_policy: "proposal_only"
   },
+  config_domain_binding: {
+    target_domain: "state_machine",
+    before_digest: hash("b"),
+    after_digest: hash("c"),
+    evidence_anchor_ids: ["backtest:bt1"]
+  },
   lifecycle: [
     {
       status: "submitted",
@@ -79,7 +85,8 @@ describe("runtime AI proposal contract reader", () => {
       status: "static_check_passed",
       is_actionable: true,
       disabled_reason: null,
-      governance: proposal.governance
+      governance: proposal.governance,
+      config_domain_binding: proposal.config_domain_binding
     });
   });
 
@@ -92,6 +99,7 @@ describe("runtime AI proposal contract reader", () => {
     expect(normalized.source_kind).toBe("unknown");
     expect(normalized.model.model).toBe("unknown");
     expect(normalized.governance.ai_write_policy).toBe("disabled");
+    expect(normalized.config_domain_binding).toBeNull();
     expect(normalized.is_actionable).toBe(false);
     expect(normalized.disabled_reason).toBe("-");
   });
@@ -129,5 +137,6 @@ describe("runtime AI proposal contract reader", () => {
     expect(normalized.ai_proposal_id).toBe(proposal.ai_proposal_id);
     expect(normalized.created_at_ms).toBe(proposal.created_at_ms);
     expect(normalized.governance.ai_write_policy).toBe("proposal_only");
+    expect(normalized.config_domain_binding.target_domain).toBe("state_machine");
   });
 });

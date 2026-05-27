@@ -66,7 +66,7 @@ function ProposalItem({ proposal, canActivate, capabilityContext, onActivateProp
       <div className="inline-actions">
         <button
           type="button"
-          className="ghost-btn compact-btn"
+          className="ad-btn ad-btn--ghost compact-btn"
           disabled={
             !canActivate ||
             !["proposed", "safe_window_denied"].includes(proposal.status) ||
@@ -84,7 +84,7 @@ function ProposalItem({ proposal, canActivate, capabilityContext, onActivateProp
         </button>
         <button
           type="button"
-          className="ghost-btn compact-btn"
+          className="ad-btn ad-btn--ghost compact-btn"
           disabled={!canActivate || proposal.status !== "activated" || !onRollbackProposal}
           onClick={() =>
             onRollbackProposal?.(proposal, {

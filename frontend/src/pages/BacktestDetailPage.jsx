@@ -222,10 +222,10 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
           <span>{t("加载回测失败:")} {runtime.backendError}</span>
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 12, justifyContent: "center" }}>
-          <button className="ghost-btn" onClick={() => loadBacktestDetail(backtestId)}>
+          <button className="ad-btn ad-btn--ghost" onClick={() => loadBacktestDetail(backtestId)}>
             {t("重试")}
           </button>
-          <button className="ghost-btn" onClick={() => navigateTo(strategiesPath())}>
+          <button className="ad-btn ad-btn--ghost" onClick={() => navigateTo(strategiesPath())}>
             {t("返回策略中心")}
           </button>
         </div>
@@ -279,7 +279,7 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
         actions={
           <div className="toolbar-group">
             <button
-              className="ghost-btn"
+              className="ad-btn ad-btn--ghost"
               onClick={() =>
                 navigateTo(
                   resolvedStrategyId ? strategyBacktestsPath(resolvedStrategyId) : strategiesPath()
@@ -290,7 +290,7 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
             </button>
             {resolvedStrategyId ? (
               <button
-                className="ghost-btn"
+                className="ad-btn ad-btn--ghost"
                 onClick={() => navigateTo(strategyWorkspacePath(resolvedStrategyId))}
               >
                 {t("打开策略工作区")}
@@ -302,7 +302,7 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
       />
       <div style={{ display: "flex", justifyContent: "flex-end", padding: "0 0 12px" }}>
         <button
-          className="ghost-btn compact-btn"
+          className="ad-btn ad-btn--ghost compact-btn"
           onClick={() => setSummaryExpanded(!summaryExpanded)}
         >
           {summaryExpanded ? t("收起") : t("展开详情")}

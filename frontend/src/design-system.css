@@ -149,6 +149,78 @@ select option {
   scrollbar-color: var(--ad-border) transparent;
 }
 
+:root[data-theme="light"] {
+  --ad-bg: #f4f5f7;
+  --ad-bg-raised: #ffffff;
+  --ad-panel: #ffffff;
+  --ad-panel-hover: #eef1f5;
+  --ad-card: #ffffff;
+  --ad-card-hover: #f7f9fb;
+  --ad-border: #c7cdd6;
+  --ad-border-strong: #9aa5b4;
+  --ad-border-rgb: 154, 165, 180;
+  --ad-text: #1c2430;
+  --ad-text-secondary: #445166;
+  --ad-text-muted: #6b7688;
+  --ad-text-inverse: #ffffff;
+  --ad-accent-soft: rgba(20, 115, 230, 0.12);
+  --ad-accent-border: rgba(20, 115, 230, 0.28);
+  --ad-success-soft: rgba(70, 135, 86, 0.12);
+  --ad-warning-soft: rgba(166, 119, 32, 0.14);
+  --ad-error-soft: rgba(178, 76, 76, 0.12);
+  --ad-shadow-sm: 0 1px 2px rgba(32, 40, 52, 0.12);
+  --ad-shadow-md: 0 4px 12px rgba(32, 40, 52, 0.14);
+  --ad-shadow-lg: 0 12px 28px rgba(32, 40, 52, 0.16);
+  scrollbar-color: var(--ad-border-strong) transparent;
+}
+
+:root[data-theme="light"] body {
+  background: var(--ad-bg);
+  color: var(--ad-text);
+}
+
+:root[data-theme="light"] .ad-sidebar,
+:root[data-theme="light"] .ad-titlebar {
+  background: #ffffff;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --ad-bg: #f4f5f7;
+    --ad-bg-raised: #ffffff;
+    --ad-panel: #ffffff;
+    --ad-panel-hover: #eef1f5;
+    --ad-card: #ffffff;
+    --ad-card-hover: #f7f9fb;
+    --ad-border: #c7cdd6;
+    --ad-border-strong: #9aa5b4;
+    --ad-border-rgb: 154, 165, 180;
+    --ad-text: #1c2430;
+    --ad-text-secondary: #445166;
+    --ad-text-muted: #6b7688;
+    --ad-text-inverse: #ffffff;
+    --ad-accent-soft: rgba(20, 115, 230, 0.12);
+    --ad-accent-border: rgba(20, 115, 230, 0.28);
+    --ad-success-soft: rgba(70, 135, 86, 0.12);
+    --ad-warning-soft: rgba(166, 119, 32, 0.14);
+    --ad-error-soft: rgba(178, 76, 76, 0.12);
+    --ad-shadow-sm: 0 1px 2px rgba(32, 40, 52, 0.12);
+    --ad-shadow-md: 0 4px 12px rgba(32, 40, 52, 0.14);
+    --ad-shadow-lg: 0 12px 28px rgba(32, 40, 52, 0.16);
+    scrollbar-color: var(--ad-border-strong) transparent;
+  }
+
+  :root:not([data-theme="dark"]) body {
+    background: var(--ad-bg);
+    color: var(--ad-text);
+  }
+
+  :root:not([data-theme="dark"]) .ad-sidebar,
+  :root:not([data-theme="dark"]) .ad-titlebar {
+    background: #ffffff;
+  }
+}
+
 /* ── 滚动条 (Webkit) ──────────────────────────────────── */
 
 ::-webkit-scrollbar {
@@ -296,7 +368,8 @@ select option {
   overflow: hidden;
   user-select: none;
 }
-.ad-sidebar:hover {
+.ad-sidebar:hover,
+.ad-sidebar:focus-within {
   width: var(--ad-sidebar-expanded);
 }
 
@@ -334,7 +407,8 @@ select option {
   opacity: 0;
   transition: opacity 0.1s;
 }
-.ad-sidebar:hover .ad-sidebar-brand__text {
+.ad-sidebar:hover .ad-sidebar-brand__text,
+.ad-sidebar:focus-within .ad-sidebar-brand__text {
   opacity: 1;
 }
 
@@ -392,7 +466,8 @@ select option {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.ad-sidebar:hover .ad-sidebar-item__label {
+.ad-sidebar:hover .ad-sidebar-item__label,
+.ad-sidebar:focus-within .ad-sidebar-item__label {
   opacity: 1;
 }
 

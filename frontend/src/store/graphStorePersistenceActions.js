@@ -297,6 +297,57 @@ export function createGraphStorePersistenceActions(set, get) {
       return finalGraph;
     },
 
+    importStrategyPackage(packageData) {
+      const rawGraph = packageData?.graph || packageData?.strategy_graph || packageData;
+      const loadedGraph = resolveLoadedGraphWithRegistry(rawGraph, get().registry);
+      if (!loadedGraph) {
+        throw new Error("策略包中没有可用的策略图。");
+      }
+
+      const sourceGraphId = loadedGraph.metadata?.graph_id || "";
+      const importedGraphId = `imported_${Date.now()}`;
+      const finalGraph = attachValidationWithRegistry(
+        {
+          ...loadedGraph,
+          metadata: {
+            ...(loadedGraph.metadata || {}),
+            graph_id: importedGraphId,
+            name: loadedGraph.metadata?.name
+              ? `${loadedGraph.metadata.name} (imported)`
+              : "Imported Strategy",
+            imported_from_graph_id: sourceGraphId,
+            imported_at: new Date().toISOString()
+          }
+        },
+        get().registry
+      );
+
+      saveGraphToStorage(finalGraph);
+      set((state) => ({
+        graph: finalGraph,
+        compileResult: null,
+        selectedNodeId: null,
+        selectedEdgeId: null,
+        selectedCompileDiagnosticTarget: null,
+        graphVersionPreview: null,
+        graphVersionPreviewStatus: "idle",
+        graphVersionPreviewMessage: "",
+        graphVersionCompare: null,
+        graphVersionCompareStatus: "idle",
+        graphVersionCompareMessage: "",
+        graphAuditHistory: [],
+        graphAuditHistoryStatus: "idle",
+        graphAuditHistoryMessage: "",
+        quantScriptDraft: finalGraph.metadata?.artifacts?.quantscript?.graph_source || "",
+        strategyIrDraft: resolveStrategyIrDraft(finalGraph, ""),
+        runtime: {
+          ...state.runtime,
+          backtestCompareSelection: {}
+        }
+      }));
+      return finalGraph;
+    },
+
     async refreshGraphVersions(graphId = get().graph?.metadata?.graph_id || "") {
       if (!graphId || graphId === "draft_graph") {
         set({
@@ -412,7 +463,7 @@ export function createGraphStorePersistenceActions(set, get) {
       });
     },
 
-    async compareGraphVersions(graphId, leftVersionId, rightVersionId) {
+    async compareGraphVersions(graphId, leftVersionId, rightVersionId, evidence = {}) {
       if (!graphId || !leftVersionId || !rightVersionId) {
         throw new Error("需要提供图谱 ID 和两个版本 ID。");
       }
@@ -422,9 +473,13 @@ export function createGraphStorePersistenceActions(set, get) {
         graphVersionCompareMessage: ""
       });
       try {
+        const query = new URLSearchParams();
+        if (evidence.leftBacktestId) query.set("left_backtest_id", evidence.leftBacktestId);
+        if (evidence.rightBacktestId) query.set("right_backtest_id", evidence.rightBacktestId);
+        const suffix = query.toString() ? `?${query.toString()}` : "";
         const compare = normalizeGraphVersionCompare(
           await fetchJson(
-            `/graphs/${encodeURIComponent(graphId)}/versions/compare/${encodeURIComponent(leftVersionId)}/${encodeURIComponent(rightVersionId)}`
+            `/graphs/${encodeURIComponent(graphId)}/versions/compare/${encodeURIComponent(leftVersionId)}/${encodeURIComponent(rightVersionId)}${suffix}`
           )
         );
         set({

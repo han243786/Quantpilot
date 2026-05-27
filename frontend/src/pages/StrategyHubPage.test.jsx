@@ -58,7 +58,7 @@ async function waitForHubRosterTable() {
 const STRATEGY_HUB_CARD_NOTES = [
   {
     label: "策略清单",
-    note: "让列表保持在总览管理层面：先筛查策略，再只在必要时深入到单个工作区。"
+    note: "让列表保持在总览管理层面：先浏览策略，再只在必要时深入到单个工作区。"
   },
   {
     label: "策略驾驶舱",

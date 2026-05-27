@@ -20,6 +20,8 @@ pub struct MigrationPackage {
     pub signature: String,
     /// v3.0.0 A-1: QS管道溯源证明
     pub qs_proof: Option<Value>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub strategy_config_preflight: Option<Value>,
 }
 
 /// 测试端 API: 接收前端部署请求, 编译→打包→发送到执行端
@@ -67,13 +69,40 @@ pub async fn deploy_strategy(
         compiled.config_hash.chars().take(8).collect::<String>()
     );
 
-    let pkg = build_migration_package(name, &compiled.core_ir, &graph_json, &params, &compile_id)
-        .map_err(|e| {
-        (
-            axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-            format!("{}", e),
-        )
-    })?;
+    let strategy_config_preflight =
+        crate::strategy_config_api::build_strategy_config_preflight_value(
+            crate::strategy_config_api::StrategyConfigArtifactRequest {
+                strategy_id: Some(graph_id.to_string()),
+                strategy_version: Some(compile_id.clone()),
+                source_mode: Some("strategy_graph".to_string()),
+                graph_json: Some(graph_json.clone()),
+                runtime_config: Some(serde_json::to_value(&protocol).unwrap_or_default()),
+                qs_source: None,
+                core_ir: Some(serde_json::to_value(&compiled.core_ir).unwrap_or_default()),
+                v4_graph: None,
+                capability_snapshot_hash: None,
+                capability_source: None,
+                runtime_mode: Some("PaperSimulated".to_string()),
+                evidence_anchors: vec![crate::strategy_config_api::EvidenceAnchorInput {
+                    anchor_type: "compile".to_string(),
+                    anchor_id: Some(compile_id.clone()),
+                    digest: Some(compiled.config_hash.clone()),
+                    summary: Some("executor deploy compile".to_string()),
+                }],
+                proposal_bindings: vec![],
+                required_execution_capability_sources: vec!["runtime_simulated".to_string()],
+            },
+        )?;
+
+    let mut pkg =
+        build_migration_package(name, &compiled.core_ir, &graph_json, &params, &compile_id)
+            .map_err(|e| {
+                (
+                    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                    format!("{}", e),
+                )
+            })?;
+    pkg.strategy_config_preflight = Some(strategy_config_preflight);
 
     let strategy_id = send_to_executor(&pkg).await.map_err(|e| {
         (
@@ -147,6 +176,7 @@ pub fn build_migration_package(
             "qs_source_hash": qs_source_hash,
             "protocol_hash": protocol_hash,
         })),
+        strategy_config_preflight: None,
     })
 }
 

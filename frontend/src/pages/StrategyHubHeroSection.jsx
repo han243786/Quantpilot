@@ -4,6 +4,9 @@ import { formatCount, formatTime } from "../utils/strategyHubFormatters";
 import { navigateTo, strategyWorkspacePath } from "../router";
 
 export default function StrategyHubHeroSection({ model }) {
+  const openTutorial = () => {
+    window.dispatchEvent(new CustomEvent("qp-open-tutorial"));
+  };
   const headerCards = [
     {
       label: "策略文件",
@@ -40,7 +43,7 @@ export default function StrategyHubHeroSection({ model }) {
             content="这里是策略管理的总入口。先在此查看健康状态、近期研究与运行压力，再只在需要深入编辑或诊断单个策略时进入对应工作区。"
           />
           <button
-            className="primary-btn strategy-hub-hero__cta"
+            className="ad-btn ad-btn--primary strategy-hub-hero__cta"
             onClick={() => void model.openBlankWorkspace()}
             data-testid="strategy-hub-hero-cta"
           >
@@ -50,7 +53,7 @@ export default function StrategyHubHeroSection({ model }) {
 
         <div className="strategy-hub-hero__actions">
           <button
-            className="primary-btn"
+            className="ad-btn ad-btn--primary"
             data-testid="strategy-hub-open-current-workspace"
             onClick={() =>
               navigateTo(strategyWorkspacePath(model.graph.metadata?.graph_id || "draft_graph"))
@@ -59,14 +62,21 @@ export default function StrategyHubHeroSection({ model }) {
             打开当前工作区
           </button>
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
             data-testid="strategy-hub-open-blank-workspace"
             onClick={() => void model.openBlankWorkspace()}
           >
             打开空白工作区
           </button>
           <button
-            className="ghost-btn"
+            className="ad-btn ad-btn--ghost"
+            data-testid="strategy-hub-open-tutorial"
+            onClick={openTutorial}
+          >
+            新手指引
+          </button>
+          <button
+            className="ad-btn ad-btn--ghost"
             onClick={() => void Promise.all([model.refreshRunHistory(), model.refreshBacktestHistory()])}
           >
             刷新活动
@@ -102,48 +112,6 @@ export default function StrategyHubHeroSection({ model }) {
           note="进入工作区前，可先用勾选把管理范围收敛到一小组策略。"
           tone="muted"
         />
-      </section>
-
-      <section className="strategy-hub-toolbar">
-        <label className="strategy-hub-search">
-          <span>搜索</span>
-          <input
-            value={model.query}
-            onChange={(event) => model.setQuery(event.target.value)}
-            placeholder="按策略 ID、名称、编译 ID 或数据集搜索"
-            maxLength={200}
-          />
-        </label>
-
-        <label className="strategy-hub-filter">
-          <span>范围</span>
-          <select value={model.scopeFilter} onChange={(event) => model.setScopeFilter(event.target.value)}>
-            <option value="all">全部策略</option>
-            <option value="current">当前策略</option>
-            <option value="active">有模拟记录</option>
-            <option value="backtested">有回测记录</option>
-          </select>
-        </label>
-
-        <label className="strategy-hub-filter">
-          <span>状态</span>
-          <select value={model.healthFilter} onChange={(event) => model.setHealthFilter(event.target.value)}>
-            <option value="all">全部状态</option>
-            <option value="runnable">可运行</option>
-            <option value="issues">待修复</option>
-            <option value="tracked">仅历史记录</option>
-          </select>
-        </label>
-
-        <label className="strategy-hub-filter">
-          <span>排序</span>
-          <select value={model.sortMode} onChange={(event) => model.setSortMode(event.target.value)}>
-            <option value="activity">最近活动</option>
-            <option value="health">状态优先</option>
-            <option value="research">研究深度</option>
-            <option value="return">最近收益</option>
-          </select>
-        </label>
       </section>
     </>
   );

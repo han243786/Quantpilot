@@ -47,12 +47,14 @@ pub struct VaultData {
     pub entries: BTreeMap<String, CredentialEntry>,
 }
 
+#[allow(dead_code)]
 pub struct ExecutorCredentialVault {
     data: Mutex<VaultData>,
     storage_dir: PathBuf,
     key: [u8; 32],
 }
 
+#[allow(dead_code)]
 impl ExecutorCredentialVault {
     pub fn load(storage_dir: &Path) -> Result<Self> {
         std::fs::create_dir_all(storage_dir)?;
@@ -192,6 +194,7 @@ fn derive_aes_key(machine_key: &[u8; 32], salt: &[u8]) -> [u8; 32] {
     aes_key
 }
 
+#[allow(dead_code)]
 fn encrypt_vault(plaintext: &[u8], machine_key: &[u8; 32]) -> Result<Vec<u8>> {
     let rng = SystemRandom::new();
     let mut salt = [0u8; SALT_LEN];
@@ -235,6 +238,7 @@ fn decrypt_vault(encrypted: &[u8], machine_key: &[u8; 32]) -> Result<VaultData> 
 }
 
 #[cfg(unix)]
+#[allow(dead_code)]
 fn sync_parent_directory(path: &Path) -> std::io::Result<()> {
     if let Some(parent) = path.parent() {
         std::fs::File::open(parent)?.sync_all()?;
@@ -243,6 +247,7 @@ fn sync_parent_directory(path: &Path) -> std::io::Result<()> {
 }
 
 #[cfg(not(unix))]
+#[allow(dead_code)]
 fn sync_parent_directory(_path: &Path) -> std::io::Result<()> {
     Ok(())
 }

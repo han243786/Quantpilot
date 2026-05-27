@@ -3,10 +3,12 @@
 /// POST /api/executor/params/:strategy_id → 提交更新
 
 import { useState, useEffect, useCallback, memo } from "react";
+import { useI18n } from "../i18n";
 
 const API = "/api/executor";
 
 const ParamField = memo(function ParamField({ name, value, onChange }) {
+  const { t } = useI18n();
   const type = typeof value;
   if (type === "boolean") {
     return (
@@ -18,7 +20,7 @@ const ParamField = memo(function ParamField({ name, value, onChange }) {
             checked={value}
             onChange={(e) => onChange(name, e.target.checked)}
           />
-          <span>{value ? "开启" : "关闭"}</span>
+          <span>{value ? t("开启") : t("关闭")}</span>
         </label>
       </div>
     );
@@ -71,6 +73,7 @@ const ParamField = memo(function ParamField({ name, value, onChange }) {
 });
 
 const StrategyParamsPanel = memo(function StrategyParamsPanel({ strategyId }) {
+  const { t } = useI18n();
   const [params, setParams] = useState(null);
   const [edits, setEdits] = useState({});
   const [status, setStatus] = useState("idle"); // idle | pending | saving | saved | error
@@ -126,25 +129,25 @@ const StrategyParamsPanel = memo(function StrategyParamsPanel({ strategyId }) {
   }, []);
 
   if (!strategyId) {
-    return <div className="params-panel-empty">请先部署策略</div>;
+    return <div className="params-panel-empty">{t("请先部署策略")}</div>;
   }
   if (!params) {
-    return <div className="params-panel-empty">加载参数中...</div>;
+    return <div className="params-panel-empty">{t("加载参数中...")}</div>;
   }
   if (Object.keys(params).length === 0) {
-    return <div className="params-panel-empty">该策略无可调参数</div>;
+    return <div className="params-panel-empty">{t("该策略无可调参数")}</div>;
   }
 
   return (
     <div className="params-panel">
       <div className="params-header">
-        <h3>策略参数</h3>
+        <h3>{t("策略参数")}</h3>
         <span className={`params-status params-status--${status}`}>
-          {status === "saving" && "提交中..."}
-          {status === "saved" && "已保存"}
-          {status === "error" && "保存失败"}
-          {status === "pending" && "有未提交的修改"}
-          {status === "idle" && hasChanges && "有未提交的修改"}
+          {status === "saving" && t("提交中...")}
+          {status === "saved" && t("已保存")}
+          {status === "error" && t("保存失败")}
+          {status === "pending" && t("有未提交的修改")}
+          {status === "idle" && hasChanges && t("有未提交的修改")}
         </span>
       </div>
       <div className="params-fields">
@@ -158,14 +161,14 @@ const StrategyParamsPanel = memo(function StrategyParamsPanel({ strategyId }) {
           disabled={!hasChanges || status === "saving"}
           onClick={handleSubmit}
         >
-          {status === "saving" ? "提交中..." : "提交参数"}
+          {status === "saving" ? t("提交中...") : t("提交参数")}
         </button>
         <button
           className="exec-btn"
           disabled={!hasChanges}
           onClick={handleReset}
         >
-          重置
+          {t("重置")}
         </button>
       </div>
     </div>

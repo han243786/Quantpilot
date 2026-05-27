@@ -4616,6 +4616,46 @@ async fn graph_version_endpoints_list_load_and_restore_versions() {
     assert_eq!(old_version["metadata"]["name"], "Versioned Strategy V1");
     assert_eq!(old_version["nodes"][0]["config"]["window_size"], 20);
 
+    let compare_response = app
+        .clone()
+        .oneshot(
+            Request::builder()
+                .uri(format!(
+                    "/api/graphs/versioned_strategy/versions/compare/{version_v1}/{version_v2}"
+                ))
+                .method("GET")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(compare_response.status(), StatusCode::OK);
+    let compare_body = to_bytes(compare_response.into_body(), usize::MAX)
+        .await
+        .unwrap();
+    let compare: serde_json::Value = serde_json::from_slice(&compare_body).unwrap();
+    assert_eq!(
+        compare["strategy_config_diff"]["schema_version"],
+        "quantpilot/v4-strategy-config-diff/v1"
+    );
+    assert_eq!(
+        compare["strategy_config_diff"]["source_digest_changes"][0]["field"],
+        "graph_digest"
+    );
+    assert!(compare["strategy_config_diff"]["domain_changes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|change| change["domain_id"] == "market"));
+    assert_eq!(
+        compare["strategy_config_evidence_diff"]["schema_version"],
+        "quantpilot/v4-strategy-config-evidence-diff/v1"
+    );
+    assert_eq!(
+        compare["strategy_config_evidence_diff"]["status"],
+        "missing"
+    );
+
     sleep(Duration::from_millis(5)).await;
 
     let restore_response = app

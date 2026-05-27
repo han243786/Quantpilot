@@ -58,7 +58,7 @@ export default function DeployButton({ graph, canDeploy, onDeployed }) {
   return (
     <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
       <button
-        className="primary-btn"
+        className="ad-btn ad-btn--primary"
         onClick={handleDeploy}
         disabled={!canDeploy || deploying}
         title={!canDeploy ? t("请先编译策略") : t("部署到执行器 (127.0.0.1:3001)")}

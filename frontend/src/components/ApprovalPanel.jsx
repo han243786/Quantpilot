@@ -8,6 +8,7 @@ import {
   rejectProposal,
   claimProposal,
   fetchSandboxReport,
+  requestSandboxVerification,
   formatApprovalLevel,
   formatReviewState,
   formatVerdict,
@@ -97,6 +98,20 @@ export default function ApprovalPanel() {
       setSandboxReport(report);
     } catch (err) {
       setActionMsg({ type: "error", text: t("沙箱报告不可用: ") + err.message });
+    }
+  };
+
+  const handleRequestSandbox = async (proposalId) => {
+    try {
+      setActionLoading("sandbox");
+      const report = await requestSandboxVerification(proposalId);
+      setSandboxReport(report);
+      setActionMsg({ type: "success", text: t("沙箱验证已重新生成") });
+      await loadApprovals();
+    } catch (err) {
+      setActionMsg({ type: "error", text: t("沙箱重试失败: ") + err.message });
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -243,6 +258,19 @@ export default function ApprovalPanel() {
                       {t("查看沙箱报告")}
                     </button>
                   </p>
+                )}
+                {!approval.sandbox_report_url && (
+                  <div className="approval-sandbox-queue" onClick={(e) => e.stopPropagation()}>
+                    <strong>{t("沙箱待处理")}</strong>
+                    <span>{t("自动沙箱报告尚未生成，可在此手动重新排队验证。")}</span>
+                    <button
+                      className="qp-btn qp-btn--primary qp-btn--sm"
+                      disabled={actionLoading !== null}
+                      onClick={() => handleRequestSandbox(approval.proposal_id)}
+                    >
+                      {actionLoading === "sandbox" ? t("请求中...") : t("重新请求沙箱验证")}
+                    </button>
+                  </div>
                 )}
                 <p><strong>{t("审批ID:")}</strong> {approval.approval_id}</p>
                 <p><strong>{t("审批人:")}</strong> {approval.reviewers_assigned?.join(", ") || t("未指定")}</p>

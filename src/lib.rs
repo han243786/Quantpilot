@@ -50,6 +50,7 @@ pub mod safe_log;
 mod sandbox_verification;
 mod snapshot_service;
 pub mod storage_lifecycle;
+mod strategy_config_api;
 mod test_runner;
 
 use anyhow::{bail, Context};
@@ -147,6 +148,7 @@ use runtime_event_projection::*;
 use runtime_persistence::*;
 use runtime_response_mapping::*;
 use runtime_validation::*;
+use strategy_config_api::*;
 
 const RUN_WINDOW_MS: u64 = 5_000;
 const SSE_EVENT_DELAY_MS: u64 = 350;

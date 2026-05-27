@@ -23,6 +23,7 @@ pub fn build_app_router(state: AppState) -> Router {
     let router = register_snapshot_routes(router);
     let router = register_runbook_routes(router);
     let router = register_chaos_routes(router);
+    let router = register_strategy_config_routes(router);
     // 测试场景路由
     let router = register_test_scenario_routes(router);
     // 凭证管理路由

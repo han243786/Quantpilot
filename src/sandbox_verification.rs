@@ -295,7 +295,7 @@ async fn load_or_fetch_ai_proposal(
     load_runtime_ai_proposal_record(state.ai_proposal_store_dir.as_ref(), proposal_id).await
 }
 
-async fn load_sandbox_report_from_disk(
+pub(super) async fn load_sandbox_report_from_disk(
     store_dir: &FsPath,
     proposal_id: &str,
 ) -> Result<SandboxVerificationReport, (StatusCode, String)> {

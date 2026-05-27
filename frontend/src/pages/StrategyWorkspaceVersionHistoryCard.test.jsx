@@ -124,7 +124,86 @@ describe("StrategyWorkspaceVersionHistoryCard", () => {
               right_value: "55"
             }
           ],
+          strategy_config_diff: {
+            schema_version: "quantpilot/v4-strategy-config-diff/v1",
+            left_artifact_id: "strategy_config_left",
+            right_artifact_id: "strategy_config_right",
+            source_digest_changes: [{ field: "graph_digest" }],
+            domain_changes: [
+              {
+                domain_id: "risk",
+                lifecycle_changed: false,
+                readiness_changed: true,
+                source_refs_changed: true,
+                findings_changed: true
+              }
+            ],
+            runtime_boundary_changed: false,
+            changed: true
+          },
+          strategy_config_evidence_diff: {
+            schema_version: "quantpilot/v4-strategy-config-evidence-diff/v1",
+            left_backtest_id: "bt_left",
+            right_backtest_id: "bt_right",
+            status: "different",
+            changed: true,
+            diagnostics: [],
+            machine_trajectory: {
+              status: "different",
+              left_point_count: 2,
+              right_point_count: 3,
+              left_visited_states: ["machine:observe"],
+              right_visited_states: ["machine:observe", "machine:trade"],
+              transition_hit_changes: [{ key: "machine:observe->trade:*", left_count: 0, right_count: 1 }],
+              left_terminal_state: "machine:observe:*",
+              right_terminal_state: "machine:trade:*",
+              first_divergence: { index: 1, left: "machine:observe:ok:*", right: "machine:trade:ok:*" }
+            },
+            risk_plane: {
+              status: "different",
+              left_decision_count: 1,
+              right_decision_count: 1,
+              left_approved_count: 1,
+              right_approved_count: 0,
+              left_rejected_count: 0,
+              right_rejected_count: 1,
+              action_count_changes: [
+                { key: "allow", left_count: 1, right_count: 0 },
+                { key: "reject", left_count: 0, right_count: 1 }
+              ],
+              reason_count_changes: [{ key: "risk_limit", left_count: 0, right_count: 1 }],
+              first_divergence: { index: 0, left: "risk:allow", right: "risk:reject" }
+            },
+            execution_capability: {
+              status: "same",
+              left_source_count: 1,
+              right_source_count: 1,
+              left_accepted_count: 1,
+              right_accepted_count: 1,
+              left_rejected_count: 0,
+              right_rejected_count: 0,
+              runtime_mode_changes: [],
+              capability_kind_changes: [],
+              capability_source_changes: [],
+              status_changes: [],
+              first_divergence: null
+            },
+            metrics: {
+              status: "different",
+              fields: [
+                { key: "total_return_ratio", status: "different", left_value: "0.01000000", right_value: "0.02000000" }
+              ]
+            }
+          },
           has_changes: true
+        },
+        runtime: {
+          ...initialState.runtime,
+          backtestHistory: [
+            { backtest_id: "bt_left", graph_id: "alpha_strategy", created_at_ms: 1_700_000_000_101 },
+            { backtest_id: "bt_right", graph_id: "alpha_strategy", created_at_ms: 1_700_000_000_202 }
+          ],
+          backtestHistoryStatus: "ready"
         },
         graphVersionCompareStatus: "ready",
         graphVersionCompareMessage: "",
@@ -163,6 +242,12 @@ describe("StrategyWorkspaceVersionHistoryCard", () => {
       fireEvent.click(screen.getByTestId("workspace-version-compare-toggle-1700000000001"));
       fireEvent.click(screen.getByTestId("workspace-version-compare-toggle-1700000000002"));
     });
+    fireEvent.change(screen.getByTestId("workspace-version-left-evidence-select"), {
+      target: { value: "bt_left" }
+    });
+    fireEvent.change(screen.getByTestId("workspace-version-right-evidence-select"), {
+      target: { value: "bt_right" }
+    });
 
     await waitFor(() =>
       expect(screen.getByTestId("workspace-version-compare-selection").textContent).toContain(
@@ -178,7 +263,11 @@ describe("StrategyWorkspaceVersionHistoryCard", () => {
       expect(compareGraphVersions).toHaveBeenCalledWith(
         "alpha_strategy",
         "1700000000001",
-        "1700000000002"
+        "1700000000002",
+        {
+          leftBacktestId: "bt_left",
+          rightBacktestId: "bt_right"
+        }
       )
     );
     expect(screen.getByTestId("workspace-version-compare-card")).toBeInTheDocument();
@@ -187,6 +276,14 @@ describe("StrategyWorkspaceVersionHistoryCard", () => {
     );
     expect(screen.getByTestId("workspace-version-config-row-data_data_1-0").textContent).toContain(
       "window_size"
+    );
+    expect(screen.getByTestId("workspace-version-strategy-config-diff")).toBeInTheDocument();
+    expect(screen.getByTestId("workspace-version-strategy-config-domain-risk").textContent).toContain(
+      "Risk Plane"
+    );
+    expect(screen.getByTestId("workspace-version-strategy-config-evidence-diff")).toBeInTheDocument();
+    expect(screen.getByTestId("workspace-version-evidence-risk-plane").textContent).toContain(
+      "reject: 0->1"
     );
   });
 });

@@ -53,7 +53,7 @@ export function projectStrategyHubRosterRowActionGroups(row) {
           label: "删除策略",
           ariaLabel: `删除策略 ${strategyIdentity}`,
           disabled: false,
-          buttonClassName: "danger-btn compact-btn"
+          buttonClassName: "ad-btn ad-btn--danger compact-btn"
         }
       ]
     }

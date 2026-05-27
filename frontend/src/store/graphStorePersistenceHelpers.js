@@ -507,6 +507,140 @@ function normalizeGraphVersionCompare(compare) {
       : []
   });
 
+  const normalizeStrategyConfigDiff = (diff) => {
+    if (!diff || typeof diff !== "object") return null;
+    return {
+      schema_version: sanitizeText(diff?.schema_version, ""),
+      left_artifact_id: sanitizeText(diff?.left_artifact_id, ""),
+      right_artifact_id: sanitizeText(diff?.right_artifact_id, ""),
+      source_digest_changes: Array.isArray(diff?.source_digest_changes)
+        ? diff.source_digest_changes.map((change) => ({
+            field: sanitizeText(change?.field, ""),
+            before: sanitizeText(change?.before, ""),
+            after: sanitizeText(change?.after, "")
+          }))
+        : [],
+      domain_changes: Array.isArray(diff?.domain_changes)
+        ? diff.domain_changes.map((change) => ({
+            domain_id: sanitizeText(change?.domain_id, ""),
+            lifecycle_changed: Boolean(change?.lifecycle_changed),
+            readiness_changed: Boolean(change?.readiness_changed),
+            source_refs_changed: Boolean(change?.source_refs_changed),
+            findings_changed: Boolean(change?.findings_changed)
+          }))
+        : [],
+      runtime_boundary_changed: Boolean(diff?.runtime_boundary_changed),
+      changed: Boolean(diff?.changed)
+    };
+  };
+
+  const normalizeEvidenceCountChange = (change) => ({
+    key: sanitizeText(change?.key, ""),
+    left_count: typeof change?.left_count === "number" ? change.left_count : 0,
+    right_count: typeof change?.right_count === "number" ? change.right_count : 0
+  });
+
+  const normalizeEvidenceFirstDivergence = (divergence) => {
+    if (!divergence || typeof divergence !== "object") return null;
+    return {
+      index: typeof divergence?.index === "number" ? divergence.index : 0,
+      left: sanitizeText(divergence?.left, ""),
+      right: sanitizeText(divergence?.right, "")
+    };
+  };
+
+  const normalizeStrategyConfigEvidenceDiff = (diff) => {
+    if (!diff || typeof diff !== "object") return null;
+    return {
+      schema_version: sanitizeText(diff?.schema_version, ""),
+      left_backtest_id: sanitizeText(diff?.left_backtest_id, ""),
+      right_backtest_id: sanitizeText(diff?.right_backtest_id, ""),
+      status: sanitizeText(diff?.status, "missing"),
+      changed: Boolean(diff?.changed),
+      diagnostics: Array.isArray(diff?.diagnostics)
+        ? diff.diagnostics.map((finding) => ({
+            severity: sanitizeText(finding?.severity, "info"),
+            code: sanitizeText(finding?.code, ""),
+            message: sanitizeText(finding?.message, "")
+          }))
+        : [],
+      machine_trajectory: diff?.machine_trajectory
+        ? {
+            status: sanitizeText(diff.machine_trajectory?.status, "missing"),
+            left_point_count: typeof diff.machine_trajectory?.left_point_count === "number" ? diff.machine_trajectory.left_point_count : 0,
+            right_point_count: typeof diff.machine_trajectory?.right_point_count === "number" ? diff.machine_trajectory.right_point_count : 0,
+            left_visited_states: Array.isArray(diff.machine_trajectory?.left_visited_states)
+              ? diff.machine_trajectory.left_visited_states.map((value) => sanitizeText(value, "")).filter(Boolean)
+              : [],
+            right_visited_states: Array.isArray(diff.machine_trajectory?.right_visited_states)
+              ? diff.machine_trajectory.right_visited_states.map((value) => sanitizeText(value, "")).filter(Boolean)
+              : [],
+            transition_hit_changes: Array.isArray(diff.machine_trajectory?.transition_hit_changes)
+              ? diff.machine_trajectory.transition_hit_changes.map(normalizeEvidenceCountChange)
+              : [],
+            left_terminal_state: sanitizeText(diff.machine_trajectory?.left_terminal_state, ""),
+            right_terminal_state: sanitizeText(diff.machine_trajectory?.right_terminal_state, ""),
+            first_divergence: normalizeEvidenceFirstDivergence(diff.machine_trajectory?.first_divergence)
+          }
+        : null,
+      risk_plane: diff?.risk_plane
+        ? {
+            status: sanitizeText(diff.risk_plane?.status, "missing"),
+            left_decision_count: typeof diff.risk_plane?.left_decision_count === "number" ? diff.risk_plane.left_decision_count : 0,
+            right_decision_count: typeof diff.risk_plane?.right_decision_count === "number" ? diff.risk_plane.right_decision_count : 0,
+            left_approved_count: typeof diff.risk_plane?.left_approved_count === "number" ? diff.risk_plane.left_approved_count : 0,
+            right_approved_count: typeof diff.risk_plane?.right_approved_count === "number" ? diff.risk_plane.right_approved_count : 0,
+            left_rejected_count: typeof diff.risk_plane?.left_rejected_count === "number" ? diff.risk_plane.left_rejected_count : 0,
+            right_rejected_count: typeof diff.risk_plane?.right_rejected_count === "number" ? diff.risk_plane.right_rejected_count : 0,
+            action_count_changes: Array.isArray(diff.risk_plane?.action_count_changes)
+              ? diff.risk_plane.action_count_changes.map(normalizeEvidenceCountChange)
+              : [],
+            reason_count_changes: Array.isArray(diff.risk_plane?.reason_count_changes)
+              ? diff.risk_plane.reason_count_changes.map(normalizeEvidenceCountChange)
+              : [],
+            first_divergence: normalizeEvidenceFirstDivergence(diff.risk_plane?.first_divergence)
+          }
+        : null,
+      execution_capability: diff?.execution_capability
+        ? {
+            status: sanitizeText(diff.execution_capability?.status, "missing"),
+            left_source_count: typeof diff.execution_capability?.left_source_count === "number" ? diff.execution_capability.left_source_count : 0,
+            right_source_count: typeof diff.execution_capability?.right_source_count === "number" ? diff.execution_capability.right_source_count : 0,
+            left_accepted_count: typeof diff.execution_capability?.left_accepted_count === "number" ? diff.execution_capability.left_accepted_count : 0,
+            right_accepted_count: typeof diff.execution_capability?.right_accepted_count === "number" ? diff.execution_capability.right_accepted_count : 0,
+            left_rejected_count: typeof diff.execution_capability?.left_rejected_count === "number" ? diff.execution_capability.left_rejected_count : 0,
+            right_rejected_count: typeof diff.execution_capability?.right_rejected_count === "number" ? diff.execution_capability.right_rejected_count : 0,
+            runtime_mode_changes: Array.isArray(diff.execution_capability?.runtime_mode_changes)
+              ? diff.execution_capability.runtime_mode_changes.map(normalizeEvidenceCountChange)
+              : [],
+            capability_kind_changes: Array.isArray(diff.execution_capability?.capability_kind_changes)
+              ? diff.execution_capability.capability_kind_changes.map(normalizeEvidenceCountChange)
+              : [],
+            capability_source_changes: Array.isArray(diff.execution_capability?.capability_source_changes)
+              ? diff.execution_capability.capability_source_changes.map(normalizeEvidenceCountChange)
+              : [],
+            status_changes: Array.isArray(diff.execution_capability?.status_changes)
+              ? diff.execution_capability.status_changes.map(normalizeEvidenceCountChange)
+              : [],
+            first_divergence: normalizeEvidenceFirstDivergence(diff.execution_capability?.first_divergence)
+          }
+        : null,
+      metrics: diff?.metrics
+        ? {
+            status: sanitizeText(diff.metrics?.status, "missing"),
+            fields: Array.isArray(diff.metrics?.fields)
+              ? diff.metrics.fields.map((field) => ({
+                  key: sanitizeText(field?.key, ""),
+                  status: sanitizeText(field?.status, "same"),
+                  left_value: sanitizeText(field?.left_value, ""),
+                  right_value: sanitizeText(field?.right_value, "")
+                }))
+              : []
+          }
+        : null
+    };
+  };
+
   return {
     graph_id: sanitizeText(compare?.graph_id, ""),
     left: normalizeEntry(compare?.left),
@@ -526,6 +660,8 @@ function normalizeGraphVersionCompare(compare) {
           right_value: sanitizeText(row?.right_value, "")
         }))
       : [],
+    strategy_config_diff: normalizeStrategyConfigDiff(compare?.strategy_config_diff),
+    strategy_config_evidence_diff: normalizeStrategyConfigEvidenceDiff(compare?.strategy_config_evidence_diff),
     has_changes: Boolean(compare?.has_changes)
   };
 }

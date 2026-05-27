@@ -3,10 +3,12 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { ReactFlow, ReactFlowProvider, Background } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { useI18n } from "../i18n";
 
 const API = "/api/executor";
 
 const StrategyGraphPanel = memo(function StrategyGraphPanel({ strategy }) {
+  const { t } = useI18n();
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
   const [pulsingNodes, setPulsingNodes] = useState(new Set());
@@ -20,7 +22,7 @@ const StrategyGraphPanel = memo(function StrategyGraphPanel({ strategy }) {
       type: "default",
       position: n.position || { x: 120 + i * 300, y: 200 },
       data: {
-        label: `${n.type || "节点"}\n${n.module_key?.split(".").pop() || ""}`,
+        label: `${n.type || t("节点")}\n${n.module_key?.split(".").pop() || ""}`,
       },
       style: { background: "var(--exec-card)", border: "1px solid var(--exec-border)", color: "var(--exec-text)", borderRadius: 4, padding: "8px 16px", fontSize: 12 },
       draggable: false,
@@ -34,7 +36,7 @@ const StrategyGraphPanel = memo(function StrategyGraphPanel({ strategy }) {
     }));
     setNodes(ns);
     setEdges(es);
-  }, [strategy]);
+  }, [strategy, t]);
 
   // v3.5.0: 价格DOM overlay — useRef直接DOM更新, 避免每ticker触发React重渲染
   const priceOverlaysRef = useRef({});

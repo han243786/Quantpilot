@@ -1,3 +1,5 @@
+use futures_util::FutureExt;
+
 fn canonical_runtime_parameter_version(
     target: &RuntimeParameterMutationTarget,
     value: &Value,
@@ -588,13 +590,7 @@ fn validate_hash_identity(
     target: &'static str,
     label: &'static str,
 ) -> Result<(), (StatusCode, String)> {
-    let trimmed = value.trim();
-    let valid = trimmed.strip_prefix("sha256:").is_some_and(|digest| {
-        digest.len() == 64
-            && digest
-                .chars()
-                .all(|ch| ch.is_ascii_digit() || matches!(ch, 'a'..='f'))
-    });
+    let valid = is_valid_hash_identity(value);
     if valid {
         Ok(())
     } else {
@@ -603,6 +599,15 @@ fn validate_hash_identity(
             format!("{target} 必须为 sha256:<64位小写十六进制> 格式 ({label})"),
         ))
     }
+}
+
+fn is_valid_hash_identity(value: &str) -> bool {
+    value.trim().strip_prefix("sha256:").is_some_and(|digest| {
+        digest.len() == 64
+            && digest
+                .chars()
+                .all(|ch| ch.is_ascii_digit() || matches!(ch, 'a'..='f'))
+    })
 }
 
 fn validate_ai_model_identity(model: &RuntimeAiModelIdentity) -> Result<(), (StatusCode, String)> {
@@ -656,6 +661,11 @@ fn ai_proposal_static_check_result(
             message: "AI 提案候选需要说明原因".to_string(),
         });
     }
+    details.extend(validate_ai_proposal_config_domain_binding(
+        request,
+        old_parameter_version,
+        proposed_parameter_version,
+    ));
 
     if is_v4_ai_proposal_target(&request.target)
         && request.source_kind != RuntimeEvidenceSourceKind::Backtest
@@ -664,6 +674,15 @@ fn ai_proposal_static_check_result(
             code: "v4_proposal_requires_backtest_artifact".to_string(),
             target: "source_kind".to_string(),
             message: "v4 AI proposals must be anchored to a v4 backtest artifact and machine trajectory.".to_string(),
+        });
+    }
+    if !is_v4_ai_proposal_target(&request.target)
+        && request.source_kind != RuntimeEvidenceSourceKind::Run
+    {
+        details.push(RuntimeAiProposalStaticCheckDetail {
+            code: "non_v4_proposal_requires_run_source".to_string(),
+            target: "source_kind".to_string(),
+            message: "非 v4 AI proposal 必须绑定 runtime run 证据。".to_string(),
         });
     }
 
@@ -688,6 +707,96 @@ fn ai_proposal_static_check_result(
 
 fn is_v4_ai_proposal_target(target: &RuntimeParameterMutationTarget) -> bool {
     target.module_key.starts_with("v4.") || target.parameter_path.starts_with("v4.")
+}
+
+fn expected_config_domain_for_target(
+    target: &RuntimeParameterMutationTarget,
+) -> StrategyConfigProposalDomain {
+    match target.module_key.as_str() {
+        "builtin.data.kline" | "builtin.data.quote" => StrategyConfigProposalDomain::Market,
+        "builtin.risk.global" => StrategyConfigProposalDomain::Risk,
+        "builtin.execution.paper" | "builtin.runtime.control" => {
+            StrategyConfigProposalDomain::Execution
+        }
+        "v4.machine.param" | "v4.transition.guard" => StrategyConfigProposalDomain::StateMachine,
+        module_key if module_key.starts_with("builtin.intent.") => {
+            StrategyConfigProposalDomain::Observation
+        }
+        module_key if module_key.starts_with("builtin.agent.") => {
+            StrategyConfigProposalDomain::Observation
+        }
+        _ => StrategyConfigProposalDomain::AiGovernance,
+    }
+}
+
+fn validate_ai_proposal_config_domain_binding(
+    request: &CreateRuntimeAiProposalRequest,
+    old_parameter_version: &str,
+    proposed_parameter_version: &str,
+) -> Vec<RuntimeAiProposalStaticCheckDetail> {
+    let Some(binding) = request.config_domain_binding.as_ref() else {
+        return vec![RuntimeAiProposalStaticCheckDetail {
+            code: "strategy_config_ai_binding_required".to_string(),
+            target: "config_domain_binding".to_string(),
+            message: "AI proposal 必须绑定目标策略配置域、修改前后 digest 和证据锚点。"
+                .to_string(),
+        }];
+    };
+
+    let mut details = Vec::new();
+    let expected_domain = expected_config_domain_for_target(&request.target);
+    if binding.target_domain != expected_domain {
+        details.push(RuntimeAiProposalStaticCheckDetail {
+            code: "strategy_config_ai_binding_domain_mismatch".to_string(),
+            target: "config_domain_binding.target_domain".to_string(),
+            message: format!(
+                "AI proposal 目标域与模块不一致: expected={:?}, actual={:?}",
+                expected_domain, binding.target_domain
+            ),
+        });
+    }
+    if !is_valid_hash_identity(&binding.before_digest) {
+        details.push(RuntimeAiProposalStaticCheckDetail {
+            code: "strategy_config_ai_binding_before_digest_invalid".to_string(),
+            target: "config_domain_binding.before_digest".to_string(),
+            message: "AI proposal 修改前 digest 必须为 sha256:<64位小写十六进制>。"
+                .to_string(),
+        });
+    }
+    if !is_valid_hash_identity(&binding.after_digest) {
+        details.push(RuntimeAiProposalStaticCheckDetail {
+            code: "strategy_config_ai_binding_after_digest_invalid".to_string(),
+            target: "config_domain_binding.after_digest".to_string(),
+            message: "AI proposal 修改后 digest 必须为 sha256:<64位小写十六进制>。"
+                .to_string(),
+        });
+    }
+    if binding.before_digest != old_parameter_version {
+        details.push(RuntimeAiProposalStaticCheckDetail {
+            code: "strategy_config_ai_binding_before_digest_mismatch".to_string(),
+            target: "config_domain_binding.before_digest".to_string(),
+            message: "AI proposal 修改前 digest 与当前策略参数版本不一致。".to_string(),
+        });
+    }
+    if binding.after_digest != proposed_parameter_version {
+        details.push(RuntimeAiProposalStaticCheckDetail {
+            code: "strategy_config_ai_binding_after_digest_mismatch".to_string(),
+            target: "config_domain_binding.after_digest".to_string(),
+            message: "AI proposal 修改后 digest 与候选策略参数版本不一致。".to_string(),
+        });
+    }
+    if binding
+        .evidence_anchor_ids
+        .iter()
+        .all(|anchor| anchor.trim().is_empty())
+    {
+        details.push(RuntimeAiProposalStaticCheckDetail {
+            code: "strategy_config_ai_binding_evidence_required".to_string(),
+            target: "config_domain_binding.evidence_anchor_ids".to_string(),
+            message: "AI proposal 必须声明至少一个配置证据锚点。".to_string(),
+        });
+    }
+    details
 }
 
 #[allow(dead_code)]
@@ -732,6 +841,51 @@ fn analyze_v4_backtest_artifact_for_ai(
         "risk_reject_ratio": risk_reject_ratio,
         "execution_fill_rate": fill_rate,
     })
+}
+
+struct RuntimeAiProposalSourceContext {
+    graph_id: String,
+    event_count: usize,
+    current_sequence_no: u64,
+    governance: RuntimeGovernanceSnapshot,
+}
+
+async fn load_runtime_ai_proposal_source_context(
+    state: &AppState,
+    user_id: &auth::UserId,
+    source_kind: RuntimeEvidenceSourceKind,
+    source_id: &str,
+) -> Result<RuntimeAiProposalSourceContext, (StatusCode, String)> {
+    match source_kind {
+        RuntimeEvidenceSourceKind::Run => {
+            let source = load_run_record_from_state(state, user_id, source_id).await?;
+            let current_sequence_no = source
+                .events
+                .last()
+                .map(|event| event.envelope.sequence_no)
+                .unwrap_or(source.events.len() as u64);
+            Ok(RuntimeAiProposalSourceContext {
+                graph_id: source.graph_id,
+                event_count: source.events.len(),
+                current_sequence_no,
+                governance: source.governance,
+            })
+        }
+        RuntimeEvidenceSourceKind::Backtest => {
+            let source = load_backtest_record_from_state(state, user_id, source_id).await?;
+            let current_sequence_no = source
+                .events
+                .last()
+                .map(|event| event.envelope.sequence_no)
+                .unwrap_or(source.events.len() as u64);
+            Ok(RuntimeAiProposalSourceContext {
+                graph_id: source.graph_id,
+                event_count: source.events.len(),
+                current_sequence_no,
+                governance: source.governance,
+            })
+        }
+    }
 }
 
 fn runtime_ai_proposal_governance(
@@ -866,6 +1020,7 @@ fn build_runtime_ai_proposal_event(
             "actor": &record.actor,
             "reason": &record.reason,
             "governance": &record.governance,
+            "config_domain_binding": &record.config_domain_binding,
         }),
         envelope: RuntimeEventEnvelope::default(),
     }
@@ -904,6 +1059,81 @@ async fn persist_runtime_ai_proposal_transition(
     Ok(())
 }
 
+async fn load_runtime_ai_proposal_for_user(
+    state: &AppState,
+    user_id: &auth::UserId,
+    proposal_id: &str,
+) -> Result<RuntimeAiProposalRecord, (StatusCode, String)> {
+    let scoped = auth::scoped_key(user_id, proposal_id);
+    if let Some(record) = state.ai_proposals.read().await.get(&scoped).cloned() {
+        return Ok(record);
+    }
+    load_runtime_ai_proposal_record(state.ai_proposal_store_dir.as_ref(), proposal_id).await
+}
+
+async fn load_sandbox_report_for_proposal(
+    state: &AppState,
+    proposal_id: &str,
+) -> Result<SandboxVerificationReport, (StatusCode, String)> {
+    if let Some(report) = state.sandbox_reports.read().await.get(proposal_id).cloned() {
+        return Ok(report);
+    }
+    super::sandbox_verification::load_sandbox_report_from_disk(
+        state.sandbox_report_store_dir.as_ref(),
+        proposal_id,
+    )
+    .await
+}
+
+async fn ensure_ai_proposal_can_be_approved(
+    state: &AppState,
+    proposal: &RuntimeAiProposalRecord,
+) -> Result<(), (StatusCode, String)> {
+    if proposal.config_domain_binding.is_none() {
+        return Err((
+            StatusCode::LOCKED,
+            json!({
+                "error": "strategy_config_ai_binding_required",
+                "message": "AI proposal 缺少策略配置域绑定，不能通过审批。",
+            })
+            .to_string(),
+        ));
+    }
+    if proposal.status != RuntimeAiProposalStatus::StaticCheckPassed {
+        return Err((
+            StatusCode::LOCKED,
+            json!({
+                "error": "ai_proposal_static_check_required",
+                "message": "AI proposal 必须先通过静态检查，才能进入审批通过路径。",
+            })
+            .to_string(),
+        ));
+    }
+    let sandbox_report = load_sandbox_report_for_proposal(state, &proposal.ai_proposal_id)
+        .await
+        .map_err(|_| {
+            (
+                StatusCode::LOCKED,
+                json!({
+                    "error": "ai_proposal_sandbox_required",
+                    "message": "AI proposal 必须先生成沙箱验证报告，才能通过审批。",
+                })
+                .to_string(),
+            )
+        })?;
+    if sandbox_report.verdict == SandboxVerdict::CandidateUnderperforms {
+        return Err((
+            StatusCode::LOCKED,
+            json!({
+                "error": "ai_proposal_sandbox_failed",
+                "message": "AI proposal 沙箱验证未通过，不能通过审批。",
+            })
+            .to_string(),
+        ));
+    }
+    Ok(())
+}
+
 async fn create_runtime_ai_proposal(
     user_id: auth::UserId,
     State(state): State<AppState>,
@@ -929,12 +1159,6 @@ async fn create_runtime_ai_proposal(
         return Err(json_bad_request(
             "ai_proposal_denied",
             "AI 写入策略必须为 proposal_only 才能创建提案",
-        ));
-    }
-    if request.source_kind != RuntimeEvidenceSourceKind::Run {
-        return Err(json_bad_request(
-            "bad_request",
-            "AI 提案候选目前需要 source_kind 为 `run`",
         ));
     }
     validate_runtime_parameter_mutation_target(&request.target)?;
@@ -969,7 +1193,13 @@ async fn create_runtime_ai_proposal(
     })?;
     let actor = normalize_actor_identity(Some(actor));
 
-    let source = load_run_record_from_state(&state, &user_id, &request.source_id).await?;
+    let source = load_runtime_ai_proposal_source_context(
+        &state,
+        &user_id,
+        request.source_kind,
+        &request.source_id,
+    )
+    .await?;
     let old_parameter_version =
         canonical_runtime_parameter_version(&request.target, &request.old_value)?;
     let proposed_parameter_version =
@@ -979,14 +1209,14 @@ async fn create_runtime_ai_proposal(
         &request,
         &old_parameter_version,
         &proposed_parameter_version,
-        source.events.len(),
+        source.event_count,
         now_ms,
     );
     let status = static_check.status;
     let ai_proposal_id = runtime_ai_proposal_record_id(
         &request,
         now_ms,
-        source.events.len(),
+        source.event_count,
         &proposed_parameter_version,
     )?;
     let governance = runtime_ai_proposal_governance(
@@ -998,7 +1228,7 @@ async fn create_runtime_ai_proposal(
         source_kind: request.source_kind,
         source_id: request.source_id.clone(),
         graph_id: source.graph_id.clone(),
-        event_count: source.events.len(),
+        event_count: source.event_count,
         evidence_hash: request.evidence_hash.clone(),
     };
     let mut record = RuntimeAiProposalRecord {
@@ -1021,6 +1251,7 @@ async fn create_runtime_ai_proposal(
         actor,
         reason: request.reason.trim().to_string(),
         governance,
+        config_domain_binding: request.config_domain_binding.clone(),
         lifecycle: Vec::new(),
         created_at_ms: now_ms,
         updated_at_ms: now_ms,
@@ -1030,36 +1261,33 @@ async fn create_runtime_ai_proposal(
         build_runtime_ai_proposal_event(&record, RuntimeAiProposalStatus::Submitted, now_ms);
     let static_event_time_ms = now_ms.saturating_add(1);
     let static_event = build_runtime_ai_proposal_event(&record, status, static_event_time_ms);
-    let current_sequence_no = source
-        .events
-        .last()
-        .map(|event| event.envelope.sequence_no)
-        .unwrap_or(source.events.len() as u64);
     record.lifecycle.push(ai_proposal_lifecycle_entry(
         RuntimeAiProposalStatus::Submitted,
         &created_event,
-        current_sequence_no + 1,
+        source.current_sequence_no + 1,
         "AI proposal candidate submitted",
     ));
     record.lifecycle.push(ai_proposal_lifecycle_entry(
         status,
         &static_event,
-        current_sequence_no + 2,
+        source.current_sequence_no + 2,
         record.static_check.message.clone(),
     ));
     let event_governance =
         governance_with_parameter_version(&source.governance, &record.old_parameter_version);
-    append_parameter_mutation_events_to_run(
-        &state,
-        &user_id,
-        &request.source_id,
-        vec![
-            (created_event, event_governance.clone()),
-            (static_event, event_governance),
-        ],
-        None,
-    )
-    .await?;
+    if request.source_kind == RuntimeEvidenceSourceKind::Run {
+        append_parameter_mutation_events_to_run(
+            &state,
+            &user_id,
+            &request.source_id,
+            vec![
+                (created_event, event_governance.clone()),
+                (static_event, event_governance),
+            ],
+            None,
+        )
+        .await?;
+    }
     // Block 5 P1-4: 静态校验通过后自动创建审批单并触发沙箱验证
     if status == RuntimeAiProposalStatus::StaticCheckPassed {
         let proposal_id = record.ai_proposal_id.clone();
@@ -1118,12 +1346,11 @@ async fn create_runtime_ai_proposal(
             };
             let mut success = false;
             for attempt in 0u32..3 {
-                let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                    let rt = tokio::runtime::Handle::current();
-                    rt.block_on(sandbox_verification::run_sandbox_verification(
-                        &state_clone, &sandbox_request,
-                    ))
-                }));
+                let result = std::panic::AssertUnwindSafe(
+                    sandbox_verification::run_sandbox_verification(&state_clone, &sandbox_request),
+                )
+                .catch_unwind()
+                .await;
                 match result {
                     Ok(Ok(_report)) => {
                         success = true;
@@ -1165,6 +1392,31 @@ async fn create_runtime_ai_proposal(
                     let _ = persist_approval(&state_clone.approval_store_dir, &approval).await;
                 }
             } else {
+                let failed_at_ms = current_time_ms();
+                let approval_to_persist = {
+                    let mut approvals = state_clone.approval_records.write().await;
+                    let mut updated = None;
+                    for approval in approvals.values_mut() {
+                        if approval.proposal_id == pid {
+                            approval.lifecycle.push(RuntimeApprovalLifecycleEntry {
+                                review_state: approval.review_state,
+                                event_id: format!("event_sandbox_failed_{}", failed_at_ms),
+                                sequence_no: approval.lifecycle.len() as u64 + 1,
+                                occurred_at_ms: failed_at_ms,
+                                reason_code: "SANDBOX_VERIFICATION_FAILED".to_string(),
+                                message: "沙箱验证 3 次尝试全部失败，审批通过路径保持阻断。"
+                                    .to_string(),
+                                actor_id: None,
+                            });
+                            updated = Some(approval.clone());
+                            break;
+                        }
+                    }
+                    updated
+                };
+                if let Some(approval) = approval_to_persist {
+                    let _ = persist_approval(&state_clone.approval_store_dir, &approval).await;
+                }
                 safe_eprintln!("[sandbox] 沙箱验证 3 次尝试全部失败, proposal={}", pid);
             }
         });
@@ -1823,6 +2075,8 @@ async fn approve_ai_proposal(
     Json(request): Json<ApprovalActionRequest>,
 ) -> Result<Json<RuntimeApprovalRecord>, (StatusCode, String)> {
     let now_ms = current_time_ms();
+    let proposal = load_runtime_ai_proposal_for_user(&state, &user_id, &proposal_id).await?;
+    ensure_ai_proposal_can_be_approved(&state, &proposal).await?;
     // v1.1.2: 持有写锁完成整个读-改-写，消除 TOCTOU 竞态
     let mut approvals = state.approval_records.write().await;
     let approval = approvals
@@ -2079,11 +2333,86 @@ struct ResearchMonthlyQuery {
 mod v4_ai_proposal_tests {
     use super::*;
 
+    fn hash(ch: char) -> String {
+        format!("sha256:{}", ch.to_string().repeat(64))
+    }
+
     fn v4_target() -> RuntimeParameterMutationTarget {
         RuntimeParameterMutationTarget {
             node_id: "compat.execution".to_string(),
             module_key: "v4.machine.param".to_string(),
             parameter_path: "v4.machine.timeout_ms".to_string(),
+        }
+    }
+
+    fn v4_binding(
+        before_digest: String,
+        after_digest: String,
+    ) -> RuntimeAiProposalConfigDomainBinding {
+        RuntimeAiProposalConfigDomainBinding {
+            target_domain: StrategyConfigProposalDomain::StateMachine,
+            before_digest,
+            after_digest,
+            evidence_anchor_ids: vec!["backtest:bt1".to_string()],
+        }
+    }
+
+    fn sample_ai_proposal(
+        status: RuntimeAiProposalStatus,
+        binding: Option<RuntimeAiProposalConfigDomainBinding>,
+    ) -> RuntimeAiProposalRecord {
+        RuntimeAiProposalRecord {
+            ai_proposal_id: "ai_proposal_test".to_string(),
+            source_kind: RuntimeEvidenceSourceKind::Backtest,
+            source_id: "bt1".to_string(),
+            graph_id: "graph-v4".to_string(),
+            source_evidence: RuntimeAiProposalSourceEvidence {
+                source_kind: RuntimeEvidenceSourceKind::Backtest,
+                source_id: "bt1".to_string(),
+                graph_id: "graph-v4".to_string(),
+                event_count: 1,
+                evidence_hash: hash('a'),
+            },
+            target: v4_target(),
+            old_value: json!(1),
+            new_value: json!(2),
+            old_parameter_version: hash('b'),
+            proposed_parameter_version: hash('c'),
+            status,
+            denial_reason: None,
+            static_check: RuntimeAiProposalStaticCheckResult {
+                status,
+                reason_code: "AI_PROPOSAL_STATIC_CHECK_PASSED".to_string(),
+                message: "AI proposal candidate passed static validation".to_string(),
+                checked_at_ms: 1,
+                details: Vec::new(),
+            },
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: hash('d'),
+            evidence_hash: hash('a'),
+            actor: ActorIdentity {
+                actor_id: "ai".to_string(),
+                display_name: "AI".to_string(),
+            },
+            reason: "Tune v4 machine timeout from trajectory evidence".to_string(),
+            governance: RuntimeAiProposalGovernance {
+                capability_hash: hash('e'),
+                deployment_revision: hash('f'),
+                strategy_version: "v1".to_string(),
+                previous_parameter_version: hash('b'),
+                proposed_parameter_version: hash('c'),
+                permission_boundary_model_version: "quantpilot/permission-boundary/v1"
+                    .to_string(),
+                ai_write_policy: "proposal_only".to_string(),
+            },
+            config_domain_binding: binding,
+            lifecycle: Vec::new(),
+            created_at_ms: 1,
+            updated_at_ms: 1,
         }
     }
 
@@ -2105,6 +2434,7 @@ mod v4_ai_proposal_tests {
             actor: None,
             reason: "Tune v4 machine timeout from trajectory evidence".to_string(),
             capability_context: None,
+            config_domain_binding: Some(v4_binding("old".to_string(), "new".to_string())),
         };
 
         let result = ai_proposal_static_check_result(&request, "old", "new", 1, 1);
@@ -2114,6 +2444,132 @@ mod v4_ai_proposal_tests {
             .details
             .iter()
             .any(|detail| detail.code == "v4_proposal_requires_backtest_artifact"));
+    }
+
+    #[test]
+    fn ai_proposal_static_check_requires_config_domain_binding() {
+        let old = hash('b');
+        let new = hash('c');
+        let request = CreateRuntimeAiProposalRequest {
+            source_kind: RuntimeEvidenceSourceKind::Backtest,
+            source_id: "bt1".to_string(),
+            target: v4_target(),
+            old_value: json!(1),
+            new_value: json!(2),
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: hash('d'),
+            evidence_hash: hash('a'),
+            actor: None,
+            reason: "Tune v4 machine timeout from trajectory evidence".to_string(),
+            capability_context: None,
+            config_domain_binding: None,
+        };
+
+        let result = ai_proposal_static_check_result(&request, &old, &new, 1, 1);
+
+        assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckFailed);
+        assert!(result
+            .details
+            .iter()
+            .any(|detail| detail.code == "strategy_config_ai_binding_required"));
+    }
+
+    #[test]
+    fn ai_proposal_static_check_accepts_matching_config_domain_binding() {
+        let old = hash('b');
+        let new = hash('c');
+        let request = CreateRuntimeAiProposalRequest {
+            source_kind: RuntimeEvidenceSourceKind::Backtest,
+            source_id: "bt1".to_string(),
+            target: v4_target(),
+            old_value: json!(1),
+            new_value: json!(2),
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: hash('d'),
+            evidence_hash: hash('a'),
+            actor: None,
+            reason: "Tune v4 machine timeout from trajectory evidence".to_string(),
+            capability_context: None,
+            config_domain_binding: Some(v4_binding(old.clone(), new.clone())),
+        };
+
+        let result = ai_proposal_static_check_result(&request, &old, &new, 1, 1);
+
+        assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckPassed);
+        assert!(result.details.is_empty());
+    }
+
+    #[tokio::test]
+    async fn ai_proposal_approval_requires_binding_and_sandbox_report() {
+        let root = std::env::temp_dir().join(format!(
+            "quantpilot_ai_binding_test_{}",
+            current_time_ms()
+        ));
+        let state = crate::app_runtime_helpers::new_app_state(
+            root.join("graphs"),
+            root.join("runs"),
+            root.join("backtests"),
+        );
+        let old = hash('b');
+        let new = hash('c');
+        let unbound =
+            sample_ai_proposal(RuntimeAiProposalStatus::StaticCheckPassed, None);
+        let error = ensure_ai_proposal_can_be_approved(&state, &unbound)
+            .await
+            .unwrap_err();
+        assert_eq!(error.0, StatusCode::LOCKED);
+        assert!(error.1.contains("strategy_config_ai_binding_required"));
+
+        let bound = sample_ai_proposal(
+            RuntimeAiProposalStatus::StaticCheckPassed,
+            Some(v4_binding(old, new)),
+        );
+        let missing_sandbox = ensure_ai_proposal_can_be_approved(&state, &bound)
+            .await
+            .unwrap_err();
+        assert_eq!(missing_sandbox.0, StatusCode::LOCKED);
+        assert!(missing_sandbox.1.contains("ai_proposal_sandbox_required"));
+
+        state.sandbox_reports.write().await.insert(
+            bound.ai_proposal_id.clone(),
+            SandboxVerificationReport {
+                proposal_id: bound.ai_proposal_id.clone(),
+                sandbox_run_id: "sbx-run-test".to_string(),
+                replay_window: ReplayWindow {
+                    from_ts: "2026-05-01T00:00:00Z".to_string(),
+                    to_ts: "2026-05-02T00:00:00Z".to_string(),
+                },
+                baseline_metrics: SandboxMetrics::default(),
+                candidate_metrics: SandboxMetrics::default(),
+                diffs: SandboxMetricsDiff {
+                    total_return_ratio: "+0.0000".to_string(),
+                    max_drawdown_ratio: "+0.0000".to_string(),
+                    sharpe_ratio: "+0.0000".to_string(),
+                    win_rate: "+0.0000".to_string(),
+                    avg_hold_hours: "+0.0000".to_string(),
+                    turnover_ratio: "+0.0000".to_string(),
+                    profit_factor: "+0.0000".to_string(),
+                    calmar_ratio: "+0.0000".to_string(),
+                },
+                verdict: SandboxVerdict::CandidateComparable,
+                warnings: Vec::new(),
+                replay_fidelity: "partial".to_string(),
+                generated_at_ms: 1,
+            },
+        );
+
+        ensure_ai_proposal_can_be_approved(&state, &bound)
+            .await
+            .unwrap();
+        let _ = std::fs::remove_dir_all(root);
     }
 
     #[test]
