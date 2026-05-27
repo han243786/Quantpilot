@@ -80,10 +80,11 @@ system.entry.backend_process
 
 | 缺口 | 处理 |
 | --- | --- |
-| 当前模块树只有 `system.entry` 种子节点 | 后续 system 抽离前，按本文件补 10 个叶子白箱 |
+| 当前模块树只有 `system.entry` 种子节点 | 后续 system 抽离前，按本文件和 `12-system十叶模块等价基线.md` 补 10 个叶子白箱 |
 | `system.build_delivery` 跨 CI、容器、release | 不作为 v4.16 首批，避免和测试资产汰换纠缠 |
 | `src-tauri/gen/schemas/*` 是生成资产 | 先作为资产叶子登记，不单独抽离 |
 | `system.entry.backend_process` 已完成抽离 | `run_server` 与 `run_api_server` 已迁入 `src/system/entry/backend_process.rs`；`new_app_state` 和 `build_app_router` 按职责留在原模块 |
+| 10 个叶子的功能等价基线 | `12-system十叶模块等价基线.md` 已建立 S1-S10 的等价证据、继续抽离状态和暂停点 |
 
 ---
 

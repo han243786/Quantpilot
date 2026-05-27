@@ -1329,9 +1329,12 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/08-system大模块分层统计.md` — v4.16.0 system 大模块分层统计，确认 3 层和 10 个叶子模块
 - `markdown/06-milestones/v4.16.0/09-system.entry首批抽离记录.md` — v4.16.0 system 试水抽离记录，确认 `system.entry.backend_process` 第一刀和兼容桥
 - `markdown/06-milestones/v4.16.0/10-system抽离完成记录.md` — v4.16.0 system 抽离完成记录，确认 `run_api_server` 与启动期 helper 已迁入 `system.entry.backend_process`
+- `markdown/06-milestones/v4.16.0/11-system抽离经验回填.md` — v4.16.0 system 抽离经验回填，固化 public/内部实现分类、owner 复核和未迁移边界准则
+- `markdown/06-milestones/v4.16.0/12-system十叶模块等价基线.md` — v4.16.0 system 10 叶模块等价基线，标定 S1-S10 的功能等价证据、继续抽离状态和暂停点
+- `markdown/06-milestones/v4.16.0/13-递归模块化全局根流程.md` — v4.16.0 递归模块化全局根流程，定义顶层模块、叶子抽离、叶子整理、细分价值判断和全量模块树收束
 
 当前治理基线: `v4.15.0/` — 三矩阵完全接管，后续常态维护模块树、全量树和治理 gate。
-当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；已决策先走 BE-001 后端接口边界，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
+当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；已决策先走 BE-001 后端接口边界，system 抽离经验已回填为后续抽离准则，system 10 叶等价基线已铺好，递归模块化流程已明确，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
 
 ### 7.7 总览 (markdown/10-overview/)
 

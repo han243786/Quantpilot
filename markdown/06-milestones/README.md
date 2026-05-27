@@ -22,6 +22,9 @@
 | 08 | `v4.16.0/08-system大模块分层统计.md` | 确定 system 分 3 层、10 个叶子模块，并说明与 BE-001 的关系 | 📋 已创建 |
 | 09 | `v4.16.0/09-system.entry首批抽离记录.md` | system 试水抽离第一刀，将 public `run_server` 归入 `system.entry.backend_process` 并保留兼容入口 | ✅ 已完成 |
 | 10 | `v4.16.0/10-system抽离完成记录.md` | system 抽离完成记录，将 `run_api_server` 与启动期 helper 归入 `system.entry.backend_process` | ✅ 已完成 |
+| 11 | `v4.16.0/11-system抽离经验回填.md` | 将 system 试水经验回填为 public/内部实现分类、owner 复核和未迁移边界准则 | ✅ 已完成 |
+| 12 | `v4.16.0/12-system十叶模块等价基线.md` | 为 system 10 个叶子模块建立功能等价证据、继续抽离状态和暂停点 | ✅ 已完成 |
+| 13 | `v4.16.0/13-递归模块化全局根流程.md` | 固化顶层模块、叶子抽离、叶子整理、细分价值判断和全局根收束流程 | ✅ 已完成 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

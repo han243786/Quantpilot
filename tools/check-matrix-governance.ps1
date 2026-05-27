@@ -155,7 +155,10 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/07-*.md", "v4.16 top module statistics"),
     @("markdown/06-milestones/v4.16.0/08-*.md", "v4.16 system module split statistics"),
     @("markdown/06-milestones/v4.16.0/09-*.md", "v4.16 system entry extraction record"),
-    @("markdown/06-milestones/v4.16.0/10-*.md", "v4.16 system extraction completion record")
+    @("markdown/06-milestones/v4.16.0/10-*.md", "v4.16 system extraction completion record"),
+    @("markdown/06-milestones/v4.16.0/11-*.md", "v4.16 system extraction lessons backfill"),
+    @("markdown/06-milestones/v4.16.0/12-*.md", "v4.16 system ten leaf equivalence baseline"),
+    @("markdown/06-milestones/v4.16.0/13-*.md", "v4.16 recursive modularization global root flow")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -187,6 +190,9 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/08-", "full feature tree v4.16 system module split statistics"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/09-", "full feature tree v4.16 system entry extraction record"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/10-", "full feature tree v4.16 system extraction completion record"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/11-", "full feature tree v4.16 system extraction lessons backfill"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/12-", "full feature tree v4.16 system ten leaf baseline"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/13-", "full feature tree v4.16 recursive modularization flow"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/03-", "module tree v4.16 backend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/04-", "module tree v4.16 frontend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/05-", "module tree v4.16 test asset register"),
@@ -195,6 +201,9 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/08-", "module tree v4.16 system module split statistics"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/09-", "module tree v4.16 system entry extraction record"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/10-", "module tree v4.16 system extraction completion record"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/11-", "module tree v4.16 system extraction lessons backfill"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/12-", "module tree v4.16 system ten leaf baseline"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/13-", "module tree v4.16 recursive modularization flow"),
     @("markdown/10-overview/overview-docs-index.md", "v4.16.0", "docs index v4.16 plan"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "v4.16.0", "current roadmap v4.16 plan")
 )
@@ -299,6 +308,46 @@ $v416LandingFiles = @(
         @("new_app_state", "state factory boundary"),
         @("build_app_router", "backend interface boundary bridge"),
         @("cargo check -p quantpilot", "rust check gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/11-*.md", @(
+        @("system.entry.backend_process", "system entry backend process module"),
+        @("public", "public method classification"),
+        @("run_api_server", "internal startup implementation example"),
+        @("new_app_state", "state factory retained boundary"),
+        @("build_app_router", "backend interface retained boundary"),
+        @("BE-001", "backend interface boundary reuse"),
+        @("owner", "owner review rule"),
+        @("tools/check-matrix-governance.ps1", "matrix governance gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/12-*.md", @(
+        @("system.entry.launch_scripts", "system launch scripts leaf"),
+        @("system.entry.backend_process", "system backend process leaf"),
+        @("system.desktop_shell.tauri_runtime", "system tauri runtime leaf"),
+        @("system.desktop_shell.tauri_config", "system tauri config leaf"),
+        @("system.desktop_shell.assets_schema", "system assets schema leaf"),
+        @("system.build_delivery.workspace_manifest", "system workspace manifest leaf"),
+        @("system.build_delivery.desktop_build_scripts", "system desktop build scripts leaf"),
+        @("system.build_delivery.container_proxy", "system container proxy leaf"),
+        @("system.build_delivery.ci_release", "system ci release leaf"),
+        @("system.runtime_profile.config_examples", "system runtime profile config examples leaf"),
+        @("public", "public entry marker"),
+        @("owner", "owner baseline marker"),
+        @("cargo check -p quantpilot", "backend check gate"),
+        @("cargo check -p quantpilot-tauri", "tauri check gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/13-*.md", @(
+        @("root.system", "root system module"),
+        @("root.backend", "root backend module"),
+        @("root.frontend", "root frontend module"),
+        @("root.executor", "root executor module"),
+        @("root.contracts", "root contracts module"),
+        @("root.docs", "root docs module"),
+        @("public", "public entry marker"),
+        @("owner", "owner review marker"),
+        @((U "6YCS5b2S"), "recursive marker"),
+        @((U "5YWo5bGA5qC5"), "global root marker"),
+        @((U "57uG5YiG5Lu35YC8"), "split value marker"),
+        @("tools/check-full-feature-tree.ps1", "full feature tree gate")
     ))
 )
 
