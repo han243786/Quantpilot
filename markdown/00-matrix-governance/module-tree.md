@@ -550,9 +550,13 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 
 **层级路径**: `root.backend.strategy_config`
 **父模块**: `backend`
-**状态**: v4.16 BE-001C 单叶 closeout 完成。当前 facade 已整理；后续值得按 artifact、preflight、diff、AI proposal binding 建立 L3 等价基线。
+**状态**: v4.16 BE-001D L3 模块壳抽离完成。artifact、preflight、diff、AI proposal binding 四个子叶 facade 已落位；handler/schema 仍保留在 `src/strategy_config_api.rs`。
 **真实文件**:
 - `src/backend/strategy_config.rs`
+- `src/backend/strategy_config/artifact.rs`
+- `src/backend/strategy_config/preflight.rs`
+- `src/backend/strategy_config/diff.rs`
+- `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/strategy_config_api.rs`
 - `tests/api_ai_proposal.rs`
 
@@ -571,6 +575,104 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 
 **回归保护**:
 `cargo test -p quantpilot strategy_config`；`powershell tools/check-openapi-route-diff.ps1`。
+
+### 3.4.1 `backend.strategy_config.artifact`
+
+**层级路径**: `root.backend.strategy_config.artifact`
+**父模块**: `backend.strategy_config`
+**状态**: v4.16 BE-001D L3 facade 已落位。只拥有 artifact route facade，不拥有 artifact handler/schema。
+**真实文件**:
+- `src/backend/strategy_config/artifact.rs`
+- `src/strategy_config_api.rs`
+
+**职责**:
+登记 v4 strategy config artifact 的 L3 子叶边界。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `register_strategy_config_artifact_route` | Axum Router | artifact route | `backend.strategy_config::register_routes` | 不得迁移 `StrategyConfigArtifact` schema |
+| `/api/v1/strategy-config/artifact` | strategy config request | strategy config artifact | 前端配置台、导出路径 | 不得绕过 QS/Core IR 证据 |
+
+**父级通信规则**:
+artifact 子叶只能经 `backend.strategy_config` 注册 route；不得直接横向调用 runtime state 或 graph compile 内部状态。
+
+**回归保护**:
+`cargo test -p quantpilot strategy_config`；涉及 API 时运行 `cargo test -p quantpilot --test api_ai_proposal` 和 route diff。
+
+### 3.4.2 `backend.strategy_config.preflight`
+
+**层级路径**: `root.backend.strategy_config.preflight`
+**父模块**: `backend.strategy_config`
+**状态**: v4.16 BE-001D L3 facade 已落位。只拥有 preflight route facade，不拥有 preflight handler/schema。
+**真实文件**:
+- `src/backend/strategy_config/preflight.rs`
+- `src/strategy_config_api.rs`
+
+**职责**:
+登记 strategy config preflight readiness、runtime boundary 和拒绝原因的 L3 子叶边界。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `register_strategy_config_preflight_route` | Axum Router | preflight route | `backend.strategy_config::register_routes` | 不得静默降级 unsupported |
+| `/api/v1/strategy-config/preflight` | artifact 或策略输入 | readiness report | 前端、执行前核验 | 不得绕过 capability 真源 |
+
+**父级通信规则**:
+preflight 子叶只能通过 `backend.strategy_config` 暴露 API；不得直接替代 runtime 或 executor 的执行状态判断。
+
+**回归保护**:
+`cargo test -p quantpilot strategy_config`；涉及 capability 时运行 capability governance 检查。
+
+### 3.4.3 `backend.strategy_config.diff`
+
+**层级路径**: `root.backend.strategy_config.diff`
+**父模块**: `backend.strategy_config`
+**状态**: v4.16 BE-001D L3 facade 已落位。只拥有 diff route facade，不拥有 diff handler/schema。
+**真实文件**:
+- `src/backend/strategy_config/diff.rs`
+- `src/strategy_config_api.rs`
+
+**职责**:
+登记 strategy config domain diff 与 evidence diff 的 L3 子叶边界。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `register_strategy_config_diff_route` | Axum Router | diff route | `backend.strategy_config::register_routes` | 不得以裸 JSON diff 替代用户语义 |
+| `/api/v1/strategy-config/diff` | 左右 artifact | domain diff | 版本历史、配置台 | 不得丢弃 source digest changes |
+
+**父级通信规则**:
+diff 子叶只比较 strategy config artifact 和 evidence，不拥有 graph version 或 backtest record 的状态所有权。
+
+**回归保护**:
+`cargo test -p quantpilot strategy_config`；涉及 graph version compare 时运行 `cargo test -p quantpilot --test api_graph_versions`。
+
+### 3.4.4 `backend.strategy_config.ai_proposal_binding`
+
+**层级路径**: `root.backend.strategy_config.ai_proposal_binding`
+**父模块**: `backend.strategy_config`
+**状态**: v4.16 BE-001D L3 facade 已落位。当前是 no-op facade，只登记 AI proposal 配置域绑定边界。
+**真实文件**:
+- `src/backend/strategy_config/ai_proposal_binding.rs`
+- `src/strategy_config_api.rs`
+- `src/runtime/mutation.rs`
+- `tests/api_ai_proposal.rs`
+
+**职责**:
+登记 AI proposal 与 strategy config domain binding 的 L3 子叶边界，实际校验逻辑当前仍保留在 runtime mutation。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `register_routes` | Axum Router | unchanged router | `backend.strategy_config::register_routes` | 不得伪造不存在的 route |
+| `validate_ai_proposal_config_domain_binding` | AI proposal mutation request | static check detail | runtime mutation | 不得在无等价基线时迁出 runtime |
+
+**父级通信规则**:
+AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的契约关系；不得绕过 approval、sandbox 或 mutation ledger。
+
+**回归保护**:
+`cargo test -p quantpilot --test api_ai_proposal`；涉及 approval/sandbox 时运行对应 mutation 和 sandbox 测试。
 
 ### 3.5 `frontend.workspace`
 
@@ -625,6 +727,10 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 - `src/backend/ops_governance.rs`
 - `src/backend/app_state_wiring.rs`
 - `src/backend/test_support.rs`
+- `src/backend/strategy_config/artifact.rs`
+- `src/backend/strategy_config/preflight.rs`
+- `src/backend/strategy_config/diff.rs`
+- `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/app_router.rs`
 - `src/app_runtime_helpers.rs`
 - `src/lib.rs`
@@ -1204,6 +1310,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 - `markdown/06-milestones/v4.16.0/37-backend.ops_governance单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/38-backend.app_state_wiring单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/39-backend.test_support单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/40-backend.strategy_config_L3模块壳抽离记录.md`
 
 **职责**:
 作为三矩阵治理控制面，定义提案、判档、父子通信、引导坐标、模块树和发布过渡协议。
@@ -1254,6 +1361,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/37-backend.ops_governance单叶closeout.md` ops governance closeout | `backend.ops_governance` | sandbox/alerts/snapshots/runbook/chaos/hotswap L3 候选 | backend 九叶整理 | 不得横向改 runtime、executor 或 release transition |
 | `markdown/06-milestones/v4.16.0/38-backend.app_state_wiring单叶closeout.md` app state wiring closeout | `backend.app_state_wiring` | AppState 工厂、health、attach_state、停止细分判断 | backend 九叶整理 | 不得迁移 AppState 字段 owner 或锁顺序 |
 | `markdown/06-milestones/v4.16.0/39-backend.test_support单叶closeout.md` test support closeout | `backend.test_support` | test scenario route、legacy tests、测试资产汰换暂停 | backend 九叶整理 | 不得无替代证据删除旧测试程序 |
+| `markdown/06-milestones/v4.16.0/40-backend.strategy_config_L3模块壳抽离记录.md` strategy config L3 shell | `backend.strategy_config` | artifact/preflight/diff/AI proposal binding 子叶 facade | backend L3 抽离 | 不得宣称 handler 或 schema 已迁移 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

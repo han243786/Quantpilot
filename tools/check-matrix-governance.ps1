@@ -184,7 +184,8 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/36-*.md", "v4.16 backend storage security leaf closeout"),
     @("markdown/06-milestones/v4.16.0/37-*.md", "v4.16 backend ops governance leaf closeout"),
     @("markdown/06-milestones/v4.16.0/38-*.md", "v4.16 backend app state wiring leaf closeout"),
-    @("markdown/06-milestones/v4.16.0/39-*.md", "v4.16 backend test support leaf closeout")
+    @("markdown/06-milestones/v4.16.0/39-*.md", "v4.16 backend test support leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/40-*.md", "v4.16 backend strategy config l3 facade extraction")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -245,6 +246,7 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/37-", "full feature tree v4.16 backend ops governance closeout"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/38-", "full feature tree v4.16 backend app state wiring closeout"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/39-", "full feature tree v4.16 backend test support closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/40-", "full feature tree v4.16 backend strategy config l3 extraction"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/03-", "module tree v4.16 backend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/04-", "module tree v4.16 frontend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/05-", "module tree v4.16 test asset register"),
@@ -282,6 +284,7 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/37-", "module tree v4.16 backend ops governance closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/38-", "module tree v4.16 backend app state wiring closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/39-", "module tree v4.16 backend test support closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/40-", "module tree v4.16 backend strategy config l3 extraction"),
     @("markdown/10-overview/overview-docs-index.md", "v4.16.0", "docs index v4.16 plan"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "v4.16.0", "current roadmap v4.16 plan")
 )
@@ -715,6 +718,24 @@ $v416LandingFiles = @(
         @("register_test_scenario_routes", "test scenario route registration"),
         @((U "MDUt5rWL6K+V6LWE5Lqn5rGw5o2i55m76K6wLm1k"), "test asset replacement register"),
         @((U "5LiN57un57ut5ouG5YiG"), "stop split decision")
+    )),
+    @("markdown/06-milestones/v4.16.0/40-*.md", @(
+        @("BE-001D", "backend strategy config l3 extraction marker"),
+        @("backend.strategy_config.artifact", "strategy config artifact l3"),
+        @("backend.strategy_config.preflight", "strategy config preflight l3"),
+        @("backend.strategy_config.diff", "strategy config diff l3"),
+        @("backend.strategy_config.ai_proposal_binding", "strategy config ai proposal binding l3"),
+        @("src/backend/strategy_config.rs", "strategy config parent facade"),
+        @("src/backend/strategy_config/artifact.rs", "strategy config artifact facade"),
+        @("src/backend/strategy_config/preflight.rs", "strategy config preflight facade"),
+        @("src/backend/strategy_config/diff.rs", "strategy config diff facade"),
+        @("src/backend/strategy_config/ai_proposal_binding.rs", "strategy config ai proposal binding facade"),
+        @("src/strategy_config_api.rs", "strategy config retained api file"),
+        @("register_strategy_config_artifact_route", "artifact route registration"),
+        @("register_strategy_config_preflight_route", "preflight route registration"),
+        @("register_strategy_config_diff_route", "diff route registration"),
+        @("handler", "handler retention marker"),
+        @("schema", "schema retention marker")
     ))
 )
 
@@ -787,6 +808,10 @@ $requiredModules = @(
     "backend.router",
     "backend.capability",
     "backend.strategy_config",
+    "backend.strategy_config.artifact",
+    "backend.strategy_config.preflight",
+    "backend.strategy_config.diff",
+    "backend.strategy_config.ai_proposal_binding",
     "backend.interface_boundary",
     "frontend.workspace",
     "backend.runtime",
