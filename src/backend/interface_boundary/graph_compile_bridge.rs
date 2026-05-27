@@ -2,20 +2,16 @@ use axum::Router;
 
 use crate::AppState;
 
-pub const MODULE_ID: &str = "backend.graph_compile";
-
-pub mod compile;
-pub mod graph;
-pub mod quantscript_graph;
+pub const MODULE_ID: &str = "backend.interface_boundary.graph_compile_bridge";
 
 pub(crate) fn register_compile_routes(router: Router<AppState>) -> Router<AppState> {
-    compile::register_routes(router)
+    crate::backend::graph_compile::register_compile_routes(router)
 }
 
 pub(crate) fn register_graph_routes(router: Router<AppState>) -> Router<AppState> {
-    graph::register_routes(router)
+    crate::backend::graph_compile::register_graph_routes(router)
 }
 
 pub(crate) fn register_graph_quantscript_routes(router: Router<AppState>) -> Router<AppState> {
-    quantscript_graph::register_routes(router)
+    crate::backend::graph_compile::register_graph_quantscript_routes(router)
 }

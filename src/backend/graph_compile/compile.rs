@@ -2,10 +2,8 @@ use axum::Router;
 
 use crate::AppState;
 
-pub const MODULE_ID: &str = "backend.runtime";
-
-pub mod routes;
+pub const MODULE_ID: &str = "backend.graph_compile.compile";
 
 pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
-    routes::register_routes(router)
+    crate::compile_api::register_compile_routes(router)
 }

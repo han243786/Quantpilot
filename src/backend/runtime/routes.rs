@@ -2,10 +2,8 @@ use axum::Router;
 
 use crate::AppState;
 
-pub const MODULE_ID: &str = "backend.runtime";
-
-pub mod routes;
+pub const MODULE_ID: &str = "backend.runtime.routes";
 
 pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
-    routes::register_routes(router)
+    crate::runtime::register_runtime_routes(router)
 }

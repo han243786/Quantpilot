@@ -252,12 +252,36 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/ops_governance.rs`
 - `src/backend/app_state_wiring.rs`
 - `src/backend/test_support.rs`
+- `src/backend/interface_boundary/app_state_bridge.rs`
+- `src/backend/interface_boundary/capability_bridge.rs`
+- `src/backend/interface_boundary/graph_compile_bridge.rs`
+- `src/backend/interface_boundary/ops_governance_bridge.rs`
+- `src/backend/interface_boundary/runtime_bridge.rs`
+- `src/backend/interface_boundary/storage_security_bridge.rs`
+- `src/backend/interface_boundary/strategy_config_bridge.rs`
+- `src/backend/interface_boundary/test_support_bridge.rs`
+- `src/backend/capability/snapshot.rs`
+- `src/backend/runtime/routes.rs`
+- `src/backend/graph_compile/compile.rs`
+- `src/backend/graph_compile/graph.rs`
+- `src/backend/graph_compile/quantscript_graph.rs`
+- `src/backend/storage_security/credential_api.rs`
+- `src/backend/storage_security/credential_vault.rs`
+- `src/backend/ops_governance/alerts.rs`
+- `src/backend/ops_governance/chaos.rs`
+- `src/backend/ops_governance/hotswap.rs`
+- `src/backend/ops_governance/runbook.rs`
+- `src/backend/ops_governance/sandbox.rs`
+- `src/backend/ops_governance/snapshots.rs`
+- `src/backend/app_state_wiring/health_route.rs`
+- `src/backend/app_state_wiring/state_factory.rs`
+- `src/backend/test_support/scenario.rs`
 - `src/backend/strategy_config/artifact.rs`
 - `src/backend/strategy_config/preflight.rs`
 - `src/backend/strategy_config/diff.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 
-**抽离口径**: v4.16 BE-001B 已建立 9 个叶子 facade，BE-001C 已完成九叶逐叶 closeout，BE-001D 已启动 `backend.strategy_config` L3 模块壳抽离。`src/app_router.rs` 通过 `backend.interface_boundary` 进入各叶子；真实 handler、state owner、response schema 和 artifact schema 仍保留在原文件中。
+**抽离口径**: v4.16 BE-001B 已建立 9 个叶子 facade，BE-001C 已完成九叶逐叶 closeout，BE-001D 已启动 `backend.strategy_config` L3 模块壳抽离，BE-001E 已完成其余八叶薄壳抽离。`src/app_router.rs` 通过 `backend.interface_boundary` 进入各叶子；真实 handler、state owner、response schema 和 artifact schema 仍保留在原文件中。
 
 **细分判断**: `backend.interface_boundary`、`backend.capability`、`backend.app_state_wiring`、`backend.test_support` 本阶段停止细分；`backend.strategy_config`、`backend.runtime`、`backend.graph_compile`、`backend.storage_security`、`backend.ops_governance` 值得进入下一轮 L3 等价基线，其中 `backend.storage_security` 必须先过安全决策暂停。
 
@@ -1383,9 +1407,18 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/38-backend.app_state_wiring单叶closeout.md` — v4.16.0 BE-001C-08 `backend.app_state_wiring` 单叶 closeout，确认 AppState wiring 不继续拆分
 - `markdown/06-milestones/v4.16.0/39-backend.test_support单叶closeout.md` — v4.16.0 BE-001C-09 `backend.test_support` 单叶 closeout，确认测试资产汰换前不继续拆分
 - `markdown/06-milestones/v4.16.0/40-backend.strategy_config_L3模块壳抽离记录.md` — v4.16.0 BE-001D `backend.strategy_config` L3 模块壳抽离，建立 artifact/preflight/diff/AI proposal binding 子叶 facade
+- `markdown/06-milestones/v4.16.0/41-backend其余八叶模块壳抽离记录.md` — v4.16.0 BE-001E backend 其余八叶薄壳抽离，建立 interface/capability/runtime/graph/storage/ops/state/test 子 facade
+- `markdown/06-milestones/v4.16.0/42-backend.interface_boundary子叶抽离完成记录.md` — v4.16.0 BE-001E-01 `backend.interface_boundary` 子叶抽离完成记录，确认 8 个 bridge facade 等价
+- `markdown/06-milestones/v4.16.0/43-backend.capability子叶抽离完成记录.md` — v4.16.0 BE-001E-02 `backend.capability` 子叶抽离完成记录，确认 capability snapshot facade 等价
+- `markdown/06-milestones/v4.16.0/44-backend.runtime子叶抽离完成记录.md` — v4.16.0 BE-001E-03 `backend.runtime` 子叶抽离完成记录，确认 runtime routes facade 等价
+- `markdown/06-milestones/v4.16.0/45-backend.graph_compile子叶抽离完成记录.md` — v4.16.0 BE-001E-04 `backend.graph_compile` 子叶抽离完成记录，确认 compile/graph/QS route facade 等价
+- `markdown/06-milestones/v4.16.0/46-backend.storage_security子叶抽离完成记录.md` — v4.16.0 BE-001E-05 `backend.storage_security` 子叶抽离完成记录，确认 credential API/vault facade 等价且安全暂停保留
+- `markdown/06-milestones/v4.16.0/47-backend.ops_governance子叶抽离完成记录.md` — v4.16.0 BE-001E-06 `backend.ops_governance` 子叶抽离完成记录，确认 ops route facade 等价
+- `markdown/06-milestones/v4.16.0/48-backend.app_state_wiring子叶抽离完成记录.md` — v4.16.0 BE-001E-07 `backend.app_state_wiring` 子叶抽离完成记录，确认 health/state factory facade 等价
+- `markdown/06-milestones/v4.16.0/49-backend.test_support子叶抽离完成记录.md` — v4.16.0 BE-001E-08 `backend.test_support` 子叶抽离完成记录，确认 test scenario facade 等价
 
 当前治理基线: `v4.15.0/` — 三矩阵完全接管，后续常态维护模块树、全量树和治理 gate。
-当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；system 抽离经验已回填为后续抽离准则，S1-S10 closeout 或静态 closeout 已完成，`root.system` 顶层阶段性 closeout 已刷新，递归模块化流程已明确；backend 已进入 R5，BE-001B `src/backend/` 九叶模块壳已落位，BE-001C 九叶逐叶 closeout 已完成，BE-001D `backend.strategy_config` L3 模块壳已落位，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
+当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；system 抽离经验已回填为后续抽离准则，S1-S10 closeout 或静态 closeout 已完成，`root.system` 顶层阶段性 closeout 已刷新，递归模块化流程已明确；backend 已进入 R5，BE-001B `src/backend/` 九叶模块壳已落位，BE-001C 九叶逐叶 closeout 已完成，BE-001D `backend.strategy_config` L3 模块壳已落位，BE-001E 其余八叶薄壳已落位且 `42-49` 已完成逐叶完成记录，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
 
 ### 7.7 总览 (markdown/10-overview/)
 

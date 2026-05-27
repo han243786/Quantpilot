@@ -2,35 +2,28 @@ use axum::Router;
 
 use crate::AppState;
 
-pub const MODULE_ID: &str = "backend.ops_governance";
-
-pub mod alerts;
-pub mod chaos;
-pub mod hotswap;
-pub mod runbook;
-pub mod sandbox;
-pub mod snapshots;
+pub const MODULE_ID: &str = "backend.interface_boundary.ops_governance_bridge";
 
 pub(crate) fn register_hotswap_routes(router: Router<AppState>) -> Router<AppState> {
-    hotswap::register_routes(router)
+    crate::backend::ops_governance::register_hotswap_routes(router)
 }
 
 pub(crate) fn register_sandbox_verification_routes(router: Router<AppState>) -> Router<AppState> {
-    sandbox::register_routes(router)
+    crate::backend::ops_governance::register_sandbox_verification_routes(router)
 }
 
 pub(crate) fn register_alert_routes(router: Router<AppState>) -> Router<AppState> {
-    alerts::register_routes(router)
+    crate::backend::ops_governance::register_alert_routes(router)
 }
 
 pub(crate) fn register_snapshot_routes(router: Router<AppState>) -> Router<AppState> {
-    snapshots::register_routes(router)
+    crate::backend::ops_governance::register_snapshot_routes(router)
 }
 
 pub(crate) fn register_runbook_routes(router: Router<AppState>) -> Router<AppState> {
-    runbook::register_routes(router)
+    crate::backend::ops_governance::register_runbook_routes(router)
 }
 
 pub(crate) fn register_chaos_routes(router: Router<AppState>) -> Router<AppState> {
-    chaos::register_routes(router)
+    crate::backend::ops_governance::register_chaos_routes(router)
 }

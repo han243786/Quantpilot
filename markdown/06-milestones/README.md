@@ -52,6 +52,15 @@
 | 38 | `v4.16.0/38-backend.app_state_wiring单叶closeout.md` | BE-001C-08 `backend.app_state_wiring` 单叶 closeout，确认 AppState wiring 不继续拆分 | ✅ 已完成 |
 | 39 | `v4.16.0/39-backend.test_support单叶closeout.md` | BE-001C-09 `backend.test_support` 单叶 closeout，确认测试资产汰换前不继续拆分 | ✅ 已完成 |
 | 40 | `v4.16.0/40-backend.strategy_config_L3模块壳抽离记录.md` | BE-001D `backend.strategy_config` L3 模块壳抽离，建立 artifact/preflight/diff/AI proposal binding 子叶 facade | ✅ 已完成 |
+| 41 | `v4.16.0/41-backend其余八叶模块壳抽离记录.md` | BE-001E backend 其余八叶薄壳抽离，建立 interface/capability/runtime/graph/storage/ops/state/test 子 facade | ✅ 已完成 |
+| 42 | `v4.16.0/42-backend.interface_boundary子叶抽离完成记录.md` | BE-001E-01 `backend.interface_boundary` 子叶抽离完成，确认 8 个 bridge facade 等价 | ✅ 已完成 |
+| 43 | `v4.16.0/43-backend.capability子叶抽离完成记录.md` | BE-001E-02 `backend.capability` 子叶抽离完成，确认 capability snapshot facade 等价 | ✅ 已完成 |
+| 44 | `v4.16.0/44-backend.runtime子叶抽离完成记录.md` | BE-001E-03 `backend.runtime` 子叶抽离完成，确认 runtime routes facade 等价 | ✅ 已完成 |
+| 45 | `v4.16.0/45-backend.graph_compile子叶抽离完成记录.md` | BE-001E-04 `backend.graph_compile` 子叶抽离完成，确认 compile/graph/QS route facade 等价 | ✅ 已完成 |
+| 46 | `v4.16.0/46-backend.storage_security子叶抽离完成记录.md` | BE-001E-05 `backend.storage_security` 子叶抽离完成，确认 credential API/vault facade 等价且安全暂停保留 | ✅ 已完成 |
+| 47 | `v4.16.0/47-backend.ops_governance子叶抽离完成记录.md` | BE-001E-06 `backend.ops_governance` 子叶抽离完成，确认 ops route facade 等价 | ✅ 已完成 |
+| 48 | `v4.16.0/48-backend.app_state_wiring子叶抽离完成记录.md` | BE-001E-07 `backend.app_state_wiring` 子叶抽离完成，确认 health/state factory facade 等价 | ✅ 已完成 |
+| 49 | `v4.16.0/49-backend.test_support子叶抽离完成记录.md` | BE-001E-08 `backend.test_support` 子叶抽离完成，确认 test scenario facade 等价且测试汰换未启动 | ✅ 已完成 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

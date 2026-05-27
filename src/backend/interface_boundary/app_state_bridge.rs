@@ -2,17 +2,12 @@ use axum::{response::IntoResponse, Router};
 
 use crate::AppState;
 
-pub const MODULE_ID: &str = "backend.app_state_wiring";
-
-pub mod health_route;
-pub mod state_factory;
-
-pub use state_factory::new_app_state;
+pub const MODULE_ID: &str = "backend.interface_boundary.app_state_bridge";
 
 pub(crate) async fn health(state: axum::extract::State<AppState>) -> impl IntoResponse {
-    health_route::health(state).await
+    crate::backend::app_state_wiring::health(state).await
 }
 
 pub(crate) fn attach_state(router: Router<AppState>, state: AppState) -> Router {
-    router.with_state(state)
+    crate::backend::app_state_wiring::attach_state(router, state)
 }
