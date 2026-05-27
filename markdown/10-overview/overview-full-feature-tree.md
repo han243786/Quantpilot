@@ -1139,6 +1139,30 @@ tools/export-capability-fixture.ps1 — 能力 fixture 导出
 
 **一句话**: 原则 → 协议 → 契约 → 指南 → 测试审计 → 里程碑归档, 全部中文。
 
+### 7.0 三矩阵治理层 (markdown/00-matrix-governance/)
+
+三矩阵治理层是 v4.12.0 起新增的开发治理控制面，位于旧 GP、超级规范化和全量树之上。
+
+```
+README.md                         — 三矩阵治理总入口
+process-matrix.md                 — 流程矩阵: 提案、校验、优化、实现、验证、收口
+standard-matrix.md                — 规范矩阵: 硬规则、禁止项、父子通信、新旧冲突、并发锁、AI 幻觉发现
+guidance-matrix.md                — 引导矩阵: 全量树 + 模块树定位流程
+module-tree.md                    — 模块树: 白箱网络、输入输出、关键 public 方法、父子通信边界
+proposal-flow.md                  — 提案状态机、三档执行判定表、提案模板
+release-transition-protocol.md    — 发布过渡期连接协议
+landing-roadmap.md                — v4.12.0 至 v4.15.0 治理完全落地路线
+```
+
+治理接管路线:
+
+| 里程碑 | 焦点 |
+| --- | --- |
+| v4.12.0 | 三矩阵治理入口启用 |
+| v4.13.0 | 模块树白箱扩面 |
+| v4.14.0 | 治理门禁自动化 |
+| v4.15.0 | 三矩阵完全接管 closeout |
+
 ### 7.1 原则层 (markdown/01-principles/)
 
 ```
@@ -1259,7 +1283,7 @@ meta-pipeline-log.md                         — 元流水线日志
 
 ### 7.6 里程碑归档 (markdown/06-milestones/)
 
-50+ 版本目录, 从 `v0.2.0` 到 `v4.10.0`, 每个含 `01-规划方案.md` + `02-综合优化清单.md` (或等效文档) + `03-closeout.md` / `02-closeout.md` / `02-落地记录.md` (或等效文档)。
+50+ 版本目录, 从 `v0.2.0` 到 `v4.15.0`, 每个含 `01-规划方案.md` + `02-综合优化清单.md` (或等效文档) + `03-closeout.md` / `02-closeout.md` / `02-落地记录.md` (或等效文档)。
 
 活跃归档:
 - `markdown/06-milestones/v4.7.0/02-closeout.md` — v4.7.0 嵌套状态机第一波 closeout 归档
@@ -1274,10 +1298,18 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.9.0/01-规划方案.md` — v4.9.0 产品功能完整度与插件执行安全规划
 - `markdown/06-milestones/v4.9.0/02-综合优化清单.md` — v4.9.0 功能完整度与安全优化清单
 - `markdown/06-milestones/v4.9.0/03-落地记录.md` — v4.9.0 功能完整度落地记录
-- `markdown/06-milestones/v4.10.0/01-规划方案.md` — v4.10.0 UX 收口与产品边界固化规划
+- `markdown/06-milestones/v4.10.0/01-规划方案2.md` — v4.10.0 UX 收口与产品边界固化规划
 - `markdown/06-milestones/v4.10.0/02-落地记录.md` — v4.10.0 UX 收口与产品边界固化落地记录
+- `markdown/06-milestones/v4.11.0/01-规划方案.md` — v4.11.0 策略配置系统一等化规划
+- `markdown/06-milestones/v4.11.0/02-策略配置系统端到端设计.md` — v4.11.0 端到端设计
+- `markdown/06-milestones/v4.11.0/03-推进约束与防偏移检查单.md` — v4.11.0 推进约束
+- `markdown/06-milestones/v4.12.0/01-规划方案.md` — v4.12.0 三矩阵治理入口启用规划
+- `markdown/06-milestones/v4.12.0/02-落地记录.md` — v4.12.0 三矩阵治理入口启用记录
+- `markdown/06-milestones/v4.13.0/01-规划方案.md` — v4.13.0 模块树白箱扩面规划
+- `markdown/06-milestones/v4.14.0/01-规划方案.md` — v4.14.0 治理门禁自动化规划
+- `markdown/06-milestones/v4.15.0/01-规划方案.md` — v4.15.0 三矩阵完全接管 closeout 规划
 
-当前活跃基线: `v4.10.0/` — UX 收口、亮色主题、教程入口和产品边界 unsupported 固化。
+当前治理基线: `v4.12.0/` — 三矩阵治理入口启用，后续通过 v4.13.0 至 v4.15.0 完成全局接管。
 
 ### 7.7 总览 (markdown/10-overview/)
 

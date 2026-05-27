@@ -1,6 +1,6 @@
 # 当前状态与发布状态
 
-> 最后更新：2026-05-26 | 当前版本：v4.7.0 ✅ | 当前优化里程碑：v4.10.0 UX 收口与产品边界固化
+> 最后更新：2026-05-27 | 当前版本：v4.7.0 ✅ | 当前治理里程碑：v4.12.0 三矩阵治理入口启用
 
 ## 版本路线
 
@@ -122,7 +122,7 @@ v4.0.0 是 MAJOR 架构收口：在 v3.7.1 稳定基线上落地状态机化 Qua
 
 v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v4.6.0 PaperActual 安全边界基础上，补齐 v4 AI 提案静态约束、沙箱回放比较和回测工件分析。当前按 `v4.7.0/01-规划方案.md` 执行实现与验证。
 
-后续优化路线按超级规范化的审计→优化闭环推进：
+后续优化和治理路线按三矩阵治理与超级规范化的审计→优化闭环推进：
 
 | 版本 | 类型 | 目标 | 状态 |
 |------|------|------|:--:|
@@ -131,9 +131,16 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 | v4.8.2 | PATCH | zh-CN 转义修复、执行端 i18n、QS 编辑器、CSS 收敛、首次体验、404、中文用户指南 | 已落地 |
 | v4.9.0 | MINOR | PaperActual 安全启动门禁、插件执行安全、策略包导入导出、设置页、API 版本治理、AI 沙箱队列、执行端图表控制 | 已落地 |
 | v4.10.0 | MINOR | 亮色主题、执行端 i18n 收口、教程自动触发、Tab keep-alive、产品边界 unsupported 固化 | 已落地 |
+| v4.11.0 | MINOR | v4 策略配置系统一等化，聚合 artifact、preflight、diff、AI proposal 配置域绑定 | 推进中 |
+| v4.12.0 | MINOR governance | 三矩阵治理入口启用，建立流程矩阵、规范矩阵、引导矩阵、模块树和完全落地路线 | 当前治理里程碑 |
+| v4.13.0 | MINOR governance | 模块树白箱扩面，覆盖 active 模块、关键 public 方法和模块化重构通道 | 规划 |
+| v4.14.0 | MINOR governance | 治理门禁自动化，检查三矩阵声明、引导坐标、模块树漂移和发布过渡保护 | 规划 |
+| v4.15.0 | MINOR governance | 三矩阵完全接管 closeout，旧入口导流并形成治理收口报告 | 规划 |
 
-使用下面的专用文档作为活跃发布界面：
+使用下面的专用文档作为活跃发布与治理界面：
 
+- [三矩阵治理入口](../00-matrix-governance/README.md)
+- [三矩阵治理完全落地路线](../00-matrix-governance/landing-roadmap.md)
 - [v3.7.0 规划方案](../06-milestones/v3.7.0/01-规划方案.md)
 - [v3.7.0 综合优化清单](../06-milestones/v3.7.0/02-综合优化清单.md)
 - [v3.7.1 规划方案](../06-milestones/v3.7.1/01-规划方案.md)
@@ -147,8 +154,14 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - [v4.8.1 综合优化清单](../06-milestones/v4.8.1/02-综合优化清单.md)
 - [v4.8.2 规划方案](../06-milestones/v4.8.2/01-规划方案.md)
 - [v4.9.0 规划方案](../06-milestones/v4.9.0/01-规划方案.md)
-- [v4.10.0 规划方案](../06-milestones/v4.10.0/01-规划方案.md)
+- [v4.10.0 规划方案](../06-milestones/v4.10.0/01-规划方案2.md)
 - [v4.10.0 落地记录](../06-milestones/v4.10.0/02-落地记录.md)
+- [v4.11.0 规划方案](../06-milestones/v4.11.0/01-规划方案.md)
+- [v4.12.0 规划方案](../06-milestones/v4.12.0/01-规划方案.md)
+- [v4.12.0 落地记录](../06-milestones/v4.12.0/02-落地记录.md)
+- [v4.13.0 规划方案](../06-milestones/v4.13.0/01-规划方案.md)
+- [v4.14.0 规划方案](../06-milestones/v4.14.0/01-规划方案.md)
+- [v4.15.0 规划方案](../06-milestones/v4.15.0/01-规划方案.md)
 - [Claude 产品/UX/功能完整度审计核查](../05-testing/Claude产品UX功能完整度审计核查-v4.7.0-2026-05-26.md)
 - [支持矩阵](../03-implementation/governance/implementation-support-matrix.md)
 - [编译链合约](../03-implementation/governance/implementation-compile-chain-contract.md)

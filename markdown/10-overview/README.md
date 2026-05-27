@@ -1,5 +1,6 @@
 # 概览文档
 
+- [三矩阵治理入口](../00-matrix-governance/README.md)
 - [当前状态与发布状态](./overview-current-status-and-roadmap.md)
 - [详细文档索引](./overview-docs-index.md)
 - [活跃 QRPC RFC 索引（`RFC-001` 至 `RFC-020`）](../02-protocol/README.md)

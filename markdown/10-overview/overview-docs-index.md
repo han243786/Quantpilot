@@ -1,6 +1,6 @@
 # QuantPilot 文档索引
 
-> v4.7.0 代码基线 / v4.10.0 优化里程碑 | 最后更新 2026-05-26
+> v4.7.0 代码基线 / v4.12.0 三矩阵治理入口启用 | 最后更新 2026-05-27
 
 ## 从这里开始
 
@@ -8,9 +8,23 @@
 |------|------|------|
 | 项目 README | `../README.md` | 产品边界、快速启动、质量门禁 |
 | 当前状态 | `./overview-current-status-and-roadmap.md` | 版本路线、仓库状态 |
+| 三矩阵治理 | `../00-matrix-governance/README.md` | 流程矩阵、规范矩阵、引导矩阵、模块树和提案流程 |
 | 支持矩阵 | `../03-implementation/governance/implementation-support-matrix.md` | supported / restricted / unsupported 产品边界 |
 | General_Policy | `../General_Policy.md` | §1-§8 全部开发规范 |
 | 超级规范化 | `../01-principles/principles-super-standardization.md` | 五条流水线的执行标准 |
+
+## 三矩阵治理 (`00-matrix-governance/`)
+
+| 文档 | 说明 |
+|------|------|
+| `README.md` | 三矩阵治理总入口 |
+| `process-matrix.md` | 流程矩阵 |
+| `standard-matrix.md` | 规范矩阵 |
+| `guidance-matrix.md` | 引导矩阵 |
+| `module-tree.md` | 模块树白箱网络 |
+| `proposal-flow.md` | 提案状态机、三档执行判定表和模板 |
+| `release-transition-protocol.md` | 发布过渡期连接协议 |
+| `landing-roadmap.md` | v4.12.0 至 v4.15.0 完全落地路线 |
 
 ## 架构原则 (`01-principles/`)
 
@@ -59,6 +73,11 @@
 
 | 版本 | 状态 |
 |------|:--:|
+| v4.15.0 | 规划: 三矩阵完全接管 closeout |
+| v4.14.0 | 规划: 治理门禁自动化 |
+| v4.13.0 | 规划: 模块树白箱扩面 |
+| v4.12.0 | 当前治理里程碑: 三矩阵治理入口启用 |
+| v4.11.0 | 推进中: 策略配置系统一等化 |
 | v4.10.0 | ✅ UX 收口与产品边界固化 |
 | v4.9.0 | ✅ 产品功能完整度 + 插件执行安全 |
 | v4.8.x | ✅ UX/i18n/API 契约收敛 |

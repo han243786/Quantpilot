@@ -9,7 +9,12 @@ QuantPilot 是一个单机量化交易沙盒, 聚焦于诚实的能力边界、�
 
 ## 项目治理体系
 
-QuantPilot 用三份文档构成完整的项目知识体系。**新开发者必须依次阅读这三份文档**才能开始贡献代码。
+v4.12.0 起，QuantPilot 的开发治理入口升级为三矩阵治理。新开发者和 AI 辅助流程应先进入三矩阵，再回到旧主干文档查证细节。
+
+- [三矩阵治理入口](./markdown/00-matrix-governance/README.md)
+- [三矩阵治理完全落地路线](./markdown/00-matrix-governance/landing-roadmap.md)
+
+旧主干仍由三份文档构成完整的项目知识体系。**新开发者必须理解这三份文档**才能开始贡献代码。
 
 ```
                       ┌─────────────┐
@@ -83,14 +88,16 @@ GP 是项目的"代码宪法"。44 条规则分为架构铁律、代码规范、
 ### 开发者上手路径
 
 ```
-第一步: 读全量树      → 了解项目全貌, 知道每个文件干什么
-第二步: 读 GP         → 了解代码规则, 知道什么能做/不能做
-第三步: 读超级规范化   → 了解开发流程, 知道提交前要跑什么门禁
-第四步: 读系统架构     → 了解技术细节, 知道数据怎么流转
+第一步: 读三矩阵治理   → 判定档位, 定位模块树, 明确提案流程
+第二步: 读全量树       → 了解项目全貌, 知道每个文件干什么
+第三步: 读 GP          → 了解代码规则, 知道什么能做/不能做
+第四步: 读超级规范化    → 了解开发流程, 知道提交前要跑什么门禁
+第五步: 读系统架构      → 了解技术细节, 知道数据怎么流转
 ```
 
 | 文档 | 路径 |
 |------|------|
+| 三矩阵治理入口 | [./markdown/00-matrix-governance/README.md](./markdown/00-matrix-governance/README.md) |
 | 全量树 | [./markdown/10-overview/overview-full-feature-tree.md](./markdown/10-overview/overview-full-feature-tree.md) |
 | GP (项目总规则) | [./markdown/General_Policy.md](./markdown/General_Policy.md) |
 | 超级规范化 | [./markdown/01-principles/principles-super-standardization.md](./markdown/01-principles/principles-super-standardization.md) |
