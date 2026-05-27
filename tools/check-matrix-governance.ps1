@@ -162,7 +162,8 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/14-*.md", "v4.16 system launch scripts leaf closeout"),
     @("markdown/06-milestones/v4.16.0/15-*.md", "v4.16 system tauri config leaf closeout"),
     @("markdown/06-milestones/v4.16.0/16-*.md", "v4.16 system runtime profile config examples closeout"),
-    @("markdown/06-milestones/v4.16.0/17-*.md", "v4.16 system tauri runtime readiness equivalence check")
+    @("markdown/06-milestones/v4.16.0/17-*.md", "v4.16 system tauri runtime readiness equivalence check"),
+    @("markdown/06-milestones/v4.16.0/18-*.md", "v4.16 system tauri runtime leaf closeout")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -201,6 +202,7 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/15-", "full feature tree v4.16 system tauri config closeout"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/16-", "full feature tree v4.16 system runtime profile closeout"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/17-", "full feature tree v4.16 system tauri runtime readiness check"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/18-", "full feature tree v4.16 system tauri runtime closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/03-", "module tree v4.16 backend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/04-", "module tree v4.16 frontend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/05-", "module tree v4.16 test asset register"),
@@ -216,6 +218,7 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/15-", "module tree v4.16 system tauri config closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/16-", "module tree v4.16 system runtime profile closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/17-", "module tree v4.16 system tauri runtime readiness check"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/18-", "module tree v4.16 system tauri runtime closeout"),
     @("markdown/10-overview/overview-docs-index.md", "v4.16.0", "docs index v4.16 plan"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "v4.16.0", "current roadmap v4.16 plan")
 )
@@ -411,6 +414,22 @@ $v416LandingFiles = @(
         @("tauri::Builder::default", "tauri builder startup"),
         @("tauri_plugin_shell::init", "tauri shell plugin"),
         @("cargo check -p quantpilot-tauri", "tauri check gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/18-*.md", @(
+        @("system.desktop_shell.tauri_runtime", "system tauri runtime leaf"),
+        @("src-tauri/src/main.rs", "tauri runtime main file"),
+        @("src-tauri/Cargo.toml", "tauri cargo manifest"),
+        @("src-tauri/tauri.conf.json", "tauri config relation"),
+        @("main", "tauri main public entry"),
+        @("wait_for_backend", "backend readiness wait"),
+        @("127.0.0.1:3000", "backend readiness endpoint"),
+        @("5173", "frontend dev server port"),
+        @("cargo build --bin quantpilot", "backend build smoke"),
+        @("cargo tauri dev --no-watch", "tauri desktop smoke command"),
+        @("CloseMainWindow", "window lifecycle close check"),
+        @("quantpilot-tauri.exe", "tauri window process"),
+        @("cargo check -p quantpilot-tauri", "tauri check gate"),
+        @("tools/check-matrix-governance.ps1", "matrix governance gate")
     ))
 )
 

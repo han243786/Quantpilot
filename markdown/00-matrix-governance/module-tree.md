@@ -179,7 +179,7 @@ AI 声称 S1 完成时，必须指出本批次没有修改 `start.bat` 或 `star
 
 **层级路径**: `root.system.desktop_shell.tauri_runtime`
 **父模块**: `system.desktop_shell`
-**状态**: v4.16 S3 readiness 等价检查完成。Tauri runtime 入口和 3000 readiness wait 已完成白箱登记；未宣告完整 closeout，未改代码。
+**状态**: v4.16 S3 单叶 closeout 完成。Tauri runtime 入口、3000 readiness wait、桌面启动 smoke、窗口生命周期和关闭路径已完成白箱登记；未改代码，不继续细分。
 **真实文件**:
 - `src-tauri/src/main.rs`
 - `src-tauri/Cargo.toml`
@@ -206,10 +206,10 @@ AI 声称 S1 完成时，必须指出本批次没有修改 `start.bat` 或 `star
 `system.desktop_shell.tauri_runtime` 只能通过 `system.desktop_shell` 管理桌面壳 runtime 和 readiness wait；不得直接横向连接 `backend.interface_boundary`、`frontend.*`、runtime state、AppState 或 capability 真源。
 
 **回归保护**:
-`cargo check -p quantpilot-tauri`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；完整 closeout 前补桌面启动 smoke 或人工窗口生命周期核查。
+`cargo check -p quantpilot-tauri`；`cargo build --bin quantpilot`；`cargo tauri dev --no-watch` 桌面启动 smoke；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 
 **幻觉检查点**:
-AI 声称 S3 完成时，必须区分 readiness 等价检查和完整 S3 closeout；当前只确认 `127.0.0.1:3000` wait、30 秒超时和 Tauri Builder 启动顺序等价。
+AI 声称 S3 完成时，必须指出完成范围是 Tauri runtime 单叶 closeout；本批次没有修改 `src-tauri/src/main.rs`、Tauri config、capability 或启动脚本。
 
 ### 3.1.4 `system.desktop_shell.tauri_config`
 
@@ -798,6 +798,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 - `markdown/06-milestones/v4.16.0/15-system.desktop_shell.tauri_config单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/16-system.runtime_profile.config_examples单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/17-system.desktop_shell.tauri_runtime-readiness等价检查.md`
+- `markdown/06-milestones/v4.16.0/18-system.desktop_shell.tauri_runtime单叶closeout.md`
 
 **职责**:
 作为三矩阵治理控制面，定义提案、判档、父子通信、引导坐标、模块树和发布过渡协议。
@@ -826,6 +827,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/15-system.desktop_shell.tauri_config单叶closeout.md` S4 closeout | `system.desktop_shell.tauri_config` | Tauri config、CSP、capability allowlist 等价证据 | system 单叶 closeout | 不得改 CSP、窗口或权限语义 |
 | `markdown/06-milestones/v4.16.0/16-system.runtime_profile.config_examples单叶closeout.md` S10 closeout | `system.runtime_profile.config_examples` | 环境变量、runtime protocol、strategy_ir schema/example 等价证据 | system 单叶 closeout | 不得把样例当 runtime 真源 |
 | `markdown/06-milestones/v4.16.0/17-system.desktop_shell.tauri_runtime-readiness等价检查.md` S3 readiness | `system.desktop_shell.tauri_runtime` | Tauri `main`、`wait_for_backend`、3000 readiness 等价证据 | system 单叶 readiness 检查 | 不得把 readiness 检查宣告为完整 S3 closeout |
+| `markdown/06-milestones/v4.16.0/18-system.desktop_shell.tauri_runtime单叶closeout.md` S3 closeout | `system.desktop_shell.tauri_runtime` | 桌面启动 smoke、主窗口生命周期、`CloseMainWindow` 退出证据 | system 单叶 closeout | 不得改 Tauri runtime 代码或继续细分 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

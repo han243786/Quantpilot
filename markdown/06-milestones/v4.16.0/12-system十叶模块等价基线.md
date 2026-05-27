@@ -51,7 +51,7 @@
 | --- | --- | --- |
 | S1 `system.entry.launch_scripts` | 已完成单叶 closeout | `14-system.entry.launch_scripts单叶closeout.md` 已确认脚本入口等价，不继续细分 |
 | S2 `system.entry.backend_process` | 已抽离完成 | 只维护，不继续扩大 owner |
-| S3 `system.desktop_shell.tauri_runtime` | readiness 等价检查已完成，代码抽离仍需暂停 | `17-system.desktop_shell.tauri_runtime-readiness等价检查.md` 已确认 3000 wait 等价；S3 完整 closeout 前需补桌面启动 smoke/窗口生命周期核查 |
+| S3 `system.desktop_shell.tauri_runtime` | 已完成单叶 closeout | `18-system.desktop_shell.tauri_runtime单叶closeout.md` 已确认 readiness wait、桌面启动 smoke 和窗口生命周期等价，不继续细分 |
 | S4 `system.desktop_shell.tauri_config` | 已完成单叶 closeout | `15-system.desktop_shell.tauri_config单叶closeout.md` 已确认 Tauri 配置等价，不继续细分 |
 | S5 `system.desktop_shell.assets_schema` | 只需登记，不主动抽离 | 作为资产叶子管理 |
 | S6 `system.build_delivery.workspace_manifest` | 需要决策暂停 | 依赖/workspace 影响大，不主动抽 |
@@ -102,8 +102,8 @@
 | 兼容入口 | 桌面应用启动入口和窗口生命周期不变 |
 | 关键内部实现 | 后端 readiness wait、桌面壳初始化、Tauri command/runtime wiring |
 | 保留外部边界 | Rust 后端 API、AppState、前端路由、capability 真源 |
-| 等价证据 | `cargo check -p quantpilot-tauri`、`17-system.desktop_shell.tauri_runtime-readiness等价检查.md`、readiness wait 人工核查、后续桌面启动 smoke |
-| 当前判定 | readiness 等价检查已完成；代码抽离仍需暂停，S3 完整 closeout 前需补桌面启动 smoke/窗口生命周期核查 |
+| 等价证据 | `cargo check -p quantpilot-tauri`、`17-system.desktop_shell.tauri_runtime-readiness等价检查.md`、`18-system.desktop_shell.tauri_runtime单叶closeout.md`、桌面启动 smoke、窗口生命周期核查 |
+| 当前判定 | 已完成单叶 closeout；不改代码，不继续细分 |
 | 暂停点 | 后端 readiness wait、窗口生命周期、Tauri command 权限或后端启动关系变化 |
 
 ### S4 `system.desktop_shell.tauri_config`
@@ -210,14 +210,13 @@
 
 | 优先级 | 叶子 | 动作 |
 | --- | --- | --- |
-| P1 | S3 `system.desktop_shell.tauri_runtime` | readiness wait 等价检查已完成；完整 closeout 前补桌面启动 smoke/窗口生命周期核查 |
 | P1 | S7 `system.build_delivery.desktop_build_scripts` | 单独批次登记 desktop build/dev scripts |
 | P2 | S6 `system.build_delivery.workspace_manifest` | 决策暂停后再碰 |
 | P2 | S8 `system.build_delivery.container_proxy` | 按容器相关变更触发 |
 | P2 | S9 `system.build_delivery.ci_release` | 等测试资产汰换策略更稳定后再推进 |
 | P3 | S5 `system.desktop_shell.assets_schema` | 只登记，不主动细分 |
 
-S2 已完成，不进入下一步抽离队列。
+S2 和 S3 已完成，不进入下一步抽离队列。
 
 ---
 

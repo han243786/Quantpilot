@@ -4,6 +4,7 @@
 > 基准: `12-system十叶模块等价基线.md`、`14-system.entry.launch_scripts单叶closeout.md`、`15-system.desktop_shell.tauri_config单叶closeout.md`。
 > 执行档位: 重型。
 > 判定: S3 `system.desktop_shell.tauri_runtime` 的后端 readiness wait 等价检查完成；不改代码，不宣告 S3 完整 closeout，不进入整理或重构。
+> 后续补充: 桌面启动 smoke 与窗口生命周期核查已在 `18-system.desktop_shell.tauri_runtime单叶closeout.md` 完成，S3 已可按单叶 closeout 口径收口。
 
 ---
 
@@ -86,7 +87,7 @@
 
 ## 后续 closeout 准入
 
-S3 还不能因为本文件直接宣告完整 closeout。进入 S3 完整 closeout 前，至少需要补齐以下确认:
+本文件本身不能直接宣告完整 closeout。后续 `18-system.desktop_shell.tauri_runtime单叶closeout.md` 已补齐以下确认，并完成 S3 closeout:
 
 1. 桌面启动 smoke 或人工窗口生命周期核查。
 2. Tauri `main`、shell plugin、debug devtools 和 `generate_context` 的白箱边界复核。

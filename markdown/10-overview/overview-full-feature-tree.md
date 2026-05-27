@@ -1336,9 +1336,10 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/15-system.desktop_shell.tauri_config单叶closeout.md` — v4.16.0 S4 Tauri config 单叶 closeout，确认 CSP、窗口配置和 capability allowlist 等价并停止继续细分
 - `markdown/06-milestones/v4.16.0/16-system.runtime_profile.config_examples单叶closeout.md` — v4.16.0 S10 配置样例单叶 closeout，确认环境变量、runtime protocol 和 strategy_ir schema/example 等价并停止继续细分
 - `markdown/06-milestones/v4.16.0/17-system.desktop_shell.tauri_runtime-readiness等价检查.md` — v4.16.0 S3 Tauri runtime readiness 等价检查，确认 3000 wait、30 秒超时和 Tauri Builder 启动顺序等价
+- `markdown/06-milestones/v4.16.0/18-system.desktop_shell.tauri_runtime单叶closeout.md` — v4.16.0 S3 Tauri runtime 单叶 closeout，确认桌面启动 smoke、主窗口生命周期和关闭路径等价并停止继续细分
 
 当前治理基线: `v4.15.0/` — 三矩阵完全接管，后续常态维护模块树、全量树和治理 gate。
-当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；已决策先走 BE-001 后端接口边界，system 抽离经验已回填为后续抽离准则，system 10 叶等价基线已铺好，S1/S4/S10 closeout 已完成，S3 readiness 等价检查已完成，递归模块化流程已明确，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
+当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；已决策先走 BE-001 后端接口边界，system 抽离经验已回填为后续抽离准则，system 10 叶等价基线已铺好，S1/S3/S4/S10 closeout 已完成，递归模块化流程已明确，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
 
 ### 7.7 总览 (markdown/10-overview/)
 
