@@ -1306,10 +1306,11 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.12.0/01-规划方案.md` — v4.12.0 三矩阵治理入口启用规划
 - `markdown/06-milestones/v4.12.0/02-落地记录.md` — v4.12.0 三矩阵治理入口启用记录
 - `markdown/06-milestones/v4.13.0/01-规划方案.md` — v4.13.0 模块树白箱扩面规划
+- `markdown/06-milestones/v4.13.0/02-落地记录.md` — v4.13.0 模块树白箱扩面记录
 - `markdown/06-milestones/v4.14.0/01-规划方案.md` — v4.14.0 治理门禁自动化规划
 - `markdown/06-milestones/v4.15.0/01-规划方案.md` — v4.15.0 三矩阵完全接管 closeout 规划
 
-当前治理基线: `v4.12.0/` — 三矩阵治理入口启用，后续通过 v4.13.0 至 v4.15.0 完成全局接管。
+当前治理基线: `v4.13.0/` — 模块树白箱扩面，后续通过 v4.14.0 至 v4.15.0 完成门禁自动化和全局接管。
 
 ### 7.7 总览 (markdown/10-overview/)
 
