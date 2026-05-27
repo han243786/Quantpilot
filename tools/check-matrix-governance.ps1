@@ -194,7 +194,8 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/46-*.md", "v4.16 backend storage security child extraction completion"),
     @("markdown/06-milestones/v4.16.0/47-*.md", "v4.16 backend ops governance child extraction completion"),
     @("markdown/06-milestones/v4.16.0/48-*.md", "v4.16 backend app state wiring child extraction completion"),
-    @("markdown/06-milestones/v4.16.0/49-*.md", "v4.16 backend test support child extraction completion")
+    @("markdown/06-milestones/v4.16.0/49-*.md", "v4.16 backend test support child extraction completion"),
+    @("markdown/06-milestones/v4.16.0/50-*.md", "v4.16 backend runtime routes child equivalence baseline")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -265,6 +266,7 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/47-", "full feature tree v4.16 backend ops governance child completion"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/48-", "full feature tree v4.16 backend app state wiring child completion"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/49-", "full feature tree v4.16 backend test support child completion"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/50-", "full feature tree v4.16 backend runtime routes baseline"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/03-", "module tree v4.16 backend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/04-", "module tree v4.16 frontend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/05-", "module tree v4.16 test asset register"),
@@ -312,6 +314,7 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/47-", "module tree v4.16 backend ops governance child completion"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/48-", "module tree v4.16 backend app state wiring child completion"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/49-", "module tree v4.16 backend test support child completion"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/50-", "module tree v4.16 backend runtime routes baseline"),
     @("markdown/10-overview/overview-docs-index.md", "v4.16.0", "docs index v4.16 plan"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "v4.16.0", "current roadmap v4.16 plan")
 )
@@ -876,6 +879,27 @@ $v416LandingFiles = @(
         @("register_test_scenario_routes", "test scenario route registration"),
         @("TestRunner::execute", "test runner public method"),
         @("integration tests", "integration test marker")
+    )),
+    @("markdown/06-milestones/v4.16.0/50-*.md", @(
+        @("BE-001F-01", "backend runtime routes baseline marker"),
+        @("backend.runtime.routes", "backend runtime routes child"),
+        @("src/backend/runtime.rs", "backend runtime parent facade"),
+        @("src/backend/runtime/routes.rs", "backend runtime routes facade"),
+        @("src/runtime/mod.rs", "runtime retained route owner"),
+        @("src/runtime/run.rs", "runtime run retained file"),
+        @("src/runtime/backtest.rs", "runtime backtest retained file"),
+        @("src/runtime/mutation.rs", "runtime mutation retained file"),
+        @("register_runtime_routes", "runtime concrete registration"),
+        @("backend.runtime.routes::register_routes", "runtime child facade registration"),
+        @("/api/runtime/test-run", "test run route"),
+        @("/api/runtime/v4/run", "v4 run route"),
+        @("/api/runtime/backtest", "backtest route"),
+        @("/api/runtime/runs/:run_id/events", "sse route"),
+        @("api_run", "api run evidence"),
+        @("api_backtest", "api backtest evidence"),
+        @("api_sse", "api sse evidence"),
+        @("state owner", "state owner retention marker"),
+        @("persistence", "persistence retention marker")
     ))
 )
 
@@ -955,6 +979,7 @@ $requiredModules = @(
     "backend.interface_boundary",
     "frontend.workspace",
     "backend.runtime",
+    "backend.runtime.routes",
     "backend.graph_compile",
     "backend.storage_security",
     "backend.ops_governance",

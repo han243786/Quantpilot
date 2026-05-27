@@ -886,7 +886,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 
 **层级路径**: `root.backend.runtime`
 **父模块**: `backend`
-**状态**: v4.16 BE-001E `backend.runtime.routes` 薄壳已落位。当前只分出 runtime route facade；真实 runtime handler/state 仍保留在 `src/runtime/`。
+**状态**: v4.16 BE-001F-01 `backend.runtime.routes` 单子叶等价基线已建立。当前只分出 runtime route aggregate facade；真实 runtime handler/state 仍保留在 `src/runtime/`。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -928,7 +928,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 runtime 对外必须经过 `backend.interface_boundary` 注册的 HTTP API、事件流或持久化接口；不得由前端直接读取内部文件推断运行状态。
 
 **允许调用的子模块**:
-`runtime_persistence`、`runtime_validation`、`runtime_event_projection`、`backtest_artifacts`。
+`backend.runtime.routes`、`runtime_persistence`、`runtime_validation`、`runtime_event_projection`、`backtest_artifacts`。
 
 **禁止横向连接**:
 不得直接调用 `executor.runner` 的内部状态；执行端交互必须经迁移包、执行端 API 或 runtime evidence。
@@ -941,6 +941,63 @@ runtime 对外必须经过 `backend.interface_boundary` 注册的 HTTP API、事
 
 **幻觉检查点**:
 AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifact 字段和测试。
+
+### 5.1.1 `backend.runtime.routes`
+
+**层级路径**: `root.backend.runtime.routes`
+**父模块**: `backend.runtime`
+**状态**: v4.16 BE-001F-01 单子叶等价基线已建立。当前只拥有 runtime route aggregate facade，不拥有 runtime handler、state owner、event stream、artifact schema 或 persistence owner。
+**真实文件**:
+- `src/backend/runtime.rs`
+- `src/backend/runtime/routes.rs`
+- `src/runtime/mod.rs`
+- `src/runtime/run.rs`
+- `src/runtime/backtest.rs`
+- `src/runtime/mutation.rs`
+- `src/runtime_event_projection.rs`
+- `src/runtime_persistence.rs`
+- `src/backtest_artifacts.rs`
+- `markdown/06-milestones/v4.16.0/50-backend.runtime.routes单子叶等价基线.md`
+
+**职责**:
+承载 backend runtime route aggregate facade 的白箱坐标，固定 `backend.runtime -> backend.runtime.routes -> crate::runtime::register_runtime_routes` 的兼容桥和等价证据。
+
+**输入**:
+| 输入 | 来源 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| Axum Router | `backend.runtime` | `Router<AppState>` | 不改变 route registration 顺序 |
+| AppState | `backend.app_state_wiring` | shared app state | 不迁移 AppState owner 或锁顺序 |
+| runtime HTTP request | frontend、tests、local API caller | `/api/runtime/*` request | 不改 path、method、payload 或 error code |
+
+**输出**:
+| 输出 | 去向 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| runtime routes | `backend.interface_boundary` | Axum Router | 仍由 `crate::runtime::register_runtime_routes` 真正注册 |
+| runtime response | frontend、tests | JSON / status code | 不改 response schema |
+| runtime event stream | frontend SSE panel、tests | SSE frames | 不改 event envelope 或 replay cursor |
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `backend.runtime::register_routes` | Axum Router | runtime routes | `backend.interface_boundary` | 不得绕过 `backend.runtime.routes` |
+| `backend.runtime.routes::register_routes` | Axum Router | runtime routes | `backend.runtime` | 不得迁移 runtime handler |
+| `crate::runtime::register_runtime_routes` | Axum Router | concrete runtime routes | `backend.runtime.routes` | 不得改变 `/api/runtime/*` 语义 |
+| `/api/runtime/test-run` | run request | run record | frontend、tests | 不得迁移 state owner |
+| `/api/runtime/v4/run` | v4 graph/run request | v4 run record | frontend、tests | 不得绕过 governance/evidence |
+| `/api/runtime/backtest` | backtest request | backtest artifact | frontend、tests | 不得改 artifact schema |
+| `/api/runtime/runs/:run_id/events` | run id | SSE stream | frontend、tests | 不得改变 SSE frame |
+
+**父级通信规则**:
+`backend.runtime.routes` 只能经 `backend.runtime` 和 `backend.interface_boundary` 暴露 runtime routes；不得横向直接改 `backend.graph_compile`、`backend.storage_security`、`executor` 或 frontend state。
+
+**允许调用的子模块**:
+`crate::runtime::register_runtime_routes`。真实 run/backtest/mutation/report/experiment 子域仍留在 `src/runtime/`，后续若继续拆分必须另起单子叶等价基线。
+
+**回归保护**:
+`cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_sse`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
+
+**幻觉检查点**:
+AI 声称 runtime routes 已迁移时，必须说明当前只完成 `backend.runtime.routes` 等价基线；不得宣称 run/backtest/mutation handler、event stream、state owner 或 persistence 已迁移。
 
 ### 5.2 `backend.graph_compile`
 
@@ -1368,6 +1425,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 - `markdown/06-milestones/v4.16.0/47-backend.ops_governance子叶抽离完成记录.md`
 - `markdown/06-milestones/v4.16.0/48-backend.app_state_wiring子叶抽离完成记录.md`
 - `markdown/06-milestones/v4.16.0/49-backend.test_support子叶抽离完成记录.md`
+- `markdown/06-milestones/v4.16.0/50-backend.runtime.routes单子叶等价基线.md`
 
 **职责**:
 作为三矩阵治理控制面，定义提案、判档、父子通信、引导坐标、模块树和发布过渡协议。
@@ -1428,6 +1486,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/47-backend.ops_governance子叶抽离完成记录.md` ops governance child complete | `backend.ops_governance` | sandbox/alerts/snapshots/runbook/chaos/hotswap route facade | BE-001E 逐叶完成 | 不得横向改 runtime、executor 或 release transition |
 | `markdown/06-milestones/v4.16.0/48-backend.app_state_wiring子叶抽离完成记录.md` app state child complete | `backend.app_state_wiring` | health/state factory facade、AppState owner 保留 | BE-001E 逐叶完成 | 不得迁移 AppState 字段 owner 或锁顺序 |
 | `markdown/06-milestones/v4.16.0/49-backend.test_support子叶抽离完成记录.md` test support child complete | `backend.test_support` | test scenario facade、旧测试程序保留 | BE-001E 逐叶完成 | 不得启动测试资产汰换或删除旧测试 |
+| `markdown/06-milestones/v4.16.0/50-backend.runtime.routes单子叶等价基线.md` runtime routes baseline | `backend.runtime.routes` | runtime route aggregate facade、真实 runtime owner 和回归证据 | BE-001F 单子叶基线 | 不得迁移 run/backtest/mutation handler、event stream、state owner 或 persistence |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
