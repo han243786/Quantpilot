@@ -41,6 +41,16 @@
 | 27 | `v4.16.0/27-system.build_delivery.ci_release单叶closeout.md` | S9 CI/release 白箱 closeout，确认 workflow、packaging 和 release manifest 边界 | ✅ 已完成 |
 | 28 | `v4.16.0/28-backend大模块分层统计.md` | backend 顶层分层统计，确认 `root.backend` 的 3 层网络和 9 个 L2 叶子候选 | 📋 已创建 |
 | 29 | `v4.16.0/29-backend.interface_boundary等价基线.md` | BE-001A `backend.interface_boundary` 等价基线，锁定 route owner、public 入口和未迁移边界 | 📋 已创建 |
+| 30 | `v4.16.0/30-backend九叶模块壳抽离记录.md` | BE-001B backend 九叶模块壳抽离记录，建立 `src/backend/` 父模块和 9 个叶子 facade | ✅ 已完成 |
+| 31 | `v4.16.0/31-backend.interface_boundary单叶closeout.md` | BE-001C-01 `backend.interface_boundary` 单叶 closeout，确认父级 route facade 不继续拆分 | ✅ 已完成 |
+| 32 | `v4.16.0/32-backend.capability单叶closeout.md` | BE-001C-02 `backend.capability` 单叶 closeout，确认 capability 真源边界不继续拆分 | ✅ 已完成 |
+| 33 | `v4.16.0/33-backend.strategy_config单叶closeout.md` | BE-001C-03 `backend.strategy_config` 单叶 closeout，登记 artifact/preflight/diff/AI proposal L3 候选 | ✅ 已完成 |
+| 34 | `v4.16.0/34-backend.runtime单叶closeout.md` | BE-001C-04 `backend.runtime` 单叶 closeout，登记 run/backtest/mutation/evidence/persistence L3 候选 | ✅ 已完成 |
+| 35 | `v4.16.0/35-backend.graph_compile单叶closeout.md` | BE-001C-05 `backend.graph_compile` 单叶 closeout，登记 graph/QS/compile/diagnostics L3 候选 | ✅ 已完成 |
+| 36 | `v4.16.0/36-backend.storage_security单叶closeout.md` | BE-001C-06 `backend.storage_security` 单叶 closeout，登记安全 L3 候选和安全决策暂停点 | ✅ 已完成 |
+| 37 | `v4.16.0/37-backend.ops_governance单叶closeout.md` | BE-001C-07 `backend.ops_governance` 单叶 closeout，登记 sandbox/alerts/snapshots/runbook/chaos/hotswap L3 候选 | ✅ 已完成 |
+| 38 | `v4.16.0/38-backend.app_state_wiring单叶closeout.md` | BE-001C-08 `backend.app_state_wiring` 单叶 closeout，确认 AppState wiring 不继续拆分 | ✅ 已完成 |
+| 39 | `v4.16.0/39-backend.test_support单叶closeout.md` | BE-001C-09 `backend.test_support` 单叶 closeout，确认测试资产汰换前不继续拆分 | ✅ 已完成 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

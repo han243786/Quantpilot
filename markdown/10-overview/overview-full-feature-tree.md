@@ -141,14 +141,16 @@ Tauri v2 桌面壳入口。做的事:
 
 ### 1.3 后端服务 (:3000)
 
-**文件**: `src/main.rs` → `src/system/entry/backend_process.rs` → `src/lib.rs` → `src/app_router.rs`
+**文件**: `src/main.rs` → `src/system/entry/backend_process.rs` → `src/lib.rs` → `src/backend/mod.rs` → `src/app_router.rs`
 
 ```
 src/main.rs                         →  tokio::main, 调用 quantpilot::run_server()
 src/system/entry/backend_process.rs →  system.entry.backend_process, 承载 run_server()
                                        run_api_server() 构建 Axum Router, 绑定 :3000
-src/lib.rs                          →  crate root 兼容 re-export, 加载后端模块
-src/app_router.rs                   →  build_app_router(), 定义所有 HTTP 路由
+src/lib.rs                          →  crate root 兼容 re-export, 加载 system/backend 模块
+src/backend/mod.rs                  →  backend 父模块, 汇总 9 个叶子 facade
+src/backend/interface_boundary.rs   →  backend.interface_boundary, route owner 父级 facade
+src/app_router.rs                   →  build_app_router(), 经 backend.interface_boundary 注册 HTTP 路由
 ```
 
 后端是单进程 Axum 0.7 HTTP 服务器, 使用 tokio 多线程运行时。所有功能通过模块化组织在 `src/` 下的 Rust 文件中。
@@ -235,7 +237,25 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 
 ## 根2: 后端服务 (:3000)
 
-**一句话**: Axum 0.7 HTTP 服务器, Rust 模块按功能分为 7 个子系统, 是整个 QuantPilot 的核心。
+**一句话**: Axum 0.7 HTTP 服务器, Rust 模块按功能分为 backend 九叶 facade 和既有 handler 子系统, 是整个 QuantPilot 的核心。
+
+### 2.-1 backend 九叶模块壳
+
+**父模块文件**:
+- `src/backend/mod.rs`
+- `src/backend/interface_boundary.rs`
+- `src/backend/capability.rs`
+- `src/backend/strategy_config.rs`
+- `src/backend/runtime.rs`
+- `src/backend/graph_compile.rs`
+- `src/backend/storage_security.rs`
+- `src/backend/ops_governance.rs`
+- `src/backend/app_state_wiring.rs`
+- `src/backend/test_support.rs`
+
+**抽离口径**: v4.16 BE-001B 已建立 9 个叶子 facade，BE-001C 已完成九叶逐叶 closeout。`src/app_router.rs` 通过 `backend.interface_boundary` 进入各叶子；真实 handler、state owner、response schema 和 artifact schema 仍保留在原文件中。
+
+**细分判断**: `backend.interface_boundary`、`backend.capability`、`backend.app_state_wiring`、`backend.test_support` 本阶段停止细分；`backend.strategy_config`、`backend.runtime`、`backend.graph_compile`、`backend.storage_security`、`backend.ops_governance` 值得进入下一轮 L3 等价基线，其中 `backend.storage_security` 必须先过安全决策暂停。
 
 ### 2.0 路由总表
 
@@ -1348,9 +1368,19 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/27-system.build_delivery.ci_release单叶closeout.md` — v4.16.0 S9 CI/release 单叶 closeout，确认 workflow、packaging 和 release manifest 边界
 - `markdown/06-milestones/v4.16.0/28-backend大模块分层统计.md` — v4.16.0 backend 顶层分层统计，确认 `root.backend` 的 3 层网络和 9 个 L2 叶子候选
 - `markdown/06-milestones/v4.16.0/29-backend.interface_boundary等价基线.md` — v4.16.0 BE-001A `backend.interface_boundary` 等价基线，锁定 route owner、public 入口和未迁移边界
+- `markdown/06-milestones/v4.16.0/30-backend九叶模块壳抽离记录.md` — v4.16.0 BE-001B backend 九叶模块壳抽离记录，建立 `src/backend/` 父模块和 9 个叶子 facade
+- `markdown/06-milestones/v4.16.0/31-backend.interface_boundary单叶closeout.md` — v4.16.0 BE-001C-01 `backend.interface_boundary` 单叶 closeout，确认父级 route facade 不继续拆分
+- `markdown/06-milestones/v4.16.0/32-backend.capability单叶closeout.md` — v4.16.0 BE-001C-02 `backend.capability` 单叶 closeout，确认 capability 真源边界不继续拆分
+- `markdown/06-milestones/v4.16.0/33-backend.strategy_config单叶closeout.md` — v4.16.0 BE-001C-03 `backend.strategy_config` 单叶 closeout，登记 artifact/preflight/diff/AI proposal L3 候选
+- `markdown/06-milestones/v4.16.0/34-backend.runtime单叶closeout.md` — v4.16.0 BE-001C-04 `backend.runtime` 单叶 closeout，登记 run/backtest/mutation/evidence/persistence L3 候选
+- `markdown/06-milestones/v4.16.0/35-backend.graph_compile单叶closeout.md` — v4.16.0 BE-001C-05 `backend.graph_compile` 单叶 closeout，登记 graph/QS/compile/diagnostics L3 候选
+- `markdown/06-milestones/v4.16.0/36-backend.storage_security单叶closeout.md` — v4.16.0 BE-001C-06 `backend.storage_security` 单叶 closeout，登记安全 L3 候选和安全决策暂停点
+- `markdown/06-milestones/v4.16.0/37-backend.ops_governance单叶closeout.md` — v4.16.0 BE-001C-07 `backend.ops_governance` 单叶 closeout，登记 sandbox/alerts/snapshots/runbook/chaos/hotswap L3 候选
+- `markdown/06-milestones/v4.16.0/38-backend.app_state_wiring单叶closeout.md` — v4.16.0 BE-001C-08 `backend.app_state_wiring` 单叶 closeout，确认 AppState wiring 不继续拆分
+- `markdown/06-milestones/v4.16.0/39-backend.test_support单叶closeout.md` — v4.16.0 BE-001C-09 `backend.test_support` 单叶 closeout，确认测试资产汰换前不继续拆分
 
 当前治理基线: `v4.15.0/` — 三矩阵完全接管，后续常态维护模块树、全量树和治理 gate。
-当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；system 抽离经验已回填为后续抽离准则，S1-S10 closeout 或静态 closeout 已完成，`root.system` 顶层阶段性 closeout 已刷新，递归模块化流程已明确；backend 已进入 R1 叶子划分与 BE-001A `backend.interface_boundary` 等价基线，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
+当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；system 抽离经验已回填为后续抽离准则，S1-S10 closeout 或静态 closeout 已完成，`root.system` 顶层阶段性 closeout 已刷新，递归模块化流程已明确；backend 已进入 R4/R5，BE-001B `src/backend/` 九叶模块壳已落位，BE-001C 九叶逐叶 closeout 已完成，5 个叶子等待下一轮 L3 等价基线，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
 
 ### 7.7 总览 (markdown/10-overview/)
 

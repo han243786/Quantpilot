@@ -525,7 +525,9 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 
 **层级路径**: `root.backend.capability`
 **父模块**: `backend`
+**状态**: v4.16 BE-001C 单叶 closeout 完成。capability 真源边界保持单一 API facade，本阶段不继续拆分。
 **真实文件**:
+- `src/backend/capability.rs`
 - `src/capability_api.rs`
 - `frontend/src/capabilities/capabilityProjection.js`
 - `frontend/src/capabilities/capabilityGovernance.js`
@@ -548,7 +550,9 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 
 **层级路径**: `root.backend.strategy_config`
 **父模块**: `backend`
+**状态**: v4.16 BE-001C 单叶 closeout 完成。当前 facade 已整理；后续值得按 artifact、preflight、diff、AI proposal binding 建立 L3 等价基线。
 **真实文件**:
+- `src/backend/strategy_config.rs`
 - `src/strategy_config_api.rs`
 - `tests/api_ai_proposal.rs`
 
@@ -609,8 +613,18 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 
 **层级路径**: `root.backend`
 **父模块**: `root`
-**状态**: v4.16 R1 已启动。`markdown/06-milestones/v4.16.0/28-backend大模块分层统计.md` 已登记 9 个 L2 叶子候选；BE-001A `backend.interface_boundary` 已建立等价基线，但 backend 代码抽离、整理和重构仍未完成。
+**状态**: v4.16 BE-001C 九叶逐叶 closeout 已完成。`src/backend/` 已建立父模块和 9 个叶子 facade；4 个叶子停止细分，5 个叶子登记为下一轮 L3 等价基线候选；真实 handler、state owner、response schema 和 artifact schema 仍保留原位。
 **真实文件**:
+- `src/backend/mod.rs`
+- `src/backend/interface_boundary.rs`
+- `src/backend/capability.rs`
+- `src/backend/strategy_config.rs`
+- `src/backend/runtime.rs`
+- `src/backend/graph_compile.rs`
+- `src/backend/storage_security.rs`
+- `src/backend/ops_governance.rs`
+- `src/backend/app_state_wiring.rs`
+- `src/backend/test_support.rs`
 - `src/app_router.rs`
 - `src/app_runtime_helpers.rs`
 - `src/lib.rs`
@@ -644,13 +658,13 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 `backend` 的子叶必须经 `backend.interface_boundary`、明确 API/facade、storage helper 或契约边界通信。子叶不得横向抢 route owner、handler、state owner、response schema、artifact schema 或测试资产归属。
 
 **允许调用的子模块**:
-`backend.interface_boundary`、`backend.runtime`、`backend.graph_compile`、`backend.capability`、`backend.strategy_config`、`backend.storage_security`；`backend.ops_governance`、`backend.app_state_wiring`、`backend.test_support` 目前只作为候选叶子登记，进入代码批次前必须另起提案。
+`backend.interface_boundary`、`backend.runtime`、`backend.graph_compile`、`backend.capability`、`backend.strategy_config`、`backend.storage_security`、`backend.ops_governance`、`backend.app_state_wiring`、`backend.test_support`。这些叶子当前是 facade 壳和白箱 closeout 坐标，不代表 handler 已迁移。
 
 **回归保护**:
 `cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_graph_versions`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 
 **幻觉检查点**:
-AI 声称 backend 已推进时，必须说明当前只是 R1 叶子划分和 BE-001A 等价基线；不得宣称 runtime、compile、storage/security 或测试资产已经抽离完成。
+AI 声称 backend 已推进时，必须说明当前完成的是 BE-001B 九叶模块壳抽离和 BE-001C 九叶逐叶 closeout；不得宣称 runtime、compile、storage/security、AppState 或测试资产 handler 已迁移完成，也不得宣称 `root.backend` 顶层已经收束。
 
 ---
 
@@ -660,8 +674,17 @@ AI 声称 backend 已推进时，必须说明当前只是 R1 叶子划分和 BE-
 
 **层级路径**: `root.backend.interface_boundary`
 **父模块**: `backend`
-**状态**: v4.16 BE-001 抽离候选大模块。真实代码仍分布在既有文件中，本节点只登记后端接口边界的父级白箱。
+**状态**: v4.16 BE-001C 单叶 closeout 完成。`src/app_router.rs` 现在通过 `src/backend/interface_boundary.rs` 调用各叶子 facade；本叶作为父级 route facade 不继续拆分，真实 handler 仍分布在既有文件中。
 **真实文件**:
+- `src/backend/interface_boundary.rs`
+- `src/backend/capability.rs`
+- `src/backend/strategy_config.rs`
+- `src/backend/runtime.rs`
+- `src/backend/graph_compile.rs`
+- `src/backend/storage_security.rs`
+- `src/backend/ops_governance.rs`
+- `src/backend/app_state_wiring.rs`
+- `src/backend/test_support.rs`
 - `src/app_router.rs`
 - `src/capability_api.rs`
 - `src/strategy_config_api.rs`
@@ -674,7 +697,7 @@ AI 声称 backend 已推进时，必须说明当前只是 R1 叶子划分和 BE-
 作为后端接口边界的大模块，先管理 router、route registration、API facade、旧 handler 保留和 response schema 冻结。后续小模块抽离必须先挂到本父级边界下，再进入 capability、strategy config、runtime、graph/compile 等子模块。
 
 **抽离策略**:
-先抽一个大模块，再在大模块里抽小模块。BE-001 只建立 `backend.interface_boundary` 父级边界，小模块抽离按后续批次逐个推进。
+先抽一个大模块，再在大模块里抽小模块。BE-001C 已确认 `backend.interface_boundary` 只作为父级 route facade，不继续向下拆；后续业务拆分落到它管理的子叶。
 
 **输入**:
 | 输入 | 来源 | 格式/类型 | 约束 |
@@ -699,12 +722,14 @@ AI 声称 backend 已推进时，必须说明当前只是 R1 叶子划分和 BE-
 | `register_runtime_routes` | Axum Router | runtime routes | `build_app_router` | 不得迁移 runtime 状态所有权 |
 | `register_graph_routes` | Axum Router | graph routes | `build_app_router` | 不得绕过版本记录 |
 | `register_compile_routes` | Axum Router | compile routes | `build_app_router` | 不得把 strategy_ir 当运行真源 |
+| `register_credential_routes` | Axum Router | credential routes | `build_app_router` | 不得绕过凭证保险库 |
+| `register_test_scenario_routes` | Axum Router | test scenario routes | `build_app_router` | 不得把测试支撑当生产 owner |
 
 **父级通信规则**:
 所有后端接口抽离必须先经过 `backend.interface_boundary` 父级边界。子模块不得直接互相横向改 route、handler、state owner 或 response schema。
 
 **允许调用的子模块**:
-`backend.capability`、`backend.strategy_config`、`backend.runtime`、`backend.graph_compile`。
+`backend.capability`、`backend.strategy_config`、`backend.runtime`、`backend.graph_compile`、`backend.storage_security`、`backend.ops_governance`、`backend.app_state_wiring`、`backend.test_support`。
 
 **禁止横向连接**:
 不得让 `backend.runtime` 直接改 `backend.graph_compile` route owner；不得让前端绕过 API 读取后端内部文件；不得让执行端状态直接并入后端接口边界。
@@ -722,7 +747,9 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 
 **层级路径**: `root.backend.runtime`
 **父模块**: `backend`
+**状态**: v4.16 BE-001C 单叶 closeout 完成。当前 facade 已整理；后续值得按 run、backtest、mutation approval、evidence artifact、persistence projection 建立 L3 等价基线。
 **真实文件**:
+- `src/backend/runtime.rs`
 - `src/runtime/mod.rs`
 - `src/runtime_persistence.rs`
 - `src/runtime_event_projection.rs`
@@ -758,7 +785,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 | `build_backtest_artifact_views` | backtest record | artifact views | runtime persistence | 不得生成无证据锚点摘要 |
 
 **父级通信规则**:
-runtime 对外必须经过 `backend.router` 注册的 HTTP API、事件流或持久化接口；不得由前端直接读取内部文件推断运行状态。
+runtime 对外必须经过 `backend.interface_boundary` 注册的 HTTP API、事件流或持久化接口；不得由前端直接读取内部文件推断运行状态。
 
 **允许调用的子模块**:
 `runtime_persistence`、`runtime_validation`、`runtime_event_projection`、`backtest_artifacts`。
@@ -779,7 +806,9 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 
 **层级路径**: `root.backend.graph_compile`
 **父模块**: `backend`
+**状态**: v4.16 BE-001C 单叶 closeout 完成。当前 facade 已整理；后续值得按 graph API、QuantScript graph、compile API、diagnostics artifacts 建立 L3 等价基线。
 **真实文件**:
+- `src/backend/graph_compile.rs`
 - `src/graph_api.rs`
 - `src/graph_quantscript_api.rs`
 - `src/graph_version_compare.rs`
@@ -825,7 +854,9 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 
 **层级路径**: `root.backend.storage_security`
 **父模块**: `backend`
+**状态**: v4.16 BE-001C 单叶 closeout 完成。当前 facade 已整理；后续值得细分，但 credential、storage、auth、quota、日志清洗和 backup 迁移必须先过安全决策暂停。
 **真实文件**:
+- `src/backend/storage_security.rs`
 - `src/storage_lifecycle.rs`
 - `src/credential_vault.rs`
 - `src/credential_api.rs`
@@ -856,6 +887,95 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 
 **幻觉检查点**:
 AI 声称“安全存储已覆盖”时，必须指出 vault、storage lifecycle、日志清洗和测试证据。
+
+### 5.3.1 `backend.ops_governance`
+
+**层级路径**: `root.backend.ops_governance`
+**父模块**: `backend`
+**状态**: v4.16 BE-001C 单叶 closeout 完成。ops route facade 已整理；后续值得按 sandbox、alerts、snapshots、runbook、chaos、hotswap 建立 L3 等价基线，真实 handler 仍保留在原文件。
+**真实文件**:
+- `src/backend/ops_governance.rs`
+- `src/alert_engine.rs`
+- `src/sandbox_verification.rs`
+- `src/snapshot_service.rs`
+- `src/runbook.rs`
+- `src/chaos_experiment.rs`
+- `src/hotswap_api.rs`
+- `src/collaboration.rs`
+- `src/migration_sender.rs`
+
+**职责**:
+承载后端运维治理 route facade，包括告警、沙箱验证、快照、运行手册、混沌实验、hotswap、协作和迁移发送边界。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `register_alert_routes` | Axum Router | alert routes | `backend.interface_boundary` | 不得改默认告警规则语义 |
+| `register_sandbox_verification_routes` | Axum Router | sandbox routes | `backend.interface_boundary` | 不得跳过沙箱验证证据 |
+| `register_snapshot_routes` | Axum Router | snapshot routes | `backend.interface_boundary` | 不得绕过签名校验 |
+| `register_runbook_routes` | Axum Router | runbook routes | `backend.interface_boundary` | 不得把操作手册当执行真源 |
+| `register_chaos_routes` | Axum Router | chaos routes | `backend.interface_boundary` | 不得默认开启 chaos mode |
+| `register_hotswap_routes` | Axum Router | hotswap routes | `backend.interface_boundary` | 不得绕过 hotswap 审计 |
+
+**父级通信规则**:
+ops 能力只经 `backend.interface_boundary` 暴露 route facade，不得横向改 runtime state、executor state、storage_security 或 release transition。
+
+**回归保护**:
+`cargo check -p quantpilot`；涉及具体 ops route 时运行相应 API test 或人工 route 审核；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
+
+### 5.3.2 `backend.app_state_wiring`
+
+**层级路径**: `root.backend.app_state_wiring`
+**父模块**: `backend`
+**状态**: v4.16 BE-001C 单叶 closeout 完成。health 与 state attach 已经经 facade 进入；`new_app_state` 保持兼容 re-export，本阶段不继续拆分。
+**真实文件**:
+- `src/backend/app_state_wiring.rs`
+- `src/app_runtime_helpers.rs`
+- `src/lib.rs`
+- `src/system/entry/backend_process.rs`
+
+**职责**:
+承载 backend AppState wiring、health route adapter 和启动链与 backend interface 的连接点。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `new_app_state` | storage dirs | AppState | `system.entry.backend_process`、测试入口 | 不得迁移 AppState 字段 owner |
+| `health` | AppState | health response | `backend.interface_boundary` | 不得把 health 当业务 capability 真源 |
+| `attach_state` | Router + AppState | Axum Router | `build_app_router` | 不得改变 route order 或 state owner |
+
+**父级通信规则**:
+AppState wiring 只能连接启动链、router 和现有 AppState 工厂；不得横向修改 runtime、credential、storage 或 executor 状态所有权。
+
+**回归保护**:
+`cargo check -p quantpilot`；`cargo test -p quantpilot defaults_to_server_when_no_cli_args_are_provided`；涉及 API 状态时运行相关 integration test。
+
+### 5.3.3 `backend.test_support`
+
+**层级路径**: `root.backend.test_support`
+**父模块**: `backend`
+**状态**: v4.16 BE-001C 单叶 closeout 完成。test scenario route facade 已整理；测试资产汰换未启动前不继续拆分，旧测试程序和 E2E 整理仍延后。
+**真实文件**:
+- `src/backend/test_support.rs`
+- `src/api_test_scenario.rs`
+- `src/test_runner.rs`
+- `src/tests_backend.rs`
+
+**职责**:
+承载后端测试支撑入口、test scenario route 和旧测试资产风险窗口登记。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `register_test_scenario_routes` | Axum Router | test scenario routes | `backend.interface_boundary` | 不得把测试 route 当生产能力 |
+| `TestRunner::execute` | test runner context | test report | 测试支撑 | 不得替代后端 API 等价证据 |
+| `src/tests_backend.rs` integration tests | HTTP requests | assertions | 后端回归 | 不得在无替代证据时删除 |
+
+**父级通信规则**:
+测试支撑只证明等价，不拥有生产 handler、state owner 或 response schema。
+
+**回归保护**:
+`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_graph_versions`；测试资产汰换时必须引用 `markdown/06-milestones/v4.16.0/05-测试资产汰换登记.md`。
 
 ### 5.4 `frontend.strategy_hub`
 
@@ -1074,6 +1194,16 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 - `markdown/06-milestones/v4.16.0/27-system.build_delivery.ci_release单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/28-backend大模块分层统计.md`
 - `markdown/06-milestones/v4.16.0/29-backend.interface_boundary等价基线.md`
+- `markdown/06-milestones/v4.16.0/30-backend九叶模块壳抽离记录.md`
+- `markdown/06-milestones/v4.16.0/31-backend.interface_boundary单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/32-backend.capability单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/33-backend.strategy_config单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/34-backend.runtime单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/35-backend.graph_compile单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/36-backend.storage_security单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/37-backend.ops_governance单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/38-backend.app_state_wiring单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/39-backend.test_support单叶closeout.md`
 
 **职责**:
 作为三矩阵治理控制面，定义提案、判档、父子通信、引导坐标、模块树和发布过渡协议。
@@ -1114,6 +1244,16 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/27-system.build_delivery.ci_release单叶closeout.md` S9 closeout | `system.build_delivery.ci_release` | CI/release/scenario workflow、packaging、release manifest 证据 | system 单叶 closeout | 不得宣称发布验收完成 |
 | `markdown/06-milestones/v4.16.0/28-backend大模块分层统计.md` backend 分层 | `root.backend` | 3 层网络、9 个 L2 叶子候选、后续递归顺序 | backend 抽离批次 | 不得宣称 backend 代码抽离完成 |
 | `markdown/06-milestones/v4.16.0/29-backend.interface_boundary等价基线.md` BE-001A baseline | `backend.interface_boundary` | route owner、public/接口入口、保留 handler/state/schema 边界 | backend 接口边界批次 | 不得迁移 handler 或状态所有权 |
+| `markdown/06-milestones/v4.16.0/30-backend九叶模块壳抽离记录.md` backend 九叶壳 | `root.backend` 9 叶子 | `src/backend/`、route facade、保留 handler/state/schema 边界 | backend 九叶抽离批次 | 不得宣称叶子整理或 handler 迁移完成 |
+| `markdown/06-milestones/v4.16.0/31-backend.interface_boundary单叶closeout.md` interface boundary closeout | `backend.interface_boundary` | 父级 route facade、兼容桥、停止细分判断 | backend 九叶整理 | 不得把父级 facade 拆成目录美化 |
+| `markdown/06-milestones/v4.16.0/32-backend.capability单叶closeout.md` capability closeout | `backend.capability` | capability 真源、单一 API facade、停止细分判断 | backend 九叶整理 | 不得由前端静态数组替代 capability 真源 |
+| `markdown/06-milestones/v4.16.0/33-backend.strategy_config单叶closeout.md` strategy config closeout | `backend.strategy_config` | artifact/preflight/diff/AI proposal L3 候选 | backend 九叶整理 | 不得迁移 schema 或 capability 语义而不重新提案 |
+| `markdown/06-milestones/v4.16.0/34-backend.runtime单叶closeout.md` runtime closeout | `backend.runtime` | run/backtest/mutation/evidence/persistence L3 候选 | backend 九叶整理 | 不得迁移 runtime state owner |
+| `markdown/06-milestones/v4.16.0/35-backend.graph_compile单叶closeout.md` graph compile closeout | `backend.graph_compile` | graph/QS/compile/diagnostics L3 候选 | backend 九叶整理 | 不得绕过 graph version 或 compile diagnostics |
+| `markdown/06-milestones/v4.16.0/36-backend.storage_security单叶closeout.md` storage security closeout | `backend.storage_security` | credential/storage/auth/safe log L3 候选和安全暂停 | backend 九叶整理 | 不得直接改密钥、认证、quota、原子写或日志清洗语义 |
+| `markdown/06-milestones/v4.16.0/37-backend.ops_governance单叶closeout.md` ops governance closeout | `backend.ops_governance` | sandbox/alerts/snapshots/runbook/chaos/hotswap L3 候选 | backend 九叶整理 | 不得横向改 runtime、executor 或 release transition |
+| `markdown/06-milestones/v4.16.0/38-backend.app_state_wiring单叶closeout.md` app state wiring closeout | `backend.app_state_wiring` | AppState 工厂、health、attach_state、停止细分判断 | backend 九叶整理 | 不得迁移 AppState 字段 owner 或锁顺序 |
+| `markdown/06-milestones/v4.16.0/39-backend.test_support单叶closeout.md` test support closeout | `backend.test_support` | test scenario route、legacy tests、测试资产汰换暂停 | backend 九叶整理 | 不得无替代证据删除旧测试程序 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

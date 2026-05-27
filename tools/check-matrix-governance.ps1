@@ -174,7 +174,17 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/26-*.md", "v4.16 system workspace manifest closeout"),
     @("markdown/06-milestones/v4.16.0/27-*.md", "v4.16 system ci release closeout"),
     @("markdown/06-milestones/v4.16.0/28-*.md", "v4.16 backend module split statistics"),
-    @("markdown/06-milestones/v4.16.0/29-*.md", "v4.16 backend interface boundary equivalence baseline")
+    @("markdown/06-milestones/v4.16.0/29-*.md", "v4.16 backend interface boundary equivalence baseline"),
+    @("markdown/06-milestones/v4.16.0/30-*.md", "v4.16 backend nine leaf facade extraction record"),
+    @("markdown/06-milestones/v4.16.0/31-*.md", "v4.16 backend interface boundary leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/32-*.md", "v4.16 backend capability leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/33-*.md", "v4.16 backend strategy config leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/34-*.md", "v4.16 backend runtime leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/35-*.md", "v4.16 backend graph compile leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/36-*.md", "v4.16 backend storage security leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/37-*.md", "v4.16 backend ops governance leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/38-*.md", "v4.16 backend app state wiring leaf closeout"),
+    @("markdown/06-milestones/v4.16.0/39-*.md", "v4.16 backend test support leaf closeout")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -225,6 +235,16 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/27-", "full feature tree v4.16 system ci release closeout"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/28-", "full feature tree v4.16 backend module split statistics"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/29-", "full feature tree v4.16 backend interface baseline"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/30-", "full feature tree v4.16 backend nine leaf facade extraction"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/31-", "full feature tree v4.16 backend interface closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/32-", "full feature tree v4.16 backend capability closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/33-", "full feature tree v4.16 backend strategy config closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/34-", "full feature tree v4.16 backend runtime closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/35-", "full feature tree v4.16 backend graph compile closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/36-", "full feature tree v4.16 backend storage security closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/37-", "full feature tree v4.16 backend ops governance closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/38-", "full feature tree v4.16 backend app state wiring closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/39-", "full feature tree v4.16 backend test support closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/03-", "module tree v4.16 backend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/04-", "module tree v4.16 frontend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/05-", "module tree v4.16 test asset register"),
@@ -252,6 +272,16 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/27-", "module tree v4.16 system ci release closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/28-", "module tree v4.16 backend module split statistics"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/29-", "module tree v4.16 backend interface baseline"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/30-", "module tree v4.16 backend nine leaf facade extraction"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/31-", "module tree v4.16 backend interface closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/32-", "module tree v4.16 backend capability closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/33-", "module tree v4.16 backend strategy config closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/34-", "module tree v4.16 backend runtime closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/35-", "module tree v4.16 backend graph compile closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/36-", "module tree v4.16 backend storage security closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/37-", "module tree v4.16 backend ops governance closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/38-", "module tree v4.16 backend app state wiring closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/39-", "module tree v4.16 backend test support closeout"),
     @("markdown/10-overview/overview-docs-index.md", "v4.16.0", "docs index v4.16 plan"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "v4.16.0", "current roadmap v4.16 plan")
 )
@@ -591,6 +621,100 @@ $v416LandingFiles = @(
         @("existing handler", "handler retention marker"),
         @("existing state owner", "state owner retention marker"),
         @("cargo test -p quantpilot --test api_run", "api run test gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/30-*.md", @(
+        @("BE-001B", "backend facade extraction marker"),
+        @("src/backend/mod.rs", "backend module root file"),
+        @("src/backend/interface_boundary.rs", "backend interface facade file"),
+        @("src/backend/capability.rs", "backend capability facade file"),
+        @("src/backend/strategy_config.rs", "backend strategy config facade file"),
+        @("src/backend/runtime.rs", "backend runtime facade file"),
+        @("src/backend/graph_compile.rs", "backend graph compile facade file"),
+        @("src/backend/storage_security.rs", "backend storage security facade file"),
+        @("src/backend/ops_governance.rs", "backend ops governance facade file"),
+        @("src/backend/app_state_wiring.rs", "backend app state wiring facade file"),
+        @("src/backend/test_support.rs", "backend test support facade file"),
+        @("existing handler", "handler retention marker"),
+        @("existing state owner", "state owner retention marker"),
+        @("cargo check -p quantpilot", "backend check gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/31-*.md", @(
+        @("BE-001C-01", "backend interface closeout marker"),
+        @("backend.interface_boundary", "backend interface boundary"),
+        @("src/backend/interface_boundary.rs", "backend interface facade file"),
+        @("src/app_router.rs", "app router file"),
+        @("build_app_router", "backend router parent entry"),
+        @("attach_state", "state attach facade"),
+        @((U "5LiN57un57ut5ouG5YiG"), "stop split decision")
+    )),
+    @("markdown/06-milestones/v4.16.0/32-*.md", @(
+        @("BE-001C-02", "backend capability closeout marker"),
+        @("backend.capability", "backend capability leaf"),
+        @("src/backend/capability.rs", "backend capability facade file"),
+        @("src/capability_api.rs", "capability api file"),
+        @("get_capabilities", "capability entry"),
+        @((U "5LiN57un57ut5ouG5YiG"), "stop split decision")
+    )),
+    @("markdown/06-milestones/v4.16.0/33-*.md", @(
+        @("BE-001C-03", "backend strategy config closeout marker"),
+        @("backend.strategy_config", "backend strategy config leaf"),
+        @("src/backend/strategy_config.rs", "backend strategy config facade file"),
+        @("register_strategy_config_routes", "strategy config route registration"),
+        @("backend.strategy_config.artifact", "strategy config artifact l3"),
+        @("backend.strategy_config.preflight", "strategy config preflight l3"),
+        @((U "5YC85b6X57un57ut5ouG5YiG"), "worth split decision")
+    )),
+    @("markdown/06-milestones/v4.16.0/34-*.md", @(
+        @("BE-001C-04", "backend runtime closeout marker"),
+        @("backend.runtime", "backend runtime leaf"),
+        @("src/backend/runtime.rs", "backend runtime facade file"),
+        @("register_runtime_routes", "runtime route registration"),
+        @("backend.runtime.run", "runtime run l3"),
+        @("backend.runtime.backtest", "runtime backtest l3"),
+        @((U "5YC85b6X57un57ut5ouG5YiG"), "worth split decision")
+    )),
+    @("markdown/06-milestones/v4.16.0/35-*.md", @(
+        @("BE-001C-05", "backend graph compile closeout marker"),
+        @("backend.graph_compile", "backend graph compile leaf"),
+        @("src/backend/graph_compile.rs", "backend graph compile facade file"),
+        @("register_graph_routes", "graph route registration"),
+        @("register_compile_routes", "compile route registration"),
+        @("backend.graph_compile.graph_api", "graph api l3"),
+        @((U "5YC85b6X57un57ut5ouG5YiG"), "worth split decision")
+    )),
+    @("markdown/06-milestones/v4.16.0/36-*.md", @(
+        @("BE-001C-06", "backend storage security closeout marker"),
+        @("backend.storage_security", "backend storage security leaf"),
+        @("src/backend/storage_security.rs", "backend storage security facade file"),
+        @("register_credential_routes", "credential route registration"),
+        @("backend.storage_security.credential_vault", "credential vault l3"),
+        @((U "5a6J5YWo5Yaz562W5pqC5YGc"), "security decision pause"),
+        @((U "5YC85b6X57un57ut5ouG5YiG"), "worth split decision")
+    )),
+    @("markdown/06-milestones/v4.16.0/37-*.md", @(
+        @("BE-001C-07", "backend ops governance closeout marker"),
+        @("backend.ops_governance", "backend ops governance leaf"),
+        @("src/backend/ops_governance.rs", "backend ops governance facade file"),
+        @("register_alert_routes", "alert route registration"),
+        @("backend.ops_governance.sandbox", "ops sandbox l3"),
+        @("backend.ops_governance.hotswap", "ops hotswap l3"),
+        @((U "5YC85b6X57un57ut5ouG5YiG"), "worth split decision")
+    )),
+    @("markdown/06-milestones/v4.16.0/38-*.md", @(
+        @("BE-001C-08", "backend app state wiring closeout marker"),
+        @("backend.app_state_wiring", "backend app state wiring leaf"),
+        @("src/backend/app_state_wiring.rs", "backend app state wiring facade file"),
+        @("new_app_state", "app state factory"),
+        @("attach_state", "state attach facade"),
+        @((U "5LiN57un57ut5ouG5YiG"), "stop split decision")
+    )),
+    @("markdown/06-milestones/v4.16.0/39-*.md", @(
+        @("BE-001C-09", "backend test support closeout marker"),
+        @("backend.test_support", "backend test support leaf"),
+        @("src/backend/test_support.rs", "backend test support facade file"),
+        @("register_test_scenario_routes", "test scenario route registration"),
+        @((U "MDUt5rWL6K+V6LWE5Lqn5rGw5o2i55m76K6wLm1k"), "test asset replacement register"),
+        @((U "5LiN57un57ut5ouG5YiG"), "stop split decision")
     ))
 )
 
@@ -668,6 +792,9 @@ $requiredModules = @(
     "backend.runtime",
     "backend.graph_compile",
     "backend.storage_security",
+    "backend.ops_governance",
+    "backend.app_state_wiring",
+    "backend.test_support",
     "frontend.strategy_hub",
     "frontend.capability_projection",
     "frontend.runtime_panels",
