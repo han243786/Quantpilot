@@ -20,7 +20,8 @@
 | 06 | `v4.16.0/06-后端接口边界首批抽离方案.md` | BE-001 后端接口边界首批抽离方案，锁定 router/API/facade 边界 | 📋 已创建 |
 | 07 | `v4.16.0/07-顶层大模块统计.md` | 统计 6 个逻辑顶层大模块、16 个白箱子节点和物理目录规模 | 📋 已创建 |
 | 08 | `v4.16.0/08-system大模块分层统计.md` | 确定 system 分 3 层、10 个叶子模块，并说明与 BE-001 的关系 | 📋 已创建 |
-| 09 | `v4.16.0/09-system.entry首批抽离记录.md` | system 试水抽离第一刀，将 public `run_server` 归入 `system.entry.backend_process` 并保留兼容入口 | 📋 已创建 |
+| 09 | `v4.16.0/09-system.entry首批抽离记录.md` | system 试水抽离第一刀，将 public `run_server` 归入 `system.entry.backend_process` 并保留兼容入口 | ✅ 已完成 |
+| 10 | `v4.16.0/10-system抽离完成记录.md` | system 抽离完成记录，将 `run_api_server` 与启动期 helper 归入 `system.entry.backend_process` | ✅ 已完成 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

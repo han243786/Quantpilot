@@ -97,7 +97,7 @@ AI 提到本模块时，必须能指出真实文件、真实方法、真实测�
 
 **层级路径**: `root.system.entry.backend_process`
 **父模块**: `system.entry`
-**状态**: v4.16 system 试水抽离第一批。public 启动入口已迁入 system 模块，旧 crate 入口通过 re-export 兼容。
+**状态**: v4.16 system 抽离完成。public 启动入口和 API server 启动实现已迁入 system 模块，旧 crate 入口通过 re-export 兼容。
 **真实文件**:
 - `src/system/mod.rs`
 - `src/system/entry/mod.rs`
@@ -106,7 +106,7 @@ AI 提到本模块时，必须能指出真实文件、真实方法、真实测�
 - `src/main.rs`
 
 **职责**:
-承载后端进程启动 public 入口、环境初始化、tracing 初始化、panic hook、CLI 分发和 API server 启动委派。
+承载后端进程启动 public 入口、环境初始化、tracing 初始化、panic hook、CLI 分发、API server 启动、启动期中间件、后台观察任务、优雅关闭和关闭刷盘。
 
 **输入**:
 | 输入 | 来源 | 格式/类型 | 约束 |
@@ -118,7 +118,7 @@ AI 提到本模块时，必须能指出真实文件、真实方法、真实测�
 **输出**:
 | 输出 | 去向 | 格式/类型 | 约束 |
 | --- | --- | --- | --- |
-| API server 委派 | `run_api_server` | async result | 不迁移 API route owner |
+| API server 启动 | `run_api_server` | async result | 不拥有 API route owner |
 | CLI 输出 | stdout/stderr | text | 不改变已有 CLI 输出语义 |
 | 兼容 public 入口 | crate root | `pub use ...::run_server` | 不删除 `quantpilot::run_server` |
 
@@ -127,14 +127,19 @@ AI 提到本模块时，必须能指出真实文件、真实方法、真实测�
 | --- | --- | --- | --- | --- |
 | `run_server` | 环境变量、CLI 参数 | `anyhow::Result<()>` | `src/main.rs`、旧 crate public 入口 | 不得拥有 handler、route schema 或 runtime state |
 
+**关键内部启动实现**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `run_api_server` | 存储目录、环境变量、AppState 工厂、router 构建器 | Axum 服务 | `run_server` | 不得拥有 handler、response schema 或 AppState 字段定义 |
+
 **父级通信规则**:
-`system.entry.backend_process` 只能通过 `run_api_server -> backend.interface_boundary -> build_app_router` 进入后端接口边界，不得直接横向改 handler 或状态所有权。
+`system.entry.backend_process` 只能通过 `run_api_server -> backend.interface_boundary -> build_app_router` 进入后端接口边界，不得直接横向改 handler、response schema 或状态所有权。
 
 **回归保护**:
 `cargo check -p quantpilot`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 
 **幻觉检查点**:
-AI 声称 system 已经抽离时，必须指出只完成 `system.entry.backend_process` 第一刀；`run_api_server`、`build_app_router`、`new_app_state` 尚未迁移。
+AI 声称 system 已经抽离时，必须指出完成范围是 `system.entry.backend_process` 启动边界；`build_app_router` 仍属 `backend.interface_boundary`，`new_app_state` 仍属 `app_runtime_helpers`。
 
 ### 3.2 `backend.router`
 
@@ -643,6 +648,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 - `markdown/06-milestones/v4.16.0/07-顶层大模块统计.md`
 - `markdown/06-milestones/v4.16.0/08-system大模块分层统计.md`
 - `markdown/06-milestones/v4.16.0/09-system.entry首批抽离记录.md`
+- `markdown/06-milestones/v4.16.0/10-system抽离完成记录.md`
 
 **职责**:
 作为三矩阵治理控制面，定义提案、判档、父子通信、引导坐标、模块树和发布过渡协议。
@@ -663,6 +669,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/07-顶层大模块统计.md` 顶层统计 | 模块树与 repo 文件 | 顶层大模块、白箱子节点、物理规模 | 后续大模块选择 | 不得把未覆盖缺口伪装成已完成 |
 | `markdown/06-milestones/v4.16.0/08-system大模块分层统计.md` system 分层 | `root.system` | 3 层、10 个叶子模块、BE-001 关系 | system 抽离批次 | 不得把启动编排当业务能力真源 |
 | `markdown/06-milestones/v4.16.0/09-system.entry首批抽离记录.md` system 试水 | `system.entry.backend_process` | public 启动入口、兼容桥、等价证据 | system 抽离批次 | 不得宣称 system 全量抽离完成 |
+| `markdown/06-milestones/v4.16.0/10-system抽离完成记录.md` system 完成 | `system.entry.backend_process` | `run_server`、`run_api_server`、启动期 helper、完成边界 | system 抽离批次 | 不得宣称整理或重构完成 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

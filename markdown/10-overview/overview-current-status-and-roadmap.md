@@ -113,7 +113,7 @@ v4.7.0 系统应被理解为：
 - 前端 Toast 通知系统, 术语全中文化, 空状态引导
 - 执行端独立进程 (:3001), ParamsPanel 热调参, Paper/Live 切换
 - v4 PaperSimulated runtime 已具备本地用户启动入口和执行端 v4 runner 集成；真实下单仍由 Risk Plane 和 ExecutionMachine 能力来源约束
-- v4.16.0 模块化抽离已完成 system 试水第一刀: `run_server` public 入口归入 `system.entry.backend_process`，`quantpilot::run_server` 兼容入口保持不变
+- v4.16.0 模块化抽离已完成 system 入口抽离: `run_server`、`run_api_server` 和启动期 helper 归入 `system.entry.backend_process`，`quantpilot::run_server` 兼容入口保持不变
 
 ## 当前收尾/发布状态
 

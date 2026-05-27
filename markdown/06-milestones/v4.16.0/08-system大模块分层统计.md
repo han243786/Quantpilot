@@ -34,7 +34,7 @@
 | # | 叶子模块 | 父域 | 真实文件 | 关键 public/入口 | 抽离备注 |
 | --- | --- | --- | --- | --- | --- |
 | S1 | `system.entry.launch_scripts` | `system.entry` | `start.bat`、`start.ps1` | 启动脚本入口 | 只编排，不拥有业务能力真源 |
-| S2 | `system.entry.backend_process` | `system.entry` | `src/main.rs`、`src/lib.rs`、`src/app_runtime_helpers.rs`、`src/system/entry/backend_process.rs` | `run_server`、`new_app_state` | `run_server` 已试水抽离；不绕过 `build_app_router` |
+| S2 | `system.entry.backend_process` | `system.entry` | `src/main.rs`、`src/lib.rs`、`src/app_runtime_helpers.rs`、`src/system/entry/backend_process.rs` | `run_server`、`run_api_server`、`new_app_state` | `run_server` 与 `run_api_server` 已抽离；不绕过 `build_app_router` |
 | S3 | `system.desktop_shell.tauri_runtime` | `system.desktop_shell` | `src-tauri/src/main.rs` | Tauri main、后端 readiness wait | 不拥有后端状态 |
 | S4 | `system.desktop_shell.tauri_config` | `system.desktop_shell` | `src-tauri/tauri.conf.json`、`src-tauri/capabilities/default.json` | Tauri config、CSP、capabilities | 改 CSP/窗口/权限时必须单独登记 |
 | S5 | `system.desktop_shell.assets_schema` | `system.desktop_shell` | `src-tauri/icons/*`、`src-tauri/gen/schemas/*` | 桌面图标、generated schemas | 先作为资产叶子，不拆更细 |
@@ -83,7 +83,7 @@ system.entry.backend_process
 | 当前模块树只有 `system.entry` 种子节点 | 后续 system 抽离前，按本文件补 10 个叶子白箱 |
 | `system.build_delivery` 跨 CI、容器、release | 不作为 v4.16 首批，避免和测试资产汰换纠缠 |
 | `src-tauri/gen/schemas/*` 是生成资产 | 先作为资产叶子登记，不单独抽离 |
-| `system.entry.backend_process` 已开始试水 | 仅完成 `run_server` 所属边界迁移；`run_api_server`、`new_app_state`、`build_app_router` 仍保留原处 |
+| `system.entry.backend_process` 已完成抽离 | `run_server` 与 `run_api_server` 已迁入 `src/system/entry/backend_process.rs`；`new_app_state` 和 `build_app_router` 按职责留在原模块 |
 
 ---
 

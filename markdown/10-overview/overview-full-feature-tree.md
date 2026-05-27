@@ -146,14 +146,14 @@ Tauri v2 桌面壳入口。做的事:
 ```
 src/main.rs                         →  tokio::main, 调用 quantpilot::run_server()
 src/system/entry/backend_process.rs →  system.entry.backend_process, 承载 run_server()
-src/lib.rs                          →  crate root 兼容 re-export, 加载后端模块
                                        run_api_server() 构建 Axum Router, 绑定 :3000
+src/lib.rs                          →  crate root 兼容 re-export, 加载后端模块
 src/app_router.rs                   →  build_app_router(), 定义所有 HTTP 路由
 ```
 
 后端是单进程 Axum 0.7 HTTP 服务器, 使用 tokio 多线程运行时。所有功能通过模块化组织在 `src/` 下的 Rust 文件中。
 
-**启动逻辑** (`src/system/entry/backend_process.rs` + `src/lib.rs`):
+**启动逻辑** (`src/system/entry/backend_process.rs`):
 - 加载 `.env` (dotenvy)
 - 初始化 tracing-subscriber (日志格式 compact/json)
 - 初始化凭证保险库 (`CredentialVault`)
@@ -1328,6 +1328,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/07-顶层大模块统计.md` — v4.16.0 顶层大模块统计，确认 6 个逻辑顶层和首批 backend 大模块
 - `markdown/06-milestones/v4.16.0/08-system大模块分层统计.md` — v4.16.0 system 大模块分层统计，确认 3 层和 10 个叶子模块
 - `markdown/06-milestones/v4.16.0/09-system.entry首批抽离记录.md` — v4.16.0 system 试水抽离记录，确认 `system.entry.backend_process` 第一刀和兼容桥
+- `markdown/06-milestones/v4.16.0/10-system抽离完成记录.md` — v4.16.0 system 抽离完成记录，确认 `run_api_server` 与启动期 helper 已迁入 `system.entry.backend_process`
 
 当前治理基线: `v4.15.0/` — 三矩阵完全接管，后续常态维护模块树、全量树和治理 gate。
 当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；已决策先走 BE-001 后端接口边界，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
@@ -1458,10 +1459,10 @@ storage/
 ### E.2 后端: `src/`
 
 - `src/main.rs` — 二进制入口, 调用 `quantpilot::run_server()`
-- `src/lib.rs` — 核心库入口, 全部模块声明 + `run_server` 兼容 re-export + `run_api_server()` 旧实现边界
+- `src/lib.rs` — 核心库入口, 全部模块声明 + `run_server` 兼容 re-export; 启动实现已归入 system 模块
 - `src/system/mod.rs` — system 父模块入口; 改 system 顶层模块导出时改这里
 - `src/system/entry/mod.rs` — system.entry 二级域入口; 改启动域子模块导出时改这里
-- `src/system/entry/backend_process.rs` — 后端进程启动 public 入口, `run_server()`、CLI 分发、环境和日志初始化; 改进程启动边界时改这里
+- `src/system/entry/backend_process.rs` — 后端进程启动 public 入口, `run_server()`、`run_api_server()`、CLI 分发、环境和日志初始化、启动期中间件和后台任务; 改进程启动边界时改这里
 - `src/app_router.rs` — 路由构建, `build_app_router()` 定义全部 HTTP 端点; 新增 API 时改这里
 - `src/alert_engine.rs` — 告警引擎, 10 条默认规则; 改告警规则/去重/恢复/404 语义时改这里
 - `src/api_errors.rs` — API 错误格式, `json_bad_request()`/`json_not_found()`/`internal_error()`; 改错误响应格式或 error_code 时改这里

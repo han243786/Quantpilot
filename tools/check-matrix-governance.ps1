@@ -154,7 +154,8 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/06-*.md", "v4.16 backend interface boundary plan"),
     @("markdown/06-milestones/v4.16.0/07-*.md", "v4.16 top module statistics"),
     @("markdown/06-milestones/v4.16.0/08-*.md", "v4.16 system module split statistics"),
-    @("markdown/06-milestones/v4.16.0/09-*.md", "v4.16 system entry extraction record")
+    @("markdown/06-milestones/v4.16.0/09-*.md", "v4.16 system entry extraction record"),
+    @("markdown/06-milestones/v4.16.0/10-*.md", "v4.16 system extraction completion record")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -185,6 +186,7 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/07-", "full feature tree v4.16 top module statistics"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/08-", "full feature tree v4.16 system module split statistics"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/09-", "full feature tree v4.16 system entry extraction record"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/10-", "full feature tree v4.16 system extraction completion record"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/03-", "module tree v4.16 backend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/04-", "module tree v4.16 frontend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/05-", "module tree v4.16 test asset register"),
@@ -192,6 +194,7 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/07-", "module tree v4.16 top module statistics"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/08-", "module tree v4.16 system module split statistics"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/09-", "module tree v4.16 system entry extraction record"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/10-", "module tree v4.16 system extraction completion record"),
     @("markdown/10-overview/overview-docs-index.md", "v4.16.0", "docs index v4.16 plan"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "v4.16.0", "current roadmap v4.16 plan")
 )
@@ -284,6 +287,16 @@ $v416LandingFiles = @(
         @("src/system/entry/mod.rs", "system entry module file"),
         @("run_server", "run server public method"),
         @("quantpilot::run_server", "compatible crate root entry"),
+        @("build_app_router", "backend interface boundary bridge"),
+        @("cargo check -p quantpilot", "rust check gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/10-*.md", @(
+        @("system.entry.backend_process", "system entry backend process module"),
+        @("src/system/entry/backend_process.rs", "system entry backend process file"),
+        @("run_server", "run server public method"),
+        @("run_api_server", "run api server startup boundary"),
+        @("quantpilot::run_server", "compatible crate root entry"),
+        @("new_app_state", "state factory boundary"),
         @("build_app_router", "backend interface boundary bridge"),
         @("cargo check -p quantpilot", "rust check gate")
     ))
