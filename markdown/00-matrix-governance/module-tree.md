@@ -175,7 +175,43 @@ AI 声称 system 已经抽离时，必须指出完成范围是 `system.entry.bac
 **幻觉检查点**:
 AI 声称 S1 完成时，必须指出本批次没有修改 `start.bat` 或 `start.ps1`，只完成启动脚本入口等价 closeout。
 
-### 3.1.3 `system.desktop_shell.tauri_config`
+### 3.1.3 `system.desktop_shell.tauri_runtime`
+
+**层级路径**: `root.system.desktop_shell.tauri_runtime`
+**父模块**: `system.desktop_shell`
+**状态**: v4.16 S3 readiness 等价检查完成。Tauri runtime 入口和 3000 readiness wait 已完成白箱登记；未宣告完整 closeout，未改代码。
+**真实文件**:
+- `src-tauri/src/main.rs`
+- `src-tauri/Cargo.toml`
+- `src-tauri/tauri.conf.json`
+
+**职责**:
+承载 Tauri 桌面 runtime 入口、后端 readiness wait、shell plugin 初始化、debug devtools setup 和 `generate_context` 启动链。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| Tauri `main` | 桌面应用启动 | Tauri runtime 进程 | Tauri CLI / 桌面启动链 | 不得改窗口生命周期、后端启动关系或 Tauri command 权限 |
+
+**关键内部启动实现**:
+| 实现 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `wait_for_backend` | `127.0.0.1:3000` TCP connect | 后端 readiness 判定 | Tauri `main` | 不得拥有后端 API、AppState 或业务 capability 真源 |
+| `TcpStream::connect_timeout` | 1 秒连接超时 | readiness 成功/失败路径 | `wait_for_backend` | 不得替代为未登记业务 API probe |
+| `MAX_WAIT_SECS = 30` | 启动等待窗口 | 超时后继续进入 Tauri runtime | `wait_for_backend` | 不得造成永久阻塞 |
+| `tauri::Builder::default` | Tauri context | 桌面 runtime | Tauri `main` | 不得混入后端 handler 或前端 route owner |
+| `tauri_plugin_shell::init` | Tauri Builder | shell plugin | Tauri runtime | 不得新增未登记权限 |
+
+**父级通信规则**:
+`system.desktop_shell.tauri_runtime` 只能通过 `system.desktop_shell` 管理桌面壳 runtime 和 readiness wait；不得直接横向连接 `backend.interface_boundary`、`frontend.*`、runtime state、AppState 或 capability 真源。
+
+**回归保护**:
+`cargo check -p quantpilot-tauri`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；完整 closeout 前补桌面启动 smoke 或人工窗口生命周期核查。
+
+**幻觉检查点**:
+AI 声称 S3 完成时，必须区分 readiness 等价检查和完整 S3 closeout；当前只确认 `127.0.0.1:3000` wait、30 秒超时和 Tauri Builder 启动顺序等价。
+
+### 3.1.4 `system.desktop_shell.tauri_config`
 
 **层级路径**: `root.system.desktop_shell.tauri_config`
 **父模块**: `system.desktop_shell`
@@ -209,7 +245,7 @@ JSON parse；`cargo check -p quantpilot-tauri`；`powershell -NoProfile -Executi
 **幻觉检查点**:
 AI 声称 S4 完成时，必须指出本批次没有修改 `src-tauri/tauri.conf.json` 或 `src-tauri/capabilities/default.json`，只完成 Tauri config 等价 closeout。
 
-### 3.1.4 `system.runtime_profile.config_examples`
+### 3.1.5 `system.runtime_profile.config_examples`
 
 **层级路径**: `root.system.runtime_profile.config_examples`
 **父模块**: `system.runtime_profile`
@@ -761,6 +797,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 - `markdown/06-milestones/v4.16.0/14-system.entry.launch_scripts单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/15-system.desktop_shell.tauri_config单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/16-system.runtime_profile.config_examples单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/17-system.desktop_shell.tauri_runtime-readiness等价检查.md`
 
 **职责**:
 作为三矩阵治理控制面，定义提案、判档、父子通信、引导坐标、模块树和发布过渡协议。
@@ -788,6 +825,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/14-system.entry.launch_scripts单叶closeout.md` S1 closeout | `system.entry.launch_scripts` | `start.bat`、`start.ps1`、启动脚本等价证据 | system 单叶 closeout | 不得改脚本语义 |
 | `markdown/06-milestones/v4.16.0/15-system.desktop_shell.tauri_config单叶closeout.md` S4 closeout | `system.desktop_shell.tauri_config` | Tauri config、CSP、capability allowlist 等价证据 | system 单叶 closeout | 不得改 CSP、窗口或权限语义 |
 | `markdown/06-milestones/v4.16.0/16-system.runtime_profile.config_examples单叶closeout.md` S10 closeout | `system.runtime_profile.config_examples` | 环境变量、runtime protocol、strategy_ir schema/example 等价证据 | system 单叶 closeout | 不得把样例当 runtime 真源 |
+| `markdown/06-milestones/v4.16.0/17-system.desktop_shell.tauri_runtime-readiness等价检查.md` S3 readiness | `system.desktop_shell.tauri_runtime` | Tauri `main`、`wait_for_backend`、3000 readiness 等价证据 | system 单叶 readiness 检查 | 不得把 readiness 检查宣告为完整 S3 closeout |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

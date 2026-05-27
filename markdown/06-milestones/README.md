@@ -28,6 +28,7 @@
 | 14 | `v4.16.0/14-system.entry.launch_scripts单叶closeout.md` | S1 启动脚本入口白箱 closeout，确认脚本等价并停止继续细分 | ✅ 已完成 |
 | 15 | `v4.16.0/15-system.desktop_shell.tauri_config单叶closeout.md` | S4 Tauri config 白箱 closeout，确认 CSP、窗口和 capability allowlist 等价并停止继续细分 | ✅ 已完成 |
 | 16 | `v4.16.0/16-system.runtime_profile.config_examples单叶closeout.md` | S10 配置样例白箱 closeout，确认环境、runtime protocol 和 strategy_ir 样例等价并停止继续细分 | ✅ 已完成 |
+| 17 | `v4.16.0/17-system.desktop_shell.tauri_runtime-readiness等价检查.md` | S3 Tauri runtime readiness 等价检查，确认 3000 wait 与启动顺序等价 | ✅ 已完成 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

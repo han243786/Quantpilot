@@ -74,7 +74,7 @@
 
 | 版本 | 状态 |
 |------|:--:|
-| v4.16.0 | 推进中: 模块化抽离第一波，已完成 system.entry.backend_process 抽离、经验回填、10 叶等价基线、递归模块化流程、S1/S4/S10 单叶 closeout |
+| v4.16.0 | 推进中: 模块化抽离第一波，已完成 system.entry.backend_process 抽离、经验回填、10 叶等价基线、递归模块化流程、S1/S4/S10 单叶 closeout 和 S3 readiness 等价检查 |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |
