@@ -68,12 +68,15 @@ AI 提到本模块时，必须能指出真实文件、真实方法、真实测�
 ### 3.1 `system.entry`
 
 **层级路径**: `root.system.entry`
-**父模块**: `root`
+**父模块**: `system`
 **真实文件**:
 - `start.bat`
 - `start.ps1`
 - `src/main.rs`
 - `src/lib.rs`
+- `src/system/mod.rs`
+- `src/system/entry/mod.rs`
+- `src/system/entry/backend_process.rs`
 - `src-tauri/src/main.rs`
 
 **职责**:
@@ -82,13 +85,56 @@ AI 提到本模块时，必须能指出真实文件、真实方法、真实测�
 **关键 public 方法**:
 | 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
 | --- | --- | --- | --- | --- |
-| `run_server` | 环境变量、存储路径、路由构建依赖 | Axum 服务 | `src/main.rs` | 不得绕过 `build_app_router` 注册路由 |
+| `run_server` | 环境变量、CLI 参数、路由构建依赖 | Axum 服务或 CLI 输出 | `src/main.rs`、`quantpilot::run_server` | 不得绕过 `build_app_router` 注册路由 |
 
 **父级通信规则**:
 系统入口只负责启动和编排，不拥有业务能力真源。
 
 **回归保护**:
 `cargo check --workspace`；涉及启动脚本时执行对应 PowerShell 或批处理 dry-run。
+
+### 3.1.1 `system.entry.backend_process`
+
+**层级路径**: `root.system.entry.backend_process`
+**父模块**: `system.entry`
+**状态**: v4.16 system 试水抽离第一批。public 启动入口已迁入 system 模块，旧 crate 入口通过 re-export 兼容。
+**真实文件**:
+- `src/system/mod.rs`
+- `src/system/entry/mod.rs`
+- `src/system/entry/backend_process.rs`
+- `src/lib.rs`
+- `src/main.rs`
+
+**职责**:
+承载后端进程启动 public 入口、环境初始化、tracing 初始化、panic hook、CLI 分发和 API server 启动委派。
+
+**输入**:
+| 输入 | 来源 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| CLI 参数 | OS process | `std::env::args()` | 不改变现有 `credential`、`v4-run`、`strategy-ir validate` 语义 |
+| 环境变量 | `.env`、shell | `QUANTPILOT_*` | 不改变默认端口或 bind 规则 |
+| 启动调用 | `src/main.rs` | `quantpilot::run_server()` | 不改二进制入口 |
+
+**输出**:
+| 输出 | 去向 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| API server 委派 | `run_api_server` | async result | 不迁移 API route owner |
+| CLI 输出 | stdout/stderr | text | 不改变已有 CLI 输出语义 |
+| 兼容 public 入口 | crate root | `pub use ...::run_server` | 不删除 `quantpilot::run_server` |
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `run_server` | 环境变量、CLI 参数 | `anyhow::Result<()>` | `src/main.rs`、旧 crate public 入口 | 不得拥有 handler、route schema 或 runtime state |
+
+**父级通信规则**:
+`system.entry.backend_process` 只能通过 `run_api_server -> backend.interface_boundary -> build_app_router` 进入后端接口边界，不得直接横向改 handler 或状态所有权。
+
+**回归保护**:
+`cargo check -p quantpilot`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
+
+**幻觉检查点**:
+AI 声称 system 已经抽离时，必须指出只完成 `system.entry.backend_process` 第一刀；`run_api_server`、`build_app_router`、`new_app_state` 尚未迁移。
 
 ### 3.2 `backend.router`
 
@@ -198,6 +244,68 @@ AI 提到本模块时，必须能指出真实文件、真实方法、真实测�
 ---
 
 ## 5. v4.13 第一波白箱节点
+
+### 5.0 `backend.interface_boundary`
+
+**层级路径**: `root.backend.interface_boundary`
+**父模块**: `backend`
+**状态**: v4.16 BE-001 抽离候选大模块。真实代码仍分布在既有文件中，本节点只登记后端接口边界的父级白箱。
+**真实文件**:
+- `src/app_router.rs`
+- `src/capability_api.rs`
+- `src/strategy_config_api.rs`
+- `src/runtime/mod.rs`
+- `src/graph_api.rs`
+- `src/graph_quantscript_api.rs`
+- `src/compile_api.rs`
+
+**职责**:
+作为后端接口边界的大模块，先管理 router、route registration、API facade、旧 handler 保留和 response schema 冻结。后续小模块抽离必须先挂到本父级边界下，再进入 capability、strategy config、runtime、graph/compile 等子模块。
+
+**抽离策略**:
+先抽一个大模块，再在大模块里抽小模块。BE-001 只建立 `backend.interface_boundary` 父级边界，小模块抽离按后续批次逐个推进。
+
+**输入**:
+| 输入 | 来源 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| HTTP request | 前端、测试、CLI | Axum request | 不改变现有 `/api/*` 入口语义 |
+| AppState | 后端启动入口 | shared app state | 不迁移状态所有权 |
+| route registration | 后端模块 | `Router<AppState>` | 不删除旧 handler |
+
+**输出**:
+| 输出 | 去向 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| Axum Router | `run_server`、测试入口 | Router | `build_app_router` 仍是父入口 |
+| API response | 前端、测试 | JSON / SSE / status code | 不改 response schema |
+| route owner map | 后续抽离提案 | 文档登记 | 不替代真实代码证据 |
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `build_app_router` | `AppState` | Axum Router | `run_server`、测试入口 | 不得跳过父级 router |
+| `get_capabilities` | backend state | capability snapshot | 前端 capability projection | 不得硬编码替代真源 |
+| `register_strategy_config_routes` | Axum Router | strategy config routes | `build_app_router` | 不得改变 preflight 语义 |
+| `register_runtime_routes` | Axum Router | runtime routes | `build_app_router` | 不得迁移 runtime 状态所有权 |
+| `register_graph_routes` | Axum Router | graph routes | `build_app_router` | 不得绕过版本记录 |
+| `register_compile_routes` | Axum Router | compile routes | `build_app_router` | 不得把 strategy_ir 当运行真源 |
+
+**父级通信规则**:
+所有后端接口抽离必须先经过 `backend.interface_boundary` 父级边界。子模块不得直接互相横向改 route、handler、state owner 或 response schema。
+
+**允许调用的子模块**:
+`backend.capability`、`backend.strategy_config`、`backend.runtime`、`backend.graph_compile`。
+
+**禁止横向连接**:
+不得让 `backend.runtime` 直接改 `backend.graph_compile` route owner；不得让前端绕过 API 读取后端内部文件；不得让执行端状态直接并入后端接口边界。
+
+**状态与锁**:
+BE-001 不迁移状态所有权，不改变 AppState、runtime state、executor state、锁顺序或事务边界。
+
+**回归保护**:
+`cargo test api_run`；`cargo test api_backtest`；`cargo test api_graph_versions`；`cargo test api_evidence_contract`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
+
+**幻觉检查点**:
+AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_router`、对应 `register_*_routes`、旧 handler 保留方式和回退点。
 
 ### 5.1 `backend.runtime`
 
@@ -526,6 +634,15 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 - `markdown/00-matrix-governance/proposal-examples.md`
 - `markdown/00-matrix-governance/release-transition-protocol.md`
 - `markdown/00-matrix-governance/landing-roadmap.md`
+- `markdown/06-milestones/v4.16.0/01-规划方案.md`
+- `markdown/06-milestones/v4.16.0/02-落地记录.md`
+- `markdown/06-milestones/v4.16.0/03-后端抽离登记.md`
+- `markdown/06-milestones/v4.16.0/04-前端抽离登记.md`
+- `markdown/06-milestones/v4.16.0/05-测试资产汰换登记.md`
+- `markdown/06-milestones/v4.16.0/06-后端接口边界首批抽离方案.md`
+- `markdown/06-milestones/v4.16.0/07-顶层大模块统计.md`
+- `markdown/06-milestones/v4.16.0/08-system大模块分层统计.md`
+- `markdown/06-milestones/v4.16.0/09-system.entry首批抽离记录.md`
 
 **职责**:
 作为三矩阵治理控制面，定义提案、判档、父子通信、引导坐标、模块树和发布过渡协议。
@@ -538,6 +655,14 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/00-matrix-governance/guidance-matrix.md` 引导坐标 | 需求、模块、文件 | 全量树和模块树定位 | 重型变更 | 不得找不到父模块仍继续 |
 | `markdown/00-matrix-governance/module-tree.md` 白箱节点 | 模块事实 | 输入输出、public 方法、边界 | 重型变更 | 不得登记虚构模块 |
 | `markdown/00-matrix-governance/release-transition-protocol.md` 发布过渡协议 | 开发者显式声明 | 横向连接例外方案 | 发布过渡提案 | AI 不得主动触发 |
+| `markdown/06-milestones/v4.16.0/02-落地记录.md` 抽离控制面 | v4.16 工作线 | 落地状态、决策项、禁止事项 | 后续抽离提案 | 不得宣称整理或重构已完成 |
+| `markdown/06-milestones/v4.16.0/03-后端抽离登记.md` 后端抽离登记 | 后端候选 | 父模块、public 方法、兼容桥、等价证据 | 后端抽离批次 | 不得切换主 API 或删除旧 handler |
+| `markdown/06-milestones/v4.16.0/04-前端抽离登记.md` 前端抽离登记 | 前端候选 | 页面/store 边界、UI 对照、暂停条件 | 前端抽离批次 | 不得借抽离做 UX 重构 |
+| `markdown/06-milestones/v4.16.0/05-测试资产汰换登记.md` 测试资产汰换 | 旧测试路径 | 废弃候选、替代证据、风险窗口 | 测试汰换批次 | 不得静默删除测试程序 |
+| `markdown/06-milestones/v4.16.0/06-后端接口边界首批抽离方案.md` BE-001 | 开发者决策 | 后端 router/API/facade 边界 | 后端接口抽离批次 | 不得迁移状态所有权 |
+| `markdown/06-milestones/v4.16.0/07-顶层大模块统计.md` 顶层统计 | 模块树与 repo 文件 | 顶层大模块、白箱子节点、物理规模 | 后续大模块选择 | 不得把未覆盖缺口伪装成已完成 |
+| `markdown/06-milestones/v4.16.0/08-system大模块分层统计.md` system 分层 | `root.system` | 3 层、10 个叶子模块、BE-001 关系 | system 抽离批次 | 不得把启动编排当业务能力真源 |
+| `markdown/06-milestones/v4.16.0/09-system.entry首批抽离记录.md` system 试水 | `system.entry.backend_process` | public 启动入口、兼容桥、等价证据 | system 抽离批次 | 不得宣称 system 全量抽离完成 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

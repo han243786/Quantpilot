@@ -141,18 +141,19 @@ Tauri v2 桌面壳入口。做的事:
 
 ### 1.3 后端服务 (:3000)
 
-**文件**: `src/main.rs` → `src/lib.rs` → `src/app_router.rs`
+**文件**: `src/main.rs` → `src/system/entry/backend_process.rs` → `src/lib.rs` → `src/app_router.rs`
 
 ```
-src/main.rs          →  tokio::main, 调用 run_server()
-src/lib.rs           →  run_server() 函数, 加载全部后端模块
-                        构建 Axum Router, 绑定 :3000
-src/app_router.rs    →  build_app_router(), 定义所有 HTTP 路由
+src/main.rs                         →  tokio::main, 调用 quantpilot::run_server()
+src/system/entry/backend_process.rs →  system.entry.backend_process, 承载 run_server()
+src/lib.rs                          →  crate root 兼容 re-export, 加载后端模块
+                                       run_api_server() 构建 Axum Router, 绑定 :3000
+src/app_router.rs                   →  build_app_router(), 定义所有 HTTP 路由
 ```
 
 后端是单进程 Axum 0.7 HTTP 服务器, 使用 tokio 多线程运行时。所有功能通过模块化组织在 `src/` 下的 Rust 文件中。
 
-**启动逻辑** (`src/lib.rs`):
+**启动逻辑** (`src/system/entry/backend_process.rs` + `src/lib.rs`):
 - 加载 `.env` (dotenvy)
 - 初始化 tracing-subscriber (日志格式 compact/json)
 - 初始化凭证保险库 (`CredentialVault`)
@@ -1154,7 +1155,7 @@ module-tree.md                    — 模块树: 白箱网络、输入输出、�
 proposal-flow.md                  — 提案状态机、三档执行判定表、提案模板
 proposal-examples.md              — 轻量、标准、重型三档提案样例
 release-transition-protocol.md    — 发布过渡期连接协议
-landing-roadmap.md                — v4.12.0 至 v4.15.0 治理完全落地路线
+landing-roadmap.md                — v4.12.0 至 v4.16.0 治理落地与模块化抽离路线
 ```
 
 自动化门禁: `tools/check-matrix-governance.ps1` 校验三矩阵入口、提案模板、模块树漂移、里程碑索引和发布过渡协议。
@@ -1168,6 +1169,7 @@ landing-roadmap.md                — v4.12.0 至 v4.15.0 治理完全落地路�
 | v4.13.0 | 模块树白箱扩面 |
 | v4.14.0 | 治理门禁自动化 |
 | v4.15.0 | 三矩阵完全接管 closeout |
+| v4.16.0 | 模块化抽离第一波: 后端抽离、前端抽离、E2E 整理延后、测试资产汰换登记 |
 
 ### 7.1 原则层 (markdown/01-principles/)
 
@@ -1289,7 +1291,7 @@ meta-pipeline-log.md                         — 元流水线日志
 
 ### 7.6 里程碑归档 (markdown/06-milestones/)
 
-50+ 版本目录, 从 `v0.2.0` 到 `v4.15.0`, 每个含 `01-规划方案.md` + `02-综合优化清单.md` (或等效文档) + `03-closeout.md` / `02-closeout.md` / `02-落地记录.md` (或等效文档)。
+50+ 版本目录, 从 `v0.2.0` 到 `v4.16.0`, 每个含 `01-规划方案.md` + `02-综合优化清单.md` (或等效文档) + `03-closeout.md` / `02-closeout.md` / `02-落地记录.md` (或等效文档)。
 
 活跃归档:
 - `markdown/06-milestones/v4.7.0/02-closeout.md` — v4.7.0 嵌套状态机第一波 closeout 归档
@@ -1317,8 +1319,18 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.14.0/02-落地记录.md` — v4.14.0 治理门禁自动化记录
 - `markdown/06-milestones/v4.15.0/01-规划方案.md` — v4.15.0 三矩阵完全接管 closeout 规划
 - `markdown/06-milestones/v4.15.0/02-治理closeout.md` — v4.15.0 三矩阵完全接管治理 closeout
+- `markdown/06-milestones/v4.16.0/01-规划方案.md` — v4.16.0 模块化抽离第一波规划，覆盖后端抽离、前端抽离、E2E 整理延后和测试资产汰换登记
+- `markdown/06-milestones/v4.16.0/02-落地记录.md` — v4.16.0 抽离控制面落地记录
+- `markdown/06-milestones/v4.16.0/03-后端抽离登记.md` — v4.16.0 后端抽离候选登记
+- `markdown/06-milestones/v4.16.0/04-前端抽离登记.md` — v4.16.0 前端抽离候选登记
+- `markdown/06-milestones/v4.16.0/05-测试资产汰换登记.md` — v4.16.0 E2E 延后与测试资产汰换登记
+- `markdown/06-milestones/v4.16.0/06-后端接口边界首批抽离方案.md` — v4.16.0 BE-001 后端接口边界首批抽离方案
+- `markdown/06-milestones/v4.16.0/07-顶层大模块统计.md` — v4.16.0 顶层大模块统计，确认 6 个逻辑顶层和首批 backend 大模块
+- `markdown/06-milestones/v4.16.0/08-system大模块分层统计.md` — v4.16.0 system 大模块分层统计，确认 3 层和 10 个叶子模块
+- `markdown/06-milestones/v4.16.0/09-system.entry首批抽离记录.md` — v4.16.0 system 试水抽离记录，确认 `system.entry.backend_process` 第一刀和兼容桥
 
 当前治理基线: `v4.15.0/` — 三矩阵完全接管，后续常态维护模块树、全量树和治理 gate。
+当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；已决策先走 BE-001 后端接口边界，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
 
 ### 7.7 总览 (markdown/10-overview/)
 
@@ -1445,8 +1457,11 @@ storage/
 
 ### E.2 后端: `src/`
 
-- `src/main.rs` — 二进制入口, 调用 `run_server()`
-- `src/lib.rs` — 核心库入口, 全部模块声明 + `run_server()` 函数
+- `src/main.rs` — 二进制入口, 调用 `quantpilot::run_server()`
+- `src/lib.rs` — 核心库入口, 全部模块声明 + `run_server` 兼容 re-export + `run_api_server()` 旧实现边界
+- `src/system/mod.rs` — system 父模块入口; 改 system 顶层模块导出时改这里
+- `src/system/entry/mod.rs` — system.entry 二级域入口; 改启动域子模块导出时改这里
+- `src/system/entry/backend_process.rs` — 后端进程启动 public 入口, `run_server()`、CLI 分发、环境和日志初始化; 改进程启动边界时改这里
 - `src/app_router.rs` — 路由构建, `build_app_router()` 定义全部 HTTP 端点; 新增 API 时改这里
 - `src/alert_engine.rs` — 告警引擎, 10 条默认规则; 改告警规则/去重/恢复/404 语义时改这里
 - `src/api_errors.rs` — API 错误格式, `json_bad_request()`/`json_not_found()`/`internal_error()`; 改错误响应格式或 error_code 时改这里

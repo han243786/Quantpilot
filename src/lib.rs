@@ -51,6 +51,7 @@ mod sandbox_verification;
 mod snapshot_service;
 pub mod storage_lifecycle;
 mod strategy_config_api;
+pub mod system;
 mod test_runner;
 
 use anyhow::{bail, Context};
@@ -131,6 +132,7 @@ use backtest_compare_core::*;
 use backtest_compare_narrative::*;
 use backtest_compare_types::*;
 use capability_api::*;
+#[cfg(test)]
 use cli_support::*;
 use collaboration::*;
 use compile_api::*;
@@ -149,6 +151,7 @@ use runtime_persistence::*;
 use runtime_response_mapping::*;
 use runtime_validation::*;
 use strategy_config_api::*;
+pub use system::entry::backend_process::run_server;
 
 const RUN_WINDOW_MS: u64 = 5_000;
 const SSE_EVENT_DELAY_MS: u64 = 350;
@@ -661,54 +664,6 @@ struct ApiPartialArtifacts {
 
 const SUPPORTED_EXCHANGES: [&str; 2] = ["binance", "okx"];
 const SUPPORTED_SYMBOLS: [&str; 3] = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
-
-pub async fn run_server() -> anyhow::Result<()> {
-    let _ = dotenvy::dotenv(); // 加载 .env 文件 (不存在则静默跳过)
-                               // v2.2.1: 初始化 tracing 订阅器 (JSON 格式输出到 stderr, 生产环境)
-    let log_format =
-        std::env::var("QUANTPILOT_LOG_FORMAT").unwrap_or_else(|_| "compact".to_string());
-    let subscriber = tracing_subscriber::fmt()
-        .with_env_filter(
-            tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info")),
-        )
-        .with_writer(std::io::stderr);
-    if log_format == "json" {
-        subscriber.json().init();
-    } else {
-        subscriber.compact().init();
-    }
-    // v1.1.1: 启动时记录 DEV 模式状态
-    let is_dev = std::env::var("QUANTPILOT_DEV").unwrap_or_default() == "true";
-    if is_dev {
-        safe_eprintln!("[启动] DEV 模式已启用 — 瞬态数据 TTL 缩短，强制启动清理");
-    }
-    // v1.1.11: 全局 panic hook，防止 panic 静默丢失
-    std::panic::set_hook(Box::new(|info| {
-        let msg = format!("{}", info);
-        eprintln!(
-            "[panic] {} — 服务将退出",
-            crate::safe_log::sanitize_secrets(&msg)
-        );
-    }));
-    let args: Vec<String> = std::env::args().collect();
-    if args.len() > 1 && args[1] == "credential" {
-        if let Err(e) = cli_support::handle_credential_command(&args[1..]) {
-            safe_eprintln!("错误: {}", e);
-            std::process::exit(1);
-        }
-        return Ok(());
-    }
-    match parse_cli_command_from(env::args())? {
-        CliCommand::Serve => run_api_server().await,
-        CliCommand::PrintHelp => {
-            print_cli_usage();
-            Ok(())
-        }
-        CliCommand::StrategyIrValidate { path } => validate_strategy_ir_file(path).await,
-        CliCommand::V4Run { graph_id_or_path } => run_v4_strategy_from_cli(graph_id_or_path).await,
-    }
-}
 
 async fn run_api_server() -> anyhow::Result<()> {
     let graph_store_dir = PathBuf::from("storage/graphs");

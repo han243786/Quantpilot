@@ -1,6 +1,6 @@
 # 当前状态与发布状态
 
-> 最后更新：2026-05-27 | 当前版本：v4.7.0 ✅ | 当前治理基线：v4.15.0 三矩阵完全接管
+> 最后更新：2026-05-27 | 当前版本：v4.7.0 ✅ | 当前治理基线：v4.15.0 三矩阵完全接管 | 当前架构推进：v4.16.0 模块化抽离第一波
 
 ## 版本路线
 
@@ -113,6 +113,7 @@ v4.7.0 系统应被理解为：
 - 前端 Toast 通知系统, 术语全中文化, 空状态引导
 - 执行端独立进程 (:3001), ParamsPanel 热调参, Paper/Live 切换
 - v4 PaperSimulated runtime 已具备本地用户启动入口和执行端 v4 runner 集成；真实下单仍由 Risk Plane 和 ExecutionMachine 能力来源约束
+- v4.16.0 模块化抽离已完成 system 试水第一刀: `run_server` public 入口归入 `system.entry.backend_process`，`quantpilot::run_server` 兼容入口保持不变
 
 ## 当前收尾/发布状态
 
@@ -136,6 +137,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 | v4.13.0 | MINOR governance | 模块树白箱扩面，覆盖 active 模块、关键 public 方法和模块化重构通道 | 已落地 |
 | v4.14.0 | MINOR governance | 治理门禁自动化，检查三矩阵声明、引导坐标、模块树漂移和发布过渡保护 | 已落地 |
 | v4.15.0 | MINOR governance | 三矩阵完全接管 closeout，旧入口导流并形成治理收口报告 | 当前治理基线 |
+| v4.16.0 | MINOR architecture / governance | 模块化抽离第一波，已决策先走 BE-001 后端接口边界；前端抽离和 E2E 整理延后，测试资产进入汰换登记 | 控制面落地中 |
 
 使用下面的专用文档作为活跃发布与治理界面：
 
@@ -165,6 +167,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - [v4.14.0 落地记录](../06-milestones/v4.14.0/02-落地记录.md)
 - [v4.15.0 规划方案](../06-milestones/v4.15.0/01-规划方案.md)
 - [v4.15.0 治理 closeout](../06-milestones/v4.15.0/02-治理closeout.md)
+- [v4.16.0 模块化抽离第一波规划](../06-milestones/v4.16.0/01-规划方案.md)
 - [Claude 产品/UX/功能完整度审计核查](../05-testing/Claude产品UX功能完整度审计核查-v4.7.0-2026-05-26.md)
 - [支持矩阵](../03-implementation/governance/implementation-support-matrix.md)
 - [编译链合约](../03-implementation/governance/implementation-compile-chain-contract.md)
