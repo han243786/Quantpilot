@@ -100,6 +100,7 @@
 | 86 | `v4.16.0/86-runtime.backtest.execution_start.v4_request_resolution单子叶等价基线.md` | BE-001P-01 `runtime.backtest.execution_start.v4_request_resolution` 单子叶等价基线，冻结 v4 请求识别、graph/symbol/event resolution；当前不移动代码 | 📋 已创建 |
 | 87 | `v4.16.0/87-runtime.backtest.execution_start.v4_request_resolution抽离方案.md` | BE-001P-02 `runtime.backtest.execution_start.v4_request_resolution` 抽离方案，锁定下一批只移动四个 request resolution helper | 📋 已创建 |
 | 88 | `v4.16.0/88-runtime.backtest.execution_start.v4_request_resolution抽离记录.md` | BE-001P-03 `runtime.backtest.execution_start.v4_request_resolution` 抽离记录，将四个 request resolution helper 迁入父级私有子模块 | 📋 已创建 |
+| 89 | `v4.16.0/89-runtime.backtest.execution_start.v4_request_resolution单叶closeout.md` | BE-001P-04 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout，确认等价并设置 `stop_split: true` | ✅ 已完成 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
