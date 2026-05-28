@@ -2,7 +2,7 @@ use super::backtest_compare_core::*;
 use super::backtest_compare_narrative::*;
 use super::*;
 
-pub(super) async fn compare_backtests(
+pub(crate) async fn compare_backtests(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Json(request): Json<BacktestCompareRequest>,

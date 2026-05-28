@@ -1,4 +1,4 @@
-async fn start_backtest_run(
+pub(crate) async fn start_backtest_run(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Json(request): Json<FrontendRunRequest>,
@@ -875,7 +875,7 @@ fn build_experiment_overrides(
 
     Ok(variants)
 }
-async fn start_backtest_experiment(
+pub(crate) async fn start_backtest_experiment(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Json(request): Json<FrontendExperimentRequest>,
@@ -997,7 +997,7 @@ async fn start_backtest_experiment(
 
     Ok(Json(experiment_detail_response_from_record(record)))
 }
-async fn list_backtests(
+pub(crate) async fn list_backtests(
     State(state): State<AppState>,
     Query(pagination): Query<PaginationQuery>,
 ) -> Result<Json<PaginatedResponse<BacktestListItem>>, (StatusCode, String)> {
@@ -1012,7 +1012,7 @@ async fn list_backtests(
     Ok(Json(paginate(items, pagination)))
 }
 
-async fn get_backtest_detail(
+pub(crate) async fn get_backtest_detail(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(backtest_id): Path<String>,
@@ -1021,7 +1021,7 @@ async fn get_backtest_detail(
     Ok(Json(backtest_detail_response_from_record(record)))
 }
 
-async fn save_backtest_record(
+pub(crate) async fn save_backtest_record(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(backtest_id): Path<String>,
@@ -1058,7 +1058,7 @@ async fn save_backtest_record(
     Ok(Json(backtest_detail_response_from_record(record)))
 }
 
-async fn discard_backtest_record(
+pub(crate) async fn discard_backtest_record(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(backtest_id): Path<String>,
@@ -1094,7 +1094,7 @@ async fn discard_backtest_record(
         discarded_kind: "backtest".to_string(),
     }))
 }
-async fn list_experiments(
+pub(crate) async fn list_experiments(
     State(state): State<AppState>,
     Query(pagination): Query<PaginationQuery>,
 ) -> Result<Json<PaginatedResponse<ExperimentListItem>>, (StatusCode, String)> {
@@ -1109,7 +1109,7 @@ async fn list_experiments(
     Ok(Json(paginate(items, pagination)))
 }
 
-async fn get_experiment_detail(
+pub(crate) async fn get_experiment_detail(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(experiment_id): Path<String>,
@@ -1118,7 +1118,7 @@ async fn get_experiment_detail(
     Ok(Json(experiment_detail_response_from_record(record)))
 }
 
-async fn save_experiment_record(
+pub(crate) async fn save_experiment_record(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(experiment_id): Path<String>,
@@ -1166,7 +1166,7 @@ async fn save_experiment_record(
     Ok(Json(experiment_detail_response_from_record(record)))
 }
 
-async fn discard_experiment_record(
+pub(crate) async fn discard_experiment_record(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(experiment_id): Path<String>,
@@ -1219,7 +1219,7 @@ async fn discard_experiment_record(
     }))
 }
 
-async fn get_backtest_replay(
+pub(crate) async fn get_backtest_replay(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(backtest_id): Path<String>,

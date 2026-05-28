@@ -5,139 +5,21 @@ include!("run.rs");
 // Mutation + Proposal + Approval handlers
 include!("mutation.rs");
 
-use super::backtest_compare::compare_backtests;
 use super::*;
 use axum::extract::Query;
 
 const MAX_EXPERIMENT_VARIANTS: usize = 27;
 const DEFAULT_REPLAY_PAGE_SIZE: usize = 12;
 const MAX_REPLAY_PAGE_SIZE: usize = 50;
-pub(super) fn register_runtime_routes(router: Router<AppState>) -> Router<AppState> {
-    router
-        .route("/api/runtime/backtest", post(start_backtest_run))
-        .route("/api/runtime/backtests", get(list_backtests))
-        .route("/api/runtime/backtests/compare", post(compare_backtests))
-        .route(
-            "/api/runtime/backtests/:backtest_id/save",
-            post(save_backtest_record),
-        )
-        .route(
-            "/api/runtime/backtests/:backtest_id",
-            get(get_backtest_detail).delete(discard_backtest_record),
-        )
-        .route(
-            "/api/runtime/backtests/:backtest_id/replay",
-            get(get_backtest_replay),
-        )
-        .route("/api/runtime/test-run", post(start_test_run))
-        .route("/api/runtime/v4/run", post(start_v4_runtime_run))
-        .route("/api/runtime/runs", get(list_runs))
-        .route("/api/runtime/runs/:run_id/save", post(save_run_record))
-        .route(
-            "/api/runtime/runs/:run_id",
-            get(get_run_detail).delete(discard_run_record),
-        )
-        .route("/api/runtime/runs/:run_id/events", get(stream_run_events))
-        .route("/api/runtime/runs/:run_id/replay", get(get_run_replay))
-        .route("/api/runtime/runs/:run_id/status", get(get_run_status))
-        .route(
-            "/api/runtime/evidence/health",
-            get(get_runtime_evidence_health),
-        )
-        .route(
-            "/api/runtime/evidence/cleanup",
-            post(cleanup_runtime_evidence),
-        )
-        .route(
-            "/api/runtime/mutations",
-            get(list_runtime_parameter_mutations).post(create_runtime_parameter_mutation),
-        )
-        .route(
-            "/api/runtime/mutations/:proposal_id",
-            get(get_runtime_parameter_mutation_detail),
-        )
-        .route(
-            "/api/runtime/mutations/:proposal_id/activate",
-            post(activate_runtime_parameter_mutation),
-        )
-        .route(
-            "/api/runtime/mutations/:proposal_id/rollback",
-            post(rollback_runtime_parameter_mutation),
-        )
-        .route(
-            "/api/runtime/ai-proposals",
-            get(list_runtime_ai_proposals).post(create_runtime_ai_proposal),
-        )
-        .route(
-            "/api/runtime/ai-proposals/:ai_proposal_id",
-            get(get_runtime_ai_proposal_detail),
-        )
-        .route(
-            "/api/runtime/reports",
-            get(list_runtime_reports).post(create_runtime_report),
-        )
-        .route(
-            "/api/runtime/reports/:report_id",
-            get(get_runtime_report_detail),
-        )
-        .route(
-            "/api/runtime/reports/:report_id/export",
-            get(export_runtime_report_artifact),
-        )
-        .route(
-            "/api/runtime/experiments/backtest-sweep",
-            post(start_backtest_experiment),
-        )
-        .route("/api/runtime/experiments", get(list_experiments))
-        .route(
-            "/api/runtime/experiments/:experiment_id/save",
-            post(save_experiment_record),
-        )
-        .route(
-            "/api/runtime/experiments/:experiment_id",
-            get(get_experiment_detail).delete(discard_experiment_record),
-        )
-        // Block 5: 审批流引擎
-        .route("/api/v1/ai/approvals", get(list_runtime_approvals))
-        .route(
-            "/api/v1/ai/approvals/:approval_id",
-            get(get_runtime_approval_detail),
-        )
-        .route(
-            "/api/v1/ai/proposals/:proposal_id/approve",
-            post(approve_ai_proposal),
-        )
-        .route(
-            "/api/v1/ai/proposals/:proposal_id/reject",
-            post(reject_ai_proposal),
-        )
-        .route(
-            "/api/v1/ai/proposals/:proposal_id/claim",
-            post(claim_ai_proposal_review),
-        )
-        // Block 5: 合并引擎
-        .route("/api/v1/merge/records", get(list_merge_records))
-        // Block 5 P3-2: 配置代际
-        .route("/api/v1/runtime/generations", get(list_config_generations))
-        // Block 5 P3-5: 存储健康
-        .route("/api/v1/storage/health", get(get_storage_health))
-        // Block 5: 运营报表
-        .route("/api/v1/reports/ops/daily", get(get_ops_daily_report))
-        .route("/api/v1/reports/audit/weekly", get(get_audit_weekly_report))
-        .route(
-            "/api/v1/reports/research/monthly",
-            get(get_research_monthly_report),
-        )
-}
 
 #[derive(Debug, Serialize)]
-struct DiscardRuntimeArtifactResponse {
+pub(crate) struct DiscardRuntimeArtifactResponse {
     discarded_id: String,
     discarded_kind: String,
 }
 
 #[derive(Debug, Deserialize)]
-struct RuntimeReplayQuery {
+pub(crate) struct RuntimeReplayQuery {
     cursor: Option<usize>,
     limit: Option<usize>,
     checkpoint: Option<usize>,
@@ -151,7 +33,7 @@ struct RuntimeReplayQuery {
 }
 
 #[derive(Debug, Deserialize, Default)]
-struct RuntimeParameterMutationListQuery {
+pub(crate) struct RuntimeParameterMutationListQuery {
     source_kind: Option<RuntimeEvidenceSourceKind>,
     source_id: Option<String>,
     limit: Option<u32>,
@@ -159,7 +41,7 @@ struct RuntimeParameterMutationListQuery {
 }
 
 #[derive(Debug, Deserialize, Default)]
-struct RuntimeAiProposalListQuery {
+pub(crate) struct RuntimeAiProposalListQuery {
     source_kind: Option<RuntimeEvidenceSourceKind>,
     source_id: Option<String>,
     status: Option<RuntimeAiProposalStatus>,
@@ -199,7 +81,7 @@ impl Drop for RunInProgressGuard<'_> {
     }
 }
 
-async fn create_runtime_report(
+pub(crate) async fn create_runtime_report(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Json(request): Json<CreateRuntimeReportRequest>,
@@ -320,7 +202,7 @@ async fn materialize_runtime_report_record(
     }
 }
 
-async fn list_runtime_reports(
+pub(crate) async fn list_runtime_reports(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Query(pagination): Query<PaginationQuery>,
@@ -344,7 +226,7 @@ async fn list_runtime_reports(
     Ok(Json(paginate(records, pagination)))
 }
 
-async fn get_runtime_report_detail(
+pub(crate) async fn get_runtime_report_detail(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(report_id): Path<String>,
@@ -355,7 +237,7 @@ async fn get_runtime_report_detail(
         .map(Json)
 }
 
-async fn export_runtime_report_artifact(
+pub(crate) async fn export_runtime_report_artifact(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(report_id): Path<String>,
@@ -389,7 +271,7 @@ fn runtime_report_status_counts(
     counts
 }
 
-async fn get_runtime_evidence_health(
+pub(crate) async fn get_runtime_evidence_health(
     State(state): State<AppState>,
 ) -> Result<Json<RuntimeEvidenceHealthResponse>, (StatusCode, String)> {
     let reports = list_runtime_report_records(&state.report_store_dir)
@@ -404,7 +286,7 @@ async fn get_runtime_evidence_health(
     }))
 }
 
-async fn cleanup_runtime_evidence(
+pub(crate) async fn cleanup_runtime_evidence(
     State(state): State<AppState>,
     Json(request): Json<RuntimeEvidenceCleanupRequest>,
 ) -> Result<Json<RuntimeEvidenceCleanupResponse>, (StatusCode, String)> {
@@ -430,7 +312,7 @@ async fn cleanup_runtime_evidence(
     }))
 }
 
-async fn list_merge_records(
+pub(crate) async fn list_merge_records(
     user_id: auth::UserId,
     State(state): State<AppState>,
 ) -> Result<Json<MergeRecordsResponse>, (StatusCode, String)> {
@@ -489,7 +371,7 @@ async fn list_merge_records(
 
 // ── Block 5 P3-2: 配置代际 API ──
 
-async fn list_config_generations(
+pub(crate) async fn list_config_generations(
     State(state): State<AppState>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
     let gen = state
@@ -518,7 +400,7 @@ async fn list_config_generations(
 
 // ── Block 5 P3-5: 存储健康 API ──
 
-async fn get_storage_health(
+pub(crate) async fn get_storage_health(
     State(state): State<AppState>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
     let dirs = [
@@ -556,7 +438,7 @@ async fn get_storage_health(
 
 // ── Block 5: 合并记录 API ──
 
-async fn get_ops_daily_report(
+pub(crate) async fn get_ops_daily_report(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Query(query): Query<OpsDailyQuery>,
@@ -679,7 +561,7 @@ async fn get_ops_daily_report(
     Ok(Json(report))
 }
 
-async fn get_audit_weekly_report(
+pub(crate) async fn get_audit_weekly_report(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Query(query): Query<AuditWeeklyQuery>,
@@ -758,7 +640,7 @@ async fn get_audit_weekly_report(
     Ok(Json(report))
 }
 
-async fn get_research_monthly_report(
+pub(crate) async fn get_research_monthly_report(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Query(query): Query<ResearchMonthlyQuery>,

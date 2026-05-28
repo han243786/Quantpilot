@@ -1,5 +1,5 @@
 #[derive(Debug, Deserialize)]
-struct V4RuntimeRunRequest {
+pub(crate) struct V4RuntimeRunRequest {
     #[serde(default)]
     source: Option<String>,
     #[serde(default)]
@@ -9,14 +9,14 @@ struct V4RuntimeRunRequest {
 }
 
 #[derive(Debug, Serialize)]
-struct V4RuntimeRunDiagnostic {
+pub(crate) struct V4RuntimeRunDiagnostic {
     severity: String,
     code: String,
     message: String,
 }
 
 #[derive(Debug, Serialize)]
-struct V4RuntimeRunResponse {
+pub(crate) struct V4RuntimeRunResponse {
     run_id: String,
     graph_id: String,
     event_count: usize,
@@ -27,7 +27,7 @@ struct V4RuntimeRunResponse {
 }
 
 #[derive(Debug, Serialize)]
-struct V4RuntimeRunHandoff {
+pub(crate) struct V4RuntimeRunHandoff {
     schema_version: String,
     accepted_for_runtime_handoff: bool,
     graph_id: Option<String>,
@@ -40,7 +40,7 @@ struct V4RuntimeRunHandoff {
     diagnostics: Vec<String>,
 }
 
-async fn start_v4_runtime_run(
+pub(crate) async fn start_v4_runtime_run(
     State(state): State<AppState>,
     Json(request): Json<V4RuntimeRunRequest>,
 ) -> Result<Json<V4RuntimeRunResponse>, (StatusCode, String)> {
@@ -278,7 +278,7 @@ fn runtime_simulated_v4_matrix(venue_id: impl Into<String>) -> qrpc_core_ir::v4:
     matrix
 }
 
-async fn start_test_run(
+pub(crate) async fn start_test_run(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Json(request): Json<FrontendRunRequest>,
@@ -369,7 +369,7 @@ async fn start_test_run(
 }
 // v2.4.0: 单机桌面应用, 所有记录属于本机用户, 无需多用户隔离。
 // 如未来部署为服务端多用户, 需按 UserId 过滤 + 存储路径前缀隔离。
-async fn list_runs(
+pub(crate) async fn list_runs(
     State(state): State<AppState>,
     Query(pagination): Query<PaginationQuery>,
 ) -> Result<Json<PaginatedResponse<RunListItem>>, (StatusCode, String)> {
@@ -383,7 +383,7 @@ async fn list_runs(
     items.sort_by(|left, right| right.created_at_ms.cmp(&left.created_at_ms));
     Ok(Json(paginate(items, pagination)))
 }
-async fn get_run_detail(
+pub(crate) async fn get_run_detail(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(run_id): Path<String>,
@@ -392,7 +392,7 @@ async fn get_run_detail(
     Ok(Json(run_detail_response_from_record(record)))
 }
 
-async fn save_run_record(
+pub(crate) async fn save_run_record(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(run_id): Path<String>,
@@ -420,7 +420,7 @@ async fn save_run_record(
     Ok(Json(run_detail_response_from_record(record)))
 }
 
-async fn discard_run_record(
+pub(crate) async fn discard_run_record(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(run_id): Path<String>,
@@ -450,7 +450,7 @@ async fn discard_run_record(
     }))
 }
 
-async fn get_run_replay(
+pub(crate) async fn get_run_replay(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(run_id): Path<String>,
@@ -466,7 +466,7 @@ async fn get_run_replay(
         .record_replay_page(started.elapsed().as_millis() as u64);
     Ok(Json(response))
 }
-async fn stream_run_events(
+pub(crate) async fn stream_run_events(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(run_id): Path<String>,
@@ -507,7 +507,7 @@ async fn stream_run_events(
     ))
 }
 
-async fn get_run_status(
+pub(crate) async fn get_run_status(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(run_id): Path<String>,
@@ -519,7 +519,7 @@ async fn get_run_status(
 // ── Block 5: 审批流引擎 ──
 
 #[derive(Debug, Deserialize)]
-struct RuntimeApprovalListQuery {
+pub(crate) struct RuntimeApprovalListQuery {
     #[serde(default)]
     review_state: Option<String>,
 }
@@ -527,7 +527,7 @@ struct RuntimeApprovalListQuery {
 // ── Block 5: 合并记录 API ──
 
 #[derive(Debug, Serialize)]
-struct MergeRecordsResponse {
+pub(crate) struct MergeRecordsResponse {
     records: Vec<MergeRecordEntry>,
     total_conflicts: usize,
     total_suppressed: usize,

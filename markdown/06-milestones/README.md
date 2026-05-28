@@ -62,6 +62,7 @@
 | 48 | `v4.16.0/48-backend.app_state_wiring子叶抽离完成记录.md` | BE-001E-07 `backend.app_state_wiring` 子叶抽离完成，确认 health/state factory facade 等价 | ✅ 已完成 |
 | 49 | `v4.16.0/49-backend.test_support子叶抽离完成记录.md` | BE-001E-08 `backend.test_support` 子叶抽离完成，确认 test scenario facade 等价且测试汰换未启动 | ✅ 已完成 |
 | 50 | `v4.16.0/50-backend.runtime.routes单子叶等价基线.md` | BE-001F-01 `backend.runtime.routes` 单子叶等价基线，固定 runtime route aggregate facade 的真实 owner 和回归证据 | 📋 已创建 |
+| 51 | `v4.16.0/51-backend.runtime.routes抽离记录.md` | BE-001F-02 `backend.runtime.routes` 抽离记录，接管 runtime route aggregate 列表并保留 handler/state owner 原位 | ✅ 已完成 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

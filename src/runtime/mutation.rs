@@ -434,7 +434,7 @@ fn runtime_parameter_mutation_rollback_record_id(
     ))
 }
 
-async fn create_runtime_parameter_mutation(
+pub(crate) async fn create_runtime_parameter_mutation(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Json(request): Json<CreateRuntimeParameterMutationRequest>,
@@ -542,7 +542,7 @@ async fn create_runtime_parameter_mutation(
     Ok(Json(record))
 }
 
-async fn list_runtime_parameter_mutations(
+pub(crate) async fn list_runtime_parameter_mutations(
     State(state): State<AppState>,
     Query(query): Query<RuntimeParameterMutationListQuery>,
 ) -> Result<Json<PaginatedResponse<RuntimeParameterMutationRecord>>, (StatusCode, String)> {
@@ -565,7 +565,7 @@ async fn list_runtime_parameter_mutations(
     Ok(Json(paginate(records, pq)))
 }
 
-async fn get_runtime_parameter_mutation_detail(
+pub(crate) async fn get_runtime_parameter_mutation_detail(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(proposal_id): Path<String>,
@@ -1134,7 +1134,7 @@ async fn ensure_ai_proposal_can_be_approved(
     Ok(())
 }
 
-async fn create_runtime_ai_proposal(
+pub(crate) async fn create_runtime_ai_proposal(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Json(request): Json<CreateRuntimeAiProposalRequest>,
@@ -1434,7 +1434,7 @@ async fn create_runtime_ai_proposal(
     Ok(Json(record))
 }
 
-async fn list_runtime_ai_proposals(
+pub(crate) async fn list_runtime_ai_proposals(
     State(state): State<AppState>,
     Query(query): Query<RuntimeAiProposalListQuery>,
 ) -> Result<Json<Vec<RuntimeAiProposalRecord>>, (StatusCode, String)> {
@@ -1459,7 +1459,7 @@ async fn list_runtime_ai_proposals(
     Ok(Json(records))
 }
 
-async fn get_runtime_ai_proposal_detail(
+pub(crate) async fn get_runtime_ai_proposal_detail(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(ai_proposal_id): Path<String>,
@@ -1522,7 +1522,7 @@ async fn persist_runtime_parameter_mutation_transition(
     Ok(())
 }
 
-async fn activate_runtime_parameter_mutation(
+pub(crate) async fn activate_runtime_parameter_mutation(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(proposal_id): Path<String>,
@@ -1780,7 +1780,7 @@ async fn auto_snapshot_on_activation(
         .insert(auth::scoped_key(user_id, &snapshot_id), snapshot);
 }
 
-async fn rollback_runtime_parameter_mutation(
+pub(crate) async fn rollback_runtime_parameter_mutation(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(proposal_id): Path<String>,
@@ -2031,7 +2031,7 @@ async fn rollback_runtime_parameter_mutation(
     Ok(Json(record))
 }
 
-async fn list_runtime_approvals(
+pub(crate) async fn list_runtime_approvals(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Query(query): Query<RuntimeApprovalListQuery>,
@@ -2054,7 +2054,7 @@ async fn list_runtime_approvals(
     Ok(Json(records))
 }
 
-async fn get_runtime_approval_detail(
+pub(crate) async fn get_runtime_approval_detail(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(approval_id): Path<String>,
@@ -2068,7 +2068,7 @@ async fn get_runtime_approval_detail(
         .map(Json)
 }
 
-async fn approve_ai_proposal(
+pub(crate) async fn approve_ai_proposal(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(proposal_id): Path<String>,
@@ -2149,7 +2149,7 @@ async fn approve_ai_proposal(
     Ok(Json(approval))
 }
 
-async fn reject_ai_proposal(
+pub(crate) async fn reject_ai_proposal(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(proposal_id): Path<String>,
@@ -2198,7 +2198,7 @@ async fn reject_ai_proposal(
     Ok(Json(approval))
 }
 
-async fn claim_ai_proposal_review(
+pub(crate) async fn claim_ai_proposal_review(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(proposal_id): Path<String>,
@@ -2315,17 +2315,17 @@ async fn load_approval_from_disk(
 // ── Block 5: 运营报表 ──
 
 #[derive(Debug, Deserialize)]
-struct OpsDailyQuery {
+pub(crate) struct OpsDailyQuery {
     date: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
-struct AuditWeeklyQuery {
+pub(crate) struct AuditWeeklyQuery {
     week_start: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
-struct ResearchMonthlyQuery {
+pub(crate) struct ResearchMonthlyQuery {
     month: Option<String>,
 }
 

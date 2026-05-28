@@ -74,7 +74,7 @@
 
 ## 兼容桥
 
-当前兼容桥保持:
+本基线建立时的兼容桥为:
 
 ```text
 backend.interface_boundary
@@ -86,6 +86,8 @@ backend.interface_boundary
 ```
 
 本批允许继续使用该桥证明等价；不允许把 `src/runtime/mod.rs` 的真实 handler 拆入 `src/backend/runtime/routes.rs`。
+
+`51-backend.runtime.routes抽离记录.md` 已在本基线之后接管 route aggregate 列表；该后续抽离只迁移 route owner，不迁移真实 handler。
 
 ---
 
