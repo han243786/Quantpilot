@@ -1,3 +1,8 @@
+#[path = "run/v4_handoff.rs"]
+mod run_v4_handoff;
+pub(crate) use run_v4_handoff::start_v4_runtime_run;
+use run_v4_handoff::{runtime_simulated_v4_matrix, runtime_v4_static_bundle};
+
 // Backtest + Experiment handlers
 include!("backtest.rs");
 // Run + SSE handlers

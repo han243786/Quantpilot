@@ -886,17 +886,20 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 
 **层级路径**: `root.backend.runtime`
 **父模块**: `backend`
-**状态**: v4.16 BE-001G-02 `backend.runtime.routes.run` run route group 抽离已完成。runtime route aggregate 已迁入 `src/backend/runtime/routes.rs`，run route group 已迁入 `src/backend/runtime/routes/run.rs`；真实 runtime handler/state 仍保留在 `src/runtime/`。
+**状态**: v4.16 BE-001H-03 `runtime.run.v4_handoff` 已完成单叶 closeout，当前不继续细拆；BE-001I-01 `runtime.run.session_start` 已建立单子叶等价基线但尚未迁移代码。runtime route aggregate 已迁入 `src/backend/runtime/routes.rs`，run route group 已迁入 `src/backend/runtime/routes/run.rs`；`/api/runtime/v4/run` handler 已迁入 `src/runtime/run/v4_handoff.rs`，其余 runtime handler/state 仍保留在 `src/runtime/`。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
 - `src/backend/runtime/routes/run.rs`
 - `src/runtime/mod.rs`
+- `src/runtime/run/v4_handoff.rs`
+- `src/runtime/run.rs`
 - `src/runtime_persistence.rs`
 - `src/runtime_event_projection.rs`
 - `src/runtime_validation.rs`
 - `src/runtime_response_mapping.rs`
 - `src/runtime_diagnostics.rs`
+- `markdown/06-milestones/v4.16.0/58-runtime.run.session_start单子叶等价基线.md`
 - `src/backtest_artifacts.rs`
 
 **职责**:
@@ -947,7 +950,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 
 **层级路径**: `root.backend.runtime.routes`
 **父模块**: `backend.runtime`
-**状态**: v4.16 BE-001G-02 run route group 抽离已完成。当前拥有 runtime route aggregate 列表，并通过 `backend.runtime.routes.run` 委托 run routes；父级仍直接拥有 event stream route，不拥有 runtime handler、state owner、artifact schema 或 persistence owner。
+**状态**: v4.16 BE-001G-03 `backend.runtime.routes.run` closeout 已完成，BE-001I-01 已为其下一个 handler sibling `runtime.run.session_start` 建立等价基线。当前拥有 runtime route aggregate 列表，并通过 `backend.runtime.routes.run` 委托 run routes；父级仍直接拥有 event stream route，不拥有 runtime handler、state owner、artifact schema 或 persistence owner。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -963,6 +966,8 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 - `markdown/06-milestones/v4.16.0/51-backend.runtime.routes抽离记录.md`
 - `markdown/06-milestones/v4.16.0/52-backend.runtime.routes.run单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/53-backend.runtime.routes.run抽离记录.md`
+- `markdown/06-milestones/v4.16.0/54-backend.runtime.routes.run单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/58-runtime.run.session_start单子叶等价基线.md`
 
 **职责**:
 承载 backend runtime route aggregate facade 的白箱坐标，固定 `backend.runtime -> backend.runtime.routes -> src/runtime/* pub(crate) handler` 的兼容桥和等价证据。
@@ -1009,15 +1014,21 @@ AI 声称 runtime routes 已迁移时，必须说明当前只迁移 route aggreg
 
 **层级路径**: `root.backend.runtime.routes.run`
 **父模块**: `backend.runtime.routes`
-**状态**: v4.16 BE-001G-02 run route group 抽离已完成。当前只拥有 run route group facade，不拥有 `src/runtime/run.rs` handler、state owner、event stream 或 persistence owner。
+**状态**: v4.16 BE-001H-03 `runtime.run.v4_handoff` 已完成单叶 closeout 并停止内部细分；BE-001I-01 `runtime.run.session_start` 已建立等价基线但尚未迁移代码。当前只拥有 run route group facade，不拥有 state owner、event stream 或 persistence owner；route facade 本身停止细分，handler 层继续按 `runtime.run` sibling 队列递归。
 **真实文件**:
 - `src/backend/runtime/routes.rs`
 - `src/backend/runtime/routes/run.rs`
+- `src/runtime/run/v4_handoff.rs`
 - `src/runtime/run.rs`
 - `src/runtime_persistence.rs`
 - `src/runtime_event_projection.rs`
 - `markdown/06-milestones/v4.16.0/52-backend.runtime.routes.run单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/53-backend.runtime.routes.run抽离记录.md`
+- `markdown/06-milestones/v4.16.0/54-backend.runtime.routes.run单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/55-runtime.run.v4_handoff单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/56-runtime.run.v4_handoff抽离记录.md`
+- `markdown/06-milestones/v4.16.0/57-runtime.run.v4_handoff单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/58-runtime.run.session_start单子叶等价基线.md`
 
 **职责**:
 承载 run/v4 run/list/detail/save/replay/status route group facade，固定 `backend.runtime.routes -> backend.runtime.routes.run -> src/runtime/run.rs pub(crate) handler` 的兼容桥和等价证据。
@@ -1050,13 +1061,142 @@ AI 声称 runtime routes 已迁移时，必须说明当前只迁移 route aggreg
 `backend.runtime.routes.run` 只能经 `backend.runtime.routes` 暴露 run routes；不得横向直接改 event stream、backtest、mutation、report、experiment、executor 或 frontend state。
 
 **允许调用的子模块**:
-`src/runtime/run.rs` 中的 `pub(crate)` run route targets，以及其既有 persistence / event projection helper 调用边界。真实 handler 和 state owner 继续保留在 `src/runtime/run.rs`。
+`src/runtime/run.rs` 中的 legacy run route targets、`src/runtime/run/v4_handoff.rs` 中的 v4 handoff target，以及既有 persistence / event projection helper 调用边界。state owner 继续保留在 `AppState`。
 
 **回归保护**:
 `cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_sse`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 
+**细分价值判断**:
+`backend.runtime.routes.run` 这个 route facade 不继续细分；真实 handler owner 已从 `runtime.run.v4_handoff` 完成第一片 closeout，并已为 `runtime.run.session_start` 建立下一片等价基线。后续若继续 session start，必须先做抽离方案；其余 sibling 候选包括 `runtime.run.record_store`、`runtime.run.replay_status`；`runtime.event_stream` 仍是父级 route 子叶候选，不属于本 facade。
+
 **幻觉检查点**:
-AI 声称 runtime run routes 已迁移时，必须说明当前只迁移 run route group facade；不得宣称 `src/runtime/run.rs` handler、state owner、event stream 或 persistence 已迁移。
+AI 声称 runtime run routes 已迁移时，必须说明 run route group facade、`runtime.run.v4_handoff` handler 子模块与 `runtime.run.session_start` 基线是三层不同动作；不得宣称 `src/runtime/run.rs` 全部 handler、state owner、event stream 或 persistence 已迁移。AI 声称本子叶完成时，还必须说明 route facade 停止细分不等于 run handler 全部完成。
+
+### 5.1.3 `runtime.run.v4_handoff`
+
+**层级路径**: `root.backend.runtime.routes.run.runtime.run.v4_handoff`
+**父模块**: `backend.runtime.routes.run`
+**状态**: v4.16 BE-001H-03 单叶 closeout 已完成，当前停止内部细分。`/api/runtime/v4/run` handler、request/response type、graph resolution、initial event、handoff projection 与 simulated capability matrix 已迁入 `src/runtime/run/v4_handoff.rs`；父级 `runtime` 保留受控 re-export。
+**真实文件**:
+- `src/runtime/run/v4_handoff.rs`
+- `src/runtime/mod.rs`
+- `src/runtime/run.rs`
+- `src/runtime/backtest.rs`
+- `src/backend/runtime/routes/run.rs`
+- `markdown/06-milestones/v4.16.0/55-runtime.run.v4_handoff单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/56-runtime.run.v4_handoff抽离记录.md`
+- `markdown/06-milestones/v4.16.0/57-runtime.run.v4_handoff单叶closeout.md`
+
+**职责**:
+承载 `/api/runtime/v4/run` 的 v4 QS source / preparsed graph / initial event / handoff report / paper simulated runtime handler 子模块，并通过父级 runtime 出口保持 route 兼容。
+
+**输入**:
+| 输入 | 来源 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| `/api/runtime/v4/run` request | `backend.runtime.routes.run` | `V4RuntimeRunRequest` | 必须包含 source 或 graph |
+| v4 QS source | frontend、tests | String | 必须经 static audit 与 handoff |
+| v4 machine graph | frontend、tests | `V4MachineGraphContract` | 必须经 static contract validation |
+| initial event | frontend、tests | `V4RuntimeInputEvent` | 缺省时从 event catalog 派生 |
+
+**输出**:
+| 输出 | 去向 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| v4 run response | frontend、tests | `V4RuntimeRunResponse` | 不改 response schema |
+| handoff diagnostics | frontend、tests | `V4RuntimeRunDiagnostic` | 不改 error code 语义 |
+| paper simulated output | frontend、tests | `V4PaperSimulatedRunOutput` | 不改 capability matrix |
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `start_v4_runtime_run` | `V4RuntimeRunRequest` | `V4RuntimeRunResponse` | `backend.runtime.routes.run` | 不得混入 legacy `start_test_run` |
+| `resolve_v4_runtime_run_graph` | source / graph / initial event | graph、handoff、diagnostics、initial event | `start_v4_runtime_run` | 不得绕过 static audit |
+| `handoff_initial_event` | handoff、graph、timestamp | `V4RuntimeInputEvent` | `start_v4_runtime_run` | 不得改变 event catalog fallback |
+| `v4_runtime_handoff_response` | handoff report | response handoff | `start_v4_runtime_run` | 不得改 response schema |
+| `default_v4_payload_value` | payload field、graph id | JSON value | `handoff_initial_event` | 不得改 default payload semantics |
+| `runtime_v4_static_bundle` / `runtime_simulated_v4_matrix` | venue id | v4 static contract / capability matrix | v4 handoff path | 不得扩大真实 provider 支持 |
+
+**父级通信规则**:
+`runtime.run.v4_handoff` 只能经父级 `runtime` re-export 和 `backend.runtime.routes.run` 暴露 `/api/runtime/v4/run`；不得横向直接改 `runtime.run.session_start`、record store、SSE、backtest、mutation、executor 或 frontend state。
+
+**允许调用的子模块**:
+仅允许使用既有 `qrpc_core_ir`、`qrpc_runtime`、`quantscript` static audit / handoff / v4 paper simulated runtime；`runtime_v4_static_bundle` / `runtime_simulated_v4_matrix` 对 `src/runtime/backtest.rs` 的复用只能经父级 `runtime` 受控出口，不得形成 sibling 直连。
+
+**细分价值判断**:
+本叶不继续细拆。request/response schema、source/graph resolution、initial event、handoff projection 都服务同一条 v4 handoff route；simulated capability matrix 若未来独立，应另起父级共享节点，不能在本叶内部横向拆出。
+
+**回归保护**:
+`cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
+
+**幻觉检查点**:
+AI 声称 `runtime.run.v4_handoff` 已抽离时，必须指出只完成 v4 handoff handler 子模块抽离；`src/runtime/run.rs` 仍拥有 legacy run/session/record/replay/status sibling。不得宣称 provider 真连接、record store、SSE、persistence 或发布版本过渡已完成。
+
+### 5.1.4 `runtime.run.session_start`
+
+**层级路径**: `root.backend.runtime.routes.run.runtime.run.session_start`
+**父模块**: `backend.runtime.routes.run`
+**状态**: v4.16 BE-001I-01 单子叶等价基线已建立，当前只冻结 legacy `/api/runtime/test-run` handler 边界，不移动 `src/runtime/run.rs` 中的 `start_test_run` 或 helper。
+**真实文件**:
+- `src/runtime/run.rs`
+- `src/runtime/mod.rs`
+- `src/backend/runtime/routes/run.rs`
+- `src/runtime_validation.rs`
+- `src/runtime_event_projection.rs`
+- `src/runtime_response_mapping.rs`
+- `src/compile_api.rs`
+- `src/capability_api.rs`
+- `src/collaboration.rs`
+- `src/graph_quantscript_api.rs`
+- `src/frontend_runtime_mapping.rs`
+- `markdown/06-milestones/v4.16.0/58-runtime.run.session_start单子叶等价基线.md`
+
+**职责**:
+承载 legacy `POST /api/runtime/test-run` session start handler 的白箱基线，固定 capability guard、QS compile、runtime session、event envelope、governance snapshot、actor collaboration 和 in-memory `state.runs` 写入边界。
+
+**输入**:
+| 输入 | 来源 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| `UserId` | auth middleware | scoped user id | 仅用于 scoped run key，不迁移 auth owner |
+| `AppState` | `backend.app_state_wiring` | shared app state | 只使用既有 `run_in_progress`、`runs`、`graph_store_dir` 等字段 |
+| `FrontendRunRequest.capability_context` | frontend、tests | runtime capability context | 缺失必须返回 `capability_boundary_violation` 且不创建 run |
+| `FrontendRunRequest.runtime_config` | frontend、tests | runtime config | 必须经 `validate_runtime_config_capabilities` |
+| `FrontendRunRequest.graph_json` | frontend、tests | graph JSON | 缺失必须按既有 bad request 拒绝 |
+| `FrontendRunRequest.runtime_targets` | frontend、tests | runtime target list | 与 graph targets 合并，不改变 event node mapping |
+
+**输出**:
+| 输出 | 去向 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| `RunStartResponse` | frontend、tests | run start response | 不改 `run_id`、`graph_id`、`compile_id`、`event_count`、`status` schema |
+| in-memory `RunRecord` | `AppState.runs` | scoped run record | 不改 scoped key、governance、actor、events、account、session 写入语义 |
+| run guard 状态 | `AppState.run_in_progress` | `RunInProgressGuard` | 不迁移 owner，不改 AcqRel / Release 语义 |
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `start_test_run` | `UserId`、`AppState`、`FrontendRunRequest` | `RunStartResponse` | `backend.runtime.routes.run` | 不得混入 record/replay/SSE 迁移 |
+| `validate_runtime_capability_guard` | capability context | validation result | `start_test_run` | 不得绕过 capability boundary |
+| `validate_runtime_config_capabilities` | runtime config、capability context | validation result | `start_test_run` | 不得放宽 provider 能力 |
+| `compile_runtime_protocol_via_qs` / `compile_runtime_protocol_config` | graph/config | compiled runtime protocol | `start_test_run` | 不得绕过 QS compile path |
+| `build_compile_runtime_targets_from_graph` / `merge_runtime_targets` | graph targets、request targets | merged runtime targets | `start_test_run` | 不得改变 event node mapping |
+| `runtime_governance_snapshot` | compile/runtime context | governance evidence | `start_test_run` | 不得缺失 evidence metadata |
+| `collect_frontend_events` / `prepend_capability_snapshot_event` | runtime session events | frontend events | `start_test_run` | 不得改变 event order |
+| `attach_runtime_event_envelopes` / `validate_runtime_event_envelopes` | frontend events | governed events | `start_test_run` | 不得绕过 envelope validation |
+| `account_summary` / `run_start_response` | run record context | API response | `start_test_run` | 不得改 response schema |
+| `normalize_actor_identity` / `collaboration_with_run_actor` | actor context | collaboration metadata | `start_test_run` | 不得迁移 graph audit owner |
+
+**父级通信规则**:
+`runtime.run.session_start` 只能经父级 `runtime` 和 `backend.runtime.routes.run` 暴露 `/api/runtime/test-run`；不得横向直接改 `runtime.run.v4_handoff`、`runtime.run.record_store`、`runtime.run.replay_status`、`runtime.event_stream`、backtest、mutation、executor 或 frontend state。
+
+**允许调用的子模块**:
+仅允许使用既有 capability validation、QS compile、runtime event projection、response mapping、collaboration、frontend runtime mapping helper。`run_in_progress` 和 `state.runs` owner 继续保留在 `AppState`，本基线不引入新的 persistence owner。
+
+**回归保护**:
+`cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
+
+**细分价值判断**:
+当前只建立基线。若继续本叶，下一步必须先制作 `runtime.run.session_start` 实际抽离方案；record store、replay/status、SSE、persistence 和 state owner 仍是独立候选，不得在本批混入。
+
+**幻觉检查点**:
+AI 声称 `runtime.run.session_start` 已推进时，必须说明当前只是 BE-001I-01 等价基线，`start_test_run` 仍在 `src/runtime/run.rs`。不得宣称 legacy run handler、record store、replay/status、SSE、persistence、state owner 或发布版本过渡已完成。
 
 ### 5.2 `backend.graph_compile`
 
@@ -1488,6 +1628,8 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 - `markdown/06-milestones/v4.16.0/51-backend.runtime.routes抽离记录.md`
 - `markdown/06-milestones/v4.16.0/52-backend.runtime.routes.run单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/53-backend.runtime.routes.run抽离记录.md`
+- `markdown/06-milestones/v4.16.0/54-backend.runtime.routes.run单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/55-runtime.run.v4_handoff单子叶等价基线.md`
 
 **职责**:
 作为三矩阵治理控制面，定义提案、判档、父子通信、引导坐标、模块树和发布过渡协议。
@@ -1552,6 +1694,11 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/51-backend.runtime.routes抽离记录.md` runtime routes extraction | `backend.runtime.routes` | runtime route aggregate 列表迁入 backend facade，handler 保留原位 | BE-001F 单子叶抽离 | 不得宣称 run/backtest/mutation handler、event stream、state owner 或 persistence 已迁移 |
 | `markdown/06-milestones/v4.16.0/52-backend.runtime.routes.run单子叶等价基线.md` runtime run routes baseline | `backend.runtime.routes.run` | run route group facade、event stream 排除边界和回归证据 | BE-001G 单子叶基线 | 不得迁移 run handler、state owner、event stream 或 persistence |
 | `markdown/06-milestones/v4.16.0/53-backend.runtime.routes.run抽离记录.md` runtime run routes extraction | `backend.runtime.routes.run` | run route group 迁入 backend route child facade，handler 保留原位 | BE-001G 单子叶抽离 | 不得宣称 run handler、event stream、state owner 或 persistence 已迁移 |
+| `markdown/06-milestones/v4.16.0/54-backend.runtime.routes.run单叶closeout.md` runtime run routes closeout | `backend.runtime.routes.run` | route facade closeout、handler 层继续细拆判断 | BE-001G 单叶 closeout | 不得把 route facade closeout 宣称为 run handler 完成 |
+| `markdown/06-milestones/v4.16.0/55-runtime.run.v4_handoff单子叶等价基线.md` runtime run v4 handoff baseline | `runtime.run.v4_handoff` | `/api/runtime/v4/run` handler 层等价基线 | BE-001H 单子叶基线 | 不得移动 handler 或扩大 provider 支持 |
+| `markdown/06-milestones/v4.16.0/56-runtime.run.v4_handoff抽离记录.md` runtime run v4 handoff extraction | `runtime.run.v4_handoff` | v4 handoff handler/type/helper 迁入 `src/runtime/run/v4_handoff.rs`，父级保留受控出口 | BE-001H 单子叶抽离 | 不得宣称 run handler 全部完成或 provider 真连接可用 |
+| `markdown/06-milestones/v4.16.0/57-runtime.run.v4_handoff单叶closeout.md` runtime run v4 handoff closeout | `runtime.run.v4_handoff` | 单叶整理、等价证据和停止内部细分判断 | BE-001H 单叶 closeout | 不得继续细拆本叶或宣称 run handler 全部完成 |
+| `markdown/06-milestones/v4.16.0/58-runtime.run.session_start单子叶等价基线.md` runtime run session start baseline | `runtime.run.session_start` | legacy `/api/runtime/test-run` handler 层等价基线 | BE-001I 单子叶基线 | 不得迁移 `start_test_run`、state owner、record/replay/SSE 或 persistence |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

@@ -65,6 +65,11 @@
 | 51 | `v4.16.0/51-backend.runtime.routes抽离记录.md` | BE-001F-02 `backend.runtime.routes` 抽离记录，接管 runtime route aggregate 列表并保留 handler/state owner 原位 | ✅ 已完成 |
 | 52 | `v4.16.0/52-backend.runtime.routes.run单子叶等价基线.md` | BE-001G-01 `backend.runtime.routes.run` 单子叶等价基线，固定 run route group 与 event stream 排除边界 | 📋 已创建 |
 | 53 | `v4.16.0/53-backend.runtime.routes.run抽离记录.md` | BE-001G-02 `backend.runtime.routes.run` 抽离记录，接管 run route group 并保留 handler/state owner 原位 | ✅ 已完成 |
+| 54 | `v4.16.0/54-backend.runtime.routes.run单叶closeout.md` | BE-001G-03 `backend.runtime.routes.run` 单叶 closeout，确认 route facade 收束并判断 `src/runtime/run.rs` handler 层值得另起基线 | ✅ 已完成 |
+| 55 | `v4.16.0/55-runtime.run.v4_handoff单子叶等价基线.md` | BE-001H-01 `runtime.run.v4_handoff` 单子叶等价基线，固定 `/api/runtime/v4/run` handler 层边界与 `api_run` 证据 | 📋 已创建 |
+| 56 | `v4.16.0/56-runtime.run.v4_handoff抽离记录.md` | BE-001H-02 `runtime.run.v4_handoff` 抽离记录，将 v4 handoff handler/type/helper 迁入 `src/runtime/run/v4_handoff.rs` 并保留父级兼容出口 | ✅ 已完成 |
+| 57 | `v4.16.0/57-runtime.run.v4_handoff单叶closeout.md` | BE-001H-03 `runtime.run.v4_handoff` 单叶 closeout，确认本叶等价并停止内部细分 | ✅ 已完成 |
+| 58 | `v4.16.0/58-runtime.run.session_start单子叶等价基线.md` | BE-001I-01 `runtime.run.session_start` 单子叶等价基线，固定 legacy `/api/runtime/test-run` handler 边界与 `api_run` 证据 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
