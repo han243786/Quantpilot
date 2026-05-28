@@ -1,7 +1,15 @@
+mod event_stream;
+#[path = "run/record_store.rs"]
+mod run_record_store;
+#[path = "run/replay_status.rs"]
+mod run_replay_status;
 #[path = "run/session_start.rs"]
 mod run_session_start;
 #[path = "run/v4_handoff.rs"]
 mod run_v4_handoff;
+pub(crate) use event_stream::stream_run_events;
+pub(crate) use run_record_store::{discard_run_record, get_run_detail, list_runs, save_run_record};
+pub(crate) use run_replay_status::{get_run_replay, get_run_status};
 pub(crate) use run_session_start::start_test_run;
 pub(crate) use run_v4_handoff::start_v4_runtime_run;
 use run_v4_handoff::{runtime_simulated_v4_matrix, runtime_v4_static_bundle};

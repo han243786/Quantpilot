@@ -282,7 +282,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/strategy_config/diff.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 
-**抽离口径**: v4.16 BE-001B 已建立 9 个叶子 facade，BE-001C 已完成九叶逐叶 closeout，BE-001D 已启动 `backend.strategy_config` L3 模块壳抽离，BE-001E 已完成其余八叶薄壳抽离，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-02 已建立 `runtime.run.record_store` 单子叶等价基线并完成真实边界梳理。`src/app_router.rs` 通过 `backend.interface_boundary` 进入各叶子；state owner、response schema 和 artifact schema 仍按各模块白箱边界保留。
+**抽离口径**: v4.16 BE-001B 已建立 9 个叶子 facade，BE-001C 已完成九叶逐叶 closeout，BE-001D 已启动 `backend.strategy_config` L3 模块壳抽离，BE-001E 已完成其余八叶薄壳抽离，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-02 已建立 `runtime.backtest` 单子叶等价基线和抽离方案且当前不移动代码。`src/app_router.rs` 通过 `backend.interface_boundary` 进入各叶子；state owner、response schema 和 artifact schema 仍按各模块白箱边界保留。
 
 **细分判断**: `backend.interface_boundary`、`backend.capability`、`backend.app_state_wiring`、`backend.test_support` 本阶段停止细分；`backend.strategy_config`、`backend.runtime`、`backend.graph_compile`、`backend.storage_security`、`backend.ops_governance` 值得进入下一轮 L3 等价基线，其中 `backend.storage_security` 必须先过安全决策暂停。
 
@@ -297,7 +297,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 | `/api/graph/*` | 策略图 CRUD | `graph_api.rs` |
 | `/api/runtime/compile` | 编译 | `compile_api.rs` |
 | `/api/v1/strategy-config/*` | v4 策略配置契约 / preflight / diff / evidence diff helper | `strategy_config_api.rs` |
-| `/api/runtime/run` | 纸面运行 | `src/backend/runtime/routes/run.rs`、`src/runtime/run.rs`、`src/runtime/run/v4_handoff.rs` |
+| `/api/runtime/run` | 纸面运行 | `src/backend/runtime/routes/run.rs`、`src/runtime/run.rs`、`src/runtime/event_stream.rs`、`src/runtime/run/session_start.rs`、`src/runtime/run/v4_handoff.rs`、`src/runtime/run/record_store.rs`、`src/runtime/run/replay_status.rs` |
 | `/api/runtime/backtest/*` | 回测 | `runtime/backtest.rs` |
 | `/api/runtime/experiments/*` | 实验/参数扫描 | — |
 | `/api/auth/*` | 本地会话认证 | `auth/mod.rs` |
@@ -1430,9 +1430,22 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/60-runtime.run.session_start单叶closeout.md` — v4.16.0 BE-001I-03 `runtime.run.session_start` 单叶 closeout，确认本叶停止内部细分
 - `markdown/06-milestones/v4.16.0/61-runtime.run.record_store单子叶等价基线.md` — v4.16.0 BE-001J-01 `runtime.run.record_store` 单子叶等价基线，固定 run record list/detail/save/discard 与 persistence/audit 边界
 - `markdown/06-milestones/v4.16.0/62-runtime.run.record_store真实边界梳理.md` — v4.16.0 BE-001J-02 `runtime.run.record_store` 真实边界梳理，校正 route method、frontend 调用和 shared helper owner
+- `markdown/06-milestones/v4.16.0/63-runtime.run.record_store抽离方案.md` — v4.16.0 BE-001J-03 `runtime.run.record_store` 抽离方案，锁定四个 handler 的最小移动方案和 shared helper 保留边界
+- `markdown/06-milestones/v4.16.0/64-runtime.run.record_store抽离记录.md` — v4.16.0 BE-001J-04 `runtime.run.record_store` 抽离记录，将四个 handler 迁入 `src/runtime/run/record_store.rs`
+- `markdown/06-milestones/v4.16.0/65-runtime.run.record_store单叶closeout.md` — v4.16.0 BE-001J-05 `runtime.run.record_store` 单叶 closeout，确认本叶等价并停止内部细拆
+- `markdown/06-milestones/v4.16.0/66-runtime.run.replay_status单子叶等价基线.md` — v4.16.0 BE-001K-01 `runtime.run.replay_status` 单子叶等价基线，固定 replay/status 与 SSE 排除边界
+- `markdown/06-milestones/v4.16.0/67-runtime.run.replay_status抽离方案.md` — v4.16.0 BE-001K-02 `runtime.run.replay_status` 抽离方案，锁定两个 handler 的最小移动方案和 owner 保留边界
+- `markdown/06-milestones/v4.16.0/68-runtime.run.replay_status抽离记录.md` — v4.16.0 BE-001K-03 `runtime.run.replay_status` 抽离记录，将两个 handler 迁入 `src/runtime/run/replay_status.rs`
+- `markdown/06-milestones/v4.16.0/69-runtime.run.replay_status单叶closeout.md` — v4.16.0 BE-001K-04 `runtime.run.replay_status` 单叶 closeout，确认本叶等价并停止内部细拆
+- `markdown/06-milestones/v4.16.0/70-runtime.event_stream单子叶等价基线.md` — v4.16.0 BE-001L-01 `runtime.event_stream` 单子叶等价基线，固定 SSE route、frame order 和 keep-alive
+- `markdown/06-milestones/v4.16.0/71-runtime.event_stream抽离方案.md` — v4.16.0 BE-001L-02 `runtime.event_stream` 抽离方案，锁定 `stream_run_events` 最小迁移和 route/shared owner 保留边界
+- `markdown/06-milestones/v4.16.0/72-runtime.event_stream抽离记录.md` — v4.16.0 BE-001L-03 `runtime.event_stream` 抽离记录，将 `stream_run_events` 迁入 `src/runtime/event_stream.rs`
+- `markdown/06-milestones/v4.16.0/73-runtime.event_stream单叶closeout.md` — v4.16.0 BE-001L-04 `runtime.event_stream` 单叶 closeout，确认本叶等价并停止内部细拆
+- `markdown/06-milestones/v4.16.0/74-runtime.backtest单子叶等价基线.md` — v4.16.0 BE-001M-01 `runtime.backtest` 单子叶等价基线，冻结 backtest route group、artifact/compare/replay/persistence owner；当前不移动代码
+- `markdown/06-milestones/v4.16.0/75-runtime.backtest抽离方案.md` — v4.16.0 BE-001M-02 `runtime.backtest` 抽离方案，锁定下一批只抽离 backtest route facade
 
 当前治理基线: `v4.15.0/` — 三矩阵完全接管，后续常态维护模块树、全量树和治理 gate。
-当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；system 抽离经验已回填为后续抽离准则，S1-S10 closeout 或静态 closeout 已完成，`root.system` 顶层阶段性 closeout 已刷新，递归模块化流程已明确；backend 已进入 R5，BE-001B `src/backend/` 九叶模块壳已落位，BE-001C 九叶逐叶 closeout 已完成，BE-001D `backend.strategy_config` L3 模块壳已落位，BE-001E 其余八叶薄壳已落位且 `42-49` 已完成逐叶完成记录，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-02 已建立 `runtime.run.record_store` 单子叶等价基线并完成真实边界梳理，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
+当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；system 抽离经验已回填为后续抽离准则，S1-S10 closeout 或静态 closeout 已完成，`root.system` 顶层阶段性 closeout 已刷新，递归模块化流程已明确；backend 已进入 R5，BE-001B `src/backend/` 九叶模块壳已落位，BE-001C 九叶逐叶 closeout 已完成，BE-001D `backend.strategy_config` L3 模块壳已落位，BE-001E 其余八叶薄壳已落位且 `42-49` 已完成逐叶完成记录，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-02 已建立 `runtime.backtest` 单子叶等价基线和抽离方案且当前不移动代码，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
 
 ### 7.7 总览 (markdown/10-overview/)
 
@@ -1598,10 +1611,13 @@ storage/
 - `src/migration_sender.rs` — 数据迁移; 改跨版本迁移时改这里
 - `src/rate_limiter.rs` — 速率限制; 改限速策略时改这里
 - `src/runbook.rs` — 运行手册; 改运维操作定义时改这里
-- `src/runtime/mod.rs` — 运行时主模块, Paper 运行/事件流 SSE/v4 run 路由与 `run_v4_handoff` 父级 re-export; 改运行时 API 聚合时改这里 🆕 v4.1.0
-- `src/runtime/run.rs` — legacy run record、replay/status 和 SSE sibling owner; 改运行事件/账户快照/run record 时改这里 🆕 v4.1.0
+- `src/runtime/mod.rs` — 运行时主模块, Paper 运行/v4 run 路由与 `event_stream` / `run_v4_handoff` 等父级 re-export; 改运行时 API 聚合时改这里 🆕 v4.1.0
+- `src/runtime/event_stream.rs` — run event stream SSE handler、frame order、delay 和 keep-alive; 改运行事件流 SSE 时改这里 🆕 v4.16.0
+- `src/runtime/run.rs` — 后续 legacy runtime sibling owner; 改运行报表、运维日报或 legacy runtime API 时改这里 🆕 v4.1.0
 - `src/runtime/run/session_start.rs` — legacy `POST /api/runtime/test-run` handler、capability guard 调用、QS compile、sandbox session、event envelope 和 in-memory run record 写入; 改 session start 时改这里 🆕 v4.16.0
 - `src/runtime/run/v4_handoff.rs` — `POST /api/runtime/v4/run` handler、request/response、graph resolution、handoff projection 和 simulated capability matrix; 改 v4 handoff run 时改这里 🆕 v4.16.0
+- `src/runtime/run/record_store.rs` — run record list/detail/save/discard handler、manifest save/discard 编排和 graph audit 调用; 改 run record API handler 时改这里 🆕 v4.16.0
+- `src/runtime/run/replay_status.rs` — run replay/status handler、replay cursor/options 编排、status projection 调用和 replay metrics 触发; 改 run replay/status API handler 时改这里 🆕 v4.16.0
 - `src/runtime/backtest.rs` — 回测引擎, 历史回放/确定性 Mock/v4 deterministic MachineGraph replay; 改回测执行时改这里 🆕 v4.3.0
 - `src/runtime/mutation.rs` — 运行时变更, AI 提案/审批/沙箱验证, v4 trajectory 提案静态约束与 strategy config domain binding 审批阻断; 改审批流或 v4 AI 提案分析时改这里 🆕 v4.11.0
 - `src/runtime_diagnostics.rs` — 运行时诊断; 改健康检查/性能诊断时改这里

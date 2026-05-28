@@ -74,6 +74,19 @@
 | 60 | `v4.16.0/60-runtime.run.session_start单叶closeout.md` | BE-001I-03 `runtime.run.session_start` 单叶 closeout，确认本叶等价并停止内部细分 | ✅ 已完成 |
 | 61 | `v4.16.0/61-runtime.run.record_store单子叶等价基线.md` | BE-001J-01 `runtime.run.record_store` 单子叶等价基线，固定 run record list/detail/save/discard 与 persistence/audit 边界 | 📋 已创建 |
 | 62 | `v4.16.0/62-runtime.run.record_store真实边界梳理.md` | BE-001J-02 `runtime.run.record_store` 真实边界梳理，校正 route method、共享 helper owner 和最小抽离边界 | 📋 已创建 |
+| 63 | `v4.16.0/63-runtime.run.record_store抽离方案.md` | BE-001J-03 `runtime.run.record_store` 抽离方案，锁定四个 handler 的最小移动方案和 shared helper 保留边界 | 📋 已创建 |
+| 64 | `v4.16.0/64-runtime.run.record_store抽离记录.md` | BE-001J-04 `runtime.run.record_store` 抽离记录，将四个 handler 迁入 `src/runtime/run/record_store.rs` 并保留父级兼容出口 | ✅ 已完成 |
+| 65 | `v4.16.0/65-runtime.run.record_store单叶closeout.md` | BE-001J-05 `runtime.run.record_store` 单叶 closeout，确认本叶等价并停止内部细拆，后续回到 `runtime.run.replay_status` 基线 | ✅ 已完成 |
+| 66 | `v4.16.0/66-runtime.run.replay_status单子叶等价基线.md` | BE-001K-01 `runtime.run.replay_status` 单子叶等价基线，固定 replay/status 两个 handler 与 SSE 排除边界 | 📋 已创建 |
+| 67 | `v4.16.0/67-runtime.run.replay_status抽离方案.md` | BE-001K-02 `runtime.run.replay_status` 抽离方案，锁定两个 handler 的最小移动方案和 SSE/response/schema/metrics 保留边界 | 📋 已创建 |
+| 68 | `v4.16.0/68-runtime.run.replay_status抽离记录.md` | BE-001K-03 `runtime.run.replay_status` 抽离记录，将两个 handler 迁入 `src/runtime/run/replay_status.rs` 并保留 SSE/shared owner | ✅ 已完成 |
+| 69 | `v4.16.0/69-runtime.run.replay_status单叶closeout.md` | BE-001K-04 `runtime.run.replay_status` 单叶 closeout，确认本叶等价并停止内部细拆，后续回到父级 `runtime.event_stream` 候选 | ✅ 已完成 |
+| 70 | `v4.16.0/70-runtime.event_stream单子叶等价基线.md` | BE-001L-01 `runtime.event_stream` 单子叶等价基线，固定 SSE route、frame order、keep-alive 和父级 route owner；当前不移动代码 | 📋 已创建 |
+| 71 | `v4.16.0/71-runtime.event_stream抽离方案.md` | BE-001L-02 `runtime.event_stream` 抽离方案，锁定只移动 `stream_run_events` 到 `src/runtime/event_stream.rs` 并保留父级 route owner | 📋 已创建 |
+| 72 | `v4.16.0/72-runtime.event_stream抽离记录.md` | BE-001L-03 `runtime.event_stream` 抽离记录，将 `stream_run_events` 迁入 `src/runtime/event_stream.rs` 并保留父级 route owner | ✅ 已完成 |
+| 73 | `v4.16.0/73-runtime.event_stream单叶closeout.md` | BE-001L-04 `runtime.event_stream` 单叶 closeout，确认 SSE handler 等价并停止内部细拆，后续回到 `runtime.backtest` 候选 | ✅ 已完成 |
+| 74 | `v4.16.0/74-runtime.backtest单子叶等价基线.md` | BE-001M-01 `runtime.backtest` 单子叶等价基线，冻结 backtest route group、artifact/compare/replay/persistence owner；当前不移动代码 | 📋 已创建 |
+| 75 | `v4.16.0/75-runtime.backtest抽离方案.md` | BE-001M-02 `runtime.backtest` 抽离方案，锁定下一批只抽离 backtest route facade 到计划目标文件 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
