@@ -205,7 +205,8 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/57-*.md", "v4.16 runtime run v4 handoff child closeout"),
     @("markdown/06-milestones/v4.16.0/58-*.md", "v4.16 runtime run session start child equivalence baseline"),
     @("markdown/06-milestones/v4.16.0/59-*.md", "v4.16 runtime run session start child extraction record"),
-    @("markdown/06-milestones/v4.16.0/60-*.md", "v4.16 runtime run session start child closeout")
+    @("markdown/06-milestones/v4.16.0/60-*.md", "v4.16 runtime run session start child closeout"),
+    @("markdown/06-milestones/v4.16.0/61-*.md", "v4.16 runtime run record store child equivalence baseline")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -287,6 +288,7 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/58-", "full feature tree v4.16 runtime run session start baseline"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/59-", "full feature tree v4.16 runtime run session start extraction"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/60-", "full feature tree v4.16 runtime run session start closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/61-", "full feature tree v4.16 runtime run record store baseline"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/03-", "module tree v4.16 backend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/04-", "module tree v4.16 frontend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/05-", "module tree v4.16 test asset register"),
@@ -345,6 +347,7 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/58-", "module tree v4.16 runtime run session start baseline"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/59-", "module tree v4.16 runtime run session start extraction"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/60-", "module tree v4.16 runtime run session start closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/61-", "module tree v4.16 runtime run record store baseline"),
     @("markdown/10-overview/overview-docs-index.md", "v4.16.0", "docs index v4.16 plan"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "v4.16.0", "current roadmap v4.16 plan")
 )
@@ -1103,6 +1106,35 @@ $v416LandingFiles = @(
         @("api_run", "api run evidence"),
         @("state owner", "state owner retention marker"),
         @("persistence", "persistence exclusion marker")
+    )),
+    @("markdown/06-milestones/v4.16.0/61-*.md", @(
+        @("BE-001J-01", "runtime run record store baseline marker"),
+        @("runtime.run.record_store", "runtime run record store child"),
+        @("src/runtime/run.rs", "runtime run retained file"),
+        @("src/runtime/mod.rs", "runtime parent module"),
+        @("src/backend/runtime/routes/run.rs", "runtime run route facade"),
+        @("src/runtime_persistence.rs", "runtime persistence owner"),
+        @("src/runtime_response_mapping.rs", "runtime response mapping owner"),
+        @("src/collaboration.rs", "graph audit helper owner"),
+        @("list_runs", "list runs handler"),
+        @("get_run_detail", "run detail handler"),
+        @("save_run_record", "save run handler"),
+        @("discard_run_record", "discard run handler"),
+        @("load_run_record_from_state", "load run record helper"),
+        @("list_run_records", "list persisted run records helper"),
+        @("persist_run_record", "persist run record helper"),
+        @("run_list_item_from_record", "run list response mapping helper"),
+        @("run_detail_response_from_record", "run detail response mapping helper"),
+        @("sanitize_storage_path_segment", "safe storage segment helper"),
+        @("persist_graph_audit_entry", "graph audit persistence helper"),
+        @("build_graph_audit_entry", "graph audit build helper"),
+        @("state.runs", "run record state marker"),
+        @("run_store_dir", "run store dir marker"),
+        @("audit_store_dir", "audit store dir marker"),
+        @("api_run", "api run evidence"),
+        @("replay/status", "replay status exclusion marker"),
+        @("SSE", "sse exclusion marker"),
+        @("persistence", "persistence retention marker")
     ))
 )
 
@@ -1186,6 +1218,7 @@ $requiredModules = @(
     "backend.runtime.routes.run",
     "runtime.run.v4_handoff",
     "runtime.run.session_start",
+    "runtime.run.record_store",
     "backend.graph_compile",
     "backend.storage_security",
     "backend.ops_governance",
