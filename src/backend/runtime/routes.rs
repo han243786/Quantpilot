@@ -3,40 +3,15 @@ use axum::{
     Router,
 };
 
-use crate::{backtest_compare, runtime as runtime_handlers, AppState};
+use crate::{runtime as runtime_handlers, AppState};
 
 pub const MODULE_ID: &str = "backend.runtime.routes";
 
+pub mod backtest;
 pub mod run;
 
 pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
-    let router = router
-        .route(
-            "/api/runtime/backtest",
-            post(runtime_handlers::start_backtest_run),
-        )
-        .route(
-            "/api/runtime/backtests",
-            get(runtime_handlers::list_backtests),
-        )
-        .route(
-            "/api/runtime/backtests/compare",
-            post(backtest_compare::compare_backtests),
-        )
-        .route(
-            "/api/runtime/backtests/:backtest_id/save",
-            post(runtime_handlers::save_backtest_record),
-        )
-        .route(
-            "/api/runtime/backtests/:backtest_id",
-            get(runtime_handlers::get_backtest_detail)
-                .delete(runtime_handlers::discard_backtest_record),
-        )
-        .route(
-            "/api/runtime/backtests/:backtest_id/replay",
-            get(runtime_handlers::get_backtest_replay),
-        );
-
+    let router = backtest::register_routes(router);
     let router = run::register_routes(router);
 
     router

@@ -262,6 +262,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/interface_boundary/test_support_bridge.rs`
 - `src/backend/capability/snapshot.rs`
 - `src/backend/runtime/routes.rs`
+- `src/backend/runtime/routes/backtest.rs`
 - `src/backend/runtime/routes/run.rs`
 - `src/backend/graph_compile/compile.rs`
 - `src/backend/graph_compile/graph.rs`
@@ -282,7 +283,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/strategy_config/diff.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 
-**抽离口径**: v4.16 BE-001B 已建立 9 个叶子 facade，BE-001C 已完成九叶逐叶 closeout，BE-001D 已启动 `backend.strategy_config` L3 模块壳抽离，BE-001E 已完成其余八叶薄壳抽离，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-02 已建立 `runtime.backtest` 单子叶等价基线和抽离方案且当前不移动代码。`src/app_router.rs` 通过 `backend.interface_boundary` 进入各叶子；state owner、response schema 和 artifact schema 仍按各模块白箱边界保留。
+**抽离口径**: v4.16 BE-001B 已建立 9 个叶子 facade，BE-001C 已完成九叶逐叶 closeout，BE-001D 已启动 `backend.strategy_config` L3 模块壳抽离，BE-001E 已完成其余八叶薄壳抽离，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-04 已完成 `runtime.backtest` route facade 抽离与单叶 closeout，BE-001N-02 已建立 `runtime.backtest.execution_start` 等价基线与抽离方案。`src/app_router.rs` 通过 `backend.interface_boundary` 进入各叶子；state owner、response schema 和 artifact schema 仍按各模块白箱边界保留。
 
 **细分判断**: `backend.interface_boundary`、`backend.capability`、`backend.app_state_wiring`、`backend.test_support` 本阶段停止细分；`backend.strategy_config`、`backend.runtime`、`backend.graph_compile`、`backend.storage_security`、`backend.ops_governance` 值得进入下一轮 L3 等价基线，其中 `backend.storage_security` 必须先过安全决策暂停。
 
@@ -298,7 +299,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 | `/api/runtime/compile` | 编译 | `compile_api.rs` |
 | `/api/v1/strategy-config/*` | v4 策略配置契约 / preflight / diff / evidence diff helper | `strategy_config_api.rs` |
 | `/api/runtime/run` | 纸面运行 | `src/backend/runtime/routes/run.rs`、`src/runtime/run.rs`、`src/runtime/event_stream.rs`、`src/runtime/run/session_start.rs`、`src/runtime/run/v4_handoff.rs`、`src/runtime/run/record_store.rs`、`src/runtime/run/replay_status.rs` |
-| `/api/runtime/backtest/*` | 回测 | `runtime/backtest.rs` |
+| `/api/runtime/backtest/*` | 回测 | `src/backend/runtime/routes/backtest.rs`、`runtime/backtest.rs`、`src/backtest_compare.rs` |
 | `/api/runtime/experiments/*` | 实验/参数扫描 | — |
 | `/api/auth/*` | 本地会话认证 | `auth/mod.rs` |
 | `/api/credentials/*` | 凭证管理 | `credential_api.rs` |
@@ -1443,9 +1444,13 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/73-runtime.event_stream单叶closeout.md` — v4.16.0 BE-001L-04 `runtime.event_stream` 单叶 closeout，确认本叶等价并停止内部细拆
 - `markdown/06-milestones/v4.16.0/74-runtime.backtest单子叶等价基线.md` — v4.16.0 BE-001M-01 `runtime.backtest` 单子叶等价基线，冻结 backtest route group、artifact/compare/replay/persistence owner；当前不移动代码
 - `markdown/06-milestones/v4.16.0/75-runtime.backtest抽离方案.md` — v4.16.0 BE-001M-02 `runtime.backtest` 抽离方案，锁定下一批只抽离 backtest route facade
+- `markdown/06-milestones/v4.16.0/76-runtime.backtest抽离记录.md` - v4.16.0 BE-001M-03 `runtime.backtest` 抽离记录，将 backtest route registration 迁入 `src/backend/runtime/routes/backtest.rs`
+- `markdown/06-milestones/v4.16.0/77-runtime.backtest单叶closeout.md` - v4.16.0 BE-001M-04 `runtime.backtest` 单叶 closeout，确认 route facade 等价并进入 handler 域细分判断
+- `markdown/06-milestones/v4.16.0/78-runtime.backtest.execution_start单子叶等价基线.md` - v4.16.0 BE-001N-01 `runtime.backtest.execution_start` 单子叶等价基线，冻结 backtest 创建路径且当前不移动代码
+- `markdown/06-milestones/v4.16.0/79-runtime.backtest.execution_start抽离方案.md` - v4.16.0 BE-001N-02 `runtime.backtest.execution_start` 抽离方案，锁定下一批只移动 backtest 创建路径 handler/helper 并保留 experiment 复用桥
 
 当前治理基线: `v4.15.0/` — 三矩阵完全接管，后续常态维护模块树、全量树和治理 gate。
-当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；system 抽离经验已回填为后续抽离准则，S1-S10 closeout 或静态 closeout 已完成，`root.system` 顶层阶段性 closeout 已刷新，递归模块化流程已明确；backend 已进入 R5，BE-001B `src/backend/` 九叶模块壳已落位，BE-001C 九叶逐叶 closeout 已完成，BE-001D `backend.strategy_config` L3 模块壳已落位，BE-001E 其余八叶薄壳已落位且 `42-49` 已完成逐叶完成记录，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-02 已建立 `runtime.backtest` 单子叶等价基线和抽离方案且当前不移动代码，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
+当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；system 抽离经验已回填为后续抽离准则，S1-S10 closeout 或静态 closeout 已完成，`root.system` 顶层阶段性 closeout 已刷新，递归模块化流程已明确；backend 已进入 R5，BE-001B `src/backend/` 九叶模块壳已落位，BE-001C 九叶逐叶 closeout 已完成，BE-001D `backend.strategy_config` L3 模块壳已落位，BE-001E 其余八叶薄壳已落位且 `42-49` 已完成逐叶完成记录，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-04 已完成 `runtime.backtest` route facade 抽离与单叶 closeout，BE-001N-02 已建立 `runtime.backtest.execution_start` 等价基线与抽离方案，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
 
 ### 7.7 总览 (markdown/10-overview/)
 

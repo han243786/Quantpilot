@@ -87,6 +87,10 @@
 | 73 | `v4.16.0/73-runtime.event_stream单叶closeout.md` | BE-001L-04 `runtime.event_stream` 单叶 closeout，确认 SSE handler 等价并停止内部细拆，后续回到 `runtime.backtest` 候选 | ✅ 已完成 |
 | 74 | `v4.16.0/74-runtime.backtest单子叶等价基线.md` | BE-001M-01 `runtime.backtest` 单子叶等价基线，冻结 backtest route group、artifact/compare/replay/persistence owner；当前不移动代码 | 📋 已创建 |
 | 75 | `v4.16.0/75-runtime.backtest抽离方案.md` | BE-001M-02 `runtime.backtest` 抽离方案，锁定下一批只抽离 backtest route facade 到计划目标文件 | 📋 已创建 |
+| 76 | `v4.16.0/76-runtime.backtest抽离记录.md` | BE-001M-03 `runtime.backtest` 抽离记录，将 backtest route group 迁入 `src/backend/runtime/routes/backtest.rs` 并保留 handler/artifact/compare/persistence owner | ✅ 已完成 |
+| 77 | `v4.16.0/77-runtime.backtest单叶closeout.md` | BE-001M-04 `runtime.backtest` 单叶 closeout，确认 route facade 等价并判断 handler 域值得进入 `runtime.backtest.execution_start` 基线 | ✅ 已完成 |
+| 78 | `v4.16.0/78-runtime.backtest.execution_start单子叶等价基线.md` | BE-001N-01 `runtime.backtest.execution_start` 单子叶等价基线，冻结 backtest 创建路径、legacy/v4 执行入口和排除边界；当前不移动代码 | 📋 已创建 |
+| 79 | `v4.16.0/79-runtime.backtest.execution_start抽离方案.md` | BE-001N-02 `runtime.backtest.execution_start` 抽离方案，锁定下一批只移动 backtest 创建路径 handler/helper 并保留 experiment 复用桥 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
