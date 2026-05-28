@@ -1,5 +1,8 @@
+#[path = "run/session_start.rs"]
+mod run_session_start;
 #[path = "run/v4_handoff.rs"]
 mod run_v4_handoff;
+pub(crate) use run_session_start::start_test_run;
 pub(crate) use run_v4_handoff::start_v4_runtime_run;
 use run_v4_handoff::{runtime_simulated_v4_matrix, runtime_v4_static_bundle};
 

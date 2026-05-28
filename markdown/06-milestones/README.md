@@ -70,6 +70,7 @@
 | 56 | `v4.16.0/56-runtime.run.v4_handoff抽离记录.md` | BE-001H-02 `runtime.run.v4_handoff` 抽离记录，将 v4 handoff handler/type/helper 迁入 `src/runtime/run/v4_handoff.rs` 并保留父级兼容出口 | ✅ 已完成 |
 | 57 | `v4.16.0/57-runtime.run.v4_handoff单叶closeout.md` | BE-001H-03 `runtime.run.v4_handoff` 单叶 closeout，确认本叶等价并停止内部细分 | ✅ 已完成 |
 | 58 | `v4.16.0/58-runtime.run.session_start单子叶等价基线.md` | BE-001I-01 `runtime.run.session_start` 单子叶等价基线，固定 legacy `/api/runtime/test-run` handler 边界与 `api_run` 证据 | 📋 已创建 |
+| 59 | `v4.16.0/59-runtime.run.session_start抽离记录.md` | BE-001I-02 `runtime.run.session_start` 抽离记录，将 `start_test_run` 迁入 `src/runtime/run/session_start.rs` 并保留父级兼容出口 | ✅ 已完成 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
