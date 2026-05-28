@@ -94,6 +94,7 @@
 | 80 | `v4.16.0/80-runtime.backtest.execution_start抽离记录.md` | BE-001N-03 `runtime.backtest.execution_start` 抽离记录，将 backtest 创建路径 handler/helper 迁入 `src/runtime/backtest/execution_start.rs` 并保留父级兼容桥 | ✅ 已完成 |
 | 81 | `v4.16.0/81-runtime.backtest.execution_start单叶closeout.md` | BE-001N-04 `runtime.backtest.execution_start` 单叶 closeout，确认等价并判断内部 `v4_projection` 值得继续细拆 | ✅ 已完成 |
 | 82 | `v4.16.0/82-runtime.backtest.execution_start.v4_projection单子叶等价基线.md` | BE-001O-01 `runtime.backtest.execution_start.v4_projection` 单子叶等价基线，冻结 v4 artifact projection helper 与排除边界；当前不移动代码 | 📋 已创建 |
+| 83 | `v4.16.0/83-runtime.backtest.execution_start.v4_projection抽离方案.md` | BE-001O-02 `runtime.backtest.execution_start.v4_projection` 抽离方案，锁定下一批只移动 projection helper 与现有单元测试 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
