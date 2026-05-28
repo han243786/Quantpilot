@@ -225,7 +225,8 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/77-*.md", "v4.16 runtime backtest closeout"),
     @("markdown/06-milestones/v4.16.0/78-*.md", "v4.16 runtime backtest execution start baseline"),
     @("markdown/06-milestones/v4.16.0/79-*.md", "v4.16 runtime backtest execution start extraction plan"),
-    @("markdown/06-milestones/v4.16.0/80-*.md", "v4.16 runtime backtest execution start extraction record")
+    @("markdown/06-milestones/v4.16.0/80-*.md", "v4.16 runtime backtest execution start extraction record"),
+    @("markdown/06-milestones/v4.16.0/81-*.md", "v4.16 runtime backtest execution start closeout")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -327,6 +328,7 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/78-", "full feature tree v4.16 runtime backtest execution start baseline"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/79-", "full feature tree v4.16 runtime backtest execution start extraction plan"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/80-", "full feature tree v4.16 runtime backtest execution start extraction record"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/81-", "full feature tree v4.16 runtime backtest execution start closeout"),
     @("markdown/10-overview/overview-full-feature-tree.md", "src/runtime/backtest/execution_start.rs", "full feature tree runtime backtest execution start file"),
     @("markdown/10-overview/overview-full-feature-tree.md", "src/backend/runtime/routes/backtest.rs", "full feature tree runtime backtest route facade file"),
     @("markdown/10-overview/overview-full-feature-tree.md", "src/runtime/event_stream.rs", "full feature tree runtime event stream file"),
@@ -410,6 +412,7 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/78-", "module tree v4.16 runtime backtest execution start baseline"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/79-", "module tree v4.16 runtime backtest execution start extraction plan"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/80-", "module tree v4.16 runtime backtest execution start extraction record"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/81-", "module tree v4.16 runtime backtest execution start closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "src/runtime/backtest/execution_start.rs", "module tree runtime backtest execution start file"),
     @("markdown/00-matrix-governance/module-tree.md", "src/backend/runtime/routes/backtest.rs", "module tree runtime backtest route facade file"),
     @("markdown/00-matrix-governance/module-tree.md", "src/runtime/event_stream.rs", "module tree runtime event stream file"),
@@ -1845,6 +1848,45 @@ $v416LandingFiles = @(
         @("cargo check -p quantpilot", "cargo check gate"),
         @("cargo test -p quantpilot --test api_backtest", "api backtest gate"),
         @("cargo test -p quantpilot --test api_evidence_contract", "evidence contract gate"),
+        @("cargo test -p quantpilot --test api_run", "api run gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/81-*.md", @(
+        @("BE-001N-04", "runtime backtest execution start closeout marker"),
+        @("runtime.backtest.execution_start", "runtime backtest execution start child"),
+        @("root.backend.runtime.routes.runtime.backtest.execution_start", "module tree coordinate"),
+        @("runtime.backtest.execution_start.v4_projection", "next v4 projection candidate"),
+        @("src/runtime/backtest/execution_start.rs", "runtime backtest execution start file"),
+        @("src/runtime/backtest.rs", "runtime backtest retained file"),
+        @("src/runtime/mod.rs", "runtime parent module"),
+        @("src/backend/runtime/routes/backtest.rs", "backtest route facade retained"),
+        @("src/backtest_artifacts.rs", "backtest artifact owner retained"),
+        @("src/runtime_response_mapping.rs", "runtime response mapping owner retained"),
+        @("src/runtime_persistence.rs", "runtime persistence owner retained"),
+        @("src/frontend_api_types.rs", "frontend api schema owner retained"),
+        @("start_backtest_run", "start backtest handler"),
+        @("execute_backtest_request", "execute backtest helper"),
+        @("execute_v4_backtest_request", "execute v4 backtest helper"),
+        @("pub(super)", "parent internal bridge visibility"),
+        @("build_v4_backtest_output", "v4 output projection helper"),
+        @("v4_win_rate_from_equity_curve", "v4 win rate helper"),
+        @("v4_equity_curve_from_artifact", "v4 equity helper"),
+        @("v4_portfolio_from_artifact", "v4 portfolio helper"),
+        @("frontend_events_from_v4_backtest_artifact", "v4 frontend events helper"),
+        @("v4_frontend_event", "v4 frontend event helper"),
+        @("stop_split: true", "stop split marker"),
+        @("list_backtests", "record store exclusion marker"),
+        @("get_backtest_detail", "record detail exclusion marker"),
+        @("save_backtest_record", "record save exclusion marker"),
+        @("discard_backtest_record", "record discard exclusion marker"),
+        @("get_backtest_replay", "replay exclusion marker"),
+        @("start_backtest_experiment", "experiment exclusion marker"),
+        @("compare_backtests", "compare exclusion marker"),
+        @("release transition guard", "release transition guard"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test --no-run", "cargo test compile gate"),
+        @("cargo test -p quantpilot --test api_backtest", "api backtest gate"),
+        @("cargo test -p quantpilot --test api_evidence_contract", "api evidence contract gate"),
         @("cargo test -p quantpilot --test api_run", "api run gate")
     ))
 )
