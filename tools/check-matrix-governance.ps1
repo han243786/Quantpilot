@@ -204,7 +204,8 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/56-*.md", "v4.16 runtime run v4 handoff child extraction record"),
     @("markdown/06-milestones/v4.16.0/57-*.md", "v4.16 runtime run v4 handoff child closeout"),
     @("markdown/06-milestones/v4.16.0/58-*.md", "v4.16 runtime run session start child equivalence baseline"),
-    @("markdown/06-milestones/v4.16.0/59-*.md", "v4.16 runtime run session start child extraction record")
+    @("markdown/06-milestones/v4.16.0/59-*.md", "v4.16 runtime run session start child extraction record"),
+    @("markdown/06-milestones/v4.16.0/60-*.md", "v4.16 runtime run session start child closeout")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -285,6 +286,7 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/57-", "full feature tree v4.16 runtime run v4 handoff closeout"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/58-", "full feature tree v4.16 runtime run session start baseline"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/59-", "full feature tree v4.16 runtime run session start extraction"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/60-", "full feature tree v4.16 runtime run session start closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/03-", "module tree v4.16 backend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/04-", "module tree v4.16 frontend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/05-", "module tree v4.16 test asset register"),
@@ -342,6 +344,7 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/57-", "module tree v4.16 runtime run v4 handoff closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/58-", "module tree v4.16 runtime run session start baseline"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/59-", "module tree v4.16 runtime run session start extraction"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/60-", "module tree v4.16 runtime run session start closeout"),
     @("markdown/10-overview/overview-docs-index.md", "v4.16.0", "docs index v4.16 plan"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "v4.16.0", "current roadmap v4.16 plan")
 )
@@ -1077,6 +1080,26 @@ $v416LandingFiles = @(
         @("compile_runtime_protocol_via_qs", "QS compile helper"),
         @("RunInProgressGuard", "run guard marker"),
         @("state.runs", "run record state marker"),
+        @("api_run", "api run evidence"),
+        @("state owner", "state owner retention marker"),
+        @("persistence", "persistence exclusion marker")
+    )),
+    @("markdown/06-milestones/v4.16.0/60-*.md", @(
+        @("BE-001I-03", "runtime run session start closeout marker"),
+        @("runtime.run.session_start", "runtime run session start child"),
+        @("src/runtime/run/session_start.rs", "runtime run session start implementation"),
+        @("src/runtime/mod.rs", "runtime parent module"),
+        @("src/runtime/run.rs", "runtime run retained sibling owner"),
+        @("src/backend/runtime/routes/run.rs", "runtime run route facade"),
+        @("start_test_run", "session start handler"),
+        @("FrontendRunRequest", "frontend run request type"),
+        @("RunStartResponse", "run start response type"),
+        @("/api/runtime/test-run", "legacy test run route"),
+        @("RunInProgressGuard", "run guard marker"),
+        @("state.runs", "run record state marker"),
+        @("stop_split", "stop split marker"),
+        @("runtime.run.record_store", "next sibling candidate"),
+        @("runtime.run.replay_status", "replay status sibling candidate"),
         @("api_run", "api run evidence"),
         @("state owner", "state owner retention marker"),
         @("persistence", "persistence exclusion marker")
