@@ -4,6 +4,8 @@ use super::*;
 mod v4_projection;
 #[path = "v4_request_resolution.rs"]
 mod v4_request_resolution;
+#[path = "v4_runtime_execution.rs"]
+mod v4_runtime_execution;
 
 use v4_projection::{
     build_v4_backtest_output, frontend_events_from_v4_backtest_artifact,
@@ -13,6 +15,7 @@ use v4_request_resolution::{
     is_v4_backtest_request, resolve_v4_backtest_graph, resolve_v4_backtest_market_event_type,
     resolve_v4_backtest_symbols,
 };
+use v4_runtime_execution::run_v4_backtest_runtime_execution;
 
 pub(crate) async fn start_backtest_run(
     user_id: auth::UserId,
@@ -259,49 +262,20 @@ async fn execute_v4_backtest_request(
     let expanded_graph =
         qrpc_runtime::expand_v4_graph_for_symbols(&graph, &symbols).map_err(internal_error)?;
     let event_type = resolve_v4_backtest_market_event_type(&expanded_graph)?;
-    let bars = qrpc_runtime::build_v4_deterministic_replay_bars(&symbols, now_ms, &event_type);
     let tick_replay = request
         .backtest_options
         .replay_mode
         .as_deref()
         .map(|mode| mode.eq_ignore_ascii_case("tick_replay"))
         .unwrap_or(false);
-    let ticks = if tick_replay {
-        bars.iter()
-            .enumerate()
-            .map(|(index, bar)| qrpc_runtime::V4BacktestTickInput {
-                venue_id: bar.venue_id.clone(),
-                symbol: bar.symbol.clone(),
-                price: bar.close,
-                size: 1.0,
-                ts_ms: bar.ts_ms,
-                sequence: index as u64,
-                event_type: event_type.clone(),
-            })
-            .collect::<Vec<_>>()
-    } else {
-        Vec::new()
-    };
-
-    let v4_artifact = tokio::task::spawn_blocking(move || {
-        let mut runtime = qrpc_runtime::V4PaperSimulatedRuntime::new_for_backtest(
-            expanded_graph,
-            runtime_simulated_v4_matrix("paper-local"),
-            vec![qrpc_core_ir::v4::ExecutionCapabilityKind::Market],
-        )
-        .map_err(internal_error)?;
-        if tick_replay {
-            runtime
-                .run_backtest_ticks(&ticks)
-                .map_err(|error| internal_error(anyhow::anyhow!(error)))
-        } else {
-            runtime
-                .run_backtest_bars(&bars)
-                .map_err(|error| internal_error(anyhow::anyhow!(error)))
-        }
-    })
-    .await
-    .map_err(|error| internal_error(anyhow::anyhow!("v4 backtest task cancelled: {error}")))??;
+    let v4_artifact = run_v4_backtest_runtime_execution(
+        expanded_graph,
+        &symbols,
+        &event_type,
+        now_ms,
+        tick_replay,
+    )
+    .await?;
 
     let config_hash = qrpc_core::canonical_json_sha256_digest(graph_json)
         .map(|digest| digest.value)

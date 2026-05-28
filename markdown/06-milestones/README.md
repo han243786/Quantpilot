@@ -103,6 +103,7 @@
 | 89 | `v4.16.0/89-runtime.backtest.execution_start.v4_request_resolution单叶closeout.md` | BE-001P-04 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout，确认等价并设置 `stop_split: true` | ✅ 已完成 |
 | 90 | `v4.16.0/90-runtime.backtest.execution_start.v4_runtime_execution单子叶等价基线.md` | BE-001Q-01 `runtime.backtest.execution_start.v4_runtime_execution` 单子叶等价基线，冻结 deterministic replay、v4 runtime execution 和 artifact output；当前不移动代码 | 📋 已创建 |
 | 91 | `v4.16.0/91-runtime.backtest.execution_start.v4_runtime_execution抽离方案.md` | BE-001Q-02 `runtime.backtest.execution_start.v4_runtime_execution` 抽离方案，限定下一批只迁移 deterministic runtime execution 最小 helper | 📋 已创建 |
+| 92 | `v4.16.0/92-runtime.backtest.execution_start.v4_runtime_execution抽离记录.md` | BE-001Q-03 `runtime.backtest.execution_start.v4_runtime_execution` 抽离记录，将 deterministic bars/ticks 与 blocking runtime replay 迁入父级私有子模块 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
