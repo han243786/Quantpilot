@@ -73,6 +73,7 @@
 | 59 | `v4.16.0/59-runtime.run.session_start抽离记录.md` | BE-001I-02 `runtime.run.session_start` 抽离记录，将 `start_test_run` 迁入 `src/runtime/run/session_start.rs` 并保留父级兼容出口 | ✅ 已完成 |
 | 60 | `v4.16.0/60-runtime.run.session_start单叶closeout.md` | BE-001I-03 `runtime.run.session_start` 单叶 closeout，确认本叶等价并停止内部细分 | ✅ 已完成 |
 | 61 | `v4.16.0/61-runtime.run.record_store单子叶等价基线.md` | BE-001J-01 `runtime.run.record_store` 单子叶等价基线，固定 run record list/detail/save/discard 与 persistence/audit 边界 | 📋 已创建 |
+| 62 | `v4.16.0/62-runtime.run.record_store真实边界梳理.md` | BE-001J-02 `runtime.run.record_store` 真实边界梳理，校正 route method、共享 helper owner 和最小抽离边界 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

@@ -206,7 +206,8 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/58-*.md", "v4.16 runtime run session start child equivalence baseline"),
     @("markdown/06-milestones/v4.16.0/59-*.md", "v4.16 runtime run session start child extraction record"),
     @("markdown/06-milestones/v4.16.0/60-*.md", "v4.16 runtime run session start child closeout"),
-    @("markdown/06-milestones/v4.16.0/61-*.md", "v4.16 runtime run record store child equivalence baseline")
+    @("markdown/06-milestones/v4.16.0/61-*.md", "v4.16 runtime run record store child equivalence baseline"),
+    @("markdown/06-milestones/v4.16.0/62-*.md", "v4.16 runtime run record store true boundary")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -289,6 +290,7 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/59-", "full feature tree v4.16 runtime run session start extraction"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/60-", "full feature tree v4.16 runtime run session start closeout"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/61-", "full feature tree v4.16 runtime run record store baseline"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/62-", "full feature tree v4.16 runtime run record store true boundary"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/03-", "module tree v4.16 backend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/04-", "module tree v4.16 frontend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/05-", "module tree v4.16 test asset register"),
@@ -348,6 +350,7 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/59-", "module tree v4.16 runtime run session start extraction"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/60-", "module tree v4.16 runtime run session start closeout"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/61-", "module tree v4.16 runtime run record store baseline"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/62-", "module tree v4.16 runtime run record store true boundary"),
     @("markdown/10-overview/overview-docs-index.md", "v4.16.0", "docs index v4.16 plan"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "v4.16.0", "current roadmap v4.16 plan")
 )
@@ -1135,6 +1138,36 @@ $v416LandingFiles = @(
         @("replay/status", "replay status exclusion marker"),
         @("SSE", "sse exclusion marker"),
         @("persistence", "persistence retention marker")
+    )),
+    @("markdown/06-milestones/v4.16.0/62-*.md", @(
+        @("BE-001J-02", "runtime run record store true boundary marker"),
+        @("runtime.run.record_store", "runtime run record store child"),
+        @("src/runtime/run.rs", "runtime run retained file"),
+        @("src/backend/runtime/routes/run.rs", "runtime run route facade"),
+        @("src/runtime_persistence.rs", "runtime persistence owner"),
+        @("src/runtime_response_mapping.rs", "runtime response mapping owner"),
+        @("src/collaboration.rs", "graph audit helper owner"),
+        @("frontend/src/store/graphStoreRuntimeHistoryApi.js", "frontend record store api caller"),
+        @("frontend/src/store/graphStoreRuntimeHistoryFlow.js", "frontend record store flow caller"),
+        @("GET /api/runtime/runs", "run list route method"),
+        @("GET /api/runtime/runs/:run_id", "run detail route method"),
+        @("POST /api/runtime/runs/:run_id/save", "run save route method"),
+        @("DELETE /api/runtime/runs/:run_id", "run discard route method"),
+        @("DELETE /api/runtime/runs/:run_id/discard", "discard route correction"),
+        @("list_runs", "list runs handler"),
+        @("get_run_detail", "run detail handler"),
+        @("save_run_record", "save run handler"),
+        @("discard_run_record", "discard run handler"),
+        @("load_run_record_from_state", "shared load helper"),
+        @("persist_run_record", "shared persist helper"),
+        @("list_run_records", "list persisted run records helper"),
+        @("sanitize_storage_path_segment", "shared safe storage segment helper"),
+        @("state.runs", "run record state marker"),
+        @("run_store_dir", "run store dir marker"),
+        @("audit_store_dir", "audit store dir marker"),
+        @("runtime.run.replay_status", "replay status exclusion marker"),
+        @("runtime.event_stream", "event stream exclusion marker"),
+        @("shared helper", "shared helper boundary marker")
     ))
 )
 

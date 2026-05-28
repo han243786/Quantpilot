@@ -78,7 +78,7 @@ backend.interface_boundary
 
 | 子域 | 当前真实 owner | 代表方法/类型 | 当前处理 |
 | --- | --- | --- | --- |
-| route facade | `src/backend/runtime/routes/run.rs` | `/api/runtime/runs`、`/api/runtime/runs/:run_id`、`/api/runtime/runs/:run_id/save`、`/api/runtime/runs/:run_id/discard` | 不改 path/method |
+| route facade | `src/backend/runtime/routes/run.rs` | `GET /api/runtime/runs`、`GET /api/runtime/runs/:run_id`、`POST /api/runtime/runs/:run_id/save`、`DELETE /api/runtime/runs/:run_id` | 不改 path/method；真实 discard route 没有 `/discard` 后缀 |
 | record handler | `src/runtime/run.rs` | `list_runs`、`get_run_detail`、`save_run_record`、`discard_run_record` | 本批不移动 |
 | state lookup | `src/runtime_persistence.rs` | `load_run_record_from_state` | 不改 `state.runs` fallback 到 manifest 的顺序 |
 | persistence | `src/runtime_persistence.rs` | `list_run_records`、`persist_run_record`、`sanitize_storage_path_segment` | 不迁移 persistence owner |
@@ -111,7 +111,7 @@ backend.interface_boundary
 
 - 不移动 `src/runtime/run.rs` 中的 `list_runs`、`get_run_detail`、`save_run_record`、`discard_run_record`。
 - 不新建 record store 实现文件。
-- 不改 `/api/runtime/runs`、`/api/runtime/runs/:run_id`、`/api/runtime/runs/:run_id/save` 或 `/api/runtime/runs/:run_id/discard` 的 path、method、payload、response schema 或 error code。
+- 不改 `GET /api/runtime/runs`、`GET /api/runtime/runs/:run_id`、`POST /api/runtime/runs/:run_id/save` 或 `DELETE /api/runtime/runs/:run_id` 的 path、method、payload、response schema 或 error code。
 - 不迁移 `state.runs`、`run_store_dir`、`audit_store_dir`、AppState 字段 owner、runtime state owner、lock order 或 persistence owner。
 - 不拆 `runtime.run.replay_status`、`runtime.event_stream`、`runtime.run.session_start`、`runtime.run.v4_handoff`、backtest、mutation、report 或 experiment owner。
 - 不主动提出发布版本过渡或横向连接。

@@ -31,7 +31,7 @@
 | v4.13.0 | 模块树白箱扩面 | 将种子模块树扩展为覆盖主要 active 模块的白箱网络 | 重型变更能定位父模块、public 方法和回归保护 |
 | v4.14.0 | 治理门禁自动化 | 将三矩阵声明、模块树漂移、索引漂移和发布过渡保护接入检查脚本 | closeout 能阻断缺失治理声明的变更 |
 | v4.15.0 | 三矩阵完全接管 | 完成旧入口导流、模块树覆盖、提案模板强制和治理 closeout | 新治理方案成为默认开发约束体系 |
-| v4.16.0 | 模块化抽离第一波 | 面向十万行级重大工程，建立目标登记、批次切片、决策暂停、兼容桥和等价验证流程，并完成 system.entry 启动抽离、经验回填、递归模块化流程、S1-S10 closeout 或静态 closeout、`root.system` 顶层阶段性 closeout；backend 已完成 BE-001B 九叶模块壳抽离、BE-001C 九叶逐叶 closeout、BE-001D strategy_config L3 模块壳抽离、BE-001E 其余八叶薄壳抽离和 BE-001E-01 至 BE-001E-08 逐叶完成记录，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-01 已建立 `runtime.run.record_store` 单子叶等价基线 | 抽离可以分片推进，整理和重构仍待后续方案 |
+| v4.16.0 | 模块化抽离第一波 | 面向十万行级重大工程，建立目标登记、批次切片、决策暂停、兼容桥和等价验证流程，并完成 system.entry 启动抽离、经验回填、递归模块化流程、S1-S10 closeout 或静态 closeout、`root.system` 顶层阶段性 closeout；backend 已完成 BE-001B 九叶模块壳抽离、BE-001C 九叶逐叶 closeout、BE-001D strategy_config L3 模块壳抽离、BE-001E 其余八叶薄壳抽离和 BE-001E-01 至 BE-001E-08 逐叶完成记录，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-02 已建立 `runtime.run.record_store` 单子叶等价基线并完成真实边界梳理 | 抽离可以分片推进，整理和重构仍待后续方案 |
 
 ---
 
@@ -55,7 +55,7 @@
 
 ### v4.16.0: 模块化抽离第一波
 
-本阶段先完成抽离路线铺设，再用低风险 system.entry 做代码试水并完成启动边界抽离。system 经验已回填为后续抽离准则，要求 public 入口、兼容入口、关键内部实现和保留外部边界分开登记；10 个 system 叶子的等价基线已用于判断后续单叶抽离顺序；S1 启动脚本、S3 Tauri runtime、S4 Tauri config、S7 desktop build/dev scripts 和 S10 配置样例 closeout 均已确认等价且不继续细分；递归模块化流程已明确顶层模块、叶子抽离、叶子整理、细分价值判断和全局根收束。backend 已完成九叶模块壳抽离、九叶逐叶 closeout、`backend.strategy_config` L3 模块壳抽离、其余八叶薄壳抽离和 BE-001E-01 至 BE-001E-08 逐叶完成记录，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout；当前结论是该叶不继续细拆，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-01 已建立 `runtime.run.record_store` 单子叶等价基线，下一步若继续 run handler 应基于该基线先做 record_store 抽离方案，其中 storage/security 必须先过安全决策暂停。目标是让后续模块化工作能先把功能从旧代码中拿出来，并通过父模块、模块树、public 方法、兼容桥和回归证据证明行为不变。
+本阶段先完成抽离路线铺设，再用低风险 system.entry 做代码试水并完成启动边界抽离。system 经验已回填为后续抽离准则，要求 public 入口、兼容入口、关键内部实现和保留外部边界分开登记；10 个 system 叶子的等价基线已用于判断后续单叶抽离顺序；S1 启动脚本、S3 Tauri runtime、S4 Tauri config、S7 desktop build/dev scripts 和 S10 配置样例 closeout 均已确认等价且不继续细分；递归模块化流程已明确顶层模块、叶子抽离、叶子整理、细分价值判断和全局根收束。backend 已完成九叶模块壳抽离、九叶逐叶 closeout、`backend.strategy_config` L3 模块壳抽离、其余八叶薄壳抽离和 BE-001E-01 至 BE-001E-08 逐叶完成记录，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout；当前结论是该叶不继续细拆，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-02 已建立 `runtime.run.record_store` 单子叶等价基线并完成真实边界梳理，下一步若继续 run handler 应基于该基线和边界梳理先做 record_store 抽离方案，其中 storage/security 必须先过安全决策暂停。目标是让后续模块化工作能先把功能从旧代码中拿出来，并通过父模块、模块树、public 方法、兼容桥和回归证据证明行为不变。
 
 这波模块化改造按十万行级重大工程看待。v4.16.0 不允许形成单个巨型代码变更，而是先把工程拆成父模块级、兼容桥级或验证链级的可回退批次。
 
@@ -93,7 +93,7 @@
 
 | 阶段 | 里程碑归属 | 当前状态 | 说明 |
 | --- | --- | --- | --- |
-| 抽离 | v4.16.0 | 已完成 system 试水、经验回填、递归流程、10 个 system 叶子 closeout/静态 closeout、`root.system` 顶层阶段性 closeout；backend 已完成 BE-001B 九叶模块壳抽离、BE-001C 九叶逐叶 closeout、BE-001D strategy_config L3 模块壳抽离、BE-001E 其余八叶薄壳抽离和 BE-001E-01 至 BE-001E-08 逐叶完成记录，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-01 已建立 `runtime.run.record_store` 单子叶等价基线 | 拆成后端抽离和前端抽离，建立模块化候选版本、兼容桥、等价验证和决策暂停机制；`system.entry.backend_process` 已完成启动边界抽离，后续抽离按 public/内部实现分类、owner 复核、单叶 closeout、暂停解除协议和递归细分判断推进 |
+| 抽离 | v4.16.0 | 已完成 system 试水、经验回填、递归流程、10 个 system 叶子 closeout/静态 closeout、`root.system` 顶层阶段性 closeout；backend 已完成 BE-001B 九叶模块壳抽离、BE-001C 九叶逐叶 closeout、BE-001D strategy_config L3 模块壳抽离、BE-001E 其余八叶薄壳抽离和 BE-001E-01 至 BE-001E-08 逐叶完成记录，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-02 已建立 `runtime.run.record_store` 单子叶等价基线并完成真实边界梳理 | 拆成后端抽离和前端抽离，建立模块化候选版本、兼容桥、等价验证和决策暂停机制；`system.entry.backend_process` 已完成启动边界抽离，后续抽离按 public/内部实现分类、owner 复核、单叶 closeout、暂停解除协议和递归细分判断推进 |
 | 整理 | 后续方案 | 未启动 | 收敛目录、命名、public 方法、状态归属和复用层 |
 | 重构 | 后续方案 | 未启动 | 切换主入口、替换旧路径、退役旧实现和调整调用拓扑 |
 
