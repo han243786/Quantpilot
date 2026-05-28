@@ -98,6 +98,7 @@
 | 84 | `v4.16.0/84-runtime.backtest.execution_start.v4_projection抽离记录.md` | BE-001O-03 `runtime.backtest.execution_start.v4_projection` 抽离记录，将 projection helper 与现有单元测试迁入 `src/runtime/backtest/v4_projection.rs` | ✅ 已完成 |
 | 85 | `v4.16.0/85-runtime.backtest.execution_start.v4_projection单叶closeout.md` | BE-001O-04 `runtime.backtest.execution_start.v4_projection` 单叶 closeout，确认等价并设置 `stop_split: true`，下一候选回到 `v4_request_resolution` | ✅ 已完成 |
 | 86 | `v4.16.0/86-runtime.backtest.execution_start.v4_request_resolution单子叶等价基线.md` | BE-001P-01 `runtime.backtest.execution_start.v4_request_resolution` 单子叶等价基线，冻结 v4 请求识别、graph/symbol/event resolution；当前不移动代码 | 📋 已创建 |
+| 87 | `v4.16.0/87-runtime.backtest.execution_start.v4_request_resolution抽离方案.md` | BE-001P-02 `runtime.backtest.execution_start.v4_request_resolution` 抽离方案，锁定下一批只移动四个 request resolution helper | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
