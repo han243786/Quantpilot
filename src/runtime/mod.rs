@@ -1,3 +1,5 @@
+#[path = "backtest/execution_start.rs"]
+mod backtest_execution_start;
 mod event_stream;
 #[path = "run/record_store.rs"]
 mod run_record_store;
@@ -7,6 +9,8 @@ mod run_replay_status;
 mod run_session_start;
 #[path = "run/v4_handoff.rs"]
 mod run_v4_handoff;
+use backtest_execution_start::execute_backtest_request;
+pub(crate) use backtest_execution_start::start_backtest_run;
 pub(crate) use event_stream::stream_run_events;
 pub(crate) use run_record_store::{discard_run_record, get_run_detail, list_runs, save_run_record};
 pub(crate) use run_replay_status::{get_run_replay, get_run_status};
