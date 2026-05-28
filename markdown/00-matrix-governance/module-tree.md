@@ -886,10 +886,11 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 
 **层级路径**: `root.backend.runtime`
 **父模块**: `backend`
-**状态**: v4.16 BE-001F-02 `backend.runtime.routes` route aggregate 抽离已完成。runtime route 列表已迁入 `src/backend/runtime/routes.rs`；真实 runtime handler/state 仍保留在 `src/runtime/`。
+**状态**: v4.16 BE-001G-02 `backend.runtime.routes.run` run route group 抽离已完成。runtime route aggregate 已迁入 `src/backend/runtime/routes.rs`，run route group 已迁入 `src/backend/runtime/routes/run.rs`；真实 runtime handler/state 仍保留在 `src/runtime/`。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
+- `src/backend/runtime/routes/run.rs`
 - `src/runtime/mod.rs`
 - `src/runtime_persistence.rs`
 - `src/runtime_event_projection.rs`
@@ -928,7 +929,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 runtime 对外必须经过 `backend.interface_boundary` 注册的 HTTP API、事件流或持久化接口；不得由前端直接读取内部文件推断运行状态。
 
 **允许调用的子模块**:
-`backend.runtime.routes`、`runtime_persistence`、`runtime_validation`、`runtime_event_projection`、`backtest_artifacts`。
+`backend.runtime.routes`、`backend.runtime.routes.run`、`runtime_persistence`、`runtime_validation`、`runtime_event_projection`、`backtest_artifacts`。
 
 **禁止横向连接**:
 不得直接调用 `executor.runner` 的内部状态；执行端交互必须经迁移包、执行端 API 或 runtime evidence。
@@ -946,10 +947,11 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 
 **层级路径**: `root.backend.runtime.routes`
 **父模块**: `backend.runtime`
-**状态**: v4.16 BE-001F-02 route aggregate 抽离已完成。当前拥有 runtime route aggregate 列表，不拥有 runtime handler、state owner、event stream、artifact schema 或 persistence owner。
+**状态**: v4.16 BE-001G-02 run route group 抽离已完成。当前拥有 runtime route aggregate 列表，并通过 `backend.runtime.routes.run` 委托 run routes；父级仍直接拥有 event stream route，不拥有 runtime handler、state owner、artifact schema 或 persistence owner。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
+- `src/backend/runtime/routes/run.rs`
 - `src/runtime/mod.rs`
 - `src/runtime/run.rs`
 - `src/runtime/backtest.rs`
@@ -958,6 +960,9 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 - `src/runtime_persistence.rs`
 - `src/backtest_artifacts.rs`
 - `markdown/06-milestones/v4.16.0/50-backend.runtime.routes单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/51-backend.runtime.routes抽离记录.md`
+- `markdown/06-milestones/v4.16.0/52-backend.runtime.routes.run单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/53-backend.runtime.routes.run抽离记录.md`
 
 **职责**:
 承载 backend runtime route aggregate facade 的白箱坐标，固定 `backend.runtime -> backend.runtime.routes -> src/runtime/* pub(crate) handler` 的兼容桥和等价证据。
@@ -981,6 +986,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 | --- | --- | --- | --- | --- |
 | `backend.runtime::register_routes` | Axum Router | runtime routes | `backend.interface_boundary` | 不得绕过 `backend.runtime.routes` |
 | `backend.runtime.routes::register_routes` | Axum Router | runtime routes | `backend.runtime` | 不得迁移 runtime handler |
+| `backend.runtime.routes.run::register_routes` | Axum Router | run routes | `backend.runtime.routes` | 不得接管 event stream |
 | `src/runtime/* pub(crate) handler` | HTTP request | concrete runtime response | `backend.runtime.routes` | 不得改变 `/api/runtime/*` 语义 |
 | `/api/runtime/test-run` | run request | run record | frontend、tests | 不得迁移 state owner |
 | `/api/runtime/v4/run` | v4 graph/run request | v4 run record | frontend、tests | 不得绕过 governance/evidence |
@@ -991,13 +997,66 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 `backend.runtime.routes` 只能经 `backend.runtime` 和 `backend.interface_boundary` 暴露 runtime routes；不得横向直接改 `backend.graph_compile`、`backend.storage_security`、`executor` 或 frontend state。
 
 **允许调用的子模块**:
-`src/runtime/mod.rs`、`src/runtime/run.rs`、`src/runtime/backtest.rs`、`src/runtime/mutation.rs`、`src/backtest_compare.rs` 中的 `pub(crate)` route targets。真实 run/backtest/mutation/report/experiment 子域仍留在 `src/runtime/`，后续若继续拆分必须另起单子叶等价基线。
+`backend.runtime.routes.run`、`src/runtime/mod.rs`、`src/runtime/run.rs`、`src/runtime/backtest.rs`、`src/runtime/mutation.rs`、`src/backtest_compare.rs` 中的 `pub(crate)` route targets。真实 run/backtest/mutation/report/experiment 子域仍留在 `src/runtime/`，后续若继续拆分必须另起单子叶等价基线。
 
 **回归保护**:
 `cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_sse`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
 
 **幻觉检查点**:
 AI 声称 runtime routes 已迁移时，必须说明当前只迁移 route aggregate owner；不得宣称 run/backtest/mutation handler、event stream、state owner 或 persistence 已迁移。
+
+### 5.1.2 `backend.runtime.routes.run`
+
+**层级路径**: `root.backend.runtime.routes.run`
+**父模块**: `backend.runtime.routes`
+**状态**: v4.16 BE-001G-02 run route group 抽离已完成。当前只拥有 run route group facade，不拥有 `src/runtime/run.rs` handler、state owner、event stream 或 persistence owner。
+**真实文件**:
+- `src/backend/runtime/routes.rs`
+- `src/backend/runtime/routes/run.rs`
+- `src/runtime/run.rs`
+- `src/runtime_persistence.rs`
+- `src/runtime_event_projection.rs`
+- `markdown/06-milestones/v4.16.0/52-backend.runtime.routes.run单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/53-backend.runtime.routes.run抽离记录.md`
+
+**职责**:
+承载 run/v4 run/list/detail/save/replay/status route group facade，固定 `backend.runtime.routes -> backend.runtime.routes.run -> src/runtime/run.rs pub(crate) handler` 的兼容桥和等价证据。
+
+**输入**:
+| 输入 | 来源 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| Axum Router | `backend.runtime.routes` | `Router<AppState>` | 不改变 run route path、method 或 handler 类型 |
+| run HTTP request | frontend、tests、local API caller | `/api/runtime/test-run`、`/api/runtime/v4/run`、`/api/runtime/runs*` request | 不改 payload、path param、response schema 或 error code |
+| AppState | `backend.app_state_wiring` | shared app state | 不迁移 AppState owner 或锁顺序 |
+
+**输出**:
+| 输出 | 去向 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| run routes | `backend.runtime.routes` | Axum Router | 不接管 `/api/runtime/runs/:run_id/events` |
+| run response | frontend、tests | JSON / status code | 不改 run record、status 或 replay schema |
+| persistence / replay lookup | `src/runtime_persistence.rs`、`src/runtime_event_projection.rs` | existing helper call | 不改 owner |
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `backend.runtime.routes.run::register_routes` | Axum Router | run route group | `backend.runtime.routes` | 不得注册 event stream |
+| `start_test_run` | run request | run record | route facade | 不得迁移 state owner |
+| `start_v4_runtime_run` | v4 graph/run request | v4 run record | route facade | 不得绕过 validation/evidence |
+| `list_runs` / `get_run_detail` | run list/detail request | run record response | route facade | 不得改 persistence projection |
+| `save_run_record` / `discard_run_record` | run id | storage mutation response | route facade | 不得改 storage semantics |
+| `get_run_replay` / `get_run_status` | run id | replay/status response | route facade | 不得改 event projection |
+
+**父级通信规则**:
+`backend.runtime.routes.run` 只能经 `backend.runtime.routes` 暴露 run routes；不得横向直接改 event stream、backtest、mutation、report、experiment、executor 或 frontend state。
+
+**允许调用的子模块**:
+`src/runtime/run.rs` 中的 `pub(crate)` run route targets，以及其既有 persistence / event projection helper 调用边界。真实 handler 和 state owner 继续保留在 `src/runtime/run.rs`。
+
+**回归保护**:
+`cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_sse`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
+
+**幻觉检查点**:
+AI 声称 runtime run routes 已迁移时，必须说明当前只迁移 run route group facade；不得宣称 `src/runtime/run.rs` handler、state owner、event stream 或 persistence 已迁移。
 
 ### 5.2 `backend.graph_compile`
 
@@ -1427,6 +1486,8 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 - `markdown/06-milestones/v4.16.0/49-backend.test_support子叶抽离完成记录.md`
 - `markdown/06-milestones/v4.16.0/50-backend.runtime.routes单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/51-backend.runtime.routes抽离记录.md`
+- `markdown/06-milestones/v4.16.0/52-backend.runtime.routes.run单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/53-backend.runtime.routes.run抽离记录.md`
 
 **职责**:
 作为三矩阵治理控制面，定义提案、判档、父子通信、引导坐标、模块树和发布过渡协议。
@@ -1489,6 +1550,8 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/49-backend.test_support子叶抽离完成记录.md` test support child complete | `backend.test_support` | test scenario facade、旧测试程序保留 | BE-001E 逐叶完成 | 不得启动测试资产汰换或删除旧测试 |
 | `markdown/06-milestones/v4.16.0/50-backend.runtime.routes单子叶等价基线.md` runtime routes baseline | `backend.runtime.routes` | runtime route aggregate facade、真实 runtime owner 和回归证据 | BE-001F 单子叶基线 | 不得迁移 run/backtest/mutation handler、event stream、state owner 或 persistence |
 | `markdown/06-milestones/v4.16.0/51-backend.runtime.routes抽离记录.md` runtime routes extraction | `backend.runtime.routes` | runtime route aggregate 列表迁入 backend facade，handler 保留原位 | BE-001F 单子叶抽离 | 不得宣称 run/backtest/mutation handler、event stream、state owner 或 persistence 已迁移 |
+| `markdown/06-milestones/v4.16.0/52-backend.runtime.routes.run单子叶等价基线.md` runtime run routes baseline | `backend.runtime.routes.run` | run route group facade、event stream 排除边界和回归证据 | BE-001G 单子叶基线 | 不得迁移 run handler、state owner、event stream 或 persistence |
+| `markdown/06-milestones/v4.16.0/53-backend.runtime.routes.run抽离记录.md` runtime run routes extraction | `backend.runtime.routes.run` | run route group 迁入 backend route child facade，handler 保留原位 | BE-001G 单子叶抽离 | 不得宣称 run handler、event stream、state owner 或 persistence 已迁移 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

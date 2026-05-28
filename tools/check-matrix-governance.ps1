@@ -196,7 +196,9 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/48-*.md", "v4.16 backend app state wiring child extraction completion"),
     @("markdown/06-milestones/v4.16.0/49-*.md", "v4.16 backend test support child extraction completion"),
     @("markdown/06-milestones/v4.16.0/50-*.md", "v4.16 backend runtime routes child equivalence baseline"),
-    @("markdown/06-milestones/v4.16.0/51-*.md", "v4.16 backend runtime routes child extraction record")
+    @("markdown/06-milestones/v4.16.0/51-*.md", "v4.16 backend runtime routes child extraction record"),
+    @("markdown/06-milestones/v4.16.0/52-*.md", "v4.16 backend runtime routes run child equivalence baseline"),
+    @("markdown/06-milestones/v4.16.0/53-*.md", "v4.16 backend runtime routes run child extraction record")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -269,6 +271,8 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/49-", "full feature tree v4.16 backend test support child completion"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/50-", "full feature tree v4.16 backend runtime routes baseline"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/51-", "full feature tree v4.16 backend runtime routes extraction"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/52-", "full feature tree v4.16 backend runtime routes run baseline"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/53-", "full feature tree v4.16 backend runtime routes run extraction"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/03-", "module tree v4.16 backend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/04-", "module tree v4.16 frontend register"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/05-", "module tree v4.16 test asset register"),
@@ -318,6 +322,8 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/49-", "module tree v4.16 backend test support child completion"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/50-", "module tree v4.16 backend runtime routes baseline"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/51-", "module tree v4.16 backend runtime routes extraction"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/52-", "module tree v4.16 backend runtime routes run baseline"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/53-", "module tree v4.16 backend runtime routes run extraction"),
     @("markdown/10-overview/overview-docs-index.md", "v4.16.0", "docs index v4.16 plan"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "v4.16.0", "current roadmap v4.16 plan")
 )
@@ -924,6 +930,35 @@ $v416LandingFiles = @(
         @("api_sse", "api sse evidence"),
         @("state owner", "state owner retention marker"),
         @("persistence", "persistence retention marker")
+    )),
+    @("markdown/06-milestones/v4.16.0/52-*.md", @(
+        @("BE-001G-01", "backend runtime routes run baseline marker"),
+        @("backend.runtime.routes.run", "backend runtime routes run child"),
+        @("src/backend/runtime/routes/run.rs", "backend runtime routes run facade"),
+        @("src/runtime/run.rs", "runtime run retained file"),
+        @("/api/runtime/test-run", "test run route"),
+        @("/api/runtime/v4/run", "v4 run route"),
+        @("/api/runtime/runs/:run_id/replay", "run replay route"),
+        @("/api/runtime/runs/:run_id/status", "run status route"),
+        @("api_run", "api run evidence"),
+        @("api_sse", "api sse evidence"),
+        @("state owner", "state owner retention marker"),
+        @("event stream", "event stream exclusion marker")
+    )),
+    @("markdown/06-milestones/v4.16.0/53-*.md", @(
+        @("BE-001G-02", "backend runtime routes run extraction marker"),
+        @("backend.runtime.routes.run", "backend runtime routes run child"),
+        @("src/backend/runtime/routes/run.rs", "backend runtime routes run facade"),
+        @("run::register_routes", "run route facade registration"),
+        @("start_test_run", "test run handler"),
+        @("start_v4_runtime_run", "v4 run handler"),
+        @("list_runs", "list runs handler"),
+        @("get_run_replay", "run replay handler"),
+        @("/api/runtime/runs/:run_id/status", "run status route"),
+        @("api_run", "api run evidence"),
+        @("api_sse", "api sse evidence"),
+        @("event stream", "event stream retention marker"),
+        @("state owner", "state owner retention marker")
     ))
 )
 
@@ -1004,6 +1039,7 @@ $requiredModules = @(
     "frontend.workspace",
     "backend.runtime",
     "backend.runtime.routes",
+    "backend.runtime.routes.run",
     "backend.graph_compile",
     "backend.storage_security",
     "backend.ops_governance",

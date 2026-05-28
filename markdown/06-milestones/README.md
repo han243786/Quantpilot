@@ -63,6 +63,8 @@
 | 49 | `v4.16.0/49-backend.test_support子叶抽离完成记录.md` | BE-001E-08 `backend.test_support` 子叶抽离完成，确认 test scenario facade 等价且测试汰换未启动 | ✅ 已完成 |
 | 50 | `v4.16.0/50-backend.runtime.routes单子叶等价基线.md` | BE-001F-01 `backend.runtime.routes` 单子叶等价基线，固定 runtime route aggregate facade 的真实 owner 和回归证据 | 📋 已创建 |
 | 51 | `v4.16.0/51-backend.runtime.routes抽离记录.md` | BE-001F-02 `backend.runtime.routes` 抽离记录，接管 runtime route aggregate 列表并保留 handler/state owner 原位 | ✅ 已完成 |
+| 52 | `v4.16.0/52-backend.runtime.routes.run单子叶等价基线.md` | BE-001G-01 `backend.runtime.routes.run` 单子叶等价基线，固定 run route group 与 event stream 排除边界 | 📋 已创建 |
+| 53 | `v4.16.0/53-backend.runtime.routes.run抽离记录.md` | BE-001G-02 `backend.runtime.routes.run` 抽离记录，接管 run route group 并保留 handler/state owner 原位 | ✅ 已完成 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

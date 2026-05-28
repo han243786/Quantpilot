@@ -7,8 +7,10 @@ use crate::{backtest_compare, runtime as runtime_handlers, AppState};
 
 pub const MODULE_ID: &str = "backend.runtime.routes";
 
+pub mod run;
+
 pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
-    router
+    let router = router
         .route(
             "/api/runtime/backtest",
             post(runtime_handlers::start_backtest_run),
@@ -33,35 +35,14 @@ pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
         .route(
             "/api/runtime/backtests/:backtest_id/replay",
             get(runtime_handlers::get_backtest_replay),
-        )
-        .route(
-            "/api/runtime/test-run",
-            post(runtime_handlers::start_test_run),
-        )
-        .route(
-            "/api/runtime/v4/run",
-            post(runtime_handlers::start_v4_runtime_run),
-        )
-        .route("/api/runtime/runs", get(runtime_handlers::list_runs))
-        .route(
-            "/api/runtime/runs/:run_id/save",
-            post(runtime_handlers::save_run_record),
-        )
-        .route(
-            "/api/runtime/runs/:run_id",
-            get(runtime_handlers::get_run_detail).delete(runtime_handlers::discard_run_record),
-        )
+        );
+
+    let router = run::register_routes(router);
+
+    router
         .route(
             "/api/runtime/runs/:run_id/events",
             get(runtime_handlers::stream_run_events),
-        )
-        .route(
-            "/api/runtime/runs/:run_id/replay",
-            get(runtime_handlers::get_run_replay),
-        )
-        .route(
-            "/api/runtime/runs/:run_id/status",
-            get(runtime_handlers::get_run_status),
         )
         .route(
             "/api/runtime/evidence/health",
