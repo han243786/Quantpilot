@@ -1136,7 +1136,7 @@ AI 声称 `backend.runtime.routes` 已完成 BE-001AD-01 时，必须说明当�
 
 **层级路径**: `root.backend.runtime.routes.mutation`
 **父模块**: `backend.runtime.routes`
-**状态**: v4.16 BE-001AE-01 单子叶等价基线已建立。当前只冻结 mutation / AI proposal / approval route group 的 path、method、handler owner、输入输出、approval lock order、测试证据和排除边界；`src/backend/runtime/routes.rs` 仍直接注册这些 route，`src/runtime/mutation.rs` 仍是 handler owner，本批 `no code movement`。下一步只能进入 BE-001AE-02 抽离方案。
+**状态**: v4.16 BE-001AE-01 单子叶等价基线已建立；BE-001AE-02 抽离方案已建立。当前仍为 `no code movement`，route facade 尚未创建；下一步只能进入 BE-001AE-03 route facade 最小物理抽离。方案只允许 planned mutation route facade 承接 mutation / AI proposal / approval route group，并由 `src/backend/runtime/routes.rs` 父级委托；`src/runtime/mutation.rs` 仍是 handler owner，`src/runtime/mod.rs` facade、`AppState`、`approval_records -> ai_proposals` 锁顺序、schema、frontend caller 和发布过渡均不得改变。
 **真实文件**:
 - `src/backend/runtime/routes.rs`
 - `src/runtime/mutation.rs`
@@ -1148,6 +1148,7 @@ AI 声称 `backend.runtime.routes` 已完成 BE-001AD-01 时，必须说明当�
 - `tests/api_run.rs`
 - `markdown/06-milestones/v4.16.0/127-backend.runtime.routes父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/128-backend.runtime.routes.mutation单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/129-backend.runtime.routes.mutation抽离方案.md`
 
 **职责**:
 登记 runtime mutation、AI proposal 和 approval route group 的 route facade 白箱边界，冻结 path/method、handler owner、AppState owner、approval lock order 和测试证据；本节点暂不拥有实际 handler 实现。
@@ -1187,7 +1188,7 @@ AI 声称 `backend.runtime.routes` 已完成 BE-001AD-01 时，必须说明当�
 **关键 public 方法**:
 | 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
 | --- | --- | --- | --- | --- |
-| `backend.runtime.routes::register_routes` | Axum Router | runtime routes | `backend.runtime` | 不得在 BE-001AE-01 新建 mutation route child |
+| `backend.runtime.routes::register_routes` | Axum Router | runtime routes | `backend.runtime` | BE-001AE-03 只允许委托 planned mutation route child |
 | `create_runtime_parameter_mutation` | mutation request | mutation proposal response | route aggregate | 不得改变 capability / safe window / audit |
 | `list_runtime_parameter_mutations` | query | mutation list | route aggregate | 不得改变排序或 filtering |
 | `get_runtime_parameter_mutation_detail` | proposal id | mutation detail | route aggregate | 不得绕过 scoped lookup |
@@ -1212,10 +1213,10 @@ AI 声称 `backend.runtime.routes` 已完成 BE-001AD-01 时，必须说明当�
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 
 **细分价值判断**:
-本节点当前只建立等价基线，不判定 `stop_split`。下一步只能进入 BE-001AE-02 抽离方案；方案也只能规划 route facade 迁移，不得移动 `src/runtime/mutation.rs` handler、AppState、锁顺序、schema、frontend caller 或发布过渡连接。
+本节点当前已完成等价基线与抽离方案，不判定 `stop_split`。下一步只能进入 BE-001AE-03 route facade 最小物理抽离；实际抽离也只能创建 planned mutation route facade 并由父级委托，不得移动 `src/runtime/mutation.rs` handler、`src/runtime/mod.rs` facade、AppState、锁顺序、schema、frontend caller 或发布过渡连接。
 
 **幻觉检查点**:
-AI 声称 `backend.runtime.routes.mutation` 已完成 BE-001AE-01 时，必须说明只建立单子叶等价基线且 `no code movement`。不得宣称 mutation route 已抽离、`src/runtime/mutation.rs` 已拆分、approval/AI proposal 状态 owner 已迁移、`backend.runtime.routes` 父叶完成、整理或重构已经完成。
+AI 声称 `backend.runtime.routes.mutation` 已完成 BE-001AE-02 时，必须说明只建立抽离方案且仍为 `no code movement`。不得宣称 planned route facade 已创建、mutation route 已抽离、`src/runtime/mutation.rs` 已拆分、approval/AI proposal 状态 owner 已迁移、`backend.runtime.routes` 父叶完成、整理或重构已经完成。
 
 ### 5.1.2 `backend.runtime.routes.run`
 
@@ -3182,6 +3183,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/126-runtime.backtest父叶残余判断.md` runtime backtest parent residual decision | `runtime.backtest` | 父叶残余判断，四个 handler 子叶均已 closeout 并设置父叶 `stop_split: true` | BE-001AC 父叶残余判断 | `no code movement`；不得宣称 `backend.runtime.routes` 上层完成、drained parent include 已删除、compare/artifact/persistence/response/frontend caller 或发布过渡已完成 |
 | `markdown/06-milestones/v4.16.0/127-backend.runtime.routes父叶残余判断.md` backend runtime routes parent residual decision | `backend.runtime.routes` | 父叶残余判断，确认父叶仍 `stop_split: false` 并登记下一候选 `backend.runtime.routes.mutation` | BE-001AD 父叶残余判断 | `no code movement`；不得宣称 mutation route 已抽离、handler/schema/state/frontend caller 或发布过渡已完成 |
 | `markdown/06-milestones/v4.16.0/128-backend.runtime.routes.mutation单子叶等价基线.md` backend runtime routes mutation baseline | `backend.runtime.routes.mutation` | 单子叶等价基线，冻结 mutation / AI proposal / approval route group | BE-001AE 单子叶基线 | `no code movement`；不得宣称 route/handler/AppState/lock order/schema/frontend caller 或 release transition 已迁移 |
+| `markdown/06-milestones/v4.16.0/129-backend.runtime.routes.mutation抽离方案.md` backend runtime routes mutation extraction plan | `backend.runtime.routes.mutation` | 抽离方案，只规划 route facade 最小迁移 | BE-001AE 抽离方案 | `no code movement`；不得宣称 planned route facade 已创建、handler/AppState/lock order/schema/frontend caller 或 release transition 已迁移 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

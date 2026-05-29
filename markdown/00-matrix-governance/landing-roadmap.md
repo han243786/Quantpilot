@@ -123,7 +123,7 @@ BE-001AB-01 已完成 `runtime.backtest.experiment_sweep` 第三轮父叶残余�
 
 BE-001AC-01 已完成 `runtime.backtest` 父叶残余判断；`execution_start`、`record_store`、`replay`、`experiment_sweep` 均已完成当前递归范围内 closeout，父叶自身设置 `stop_split: true`。该上层已由 BE-001AD-01 承接完成，BE-001AE-01 已建立 `backend.runtime.routes.mutation` 单子叶等价基线，下一步只能进入 BE-001AE-02 抽离方案，不能删除 drained parent include、迁移 compare/artifact schema/persistence/response mapping/frontend caller 或启动发布过渡。
 
-BE-001AD-01 已完成 `backend.runtime.routes` 父叶残余判断；`run`、`event_stream`、`backtest` 相关递归链路均已完成当前范围内 closeout，但 route aggregate 仍直接持有 mutation / AI proposal / approval / evidence / report / experiment / ops 等路线，因此父叶保持 `stop_split: false`。BE-001AE-01 已建立 `backend.runtime.routes.mutation` 单子叶等价基线，下一步只能进入 BE-001AE-02 抽离方案，不能移动 route、handler、AppState、锁顺序、schema、frontend caller 或启动发布过渡。
+BE-001AD-01 已完成 `backend.runtime.routes` 父叶残余判断；`run`、`event_stream`、`backtest` 相关递归链路均已完成当前范围内 closeout，但 route aggregate 仍直接持有 mutation / AI proposal / approval / evidence / report / experiment / ops 等路线，因此父叶保持 `stop_split: false`。BE-001AE-01 已建立 `backend.runtime.routes.mutation` 单子叶等价基线，BE-001AE-02 已建立抽离方案，下一步只能进入 BE-001AE-03 route facade 最小物理抽离，不能移动 handler、AppState、锁顺序、schema、frontend caller 或启动发布过渡。
 
 这波模块化改造按十万行级重大工程看待。v4.16.0 不允许形成单个巨型代码变更，而是先把工程拆成父模块级、兼容桥级或验证链级的可回退批次。
 
