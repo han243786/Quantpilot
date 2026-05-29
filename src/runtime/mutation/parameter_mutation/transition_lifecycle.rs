@@ -8,6 +8,8 @@ mod activation_snapshot_side_effect;
 mod boundary_safety;
 #[path = "transition_lifecycle/rollback_flow.rs"]
 mod rollback_flow;
+#[path = "transition_lifecycle/transition_record_persistence.rs"]
+mod transition_record_persistence;
 
 pub(crate) use activation_flow::activate_runtime_parameter_mutation;
 pub(crate) use rollback_flow::rollback_runtime_parameter_mutation;
@@ -15,6 +17,9 @@ pub(crate) use rollback_flow::rollback_runtime_parameter_mutation;
 use activation_snapshot_side_effect::auto_snapshot_on_activation;
 use boundary_safety::{
     evaluate_runtime_parameter_mutation_safe_window, resolve_runtime_parameter_mutation_boundary,
+};
+use transition_record_persistence::{
+    mutation_lifecycle_entry, persist_runtime_parameter_mutation_transition,
 };
 
 pub(super) fn validate_runtime_parameter_mutation_boundary(
@@ -45,36 +50,4 @@ fn runtime_parameter_mutation_rollback_record_id(
         created_at_ms,
         &digest.value[..12]
     ))
-}
-
-fn mutation_lifecycle_entry(
-    status: RuntimeParameterMutationStatus,
-    event: &FrontendRuntimeEvent,
-    sequence_no: u64,
-    message: impl Into<String>,
-) -> RuntimeParameterMutationLifecycleEntry {
-    let (_, reason_code) = mutation_event_contract(status);
-    RuntimeParameterMutationLifecycleEntry {
-        status,
-        event_id: event.event_id.clone(),
-        sequence_no,
-        occurred_at_ms: event.event_time_ms,
-        reason_code: reason_code.to_string(),
-        message: message.into(),
-    }
-}
-
-async fn persist_runtime_parameter_mutation_transition(
-    state: &AppState,
-    user_id: &auth::UserId,
-    record: &RuntimeParameterMutationRecord,
-) -> Result<(), (StatusCode, String)> {
-    persist_runtime_parameter_mutation_record(state.mutation_store_dir.as_ref(), record)
-        .await
-        .map_err(io_error)?;
-    state.parameter_mutations.write().await.insert(
-        auth::scoped_key(user_id, &record.proposal_id),
-        record.clone(),
-    );
-    Ok(())
 }
