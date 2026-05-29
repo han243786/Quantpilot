@@ -1242,6 +1242,7 @@ AI 声称 `backend.runtime.routes.mutation` 已完成 BE-001AF-04 时，必须�
 **最新状态补充**: BE-001AP-03 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence` 实际抽离；`mutation_lifecycle_entry` 与 `persist_runtime_parameter_mutation_transition` 已迁入 child，下一步只能进入 BE-001AP-04 单叶 closeout。
 **最新状态补充**: BE-001AP-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001AQ-01 `transition_lifecycle` 第五轮父叶残余判断。
 **最新状态补充**: BE-001AQ-01 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle` 第五轮父叶残余判断；父叶仍保持 `stop_split: false`，下一步只能进入 BE-001AR-01 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 单子叶等价基线。
+**最新状态补充**: BE-001AR-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001AR-02 抽离方案。
 **真实文件**:
 - `src/runtime/mutation/parameter_mutation.rs`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle.rs`
@@ -1349,13 +1350,14 @@ AI 声称 `runtime.mutation.parameter_mutation` 已推进至 BE-001AN-04 时，�
 **层级路径**: `root.backend.runtime.mutation.parameter_mutation.transition_lifecycle`
 **父模块**: `runtime.mutation.parameter_mutation`
 **路由入口**: `backend.runtime.routes.mutation`
-**状态**: v4.16 BE-001AQ-01 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle` 第五轮父叶残余判断；`boundary_safety`、`activation_flow`、`rollback_flow`、`activation_snapshot_side_effect` 与 `transition_record_persistence` 均已 closeout，`src/runtime/mutation/parameter_mutation/transition_lifecycle.rs` 仍直接承接 `runtime_parameter_mutation_rollback_record_id`，因此本父叶仍保持 `stop_split: false`。父级通过 `#[path = "parameter_mutation/transition_lifecycle.rs"] mod transition_lifecycle;`、`pub(crate) use transition_lifecycle::{activate_runtime_parameter_mutation, rollback_runtime_parameter_mutation};` 和 `use transition_lifecycle::validate_runtime_parameter_mutation_boundary;` 维持 handler 与 boundary validation 出口。下一步只能进入 BE-001AR-01 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 单子叶等价基线，不得混入 proposal create/list/detail、AI proposal、approval、AppState、schema、frontend caller 或发布过渡连接。
+**状态**: v4.16 BE-001AR-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 单子叶等价基线；`boundary_safety`、`activation_flow`、`rollback_flow`、`activation_snapshot_side_effect` 与 `transition_record_persistence` 均已 closeout，`src/runtime/mutation/parameter_mutation/transition_lifecycle.rs` 仍直接承接 `runtime_parameter_mutation_rollback_record_id`，因此本父叶仍保持 `stop_split: false`。父级通过 `#[path = "parameter_mutation/transition_lifecycle.rs"] mod transition_lifecycle;`、`pub(crate) use transition_lifecycle::{activate_runtime_parameter_mutation, rollback_runtime_parameter_mutation};` 和 `use transition_lifecycle::validate_runtime_parameter_mutation_boundary;` 维持 handler 与 boundary validation 出口。下一步只能进入 BE-001AR-02 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 抽离方案，不得混入 proposal create/list/detail、AI proposal、approval、AppState、schema、frontend caller 或发布过渡连接。
 **最新状态补充**: BE-001AO-01 已完成第四轮父叶残余判断；本父叶仍保持 `stop_split: false`，因为 `mutation_lifecycle_entry`、`persist_runtime_parameter_mutation_transition` 和 `runtime_parameter_mutation_rollback_record_id` 仍为 parent-owned residual。下一步只能进入 BE-001AP-01 `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence` 单子叶等价基线，先冻结 lifecycle entry 与 transition persistence，不得直接迁移 rollback id 或启动 release transition guard。
 **最新状态补充**: BE-001AP-01 已建立 `transition_record_persistence` 单子叶等价基线；`mutation_lifecycle_entry` 与 `persist_runtime_parameter_mutation_transition` 仍留在 `src/runtime/mutation/parameter_mutation/transition_lifecycle.rs`，目标文件尚未创建。下一步只能进入 BE-001AP-02 抽离方案。
 **最新状态补充**: BE-001AP-02 已建立 `transition_record_persistence` 抽离方案；目标 child、父级 path attribute、helper import、`pub(super)` visibility 和回退点已固定。下一步只能进入 BE-001AP-03 实际抽离。
 **最新状态补充**: BE-001AP-03 已完成 `transition_record_persistence` 实际抽离；`mutation_lifecycle_entry` 与 `persist_runtime_parameter_mutation_transition` 已迁入 `src/runtime/mutation/parameter_mutation/transition_lifecycle/transition_record_persistence.rs`，下一步只能进入 BE-001AP-04 单叶 closeout。
 **最新状态补充**: BE-001AP-04 已完成 `transition_record_persistence` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001AQ-01 第五轮父叶残余判断。
 **最新状态补充**: BE-001AQ-01 已完成第五轮父叶残余判断；本父叶仍保持 `stop_split: false`，因为 `runtime_parameter_mutation_rollback_record_id` 仍为 parent-owned residual。下一步只能进入 BE-001AR-01 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 单子叶等价基线。
+**最新状态补充**: BE-001AR-01 已建立 `rollback_record_identity` 单子叶等价基线；`runtime_parameter_mutation_rollback_record_id` 仍留在父级，目标文件尚未创建。下一步只能进入 BE-001AR-02 抽离方案。
 **真实文件**:
 - `src/runtime/mutation/parameter_mutation.rs`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle.rs`
@@ -1401,6 +1403,7 @@ AI 声称 `runtime.mutation.parameter_mutation` 已推进至 BE-001AN-04 时，�
 - `markdown/06-milestones/v4.16.0/162-runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence抽离记录.md`
 - `markdown/06-milestones/v4.16.0/163-runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/164-runtime.mutation.parameter_mutation.transition_lifecycle第五轮父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/165-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity单子叶等价基线.md`
 
 **职责**:
 承载 runtime parameter mutation transition lifecycle 白箱边界，冻结已有 proposal 从 activation 或 rollback request 进入状态转移、safe window 拒绝、transition record 持久化、run record append 和 activation auto snapshot side effect 的等价证据。本节点不拥有 proposal create/list/detail、AI proposal、approval review、AppState、schema、frontend caller、runtime persistence owner 或发布过渡连接。
@@ -1528,7 +1531,10 @@ AI 声称 `runtime.mutation.parameter_mutation` 已推进至 BE-001AN-04 时，�
 **BE-001AQ-01 transition_lifecycle 第五轮父叶残余判断结果**:
 `runtime.mutation.parameter_mutation.transition_lifecycle` 第五轮父叶残余判断已完成。五个已抽子叶均已 closeout 并设置 `stop_split: true`，但父叶仍直接拥有 `runtime_parameter_mutation_rollback_record_id`，因此保持 `stop_split: false`。下一步只能进入 BE-001AR-01 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 单子叶等价基线。
 
-AI 声称 `runtime.mutation.parameter_mutation.transition_lifecycle` 已推进至 BE-001AQ-01 时，必须说明父叶仍为 `stop_split: false`，下一步只能进入 BE-001AR-01 `rollback_record_identity` 单子叶等价基线。不得宣称 rollback id 已拆分、transition_lifecycle 父叶完成、parameter_mutation 父叶完成、AI proposal/approval 已拆分、AppState/schema/frontend caller 已改变或发布过渡已启动。
+**BE-001AR-01 rollback_record_identity 基线结果**:
+`runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 单子叶等价基线已建立。当前只冻结 `runtime_parameter_mutation_rollback_record_id` 的输入、digest input、`canonical_json_sha256_digest`、`parameter_rollback_` prefix、`digest[..12]` 和 error mapping；代码未移动，目标文件未创建。下一步只能进入 BE-001AR-02 抽离方案。
+
+AI 声称 `runtime.mutation.parameter_mutation.transition_lifecycle` 已推进至 BE-001AR-01 时，必须说明 `rollback_record_identity` 只是等价基线，helper 仍在父级，目标文件尚未创建，下一步只能进入 BE-001AR-02 抽离方案。不得宣称 rollback id 已拆分、transition_lifecycle 父叶完成、parameter_mutation 父叶完成、AI proposal/approval 已拆分、AppState/schema/frontend caller 已改变或发布过渡已启动。
 
 ### 5.1.1.2.1.1 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety`
 
@@ -1755,6 +1761,38 @@ AI 声称 `activation_snapshot_side_effect` 已完成 BE-001AN-04 时，必须�
 
 **幻觉检查点**:
 AI 声称 `transition_record_persistence` 已完成 BE-001AP-04 时，必须说明本叶已 closeout 并设置 `stop_split: true`，rollback id 仍留在父级，下一步只能回到 BE-001AQ-01 父叶残余判断。不得宣称 rollback id 已迁移、AppState/schema/frontend caller 已改变、发布过渡已启动或父叶已完成。
+
+### 5.1.1.2.1.6 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity`
+
+**层级路径**: `root.backend.runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity`
+**父模块**: `runtime.mutation.parameter_mutation.transition_lifecycle`
+**状态**: v4.16 BE-001AR-01 单子叶等价基线已建立；当前 `no code movement`，目标文件尚未创建。`runtime_parameter_mutation_rollback_record_id` 仍留在 `src/runtime/mutation/parameter_mutation/transition_lifecycle.rs` 父级，下一步只能进入 BE-001AR-02 抽离方案。
+**真实文件**:
+- `src/runtime/mutation/parameter_mutation/transition_lifecycle.rs`
+- `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_flow.rs`
+- `src/runtime/mutation/parameter_mutation/transition_lifecycle/transition_record_persistence.rs`
+- `tests/api_mutation.rs`
+- `markdown/06-milestones/v4.16.0/164-runtime.mutation.parameter_mutation.transition_lifecycle第五轮父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/165-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity单子叶等价基线.md`
+
+**候选目标模块名**: `rollback_record_identity`，候选目录为 transition lifecycle child 目录。对应 Rust 文件尚未创建，只能在 BE-001AR-03 实际抽离批次中创建。
+
+**职责**:
+冻结 rollback record deterministic identity 白箱边界: digest input、`canonical_json_sha256_digest`、`internal_error` mapping、`parameter_rollback_` prefix、`created_at_ms` 和 `digest[..12]` output segment。
+
+**关键候选方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `runtime_parameter_mutation_rollback_record_id` | `source_id`、`rollback_of`、`RuntimeParameterMutationTarget`、`created_at_ms`、`source_event_count`、`proposed_parameter_version` | `Result<String, (StatusCode, String)>` rollback proposal id | `rollback_flow` via parent helper | 不得改变 digest input、prefix、slice length 或 error mapping |
+
+**父子通信规则**:
+`rollback_record_identity` 只能作为 `transition_lifecycle` 的 child 被父级管理。BE-001AR-01 只建立等价基线；后续若实际抽离，rollback_flow 仍经父级受控 helper 调用，不得让 route facade、AI proposal、approval review、frontend caller、AppState owner、schema owner 或发布过渡连接直接依赖本叶。ASCII guard: `release transition guard`。
+
+**细分价值判断**:
+本叶值得进入抽离方案。它是 `transition_lifecycle` 父叶最后一个真正实现残余，负责 rollback id deterministic contract；独立抽离后父级可以收敛为 module facade、re-export 与受控 wrapper，不需要回改已 closeout 的 `rollback_flow`。
+
+**幻觉检查点**:
+AI 声称 `rollback_record_identity` 已完成 BE-001AR-01 时，必须说明当前只是等价基线，helper 仍留在父级，目标文件未创建，下一步只能进入 BE-001AR-02 抽离方案。不得宣称 rollback id 已迁移、rollback_flow 已回改、AppState/schema/frontend caller 已改变或发布过渡已启动。
 
 ### 5.1.2 `backend.runtime.routes.run`
 
@@ -3757,6 +3795,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/162-runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence抽离记录.md` runtime mutation parameter mutation transition lifecycle transition record persistence extraction record | `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence` | 实际抽离，lifecycle entry 与 transition persistence helper 已迁入 child | BE-001AP 抽离记录 | 下一步只能进入 BE-001AP-04 单叶 closeout，不得迁移 rollback id 或 release transition |
 | `markdown/06-milestones/v4.16.0/163-runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence单叶closeout.md` runtime mutation parameter mutation transition lifecycle transition record persistence closeout | `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence` | 单叶 closeout，确认等价并设置 `stop_split: true` | BE-001AP 单叶 closeout | `no code movement`；下一步只能进入 BE-001AQ-01 父叶残余判断，不得继续拆 transition_record_persistence 或 release transition |
 | `markdown/06-milestones/v4.16.0/164-runtime.mutation.parameter_mutation.transition_lifecycle第五轮父叶残余判断.md` runtime mutation parameter mutation transition lifecycle fifth parent residual decision | `runtime.mutation.parameter_mutation.transition_lifecycle` | 第五轮父叶残余判断，确认五个子叶已 closeout 且父叶仍 `stop_split: false` | BE-001AQ 父叶残余判断 | `no code movement`；下一步只能进入 BE-001AR-01 `rollback_record_identity` 单子叶等价基线，不得迁移 rollback id 或 release transition |
+| `markdown/06-milestones/v4.16.0/165-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity单子叶等价基线.md` runtime mutation parameter mutation transition lifecycle rollback record identity baseline | `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` | 单子叶等价基线，冻结 rollback id digest contract | BE-001AR 单子叶基线 | `no code movement`；下一步只能进入 BE-001AR-02 抽离方案，不得创建目标文件、回改 rollback_flow 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

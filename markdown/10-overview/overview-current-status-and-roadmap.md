@@ -122,6 +122,7 @@ v4.7.0 系统应被理解为：
 - BE-001AP-03 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence` 实际抽离；lifecycle entry 与 transition persistence helper 已迁入 child，父级仍控制调用面。下一步只能进入 BE-001AP-04 单叶 closeout。
 - BE-001AP-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001AQ-01 `runtime.mutation.parameter_mutation.transition_lifecycle` 第五轮父叶残余判断。
 - BE-001AQ-01 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle` 第五轮父叶残余判断；父叶仍保持 `stop_split: false`，下一步只能进入 BE-001AR-01 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 单子叶等价基线。
+- BE-001AR-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 单子叶等价基线；当前冻结 rollback id digest contract，目标文件未创建。下一步只能进入 BE-001AR-02 抽离方案。
 
 ## 当前收尾/发布状态
 
