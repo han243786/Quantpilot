@@ -170,6 +170,7 @@
 | 156 | `v4.16.0/156-runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect抽离方案.md` | BE-001AN-02 `activation_snapshot_side_effect` 抽离方案 | 📋 已创建 |
 | 157 | `v4.16.0/157-runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect抽离记录.md` | BE-001AN-03 `activation_snapshot_side_effect` 实际抽离 | 📋 已创建 |
 | 158 | `v4.16.0/158-runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect单叶closeout.md` | BE-001AN-04 `activation_snapshot_side_effect` 单叶 closeout | 📋 已创建 |
+| 159 | `v4.16.0/159-runtime.mutation.parameter_mutation.transition_lifecycle第四轮父叶残余判断.md` | BE-001AO-01 `transition_lifecycle` 第四轮父叶残余判断，下一候选为 `transition_record_persistence` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
