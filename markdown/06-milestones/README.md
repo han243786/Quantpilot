@@ -196,6 +196,7 @@
 | 182 | `v4.16.0/182-runtime.mutation.ai_proposal抽离方案.md` | BE-001AY-02 `runtime.mutation.ai_proposal` 抽离方案，固定目标文件、父级声明和 public handler re-export | 📋 已创建 |
 | 183 | `v4.16.0/183-runtime.mutation.ai_proposal抽离记录.md` | BE-001AY-03 `runtime.mutation.ai_proposal` 实际抽离，迁移 AI proposal / approval handler | 📋 已创建 |
 | 184 | `v4.16.0/184-runtime.mutation.ai_proposal单叶closeout.md` | BE-001AY-04 `runtime.mutation.ai_proposal` 单叶 closeout，设置 `stop_split: false`，下一候选为 `static_check` | 📋 已创建 |
+| 185 | `v4.16.0/185-runtime.mutation.ai_proposal.static_check单子叶等价基线.md` | BE-001AZ-01 `runtime.mutation.ai_proposal.static_check` 单子叶等价基线，冻结 validation / analysis helper | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

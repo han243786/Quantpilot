@@ -2074,6 +2074,59 @@ AI 声称 `record_query` 已完成 BE-001AW-04 时，必须说明本叶已 close
 **幻觉检查点**:
 AI 声称 `runtime.mutation.ai_proposal` 已推进至 BE-001AY-04 时，必须说明本叶已 closeout 且 `stop_split: false`，下一步只能进入 BE-001AZ-01 `runtime.mutation.ai_proposal.static_check` 单子叶等价基线。不得宣称 static_check 已创建、approval review 已单独 closeout、AppState/schema/frontend caller 已改变、sandbox owner 已迁移、release transition 已启动、整理或重构已经完成。
 
+### 5.1.1.3.1 `runtime.mutation.ai_proposal.static_check`
+
+**层级路径**: `root.backend.runtime.mutation.ai_proposal.static_check`
+**父模块**: `runtime.mutation.ai_proposal`
+**状态**: v4.16 BE-001AZ-01 单子叶等价基线已建立；当前 `no code movement`，只冻结 hash identity、model identity、static check result、v4 target detection、config domain binding、v4 artifact analysis 与测试证据。下一步只能进入 BE-001AZ-02 抽离方案。目标文件尚未创建，helper 尚未迁移，approval review、record query、AppState、schema owner、frontend caller、route facade 和 release transition guard 均未改变。
+
+**真实文件**:
+- `src/runtime/mutation/ai_proposal.rs`
+- `src/frontend_api_types.rs`
+- `tests/api_ai_proposal.rs`
+- `markdown/06-milestones/v4.16.0/185-runtime.mutation.ai_proposal.static_check单子叶等价基线.md`
+
+**职责**:
+承载 AI proposal candidate 的静态校验白箱边界，冻结 hash identity、model identity、source evidence、noop version、reason、config domain binding、v4 backtest source requirement、non-v4 run source requirement 和 v4 artifact analysis。本节点不拥有 create transaction、approval review、record query、source governance、event lifecycle、sandbox trigger、AppState、schema owner、frontend caller 或发布过渡连接。
+
+**输入**:
+| 输入 | 来源 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| AI proposal request | `runtime.mutation.ai_proposal.create_runtime_ai_proposal` | `CreateRuntimeAiProposalRequest` | 保持 source_kind、target、reason、model、config_domain_binding |
+| old/new parameter version | parent shared helper | `String` | 保持 canonical digest 比较 |
+| source event count | source context | `usize` | 0 必须产生 `missing_source_evidence` |
+| checked timestamp | parent create flow | `u64` | 保持原时间来源 |
+| v4 backtest artifact | artifact owner | `V4BacktestArtifact` | 只读 analysis summary |
+
+**输出**:
+| 输出 | 去向 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| static check result | proposal record | `RuntimeAiProposalStaticCheckResult` | 不改变 status、reason_code、message、checked_at_ms、details |
+| binding validation details | static check result | `RuntimeAiProposalStaticCheckDetail` | 不改变 detail code / target / message |
+| v4 artifact analysis | future evidence / tests | `serde_json::Value` | 不改变 `analysis_version`、counts、risk ratio、fill rate |
+
+**关键 helper 基线**:
+`validate_hash_identity`；`is_valid_hash_identity`；`validate_ai_model_identity`；`ai_proposal_static_check_result`；`is_v4_ai_proposal_target`；`expected_config_domain_for_target`；`validate_ai_proposal_config_domain_binding`；`analyze_v4_backtest_artifact_for_ai`。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `ai_proposal_static_check_result` | `CreateRuntimeAiProposalRequest`、old/new parameter version、source event count、checked timestamp | `RuntimeAiProposalStaticCheckResult` | 当前 `runtime.mutation.ai_proposal.create_runtime_ai_proposal` | 后续若迁移，只能作为父级受控 helper 暴露，不得成为 route handler 或横向服务 |
+| `validate_ai_model_identity` | `RuntimeAiModelIdentity` | `Result<(), (StatusCode, String)>` | 当前 `runtime.mutation.ai_proposal.create_runtime_ai_proposal` | 不得绕过 provider/model/model_version 必填 |
+| `analyze_v4_backtest_artifact_for_ai` | `V4BacktestArtifact` | `serde_json::Value` | 当前内部单测 / future evidence analysis | 不得接管 artifact schema owner |
+
+**父级通信规则**:
+`runtime.mutation.ai_proposal.static_check` 后续若创建，只能被父级 `runtime.mutation.ai_proposal` 调用。不得横向接管 approval_review、record_query、source_governance_identity、event_lifecycle、sandbox_trigger、parameter mutation、AppState、schema owner、frontend caller 或 runtime persistence owner。ASCII guard: `release transition guard`。
+
+**回归保护**:
+`cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1`；`git diff --check`。
+
+**细分价值判断**:
+本批只建立单子叶等价基线，不做实际抽离，也不判断内部是否继续细拆。后续必须先进入 BE-001AZ-02 抽离方案；不得直接创建目标文件或迁移 helper。
+
+**幻觉检查点**:
+AI 声称 `runtime.mutation.ai_proposal.static_check` 已推进至 BE-001AZ-01 时，必须说明本批只有等价基线且为 `no code movement`。不得宣称 helper 已迁移、目标文件已创建、approval review 已拆分、AppState/schema/frontend caller 已改变、release transition 已启动、整理或重构已经完成。
+
 ### 5.1.2 `backend.runtime.routes.run`
 
 **层级路径**: `root.backend.runtime.routes.run`
@@ -4095,6 +4148,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/182-runtime.mutation.ai_proposal抽离方案.md` runtime mutation ai proposal extraction plan | `runtime.mutation.ai_proposal` | 抽离方案，固定目标文件、父级声明、public handler re-export 和 shared helper 保留清单 | BE-001AY 抽离方案 | `no code movement`；下一步只能进入 BE-001AY-03 实际抽离，不得迁移 shared helper 或 release transition |
 | `markdown/06-milestones/v4.16.0/183-runtime.mutation.ai_proposal抽离记录.md` runtime mutation ai proposal extraction record | `runtime.mutation.ai_proposal` | 实际抽离，AI proposal / approval public handlers 与专属 helper 已迁入 child | BE-001AY 抽离记录 | 下一步只能进入 BE-001AY-04 单叶 closeout，不得继续细拆或 release transition |
 | `markdown/06-milestones/v4.16.0/184-runtime.mutation.ai_proposal单叶closeout.md` runtime mutation ai proposal closeout | `runtime.mutation.ai_proposal` | 单叶 closeout，确认抽离等价并设置 `stop_split: false` | BE-001AY 单叶 closeout | `no code movement`；下一步只能进入 BE-001AZ-01 `static_check` 单子叶等价基线，不得直接创建目标文件或 release transition |
+| `markdown/06-milestones/v4.16.0/185-runtime.mutation.ai_proposal.static_check单子叶等价基线.md` runtime mutation ai proposal static check baseline | `runtime.mutation.ai_proposal.static_check` | 单子叶等价基线，冻结 validation / analysis helper | BE-001AZ 单子叶基线 | `no code movement`；下一步只能进入 BE-001AZ-02 抽离方案，不得创建 static_check 目标文件或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

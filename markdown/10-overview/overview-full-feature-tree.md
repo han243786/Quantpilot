@@ -1574,6 +1574,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/182-runtime.mutation.ai_proposal抽离方案.md` - v4.16.0 BE-001AY-02 `runtime.mutation.ai_proposal` 抽离方案，固定目标文件与迁移清单
 - `markdown/06-milestones/v4.16.0/183-runtime.mutation.ai_proposal抽离记录.md` - v4.16.0 BE-001AY-03 `runtime.mutation.ai_proposal` 实际抽离，迁移 AI proposal / approval handler
 - `markdown/06-milestones/v4.16.0/184-runtime.mutation.ai_proposal单叶closeout.md` - v4.16.0 BE-001AY-04 `runtime.mutation.ai_proposal` 单叶 closeout，设置 `stop_split: false`
+- `markdown/06-milestones/v4.16.0/185-runtime.mutation.ai_proposal.static_check单子叶等价基线.md` - v4.16.0 BE-001AZ-01 `runtime.mutation.ai_proposal.static_check` 单子叶等价基线，冻结 validation / analysis helper
 - `src/runtime/mutation/ai_proposal.rs` - runtime AI proposal child，承接 AI proposal / approval public handler 与专属 helper
 - `src/runtime/mutation/parameter_mutation/record_query.rs` - runtime parameter mutation record query child，承接 list/detail read model handler
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/transition_record_persistence.rs` - transition lifecycle entry / persistence child
@@ -1609,6 +1610,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001AY-02 已建立 `runtime.mutation.ai_proposal` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001AY-03 实际抽离。
 当前最新递归点补充: BE-001AY-03 已完成 `runtime.mutation.ai_proposal` 实际抽离；AI proposal / approval handlers 已迁入 child，下一步只能进入 BE-001AY-04 单叶 closeout。
 当前最新递归点补充: BE-001AY-04 已完成 `runtime.mutation.ai_proposal` 单叶 closeout 并设置 `stop_split: false`；下一步只能进入 BE-001AZ-01 `runtime.mutation.ai_proposal.static_check` 单子叶等价基线。
+当前最新递归点补充: BE-001AZ-01 已建立 `runtime.mutation.ai_proposal.static_check` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001AZ-02 抽离方案。
 
 ### 7.7 总览 (markdown/10-overview/)
 
