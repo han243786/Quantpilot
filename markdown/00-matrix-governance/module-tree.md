@@ -1991,6 +1991,85 @@ BE-001AW-03 已完成实际抽离。`record_query` 只能经 `runtime.mutation.p
 **幻觉检查点**:
 AI 声称 `record_query` 已完成 BE-001AW-04 时，必须说明本叶已 closeout 并设置 `stop_split: true`，但 `runtime.mutation.parameter_mutation` 父叶尚未完成。不得宣称 AppState/schema/frontend caller 已改变、发布过渡已启动或父叶已经完成。
 
+### 5.1.1.3 `runtime.mutation.ai_proposal`
+
+**层级路径**: `root.backend.runtime.mutation.ai_proposal`
+**父模块**: `backend.runtime`
+**状态**: v4.16 BE-001AY-01 单子叶等价基线已建立；当前 `no code movement`，只冻结 AI proposal candidate、static check、proposal list/detail、approval list/detail、approve/reject/claim、sandbox gate、approval persistence、状态迁移和测试证据。下一步只能进入 BE-001AY-02 抽离方案。`src/runtime/mutation.rs` handler 尚未迁移，`AppState`、schema、frontend caller、runtime persistence owner 和 release transition guard 均未改变。
+
+**真实文件**:
+- `src/runtime/mutation.rs`
+- `src/runtime/mod.rs`
+- `src/backend/runtime/routes/mutation.rs`
+- `src/frontend_api_types.rs`
+- `src/runtime_persistence.rs`
+- `tests/api_ai_proposal.rs`
+- `tests/api_mutation.rs`
+- `tests/api_evidence_contract.rs`
+- `tests/api_run.rs`
+- `markdown/06-milestones/v4.16.0/181-runtime.mutation.ai_proposal单子叶等价基线.md`
+
+**职责**:
+承载 runtime AI proposal 与 approval review handler 域的白箱边界，冻结候选生成、静态检查、proposal 查询、approval 查询、approve/reject/claim、sandbox gate、approval persistence、状态迁移和 evidence event contract。本节点不拥有 parameter mutation、report、evidence、experiment、ops、frontend caller、schema owner、AppState owner 或发布过渡连接。
+
+**输入**:
+| 输入 | 来源 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| AI proposal candidate | `backend.runtime.routes.mutation` | `CreateRuntimeAiProposalRequest` | 保持 source_kind/source_id、target、model、prompt_hash、evidence_hash、reason、config_domain_binding |
+| proposal list query | API caller | `RuntimeAiProposalListQuery` | 保持 source_kind/source_id/status filtering 与倒序排序 |
+| approval action | approve/reject/claim route | `ApprovalActionRequest` + proposal id | 保持 actor_id、comment、review state guard 和 reviewer lifecycle |
+| source context | run/backtest owner | run/backtest record + governance snapshot | 保持 event_count、sequence cursor 和 governance copy |
+| sandbox report | sandbox verification owner | proposal sandbox report | approve 前保持 report existence 与 passed gate |
+
+**输出**:
+| 输出 | 去向 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| proposal record | frontend / tests | `RuntimeAiProposalRecord` | 不改变 status、static_check、source_evidence、governance、config_domain_binding、lifecycle |
+| approval record | frontend / tests | `RuntimeApprovalRecord` | 不改变 review_state、reviewers、sandbox_report_url、lifecycle |
+| runtime event | run/backtest evidence | `FrontendRuntimeEvent` | 不改变 AIProposalCreated / StaticCheckPassed / StaticCheckFailed / Denied / Approved contract |
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `create_runtime_ai_proposal` | user id、`AppState`、AI proposal request | AI proposal record | `backend.runtime.routes.mutation` | 不得绕过 static check、capability、approval record 或 sandbox trigger |
+| `list_runtime_ai_proposals` | list query | AI proposal records | `backend.runtime.routes.mutation` | 不得改变 filtering 或 sorting |
+| `get_runtime_ai_proposal_detail` | proposal id | AI proposal record | `backend.runtime.routes.mutation` | 不得绕过 scoped memory lookup 或 disk fallback |
+| `list_runtime_approvals` | user id、query | approval records | `backend.runtime.routes.mutation` | 不得改变 scoped visibility 或 review_state filtering |
+| `get_runtime_approval_detail` | approval id | approval record | `backend.runtime.routes.mutation` | 不得绕过 memory-first lookup 或 disk fallback |
+| `approve_ai_proposal` | proposal id、approval action | approval record | `backend.runtime.routes.mutation` | 不得改变 sandbox gate、reviewer quorum、approval lifecycle 或 proposal approved transition |
+| `reject_ai_proposal` | proposal id、approval action | approval record | `backend.runtime.routes.mutation` | 不得丢失 rejection reason 或 proposal denied transition |
+| `claim_ai_proposal_review` | proposal id、approval action | approval record | `backend.runtime.routes.mutation` | 不得改变 pending-only claim guard 或 reviewer assignment |
+
+**关键 helper 基线**:
+`validate_ai_model_identity`；`ai_proposal_static_check_result`；`validate_ai_proposal_config_domain_binding`；`load_runtime_ai_proposal_source_context`；`runtime_ai_proposal_governance`；`runtime_ai_proposal_record_id`；`build_runtime_ai_proposal_event`；`ai_proposal_lifecycle_entry`；`persist_runtime_ai_proposal_transition`；`load_runtime_ai_proposal_for_user`；`load_sandbox_report_for_proposal`；`ensure_ai_proposal_can_be_approved`；`is_valid_ai_proposal_transition`；`update_ai_proposal_status`；`persist_approval`；`load_approval_from_disk`。
+
+**HTTP route 基线**:
+| Route | Method | Handler |
+| --- | --- | --- |
+| `/api/runtime/ai-proposals` | GET | `list_runtime_ai_proposals` |
+| `/api/runtime/ai-proposals` | POST | `create_runtime_ai_proposal` |
+| `/api/runtime/ai-proposals/:ai_proposal_id` | GET | `get_runtime_ai_proposal_detail` |
+| `/api/v1/ai/approvals` | GET | `list_runtime_approvals` |
+| `/api/v1/ai/approvals/:approval_id` | GET | `get_runtime_approval_detail` |
+| `/api/v1/ai/proposals/:proposal_id/approve` | POST | `approve_ai_proposal` |
+| `/api/v1/ai/proposals/:proposal_id/reject` | POST | `reject_ai_proposal` |
+| `/api/v1/ai/proposals/:proposal_id/claim` | POST | `claim_ai_proposal_review` |
+
+**状态与锁**:
+`AppState` 继续拥有 `ai_proposals` 与 `approval_records`。approval action 路径必须保持既有 `approval_records -> ai_proposals` lock order 和写入语义；sandbox verification background task、JoinHandle 监控和 `sandbox_report_url` 回写语义不得改变。
+
+**父级通信规则**:
+`runtime.mutation.ai_proposal` 只能经父级 `backend.runtime.routes.mutation` 暴露 HTTP route；不得横向接管 `runtime.mutation.parameter_mutation`、report、evidence、experiment、ops、strategy_config、frontend caller 或 executor。状态 owner 仍是 `AppState`，schema owner 仍是 `src/frontend_api_types.rs`，共享 persistence owner 仍是 `src/runtime_persistence.rs`。发布过渡前不得主动提出横向连接或性能旁路。ASCII guard: `release transition guard`。
+
+**回归保护**:
+`cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1`；`git diff --check`。
+
+**细分价值判断**:
+本批只建立单子叶等价基线，不做实际抽离，也不判断内部是否继续细拆。后续必须先进入 BE-001AY-02 抽离方案；若首轮实际抽离完成，再按递归流程进入单叶 closeout，判断 static check、record_query、approval_review、status_transition、approval_persistence 或 sandbox_trigger 是否值得继续拆分。
+
+**幻觉检查点**:
+AI 声称 `runtime.mutation.ai_proposal` 已推进至 BE-001AY-01 时，必须说明本批只有等价基线且为 `no code movement`。不得宣称 handler 已迁移、目标文件已创建、approval review 已拆分、AppState/schema/frontend caller 已改变、sandbox owner 已迁移、release transition 已启动、整理或重构已经完成。
+
 ### 5.1.2 `backend.runtime.routes.run`
 
 **层级路径**: `root.backend.runtime.routes.run`
@@ -4008,6 +4087,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/178-runtime.mutation.parameter_mutation.record_query抽离记录.md` runtime mutation parameter mutation record query extraction record | `runtime.mutation.parameter_mutation.record_query` | 实际抽离，list/detail handler 已迁入 child | BE-001AW 抽离记录 | 下一步只能进入 BE-001AW-04 单叶 closeout，不得迁移 create/activate/rollback 或 release transition |
 | `markdown/06-milestones/v4.16.0/179-runtime.mutation.parameter_mutation.record_query单叶closeout.md` runtime mutation parameter mutation record query closeout | `runtime.mutation.parameter_mutation.record_query` | 单叶 closeout，确认等价并设置 `stop_split: true` | BE-001AW 单叶 closeout | `no code movement`；下一步只能进入 BE-001AX-01 父叶残余判断，不得继续拆 record_query 或 release transition |
 | `markdown/06-milestones/v4.16.0/180-runtime.mutation.parameter_mutation第三轮父叶残余判断.md` runtime mutation parameter mutation third parent residual decision | `runtime.mutation.parameter_mutation` | 父叶残余判断，确认三个 child 均 closeout 并设置父叶 `stop_split: true` | BE-001AX 父叶残余判断 | `no code movement`；下一步只能进入 BE-001AY-01 `runtime.mutation.ai_proposal` 单子叶等价基线，不得移动 AI proposal 或 release transition |
+| `markdown/06-milestones/v4.16.0/181-runtime.mutation.ai_proposal单子叶等价基线.md` runtime mutation ai proposal baseline | `runtime.mutation.ai_proposal` | 单子叶等价基线，冻结 AI proposal / approval handler 域 | BE-001AY 单子叶基线 | `no code movement`；下一步只能进入 BE-001AY-02 抽离方案，不得移动 handler/helper、AppState/schema/frontend caller 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

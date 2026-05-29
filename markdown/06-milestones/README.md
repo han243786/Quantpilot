@@ -192,6 +192,7 @@
 | 178 | `v4.16.0/178-runtime.mutation.parameter_mutation.record_query抽离记录.md` | BE-001AW-03 `record_query` 实际抽离，迁移 list/detail handler | 📋 已创建 |
 | 179 | `v4.16.0/179-runtime.mutation.parameter_mutation.record_query单叶closeout.md` | BE-001AW-04 `record_query` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 | 180 | `v4.16.0/180-runtime.mutation.parameter_mutation第三轮父叶残余判断.md` | BE-001AX-01 `parameter_mutation` 第三轮父叶残余判断，父叶设置 `stop_split: true` | 📋 已创建 |
+| 181 | `v4.16.0/181-runtime.mutation.ai_proposal单子叶等价基线.md` | BE-001AY-01 `runtime.mutation.ai_proposal` 单子叶等价基线，冻结 AI proposal / approval handler 域 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
