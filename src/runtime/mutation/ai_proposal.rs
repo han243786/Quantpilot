@@ -3,6 +3,8 @@ use futures_util::FutureExt;
 
 #[path = "ai_proposal/event_lifecycle.rs"]
 mod event_lifecycle;
+#[path = "ai_proposal/record_query.rs"]
+mod record_query;
 #[path = "ai_proposal/source_governance_identity.rs"]
 mod source_governance_identity;
 #[path = "ai_proposal/static_check.rs"]
@@ -12,6 +14,8 @@ use event_lifecycle::{
     ai_proposal_lifecycle_entry, build_runtime_ai_proposal_event,
     persist_runtime_ai_proposal_transition,
 };
+use record_query::load_runtime_ai_proposal_for_user;
+pub(crate) use record_query::{get_runtime_ai_proposal_detail, list_runtime_ai_proposals};
 use source_governance_identity::{
     load_runtime_ai_proposal_source_context, runtime_ai_proposal_governance,
     runtime_ai_proposal_record_id,
@@ -19,18 +23,6 @@ use source_governance_identity::{
 use static_check::{
     ai_proposal_static_check_result, validate_ai_model_identity, validate_hash_identity,
 };
-
-async fn load_runtime_ai_proposal_for_user(
-    state: &AppState,
-    user_id: &auth::UserId,
-    proposal_id: &str,
-) -> Result<RuntimeAiProposalRecord, (StatusCode, String)> {
-    let scoped = auth::scoped_key(user_id, proposal_id);
-    if let Some(record) = state.ai_proposals.read().await.get(&scoped).cloned() {
-        return Ok(record);
-    }
-    load_runtime_ai_proposal_record(state.ai_proposal_store_dir.as_ref(), proposal_id).await
-}
 
 async fn load_sandbox_report_for_proposal(
     state: &AppState,
@@ -388,45 +380,6 @@ pub(crate) async fn create_runtime_ai_proposal(
     }
 
     Ok(Json(record))
-}
-
-pub(crate) async fn list_runtime_ai_proposals(
-    State(state): State<AppState>,
-    Query(query): Query<RuntimeAiProposalListQuery>,
-) -> Result<Json<Vec<RuntimeAiProposalRecord>>, (StatusCode, String)> {
-    let mut records = list_runtime_ai_proposal_records(&state.ai_proposal_store_dir)
-        .await
-        .map_err(io_error)?;
-    if let Some(source_kind) = query.source_kind {
-        records.retain(|record| record.source_kind == source_kind);
-    }
-    if let Some(source_id) = clean_optional_filter(query.source_id) {
-        records.retain(|record| record.source_id == source_id);
-    }
-    if let Some(status) = query.status {
-        records.retain(|record| record.status == status);
-    }
-    records.sort_by(|left, right| {
-        right
-            .created_at_ms
-            .cmp(&left.created_at_ms)
-            .then_with(|| right.ai_proposal_id.cmp(&left.ai_proposal_id))
-    });
-    Ok(Json(records))
-}
-
-pub(crate) async fn get_runtime_ai_proposal_detail(
-    user_id: auth::UserId,
-    State(state): State<AppState>,
-    Path(ai_proposal_id): Path<String>,
-) -> Result<Json<RuntimeAiProposalRecord>, (StatusCode, String)> {
-    let scoped = auth::scoped_key(&user_id, &ai_proposal_id);
-    if let Some(record) = state.ai_proposals.read().await.get(&scoped).cloned() {
-        return Ok(Json(record));
-    }
-    load_runtime_ai_proposal_record(state.ai_proposal_store_dir.as_ref(), &ai_proposal_id)
-        .await
-        .map(Json)
 }
 
 pub(crate) async fn list_runtime_approvals(

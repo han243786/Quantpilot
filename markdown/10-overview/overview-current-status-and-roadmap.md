@@ -159,6 +159,7 @@ v4.7.0 系统应被理解为：
 - BE-001BE-01 已完成 `runtime.mutation.ai_proposal` 第三轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001BF-01 `runtime.mutation.ai_proposal.record_query` 单子叶等价基线。
 - BE-001BF-01 已建立 `runtime.mutation.ai_proposal.record_query` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001BF-02 抽离方案。
 - BE-001BF-02 已建立 `runtime.mutation.ai_proposal.record_query` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001BF-03 实际抽离。
+- BE-001BF-03 已完成 `runtime.mutation.ai_proposal.record_query` 实际抽离；list/detail/read-through loader 已迁入 child，下一步只能进入 BE-001BF-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 
