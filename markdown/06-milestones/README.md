@@ -174,6 +174,7 @@
 | 160 | `v4.16.0/160-runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence单子叶等价基线.md` | BE-001AP-01 `transition_record_persistence` 单子叶等价基线，冻结 lifecycle entry 与 transition persistence | 📋 已创建 |
 | 161 | `v4.16.0/161-runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence抽离方案.md` | BE-001AP-02 `transition_record_persistence` 抽离方案，固定目标文件、父级声明和回退点 | 📋 已创建 |
 | 162 | `v4.16.0/162-runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence抽离记录.md` | BE-001AP-03 `transition_record_persistence` 实际抽离，迁移 lifecycle entry 与 transition persistence helper | 📋 已创建 |
+| 163 | `v4.16.0/163-runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence单叶closeout.md` | BE-001AP-04 `transition_record_persistence` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

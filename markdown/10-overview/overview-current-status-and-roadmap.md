@@ -120,6 +120,7 @@ v4.7.0 系统应被理解为：
 - BE-001AP-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence` 单子叶等价基线；当前只冻结 lifecycle entry、transition persistence、in-memory index 和 activation / rollback 调用点，目标文件未创建。下一步只能进入 BE-001AP-02 抽离方案。
 - BE-001AP-02 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence` 抽离方案；当前固定目标文件、父级 path attribute、helper import、visibility 和回退点，但仍是 `no code movement`。下一步只能进入 BE-001AP-03 实际抽离。
 - BE-001AP-03 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence` 实际抽离；lifecycle entry 与 transition persistence helper 已迁入 child，父级仍控制调用面。下一步只能进入 BE-001AP-04 单叶 closeout。
+- BE-001AP-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001AQ-01 `runtime.mutation.parameter_mutation.transition_lifecycle` 第五轮父叶残余判断。
 
 ## 当前收尾/发布状态
 
