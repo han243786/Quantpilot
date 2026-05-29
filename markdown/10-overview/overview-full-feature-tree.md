@@ -1557,6 +1557,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/166-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity抽离方案.md` - v4.16.0 BE-001AR-02 `rollback_record_identity` 抽离方案，固定目标文件、父级声明和回退点
 - `markdown/06-milestones/v4.16.0/167-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity抽离记录.md` - v4.16.0 BE-001AR-03 `rollback_record_identity` 实际抽离，迁移 rollback id helper
 - `markdown/06-milestones/v4.16.0/168-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity单叶closeout.md` - v4.16.0 BE-001AR-04 `rollback_record_identity` 单叶 closeout，设置 `stop_split: true`
+- `markdown/06-milestones/v4.16.0/169-runtime.mutation.parameter_mutation.transition_lifecycle第六轮父叶残余判断.md` - v4.16.0 BE-001AS-01 `transition_lifecycle` 第六轮父叶残余判断，父叶设置 `stop_split: true`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/transition_record_persistence.rs` - transition lifecycle entry / persistence child
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_record_identity.rs` - transition lifecycle rollback id identity child
 
@@ -1574,6 +1575,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001AR-02 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 抽离方案；下一步只能进入 BE-001AR-03 实际抽离。
 当前最新递归点补充: BE-001AR-03 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 实际抽离；下一步只能进入 BE-001AR-04 单叶 closeout。
 当前最新递归点补充: BE-001AR-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001AS-01 父叶残余判断。
+当前最新递归点补充: BE-001AS-01 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle` 第六轮父叶残余判断并设置父叶 `stop_split: true`；下一步只能进入 BE-001AT-01 `runtime.mutation.parameter_mutation` 父叶残余判断。
 
 ### 7.7 总览 (markdown/10-overview/)
 
