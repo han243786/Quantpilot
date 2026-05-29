@@ -7,6 +7,8 @@ mod backtest_record_store;
 #[path = "backtest/replay.rs"]
 mod backtest_replay;
 mod event_stream;
+#[path = "mutation/parameter_mutation.rs"]
+mod mutation_parameter_mutation;
 #[path = "run/record_store.rs"]
 mod run_record_store;
 #[path = "run/replay_status.rs"]
@@ -22,6 +24,11 @@ pub(crate) use backtest_record_store::{
 };
 pub(crate) use backtest_replay::get_backtest_replay;
 pub(crate) use event_stream::stream_run_events;
+pub(crate) use mutation_parameter_mutation::{
+    activate_runtime_parameter_mutation, create_runtime_parameter_mutation,
+    get_runtime_parameter_mutation_detail, list_runtime_parameter_mutations,
+    rollback_runtime_parameter_mutation,
+};
 pub(crate) use run_record_store::{discard_run_record, get_run_detail, list_runs, save_run_record};
 pub(crate) use run_replay_status::{get_run_replay, get_run_status};
 pub(crate) use run_session_start::start_test_run;

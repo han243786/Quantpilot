@@ -886,7 +886,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 
 **层级路径**: `root.backend.runtime`
 **父模块**: `backend`
-**最新状态补充**: BE-001AE-04 `backend.runtime.routes.mutation` 单叶 closeout 已完成，route facade 等价并设置 `stop_split: true`；BE-001AF-02 已建立 `runtime.mutation.parameter_mutation` 抽离方案，下一步只能进入 BE-001AF-03 实际抽离。handler、`src/runtime/mod.rs` facade、`AppState`、锁顺序、schema、frontend caller 和发布过渡均未迁移。
+**最新状态补充**: BE-001AE-04 `backend.runtime.routes.mutation` 单叶 closeout 已完成，route facade 等价并设置 `stop_split: true`；BE-001AF-03 已完成 `runtime.mutation.parameter_mutation` 实际抽离，下一步只能进入 BE-001AF-04 单叶整理 / closeout。AI proposal、approval、`AppState`、锁顺序、schema、frontend caller 和发布过渡均未迁移。
 **状态**: v4.16 BE-001H-03 `runtime.run.v4_handoff` 已完成单叶 closeout，当前不继续细拆；BE-001I-03 `runtime.run.session_start` 已完成单叶 closeout，当前不继续细拆；BE-001J-05 `runtime.run.record_store` 已完成抽离与单叶 closeout，当前不继续细拆；BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，当前不继续细拆；BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，当前不继续细拆；BE-001M-04 `runtime.backtest` 已完成 route facade 抽离与单叶 closeout，route facade 本身停止细分；BE-001N-04 `runtime.backtest.execution_start` 已完成第一轮物理抽离与单叶 closeout；BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout 并设置 `stop_split: true`；BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout 并设置 `stop_split: true`；BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`；BE-001R-04 已完成 `runtime.backtest.execution_start.legacy_dispatch` 单叶 closeout 并设置 `stop_split: true`；BE-001S-01 已完成 `runtime.backtest.execution_start` 父叶残余判断；BE-001T-04 已完成 `runtime.backtest.record_store` 单叶 closeout 并设置 `stop_split: true`；BE-001U-04 已完成 `runtime.backtest.replay` 单叶 closeout 并设置 `stop_split: true`；BE-001V-04 已完成 `runtime.backtest.experiment_sweep` 单叶 closeout 并设置 `stop_split: false`；BE-001W-04 已完成 `runtime.backtest.experiment_sweep.parameter_grid` 单叶 closeout 并设置 `stop_split: true`；BE-001Y-04 已完成 `runtime.backtest.experiment_sweep.start_orchestration` 单叶 closeout 并设置 `stop_split: true`；BE-001Z-01 已完成 `runtime.backtest.experiment_sweep` 第二轮父叶残余判断；BE-001AA-01 已建立 `runtime.backtest.experiment_sweep.record_lifecycle` 单子叶等价基线，BE-001AA-02 已建立抽离方案，BE-001AA-03 已完成实际抽离，BE-001AA-04 已完成单叶 closeout 并设置 `stop_split: true`；BE-001AB-01 已完成第三轮父叶残余判断并设置 `runtime.backtest.experiment_sweep` 父叶 `stop_split: true`；BE-001AC-01 已完成 `runtime.backtest` 父叶残余判断并设置父叶 `stop_split: true`，该上层已由 BE-001AD-01 承接完成，BE-001AE-04 已完成 `backend.runtime.routes.mutation` route facade 单叶 closeout 并设置 `stop_split: true`；BE-001AF-01 已建立 `runtime.mutation.parameter_mutation` 单子叶等价基线，下一步只能进入 BE-001AF-02 抽离方案。runtime route aggregate 已迁入 `src/backend/runtime/routes.rs`，run route group 已迁入 `src/backend/runtime/routes/run.rs`，backtest route group 已迁入 `src/backend/runtime/routes/backtest.rs`；`/api/runtime/v4/run` handler 已迁入 `src/runtime/run/v4_handoff.rs`，legacy `/api/runtime/test-run` handler 已迁入 `src/runtime/run/session_start.rs`，run record list/detail/save/discard handler 已迁入 `src/runtime/run/record_store.rs`，replay/status handler 已迁入 `src/runtime/run/replay_status.rs`，SSE handler 已迁入 `src/runtime/event_stream.rs`，backtest 创建路径 handler/helper 已迁入 `src/runtime/backtest/execution_start.rs`，v4 projection helper 已迁入 `src/runtime/backtest/v4_projection.rs`，v4 request resolution helper 已迁入 `src/runtime/backtest/v4_request_resolution.rs`，v4 runtime execution helper 已迁入 `src/runtime/backtest/v4_runtime_execution.rs`，legacy dispatch helper 已迁入 `src/runtime/backtest/legacy_dispatch.rs`，backtest record store handler 已迁入 `src/runtime/backtest/record_store.rs`，backtest replay handler 已迁入 `src/runtime/backtest/replay.rs`，backtest experiment sweep handler/helper 已迁入 `src/runtime/backtest/experiment_sweep.rs`，parameter_grid helper 已迁入 `src/runtime/backtest/parameter_grid.rs`，start_orchestration handler 已迁入 `src/runtime/backtest/start_orchestration.rs`，record_lifecycle handler 已迁入 `src/runtime/backtest/record_lifecycle.rs`，backtest artifact/compare/persistence 仍保留原 owner，state/shared helper 仍保留在 `src/runtime/`。
 **真实文件**:
 - `src/backend/runtime.rs`
@@ -1039,7 +1039,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 
 **层级路径**: `root.backend.runtime.routes`
 **父模块**: `backend.runtime`
-**最新状态补充**: BE-001AE-04 已完成 `backend.runtime.routes.mutation` route facade 单叶 closeout。当前 `backend.runtime.routes` 通过 `backend.runtime.routes.run`、`backend.runtime.routes.backtest`、`backend.runtime.routes.mutation` 委托三个 route child，BE-001AF-02 已建立 `runtime.mutation.parameter_mutation` 抽离方案，下一步只能进入 BE-001AF-03 实际抽离。
+**最新状态补充**: BE-001AE-04 已完成 `backend.runtime.routes.mutation` route facade 单叶 closeout。当前 `backend.runtime.routes` 通过 `backend.runtime.routes.run`、`backend.runtime.routes.backtest`、`backend.runtime.routes.mutation` 委托三个 route child，BE-001AF-03 已完成 `runtime.mutation.parameter_mutation` 实际抽离，下一步只能进入 BE-001AF-04 单叶整理 / closeout。
 **状态**: v4.16 BE-001G-03 `backend.runtime.routes.run` closeout 已完成，BE-001I-03 已完成其下一个 handler sibling `runtime.run.session_start` 单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-04 已完成 `runtime.backtest` route facade 抽离与单叶 closeout，BE-001V-04 已完成 `runtime.backtest.experiment_sweep` 单叶 closeout，BE-001W-04 已完成 `runtime.backtest.experiment_sweep.parameter_grid` 单叶 closeout 并设置 `stop_split: true`，BE-001Y-04 已完成 `runtime.backtest.experiment_sweep.start_orchestration` 单叶 closeout 并设置 `stop_split: true`；BE-001Z-01 已完成 `runtime.backtest.experiment_sweep` 第二轮父叶残余判断；BE-001AA-01 已建立 `runtime.backtest.experiment_sweep.record_lifecycle` 单子叶等价基线，BE-001AA-02 已建立抽离方案，BE-001AA-03 已完成实际抽离，BE-001AA-04 已完成单叶 closeout 并设置 `stop_split: true`；BE-001AB-01 已完成第三轮父叶残余判断并设置 `runtime.backtest.experiment_sweep` 父叶 `stop_split: true`；BE-001AC-01 已完成 `runtime.backtest` 父叶残余判断并设置父叶 `stop_split: true`；BE-001AD-01 已完成 `backend.runtime.routes` 父叶残余判断，确认父叶仍保持 `stop_split: false`，BE-001AE-04 已完成 `backend.runtime.routes.mutation` route facade 单叶 closeout 并设置 `stop_split: true`；BE-001AF-01 已建立 `runtime.mutation.parameter_mutation` 单子叶等价基线，下一步只能进入 BE-001AF-02 抽离方案。当前拥有 runtime route aggregate 列表，并通过 `backend.runtime.routes.run` 委托 run routes、通过 `backend.runtime.routes.backtest` 委托 backtest routes；父级仍直接拥有 event stream、evidence、mutation、report、experiment、approval 和 ops routes，不拥有 runtime state owner、artifact schema、compare owner 或 persistence owner。
 **真实文件**:
 - `src/backend/runtime.rs`
@@ -1131,19 +1131,19 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 `cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_sse`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
 
 **父叶残余判断**:
-BE-001AD-01 已确认 `backend.runtime.routes.run`、`runtime.event_stream`、`backend.runtime.routes.backtest` 和 `runtime.backtest` 相关递归链路均已完成当前范围内 closeout；父叶仍保持 `stop_split: false`。BE-001AE-04 已完成 `backend.runtime.routes.mutation` route facade 单叶 closeout 并设置 `stop_split: true`；BE-001AF-02 已建立 `runtime.mutation.parameter_mutation` 抽离方案，下一步只能进入 BE-001AF-03 实际抽离，不得直接移动方案外 handler、AppState、锁顺序、schema、frontend caller 或发布过渡连接。
+BE-001AD-01 已确认 `backend.runtime.routes.run`、`runtime.event_stream`、`backend.runtime.routes.backtest` 和 `runtime.backtest` 相关递归链路均已完成当前范围内 closeout；父叶仍保持 `stop_split: false`。BE-001AE-04 已完成 `backend.runtime.routes.mutation` route facade 单叶 closeout 并设置 `stop_split: true`；BE-001AF-03 已完成 `runtime.mutation.parameter_mutation` 实际抽离，下一步只能进入 BE-001AF-04 单叶整理 / closeout，不得直接继续移动 AI proposal、approval、AppState、锁顺序、schema、frontend caller 或发布过渡连接。
 
 **细分价值判断**:
-`backend.runtime.routes.mutation` route facade 已完成 BE-001AE-04 单叶 closeout 并设置 `stop_split: true`，因为继续拆 58 行 route facade 只会制造无意义微文件。`src/runtime/mutation.rs` handler 域仍值得继续递归，`runtime.mutation.parameter_mutation` 已完成 BE-001AF-02 抽离方案；下一步只能进入 BE-001AF-03 实际抽离。`backend.runtime.routes.experiment`、`backend.runtime.routes.evidence` 和 `backend.runtime.routes.report_ops` 保留为后续候选，不得在本批顺手新建 route 子文件。
+`backend.runtime.routes.mutation` route facade 已完成 BE-001AE-04 单叶 closeout 并设置 `stop_split: true`，因为继续拆 58 行 route facade 只会制造无意义微文件。`src/runtime/mutation.rs` handler 域仍值得继续递归，`runtime.mutation.parameter_mutation` 已完成 BE-001AF-03 实际抽离；下一步只能进入 BE-001AF-04 单叶整理 / closeout。`backend.runtime.routes.experiment`、`backend.runtime.routes.evidence` 和 `backend.runtime.routes.report_ops` 保留为后续候选，不得在本批顺手新建 route 子文件。
 
 **幻觉检查点**:
-AI 声称 `backend.runtime.routes` 已推进至 BE-001AF-02 时，必须说明 mutation route facade 已完成 closeout 并设置 `stop_split: true`，`runtime.mutation.parameter_mutation` 只建立抽离方案且仍为 `no code movement`；`src/runtime/mutation.rs` handler、`src/runtime/mod.rs` facade、AppState、锁顺序、schema、frontend caller 和发布过渡均未改变；父叶仍是 `stop_split: false`。不得宣称 parameter mutation handler 已迁移、report/evidence/experiment/ops 已迁移、发布过渡已启动、整理或重构已经完成。
+AI 声称 `backend.runtime.routes` 已推进至 BE-001AF-03 时，必须说明 mutation route facade 已完成 closeout 并设置 `stop_split: true`，`runtime.mutation.parameter_mutation` 只完成 parameter mutation handler 实际抽离；AI proposal、approval、AppState、锁顺序、schema、frontend caller 和发布过渡均未改变；父叶仍是 `stop_split: false`。不得宣称 report/evidence/experiment/ops 已迁移、发布过渡已启动、整理或重构已经完成。
 
 ### 5.1.1.1 `backend.runtime.routes.mutation`
 
 **层级路径**: `root.backend.runtime.routes.mutation`
 **父模块**: `backend.runtime.routes`
-**状态**: v4.16 BE-001AE-04 单叶 closeout 已完成；`src/backend/runtime/routes/mutation.rs` 承接 mutation / AI proposal / approval route group，并由 `src/backend/runtime/routes.rs` 父级委托，route facade 等价且设置 `stop_split: true`。`src/runtime/mutation.rs` 仍是 handler owner，`src/runtime/mod.rs` facade、`AppState`、`approval_records -> ai_proposals` 锁顺序、schema、frontend caller 和发布过渡均未改变。BE-001AF-02 已建立 `runtime.mutation.parameter_mutation` 抽离方案，下一步只能进入 BE-001AF-03 实际抽离。
+**状态**: v4.16 BE-001AE-04 单叶 closeout 已完成；`src/backend/runtime/routes/mutation.rs` 承接 mutation / AI proposal / approval route group，并由 `src/backend/runtime/routes.rs` 父级委托，route facade 等价且设置 `stop_split: true`。BE-001AF-03 已完成 `runtime.mutation.parameter_mutation` 实际抽离；`src/runtime/mod.rs` facade、`AppState`、`approval_records -> ai_proposals` 锁顺序、schema、frontend caller 和发布过渡均未改变。下一步只能进入 BE-001AF-04 单叶整理 / closeout。
 **真实文件**:
 - `src/backend/runtime/routes.rs`
 - `src/backend/runtime/routes/mutation.rs`
@@ -1225,18 +1225,19 @@ AI 声称 `backend.runtime.routes` 已推进至 BE-001AF-02 时，必须说明 m
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 
 **细分价值判断**:
-本节点已完成等价基线、抽离方案、route facade 最小物理抽离与单叶 closeout，route facade 设置 `stop_split: true`。继续把 facade 拆成 mutation routes、AI proposal routes 和 approval routes 会增加父级导入面，但不会形成新的稳定 owner；后续递归已转入 `src/runtime/mutation.rs` handler 域，`runtime.mutation.parameter_mutation` 已建立 BE-001AF-02 抽离方案，下一步只能进入 BE-001AF-03 实际抽离。`runtime.mutation.ai_proposal`、`runtime.mutation.approval_review` 值得后续排队，`runtime.mutation.shared_persistence_governance` 暂缓。
+本节点已完成等价基线、抽离方案、route facade 最小物理抽离与单叶 closeout，route facade 设置 `stop_split: true`。继续把 facade 拆成 mutation routes、AI proposal routes 和 approval routes 会增加父级导入面，但不会形成新的稳定 owner；后续递归已转入 `src/runtime/mutation.rs` handler 域，`runtime.mutation.parameter_mutation` 已完成 BE-001AF-03 实际抽离，下一步只能进入 BE-001AF-04 单叶整理 / closeout。`runtime.mutation.ai_proposal`、`runtime.mutation.approval_review` 值得后续排队，`runtime.mutation.shared_persistence_governance` 暂缓。
 
 **幻觉检查点**:
-AI 声称 `backend.runtime.routes.mutation` 已完成 BE-001AF-02 时，必须说明 route facade 已 closeout 并设置 `stop_split: true`，`runtime.mutation.parameter_mutation` 只完成抽离方案；`src/runtime/mutation.rs` handler、`src/runtime/mod.rs` facade、AppState、`approval_records -> ai_proposals` 锁顺序、schema、frontend caller 和发布过渡均未改变。不得宣称 mutation handler 已拆分、parameter mutation handler 已迁移、approval/AI proposal 状态 owner 已迁移、`backend.runtime.routes` 父叶完成、整理或重构已经完成。
+AI 声称 `backend.runtime.routes.mutation` 已完成 BE-001AF-03 时，必须说明 route facade 已 closeout 并设置 `stop_split: true`，`runtime.mutation.parameter_mutation` 只完成实际抽离；AppState、`approval_records -> ai_proposals` 锁顺序、schema、frontend caller 和发布过渡均未改变。不得宣称 approval/AI proposal 状态 owner 已迁移、`backend.runtime.routes` 父叶完成、整理或重构已经完成。
 
 ### 5.1.1.2 `runtime.mutation.parameter_mutation`
 
 **层级路径**: `root.backend.runtime.mutation.parameter_mutation`
 **父模块**: `backend.runtime`
 **路由入口**: `backend.runtime.routes.mutation`
-**状态**: v4.16 BE-001AF-02 抽离方案已建立；当前仍是 `no code movement`。本节点冻结 runtime parameter mutation 的 create/list/detail/activate/rollback handler 生命周期，并已固定下一批 BE-001AF-03 的目标子模块路径、父级 re-export、允许迁移 helper 和 shared helper 保留边界。下一步只能进入 BE-001AF-03 实际抽离。
+**状态**: v4.16 BE-001AF-03 实际抽离已完成；五个 parameter mutation public handler 与本叶私有 helper 已迁入 `src/runtime/mutation/parameter_mutation.rs`，父级 `src/runtime/mod.rs` 通过 `pub(crate) use mutation_parameter_mutation` 保持 route facade 调用面。AI proposal、approval review、AppState、schema、frontend caller、锁顺序、shared helper 和发布过渡连接未改变。下一步只能进入 BE-001AF-04 单叶整理 / closeout，判断是否继续细拆。
 **真实文件**:
+- `src/runtime/mutation/parameter_mutation.rs`
 - `src/runtime/mutation.rs`
 - `src/runtime/mod.rs`
 - `src/backend/runtime/routes/mutation.rs`
@@ -1251,6 +1252,7 @@ AI 声称 `backend.runtime.routes.mutation` 已完成 BE-001AF-02 时，必须�
 - `frontend/src/components/RuntimeMutationPanel.jsx`
 - `markdown/06-milestones/v4.16.0/132-runtime.mutation.parameter_mutation单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/133-runtime.mutation.parameter_mutation抽离方案.md`
+- `markdown/06-milestones/v4.16.0/134-runtime.mutation.parameter_mutation抽离记录.md`
 
 **职责**:
 承载 runtime parameter mutation lifecycle handler 白箱边界，冻结 proposal create/list/detail、activation、rollback、safe window、parameter version canonicalization、event contract、run record append 和 persisted mutation record 的等价证据。本节点不拥有 AI proposal、approval review、schema 定义、AppState、runtime persistence、frontend caller 或发布过渡连接。
@@ -1280,19 +1282,22 @@ AI 声称 `backend.runtime.routes.mutation` 已完成 BE-001AF-02 时，必须�
 | `activate_runtime_parameter_mutation` | proposal id、activation body | activated record | route facade | 不得迁移 snapshot/config generation owner |
 | `rollback_runtime_parameter_mutation` | proposal id、rollback body | rolled back record | route facade | 不得改变 rollback event contract |
 
-**关键内部 helper**:
-`canonical_runtime_parameter_version`；`validate_runtime_parameter_mutation_target`；`validate_runtime_parameter_mutation_boundary`；`resolve_runtime_parameter_mutation_boundary`；`evaluate_runtime_parameter_mutation_safe_window`；`runtime_mode_from_events`；`status_contract_value`；`mutation_event_contract`；`build_runtime_parameter_mutation_event`；`append_parameter_mutation_events_to_run`；`runtime_parameter_mutation_governance`；`runtime_parameter_mutation_record_id`；`runtime_parameter_mutation_rollback_record_id`；`mutation_lifecycle_entry`；`governance_with_parameter_version`；`persist_runtime_parameter_mutation_transition`；`auto_snapshot_on_activation`。
+**子模块私有 helper**:
+`validate_runtime_parameter_mutation_boundary`；`resolve_runtime_parameter_mutation_boundary`；`evaluate_runtime_parameter_mutation_safe_window`；`runtime_parameter_mutation_record_id`；`runtime_parameter_mutation_rollback_record_id`；`mutation_lifecycle_entry`；`persist_runtime_parameter_mutation_transition`；`auto_snapshot_on_activation`。
 
-**抽离方案**:
-| 项 | BE-001AF-03 计划 | 约束 |
+**父级 shared helper**:
+`canonical_runtime_parameter_version`；`validate_runtime_parameter_mutation_target`；`runtime_mode_from_events`；`status_contract_value`；`mutation_event_contract`；`build_runtime_parameter_mutation_event`；`append_parameter_mutation_events_to_run`；`runtime_parameter_mutation_governance`；`governance_with_parameter_version`。
+
+**抽离结果**:
+| 项 | BE-001AF-03 结果 | 约束 |
 | --- | --- | --- |
-| 目标子模块 | src/runtime/mutation/parameter_mutation.rs | 仅为下一批计划目标，当前文件尚未创建 |
-| 父级声明 | `#[path = "mutation/parameter_mutation.rs"] mod mutation_parameter_mutation;` | 必须落在 `src/runtime/mod.rs`，位于 `include!("mutation.rs")` 之前 |
-| 父级出口 | `pub(crate) use mutation_parameter_mutation` | 只 re-export 五个 parameter mutation public handler |
+| 目标子模块 | `src/runtime/mutation/parameter_mutation.rs` | 已创建，承接五个 public handler 和本叶私有 helper |
+| 父级声明 | `#[path = "mutation/parameter_mutation.rs"] mod mutation_parameter_mutation;` | 已落在 `src/runtime/mod.rs`，位于 `include!("mutation.rs")` 之前 |
+| 父级出口 | `pub(crate) use mutation_parameter_mutation` | 已只 re-export 五个 parameter mutation public handler |
 | route facade | `src/backend/runtime/routes/mutation.rs` | 不改 route、不改 handler 调用名 |
-| query owner | `RuntimeParameterMutationListQuery` | BE-001AF-03 暂留 `src/runtime/mod.rs` |
+| query owner | `RuntimeParameterMutationListQuery` | 继续留在 `src/runtime/mod.rs` |
 
-**BE-001AF-03 允许迁移**:
+**BE-001AF-03 已迁移**:
 `create_runtime_parameter_mutation`；`list_runtime_parameter_mutations`；`get_runtime_parameter_mutation_detail`；`activate_runtime_parameter_mutation`；`rollback_runtime_parameter_mutation`；`validate_runtime_parameter_mutation_boundary`；`resolve_runtime_parameter_mutation_boundary`；`evaluate_runtime_parameter_mutation_safe_window`；`runtime_parameter_mutation_record_id`；`runtime_parameter_mutation_rollback_record_id`；`mutation_lifecycle_entry`；`persist_runtime_parameter_mutation_transition`；`auto_snapshot_on_activation`。
 
 **BE-001AF-03 必须保留父级 shared helper**:
@@ -1301,11 +1306,11 @@ AI 声称 `backend.runtime.routes.mutation` 已完成 BE-001AF-02 时，必须�
 **路由 owner 基线**:
 | Route | Handler | 当前 owner |
 | --- | --- | --- |
-| `POST /api/runtime/mutations` | `create_runtime_parameter_mutation` | `src/runtime/mutation.rs` |
-| `GET /api/runtime/mutations` | `list_runtime_parameter_mutations` | `src/runtime/mutation.rs` |
-| `GET /api/runtime/mutations/:proposal_id` | `get_runtime_parameter_mutation_detail` | `src/runtime/mutation.rs` |
-| `POST /api/runtime/mutations/:proposal_id/activate` | `activate_runtime_parameter_mutation` | `src/runtime/mutation.rs` |
-| `POST /api/runtime/mutations/:proposal_id/rollback` | `rollback_runtime_parameter_mutation` | `src/runtime/mutation.rs` |
+| `POST /api/runtime/mutations` | `create_runtime_parameter_mutation` | `src/runtime/mutation/parameter_mutation.rs` via `src/runtime/mod.rs` |
+| `GET /api/runtime/mutations` | `list_runtime_parameter_mutations` | `src/runtime/mutation/parameter_mutation.rs` via `src/runtime/mod.rs` |
+| `GET /api/runtime/mutations/:proposal_id` | `get_runtime_parameter_mutation_detail` | `src/runtime/mutation/parameter_mutation.rs` via `src/runtime/mod.rs` |
+| `POST /api/runtime/mutations/:proposal_id/activate` | `activate_runtime_parameter_mutation` | `src/runtime/mutation/parameter_mutation.rs` via `src/runtime/mod.rs` |
+| `POST /api/runtime/mutations/:proposal_id/rollback` | `rollback_runtime_parameter_mutation` | `src/runtime/mutation/parameter_mutation.rs` via `src/runtime/mod.rs` |
 
 **父级通信规则**:
 `runtime.mutation.parameter_mutation` 只能经 `backend.runtime.routes.mutation` 暴露 HTTP route，并经父级 runtime facade 维持兼容出口。不得横向接管 AI proposal、approval review、report、evidence、experiment、ops、strategy_config、executor 或 frontend caller。状态 owner 仍是 `AppState`，schema owner 仍是 `src/frontend_api_types.rs`，persistence owner 仍是 `src/runtime_persistence.rs`。发布过渡前不得主动提出横向连接或性能旁路。ASCII guard: `release transition guard`。
@@ -1321,8 +1326,11 @@ AI 声称 `backend.runtime.routes.mutation` 已完成 BE-001AF-02 时，必须�
 **回归保护**:
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；`git diff --check`。
 
+**细分价值判断**:
+BE-001AF-03 只完成实际抽离，不做单叶整理结论。下一步 BE-001AF-04 必须判断 activate/rollback lifecycle、safe window/boundary helper、auto snapshot side effect 是否值得继续细拆；如值得，必须先建立新的单子叶等价基线。
+
 **幻觉检查点**:
-AI 声称 `runtime.mutation.parameter_mutation` 已完成 BE-001AF-02 时，必须说明本批只建立抽离方案，且仍为 `no code movement`。不得宣称 parameter mutation handler 已迁移、目标文件已创建、AI proposal/approval 已迁移、AppState 或锁顺序已改变、snapshot/config generation owner 已迁移、发布过渡已启动、整理或重构已经完成。
+AI 声称 `runtime.mutation.parameter_mutation` 已完成 BE-001AF-03 时，必须说明 parameter mutation handler 已迁入 `src/runtime/mutation/parameter_mutation.rs`，route facade 未修改，AI proposal / approval 未迁移，AppState / schema / frontend caller / 锁顺序未改变，发布过渡未启动，下一步只能进入 BE-001AF-04 单叶 closeout。不得宣称 `runtime.mutation` 已全部完成、AI proposal/approval 已拆分、整理或重构已经完成。
 
 ### 5.1.2 `backend.runtime.routes.run`
 
@@ -3294,6 +3302,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/131-backend.runtime.routes.mutation单叶closeout.md` backend runtime routes mutation closeout | `backend.runtime.routes.mutation` | 单叶 closeout，route facade 等价并设置 `stop_split: true` | BE-001AE 单叶 closeout | 不得宣称 handler/AppState/lock order/schema/frontend caller 或 release transition 已迁移；已由 BE-001AF-01 `runtime.mutation.parameter_mutation` 基线承接 |
 | `markdown/06-milestones/v4.16.0/132-runtime.mutation.parameter_mutation单子叶等价基线.md` runtime mutation parameter mutation baseline | `runtime.mutation.parameter_mutation` | 单子叶等价基线，冻结 parameter mutation handler 生命周期 | BE-001AF 单子叶基线 | `no code movement`；不得宣称 handler moved、target file created、AI proposal/approval/shared owner migrated 或 release transition 已启动 |
 | `markdown/06-milestones/v4.16.0/133-runtime.mutation.parameter_mutation抽离方案.md` runtime mutation parameter mutation extraction plan | `runtime.mutation.parameter_mutation` | 抽离方案，固定目标子模块、父级 re-export 和 shared helper 保留边界 | BE-001AF 抽离方案 | `no code movement`；下一步只能进入 BE-001AF-03 实际抽离，不得宣称 handler moved、target file created 或 release transition 已启动 |
+| `markdown/06-milestones/v4.16.0/134-runtime.mutation.parameter_mutation抽离记录.md` runtime mutation parameter mutation extraction record | `runtime.mutation.parameter_mutation` | 实际抽离，五个 parameter mutation handler 已迁入 `src/runtime/mutation/parameter_mutation.rs` 并通过父级 re-export 暴露 | BE-001AF 抽离记录 | 下一步只能进入 BE-001AF-04 单叶 closeout；不得宣称 AI proposal/approval/AppState/schema/frontend caller 或 release transition 已迁移 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
