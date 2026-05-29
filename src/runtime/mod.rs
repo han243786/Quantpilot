@@ -7,6 +7,8 @@ mod backtest_record_store;
 #[path = "backtest/replay.rs"]
 mod backtest_replay;
 mod event_stream;
+#[path = "mutation/ai_proposal.rs"]
+mod mutation_ai_proposal;
 #[path = "mutation/parameter_mutation.rs"]
 mod mutation_parameter_mutation;
 #[path = "run/record_store.rs"]
@@ -24,6 +26,11 @@ pub(crate) use backtest_record_store::{
 };
 pub(crate) use backtest_replay::get_backtest_replay;
 pub(crate) use event_stream::stream_run_events;
+pub(crate) use mutation_ai_proposal::{
+    approve_ai_proposal, claim_ai_proposal_review, create_runtime_ai_proposal,
+    get_runtime_ai_proposal_detail, get_runtime_approval_detail, list_runtime_ai_proposals,
+    list_runtime_approvals, reject_ai_proposal,
+};
 pub(crate) use mutation_parameter_mutation::{
     activate_runtime_parameter_mutation, create_runtime_parameter_mutation,
     get_runtime_parameter_mutation_detail, list_runtime_parameter_mutations,

@@ -140,6 +140,7 @@ v4.7.0 系统应被理解为：
 - BE-001AX-01 已完成 `runtime.mutation.parameter_mutation` 第三轮父叶残余判断并设置父叶 `stop_split: true`。下一步只能进入 BE-001AY-01 `runtime.mutation.ai_proposal` 单子叶等价基线。
 - BE-001AY-01 已建立 `runtime.mutation.ai_proposal` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001AY-02 抽离方案。
 - BE-001AY-02 已建立 `runtime.mutation.ai_proposal` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001AY-03 实际抽离。
+- BE-001AY-03 已完成 `runtime.mutation.ai_proposal` 实际抽离；AI proposal / approval handlers 已迁入 `src/runtime/mutation/ai_proposal.rs`，下一步只能进入 BE-001AY-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 
