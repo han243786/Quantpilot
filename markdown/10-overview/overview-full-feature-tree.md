@@ -1590,6 +1590,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/198-runtime.mutation.ai_proposal.event_lifecycle单叶closeout.md` - v4.16.0 BE-001BD-04 `runtime.mutation.ai_proposal.event_lifecycle` 单叶 closeout
 - `markdown/06-milestones/v4.16.0/199-runtime.mutation.ai_proposal第三轮父叶残余判断.md` - v4.16.0 BE-001BE-01 `runtime.mutation.ai_proposal` 第三轮父叶残余判断
 - `markdown/06-milestones/v4.16.0/200-runtime.mutation.ai_proposal.record_query单子叶等价基线.md` - v4.16.0 BE-001BF-01 `runtime.mutation.ai_proposal.record_query` 单子叶等价基线
+- `markdown/06-milestones/v4.16.0/201-runtime.mutation.ai_proposal.record_query抽离方案.md` - v4.16.0 BE-001BF-02 `runtime.mutation.ai_proposal.record_query` 抽离方案
 - `src/runtime/mutation/ai_proposal.rs` - runtime AI proposal child，承接 AI proposal / approval public handler 与专属 helper
 - `src/runtime/mutation/ai_proposal/static_check.rs` - runtime AI proposal static check child，承接 hash/model/static check/config binding/v4 analysis helper 与静态检查单测
 - `src/runtime/mutation/ai_proposal/source_governance_identity.rs` - runtime AI proposal source governance identity child，承接 source context、governance projection 与 record identity helper
@@ -1644,6 +1645,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001BD-04 已完成 `runtime.mutation.ai_proposal.event_lifecycle` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001BE-01 `runtime.mutation.ai_proposal` 父叶残余判断。
 当前最新递归点补充: BE-001BE-01 已完成 `runtime.mutation.ai_proposal` 第三轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001BF-01 `runtime.mutation.ai_proposal.record_query` 单子叶等价基线。
 当前最新递归点补充: BE-001BF-01 已建立 `runtime.mutation.ai_proposal.record_query` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001BF-02 抽离方案。
+当前最新递归点补充: BE-001BF-02 已建立 `runtime.mutation.ai_proposal.record_query` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001BF-03 实际抽离。
 
 ### 7.7 总览 (markdown/10-overview/)
 

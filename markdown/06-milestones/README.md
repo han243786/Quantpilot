@@ -212,6 +212,7 @@
 | 198 | `v4.16.0/198-runtime.mutation.ai_proposal.event_lifecycle单叶closeout.md` | BE-001BD-04 `runtime.mutation.ai_proposal.event_lifecycle` 单叶 closeout | 📋 已创建 |
 | 199 | `v4.16.0/199-runtime.mutation.ai_proposal第三轮父叶残余判断.md` | BE-001BE-01 `runtime.mutation.ai_proposal` 第三轮父叶残余判断 | 📋 已创建 |
 | 200 | `v4.16.0/200-runtime.mutation.ai_proposal.record_query单子叶等价基线.md` | BE-001BF-01 `runtime.mutation.ai_proposal.record_query` 单子叶等价基线 | 📋 已创建 |
+| 201 | `v4.16.0/201-runtime.mutation.ai_proposal.record_query抽离方案.md` | BE-001BF-02 `runtime.mutation.ai_proposal.record_query` 抽离方案 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
