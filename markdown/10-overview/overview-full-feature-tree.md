@@ -294,6 +294,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/runtime/backtest/start_orchestration.rs`
 - `src/runtime/backtest/record_lifecycle.rs`
 - `src/runtime/mutation/parameter_mutation.rs`
+- `src/runtime/mutation/parameter_mutation/proposal_creation.rs`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle.rs`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/activation_flow.rs`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/activation_snapshot_side_effect.rs`
@@ -1561,6 +1562,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/170-runtime.mutation.parameter_mutation父叶残余判断.md` - v4.16.0 BE-001AT-01 `parameter_mutation` 父叶残余判断，下一候选为 `proposal_creation`
 - `markdown/06-milestones/v4.16.0/171-runtime.mutation.parameter_mutation.proposal_creation单子叶等价基线.md` - v4.16.0 BE-001AU-01 `proposal_creation` 单子叶等价基线，冻结 create handler 与 record id helper
 - `markdown/06-milestones/v4.16.0/172-runtime.mutation.parameter_mutation.proposal_creation抽离方案.md` - v4.16.0 BE-001AU-02 `proposal_creation` 抽离方案，固定目标文件、父级声明和 handler re-export
+- `markdown/06-milestones/v4.16.0/173-runtime.mutation.parameter_mutation.proposal_creation抽离记录.md` - v4.16.0 BE-001AU-03 `proposal_creation` 实际抽离，迁移 create handler 与 record id helper
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/transition_record_persistence.rs` - transition lifecycle entry / persistence child
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_record_identity.rs` - transition lifecycle rollback id identity child
 
@@ -1582,6 +1584,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001AT-01 已完成 `runtime.mutation.parameter_mutation` 父叶残余判断；父叶仍为 `stop_split: false`，下一步只能进入 BE-001AU-01 `proposal_creation` 单子叶等价基线。
 当前最新递归点补充: BE-001AU-01 已建立 `runtime.mutation.parameter_mutation.proposal_creation` 单子叶等价基线；下一步只能进入 BE-001AU-02 抽离方案，目标文件尚未创建。
 当前最新递归点补充: BE-001AU-02 已建立 `runtime.mutation.parameter_mutation.proposal_creation` 抽离方案；下一步只能进入 BE-001AU-03 实际抽离，目标文件尚未创建。
+当前最新递归点补充: BE-001AU-03 已完成 `runtime.mutation.parameter_mutation.proposal_creation` 实际抽离；下一步只能进入 BE-001AU-04 单叶 closeout。
 
 ### 7.7 总览 (markdown/10-overview/)
 
