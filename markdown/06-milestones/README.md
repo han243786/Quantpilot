@@ -141,6 +141,7 @@
 | 127 | `v4.16.0/127-backend.runtime.routes父叶残余判断.md` | BE-001AD-01 `backend.runtime.routes` 父叶残余判断，确认 route aggregate 仍有 mutation 等残余候选并保持 `stop_split: false` | ✅ 已完成 |
 | 128 | `v4.16.0/128-backend.runtime.routes.mutation单子叶等价基线.md` | BE-001AE-01 `backend.runtime.routes.mutation` 单子叶等价基线，冻结 mutation / AI proposal / approval route group | ✅ 已完成 |
 | 129 | `v4.16.0/129-backend.runtime.routes.mutation抽离方案.md` | BE-001AE-02 `backend.runtime.routes.mutation` 抽离方案，只规划 route facade 最小迁移 | 📋 已创建 |
+| 130 | `v4.16.0/130-backend.runtime.routes.mutation抽离记录.md` | BE-001AE-03 `backend.runtime.routes.mutation` route facade 实际抽离记录 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

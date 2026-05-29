@@ -8,13 +8,14 @@ use crate::{runtime as runtime_handlers, AppState};
 pub const MODULE_ID: &str = "backend.runtime.routes";
 
 pub mod backtest;
+pub mod mutation;
 pub mod run;
 
 pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
     let router = backtest::register_routes(router);
     let router = run::register_routes(router);
 
-    router
+    let router = router
         .route(
             "/api/runtime/runs/:run_id/events",
             get(runtime_handlers::stream_run_events),
@@ -26,33 +27,11 @@ pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
         .route(
             "/api/runtime/evidence/cleanup",
             post(runtime_handlers::cleanup_runtime_evidence),
-        )
-        .route(
-            "/api/runtime/mutations",
-            get(runtime_handlers::list_runtime_parameter_mutations)
-                .post(runtime_handlers::create_runtime_parameter_mutation),
-        )
-        .route(
-            "/api/runtime/mutations/:proposal_id",
-            get(runtime_handlers::get_runtime_parameter_mutation_detail),
-        )
-        .route(
-            "/api/runtime/mutations/:proposal_id/activate",
-            post(runtime_handlers::activate_runtime_parameter_mutation),
-        )
-        .route(
-            "/api/runtime/mutations/:proposal_id/rollback",
-            post(runtime_handlers::rollback_runtime_parameter_mutation),
-        )
-        .route(
-            "/api/runtime/ai-proposals",
-            get(runtime_handlers::list_runtime_ai_proposals)
-                .post(runtime_handlers::create_runtime_ai_proposal),
-        )
-        .route(
-            "/api/runtime/ai-proposals/:ai_proposal_id",
-            get(runtime_handlers::get_runtime_ai_proposal_detail),
-        )
+        );
+
+    let router = mutation::register_routes(router);
+
+    router
         .route(
             "/api/runtime/reports",
             get(runtime_handlers::list_runtime_reports)
@@ -82,26 +61,6 @@ pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
             "/api/runtime/experiments/:experiment_id",
             get(runtime_handlers::get_experiment_detail)
                 .delete(runtime_handlers::discard_experiment_record),
-        )
-        .route(
-            "/api/v1/ai/approvals",
-            get(runtime_handlers::list_runtime_approvals),
-        )
-        .route(
-            "/api/v1/ai/approvals/:approval_id",
-            get(runtime_handlers::get_runtime_approval_detail),
-        )
-        .route(
-            "/api/v1/ai/proposals/:proposal_id/approve",
-            post(runtime_handlers::approve_ai_proposal),
-        )
-        .route(
-            "/api/v1/ai/proposals/:proposal_id/reject",
-            post(runtime_handlers::reject_ai_proposal),
-        )
-        .route(
-            "/api/v1/ai/proposals/:proposal_id/claim",
-            post(runtime_handlers::claim_ai_proposal_review),
         )
         .route(
             "/api/v1/merge/records",
