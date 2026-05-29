@@ -4088,6 +4088,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/179-runtime.mutation.parameter_mutation.record_query单叶closeout.md` runtime mutation parameter mutation record query closeout | `runtime.mutation.parameter_mutation.record_query` | 单叶 closeout，确认等价并设置 `stop_split: true` | BE-001AW 单叶 closeout | `no code movement`；下一步只能进入 BE-001AX-01 父叶残余判断，不得继续拆 record_query 或 release transition |
 | `markdown/06-milestones/v4.16.0/180-runtime.mutation.parameter_mutation第三轮父叶残余判断.md` runtime mutation parameter mutation third parent residual decision | `runtime.mutation.parameter_mutation` | 父叶残余判断，确认三个 child 均 closeout 并设置父叶 `stop_split: true` | BE-001AX 父叶残余判断 | `no code movement`；下一步只能进入 BE-001AY-01 `runtime.mutation.ai_proposal` 单子叶等价基线，不得移动 AI proposal 或 release transition |
 | `markdown/06-milestones/v4.16.0/181-runtime.mutation.ai_proposal单子叶等价基线.md` runtime mutation ai proposal baseline | `runtime.mutation.ai_proposal` | 单子叶等价基线，冻结 AI proposal / approval handler 域 | BE-001AY 单子叶基线 | `no code movement`；下一步只能进入 BE-001AY-02 抽离方案，不得移动 handler/helper、AppState/schema/frontend caller 或 release transition |
+| `markdown/06-milestones/v4.16.0/182-runtime.mutation.ai_proposal抽离方案.md` runtime mutation ai proposal extraction plan | `runtime.mutation.ai_proposal` | 抽离方案，固定目标文件、父级声明、public handler re-export 和 shared helper 保留清单 | BE-001AY 抽离方案 | `no code movement`；下一步只能进入 BE-001AY-03 实际抽离，不得迁移 shared helper 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
