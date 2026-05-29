@@ -172,6 +172,7 @@ v4.7.0 系统应被理解为：
 - BE-001BJ-03 已完成 `runtime.mutation.ai_proposal.approval_persistence` 实际抽离；`persist_approval` 与 `load_approval_from_disk` 已迁入 `src/runtime/mutation/ai_proposal/approval_persistence.rs`，下一步只能进入 BE-001BJ-04 单叶 closeout。
 - BE-001BJ-04 已完成 `runtime.mutation.ai_proposal.approval_persistence` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001BK-01 `runtime.mutation.ai_proposal` 第六轮父叶残余判断。
 - BE-001BK-01 已完成 `runtime.mutation.ai_proposal` 第六轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001BL-01 `runtime.mutation.ai_proposal.sandbox_trigger` 单子叶等价基线。
+- BE-001BL-01 已建立 `runtime.mutation.ai_proposal.sandbox_trigger` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001BL-02 抽离方案。
 
 ## 当前收尾/发布状态
 

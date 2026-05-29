@@ -1995,7 +1995,7 @@ AI 声称 `record_query` 已完成 BE-001AW-04 时，必须说明本叶已 close
 
 **层级路径**: `root.backend.runtime.mutation.ai_proposal`
 **父模块**: `backend.runtime`
-**状态**: v4.16 BE-001BK-01 已完成 `runtime.mutation.ai_proposal` 第六轮父叶残余判断。`runtime.mutation.ai_proposal.static_check`、`runtime.mutation.ai_proposal.source_governance_identity`、`runtime.mutation.ai_proposal.event_lifecycle`、`runtime.mutation.ai_proposal.record_query`、`runtime.mutation.ai_proposal.approval_review` 与 `runtime.mutation.ai_proposal.approval_persistence` 均已完成 closeout，父叶仍承接 `sandbox_trigger`、`status_transition` 与 proposal create orchestration 等稳定职责，因此父叶保持 `stop_split: false`。下一步只能进入 BE-001BL-01 `runtime.mutation.ai_proposal.sandbox_trigger` 单子叶等价基线。`AppState`、schema owner、frontend caller、runtime persistence owner、route facade 和 release transition guard 均未改变。
+**状态**: v4.16 BE-001BL-01 已建立 `runtime.mutation.ai_proposal.sandbox_trigger` 单子叶等价基线。`runtime.mutation.ai_proposal.static_check`、`runtime.mutation.ai_proposal.source_governance_identity`、`runtime.mutation.ai_proposal.event_lifecycle`、`runtime.mutation.ai_proposal.record_query`、`runtime.mutation.ai_proposal.approval_review` 与 `runtime.mutation.ai_proposal.approval_persistence` 均已完成 closeout，父叶仍承接 `sandbox_trigger`、`status_transition` 与 proposal create orchestration 等稳定职责，因此父叶保持 `stop_split: false`。下一步只能进入 BE-001BL-02 `runtime.mutation.ai_proposal.sandbox_trigger` 抽离方案。`AppState`、schema owner、frontend caller、runtime persistence owner、route facade 和 release transition guard 均未改变。
 
 **真实文件**:
 - `src/runtime/mutation/ai_proposal.rs`
@@ -2048,6 +2048,7 @@ AI 声称 `record_query` 已完成 BE-001AW-04 时，必须说明本叶已 close
 - `markdown/06-milestones/v4.16.0/212-runtime.mutation.ai_proposal.approval_persistence抽离记录.md`
 - `markdown/06-milestones/v4.16.0/213-runtime.mutation.ai_proposal.approval_persistence单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/214-runtime.mutation.ai_proposal第六轮父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/215-runtime.mutation.ai_proposal.sandbox_trigger单子叶等价基线.md`
 
 **职责**:
 承载 runtime AI proposal 与 approval review handler 域的白箱边界，冻结候选生成、静态检查、proposal 查询、approval 查询、approve/reject/claim、sandbox gate、approval persistence、状态迁移和 evidence event contract。本节点不拥有 parameter mutation、report、evidence、experiment、ops、frontend caller、schema owner、AppState owner 或发布过渡连接。
@@ -2081,7 +2082,7 @@ AI 声称 `record_query` 已完成 BE-001AW-04 时，必须说明本叶已 close
 | `claim_ai_proposal_review` | proposal id、approval action | approval record | `backend.runtime.routes.mutation` | 不得改变 pending-only claim guard 或 reviewer assignment |
 
 **关键 helper 基线**:
-`static_check` child 已承接 `validate_hash_identity`、`validate_ai_model_identity`、`ai_proposal_static_check_result`、`validate_ai_proposal_config_domain_binding` 等 static check helper。`source_governance_identity` child 已承接 `RuntimeAiProposalSourceContext`、`load_runtime_ai_proposal_source_context`、`runtime_ai_proposal_governance` 和 `runtime_ai_proposal_record_id`。`event_lifecycle` child 已承接 `ai_proposal_event_contract`、`build_runtime_ai_proposal_event`、`ai_proposal_lifecycle_entry` 与 `persist_runtime_ai_proposal_transition`。`record_query` child 已承接 `load_runtime_ai_proposal_for_user`、`list_runtime_ai_proposals` 与 `get_runtime_ai_proposal_detail`；父级只保留 path-attributed child、双 handler re-export 和 loader import。`approval_review` child 已承接 `list_runtime_approvals`、`get_runtime_approval_detail`、`approve_ai_proposal`、`reject_ai_proposal` 与 `claim_ai_proposal_review`；父级只保留 path-attributed child 和五 handler re-export。`approval_persistence` child 已承接 `persist_approval` 与 `load_approval_from_disk`；父级只保留 path-attributed child 和私有 helper import。父叶残余仍包括 `load_sandbox_report_for_proposal`、`ensure_ai_proposal_can_be_approved`、`create_runtime_ai_proposal` 内部 `RequestSandboxVerificationRequest` / `run_sandbox_verification` / `JoinHandle` / `catch_unwind` / `sandbox_report_url` sandbox task、`ai_proposal_approved_status`、`is_valid_ai_proposal_transition` 和 `update_ai_proposal_status`。
+`static_check` child 已承接 `validate_hash_identity`、`validate_ai_model_identity`、`ai_proposal_static_check_result`、`validate_ai_proposal_config_domain_binding` 等 static check helper。`source_governance_identity` child 已承接 `RuntimeAiProposalSourceContext`、`load_runtime_ai_proposal_source_context`、`runtime_ai_proposal_governance` 和 `runtime_ai_proposal_record_id`。`event_lifecycle` child 已承接 `ai_proposal_event_contract`、`build_runtime_ai_proposal_event`、`ai_proposal_lifecycle_entry` 与 `persist_runtime_ai_proposal_transition`。`record_query` child 已承接 `load_runtime_ai_proposal_for_user`、`list_runtime_ai_proposals` 与 `get_runtime_ai_proposal_detail`；父级只保留 path-attributed child、双 handler re-export 和 loader import。`approval_review` child 已承接 `list_runtime_approvals`、`get_runtime_approval_detail`、`approve_ai_proposal`、`reject_ai_proposal` 与 `claim_ai_proposal_review`；父级只保留 path-attributed child 和五 handler re-export。`approval_persistence` child 已承接 `persist_approval` 与 `load_approval_from_disk`；父级只保留 path-attributed child 和私有 helper import。`sandbox_trigger` 单子叶等价基线已建立，但代码仍在父级；残余包括 `load_sandbox_report_for_proposal`、`ensure_ai_proposal_can_be_approved`、`create_runtime_ai_proposal` 内部 `RequestSandboxVerificationRequest` / `run_sandbox_verification` / `JoinHandle` / `catch_unwind` / `sandbox_report_url` sandbox task、`ai_proposal_approved_status`、`is_valid_ai_proposal_transition` 和 `update_ai_proposal_status`。
 
 **HTTP route 基线**:
 | Route | Method | Handler |
@@ -2105,10 +2106,10 @@ AI 声称 `record_query` 已完成 BE-001AW-04 时，必须说明本叶已 close
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1`；`git diff --check`。
 
 **细分价值判断**:
-本父叶已推进至 BE-001BK-01，仍设置 `stop_split: false`。`static_check`、`source_governance_identity`、`event_lifecycle`、`record_query`、`approval_review` 与 `approval_persistence` 均已 closeout 且 `stop_split: true`。父叶还剩 `sandbox_trigger`、`status_transition` 与 proposal create orchestration，下一步只能进入 BE-001BL-01 `runtime.mutation.ai_proposal.sandbox_trigger` 单子叶等价基线。
+本父叶已推进至 BE-001BL-01，仍设置 `stop_split: false`。`static_check`、`source_governance_identity`、`event_lifecycle`、`record_query`、`approval_review` 与 `approval_persistence` 均已 closeout 且 `stop_split: true`。`sandbox_trigger` 已建立单子叶等价基线但尚未抽离；父叶还剩 `sandbox_trigger`、`status_transition` 与 proposal create orchestration，下一步只能进入 BE-001BL-02 `runtime.mutation.ai_proposal.sandbox_trigger` 抽离方案。
 
 **幻觉检查点**:
-AI 声称 `runtime.mutation.ai_proposal` 已推进至 BE-001BK-01 时，必须说明当前只是父叶残余判断，`sandbox_trigger` 尚未建立等价基线也尚未抽离，status transition 与 proposal create orchestration 尚未拆分。不得宣称 AppState/schema/frontend caller 已改变、release transition 已启动、整理或重构已经完成。
+AI 声称 `runtime.mutation.ai_proposal` 已推进至 BE-001BL-01 时，必须说明当前只是 `sandbox_trigger` 单子叶等价基线，尚未创建 sandbox_trigger 目标文件，status transition 与 proposal create orchestration 尚未拆分。不得宣称 AppState/schema/frontend caller 已改变、release transition 已启动、整理或重构已经完成。
 
 ### 5.1.1.3.1 `runtime.mutation.ai_proposal.static_check`
 
@@ -2446,6 +2447,46 @@ BE-001BJ-04 已完成单叶 closeout，设置 `stop_split: true`。`persist_appr
 
 **幻觉检查点**:
 AI 声称 `runtime.mutation.ai_proposal.approval_persistence` 已推进至 BE-001BJ-04 时，必须说明本叶已 closeout 并设置 `stop_split: true`，但 `runtime.mutation.ai_proposal` 父叶尚未完成。不得宣称 sandbox_trigger/status_transition 已拆分、AppState/schema/frontend caller 已改变、release transition 已启动或 Rust backend 重构完成。
+
+### 5.1.1.3.7 `runtime.mutation.ai_proposal.sandbox_trigger`
+
+**层级路径**: `root.backend.runtime.mutation.ai_proposal.sandbox_trigger`
+**父模块**: `runtime.mutation.ai_proposal`
+**状态**: v4.16 BE-001BL-01 单子叶等价基线已建立；当前 `no code movement`，计划目标文件为 src/runtime/mutation/ai_proposal/sandbox_trigger.rs，但尚未创建。该叶冻结 approve 前 sandbox gate、sandbox report fallback、create path background task、retry / panic guard、`sandbox_report_url` 回写、失败 lifecycle 和 approval persistence 副作用。下一步只能进入 BE-001BL-02 抽离方案。
+
+**真实文件**:
+- `src/runtime/mutation/ai_proposal.rs`
+- `src/runtime/mutation/ai_proposal/approval_review.rs`
+- `src/runtime/mutation/ai_proposal/approval_persistence.rs`
+- `src/runtime_persistence.rs`
+- `tests/api_ai_proposal.rs`
+- `tests/api_mutation.rs`
+- `tests/api_evidence_contract.rs`
+- `tests/api_run.rs`
+- `markdown/06-milestones/v4.16.0/214-runtime.mutation.ai_proposal第六轮父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/215-runtime.mutation.ai_proposal.sandbox_trigger单子叶等价基线.md`
+
+**职责**:
+冻结 AI proposal sandbox trigger 白箱边界: `load_sandbox_report_for_proposal` 的 memory-first / disk fallback、`ensure_ai_proposal_can_be_approved` 的 config binding / static check / sandbox required / sandbox verdict gate、`create_runtime_ai_proposal` 内部 background sandbox verification task 的 `RequestSandboxVerificationRequest`、`run_sandbox_verification`、`JoinHandle` monitoring、`catch_unwind`、retry、`sandbox_report_url` 回写和 `RuntimeApprovalLifecycleEntry` failure side effect。本节点不拥有 `status_transition`、proposal create orchestration、AppState、schema owner、frontend caller、route facade、runtime persistence owner 或 release transition guard。
+
+**关键 public/helper 方法**:
+| 方法 / 入口 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `load_sandbox_report_for_proposal` | `&AppState`、proposal id | `Result<SandboxVerificationReport, (StatusCode, String)>` | `ensure_ai_proposal_can_be_approved` | 不得跳过 `state.sandbox_reports` memory-first lookup 或 `sandbox_report_store_dir` fallback |
+| `ensure_ai_proposal_can_be_approved` | `&AppState`、`&RuntimeAiProposalRecord` | `Result<(), (StatusCode, String)>` | `approval_review` via parent `use super::*` | 不得改变 `strategy_config_ai_binding_required`、`ai_proposal_static_check_required`、`ai_proposal_sandbox_required` 或 `ai_proposal_sandbox_failed` gate |
+| background sandbox verification task | `AppState` clone、proposal id、approval record | approval side effect | `create_runtime_ai_proposal` | 不得改变 `RequestSandboxVerificationRequest`、`run_sandbox_verification`、3 次 retry、`catch_unwind`、`sandbox_report_url` 或 failed lifecycle |
+
+**父级通信规则**:
+`runtime.mutation.ai_proposal.sandbox_trigger` 后续只能由父级 `runtime.mutation.ai_proposal` 连接。`approval_review` 必须继续经父级 `use super::*` 受控调用 `ensure_ai_proposal_can_be_approved`，不得横向 import sibling。sandbox task 即使迁入 planned child，也只能经父级受控调用 `persist_approval`，不得横向 import `approval_persistence` sibling。ASCII guard: `release transition guard`。
+
+**回归保护**:
+本基线批次只跑治理门禁: `powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；`git diff --check`。后续实际抽离必须补跑 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`。
+
+**细分价值判断**:
+BE-001BL-01 只建立单子叶等价基线，`stop_split: pending`。本叶目前值得进入抽离方案，因为 sandbox gate、external report evidence、background verification task、retry / panic guard、report URL 回写和 failure lifecycle 共同形成独立外部证据 owner。下一步只能进入 BE-001BL-02 抽离方案，不得直接创建 sandbox_trigger 目标文件或迁移 status_transition。
+
+**幻觉检查点**:
+AI 声称 `runtime.mutation.ai_proposal.sandbox_trigger` 已推进至 BE-001BL-01 时，必须说明当前只是单子叶等价基线，尚未创建目标文件，也尚未迁移 `load_sandbox_report_for_proposal`、`ensure_ai_proposal_can_be_approved` 或 background sandbox task。不得宣称 status_transition、proposal create orchestration、AppState/schema/frontend caller、route facade、runtime persistence owner 或 release transition 已改变。
 
 ### 5.1.2 `backend.runtime.routes.run`
 
@@ -4498,6 +4539,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/212-runtime.mutation.ai_proposal.approval_persistence抽离记录.md` runtime mutation ai proposal approval persistence extraction record | `runtime.mutation.ai_proposal.approval_persistence` | 实际抽离记录，两个 persistence helper 迁入 child | BE-001BJ 实际抽离 | 下一步只能进入 BE-001BJ-04 单叶 closeout，不得迁移 sandbox/status helper 或 release transition |
 | `markdown/06-milestones/v4.16.0/213-runtime.mutation.ai_proposal.approval_persistence单叶closeout.md` runtime mutation ai proposal approval persistence closeout | `runtime.mutation.ai_proposal.approval_persistence` | 单叶 closeout，设置 `stop_split: true` | BE-001BJ 单叶收口 | 下一步只能进入 BE-001BK-01 父叶残余判断，不得继续细拆 approval_persistence 或 release transition |
 | `markdown/06-milestones/v4.16.0/214-runtime.mutation.ai_proposal第六轮父叶残余判断.md` runtime mutation ai proposal sixth parent residual decision | `runtime.mutation.ai_proposal` | 父叶残余判断，选择下一候选 `sandbox_trigger` | BE-001BK 父叶判断 | 父叶保持 `stop_split: false`；下一步只能进入 BE-001BL-01 单子叶等价基线，不得直接创建 sandbox_trigger 文件或 release transition |
+| `markdown/06-milestones/v4.16.0/215-runtime.mutation.ai_proposal.sandbox_trigger单子叶等价基线.md` runtime mutation ai proposal sandbox trigger baseline | `runtime.mutation.ai_proposal.sandbox_trigger` | 单子叶等价基线，冻结 sandbox gate / background task / report URL side effect | BE-001BL 单子叶基线 | `no code movement`；下一步只能进入 BE-001BL-02 抽离方案，不得创建 sandbox_trigger 文件或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
