@@ -214,6 +214,7 @@
 | 200 | `v4.16.0/200-runtime.mutation.ai_proposal.record_query单子叶等价基线.md` | BE-001BF-01 `runtime.mutation.ai_proposal.record_query` 单子叶等价基线 | 📋 已创建 |
 | 201 | `v4.16.0/201-runtime.mutation.ai_proposal.record_query抽离方案.md` | BE-001BF-02 `runtime.mutation.ai_proposal.record_query` 抽离方案 | 📋 已创建 |
 | 202 | `v4.16.0/202-runtime.mutation.ai_proposal.record_query抽离记录.md` | BE-001BF-03 `runtime.mutation.ai_proposal.record_query` 抽离记录 | 📋 已创建 |
+| 203 | `v4.16.0/203-runtime.mutation.ai_proposal.record_query单叶closeout.md` | BE-001BF-04 `runtime.mutation.ai_proposal.record_query` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
