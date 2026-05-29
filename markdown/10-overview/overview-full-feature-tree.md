@@ -1586,9 +1586,11 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/194-runtime.mutation.ai_proposal第二轮父叶残余判断.md` - v4.16.0 BE-001BC-01 `runtime.mutation.ai_proposal` 第二轮父叶残余判断，下一候选为 `event_lifecycle`
 - `markdown/06-milestones/v4.16.0/195-runtime.mutation.ai_proposal.event_lifecycle单子叶等价基线.md` - v4.16.0 BE-001BD-01 `runtime.mutation.ai_proposal.event_lifecycle` 单子叶等价基线
 - `markdown/06-milestones/v4.16.0/196-runtime.mutation.ai_proposal.event_lifecycle抽离方案.md` - v4.16.0 BE-001BD-02 `runtime.mutation.ai_proposal.event_lifecycle` 抽离方案
+- `markdown/06-milestones/v4.16.0/197-runtime.mutation.ai_proposal.event_lifecycle抽离记录.md` - v4.16.0 BE-001BD-03 `runtime.mutation.ai_proposal.event_lifecycle` 抽离记录
 - `src/runtime/mutation/ai_proposal.rs` - runtime AI proposal child，承接 AI proposal / approval public handler 与专属 helper
 - `src/runtime/mutation/ai_proposal/static_check.rs` - runtime AI proposal static check child，承接 hash/model/static check/config binding/v4 analysis helper 与静态检查单测
 - `src/runtime/mutation/ai_proposal/source_governance_identity.rs` - runtime AI proposal source governance identity child，承接 source context、governance projection 与 record identity helper
+- `src/runtime/mutation/ai_proposal/event_lifecycle.rs` - runtime AI proposal event lifecycle child，承接 event contract、runtime event builder、lifecycle entry 与 proposal transition persistence helper
 - `src/runtime/mutation/parameter_mutation/record_query.rs` - runtime parameter mutation record query child，承接 list/detail read model handler
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/transition_record_persistence.rs` - transition lifecycle entry / persistence child
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_record_identity.rs` - transition lifecycle rollback id identity child
@@ -1635,6 +1637,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001BC-01 已完成 `runtime.mutation.ai_proposal` 第二轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001BD-01 `runtime.mutation.ai_proposal.event_lifecycle` 单子叶等价基线。
 当前最新递归点补充: BE-001BD-01 已建立 `runtime.mutation.ai_proposal.event_lifecycle` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001BD-02 抽离方案。
 当前最新递归点补充: BE-001BD-02 已建立 `runtime.mutation.ai_proposal.event_lifecycle` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001BD-03 实际抽离。
+当前最新递归点补充: BE-001BD-03 已完成 `runtime.mutation.ai_proposal.event_lifecycle` 实际抽离；event/lifecycle helper 已迁入 child，下一步只能进入 BE-001BD-04 单叶 closeout。
 
 ### 7.7 总览 (markdown/10-overview/)
 
