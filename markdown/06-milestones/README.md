@@ -130,6 +130,7 @@
 | 116 | `v4.16.0/116-runtime.backtest.experiment_sweep.start_orchestration单子叶等价基线.md` | BE-001Y-01 `runtime.backtest.experiment_sweep.start_orchestration` 单子叶等价基线，当前 `no code movement` | 📋 已创建 |
 | 117 | `v4.16.0/117-runtime.backtest.experiment_sweep.start_orchestration抽离方案.md` | BE-001Y-02 `runtime.backtest.experiment_sweep.start_orchestration` 抽离方案，限定下一批只迁移 `start_backtest_experiment` | 📋 已创建 |
 | 118 | `v4.16.0/118-runtime.backtest.experiment_sweep.start_orchestration抽离记录.md` | BE-001Y-03 `runtime.backtest.experiment_sweep.start_orchestration` 抽离记录，将 `start_backtest_experiment` 迁入 `src/runtime/backtest/start_orchestration.rs` | 📋 已创建 |
+| 119 | `v4.16.0/119-runtime.backtest.experiment_sweep.start_orchestration单叶closeout.md` | BE-001Y-04 `runtime.backtest.experiment_sweep.start_orchestration` 单叶 closeout，确认等价并设置 `stop_split: true` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
