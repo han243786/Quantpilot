@@ -167,6 +167,7 @@
 | 153 | `v4.16.0/153-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_flow单叶closeout.md` | BE-001AL-04 `rollback_flow` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 | 154 | `v4.16.0/154-runtime.mutation.parameter_mutation.transition_lifecycle第三轮父叶残余判断.md` | BE-001AM-01 `transition_lifecycle` 第三轮父叶残余判断，下一候选为 `activation_snapshot_side_effect` | 📋 已创建 |
 | 155 | `v4.16.0/155-runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect单子叶等价基线.md` | BE-001AN-01 `activation_snapshot_side_effect` 单子叶等价基线 | 📋 已创建 |
+| 156 | `v4.16.0/156-runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect抽离方案.md` | BE-001AN-02 `activation_snapshot_side_effect` 抽离方案 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
