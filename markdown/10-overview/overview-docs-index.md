@@ -186,6 +186,7 @@
 | v4.16.0 / BE-001BF-03 | 新增: `runtime.mutation.ai_proposal.record_query` 实际抽离已完成，下一步进入 BE-001BF-04 单叶 closeout |
 | v4.16.0 / BE-001BF-04 | 新增: `runtime.mutation.ai_proposal.record_query` 单叶 closeout 已完成并设置 `stop_split: true`，下一步进入 BE-001BG-01 父叶残余判断 |
 | v4.16.0 / BE-001BG-01 | 新增: `runtime.mutation.ai_proposal` 第四轮父叶残余判断已完成，下一步进入 BE-001BH-01 `approval_review` 单子叶等价基线 |
+| v4.16.0 / BE-001BH-01 | 新增: `runtime.mutation.ai_proposal.approval_review` 单子叶等价基线已建立，当前 `no code movement`，下一步进入 BE-001BH-02 抽离方案 |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |
