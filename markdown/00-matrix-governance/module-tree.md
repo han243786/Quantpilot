@@ -1995,7 +1995,7 @@ AI 声称 `record_query` 已完成 BE-001AW-04 时，必须说明本叶已 close
 
 **层级路径**: `root.backend.runtime.mutation.ai_proposal`
 **父模块**: `backend.runtime`
-**状态**: v4.16 BE-001BJ-03 已完成 `runtime.mutation.ai_proposal.approval_persistence` 实际抽离。`runtime.mutation.ai_proposal.static_check`、`runtime.mutation.ai_proposal.source_governance_identity`、`runtime.mutation.ai_proposal.event_lifecycle`、`runtime.mutation.ai_proposal.record_query` 与 `runtime.mutation.ai_proposal.approval_review` 均已完成 closeout，父叶仍承接 sandbox_trigger 和 status_transition 等稳定职责，因此父叶保持 `stop_split: false`。下一步只能进入 BE-001BJ-04 `runtime.mutation.ai_proposal.approval_persistence` 单叶 closeout。`AppState`、schema owner、frontend caller、runtime persistence owner、route facade 和 release transition guard 均未改变。
+**状态**: v4.16 BE-001BJ-04 已完成 `runtime.mutation.ai_proposal.approval_persistence` 单叶 closeout 并设置 `stop_split: true`。`runtime.mutation.ai_proposal.static_check`、`runtime.mutation.ai_proposal.source_governance_identity`、`runtime.mutation.ai_proposal.event_lifecycle`、`runtime.mutation.ai_proposal.record_query`、`runtime.mutation.ai_proposal.approval_review` 与 `runtime.mutation.ai_proposal.approval_persistence` 均已完成 closeout，父叶仍承接 sandbox_trigger 和 status_transition 等稳定职责，因此父叶保持 `stop_split: false`。下一步只能进入 BE-001BK-01 `runtime.mutation.ai_proposal` 第六轮父叶残余判断。`AppState`、schema owner、frontend caller、runtime persistence owner、route facade 和 release transition guard 均未改变。
 
 **真实文件**:
 - `src/runtime/mutation/ai_proposal.rs`
@@ -2046,6 +2046,7 @@ AI 声称 `record_query` 已完成 BE-001AW-04 时，必须说明本叶已 close
 - `markdown/06-milestones/v4.16.0/210-runtime.mutation.ai_proposal.approval_persistence单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/211-runtime.mutation.ai_proposal.approval_persistence抽离方案.md`
 - `markdown/06-milestones/v4.16.0/212-runtime.mutation.ai_proposal.approval_persistence抽离记录.md`
+- `markdown/06-milestones/v4.16.0/213-runtime.mutation.ai_proposal.approval_persistence单叶closeout.md`
 
 **职责**:
 承载 runtime AI proposal 与 approval review handler 域的白箱边界，冻结候选生成、静态检查、proposal 查询、approval 查询、approve/reject/claim、sandbox gate、approval persistence、状态迁移和 evidence event contract。本节点不拥有 parameter mutation、report、evidence、experiment、ops、frontend caller、schema owner、AppState owner 或发布过渡连接。
@@ -2103,10 +2104,10 @@ AI 声称 `record_query` 已完成 BE-001AW-04 时，必须说明本叶已 close
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1`；`git diff --check`。
 
 **细分价值判断**:
-本父叶已推进至 BE-001BJ-03，仍设置 `stop_split: false`。`static_check`、`source_governance_identity`、`event_lifecycle`、`record_query` 与 `approval_review` 均已 closeout 且 `stop_split: true`。`approval_persistence` 已完成实际抽离但尚未 closeout；父叶还剩 sandbox_trigger 与 status_transition，下一步只能进入 BE-001BJ-04 `runtime.mutation.ai_proposal.approval_persistence` 单叶 closeout。
+本父叶已推进至 BE-001BJ-04，仍设置 `stop_split: false`。`static_check`、`source_governance_identity`、`event_lifecycle`、`record_query`、`approval_review` 与 `approval_persistence` 均已 closeout 且 `stop_split: true`。父叶还剩 sandbox_trigger 与 status_transition，下一步只能进入 BE-001BK-01 `runtime.mutation.ai_proposal` 第六轮父叶残余判断。
 
 **幻觉检查点**:
-AI 声称 `runtime.mutation.ai_proposal` 已推进至 BE-001BJ-03 时，必须说明当前只是 `approval_persistence` 实际抽离，单叶 closeout 尚未完成，sandbox trigger 与 status transition 尚未拆分。不得宣称 AppState/schema/frontend caller 已改变、release transition 已启动、整理或重构已经完成。
+AI 声称 `runtime.mutation.ai_proposal` 已推进至 BE-001BJ-04 时，必须说明当前只是 `approval_persistence` 单叶 closeout，父叶尚未完成，sandbox trigger 与 status transition 尚未拆分。不得宣称 AppState/schema/frontend caller 已改变、release transition 已启动、整理或重构已经完成。
 
 ### 5.1.1.3.1 `runtime.mutation.ai_proposal.static_check`
 
@@ -2401,7 +2402,7 @@ AI 声称 `runtime.mutation.ai_proposal.approval_review` 已推进至 BE-001BH-0
 
 **层级路径**: `root.backend.runtime.mutation.ai_proposal.approval_persistence`
 **父模块**: `runtime.mutation.ai_proposal`
-**状态**: v4.16 BE-001BJ-03 实际抽离已完成；`src/runtime/mutation/ai_proposal/approval_persistence.rs` 已创建并承接 `persist_approval` 与 `load_approval_from_disk`。父级保留 `mod approval_persistence` 与私有 helper import，下一步只能进入 BE-001BJ-04 单叶 closeout。
+**状态**: v4.16 BE-001BJ-04 单叶 closeout 已完成；`src/runtime/mutation/ai_proposal/approval_persistence.rs` 承接 `persist_approval` 与 `load_approval_from_disk`，设置 `stop_split: true`。继续拆 read/write 微叶不会形成新的稳定 owner。下一步只能进入 BE-001BK-01 父叶残余判断。
 
 **真实文件**:
 - `src/runtime/mutation/ai_proposal.rs`
@@ -2416,6 +2417,7 @@ AI 声称 `runtime.mutation.ai_proposal.approval_review` 已推进至 BE-001BH-0
 - `markdown/06-milestones/v4.16.0/210-runtime.mutation.ai_proposal.approval_persistence单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/211-runtime.mutation.ai_proposal.approval_persistence抽离方案.md`
 - `markdown/06-milestones/v4.16.0/212-runtime.mutation.ai_proposal.approval_persistence抽离记录.md`
+- `markdown/06-milestones/v4.16.0/213-runtime.mutation.ai_proposal.approval_persistence单叶closeout.md`
 
 **职责**:
 冻结 approval record persistence 白箱边界: `RuntimeApprovalRecord` 写入、磁盘 fallback 读取、`approval_store_dir`、`FsPath`、`fs::create_dir_all`、`atomic_write_json`、`fs::read`、`serde_json::from_slice`、`json_bad_request` / `not_found` 与 `internal_error(anyhow::anyhow)` 错误映射。本节点不拥有 approval review handler、sandbox_trigger、status_transition、AppState、schema owner、frontend caller、route facade、runtime persistence owner 或 release transition guard。
@@ -2439,10 +2441,10 @@ BE-001BJ-03 只允许迁移 `persist_approval` 与 `load_approval_from_disk` 两
 BE-001BJ-03 已完成实际抽离。目标 child 已创建，父级只保留 `#[path = "ai_proposal/approval_persistence.rs"] mod approval_persistence;` 与 `use approval_persistence::{load_approval_from_disk, persist_approval};`。`approval_review` 仍经父级 `use super::*` 访问 helper，没有横向 import sibling。
 
 **细分价值判断**:
-BE-001BJ-03 已完成实际抽离，当前 `stop_split: pending`。`persist_approval` 与 `load_approval_from_disk` 围绕同一 approval record store path、JSON 文件命名和错误映射形成低副作用 persistence owner；是否继续细拆必须等 BE-001BJ-04 单叶 closeout 判断。
+BE-001BJ-04 已完成单叶 closeout，设置 `stop_split: true`。`persist_approval` 与 `load_approval_from_disk` 围绕同一 approval record store path、JSON 文件命名和错误映射形成低副作用 persistence owner；继续拆成 read/write 微叶不会形成新的稳定状态、锁、schema、route facade 或 runtime persistence owner。
 
 **幻觉检查点**:
-AI 声称 `runtime.mutation.ai_proposal.approval_persistence` 已推进至 BE-001BJ-03 时，必须说明当前只完成实际抽离，单叶 closeout 尚未完成。不得宣称 sandbox_trigger/status_transition 已拆分、AppState/schema/frontend caller 已改变、release transition 已启动或 Rust backend 重构完成。
+AI 声称 `runtime.mutation.ai_proposal.approval_persistence` 已推进至 BE-001BJ-04 时，必须说明本叶已 closeout 并设置 `stop_split: true`，但 `runtime.mutation.ai_proposal` 父叶尚未完成。不得宣称 sandbox_trigger/status_transition 已拆分、AppState/schema/frontend caller 已改变、release transition 已启动或 Rust backend 重构完成。
 
 ### 5.1.2 `backend.runtime.routes.run`
 
@@ -4493,6 +4495,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/210-runtime.mutation.ai_proposal.approval_persistence单子叶等价基线.md` runtime mutation ai proposal approval persistence baseline | `runtime.mutation.ai_proposal.approval_persistence` | 单子叶等价基线，冻结 approval record disk read/write helper | BE-001BJ 单子叶基线 | `no code movement`；下一步只能进入 BE-001BJ-02 抽离方案，不得创建 approval_persistence 文件或 release transition |
 | `markdown/06-milestones/v4.16.0/211-runtime.mutation.ai_proposal.approval_persistence抽离方案.md` runtime mutation ai proposal approval persistence extraction plan | `runtime.mutation.ai_proposal.approval_persistence` | 抽离方案，固定目标文件、父级声明和 helper import | BE-001BJ 抽离方案 | `no code movement`；下一步只能进入 BE-001BJ-03 实际抽离，不得迁移 sandbox/status helper 或 release transition |
 | `markdown/06-milestones/v4.16.0/212-runtime.mutation.ai_proposal.approval_persistence抽离记录.md` runtime mutation ai proposal approval persistence extraction record | `runtime.mutation.ai_proposal.approval_persistence` | 实际抽离记录，两个 persistence helper 迁入 child | BE-001BJ 实际抽离 | 下一步只能进入 BE-001BJ-04 单叶 closeout，不得迁移 sandbox/status helper 或 release transition |
+| `markdown/06-milestones/v4.16.0/213-runtime.mutation.ai_proposal.approval_persistence单叶closeout.md` runtime mutation ai proposal approval persistence closeout | `runtime.mutation.ai_proposal.approval_persistence` | 单叶 closeout，设置 `stop_split: true` | BE-001BJ 单叶收口 | 下一步只能进入 BE-001BK-01 父叶残余判断，不得继续细拆 approval_persistence 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
