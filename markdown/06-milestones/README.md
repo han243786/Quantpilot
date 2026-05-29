@@ -200,6 +200,7 @@
 | 186 | `v4.16.0/186-runtime.mutation.ai_proposal.static_check抽离方案.md` | BE-001AZ-02 `runtime.mutation.ai_proposal.static_check` 抽离方案，固定目标文件、helper import 和 visibility | 📋 已创建 |
 | 187 | `v4.16.0/187-runtime.mutation.ai_proposal.static_check抽离记录.md` | BE-001AZ-03 `runtime.mutation.ai_proposal.static_check` 实际抽离，helper 与静态检查单测迁入 child | 📋 已创建 |
 | 188 | `v4.16.0/188-runtime.mutation.ai_proposal.static_check单叶closeout.md` | BE-001AZ-04 `runtime.mutation.ai_proposal.static_check` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
+| 189 | `v4.16.0/189-runtime.mutation.ai_proposal父叶残余判断.md` | BE-001BA-01 `runtime.mutation.ai_proposal` 父叶残余判断，下一候选为 `source_governance_identity` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
