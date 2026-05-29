@@ -187,6 +187,7 @@
 | 173 | `v4.16.0/173-runtime.mutation.parameter_mutation.proposal_creation抽离记录.md` | BE-001AU-03 `proposal_creation` 实际抽离，迁移 create handler 与 record id helper | 📋 已创建 |
 | 174 | `v4.16.0/174-runtime.mutation.parameter_mutation.proposal_creation单叶closeout.md` | BE-001AU-04 `proposal_creation` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 | 175 | `v4.16.0/175-runtime.mutation.parameter_mutation第二轮父叶残余判断.md` | BE-001AV-01 `parameter_mutation` 第二轮父叶残余判断，下一候选为 `record_query` | 📋 已创建 |
+| 176 | `v4.16.0/176-runtime.mutation.parameter_mutation.record_query单子叶等价基线.md` | BE-001AW-01 `record_query` 单子叶等价基线，冻结 list/detail 查询流 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
