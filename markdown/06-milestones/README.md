@@ -137,6 +137,8 @@
 | 123 | `v4.16.0/123-runtime.backtest.experiment_sweep.record_lifecycle抽离记录.md` | BE-001AA-03 `runtime.backtest.experiment_sweep.record_lifecycle` 抽离记录，四个 lifecycle handler 已迁入 `src/runtime/backtest/record_lifecycle.rs` | ✅ 已完成 |
 | 124 | `v4.16.0/124-runtime.backtest.experiment_sweep.record_lifecycle单叶closeout.md` | BE-001AA-04 `runtime.backtest.experiment_sweep.record_lifecycle` 单叶 closeout，确认等价并设置 `stop_split: true` | ✅ 已完成 |
 | 125 | `v4.16.0/125-runtime.backtest.experiment_sweep第三轮父叶残余判断.md` | BE-001AB-01 `runtime.backtest.experiment_sweep` 第三轮父叶残余判断，确认三子叶均已 closeout 并设置父叶 `stop_split: true` | ✅ 已完成 |
+| 126 | `v4.16.0/126-runtime.backtest父叶残余判断.md` | BE-001AC-01 `runtime.backtest` 父叶残余判断，确认当前 handler 域已收束并设置父叶 `stop_split: true` | ✅ 已完成 |
+| 127 | `v4.16.0/127-backend.runtime.routes父叶残余判断.md` | BE-001AD-01 `backend.runtime.routes` 父叶残余判断，确认 route aggregate 仍有 mutation 等残余候选并保持 `stop_split: false` | ✅ 已完成 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
