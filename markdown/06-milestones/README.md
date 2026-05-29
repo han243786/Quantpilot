@@ -164,6 +164,7 @@
 | 150 | `v4.16.0/150-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_flow单子叶等价基线.md` | BE-001AL-01 `rollback_flow` 单子叶等价基线，冻结 rollback transaction 状态机 | 📋 已创建 |
 | 151 | `v4.16.0/151-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_flow抽离方案.md` | BE-001AL-02 `rollback_flow` 抽离方案，固定目标文件与父级 re-export | 📋 已创建 |
 | 152 | `v4.16.0/152-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_flow抽离记录.md` | BE-001AL-03 `rollback_flow` 实际抽离，迁移 rollback public handler | 📋 已创建 |
+| 153 | `v4.16.0/153-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_flow单叶closeout.md` | BE-001AL-04 `rollback_flow` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
