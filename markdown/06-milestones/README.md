@@ -202,6 +202,7 @@
 | 188 | `v4.16.0/188-runtime.mutation.ai_proposal.static_check单叶closeout.md` | BE-001AZ-04 `runtime.mutation.ai_proposal.static_check` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 | 189 | `v4.16.0/189-runtime.mutation.ai_proposal父叶残余判断.md` | BE-001BA-01 `runtime.mutation.ai_proposal` 父叶残余判断，下一候选为 `source_governance_identity` | 📋 已创建 |
 | 190 | `v4.16.0/190-runtime.mutation.ai_proposal.source_governance_identity单子叶等价基线.md` | BE-001BB-01 `runtime.mutation.ai_proposal.source_governance_identity` 单子叶等价基线 | 📋 已创建 |
+| 191 | `v4.16.0/191-runtime.mutation.ai_proposal.source_governance_identity抽离方案.md` | BE-001BB-02 `runtime.mutation.ai_proposal.source_governance_identity` 抽离方案 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
