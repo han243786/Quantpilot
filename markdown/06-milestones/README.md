@@ -183,6 +183,7 @@
 | 169 | `v4.16.0/169-runtime.mutation.parameter_mutation.transition_lifecycle第六轮父叶残余判断.md` | BE-001AS-01 `transition_lifecycle` 第六轮父叶残余判断，父叶设置 `stop_split: true` | 📋 已创建 |
 | 170 | `v4.16.0/170-runtime.mutation.parameter_mutation父叶残余判断.md` | BE-001AT-01 `parameter_mutation` 父叶残余判断，下一候选为 `proposal_creation` | 📋 已创建 |
 | 171 | `v4.16.0/171-runtime.mutation.parameter_mutation.proposal_creation单子叶等价基线.md` | BE-001AU-01 `proposal_creation` 单子叶等价基线，冻结 create handler 与 record id helper | 📋 已创建 |
+| 172 | `v4.16.0/172-runtime.mutation.parameter_mutation.proposal_creation抽离方案.md` | BE-001AU-02 `proposal_creation` 抽离方案，固定目标文件、父级声明和 handler re-export | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

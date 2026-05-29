@@ -129,6 +129,7 @@ v4.7.0 系统应被理解为：
 - BE-001AS-01 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle` 第六轮父叶残余判断；父叶已设置 `stop_split: true`。下一步只能进入 BE-001AT-01 `runtime.mutation.parameter_mutation` 父叶残余判断。
 - BE-001AT-01 已完成 `runtime.mutation.parameter_mutation` 父叶残余判断；父叶仍保持 `stop_split: false`，下一步只能进入 BE-001AU-01 `runtime.mutation.parameter_mutation.proposal_creation` 单子叶等价基线。
 - BE-001AU-01 已建立 `runtime.mutation.parameter_mutation.proposal_creation` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001AU-02 抽离方案。
+- BE-001AU-02 已建立 `runtime.mutation.parameter_mutation.proposal_creation` 抽离方案；当前 `no code movement`，目标文件、父级 path attribute、handler re-export、`use super::*`、迁移清单和回退点已固定。下一步只能进入 BE-001AU-03 实际抽离。
 
 ## 当前收尾/发布状态
 

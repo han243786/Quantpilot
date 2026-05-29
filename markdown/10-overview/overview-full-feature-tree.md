@@ -1560,6 +1560,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/169-runtime.mutation.parameter_mutation.transition_lifecycle第六轮父叶残余判断.md` - v4.16.0 BE-001AS-01 `transition_lifecycle` 第六轮父叶残余判断，父叶设置 `stop_split: true`
 - `markdown/06-milestones/v4.16.0/170-runtime.mutation.parameter_mutation父叶残余判断.md` - v4.16.0 BE-001AT-01 `parameter_mutation` 父叶残余判断，下一候选为 `proposal_creation`
 - `markdown/06-milestones/v4.16.0/171-runtime.mutation.parameter_mutation.proposal_creation单子叶等价基线.md` - v4.16.0 BE-001AU-01 `proposal_creation` 单子叶等价基线，冻结 create handler 与 record id helper
+- `markdown/06-milestones/v4.16.0/172-runtime.mutation.parameter_mutation.proposal_creation抽离方案.md` - v4.16.0 BE-001AU-02 `proposal_creation` 抽离方案，固定目标文件、父级声明和 handler re-export
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/transition_record_persistence.rs` - transition lifecycle entry / persistence child
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_record_identity.rs` - transition lifecycle rollback id identity child
 
@@ -1580,6 +1581,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001AS-01 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle` 第六轮父叶残余判断并设置父叶 `stop_split: true`；下一步只能进入 BE-001AT-01 `runtime.mutation.parameter_mutation` 父叶残余判断。
 当前最新递归点补充: BE-001AT-01 已完成 `runtime.mutation.parameter_mutation` 父叶残余判断；父叶仍为 `stop_split: false`，下一步只能进入 BE-001AU-01 `proposal_creation` 单子叶等价基线。
 当前最新递归点补充: BE-001AU-01 已建立 `runtime.mutation.parameter_mutation.proposal_creation` 单子叶等价基线；下一步只能进入 BE-001AU-02 抽离方案，目标文件尚未创建。
+当前最新递归点补充: BE-001AU-02 已建立 `runtime.mutation.parameter_mutation.proposal_creation` 抽离方案；下一步只能进入 BE-001AU-03 实际抽离，目标文件尚未创建。
 
 ### 7.7 总览 (markdown/10-overview/)
 
