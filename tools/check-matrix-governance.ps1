@@ -264,7 +264,8 @@ $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.16.0/116-*.md", "v4.16 runtime backtest experiment sweep start orchestration baseline"),
     @("markdown/06-milestones/v4.16.0/117-*.md", "v4.16 runtime backtest experiment sweep start orchestration extraction plan"),
     @("markdown/06-milestones/v4.16.0/118-*.md", "v4.16 runtime backtest experiment sweep start orchestration extraction record"),
-    @("markdown/06-milestones/v4.16.0/119-*.md", "v4.16 runtime backtest experiment sweep start orchestration closeout")
+    @("markdown/06-milestones/v4.16.0/119-*.md", "v4.16 runtime backtest experiment sweep start orchestration closeout"),
+    @("markdown/06-milestones/v4.16.0/120-*.md", "v4.16 runtime backtest experiment sweep second parent residual decision")
 )
 
 foreach ($entry in $requiredMilestonePatterns) {
@@ -405,6 +406,7 @@ $indexChecks = @(
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/117-", "full feature tree v4.16 runtime backtest experiment sweep start orchestration extraction plan"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/118-", "full feature tree v4.16 runtime backtest experiment sweep start orchestration extraction record"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/119-", "full feature tree v4.16 runtime backtest experiment sweep start orchestration closeout"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.16.0/120-", "full feature tree v4.16 runtime backtest experiment sweep second parent residual decision"),
     @("markdown/10-overview/overview-full-feature-tree.md", "src/runtime/backtest/execution_start.rs", "full feature tree runtime backtest execution start file"),
     @("markdown/10-overview/overview-full-feature-tree.md", "src/runtime/backtest/v4_projection.rs", "full feature tree runtime backtest v4 projection file"),
     @("markdown/10-overview/overview-full-feature-tree.md", "src/runtime/backtest/v4_request_resolution.rs", "full feature tree runtime backtest v4 request resolution file"),
@@ -536,6 +538,7 @@ $indexChecks = @(
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/117-", "module tree v4.16 runtime backtest experiment sweep start orchestration extraction plan"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/118-", "module tree v4.16 runtime backtest experiment sweep start orchestration extraction record"),
     @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/119-", "module tree v4.16 runtime backtest experiment sweep start orchestration closeout"),
+    @("markdown/00-matrix-governance/module-tree.md", "markdown/06-milestones/v4.16.0/120-", "module tree v4.16 runtime backtest experiment sweep second parent residual decision"),
     @("markdown/00-matrix-governance/module-tree.md", "src/runtime/backtest/execution_start.rs", "module tree runtime backtest execution start file"),
     @("markdown/00-matrix-governance/module-tree.md", "src/runtime/backtest/v4_projection.rs", "module tree runtime backtest v4 projection file"),
     @("markdown/00-matrix-governance/module-tree.md", "src/runtime/backtest/v4_request_resolution.rs", "module tree runtime backtest v4 request resolution file"),
@@ -3913,6 +3916,49 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/120-*.md", @(
+        @("BE-001Z-01", "runtime backtest experiment sweep second parent residual marker"),
+        @("BE-001AA-01", "next record lifecycle baseline marker"),
+        @("runtime.backtest.experiment_sweep", "runtime backtest experiment sweep parent"),
+        @("root.backend.runtime.routes.runtime.backtest.experiment_sweep", "module tree coordinate"),
+        @("runtime.backtest.experiment_sweep.record_lifecycle", "record lifecycle next candidate marker"),
+        @("runtime.backtest.experiment_sweep.parameter_grid", "parameter grid child marker"),
+        @("runtime.backtest.experiment_sweep.start_orchestration", "start orchestration child marker"),
+        @("no code movement", "no code movement marker"),
+        @("stop_split: false", "parent remains open marker"),
+        @("stop_split: true", "closed child marker"),
+        @("src/runtime/backtest/experiment_sweep.rs", "runtime backtest experiment sweep file"),
+        @("src/runtime/backtest/parameter_grid.rs", "runtime backtest parameter grid file"),
+        @("src/runtime/backtest/start_orchestration.rs", "runtime backtest start orchestration file"),
+        @("src/runtime/backtest/execution_start.rs", "execution start bridge file"),
+        @("src/runtime_persistence.rs", "runtime persistence owner file"),
+        @("src/runtime_response_mapping.rs", "runtime response mapping owner file"),
+        @("src/frontend_api_types.rs", "frontend api types owner file"),
+        @("list_experiments", "list experiments marker"),
+        @("get_experiment_detail", "experiment detail marker"),
+        @("save_experiment_record", "save experiment marker"),
+        @("discard_experiment_record", "discard experiment marker"),
+        @("variant backtest", "variant backtest marker"),
+        @("transient cleanup", "transient cleanup marker"),
+        @("state cache", "state cache marker"),
+        @("audit", "audit marker"),
+        @("response mapping", "response mapping marker"),
+        @("route registration", "route registration exclusion marker"),
+        @("schema", "schema exclusion marker"),
+        @("persistence", "persistence exclusion marker"),
+        @("frontend caller", "frontend caller exclusion marker"),
+        @("release transition guard", "release transition guard"),
+        @("powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1", "utf8 gate"),
+        @("git diff --check", "diff whitespace gate"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test --no-run", "cargo test compile gate"),
+        @("cargo test -p quantpilot --test api_experiments", "api experiments gate"),
+        @("cargo test -p quantpilot --test api_backtest", "api backtest gate"),
+        @("cargo test -p quantpilot --test api_evidence_contract", "api evidence contract gate")
     ))
 )
 
