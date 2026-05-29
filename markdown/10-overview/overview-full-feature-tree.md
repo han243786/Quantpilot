@@ -1554,6 +1554,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/163-runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence单叶closeout.md` - v4.16.0 BE-001AP-04 `transition_record_persistence` 单叶 closeout，设置 `stop_split: true`
 - `markdown/06-milestones/v4.16.0/164-runtime.mutation.parameter_mutation.transition_lifecycle第五轮父叶残余判断.md` - v4.16.0 BE-001AQ-01 `transition_lifecycle` 第五轮父叶残余判断，父叶保持 `stop_split: false`，下一候选为 `rollback_record_identity`
 - `markdown/06-milestones/v4.16.0/165-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity单子叶等价基线.md` - v4.16.0 BE-001AR-01 `rollback_record_identity` 单子叶等价基线，冻结 rollback id digest contract
+- `markdown/06-milestones/v4.16.0/166-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity抽离方案.md` - v4.16.0 BE-001AR-02 `rollback_record_identity` 抽离方案，固定目标文件、父级声明和回退点
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/transition_record_persistence.rs` - transition lifecycle entry / persistence child
 
 当前治理基线: `v4.15.0/` — 三矩阵完全接管，后续常态维护模块树、全量树和治理 gate。
@@ -1567,6 +1568,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001AP-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001AQ-01 父叶残余判断。
 当前最新递归点补充: BE-001AQ-01 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle` 第五轮父叶残余判断；父叶仍为 `stop_split: false`，下一步只能进入 BE-001AR-01 `rollback_record_identity` 单子叶等价基线。
 当前最新递归点补充: BE-001AR-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 单子叶等价基线；下一步只能进入 BE-001AR-02 抽离方案，目标文件尚未创建。
+当前最新递归点补充: BE-001AR-02 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 抽离方案；下一步只能进入 BE-001AR-03 实际抽离。
 
 ### 7.7 总览 (markdown/10-overview/)
 
