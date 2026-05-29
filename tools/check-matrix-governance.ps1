@@ -5512,6 +5512,38 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/152-*.md", @(
+        @("BE-001AL-03", "runtime mutation parameter transition lifecycle rollback flow extraction record marker"),
+        @("BE-001AL-04", "next rollback flow closeout marker"),
+        @("actual extraction", "actual extraction marker"),
+        @("runtime.mutation.parameter_mutation.transition_lifecycle.rollback_flow", "rollback flow child marker"),
+        @("root.backend.runtime.mutation.parameter_mutation.transition_lifecycle.rollback_flow", "module tree coordinate"),
+        @("src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_flow.rs", "rollback flow target file"),
+        @("#[path = `"transition_lifecycle/rollback_flow.rs`"]", "path attributed child declaration"),
+        @("pub(crate) use rollback_flow::rollback_runtime_parameter_mutation;", "rollback handler re-export"),
+        @("rollback_runtime_parameter_mutation", "rollback public handler"),
+        @("use super::*;", "child prelude"),
+        @("runtime_parameter_mutation_rollback_record_id", "rollback id helper"),
+        @("mutation_lifecycle_entry", "lifecycle helper"),
+        @("persist_runtime_parameter_mutation_transition", "transition persistence helper"),
+        @("auto_snapshot_on_activation", "snapshot helper parent residual"),
+        @("AI proposal", "ai proposal exclusion marker"),
+        @("approval review", "approval exclusion marker"),
+        @("AppState", "app state owner marker"),
+        @("schema", "schema owner marker"),
+        @("frontend caller", "frontend caller marker"),
+        @("cargo fmt --check", "cargo fmt check gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test --no-run", "cargo test compile gate"),
+        @("cargo test -p quantpilot --test api_mutation", "api mutation gate"),
+        @("cargo test -p quantpilot --test api_ai_proposal", "api ai proposal gate"),
+        @("cargo test -p quantpilot --test api_evidence_contract", "api evidence contract gate"),
+        @("cargo test -p quantpilot --test api_run", "api run gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 
