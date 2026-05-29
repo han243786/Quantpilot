@@ -28,7 +28,7 @@
 | --- | --- |
 | 目标文件 | `src/runtime/mutation/parameter_mutation/transition_lifecycle.rs` |
 | 父级文件 | `src/runtime/mutation/parameter_mutation.rs` |
-| 父级声明 | `mod transition_lifecycle;` |
+| 父级声明 | `#[path = "parameter_mutation/transition_lifecycle.rs"] mod transition_lifecycle;` |
 | 父级 handler 出口 | `pub(crate) use transition_lifecycle::{activate_runtime_parameter_mutation, rollback_runtime_parameter_mutation};` |
 | 父级 boundary 出口 | `use transition_lifecycle::validate_runtime_parameter_mutation_boundary;` |
 | 子级导入 | `use super::*;` |
@@ -103,6 +103,7 @@ src/runtime/mod.rs
 
 src/runtime/mutation/parameter_mutation.rs
   use super::*;
+  #[path = "parameter_mutation/transition_lifecycle.rs"]
   mod transition_lifecycle;
   pub(crate) use transition_lifecycle::{
       activate_runtime_parameter_mutation,
