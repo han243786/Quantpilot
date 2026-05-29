@@ -217,6 +217,7 @@
 | 203 | `v4.16.0/203-runtime.mutation.ai_proposal.record_query单叶closeout.md` | BE-001BF-04 `runtime.mutation.ai_proposal.record_query` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 | 204 | `v4.16.0/204-runtime.mutation.ai_proposal第四轮父叶残余判断.md` | BE-001BG-01 `runtime.mutation.ai_proposal` 第四轮父叶残余判断，下一候选为 `approval_review` | 📋 已创建 |
 | 205 | `v4.16.0/205-runtime.mutation.ai_proposal.approval_review单子叶等价基线.md` | BE-001BH-01 `runtime.mutation.ai_proposal.approval_review` 单子叶等价基线 | 📋 已创建 |
+| 206 | `v4.16.0/206-runtime.mutation.ai_proposal.approval_review抽离方案.md` | BE-001BH-02 `runtime.mutation.ai_proposal.approval_review` 抽离方案 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
