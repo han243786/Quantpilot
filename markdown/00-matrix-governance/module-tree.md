@@ -2078,14 +2078,16 @@ AI 声称 `runtime.mutation.ai_proposal` 已推进至 BE-001AY-04 时，必须�
 
 **层级路径**: `root.backend.runtime.mutation.ai_proposal.static_check`
 **父模块**: `runtime.mutation.ai_proposal`
-**状态**: v4.16 BE-001AZ-02 抽离方案已建立；当前 `no code movement`，只固定 BE-001AZ-03 的目标文件、父级 `static_check` child 声明、helper import、`pub(super)` visibility、迁移清单和回退点。下一步只能进入 BE-001AZ-03 实际抽离。目标文件尚未创建，helper 尚未迁移，approval review、record query、AppState、schema owner、frontend caller、route facade 和 release transition guard 均未改变。
+**状态**: v4.16 BE-001AZ-03 实际抽离已完成；`src/runtime/mutation/ai_proposal/static_check.rs` 已创建，static check helper 与对应单测已迁入 child。父级通过 `#[path = "ai_proposal/static_check.rs"] mod static_check;` 和受控 `use static_check::{ai_proposal_static_check_result, validate_ai_model_identity, validate_hash_identity};` 保持调用面。下一步只能进入 BE-001AZ-04 单叶 closeout，判断本 child 是否继续细拆。approval review、record query、AppState、schema owner、frontend caller、route facade 和 release transition guard 均未改变。
 
 **真实文件**:
 - `src/runtime/mutation/ai_proposal.rs`
+- `src/runtime/mutation/ai_proposal/static_check.rs`
 - `src/frontend_api_types.rs`
 - `tests/api_ai_proposal.rs`
 - `markdown/06-milestones/v4.16.0/185-runtime.mutation.ai_proposal.static_check单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/186-runtime.mutation.ai_proposal.static_check抽离方案.md`
+- `markdown/06-milestones/v4.16.0/187-runtime.mutation.ai_proposal.static_check抽离记录.md`
 
 **职责**:
 承载 AI proposal candidate 的静态校验白箱边界，冻结 hash identity、model identity、source evidence、noop version、reason、config domain binding、v4 backtest source requirement、non-v4 run source requirement 和 v4 artifact analysis。本节点不拥有 create transaction、approval review、record query、source governance、event lifecycle、sandbox trigger、AppState、schema owner、frontend caller 或发布过渡连接。
@@ -2112,21 +2114,22 @@ AI 声称 `runtime.mutation.ai_proposal` 已推进至 BE-001AY-04 时，必须�
 **关键 public 方法**:
 | 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
 | --- | --- | --- | --- | --- |
-| `ai_proposal_static_check_result` | `CreateRuntimeAiProposalRequest`、old/new parameter version、source event count、checked timestamp | `RuntimeAiProposalStaticCheckResult` | 当前 `runtime.mutation.ai_proposal.create_runtime_ai_proposal` | 后续若迁移，只能作为父级受控 helper 暴露，不得成为 route handler 或横向服务 |
-| `validate_ai_model_identity` | `RuntimeAiModelIdentity` | `Result<(), (StatusCode, String)>` | 当前 `runtime.mutation.ai_proposal.create_runtime_ai_proposal` | 不得绕过 provider/model/model_version 必填 |
-| `analyze_v4_backtest_artifact_for_ai` | `V4BacktestArtifact` | `serde_json::Value` | 当前内部单测 / future evidence analysis | 不得接管 artifact schema owner |
+| `ai_proposal_static_check_result` | `CreateRuntimeAiProposalRequest`、old/new parameter version、source event count、checked timestamp | `RuntimeAiProposalStaticCheckResult` | `runtime.mutation.ai_proposal.create_runtime_ai_proposal` via `pub(super)` | 不得成为 route handler 或横向服务 |
+| `validate_ai_model_identity` | `RuntimeAiModelIdentity` | `Result<(), (StatusCode, String)>` | `runtime.mutation.ai_proposal.create_runtime_ai_proposal` via `pub(super)` | 不得绕过 provider/model/model_version 必填 |
+| `validate_hash_identity` | prompt/evidence hash、target、label | `Result<(), (StatusCode, String)>` | `runtime.mutation.ai_proposal.create_runtime_ai_proposal` via `pub(super)` | 不得把 hash 校验开放给 sibling |
+| `analyze_v4_backtest_artifact_for_ai` | `V4BacktestArtifact` | `serde_json::Value` | 当前 child 内部单测 / future evidence analysis | 不得接管 artifact schema owner |
 
 **父级通信规则**:
-`runtime.mutation.ai_proposal.static_check` 后续若创建，只能被父级 `runtime.mutation.ai_proposal` 调用。不得横向接管 approval_review、record_query、source_governance_identity、event_lifecycle、sandbox_trigger、parameter mutation、AppState、schema owner、frontend caller 或 runtime persistence owner。ASCII guard: `release transition guard`。
+`runtime.mutation.ai_proposal.static_check` 只能被父级 `runtime.mutation.ai_proposal` 调用。父级当前只通过 `ai_proposal_static_check_result`、`validate_ai_model_identity`、`validate_hash_identity` 三个 `pub(super)` helper 受控连接 child；其余 helper 保持 child private。不得横向接管 approval_review、record_query、source_governance_identity、event_lifecycle、sandbox_trigger、parameter mutation、AppState、schema owner、frontend caller 或 runtime persistence owner。ASCII guard: `release transition guard`。
 
 **回归保护**:
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1`；`git diff --check`。
 
 **细分价值判断**:
-本批只建立抽离方案，不做实际抽离，也不判断内部是否继续细拆。后续必须先进入 BE-001AZ-03 实际抽离；只允许创建已在 186 号方案中冻结的 static_check child 文件，并迁移计划清单内 helper 与 static check 单测，不得迁移 approval gate 或 create handler。
+本批已完成第一轮实际抽离，但尚未完成单叶 closeout。后续必须先进入 BE-001AZ-04 单叶 closeout，确认本 child 是否值得继续细拆。当前不得迁移 approval gate、record_query、approval_review、sandbox_trigger 或 create handler。
 
 **幻觉检查点**:
-AI 声称 `runtime.mutation.ai_proposal.static_check` 已推进至 BE-001AZ-02 时，必须说明当前只是抽离方案且为 `no code movement`。不得宣称 helper 已迁移、目标文件已创建、approval review 已拆分、AppState/schema/frontend caller 已改变、release transition 已启动、整理或重构已经完成。
+AI 声称 `runtime.mutation.ai_proposal.static_check` 已推进至 BE-001AZ-03 时，必须说明当前只完成第一轮实际抽离，尚未完成单叶 closeout。不得宣称 approval review 已拆分、record query 已拆分、AppState/schema/frontend caller 已改变、release transition 已启动、整理或重构已经完成。
 
 ### 5.1.2 `backend.runtime.routes.run`
 
@@ -4151,6 +4154,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/184-runtime.mutation.ai_proposal单叶closeout.md` runtime mutation ai proposal closeout | `runtime.mutation.ai_proposal` | 单叶 closeout，确认抽离等价并设置 `stop_split: false` | BE-001AY 单叶 closeout | `no code movement`；下一步只能进入 BE-001AZ-01 `static_check` 单子叶等价基线，不得直接创建目标文件或 release transition |
 | `markdown/06-milestones/v4.16.0/185-runtime.mutation.ai_proposal.static_check单子叶等价基线.md` runtime mutation ai proposal static check baseline | `runtime.mutation.ai_proposal.static_check` | 单子叶等价基线，冻结 validation / analysis helper | BE-001AZ 单子叶基线 | `no code movement`；下一步只能进入 BE-001AZ-02 抽离方案，不得创建 static_check 目标文件或 release transition |
 | `markdown/06-milestones/v4.16.0/186-runtime.mutation.ai_proposal.static_check抽离方案.md` runtime mutation ai proposal static check extraction plan | `runtime.mutation.ai_proposal.static_check` | 抽离方案，固定目标文件、helper import、`pub(super)` visibility 和回退点 | BE-001AZ 抽离方案 | `no code movement`；下一步只能进入 BE-001AZ-03 实际抽离，不得迁移 approval gate 或 release transition |
+| `markdown/06-milestones/v4.16.0/187-runtime.mutation.ai_proposal.static_check抽离记录.md` runtime mutation ai proposal static check extraction record | `runtime.mutation.ai_proposal.static_check` | 实际抽离，helper 与静态检查单测迁入 child | BE-001AZ 实际抽离 | 下一步只能进入 BE-001AZ-04 单叶 closeout，不得迁移 approval_review、record_query 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
