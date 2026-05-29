@@ -124,6 +124,7 @@ v4.7.0 系统应被理解为：
 - BE-001AQ-01 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle` 第五轮父叶残余判断；父叶仍保持 `stop_split: false`，下一步只能进入 BE-001AR-01 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 单子叶等价基线。
 - BE-001AR-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 单子叶等价基线；当前冻结 rollback id digest contract，目标文件未创建。下一步只能进入 BE-001AR-02 抽离方案。
 - BE-001AR-02 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 抽离方案；当前固定目标文件、父级 path attribute、helper import、visibility 和回退点，但仍是 `no code movement`。下一步只能进入 BE-001AR-03 实际抽离。
+- BE-001AR-03 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity` 实际抽离；`runtime_parameter_mutation_rollback_record_id` 已迁入 child，父级保留受控 import。下一步只能进入 BE-001AR-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 

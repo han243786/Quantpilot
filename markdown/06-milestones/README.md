@@ -178,6 +178,7 @@
 | 164 | `v4.16.0/164-runtime.mutation.parameter_mutation.transition_lifecycle第五轮父叶残余判断.md` | BE-001AQ-01 `transition_lifecycle` 第五轮父叶残余判断，下一候选为 `rollback_record_identity` | 📋 已创建 |
 | 165 | `v4.16.0/165-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity单子叶等价基线.md` | BE-001AR-01 `rollback_record_identity` 单子叶等价基线，冻结 rollback id digest contract | 📋 已创建 |
 | 166 | `v4.16.0/166-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity抽离方案.md` | BE-001AR-02 `rollback_record_identity` 抽离方案，固定目标文件、父级声明和回退点 | 📋 已创建 |
+| 167 | `v4.16.0/167-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity抽离记录.md` | BE-001AR-03 `rollback_record_identity` 实际抽离，迁移 rollback id helper | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
