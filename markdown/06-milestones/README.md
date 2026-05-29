@@ -144,6 +144,7 @@
 | 130 | `v4.16.0/130-backend.runtime.routes.mutation抽离记录.md` | BE-001AE-03 `backend.runtime.routes.mutation` route facade 实际抽离记录 | 📋 已创建 |
 | 131 | `v4.16.0/131-backend.runtime.routes.mutation单叶closeout.md` | BE-001AE-04 `backend.runtime.routes.mutation` 单叶 closeout，确认 route facade 等价并设置 `stop_split: true` | 📋 已创建 |
 | 132 | `v4.16.0/132-runtime.mutation.parameter_mutation单子叶等价基线.md` | BE-001AF-01 `runtime.mutation.parameter_mutation` 单子叶等价基线，冻结参数变更 handler 生命周期 | 📋 已创建 |
+| 133 | `v4.16.0/133-runtime.mutation.parameter_mutation抽离方案.md` | BE-001AF-02 `runtime.mutation.parameter_mutation` 抽离方案，固定目标子模块、父级 re-export 和 shared helper 保留边界 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
