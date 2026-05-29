@@ -158,6 +158,7 @@
 | 144 | `v4.16.0/144-runtime.mutation.parameter_mutation.transition_lifecycle父叶残余判断.md` | BE-001AI-01 `transition_lifecycle` 父叶残余判断，父叶保持 `stop_split: false`，下一步进入 `activation_flow` 基线 | 📋 已创建 |
 | 145 | `v4.16.0/145-runtime.mutation.parameter_mutation.transition_lifecycle.activation_flow单子叶等价基线.md` | BE-001AJ-01 `activation_flow` 单子叶等价基线，冻结 activation handler 状态机 | 📋 已创建 |
 | 146 | `v4.16.0/146-runtime.mutation.parameter_mutation.transition_lifecycle.activation_flow抽离方案.md` | BE-001AJ-02 `activation_flow` 抽离方案，固定目标文件与父级 re-export | 📋 已创建 |
+| 147 | `v4.16.0/147-runtime.mutation.parameter_mutation.transition_lifecycle.activation_flow抽离记录.md` | BE-001AJ-03 `activation_flow` 实际抽离，迁移 activation public handler | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
