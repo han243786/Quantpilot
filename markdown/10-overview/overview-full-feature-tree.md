@@ -1569,6 +1569,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/177-runtime.mutation.parameter_mutation.record_query抽离方案.md` - v4.16.0 BE-001AW-02 `record_query` 抽离方案，固定目标文件、父级声明和双 handler re-export
 - `markdown/06-milestones/v4.16.0/178-runtime.mutation.parameter_mutation.record_query抽离记录.md` - v4.16.0 BE-001AW-03 `record_query` 实际抽离，迁移 list/detail handler
 - `markdown/06-milestones/v4.16.0/179-runtime.mutation.parameter_mutation.record_query单叶closeout.md` - v4.16.0 BE-001AW-04 `record_query` 单叶 closeout，设置 `stop_split: true`
+- `markdown/06-milestones/v4.16.0/180-runtime.mutation.parameter_mutation第三轮父叶残余判断.md` - v4.16.0 BE-001AX-01 `parameter_mutation` 第三轮父叶残余判断，父叶设置 `stop_split: true`
 - `src/runtime/mutation/parameter_mutation/record_query.rs` - runtime parameter mutation record query child，承接 list/detail read model handler
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/transition_record_persistence.rs` - transition lifecycle entry / persistence child
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_record_identity.rs` - transition lifecycle rollback id identity child
@@ -1598,6 +1599,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001AW-02 已建立 `runtime.mutation.parameter_mutation.record_query` 抽离方案；当前仍为 `no code movement`，下一步只能进入 BE-001AW-03 实际抽离，目标文件尚未创建。
 当前最新递归点补充: BE-001AW-03 已完成 `runtime.mutation.parameter_mutation.record_query` 实际抽离；list/detail handler 已迁入 child，下一步只能进入 BE-001AW-04 单叶 closeout。
 当前最新递归点补充: BE-001AW-04 已完成 `runtime.mutation.parameter_mutation.record_query` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001AX-01 `runtime.mutation.parameter_mutation` 父叶残余判断。
+当前最新递归点补充: BE-001AX-01 已完成 `runtime.mutation.parameter_mutation` 第三轮父叶残余判断并设置父叶 `stop_split: true`；下一步只能进入 BE-001AY-01 `runtime.mutation.ai_proposal` 单子叶等价基线。
 
 ### 7.7 总览 (markdown/10-overview/)
 
