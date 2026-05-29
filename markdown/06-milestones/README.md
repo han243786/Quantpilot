@@ -127,6 +127,7 @@
 | 113 | `v4.16.0/113-runtime.backtest.experiment_sweep.parameter_grid抽离记录.md` | BE-001W-03 `runtime.backtest.experiment_sweep.parameter_grid` 抽离记录，将 3 个 helper 迁入 `src/runtime/backtest/parameter_grid.rs` | 📋 已创建 |
 | 114 | `v4.16.0/114-runtime.backtest.experiment_sweep.parameter_grid单叶closeout.md` | BE-001W-04 `runtime.backtest.experiment_sweep.parameter_grid` 单叶 closeout，确认等价并设置 `stop_split: true` | 📋 已创建 |
 | 115 | `v4.16.0/115-runtime.backtest.experiment_sweep父叶残余判断.md` | BE-001X-01 `runtime.backtest.experiment_sweep` 父叶残余判断，下一候选为 `start_orchestration` | 📋 已创建 |
+| 116 | `v4.16.0/116-runtime.backtest.experiment_sweep.start_orchestration单子叶等价基线.md` | BE-001Y-01 `runtime.backtest.experiment_sweep.start_orchestration` 单子叶等价基线，当前 `no code movement` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

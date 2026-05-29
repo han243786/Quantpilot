@@ -2163,7 +2163,7 @@ AI 声称 `runtime.backtest.replay` 已完成时，必须说明只完成 `get_ba
 
 **层级路径**: `root.backend.runtime.routes.runtime.backtest.experiment_sweep`
 **父模块**: `runtime.backtest`
-**状态**: v4.16 BE-001V-04 单叶 closeout 已完成。5 个 experiment handler 已迁入 `src/runtime/backtest/experiment_sweep.rs` 并确认等价，3 个参数网格 helper 已在 BE-001W-04 完成抽离与单叶 closeout；BE-001X-01 已完成 `runtime.backtest.experiment_sweep` 父叶残余判断，确认 `parameter_grid` 关闭并设置 `stop_split: true`，但父叶仍保持 `stop_split: false`。下一步只能进入 BE-001Y-01 `runtime.backtest.experiment_sweep.start_orchestration` 单子叶等价基线。`src/runtime/backtest.rs` 仅保留 drained parent include 注释，route 真实 owner 仍是 `src/backend/runtime/routes.rs`。
+**状态**: v4.16 BE-001V-04 单叶 closeout 已完成。5 个 experiment handler 已迁入 `src/runtime/backtest/experiment_sweep.rs` 并确认等价，3 个参数网格 helper 已在 BE-001W-04 完成抽离与单叶 closeout；BE-001X-01 已完成 `runtime.backtest.experiment_sweep` 父叶残余判断，确认 `parameter_grid` 关闭并设置 `stop_split: true`，但父叶仍保持 `stop_split: false`；BE-001Y-01 已建立 `runtime.backtest.experiment_sweep.start_orchestration` 单子叶等价基线。下一步只能进入 BE-001Y-02 抽离方案。`src/runtime/backtest.rs` 仅保留 drained parent include 注释，route 真实 owner 仍是 `src/backend/runtime/routes.rs`。
 
 **真实文件**:
 - `src/runtime/backtest/experiment_sweep.rs`
@@ -2187,6 +2187,7 @@ AI 声称 `runtime.backtest.replay` 已完成时，必须说明只完成 `get_ba
 - `markdown/06-milestones/v4.16.0/113-runtime.backtest.experiment_sweep.parameter_grid抽离记录.md`
 - `markdown/06-milestones/v4.16.0/114-runtime.backtest.experiment_sweep.parameter_grid单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/115-runtime.backtest.experiment_sweep父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/116-runtime.backtest.experiment_sweep.start_orchestration单子叶等价基线.md`
 
 **职责**:
 承载 backtest experiment sweep 的创建、列表、详情、保存和丢弃 API 边界。该叶只拥有 experiment handler 编排，不拥有 route aggregate、backtest execution_start 实现、record_store、replay、compare、artifact schema、state owner、persistence owner、response mapping owner、schema owner、frontend caller 或发布过渡连接。
@@ -2221,17 +2222,20 @@ AI 声称 `runtime.backtest.replay` 已完成时，必须说明只完成 `get_ba
 **父叶残余判断**:
 BE-001X-01 已完成 `runtime.backtest.experiment_sweep` 父叶残余判断。`runtime.backtest.experiment_sweep.parameter_grid` 已关闭并设置 `stop_split: true`；父叶仍保持 `stop_split: false`，因为 `start_backtest_experiment` 仍是创建路径高风险编排段，集中接触 capability/config guard、QS compile、variant request assembly、`execute_backtest_request` 复用桥、preview persistence 和 response assembly。
 
+**单子叶等价基线**:
+BE-001Y-01 已建立 `runtime.backtest.experiment_sweep.start_orchestration` 单子叶等价基线。该基线只冻结 `start_backtest_experiment` 创建编排、guard、QS compile、variant request、`execute_backtest_request` 复用桥和 preview persistence；当前 `no code movement`，未移动 handler 或新增子文件。
+
 **后续队列**:
-下一步只能进入 BE-001Y-01 `runtime.backtest.experiment_sweep.start_orchestration` 单子叶等价基线。`record_lifecycle` 只是后续候选，需在 start orchestration 基线之后重新判断；不得顺手移动 handler、删除 drained parent include、迁移 route facade、execution_start、record_store、replay、compare、state/persistence、response mapping、schema、frontend caller 或发布过渡连接，也不得宣称父叶最终完成。
+下一步只能进入 BE-001Y-02 `runtime.backtest.experiment_sweep.start_orchestration` 抽离方案。`record_lifecycle` 只是后续候选，需在 start orchestration 抽离和 closeout 之后重新判断；不得顺手移动 handler、删除 drained parent include、迁移 route facade、execution_start、record_store、replay、compare、state/persistence、response mapping、schema、frontend caller 或发布过渡连接，也不得宣称父叶最终完成。
 
 **幻觉检查点**:
-AI 声称 `runtime.backtest.experiment_sweep` 已完成 BE-001X-01 时，必须说明这只是父叶残余判断且 `no code movement`；`runtime.backtest.experiment_sweep.parameter_grid` 已在 BE-001W-04 完成 3 个 helper 抽离与 closeout，并设置 `stop_split: true`，但父叶仍为 `stop_split: false`。不得宣称 `runtime.backtest.experiment_sweep.start_orchestration`、`record_lifecycle`、route facade、record_store、replay、compare、artifact schema owner、state owner、persistence owner、frontend caller、发布过渡、整理或重构已经完成。
+AI 声称 `runtime.backtest.experiment_sweep` 已完成 BE-001Y-01 时，必须说明这只是 `start_orchestration` 单子叶等价基线且 `no code movement`；`runtime.backtest.experiment_sweep.parameter_grid` 已在 BE-001W-04 完成 3 个 helper 抽离与 closeout，并设置 `stop_split: true`，但父叶仍为 `stop_split: false`。不得宣称 `start_backtest_experiment` 已抽离、`record_lifecycle`、route facade、record_store、replay、compare、artifact schema owner、state owner、persistence owner、frontend caller、发布过渡、整理或重构已经完成。
 
 ### 5.1.17 `runtime.backtest.experiment_sweep.parameter_grid`
 
 **层级路径**: `root.backend.runtime.routes.runtime.backtest.experiment_sweep.parameter_grid`
 **父模块**: `runtime.backtest.experiment_sweep`
-**状态**: v4.16 BE-001W-04 单叶 closeout 已完成并设置 `stop_split: true`。3 个参数网格 helper 已迁入 `src/runtime/backtest/parameter_grid.rs` 并确认等价；父级 `experiment_sweep` 只保留 handler 编排和 `pub(super)` 调用。BE-001X-01 已完成父叶残余判断并把后续队列推进到 BE-001Y-01 `runtime.backtest.experiment_sweep.start_orchestration` 单子叶等价基线。
+**状态**: v4.16 BE-001W-04 单叶 closeout 已完成并设置 `stop_split: true`。3 个参数网格 helper 已迁入 `src/runtime/backtest/parameter_grid.rs` 并确认等价；父级 `experiment_sweep` 只保留 handler 编排和 `pub(super)` 调用。BE-001X-01 已完成父叶残余判断，BE-001Y-01 已建立 `runtime.backtest.experiment_sweep.start_orchestration` 单子叶等价基线，下一步只能进入 BE-001Y-02 抽离方案。
 
 **真实文件**:
 - `src/runtime/backtest/parameter_grid.rs`
@@ -2246,6 +2250,7 @@ AI 声称 `runtime.backtest.experiment_sweep` 已完成 BE-001X-01 时，必须�
 - `markdown/06-milestones/v4.16.0/113-runtime.backtest.experiment_sweep.parameter_grid抽离记录.md`
 - `markdown/06-milestones/v4.16.0/114-runtime.backtest.experiment_sweep.parameter_grid单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/115-runtime.backtest.experiment_sweep父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/116-runtime.backtest.experiment_sweep.start_orchestration单子叶等价基线.md`
 
 **职责**:
 只负责把 `FrontendExperimentRequest.parameter_grid` 和 `RuntimeProtocolCoreConfig` 解析成 `Vec<FrontendExecutionAssumptionOverrides>`。本节点不拥有 experiment route、handler orchestration、variant backtest execution、persistence、response mapping、schema owner、state owner、audit、frontend caller 或发布过渡连接。
@@ -2278,10 +2283,68 @@ BE-001W-04 已确认参数网格 helper 等价，并设置 `stop_split: true`。
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_experiments`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_evidence_contract`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1`；`git diff --check`。
 
 **后续队列**:
-本叶已完成 BE-001W-04 closeout，不继续细拆，并已交回父叶完成 BE-001X-01 残余判断。下一步只能进入 BE-001Y-01 `runtime.backtest.experiment_sweep.start_orchestration` 单子叶等价基线；不得直接修改 schema、改 `MAX_EXPERIMENT_VARIANTS`、删除 drained parent include、继续细拆 axis normalization/variant expansion 或宣称发布过渡。
+本叶已完成 BE-001W-04 closeout，不继续细拆，并已交回父叶完成 BE-001X-01 残余判断；BE-001Y-01 已建立 `runtime.backtest.experiment_sweep.start_orchestration` 单子叶等价基线。下一步只能进入 BE-001Y-02 抽离方案；不得直接修改 schema、改 `MAX_EXPERIMENT_VARIANTS`、删除 drained parent include、继续细拆 axis normalization/variant expansion 或宣称发布过渡。
 
 **幻觉检查点**:
-AI 声称 `runtime.backtest.experiment_sweep.parameter_grid` 已完成时，必须说明只完成 3 个 helper 的抽离与 closeout，并设置 `stop_split: true`；BE-001X-01 只完成父叶残余判断，未抽离 `start_backtest_experiment` 或 `runtime.backtest.experiment_sweep.start_orchestration`。不得宣称 route aggregate、execution_start、schema、state、persistence、response mapping、audit、frontend caller、发布版本过渡、整理和重构均已完成。
+AI 声称 `runtime.backtest.experiment_sweep.parameter_grid` 已完成时，必须说明只完成 3 个 helper 的抽离与 closeout，并设置 `stop_split: true`；BE-001Y-01 只建立 `start_orchestration` 等价基线，未抽离 `start_backtest_experiment`。不得宣称 route aggregate、execution_start、schema、state、persistence、response mapping、audit、frontend caller、发布版本过渡、整理和重构均已完成。
+
+### 5.1.18 `runtime.backtest.experiment_sweep.start_orchestration`
+
+**层级路径**: `root.backend.runtime.routes.runtime.backtest.experiment_sweep.start_orchestration`
+**父模块**: `runtime.backtest.experiment_sweep`
+**状态**: v4.16 BE-001Y-01 单子叶等价基线已建立，当前 `no code movement`。`start_backtest_experiment` 仍位于 `src/runtime/backtest/experiment_sweep.rs`；后续只能进入 BE-001Y-02 抽离方案，先确认目标物理文件名、父级私有可见性、re-export 方式、focused tests 和 rollback 点。
+
+**真实文件**:
+- `src/runtime/backtest/experiment_sweep.rs`
+- `src/runtime/backtest/parameter_grid.rs`
+- `src/runtime/backtest/execution_start.rs`
+- `src/runtime/backtest.rs`
+- `src/runtime/mod.rs`
+- `src/backend/runtime/routes.rs`
+- `src/runtime_persistence.rs`
+- `src/runtime_response_mapping.rs`
+- `src/frontend_api_types.rs`
+- `tests/api_experiments.rs`
+- `tests/api_backtest.rs`
+- `tests/api_evidence_contract.rs`
+- `markdown/06-milestones/v4.16.0/116-runtime.backtest.experiment_sweep.start_orchestration单子叶等价基线.md`
+
+**职责**:
+冻结 experiment sweep 创建路径的 handler orchestration 边界，包括 capability/config/execution assumption guard、`graph_json` 必填、QS compile、base execution assumptions、parameter grid 调用、variant `FrontendRunRequest` 组装、`execute_backtest_request` 复用桥、variant summary 投影、preview `ExperimentRecord` 组装、preview persistence 和 detail response mapping。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `start_backtest_experiment` | `UserId`、`AppState`、`FrontendExperimentRequest` | `ExperimentDetailResponse` | `backend.runtime.routes` | 不得绕过 guard、重写 parameter grid、横向直连 execution_start 内部 helper 或迁移 record lifecycle |
+
+**白箱输入输出**:
+| 方向 | 内容 | 来源/去向 | 约束 |
+| --- | --- | --- | --- |
+| 输入 | `FrontendExperimentRequest` | frontend runtime API | 保留 actor、capability_context、runtime_config、graph_json、runtime_targets、backtest_options、parameter_grid |
+| 输入 | `build_experiment_overrides` | `runtime.backtest.experiment_sweep.parameter_grid` | 只作为父级私有 helper 调用 |
+| 输入 | `execute_backtest_request` | `runtime.backtest.execution_start` 复用桥 | 只能经父级 runtime 内部桥调用 |
+| 输出 | `ExperimentRecord` | experiment store/cache | `saved=false`，包含 definition、variants、actor |
+| 输出 | `ExperimentDetailResponse` | frontend/tests | 继续通过 `experiment_detail_response_from_record` 生成 |
+
+**等价冻结项**:
+| 行为 | 当前语义 | 不得改变 |
+| --- | --- | --- |
+| guard order | capability guard -> runtime config guard -> execution assumption guard -> graph_json check | 不得后置或吞掉 details |
+| QS compile | `compile_runtime_protocol_via_qs(graph_json)` 在 grid 前执行 | 不得跳过 protocol |
+| replay source | 缺失时回退 `FrontendBacktestReplaySource::HistoricalReplay` | 不得改默认 |
+| variant request | 每个 override 组装完整 `FrontendRunRequest` | 不得丢 actor/capability/runtime targets/options |
+| execution bridge | 每个 variant 调用 `execute_backtest_request`，suffix 为 `{experiment_id}_v{n}` | 不得横向直连 execution_start 内部 helper |
+| summary/tag | 优先 artifact metrics，缺失时回退 record summary | 不得只读 request |
+| preview persistence | `persist_experiment_record` 后写 `state.experiments` scoped cache | 不得只写内存或只写文件 |
+
+**父级通信规则**:
+`runtime.backtest.experiment_sweep.start_orchestration` 只能被父级 `runtime.backtest.experiment_sweep` 私有调用，并只能经父级 `runtime` re-export 和 `backend.runtime.routes` 暴露 API。不得让 `runtime.backtest.record_store`、`runtime.backtest.replay`、`backtest_compare`、persistence owner、response mapping owner、schema owner、state owner、audit owner、frontend caller 或其他 sibling 横向直连；发布过渡前不得主动提出缓存旁路或性能优化。ASCII guard: `release transition guard`。
+
+**后续队列**:
+下一步只能进入 BE-001Y-02 `runtime.backtest.experiment_sweep.start_orchestration` 抽离方案。不得直接移动 `start_backtest_experiment`，不得把 `list_experiments`、`get_experiment_detail`、`save_experiment_record`、`discard_experiment_record` 的 record lifecycle 混入本子叶。
+
+**幻觉检查点**:
+AI 声称 `runtime.backtest.experiment_sweep.start_orchestration` 已建立基线时，必须说明本批是 `no code movement`，只冻结 `start_backtest_experiment` 创建编排等价边界。不得宣称 start handler 已抽离、planned start_orchestration child file 已存在、record lifecycle、route registration、schema、state、persistence、response mapping、audit、frontend caller、发布过渡、整理或重构已经完成。
 
 ### 5.2 `backend.graph_compile`
 
@@ -2851,6 +2914,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/113-runtime.backtest.experiment_sweep.parameter_grid抽离记录.md` runtime backtest experiment sweep parameter grid extraction record | `runtime.backtest.experiment_sweep.parameter_grid` | 抽离记录，3 个 helper 已迁入 `src/runtime/backtest/parameter_grid.rs` | BE-001W 抽离记录 | 不得宣称 parameter_grid 已 closeout、schema/constant/route/shared owner 或发布过渡已完成 |
 | `markdown/06-milestones/v4.16.0/114-runtime.backtest.experiment_sweep.parameter_grid单叶closeout.md` runtime backtest experiment sweep parameter grid closeout | `runtime.backtest.experiment_sweep.parameter_grid` | 单叶 closeout，确认等价并设置 `stop_split: true` | BE-001W 单叶 closeout | 不得继续细拆 parameter_grid 或宣称 experiment_sweep 父叶最终完成、schema/constant/route/shared owner 或发布过渡已完成 |
 | `markdown/06-milestones/v4.16.0/115-runtime.backtest.experiment_sweep父叶残余判断.md` runtime backtest experiment sweep parent residual decision | `runtime.backtest.experiment_sweep` | 父叶残余判断，确认 `parameter_grid` 关闭但父叶仍 `stop_split: false`，下一候选 `start_orchestration` | BE-001X 父叶残余判断 | `no code movement`；不得宣称 `start_orchestration`、`record_lifecycle`、route/schema/state/persistence/frontend caller 或发布过渡已迁移 |
+| `markdown/06-milestones/v4.16.0/116-runtime.backtest.experiment_sweep.start_orchestration单子叶等价基线.md` runtime backtest experiment sweep start orchestration baseline | `runtime.backtest.experiment_sweep.start_orchestration` | 单子叶等价基线，冻结 `start_backtest_experiment` 创建编排、guard、variant request、execution bridge 和 preview persistence | BE-001Y 单子叶基线 | `no code movement`；不得宣称 start handler、record lifecycle、route/schema/state/persistence/frontend caller 或发布过渡已迁移 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
