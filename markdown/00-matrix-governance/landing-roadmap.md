@@ -103,6 +103,8 @@ BE-001X-01 已完成 `runtime.backtest.experiment_sweep` 父叶残余判断，�
 
 BE-001Y-01 已建立 `runtime.backtest.experiment_sweep.start_orchestration` 单子叶等价基线，冻结 `start_backtest_experiment` 创建编排、guard、QS compile、variant request、`execute_backtest_request` 复用桥和 preview persistence；当前 `no code movement`，下一步只能进入 BE-001Y-02 抽离方案，不能直接移动 start handler、混入 record lifecycle、迁移 route/schema/state/persistence/frontend caller 或启动发布过渡连接。
 
+BE-001Y-02 已建立 `runtime.backtest.experiment_sweep.start_orchestration` 抽离方案，限定下一批只允许迁移 `start_backtest_experiment` 到计划子文件；当前 `no code movement`，下一步只能进入 BE-001Y-03 实际抽离记录，不能混入 record lifecycle、route/schema/state/persistence/response mapping/audit/frontend caller 或启动发布过渡连接。
+
 这波模块化改造按十万行级重大工程看待。v4.16.0 不允许形成单个巨型代码变更，而是先把工程拆成父模块级、兼容桥级或验证链级的可回退批次。
 
 抽离主线拆为后端抽离和前端抽离。E2E 整理延后，不作为 v4.16 抽离控制面的前置阻断；后续测试程序会大规模废弃，必须进入测试资产汰换登记，不能静默删除。
