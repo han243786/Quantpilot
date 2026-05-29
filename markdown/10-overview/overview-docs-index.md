@@ -193,6 +193,7 @@
 | v4.16.0 / BE-001BI-01 | 新增: `runtime.mutation.ai_proposal` 第五轮父叶残余判断已完成，下一候选为 `approval_persistence` |
 | v4.16.0 / BE-001BJ-01 | 新增: `runtime.mutation.ai_proposal.approval_persistence` 单子叶等价基线已建立，当前 `no code movement`，下一步进入 BE-001BJ-02 抽离方案 |
 | v4.16.0 / BE-001BJ-02 | 新增: `runtime.mutation.ai_proposal.approval_persistence` 抽离方案已建立，当前 `no code movement`，下一步进入 BE-001BJ-03 实际抽离 |
+| v4.16.0 / BE-001BJ-03 | 新增: `runtime.mutation.ai_proposal.approval_persistence` 实际抽离已完成，两个 persistence helper 已迁入 child，下一步进入 BE-001BJ-04 单叶 closeout |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |
