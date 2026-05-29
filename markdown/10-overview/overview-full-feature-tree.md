@@ -1596,11 +1596,13 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/204-runtime.mutation.ai_proposal第四轮父叶残余判断.md` - v4.16.0 BE-001BG-01 `runtime.mutation.ai_proposal` 第四轮父叶残余判断，下一候选为 `approval_review`
 - `markdown/06-milestones/v4.16.0/205-runtime.mutation.ai_proposal.approval_review单子叶等价基线.md` - v4.16.0 BE-001BH-01 `runtime.mutation.ai_proposal.approval_review` 单子叶等价基线
 - `markdown/06-milestones/v4.16.0/206-runtime.mutation.ai_proposal.approval_review抽离方案.md` - v4.16.0 BE-001BH-02 `runtime.mutation.ai_proposal.approval_review` 抽离方案
+- `markdown/06-milestones/v4.16.0/207-runtime.mutation.ai_proposal.approval_review抽离记录.md` - v4.16.0 BE-001BH-03 `runtime.mutation.ai_proposal.approval_review` 抽离记录
 - `src/runtime/mutation/ai_proposal.rs` - runtime AI proposal child，承接 AI proposal / approval public handler 与专属 helper
 - `src/runtime/mutation/ai_proposal/static_check.rs` - runtime AI proposal static check child，承接 hash/model/static check/config binding/v4 analysis helper 与静态检查单测
 - `src/runtime/mutation/ai_proposal/source_governance_identity.rs` - runtime AI proposal source governance identity child，承接 source context、governance projection 与 record identity helper
 - `src/runtime/mutation/ai_proposal/event_lifecycle.rs` - runtime AI proposal event lifecycle child，承接 event contract、runtime event builder、lifecycle entry 与 proposal transition persistence helper
 - `src/runtime/mutation/ai_proposal/record_query.rs` - runtime AI proposal record query child，承接 proposal list/detail/read-through loader
+- `src/runtime/mutation/ai_proposal/approval_review.rs` - runtime AI proposal approval review child，承接 approval list/detail/approve/reject/claim handler
 - `src/runtime/mutation/parameter_mutation/record_query.rs` - runtime parameter mutation record query child，承接 list/detail read model handler
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/transition_record_persistence.rs` - transition lifecycle entry / persistence child
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_record_identity.rs` - transition lifecycle rollback id identity child
@@ -1657,6 +1659,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001BG-01 已完成 `runtime.mutation.ai_proposal` 第四轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001BH-01 `runtime.mutation.ai_proposal.approval_review` 单子叶等价基线。
 当前最新递归点补充: BE-001BH-01 已建立 `runtime.mutation.ai_proposal.approval_review` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001BH-02 抽离方案。
 当前最新递归点补充: BE-001BH-02 已建立 `runtime.mutation.ai_proposal.approval_review` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001BH-03 实际抽离。
+当前最新递归点补充: BE-001BH-03 已完成 `runtime.mutation.ai_proposal.approval_review` 实际抽离；approval list/detail/approve/reject/claim 五个 handler 已迁入 child，下一步只能进入 BE-001BH-04 单叶 closeout。
 
 ### 7.7 总览 (markdown/10-overview/)
 
