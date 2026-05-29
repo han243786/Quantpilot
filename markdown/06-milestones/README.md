@@ -134,6 +134,9 @@
 | 120 | `v4.16.0/120-runtime.backtest.experiment_sweep第二轮父叶残余判断.md` | BE-001Z-01 `runtime.backtest.experiment_sweep` 第二轮父叶残余判断，下一候选为 `record_lifecycle` | 📋 已创建 |
 | 121 | `v4.16.0/121-runtime.backtest.experiment_sweep.record_lifecycle单子叶等价基线.md` | BE-001AA-01 `runtime.backtest.experiment_sweep.record_lifecycle` 单子叶等价基线，当前 `no code movement` | 📋 已创建 |
 | 122 | `v4.16.0/122-runtime.backtest.experiment_sweep.record_lifecycle抽离方案.md` | BE-001AA-02 `runtime.backtest.experiment_sweep.record_lifecycle` 抽离方案，限定下一批只迁移四个 lifecycle handler | 📋 已创建 |
+| 123 | `v4.16.0/123-runtime.backtest.experiment_sweep.record_lifecycle抽离记录.md` | BE-001AA-03 `runtime.backtest.experiment_sweep.record_lifecycle` 抽离记录，四个 lifecycle handler 已迁入 `src/runtime/backtest/record_lifecycle.rs` | ✅ 已完成 |
+| 124 | `v4.16.0/124-runtime.backtest.experiment_sweep.record_lifecycle单叶closeout.md` | BE-001AA-04 `runtime.backtest.experiment_sweep.record_lifecycle` 单叶 closeout，确认等价并设置 `stop_split: true` | ✅ 已完成 |
+| 125 | `v4.16.0/125-runtime.backtest.experiment_sweep第三轮父叶残余判断.md` | BE-001AB-01 `runtime.backtest.experiment_sweep` 第三轮父叶残余判断，确认三子叶均已 closeout 并设置父叶 `stop_split: true` | ✅ 已完成 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
