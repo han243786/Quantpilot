@@ -185,6 +185,7 @@
 | 171 | `v4.16.0/171-runtime.mutation.parameter_mutation.proposal_creation单子叶等价基线.md` | BE-001AU-01 `proposal_creation` 单子叶等价基线，冻结 create handler 与 record id helper | 📋 已创建 |
 | 172 | `v4.16.0/172-runtime.mutation.parameter_mutation.proposal_creation抽离方案.md` | BE-001AU-02 `proposal_creation` 抽离方案，固定目标文件、父级声明和 handler re-export | 📋 已创建 |
 | 173 | `v4.16.0/173-runtime.mutation.parameter_mutation.proposal_creation抽离记录.md` | BE-001AU-03 `proposal_creation` 实际抽离，迁移 create handler 与 record id helper | 📋 已创建 |
+| 174 | `v4.16.0/174-runtime.mutation.parameter_mutation.proposal_creation单叶closeout.md` | BE-001AU-04 `proposal_creation` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
