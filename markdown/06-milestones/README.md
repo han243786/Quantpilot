@@ -146,6 +146,7 @@
 | 132 | `v4.16.0/132-runtime.mutation.parameter_mutation单子叶等价基线.md` | BE-001AF-01 `runtime.mutation.parameter_mutation` 单子叶等价基线，冻结参数变更 handler 生命周期 | 📋 已创建 |
 | 133 | `v4.16.0/133-runtime.mutation.parameter_mutation抽离方案.md` | BE-001AF-02 `runtime.mutation.parameter_mutation` 抽离方案，固定目标子模块、父级 re-export 和 shared helper 保留边界 | 📋 已创建 |
 | 134 | `v4.16.0/134-runtime.mutation.parameter_mutation抽离记录.md` | BE-001AF-03 `runtime.mutation.parameter_mutation` 抽离记录，将参数变更 handler 迁入子模块并保留父级兼容出口 | 📋 已创建 |
+| 135 | `v4.16.0/135-runtime.mutation.parameter_mutation单叶closeout.md` | BE-001AF-04 `runtime.mutation.parameter_mutation` 单叶 closeout，判定继续细拆并登记 transition lifecycle 下一基线 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
