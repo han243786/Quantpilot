@@ -1995,7 +1995,7 @@ AI 声称 `record_query` 已完成 BE-001AW-04 时，必须说明本叶已 close
 
 **层级路径**: `root.backend.runtime.mutation.ai_proposal`
 **父模块**: `backend.runtime`
-**状态**: v4.16 BE-001BB-03 `runtime.mutation.ai_proposal.source_governance_identity` 第一轮实际抽离已完成；`runtime.mutation.ai_proposal.static_check` 已完成 closeout 并设置 `stop_split: true`，但父叶仍承接 event_lifecycle、record_query、approval_review、approval_persistence、sandbox_trigger 和 status_transition 等稳定职责，因此父叶保持 `stop_split: false`。下一步只能进入 BE-001BB-04 source_governance_identity 单叶 closeout。`AppState`、schema owner、frontend caller、runtime persistence owner、route facade 和 release transition guard 均未改变。
+**状态**: v4.16 BE-001BB-04 `runtime.mutation.ai_proposal.source_governance_identity` 单叶 closeout 已完成并设置 `stop_split: true`；`runtime.mutation.ai_proposal.static_check` 也已完成 closeout 并设置 `stop_split: true`，但父叶仍承接 event_lifecycle、record_query、approval_review、approval_persistence、sandbox_trigger 和 status_transition 等稳定职责，因此父叶保持 `stop_split: false`。下一步只能进入 BE-001BC-01 父叶残余判断。`AppState`、schema owner、frontend caller、runtime persistence owner、route facade 和 release transition guard 均未改变。
 
 **真实文件**:
 - `src/runtime/mutation/ai_proposal.rs`
@@ -2022,6 +2022,7 @@ AI 声称 `record_query` 已完成 BE-001AW-04 时，必须说明本叶已 close
 - `markdown/06-milestones/v4.16.0/190-runtime.mutation.ai_proposal.source_governance_identity单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/191-runtime.mutation.ai_proposal.source_governance_identity抽离方案.md`
 - `markdown/06-milestones/v4.16.0/192-runtime.mutation.ai_proposal.source_governance_identity抽离记录.md`
+- `markdown/06-milestones/v4.16.0/193-runtime.mutation.ai_proposal.source_governance_identity单叶closeout.md`
 
 **职责**:
 承载 runtime AI proposal 与 approval review handler 域的白箱边界，冻结候选生成、静态检查、proposal 查询、approval 查询、approve/reject/claim、sandbox gate、approval persistence、状态迁移和 evidence event contract。本节点不拥有 parameter mutation、report、evidence、experiment、ops、frontend caller、schema owner、AppState owner 或发布过渡连接。
@@ -2079,10 +2080,10 @@ AI 声称 `record_query` 已完成 BE-001AW-04 时，必须说明本叶已 close
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1`；`git diff --check`。
 
 **细分价值判断**:
-本父叶已完成 BE-001BB-03 `source_governance_identity` 第一轮实际抽离，仍设置 `stop_split: false`。`static_check` 已 closeout 且 `stop_split: true`；下一步只能进入 BE-001BB-04 单叶 closeout。source context、governance projection 与 record identity 已迁入 child，且不触碰 approval review、record_query、sandbox_trigger、AppState、schema owner 或 route facade。
+本父叶已完成 BE-001BB-04 `source_governance_identity` 单叶 closeout，仍设置 `stop_split: false`。`static_check` 与 `source_governance_identity` 均已 closeout 且 `stop_split: true`；下一步只能进入 BE-001BC-01 父叶残余判断。父叶剩余 event_lifecycle、record_query、approval_review、approval_persistence、sandbox_trigger 与 status_transition。
 
 **幻觉检查点**:
-AI 声称 `runtime.mutation.ai_proposal` 已推进至 BE-001BB-03 时，必须说明当前只是完成 `source_governance_identity` 第一轮实际抽离，下一步只能进入 BE-001BB-04 单叶 closeout。不得宣称 source_governance_identity 已完成 closeout、approval review 已单独 closeout、AppState/schema/frontend caller 已改变、sandbox owner 已迁移、release transition 已启动、整理或重构已经完成。
+AI 声称 `runtime.mutation.ai_proposal` 已推进至 BE-001BB-04 时，必须说明当前只是完成 `source_governance_identity` 单叶 closeout，父级仍需进入 BE-001BC-01 残余判断。不得宣称 `runtime.mutation.ai_proposal` 父级已完成、approval review 已单独 closeout、AppState/schema/frontend caller 已改变、sandbox owner 已迁移、release transition 已启动、整理或重构已经完成。
 
 ### 5.1.1.3.1 `runtime.mutation.ai_proposal.static_check`
 
@@ -2146,7 +2147,7 @@ AI 声称 `runtime.mutation.ai_proposal.static_check` 已推进至 BE-001AZ-04 �
 
 **层级路径**: `root.backend.runtime.mutation.ai_proposal.source_governance_identity`
 **父模块**: `runtime.mutation.ai_proposal`
-**状态**: v4.16 BE-001BB-03 第一轮实际抽离已完成；`src/runtime/mutation/ai_proposal/source_governance_identity.rs` 承接 source context、governance projection 与 proposal record identity helper，父级 `src/runtime/mutation/ai_proposal.rs` 只保留受控 child import。下一步只能进入 BE-001BB-04 单叶 closeout。event lifecycle、record query、approval review、approval persistence、sandbox trigger、AppState、schema owner、frontend caller、route facade 和 release transition guard 均未改变。
+**状态**: v4.16 BE-001BB-04 单叶 closeout 已完成；`src/runtime/mutation/ai_proposal/source_governance_identity.rs` 承接 source context、governance projection 与 proposal record identity helper，设置 `stop_split: true`。继续细拆 source loader、governance projection、record id digest 或 context struct 只会增加父子 helper 接线，不会形成新的稳定 owner。event lifecycle、record query、approval review、approval persistence、sandbox trigger、AppState、schema owner、frontend caller、route facade 和 release transition guard 均未改变。
 
 **真实文件**:
 - `src/runtime/mutation/ai_proposal.rs`
@@ -2158,6 +2159,7 @@ AI 声称 `runtime.mutation.ai_proposal.static_check` 已推进至 BE-001AZ-04 �
 - `markdown/06-milestones/v4.16.0/190-runtime.mutation.ai_proposal.source_governance_identity单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/191-runtime.mutation.ai_proposal.source_governance_identity抽离方案.md`
 - `markdown/06-milestones/v4.16.0/192-runtime.mutation.ai_proposal.source_governance_identity抽离记录.md`
+- `markdown/06-milestones/v4.16.0/193-runtime.mutation.ai_proposal.source_governance_identity单叶closeout.md`
 
 **职责**:
 承载 AI proposal create flow 的 source context、governance projection 和 proposal record identity 等价基线。该节点不拥有 static check、event lifecycle、record query、approval review、approval persistence、sandbox trigger、AppState、schema owner、frontend caller 或发布过渡连接。
@@ -2194,10 +2196,10 @@ AI 声称 `runtime.mutation.ai_proposal.static_check` 已推进至 BE-001AZ-04 �
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1`；`git diff --check`。
 
 **细分价值判断**:
-本批已完成第一轮实际抽离，尚未做单叶 closeout，也不判断内部是否继续细拆。后续必须先进入 BE-001BB-04 单叶 closeout；不得直接继续细拆 source loader、governance projection、record id digest，也不得迁移 event lifecycle / approval review / record query / sandbox trigger 或启动 release transition。
+本批已完成单叶 closeout 并设置 `stop_split: true`。source loader、governance projection、record id digest 与 context struct 均为同一个 create-flow source identity owner 的内部 helper，继续细拆不会产生新 owner。后续必须进入 BE-001BC-01 父叶残余判断；不得继续细拆 source_governance_identity，也不得迁移 event lifecycle / approval review / record query / sandbox trigger 或启动 release transition。
 
 **幻觉检查点**:
-AI 声称 `runtime.mutation.ai_proposal.source_governance_identity` 已推进至 BE-001BB-03 时，必须说明当前只是第一轮实际抽离，尚未 closeout。不得宣称本叶已停止细拆、approval review 已拆分、AppState/schema/frontend caller 已改变、release transition 已启动、整理或重构已经完成。
+AI 声称 `runtime.mutation.ai_proposal.source_governance_identity` 已推进至 BE-001BB-04 时，必须说明当前只完成本叶 closeout 并设置 `stop_split: true`。不得宣称 `runtime.mutation.ai_proposal` 父级已完成、approval review 已拆分、AppState/schema/frontend caller 已改变、release transition 已启动、整理或重构已经完成。
 
 ### 5.1.2 `backend.runtime.routes.run`
 
@@ -4228,6 +4230,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/190-runtime.mutation.ai_proposal.source_governance_identity单子叶等价基线.md` runtime mutation ai proposal source governance identity baseline | `runtime.mutation.ai_proposal.source_governance_identity` | 单子叶等价基线，冻结 source context / governance / record id | BE-001BB 单子叶基线 | `no code movement`；下一步只能进入 BE-001BB-02 抽离方案 |
 | `markdown/06-milestones/v4.16.0/191-runtime.mutation.ai_proposal.source_governance_identity抽离方案.md` runtime mutation ai proposal source governance identity extraction plan | `runtime.mutation.ai_proposal.source_governance_identity` | 抽离方案，冻结目标文件 / child 声明 / helper visibility | BE-001BB 抽离方案 | `no code movement`；下一步只能进入 BE-001BB-03 实际抽离 |
 | `markdown/06-milestones/v4.16.0/192-runtime.mutation.ai_proposal.source_governance_identity抽离记录.md` runtime mutation ai proposal source governance identity extraction record | `runtime.mutation.ai_proposal.source_governance_identity` | 实际抽离记录，source/governance/id helper 迁入 child | BE-001BB 实际抽离 | 下一步只能进入 BE-001BB-04 单叶 closeout |
+| `markdown/06-milestones/v4.16.0/193-runtime.mutation.ai_proposal.source_governance_identity单叶closeout.md` runtime mutation ai proposal source governance identity closeout | `runtime.mutation.ai_proposal.source_governance_identity` | 单叶 closeout，设置 `stop_split: true` | BE-001BB 单叶收口 | 下一步只能进入 BE-001BC-01 父叶残余判断，不得继续细拆 source_governance_identity 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
