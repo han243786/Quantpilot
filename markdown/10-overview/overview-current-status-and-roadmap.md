@@ -149,6 +149,7 @@ v4.7.0 系统应被理解为：
 - BE-001BA-01 已完成 `runtime.mutation.ai_proposal` 父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001BB-01 `runtime.mutation.ai_proposal.source_governance_identity` 单子叶等价基线。
 - BE-001BB-01 已建立 `runtime.mutation.ai_proposal.source_governance_identity` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001BB-02 抽离方案。
 - BE-001BB-02 已建立 `runtime.mutation.ai_proposal.source_governance_identity` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001BB-03 实际抽离。
+- BE-001BB-03 已完成 `runtime.mutation.ai_proposal.source_governance_identity` 实际抽离；source/governance/id helper 已迁入 child，下一步只能进入 BE-001BB-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 
