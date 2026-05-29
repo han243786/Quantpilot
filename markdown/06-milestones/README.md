@@ -225,6 +225,7 @@
 | 211 | `v4.16.0/211-runtime.mutation.ai_proposal.approval_persistence抽离方案.md` | BE-001BJ-02 `runtime.mutation.ai_proposal.approval_persistence` 抽离方案 | 📋 已创建 |
 | 212 | `v4.16.0/212-runtime.mutation.ai_proposal.approval_persistence抽离记录.md` | BE-001BJ-03 `runtime.mutation.ai_proposal.approval_persistence` 实际抽离记录 | 📋 已创建 |
 | 213 | `v4.16.0/213-runtime.mutation.ai_proposal.approval_persistence单叶closeout.md` | BE-001BJ-04 `runtime.mutation.ai_proposal.approval_persistence` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
+| 214 | `v4.16.0/214-runtime.mutation.ai_proposal第六轮父叶残余判断.md` | BE-001BK-01 `runtime.mutation.ai_proposal` 第六轮父叶残余判断，下一候选为 `sandbox_trigger` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
