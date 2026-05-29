@@ -121,6 +121,11 @@
 | 107 | `v4.16.0/107-runtime.backtest.experiment_sweep单子叶等价基线.md` | BE-001V-01 `runtime.backtest.experiment_sweep` 单子叶等价基线，冻结 experiment routes、参数网格、复用桥和生命周期边界 | 📋 已创建 |
 | 108 | `v4.16.0/108-runtime.backtest.experiment_sweep抽离方案.md` | BE-001V-02 `runtime.backtest.experiment_sweep` 抽离方案，限定下一批只迁移 experiment handler/helper | 📋 已创建 |
 | 109 | `v4.16.0/109-runtime.backtest.experiment_sweep抽离记录.md` | BE-001V-03 `runtime.backtest.experiment_sweep` 抽离记录，将 experiment handler/helper 迁入 `src/runtime/backtest/experiment_sweep.rs` | 📋 已创建 |
+| 110 | `v4.16.0/110-runtime.backtest.experiment_sweep单叶closeout.md` | BE-001V-04 `runtime.backtest.experiment_sweep` 单叶 closeout，确认等价并登记 `parameter_grid` 下一候选 | 📋 已创建 |
+| 111 | `v4.16.0/111-runtime.backtest.experiment_sweep.parameter_grid单子叶等价基线.md` | BE-001W-01 `runtime.backtest.experiment_sweep.parameter_grid` 单子叶等价基线，冻结参数网格 helper 边界 | 📋 已创建 |
+| 112 | `v4.16.0/112-runtime.backtest.experiment_sweep.parameter_grid抽离方案.md` | BE-001W-02 `runtime.backtest.experiment_sweep.parameter_grid` 抽离方案，限定下一批只迁移 3 个 helper | 📋 已创建 |
+| 113 | `v4.16.0/113-runtime.backtest.experiment_sweep.parameter_grid抽离记录.md` | BE-001W-03 `runtime.backtest.experiment_sweep.parameter_grid` 抽离记录，将 3 个 helper 迁入 `src/runtime/backtest/parameter_grid.rs` | 📋 已创建 |
+| 114 | `v4.16.0/114-runtime.backtest.experiment_sweep.parameter_grid单叶closeout.md` | BE-001W-04 `runtime.backtest.experiment_sweep.parameter_grid` 单叶 closeout，确认等价并设置 `stop_split: true` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
