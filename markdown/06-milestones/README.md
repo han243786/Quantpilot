@@ -105,6 +105,22 @@
 | 91 | `v4.16.0/91-runtime.backtest.execution_start.v4_runtime_execution抽离方案.md` | BE-001Q-02 `runtime.backtest.execution_start.v4_runtime_execution` 抽离方案，限定下一批只迁移 deterministic runtime execution 最小 helper | 📋 已创建 |
 | 92 | `v4.16.0/92-runtime.backtest.execution_start.v4_runtime_execution抽离记录.md` | BE-001Q-03 `runtime.backtest.execution_start.v4_runtime_execution` 抽离记录，将 deterministic bars/ticks 与 blocking runtime replay 迁入父级私有子模块 | 📋 已创建 |
 | 93 | `v4.16.0/93-runtime.backtest.execution_start.v4_runtime_execution单叶closeout.md` | BE-001Q-04 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout，确认等价并设置 `stop_split: true` | ✅ 已完成 |
+| 94 | `v4.16.0/94-runtime.backtest.execution_start.legacy_dispatch单子叶等价基线.md` | BE-001R-01 `runtime.backtest.execution_start.legacy_dispatch` 单子叶等价基线，冻结 legacy compile/sandbox dispatch 且当前不移动代码 | 📋 已创建 |
+| 95 | `v4.16.0/95-runtime.backtest.execution_start.legacy_dispatch抽离方案.md` | BE-001R-02 `runtime.backtest.execution_start.legacy_dispatch` 抽离方案，限定下一批只迁移 legacy compile/sandbox dispatch 最小 helper | 📋 已创建 |
+| 96 | `v4.16.0/96-runtime.backtest.execution_start.legacy_dispatch抽离记录.md` | BE-001R-03 `runtime.backtest.execution_start.legacy_dispatch` 抽离记录，将 legacy compile/sandbox dispatch 迁入父级私有子模块 | 📋 已创建 |
+| 97 | `v4.16.0/97-runtime.backtest.execution_start.legacy_dispatch单叶closeout.md` | BE-001R-04 `runtime.backtest.execution_start.legacy_dispatch` 单叶 closeout，确认等价并设置 `stop_split: true` | ✅ 已完成 |
+| 98 | `v4.16.0/98-runtime.backtest.execution_start父叶残余判断.md` | BE-001S-01 `runtime.backtest.execution_start` 父叶残余判断，确认回到 `runtime.backtest.record_store` 上层队列 | ✅ 已完成 |
+| 99 | `v4.16.0/99-runtime.backtest.record_store单子叶等价基线.md` | BE-001T-01 `runtime.backtest.record_store` 单子叶等价基线，冻结 backtest list/detail/save/discard 边界 | 📋 已创建 |
+| 100 | `v4.16.0/100-runtime.backtest.record_store抽离方案.md` | BE-001T-02 `runtime.backtest.record_store` 抽离方案，限定下一批只迁移四个 handler 并保留 shared owner | 📋 已创建 |
+| 101 | `v4.16.0/101-runtime.backtest.record_store抽离记录.md` | BE-001T-03 `runtime.backtest.record_store` 抽离记录，将四个 handler 迁入 `src/runtime/backtest/record_store.rs` | 📋 已创建 |
+| 102 | `v4.16.0/102-runtime.backtest.record_store单叶closeout.md` | BE-001T-04 `runtime.backtest.record_store` 单叶 closeout，确认等价并设置 `stop_split: true` | ✅ 已完成 |
+| 103 | `v4.16.0/103-runtime.backtest.replay单子叶等价基线.md` | BE-001U-01 `runtime.backtest.replay` 单子叶等价基线，冻结 replay route、query、response mapping 和 metrics 边界 | 📋 已创建 |
+| 104 | `v4.16.0/104-runtime.backtest.replay抽离方案.md` | BE-001U-02 `runtime.backtest.replay` 抽离方案，限定下一批只迁移 `get_backtest_replay` 并保留 shared owner | 📋 已创建 |
+| 105 | `v4.16.0/105-runtime.backtest.replay抽离记录.md` | BE-001U-03 `runtime.backtest.replay` 抽离记录，将 `get_backtest_replay` 迁入 `src/runtime/backtest/replay.rs` | 📋 已创建 |
+| 106 | `v4.16.0/106-runtime.backtest.replay单叶closeout.md` | BE-001U-04 `runtime.backtest.replay` 单叶 closeout，确认等价并设置 `stop_split: true` | 📋 已创建 |
+| 107 | `v4.16.0/107-runtime.backtest.experiment_sweep单子叶等价基线.md` | BE-001V-01 `runtime.backtest.experiment_sweep` 单子叶等价基线，冻结 experiment routes、参数网格、复用桥和生命周期边界 | 📋 已创建 |
+| 108 | `v4.16.0/108-runtime.backtest.experiment_sweep抽离方案.md` | BE-001V-02 `runtime.backtest.experiment_sweep` 抽离方案，限定下一批只迁移 experiment handler/helper | 📋 已创建 |
+| 109 | `v4.16.0/109-runtime.backtest.experiment_sweep抽离记录.md` | BE-001V-03 `runtime.backtest.experiment_sweep` 抽离记录，将 experiment handler/helper 迁入 `src/runtime/backtest/experiment_sweep.rs` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

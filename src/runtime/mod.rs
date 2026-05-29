@@ -1,5 +1,11 @@
 #[path = "backtest/execution_start.rs"]
 mod backtest_execution_start;
+#[path = "backtest/experiment_sweep.rs"]
+mod backtest_experiment_sweep;
+#[path = "backtest/record_store.rs"]
+mod backtest_record_store;
+#[path = "backtest/replay.rs"]
+mod backtest_replay;
 mod event_stream;
 #[path = "run/record_store.rs"]
 mod run_record_store;
@@ -11,6 +17,10 @@ mod run_session_start;
 mod run_v4_handoff;
 use backtest_execution_start::execute_backtest_request;
 pub(crate) use backtest_execution_start::start_backtest_run;
+pub(crate) use backtest_record_store::{
+    discard_backtest_record, get_backtest_detail, list_backtests, save_backtest_record,
+};
+pub(crate) use backtest_replay::get_backtest_replay;
 pub(crate) use event_stream::stream_run_events;
 pub(crate) use run_record_store::{discard_run_record, get_run_detail, list_runs, save_run_record};
 pub(crate) use run_replay_status::{get_run_replay, get_run_status};
@@ -20,6 +30,10 @@ use run_v4_handoff::{runtime_simulated_v4_matrix, runtime_v4_static_bundle};
 
 // Backtest + Experiment handlers
 include!("backtest.rs");
+pub(crate) use backtest_experiment_sweep::{
+    discard_experiment_record, get_experiment_detail, list_experiments, save_experiment_record,
+    start_backtest_experiment,
+};
 // Run + SSE handlers
 include!("run.rs");
 // Mutation + Proposal + Approval handlers

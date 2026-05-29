@@ -886,7 +886,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 
 **层级路径**: `root.backend.runtime`
 **父模块**: `backend`
-**状态**: v4.16 BE-001H-03 `runtime.run.v4_handoff` 已完成单叶 closeout，当前不继续细拆；BE-001I-03 `runtime.run.session_start` 已完成单叶 closeout，当前不继续细拆；BE-001J-05 `runtime.run.record_store` 已完成抽离与单叶 closeout，当前不继续细拆；BE-001K-04 `runtime.run.replay_status` 已完成抽离与单叶 closeout，当前不继续细拆；BE-001L-04 `runtime.event_stream` 已完成抽离与单叶 closeout，当前不继续细拆；BE-001M-04 `runtime.backtest` 已完成 route facade 抽离与单叶 closeout，route facade 本身停止细分；BE-001N-04 `runtime.backtest.execution_start` 已完成第一轮物理抽离与单叶 closeout，但不停止内部细分；BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout 并设置 `stop_split: true`；BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout 并设置 `stop_split: true`；BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`。runtime route aggregate 已迁入 `src/backend/runtime/routes.rs`，run route group 已迁入 `src/backend/runtime/routes/run.rs`，backtest route group 已迁入 `src/backend/runtime/routes/backtest.rs`；`/api/runtime/v4/run` handler 已迁入 `src/runtime/run/v4_handoff.rs`，legacy `/api/runtime/test-run` handler 已迁入 `src/runtime/run/session_start.rs`，run record list/detail/save/discard handler 已迁入 `src/runtime/run/record_store.rs`，replay/status handler 已迁入 `src/runtime/run/replay_status.rs`，SSE handler 已迁入 `src/runtime/event_stream.rs`，backtest 创建路径 handler/helper 已迁入 `src/runtime/backtest/execution_start.rs`，v4 projection helper 已迁入 `src/runtime/backtest/v4_projection.rs`，v4 request resolution helper 已迁入 `src/runtime/backtest/v4_request_resolution.rs`，v4 runtime execution helper 已迁入 `src/runtime/backtest/v4_runtime_execution.rs`，backtest record/replay/experiment/artifact/compare/persistence 仍保留原 owner，state/shared helper 仍保留在 `src/runtime/`。
+**状态**: v4.16 BE-001H-03 `runtime.run.v4_handoff` 已完成单叶 closeout，当前不继续细拆；BE-001I-03 `runtime.run.session_start` 已完成单叶 closeout，当前不继续细拆；BE-001J-05 `runtime.run.record_store` 已完成抽离与单叶 closeout，当前不继续细拆；BE-001K-04 `runtime.run.replay_status` 已完成抽离与单叶 closeout，当前不继续细拆；BE-001L-04 `runtime.event_stream` 已完成抽离与单叶 closeout，当前不继续细拆；BE-001M-04 `runtime.backtest` 已完成 route facade 抽离与单叶 closeout，route facade 本身停止细分；BE-001N-04 `runtime.backtest.execution_start` 已完成第一轮物理抽离与单叶 closeout；BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout 并设置 `stop_split: true`；BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout 并设置 `stop_split: true`；BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`；BE-001R-04 已完成 `runtime.backtest.execution_start.legacy_dispatch` 单叶 closeout 并设置 `stop_split: true`；BE-001S-01 已完成 `runtime.backtest.execution_start` 父叶残余判断；BE-001T-04 已完成 `runtime.backtest.record_store` 单叶 closeout 并设置 `stop_split: true`；BE-001U-04 已完成 `runtime.backtest.replay` 单叶 closeout 并设置 `stop_split: true`；BE-001V-03 已完成 `runtime.backtest.experiment_sweep` 第一轮物理抽离，下一候选为 BE-001V-04 单叶 closeout。runtime route aggregate 已迁入 `src/backend/runtime/routes.rs`，run route group 已迁入 `src/backend/runtime/routes/run.rs`，backtest route group 已迁入 `src/backend/runtime/routes/backtest.rs`；`/api/runtime/v4/run` handler 已迁入 `src/runtime/run/v4_handoff.rs`，legacy `/api/runtime/test-run` handler 已迁入 `src/runtime/run/session_start.rs`，run record list/detail/save/discard handler 已迁入 `src/runtime/run/record_store.rs`，replay/status handler 已迁入 `src/runtime/run/replay_status.rs`，SSE handler 已迁入 `src/runtime/event_stream.rs`，backtest 创建路径 handler/helper 已迁入 `src/runtime/backtest/execution_start.rs`，v4 projection helper 已迁入 `src/runtime/backtest/v4_projection.rs`，v4 request resolution helper 已迁入 `src/runtime/backtest/v4_request_resolution.rs`，v4 runtime execution helper 已迁入 `src/runtime/backtest/v4_runtime_execution.rs`，legacy dispatch helper 已迁入 `src/runtime/backtest/legacy_dispatch.rs`，backtest record store handler 已迁入 `src/runtime/backtest/record_store.rs`，backtest replay handler 已迁入 `src/runtime/backtest/replay.rs`，backtest experiment sweep handler/helper 已迁入 `src/runtime/backtest/experiment_sweep.rs`，backtest artifact/compare/persistence 仍保留原 owner，state/shared helper 仍保留在 `src/runtime/`。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -903,6 +903,8 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `src/runtime/backtest/v4_projection.rs`
 - `src/runtime/backtest/v4_request_resolution.rs`
 - `src/runtime/backtest/v4_runtime_execution.rs`
+- `src/runtime/backtest/legacy_dispatch.rs`
+- `src/runtime/backtest/record_store.rs`
 - `src/runtime_persistence.rs`
 - `src/runtime_event_projection.rs`
 - `src/runtime_validation.rs`
@@ -947,6 +949,22 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/91-runtime.backtest.execution_start.v4_runtime_execution抽离方案.md`
 - `markdown/06-milestones/v4.16.0/92-runtime.backtest.execution_start.v4_runtime_execution抽离记录.md`
 - `markdown/06-milestones/v4.16.0/93-runtime.backtest.execution_start.v4_runtime_execution单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/94-runtime.backtest.execution_start.legacy_dispatch单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/95-runtime.backtest.execution_start.legacy_dispatch抽离方案.md`
+- `markdown/06-milestones/v4.16.0/96-runtime.backtest.execution_start.legacy_dispatch抽离记录.md`
+- `markdown/06-milestones/v4.16.0/97-runtime.backtest.execution_start.legacy_dispatch单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/98-runtime.backtest.execution_start父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/99-runtime.backtest.record_store单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/100-runtime.backtest.record_store抽离方案.md`
+- `markdown/06-milestones/v4.16.0/101-runtime.backtest.record_store抽离记录.md`
+- `markdown/06-milestones/v4.16.0/102-runtime.backtest.record_store单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/103-runtime.backtest.replay单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/104-runtime.backtest.replay抽离方案.md`
+- `markdown/06-milestones/v4.16.0/105-runtime.backtest.replay抽离记录.md`
+- `markdown/06-milestones/v4.16.0/106-runtime.backtest.replay单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/107-runtime.backtest.experiment_sweep单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/108-runtime.backtest.experiment_sweep抽离方案.md`
+- `markdown/06-milestones/v4.16.0/109-runtime.backtest.experiment_sweep抽离记录.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -1472,7 +1490,7 @@ AI 声称 `runtime.event_stream` 已完成时，必须说明只完成 SSE handle
 
 **层级路径**: `root.backend.runtime.routes.runtime.backtest`
 **父模块**: `backend.runtime.routes`
-**状态**: v4.16 BE-001M-04 route facade 抽离与单叶 closeout 已完成，route facade 本身停止细分；BE-001N-04 已将 `runtime.backtest.execution_start` 创建路径 handler/helper 迁入 `src/runtime/backtest/execution_start.rs` 并完成单叶 closeout；BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout 并设置 `stop_split: true`；BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout 并设置 `stop_split: true`；BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`。backtest start/list/detail/save/discard/replay/compare routes 已由 `src/backend/runtime/routes/backtest.rs` 注册并经 `src/backend/runtime/routes.rs` 父级 aggregate 接入；record store、replay、experiment、artifact schema、compare owner、state owner、persistence owner 和 frontend caller 均保留原位。
+**状态**: v4.16 BE-001M-04 route facade 抽离与单叶 closeout 已完成，route facade 本身停止细分；BE-001N-04 已将 `runtime.backtest.execution_start` 创建路径 handler/helper 迁入 `src/runtime/backtest/execution_start.rs` 并完成单叶 closeout；BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout 并设置 `stop_split: true`；BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout 并设置 `stop_split: true`；BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`；BE-001R-04 已完成 `runtime.backtest.execution_start.legacy_dispatch` 单叶 closeout 并设置 `stop_split: true`；BE-001S-01 已完成 `runtime.backtest.execution_start` 父叶残余判断；BE-001T-04 已完成 `runtime.backtest.record_store` 单叶 closeout 并设置 `stop_split: true`；BE-001U-04 已完成 `runtime.backtest.replay` 单叶 closeout 并设置 `stop_split: true`。backtest start/list/detail/save/discard/replay/compare routes 已由 `src/backend/runtime/routes/backtest.rs` 注册并经 `src/backend/runtime/routes.rs` 父级 aggregate 接入；record store handler 已迁入 `src/runtime/backtest/record_store.rs`，replay handler 已迁入 `src/runtime/backtest/replay.rs`，experiment、artifact schema、compare owner、state owner、persistence owner 和 frontend caller 均保留原位。
 **真实文件**:
 - `src/backend/runtime/routes.rs`
 - `src/backend/runtime/routes/backtest.rs`
@@ -1481,6 +1499,8 @@ AI 声称 `runtime.event_stream` 已完成时，必须说明只完成 SSE handle
 - `src/runtime/backtest/v4_projection.rs`
 - `src/runtime/backtest/v4_request_resolution.rs`
 - `src/runtime/backtest/v4_runtime_execution.rs`
+- `src/runtime/backtest/legacy_dispatch.rs`
+- `src/runtime/backtest/record_store.rs`
 - `src/backtest_compare.rs`
 - `src/backtest_artifacts.rs`
 - `src/runtime_persistence.rs`
@@ -1509,6 +1529,22 @@ AI 声称 `runtime.event_stream` 已完成时，必须说明只完成 SSE handle
 - `markdown/06-milestones/v4.16.0/91-runtime.backtest.execution_start.v4_runtime_execution抽离方案.md`
 - `markdown/06-milestones/v4.16.0/92-runtime.backtest.execution_start.v4_runtime_execution抽离记录.md`
 - `markdown/06-milestones/v4.16.0/93-runtime.backtest.execution_start.v4_runtime_execution单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/94-runtime.backtest.execution_start.legacy_dispatch单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/95-runtime.backtest.execution_start.legacy_dispatch抽离方案.md`
+- `markdown/06-milestones/v4.16.0/96-runtime.backtest.execution_start.legacy_dispatch抽离记录.md`
+- `markdown/06-milestones/v4.16.0/97-runtime.backtest.execution_start.legacy_dispatch单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/98-runtime.backtest.execution_start父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/99-runtime.backtest.record_store单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/100-runtime.backtest.record_store抽离方案.md`
+- `markdown/06-milestones/v4.16.0/101-runtime.backtest.record_store抽离记录.md`
+- `markdown/06-milestones/v4.16.0/102-runtime.backtest.record_store单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/103-runtime.backtest.replay单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/104-runtime.backtest.replay抽离方案.md`
+- `markdown/06-milestones/v4.16.0/105-runtime.backtest.replay抽离记录.md`
+- `markdown/06-milestones/v4.16.0/106-runtime.backtest.replay单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/107-runtime.backtest.experiment_sweep单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/108-runtime.backtest.experiment_sweep抽离方案.md`
+- `markdown/06-milestones/v4.16.0/109-runtime.backtest.experiment_sweep抽离记录.md`
 
 **职责**:
 承载 backtest route group 的 route facade 与等价基线，固定 backtest run/list/detail/save/discard/replay/compare、artifact views、transient spill、persistence lookup、v4 backtest evidence 和父级 route owner。
@@ -1565,10 +1601,10 @@ AI 声称 `runtime.event_stream` 已完成时，必须说明只完成 SSE handle
 BE-001M-03 已新建 `src/backend/runtime/routes/backtest.rs` 并迁入 backtest route registration。`src/backend/runtime/routes.rs` 只新增 backtest 子 route facade 注册，并继续保留 event stream、evidence、mutation、report、experiment、approval 和 ops routes。`src/runtime/backtest.rs`、`src/backtest_compare.rs`、artifact、persistence、schema、state 和 frontend owner 不迁移。
 
 **单叶 closeout**:
-BE-001M-04 已确认 route facade 等价并停止 route facade 内部细分。BE-001N-04 已为 `runtime.backtest.execution_start` 完成第一轮物理抽离与单叶 closeout；BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout 并设置 `stop_split: true`；BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout 并设置 `stop_split: true`；BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`。下一批若继续只能回到父叶另起候选基线，不能直接越级迁移 record store、replay、experiment 或共享 owner。
+BE-001M-04 已确认 route facade 等价并停止 route facade 内部细分。BE-001N-04 已为 `runtime.backtest.execution_start` 完成第一轮物理抽离与单叶 closeout；BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout 并设置 `stop_split: true`；BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout 并设置 `stop_split: true`；BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`；BE-001R-04 已完成 `runtime.backtest.execution_start.legacy_dispatch` 单叶 closeout 并设置 `stop_split: true`；BE-001S-01 已完成 `runtime.backtest.execution_start` 父叶残余判断；BE-001T-04 已完成 `runtime.backtest.record_store` 单叶 closeout 并设置 `stop_split: true`；BE-001U-04 已完成 `runtime.backtest.replay` 单叶 closeout 并设置 `stop_split: true`；BE-001V-03 已完成 `runtime.backtest.experiment_sweep` 第一轮物理抽离。下一批若继续只能进入 BE-001V-04 单叶 closeout，不能直接越级迁移 route facade、execution_start、persistence、mapping、schema、state 或共享 owner。
 
 **细分价值判断**:
-route facade 本身已 `stop_split: true`，因为继续拆只会制造无意义微文件。当前优先候选 `runtime.backtest.execution_start` 已完成第一轮物理抽离与单叶 closeout，但不设置 `stop_split: true`；`runtime.backtest.execution_start.v4_projection` 已完成单叶 closeout 并设置 `stop_split: true`；`runtime.backtest.execution_start.v4_request_resolution` 已完成单叶 closeout 并设置 `stop_split: true`；`runtime.backtest.execution_start.v4_runtime_execution` 已完成单叶 closeout 并设置 `stop_split: true`。不得跳过父叶候选基线直接移动 artifact schema、compare owner、persistence owner、replay helper、state owner 或 frontend caller。
+route facade 本身已 `stop_split: true`，因为继续拆只会制造无意义微文件。`runtime.backtest.execution_start` 已完成第一轮物理抽离、内部四个子叶 closeout 和父叶残余判断；`runtime.backtest.record_store` 已完成抽离与单叶 closeout，并设置 `stop_split: true`。不得从 record_store 继续细拆或直接移动 artifact schema、compare owner、persistence owner、replay helper、state owner 或 frontend caller。
 
 **幻觉检查点**:
 AI 声称 `runtime.backtest` 已 closeout 时，必须说明当前只完成 backtest route facade 抽离与 route facade 单叶 closeout；没有迁移 handler、artifact、compare、replay、state、persistence、schema 或 frontend caller。不得宣称 runtime route aggregate 全部完成，也不得把 experiment/report/mutation 说成本叶的一部分。
@@ -1577,13 +1613,15 @@ AI 声称 `runtime.backtest` 已 closeout 时，必须说明当前只完成 back
 
 **层级路径**: `root.backend.runtime.routes.runtime.backtest.execution_start`
 **父模块**: `runtime.backtest`
-**状态**: v4.16 BE-001N-04 单叶 closeout 已完成。`start_backtest_run`、`execute_backtest_request`、`execute_v4_backtest_request` 和 v4 helper 已迁入 `src/runtime/backtest/execution_start.rs`；父级 `runtime` 通过 re-export 暴露 `start_backtest_run`，并通过内部桥保留 `execute_backtest_request` 给 experiment sweep 复用。本叶等价成立，但不设置 `stop_split: true`；BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout 并设置 `stop_split: true`；BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout 并设置 `stop_split: true`；BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`。record store、replay、experiment、artifact schema、compare owner、persistence owner、schema owner、state owner、frontend caller 和发布过渡均未迁移。
+**状态**: v4.16 BE-001N-04 单叶 closeout 已完成。`start_backtest_run`、`execute_backtest_request`、`execute_v4_backtest_request` 和 v4 helper 已迁入 `src/runtime/backtest/execution_start.rs`；父级 `runtime` 通过 re-export 暴露 `start_backtest_run`，并通过内部桥保留 `execute_backtest_request` 给 experiment sweep 复用。本叶等价成立，但不设置 `stop_split: true`；BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout 并设置 `stop_split: true`；BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout 并设置 `stop_split: true`；BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`；BE-001R-04 已完成 `runtime.backtest.execution_start.legacy_dispatch` 单叶 closeout 并设置 `stop_split: true`；BE-001S-01 已完成父叶残余判断。record store、replay、experiment、artifact schema、compare owner、persistence owner、schema owner、state owner、frontend caller 和发布过渡均未迁移。
+**递归状态补充**: BE-001S-01 已确认 `runtime.backtest.execution_start` 当前不再私拆 record/state/persistence 边界；下一步回到 `runtime.backtest` 上层队列，为 `runtime.backtest.record_store` 建立单子叶等价基线。
 **真实文件**:
 - `src/backend/runtime/routes/backtest.rs`
 - `src/runtime/backtest/execution_start.rs`
 - `src/runtime/backtest/v4_projection.rs`
 - `src/runtime/backtest/v4_request_resolution.rs`
 - `src/runtime/backtest/v4_runtime_execution.rs`
+- `src/runtime/backtest/legacy_dispatch.rs`
 - `src/runtime/backtest.rs`
 - `src/runtime/mod.rs`
 - `src/backtest_artifacts.rs`
@@ -1608,6 +1646,11 @@ AI 声称 `runtime.backtest` 已 closeout 时，必须说明当前只完成 back
 - `markdown/06-milestones/v4.16.0/91-runtime.backtest.execution_start.v4_runtime_execution抽离方案.md`
 - `markdown/06-milestones/v4.16.0/92-runtime.backtest.execution_start.v4_runtime_execution抽离记录.md`
 - `markdown/06-milestones/v4.16.0/93-runtime.backtest.execution_start.v4_runtime_execution单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/94-runtime.backtest.execution_start.legacy_dispatch单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/95-runtime.backtest.execution_start.legacy_dispatch抽离方案.md`
+- `markdown/06-milestones/v4.16.0/96-runtime.backtest.execution_start.legacy_dispatch抽离记录.md`
+- `markdown/06-milestones/v4.16.0/97-runtime.backtest.execution_start.legacy_dispatch单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/98-runtime.backtest.execution_start父叶残余判断.md`
 
 **职责**:
 固定 backtest 创建路径的白箱边界，包括 `start_backtest_run`、legacy `execute_backtest_request`、v4 `execute_v4_backtest_request`、v4 request resolution 子模块调用、artifact view 构建调用、governance event envelope 校验和 transient/in-memory record 写入。
@@ -1637,16 +1680,16 @@ AI 声称 `runtime.backtest` 已 closeout 时，必须说明当前只完成 back
 `runtime.backtest.execution_start` 只能经父级 `runtime.backtest` 和 `backend.runtime.routes.backtest` 暴露创建路径；不得横向直接接管 record store、replay、experiment、compare、artifact schema、persistence、state 或 frontend caller。
 
 **允许调用的子模块**:
-仅允许继续使用既有 `src/backtest_artifacts.rs`、`src/runtime_response_mapping.rs`、`src/runtime_persistence.rs`、`src/frontend_api_types.rs`、`src/runtime/backtest/v4_projection.rs`、`src/runtime/backtest/v4_request_resolution.rs` 和 v4 runtime helper。共享 owner 保持原位，不在本叶私有化。父级 `runtime` 是唯一兼容桥，禁止 sibling 横向直连。
+仅允许继续使用既有 `src/backtest_artifacts.rs`、`src/runtime_response_mapping.rs`、`src/runtime_persistence.rs`、`src/frontend_api_types.rs`、`src/runtime/backtest/v4_projection.rs`、`src/runtime/backtest/v4_request_resolution.rs`、`src/runtime/backtest/v4_runtime_execution.rs` 和 `src/runtime/backtest/legacy_dispatch.rs`。共享 owner 保持原位，不在本叶私有化。父级 `runtime` 是唯一兼容桥，禁止 sibling 横向直连。
 
 **回归保护**:
 `cargo check -p quantpilot`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 
 **细分价值判断**:
-本节点已完成单叶 closeout，判定不设置 `stop_split: true`。BE-001O-04 已确认 `runtime.backtest.execution_start.v4_projection` 等价并设置 `stop_split: true`。BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout 并设置 `stop_split: true`；BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`。下一批若继续只能回到父叶另起候选基线。不得直接拆迁 record/replay/experiment/compare，也不得越过父叶候选基线迁移 schema、state、persistence 或 frontend。
+本节点已完成单叶 closeout，判定不设置 `stop_split: true`。BE-001O-04 已确认 `runtime.backtest.execution_start.v4_projection` 等价并设置 `stop_split: true`；BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout 并设置 `stop_split: true`；BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`；BE-001R-04 已完成 `runtime.backtest.execution_start.legacy_dispatch` 单叶 closeout 并设置 `stop_split: true`；BE-001S-01 已完成父叶残余判断。上层 `runtime.backtest.record_store` 已在 BE-001T-04 完成 closeout，`runtime.backtest.replay` 已在 BE-001U-04 完成 closeout，`runtime.backtest.experiment_sweep` 已在 BE-001V-03 完成第一轮物理抽离；下一批若继续只能进入 BE-001V-04 单叶 closeout。不得在本父叶内私拆 record finalize、state write、persistence、schema 或 frontend。
 
 **幻觉检查点**:
-AI 声称 `runtime.backtest.execution_start` 已 closeout 时，必须说明只完成创建路径 handler/helper 的抽离与等价 closeout，且 `execute_backtest_request` 只是父级内部 `pub(super)` 复用桥；本叶尚未停止内部细分，但 `runtime.backtest.execution_start.v4_projection` 已完成单叶 closeout 并设置 `stop_split: true`。不得宣称 record store、replay、experiment、artifact schema、compare owner、persistence owner、state owner、schema owner、frontend caller 或发布过渡已经迁移。
+AI 声称 `runtime.backtest.execution_start` 已完成父叶残余判断时，必须说明只完成创建路径 handler/helper 的抽离、四个内部子叶 closeout 和 `no code movement` 的残余判断；下一候选回到 `runtime.backtest.record_store`。不得宣称 record store、replay、experiment、artifact schema、compare owner、persistence owner、state owner、schema owner、frontend caller、发布过渡、整理或重构已经完成。
 
 ### 5.1.10 `runtime.backtest.execution_start.v4_projection`
 
@@ -1863,6 +1906,301 @@ BE-001Q-04 已确认 `run_v4_backtest_runtime_execution` 等价成立，并设�
 
 **幻觉检查点**:
 AI 声称 `runtime.backtest.execution_start.v4_runtime_execution` 已 closeout 时，必须说明只完成 deterministic bars/ticks、blocking runtime replay 和 `run_v4_backtest_runtime_execution` helper 的等价 closeout，并设置 `stop_split: true`；`expand_v4_graph_for_symbols` 仍保留在父级 `execute_v4_backtest_request` 内。不得宣称 request resolution、projection、record write、artifact schema、response schema、state owner、persistence owner、frontend caller、发布过渡、整理或重构已经完成。
+
+### 5.1.13 `runtime.backtest.execution_start.legacy_dispatch`
+
+**层级路径**: `root.backend.runtime.routes.runtime.backtest.execution_start.legacy_dispatch`
+**父模块**: `runtime.backtest.execution_start`
+**状态**: v4.16 BE-001R-04 单叶 closeout 已完成，并设置 `stop_split: true`。legacy non-v4 path 的 QS compile、execution assumption override、compile artifact bundle、blocking FastBacktestSandbox replay 和轻量输出结构已迁入 `src/runtime/backtest/legacy_dispatch.rs`；父级仍保留 validation、v4 bridge、actor/collaboration、id、governance、event envelope、record assembly、artifact views、transient spill、state write、audit log、schema owner、persistence owner、frontend caller 和发布过渡边界。
+**真实文件**:
+- `src/runtime/backtest/execution_start.rs`
+- `src/runtime/backtest/legacy_dispatch.rs`
+- `src/runtime/backtest/v4_runtime_execution.rs`
+- `src/runtime/backtest/v4_request_resolution.rs`
+- `src/runtime/backtest/v4_projection.rs`
+- `src/backtest_artifacts.rs`
+- `src/runtime_response_mapping.rs`
+- `src/runtime_persistence.rs`
+- `src/frontend_api_types.rs`
+- `markdown/06-milestones/v4.16.0/94-runtime.backtest.execution_start.legacy_dispatch单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/95-runtime.backtest.execution_start.legacy_dispatch抽离方案.md`
+- `markdown/06-milestones/v4.16.0/96-runtime.backtest.execution_start.legacy_dispatch抽离记录.md`
+- `markdown/06-milestones/v4.16.0/97-runtime.backtest.execution_start.legacy_dispatch单叶closeout.md`
+
+**职责**:
+作为 `runtime.backtest.execution_start` 父叶的 legacy non-v4 dispatch 子叶，承载 compile preparation 与 sandbox replay 两段式父级私有 helper。它覆盖 `compile_runtime_protocol_via_qs`、`apply_backtest_execution_assumption_overrides`、`compile_runtime_protocol_config`、`resolved_backtest_execution_assumptions`、`resolved_execution_assumption_sources`、`build_compile_artifact_bundle`、`FrontendBacktestReplaySource`、`FastBacktestSandbox`、`DeterministicTestMode::replay_defaults`、`BACKTEST_DETERMINISTIC_SEED`、`tokio::task::spawn_blocking`、latency override、`sandbox.start` 和 `sandbox.run_backtest`；不承载 record assembly。
+
+**输入**:
+| 输入 | 来源 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| `graph_json` | 父级 `execute_backtest_request` | JSON graph | legacy path 继续走 QS compile；v4 path 仍由父级 bridge 分流 |
+| `request` | route / experiment caller | `FrontendRunRequest` | 不改变 runtime_config、backtest_options、actor 或 metadata 语义 |
+| `plan` | `prepare_legacy_backtest_dispatch` | `LegacyBacktestDispatchPlan` | 只携带 compiled protocol 和 execution assumption snapshots |
+| `now_ms` | 父级 timestamp | u64 | 不改变 replay defaults、compile artifact 或 id time anchor |
+
+**输出**:
+| 输出 | 去向 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| `compiled` | parent record/spec/artifact assembly | compiled runtime protocol | 不改变 protocol name、config hash、compiled config 或 core IR |
+| `artifacts` | parent `BacktestRecord.artifacts` | compile artifact bundle | 不改变 artifact source kind 或 metadata |
+| `backtest` | parent record/event projection | sandbox backtest output | 不改变 portfolio、summary、trade count 或 replay semantics |
+| resolved assumptions | parent `build_backtest_spec` | execution assumption snapshot | 不改变 latency override 或 source attribution |
+
+**关键 public 方法**:
+| 方法/调用 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `compile_runtime_protocol_via_qs` | graph JSON | QS protocol | legacy path | 不得绕过 QS compile path |
+| `apply_backtest_execution_assumption_overrides` | protocol、request overrides | runtime protocol | legacy path | 不得改变 override precedence |
+| `compile_runtime_protocol_config` | runtime protocol | compiled config | legacy path | 不得改变 protocol name/config hash |
+| `prepare_legacy_backtest_dispatch` | graph JSON、request | `LegacyBacktestDispatchPlan` | 父级 `execute_backtest_request` | 只做 compile/assumption preparation |
+| `run_legacy_backtest_dispatch` | plan、request、now_ms | `LegacyBacktestDispatchOutput` | 父级 `execute_backtest_request` | 不得迁移 record assembly |
+| `build_compile_artifact_bundle` | metadata、compiled | artifact bundle | legacy path | 不得迁移 artifact schema owner |
+| `FastBacktestSandbox::with_replay_from_core_ir` | core IR、now_ms | sandbox | HistoricalReplay | 不得吞掉本地市场数据缺失错误 |
+| `FastBacktestSandbox::with_mock_replay_from_core_ir_and_test_mode` | core IR、test mode | sandbox | DeterministicMock | 不得改变 deterministic seed |
+| `tokio::task::spawn_blocking` | legacy replay closure | backtest output | legacy path | 不得改变 blocking boundary |
+
+**父子通信规则**:
+`runtime.backtest.execution_start.legacy_dispatch` 只能由父级 `runtime.backtest.execution_start` 调用，且只能作为父模块内部 helper 候选。不得让 v4 request resolution、v4 projection、v4 runtime execution、record store、replay、experiment、compare、persistence、frontend caller 或其他 sibling 横向直连；发布过渡前不得主动提出缓存旁路或性能优化。ASCII guard: `release transition guard`。
+
+**允许调用的子模块**:
+当前物理子模块为 `src/runtime/backtest/legacy_dispatch.rs`，只暴露 `prepare_legacy_backtest_dispatch`、`run_legacy_backtest_dispatch`、`LegacyBacktestDispatchPlan` 和 `LegacyBacktestDispatchOutput` 这些 `pub(super)` 父级私有入口；不得被 sibling 横向调用。
+
+**等价基线**:
+BE-001R-01 已冻结 legacy compile/sandbox dispatch 的输入输出、排除项和验证计划。当前不得宣称 helper 已抽离，不得宣称 `execute_backtest_request` 已整理，也不得迁移 record write、artifact views、transient spill、`state.backtests`、persistence、schema owner 或 frontend caller。
+**抽离方案**:
+BE-001R-02 已限定下一批 BE-001R-03 只允许迁移 legacy compile/sandbox dispatch 最小 helper。允许迁移 `compile_runtime_protocol_via_qs`、`apply_backtest_execution_assumption_overrides`、`compile_runtime_protocol_config`、`resolved_backtest_execution_assumptions`、`resolved_execution_assumption_sources`、`build_compile_artifact_bundle`、`FrontendBacktestReplaySource`、`FastBacktestSandbox`、`DeterministicTestMode::replay_defaults`、`BACKTEST_DETERMINISTIC_SEED`、`tokio::task::spawn_blocking`、latency override、`sandbox.start` 和 `sandbox.run_backtest` 所属连续段；必须保留 parent record assembly、artifact views、spill、state write 和 audit log。
+**抽离记录**:
+BE-001R-03 已按方案新建 `src/runtime/backtest/legacy_dispatch.rs`，并迁入 legacy compile/assumption/artifact/sandbox replay 两段式 helper。父级 `src/runtime/backtest/execution_start.rs` 只保留 path module 与 `pub(super)` 私有导入，不新增 public API，不改变 record assembly、artifact views、spill、state write、audit log 或发布过渡边界。
+**单叶 closeout**:
+BE-001R-04 已确认 legacy dispatch helper 等价成立，并设置 `stop_split: true`。本叶没有 state、IO 持久化、锁、route、schema owner、frontend caller 或外部 API；继续拆成 compile preparation / artifact bundle / sandbox replay 微叶只会扩大父级导入面，不会减少真实耦合。
+
+**后续递归队列**:
+BE-001S-01 已完成 `runtime.backtest.execution_start` 父叶残余判断，下一步回到 `runtime.backtest` 上层队列，默认候选为 `runtime.backtest.record_store`。若要动 record write、artifact schema、state owner、persistence owner 或 frontend caller，必须另起提案并回到适配性校验。
+
+**回归保护**:
+`cargo fmt --check`，`cargo check -p quantpilot`，`cargo test --no-run`，`cargo test -p quantpilot --test api_backtest`，`cargo test -p quantpilot --test api_evidence_contract`，`cargo test -p quantpilot --test api_run`，`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`，`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
+**幻觉检查点**:
+AI 声称 `runtime.backtest.execution_start.legacy_dispatch` 已 closeout 时，必须说明当前只完成 legacy compile/assumption/artifact/sandbox replay helper 的等价 closeout，并设置 `stop_split: true`。不得宣称 record write/persistence/state/frontend owner 已迁移、发布过渡已启动、`runtime.backtest.execution_start` 已整体停止细分，或整理/重构已经完成。
+
+### 5.1.14 `runtime.backtest.record_store`
+
+**层级路径**: `root.backend.runtime.routes.runtime.backtest.record_store`
+**父模块**: `runtime.backtest`
+**状态**: v4.16 BE-001T-04 单叶 closeout 已完成并设置 `stop_split: true`。`list_backtests`、`get_backtest_detail`、`save_backtest_record`、`discard_backtest_record` 已迁入 `src/runtime/backtest/record_store.rs` 并确认等价；本叶不继续细拆，`runtime.backtest.replay` 已由 BE-001U-04 完成 closeout。后续不能从 record_store 混入 experiment、compare、shared helper owner、state owner、persistence owner、artifact/transient owner、response mapping、frontend caller 或发布过渡。
+**真实文件**:
+- `src/backend/runtime/routes/backtest.rs`
+- `src/runtime/backtest/record_store.rs`
+- `src/runtime/backtest.rs`
+- `src/runtime/mod.rs`
+- `src/runtime_persistence.rs`
+- `src/runtime_response_mapping.rs`
+- `src/backtest_artifacts.rs`
+- `src/collaboration.rs`
+- `src/frontend_api_types.rs`
+- `tests/api_backtest.rs`
+- `tests/api_evidence_contract.rs`
+- `tests/api_run.rs`
+- `markdown/06-milestones/v4.16.0/77-runtime.backtest单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/98-runtime.backtest.execution_start父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/99-runtime.backtest.record_store单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/100-runtime.backtest.record_store抽离方案.md`
+- `markdown/06-milestones/v4.16.0/101-runtime.backtest.record_store抽离记录.md`
+- `markdown/06-milestones/v4.16.0/102-runtime.backtest.record_store单叶closeout.md`
+
+**职责**:
+固定 backtest record store handler 边界，包括已保存 backtest 列表、detail lookup、transient/in-memory record 保存、artifact view materialization、transient cleanup、保存审计和未保存 record 丢弃。它不承载 backtest 创建、replay window、experiment sweep、compare logic、artifact schema 设计或 frontend caller。
+
+**输入**:
+| 输入 | 来源 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| `AppState` | backend app state | shared state | 只读取既有 `backtests`、`backtest_store_dir`、`transient_backtest_store_dir`、`audit_store_dir` |
+| `UserId` + `backtest_id` | auth middleware、path param | scoped user / string id | detail/save/discard 必须继续使用 scoped key 或安全路径段 |
+| `PaginationQuery` | `/api/runtime/backtests` | pagination query | 不改变分页语义或 created_at 倒序排序 |
+
+**输出**:
+| 输出 | 去向 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| `PaginatedResponse<BacktestListItem>` | frontend、tests | JSON response | 不改 list schema、filter metadata 或 execution assumption tag |
+| `BacktestDetailResponse` | frontend、tests | JSON response | 不改 governance、artifact views、account、events 或 diagnostics source |
+| persisted artifact directory | filesystem | manifest/event log/metrics/trades/equity | 必须继续由 `persist_backtest_record` 和 `backtest_artifacts` owner 写入 |
+| transient cleanup | filesystem | transient store mutation | `save_backtest_record` 和 `discard_backtest_record` 继续调用 `delete_transient_backtest_record` |
+| graph audit entry | audit store | `GraphAuditAction::BacktestCreated` | 只在 record actor 存在时写入 |
+| discard response | frontend、tests | `DiscardRuntimeArtifactResponse` | 已保存记录必须 conflict；不存在记录必须 not found |
+
+**关键 public 方法**:
+| 方法/调用 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `list_backtests` | `AppState`、`PaginationQuery` | `PaginatedResponse<BacktestListItem>` | `GET /api/runtime/backtests` | 不得列出 transient/in-memory 未保存 record |
+| `get_backtest_detail` | `UserId`、`AppState`、`backtest_id` | `BacktestDetailResponse` | `GET /api/runtime/backtests/:backtest_id` | 不得绕过 scoped lookup 或 governance normalization |
+| `save_backtest_record` | `UserId`、`AppState`、`backtest_id` | `BacktestDetailResponse` | `POST /api/runtime/backtests/:backtest_id/save` | 不得绕过 persistence、artifact views、transient cleanup 或 audit |
+| `discard_backtest_record` | `UserId`、`AppState`、`backtest_id` | `DiscardRuntimeArtifactResponse` | `DELETE /api/runtime/backtests/:backtest_id` | 不得删除正式保存记录 |
+| `load_backtest_record_from_state` | `AppState`、`UserId`、`backtest_id` | `BacktestRecord` | detail/save/replay/compare/report | 不得改变 memory -> artifact dir -> transient fallback 顺序 |
+| `list_backtest_records` | `backtest_store_dir` | `Vec<BacktestRecord>` | list handler | 不得读取 promotion work dir |
+| `persist_backtest_record` | store dir、record | artifact views | save handler | 不得迁移 artifact schema owner |
+| `delete_transient_backtest_record` | transient dir、id | filesystem cleanup | save/discard handler | 不得改变 transient retention/quota owner |
+| `backtest_list_item_from_record` / `backtest_detail_response_from_record` | record | API response | list/detail/save | 不得改 response schema |
+
+**父级通信规则**:
+`runtime.backtest.record_store` 只能经父级 `runtime.backtest` 和 route facade `backend.runtime.routes.backtest` 暴露 record store API。不得让 `runtime.backtest.execution_start`、`runtime.backtest.replay`、`runtime.backtest.experiment_sweep`、`backtest_compare`、persistence owner、frontend caller 或其他 sibling 横向直连；发布过渡前不得主动提出缓存旁路或性能优化。ASCII guard: `release transition guard`。
+
+**允许调用的子模块**:
+当前物理子模块为 `src/runtime/backtest/record_store.rs`，通过父级 `src/runtime/mod.rs` re-export 暴露四个 route handler。它只允许引用既有 `src/runtime_persistence.rs`、`src/runtime_response_mapping.rs`、`src/backtest_artifacts.rs`、`src/collaboration.rs` 和 `src/frontend_api_types.rs`。`AppState.backtests`、`backtest_store_dir`、`transient_backtest_store_dir`、`audit_store_dir` 保持原 owner。
+
+**等价基线**:
+BE-001T-01 已冻结 backtest list/detail/save/discard、transient/persistent record、artifact view、audit 和排除边界。该基线批次为 `no code movement`，不得迁移 replay、experiment、compare、artifact schema owner、state owner、persistence owner 或 frontend caller。
+
+**抽离方案**:
+BE-001T-02 已限定下一批 BE-001T-03 只迁移 `list_backtests`、`get_backtest_detail`、`save_backtest_record`、`discard_backtest_record` 四个 handler 到 record_store 子模块文件。父级 `src/runtime/mod.rs` 只做受控私有子模块接入和 re-export，`src/backend/runtime/routes/backtest.rs` route facade 保持不变；`src/runtime_persistence.rs`、`src/runtime_response_mapping.rs`、`src/backtest_artifacts.rs`、`src/collaboration.rs`、`src/frontend_api_types.rs` 和 AppState/store dir owner 均不迁移。
+
+**抽离记录**:
+BE-001T-03 已按方案新建 `src/runtime/backtest/record_store.rs`，并迁入 `list_backtests`、`get_backtest_detail`、`save_backtest_record`、`discard_backtest_record` 四个 handler。父级 `src/runtime/mod.rs` 保留 `crate::runtime::{list_backtests,get_backtest_detail,save_backtest_record,discard_backtest_record}` 兼容出口；`src/backend/runtime/routes/backtest.rs` 未改 route path、method 或 handler 调用名。
+
+**单叶 closeout**:
+BE-001T-04 已确认四个 handler 等价，并设置 `stop_split: true`。继续拆成 list/detail/save/discard 微文件会增加父级 re-export 和导入面，但不会改善 owner 清晰度；persistence、artifact/transient、audit、response mapping 和 AppState 均继续保留共享 owner。
+
+**后续递归队列**:
+`runtime.backtest.record_store` 后续队列已由 BE-001U-04 `runtime.backtest.replay` closeout 承接并收口。不得继续细拆 `runtime.backtest.record_store`，也不得直接迁移 shared helper、persistence、audit、artifact/transient、response mapping、frontend route 或发布过渡连接。
+
+**回归保护**:
+`cargo fmt --check`，`cargo check -p quantpilot`，`cargo test --no-run`，`cargo test -p quantpilot --test api_backtest`，`cargo test -p quantpilot --test api_evidence_contract`，`cargo test -p quantpilot --test api_run`，`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`，`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
+**幻觉检查点**:
+AI 声称 `runtime.backtest.record_store` 已完成时，必须说明只完成 backtest record list/detail/save/discard handler 子模块的抽离与 closeout，并设置 `stop_split: true`；`src/runtime/backtest.rs` 仍拥有 replay、experiment 和其他 sibling，state owner、shared helper owner、persistence owner、artifact/transient owner、frontend route、发布版本过渡、整理和重构均未完成。不得宣称 backtest handler 全部完成。
+
+### 5.1.15 `runtime.backtest.replay`
+
+**层级路径**: `root.backend.runtime.routes.runtime.backtest.replay`
+**父模块**: `runtime.backtest`
+**状态**: v4.16 BE-001U-04 单叶 closeout 已完成并设置 `stop_split: true`。`get_backtest_replay` 已迁入 `src/runtime/backtest/replay.rs` 并确认等价；route facade、record lookup、query normalization、response mapping、schema、metrics、state/persistence、artifact schema、frontend caller 和发布过渡边界均保持不变。后续 sibling 已由 BE-001V-03 `runtime.backtest.experiment_sweep` 第一轮物理抽离承接。
+**真实文件**:
+- `src/backend/runtime/routes/backtest.rs`
+- `src/runtime/backtest/replay.rs`
+- `src/runtime/backtest.rs`
+- `src/runtime/mod.rs`
+- `src/runtime_persistence.rs`
+- `src/runtime_response_mapping.rs`
+- `src/backtest_artifacts.rs`
+- `src/frontend_api_types.rs`
+- `src/lib.rs`
+- `tests/api_backtest.rs`
+- `tests/api_evidence_contract.rs`
+- `tests/api_run.rs`
+- `markdown/06-milestones/v4.16.0/103-runtime.backtest.replay单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/104-runtime.backtest.replay抽离方案.md`
+- `markdown/06-milestones/v4.16.0/105-runtime.backtest.replay抽离记录.md`
+- `markdown/06-milestones/v4.16.0/106-runtime.backtest.replay单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/107-runtime.backtest.experiment_sweep单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/108-runtime.backtest.experiment_sweep抽离方案.md`
+
+**职责**:
+固定 backtest replay handler 边界，包括 replay route、用户作用域 backtest record lookup、`RuntimeReplayQuery` normalization、artifact event log 优先的 replay response mapping、cursor/filter/checkpoint/timeline 输出和 replay metrics。它不承载 record list/detail/save/discard、backtest 创建、experiment sweep、compare logic、artifact schema 设计或 frontend caller。
+
+**输入**:
+| 输入 | 来源 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| `UserId` + `backtest_id` | auth middleware、path param | scoped user / string id | 必须继续经 `load_backtest_record_from_state` 读取用户作用域 record |
+| `RuntimeReplayQuery` | query string | cursor/filter query | 保持 `cursor`、`checkpoint`、`sequence_cursor`、`limit`、`stage`、`severity`、`retention_class`、`module_key`、`key_only` 语义 |
+| `AppState` | backend app state | shared state | 只读取 record 与 `evidence_metrics`，不迁移 AppState owner |
+
+**输出**:
+| 输出 | 去向 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| `RuntimeReplayResponse` | frontend、tests | JSON response | 不改 `kind`、`record_id`、`graph_id`、events、timeline、checkpoints、filters、cursor 或 account schema |
+| bad cursor error | frontend、tests | `bad_replay_cursor` | 越界 cursor / sequence_cursor 仍由 response mapping 错误映射 |
+| replay metrics | `RuntimeEvidenceMetrics` | latency counter | 成功 replay page 后继续调用 `record_replay_page` |
+
+**关键 public 方法**:
+| 方法/调用 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `get_backtest_replay` | `UserId`、`AppState`、`backtest_id`、`RuntimeReplayQuery` | `RuntimeReplayResponse` | `GET /api/runtime/backtests/:backtest_id/replay` | 不得改变 route、cursor/filter 语义或 metrics 记录 |
+| `load_backtest_record_from_state` | `AppState`、`UserId`、`backtest_id` | `BacktestRecord` | replay/detail/save/compare/report | 不得改变 memory -> artifact directory -> transient fallback 顺序 |
+| `normalized_replay_options` | `RuntimeReplayQuery` | `RuntimeReplayOptions` | replay handlers | 不得改变 default limit、max limit 或 checkpoint/cursor 优先级 |
+| `backtest_replay_response_from_record` | `BacktestRecord`、`RuntimeReplayOptions` | `RuntimeReplayResponse` | backtest replay handler | 不得改变 artifact event log 优先级或 response schema |
+| `runtime_replay_response` | record kind、events、options | `RuntimeReplayResponse` | run/backtest replay mapping | 不得私有化到 backtest replay 叶子 |
+| `record_replay_page` | latency ms | metrics mutation | replay handler | 不得迁移 metrics owner |
+
+**父级通信规则**:
+`runtime.backtest.replay` 只能经父级 `runtime.backtest` 和 route facade `backend.runtime.routes.backtest` 暴露 replay API。不得让 `runtime.backtest.record_store`、`runtime.backtest.execution_start`、`runtime.backtest.experiment_sweep`、`backtest_compare`、response mapping owner、schema owner、state/persistence owner、frontend caller 或其他 sibling 横向直连；发布过渡前不得主动提出缓存旁路或性能优化。ASCII guard: `release transition guard`。
+
+**允许调用的子模块**:
+当前物理子模块为 `src/runtime/backtest/replay.rs`，只承载 `get_backtest_replay`；父级 `src/runtime/mod.rs` 通过 `#[path = "backtest/replay.rs"] mod backtest_replay;` 和 `pub(crate) use backtest_replay::get_backtest_replay;` 暴露兼容入口。它只允许引用既有 `src/runtime_persistence.rs`、`src/runtime_response_mapping.rs`、`src/backtest_artifacts.rs`、`src/frontend_api_types.rs` 和 `src/lib.rs` metrics owner。`RuntimeReplayQuery`、`RuntimeReplayOptions`、`RuntimeReplayFilters`、`RuntimeReplayResponse`、`RuntimeReplayRecordKind`、`RuntimeReplayCheckpoint` 和 `RuntimeReplayEventItem` 保持原 schema owner。
+
+**等价基线**:
+BE-001U-01 已冻结 replay route、record lookup、query normalization、artifact event log 优先级、cursor/filter/checkpoint/timeline response mapping、bad cursor error 和 metrics。该基线本身不代表 handler 已迁移；BE-001U-03 之后才允许声明 replay 物理文件已存在，且不得迁移 record_store、execution_start、experiment、compare、artifact schema owner、state owner、persistence owner、frontend caller 或发布过渡。
+
+**抽离方案**:
+BE-001U-02 已限定下一批 BE-001U-03 只迁移 `get_backtest_replay` 到 planned replay module file。父级 `src/runtime/mod.rs` 只做受控私有子模块接入和 re-export，`src/backend/runtime/routes/backtest.rs` route facade 保持不变；`src/runtime_persistence.rs`、`src/runtime_response_mapping.rs`、`src/frontend_api_types.rs`、`src/lib.rs`、AppState/store dir owner 和 artifact schema owner 均不迁移。
+
+**抽离记录**:
+BE-001U-03 已将 `get_backtest_replay` 迁入 `src/runtime/backtest/replay.rs`。`src/runtime/backtest.rs` 继续承载 experiment sweep 和后续 sibling；`src/runtime/mod.rs` 只新增 `backtest_replay` 私有模块和 re-export；`src/backend/runtime/routes/backtest.rs` 未改动。record lookup、query normalization、response mapping、schema、metrics、state/persistence、artifact schema、frontend caller 和发布过渡均不迁移。
+
+**单叶 closeout**:
+BE-001U-04 已确认 `get_backtest_replay` 等价，并设置 `stop_split: true`。本叶不继续拆成 query adapter、record lookup、response projection、metrics hook、bad cursor adapter 或 timeline filter；这些 owner 分别保留在共享 query/options、persistence、response mapping、metrics 和 schema 边界。
+
+**后续递归队列**:
+后续 sibling 队列已由 BE-001V-03 `runtime.backtest.experiment_sweep` 第一轮物理抽离承接。不得继续细拆 replay，也不得顺手迁移 query normalization、response mapping、schema、metrics、record lookup、state/persistence、artifact schema、frontend route 或发布过渡连接。
+
+**回归保护**:
+`cargo fmt --check`，`cargo check -p quantpilot`，`cargo test --no-run`，`cargo test -p quantpilot --test api_backtest`，`cargo test -p quantpilot --test api_evidence_contract`，`cargo test -p quantpilot --test api_run`，`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`，`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
+**幻觉检查点**:
+AI 声称 `runtime.backtest.replay` 已完成时，必须说明只完成 `get_backtest_replay` handler 子模块抽离与 closeout，并设置 `stop_split: true`。不得宣称 query normalization、response mapping、schema、metrics、record lookup、record_store、execution_start、experiment、compare、artifact schema owner、state owner、persistence owner、frontend caller、发布过渡、整理或重构已经完成。
+
+### 5.1.16 `runtime.backtest.experiment_sweep`
+
+**层级路径**: `root.backend.runtime.routes.runtime.backtest.experiment_sweep`
+**父模块**: `runtime.backtest`
+**状态**: v4.16 BE-001V-03 第一轮物理抽离已完成。5 个 experiment handler 和 3 个参数网格 helper 已迁入 `src/runtime/backtest/experiment_sweep.rs`；`src/runtime/backtest.rs` 仅保留 drained parent include 注释，route 真实 owner 仍是 `src/backend/runtime/routes.rs`，下一步只能进入 BE-001V-04 单叶 closeout。
+
+**真实文件**:
+- `src/runtime/backtest/experiment_sweep.rs`
+- `src/runtime/backtest.rs`
+- `src/runtime/backtest/execution_start.rs`
+- `src/runtime/mod.rs`
+- `src/backend/runtime/routes.rs`
+- `src/runtime_persistence.rs`
+- `src/runtime_response_mapping.rs`
+- `src/frontend_api_types.rs`
+- `src/lib.rs`
+
+**治理文档**:
+- `markdown/06-milestones/v4.16.0/107-runtime.backtest.experiment_sweep单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/108-runtime.backtest.experiment_sweep抽离方案.md`
+- `markdown/06-milestones/v4.16.0/109-runtime.backtest.experiment_sweep抽离记录.md`
+
+**职责**:
+承载 backtest experiment sweep 的创建、列表、详情、保存和丢弃 API 边界。该叶只拥有 experiment handler 编排，不拥有 route aggregate、backtest execution_start 实现、record_store、replay、compare、artifact schema、state owner、persistence owner、response mapping owner、schema owner、frontend caller 或发布过渡连接。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `start_backtest_experiment` | `UserId`、`AppState`、`FrontendExperimentRequest` | `ExperimentDetailResponse` | `backend.runtime.routes` | 不得绕过 capability/config/execution assumption guard |
+| `list_experiments` | `AppState`、`PaginationQuery` | `PaginatedResponse<ExperimentListItem>` | `backend.runtime.routes` | 不得改变 created_at 倒序或分页语义 |
+| `get_experiment_detail` | `UserId`、`AppState`、`experiment_id` | `ExperimentDetailResponse` | `backend.runtime.routes` | 不得绕过 scoped experiment lookup |
+| `save_experiment_record` | `UserId`、`AppState`、`experiment_id` | `ExperimentDetailResponse` | `backend.runtime.routes` | 不得跳过 variant backtest 持久化、transient 清理或 audit |
+| `discard_experiment_record` | `UserId`、`AppState`、`experiment_id` | `DiscardRuntimeArtifactResponse` | `backend.runtime.routes` | 不得允许 saved experiment discard |
+| `build_experiment_overrides` | `FrontendExperimentRequest`、`RuntimeProtocolCoreConfig` | `Vec<FrontendExecutionAssumptionOverrides>` | `start_backtest_experiment` | 不得改变 empty grid、负数校验、去重、base fallback 或 `MAX_EXPERIMENT_VARIANTS` |
+| `execute_backtest_request` | `AppState`、`UserId`、`FrontendRunRequest`、optional suffix | `BacktestRecord` | `start_backtest_experiment` | 只能作为父级 runtime 内部复用桥，不得扩大为 sibling 横向连接 |
+
+**白箱输入输出**:
+| 方向 | 内容 | 来源/去向 | 约束 |
+| --- | --- | --- | --- |
+| 输入 | `FrontendExperimentRequest` | frontend runtime API | 必须保留 `experiment_name`、`actor`、`capability_context`、`runtime_config`、`graph_json`、`runtime_targets`、`backtest_options`、`parameter_grid` |
+| 输入 | `FrontendExecutionAssumptionSweepGrid` | experiment request | fee/slippage 不得为负；空轴回退 base；空网格报错；variant 总数受限 |
+| 输入 | `execute_backtest_request` | `runtime.backtest.execution_start` | 只能经父级 runtime 内部桥调用 |
+| 输出 | `ExperimentDetailResponse` | frontend/tests | 保留 definition、variants、saved 状态和 execution assumptions tag |
+| 输出 | `ExperimentListItem` | frontend/tests | 保留 sweep axes、best variant 和分页语义 |
+| 输出 | `DiscardRuntimeArtifactResponse` | frontend/tests | 只允许未保存 experiment discard |
+
+**父级通信规则**:
+`runtime.backtest.experiment_sweep` 只能经父级 `runtime` 兼容出口和 `backend.runtime.routes` 暴露 experiment API；当前 route 真实 owner 仍是 `backend.runtime.routes`，不得在基线阶段擅自搬到 `backend.runtime.routes.backtest`。不得让 `runtime.backtest.record_store`、`runtime.backtest.replay`、`backtest_compare`、persistence owner、response mapping owner、schema owner、frontend caller 或其他 sibling 横向直连；发布过渡前不得主动提出缓存旁路或性能优化。ASCII guard: `release transition guard`。
+
+**回归保护**:
+`cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_experiments`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_evidence_contract`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1`；`git diff --check`。
+
+**后续队列**:
+下一步只能进入 BE-001V-04 `runtime.backtest.experiment_sweep` 单叶 closeout。不得顺手删除 drained parent include、迁移 route facade、execution_start、record_store、replay、compare、state/persistence、response mapping、schema、frontend caller 或发布过渡连接。
+
+**幻觉检查点**:
+AI 声称 `runtime.backtest.experiment_sweep` 已抽离时，必须说明只迁移了 5 个 experiment handler 和 3 个参数网格 helper 到 `src/runtime/backtest/experiment_sweep.rs`，并通过父级 re-export 保持兼容出口。不得宣称 route facade 已迁移、record_store、replay、compare、artifact schema owner、state owner、persistence owner、frontend caller、发布过渡、整理或重构已经完成。
 
 ### 5.2 `backend.graph_compile`
 
@@ -2410,6 +2748,22 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/91-runtime.backtest.execution_start.v4_runtime_execution抽离方案.md` runtime backtest execution start v4 runtime execution extraction plan | `runtime.backtest.execution_start.v4_runtime_execution` | 限定下一批只迁移 deterministic runtime execution 最小 helper | BE-001Q 抽离方案 | `no code movement`；不得宣称 helper、request resolution、projection、record write、schema/state/persistence/frontend caller 或发布过渡已迁移 |
 | `markdown/06-milestones/v4.16.0/92-runtime.backtest.execution_start.v4_runtime_execution抽离记录.md` runtime backtest execution start v4 runtime execution extraction record | `runtime.backtest.execution_start.v4_runtime_execution` | deterministic bars/ticks 与 blocking runtime replay 迁入 `src/runtime/backtest/v4_runtime_execution.rs` | BE-001Q 抽离记录 | 不得宣称 expanded graph、request resolution、projection、record write、schema/state/persistence/frontend caller、closeout 或发布过渡已完成 |
 | `markdown/06-milestones/v4.16.0/93-runtime.backtest.execution_start.v4_runtime_execution单叶closeout.md` runtime backtest execution start v4 runtime execution closeout | `runtime.backtest.execution_start.v4_runtime_execution` | `run_v4_backtest_runtime_execution` 等价 closeout 并设置 `stop_split: true` | BE-001Q 单叶 closeout | 不得宣称 expanded graph、request resolution、projection、record write、schema/state/persistence/frontend caller 或发布过渡已完成 |
+| `markdown/06-milestones/v4.16.0/94-runtime.backtest.execution_start.legacy_dispatch单子叶等价基线.md` runtime backtest execution start legacy dispatch baseline | `runtime.backtest.execution_start.legacy_dispatch` | legacy compile/sandbox dispatch 等价基线，当前 `no code movement` | BE-001R 单子叶基线 | 不得宣称 legacy helper 已抽离、record write/persistence/state/frontend owner 已迁移或发布过渡已启动 |
+| `markdown/06-milestones/v4.16.0/95-runtime.backtest.execution_start.legacy_dispatch抽离方案.md` runtime backtest execution start legacy dispatch extraction plan | `runtime.backtest.execution_start.legacy_dispatch` | 下一批只允许迁移 legacy compile/sandbox dispatch 最小 helper | BE-001R 抽离方案 | `no code movement`；不得宣称 helper 已迁移或 record write/persistence/state/frontend owner 已迁移 |
+| `markdown/06-milestones/v4.16.0/96-runtime.backtest.execution_start.legacy_dispatch抽离记录.md` runtime backtest execution start legacy dispatch extraction record | `runtime.backtest.execution_start.legacy_dispatch` | legacy compile/assumption/artifact/sandbox replay 迁入 `src/runtime/backtest/legacy_dispatch.rs` | BE-001R 抽离记录 | 不得宣称 record assembly、artifact views、schema/state/persistence/frontend caller、closeout 或发布过渡已完成 |
+| `markdown/06-milestones/v4.16.0/97-runtime.backtest.execution_start.legacy_dispatch单叶closeout.md` runtime backtest execution start legacy dispatch closeout | `runtime.backtest.execution_start.legacy_dispatch` | legacy dispatch helper 等价 closeout 并设置 `stop_split: true` | BE-001R 单叶 closeout | 不得宣称 record write、schema/state/persistence/frontend caller、父叶整体完成或发布过渡已完成 |
+| `markdown/06-milestones/v4.16.0/98-runtime.backtest.execution_start父叶残余判断.md` runtime backtest execution start parent residual decision | `runtime.backtest.execution_start` | 父叶残余判断完成，下一候选回到 `runtime.backtest.record_store` | BE-001S 父叶残余判断 | `no code movement`；不得宣称 record store、replay、experiment、schema/state/persistence/frontend caller 已迁移 |
+| `markdown/06-milestones/v4.16.0/99-runtime.backtest.record_store单子叶等价基线.md` runtime backtest record store baseline | `runtime.backtest.record_store` | backtest list/detail/save/discard、transient/persistent record、artifact view 与 audit 等价基线 | BE-001T 单子叶基线 | `no code movement`；不得宣称 handler 已迁移或 replay/experiment/compare/schema/state/persistence/frontend caller 已迁移 |
+| `markdown/06-milestones/v4.16.0/100-runtime.backtest.record_store抽离方案.md` runtime backtest record store extraction plan | `runtime.backtest.record_store` | 抽离方案，下一批只允许四个 handler 最小迁移 | BE-001T 抽离方案 | `no code movement`；不得宣称 handler 已迁移或 replay/experiment/compare/shared owner/schema/state/persistence/frontend caller 已迁移 |
+| `markdown/06-milestones/v4.16.0/101-runtime.backtest.record_store抽离记录.md` runtime backtest record store extraction record | `runtime.backtest.record_store` | 四个 handler 迁入 `src/runtime/backtest/record_store.rs` | BE-001T 抽离记录 | 不得宣称 replay/experiment/compare/shared owner/schema/state/persistence/frontend caller、closeout 或发布过渡已完成 |
+| `markdown/06-milestones/v4.16.0/102-runtime.backtest.record_store单叶closeout.md` runtime backtest record store closeout | `runtime.backtest.record_store` | 单叶整理、等价证据和停止内部细分判断 | BE-001T 单叶 closeout | 不得继续细拆本叶或宣称 replay/experiment/compare/shared owner/schema/state/persistence/frontend caller、发布过渡已完成 |
+| `markdown/06-milestones/v4.16.0/103-runtime.backtest.replay单子叶等价基线.md` runtime backtest replay baseline | `runtime.backtest.replay` | backtest replay route、query normalization、response mapping 和 metrics 等价基线 | BE-001U 单子叶基线 | `no code movement`；不得宣称 handler 已迁移或 record_store/execution_start/experiment/compare/schema/state/persistence/frontend caller 已迁移 |
+| `markdown/06-milestones/v4.16.0/104-runtime.backtest.replay抽离方案.md` runtime backtest replay extraction plan | `runtime.backtest.replay` | 抽离方案，下一批只允许迁移 `get_backtest_replay` | BE-001U 抽离方案 | `no code movement`；不得宣称 handler 已迁移或 query/mapping/schema/metrics/state/persistence/frontend caller 已迁移 |
+| `markdown/06-milestones/v4.16.0/105-runtime.backtest.replay抽离记录.md` runtime backtest replay extraction record | `runtime.backtest.replay` | `get_backtest_replay` 迁入 `src/runtime/backtest/replay.rs` | BE-001U 抽离记录 | 不得宣称 query/mapping/schema/metrics/state/persistence/frontend caller、closeout 或发布过渡已完成 |
+| `markdown/06-milestones/v4.16.0/106-runtime.backtest.replay单叶closeout.md` runtime backtest replay closeout | `runtime.backtest.replay` | 单叶整理、等价证据和停止内部细分判断 | BE-001U 单叶 closeout | 不得继续细拆本叶或宣称 experiment/compare/schema/state/persistence/frontend caller、发布过渡已完成 |
+| `markdown/06-milestones/v4.16.0/107-runtime.backtest.experiment_sweep单子叶等价基线.md` runtime backtest experiment sweep baseline | `runtime.backtest.experiment_sweep` | experiment routes、参数网格、复用桥、persistence、save/discard lifecycle 与 audit 等价基线 | BE-001V 单子叶基线 | `no code movement`；不得宣称 handler、route facade、record_store/replay/compare/schema/state/persistence/frontend caller 已迁移 |
+| `markdown/06-milestones/v4.16.0/108-runtime.backtest.experiment_sweep抽离方案.md` runtime backtest experiment sweep extraction plan | `runtime.backtest.experiment_sweep` | 抽离方案，下一批只允许迁移 experiment handler/helper | BE-001V 抽离方案 | `no code movement`；不得宣称 handler 已迁移或 route facade/execution_start/persistence/mapping/schema/state/frontend caller 已迁移 |
+| `markdown/06-milestones/v4.16.0/109-runtime.backtest.experiment_sweep抽离记录.md` runtime backtest experiment sweep extraction record | `runtime.backtest.experiment_sweep` | 抽离记录，5 个 handler 和 3 个 helper 已迁入 `src/runtime/backtest/experiment_sweep.rs` | BE-001V 抽离记录 | 不得宣称 route facade、execution_start、persistence、mapping、schema、state、audit、frontend caller、发布过渡或 closeout 已完成 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

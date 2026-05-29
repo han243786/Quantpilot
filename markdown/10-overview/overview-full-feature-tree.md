@@ -285,8 +285,14 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/runtime/backtest/v4_projection.rs`
 - `src/runtime/backtest/v4_request_resolution.rs`
 - `src/runtime/backtest/v4_runtime_execution.rs`
+- `src/runtime/backtest/legacy_dispatch.rs`
+- `src/runtime/backtest/record_store.rs`
+- `src/runtime/backtest/replay.rs`
+- `src/runtime/backtest/experiment_sweep.rs`
 
-**抽离口径**: v4.16 BE-001B 已建立 9 个叶子 facade，BE-001C 已完成九叶逐叶 closeout，BE-001D 已启动 `backend.strategy_config` L3 模块壳抽离，BE-001E 已完成其余八叶薄壳抽离，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-04 已完成 `runtime.backtest` route facade 抽离与单叶 closeout，BE-001N-04 已完成 `runtime.backtest.execution_start` 第一轮物理抽离与单叶 closeout，BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout，BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout，BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`。`src/app_router.rs` 通过 `backend.interface_boundary` 进入各叶子；state owner、response schema 和 artifact schema 仍按各模块白箱边界保留。
+**抽离口径**: v4.16 BE-001B 已建立 9 个叶子 facade，BE-001C 已完成九叶逐叶 closeout，BE-001D 已启动 `backend.strategy_config` L3 模块壳抽离，BE-001E 已完成其余八叶薄壳抽离，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-04 已完成 `runtime.backtest` route facade 抽离与单叶 closeout，BE-001N-04 已完成 `runtime.backtest.execution_start` 第一轮物理抽离与单叶 closeout，BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout，BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout，BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`，BE-001R-04 已完成 `runtime.backtest.execution_start.legacy_dispatch` 单叶 closeout 并设置 `stop_split: true`，BE-001S-01 已完成 `runtime.backtest.execution_start` 父叶残余判断，BE-001T-04 已完成 `runtime.backtest.record_store` 单叶 closeout 并设置 `stop_split: true`，BE-001U-04 已完成 `runtime.backtest.replay` 单叶 closeout 并设置 `stop_split: true`，BE-001V-03 已完成 `runtime.backtest.experiment_sweep` 第一轮物理抽离。`src/app_router.rs` 通过 `backend.interface_boundary` 进入各叶子；state owner、response schema 和 artifact schema 仍按各模块白箱边界保留。
+
+**抽离补充**: BE-001V-03 已完成 `runtime.backtest.experiment_sweep` 第一轮物理抽离，下一步只能进入 BE-001V-04 单叶 closeout。
 
 **细分判断**: `backend.interface_boundary`、`backend.capability`、`backend.app_state_wiring`、`backend.test_support` 本阶段停止细分；`backend.strategy_config`、`backend.runtime`、`backend.graph_compile`、`backend.storage_security`、`backend.ops_governance` 值得进入下一轮 L3 等价基线，其中 `backend.storage_security` 必须先过安全决策暂停。
 
@@ -302,8 +308,8 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 | `/api/runtime/compile` | 编译 | `compile_api.rs` |
 | `/api/v1/strategy-config/*` | v4 策略配置契约 / preflight / diff / evidence diff helper | `strategy_config_api.rs` |
 | `/api/runtime/run` | 纸面运行 | `src/backend/runtime/routes/run.rs`、`src/runtime/run.rs`、`src/runtime/event_stream.rs`、`src/runtime/run/session_start.rs`、`src/runtime/run/v4_handoff.rs`、`src/runtime/run/record_store.rs`、`src/runtime/run/replay_status.rs` |
-| `/api/runtime/backtest/*` | 回测 | `src/backend/runtime/routes/backtest.rs`、`src/runtime/backtest/execution_start.rs`、`src/runtime/backtest/v4_projection.rs`、`src/runtime/backtest/v4_request_resolution.rs`、`src/runtime/backtest/v4_runtime_execution.rs`、`src/runtime/backtest.rs`、`src/backtest_compare.rs` |
-| `/api/runtime/experiments/*` | 实验/参数扫描 | — |
+| `/api/runtime/backtest/*` | 回测 | `src/backend/runtime/routes/backtest.rs`、`src/runtime/backtest/execution_start.rs`、`src/runtime/backtest/v4_projection.rs`、`src/runtime/backtest/v4_request_resolution.rs`、`src/runtime/backtest/v4_runtime_execution.rs`、`src/runtime/backtest/legacy_dispatch.rs`、`src/runtime/backtest/record_store.rs`、`src/runtime/backtest/replay.rs`、`src/runtime/backtest.rs`、`src/backtest_compare.rs` |
+| `/api/runtime/experiments/*` | 实验/参数扫描 | `src/backend/runtime/routes.rs`、`src/runtime/backtest/experiment_sweep.rs` |
 | `/api/auth/*` | 本地会话认证 | `auth/mod.rs` |
 | `/api/credentials/*` | 凭证管理 | `credential_api.rs` |
 | `/api/v1/alerts/*` | 告警 | `alert_engine.rs` |
@@ -1465,9 +1471,27 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/91-runtime.backtest.execution_start.v4_runtime_execution抽离方案.md` - v4.16.0 BE-001Q-02 `runtime.backtest.execution_start.v4_runtime_execution` 抽离方案，限定下一批只迁移 deterministic runtime execution 最小 helper
 - `markdown/06-milestones/v4.16.0/92-runtime.backtest.execution_start.v4_runtime_execution抽离记录.md` - v4.16.0 BE-001Q-03 `runtime.backtest.execution_start.v4_runtime_execution` 抽离记录，将 deterministic bars/ticks 与 blocking runtime replay 迁入 `src/runtime/backtest/v4_runtime_execution.rs`
 - `markdown/06-milestones/v4.16.0/93-runtime.backtest.execution_start.v4_runtime_execution单叶closeout.md` - v4.16.0 BE-001Q-04 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout，确认等价并设置 `stop_split: true`
+- `markdown/06-milestones/v4.16.0/94-runtime.backtest.execution_start.legacy_dispatch单子叶等价基线.md` - v4.16.0 BE-001R-01 `runtime.backtest.execution_start.legacy_dispatch` 单子叶等价基线，冻结 legacy compile/sandbox dispatch 且当前不移动代码
+- `markdown/06-milestones/v4.16.0/95-runtime.backtest.execution_start.legacy_dispatch抽离方案.md` - v4.16.0 BE-001R-02 `runtime.backtest.execution_start.legacy_dispatch` 抽离方案，限定下一批只迁移 legacy compile/sandbox dispatch 最小 helper
+- `markdown/06-milestones/v4.16.0/96-runtime.backtest.execution_start.legacy_dispatch抽离记录.md` - v4.16.0 BE-001R-03 `runtime.backtest.execution_start.legacy_dispatch` 抽离记录，将 legacy compile/sandbox dispatch 迁入 `src/runtime/backtest/legacy_dispatch.rs`
+- `markdown/06-milestones/v4.16.0/97-runtime.backtest.execution_start.legacy_dispatch单叶closeout.md` - v4.16.0 BE-001R-04 `runtime.backtest.execution_start.legacy_dispatch` 单叶 closeout，确认等价并设置 `stop_split: true`
+- `markdown/06-milestones/v4.16.0/98-runtime.backtest.execution_start父叶残余判断.md` - v4.16.0 BE-001S-01 `runtime.backtest.execution_start` 父叶残余判断，确认回到 `runtime.backtest.record_store` 上层队列
+- `markdown/06-milestones/v4.16.0/99-runtime.backtest.record_store单子叶等价基线.md` - v4.16.0 BE-001T-01 `runtime.backtest.record_store` 单子叶等价基线，冻结 backtest list/detail/save/discard 边界
+- `markdown/06-milestones/v4.16.0/100-runtime.backtest.record_store抽离方案.md` - v4.16.0 BE-001T-02 `runtime.backtest.record_store` 抽离方案，限定下一批只迁移四个 handler 并保留 shared owner
+- `markdown/06-milestones/v4.16.0/101-runtime.backtest.record_store抽离记录.md` - v4.16.0 BE-001T-03 `runtime.backtest.record_store` 抽离记录，将四个 handler 迁入 `src/runtime/backtest/record_store.rs`
+- `markdown/06-milestones/v4.16.0/102-runtime.backtest.record_store单叶closeout.md` - v4.16.0 BE-001T-04 `runtime.backtest.record_store` 单叶 closeout，确认等价并设置 `stop_split: true`
+- `markdown/06-milestones/v4.16.0/103-runtime.backtest.replay单子叶等价基线.md` - v4.16.0 BE-001U-01 `runtime.backtest.replay` 单子叶等价基线，冻结 replay route、query、response mapping 和 metrics 边界
+- `markdown/06-milestones/v4.16.0/104-runtime.backtest.replay抽离方案.md` - v4.16.0 BE-001U-02 `runtime.backtest.replay` 抽离方案，限定下一批只迁移 `get_backtest_replay`
+- `markdown/06-milestones/v4.16.0/105-runtime.backtest.replay抽离记录.md` - v4.16.0 BE-001U-03 `runtime.backtest.replay` 抽离记录，将 `get_backtest_replay` 迁入 `src/runtime/backtest/replay.rs`
+- `markdown/06-milestones/v4.16.0/106-runtime.backtest.replay单叶closeout.md` - v4.16.0 BE-001U-04 `runtime.backtest.replay` 单叶 closeout，确认等价并设置 `stop_split: true`
+- `markdown/06-milestones/v4.16.0/107-runtime.backtest.experiment_sweep单子叶等价基线.md` - v4.16.0 BE-001V-01 `runtime.backtest.experiment_sweep` 单子叶等价基线，冻结 experiment routes、参数网格、复用桥和 lifecycle 边界
+- `markdown/06-milestones/v4.16.0/108-runtime.backtest.experiment_sweep抽离方案.md` - v4.16.0 BE-001V-02 `runtime.backtest.experiment_sweep` 抽离方案，限定下一批只迁移 experiment handler/helper
+- `markdown/06-milestones/v4.16.0/109-runtime.backtest.experiment_sweep抽离记录.md` - v4.16.0 BE-001V-03 `runtime.backtest.experiment_sweep` 抽离记录，将 experiment handler/helper 迁入 `src/runtime/backtest/experiment_sweep.rs`
 
 当前治理基线: `v4.15.0/` — 三矩阵完全接管，后续常态维护模块树、全量树和治理 gate。
-当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；system 抽离经验已回填为后续抽离准则，S1-S10 closeout 或静态 closeout 已完成，`root.system` 顶层阶段性 closeout 已刷新，递归模块化流程已明确；backend 已进入 R5，BE-001B `src/backend/` 九叶模块壳已落位，BE-001C 九叶逐叶 closeout 已完成，BE-001D `backend.strategy_config` L3 模块壳已落位，BE-001E 其余八叶薄壳已落位且 `42-49` 已完成逐叶完成记录，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-04 已完成 `runtime.backtest` route facade 抽离与单叶 closeout，BE-001N-04 已完成 `runtime.backtest.execution_start` 第一轮物理抽离与单叶 closeout，BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout，BE-001P-04 已完成 `v4_request_resolution` 单叶 closeout，BE-001Q-04 已完成 `v4_runtime_execution` 单叶 closeout，下一步回到 `runtime.backtest.execution_start` 父叶候选队列，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
+当前架构规划: `v4.16.0/` — 面向十万行级重大工程，只启用模块化抽离控制；system 抽离经验已回填为后续抽离准则，S1-S10 closeout 或静态 closeout 已完成，`root.system` 顶层阶段性 closeout 已刷新，递归模块化流程已明确；backend 已进入 R5，BE-001B `src/backend/` 九叶模块壳已落位，BE-001C 九叶逐叶 closeout 已完成，BE-001D `backend.strategy_config` L3 模块壳已落位，BE-001E 其余八叶薄壳已落位且 `42-49` 已完成逐叶完成记录，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-04 已完成 `runtime.backtest` route facade 抽离与单叶 closeout，BE-001N-04 已完成 `runtime.backtest.execution_start` 第一轮物理抽离与单叶 closeout，BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout，BE-001P-04 已完成 `v4_request_resolution` 单叶 closeout，BE-001Q-04 已完成 `v4_runtime_execution` 单叶 closeout，BE-001R-04 已完成 `legacy_dispatch` 单叶 closeout，BE-001S-01 已完成 `runtime.backtest.execution_start` 父叶残余判断，BE-001T-04 已完成 `runtime.backtest.record_store` 单叶 closeout 并设置 `stop_split: true`，BE-001U-04 已完成 `runtime.backtest.replay` 单叶 closeout 并设置 `stop_split: true`，前端抽离和 E2E 整理延后，测试资产汰换登记已建立。
+当前架构补充: BE-001V-03 已完成 `runtime.backtest.experiment_sweep` 第一轮物理抽离。
+当前最新递归点: BE-001V-03 已完成 `runtime.backtest.experiment_sweep` 第一轮物理抽离；下一步只能进入 BE-001V-04 单叶 closeout。
 
 ### 7.7 总览 (markdown/10-overview/)
 
@@ -1641,6 +1665,8 @@ storage/
 - `src/runtime/run/record_store.rs` — run record list/detail/save/discard handler、manifest save/discard 编排和 graph audit 调用; 改 run record API handler 时改这里 🆕 v4.16.0
 - `src/runtime/run/replay_status.rs` — run replay/status handler、replay cursor/options 编排、status projection 调用和 replay metrics 触发; 改 run replay/status API handler 时改这里 🆕 v4.16.0
 - `src/runtime/backtest/execution_start.rs` — backtest 创建路径 handler、legacy/v4 execution helper 和 transient record 写入; 改 backtest start 执行入口时改这里 🆕 v4.16.0
+- `src/runtime/backtest/legacy_dispatch.rs` — legacy backtest compile/assumption/artifact/sandbox replay 父级私有 helper; 改 legacy non-v4 backtest dispatch 时改这里 🆕 v4.16.0
+- `src/runtime/backtest/record_store.rs` — backtest record list/detail/save/discard handler; 改 backtest record API handler 时改这里 🆕 v4.16.0
 - `src/runtime/backtest/v4_projection.rs` — v4 backtest artifact projection helper 与单元测试; 改 `V4BacktestArtifact -> BacktestOutput / FrontendRuntimeEvent` 投影时改这里 🆕 v4.16.0
 - `src/runtime/backtest/v4_request_resolution.rs` — v4 backtest request detection、graph resolution、symbol resolution 和 event type resolution helper; 改 v4 backtest 请求解析时改这里 🆕 v4.16.0
 - `src/runtime/backtest/v4_runtime_execution.rs` — v4 backtest deterministic bars/ticks、blocking runtime replay 和 `V4BacktestArtifact` 输出 helper; 改 v4 backtest runtime execution 时改这里 🆕 v4.16.0

@@ -1,5 +1,7 @@
 use super::*;
 
+#[path = "legacy_dispatch.rs"]
+mod legacy_dispatch;
 #[path = "v4_projection.rs"]
 mod v4_projection;
 #[path = "v4_request_resolution.rs"]
@@ -7,6 +9,9 @@ mod v4_request_resolution;
 #[path = "v4_runtime_execution.rs"]
 mod v4_runtime_execution;
 
+use legacy_dispatch::{
+    prepare_legacy_backtest_dispatch, run_legacy_backtest_dispatch, LegacyBacktestDispatchOutput,
+};
 use v4_projection::{
     build_v4_backtest_output, frontend_events_from_v4_backtest_artifact,
     v4_equity_curve_from_artifact,
@@ -69,19 +74,9 @@ pub(super) async fn execute_backtest_request(
     if is_v4_backtest_request(request, graph_json) {
         return execute_v4_backtest_request(state, user_id, request, graph_json, id_suffix).await;
     }
-    let qs_protocol = compile_runtime_protocol_via_qs(graph_json)?;
-    let runtime_protocol = apply_backtest_execution_assumption_overrides(
-        &qs_protocol,
-        request.backtest_options.execution_assumptions.as_ref(),
-    );
-    let compiled = compile_runtime_protocol_config(&runtime_protocol).map_err(internal_error)?;
-    let resolved_execution_assumptions = resolved_backtest_execution_assumptions(
-        &compiled.config,
-        request.backtest_options.execution_assumptions.as_ref(),
-    );
-    let resolved_execution_assumption_sources = resolved_execution_assumption_sources(request);
-    let protocol_name = compiled.protocol_name.clone();
-    let config_hash = compiled.config_hash.clone();
+    let legacy_dispatch_plan = prepare_legacy_backtest_dispatch(graph_json, request)?;
+    let protocol_name = legacy_dispatch_plan.compiled.protocol_name.clone();
+    let config_hash = legacy_dispatch_plan.compiled.config_hash.clone();
     let now_ms = current_time_ms();
     let actor = normalize_actor_identity(request.actor.clone());
     let _collaboration = collaboration_with_run_actor(
@@ -90,53 +85,14 @@ pub(super) async fn execute_backtest_request(
         &actor,
     )
     .await?;
-    let artifacts = build_compile_artifact_bundle(
-        &request.runtime_config.metadata.graph_id,
-        &request.runtime_config.metadata.compile_id,
-        &request.runtime_config.metadata.name,
-        &request.runtime_config.metadata.mode,
-        StrategyArtifactSourceKind::FrontendGraph,
-        &request.runtime_config.metadata.graph_id,
-        BTreeMap::new(),
-        &compiled,
-    )
-    .map_err(internal_error)?;
-    let replay_source = request.backtest_replay_source();
-    let core_ir = compiled.core_ir.clone();
-    let latency_override = resolved_execution_assumptions.latency_assumption_ms;
-    // v2.3.3: 沙盒回测操作可能阻塞 (数据加载/HTTP请求)，移至 spawn_blocking 避免阻塞 tokio 线程
-    let backtest = tokio::task::spawn_blocking(move || {
-        let mut sandbox = match replay_source {
-            FrontendBacktestReplaySource::HistoricalReplay => {
-                FastBacktestSandbox::with_replay_from_core_ir(core_ir.clone(), now_ms)
-                    .map_err(|error| {
-                        anyhow::anyhow!(
-                            "{}. 历史重放需要本地市场数据文件 (位于 data cache 目录下)。\
-                             离线测试请设置 backtest_options.replay_source = \"deterministic_mock\"",
-                            error,
-                        )
-                    })
-            }
-            FrontendBacktestReplaySource::DeterministicMock => {
-                FastBacktestSandbox::with_mock_replay_from_core_ir_and_test_mode(
-                    core_ir,
-                    now_ms,
-                    DeterministicTestMode::replay_defaults(now_ms, BACKTEST_DETERMINISTIC_SEED),
-                )
-            }
-        }
-        .map_err(|e| internal_error(anyhow::anyhow!(e)))?;
-        if let Some(latency_ms) = latency_override {
-            sandbox.set_execution_assumptions(qrpc_runtime::slippage::ExecutionAssumptions {
-                latency: qrpc_runtime::slippage::LatencyModel::Fixed { delay_ms: latency_ms },
-                ..qrpc_runtime::slippage::ExecutionAssumptions::v1_0_7_compat()
-            });
-        }
-        sandbox.start().map_err(|e| internal_error(anyhow::anyhow!(e)))?;
-        sandbox.run_backtest().map_err(|e| internal_error(anyhow::anyhow!(e)))
-    })
-    .await
-    .map_err(|e| internal_error(anyhow::anyhow!("回测任务被取消: {}", e)))??;
+    let LegacyBacktestDispatchOutput {
+        compiled,
+        artifacts,
+        replay_source,
+        resolved_execution_assumptions,
+        resolved_execution_assumption_sources,
+        backtest,
+    } = run_legacy_backtest_dispatch(legacy_dispatch_plan, request, now_ms).await?;
     let graph_targets = build_compile_runtime_targets_from_graph(graph_json);
     let runtime_targets = merge_runtime_targets(&request.runtime_targets, &graph_targets);
     // v1.3.7: 添加计数器后缀防止同一毫秒内ID碰撞
