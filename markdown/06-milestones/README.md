@@ -152,6 +152,7 @@
 | 138 | `v4.16.0/138-runtime.mutation.parameter_mutation.transition_lifecycle抽离记录.md` | BE-001AG-03 `transition_lifecycle` 实际抽离记录，迁移 activation / rollback handler | 📋 已创建 |
 | 139 | `v4.16.0/139-runtime.mutation.parameter_mutation.transition_lifecycle单叶closeout.md` | BE-001AG-04 `transition_lifecycle` 单叶 closeout，设置 `stop_split: false` 并登记 boundary_safety 下一基线 | 📋 已创建 |
 | 140 | `v4.16.0/140-runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety单子叶等价基线.md` | BE-001AH-01 `boundary_safety` 单子叶等价基线，冻结 boundary / safe window 纯策略 | 📋 已创建 |
+| 141 | `v4.16.0/141-runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety抽离方案.md` | BE-001AH-02 `boundary_safety` 抽离方案，固定目标文件和 wrapper 方式 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
