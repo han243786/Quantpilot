@@ -913,6 +913,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CI-01）**: BE-001CI-01 已完成 `backend.runtime` 第二轮父叶残余判断。`backend.runtime.routes` 与 `runtime.report_ops` 均已 closeout，但 `src/runtime/mod.rs` 仍直接持有 evidence health handler 残余，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CJ-01 `runtime.evidence_health` 单子叶等价基线。
 **第二轮父叶残余判断（BE-001CI-01）**: `backend.runtime.routes stop_split: true` 与 `runtime.report_ops stop_split: true` 已成立，但 `src/runtime/mod.rs` 仍直接持有 `get_runtime_evidence_health`、`cleanup_runtime_evidence` 与 `runtime_report_status_counts`。本轮不迁移 handler、`AppState`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、shared helpers 或 release transition guard；`backend.runtime stop_split: false`，下一步固定为 BE-001CJ-01 `runtime.evidence_health` 单子叶等价基线。
 **最新状态补充（BE-001CJ-01）**: BE-001CJ-01 已建立 `runtime.evidence_health` 单子叶等价基线。当前 `no code movement`，planned child 名称 `evidence_health` 尚未落地，两个 evidence handler 与 `runtime_report_status_counts` 仍在 `src/runtime/mod.rs`；下一步只能进入 BE-001CJ-02 抽离方案。
+**最新状态补充（BE-001CJ-02）**: BE-001CJ-02 已建立 `runtime.evidence_health` 抽离方案。当前 `no code movement`，下一步 BE-001CJ-03 才允许落地 `evidence_health` child，并且迁移清单仅限 `runtime_report_status_counts`、`get_runtime_evidence_health`、`cleanup_runtime_evidence`。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1043,6 +1044,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/272-runtime.report_ops第二轮父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/273-backend.runtime第二轮父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/274-runtime.evidence_health单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/275-runtime.evidence_health抽离方案.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -4796,6 +4798,7 @@ AI 声称 `runtime.report_ops.merge_generation_health` 已完成 BE-001CG-05 时
 - `tests/api_mutation.rs`
 - `markdown/06-milestones/v4.16.0/273-backend.runtime第二轮父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/274-runtime.evidence_health单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/275-runtime.evidence_health抽离方案.md`
 
 **职责**:
 冻结 runtime evidence health / cleanup handler 的白箱边界，只覆盖 `/api/runtime/evidence/health` 与 `/api/runtime/evidence/cleanup` 的 handler 逻辑、report status count helper、metrics snapshot、cleanup policy projection 和 transient cleanup response。当前不拥有 route registration、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、metrics owner、`AppState` 或 release transition guard。
@@ -4819,14 +4822,19 @@ AI 声称 `runtime.report_ops.merge_generation_health` 已完成 BE-001CG-05 时
 **现有等价证据**:
 `tests/api_evidence_contract.rs::runtime_evidence_health_tracks_metrics_and_cleanup_preserves_reports` 覆盖 health/cleanup；`tests/api_evidence_contract.rs::runtime_evidence_contract_snapshot_matches_fixture` 覆盖 evidence contract snapshot；`tests/api_mutation.rs` 对 health endpoint 提供 mutation metrics 联动回归。
 
+**抽离方案**:
+BE-001CJ-02 已固定 BE-001CJ-03 的最小迁移方式: 只落地 `evidence_health` child，并迁移 `runtime_report_status_counts`、`get_runtime_evidence_health`、`cleanup_runtime_evidence` 三个函数。父级 `src/runtime/mod.rs` 只增加 child module 声明与受控 re-export；route facade、schema owner、runtime persistence owner、metrics owner、`AppState` 和 release transition guard 均不得迁移。
+
 **明确排除**:
 `backend.runtime.routes.evidence`、`runtime.report_ops`、`RuntimeEvidenceHealthResponse`、`RuntimeEvidenceCleanupRequest`、`RuntimeEvidenceCleanupResponse`、`runtime_evidence_cleanup_policy`、`cleanup_transient_runtime_report_outputs`、`list_runtime_report_records`、`current_time_ms`、`AppState`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、metrics owner、shared helpers 和 release transition guard 均不属于本批迁移。
 
 **下一步**:
-BE-001CJ-02 只能建立抽离方案，固定 planned child、父级 re-export、允许迁移清单、验证命令和回退点；不得直接创建 `evidence_health` child 或迁移 handler。
+BE-001CJ-03 才允许实际抽离，并且只能执行 BE-001CJ-02 固定的迁移清单；完成后必须进入 BE-001CJ-04 单叶 closeout，不得跳过 closeout 回到父叶。
 
 **幻觉检查点**:
 AI 声称 `runtime.evidence_health` 已完成 BE-001CJ-01 时，必须说明当前是 `no code movement` 单子叶等价基线，planned child 文件尚未创建，两个 public handler 与 `runtime_report_status_counts` 仍在 `src/runtime/mod.rs`，下一步只能进入 BE-001CJ-02 抽离方案。不得宣称 handler 已抽离、schema/runtime persistence/metrics owner 已迁移、发布过渡已启动或 Rust 重构完成。
+
+AI 声称 `runtime.evidence_health` 已完成 BE-001CJ-02 时，必须说明当前仍是 `no code movement` 抽离方案，允许迁移清单只有 `runtime_report_status_counts`、`get_runtime_evidence_health`、`cleanup_runtime_evidence`，下一步只能进入 BE-001CJ-03 实际抽离。不得宣称 child 已落地或 handler 已迁移。
 
 ### 5.2 `backend.graph_compile`
 
@@ -5555,6 +5563,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/272-runtime.report_ops第二轮父叶残余判断.md` runtime report ops second parent residual | `runtime.report_ops` | 第二轮父叶残余判断，确认三个 child 均 closeout 并设置父叶 `stop_split: true` | BE-001CH 父叶残余判断 | `no code movement`；下一步只能进入 BE-001CI-01 `backend.runtime` 父叶残余判断 |
 | `markdown/06-milestones/v4.16.0/273-backend.runtime第二轮父叶残余判断.md` backend runtime second parent residual | `backend.runtime` | 第二轮父叶残余判断，确认 routes/report_ops 已 closeout 但 evidence health handler 仍残留 | BE-001CI 父叶残余判断 | `no code movement`；`backend.runtime stop_split: false`；下一步只能进入 BE-001CJ-01 `runtime.evidence_health` 单子叶等价基线 |
 | `markdown/06-milestones/v4.16.0/274-runtime.evidence_health单子叶等价基线.md` runtime evidence health baseline | `runtime.evidence_health` | 单子叶等价基线，冻结 evidence health / cleanup handler 与 status count helper 白箱边界 | BE-001CJ 单子叶基线 | `no code movement`；下一步只能进入 BE-001CJ-02 抽离方案，不得创建 child 文件或迁移 handler |
+| `markdown/06-milestones/v4.16.0/275-runtime.evidence_health抽离方案.md` runtime evidence health extraction plan | `runtime.evidence_health` | 抽离方案，固定 child、父级 re-export、允许迁移清单和回退点 | BE-001CJ 抽离方案 | `no code movement`；下一步只能进入 BE-001CJ-03 实际抽离，迁移清单仅限三个函数 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
