@@ -321,6 +321,7 @@
 | 307 | `v4.16.0/307-runtime.parent_include_cleanup清理记录.md` | BE-001CV-03 `runtime.parent_include_cleanup` 实际 cleanup，删除三条 drained include 与三个 drained 文件 | 📋 已创建 |
 | 308 | `v4.16.0/308-backend.runtime第九轮父叶残余判断.md` | BE-001CW-01 `backend.runtime` 第九轮父叶残余判断，锁定 `runtime.parent_import_bridge` 下一候选 | 📋 已创建 |
 | 309 | `v4.16.0/309-runtime.parent_import_bridge单子叶等价基线.md` | BE-001CX-01 `runtime.parent_import_bridge` 单子叶等价基线，冻结 parent import bridge 与 46 文件依赖面 | 📋 已创建 |
+| 310 | `v4.16.0/310-runtime.parent_import_bridge抽离方案.md` | BE-001CX-02 `runtime.parent_import_bridge` 抽离方案，固定 staged explicit import pass 与首批 root support pilot | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
