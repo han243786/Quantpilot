@@ -261,6 +261,7 @@ v4.7.0 系统应被理解为：
 - BE-001CT-03 已完成 `runtime.experiment_limit` endpoint smoke 补测；`api_experiments` 已覆盖 36 个变体超过 27 上限的 bad_request，下一步只能进入 BE-001CT-04 实际抽离。
 - BE-001CT-04 已完成 `runtime.experiment_limit` 实际抽离；`src/runtime/experiment_limit.rs` 已创建，下一步只能进入 BE-001CT-05 单叶 closeout。
 - BE-001CT-05 已完成 `runtime.experiment_limit` 单叶 closeout；`runtime.experiment_limit stop_split: true`，下一步只能进入 BE-001CU-01 `backend.runtime` 第八轮父叶残余判断。
+- BE-001CU-01 已完成 `backend.runtime` 第八轮父叶残余判断；父级真实残余只剩 `include!("run.rs")`、`include!("mutation.rs")` 与 `include!("backtest.rs")` drained parent include cleanup，因此保持 `backend.runtime stop_split: false`，下一步只能进入 BE-001CV-01 `runtime.parent_include_cleanup` 单子叶等价基线。
 
 ## 当前收尾/发布状态
 

@@ -942,6 +942,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CT-03）**: BE-001CT-03 已完成 `runtime.experiment_limit` endpoint smoke 补测。`tests/api_experiments.rs` 已新增 36 个变体超过 27 上限的 bad_request 负测；当前仍未迁移 `MAX_EXPERIMENT_VARIANTS`，下一步只能进入 BE-001CT-04 实际抽离。
 **最新状态补充（BE-001CT-04）**: BE-001CT-04 已完成 `runtime.experiment_limit` 实际抽离。`src/runtime/experiment_limit.rs` 已创建并承接 `MAX_EXPERIMENT_VARIANTS = 27`；父级只保留 `mod experiment_limit` 与 plain import，下一步只能进入 BE-001CT-05 单叶 closeout。
 **最新状态补充（BE-001CT-05）**: BE-001CT-05 已完成 `runtime.experiment_limit` 单叶 closeout，并设置 `runtime.experiment_limit stop_split: true`。下一步只能进入 BE-001CU-01 `backend.runtime` 第八轮父叶残余判断，不得从 experiment_limit 继续细拆。
+**最新状态补充（BE-001CU-01）**: BE-001CU-01 已完成 `backend.runtime` 第八轮父叶残余判断。`runtime.experiment_limit stop_split: true` 已成立，父级真实残余只剩 `include!("run.rs")`、`include!("mutation.rs")` 与 `include!("backtest.rs")` drained parent include cleanup，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CV-01 `runtime.parent_include_cleanup` 单子叶等价基线。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1107,6 +1108,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/301-runtime.experiment_limit补测记录.md`
 - `markdown/06-milestones/v4.16.0/302-runtime.experiment_limit抽离记录.md`
 - `markdown/06-milestones/v4.16.0/303-runtime.experiment_limit单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/304-backend.runtime第八轮父叶残余判断.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5903,6 +5905,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/301-runtime.experiment_limit补测记录.md` runtime experiment limit smoke record | `runtime.experiment_limit` | endpoint smoke 补测，覆盖 36 个变体超过 27 上限的 bad_request | BE-001CT 补测记录 | `test-only`；下一步只能进入 BE-001CT-04 实际抽离，不得删除 parent include 或 release transition |
 | `markdown/06-milestones/v4.16.0/302-runtime.experiment_limit抽离记录.md` runtime experiment limit extraction record | `runtime.experiment_limit` | 实际抽离，创建 experiment_limit child 并迁移 `MAX_EXPERIMENT_VARIANTS` | BE-001CT 抽离记录 | 下一步只能进入 BE-001CT-05 单叶 closeout，不得删除 parent include 或 release transition |
 | `markdown/06-milestones/v4.16.0/303-runtime.experiment_limit单叶closeout.md` runtime experiment limit closeout | `runtime.experiment_limit` | 单叶 closeout，确认 experiment limit 不继续拆分 | BE-001CT 单叶 closeout | `runtime.experiment_limit stop_split: true`；下一步只能进入 BE-001CU-01 `backend.runtime` 第八轮父叶残余判断 |
+| `markdown/06-milestones/v4.16.0/304-backend.runtime第八轮父叶残余判断.md` backend runtime eighth parent residual | `backend.runtime` | 第八轮父叶残余判断，确认真实残余只剩 drained parent include cleanup | BE-001CU 父叶残余判断 | `no code movement`；`backend.runtime stop_split: false`；下一步只能进入 BE-001CV-01 `runtime.parent_include_cleanup` 单子叶等价基线 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
