@@ -184,6 +184,7 @@ v4.7.0 系统应被理解为：
 - BE-001BO-01 已完成 `runtime.mutation.ai_proposal` 第八轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001BP-01 `runtime.mutation.ai_proposal.proposal_creation` 单子叶等价基线。
 - BE-001BP-01 已建立 `runtime.mutation.ai_proposal.proposal_creation` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001BP-02 抽离方案。
 - BE-001BP-02 已建立 `runtime.mutation.ai_proposal.proposal_creation` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001BP-03 实际抽离。
+- BE-001BP-03 已完成 `runtime.mutation.ai_proposal.proposal_creation` 实际抽离；`create_runtime_ai_proposal` 已迁入 `src/runtime/mutation/ai_proposal/proposal_creation.rs`，下一步只能进入 BE-001BP-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 
