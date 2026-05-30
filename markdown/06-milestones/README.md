@@ -271,6 +271,7 @@
 | 257 | `v4.16.0/257-runtime.report_ops.runtime_report抽离方案.md` | BE-001CC-02 `runtime.report_ops.runtime_report` 抽离方案 | 📋 已创建 |
 | 258 | `v4.16.0/258-runtime.report_ops.runtime_report抽离记录.md` | BE-001CC-03 `runtime.report_ops.runtime_report` 实际抽离记录 | 📋 已创建 |
 | 259 | `v4.16.0/259-runtime.report_ops.runtime_report单叶closeout.md` | BE-001CC-04 `runtime.report_ops.runtime_report` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
+| 260 | `v4.16.0/260-runtime.report_ops父叶残余判断.md` | BE-001CD-01 `runtime.report_ops` 父叶残余判断，选择 `v1_report_endpoints` 下一候选 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
