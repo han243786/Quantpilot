@@ -910,6 +910,8 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CG-04）**: BE-001CG-04 已完成 `runtime.report_ops.merge_generation_health` 实际抽离。`src/runtime/report_ops/merge_generation_health.rs` 已创建并承接 `list_merge_records`、`list_config_generations`、`get_storage_health`；父级只保留受控 re-export，下一步只能进入 BE-001CG-05 单叶 closeout。
 **最新状态补充（BE-001CG-05）**: BE-001CG-05 已完成 `runtime.report_ops.merge_generation_health` 单叶 closeout 并设置 `stop_split: true`。下一步只能进入 BE-001CH-01 `runtime.report_ops` 父叶残余判断。
 **最新状态补充（BE-001CH-01）**: BE-001CH-01 已完成 `runtime.report_ops` 第二轮父叶残余判断。三个 report_ops child 均已 closeout，父级只保留受控 re-export，因此设置 `runtime.report_ops stop_split: true`；下一步只能进入 BE-001CI-01 `backend.runtime` 父叶残余判断。
+**最新状态补充（BE-001CI-01）**: BE-001CI-01 已完成 `backend.runtime` 第二轮父叶残余判断。`backend.runtime.routes` 与 `runtime.report_ops` 均已 closeout，但 `src/runtime/mod.rs` 仍直接持有 evidence health handler 残余，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CJ-01 `runtime.evidence_health` 单子叶等价基线。
+**第二轮父叶残余判断（BE-001CI-01）**: `backend.runtime.routes stop_split: true` 与 `runtime.report_ops stop_split: true` 已成立，但 `src/runtime/mod.rs` 仍直接持有 `get_runtime_evidence_health`、`cleanup_runtime_evidence` 与 `runtime_report_status_counts`。本轮不迁移 handler、`AppState`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、shared helpers 或 release transition guard；`backend.runtime stop_split: false`，下一步固定为 BE-001CJ-01 `runtime.evidence_health` 单子叶等价基线。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1038,6 +1040,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/270-runtime.report_ops.merge_generation_health抽离记录.md`
 - `markdown/06-milestones/v4.16.0/271-runtime.report_ops.merge_generation_health单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/272-runtime.report_ops第二轮父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/273-backend.runtime第二轮父叶残余判断.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5502,6 +5505,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/270-runtime.report_ops.merge_generation_health抽离记录.md` runtime report ops merge generation health extraction record | `runtime.report_ops.merge_generation_health` | 实际抽离，创建 child module 并迁移三个 v1 support/health handler | BE-001CG 抽离记录 | 下一步只能进入 BE-001CG-05 单叶 closeout；不得处理 `runtime.evidence_health`、schema owner、frontend caller 或 release transition |
 | `markdown/06-milestones/v4.16.0/271-runtime.report_ops.merge_generation_health单叶closeout.md` runtime report ops merge generation health closeout | `runtime.report_ops.merge_generation_health` | 单叶 closeout，确认 child 等价并设置 `stop_split: true` | BE-001CG 单叶 closeout | `no code movement`；下一步只能进入 BE-001CH-01 `runtime.report_ops` 父叶残余判断，不得继续细拆三条 support/health 微叶 |
 | `markdown/06-milestones/v4.16.0/272-runtime.report_ops第二轮父叶残余判断.md` runtime report ops second parent residual | `runtime.report_ops` | 第二轮父叶残余判断，确认三个 child 均 closeout 并设置父叶 `stop_split: true` | BE-001CH 父叶残余判断 | `no code movement`；下一步只能进入 BE-001CI-01 `backend.runtime` 父叶残余判断 |
+| `markdown/06-milestones/v4.16.0/273-backend.runtime第二轮父叶残余判断.md` backend runtime second parent residual | `backend.runtime` | 第二轮父叶残余判断，确认 routes/report_ops 已 closeout 但 evidence health handler 仍残留 | BE-001CI 父叶残余判断 | `no code movement`；`backend.runtime stop_split: false`；下一步只能进入 BE-001CJ-01 `runtime.evidence_health` 单子叶等价基线 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

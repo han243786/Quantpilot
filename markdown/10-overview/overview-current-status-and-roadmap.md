@@ -230,6 +230,7 @@ v4.7.0 系统应被理解为：
 - BE-001CG-04 已完成 `runtime.report_ops.merge_generation_health` 实际抽离；`src/runtime/report_ops/merge_generation_health.rs` 承接三条 v1 support/health handler，父级只保留受控 re-export。下一步只能进入 BE-001CG-05 单叶 closeout。
 - BE-001CG-05 已完成 `runtime.report_ops.merge_generation_health` 单叶 closeout；本叶设置 `stop_split: true`，下一步只能进入 BE-001CH-01 `runtime.report_ops` 父叶残余判断。
 - BE-001CH-01 已完成 `runtime.report_ops` 第二轮父叶残余判断；三个 child 均已 closeout，父级设置 `stop_split: true`。下一步只能进入 BE-001CI-01 `backend.runtime` 父叶残余判断。
+- BE-001CI-01 已完成 `backend.runtime` 第二轮父叶残余判断；父级保持 `stop_split: false`，下一步只能进入 BE-001CJ-01 `runtime.evidence_health` 单子叶等价基线。
 
 ## 当前收尾/发布状态
 
