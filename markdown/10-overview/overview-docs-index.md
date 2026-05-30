@@ -289,6 +289,7 @@
 | v4.16.0 / BE-001CV-01 | 新增: `runtime.parent_include_cleanup` 单子叶等价基线已建立，下一步进入抽离方案 |
 | v4.16.0 / BE-001CV-02 | 新增: `runtime.parent_include_cleanup` 抽离方案已建立，下一步进入实际 cleanup |
 | v4.16.0 / BE-001CV-03 | 新增: `runtime.parent_include_cleanup` 实际 cleanup 已完成，下一步进入 `backend.runtime` 第九轮父叶残余判断 |
+| v4.16.0 / BE-001CW-01 | 新增: `backend.runtime` 第九轮父叶残余判断已完成，下一步进入 `runtime.parent_import_bridge` 单子叶等价基线 |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |
