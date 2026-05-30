@@ -208,6 +208,7 @@ v4.7.0 系统应被理解为：
 - BE-001BY-03 已完成 `backend.runtime.routes.report_ops` 实际抽离；下一步只能进入 BE-001BY-04 单叶 closeout。
 - BE-001BY-04 已完成 `backend.runtime.routes.report_ops` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001BZ-01 父叶残余判断。
 - BE-001BZ-01 已完成 `backend.runtime.routes` 第六轮父叶残余判断并设置 `stop_split: true`；下一步只能进入 BE-001CA-01 `backend.runtime` 父叶残余判断。
+- BE-001CA-01 已完成 `backend.runtime` 父叶残余判断；`backend.runtime.routes` 已关闭，但 `src/runtime/mod.rs` 仍有 report/evidence/ops handler 残余，因此父叶保持 `stop_split: false`，下一步只能进入 BE-001CB-01 `runtime.report_ops` 单子叶等价基线。
 
 ## 当前收尾/发布状态
 
