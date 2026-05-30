@@ -212,6 +212,7 @@ v4.7.0 系统应被理解为：
 - BE-001CB-01 已建立 `runtime.report_ops` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001CB-02 抽离方案，且 v1 ops/report endpoints 的测试缺口必须在方案中显式处理。
 - BE-001CB-02 已建立 `runtime.report_ops` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CB-03 实际抽离，且不得迁移 `runtime.evidence_health`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState` 或发布过渡连接。
 - BE-001CB-03 已完成 `runtime.report_ops` 实际抽离；`src/runtime/report_ops.rs` 已创建并通过 `src/runtime/mod.rs` re-export 保持兼容出口。下一步只能进入 BE-001CB-04 单叶 closeout，且 v1 ops/report endpoint 测试缺口仍需在 closeout 中判断。
+- BE-001CB-04 已完成 `runtime.report_ops` 单叶 closeout；抽离等价成立但该叶设置 `stop_split: false`。下一步只能进入 BE-001CC-01 `runtime.report_ops.runtime_report` 单子叶等价基线，v1 ops/report endpoint 测试缺口仍保留。
 
 ## 当前收尾/发布状态
 
