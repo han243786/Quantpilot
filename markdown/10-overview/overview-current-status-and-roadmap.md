@@ -215,6 +215,7 @@ v4.7.0 系统应被理解为：
 - BE-001CB-04 已完成 `runtime.report_ops` 单叶 closeout；抽离等价成立但该叶设置 `stop_split: false`。下一步只能进入 BE-001CC-01 `runtime.report_ops.runtime_report` 单子叶等价基线，v1 ops/report endpoint 测试缺口仍保留。
 - BE-001CC-01 已建立 `runtime.report_ops.runtime_report` 单子叶等价基线；当前 `no code movement`，目标文件尚未创建。下一步只能进入 BE-001CC-02 抽离方案。
 - BE-001CC-02 已建立 `runtime.report_ops.runtime_report` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CC-03 实际抽离。
+- BE-001CC-03 已完成 `runtime.report_ops.runtime_report` 实际抽离；`src/runtime/report_ops/runtime_report.rs` 已创建并通过 `src/runtime/report_ops.rs` re-export 保持兼容出口。下一步只能进入 BE-001CC-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 
