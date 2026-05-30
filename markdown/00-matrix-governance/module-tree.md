@@ -922,6 +922,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CL-03）**: BE-001CL-03 已完成 `runtime.mutation.shared_governance` 实际抽离。`src/runtime/mutation/shared_governance.rs` 已创建并迁入 9 个 shared governance helper，父级只保留受控 child 声明与 caller-facing plain import；下一步只能进入 BE-001CL-04 单叶 closeout。
 **最新状态补充（BE-001CL-04）**: BE-001CL-04 已完成 `runtime.mutation.shared_governance` 单叶 closeout 并设置 `stop_split: true`。下一步只能进入 BE-001CM-01 `backend.runtime` 第四轮父叶残余判断，不得从本叶继续细拆 validation / event contract / governance projection 微叶。
 **最新状态补充（BE-001CM-01）**: BE-001CM-01 已完成 `backend.runtime` 第四轮父叶残余判断。`runtime.mutation.shared_governance` 已 closeout，但父级仍有 query DTO、run guard、response support 与 experiment limit 残余，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CN-01 `runtime.query_support` 单子叶等价基线。
+**最新状态补充（BE-001CN-01）**: BE-001CN-01 已建立 `runtime.query_support` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，7 个 query DTO 与 filter / replay normalization helper 仍在 `src/runtime/mod.rs`、`src/runtime/run.rs`、`src/runtime/mutation.rs`；下一步只能进入 BE-001CN-02 抽离方案。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1063,6 +1064,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/281-runtime.mutation.shared_governance抽离记录.md`
 - `markdown/06-milestones/v4.16.0/282-runtime.mutation.shared_governance单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/283-backend.runtime第四轮父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/284-runtime.query_support单子叶等价基线.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5667,6 +5669,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/281-runtime.mutation.shared_governance抽离记录.md` runtime mutation shared governance extraction record | `runtime.mutation.shared_governance` | 实际抽离，创建 child module 并迁移 9 个 shared governance helper | BE-001CL 抽离记录 | 下一步只能进入 BE-001CL-04 单叶 closeout；不得处理 query DTO/run guard 或 release transition |
 | `markdown/06-milestones/v4.16.0/282-runtime.mutation.shared_governance单叶closeout.md` runtime mutation shared governance closeout | `runtime.mutation.shared_governance` | 单叶 closeout，确认不继续拆 validation / event contract / governance projection 微叶并设置 `stop_split: true` | BE-001CL 单叶 closeout | `no code movement`；下一步只能进入 BE-001CM-01 `backend.runtime` 第四轮父叶残余判断 |
 | `markdown/06-milestones/v4.16.0/283-backend.runtime第四轮父叶残余判断.md` backend runtime fourth parent residual | `backend.runtime` | 第四轮父叶残余判断，确认 query DTO / run guard / response support / experiment limit 残余仍存在 | BE-001CM 父叶残余判断 | `no code movement`；`backend.runtime stop_split: false`；下一步只能进入 BE-001CN-01 `runtime.query_support` 单子叶等价基线 |
+| `markdown/06-milestones/v4.16.0/284-runtime.query_support单子叶等价基线.md` runtime query support baseline | `runtime.query_support` | 单子叶等价基线，冻结 query DTO、filter normalization、replay option normalization 与 field visibility | BE-001CN 单子叶基线 | `no code movement`；下一步只能进入 BE-001CN-02 抽离方案，不得创建 planned child 文件或迁移 DTO/helper |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
