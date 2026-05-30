@@ -251,6 +251,7 @@
 | v4.16.0 / BE-001CG-01 | 新增: `runtime.report_ops.merge_generation_health` 单子叶等价基线已建立，当前 `no code movement`，下一步进入抽离方案 |
 | v4.16.0 / BE-001CG-02 | 新增: `runtime.report_ops.merge_generation_health` test-first 抽离方案已建立，下一步进入 endpoint smoke 补测 |
 | v4.16.0 / BE-001CG-03 | 新增: `runtime.report_ops.merge_generation_health` endpoint smoke 补测已完成，下一步进入实际抽离 |
+| v4.16.0 / BE-001CG-04 | 新增: `runtime.report_ops.merge_generation_health` 实际抽离已完成，下一步进入单叶 closeout |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |

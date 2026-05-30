@@ -227,6 +227,7 @@ v4.7.0 系统应被理解为：
 - BE-001CG-01 已建立 `runtime.report_ops.merge_generation_health` 单子叶等价基线；当前 `no code movement`，planned child 文件尚未创建，下一步只能进入 BE-001CG-02 抽离方案。
 - BE-001CG-02 已建立 `runtime.report_ops.merge_generation_health` test-first 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CG-03 endpoint smoke 补测。
 - BE-001CG-03 已完成 `runtime.report_ops.merge_generation_health` endpoint smoke 补测；新增 `tests/api_v1_ops_health.rs` 覆盖三条 v1 support/health endpoint 的最小 JSON contract。下一步只能进入 BE-001CG-04 实际抽离。
+- BE-001CG-04 已完成 `runtime.report_ops.merge_generation_health` 实际抽离；`src/runtime/report_ops/merge_generation_health.rs` 承接三条 v1 support/health handler，父级只保留受控 re-export。下一步只能进入 BE-001CG-05 单叶 closeout。
 
 ## 当前收尾/发布状态
 

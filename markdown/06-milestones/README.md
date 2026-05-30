@@ -281,6 +281,7 @@
 | 267 | `v4.16.0/267-runtime.report_ops.merge_generation_health单子叶等价基线.md` | BE-001CG-01 `runtime.report_ops.merge_generation_health` 单子叶等价基线 | 📋 已创建 |
 | 268 | `v4.16.0/268-runtime.report_ops.merge_generation_health抽离方案.md` | BE-001CG-02 `runtime.report_ops.merge_generation_health` test-first 抽离方案 | 📋 已创建 |
 | 269 | `v4.16.0/269-runtime.report_ops.merge_generation_health补测记录.md` | BE-001CG-03 `runtime.report_ops.merge_generation_health` endpoint smoke 补测记录 | 📋 已创建 |
+| 270 | `v4.16.0/270-runtime.report_ops.merge_generation_health抽离记录.md` | BE-001CG-04 `runtime.report_ops.merge_generation_health` 实际抽离记录 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
