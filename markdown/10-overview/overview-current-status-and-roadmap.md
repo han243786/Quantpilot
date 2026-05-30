@@ -234,6 +234,7 @@ v4.7.0 系统应被理解为：
 - BE-001CJ-01 已建立 `runtime.evidence_health` 单子叶等价基线；当前 `no code movement`，planned child 文件尚未创建，下一步只能进入 BE-001CJ-02 抽离方案。
 - BE-001CJ-02 已建立 `runtime.evidence_health` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CJ-03 实际抽离。
 - BE-001CJ-03 已完成 `runtime.evidence_health` 实际抽离；`src/runtime/evidence_health.rs` 已承接 evidence health / cleanup handler，下一步只能进入 BE-001CJ-04 单叶 closeout。
+- BE-001CJ-04 已完成 `runtime.evidence_health` 单叶 closeout；本叶设置 `stop_split: true`，下一步只能进入 BE-001CK-01 `backend.runtime` 第三轮父叶残余判断。
 
 ## 当前收尾/发布状态
 
