@@ -1628,6 +1628,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/236-backend.runtime.routes.evidence单子叶等价基线.md` - v4.16.0 BE-001BU-01 `backend.runtime.routes.evidence` 单子叶等价基线
 - `markdown/06-milestones/v4.16.0/237-backend.runtime.routes.evidence抽离方案.md` - v4.16.0 BE-001BU-02 `backend.runtime.routes.evidence` 抽离方案
 - `markdown/06-milestones/v4.16.0/238-backend.runtime.routes.evidence抽离记录.md` - v4.16.0 BE-001BU-03 `backend.runtime.routes.evidence` 实际抽离记录
+- `markdown/06-milestones/v4.16.0/239-backend.runtime.routes.evidence单叶closeout.md` - v4.16.0 BE-001BU-04 `backend.runtime.routes.evidence` 单叶 closeout
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
 - `src/runtime/mutation/ai_proposal.rs` - runtime AI proposal child，承接 AI proposal / approval public handler 与专属 helper
@@ -1728,6 +1729,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001BU-01 已建立 `backend.runtime.routes.evidence` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001BU-02 抽离方案。
 当前最新递归点补充: BE-001BU-02 已建立 `backend.runtime.routes.evidence` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001BU-03 实际抽离。
 当前最新递归点补充: BE-001BU-03 已完成 `backend.runtime.routes.evidence` 实际抽离；`src/backend/runtime/routes/evidence.rs` 已创建，下一步只能进入 BE-001BU-04 单叶 closeout。
+当前最新递归点补充: BE-001BU-04 已完成 `backend.runtime.routes.evidence` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001BV-01 `backend.runtime.routes` 父叶残余判断。
 
 ### 7.7 总览 (markdown/10-overview/)
 
