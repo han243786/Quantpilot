@@ -889,6 +889,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充**: BE-001BZ-01 `backend.runtime.routes` 第六轮父叶残余判断已完成并设置 `stop_split: true`；route aggregate 当前只聚合 run/backtest/event_stream/evidence/mutation/experiment/report_ops 七个 route child。下一步只能进入 BE-001CA-01 `backend.runtime` 父叶残余判断，不能从 route aggregate 内继续细拆。AI proposal、approval、`AppState`、锁顺序、schema、frontend caller 和发布过渡均未迁移。
 **状态**: v4.16 BE-001H-03 `runtime.run.v4_handoff` 已完成单叶 closeout，当前不继续细拆；BE-001I-03 `runtime.run.session_start` 已完成单叶 closeout，当前不继续细拆；BE-001J-05 `runtime.run.record_store` 已完成抽离与单叶 closeout，当前不继续细拆；BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，当前不继续细拆；BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，当前不继续细拆；BE-001M-04 `runtime.backtest` 已完成 route facade 抽离与单叶 closeout，route facade 本身停止细分；BE-001N-04 `runtime.backtest.execution_start` 已完成第一轮物理抽离与单叶 closeout；BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout 并设置 `stop_split: true`；BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout 并设置 `stop_split: true`；BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`；BE-001R-04 已完成 `runtime.backtest.execution_start.legacy_dispatch` 单叶 closeout 并设置 `stop_split: true`；BE-001S-01 已完成 `runtime.backtest.execution_start` 父叶残余判断；BE-001T-04 已完成 `runtime.backtest.record_store` 单叶 closeout 并设置 `stop_split: true`；BE-001U-04 已完成 `runtime.backtest.replay` 单叶 closeout 并设置 `stop_split: true`；BE-001V-04 已完成 `runtime.backtest.experiment_sweep` 单叶 closeout 并设置 `stop_split: false`；BE-001W-04 已完成 `runtime.backtest.experiment_sweep.parameter_grid` 单叶 closeout 并设置 `stop_split: true`；BE-001Y-04 已完成 `runtime.backtest.experiment_sweep.start_orchestration` 单叶 closeout 并设置 `stop_split: true`；BE-001Z-01 已完成 `runtime.backtest.experiment_sweep` 第二轮父叶残余判断；BE-001AA-01 已建立 `runtime.backtest.experiment_sweep.record_lifecycle` 单子叶等价基线，BE-001AA-02 已建立抽离方案，BE-001AA-03 已完成实际抽离，BE-001AA-04 已完成单叶 closeout 并设置 `stop_split: true`；BE-001AB-01 已完成第三轮父叶残余判断并设置 `runtime.backtest.experiment_sweep` 父叶 `stop_split: true`；BE-001AC-01 已完成 `runtime.backtest` 父叶残余判断并设置父叶 `stop_split: true`，该上层已由 BE-001AD-01 承接完成，BE-001AE-04 已完成 `backend.runtime.routes.mutation` route facade 单叶 closeout 并设置 `stop_split: true`；BE-001AF-04 已完成 `runtime.mutation.parameter_mutation` 单叶 closeout并设置 `stop_split: false`，BE-001AH-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety` 单叶 closeout并设置 `stop_split: true`，下一步只能进入 BE-001AI-01 父叶残余判断。runtime route aggregate 已迁入 `src/backend/runtime/routes.rs`，run route group 已迁入 `src/backend/runtime/routes/run.rs`，backtest route group 已迁入 `src/backend/runtime/routes/backtest.rs`；`/api/runtime/v4/run` handler 已迁入 `src/runtime/run/v4_handoff.rs`，legacy `/api/runtime/test-run` handler 已迁入 `src/runtime/run/session_start.rs`，run record list/detail/save/discard handler 已迁入 `src/runtime/run/record_store.rs`，replay/status handler 已迁入 `src/runtime/run/replay_status.rs`，SSE handler 已迁入 `src/runtime/event_stream.rs`，backtest 创建路径 handler/helper 已迁入 `src/runtime/backtest/execution_start.rs`，v4 projection helper 已迁入 `src/runtime/backtest/v4_projection.rs`，v4 request resolution helper 已迁入 `src/runtime/backtest/v4_request_resolution.rs`，v4 runtime execution helper 已迁入 `src/runtime/backtest/v4_runtime_execution.rs`，legacy dispatch helper 已迁入 `src/runtime/backtest/legacy_dispatch.rs`，backtest record store handler 已迁入 `src/runtime/backtest/record_store.rs`，backtest replay handler 已迁入 `src/runtime/backtest/replay.rs`，backtest experiment sweep handler/helper 已迁入 `src/runtime/backtest/experiment_sweep.rs`，parameter_grid helper 已迁入 `src/runtime/backtest/parameter_grid.rs`，start_orchestration handler 已迁入 `src/runtime/backtest/start_orchestration.rs`，record_lifecycle handler 已迁入 `src/runtime/backtest/record_lifecycle.rs`，transition_lifecycle handler/helper 已迁入 `src/runtime/mutation/parameter_mutation/transition_lifecycle.rs`，boundary_safety helper 已迁入 `src/runtime/mutation/parameter_mutation/transition_lifecycle/boundary_safety.rs`，backtest artifact/compare/persistence 仍保留原 owner，state/shared helper 仍保留在 `src/runtime/`。
 **最新状态补充（BE-001CA-01）**: BE-001CA-01 已完成 `backend.runtime` 父叶残余判断。`backend.runtime.routes` 已设置 `stop_split: true`，但 `src/runtime/mod.rs` 仍持有 report/evidence/ops handler 与 helper 残余，因此 `backend.runtime` 保持 `stop_split: false`。下一步只能进入 BE-001CB-01 `runtime.report_ops` 单子叶等价基线，不得直接创建 child 文件、迁移 handler 或启动发布过渡。
+**最新状态补充（BE-001CB-01）**: BE-001CB-01 已建立 `runtime.report_ops` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，runtime report / v1 ops report handler 仍在 `src/runtime/mod.rs`。下一步只能进入 BE-001CB-02 抽离方案，不得迁移 handler、扩大 v1 ops/report endpoint 测试缺口或启动发布过渡。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -992,6 +993,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/126-runtime.backtest父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/127-backend.runtime.routes父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/251-backend.runtime父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/252-runtime.report_ops单子叶等价基线.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -1118,6 +1120,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 - `markdown/06-milestones/v4.16.0/249-backend.runtime.routes.report_ops单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/250-backend.runtime.routes第六轮父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/251-backend.runtime父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/252-runtime.report_ops单子叶等价基线.md`
 
 **职责**:
 承载 backend runtime route aggregate facade 的白箱坐标，固定 `backend.runtime -> backend.runtime.routes -> src/runtime/* pub(crate) handler` 的兼容桥和等价证据。
@@ -4362,6 +4365,59 @@ AI 声称 `runtime.backtest.experiment_sweep.record_lifecycle` 已抽离时，�
 
 AI 声称 `runtime.backtest.experiment_sweep.record_lifecycle` 已 closeout 时，必须说明只完成四个 lifecycle handler 的抽离与等价 closeout，并设置 `stop_split: true`；`runtime.backtest.experiment_sweep` 父叶已完成 BE-001AB-01 第三轮父叶残余判断，但 BE-001AD-01 已确认 `backend.runtime.routes` 父叶仍保持 `stop_split: false`，BE-001AE-04 已完成 `backend.runtime.routes.mutation` route facade 单叶 closeout 并设置 `stop_split: true`，BE-001AF-01 已建立 `runtime.mutation.parameter_mutation` 单子叶等价基线，下一步只能进入 BE-001AF-02 抽离方案。不得宣称 route registration、schema、state、persistence、response mapping、audit、frontend caller、发布过渡、整理或重构已经完成。
 
+### 5.1.20 `runtime.report_ops`
+
+**层级路径**: `root.backend.runtime.runtime.report_ops`
+**父模块**: `backend.runtime`
+**状态**: v4.16 BE-001CB-01 单子叶等价基线已建立。当前只冻结 runtime report / v1 ops report handler 边界，planned child 文件尚未创建，handler 尚未迁移；下一步只能进入 BE-001CB-02 抽离方案。
+**真实文件**:
+- `src/runtime/mod.rs`
+- `src/backend/runtime/routes/report_ops.rs`
+- `src/runtime_persistence.rs`
+- `src/runtime_response_mapping.rs`
+- `src/runtime/run.rs`
+- `src/runtime/mutation.rs`
+- `src/frontend_api_types.rs`
+- `frontend/src/store/graphStoreRuntimeHistoryApi.js`
+- `frontend/src/components/RuntimeReportPanel.jsx`
+- `tests/api_run.rs`
+- `tests/api_backtest.rs`
+- `tests/api_mutation.rs`
+- `tests/api_evidence_contract.rs`
+- `markdown/06-milestones/v4.16.0/252-runtime.report_ops单子叶等价基线.md`
+
+**职责**:
+承载 runtime report create/list/detail/export 与 v1 merge records、runtime generations、storage health、ops daily、audit weekly、research monthly report handler 的白箱边界。当前不拥有 route registration、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner 或 release transition guard。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `create_runtime_report` | `CreateRuntimeReportRequest` | `RuntimeEvidenceReportRecord` | `backend.runtime.routes.report_ops` | 不得改变 source metadata/idempotent 语义 |
+| `list_runtime_reports` | `PaginationQuery` | `PaginatedResponse<RuntimeEvidenceReportRecord>` | `backend.runtime.routes.report_ops` | 不得改变 materialize、排序或分页语义 |
+| `get_runtime_report_detail` | report id | `RuntimeEvidenceReportRecord` | `backend.runtime.routes.report_ops` | 不得跳过 source changed 检查 |
+| `export_runtime_report_artifact` | report id | `RuntimeEvidenceReportArtifact` | `backend.runtime.routes.report_ops` | 不得私造 artifact schema |
+| `list_merge_records` | user scope | `MergeRecordsResponse` | `backend.runtime.routes.report_ops` | 不得改变 merge event scan totals |
+| `list_config_generations` | `AppState` generation | JSON | `backend.runtime.routes.report_ops` | 不得迁移 generation state owner |
+| `get_storage_health` | storage dirs | JSON | `backend.runtime.routes.report_ops` | 不得迁移 storage lifecycle owner |
+| `get_ops_daily_report` | `OpsDailyQuery` | `OpsDailyReport` | `backend.runtime.routes.report_ops` | 不得改变 metrics/alert/storage projection |
+| `get_audit_weekly_report` | `AuditWeeklyQuery` | `AuditWeeklyReport` | `backend.runtime.routes.report_ops` | 不得改变 approval/proposal/mutation counts |
+| `get_research_monthly_report` | `ResearchMonthlyQuery` | `ResearchMonthlyReport` | `backend.runtime.routes.report_ops` | 不得改变 strategy/capacity/cost projection |
+
+**父级通信规则**:
+`runtime.report_ops` 只能经父级 `backend.runtime` 暴露给 `backend.runtime.routes.report_ops` route facade。后续若实际抽离，只能由 `src/runtime/mod.rs` 增加受控 `mod report_ops` 与 `pub(crate) use report_ops::{...}` re-export；不得让 route facade、frontend caller、persistence owner、schema owner 或 storage lifecycle owner 横向直连子叶。
+
+**允许迁移清单**:
+BE-001CB-03 若被 BE-001CB-02 允许，第一轮只可迁移 `create_runtime_report`、`report_source_metadata_matches`、`source_changed_report`、`current_report_for_saved_source`、`materialize_runtime_report_record`、`list_runtime_reports`、`get_runtime_report_detail`、`export_runtime_report_artifact`、`list_merge_records`、`list_config_generations`、`get_storage_health`、`get_ops_daily_report`、`get_audit_weekly_report`、`get_research_monthly_report`。
+
+**明确排除**:
+`get_runtime_evidence_health`、`cleanup_runtime_evidence`、`runtime_report_status_counts`、query structs/shared helper、`AppState`、`runtime_persistence`、`runtime_response_mapping`、`frontend_api_types`、frontend caller、storage lifecycle owner 和 release transition guard 均不属于本叶第一轮迁移。`runtime.evidence_health` 应作为 sibling 另起基线。
+
+**回归保护**:
+`cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_evidence_contract`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；`git diff --check`。
+
+**幻觉检查点**:
+AI 声称 `runtime.report_ops` 已完成 BE-001CB-01 时，必须说明当前只是等价基线，planned child 文件尚未创建，handler 仍在 `src/runtime/mod.rs`，v1 ops/report endpoints 仍有测试缺口，下一步只能进入 BE-001CB-02 抽离方案。不得宣称代码已抽离、发布过渡已启动或 `runtime.evidence_health` 已并入本叶。
+
 ### 5.2 `backend.graph_compile`
 
 **层级路径**: `root.backend.graph_compile`
@@ -5066,6 +5122,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/249-backend.runtime.routes.report_ops单叶closeout.md` backend runtime routes report ops closeout | `backend.runtime.routes.report_ops` | 单叶 closeout，设置 `stop_split: true` | BE-001BY 单叶 closeout | `no code movement`；下一步只能进入 BE-001BZ-01 父叶残余判断，不得继续拆 report_ops route child 或 release transition |
 | `markdown/06-milestones/v4.16.0/250-backend.runtime.routes第六轮父叶残余判断.md` backend runtime routes sixth parent residual decision | `backend.runtime.routes` | 父叶残余判断，七个 route child 均已 closeout，route aggregate 设置 `stop_split: true` | BE-001BZ 父叶收口 | `no code movement`；下一步只能进入 BE-001CA-01 `backend.runtime` 父叶残余判断，不得继续拆 route aggregate 或 release transition |
 | `markdown/06-milestones/v4.16.0/251-backend.runtime父叶残余判断.md` backend runtime parent residual decision | `backend.runtime` | 父叶残余判断，route aggregate 已关闭但 handler 残余仍在 `src/runtime/mod.rs` | BE-001CA 父叶判断 | `no code movement`；父叶保持 `stop_split: false`；下一步只能进入 BE-001CB-01 `runtime.report_ops` 单子叶等价基线，不得直接迁移 handler 或 release transition |
+| `markdown/06-milestones/v4.16.0/252-runtime.report_ops单子叶等价基线.md` runtime report ops baseline | `runtime.report_ops` | 单子叶等价基线，冻结 runtime report / v1 ops report handler 边界 | BE-001CB 单子叶基线 | `no code movement`；下一步只能进入 BE-001CB-02 抽离方案，不得创建 planned child 文件、迁移 handler 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

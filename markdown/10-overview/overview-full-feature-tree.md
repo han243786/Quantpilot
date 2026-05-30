@@ -1641,6 +1641,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/249-backend.runtime.routes.report_ops单叶closeout.md` - v4.16.0 BE-001BY-04 `backend.runtime.routes.report_ops` 单叶 closeout
 - `markdown/06-milestones/v4.16.0/250-backend.runtime.routes第六轮父叶残余判断.md` - v4.16.0 BE-001BZ-01 `backend.runtime.routes` 第六轮父叶残余判断
 - `markdown/06-milestones/v4.16.0/251-backend.runtime父叶残余判断.md` - v4.16.0 BE-001CA-01 `backend.runtime` 父叶残余判断
+- `markdown/06-milestones/v4.16.0/252-runtime.report_ops单子叶等价基线.md` - v4.16.0 BE-001CB-01 `runtime.report_ops` 单子叶等价基线
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
@@ -1756,6 +1757,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001BY-04 已完成 `backend.runtime.routes.report_ops` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001BZ-01 父叶残余判断。
 当前最新递归点补充: BE-001BZ-01 已完成 `backend.runtime.routes` 第六轮父叶残余判断并设置 `stop_split: true`；下一步只能进入 BE-001CA-01 `backend.runtime` 父叶残余判断。
 当前最新递归点补充: BE-001CA-01 已完成 `backend.runtime` 父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001CB-01 `runtime.report_ops` 单子叶等价基线。
+当前最新递归点补充: BE-001CB-01 已建立 `runtime.report_ops` 单子叶等价基线；下一步只能进入 BE-001CB-02 抽离方案。
 
 ### 7.7 总览 (markdown/10-overview/)
 
