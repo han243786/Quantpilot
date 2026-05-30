@@ -318,6 +318,7 @@
 | 304 | `v4.16.0/304-backend.runtime第八轮父叶残余判断.md` | BE-001CU-01 `backend.runtime` 第八轮父叶残余判断，选择 `runtime.parent_include_cleanup` 下一候选 | 📋 已创建 |
 | 305 | `v4.16.0/305-runtime.parent_include_cleanup单子叶等价基线.md` | BE-001CV-01 `runtime.parent_include_cleanup` 单子叶等价基线，冻结 drained include cleanup 删除边界 | 📋 已创建 |
 | 306 | `v4.16.0/306-runtime.parent_include_cleanup抽离方案.md` | BE-001CV-02 `runtime.parent_include_cleanup` 抽离方案，限定三条 include 与三个 drained 文件 cleanup | 📋 已创建 |
+| 307 | `v4.16.0/307-runtime.parent_include_cleanup清理记录.md` | BE-001CV-03 `runtime.parent_include_cleanup` 实际 cleanup，删除三条 drained include 与三个 drained 文件 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

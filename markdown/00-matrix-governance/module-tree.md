@@ -657,7 +657,6 @@ diff 子叶只比较 strategy config artifact 和 evidence，不拥有 graph ver
 **真实文件**:
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/strategy_config_api.rs`
-- `src/runtime/mutation.rs`
 - `tests/api_ai_proposal.rs`
 
 **职责**:
@@ -762,9 +761,6 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/capability_api.rs`
 - `src/strategy_config_api.rs`
 - `src/runtime/mod.rs`
-- `src/runtime/run.rs`
-- `src/runtime/backtest.rs`
-- `src/runtime/mutation.rs`
 - `src/graph_api.rs`
 - `src/graph_quantscript_api.rs`
 - `src/compile_api.rs`
@@ -916,20 +912,20 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CJ-02）**: BE-001CJ-02 已建立 `runtime.evidence_health` 抽离方案。当前 `no code movement`，下一步 BE-001CJ-03 才允许落地 `evidence_health` child，并且迁移清单仅限 `runtime_report_status_counts`、`get_runtime_evidence_health`、`cleanup_runtime_evidence`。
 **最新状态补充（BE-001CJ-03）**: BE-001CJ-03 已完成 `runtime.evidence_health` 实际抽离。`src/runtime/evidence_health.rs` 已创建并承接两个 evidence handler 与 `runtime_report_status_counts`，父级只保留受控 re-export；下一步只能进入 BE-001CJ-04 单叶 closeout。
 **最新状态补充（BE-001CJ-04）**: BE-001CJ-04 已完成 `runtime.evidence_health` 单叶 closeout 并设置 `stop_split: true`。下一步只能进入 BE-001CK-01 `backend.runtime` 第三轮父叶残余判断，不得从本叶继续细拆 health / cleanup 微叶。
-**最新状态补充（BE-001CK-01）**: BE-001CK-01 已完成 `backend.runtime` 第三轮父叶残余判断。`backend.runtime.routes`、`runtime.report_ops` 与 `runtime.evidence_health` 均已 closeout，但 `src/runtime/mutation.rs` 仍持有 mutation shared governance helper 残余，且父级仍有 query/guard/response support 残余，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CL-01 `runtime.mutation.shared_governance` 单子叶等价基线。
-**最新状态补充（BE-001CL-01）**: BE-001CL-01 已建立 `runtime.mutation.shared_governance` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，9 个 shared governance helper 仍在 `src/runtime/mutation.rs`；下一步只能进入 BE-001CL-02 抽离方案。
-**最新状态补充（BE-001CL-02）**: BE-001CL-02 已建立 `runtime.mutation.shared_governance` 抽离方案。当前 `no code movement`，planned child 文件尚未创建，9 个 shared governance helper 仍在 `src/runtime/mutation.rs`；下一步只能进入 BE-001CL-03 实际抽离。
+**最新状态补充（BE-001CK-01）**: BE-001CK-01 已完成 `backend.runtime` 第三轮父叶残余判断。`backend.runtime.routes`、`runtime.report_ops` 与 `runtime.evidence_health` 均已 closeout，但 src/runtime/mutation.rs (retired drained include) 仍持有 mutation shared governance helper 残余，且父级仍有 query/guard/response support 残余，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CL-01 `runtime.mutation.shared_governance` 单子叶等价基线。
+**最新状态补充（BE-001CL-01）**: BE-001CL-01 已建立 `runtime.mutation.shared_governance` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，9 个 shared governance helper 仍在 src/runtime/mutation.rs (retired drained include)；下一步只能进入 BE-001CL-02 抽离方案。
+**最新状态补充（BE-001CL-02）**: BE-001CL-02 已建立 `runtime.mutation.shared_governance` 抽离方案。当前 `no code movement`，planned child 文件尚未创建，9 个 shared governance helper 仍在 src/runtime/mutation.rs (retired drained include)；下一步只能进入 BE-001CL-03 实际抽离。
 **最新状态补充（BE-001CL-03）**: BE-001CL-03 已完成 `runtime.mutation.shared_governance` 实际抽离。`src/runtime/mutation/shared_governance.rs` 已创建并迁入 9 个 shared governance helper，父级只保留受控 child 声明与 caller-facing plain import；下一步只能进入 BE-001CL-04 单叶 closeout。
 **最新状态补充（BE-001CL-04）**: BE-001CL-04 已完成 `runtime.mutation.shared_governance` 单叶 closeout 并设置 `stop_split: true`。下一步只能进入 BE-001CM-01 `backend.runtime` 第四轮父叶残余判断，不得从本叶继续细拆 validation / event contract / governance projection 微叶。
 **最新状态补充（BE-001CM-01）**: BE-001CM-01 已完成 `backend.runtime` 第四轮父叶残余判断。`runtime.mutation.shared_governance` 已 closeout，但父级仍有 query DTO、run guard、response support 与 experiment limit 残余，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CN-01 `runtime.query_support` 单子叶等价基线。
-**最新状态补充（BE-001CN-01）**: BE-001CN-01 已建立 `runtime.query_support` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，7 个 query DTO 与 filter / replay normalization helper 仍在 `src/runtime/mod.rs`、`src/runtime/run.rs`、`src/runtime/mutation.rs`；下一步只能进入 BE-001CN-02 抽离方案。
+**最新状态补充（BE-001CN-01）**: BE-001CN-01 已建立 `runtime.query_support` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，7 个 query DTO 与 filter / replay normalization helper 仍在 `src/runtime/mod.rs`、src/runtime/run.rs (retired drained include)、src/runtime/mutation.rs (retired drained include)；下一步只能进入 BE-001CN-02 抽离方案。
 **最新状态补充（BE-001CN-02）**: BE-001CN-02 已建立 `runtime.query_support` 抽离方案。当前 `no code movement`，下一步 BE-001CN-03 才允许创建 planned child 文件并迁移 7 个 query DTO、`clean_optional_filter` 与 `normalized_replay_options`。
 **最新状态补充（BE-001CN-03）**: BE-001CN-03 已完成 `runtime.query_support` 实际抽离。`src/runtime/query_support.rs` 已创建并迁入 7 个 Query DTO、`clean_optional_filter` 与 `normalized_replay_options`；下一步只能进入 BE-001CN-04 单叶 closeout。
 **最新状态补充（BE-001CN-04）**: BE-001CN-04 已完成 `runtime.query_support` 单叶 closeout 并设置 `stop_split: true`。下一步只能进入 BE-001CO-01 `backend.runtime` 第五轮父叶残余判断，不得从本叶继续细拆 replay/mutation/report query 或 normalization 微叶。
 **最新状态补充（BE-001CO-01）**: BE-001CO-01 已完成 `backend.runtime` 第五轮父叶残余判断。`runtime.query_support` 已 closeout，但父级仍有 response support、run guard、experiment limit 与 parent include residual，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CP-01 `runtime.response_support` 单子叶等价基线。
-**最新状态补充（BE-001CP-01）**: BE-001CP-01 已建立 `runtime.response_support` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，`DiscardRuntimeArtifactResponse` 仍在 `src/runtime/mod.rs`，`MergeRecordsResponse` 与 `MergeRecordEntry` 仍在 `src/runtime/run.rs`；下一步只能进入 BE-001CP-02 抽离方案。
+**最新状态补充（BE-001CP-01）**: BE-001CP-01 已建立 `runtime.response_support` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，`DiscardRuntimeArtifactResponse` 仍在 `src/runtime/mod.rs`，`MergeRecordsResponse` 与 `MergeRecordEntry` 仍在 src/runtime/run.rs (retired drained include)；下一步只能进入 BE-001CP-02 抽离方案。
 **最新状态补充（BE-001CP-02）**: BE-001CP-02 已建立 `runtime.response_support` 抽离方案。当前 `no code movement`，下一步 BE-001CP-03 才允许创建 response_support child 并迁移 `DiscardRuntimeArtifactResponse`、`MergeRecordsResponse` 与 `MergeRecordEntry`。
-**最新状态补充（BE-001CP-03）**: BE-001CP-03 已完成 `runtime.response_support` 实际抽离。`src/runtime/response_support.rs` 已创建并迁入 3 个 response DTO，父级只保留 plain import，`src/runtime/run.rs` 已降为 drained include 注释；下一步只能进入 BE-001CP-04 单叶 closeout。
+**最新状态补充（BE-001CP-03）**: BE-001CP-03 已完成 `runtime.response_support` 实际抽离。`src/runtime/response_support.rs` 已创建并迁入 3 个 response DTO，父级只保留 plain import，src/runtime/run.rs (retired drained include) 已降为 drained include 注释；下一步只能进入 BE-001CP-04 单叶 closeout。
 **最新状态补充（BE-001CP-04）**: BE-001CP-04 已完成 `runtime.response_support` 单叶 closeout 并设置 `stop_split: true`。下一步只能进入 BE-001CQ-01 `backend.runtime` 第六轮父叶残余判断，不得从 response_support 继续细拆。
 **最新状态补充（BE-001CQ-01）**: BE-001CQ-01 已完成 `backend.runtime` 第六轮父叶残余判断。`runtime.response_support` 已 closeout，但父级仍有 run guard、experiment limit 与 drained parent include residual，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CR-01 `runtime.run_guard` 单子叶等价基线。
 **最新状态补充（BE-001CR-01）**: BE-001CR-01 已建立 `runtime.run_guard` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，`RunInProgressGuard` 仍在 `src/runtime/mod.rs`；下一步只能进入 BE-001CR-02 抽离方案。
@@ -945,6 +941,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CU-01）**: BE-001CU-01 已完成 `backend.runtime` 第八轮父叶残余判断。`runtime.experiment_limit stop_split: true` 已成立，父级真实残余只剩 `include!("run.rs")`、`include!("mutation.rs")` 与 `include!("backtest.rs")` drained parent include cleanup，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CV-01 `runtime.parent_include_cleanup` 单子叶等价基线。
 **最新状态补充（BE-001CV-01）**: BE-001CV-01 已建立 `runtime.parent_include_cleanup` 单子叶等价基线。当前 `no code movement`，只冻结三条 drained `include!(...)`、三个 drained 文件、public 出口影响面和等价验证门禁；下一步只能进入 BE-001CV-02 抽离方案。
 **最新状态补充（BE-001CV-02）**: BE-001CV-02 已建立 `runtime.parent_include_cleanup` 抽离方案。当前 `no code movement`，BE-001CV-03 只允许删除三条 drained `include!(...)` 与三个 drained 文件，不得处理 `backend.runtime` 父叶 closeout、schema/frontend/state/persistence owner 或 release transition。
+**最新状态补充（BE-001CV-03）**: BE-001CV-03 已完成 `runtime.parent_include_cleanup` 实际 cleanup。`src/runtime/mod.rs` 中三条 drained `include!(...)` 已删除，三个 drained 文件已删除；public handler owner、route facade、schema/frontend/state/persistence owner、lock order 与 release transition guard 均未处理。下一步只能进入 BE-001CW-01 `backend.runtime` 第九轮父叶残余判断。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -967,7 +964,6 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `src/runtime/run/session_start.rs`
 - `src/runtime/run/record_store.rs`
 - `src/runtime/run/replay_status.rs`
-- `src/runtime/run.rs`
 - `src/runtime/backtest/execution_start.rs`
 - `src/runtime/backtest/v4_projection.rs`
 - `src/runtime/backtest/v4_request_resolution.rs`
@@ -984,7 +980,6 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `src/runtime_validation.rs`
 - `src/runtime_response_mapping.rs`
 - `src/runtime_diagnostics.rs`
-- `src/runtime/backtest.rs`
 - `src/backtest_compare.rs`
 - `src/backtest_artifacts.rs`
 - `markdown/06-milestones/v4.16.0/58-runtime.run.session_start单子叶等价基线.md`
@@ -1113,6 +1108,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/304-backend.runtime第八轮父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/305-runtime.parent_include_cleanup单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/306-runtime.parent_include_cleanup抽离方案.md`
+- `markdown/06-milestones/v4.16.0/307-runtime.parent_include_cleanup清理记录.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -1179,10 +1175,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 - `src/runtime/run/replay_status.rs`
 - `src/runtime/mod.rs`
 - `src/runtime/run/session_start.rs`
-- `src/runtime/run.rs`
-- `src/runtime/backtest.rs`
 - `src/backtest_compare.rs`
-- `src/runtime/mutation.rs`
 - `src/runtime_event_projection.rs`
 - `src/runtime_persistence.rs`
 - `src/backtest_artifacts.rs`
@@ -1301,7 +1294,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 `backend.runtime.routes` 只能经 `backend.runtime` 和 `backend.interface_boundary` 暴露 runtime routes；不得横向直接改 `backend.graph_compile`、`backend.storage_security`、`executor` 或 frontend state。
 
 **允许调用的子模块**:
-`backend.runtime.routes.run`、`backend.runtime.routes.backtest`、`backend.runtime.routes.event_stream`、`backend.runtime.routes.evidence`、`backend.runtime.routes.mutation`、`backend.runtime.routes.experiment`、`backend.runtime.routes.report_ops`、`src/runtime/mod.rs`、`src/runtime/run.rs`、`src/runtime/backtest.rs`、`src/runtime/mutation.rs`、`src/backtest_compare.rs` 中的 `pub(crate)` route targets。真实 run/backtest/mutation/report/experiment/evidence/event_stream 子域仍留在 `src/runtime/`，后续若继续拆分必须另起单子叶等价基线。
+`backend.runtime.routes.run`、`backend.runtime.routes.backtest`、`backend.runtime.routes.event_stream`、`backend.runtime.routes.evidence`、`backend.runtime.routes.mutation`、`backend.runtime.routes.experiment`、`backend.runtime.routes.report_ops`、`src/runtime/mod.rs`、src/runtime/run.rs (retired drained include)、src/runtime/backtest.rs (retired drained include)、src/runtime/mutation.rs (retired drained include)、`src/backtest_compare.rs` 中的 `pub(crate)` route targets。真实 run/backtest/mutation/report/experiment/evidence/event_stream 子域仍留在 `src/runtime/`，后续若继续拆分必须另起单子叶等价基线。
 
 **回归保护**:
 `cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_sse`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
@@ -1611,7 +1604,6 @@ AI 声称 `backend.runtime.routes.report_ops` 已推进至 BE-001BY-04 时，必
 **真实文件**:
 - `src/backend/runtime/routes.rs`
 - `src/backend/runtime/routes/mutation.rs`
-- `src/runtime/mutation.rs`
 - `src/runtime/mod.rs`
 - `src/backend/runtime.rs`
 - `tests/api_mutation.rs`
@@ -1680,7 +1672,7 @@ AI 声称 `backend.runtime.routes.report_ops` 已推进至 BE-001BY-04 时，必
 | `claim_ai_proposal_review` | proposal id | claim response | route aggregate | 不得改变 reviewer claim semantics |
 
 **父级通信规则**:
-`backend.runtime.routes.mutation` 只能经父级 `backend.runtime.routes` 暴露 mutation / AI proposal / approval routes；不得横向接管 report、evidence、experiment、ops、strategy_config、frontend caller 或 executor。handler owner 仍是 `src/runtime/mutation.rs`，状态 owner 仍是 `AppState`。发布过渡前不得主动提出横向连接或性能旁路。ASCII guard: `release transition guard`。
+`backend.runtime.routes.mutation` 只能经父级 `backend.runtime.routes` 暴露 mutation / AI proposal / approval routes；不得横向接管 report、evidence、experiment、ops、strategy_config、frontend caller 或 executor。handler owner 仍是 src/runtime/mutation.rs (retired drained include)，状态 owner 仍是 `AppState`。发布过渡前不得主动提出横向连接或性能旁路。ASCII guard: `release transition guard`。
 
 **状态与锁**:
 `approval_records -> ai_proposals` lock order 必须保持不变；mutation ledger、approval records、AI proposals、capability context、sandbox/static check 和 audit projection 均保留原 owner。
@@ -1689,7 +1681,7 @@ AI 声称 `backend.runtime.routes.report_ops` 已推进至 BE-001BY-04 时，必
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 
 **细分价值判断**:
-本节点已完成等价基线、抽离方案、route facade 最小物理抽离与单叶 closeout，route facade 设置 `stop_split: true`。继续把 facade 拆成 mutation routes、AI proposal routes 和 approval routes 会增加父级导入面，但不会形成新的稳定 owner；后续递归已转入 `src/runtime/mutation.rs` handler 域，`runtime.mutation.parameter_mutation` 已完成 BE-001AF-04 单叶 closeout，BE-001AN-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect` 单叶 closeout，下一步只能进入 BE-001AO-01 父叶残余判断。`runtime.mutation.ai_proposal`、`runtime.mutation.approval_review` 值得后续排队，`runtime.mutation.shared_persistence_governance` 暂缓。
+本节点已完成等价基线、抽离方案、route facade 最小物理抽离与单叶 closeout，route facade 设置 `stop_split: true`。继续把 facade 拆成 mutation routes、AI proposal routes 和 approval routes 会增加父级导入面，但不会形成新的稳定 owner；后续递归已转入 src/runtime/mutation.rs (retired drained include) handler 域，`runtime.mutation.parameter_mutation` 已完成 BE-001AF-04 单叶 closeout，BE-001AN-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect` 单叶 closeout，下一步只能进入 BE-001AO-01 父叶残余判断。`runtime.mutation.ai_proposal`、`runtime.mutation.approval_review` 值得后续排队，`runtime.mutation.shared_persistence_governance` 暂缓。
 
 **幻觉检查点**:
 AI 声称 `backend.runtime.routes.mutation` 已完成 BE-001AF-04 时，必须说明 route facade 已 closeout 并设置 `stop_split: true`，`runtime.mutation.parameter_mutation` 只完成单叶 closeout 且设置 `stop_split: false`；AppState、`approval_records -> ai_proposals` 锁顺序、schema、frontend caller 和发布过渡均未改变。不得宣称 approval/AI proposal 状态 owner 已迁移、`backend.runtime.routes` 父叶完成、整理或重构已经完成。
@@ -1729,7 +1721,6 @@ AI 声称 `backend.runtime.routes.mutation` 已完成 BE-001AF-04 时，必须�
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle.rs`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/transition_record_persistence.rs`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_record_identity.rs`
-- `src/runtime/mutation.rs`
 - `src/runtime/mod.rs`
 - `src/backend/runtime/routes/mutation.rs`
 - `src/runtime_persistence.rs`
@@ -1898,7 +1889,6 @@ AI 声称 `runtime.mutation.parameter_mutation` 已推进至 BE-001AX-01 时，�
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/activation_snapshot_side_effect.rs`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_flow.rs`
 - `src/runtime/mod.rs`
-- `src/runtime/mutation.rs`
 - `src/backend/runtime/routes/mutation.rs`
 - `src/runtime_persistence.rs`
 - `tests/api_mutation.rs`
@@ -2472,7 +2462,6 @@ AI 声称 `record_query` 已完成 BE-001AW-04 时，必须说明本叶已 close
 - `src/runtime/mutation/ai_proposal/sandbox_trigger.rs`
 - `src/runtime/mutation/ai_proposal/status_transition.rs`
 - `src/runtime/mutation/ai_proposal/proposal_creation.rs`
-- `src/runtime/mutation.rs`
 - `src/runtime/mod.rs`
 - `src/backend/runtime/routes/mutation.rs`
 - `src/frontend_api_types.rs`
@@ -3052,7 +3041,6 @@ AI 声称 `runtime.mutation.ai_proposal.status_transition` 已推进至 BE-001BN
 - `src/runtime/mutation/ai_proposal/sandbox_trigger.rs`
 - `src/runtime/mutation/ai_proposal/status_transition.rs`
 - `src/runtime/mutation/ai_proposal/proposal_creation.rs`
-- `src/runtime/mutation.rs`
 - `src/runtime/mod.rs`
 - `src/backend/runtime/routes/mutation.rs`
 - `src/frontend_api_types.rs`
@@ -3132,7 +3120,6 @@ AI 声称 `runtime.mutation.ai_proposal.proposal_creation` 已推进至 BE-001BP
 - `src/runtime/run/session_start.rs`
 - `src/runtime/run/record_store.rs`
 - `src/runtime/run/replay_status.rs`
-- `src/runtime/run.rs`
 - `src/runtime_persistence.rs`
 - `src/runtime_event_projection.rs`
 - `markdown/06-milestones/v4.16.0/52-backend.runtime.routes.run单子叶等价基线.md`
@@ -3194,7 +3181,7 @@ AI 声称 `runtime.mutation.ai_proposal.proposal_creation` 已推进至 BE-001BP
 `backend.runtime.routes.run` 这个 route facade 不继续细分；真实 handler owner 已从 `runtime.run.v4_handoff`、`runtime.run.session_start`、`runtime.run.record_store` 和 `runtime.run.replay_status` 完成四片 closeout。后续不得继续细拆这些已 closeout 叶子；`runtime.event_stream` 仍是父级 route 子叶候选，不属于本 facade。
 
 **幻觉检查点**:
-AI 声称 runtime run routes 已迁移时，必须说明 run route group facade、`runtime.run.v4_handoff` handler 子模块、`runtime.run.session_start` handler 子模块与 `runtime.run.record_store` handler 子模块是不同动作；不得宣称 `src/runtime/run.rs` 全部 handler、state owner、event stream 或 persistence 已迁移。AI 声称本子叶完成时，还必须说明 route facade 停止细分不等于 run handler 全部完成。
+AI 声称 runtime run routes 已迁移时，必须说明 run route group facade、`runtime.run.v4_handoff` handler 子模块、`runtime.run.session_start` handler 子模块与 `runtime.run.record_store` handler 子模块是不同动作；不得宣称 src/runtime/run.rs (retired drained include) 全部 handler、state owner、event stream 或 persistence 已迁移。AI 声称本子叶完成时，还必须说明 route facade 停止细分不等于 run handler 全部完成。
 
 ### 5.1.3 `runtime.run.v4_handoff`
 
@@ -3204,8 +3191,6 @@ AI 声称 runtime run routes 已迁移时，必须说明 run route group facade�
 **真实文件**:
 - `src/runtime/run/v4_handoff.rs`
 - `src/runtime/mod.rs`
-- `src/runtime/run.rs`
-- `src/runtime/backtest.rs`
 - `src/backend/runtime/routes/run.rs`
 - `markdown/06-milestones/v4.16.0/55-runtime.run.v4_handoff单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/56-runtime.run.v4_handoff抽离记录.md`
@@ -3243,7 +3228,7 @@ AI 声称 runtime run routes 已迁移时，必须说明 run route group facade�
 `runtime.run.v4_handoff` 只能经父级 `runtime` re-export 和 `backend.runtime.routes.run` 暴露 `/api/runtime/v4/run`；不得横向直接改 `runtime.run.session_start`、record store、SSE、backtest、mutation、executor 或 frontend state。
 
 **允许调用的子模块**:
-仅允许使用既有 `qrpc_core_ir`、`qrpc_runtime`、`quantscript` static audit / handoff / v4 paper simulated runtime；`runtime_v4_static_bundle` / `runtime_simulated_v4_matrix` 对 `src/runtime/backtest.rs` 的复用只能经父级 `runtime` 受控出口，不得形成 sibling 直连。
+仅允许使用既有 `qrpc_core_ir`、`qrpc_runtime`、`quantscript` static audit / handoff / v4 paper simulated runtime；`runtime_v4_static_bundle` / `runtime_simulated_v4_matrix` 对 src/runtime/backtest.rs (retired drained include) 的复用只能经父级 `runtime` 受控出口，不得形成 sibling 直连。
 
 **细分价值判断**:
 本叶不继续细拆。request/response schema、source/graph resolution、initial event、handoff projection 都服务同一条 v4 handoff route；simulated capability matrix 若未来独立，应另起父级共享节点，不能在本叶内部横向拆出。
@@ -3261,7 +3246,6 @@ AI 声称 `runtime.run.v4_handoff` 已抽离时，必须指出只完成 v4 hando
 **状态**: v4.16 BE-001I-03 单叶 closeout 已完成，当前停止内部细分。legacy `/api/runtime/test-run` 的 `start_test_run` 已迁入 `src/runtime/run/session_start.rs`，父级 `runtime` 保留受控 re-export；record/replay/status、SSE、state owner 和 persistence 仍不迁移。
 **真实文件**:
 - `src/runtime/run/session_start.rs`
-- `src/runtime/run.rs`
 - `src/runtime/mod.rs`
 - `src/backend/runtime/routes/run.rs`
 - `src/runtime_validation.rs`
@@ -3332,7 +3316,6 @@ AI 声称 `runtime.run.session_start` 已完成时，必须说明只完成 legac
 **状态**: v4.16 BE-001J-05 抽离与单叶 closeout 已完成，当前不继续细拆。`list_runs`、`get_run_detail`、`save_run_record`、`discard_run_record` 已迁入 `src/runtime/run/record_store.rs`；persistence、audit、response mapping、frontend route 和 AppState owner 均保留原位。
 **真实文件**:
 - `src/runtime/run/record_store.rs`
-- `src/runtime/run.rs`
 - `src/runtime/mod.rs`
 - `src/backend/runtime/routes/run.rs`
 - `src/runtime_persistence.rs`
@@ -3408,7 +3391,6 @@ AI 声称 `runtime.run.record_store` 已完成时，必须说明只完成四个 
 **状态**: v4.16 BE-001K-04 抽离与单叶 closeout 已完成，当前不继续细拆。`get_run_replay` 与 `get_run_status` 已迁入 `src/runtime/run/replay_status.rs`；`runtime.event_stream`、response mapping、schema、metrics、state owner 和 persistence owner 均保留原位。
 **真实文件**:
 - `src/runtime/run/replay_status.rs`
-- `src/runtime/run.rs`
 - `src/runtime/mod.rs`
 - `src/backend/runtime/routes/run.rs`
 - `src/runtime_response_mapping.rs`
@@ -3456,7 +3438,6 @@ AI 声称 `runtime.run.replay_status` 已完成时，必须说明只完成 repla
 **真实文件**:
 - `src/backend/runtime/routes.rs`
 - `src/runtime/event_stream.rs`
-- `src/runtime/run.rs`
 - `src/runtime/mod.rs`
 - `tests/api_sse.rs`
 - `markdown/06-milestones/v4.16.0/70-runtime.event_stream单子叶等价基线.md`
@@ -3514,7 +3495,6 @@ AI 声称 `runtime.event_stream` 已完成时，必须说明只完成 SSE handle
 **真实文件**:
 - `src/backend/runtime/routes.rs`
 - `src/backend/runtime/routes/backtest.rs`
-- `src/runtime/backtest.rs`
 - `src/runtime/backtest/execution_start.rs`
 - `src/runtime/backtest/v4_projection.rs`
 - `src/runtime/backtest/v4_request_resolution.rs`
@@ -3640,19 +3620,19 @@ AI 声称 `runtime.event_stream` 已完成时，必须说明只完成 SSE handle
 `cargo check -p quantpilot`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 
 **抽离记录**:
-BE-001M-03 已新建 `src/backend/runtime/routes/backtest.rs` 并迁入 backtest route registration。`src/backend/runtime/routes.rs` 只新增 backtest 子 route facade 注册，并继续保留 event stream、evidence、mutation、report、experiment、approval 和 ops routes。`src/runtime/backtest.rs`、`src/backtest_compare.rs`、artifact、persistence、schema、state 和 frontend owner 不迁移。
+BE-001M-03 已新建 `src/backend/runtime/routes/backtest.rs` 并迁入 backtest route registration。`src/backend/runtime/routes.rs` 只新增 backtest 子 route facade 注册，并继续保留 event stream、evidence、mutation、report、experiment、approval 和 ops routes。src/runtime/backtest.rs (retired drained include)、`src/backtest_compare.rs`、artifact、persistence、schema、state 和 frontend owner 不迁移。
 
 **单叶 closeout**:
 BE-001M-04 已确认 route facade 等价并停止 route facade 内部细分。BE-001N-04 已为 `runtime.backtest.execution_start` 完成第一轮物理抽离与单叶 closeout；BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout 并设置 `stop_split: true`；BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout 并设置 `stop_split: true`；BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`；BE-001R-04 已完成 `runtime.backtest.execution_start.legacy_dispatch` 单叶 closeout 并设置 `stop_split: true`；BE-001S-01 已完成 `runtime.backtest.execution_start` 父叶残余判断；BE-001T-04 已完成 `runtime.backtest.record_store` 单叶 closeout 并设置 `stop_split: true`；BE-001U-04 已完成 `runtime.backtest.replay` 单叶 closeout 并设置 `stop_split: true`；BE-001V-04 已完成 `runtime.backtest.experiment_sweep` 单叶 closeout 并设置 `stop_split: false`；BE-001W-04 已完成 `runtime.backtest.experiment_sweep.parameter_grid` 单叶 closeout 并设置 `stop_split: true`；BE-001Y-04 已完成 `runtime.backtest.experiment_sweep.start_orchestration` 单叶 closeout 并设置 `stop_split: true`；BE-001Z-01 已完成第二轮父叶残余判断；BE-001AA-01 已建立 `record_lifecycle` 单子叶等价基线，BE-001AA-02 已建立抽离方案，BE-001AA-03 已完成实际抽离，BE-001AA-04 已完成单叶 closeout 并设置 `stop_split: true`；BE-001AB-01 已完成 `runtime.backtest.experiment_sweep` 第三轮父叶残余判断并设置父叶 `stop_split: true`；BE-001AC-01 已完成 `runtime.backtest` 父叶残余判断并设置父叶 `stop_split: true`。下一批若继续只能进入 BE-001AD-01 `backend.runtime.routes` 父叶残余判断，不能直接越级迁移 route facade、execution_start、persistence、mapping、schema、state 或共享 owner。
 
 **父叶残余判断**:
-BE-001AC-01 已确认 `runtime.backtest.execution_start`、`runtime.backtest.record_store`、`runtime.backtest.replay`、`runtime.backtest.experiment_sweep` 均已完成当前递归范围内的 closeout，`runtime.backtest` 父叶当前设置 `stop_split: true`。`src/runtime/backtest.rs` 仍是 drained parent include placeholder，本批不删除；`src/backtest_compare.rs`、`src/backtest_artifacts.rs`、`src/runtime_persistence.rs`、`src/runtime_response_mapping.rs`、`src/frontend_api_types.rs` 和 `AppState` 均保留原 owner。下一候选固定为 BE-001AD-01 `backend.runtime.routes` 父叶残余判断。
+BE-001AC-01 已确认 `runtime.backtest.execution_start`、`runtime.backtest.record_store`、`runtime.backtest.replay`、`runtime.backtest.experiment_sweep` 均已完成当前递归范围内的 closeout，`runtime.backtest` 父叶当前设置 `stop_split: true`。src/runtime/backtest.rs (retired drained include) 仍是 drained parent include placeholder，本批不删除；`src/backtest_compare.rs`、`src/backtest_artifacts.rs`、`src/runtime_persistence.rs`、`src/runtime_response_mapping.rs`、`src/frontend_api_types.rs` 和 `AppState` 均保留原 owner。下一候选固定为 BE-001AD-01 `backend.runtime.routes` 父叶残余判断。
 
 **细分价值判断**:
 route facade 本身已 `stop_split: true`，因为继续拆只会制造无意义微文件。`runtime.backtest.execution_start` 已完成第一轮物理抽离、内部四个子叶 closeout 和父叶残余判断；`runtime.backtest.record_store`、`runtime.backtest.replay` 和 `runtime.backtest.experiment_sweep` 均已完成当前递归范围内 closeout。BE-001AC-01 已将 `runtime.backtest` 父叶设置为 `stop_split: true`；不得从本父叶继续细拆或直接移动 artifact schema、compare owner、persistence owner、response mapping owner、state owner、frontend caller 或 drained parent include cleanup。
 
 **幻觉检查点**:
-AI 声称 `runtime.backtest` 已完成 BE-001AC-01 时，必须说明 `execution_start`、`record_store`、`replay` 与 `experiment_sweep` 均已完成当前递归范围内 closeout，父叶已设置 `stop_split: true`，且本批为 `no code movement`。不得宣称 `backend.runtime.routes` 上层完成、`src/runtime/backtest.rs` drained parent include 已删除、compare/artifact schema/persistence/response mapping/frontend caller 已迁移、发布过渡已启动、整理或重构已经完成。
+AI 声称 `runtime.backtest` 已完成 BE-001AC-01 时，必须说明 `execution_start`、`record_store`、`replay` 与 `experiment_sweep` 均已完成当前递归范围内 closeout，父叶已设置 `stop_split: true`，且本批为 `no code movement`。不得宣称 `backend.runtime.routes` 上层完成、src/runtime/backtest.rs (retired drained include) drained parent include 已删除、compare/artifact schema/persistence/response mapping/frontend caller 已迁移、发布过渡已启动、整理或重构已经完成。
 
 ### 5.1.9 `runtime.backtest.execution_start`
 
@@ -3667,7 +3647,6 @@ AI 声称 `runtime.backtest` 已完成 BE-001AC-01 时，必须说明 `execution
 - `src/runtime/backtest/v4_request_resolution.rs`
 - `src/runtime/backtest/v4_runtime_execution.rs`
 - `src/runtime/backtest/legacy_dispatch.rs`
-- `src/runtime/backtest.rs`
 - `src/runtime/mod.rs`
 - `src/backtest_artifacts.rs`
 - `src/runtime_response_mapping.rs`
@@ -3745,7 +3724,6 @@ AI 声称 `runtime.backtest.execution_start` 已完成父叶残余判断时，�
 - `src/runtime/backtest/execution_start.rs`
 - `src/runtime/backtest/v4_projection.rs`
 - `src/runtime/mod.rs`
-- `src/runtime/backtest.rs`
 - `src/backend/runtime/routes/backtest.rs`
 - `src/backtest_artifacts.rs`
 - `src/runtime_response_mapping.rs`
@@ -3814,7 +3792,6 @@ AI 声称 `runtime.backtest.execution_start.v4_projection` 已 closeout 时，�
 - `src/runtime/backtest/v4_request_resolution.rs`
 - `src/runtime/backtest/v4_projection.rs`
 - `src/runtime/mod.rs`
-- `src/runtime/backtest.rs`
 - `src/backend/runtime/routes/backtest.rs`
 - `src/backtest_artifacts.rs`
 - `src/runtime_response_mapping.rs`
@@ -3889,7 +3866,6 @@ AI 声称 `runtime.backtest.execution_start.v4_request_resolution` 已 closeout 
 - `src/runtime/backtest/v4_request_resolution.rs`
 - `src/runtime/backtest/v4_projection.rs`
 - `src/runtime/mod.rs`
-- `src/runtime/backtest.rs`
 - `src/backend/runtime/routes/backtest.rs`
 - `src/backtest_artifacts.rs`
 - `src/runtime_response_mapping.rs`
@@ -4035,7 +4011,6 @@ AI 声称 `runtime.backtest.execution_start.legacy_dispatch` 已 closeout 时，
 **真实文件**:
 - `src/backend/runtime/routes/backtest.rs`
 - `src/runtime/backtest/record_store.rs`
-- `src/runtime/backtest.rs`
 - `src/runtime/mod.rs`
 - `src/runtime_persistence.rs`
 - `src/runtime_response_mapping.rs`
@@ -4109,7 +4084,7 @@ BE-001T-04 已确认四个 handler 等价，并设置 `stop_split: true`。继�
 **回归保护**:
 `cargo fmt --check`，`cargo check -p quantpilot`，`cargo test --no-run`，`cargo test -p quantpilot --test api_backtest`，`cargo test -p quantpilot --test api_evidence_contract`，`cargo test -p quantpilot --test api_run`，`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`，`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 **幻觉检查点**:
-AI 声称 `runtime.backtest.record_store` 已完成时，必须说明只完成 backtest record list/detail/save/discard handler 子模块的抽离与 closeout，并设置 `stop_split: true`；`src/runtime/backtest.rs` 仍拥有 replay、experiment 和其他 sibling，state owner、shared helper owner、persistence owner、artifact/transient owner、frontend route、发布版本过渡、整理和重构均未完成。不得宣称 backtest handler 全部完成。
+AI 声称 `runtime.backtest.record_store` 已完成时，必须说明只完成 backtest record list/detail/save/discard handler 子模块的抽离与 closeout，并设置 `stop_split: true`；src/runtime/backtest.rs (retired drained include) 仍拥有 replay、experiment 和其他 sibling，state owner、shared helper owner、persistence owner、artifact/transient owner、frontend route、发布版本过渡、整理和重构均未完成。不得宣称 backtest handler 全部完成。
 
 ### 5.1.15 `runtime.backtest.replay`
 
@@ -4119,7 +4094,6 @@ AI 声称 `runtime.backtest.record_store` 已完成时，必须说明只完成 b
 **真实文件**:
 - `src/backend/runtime/routes/backtest.rs`
 - `src/runtime/backtest/replay.rs`
-- `src/runtime/backtest.rs`
 - `src/runtime/mod.rs`
 - `src/runtime_persistence.rs`
 - `src/runtime_response_mapping.rs`
@@ -4176,7 +4150,7 @@ BE-001U-01 已冻结 replay route、record lookup、query normalization、artifa
 BE-001U-02 已限定下一批 BE-001U-03 只迁移 `get_backtest_replay` 到 planned replay module file。父级 `src/runtime/mod.rs` 只做受控私有子模块接入和 re-export，`src/backend/runtime/routes/backtest.rs` route facade 保持不变；`src/runtime_persistence.rs`、`src/runtime_response_mapping.rs`、`src/frontend_api_types.rs`、`src/lib.rs`、AppState/store dir owner 和 artifact schema owner 均不迁移。
 
 **抽离记录**:
-BE-001U-03 已将 `get_backtest_replay` 迁入 `src/runtime/backtest/replay.rs`。`src/runtime/backtest.rs` 继续承载 experiment sweep 和后续 sibling；`src/runtime/mod.rs` 只新增 `backtest_replay` 私有模块和 re-export；`src/backend/runtime/routes/backtest.rs` 未改动。record lookup、query normalization、response mapping、schema、metrics、state/persistence、artifact schema、frontend caller 和发布过渡均不迁移。
+BE-001U-03 已将 `get_backtest_replay` 迁入 `src/runtime/backtest/replay.rs`。src/runtime/backtest.rs (retired drained include) 继续承载 experiment sweep 和后续 sibling；`src/runtime/mod.rs` 只新增 `backtest_replay` 私有模块和 re-export；`src/backend/runtime/routes/backtest.rs` 未改动。record lookup、query normalization、response mapping、schema、metrics、state/persistence、artifact schema、frontend caller 和发布过渡均不迁移。
 
 **单叶 closeout**:
 BE-001U-04 已确认 `get_backtest_replay` 等价，并设置 `stop_split: true`。本叶不继续拆成 query adapter、record lookup、response projection、metrics hook、bad cursor adapter 或 timeline filter；这些 owner 分别保留在共享 query/options、persistence、response mapping、metrics 和 schema 边界。
@@ -4193,14 +4167,13 @@ AI 声称 `runtime.backtest.replay` 已完成时，必须说明只完成 `get_ba
 
 **层级路径**: `root.backend.runtime.routes.runtime.backtest.experiment_sweep`
 **父模块**: `runtime.backtest`
-**状态**: v4.16 BE-001V-04 单叶 closeout 已完成。5 个 experiment handler 已迁入 `src/runtime/backtest/experiment_sweep.rs` 并确认等价，3 个参数网格 helper 已在 BE-001W-04 完成抽离与单叶 closeout；BE-001X-01 已完成 `runtime.backtest.experiment_sweep` 父叶残余判断，确认 `parameter_grid` 关闭并设置 `stop_split: true`，但父叶仍保持 `stop_split: false`；BE-001Y-04 已完成 `runtime.backtest.experiment_sweep.start_orchestration` 单叶 closeout 并设置 `stop_split: true`；BE-001Z-01 已完成第二轮父叶残余判断；BE-001AA-01 已建立 `runtime.backtest.experiment_sweep.record_lifecycle` 单子叶等价基线，BE-001AA-02 已建立抽离方案，BE-001AA-03 已完成实际抽离，BE-001AA-04 已完成单叶 closeout 并设置 `stop_split: true`。BE-001AB-01 已完成第三轮父叶残余判断并设置 `runtime.backtest.experiment_sweep` 父叶 `stop_split: true`；BE-001AC-01 已完成 `runtime.backtest` 父叶残余判断并设置父叶 `stop_split: true`，该上层已由 BE-001AD-01 承接完成，BE-001AE-04 已完成 `backend.runtime.routes.mutation` route facade 单叶 closeout 并设置 `stop_split: true`；BE-001AF-01 已建立 `runtime.mutation.parameter_mutation` 单子叶等价基线，下一步只能进入 BE-001AF-02 抽离方案。`src/runtime/backtest.rs` 仅保留 drained parent include 注释，route 真实 owner 仍是 `src/backend/runtime/routes.rs`。
+**状态**: v4.16 BE-001V-04 单叶 closeout 已完成。5 个 experiment handler 已迁入 `src/runtime/backtest/experiment_sweep.rs` 并确认等价，3 个参数网格 helper 已在 BE-001W-04 完成抽离与单叶 closeout；BE-001X-01 已完成 `runtime.backtest.experiment_sweep` 父叶残余判断，确认 `parameter_grid` 关闭并设置 `stop_split: true`，但父叶仍保持 `stop_split: false`；BE-001Y-04 已完成 `runtime.backtest.experiment_sweep.start_orchestration` 单叶 closeout 并设置 `stop_split: true`；BE-001Z-01 已完成第二轮父叶残余判断；BE-001AA-01 已建立 `runtime.backtest.experiment_sweep.record_lifecycle` 单子叶等价基线，BE-001AA-02 已建立抽离方案，BE-001AA-03 已完成实际抽离，BE-001AA-04 已完成单叶 closeout 并设置 `stop_split: true`。BE-001AB-01 已完成第三轮父叶残余判断并设置 `runtime.backtest.experiment_sweep` 父叶 `stop_split: true`；BE-001AC-01 已完成 `runtime.backtest` 父叶残余判断并设置父叶 `stop_split: true`，该上层已由 BE-001AD-01 承接完成，BE-001AE-04 已完成 `backend.runtime.routes.mutation` route facade 单叶 closeout 并设置 `stop_split: true`；BE-001AF-01 已建立 `runtime.mutation.parameter_mutation` 单子叶等价基线，下一步只能进入 BE-001AF-02 抽离方案。src/runtime/backtest.rs (retired drained include) 仅保留 drained parent include 注释，route 真实 owner 仍是 `src/backend/runtime/routes.rs`。
 
 **真实文件**:
 - `src/runtime/backtest/experiment_sweep.rs`
 - `src/runtime/backtest/parameter_grid.rs`
 - `src/runtime/backtest/start_orchestration.rs`
 - `src/runtime/backtest/record_lifecycle.rs`
-- `src/runtime/backtest.rs`
 - `src/runtime/backtest/execution_start.rs`
 - `src/runtime/mod.rs`
 - `src/backend/runtime/routes.rs`
@@ -4298,7 +4271,6 @@ AI 声称 `runtime.backtest.experiment_sweep` 已完成 BE-001AB-01 时，必须
 **真实文件**:
 - `src/runtime/backtest/parameter_grid.rs`
 - `src/runtime/backtest/experiment_sweep.rs`
-- `src/runtime/backtest.rs`
 - `src/frontend_api_types.rs`
 - `tests/api_experiments.rs`
 - `tests/api_backtest.rs`
@@ -4358,7 +4330,6 @@ AI 声称 `runtime.backtest.experiment_sweep.parameter_grid` 已完成时，必�
 - `src/runtime/backtest/start_orchestration.rs`
 - `src/runtime/backtest/parameter_grid.rs`
 - `src/runtime/backtest/execution_start.rs`
-- `src/runtime/backtest.rs`
 - `src/runtime/mod.rs`
 - `src/backend/runtime/routes.rs`
 - `src/runtime_persistence.rs`
@@ -4427,7 +4398,6 @@ AI 声称 `runtime.backtest.experiment_sweep.start_orchestration` 已 closeout �
 - `src/runtime/backtest/start_orchestration.rs`
 - `src/runtime/backtest/record_lifecycle.rs`
 - `src/runtime/backtest/execution_start.rs`
-- `src/runtime/backtest.rs`
 - `src/runtime/mod.rs`
 - `src/backend/runtime/routes.rs`
 - `src/runtime_persistence.rs`
@@ -4517,8 +4487,6 @@ AI 声称 `runtime.backtest.experiment_sweep.record_lifecycle` 已 closeout 时�
 - `src/backend/runtime/routes/report_ops.rs`
 - `src/runtime_persistence.rs`
 - `src/runtime_response_mapping.rs`
-- `src/runtime/run.rs`
-- `src/runtime/mutation.rs`
 - `src/frontend_api_types.rs`
 - `frontend/src/store/graphStoreRuntimeHistoryApi.js`
 - `frontend/src/components/RuntimeReportPanel.jsx`
@@ -4731,7 +4699,6 @@ AI 声称 `runtime.report_ops.runtime_report` 已完成 BE-001CC-04 时，必须
 - `src/runtime/report_ops/v1_report_endpoints.rs`
 - `src/runtime/mod.rs`
 - `src/backend/runtime/routes/report_ops.rs`
-- `src/runtime/mutation.rs`
 - `src/frontend_api_types.rs`
 - `tests/api_v1_reports.rs`
 - `markdown/06-milestones/v4.16.0/260-runtime.report_ops父叶残余判断.md`
@@ -4799,7 +4766,6 @@ AI 声称 `runtime.report_ops.v1_report_endpoints` 已完成 BE-001CE-05 时，�
 - `src/runtime/report_ops/runtime_report.rs`
 - `src/runtime/report_ops/v1_report_endpoints.rs`
 - `src/runtime/mod.rs`
-- `src/runtime/run.rs`
 - `src/backend/runtime/routes/report_ops.rs`
 - `src/storage_lifecycle.rs`
 - `tests/api_v1_ops_health.rs`
@@ -4919,9 +4885,9 @@ AI 声称 `runtime.evidence_health` 已完成 BE-001CJ-04 时，必须说明本�
 
 AI 声称 `backend.runtime` 已完成 BE-001CK-01 时，必须说明本批次是 `no code movement` 父叶残余判断，`backend.runtime stop_split: false`，下一步只能进入 BE-001CL-01 `runtime.mutation.shared_governance` 单子叶等价基线。不得宣称 parent support 已整体抽离、planned child 文件已创建、helper 已迁移、发布过渡已启动或 Rust 重构完成。
 
-AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-01 时，必须说明本批次是 `no code movement` 单子叶等价基线，9 个 shared governance helper 仍在 `src/runtime/mutation.rs`，下一步只能进入 BE-001CL-02 抽离方案。不得宣称 helper 已迁移、query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
+AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-01 时，必须说明本批次是 `no code movement` 单子叶等价基线，9 个 shared governance helper 仍在 src/runtime/mutation.rs (retired drained include)，下一步只能进入 BE-001CL-02 抽离方案。不得宣称 helper 已迁移、query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
 
-AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-02 时，必须说明本批次是 `no code movement` 抽离方案，planned child 文件尚未创建，9 个 shared governance helper 仍在 `src/runtime/mutation.rs`，下一步只能进入 BE-001CL-03 实际抽离。不得宣称 helper 已迁移、query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
+AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-02 时，必须说明本批次是 `no code movement` 抽离方案，planned child 文件尚未创建，9 个 shared governance helper 仍在 src/runtime/mutation.rs (retired drained include)，下一步只能进入 BE-001CL-03 实际抽离。不得宣称 helper 已迁移、query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
 
 AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-03 时，必须说明 `src/runtime/mutation/shared_governance.rs` 已创建，9 个 shared governance helper 已迁入 child，父级只保留 caller-facing plain import，下一步只能进入 BE-001CL-04 单叶 closeout。不得宣称 query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
 
@@ -4934,7 +4900,6 @@ AI 声称 `runtime.query_support` 已完成 BE-001CN-03 时，必须说明 `src/
 **状态**: v4.16 BE-001CL-03 实际抽离已完成。`src/runtime/mutation/shared_governance.rs` 已创建并迁入 9 个 shared governance helper；下一步只能进入 BE-001CL-04 单叶 closeout。
 **真实文件**:
 - `src/runtime/mod.rs`
-- `src/runtime/mutation.rs`
 - `src/runtime/mutation/shared_governance.rs`
 - `src/runtime/mutation/parameter_mutation/proposal_creation.rs`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/activation_flow.rs`
@@ -4970,7 +4935,7 @@ BE-001CL-03 只能由 `src/runtime/mod.rs` 创建 child 声明并用 plain paren
 BE-001CL-02 已固定 BE-001CL-03 的最小迁移方式: 只创建 planned child 文件，只迁移 9 个 shared governance helper，helper visibility 固定为 `pub(super)`，父级只补 child 声明与 plain import。`include!("mutation.rs")` 暂时保留，因为 `OpsDailyQuery`、`AuditWeeklyQuery`、`ResearchMonthlyQuery` 与后续 query/guard/response support 残余需要另起父叶判断。
 
 **抽离记录**:
-BE-001CL-03 已创建 `src/runtime/mutation/shared_governance.rs`，并将 `canonical_runtime_parameter_version`、`validate_runtime_parameter_mutation_target`、`runtime_mode_from_events`、`status_contract_value`、`mutation_event_contract`、`build_runtime_parameter_mutation_event`、`append_parameter_mutation_events_to_run`、`runtime_parameter_mutation_governance`、`governance_with_parameter_version` 从 `src/runtime/mutation.rs` 迁入 child。`src/runtime/mod.rs` 只保留 `#[path = "mutation/shared_governance.rs"] mod mutation_shared_governance;` 与 caller-facing plain import；`runtime_mode_from_events`、`status_contract_value` 留作 child-internal helper，不回填父级 import，以保持 warning-free。
+BE-001CL-03 已创建 `src/runtime/mutation/shared_governance.rs`，并将 `canonical_runtime_parameter_version`、`validate_runtime_parameter_mutation_target`、`runtime_mode_from_events`、`status_contract_value`、`mutation_event_contract`、`build_runtime_parameter_mutation_event`、`append_parameter_mutation_events_to_run`、`runtime_parameter_mutation_governance`、`governance_with_parameter_version` 从 src/runtime/mutation.rs (retired drained include) 迁入 child。`src/runtime/mod.rs` 只保留 `#[path = "mutation/shared_governance.rs"] mod mutation_shared_governance;` 与 caller-facing plain import；`runtime_mode_from_events`、`status_contract_value` 留作 child-internal helper，不回填父级 import，以保持 warning-free。
 
 **明确排除**:
 `OpsDailyQuery`、`AuditWeeklyQuery`、`ResearchMonthlyQuery`、`RuntimeReplayQuery`、`RuntimeParameterMutationListQuery`、`RuntimeAiProposalListQuery`、`RuntimeApprovalListQuery`、`RunInProgressGuard`、`DiscardRuntimeArtifactResponse`、`MergeRecordsResponse`、`MergeRecordEntry`、`AppState`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、lock order 与 release transition guard 均不属于本子叶。
@@ -4979,9 +4944,9 @@ BE-001CL-03 已创建 `src/runtime/mutation/shared_governance.rs`，并将 `cano
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_ai_proposal`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
 
 **幻觉检查点**:
-AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-02 时，必须说明本批次是 `no code movement` 抽离方案，planned child 文件尚未创建，9 个 helper 仍在 `src/runtime/mutation.rs`，下一步只能进入 BE-001CL-03 实际抽离。不得宣称 helper 已迁移、`backend.runtime` 已完成、query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
+AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-02 时，必须说明本批次是 `no code movement` 抽离方案，planned child 文件尚未创建，9 个 helper 仍在 src/runtime/mutation.rs (retired drained include)，下一步只能进入 BE-001CL-03 实际抽离。不得宣称 helper 已迁移、`backend.runtime` 已完成、query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
 
-AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-03 时，必须说明 `src/runtime/mutation/shared_governance.rs` 已创建，9 个 helper 已迁入 child，`src/runtime/mutation.rs` 仍保留 `OpsDailyQuery`、`AuditWeeklyQuery` 与 `ResearchMonthlyQuery`，下一步只能进入 BE-001CL-04 单叶 closeout。不得宣称 `backend.runtime` 已完成、query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
+AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-03 时，必须说明 `src/runtime/mutation/shared_governance.rs` 已创建，9 个 helper 已迁入 child，src/runtime/mutation.rs (retired drained include) 仍保留 `OpsDailyQuery`、`AuditWeeklyQuery` 与 `ResearchMonthlyQuery`，下一步只能进入 BE-001CL-04 单叶 closeout。不得宣称 `backend.runtime` 已完成、query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
 
 ### 5.1.23 `runtime.query_support`
 
@@ -4991,8 +4956,6 @@ AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-03 时，必�
 **真实文件**:
 - `src/runtime/mod.rs`
 - `src/runtime/query_support.rs`
-- `src/runtime/run.rs`
-- `src/runtime/mutation.rs`
 - `src/runtime/run/replay_status.rs`
 - `src/runtime/backtest/replay.rs`
 - `src/runtime/mutation/parameter_mutation/record_query.rs`
@@ -5029,10 +4992,10 @@ AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-03 时，必�
 `runtime.query_support` 只能经 `src/runtime/mod.rs` 受控 query surface 供 runtime child callers 使用。父级只允许 `mod query_support;` 与普通 `use query_support::{...};`，不得使用 `pub(crate) use query_support::{...};`。开发者未明确进入发布版本过渡前，不得让 sibling child、route facade、frontend caller、schema owner、runtime persistence owner、storage lifecycle owner 或 `AppState` 横向直连本 child。
 
 **抽离记录**:
-BE-001CN-03 已创建 `src/runtime/query_support.rs`，并从 `src/runtime/mod.rs`、`src/runtime/run.rs`、`src/runtime/mutation.rs` 迁入 7 个 Query DTO、`clean_optional_filter`、`normalized_replay_options`、`DEFAULT_REPLAY_PAGE_SIZE` 与 `MAX_REPLAY_PAGE_SIZE`。DTO 类型本体保持 `pub(crate)` 以满足 `pub(crate)` handler 签名，字段统一为 `pub(super)`，两个 helper 为 `pub(super)`。`MAX_EXPERIMENT_VARIANTS` 仍留在父级。
+BE-001CN-03 已创建 `src/runtime/query_support.rs`，并从 `src/runtime/mod.rs`、src/runtime/run.rs (retired drained include)、src/runtime/mutation.rs (retired drained include) 迁入 7 个 Query DTO、`clean_optional_filter`、`normalized_replay_options`、`DEFAULT_REPLAY_PAGE_SIZE` 与 `MAX_REPLAY_PAGE_SIZE`。DTO 类型本体保持 `pub(crate)` 以满足 `pub(crate)` handler 签名，字段统一为 `pub(super)`，两个 helper 为 `pub(super)`。`MAX_EXPERIMENT_VARIANTS` 仍留在父级。
 
 **明确排除**:
-`DiscardRuntimeArtifactResponse`、`MergeRecordsResponse`、`MergeRecordEntry`、`RunInProgressGuard`、`MAX_EXPERIMENT_VARIANTS`、`include!("run.rs")`、`include!("mutation.rs")`、`include!("backtest.rs")`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState`、lock order 与 release transition guard 均不属于本子叶。`src/runtime/mutation.rs` 当前为 drained include，后续只能由父叶残余判断决定是否处理。
+`DiscardRuntimeArtifactResponse`、`MergeRecordsResponse`、`MergeRecordEntry`、`RunInProgressGuard`、`MAX_EXPERIMENT_VARIANTS`、`include!("run.rs")`、`include!("mutation.rs")`、`include!("backtest.rs")`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState`、lock order 与 release transition guard 均不属于本子叶。src/runtime/mutation.rs (retired drained include) 当前为 drained include，后续只能由父叶残余判断决定是否处理。
 
 **回归保护**:
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_v1_reports`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
@@ -5050,7 +5013,6 @@ AI 声称 `runtime.query_support` 已完成 BE-001CN-04 时，必须说明本批
 **真实文件**:
 - `src/runtime/mod.rs`
 - `src/runtime/response_support.rs`
-- `src/runtime/run.rs`
 - `src/runtime/run/record_store.rs`
 - `src/runtime/backtest/record_store.rs`
 - `src/runtime/backtest/record_lifecycle.rs`
@@ -5087,11 +5049,11 @@ AI 声称 `runtime.query_support` 已完成 BE-001CN-04 时，必须说明本批
 **回归保护**:
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_v1_reports`；`cargo test -p quantpilot --test api_v1_ops_health`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 **幻觉检查点**:
-AI 声称 BE-001CP-01 完成时，必须说明本批次是 `no code movement` 基线，`response_support` planned child 尚未创建，response DTO 仍在 `src/runtime/mod.rs` 与 `src/runtime/run.rs`，下一步只能进入 BE-001CP-02 抽离方案。不得宣称 response DTO 已抽离、run guard 已处理、parent include 已删除、发布过渡已启动或 Rust 重构完成。
+AI 声称 BE-001CP-01 完成时，必须说明本批次是 `no code movement` 基线，`response_support` planned child 尚未创建，response DTO 仍在 `src/runtime/mod.rs` 与 src/runtime/run.rs (retired drained include)，下一步只能进入 BE-001CP-02 抽离方案。不得宣称 response DTO 已抽离、run guard 已处理、parent include 已删除、发布过渡已启动或 Rust 重构完成。
 
-AI 声称 BE-001CP-02 完成时，必须说明本批次仍是 `no code movement` 抽离方案，下一步 BE-001CP-03 才允许创建 planned child 并迁移 3 个 response DTO；父级只能使用 `mod response_support` 与 plain `use response_support::{...};`，`src/runtime/run.rs` 迁移后只能降为 drained include 注释。不得宣称 response DTO 已迁移、parent include 已删除、run guard 已处理、发布过渡已启动或 Rust 重构完成。
+AI 声称 BE-001CP-02 完成时，必须说明本批次仍是 `no code movement` 抽离方案，下一步 BE-001CP-03 才允许创建 planned child 并迁移 3 个 response DTO；父级只能使用 `mod response_support` 与 plain `use response_support::{...};`，src/runtime/run.rs (retired drained include) 迁移后只能降为 drained include 注释。不得宣称 response DTO 已迁移、parent include 已删除、run guard 已处理、发布过渡已启动或 Rust 重构完成。
 
-AI 声称 BE-001CP-03 完成时，必须说明 `src/runtime/response_support.rs` 已创建，`DiscardRuntimeArtifactResponse`、`MergeRecordsResponse` 与 `MergeRecordEntry` 已迁入 child，父级只保留 `mod response_support;` 与 plain `use response_support::{...};`，`src/runtime/run.rs` 只剩 drained include 注释但 `include!("run.rs")` 仍保留，下一步只能进入 BE-001CP-04 单叶 closeout。不得宣称 run guard、experiment limit、parent include 删除、发布过渡已启动或 Rust 重构完成。
+AI 声称 BE-001CP-03 完成时，必须说明 `src/runtime/response_support.rs` 已创建，`DiscardRuntimeArtifactResponse`、`MergeRecordsResponse` 与 `MergeRecordEntry` 已迁入 child，父级只保留 `mod response_support;` 与 plain `use response_support::{...};`，src/runtime/run.rs (retired drained include) 只剩 drained include 注释但 `include!("run.rs")` 仍保留，下一步只能进入 BE-001CP-04 单叶 closeout。不得宣称 run guard、experiment limit、parent include 删除、发布过渡已启动或 Rust 重构完成。
 
 AI 声称 BE-001CP-04 完成时，必须说明本批次是 `no code movement` closeout，`runtime.response_support stop_split: true`，不继续拆 discard response / merge records response 微叶，`src/runtime/response_support.rs` 仍承接 3 个 response DTO，下一步只能进入 BE-001CQ-01 `backend.runtime` 第六轮父叶残余判断。不得宣称 run guard、experiment limit、parent include 删除、发布过渡已启动或 Rust 重构完成。
 
@@ -5912,6 +5874,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/304-backend.runtime第八轮父叶残余判断.md` backend runtime eighth parent residual | `backend.runtime` | 第八轮父叶残余判断，确认真实残余只剩 drained parent include cleanup | BE-001CU 父叶残余判断 | `no code movement`；`backend.runtime stop_split: false`；下一步只能进入 BE-001CV-01 `runtime.parent_include_cleanup` 单子叶等价基线 |
 | `markdown/06-milestones/v4.16.0/305-runtime.parent_include_cleanup单子叶等价基线.md` runtime parent include cleanup baseline | `runtime.parent_include_cleanup` | 单子叶等价基线，冻结 drained include cleanup 删除边界和 public 出口影响面 | BE-001CV 单子叶基线 | `no code movement`；下一步只能进入 BE-001CV-02 抽离方案，不得直接删除 include 或 drained 文件 |
 | `markdown/06-milestones/v4.16.0/306-runtime.parent_include_cleanup抽离方案.md` runtime parent include cleanup extraction plan | `runtime.parent_include_cleanup` | 抽离方案，限定三条 include 删除与三个 drained 文件删除 | BE-001CV 抽离方案 | `no code movement`；下一步只能进入 BE-001CV-03 实际 cleanup，不得处理父叶 closeout 或 release transition |
+| `markdown/06-milestones/v4.16.0/307-runtime.parent_include_cleanup清理记录.md` runtime parent include cleanup actual cleanup | `runtime.parent_include_cleanup` | 实际 cleanup，删除三条 drained include 与三个 drained 文件 | BE-001CV 实际 cleanup | 下一步只能进入 BE-001CW-01 `backend.runtime` 第九轮父叶残余判断，不得宣称父级完成或启动 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

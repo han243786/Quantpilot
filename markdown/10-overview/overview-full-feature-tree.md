@@ -65,7 +65,7 @@
 
 5. **新增能力标注引入版本** — 新增功能节点使用 `🆕 vX.Y.Z` 标注。
 
-6. **路径必须 repo-relative 完整路径** — 使用 `src/runtime/run.rs`, 禁止 `runtime/run.rs` 这种上下文相对路径。
+6. **路径必须 repo-relative 完整路径** — 使用 `src/runtime/run/session_start.rs`, 禁止 `runtime/run/session_start.rs` 这种上下文相对路径。
 
 7. **行数不手写为事实来源** — 不使用具体行数。若保留统计数字, 必须来自脚本输出; 否则只写功能描述。
 
@@ -321,10 +321,10 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 | `/api/graph/*` | 策略图 CRUD | `graph_api.rs` |
 | `/api/runtime/compile` | 编译 | `compile_api.rs` |
 | `/api/v1/strategy-config/*` | v4 策略配置契约 / preflight / diff / evidence diff helper | `strategy_config_api.rs` |
-| `/api/runtime/run` | 纸面运行 | `src/backend/runtime/routes/run.rs`、`src/runtime/run.rs`、`src/runtime/event_stream.rs`、`src/runtime/run/session_start.rs`、`src/runtime/run/v4_handoff.rs`、`src/runtime/run/record_store.rs`、`src/runtime/run/replay_status.rs` |
-| `/api/runtime/backtest/*` | 回测 | `src/backend/runtime/routes/backtest.rs`、`src/runtime/backtest/execution_start.rs`、`src/runtime/backtest/v4_projection.rs`、`src/runtime/backtest/v4_request_resolution.rs`、`src/runtime/backtest/v4_runtime_execution.rs`、`src/runtime/backtest/legacy_dispatch.rs`、`src/runtime/backtest/record_store.rs`、`src/runtime/backtest/replay.rs`、`src/runtime/backtest.rs`、`src/backtest_compare.rs` |
+| `/api/runtime/run` | 纸面运行 | `src/backend/runtime/routes/run.rs`、`src/runtime/event_stream.rs`、`src/runtime/run/session_start.rs`、`src/runtime/run/v4_handoff.rs`、`src/runtime/run/record_store.rs`、`src/runtime/run/replay_status.rs` |
+| `/api/runtime/backtest/*` | 回测 | `src/backend/runtime/routes/backtest.rs`、`src/runtime/backtest/execution_start.rs`、`src/runtime/backtest/v4_projection.rs`、`src/runtime/backtest/v4_request_resolution.rs`、`src/runtime/backtest/v4_runtime_execution.rs`、`src/runtime/backtest/legacy_dispatch.rs`、`src/runtime/backtest/record_store.rs`、`src/runtime/backtest/replay.rs`、`src/runtime/backtest/experiment_sweep.rs`、`src/backtest_compare.rs` |
 | `/api/runtime/experiments/*` | 实验/参数扫描 | `src/backend/runtime/routes.rs`、`src/runtime/backtest/experiment_sweep.rs`、`src/runtime/backtest/parameter_grid.rs`、`src/runtime/backtest/start_orchestration.rs`、`src/runtime/backtest/record_lifecycle.rs` |
-| `/api/runtime/mutations/*`、`/api/runtime/ai-proposals/*`、`/api/v1/ai/*` | 运行时变更 / AI proposal / approval | `src/backend/runtime/routes/mutation.rs`、`src/runtime/mutation/parameter_mutation.rs`、`src/runtime/mutation.rs` |
+| `/api/runtime/mutations/*`、`/api/runtime/ai-proposals/*`、`/api/v1/ai/*` | 运行时变更 / AI proposal / approval | `src/backend/runtime/routes/mutation.rs`、`src/runtime/mutation/parameter_mutation.rs`、`src/runtime/mutation/ai_proposal.rs`、`src/runtime/mutation/shared_governance.rs` |
 | `/api/auth/*` | 本地会话认证 | `auth/mod.rs` |
 | `/api/credentials/*` | 凭证管理 | `credential_api.rs` |
 | `/api/v1/alerts/*` | 告警 | `alert_engine.rs` |
@@ -1699,6 +1699,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/304-backend.runtime第八轮父叶残余判断.md` - v4.16.0 BE-001CU-01 `backend.runtime` 第八轮父叶残余判断
 - `markdown/06-milestones/v4.16.0/305-runtime.parent_include_cleanup单子叶等价基线.md` - v4.16.0 BE-001CV-01 `runtime.parent_include_cleanup` 单子叶等价基线
 - `markdown/06-milestones/v4.16.0/306-runtime.parent_include_cleanup抽离方案.md` - v4.16.0 BE-001CV-02 `runtime.parent_include_cleanup` 抽离方案
+- `markdown/06-milestones/v4.16.0/307-runtime.parent_include_cleanup清理记录.md` - v4.16.0 BE-001CV-03 `runtime.parent_include_cleanup` 实际 cleanup
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
@@ -1872,6 +1873,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001CU-01 已完成 `backend.runtime` 第八轮父叶残余判断并保持 `stop_split: false`；下一步只能进入 BE-001CV-01 `runtime.parent_include_cleanup` 单子叶等价基线。
 当前最新递归点补充: BE-001CV-01 已建立 `runtime.parent_include_cleanup` 单子叶等价基线；下一步只能进入 BE-001CV-02 抽离方案。
 当前最新递归点补充: BE-001CV-02 已建立 `runtime.parent_include_cleanup` 抽离方案；下一步只能进入 BE-001CV-03 实际 cleanup。
+当前最新递归点补充: BE-001CV-03 已完成 `runtime.parent_include_cleanup` 实际 cleanup；下一步只能进入 BE-001CW-01 `backend.runtime` 第九轮父叶残余判断。
 
 ### 7.7 总览 (markdown/10-overview/)
 
@@ -2046,7 +2048,6 @@ storage/
 - `src/runtime/report_ops.rs` — runtime report / v1 ops report handler child; 改 report ops handler 等价时改这里 🆕 v4.16.0
 - `src/runtime/report_ops/runtime_report.rs` — runtime report create/list/detail/export handler 与 materialization helper child; 改 runtime report API 等价时改这里 🆕 v4.16.0
 - `src/runtime/event_stream.rs` — run event stream SSE handler、frame order、delay 和 keep-alive; 改运行事件流 SSE 时改这里 🆕 v4.16.0
-- `src/runtime/run.rs` — 后续 legacy runtime sibling owner; 改运行报表、运维日报或 legacy runtime API 时改这里 🆕 v4.1.0
 - `src/runtime/run/session_start.rs` — legacy `POST /api/runtime/test-run` handler、capability guard 调用、QS compile、sandbox session、event envelope 和 in-memory run record 写入; 改 session start 时改这里 🆕 v4.16.0
 - `src/runtime/run/v4_handoff.rs` — `POST /api/runtime/v4/run` handler、request/response、graph resolution、handoff projection 和 simulated capability matrix; 改 v4 handoff run 时改这里 🆕 v4.16.0
 - `src/runtime/run/record_store.rs` — run record list/detail/save/discard handler、manifest save/discard 编排和 graph audit 调用; 改 run record API handler 时改这里 🆕 v4.16.0
@@ -2057,13 +2058,11 @@ storage/
 - `src/runtime/backtest/v4_projection.rs` — v4 backtest artifact projection helper 与单元测试; 改 `V4BacktestArtifact -> BacktestOutput / FrontendRuntimeEvent` 投影时改这里 🆕 v4.16.0
 - `src/runtime/backtest/v4_request_resolution.rs` — v4 backtest request detection、graph resolution、symbol resolution 和 event type resolution helper; 改 v4 backtest 请求解析时改这里 🆕 v4.16.0
 - `src/runtime/backtest/v4_runtime_execution.rs` — v4 backtest deterministic bars/ticks、blocking runtime replay 和 `V4BacktestArtifact` 输出 helper; 改 v4 backtest runtime execution 时改这里 🆕 v4.16.0
-- `src/runtime/backtest.rs` — 回测 record store、replay、experiment sweep 与保留 sibling owner; 改回测记录、回放或实验路径时改这里 🆕 v4.3.0
 - `src/runtime/mutation/parameter_mutation.rs` — 运行时参数变更 create/list/detail 与 transition child re-export; 改 runtime parameter mutation proposal record 时改这里 🆕 v4.16.0
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle.rs` — 运行时参数变更 activation / rollback lifecycle、boundary/safe window、transition persistence 和 activation snapshot side effect; 改 runtime parameter mutation transition 时改这里 🆕 v4.16.0
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/activation_flow.rs` — 运行时参数变更 activation public handler、activation 状态机、run event append 和 activation metrics; 改 runtime parameter mutation activation flow 时改这里 🆕 v4.16.0
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/boundary_safety.rs` — 运行时参数变更 boundary validation / resolution 与 safe-window evaluation; 改 runtime parameter mutation boundary safety 时改这里 🆕 v4.16.0
 - `src/runtime/mutation/shared_governance.rs` — 运行时 mutation shared governance helper child; 改 parameter mutation / AI proposal 共享 target validation、event contract 或 governance projection 时改这里 🆕 v4.16.0
-- `src/runtime/mutation.rs` — 运行时变更, AI 提案/审批/沙箱验证, v4 trajectory 提案静态约束与 strategy config domain binding 审批阻断; 改审批流或 v4 AI 提案分析时改这里 🆕 v4.11.0
 - `src/runtime_diagnostics.rs` — 运行时诊断; 改健康检查/性能诊断时改这里
 - `src/runtime_event_projection.rs` — v4 运行时事件投影; 改 v4 事件→前端映射时改这里
 - `src/runtime_persistence.rs` — 运行时持久化; 改运行记录/回测工件读写时改这里

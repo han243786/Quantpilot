@@ -70,16 +70,10 @@ pub(crate) use run_session_start::start_test_run;
 pub(crate) use run_v4_handoff::start_v4_runtime_run;
 use run_v4_handoff::{runtime_simulated_v4_matrix, runtime_v4_static_bundle};
 
-// Backtest + Experiment handlers
-include!("backtest.rs");
 pub(crate) use backtest_experiment_sweep::{
     discard_experiment_record, get_experiment_detail, list_experiments, save_experiment_record,
     start_backtest_experiment,
 };
-// Run + SSE handlers
-include!("run.rs");
-// Mutation + Proposal + Approval handlers
-include!("mutation.rs");
 
 use super::*;
 use axum::extract::Query;
