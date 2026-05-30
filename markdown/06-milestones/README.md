@@ -229,6 +229,7 @@
 | 215 | `v4.16.0/215-runtime.mutation.ai_proposal.sandbox_trigger单子叶等价基线.md` | BE-001BL-01 `runtime.mutation.ai_proposal.sandbox_trigger` 单子叶等价基线 | 📋 已创建 |
 | 216 | `v4.16.0/216-runtime.mutation.ai_proposal.sandbox_trigger抽离方案.md` | BE-001BL-02 `runtime.mutation.ai_proposal.sandbox_trigger` 抽离方案 | 📋 已创建 |
 | 217 | `v4.16.0/217-runtime.mutation.ai_proposal.sandbox_trigger抽离记录.md` | BE-001BL-03 `runtime.mutation.ai_proposal.sandbox_trigger` 实际抽离记录 | 📋 已创建 |
+| 218 | `v4.16.0/218-runtime.mutation.ai_proposal.sandbox_trigger单叶closeout.md` | BE-001BL-04 `runtime.mutation.ai_proposal.sandbox_trigger` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
