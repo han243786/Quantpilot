@@ -274,6 +274,7 @@
 | 260 | `v4.16.0/260-runtime.report_ops父叶残余判断.md` | BE-001CD-01 `runtime.report_ops` 父叶残余判断，选择 `v1_report_endpoints` 下一候选 | 📋 已创建 |
 | 261 | `v4.16.0/261-runtime.report_ops.v1_report_endpoints单子叶等价基线.md` | BE-001CE-01 `runtime.report_ops.v1_report_endpoints` 单子叶等价基线 | 📋 已创建 |
 | 262 | `v4.16.0/262-runtime.report_ops.v1_report_endpoints抽离方案.md` | BE-001CE-02 `runtime.report_ops.v1_report_endpoints` test-first 抽离方案 | 📋 已创建 |
+| 263 | `v4.16.0/263-runtime.report_ops.v1_report_endpoints补测记录.md` | BE-001CE-03 `runtime.report_ops.v1_report_endpoints` endpoint smoke 补测记录 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

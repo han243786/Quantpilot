@@ -1652,6 +1652,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/260-runtime.report_ops父叶残余判断.md` - v4.16.0 BE-001CD-01 `runtime.report_ops` 父叶残余判断
 - `markdown/06-milestones/v4.16.0/261-runtime.report_ops.v1_report_endpoints单子叶等价基线.md` - v4.16.0 BE-001CE-01 `runtime.report_ops.v1_report_endpoints` 单子叶等价基线
 - `markdown/06-milestones/v4.16.0/262-runtime.report_ops.v1_report_endpoints抽离方案.md` - v4.16.0 BE-001CE-02 `runtime.report_ops.v1_report_endpoints` test-first 抽离方案
+- `markdown/06-milestones/v4.16.0/263-runtime.report_ops.v1_report_endpoints补测记录.md` - v4.16.0 BE-001CE-03 `runtime.report_ops.v1_report_endpoints` endpoint smoke 补测记录
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
@@ -1778,6 +1779,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001CD-01 已完成 `runtime.report_ops` 父叶残余判断；父级保持 `stop_split: false`，下一步只能进入 BE-001CE-01 `runtime.report_ops.v1_report_endpoints` 单子叶等价基线。
 当前最新递归点补充: BE-001CE-01 已建立 `runtime.report_ops.v1_report_endpoints` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001CE-02 抽离方案。
 当前最新递归点补充: BE-001CE-02 已建立 `runtime.report_ops.v1_report_endpoints` test-first 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CE-03 endpoint smoke 补测。
+当前最新递归点补充: BE-001CE-03 已完成 `runtime.report_ops.v1_report_endpoints` endpoint smoke 补测；新增 `tests/api_v1_reports.rs` 覆盖三条 `/api/v1/reports/*` 基础 JSON contract，下一步只能进入 BE-001CE-04 实际抽离。
 
 ### 7.7 总览 (markdown/10-overview/)
 
@@ -2463,6 +2465,7 @@ storage/
 - `tests/api_experiments.rs` — 实验 API 测试
 - `tests/api_graph_versions.rs` — 图版本 API 测试
 - `tests/api_mutation.rs` — 变更 API 测试
+- `tests/api_v1_reports.rs` — v1 report endpoint smoke 测试
 - `tests/api_run.rs` — 运行 API 测试
 - `tests/api_sse.rs` — SSE API 测试
 - `tests/quantscript_real_strategy_authoring.rs` — QS 真实策略编写测试

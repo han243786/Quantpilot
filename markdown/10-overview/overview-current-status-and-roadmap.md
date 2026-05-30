@@ -220,6 +220,7 @@ v4.7.0 系统应被理解为：
 - BE-001CD-01 已完成 `runtime.report_ops` 父叶残余判断；父级仍保留 v1 report endpoints 与 merge/generation/storage health endpoints，因此 `stop_split: false`。下一步只能进入 BE-001CE-01 `runtime.report_ops.v1_report_endpoints` 单子叶等价基线。
 - BE-001CE-01 已建立 `runtime.report_ops.v1_report_endpoints` 单子叶等价基线；当前 `no code movement`，目标 child 文件尚未创建，v1 report endpoint 专门测试缺口已冻结。下一步只能进入 BE-001CE-02 抽离方案。
 - BE-001CE-02 已建立 `runtime.report_ops.v1_report_endpoints` test-first 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CE-03 endpoint smoke 补测，不迁移 handler。
+- BE-001CE-03 已完成 `runtime.report_ops.v1_report_endpoints` endpoint smoke 补测；新增 `tests/api_v1_reports.rs` 覆盖三条 `/api/v1/reports/*` 基础 JSON contract。下一步只能进入 BE-001CE-04 实际抽离。
 
 ## 当前收尾/发布状态
 
