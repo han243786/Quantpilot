@@ -944,6 +944,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CT-05）**: BE-001CT-05 已完成 `runtime.experiment_limit` 单叶 closeout，并设置 `runtime.experiment_limit stop_split: true`。下一步只能进入 BE-001CU-01 `backend.runtime` 第八轮父叶残余判断，不得从 experiment_limit 继续细拆。
 **最新状态补充（BE-001CU-01）**: BE-001CU-01 已完成 `backend.runtime` 第八轮父叶残余判断。`runtime.experiment_limit stop_split: true` 已成立，父级真实残余只剩 `include!("run.rs")`、`include!("mutation.rs")` 与 `include!("backtest.rs")` drained parent include cleanup，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CV-01 `runtime.parent_include_cleanup` 单子叶等价基线。
 **最新状态补充（BE-001CV-01）**: BE-001CV-01 已建立 `runtime.parent_include_cleanup` 单子叶等价基线。当前 `no code movement`，只冻结三条 drained `include!(...)`、三个 drained 文件、public 出口影响面和等价验证门禁；下一步只能进入 BE-001CV-02 抽离方案。
+**最新状态补充（BE-001CV-02）**: BE-001CV-02 已建立 `runtime.parent_include_cleanup` 抽离方案。当前 `no code movement`，BE-001CV-03 只允许删除三条 drained `include!(...)` 与三个 drained 文件，不得处理 `backend.runtime` 父叶 closeout、schema/frontend/state/persistence owner 或 release transition。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1111,6 +1112,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/303-runtime.experiment_limit单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/304-backend.runtime第八轮父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/305-runtime.parent_include_cleanup单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/306-runtime.parent_include_cleanup抽离方案.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5909,6 +5911,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/303-runtime.experiment_limit单叶closeout.md` runtime experiment limit closeout | `runtime.experiment_limit` | 单叶 closeout，确认 experiment limit 不继续拆分 | BE-001CT 单叶 closeout | `runtime.experiment_limit stop_split: true`；下一步只能进入 BE-001CU-01 `backend.runtime` 第八轮父叶残余判断 |
 | `markdown/06-milestones/v4.16.0/304-backend.runtime第八轮父叶残余判断.md` backend runtime eighth parent residual | `backend.runtime` | 第八轮父叶残余判断，确认真实残余只剩 drained parent include cleanup | BE-001CU 父叶残余判断 | `no code movement`；`backend.runtime stop_split: false`；下一步只能进入 BE-001CV-01 `runtime.parent_include_cleanup` 单子叶等价基线 |
 | `markdown/06-milestones/v4.16.0/305-runtime.parent_include_cleanup单子叶等价基线.md` runtime parent include cleanup baseline | `runtime.parent_include_cleanup` | 单子叶等价基线，冻结 drained include cleanup 删除边界和 public 出口影响面 | BE-001CV 单子叶基线 | `no code movement`；下一步只能进入 BE-001CV-02 抽离方案，不得直接删除 include 或 drained 文件 |
+| `markdown/06-milestones/v4.16.0/306-runtime.parent_include_cleanup抽离方案.md` runtime parent include cleanup extraction plan | `runtime.parent_include_cleanup` | 抽离方案，限定三条 include 删除与三个 drained 文件删除 | BE-001CV 抽离方案 | `no code movement`；下一步只能进入 BE-001CV-03 实际 cleanup，不得处理父叶 closeout 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
