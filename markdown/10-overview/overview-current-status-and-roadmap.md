@@ -222,6 +222,7 @@ v4.7.0 系统应被理解为：
 - BE-001CE-02 已建立 `runtime.report_ops.v1_report_endpoints` test-first 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CE-03 endpoint smoke 补测，不迁移 handler。
 - BE-001CE-03 已完成 `runtime.report_ops.v1_report_endpoints` endpoint smoke 补测；新增 `tests/api_v1_reports.rs` 覆盖三条 `/api/v1/reports/*` 基础 JSON contract。下一步只能进入 BE-001CE-04 实际抽离。
 - BE-001CE-04 已完成 `runtime.report_ops.v1_report_endpoints` 实际抽离；`src/runtime/report_ops/v1_report_endpoints.rs` 已创建并承接三个 v1 report handler。下一步只能进入 BE-001CE-05 单叶 closeout。
+- BE-001CE-05 已完成 `runtime.report_ops.v1_report_endpoints` 单叶 closeout；本叶设置 `stop_split: true`。下一步只能进入 BE-001CF-01 `runtime.report_ops` 父叶残余判断。
 
 ## 当前收尾/发布状态
 

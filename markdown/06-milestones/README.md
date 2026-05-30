@@ -276,6 +276,7 @@
 | 262 | `v4.16.0/262-runtime.report_ops.v1_report_endpoints抽离方案.md` | BE-001CE-02 `runtime.report_ops.v1_report_endpoints` test-first 抽离方案 | 📋 已创建 |
 | 263 | `v4.16.0/263-runtime.report_ops.v1_report_endpoints补测记录.md` | BE-001CE-03 `runtime.report_ops.v1_report_endpoints` endpoint smoke 补测记录 | 📋 已创建 |
 | 264 | `v4.16.0/264-runtime.report_ops.v1_report_endpoints抽离记录.md` | BE-001CE-04 `runtime.report_ops.v1_report_endpoints` 实际抽离记录 | 📋 已创建 |
+| 265 | `v4.16.0/265-runtime.report_ops.v1_report_endpoints单叶closeout.md` | BE-001CE-05 `runtime.report_ops.v1_report_endpoints` 单叶 closeout | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

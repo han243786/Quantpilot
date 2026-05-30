@@ -902,6 +902,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CE-02）**: BE-001CE-02 已建立 `runtime.report_ops.v1_report_endpoints` test-first 抽离方案。当前 `no code movement`，下一步只能进入 BE-001CE-03 endpoint smoke 补测，不能创建 child module 或迁移 handler。
 **最新状态补充（BE-001CE-03）**: BE-001CE-03 已完成 `runtime.report_ops.v1_report_endpoints` endpoint smoke 补测。`tests/api_v1_reports.rs` 已创建并覆盖三条 `/api/v1/reports/*` 基础 JSON contract；当前仍未创建 child module、未迁移 handler，下一步只能进入 BE-001CE-04 实际抽离。
 **最新状态补充（BE-001CE-04）**: BE-001CE-04 已完成 `runtime.report_ops.v1_report_endpoints` 实际抽离。`src/runtime/report_ops/v1_report_endpoints.rs` 已创建并承接三个 v1 report handler；父级只保留受控 re-export，下一步只能进入 BE-001CE-05 单叶 closeout。
+**最新状态补充（BE-001CE-05）**: BE-001CE-05 已完成 `runtime.report_ops.v1_report_endpoints` 单叶 closeout。该 child 设置 `stop_split: true`；父级 `runtime.report_ops stop_split: false`，下一步只能进入 BE-001CF-01 父叶残余判断。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1021,6 +1022,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/262-runtime.report_ops.v1_report_endpoints抽离方案.md`
 - `markdown/06-milestones/v4.16.0/263-runtime.report_ops.v1_report_endpoints补测记录.md`
 - `markdown/06-milestones/v4.16.0/264-runtime.report_ops.v1_report_endpoints抽离记录.md`
+- `markdown/06-milestones/v4.16.0/265-runtime.report_ops.v1_report_endpoints单叶closeout.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -1160,6 +1162,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 - `markdown/06-milestones/v4.16.0/262-runtime.report_ops.v1_report_endpoints抽离方案.md`
 - `markdown/06-milestones/v4.16.0/263-runtime.report_ops.v1_report_endpoints补测记录.md`
 - `markdown/06-milestones/v4.16.0/264-runtime.report_ops.v1_report_endpoints抽离记录.md`
+- `markdown/06-milestones/v4.16.0/265-runtime.report_ops.v1_report_endpoints单叶closeout.md`
 
 **职责**:
 承载 backend runtime route aggregate facade 的白箱坐标，固定 `backend.runtime -> backend.runtime.routes -> src/runtime/* pub(crate) handler` 的兼容桥和等价证据。
@@ -4408,7 +4411,7 @@ AI 声称 `runtime.backtest.experiment_sweep.record_lifecycle` 已 closeout 时�
 
 **层级路径**: `root.backend.runtime.runtime.report_ops`
 **父模块**: `backend.runtime`
-**状态**: v4.16 BE-001CE-04 `runtime.report_ops.v1_report_endpoints` 实际抽离已完成。`runtime.report_ops stop_split: false`，下一步只能进入 BE-001CE-05 单叶 closeout。
+**状态**: v4.16 BE-001CE-05 `runtime.report_ops.v1_report_endpoints` 单叶 closeout 已完成。该 child `stop_split: true`，`runtime.report_ops stop_split: false`；下一步只能进入 BE-001CF-01 父叶残余判断。
 **真实文件**:
 - `src/runtime/mod.rs`
 - `src/runtime/report_ops.rs`
@@ -4439,6 +4442,7 @@ AI 声称 `runtime.backtest.experiment_sweep.record_lifecycle` 已 closeout 时�
 - `markdown/06-milestones/v4.16.0/262-runtime.report_ops.v1_report_endpoints抽离方案.md`
 - `markdown/06-milestones/v4.16.0/263-runtime.report_ops.v1_report_endpoints补测记录.md`
 - `markdown/06-milestones/v4.16.0/264-runtime.report_ops.v1_report_endpoints抽离记录.md`
+- `markdown/06-milestones/v4.16.0/265-runtime.report_ops.v1_report_endpoints单叶closeout.md`
 
 **职责**:
 承载 runtime report create/list/detail/export 与 v1 merge records、runtime generations、storage health、ops daily、audit weekly、research monthly report handler 的白箱边界。当前不拥有 route registration、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner 或 release transition guard。
@@ -4486,6 +4490,9 @@ BE-001CE-03 已新增 `tests/api_v1_reports.rs`，覆盖 `/api/v1/reports/ops/da
 **抽离记录**:
 BE-001CE-04 已创建 `src/runtime/report_ops/v1_report_endpoints.rs`，并迁入 `get_ops_daily_report`、`get_audit_weekly_report`、`get_research_monthly_report`。父级 `src/runtime/report_ops.rs` 只新增 `mod v1_report_endpoints` 与受控 `pub(crate) use v1_report_endpoints::{...}`；`src/runtime/mod.rs` 与 `src/backend/runtime/routes/report_ops.rs` 未改。
 
+**单叶 closeout**:
+BE-001CE-05 已确认 `runtime.report_ops.v1_report_endpoints` 作为 v1 report projection surface 已稳定，并设置 `runtime.report_ops.v1_report_endpoints stop_split: true`。继续拆成 ops/audit/research 微叶不会形成新的稳定 owner；父级 `runtime.report_ops stop_split: false`，下一步只能进入 BE-001CF-01 父叶残余判断。
+
 **明确排除**:
 `get_runtime_evidence_health`、`cleanup_runtime_evidence`、`runtime_report_status_counts`、query structs/shared helper、`AppState`、`runtime_persistence`、`runtime_response_mapping`、`frontend_api_types`、frontend caller、storage lifecycle owner 和 release transition guard 均不属于本叶第一轮迁移。`runtime.evidence_health` 应作为 sibling 另起基线。
 
@@ -4504,6 +4511,8 @@ AI 声称 `runtime.report_ops` 已完成 BE-001CE-02 时，必须说明本批次
 AI 声称 `runtime.report_ops` 已完成 BE-001CE-03 时，必须说明本批次只新增 endpoint smoke 测试，`tests/api_v1_reports.rs` 已覆盖三条 `/api/v1/reports/*` 基础 JSON contract，child module 尚未创建，三个 handler 仍在 `src/runtime/report_ops.rs`，下一步只能进入 BE-001CE-04 实际抽离。不得宣称发布过渡已启动。
 
 AI 声称 `runtime.report_ops` 已完成 BE-001CE-04 时，必须说明 `src/runtime/report_ops/v1_report_endpoints.rs` 已创建并迁入三个 v1 report handler，父级只保留受控 re-export，`src/runtime/mod.rs` 和 route facade 未改变，下一步只能进入 BE-001CE-05 单叶 closeout。不得宣称发布过渡已启动。
+
+AI 声称 `runtime.report_ops` 已完成 BE-001CE-05 时，必须说明本批次是 `no code movement` closeout，`runtime.report_ops.v1_report_endpoints stop_split: true`，父级 `runtime.report_ops stop_split: false`，下一步只能进入 BE-001CF-01 父叶残余判断。不得宣称发布过渡已启动。
 
 ### 5.1.20.1 `runtime.report_ops.runtime_report`
 
@@ -4574,7 +4583,7 @@ AI 声称 `runtime.report_ops.runtime_report` 已完成 BE-001CC-04 时，必须
 
 **层级路径**: `root.backend.runtime.runtime.report_ops.v1_report_endpoints`
 **父模块**: `runtime.report_ops`
-**状态**: v4.16 BE-001CE-04 实际抽离已完成。`src/runtime/report_ops/v1_report_endpoints.rs` 已创建并承接三个目标 handler；下一步只能进入 BE-001CE-05 单叶 closeout。
+**状态**: v4.16 BE-001CE-05 单叶 closeout 已完成。`src/runtime/report_ops/v1_report_endpoints.rs` 承接三个目标 handler，`runtime.report_ops.v1_report_endpoints stop_split: true`；下一步只能进入 BE-001CF-01 父叶残余判断。
 **真实文件**:
 - `src/runtime/report_ops.rs`
 - `src/runtime/report_ops/runtime_report.rs`
@@ -4589,6 +4598,7 @@ AI 声称 `runtime.report_ops.runtime_report` 已完成 BE-001CC-04 时，必须
 - `markdown/06-milestones/v4.16.0/262-runtime.report_ops.v1_report_endpoints抽离方案.md`
 - `markdown/06-milestones/v4.16.0/263-runtime.report_ops.v1_report_endpoints补测记录.md`
 - `markdown/06-milestones/v4.16.0/264-runtime.report_ops.v1_report_endpoints抽离记录.md`
+- `markdown/06-milestones/v4.16.0/265-runtime.report_ops.v1_report_endpoints单叶closeout.md`
 
 **职责**:
 冻结 `/api/v1/reports/*` 三个 v1 report projection handler 的白箱边界，不接管 runtime report lifecycle、merge/generation/storage health endpoints、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner 或 release transition guard。
@@ -4615,6 +4625,9 @@ BE-001CE-03 已新增 `tests/api_v1_reports.rs`。该测试通过 `common::test_
 **抽离记录**:
 BE-001CE-04 已创建 `src/runtime/report_ops/v1_report_endpoints.rs`，并将 `get_ops_daily_report`、`get_audit_weekly_report`、`get_research_monthly_report` 迁入 child。父级 `src/runtime/report_ops.rs` 只保留 `mod v1_report_endpoints` 与受控 `pub(crate) use v1_report_endpoints::{...}`，`src/runtime/mod.rs` 和 route facade 未改。
 
+**单叶 closeout**:
+BE-001CE-05 已确认本叶不继续拆分，并设置 `runtime.report_ops.v1_report_endpoints stop_split: true`。三个 handler 共同服务 `/api/v1/reports/*` projection surface，调用方与父级出口一致，继续拆成 ops/audit/research 微叶会增加治理登记成本但不会产生更稳定的 owner。
+
 **明确排除**:
 `create_runtime_report`、`list_runtime_reports`、`get_runtime_report_detail`、`export_runtime_report_artifact`、`runtime.report_ops.runtime_report`、`list_merge_records`、`list_config_generations`、`get_storage_health`、`runtime.report_ops.merge_generation_health`、`get_runtime_evidence_health`、`cleanup_runtime_evidence`、`runtime_report_status_counts`、`runtime.evidence_health`、`AppState`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner 与 release transition guard 均不属于本子叶。
 
@@ -4631,6 +4644,8 @@ AI 声称 `runtime.report_ops.v1_report_endpoints` 已完成 BE-001CE-02 时，�
 AI 声称 `runtime.report_ops.v1_report_endpoints` 已完成 BE-001CE-03 时，必须说明本批次只新增 endpoint smoke 测试，`tests/api_v1_reports.rs` 已创建并覆盖三条 `/api/v1/reports/*` endpoint 的基础 JSON contract；child module 尚未创建，三个 handler 仍在 `src/runtime/report_ops.rs`，下一步只能进入 BE-001CE-04 实际抽离。不得宣称 merge/generation/storage health、`runtime.evidence_health` 或 release transition 已处理。
 
 AI 声称 `runtime.report_ops.v1_report_endpoints` 已完成 BE-001CE-04 时，必须说明 `src/runtime/report_ops/v1_report_endpoints.rs` 已创建，三个 handler 已迁入 child，父级只保留受控 re-export，`src/runtime/mod.rs` 与 route facade 未改，下一步只能进入 BE-001CE-05 单叶 closeout。不得宣称 merge/generation/storage health、`runtime.evidence_health` 或 release transition 已处理。
+
+AI 声称 `runtime.report_ops.v1_report_endpoints` 已完成 BE-001CE-05 时，必须说明本批次是 `no code movement` closeout，`runtime.report_ops.v1_report_endpoints stop_split: true`，下一步只能进入 BE-001CF-01 `runtime.report_ops` 父叶残余判断。不得继续从本叶细拆 ops/audit/research 微叶，不得宣称 release transition 已处理。
 
 ### 5.2 `backend.graph_compile`
 
@@ -5349,6 +5364,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/262-runtime.report_ops.v1_report_endpoints抽离方案.md` runtime report ops v1 report endpoints extraction plan | `runtime.report_ops.v1_report_endpoints` | 抽离方案，选择 test-first 并固定 smoke / extraction 顺序 | BE-001CE 抽离方案 | `no code movement`；下一步只能进入 BE-001CE-03 endpoint smoke 补测，不得创建 child module 或迁移 handler |
 | `markdown/06-milestones/v4.16.0/263-runtime.report_ops.v1_report_endpoints补测记录.md` runtime report ops v1 report endpoints smoke | `runtime.report_ops.v1_report_endpoints` | endpoint smoke 补测，新增 `tests/api_v1_reports.rs` 覆盖三条 v1 report JSON contract | BE-001CE 补测记录 | 下一步只能进入 BE-001CE-04 实际抽离；不得创建 child module、迁移 handler 以外的 owner 或处理 merge/generation/storage health endpoints |
 | `markdown/06-milestones/v4.16.0/264-runtime.report_ops.v1_report_endpoints抽离记录.md` runtime report ops v1 report endpoints extraction record | `runtime.report_ops.v1_report_endpoints` | 实际抽离，创建 child module 并迁移三个 v1 report handler | BE-001CE 抽离记录 | 下一步只能进入 BE-001CE-05 单叶 closeout；不得处理 merge/generation/storage health endpoints、`runtime.evidence_health` 或 release transition |
+| `markdown/06-milestones/v4.16.0/265-runtime.report_ops.v1_report_endpoints单叶closeout.md` runtime report ops v1 report endpoints closeout | `runtime.report_ops.v1_report_endpoints` | 单叶 closeout，确认 child 等价并设置 `stop_split: true` | BE-001CE 单叶 closeout | `no code movement`；下一步只能进入 BE-001CF-01 `runtime.report_ops` 父叶残余判断，不得继续细拆 ops/audit/research 微叶 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
