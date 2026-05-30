@@ -908,6 +908,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CG-02）**: BE-001CG-02 已建立 `runtime.report_ops.merge_generation_health` test-first 抽离方案。当前 `no code movement`，下一步只能进入 BE-001CG-03 endpoint smoke 补测；BE-001CG-04 才允许创建 planned child 并迁移三个 handler。
 **最新状态补充（BE-001CG-03）**: BE-001CG-03 已完成 `runtime.report_ops.merge_generation_health` endpoint smoke 补测。`tests/api_v1_ops_health.rs` 已创建并覆盖三条 v1 support/health endpoint 的基础 JSON contract；planned child 文件尚未创建，三个 handler 仍在 `src/runtime/report_ops.rs`，下一步只能进入 BE-001CG-04 实际抽离。
 **最新状态补充（BE-001CG-04）**: BE-001CG-04 已完成 `runtime.report_ops.merge_generation_health` 实际抽离。`src/runtime/report_ops/merge_generation_health.rs` 已创建并承接 `list_merge_records`、`list_config_generations`、`get_storage_health`；父级只保留受控 re-export，下一步只能进入 BE-001CG-05 单叶 closeout。
+**最新状态补充（BE-001CG-05）**: BE-001CG-05 已完成 `runtime.report_ops.merge_generation_health` 单叶 closeout 并设置 `stop_split: true`。下一步只能进入 BE-001CH-01 `runtime.report_ops` 父叶残余判断。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1034,6 +1035,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/268-runtime.report_ops.merge_generation_health抽离方案.md`
 - `markdown/06-milestones/v4.16.0/269-runtime.report_ops.merge_generation_health补测记录.md`
 - `markdown/06-milestones/v4.16.0/270-runtime.report_ops.merge_generation_health抽离记录.md`
+- `markdown/06-milestones/v4.16.0/271-runtime.report_ops.merge_generation_health单叶closeout.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -1179,6 +1181,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 - `markdown/06-milestones/v4.16.0/268-runtime.report_ops.merge_generation_health抽离方案.md`
 - `markdown/06-milestones/v4.16.0/269-runtime.report_ops.merge_generation_health补测记录.md`
 - `markdown/06-milestones/v4.16.0/270-runtime.report_ops.merge_generation_health抽离记录.md`
+- `markdown/06-milestones/v4.16.0/271-runtime.report_ops.merge_generation_health单叶closeout.md`
 
 **职责**:
 承载 backend runtime route aggregate facade 的白箱坐标，固定 `backend.runtime -> backend.runtime.routes -> src/runtime/* pub(crate) handler` 的兼容桥和等价证据。
@@ -4427,7 +4430,7 @@ AI 声称 `runtime.backtest.experiment_sweep.record_lifecycle` 已 closeout 时�
 
 **层级路径**: `root.backend.runtime.runtime.report_ops`
 **父模块**: `backend.runtime`
-**状态**: v4.16 BE-001CG-04 `runtime.report_ops.merge_generation_health` 实际抽离已完成。`runtime.report_ops stop_split: false`；下一步只能进入 BE-001CG-05 单叶 closeout。
+**状态**: v4.16 BE-001CG-05 `runtime.report_ops.merge_generation_health` 单叶 closeout 已完成。`runtime.report_ops` 父叶残余判断 pending；下一步只能进入 BE-001CH-01 父叶残余判断。
 **真实文件**:
 - `src/runtime/mod.rs`
 - `src/runtime/report_ops.rs`
@@ -4466,6 +4469,7 @@ AI 声称 `runtime.backtest.experiment_sweep.record_lifecycle` 已 closeout 时�
 - `markdown/06-milestones/v4.16.0/268-runtime.report_ops.merge_generation_health抽离方案.md`
 - `markdown/06-milestones/v4.16.0/269-runtime.report_ops.merge_generation_health补测记录.md`
 - `markdown/06-milestones/v4.16.0/270-runtime.report_ops.merge_generation_health抽离记录.md`
+- `markdown/06-milestones/v4.16.0/271-runtime.report_ops.merge_generation_health单叶closeout.md`
 
 **职责**:
 承载 runtime report create/list/detail/export 与 v1 merge records、runtime generations、storage health、ops daily、audit weekly、research monthly report handler 的白箱边界。当前不拥有 route registration、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner 或 release transition guard。
@@ -4531,6 +4535,9 @@ BE-001CG-03 已新增 `tests/api_v1_ops_health.rs`，覆盖 `/api/v1/merge/recor
 **抽离记录**:
 BE-001CG-04 已创建 `src/runtime/report_ops/merge_generation_health.rs`，并迁入 `list_merge_records`、`list_config_generations`、`get_storage_health`。父级 `src/runtime/report_ops.rs` 只新增 `mod merge_generation_health` 与受控 `pub(crate) use merge_generation_health::{get_storage_health, list_config_generations, list_merge_records};`；`src/runtime/mod.rs` 与 `src/backend/runtime/routes/report_ops.rs` 未改。下一步只能进入 BE-001CG-05 单叶 closeout。
 
+**单叶 closeout**:
+BE-001CG-05 已确认 `runtime.report_ops.merge_generation_health` 作为 v1 support/health projection surface 已稳定，并设置 `runtime.report_ops.merge_generation_health stop_split: true`。继续拆成 merge_records/config_generations/storage_health 微叶不会形成新的稳定 owner；下一步只能进入 BE-001CH-01 `runtime.report_ops` 父叶残余判断。
+
 **明确排除**:
 `get_runtime_evidence_health`、`cleanup_runtime_evidence`、`runtime_report_status_counts`、query structs/shared helper、`AppState`、`runtime_persistence`、`runtime_response_mapping`、`frontend_api_types`、frontend caller、storage lifecycle owner 和 release transition guard 均不属于本叶第一轮迁移。`runtime.evidence_health` 应作为 sibling 另起基线。
 
@@ -4561,6 +4568,8 @@ AI 声称 `runtime.report_ops` 已完成 BE-001CG-02 时，必须说明本批次
 AI 声称 `runtime.report_ops` 已完成 BE-001CG-03 时，必须说明本批次只新增 endpoint smoke 测试，`tests/api_v1_ops_health.rs` 已覆盖三条 v1 support/health endpoint 的基础 JSON contract，planned child 文件尚未创建，三个 handler 仍在 `src/runtime/report_ops.rs`，下一步只能进入 BE-001CG-04 实际抽离。不得宣称发布过渡已启动。
 
 AI 声称 `runtime.report_ops` 已完成 BE-001CG-04 时，必须说明 `src/runtime/report_ops/merge_generation_health.rs` 已创建，三个 v1 support/health handler 已迁入 child，父级只保留受控 re-export，`src/runtime/mod.rs` 与 route facade 未改，下一步只能进入 BE-001CG-05 单叶 closeout。不得宣称发布过渡已启动。
+
+AI 声称 `runtime.report_ops` 已完成 BE-001CG-05 时，必须说明本批次是 `no code movement` closeout，`runtime.report_ops.merge_generation_health stop_split: true`，三个 report_ops child 均已 closeout，但父级还必须进入 BE-001CH-01 残余判断后才能宣称父叶收口。不得宣称发布过渡已启动。
 
 ### 5.1.20.1 `runtime.report_ops.runtime_report`
 
@@ -4699,7 +4708,7 @@ AI 声称 `runtime.report_ops.v1_report_endpoints` 已完成 BE-001CE-05 时，�
 
 **层级路径**: `root.backend.runtime.runtime.report_ops.merge_generation_health`
 **父模块**: `runtime.report_ops`
-**状态**: v4.16 BE-001CG-04 实际抽离已完成。child 文件已创建并承接三个目标 handler；下一步只能进入 BE-001CG-05 单叶 closeout。
+**状态**: v4.16 BE-001CG-05 单叶 closeout 已完成，`runtime.report_ops.merge_generation_health stop_split: true`。下一步只能回到父级进入 BE-001CH-01 `runtime.report_ops` 父叶残余判断。
 **真实文件**:
 - `src/runtime/report_ops.rs`
 - `src/runtime/report_ops/merge_generation_health.rs`
@@ -4715,6 +4724,7 @@ AI 声称 `runtime.report_ops.v1_report_endpoints` 已完成 BE-001CE-05 时，�
 - `markdown/06-milestones/v4.16.0/268-runtime.report_ops.merge_generation_health抽离方案.md`
 - `markdown/06-milestones/v4.16.0/269-runtime.report_ops.merge_generation_health补测记录.md`
 - `markdown/06-milestones/v4.16.0/270-runtime.report_ops.merge_generation_health抽离记录.md`
+- `markdown/06-milestones/v4.16.0/271-runtime.report_ops.merge_generation_health单叶closeout.md`
 
 **职责**:
 冻结 v1 support/health endpoints 的白箱边界，只覆盖 merge records、runtime generation history 和 storage health projection。当前不接管 runtime report lifecycle、v1 `/api/v1/reports/*` endpoints、runtime evidence health、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、run state owner、config generation owner、`AppState` 或 release transition guard。
@@ -4741,6 +4751,9 @@ BE-001CG-02 已固定实际抽离目标为计划 child 文件 `merge_generation_
 **抽离记录**:
 BE-001CG-04 已创建 `src/runtime/report_ops/merge_generation_health.rs`，并迁入 `list_merge_records`、`list_config_generations`、`get_storage_health`。父级 `src/runtime/report_ops.rs` 只保留 `mod merge_generation_health` 与受控 `pub(crate) use merge_generation_health::{get_storage_health, list_config_generations, list_merge_records};`；`src/runtime/mod.rs`、route facade、`runtime.evidence_health`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState` 与 release transition guard 均未迁移。
 
+**单叶 closeout**:
+BE-001CG-05 已确认本叶内部不再继续细拆。`list_merge_records`、`list_config_generations`、`get_storage_health` 共同构成 v1 support/health projection surface；继续拆成 merge_records/config_generations/storage_health 微叶只会增加 re-export 与治理登记成本，不会形成独立状态机、持久化 owner、schema owner 或 release transition guard。因此设置 `runtime.report_ops.merge_generation_health stop_split: true`。
+
 **明确排除**:
 `runtime.report_ops.runtime_report`、`runtime.report_ops.v1_report_endpoints`、`create_runtime_report`、`list_runtime_reports`、`get_runtime_report_detail`、`export_runtime_report_artifact`、`get_ops_daily_report`、`get_audit_weekly_report`、`get_research_monthly_report`、`get_runtime_evidence_health`、`cleanup_runtime_evidence`、`runtime_report_status_counts`、`runtime.evidence_health`、`AppState`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner 与 release transition guard 均不属于本子叶。
 
@@ -4752,6 +4765,8 @@ AI 声称 `runtime.report_ops.merge_generation_health` 已完成 BE-001CG-02 时
 AI 声称 `runtime.report_ops.merge_generation_health` 已完成 BE-001CG-03 时，必须说明本批次只新增 endpoint smoke 测试，`tests/api_v1_ops_health.rs` 已覆盖三条 v1 support/health endpoint 的基础 JSON contract，planned child 文件尚未创建，三个 handler 仍在 `src/runtime/report_ops.rs`，下一步只能进入 BE-001CG-04 实际抽离。不得宣称 handler 已迁移或发布过渡已启动。
 
 AI 声称 `runtime.report_ops.merge_generation_health` 已完成 BE-001CG-04 时，必须说明 `src/runtime/report_ops/merge_generation_health.rs` 已创建，`list_merge_records`、`list_config_generations`、`get_storage_health` 已从 `src/runtime/report_ops.rs` 迁入 child，父级只保留受控 re-export，`src/runtime/mod.rs` 与 route facade 未改，下一步只能进入 BE-001CG-05 单叶 closeout。不得宣称 `runtime.evidence_health`、handler 之外 owner 或发布过渡已处理。
+
+AI 声称 `runtime.report_ops.merge_generation_health` 已完成 BE-001CG-05 时，必须说明本批次是 `no code movement` closeout，`runtime.report_ops.merge_generation_health stop_split: true`，三个 v1 support/health handler 仍在 `src/runtime/report_ops/merge_generation_health.rs`，下一步只能进入 BE-001CH-01 `runtime.report_ops` 父叶残余判断。不得宣称 `runtime.evidence_health`、handler 之外 owner 或发布过渡已处理。
 
 ### 5.2 `backend.graph_compile`
 
@@ -5476,6 +5491,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/268-runtime.report_ops.merge_generation_health抽离方案.md` runtime report ops merge generation health extraction plan | `runtime.report_ops.merge_generation_health` | test-first 抽离方案，固定 endpoint smoke、planned child 文件、父级 re-export 和允许迁移清单 | BE-001CG 抽离方案 | `no code movement`；下一步只能进入 BE-001CG-03 endpoint smoke 补测，BE-001CG-04 才允许实际迁移 |
 | `markdown/06-milestones/v4.16.0/269-runtime.report_ops.merge_generation_health补测记录.md` runtime report ops merge generation health smoke | `runtime.report_ops.merge_generation_health` | endpoint smoke 补测，新增 `tests/api_v1_ops_health.rs` 覆盖三条 v1 support/health JSON contract | BE-001CG 补测记录 | 下一步只能进入 BE-001CG-04 实际抽离；不得创建 child module、迁移 handler 以外的 owner 或处理 `runtime.evidence_health` |
 | `markdown/06-milestones/v4.16.0/270-runtime.report_ops.merge_generation_health抽离记录.md` runtime report ops merge generation health extraction record | `runtime.report_ops.merge_generation_health` | 实际抽离，创建 child module 并迁移三个 v1 support/health handler | BE-001CG 抽离记录 | 下一步只能进入 BE-001CG-05 单叶 closeout；不得处理 `runtime.evidence_health`、schema owner、frontend caller 或 release transition |
+| `markdown/06-milestones/v4.16.0/271-runtime.report_ops.merge_generation_health单叶closeout.md` runtime report ops merge generation health closeout | `runtime.report_ops.merge_generation_health` | 单叶 closeout，确认 child 等价并设置 `stop_split: true` | BE-001CG 单叶 closeout | `no code movement`；下一步只能进入 BE-001CH-01 `runtime.report_ops` 父叶残余判断，不得继续细拆三条 support/health 微叶 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
