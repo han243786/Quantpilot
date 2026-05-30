@@ -266,6 +266,7 @@ v4.7.0 系统应被理解为：
 - BE-001CV-02 已建立 `runtime.parent_include_cleanup` 抽离方案；当前 `no code movement`，下一批 BE-001CV-03 只允许删除三条 drained `include!(...)` 与三个 drained 文件，不处理 `backend.runtime` 父叶 closeout 或发布过渡。
 - BE-001CV-03 已完成 `runtime.parent_include_cleanup` 实际 cleanup；三条 drained `include!(...)` 与三个 drained 文件已删除，public handler owner、route facade、schema/frontend/state/persistence owner、lock order 与 release transition guard 未变更，下一步只能进入 BE-001CW-01 `backend.runtime` 第九轮父叶残余判断。
 - BE-001CW-01 已完成 `backend.runtime` 第九轮父叶残余判断；`src/runtime/mod.rs` 已无行为体和 drained include，但仍保留 parent import bridge，因此 `backend.runtime stop_split: false`，下一步只能进入 BE-001CX-01 `runtime.parent_import_bridge` 单子叶等价基线。
+- BE-001CX-01 已建立 `runtime.parent_import_bridge` 单子叶等价基线；当前 46 个 runtime 文件仍存在 `use super::*` / `super::` 依赖，下一步只能进入 BE-001CX-02 抽离方案，不能直接批量改写 Rust import。
 
 ## 当前收尾/发布状态
 
