@@ -240,6 +240,7 @@ v4.7.0 系统应被理解为：
 - BE-001CL-02 已建立 `runtime.mutation.shared_governance` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CL-03 实际抽离。
 - BE-001CL-03 已完成 `runtime.mutation.shared_governance` 实际抽离；9 个 shared governance helper 已迁入 child，下一步只能进入 BE-001CL-04 单叶 closeout。
 - BE-001CL-04 已完成 `runtime.mutation.shared_governance` 单叶 closeout；本叶设置 `stop_split: true`，下一步只能进入 BE-001CM-01 `backend.runtime` 第四轮父叶残余判断。
+- BE-001CM-01 已完成 `backend.runtime` 第四轮父叶残余判断；父级仍有 query DTO / run guard / response support / experiment limit 残余，因此保持 `backend.runtime stop_split: false`，下一步只能进入 BE-001CN-01 `runtime.query_support` 单子叶等价基线。
 
 ## 当前收尾/发布状态
 
