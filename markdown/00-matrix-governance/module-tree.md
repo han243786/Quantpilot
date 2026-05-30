@@ -926,6 +926,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CN-02）**: BE-001CN-02 已建立 `runtime.query_support` 抽离方案。当前 `no code movement`，下一步 BE-001CN-03 才允许创建 planned child 文件并迁移 7 个 query DTO、`clean_optional_filter` 与 `normalized_replay_options`。
 **最新状态补充（BE-001CN-03）**: BE-001CN-03 已完成 `runtime.query_support` 实际抽离。`src/runtime/query_support.rs` 已创建并迁入 7 个 Query DTO、`clean_optional_filter` 与 `normalized_replay_options`；下一步只能进入 BE-001CN-04 单叶 closeout。
 **最新状态补充（BE-001CN-04）**: BE-001CN-04 已完成 `runtime.query_support` 单叶 closeout 并设置 `stop_split: true`。下一步只能进入 BE-001CO-01 `backend.runtime` 第五轮父叶残余判断，不得从本叶继续细拆 replay/mutation/report query 或 normalization 微叶。
+**最新状态补充（BE-001CO-01）**: BE-001CO-01 已完成 `backend.runtime` 第五轮父叶残余判断。`runtime.query_support` 已 closeout，但父级仍有 response support、run guard、experiment limit 与 parent include residual，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CP-01 `runtime.response_support` 单子叶等价基线。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1072,6 +1073,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/285-runtime.query_support抽离方案.md`
 - `markdown/06-milestones/v4.16.0/286-runtime.query_support抽离记录.md`
 - `markdown/06-milestones/v4.16.0/287-runtime.query_support单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/288-backend.runtime第五轮父叶残余判断.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5741,6 +5743,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/285-runtime.query_support抽离方案.md` runtime query support extraction plan | `runtime.query_support` | 抽离方案，固定 planned child、父级声明、plain import、DTO `pub(crate)` shell、field/helper `pub(super)` visibility 和迁移清单 | BE-001CN 抽离方案 | `no code movement`；下一步只能进入 BE-001CN-03 实际抽离，不得处理 response support、run guard 或 release transition |
 | `markdown/06-milestones/v4.16.0/286-runtime.query_support抽离记录.md` runtime query support extraction record | `runtime.query_support` | 实际抽离，创建 query_support child 并迁入 7 个 Query DTO 与两个 normalization helper | BE-001CN 抽离记录 | 下一步只能进入 BE-001CN-04 单叶 closeout；不得处理 response support、run guard 或 release transition |
 | `markdown/06-milestones/v4.16.0/287-runtime.query_support单叶closeout.md` runtime query support closeout | `runtime.query_support` | 单叶 closeout，确认不继续细拆 query / normalization 微叶 | BE-001CN 单叶 closeout | `runtime.query_support stop_split: true`；下一步只能进入 BE-001CO-01 `backend.runtime` 第五轮父叶残余判断 |
+| `markdown/06-milestones/v4.16.0/288-backend.runtime第五轮父叶残余判断.md` backend runtime fifth parent residual | `backend.runtime` | 第五轮父叶残余判断，确认 response support / run guard / experiment limit / parent include residual 仍存在 | BE-001CO 父叶残余判断 | `no code movement`；`backend.runtime stop_split: false`；下一步只能进入 BE-001CP-01 `runtime.response_support` 单子叶等价基线 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
