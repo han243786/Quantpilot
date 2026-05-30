@@ -296,6 +296,7 @@
 | 282 | `v4.16.0/282-runtime.mutation.shared_governance单叶closeout.md` | BE-001CL-04 `runtime.mutation.shared_governance` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 | 283 | `v4.16.0/283-backend.runtime第四轮父叶残余判断.md` | BE-001CM-01 `backend.runtime` 第四轮父叶残余判断，选择 `runtime.query_support` 下一候选 | 📋 已创建 |
 | 284 | `v4.16.0/284-runtime.query_support单子叶等价基线.md` | BE-001CN-01 `runtime.query_support` 单子叶等价基线 | 📋 已创建 |
+| 285 | `v4.16.0/285-runtime.query_support抽离方案.md` | BE-001CN-02 `runtime.query_support` 抽离方案 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
