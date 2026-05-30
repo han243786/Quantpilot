@@ -260,6 +260,7 @@
 | 246 | `v4.16.0/246-backend.runtime.routes.report_ops单子叶等价基线.md` | BE-001BY-01 `backend.runtime.routes.report_ops` 单子叶等价基线 | 📋 已创建 |
 | 247 | `v4.16.0/247-backend.runtime.routes.report_ops抽离方案.md` | BE-001BY-02 `backend.runtime.routes.report_ops` 抽离方案 | 📋 已创建 |
 | 248 | `v4.16.0/248-backend.runtime.routes.report_ops抽离记录.md` | BE-001BY-03 `backend.runtime.routes.report_ops` 实际抽离记录 | 📋 已创建 |
+| 249 | `v4.16.0/249-backend.runtime.routes.report_ops单叶closeout.md` | BE-001BY-04 `backend.runtime.routes.report_ops` 单叶 closeout | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
