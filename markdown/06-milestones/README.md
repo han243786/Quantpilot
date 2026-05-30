@@ -292,6 +292,7 @@
 | 278 | `v4.16.0/278-backend.runtime第三轮父叶残余判断.md` | BE-001CK-01 `backend.runtime` 第三轮父叶残余判断 | 📋 已创建 |
 | 279 | `v4.16.0/279-runtime.mutation.shared_governance单子叶等价基线.md` | BE-001CL-01 `runtime.mutation.shared_governance` 单子叶等价基线 | 📋 已创建 |
 | 280 | `v4.16.0/280-runtime.mutation.shared_governance抽离方案.md` | BE-001CL-02 `runtime.mutation.shared_governance` 抽离方案 | 📋 已创建 |
+| 281 | `v4.16.0/281-runtime.mutation.shared_governance抽离记录.md` | BE-001CL-03 `runtime.mutation.shared_governance` 实际抽离 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

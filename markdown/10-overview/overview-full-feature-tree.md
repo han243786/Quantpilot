@@ -300,6 +300,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/activation_snapshot_side_effect.rs`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/boundary_safety.rs`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_flow.rs`
+- `src/runtime/mutation/shared_governance.rs`
 
 **抽离口径**: v4.16 BE-001B 已建立 9 个叶子 facade，BE-001C 已完成九叶逐叶 closeout，BE-001D 已启动 `backend.strategy_config` L3 模块壳抽离，BE-001E 已完成其余八叶薄壳抽离，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-04 已完成 `runtime.backtest` route facade 抽离与单叶 closeout，BE-001N-04 已完成 `runtime.backtest.execution_start` 第一轮物理抽离与单叶 closeout，BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout，BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout，BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`，BE-001R-04 已完成 `runtime.backtest.execution_start.legacy_dispatch` 单叶 closeout 并设置 `stop_split: true`，BE-001S-01 已完成 `runtime.backtest.execution_start` 父叶残余判断，BE-001T-04 已完成 `runtime.backtest.record_store` 单叶 closeout 并设置 `stop_split: true`，BE-001U-04 已完成 `runtime.backtest.replay` 单叶 closeout 并设置 `stop_split: true`，BE-001V-04 已完成 `runtime.backtest.experiment_sweep` 单叶 closeout 并设置 `stop_split: false`，BE-001W-04 已完成 `runtime.backtest.experiment_sweep.parameter_grid` 单叶 closeout 并设置 `stop_split: true`，BE-001X-01 已完成 `runtime.backtest.experiment_sweep` 父叶残余判断，BE-001Y-04 已完成 `runtime.backtest.experiment_sweep.start_orchestration` 单叶 closeout 并设置 `stop_split: true`，BE-001Z-01 已完成 `runtime.backtest.experiment_sweep` 第二轮父叶残余判断，BE-001AA-01 已建立 `runtime.backtest.experiment_sweep.record_lifecycle` 单子叶等价基线，BE-001AA-02 已建立抽离方案，BE-001AA-03 已完成实际抽离，BE-001AA-04 已完成单叶 closeout 并设置 `stop_split: true`，BE-001AB-01 已完成 `runtime.backtest.experiment_sweep` 第三轮父叶残余判断并设置父叶 `stop_split: true`，BE-001AC-01 已完成 `runtime.backtest` 父叶残余判断并设置父叶 `stop_split: true`，BE-001AE-04 已完成 `backend.runtime.routes.mutation` route facade 单叶 closeout 并设置 `stop_split: true`，BE-001AF-04 已完成 `runtime.mutation.parameter_mutation` 单叶 closeout，BE-001AH-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety` 单叶 closeout 并设置 `stop_split: true`，BE-001AJ-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.activation_flow` 单叶 closeout 并设置 `stop_split: true`，BE-001AK-01 已完成 `transition_lifecycle` 第二轮父叶残余判断，BE-001AL-04 已完成 `rollback_flow` 单叶 closeout 并设置 `stop_split: true`，BE-001AM-01 已完成 `transition_lifecycle` 第三轮父叶残余判断，BE-001AN-04 已完成 `activation_snapshot_side_effect` 单叶 closeout 并设置 `stop_split: true`，下一步进入 BE-001AO-01 父叶残余判断。`src/app_router.rs` 通过 `backend.interface_boundary` 进入各叶子；state owner、response schema 和 artifact schema 仍按各模块白箱边界保留。
 
@@ -1670,11 +1671,13 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/278-backend.runtime第三轮父叶残余判断.md` - v4.16.0 BE-001CK-01 `backend.runtime` 第三轮父叶残余判断
 - `markdown/06-milestones/v4.16.0/279-runtime.mutation.shared_governance单子叶等价基线.md` - v4.16.0 BE-001CL-01 `runtime.mutation.shared_governance` 单子叶等价基线
 - `markdown/06-milestones/v4.16.0/280-runtime.mutation.shared_governance抽离方案.md` - v4.16.0 BE-001CL-02 `runtime.mutation.shared_governance` 抽离方案
+- `markdown/06-milestones/v4.16.0/281-runtime.mutation.shared_governance抽离记录.md` - v4.16.0 BE-001CL-03 `runtime.mutation.shared_governance` 实际抽离
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
 - `src/backend/runtime/routes/report_ops.rs` - backend runtime report ops route child，承接 runtime reports、merge records、runtime generations、storage health、ops/audit/research report route registration
 - `src/runtime/mutation/ai_proposal.rs` - runtime AI proposal child，承接 AI proposal / approval public handler 与专属 helper
+- `src/runtime/mutation/shared_governance.rs` - runtime mutation shared governance child，承接 9 个 mutation shared governance helper
 - `src/runtime/mutation/ai_proposal/proposal_creation.rs` - runtime AI proposal proposal creation child，承接 `create_runtime_ai_proposal`
 - `src/runtime/mutation/ai_proposal/approval_persistence.rs` - runtime AI proposal approval persistence child，承接 approval record disk read/write helper
 - `src/runtime/mutation/ai_proposal/sandbox_trigger.rs` - runtime AI proposal sandbox trigger child，承接 sandbox approve gate 与 background sandbox verification helper
@@ -1816,6 +1819,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001CK-01 已完成 `backend.runtime` 第三轮父叶残余判断并保持 `stop_split: false`；下一步只能进入 BE-001CL-01 `runtime.mutation.shared_governance` 单子叶等价基线。
 当前最新递归点补充: BE-001CL-01 已建立 `runtime.mutation.shared_governance` 单子叶等价基线；下一步只能进入 BE-001CL-02 抽离方案。
 当前最新递归点补充: BE-001CL-02 已建立 `runtime.mutation.shared_governance` 抽离方案；下一步只能进入 BE-001CL-03 实际抽离。
+当前最新递归点补充: BE-001CL-03 已完成 `runtime.mutation.shared_governance` 实际抽离；下一步只能进入 BE-001CL-04 单叶 closeout。
 
 ### 7.7 总览 (markdown/10-overview/)
 
@@ -2002,6 +2006,7 @@ storage/
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle.rs` — 运行时参数变更 activation / rollback lifecycle、boundary/safe window、transition persistence 和 activation snapshot side effect; 改 runtime parameter mutation transition 时改这里 🆕 v4.16.0
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/activation_flow.rs` — 运行时参数变更 activation public handler、activation 状态机、run event append 和 activation metrics; 改 runtime parameter mutation activation flow 时改这里 🆕 v4.16.0
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/boundary_safety.rs` — 运行时参数变更 boundary validation / resolution 与 safe-window evaluation; 改 runtime parameter mutation boundary safety 时改这里 🆕 v4.16.0
+- `src/runtime/mutation/shared_governance.rs` — 运行时 mutation shared governance helper child; 改 parameter mutation / AI proposal 共享 target validation、event contract 或 governance projection 时改这里 🆕 v4.16.0
 - `src/runtime/mutation.rs` — 运行时变更, AI 提案/审批/沙箱验证, v4 trajectory 提案静态约束与 strategy config domain binding 审批阻断; 改审批流或 v4 AI 提案分析时改这里 🆕 v4.11.0
 - `src/runtime_diagnostics.rs` — 运行时诊断; 改健康检查/性能诊断时改这里
 - `src/runtime_event_projection.rs` — v4 运行时事件投影; 改 v4 事件→前端映射时改这里

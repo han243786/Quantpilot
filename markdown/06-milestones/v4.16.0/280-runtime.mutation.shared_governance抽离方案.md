@@ -68,7 +68,7 @@ BE-001CL-03 只能在 `src/runtime/mod.rs` 增加受控 child 声明:
 mod mutation_shared_governance;
 ```
 
-父级只能用 plain `use mutation_shared_governance::{...};` 把 helper 拉回 `src/runtime/mod.rs` 的父级受控 surface，保持现有 child 调用方通过 `use super::*` 取名:
+父级只能用 plain `use mutation_shared_governance::{...};` 把 caller-facing helper 拉回 `src/runtime/mod.rs` 的父级受控 surface，保持现有 child 调用方通过 `use super::*` 取名:
 
 ```rust
 use mutation_shared_governance::{
@@ -77,14 +77,12 @@ use mutation_shared_governance::{
     canonical_runtime_parameter_version,
     governance_with_parameter_version,
     mutation_event_contract,
-    runtime_mode_from_events,
     runtime_parameter_mutation_governance,
-    status_contract_value,
     validate_runtime_parameter_mutation_target,
 };
 ```
 
-不得在本子叶引入 `pub(crate) use` 对外扩大 runtime surface。新 child 内部函数 visibility 固定为 `pub(super)`，child 文件内允许 `use super::*;` 继承父级类型与 helper。
+`runtime_mode_from_events` 与 `status_contract_value` 迁入 child 后仍是 `pub(super)` helper，但只被同一 child 内部调用，不强制回填到父级 import surface，避免 unused import warning。不得在本子叶引入 `pub(crate) use` 对外扩大 runtime surface。新 child 内部函数 visibility 固定为 `pub(super)`，child 文件内允许 `use super::*;` 继承父级类型与 helper。
 
 `include!("mutation.rs")` 保留，直到 `OpsDailyQuery`、`AuditWeeklyQuery`、`ResearchMonthlyQuery` 以及后续 query/guard/response support 残余另起父叶判断。
 

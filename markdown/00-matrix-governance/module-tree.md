@@ -919,6 +919,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CK-01）**: BE-001CK-01 已完成 `backend.runtime` 第三轮父叶残余判断。`backend.runtime.routes`、`runtime.report_ops` 与 `runtime.evidence_health` 均已 closeout，但 `src/runtime/mutation.rs` 仍持有 mutation shared governance helper 残余，且父级仍有 query/guard/response support 残余，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CL-01 `runtime.mutation.shared_governance` 单子叶等价基线。
 **最新状态补充（BE-001CL-01）**: BE-001CL-01 已建立 `runtime.mutation.shared_governance` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，9 个 shared governance helper 仍在 `src/runtime/mutation.rs`；下一步只能进入 BE-001CL-02 抽离方案。
 **最新状态补充（BE-001CL-02）**: BE-001CL-02 已建立 `runtime.mutation.shared_governance` 抽离方案。当前 `no code movement`，planned child 文件尚未创建，9 个 shared governance helper 仍在 `src/runtime/mutation.rs`；下一步只能进入 BE-001CL-03 实际抽离。
+**最新状态补充（BE-001CL-03）**: BE-001CL-03 已完成 `runtime.mutation.shared_governance` 实际抽离。`src/runtime/mutation/shared_governance.rs` 已创建并迁入 9 个 shared governance helper，父级只保留受控 child 声明与 caller-facing plain import；下一步只能进入 BE-001CL-04 单叶 closeout。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -926,6 +927,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `src/backend/runtime/routes/mutation.rs`
 - `src/backend/runtime/routes/run.rs`
 - `src/runtime/mod.rs`
+- `src/runtime/mutation/shared_governance.rs`
 - `src/runtime/evidence_health.rs`
 - `src/runtime/report_ops.rs`
 - `src/runtime/report_ops/runtime_report.rs`
@@ -1056,6 +1058,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/278-backend.runtime第三轮父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/279-runtime.mutation.shared_governance单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/280-runtime.mutation.shared_governance抽离方案.md`
+- `markdown/06-milestones/v4.16.0/281-runtime.mutation.shared_governance抽离记录.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -4866,14 +4869,17 @@ AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-01 时，必�
 
 AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-02 时，必须说明本批次是 `no code movement` 抽离方案，planned child 文件尚未创建，9 个 shared governance helper 仍在 `src/runtime/mutation.rs`，下一步只能进入 BE-001CL-03 实际抽离。不得宣称 helper 已迁移、query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
 
+AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-03 时，必须说明 `src/runtime/mutation/shared_governance.rs` 已创建，9 个 shared governance helper 已迁入 child，父级只保留 caller-facing plain import，下一步只能进入 BE-001CL-04 单叶 closeout。不得宣称 query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
+
 ### 5.1.22 `runtime.mutation.shared_governance`
 
 **层级路径**: `root.backend.runtime.runtime.mutation.shared_governance`
 **父模块**: `backend.runtime`
-**状态**: v4.16 BE-001CL-02 抽离方案已建立，当前 `no code movement`。planned child 文件尚未创建，9 个 shared governance helper 仍在 `src/runtime/mutation.rs`；下一步只能进入 BE-001CL-03 实际抽离。
+**状态**: v4.16 BE-001CL-03 实际抽离已完成。`src/runtime/mutation/shared_governance.rs` 已创建并迁入 9 个 shared governance helper；下一步只能进入 BE-001CL-04 单叶 closeout。
 **真实文件**:
 - `src/runtime/mod.rs`
 - `src/runtime/mutation.rs`
+- `src/runtime/mutation/shared_governance.rs`
 - `src/runtime/mutation/parameter_mutation/proposal_creation.rs`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/activation_flow.rs`
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_flow.rs`
@@ -4883,6 +4889,7 @@ AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-02 时，必�
 - `tests/api_ai_proposal.rs`
 - `markdown/06-milestones/v4.16.0/279-runtime.mutation.shared_governance单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/280-runtime.mutation.shared_governance抽离方案.md`
+- `markdown/06-milestones/v4.16.0/281-runtime.mutation.shared_governance抽离记录.md`
 
 **职责**:
 冻结 runtime mutation shared governance helper 的白箱边界，只覆盖 parameter mutation 与 AI proposal 共享的 target validation、canonical parameter version、event contract、event append 和 governance projection。当前不拥有 query DTO、run guard、response support、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState` 或 release transition guard。
@@ -4906,6 +4913,9 @@ BE-001CL-03 只能由 `src/runtime/mod.rs` 创建 child 声明并用 plain paren
 **抽离方案**:
 BE-001CL-02 已固定 BE-001CL-03 的最小迁移方式: 只创建 planned child 文件，只迁移 9 个 shared governance helper，helper visibility 固定为 `pub(super)`，父级只补 child 声明与 plain import。`include!("mutation.rs")` 暂时保留，因为 `OpsDailyQuery`、`AuditWeeklyQuery`、`ResearchMonthlyQuery` 与后续 query/guard/response support 残余需要另起父叶判断。
 
+**抽离记录**:
+BE-001CL-03 已创建 `src/runtime/mutation/shared_governance.rs`，并将 `canonical_runtime_parameter_version`、`validate_runtime_parameter_mutation_target`、`runtime_mode_from_events`、`status_contract_value`、`mutation_event_contract`、`build_runtime_parameter_mutation_event`、`append_parameter_mutation_events_to_run`、`runtime_parameter_mutation_governance`、`governance_with_parameter_version` 从 `src/runtime/mutation.rs` 迁入 child。`src/runtime/mod.rs` 只保留 `#[path = "mutation/shared_governance.rs"] mod mutation_shared_governance;` 与 caller-facing plain import；`runtime_mode_from_events`、`status_contract_value` 留作 child-internal helper，不回填父级 import，以保持 warning-free。
+
 **明确排除**:
 `OpsDailyQuery`、`AuditWeeklyQuery`、`ResearchMonthlyQuery`、`RuntimeReplayQuery`、`RuntimeParameterMutationListQuery`、`RuntimeAiProposalListQuery`、`RuntimeApprovalListQuery`、`RunInProgressGuard`、`DiscardRuntimeArtifactResponse`、`MergeRecordsResponse`、`MergeRecordEntry`、`AppState`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、lock order 与 release transition guard 均不属于本子叶。
 
@@ -4914,6 +4924,8 @@ BE-001CL-02 已固定 BE-001CL-03 的最小迁移方式: 只创建 planned child
 
 **幻觉检查点**:
 AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-02 时，必须说明本批次是 `no code movement` 抽离方案，planned child 文件尚未创建，9 个 helper 仍在 `src/runtime/mutation.rs`，下一步只能进入 BE-001CL-03 实际抽离。不得宣称 helper 已迁移、`backend.runtime` 已完成、query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
+
+AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-03 时，必须说明 `src/runtime/mutation/shared_governance.rs` 已创建，9 个 helper 已迁入 child，`src/runtime/mutation.rs` 仍保留 `OpsDailyQuery`、`AuditWeeklyQuery` 与 `ResearchMonthlyQuery`，下一步只能进入 BE-001CL-04 单叶 closeout。不得宣称 `backend.runtime` 已完成、query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
 
 ### 5.2 `backend.graph_compile`
 
@@ -5648,6 +5660,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/278-backend.runtime第三轮父叶残余判断.md` backend runtime third parent residual | `backend.runtime` | 第三轮父叶残余判断，确认 mutation shared governance 与 query/guard/response support 残余仍存在 | BE-001CK 父叶残余判断 | `no code movement`；`backend.runtime stop_split: false`；下一步只能进入 BE-001CL-01 `runtime.mutation.shared_governance` 单子叶等价基线 |
 | `markdown/06-milestones/v4.16.0/279-runtime.mutation.shared_governance单子叶等价基线.md` runtime mutation shared governance baseline | `runtime.mutation.shared_governance` | 单子叶等价基线，冻结 9 个 mutation shared governance helper 与调用方边界 | BE-001CL 单子叶基线 | `no code movement`；下一步只能进入 BE-001CL-02 抽离方案，不得创建 planned child 文件或迁移 helper |
 | `markdown/06-milestones/v4.16.0/280-runtime.mutation.shared_governance抽离方案.md` runtime mutation shared governance extraction plan | `runtime.mutation.shared_governance` | 抽离方案，固定 planned child、父级声明、plain import、helper visibility 和迁移清单 | BE-001CL 抽离方案 | `no code movement`；下一步只能进入 BE-001CL-03 实际抽离，不得处理 query DTO/run guard 或 release transition |
+| `markdown/06-milestones/v4.16.0/281-runtime.mutation.shared_governance抽离记录.md` runtime mutation shared governance extraction record | `runtime.mutation.shared_governance` | 实际抽离，创建 child module 并迁移 9 个 shared governance helper | BE-001CL 抽离记录 | 下一步只能进入 BE-001CL-04 单叶 closeout；不得处理 query DTO/run guard 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

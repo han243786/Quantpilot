@@ -12,6 +12,8 @@ mod evidence_health;
 mod mutation_ai_proposal;
 #[path = "mutation/parameter_mutation.rs"]
 mod mutation_parameter_mutation;
+#[path = "mutation/shared_governance.rs"]
+mod mutation_shared_governance;
 mod report_ops;
 #[path = "run/record_store.rs"]
 mod run_record_store;
@@ -38,6 +40,12 @@ pub(crate) use mutation_parameter_mutation::{
     activate_runtime_parameter_mutation, create_runtime_parameter_mutation,
     get_runtime_parameter_mutation_detail, list_runtime_parameter_mutations,
     rollback_runtime_parameter_mutation,
+};
+use mutation_shared_governance::{
+    append_parameter_mutation_events_to_run, build_runtime_parameter_mutation_event,
+    canonical_runtime_parameter_version, governance_with_parameter_version,
+    mutation_event_contract, runtime_parameter_mutation_governance,
+    validate_runtime_parameter_mutation_target,
 };
 pub(crate) use report_ops::{
     create_runtime_report, export_runtime_report_artifact, get_audit_weekly_report,
