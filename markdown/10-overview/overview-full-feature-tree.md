@@ -1621,6 +1621,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/229-runtime.mutation.ai_proposal第九轮父叶残余判断.md` - v4.16.0 BE-001BQ-01 `runtime.mutation.ai_proposal` 父叶残余判断
 - `markdown/06-milestones/v4.16.0/230-backend.runtime.routes第二轮父叶残余判断.md` - v4.16.0 BE-001BR-01 `backend.runtime.routes` 第二轮父叶残余判断
 - `markdown/06-milestones/v4.16.0/231-backend.runtime.routes.experiment单子叶等价基线.md` - v4.16.0 BE-001BS-01 `backend.runtime.routes.experiment` 单子叶等价基线
+- `markdown/06-milestones/v4.16.0/232-backend.runtime.routes.experiment抽离方案.md` - v4.16.0 BE-001BS-02 `backend.runtime.routes.experiment` 抽离方案
 - `src/runtime/mutation/ai_proposal.rs` - runtime AI proposal child，承接 AI proposal / approval public handler 与专属 helper
 - `src/runtime/mutation/ai_proposal/proposal_creation.rs` - runtime AI proposal proposal creation child，承接 `create_runtime_ai_proposal`
 - `src/runtime/mutation/ai_proposal/approval_persistence.rs` - runtime AI proposal approval persistence child，承接 approval record disk read/write helper
@@ -1712,6 +1713,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001BQ-01 已完成 `runtime.mutation.ai_proposal` 父叶残余判断并设置父叶 `stop_split: true`；下一步只能进入 BE-001BR-01 `backend.runtime.routes` 父叶残余判断。
 当前最新递归点补充: BE-001BR-01 已完成 `backend.runtime.routes` 第二轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001BS-01 `backend.runtime.routes.experiment` 单子叶等价基线。
 当前最新递归点补充: BE-001BS-01 已建立 `backend.runtime.routes.experiment` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001BS-02 抽离方案。
+当前最新递归点补充: BE-001BS-02 已建立 `backend.runtime.routes.experiment` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001BS-03 实际抽离。
 
 ### 7.7 总览 (markdown/10-overview/)
 

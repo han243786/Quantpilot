@@ -1146,7 +1146,7 @@ AI 声称 `backend.runtime.routes` 已推进至 BE-001BR-01 时，必须说明 r
 
 **层级路径**: `root.backend.runtime.routes.experiment`
 **父模块**: `backend.runtime.routes`
-**状态**: v4.16 BE-001BS-01 单子叶等价基线已建立；当前 `no code movement`，`stop_split: pending`。本节点冻结 experiment route group 的 path/method、handler owner、父级委托、状态/persistence 边界和测试证据；planned experiment route child file 尚未创建，下一步只能进入 BE-001BS-02 抽离方案。
+**状态**: v4.16 BE-001BS-02 抽离方案已建立；当前 `no code movement`，`stop_split: pending`。本节点冻结 experiment route group 的 path/method、handler owner、父级委托、状态/persistence 边界和测试证据；planned experiment route child file 尚未创建，下一步只能进入 BE-001BS-03 实际抽离。
 **真实文件**:
 - `src/backend/runtime/routes.rs`
 - `src/runtime/backtest/experiment_sweep.rs`
@@ -1159,6 +1159,7 @@ AI 声称 `backend.runtime.routes` 已推进至 BE-001BR-01 时，必须说明 r
 - `tests/api_run.rs`
 - `markdown/06-milestones/v4.16.0/230-backend.runtime.routes第二轮父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/231-backend.runtime.routes.experiment单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/232-backend.runtime.routes.experiment抽离方案.md`
 
 **职责**:
 承载 experiment route group 的 route facade 白箱边界，冻结 create/list/detail/save/discard routes 与 handler owner。本节点只规划 route registration，不拥有 experiment handler、state owner、schema owner、artifact schema、compare owner、runtime persistence owner 或 frontend caller。
@@ -1204,10 +1205,10 @@ AI 声称 `backend.runtime.routes` 已推进至 BE-001BR-01 时，必须说明 r
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_experiments`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 
 **下一步**:
-BE-001BS-02 只能建立 `backend.runtime.routes.experiment` 抽离方案，且保持 `no code movement`；不得直接创建 planned experiment route child file、迁移 handler、修改 `AppState`、schema owner、frontend caller、runtime persistence owner 或 release transition guard。
+BE-001BS-03 只能执行 `backend.runtime.routes.experiment` 实际抽离；只允许创建 planned experiment route child file、迁移五个 experiment route registration，并保持 reports -> experiment -> ops 的相对 route order。不得迁移 handler、修改 `AppState`、schema owner、frontend caller、runtime persistence owner 或 release transition guard。
 
 **幻觉检查点**:
-AI 声称 `backend.runtime.routes.experiment` 已推进至 BE-001BS-01 时，必须说明只是建立等价基线，route 尚未抽离，planned file 尚未创建，handler 与 state/persistence owner 均未改变。不得宣称 `backend.runtime.routes` 父叶完成、experiment handler 已迁移、发布过渡已启动、整理或重构已经完成。
+AI 声称 `backend.runtime.routes.experiment` 已推进至 BE-001BS-02 时，必须说明只是建立抽离方案，route 尚未抽离，planned file 尚未创建，handler 与 state/persistence owner 均未改变。不得宣称 `backend.runtime.routes` 父叶完成、experiment handler 已迁移、发布过渡已启动、整理或重构已经完成。
 
 ### 5.1.1.1 `backend.runtime.routes.mutation`
 
@@ -4794,6 +4795,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/229-runtime.mutation.ai_proposal第九轮父叶残余判断.md` runtime mutation ai proposal ninth parent residual decision | `runtime.mutation.ai_proposal` | 父叶残余判断，九个子叶均已 closeout 并设置父叶 `stop_split: true` | BE-001BQ 父叶残余判断 | `no code movement`；下一步只能进入 BE-001BR-01 `backend.runtime.routes` 父叶残余判断，不得回改 AI proposal 或 release transition |
 | `markdown/06-milestones/v4.16.0/230-backend.runtime.routes第二轮父叶残余判断.md` backend runtime routes second parent residual decision | `backend.runtime.routes` | 父叶残余判断，run/backtest/mutation route child 已关闭但父叶保持 `stop_split: false` | BE-001BR 父叶残余判断 | `no code movement`；下一步只能进入 BE-001BS-01 `backend.runtime.routes.experiment` 单子叶等价基线，不得迁移 route handler 或 release transition |
 | `markdown/06-milestones/v4.16.0/231-backend.runtime.routes.experiment单子叶等价基线.md` backend runtime routes experiment baseline | `backend.runtime.routes.experiment` | 单子叶等价基线，冻结 experiment route group | BE-001BS 单子叶基线 | `no code movement`；下一步只能进入 BE-001BS-02 抽离方案，不得创建 route child、迁移 handler 或 release transition |
+| `markdown/06-milestones/v4.16.0/232-backend.runtime.routes.experiment抽离方案.md` backend runtime routes experiment extraction plan | `backend.runtime.routes.experiment` | 抽离方案，下一批只迁移五个 experiment route registration | BE-001BS 抽离方案 | `no code movement`；下一步只能进入 BE-001BS-03 实际抽离，不得迁移 handler 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
