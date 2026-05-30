@@ -210,6 +210,7 @@ v4.7.0 系统应被理解为：
 - BE-001BZ-01 已完成 `backend.runtime.routes` 第六轮父叶残余判断并设置 `stop_split: true`；下一步只能进入 BE-001CA-01 `backend.runtime` 父叶残余判断。
 - BE-001CA-01 已完成 `backend.runtime` 父叶残余判断；`backend.runtime.routes` 已关闭，但 `src/runtime/mod.rs` 仍有 report/evidence/ops handler 残余，因此父叶保持 `stop_split: false`，下一步只能进入 BE-001CB-01 `runtime.report_ops` 单子叶等价基线。
 - BE-001CB-01 已建立 `runtime.report_ops` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001CB-02 抽离方案，且 v1 ops/report endpoints 的测试缺口必须在方案中显式处理。
+- BE-001CB-02 已建立 `runtime.report_ops` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CB-03 实际抽离，且不得迁移 `runtime.evidence_health`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState` 或发布过渡连接。
 
 ## 当前收尾/发布状态
 

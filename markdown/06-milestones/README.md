@@ -264,6 +264,7 @@
 | 250 | `v4.16.0/250-backend.runtime.routes第六轮父叶残余判断.md` | BE-001BZ-01 `backend.runtime.routes` 第六轮父叶残余判断，route aggregate 收口 | 📋 已创建 |
 | 251 | `v4.16.0/251-backend.runtime父叶残余判断.md` | BE-001CA-01 `backend.runtime` 父叶残余判断，选择 `runtime.report_ops` 下一候选 | 📋 已创建 |
 | 252 | `v4.16.0/252-runtime.report_ops单子叶等价基线.md` | BE-001CB-01 `runtime.report_ops` 单子叶等价基线 | 📋 已创建 |
+| 253 | `v4.16.0/253-runtime.report_ops抽离方案.md` | BE-001CB-02 `runtime.report_ops` 抽离方案 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
