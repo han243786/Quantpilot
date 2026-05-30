@@ -316,6 +316,7 @@
 | 302 | `v4.16.0/302-runtime.experiment_limit抽离记录.md` | BE-001CT-04 `runtime.experiment_limit` 实际抽离 | 📋 已创建 |
 | 303 | `v4.16.0/303-runtime.experiment_limit单叶closeout.md` | BE-001CT-05 `runtime.experiment_limit` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 | 304 | `v4.16.0/304-backend.runtime第八轮父叶残余判断.md` | BE-001CU-01 `backend.runtime` 第八轮父叶残余判断，选择 `runtime.parent_include_cleanup` 下一候选 | 📋 已创建 |
+| 305 | `v4.16.0/305-runtime.parent_include_cleanup单子叶等价基线.md` | BE-001CV-01 `runtime.parent_include_cleanup` 单子叶等价基线，冻结 drained include cleanup 删除边界 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
