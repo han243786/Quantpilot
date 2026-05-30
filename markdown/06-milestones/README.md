@@ -237,6 +237,7 @@
 | 223 | `v4.16.0/223-runtime.mutation.ai_proposal.status_transition单叶closeout.md` | BE-001BN-04 `runtime.mutation.ai_proposal.status_transition` 单叶 closeout | 📋 已创建 |
 | 224 | `v4.16.0/224-runtime.mutation.ai_proposal第八轮父叶残余判断.md` | BE-001BO-01 `runtime.mutation.ai_proposal` 第八轮父叶残余判断，下一候选为 `proposal_creation` | 📋 已创建 |
 | 225 | `v4.16.0/225-runtime.mutation.ai_proposal.proposal_creation单子叶等价基线.md` | BE-001BP-01 `runtime.mutation.ai_proposal.proposal_creation` 单子叶等价基线 | 📋 已创建 |
+| 226 | `v4.16.0/226-runtime.mutation.ai_proposal.proposal_creation抽离方案.md` | BE-001BP-02 `runtime.mutation.ai_proposal.proposal_creation` 抽离方案 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
