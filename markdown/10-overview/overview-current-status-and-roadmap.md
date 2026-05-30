@@ -253,6 +253,7 @@ v4.7.0 系统应被理解为：
 - BE-001CQ-01 已完成 `backend.runtime` 第六轮父叶残余判断；父级保持 `stop_split: false`，下一步只能进入 BE-001CR-01 `runtime.run_guard` 单子叶等价基线。
 - BE-001CR-01 已建立 `runtime.run_guard` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001CR-02 抽离方案。
 - BE-001CR-02 已建立 `runtime.run_guard` 抽离方案；当前 `no code movement`，方案选择不单独开 test-first 批次，下一步只能进入 BE-001CR-03 实际抽离。
+- BE-001CR-03 已完成 `runtime.run_guard` 实际抽离；`src/runtime/run_guard.rs` 已创建，下一步只能进入 BE-001CR-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 
