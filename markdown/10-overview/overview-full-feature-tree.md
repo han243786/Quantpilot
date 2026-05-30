@@ -302,6 +302,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_flow.rs`
 - `src/runtime/mutation/shared_governance.rs`
 - `src/runtime/query_support.rs`
+- `src/runtime/response_support.rs`
 
 **抽离口径**: v4.16 BE-001B 已建立 9 个叶子 facade，BE-001C 已完成九叶逐叶 closeout，BE-001D 已启动 `backend.strategy_config` L3 模块壳抽离，BE-001E 已完成其余八叶薄壳抽离，BE-001F 已完成 `backend.runtime.routes` route aggregate 抽离，BE-001G 已完成 `backend.runtime.routes.run` run route group 抽离和单叶 closeout，BE-001H-03 已完成 `runtime.run.v4_handoff` 抽离与单叶 closeout，BE-001I-03 已完成 `runtime.run.session_start` 抽离与单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-04 已完成 `runtime.backtest` route facade 抽离与单叶 closeout，BE-001N-04 已完成 `runtime.backtest.execution_start` 第一轮物理抽离与单叶 closeout，BE-001O-04 已完成 `runtime.backtest.execution_start.v4_projection` 单叶 closeout，BE-001P-04 已完成 `runtime.backtest.execution_start.v4_request_resolution` 单叶 closeout，BE-001Q-04 已完成 `runtime.backtest.execution_start.v4_runtime_execution` 单叶 closeout 并设置 `stop_split: true`，BE-001R-04 已完成 `runtime.backtest.execution_start.legacy_dispatch` 单叶 closeout 并设置 `stop_split: true`，BE-001S-01 已完成 `runtime.backtest.execution_start` 父叶残余判断，BE-001T-04 已完成 `runtime.backtest.record_store` 单叶 closeout 并设置 `stop_split: true`，BE-001U-04 已完成 `runtime.backtest.replay` 单叶 closeout 并设置 `stop_split: true`，BE-001V-04 已完成 `runtime.backtest.experiment_sweep` 单叶 closeout 并设置 `stop_split: false`，BE-001W-04 已完成 `runtime.backtest.experiment_sweep.parameter_grid` 单叶 closeout 并设置 `stop_split: true`，BE-001X-01 已完成 `runtime.backtest.experiment_sweep` 父叶残余判断，BE-001Y-04 已完成 `runtime.backtest.experiment_sweep.start_orchestration` 单叶 closeout 并设置 `stop_split: true`，BE-001Z-01 已完成 `runtime.backtest.experiment_sweep` 第二轮父叶残余判断，BE-001AA-01 已建立 `runtime.backtest.experiment_sweep.record_lifecycle` 单子叶等价基线，BE-001AA-02 已建立抽离方案，BE-001AA-03 已完成实际抽离，BE-001AA-04 已完成单叶 closeout 并设置 `stop_split: true`，BE-001AB-01 已完成 `runtime.backtest.experiment_sweep` 第三轮父叶残余判断并设置父叶 `stop_split: true`，BE-001AC-01 已完成 `runtime.backtest` 父叶残余判断并设置父叶 `stop_split: true`，BE-001AE-04 已完成 `backend.runtime.routes.mutation` route facade 单叶 closeout 并设置 `stop_split: true`，BE-001AF-04 已完成 `runtime.mutation.parameter_mutation` 单叶 closeout，BE-001AH-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety` 单叶 closeout 并设置 `stop_split: true`，BE-001AJ-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.activation_flow` 单叶 closeout 并设置 `stop_split: true`，BE-001AK-01 已完成 `transition_lifecycle` 第二轮父叶残余判断，BE-001AL-04 已完成 `rollback_flow` 单叶 closeout 并设置 `stop_split: true`，BE-001AM-01 已完成 `transition_lifecycle` 第三轮父叶残余判断，BE-001AN-04 已完成 `activation_snapshot_side_effect` 单叶 closeout 并设置 `stop_split: true`，下一步进入 BE-001AO-01 父叶残余判断。`src/app_router.rs` 通过 `backend.interface_boundary` 进入各叶子；state owner、response schema 和 artifact schema 仍按各模块白箱边界保留。
 
@@ -1682,6 +1683,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/288-backend.runtime第五轮父叶残余判断.md` - v4.16.0 BE-001CO-01 `backend.runtime` 第五轮父叶残余判断
 - `markdown/06-milestones/v4.16.0/289-runtime.response_support单子叶等价基线.md` - v4.16.0 BE-001CP-01 `runtime.response_support` 单子叶等价基线
 - `markdown/06-milestones/v4.16.0/290-runtime.response_support抽离方案.md` - v4.16.0 BE-001CP-02 `runtime.response_support` 抽离方案
+- `markdown/06-milestones/v4.16.0/291-runtime.response_support抽离记录.md` - v4.16.0 BE-001CP-03 `runtime.response_support` 实际抽离
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
@@ -1839,6 +1841,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001CO-01 已完成 `backend.runtime` 第五轮父叶残余判断并保持 `stop_split: false`；下一步只能进入 BE-001CP-01 `runtime.response_support` 单子叶等价基线。
 当前最新递归点补充: BE-001CP-01 已建立 `runtime.response_support` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001CP-02 抽离方案。
 当前最新递归点补充: BE-001CP-02 已建立 `runtime.response_support` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CP-03 实际抽离。
+当前最新递归点补充: BE-001CP-03 已完成 `runtime.response_support` 实际抽离；`src/runtime/response_support.rs` 已创建，下一步只能进入 BE-001CP-04 单叶 closeout。
 
 ### 7.7 总览 (markdown/10-overview/)
 
@@ -2006,6 +2009,7 @@ storage/
 - `src/runbook.rs` — 运行手册; 改运维操作定义时改这里
 - `src/runtime/mod.rs` — 运行时主模块, Paper 运行/v4 run 路由与 `event_stream` / `run_v4_handoff` 等父级 re-export; 改运行时 API 聚合时改这里 🆕 v4.1.0
 - `src/runtime/query_support.rs` — runtime Query DTO、filter normalization 与 replay option normalization child; 改 runtime query parsing 或 replay option mapping 时改这里 🆕 v4.16.0
+- `src/runtime/response_support.rs` — runtime response DTO child; 改 discard response 或 merge records response DTO 时改这里 🆕 v4.16.0
 - `src/runtime/evidence_health.rs` — runtime evidence health / cleanup handler 与 report status counts helper child; 改 evidence health API 等价时改这里 🆕 v4.16.0
 - `src/runtime/report_ops.rs` — runtime report / v1 ops report handler child; 改 report ops handler 等价时改这里 🆕 v4.16.0
 - `src/runtime/report_ops/runtime_report.rs` — runtime report create/list/detail/export handler 与 materialization helper child; 改 runtime report API 等价时改这里 🆕 v4.16.0

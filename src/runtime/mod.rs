@@ -16,6 +16,7 @@ mod mutation_parameter_mutation;
 mod mutation_shared_governance;
 mod query_support;
 mod report_ops;
+mod response_support;
 #[path = "run/record_store.rs"]
 mod run_record_store;
 #[path = "run/replay_status.rs"]
@@ -58,6 +59,7 @@ pub(crate) use report_ops::{
     get_ops_daily_report, get_research_monthly_report, get_runtime_report_detail,
     get_storage_health, list_config_generations, list_merge_records, list_runtime_reports,
 };
+use response_support::{DiscardRuntimeArtifactResponse, MergeRecordEntry, MergeRecordsResponse};
 pub(crate) use run_record_store::{discard_run_record, get_run_detail, list_runs, save_run_record};
 pub(crate) use run_replay_status::{get_run_replay, get_run_status};
 pub(crate) use run_session_start::start_test_run;
@@ -79,12 +81,6 @@ use super::*;
 use axum::extract::Query;
 
 const MAX_EXPERIMENT_VARIANTS: usize = 27;
-
-#[derive(Debug, Serialize)]
-pub(crate) struct DiscardRuntimeArtifactResponse {
-    discarded_id: String,
-    discarded_kind: String,
-}
 
 /// v1.3.5: RAII 守卫 — 运行结束后自动复位 run_in_progress
 struct RunInProgressGuard<'a>(&'a std::sync::atomic::AtomicBool);
