@@ -1653,6 +1653,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/261-runtime.report_ops.v1_report_endpoints单子叶等价基线.md` - v4.16.0 BE-001CE-01 `runtime.report_ops.v1_report_endpoints` 单子叶等价基线
 - `markdown/06-milestones/v4.16.0/262-runtime.report_ops.v1_report_endpoints抽离方案.md` - v4.16.0 BE-001CE-02 `runtime.report_ops.v1_report_endpoints` test-first 抽离方案
 - `markdown/06-milestones/v4.16.0/263-runtime.report_ops.v1_report_endpoints补测记录.md` - v4.16.0 BE-001CE-03 `runtime.report_ops.v1_report_endpoints` endpoint smoke 补测记录
+- `markdown/06-milestones/v4.16.0/264-runtime.report_ops.v1_report_endpoints抽离记录.md` - v4.16.0 BE-001CE-04 `runtime.report_ops.v1_report_endpoints` 实际抽离记录
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
@@ -1667,6 +1668,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `src/runtime/mutation/ai_proposal/event_lifecycle.rs` - runtime AI proposal event lifecycle child，承接 event contract、runtime event builder、lifecycle entry 与 proposal transition persistence helper
 - `src/runtime/mutation/ai_proposal/record_query.rs` - runtime AI proposal record query child，承接 proposal list/detail/read-through loader
 - `src/runtime/mutation/ai_proposal/approval_review.rs` - runtime AI proposal approval review child，承接 approval list/detail/approve/reject/claim handler
+- `src/runtime/report_ops/v1_report_endpoints.rs` - runtime report ops v1 report endpoint child，承接 ops/audit/research 三个 v1 report handler
 - `src/runtime/mutation/parameter_mutation/record_query.rs` - runtime parameter mutation record query child，承接 list/detail read model handler
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/transition_record_persistence.rs` - transition lifecycle entry / persistence child
 - `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_record_identity.rs` - transition lifecycle rollback id identity child
@@ -1780,6 +1782,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001CE-01 已建立 `runtime.report_ops.v1_report_endpoints` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001CE-02 抽离方案。
 当前最新递归点补充: BE-001CE-02 已建立 `runtime.report_ops.v1_report_endpoints` test-first 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CE-03 endpoint smoke 补测。
 当前最新递归点补充: BE-001CE-03 已完成 `runtime.report_ops.v1_report_endpoints` endpoint smoke 补测；新增 `tests/api_v1_reports.rs` 覆盖三条 `/api/v1/reports/*` 基础 JSON contract，下一步只能进入 BE-001CE-04 实际抽离。
+当前最新递归点补充: BE-001CE-04 已完成 `runtime.report_ops.v1_report_endpoints` 实际抽离；`src/runtime/report_ops/v1_report_endpoints.rs` 已创建并承接三个 v1 report handler，下一步只能进入 BE-001CE-05 单叶 closeout。
 
 ### 7.7 总览 (markdown/10-overview/)
 
