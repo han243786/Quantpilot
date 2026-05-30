@@ -8,6 +8,7 @@ use crate::{runtime as runtime_handlers, AppState};
 pub const MODULE_ID: &str = "backend.runtime.routes";
 
 pub mod backtest;
+pub mod experiment;
 pub mod mutation;
 pub mod run;
 
@@ -31,7 +32,7 @@ pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
 
     let router = mutation::register_routes(router);
 
-    router
+    let router = router
         .route(
             "/api/runtime/reports",
             get(runtime_handlers::list_runtime_reports)
@@ -44,24 +45,11 @@ pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
         .route(
             "/api/runtime/reports/:report_id/export",
             get(runtime_handlers::export_runtime_report_artifact),
-        )
-        .route(
-            "/api/runtime/experiments/backtest-sweep",
-            post(runtime_handlers::start_backtest_experiment),
-        )
-        .route(
-            "/api/runtime/experiments",
-            get(runtime_handlers::list_experiments),
-        )
-        .route(
-            "/api/runtime/experiments/:experiment_id/save",
-            post(runtime_handlers::save_experiment_record),
-        )
-        .route(
-            "/api/runtime/experiments/:experiment_id",
-            get(runtime_handlers::get_experiment_detail)
-                .delete(runtime_handlers::discard_experiment_record),
-        )
+        );
+
+    let router = experiment::register_routes(router);
+
+    router
         .route(
             "/api/v1/merge/records",
             get(runtime_handlers::list_merge_records),

@@ -244,6 +244,7 @@
 | 230 | `v4.16.0/230-backend.runtime.routes第二轮父叶残余判断.md` | BE-001BR-01 `backend.runtime.routes` 第二轮父叶残余判断 | 📋 已创建 |
 | 231 | `v4.16.0/231-backend.runtime.routes.experiment单子叶等价基线.md` | BE-001BS-01 `backend.runtime.routes.experiment` 单子叶等价基线 | 📋 已创建 |
 | 232 | `v4.16.0/232-backend.runtime.routes.experiment抽离方案.md` | BE-001BS-02 `backend.runtime.routes.experiment` 抽离方案 | 📋 已创建 |
+| 233 | `v4.16.0/233-backend.runtime.routes.experiment抽离记录.md` | BE-001BS-03 `backend.runtime.routes.experiment` 实际抽离记录 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
