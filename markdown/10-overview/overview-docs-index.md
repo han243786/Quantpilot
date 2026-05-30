@@ -223,6 +223,7 @@
 | v4.16.0 / BE-001BU-04 | 新增: `backend.runtime.routes.evidence` 单叶 closeout 已完成并设置 `stop_split: true`，下一步回到父叶残余判断 |
 | v4.16.0 / BE-001BV-01 | 新增: `backend.runtime.routes` 第四轮父叶残余判断已完成，下一步进入 `backend.runtime.routes.event_stream` 单子叶等价基线 |
 | v4.16.0 / BE-001BW-01 | 新增: `backend.runtime.routes.event_stream` 单子叶等价基线已建立，下一步进入抽离方案 |
+| v4.16.0 / BE-001BW-02 | 新增: `backend.runtime.routes.event_stream` 抽离方案已建立，下一步进入实际抽离 |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |
