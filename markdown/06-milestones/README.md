@@ -305,6 +305,7 @@
 | 291 | `v4.16.0/291-runtime.response_support抽离记录.md` | BE-001CP-03 `runtime.response_support` 实际抽离 | 📋 已创建 |
 | 292 | `v4.16.0/292-runtime.response_support单叶closeout.md` | BE-001CP-04 `runtime.response_support` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 | 293 | `v4.16.0/293-backend.runtime第六轮父叶残余判断.md` | BE-001CQ-01 `backend.runtime` 第六轮父叶残余判断，选择 `runtime.run_guard` 下一候选 | 📋 已创建 |
+| 294 | `v4.16.0/294-runtime.run_guard单子叶等价基线.md` | BE-001CR-01 `runtime.run_guard` 单子叶等价基线 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
