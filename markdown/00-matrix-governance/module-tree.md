@@ -916,6 +916,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CJ-02）**: BE-001CJ-02 已建立 `runtime.evidence_health` 抽离方案。当前 `no code movement`，下一步 BE-001CJ-03 才允许落地 `evidence_health` child，并且迁移清单仅限 `runtime_report_status_counts`、`get_runtime_evidence_health`、`cleanup_runtime_evidence`。
 **最新状态补充（BE-001CJ-03）**: BE-001CJ-03 已完成 `runtime.evidence_health` 实际抽离。`src/runtime/evidence_health.rs` 已创建并承接两个 evidence handler 与 `runtime_report_status_counts`，父级只保留受控 re-export；下一步只能进入 BE-001CJ-04 单叶 closeout。
 **最新状态补充（BE-001CJ-04）**: BE-001CJ-04 已完成 `runtime.evidence_health` 单叶 closeout 并设置 `stop_split: true`。下一步只能进入 BE-001CK-01 `backend.runtime` 第三轮父叶残余判断，不得从本叶继续细拆 health / cleanup 微叶。
+**最新状态补充（BE-001CK-01）**: BE-001CK-01 已完成 `backend.runtime` 第三轮父叶残余判断。`backend.runtime.routes`、`runtime.report_ops` 与 `runtime.evidence_health` 均已 closeout，但 `src/runtime/mutation.rs` 仍持有 mutation shared governance helper 残余，且父级仍有 query/guard/response support 残余，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CL-01 `runtime.mutation.shared_governance` 单子叶等价基线。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1050,6 +1051,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/275-runtime.evidence_health抽离方案.md`
 - `markdown/06-milestones/v4.16.0/276-runtime.evidence_health抽离记录.md`
 - `markdown/06-milestones/v4.16.0/277-runtime.evidence_health单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/278-backend.runtime第三轮父叶残余判断.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -4854,6 +4856,8 @@ AI 声称 `runtime.evidence_health` 已完成 BE-001CJ-03 时，必须说明 `sr
 
 AI 声称 `runtime.evidence_health` 已完成 BE-001CJ-04 时，必须说明本批次是 `no code movement` closeout，`runtime.evidence_health stop_split: true`，不继续拆 health / cleanup 微叶，下一步只能进入 BE-001CK-01 `backend.runtime` 第三轮父叶残余判断。不得宣称发布过渡已启动或 Rust 重构完成。
 
+AI 声称 `backend.runtime` 已完成 BE-001CK-01 时，必须说明本批次是 `no code movement` 父叶残余判断，`backend.runtime stop_split: false`，下一步只能进入 BE-001CL-01 `runtime.mutation.shared_governance` 单子叶等价基线。不得宣称 parent support 已整体抽离、planned child 文件已创建、helper 已迁移、发布过渡已启动或 Rust 重构完成。
+
 ### 5.2 `backend.graph_compile`
 
 **层级路径**: `root.backend.graph_compile`
@@ -5584,6 +5588,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/275-runtime.evidence_health抽离方案.md` runtime evidence health extraction plan | `runtime.evidence_health` | 抽离方案，固定 child、父级 re-export、允许迁移清单和回退点 | BE-001CJ 抽离方案 | `no code movement`；下一步只能进入 BE-001CJ-03 实际抽离，迁移清单仅限三个函数 |
 | `markdown/06-milestones/v4.16.0/276-runtime.evidence_health抽离记录.md` runtime evidence health extraction record | `runtime.evidence_health` | 实际抽离，创建 child module 并迁移两个 handler 与 status count helper | BE-001CJ 抽离记录 | 下一步只能进入 BE-001CJ-04 单叶 closeout；不得迁移 route/schema/persistence/metrics/state owner |
 | `markdown/06-milestones/v4.16.0/277-runtime.evidence_health单叶closeout.md` runtime evidence health closeout | `runtime.evidence_health` | 单叶 closeout，确认不继续拆 health / cleanup 微叶并设置 `stop_split: true` | BE-001CJ 单叶 closeout | `no code movement`；下一步只能进入 BE-001CK-01 `backend.runtime` 第三轮父叶残余判断 |
+| `markdown/06-milestones/v4.16.0/278-backend.runtime第三轮父叶残余判断.md` backend runtime third parent residual | `backend.runtime` | 第三轮父叶残余判断，确认 mutation shared governance 与 query/guard/response support 残余仍存在 | BE-001CK 父叶残余判断 | `no code movement`；`backend.runtime stop_split: false`；下一步只能进入 BE-001CL-01 `runtime.mutation.shared_governance` 单子叶等价基线 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
