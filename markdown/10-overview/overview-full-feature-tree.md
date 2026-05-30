@@ -1661,6 +1661,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/269-runtime.report_ops.merge_generation_health补测记录.md` - v4.16.0 BE-001CG-03 `runtime.report_ops.merge_generation_health` endpoint smoke 补测记录
 - `markdown/06-milestones/v4.16.0/270-runtime.report_ops.merge_generation_health抽离记录.md` - v4.16.0 BE-001CG-04 `runtime.report_ops.merge_generation_health` 实际抽离记录
 - `markdown/06-milestones/v4.16.0/271-runtime.report_ops.merge_generation_health单叶closeout.md` - v4.16.0 BE-001CG-05 `runtime.report_ops.merge_generation_health` 单叶 closeout
+- `markdown/06-milestones/v4.16.0/272-runtime.report_ops第二轮父叶残余判断.md` - v4.16.0 BE-001CH-01 `runtime.report_ops` 第二轮父叶残余判断
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
@@ -1798,6 +1799,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001CG-03 已完成 `runtime.report_ops.merge_generation_health` endpoint smoke 补测；新增 `tests/api_v1_ops_health.rs` 覆盖三条 v1 support/health endpoint 最小 JSON contract，下一步只能进入 BE-001CG-04 实际抽离。
 当前最新递归点补充: BE-001CG-04 已完成 `runtime.report_ops.merge_generation_health` 实际抽离；新增 `src/runtime/report_ops/merge_generation_health.rs` 承接三条 v1 support/health handler，下一步只能进入 BE-001CG-05 单叶 closeout。
 当前最新递归点补充: BE-001CG-05 已完成 `runtime.report_ops.merge_generation_health` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001CH-01 `runtime.report_ops` 父叶残余判断。
+当前最新递归点补充: BE-001CH-01 已完成 `runtime.report_ops` 第二轮父叶残余判断并设置父叶 `stop_split: true`；下一步只能进入 BE-001CI-01 `backend.runtime` 父叶残余判断。
 
 ### 7.7 总览 (markdown/10-overview/)
 

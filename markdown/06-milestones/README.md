@@ -283,6 +283,7 @@
 | 269 | `v4.16.0/269-runtime.report_ops.merge_generation_health补测记录.md` | BE-001CG-03 `runtime.report_ops.merge_generation_health` endpoint smoke 补测记录 | 📋 已创建 |
 | 270 | `v4.16.0/270-runtime.report_ops.merge_generation_health抽离记录.md` | BE-001CG-04 `runtime.report_ops.merge_generation_health` 实际抽离记录 | 📋 已创建 |
 | 271 | `v4.16.0/271-runtime.report_ops.merge_generation_health单叶closeout.md` | BE-001CG-05 `runtime.report_ops.merge_generation_health` 单叶 closeout | 📋 已创建 |
+| 272 | `v4.16.0/272-runtime.report_ops第二轮父叶残余判断.md` | BE-001CH-01 `runtime.report_ops` 第二轮父叶残余判断 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
