@@ -1618,6 +1618,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/226-runtime.mutation.ai_proposal.proposal_creation抽离方案.md` - v4.16.0 BE-001BP-02 `runtime.mutation.ai_proposal.proposal_creation` 抽离方案
 - `markdown/06-milestones/v4.16.0/227-runtime.mutation.ai_proposal.proposal_creation抽离记录.md` - v4.16.0 BE-001BP-03 `runtime.mutation.ai_proposal.proposal_creation` 实际抽离记录
 - `markdown/06-milestones/v4.16.0/228-runtime.mutation.ai_proposal.proposal_creation单叶closeout.md` - v4.16.0 BE-001BP-04 `runtime.mutation.ai_proposal.proposal_creation` 单叶 closeout
+- `markdown/06-milestones/v4.16.0/229-runtime.mutation.ai_proposal第九轮父叶残余判断.md` - v4.16.0 BE-001BQ-01 `runtime.mutation.ai_proposal` 父叶残余判断
 - `src/runtime/mutation/ai_proposal.rs` - runtime AI proposal child，承接 AI proposal / approval public handler 与专属 helper
 - `src/runtime/mutation/ai_proposal/proposal_creation.rs` - runtime AI proposal proposal creation child，承接 `create_runtime_ai_proposal`
 - `src/runtime/mutation/ai_proposal/approval_persistence.rs` - runtime AI proposal approval persistence child，承接 approval record disk read/write helper
@@ -1706,6 +1707,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001BP-02 已建立 `runtime.mutation.ai_proposal.proposal_creation` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001BP-03 实际抽离。
 当前最新递归点补充: BE-001BP-03 已完成 `runtime.mutation.ai_proposal.proposal_creation` 实际抽离；`create_runtime_ai_proposal` 已迁入 `src/runtime/mutation/ai_proposal/proposal_creation.rs`，下一步只能进入 BE-001BP-04 单叶 closeout。
 当前最新递归点补充: BE-001BP-04 已完成 `runtime.mutation.ai_proposal.proposal_creation` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001BQ-01 `runtime.mutation.ai_proposal` 父叶残余判断。
+当前最新递归点补充: BE-001BQ-01 已完成 `runtime.mutation.ai_proposal` 父叶残余判断并设置父叶 `stop_split: true`；下一步只能进入 BE-001BR-01 `backend.runtime.routes` 父叶残余判断。
 
 ### 7.7 总览 (markdown/10-overview/)
 

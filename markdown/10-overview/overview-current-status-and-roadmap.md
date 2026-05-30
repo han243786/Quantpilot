@@ -186,6 +186,7 @@ v4.7.0 系统应被理解为：
 - BE-001BP-02 已建立 `runtime.mutation.ai_proposal.proposal_creation` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001BP-03 实际抽离。
 - BE-001BP-03 已完成 `runtime.mutation.ai_proposal.proposal_creation` 实际抽离；`create_runtime_ai_proposal` 已迁入 `src/runtime/mutation/ai_proposal/proposal_creation.rs`，下一步只能进入 BE-001BP-04 单叶 closeout。
 - BE-001BP-04 已完成 `runtime.mutation.ai_proposal.proposal_creation` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001BQ-01 `runtime.mutation.ai_proposal` 父叶残余判断。
+- BE-001BQ-01 已完成 `runtime.mutation.ai_proposal` 父叶残余判断并设置 `stop_split: true`；下一步只能进入 BE-001BR-01 `backend.runtime.routes` 父叶残余判断。
 
 ## 当前收尾/发布状态
 
