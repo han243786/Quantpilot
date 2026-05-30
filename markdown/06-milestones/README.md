@@ -255,6 +255,7 @@
 | 241 | `v4.16.0/241-backend.runtime.routes.event_stream单子叶等价基线.md` | BE-001BW-01 `backend.runtime.routes.event_stream` 单子叶等价基线 | 📋 已创建 |
 | 242 | `v4.16.0/242-backend.runtime.routes.event_stream抽离方案.md` | BE-001BW-02 `backend.runtime.routes.event_stream` 抽离方案 | 📋 已创建 |
 | 243 | `v4.16.0/243-backend.runtime.routes.event_stream抽离记录.md` | BE-001BW-03 `backend.runtime.routes.event_stream` 实际抽离记录 | 📋 已创建 |
+| 244 | `v4.16.0/244-backend.runtime.routes.event_stream单叶closeout.md` | BE-001BW-04 `backend.runtime.routes.event_stream` 单叶 closeout | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
