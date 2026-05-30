@@ -260,6 +260,7 @@ v4.7.0 系统应被理解为：
 - BE-001CT-02 已建立 `runtime.experiment_limit` test-first 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CT-03 endpoint smoke 补测。
 - BE-001CT-03 已完成 `runtime.experiment_limit` endpoint smoke 补测；`api_experiments` 已覆盖 36 个变体超过 27 上限的 bad_request，下一步只能进入 BE-001CT-04 实际抽离。
 - BE-001CT-04 已完成 `runtime.experiment_limit` 实际抽离；`src/runtime/experiment_limit.rs` 已创建，下一步只能进入 BE-001CT-05 单叶 closeout。
+- BE-001CT-05 已完成 `runtime.experiment_limit` 单叶 closeout；`runtime.experiment_limit stop_split: true`，下一步只能进入 BE-001CU-01 `backend.runtime` 第八轮父叶残余判断。
 
 ## 当前收尾/发布状态
 
