@@ -9770,6 +9770,35 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/240-*.md", @(
+        @("BE-001BV-01", "parent residual marker"),
+        @("BE-001BW-01", "next event stream baseline marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend.runtime.routes", "runtime routes parent marker"),
+        @("backend.runtime.routes.evidence", "closed evidence child marker"),
+        @("backend.runtime.routes.event_stream", "event stream candidate marker"),
+        @("backend.runtime.routes.report_ops", "report ops candidate marker"),
+        @("stop_split: false", "parent stop split false marker"),
+        @("stop_split: true", "closed child stop split marker"),
+        @("src/backend/runtime/routes.rs", "route aggregate file"),
+        @("src/backend/runtime/routes/evidence.rs", "evidence route child file"),
+        @("/api/runtime/runs/:run_id/events", "event stream route marker"),
+        @("runtime_handlers::stream_run_events", "event stream handler marker"),
+        @("stream_run_events", "event stream handler short marker"),
+        @("report_ops", "report ops marker"),
+        @("AppState", "app state marker"),
+        @("schema owner", "schema owner marker"),
+        @("frontend caller", "frontend caller marker"),
+        @("runtime persistence owner", "runtime persistence owner marker"),
+        @("release transition guard", "release transition guard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test --no-run", "cargo test no-run gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 
