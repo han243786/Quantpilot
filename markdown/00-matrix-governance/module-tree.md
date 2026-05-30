@@ -933,6 +933,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CP-04）**: BE-001CP-04 已完成 `runtime.response_support` 单叶 closeout 并设置 `stop_split: true`。下一步只能进入 BE-001CQ-01 `backend.runtime` 第六轮父叶残余判断，不得从 response_support 继续细拆。
 **最新状态补充（BE-001CQ-01）**: BE-001CQ-01 已完成 `backend.runtime` 第六轮父叶残余判断。`runtime.response_support` 已 closeout，但父级仍有 run guard、experiment limit 与 drained parent include residual，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CR-01 `runtime.run_guard` 单子叶等价基线。
 **最新状态补充（BE-001CR-01）**: BE-001CR-01 已建立 `runtime.run_guard` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，`RunInProgressGuard` 仍在 `src/runtime/mod.rs`；下一步只能进入 BE-001CR-02 抽离方案。
+**最新状态补充（BE-001CR-02）**: BE-001CR-02 已建立 `runtime.run_guard` 抽离方案。当前 `no code movement`，方案选择不单独开 test-first 批次，planned child 文件尚未创建；下一步只能进入 BE-001CR-03 实际抽离。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -5073,16 +5074,17 @@ AI 声称 BE-001CP-04 完成时，必须说明本批次是 `no code movement` cl
 
 **层级路径**: `root.backend.runtime.runtime.run_guard`
 **父模块**: `backend.runtime`
-**状态**: v4.16 BE-001CR-01 单子叶等价基线已建立。当前 `no code movement`；planned child 文件尚未创建；下一步只能进入 BE-001CR-02 抽离方案。
+**状态**: v4.16 BE-001CR-02 抽离方案已建立。当前 `no code movement`；planned child 文件尚未创建；下一步只能进入 BE-001CR-03 实际抽离。
 **真实文件**:
 - `src/runtime/mod.rs`
 - `src/runtime/run/session_start.rs`
 - `src/runtime/run/v4_handoff.rs`
 - `markdown/06-milestones/v4.16.0/293-backend.runtime第六轮父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/294-runtime.run_guard单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/295-runtime.run_guard抽离方案.md`
 
 **职责**:
-冻结 `RunInProgressGuard` 的白箱边界。当前只登记 run guard owner、调用方、`AppState.run_in_progress` 输入、`swap(true, Ordering::AcqRel)` 进入语义、Drop `store(false, Ordering::Release)` 复位语义与后续抽离门禁；不拥有 experiment limit、parent include cleanup、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState` owner、lock order 或 release transition guard。
+冻结 `RunInProgressGuard` 的白箱边界，并固定 BE-001CR-03 的最小迁移方式。当前只登记 run guard owner、调用方、`AppState.run_in_progress` 输入、`swap(true, Ordering::AcqRel)` 进入语义、Drop `store(false, Ordering::Release)` 复位语义、plain import、`pub(super)` visibility 与回退点；不拥有 experiment limit、parent include cleanup、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState` owner、lock order 或 release transition guard。
 
 **输入**:
 | 输入 | 来源 | 格式/类型 | 约束 |
@@ -5105,11 +5107,15 @@ AI 声称 BE-001CP-04 完成时，必须说明本批次是 `no code movement` cl
 **父级通信规则**:
 `runtime.run_guard` 后续若实际抽离，只能经 `src/runtime/mod.rs` controlled run guard surface 服务 run child callers。父级方案只能引入 planned child 和 plain import，不得用 `pub(crate) use` 扩大对外 surface。开发者未明确进入发布版本过渡前，不得让 sibling child、route facade、frontend caller、schema owner、runtime persistence owner、storage lifecycle owner 或 `AppState` 横向直连 planned child。
 
+BE-001CR-02 固定 BE-001CR-03 的父级声明为 `mod run_guard;` 与 plain `use run_guard::RunInProgressGuard;`。方案选择不单独开 test-first 批次，但允许实际抽离时在 child 内新增最小 unit smoke；不得把 `swap(true, Ordering::AcqRel)` 移入 guard，不得统一 legacy/v4 busy response。
+
 **回归保护**:
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_v1_reports`；`cargo test -p quantpilot --test api_v1_ops_health`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 
 **幻觉检查点**:
 AI 声称 BE-001CR-01 完成时，必须说明本批次是 `no code movement` 基线，planned run guard child 尚未创建，`RunInProgressGuard` 仍在 `src/runtime/mod.rs`，两个调用方仍为 `src/runtime/run/session_start.rs` 与 `src/runtime/run/v4_handoff.rs`，下一步只能进入 BE-001CR-02 抽离方案。不得宣称 run guard 已抽离、experiment limit 已处理、parent include 已删除、发布过渡已启动或 Rust 重构完成。
+
+AI 声称 BE-001CR-02 完成时，必须说明本批次是 `no code movement` 抽离方案，planned run guard child 尚未创建，BE-001CR-03 的迁移清单仅限 `RunInProgressGuard` 与 Drop impl，父级只允许 `mod run_guard;` 与 plain `use run_guard::RunInProgressGuard;`，下一步只能进入 BE-001CR-03 实际抽离。不得宣称 run guard 已迁移、experiment limit 已处理、parent include 已删除、发布过渡已启动或 Rust 重构完成。
 
 ### 5.2 `backend.graph_compile`
 
@@ -5858,6 +5864,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/292-runtime.response_support单叶closeout.md` runtime response support closeout | `runtime.response_support` | 单叶 closeout，确认不继续拆 discard / merge response 微叶 | BE-001CP 单叶 closeout | `runtime.response_support stop_split: true`；下一步只能进入 BE-001CQ-01 `backend.runtime` 第六轮父叶残余判断 |
 | `markdown/06-milestones/v4.16.0/293-backend.runtime第六轮父叶残余判断.md` backend runtime sixth parent residual | `backend.runtime` | 第六轮父叶残余判断，确认 run guard / experiment limit / parent include residual 仍存在 | BE-001CQ 父叶残余判断 | `no code movement`；`backend.runtime stop_split: false`；下一步只能进入 BE-001CR-01 `runtime.run_guard` 单子叶等价基线 |
 | `markdown/06-milestones/v4.16.0/294-runtime.run_guard单子叶等价基线.md` runtime run guard baseline | `runtime.run_guard` | 单子叶等价基线，冻结 run guard 并发复位语义、调用方和 planned child 门禁 | BE-001CR 单子叶基线 | `no code movement`；下一步只能进入 BE-001CR-02 抽离方案，不得创建 planned child 文件或迁移 guard |
+| `markdown/06-milestones/v4.16.0/295-runtime.run_guard抽离方案.md` runtime run guard extraction plan | `runtime.run_guard` | 抽离方案，固定 planned child、父级声明、plain import、`pub(super)` visibility、test-first 判定和回退点 | BE-001CR 抽离方案 | `no code movement`；下一步只能进入 BE-001CR-03 实际抽离，不得迁移 experiment limit 或删除 parent include |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
