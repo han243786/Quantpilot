@@ -258,6 +258,7 @@
 | 244 | `v4.16.0/244-backend.runtime.routes.event_stream单叶closeout.md` | BE-001BW-04 `backend.runtime.routes.event_stream` 单叶 closeout | 📋 已创建 |
 | 245 | `v4.16.0/245-backend.runtime.routes第五轮父叶残余判断.md` | BE-001BX-01 `backend.runtime.routes` 第五轮父叶残余判断，下一候选为 `report_ops` | 📋 已创建 |
 | 246 | `v4.16.0/246-backend.runtime.routes.report_ops单子叶等价基线.md` | BE-001BY-01 `backend.runtime.routes.report_ops` 单子叶等价基线 | 📋 已创建 |
+| 247 | `v4.16.0/247-backend.runtime.routes.report_ops抽离方案.md` | BE-001BY-02 `backend.runtime.routes.report_ops` 抽离方案 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
