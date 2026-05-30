@@ -244,6 +244,7 @@ v4.7.0 系统应被理解为：
 - BE-001CN-01 已建立 `runtime.query_support` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001CN-02 抽离方案。
 - BE-001CN-02 已建立 `runtime.query_support` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CN-03 实际抽离。
 - BE-001CN-03 已完成 `runtime.query_support` 实际抽离；`src/runtime/query_support.rs` 承接 Query DTO 与 filter/replay normalization，下一步只能进入 BE-001CN-04 单叶 closeout。
+- BE-001CN-04 已完成 `runtime.query_support` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001CO-01 `backend.runtime` 第五轮父叶残余判断。
 
 ## 当前收尾/发布状态
 
