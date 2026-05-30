@@ -312,6 +312,7 @@
 | 298 | `v4.16.0/298-backend.runtime第七轮父叶残余判断.md` | BE-001CS-01 `backend.runtime` 第七轮父叶残余判断，选择 `runtime.experiment_limit` 下一候选 | 📋 已创建 |
 | 299 | `v4.16.0/299-runtime.experiment_limit单子叶等价基线.md` | BE-001CT-01 `runtime.experiment_limit` 单子叶等价基线 | 📋 已创建 |
 | 300 | `v4.16.0/300-runtime.experiment_limit抽离方案.md` | BE-001CT-02 `runtime.experiment_limit` test-first 抽离方案 | 📋 已创建 |
+| 301 | `v4.16.0/301-runtime.experiment_limit补测记录.md` | BE-001CT-03 `runtime.experiment_limit` endpoint smoke 补测 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

@@ -128,6 +128,42 @@ async fn experiment_endpoints_expose_parameter_grid_and_variant_summaries() {
 }
 
 #[tokio::test(flavor = "multi_thread")]
+async fn experiment_sweep_rejects_parameter_grid_above_variant_limit() {
+    let app = common::test_app("api_experiments_variant_limit");
+    let mut request = common::sample_runtime_request();
+    request["backtest_options"] = serde_json::json!({
+        "replay_source": "deterministic_mock"
+    });
+    request["parameter_grid"] = serde_json::json!({
+        "fee_bps": [1.0, 2.0, 3.0, 4.0],
+        "slippage_bps": [1.0, 2.0, 3.0],
+        "latency_ms": [0, 100, 200]
+    });
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .uri("/api/runtime/experiments/backtest-sweep")
+                .method("POST")
+                .header("content-type", "application/json")
+                .body(Body::from(request.to_string()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+    let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
+    let payload: Value = serde_json::from_slice(&body).unwrap();
+    assert_eq!(payload["error"], "bad_request");
+    let message = payload["message"]
+        .as_str()
+        .expect("error response should include message");
+    assert!(message.contains("参数扫描展开为 36 个变体"));
+    assert!(message.contains("超出当前限制 27"));
+}
+
+#[tokio::test(flavor = "multi_thread")]
 async fn experiment_preview_can_be_discarded_before_save_only() {
     let app = common::test_app("api_experiments_discard");
     let mut request = common::sample_runtime_request();
