@@ -211,6 +211,7 @@
 | v4.16.0 / BE-001BP-03 | 新增: `runtime.mutation.ai_proposal.proposal_creation` 实际抽离已完成，下一步进入 BE-001BP-04 单叶 closeout |
 | v4.16.0 / BE-001BP-04 | 新增: `runtime.mutation.ai_proposal.proposal_creation` 单叶 closeout 已完成，设置 `stop_split: true` |
 | v4.16.0 / BE-001BQ-01 | 新增: `runtime.mutation.ai_proposal` 父叶残余判断已完成，设置 `stop_split: true` |
+| v4.16.0 / BE-001BR-01 | 新增: `backend.runtime.routes` 第二轮父叶残余判断已完成，父叶保持 `stop_split: false`，下一步进入 `backend.runtime.routes.experiment` 单子叶等价基线 |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |
