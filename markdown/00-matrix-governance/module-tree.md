@@ -1091,6 +1091,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 - `markdown/06-milestones/v4.16.0/130-backend.runtime.routes.mutation抽离记录.md`
 - `markdown/06-milestones/v4.16.0/131-backend.runtime.routes.mutation单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/230-backend.runtime.routes第二轮父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/231-backend.runtime.routes.experiment单子叶等价基线.md`
 
 **职责**:
 承载 backend runtime route aggregate facade 的白箱坐标，固定 `backend.runtime -> backend.runtime.routes -> src/runtime/* pub(crate) handler` 的兼容桥和等价证据。
@@ -1140,6 +1141,73 @@ BE-001BR-01 已确认 `backend.runtime.routes.run`、`backend.runtime.routes.bac
 
 **幻觉检查点**:
 AI 声称 `backend.runtime.routes` 已推进至 BE-001BR-01 时，必须说明 run/backtest/mutation 三个 route child 已关闭，但父叶仍是 `stop_split: false`。不得宣称 experiment/evidence/report_ops/event_stream route 已迁移、AppState/schema/frontend caller/runtime persistence owner 已改变、发布过渡已启动、整理或重构已经完成。
+
+### 5.1.1.A `backend.runtime.routes.experiment`
+
+**层级路径**: `root.backend.runtime.routes.experiment`
+**父模块**: `backend.runtime.routes`
+**状态**: v4.16 BE-001BS-01 单子叶等价基线已建立；当前 `no code movement`，`stop_split: pending`。本节点冻结 experiment route group 的 path/method、handler owner、父级委托、状态/persistence 边界和测试证据；planned experiment route child file 尚未创建，下一步只能进入 BE-001BS-02 抽离方案。
+**真实文件**:
+- `src/backend/runtime/routes.rs`
+- `src/runtime/backtest/experiment_sweep.rs`
+- `src/runtime/backtest/start_orchestration.rs`
+- `src/runtime/backtest/record_lifecycle.rs`
+- `src/runtime/mod.rs`
+- `tests/api_experiments.rs`
+- `tests/api_backtest.rs`
+- `tests/api_evidence_contract.rs`
+- `tests/api_run.rs`
+- `markdown/06-milestones/v4.16.0/230-backend.runtime.routes第二轮父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/231-backend.runtime.routes.experiment单子叶等价基线.md`
+
+**职责**:
+承载 experiment route group 的 route facade 白箱边界，冻结 create/list/detail/save/discard routes 与 handler owner。本节点只规划 route registration，不拥有 experiment handler、state owner、schema owner、artifact schema、compare owner、runtime persistence owner 或 frontend caller。
+
+**输入**:
+| 输入 | 来源 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| experiment request | frontend、tests | `FrontendExperimentRequest` | 不改变 graph_json、runtime_config、backtest_options 或 parameter_grid |
+| experiment id | path param | string id | 不改变 detail/save/discard scoped lookup |
+| pagination query | list route | `PaginationQuery` | 不改变 pagination response |
+| `AppState` | backend app state | shared state | 不迁移 experiments、backtests、store dir 或锁顺序 |
+
+**输出**:
+| 输出 | 去向 | 格式/类型 | 约束 |
+| --- | --- | --- | --- |
+| experiment detail | frontend、tests | `ExperimentDetailResponse` | 不改变 create/detail/save response shape |
+| experiment list | frontend、tests | `PaginatedResponse<ExperimentListItem>` | 不改变 sorting、saved flag、variant_count 或 best_backtest_id |
+| discard response | frontend、tests | `DiscardRuntimeArtifactResponse` | 不改变 preview-only discard 与 saved conflict |
+
+**route owner 基线**:
+| route | method | handler | 禁止事项 |
+| --- | --- | --- | --- |
+| `/api/runtime/experiments/backtest-sweep` | POST | `start_backtest_experiment` | 不得迁移 handler 或改变 variant execution |
+| `/api/runtime/experiments` | GET | `list_experiments` | 不得改变 list pagination / sorting |
+| `/api/runtime/experiments/:experiment_id/save` | POST | `save_experiment_record` | 不得改变 variant persistence |
+| `/api/runtime/experiments/:experiment_id` | GET | `get_experiment_detail` | 不得绕过 scoped lookup |
+| `/api/runtime/experiments/:experiment_id` | DELETE | `discard_experiment_record` | 不得改变 preview-only guard |
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `backend.runtime.routes::register_routes` | Axum Router | runtime routes | `backend.runtime` | 不得在 BE-001BS-01 创建 route child |
+| `start_backtest_experiment` | user id、`AppState`、request | experiment detail | route aggregate | 不得迁移 handler 或改变 parameter grid |
+| `list_experiments` | `AppState`、pagination | paginated list | route aggregate | 不得改变 sorting |
+| `get_experiment_detail` | user id、experiment id | experiment detail | route aggregate | 不得绕过 scoped lookup |
+| `save_experiment_record` | user id、experiment id | experiment detail | route aggregate | 不得改变 transient-to-persistent flow |
+| `discard_experiment_record` | user id、experiment id | discard response | route aggregate | 不得改变 saved conflict |
+
+**父级通信规则**:
+`backend.runtime.routes.experiment` 只能经父级 `backend.runtime.routes` 暴露 experiment routes；不得横向接管 evidence、report_ops、event_stream、backtest compare、artifact schema、frontend caller 或 executor。handler owner 仍是 `runtime.backtest.experiment_sweep` 子树，状态 owner 仍是 `AppState`。发布过渡前不得主动提出横向连接或性能旁路。ASCII guard: `release transition guard`。
+
+**回归保护**:
+`cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_experiments`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_run`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
+
+**下一步**:
+BE-001BS-02 只能建立 `backend.runtime.routes.experiment` 抽离方案，且保持 `no code movement`；不得直接创建 planned experiment route child file、迁移 handler、修改 `AppState`、schema owner、frontend caller、runtime persistence owner 或 release transition guard。
+
+**幻觉检查点**:
+AI 声称 `backend.runtime.routes.experiment` 已推进至 BE-001BS-01 时，必须说明只是建立等价基线，route 尚未抽离，planned file 尚未创建，handler 与 state/persistence owner 均未改变。不得宣称 `backend.runtime.routes` 父叶完成、experiment handler 已迁移、发布过渡已启动、整理或重构已经完成。
 
 ### 5.1.1.1 `backend.runtime.routes.mutation`
 
@@ -4725,6 +4793,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/228-runtime.mutation.ai_proposal.proposal_creation单叶closeout.md` runtime mutation ai proposal proposal creation closeout | `runtime.mutation.ai_proposal.proposal_creation` | 单叶 closeout，设置 `stop_split: true` | BE-001BP 单叶 closeout | `no code movement`；下一步只能进入 BE-001BQ-01 父叶残余判断，不得继续拆 proposal_creation 或 release transition |
 | `markdown/06-milestones/v4.16.0/229-runtime.mutation.ai_proposal第九轮父叶残余判断.md` runtime mutation ai proposal ninth parent residual decision | `runtime.mutation.ai_proposal` | 父叶残余判断，九个子叶均已 closeout 并设置父叶 `stop_split: true` | BE-001BQ 父叶残余判断 | `no code movement`；下一步只能进入 BE-001BR-01 `backend.runtime.routes` 父叶残余判断，不得回改 AI proposal 或 release transition |
 | `markdown/06-milestones/v4.16.0/230-backend.runtime.routes第二轮父叶残余判断.md` backend runtime routes second parent residual decision | `backend.runtime.routes` | 父叶残余判断，run/backtest/mutation route child 已关闭但父叶保持 `stop_split: false` | BE-001BR 父叶残余判断 | `no code movement`；下一步只能进入 BE-001BS-01 `backend.runtime.routes.experiment` 单子叶等价基线，不得迁移 route handler 或 release transition |
+| `markdown/06-milestones/v4.16.0/231-backend.runtime.routes.experiment单子叶等价基线.md` backend runtime routes experiment baseline | `backend.runtime.routes.experiment` | 单子叶等价基线，冻结 experiment route group | BE-001BS 单子叶基线 | `no code movement`；下一步只能进入 BE-001BS-02 抽离方案，不得创建 route child、迁移 handler 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
