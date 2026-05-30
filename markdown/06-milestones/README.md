@@ -308,6 +308,7 @@
 | 294 | `v4.16.0/294-runtime.run_guard单子叶等价基线.md` | BE-001CR-01 `runtime.run_guard` 单子叶等价基线 | 📋 已创建 |
 | 295 | `v4.16.0/295-runtime.run_guard抽离方案.md` | BE-001CR-02 `runtime.run_guard` 抽离方案 | 📋 已创建 |
 | 296 | `v4.16.0/296-runtime.run_guard抽离记录.md` | BE-001CR-03 `runtime.run_guard` 实际抽离 | 📋 已创建 |
+| 297 | `v4.16.0/297-runtime.run_guard单叶closeout.md` | BE-001CR-04 `runtime.run_guard` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

@@ -935,6 +935,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CR-01）**: BE-001CR-01 已建立 `runtime.run_guard` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，`RunInProgressGuard` 仍在 `src/runtime/mod.rs`；下一步只能进入 BE-001CR-02 抽离方案。
 **最新状态补充（BE-001CR-02）**: BE-001CR-02 已建立 `runtime.run_guard` 抽离方案。当前 `no code movement`，方案选择不单独开 test-first 批次，planned child 文件尚未创建；下一步只能进入 BE-001CR-03 实际抽离。
 **最新状态补充（BE-001CR-03）**: BE-001CR-03 已完成 `runtime.run_guard` 实际抽离。`src/runtime/run_guard.rs` 已创建并承接 `RunInProgressGuard` 与 Drop impl；下一步只能进入 BE-001CR-04 单叶 closeout。
+**最新状态补充（BE-001CR-04）**: BE-001CR-04 已完成 `runtime.run_guard` 单叶 closeout，并设置 `runtime.run_guard stop_split: true`。下一步只能进入 BE-001CS-01 `backend.runtime` 第七轮父叶残余判断。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -5075,7 +5076,7 @@ AI 声称 BE-001CP-04 完成时，必须说明本批次是 `no code movement` cl
 
 **层级路径**: `root.backend.runtime.runtime.run_guard`
 **父模块**: `backend.runtime`
-**状态**: v4.16 BE-001CR-03 实际抽离已完成。`src/runtime/run_guard.rs` 已创建；下一步只能进入 BE-001CR-04 单叶 closeout。
+**状态**: v4.16 BE-001CR-04 单叶 closeout 已完成。`runtime.run_guard stop_split: true`；下一步只能进入 BE-001CS-01 `backend.runtime` 第七轮父叶残余判断。
 **真实文件**:
 - `src/runtime/mod.rs`
 - `src/runtime/run_guard.rs`
@@ -5085,9 +5086,12 @@ AI 声称 BE-001CP-04 完成时，必须说明本批次是 `no code movement` cl
 - `markdown/06-milestones/v4.16.0/294-runtime.run_guard单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/295-runtime.run_guard抽离方案.md`
 - `markdown/06-milestones/v4.16.0/296-runtime.run_guard抽离记录.md`
+- `markdown/06-milestones/v4.16.0/297-runtime.run_guard单叶closeout.md`
 
 **职责**:
 承接 `RunInProgressGuard` 的白箱边界。当前 child 只拥有 run guard owner、`AtomicBool` 引用、Drop `store(false, Ordering::Release)` 复位语义和 child-local unit smoke；调用方 `swap(true, Ordering::AcqRel)` 进入检查仍保留在 `runtime.run.session_start` 与 `runtime.run.v4_handoff`。本叶不拥有 experiment limit、parent include cleanup、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState` owner、lock order 或 release transition guard。
+
+BE-001CR-04 已确认本叶不继续拆成 enter check、drop reset 或 unit smoke 微叶；继续拆分不会形成新的稳定 owner，只会扩大父子接线面。
 
 **输入**:
 | 输入 | 来源 | 格式/类型 | 约束 |
@@ -5123,6 +5127,8 @@ AI 声称 BE-001CR-01 完成时，必须说明本批次是 `no code movement` �
 AI 声称 BE-001CR-02 完成时，必须说明本批次是 `no code movement` 抽离方案，planned run guard child 尚未创建，BE-001CR-03 的迁移清单仅限 `RunInProgressGuard` 与 Drop impl，父级只允许 `mod run_guard;` 与 plain `use run_guard::RunInProgressGuard;`，下一步只能进入 BE-001CR-03 实际抽离。不得宣称 run guard 已迁移、experiment limit 已处理、parent include 已删除、发布过渡已启动或 Rust 重构完成。
 
 AI 声称 BE-001CR-03 完成时，必须说明 `src/runtime/run_guard.rs` 已创建，`RunInProgressGuard` 与 Drop impl 已迁入 child，父级只保留 `mod run_guard;` 与 plain `use run_guard::RunInProgressGuard;`，两个调用方没有新增 direct child import，下一步只能进入 BE-001CR-04 单叶 closeout。不得宣称 experiment limit 已处理、parent include 已删除、发布过渡已启动或 Rust 重构完成。
+
+AI 声称 BE-001CR-04 完成时，必须说明本批次是 `no code movement` closeout，`runtime.run_guard stop_split: true`，本叶不继续细拆，下一步只能进入 BE-001CS-01 `backend.runtime` 第七轮父叶残余判断。不得宣称 experiment limit 已处理、parent include 已删除、发布过渡已启动或 Rust 重构完成。
 
 ### 5.2 `backend.graph_compile`
 
@@ -5873,6 +5879,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/294-runtime.run_guard单子叶等价基线.md` runtime run guard baseline | `runtime.run_guard` | 单子叶等价基线，冻结 run guard 并发复位语义、调用方和 planned child 门禁 | BE-001CR 单子叶基线 | `no code movement`；下一步只能进入 BE-001CR-02 抽离方案，不得创建 planned child 文件或迁移 guard |
 | `markdown/06-milestones/v4.16.0/295-runtime.run_guard抽离方案.md` runtime run guard extraction plan | `runtime.run_guard` | 抽离方案，固定 planned child、父级声明、plain import、`pub(super)` visibility、test-first 判定和回退点 | BE-001CR 抽离方案 | `no code movement`；下一步只能进入 BE-001CR-03 实际抽离，不得迁移 experiment limit 或删除 parent include |
 | `markdown/06-milestones/v4.16.0/296-runtime.run_guard抽离记录.md` runtime run guard extraction record | `runtime.run_guard` | 实际抽离，创建 run_guard child 并迁入 RAII guard 与 Drop impl | BE-001CR 抽离记录 | 下一步只能进入 BE-001CR-04 单叶 closeout；不得处理 experiment limit、parent include cleanup 或 release transition |
+| `markdown/06-milestones/v4.16.0/297-runtime.run_guard单叶closeout.md` runtime run guard closeout | `runtime.run_guard` | 单叶 closeout，确认 run guard 不继续拆分 | BE-001CR 单叶 closeout | `runtime.run_guard stop_split: true`；下一步只能进入 BE-001CS-01 `backend.runtime` 第七轮父叶残余判断 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
