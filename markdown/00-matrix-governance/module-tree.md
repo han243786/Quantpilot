@@ -936,6 +936,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CR-02）**: BE-001CR-02 已建立 `runtime.run_guard` 抽离方案。当前 `no code movement`，方案选择不单独开 test-first 批次，planned child 文件尚未创建；下一步只能进入 BE-001CR-03 实际抽离。
 **最新状态补充（BE-001CR-03）**: BE-001CR-03 已完成 `runtime.run_guard` 实际抽离。`src/runtime/run_guard.rs` 已创建并承接 `RunInProgressGuard` 与 Drop impl；下一步只能进入 BE-001CR-04 单叶 closeout。
 **最新状态补充（BE-001CR-04）**: BE-001CR-04 已完成 `runtime.run_guard` 单叶 closeout，并设置 `runtime.run_guard stop_split: true`。下一步只能进入 BE-001CS-01 `backend.runtime` 第七轮父叶残余判断。
+**最新状态补充（BE-001CS-01）**: BE-001CS-01 已完成 `backend.runtime` 第七轮父叶残余判断。`runtime.run_guard stop_split: true` 已成立，但父级仍有 `MAX_EXPERIMENT_VARIANTS` 与 `include!("run.rs")` / `include!("mutation.rs")` / `include!("backtest.rs")` drained parent include residual，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CT-01 `runtime.experiment_limit` 单子叶等价基线。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -945,6 +946,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `src/runtime/mod.rs`
 - `src/runtime/query_support.rs`
 - `src/runtime/response_support.rs`
+- `src/runtime/run_guard.rs`
 - `src/runtime/mutation/shared_governance.rs`
 - `src/runtime/evidence_health.rs`
 - `src/runtime/report_ops.rs`
@@ -1090,6 +1092,10 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/292-runtime.response_support单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/293-backend.runtime第六轮父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/294-runtime.run_guard单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/295-runtime.run_guard抽离方案.md`
+- `markdown/06-milestones/v4.16.0/296-runtime.run_guard抽离记录.md`
+- `markdown/06-milestones/v4.16.0/297-runtime.run_guard单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/298-backend.runtime第七轮父叶残余判断.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5880,6 +5886,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/295-runtime.run_guard抽离方案.md` runtime run guard extraction plan | `runtime.run_guard` | 抽离方案，固定 planned child、父级声明、plain import、`pub(super)` visibility、test-first 判定和回退点 | BE-001CR 抽离方案 | `no code movement`；下一步只能进入 BE-001CR-03 实际抽离，不得迁移 experiment limit 或删除 parent include |
 | `markdown/06-milestones/v4.16.0/296-runtime.run_guard抽离记录.md` runtime run guard extraction record | `runtime.run_guard` | 实际抽离，创建 run_guard child 并迁入 RAII guard 与 Drop impl | BE-001CR 抽离记录 | 下一步只能进入 BE-001CR-04 单叶 closeout；不得处理 experiment limit、parent include cleanup 或 release transition |
 | `markdown/06-milestones/v4.16.0/297-runtime.run_guard单叶closeout.md` runtime run guard closeout | `runtime.run_guard` | 单叶 closeout，确认 run guard 不继续拆分 | BE-001CR 单叶 closeout | `runtime.run_guard stop_split: true`；下一步只能进入 BE-001CS-01 `backend.runtime` 第七轮父叶残余判断 |
+| `markdown/06-milestones/v4.16.0/298-backend.runtime第七轮父叶残余判断.md` backend runtime seventh parent residual | `backend.runtime` | 第七轮父叶残余判断，确认 experiment limit 与 drained parent include residual 仍存在 | BE-001CS 父叶残余判断 | `no code movement`；`backend.runtime stop_split: false`；下一步只能进入 BE-001CT-01 `runtime.experiment_limit` 单子叶等价基线 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
