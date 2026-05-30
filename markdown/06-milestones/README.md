@@ -301,6 +301,7 @@
 | 287 | `v4.16.0/287-runtime.query_support单叶closeout.md` | BE-001CN-04 `runtime.query_support` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 | 288 | `v4.16.0/288-backend.runtime第五轮父叶残余判断.md` | BE-001CO-01 `backend.runtime` 第五轮父叶残余判断，选择 `runtime.response_support` 下一候选 | 📋 已创建 |
 | 289 | `v4.16.0/289-runtime.response_support单子叶等价基线.md` | BE-001CP-01 `runtime.response_support` 单子叶等价基线 | 📋 已创建 |
+| 290 | `v4.16.0/290-runtime.response_support抽离方案.md` | BE-001CP-02 `runtime.response_support` 抽离方案 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
