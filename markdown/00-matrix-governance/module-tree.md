@@ -1039,7 +1039,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 
 **层级路径**: `root.backend.runtime.routes`
 **父模块**: `backend.runtime`
-**最新状态补充**: BE-001BY-02 已建立 `backend.runtime.routes.report_ops` 抽离方案。当前 `backend.runtime.routes` 通过 `backend.runtime.routes.run`、`backend.runtime.routes.backtest`、`backend.runtime.routes.event_stream`、`backend.runtime.routes.evidence`、`backend.runtime.routes.mutation` 与 `backend.runtime.routes.experiment` 委托六个 route child；父叶仍直接持有 report_ops route，因此保持 `stop_split: false`，下一步只能进入 BE-001BY-03 `backend.runtime.routes.report_ops` 实际抽离。
+**最新状态补充**: BE-001BY-03 已完成 `backend.runtime.routes.report_ops` 实际抽离。当前 `backend.runtime.routes` 通过 `backend.runtime.routes.run`、`backend.runtime.routes.backtest`、`backend.runtime.routes.event_stream`、`backend.runtime.routes.evidence`、`backend.runtime.routes.mutation`、`backend.runtime.routes.experiment` 与 `backend.runtime.routes.report_ops` 委托七个 route child；父叶不再直接持有 report_ops route registration，但必须先进入 BE-001BY-04 单叶 closeout，暂不宣称父叶完成。
 **状态**: v4.16 BE-001G-03 `backend.runtime.routes.run` closeout 已完成，BE-001I-03 已完成其下一个 handler sibling `runtime.run.session_start` 单叶 closeout，BE-001J-05 已完成 `runtime.run.record_store` 抽离与单叶 closeout，BE-001K-04 已完成 `runtime.run.replay_status` 抽离与单叶 closeout，BE-001L-04 已完成 `runtime.event_stream` 抽离与单叶 closeout，BE-001M-04 已完成 `runtime.backtest` route facade 抽离与单叶 closeout，BE-001V-04 已完成 `runtime.backtest.experiment_sweep` 单叶 closeout，BE-001W-04 已完成 `runtime.backtest.experiment_sweep.parameter_grid` 单叶 closeout 并设置 `stop_split: true`，BE-001Y-04 已完成 `runtime.backtest.experiment_sweep.start_orchestration` 单叶 closeout 并设置 `stop_split: true`；BE-001Z-01 已完成 `runtime.backtest.experiment_sweep` 第二轮父叶残余判断；BE-001AA-01 已建立 `runtime.backtest.experiment_sweep.record_lifecycle` 单子叶等价基线，BE-001AA-02 已建立抽离方案，BE-001AA-03 已完成实际抽离，BE-001AA-04 已完成单叶 closeout 并设置 `stop_split: true`；BE-001AB-01 已完成第三轮父叶残余判断并设置 `runtime.backtest.experiment_sweep` 父叶 `stop_split: true`；BE-001AC-01 已完成 `runtime.backtest` 父叶残余判断并设置父叶 `stop_split: true`；BE-001AD-01 已完成 `backend.runtime.routes` 父叶残余判断，确认父叶仍保持 `stop_split: false`，BE-001AE-04 已完成 `backend.runtime.routes.mutation` route facade 单叶 closeout 并设置 `stop_split: true`；BE-001AF-04 已完成 `runtime.mutation.parameter_mutation` 单叶 closeout并设置 `stop_split: false`，BE-001AH-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety` 单叶 closeout，下一步只能进入 BE-001AI-01 父叶残余判断。当前拥有 runtime route aggregate 列表，并通过 `backend.runtime.routes.run`、`backend.runtime.routes.backtest`、`backend.runtime.routes.evidence`、`backend.runtime.routes.mutation` 与 `backend.runtime.routes.experiment` 委托 route child；父级仍直接拥有 event_stream、report_ops 和 ops routes，不拥有 runtime state owner、artifact schema、compare owner 或 persistence owner。
 **真实文件**:
 - `src/backend/runtime.rs`
@@ -1049,6 +1049,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 - `src/backend/runtime/routes/event_stream.rs`
 - `src/backend/runtime/routes/experiment.rs`
 - `src/backend/runtime/routes/mutation.rs`
+- `src/backend/runtime/routes/report_ops.rs`
 - `src/backend/runtime/routes/run.rs`
 - `src/runtime/event_stream.rs`
 - `src/runtime/run/record_store.rs`
@@ -1111,6 +1112,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 - `markdown/06-milestones/v4.16.0/245-backend.runtime.routes第五轮父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/246-backend.runtime.routes.report_ops单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/247-backend.runtime.routes.report_ops抽离方案.md`
+- `markdown/06-milestones/v4.16.0/248-backend.runtime.routes.report_ops抽离记录.md`
 
 **职责**:
 承载 backend runtime route aggregate facade 的白箱坐标，固定 `backend.runtime -> backend.runtime.routes -> src/runtime/* pub(crate) handler` 的兼容桥和等价证据。
@@ -1150,19 +1152,19 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 `backend.runtime.routes` 只能经 `backend.runtime` 和 `backend.interface_boundary` 暴露 runtime routes；不得横向直接改 `backend.graph_compile`、`backend.storage_security`、`executor` 或 frontend state。
 
 **允许调用的子模块**:
-`backend.runtime.routes.run`、`backend.runtime.routes.backtest`、`backend.runtime.routes.event_stream`、`backend.runtime.routes.evidence`、`backend.runtime.routes.mutation`、`backend.runtime.routes.experiment`、`src/runtime/mod.rs`、`src/runtime/run.rs`、`src/runtime/backtest.rs`、`src/runtime/mutation.rs`、`src/backtest_compare.rs` 中的 `pub(crate)` route targets。真实 run/backtest/mutation/report/experiment/evidence/event_stream 子域仍留在 `src/runtime/`，后续若继续拆分必须另起单子叶等价基线。
+`backend.runtime.routes.run`、`backend.runtime.routes.backtest`、`backend.runtime.routes.event_stream`、`backend.runtime.routes.evidence`、`backend.runtime.routes.mutation`、`backend.runtime.routes.experiment`、`backend.runtime.routes.report_ops`、`src/runtime/mod.rs`、`src/runtime/run.rs`、`src/runtime/backtest.rs`、`src/runtime/mutation.rs`、`src/backtest_compare.rs` 中的 `pub(crate)` route targets。真实 run/backtest/mutation/report/experiment/evidence/event_stream 子域仍留在 `src/runtime/`，后续若继续拆分必须另起单子叶等价基线。
 
 **回归保护**:
 `cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_sse`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
 
 **父叶残余判断**:
-BE-001BY-02 已建立 `backend.runtime.routes.report_ops` 抽离方案；`backend.runtime.routes.run`、`backend.runtime.routes.backtest`、`backend.runtime.routes.event_stream`、`backend.runtime.routes.evidence`、`backend.runtime.routes.mutation` 与 `backend.runtime.routes.experiment` 六个 route child 均由父级委托且已完成当前递归 closeout。父叶仍直接持有 report_ops route，因此继续保持 `stop_split: false`。下一步只能进入 BE-001BY-03 `backend.runtime.routes.report_ops` 实际抽离，不得迁移 handler、schema、state owner、frontend caller、runtime persistence owner 或 release transition guard。
+BE-001BY-03 已完成 `backend.runtime.routes.report_ops` 实际抽离；`backend.runtime.routes.run`、`backend.runtime.routes.backtest`、`backend.runtime.routes.event_stream`、`backend.runtime.routes.evidence`、`backend.runtime.routes.mutation`、`backend.runtime.routes.experiment` 与 `backend.runtime.routes.report_ops` 七个 route child 均由父级委托。report_ops route child 尚未完成单叶 closeout，因此父叶暂不宣称完成。下一步只能进入 BE-001BY-04 `backend.runtime.routes.report_ops` 单叶 closeout，不得迁移 handler、schema、state owner、frontend caller、runtime persistence owner 或 release transition guard。
 
 **细分价值判断**:
-`backend.runtime.routes.experiment` 已完成 BE-001BS-04 单叶 closeout 并设置 `stop_split: true`；继续拆成 sweep/list/save/detail/discard 微 facade 不会形成新的稳定 owner。BE-001BU-04 已确认 `backend.runtime.routes.evidence` 也设置 `stop_split: true`，继续拆 health/cleanup 微 facade 不会形成新的稳定 owner。BE-001BW-04 已确认 `backend.runtime.routes.event_stream` 也设置 `stop_split: true`，继续拆 SSE 微 facade 不会形成新的稳定 owner。BE-001BY-02 已为 `backend.runtime.routes.report_ops` 建立抽离方案；下一步只允许进入 report_ops route facade 实际抽离。
+`backend.runtime.routes.experiment` 已完成 BE-001BS-04 单叶 closeout 并设置 `stop_split: true`；继续拆成 sweep/list/save/detail/discard 微 facade 不会形成新的稳定 owner。BE-001BU-04 已确认 `backend.runtime.routes.evidence` 也设置 `stop_split: true`，继续拆 health/cleanup 微 facade 不会形成新的稳定 owner。BE-001BW-04 已确认 `backend.runtime.routes.event_stream` 也设置 `stop_split: true`，继续拆 SSE 微 facade 不会形成新的稳定 owner。BE-001BY-03 已完成 `backend.runtime.routes.report_ops` 实际抽离；下一步只允许进入 report_ops route facade 单叶 closeout。
 
 **幻觉检查点**:
-AI 声称 `backend.runtime.routes` 已推进至 BE-001BY-02 时，必须说明父叶仍是 `stop_split: false`，report_ops 只是完成抽离方案，report_ops route 尚未迁移，handler/AppState/schema/frontend caller/runtime persistence owner 均未改变。不得宣称发布过渡已启动、整理或重构已经完成。
+AI 声称 `backend.runtime.routes` 已推进至 BE-001BY-03 时，必须说明 report_ops 只完成 route facade 实际抽离，handler/AppState/schema/frontend caller/runtime persistence owner 均未改变，下一步仍需 report_ops 单叶 closeout。不得宣称发布过渡已启动、整理或重构已经完成。
 
 ### 5.1.1.A `backend.runtime.routes.experiment`
 
@@ -1369,9 +1371,10 @@ AI 声称 `backend.runtime.routes.event_stream` 已推进至 BE-001BW-04 时，�
 
 **层级路径**: `root.backend.runtime.routes.report_ops`
 **父模块**: `backend.runtime.routes`
-**状态**: v4.16 BE-001BY-02 抽离方案已建立；当前 `no code movement`，下一步 BE-001BY-03 才允许创建 planned report_ops route child file，并以 `report_ops::register_runtime_report_routes(router)` 与 `report_ops::register_ops_routes(router)` 两个父级委托入口保持现有 route order。route registration 仍在 `src/backend/runtime/routes.rs`，handler owner 仍在 `src/runtime/mod.rs`，planned route child file 尚未创建。本节点 `stop_split: pending`，下一步只能进入 BE-001BY-03 实际抽离。
+**状态**: v4.16 BE-001BY-03 实际抽离已完成；`src/backend/runtime/routes/report_ops.rs` 已创建并承接 runtime reports、merge records、runtime generations、storage health、ops/audit/research reports 的 route registration。父级通过 `report_ops::register_runtime_report_routes(router)` 与 `report_ops::register_ops_routes(router)` 委托并保持现有 route order；handler owner 仍在 `src/runtime/mod.rs`。本节点 `stop_split: pending`，下一步只能进入 BE-001BY-04 单叶 closeout。
 **真实文件**:
 - `src/backend/runtime/routes.rs`
+- `src/backend/runtime/routes/report_ops.rs`
 - `src/runtime/mod.rs`
 - `src/runtime_persistence.rs`
 - `src/frontend_api_types.rs`
@@ -1384,6 +1387,7 @@ AI 声称 `backend.runtime.routes.event_stream` 已推进至 BE-001BW-04 时，�
 - `markdown/06-milestones/v4.16.0/245-backend.runtime.routes第五轮父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/246-backend.runtime.routes.report_ops单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/247-backend.runtime.routes.report_ops抽离方案.md`
+- `markdown/06-milestones/v4.16.0/248-backend.runtime.routes.report_ops抽离记录.md`
 
 **职责**:
 承载 report_ops route group 的 route facade 白箱边界，冻结 runtime report create/list/detail/export、merge records、runtime generations、storage health、ops daily、audit weekly 与 research monthly routes。本节点只规划 route registration facade，不拥有 report handler、schema owner、state owner、runtime persistence owner、storage lifecycle owner 或 frontend caller。
@@ -1409,33 +1413,33 @@ AI 声称 `backend.runtime.routes.event_stream` 已推进至 BE-001BW-04 时，�
 **route owner 基线**:
 | route | method | handler | 当前 owner |
 | --- | --- | --- | --- |
-| `/api/runtime/reports` | GET | `runtime_handlers::list_runtime_reports` | `src/backend/runtime/routes.rs` |
-| `/api/runtime/reports` | POST | `runtime_handlers::create_runtime_report` | `src/backend/runtime/routes.rs` |
-| `/api/runtime/reports/:report_id` | GET | `runtime_handlers::get_runtime_report_detail` | `src/backend/runtime/routes.rs` |
-| `/api/runtime/reports/:report_id/export` | GET | `runtime_handlers::export_runtime_report_artifact` | `src/backend/runtime/routes.rs` |
-| `/api/v1/merge/records` | GET | `runtime_handlers::list_merge_records` | `src/backend/runtime/routes.rs` |
-| `/api/v1/runtime/generations` | GET | `runtime_handlers::list_config_generations` | `src/backend/runtime/routes.rs` |
-| `/api/v1/storage/health` | GET | `runtime_handlers::get_storage_health` | `src/backend/runtime/routes.rs` |
-| `/api/v1/reports/ops/daily` | GET | `runtime_handlers::get_ops_daily_report` | `src/backend/runtime/routes.rs` |
-| `/api/v1/reports/audit/weekly` | GET | `runtime_handlers::get_audit_weekly_report` | `src/backend/runtime/routes.rs` |
-| `/api/v1/reports/research/monthly` | GET | `runtime_handlers::get_research_monthly_report` | `src/backend/runtime/routes.rs` |
+| `/api/runtime/reports` | GET | `runtime_handlers::list_runtime_reports` | `src/backend/runtime/routes/report_ops.rs` |
+| `/api/runtime/reports` | POST | `runtime_handlers::create_runtime_report` | `src/backend/runtime/routes/report_ops.rs` |
+| `/api/runtime/reports/:report_id` | GET | `runtime_handlers::get_runtime_report_detail` | `src/backend/runtime/routes/report_ops.rs` |
+| `/api/runtime/reports/:report_id/export` | GET | `runtime_handlers::export_runtime_report_artifact` | `src/backend/runtime/routes/report_ops.rs` |
+| `/api/v1/merge/records` | GET | `runtime_handlers::list_merge_records` | `src/backend/runtime/routes/report_ops.rs` |
+| `/api/v1/runtime/generations` | GET | `runtime_handlers::list_config_generations` | `src/backend/runtime/routes/report_ops.rs` |
+| `/api/v1/storage/health` | GET | `runtime_handlers::get_storage_health` | `src/backend/runtime/routes/report_ops.rs` |
+| `/api/v1/reports/ops/daily` | GET | `runtime_handlers::get_ops_daily_report` | `src/backend/runtime/routes/report_ops.rs` |
+| `/api/v1/reports/audit/weekly` | GET | `runtime_handlers::get_audit_weekly_report` | `src/backend/runtime/routes/report_ops.rs` |
+| `/api/v1/reports/research/monthly` | GET | `runtime_handlers::get_research_monthly_report` | `src/backend/runtime/routes/report_ops.rs` |
 
 **关键 public 方法**:
 | 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
 | --- | --- | --- | --- | --- |
-| `backend.runtime.routes::register_routes` | Axum Router | runtime routes | `backend.runtime` | 当前仍直接注册 report_ops routes，不得迁移 handler owner |
-| `report_ops::register_runtime_report_routes` | Axum Router | runtime report routes | `backend.runtime.routes` | 下一步只允许承接 `/api/runtime/reports*` routes，不得注册 v1 ops 或 experiment routes |
-| `report_ops::register_ops_routes` | Axum Router | v1 ops routes | `backend.runtime.routes` | 下一步只允许承接 `/api/v1/*` report ops routes，不得注册 runtime report 或 experiment routes |
-| `create_runtime_report` | user id、`AppState`、request | report record | route aggregate | 不得迁移 report persistence helper |
-| `list_runtime_reports` | user id、`AppState`、pagination | paginated reports | route aggregate | 不得改变 sorting/pagination |
-| `get_runtime_report_detail` | user id、`AppState`、report id | report record | route aggregate | 不得绕过 report store lookup |
-| `export_runtime_report_artifact` | user id、`AppState`、report id | report artifact | route aggregate | 不得改变 artifact schema |
-| `list_merge_records` | user id、`AppState` | merge records | route aggregate | 不得迁移 run state owner |
-| `list_config_generations` | `AppState` | generation history | route aggregate | 不得迁移 config generation owner |
-| `get_storage_health` | `AppState` | storage health | route aggregate | 不得迁移 storage lifecycle owner |
-| `get_ops_daily_report` | user id、`AppState`、query | ops report | route aggregate | 不得迁移 report schema owner |
-| `get_audit_weekly_report` | user id、`AppState`、query | audit report | route aggregate | 不得迁移 report schema owner |
-| `get_research_monthly_report` | user id、`AppState`、query | research report | route aggregate | 不得迁移 report schema owner |
+| `backend.runtime.routes::register_routes` | Axum Router | runtime routes | `backend.runtime` | 只能委托 report_ops route child，不得迁移 handler owner |
+| `report_ops::register_runtime_report_routes` | Axum Router | runtime report routes | `backend.runtime.routes` | 只承接 `/api/runtime/reports*` routes，不得注册 v1 ops 或 experiment routes |
+| `report_ops::register_ops_routes` | Axum Router | v1 ops routes | `backend.runtime.routes` | 只承接 `/api/v1/*` report ops routes，不得注册 runtime report 或 experiment routes |
+| `create_runtime_report` | user id、`AppState`、request | report record | route child | 不得迁移 report persistence helper |
+| `list_runtime_reports` | user id、`AppState`、pagination | paginated reports | route child | 不得改变 sorting/pagination |
+| `get_runtime_report_detail` | user id、`AppState`、report id | report record | route child | 不得绕过 report store lookup |
+| `export_runtime_report_artifact` | user id、`AppState`、report id | report artifact | route child | 不得改变 artifact schema |
+| `list_merge_records` | user id、`AppState` | merge records | route child | 不得迁移 run state owner |
+| `list_config_generations` | `AppState` | generation history | route child | 不得迁移 config generation owner |
+| `get_storage_health` | `AppState` | storage health | route child | 不得迁移 storage lifecycle owner |
+| `get_ops_daily_report` | user id、`AppState`、query | ops report | route child | 不得迁移 report schema owner |
+| `get_audit_weekly_report` | user id、`AppState`、query | audit report | route child | 不得迁移 report schema owner |
+| `get_research_monthly_report` | user id、`AppState`、query | research report | route child | 不得迁移 report schema owner |
 
 **父级通信规则**:
 `backend.runtime.routes.report_ops` 只能经父级 `backend.runtime.routes` 暴露 report_ops routes；不得横向接管 run/backtest/event_stream/evidence/mutation/experiment route child、frontend caller、runtime persistence owner 或 executor。handler owner 仍是 `src/runtime/mod.rs`，状态 owner 仍是 `AppState`。发布过渡前不得主动提出横向连接或性能旁路。ASCII guard: `release transition guard`。
@@ -1444,10 +1448,10 @@ AI 声称 `backend.runtime.routes.event_stream` 已推进至 BE-001BW-04 时，�
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_evidence_contract`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_mutation`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`。
 
 **下一步**:
-只能进入 BE-001BY-03 `backend.runtime.routes.report_ops` 实际抽离；不得跳过 route facade 创建去迁移 report handler、`AppState`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner 或 release transition guard。
+只能进入 BE-001BY-04 `backend.runtime.routes.report_ops` 单叶 closeout；不得跳过 closeout 去迁移 report handler、`AppState`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner 或 release transition guard。
 
 **幻觉检查点**:
-AI 声称 `backend.runtime.routes.report_ops` 已推进至 BE-001BY-02 时，必须说明只是抽离方案，route registration 仍在父级，planned route child file 尚未创建，handler 与 state/persistence owner 均未改变。不得宣称 report_ops route 已迁移、`backend.runtime.routes` 父叶完成、发布过渡已启动、整理或重构已经完成。
+AI 声称 `backend.runtime.routes.report_ops` 已推进至 BE-001BY-03 时，必须说明只完成 route facade 抽离，handler 与 state/persistence owner 均未改变，下一步仍需单叶 closeout。不得宣称 `backend.runtime.routes` 父叶完成、发布过渡已启动、整理或重构已经完成。
 
 ### 5.1.1.1 `backend.runtime.routes.mutation`
 
@@ -5050,6 +5054,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/245-backend.runtime.routes第五轮父叶残余判断.md` backend runtime routes fifth parent residual decision | `backend.runtime.routes` | 父叶残余判断，report_ops 为唯一 direct residual | BE-001BX 父叶残余判断 | `no code movement`；下一步只能进入 BE-001BY-01 `backend.runtime.routes.report_ops` 单子叶等价基线，不得直接创建 route child 或 release transition |
 | `markdown/06-milestones/v4.16.0/246-backend.runtime.routes.report_ops单子叶等价基线.md` backend runtime routes report ops baseline | `backend.runtime.routes.report_ops` | 单子叶等价基线，冻结 report_ops routes / handler owner / state boundary | BE-001BY 单子叶基线 | `no code movement`；下一步只能进入 BE-001BY-02 抽离方案，不得直接创建 route child 或 release transition |
 | `markdown/06-milestones/v4.16.0/247-backend.runtime.routes.report_ops抽离方案.md` backend runtime routes report ops extraction plan | `backend.runtime.routes.report_ops` | 抽离方案，固定两个父级委托入口、route order 和允许迁移清单 | BE-001BY 抽离方案 | `no code movement`；下一步只能进入 BE-001BY-03 实际抽离，不得迁移 handler、state owner、schema owner、runtime persistence owner 或 release transition |
+| `markdown/06-milestones/v4.16.0/248-backend.runtime.routes.report_ops抽离记录.md` backend runtime routes report ops extraction record | `backend.runtime.routes.report_ops` | 实际抽离，迁移十条 report_ops route registration | BE-001BY 实际抽离 | 创建 `src/backend/runtime/routes/report_ops.rs`；下一步只能进入 BE-001BY-04 单叶 closeout，不得迁移 handler、state owner、schema owner、runtime persistence owner 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

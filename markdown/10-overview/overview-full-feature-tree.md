@@ -1637,9 +1637,11 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/245-backend.runtime.routes第五轮父叶残余判断.md` - v4.16.0 BE-001BX-01 `backend.runtime.routes` 第五轮父叶残余判断
 - `markdown/06-milestones/v4.16.0/246-backend.runtime.routes.report_ops单子叶等价基线.md` - v4.16.0 BE-001BY-01 `backend.runtime.routes.report_ops` 单子叶等价基线
 - `markdown/06-milestones/v4.16.0/247-backend.runtime.routes.report_ops抽离方案.md` - v4.16.0 BE-001BY-02 `backend.runtime.routes.report_ops` 抽离方案
+- `markdown/06-milestones/v4.16.0/248-backend.runtime.routes.report_ops抽离记录.md` - v4.16.0 BE-001BY-03 `backend.runtime.routes.report_ops` 实际抽离记录
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
+- `src/backend/runtime/routes/report_ops.rs` - backend runtime report ops route child，承接 runtime reports、merge records、runtime generations、storage health、ops/audit/research report route registration
 - `src/runtime/mutation/ai_proposal.rs` - runtime AI proposal child，承接 AI proposal / approval public handler 与专属 helper
 - `src/runtime/mutation/ai_proposal/proposal_creation.rs` - runtime AI proposal proposal creation child，承接 `create_runtime_ai_proposal`
 - `src/runtime/mutation/ai_proposal/approval_persistence.rs` - runtime AI proposal approval persistence child，承接 approval record disk read/write helper
@@ -1747,6 +1749,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001BX-01 已完成 `backend.runtime.routes` 第五轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001BY-01 `backend.runtime.routes.report_ops` 单子叶等价基线。
 当前最新递归点补充: BE-001BY-01 已建立 `backend.runtime.routes.report_ops` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001BY-02 抽离方案。
 当前最新递归点补充: BE-001BY-02 已建立 `backend.runtime.routes.report_ops` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001BY-03 实际抽离。
+当前最新递归点补充: BE-001BY-03 已完成 `backend.runtime.routes.report_ops` 实际抽离；下一步只能进入 BE-001BY-04 单叶 closeout。
 
 ### 7.7 总览 (markdown/10-overview/)
 
