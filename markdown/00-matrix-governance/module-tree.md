@@ -930,6 +930,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CP-01）**: BE-001CP-01 已建立 `runtime.response_support` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，`DiscardRuntimeArtifactResponse` 仍在 `src/runtime/mod.rs`，`MergeRecordsResponse` 与 `MergeRecordEntry` 仍在 `src/runtime/run.rs`；下一步只能进入 BE-001CP-02 抽离方案。
 **最新状态补充（BE-001CP-02）**: BE-001CP-02 已建立 `runtime.response_support` 抽离方案。当前 `no code movement`，下一步 BE-001CP-03 才允许创建 response_support child 并迁移 `DiscardRuntimeArtifactResponse`、`MergeRecordsResponse` 与 `MergeRecordEntry`。
 **最新状态补充（BE-001CP-03）**: BE-001CP-03 已完成 `runtime.response_support` 实际抽离。`src/runtime/response_support.rs` 已创建并迁入 3 个 response DTO，父级只保留 plain import，`src/runtime/run.rs` 已降为 drained include 注释；下一步只能进入 BE-001CP-04 单叶 closeout。
+**最新状态补充（BE-001CP-04）**: BE-001CP-04 已完成 `runtime.response_support` 单叶 closeout 并设置 `stop_split: true`。下一步只能进入 BE-001CQ-01 `backend.runtime` 第六轮父叶残余判断，不得从 response_support 继续细拆。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1081,6 +1082,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/289-runtime.response_support单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/290-runtime.response_support抽离方案.md`
 - `markdown/06-milestones/v4.16.0/291-runtime.response_support抽离记录.md`
+- `markdown/06-milestones/v4.16.0/292-runtime.response_support单叶closeout.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5014,7 +5016,7 @@ AI 声称 `runtime.query_support` 已完成 BE-001CN-04 时，必须说明本批
 
 **层级路径**: `root.backend.runtime.runtime.response_support`
 **父模块**: `backend.runtime`
-**状态**: v4.16 BE-001CP-03 实际抽离已完成。`runtime.response_support` child 文件已创建；下一步只能进入 BE-001CP-04 单叶 closeout。
+**状态**: v4.16 BE-001CP-04 单叶 closeout 已完成。`runtime.response_support stop_split: true`；下一步只能进入 BE-001CQ-01 `backend.runtime` 第六轮父叶残余判断。
 **真实文件**:
 - `src/runtime/mod.rs`
 - `src/runtime/response_support.rs`
@@ -5026,6 +5028,7 @@ AI 声称 `runtime.query_support` 已完成 BE-001CN-04 时，必须说明本批
 - `markdown/06-milestones/v4.16.0/289-runtime.response_support单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/290-runtime.response_support抽离方案.md`
 - `markdown/06-milestones/v4.16.0/291-runtime.response_support抽离记录.md`
+- `markdown/06-milestones/v4.16.0/292-runtime.response_support单叶closeout.md`
 
 **职责**:
 冻结 runtime response DTO 的白箱边界。当前 `DiscardRuntimeArtifactResponse`、`MergeRecordsResponse` 与 `MergeRecordEntry` 已从父级迁入 `src/runtime/response_support.rs`；不拥有 run guard、experiment limit、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState`、lock order 或 release transition guard。
@@ -5059,6 +5062,8 @@ AI 声称 BE-001CP-01 完成时，必须说明本批次是 `no code movement` �
 AI 声称 BE-001CP-02 完成时，必须说明本批次仍是 `no code movement` 抽离方案，下一步 BE-001CP-03 才允许创建 planned child 并迁移 3 个 response DTO；父级只能使用 `mod response_support` 与 plain `use response_support::{...};`，`src/runtime/run.rs` 迁移后只能降为 drained include 注释。不得宣称 response DTO 已迁移、parent include 已删除、run guard 已处理、发布过渡已启动或 Rust 重构完成。
 
 AI 声称 BE-001CP-03 完成时，必须说明 `src/runtime/response_support.rs` 已创建，`DiscardRuntimeArtifactResponse`、`MergeRecordsResponse` 与 `MergeRecordEntry` 已迁入 child，父级只保留 `mod response_support;` 与 plain `use response_support::{...};`，`src/runtime/run.rs` 只剩 drained include 注释但 `include!("run.rs")` 仍保留，下一步只能进入 BE-001CP-04 单叶 closeout。不得宣称 run guard、experiment limit、parent include 删除、发布过渡已启动或 Rust 重构完成。
+
+AI 声称 BE-001CP-04 完成时，必须说明本批次是 `no code movement` closeout，`runtime.response_support stop_split: true`，不继续拆 discard response / merge records response 微叶，`src/runtime/response_support.rs` 仍承接 3 个 response DTO，下一步只能进入 BE-001CQ-01 `backend.runtime` 第六轮父叶残余判断。不得宣称 run guard、experiment limit、parent include 删除、发布过渡已启动或 Rust 重构完成。
 
 ### 5.2 `backend.graph_compile`
 
@@ -5804,6 +5809,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/289-runtime.response_support单子叶等价基线.md` runtime response support baseline | `runtime.response_support` | 单子叶等价基线，冻结 response DTO owner、调用方、visibility 与硬门禁 | BE-001CP 单子叶基线 | `no code movement`；下一步只能进入 BE-001CP-02 抽离方案，不得创建 planned child 文件或迁移 response DTO |
 | `markdown/06-milestones/v4.16.0/290-runtime.response_support抽离方案.md` runtime response support extraction plan | `runtime.response_support` | 抽离方案，固定 planned child、plain import、3 个 DTO 迁移清单、drained include 规则与回退点 | BE-001CP 抽离方案 | `no code movement`；下一步只能进入 BE-001CP-03 实际抽离，不得迁移 run guard、experiment limit 或 parent include cleanup |
 | `markdown/06-milestones/v4.16.0/291-runtime.response_support抽离记录.md` runtime response support extraction record | `runtime.response_support` | 实际抽离，创建 response_support child 并迁入 3 个 response DTO | BE-001CP 抽离记录 | 下一步只能进入 BE-001CP-04 单叶 closeout；不得处理 run guard、experiment limit 或 release transition |
+| `markdown/06-milestones/v4.16.0/292-runtime.response_support单叶closeout.md` runtime response support closeout | `runtime.response_support` | 单叶 closeout，确认不继续拆 discard / merge response 微叶 | BE-001CP 单叶 closeout | `runtime.response_support stop_split: true`；下一步只能进入 BE-001CQ-01 `backend.runtime` 第六轮父叶残余判断 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

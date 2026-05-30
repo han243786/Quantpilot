@@ -249,6 +249,7 @@ v4.7.0 系统应被理解为：
 - BE-001CP-01 已建立 `runtime.response_support` 单子叶等价基线；当前 `no code movement`，planned child 文件尚未创建，下一步只能进入 BE-001CP-02 抽离方案。
 - BE-001CP-02 已建立 `runtime.response_support` 抽离方案；当前 `no code movement`，下一步 BE-001CP-03 才允许创建 child 并迁移 3 个 response DTO。
 - BE-001CP-03 已完成 `runtime.response_support` 实际抽离；`src/runtime/response_support.rs` 已创建并承接 3 个 response DTO，`src/runtime/run.rs` 降为 drained include，下一步只能进入 BE-001CP-04 单叶 closeout。
+- BE-001CP-04 已完成 `runtime.response_support` 单叶 closeout；本叶设置 `stop_split: true`，下一步只能进入 BE-001CQ-01 `backend.runtime` 第六轮父叶残余判断。
 
 ## 当前收尾/发布状态
 
