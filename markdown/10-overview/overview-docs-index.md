@@ -231,6 +231,7 @@
 | v4.16.0 / BE-001BY-02 | 新增: `backend.runtime.routes.report_ops` 抽离方案已建立，下一步进入实际抽离 |
 | v4.16.0 / BE-001BY-03 | 新增: `backend.runtime.routes.report_ops` 实际抽离已完成，下一步进入单叶 closeout |
 | v4.16.0 / BE-001BY-04 | 新增: `backend.runtime.routes.report_ops` 单叶 closeout 已完成，下一步进入父叶残余判断 |
+| v4.16.0 / BE-001BZ-01 | 新增: `backend.runtime.routes` 第六轮父叶残余判断已完成，route aggregate 设置 `stop_split: true` |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |
