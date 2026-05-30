@@ -178,6 +178,7 @@ v4.7.0 系统应被理解为：
 - BE-001BL-04 已完成 `runtime.mutation.ai_proposal.sandbox_trigger` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001BM-01 父叶残余判断。
 - BE-001BM-01 已完成 `runtime.mutation.ai_proposal` 第七轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001BN-01 `runtime.mutation.ai_proposal.status_transition` 单子叶等价基线。
 - BE-001BN-01 已建立 `runtime.mutation.ai_proposal.status_transition` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001BN-02 抽离方案。
+- BE-001BN-02 已建立 `runtime.mutation.ai_proposal.status_transition` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001BN-03 实际抽离。
 
 ## 当前收尾/发布状态
 
