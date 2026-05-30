@@ -1685,6 +1685,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/290-runtime.response_support抽离方案.md` - v4.16.0 BE-001CP-02 `runtime.response_support` 抽离方案
 - `markdown/06-milestones/v4.16.0/291-runtime.response_support抽离记录.md` - v4.16.0 BE-001CP-03 `runtime.response_support` 实际抽离
 - `markdown/06-milestones/v4.16.0/292-runtime.response_support单叶closeout.md` - v4.16.0 BE-001CP-04 `runtime.response_support` 单叶 closeout
+- `markdown/06-milestones/v4.16.0/293-backend.runtime第六轮父叶残余判断.md` - v4.16.0 BE-001CQ-01 `backend.runtime` 第六轮父叶残余判断
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
@@ -1844,6 +1845,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001CP-02 已建立 `runtime.response_support` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CP-03 实际抽离。
 当前最新递归点补充: BE-001CP-03 已完成 `runtime.response_support` 实际抽离；`src/runtime/response_support.rs` 已创建，下一步只能进入 BE-001CP-04 单叶 closeout。
 当前最新递归点补充: BE-001CP-04 已完成 `runtime.response_support` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001CQ-01 `backend.runtime` 第六轮父叶残余判断。
+当前最新递归点补充: BE-001CQ-01 已完成 `backend.runtime` 第六轮父叶残余判断并保持 `stop_split: false`；下一步只能进入 BE-001CR-01 `runtime.run_guard` 单子叶等价基线。
 
 ### 7.7 总览 (markdown/10-overview/)
 
