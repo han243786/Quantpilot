@@ -279,6 +279,7 @@
 | 265 | `v4.16.0/265-runtime.report_ops.v1_report_endpoints单叶closeout.md` | BE-001CE-05 `runtime.report_ops.v1_report_endpoints` 单叶 closeout | 📋 已创建 |
 | 266 | `v4.16.0/266-runtime.report_ops父叶残余判断.md` | BE-001CF-01 `runtime.report_ops` 父叶残余判断 | 📋 已创建 |
 | 267 | `v4.16.0/267-runtime.report_ops.merge_generation_health单子叶等价基线.md` | BE-001CG-01 `runtime.report_ops.merge_generation_health` 单子叶等价基线 | 📋 已创建 |
+| 268 | `v4.16.0/268-runtime.report_ops.merge_generation_health抽离方案.md` | BE-001CG-02 `runtime.report_ops.merge_generation_health` test-first 抽离方案 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
