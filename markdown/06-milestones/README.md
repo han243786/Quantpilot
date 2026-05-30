@@ -231,6 +231,7 @@
 | 217 | `v4.16.0/217-runtime.mutation.ai_proposal.sandbox_trigger抽离记录.md` | BE-001BL-03 `runtime.mutation.ai_proposal.sandbox_trigger` 实际抽离记录 | 📋 已创建 |
 | 218 | `v4.16.0/218-runtime.mutation.ai_proposal.sandbox_trigger单叶closeout.md` | BE-001BL-04 `runtime.mutation.ai_proposal.sandbox_trigger` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 | 219 | `v4.16.0/219-runtime.mutation.ai_proposal第七轮父叶残余判断.md` | BE-001BM-01 `runtime.mutation.ai_proposal` 第七轮父叶残余判断，下一候选为 `status_transition` | 📋 已创建 |
+| 220 | `v4.16.0/220-runtime.mutation.ai_proposal.status_transition单子叶等价基线.md` | BE-001BN-01 `runtime.mutation.ai_proposal.status_transition` 单子叶等价基线 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
