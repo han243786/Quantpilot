@@ -234,6 +234,7 @@
 | 220 | `v4.16.0/220-runtime.mutation.ai_proposal.status_transition单子叶等价基线.md` | BE-001BN-01 `runtime.mutation.ai_proposal.status_transition` 单子叶等价基线 | 📋 已创建 |
 | 221 | `v4.16.0/221-runtime.mutation.ai_proposal.status_transition抽离方案.md` | BE-001BN-02 `runtime.mutation.ai_proposal.status_transition` 抽离方案 | 📋 已创建 |
 | 222 | `v4.16.0/222-runtime.mutation.ai_proposal.status_transition抽离记录.md` | BE-001BN-03 `runtime.mutation.ai_proposal.status_transition` 实际抽离记录 | 📋 已创建 |
+| 223 | `v4.16.0/223-runtime.mutation.ai_proposal.status_transition单叶closeout.md` | BE-001BN-04 `runtime.mutation.ai_proposal.status_transition` 单叶 closeout | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
