@@ -313,6 +313,7 @@
 | 299 | `v4.16.0/299-runtime.experiment_limit单子叶等价基线.md` | BE-001CT-01 `runtime.experiment_limit` 单子叶等价基线 | 📋 已创建 |
 | 300 | `v4.16.0/300-runtime.experiment_limit抽离方案.md` | BE-001CT-02 `runtime.experiment_limit` test-first 抽离方案 | 📋 已创建 |
 | 301 | `v4.16.0/301-runtime.experiment_limit补测记录.md` | BE-001CT-03 `runtime.experiment_limit` endpoint smoke 补测 | 📋 已创建 |
+| 302 | `v4.16.0/302-runtime.experiment_limit抽离记录.md` | BE-001CT-04 `runtime.experiment_limit` 实际抽离 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

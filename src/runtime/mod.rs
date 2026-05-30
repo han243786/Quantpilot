@@ -8,6 +8,7 @@ mod backtest_record_store;
 mod backtest_replay;
 mod event_stream;
 mod evidence_health;
+mod experiment_limit;
 #[path = "mutation/ai_proposal.rs"]
 mod mutation_ai_proposal;
 #[path = "mutation/parameter_mutation.rs"]
@@ -34,6 +35,7 @@ pub(crate) use backtest_record_store::{
 pub(crate) use backtest_replay::get_backtest_replay;
 pub(crate) use event_stream::stream_run_events;
 pub(crate) use evidence_health::{cleanup_runtime_evidence, get_runtime_evidence_health};
+use experiment_limit::MAX_EXPERIMENT_VARIANTS;
 pub(crate) use mutation_ai_proposal::{
     approve_ai_proposal, claim_ai_proposal_review, create_runtime_ai_proposal,
     get_runtime_ai_proposal_detail, get_runtime_approval_detail, list_runtime_ai_proposals,
@@ -81,5 +83,3 @@ include!("mutation.rs");
 
 use super::*;
 use axum::extract::Query;
-
-const MAX_EXPERIMENT_VARIANTS: usize = 27;

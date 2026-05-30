@@ -940,6 +940,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CT-01）**: BE-001CT-01 已建立 `runtime.experiment_limit` 单子叶等价基线。当前 `no code movement`，只冻结 `MAX_EXPERIMENT_VARIANTS = 27`、`src/runtime/backtest/parameter_grid.rs` 唯一调用方、`variant_count` guard、bad_request 输出与 planned child 门禁；下一步只能进入 BE-001CT-02 抽离方案，不得直接迁移常量、删除 parent include 或启动发布过渡。
 **最新状态补充（BE-001CT-02）**: BE-001CT-02 已建立 `runtime.experiment_limit` test-first 抽离方案。当前 `no code movement`，下一批只补 `tests/api_experiments.rs` 超限负测；实际迁移必须等 BE-001CT-03 通过并提交后进入 BE-001CT-04，不得直接创建 planned child、删除 parent include 或启动发布过渡。
 **最新状态补充（BE-001CT-03）**: BE-001CT-03 已完成 `runtime.experiment_limit` endpoint smoke 补测。`tests/api_experiments.rs` 已新增 36 个变体超过 27 上限的 bad_request 负测；当前仍未迁移 `MAX_EXPERIMENT_VARIANTS`，下一步只能进入 BE-001CT-04 实际抽离。
+**最新状态补充（BE-001CT-04）**: BE-001CT-04 已完成 `runtime.experiment_limit` 实际抽离。`src/runtime/experiment_limit.rs` 已创建并承接 `MAX_EXPERIMENT_VARIANTS = 27`；父级只保留 `mod experiment_limit` 与 plain import，下一步只能进入 BE-001CT-05 单叶 closeout。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -947,6 +948,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `src/backend/runtime/routes/mutation.rs`
 - `src/backend/runtime/routes/run.rs`
 - `src/runtime/mod.rs`
+- `src/runtime/experiment_limit.rs`
 - `src/runtime/query_support.rs`
 - `src/runtime/response_support.rs`
 - `src/runtime/run_guard.rs`
@@ -1102,6 +1104,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/299-runtime.experiment_limit单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/300-runtime.experiment_limit抽离方案.md`
 - `markdown/06-milestones/v4.16.0/301-runtime.experiment_limit补测记录.md`
+- `markdown/06-milestones/v4.16.0/302-runtime.experiment_limit抽离记录.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5896,6 +5899,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/299-runtime.experiment_limit单子叶等价基线.md` runtime experiment limit baseline | `runtime.experiment_limit` | 单子叶等价基线，冻结 experiment variant limit 常量、调用方与 planned child 门禁 | BE-001CT 单子叶基线 | `no code movement`；下一步只能进入 BE-001CT-02 抽离方案，不得迁移常量、删除 parent include 或 release transition |
 | `markdown/06-milestones/v4.16.0/300-runtime.experiment_limit抽离方案.md` runtime experiment limit extraction plan | `runtime.experiment_limit` | test-first 抽离方案，下一批先补 experiment variant limit 超限负测 | BE-001CT 抽离方案 | `no code movement`；下一步只能进入 BE-001CT-03 endpoint smoke 补测，不得创建 planned child 或 release transition |
 | `markdown/06-milestones/v4.16.0/301-runtime.experiment_limit补测记录.md` runtime experiment limit smoke record | `runtime.experiment_limit` | endpoint smoke 补测，覆盖 36 个变体超过 27 上限的 bad_request | BE-001CT 补测记录 | `test-only`；下一步只能进入 BE-001CT-04 实际抽离，不得删除 parent include 或 release transition |
+| `markdown/06-milestones/v4.16.0/302-runtime.experiment_limit抽离记录.md` runtime experiment limit extraction record | `runtime.experiment_limit` | 实际抽离，创建 experiment_limit child 并迁移 `MAX_EXPERIMENT_VARIANTS` | BE-001CT 抽离记录 | 下一步只能进入 BE-001CT-05 单叶 closeout，不得删除 parent include 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
