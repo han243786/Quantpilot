@@ -224,6 +224,7 @@ v4.7.0 系统应被理解为：
 - BE-001CE-04 已完成 `runtime.report_ops.v1_report_endpoints` 实际抽离；`src/runtime/report_ops/v1_report_endpoints.rs` 已创建并承接三个 v1 report handler。下一步只能进入 BE-001CE-05 单叶 closeout。
 - BE-001CE-05 已完成 `runtime.report_ops.v1_report_endpoints` 单叶 closeout；本叶设置 `stop_split: true`。下一步只能进入 BE-001CF-01 `runtime.report_ops` 父叶残余判断。
 - BE-001CF-01 已完成 `runtime.report_ops` 父叶残余判断；父级仍保留 `list_merge_records`、`list_config_generations`、`get_storage_health`，因此 `stop_split: false`。下一步只能进入 BE-001CG-01 `runtime.report_ops.merge_generation_health` 单子叶等价基线。
+- BE-001CG-01 已建立 `runtime.report_ops.merge_generation_health` 单子叶等价基线；当前 `no code movement`，planned child 文件尚未创建，下一步只能进入 BE-001CG-02 抽离方案。
 
 ## 当前收尾/发布状态
 
