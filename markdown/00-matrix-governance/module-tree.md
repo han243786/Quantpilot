@@ -891,6 +891,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CA-01）**: BE-001CA-01 已完成 `backend.runtime` 父叶残余判断。`backend.runtime.routes` 已设置 `stop_split: true`，但 `src/runtime/mod.rs` 仍持有 report/evidence/ops handler 与 helper 残余，因此 `backend.runtime` 保持 `stop_split: false`。下一步只能进入 BE-001CB-01 `runtime.report_ops` 单子叶等价基线，不得直接创建 child 文件、迁移 handler 或启动发布过渡。
 **最新状态补充（BE-001CB-01）**: BE-001CB-01 已建立 `runtime.report_ops` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，runtime report / v1 ops report handler 仍在 `src/runtime/mod.rs`。下一步只能进入 BE-001CB-02 抽离方案，不得迁移 handler、扩大 v1 ops/report endpoint 测试缺口或启动发布过渡。
 **最新状态补充（BE-001CB-02）**: BE-001CB-02 已建立 `runtime.report_ops` 抽离方案。当前 `no code movement`，下一步只能进入 BE-001CB-03 实际抽离；允许迁移清单仅限 report helper 与十个 public handler，不得处理 `runtime.evidence_health`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState` 或 release transition guard。
+**最新状态补充（BE-001CB-03）**: BE-001CB-03 已完成 `runtime.report_ops` 实际抽离。`src/runtime/report_ops.rs` 已创建并承接十个 public handler 与四个 private helper；`src/runtime/mod.rs` 只保留受控 re-export。下一步只能进入 BE-001CB-04 单叶 closeout，不得跳过 closeout 处理 `runtime.evidence_health`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState` 或 release transition guard。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -898,6 +899,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `src/backend/runtime/routes/mutation.rs`
 - `src/backend/runtime/routes/run.rs`
 - `src/runtime/mod.rs`
+- `src/runtime/report_ops.rs`
 - `src/runtime/event_stream.rs`
 - `src/runtime/run/v4_handoff.rs`
 - `src/runtime/run/session_start.rs`
@@ -996,6 +998,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/251-backend.runtime父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/252-runtime.report_ops单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/253-runtime.report_ops抽离方案.md`
+- `markdown/06-milestones/v4.16.0/254-runtime.report_ops抽离记录.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -1124,6 +1127,7 @@ AI 声称 runtime 支持新能力时，必须指出真实路由、record/artifac
 - `markdown/06-milestones/v4.16.0/251-backend.runtime父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/252-runtime.report_ops单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/253-runtime.report_ops抽离方案.md`
+- `markdown/06-milestones/v4.16.0/254-runtime.report_ops抽离记录.md`
 
 **职责**:
 承载 backend runtime route aggregate facade 的白箱坐标，固定 `backend.runtime -> backend.runtime.routes -> src/runtime/* pub(crate) handler` 的兼容桥和等价证据。
@@ -4372,9 +4376,10 @@ AI 声称 `runtime.backtest.experiment_sweep.record_lifecycle` 已 closeout 时�
 
 **层级路径**: `root.backend.runtime.runtime.report_ops`
 **父模块**: `backend.runtime`
-**状态**: v4.16 BE-001CB-02 抽离方案已建立。当前仍为 `no code movement`，planned child 文件尚未创建，handler 尚未迁移；下一步只能进入 BE-001CB-03 实际抽离。
+**状态**: v4.16 BE-001CB-03 实际抽离已完成。`src/runtime/report_ops.rs` 已创建并承接十个 public handler 与四个 private helper；父级 `src/runtime/mod.rs` 通过 `mod report_ops` 与受控 `pub(crate) use report_ops::{...}` 保持 route facade 调用面。下一步只能进入 BE-001CB-04 单叶 closeout。
 **真实文件**:
 - `src/runtime/mod.rs`
+- `src/runtime/report_ops.rs`
 - `src/backend/runtime/routes/report_ops.rs`
 - `src/runtime_persistence.rs`
 - `src/runtime_response_mapping.rs`
@@ -4389,6 +4394,7 @@ AI 声称 `runtime.backtest.experiment_sweep.record_lifecycle` 已 closeout 时�
 - `tests/api_evidence_contract.rs`
 - `markdown/06-milestones/v4.16.0/252-runtime.report_ops单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/253-runtime.report_ops抽离方案.md`
+- `markdown/06-milestones/v4.16.0/254-runtime.report_ops抽离记录.md`
 
 **职责**:
 承载 runtime report create/list/detail/export 与 v1 merge records、runtime generations、storage health、ops daily、audit weekly、research monthly report handler 的白箱边界。当前不拥有 route registration、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner 或 release transition guard。
@@ -4413,6 +4419,9 @@ AI 声称 `runtime.backtest.experiment_sweep.record_lifecycle` 已 closeout 时�
 **允许迁移清单**:
 BE-001CB-03 若被 BE-001CB-02 允许，第一轮只可迁移 `create_runtime_report`、`report_source_metadata_matches`、`source_changed_report`、`current_report_for_saved_source`、`materialize_runtime_report_record`、`list_runtime_reports`、`get_runtime_report_detail`、`export_runtime_report_artifact`、`list_merge_records`、`list_config_generations`、`get_storage_health`、`get_ops_daily_report`、`get_audit_weekly_report`、`get_research_monthly_report`。
 
+**抽离记录**:
+BE-001CB-03 已按方案新建 `src/runtime/report_ops.rs`，并迁入 `create_runtime_report`、`list_runtime_reports`、`get_runtime_report_detail`、`export_runtime_report_artifact`、`list_merge_records`、`list_config_generations`、`get_storage_health`、`get_ops_daily_report`、`get_audit_weekly_report`、`get_research_monthly_report` 以及四个 report helper。父级 `src/runtime/mod.rs` 只保留 `mod report_ops` 与受控 `pub(crate) use report_ops::{...}`，route facade 未改。
+
 **明确排除**:
 `get_runtime_evidence_health`、`cleanup_runtime_evidence`、`runtime_report_status_counts`、query structs/shared helper、`AppState`、`runtime_persistence`、`runtime_response_mapping`、`frontend_api_types`、frontend caller、storage lifecycle owner 和 release transition guard 均不属于本叶第一轮迁移。`runtime.evidence_health` 应作为 sibling 另起基线。
 
@@ -4420,7 +4429,7 @@ BE-001CB-03 若被 BE-001CB-02 允许，第一轮只可迁移 `create_runtime_re
 `cargo fmt --check`；`cargo check -p quantpilot`；`cargo test --no-run`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_evidence_contract`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1`；`git diff --check`。
 
 **幻觉检查点**:
-AI 声称 `runtime.report_ops` 已完成 BE-001CB-02 时，必须说明当前只是抽离方案，planned child 文件尚未创建，handler 仍在 `src/runtime/mod.rs`，v1 ops/report endpoints 仍有测试缺口，下一步只能进入 BE-001CB-03 实际抽离。不得宣称代码已抽离、发布过渡已启动或 `runtime.evidence_health` 已并入本叶。
+AI 声称 `runtime.report_ops` 已完成 BE-001CB-03 时，必须说明 `src/runtime/report_ops.rs` 已创建，父级只保留 re-export，`src/backend/runtime/routes/report_ops.rs` 未改变，v1 ops/report endpoints 仍有测试缺口，下一步只能进入 BE-001CB-04 单叶 closeout。不得宣称发布过渡已启动或 `runtime.evidence_health` 已并入本叶。
 
 ### 5.2 `backend.graph_compile`
 
@@ -5128,6 +5137,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/251-backend.runtime父叶残余判断.md` backend runtime parent residual decision | `backend.runtime` | 父叶残余判断，route aggregate 已关闭但 handler 残余仍在 `src/runtime/mod.rs` | BE-001CA 父叶判断 | `no code movement`；父叶保持 `stop_split: false`；下一步只能进入 BE-001CB-01 `runtime.report_ops` 单子叶等价基线，不得直接迁移 handler 或 release transition |
 | `markdown/06-milestones/v4.16.0/252-runtime.report_ops单子叶等价基线.md` runtime report ops baseline | `runtime.report_ops` | 单子叶等价基线，冻结 runtime report / v1 ops report handler 边界 | BE-001CB 单子叶基线 | `no code movement`；下一步只能进入 BE-001CB-02 抽离方案，不得创建 planned child 文件、迁移 handler 或 release transition |
 | `markdown/06-milestones/v4.16.0/253-runtime.report_ops抽离方案.md` runtime report ops extraction plan | `runtime.report_ops` | 抽离方案，固定父级 re-export、允许迁移清单、测试缺口和回退点 | BE-001CB 抽离方案 | `no code movement`；下一步只能进入 BE-001CB-03 实际抽离，不得迁移 `runtime.evidence_health`、schema、frontend、persistence、storage lifecycle、`AppState` 或 release transition |
+| `markdown/06-milestones/v4.16.0/254-runtime.report_ops抽离记录.md` runtime report ops extraction record | `runtime.report_ops` | 实际抽离，创建 handler child 并迁移十个 public handler 与四个 private helper | BE-001CB 实际抽离 | 创建 `src/runtime/report_ops.rs`；下一步只能进入 BE-001CB-04 单叶 closeout，不得迁移 `runtime.evidence_health`、schema、frontend、persistence、storage lifecycle、`AppState` 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

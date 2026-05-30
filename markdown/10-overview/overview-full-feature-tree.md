@@ -1643,6 +1643,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/251-backend.runtime父叶残余判断.md` - v4.16.0 BE-001CA-01 `backend.runtime` 父叶残余判断
 - `markdown/06-milestones/v4.16.0/252-runtime.report_ops单子叶等价基线.md` - v4.16.0 BE-001CB-01 `runtime.report_ops` 单子叶等价基线
 - `markdown/06-milestones/v4.16.0/253-runtime.report_ops抽离方案.md` - v4.16.0 BE-001CB-02 `runtime.report_ops` 抽离方案
+- `markdown/06-milestones/v4.16.0/254-runtime.report_ops抽离记录.md` - v4.16.0 BE-001CB-03 `runtime.report_ops` 实际抽离记录
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
@@ -1760,6 +1761,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001CA-01 已完成 `backend.runtime` 父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001CB-01 `runtime.report_ops` 单子叶等价基线。
 当前最新递归点补充: BE-001CB-01 已建立 `runtime.report_ops` 单子叶等价基线；下一步只能进入 BE-001CB-02 抽离方案。
 当前最新递归点补充: BE-001CB-02 已建立 `runtime.report_ops` 抽离方案；下一步只能进入 BE-001CB-03 实际抽离。
+当前最新递归点补充: BE-001CB-03 已完成 `runtime.report_ops` 实际抽离；下一步只能进入 BE-001CB-04 单叶 closeout。
 
 ### 7.7 总览 (markdown/10-overview/)
 
@@ -1926,6 +1928,7 @@ storage/
 - `src/rate_limiter.rs` — 速率限制; 改限速策略时改这里
 - `src/runbook.rs` — 运行手册; 改运维操作定义时改这里
 - `src/runtime/mod.rs` — 运行时主模块, Paper 运行/v4 run 路由与 `event_stream` / `run_v4_handoff` 等父级 re-export; 改运行时 API 聚合时改这里 🆕 v4.1.0
+- `src/runtime/report_ops.rs` — runtime report / v1 ops report handler child; 改 report ops handler 等价时改这里 🆕 v4.16.0
 - `src/runtime/event_stream.rs` — run event stream SSE handler、frame order、delay 和 keep-alive; 改运行事件流 SSE 时改这里 🆕 v4.16.0
 - `src/runtime/run.rs` — 后续 legacy runtime sibling owner; 改运行报表、运维日报或 legacy runtime API 时改这里 🆕 v4.1.0
 - `src/runtime/run/session_start.rs` — legacy `POST /api/runtime/test-run` handler、capability guard 调用、QS compile、sandbox session、event envelope 和 in-memory run record 写入; 改 session start 时改这里 🆕 v4.16.0

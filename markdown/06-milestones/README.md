@@ -265,6 +265,7 @@
 | 251 | `v4.16.0/251-backend.runtime父叶残余判断.md` | BE-001CA-01 `backend.runtime` 父叶残余判断，选择 `runtime.report_ops` 下一候选 | 📋 已创建 |
 | 252 | `v4.16.0/252-runtime.report_ops单子叶等价基线.md` | BE-001CB-01 `runtime.report_ops` 单子叶等价基线 | 📋 已创建 |
 | 253 | `v4.16.0/253-runtime.report_ops抽离方案.md` | BE-001CB-02 `runtime.report_ops` 抽离方案 | 📋 已创建 |
+| 254 | `v4.16.0/254-runtime.report_ops抽离记录.md` | BE-001CB-03 `runtime.report_ops` 实际抽离记录 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
