@@ -73,7 +73,7 @@ use query_support::{
 
 该 child 同时承接 filter normalization 与 replay option normalization，不得在 BE-001CN-03 将二者拆散。
 
-不得使用 `pub(crate) use` 扩大 runtime 外部 API。调用方继续通过 `use super::*` 访问父级受控 surface。
+不得使用 `pub(crate) use` 扩大 runtime 外部 API。调用方继续通过 `use super::*` 访问父级受控 surface。由于 Query DTO 出现在 `pub(crate)` handler 签名中，DTO 类型本体允许保持原有 `pub(crate)` 可见性；字段与 helper 必须收敛为 `pub(super)`。
 
 ---
 
@@ -83,13 +83,13 @@ BE-001CN-03 仅允许迁移以下 9 个 item 到 `src/runtime/query_support.rs`:
 
 | item | 迁移后 visibility | field visibility | 迁移约束 |
 | --- | --- | --- | --- |
-| `RuntimeReplayQuery` | `pub(super)` | `pub(super)` | 不得改变 cursor / checkpoint precedence、limit field 或 filter fields |
-| `RuntimeParameterMutationListQuery` | `pub(super)` | `pub(super)` | 不得改变 source / pagination semantics |
-| `RuntimeAiProposalListQuery` | `pub(super)` | `pub(super)` | 不得改变 source / status filter semantics |
-| `RuntimeApprovalListQuery` | `pub(super)` | `pub(super)` | 不得改变 `review_state` default 或 filter semantics |
-| `OpsDailyQuery` | `pub(super)` | `pub(super)` | 不得改变 optional date behavior |
-| `AuditWeeklyQuery` | `pub(super)` | `pub(super)` | 不得改变 optional week_start behavior |
-| `ResearchMonthlyQuery` | `pub(super)` | `pub(super)` | 不得改变 optional month behavior |
+| `RuntimeReplayQuery` | `pub(crate)` | `pub(super)` | 不得改变 cursor / checkpoint precedence、limit field 或 filter fields |
+| `RuntimeParameterMutationListQuery` | `pub(crate)` | `pub(super)` | 不得改变 source / pagination semantics |
+| `RuntimeAiProposalListQuery` | `pub(crate)` | `pub(super)` | 不得改变 source / status filter semantics |
+| `RuntimeApprovalListQuery` | `pub(crate)` | `pub(super)` | 不得改变 `review_state` default 或 filter semantics |
+| `OpsDailyQuery` | `pub(crate)` | `pub(super)` | 不得改变 optional date behavior |
+| `AuditWeeklyQuery` | `pub(crate)` | `pub(super)` | 不得改变 optional week_start behavior |
+| `ResearchMonthlyQuery` | `pub(crate)` | `pub(super)` | 不得改变 optional month behavior |
 | `clean_optional_filter` | `pub(super)` | n/a | 不得改变 trim / empty-filter behavior |
 | `normalized_replay_options` | `pub(super)` | n/a | 不得改变 `RuntimeReplayOptions` mapping、`DEFAULT_REPLAY_PAGE_SIZE`、`MAX_REPLAY_PAGE_SIZE`、cursor precedence、sequence cursor 或 key_only filter |
 
@@ -197,6 +197,6 @@ AI 声称 BE-001CN-02 完成时，必须说明:
 ## 验收标准
 
 1. `285-runtime.query_support抽离方案.md` 进入里程碑索引、模块树、全量树和治理门禁。
-2. 方案固定 BE-001CN-03 的唯一 planned child、父级声明、plain import、`pub(super)` visibility、允许迁移清单和排除项。
+2. 方案固定 BE-001CN-03 的唯一 planned child、父级声明、plain import、DTO `pub(crate)` shell、field/helper `pub(super)` visibility、允许迁移清单和排除项。
 3. 模块树不登记尚未创建的 `src/runtime/query_support.rs` 真实文件路径。
 4. 治理门禁、Rust 等价测试、全量树覆盖和 `git diff --check` 均通过。

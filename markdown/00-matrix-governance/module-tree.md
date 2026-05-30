@@ -924,6 +924,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CM-01）**: BE-001CM-01 已完成 `backend.runtime` 第四轮父叶残余判断。`runtime.mutation.shared_governance` 已 closeout，但父级仍有 query DTO、run guard、response support 与 experiment limit 残余，因此 `backend.runtime stop_split: false`；下一步只能进入 BE-001CN-01 `runtime.query_support` 单子叶等价基线。
 **最新状态补充（BE-001CN-01）**: BE-001CN-01 已建立 `runtime.query_support` 单子叶等价基线。当前 `no code movement`，planned child 文件尚未创建，7 个 query DTO 与 filter / replay normalization helper 仍在 `src/runtime/mod.rs`、`src/runtime/run.rs`、`src/runtime/mutation.rs`；下一步只能进入 BE-001CN-02 抽离方案。
 **最新状态补充（BE-001CN-02）**: BE-001CN-02 已建立 `runtime.query_support` 抽离方案。当前 `no code movement`，下一步 BE-001CN-03 才允许创建 planned child 文件并迁移 7 个 query DTO、`clean_optional_filter` 与 `normalized_replay_options`。
+**最新状态补充（BE-001CN-03）**: BE-001CN-03 已完成 `runtime.query_support` 实际抽离。`src/runtime/query_support.rs` 已创建并迁入 7 个 Query DTO、`clean_optional_filter` 与 `normalized_replay_options`；下一步只能进入 BE-001CN-04 单叶 closeout。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -931,6 +932,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `src/backend/runtime/routes/mutation.rs`
 - `src/backend/runtime/routes/run.rs`
 - `src/runtime/mod.rs`
+- `src/runtime/query_support.rs`
 - `src/runtime/mutation/shared_governance.rs`
 - `src/runtime/evidence_health.rs`
 - `src/runtime/report_ops.rs`
@@ -1067,6 +1069,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/283-backend.runtime第四轮父叶残余判断.md`
 - `markdown/06-milestones/v4.16.0/284-runtime.query_support单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/285-runtime.query_support抽离方案.md`
+- `markdown/06-milestones/v4.16.0/286-runtime.query_support抽离记录.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -4879,6 +4882,8 @@ AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-02 时，必�
 
 AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-03 时，必须说明 `src/runtime/mutation/shared_governance.rs` 已创建，9 个 shared governance helper 已迁入 child，父级只保留 caller-facing plain import，下一步只能进入 BE-001CL-04 单叶 closeout。不得宣称 query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
 
+AI 声称 `runtime.query_support` 已完成 BE-001CN-03 时，必须说明 `src/runtime/query_support.rs` 已创建，7 个 Query DTO、`clean_optional_filter` 与 `normalized_replay_options` 已迁入 child，DTO 类型本体保持 `pub(crate)`，字段/helper 为 `pub(super)`，父级只保留 plain import，下一步只能进入 BE-001CN-04 单叶 closeout。不得宣称 response support、run guard、parent include 删除、发布过渡已启动或 Rust 重构完成。
+
 ### 5.1.22 `runtime.mutation.shared_governance`
 
 **层级路径**: `root.backend.runtime.runtime.mutation.shared_governance`
@@ -4934,6 +4939,62 @@ BE-001CL-03 已创建 `src/runtime/mutation/shared_governance.rs`，并将 `cano
 AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-02 时，必须说明本批次是 `no code movement` 抽离方案，planned child 文件尚未创建，9 个 helper 仍在 `src/runtime/mutation.rs`，下一步只能进入 BE-001CL-03 实际抽离。不得宣称 helper 已迁移、`backend.runtime` 已完成、query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
 
 AI 声称 `runtime.mutation.shared_governance` 已完成 BE-001CL-03 时，必须说明 `src/runtime/mutation/shared_governance.rs` 已创建，9 个 helper 已迁入 child，`src/runtime/mutation.rs` 仍保留 `OpsDailyQuery`、`AuditWeeklyQuery` 与 `ResearchMonthlyQuery`，下一步只能进入 BE-001CL-04 单叶 closeout。不得宣称 `backend.runtime` 已完成、query DTO/run guard 已处理、发布过渡已启动或 Rust 重构完成。
+
+### 5.1.23 `runtime.query_support`
+
+**层级路径**: `root.backend.runtime.runtime.query_support`
+**父模块**: `backend.runtime`
+**状态**: v4.16 BE-001CN-03 实际抽离已完成。`src/runtime/query_support.rs` 已创建并迁入 7 个 Query DTO、`clean_optional_filter` 与 `normalized_replay_options`；下一步只能进入 BE-001CN-04 单叶 closeout。
+**真实文件**:
+- `src/runtime/mod.rs`
+- `src/runtime/query_support.rs`
+- `src/runtime/run.rs`
+- `src/runtime/mutation.rs`
+- `src/runtime/run/replay_status.rs`
+- `src/runtime/backtest/replay.rs`
+- `src/runtime/mutation/parameter_mutation/record_query.rs`
+- `src/runtime/mutation/ai_proposal/record_query.rs`
+- `src/runtime/mutation/ai_proposal/approval_review.rs`
+- `src/runtime/report_ops/v1_report_endpoints.rs`
+- `tests/api_run.rs`
+- `tests/api_backtest.rs`
+- `tests/api_mutation.rs`
+- `tests/api_ai_proposal.rs`
+- `tests/api_v1_reports.rs`
+- `markdown/06-milestones/v4.16.0/284-runtime.query_support单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/285-runtime.query_support抽离方案.md`
+- `markdown/06-milestones/v4.16.0/286-runtime.query_support抽离记录.md`
+
+**职责**:
+冻结 runtime Query DTO、filter normalization 与 replay option normalization 的白箱边界。当前不拥有 response support、run guard、experiment limit、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState`、lock order 或 release transition guard。
+
+**关键 public / helper 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `RuntimeReplayQuery` | HTTP query | replay query DTO | run/backtest replay handlers | 不得改变 cursor / checkpoint precedence、limit、filters 或 key_only |
+| `RuntimeParameterMutationListQuery` | HTTP query | parameter mutation list DTO | parameter mutation list handler | 不得改变 source / pagination semantics |
+| `RuntimeAiProposalListQuery` | HTTP query | AI proposal list DTO | AI proposal list handler | 不得改变 source / status filter semantics |
+| `RuntimeApprovalListQuery` | HTTP query | approval list DTO | approval list handler | 不得改变 `review_state` default 或 filter semantics |
+| `OpsDailyQuery` | HTTP query | ops daily DTO | ops daily report handler | 不得改变 optional date behavior |
+| `AuditWeeklyQuery` | HTTP query | audit weekly DTO | audit weekly report handler | 不得改变 optional week_start behavior |
+| `ResearchMonthlyQuery` | HTTP query | research monthly DTO | research monthly report handler | 不得改变 optional month behavior |
+| `clean_optional_filter` | optional string | optional trimmed string | mutation/proposal query filters、replay filters | 不得改变 trim / empty-filter behavior |
+| `normalized_replay_options` | `RuntimeReplayQuery` | `RuntimeReplayOptions` | run/backtest replay handlers | 不得改变 default page size、max page size、cursor precedence、sequence cursor 或 filters |
+
+**父级通信规则**:
+`runtime.query_support` 只能经 `src/runtime/mod.rs` 受控 query surface 供 runtime child callers 使用。父级只允许 `mod query_support;` 与普通 `use query_support::{...};`，不得使用 `pub(crate) use query_support::{...};`。开发者未明确进入发布版本过渡前，不得让 sibling child、route facade、frontend caller、schema owner、runtime persistence owner、storage lifecycle owner 或 `AppState` 横向直连本 child。
+
+**抽离记录**:
+BE-001CN-03 已创建 `src/runtime/query_support.rs`，并从 `src/runtime/mod.rs`、`src/runtime/run.rs`、`src/runtime/mutation.rs` 迁入 7 个 Query DTO、`clean_optional_filter`、`normalized_replay_options`、`DEFAULT_REPLAY_PAGE_SIZE` 与 `MAX_REPLAY_PAGE_SIZE`。DTO 类型本体保持 `pub(crate)` 以满足 `pub(crate)` handler 签名，字段统一为 `pub(super)`，两个 helper 为 `pub(super)`。`MAX_EXPERIMENT_VARIANTS` 仍留在父级。
+
+**明确排除**:
+`DiscardRuntimeArtifactResponse`、`MergeRecordsResponse`、`MergeRecordEntry`、`RunInProgressGuard`、`MAX_EXPERIMENT_VARIANTS`、`include!("run.rs")`、`include!("mutation.rs")`、`include!("backtest.rs")`、schema owner、frontend caller、runtime persistence owner、storage lifecycle owner、`AppState`、lock order 与 release transition guard 均不属于本子叶。`src/runtime/mutation.rs` 当前为 drained include，后续只能由父叶残余判断决定是否处理。
+
+**回归保护**:
+`cargo fmt --check`；`cargo check -p quantpilot`；`cargo test -p quantpilot --test api_run`；`cargo test -p quantpilot --test api_backtest`；`cargo test -p quantpilot --test api_mutation`；`cargo test -p quantpilot --test api_ai_proposal`；`cargo test -p quantpilot --test api_v1_reports`；`powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1`。
+
+**幻觉检查点**:
+AI 声称 `runtime.query_support` 已完成 BE-001CN-03 时，必须说明 `src/runtime/query_support.rs` 已创建，7 个 Query DTO 与两个 normalization helper 已迁入 child，DTO 类型本体为 `pub(crate)`，字段/helper 为 `pub(super)`，调用方文件未改动且仍通过 `use super::*`，`MAX_EXPERIMENT_VARIANTS` 与 response/run guard 未迁移，下一步只能进入 BE-001CN-04 单叶 closeout。不得宣称 `backend.runtime` 已完成、parent include 已删除、发布过渡已启动或 Rust 重构完成。
 
 ### 5.2 `backend.graph_compile`
 
@@ -5672,7 +5733,8 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/282-runtime.mutation.shared_governance单叶closeout.md` runtime mutation shared governance closeout | `runtime.mutation.shared_governance` | 单叶 closeout，确认不继续拆 validation / event contract / governance projection 微叶并设置 `stop_split: true` | BE-001CL 单叶 closeout | `no code movement`；下一步只能进入 BE-001CM-01 `backend.runtime` 第四轮父叶残余判断 |
 | `markdown/06-milestones/v4.16.0/283-backend.runtime第四轮父叶残余判断.md` backend runtime fourth parent residual | `backend.runtime` | 第四轮父叶残余判断，确认 query DTO / run guard / response support / experiment limit 残余仍存在 | BE-001CM 父叶残余判断 | `no code movement`；`backend.runtime stop_split: false`；下一步只能进入 BE-001CN-01 `runtime.query_support` 单子叶等价基线 |
 | `markdown/06-milestones/v4.16.0/284-runtime.query_support单子叶等价基线.md` runtime query support baseline | `runtime.query_support` | 单子叶等价基线，冻结 query DTO、filter normalization、replay option normalization 与 field visibility | BE-001CN 单子叶基线 | `no code movement`；下一步只能进入 BE-001CN-02 抽离方案，不得创建 planned child 文件或迁移 DTO/helper |
-| `markdown/06-milestones/v4.16.0/285-runtime.query_support抽离方案.md` runtime query support extraction plan | `runtime.query_support` | 抽离方案，固定 planned child、父级声明、plain import、`pub(super)` visibility 和迁移清单 | BE-001CN 抽离方案 | `no code movement`；下一步只能进入 BE-001CN-03 实际抽离，不得处理 response support、run guard 或 release transition |
+| `markdown/06-milestones/v4.16.0/285-runtime.query_support抽离方案.md` runtime query support extraction plan | `runtime.query_support` | 抽离方案，固定 planned child、父级声明、plain import、DTO `pub(crate)` shell、field/helper `pub(super)` visibility 和迁移清单 | BE-001CN 抽离方案 | `no code movement`；下一步只能进入 BE-001CN-03 实际抽离，不得处理 response support、run guard 或 release transition |
+| `markdown/06-milestones/v4.16.0/286-runtime.query_support抽离记录.md` runtime query support extraction record | `runtime.query_support` | 实际抽离，创建 query_support child 并迁入 7 个 Query DTO 与两个 normalization helper | BE-001CN 抽离记录 | 下一步只能进入 BE-001CN-04 单叶 closeout；不得处理 response support、run guard 或 release transition |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

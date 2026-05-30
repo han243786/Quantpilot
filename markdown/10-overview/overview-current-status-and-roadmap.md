@@ -243,6 +243,7 @@ v4.7.0 系统应被理解为：
 - BE-001CM-01 已完成 `backend.runtime` 第四轮父叶残余判断；父级仍有 query DTO / run guard / response support / experiment limit 残余，因此保持 `backend.runtime stop_split: false`，下一步只能进入 BE-001CN-01 `runtime.query_support` 单子叶等价基线。
 - BE-001CN-01 已建立 `runtime.query_support` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001CN-02 抽离方案。
 - BE-001CN-02 已建立 `runtime.query_support` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001CN-03 实际抽离。
+- BE-001CN-03 已完成 `runtime.query_support` 实际抽离；`src/runtime/query_support.rs` 承接 Query DTO 与 filter/replay normalization，下一步只能进入 BE-001CN-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 

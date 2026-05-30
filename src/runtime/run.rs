@@ -1,11 +1,3 @@
-// ── Block 5: 审批流引擎 ──
-
-#[derive(Debug, Deserialize)]
-pub(crate) struct RuntimeApprovalListQuery {
-    #[serde(default)]
-    review_state: Option<String>,
-}
-
 // ── Block 5: 合并记录 API ──
 
 #[derive(Debug, Serialize)]
