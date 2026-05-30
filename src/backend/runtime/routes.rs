@@ -5,6 +5,7 @@ use crate::{runtime as runtime_handlers, AppState};
 pub const MODULE_ID: &str = "backend.runtime.routes";
 
 pub mod backtest;
+pub mod event_stream;
 pub mod evidence;
 pub mod experiment;
 pub mod mutation;
@@ -14,11 +15,7 @@ pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
     let router = backtest::register_routes(router);
     let router = run::register_routes(router);
 
-    let router = router.route(
-        "/api/runtime/runs/:run_id/events",
-        get(runtime_handlers::stream_run_events),
-    );
-
+    let router = event_stream::register_routes(router);
     let router = evidence::register_routes(router);
     let router = mutation::register_routes(router);
 

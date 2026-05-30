@@ -200,6 +200,7 @@ v4.7.0 系统应被理解为：
 - BE-001BV-01 已完成 `backend.runtime.routes` 第四轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001BW-01 `backend.runtime.routes.event_stream` 单子叶等价基线。
 - BE-001BW-01 已建立 `backend.runtime.routes.event_stream` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001BW-02 抽离方案。
 - BE-001BW-02 已建立 `backend.runtime.routes.event_stream` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001BW-03 实际抽离。
+- BE-001BW-03 已完成 `backend.runtime.routes.event_stream` 实际抽离；下一步只能进入 BE-001BW-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 
