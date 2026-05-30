@@ -9708,6 +9708,38 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/238-*.md", @(
+        @("BE-001BU-03", "evidence route extraction marker"),
+        @("BE-001BU-04", "next evidence route closeout marker"),
+        @("route facade extraction only", "route facade extraction marker"),
+        @("backend.runtime.routes.evidence", "evidence route child marker"),
+        @("root.backend.runtime.routes.evidence", "module tree coordinate"),
+        @("src/backend/runtime/routes.rs", "route aggregate file"),
+        @("src/backend/runtime/routes/evidence.rs", "actual evidence route file"),
+        @("pub mod evidence", "evidence module declaration"),
+        @("evidence::register_routes(router)", "evidence route delegate"),
+        @("event_stream -> evidence -> mutation", "route order marker"),
+        @("/api/runtime/evidence/health", "evidence health route marker"),
+        @("/api/runtime/evidence/cleanup", "evidence cleanup route marker"),
+        @("runtime_handlers::get_runtime_evidence_health", "evidence health route handler marker"),
+        @("runtime_handlers::cleanup_runtime_evidence", "evidence cleanup route handler marker"),
+        @("get_runtime_evidence_health", "evidence health handler marker"),
+        @("cleanup_runtime_evidence", "evidence cleanup handler marker"),
+        @("AppState", "app state marker"),
+        @("schema owner", "schema owner marker"),
+        @("frontend caller", "frontend caller marker"),
+        @("runtime persistence owner", "runtime persistence owner marker"),
+        @("release transition guard", "release transition guard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test --no-run", "cargo test no-run gate"),
+        @("cargo test -p quantpilot --test api_evidence_contract", "api evidence gate"),
+        @("cargo test -p quantpilot --test api_run", "api run gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 

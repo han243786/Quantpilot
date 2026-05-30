@@ -1,13 +1,11 @@
-use axum::{
-    routing::{get, post},
-    Router,
-};
+use axum::{routing::get, Router};
 
 use crate::{runtime as runtime_handlers, AppState};
 
 pub const MODULE_ID: &str = "backend.runtime.routes";
 
 pub mod backtest;
+pub mod evidence;
 pub mod experiment;
 pub mod mutation;
 pub mod run;
@@ -16,20 +14,12 @@ pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
     let router = backtest::register_routes(router);
     let router = run::register_routes(router);
 
-    let router = router
-        .route(
-            "/api/runtime/runs/:run_id/events",
-            get(runtime_handlers::stream_run_events),
-        )
-        .route(
-            "/api/runtime/evidence/health",
-            get(runtime_handlers::get_runtime_evidence_health),
-        )
-        .route(
-            "/api/runtime/evidence/cleanup",
-            post(runtime_handlers::cleanup_runtime_evidence),
-        );
+    let router = router.route(
+        "/api/runtime/runs/:run_id/events",
+        get(runtime_handlers::stream_run_events),
+    );
 
+    let router = evidence::register_routes(router);
     let router = mutation::register_routes(router);
 
     let router = router
