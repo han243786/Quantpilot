@@ -11057,6 +11057,37 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/266-*.md", @(
+        @("BE-001CF-01", "runtime report ops parent residual marker"),
+        @("BE-001CG-01", "next merge generation health marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.report_ops", "runtime report ops parent marker"),
+        @("runtime.report_ops stop_split: false", "parent stop split false marker"),
+        @("runtime.report_ops.runtime_report", "runtime report child marker"),
+        @("runtime.report_ops.v1_report_endpoints", "v1 report endpoint child marker"),
+        @("runtime.report_ops.merge_generation_health", "next child marker"),
+        @("root.backend.runtime.runtime.report_ops", "module tree coordinate"),
+        @("src/runtime/report_ops.rs", "parent file"),
+        @("src/runtime/report_ops/runtime_report.rs", "runtime report child file"),
+        @("src/runtime/report_ops/v1_report_endpoints.rs", "v1 report endpoint child file"),
+        @("list_merge_records", "merge records handler"),
+        @("list_config_generations", "config generation handler"),
+        @("get_storage_health", "storage health handler"),
+        @("runtime.evidence_health", "evidence health sibling"),
+        @("AppState", "app state marker"),
+        @("schema owner", "schema owner marker"),
+        @("frontend caller", "frontend caller marker"),
+        @("runtime persistence owner", "runtime persistence owner marker"),
+        @("storage lifecycle owner", "storage lifecycle owner marker"),
+        @("release transition guard", "release transition guard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_v1_reports", "api v1 reports gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 

@@ -247,6 +247,7 @@
 | v4.16.0 / BE-001CE-03 | 新增: `runtime.report_ops.v1_report_endpoints` endpoint smoke 补测已完成，下一步进入实际抽离 |
 | v4.16.0 / BE-001CE-04 | 新增: `runtime.report_ops.v1_report_endpoints` 实际抽离已完成，下一步进入单叶 closeout |
 | v4.16.0 / BE-001CE-05 | 新增: `runtime.report_ops.v1_report_endpoints` 单叶 closeout 已完成，下一步进入父叶残余判断 |
+| v4.16.0 / BE-001CF-01 | 新增: `runtime.report_ops` 父叶残余判断已完成，下一步进入 `merge_generation_health` 基线 |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |
