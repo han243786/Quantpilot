@@ -1007,6 +1007,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001DV-02）**: BE-001DV-02 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` 抽离方案。父叶保持 `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass stop_split: false`，拒绝 7 文件同批 rewrite；下一步只能进入 BE-001DW-01 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 单子叶等价基线。
 **最新状态补充（BE-001DW-01）**: BE-001DW-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 单子叶等价基线。冻结 `src/runtime/mutation/parameter_mutation/transition_lifecycle/boundary_safety.rs` 的三个 helper、当前 `use super::*` residual 与预期显式 import 输入面；下一步只能进入 BE-001DW-02 抽离方案。
 **最新状态补充（BE-001DW-02）**: BE-001DW-02 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 抽离方案。下一步只允许 BE-001DW-03 单文件改写 `src/runtime/mutation/parameter_mutation/transition_lifecycle/boundary_safety.rs` 顶部 import；不改函数体、可见性、facade、activation / rollback sibling、AI proposal、root bridge 或 release transition。旧三叶暂停目标继续取消。
+**最新状态补充（BE-001DW-03）**: BE-001DW-03 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 实际抽离。`src/runtime/mutation/parameter_mutation/transition_lifecycle/boundary_safety.rs` 已移除 `use super::*` 并改为显式 import；residual 降为 total 19 / mutation 17 / parameter_mutation 7 / transition_lifecycle 6。下一步只能进入 BE-001DW-04 单叶 closeout。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1239,6 +1240,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/370-runtime.mutation.parameter_mutation.transition_lifecycle_import_pass抽离方案.md`
 - `markdown/06-milestones/v4.16.0/371-runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/372-runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass抽离方案.md`
+- `markdown/06-milestones/v4.16.0/373-runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass抽离记录.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -6070,6 +6072,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/370-runtime.mutation.parameter_mutation.transition_lifecycle_import_pass抽离方案.md` runtime mutation parameter mutation transition lifecycle import pass plan | `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` | 抽离方案，拒绝 7 文件同批 rewrite 并选择 boundary_safety import pass | BE-001DV 抽离方案 | `boundary_safety_import_pass_selected`；下一步只能进入 BE-001DW-01 单子叶等价基线 |
 | `markdown/06-milestones/v4.16.0/371-runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass单子叶等价基线.md` runtime mutation parameter mutation transition lifecycle boundary safety import pass baseline | `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` | 单子叶等价基线，冻结 `src/runtime/mutation/parameter_mutation/transition_lifecycle/boundary_safety.rs` 输入面 | BE-001DW 单子叶基线 | `boundary_safety_import_pass baseline_frozen`；下一步只能进入 BE-001DW-02 抽离方案 |
 | `markdown/06-milestones/v4.16.0/372-runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass抽离方案.md` runtime mutation parameter mutation transition lifecycle boundary safety import pass plan | `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` | 抽离方案，固定 `src/runtime/mutation/parameter_mutation/transition_lifecycle/boundary_safety.rs` 单文件 import rewrite | BE-001DW 抽离方案 | `boundary_safety_import_pass plan_frozen`；下一步只能进入 BE-001DW-03 实际抽离记录 |
+| `markdown/06-milestones/v4.16.0/373-runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass抽离记录.md` runtime mutation parameter mutation transition lifecycle boundary safety import pass extraction | `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` | 实际抽离，清理 `src/runtime/mutation/parameter_mutation/transition_lifecycle/boundary_safety.rs` parent wildcard import | BE-001DW 抽离记录 | `boundary_safety_import_pass extraction_complete`；下一步只能进入 BE-001DW-04 单叶 closeout |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
