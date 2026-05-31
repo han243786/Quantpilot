@@ -382,6 +382,7 @@
 | 368 | `v4.16.0/368-runtime.mutation.parameter_mutation_import_pass第二轮父叶残余判断.md` | BE-001DU-01 `runtime.mutation.parameter_mutation_import_pass` 第二轮父叶残余判断，锁定 transition_lifecycle import pass | 📋 已创建 |
 | 369 | `v4.16.0/369-runtime.mutation.parameter_mutation.transition_lifecycle_import_pass单子叶等价基线.md` | BE-001DV-01 `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` 单子叶等价基线，冻结 7 文件 lifecycle 输入面 | 📋 已创建 |
 | 370 | `v4.16.0/370-runtime.mutation.parameter_mutation.transition_lifecycle_import_pass抽离方案.md` | BE-001DV-02 `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` 抽离方案，选择 boundary_safety import pass | 📋 已创建 |
+| 371 | `v4.16.0/371-runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass单子叶等价基线.md` | BE-001DW-01 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 单子叶等价基线 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
