@@ -2958,3 +2958,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/455-runtime.mutation.ai_proposal.proposal_creation_import_pass单子叶等价基线.md` - v4.16.0 BE-001FF-01 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 单子叶等价基线，冻结 create handler import 输入面
 递归边界补充: BE-001FF-02 已建立 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 抽离方案；BE-001FF-03 只允许单文件 import rewrite，不得迁移 handler owner、route facade、state/persistence/schema/frontend owner 或启动 release transition。
 - `markdown/06-milestones/v4.16.0/456-runtime.mutation.ai_proposal.proposal_creation_import_pass抽离方案.md` - v4.16.0 BE-001FF-02 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 抽离方案，固定单文件 import rewrite
+递归边界补充: BE-001FF-03 已完成 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 实际抽离；下一步只能进入 BE-001FF-04 单叶 closeout，不得跳到 parent facade 或 root bridge 完成声明。
+- `markdown/06-milestones/v4.16.0/457-runtime.mutation.ai_proposal.proposal_creation_import_pass抽离记录.md` - v4.16.0 BE-001FF-03 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 抽离记录，`proposal_creation.rs` import 显式化

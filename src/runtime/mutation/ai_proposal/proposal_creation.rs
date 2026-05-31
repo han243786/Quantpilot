@@ -1,4 +1,31 @@
-use super::*;
+use super::{
+    approval_persistence::persist_approval,
+    event_lifecycle::{
+        ai_proposal_lifecycle_entry, build_runtime_ai_proposal_event,
+        persist_runtime_ai_proposal_transition,
+    },
+    sandbox_trigger::spawn_ai_proposal_sandbox_verification,
+    source_governance_identity::{
+        load_runtime_ai_proposal_source_context, runtime_ai_proposal_governance,
+        runtime_ai_proposal_record_id,
+    },
+    static_check::{
+        ai_proposal_static_check_result, validate_ai_model_identity, validate_hash_identity,
+    },
+};
+use crate::{
+    auth, current_time_ms, io_error, json_bad_request, json_bad_request_with_details,
+    normalize_actor_identity,
+    runtime::{
+        append_parameter_mutation_events_to_run, canonical_runtime_parameter_version,
+        governance_with_parameter_version, validate_runtime_parameter_mutation_target,
+    },
+    validate_runtime_capability_guard, AppState, CreateRuntimeAiProposalRequest,
+    RuntimeAiProposalRecord, RuntimeAiProposalSourceEvidence, RuntimeAiProposalStatus,
+    RuntimeApprovalLevel, RuntimeApprovalLifecycleEntry, RuntimeApprovalRecord,
+    RuntimeApprovalReviewState, RuntimeEvidenceSourceKind, RuntimeRollbackPlan,
+};
+use axum::{extract::State, http::StatusCode, Json};
 
 pub(crate) async fn create_runtime_ai_proposal(
     user_id: auth::UserId,
