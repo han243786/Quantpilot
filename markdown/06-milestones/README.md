@@ -368,6 +368,7 @@
 | 354 | `v4.16.0/354-runtime.mutation.shared_governance_import_pass抽离记录.md` | BE-001DO-03 `runtime.mutation.shared_governance_import_pass` 抽离记录，改写 `shared_governance.rs` parent wildcard import | 📋 已创建 |
 | 355 | `v4.16.0/355-runtime.mutation.shared_governance_import_pass单叶closeout.md` | BE-001DO-04 `runtime.mutation.shared_governance_import_pass` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
 | 356 | `v4.16.0/356-runtime.mutation_import_pass父叶残余判断.md` | BE-001DP-01 `runtime.mutation_import_pass` 父叶残余判断，选择 parameter_mutation import pass | 📋 已创建 |
+| 357 | `v4.16.0/357-runtime.mutation.parameter_mutation_import_pass单子叶等价基线.md` | BE-001DQ-01 `runtime.mutation.parameter_mutation_import_pass` 单子叶等价基线，冻结 10 个 parameter mutation residual 文件 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

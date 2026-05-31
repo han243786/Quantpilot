@@ -15275,6 +15275,37 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/357-*.md", @(
+        @("BE-001DQ-01", "parameter mutation import baseline marker"),
+        @("BE-001DQ-02", "next parameter mutation import plan marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation.parameter_mutation_import_pass", "parameter mutation import pass marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.parameter_mutation_import_pass", "parameter mutation import coordinate"),
+        @("parameter_mutation_import_pass baseline_frozen", "baseline frozen marker"),
+        @("remaining_parent_import_bridge_22", "parent bridge residual marker"),
+        @("remaining_mutation_import_bridge_20", "mutation residual marker"),
+        @("src/runtime/mutation/parameter_mutation.rs", "parameter mutation parent file marker"),
+        @("src/runtime/mutation/parameter_mutation/proposal_creation.rs", "proposal creation file marker"),
+        @("src/runtime/mutation/parameter_mutation/record_query.rs", "record query file marker"),
+        @("src/runtime/mutation/parameter_mutation/transition_lifecycle.rs", "transition lifecycle file marker"),
+        @("create_runtime_parameter_mutation", "create handler marker"),
+        @("list_runtime_parameter_mutations", "list handler marker"),
+        @("get_runtime_parameter_mutation_detail", "detail handler marker"),
+        @("activate_runtime_parameter_mutation", "activate handler marker"),
+        @("rollback_runtime_parameter_mutation", "rollback handler marker"),
+        @("runtime_parameter_mutation_record_id", "record id helper marker"),
+        @("validate_runtime_parameter_mutation_boundary", "boundary helper marker"),
+        @("auto_snapshot_on_activation", "snapshot helper marker"),
+        @("sibling horizontal link", "sibling horizontal link marker"),
+        @("release transition", "release transition marker"),
+        @("old_three_leaf_pause_target_cancelled", "old three leaf pause marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 
