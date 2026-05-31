@@ -967,6 +967,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001DE-02）**: BE-001DE-02 已建立 `runtime.backtest.record_store_import_pass` 抽离方案。BE-001DE-03 只允许改写 `src/runtime/backtest/record_store.rs` 顶部 import；不得混入 replay、experiment、execution_start、root bridge 或 release transition。
 **最新状态补充（BE-001DE-03）**: BE-001DE-03 已完成 `runtime.backtest.record_store_import_pass` 实际抽离。`src/runtime/backtest/record_store.rs` 已删除 `use super::*` 并改为显式 import，runtime parent bridge 依赖文件数从 34 降为 33；下一步只能进入 BE-001DE-04 单叶 closeout。
 **最新状态补充（BE-001DE-04）**: BE-001DE-04 已完成 `runtime.backtest.record_store_import_pass` 单叶 closeout。该 import pocket 设置 `stop_split: true`，不继续拆微叶；下一步只能进入 BE-001DF-01 `runtime.backtest_import_pass` 父叶残余判断。
+**最新状态补充（BE-001DF-01）**: BE-001DF-01 已完成 `runtime.backtest_import_pass` 父叶残余判断。`runtime.backtest_import_pass stop_split: false`，当前剩余分布为 root 1、run 0、backtest 10、mutation 21、test-only 1；下一步只能进入 BE-001DG-01 `runtime.backtest.replay_import_pass` 单子叶等价基线。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1159,6 +1160,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/330-runtime.backtest.record_store_import_pass抽离方案.md`
 - `markdown/06-milestones/v4.16.0/331-runtime.backtest.record_store_import_pass抽离记录.md`
 - `markdown/06-milestones/v4.16.0/332-runtime.backtest.record_store_import_pass单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/333-runtime.backtest_import_pass父叶残余判断.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5950,6 +5952,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/330-runtime.backtest.record_store_import_pass抽离方案.md` runtime backtest record store import pass plan | `runtime.backtest.record_store_import_pass` | 抽离方案，固定单文件 import rewrite | BE-001DE 抽离方案 | `no code movement`；下一步只能进入 BE-001DE-03 实际抽离 |
 | `markdown/06-milestones/v4.16.0/331-runtime.backtest.record_store_import_pass抽离记录.md` runtime backtest record store import pass extraction | `runtime.backtest.record_store_import_pass` | 实际抽离，改写 `src/runtime/backtest/record_store.rs` parent wildcard import | BE-001DE 实际抽离 | 依赖文件数从 34 降为 33；下一步只能进入 BE-001DE-04 单叶 closeout |
 | `markdown/06-milestones/v4.16.0/332-runtime.backtest.record_store_import_pass单叶closeout.md` runtime backtest record store import pass closeout | `runtime.backtest.record_store_import_pass` | 单叶 closeout，设置 `stop_split: true` | BE-001DE 单叶 closeout | parent bridge 仍剩 33；下一步只能进入 BE-001DF-01 `runtime.backtest_import_pass` 父叶残余判断 |
+| `markdown/06-milestones/v4.16.0/333-runtime.backtest_import_pass父叶残余判断.md` runtime backtest import pass residual judgment | `runtime.backtest_import_pass` | 父叶残余判断，确认 backtest 剩余 10 个 import 依赖文件 | BE-001DF 父叶残余判断 | `runtime.backtest_import_pass stop_split: false`；下一步只能进入 BE-001DG-01 `runtime.backtest.replay_import_pass` 单子叶等价基线 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

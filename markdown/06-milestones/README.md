@@ -344,6 +344,7 @@
 | 330 | `v4.16.0/330-runtime.backtest.record_store_import_pass抽离方案.md` | BE-001DE-02 `runtime.backtest.record_store_import_pass` 抽离方案，固定 BE-001DE-03 只改 `record_store.rs` import | 📋 已创建 |
 | 331 | `v4.16.0/331-runtime.backtest.record_store_import_pass抽离记录.md` | BE-001DE-03 `runtime.backtest.record_store_import_pass` 实际抽离，改写 `record_store.rs` parent wildcard import | 📋 已创建 |
 | 332 | `v4.16.0/332-runtime.backtest.record_store_import_pass单叶closeout.md` | BE-001DE-04 `runtime.backtest.record_store_import_pass` 单叶 closeout，设置 `stop_split: true` 并回到父叶残余判断 | 📋 已创建 |
+| 333 | `v4.16.0/333-runtime.backtest_import_pass父叶残余判断.md` | BE-001DF-01 `runtime.backtest_import_pass` 父叶残余判断，确认剩余 33 个依赖文件并选择 `runtime.backtest.replay_import_pass` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

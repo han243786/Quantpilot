@@ -290,6 +290,7 @@ v4.7.0 系统应被理解为：
 - BE-001DE-02 已建立 `runtime.backtest.record_store_import_pass` 抽离方案；下一步 BE-001DE-03 只允许改写 `src/runtime/backtest/record_store.rs` 顶部 import。
 - BE-001DE-03 已完成 `runtime.backtest.record_store_import_pass` 实际抽离；`record_store.rs` 已移除 parent wildcard import，parent bridge 依赖文件数从 34 降为 33，下一步只能进入 BE-001DE-04 单叶 closeout。
 - BE-001DE-04 已完成 `runtime.backtest.record_store_import_pass` 单叶 closeout；该 import pocket 设置 `stop_split: true`，parent bridge 依赖文件数仍为 33，下一步只能进入 BE-001DF-01 `runtime.backtest_import_pass` 父叶残余判断。
+- BE-001DF-01 已完成 `runtime.backtest_import_pass` 父叶残余判断；父叶保持 `stop_split: false`，剩余分布为 root 1、run 0、backtest 10、mutation 21、test-only 1，下一步只能进入 BE-001DG-01 `runtime.backtest.replay_import_pass` 单子叶等价基线。
 
 ## 当前收尾/发布状态
 
