@@ -1703,6 +1703,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/308-backend.runtime第九轮父叶残余判断.md` - v4.16.0 BE-001CW-01 `backend.runtime` 第九轮父叶残余判断
 - `markdown/06-milestones/v4.16.0/309-runtime.parent_import_bridge单子叶等价基线.md` - v4.16.0 BE-001CX-01 `runtime.parent_import_bridge` 单子叶等价基线
 - `markdown/06-milestones/v4.16.0/310-runtime.parent_import_bridge抽离方案.md` - v4.16.0 BE-001CX-02 `runtime.parent_import_bridge` 抽离方案
+- `markdown/06-milestones/v4.16.0/311-runtime.root_support_import_pilot抽离记录.md` - v4.16.0 BE-001CX-03 `runtime.root_support_import_pilot` 抽离记录
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
@@ -1880,6 +1881,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001CW-01 已完成 `backend.runtime` 第九轮父叶残余判断并保持 `stop_split: false`；下一步只能进入 BE-001CX-01 `runtime.parent_import_bridge` 单子叶等价基线。
 当前最新递归点补充: BE-001CX-01 已建立 `runtime.parent_import_bridge` 单子叶等价基线；下一步只能进入 BE-001CX-02 抽离方案，不能直接批量改写 Rust import。
 当前最新递归点补充: BE-001CX-02 已建立 `runtime.parent_import_bridge` 抽离方案；下一步只能进入 BE-001CX-03 `runtime.root_support_import_pilot` 实际抽离。
+当前最新递归点补充: BE-001CX-03 已完成 `runtime.root_support_import_pilot` 实际抽离；下一步只能进入 BE-001CX-04 单叶 closeout。
 
 ### 7.7 总览 (markdown/10-overview/)
 

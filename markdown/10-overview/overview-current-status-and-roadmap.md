@@ -268,6 +268,7 @@ v4.7.0 系统应被理解为：
 - BE-001CW-01 已完成 `backend.runtime` 第九轮父叶残余判断；`src/runtime/mod.rs` 已无行为体和 drained include，但仍保留 parent import bridge，因此 `backend.runtime stop_split: false`，下一步只能进入 BE-001CX-01 `runtime.parent_import_bridge` 单子叶等价基线。
 - BE-001CX-01 已建立 `runtime.parent_import_bridge` 单子叶等价基线；当前 46 个 runtime 文件仍存在 `use super::*` / `super::` 依赖，下一步只能进入 BE-001CX-02 抽离方案，不能直接批量改写 Rust import。
 - BE-001CX-02 已建立 `runtime.parent_import_bridge` 抽离方案；后续采用 staged explicit import pass，首个实际批次固定为 BE-001CX-03 `runtime.root_support_import_pilot`，只处理 `query_support` 与 `response_support`。
+- BE-001CX-03 已完成 `runtime.root_support_import_pilot` 实际抽离；`query_support` 与 `response_support` 已改为显式 import，runtime parent bridge 依赖文件数从 46 降为 44，下一步只能进入 BE-001CX-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 
