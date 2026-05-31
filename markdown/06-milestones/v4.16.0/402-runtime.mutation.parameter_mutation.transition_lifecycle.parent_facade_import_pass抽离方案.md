@@ -73,11 +73,14 @@ use super::*;
 替换为显式输入面:
 
 ```rust
-use axum::http::StatusCode;
+use super::mutation_event_contract;
 use crate::RuntimeParameterMutationBoundary;
+use axum::http::StatusCode;
 ```
 
 允许 rustfmt 调整 import 顺序，但语义输入面不得扩大。
+
+补充约束: `transition_record_persistence` 通过 parent facade 命名空间调用 `mutation_event_contract`，因此 BE-001EI-03 必须把它作为 parent-private helper import 显式保留，不得让 child 横向改连。
 
 ---
 

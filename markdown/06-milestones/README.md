@@ -763,3 +763,4 @@
 | v4.16.0 / BE-001EH-01 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` 第六轮父叶残余判断已建立，选择 parent_facade import pass |
 | v4.16.0 / BE-001EI-01 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.parent_facade_import_pass` 单子叶等价基线已建立，冻结 parent facade 输入面 |
 | v4.16.0 / BE-001EI-02 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.parent_facade_import_pass` 抽离方案已建立，固定单文件 import rewrite |
+| v4.16.0 / BE-001EI-03 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.parent_facade_import_pass` 抽离记录已建立，parent facade import 已显式化 |
