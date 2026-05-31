@@ -51,13 +51,16 @@ use super::*;
 预期 import:
 
 ```rust
+use super::mutation_event_contract;
 use crate::{
-    auth, io_error, mutation_event_contract, persist_runtime_parameter_mutation_record, AppState,
-    FrontendRuntimeEvent, RuntimeParameterMutationLifecycleEntry, RuntimeParameterMutationRecord,
+    auth, io_error, persist_runtime_parameter_mutation_record, AppState, FrontendRuntimeEvent,
+    RuntimeParameterMutationLifecycleEntry, RuntimeParameterMutationRecord,
     RuntimeParameterMutationStatus,
 };
 use axum::http::StatusCode;
 ```
+
+`mutation_event_contract` 是父级白箱输入，不提升为 crate root import。
 
 ---
 

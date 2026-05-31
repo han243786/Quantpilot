@@ -95,13 +95,16 @@ StatusCode
 预期 BE-001EA-03 import:
 
 ```rust
+use super::mutation_event_contract;
 use crate::{
-    auth, io_error, mutation_event_contract, persist_runtime_parameter_mutation_record, AppState,
-    FrontendRuntimeEvent, RuntimeParameterMutationLifecycleEntry, RuntimeParameterMutationRecord,
+    auth, io_error, persist_runtime_parameter_mutation_record, AppState, FrontendRuntimeEvent,
+    RuntimeParameterMutationLifecycleEntry, RuntimeParameterMutationRecord,
     RuntimeParameterMutationStatus,
 };
 use axum::http::StatusCode;
 ```
+
+`mutation_event_contract` 保持通过父级白箱输入，不提升到 crate root。
 
 ---
 
