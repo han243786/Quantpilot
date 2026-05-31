@@ -378,6 +378,7 @@
 | 364 | `v4.16.0/364-runtime.mutation.parameter_mutation.proposal_creation_import_pass单子叶等价基线.md` | BE-001DT-01 `runtime.mutation.parameter_mutation.proposal_creation_import_pass` 单子叶等价基线，冻结 proposal creation 输入面 | 📋 已创建 |
 | 365 | `v4.16.0/365-runtime.mutation.parameter_mutation.proposal_creation_import_pass抽离方案.md` | BE-001DT-02 `runtime.mutation.parameter_mutation.proposal_creation_import_pass` 抽离方案，固定单文件 import rewrite | 📋 已创建 |
 | 366 | `v4.16.0/366-runtime.mutation.parameter_mutation.proposal_creation_import_pass抽离记录.md` | BE-001DT-03 `runtime.mutation.parameter_mutation.proposal_creation_import_pass` 抽离记录，改写 `proposal_creation.rs` parent wildcard import | 📋 已创建 |
+| 367 | `v4.16.0/367-runtime.mutation.parameter_mutation.proposal_creation_import_pass单叶closeout.md` | BE-001DT-04 `runtime.mutation.parameter_mutation.proposal_creation_import_pass` 单叶 closeout，设置 `stop_split: true` 并回父叶判断 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
