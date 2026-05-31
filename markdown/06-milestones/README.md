@@ -779,3 +779,4 @@
 | v4.16.0 / BE-001EP-02 | 新增: `runtime.mutation.ai_proposal.record_query_import_pass` 抽离方案已建立，固定单文件 import rewrite |
 | v4.16.0 / BE-001EP-03 | 新增: `runtime.mutation.ai_proposal.record_query_import_pass` 抽离记录已建立，record_query import 已显式化 |
 | v4.16.0 / BE-001EP-04 | 新增: `runtime.mutation.ai_proposal.record_query_import_pass` 单叶 closeout 已建立，设置 stop_split true |
+| v4.16.0 / BE-001EQ-01 | 新增: `runtime.mutation.ai_proposal_import_pass` 第三轮父叶残余判断已建立，选择 source_governance_identity import pass |
