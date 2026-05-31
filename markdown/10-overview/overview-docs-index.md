@@ -315,6 +315,7 @@
 | v4.16.0 / BE-001DE-03 | 新增: `runtime.backtest.record_store_import_pass` 抽离记录已建立，`record_store.rs` parent wildcard import 已收敛 |
 | v4.16.0 / BE-001DE-04 | 新增: `runtime.backtest.record_store_import_pass` 单叶 closeout 已建立，设置 `stop_split: true` 并回到父叶残余判断 |
 | v4.16.0 / BE-001DF-01 | 新增: `runtime.backtest_import_pass` 父叶残余判断已建立，选择 `runtime.backtest.replay_import_pass` 为下一候选 |
+| v4.16.0 / BE-001DG-01 | 新增: `runtime.backtest.replay_import_pass` 单子叶等价基线已建立，冻结 `replay.rs` import 输入面 |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |
