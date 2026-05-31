@@ -364,6 +364,7 @@
 | 350 | `v4.16.0/350-runtime.mutation_import_pass单子叶等价基线.md` | BE-001DN-01 `runtime.mutation_import_pass` 单子叶等价基线，冻结 21 个 mutation parent bridge 文件 | 📋 已创建 |
 | 351 | `v4.16.0/351-runtime.mutation_import_pass抽离方案.md` | BE-001DN-02 `runtime.mutation_import_pass` 抽离方案，选择 shared_governance import pass | 📋 已创建 |
 | 352 | `v4.16.0/352-runtime.mutation.shared_governance_import_pass单子叶等价基线.md` | BE-001DO-01 `runtime.mutation.shared_governance_import_pass` 单子叶等价基线，冻结 `shared_governance.rs` import 输入面 | 📋 已创建 |
+| 353 | `v4.16.0/353-runtime.mutation.shared_governance_import_pass抽离方案.md` | BE-001DO-02 `runtime.mutation.shared_governance_import_pass` 抽离方案，固定单文件 explicit import rewrite | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
