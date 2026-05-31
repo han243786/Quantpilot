@@ -2968,3 +2968,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/460-runtime.mutation.ai_proposal.parent_facade_import_pass单子叶等价基线.md` - v4.16.0 BE-001FH-01 `runtime.mutation.ai_proposal.parent_facade_import_pass` 单子叶等价基线，冻结 parent facade 输入面
 递归边界补充: BE-001FH-02 已建立 `runtime.mutation.ai_proposal.parent_facade_import_pass` 抽离方案；下一步只能进入 BE-001FH-03 实际抽离记录，不得越过单文件 import rewrite。
 - `markdown/06-milestones/v4.16.0/461-runtime.mutation.ai_proposal.parent_facade_import_pass抽离方案.md` - v4.16.0 BE-001FH-02 `runtime.mutation.ai_proposal.parent_facade_import_pass` 抽离方案，固定单文件 import rewrite
+递归边界补充: BE-001FH-03 已完成 `runtime.mutation.ai_proposal.parent_facade_import_pass` 实际抽离；下一步只能进入 BE-001FH-04 单叶 closeout，不得直接声明 ai proposal import pass 完成。
+- `markdown/06-milestones/v4.16.0/462-runtime.mutation.ai_proposal.parent_facade_import_pass抽离记录.md` - v4.16.0 BE-001FH-03 `runtime.mutation.ai_proposal.parent_facade_import_pass` 抽离记录，parent facade import 已显式化

@@ -1,5 +1,3 @@
-use super::*;
-
 #[path = "ai_proposal/approval_persistence.rs"]
 mod approval_persistence;
 #[path = "ai_proposal/approval_review.rs"]
@@ -19,31 +17,27 @@ mod static_check;
 #[path = "ai_proposal/status_transition.rs"]
 mod status_transition;
 
-use approval_persistence::{load_approval_from_disk, persist_approval};
+use super::RuntimeApprovalListQuery;
 pub(crate) use approval_review::{
     approve_ai_proposal, claim_ai_proposal_review, get_runtime_approval_detail,
     list_runtime_approvals, reject_ai_proposal,
 };
-use event_lifecycle::{
-    ai_proposal_lifecycle_entry, build_runtime_ai_proposal_event,
-    persist_runtime_ai_proposal_transition,
-};
 pub(crate) use proposal_creation::create_runtime_ai_proposal;
-use record_query::load_runtime_ai_proposal_for_user;
 pub(crate) use record_query::{get_runtime_ai_proposal_detail, list_runtime_ai_proposals};
-use sandbox_trigger::{ensure_ai_proposal_can_be_approved, spawn_ai_proposal_sandbox_verification};
-use source_governance_identity::{
-    load_runtime_ai_proposal_source_context, runtime_ai_proposal_governance,
-    runtime_ai_proposal_record_id,
-};
-use static_check::{
-    ai_proposal_static_check_result, validate_ai_model_identity, validate_hash_identity,
-};
-use status_transition::{ai_proposal_approved_status, update_ai_proposal_status};
 
 #[cfg(test)]
 mod v4_ai_proposal_tests {
-    use super::*;
+    use super::sandbox_trigger::ensure_ai_proposal_can_be_approved;
+    use crate::{
+        current_time_ms, ActorIdentity, ReplayWindow, RuntimeAiModelIdentity,
+        RuntimeAiProposalConfigDomainBinding, RuntimeAiProposalGovernance, RuntimeAiProposalRecord,
+        RuntimeAiProposalSourceEvidence, RuntimeAiProposalStaticCheckResult,
+        RuntimeAiProposalStatus, RuntimeEvidenceSourceKind, RuntimeParameterMutationTarget,
+        SandboxMetrics, SandboxMetricsDiff, SandboxVerdict, SandboxVerificationReport,
+        StrategyConfigProposalDomain,
+    };
+    use axum::http::StatusCode;
+    use serde_json::json;
 
     fn hash(ch: char) -> String {
         format!("sha256:{}", ch.to_string().repeat(64))
