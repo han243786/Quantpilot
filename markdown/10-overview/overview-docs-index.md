@@ -434,3 +434,4 @@
 | v4.16.0 / BE-001EW-01 | 新增: `runtime.mutation.ai_proposal_import_pass` 第六轮父叶残余判断已建立，下一步进入 BE-001EX-01 approval_persistence import pass 基线 |
 | v4.16.0 / BE-001EX-01 | 新增: `runtime.mutation.ai_proposal.approval_persistence_import_pass` 单子叶等价基线已建立，下一步进入 BE-001EX-02 抽离方案 |
 | v4.16.0 / BE-001EX-02 | 新增: `runtime.mutation.ai_proposal.approval_persistence_import_pass` 抽离方案已建立，下一步进入 BE-001EX-03 实际抽离记录 |
+| v4.16.0 / BE-001EX-03 | 新增: `runtime.mutation.ai_proposal.approval_persistence_import_pass` 抽离记录已建立，下一步进入 BE-001EX-04 单叶 closeout |
