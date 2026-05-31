@@ -281,6 +281,7 @@ v4.7.0 系统应被理解为：
 - BE-001DA-01 已完成 `runtime.parent_import_bridge` 父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001DB-01 `runtime.run_import_pass` 单子叶等价基线。
 - BE-001DB-01 已建立 `runtime.run_import_pass` 单子叶等价基线；冻结 4 个 run child 的 import 收敛边界，下一步只能进入 BE-001DB-02 抽离方案。
 - BE-001DB-02 已建立 `runtime.run_import_pass` 抽离方案；下一步 BE-001DB-03 只允许同批改写 4 个 run child 的 explicit import。
+- BE-001DB-03 已完成 `runtime.run_import_pass` 实际抽离；4 个 run child 已移除 parent wildcard import，parent bridge 依赖文件数从 38 降为 34，下一步只能进入 BE-001DB-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 
