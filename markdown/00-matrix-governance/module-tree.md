@@ -959,6 +959,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001DB-01）**: BE-001DB-01 已建立 `runtime.run_import_pass` 单子叶等价基线。候选范围固定为 4 个 `src/runtime/run/**` child；下一步只能进入 BE-001DB-02 抽离方案。
 **最新状态补充（BE-001DB-02）**: BE-001DB-02 已建立 `runtime.run_import_pass` 抽离方案。BE-001DB-03 只允许同批改写 4 个 run child 的 explicit import；不得混入 root parent bridge、backtest/mutation 子树或 release transition。
 **最新状态补充（BE-001DB-03）**: BE-001DB-03 已完成 `runtime.run_import_pass` 实际抽离。4 个 run child 已从 `use super::*` 收敛为显式 import，runtime parent bridge 依赖文件数从 38 降为 34；下一步只能进入 BE-001DB-04 单叶 closeout。
+**最新状态补充（BE-001DB-04）**: BE-001DB-04 已完成 `runtime.run_import_pass` 单叶 closeout。`runtime.run_import_pass stop_split: true`，run import pass 不继续拆微叶；下一步只能进入 BE-001DC-01 `runtime.parent_import_bridge` 父叶残余判断。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1143,6 +1144,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/322-runtime.run_import_pass单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/323-runtime.run_import_pass抽离方案.md`
 - `markdown/06-milestones/v4.16.0/324-runtime.run_import_pass抽离记录.md`
+- `markdown/06-milestones/v4.16.0/325-runtime.run_import_pass单叶closeout.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5926,6 +5928,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/322-runtime.run_import_pass单子叶等价基线.md` runtime run import pass baseline | `runtime.run_import_pass` | 单子叶等价基线，冻结 4 个 run child 的 import 收敛边界 | BE-001DB 单子叶基线 | `no code movement`；下一步只能进入 BE-001DB-02 抽离方案 |
 | `markdown/06-milestones/v4.16.0/323-runtime.run_import_pass抽离方案.md` runtime run import pass extraction plan | `runtime.run_import_pass` | 抽离方案，固定 4 个 run child 同批 explicit import rewrite | BE-001DB 抽离方案 | `no code movement`；下一步只能进入 BE-001DB-03 实际抽离 |
 | `markdown/06-milestones/v4.16.0/324-runtime.run_import_pass抽离记录.md` runtime run import pass extraction | `runtime.run_import_pass` | 实际抽离，改写 4 个 run child parent wildcard import | BE-001DB 实际抽离 | 依赖文件数从 38 降为 34；下一步只能进入 BE-001DB-04 单叶 closeout |
+| `markdown/06-milestones/v4.16.0/325-runtime.run_import_pass单叶closeout.md` runtime run import pass closeout | `runtime.run_import_pass` | 单叶 closeout，确认 run import pass 不继续细拆 | BE-001DB closeout | `runtime.run_import_pass stop_split: true`；下一步只能进入 BE-001DC-01 `runtime.parent_import_bridge` 父叶残余判断 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
