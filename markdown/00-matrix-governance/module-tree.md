@@ -6364,8 +6364,10 @@ BE-001FD-01 仅冻结 `use super::*` 当前 parent import bridge 与预期显式
 **最新状态补充（BE-001FD-03）**: BE-001FD-03 已完成 `runtime.mutation.ai_proposal.approval_review_import_pass` 实际抽离。`src/runtime/mutation/ai_proposal/approval_review.rs` 已移除 `use super::*` 并改为显式 import；五个 approval review handler 函数体未改。下一步只能进入 BE-001FD-04 单叶 closeout。
 **最新状态补充（BE-001FD-04）**: BE-001FD-04 已建立 `runtime.mutation.ai_proposal.approval_review_import_pass` 单叶 closeout。当前 `no code movement`，本叶设置 `stop_split: true`；下一步只能进入 BE-001FE-01 `runtime.mutation.ai_proposal_import_pass` 父叶残余判断。
 **最新状态补充（BE-001FE-01）**: BE-001FE-01 已建立 `runtime.mutation.ai_proposal_import_pass` 第十轮父叶残余判断。当前 `no code movement`，父叶保持 `runtime.mutation.ai_proposal_import_pass stop_split: false`；下一步只能进入 BE-001FF-01 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 等价基线。parent facade unused imports 继续延期到 parent facade import pass，不在本批主动清理。
+**最新状态补充（BE-001FG-01）**: BE-001FG-01 已建立 `runtime.mutation.ai_proposal_import_pass` 第十一轮父叶残余判断。当前 `no code movement`，child import pockets 已全部完成，但 parent facade residual 仍在 `src/runtime/mutation/ai_proposal.rs`；父叶保持 `runtime.mutation.ai_proposal_import_pass stop_split: false`，下一步只能进入 BE-001FH-01 `runtime.mutation.ai_proposal.parent_facade_import_pass` 单子叶等价基线。parent facade unused imports 继续延期到 parent facade import pass，不在本批主动清理。
 
 | `markdown/06-milestones/v4.16.0/454-runtime.mutation.ai_proposal_import_pass第十轮父叶残余判断.md` runtime mutation ai proposal import pass tenth parent residual judgment | `runtime.mutation.ai_proposal_import_pass` | 父叶残余判断，选择 proposal_creation import pass | BE-001FE 父叶重判 | `proposal_creation_import_pass_selected`；下一步只能进入 BE-001FF-01 等价基线 |
+| `markdown/06-milestones/v4.16.0/459-runtime.mutation.ai_proposal_import_pass第十一轮父叶残余判断.md` runtime mutation ai proposal import pass eleventh parent residual judgment | `runtime.mutation.ai_proposal_import_pass` | 父叶残余判断，选择 parent facade import pass | BE-001FG 父叶重判 | `parent_facade_import_pass_selected`；下一步只能进入 BE-001FH-01 等价基线 |
 
 ## 模块 ID: `runtime.mutation.ai_proposal.proposal_creation_import_pass`
 
