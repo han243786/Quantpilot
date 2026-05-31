@@ -19904,6 +19904,43 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/463-*.md", @(
+        @("BE-001FH-04", "closeout marker"),
+        @("BE-001FI-01", "next parent residual marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation.ai_proposal.parent_facade_import_pass", "parent facade marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.ai_proposal.parent_facade_import_pass", "parent facade coordinate"),
+        @("parent_facade_import_pass_closeout_complete", "closeout complete marker"),
+        @("runtime.mutation.ai_proposal.parent_facade_import_pass stop_split: true", "stop split marker"),
+        @("single_file_ai_proposal_parent_facade_import_pass", "single file marker"),
+        @("RuntimeApprovalListQuery_explicit_parent_import", "hidden input marker"),
+        @("remaining_runtime_parent_import_bridge_1", "remaining runtime residual marker"),
+        @("remaining_mutation_import_bridge_0", "remaining mutation residual marker"),
+        @("remaining_ai_proposal_import_bridge_0", "remaining ai proposal residual marker"),
+        @("remaining_root_parent_import_bridge_1", "remaining root residual marker"),
+        @("src/runtime/mod.rs", "runtime root residual marker"),
+        @("src/runtime/mutation/ai_proposal.rs", "ai proposal parent facade file marker"),
+        @("no_child_module_declaration_micro_split", "child declaration no split marker"),
+        @("no_public_reexport_micro_split", "re-export no split marker"),
+        @("no_test_module_micro_split", "test module no split marker"),
+        @("no_hidden_input_micro_split", "hidden input no split marker"),
+        @("no_route_facade_rewrite", "route facade guard"),
+        @("no_state_owner_migration", "state owner guard"),
+        @("no_schema_owner_migration", "schema owner guard"),
+        @("no_sibling_horizontal_link", "sibling guard"),
+        @("no_release_transition", "release guard"),
+        @("old_three_leaf_pause_target_cancelled", "old pause cancel marker"),
+        @("progress_report_instruction_discarded", "progress report discard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_ai_proposal", "api ai proposal gate"),
+        @("cargo test -p quantpilot v4_ai_proposal_tests::ai_proposal_approval_requires_binding_and_sandbox_report", "internal ai proposal test gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
