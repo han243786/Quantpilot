@@ -6298,3 +6298,7 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 **最新状态补充（BE-001FA-01）**: BE-001FA-01 已建立 `runtime.mutation.ai_proposal_import_pass` 第八轮父叶残余判断。当前 `no code movement`，父叶保持 `runtime.mutation.ai_proposal_import_pass stop_split: false`；下一步只能进入 BE-001FB-01 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 等价基线。
 
 | `markdown/06-milestones/v4.16.0/444-runtime.mutation.ai_proposal_import_pass第八轮父叶残余判断.md` runtime mutation ai proposal import pass eighth parent residual judgment | `runtime.mutation.ai_proposal_import_pass` | 父叶残余判断，选择 sandbox_trigger import pass | BE-001FA 父叶重判 | `sandbox_trigger_import_pass_selected`；下一步只能进入 BE-001FB-01 等价基线 |
+
+**最新状态补充（BE-001FB-01）**: BE-001FB-01 已建立 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 单子叶等价基线。当前 `no code movement`，冻结 sandbox gate、async retry side effect、approval lifecycle 与 persistence order；下一步只能进入 BE-001FB-02 抽离方案。
+
+| `markdown/06-milestones/v4.16.0/445-runtime.mutation.ai_proposal.sandbox_trigger_import_pass单子叶等价基线.md` runtime mutation ai proposal sandbox trigger import pass baseline | `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` | 单子叶等价基线，冻结 sandbox trigger 输入面 | BE-001FB 单子叶基线 | `runtime.mutation.ai_proposal.sandbox_trigger_import_pass baseline_frozen`；下一步只能进入 BE-001FB-02 抽离方案 |
