@@ -46,10 +46,11 @@ next_step: BE-001FD-03 extraction record
 +use super::record_query::load_runtime_ai_proposal_for_user;
 +use super::sandbox_trigger::ensure_ai_proposal_can_be_approved;
 +use super::status_transition::{ai_proposal_approved_status, update_ai_proposal_status};
++use super::RuntimeApprovalListQuery;
 +use crate::{
 +    auth, current_time_ms, io_error, json_bad_request, AppState, ApprovalActionRequest,
-+    RuntimeAiProposalStatus, RuntimeApprovalLifecycleEntry, RuntimeApprovalListQuery,
-+    RuntimeApprovalRecord, RuntimeApprovalReviewState,
++    RuntimeAiProposalStatus, RuntimeApprovalLifecycleEntry, RuntimeApprovalRecord,
++    RuntimeApprovalReviewState,
 +};
 +use axum::{
 +    extract::{Path, Query, State},

@@ -67,7 +67,7 @@ crate::AppState
 crate::ApprovalActionRequest
 crate::RuntimeAiProposalStatus
 crate::RuntimeApprovalLifecycleEntry
-crate::RuntimeApprovalListQuery
+super::RuntimeApprovalListQuery
 crate::RuntimeApprovalRecord
 crate::RuntimeApprovalReviewState
 axum::extract::{Path, Query, State}

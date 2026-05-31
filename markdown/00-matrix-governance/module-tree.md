@@ -6345,7 +6345,7 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 - `super::status_transition::{ai_proposal_approved_status, update_ai_proposal_status}`
 - `crate::auth`, `crate::current_time_ms`, `crate::io_error`, `crate::json_bad_request`, `crate::AppState`
 - `crate::ApprovalActionRequest`, `crate::RuntimeAiProposalStatus`, `crate::RuntimeApprovalLifecycleEntry`
-- `crate::RuntimeApprovalListQuery`, `crate::RuntimeApprovalRecord`, `crate::RuntimeApprovalReviewState`
+- `super::RuntimeApprovalListQuery`, `crate::RuntimeApprovalRecord`, `crate::RuntimeApprovalReviewState`
 - `axum::extract::{Path, Query, State}`, `axum::http::StatusCode`, `axum::Json`
 
 **输出**:
@@ -6361,3 +6361,4 @@ BE-001FD-01 仅冻结 `use super::*` 当前 parent import bridge 与预期显式
 
 **最新状态补充（BE-001FD-01）**: BE-001FD-01 已建立 `runtime.mutation.ai_proposal.approval_review_import_pass` 单子叶等价基线。当前 `no code movement`，`src/runtime/mutation/ai_proposal/approval_review.rs` 仍保留 `use super::*`；下一步只能进入 BE-001FD-02 抽离方案。
 **最新状态补充（BE-001FD-02）**: BE-001FD-02 已建立 `runtime.mutation.ai_proposal.approval_review_import_pass` 抽离方案。当前 `no code movement`；BE-001FD-03 只允许把 `src/runtime/mutation/ai_proposal/approval_review.rs` 顶部 `use super::*` 改为显式 import，禁止改 handler 函数体、锁顺序、lifecycle、status transition 和 persist order。
+**最新状态补充（BE-001FD-03）**: BE-001FD-03 已完成 `runtime.mutation.ai_proposal.approval_review_import_pass` 实际抽离。`src/runtime/mutation/ai_proposal/approval_review.rs` 已移除 `use super::*` 并改为显式 import；五个 approval review handler 函数体未改。下一步只能进入 BE-001FD-04 单叶 closeout。
