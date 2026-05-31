@@ -6373,13 +6373,14 @@ BE-001FD-01 仅冻结 `use super::*` 当前 parent import bridge 与预期显式
 
 **父模块**: `runtime.mutation.ai_proposal_import_pass`
 
-**状态**: v4.16 BE-001FF-03 实际抽离已完成；`src/runtime/mutation/ai_proposal/proposal_creation.rs` 已移除 `use super::*` 并改为显式 import，下一步只能进入 BE-001FF-04 单叶 closeout。
+**状态**: v4.16 BE-001FF-04 单叶 closeout 已完成；`runtime.mutation.ai_proposal.proposal_creation_import_pass stop_split: true`，下一步只能进入 BE-001FG-01 父叶残余判断。
 
 **真实文件**:
 - `src/runtime/mutation/ai_proposal/proposal_creation.rs` - AI proposal create handler import pocket
 - `markdown/06-milestones/v4.16.0/455-runtime.mutation.ai_proposal.proposal_creation_import_pass单子叶等价基线.md` - BE-001FF-01 等价基线
 - `markdown/06-milestones/v4.16.0/456-runtime.mutation.ai_proposal.proposal_creation_import_pass抽离方案.md` - BE-001FF-02 抽离方案
 - `markdown/06-milestones/v4.16.0/457-runtime.mutation.ai_proposal.proposal_creation_import_pass抽离记录.md` - BE-001FF-03 抽离记录
+- `markdown/06-milestones/v4.16.0/458-runtime.mutation.ai_proposal.proposal_creation_import_pass单叶closeout.md` - BE-001FF-04 单叶 closeout
 
 **public / parent-visible 方法**:
 - `create_runtime_ai_proposal` - route-facing AI proposal create handler
@@ -6393,3 +6394,4 @@ AI 声称 `proposal_creation_import_pass` 已推进至 BE-001FF-01 时，必须�
 **最新状态补充（BE-001FF-01）**: BE-001FF-01 已建立 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 单子叶等价基线。下一步只能进入 BE-001FF-02 抽离方案，不得直接改写函数体、自动审批、事件生命周期、persist order、sandbox trigger、parent facade 或 release transition。
 **最新状态补充（BE-001FF-02）**: BE-001FF-02 已建立 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 抽离方案。当前 `no code movement`；BE-001FF-03 只允许把 `src/runtime/mutation/ai_proposal/proposal_creation.rs` 顶部 `use super::*` 改为显式 import，禁止改 handler 函数体、自动审批、事件生命周期、persist order、sandbox trigger 和 sibling owner。
 **最新状态补充（BE-001FF-03）**: BE-001FF-03 已完成 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 实际抽离。`src/runtime/mutation/ai_proposal/proposal_creation.rs` 已移除 `use super::*` 并改为显式 import；剩余 residual 为 `src/runtime/mod.rs` 与 `src/runtime/mutation/ai_proposal.rs`，下一步只能进入 BE-001FF-04 单叶 closeout。
+**最新状态补充（BE-001FF-04）**: BE-001FF-04 已完成 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 单叶 closeout。设置 `runtime.mutation.ai_proposal.proposal_creation_import_pass stop_split: true`；下一步只能进入 BE-001FG-01 `runtime.mutation.ai_proposal_import_pass` 父叶残余判断。

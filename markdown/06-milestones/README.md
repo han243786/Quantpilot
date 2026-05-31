@@ -818,3 +818,4 @@
 | v4.16.0 / BE-001FF-01 | 新增: `runtime.mutation.ai_proposal.proposal_creation_import_pass` 单子叶等价基线已建立，冻结 create handler 输入面 |
 | v4.16.0 / BE-001FF-02 | 新增: `runtime.mutation.ai_proposal.proposal_creation_import_pass` 抽离方案已建立，固定单文件 import rewrite |
 | v4.16.0 / BE-001FF-03 | 新增: `runtime.mutation.ai_proposal.proposal_creation_import_pass` 抽离记录已建立，`proposal_creation.rs` import 已显式化 |
+| v4.16.0 / BE-001FF-04 | 新增: `runtime.mutation.ai_proposal.proposal_creation_import_pass` 单叶 closeout 已建立，设置 stop_split true |
