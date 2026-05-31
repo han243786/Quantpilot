@@ -377,3 +377,4 @@
 | v4.16.0 / BE-001DY-02 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 抽离方案已建立，下一步进入 BE-001DY-03 实际抽离记录 |
 | v4.16.0 / BE-001DY-03 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 抽离记录已建立，下一步进入 BE-001DY-04 单叶 closeout |
 | v4.16.0 / BE-001DY-04 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 单叶 closeout 已建立，下一步进入 BE-001DZ-01 父叶残余判断 |
+| v4.16.0 / BE-001DZ-01 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` 父叶残余判断已建立，选择 transition_record_persistence import pass |
