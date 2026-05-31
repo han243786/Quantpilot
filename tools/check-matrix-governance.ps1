@@ -17283,6 +17283,30 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/405-*.md", @(
+        @("BE-001EJ-01", "parent residual marker"),
+        @("BE-001EK-01", "next parameter mutation parent marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation.parameter_mutation.transition_lifecycle_import_pass", "transition lifecycle import pass marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.parameter_mutation.transition_lifecycle_import_pass", "transition lifecycle coordinate"),
+        @("transition_lifecycle_import_pass seventh_parent_residual_judgment", "seventh residual marker"),
+        @("runtime.mutation.parameter_mutation.transition_lifecycle_import_pass stop_split: true", "transition lifecycle stop split marker"),
+        @("runtime.mutation.parameter_mutation_import_pass", "parameter mutation parent marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.parameter_mutation_import_pass", "parameter mutation coordinate"),
+        @("src/runtime/mutation/parameter_mutation.rs", "remaining parent facade residual marker"),
+        @("remaining_parent_import_bridge_13", "remaining parent marker"),
+        @("remaining_mutation_import_bridge_11", "remaining mutation marker"),
+        @("remaining_parameter_mutation_import_bridge_1", "remaining parameter mutation marker"),
+        @("remaining_transition_lifecycle_import_bridge_0", "remaining lifecycle marker"),
+        @("old_three_leaf_pause_target_cancelled", "old three leaf pause marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_mutation", "api mutation test gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 
