@@ -6360,3 +6360,4 @@ BE-001FD-01 仅冻结 `use super::*` 当前 parent import bridge 与预期显式
 `no_approval_filter_rewrite`、`no_approval_lock_order_rewrite`、`no_reviewer_count_rewrite`、`no_lifecycle_event_rewrite`、`no_status_transition_rewrite`、`no_persistence_order_rewrite`、`no_error_payload_rewrite`、`no_visibility_rewrite`、`no_sibling_owner_migration`。
 
 **最新状态补充（BE-001FD-01）**: BE-001FD-01 已建立 `runtime.mutation.ai_proposal.approval_review_import_pass` 单子叶等价基线。当前 `no code movement`，`src/runtime/mutation/ai_proposal/approval_review.rs` 仍保留 `use super::*`；下一步只能进入 BE-001FD-02 抽离方案。
+**最新状态补充（BE-001FD-02）**: BE-001FD-02 已建立 `runtime.mutation.ai_proposal.approval_review_import_pass` 抽离方案。当前 `no code movement`；BE-001FD-03 只允许把 `src/runtime/mutation/ai_proposal/approval_review.rs` 顶部 `use super::*` 改为显式 import，禁止改 handler 函数体、锁顺序、lifecycle、status transition 和 persist order。

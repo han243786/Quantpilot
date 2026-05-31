@@ -2949,3 +2949,4 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/449-runtime.mutation.ai_proposal_import_pass第九轮父叶残余判断.md` - v4.16.0 BE-001FC-01 `runtime.mutation.ai_proposal_import_pass` 第九轮父叶残余判断，选择 approval_review import pass
 递归边界补充: BE-001FC-01 已建立第九轮父叶残余判断；下一步只能进入 BE-001FD-01 `runtime.mutation.ai_proposal.approval_review_import_pass` 等价基线。
 递归边界补充: BE-001FD-01 已建立 `runtime.mutation.ai_proposal.approval_review_import_pass` 单子叶等价基线；下一步只能进入 BE-001FD-02 抽离方案，不得直接改写函数体、锁顺序、approval lifecycle、proposal status transition、route facade 或发布过渡。
+递归边界补充: BE-001FD-02 已建立 `runtime.mutation.ai_proposal.approval_review_import_pass` 抽离方案；BE-001FD-03 只允许单文件 import rewrite，不得迁移 handler owner、route facade、state/persistence/schema/frontend owner 或启动 release transition。
