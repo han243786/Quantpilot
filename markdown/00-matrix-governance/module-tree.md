@@ -6366,10 +6366,12 @@ BE-001FD-01 仅冻结 `use super::*` 当前 parent import bridge 与预期显式
 **最新状态补充（BE-001FE-01）**: BE-001FE-01 已建立 `runtime.mutation.ai_proposal_import_pass` 第十轮父叶残余判断。当前 `no code movement`，父叶保持 `runtime.mutation.ai_proposal_import_pass stop_split: false`；下一步只能进入 BE-001FF-01 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 等价基线。parent facade unused imports 继续延期到 parent facade import pass，不在本批主动清理。
 **最新状态补充（BE-001FG-01）**: BE-001FG-01 已建立 `runtime.mutation.ai_proposal_import_pass` 第十一轮父叶残余判断。当前 `no code movement`，child import pockets 已全部完成，但 parent facade residual 仍在 `src/runtime/mutation/ai_proposal.rs`；父叶保持 `runtime.mutation.ai_proposal_import_pass stop_split: false`，下一步只能进入 BE-001FH-01 `runtime.mutation.ai_proposal.parent_facade_import_pass` 单子叶等价基线。parent facade unused imports 继续延期到 parent facade import pass，不在本批主动清理。
 **最新状态补充（BE-001FH-01）**: BE-001FH-01 已建立 `runtime.mutation.ai_proposal.parent_facade_import_pass` 单子叶等价基线。当前 `no code movement`，冻结 `src/runtime/mutation/ai_proposal.rs` 的 child module declarations、public facade re-export、parent-private helper imports、`v4_ai_proposal_tests` 与当前 `use super::*` residual；下一步只能进入 BE-001FH-02 抽离方案。
+**最新状态补充（BE-001FH-02）**: BE-001FH-02 已建立 `runtime.mutation.ai_proposal.parent_facade_import_pass` 抽离方案。当前 `no code movement`；BE-001FH-03 只允许改写 `src/runtime/mutation/ai_proposal.rs` 的 import 面，禁止改 child module declarations、public re-export、handler 函数体、测试语义、route facade 或 release transition。
 
 | `markdown/06-milestones/v4.16.0/454-runtime.mutation.ai_proposal_import_pass第十轮父叶残余判断.md` runtime mutation ai proposal import pass tenth parent residual judgment | `runtime.mutation.ai_proposal_import_pass` | 父叶残余判断，选择 proposal_creation import pass | BE-001FE 父叶重判 | `proposal_creation_import_pass_selected`；下一步只能进入 BE-001FF-01 等价基线 |
 | `markdown/06-milestones/v4.16.0/459-runtime.mutation.ai_proposal_import_pass第十一轮父叶残余判断.md` runtime mutation ai proposal import pass eleventh parent residual judgment | `runtime.mutation.ai_proposal_import_pass` | 父叶残余判断，选择 parent facade import pass | BE-001FG 父叶重判 | `parent_facade_import_pass_selected`；下一步只能进入 BE-001FH-01 等价基线 |
 | `markdown/06-milestones/v4.16.0/460-runtime.mutation.ai_proposal.parent_facade_import_pass单子叶等价基线.md` runtime mutation ai proposal parent facade import pass baseline | `runtime.mutation.ai_proposal.parent_facade_import_pass` | 单子叶等价基线，冻结 `src/runtime/mutation/ai_proposal.rs` parent facade 输入面 | BE-001FH 单子叶基线 | `parent_facade_import_pass baseline_frozen`；下一步只能进入 BE-001FH-02 抽离方案 |
+| `markdown/06-milestones/v4.16.0/461-runtime.mutation.ai_proposal.parent_facade_import_pass抽离方案.md` runtime mutation ai proposal parent facade import pass plan | `runtime.mutation.ai_proposal.parent_facade_import_pass` | 抽离方案，固定 BE-001FH-03 单文件 import rewrite | BE-001FH 抽离方案 | `parent_facade_import_pass plan_frozen`；下一步只能进入 BE-001FH-03 实际抽离记录 |
 
 ## 模块 ID: `runtime.mutation.ai_proposal.parent_facade_import_pass`
 
@@ -6382,6 +6384,7 @@ BE-001FD-01 仅冻结 `use super::*` 当前 parent import bridge 与预期显式
 **真实文件**:
 - `src/runtime/mutation/ai_proposal.rs` - AI proposal parent facade import pocket
 - `markdown/06-milestones/v4.16.0/460-runtime.mutation.ai_proposal.parent_facade_import_pass单子叶等价基线.md` - BE-001FH-01 等价基线
+- `markdown/06-milestones/v4.16.0/461-runtime.mutation.ai_proposal.parent_facade_import_pass抽离方案.md` - BE-001FH-02 抽离方案
 
 **public / parent-visible 方法**:
 - `create_runtime_ai_proposal` - AI proposal create handler re-export
@@ -6398,6 +6401,8 @@ BE-001FD-01 仅冻结 `use super::*` 当前 parent import bridge 与预期显式
 
 **回归保护**:
 AI 声称 `parent_facade_import_pass` 已推进至 BE-001FH-01 时，必须说明当前只是 `no code movement` 等价基线，`src/runtime/mutation/ai_proposal.rs` 仍未实际移除 `use super::*`。不得宣称 ai proposal import pass、mutation import pass、runtime parent bridge、backend.runtime 或 Rust 重构已完成。
+
+**最新状态补充（BE-001FH-02）**: BE-001FH-02 已建立 `runtime.mutation.ai_proposal.parent_facade_import_pass` 抽离方案。下一步只能进入 BE-001FH-03 实际抽离记录；BE-001FH-03 只能执行 `single_file_ai_proposal_parent_facade_import_pass`，不得越界改写 child file、handler、re-export、状态机、事件、持久化顺序或发布过渡。
 
 ## 模块 ID: `runtime.mutation.ai_proposal.proposal_creation_import_pass`
 
