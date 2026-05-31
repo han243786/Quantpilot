@@ -2806,3 +2806,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 当前最新递归点补充: BE-001DY-02 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 抽离方案；下一步只能进入 BE-001DY-03 实际抽离记录。
 - `markdown/06-milestones/v4.16.0/378-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass抽离记录.md` - v4.16.0 BE-001DY-03 `rollback_record_identity_import_pass` 抽离记录，移除 rollback_record_identity parent wildcard import
 当前最新递归点补充: BE-001DY-03 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 实际抽离；下一步只能进入 BE-001DY-04 单叶 closeout。
+- `markdown/06-milestones/v4.16.0/379-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass单叶closeout.md` - v4.16.0 BE-001DY-04 `rollback_record_identity_import_pass` 单叶 closeout，设置 stop_split true
+当前最新递归点补充: BE-001DY-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 单叶 closeout；下一步只能进入 BE-001DZ-01 父叶残余判断。
