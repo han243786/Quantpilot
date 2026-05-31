@@ -1,4 +1,4 @@
-use super::*;
+use super::mutation_event_contract;
 
 #[path = "parameter_mutation/proposal_creation.rs"]
 mod proposal_creation;

@@ -90,16 +90,17 @@ use transition_lifecycle::validate_runtime_parameter_mutation_boundary;
 
 ---
 
-## 预期显式输入面
+## 预期输入探针
 
 BE-001EL-02 只能围绕下列输入面建立方案:
 
 ```text
-empty_explicit_parent_import_surface
-no_replacement_import_expected
+initial_empty_explicit_parent_import_surface_candidate
+hidden_parent_input_probe_required
+mutation_event_contract_explicit_parent_import_if_compiler_requires
 ```
 
-预期 BE-001EL-03 只允许删除 `use super::*`。如果编译发现隐藏输入，必须回到方案文档补充显式 import，不得扩大到 child rewrite。
+预期 BE-001EL-03 先尝试删除 `use super::*`。如果 `cargo check -p quantpilot` 发现隐藏父级输入，必须回到方案记录显式 import，不得扩大到 child rewrite。
 
 等价约束:
 
@@ -181,6 +182,6 @@ AI 声称 BE-001EL-01 完成时，必须说明:
 
 1. `407-runtime.mutation.parameter_mutation.parent_facade_import_pass单子叶等价基线.md` 进入里程碑索引、模块树、全量树和治理门禁。
 2. BE-001EL-01 只冻结 baseline，不改 Rust。
-3. `empty_explicit_parent_import_surface` 与 `no_replacement_import_expected` 被记录。
+3. `hidden_parent_input_probe_required` 与 `mutation_event_contract_explicit_parent_import_if_compiler_requires` 被记录。
 4. 下一步固定为 BE-001EL-02 抽离方案。
 5. Rust / 治理 / 全量树门禁均通过。

@@ -35,7 +35,8 @@ parent_facade_import_pass extraction_ready
 single_file_parameter_mutation_parent_facade_import_pass
 delete_parameter_mutation_parent_wildcard_import_only
 empty_explicit_parent_import_surface
-no_replacement_import_expected
+hidden_parent_input_probe_required
+mutation_event_contract_explicit_parent_import_if_compiler_requires
 no code movement
 old_three_leaf_pause_target_cancelled
 ```
@@ -52,11 +53,18 @@ src/runtime/mutation/parameter_mutation.rs
 -use super::*;
 ```
 
-不新增替代 import:
+初始方案优先不新增替代 import，但必须保留编译探针回退:
 
 ```text
 empty_explicit_parent_import_surface
-no_replacement_import_expected
+hidden_parent_input_probe_required
+mutation_event_contract_explicit_parent_import_if_compiler_requires
+```
+
+若 `cargo check -p quantpilot` 发现 `transition_lifecycle` 仍通过父级白箱需要 `mutation_event_contract`，BE-001EL-03 可将 parent wildcard import 收敛为:
+
+```rust
+use super::mutation_event_contract;
 ```
 
 ---
@@ -160,7 +168,7 @@ AI 声称 BE-001EL-02 完成时，必须说明:
 1. 本批是 `no code movement`。
 2. 只建立 `parent_facade_import_pass plan_frozen`。
 3. BE-001EL-03 只能删除 `src/runtime/mutation/parameter_mutation.rs` 的 `use super::*`。
-4. 不新增替代 import。
+4. 若编译发现 hidden parent input，只允许补充 `use super::mutation_event_contract;`。
 5. 下一步只能进入 BE-001EL-03 实际抽离记录。
 6. 旧三叶暂停目标保持取消: `old_three_leaf_pause_target_cancelled`。
 
