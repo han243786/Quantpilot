@@ -1,4 +1,4 @@
-use super::*;
+use crate::{auth, current_time_ms, AppState, RuntimeAiProposalStatus};
 
 pub(super) fn ai_proposal_approved_status() -> RuntimeAiProposalStatus {
     // v1.2.1: 使用独立 Approved 变体区分审批通过和静态检查通过
