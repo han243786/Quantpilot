@@ -14116,6 +14116,34 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/332-*.md", @(
+        @("BE-001DE-04", "record store import pass closeout marker"),
+        @("BE-001DF-01", "next parent residual marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.backtest.record_store_import_pass", "record store import pass marker"),
+        @("runtime.backtest.record_store_import_pass stop_split: true", "stop split marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.backtest_import_pass.runtime.backtest.record_store_import_pass", "record store import pass coordinate"),
+        @("runtime.backtest_import_pass", "parent import pass marker"),
+        @("parent residual judgment", "parent residual judgment marker"),
+        @("runtime.backtest.replay_import_pass", "next replay candidate marker"),
+        @("src/runtime/backtest/record_store.rs", "record store file marker"),
+        @("src/runtime/backtest/replay.rs", "replay exclusion marker"),
+        @("src/runtime/backtest/experiment_sweep.rs", "experiment sweep exclusion marker"),
+        @("src/runtime/backtest/execution_start.rs", "execution start exclusion marker"),
+        @("src/runtime/mod.rs", "runtime parent module marker"),
+        @("src/runtime/mutation/**", "mutation subtree marker"),
+        @("src/runtime/run_guard.rs", "run guard marker"),
+        @("34", "previous dependency count marker"),
+        @("33", "remaining dependency count marker"),
+        @("sibling horizontal link", "sibling horizontal link marker"),
+        @("release transition", "release transition marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 
