@@ -792,3 +792,4 @@
 | v4.16.0 / BE-001EU-01 | 新增: `runtime.mutation.ai_proposal_import_pass` 第五轮父叶残余判断已建立，选择 event_lifecycle import pass |
 | v4.16.0 / BE-001EV-01 | 新增: `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 单子叶等价基线已建立 |
 | v4.16.0 / BE-001EV-02 | 新增: `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 抽离方案已建立，固定单文件 import rewrite |
+| v4.16.0 / BE-001EV-03 | 新增: `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 抽离记录已建立，event_lifecycle import 已显式化 |

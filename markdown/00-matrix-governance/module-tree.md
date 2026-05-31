@@ -6258,3 +6258,6 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 **最新状态补充（BE-001EV-02）**: BE-001EV-02 已建立 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 抽离方案。当前 `no code movement`，BE-001EV-03 只能改写 `src/runtime/mutation/ai_proposal/event_lifecycle.rs` 顶部 import；下一步只能进入 BE-001EV-03 实际抽离记录。
 
 | `markdown/06-milestones/v4.16.0/431-runtime.mutation.ai_proposal.event_lifecycle_import_pass抽离方案.md` runtime mutation ai proposal event lifecycle import pass plan | `runtime.mutation.ai_proposal.event_lifecycle_import_pass` | 抽离方案，固定单文件 import rewrite | BE-001EV 抽离方案 | `event_lifecycle_import_pass plan_frozen`；下一步只能进入 BE-001EV-03 实际抽离记录 |
+**最新状态补充（BE-001EV-03）**: BE-001EV-03 已完成 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 实际抽离。`src/runtime/mutation/ai_proposal/event_lifecycle.rs` 已移除 parent wildcard import 并改为显式输入面；下一步只能进入 BE-001EV-04 单叶 closeout。
+
+| `markdown/06-milestones/v4.16.0/432-runtime.mutation.ai_proposal.event_lifecycle_import_pass抽离记录.md` runtime mutation ai proposal event lifecycle import pass extraction | `runtime.mutation.ai_proposal.event_lifecycle_import_pass` | 实际抽离，event_lifecycle import 显式化 | BE-001EV 实际抽离 | `event_lifecycle_import_pass extraction_done`；下一步只能进入 BE-001EV-04 单叶 closeout |

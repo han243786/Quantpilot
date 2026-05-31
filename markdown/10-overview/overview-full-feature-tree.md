@@ -2912,3 +2912,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 递归边界补充: BE-001EV-01 已建立 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 单子叶等价基线；下一步只能进入 BE-001EV-02 抽离方案。
 - `markdown/06-milestones/v4.16.0/431-runtime.mutation.ai_proposal.event_lifecycle_import_pass抽离方案.md` - v4.16.0 BE-001EV-02 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 抽离方案，固定单文件 import rewrite
 递归边界补充: BE-001EV-02 已建立 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 抽离方案；下一步只能进入 BE-001EV-03 实际抽离记录。
+- `markdown/06-milestones/v4.16.0/432-runtime.mutation.ai_proposal.event_lifecycle_import_pass抽离记录.md` - v4.16.0 BE-001EV-03 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 抽离记录，event_lifecycle import 已显式化
+递归边界补充: BE-001EV-03 已完成 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 实际抽离；下一步只能进入 BE-001EV-04 单叶 closeout。
