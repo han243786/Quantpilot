@@ -956,6 +956,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CZ-03）**: BE-001CZ-03 已完成 `runtime.report_ops_import_pass` 实际抽离。`src/runtime/report_ops.rs` 与 3 个 report_ops child 已从 `use super::*` 收敛为显式 import，runtime parent bridge 依赖文件数从 42 降为 38；下一步只能进入 BE-001CZ-04 单叶 closeout。
 **最新状态补充（BE-001CZ-04）**: BE-001CZ-04 已完成 `runtime.report_ops_import_pass` 单叶 closeout。`runtime.report_ops_import_pass stop_split: true`，report_ops import pass 不继续拆微叶；下一步只能进入 BE-001DA-01 `runtime.parent_import_bridge` 父叶残余判断。
 **最新状态补充（BE-001DA-01）**: BE-001DA-01 已完成 `runtime.parent_import_bridge` 父叶残余判断。`runtime.parent_import_bridge stop_split: false`，当前剩余 38 个 parent bridge 依赖文件；下一步只能进入 BE-001DB-01 `runtime.run_import_pass` 单子叶等价基线。
+**最新状态补充（BE-001DB-01）**: BE-001DB-01 已建立 `runtime.run_import_pass` 单子叶等价基线。候选范围固定为 4 个 `src/runtime/run/**` child；下一步只能进入 BE-001DB-02 抽离方案。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1137,6 +1138,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/319-runtime.report_ops_import_pass抽离记录.md`
 - `markdown/06-milestones/v4.16.0/320-runtime.report_ops_import_pass单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/321-runtime.parent_import_bridge父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/322-runtime.run_import_pass单子叶等价基线.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5917,6 +5919,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/319-runtime.report_ops_import_pass抽离记录.md` runtime report ops import pass extraction | `runtime.report_ops_import_pass` | 实际抽离，改写 report_ops four-file pocket parent wildcard import | BE-001CZ 实际抽离 | 依赖文件数从 42 降为 38；下一步只能进入 BE-001CZ-04 单叶 closeout |
 | `markdown/06-milestones/v4.16.0/320-runtime.report_ops_import_pass单叶closeout.md` runtime report ops import pass closeout | `runtime.report_ops_import_pass` | 单叶 closeout，确认 report_ops import pass 不继续细拆 | BE-001CZ closeout | `runtime.report_ops_import_pass stop_split: true`；下一步只能进入 BE-001DA-01 `runtime.parent_import_bridge` 父叶残余判断 |
 | `markdown/06-milestones/v4.16.0/321-runtime.parent_import_bridge父叶残余判断.md` runtime parent import bridge residual judgement | `runtime.parent_import_bridge` | 父叶残余判断，确认剩余 38 个 parent bridge 依赖文件 | BE-001DA 父叶残余判断 | `runtime.parent_import_bridge stop_split: false`；下一步只能进入 BE-001DB-01 `runtime.run_import_pass` 单子叶等价基线 |
+| `markdown/06-milestones/v4.16.0/322-runtime.run_import_pass单子叶等价基线.md` runtime run import pass baseline | `runtime.run_import_pass` | 单子叶等价基线，冻结 4 个 run child 的 import 收敛边界 | BE-001DB 单子叶基线 | `no code movement`；下一步只能进入 BE-001DB-02 抽离方案 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

@@ -333,6 +333,7 @@
 | 319 | `v4.16.0/319-runtime.report_ops_import_pass抽离记录.md` | BE-001CZ-03 `runtime.report_ops_import_pass` 实际抽离，改写 report_ops four-file pocket parent wildcard import | 📋 已创建 |
 | 320 | `v4.16.0/320-runtime.report_ops_import_pass单叶closeout.md` | BE-001CZ-04 `runtime.report_ops_import_pass` 单叶 closeout，设置 `stop_split: true` 并回到 parent import bridge 残余判断 | 📋 已创建 |
 | 321 | `v4.16.0/321-runtime.parent_import_bridge父叶残余判断.md` | BE-001DA-01 `runtime.parent_import_bridge` 父叶残余判断，确认剩余 38 个依赖文件并选择 `runtime.run_import_pass` | 📋 已创建 |
+| 322 | `v4.16.0/322-runtime.run_import_pass单子叶等价基线.md` | BE-001DB-01 `runtime.run_import_pass` 单子叶等价基线，冻结 4 个 run child 的 import 收敛边界 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
