@@ -498,3 +498,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001EL-02 已建立 `runtime.mutation.parameter_mutation.parent_facade_import_pass` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001EL-03 单文件实际 import rewrite。
 - BE-001EL-03 已完成 `runtime.mutation.parameter_mutation.parent_facade_import_pass` 实际抽离；`parameter_mutation.rs` 已移除 parent wildcard import 并显式导入 `mutation_event_contract`，下一步只能进入 BE-001EL-04 单叶 closeout。
 - BE-001EL-04 已完成 `runtime.mutation.parameter_mutation.parent_facade_import_pass` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001EM-01 `runtime.mutation.parameter_mutation_import_pass` 父叶残余判断。
+- BE-001EM-01 已完成 `runtime.mutation.parameter_mutation_import_pass` 第四轮父叶残余判断并设置 `stop_split: true`；下一步只能进入 BE-001EN-01 `runtime.mutation_import_pass` 父叶残余判断。
