@@ -15509,6 +15509,35 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/365-*.md", @(
+        @("BE-001DT-02", "proposal creation plan marker"),
+        @("BE-001DT-03", "next proposal creation record marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation.parameter_mutation.proposal_creation_import_pass", "proposal creation import pass marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.parameter_mutation.proposal_creation_import_pass", "proposal creation coordinate"),
+        @("single_file_proposal_creation_import_rewrite", "single file rewrite marker"),
+        @("src/runtime/mutation/parameter_mutation/proposal_creation.rs", "proposal creation file marker"),
+        @("use super::*", "current wildcard marker"),
+        @("mutation_parameter_mutation::validate_runtime_parameter_mutation_boundary", "parent boundary import marker"),
+        @("expected_parent_import_bridge_21_to_20", "expected parent bridge marker"),
+        @("expected_mutation_import_bridge_19_to_18", "expected mutation bridge marker"),
+        @("expected_parameter_mutation_import_bridge_9_to_8", "expected parameter mutation bridge marker"),
+        @("record_query_import_bridge_0", "record query bridge marker"),
+        @("no_function_body_change", "no function body change marker"),
+        @("no_handler_signature_change", "no handler signature change marker"),
+        @("no_transition_lifecycle_rewrite", "no lifecycle rewrite marker"),
+        @("no_parameter_mutation_parent_facade_rewrite", "no parent facade rewrite marker"),
+        @("no_sibling_horizontal_link", "no sibling horizontal link marker"),
+        @("no_release_transition", "no release transition marker"),
+        @("old_three_leaf_pause_target_cancelled", "old three leaf pause marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_mutation", "api mutation test gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 
