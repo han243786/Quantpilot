@@ -384,3 +384,4 @@
 | v4.16.0 / BE-001EA-04 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence_import_pass` 单叶 closeout 已建立，下一步进入 BE-001EB-01 父叶残余判断 |
 | v4.16.0 / BE-001EB-01 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` 第三轮父叶残余判断已建立，下一步进入 BE-001EC-01 单子叶等价基线 |
 | v4.16.0 / BE-001EC-01 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect_import_pass` 单子叶等价基线已建立，下一步进入 BE-001EC-02 抽离方案 |
+| v4.16.0 / BE-001EC-02 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect_import_pass` 抽离方案已建立，下一步进入 BE-001EC-03 实际抽离记录 |

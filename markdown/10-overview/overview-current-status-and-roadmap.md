@@ -474,3 +474,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001EA-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence_import_pass` 单叶 closeout；本 import pocket 设置 `stop_split: true`，下一步只能进入 BE-001EB-01 `transition_lifecycle_import_pass` 父叶残余判断。
 - BE-001EB-01 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` 第三轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001EC-01 `activation_snapshot_side_effect_import_pass` 单子叶等价基线。
 - BE-001EC-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect_import_pass` 单子叶等价基线；当前为 `no code movement`，冻结 activation snapshot side-effect 输入面。下一步只能进入 BE-001EC-02 抽离方案。
+- BE-001EC-02 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect_import_pass` 抽离方案；当前为 `no code movement`，下一步只允许改写 `activation_snapshot_side_effect.rs` 顶部 import。下一步只能进入 BE-001EC-03 实际抽离记录。

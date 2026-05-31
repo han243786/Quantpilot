@@ -2822,3 +2822,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 当前最新递归点补充: BE-001EB-01 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` 第三轮父叶残余判断；下一步只能进入 BE-001EC-01 `activation_snapshot_side_effect_import_pass` 单子叶等价基线。
 - `markdown/06-milestones/v4.16.0/386-runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect_import_pass单子叶等价基线.md` - v4.16.0 BE-001EC-01 `activation_snapshot_side_effect_import_pass` 单子叶等价基线，冻结 activation snapshot side-effect 输入面
 当前最新递归点补充: BE-001EC-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect_import_pass` 单子叶等价基线；下一步只能进入 BE-001EC-02 抽离方案。
+- `markdown/06-milestones/v4.16.0/387-runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect_import_pass抽离方案.md` - v4.16.0 BE-001EC-02 `activation_snapshot_side_effect_import_pass` 抽离方案，固定单文件 import rewrite
+当前最新递归点补充: BE-001EC-02 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.activation_snapshot_side_effect_import_pass` 抽离方案；下一步只能进入 BE-001EC-03 实际抽离记录。
