@@ -553,3 +553,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001FH-04 已完成 `runtime.mutation.ai_proposal.parent_facade_import_pass` 单叶 closeout；本批 `no code movement`，设置 `stop_split: true`。下一步只能进入 BE-001FI-01 `runtime.mutation.ai_proposal_import_pass` 父叶残余判断。
 - BE-001FI-01 已完成 `runtime.mutation.ai_proposal_import_pass` 第十二轮父叶残余判断；本批 `no code movement`，父叶设置 `stop_split: true`。下一步只能进入 BE-001FJ-01 `runtime.mutation_import_pass` 父叶残余判断。
 - BE-001FJ-01 已完成 `runtime.mutation_import_pass` 第三轮父叶残余判断；本批 `no code movement`，父叶设置 `stop_split: true`。下一步只能进入 BE-001FK-01 `runtime.parent_import_bridge` 父叶残余判断。
+- BE-001FK-01 已完成 `runtime.parent_import_bridge` 第四轮父叶残余判断；本批 `no code movement`，父叶保持 `stop_split: false`。下一步只能进入 BE-001FL-01 `runtime.root_parent_facade_import_pass` 单子叶等价基线。

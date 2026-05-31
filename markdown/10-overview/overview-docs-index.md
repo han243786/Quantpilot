@@ -463,3 +463,4 @@
 | v4.16.0 / BE-001FH-04 | 新增: `runtime.mutation.ai_proposal.parent_facade_import_pass` 单叶 closeout 已建立，下一步回父叶残余判断 |
 | v4.16.0 / BE-001FI-01 | 新增: `runtime.mutation.ai_proposal_import_pass` 第十二轮父叶残余判断已建立，下一步回上层父叶 |
 | v4.16.0 / BE-001FJ-01 | 新增: `runtime.mutation_import_pass` 第三轮父叶残余判断已建立，下一步回 root parent bridge |
+| v4.16.0 / BE-001FK-01 | 新增: `runtime.parent_import_bridge` 第四轮父叶残余判断已建立，下一步进入 root parent facade 基线 |

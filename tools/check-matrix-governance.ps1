@@ -20008,6 +20008,38 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/466-*.md", @(
+        @("BE-001FK-01", "parent residual marker"),
+        @("BE-001FL-01", "next root facade baseline marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.parent_import_bridge", "parent bridge marker"),
+        @("runtime.root_parent_facade_import_pass", "root facade candidate marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge", "parent bridge coordinate"),
+        @("runtime.parent_import_bridge stop_split: false", "stop split false marker"),
+        @("root 1 / run 0 / backtest 0 / report_ops 0 / mutation 0 / production total 1", "residual distribution marker"),
+        @("remaining_runtime_parent_import_bridge_1", "remaining runtime residual marker"),
+        @("remaining_mutation_import_bridge_0", "remaining mutation residual marker"),
+        @("remaining_root_parent_import_bridge_1", "remaining root residual marker"),
+        @("src/runtime/mod.rs", "runtime root residual marker"),
+        @("src/runtime/run_guard.rs", "test local marker"),
+        @("src/runtime/mutation/ai_proposal/static_check.rs", "test local static check marker"),
+        @("root facade", "root facade wording marker"),
+        @("old_three_leaf_pause_target_cancelled", "old pause cancel marker"),
+        @("progress_report_instruction_discarded", "progress report discard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_run", "api run follow-up gate"),
+        @("cargo test -p quantpilot --test api_backtest", "api backtest follow-up gate"),
+        @("cargo test -p quantpilot --test api_mutation", "api mutation follow-up gate"),
+        @("cargo test -p quantpilot --test api_ai_proposal", "api ai proposal follow-up gate"),
+        @("cargo test -p quantpilot --test api_v1_reports", "api reports follow-up gate"),
+        @("cargo test -p quantpilot --test api_evidence_contract", "api evidence follow-up gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
