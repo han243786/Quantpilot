@@ -440,3 +440,4 @@
 | v4.16.0 / BE-001EZ-01 | 新增: `runtime.mutation.ai_proposal.status_transition_import_pass` 单子叶等价基线已建立，下一步进入 BE-001EZ-02 抽离方案 |
 | v4.16.0 / BE-001EZ-02 | 新增: `runtime.mutation.ai_proposal.status_transition_import_pass` 抽离方案已建立，下一步进入 BE-001EZ-03 实际抽离记录 |
 | v4.16.0 / BE-001EZ-03 | 新增: `runtime.mutation.ai_proposal.status_transition_import_pass` 抽离记录已建立，下一步进入 BE-001EZ-04 单叶 closeout |
+| v4.16.0 / BE-001EZ-04 | 新增: `runtime.mutation.ai_proposal.status_transition_import_pass` 单叶 closeout 已建立，下一步进入 BE-001FA-01 父叶残余判断 |
