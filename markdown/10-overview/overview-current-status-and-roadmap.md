@@ -528,3 +528,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001EX-04 已完成 `runtime.mutation.ai_proposal.approval_persistence_import_pass` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001EY-01 父叶残余判断。
 - BE-001EY-01 已完成 `runtime.mutation.ai_proposal_import_pass` 第七轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001EZ-01 `runtime.mutation.ai_proposal.status_transition_import_pass` 单子叶等价基线。
 - BE-001EZ-01 已建立 `runtime.mutation.ai_proposal.status_transition_import_pass` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001EZ-02 抽离方案。
+- BE-001EZ-02 已建立 `runtime.mutation.ai_proposal.status_transition_import_pass` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001EZ-03 单文件实际 import rewrite。

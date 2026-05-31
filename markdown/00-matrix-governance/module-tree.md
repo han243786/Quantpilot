@@ -6285,3 +6285,6 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 **最新状态补充（BE-001EZ-01）**: BE-001EZ-01 已建立 `runtime.mutation.ai_proposal.status_transition_import_pass` 单子叶等价基线。当前 `no code movement`，冻结 `src/runtime/mutation/ai_proposal/status_transition.rs` 的 Approved 映射、状态转换表、状态写入顺序和 invalid transition 日志；下一步只能进入 BE-001EZ-02 抽离方案。
 
 | `markdown/06-milestones/v4.16.0/440-runtime.mutation.ai_proposal.status_transition_import_pass单子叶等价基线.md` runtime mutation ai proposal status transition import pass baseline | `runtime.mutation.ai_proposal.status_transition_import_pass` | 单子叶等价基线，冻结 status transition 输入面 | BE-001EZ 单子叶基线 | `runtime.mutation.ai_proposal.status_transition_import_pass baseline_frozen`；下一步只能进入 BE-001EZ-02 抽离方案 |
+**最新状态补充（BE-001EZ-02）**: BE-001EZ-02 已建立 `runtime.mutation.ai_proposal.status_transition_import_pass` 抽离方案。当前 `no code movement`，BE-001EZ-03 只能改写 `src/runtime/mutation/ai_proposal/status_transition.rs` 顶部 import；下一步只能进入 BE-001EZ-03 实际抽离记录。
+
+| `markdown/06-milestones/v4.16.0/441-runtime.mutation.ai_proposal.status_transition_import_pass抽离方案.md` runtime mutation ai proposal status transition import pass plan | `runtime.mutation.ai_proposal.status_transition_import_pass` | 抽离方案，固定单文件 import rewrite | BE-001EZ 抽离方案 | `status_transition_import_pass plan_frozen`；下一步只能进入 BE-001EZ-03 实际抽离记录 |
