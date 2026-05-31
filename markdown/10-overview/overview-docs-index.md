@@ -447,3 +447,4 @@
 | v4.16.0 / BE-001FB-03 | 新增: `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 抽离记录已建立，下一步进入 BE-001FB-04 单叶 closeout |
 | v4.16.0 / BE-001FB-04 | 新增: `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 单叶 closeout 已建立，下一步进入 BE-001FC-01 父叶残余判断 |
 | v4.16.0 / BE-001FC-01 | 新增: `runtime.mutation.ai_proposal_import_pass` 第九轮父叶残余判断已建立，下一步进入 BE-001FD-01 approval_review 等价基线 |
+| v4.16.0 / BE-001FD-01 | 新增: `runtime.mutation.ai_proposal.approval_review_import_pass` 单子叶等价基线已建立，下一步进入 BE-001FD-02 approval_review 抽离方案 |

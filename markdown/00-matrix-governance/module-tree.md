@@ -6318,3 +6318,45 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 **最新状态补充（BE-001FC-01）**: BE-001FC-01 已建立 `runtime.mutation.ai_proposal_import_pass` 第九轮父叶残余判断。当前 `no code movement`，父叶保持 `runtime.mutation.ai_proposal_import_pass stop_split: false`；下一步只能进入 BE-001FD-01 `runtime.mutation.ai_proposal.approval_review_import_pass` 等价基线。
 
 | `markdown/06-milestones/v4.16.0/449-runtime.mutation.ai_proposal_import_pass第九轮父叶残余判断.md` runtime mutation ai proposal import pass ninth parent residual judgment | `runtime.mutation.ai_proposal_import_pass` | 父叶残余判断，选择 approval_review import pass | BE-001FC 父叶重判 | `approval_review_import_pass_selected`；下一步只能进入 BE-001FD-01 等价基线 |
+
+## 模块 ID: `runtime.mutation.ai_proposal.approval_review_import_pass`
+
+**层级路径**: `root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.ai_proposal.approval_review_import_pass`
+**父模块**: `runtime.mutation.ai_proposal_import_pass`
+**子模块**: 暂无
+**真实文件**:
+- `src/runtime/mutation/ai_proposal/approval_review.rs`
+- `markdown/06-milestones/v4.16.0/450-runtime.mutation.ai_proposal.approval_review_import_pass单子叶等价基线.md`
+
+**职责**:
+冻结 approval review import pocket 的白箱输入面，覆盖 list/detail/approve/reject/claim 五个 route-facing handler。
+
+**public 方法**:
+- `list_runtime_approvals`
+- `get_runtime_approval_detail`
+- `approve_ai_proposal`
+- `reject_ai_proposal`
+- `claim_ai_proposal_review`
+
+**输入**:
+- `super::approval_persistence::{load_approval_from_disk, persist_approval}`
+- `super::record_query::load_runtime_ai_proposal_for_user`
+- `super::sandbox_trigger::ensure_ai_proposal_can_be_approved`
+- `super::status_transition::{ai_proposal_approved_status, update_ai_proposal_status}`
+- `crate::auth`, `crate::current_time_ms`, `crate::io_error`, `crate::json_bad_request`, `crate::AppState`
+- `crate::ApprovalActionRequest`, `crate::RuntimeAiProposalStatus`, `crate::RuntimeApprovalLifecycleEntry`
+- `crate::RuntimeApprovalListQuery`, `crate::RuntimeApprovalRecord`, `crate::RuntimeApprovalReviewState`
+- `axum::extract::{Path, Query, State}`, `axum::http::StatusCode`, `axum::Json`
+
+**输出**:
+- `Json<Vec<RuntimeApprovalRecord>>`
+- `Json<RuntimeApprovalRecord>`
+- `(StatusCode, String)` error tuple
+
+**父子通信规则**:
+BE-001FD-01 仅冻结 `use super::*` 当前 parent import bridge 与预期显式输入面；BE-001FD-03 之前不得改写 import。子叶只能经父级 ai_proposal import pass 协调，不得新增 sibling 横向连接。
+
+**回归保护**:
+`no_approval_filter_rewrite`、`no_approval_lock_order_rewrite`、`no_reviewer_count_rewrite`、`no_lifecycle_event_rewrite`、`no_status_transition_rewrite`、`no_persistence_order_rewrite`、`no_error_payload_rewrite`、`no_visibility_rewrite`、`no_sibling_owner_migration`。
+
+**最新状态补充（BE-001FD-01）**: BE-001FD-01 已建立 `runtime.mutation.ai_proposal.approval_review_import_pass` 单子叶等价基线。当前 `no code movement`，`src/runtime/mutation/ai_proposal/approval_review.rs` 仍保留 `use super::*`；下一步只能进入 BE-001FD-02 抽离方案。
