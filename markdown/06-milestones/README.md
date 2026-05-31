@@ -772,3 +772,4 @@
 | v4.16.0 / BE-001EL-03 | 新增: `runtime.mutation.parameter_mutation.parent_facade_import_pass` 抽离记录已建立，parent wildcard import 已收敛为显式 `mutation_event_contract` 输入 |
 | v4.16.0 / BE-001EL-04 | 新增: `runtime.mutation.parameter_mutation.parent_facade_import_pass` 单叶 closeout 已建立，设置 stop_split true |
 | v4.16.0 / BE-001EM-01 | 新增: `runtime.mutation.parameter_mutation_import_pass` 第四轮父叶残余判断已建立，设置 stop_split true |
+| v4.16.0 / BE-001EN-01 | 新增: `runtime.mutation_import_pass` 第二轮父叶残余判断已建立，选择 ai_proposal import pass |
