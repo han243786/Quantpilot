@@ -465,3 +465,4 @@
 | v4.16.0 / BE-001FJ-01 | 新增: `runtime.mutation_import_pass` 第三轮父叶残余判断已建立，下一步回 root parent bridge |
 | v4.16.0 / BE-001FK-01 | 新增: `runtime.parent_import_bridge` 第四轮父叶残余判断已建立，下一步进入 root parent facade 基线 |
 | v4.16.0 / BE-001FL-01 | 新增: `runtime.root_parent_facade_import_pass` 单子叶等价基线已建立，下一步进入 root import 抽离方案 |
+| v4.16.0 / BE-001FL-02 | 新增: `runtime.root_parent_facade_import_pass` 抽离方案已建立，下一步进入单文件实际抽离 |

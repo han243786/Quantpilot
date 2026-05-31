@@ -6477,3 +6477,4 @@ AI 声称 `proposal_creation_import_pass` 已推进至 BE-001FF-01 时，必须�
 AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement` 等价基线，`src/runtime/mod.rs` 仍保留 `use super::*` 与 `use axum::extract::Query`，`remaining_runtime_parent_import_bridge_1` 与 `remaining_root_parent_import_bridge_1` 仍成立。不得宣称 runtime parent bridge、backend.runtime 或 Rust 重构已完成。
 
 **最新状态补充（BE-001FL-01）**: BE-001FL-01 已建立 `runtime.root_parent_facade_import_pass` 单子叶等价基线。`root_parent_facade_import_pass baseline_frozen`，冻结 module declaration surface、public re-export surface、private helper bridge surface、query_support parent surface 与 response_support parent surface；下一步只能进入 BE-001FL-02 抽离方案。
+**最新状态补充（BE-001FL-02）**: BE-001FL-02 已建立 `runtime.root_parent_facade_import_pass` 抽离方案。`root_parent_facade_import_pass plan_frozen`；BE-001FL-03 只能删除 `src/runtime/mod.rs` 中 `use super::*` 与 `use axum::extract::Query` 两行，不新增替代 import，不改 child module、handler、re-export、private helper bridge、route facade 或 release transition。
