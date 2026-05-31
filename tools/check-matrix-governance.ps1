@@ -19979,6 +19979,35 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/465-*.md", @(
+        @("BE-001FJ-01", "parent residual marker"),
+        @("BE-001FK-01", "next root parent residual marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation_import_pass", "mutation import pass marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation_import_pass", "mutation import pass coordinate"),
+        @("mutation_import_pass third_parent_residual_judgment", "third judgment marker"),
+        @("runtime.mutation_import_pass stop_split: true", "stop split true marker"),
+        @("remaining_runtime_parent_import_bridge_1", "remaining runtime residual marker"),
+        @("remaining_mutation_import_bridge_0", "remaining mutation residual marker"),
+        @("remaining_root_parent_import_bridge_1", "remaining root residual marker"),
+        @("runtime.mutation.shared_governance_import_pass", "shared governance closeout marker"),
+        @("runtime.mutation.parameter_mutation_import_pass", "parameter mutation closeout marker"),
+        @("runtime.mutation.ai_proposal_import_pass", "ai proposal closeout marker"),
+        @("src/runtime/mutation/**", "mutation files marker"),
+        @("src/runtime/mod.rs", "runtime root residual marker"),
+        @("runtime.parent_import_bridge", "root parent bridge marker"),
+        @("old_three_leaf_pause_target_cancelled", "old pause cancel marker"),
+        @("progress_report_instruction_discarded", "progress report discard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_mutation", "api mutation gate"),
+        @("cargo test -p quantpilot --test api_ai_proposal", "api ai proposal gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {

@@ -825,3 +825,4 @@
 | v4.16.0 / BE-001FH-03 | 新增: `runtime.mutation.ai_proposal.parent_facade_import_pass` 抽离记录已建立，parent facade import 已显式化 |
 | v4.16.0 / BE-001FH-04 | 新增: `runtime.mutation.ai_proposal.parent_facade_import_pass` 单叶 closeout 已建立，设置 stop_split true |
 | v4.16.0 / BE-001FI-01 | 新增: `runtime.mutation.ai_proposal_import_pass` 第十二轮父叶残余判断已建立，设置 stop_split true |
+| v4.16.0 / BE-001FJ-01 | 新增: `runtime.mutation_import_pass` 第三轮父叶残余判断已建立，设置 stop_split true |

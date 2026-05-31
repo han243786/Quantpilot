@@ -552,3 +552,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001FH-03 已完成 `runtime.mutation.ai_proposal.parent_facade_import_pass` 实际抽离；`src/runtime/mutation/ai_proposal.rs` 已移除 parent wildcard import 并显式保留 `RuntimeApprovalListQuery` hidden input。下一步只能进入 BE-001FH-04 单叶 closeout。
 - BE-001FH-04 已完成 `runtime.mutation.ai_proposal.parent_facade_import_pass` 单叶 closeout；本批 `no code movement`，设置 `stop_split: true`。下一步只能进入 BE-001FI-01 `runtime.mutation.ai_proposal_import_pass` 父叶残余判断。
 - BE-001FI-01 已完成 `runtime.mutation.ai_proposal_import_pass` 第十二轮父叶残余判断；本批 `no code movement`，父叶设置 `stop_split: true`。下一步只能进入 BE-001FJ-01 `runtime.mutation_import_pass` 父叶残余判断。
+- BE-001FJ-01 已完成 `runtime.mutation_import_pass` 第三轮父叶残余判断；本批 `no code movement`，父叶设置 `stop_split: true`。下一步只能进入 BE-001FK-01 `runtime.parent_import_bridge` 父叶残余判断。
