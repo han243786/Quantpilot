@@ -2850,3 +2850,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 当前最新递归点补充: BE-001EG-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_flow_import_pass` 单叶 closeout；下一步只能进入 BE-001EH-01 父叶残余判断。
 - `markdown/06-milestones/v4.16.0/400-runtime.mutation.parameter_mutation.transition_lifecycle_import_pass第六轮父叶残余判断.md` - v4.16.0 BE-001EH-01 `transition_lifecycle_import_pass` 第六轮父叶残余判断，选择 parent_facade import pass
 当前最新递归点补充: BE-001EH-01 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` 第六轮父叶残余判断；下一步只能进入 BE-001EI-01 单子叶等价基线。
+- `markdown/06-milestones/v4.16.0/401-runtime.mutation.parameter_mutation.transition_lifecycle.parent_facade_import_pass单子叶等价基线.md` - v4.16.0 BE-001EI-01 `parent_facade_import_pass` 单子叶等价基线，冻结 parent facade 输入面
+当前最新递归点补充: BE-001EI-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.parent_facade_import_pass` 单子叶等价基线；下一步只能进入 BE-001EI-02 抽离方案。
