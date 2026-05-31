@@ -17841,6 +17841,37 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/423-*.md", @(
+        @("BE-001ER-04", "closeout marker"),
+        @("BE-001ES-01", "next parent residual marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation.ai_proposal.source_governance_identity_import_pass", "source governance import marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.ai_proposal.source_governance_identity_import_pass", "source governance coordinate"),
+        @("runtime.mutation.ai_proposal.source_governance_identity_import_pass closeout_done", "closeout done marker"),
+        @("runtime.mutation.ai_proposal.source_governance_identity_import_pass stop_split: true", "stop split marker"),
+        @("removed use super::*", "wildcard removal marker"),
+        @("single file import rewrite", "single file rewrite marker"),
+        @("RuntimeAiProposalSourceContext", "source context marker"),
+        @("load_runtime_ai_proposal_source_context", "source load helper marker"),
+        @("runtime_ai_proposal_governance", "governance helper marker"),
+        @("runtime_ai_proposal_record_id", "record id helper marker"),
+        @("no_source_kind_branch_rewrite", "source kind guard marker"),
+        @("no_sequence_no_rewrite", "sequence guard marker"),
+        @("no_governance_projection_rewrite", "governance projection guard marker"),
+        @("no_record_id_rewrite", "record id guard marker"),
+        @("no_sibling_owner_migration", "sibling owner guard marker"),
+        @("remaining_parent_import_bridge_10", "remaining parent marker"),
+        @("remaining_mutation_import_bridge_8", "remaining mutation marker"),
+        @("remaining_ai_proposal_import_bridge_8", "remaining ai proposal marker"),
+        @("old_three_leaf_pause_target_cancelled", "old three leaf pause marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_ai_proposal", "api ai proposal test gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 
