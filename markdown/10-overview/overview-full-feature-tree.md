@@ -2954,3 +2954,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 递归边界补充: BE-001FD-04 已完成 `runtime.mutation.ai_proposal.approval_review_import_pass` 单叶 closeout；本叶不继续拆 approval filter / lock / lifecycle 微叶，下一步回到 `runtime.mutation.ai_proposal_import_pass` 父叶残余判断。
 递归边界补充: BE-001FE-01 已完成 `runtime.mutation.ai_proposal_import_pass` 第十轮父叶残余判断；父叶继续 `stop_split: false`，下一步只能进入 BE-001FF-01 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 等价基线。
 - `markdown/06-milestones/v4.16.0/454-runtime.mutation.ai_proposal_import_pass第十轮父叶残余判断.md` - v4.16.0 BE-001FE-01 `runtime.mutation.ai_proposal_import_pass` 第十轮父叶残余判断，选择 proposal_creation import pass
+递归边界补充: BE-001FF-01 已建立 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 单子叶等价基线；下一步只能进入 BE-001FF-02 抽离方案，不得直接改写函数体、自动审批、事件生命周期、persist order、sandbox trigger、parent facade 或发布过渡。
+- `markdown/06-milestones/v4.16.0/455-runtime.mutation.ai_proposal.proposal_creation_import_pass单子叶等价基线.md` - v4.16.0 BE-001FF-01 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 单子叶等价基线，冻结 create handler import 输入面

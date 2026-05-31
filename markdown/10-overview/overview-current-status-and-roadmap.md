@@ -542,3 +542,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001FD-03 已完成 `runtime.mutation.ai_proposal.approval_review_import_pass` 实际抽离；`approval_review.rs` 顶部 `use super::*` 已移除并改为显式 import，五个 handler 函数体未改。下一步只能进入 BE-001FD-04 单叶 closeout。
 - BE-001FD-04 已建立 `runtime.mutation.ai_proposal.approval_review_import_pass` 单叶 closeout；本批 `no code movement`，设置 `stop_split: true`，下一步只能进入 BE-001FE-01 父叶残余判断。
 - BE-001FE-01 已建立 `runtime.mutation.ai_proposal_import_pass` 第十轮父叶残余判断；本批 `no code movement`，父叶继续 `stop_split: false`，下一步只能进入 BE-001FF-01 `proposal_creation_import_pass` 等价基线。
+- BE-001FF-01 已建立 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 单子叶等价基线；本批 `no code movement`，冻结 `create_runtime_ai_proposal` 的输入面、状态机、自动审批、事件写入、持久化顺序与 sandbox trigger。下一步只能进入 BE-001FF-02 抽离方案。

@@ -6366,3 +6366,26 @@ BE-001FD-01 仅冻结 `use super::*` 当前 parent import bridge 与预期显式
 **最新状态补充（BE-001FE-01）**: BE-001FE-01 已建立 `runtime.mutation.ai_proposal_import_pass` 第十轮父叶残余判断。当前 `no code movement`，父叶保持 `runtime.mutation.ai_proposal_import_pass stop_split: false`；下一步只能进入 BE-001FF-01 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 等价基线。parent facade unused imports 继续延期到 parent facade import pass，不在本批主动清理。
 
 | `markdown/06-milestones/v4.16.0/454-runtime.mutation.ai_proposal_import_pass第十轮父叶残余判断.md` runtime mutation ai proposal import pass tenth parent residual judgment | `runtime.mutation.ai_proposal_import_pass` | 父叶残余判断，选择 proposal_creation import pass | BE-001FE 父叶重判 | `proposal_creation_import_pass_selected`；下一步只能进入 BE-001FF-01 等价基线 |
+
+## 模块 ID: `runtime.mutation.ai_proposal.proposal_creation_import_pass`
+
+**层级路径**: `root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.ai_proposal.proposal_creation_import_pass`
+
+**父模块**: `runtime.mutation.ai_proposal_import_pass`
+
+**状态**: v4.16 BE-001FF-01 单子叶等价基线已建立；当前 `no code movement`，`src/runtime/mutation/ai_proposal/proposal_creation.rs` 仍保留 `use super::*`，下一步只能进入 BE-001FF-02 抽离方案。
+
+**真实文件**:
+- `src/runtime/mutation/ai_proposal/proposal_creation.rs` - AI proposal create handler import pocket
+- `markdown/06-milestones/v4.16.0/455-runtime.mutation.ai_proposal.proposal_creation_import_pass单子叶等价基线.md` - BE-001FF-01 等价基线
+
+**public / parent-visible 方法**:
+- `create_runtime_ai_proposal` - route-facing AI proposal create handler
+
+**父子通信规则**:
+`proposal_creation_import_pass` 只能通过父级 `runtime.mutation.ai_proposal_import_pass` 接入。BE-001FF-02/03 只能收敛 `src/runtime/mutation/ai_proposal/proposal_creation.rs` 顶部 import，不得绕过父级横向调用 approval_review、parameter_mutation、route facade、AppState owner、schema owner 或 frontend caller。ASCII guard: `release transition guard`。
+
+**回归保护**:
+AI 声称 `proposal_creation_import_pass` 已推进至 BE-001FF-01 时，必须说明当前只是 `no code movement` 等价基线，`src/runtime/mutation/ai_proposal/proposal_creation.rs` 仍未实际移除 `use super::*`。不得宣称 create handler、parent facade、runtime root bridge、backend.runtime 或 Rust 重构已完成。
+
+**最新状态补充（BE-001FF-01）**: BE-001FF-01 已建立 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 单子叶等价基线。下一步只能进入 BE-001FF-02 抽离方案，不得直接改写函数体、自动审批、事件生命周期、persist order、sandbox trigger、parent facade 或 release transition。
