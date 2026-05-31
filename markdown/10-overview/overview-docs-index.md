@@ -337,6 +337,7 @@
 | v4.16.0 / BE-001DO-02 | 新增: `runtime.mutation.shared_governance_import_pass` 抽离方案已建立，固定单文件 explicit import rewrite |
 | v4.16.0 / BE-001DO-03 | 新增: `runtime.mutation.shared_governance_import_pass` 抽离记录已建立，shared_governance parent import 已收敛 |
 | v4.16.0 / BE-001DO-04 | 新增: `runtime.mutation.shared_governance_import_pass` 单叶 closeout 已建立，设置 stop_split true |
+| v4.16.0 / BE-001DP-01 | 新增: `runtime.mutation_import_pass` 父叶残余判断已建立，选择 parameter_mutation import pass |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |

@@ -990,6 +990,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001DO-02）**: BE-001DO-02 已建立 `runtime.mutation.shared_governance_import_pass` 抽离方案。BE-001DO-03 只允许单文件改写 `src/runtime/mutation/shared_governance.rs` 顶部 import；下一步只能进入实际抽离记录。
 **最新状态补充（BE-001DO-03）**: BE-001DO-03 已完成 `runtime.mutation.shared_governance_import_pass` 实际抽离。`src/runtime/mutation/shared_governance.rs` 已删除 `use super::*` 并改为显式 import，parent bridge 剩余降为 total 22；下一步只能进入 BE-001DO-04 单叶 closeout。
 **最新状态补充（BE-001DO-04）**: BE-001DO-04 已完成 `runtime.mutation.shared_governance_import_pass` 单叶 closeout。设置 `runtime.mutation.shared_governance_import_pass stop_split: true`，下一步只能进入 BE-001DP-01 `runtime.mutation_import_pass` 父叶残余判断。
+**最新状态补充（BE-001DP-01）**: BE-001DP-01 已完成 `runtime.mutation_import_pass` 父叶残余判断。父叶保持 `runtime.mutation_import_pass stop_split: false`，当前 parent bridge 剩余 total 22、mutation 20；下一步只能进入 BE-001DQ-01 `runtime.mutation.parameter_mutation_import_pass` 单子叶等价基线。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1205,6 +1206,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/353-runtime.mutation.shared_governance_import_pass抽离方案.md`
 - `markdown/06-milestones/v4.16.0/354-runtime.mutation.shared_governance_import_pass抽离记录.md`
 - `markdown/06-milestones/v4.16.0/355-runtime.mutation.shared_governance_import_pass单叶closeout.md`
+- `markdown/06-milestones/v4.16.0/356-runtime.mutation_import_pass父叶残余判断.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -6019,6 +6021,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/353-runtime.mutation.shared_governance_import_pass抽离方案.md` runtime mutation shared governance import pass plan | `runtime.mutation.shared_governance_import_pass` | 抽离方案，固定单文件 explicit import rewrite | BE-001DO 抽离方案 | `no code movement`；下一步只能进入 BE-001DO-03 实际抽离记录 |
 | `markdown/06-milestones/v4.16.0/354-runtime.mutation.shared_governance_import_pass抽离记录.md` runtime mutation shared governance import pass record | `runtime.mutation.shared_governance_import_pass` | 实际抽离，改写 shared_governance.rs parent wildcard import | BE-001DO 抽离记录 | `actual_parent_import_bridge_23_to_22`；下一步只能进入 BE-001DO-04 单叶 closeout |
 | `markdown/06-milestones/v4.16.0/355-runtime.mutation.shared_governance_import_pass单叶closeout.md` runtime mutation shared governance import pass closeout | `runtime.mutation.shared_governance_import_pass` | 单叶 closeout，确认不继续拆微叶 | BE-001DO 单叶 closeout | `runtime.mutation.shared_governance_import_pass stop_split: true`；下一步只能进入 BE-001DP-01 父叶残余判断 |
+| `markdown/06-milestones/v4.16.0/356-runtime.mutation_import_pass父叶残余判断.md` runtime mutation import pass residual judgment | `runtime.mutation_import_pass` | 父叶残余判断，选择 parameter_mutation import pass | BE-001DP 父叶残余判断 | `runtime.mutation_import_pass stop_split: false`；下一步只能进入 BE-001DQ-01 单子叶等价基线 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
