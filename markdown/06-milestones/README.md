@@ -759,3 +759,4 @@
 | v4.16.0 / BE-001EG-01 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_flow_import_pass` 单子叶等价基线已建立，冻结 rollback flow 输入面 |
 | v4.16.0 / BE-001EG-02 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_flow_import_pass` 抽离方案已建立，固定单文件 import rewrite |
 | v4.16.0 / BE-001EG-03 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_flow_import_pass` 抽离记录已建立，rollback_flow parent import 已收敛 |
+| v4.16.0 / BE-001EG-04 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_flow_import_pass` 单叶 closeout 已建立，设置 stop_split true |
