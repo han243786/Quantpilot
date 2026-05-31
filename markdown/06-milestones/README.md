@@ -340,6 +340,7 @@
 | 326 | `v4.16.0/326-runtime.parent_import_bridge父叶残余判断.md` | BE-001DC-01 `runtime.parent_import_bridge` 父叶残余判断，确认剩余 34 个依赖文件并选择 `runtime.backtest_import_pass` | 📋 已创建 |
 | 327 | `v4.16.0/327-runtime.backtest_import_pass单子叶等价基线.md` | BE-001DD-01 `runtime.backtest_import_pass` 单子叶等价基线，冻结 11 个 backtest 残余文件 | 📋 已创建 |
 | 328 | `v4.16.0/328-runtime.backtest_import_pass抽离方案.md` | BE-001DD-02 `runtime.backtest_import_pass` 抽离方案，拒绝 11 文件整批并选择 `runtime.backtest.record_store_import_pass` | 📋 已创建 |
+| 329 | `v4.16.0/329-runtime.backtest.record_store_import_pass单子叶等价基线.md` | BE-001DE-01 `runtime.backtest.record_store_import_pass` 单子叶等价基线，冻结 `record_store.rs` import 输入面 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
