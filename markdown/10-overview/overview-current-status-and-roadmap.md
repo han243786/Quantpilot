@@ -304,6 +304,7 @@ v4.7.0 系统应被理解为：
 - BE-001DK-01 已建立 `runtime.backtest.execution_start_import_pass` 单子叶等价基线；冻结五文件 pocket，下一步只能进入 BE-001DK-02 抽离方案。
 - BE-001DK-02 已建立 `runtime.backtest.execution_start_import_pass` 抽离方案；下一步 BE-001DK-03 只允许五文件 import rewrite。
 - BE-001DK-03 已完成 `runtime.backtest.execution_start_import_pass` 实际抽离；backtest parent bridge residual 清零，parent bridge 总数从 28 降为 23，下一步只能进入 BE-001DK-04 单叶 closeout。
+- BE-001DK-04 已完成 `runtime.backtest.execution_start_import_pass` 单叶 closeout；设置 `stop_split: true`，backtest residual 保持 0，下一步只能进入 BE-001DL-01 `runtime.backtest_import_pass` 父叶残余判断。
 
 ## 当前收尾/发布状态
 

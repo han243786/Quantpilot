@@ -358,6 +358,7 @@
 | 344 | `v4.16.0/344-runtime.backtest.execution_start_import_pass单子叶等价基线.md` | BE-001DK-01 `runtime.backtest.execution_start_import_pass` 单子叶等价基线，冻结五文件 pocket | 📋 已创建 |
 | 345 | `v4.16.0/345-runtime.backtest.execution_start_import_pass抽离方案.md` | BE-001DK-02 `runtime.backtest.execution_start_import_pass` 抽离方案，固定五文件 import rewrite | 📋 已创建 |
 | 346 | `v4.16.0/346-runtime.backtest.execution_start_import_pass抽离记录.md` | BE-001DK-03 `runtime.backtest.execution_start_import_pass` 实际抽离，backtest import residual 清零 | 📋 已创建 |
+| 347 | `v4.16.0/347-runtime.backtest.execution_start_import_pass单叶closeout.md` | BE-001DK-04 `runtime.backtest.execution_start_import_pass` 单叶 closeout，设置 stop_split true 并回父叶判断 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
