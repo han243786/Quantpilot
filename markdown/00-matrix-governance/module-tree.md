@@ -978,6 +978,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001DI-03）**: BE-001DI-03 已完成 `runtime.backtest.experiment_sweep_import_pass` 实际抽离。四文件 parent import 已收敛，runtime parent bridge 依赖文件数从 32 降为 28；下一步只能进入 BE-001DI-04 单叶 closeout。
 **最新状态补充（BE-001DI-04）**: BE-001DI-04 已完成 `runtime.backtest.experiment_sweep_import_pass` 单叶 closeout。设置 `runtime.backtest.experiment_sweep_import_pass stop_split: true`，旧的三叶暂停目标取消；下一步只能进入 BE-001DJ-01 `runtime.backtest_import_pass` 父叶残余判断。
 **最新状态补充（BE-001DJ-01）**: BE-001DJ-01 已完成 `runtime.backtest_import_pass` 第三轮父叶残余判断。父叶保持 `runtime.backtest_import_pass stop_split: false`，当前剩余分布为 root 1 / run 0 / backtest 5 / mutation 21 / test-only 1 / total 28；下一步只能进入 BE-001DK-01 `runtime.backtest.execution_start_import_pass` 单子叶等价基线。
+**最新状态补充（BE-001DK-01）**: BE-001DK-01 已建立 `runtime.backtest.execution_start_import_pass` 单子叶等价基线。冻结 execution_start 五文件 import pocket、白箱方法和等价风险；下一步只能进入 BE-001DK-02 抽离方案。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1181,6 +1182,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/341-runtime.backtest.experiment_sweep_import_pass抽离记录.md`
 - `markdown/06-milestones/v4.16.0/342-runtime.backtest.experiment_sweep_import_pass单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/343-runtime.backtest_import_pass第三轮父叶残余判断.md`
+- `markdown/06-milestones/v4.16.0/344-runtime.backtest.execution_start_import_pass单子叶等价基线.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5983,6 +5985,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/341-runtime.backtest.experiment_sweep_import_pass抽离记录.md` runtime backtest experiment sweep import pass extraction | `runtime.backtest.experiment_sweep_import_pass` | 实际抽离，四文件 parent import 收敛 | BE-001DI 实际抽离 | 依赖文件数从 32 降为 28；下一步只能进入 BE-001DI-04 单叶 closeout |
 | `markdown/06-milestones/v4.16.0/342-runtime.backtest.experiment_sweep_import_pass单叶closeout.md` runtime backtest experiment sweep import pass closeout | `runtime.backtest.experiment_sweep_import_pass` | 单叶 closeout，确认四文件 pocket 不继续拆微叶 | BE-001DI 单叶 closeout | `runtime.backtest.experiment_sweep_import_pass stop_split: true`；下一步只能进入 BE-001DJ-01 父叶残余判断 |
 | `markdown/06-milestones/v4.16.0/343-runtime.backtest_import_pass第三轮父叶残余判断.md` runtime backtest import pass third residual judgment | `runtime.backtest_import_pass` | 第三轮父叶残余判断，确认 backtest 剩余 5 个 execution_start 组 import 依赖文件 | BE-001DJ 父叶残余判断 | `runtime.backtest_import_pass stop_split: false`；下一步只能进入 BE-001DK-01 `runtime.backtest.execution_start_import_pass` 单子叶等价基线 |
+| `markdown/06-milestones/v4.16.0/344-runtime.backtest.execution_start_import_pass单子叶等价基线.md` runtime backtest execution start import pass baseline | `runtime.backtest.execution_start_import_pass` | 单子叶等价基线，冻结 execution_start 五文件 import pocket | BE-001DK 单子叶基线 | `no code movement`；下一步只能进入 BE-001DK-02 抽离方案 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
