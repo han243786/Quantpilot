@@ -296,6 +296,7 @@
 | v4.16.0 / BE-001CX-04 | 新增: `runtime.root_support_import_pilot` 单叶 closeout 已完成，`stop_split: true` 并转入 root entry import pass |
 | v4.16.0 / BE-001CY-01 | 新增: `runtime.root_entry_import_pass` 单子叶等价基线已建立，冻结 root entry 候选与 test-only super import 判定 |
 | v4.16.0 / BE-001CY-02 | 新增: `runtime.root_entry_import_pass` 抽离方案已建立，固定 two-handler root entry pilot 与 BE-001CY-03 文件边界 |
+| v4.16.0 / BE-001CY-03 | 新增: `runtime.root_entry_import_pass` 抽离记录已建立，`event_stream` 与 `evidence_health` parent wildcard import 已收敛 |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |

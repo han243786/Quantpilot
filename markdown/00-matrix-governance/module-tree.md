@@ -949,6 +949,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CX-04）**: BE-001CX-04 已完成 `runtime.root_support_import_pilot` 单叶 closeout。`runtime.root_support_import_pilot stop_split: true`，不继续拆 `query_support` / `response_support` 微叶；下一步只能进入 BE-001CY-01 `runtime.root_entry_import_pass` 单子叶等价基线。
 **最新状态补充（BE-001CY-01）**: BE-001CY-01 已建立 `runtime.root_entry_import_pass` 单子叶等价基线。候选范围为 `event_stream`、`evidence_health`、`report_ops`、`src/runtime/run_guard.rs` 与 `src/runtime/mod.rs`，其中 `src/runtime/run_guard.rs` 的 `use super::*` 为 test-only super import；下一步只能进入 BE-001CY-02 抽离方案。
 **最新状态补充（BE-001CY-02）**: BE-001CY-02 已建立 `runtime.root_entry_import_pass` 抽离方案。BE-001CY-03 只允许把 `src/runtime/event_stream.rs` 与 `src/runtime/evidence_health.rs` 的 parent wildcard import 改为显式 import；`src/runtime/report_ops.rs` 将另起 `runtime.report_ops_import_pass`，test-only `src/runtime/run_guard.rs` 与 `src/runtime/mod.rs` 父桥均不得混批处理。
+**最新状态补充（BE-001CY-03）**: BE-001CY-03 已完成 `runtime.root_entry_import_pass` 实际抽离。`src/runtime/event_stream.rs` 与 `src/runtime/evidence_health.rs` 已从 `use super::*` 收敛为显式 import，runtime parent bridge 依赖文件数从 44 降为 42；下一步只能进入 BE-001CY-04 单叶 closeout。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1123,6 +1124,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/312-runtime.root_support_import_pilot单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/313-runtime.root_entry_import_pass单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/314-runtime.root_entry_import_pass抽离方案.md`
+- `markdown/06-milestones/v4.16.0/315-runtime.root_entry_import_pass抽离记录.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5896,6 +5898,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/312-runtime.root_support_import_pilot单叶closeout.md` runtime root support import pilot closeout | `runtime.root_support_import_pilot` | 单叶 closeout，确认 root support import pilot 不继续细拆 | BE-001CX closeout | `runtime.root_support_import_pilot stop_split: true`；下一步只能进入 BE-001CY-01 `runtime.root_entry_import_pass` 单子叶等价基线 |
 | `markdown/06-milestones/v4.16.0/313-runtime.root_entry_import_pass单子叶等价基线.md` runtime root entry import pass baseline | `runtime.root_entry_import_pass` | 单子叶等价基线，冻结 root entry 候选与 test-only super import 判定 | BE-001CY 单子叶基线 | `no code movement`；下一步只能进入 BE-001CY-02 抽离方案 |
 | `markdown/06-milestones/v4.16.0/314-runtime.root_entry_import_pass抽离方案.md` runtime root entry import pass extraction plan | `runtime.root_entry_import_pass` | 抽离方案，固定 two-handler root entry pilot 与 BE-001CY-03 文件边界 | BE-001CY 抽离方案 | `no code movement`；下一步只能进入 BE-001CY-03 实际抽离，只处理 `src/runtime/event_stream.rs` 与 `src/runtime/evidence_health.rs` |
+| `markdown/06-milestones/v4.16.0/315-runtime.root_entry_import_pass抽离记录.md` runtime root entry import pass extraction | `runtime.root_entry_import_pass` | 实际抽离，改写 event_stream 与 evidence_health parent wildcard import | BE-001CY 实际抽离 | 依赖文件数从 44 降为 42；下一步只能进入 BE-001CY-04 单叶 closeout |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
