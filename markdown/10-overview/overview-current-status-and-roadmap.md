@@ -509,3 +509,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001EQ-01 已完成 `runtime.mutation.ai_proposal_import_pass` 第三轮父叶残余判断并保持 `stop_split: false`；下一步只能进入 BE-001ER-01 `source_governance_identity_import_pass` 单子叶等价基线。
 - BE-001ER-01 已建立 `runtime.mutation.ai_proposal.source_governance_identity_import_pass` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001ER-02 抽离方案。
 - BE-001ER-02 已建立 `runtime.mutation.ai_proposal.source_governance_identity_import_pass` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001ER-03 单文件实际 import rewrite。
+- BE-001ER-03 已完成 `runtime.mutation.ai_proposal.source_governance_identity_import_pass` 实际抽离；`source_governance_identity.rs` 已移除 parent wildcard import，下一步只能进入 BE-001ER-04 单叶 closeout。

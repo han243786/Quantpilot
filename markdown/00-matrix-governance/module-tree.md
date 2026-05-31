@@ -6228,3 +6228,6 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 **最新状态补充（BE-001ER-02）**: BE-001ER-02 已建立 `runtime.mutation.ai_proposal.source_governance_identity_import_pass` 抽离方案。当前 `no code movement`，固定 BE-001ER-03 只能改写 `src/runtime/mutation/ai_proposal/source_governance_identity.rs` 顶部 import；下一步只能进入 BE-001ER-03 实际抽离记录。
 
 | `markdown/06-milestones/v4.16.0/421-runtime.mutation.ai_proposal.source_governance_identity_import_pass抽离方案.md` runtime mutation ai proposal source governance identity import pass plan | `runtime.mutation.ai_proposal.source_governance_identity_import_pass` | 抽离方案，固定单文件 import rewrite | BE-001ER 抽离方案 | `source_governance_identity_import_pass plan_frozen`；下一步只能进入 BE-001ER-03 实际抽离记录 |
+**最新状态补充（BE-001ER-03）**: BE-001ER-03 已完成 `runtime.mutation.ai_proposal.source_governance_identity_import_pass` 实际抽离。`src/runtime/mutation/ai_proposal/source_governance_identity.rs` 已移除 parent wildcard import 并改为显式输入面；下一步只能进入 BE-001ER-04 单叶 closeout。
+
+| `markdown/06-milestones/v4.16.0/422-runtime.mutation.ai_proposal.source_governance_identity_import_pass抽离记录.md` runtime mutation ai proposal source governance identity import pass extraction | `runtime.mutation.ai_proposal.source_governance_identity_import_pass` | 实际抽离，source governance import 显式化 | BE-001ER 实际抽离 | `source_governance_identity_import_pass extraction_done`；下一步只能进入 BE-001ER-04 单叶 closeout |
