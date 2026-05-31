@@ -2972,3 +2972,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/462-runtime.mutation.ai_proposal.parent_facade_import_pass抽离记录.md` - v4.16.0 BE-001FH-03 `runtime.mutation.ai_proposal.parent_facade_import_pass` 抽离记录，parent facade import 已显式化
 递归边界补充: BE-001FH-04 已完成 `runtime.mutation.ai_proposal.parent_facade_import_pass` 单叶 closeout；本叶设置 `stop_split: true`，下一步只能回到 BE-001FI-01 父叶 residual 判断。
 - `markdown/06-milestones/v4.16.0/463-runtime.mutation.ai_proposal.parent_facade_import_pass单叶closeout.md` - v4.16.0 BE-001FH-04 `runtime.mutation.ai_proposal.parent_facade_import_pass` 单叶 closeout，停止继续细拆 parent facade import pocket
+递归边界补充: BE-001FI-01 已完成 `runtime.mutation.ai_proposal_import_pass` 第十二轮父叶残余判断；父叶设置 `stop_split: true`，下一步只能进入 BE-001FJ-01 `runtime.mutation_import_pass` 父叶 residual 判断。
+- `markdown/06-milestones/v4.16.0/464-runtime.mutation.ai_proposal_import_pass第十二轮父叶残余判断.md` - v4.16.0 BE-001FI-01 `runtime.mutation.ai_proposal_import_pass` 父叶残余判断，ai proposal import pass 收口

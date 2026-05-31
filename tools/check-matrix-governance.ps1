@@ -19941,6 +19941,44 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/464-*.md", @(
+        @("BE-001FI-01", "parent residual marker"),
+        @("BE-001FJ-01", "next parent residual marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation.ai_proposal_import_pass", "ai proposal import pass marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.ai_proposal_import_pass", "ai proposal import pass coordinate"),
+        @("ai_proposal_import_pass twelfth_parent_residual_judgment", "twelfth judgment marker"),
+        @("runtime.mutation.ai_proposal_import_pass stop_split: true", "stop split true marker"),
+        @("remaining_runtime_parent_import_bridge_1", "remaining runtime residual marker"),
+        @("remaining_mutation_import_bridge_0", "remaining mutation residual marker"),
+        @("remaining_ai_proposal_import_bridge_0", "remaining ai proposal residual marker"),
+        @("remaining_root_parent_import_bridge_1", "remaining root residual marker"),
+        @("runtime.mutation.ai_proposal.record_query_import_pass", "record query closeout marker"),
+        @("runtime.mutation.ai_proposal.source_governance_identity_import_pass", "source governance closeout marker"),
+        @("runtime.mutation.ai_proposal.static_check_import_pass", "static check closeout marker"),
+        @("runtime.mutation.ai_proposal.event_lifecycle_import_pass", "event lifecycle closeout marker"),
+        @("runtime.mutation.ai_proposal.approval_persistence_import_pass", "approval persistence closeout marker"),
+        @("runtime.mutation.ai_proposal.status_transition_import_pass", "status transition closeout marker"),
+        @("runtime.mutation.ai_proposal.sandbox_trigger_import_pass", "sandbox trigger closeout marker"),
+        @("runtime.mutation.ai_proposal.approval_review_import_pass", "approval review closeout marker"),
+        @("runtime.mutation.ai_proposal.proposal_creation_import_pass", "proposal creation closeout marker"),
+        @("runtime.mutation.ai_proposal.parent_facade_import_pass", "parent facade closeout marker"),
+        @("src/runtime/mutation/ai_proposal.rs", "ai proposal parent facade file marker"),
+        @("src/runtime/mutation/ai_proposal/**", "ai proposal child files marker"),
+        @("use super::RuntimeApprovalListQuery", "explicit parent import marker"),
+        @("src/runtime/mod.rs", "runtime root residual marker"),
+        @("old_three_leaf_pause_target_cancelled", "old pause cancel marker"),
+        @("progress_report_instruction_discarded", "progress report discard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_ai_proposal", "api ai proposal gate"),
+        @("cargo test -p quantpilot v4_ai_proposal_tests::ai_proposal_approval_requires_binding_and_sandbox_report", "internal ai proposal test gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
