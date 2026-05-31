@@ -330,6 +330,7 @@
 | v4.16.0 / BE-001DK-03 | 新增: `runtime.backtest.execution_start_import_pass` 抽离记录已建立，backtest import residual 清零 |
 | v4.16.0 / BE-001DK-04 | 新增: `runtime.backtest.execution_start_import_pass` 单叶 closeout 已建立，确认 `stop_split: true` |
 | v4.16.0 / BE-001DL-01 | 新增: `runtime.backtest_import_pass` 第四轮父叶残余判断已建立，确认 `stop_split: true` |
+| v4.16.0 / BE-001DM-01 | 新增: `runtime.parent_import_bridge` 父叶残余判断已建立，锁定 mutation import pass |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |
