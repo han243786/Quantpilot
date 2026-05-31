@@ -1,4 +1,5 @@
-use super::*;
+use crate::{FrontendRuntimeEvent, RuntimeEventEnvelope};
+use serde_json::{json, Value};
 
 pub(super) fn build_v4_backtest_output(
     artifact: &qrpc_core_ir::v4::V4BacktestArtifact,
@@ -256,7 +257,9 @@ fn v4_frontend_event(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::runtime::backtest_execution_start::v4_projection::{
+        v4_equity_curve_from_artifact, v4_win_rate_from_equity_curve,
+    };
 
     fn point(ts_ms: u64, equity: f64) -> qrpc_core::BacktestEquityPoint {
         qrpc_core::BacktestEquityPoint {

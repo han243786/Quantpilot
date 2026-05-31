@@ -1,5 +1,3 @@
-use super::*;
-
 #[path = "legacy_dispatch.rs"]
 mod legacy_dispatch;
 #[path = "v4_projection.rs"]
@@ -21,6 +19,21 @@ use v4_request_resolution::{
     resolve_v4_backtest_symbols,
 };
 use v4_runtime_execution::run_v4_backtest_runtime_execution;
+
+use crate::{
+    account_summary_from_portfolio, attach_runtime_event_envelopes, auth, backtest_run_response,
+    build_backtest_artifact_views, build_backtest_spec, build_compile_runtime_targets_from_graph,
+    collaboration_with_run_actor, collect_frontend_events_for_backtest, current_time_ms,
+    internal_error, io_error, json_bad_request, json_bad_request_with_details,
+    maybe_spill_transient_backtest_record, merge_runtime_targets, normalize_actor_identity,
+    prepend_capability_snapshot_event, runtime_governance_snapshot,
+    validate_backtest_execution_assumption_overrides, validate_runtime_capability_guard,
+    validate_runtime_config_capabilities, validate_runtime_event_envelopes, AppState,
+    BacktestRecord, BacktestRunResponse, FrontendRunRequest,
+};
+use axum::{extract::State, http::StatusCode, Json};
+use serde_json::Value;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 pub(crate) async fn start_backtest_run(
     user_id: auth::UserId,
@@ -96,13 +109,13 @@ pub(super) async fn execute_backtest_request(
     let graph_targets = build_compile_runtime_targets_from_graph(graph_json);
     let runtime_targets = merge_runtime_targets(&request.runtime_targets, &graph_targets);
     // v1.3.7: 添加计数器后缀防止同一毫秒内ID碰撞
-    static BACKTEST_SEQ: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    static BACKTEST_SEQ: AtomicU64 = AtomicU64::new(0);
     let backtest_id = match id_suffix {
         Some(suffix) => format!("backtest_{}_{}", now_ms, suffix),
         None => format!(
             "backtest_{}_{}",
             now_ms,
-            BACKTEST_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+            BACKTEST_SEQ.fetch_add(1, Ordering::Relaxed)
         ),
     };
     let governance =
@@ -203,13 +216,13 @@ async fn execute_v4_backtest_request(
     )
     .await?;
 
-    static V4_BACKTEST_SEQ: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    static V4_BACKTEST_SEQ: AtomicU64 = AtomicU64::new(0);
     let backtest_id = match id_suffix {
         Some(suffix) => format!("backtest_{}_{}", now_ms, suffix),
         None => format!(
             "backtest_{}_v4_{}",
             now_ms,
-            V4_BACKTEST_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+            V4_BACKTEST_SEQ.fetch_add(1, Ordering::Relaxed)
         ),
     };
 

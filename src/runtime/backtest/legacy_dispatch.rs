@@ -1,4 +1,17 @@
-use super::*;
+use crate::{
+    apply_backtest_execution_assumption_overrides, build_compile_artifact_bundle,
+    compile_runtime_protocol_config, compile_runtime_protocol_via_qs, internal_error,
+    resolved_backtest_execution_assumptions, resolved_execution_assumption_sources,
+    CompileArtifactBundle, DeterministicTestMode, ExecutionAssumptionSourceSummary,
+    ExecutionAssumptionSpec, FastBacktestSandbox, FrontendBacktestReplaySource, FrontendRunRequest,
+    StrategyArtifactSourceKind, BACKTEST_DETERMINISTIC_SEED,
+};
+use axum::http::StatusCode;
+use qrpc_core::BacktestOutput;
+use qrpc_runtime::Sandbox;
+use serde_json::Value;
+use std::collections::BTreeMap;
+use tokio::task;
 
 pub(super) struct LegacyBacktestDispatchOutput {
     pub compiled: qrpc_core::CompiledRuntimeProtocol,
@@ -63,7 +76,7 @@ pub(super) async fn run_legacy_backtest_dispatch(
     let core_ir = compiled.core_ir.clone();
     let latency_override = resolved_execution_assumptions.latency_assumption_ms;
 
-    let backtest = tokio::task::spawn_blocking(move || {
+    let backtest = task::spawn_blocking(move || {
         let mut sandbox = match replay_source {
             FrontendBacktestReplaySource::HistoricalReplay => {
                 FastBacktestSandbox::with_replay_from_core_ir(core_ir.clone(), now_ms)
