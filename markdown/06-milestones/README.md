@@ -804,3 +804,4 @@
 | v4.16.0 / BE-001EZ-02 | 新增: `runtime.mutation.ai_proposal.status_transition_import_pass` 抽离方案已建立，固定单文件 import rewrite |
 | v4.16.0 / BE-001EZ-03 | 新增: `runtime.mutation.ai_proposal.status_transition_import_pass` 抽离记录已建立，status_transition import 已显式化 |
 | v4.16.0 / BE-001EZ-04 | 新增: `runtime.mutation.ai_proposal.status_transition_import_pass` 单叶 closeout 已建立，设置 stop_split true |
+| v4.16.0 / BE-001FA-01 | 新增: `runtime.mutation.ai_proposal_import_pass` 第八轮父叶残余判断已建立，选择 sandbox_trigger import pass |
