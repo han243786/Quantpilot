@@ -45,9 +45,9 @@ use super::*;
 
 ```rust
 use crate::{
-    auth, backtest_replay_response_from_record, json_bad_request,
-    load_backtest_record_from_state, normalized_replay_options, AppState, RuntimeReplayQuery,
-    RuntimeReplayResponse,
+    auth, backtest_replay_response_from_record, json_bad_request, load_backtest_record_from_state,
+    runtime::{normalized_replay_options, RuntimeReplayQuery},
+    AppState, RuntimeReplayResponse,
 };
 use axum::{
     extract::{Path, Query, State},

@@ -110,7 +110,7 @@ use std::{
         atomic::{AtomicU64, Ordering},
         Arc,
     },
-    time::{Duration, Instant},
+    time::Duration,
 };
 use tokio::{fs, sync::RwLock, time::sleep};
 
