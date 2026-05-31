@@ -2926,3 +2926,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 递归边界补充: BE-001EX-03 已完成 `runtime.mutation.ai_proposal.approval_persistence_import_pass` 实际抽离；下一步只能进入 BE-001EX-04 单叶 closeout。
 - `markdown/06-milestones/v4.16.0/438-runtime.mutation.ai_proposal.approval_persistence_import_pass单叶closeout.md` - v4.16.0 BE-001EX-04 `runtime.mutation.ai_proposal.approval_persistence_import_pass` 单叶 closeout，设置 stop_split true
 递归边界补充: BE-001EX-04 已完成 `runtime.mutation.ai_proposal.approval_persistence_import_pass` 单叶 closeout；下一步只能进入 BE-001EY-01 父叶残余判断。
+- `markdown/06-milestones/v4.16.0/439-runtime.mutation.ai_proposal_import_pass第七轮父叶残余判断.md` - v4.16.0 BE-001EY-01 `runtime.mutation.ai_proposal_import_pass` 第七轮父叶残余判断，选择 status_transition import pass
+递归边界补充: BE-001EY-01 已完成 `runtime.mutation.ai_proposal_import_pass` 第七轮父叶残余判断；下一步只能进入 BE-001EZ-01 `runtime.mutation.ai_proposal.status_transition_import_pass` 单子叶等价基线。
