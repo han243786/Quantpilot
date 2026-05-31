@@ -353,6 +353,7 @@
 | 339 | `v4.16.0/339-runtime.backtest.experiment_sweep_import_pass单子叶等价基线.md` | BE-001DI-01 `runtime.backtest.experiment_sweep_import_pass` 单子叶等价基线，冻结四文件 pocket | 📋 已创建 |
 | 340 | `v4.16.0/340-runtime.backtest.experiment_sweep_import_pass抽离方案.md` | BE-001DI-02 `runtime.backtest.experiment_sweep_import_pass` 抽离方案，固定四文件 import rewrite | 📋 已创建 |
 | 341 | `v4.16.0/341-runtime.backtest.experiment_sweep_import_pass抽离记录.md` | BE-001DI-03 `runtime.backtest.experiment_sweep_import_pass` 实际抽离，四文件 parent import 已收敛 | 📋 已创建 |
+| 342 | `v4.16.0/342-runtime.backtest.experiment_sweep_import_pass单叶closeout.md` | BE-001DI-04 `runtime.backtest.experiment_sweep_import_pass` 单叶 closeout，设置 stop_split true 并回父叶判断 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
