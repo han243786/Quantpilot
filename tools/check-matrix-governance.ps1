@@ -17872,6 +17872,32 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/424-*.md", @(
+        @("BE-001ES-01", "parent residual marker"),
+        @("BE-001ET-01", "next static check baseline marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation.ai_proposal_import_pass", "ai proposal parent marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.ai_proposal_import_pass", "ai proposal parent coordinate"),
+        @("runtime.mutation.ai_proposal_import_pass fourth_parent_residual_judgment", "fourth parent residual marker"),
+        @("runtime.mutation.ai_proposal_import_pass stop_split: false", "parent stop split false marker"),
+        @("static_check_import_pass_selected", "static check selected marker"),
+        @("src/runtime/mutation/ai_proposal/static_check.rs", "static check file marker"),
+        @("validate_hash_identity", "hash identity helper marker"),
+        @("validate_ai_model_identity", "model identity helper marker"),
+        @("ai_proposal_static_check_result", "static check result marker"),
+        @("validate_ai_proposal_config_domain_binding", "config domain binding marker"),
+        @("remaining_parent_import_bridge_10", "remaining parent marker"),
+        @("remaining_mutation_import_bridge_8", "remaining mutation marker"),
+        @("remaining_ai_proposal_import_bridge_8", "remaining ai proposal marker"),
+        @("old_three_leaf_pause_target_cancelled", "old three leaf pause marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_ai_proposal", "api ai proposal test gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 
