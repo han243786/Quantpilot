@@ -813,3 +813,4 @@
 | v4.16.0 / BE-001FD-01 | 新增: `runtime.mutation.ai_proposal.approval_review_import_pass` 单子叶等价基线已建立，下一步进入 BE-001FD-02 抽离方案 |
 | v4.16.0 / BE-001FD-02 | 新增: `runtime.mutation.ai_proposal.approval_review_import_pass` 抽离方案已建立，下一步进入 BE-001FD-03 实际抽离记录 |
 | v4.16.0 / BE-001FD-03 | 新增: `runtime.mutation.ai_proposal.approval_review_import_pass` 抽离记录已建立，`approval_review.rs` import 已显式化 |
+| v4.16.0 / BE-001FD-04 | 新增: `runtime.mutation.ai_proposal.approval_review_import_pass` 单叶 closeout 已建立，设置 stop_split true |
