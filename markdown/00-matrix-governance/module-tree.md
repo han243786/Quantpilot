@@ -6240,3 +6240,6 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 **最新状态补充（BE-001ET-01）**: BE-001ET-01 已建立 `runtime.mutation.ai_proposal.static_check_import_pass` 单子叶等价基线。当前 `no code movement`，冻结 `src/runtime/mutation/ai_proposal/static_check.rs` 的静态校验输入面；下一步只能进入 BE-001ET-02 抽离方案。
 
 | `markdown/06-milestones/v4.16.0/425-runtime.mutation.ai_proposal.static_check_import_pass单子叶等价基线.md` runtime mutation ai proposal static check import pass baseline | `runtime.mutation.ai_proposal.static_check_import_pass` | 单子叶等价基线，冻结 static check 输入面 | BE-001ET 单子叶基线 | `runtime.mutation.ai_proposal.static_check_import_pass baseline_frozen`；下一步只能进入 BE-001ET-02 抽离方案 |
+**最新状态补充（BE-001ET-02）**: BE-001ET-02 已建立 `runtime.mutation.ai_proposal.static_check_import_pass` 抽离方案。当前 `no code movement`，BE-001ET-03 只能改写 `src/runtime/mutation/ai_proposal/static_check.rs` 顶部 import；下一步只能进入 BE-001ET-03 实际抽离记录。
+
+| `markdown/06-milestones/v4.16.0/426-runtime.mutation.ai_proposal.static_check_import_pass抽离方案.md` runtime mutation ai proposal static check import pass plan | `runtime.mutation.ai_proposal.static_check_import_pass` | 抽离方案，固定单文件 import rewrite | BE-001ET 抽离方案 | `static_check_import_pass plan_frozen`；下一步只能进入 BE-001ET-03 实际抽离记录 |

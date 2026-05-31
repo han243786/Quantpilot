@@ -786,3 +786,4 @@
 | v4.16.0 / BE-001ER-04 | 新增: `runtime.mutation.ai_proposal.source_governance_identity_import_pass` 单叶 closeout 已建立，设置 stop_split true |
 | v4.16.0 / BE-001ES-01 | 新增: `runtime.mutation.ai_proposal_import_pass` 第四轮父叶残余判断已建立，选择 static_check import pass |
 | v4.16.0 / BE-001ET-01 | 新增: `runtime.mutation.ai_proposal.static_check_import_pass` 单子叶等价基线已建立 |
+| v4.16.0 / BE-001ET-02 | 新增: `runtime.mutation.ai_proposal.static_check_import_pass` 抽离方案已建立，固定单文件 import rewrite |
