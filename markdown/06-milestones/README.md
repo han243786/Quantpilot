@@ -776,3 +776,4 @@
 | v4.16.0 / BE-001EO-01 | 新增: `runtime.mutation.ai_proposal_import_pass` 单子叶等价基线已建立，冻结 ai proposal 输入面 |
 | v4.16.0 / BE-001EO-02 | 新增: `runtime.mutation.ai_proposal_import_pass` 抽离方案已建立，选择 record_query import pass |
 | v4.16.0 / BE-001EP-01 | 新增: `runtime.mutation.ai_proposal.record_query_import_pass` 单子叶等价基线已建立 |
+| v4.16.0 / BE-001EP-02 | 新增: `runtime.mutation.ai_proposal.record_query_import_pass` 抽离方案已建立，固定单文件 import rewrite |

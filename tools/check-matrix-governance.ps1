@@ -17630,6 +17630,36 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/416-*.md", @(
+        @("BE-001EP-02", "plan marker"),
+        @("BE-001EP-03", "next extraction marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation.ai_proposal.record_query_import_pass", "record query import marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.ai_proposal.record_query_import_pass", "record query coordinate"),
+        @("record_query_import_pass plan_frozen", "plan frozen marker"),
+        @("single file import rewrite", "single file rewrite marker"),
+        @("src/runtime/mutation/ai_proposal/record_query.rs", "record query file marker"),
+        @("use super::*", "wildcard import marker"),
+        @("load_runtime_ai_proposal_for_user", "load helper marker"),
+        @("list_runtime_ai_proposals", "list handler marker"),
+        @("get_runtime_ai_proposal_detail", "detail handler marker"),
+        @("no_handler_signature_change", "handler signature guard marker"),
+        @("no_query_filter_rewrite", "query filter guard marker"),
+        @("no_state_cache_rewrite", "state cache guard marker"),
+        @("no_disk_fallback_rewrite", "disk fallback guard marker"),
+        @("no_sibling_owner_migration", "sibling owner guard marker"),
+        @("expected_remaining_parent_import_bridge_11", "expected remaining parent marker"),
+        @("expected_remaining_mutation_import_bridge_9", "expected remaining mutation marker"),
+        @("expected_remaining_ai_proposal_import_bridge_9", "expected remaining ai proposal marker"),
+        @("old_three_leaf_pause_target_cancelled", "old three leaf pause marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_ai_proposal", "api ai proposal test gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 
