@@ -1729,6 +1729,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/334-runtime.backtest.replay_import_pass单子叶等价基线.md` - v4.16.0 BE-001DG-01 `runtime.backtest.replay_import_pass` 单子叶等价基线
 - `markdown/06-milestones/v4.16.0/335-runtime.backtest.replay_import_pass抽离方案.md` - v4.16.0 BE-001DG-02 `runtime.backtest.replay_import_pass` 抽离方案
 - `markdown/06-milestones/v4.16.0/336-runtime.backtest.replay_import_pass抽离记录.md` - v4.16.0 BE-001DG-03 `runtime.backtest.replay_import_pass` 抽离记录
+- `markdown/06-milestones/v4.16.0/337-runtime.backtest.replay_import_pass单叶closeout.md` - v4.16.0 BE-001DG-04 `runtime.backtest.replay_import_pass` 单叶 closeout
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
@@ -1932,6 +1933,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001DG-01 已建立 `runtime.backtest.replay_import_pass` 单子叶等价基线；下一步只能进入 BE-001DG-02 抽离方案。
 当前最新递归点补充: BE-001DG-02 已建立 `runtime.backtest.replay_import_pass` 抽离方案；下一步只能进入 BE-001DG-03 实际抽离。
 当前最新递归点补充: BE-001DG-03 已完成 `runtime.backtest.replay_import_pass` 实际抽离；下一步只能进入 BE-001DG-04 单叶 closeout。
+当前最新递归点补充: BE-001DG-04 已完成 `runtime.backtest.replay_import_pass` 单叶 closeout；下一步只能进入 BE-001DH-01 `runtime.backtest_import_pass` 父叶残余判断。
 
 ### 7.7 总览 (markdown/10-overview/)
 

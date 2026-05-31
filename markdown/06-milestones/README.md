@@ -348,6 +348,7 @@
 | 334 | `v4.16.0/334-runtime.backtest.replay_import_pass单子叶等价基线.md` | BE-001DG-01 `runtime.backtest.replay_import_pass` 单子叶等价基线，冻结 `replay.rs` import 输入面 | 📋 已创建 |
 | 335 | `v4.16.0/335-runtime.backtest.replay_import_pass抽离方案.md` | BE-001DG-02 `runtime.backtest.replay_import_pass` 抽离方案，固定 BE-001DG-03 只改 `replay.rs` import | 📋 已创建 |
 | 336 | `v4.16.0/336-runtime.backtest.replay_import_pass抽离记录.md` | BE-001DG-03 `runtime.backtest.replay_import_pass` 实际抽离，改写 `replay.rs` parent wildcard import | 📋 已创建 |
+| 337 | `v4.16.0/337-runtime.backtest.replay_import_pass单叶closeout.md` | BE-001DG-04 `runtime.backtest.replay_import_pass` 单叶 closeout，确认 `stop_split: true` | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
