@@ -16585,6 +16585,34 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/390-*.md", @(
+        @("BE-001ED-01", "parent residual marker"),
+        @("BE-001EE-01", "next activation flow baseline marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation.parameter_mutation.transition_lifecycle_import_pass", "transition lifecycle import pass marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.parameter_mutation.transition_lifecycle_import_pass", "transition lifecycle coordinate"),
+        @("transition_lifecycle_import_pass fourth_parent_residual_judgment", "fourth residual marker"),
+        @("runtime.mutation.parameter_mutation.transition_lifecycle_import_pass stop_split: false", "parent stop split false marker"),
+        @("activation_flow_import_pass_selected", "activation flow selected marker"),
+        @("single_file_activation_flow_import_pass", "single file activation flow marker"),
+        @("runtime.mutation.parameter_mutation.transition_lifecycle.activation_flow_import_pass", "activation flow import pass marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.parameter_mutation.transition_lifecycle.activation_flow_import_pass", "activation flow coordinate"),
+        @("src/runtime/mutation/parameter_mutation/transition_lifecycle.rs", "transition lifecycle facade file marker"),
+        @("src/runtime/mutation/parameter_mutation/transition_lifecycle/activation_flow.rs", "activation flow file marker"),
+        @("src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_flow.rs", "rollback flow file marker"),
+        @("remaining_parent_import_bridge_16", "remaining parent bridge marker"),
+        @("remaining_mutation_import_bridge_14", "remaining mutation bridge marker"),
+        @("remaining_parameter_mutation_import_bridge_4", "remaining parameter mutation marker"),
+        @("remaining_transition_lifecycle_import_bridge_3", "remaining lifecycle marker"),
+        @("old_three_leaf_pause_target_cancelled", "old three leaf pause marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_mutation", "api mutation test gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 
