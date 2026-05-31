@@ -302,6 +302,7 @@ v4.7.0 系统应被理解为：
 - BE-001DI-04 已完成 `runtime.backtest.experiment_sweep_import_pass` 单叶 closeout；设置 `stop_split: true`，旧的三叶暂停目标取消，下一步只能进入 BE-001DJ-01 `runtime.backtest_import_pass` 父叶残余判断。
 - BE-001DJ-01 已完成 `runtime.backtest_import_pass` 第三轮父叶残余判断；backtest 剩余 5 个 execution_start 组依赖，下一步只能进入 BE-001DK-01 `runtime.backtest.execution_start_import_pass` 单子叶等价基线。
 - BE-001DK-01 已建立 `runtime.backtest.execution_start_import_pass` 单子叶等价基线；冻结五文件 pocket，下一步只能进入 BE-001DK-02 抽离方案。
+- BE-001DK-02 已建立 `runtime.backtest.execution_start_import_pass` 抽离方案；下一步 BE-001DK-03 只允许五文件 import rewrite。
 
 ## 当前收尾/发布状态
 
