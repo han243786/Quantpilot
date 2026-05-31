@@ -295,6 +295,7 @@ v4.7.0 系统应被理解为：
 - BE-001DG-02 已建立 `runtime.backtest.replay_import_pass` 抽离方案；下一步 BE-001DG-03 只允许改写 `src/runtime/backtest/replay.rs` 顶部 import。
 - BE-001DG-03 已完成 `runtime.backtest.replay_import_pass` 实际抽离；`replay.rs` 已移除 parent wildcard import，parent bridge 依赖文件数从 33 降为 32，下一步只能进入 BE-001DG-04 单叶 closeout。
 - BE-001DG-04 已完成 `runtime.backtest.replay_import_pass` 单叶 closeout；本叶设置 `stop_split: true`，下一步只能进入 BE-001DH-01 `runtime.backtest_import_pass` 父叶残余判断。
+- BE-001DH-01 已完成 `runtime.backtest_import_pass` 第二轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001DI-01 `runtime.backtest.experiment_sweep_import_pass` 单子叶等价基线。
 
 ## 当前收尾/发布状态
 
