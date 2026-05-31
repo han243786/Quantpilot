@@ -6114,3 +6114,6 @@ AI 引用治理规则时，必须指出具体矩阵、文件和章节；不能�
 
 **幻觉检查点**:
 AI 声称文件存在或路径有效时，必须能通过全量树或实际文件检查证实。
+| `markdown/06-milestones/v4.16.0/376-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass单子叶等价基线.md` runtime mutation parameter mutation transition lifecycle rollback record identity import pass baseline | `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` | 单子叶等价基线，冻结 `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_record_identity.rs` 输入面 | BE-001DY 单子叶基线 | `rollback_record_identity_import_pass baseline_frozen`；下一步只能进入 BE-001DY-02 抽离方案 |
+
+**最新状态补充（BE-001DY-01）**: BE-001DY-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 单子叶等价基线。当前 `no code movement`，冻结文件为 `src/runtime/mutation/parameter_mutation/transition_lifecycle/rollback_record_identity.rs`，helper 为 `runtime_parameter_mutation_rollback_record_id`；下一步只能进入 BE-001DY-02 抽离方案。旧三叶暂停目标保持取消: `old_three_leaf_pause_target_cancelled`。
