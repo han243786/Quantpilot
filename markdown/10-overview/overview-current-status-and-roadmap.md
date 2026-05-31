@@ -288,6 +288,7 @@ v4.7.0 系统应被理解为：
 - BE-001DD-02 已建立 `runtime.backtest_import_pass` 抽离方案；拒绝 11 文件整批改写，下一步只能进入 BE-001DE-01 `runtime.backtest.record_store_import_pass` 单子叶等价基线。
 - BE-001DE-01 已建立 `runtime.backtest.record_store_import_pass` 单子叶等价基线；冻结 `src/runtime/backtest/record_store.rs` 的 4 个 public 方法与预期显式输入面，下一步只能进入 BE-001DE-02 抽离方案。
 - BE-001DE-02 已建立 `runtime.backtest.record_store_import_pass` 抽离方案；下一步 BE-001DE-03 只允许改写 `src/runtime/backtest/record_store.rs` 顶部 import。
+- BE-001DE-03 已完成 `runtime.backtest.record_store_import_pass` 实际抽离；`record_store.rs` 已移除 parent wildcard import，parent bridge 依赖文件数从 34 降为 33，下一步只能进入 BE-001DE-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 
