@@ -744,3 +744,4 @@
 | v4.16.0 / BE-001EA-01 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence_import_pass` 单子叶等价基线已建立，冻结 lifecycle persistence 输入面 |
 | v4.16.0 / BE-001EA-02 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence_import_pass` 抽离方案已建立，固定单文件 import rewrite |
 | v4.16.0 / BE-001EA-03 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence_import_pass` 抽离记录已建立，transition_record_persistence parent import 已收敛 |
+| v4.16.0 / BE-001EA-04 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.transition_record_persistence_import_pass` 单叶 closeout 已建立，设置 stop_split true |
