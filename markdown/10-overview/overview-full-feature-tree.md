@@ -2940,3 +2940,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 递归边界补充: BE-001FA-01 已建立第八轮父叶残余判断；下一步只能进入 BE-001FB-01 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 等价基线。
 - `markdown/06-milestones/v4.16.0/445-runtime.mutation.ai_proposal.sandbox_trigger_import_pass单子叶等价基线.md` - v4.16.0 BE-001FB-01 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 单子叶等价基线，冻结 sandbox gate 与 async retry side effect
 递归边界补充: BE-001FB-01 已建立 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 等价基线；下一步只能进入 BE-001FB-02 抽离方案。
+- `markdown/06-milestones/v4.16.0/446-runtime.mutation.ai_proposal.sandbox_trigger_import_pass抽离方案.md` - v4.16.0 BE-001FB-02 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 抽离方案，固定单文件 import rewrite
+递归边界补充: BE-001FB-02 已建立 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 抽离方案；下一步只能进入 BE-001FB-03 实际抽离记录。

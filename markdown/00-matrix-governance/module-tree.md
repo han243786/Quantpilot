@@ -6302,3 +6302,7 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 **最新状态补充（BE-001FB-01）**: BE-001FB-01 已建立 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 单子叶等价基线。当前 `no code movement`，冻结 sandbox gate、async retry side effect、approval lifecycle 与 persistence order；下一步只能进入 BE-001FB-02 抽离方案。
 
 | `markdown/06-milestones/v4.16.0/445-runtime.mutation.ai_proposal.sandbox_trigger_import_pass单子叶等价基线.md` runtime mutation ai proposal sandbox trigger import pass baseline | `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` | 单子叶等价基线，冻结 sandbox trigger 输入面 | BE-001FB 单子叶基线 | `runtime.mutation.ai_proposal.sandbox_trigger_import_pass baseline_frozen`；下一步只能进入 BE-001FB-02 抽离方案 |
+
+**最新状态补充（BE-001FB-02）**: BE-001FB-02 已建立 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 抽离方案。当前 `no code movement`，BE-001FB-03 只能改写 `src/runtime/mutation/ai_proposal/sandbox_trigger.rs` 顶部 import；下一步只能进入 BE-001FB-03 实际抽离记录。
+
+| `markdown/06-milestones/v4.16.0/446-runtime.mutation.ai_proposal.sandbox_trigger_import_pass抽离方案.md` runtime mutation ai proposal sandbox trigger import pass plan | `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` | 抽离方案，固定单文件 import rewrite | BE-001FB 抽离方案 | `sandbox_trigger_import_pass plan_frozen`；下一步只能进入 BE-001FB-03 实际抽离记录 |
