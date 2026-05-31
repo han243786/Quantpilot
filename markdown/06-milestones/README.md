@@ -327,6 +327,7 @@
 | 313 | `v4.16.0/313-runtime.root_entry_import_pass单子叶等价基线.md` | BE-001CY-01 `runtime.root_entry_import_pass` 单子叶等价基线，冻结 root entry 候选与 test-only super import 判定 | 📋 已创建 |
 | 314 | `v4.16.0/314-runtime.root_entry_import_pass抽离方案.md` | BE-001CY-02 `runtime.root_entry_import_pass` 抽离方案，限定 BE-001CY-03 只处理 event_stream 与 evidence_health | 📋 已创建 |
 | 315 | `v4.16.0/315-runtime.root_entry_import_pass抽离记录.md` | BE-001CY-03 `runtime.root_entry_import_pass` 实际抽离，改写 event_stream/evidence_health parent wildcard import | 📋 已创建 |
+| 316 | `v4.16.0/316-runtime.root_entry_import_pass单叶closeout.md` | BE-001CY-04 `runtime.root_entry_import_pass` 单叶 closeout，设置 `stop_split: true` 并转入 report_ops import pass | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

@@ -273,6 +273,7 @@ v4.7.0 系统应被理解为：
 - BE-001CY-01 已建立 `runtime.root_entry_import_pass` 单子叶等价基线；冻结 root entry 候选文件并确认 `run_guard.rs` 为 test-only super import，下一步只能进入 BE-001CY-02 抽离方案。
 - BE-001CY-02 已建立 `runtime.root_entry_import_pass` 抽离方案；下一步 BE-001CY-03 只允许处理 `src/runtime/event_stream.rs` 与 `src/runtime/evidence_health.rs`，`report_ops`、test-only `run_guard` 与 `src/runtime/mod.rs` 父桥全部延后。
 - BE-001CY-03 已完成 `runtime.root_entry_import_pass` 实际抽离；`event_stream` 与 `evidence_health` 已改为显式 import，parent bridge 依赖文件数从 44 降为 42，下一步只能进入 BE-001CY-04 单叶 closeout。
+- BE-001CY-04 已完成 `runtime.root_entry_import_pass` 单叶 closeout；该 pass 设置 `stop_split: true`，下一步只能进入 BE-001CZ-01 `runtime.report_ops_import_pass` 单子叶等价基线。
 
 ## 当前收尾/发布状态
 
