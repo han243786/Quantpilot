@@ -17372,6 +17372,37 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/408-*.md", @(
+        @("BE-001EL-02", "plan marker"),
+        @("BE-001EL-03", "next extraction marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation.parameter_mutation.parent_facade_import_pass", "parent facade marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.parameter_mutation.parent_facade_import_pass", "parent facade coordinate"),
+        @("src/runtime/mutation/parameter_mutation.rs", "real file marker"),
+        @("parent_facade_import_pass plan_frozen", "plan frozen marker"),
+        @("parent_facade_import_pass extraction_ready", "extraction ready marker"),
+        @("single_file_parameter_mutation_parent_facade_import_pass", "single file marker"),
+        @("delete_parameter_mutation_parent_wildcard_import_only", "delete wildcard only marker"),
+        @("empty_explicit_parent_import_surface", "empty import surface marker"),
+        @("no_replacement_import_expected", "no replacement import marker"),
+        @("use super::*", "wildcard import residual marker"),
+        @("validate_runtime_parameter_mutation_boundary", "private helper alias marker"),
+        @("no_private_helper_alias_rewrite", "private helper no rewrite marker"),
+        @("no_child_module_rewrite", "child module no rewrite marker"),
+        @("no_reexport_rewrite", "re-export no rewrite marker"),
+        @("expected_remaining_parent_import_bridge_12", "expected parent marker"),
+        @("expected_remaining_mutation_import_bridge_10", "expected mutation marker"),
+        @("expected_remaining_parameter_mutation_import_bridge_0", "expected parameter mutation marker"),
+        @("expected_remaining_transition_lifecycle_import_bridge_0", "expected lifecycle marker"),
+        @("old_three_leaf_pause_target_cancelled", "old three leaf pause marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_mutation", "api mutation test gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 
