@@ -1,4 +1,7 @@
-use super::*;
+use crate::{
+    auth, current_time_ms, AppState, DeploymentSignatureSnapshot, EventSliceBounds,
+    RuntimeParameterMutationRecord,
+};
 
 /// Block 5 P1-6 + P3-2: 激活时自动生成签名快照 + 递增代际
 pub(super) async fn auto_snapshot_on_activation(
