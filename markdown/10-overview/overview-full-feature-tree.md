@@ -2802,3 +2802,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 4. 运行 `check-full-feature-tree.ps1` 确认通过
 - `markdown/06-milestones/v4.16.0/376-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass单子叶等价基线.md` - v4.16.0 BE-001DY-01 `rollback_record_identity_import_pass` 单子叶等价基线，冻结 rollback id import pass 输入面
 当前最新递归点补充: BE-001DY-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 单子叶等价基线；下一步只能进入 BE-001DY-02 抽离方案。
+- `markdown/06-milestones/v4.16.0/377-runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass抽离方案.md` - v4.16.0 BE-001DY-02 `rollback_record_identity_import_pass` 抽离方案，固定单文件 import rewrite
+当前最新递归点补充: BE-001DY-02 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 抽离方案；下一步只能进入 BE-001DY-03 实际抽离记录。

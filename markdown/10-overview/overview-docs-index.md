@@ -374,3 +374,4 @@
 
 已退役的设计笔记、追踪文档、历史审计报告。
 | v4.16.0 / BE-001DY-01 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 单子叶等价基线已建立，下一步进入 BE-001DY-02 抽离方案 |
+| v4.16.0 / BE-001DY-02 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 抽离方案已建立，下一步进入 BE-001DY-03 实际抽离记录 |
