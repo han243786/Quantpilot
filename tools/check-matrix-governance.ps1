@@ -15477,6 +15477,38 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/364-*.md", @(
+        @("BE-001DT-01", "proposal creation baseline marker"),
+        @("BE-001DT-02", "next proposal creation plan marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation.parameter_mutation.proposal_creation_import_pass", "proposal creation import pass marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.parameter_mutation.proposal_creation_import_pass", "proposal creation coordinate"),
+        @("proposal_creation_import_pass baseline_frozen", "proposal creation baseline frozen marker"),
+        @("src/runtime/mutation/parameter_mutation/proposal_creation.rs", "proposal creation file marker"),
+        @("current_parent_wildcard_import: use super::*", "current wildcard marker"),
+        @("runtime_parameter_mutation_record_id", "record id helper marker"),
+        @("create_runtime_parameter_mutation", "create handler marker"),
+        @("validate_runtime_parameter_mutation_boundary", "boundary parent white-box marker"),
+        @("append_parameter_mutation_events_to_run", "append events marker"),
+        @("build_runtime_parameter_mutation_event", "build event marker"),
+        @("canonical_runtime_parameter_version", "parameter version marker"),
+        @("runtime_parameter_mutation_governance", "governance marker"),
+        @("validate_runtime_parameter_mutation_target", "target validation marker"),
+        @("RuntimeEvidenceSourceKind", "source kind marker"),
+        @("RuntimeParameterMutationStatus", "mutation status marker"),
+        @("remaining_parent_import_bridge_21", "remaining parent bridge marker"),
+        @("remaining_mutation_import_bridge_19", "remaining mutation bridge marker"),
+        @("remaining_parameter_mutation_import_bridge_9", "remaining parameter mutation marker"),
+        @("sibling horizontal link", "sibling horizontal link marker"),
+        @("release transition", "release transition marker"),
+        @("old_three_leaf_pause_target_cancelled", "old three leaf pause marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 
