@@ -17307,6 +17307,36 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/406-*.md", @(
+        @("BE-001EK-01", "parent residual marker"),
+        @("BE-001EL-01", "next parent facade marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation.parameter_mutation_import_pass", "parameter mutation parent marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.parameter_mutation_import_pass", "parameter mutation coordinate"),
+        @("runtime.mutation.parameter_mutation.parent_facade_import_pass", "parent facade marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.parameter_mutation.parent_facade_import_pass", "parent facade coordinate"),
+        @("parameter_mutation_import_pass third_parent_residual_judgment", "third residual marker"),
+        @("runtime.mutation.parameter_mutation_import_pass stop_split: false", "parameter mutation stop split marker"),
+        @("parameter_mutation_parent_facade_import_pass_selected", "parent facade selected marker"),
+        @("single_file_parameter_mutation_parent_facade_import_pass", "single file parent facade marker"),
+        @("src/runtime/mutation/parameter_mutation.rs", "remaining parent facade residual marker"),
+        @("use super::*", "wildcard import residual marker"),
+        @("proposal_creation_import_pass", "proposal creation closeout marker"),
+        @("record_query_import_pass", "record query closeout marker"),
+        @("transition_lifecycle_import_pass", "transition lifecycle closeout marker"),
+        @("remaining_parent_import_bridge_13", "remaining parent marker"),
+        @("remaining_mutation_import_bridge_11", "remaining mutation marker"),
+        @("remaining_parameter_mutation_import_bridge_1", "remaining parameter mutation marker"),
+        @("remaining_transition_lifecycle_import_bridge_0", "remaining lifecycle marker"),
+        @("old_three_leaf_pause_target_cancelled", "old three leaf pause marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_mutation", "api mutation test gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 
