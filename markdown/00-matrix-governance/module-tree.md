@@ -6314,3 +6314,7 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 **最新状态补充（BE-001FB-04）**: BE-001FB-04 已完成 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 单叶 closeout。当前 `no code movement`，设置 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass stop_split: true`；下一步只能进入 BE-001FC-01 父叶残余判断。
 
 | `markdown/06-milestones/v4.16.0/448-runtime.mutation.ai_proposal.sandbox_trigger_import_pass单叶closeout.md` runtime mutation ai proposal sandbox trigger import pass closeout | `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` | 单叶 closeout，设置 stop_split true | BE-001FB 单叶收口 | `runtime.mutation.ai_proposal.sandbox_trigger_import_pass closeout_done`；下一步只能进入 BE-001FC-01 父叶残余判断 |
+
+**最新状态补充（BE-001FC-01）**: BE-001FC-01 已建立 `runtime.mutation.ai_proposal_import_pass` 第九轮父叶残余判断。当前 `no code movement`，父叶保持 `runtime.mutation.ai_proposal_import_pass stop_split: false`；下一步只能进入 BE-001FD-01 `runtime.mutation.ai_proposal.approval_review_import_pass` 等价基线。
+
+| `markdown/06-milestones/v4.16.0/449-runtime.mutation.ai_proposal_import_pass第九轮父叶残余判断.md` runtime mutation ai proposal import pass ninth parent residual judgment | `runtime.mutation.ai_proposal_import_pass` | 父叶残余判断，选择 approval_review import pass | BE-001FC 父叶重判 | `approval_review_import_pass_selected`；下一步只能进入 BE-001FD-01 等价基线 |

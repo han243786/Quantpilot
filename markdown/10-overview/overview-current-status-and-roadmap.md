@@ -536,3 +536,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001FB-02 已建立 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 抽离方案；下一步只能进入 BE-001FB-03 单文件实际 import rewrite。
 - BE-001FB-03 已完成 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 实际抽离；`sandbox_trigger.rs` 已移除 parent wildcard import，下一步只能进入 BE-001FB-04 单叶 closeout。
 - BE-001FB-04 已完成 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001FC-01 父叶残余判断。
+- BE-001FC-01 已建立 `runtime.mutation.ai_proposal_import_pass` 第九轮父叶残余判断；父叶继续 `stop_split: false`，下一步只能进入 BE-001FD-01 `approval_review_import_pass` 等价基线。
