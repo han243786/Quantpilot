@@ -316,6 +316,7 @@ v4.7.0 系统应被理解为：
 - BE-001DP-01 已完成 `runtime.mutation_import_pass` 父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001DQ-01 `runtime.mutation.parameter_mutation_import_pass` 单子叶等价基线。
 - BE-001DQ-01 已建立 `runtime.mutation.parameter_mutation_import_pass` 单子叶等价基线；冻结 10 个 parameter mutation residual 文件，下一步只能进入 BE-001DQ-02 抽离方案并先判断是否继续拆小 pocket。
 - BE-001DQ-02 已建立 `runtime.mutation.parameter_mutation_import_pass` 抽离方案；拒绝 10 文件整批 rewrite，下一步只能进入 BE-001DR-01 `runtime.mutation.parameter_mutation.record_query_import_pass` 单子叶等价基线。
+- BE-001DR-01 已建立 `runtime.mutation.parameter_mutation.record_query_import_pass` 单子叶等价基线；冻结 `record_query.rs` 读路径输入面，下一步只能进入 BE-001DR-02 抽离方案。
 
 ## 当前收尾/发布状态
 
