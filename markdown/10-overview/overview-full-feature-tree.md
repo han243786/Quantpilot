@@ -2908,3 +2908,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 递归边界补充: BE-001ET-04 已完成 `runtime.mutation.ai_proposal.static_check_import_pass` 单叶 closeout；下一步只能进入 BE-001EU-01 父叶残余判断。
 - `markdown/06-milestones/v4.16.0/429-runtime.mutation.ai_proposal_import_pass第五轮父叶残余判断.md` - v4.16.0 BE-001EU-01 `runtime.mutation.ai_proposal_import_pass` 第五轮父叶残余判断，选择 event_lifecycle import pass
 递归边界补充: BE-001EU-01 已完成 `runtime.mutation.ai_proposal_import_pass` 第五轮父叶残余判断；下一步只能进入 BE-001EV-01 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 单子叶等价基线。
+- `markdown/06-milestones/v4.16.0/430-runtime.mutation.ai_proposal.event_lifecycle_import_pass单子叶等价基线.md` - v4.16.0 BE-001EV-01 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 单子叶等价基线，冻结 event lifecycle 输入面
+递归边界补充: BE-001EV-01 已建立 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 单子叶等价基线；下一步只能进入 BE-001EV-02 抽离方案。

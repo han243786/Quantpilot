@@ -6252,3 +6252,6 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 **最新状态补充（BE-001EU-01）**: BE-001EU-01 已完成 `runtime.mutation.ai_proposal_import_pass` 第五轮父叶残余判断。当前 `no code movement`，父叶保持 `runtime.mutation.ai_proposal_import_pass stop_split: false`；下一步只能进入 BE-001EV-01 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 单子叶等价基线。
 
 | `markdown/06-milestones/v4.16.0/429-runtime.mutation.ai_proposal_import_pass第五轮父叶残余判断.md` runtime mutation ai proposal import pass fifth parent residual judgment | `runtime.mutation.ai_proposal_import_pass` | 父叶残余判断，选择 event_lifecycle import pass | BE-001EU 父叶重判 | `runtime.mutation.ai_proposal_import_pass fifth_parent_residual_judgment`；下一步只能进入 BE-001EV-01 单子叶等价基线 |
+**最新状态补充（BE-001EV-01）**: BE-001EV-01 已建立 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 单子叶等价基线。当前 `no code movement`，冻结 `src/runtime/mutation/ai_proposal/event_lifecycle.rs` 的事件 contract、payload、lifecycle entry 与 transition persistence 边界；下一步只能进入 BE-001EV-02 抽离方案。
+
+| `markdown/06-milestones/v4.16.0/430-runtime.mutation.ai_proposal.event_lifecycle_import_pass单子叶等价基线.md` runtime mutation ai proposal event lifecycle import pass baseline | `runtime.mutation.ai_proposal.event_lifecycle_import_pass` | 单子叶等价基线，冻结 event lifecycle 输入面 | BE-001EV 单子叶基线 | `runtime.mutation.ai_proposal.event_lifecycle_import_pass baseline_frozen`；下一步只能进入 BE-001EV-02 抽离方案 |
