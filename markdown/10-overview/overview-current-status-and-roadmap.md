@@ -312,6 +312,7 @@ v4.7.0 系统应被理解为：
 - BE-001DO-01 已建立 `runtime.mutation.shared_governance_import_pass` 单子叶等价基线；冻结 `src/runtime/mutation/shared_governance.rs` 的 9 个 helper 与显式 import 输入面，下一步只能进入 BE-001DO-02 抽离方案。
 - BE-001DO-02 已建立 `runtime.mutation.shared_governance_import_pass` 抽离方案；下一步只允许单文件改写 `src/runtime/mutation/shared_governance.rs` 顶部 import 并进入 BE-001DO-03 抽离记录。
 - BE-001DO-03 已完成 `runtime.mutation.shared_governance_import_pass` 实际抽离；parent bridge 剩余降为 root 1 / run 0 / backtest 0 / mutation 20 / test-only 1，下一步只能进入 BE-001DO-04 单叶 closeout。
+- BE-001DO-04 已完成 `runtime.mutation.shared_governance_import_pass` 单叶 closeout；设置 `stop_split: true`，下一步只能进入 BE-001DP-01 `runtime.mutation_import_pass` 父叶残余判断。
 
 ## 当前收尾/发布状态
 
