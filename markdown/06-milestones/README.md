@@ -323,6 +323,7 @@
 | 309 | `v4.16.0/309-runtime.parent_import_bridge单子叶等价基线.md` | BE-001CX-01 `runtime.parent_import_bridge` 单子叶等价基线，冻结 parent import bridge 与 46 文件依赖面 | 📋 已创建 |
 | 310 | `v4.16.0/310-runtime.parent_import_bridge抽离方案.md` | BE-001CX-02 `runtime.parent_import_bridge` 抽离方案，固定 staged explicit import pass 与首批 root support pilot | 📋 已创建 |
 | 311 | `v4.16.0/311-runtime.root_support_import_pilot抽离记录.md` | BE-001CX-03 `runtime.root_support_import_pilot` 实际抽离，改写 query/response support parent wildcard import | 📋 已创建 |
+| 312 | `v4.16.0/312-runtime.root_support_import_pilot单叶closeout.md` | BE-001CX-04 `runtime.root_support_import_pilot` 单叶 closeout，设置 `stop_split: true` 并转入 root entry import pass | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

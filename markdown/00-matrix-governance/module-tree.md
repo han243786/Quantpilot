@@ -946,6 +946,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CX-01）**: BE-001CX-01 已建立 `runtime.parent_import_bridge` 单子叶等价基线。当前 `no code movement`，冻结 46 个 runtime 文件对 parent import bridge 的 `use super::*` / `super::` 依赖面；下一步只能进入 BE-001CX-02 抽离方案，不能直接批量改写 Rust import 或启动 release transition。
 **最新状态补充（BE-001CX-02）**: BE-001CX-02 已建立 `runtime.parent_import_bridge` 抽离方案。当前 `no code movement`，后续采用 staged explicit import pass；下一步只能进入 BE-001CX-03 `runtime.root_support_import_pilot` 实际抽离，且首批只处理 `query_support` 与 `response_support`。
 **最新状态补充（BE-001CX-03）**: BE-001CX-03 已完成 `runtime.root_support_import_pilot` 实际抽离。`src/runtime/query_support.rs` 与 `src/runtime/response_support.rs` 已从 `use super::*` 收敛为显式 import，runtime parent bridge 依赖文件数从 46 降为 44；下一步只能进入 BE-001CX-04 单叶 closeout。
+**最新状态补充（BE-001CX-04）**: BE-001CX-04 已完成 `runtime.root_support_import_pilot` 单叶 closeout。`runtime.root_support_import_pilot stop_split: true`，不继续拆 `query_support` / `response_support` 微叶；下一步只能进入 BE-001CY-01 `runtime.root_entry_import_pass` 单子叶等价基线。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1117,6 +1118,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/309-runtime.parent_import_bridge单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/310-runtime.parent_import_bridge抽离方案.md`
 - `markdown/06-milestones/v4.16.0/311-runtime.root_support_import_pilot抽离记录.md`
+- `markdown/06-milestones/v4.16.0/312-runtime.root_support_import_pilot单叶closeout.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5887,6 +5889,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/309-runtime.parent_import_bridge单子叶等价基线.md` runtime parent import bridge baseline | `runtime.parent_import_bridge` | 单子叶等价基线，冻结 46 文件 parent import bridge 依赖面 | BE-001CX 单子叶基线 | `no code movement`；下一步只能进入 BE-001CX-02 抽离方案，不得直接批量改写 Rust import 或启动 release transition |
 | `markdown/06-milestones/v4.16.0/310-runtime.parent_import_bridge抽离方案.md` runtime parent import bridge extraction plan | `runtime.parent_import_bridge` | 抽离方案，固定 staged explicit import pass 与首批 root support pilot | BE-001CX 抽离方案 | `no code movement`；下一步只能进入 BE-001CX-03 `runtime.root_support_import_pilot` 实际抽离 |
 | `markdown/06-milestones/v4.16.0/311-runtime.root_support_import_pilot抽离记录.md` runtime root support import pilot extraction | `runtime.root_support_import_pilot` | 实际抽离，改写 query_support 与 response_support parent wildcard import | BE-001CX 实际抽离 | 依赖文件数从 46 降为 44；下一步只能进入 BE-001CX-04 单叶 closeout |
+| `markdown/06-milestones/v4.16.0/312-runtime.root_support_import_pilot单叶closeout.md` runtime root support import pilot closeout | `runtime.root_support_import_pilot` | 单叶 closeout，确认 root support import pilot 不继续细拆 | BE-001CX closeout | `runtime.root_support_import_pilot stop_split: true`；下一步只能进入 BE-001CY-01 `runtime.root_entry_import_pass` 单子叶等价基线 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
