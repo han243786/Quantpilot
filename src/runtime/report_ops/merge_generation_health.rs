@@ -1,4 +1,6 @@
-use super::*;
+use crate::runtime::{MergeRecordEntry, MergeRecordsResponse};
+use crate::{auth, AppState};
+use axum::{extract::State, http::StatusCode, Json};
 
 pub(crate) async fn list_merge_records(
     user_id: auth::UserId,

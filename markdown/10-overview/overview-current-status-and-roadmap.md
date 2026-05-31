@@ -276,6 +276,7 @@ v4.7.0 系统应被理解为：
 - BE-001CY-04 已完成 `runtime.root_entry_import_pass` 单叶 closeout；该 pass 设置 `stop_split: true`，下一步只能进入 BE-001CZ-01 `runtime.report_ops_import_pass` 单子叶等价基线。
 - BE-001CZ-01 已建立 `runtime.report_ops_import_pass` 单子叶等价基线；冻结 `report_ops` parent facade 与 3 个 child 的 transitive parent surface risk，下一步只能进入 BE-001CZ-02 抽离方案。
 - BE-001CZ-02 已建立 `runtime.report_ops_import_pass` 抽离方案；下一步 BE-001CZ-03 只允许同批处理 report_ops four-file pocket，不能混入 root parent bridge 或其他 runtime 子树。
+- BE-001CZ-03 已完成 `runtime.report_ops_import_pass` 实际抽离；report_ops four-file pocket 已改为显式 import，parent bridge 依赖文件数从 42 降为 38，下一步只能进入 BE-001CZ-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 
