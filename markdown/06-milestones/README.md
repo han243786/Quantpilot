@@ -346,6 +346,7 @@
 | 332 | `v4.16.0/332-runtime.backtest.record_store_import_pass单叶closeout.md` | BE-001DE-04 `runtime.backtest.record_store_import_pass` 单叶 closeout，设置 `stop_split: true` 并回到父叶残余判断 | 📋 已创建 |
 | 333 | `v4.16.0/333-runtime.backtest_import_pass父叶残余判断.md` | BE-001DF-01 `runtime.backtest_import_pass` 父叶残余判断，确认剩余 33 个依赖文件并选择 `runtime.backtest.replay_import_pass` | 📋 已创建 |
 | 334 | `v4.16.0/334-runtime.backtest.replay_import_pass单子叶等价基线.md` | BE-001DG-01 `runtime.backtest.replay_import_pass` 单子叶等价基线，冻结 `replay.rs` import 输入面 | 📋 已创建 |
+| 335 | `v4.16.0/335-runtime.backtest.replay_import_pass抽离方案.md` | BE-001DG-02 `runtime.backtest.replay_import_pass` 抽离方案，固定 BE-001DG-03 只改 `replay.rs` import | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
