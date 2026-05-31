@@ -994,6 +994,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001DQ-01）**: BE-001DQ-01 已建立 `runtime.mutation.parameter_mutation_import_pass` 单子叶等价基线。冻结 10 个 parameter mutation residual 文件、5 个 public handler、8 个内部 helper；旧的三叶暂停目标继续取消，下一步只能进入 BE-001DQ-02 抽离方案。
 **最新状态补充（BE-001DQ-02）**: BE-001DQ-02 已建立 `runtime.mutation.parameter_mutation_import_pass` 抽离方案。设置 `runtime.mutation.parameter_mutation_import_pass stop_split: false`，拒绝 10 文件整批 rewrite；下一步只能进入 BE-001DR-01 `runtime.mutation.parameter_mutation.record_query_import_pass` 单子叶等价基线。
 **最新状态补充（BE-001DR-01）**: BE-001DR-01 已建立 `runtime.mutation.parameter_mutation.record_query_import_pass` 单子叶等价基线。冻结 `src/runtime/mutation/parameter_mutation/record_query.rs` 的 list/detail 读路径输入面；下一步只能进入 BE-001DR-02 抽离方案。
+**最新状态补充（BE-001DR-02）**: BE-001DR-02 已建立 `runtime.mutation.parameter_mutation.record_query_import_pass` 抽离方案。下一步只允许单文件改写 `src/runtime/mutation/parameter_mutation/record_query.rs` 顶部 import，不触碰 parent facade 或 lifecycle sibling。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1213,6 +1214,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/357-runtime.mutation.parameter_mutation_import_pass单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/358-runtime.mutation.parameter_mutation_import_pass抽离方案.md`
 - `markdown/06-milestones/v4.16.0/359-runtime.mutation.parameter_mutation.record_query_import_pass单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/360-runtime.mutation.parameter_mutation.record_query_import_pass抽离方案.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -6031,6 +6033,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/357-runtime.mutation.parameter_mutation_import_pass单子叶等价基线.md` runtime mutation parameter mutation import pass baseline | `runtime.mutation.parameter_mutation_import_pass` | 单子叶等价基线，冻结 10 个 parameter mutation residual 文件 | BE-001DQ 单子叶基线 | `no code movement`；下一步只能进入 BE-001DQ-02 抽离方案 |
 | `markdown/06-milestones/v4.16.0/358-runtime.mutation.parameter_mutation_import_pass抽离方案.md` runtime mutation parameter mutation import pass plan | `runtime.mutation.parameter_mutation_import_pass` | 抽离方案，拒绝 10 文件整批 rewrite 并选择 record_query import pass | BE-001DQ 抽离方案 | `runtime.mutation.parameter_mutation_import_pass stop_split: false`；下一步只能进入 BE-001DR-01 单子叶等价基线 |
 | `markdown/06-milestones/v4.16.0/359-runtime.mutation.parameter_mutation.record_query_import_pass单子叶等价基线.md` runtime mutation parameter mutation record query import pass baseline | `runtime.mutation.parameter_mutation.record_query_import_pass` | 单子叶等价基线，冻结 `src/runtime/mutation/parameter_mutation/record_query.rs` 读路径输入面 | BE-001DR 单子叶基线 | `no code movement`；下一步只能进入 BE-001DR-02 抽离方案 |
+| `markdown/06-milestones/v4.16.0/360-runtime.mutation.parameter_mutation.record_query_import_pass抽离方案.md` runtime mutation parameter mutation record query import pass plan | `runtime.mutation.parameter_mutation.record_query_import_pass` | 抽离方案，固定单文件 import rewrite | BE-001DR 抽离方案 | `single_file_record_query_import_rewrite`；下一步只能进入 BE-001DR-03 实际抽离记录 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。

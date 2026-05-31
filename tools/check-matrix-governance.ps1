@@ -15363,6 +15363,35 @@ $v416LandingFiles = @(
         @("tools\check-matrix-governance.ps1", "matrix governance gate"),
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
+    )),
+    @("markdown/06-milestones/v4.16.0/360-*.md", @(
+        @("BE-001DR-02", "record query plan marker"),
+        @("BE-001DR-03", "next record query record marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.mutation.parameter_mutation.record_query_import_pass", "record query import pass marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.mutation.parameter_mutation.record_query_import_pass", "record query import coordinate"),
+        @("single_file_record_query_import_rewrite", "single file rewrite marker"),
+        @("src/runtime/mutation/parameter_mutation/record_query.rs", "record query file marker"),
+        @("use super::*", "current wildcard marker"),
+        @("auth", "auth import marker"),
+        @("clean_optional_filter", "clean optional filter marker"),
+        @("load_runtime_parameter_mutation_record", "load mutation record marker"),
+        @("list_runtime_parameter_mutation_records", "list mutation records marker"),
+        @("expected_parent_import_bridge_22_to_21", "expected parent bridge marker"),
+        @("expected_mutation_import_bridge_20_to_19", "expected mutation bridge marker"),
+        @("proposal_creation.rs", "proposal creation exclusion marker"),
+        @("transition_lifecycle.rs", "transition lifecycle exclusion marker"),
+        @("parameter_mutation.rs", "parent facade exclusion marker"),
+        @("sibling horizontal link", "sibling horizontal link marker"),
+        @("release transition", "release transition marker"),
+        @("old_three_leaf_pause_target_cancelled", "old three leaf pause marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot --test api_mutation", "api mutation test gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
     ))
 )
 

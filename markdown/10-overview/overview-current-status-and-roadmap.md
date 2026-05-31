@@ -317,6 +317,7 @@ v4.7.0 系统应被理解为：
 - BE-001DQ-01 已建立 `runtime.mutation.parameter_mutation_import_pass` 单子叶等价基线；冻结 10 个 parameter mutation residual 文件，下一步只能进入 BE-001DQ-02 抽离方案并先判断是否继续拆小 pocket。
 - BE-001DQ-02 已建立 `runtime.mutation.parameter_mutation_import_pass` 抽离方案；拒绝 10 文件整批 rewrite，下一步只能进入 BE-001DR-01 `runtime.mutation.parameter_mutation.record_query_import_pass` 单子叶等价基线。
 - BE-001DR-01 已建立 `runtime.mutation.parameter_mutation.record_query_import_pass` 单子叶等价基线；冻结 `record_query.rs` 读路径输入面，下一步只能进入 BE-001DR-02 抽离方案。
+- BE-001DR-02 已建立 `runtime.mutation.parameter_mutation.record_query_import_pass` 抽离方案；下一步只允许单文件改写 `src/runtime/mutation/parameter_mutation/record_query.rs` 顶部 import。
 
 ## 当前收尾/发布状态
 
