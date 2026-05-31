@@ -285,6 +285,7 @@ v4.7.0 系统应被理解为：
 - BE-001DB-04 已完成 `runtime.run_import_pass` 单叶 closeout；该 pass 设置 `stop_split: true`，下一步只能进入 BE-001DC-01 `runtime.parent_import_bridge` 父叶残余判断。
 - BE-001DC-01 已完成 `runtime.parent_import_bridge` 父叶残余判断；父叶保持 `stop_split: false`，剩余分布为 root 1、run 0、backtest 11、mutation 21、test-only 1，下一步只能进入 BE-001DD-01 `runtime.backtest_import_pass` 单子叶等价基线。
 - BE-001DD-01 已建立 `runtime.backtest_import_pass` 单子叶等价基线；冻结 11 个 backtest 残余文件与父级输入面，下一步只能进入 BE-001DD-02 抽离方案。
+- BE-001DD-02 已建立 `runtime.backtest_import_pass` 抽离方案；拒绝 11 文件整批改写，下一步只能进入 BE-001DE-01 `runtime.backtest.record_store_import_pass` 单子叶等价基线。
 
 ## 当前收尾/发布状态
 
