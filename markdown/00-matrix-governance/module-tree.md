@@ -6201,3 +6201,6 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 **最新状态补充（BE-001EN-01）**: BE-001EN-01 已完成 `runtime.mutation_import_pass` 第二轮父叶残余判断。当前 mutation residual 为 10 个 ai proposal 文件，父叶保持 `runtime.mutation_import_pass stop_split: false`；下一步只能进入 BE-001EO-01 `runtime.mutation.ai_proposal_import_pass` 单子叶等价基线。
 
 | `markdown/06-milestones/v4.16.0/412-runtime.mutation_import_pass第二轮父叶残余判断.md` runtime mutation import pass second parent residual judgment | `runtime.mutation_import_pass` | 父叶残余判断，选择 ai_proposal import pass | BE-001EN 父叶重判 | `runtime.mutation_import_pass second_parent_residual_judgment`；下一步只能进入 BE-001EO-01 单子叶等价基线 |
+**最新状态补充（BE-001EO-01）**: BE-001EO-01 已建立 `runtime.mutation.ai_proposal_import_pass` 单子叶等价基线。当前 `no code movement`，冻结 10 个 ai proposal residual 文件、8 个 route-facing handler 与 18 个内部 helper；下一步只能进入 BE-001EO-02 抽离方案。
+
+| `markdown/06-milestones/v4.16.0/413-runtime.mutation.ai_proposal_import_pass单子叶等价基线.md` runtime mutation ai proposal import pass baseline | `runtime.mutation.ai_proposal_import_pass` | 单子叶等价基线，冻结 ai proposal import 输入面 | BE-001EO 单子叶基线 | `ai_proposal_import_pass baseline_frozen`；下一步只能进入 BE-001EO-02 抽离方案 |
