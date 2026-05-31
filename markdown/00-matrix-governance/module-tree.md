@@ -6213,3 +6213,6 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 **最新状态补充（BE-001EP-02）**: BE-001EP-02 已建立 `runtime.mutation.ai_proposal.record_query_import_pass` 抽离方案。当前 `no code movement`，固定 BE-001EP-03 只能改写 `src/runtime/mutation/ai_proposal/record_query.rs` 顶部 import；下一步只能进入 BE-001EP-03 实际抽离记录。
 
 | `markdown/06-milestones/v4.16.0/416-runtime.mutation.ai_proposal.record_query_import_pass抽离方案.md` runtime mutation ai proposal record query import pass plan | `runtime.mutation.ai_proposal.record_query_import_pass` | 抽离方案，固定单文件 import rewrite | BE-001EP 抽离方案 | `record_query_import_pass plan_frozen`；下一步只能进入 BE-001EP-03 实际抽离记录 |
+**最新状态补充（BE-001EP-03）**: BE-001EP-03 已完成 `runtime.mutation.ai_proposal.record_query_import_pass` 实际抽离。`src/runtime/mutation/ai_proposal/record_query.rs` 已移除 parent wildcard import 并改为显式输入面；下一步只能进入 BE-001EP-04 单叶 closeout。
+
+| `markdown/06-milestones/v4.16.0/417-runtime.mutation.ai_proposal.record_query_import_pass抽离记录.md` runtime mutation ai proposal record query import pass extraction | `runtime.mutation.ai_proposal.record_query_import_pass` | 实际抽离，record_query import 显式化 | BE-001EP 实际抽离 | `record_query_import_pass extraction_done`；下一步只能进入 BE-001EP-04 单叶 closeout |
