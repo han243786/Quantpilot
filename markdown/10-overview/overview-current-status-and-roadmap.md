@@ -271,6 +271,7 @@ v4.7.0 系统应被理解为：
 - BE-001CX-03 已完成 `runtime.root_support_import_pilot` 实际抽离；`query_support` 与 `response_support` 已改为显式 import，runtime parent bridge 依赖文件数从 46 降为 44，下一步只能进入 BE-001CX-04 单叶 closeout。
 - BE-001CX-04 已完成 `runtime.root_support_import_pilot` 单叶 closeout；该 pilot 设置 `stop_split: true`，parent import bridge 仍剩 44 个依赖文件，下一步只能进入 BE-001CY-01 `runtime.root_entry_import_pass` 单子叶等价基线。
 - BE-001CY-01 已建立 `runtime.root_entry_import_pass` 单子叶等价基线；冻结 root entry 候选文件并确认 `run_guard.rs` 为 test-only super import，下一步只能进入 BE-001CY-02 抽离方案。
+- BE-001CY-02 已建立 `runtime.root_entry_import_pass` 抽离方案；下一步 BE-001CY-03 只允许处理 `src/runtime/event_stream.rs` 与 `src/runtime/evidence_health.rs`，`report_ops`、test-only `run_guard` 与 `src/runtime/mod.rs` 父桥全部延后。
 
 ## 当前收尾/发布状态
 
