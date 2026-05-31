@@ -6310,3 +6310,7 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 **最新状态补充（BE-001FB-03）**: BE-001FB-03 已完成 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 实际抽离。`src/runtime/mutation/ai_proposal/sandbox_trigger.rs` 已移除 parent wildcard import 并改为显式输入面；下一步只能进入 BE-001FB-04 单叶 closeout。
 
 | `markdown/06-milestones/v4.16.0/447-runtime.mutation.ai_proposal.sandbox_trigger_import_pass抽离记录.md` runtime mutation ai proposal sandbox trigger import pass extraction | `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` | 实际抽离，sandbox_trigger import 显式化 | BE-001FB 实际抽离 | `sandbox_trigger_import_pass extraction_done`；下一步只能进入 BE-001FB-04 单叶 closeout |
+
+**最新状态补充（BE-001FB-04）**: BE-001FB-04 已完成 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 单叶 closeout。当前 `no code movement`，设置 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass stop_split: true`；下一步只能进入 BE-001FC-01 父叶残余判断。
+
+| `markdown/06-milestones/v4.16.0/448-runtime.mutation.ai_proposal.sandbox_trigger_import_pass单叶closeout.md` runtime mutation ai proposal sandbox trigger import pass closeout | `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` | 单叶 closeout，设置 stop_split true | BE-001FB 单叶收口 | `runtime.mutation.ai_proposal.sandbox_trigger_import_pass closeout_done`；下一步只能进入 BE-001FC-01 父叶残余判断 |

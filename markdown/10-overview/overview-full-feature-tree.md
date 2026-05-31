@@ -2944,3 +2944,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 递归边界补充: BE-001FB-02 已建立 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 抽离方案；下一步只能进入 BE-001FB-03 实际抽离记录。
 - `markdown/06-milestones/v4.16.0/447-runtime.mutation.ai_proposal.sandbox_trigger_import_pass抽离记录.md` - v4.16.0 BE-001FB-03 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 抽离记录，sandbox_trigger import 已显式化
 递归边界补充: BE-001FB-03 已完成 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 实际抽离；下一步只能进入 BE-001FB-04 单叶 closeout。
+- `markdown/06-milestones/v4.16.0/448-runtime.mutation.ai_proposal.sandbox_trigger_import_pass单叶closeout.md` - v4.16.0 BE-001FB-04 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 单叶 closeout，设置 stop_split true
+递归边界补充: BE-001FB-04 已完成 `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 单叶 closeout；下一步只能进入 BE-001FC-01 父叶残余判断。

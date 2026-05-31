@@ -808,3 +808,4 @@
 | v4.16.0 / BE-001FB-01 | 新增: `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 单子叶等价基线已建立 |
 | v4.16.0 / BE-001FB-02 | 新增: `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 抽离方案已建立，固定单文件 import rewrite |
 | v4.16.0 / BE-001FB-03 | 新增: `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 抽离记录已建立，sandbox_trigger import 已显式化 |
+| v4.16.0 / BE-001FB-04 | 新增: `runtime.mutation.ai_proposal.sandbox_trigger_import_pass` 单叶 closeout 已建立，设置 stop_split true |
