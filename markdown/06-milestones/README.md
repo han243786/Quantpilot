@@ -350,6 +350,7 @@
 | 336 | `v4.16.0/336-runtime.backtest.replay_import_pass抽离记录.md` | BE-001DG-03 `runtime.backtest.replay_import_pass` 实际抽离，改写 `replay.rs` parent wildcard import | 📋 已创建 |
 | 337 | `v4.16.0/337-runtime.backtest.replay_import_pass单叶closeout.md` | BE-001DG-04 `runtime.backtest.replay_import_pass` 单叶 closeout，确认 `stop_split: true` | 📋 已创建 |
 | 338 | `v4.16.0/338-runtime.backtest_import_pass第二轮父叶残余判断.md` | BE-001DH-01 `runtime.backtest_import_pass` 第二轮父叶残余判断，选择 experiment sweep import pass | 📋 已创建 |
+| 339 | `v4.16.0/339-runtime.backtest.experiment_sweep_import_pass单子叶等价基线.md` | BE-001DI-01 `runtime.backtest.experiment_sweep_import_pass` 单子叶等价基线，冻结四文件 pocket | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
