@@ -451,3 +451,4 @@
 | v4.16.0 / BE-001FD-02 | 新增: `runtime.mutation.ai_proposal.approval_review_import_pass` 抽离方案已建立，限制下一步为单文件 import rewrite |
 | v4.16.0 / BE-001FD-03 | 新增: `runtime.mutation.ai_proposal.approval_review_import_pass` 抽离记录已建立，下一步进入单叶 closeout |
 | v4.16.0 / BE-001FD-04 | 新增: `runtime.mutation.ai_proposal.approval_review_import_pass` 单叶 closeout 已建立，下一步回到父叶残余判断 |
+| v4.16.0 / BE-001FE-01 | 新增: `runtime.mutation.ai_proposal_import_pass` 第十轮父叶残余判断已建立，下一步进入 proposal_creation import pass 等价基线 |
