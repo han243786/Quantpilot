@@ -2876,3 +2876,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 递归边界补充: BE-001EN-01 已完成 `runtime.mutation_import_pass` 父叶残余判断；下一步只能进入 BE-001EO-01 `runtime.mutation.ai_proposal_import_pass` 单子叶等价基线。
 - `markdown/06-milestones/v4.16.0/413-runtime.mutation.ai_proposal_import_pass单子叶等价基线.md` - v4.16.0 BE-001EO-01 `runtime.mutation.ai_proposal_import_pass` 单子叶等价基线，冻结 ai proposal 输入面
 递归边界补充: BE-001EO-01 已建立 `runtime.mutation.ai_proposal_import_pass` 单子叶等价基线；下一步只能进入 BE-001EO-02 抽离方案。
+- `markdown/06-milestones/v4.16.0/414-runtime.mutation.ai_proposal_import_pass抽离方案.md` - v4.16.0 BE-001EO-02 `runtime.mutation.ai_proposal_import_pass` 抽离方案，选择 record_query import pass
+递归边界补充: BE-001EO-02 已建立 `runtime.mutation.ai_proposal_import_pass` 抽离方案；下一步只能进入 BE-001EP-01 `runtime.mutation.ai_proposal.record_query_import_pass` 单子叶等价基线。

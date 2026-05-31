@@ -6204,3 +6204,6 @@ AI 声称文件存在或路径有效时，必须能通过全量树或实际文�
 **最新状态补充（BE-001EO-01）**: BE-001EO-01 已建立 `runtime.mutation.ai_proposal_import_pass` 单子叶等价基线。当前 `no code movement`，冻结 10 个 ai proposal residual 文件、8 个 route-facing handler 与 18 个内部 helper；下一步只能进入 BE-001EO-02 抽离方案。
 
 | `markdown/06-milestones/v4.16.0/413-runtime.mutation.ai_proposal_import_pass单子叶等价基线.md` runtime mutation ai proposal import pass baseline | `runtime.mutation.ai_proposal_import_pass` | 单子叶等价基线，冻结 ai proposal import 输入面 | BE-001EO 单子叶基线 | `ai_proposal_import_pass baseline_frozen`；下一步只能进入 BE-001EO-02 抽离方案 |
+**最新状态补充（BE-001EO-02）**: BE-001EO-02 已建立 `runtime.mutation.ai_proposal_import_pass` 抽离方案。父叶保持 `runtime.mutation.ai_proposal_import_pass stop_split: false`，拒绝 10 文件整批 rewrite；下一步只能进入 BE-001EP-01 `runtime.mutation.ai_proposal.record_query_import_pass` 单子叶等价基线。
+
+| `markdown/06-milestones/v4.16.0/414-runtime.mutation.ai_proposal_import_pass抽离方案.md` runtime mutation ai proposal import pass plan | `runtime.mutation.ai_proposal_import_pass` | 抽离方案，选择 record_query import pass | BE-001EO 抽离方案 | `reject_ai_proposal_bulk_rewrite_10_files`；下一步只能进入 BE-001EP-01 单子叶等价基线 |
