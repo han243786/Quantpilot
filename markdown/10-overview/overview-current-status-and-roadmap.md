@@ -521,3 +521,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001EV-02 已建立 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 抽离方案；当前 `no code movement`，下一步只能进入 BE-001EV-03 单文件实际 import rewrite。
 - BE-001EV-03 已完成 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 实际抽离；`event_lifecycle.rs` 已移除 parent wildcard import，下一步只能进入 BE-001EV-04 单叶 closeout。
 - BE-001EV-04 已完成 `runtime.mutation.ai_proposal.event_lifecycle_import_pass` 单叶 closeout 并设置 `stop_split: true`；下一步只能进入 BE-001EW-01 父叶残余判断。
+- BE-001EW-01 已建立 `runtime.mutation.ai_proposal_import_pass` 第六轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001EX-01 `runtime.mutation.ai_proposal.approval_persistence_import_pass` 单子叶等价基线。
