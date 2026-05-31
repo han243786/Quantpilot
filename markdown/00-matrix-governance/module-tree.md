@@ -6446,3 +6446,34 @@ AI 声称 `proposal_creation_import_pass` 已推进至 BE-001FF-01 时，必须�
 **最新状态补充（BE-001FF-02）**: BE-001FF-02 已建立 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 抽离方案。当前 `no code movement`；BE-001FF-03 只允许把 `src/runtime/mutation/ai_proposal/proposal_creation.rs` 顶部 `use super::*` 改为显式 import，禁止改 handler 函数体、自动审批、事件生命周期、persist order、sandbox trigger 和 sibling owner。
 **最新状态补充（BE-001FF-03）**: BE-001FF-03 已完成 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 实际抽离。`src/runtime/mutation/ai_proposal/proposal_creation.rs` 已移除 `use super::*` 并改为显式 import；剩余 residual 为 `src/runtime/mod.rs` 与 `src/runtime/mutation/ai_proposal.rs`，下一步只能进入 BE-001FF-04 单叶 closeout。
 **最新状态补充（BE-001FF-04）**: BE-001FF-04 已完成 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 单叶 closeout。设置 `runtime.mutation.ai_proposal.proposal_creation_import_pass stop_split: true`；下一步只能进入 BE-001FG-01 `runtime.mutation.ai_proposal_import_pass` 父叶残余判断。
+
+## 模块 ID: `runtime.root_parent_facade_import_pass`
+
+**层级路径**: `root.backend.runtime.runtime.parent_import_bridge.runtime.root_parent_facade_import_pass`
+
+**父模块**: `runtime.parent_import_bridge`
+
+**状态**: v4.16 BE-001FL-01 单子叶等价基线已建立；当前 `no code movement`，`src/runtime/mod.rs` 尚未改写，下一步只能进入 BE-001FL-02 抽离方案。
+
+**真实文件**:
+- `src/runtime/mod.rs` - runtime root facade import pocket
+- `markdown/06-milestones/v4.16.0/467-runtime.root_parent_facade_import_pass单子叶等价基线.md` - BE-001FL-01 等价基线
+
+**public / parent-visible 方法**:
+- `start_backtest_run` - backtest start handler re-export
+- `start_backtest_experiment` - experiment start handler re-export
+- `start_test_run` - run start handler re-export
+- `start_v4_runtime_run` - v4 runtime start handler re-export
+- `create_runtime_ai_proposal` - AI proposal create handler re-export
+- `approve_ai_proposal` / `reject_ai_proposal` / `claim_ai_proposal_review` - AI proposal approval handlers
+- `create_runtime_parameter_mutation` / `activate_runtime_parameter_mutation` / `rollback_runtime_parameter_mutation` - parameter mutation lifecycle handlers
+- `create_runtime_report` / `export_runtime_report_artifact` / `list_runtime_reports` - report ops handlers
+- `stream_run_events` / `get_runtime_evidence_health` / `cleanup_runtime_evidence` - runtime support handlers
+
+**父子通信规则**:
+`runtime.root_parent_facade_import_pass` 只能通过父级 `runtime.parent_import_bridge` 承接 root facade import 显式化。BE-001FL-02/03 不得改写 child module declaration、handler body、route facade、schema owner、state owner、frontend caller 或 release transition；不得新增 sibling horizontal link。ASCII guard: `release transition guard`。
+
+**回归保护**:
+AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement` 等价基线，`src/runtime/mod.rs` 仍保留 `use super::*` 与 `use axum::extract::Query`，`remaining_runtime_parent_import_bridge_1` 与 `remaining_root_parent_import_bridge_1` 仍成立。不得宣称 runtime parent bridge、backend.runtime 或 Rust 重构已完成。
+
+**最新状态补充（BE-001FL-01）**: BE-001FL-01 已建立 `runtime.root_parent_facade_import_pass` 单子叶等价基线。`root_parent_facade_import_pass baseline_frozen`，冻结 module declaration surface、public re-export surface、private helper bridge surface、query_support parent surface 与 response_support parent surface；下一步只能进入 BE-001FL-02 抽离方案。

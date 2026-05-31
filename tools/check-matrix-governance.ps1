@@ -20040,6 +20040,33 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/467-*.md", @(
+        @("BE-001FL-01", "baseline marker"),
+        @("BE-001FL-02", "next plan marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.root_parent_facade_import_pass", "root facade marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.root_parent_facade_import_pass", "root facade coordinate"),
+        @("src/runtime/mod.rs", "runtime root file marker"),
+        @("root_parent_facade_import_pass baseline_frozen", "baseline frozen marker"),
+        @("module declaration surface frozen", "module declaration marker"),
+        @("public re-export surface frozen", "re-export marker"),
+        @("private helper bridge surface frozen", "private helper marker"),
+        @("query_support parent surface frozen", "query support marker"),
+        @("response_support parent surface frozen", "response support marker"),
+        @("use super::*", "parent wildcard marker"),
+        @("use axum::extract::Query", "unused query marker"),
+        @("remaining_runtime_parent_import_bridge_1", "remaining runtime residual marker"),
+        @("remaining_root_parent_import_bridge_1", "remaining root residual marker"),
+        @("old_three_leaf_pause_target_cancelled", "old pause cancel marker"),
+        @("progress_report_instruction_discarded", "progress report discard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
