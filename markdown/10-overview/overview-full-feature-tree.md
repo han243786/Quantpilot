@@ -1743,6 +1743,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/348-runtime.backtest_import_pass第四轮父叶残余判断.md` - v4.16.0 BE-001DL-01 `runtime.backtest_import_pass` 第四轮父叶残余判断
 - `markdown/06-milestones/v4.16.0/349-runtime.parent_import_bridge父叶残余判断.md` - v4.16.0 BE-001DM-01 `runtime.parent_import_bridge` 父叶残余判断
 - `markdown/06-milestones/v4.16.0/350-runtime.mutation_import_pass单子叶等价基线.md` - v4.16.0 BE-001DN-01 `runtime.mutation_import_pass` 单子叶等价基线
+- `markdown/06-milestones/v4.16.0/351-runtime.mutation_import_pass抽离方案.md` - v4.16.0 BE-001DN-02 `runtime.mutation_import_pass` 抽离方案
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
@@ -1960,6 +1961,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001DL-01 已完成 `runtime.backtest_import_pass` 第四轮父叶残余判断并设置 `stop_split: true`；下一步只能进入 BE-001DM-01 `runtime.parent_import_bridge` 父叶残余判断。
 当前最新递归点补充: BE-001DM-01 已完成 `runtime.parent_import_bridge` 父叶残余判断并保持 `stop_split: false`；下一步只能进入 BE-001DN-01 `runtime.mutation_import_pass` 单子叶等价基线。
 当前最新递归点补充: BE-001DN-01 已建立 `runtime.mutation_import_pass` 单子叶等价基线；下一步只能进入 BE-001DN-02 抽离方案。
+当前最新递归点补充: BE-001DN-02 已建立 `runtime.mutation_import_pass` 抽离方案；下一步只能进入 BE-001DO-01 `runtime.mutation.shared_governance_import_pass` 单子叶等价基线。
 
 ### 7.7 总览 (markdown/10-overview/)
 

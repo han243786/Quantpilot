@@ -362,6 +362,7 @@
 | 348 | `v4.16.0/348-runtime.backtest_import_pass第四轮父叶残余判断.md` | BE-001DL-01 `runtime.backtest_import_pass` 第四轮父叶残余判断，设置 stop_split true 并回上层父叶 | 📋 已创建 |
 | 349 | `v4.16.0/349-runtime.parent_import_bridge父叶残余判断.md` | BE-001DM-01 `runtime.parent_import_bridge` 父叶残余判断，锁定 mutation import pass | 📋 已创建 |
 | 350 | `v4.16.0/350-runtime.mutation_import_pass单子叶等价基线.md` | BE-001DN-01 `runtime.mutation_import_pass` 单子叶等价基线，冻结 21 个 mutation parent bridge 文件 | 📋 已创建 |
+| 351 | `v4.16.0/351-runtime.mutation_import_pass抽离方案.md` | BE-001DN-02 `runtime.mutation_import_pass` 抽离方案，选择 shared_governance import pass | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 

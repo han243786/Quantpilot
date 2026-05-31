@@ -308,6 +308,7 @@ v4.7.0 系统应被理解为：
 - BE-001DL-01 已完成 `runtime.backtest_import_pass` 第四轮父叶残余判断；backtest 父叶设置 `stop_split: true`，下一步只能进入 BE-001DM-01 `runtime.parent_import_bridge` 父叶残余判断。
 - BE-001DM-01 已完成 `runtime.parent_import_bridge` 父叶残余判断；父叶保持 `stop_split: false`，剩余分布 root 1 / run 0 / backtest 0 / mutation 21 / test-only 1，下一步只能进入 BE-001DN-01 `runtime.mutation_import_pass` 单子叶等价基线。
 - BE-001DN-01 已建立 `runtime.mutation_import_pass` 单子叶等价基线；冻结 21 个 mutation parent bridge 文件，下一步只能进入 BE-001DN-02 抽离方案。
+- BE-001DN-02 已建立 `runtime.mutation_import_pass` 抽离方案；拒绝 21 文件整批 rewrite，下一步只能进入 BE-001DO-01 `runtime.mutation.shared_governance_import_pass` 单子叶等价基线。
 
 ## 当前收尾/发布状态
 
