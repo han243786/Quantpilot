@@ -770,3 +770,4 @@
 | v4.16.0 / BE-001EL-01 | 新增: `runtime.mutation.parameter_mutation.parent_facade_import_pass` 单子叶等价基线已建立，冻结 parent facade 输入面 |
 | v4.16.0 / BE-001EL-02 | 新增: `runtime.mutation.parameter_mutation.parent_facade_import_pass` 抽离方案已建立，固定单文件删除 parent wildcard import |
 | v4.16.0 / BE-001EL-03 | 新增: `runtime.mutation.parameter_mutation.parent_facade_import_pass` 抽离记录已建立，parent wildcard import 已收敛为显式 `mutation_event_contract` 输入 |
+| v4.16.0 / BE-001EL-04 | 新增: `runtime.mutation.parameter_mutation.parent_facade_import_pass` 单叶 closeout 已建立，设置 stop_split true |
