@@ -373,6 +373,7 @@
 | 359 | `v4.16.0/359-runtime.mutation.parameter_mutation.record_query_import_pass单子叶等价基线.md` | BE-001DR-01 `runtime.mutation.parameter_mutation.record_query_import_pass` 单子叶等价基线，冻结 record query 读路径输入面 | 📋 已创建 |
 | 360 | `v4.16.0/360-runtime.mutation.parameter_mutation.record_query_import_pass抽离方案.md` | BE-001DR-02 `runtime.mutation.parameter_mutation.record_query_import_pass` 抽离方案，固定单文件 import rewrite | 📋 已创建 |
 | 361 | `v4.16.0/361-runtime.mutation.parameter_mutation.record_query_import_pass抽离记录.md` | BE-001DR-03 `runtime.mutation.parameter_mutation.record_query_import_pass` 抽离记录，改写 `record_query.rs` parent wildcard import | 📋 已创建 |
+| 362 | `v4.16.0/362-runtime.mutation.parameter_mutation.record_query_import_pass单叶closeout.md` | BE-001DR-04 `runtime.mutation.parameter_mutation.record_query_import_pass` 单叶 closeout，设置 `stop_split: true` 并回父叶判断 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
