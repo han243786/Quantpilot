@@ -331,6 +331,7 @@ v4.7.0 系统应被理解为：
 - BE-001DW-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 单子叶等价基线；冻结 `boundary_safety.rs` 输入面，下一步只能进入 BE-001DW-02 抽离方案。
 - BE-001DW-02 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 抽离方案；下一步只能进入 BE-001DW-03 单文件 import rewrite，不得改函数体、可见性、facade、activation / rollback sibling 或 release transition。
 - BE-001DW-03 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 实际抽离；`boundary_safety.rs` parent wildcard import 已清理，下一步只能进入 BE-001DW-04 单叶 closeout。
+- BE-001DW-04 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 单叶 closeout；设置 `stop_split: true`，下一步只能进入 BE-001DX-01 `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` 父叶残余判断。
 
 ## 当前收尾/发布状态
 
