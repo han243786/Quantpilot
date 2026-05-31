@@ -301,6 +301,7 @@
 | v4.16.0 / BE-001CZ-01 | 新增: `runtime.report_ops_import_pass` 单子叶等价基线已建立，冻结 report_ops facade 与 3 child import 转运风险 |
 | v4.16.0 / BE-001CZ-02 | 新增: `runtime.report_ops_import_pass` 抽离方案已建立，固定 report_ops four-file pocket 同批处理 |
 | v4.16.0 / BE-001CZ-03 | 新增: `runtime.report_ops_import_pass` 抽离记录已建立，report_ops four-file pocket parent wildcard import 已收敛 |
+| v4.16.0 / BE-001CZ-04 | 新增: `runtime.report_ops_import_pass` 单叶 closeout 已建立，设置 `stop_split: true` 并回到 parent import bridge 残余判断 |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |

@@ -331,6 +331,7 @@
 | 317 | `v4.16.0/317-runtime.report_ops_import_pass单子叶等价基线.md` | BE-001CZ-01 `runtime.report_ops_import_pass` 单子叶等价基线，冻结 report_ops facade 与 3 child 的 import 转运风险 | 📋 已创建 |
 | 318 | `v4.16.0/318-runtime.report_ops_import_pass抽离方案.md` | BE-001CZ-02 `runtime.report_ops_import_pass` 抽离方案，固定 report_ops four-file pocket 同批处理 | 📋 已创建 |
 | 319 | `v4.16.0/319-runtime.report_ops_import_pass抽离记录.md` | BE-001CZ-03 `runtime.report_ops_import_pass` 实际抽离，改写 report_ops four-file pocket parent wildcard import | 📋 已创建 |
+| 320 | `v4.16.0/320-runtime.report_ops_import_pass单叶closeout.md` | BE-001CZ-04 `runtime.report_ops_import_pass` 单叶 closeout，设置 `stop_split: true` 并回到 parent import bridge 残余判断 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
