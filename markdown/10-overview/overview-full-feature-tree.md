@@ -1760,6 +1760,7 @@ meta-pipeline-log.md                         — 元流水线日志
 - `markdown/06-milestones/v4.16.0/365-runtime.mutation.parameter_mutation.proposal_creation_import_pass抽离方案.md` - v4.16.0 BE-001DT-02 `runtime.mutation.parameter_mutation.proposal_creation_import_pass` 抽离方案
 - `markdown/06-milestones/v4.16.0/366-runtime.mutation.parameter_mutation.proposal_creation_import_pass抽离记录.md` - v4.16.0 BE-001DT-03 `runtime.mutation.parameter_mutation.proposal_creation_import_pass` 抽离记录
 - `markdown/06-milestones/v4.16.0/367-runtime.mutation.parameter_mutation.proposal_creation_import_pass单叶closeout.md` - v4.16.0 BE-001DT-04 `runtime.mutation.parameter_mutation.proposal_creation_import_pass` 单叶 closeout
+- `markdown/06-milestones/v4.16.0/368-runtime.mutation.parameter_mutation_import_pass第二轮父叶残余判断.md` - v4.16.0 BE-001DU-01 `runtime.mutation.parameter_mutation_import_pass` 第二轮父叶残余判断
 - `src/backend/runtime/routes/evidence.rs` - backend runtime evidence route child，承接 evidence health / cleanup route registration
 - `src/backend/runtime/routes/event_stream.rs` - backend runtime event stream route child，承接 run events SSE route registration
 - `src/backend/runtime/routes/experiment.rs` - backend runtime experiment route child，承接 experiment route registration
@@ -1994,6 +1995,7 @@ meta-pipeline-log.md                         — 元流水线日志
 当前最新递归点补充: BE-001DT-02 已建立 `runtime.mutation.parameter_mutation.proposal_creation_import_pass` 抽离方案；下一步只能进入 BE-001DT-03 实际抽离记录。
 当前最新递归点补充: BE-001DT-03 已完成 `runtime.mutation.parameter_mutation.proposal_creation_import_pass` 实际抽离；下一步只能进入 BE-001DT-04 单叶 closeout。
 当前最新递归点补充: BE-001DT-04 已完成 `runtime.mutation.parameter_mutation.proposal_creation_import_pass` 单叶 closeout；设置 `stop_split: true`，旧三叶暂停目标保持取消，下一步只能进入 BE-001DU-01 `runtime.mutation.parameter_mutation_import_pass` 父叶残余判断。
+当前最新递归点补充: BE-001DU-01 已完成 `runtime.mutation.parameter_mutation_import_pass` 第二轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001DV-01 `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` 单子叶等价基线。
 
 ### 7.7 总览 (markdown/10-overview/)
 
