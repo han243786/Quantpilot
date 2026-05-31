@@ -356,6 +356,7 @@
 | v4.16.0 / BE-001DW-02 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 抽离方案已建立，固定单文件 import rewrite |
 | v4.16.0 / BE-001DW-03 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 抽离记录已建立，boundary_safety parent import 已收敛 |
 | v4.16.0 / BE-001DW-04 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 单叶 closeout 已建立，设置 stop_split true |
+| v4.16.0 / BE-001DX-01 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` 父叶残余判断已建立，选择 rollback_record_identity import pass |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |

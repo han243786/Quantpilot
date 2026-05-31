@@ -386,6 +386,7 @@
 | 372 | `v4.16.0/372-runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass抽离方案.md` | BE-001DW-02 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 抽离方案，固定单文件 import rewrite | 📋 已创建 |
 | 373 | `v4.16.0/373-runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass抽离记录.md` | BE-001DW-03 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 抽离记录，清理 `boundary_safety.rs` parent wildcard import | 📋 已创建 |
 | 374 | `v4.16.0/374-runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass单叶closeout.md` | BE-001DW-04 `runtime.mutation.parameter_mutation.transition_lifecycle.boundary_safety_import_pass` 单叶 closeout，设置 `stop_split: true` | 📋 已创建 |
+| 375 | `v4.16.0/375-runtime.mutation.parameter_mutation.transition_lifecycle_import_pass父叶残余判断.md` | BE-001DX-01 `runtime.mutation.parameter_mutation.transition_lifecycle_import_pass` 父叶残余判断，选择 rollback_record_identity import pass | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
