@@ -6378,6 +6378,7 @@ BE-001FD-01 仅冻结 `use super::*` 当前 parent import bridge 与预期显式
 **真实文件**:
 - `src/runtime/mutation/ai_proposal/proposal_creation.rs` - AI proposal create handler import pocket
 - `markdown/06-milestones/v4.16.0/455-runtime.mutation.ai_proposal.proposal_creation_import_pass单子叶等价基线.md` - BE-001FF-01 等价基线
+- `markdown/06-milestones/v4.16.0/456-runtime.mutation.ai_proposal.proposal_creation_import_pass抽离方案.md` - BE-001FF-02 抽离方案
 
 **public / parent-visible 方法**:
 - `create_runtime_ai_proposal` - route-facing AI proposal create handler
@@ -6389,3 +6390,4 @@ BE-001FD-01 仅冻结 `use super::*` 当前 parent import bridge 与预期显式
 AI 声称 `proposal_creation_import_pass` 已推进至 BE-001FF-01 时，必须说明当前只是 `no code movement` 等价基线，`src/runtime/mutation/ai_proposal/proposal_creation.rs` 仍未实际移除 `use super::*`。不得宣称 create handler、parent facade、runtime root bridge、backend.runtime 或 Rust 重构已完成。
 
 **最新状态补充（BE-001FF-01）**: BE-001FF-01 已建立 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 单子叶等价基线。下一步只能进入 BE-001FF-02 抽离方案，不得直接改写函数体、自动审批、事件生命周期、persist order、sandbox trigger、parent facade 或 release transition。
+**最新状态补充（BE-001FF-02）**: BE-001FF-02 已建立 `runtime.mutation.ai_proposal.proposal_creation_import_pass` 抽离方案。当前 `no code movement`；BE-001FF-03 只允许把 `src/runtime/mutation/ai_proposal/proposal_creation.rs` 顶部 `use super::*` 改为显式 import，禁止改 handler 函数体、自动审批、事件生命周期、persist order、sandbox trigger 和 sibling owner。
