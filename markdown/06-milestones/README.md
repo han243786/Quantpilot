@@ -738,3 +738,4 @@
 `tracking/` 和各历史版本目录下为历史开发过程产生的优化追踪文档和审计报告，仅供历史参考，不反映当前开发方向。
 | v4.16.0 / BE-001DY-01 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 单子叶等价基线已建立，冻结 rollback id import pass 输入面 |
 | v4.16.0 / BE-001DY-02 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 抽离方案已建立，固定单文件 import rewrite |
+| v4.16.0 / BE-001DY-03 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 抽离记录已建立，rollback_record_identity parent import 已收敛 |

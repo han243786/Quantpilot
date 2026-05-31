@@ -465,3 +465,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - 前端和文档文本保存为 UTF-8 并验证在渲染产品中正确显示
 - BE-001DY-01 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 单子叶等价基线；当前为 `no code movement`，冻结 `runtime_parameter_mutation_rollback_record_id` 的 digest/id 语义和预期显式 import 输入面。下一步只能进入 BE-001DY-02 抽离方案；旧三叶暂停目标保持取消。
 - BE-001DY-02 已建立 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 抽离方案；当前为 `no code movement`，下一步只允许改写 `rollback_record_identity.rs` 顶部 import。下一步只能进入 BE-001DY-03 实际抽离记录。
+- BE-001DY-03 已完成 `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 实际抽离；`rollback_record_identity.rs` 已移除 parent wildcard import，residual 降为 total 18 / mutation 16 / parameter_mutation 6 / transition_lifecycle 5。下一步只能进入 BE-001DY-04 单叶 closeout。
