@@ -952,6 +952,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001CY-03）**: BE-001CY-03 已完成 `runtime.root_entry_import_pass` 实际抽离。`src/runtime/event_stream.rs` 与 `src/runtime/evidence_health.rs` 已从 `use super::*` 收敛为显式 import，runtime parent bridge 依赖文件数从 44 降为 42；下一步只能进入 BE-001CY-04 单叶 closeout。
 **最新状态补充（BE-001CY-04）**: BE-001CY-04 已完成 `runtime.root_entry_import_pass` 单叶 closeout。`runtime.root_entry_import_pass stop_split: true`，不继续拆 `event_stream` / `evidence_health` 微叶；下一步只能进入 BE-001CZ-01 `runtime.report_ops_import_pass` 单子叶等价基线。
 **最新状态补充（BE-001CZ-01）**: BE-001CZ-01 已建立 `runtime.report_ops_import_pass` 单子叶等价基线。候选范围为 `src/runtime/report_ops.rs`、`src/runtime/report_ops/runtime_report.rs`、`src/runtime/report_ops/v1_report_endpoints.rs` 与 `src/runtime/report_ops/merge_generation_health.rs`，且 parent facade 存在 transitive parent surface risk；下一步只能进入 BE-001CZ-02 抽离方案。
+**最新状态补充（BE-001CZ-02）**: BE-001CZ-02 已建立 `runtime.report_ops_import_pass` 抽离方案。下一步 BE-001CZ-03 只允许同批处理 report_ops four-file pocket，不得混入 `src/runtime/mod.rs`、test-only `src/runtime/run_guard.rs`、run/backtest/mutation 子树或 release transition。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1129,6 +1130,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/315-runtime.root_entry_import_pass抽离记录.md`
 - `markdown/06-milestones/v4.16.0/316-runtime.root_entry_import_pass单叶closeout.md`
 - `markdown/06-milestones/v4.16.0/317-runtime.report_ops_import_pass单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/318-runtime.report_ops_import_pass抽离方案.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5905,6 +5907,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/315-runtime.root_entry_import_pass抽离记录.md` runtime root entry import pass extraction | `runtime.root_entry_import_pass` | 实际抽离，改写 event_stream 与 evidence_health parent wildcard import | BE-001CY 实际抽离 | 依赖文件数从 44 降为 42；下一步只能进入 BE-001CY-04 单叶 closeout |
 | `markdown/06-milestones/v4.16.0/316-runtime.root_entry_import_pass单叶closeout.md` runtime root entry import pass closeout | `runtime.root_entry_import_pass` | 单叶 closeout，确认 root entry import pass 不继续细拆 | BE-001CY closeout | `runtime.root_entry_import_pass stop_split: true`；下一步只能进入 BE-001CZ-01 `runtime.report_ops_import_pass` 单子叶等价基线 |
 | `markdown/06-milestones/v4.16.0/317-runtime.report_ops_import_pass单子叶等价基线.md` runtime report ops import pass baseline | `runtime.report_ops_import_pass` | 单子叶等价基线，冻结 report_ops facade 与 3 child 的 transitive parent surface risk | BE-001CZ 单子叶基线 | `no code movement`；下一步只能进入 BE-001CZ-02 抽离方案 |
+| `markdown/06-milestones/v4.16.0/318-runtime.report_ops_import_pass抽离方案.md` runtime report ops import pass extraction plan | `runtime.report_ops_import_pass` | 抽离方案，固定 report_ops four-file pocket 同批处理 | BE-001CZ 抽离方案 | `no code movement`；下一步只能进入 BE-001CZ-03 实际抽离 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
