@@ -338,6 +338,7 @@
 | 324 | `v4.16.0/324-runtime.run_import_pass抽离记录.md` | BE-001DB-03 `runtime.run_import_pass` 实际抽离，改写 4 个 run child parent wildcard import | 📋 已创建 |
 | 325 | `v4.16.0/325-runtime.run_import_pass单叶closeout.md` | BE-001DB-04 `runtime.run_import_pass` 单叶 closeout，设置 `stop_split: true` 并回到 parent import bridge 残余判断 | 📋 已创建 |
 | 326 | `v4.16.0/326-runtime.parent_import_bridge父叶残余判断.md` | BE-001DC-01 `runtime.parent_import_bridge` 父叶残余判断，确认剩余 34 个依赖文件并选择 `runtime.backtest_import_pass` | 📋 已创建 |
+| 327 | `v4.16.0/327-runtime.backtest_import_pass单子叶等价基线.md` | BE-001DD-01 `runtime.backtest_import_pass` 单子叶等价基线，冻结 11 个 backtest 残余文件 | 📋 已创建 |
 
 ### v4.15.0 — 三矩阵完全接管 closeout (MINOR governance, 已落地)
 
