@@ -320,6 +320,7 @@ v4.7.0 系统应被理解为：
 - BE-001DR-02 已建立 `runtime.mutation.parameter_mutation.record_query_import_pass` 抽离方案；下一步只允许单文件改写 `src/runtime/mutation/parameter_mutation/record_query.rs` 顶部 import。
 - BE-001DR-03 已完成 `runtime.mutation.parameter_mutation.record_query_import_pass` 实际抽离；parent bridge 剩余降为 total 21 / mutation 19，下一步只能进入 BE-001DR-04 单叶 closeout。
 - BE-001DR-04 已完成 `runtime.mutation.parameter_mutation.record_query_import_pass` 单叶 closeout；设置 `stop_split: true`，旧三叶暂停目标保持取消，下一步只能进入 BE-001DS-01 `runtime.mutation.parameter_mutation_import_pass` 父叶残余判断。
+- BE-001DS-01 已完成 `runtime.mutation.parameter_mutation_import_pass` 父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001DT-01 `runtime.mutation.parameter_mutation.proposal_creation_import_pass` 单子叶等价基线。
 
 ## 当前收尾/发布状态
 
