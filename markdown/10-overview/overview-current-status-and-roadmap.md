@@ -298,6 +298,7 @@ v4.7.0 系统应被理解为：
 - BE-001DH-01 已完成 `runtime.backtest_import_pass` 第二轮父叶残余判断；父叶保持 `stop_split: false`，下一步只能进入 BE-001DI-01 `runtime.backtest.experiment_sweep_import_pass` 单子叶等价基线。
 - BE-001DI-01 已建立 `runtime.backtest.experiment_sweep_import_pass` 单子叶等价基线；冻结四文件 pocket，下一步只能进入 BE-001DI-02 抽离方案。
 - BE-001DI-02 已建立 `runtime.backtest.experiment_sweep_import_pass` 抽离方案；下一步 BE-001DI-03 只允许四文件 import rewrite。
+- BE-001DI-03 已完成 `runtime.backtest.experiment_sweep_import_pass` 实际抽离；四文件 parent import 已收敛，parent bridge 依赖文件数从 32 降为 28，下一步只能进入 BE-001DI-04 单叶 closeout。
 
 ## 当前收尾/发布状态
 

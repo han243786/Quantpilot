@@ -322,6 +322,7 @@
 | v4.16.0 / BE-001DH-01 | 新增: `runtime.backtest_import_pass` 第二轮父叶残余判断已建立，选择 experiment sweep import pass |
 | v4.16.0 / BE-001DI-01 | 新增: `runtime.backtest.experiment_sweep_import_pass` 单子叶等价基线已建立，冻结四文件 pocket |
 | v4.16.0 / BE-001DI-02 | 新增: `runtime.backtest.experiment_sweep_import_pass` 抽离方案已建立，固定四文件 import rewrite |
+| v4.16.0 / BE-001DI-03 | 新增: `runtime.backtest.experiment_sweep_import_pass` 抽离记录已建立，四文件 parent import 已收敛 |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |
