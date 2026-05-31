@@ -311,6 +311,7 @@
 | v4.16.0 / BE-001DD-01 | 新增: `runtime.backtest_import_pass` 单子叶等价基线已建立，冻结 11 个 backtest import 残余文件 |
 | v4.16.0 / BE-001DD-02 | 新增: `runtime.backtest_import_pass` 抽离方案已建立，选择 `runtime.backtest.record_store_import_pass` 为下一候选 |
 | v4.16.0 / BE-001DE-01 | 新增: `runtime.backtest.record_store_import_pass` 单子叶等价基线已建立，冻结 `record_store.rs` import 输入面 |
+| v4.16.0 / BE-001DE-02 | 新增: `runtime.backtest.record_store_import_pass` 抽离方案已建立，固定单文件 import rewrite |
 | v4.15.0 | 当前治理基线: 三矩阵完全接管 closeout |
 | v4.14.0 | ✅ 治理门禁自动化 |
 | v4.13.0 | ✅ 模块树白箱扩面 |

@@ -964,6 +964,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 **最新状态补充（BE-001DD-01）**: BE-001DD-01 已建立 `runtime.backtest_import_pass` 单子叶等价基线。冻结 11 个 `src/runtime/backtest/**` 残余文件、public/internal 方法和父级输入面；下一步只能进入 BE-001DD-02 抽离方案。
 **最新状态补充（BE-001DD-02）**: BE-001DD-02 已建立 `runtime.backtest_import_pass` 抽离方案。`runtime.backtest_import_pass stop_split: false`，不采用 11 文件整批 import rewrite；下一步只能进入 BE-001DE-01 `runtime.backtest.record_store_import_pass` 单子叶等价基线。
 **最新状态补充（BE-001DE-01）**: BE-001DE-01 已建立 `runtime.backtest.record_store_import_pass` 单子叶等价基线。冻结 `src/runtime/backtest/record_store.rs` 的 4 个 public 方法、`use super::*` 残余和预期显式输入面；下一步只能进入 BE-001DE-02 抽离方案。
+**最新状态补充（BE-001DE-02）**: BE-001DE-02 已建立 `runtime.backtest.record_store_import_pass` 抽离方案。BE-001DE-03 只允许改写 `src/runtime/backtest/record_store.rs` 顶部 import；不得混入 replay、experiment、execution_start、root bridge 或 release transition。
 **真实文件**:
 - `src/backend/runtime.rs`
 - `src/backend/runtime/routes.rs`
@@ -1153,6 +1154,7 @@ AI 声称后端接口边界已经抽离时，必须指出 BE-001、`build_app_ro
 - `markdown/06-milestones/v4.16.0/327-runtime.backtest_import_pass单子叶等价基线.md`
 - `markdown/06-milestones/v4.16.0/328-runtime.backtest_import_pass抽离方案.md`
 - `markdown/06-milestones/v4.16.0/329-runtime.backtest.record_store_import_pass单子叶等价基线.md`
+- `markdown/06-milestones/v4.16.0/330-runtime.backtest.record_store_import_pass抽离方案.md`
 
 **职责**:
 承载 runtime run、v4 run、backtest、事件流、持久化记录、AI proposal 审批和运行证据输出。
@@ -5941,6 +5943,7 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/06-milestones/v4.16.0/327-runtime.backtest_import_pass单子叶等价基线.md` runtime backtest import pass baseline | `runtime.backtest_import_pass` | 单子叶等价基线，冻结 11 个 backtest 残余文件 | BE-001DD 单子叶基线 | `no code movement`；下一步只能进入 BE-001DD-02 抽离方案 |
 | `markdown/06-milestones/v4.16.0/328-runtime.backtest_import_pass抽离方案.md` runtime backtest import pass plan | `runtime.backtest_import_pass` | 抽离方案，拒绝 11 文件整批并拆 pocket | BE-001DD 抽离方案 | `runtime.backtest_import_pass stop_split: false`；下一步只能进入 BE-001DE-01 `runtime.backtest.record_store_import_pass` 单子叶等价基线 |
 | `markdown/06-milestones/v4.16.0/329-runtime.backtest.record_store_import_pass单子叶等价基线.md` runtime backtest record store import pass baseline | `runtime.backtest.record_store_import_pass` | 单子叶等价基线，冻结 `src/runtime/backtest/record_store.rs` import 输入面 | BE-001DE 单子叶基线 | `no code movement`；下一步只能进入 BE-001DE-02 抽离方案 |
+| `markdown/06-milestones/v4.16.0/330-runtime.backtest.record_store_import_pass抽离方案.md` runtime backtest record store import pass plan | `runtime.backtest.record_store_import_pass` | 抽离方案，固定单文件 import rewrite | BE-001DE 抽离方案 | `no code movement`；下一步只能进入 BE-001DE-03 实际抽离 |
 
 **父级通信规则**:
 文档治理变更必须经三矩阵自身判档。改变规则含义时直接重型。
