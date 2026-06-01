@@ -548,3 +548,4 @@
 | v4.16.0 / BE-001HA-01 | 新增: `backend.graph_compile.quantscript_graph` quantscript_graph parent residual judgment selects strategy_graph_parser |
 | v4.16.0 / BE-001HB-01 | 新增: `backend.graph_compile.quantscript_graph.strategy_graph_parser` strategy_graph_parser equivalence baseline and extraction plan |
 | v4.16.0 / BE-001HB-02 | 新增: `backend.graph_compile.quantscript_graph.strategy_graph_parser` strategy_graph_parser actual extraction and closeout complete |
+| v4.16.0 / BE-001HC-01 | 新增: `backend.graph_compile.quantscript_graph` quantscript_graph parent residual judgment selects artifact_target_projection |

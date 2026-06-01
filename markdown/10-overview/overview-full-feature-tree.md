@@ -3170,3 +3170,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/547-backend.graph_compile.quantscript_graph.strategy_graph_parser.baseline_plan.md` - v4.16.0 BE-001HB-01 strategy_graph_parser equivalence baseline and extraction plan
 递归边界补充: BE-001HB-02 `backend.graph_compile.quantscript_graph.strategy_graph_parser` strategy_graph_parser actual extraction and closeout complete；下一步: BE-001HC-01 quantscript_graph parent residual judgment。
 - `markdown/06-milestones/v4.16.0/548-backend.graph_compile.quantscript_graph.strategy_graph_parser.extract_closeout.md` - v4.16.0 BE-001HB-02 strategy_graph_parser actual extraction and closeout complete
+递归边界补充: BE-001HC-01 `backend.graph_compile.quantscript_graph` quantscript_graph parent residual judgment selects artifact_target_projection；下一步: BE-001HD-01 artifact_target_projection baseline_plan。
+- `markdown/06-milestones/v4.16.0/549-backend.graph_compile.quantscript_graph.parent_residual_judgment.artifact_target_projection.md` - v4.16.0 BE-001HC-01 quantscript_graph parent residual judgment selects artifact_target_projection
