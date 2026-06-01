@@ -5508,9 +5508,10 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering`
 **父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
-**状态**: v4.16 BE-001GB-01 单子叶等价基线已建立，child file 尚未创建。
+**状态**: v4.16 BE-001GB-03 实际抽离已完成，child file 已创建。
 
-**计划文件状态**: child 文件尚未创建；真实文件路径必须等 BE-001GB-03 实际抽离后再登记为文件引用。
+**真实文件**:
+- `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/double_ma_lowering.rs`
 
 **白箱节点**:
 
@@ -5523,6 +5524,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 
 **最新状态补充（BE-001GB-01）**: `double_ma_lowering baseline_frozen` 成立；下一步只能进入 BE-001GB-02 抽离方案，不得直接移动 branch。
 **最新状态补充（BE-001GB-02）**: `double_ma_lowering plan_frozen` 成立；planned helper 为 `append_double_ma_lowering_lines(cfg, &source_var, instrument, qs_lines)`；下一步只能进入 BE-001GB-03 实际抽离记录。
+**最新状态补充（BE-001GB-03）**: `double_ma_lowering actual_extraction_done` 成立；`append_double_ma_lowering_lines` 已迁入 child，下一步只能进入 BE-001GB-04 单叶 closeout。
 
 ### 5.3 `backend.storage_security`
 

@@ -1,3 +1,4 @@
+mod double_ma_lowering;
 mod macd_lowering;
 mod spread_observer_lowering;
 
@@ -31,22 +32,12 @@ pub(super) fn append_intent_lowering_lines(
 
             match module_key {
                 "builtin.intent.double_ma" => {
-                    let fast = cfg
-                        .get("fast_period")
-                        .and_then(|v| v.as_u64())
-                        .unwrap_or(20);
-                    let slow = cfg
-                        .get("slow_period")
-                        .and_then(|v| v.as_u64())
-                        .unwrap_or(50);
-                    qs_lines.push(format!("    let fast = sma({}, {})", source_var, fast));
-                    qs_lines.push(format!("    let slow = sma({}, {})", source_var, slow));
-                    qs_lines.push("    if fast > slow {".to_string());
-                    qs_lines.push(format!(
-                        "        emit Intent(\"BUY\", instrument=\"{}\", quantity=1.0)",
-                        instrument
-                    ));
-                    qs_lines.push("    }".to_string());
+                    double_ma_lowering::append_double_ma_lowering_lines(
+                        cfg,
+                        &source_var,
+                        instrument,
+                        qs_lines,
+                    );
                 }
                 "builtin.intent.rsi" => {
                     let period = cfg.get("period").and_then(|v| v.as_u64()).unwrap_or(14);
