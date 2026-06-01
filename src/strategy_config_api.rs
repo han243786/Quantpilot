@@ -5,15 +5,6 @@ const STRATEGY_CONFIG_PREFLIGHT_SCHEMA: &str = "quantpilot/v4-strategy-config-pr
 const STRATEGY_CONFIG_DIFF_SCHEMA: &str = "quantpilot/v4-strategy-config-diff/v1";
 const STRATEGY_CONFIG_EVIDENCE_DIFF_SCHEMA: &str = "quantpilot/v4-strategy-config-evidence-diff/v1";
 
-pub(super) fn register_strategy_config_artifact_route(
-    router: Router<AppState>,
-) -> Router<AppState> {
-    router.route(
-        "/api/v1/strategy-config/artifact",
-        post(create_strategy_config_artifact),
-    )
-}
-
 pub(super) fn register_strategy_config_preflight_route(
     router: Router<AppState>,
 ) -> Router<AppState> {
@@ -25,15 +16,6 @@ pub(super) fn register_strategy_config_preflight_route(
 
 pub(super) fn register_strategy_config_diff_route(router: Router<AppState>) -> Router<AppState> {
     router.route("/api/v1/strategy-config/diff", post(diff_strategy_config))
-}
-
-async fn create_strategy_config_artifact(
-    Json(request): Json<StrategyConfigArtifactRequest>,
-) -> Result<Json<StrategyConfigArtifact>, (StatusCode, String)> {
-    Ok(Json(build_strategy_config_artifact(
-        request,
-        current_time_ms(),
-    )?))
 }
 
 async fn preflight_strategy_config(
@@ -487,7 +469,7 @@ pub(super) struct StrategyConfigDomainChange {
     pub(super) findings_changed: bool,
 }
 
-fn build_strategy_config_artifact(
+pub(super) fn build_strategy_config_artifact(
     request: StrategyConfigArtifactRequest,
     now_ms: u64,
 ) -> Result<StrategyConfigArtifact, (StatusCode, String)> {

@@ -657,3 +657,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001HO-01 `backend` backend parent residual judgment selects strategy_config；下一步: BE-001HP-01 backend.strategy_config parent residual judgment。
 - BE-001HP-01 `backend.strategy_config` backend.strategy_config parent residual judgment selects artifact；下一步: BE-001HQ-01 backend.strategy_config.artifact baseline_plan。
 - BE-001HQ-01 `backend.strategy_config.artifact` backend.strategy_config.artifact equivalence baseline and extraction plan；下一步: BE-001HQ-02 backend.strategy_config.artifact extract_closeout。
+- BE-001HQ-02 `backend.strategy_config.artifact` backend.strategy_config.artifact route owner extraction complete；下一步: BE-001HR-01 backend.strategy_config.artifact parent residual judgment。
