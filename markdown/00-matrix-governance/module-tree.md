@@ -5678,6 +5678,26 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001GL-01）**: `shared_intent_context baseline_frozen` 与 `shared_intent_context plan_frozen` 成立；下一步只能进入 BE-001GL-02 extract_closeout，不得让 context child 直接调用 branch child。
 **最新状态补充（BE-001GL-02）**: `shared_intent_context actual_extraction_done`、`shared_intent_context closeout_done` 与 `shared_intent_context stop_split: true` 成立；不继续拆 instrument_fallback / source_lookup / source_var_normalization 微叶。
 
+#### 5.2.2.1.9 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.unsupported_intent_failure`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.unsupported_intent_failure`
+**父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
+**状态**: v4.16 BE-001GN-02 单叶 closeout 已完成，`stop_split: true`。
+
+**真实文件**:
+- `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/unsupported_intent_failure.rs`
+
+**白箱节点**:
+
+| 节点 | 输入 | 输出 | 约束 |
+| --- | --- | --- | --- |
+| supported intent display string | none | `double_ma/ma_deviation/rsi/macd/momentum/zscore/spread_observer` | Must remain equivalent to pre-extraction parent string. |
+| unsupported intent diagnostic | module key | Chinese unsupported intent error message | Exact message is locked by local unit test. |
+| hard failure return | module key | `anyhow::Result<()>` error | Never silently drops unknown intent modules. |
+
+**最新状态补充（BE-001GN-01）**: `unsupported_intent_failure baseline_frozen` 与 `unsupported_intent_failure plan_frozen` 成立；下一步只能进入 BE-001GN-02 extract_closeout，不得移动 supported intent branches。
+**最新状态补充（BE-001GN-02）**: `unsupported_intent_failure actual_extraction_done`、`unsupported_intent_failure closeout_done` 与 `unsupported_intent_failure stop_split: true` 成立；不继续拆 supported_string / diagnostic_format / bail_return 微叶。
+
 ### 5.3 `backend.storage_security`
 
 **层级路径**: `root.backend.storage_security`
@@ -6875,3 +6895,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001GL-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.shared_intent_context` shared_intent_context actual extraction and closeout complete；下一步: BE-001GM-01 intent_lowering parent residual judgment。
 **最新状态补充(BE-001GM-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects unsupported_intent_failure；下一步: BE-001GN-01 unsupported_intent_failure baseline_plan。
 **最新状态补充(BE-001GN-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.unsupported_intent_failure` unsupported_intent_failure equivalence baseline and extraction plan；下一步: BE-001GN-02 unsupported_intent_failure extract_closeout。
+**最新状态补充(BE-001GN-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.unsupported_intent_failure` unsupported_intent_failure actual extraction and closeout complete；下一步: BE-001GO-01 intent_lowering parent residual closeout。

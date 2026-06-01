@@ -5,6 +5,7 @@ mod momentum_lowering;
 mod rsi_lowering;
 mod shared_intent_context;
 mod spread_observer_lowering;
+mod unsupported_intent_failure;
 mod zscore_lowering;
 
 use serde_json::Value;
@@ -84,14 +85,7 @@ pub(super) fn append_intent_lowering_lines(
                     );
                 }
                 _ => {
-                    // v2.3.3 修复 S0-5: 未知意图模块键不再静默丢弃, 返回明确错误
-                    let supported =
-                        "double_ma/ma_deviation/rsi/macd/momentum/zscore/spread_observer";
-                    anyhow::bail!(
-                        "不支持的意图模块 '{}': 当前版本仅支持 {}。请升级到支持该模块的版本。",
-                        ctx.module_key,
-                        supported
-                    );
+                    unsupported_intent_failure::bail_unsupported_intent(ctx.module_key)?;
                 }
             }
         }
