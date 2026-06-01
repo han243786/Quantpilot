@@ -4,8 +4,10 @@ use crate::{current_time_ms, strategy_config_api, AppState};
 
 pub const MODULE_ID: &str = "backend.strategy_config.artifact";
 
+pub mod domain_projection;
 pub mod schema_model;
 
+pub(crate) use domain_projection::{build_config_domains, finding};
 pub(crate) use schema_model::*;
 
 pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {

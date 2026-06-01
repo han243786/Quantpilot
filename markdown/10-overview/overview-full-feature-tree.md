@@ -281,6 +281,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/app_state_wiring/state_factory.rs`
 - `src/backend/test_support/scenario.rs`
 - `src/backend/strategy_config/artifact.rs`
+- `src/backend/strategy_config/artifact/domain_projection.rs`
 - `src/backend/strategy_config/artifact/schema_model.rs`
 - `src/backend/strategy_config/preflight.rs`
 - `src/backend/strategy_config/diff.rs`
@@ -3228,3 +3229,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/573-backend.strategy_config.artifact.parent_residual_judgment.domain_projection.md` - v4.16.0 BE-001HT-01 backend.strategy_config.artifact parent residual judgment selects domain_projection
 递归边界补充: BE-001HU-01 `backend.strategy_config.artifact.domain_projection` backend.strategy_config.artifact.domain_projection equivalence baseline and extraction plan；下一步: BE-001HU-02 backend.strategy_config.artifact.domain_projection extract_closeout。
 - `markdown/06-milestones/v4.16.0/574-backend.strategy_config.artifact.domain_projection.baseline_plan.md` - v4.16.0 BE-001HU-01 backend.strategy_config.artifact.domain_projection equivalence baseline and extraction plan
+递归边界补充: BE-001HU-02 `backend.strategy_config.artifact.domain_projection` backend.strategy_config.artifact.domain_projection actual extraction complete；下一步: BE-001HV-01 backend.strategy_config.artifact parent residual judgment。
+- `markdown/06-milestones/v4.16.0/575-backend.strategy_config.artifact.domain_projection.extract_closeout.md` - v4.16.0 BE-001HU-02 backend.strategy_config.artifact.domain_projection actual extraction complete

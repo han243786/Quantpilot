@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001HT-01",
-  "last_committed_sha": "092e1ec",
-  "current_parent": "backend.strategy_config.artifact.domain_projection",
-  "current_step": "BE-001HU-02",
-  "current_phase": "extract_closeout",
+  "last_committed_batch": "BE-001HU-01",
+  "last_committed_sha": "d56f13b",
+  "current_parent": "backend.strategy_config.artifact",
+  "current_step": "BE-001HV-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -15,7 +15,6 @@
   ],
   "open_residuals": [
     "strategy_config.artifact.builder_core",
-    "strategy_config.artifact.domain_projection",
     "strategy_config.preflight",
     "strategy_config.diff",
     "strategy_config.ai_proposal_binding",

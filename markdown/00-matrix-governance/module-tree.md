@@ -611,9 +611,10 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 
 **层级路径**: `root.backend.strategy_config.artifact`
 **父模块**: `backend.strategy_config`
-**状态**: v4.16 BE-001HS-02 已完成 artifact route owner 与 schema_model owner 抽离；builder/domain projection 仍在 `src/strategy_config_api.rs`。
+**状态**: v4.16 BE-001HU-02 已完成 artifact route owner、schema_model owner 与 domain_projection owner 抽离；builder_core 仍在 `src/strategy_config_api.rs`。
 **真实文件**:
 - `src/backend/strategy_config/artifact.rs`
+- `src/backend/strategy_config/artifact/domain_projection.rs`
 - `src/backend/strategy_config/artifact/schema_model.rs`
 - `src/strategy_config_api.rs`
 
@@ -784,6 +785,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/app_state_wiring/state_factory.rs`
 - `src/backend/test_support/scenario.rs`
 - `src/backend/strategy_config/artifact.rs`
+- `src/backend/strategy_config/artifact/domain_projection.rs`
 - `src/backend/strategy_config/artifact/schema_model.rs`
 - `src/backend/strategy_config/preflight.rs`
 - `src/backend/strategy_config/diff.rs`
@@ -7223,3 +7225,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001HS-02)**: `backend.strategy_config.artifact.schema_model` backend.strategy_config.artifact.schema_model actual extraction complete；下一步: BE-001HT-01 backend.strategy_config.artifact parent residual judgment。
 **最新状态补充(BE-001HT-01)**: `backend.strategy_config.artifact` backend.strategy_config.artifact parent residual judgment selects domain_projection；下一步: BE-001HU-01 backend.strategy_config.artifact.domain_projection baseline_plan。
 **最新状态补充(BE-001HU-01)**: `backend.strategy_config.artifact.domain_projection` backend.strategy_config.artifact.domain_projection equivalence baseline and extraction plan；下一步: BE-001HU-02 backend.strategy_config.artifact.domain_projection extract_closeout。
+**最新状态补充(BE-001HU-02)**: `backend.strategy_config.artifact.domain_projection` backend.strategy_config.artifact.domain_projection actual extraction complete；下一步: BE-001HV-01 backend.strategy_config.artifact parent residual judgment。
