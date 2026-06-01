@@ -5824,13 +5824,11 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.strategy_graph_parser`
 **父模块**: `backend.graph_compile.quantscript_graph`
-**状态**: v4.16 BE-001HB-01 baseline_plan 已建立，`strategy_graph_parser baseline_frozen` 与 `strategy_graph_parser plan_frozen` 成立；下一步只能进入 BE-001HB-02 extract_closeout。
+**状态**: v4.16 BE-001HB-02 actual extraction + closeout 已完成，`strategy_graph_parser stop_split: true`；下一步回到 `backend.graph_compile.quantscript_graph` 父叶残余判断。
 
 **真实文件**:
 - `src/backend/graph_compile/quantscript_graph.rs`
-
-**计划文件**:
-strategy_graph_parser child module under `src/backend/graph_compile/quantscript_graph/` (not created in BE-001HB-01).
+- `src/backend/graph_compile/quantscript_graph/strategy_graph_parser.rs`
 
 **职责**:
 承接 `strategy_graph` QuantScript source 到 graph JSON 的 parser body；父级继续持有 route wrapper、artifact attachment、generation/formal conversion child 边界。
@@ -5838,7 +5836,7 @@ strategy_graph_parser child module under `src/backend/graph_compile/quantscript_
 **关键 public 方法**:
 | 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
 | --- | --- | --- | --- | --- |
-| `parse_strategy_graph_source` (planned `pub(super)`) | source text, `now` timestamp | graph `Value` before artifact attachment | `backend.graph_compile.quantscript_graph` parent wrapper | 不得直接调用 artifact target projection / route surface sibling；不得改写 imported graph shape |
+| `parse_strategy_graph_source` (`pub(super)`) | source text, `now` timestamp | graph `Value` before artifact attachment | `backend.graph_compile.quantscript_graph` parent wrapper | 不得直接调用 artifact target projection / route surface sibling；不得改写 imported graph shape |
 
 **白箱节点**:
 | 白箱节点 | 输入 | 输出 | 等价注意事项 |
@@ -5856,6 +5854,7 @@ strategy_graph_parser child module under `src/backend/graph_compile/quantscript_
 AI 声称 BE-001HB-01 已完成时，必须说明当前只是 `no code movement` baseline_plan，planned strategy_graph_parser child 尚未创建，`parse_graph_quantscript_source` 仍在 `src/backend/graph_compile/quantscript_graph.rs`。
 
 **最新状态补充（BE-001HB-01）**: `strategy_graph_parser baseline_frozen` 与 `strategy_graph_parser plan_frozen` 成立；下一步只能进入 BE-001HB-02 extract_closeout，不得移动 route surface 或 artifact projection。
+**最新状态补充（BE-001HB-02）**: `strategy_graph_parser actual_extraction_done`、`strategy_graph_parser closeout_done` 与 `strategy_graph_parser stop_split: true` 成立；父级仍保留 route surface 与 artifact target projection 残余，下一步只能回到 BE-001HC-01 `quantscript_graph` 父叶残余判断。
 
 ### 5.3 `backend.storage_security`
 
@@ -7074,3 +7073,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001GZ-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent closeout sets stop_split true；下一步: BE-001HA-01 quantscript_graph parent residual judgment。
 **最新状态补充(BE-001HA-01)**: `backend.graph_compile.quantscript_graph` quantscript_graph parent residual judgment selects strategy_graph_parser；下一步: BE-001HB-01 strategy_graph_parser baseline_plan。
 **最新状态补充(BE-001HB-01)**: `backend.graph_compile.quantscript_graph.strategy_graph_parser` strategy_graph_parser equivalence baseline and extraction plan；下一步: BE-001HB-02 strategy_graph_parser extract_closeout。
+**最新状态补充(BE-001HB-02)**: `backend.graph_compile.quantscript_graph.strategy_graph_parser` strategy_graph_parser actual extraction and closeout complete；下一步: BE-001HC-01 quantscript_graph parent residual judgment。
