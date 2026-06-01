@@ -3149,3 +3149,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `src/backend/graph_compile/quantscript_graph/formal_module_conversion/input_shape_validation.rs` - Input shape validation child, owns graph nodes/edges required-array checks
 递归边界补充: BE-001GV-01 `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent residual judgment selects terminal_parse；下一步: BE-001GW-01 terminal_parse baseline_plan。
 - `markdown/06-milestones/v4.16.0/539-backend.graph_compile.quantscript_graph.formal_module_conversion.parent_residual_judgment.terminal_parse.md` - v4.16.0 BE-001GV-01 formal_module_conversion parent residual judgment selects terminal_parse
+递归边界补充: BE-001GW-01 `backend.graph_compile.quantscript_graph.formal_module_conversion.terminal_parse` terminal_parse equivalence baseline and extraction plan；下一步: BE-001GW-02 terminal_parse extract_closeout。
+- `markdown/06-milestones/v4.16.0/540-backend.graph_compile.quantscript_graph.formal_module_conversion.terminal_parse.baseline_plan.md` - v4.16.0 BE-001GW-01 terminal_parse equivalence baseline and extraction plan
