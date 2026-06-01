@@ -66,6 +66,15 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0015-frontend-routing-shell-navigation-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0016-frontend-routing-parent-closeout.md`
 
+- `frontend.api_client`
+  - Status: parent baseline established.
+  - User-visible behavior: frontend HTTP requests resolve the API base, apply timeout handling, send JSON requests, and surface server errors consistently.
+  - Active frontend-local paths:
+    - `frontend/src/api/client.js`
+    - `frontend/src/utils/api.js`
+  - Evidence:
+    - `markdown/00-frontend-refactor-governance/records/FE-0017-frontend-api-client-baseline.md`
+
 ## Evidence Rules
 
 Each landed feature area should link to:

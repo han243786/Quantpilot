@@ -10,7 +10,28 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Active Parent
 
-None. Next parent candidate: `frontend.api_client`.
+- `frontend.api_client`
+  - Status: parent baseline established.
+  - Record: `markdown/00-frontend-refactor-governance/records/FE-0017-frontend-api-client-baseline.md`
+  - Current owned files:
+    - `frontend/src/api/client.js`
+    - `frontend/src/utils/api.js`
+  - Important consumers:
+    - `frontend/src/components/DeployButton.jsx`
+    - `frontend/src/pages/StrategyConfigCockpit.jsx`
+    - `frontend/src/store/graphStorePersistenceHelpers.js`
+    - `frontend/src/pages/AlertsPage.jsx`
+    - `frontend/src/pages/ChaosPage.jsx`
+    - `frontend/src/pages/RunbookPage.jsx`
+    - `frontend/src/pages/SnapshotsPage.jsx`
+    - `frontend/src/pages/StrategyWorkspaceSourceTab.jsx`
+    - `frontend/src/components/TopToolbar.jsx`
+    - `frontend/src/utils/runtimeApproval.js`
+  - Child queue:
+    - `frontend.api_client.base_resolution`
+    - `frontend.api_client.request_transport`
+    - `frontend.api_client.compat_fetch_helpers`
+  - Closed child leaves: none.
 
 ## Last Closed Parent
 
@@ -84,7 +105,6 @@ None. Next parent candidate: `frontend.api_client`.
 
 ## Pending Parent Queue
 
-- `frontend.api_client`
 - `frontend.capabilities`
 - `frontend.strategy_workspace`
 - `frontend.strategy_hub`
