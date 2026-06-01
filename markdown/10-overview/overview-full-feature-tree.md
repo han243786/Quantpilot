@@ -3135,3 +3135,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `src/backend/graph_compile/quantscript_graph/formal_module_conversion/data_source_lowering.rs` - Data source lowering child, owns data node fetch argument construction and QS fetch line rendering
 递归边界补充: BE-001GR-01 `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent residual judgment selects profile_lowering；下一步: BE-001GS-01 profile_lowering baseline_plan。
 - `markdown/06-milestones/v4.16.0/533-backend.graph_compile.quantscript_graph.formal_module_conversion.parent_residual_judgment.profile_lowering.md` - v4.16.0 BE-001GR-01 formal_module_conversion parent residual judgment selects profile_lowering
+递归边界补充: BE-001GS-01 `backend.graph_compile.quantscript_graph.formal_module_conversion.profile_lowering` profile_lowering equivalence baseline and extraction plan；下一步: BE-001GS-02 profile_lowering extract_closeout。
+- `markdown/06-milestones/v4.16.0/534-backend.graph_compile.quantscript_graph.formal_module_conversion.profile_lowering.baseline_plan.md` - v4.16.0 BE-001GS-01 profile_lowering equivalence baseline and extraction plan
