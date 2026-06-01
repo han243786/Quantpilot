@@ -3038,3 +3038,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/493-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering父叶残余判断.md` - v4.16.0 BE-001FW-01 `intent_lowering` 父叶残余判断，选择 `spread_observer_lowering`
 递归边界补充: BE-001FX-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering` 单子叶等价基线；下一步只能进入 BE-001FX-02 抽离方案。
 - `markdown/06-milestones/v4.16.0/494-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering单子叶等价基线.md` - v4.16.0 BE-001FX-01 `spread_observer_lowering` 等价基线，冻结 spread observer branch 语义
+递归边界补充: BE-001FX-02 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering` 抽离方案；下一步只能进入 BE-001FX-03 实际抽离记录。
+- `markdown/06-milestones/v4.16.0/495-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering抽离方案.md` - v4.16.0 BE-001FX-02 `spread_observer_lowering` 抽离方案，固定 planned child 与 helper signature
