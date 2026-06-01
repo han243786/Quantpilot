@@ -928,3 +928,4 @@
 | v4.16.0 / BE-001HN-02 | 新增: `backend.capability` backend.capability actual extraction and closeout complete |
 | v4.16.0 / BE-001HO-01 | 新增: `backend` backend parent residual judgment selects strategy_config |
 | v4.16.0 / BE-001HP-01 | 新增: `backend.strategy_config` backend.strategy_config parent residual judgment selects artifact |
+| v4.16.0 / BE-001HQ-01 | 新增: `backend.strategy_config.artifact` backend.strategy_config.artifact equivalence baseline and extraction plan |

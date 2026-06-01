@@ -3213,3 +3213,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/566-backend.parent_residual_judgment.strategy_config.md` - v4.16.0 BE-001HO-01 backend parent residual judgment selects strategy_config
 递归边界补充: BE-001HP-01 `backend.strategy_config` backend.strategy_config parent residual judgment selects artifact；下一步: BE-001HQ-01 backend.strategy_config.artifact baseline_plan。
 - `markdown/06-milestones/v4.16.0/567-backend.strategy_config.parent_residual_judgment.artifact.md` - v4.16.0 BE-001HP-01 backend.strategy_config parent residual judgment selects artifact
+递归边界补充: BE-001HQ-01 `backend.strategy_config.artifact` backend.strategy_config.artifact equivalence baseline and extraction plan；下一步: BE-001HQ-02 backend.strategy_config.artifact extract_closeout。
+- `markdown/06-milestones/v4.16.0/568-backend.strategy_config.artifact.baseline_plan.md` - v4.16.0 BE-001HQ-01 backend.strategy_config.artifact equivalence baseline and extraction plan
