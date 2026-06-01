@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.capabilities",
-  "current_step": "FE-0029",
-  "current_phase": "frontend_capabilities_governance_registry_entries_closeout",
+  "current_step": "FE-0030",
+  "current_phase": "frontend_capabilities_governance_public_facade_closeout",
   "current_child_queue": [
-    "frontend.capabilities.governance_registry.public_facade",
     "frontend.capabilities.builtin_capability_snapshot",
     "frontend.capabilities.module_registry_gate",
     "frontend.capabilities.store_capability_refresh"
@@ -24,7 +23,9 @@
     "frontend.capabilities.support_matrix_truth.action_block_reason",
     "frontend.capabilities.capability_projection",
     "frontend.capabilities.governance_registry.core_contract",
-    "frontend.capabilities.governance_registry.registry_entries"
+    "frontend.capabilities.governance_registry.registry_entries",
+    "frontend.capabilities.governance_registry.public_facade",
+    "frontend.capabilities.governance_registry"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

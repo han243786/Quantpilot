@@ -120,6 +120,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0027-frontend-capabilities-projection-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0028-frontend-capabilities-governance-core-contract-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0029-frontend-capabilities-governance-registry-entries-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0030-frontend-capabilities-governance-public-facade-closeout.md`
 
 ## Evidence Rules
 
