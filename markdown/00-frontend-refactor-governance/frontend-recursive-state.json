@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.routing",
-  "current_step": "FE-0013",
-  "current_phase": "frontend_routing_route_contract_closeout",
+  "current_step": "FE-0014",
+  "current_phase": "frontend_routing_navigation_dispatch_closeout",
   "current_child_queue": [
-    "frontend.routing.navigation_dispatch",
     "frontend.routing.shell_navigation"
   ],
   "next_parent": "frontend.api_client",
@@ -14,7 +13,8 @@
     "frontend.app_shell"
   ],
   "closed_children": [
-    "frontend.routing.route_contract"
+    "frontend.routing.route_contract",
+    "frontend.routing.navigation_dispatch"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

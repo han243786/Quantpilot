@@ -16,6 +16,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
   - Current owned files:
     - `frontend/src/router.js`
     - `frontend/src/router.test.js`
+    - `frontend/src/routing/navigationDispatch.js`
+    - `frontend/src/routing/navigationDispatch.test.js`
     - `frontend/src/routing/routeContract.js`
     - `frontend/src/routing/routeContract.test.js`
   - Important consumers:
@@ -30,10 +32,10 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/utils/*Actions.js`
     - `frontend/src/test/testBridge.js`
   - Child queue:
-    - `frontend.routing.navigation_dispatch`
     - `frontend.routing.shell_navigation`
   - Closed child leaves:
     - `frontend.routing.route_contract`
+    - `frontend.routing.navigation_dispatch`
 
 ## Last Closed Parent
 
