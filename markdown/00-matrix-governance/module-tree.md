@@ -581,7 +581,7 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 
 **层级路径**: `root.backend.strategy_config`
 **父模块**: `backend`
-**状态**: v4.16 BE-001HY-01 已完成父级残余判断；`artifact stop_split: true`，`preflight` 被选为下一轮抽离子叶，`diff` 与 `ai_proposal_binding` 仍保持开放残余。
+**状态**: v4.16 BE-001IB-01 已完成父级残余判断；`artifact` 与 `preflight` 均已 closeout，`diff` 被选为下一轮抽离子叶，`ai_proposal_binding` 仍保持开放残余。
 **真实文件**:
 - `src/backend/strategy_config.rs`
 - `src/backend/strategy_config/artifact.rs`
@@ -7237,3 +7237,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001HZ-01)**: `backend.strategy_config.preflight` backend.strategy_config.preflight equivalence baseline and extraction plan；下一步: BE-001HZ-02 backend.strategy_config.preflight extract_closeout。
 **最新状态补充(BE-001HZ-02)**: `backend.strategy_config.preflight` backend.strategy_config.preflight actual extraction complete；下一步: BE-001IA-01 backend.strategy_config.preflight single_leaf_closeout。
 **最新状态补充(BE-001IA-01)**: `backend.strategy_config.preflight` backend.strategy_config.preflight single leaf closeout sets stop_split true；下一步: BE-001IB-01 backend.strategy_config parent residual judgment。
+**最新状态补充(BE-001IB-01)**: `backend.strategy_config` backend.strategy_config parent residual judgment selects diff；下一步: BE-001IC-01 backend.strategy_config.diff baseline_plan。
