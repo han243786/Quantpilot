@@ -946,3 +946,4 @@
 | v4.16.0 / BE-001IA-01 | 新增: `backend.strategy_config.preflight` backend.strategy_config.preflight single leaf closeout sets stop_split true |
 | v4.16.0 / BE-001IB-01 | 新增: `backend.strategy_config` backend.strategy_config parent residual judgment selects diff |
 | v4.16.0 / BE-001IC-01 | 新增: `backend.strategy_config.diff` backend.strategy_config.diff equivalence baseline and extraction plan |
+| v4.16.0 / BE-001IC-02 | 新增: `backend.strategy_config.diff` backend.strategy_config.diff actual extraction complete |
