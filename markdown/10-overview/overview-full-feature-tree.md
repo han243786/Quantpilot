@@ -3076,3 +3076,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 递归边界补充: BE-001GD-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 实际抽离；下一步只能进入 BE-001GD-04 单叶 closeout。
 - `markdown/06-milestones/v4.16.0/511-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering抽离记录.md` - v4.16.0 BE-001GD-03 `rsi_lowering` 实际抽离记录
 - `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/rsi_lowering.rs` - RSI intent lowering child helper
+递归边界补充: BE-001GD-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 单叶 closeout；`rsi_lowering stop_split: true`，下一步只能进入 BE-001GE-01 `intent_lowering` 父叶残余判断。
+- `markdown/06-milestones/v4.16.0/512-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering单叶closeout.md` - v4.16.0 BE-001GD-04 `rsi_lowering` 单叶 closeout

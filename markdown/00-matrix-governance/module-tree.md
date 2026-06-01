@@ -5399,6 +5399,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001GD-01）**: BE-001GD-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 单子叶等价基线。当前 `no code movement`，`rsi_lowering baseline_frozen` 成立；下一步只能进入 BE-001GD-02 抽离方案，不得直接创建 child file 或移动 `rsi` branch。
 **最新状态补充（BE-001GD-02）**: BE-001GD-02 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 抽离方案。当前 `no code movement`，`rsi_lowering plan_frozen` 成立；下一步 BE-001GD-03 只允许创建 planned child、添加 `mod rsi_lowering;` 并移动 `builtin.intent.rsi` branch。
 **最新状态补充（BE-001GD-03）**: BE-001GD-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 实际抽离。`rsi_lowering actual_extraction_done` 成立；child file 已创建并承接 RSI branch，父级只保留受控调用。
+**最新状态补充（BE-001GD-04）**: BE-001GD-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 单叶 closeout。当前 `no code movement`，`rsi_lowering closeout_done` 与 `rsi_lowering stop_split: true` 成立；下一步回到 BE-001GE-01 `intent_lowering` 父叶残余判断。
 
 | `markdown/06-milestones/v4.16.0/486-backend.graph_compile.quantscript_graph.formal_module_conversion抽离记录.md` backend graph compile quantscript graph formal module conversion extraction | `backend.graph_compile.quantscript_graph.formal_module_conversion` | actual extraction, child file owns `convert_graph_json_to_script_module` | BE-001FT actual extraction | `formal_module_conversion actual_extraction_done`; next step is BE-001FT-04 single leaf closeout |
 | `markdown/06-milestones/v4.16.0/487-backend.graph_compile.quantscript_graph.formal_module_conversion单叶closeout.md` backend graph compile quantscript graph formal module conversion closeout | `backend.graph_compile.quantscript_graph.formal_module_conversion` | single leaf closeout, keep split queue open | BE-001FT single leaf closeout | `formal_module_conversion stop_split: false`; next step is BE-001FU-01 parent residual judgment |
@@ -5424,6 +5425,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 | `markdown/06-milestones/v4.16.0/509-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering单子叶等价基线.md` backend graph compile quantscript graph formal module conversion intent RSI lowering baseline | `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` | single child equivalence baseline, freeze RSI branch | BE-001GD single child baseline | `rsi_lowering baseline_frozen`; next step is BE-001GD-02 extraction plan |
 | `markdown/06-milestones/v4.16.0/510-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering抽离方案.md` backend graph compile quantscript graph formal module conversion intent RSI lowering plan | `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` | extraction plan, planned child and helper signature | BE-001GD extraction plan | `rsi_lowering plan_frozen`; next step is BE-001GD-03 actual extraction |
 | `markdown/06-milestones/v4.16.0/511-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering抽离记录.md` backend graph compile quantscript graph formal module conversion intent RSI lowering extraction | `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` | actual extraction, child owns RSI branch | BE-001GD actual extraction | `rsi_lowering actual_extraction_done`; next step is BE-001GD-04 single leaf closeout |
+| `markdown/06-milestones/v4.16.0/512-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering单叶closeout.md` backend graph compile quantscript graph formal module conversion intent RSI lowering closeout | `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` | single leaf closeout, stop split | BE-001GD single leaf closeout | `rsi_lowering stop_split: true`; next step is BE-001GE-01 parent residual judgment |
 
 #### 5.2.2.1 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
 
@@ -5471,6 +5473,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001GD-01）**: `rsi_lowering baseline_frozen` 成立；下一步只能进入 BE-001GD-02 抽离方案，不能直接创建 child file。
 **最新状态补充（BE-001GD-02）**: `rsi_lowering plan_frozen` 成立；下一步只能进入 BE-001GD-03 实际抽离记录，不能移动其它 built-in intent branch。
 **最新状态补充（BE-001GD-03）**: `rsi_lowering actual_extraction_done` 成立；父级通过 `rsi_lowering::append_rsi_lowering_lines` 单向调用 child。
+**最新状态补充（BE-001GD-04）**: `rsi_lowering closeout_done` 与 `rsi_lowering stop_split: true` 成立；下一步回到 BE-001GE-01 父叶残余判断。
 
 #### 5.2.2.1.1 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering`
 
@@ -5545,7 +5548,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering`
 **父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
-**状态**: v4.16 BE-001GD-03 实际抽离已完成；下一步只能进入 BE-001GD-04 单叶 closeout。
+**状态**: v4.16 BE-001GD-04 单叶 closeout 已完成，`stop_split: true`。
 
 **真实文件**:
 - `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/rsi_lowering.rs`
@@ -5562,6 +5565,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001GD-01）**: `rsi_lowering baseline_frozen` 成立；冻结 `period` / `oversold_threshold` / `oversold` fallback、`rsi({}, {})` QS line、`{}_signal` guard 与 BUY emit，下一步只能进入 BE-001GD-02 抽离方案。
 **最新状态补充（BE-001GD-02）**: `rsi_lowering plan_frozen` 成立；planned helper 为 `append_rsi_lowering_lines(node_id, cfg, &source_var, instrument, qs_lines)`；下一步只能进入 BE-001GD-03 实际抽离记录。
 **最新状态补充（BE-001GD-03）**: `rsi_lowering actual_extraction_done` 成立；`append_rsi_lowering_lines` 已迁入 child，下一步只能进入 BE-001GD-04 单叶 closeout。
+**最新状态补充（BE-001GD-04）**: `rsi_lowering closeout_done` 与 `rsi_lowering stop_split: true` 成立；不继续拆 rsi_config_decode / rsi_signal_rendering / rsi_buy_emit 微叶。
 
 ### 5.3 `backend.storage_security`
 
