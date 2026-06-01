@@ -581,3 +581,4 @@
 | v4.16.0 / BE-001HX-01 | 新增: `backend.strategy_config.artifact` backend.strategy_config.artifact parent closeout sets stop_split true |
 | v4.16.0 / BE-001HY-01 | 新增: `backend.strategy_config` backend.strategy_config parent residual judgment selects preflight |
 | v4.16.0 / BE-001HZ-01 | 新增: `backend.strategy_config.preflight` backend.strategy_config.preflight equivalence baseline and extraction plan |
+| v4.16.0 / BE-001HZ-02 | 新增: `backend.strategy_config.preflight` backend.strategy_config.preflight actual extraction complete |
