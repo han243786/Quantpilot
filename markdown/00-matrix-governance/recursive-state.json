@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001HN-02",
-  "last_committed_sha": "c2cbf366",
-  "current_parent": "backend.strategy_config",
-  "current_step": "BE-001HP-01",
-  "current_phase": "parent_residual_judgment",
+  "last_committed_batch": "BE-001HO-01",
+  "last_committed_sha": "5a1f53c",
+  "current_parent": "backend.strategy_config.artifact",
+  "current_step": "BE-001HQ-01",
+  "current_phase": "baseline_plan",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -14,13 +14,16 @@
     "capability"
   ],
   "open_residuals": [
-    "strategy_config",
+    "strategy_config.artifact",
+    "strategy_config.preflight",
+    "strategy_config.diff",
+    "strategy_config.ai_proposal_binding",
     "storage_security",
     "ops_governance",
     "app_state_wiring",
     "test_support"
   ],
-  "next_recommended_child": "backend.strategy_config",
+  "next_recommended_child": "backend.strategy_config.artifact",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
