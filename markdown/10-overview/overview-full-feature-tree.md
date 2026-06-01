@@ -2982,3 +2982,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/467-runtime.root_parent_facade_import_pass单子叶等价基线.md` - v4.16.0 BE-001FL-01 `runtime.root_parent_facade_import_pass` 单子叶等价基线，冻结 root facade 输入面
 递归边界补充: BE-001FL-02 已建立 `runtime.root_parent_facade_import_pass` 抽离方案；下一步只能进入 BE-001FL-03 单文件 root import cleanup。
 - `markdown/06-milestones/v4.16.0/468-runtime.root_parent_facade_import_pass抽离方案.md` - v4.16.0 BE-001FL-02 `runtime.root_parent_facade_import_pass` 抽离方案，固定 single file import cleanup
+递归边界补充: BE-001FL-03 已完成 `runtime.root_parent_facade_import_pass` 实际抽离；`src/runtime/mod.rs` root import residual 已清除，下一步只能进入 BE-001FL-04 单叶 closeout。
+- `markdown/06-milestones/v4.16.0/469-runtime.root_parent_facade_import_pass抽离记录.md` - v4.16.0 BE-001FL-03 `runtime.root_parent_facade_import_pass` 抽离记录，root import residual 清除
