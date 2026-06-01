@@ -3021,3 +3021,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 递归边界补充: BE-001FT-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion` 实际抽离；下一步只能进入 BE-001FT-04 单叶 closeout。
 - `markdown/06-milestones/v4.16.0/486-backend.graph_compile.quantscript_graph.formal_module_conversion抽离记录.md` - v4.16.0 BE-001FT-03 `formal_module_conversion` 抽离记录，child file 承接 formal conversion
 - `src/backend/graph_compile/quantscript_graph/formal_module_conversion.rs` - backend graph compile quantscript graph formal conversion child，承接 `convert_graph_json_to_script_module`
+递归边界补充: BE-001FT-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion` 单叶 closeout；下一步只能进入 BE-001FU-01 父叶残余判断。
+- `markdown/06-milestones/v4.16.0/487-backend.graph_compile.quantscript_graph.formal_module_conversion单叶closeout.md` - v4.16.0 BE-001FT-04 `formal_module_conversion` 单叶 closeout，确认等价并保持继续细拆

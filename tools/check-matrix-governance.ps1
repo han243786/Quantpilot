@@ -20682,6 +20682,38 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/487-*.md", @(
+        @("BE-001FT-04", "formal conversion closeout marker"),
+        @("BE-001FU-01", "next formal conversion parent residual marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend.graph_compile.quantscript_graph.formal_module_conversion", "formal conversion child marker"),
+        @("root.backend.graph_compile.quantscript_graph.formal_module_conversion", "formal conversion coordinate"),
+        @("formal_module_conversion closeout_done", "closeout done marker"),
+        @("formal_module_conversion stop_split: false", "stop split false marker"),
+        @("formal_module_conversion actual_extraction_done", "actual extraction evidence marker"),
+        @("src/backend/graph_compile/quantscript_graph/formal_module_conversion.rs", "child file marker"),
+        @("mod formal_module_conversion;", "parent module declaration marker"),
+        @("pub(crate) use formal_module_conversion::convert_graph_json_to_script_module;", "parent re-export marker"),
+        @("convert_graph_json_to_script_module", "formal conversion function marker"),
+        @("ScriptModule", "script module output marker"),
+        @("parse_quant_script_module", "terminal parse marker"),
+        @("safe_eprintln!", "safe log marker"),
+        @("data", "data residual marker"),
+        @("risk", "risk residual marker"),
+        @("execution", "execution residual marker"),
+        @("intent", "intent residual marker"),
+        @("src/compile_api.rs", "compile caller marker"),
+        @("src/lib.rs", "root re-export marker"),
+        @("release transition guard", "release guard marker"),
+        @("sibling horizontal link", "horizontal link guard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
