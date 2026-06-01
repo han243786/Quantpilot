@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001GO-01",
-  "last_committed_sha": "928301a",
+  "last_committed_batch": "BE-001GP-01",
+  "last_committed_sha": "d0b6367",
   "current_parent": "backend.graph_compile.quantscript_graph.formal_module_conversion",
-  "current_step": "BE-001GQ-01",
-  "current_phase": "baseline_plan",
+  "current_step": "BE-001GQ-02",
+  "current_phase": "extract_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "intent_lowering"
