@@ -3065,3 +3065,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 递归边界补充: BE-001GB-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering` 实际抽离；下一步只能进入 BE-001GB-04 单叶 closeout。
 - `markdown/06-milestones/v4.16.0/506-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering抽离记录.md` - v4.16.0 BE-001GB-03 `double_ma_lowering` 实际抽离记录
 - `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/double_ma_lowering.rs` - double MA intent lowering child helper
+递归边界补充: BE-001GB-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering` 单叶 closeout；`double_ma_lowering stop_split: true`，下一步只能进入 BE-001GC-01 `intent_lowering` 父叶残余判断。
+- `markdown/06-milestones/v4.16.0/507-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering单叶closeout.md` - v4.16.0 BE-001GB-04 `double_ma_lowering` 单叶 closeout
