@@ -5637,6 +5637,26 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001GH-01）**: `momentum_lowering baseline_frozen` 与 `momentum_lowering plan_frozen` 成立；下一步只能进入 BE-001GH-02 extract_closeout，不得直接移动其它 built-in intent branch。
 **最新状态补充（BE-001GH-02）**: `momentum_lowering actual_extraction_done`、`momentum_lowering closeout_done` 与 `momentum_lowering stop_split: true` 成立；不继续拆 momentum_config_decode / momentum_signal_rendering / momentum_buy_emit 微叶。
 
+#### 5.2.2.1.7 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.zscore_lowering`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.zscore_lowering`
+**父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
+**状态**: v4.16 BE-001GJ-02 单叶 closeout 已完成，`stop_split: true`。
+
+**真实文件**:
+- `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/zscore_lowering.rs`
+
+**白箱节点**:
+
+| 节点 | 输入 | 输出 | 约束 |
+| --- | --- | --- | --- |
+| zscore config decode | `window` / `entry_z` | window / entry threshold | default 20 / 2.0 |
+| zscore signal rendering | `node_id` / `source_var` / window | `let {node_id}_signal = zscore(...)` | signal variable name remains node scoped |
+| zscore branch | signal / `entry_z.abs()` / instrument | BUY Intent | negative threshold guard and BUY emit unchanged |
+
+**最新状态补充（BE-001GJ-01）**: `zscore_lowering baseline_frozen` 与 `zscore_lowering plan_frozen` 成立；下一步只能进入 BE-001GJ-02 extract_closeout，不得直接移动其它 built-in intent branch。
+**最新状态补充（BE-001GJ-02）**: `zscore_lowering actual_extraction_done`、`zscore_lowering closeout_done` 与 `zscore_lowering stop_split: true` 成立；不继续拆 zscore_config_decode / zscore_signal_rendering / zscore_buy_emit 微叶。
+
 ### 5.3 `backend.storage_security`
 
 **层级路径**: `root.backend.storage_security`
@@ -6828,3 +6848,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001GH-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.momentum_lowering` momentum_lowering actual extraction and closeout complete；下一步: BE-001GI-01 intent_lowering parent residual judgment。
 **最新状态补充(BE-001GI-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects zscore_lowering；下一步: BE-001GJ-01 zscore_lowering baseline_plan。
 **最新状态补充(BE-001GJ-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.zscore_lowering` zscore_lowering baseline and extraction plan frozen；下一步: BE-001GJ-02 zscore_lowering extract_closeout。
+**最新状态补充(BE-001GJ-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.zscore_lowering` zscore_lowering actual extraction and closeout complete；下一步: BE-001GK-01 intent_lowering parent residual judgment。
