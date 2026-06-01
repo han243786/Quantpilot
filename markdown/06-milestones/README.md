@@ -902,3 +902,4 @@
 | v4.16.0 / BE-001GV-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent residual judgment selects terminal_parse |
 | v4.16.0 / BE-001GW-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.terminal_parse` terminal_parse equivalence baseline and extraction plan |
 | v4.16.0 / BE-001GW-02 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.terminal_parse` terminal_parse actual extraction and closeout complete |
+| v4.16.0 / BE-001GX-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent residual judgment selects unsupported_node_logging |
