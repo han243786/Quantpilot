@@ -2169,6 +2169,7 @@ storage/
 - `src/frontend_runtime_mapping.rs` — 前端运行时映射; 改后端→前端数据映射时改这里
 - `src/graph_api.rs` — 图 CRUD API (save/load/list/delete/versions); 改图存储 API 时改这里
 - `src/backend/graph_compile/quantscript_graph.rs` — QS graph route/parser/artifact 父叶, `generate_quantscript_from_graph_value()` 由 child re-export
+- `src/backend/graph_compile/quantscript_graph/artifact_target_projection.rs` — QS graph artifact and runtime target projection child; parent mediates graph-to-QS generator reuse
 - `src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs` — graph JSON → QS 源码, `generate_quantscript_from_graph_value()`; 改图→QS 转换时改这里
 - `src/backend/graph_compile/quantscript_graph/strategy_graph_parser.rs` — strategy_graph source parser child, owns source-to-imported-graph parsing before artifact attachment
 - `src/graph_version_compare.rs` — 图版本对比; 改版本 diff 算法、配置契约 diff 或 evidence diff 响应挂接时改这里
@@ -3174,3 +3175,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/549-backend.graph_compile.quantscript_graph.parent_residual_judgment.artifact_target_projection.md` - v4.16.0 BE-001HC-01 quantscript_graph parent residual judgment selects artifact_target_projection
 递归边界补充: BE-001HD-01 `backend.graph_compile.quantscript_graph.artifact_target_projection` artifact_target_projection equivalence baseline and extraction plan；下一步: BE-001HD-02 artifact_target_projection extract_closeout。
 - `markdown/06-milestones/v4.16.0/550-backend.graph_compile.quantscript_graph.artifact_target_projection.baseline_plan.md` - v4.16.0 BE-001HD-01 artifact_target_projection equivalence baseline and extraction plan
+递归边界补充: BE-001HD-02 `backend.graph_compile.quantscript_graph.artifact_target_projection` artifact_target_projection actual extraction and closeout complete；下一步: BE-001HE-01 quantscript_graph parent residual judgment。
+- `markdown/06-milestones/v4.16.0/551-backend.graph_compile.quantscript_graph.artifact_target_projection.extract_closeout.md` - v4.16.0 BE-001HD-02 artifact_target_projection actual extraction and closeout complete
