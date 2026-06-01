@@ -21457,6 +21457,46 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/504-*.md", @(
+        @("BE-001GB-01", "double ma baseline marker"),
+        @("BE-001GB-02", "next double ma plan marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering", "double ma child marker"),
+        @("root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering", "double ma coordinate"),
+        @("double_ma_lowering baseline_frozen", "baseline frozen marker"),
+        @("intent_lowering stop_split: false", "intent lowering stop split marker"),
+        @("double_ma_lowering_selected", "double ma selected marker"),
+        @("spread_observer_lowering stop_split: true", "spread observer closed marker"),
+        @("macd_lowering stop_split: true", "macd closed marker"),
+        @("src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering.rs", "current owner path"),
+        @("src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/double_ma_lowering.rs", "planned child path"),
+        @("pub(super) fn append_double_ma_lowering_lines", "helper signature marker"),
+        @("cfg: &Value", "cfg input marker"),
+        @("source_var: &str", "source input marker"),
+        @("instrument: &str", "instrument input marker"),
+        @("qs_lines: &mut Vec<String>", "qs lines input marker"),
+        @("builtin.intent.double_ma", "double ma branch marker"),
+        @("fast_period default 20", "fast default marker"),
+        @("slow_period default 50", "slow default marker"),
+        @("let fast = sma({}, {})", "fast sma marker"),
+        @("let slow = sma({}, {})", "slow sma marker"),
+        @("fast > slow", "cross guard marker"),
+        @("emit Intent(`"BUY`", instrument=`"{}`", quantity=1.0)", "buy emit marker"),
+        @("intent_lowering -> double_ma_lowering", "double ma child link marker"),
+        @("formal_module_conversion -> intent_lowering", "upper parent link marker"),
+        @("intent_lowering -> spread_observer_lowering", "spread child link marker"),
+        @("intent_lowering -> macd_lowering", "macd child link marker"),
+        @("formal_module_conversion -> double_ma_lowering", "forbidden upper bypass marker"),
+        @("sibling horizontal link", "horizontal link guard marker"),
+        @("release transition", "release transition guard marker"),
+        @("cargo fmt --check", "cargo fmt check marker"),
+        @("cargo check -p quantpilot", "cargo check marker"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
