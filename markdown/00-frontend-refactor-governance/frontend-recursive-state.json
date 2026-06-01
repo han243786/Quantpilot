@@ -1,0 +1,26 @@
+{
+  "version": "frontend-v0",
+  "protocol": "frontend-recursive-isolated-v1",
+  "scope": "frontend",
+  "current_parent": "root.frontend",
+  "current_step": "FE-0001",
+  "current_phase": "isolated_governance_bootstrap",
+  "closed_children": [],
+  "open_residuals": [],
+  "hot_global_files_forbidden_until_merge": [
+    "markdown/00-matrix-governance/module-tree.md",
+    "markdown/00-matrix-governance/guidance-matrix.md",
+    "markdown/00-matrix-governance/process-matrix.md",
+    "markdown/00-matrix-governance/standard-matrix.md",
+    "markdown/10-overview/overview-full-feature-tree.md",
+    "markdown/10-overview/overview-docs-index.md",
+    "markdown/10-overview/overview-current-status-and-roadmap.md",
+    "markdown/06-milestones/v4.16.0/02-落地记录.md"
+  ],
+  "allowed_docs_root": "markdown/00-frontend-refactor-governance",
+  "merge_back_requires_user_decision": true,
+  "release_transition": {
+    "developer_explicit_statement_required": true,
+    "ai_must_not_propose": true
+  }
+}
