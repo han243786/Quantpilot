@@ -611,9 +611,10 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 
 **层级路径**: `root.backend.strategy_config.artifact`
 **父模块**: `backend.strategy_config`
-**状态**: v4.16 BE-001D L3 facade 已落位。只拥有 artifact route facade，不拥有 artifact handler/schema。
+**状态**: v4.16 BE-001HS-02 已完成 artifact route owner 与 schema_model owner 抽离；builder/domain projection 仍在 `src/strategy_config_api.rs`。
 **真实文件**:
 - `src/backend/strategy_config/artifact.rs`
+- `src/backend/strategy_config/artifact/schema_model.rs`
 - `src/strategy_config_api.rs`
 
 **职责**:
@@ -622,7 +623,8 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 **关键 public 方法**:
 | 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
 | --- | --- | --- | --- | --- |
-| `register_strategy_config_artifact_route` | Axum Router | artifact route | `backend.strategy_config::register_routes` | 不得迁移 `StrategyConfigArtifact` schema |
+| `register_routes` | Axum Router | artifact route | `backend.strategy_config::register_routes` | 不得绕过 `backend.strategy_config.artifact` |
+| `StrategyConfigArtifactRequest` / `StrategyConfigArtifact` | JSON request/response | artifact schema model | artifact route、preflight、diff、migration sender | 不得改变 serde shape |
 | `/api/v1/strategy-config/artifact` | strategy config request | strategy config artifact | 前端配置台、导出路径 | 不得绕过 QS/Core IR 证据 |
 
 **父级通信规则**:
@@ -782,6 +784,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/app_state_wiring/state_factory.rs`
 - `src/backend/test_support/scenario.rs`
 - `src/backend/strategy_config/artifact.rs`
+- `src/backend/strategy_config/artifact/schema_model.rs`
 - `src/backend/strategy_config/preflight.rs`
 - `src/backend/strategy_config/diff.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
@@ -7217,3 +7220,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001HQ-02)**: `backend.strategy_config.artifact` backend.strategy_config.artifact route owner extraction complete；下一步: BE-001HR-01 backend.strategy_config.artifact parent residual judgment。
 **最新状态补充(BE-001HR-01)**: `backend.strategy_config.artifact` backend.strategy_config.artifact parent residual judgment selects schema_model；下一步: BE-001HS-01 backend.strategy_config.artifact.schema_model baseline_plan。
 **最新状态补充(BE-001HS-01)**: `backend.strategy_config.artifact.schema_model` backend.strategy_config.artifact.schema_model equivalence baseline and extraction plan；下一步: BE-001HS-02 backend.strategy_config.artifact.schema_model extract_closeout。
+**最新状态补充(BE-001HS-02)**: `backend.strategy_config.artifact.schema_model` backend.strategy_config.artifact.schema_model actual extraction complete；下一步: BE-001HT-01 backend.strategy_config.artifact parent residual judgment。

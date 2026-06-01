@@ -281,6 +281,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/app_state_wiring/state_factory.rs`
 - `src/backend/test_support/scenario.rs`
 - `src/backend/strategy_config/artifact.rs`
+- `src/backend/strategy_config/artifact/schema_model.rs`
 - `src/backend/strategy_config/preflight.rs`
 - `src/backend/strategy_config/diff.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
@@ -3221,3 +3222,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/570-backend.strategy_config.artifact.parent_residual_judgment.schema_model.md` - v4.16.0 BE-001HR-01 backend.strategy_config.artifact parent residual judgment selects schema_model
 递归边界补充: BE-001HS-01 `backend.strategy_config.artifact.schema_model` backend.strategy_config.artifact.schema_model equivalence baseline and extraction plan；下一步: BE-001HS-02 backend.strategy_config.artifact.schema_model extract_closeout。
 - `markdown/06-milestones/v4.16.0/571-backend.strategy_config.artifact.schema_model.baseline_plan.md` - v4.16.0 BE-001HS-01 backend.strategy_config.artifact.schema_model equivalence baseline and extraction plan
+递归边界补充: BE-001HS-02 `backend.strategy_config.artifact.schema_model` backend.strategy_config.artifact.schema_model actual extraction complete；下一步: BE-001HT-01 backend.strategy_config.artifact parent residual judgment。
+- `markdown/06-milestones/v4.16.0/572-backend.strategy_config.artifact.schema_model.extract_closeout.md` - v4.16.0 BE-001HS-02 backend.strategy_config.artifact.schema_model actual extraction complete
