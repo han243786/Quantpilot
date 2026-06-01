@@ -3,8 +3,12 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.app_shell",
-  "current_step": "FE-0010",
-  "current_phase": "frontend_app_shell_global_overlays_closeout",
+  "current_step": "FE-0011",
+  "current_phase": "frontend_app_shell_parent_closeout",
+  "next_parent": "frontend.routing",
+  "closed_parents": [
+    "frontend.app_shell"
+  ],
   "closed_children": [
     "frontend.app_shell.bootstrap_root",
     "frontend.app_shell.startup_readiness",

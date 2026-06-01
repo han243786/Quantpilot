@@ -10,9 +10,14 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Active Parent
 
+None. Next parent candidate: `frontend.routing`.
+
+## Last Closed Parent
+
 - `frontend.app_shell`
-  - Status: parent baseline established.
+  - Status: parent closed.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0002-frontend-app-shell-baseline.md`
+  - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0011-frontend-app-shell-parent-closeout.md`
   - Current owned files:
     - `frontend/src/main.jsx`
     - `frontend/src/App.jsx`
@@ -36,7 +41,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/app/useAppRoute.test.jsx`
     - `frontend/src/app/useDesktopWindowChrome.js`
     - `frontend/src/app/useDesktopWindowChrome.test.jsx`
-  - Child queue: none.
+  - Child queue: closed.
   - Closed child leaves:
     - `frontend.app_shell.bootstrap_root`
     - `frontend.app_shell.startup_readiness`
@@ -61,7 +66,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Closed Nodes
 
-None yet.
+- `frontend.app_shell`
 
 ## Deferred Merge Notes
 

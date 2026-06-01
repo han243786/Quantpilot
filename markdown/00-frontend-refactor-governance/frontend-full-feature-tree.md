@@ -11,7 +11,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
 ## Feature Areas
 
 - `frontend.app_shell`
-  - Status: planned child leaves extracted; parent closeout pending.
+  - Status: parent closed.
   - User-visible behavior: React root bootstraps the application, initializes the graph store, renders route content behind the app shell, and hosts desktop/browser shell affordances.
   - Active frontend-local paths:
     - `frontend/src/main.jsx`
@@ -45,6 +45,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0008-frontend-app-shell-desktop-window-chrome-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0009-frontend-app-shell-route-host-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0010-frontend-app-shell-global-overlays-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0011-frontend-app-shell-parent-closeout.md`
 
 ## Evidence Rules
 
