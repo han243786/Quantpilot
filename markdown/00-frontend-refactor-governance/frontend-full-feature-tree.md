@@ -103,6 +103,8 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `frontend/src/capabilities/capabilityProjection.test.js`
     - `frontend/src/capabilities/capabilityGovernanceCore.js`
     - `frontend/src/capabilities/capabilityGovernanceCore.test.js`
+    - `frontend/src/capabilities/capabilityGovernanceRegistry.js`
+    - `frontend/src/capabilities/capabilityGovernanceRegistry.test.js`
     - `frontend/src/capabilities/capabilityGovernance.js`
     - `frontend/src/capabilities/capabilityGovernance.test.js`
     - `frontend/src/modules/moduleRegistry.js`
@@ -117,6 +119,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0026-frontend-capabilities-action-block-reason-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0027-frontend-capabilities-projection-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0028-frontend-capabilities-governance-core-contract-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0029-frontend-capabilities-governance-registry-entries-closeout.md`
 
 ## Evidence Rules
 
