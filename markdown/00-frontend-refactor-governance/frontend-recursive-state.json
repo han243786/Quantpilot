@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.capabilities",
-  "current_step": "FE-0024",
-  "current_phase": "frontend_capabilities_catalog_maps_closeout",
+  "current_step": "FE-0025",
+  "current_phase": "frontend_capabilities_boundary_context_closeout",
   "current_child_queue": [
-    "frontend.capabilities.support_matrix_truth.boundary_context",
     "frontend.capabilities.support_matrix_truth.action_block_reason",
     "frontend.capabilities.capability_projection",
     "frontend.capabilities.governance_registry",
@@ -22,7 +21,8 @@
   ],
   "closed_children": [
     "frontend.capabilities.support_matrix_truth.sync_block_gate",
-    "frontend.capabilities.support_matrix_truth.catalog_maps"
+    "frontend.capabilities.support_matrix_truth.catalog_maps",
+    "frontend.capabilities.support_matrix_truth.boundary_context"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
