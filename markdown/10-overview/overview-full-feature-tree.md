@@ -3012,3 +3012,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/481-backend.graph_compile.quantscript_graph.graph_to_qs_generation抽离记录.md` - v4.16.0 BE-001FR-03 `graph_to_qs_generation` 抽离记录，child file 承接 generator
 递归边界补充: BE-001FR-04 已完成 `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 单叶 closeout；下一步只能进入 BE-001FS-01 父叶残余判断。
 - `markdown/06-milestones/v4.16.0/482-backend.graph_compile.quantscript_graph.graph_to_qs_generation单叶closeout.md` - v4.16.0 BE-001FR-04 `graph_to_qs_generation` 单叶 closeout，设置 stop_split true
+递归边界补充: BE-001FS-01 已完成 `backend.graph_compile.quantscript_graph` 父叶残余判断；下一步只能进入 BE-001FT-01 formal module conversion 等价基线。
+- `markdown/06-milestones/v4.16.0/483-backend.graph_compile.quantscript_graph父叶残余判断.md` - v4.16.0 BE-001FS-01 `quantscript_graph` 父叶残余判断，选择 formal_module_conversion

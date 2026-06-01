@@ -843,3 +843,4 @@
 | v4.16.0 / BE-001FR-02 | 新增: `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 抽离方案已建立，固定 planned child 与四函数迁移清单 |
 | v4.16.0 / BE-001FR-03 | 新增: `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 实际抽离完成，child file 承接四个 generator helper |
 | v4.16.0 / BE-001FR-04 | 新增: `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 单叶 closeout 已完成，设置 stop_split true |
+| v4.16.0 / BE-001FS-01 | 新增: `backend.graph_compile.quantscript_graph` 父叶残余判断已完成，选择 `formal_module_conversion` |
