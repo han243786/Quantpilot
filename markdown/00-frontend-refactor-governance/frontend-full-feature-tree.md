@@ -91,6 +91,8 @@ This file is the frontend-only full feature tree. It starts blank by design and 
   - Active frontend-local paths:
     - `frontend/src/capabilities/supportMatrix.js`
     - `frontend/src/capabilities/supportMatrix.test.js`
+    - `frontend/src/capabilities/capabilityCatalog.js`
+    - `frontend/src/capabilities/capabilityCatalog.test.js`
     - `frontend/src/capabilities/capabilitySync.js`
     - `frontend/src/capabilities/capabilitySync.test.js`
     - `frontend/src/capabilities/capabilityProjection.js`
@@ -104,6 +106,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
   - Evidence:
     - `markdown/00-frontend-refactor-governance/records/FE-0022-frontend-capabilities-baseline.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0023-frontend-capabilities-sync-block-gate-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0024-frontend-capabilities-catalog-maps-closeout.md`
 
 ## Evidence Rules
 
