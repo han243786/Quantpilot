@@ -1,3 +1,5 @@
+export { isCapabilitySyncBlocked } from "./capabilitySync";
+
 export const DECLARED_INDICATOR_KINDS = [
   "ma_cross",
   "rsi",
@@ -414,14 +416,6 @@ function normalizeUiActionStatus(actionKey, capabilities) {
         ? entry.reason.trim()
         : "后端已声明该操作，但当前版本未开放。"
   };
-}
-
-export function isCapabilitySyncBlocked(capabilityStatus, capabilitySource) {
-  // v3.5.0: 缓存/降级模式仍允许模块操作, 仅完整阻断 loading 和 safe_fallback
-  return (
-    capabilityStatus === "loading" ||
-    capabilitySource === "safe_fallback"
-  );
 }
 
 export function getCapabilityBoundaryIssues(capabilities) {

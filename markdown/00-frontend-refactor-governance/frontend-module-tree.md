@@ -16,6 +16,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
   - Current owned and split-target files:
     - `frontend/src/capabilities/supportMatrix.js`
     - `frontend/src/capabilities/supportMatrix.test.js`
+    - `frontend/src/capabilities/capabilitySync.js`
+    - `frontend/src/capabilities/capabilitySync.test.js`
     - `frontend/src/capabilities/capabilityProjection.js`
     - `frontend/src/capabilities/capabilityProjection.test.js`
     - `frontend/src/capabilities/capabilityGovernance.js`
@@ -35,13 +37,16 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/StrategyWorkspaceExperimentCard.jsx`
     - `frontend/src/graph/compileGraph.js`
   - Child queue:
-    - `frontend.capabilities.support_matrix_truth`
+    - `frontend.capabilities.support_matrix_truth.catalog_maps`
+    - `frontend.capabilities.support_matrix_truth.boundary_context`
+    - `frontend.capabilities.support_matrix_truth.action_block_reason`
     - `frontend.capabilities.capability_projection`
     - `frontend.capabilities.governance_registry`
     - `frontend.capabilities.builtin_capability_snapshot`
     - `frontend.capabilities.module_registry_gate`
     - `frontend.capabilities.store_capability_refresh`
-  - Closed child leaves: none.
+  - Closed child leaves:
+    - `frontend.capabilities.support_matrix_truth.sync_block_gate`
 
 ## Last Closed Parent
 
