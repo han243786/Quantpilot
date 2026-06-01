@@ -34,6 +34,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/capabilities/capabilityGovernance.test.js`
     - `frontend/src/capabilities/builtinCapabilitySnapshot.js`
     - `frontend/src/capabilities/builtinCapabilitySnapshot.test.js`
+    - `frontend/src/capabilities/capabilityNormalization.js`
+    - `frontend/src/capabilities/capabilityNormalization.test.js`
     - `frontend/src/modules/moduleRegistry.js`
     - `frontend/src/modules/moduleRegistry.test.js`
     - `frontend/src/modules/builtinModules.js`
@@ -49,7 +51,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/StrategyWorkspaceExperimentCard.jsx`
     - `frontend/src/graph/compileGraph.js`
   - Child queue:
-    - `frontend.capabilities.builtin_capability_snapshot.normalization`
     - `frontend.capabilities.module_registry_gate`
     - `frontend.capabilities.store_capability_refresh`
   - Closed child leaves:
@@ -63,6 +64,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.capabilities.governance_registry.public_facade`
     - `frontend.capabilities.governance_registry`
     - `frontend.capabilities.builtin_capability_snapshot.default_snapshot`
+    - `frontend.capabilities.builtin_capability_snapshot.normalization`
+    - `frontend.capabilities.builtin_capability_snapshot`
 
 ## Last Closed Parent
 
