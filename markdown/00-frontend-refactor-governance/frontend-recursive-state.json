@@ -3,8 +3,8 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.app_shell",
-  "current_step": "FE-0004",
-  "current_phase": "frontend_isolated_coverage_gate",
+  "current_step": "FE-0005",
+  "current_phase": "worktree_pre_commit_hook_gate",
   "closed_children": [
     "frontend.app_shell.bootstrap_root"
   ],
