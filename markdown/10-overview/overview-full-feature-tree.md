@@ -3032,3 +3032,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 递归边界补充: BE-001FV-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 实际抽离；下一步只能进入 BE-001FV-04 单叶 closeout。
 - `markdown/06-milestones/v4.16.0/491-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering抽离记录.md` - v4.16.0 BE-001FV-03 `intent_lowering` 抽离记录，child file 承接 intent block
 - `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering.rs` - backend graph compile formal conversion intent lowering child，承接 built-in intent branch lowering
+递归边界补充: BE-001FV-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 单叶 closeout；下一步只能进入 BE-001FW-01 父叶残余判断。
+- `markdown/06-milestones/v4.16.0/492-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering单叶closeout.md` - v4.16.0 BE-001FV-04 `intent_lowering` 单叶 closeout，确认等价并保持继续细拆
