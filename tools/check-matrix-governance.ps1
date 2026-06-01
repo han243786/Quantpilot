@@ -20128,6 +20128,32 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/470-*.md", @(
+        @("BE-001FL-04", "closeout marker"),
+        @("BE-001FM-01", "next parent residual marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.root_parent_facade_import_pass", "root facade marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge.runtime.root_parent_facade_import_pass", "root facade coordinate"),
+        @("runtime.root_parent_facade_import_pass stop_split: true", "stop split true marker"),
+        @("root_parent_facade_import_pass closeout_complete", "closeout complete marker"),
+        @("src/runtime/mod.rs", "runtime root file marker"),
+        @("use super::*", "parent wildcard marker"),
+        @("use axum::extract::Query", "unused query marker"),
+        @("remaining_runtime_parent_import_bridge_0", "remaining runtime zero marker"),
+        @("remaining_root_parent_import_bridge_0", "remaining root zero marker"),
+        @("runtime.parent_import_bridge", "parent bridge marker"),
+        @("src/runtime/run_guard.rs", "test local marker"),
+        @("src/runtime/mutation/ai_proposal/static_check.rs", "test local static check marker"),
+        @("old_three_leaf_pause_target_cancelled", "old pause cancel marker"),
+        @("progress_report_instruction_discarded", "progress report discard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {

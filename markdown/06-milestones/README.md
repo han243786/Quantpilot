@@ -830,3 +830,4 @@
 | v4.16.0 / BE-001FL-01 | 新增: `runtime.root_parent_facade_import_pass` 单子叶等价基线已建立，冻结 `src/runtime/mod.rs` root facade 输入面 |
 | v4.16.0 / BE-001FL-02 | 新增: `runtime.root_parent_facade_import_pass` 抽离方案已建立，固定单文件 root import cleanup |
 | v4.16.0 / BE-001FL-03 | 新增: `runtime.root_parent_facade_import_pass` 抽离记录已建立，`src/runtime/mod.rs` root import residual 已清除 |
+| v4.16.0 / BE-001FL-04 | 新增: `runtime.root_parent_facade_import_pass` 单叶 closeout 已建立，设置 stop_split true |
