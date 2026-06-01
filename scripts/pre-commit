@@ -1,26 +1,6 @@
 #!/bin/bash
-# QuantPilot pre-commit hook — 超级规范化 §3.3
-# 阻断级: 编译不通过 / 测试编译失败 / 前端构建失败 / 前端测试失败
-# 从仓库根目录执行: git 工作目录总是仓库根
+# QuantPilot smart pre-commit hook.
 
-set -e
+set -euo pipefail
 
-echo "=== pre-commit: UTF-8 check ==="
-powershell -NoProfile -ExecutionPolicy Bypass -File tools/check-utf8.ps1
-
-echo "=== pre-commit: cargo fmt --check ==="
-cargo fmt --check
-
-echo "=== pre-commit: cargo check ==="
-cargo check --workspace
-
-echo "=== pre-commit: cargo test --no-run ==="
-./scripts/test.sh test --workspace --no-run
-
-echo "=== pre-commit: frontend build ==="
-( cd frontend && npx vite build )
-
-echo "=== pre-commit: vitest ==="
-( cd frontend && npx vitest run )
-
-echo "=== pre-commit: done ==="
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/run-smart-pre-commit.ps1

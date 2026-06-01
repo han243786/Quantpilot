@@ -27,6 +27,8 @@
 | `proposal-examples.md` | 轻量、标准、重型三档提案样例 |
 | `release-transition-protocol.md` | 发布过渡期的横向连接、旁路缓存、热路径直连和可撤销证明 |
 | `landing-roadmap.md` | v4.12.0 至 v4.15.0 的治理完全落地路线 |
+| `recursive-speed-protocol.md` | v4.16+ 递归模块化的高速执行协议、智能门禁、两段式、同构批处理和状态游标规则 |
+| `recursive-state.json` | 当前递归游标，记录 parent、phase、closed children、open residuals 和一次性提示黑名单 |
 
 ---
 
@@ -49,6 +51,7 @@
 3. `standard-matrix.md` 检查硬规则。
 4. `process-matrix.md` 推进状态机。
 5. 如涉及发布性能优化，再进入 `release-transition-protocol.md`。
+6. 如处于 v4.16+ 递归模块化执行，再进入 `recursive-speed-protocol.md` 和 `recursive-state.json`。
 
 ---
 

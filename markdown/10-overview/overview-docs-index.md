@@ -26,6 +26,8 @@
 | `proposal-examples.md` | 轻量、标准、重型三档提案样例 |
 | `release-transition-protocol.md` | 发布过渡期连接协议 |
 | `landing-roadmap.md` | v4.12.0 至 v4.16.0 治理落地与模块化抽离路线 |
+| `recursive-speed-protocol.md` | v4.16+ 递归模块化高速执行协议 |
+| `recursive-state.json` | 当前递归状态游标 |
 
 ## 架构原则 (`01-principles/`)
 

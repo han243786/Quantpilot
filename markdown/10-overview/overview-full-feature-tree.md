@@ -1134,17 +1134,12 @@ frontend/src/
 
 **文件**: `scripts/pre-commit`
 
-`git commit` 时自动执行:
+`git commit` 时自动执行 staged-file 智能分流:
 ```
-powershell tools/check-utf8.ps1
-cargo fmt --check
-cargo check --workspace
-./scripts/test.sh test --workspace --no-run
-cd frontend && npx vite build
-cd frontend && npx vitest run
+powershell tools/run-smart-pre-commit.ps1
 ```
 
-任何一步失败 → 提交被拒。
+docs-only 默认只跑 diff / UTF-8 / full-feature-tree / matrix governance；rust-only 默认跑 cargo fmt 与 cargo check；frontend-only 默认跑 build 与 vitest；tooling 改动额外检查 hook sync。任何一步失败 → 提交被拒。
 
 ### 6.2 closeout 基础门禁 (22 项)
 
@@ -1231,10 +1226,14 @@ proposal-flow.md                  — 提案状态机、三档执行判定表、
 proposal-examples.md              — 轻量、标准、重型三档提案样例
 release-transition-protocol.md    — 发布过渡期连接协议
 landing-roadmap.md                — v4.12.0 至 v4.16.0 治理落地与模块化抽离路线
+recursive-speed-protocol.md       — v4.16+ 递归高速执行协议
+recursive-state.json              — 当前递归状态游标
 ```
 
-自动化门禁: `tools/check-matrix-governance.ps1` 校验三矩阵入口、提案模板、模块树漂移、里程碑索引和发布过渡协议。
+自动化门禁: `tools/check-matrix-governance.ps1` 校验三矩阵入口、提案模板、模块树漂移、里程碑索引、发布过渡协议和递归高速执行协议。
 提案样例库: `markdown/00-matrix-governance/proposal-examples.md` 提供轻量、标准、重型三档最小样例。
+递归高速协议: `markdown/00-matrix-governance/recursive-speed-protocol.md` 固化智能门禁、两段式、同构批处理、治理生成器和状态游标规则。
+递归状态游标: `markdown/00-matrix-governance/recursive-state.json` 记录当前递归 parent、phase、closed children、open residuals 和一次性提示黑名单。
 
 治理接管路线:
 
@@ -2730,6 +2729,8 @@ storage/
 - `tools/check-clean-worktree.ps1` — 干净工作区检查
 - `tools/check-gates-smoke.ps1` — 门禁冒烟
 - `tools/check-full-feature-tree.ps1` — 全量树校验 🆕 v4.0.0
+- `tools/run-smart-pre-commit.ps1` — staged-file 智能 pre-commit 分流
+- `tools/update-recursive-governance.ps1` — 递归治理 skeleton 与索引生成器
 
 **其他工具**:
 - `tools/run-closeout-gates.bat` — 一键 26 项 closeout

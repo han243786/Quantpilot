@@ -5923,6 +5923,8 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 - `markdown/00-matrix-governance/proposal-examples.md`
 - `markdown/00-matrix-governance/release-transition-protocol.md`
 - `markdown/00-matrix-governance/landing-roadmap.md`
+- `markdown/00-matrix-governance/recursive-speed-protocol.md`
+- `markdown/00-matrix-governance/recursive-state.json`
 - `markdown/06-milestones/v4.16.0/01-规划方案.md`
 - `markdown/06-milestones/v4.16.0/02-落地记录.md`
 - `markdown/06-milestones/v4.16.0/03-后端抽离登记.md`
@@ -6000,6 +6002,8 @@ AI 声称执行端已能真实下单时，必须指出 execution mode、OKX prof
 | `markdown/00-matrix-governance/guidance-matrix.md` 引导坐标 | 需求、模块、文件 | 全量树和模块树定位 | 重型变更 | 不得找不到父模块仍继续 |
 | `markdown/00-matrix-governance/module-tree.md` 白箱节点 | 模块事实 | 输入输出、public 方法、边界 | 重型变更 | 不得登记虚构模块 |
 | `markdown/00-matrix-governance/release-transition-protocol.md` 发布过渡协议 | 开发者显式声明 | 横向连接例外方案 | 发布过渡提案 | AI 不得主动触发 |
+| `markdown/00-matrix-governance/recursive-speed-protocol.md` 递归高速协议 | v4.16+ 递归执行上下文 | 智能门禁、两段式、同构批处理、状态游标规则 | 递归模块化批次 | 不得绕过等价证明、父子通信和 leaf split gate |
+| `markdown/00-matrix-governance/recursive-state.json` 递归状态游标 | 当前递归上下文 | parent、phase、closed children、open residuals、提示黑名单 | 递归模块化恢复上下文 | 不得把一次性用户问题写入递归流程 |
 | `markdown/06-milestones/v4.16.0/02-落地记录.md` 抽离控制面 | v4.16 工作线 | 落地状态、决策项、禁止事项 | 后续抽离提案 | 不得宣称整理或重构已完成 |
 | `markdown/06-milestones/v4.16.0/03-后端抽离登记.md` 后端抽离登记 | 后端候选 | 父模块、public 方法、兼容桥、等价证据 | 后端抽离批次 | 不得切换主 API 或删除旧 handler |
 | `markdown/06-milestones/v4.16.0/04-前端抽离登记.md` 前端抽离登记 | 前端候选 | 页面/store 边界、UI 对照、暂停条件 | 前端抽离批次 | 不得借抽离做 UX 重构 |

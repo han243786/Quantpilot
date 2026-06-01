@@ -1,0 +1,41 @@
+{
+  "version": "v4.16.0",
+  "protocol": "recursive-high-speed-v1",
+  "last_committed_batch": "GOV-LEAF-SPLIT-GATE",
+  "last_committed_sha": "53c3f8aa",
+  "current_parent": "backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering",
+  "current_step": "BE-001GE-01",
+  "current_phase": "parent_residual_judgment",
+  "leaf_split_decision_gate_required": true,
+  "closed_children": [
+    "spread_observer_lowering",
+    "macd_lowering",
+    "double_ma_lowering",
+    "rsi_lowering"
+  ],
+  "open_residuals": [
+    "shared_intent_context",
+    "ma_deviation_lowering",
+    "momentum_lowering",
+    "zscore_lowering",
+    "unsupported_intent_failure"
+  ],
+  "next_recommended_child": "ma_deviation_lowering",
+  "allowed_speedups": [
+    "smart_pre_commit",
+    "lightweight_two_step",
+    "homogeneous_leaf_batching",
+    "recursive_governance_generator",
+    "recursive_state_cursor"
+  ],
+  "forbidden_carryover_prompts": [
+    "one_time_progress_report",
+    "three_leaf_pause_target",
+    "model_capability_report",
+    "temporary_status_request"
+  ],
+  "release_transition": {
+    "developer_explicit_statement_required": true,
+    "ai_must_not_propose": true
+  }
+}

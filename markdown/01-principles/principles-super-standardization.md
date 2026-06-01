@@ -50,18 +50,13 @@ QuantPilot 的开发过程受 **三层门禁流水线** 约束：
 
 ### 2.1 日常开发门禁：Pre-commit Hook
 
-`scripts/pre-commit` 在 `git commit` 时自动执行：
+`scripts/pre-commit` 在 `git commit` 时自动执行 staged-file 智能分流：
 
 ```
-powershell tools/check-utf8.ps1
-cargo fmt --check
-cargo check --workspace
-./scripts/test.sh test --workspace --no-run
-cd frontend && npx vite build
-cd frontend && npx vitest run
+powershell tools/run-smart-pre-commit.ps1
 ```
 
-任何一步失败则提交被拒。
+docs-only 默认只跑 diff / UTF-8 / full-feature-tree / matrix governance；rust-only 默认跑 cargo fmt 与 cargo check；frontend-only 默认跑 build 与 vitest；tooling 改动额外检查 hook sync。任何一步失败则提交被拒。
 
 日常开发门禁只拦截明显破坏，避免把 E2E、audit、完整场景测试放进每次提交。
 

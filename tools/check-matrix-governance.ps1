@@ -130,7 +130,9 @@ $requiredCoreDocs = @(
     "markdown/00-matrix-governance/proposal-flow.md",
     "markdown/00-matrix-governance/proposal-examples.md",
     "markdown/00-matrix-governance/release-transition-protocol.md",
-    "markdown/00-matrix-governance/landing-roadmap.md"
+    "markdown/00-matrix-governance/landing-roadmap.md",
+    "markdown/00-matrix-governance/recursive-speed-protocol.md",
+    "markdown/00-matrix-governance/recursive-state.json"
 )
 
 foreach ($path in $requiredCoreDocs) {
@@ -296,12 +298,20 @@ $indexChecks = @(
     @("markdown/General_Policy.md", "00-matrix-governance/README.md", "general policy matrix governance handoff"),
     @("markdown/01-principles/principles-super-standardization.md", "00-matrix-governance/README.md", "super standardization matrix governance handoff"),
     @("markdown/00-matrix-governance/README.md", "proposal-examples.md", "matrix proposal examples entry"),
+    @("markdown/00-matrix-governance/README.md", "recursive-speed-protocol.md", "matrix recursive speed protocol entry"),
+    @("markdown/00-matrix-governance/README.md", "recursive-state.json", "matrix recursive state cursor entry"),
     @("markdown/10-overview/README.md", "../00-matrix-governance/README.md", "overview matrix governance entry"),
     @("markdown/10-overview/overview-docs-index.md", "../00-matrix-governance/README.md", "docs index matrix governance entry"),
     @("markdown/10-overview/overview-docs-index.md", "proposal-examples.md", "docs index proposal examples"),
+    @("markdown/10-overview/overview-docs-index.md", "recursive-speed-protocol.md", "docs index recursive speed protocol"),
     @("markdown/10-overview/overview-current-status-and-roadmap.md", "../00-matrix-governance/landing-roadmap.md", "current roadmap matrix landing roadmap"),
+    @("markdown/10-overview/overview-current-status-and-roadmap.md", "../00-matrix-governance/recursive-speed-protocol.md", "current roadmap recursive speed protocol"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/00-matrix-governance/", "full feature tree matrix directory"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/00-matrix-governance/proposal-examples.md", "full feature tree proposal examples"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/00-matrix-governance/recursive-speed-protocol.md", "full feature tree recursive speed protocol"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "markdown/00-matrix-governance/recursive-state.json", "full feature tree recursive state cursor"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "tools/run-smart-pre-commit.ps1", "full feature tree smart pre-commit script"),
+    @("markdown/10-overview/overview-full-feature-tree.md", "tools/update-recursive-governance.ps1", "full feature tree recursive governance generator"),
     @("markdown/10-overview/overview-full-feature-tree.md", "tools/check-matrix-governance.ps1", "full feature tree matrix gate"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.14.0/02-", "full feature tree v4.14 record"),
     @("markdown/10-overview/overview-full-feature-tree.md", "markdown/06-milestones/v4.15.0/02-", "full feature tree v4.15 closeout"),
@@ -21970,6 +21980,50 @@ $releaseTokens = @(
 foreach ($check in $releaseTokens) {
     Assert-TextContains $releaseProtocol $check[0] $check[1]
 }
+
+$recursiveSpeedProtocol = "markdown/00-matrix-governance/recursive-speed-protocol.md"
+$recursiveSpeedTokens = @(
+    @("recursive_speed_protocol", "recursive speed protocol marker"),
+    @("smart_pre_commit", "smart pre-commit marker"),
+    @("lightweight_two_step", "lightweight two-step marker"),
+    @("homogeneous_leaf_batching", "homogeneous leaf batching marker"),
+    @("recursive_governance_generator", "recursive governance generator marker"),
+    @("recursive_state_cursor", "recursive state cursor marker"),
+    @("parent-child communication rule", "parent child communication hard rule"),
+    @("sibling horizontal link", "sibling horizontal link guard"),
+    @("release transition", "release transition guard"),
+    @("leaf_split_decision_gate", "leaf split decision gate guard"),
+    @("tools/run-smart-pre-commit.ps1", "smart pre-commit tool path"),
+    @("tools/update-recursive-governance.ps1", "recursive governance generator path"),
+    @("markdown/00-matrix-governance/recursive-state.json", "recursive state cursor path")
+)
+
+foreach ($check in $recursiveSpeedTokens) {
+    Assert-TextContains $recursiveSpeedProtocol $check[0] $check[1]
+}
+
+$recursiveStateCursor = "markdown/00-matrix-governance/recursive-state.json"
+$recursiveStateTokens = @(
+    @("recursive-high-speed-v1", "recursive high speed state protocol"),
+    @("current_parent", "current parent field"),
+    @("current_phase", "current phase field"),
+    @("closed_children", "closed children field"),
+    @("open_residuals", "open residuals field"),
+    @("forbidden_carryover_prompts", "forbidden carryover prompts field"),
+    @("ai_must_not_propose", "AI release transition guard field")
+)
+
+foreach ($check in $recursiveStateTokens) {
+    Assert-TextContains $recursiveStateCursor $check[0] $check[1]
+}
+
+Assert-TextContains "scripts/pre-commit" "tools/run-smart-pre-commit.ps1" "smart pre-commit hook handoff"
+Assert-TextContains "tools/run-smart-pre-commit.ps1" "docs-only" "smart pre-commit docs-only mode"
+Assert-TextContains "tools/run-smart-pre-commit.ps1" "rust-only" "smart pre-commit rust-only mode"
+Assert-TextContains "tools/run-smart-pre-commit.ps1" "frontend-only" "smart pre-commit frontend-only mode"
+Assert-TextContains "tools/run-smart-pre-commit.ps1" "QUANTPILOT_PRECOMMIT_FULL" "smart pre-commit full override"
+Assert-TextContains "tools/update-recursive-governance.ps1" "baseline_plan" "recursive governance baseline stage"
+Assert-TextContains "tools/update-recursive-governance.ps1" "leaf_split_decision_gate" "recursive governance leaf split skeleton"
 
 $moduleTreePath = "markdown/00-matrix-governance/module-tree.md"
 $moduleTreeContent = Read-RepoText $moduleTreePath

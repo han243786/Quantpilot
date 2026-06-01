@@ -362,6 +362,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 
 - [三矩阵治理入口](../00-matrix-governance/README.md)
 - [三矩阵治理完全落地路线](../00-matrix-governance/landing-roadmap.md)
+- [递归高速执行协议](../00-matrix-governance/recursive-speed-protocol.md)
 - [v3.7.0 规划方案](../06-milestones/v3.7.0/01-规划方案.md)
 - [v3.7.0 综合优化清单](../06-milestones/v3.7.0/02-综合优化清单.md)
 - [v3.7.1 规划方案](../06-milestones/v3.7.1/01-规划方案.md)
@@ -419,7 +420,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 | S0/P1 回归修复 | ✅ | 登录挂起、凭证 DELETE 405 已修复 |
 | P2 测试进程锁 | ✅ | `scripts/test.ps1` / `scripts/test.sh` |
 | 功能演进契约 | ✅ | 新增能力必须有登记、回归保护矩阵、兼容性与迁移说明 |
-| Pre-commit hook 同步 | ✅ | `tools/check-pre-commit-hook.ps1` 已进入 closeout，防止 `.git/hooks/pre-commit` 与 `scripts/pre-commit` 再次漂移 |
+| Pre-commit hook 同步 | ✅ | `tools/check-pre-commit-hook.ps1` 已进入 closeout，防止 `.git/hooks/pre-commit` 与 `scripts/pre-commit` 再次漂移；递归高速执行改为 staged-file 智能分流 |
 | 清理边界门禁 | ✅ | `tools/check-cleanup-boundary.ps1` 已进入 CI/closeout，防止清理脚本触碰真实运行/图版本工件 |
 | 三矩阵治理门禁 | ✅ | `tools/check-matrix-governance.ps1` 已接入 closeout [7/26]，用于检查治理入口、提案模板、模块树漂移和发布过渡协议 |
 | Rust 格式基线 | ✅ | `cargo fmt --check` 已进入三层门禁 |

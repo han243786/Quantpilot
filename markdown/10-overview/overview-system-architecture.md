@@ -1142,7 +1142,7 @@ get_service("okx_testnet")
 
 **设计流水线**: 触发条件: 新增功能 / API 路由变更 / 插件协议变更 / ≥3 文件变更。输出: 设计文档 (目标/非目标/方案/验收/风险/决策纪录)。
 
-**开发流水线**: Pre-commit hook 自动执行 `cargo check --workspace` + `cargo test --workspace --no-run` + `vite build` + `vitest run`。任何失败拒绝提交。
+**开发流水线**: Pre-commit hook 自动执行 staged-file 智能分流。docs-only 默认跑治理文档门禁，rust-only 默认跑 `cargo fmt --check` 与 `cargo check`，frontend-only 默认跑 `vite build` 与 `vitest run`，任何失败拒绝提交；可用 `QUANTPILOT_PRECOMMIT_FULL=1` 强制全量 legacy gate。
 
 **检查流水线**: 10 项自动化门禁。通过 `.github/workflows/ci.yml` 在 push/PR 时触发, 或本地 `tools/run-closeout-gates.bat` 一键执行。
 
