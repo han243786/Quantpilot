@@ -3018,3 +3018,6 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/484-backend.graph_compile.quantscript_graph.formal_module_conversion单子叶等价基线.md` - v4.16.0 BE-001FT-01 `formal_module_conversion` 等价基线，冻结 graph JSON 到 `ScriptModule` conversion 语义
 递归边界补充: BE-001FT-02 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion` 抽离方案；下一步只能进入 BE-001FT-03 实际抽离记录。
 - `markdown/06-milestones/v4.16.0/485-backend.graph_compile.quantscript_graph.formal_module_conversion抽离方案.md` - v4.16.0 BE-001FT-02 `formal_module_conversion` 抽离方案，固定 planned child 与单函数迁移清单
+递归边界补充: BE-001FT-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion` 实际抽离；下一步只能进入 BE-001FT-04 单叶 closeout。
+- `markdown/06-milestones/v4.16.0/486-backend.graph_compile.quantscript_graph.formal_module_conversion抽离记录.md` - v4.16.0 BE-001FT-03 `formal_module_conversion` 抽离记录，child file 承接 formal conversion
+- `src/backend/graph_compile/quantscript_graph/formal_module_conversion.rs` - backend graph compile quantscript graph formal conversion child，承接 `convert_graph_json_to_script_module`

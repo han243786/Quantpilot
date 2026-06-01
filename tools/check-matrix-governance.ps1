@@ -20643,6 +20643,45 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/486-*.md", @(
+        @("BE-001FT-03", "formal conversion extraction marker"),
+        @("BE-001FT-04", "next formal conversion closeout marker"),
+        @("backend.graph_compile.quantscript_graph.formal_module_conversion", "formal conversion child marker"),
+        @("root.backend.graph_compile.quantscript_graph.formal_module_conversion", "formal conversion coordinate"),
+        @("formal_module_conversion actual_extraction_done", "actual extraction done marker"),
+        @("src/backend/graph_compile/quantscript_graph/formal_module_conversion.rs", "child file marker"),
+        @("src/backend/graph_compile/quantscript_graph.rs", "parent owner marker"),
+        @("mod formal_module_conversion;", "parent module declaration marker"),
+        @("pub(crate) use formal_module_conversion::convert_graph_json_to_script_module;", "parent re-export marker"),
+        @("convert_graph_json_to_script_module", "formal conversion function marker"),
+        @("parse_quant_script_module", "terminal parse marker"),
+        @("safe_eprintln!", "safe log marker"),
+        @("graph.nodes", "nodes validation marker"),
+        @("graph.edges", "edges validation marker"),
+        @("builtin.intent.double_ma", "double ma marker"),
+        @("builtin.intent.rsi", "rsi marker"),
+        @("builtin.intent.ma_deviation", "ma deviation marker"),
+        @("builtin.intent.macd", "macd marker"),
+        @("builtin.intent.momentum", "momentum marker"),
+        @("builtin.intent.zscore", "zscore marker"),
+        @("builtin.intent.spread_observer", "spread observer marker"),
+        @("risk.profile", "risk profile marker"),
+        @("execution.profile", "execution profile marker"),
+        @("src/compile_api.rs", "compile caller marker"),
+        @("src/lib.rs", "root re-export marker"),
+        @("release transition guard", "release guard marker"),
+        @("sibling horizontal link", "horizontal link guard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("cargo test -p quantpilot quantscript --lib", "quantscript lib test gate"),
+        @("cargo test -p quantpilot --test quantscript_real_strategy_authoring", "quantscript authoring test gate"),
+        @("cargo test -p quantpilot --test api_graph_versions", "graph versions test gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
