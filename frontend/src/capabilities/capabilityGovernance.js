@@ -10,76 +10,24 @@ import {
   WORKSPACE_SURFACE_MAP
 } from "./supportMatrix.js";
 
-export const CAPABILITY_GOVERNANCE_SCHEMA_VERSION = "quantpilot/capability-governance/v1";
+import {
+  CAPABILITY_CLASSES,
+  CAPABILITY_GOVERNANCE_SCHEMA_VERSION,
+  CAPABILITY_OWNER_ROLES,
+  CAPABILITY_TEXT_GATES,
+  DEFAULT_TEXT_GATE_ALLOWED_CONTEXT_PATTERN,
+  buildCapabilityGovernanceEntry
+} from "./capabilityGovernanceCore.js";
 
-export const CAPABILITY_CLASSES = {
-  supported: "supported",
-  restricted: "restricted",
-  trace_only: "trace_only",
-  disallowed_claim: "disallowed_claim"
-};
-
-export const CAPABILITY_OWNER_ROLES = {
-  backend_runtime_owner: "backend runtime owner",
-  backend_market_data_owner: "backend market-data owner",
-  backend_compile_owner: "backend compile owner",
-  frontend_editor_owner: "frontend editor owner",
-  docs_and_qa_owner: "docs and QA owner"
-};
-
-const DEFAULT_TEXT_GATE_ALLOWED_CONTEXT_PATTERN =
-  "must not|must not appear|disallowedClaims|forbiddenPattern|textGate";
-
-export const CAPABILITY_TEXT_GATES = {
-  positiveClaimAudit: {
-    scopedPaths: [
-      "README.md",
-      "frontend/src/components/TopToolbar.jsx",
-      "frontend/src/components/PropertyPanel.jsx",
-      "frontend/src/components/EventStreamPanel.jsx",
-      "frontend/src/components/ModuleSidebar.jsx",
-      "frontend/src/pages/EditorPage.jsx",
-      "frontend/src/pages/BacktestDetailPage.jsx",
-      "frontend/src/pages/BacktestComparePage.jsx"
-    ],
-    positiveStatementPatterns: [
-      "\\b(?:is|are)\\s+(?:currently\\s+)?supported\\b",
-      "\\bcurrently\\s+supported\\b",
-      "\\bsupports\\b",
-      "\\bsupported\\s+(?:runtime|mode|execution|exchange|symbol|indicator|capability|path)\\b",
-      "\\b(?:runtime|backtest|execution|market-data|plugin|arbitrage|spread)\\s+support\\b"
-    ],
-    allowedContextPattern:
-      "must not|must not appear|disallowedClaims|allowedClaims|support matrix|capability governance"
-  }
-};
-
-function buildEntry({
-  id,
-  family,
-  value,
-  className,
-  ownerRole,
-  reviewResponsibility,
-  sourceOfTruth,
-  notes = [],
-  textGate = null
-}) {
-  return {
-    id,
-    family,
-    value,
-    class: className,
-    ownerRole,
-    reviewResponsibility,
-    sourceOfTruth,
-    notes,
-    textGate
-  };
-}
+export {
+  CAPABILITY_CLASSES,
+  CAPABILITY_GOVERNANCE_SCHEMA_VERSION,
+  CAPABILITY_OWNER_ROLES,
+  CAPABILITY_TEXT_GATES
+} from "./capabilityGovernanceCore.js";
 
 const runtimeModeEntries = SUPPORTED_RUNTIME_MODES.map((mode) =>
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: `runtime.mode.${mode}`,
     family: "runtime_mode",
     value: mode,
@@ -91,7 +39,7 @@ const runtimeModeEntries = SUPPORTED_RUNTIME_MODES.map((mode) =>
 );
 
 const executionModuleEntries = SUPPORTED_RUNTIME_EXECUTION_MODULES.map((moduleKey) =>
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: `execution.module.${moduleKey}`,
     family: "execution_module",
     value: moduleKey,
@@ -103,7 +51,7 @@ const executionModuleEntries = SUPPORTED_RUNTIME_EXECUTION_MODULES.map((moduleKe
 );
 
 const exchangeEntries = SUPPORTED_EXCHANGES.map((exchange) =>
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: `market.exchange.${exchange}`,
     family: "exchange",
     value: exchange,
@@ -115,7 +63,7 @@ const exchangeEntries = SUPPORTED_EXCHANGES.map((exchange) =>
 );
 
 const symbolEntries = SUPPORTED_SYMBOLS.map((symbol) =>
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: `market.symbol.${symbol}`,
     family: "symbol",
     value: symbol,
@@ -141,7 +89,7 @@ const indicatorNotesMap = {
 };
 
 const indicatorEntries = DECLARED_INDICATOR_KINDS.map((kind) =>
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: `strategy_ir.indicator.${kind}`,
     family: "strategy_ir_indicator_kind",
     value: kind,
@@ -168,7 +116,7 @@ const frontendModuleNotesMap = {
 };
 
 const frontendModuleEntries = SUPPORTED_FRONTEND_MODULE_KEYS.map((moduleKey) =>
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: `frontend.module.${moduleKey}`,
     family: "frontend_module",
     value: moduleKey,
@@ -181,7 +129,7 @@ const frontendModuleEntries = SUPPORTED_FRONTEND_MODULE_KEYS.map((moduleKey) =>
 );
 
 const actionEntries = Object.entries(CAPABILITY_ACTION_MAP).map(([actionKey, action]) =>
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: `ui.action.${actionKey}`,
     family: "ui_action",
     value: actionKey,
@@ -198,7 +146,7 @@ const workspaceSurfaceClassMap = {
 };
 
 const workspaceSurfaceEntries = Object.entries(WORKSPACE_SURFACE_MAP).map(([surfaceKey, surface]) =>
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: `workspace.surface.${surfaceKey}`,
     family: "workspace_surface",
     value: surfaceKey,
@@ -211,7 +159,7 @@ const workspaceSurfaceEntries = Object.entries(WORKSPACE_SURFACE_MAP).map(([surf
 );
 
 const compileBoundaryEntries = [
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: "compile.strategy_ir_preflight",
     family: "compile_boundary",
     value: "strategy_ir",
@@ -221,7 +169,7 @@ const compileBoundaryEntries = [
     sourceOfTruth: "frontend:support-matrix.compile.preflightArtifact",
     notes: ["Semantic preflight only. It does not decide runnable output."]
   }),
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: "compile.formal_quantscript_lowering",
     family: "compile_boundary",
     value: "quantscript.formal_source",
@@ -231,7 +179,7 @@ const compileBoundaryEntries = [
     sourceOfTruth: "frontend:support-matrix.compile.boundaryNotes",
     notes: ["Owns runtime lowering when present, but runtime compile still decides runnable output."]
   }),
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: "compile.runtime_source_of_truth",
     family: "compile_boundary",
     value: SUPPORT_MATRIX.compile.runtimeSourceOfTruth,
@@ -245,7 +193,7 @@ const compileBoundaryEntries = [
 
 const claimEntries = [
   ...SUPPORT_MATRIX.userFacingGuardrails.allowedClaims.map((claimText) =>
-    buildEntry({
+    buildCapabilityGovernanceEntry({
       id: `claim.allowed.${claimText.replace(/\s+/g, "_")}`,
       family: "user_facing_claim",
       value: claimText,
@@ -258,7 +206,7 @@ const claimEntries = [
       }
     })
   ),
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: "claim.disallowed.claiming_research-grade_backtest_support",
     family: "user_facing_claim",
     value: SUPPORT_MATRIX.userFacingGuardrails.disallowedClaims[0],
@@ -272,7 +220,7 @@ const claimEntries = [
       allowedContextPattern: DEFAULT_TEXT_GATE_ALLOWED_CONTEXT_PATTERN
     }
   }),
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: "claim.disallowed.claiming_live_trading_support",
     family: "user_facing_claim",
     value: SUPPORT_MATRIX.userFacingGuardrails.disallowedClaims[1],
@@ -286,7 +234,7 @@ const claimEntries = [
       allowedContextPattern: DEFAULT_TEXT_GATE_ALLOWED_CONTEXT_PATTERN
     }
   }),
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: "claim.disallowed.claiming_true_arbitrage_agent_support",
     family: "user_facing_claim",
     value: SUPPORT_MATRIX.userFacingGuardrails.disallowedClaims[2],
@@ -300,7 +248,7 @@ const claimEntries = [
       allowedContextPattern: DEFAULT_TEXT_GATE_ALLOWED_CONTEXT_PATTERN
     }
   }),
-  buildEntry({
+  buildCapabilityGovernanceEntry({
     id: "claim.disallowed.claiming_third-party_plugin_marketplace_support",
     family: "user_facing_claim",
     value: SUPPORT_MATRIX.userFacingGuardrails.disallowedClaims[3],
