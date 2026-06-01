@@ -589,3 +589,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001FZ-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` 单子叶等价基线；本批 `no code movement`，冻结 MACD 参数 fallback、QS line、BUY/SELL emit 顺序和父子通信规则。下一步只能进入 BE-001FZ-02 抽离方案。
 - BE-001FZ-02 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` 抽离方案；本批 `no code movement`，固定 planned child、父级 `mod`、helper signature、允许迁移块和回退方案。下一步只能进入 BE-001FZ-03 实际抽离记录。
 - BE-001FZ-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` 实际抽离；child file 承接 MACD branch，父级只保留 `mod macd_lowering;` 与受控调用。下一步只能进入 BE-001FZ-04 单叶 closeout。
+- BE-001FZ-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` 单叶 closeout；本批 `no code movement`，设置 `macd_lowering stop_split: true`。下一步只能进入 BE-001GA-01 `intent_lowering` 父叶残余判断。

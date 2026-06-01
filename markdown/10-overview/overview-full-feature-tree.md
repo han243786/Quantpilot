@@ -3054,3 +3054,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 递归边界补充: BE-001FZ-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` 实际抽离；下一步只能进入 BE-001FZ-04 单叶 closeout。
 - `markdown/06-milestones/v4.16.0/501-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering抽离记录.md` - v4.16.0 BE-001FZ-03 `macd_lowering` 实际抽离记录
 - `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/macd_lowering.rs` - MACD intent lowering child helper
+递归边界补充: BE-001FZ-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` 单叶 closeout；`macd_lowering stop_split: true`，下一步只能进入 BE-001GA-01 `intent_lowering` 父叶残余判断。
+- `markdown/06-milestones/v4.16.0/502-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering单叶closeout.md` - v4.16.0 BE-001FZ-04 `macd_lowering` 单叶 closeout
