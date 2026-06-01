@@ -853,3 +853,4 @@
 | v4.16.0 / BE-001FV-02 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 抽离方案已建立，固定 planned child 与 helper signature |
 | v4.16.0 / BE-001FV-03 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 实际抽离完成，child file 承接 intent block |
 | v4.16.0 / BE-001FV-04 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 单叶 closeout 完成，判定继续细拆 |
+| v4.16.0 / BE-001FW-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 父叶残余判断已完成，选择 `spread_observer_lowering` |
