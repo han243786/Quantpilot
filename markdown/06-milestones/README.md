@@ -933,3 +933,4 @@
 | v4.16.0 / BE-001HR-01 | 新增: `backend.strategy_config.artifact` backend.strategy_config.artifact parent residual judgment selects schema_model |
 | v4.16.0 / BE-001HS-01 | 新增: `backend.strategy_config.artifact.schema_model` backend.strategy_config.artifact.schema_model equivalence baseline and extraction plan |
 | v4.16.0 / BE-001HS-02 | 新增: `backend.strategy_config.artifact.schema_model` backend.strategy_config.artifact.schema_model actual extraction complete |
+| v4.16.0 / BE-001HT-01 | 新增: `backend.strategy_config.artifact` backend.strategy_config.artifact parent residual judgment selects domain_projection |
