@@ -868,3 +868,4 @@
 | v4.16.0 / BE-001GB-02 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering` 抽离方案已建立 |
 | v4.16.0 / BE-001GB-03 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering` 实际抽离完成 |
 | v4.16.0 / BE-001GB-04 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering` 单叶 closeout 完成 |
+| v4.16.0 / BE-001GC-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 父叶残余判断已完成，选择 `rsi_lowering` |
