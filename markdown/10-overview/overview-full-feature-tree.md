@@ -3000,3 +3000,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/476-backend.graph_compile.quantscript_graph抽离方案.md` - v4.16.0 BE-001FQ-02 `backend.graph_compile.quantscript_graph` 抽离方案，固定 planned move 与 root parent re-export
 递归边界补充: BE-001FQ-03 已完成 `backend.graph_compile.quantscript_graph` 实际抽离；下一步只能进入 BE-001FQ-04 单叶 closeout。
 - `markdown/06-milestones/v4.16.0/477-backend.graph_compile.quantscript_graph抽离记录.md` - v4.16.0 BE-001FQ-03 `backend.graph_compile.quantscript_graph` 抽离记录，真实 owner 迁入 backend child
+递归边界补充: BE-001FQ-04 已完成 `backend.graph_compile.quantscript_graph` 单叶 closeout；本叶保持 `stop_split: false`，下一步只能进入 BE-001FR-01 `graph_to_qs_generation` 等价基线。
+- `markdown/06-milestones/v4.16.0/478-backend.graph_compile.quantscript_graph单叶closeout.md` - v4.16.0 BE-001FQ-04 `backend.graph_compile.quantscript_graph` 单叶 closeout，选择 graph_to_qs_generation

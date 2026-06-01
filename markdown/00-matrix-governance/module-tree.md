@@ -5307,6 +5307,7 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 **最新状态补充（BE-001FQ-01）**: BE-001FQ-01 已建立 `backend.graph_compile.quantscript_graph` 单子叶等价基线。当时 `no code movement`，旧 graph_quantscript_api owner 仍是旧 owner，route handler、`generate_quantscript_from_graph_value`、`parse_graph_quantscript_source`、`convert_graph_json_to_script_module`、`attach_quantscript_artifacts`、runtime targets helper 与 compile/graph/runtime/test 调用面已冻结；下一步只能进入 BE-001FQ-02 抽离方案。
 **最新状态补充（BE-001FQ-02）**: BE-001FQ-02 已建立 `backend.graph_compile.quantscript_graph` 抽离方案。下一步只能进入 BE-001FQ-03 实际抽离记录：由 `src/backend/graph_compile/quantscript_graph.rs` 接管旧 graph_quantscript_api 真实实现，`src/lib.rs` 通过 root parent re-export surface 维持旧 caller，不得新增 compile / graph / runtime sibling horizontal link。
 **最新状态补充（BE-001FQ-03）**: BE-001FQ-03 已完成 `backend.graph_compile.quantscript_graph` 实际抽离。旧 graph_quantscript_api owner 已删除，`src/backend/graph_compile/quantscript_graph.rs` 成为 QS graph route/helper 真实 owner；`src/lib.rs` 通过 root parent re-export surface 维持 compile / graph / runtime / test caller，当前不得宣称 `backend.graph_compile stop_split: true`。
+**最新状态补充（BE-001FQ-04）**: BE-001FQ-04 已完成 `backend.graph_compile.quantscript_graph` 单叶 closeout。等价成立，但本叶仍同时承载 route surface、graph-to-QS generation、formal conversion、artifact target projection 与 strategy_graph parser，因此 `backend.graph_compile.quantscript_graph stop_split: false`；下一步只能进入 BE-001FR-01 `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 等价基线。
 
 ### 5.3 `backend.storage_security`
 

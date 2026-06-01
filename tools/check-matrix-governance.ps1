@@ -20398,6 +20398,35 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/478-*.md", @(
+        @("BE-001FQ-04", "quantscript graph closeout marker"),
+        @("BE-001FR-01", "next graph generation baseline marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend.graph_compile.quantscript_graph", "quantscript graph marker"),
+        @("root.backend.graph_compile.quantscript_graph", "quantscript graph coordinate"),
+        @("backend.graph_compile.quantscript_graph stop_split: false", "stop split false marker"),
+        @("graph_to_qs_generation", "graph generation child marker"),
+        @("route_surface", "route surface cluster marker"),
+        @("formal_module_conversion", "formal conversion cluster marker"),
+        @("artifact_target_projection", "artifact projection cluster marker"),
+        @("strategy_graph_parser", "parser cluster marker"),
+        @("src/backend/graph_compile/quantscript_graph.rs", "quantscript owner file"),
+        @("src/graph_quantscript_api.rs deleted", "legacy deleted marker"),
+        @("backend_graph_compile_quantscript_graph_parent_wildcard_residual_0", "residual zero marker"),
+        @("generate_quantscript_from_graph_value", "generate helper marker"),
+        @("generate_node_quantscript", "node generation helper marker"),
+        @("quoted", "quoted helper marker"),
+        @("render_json_scalar", "json scalar helper marker"),
+        @("release transition guard", "release transition guard marker"),
+        @("sibling horizontal link", "horizontal link guard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {

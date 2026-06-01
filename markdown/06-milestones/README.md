@@ -838,3 +838,4 @@
 | v4.16.0 / BE-001FQ-01 | 新增: `backend.graph_compile.quantscript_graph` 单子叶等价基线已建立，冻结 route 与 shared helper 输入面 |
 | v4.16.0 / BE-001FQ-02 | 新增: `backend.graph_compile.quantscript_graph` 抽离方案已建立，固定 planned move、import rewrite 与 root parent re-export surface |
 | v4.16.0 / BE-001FQ-03 | 新增: `backend.graph_compile.quantscript_graph` 实际抽离完成，真实实现迁入 backend child 并删除旧 root owner |
+| v4.16.0 / BE-001FQ-04 | 新增: `backend.graph_compile.quantscript_graph` 单叶 closeout 完成，判定继续细拆并选择 `graph_to_qs_generation` |
