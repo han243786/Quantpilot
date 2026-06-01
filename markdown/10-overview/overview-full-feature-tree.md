@@ -3242,3 +3242,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/579-backend.strategy_config.artifact.parent_closeout.md` - v4.16.0 BE-001HX-01 backend.strategy_config.artifact parent closeout sets stop_split true
 递归边界补充: BE-001HY-01 `backend.strategy_config` backend.strategy_config parent residual judgment selects preflight；下一步: BE-001HZ-01 backend.strategy_config.preflight baseline_plan。
 - `markdown/06-milestones/v4.16.0/580-backend.strategy_config.parent_residual_judgment.preflight.md` - v4.16.0 BE-001HY-01 backend.strategy_config parent residual judgment selects preflight
+递归边界补充: BE-001HZ-01 `backend.strategy_config.preflight` backend.strategy_config.preflight equivalence baseline and extraction plan；下一步: BE-001HZ-02 backend.strategy_config.preflight extract_closeout。
+- `markdown/06-milestones/v4.16.0/581-backend.strategy_config.preflight.baseline_plan.md` - v4.16.0 BE-001HZ-01 backend.strategy_config.preflight equivalence baseline and extraction plan
