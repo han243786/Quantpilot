@@ -43,7 +43,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/StrategyWorkspaceExperimentCard.jsx`
     - `frontend/src/graph/compileGraph.js`
   - Child queue:
-    - `frontend.capabilities.capability_projection`
     - `frontend.capabilities.governance_registry`
     - `frontend.capabilities.builtin_capability_snapshot`
     - `frontend.capabilities.module_registry_gate`
@@ -53,6 +52,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.capabilities.support_matrix_truth.catalog_maps`
     - `frontend.capabilities.support_matrix_truth.boundary_context`
     - `frontend.capabilities.support_matrix_truth.action_block_reason`
+    - `frontend.capabilities.capability_projection`
 
 ## Last Closed Parent
 

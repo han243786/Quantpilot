@@ -113,6 +113,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0024-frontend-capabilities-catalog-maps-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0025-frontend-capabilities-boundary-context-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0026-frontend-capabilities-action-block-reason-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0027-frontend-capabilities-projection-closeout.md`
 
 ## Evidence Rules
 
