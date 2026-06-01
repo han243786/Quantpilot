@@ -5385,7 +5385,7 @@ AI 声称 BE-001FR-01 已完成时，必须说明当前只是 `no code movement`
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion`
 **父模块**: `backend.graph_compile.quantscript_graph`
-**状态**: v4.16 BE-001GW-02 `terminal_parse` 单叶 closeout 已完成，`formal_module_conversion stop_split: false`，下一步回到父叶残余判断。
+**状态**: v4.16 BE-001GY-02 `unsupported_node_logging` 单叶 closeout 已完成，`formal_module_conversion stop_split: false`，下一步进入父叶 closeout。
 **真实文件**:
 - `src/backend/graph_compile/quantscript_graph.rs`
 
@@ -5422,6 +5422,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001GW-02）**: `terminal_parse actual_extraction_done`、`terminal_parse closeout_done` 与 `terminal_parse stop_split: true` 成立；下一步只能回到 BE-001GX-01 `formal_module_conversion` 父叶残余判断。
 **最新状态补充（BE-001GX-01）**: `formal_module_conversion parent_residual_judgment` 与 `unsupported_node_logging_selected` 成立；下一步只能进入 BE-001GY-01 单子叶等价基线，不能直接移动未知节点日志代码。
 **最新状态补充（BE-001GY-01）**: `unsupported_node_logging baseline_frozen` 与 `unsupported_node_logging plan_frozen` 成立；下一步只能进入 BE-001GY-02 extract_closeout，不得移动其它 formal conversion child。
+**最新状态补充（BE-001GY-02）**: `unsupported_node_logging actual_extraction_done`、`unsupported_node_logging closeout_done` 与 `unsupported_node_logging stop_split: true` 成立；下一步只能进入 BE-001GZ-01 `formal_module_conversion` 父叶 closeout。
 **最新状态补充（BE-001FV-01）**: BE-001FV-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 单子叶等价基线。当前 `no code movement`，`intent_lowering baseline_frozen` 成立；下一步只能进入 BE-001FV-02 抽离方案，不得直接创建 child file、移动 intent 分支或启动 release transition。
 **最新状态补充（BE-001FV-02）**: BE-001FV-02 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 抽离方案。当前 `no code movement`，`intent_lowering plan_frozen` 成立；下一步 BE-001FV-03 只允许创建 planned child、添加 `append_intent_lowering_lines` helper，并由父级单向调用。
 **最新状态补充（BE-001FV-03）**: BE-001FV-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 实际抽离。`intent_lowering actual_extraction_done` 成立；`src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering.rs` 已创建并承接 intent block，父级只保留 `mod intent_lowering` 与 `append_intent_lowering_lines` 调用。
@@ -5796,6 +5797,26 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 
 **最新状态补充（BE-001GW-01）**: `terminal_parse baseline_frozen` 与 `terminal_parse plan_frozen` 成立；下一步只能进入 BE-001GW-02 extract_closeout。
 **最新状态补充（BE-001GW-02）**: `terminal_parse actual_extraction_done`、`terminal_parse closeout_done` 与 `terminal_parse stop_split: true` 成立；不继续拆 closing_brace / line_join / parse_call 微叶。
+
+#### 5.2.2.6 `backend.graph_compile.quantscript_graph.formal_module_conversion.unsupported_node_logging`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.unsupported_node_logging`
+**父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion`
+**状态**: v4.16 BE-001GY-02 单叶 closeout 已完成，`stop_split: true`。
+
+**真实文件**:
+- `src/backend/graph_compile/quantscript_graph/formal_module_conversion/unsupported_node_logging.rs`
+
+**白箱节点**:
+
+| 节点 | 输入 | 输出 | 约束 |
+| --- | --- | --- | --- |
+| node type lookup | graph node | node type string | Missing type follows previous empty-string fallback. |
+| known-node no-op classification | node type | no log | data / intent / agent / runtime / runtime_control stay silent. |
+| unknown-node diagnostic | node type | safe log message | Message remains `[graph->QS] 未知节点类型 '{node_type}', 跳过 QS 生成`. |
+
+**最新状态补充（BE-001GY-01）**: `unsupported_node_logging baseline_frozen` 与 `unsupported_node_logging plan_frozen` 成立；下一步只能进入 BE-001GY-02 extract_closeout。
+**最新状态补充（BE-001GY-02）**: `unsupported_node_logging actual_extraction_done`、`unsupported_node_logging closeout_done` 与 `unsupported_node_logging stop_split: true` 成立；不继续拆 known_noop_classifier / message_format 微叶。
 
 ### 5.3 `backend.storage_security`
 
@@ -7010,3 +7031,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001GW-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.terminal_parse` terminal_parse actual extraction and closeout complete；下一步: BE-001GX-01 formal_module_conversion parent residual judgment。
 **最新状态补充(BE-001GX-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent residual judgment selects unsupported_node_logging；下一步: BE-001GY-01 unsupported_node_logging baseline_plan。
 **最新状态补充(BE-001GY-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.unsupported_node_logging` unsupported_node_logging equivalence baseline and extraction plan；下一步: BE-001GY-02 unsupported_node_logging extract_closeout。
+**最新状态补充(BE-001GY-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.unsupported_node_logging` unsupported_node_logging actual extraction and closeout complete；下一步: BE-001GZ-01 formal_module_conversion parent closeout。

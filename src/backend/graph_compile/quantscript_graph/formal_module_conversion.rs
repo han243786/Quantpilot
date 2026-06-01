@@ -3,6 +3,7 @@ mod input_shape_validation;
 mod intent_lowering;
 mod profile_lowering;
 mod terminal_parse;
+mod unsupported_node_logging;
 
 use quantscript::ScriptModule;
 use serde_json::Value;
@@ -23,13 +24,7 @@ pub(crate) fn convert_graph_json_to_script_module(
             continue;
         }
 
-        let node_type = node.get("type").and_then(Value::as_str).unwrap_or("");
-        match node_type {
-            "data" | "intent" | "agent" | "runtime" | "runtime_control" => {}
-            _ => {
-                safe_eprintln!("[graph->QS] 未知节点类型 '{}', 跳过 QS 生成", node_type);
-            }
-        }
+        unsupported_node_logging::log_if_unsupported_node(node);
     }
 
     intent_lowering::append_intent_lowering_lines(nodes, edges, &mut qs_lines)?;
