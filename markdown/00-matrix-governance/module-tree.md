@@ -5857,6 +5857,45 @@ AI 声称 BE-001HB-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充（BE-001HB-01）**: `strategy_graph_parser baseline_frozen` 与 `strategy_graph_parser plan_frozen` 成立；下一步只能进入 BE-001HB-02 extract_closeout，不得移动 route surface 或 artifact projection。
 **最新状态补充（BE-001HB-02）**: `strategy_graph_parser actual_extraction_done`、`strategy_graph_parser closeout_done` 与 `strategy_graph_parser stop_split: true` 成立；父级仍保留 route surface 与 artifact target projection 残余，下一步只能回到 BE-001HC-01 `quantscript_graph` 父叶残余判断。
 
+### 5.2.4 `backend.graph_compile.quantscript_graph.artifact_target_projection`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.artifact_target_projection`
+**父模块**: `backend.graph_compile.quantscript_graph`
+**状态**: v4.16 BE-001HD-01 baseline_plan 已建立，`artifact_target_projection baseline_frozen` 与 `artifact_target_projection plan_frozen` 成立；下一步只能进入 BE-001HD-02 extract_closeout。
+
+**真实文件**:
+- `src/backend/graph_compile/quantscript_graph.rs`
+
+**计划文件**:
+artifact_target_projection child module under `src/backend/graph_compile/quantscript_graph/` (not created in BE-001HD-01).
+
+**职责**:
+承接 QuantScript artifact enrichment 与 runtime target projection；父级继续持有 route surface 和 public helper wrapper，并通过父级中介复用 graph-to-QS generator。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `attach_quantscript_artifacts` (parent wrapper retained) | graph, QS source, generated_at, saved path | mutates graph metadata artifacts | graph API / parser wrapper | child 不得直接调用 `graph_to_qs_generation` sibling；不得移动 route handler |
+| `build_compile_runtime_targets_from_graph` (parent wrapper retained) | graph `Value` | `CompileRuntimeTargets` | compile/runtime/backtest callers | 不得改写 fallback 语义或 runtime target shape |
+
+**白箱节点**:
+| 白箱节点 | 输入 | 输出 | 等价注意事项 |
+| --- | --- | --- | --- |
+| artifact map mutation | graph + QS metadata | metadata.artifacts.quantscript | Preserve graph_source/formal_source/node_sources/label_targets/runtime_targets/generated_at/saved_path. |
+| node source projection | graph nodes/edges + parent-supplied generator | node_sources map | Generator reuse must be parent-mediated, not child-to-child. |
+| label target projection | graph nodes/config | label_targets map | Preserve node id/name/name-field/config-field aliases and duplicate-first behavior. |
+| runtime target projection | graph nodes | runtime_targets value | Preserve data/intent/agent/risk/runtime/execution mappings. |
+| sanitizer helpers | exchange/instrument/interval/node id | stable source/runtime ids | Preserve lowercase/ascii/underscore fallback behavior. |
+| compile target decode | runtime_targets value | `CompileRuntimeTargets` | Preserve safe warning and default fallback on deserialize failure. |
+
+**父级通信规则**:
+本子叶只能由 `backend.graph_compile.quantscript_graph` 父级调用。graph-to-QS child reuse must be passed by the parent as a generator callback; artifact_target_projection must not import or call sibling modules directly.
+
+**幻觉检查点**:
+AI 声称 BE-001HD-01 已完成时，必须说明当前只是 `no code movement` baseline_plan，planned artifact_target_projection child 尚未创建，projection helpers 仍在 `src/backend/graph_compile/quantscript_graph.rs`。
+
+**最新状态补充（BE-001HD-01）**: `artifact_target_projection baseline_frozen` 与 `artifact_target_projection plan_frozen` 成立；下一步只能进入 BE-001HD-02 extract_closeout，不得移动 route surface、parser、formal conversion 或 graph generation child。
+
 ### 5.3 `backend.storage_security`
 
 **层级路径**: `root.backend.storage_security`
@@ -7076,3 +7115,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001HB-01)**: `backend.graph_compile.quantscript_graph.strategy_graph_parser` strategy_graph_parser equivalence baseline and extraction plan；下一步: BE-001HB-02 strategy_graph_parser extract_closeout。
 **最新状态补充(BE-001HB-02)**: `backend.graph_compile.quantscript_graph.strategy_graph_parser` strategy_graph_parser actual extraction and closeout complete；下一步: BE-001HC-01 quantscript_graph parent residual judgment。
 **最新状态补充(BE-001HC-01)**: `backend.graph_compile.quantscript_graph` quantscript_graph parent residual judgment selects artifact_target_projection；下一步: BE-001HD-01 artifact_target_projection baseline_plan。
+**最新状态补充(BE-001HD-01)**: `backend.graph_compile.quantscript_graph.artifact_target_projection` artifact_target_projection equivalence baseline and extraction plan；下一步: BE-001HD-02 artifact_target_projection extract_closeout。
