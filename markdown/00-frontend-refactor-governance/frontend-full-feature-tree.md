@@ -18,12 +18,17 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `frontend/src/App.jsx`
     - `frontend/src/app/AppRoot.jsx`
     - `frontend/src/app/AppRoot.test.jsx`
+    - `frontend/src/app/AppShellFallback.jsx`
+    - `frontend/src/app/AppShellFallback.test.jsx`
     - `frontend/src/app/installGlobalErrorHandlers.js`
     - `frontend/src/app/installGlobalErrorHandlers.test.js`
+    - `frontend/src/app/useAppInitialization.js`
+    - `frontend/src/app/useAppInitialization.test.jsx`
   - Evidence:
     - `markdown/00-frontend-refactor-governance/records/FE-0002-frontend-app-shell-baseline.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0003-frontend-app-shell-bootstrap-root-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0004-frontend-isolated-coverage-gate.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0006-frontend-app-shell-startup-readiness-closeout.md`
 
 ## Evidence Rules
 

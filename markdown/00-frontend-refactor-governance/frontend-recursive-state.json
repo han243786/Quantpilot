@@ -3,10 +3,11 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.app_shell",
-  "current_step": "FE-0005",
-  "current_phase": "worktree_pre_commit_hook_gate",
+  "current_step": "FE-0006",
+  "current_phase": "frontend_app_shell_startup_readiness_closeout",
   "closed_children": [
-    "frontend.app_shell.bootstrap_root"
+    "frontend.app_shell.bootstrap_root",
+    "frontend.app_shell.startup_readiness"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
