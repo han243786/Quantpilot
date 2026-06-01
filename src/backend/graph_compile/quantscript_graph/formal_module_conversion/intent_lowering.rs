@@ -1,3 +1,4 @@
+mod macd_lowering;
 mod spread_observer_lowering;
 
 use serde_json::Value;
@@ -83,33 +84,12 @@ pub(super) fn append_intent_lowering_lines(
                     qs_lines.push("    }".to_string());
                 }
                 "builtin.intent.macd" => {
-                    let fast = cfg
-                        .get("fast_period")
-                        .and_then(|v| v.as_u64())
-                        .unwrap_or(12);
-                    let slow = cfg
-                        .get("slow_period")
-                        .and_then(|v| v.as_u64())
-                        .unwrap_or(26);
-                    let signal_period = cfg
-                        .get("signal_period")
-                        .and_then(|v| v.as_u64())
-                        .unwrap_or(9);
-                    qs_lines.push(format!(
-                        "    let macd_val = macd({}, {}, {}, {})",
-                        source_var, fast, slow, signal_period
-                    ));
-                    qs_lines.push("    if macd_val > 0 {".to_string());
-                    qs_lines.push(format!(
-                        "        emit Intent(\"BUY\", instrument=\"{}\", quantity=1.0)",
-                        instrument
-                    ));
-                    qs_lines.push("    } else if macd_val < 0 {".to_string());
-                    qs_lines.push(format!(
-                        "        emit Intent(\"SELL\", instrument=\"{}\", quantity=1.0)",
-                        instrument
-                    ));
-                    qs_lines.push("    }".to_string());
+                    macd_lowering::append_macd_lowering_lines(
+                        cfg,
+                        &source_var,
+                        instrument,
+                        qs_lines,
+                    );
                 }
                 "builtin.intent.momentum" => {
                     let lookback = cfg.get("lookback").and_then(|v| v.as_u64()).unwrap_or(10);
