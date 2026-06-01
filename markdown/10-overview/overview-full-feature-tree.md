@@ -319,7 +319,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 
 | 路由前缀 | 功能域 | 关键模块 |
 |---------|--------|---------|
-| `/api/graph/*` | 策略图 CRUD | `graph_api.rs` |
+| `/api/graph/*` | 策略图 CRUD | `src/backend/graph_compile/graph.rs` |
 | `/api/runtime/compile` | 编译 | `src/backend/graph_compile/compile.rs` |
 | `/api/v1/strategy-config/*` | v4 策略配置契约 / preflight / diff / evidence diff helper | `strategy_config_api.rs` |
 | `/api/runtime/run` | 纸面运行 | `src/backend/runtime/routes/run.rs`、`src/runtime/event_stream.rs`、`src/runtime/run/session_start.rs`、`src/runtime/run/v4_handoff.rs`、`src/runtime/run/record_store.rs`、`src/runtime/run/replay_status.rs` |
@@ -381,7 +381,7 @@ formal_quantscript_authoring_types.rs — QS 正式编写类型定义
 **职责**: 策略图的 CRUD、版本管理、持久化。
 
 ```
-graph_api.rs                    — 图 CRUD API
+src/backend/graph_compile/graph.rs — 图 CRUD API
   ├── POST   /api/graph/save           — 保存策略图
   ├── GET    /api/graph/load/:id       — 加载策略图
   ├── GET    /api/graph/list           — 列出全部策略
@@ -2168,7 +2168,8 @@ storage/
 - `src/formal_quantscript_authoring_types.rs` — QS 正式编写类型; 改 QS 编写 API 类型时改这里
 - `src/frontend_api_types.rs` — 前端 API 类型定义; 改前后端接口类型时改这里
 - `src/frontend_runtime_mapping.rs` — 前端运行时映射; 改后端→前端数据映射时改这里
-- `src/graph_api.rs` — 图 CRUD API (save/load/list/delete/versions); 改图存储 API 时改这里
+- `src/backend/graph_compile/graph.rs` — 图 CRUD API (save/load/list/delete/versions); 改图存储 API 时改这里
+- `src/graph_api.rs` — root graph API compatibility shim for tests; real implementation lives in `src/backend/graph_compile/graph.rs`
 - `src/backend/graph_compile/quantscript_graph.rs` — QS graph route/parser/artifact 父叶, `generate_quantscript_from_graph_value()` 由 child re-export
 - `src/backend/graph_compile/quantscript_graph/artifact_target_projection.rs` — QS graph artifact and runtime target projection child; parent mediates graph-to-QS generator reuse
 - `src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs` — graph JSON → QS 源码, `generate_quantscript_from_graph_value()`; 改图→QS 转换时改这里
@@ -3197,3 +3198,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/559-backend.graph_compile.parent_residual_judgment.graph.md` - v4.16.0 BE-001HJ-01 backend.graph_compile parent residual judgment selects graph
 递归边界补充: BE-001HK-01 `backend.graph_compile.graph` backend.graph_compile.graph equivalence baseline and extraction plan；下一步: BE-001HK-02 backend.graph_compile.graph extract_closeout。
 - `markdown/06-milestones/v4.16.0/560-backend.graph_compile.graph.baseline_plan.md` - v4.16.0 BE-001HK-01 backend.graph_compile.graph equivalence baseline and extraction plan
+递归边界补充: BE-001HK-02 `backend.graph_compile.graph` backend.graph_compile.graph actual extraction and closeout complete；下一步: BE-001HL-01 backend.graph_compile parent closeout。
+- `markdown/06-milestones/v4.16.0/561-backend.graph_compile.graph.extract_closeout.md` - v4.16.0 BE-001HK-02 backend.graph_compile.graph actual extraction and closeout complete

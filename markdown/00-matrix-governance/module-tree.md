@@ -5287,7 +5287,7 @@ AI 声称 BE-001CR-04 完成时，必须说明本批次是 `no code movement` cl
 
 **层级路径**: `root.backend.graph_compile`
 **父模块**: `backend`
-**状态**: v4.16 BE-001HJ-01 父叶残余判断已完成；`quantscript_graph` 与 `compile` 均已 closeout，`backend.graph_compile stop_split: false`，下一步进入 BE-001HK-01 `backend.graph_compile.graph` baseline_plan。
+**状态**: v4.16 BE-001HK-02 已完成 `backend.graph_compile.graph` 实际抽离与 closeout；`quantscript_graph`、`compile` 与 `graph` 均已 closeout，下一步进入 BE-001HL-01 `backend.graph_compile` parent closeout。
 **真实文件**:
 - `src/backend/graph_compile.rs`
 - `src/backend/graph_compile/compile.rs`
@@ -5352,12 +5352,13 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 **最新状态补充（BE-001HI-02）**: BE-001HI-02 已完成 `backend.graph_compile.compile` 实际抽离与 closeout。`src/backend/graph_compile/compile.rs` 已承接 compile route/API 实现，旧 root compile_api implementation owner 已移除且 `src/compile_api.rs` 仅保留兼容 marker，root parent 仅保留 `compile_runtime_protocol_via_qs` 受控导出；下一步只能回到 BE-001HJ-01 `backend.graph_compile` 父叶残余判断，不得移动 `graph_api` 或宣称 graph compile 已整体收口。
 **最新状态补充（BE-001HJ-01）**: BE-001HJ-01 已完成 `backend.graph_compile` 父叶残余判断。`quantscript_graph` 与 `compile` 已 closeout，父级只剩 `graph` route/persistence residual，因此 `backend.graph_compile stop_split: false`；下一步只能进入 BE-001HK-01 `backend.graph_compile.graph` baseline_plan，不得直接移动 graph API 实现或宣称 graph compile 已整体收口。
 **最新状态补充（BE-001HK-01）**: BE-001HK-01 已建立 `backend.graph_compile.graph` 等价基线与抽离方案。当前 `no code movement`，`graph baseline_frozen` 与 `graph plan_frozen` 成立；下一步只能进入 BE-001HK-02 extract_closeout，不得移动 compile / quantscript graph child 或改变 graph persistence/version/reveal 语义。
+**最新状态补充（BE-001HK-02）**: BE-001HK-02 已完成 `backend.graph_compile.graph` 实际抽离与 closeout。`src/backend/graph_compile/graph.rs` 已承接 graph route/persistence 实现，`src/graph_api.rs` 仅保留 cfg(test) compatibility shim；下一步只能进入 BE-001HL-01 `backend.graph_compile` parent closeout，不得继续细拆 graph 内部或宣称 backend 顶层已完成。
 
 ### 5.2.0b `backend.graph_compile.graph`
 
 **层级路径**: `root.backend.graph_compile.graph`
 **父模块**: `backend.graph_compile`
-**状态**: v4.16 BE-001HK-01 baseline_plan 已完成；当前真实 owner 仍是 `src/graph_api.rs`，下一步 BE-001HK-02 只允许把 graph route/persistence residual 迁入 `src/backend/graph_compile/graph.rs`。
+**状态**: v4.16 BE-001HK-02 actual extraction + closeout 已完成，`backend.graph_compile.graph stop_split: true`；下一步回到 `backend.graph_compile` parent closeout。
 **真实文件**:
 - `src/backend/graph_compile/graph.rs`
 - `src/graph_api.rs`
@@ -7201,3 +7202,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001HI-02)**: `backend.graph_compile.compile` backend.graph_compile.compile actual extraction and closeout complete；下一步: BE-001HJ-01 backend.graph_compile parent residual judgment。
 **最新状态补充(BE-001HJ-01)**: `backend.graph_compile` backend.graph_compile parent residual judgment selects graph；下一步: BE-001HK-01 backend.graph_compile.graph baseline_plan。
 **最新状态补充(BE-001HK-01)**: `backend.graph_compile.graph` backend.graph_compile.graph equivalence baseline and extraction plan；下一步: BE-001HK-02 backend.graph_compile.graph extract_closeout。
+**最新状态补充(BE-001HK-02)**: `backend.graph_compile.graph` backend.graph_compile.graph actual extraction and closeout complete；下一步: BE-001HL-01 backend.graph_compile parent closeout。
