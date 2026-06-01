@@ -21285,6 +21285,47 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/500-*.md", @(
+        @("BE-001FZ-02", "macd plan marker"),
+        @("BE-001FZ-03", "next macd extraction marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering", "macd child marker"),
+        @("root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering", "macd coordinate"),
+        @("macd_lowering plan_frozen", "plan frozen marker"),
+        @("macd_lowering baseline_frozen", "baseline frozen marker"),
+        @("src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/macd_lowering.rs", "planned child path"),
+        @("src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering.rs", "parent path"),
+        @("mod macd_lowering;", "parent mod marker"),
+        @("macd_lowering::append_macd_lowering_lines", "parent call marker"),
+        @("pub(super) fn append_macd_lowering_lines", "helper signature marker"),
+        @("cfg: &Value", "cfg input marker"),
+        @("source_var: &str", "source input marker"),
+        @("instrument: &str", "instrument input marker"),
+        @("qs_lines: &mut Vec<String>", "qs lines input marker"),
+        @("builtin.intent.macd", "macd branch marker"),
+        @("fast_period default 12", "fast default marker"),
+        @("slow_period default 26", "slow default marker"),
+        @("signal_period default 9", "signal default marker"),
+        @("macd({}, {}, {}, {})", "macd render marker"),
+        @("macd_val > 0", "buy guard marker"),
+        @("macd_val < 0", "sell guard marker"),
+        @("emit Intent(`"BUY`", instrument=`"{}`", quantity=1.0)", "buy emit marker"),
+        @("emit Intent(`"SELL`", instrument=`"{}`", quantity=1.0)", "sell emit marker"),
+        @("intent_lowering -> macd_lowering", "macd child link marker"),
+        @("formal_module_conversion -> intent_lowering", "upper parent link marker"),
+        @("intent_lowering -> spread_observer_lowering", "spread child link marker"),
+        @("formal_module_conversion -> macd_lowering", "forbidden upper bypass marker"),
+        @("sibling horizontal link", "horizontal link guard marker"),
+        @("release transition", "release transition guard marker"),
+        @("cargo fmt --check", "cargo fmt check marker"),
+        @("cargo check -p quantpilot", "cargo check marker"),
+        @("formal_quantscript_compile_endpoint_returns_structured_lowering_diagnostic_for_missing_macd_source", "macd targeted test marker"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
