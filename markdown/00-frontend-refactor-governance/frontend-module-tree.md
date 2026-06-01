@@ -10,7 +10,38 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Active Parent
 
-None. Next parent candidate: `frontend.capabilities`.
+- `frontend.capabilities`
+  - Status: parent baseline established.
+  - Record: `markdown/00-frontend-refactor-governance/records/FE-0022-frontend-capabilities-baseline.md`
+  - Current owned and split-target files:
+    - `frontend/src/capabilities/supportMatrix.js`
+    - `frontend/src/capabilities/supportMatrix.test.js`
+    - `frontend/src/capabilities/capabilityProjection.js`
+    - `frontend/src/capabilities/capabilityProjection.test.js`
+    - `frontend/src/capabilities/capabilityGovernance.js`
+    - `frontend/src/capabilities/capabilityGovernance.test.js`
+    - `frontend/src/modules/moduleRegistry.js`
+    - `frontend/src/modules/moduleRegistry.test.js`
+    - `frontend/src/modules/builtinModules.js`
+    - `frontend/src/store/graphStore.capabilities.test.js`
+  - Important consumers:
+    - `frontend/src/store/graphStore.js`
+    - `frontend/src/store/graphStorePersistenceHelpers.js`
+    - `frontend/src/store/graphStoreCompileActions.js`
+    - `frontend/src/store/graphStoreRuntimeSessionActions.js`
+    - `frontend/src/components/ModuleSidebar.jsx`
+    - `frontend/src/components/TopToolbar.jsx`
+    - `frontend/src/pages/StrategyWorkspacePage.jsx`
+    - `frontend/src/pages/StrategyWorkspaceExperimentCard.jsx`
+    - `frontend/src/graph/compileGraph.js`
+  - Child queue:
+    - `frontend.capabilities.support_matrix_truth`
+    - `frontend.capabilities.capability_projection`
+    - `frontend.capabilities.governance_registry`
+    - `frontend.capabilities.builtin_capability_snapshot`
+    - `frontend.capabilities.module_registry_gate`
+    - `frontend.capabilities.store_capability_refresh`
+  - Closed child leaves: none.
 
 ## Last Closed Parent
 
@@ -114,7 +145,6 @@ None. Next parent candidate: `frontend.capabilities`.
 
 ## Pending Parent Queue
 
-- `frontend.capabilities`
 - `frontend.strategy_workspace`
 - `frontend.strategy_hub`
 - `frontend.graph_editor`

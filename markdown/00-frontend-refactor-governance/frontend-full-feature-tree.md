@@ -85,6 +85,23 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0020-frontend-api-client-compat-fetch-helpers-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0021-frontend-api-client-parent-closeout.md`
 
+- `frontend.capabilities`
+  - Status: parent baseline established.
+  - User-visible behavior: backend capability snapshots gate frontend modules, workspace surfaces, toolbar/runtime actions, and safe fallback messaging.
+  - Active frontend-local paths:
+    - `frontend/src/capabilities/supportMatrix.js`
+    - `frontend/src/capabilities/supportMatrix.test.js`
+    - `frontend/src/capabilities/capabilityProjection.js`
+    - `frontend/src/capabilities/capabilityProjection.test.js`
+    - `frontend/src/capabilities/capabilityGovernance.js`
+    - `frontend/src/capabilities/capabilityGovernance.test.js`
+    - `frontend/src/modules/moduleRegistry.js`
+    - `frontend/src/modules/moduleRegistry.test.js`
+    - `frontend/src/modules/builtinModules.js`
+    - `frontend/src/store/graphStore.capabilities.test.js`
+  - Evidence:
+    - `markdown/00-frontend-refactor-governance/records/FE-0022-frontend-capabilities-baseline.md`
+
 ## Evidence Rules
 
 Each landed feature area should link to:

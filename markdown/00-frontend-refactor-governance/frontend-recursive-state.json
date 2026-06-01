@@ -2,21 +2,24 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.api_client",
-  "current_step": "FE-0021",
-  "current_phase": "frontend_api_client_parent_closeout",
-  "current_child_queue": [],
-  "next_parent": "frontend.capabilities",
+  "current_parent": "frontend.capabilities",
+  "current_step": "FE-0022",
+  "current_phase": "frontend_capabilities_baseline",
+  "current_child_queue": [
+    "frontend.capabilities.support_matrix_truth",
+    "frontend.capabilities.capability_projection",
+    "frontend.capabilities.governance_registry",
+    "frontend.capabilities.builtin_capability_snapshot",
+    "frontend.capabilities.module_registry_gate",
+    "frontend.capabilities.store_capability_refresh"
+  ],
+  "next_parent": "frontend.strategy_workspace",
   "closed_parents": [
     "frontend.app_shell",
     "frontend.routing",
     "frontend.api_client"
   ],
-  "closed_children": [
-    "frontend.api_client.base_resolution",
-    "frontend.api_client.request_transport",
-    "frontend.api_client.compat_fetch_helpers"
-  ],
+  "closed_children": [],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
     "markdown/00-matrix-governance/module-tree.md",
