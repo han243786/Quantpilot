@@ -646,3 +646,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001HG-01 `backend.graph_compile.quantscript_graph` quantscript_graph parent closeout sets stop_split true；下一步: BE-001HH-01 backend.graph_compile parent residual judgment。
 - BE-001HH-01 `backend.graph_compile` backend.graph_compile parent residual judgment selects compile；下一步: BE-001HI-01 backend.graph_compile.compile baseline_plan。
 - BE-001HI-01 `backend.graph_compile.compile` backend.graph_compile.compile equivalence baseline and extraction plan；下一步: BE-001HI-02 backend.graph_compile.compile extract_closeout。
+- BE-001HI-02 `backend.graph_compile.compile` backend.graph_compile.compile actual extraction and closeout complete；下一步: BE-001HJ-01 backend.graph_compile parent residual judgment。

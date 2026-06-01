@@ -918,3 +918,4 @@
 | v4.16.0 / BE-001HG-01 | 新增: `backend.graph_compile.quantscript_graph` quantscript_graph parent closeout sets stop_split true |
 | v4.16.0 / BE-001HH-01 | 新增: `backend.graph_compile` backend.graph_compile parent residual judgment selects compile |
 | v4.16.0 / BE-001HI-01 | 新增: `backend.graph_compile.compile` backend.graph_compile.compile equivalence baseline and extraction plan |
+| v4.16.0 / BE-001HI-02 | 新增: `backend.graph_compile.compile` backend.graph_compile.compile actual extraction and closeout complete |

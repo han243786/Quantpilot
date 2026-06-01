@@ -792,7 +792,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/strategy_config_api.rs`
 - `src/runtime/mod.rs`
 - `src/graph_api.rs`
-- `src/compile_api.rs`
+- `src/backend/graph_compile/compile.rs`
 - `src/storage_lifecycle.rs`
 - `src/credential_vault.rs`
 - `src/tests_backend.rs`
@@ -857,7 +857,7 @@ AI 声称 backend 已推进时，必须说明当前完成的是 BE-001B 九叶�
 - `src/runtime/mod.rs`
 - `src/graph_api.rs`
 - `src/backend/graph_compile/quantscript_graph.rs`
-- `src/compile_api.rs`
+- `src/backend/graph_compile/compile.rs`
 
 **职责**:
 作为后端接口边界的大模块，先管理 router、route registration、API facade、旧 handler 保留和 response schema 冻结。后续小模块抽离必须先挂到本父级边界下，再进入 capability、strategy config、runtime、graph/compile 等子模块。
@@ -3419,7 +3419,7 @@ AI 声称 `runtime.run.v4_handoff` 已抽离时，必须指出只完成 v4 hando
 - `src/runtime_validation.rs`
 - `src/runtime_event_projection.rs`
 - `src/runtime_response_mapping.rs`
-- `src/compile_api.rs`
+- `src/backend/graph_compile/compile.rs`
 - `src/capability_api.rs`
 - `src/collaboration.rs`
 - `src/backend/graph_compile/quantscript_graph.rs`
@@ -5287,7 +5287,7 @@ AI 声称 BE-001CR-04 完成时，必须说明本批次是 `no code movement` cl
 
 **层级路径**: `root.backend.graph_compile`
 **父模块**: `backend`
-**状态**: v4.16 BE-001HH-01 父叶残余判断已完成；`quantscript_graph stop_split: true`，`backend.graph_compile stop_split: false`，下一步进入 BE-001HI-01 `backend.graph_compile.compile` baseline_plan。
+**状态**: v4.16 BE-001HI-02 已完成 `backend.graph_compile.compile` 实际抽离与 closeout；`quantscript_graph` 与 `compile` 均已 closeout，`backend.graph_compile stop_split: false`，下一步回到 BE-001HJ-01 父叶残余判断处理 `graph` residual。
 **真实文件**:
 - `src/backend/graph_compile.rs`
 - `src/backend/graph_compile/compile.rs`
@@ -5296,7 +5296,6 @@ AI 声称 BE-001CR-04 完成时，必须说明本批次是 `no code movement` cl
 - `src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs`
 - `src/graph_api.rs`
 - `src/graph_version_compare.rs`
-- `src/compile_api.rs`
 - `src/compile_artifact_builders.rs`
 - `src/compile_diagnostics.rs`
 
@@ -5334,7 +5333,7 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 **幻觉检查点**:
 任何“编译链已支持”的结论必须同时指出 graph route、compile route 和诊断测试。
 
-**最新状态补充（BE-001FP-01）**: BE-001FP-01 已完成 `backend.graph_compile` 父叶残余判断。当时 `src/compile_api.rs`、`src/graph_api.rs` 与旧 graph_quantscript_api owner 仍是旧 owner residual，三个 child route facade 尚未承接真实 handler，因此 `backend.graph_compile stop_split: false`。下一步只能进入 BE-001FQ-01 `backend.graph_compile.quantscript_graph` 单子叶等价基线，不得直接迁移 compile / graph / quantscript graph handler。
+**最新状态补充（BE-001FP-01）**: BE-001FP-01 已完成 `backend.graph_compile` 父叶残余判断。当时旧 root compile_api owner、`src/graph_api.rs` 与旧 graph_quantscript_api owner 仍是旧 owner residual，三个 child route facade 尚未承接真实 handler，因此 `backend.graph_compile stop_split: false`。下一步只能进入 BE-001FQ-01 `backend.graph_compile.quantscript_graph` 单子叶等价基线，不得直接迁移 compile / graph / quantscript graph handler。
 **最新状态补充（BE-001FQ-01）**: BE-001FQ-01 已建立 `backend.graph_compile.quantscript_graph` 单子叶等价基线。当时 `no code movement`，旧 graph_quantscript_api owner 仍是旧 owner，route handler、`generate_quantscript_from_graph_value`、`parse_graph_quantscript_source`、`convert_graph_json_to_script_module`、`attach_quantscript_artifacts`、runtime targets helper 与 compile/graph/runtime/test 调用面已冻结；下一步只能进入 BE-001FQ-02 抽离方案。
 **最新状态补充（BE-001FQ-02）**: BE-001FQ-02 已建立 `backend.graph_compile.quantscript_graph` 抽离方案。下一步只能进入 BE-001FQ-03 实际抽离记录：由 `src/backend/graph_compile/quantscript_graph.rs` 接管旧 graph_quantscript_api 真实实现，`src/lib.rs` 通过 root parent re-export surface 维持旧 caller，不得新增 compile / graph / runtime sibling horizontal link。
 **最新状态补充（BE-001FQ-03）**: BE-001FQ-03 已完成 `backend.graph_compile.quantscript_graph` 实际抽离。旧 graph_quantscript_api owner 已删除，`src/backend/graph_compile/quantscript_graph.rs` 成为 QS graph route/helper 真实 owner；`src/lib.rs` 通过 root parent re-export surface 维持 compile / graph / runtime / test caller，当前不得宣称 `backend.graph_compile stop_split: true`。
@@ -5350,12 +5349,13 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 **最新状态补充（BE-001HG-01）**: BE-001HG-01 已完成 `backend.graph_compile.quantscript_graph` 父叶 closeout。`graph_to_qs_generation`、`formal_module_conversion`、`strategy_graph_parser`、`artifact_target_projection` 与 `route_surface` 均已 closeout，父级只保留受控 wrapper / re-export / callback mediation，因此 `backend.graph_compile.quantscript_graph stop_split: true`；下一步只能上浮到 BE-001HH-01 `backend.graph_compile` 父叶残余判断，不得宣称 `backend.graph_compile` 已整体收口。
 **最新状态补充（BE-001HH-01）**: BE-001HH-01 已完成 `backend.graph_compile` 父叶残余判断。`quantscript_graph` 已 closeout，父级仍保留 `compile` 与 `graph` route facade 旧 owner residual，因此 `backend.graph_compile stop_split: false`；下一步只能进入 BE-001HI-01 `backend.graph_compile.compile` baseline_plan，不得直接移动 `graph_api` 或宣称 graph compile 已整体收口。
 **最新状态补充（BE-001HI-01）**: BE-001HI-01 已建立 `backend.graph_compile.compile` 等价基线与抽离方案。当前 `no code movement`，`compile baseline_frozen` 与 `compile plan_frozen` 成立；下一步只能进入 BE-001HI-02 `backend.graph_compile.compile` extract_closeout，不得移动 `graph_api`、改变 compile diagnostics/artifact builder 语义或启动 release transition。
+**最新状态补充（BE-001HI-02）**: BE-001HI-02 已完成 `backend.graph_compile.compile` 实际抽离与 closeout。`src/backend/graph_compile/compile.rs` 已承接 compile route/API 实现，旧 root compile_api implementation owner 已移除且 `src/compile_api.rs` 仅保留兼容 marker，root parent 仅保留 `compile_runtime_protocol_via_qs` 受控导出；下一步只能回到 BE-001HJ-01 `backend.graph_compile` 父叶残余判断，不得移动 `graph_api` 或宣称 graph compile 已整体收口。
 
 ### 5.2.0 `backend.graph_compile.compile`
 
 **层级路径**: `root.backend.graph_compile.compile`
 **父模块**: `backend.graph_compile`
-**状态**: v4.16 BE-001HI-01 baseline_plan 已完成；当前真实 owner 仍是 `src/compile_api.rs`，下一步 BE-001HI-02 只允许把 compile route/API residual 迁入 `src/backend/graph_compile/compile.rs`。
+**状态**: v4.16 BE-001HI-02 actual extraction + closeout 已完成，`backend.graph_compile.compile stop_split: true`；下一步回到 `backend.graph_compile` 父叶残余判断。
 **真实文件**:
 - `src/backend/graph_compile/compile.rs`
 - `src/compile_api.rs`
@@ -5377,7 +5377,7 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 **真实文件**:
 - `src/backend/graph_compile/quantscript_graph.rs`
 - `src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs`
-- `src/compile_api.rs`
+- `src/backend/graph_compile/compile.rs`
 - `src/graph_api.rs`
 - `src/tests_backend.rs`
 
@@ -7178,3 +7178,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001HG-01)**: `backend.graph_compile.quantscript_graph` quantscript_graph parent closeout sets stop_split true；下一步: BE-001HH-01 backend.graph_compile parent residual judgment。
 **最新状态补充(BE-001HH-01)**: `backend.graph_compile` backend.graph_compile parent residual judgment selects compile；下一步: BE-001HI-01 backend.graph_compile.compile baseline_plan。
 **最新状态补充(BE-001HI-01)**: `backend.graph_compile.compile` backend.graph_compile.compile equivalence baseline and extraction plan；下一步: BE-001HI-02 backend.graph_compile.compile extract_closeout。
+**最新状态补充(BE-001HI-02)**: `backend.graph_compile.compile` backend.graph_compile.compile actual extraction and closeout complete；下一步: BE-001HJ-01 backend.graph_compile parent residual judgment。

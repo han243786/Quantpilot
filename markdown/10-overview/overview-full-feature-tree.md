@@ -320,7 +320,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 | 路由前缀 | 功能域 | 关键模块 |
 |---------|--------|---------|
 | `/api/graph/*` | 策略图 CRUD | `graph_api.rs` |
-| `/api/runtime/compile` | 编译 | `compile_api.rs` |
+| `/api/runtime/compile` | 编译 | `src/backend/graph_compile/compile.rs` |
 | `/api/v1/strategy-config/*` | v4 策略配置契约 / preflight / diff / evidence diff helper | `strategy_config_api.rs` |
 | `/api/runtime/run` | 纸面运行 | `src/backend/runtime/routes/run.rs`、`src/runtime/event_stream.rs`、`src/runtime/run/session_start.rs`、`src/runtime/run/v4_handoff.rs`、`src/runtime/run/record_store.rs`、`src/runtime/run/replay_status.rs` |
 | `/api/runtime/backtest/*` | 回测 | `src/backend/runtime/routes/backtest.rs`、`src/runtime/backtest/execution_start.rs`、`src/runtime/backtest/v4_projection.rs`、`src/runtime/backtest/v4_request_resolution.rs`、`src/runtime/backtest/v4_runtime_execution.rs`、`src/runtime/backtest/legacy_dispatch.rs`、`src/runtime/backtest/record_store.rs`、`src/runtime/backtest/replay.rs`、`src/runtime/backtest/experiment_sweep.rs`、`src/backtest_compare.rs` |
@@ -334,7 +334,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 | `/api/v1/chaos/*` | 混沌实验 | `chaos_experiment.rs` |
 | `/api/v1/runbook/*` | 运行手册 | `runbook.rs` |
 | `/api/capabilities` | 能力声明 | `capability_api.rs` |
-| `/api/quantscript/formal/*` | QS 正式编译 | `compile_api.rs` |
+| `/api/quantscript/formal/*` | QS 正式编译 | `src/backend/graph_compile/compile.rs` |
 | `/api/collaboration/*` | 协作 | `collaboration.rs` |
 | `/api/hotswap/*` | 模块热替换 | `hotswap_api.rs` |
 | `/api/migration/*` | 数据迁移 | `migration_sender.rs` |
@@ -349,7 +349,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 **数据流**: `graph JSON → QS 源码 → parse → HIR → lower → Core IR → sandbox`
 
 ```
-compile_api.rs                  — 编译入口, /api/runtime/compile
+src/backend/graph_compile/compile.rs — 编译入口, /api/runtime/compile
   ├── compile_runtime_protocol_via_qs()  — QS 路径编译 (主路径)
   ├── compile_runtime_protocol()         — graph 直接编译 (内部路径)
   └── 编译缓存: LRU 50 条, key=(graph_hash, compile_options_hash)
@@ -2044,7 +2044,7 @@ research-spread-custom-plugin-sequencing.md  — Spread 自定义插件排序
 策略图 (graph JSON) / QuantScript 源码
   │  POST /api/runtime/compile
   ▼
-编译管道 (compile_api.rs → quantscript)
+编译管道 (backend.graph_compile.compile → quantscript)
   │  graph → QS 源码 → parse → HIR → lower → Core IR
   ▼
 运行时 (runtime/mod.rs → qrpc_runtime)
@@ -2158,7 +2158,8 @@ storage/
 - `src/chaos_experiment.rs` — 混沌实验; 改混沌测试定义/执行时改这里
 - `src/cli_support.rs` — CLI 辅助; 改命令行参数或 `v4-run` 时改这里 🆕 v4.1.0
 - `src/collaboration.rs` — 协作功能; 改多人协作时改这里
-- `src/compile_api.rs` — 编译入口, `/api/runtime/compile`; 改编译流程或 v4 诊断码映射时改这里
+- `src/backend/graph_compile/compile.rs` — 编译入口, `/api/runtime/compile`; 改编译流程或 v4 诊断码映射时改这里
+- `src/compile_api.rs` — root compile API compatibility marker; real implementation lives in `src/backend/graph_compile/compile.rs`
 - `src/compile_artifact_builders.rs` — 编译产物组装; 改策略包/迁移包结构时改这里
 - `src/compile_diagnostics.rs` — 编译诊断; 改编译错误/警告格式时改这里
 - `src/credential_api.rs` — 凭证管理 API (set/list/delete); 改凭证 CRUD 时改这里
@@ -3190,3 +3191,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/556-backend.graph_compile.parent_residual_judgment.md` - v4.16.0 BE-001HH-01 backend.graph_compile parent residual judgment selects compile
 递归边界补充: BE-001HI-01 `backend.graph_compile.compile` backend.graph_compile.compile equivalence baseline and extraction plan；下一步: BE-001HI-02 backend.graph_compile.compile extract_closeout。
 - `markdown/06-milestones/v4.16.0/557-backend.graph_compile.compile.baseline_plan.md` - v4.16.0 BE-001HI-01 backend.graph_compile.compile equivalence baseline and extraction plan
+递归边界补充: BE-001HI-02 `backend.graph_compile.compile` backend.graph_compile.compile actual extraction and closeout complete；下一步: BE-001HJ-01 backend.graph_compile parent residual judgment。
+- `markdown/06-milestones/v4.16.0/558-backend.graph_compile.compile.extract_closeout.md` - v4.16.0 BE-001HI-02 backend.graph_compile.compile actual extraction and closeout complete

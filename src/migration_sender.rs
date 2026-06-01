@@ -36,13 +36,12 @@ pub async fn deploy_strategy(
     })?;
 
     // 1. QS lowering → RuntimeProtocolCoreConfig
-    let protocol =
-        crate::compile_api::compile_runtime_protocol_via_qs(&graph_json).map_err(|e| {
-            (
-                axum::http::StatusCode::BAD_REQUEST,
-                format!("编译失败: {}", e.1),
-            )
-        })?;
+    let protocol = crate::compile_runtime_protocol_via_qs(&graph_json).map_err(|e| {
+        (
+            axum::http::StatusCode::BAD_REQUEST,
+            format!("编译失败: {}", e.1),
+        )
+    })?;
 
     // 2. 编译 → Core IR
     let compiled = qrpc_compiler::compile_runtime_protocol_config(&protocol).map_err(|e| {

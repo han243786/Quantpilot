@@ -116,6 +116,7 @@ use tokio::{fs, sync::RwLock, time::sleep};
 use api_errors::*;
 pub use app_router::*;
 pub use app_runtime_helpers::*;
+pub(crate) use backend::graph_compile::compile::compile_runtime_protocol_via_qs;
 pub(crate) use backend::graph_compile::quantscript_graph::{
     attach_quantscript_artifacts, build_compile_runtime_targets_from_graph,
     convert_graph_json_to_script_module, generate_quantscript_from_graph_value,
@@ -138,7 +139,6 @@ use capability_api::*;
 #[cfg(test)]
 use cli_support::*;
 use collaboration::*;
-use compile_api::*;
 use compile_artifact_builders::*;
 use compile_diagnostics::*;
 use formal_quantscript_authoring_types::*;
