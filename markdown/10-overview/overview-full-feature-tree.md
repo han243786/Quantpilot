@@ -3027,3 +3027,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/488-backend.graph_compile.quantscript_graph.formal_module_conversion父叶残余判断.md` - v4.16.0 BE-001FU-01 `formal_module_conversion` 父叶残余判断，选择 `intent_lowering`
 递归边界补充: BE-001FV-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 单子叶等价基线；下一步只能进入 BE-001FV-02 抽离方案，不得直接创建 child file 或移动 intent 分支。
 - `markdown/06-milestones/v4.16.0/489-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering单子叶等价基线.md` - v4.16.0 BE-001FV-01 `intent_lowering` 等价基线，冻结 built-in intent lowering 语义
+递归边界补充: BE-001FV-02 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 抽离方案；下一步只能进入 BE-001FV-03 实际抽离记录。
+- `markdown/06-milestones/v4.16.0/490-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering抽离方案.md` - v4.16.0 BE-001FV-02 `intent_lowering` 抽离方案，固定 planned child 与 helper signature
