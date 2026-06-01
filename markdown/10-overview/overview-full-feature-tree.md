@@ -281,6 +281,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/app_state_wiring/state_factory.rs`
 - `src/backend/test_support/scenario.rs`
 - `src/backend/strategy_config/artifact.rs`
+- `src/backend/strategy_config/artifact/builder_core.rs`
 - `src/backend/strategy_config/artifact/domain_projection.rs`
 - `src/backend/strategy_config/artifact/schema_model.rs`
 - `src/backend/strategy_config/preflight.rs`
@@ -3235,3 +3236,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/576-backend.strategy_config.artifact.parent_residual_judgment.builder_core.md` - v4.16.0 BE-001HV-01 backend.strategy_config.artifact parent residual judgment selects builder_core
 递归边界补充: BE-001HW-01 `backend.strategy_config.artifact.builder_core` backend.strategy_config.artifact.builder_core equivalence baseline and extraction plan；下一步: BE-001HW-02 backend.strategy_config.artifact.builder_core extract_closeout。
 - `markdown/06-milestones/v4.16.0/577-backend.strategy_config.artifact.builder_core.baseline_plan.md` - v4.16.0 BE-001HW-01 backend.strategy_config.artifact.builder_core equivalence baseline and extraction plan
+递归边界补充: BE-001HW-02 `backend.strategy_config.artifact.builder_core` backend.strategy_config.artifact.builder_core actual extraction complete；下一步: BE-001HX-01 backend.strategy_config.artifact parent closeout。
+- `markdown/06-milestones/v4.16.0/578-backend.strategy_config.artifact.builder_core.extract_closeout.md` - v4.16.0 BE-001HW-02 backend.strategy_config.artifact.builder_core actual extraction complete
