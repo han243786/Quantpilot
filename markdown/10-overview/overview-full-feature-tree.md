@@ -3219,3 +3219,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/569-backend.strategy_config.artifact.extract_closeout.md` - v4.16.0 BE-001HQ-02 backend.strategy_config.artifact route owner extraction complete
 递归边界补充: BE-001HR-01 `backend.strategy_config.artifact` backend.strategy_config.artifact parent residual judgment selects schema_model；下一步: BE-001HS-01 backend.strategy_config.artifact.schema_model baseline_plan。
 - `markdown/06-milestones/v4.16.0/570-backend.strategy_config.artifact.parent_residual_judgment.schema_model.md` - v4.16.0 BE-001HR-01 backend.strategy_config.artifact parent residual judgment selects schema_model
+递归边界补充: BE-001HS-01 `backend.strategy_config.artifact.schema_model` backend.strategy_config.artifact.schema_model equivalence baseline and extraction plan；下一步: BE-001HS-02 backend.strategy_config.artifact.schema_model extract_closeout。
+- `markdown/06-milestones/v4.16.0/571-backend.strategy_config.artifact.schema_model.baseline_plan.md` - v4.16.0 BE-001HS-01 backend.strategy_config.artifact.schema_model equivalence baseline and extraction plan
