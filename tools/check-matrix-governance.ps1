@@ -20210,6 +20210,40 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/473-*.md", @(
+        @("BE-001FO-01", "backend parent residual marker"),
+        @("BE-001FP-01", "next graph compile marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend", "backend marker"),
+        @("root.backend", "backend coordinate"),
+        @("backend stop_split: false", "backend stop split false marker"),
+        @("backend.runtime stop_split: true", "backend runtime done marker"),
+        @("backend_top_level_residual_exists", "backend residual marker"),
+        @("backend_graph_compile_next_leaf_ready", "graph compile next marker"),
+        @("backend.graph_compile", "graph compile marker"),
+        @("root.backend.graph_compile", "graph compile coordinate"),
+        @("backend.capability", "capability marker"),
+        @("backend.strategy_config", "strategy config marker"),
+        @("backend.storage_security", "storage security marker"),
+        @("backend.ops_governance", "ops governance marker"),
+        @("backend.app_state_wiring", "app state marker"),
+        @("backend.test_support", "test support marker"),
+        @("src/backend/graph_compile.rs", "graph compile facade file"),
+        @("src/backend/graph_compile/compile.rs", "compile facade file"),
+        @("src/backend/graph_compile/graph.rs", "graph facade file"),
+        @("src/backend/graph_compile/quantscript_graph.rs", "quantscript graph facade file"),
+        @("src/compile_api.rs", "compile api legacy file"),
+        @("src/graph_api.rs", "graph api legacy file"),
+        @("src/graph_quantscript_api.rs", "graph quantscript api legacy file"),
+        @("release transition guard", "release transition guard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
