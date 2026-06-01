@@ -3016,3 +3016,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/483-backend.graph_compile.quantscript_graph父叶残余判断.md` - v4.16.0 BE-001FS-01 `quantscript_graph` 父叶残余判断，选择 formal_module_conversion
 递归边界补充: BE-001FT-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion` 单子叶等价基线；下一步只能进入 BE-001FT-02 抽离方案，不得直接创建 child file 或移动 `convert_graph_json_to_script_module`。
 - `markdown/06-milestones/v4.16.0/484-backend.graph_compile.quantscript_graph.formal_module_conversion单子叶等价基线.md` - v4.16.0 BE-001FT-01 `formal_module_conversion` 等价基线，冻结 graph JSON 到 `ScriptModule` conversion 语义
+递归边界补充: BE-001FT-02 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion` 抽离方案；下一步只能进入 BE-001FT-03 实际抽离记录。
+- `markdown/06-milestones/v4.16.0/485-backend.graph_compile.quantscript_graph.formal_module_conversion抽离方案.md` - v4.16.0 BE-001FT-02 `formal_module_conversion` 抽离方案，固定 planned child 与单函数迁移清单
