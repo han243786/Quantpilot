@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { navigateTo, strategiesPath } from "./router";
+import AppGlobalOverlays from "./app/AppGlobalOverlays";
 import AppRouteHost from "./app/AppRouteHost";
 import DesktopTitleBar from "./app/DesktopTitleBar";
 import AppShellFallback from "./app/AppShellFallback";
@@ -8,18 +9,11 @@ import { useAppInitialization } from "./app/useAppInitialization";
 import { useAppRoute } from "./app/useAppRoute";
 import { useDesktopWindowChrome } from "./app/useDesktopWindowChrome";
 import LeftSidebar from "./components/LeftSidebar";
-import CommandPalette from "./components/CommandPalette";
 import { useI18n } from "./i18n";
-import TutorialOverlay from "./components/TutorialOverlay";
-import ToastContainer from "./components/ToastContainer";
-import { createTutorialSteps } from "./data/tutorialSteps";
-import { useTutorial } from "./hooks/useTutorial";
 
 export default function App() {
   const isInitialized = useAppInitialization();
-  const { tutorialOpen, closeTutorial } = useTutorial();
   const { t } = useI18n();
-  const tutorialSteps = createTutorialSteps(t);
   const [forceReady, setForceReady] = useState(false);
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
   const mainRef = useRef(null);
@@ -62,11 +56,10 @@ export default function App() {
       <main id="main-content" className="ad-main-content" ref={mainRef} tabIndex={-1} style={appWindow ? { marginTop: 32, height: "calc(100% - 32px)" } : {}}>
         <AppRouteHost route={route} />
       </main>
-      {tutorialOpen && (
-        <TutorialOverlay steps={tutorialSteps} onClose={closeTutorial} />
-      )}
-      <CommandPalette open={cmdPaletteOpen} onClose={() => setCmdPaletteOpen(false)} />
-      <ToastContainer />
+      <AppGlobalOverlays
+        commandPaletteOpen={cmdPaletteOpen}
+        onCloseCommandPalette={() => setCmdPaletteOpen(false)}
+      />
     </>
   );
 }
