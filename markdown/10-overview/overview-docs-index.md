@@ -551,3 +551,4 @@
 | v4.16.0 / BE-001HC-01 | 新增: `backend.graph_compile.quantscript_graph` quantscript_graph parent residual judgment selects artifact_target_projection |
 | v4.16.0 / BE-001HD-01 | 新增: `backend.graph_compile.quantscript_graph.artifact_target_projection` artifact_target_projection equivalence baseline and extraction plan |
 | v4.16.0 / BE-001HD-02 | 新增: `backend.graph_compile.quantscript_graph.artifact_target_projection` artifact_target_projection actual extraction and closeout complete |
+| v4.16.0 / BE-001HE-01 | 新增: `backend.graph_compile.quantscript_graph` quantscript_graph parent residual judgment selects route_surface |
