@@ -841,3 +841,4 @@
 | v4.16.0 / BE-001FQ-04 | 新增: `backend.graph_compile.quantscript_graph` 单叶 closeout 完成，判定继续细拆并选择 `graph_to_qs_generation` |
 | v4.16.0 / BE-001FR-01 | 新增: `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 单子叶等价基线已建立，冻结 graph-to-QS generator 输入面 |
 | v4.16.0 / BE-001FR-02 | 新增: `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 抽离方案已建立，固定 planned child 与四函数迁移清单 |
+| v4.16.0 / BE-001FR-03 | 新增: `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 实际抽离完成，child file 承接四个 generator helper |

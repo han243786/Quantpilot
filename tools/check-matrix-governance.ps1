@@ -20489,6 +20489,40 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/481-*.md", @(
+        @("BE-001FR-03", "graph generation actual extraction marker"),
+        @("BE-001FR-04", "next graph generation closeout marker"),
+        @("actual extraction", "actual extraction marker"),
+        @("backend.graph_compile.quantscript_graph.graph_to_qs_generation", "graph generation child marker"),
+        @("root.backend.graph_compile.quantscript_graph.graph_to_qs_generation", "graph generation coordinate"),
+        @("src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs", "child file marker"),
+        @("graph_to_qs_generation_file_created", "child created marker"),
+        @("graph_to_qs_generation_actual_extraction_done", "actual extraction done marker"),
+        @("mod graph_to_qs_generation", "parent module declaration marker"),
+        @("pub(crate) use graph_to_qs_generation::generate_quantscript_from_graph_value", "parent re-export marker"),
+        @("generate_quantscript_from_graph_value", "generator migrated marker"),
+        @("generate_node_quantscript", "node helper migrated marker"),
+        @("quoted", "quoted helper migrated marker"),
+        @("render_json_scalar", "scalar helper migrated marker"),
+        @("pub(super) fn generate_node_quantscript", "pub super helper marker"),
+        @("build_quantscript_node_sources", "parent internal reuse marker"),
+        @("register_routes", "route exclusion marker"),
+        @("convert_graph_json_to_script_module", "formal conversion exclusion marker"),
+        @("attach_quantscript_artifacts", "artifact projection exclusion marker"),
+        @("parse_graph_quantscript_source", "parser exclusion marker"),
+        @("release transition guard", "release guard marker"),
+        @("sibling horizontal link", "horizontal link guard marker"),
+        @("cargo test -p quantpilot quantscript --lib", "quantscript lib gate"),
+        @("cargo test -p quantpilot --test quantscript_real_strategy_authoring", "authoring gate"),
+        @("cargo test -p quantpilot --test api_graph_versions", "graph versions gate"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
