@@ -650,3 +650,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001HJ-01 `backend.graph_compile` backend.graph_compile parent residual judgment selects graph；下一步: BE-001HK-01 backend.graph_compile.graph baseline_plan。
 - BE-001HK-01 `backend.graph_compile.graph` backend.graph_compile.graph equivalence baseline and extraction plan；下一步: BE-001HK-02 backend.graph_compile.graph extract_closeout。
 - BE-001HK-02 `backend.graph_compile.graph` backend.graph_compile.graph actual extraction and closeout complete；下一步: BE-001HL-01 backend.graph_compile parent closeout。
+- BE-001HL-01 `backend.graph_compile` backend.graph_compile parent closeout sets stop_split true；下一步: BE-001HM-01 backend parent residual judgment。
