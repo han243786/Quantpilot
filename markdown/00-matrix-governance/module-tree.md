@@ -5385,7 +5385,7 @@ AI 声称 BE-001FR-01 已完成时，必须说明当前只是 `no code movement`
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion`
 **父模块**: `backend.graph_compile.quantscript_graph`
-**状态**: v4.16 BE-001GQ-02 `data_source_lowering` 单叶 closeout 已完成，`formal_module_conversion stop_split: false`，下一步回到父叶残余判断。
+**状态**: v4.16 BE-001GS-02 `profile_lowering` 单叶 closeout 已完成，`formal_module_conversion stop_split: false`，下一步回到父叶残余判断。
 **真实文件**:
 - `src/backend/graph_compile/quantscript_graph.rs`
 
@@ -5413,6 +5413,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001GQ-02）**: `data_source_lowering actual_extraction_done`、`data_source_lowering closeout_done` 与 `data_source_lowering stop_split: true` 成立；下一步只能回到 BE-001GR-01 `formal_module_conversion` 父叶残余判断。
 **最新状态补充（BE-001GR-01）**: `formal_module_conversion parent_residual_judgment` 与 `profile_lowering_selected` 成立；下一步只能进入 BE-001GS-01 单子叶等价基线，不能直接移动 risk/execution profile 分支。
 **最新状态补充（BE-001GS-01）**: `profile_lowering baseline_frozen` 与 `profile_lowering plan_frozen` 成立；下一步只能进入 BE-001GS-02 extract_closeout，不能移动 unsupported node logging 或 terminal parse。
+**最新状态补充（BE-001GS-02）**: `profile_lowering actual_extraction_done`、`profile_lowering closeout_done` 与 `profile_lowering stop_split: true` 成立；下一步只能回到 BE-001GT-01 `formal_module_conversion` 父叶残余判断。
 **最新状态补充（BE-001FV-01）**: BE-001FV-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 单子叶等价基线。当前 `no code movement`，`intent_lowering baseline_frozen` 成立；下一步只能进入 BE-001FV-02 抽离方案，不得直接创建 child file、移动 intent 分支或启动 release transition。
 **最新状态补充（BE-001FV-02）**: BE-001FV-02 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 抽离方案。当前 `no code movement`，`intent_lowering plan_frozen` 成立；下一步 BE-001FV-03 只允许创建 planned child、添加 `append_intent_lowering_lines` helper，并由父级单向调用。
 **最新状态补充（BE-001FV-03）**: BE-001FV-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 实际抽离。`intent_lowering actual_extraction_done` 成立；`src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering.rs` 已创建并承接 intent block，父级只保留 `mod intent_lowering` 与 `append_intent_lowering_lines` 调用。
@@ -5725,6 +5726,28 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 
 **最新状态补充（BE-001GQ-01）**: `data_source_lowering baseline_frozen` 与 `data_source_lowering plan_frozen` 成立；下一步只能进入 BE-001GQ-02 extract_closeout。
 **最新状态补充（BE-001GQ-02）**: `data_source_lowering actual_extraction_done`、`data_source_lowering closeout_done` 与 `data_source_lowering stop_split: true` 成立；不继续拆 config_defaults / optional_fetch_args / fetch_line_rendering 微叶。
+
+#### 5.2.2.3 `backend.graph_compile.quantscript_graph.formal_module_conversion.profile_lowering`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.profile_lowering`
+**父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion`
+**状态**: v4.16 BE-001GS-02 单叶 closeout 已完成，`stop_split: true`。
+
+**真实文件**:
+- `src/backend/graph_compile/quantscript_graph/formal_module_conversion/profile_lowering.rs`
+
+**白箱节点**:
+
+| 节点 | 输入 | 输出 | 约束 |
+| --- | --- | --- | --- |
+| profile node classifier | graph node | handled bool | Only risk/execution nodes are handled; parent keeps unsupported-node logging. |
+| risk profile defaults | risk config | profile / max position / leverage / interval | Defaults remain global / 0.2 / 3.0 / 3.0 / 100. |
+| risk profile rendering | risk profile values | `risk.profile(...)` QS line | Existing argument order and formatting remain unchanged. |
+| execution profile defaults | execution config | profile / fee / slippage | Defaults remain paper / 10.0 / 5.0; profile priority remains profile_id / profile_name / mode / paper. |
+| execution profile rendering | execution profile values | `execution.profile(...)` QS line | Existing argument order and formatting remain unchanged. |
+
+**最新状态补充（BE-001GS-01）**: `profile_lowering baseline_frozen` 与 `profile_lowering plan_frozen` 成立；下一步只能进入 BE-001GS-02 extract_closeout。
+**最新状态补充（BE-001GS-02）**: `profile_lowering actual_extraction_done`、`profile_lowering closeout_done` 与 `profile_lowering stop_split: true` 成立；不继续拆 risk_profile_rendering / execution_profile_rendering 微叶。
 
 ### 5.3 `backend.storage_security`
 
@@ -6930,3 +6953,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001GQ-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.data_source_lowering` data_source_lowering actual extraction and closeout complete；下一步: BE-001GR-01 formal_module_conversion parent residual judgment。
 **最新状态补充(BE-001GR-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent residual judgment selects profile_lowering；下一步: BE-001GS-01 profile_lowering baseline_plan。
 **最新状态补充(BE-001GS-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.profile_lowering` profile_lowering equivalence baseline and extraction plan；下一步: BE-001GS-02 profile_lowering extract_closeout。
+**最新状态补充(BE-001GS-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.profile_lowering` profile_lowering actual extraction and closeout complete；下一步: BE-001GT-01 formal_module_conversion parent residual judgment。
