@@ -21861,6 +21861,34 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/513-*.md", @(
+        @("GOV-LEAF-SPLIT-GATE", "leaf split gate batch marker"),
+        @("no code movement", "no code movement marker"),
+        @("leaf_split_decision_gate", "leaf split decision gate marker"),
+        @("leaf_split_base_gate", "base gate marker"),
+        @("white_box_boundary_named", "white box boundary rule"),
+        @("parent_child_communication_kept", "parent child communication rule"),
+        @("equivalence_baseline_freezable", "equivalence baseline rule"),
+        @("leaf_split_positive_trigger", "positive trigger marker"),
+        @("public_or_handler_boundary", "public or handler trigger"),
+        @("state_machine_phase", "state machine trigger"),
+        @("strategy_branch", "strategy branch trigger"),
+        @("independent_failure_mode", "independent failure trigger"),
+        @("reuse_pressure", "reuse pressure trigger"),
+        @("leaf_split_stop_condition", "stop condition marker"),
+        @("micro_leaf_without_owner", "micro leaf stop rule"),
+        @("communication_cost_rises", "communication cost stop rule"),
+        @("local_proof_missing", "local proof stop rule"),
+        @("line_count_only", "line count stop rule"),
+        @("leaf_split_decision_result", "decision result marker"),
+        @("next_recursive_step", "next recursive step marker"),
+        @("future_recursive_docs_must_trigger_leaf_split_gate", "future docs enforcement marker"),
+        @("single leaf closeout", "single leaf closeout scope"),
+        @("parent residual judgment", "parent residual judgment scope"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
@@ -21873,6 +21901,36 @@ foreach ($entry in $v416LandingFiles) {
     $relative = Get-RelativePath $files[0].FullName
     foreach ($check in $entry[1]) {
         Assert-TextContains $relative $check[0] $check[1]
+    }
+}
+
+$leafSplitRequiredMarkers = @(
+    @("leaf_split_decision_gate", "leaf split decision gate marker"),
+    @("leaf_split_base_gate", "base gate marker"),
+    @("leaf_split_positive_trigger", "positive trigger marker"),
+    @("leaf_split_stop_condition", "stop condition marker"),
+    @("leaf_split_decision_result", "decision result marker"),
+    @("next_recursive_step", "next recursive step marker")
+)
+
+$leafSplitDecisionFiles = @(Get-ChildItem -LiteralPath (Join-Root "markdown/06-milestones/v4.16.0") -Filter "*.md" -File -ErrorAction SilentlyContinue | Where-Object {
+    if ($_.BaseName -notmatch '^(\d+)-') {
+        return $false
+    }
+    $number = [int]$Matches[1]
+    if ($number -lt 513) {
+        return $false
+    }
+    return ($_.Name.Contains("单叶closeout") -or $_.Name.Contains("父叶残余判断"))
+})
+
+foreach ($file in $leafSplitDecisionFiles) {
+    $relative = Get-RelativePath $file.FullName
+    $content = Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8
+    foreach ($check in $leafSplitRequiredMarkers) {
+        if (-not $content.Contains($check[0])) {
+            Add-Failure "$relative missing post-513 leaf split gate $($check[1])"
+        }
     }
 }
 

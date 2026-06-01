@@ -16,6 +16,36 @@
 
 ---
 
+## 1.1 递归叶子细分判定硬规则
+
+leaf_split_decision_gate
+
+模块树作为白箱网络，必须让每个递归决策都能回答“当前叶子是否值得继续细分”。从 `GOV-LEAF-SPLIT-GATE` 起，新增单叶 closeout 和父叶残余判断必须显式触发以下门禁。
+
+**基础门槛**:
+leaf_split_base_gate
+
+1. `white_box_boundary_named`: 新子叶必须能稳定命名，并能写清输入、输出、调用方、处理范围和不处理范围。
+2. `parent_child_communication_kept`: 新子叶必须仍由父叶单向调用，不得要求 sibling horizontal link。
+3. `equivalence_baseline_freezable`: 新子叶必须能冻结关键输入、默认值、错误分支、状态变化、输出格式和验证命令。
+
+**强拆分触发**:
+leaf_split_positive_trigger
+
+允许继续细分前，必须至少命中 `public_or_handler_boundary`、`state_machine_phase`、`strategy_branch`、`independent_failure_mode` 或 `reuse_pressure` 之一。
+
+**强停止条件**:
+leaf_split_stop_condition
+
+命中 `micro_leaf_without_owner`、`communication_cost_rises`、`local_proof_missing` 或 `line_count_only` 任一项时，必须停止细拆、回到父叶整理或先补等价基线。
+
+**每次判定输出**:
+leaf_split_decision_result
+
+受影响文档必须给出 `leaf_split_decision_result` 与 `next_recursive_step`，且最终结果只能是 `continue_split`、`stop_split_true`、`return_parent_residual` 或 `baseline_required`。
+
+---
+
 ## 2. 白箱节点模板
 
 ```markdown
