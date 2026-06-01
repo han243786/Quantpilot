@@ -939,3 +939,4 @@
 | v4.16.0 / BE-001HV-01 | 新增: `backend.strategy_config.artifact` backend.strategy_config.artifact parent residual judgment selects builder_core |
 | v4.16.0 / BE-001HW-01 | 新增: `backend.strategy_config.artifact.builder_core` backend.strategy_config.artifact.builder_core equivalence baseline and extraction plan |
 | v4.16.0 / BE-001HW-02 | 新增: `backend.strategy_config.artifact.builder_core` backend.strategy_config.artifact.builder_core actual extraction complete |
+| v4.16.0 / BE-001HX-01 | 新增: `backend.strategy_config.artifact` backend.strategy_config.artifact parent closeout sets stop_split true |

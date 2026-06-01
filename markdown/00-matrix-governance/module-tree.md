@@ -612,7 +612,7 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 
 **层级路径**: `root.backend.strategy_config.artifact`
 **父模块**: `backend.strategy_config`
-**状态**: v4.16 BE-001HW-02 已完成 artifact route owner、schema_model owner、domain_projection owner 与 builder_core owner 抽离；artifact 内部残余已清空，待 BE-001HX-01 父叶 closeout。
+**状态**: v4.16 BE-001HX-01 已完成 artifact parent closeout；route owner、schema_model owner、domain_projection owner 与 builder_core owner 均已归位，`backend.strategy_config.artifact stop_split: true`。
 **真实文件**:
 - `src/backend/strategy_config/artifact.rs`
 - `src/backend/strategy_config/artifact/builder_core.rs`
@@ -7232,3 +7232,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001HV-01)**: `backend.strategy_config.artifact` backend.strategy_config.artifact parent residual judgment selects builder_core；下一步: BE-001HW-01 backend.strategy_config.artifact.builder_core baseline_plan。
 **最新状态补充(BE-001HW-01)**: `backend.strategy_config.artifact.builder_core` backend.strategy_config.artifact.builder_core equivalence baseline and extraction plan；下一步: BE-001HW-02 backend.strategy_config.artifact.builder_core extract_closeout。
 **最新状态补充(BE-001HW-02)**: `backend.strategy_config.artifact.builder_core` backend.strategy_config.artifact.builder_core actual extraction complete；下一步: BE-001HX-01 backend.strategy_config.artifact parent closeout。
+**最新状态补充(BE-001HX-01)**: `backend.strategy_config.artifact` backend.strategy_config.artifact parent closeout sets stop_split true；下一步: BE-001HY-01 backend.strategy_config parent residual judgment。
