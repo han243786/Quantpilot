@@ -3099,3 +3099,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/momentum_lowering.rs` - Momentum built-in intent lowering child
 递归边界补充: BE-001GH-02 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.momentum_lowering` momentum_lowering actual extraction and closeout complete；下一步: BE-001GI-01 intent_lowering parent residual judgment。
 - `markdown/06-milestones/v4.16.0/519-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.momentum_lowering抽离与closeout.md` - v4.16.0 BE-001GH-02 momentum_lowering actual extraction and closeout complete
+递归边界补充: BE-001GI-01 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects zscore_lowering；下一步: BE-001GJ-01 zscore_lowering baseline_plan。
+- `markdown/06-milestones/v4.16.0/520-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering父叶残余判断.md` - v4.16.0 BE-001GI-01 intent_lowering parent residual judgment selects zscore_lowering
