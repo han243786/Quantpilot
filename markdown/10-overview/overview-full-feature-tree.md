@@ -3045,3 +3045,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/spread_observer_lowering.rs` - spread observer intent lowering child helper
 递归边界补充: BE-001FX-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering` 单叶 closeout；下一步只能进入 BE-001FY-01 `intent_lowering` 父叶残余判断。
 - `markdown/06-milestones/v4.16.0/497-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering单叶closeout.md` - v4.16.0 BE-001FX-04 `spread_observer_lowering` 单叶 closeout
+递归边界补充: BE-001FY-01 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 父叶残余判断；下一步只能进入 BE-001FZ-01 `macd_lowering` 单子叶等价基线。
+- `markdown/06-milestones/v4.16.0/498-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering父叶残余判断.md` - v4.16.0 BE-001FY-01 `intent_lowering` 父叶残余判断，选择 `macd_lowering`
