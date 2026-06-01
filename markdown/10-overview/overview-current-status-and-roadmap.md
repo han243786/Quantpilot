@@ -576,3 +576,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001FT-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion` 实际抽离；`convert_graph_json_to_script_module` 已迁入 child，父级通过 `mod formal_module_conversion` 与受控 re-export 保持调用面。下一步只能进入 BE-001FT-04 单叶 closeout。
 - BE-001FT-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion` 单叶 closeout；本批 `no code movement`，确认等价成立但本叶保持 `stop_split: false`。下一步只能进入 BE-001FU-01 父叶残余判断。
 - BE-001FU-01 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion` 父叶残余判断；本批 `no code movement`，确认父叶仍有 input/data/profile/intent/parse 残余，下一步只能进入 BE-001FV-01 `intent_lowering` 单子叶等价基线。
+- BE-001FV-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 单子叶等价基线；本批 `no code movement`，冻结 upstream edge、source var、七个 built-in intent 分支和 unsupported intent failure。下一步只能进入 BE-001FV-02 抽离方案。

@@ -5355,7 +5355,7 @@ AI 声称 BE-001FR-01 已完成时，必须说明当前只是 `no code movement`
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion`
 **父模块**: `backend.graph_compile.quantscript_graph`
-**状态**: v4.16 BE-001FU-01 父叶残余判断已完成，当前 `no code movement`，下一步进入 `intent_lowering` 单子叶等价基线。
+**状态**: v4.16 BE-001FV-01 `intent_lowering` 单子叶等价基线已建立，当前 `no code movement`。
 **真实文件**:
 - `src/backend/graph_compile/quantscript_graph.rs`
 
@@ -5378,10 +5378,35 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001FT-03）**: BE-001FT-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion` 实际抽离。`formal_module_conversion actual_extraction_done` 成立；`src/backend/graph_compile/quantscript_graph/formal_module_conversion.rs` 已创建并承接 `convert_graph_json_to_script_module`，父级只保留 `mod formal_module_conversion` / controlled re-export。下一步只能进入 BE-001FT-04 单叶 closeout，不得处理 route surface、artifact target projection、strategy_graph_parser、graph_to_qs_generation child 或 release transition。
 **最新状态补充（BE-001FT-04）**: BE-001FT-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion` 单叶 closeout。当前 `no code movement`，`formal_module_conversion closeout_done` 与 `formal_module_conversion stop_split: false` 成立；下一步只能进入 BE-001FU-01 父叶残余判断，不得直接移动 data/risk/execution/intent 子职责或启动 release transition。
 **最新状态补充（BE-001FU-01）**: BE-001FU-01 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion` 父叶残余判断。当前 `no code movement`，`formal_module_conversion parent_residual_judgment` 与 `intent_lowering_selected` 成立；下一步只能进入 BE-001FV-01 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 单子叶等价基线，不得直接创建 child file、移动 intent 分支或启动 release transition。
+**最新状态补充（BE-001FV-01）**: BE-001FV-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 单子叶等价基线。当前 `no code movement`，`intent_lowering baseline_frozen` 成立；下一步只能进入 BE-001FV-02 抽离方案，不得直接创建 child file、移动 intent 分支或启动 release transition。
 
 | `markdown/06-milestones/v4.16.0/486-backend.graph_compile.quantscript_graph.formal_module_conversion抽离记录.md` backend graph compile quantscript graph formal module conversion extraction | `backend.graph_compile.quantscript_graph.formal_module_conversion` | actual extraction, child file owns `convert_graph_json_to_script_module` | BE-001FT actual extraction | `formal_module_conversion actual_extraction_done`; next step is BE-001FT-04 single leaf closeout |
 | `markdown/06-milestones/v4.16.0/487-backend.graph_compile.quantscript_graph.formal_module_conversion单叶closeout.md` backend graph compile quantscript graph formal module conversion closeout | `backend.graph_compile.quantscript_graph.formal_module_conversion` | single leaf closeout, keep split queue open | BE-001FT single leaf closeout | `formal_module_conversion stop_split: false`; next step is BE-001FU-01 parent residual judgment |
 | `markdown/06-milestones/v4.16.0/488-backend.graph_compile.quantscript_graph.formal_module_conversion父叶残余判断.md` backend graph compile quantscript graph formal module conversion parent residual judgment | `backend.graph_compile.quantscript_graph.formal_module_conversion` | parent residual judgment, select intent lowering | BE-001FU parent residual judgment | `intent_lowering_selected`; next step is BE-001FV-01 single child baseline |
+| `markdown/06-milestones/v4.16.0/489-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering单子叶等价基线.md` backend graph compile quantscript graph formal module conversion intent lowering baseline | `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` | single child equivalence baseline, freeze built-in intent lowering | BE-001FV single child baseline | `intent_lowering baseline_frozen`; next step is BE-001FV-02 extraction plan |
+
+#### 5.2.2.1 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
+**父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion`
+**状态**: v4.16 BE-001FV-01 单子叶等价基线已建立，当前 `no code movement`。
+
+**当前 owner**:
+
+- `src/backend/graph_compile/quantscript_graph/formal_module_conversion.rs`
+- `convert_graph_json_to_script_module`
+
+**白箱节点**:
+
+| 节点 | 输入 | 输出 | 约束 |
+| --- | --- | --- | --- |
+| intent node scan | `nodes` | intent-only iteration | 只处理 `node.type == "intent"` |
+| upstream edge resolution | `edges` / `target_node_id` | source node id | 缺失时 default `data` |
+| source var normalization | source node id | QS variable name | `-` 与 `.` 替换为 `_` |
+| built-in intent lowering | module config | indicator / emit QS lines | 七个 built-in intent 分支不得改语义 |
+| unsupported intent failure | unsupported module key | `anyhow::bail!` | 不得静默跳过 |
+
+**最新状态补充（BE-001FV-01）**: `intent_lowering baseline_frozen` 成立，下一步只能进入 BE-001FV-02 抽离方案；不得直接创建 planned child file，不得让 compile / graph / runtime sibling 横向直连。
 
 ### 5.3 `backend.storage_security`
 
