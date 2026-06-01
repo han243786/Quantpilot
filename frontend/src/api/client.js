@@ -9,14 +9,9 @@
  *   await apiClient.del("/graphs/abc123");
  */
 
-const resolveApiBase = () => {
-  const raw = import.meta.env.VITE_API_BASE_URL?.trim();
-  if (raw) return raw.replace(/\/+$/, "");
-  if (typeof window === "undefined") return "http://127.0.0.1:3000/api";
-  return "/api";
-};
+import { API_BASE } from "./apiBase";
 
-export const API_BASE = resolveApiBase();
+export { API_BASE, getAuthHeaders, resolveApiBase } from "./apiBase";
 
 async function request(method, path, body, { timeoutMs = 30000, headers = {} } = {}) {
   const controller = new AbortController();
@@ -62,9 +57,4 @@ export function withPagination(path, { limit, offset } = {}) {
   if (offset != null) params.set("offset", String(offset));
   const qs = params.toString();
   return qs ? `${path}?${qs}` : path;
-}
-
-/** 扩展点: 未来接入身份验证时修改此函数即可 */
-export function getAuthHeaders() {
-  return {};
 }

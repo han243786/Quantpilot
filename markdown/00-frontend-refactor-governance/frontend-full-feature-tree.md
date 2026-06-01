@@ -70,10 +70,13 @@ This file is the frontend-only full feature tree. It starts blank by design and 
   - Status: parent baseline established.
   - User-visible behavior: frontend HTTP requests resolve the API base, apply timeout handling, send JSON requests, and surface server errors consistently.
   - Active frontend-local paths:
+    - `frontend/src/api/apiBase.js`
+    - `frontend/src/api/apiBase.test.js`
     - `frontend/src/api/client.js`
     - `frontend/src/utils/api.js`
   - Evidence:
     - `markdown/00-frontend-refactor-governance/records/FE-0017-frontend-api-client-baseline.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0018-frontend-api-client-base-resolution-closeout.md`
 
 ## Evidence Rules
 

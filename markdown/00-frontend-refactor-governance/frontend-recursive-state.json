@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.api_client",
-  "current_step": "FE-0017",
-  "current_phase": "frontend_api_client_parent_baseline",
+  "current_step": "FE-0018",
+  "current_phase": "frontend_api_client_base_resolution_closeout",
   "current_child_queue": [
-    "frontend.api_client.base_resolution",
     "frontend.api_client.request_transport",
     "frontend.api_client.compat_fetch_helpers"
   ],
@@ -15,7 +14,9 @@
     "frontend.app_shell",
     "frontend.routing"
   ],
-  "closed_children": [],
+  "closed_children": [
+    "frontend.api_client.base_resolution"
+  ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
     "markdown/00-matrix-governance/module-tree.md",
