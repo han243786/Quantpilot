@@ -16,6 +16,8 @@ This file is the frontend-only full feature tree. It starts blank by design and 
   - Active frontend-local paths:
     - `frontend/src/main.jsx`
     - `frontend/src/App.jsx`
+    - `frontend/src/app/DesktopTitleBar.jsx`
+    - `frontend/src/app/DesktopTitleBar.test.jsx`
     - `frontend/src/app/AppRoot.jsx`
     - `frontend/src/app/AppRoot.test.jsx`
     - `frontend/src/app/AppShellFallback.jsx`
@@ -26,12 +28,15 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `frontend/src/app/useAppEnvironmentEvents.test.jsx`
     - `frontend/src/app/useAppInitialization.js`
     - `frontend/src/app/useAppInitialization.test.jsx`
+    - `frontend/src/app/useDesktopWindowChrome.js`
+    - `frontend/src/app/useDesktopWindowChrome.test.jsx`
   - Evidence:
     - `markdown/00-frontend-refactor-governance/records/FE-0002-frontend-app-shell-baseline.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0003-frontend-app-shell-bootstrap-root-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0004-frontend-isolated-coverage-gate.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0006-frontend-app-shell-startup-readiness-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0007-frontend-app-shell-environment-events-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0008-frontend-app-shell-desktop-window-chrome-closeout.md`
 
 ## Evidence Rules
 

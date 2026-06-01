@@ -1,13 +1,14 @@
 import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { navigateTo, parseRoute, strategiesPath } from "./router";
+import DesktopTitleBar from "./app/DesktopTitleBar";
 import AppShellFallback from "./app/AppShellFallback";
 import { useAppEnvironmentEvents } from "./app/useAppEnvironmentEvents";
 import { useAppInitialization } from "./app/useAppInitialization";
+import { useDesktopWindowChrome } from "./app/useDesktopWindowChrome";
 import LeftSidebar from "./components/LeftSidebar";
 import CommandPalette from "./components/CommandPalette";
 import { useI18n } from "./i18n";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 
 const StrategyHubPage = lazy(() => import("./pages/StrategyHubPage"));
 const StrategyWorkspacePage = lazy(() => import("./pages/StrategyWorkspacePage"));
@@ -27,20 +28,6 @@ import ToastContainer from "./components/ToastContainer";
 import { createTutorialSteps } from "./data/tutorialSteps";
 import { useTutorial } from "./hooks/useTutorial";
 
-function resolveTauriWindow() {
-  const isTauriRuntime =
-    typeof window !== "undefined" && Boolean(window.__TAURI_INTERNALS__);
-  if (!isTauriRuntime) return null;
-  try {
-    return getCurrentWindow();
-  } catch (error) {
-    if (import.meta.env.DEV) {
-      console.warn("[App] Tauri 窗口 API 初始化失败:", error.message);
-    }
-    return null;
-  }
-}
-
 export default function App() {
   const isInitialized = useAppInitialization();
   const { tutorialOpen, closeTutorial } = useTutorial();
@@ -49,8 +36,7 @@ export default function App() {
   const [forceReady, setForceReady] = useState(false);
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
   const mainRef = useRef(null);
-  const [isMaximized, setIsMaximized] = useState(false);
-  const appWindow = resolveTauriWindow();
+  const { appWindow, isMaximized } = useDesktopWindowChrome();
   const [route, setRoute] = useState(() =>
     parseRoute(
       typeof window === "undefined" ? "/" : window.location.pathname,
@@ -68,17 +54,6 @@ export default function App() {
     route,
     onToggleCommandPalette: toggleCommandPalette,
   });
-
-  // 监听窗口最大化状态
-  useEffect(() => {
-    if (!appWindow) return;
-    let disposed = false;
-    appWindow.isMaximized().then((v) => { if (!disposed) setIsMaximized(v); });
-    const unlisten = appWindow.onResized(() => {
-      appWindow.isMaximized().then((v) => { if (!disposed) setIsMaximized(v); });
-    });
-    return () => { disposed = true; unlisten.then((fn) => fn()); };
-  }, []);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -136,16 +111,7 @@ export default function App() {
 
   return (
     <>
-      {appWindow ? (
-        <div className="ad-titlebar" data-tauri-drag-region>
-          <span className="ad-titlebar-title">QuantPilot</span>
-          <div className="ad-titlebar-controls">
-            <button className="ad-titlebar-btn" onClick={() => appWindow.minimize()} aria-label={t("最小化")}>—</button>
-            <button className="ad-titlebar-btn" onClick={() => appWindow.toggleMaximize()} aria-label={t("最大化")}>{isMaximized ? "□" : "❐"}</button>
-            <button className="ad-titlebar-btn ad-titlebar-btn--close" onClick={() => appWindow.close()} aria-label={t("关闭")}>✕</button>
-          </div>
-        </div>
-      ) : null}
+      <DesktopTitleBar appWindow={appWindow} isMaximized={isMaximized} />
       <LeftSidebar />
       {!appWindow && isOffline ? (
         <div className="ad-offline-banner" role="alert">

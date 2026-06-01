@@ -3,12 +3,13 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.app_shell",
-  "current_step": "FE-0007",
-  "current_phase": "frontend_app_shell_environment_events_closeout",
+  "current_step": "FE-0008",
+  "current_phase": "frontend_app_shell_desktop_window_chrome_closeout",
   "closed_children": [
     "frontend.app_shell.bootstrap_root",
     "frontend.app_shell.startup_readiness",
-    "frontend.app_shell.environment_events"
+    "frontend.app_shell.environment_events",
+    "frontend.app_shell.desktop_window_chrome"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
