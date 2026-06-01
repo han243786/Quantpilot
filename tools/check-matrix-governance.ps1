@@ -21416,6 +21416,47 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/503-*.md", @(
+        @("BE-001GA-01", "intent lowering parent residual marker"),
+        @("BE-001GB-01", "next double ma baseline marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering", "intent lowering marker"),
+        @("root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering", "intent lowering coordinate"),
+        @("backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering", "double ma child marker"),
+        @("root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering", "double ma coordinate"),
+        @("intent_lowering parent_residual_judgment", "parent residual marker"),
+        @("intent_lowering stop_split: false", "stop split false marker"),
+        @("double_ma_lowering_selected", "double ma selected marker"),
+        @("spread_observer_lowering stop_split: true", "spread observer closed marker"),
+        @("macd_lowering stop_split: true", "macd closed marker"),
+        @("shared_intent_context", "shared context marker"),
+        @("double_ma_lowering", "double ma residual marker"),
+        @("rsi_lowering", "rsi residual marker"),
+        @("ma_deviation_lowering", "ma deviation residual marker"),
+        @("momentum_lowering", "momentum residual marker"),
+        @("zscore_lowering", "zscore residual marker"),
+        @("unsupported_intent_failure", "unsupported residual marker"),
+        @("builtin.intent.double_ma", "double ma branch marker"),
+        @("fast_period default 20", "fast default marker"),
+        @("slow_period default 50", "slow default marker"),
+        @("sma({}, {})", "sma render marker"),
+        @("fast > slow", "cross guard marker"),
+        @("emit Intent(`"BUY`", instrument=`"{}`", quantity=1.0)", "buy emit marker"),
+        @("formal_module_conversion -> intent_lowering", "upper parent link marker"),
+        @("intent_lowering -> spread_observer_lowering", "spread child link marker"),
+        @("intent_lowering -> macd_lowering", "macd child link marker"),
+        @("intent_lowering -> double_ma_lowering", "double ma child link marker"),
+        @("formal_module_conversion -> double_ma_lowering", "forbidden upper bypass marker"),
+        @("sibling horizontal link", "horizontal link guard marker"),
+        @("release transition", "release transition guard marker"),
+        @("cargo fmt --check", "cargo fmt check marker"),
+        @("cargo check -p quantpilot", "cargo check marker"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {

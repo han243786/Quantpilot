@@ -500,3 +500,4 @@
 | v4.16.0 / BE-001FZ-02 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` 抽离方案已建立，下一步进入实际抽离记录 |
 | v4.16.0 / BE-001FZ-03 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` 实际抽离完成，下一步进入单叶 closeout |
 | v4.16.0 / BE-001FZ-04 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` 单叶 closeout 完成，下一步回到父叶残余判断 |
+| v4.16.0 / BE-001GA-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 父叶残余判断已完成，下一步进入 `double_ma_lowering` 等价基线 |

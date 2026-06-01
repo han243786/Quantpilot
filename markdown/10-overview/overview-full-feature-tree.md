@@ -3056,3 +3056,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/macd_lowering.rs` - MACD intent lowering child helper
 递归边界补充: BE-001FZ-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` 单叶 closeout；`macd_lowering stop_split: true`，下一步只能进入 BE-001GA-01 `intent_lowering` 父叶残余判断。
 - `markdown/06-milestones/v4.16.0/502-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering单叶closeout.md` - v4.16.0 BE-001FZ-04 `macd_lowering` 单叶 closeout
+递归边界补充: BE-001GA-01 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 父叶残余判断；`intent_lowering stop_split: false`，下一步只能进入 BE-001GB-01 `double_ma_lowering` 单子叶等价基线。
+- `markdown/06-milestones/v4.16.0/503-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering父叶残余判断.md` - v4.16.0 BE-001GA-01 `intent_lowering` 父叶残余判断，选择 `double_ma_lowering`
