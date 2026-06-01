@@ -1,7 +1,308 @@
-use axum::response::IntoResponse;
+use crate::*;
 
 pub const MODULE_ID: &str = "backend.capability.snapshot";
 
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct CapabilityContract {
+    pub(crate) api_version: &'static str,
+    pub(crate) schema_version: &'static str,
+    pub(crate) chain_stages: Vec<&'static str>,
+    pub(crate) declared_indicator_kinds: Vec<IndicatorKind>,
+    pub(crate) supported_indicator_kinds: Vec<IndicatorKind>,
+    pub(crate) runtime_modes: Vec<&'static str>,
+    pub(crate) execution_module_keys: Vec<&'static str>,
+    pub(crate) supported_exchanges: Vec<&'static str>,
+    pub(crate) supported_symbols: Vec<&'static str>,
+    pub(crate) declared_module_keys: Vec<&'static str>,
+    pub(crate) supported_module_keys: Vec<&'static str>,
+    pub(crate) unsupported_module_reasons: BTreeMap<&'static str, &'static str>,
+    pub(crate) workspace_surfaces: Vec<UiCapabilityEntry>,
+    pub(crate) ui_actions: Vec<UiCapabilityEntry>,
+    pub(crate) versioning: CapabilityVersioningSummary,
+    pub(crate) permission_boundary: CapabilityPermissionBoundarySummary,
+}
+
 pub(crate) async fn get_capabilities() -> impl IntoResponse {
-    crate::capability_api::get_capabilities().await
+    Json(build_capability_response())
+}
+
+pub(crate) fn build_capability_response() -> CapabilityResponse {
+    let contract = build_capability_contract();
+    let supported_module_set = contract
+        .supported_module_keys
+        .iter()
+        .copied()
+        .collect::<std::collections::BTreeSet<_>>();
+    let schema_hash = capability_contract_hash(&contract);
+
+    CapabilityResponse {
+        api_version: contract.api_version,
+        schema_version: contract.schema_version,
+        schema_hash,
+        chain_stages: contract.chain_stages,
+        strategy_ir: StrategyIrCapabilitySummary {
+            declared_indicator_kinds: contract.declared_indicator_kinds.clone(),
+            supported_indicator_kinds: contract.supported_indicator_kinds.clone(),
+            indicator_support: contract
+                .declared_indicator_kinds
+                .iter()
+                .copied()
+                .map(|kind| IndicatorCapabilityEntry {
+                    status: if contract.supported_indicator_kinds.contains(&kind) {
+                        CapabilitySupportStatus::Supported
+                    } else {
+                        CapabilitySupportStatus::DeclaredOnly
+                    },
+                    kind,
+                    reason: indicator_declared_only_reason(kind),
+                })
+                .collect(),
+        },
+        runtime: RuntimeCapabilitySummary {
+            supported_modes: contract.runtime_modes.clone(),
+            supported_execution_modules: contract.execution_module_keys.clone(),
+            mode_support: contract
+                .runtime_modes
+                .iter()
+                .copied()
+                .map(supported_named_capability)
+                .collect(),
+            execution_module_support: contract
+                .execution_module_keys
+                .iter()
+                .copied()
+                .map(supported_named_capability)
+                .collect(),
+        },
+        market_data: MarketDataCapabilitySummary {
+            supported_exchanges: contract.supported_exchanges.clone(),
+            supported_symbols: contract.supported_symbols.clone(),
+            exchange_support: contract
+                .supported_exchanges
+                .iter()
+                .copied()
+                .map(supported_named_capability)
+                .collect(),
+            symbol_support: contract
+                .supported_symbols
+                .iter()
+                .copied()
+                .map(supported_named_capability)
+                .collect(),
+        },
+        frontend: FrontendCapabilitySummary {
+            declared_module_keys: contract.declared_module_keys.clone(),
+            supported_module_keys: contract.supported_module_keys.clone(),
+            unsupported_module_reasons: contract.unsupported_module_reasons.clone(),
+            module_support: contract
+                .declared_module_keys
+                .iter()
+                .copied()
+                .map(|module_key| ModuleCapabilityEntry {
+                    module_key,
+                    status: if supported_module_set.contains(module_key) {
+                        CapabilitySupportStatus::Supported
+                    } else {
+                        CapabilitySupportStatus::DeclaredOnly
+                    },
+                    reason: contract.unsupported_module_reasons.get(module_key).copied(),
+                })
+                .collect(),
+        },
+        workspace: WorkspaceCapabilitySummary {
+            surfaces: contract.workspace_surfaces,
+        },
+        ui_actions: UiActionCapabilitySummary {
+            actions: contract.ui_actions,
+        },
+        versioning: contract.versioning,
+        permission_boundary: contract.permission_boundary,
+    }
+}
+
+#[cfg(test)]
+pub(crate) fn current_capability_hash() -> String {
+    capability_contract_hash(&build_capability_contract())
+}
+
+pub(crate) fn current_capability_context() -> FrontendCapabilityContext {
+    let contract = build_capability_contract();
+    let permission = contract.permission_boundary;
+
+    FrontendCapabilityContext {
+        schema_hash: capability_contract_hash(&contract),
+        permission_boundary: PermissionBoundarySnapshot {
+            model_version: permission.model_version.to_string(),
+            execution_owner_module: permission.execution_owner_module.to_string(),
+            live_execution_allowed: permission.live_execution_allowed,
+            ai_write_policy: permission.ai_write_policy.as_str().to_string(),
+            plugin_network_default: permission.plugin_network_default.as_str().to_string(),
+            non_execution_order_access: permission.non_execution_order_access.as_str().to_string(),
+        },
+    }
+}
+
+pub(crate) fn build_capability_contract() -> CapabilityContract {
+    let runtime_boundary = runtime_support_boundary();
+    CapabilityContract {
+        api_version: CAPABILITY_API_VERSION,
+        schema_version: CAPABILITY_SCHEMA_VERSION,
+        chain_stages: RUNTIME_CHAIN_STAGES.to_vec(),
+        declared_indicator_kinds: declared_indicator_kinds().to_vec(),
+        supported_indicator_kinds: supported_indicator_kinds().to_vec(),
+        runtime_modes: runtime_boundary.runtime_modes.to_vec(),
+        execution_module_keys: runtime_boundary.execution_module_keys.to_vec(),
+        supported_exchanges: SUPPORTED_EXCHANGES.to_vec(),
+        supported_symbols: SUPPORTED_SYMBOLS.to_vec(),
+        declared_module_keys: DECLARED_FRONTEND_MODULE_KEYS.to_vec(),
+        supported_module_keys: SUPPORTED_FRONTEND_MODULE_KEYS.to_vec(),
+        unsupported_module_reasons: unsupported_frontend_module_reasons(),
+        workspace_surfaces: workspace_surface_capabilities(),
+        ui_actions: ui_action_capabilities(),
+        versioning: capability_versioning_summary(),
+        permission_boundary: capability_permission_boundary_summary(),
+    }
+}
+
+/// 计算当前能力合约的 SHA-256 签名。
+/// 前端在创建运行时记录前须携带此哈希以证明其 capability 上下文与服务端一致。
+/// 哈希不匹配时服务端拒绝运行时写入（参见 validate_runtime_capability_guard）。
+pub(crate) fn capability_contract_hash(contract: &CapabilityContract) -> String {
+    canonical_sha256_hash(contract)
+}
+
+pub(crate) fn capability_versioning_summary() -> CapabilityVersioningSummary {
+    CapabilityVersioningSummary {
+        model_version: CAPABILITY_VERSIONING_MODEL_VERSION,
+        strategy_version_source: "frontend_runtime_config.metadata.version",
+        parameter_version_policy: "immutable_generation_pointer",
+        deployment_revision_policy: "strategy_version_plus_compile_id_plus_capability_hash",
+    }
+}
+
+pub(crate) fn capability_permission_boundary_summary() -> CapabilityPermissionBoundarySummary {
+    CapabilityPermissionBoundarySummary {
+        model_version: CAPABILITY_PERMISSION_MODEL_VERSION,
+        execution_owner_module: "builtin.execution.paper",
+        live_execution_allowed: false,
+        ai_write_policy: AiWritePolicy::ProposalOnly,
+        plugin_network_default: BoundaryAccessPolicy::Deny,
+        non_execution_order_access: BoundaryAccessPolicy::Deny,
+    }
+}
+
+pub(crate) fn runtime_governance_snapshot(
+    metadata: &FrontendMetadata,
+    parameter_fingerprint: Option<&str>,
+) -> RuntimeGovernanceSnapshot {
+    let contract = build_capability_contract();
+    let capability_hash = capability_contract_hash(&contract);
+    let parameter_version = parameter_fingerprint
+        .filter(|value| !value.trim().is_empty())
+        .map(|value| format!("config:{value}"))
+        .unwrap_or_else(|| format!("compile:{}", metadata.compile_id));
+    let deployment_revision = stable_json_hash(&json!({
+        "graph_id": metadata.graph_id,
+        "compile_id": metadata.compile_id,
+        "strategy_version": metadata.version,
+        "parameter_version": parameter_version,
+        "capability_hash": capability_hash,
+    }));
+    let permission = contract.permission_boundary;
+
+    RuntimeGovernanceSnapshot {
+        schema_version: RUNTIME_GOVERNANCE_SCHEMA_VERSION.to_string(),
+        governance_source: "current_runtime".to_string(),
+        capability_hash,
+        strategy_version: metadata.version.clone(),
+        parameter_version,
+        deployment_revision,
+        permission_boundary: PermissionBoundarySnapshot {
+            model_version: permission.model_version.to_string(),
+            execution_owner_module: permission.execution_owner_module.to_string(),
+            live_execution_allowed: permission.live_execution_allowed,
+            ai_write_policy: permission.ai_write_policy.as_str().to_string(),
+            plugin_network_default: permission.plugin_network_default.as_str().to_string(),
+            non_execution_order_access: permission.non_execution_order_access.as_str().to_string(),
+        },
+    }
+}
+
+fn stable_json_hash(value: &Value) -> String {
+    canonical_sha256_hash(value)
+}
+
+fn canonical_sha256_hash(value: &impl Serialize) -> String {
+    let digest = canonical_json_sha256_digest(value)
+        .expect("capability governance payloads must serialize for canonical hashing");
+    format!("sha256:{}", digest.value)
+}
+
+pub(crate) fn supported_named_capability(key: &'static str) -> NamedCapabilityEntry {
+    NamedCapabilityEntry {
+        key,
+        status: CapabilitySupportStatus::Supported,
+        reason: None,
+    }
+}
+
+pub(crate) fn indicator_declared_only_reason(_kind: IndicatorKind) -> Option<&'static str> {
+    // v1.2.0: 显式使用 _kind 前缀替代 let _ =，明确这是有意忽略
+    None
+}
+
+pub(crate) fn unsupported_frontend_module_reasons() -> BTreeMap<&'static str, &'static str> {
+    BTreeMap::new()
+}
+
+pub(crate) fn ui_capability_entry(key: &'static str, source: &'static str) -> UiCapabilityEntry {
+    UiCapabilityEntry {
+        key,
+        status: CapabilitySupportStatus::Supported,
+        reason: None,
+        source,
+    }
+}
+
+pub(crate) fn workspace_surface_capabilities() -> Vec<UiCapabilityEntry> {
+    const WORKSPACE_SURFACE_SOURCE: &str = "backend:/api/capabilities.workspace.surfaces";
+    [
+        "dashboard",
+        "code",
+        "diagnostics",
+        "research",
+        "monitor",
+        "source",
+        "template_library",
+        "version_history",
+        "collaboration_audit",
+        "parameter_sweep",
+    ]
+    .into_iter()
+    .map(|key| ui_capability_entry(key, WORKSPACE_SURFACE_SOURCE))
+    .collect()
+}
+
+pub(crate) fn ui_action_capabilities() -> Vec<UiCapabilityEntry> {
+    const UI_ACTION_SOURCE: &str = "backend:/api/capabilities.ui_actions.actions";
+    [
+        "open_tutorial",
+        "manage_credentials",
+        "reset_graph",
+        "load_latest_graph",
+        "save_graph",
+        "export_runtime_config",
+        "export_quantscript",
+        "compile",
+        "start_simulation",
+        "start_v4_simulation",
+        "run_backtest",
+        "stop_runtime",
+        "reset_runtime",
+        "open_backtests",
+        "run_parameter_sweep",
+    ]
+    .into_iter()
+    .map(|key| ui_capability_entry(key, UI_ACTION_SOURCE))
+    .collect()
 }

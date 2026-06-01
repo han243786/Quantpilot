@@ -333,7 +333,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 | `/api/v1/approvals/*` | 审批 | `runtime/mutation.rs` |
 | `/api/v1/chaos/*` | 混沌实验 | `chaos_experiment.rs` |
 | `/api/v1/runbook/*` | 运行手册 | `runbook.rs` |
-| `/api/capabilities` | 能力声明 | `capability_api.rs` |
+| `/api/capabilities` | 能力声明 | `src/backend/capability/snapshot.rs` |
 | `/api/quantscript/formal/*` | QS 正式编译 | `src/backend/graph_compile/compile.rs` |
 | `/api/collaboration/*` | 协作 | `collaboration.rs` |
 | `/api/hotswap/*` | 模块热替换 | `hotswap_api.rs` |
@@ -543,7 +543,7 @@ backup.rs                       — 备份
 **职责**: capability 声明、API 错误格式、测试场景、CLI 支持。
 
 ```
-capability_api.rs               — 能力声明 API
+src/backend/capability/snapshot.rs — 能力声明 API
   ├── GET /api/capabilities     — 后端能力真源
   └── CapabilityResponse: workspace.surfaces + ui_actions.actions
       + runtime.modes + market_data + strategy_ir + permission_boundary
@@ -2154,7 +2154,8 @@ storage/
 - `src/backtest_compare_narrative.rs` — 回测对比中文叙述生成; 改分析文案时改这里
 - `src/backtest_compare_types.rs` — 回测对比类型定义; 改对比数据结构时改这里
 - `src/backup.rs` — 数据备份与恢复; 改备份策略时改这里
-- `src/capability_api.rs` — 能力声明 API (`GET /api/capabilities`); 新增能力声明时改这里
+- `src/backend/capability/snapshot.rs` — 能力声明 API (`GET /api/capabilities`); 新增能力声明时改这里
+- `src/capability_api.rs` — root capability API compatibility shim; real implementation lives in `src/backend/capability/snapshot.rs`
 - `src/chaos_experiment.rs` — 混沌实验; 改混沌测试定义/执行时改这里
 - `src/cli_support.rs` — CLI 辅助; 改命令行参数或 `v4-run` 时改这里 🆕 v4.1.0
 - `src/collaboration.rs` — 协作功能; 改多人协作时改这里
@@ -3206,3 +3207,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/563-backend.parent_residual_judgment.capability.md` - v4.16.0 BE-001HM-01 backend parent residual judgment selects capability
 递归边界补充: BE-001HN-01 `backend.capability` backend.capability equivalence baseline and extraction plan；下一步: BE-001HN-02 backend.capability extract_closeout。
 - `markdown/06-milestones/v4.16.0/564-backend.capability.baseline_plan.md` - v4.16.0 BE-001HN-01 backend.capability equivalence baseline and extraction plan
+递归边界补充: BE-001HN-02 `backend.capability` backend.capability actual extraction and closeout complete；下一步: BE-001HO-01 backend parent residual judgment。
+- `markdown/06-milestones/v4.16.0/565-backend.capability.extract_closeout.md` - v4.16.0 BE-001HN-02 backend.capability actual extraction and closeout complete
