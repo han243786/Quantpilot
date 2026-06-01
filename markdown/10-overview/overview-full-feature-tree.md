@@ -2986,3 +2986,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/469-runtime.root_parent_facade_import_pass抽离记录.md` - v4.16.0 BE-001FL-03 `runtime.root_parent_facade_import_pass` 抽离记录，root import residual 清除
 递归边界补充: BE-001FL-04 已完成 `runtime.root_parent_facade_import_pass` 单叶 closeout；本叶设置 `stop_split: true`，下一步只能进入 BE-001FM-01 `runtime.parent_import_bridge` 父叶 residual 判断。
 - `markdown/06-milestones/v4.16.0/470-runtime.root_parent_facade_import_pass单叶closeout.md` - v4.16.0 BE-001FL-04 `runtime.root_parent_facade_import_pass` 单叶 closeout，root facade import pocket 收口
+递归边界补充: BE-001FM-01 已完成 `runtime.parent_import_bridge` 第五轮父叶残余判断；生产级 parent wildcard residual 为 0，下一步只能进入 BE-001FN-01 `backend.runtime` 父叶判断。
+- `markdown/06-milestones/v4.16.0/471-runtime.parent_import_bridge第五轮父叶残余判断.md` - v4.16.0 BE-001FM-01 `runtime.parent_import_bridge` 父叶残余判断，生产级 parent bridge 收口

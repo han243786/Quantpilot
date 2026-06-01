@@ -20154,6 +20154,35 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/471-*.md", @(
+        @("BE-001FM-01", "parent residual marker"),
+        @("BE-001FN-01", "next backend runtime marker"),
+        @("no code movement", "no code movement marker"),
+        @("runtime.parent_import_bridge", "parent bridge marker"),
+        @("root.backend.runtime.runtime.parent_import_bridge", "parent bridge coordinate"),
+        @("runtime.parent_import_bridge stop_split: true", "stop split true marker"),
+        @("remaining_runtime_parent_import_bridge_0", "remaining runtime zero marker"),
+        @("remaining_root_parent_import_bridge_0", "remaining root zero marker"),
+        @("remaining_run_parent_import_bridge_0", "remaining run zero marker"),
+        @("remaining_backtest_parent_import_bridge_0", "remaining backtest zero marker"),
+        @("remaining_report_ops_parent_import_bridge_0", "remaining report ops zero marker"),
+        @("remaining_mutation_parent_import_bridge_0", "remaining mutation zero marker"),
+        @("remaining_test_local_wildcard_import_2", "test local residual marker"),
+        @("runtime_explicit_parent_surface_preserved", "explicit parent surface marker"),
+        @("runtime_parent_import_bridge_closeout_ready", "closeout ready marker"),
+        @("src/runtime/run_guard.rs", "test local marker"),
+        @("src/runtime/mutation/ai_proposal/static_check.rs", "test local static check marker"),
+        @("backend.runtime", "backend runtime marker"),
+        @("old_three_leaf_pause_target_cancelled", "old pause cancel marker"),
+        @("progress_report_instruction_discarded", "progress report discard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
