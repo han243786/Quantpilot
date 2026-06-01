@@ -859,3 +859,4 @@
 | v4.16.0 / BE-001FX-03 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering` 实际抽离完成 |
 | v4.16.0 / BE-001FX-04 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering` 单叶 closeout 完成 |
 | v4.16.0 / BE-001FY-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 父叶残余判断已完成，选择 `macd_lowering` |
+| v4.16.0 / BE-001FZ-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` 单子叶等价基线已建立 |

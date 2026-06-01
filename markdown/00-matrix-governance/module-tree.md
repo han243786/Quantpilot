@@ -5355,7 +5355,7 @@ AI 声称 BE-001FR-01 已完成时，必须说明当前只是 `no code movement`
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion`
 **父模块**: `backend.graph_compile.quantscript_graph`
-**状态**: v4.16 BE-001FY-01 `intent_lowering` 父叶残余判断完成，选择 `macd_lowering`。
+**状态**: v4.16 BE-001FZ-01 `macd_lowering` 单子叶等价基线已建立。
 **真实文件**:
 - `src/backend/graph_compile/quantscript_graph.rs`
 
@@ -5388,6 +5388,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001FX-03）**: BE-001FX-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering` 实际抽离。`spread_observer_lowering actual_extraction_done` 成立；child file 已创建并承接 spread observer branch，父级只保留受控调用。
 **最新状态补充（BE-001FX-04）**: BE-001FX-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering` 单叶 closeout。当前 `no code movement`，`spread_observer_lowering closeout_done` 与 `spread_observer_lowering stop_split: true` 成立；下一步回到 BE-001FY-01 `intent_lowering` 父叶残余判断。
 **最新状态补充（BE-001FY-01）**: BE-001FY-01 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 父叶残余判断。当前 `no code movement`，`intent_lowering stop_split: false` 与 `macd_lowering_selected` 成立；下一步只能进入 BE-001FZ-01 单子叶等价基线。
+**最新状态补充（BE-001FZ-01）**: BE-001FZ-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` 单子叶等价基线。当前 `no code movement`，`macd_lowering baseline_frozen` 成立；下一步只能进入 BE-001FZ-02 抽离方案，不得直接创建 child file 或移动 `macd` branch。
 
 | `markdown/06-milestones/v4.16.0/486-backend.graph_compile.quantscript_graph.formal_module_conversion抽离记录.md` backend graph compile quantscript graph formal module conversion extraction | `backend.graph_compile.quantscript_graph.formal_module_conversion` | actual extraction, child file owns `convert_graph_json_to_script_module` | BE-001FT actual extraction | `formal_module_conversion actual_extraction_done`; next step is BE-001FT-04 single leaf closeout |
 | `markdown/06-milestones/v4.16.0/487-backend.graph_compile.quantscript_graph.formal_module_conversion单叶closeout.md` backend graph compile quantscript graph formal module conversion closeout | `backend.graph_compile.quantscript_graph.formal_module_conversion` | single leaf closeout, keep split queue open | BE-001FT single leaf closeout | `formal_module_conversion stop_split: false`; next step is BE-001FU-01 parent residual judgment |
@@ -5402,12 +5403,13 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 | `markdown/06-milestones/v4.16.0/496-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering抽离记录.md` backend graph compile quantscript graph formal module conversion intent spread observer lowering extraction | `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering` | actual extraction, child owns spread observer branch | BE-001FX actual extraction | `spread_observer_lowering actual_extraction_done`; next step is BE-001FX-04 single leaf closeout |
 | `markdown/06-milestones/v4.16.0/497-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering单叶closeout.md` backend graph compile quantscript graph formal module conversion intent spread observer lowering closeout | `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering` | single leaf closeout, stop split | BE-001FX single leaf closeout | `spread_observer_lowering stop_split: true`; next step is BE-001FY-01 parent residual judgment |
 | `markdown/06-milestones/v4.16.0/498-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering父叶残余判断.md` backend graph compile quantscript graph formal module conversion intent lowering parent residual judgment | `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` | parent residual judgment, select macd lowering | BE-001FY parent residual judgment | `macd_lowering_selected`; next step is BE-001FZ-01 single child baseline |
+| `markdown/06-milestones/v4.16.0/499-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering单子叶等价基线.md` backend graph compile quantscript graph formal module conversion intent macd lowering baseline | `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` | single child equivalence baseline, freeze macd branch | BE-001FZ single child baseline | `macd_lowering baseline_frozen`; next step is BE-001FZ-02 extraction plan |
 
 #### 5.2.2.1 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
 **父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion`
-**状态**: v4.16 BE-001FY-01 父叶残余判断完成，`intent_lowering stop_split: false`，下一步进入 `macd_lowering` 等价基线。
+**状态**: v4.16 BE-001FZ-01 `macd_lowering` 单子叶等价基线已建立，`intent_lowering stop_split: false`。
 
 **当前 owner**:
 
@@ -5436,6 +5438,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001FX-03）**: `spread_observer_lowering actual_extraction_done` 成立；父级通过 `spread_observer_lowering::append_spread_observer_lowering_lines` 单向调用 child。
 **最新状态补充（BE-001FX-04）**: `spread_observer_lowering closeout_done` 与 `spread_observer_lowering stop_split: true` 成立；下一步回到 BE-001FY-01 父叶残余判断。
 **最新状态补充（BE-001FY-01）**: `intent_lowering parent_residual_judgment` 与 `macd_lowering_selected` 成立；下一步只能进入 BE-001FZ-01 单子叶等价基线，不能直接创建 child file。
+**最新状态补充（BE-001FZ-01）**: `macd_lowering baseline_frozen` 成立；下一步只能进入 BE-001FZ-02 抽离方案，不能直接创建 child file。
 
 #### 5.2.2.1.1 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering`
 
@@ -5459,6 +5462,23 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001FX-02）**: `spread_observer_lowering plan_frozen` 成立；planned helper 为 `append_spread_observer_lowering_lines(node, edges, cfg, node_id, &source_var, instrument, qs_lines)`；下一步只能进入 BE-001FX-03 实际抽离记录。
 **最新状态补充（BE-001FX-03）**: `spread_observer_lowering actual_extraction_done` 成立；`append_spread_observer_lowering_lines` 已迁入 child，下一步只能进入 BE-001FX-04 单叶 closeout。
 **最新状态补充（BE-001FX-04）**: `spread_observer_lowering closeout_done` 与 `spread_observer_lowering stop_split: true` 成立；不继续拆 source_collection / config_decode / qs_line_rendering 微叶。
+
+#### 5.2.2.1.2 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering`
+**父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
+**状态**: v4.16 BE-001FZ-01 单子叶等价基线已建立，planned child 尚未创建。
+
+**白箱节点**:
+
+| 节点 | 输入 | 输出 | 约束 |
+| --- | --- | --- | --- |
+| macd config decode | `fast_period` / `slow_period` / `signal_period` | fast/slow/signal period | defaults 12/26/9 |
+| macd signal rendering | `source_var` / periods | `macd_val` line | `macd({}, {}, {}, {})` 不变 |
+| positive branch | `macd_val > 0` / `instrument` | BUY Intent | BUY emit 不变 |
+| negative branch | `macd_val < 0` / `instrument` | SELL Intent | SELL emit 不变 |
+
+**最新状态补充（BE-001FZ-01）**: `macd_lowering baseline_frozen` 成立；下一步只能进入 BE-001FZ-02 抽离方案，不得直接移动 branch。
 
 ### 5.3 `backend.storage_security`
 
