@@ -107,6 +107,8 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `frontend/src/capabilities/capabilityGovernanceRegistry.test.js`
     - `frontend/src/capabilities/capabilityGovernance.js`
     - `frontend/src/capabilities/capabilityGovernance.test.js`
+    - `frontend/src/capabilities/builtinCapabilitySnapshot.js`
+    - `frontend/src/capabilities/builtinCapabilitySnapshot.test.js`
     - `frontend/src/modules/moduleRegistry.js`
     - `frontend/src/modules/moduleRegistry.test.js`
     - `frontend/src/modules/builtinModules.js`
@@ -121,6 +123,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0028-frontend-capabilities-governance-core-contract-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0029-frontend-capabilities-governance-registry-entries-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0030-frontend-capabilities-governance-public-facade-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0031-frontend-capabilities-builtin-default-snapshot-closeout.md`
 
 ## Evidence Rules
 
