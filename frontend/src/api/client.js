@@ -9,46 +9,12 @@
  *   await apiClient.del("/graphs/abc123");
  */
 
-import { API_BASE } from "./apiBase";
+import { createApiClient, request } from "./apiTransport";
 
 export { API_BASE, getAuthHeaders, resolveApiBase } from "./apiBase";
+export { createApiClient, request } from "./apiTransport";
 
-async function request(method, path, body, { timeoutMs = 30000, headers = {} } = {}) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-  const options = {
-    method,
-    headers: { "Content-Type": "application/json", ...headers },
-    signal: controller.signal,
-  };
-  if (body !== undefined) {
-    options.body = JSON.stringify(body);
-  }
-
-  try {
-    const response = await fetch(`${API_BASE}${path}`, options);
-    if (!response.ok) {
-      const text = await response.text();
-      const error = new Error(text.slice(0, 2000) || `服务器错误 (${response.status})`);
-      error.status = response.status;
-      throw error;
-    }
-    const contentType = response.headers.get("content-type") || "";
-    if (contentType.includes("application/json")) {
-      return response.json();
-    }
-    return response.text();
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-export const apiClient = {
-  get: (path, opts) => request("GET", path, undefined, opts),
-  post: (path, body, opts) => request("POST", path, body, opts),
-  del: (path, opts) => request("DELETE", path, undefined, opts),
-};
+export const apiClient = createApiClient();
 
 /** 分页辅助: 将 {limit, offset} 转为 query string */
 export function withPagination(path, { limit, offset } = {}) {
