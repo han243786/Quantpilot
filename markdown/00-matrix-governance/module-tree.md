@@ -5287,7 +5287,7 @@ AI 声称 BE-001CR-04 完成时，必须说明本批次是 `no code movement` cl
 
 **层级路径**: `root.backend.graph_compile`
 **父模块**: `backend`
-**状态**: v4.16 BE-001HE-01 父叶残余判断已完成；四个功能 child 已 closeout，`backend.graph_compile.quantscript_graph stop_split: false`，下一步进入最终 `route_surface` baseline_plan。
+**状态**: v4.16 BE-001HG-01 已完成 `backend.graph_compile.quantscript_graph` 父叶 closeout，`quantscript_graph stop_split: true`；`backend.graph_compile` 仍保留 `compile` 与 `graph` route facade 旧 owner residual，下一步进入 BE-001HH-01 父叶残余判断。
 **真实文件**:
 - `src/backend/graph_compile.rs`
 - `src/backend/graph_compile/compile.rs`
@@ -5347,6 +5347,7 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 **最新状态补充（BE-001HA-01）**: BE-001HA-01 已完成 `backend.graph_compile.quantscript_graph` 父叶残余判断。`graph_to_qs_generation` 与 `formal_module_conversion` 已 closeout，父级仍保留 route surface、artifact target projection 与 strategy_graph parser 残余，因此 `backend.graph_compile.quantscript_graph stop_split: false`；下一步只能进入 BE-001HB-01 `backend.graph_compile.quantscript_graph.strategy_graph_parser` baseline_plan。
 **最新状态补充（BE-001HC-01）**: BE-001HC-01 已完成 `backend.graph_compile.quantscript_graph` 父叶残余判断。`strategy_graph_parser` 已 closeout，父级仍保留 route surface 与 artifact target projection 残余，因此 `backend.graph_compile.quantscript_graph stop_split: false`；下一步只能进入 BE-001HD-01 `backend.graph_compile.quantscript_graph.artifact_target_projection` baseline_plan。
 **最新状态补充（BE-001HE-01）**: BE-001HE-01 已完成 `backend.graph_compile.quantscript_graph` 父叶残余判断。`artifact_target_projection` 已 closeout，父级只剩 route surface 残余，因此 `backend.graph_compile.quantscript_graph stop_split: false`；下一步只能进入 BE-001HF-01 `backend.graph_compile.quantscript_graph.route_surface` baseline_plan。
+**最新状态补充（BE-001HG-01）**: BE-001HG-01 已完成 `backend.graph_compile.quantscript_graph` 父叶 closeout。`graph_to_qs_generation`、`formal_module_conversion`、`strategy_graph_parser`、`artifact_target_projection` 与 `route_surface` 均已 closeout，父级只保留受控 wrapper / re-export / callback mediation，因此 `backend.graph_compile.quantscript_graph stop_split: true`；下一步只能上浮到 BE-001HH-01 `backend.graph_compile` 父叶残余判断，不得宣称 `backend.graph_compile` 已整体收口。
 
 ### 5.2.1 `backend.graph_compile.quantscript_graph.graph_to_qs_generation`
 
@@ -7154,3 +7155,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001HE-01)**: `backend.graph_compile.quantscript_graph` quantscript_graph parent residual judgment selects route_surface；下一步: BE-001HF-01 route_surface baseline_plan。
 **最新状态补充(BE-001HF-01)**: `backend.graph_compile.quantscript_graph.route_surface` route_surface equivalence baseline and extraction plan；下一步: BE-001HF-02 route_surface extract_closeout。
 **最新状态补充(BE-001HF-02)**: `backend.graph_compile.quantscript_graph.route_surface` route_surface actual extraction and closeout complete；下一步: BE-001HG-01 quantscript_graph parent closeout。
+**最新状态补充(BE-001HG-01)**: `backend.graph_compile.quantscript_graph` quantscript_graph parent closeout sets stop_split true；下一步: BE-001HH-01 backend.graph_compile parent residual judgment。
