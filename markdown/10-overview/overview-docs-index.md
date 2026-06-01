@@ -535,3 +535,4 @@
 | v4.16.0 / BE-001GR-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent residual judgment selects profile_lowering |
 | v4.16.0 / BE-001GS-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.profile_lowering` profile_lowering equivalence baseline and extraction plan |
 | v4.16.0 / BE-001GS-02 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.profile_lowering` profile_lowering actual extraction and closeout complete |
+| v4.16.0 / BE-001GT-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent residual judgment selects input_shape_validation |
