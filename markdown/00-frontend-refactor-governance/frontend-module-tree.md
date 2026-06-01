@@ -10,17 +10,22 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Active Parent
 
+None. Next parent candidate: `frontend.capabilities`.
+
+## Last Closed Parent
+
 - `frontend.api_client`
-  - Status: parent baseline established.
+  - Status: parent closed.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0017-frontend-api-client-baseline.md`
+  - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0021-frontend-api-client-parent-closeout.md`
   - Current owned files:
     - `frontend/src/api/apiBase.js`
     - `frontend/src/api/apiBase.test.js`
-    - `frontend/src/api/fetchHelpers.js`
-    - `frontend/src/api/fetchHelpers.test.js`
     - `frontend/src/api/apiTransport.js`
     - `frontend/src/api/apiTransport.test.js`
     - `frontend/src/api/client.js`
+    - `frontend/src/api/fetchHelpers.js`
+    - `frontend/src/api/fetchHelpers.test.js`
     - `frontend/src/utils/api.js`
   - Important consumers:
     - `frontend/src/components/DeployButton.jsx`
@@ -39,7 +44,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.api_client.request_transport`
     - `frontend.api_client.compat_fetch_helpers`
 
-## Last Closed Parent
+## Previously Closed Parent
 
 - `frontend.routing`
   - Status: parent closed.
@@ -70,8 +75,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.routing.route_contract`
     - `frontend.routing.navigation_dispatch`
     - `frontend.routing.shell_navigation`
-
-## Previously Closed Parent
 
 - `frontend.app_shell`
   - Status: parent closed.
@@ -125,6 +128,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 - `frontend.app_shell`
 - `frontend.routing`
+- `frontend.api_client`
 
 ## Deferred Merge Notes
 

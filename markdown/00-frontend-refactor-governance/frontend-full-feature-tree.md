@@ -67,7 +67,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0016-frontend-routing-parent-closeout.md`
 
 - `frontend.api_client`
-  - Status: parent baseline established.
+  - Status: parent closed.
   - User-visible behavior: frontend HTTP requests resolve the API base, apply timeout handling, send JSON requests, and surface server errors consistently.
   - Active frontend-local paths:
     - `frontend/src/api/apiBase.js`
@@ -83,6 +83,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0018-frontend-api-client-base-resolution-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0019-frontend-api-client-request-transport-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0020-frontend-api-client-compat-fetch-helpers-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0021-frontend-api-client-parent-closeout.md`
 
 ## Evidence Rules
 
