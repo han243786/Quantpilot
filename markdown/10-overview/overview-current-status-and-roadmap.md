@@ -581,3 +581,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001FV-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 实际抽离；child file 承接 intent block，父级保留 `mod intent_lowering` 与 `append_intent_lowering_lines` 单向调用。下一步只能进入 BE-001FV-04 单叶 closeout。
 - BE-001FV-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 单叶 closeout；本批 `no code movement`，确认等价成立但本叶保持 `stop_split: false`。下一步只能进入 BE-001FW-01 父叶残余判断。
 - BE-001FW-01 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 父叶残余判断；本批 `no code movement`，选择 `spread_observer_lowering`。下一步只能进入 BE-001FX-01 单子叶等价基线。
+- BE-001FX-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering` 单子叶等价基线；本批 `no code movement`，冻结 spread observer branch 输入、fallback 和 QS line 顺序。下一步只能进入 BE-001FX-02 抽离方案。

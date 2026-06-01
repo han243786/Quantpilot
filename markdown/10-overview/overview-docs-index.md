@@ -491,3 +491,4 @@
 | v4.16.0 / BE-001FV-03 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 实际抽离完成，下一步进入单叶 closeout |
 | v4.16.0 / BE-001FV-04 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 单叶 closeout 完成，下一步进入父叶残余判断 |
 | v4.16.0 / BE-001FW-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 父叶残余判断已完成，下一步进入 `spread_observer_lowering` 等价基线 |
+| v4.16.0 / BE-001FX-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering` 单子叶等价基线已建立，下一步进入抽离方案 |
