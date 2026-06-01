@@ -53,8 +53,11 @@ This file is the frontend-only full feature tree. It starts blank by design and 
   - Active frontend-local paths:
     - `frontend/src/router.js`
     - `frontend/src/router.test.js`
+    - `frontend/src/routing/routeContract.js`
+    - `frontend/src/routing/routeContract.test.js`
   - Evidence:
     - `markdown/00-frontend-refactor-governance/records/FE-0012-frontend-routing-baseline.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0013-frontend-routing-route-contract-closeout.md`
 
 ## Evidence Rules
 

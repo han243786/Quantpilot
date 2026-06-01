@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.routing",
-  "current_step": "FE-0012",
-  "current_phase": "frontend_routing_parent_baseline",
+  "current_step": "FE-0013",
+  "current_phase": "frontend_routing_route_contract_closeout",
   "current_child_queue": [
-    "frontend.routing.route_contract",
     "frontend.routing.navigation_dispatch",
     "frontend.routing.shell_navigation"
   ],
@@ -14,7 +13,9 @@
   "closed_parents": [
     "frontend.app_shell"
   ],
-  "closed_children": [],
+  "closed_children": [
+    "frontend.routing.route_contract"
+  ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
     "markdown/00-matrix-governance/module-tree.md",
