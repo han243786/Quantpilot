@@ -920,3 +920,4 @@
 | v4.16.0 / BE-001HI-01 | 新增: `backend.graph_compile.compile` backend.graph_compile.compile equivalence baseline and extraction plan |
 | v4.16.0 / BE-001HI-02 | 新增: `backend.graph_compile.compile` backend.graph_compile.compile actual extraction and closeout complete |
 | v4.16.0 / BE-001HJ-01 | 新增: `backend.graph_compile` backend.graph_compile parent residual judgment selects graph |
+| v4.16.0 / BE-001HK-01 | 新增: `backend.graph_compile.graph` backend.graph_compile.graph equivalence baseline and extraction plan |

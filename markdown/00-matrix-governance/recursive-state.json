@@ -1,20 +1,20 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001HI-02",
-  "last_committed_sha": "9893142c",
+  "last_committed_batch": "BE-001HJ-01",
+  "last_committed_sha": "65d9184",
   "current_parent": "backend.graph_compile.graph",
-  "current_step": "BE-001HK-01",
-  "current_phase": "baseline_plan",
+  "current_step": "BE-001HK-02",
+  "current_phase": "extract_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "quantscript_graph",
     "compile"
   ],
   "open_residuals": [
-    "graph route facade still delegates to crate::graph_api"
+    "graph route facade selected for extract_closeout"
   ],
-  "next_recommended_child": "backend_graph_compile_graph_baseline_plan",
+  "next_recommended_child": "backend_graph_compile_graph_extract_closeout",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
