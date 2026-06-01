@@ -626,3 +626,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001GS-02 `backend.graph_compile.quantscript_graph.formal_module_conversion.profile_lowering` profile_lowering actual extraction and closeout complete；下一步: BE-001GT-01 formal_module_conversion parent residual judgment。
 - BE-001GT-01 `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent residual judgment selects input_shape_validation；下一步: BE-001GU-01 input_shape_validation baseline_plan。
 - BE-001GU-01 `backend.graph_compile.quantscript_graph.formal_module_conversion.input_shape_validation` input_shape_validation equivalence baseline and extraction plan；下一步: BE-001GU-02 input_shape_validation extract_closeout。
+- BE-001GU-02 `backend.graph_compile.quantscript_graph.formal_module_conversion.input_shape_validation` input_shape_validation actual extraction and closeout complete；下一步: BE-001GV-01 formal_module_conversion parent residual judgment。

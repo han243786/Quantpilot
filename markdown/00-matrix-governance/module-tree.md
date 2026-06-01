@@ -5385,7 +5385,7 @@ AI 声称 BE-001FR-01 已完成时，必须说明当前只是 `no code movement`
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion`
 **父模块**: `backend.graph_compile.quantscript_graph`
-**状态**: v4.16 BE-001GS-02 `profile_lowering` 单叶 closeout 已完成，`formal_module_conversion stop_split: false`，下一步回到父叶残余判断。
+**状态**: v4.16 BE-001GU-02 `input_shape_validation` 单叶 closeout 已完成，`formal_module_conversion stop_split: false`，下一步回到父叶残余判断。
 **真实文件**:
 - `src/backend/graph_compile/quantscript_graph.rs`
 
@@ -5416,6 +5416,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001GS-02）**: `profile_lowering actual_extraction_done`、`profile_lowering closeout_done` 与 `profile_lowering stop_split: true` 成立；下一步只能回到 BE-001GT-01 `formal_module_conversion` 父叶残余判断。
 **最新状态补充（BE-001GT-01）**: `formal_module_conversion parent_residual_judgment` 与 `input_shape_validation_selected` 成立；下一步只能进入 BE-001GU-01 单子叶等价基线，不能直接移动入口校验代码。
 **最新状态补充（BE-001GU-01）**: `input_shape_validation baseline_frozen` 与 `input_shape_validation plan_frozen` 成立；下一步只能进入 BE-001GU-02 extract_closeout，不能移动后续 lowering 分支。
+**最新状态补充（BE-001GU-02）**: `input_shape_validation actual_extraction_done`、`input_shape_validation closeout_done` 与 `input_shape_validation stop_split: true` 成立；下一步只能回到 BE-001GV-01 `formal_module_conversion` 父叶残余判断。
 **最新状态补充（BE-001FV-01）**: BE-001FV-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 单子叶等价基线。当前 `no code movement`，`intent_lowering baseline_frozen` 成立；下一步只能进入 BE-001FV-02 抽离方案，不得直接创建 child file、移动 intent 分支或启动 release transition。
 **最新状态补充（BE-001FV-02）**: BE-001FV-02 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 抽离方案。当前 `no code movement`，`intent_lowering plan_frozen` 成立；下一步 BE-001FV-03 只允许创建 planned child、添加 `append_intent_lowering_lines` helper，并由父级单向调用。
 **最新状态补充（BE-001FV-03）**: BE-001FV-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 实际抽离。`intent_lowering actual_extraction_done` 成立；`src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering.rs` 已创建并承接 intent block，父级只保留 `mod intent_lowering` 与 `append_intent_lowering_lines` 调用。
@@ -5750,6 +5751,26 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 
 **最新状态补充（BE-001GS-01）**: `profile_lowering baseline_frozen` 与 `profile_lowering plan_frozen` 成立；下一步只能进入 BE-001GS-02 extract_closeout。
 **最新状态补充（BE-001GS-02）**: `profile_lowering actual_extraction_done`、`profile_lowering closeout_done` 与 `profile_lowering stop_split: true` 成立；不继续拆 risk_profile_rendering / execution_profile_rendering 微叶。
+
+#### 5.2.2.4 `backend.graph_compile.quantscript_graph.formal_module_conversion.input_shape_validation`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.input_shape_validation`
+**父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion`
+**状态**: v4.16 BE-001GU-02 单叶 closeout 已完成，`stop_split: true`。
+
+**真实文件**:
+- `src/backend/graph_compile/quantscript_graph/formal_module_conversion/input_shape_validation.rs`
+
+**白箱节点**:
+
+| 节点 | 输入 | 输出 | 约束 |
+| --- | --- | --- | --- |
+| nodes required-array check | graph JSON | borrowed nodes slice or error | Error string remains `graph.nodes 必须是数组`. |
+| edges required-array check | graph JSON | borrowed edges slice or error | Error string remains `graph.edges 必须是数组`; nodes check runs first. |
+| conversion entry guard | graph JSON | `(nodes, edges)` | No downstream lowering runs until both arrays are available. |
+
+**最新状态补充（BE-001GU-01）**: `input_shape_validation baseline_frozen` 与 `input_shape_validation plan_frozen` 成立；下一步只能进入 BE-001GU-02 extract_closeout。
+**最新状态补充（BE-001GU-02）**: `input_shape_validation actual_extraction_done`、`input_shape_validation closeout_done` 与 `input_shape_validation stop_split: true` 成立；不继续拆 nodes_array_check / edges_array_check 微叶。
 
 ### 5.3 `backend.storage_security`
 
@@ -6958,3 +6979,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001GS-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.profile_lowering` profile_lowering actual extraction and closeout complete；下一步: BE-001GT-01 formal_module_conversion parent residual judgment。
 **最新状态补充(BE-001GT-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent residual judgment selects input_shape_validation；下一步: BE-001GU-01 input_shape_validation baseline_plan。
 **最新状态补充(BE-001GU-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.input_shape_validation` input_shape_validation equivalence baseline and extraction plan；下一步: BE-001GU-02 input_shape_validation extract_closeout。
+**最新状态补充(BE-001GU-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.input_shape_validation` input_shape_validation actual extraction and closeout complete；下一步: BE-001GV-01 formal_module_conversion parent residual judgment。

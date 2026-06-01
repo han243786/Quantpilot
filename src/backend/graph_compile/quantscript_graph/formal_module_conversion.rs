@@ -1,4 +1,5 @@
 mod data_source_lowering;
+mod input_shape_validation;
 mod intent_lowering;
 mod profile_lowering;
 
@@ -8,14 +9,7 @@ use serde_json::Value;
 pub(crate) fn convert_graph_json_to_script_module(
     graph_value: &Value,
 ) -> anyhow::Result<ScriptModule> {
-    let nodes = graph_value
-        .get("nodes")
-        .and_then(Value::as_array)
-        .ok_or_else(|| anyhow::anyhow!("graph.nodes 必须是数组"))?;
-    let edges = graph_value
-        .get("edges")
-        .and_then(Value::as_array)
-        .ok_or_else(|| anyhow::anyhow!("graph.edges 必须是数组"))?;
+    let (nodes, edges) = input_shape_validation::require_graph_nodes_and_edges(graph_value)?;
 
     // Build a minimal QS source from the graph
     let mut qs_lines: Vec<String> = vec!["fn strategy() {".to_string()];
