@@ -664,3 +664,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001HT-01 `backend.strategy_config.artifact` backend.strategy_config.artifact parent residual judgment selects domain_projection；下一步: BE-001HU-01 backend.strategy_config.artifact.domain_projection baseline_plan。
 - BE-001HU-01 `backend.strategy_config.artifact.domain_projection` backend.strategy_config.artifact.domain_projection equivalence baseline and extraction plan；下一步: BE-001HU-02 backend.strategy_config.artifact.domain_projection extract_closeout。
 - BE-001HU-02 `backend.strategy_config.artifact.domain_projection` backend.strategy_config.artifact.domain_projection actual extraction complete；下一步: BE-001HV-01 backend.strategy_config.artifact parent residual judgment。
+- BE-001HV-01 `backend.strategy_config.artifact` backend.strategy_config.artifact parent residual judgment selects builder_core；下一步: BE-001HW-01 backend.strategy_config.artifact.builder_core baseline_plan。
