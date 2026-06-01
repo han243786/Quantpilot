@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "GOV-LEAF-SPLIT-GATE",
-  "last_committed_sha": "53c3f8aa",
+  "last_committed_batch": "GOV-RECURSIVE-SPEEDUP",
+  "last_committed_sha": "6bea211",
   "current_parent": "backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering",
-  "current_step": "BE-001GE-01",
-  "current_phase": "parent_residual_judgment",
+  "current_step": "BE-001GF-01",
+  "current_phase": "baseline_plan",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "spread_observer_lowering",

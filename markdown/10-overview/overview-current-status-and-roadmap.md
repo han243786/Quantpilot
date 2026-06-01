@@ -602,3 +602,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001GD-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 实际抽离；child file 承接 RSI branch，父级只保留 `mod rsi_lowering;` 与受控调用。下一步只能进入 BE-001GD-04 单叶 closeout。
 - BE-001GD-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 单叶 closeout；本批 `no code movement`，设置 `rsi_lowering stop_split: true`。下一步只能进入 BE-001GE-01 `intent_lowering` 父叶残余判断。
 - GOV-LEAF-SPLIT-GATE 已固化递归叶子细分判定硬规则；后续新增单叶 closeout / 父叶残余判断必须触发 `leaf_split_decision_gate`，缺少基础门槛、强拆分触发、强停止条件、判定结果或下一步时治理门禁应失败。
+- BE-001GE-01 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects ma_deviation_lowering；下一步: BE-001GF-01 ma_deviation_lowering baseline_plan。
