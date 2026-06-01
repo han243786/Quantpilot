@@ -5308,6 +5308,38 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 **最新状态补充（BE-001FQ-02）**: BE-001FQ-02 已建立 `backend.graph_compile.quantscript_graph` 抽离方案。下一步只能进入 BE-001FQ-03 实际抽离记录：由 `src/backend/graph_compile/quantscript_graph.rs` 接管旧 graph_quantscript_api 真实实现，`src/lib.rs` 通过 root parent re-export surface 维持旧 caller，不得新增 compile / graph / runtime sibling horizontal link。
 **最新状态补充（BE-001FQ-03）**: BE-001FQ-03 已完成 `backend.graph_compile.quantscript_graph` 实际抽离。旧 graph_quantscript_api owner 已删除，`src/backend/graph_compile/quantscript_graph.rs` 成为 QS graph route/helper 真实 owner；`src/lib.rs` 通过 root parent re-export surface 维持 compile / graph / runtime / test caller，当前不得宣称 `backend.graph_compile stop_split: true`。
 **最新状态补充（BE-001FQ-04）**: BE-001FQ-04 已完成 `backend.graph_compile.quantscript_graph` 单叶 closeout。等价成立，但本叶仍同时承载 route surface、graph-to-QS generation、formal conversion、artifact target projection 与 strategy_graph parser，因此 `backend.graph_compile.quantscript_graph stop_split: false`；下一步只能进入 BE-001FR-01 `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 等价基线。
+**最新状态补充（BE-001FR-01）**: BE-001FR-01 已建立 `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 单子叶等价基线。当前 `no code movement`，`src/backend/graph_compile/quantscript_graph.rs` 仍是真实 owner，`graph_to_qs_generation baseline_frozen`；下一步只能进入 BE-001FR-02 抽离方案，不得直接移动 generator 或新增 sibling horizontal link。
+
+### 5.2.1 `backend.graph_compile.quantscript_graph.graph_to_qs_generation`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.graph_to_qs_generation`
+**父模块**: `backend.graph_compile.quantscript_graph`
+**状态**: v4.16 BE-001FR-01 等价基线已建立，当前只冻结 graph-to-QS generator 输入面；child file 尚未创建。
+**真实文件**:
+- `src/backend/graph_compile/quantscript_graph.rs`
+- `src/compile_api.rs`
+- `src/graph_api.rs`
+- `src/tests_backend.rs`
+
+**职责**:
+把 graph JSON 渲染为 strategy_graph QuantScript source，管理 metadata、node block、edge connect 与 scalar rendering。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `generate_quantscript_from_graph_value` | graph `Value` | QuantScript source | compile/graph/test caller | 不得改变 metadata、node、edge 输出语义 |
+| `generate_node_quantscript` | node、nodes、edges | node block | generator、`build_quantscript_node_sources` | 不得绕过父级通信改 artifact projection |
+| `quoted` | string | quoted string | scalar renderer | 不得改变 escaping |
+| `render_json_scalar` | JSON scalar | QS scalar text | node config renderer | 不得改变 complex JSON fallback |
+
+**父级通信规则**:
+本子叶只能通过 `backend.graph_compile.quantscript_graph` 父级对外暴露；compile、graph、runtime 和 artifact projection 不得直接横向连接 child。若后续实际抽离，`build_quantscript_node_sources` 对 `generate_node_quantscript` 的复用必须使用父级受控 `pub(super)` helper 或父级委托。
+
+**回归保护**:
+`cargo check -p quantpilot`；后续实际抽离补跑 `cargo test -p quantpilot quantscript --lib`、`cargo test -p quantpilot --test quantscript_real_strategy_authoring`、`cargo test -p quantpilot --test api_graph_versions`。
+
+**幻觉检查点**:
+AI 声称 BE-001FR-01 已完成时，必须说明当前只是 `no code movement` 等价基线，`src/backend/graph_compile/quantscript_graph.rs` 仍是真实 owner，`graph_to_qs_generation baseline_frozen` 成立但 child file 尚未创建。不得宣称 `convert_graph_json_to_script_module`、`attach_quantscript_artifacts`、`parse_graph_quantscript_source` 或 `backend.graph_compile` 已收口。
 
 ### 5.3 `backend.storage_security`
 

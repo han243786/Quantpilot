@@ -20427,6 +20427,36 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/479-*.md", @(
+        @("BE-001FR-01", "graph generation baseline marker"),
+        @("BE-001FR-02", "next graph generation plan marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend.graph_compile.quantscript_graph.graph_to_qs_generation", "graph generation child marker"),
+        @("root.backend.graph_compile.quantscript_graph.graph_to_qs_generation", "graph generation coordinate"),
+        @("src/backend/graph_compile/quantscript_graph.rs", "current owner file"),
+        @("generate_quantscript_from_graph_value", "generator public helper marker"),
+        @("generate_node_quantscript", "node generator helper marker"),
+        @("quoted", "quoted helper marker"),
+        @("render_json_scalar", "scalar renderer helper marker"),
+        @("build_quantscript_node_sources", "hidden artifact projection caller marker"),
+        @("graph_id", "graph id invariant marker"),
+        @("unknown.module", "module fallback invariant marker"),
+        @("connect {source}.{source_port} -> {target}.{target_port}", "connect invariant marker"),
+        @("# no connections", "no connections invariant marker"),
+        @("convert_graph_json_to_script_module", "formal conversion exclusion marker"),
+        @("attach_quantscript_artifacts", "artifact projection exclusion marker"),
+        @("parse_graph_quantscript_source", "parser exclusion marker"),
+        @("pub(super)", "parent controlled helper marker"),
+        @("release transition guard", "release transition guard marker"),
+        @("sibling horizontal link", "horizontal link guard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
