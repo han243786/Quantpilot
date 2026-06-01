@@ -3,9 +3,11 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.app_shell",
-  "current_step": "FE-0002",
-  "current_phase": "frontend_app_shell_parent_baseline",
-  "closed_children": [],
+  "current_step": "FE-0003",
+  "current_phase": "frontend_app_shell_bootstrap_root_closeout",
+  "closed_children": [
+    "frontend.app_shell.bootstrap_root"
+  ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
     "markdown/00-matrix-governance/module-tree.md",

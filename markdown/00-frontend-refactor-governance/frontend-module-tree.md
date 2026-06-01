@@ -16,13 +16,18 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
   - Current owned files:
     - `frontend/src/main.jsx`
     - `frontend/src/App.jsx`
+    - `frontend/src/app/AppRoot.jsx`
+    - `frontend/src/app/AppRoot.test.jsx`
+    - `frontend/src/app/installGlobalErrorHandlers.js`
+    - `frontend/src/app/installGlobalErrorHandlers.test.js`
   - Child queue:
-    - `frontend.app_shell.bootstrap_root`
     - `frontend.app_shell.startup_readiness`
     - `frontend.app_shell.environment_events`
     - `frontend.app_shell.desktop_window_chrome`
     - `frontend.app_shell.route_host`
     - `frontend.app_shell.global_overlays`
+  - Closed child leaves:
+    - `frontend.app_shell.bootstrap_root`
 
 ## Pending Parent Queue
 
