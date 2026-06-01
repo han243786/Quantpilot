@@ -5657,6 +5657,27 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001GJ-01）**: `zscore_lowering baseline_frozen` 与 `zscore_lowering plan_frozen` 成立；下一步只能进入 BE-001GJ-02 extract_closeout，不得直接移动其它 built-in intent branch。
 **最新状态补充（BE-001GJ-02）**: `zscore_lowering actual_extraction_done`、`zscore_lowering closeout_done` 与 `zscore_lowering stop_split: true` 成立；不继续拆 zscore_config_decode / zscore_signal_rendering / zscore_buy_emit 微叶。
 
+#### 5.2.2.1.8 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.shared_intent_context`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.shared_intent_context`
+**父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
+**状态**: v4.16 BE-001GL-02 单叶 closeout 已完成，`stop_split: true`。
+
+**真实文件**:
+- `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/shared_intent_context.rs`
+
+**白箱节点**:
+
+| 节点 | 输入 | 输出 | 约束 |
+| --- | --- | --- | --- |
+| module key lookup | intent node | module key | missing defaults to empty string |
+| config and instrument lookup | intent node config | cfg / instrument | missing config uses `Value::Null`; instrument defaults to `BTCUSDT` |
+| upstream edge lookup | `edges` / node id | source id | missing edge/source defaults to `data` |
+| source var normalization | source id | source var | `-` and `.` normalize to `_` |
+
+**最新状态补充（BE-001GL-01）**: `shared_intent_context baseline_frozen` 与 `shared_intent_context plan_frozen` 成立；下一步只能进入 BE-001GL-02 extract_closeout，不得让 context child 直接调用 branch child。
+**最新状态补充（BE-001GL-02）**: `shared_intent_context actual_extraction_done`、`shared_intent_context closeout_done` 与 `shared_intent_context stop_split: true` 成立；不继续拆 instrument_fallback / source_lookup / source_var_normalization 微叶。
+
 ### 5.3 `backend.storage_security`
 
 **层级路径**: `root.backend.storage_security`
@@ -6851,3 +6872,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001GJ-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.zscore_lowering` zscore_lowering actual extraction and closeout complete；下一步: BE-001GK-01 intent_lowering parent residual judgment。
 **最新状态补充(BE-001GK-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects shared_intent_context；下一步: BE-001GL-01 shared_intent_context baseline_plan。
 **最新状态补充(BE-001GL-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.shared_intent_context` shared_intent_context baseline and extraction plan frozen；下一步: BE-001GL-02 shared_intent_context extract_closeout。
+**最新状态补充(BE-001GL-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.shared_intent_context` shared_intent_context actual extraction and closeout complete；下一步: BE-001GM-01 intent_lowering parent residual judgment。
