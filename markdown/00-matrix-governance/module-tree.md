@@ -5617,6 +5617,26 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001GF-01）**: `ma_deviation_lowering baseline_frozen` 与 `ma_deviation_lowering plan_frozen` 成立；下一步只能进入 BE-001GF-02 extract_closeout，不得直接移动其它 built-in intent branch。
 **最新状态补充（BE-001GF-02）**: `ma_deviation_lowering actual_extraction_done`、`ma_deviation_lowering closeout_done` 与 `ma_deviation_lowering stop_split: true` 成立；不继续拆 ma_deviation_config_decode / ma_dev_signal_rendering / ma_deviation_sell_emit 微叶。
 
+#### 5.2.2.1.6 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.momentum_lowering`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.momentum_lowering`
+**父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
+**状态**: v4.16 BE-001GH-02 单叶 closeout 已完成，`stop_split: true`。
+
+**真实文件**:
+- `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/momentum_lowering.rs`
+
+**白箱节点**:
+
+| 节点 | 输入 | 输出 | 约束 |
+| --- | --- | --- | --- |
+| momentum config decode | `lookback` / `threshold_ratio` / `threshold` | lookback / threshold | default 10 / 0.02；`threshold_ratio` 优先 |
+| momentum signal rendering | `node_id` / `source_var` / lookback | `let {node_id}_signal = momentum(...)` | signal variable name remains node scoped |
+| momentum branch | signal / threshold / instrument | BUY Intent | BUY emit unchanged |
+
+**最新状态补充（BE-001GH-01）**: `momentum_lowering baseline_frozen` 与 `momentum_lowering plan_frozen` 成立；下一步只能进入 BE-001GH-02 extract_closeout，不得直接移动其它 built-in intent branch。
+**最新状态补充（BE-001GH-02）**: `momentum_lowering actual_extraction_done`、`momentum_lowering closeout_done` 与 `momentum_lowering stop_split: true` 成立；不继续拆 momentum_config_decode / momentum_signal_rendering / momentum_buy_emit 微叶。
+
 ### 5.3 `backend.storage_security`
 
 **层级路径**: `root.backend.storage_security`
@@ -6805,3 +6825,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001GF-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.ma_deviation_lowering` ma_deviation_lowering actual extraction and closeout complete；下一步: BE-001GG-01 intent_lowering parent residual judgment。
 **最新状态补充(BE-001GG-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects momentum_lowering；下一步: BE-001GH-01 momentum_lowering baseline_plan。
 **最新状态补充(BE-001GH-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.momentum_lowering` momentum_lowering baseline and extraction plan frozen；下一步: BE-001GH-02 momentum_lowering extract_closeout。
+**最新状态补充(BE-001GH-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.momentum_lowering` momentum_lowering actual extraction and closeout complete；下一步: BE-001GI-01 intent_lowering parent residual judgment。
