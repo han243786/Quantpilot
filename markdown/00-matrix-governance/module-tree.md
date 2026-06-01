@@ -824,6 +824,7 @@ AI 声称 backend 已推进时，必须说明当前完成的是 BE-001B 九叶�
 
 **最新状态补充（BE-001FO-01）**: BE-001FO-01 已完成 `backend` 父叶残余判断。`backend.runtime stop_split: true` 已成立，但 `backend.graph_compile`、`backend.capability`、`backend.strategy_config`、`backend.storage_security`、`backend.ops_governance`、`backend.app_state_wiring` 与 `backend.test_support` 仍有顶层残余，因此 `backend stop_split: false`。下一步只能进入 BE-001FP-01 `backend.graph_compile` 父叶残余判断，不得直接改写 compile / graph / quantscript graph handler。
 **最新状态补充（BE-001HM-01）**: BE-001HM-01 已完成 `backend` 父叶残余判断。`interface_boundary`、`runtime` 与 `graph_compile` 已 closeout，父级仍保留 `capability`、`strategy_config`、`storage_security`、`ops_governance`、`app_state_wiring` 与 `test_support` 顶层残余，因此 `backend stop_split: false`；下一步只能进入 BE-001HN-01 `backend.capability` baseline_plan。
+**最新状态补充（BE-001HN-01）**: BE-001HN-01 已建立 `backend.capability` 等价基线与抽离方案。当前 `no code movement`，`capability baseline_frozen` 与 `capability plan_frozen` 成立；下一步只能进入 BE-001HN-02 extract_closeout，不得改变 capability response/hash/context 语义。
 
 ---
 
@@ -7207,3 +7208,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001HK-02)**: `backend.graph_compile.graph` backend.graph_compile.graph actual extraction and closeout complete；下一步: BE-001HL-01 backend.graph_compile parent closeout。
 **最新状态补充(BE-001HL-01)**: `backend.graph_compile` backend.graph_compile parent closeout sets stop_split true；下一步: BE-001HM-01 backend parent residual judgment。
 **最新状态补充(BE-001HM-01)**: `backend` backend parent residual judgment selects capability；下一步: BE-001HN-01 backend.capability baseline_plan。
+**最新状态补充(BE-001HN-01)**: `backend.capability` backend.capability equivalence baseline and extraction plan；下一步: BE-001HN-02 backend.capability extract_closeout。

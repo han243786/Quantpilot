@@ -3204,3 +3204,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/562-backend.graph_compile.parent_closeout.md` - v4.16.0 BE-001HL-01 backend.graph_compile parent closeout sets stop_split true
 递归边界补充: BE-001HM-01 `backend` backend parent residual judgment selects capability；下一步: BE-001HN-01 backend.capability baseline_plan。
 - `markdown/06-milestones/v4.16.0/563-backend.parent_residual_judgment.capability.md` - v4.16.0 BE-001HM-01 backend parent residual judgment selects capability
+递归边界补充: BE-001HN-01 `backend.capability` backend.capability equivalence baseline and extraction plan；下一步: BE-001HN-02 backend.capability extract_closeout。
+- `markdown/06-milestones/v4.16.0/564-backend.capability.baseline_plan.md` - v4.16.0 BE-001HN-01 backend.capability equivalence baseline and extraction plan

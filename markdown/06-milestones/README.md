@@ -924,3 +924,4 @@
 | v4.16.0 / BE-001HK-02 | 新增: `backend.graph_compile.graph` backend.graph_compile.graph actual extraction and closeout complete |
 | v4.16.0 / BE-001HL-01 | 新增: `backend.graph_compile` backend.graph_compile parent closeout sets stop_split true |
 | v4.16.0 / BE-001HM-01 | 新增: `backend` backend parent residual judgment selects capability |
+| v4.16.0 / BE-001HN-01 | 新增: `backend.capability` backend.capability equivalence baseline and extraction plan |
