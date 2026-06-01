@@ -13,6 +13,7 @@ import { createApiClient, request } from "./apiTransport";
 
 export { API_BASE, getAuthHeaders, resolveApiBase } from "./apiBase";
 export { createApiClient, request } from "./apiTransport";
+export { fetchWithTimeout } from "./fetchHelpers";
 
 export const apiClient = createApiClient();
 

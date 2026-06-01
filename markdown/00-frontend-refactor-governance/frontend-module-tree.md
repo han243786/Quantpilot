@@ -16,6 +16,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
   - Current owned files:
     - `frontend/src/api/apiBase.js`
     - `frontend/src/api/apiBase.test.js`
+    - `frontend/src/api/fetchHelpers.js`
+    - `frontend/src/api/fetchHelpers.test.js`
     - `frontend/src/api/apiTransport.js`
     - `frontend/src/api/apiTransport.test.js`
     - `frontend/src/api/client.js`
@@ -31,11 +33,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/StrategyWorkspaceSourceTab.jsx`
     - `frontend/src/components/TopToolbar.jsx`
     - `frontend/src/utils/runtimeApproval.js`
-  - Child queue:
-    - `frontend.api_client.compat_fetch_helpers`
+  - Child queue: closed.
   - Closed child leaves:
     - `frontend.api_client.base_resolution`
     - `frontend.api_client.request_transport`
+    - `frontend.api_client.compat_fetch_helpers`
 
 ## Last Closed Parent
 
