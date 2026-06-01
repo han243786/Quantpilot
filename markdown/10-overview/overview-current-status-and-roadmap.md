@@ -562,3 +562,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001FN-01 已完成 `backend.runtime` 第十轮父叶残余判断；本批 `no code movement`，`backend.runtime stop_split: true`，下一步只能进入 BE-001FO-01 `backend` 父叶残余判断。
 - BE-001FO-01 已完成 `backend` 父叶残余判断；本批 `no code movement`，`backend stop_split: false`，下一步只能进入 BE-001FP-01 `backend.graph_compile` 父叶残余判断。
 - BE-001FP-01 已完成 `backend.graph_compile` 父叶残余判断；本批 `no code movement`，`backend.graph_compile stop_split: false`，下一步只能进入 BE-001FQ-01 `backend.graph_compile.quantscript_graph` 单子叶等价基线。
+- BE-001FQ-01 已建立 `backend.graph_compile.quantscript_graph` 单子叶等价基线；本批 `no code movement`，冻结 route handler、shared helper、compile/graph/runtime/test 调用面，下一步只能进入 BE-001FQ-02 抽离方案。

@@ -472,3 +472,4 @@
 | v4.16.0 / BE-001FN-01 | 新增: `backend.runtime` 第十轮父叶残余判断已建立，下一步进入 backend 父叶判断 |
 | v4.16.0 / BE-001FO-01 | 新增: `backend` 父叶残余判断已建立，下一步进入 backend.graph_compile 父叶判断 |
 | v4.16.0 / BE-001FP-01 | 新增: `backend.graph_compile` 父叶残余判断已建立，下一步进入 quantscript_graph 等价基线 |
+| v4.16.0 / BE-001FQ-01 | 新增: `backend.graph_compile.quantscript_graph` 单子叶等价基线已建立，下一步进入抽离方案 |

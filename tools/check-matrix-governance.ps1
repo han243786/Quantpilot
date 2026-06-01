@@ -20276,6 +20276,40 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/475-*.md", @(
+        @("BE-001FQ-01", "quantscript graph baseline marker"),
+        @("BE-001FQ-02", "next extraction plan marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend.graph_compile.quantscript_graph", "quantscript graph marker"),
+        @("root.backend.graph_compile.quantscript_graph", "quantscript graph coordinate"),
+        @("src/backend/graph_compile/quantscript_graph.rs", "quantscript facade file"),
+        @("src/graph_quantscript_api.rs", "legacy quantscript graph file"),
+        @("backend_graph_compile_quantscript_graph_parent_wildcard_residual_1", "parent wildcard residual marker"),
+        @("register_graph_quantscript_routes", "route register marker"),
+        @("/api/graphs/:graph_id/quantscript", "load route marker"),
+        @("/api/quantscript/graph/parse", "parse route marker"),
+        @("load_graph_quantscript", "load handler marker"),
+        @("parse_graph_quantscript", "parse handler marker"),
+        @("generate_quantscript_from_graph_value", "generate helper marker"),
+        @("convert_graph_json_to_script_module", "convert helper marker"),
+        @("attach_quantscript_artifacts", "artifact helper marker"),
+        @("build_quantscript_runtime_targets", "runtime target helper marker"),
+        @("build_compile_runtime_targets_from_graph", "compile target helper marker"),
+        @("parse_graph_quantscript_source", "parser helper marker"),
+        @("src/compile_api.rs", "compile caller marker"),
+        @("src/graph_api.rs", "graph caller marker"),
+        @("src/runtime/run/session_start.rs", "runtime caller marker"),
+        @("src/runtime/backtest/execution_start.rs", "backtest caller marker"),
+        @("src/tests_backend.rs", "test caller marker"),
+        @("release transition guard", "release transition guard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
