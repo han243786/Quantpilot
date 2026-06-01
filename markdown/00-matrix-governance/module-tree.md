@@ -5900,13 +5900,11 @@ AI 声称 BE-001HD-01 已完成时，必须说明当前只是 `no code movement`
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.route_surface`
 **父模块**: `backend.graph_compile.quantscript_graph`
-**状态**: v4.16 BE-001HF-01 baseline_plan 已建立，`route_surface baseline_frozen` 与 `route_surface plan_frozen` 成立；下一步只能进入 BE-001HF-02 extract_closeout。
+**状态**: v4.16 BE-001HF-02 actual extraction + closeout 已完成，`route_surface stop_split: true`；下一步回到 `backend.graph_compile.quantscript_graph` 父叶 closeout。
 
 **真实文件**:
 - `src/backend/graph_compile/quantscript_graph.rs`
-
-**计划文件**:
-route_surface child module under `src/backend/graph_compile/quantscript_graph/` (not created in BE-001HF-01).
+- `src/backend/graph_compile/quantscript_graph/route_surface.rs`
 
 **职责**:
 承接 QS graph HTTP route facade：route registration、load `.qs` handler、parse strategy_graph source handler。父级继续持有 public wrapper 与 helper child mediation。
@@ -5930,6 +5928,7 @@ route_surface child module under `src/backend/graph_compile/quantscript_graph/` 
 AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement` baseline_plan，planned route_surface child 尚未创建，route handlers 仍在 `src/backend/graph_compile/quantscript_graph.rs`。
 
 **最新状态补充（BE-001HF-01）**: `route_surface baseline_frozen` 与 `route_surface plan_frozen` 成立；下一步只能进入 BE-001HF-02 extract_closeout，不得移动 parser、artifact projection、formal conversion 或 graph generation child。
+**最新状态补充（BE-001HF-02）**: `route_surface actual_extraction_done`、`route_surface closeout_done` 与 `route_surface stop_split: true` 成立；`backend.graph_compile.quantscript_graph` 所有已选 child 均 closeout，下一步只能进入 BE-001HG-01 父叶 closeout。
 
 ### 5.3 `backend.storage_security`
 
@@ -7154,3 +7153,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001HD-02)**: `backend.graph_compile.quantscript_graph.artifact_target_projection` artifact_target_projection actual extraction and closeout complete；下一步: BE-001HE-01 quantscript_graph parent residual judgment。
 **最新状态补充(BE-001HE-01)**: `backend.graph_compile.quantscript_graph` quantscript_graph parent residual judgment selects route_surface；下一步: BE-001HF-01 route_surface baseline_plan。
 **最新状态补充(BE-001HF-01)**: `backend.graph_compile.quantscript_graph.route_surface` route_surface equivalence baseline and extraction plan；下一步: BE-001HF-02 route_surface extract_closeout。
+**最新状态补充(BE-001HF-02)**: `backend.graph_compile.quantscript_graph.route_surface` route_surface actual extraction and closeout complete；下一步: BE-001HG-01 quantscript_graph parent closeout。

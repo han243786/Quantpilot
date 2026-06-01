@@ -2171,6 +2171,7 @@ storage/
 - `src/backend/graph_compile/quantscript_graph.rs` — QS graph route/parser/artifact 父叶, `generate_quantscript_from_graph_value()` 由 child re-export
 - `src/backend/graph_compile/quantscript_graph/artifact_target_projection.rs` — QS graph artifact and runtime target projection child; parent mediates graph-to-QS generator reuse
 - `src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs` — graph JSON → QS 源码, `generate_quantscript_from_graph_value()`; 改图→QS 转换时改这里
+- `src/backend/graph_compile/quantscript_graph/route_surface.rs` — QS graph route facade child, owns load/parse HTTP handlers
 - `src/backend/graph_compile/quantscript_graph/strategy_graph_parser.rs` — strategy_graph source parser child, owns source-to-imported-graph parsing before artifact attachment
 - `src/graph_version_compare.rs` — 图版本对比; 改版本 diff 算法、配置契约 diff 或 evidence diff 响应挂接时改这里
 - `src/hotswap_api.rs` — 模块热替换 API; 改热替换接口时改这里
@@ -3181,3 +3182,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/552-backend.graph_compile.quantscript_graph.parent_residual_judgment.route_surface.md` - v4.16.0 BE-001HE-01 quantscript_graph parent residual judgment selects route_surface
 递归边界补充: BE-001HF-01 `backend.graph_compile.quantscript_graph.route_surface` route_surface equivalence baseline and extraction plan；下一步: BE-001HF-02 route_surface extract_closeout。
 - `markdown/06-milestones/v4.16.0/553-backend.graph_compile.quantscript_graph.route_surface.baseline_plan.md` - v4.16.0 BE-001HF-01 route_surface equivalence baseline and extraction plan
+递归边界补充: BE-001HF-02 `backend.graph_compile.quantscript_graph.route_surface` route_surface actual extraction and closeout complete；下一步: BE-001HG-01 quantscript_graph parent closeout。
+- `markdown/06-milestones/v4.16.0/554-backend.graph_compile.quantscript_graph.route_surface.extract_closeout.md` - v4.16.0 BE-001HF-02 route_surface actual extraction and closeout complete
