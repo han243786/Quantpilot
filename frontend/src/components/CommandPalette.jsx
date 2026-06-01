@@ -1,22 +1,17 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useI18n } from "../i18n";
 import { navigateTo } from "../router";
+import { COMMAND_NAVIGATION_DEFS } from "../routing/shellNavigation";
 import { useGraphStore } from "../store/graphStore";
 import { humanizeErrorText } from "../utils/errorText";
 
-const COMMAND_DEFS = [
-  { id: "strategies", labelKey: "策略中心", keys: ["/strategies"], sectionKey: "导航" },
-  { id: "quantscript", labelKey: "QuantScript 编辑器", keys: ["/quantscript"], sectionKey: "导航" },
-  { id: "approvals", labelKey: "审批队列", keys: ["/approvals"], sectionKey: "运维" },
-  { id: "alerts", labelKey: "告警面板", keys: ["/alerts"], sectionKey: "运维" },
-  { id: "snapshots", labelKey: "签名快照", keys: ["/snapshots"], sectionKey: "运维" },
-  { id: "runbook", labelKey: "故障手册", keys: ["/runbook"], sectionKey: "运维" },
-  { id: "chaos", labelKey: "混沌实验", keys: ["/chaos"], sectionKey: "运维" },
+const ACTION_COMMAND_DEFS = [
   { id: "save-graph", labelKey: "保存策略图", keys: ["save"], sectionKey: "操作", action: "saveGraph" },
   { id: "compile-graph", labelKey: "编译当前策略", keys: ["compile"], sectionKey: "操作", action: "compileCurrentGraph" },
   { id: "run-runtime", labelKey: "运行模拟", keys: ["run"], sectionKey: "操作", action: "startRuntime" },
   { id: "run-backtest", labelKey: "运行回测", keys: ["backtest"], sectionKey: "操作", action: "startBacktest" },
 ];
+const COMMAND_DEFS = [...COMMAND_NAVIGATION_DEFS, ...ACTION_COMMAND_DEFS];
 
 function toast(type, message) {
   if (typeof window === "undefined") return;

@@ -57,10 +57,13 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `frontend/src/routing/navigationDispatch.test.js`
     - `frontend/src/routing/routeContract.js`
     - `frontend/src/routing/routeContract.test.js`
+    - `frontend/src/routing/shellNavigation.js`
+    - `frontend/src/routing/shellNavigation.test.js`
   - Evidence:
     - `markdown/00-frontend-refactor-governance/records/FE-0012-frontend-routing-baseline.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0013-frontend-routing-route-contract-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0014-frontend-routing-navigation-dispatch-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0015-frontend-routing-shell-navigation-closeout.md`
 
 ## Evidence Rules
 

@@ -20,6 +20,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/routing/navigationDispatch.test.js`
     - `frontend/src/routing/routeContract.js`
     - `frontend/src/routing/routeContract.test.js`
+    - `frontend/src/routing/shellNavigation.js`
+    - `frontend/src/routing/shellNavigation.test.js`
   - Important consumers:
     - `frontend/src/app/useAppRoute.js`
     - `frontend/src/App.jsx`
@@ -31,11 +33,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/*`
     - `frontend/src/utils/*Actions.js`
     - `frontend/src/test/testBridge.js`
-  - Child queue:
-    - `frontend.routing.shell_navigation`
+  - Child queue: none.
   - Closed child leaves:
     - `frontend.routing.route_contract`
     - `frontend.routing.navigation_dispatch`
+    - `frontend.routing.shell_navigation`
 
 ## Last Closed Parent
 
