@@ -250,7 +250,10 @@ async fn compile_runtime_request(
             ),
             target: None,
             span_label: None,
-            hint: Some("检查前端模块键是否与 graph_quantscript_api.rs 的 QS 生成分支一致。".to_string()),
+            hint: Some(
+                "检查前端模块键是否与 backend.graph_compile.quantscript_graph 的 QS 生成分支一致。"
+                    .to_string(),
+            ),
         });
     }
     let protocol_name = compiled.protocol_name.clone();

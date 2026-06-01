@@ -474,3 +474,4 @@
 | v4.16.0 / BE-001FP-01 | 新增: `backend.graph_compile` 父叶残余判断已建立，下一步进入 quantscript_graph 等价基线 |
 | v4.16.0 / BE-001FQ-01 | 新增: `backend.graph_compile.quantscript_graph` 单子叶等价基线已建立，下一步进入抽离方案 |
 | v4.16.0 / BE-001FQ-02 | 新增: `backend.graph_compile.quantscript_graph` 抽离方案已建立，下一步进入实际抽离记录 |
+| v4.16.0 / BE-001FQ-03 | 新增: `backend.graph_compile.quantscript_graph` 实际抽离完成，下一步进入单叶 closeout |

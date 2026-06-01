@@ -35,7 +35,6 @@ mod formal_quantscript_authoring_types;
 mod frontend_api_types;
 mod frontend_runtime_mapping;
 mod graph_api;
-mod graph_quantscript_api;
 mod graph_version_compare;
 mod hotswap_api;
 pub mod migration_sender;
@@ -117,6 +116,11 @@ use tokio::{fs, sync::RwLock, time::sleep};
 use api_errors::*;
 pub use app_router::*;
 pub use app_runtime_helpers::*;
+pub(crate) use backend::graph_compile::quantscript_graph::{
+    attach_quantscript_artifacts, build_compile_runtime_targets_from_graph,
+    convert_graph_json_to_script_module, generate_quantscript_from_graph_value,
+    parse_graph_quantscript_source,
+};
 use backtest_artifacts::{
     build_backtest_artifact_views, cleanup_backtest_promotion_work_dirs,
     cleanup_transient_backtest_records, delete_transient_backtest_record,
@@ -140,7 +144,6 @@ use compile_diagnostics::*;
 use formal_quantscript_authoring_types::*;
 use frontend_api_types::*;
 use frontend_runtime_mapping::*;
-use graph_quantscript_api::*;
 use graph_version_compare::*;
 use runtime_diagnostics::*;
 use runtime_event_projection::*;

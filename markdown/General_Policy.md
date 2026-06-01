@@ -386,7 +386,7 @@ cd frontend && npm audit --audit-level=moderate  # v3.0 新增
 
 | 系统 | 覆盖范围 | 关键文件 | 依赖 |
 |------|---------|---------|------|
-| **QS 编译管道** | graph JSON→QS源码→parse→HIR→lower→Core IR | `compile_api.rs`, `graph_quantscript_api.rs`, `quantscript/src/lowering/` | §1.1, §1.3 |
+| **QS 编译管道** | graph JSON→QS源码→parse→HIR→lower→Core IR | `compile_api.rs`, `backend/graph_compile/quantscript_graph.rs`, `quantscript/src/lowering/` | §1.1, §1.3 |
 | **策略图编辑器** | React Flow 可视化编辑, 6类节点(数据/意图/代理/风控/执行/运行时), 模板库 | `StrategyCanvas.jsx`, `strategyTemplates.js`, `builtinModules.js` | §1.1, §5.4 |
 | **Paper 运行时** | 实时沙盒, 慢/快双周期, 模拟成交引擎 | `qrpc_runtime/src/lib.rs`, `fill_engine.rs`, `sandbox/mod.rs` | §1.2 |
 | **回测引擎** | 历史回放/确定性Mock, 夏普/索提诺/卡尔玛等12项指标 | `backtest_metrics.rs`, `sandbox/mod.rs`, `BacktestDetailPage.jsx` | §1.2, §2.3 |

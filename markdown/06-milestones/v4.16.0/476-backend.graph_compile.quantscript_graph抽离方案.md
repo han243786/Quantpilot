@@ -60,12 +60,13 @@ use graph_quantscript_api::*;
 pub(crate) use backend::graph_compile::quantscript_graph::{
     attach_quantscript_artifacts,
     build_compile_runtime_targets_from_graph,
-    build_quantscript_runtime_targets,
     convert_graph_json_to_script_module,
     generate_quantscript_from_graph_value,
     parse_graph_quantscript_source,
 };
 ```
+
+`build_quantscript_runtime_targets` 保留在本叶内部作为 artifact attach / compile target helper 的组成部分；只有出现真实外部 caller 时才进入 root parent re-export surface。
 
 ---
 
@@ -175,6 +176,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1
 cargo fmt --check
 cargo check -p quantpilot
 cargo test -p quantpilot graph_quantscript --lib
+cargo test -p quantpilot quantscript --lib
 cargo test -p quantpilot --test quantscript_real_strategy_authoring
 cargo test -p quantpilot --test api_graph_versions
 ```

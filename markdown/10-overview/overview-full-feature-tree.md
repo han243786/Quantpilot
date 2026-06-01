@@ -359,7 +359,7 @@ compile_diagnostics.rs          — 编译诊断生成
 compile_artifact_builders.rs    — 编译产物构建
   └── 组装 RuntimeProtocolCoreConfig, StrategyPackage, MigrationPackage
 
-graph_quantscript_api.rs        — graph JSON → QS 源码
+backend/graph_compile/quantscript_graph.rs — graph JSON → QS 源码
   └── generate_quantscript_from_graph_value() — 前端图编辑器的唯一合法出口
 
 graph_version_compare.rs        — 图版本对比
@@ -2168,7 +2168,7 @@ storage/
 - `src/frontend_api_types.rs` — 前端 API 类型定义; 改前后端接口类型时改这里
 - `src/frontend_runtime_mapping.rs` — 前端运行时映射; 改后端→前端数据映射时改这里
 - `src/graph_api.rs` — 图 CRUD API (save/load/list/delete/versions); 改图存储 API 时改这里
-- `src/graph_quantscript_api.rs` — graph JSON → QS 源码, `generate_quantscript_from_graph_value()`; 改图→QS 转换时改这里
+- `src/backend/graph_compile/quantscript_graph.rs` — graph JSON → QS 源码, `generate_quantscript_from_graph_value()`; 改图→QS 转换时改这里
 - `src/graph_version_compare.rs` — 图版本对比; 改版本 diff 算法、配置契约 diff 或 evidence diff 响应挂接时改这里
 - `src/hotswap_api.rs` — 模块热替换 API; 改热替换接口时改这里
 - `src/middleware.rs` — 通用中间件; 改请求处理管道时改这里
@@ -2998,3 +2998,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/475-backend.graph_compile.quantscript_graph单子叶等价基线.md` - v4.16.0 BE-001FQ-01 `backend.graph_compile.quantscript_graph` 等价基线，冻结 QS graph route/helper 面
 递归边界补充: BE-001FQ-02 已建立 `backend.graph_compile.quantscript_graph` 抽离方案；下一步只能进入 BE-001FQ-03 实际抽离记录。
 - `markdown/06-milestones/v4.16.0/476-backend.graph_compile.quantscript_graph抽离方案.md` - v4.16.0 BE-001FQ-02 `backend.graph_compile.quantscript_graph` 抽离方案，固定 planned move 与 root parent re-export
+递归边界补充: BE-001FQ-03 已完成 `backend.graph_compile.quantscript_graph` 实际抽离；下一步只能进入 BE-001FQ-04 单叶 closeout。
+- `markdown/06-milestones/v4.16.0/477-backend.graph_compile.quantscript_graph抽离记录.md` - v4.16.0 BE-001FQ-03 `backend.graph_compile.quantscript_graph` 抽离记录，真实 owner 迁入 backend child
