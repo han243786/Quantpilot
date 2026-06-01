@@ -1,5 +1,6 @@
 mod double_ma_lowering;
 mod macd_lowering;
+mod rsi_lowering;
 mod spread_observer_lowering;
 
 use serde_json::Value;
@@ -40,22 +41,13 @@ pub(super) fn append_intent_lowering_lines(
                     );
                 }
                 "builtin.intent.rsi" => {
-                    let period = cfg.get("period").and_then(|v| v.as_u64()).unwrap_or(14);
-                    let oversold = cfg
-                        .get("oversold_threshold")
-                        .or_else(|| cfg.get("oversold"))
-                        .and_then(Value::as_f64)
-                        .unwrap_or(30.0);
-                    qs_lines.push(format!(
-                        "    let {}_signal = rsi({}, {})",
-                        node_id, source_var, period
-                    ));
-                    qs_lines.push(format!("    if {}_signal < {} {{", node_id, oversold));
-                    qs_lines.push(format!(
-                        "        emit Intent(\"BUY\", instrument=\"{}\", quantity=1.0)",
-                        instrument
-                    ));
-                    qs_lines.push("    }".to_string());
+                    rsi_lowering::append_rsi_lowering_lines(
+                        node_id,
+                        cfg,
+                        &source_var,
+                        instrument,
+                        qs_lines,
+                    );
                 }
                 "builtin.intent.ma_deviation" => {
                     let lookback = cfg.get("lookback").and_then(|v| v.as_u64()).unwrap_or(15);

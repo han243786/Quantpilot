@@ -508,3 +508,4 @@
 | v4.16.0 / BE-001GC-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 父叶残余判断已完成，下一步进入 `rsi_lowering` 等价基线 |
 | v4.16.0 / BE-001GD-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 单子叶等价基线已建立，下一步进入抽离方案 |
 | v4.16.0 / BE-001GD-02 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 抽离方案已建立，下一步进入实际抽离记录 |
+| v4.16.0 / BE-001GD-03 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 实际抽离完成，下一步进入单叶 closeout |

@@ -598,3 +598,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001GC-01 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 父叶残余判断；本批 `no code movement`，父叶保持 `stop_split: false`，本轮选择 `rsi_lowering`。下一步只能进入 BE-001GD-01 单子叶等价基线。
 - BE-001GD-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 单子叶等价基线；本批 `no code movement`，冻结 RSI 参数 fallback、QS line、BUY emit 与父子通信规则。下一步只能进入 BE-001GD-02 抽离方案。
 - BE-001GD-02 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 抽离方案；本批 `no code movement`，固定 planned child、helper signature、允许迁移块和回退方案。下一步只能进入 BE-001GD-03 实际抽离记录。
+- BE-001GD-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 实际抽离；child file 承接 RSI branch，父级只保留 `mod rsi_lowering;` 与受控调用。下一步只能进入 BE-001GD-04 单叶 closeout。
