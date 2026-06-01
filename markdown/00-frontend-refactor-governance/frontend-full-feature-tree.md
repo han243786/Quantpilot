@@ -48,7 +48,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0011-frontend-app-shell-parent-closeout.md`
 
 - `frontend.routing`
-  - Status: parent baseline established.
+  - Status: parent closed.
   - User-visible behavior: path builders, route parsing, and navigation dispatch keep shell navigation and routed feature entry stable.
   - Active frontend-local paths:
     - `frontend/src/router.js`
@@ -64,6 +64,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0013-frontend-routing-route-contract-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0014-frontend-routing-navigation-dispatch-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0015-frontend-routing-shell-navigation-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0016-frontend-routing-parent-closeout.md`
 
 ## Evidence Rules
 

@@ -3,12 +3,13 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.routing",
-  "current_step": "FE-0015",
-  "current_phase": "frontend_routing_shell_navigation_closeout",
+  "current_step": "FE-0016",
+  "current_phase": "frontend_routing_parent_closeout",
   "current_child_queue": [],
   "next_parent": "frontend.api_client",
   "closed_parents": [
-    "frontend.app_shell"
+    "frontend.app_shell",
+    "frontend.routing"
   ],
   "closed_children": [
     "frontend.routing.route_contract",
