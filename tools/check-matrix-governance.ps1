@@ -20714,6 +20714,47 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/488-*.md", @(
+        @("BE-001FU-01", "formal conversion parent residual marker"),
+        @("BE-001FV-01", "next intent lowering baseline marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend.graph_compile.quantscript_graph.formal_module_conversion", "formal conversion parent marker"),
+        @("root.backend.graph_compile.quantscript_graph.formal_module_conversion", "formal conversion coordinate"),
+        @("backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering", "intent lowering child marker"),
+        @("root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering", "intent lowering coordinate"),
+        @("formal_module_conversion parent_residual_judgment", "parent residual marker"),
+        @("formal_module_conversion stop_split: false", "stop split false marker"),
+        @("backend.graph_compile.quantscript_graph.formal_module_conversion residual_exists", "residual exists marker"),
+        @("intent_lowering_selected", "intent lowering selected marker"),
+        @("src/backend/graph_compile/quantscript_graph/formal_module_conversion.rs", "formal conversion file marker"),
+        @("convert_graph_json_to_script_module", "formal conversion function marker"),
+        @("graph.nodes", "nodes validation marker"),
+        @("graph.edges", "edges validation marker"),
+        @("data_source_lowering", "data residual marker"),
+        @("profile_lowering", "profile residual marker"),
+        @("intent_lowering", "intent residual marker"),
+        @("unsupported_intent_failure", "unsupported intent marker"),
+        @("unsupported_node_logging", "unsupported node marker"),
+        @("terminal_parse", "terminal parse marker"),
+        @("parse_quant_script_module", "parse marker"),
+        @("safe_eprintln!", "safe log marker"),
+        @("builtin.intent.double_ma", "double ma marker"),
+        @("builtin.intent.rsi", "rsi marker"),
+        @("builtin.intent.ma_deviation", "ma deviation marker"),
+        @("builtin.intent.macd", "macd marker"),
+        @("builtin.intent.momentum", "momentum marker"),
+        @("builtin.intent.zscore", "zscore marker"),
+        @("builtin.intent.spread_observer", "spread observer marker"),
+        @("release transition guard", "release guard marker"),
+        @("sibling horizontal link", "horizontal link guard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
