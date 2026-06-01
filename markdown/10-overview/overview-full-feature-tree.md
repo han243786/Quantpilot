@@ -3161,3 +3161,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 递归边界补充: BE-001GY-02 `backend.graph_compile.quantscript_graph.formal_module_conversion.unsupported_node_logging` unsupported_node_logging actual extraction and closeout complete；下一步: BE-001GZ-01 formal_module_conversion parent closeout。
 - `markdown/06-milestones/v4.16.0/544-backend.graph_compile.quantscript_graph.formal_module_conversion.unsupported_node_logging.extract_closeout.md` - v4.16.0 BE-001GY-02 unsupported_node_logging actual extraction and closeout complete
 - `src/backend/graph_compile/quantscript_graph/formal_module_conversion/unsupported_node_logging.rs` - Unsupported node logging child, owns known-node no-op classification and unknown-node safe log message
+递归边界补充: BE-001GZ-01 `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent closeout sets stop_split true；下一步: BE-001HA-01 quantscript_graph parent residual judgment。
+- `markdown/06-milestones/v4.16.0/545-backend.graph_compile.quantscript_graph.formal_module_conversion.parent_closeout.md` - v4.16.0 BE-001GZ-01 formal_module_conversion parent closeout sets stop_split true
