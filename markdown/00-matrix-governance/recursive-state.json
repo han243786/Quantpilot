@@ -1,23 +1,23 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001GV-01",
-  "last_committed_sha": "f33f7d7",
+  "last_committed_batch": "BE-001GW-01",
+  "last_committed_sha": "290a429",
   "current_parent": "backend.graph_compile.quantscript_graph.formal_module_conversion",
-  "current_step": "BE-001GW-02",
-  "current_phase": "extract_closeout",
+  "current_step": "BE-001GX-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "intent_lowering",
     "data_source_lowering",
     "profile_lowering",
-    "input_shape_validation"
-  ],
-  "open_residuals": [
-    "unsupported_node_logging",
+    "input_shape_validation",
     "terminal_parse"
   ],
-  "next_recommended_child": "terminal_parse",
+  "open_residuals": [
+    "unsupported_node_logging"
+  ],
+  "next_recommended_child": "formal_module_conversion_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

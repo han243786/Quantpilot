@@ -2,8 +2,9 @@ mod data_source_lowering;
 mod input_shape_validation;
 mod intent_lowering;
 mod profile_lowering;
+mod terminal_parse;
 
-use quantscript::{parse_quant_script_module, ScriptModule};
+use quantscript::ScriptModule;
 use serde_json::Value;
 
 pub(crate) fn convert_graph_json_to_script_module(
@@ -33,9 +34,5 @@ pub(crate) fn convert_graph_json_to_script_module(
 
     intent_lowering::append_intent_lowering_lines(nodes, edges, &mut qs_lines)?;
 
-    qs_lines.push("}".to_string());
-    let qs_source = qs_lines.join("\n");
-
-    // Parse the generated QS source into a ScriptModule
-    parse_quant_script_module(&qs_source)
+    terminal_parse::parse_generated_qs_lines(qs_lines)
 }
