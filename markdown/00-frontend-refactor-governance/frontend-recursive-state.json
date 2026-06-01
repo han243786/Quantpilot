@@ -2,9 +2,9 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "root.frontend",
-  "current_step": "FE-0001",
-  "current_phase": "isolated_governance_bootstrap",
+  "current_parent": "frontend.app_shell",
+  "current_step": "FE-0002",
+  "current_phase": "frontend_app_shell_parent_baseline",
   "closed_children": [],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

@@ -10,7 +10,10 @@ This file is the frontend-only full feature tree. It starts blank by design and 
 
 ## Feature Areas
 
-No frontend feature areas have been landed in this isolated tree yet.
+- `frontend.app_shell`
+  - Status: parent baseline established; code extraction not started.
+  - User-visible behavior: React root bootstraps the application, initializes the graph store, renders route content behind the app shell, and hosts desktop/browser shell affordances.
+  - Evidence: `markdown/00-frontend-refactor-governance/records/FE-0002-frontend-app-shell-baseline.md`
 
 ## Evidence Rules
 

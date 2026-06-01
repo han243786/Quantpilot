@@ -25,6 +25,7 @@ This directory is the frontend-only governance root for the parallel refactor. I
 | `frontend-recursive-speed-protocol.md` | Speed rules derived from backend experience. |
 | `frontend-proposal-flow.md` | Frontend proposal, fit check, refinement, and design landing flow. |
 | `frontend-closeout-and-merge-protocol.md` | Rules for final merge back into global governance. |
+| `records/` | Frontend-local baseline, extraction, and closeout records. |
 
 ## Merge-Back Principle
 
