@@ -10,7 +10,28 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Active Parent
 
-None. Next parent candidate: `frontend.routing`.
+- `frontend.routing`
+  - Status: parent baseline established.
+  - Record: `markdown/00-frontend-refactor-governance/records/FE-0012-frontend-routing-baseline.md`
+  - Current owned files:
+    - `frontend/src/router.js`
+    - `frontend/src/router.test.js`
+  - Important consumers:
+    - `frontend/src/app/useAppRoute.js`
+    - `frontend/src/App.jsx`
+    - `frontend/src/components/LeftSidebar.jsx`
+    - `frontend/src/components/CommandPalette.jsx`
+    - `frontend/src/components/BacktestHistorySection.jsx`
+    - `frontend/src/components/EventStreamPanel.jsx`
+    - `frontend/src/hooks/useStrategyDirectoryModel.js`
+    - `frontend/src/pages/*`
+    - `frontend/src/utils/*Actions.js`
+    - `frontend/src/test/testBridge.js`
+  - Child queue:
+    - `frontend.routing.route_contract`
+    - `frontend.routing.navigation_dispatch`
+    - `frontend.routing.shell_navigation`
+  - Closed child leaves: none.
 
 ## Last Closed Parent
 
@@ -52,7 +73,6 @@ None. Next parent candidate: `frontend.routing`.
 
 ## Pending Parent Queue
 
-- `frontend.routing`
 - `frontend.api_client`
 - `frontend.capabilities`
 - `frontend.strategy_workspace`

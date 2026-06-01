@@ -2,21 +2,19 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.app_shell",
-  "current_step": "FE-0011",
-  "current_phase": "frontend_app_shell_parent_closeout",
-  "next_parent": "frontend.routing",
+  "current_parent": "frontend.routing",
+  "current_step": "FE-0012",
+  "current_phase": "frontend_routing_parent_baseline",
+  "current_child_queue": [
+    "frontend.routing.route_contract",
+    "frontend.routing.navigation_dispatch",
+    "frontend.routing.shell_navigation"
+  ],
+  "next_parent": "frontend.api_client",
   "closed_parents": [
     "frontend.app_shell"
   ],
-  "closed_children": [
-    "frontend.app_shell.bootstrap_root",
-    "frontend.app_shell.startup_readiness",
-    "frontend.app_shell.environment_events",
-    "frontend.app_shell.desktop_window_chrome",
-    "frontend.app_shell.route_host",
-    "frontend.app_shell.global_overlays"
-  ],
+  "closed_children": [],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
     "markdown/00-matrix-governance/module-tree.md",

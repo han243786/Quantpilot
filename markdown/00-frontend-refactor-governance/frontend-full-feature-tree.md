@@ -47,6 +47,15 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0010-frontend-app-shell-global-overlays-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0011-frontend-app-shell-parent-closeout.md`
 
+- `frontend.routing`
+  - Status: parent baseline established.
+  - User-visible behavior: path builders, route parsing, and navigation dispatch keep shell navigation and routed feature entry stable.
+  - Active frontend-local paths:
+    - `frontend/src/router.js`
+    - `frontend/src/router.test.js`
+  - Evidence:
+    - `markdown/00-frontend-refactor-governance/records/FE-0012-frontend-routing-baseline.md`
+
 ## Evidence Rules
 
 Each landed feature area should link to:
