@@ -5385,7 +5385,7 @@ AI 声称 BE-001FR-01 已完成时，必须说明当前只是 `no code movement`
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion`
 **父模块**: `backend.graph_compile.quantscript_graph`
-**状态**: v4.16 BE-001FZ-04 `macd_lowering` 单叶 closeout 已完成。
+**状态**: v4.16 BE-001GQ-02 `data_source_lowering` 单叶 closeout 已完成，`formal_module_conversion stop_split: false`，下一步回到父叶残余判断。
 **真实文件**:
 - `src/backend/graph_compile/quantscript_graph.rs`
 
@@ -5408,6 +5408,9 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001FT-03）**: BE-001FT-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion` 实际抽离。`formal_module_conversion actual_extraction_done` 成立；`src/backend/graph_compile/quantscript_graph/formal_module_conversion.rs` 已创建并承接 `convert_graph_json_to_script_module`，父级只保留 `mod formal_module_conversion` / controlled re-export。下一步只能进入 BE-001FT-04 单叶 closeout，不得处理 route surface、artifact target projection、strategy_graph_parser、graph_to_qs_generation child 或 release transition。
 **最新状态补充（BE-001FT-04）**: BE-001FT-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion` 单叶 closeout。当前 `no code movement`，`formal_module_conversion closeout_done` 与 `formal_module_conversion stop_split: false` 成立；下一步只能进入 BE-001FU-01 父叶残余判断，不得直接移动 data/risk/execution/intent 子职责或启动 release transition。
 **最新状态补充（BE-001FU-01）**: BE-001FU-01 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion` 父叶残余判断。当前 `no code movement`，`formal_module_conversion parent_residual_judgment` 与 `intent_lowering_selected` 成立；下一步只能进入 BE-001FV-01 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 单子叶等价基线，不得直接创建 child file、移动 intent 分支或启动 release transition。
+**最新状态补充（BE-001GP-01）**: `formal_module_conversion parent_residual_judgment` 与 `data_source_lowering_selected` 成立；下一步只能进入 BE-001GQ-01 单子叶等价基线，不能直接创建 child file。
+**最新状态补充（BE-001GQ-01）**: `data_source_lowering baseline_frozen` 与 `data_source_lowering plan_frozen` 成立；下一步只能进入 BE-001GQ-02 extract_closeout，不能移动 profile lowering 或 terminal parse。
+**最新状态补充（BE-001GQ-02）**: `data_source_lowering actual_extraction_done`、`data_source_lowering closeout_done` 与 `data_source_lowering stop_split: true` 成立；下一步只能回到 BE-001GR-01 `formal_module_conversion` 父叶残余判断。
 **最新状态补充（BE-001FV-01）**: BE-001FV-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 单子叶等价基线。当前 `no code movement`，`intent_lowering baseline_frozen` 成立；下一步只能进入 BE-001FV-02 抽离方案，不得直接创建 child file、移动 intent 分支或启动 release transition。
 **最新状态补充（BE-001FV-02）**: BE-001FV-02 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 抽离方案。当前 `no code movement`，`intent_lowering plan_frozen` 成立；下一步 BE-001FV-03 只允许创建 planned child、添加 `append_intent_lowering_lines` helper，并由父级单向调用。
 **最新状态补充（BE-001FV-03）**: BE-001FV-03 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 实际抽离。`intent_lowering actual_extraction_done` 成立；`src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering.rs` 已创建并承接 intent block，父级只保留 `mod intent_lowering` 与 `append_intent_lowering_lines` 调用。
@@ -5698,6 +5701,28 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 
 **最新状态补充（BE-001GN-01）**: `unsupported_intent_failure baseline_frozen` 与 `unsupported_intent_failure plan_frozen` 成立；下一步只能进入 BE-001GN-02 extract_closeout，不得移动 supported intent branches。
 **最新状态补充（BE-001GN-02）**: `unsupported_intent_failure actual_extraction_done`、`unsupported_intent_failure closeout_done` 与 `unsupported_intent_failure stop_split: true` 成立；不继续拆 supported_string / diagnostic_format / bail_return 微叶。
+
+#### 5.2.2.2 `backend.graph_compile.quantscript_graph.formal_module_conversion.data_source_lowering`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.data_source_lowering`
+**父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion`
+**状态**: v4.16 BE-001GQ-02 单叶 closeout 已完成，`stop_split: true`。
+
+**真实文件**:
+- `src/backend/graph_compile/quantscript_graph/formal_module_conversion/data_source_lowering.rs`
+
+**白箱节点**:
+
+| 节点 | 输入 | 输出 | 约束 |
+| --- | --- | --- | --- |
+| data node filter | graph nodes | data nodes only | Ignores all non-data node types. |
+| data config defaults | data node config | exchange / instrument / interval / lookback | Defaults remain binance / BTCUSDT / 1d / 200; negative or missing window falls back to 200. |
+| optional fetch args | ping / request interval config | optional fetch args | Only appends typed bool/u64 values. |
+| data var normalization | node id | QS variable name | `-` and `.` normalize to `_`; missing id defaults to `data`. |
+| fetch line rendering | normalized config | QS `fetch(...)` line | Output order remains exchange, interval, lookback, optional ping, optional interval ms. |
+
+**最新状态补充（BE-001GQ-01）**: `data_source_lowering baseline_frozen` 与 `data_source_lowering plan_frozen` 成立；下一步只能进入 BE-001GQ-02 extract_closeout。
+**最新状态补充（BE-001GQ-02）**: `data_source_lowering actual_extraction_done`、`data_source_lowering closeout_done` 与 `data_source_lowering stop_split: true` 成立；不继续拆 config_defaults / optional_fetch_args / fetch_line_rendering 微叶。
 
 ### 5.3 `backend.storage_security`
 
@@ -6900,3 +6925,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001GO-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent closeout sets stop_split true；下一步: BE-001GP-01 formal_module_conversion parent residual judgment。
 **最新状态补充(BE-001GP-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent residual judgment selects data_source_lowering；下一步: BE-001GQ-01 data_source_lowering baseline_plan。
 **最新状态补充(BE-001GQ-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.data_source_lowering` data_source_lowering equivalence baseline and extraction plan；下一步: BE-001GQ-02 data_source_lowering extract_closeout。
+**最新状态补充(BE-001GQ-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.data_source_lowering` data_source_lowering actual extraction and closeout complete；下一步: BE-001GR-01 formal_module_conversion parent residual judgment。

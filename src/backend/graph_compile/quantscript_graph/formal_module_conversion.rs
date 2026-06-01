@@ -1,3 +1,4 @@
+mod data_source_lowering;
 mod intent_lowering;
 
 use quantscript::{parse_quant_script_module, ScriptModule};
@@ -18,50 +19,7 @@ pub(crate) fn convert_graph_json_to_script_module(
     // Build a minimal QS source from the graph
     let mut qs_lines: Vec<String> = vec!["fn strategy() {".to_string()];
 
-    // Add fetch calls for data nodes
-    for node in nodes {
-        let node_type = node.get("type").and_then(Value::as_str).unwrap_or("");
-        if node_type == "data" {
-            let cfg = node.get("config").unwrap_or(&Value::Null);
-            let exchange = cfg
-                .get("exchange")
-                .and_then(Value::as_str)
-                .unwrap_or("binance");
-            let instrument = cfg
-                .get("instrument")
-                .and_then(Value::as_str)
-                .unwrap_or("BTCUSDT");
-            let interval = cfg.get("timeframe").and_then(Value::as_str).unwrap_or("1d");
-            // v1.3.6: 拒绝负数窗口大小，防止静默回退默认值
-            let lookback = cfg
-                .get("window_size")
-                .and_then(|v| v.as_f64())
-                .filter(|&n| n >= 1.0)
-                .map(|n| n as u64)
-                .unwrap_or(200);
-            let mut fetch_args = vec![
-                format!("exchange=\"{}\"", exchange),
-                format!("interval=\"{}\"", interval),
-                format!("lookback={}", lookback),
-            ];
-            if let Some(ping_enabled) = cfg.get("ping_enabled").and_then(Value::as_bool) {
-                fetch_args.push(format!("ping_enabled={}", ping_enabled));
-            }
-            if let Some(request_interval_ms) =
-                cfg.get("request_interval_ms").and_then(Value::as_u64)
-            {
-                fetch_args.push(format!("request_interval_ms={}", request_interval_ms));
-            }
-            let node_id = node.get("id").and_then(Value::as_str).unwrap_or("data");
-            let var_name = node_id.replace(['-', '.'], "_");
-            qs_lines.push(format!(
-                "    let {} = fetch(\"{}\", {})?",
-                var_name,
-                instrument,
-                fetch_args.join(", ")
-            ));
-        }
-    }
+    data_source_lowering::append_data_source_lowering_lines(nodes, &mut qs_lines);
 
     // Add top-level risk/execution declarations supported by formal QuantScript lowering.
     // Agent/runtime nodes are represented by the inferred runtime graph and metadata, not calls.
