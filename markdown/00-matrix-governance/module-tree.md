@@ -5312,12 +5312,13 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 **最新状态补充（BE-001FR-01）**: BE-001FR-01 已建立 `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 单子叶等价基线。当前 `no code movement`，`src/backend/graph_compile/quantscript_graph.rs` 仍是真实 owner，`graph_to_qs_generation baseline_frozen`；下一步只能进入 BE-001FR-02 抽离方案，不得直接移动 generator 或新增 sibling horizontal link。
 **最新状态补充（BE-001FR-02）**: BE-001FR-02 已建立 `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 抽离方案。当前 `no code movement`，`graph_to_qs_generation plan_frozen`，planned child path 固定为 src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs；下一步只能进入 BE-001FR-03 实际抽离记录。
 **最新状态补充（BE-001FR-03）**: BE-001FR-03 已完成 `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 实际抽离。`src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs` 已创建，四个 generator helper 已迁入 child；下一步只能进入 BE-001FR-04 单叶 closeout。
+**最新状态补充（BE-001FR-04）**: BE-001FR-04 已完成 `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 单叶 closeout。`backend.graph_compile.quantscript_graph.graph_to_qs_generation stop_split: true`，下一步只能进入 BE-001FS-01 `backend.graph_compile.quantscript_graph` 父叶残余判断。
 
 ### 5.2.1 `backend.graph_compile.quantscript_graph.graph_to_qs_generation`
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.graph_to_qs_generation`
 **父模块**: `backend.graph_compile.quantscript_graph`
-**状态**: v4.16 BE-001FR-03 实际抽离已完成，child file 已承接 graph-to-QS generator helper；下一步进入单叶 closeout。
+**状态**: v4.16 BE-001FR-04 单叶 closeout 已完成，`stop_split: true`。
 **真实文件**:
 - `src/backend/graph_compile/quantscript_graph.rs`
 - `src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs`
@@ -5347,6 +5348,7 @@ AI 声称 BE-001FR-01 已完成时，必须说明当前只是 `no code movement`
 
 **最新状态补充（BE-001FR-02）**: planned child path 为 src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs，BE-001FR-03 只允许迁移 `generate_quantscript_from_graph_value`、`generate_node_quantscript`、`quoted`、`render_json_scalar`。`generate_node_quantscript` 只能作为 `pub(super)` 给父级 artifact projection 内部复用。
 **最新状态补充（BE-001FR-03）**: `graph_to_qs_generation_actual_extraction_done`，四个 helper 已迁入 child；父级通过 `pub(crate) use graph_to_qs_generation::generate_quantscript_from_graph_value` 和 `graph_to_qs_generation::generate_node_quantscript` 受控通信。
+**最新状态补充（BE-001FR-04）**: `graph_to_qs_generation_closeout_done`，本叶不继续拆 graph_metadata_rendering / node_block_rendering / scalar_rendering / edge_connect_rendering 微叶。
 
 ### 5.3 `backend.storage_security`
 

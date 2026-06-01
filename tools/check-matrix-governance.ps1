@@ -20523,6 +20523,29 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/482-*.md", @(
+        @("BE-001FR-04", "graph generation closeout marker"),
+        @("BE-001FS-01", "next parent residual marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend.graph_compile.quantscript_graph.graph_to_qs_generation", "graph generation child marker"),
+        @("root.backend.graph_compile.quantscript_graph.graph_to_qs_generation", "graph generation coordinate"),
+        @("graph_to_qs_generation_closeout_done", "closeout done marker"),
+        @("backend.graph_compile.quantscript_graph.graph_to_qs_generation stop_split: true", "stop split true marker"),
+        @("backend.graph_compile.quantscript_graph", "parent residual marker"),
+        @("route_surface", "route surface residual marker"),
+        @("formal_module_conversion", "formal conversion residual marker"),
+        @("artifact_target_projection", "artifact projection residual marker"),
+        @("strategy_graph_parser", "parser residual marker"),
+        @("release transition guard", "release guard marker"),
+        @("sibling horizontal link", "horizontal link guard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {
