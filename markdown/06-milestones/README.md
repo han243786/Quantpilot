@@ -836,3 +836,4 @@
 | v4.16.0 / BE-001FO-01 | 新增: `backend` 父叶残余判断已建立，选择 backend.graph_compile 作为下一顶层叶子 |
 | v4.16.0 / BE-001FP-01 | 新增: `backend.graph_compile` 父叶残余判断已建立，选择 quantscript_graph 作为首个子叶 |
 | v4.16.0 / BE-001FQ-01 | 新增: `backend.graph_compile.quantscript_graph` 单子叶等价基线已建立，冻结 route 与 shared helper 输入面 |
+| v4.16.0 / BE-001FQ-02 | 新增: `backend.graph_compile.quantscript_graph` 抽离方案已建立，固定 planned move、import rewrite 与 root parent re-export surface |

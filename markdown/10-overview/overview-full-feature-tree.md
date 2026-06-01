@@ -2996,3 +2996,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/474-backend.graph_compile父叶残余判断.md` - v4.16.0 BE-001FP-01 `backend.graph_compile` 父叶残余判断，选择 quantscript_graph
 递归边界补充: BE-001FQ-01 已建立 `backend.graph_compile.quantscript_graph` 单子叶等价基线；下一步只能进入 BE-001FQ-02 抽离方案。
 - `markdown/06-milestones/v4.16.0/475-backend.graph_compile.quantscript_graph单子叶等价基线.md` - v4.16.0 BE-001FQ-01 `backend.graph_compile.quantscript_graph` 等价基线，冻结 QS graph route/helper 面
+递归边界补充: BE-001FQ-02 已建立 `backend.graph_compile.quantscript_graph` 抽离方案；下一步只能进入 BE-001FQ-03 实际抽离记录。
+- `markdown/06-milestones/v4.16.0/476-backend.graph_compile.quantscript_graph抽离方案.md` - v4.16.0 BE-001FQ-02 `backend.graph_compile.quantscript_graph` 抽离方案，固定 planned move 与 root parent re-export
