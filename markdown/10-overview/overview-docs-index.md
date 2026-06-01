@@ -569,3 +569,4 @@
 | v4.16.0 / BE-001HP-01 | 新增: `backend.strategy_config` backend.strategy_config parent residual judgment selects artifact |
 | v4.16.0 / BE-001HQ-01 | 新增: `backend.strategy_config.artifact` backend.strategy_config.artifact equivalence baseline and extraction plan |
 | v4.16.0 / BE-001HQ-02 | 新增: `backend.strategy_config.artifact` backend.strategy_config.artifact route owner extraction complete |
+| v4.16.0 / BE-001HR-01 | 新增: `backend.strategy_config.artifact` backend.strategy_config.artifact parent residual judgment selects schema_model |
