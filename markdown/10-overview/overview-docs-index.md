@@ -471,3 +471,4 @@
 | v4.16.0 / BE-001FM-01 | 新增: `runtime.parent_import_bridge` 第五轮父叶残余判断已建立，下一步进入 backend.runtime 父叶判断 |
 | v4.16.0 / BE-001FN-01 | 新增: `backend.runtime` 第十轮父叶残余判断已建立，下一步进入 backend 父叶判断 |
 | v4.16.0 / BE-001FO-01 | 新增: `backend` 父叶残余判断已建立，下一步进入 backend.graph_compile 父叶判断 |
+| v4.16.0 / BE-001FP-01 | 新增: `backend.graph_compile` 父叶残余判断已建立，下一步进入 quantscript_graph 等价基线 |

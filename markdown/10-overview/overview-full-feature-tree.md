@@ -2992,3 +2992,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/472-backend.runtime第十轮父叶残余判断.md` - v4.16.0 BE-001FN-01 `backend.runtime` 父叶残余判断，runtime 顶层父叶收口
 递归边界补充: BE-001FO-01 已完成 `backend` 父叶残余判断；`backend stop_split: false`，下一步只能进入 BE-001FP-01 `backend.graph_compile` 父叶判断。
 - `markdown/06-milestones/v4.16.0/473-backend父叶残余判断.md` - v4.16.0 BE-001FO-01 `backend` 父叶残余判断，选择 backend.graph_compile
+递归边界补充: BE-001FP-01 已完成 `backend.graph_compile` 父叶残余判断；`backend.graph_compile stop_split: false`，下一步只能进入 BE-001FQ-01 `backend.graph_compile.quantscript_graph` 等价基线。
+- `markdown/06-milestones/v4.16.0/474-backend.graph_compile父叶残余判断.md` - v4.16.0 BE-001FP-01 `backend.graph_compile` 父叶残余判断，选择 quantscript_graph

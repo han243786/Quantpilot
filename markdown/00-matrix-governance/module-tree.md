@@ -5305,6 +5305,8 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 **幻觉检查点**:
 任何“编译链已支持”的结论必须同时指出 graph route、compile route 和诊断测试。
 
+**最新状态补充（BE-001FP-01）**: BE-001FP-01 已完成 `backend.graph_compile` 父叶残余判断。当前 `src/compile_api.rs`、`src/graph_api.rs` 与 `src/graph_quantscript_api.rs` 仍是旧 owner residual，三个 child route facade 尚未承接真实 handler，因此 `backend.graph_compile stop_split: false`。下一步只能进入 BE-001FQ-01 `backend.graph_compile.quantscript_graph` 单子叶等价基线，不得直接迁移 compile / graph / quantscript graph handler。
+
 ### 5.3 `backend.storage_security`
 
 **层级路径**: `root.backend.storage_security`

@@ -834,3 +834,4 @@
 | v4.16.0 / BE-001FM-01 | 新增: `runtime.parent_import_bridge` 第五轮父叶残余判断已建立，生产级 parent bridge 设置 stop_split true |
 | v4.16.0 / BE-001FN-01 | 新增: `backend.runtime` 第十轮父叶残余判断已建立，设置 stop_split true 并回到 backend 父叶 |
 | v4.16.0 / BE-001FO-01 | 新增: `backend` 父叶残余判断已建立，选择 backend.graph_compile 作为下一顶层叶子 |
+| v4.16.0 / BE-001FP-01 | 新增: `backend.graph_compile` 父叶残余判断已建立，选择 quantscript_graph 作为首个子叶 |
