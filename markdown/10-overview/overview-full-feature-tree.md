@@ -3071,3 +3071,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/508-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering父叶残余判断.md` - v4.16.0 BE-001GC-01 `intent_lowering` 父叶残余判断，选择 `rsi_lowering`
 递归边界补充: BE-001GD-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 单子叶等价基线；当前 `no code movement`，下一步只能进入 BE-001GD-02 抽离方案。
 - `markdown/06-milestones/v4.16.0/509-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering单子叶等价基线.md` - v4.16.0 BE-001GD-01 `rsi_lowering` 单子叶等价基线
+递归边界补充: BE-001GD-02 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 抽离方案；下一步只能进入 BE-001GD-03 实际抽离记录。
+- `markdown/06-milestones/v4.16.0/510-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering抽离方案.md` - v4.16.0 BE-001GD-02 `rsi_lowering` 抽离方案
