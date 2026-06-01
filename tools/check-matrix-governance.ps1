@@ -20183,6 +20183,33 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/472-*.md", @(
+        @("BE-001FN-01", "backend runtime residual marker"),
+        @("BE-001FO-01", "next backend parent marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend.runtime", "backend runtime marker"),
+        @("root.backend.runtime", "backend runtime coordinate"),
+        @("backend.runtime stop_split: true", "backend runtime stop split true marker"),
+        @("backend.runtime.routes stop_split: true", "route aggregate closeout marker"),
+        @("runtime.parent_import_bridge stop_split: true", "parent bridge closeout marker"),
+        @("remaining_backend_runtime_route_residual_0", "route residual zero marker"),
+        @("remaining_runtime_parent_import_bridge_0", "runtime parent bridge zero marker"),
+        @("backend_runtime_production_residual_0", "backend runtime production zero marker"),
+        @("backend_runtime_parent_closeout_ready", "backend runtime closeout marker"),
+        @("remaining_test_local_wildcard_import_2", "test local residual marker"),
+        @("src/backend/runtime.rs", "backend runtime facade file"),
+        @("src/backend/runtime/routes.rs", "backend runtime route aggregate file"),
+        @("src/runtime/run_guard.rs", "test local marker"),
+        @("src/runtime/mutation/ai_proposal/static_check.rs", "test local static check marker"),
+        @("release transition guard", "release transition guard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {

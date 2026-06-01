@@ -832,3 +832,4 @@
 | v4.16.0 / BE-001FL-03 | 新增: `runtime.root_parent_facade_import_pass` 抽离记录已建立，`src/runtime/mod.rs` root import residual 已清除 |
 | v4.16.0 / BE-001FL-04 | 新增: `runtime.root_parent_facade_import_pass` 单叶 closeout 已建立，设置 stop_split true |
 | v4.16.0 / BE-001FM-01 | 新增: `runtime.parent_import_bridge` 第五轮父叶残余判断已建立，生产级 parent bridge 设置 stop_split true |
+| v4.16.0 / BE-001FN-01 | 新增: `backend.runtime` 第十轮父叶残余判断已建立，设置 stop_split true 并回到 backend 父叶 |
