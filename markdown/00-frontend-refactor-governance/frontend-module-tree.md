@@ -22,16 +22,18 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/app/AppShellFallback.test.jsx`
     - `frontend/src/app/installGlobalErrorHandlers.js`
     - `frontend/src/app/installGlobalErrorHandlers.test.js`
+    - `frontend/src/app/useAppEnvironmentEvents.js`
+    - `frontend/src/app/useAppEnvironmentEvents.test.jsx`
     - `frontend/src/app/useAppInitialization.js`
     - `frontend/src/app/useAppInitialization.test.jsx`
   - Child queue:
-    - `frontend.app_shell.environment_events`
     - `frontend.app_shell.desktop_window_chrome`
     - `frontend.app_shell.route_host`
     - `frontend.app_shell.global_overlays`
   - Closed child leaves:
     - `frontend.app_shell.bootstrap_root`
     - `frontend.app_shell.startup_readiness`
+    - `frontend.app_shell.environment_events`
 
 ## Pending Parent Queue
 

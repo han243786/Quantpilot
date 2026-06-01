@@ -1,7 +1,7 @@
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
-import { useGraphStore } from "./store/graphStore";
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { navigateTo, parseRoute, strategiesPath } from "./router";
 import AppShellFallback from "./app/AppShellFallback";
+import { useAppEnvironmentEvents } from "./app/useAppEnvironmentEvents";
 import { useAppInitialization } from "./app/useAppInitialization";
 import LeftSidebar from "./components/LeftSidebar";
 import CommandPalette from "./components/CommandPalette";
@@ -48,31 +48,26 @@ export default function App() {
   const tutorialSteps = createTutorialSteps(t);
   const [forceReady, setForceReady] = useState(false);
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
-  const [isOffline, setIsOffline] = useState(
-    typeof navigator !== "undefined" ? !navigator.onLine : false
-  );
-  const [storageQuotaExceeded, setStorageQuotaExceeded] = useState(false);
   const mainRef = useRef(null);
   const [isMaximized, setIsMaximized] = useState(false);
   const appWindow = resolveTauriWindow();
-
-  useEffect(() => {
-    const applyStoredTheme = () => {
-      try {
-        const theme = window.localStorage?.getItem("quantpilot.theme") || "auto";
-        if (theme === "light" || theme === "dark") {
-          document.documentElement.dataset.theme = theme;
-        } else {
-          document.documentElement.removeAttribute("data-theme");
-        }
-      } catch (_) {
-        document.documentElement.removeAttribute("data-theme");
-      }
-    };
-    applyStoredTheme();
-    window.addEventListener("qp-theme-change", applyStoredTheme);
-    return () => window.removeEventListener("qp-theme-change", applyStoredTheme);
+  const [route, setRoute] = useState(() =>
+    parseRoute(
+      typeof window === "undefined" ? "/" : window.location.pathname,
+      typeof window === "undefined" ? "" : window.location.search
+    )
+  );
+  const toggleCommandPalette = useCallback(() => {
+    setCmdPaletteOpen((value) => !value);
   }, []);
+  const {
+    isOffline,
+    storageQuotaExceeded,
+    setStorageQuotaExceeded,
+  } = useAppEnvironmentEvents({
+    route,
+    onToggleCommandPalette: toggleCommandPalette,
+  });
 
   // 监听窗口最大化状态
   useEffect(() => {
@@ -83,74 +78,6 @@ export default function App() {
       appWindow.isMaximized().then((v) => { if (!disposed) setIsMaximized(v); });
     });
     return () => { disposed = true; unlisten.then((fn) => fn()); };
-  }, []);
-
-  // 离线/在线检测
-  useEffect(() => {
-    const goOffline = () => setIsOffline(true);
-    const goOnline = () => setIsOffline(false);
-    window.addEventListener("offline", goOffline);
-    window.addEventListener("online", goOnline);
-    return () => {
-      window.removeEventListener("offline", goOffline);
-      window.removeEventListener("online", goOnline);
-    };
-  }, []);
-
-  // v1.0.5: localStorage 配额超限通知
-  useEffect(() => {
-    const handler = () => setStorageQuotaExceeded(true);
-    window.addEventListener("qp-storage-quota-exceeded", handler);
-    return () => window.removeEventListener("qp-storage-quota-exceeded", handler);
-  }, []);
-
-  // v1.0.5: 标签页可见性变化 — 后台时标记, 前台时同步刷新
-  useEffect(() => {
-    const handle = () => {
-      if (!document.hidden) {
-        useGraphStore.getState().refreshGraphIndex?.();
-      }
-    };
-    document.addEventListener("visibilitychange", handle);
-    return () => document.removeEventListener("visibilitychange", handle);
-  }, []);
-
-  const [route, setRoute] = useState(() =>
-    parseRoute(
-      typeof window === "undefined" ? "/" : window.location.pathname,
-      typeof window === "undefined" ? "" : window.location.search
-    )
-  );
-
-  // 未保存更改时关闭/刷新提醒
-  const routeRef = useRef(route);
-  routeRef.current = route;
-  useEffect(() => {
-    const handler = (e) => {
-      const name = routeRef.current.name;
-      if (name === "strategy-workspace" || name === "quantscript") {
-        e.preventDefault();
-        // v2.4.0 U7: 根据当前 locale 选择提示语言
-        const locale = localStorage.getItem("quantpilot.locale") || "zh-CN";
-        e.returnValue = locale === "en-US"
-          ? "You have unsaved strategy changes. Leaving this page will discard your changes."
-          : "当前有未保存的策略图更改，离开此页面将丢失更改。";
-      }
-    };
-    window.addEventListener("beforeunload", handler);
-    return () => window.removeEventListener("beforeunload", handler);
-  }, []);
-
-  // ⌘K / Ctrl+K 全局监听
-  useEffect(() => {
-    const handleKey = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        setCmdPaletteOpen((v) => !v);
-      }
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
   }, []);
 
   useEffect(() => {
