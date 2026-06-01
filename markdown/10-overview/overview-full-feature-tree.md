@@ -3186,3 +3186,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/554-backend.graph_compile.quantscript_graph.route_surface.extract_closeout.md` - v4.16.0 BE-001HF-02 route_surface actual extraction and closeout complete
 递归边界补充: BE-001HG-01 `backend.graph_compile.quantscript_graph` quantscript_graph parent closeout sets stop_split true；下一步: BE-001HH-01 backend.graph_compile parent residual judgment。
 - `markdown/06-milestones/v4.16.0/555-backend.graph_compile.quantscript_graph.parent_closeout.md` - v4.16.0 BE-001HG-01 quantscript_graph parent closeout sets stop_split true
+递归边界补充: BE-001HH-01 `backend.graph_compile` backend.graph_compile parent residual judgment selects compile；下一步: BE-001HI-01 backend.graph_compile.compile baseline_plan。
+- `markdown/06-milestones/v4.16.0/556-backend.graph_compile.parent_residual_judgment.md` - v4.16.0 BE-001HH-01 backend.graph_compile parent residual judgment selects compile
