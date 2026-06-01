@@ -5896,6 +5896,41 @@ AI 声称 BE-001HD-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充（BE-001HD-01）**: `artifact_target_projection baseline_frozen` 与 `artifact_target_projection plan_frozen` 成立；下一步只能进入 BE-001HD-02 extract_closeout，不得移动 route surface、parser、formal conversion 或 graph generation child。
 **最新状态补充（BE-001HD-02）**: `artifact_target_projection actual_extraction_done`、`artifact_target_projection closeout_done` 与 `artifact_target_projection stop_split: true` 成立；父级仍保留 route surface 残余，下一步只能回到 BE-001HE-01 `quantscript_graph` 父叶残余判断。
 
+### 5.2.5 `backend.graph_compile.quantscript_graph.route_surface`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.route_surface`
+**父模块**: `backend.graph_compile.quantscript_graph`
+**状态**: v4.16 BE-001HF-01 baseline_plan 已建立，`route_surface baseline_frozen` 与 `route_surface plan_frozen` 成立；下一步只能进入 BE-001HF-02 extract_closeout。
+
+**真实文件**:
+- `src/backend/graph_compile/quantscript_graph.rs`
+
+**计划文件**:
+route_surface child module under `src/backend/graph_compile/quantscript_graph/` (not created in BE-001HF-01).
+
+**职责**:
+承接 QS graph HTTP route facade：route registration、load `.qs` handler、parse strategy_graph source handler。父级继续持有 public wrapper 与 helper child mediation。
+
+**关键 public 方法**:
+| 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
+| --- | --- | --- | --- | --- |
+| `register_routes` (parent wrapper retained) | `Router<AppState>` | `Router<AppState>` | graph_compile parent/router assembly | 不得改动 route path/method；不得直接导入 sibling child |
+
+**白箱节点**:
+| 白箱节点 | 输入 | 输出 | 等价注意事项 |
+| --- | --- | --- | --- |
+| route registration | router | router with two routes | Keep GET load and POST parse paths unchanged. |
+| load handler | graph id + state | `.qs` source text | Preserve graph id validation, graph_store_dir path, and not_found_io_error mapping. |
+| parse handler | JSON source request | graph JSON or bad_request | Preserve parent parser wrapper call and error envelope. |
+
+**父级通信规则**:
+本子叶只能由 `backend.graph_compile.quantscript_graph` 父级调用。route child may call parent helper wrappers such as `parse_graph_quantscript_source`, but must not import parser/artifact/generation/formal child modules directly.
+
+**幻觉检查点**:
+AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement` baseline_plan，planned route_surface child 尚未创建，route handlers 仍在 `src/backend/graph_compile/quantscript_graph.rs`。
+
+**最新状态补充（BE-001HF-01）**: `route_surface baseline_frozen` 与 `route_surface plan_frozen` 成立；下一步只能进入 BE-001HF-02 extract_closeout，不得移动 parser、artifact projection、formal conversion 或 graph generation child。
+
 ### 5.3 `backend.storage_security`
 
 **层级路径**: `root.backend.storage_security`
@@ -7118,3 +7153,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001HD-01)**: `backend.graph_compile.quantscript_graph.artifact_target_projection` artifact_target_projection equivalence baseline and extraction plan；下一步: BE-001HD-02 artifact_target_projection extract_closeout。
 **最新状态补充(BE-001HD-02)**: `backend.graph_compile.quantscript_graph.artifact_target_projection` artifact_target_projection actual extraction and closeout complete；下一步: BE-001HE-01 quantscript_graph parent residual judgment。
 **最新状态补充(BE-001HE-01)**: `backend.graph_compile.quantscript_graph` quantscript_graph parent residual judgment selects route_surface；下一步: BE-001HF-01 route_surface baseline_plan。
+**最新状态补充(BE-001HF-01)**: `backend.graph_compile.quantscript_graph.route_surface` route_surface equivalence baseline and extraction plan；下一步: BE-001HF-02 route_surface extract_closeout。
