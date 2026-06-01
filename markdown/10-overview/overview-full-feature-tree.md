@@ -3090,3 +3090,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/ma_deviation_lowering.rs` - MA deviation built-in intent lowering child
 递归边界补充: BE-001GF-02 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.ma_deviation_lowering` ma_deviation_lowering actual extraction and closeout complete；下一步: BE-001GG-01 intent_lowering parent residual judgment。
 - `markdown/06-milestones/v4.16.0/516-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.ma_deviation_lowering抽离与closeout.md` - v4.16.0 BE-001GF-02 ma_deviation_lowering actual extraction and closeout complete
+递归边界补充: BE-001GG-01 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects momentum_lowering；下一步: BE-001GH-01 momentum_lowering baseline_plan。
+- `markdown/06-milestones/v4.16.0/517-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering父叶残余判断.md` - v4.16.0 BE-001GG-01 intent_lowering parent residual judgment selects momentum_lowering
