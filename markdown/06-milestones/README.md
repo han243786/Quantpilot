@@ -890,3 +890,4 @@
 | v4.16.0 / BE-001GN-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.unsupported_intent_failure` unsupported_intent_failure equivalence baseline and extraction plan |
 | v4.16.0 / BE-001GN-02 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.unsupported_intent_failure` unsupported_intent_failure actual extraction and closeout complete |
 | v4.16.0 / BE-001GO-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent closeout sets stop_split true |
+| v4.16.0 / BE-001GP-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion` formal_module_conversion parent residual judgment selects data_source_lowering |
