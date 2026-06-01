@@ -3209,3 +3209,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/564-backend.capability.baseline_plan.md` - v4.16.0 BE-001HN-01 backend.capability equivalence baseline and extraction plan
 递归边界补充: BE-001HN-02 `backend.capability` backend.capability actual extraction and closeout complete；下一步: BE-001HO-01 backend parent residual judgment。
 - `markdown/06-milestones/v4.16.0/565-backend.capability.extract_closeout.md` - v4.16.0 BE-001HN-02 backend.capability actual extraction and closeout complete
+递归边界补充: BE-001HO-01 `backend` backend parent residual judgment selects strategy_config；下一步: BE-001HP-01 backend.strategy_config parent residual judgment。
+- `markdown/06-milestones/v4.16.0/566-backend.parent_residual_judgment.strategy_config.md` - v4.16.0 BE-001HO-01 backend parent residual judgment selects strategy_config

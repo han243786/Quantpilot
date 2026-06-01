@@ -654,3 +654,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001HM-01 `backend` backend parent residual judgment selects capability；下一步: BE-001HN-01 backend.capability baseline_plan。
 - BE-001HN-01 `backend.capability` backend.capability equivalence baseline and extraction plan；下一步: BE-001HN-02 backend.capability extract_closeout。
 - BE-001HN-02 `backend.capability` backend.capability actual extraction and closeout complete；下一步: BE-001HO-01 backend parent residual judgment。
+- BE-001HO-01 `backend` backend parent residual judgment selects strategy_config；下一步: BE-001HP-01 backend.strategy_config parent residual judgment。

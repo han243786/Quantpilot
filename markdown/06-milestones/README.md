@@ -926,3 +926,4 @@
 | v4.16.0 / BE-001HM-01 | 新增: `backend` backend parent residual judgment selects capability |
 | v4.16.0 / BE-001HN-01 | 新增: `backend.capability` backend.capability equivalence baseline and extraction plan |
 | v4.16.0 / BE-001HN-02 | 新增: `backend.capability` backend.capability actual extraction and closeout complete |
+| v4.16.0 / BE-001HO-01 | 新增: `backend` backend parent residual judgment selects strategy_config |
