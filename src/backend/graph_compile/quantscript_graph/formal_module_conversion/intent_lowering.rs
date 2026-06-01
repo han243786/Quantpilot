@@ -1,4 +1,5 @@
 mod double_ma_lowering;
+mod ma_deviation_lowering;
 mod macd_lowering;
 mod rsi_lowering;
 mod spread_observer_lowering;
@@ -50,21 +51,12 @@ pub(super) fn append_intent_lowering_lines(
                     );
                 }
                 "builtin.intent.ma_deviation" => {
-                    let lookback = cfg.get("lookback").and_then(|v| v.as_u64()).unwrap_or(15);
-                    let baseline = cfg
-                        .get("baseline_period")
-                        .and_then(|v| v.as_u64())
-                        .unwrap_or(150);
-                    qs_lines.push(format!(
-                        "    let ma_dev = sma({}, {}) / sma({}, {})",
-                        source_var, lookback, source_var, baseline
-                    ));
-                    qs_lines.push("    if ma_dev > 1 {".to_string());
-                    qs_lines.push(format!(
-                        "        emit Intent(\"SELL\", instrument=\"{}\", quantity=1.0)",
-                        instrument
-                    ));
-                    qs_lines.push("    }".to_string());
+                    ma_deviation_lowering::append_ma_deviation_lowering_lines(
+                        cfg,
+                        &source_var,
+                        instrument,
+                        qs_lines,
+                    );
                 }
                 "builtin.intent.macd" => {
                     macd_lowering::append_macd_lowering_lines(

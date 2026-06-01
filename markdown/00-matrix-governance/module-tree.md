@@ -5597,6 +5597,26 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001GD-03）**: `rsi_lowering actual_extraction_done` 成立；`append_rsi_lowering_lines` 已迁入 child，下一步只能进入 BE-001GD-04 单叶 closeout。
 **最新状态补充（BE-001GD-04）**: `rsi_lowering closeout_done` 与 `rsi_lowering stop_split: true` 成立；不继续拆 rsi_config_decode / rsi_signal_rendering / rsi_buy_emit 微叶。
 
+#### 5.2.2.1.5 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.ma_deviation_lowering`
+
+**层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.ma_deviation_lowering`
+**父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
+**状态**: v4.16 BE-001GF-02 单叶 closeout 已完成，`stop_split: true`。
+
+**真实文件**:
+- `src/backend/graph_compile/quantscript_graph/formal_module_conversion/intent_lowering/ma_deviation_lowering.rs`
+
+**白箱节点**:
+
+| 节点 | 输入 | 输出 | 约束 |
+| --- | --- | --- | --- |
+| MA deviation config decode | `lookback` / `baseline_period` | lookback / baseline | defaults 15 / 150 |
+| MA deviation signal rendering | `source_var` / periods | `let ma_dev = sma(...) / sma(...)` | variable name remains `ma_dev` |
+| deviation branch | `ma_dev > 1` / `instrument` | SELL Intent | SELL emit unchanged |
+
+**最新状态补充（BE-001GF-01）**: `ma_deviation_lowering baseline_frozen` 与 `ma_deviation_lowering plan_frozen` 成立；下一步只能进入 BE-001GF-02 extract_closeout，不得直接移动其它 built-in intent branch。
+**最新状态补充（BE-001GF-02）**: `ma_deviation_lowering actual_extraction_done`、`ma_deviation_lowering closeout_done` 与 `ma_deviation_lowering stop_split: true` 成立；不继续拆 ma_deviation_config_decode / ma_dev_signal_rendering / ma_deviation_sell_emit 微叶。
+
 ### 5.3 `backend.storage_security`
 
 **层级路径**: `root.backend.storage_security`
@@ -6782,3 +6802,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充（BE-001FN-01）**: BE-001FN-01 已完成 `backend.runtime` 第十轮父叶残余判断。`src/backend/runtime.rs` 与 `src/backend/runtime/routes.rs` 只剩受控 facade / aggregate；`backend.runtime.routes stop_split: true` 与 `runtime.parent_import_bridge stop_split: true` 已成立，设置 `backend.runtime stop_split: true`。下一步只能进入 BE-001FO-01 `backend` 父叶残余判断，不得宣称 `backend` 顶层或 Rust 重构完成。
 **最新状态补充(BE-001GE-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects ma_deviation_lowering；下一步: BE-001GF-01 ma_deviation_lowering baseline_plan。
 **最新状态补充(BE-001GF-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.ma_deviation_lowering` ma_deviation_lowering baseline and extraction plan frozen；下一步: BE-001GF-02 ma_deviation_lowering extract_closeout。
+**最新状态补充(BE-001GF-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.ma_deviation_lowering` ma_deviation_lowering actual extraction and closeout complete；下一步: BE-001GG-01 intent_lowering parent residual judgment。

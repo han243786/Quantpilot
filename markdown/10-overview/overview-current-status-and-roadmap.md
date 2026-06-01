@@ -604,3 +604,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - GOV-LEAF-SPLIT-GATE 已固化递归叶子细分判定硬规则；后续新增单叶 closeout / 父叶残余判断必须触发 `leaf_split_decision_gate`，缺少基础门槛、强拆分触发、强停止条件、判定结果或下一步时治理门禁应失败。
 - BE-001GE-01 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects ma_deviation_lowering；下一步: BE-001GF-01 ma_deviation_lowering baseline_plan。
 - BE-001GF-01 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.ma_deviation_lowering` ma_deviation_lowering baseline and extraction plan frozen；下一步: BE-001GF-02 ma_deviation_lowering extract_closeout。
+- BE-001GF-02 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.ma_deviation_lowering` ma_deviation_lowering actual extraction and closeout complete；下一步: BE-001GG-01 intent_lowering parent residual judgment。
