@@ -3193,3 +3193,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/557-backend.graph_compile.compile.baseline_plan.md` - v4.16.0 BE-001HI-01 backend.graph_compile.compile equivalence baseline and extraction plan
 递归边界补充: BE-001HI-02 `backend.graph_compile.compile` backend.graph_compile.compile actual extraction and closeout complete；下一步: BE-001HJ-01 backend.graph_compile parent residual judgment。
 - `markdown/06-milestones/v4.16.0/558-backend.graph_compile.compile.extract_closeout.md` - v4.16.0 BE-001HI-02 backend.graph_compile.compile actual extraction and closeout complete
+递归边界补充: BE-001HJ-01 `backend.graph_compile` backend.graph_compile parent residual judgment selects graph；下一步: BE-001HK-01 backend.graph_compile.graph baseline_plan。
+- `markdown/06-milestones/v4.16.0/559-backend.graph_compile.parent_residual_judgment.graph.md` - v4.16.0 BE-001HJ-01 backend.graph_compile parent residual judgment selects graph

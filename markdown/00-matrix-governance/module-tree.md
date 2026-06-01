@@ -5287,7 +5287,7 @@ AI 声称 BE-001CR-04 完成时，必须说明本批次是 `no code movement` cl
 
 **层级路径**: `root.backend.graph_compile`
 **父模块**: `backend`
-**状态**: v4.16 BE-001HI-02 已完成 `backend.graph_compile.compile` 实际抽离与 closeout；`quantscript_graph` 与 `compile` 均已 closeout，`backend.graph_compile stop_split: false`，下一步回到 BE-001HJ-01 父叶残余判断处理 `graph` residual。
+**状态**: v4.16 BE-001HJ-01 父叶残余判断已完成；`quantscript_graph` 与 `compile` 均已 closeout，`backend.graph_compile stop_split: false`，下一步进入 BE-001HK-01 `backend.graph_compile.graph` baseline_plan。
 **真实文件**:
 - `src/backend/graph_compile.rs`
 - `src/backend/graph_compile/compile.rs`
@@ -5350,6 +5350,7 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 **最新状态补充（BE-001HH-01）**: BE-001HH-01 已完成 `backend.graph_compile` 父叶残余判断。`quantscript_graph` 已 closeout，父级仍保留 `compile` 与 `graph` route facade 旧 owner residual，因此 `backend.graph_compile stop_split: false`；下一步只能进入 BE-001HI-01 `backend.graph_compile.compile` baseline_plan，不得直接移动 `graph_api` 或宣称 graph compile 已整体收口。
 **最新状态补充（BE-001HI-01）**: BE-001HI-01 已建立 `backend.graph_compile.compile` 等价基线与抽离方案。当前 `no code movement`，`compile baseline_frozen` 与 `compile plan_frozen` 成立；下一步只能进入 BE-001HI-02 `backend.graph_compile.compile` extract_closeout，不得移动 `graph_api`、改变 compile diagnostics/artifact builder 语义或启动 release transition。
 **最新状态补充（BE-001HI-02）**: BE-001HI-02 已完成 `backend.graph_compile.compile` 实际抽离与 closeout。`src/backend/graph_compile/compile.rs` 已承接 compile route/API 实现，旧 root compile_api implementation owner 已移除且 `src/compile_api.rs` 仅保留兼容 marker，root parent 仅保留 `compile_runtime_protocol_via_qs` 受控导出；下一步只能回到 BE-001HJ-01 `backend.graph_compile` 父叶残余判断，不得移动 `graph_api` 或宣称 graph compile 已整体收口。
+**最新状态补充（BE-001HJ-01）**: BE-001HJ-01 已完成 `backend.graph_compile` 父叶残余判断。`quantscript_graph` 与 `compile` 已 closeout，父级只剩 `graph` route/persistence residual，因此 `backend.graph_compile stop_split: false`；下一步只能进入 BE-001HK-01 `backend.graph_compile.graph` baseline_plan，不得直接移动 graph API 实现或宣称 graph compile 已整体收口。
 
 ### 5.2.0 `backend.graph_compile.compile`
 
@@ -7179,3 +7180,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001HH-01)**: `backend.graph_compile` backend.graph_compile parent residual judgment selects compile；下一步: BE-001HI-01 backend.graph_compile.compile baseline_plan。
 **最新状态补充(BE-001HI-01)**: `backend.graph_compile.compile` backend.graph_compile.compile equivalence baseline and extraction plan；下一步: BE-001HI-02 backend.graph_compile.compile extract_closeout。
 **最新状态补充(BE-001HI-02)**: `backend.graph_compile.compile` backend.graph_compile.compile actual extraction and closeout complete；下一步: BE-001HJ-01 backend.graph_compile parent residual judgment。
+**最新状态补充(BE-001HJ-01)**: `backend.graph_compile` backend.graph_compile parent residual judgment selects graph；下一步: BE-001HK-01 backend.graph_compile.graph baseline_plan。
