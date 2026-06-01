@@ -5309,6 +5309,7 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 **最新状态补充（BE-001FQ-03）**: BE-001FQ-03 已完成 `backend.graph_compile.quantscript_graph` 实际抽离。旧 graph_quantscript_api owner 已删除，`src/backend/graph_compile/quantscript_graph.rs` 成为 QS graph route/helper 真实 owner；`src/lib.rs` 通过 root parent re-export surface 维持 compile / graph / runtime / test caller，当前不得宣称 `backend.graph_compile stop_split: true`。
 **最新状态补充（BE-001FQ-04）**: BE-001FQ-04 已完成 `backend.graph_compile.quantscript_graph` 单叶 closeout。等价成立，但本叶仍同时承载 route surface、graph-to-QS generation、formal conversion、artifact target projection 与 strategy_graph parser，因此 `backend.graph_compile.quantscript_graph stop_split: false`；下一步只能进入 BE-001FR-01 `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 等价基线。
 **最新状态补充（BE-001FR-01）**: BE-001FR-01 已建立 `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 单子叶等价基线。当前 `no code movement`，`src/backend/graph_compile/quantscript_graph.rs` 仍是真实 owner，`graph_to_qs_generation baseline_frozen`；下一步只能进入 BE-001FR-02 抽离方案，不得直接移动 generator 或新增 sibling horizontal link。
+**最新状态补充（BE-001FR-02）**: BE-001FR-02 已建立 `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 抽离方案。当前 `no code movement`，`graph_to_qs_generation plan_frozen`，planned child path 固定为 src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs；下一步只能进入 BE-001FR-03 实际抽离记录。
 
 ### 5.2.1 `backend.graph_compile.quantscript_graph.graph_to_qs_generation`
 
@@ -5340,6 +5341,8 @@ graph 和 compile 必须通过后端 API 与编译链契约对外通信；前端
 
 **幻觉检查点**:
 AI 声称 BE-001FR-01 已完成时，必须说明当前只是 `no code movement` 等价基线，`src/backend/graph_compile/quantscript_graph.rs` 仍是真实 owner，`graph_to_qs_generation baseline_frozen` 成立但 child file 尚未创建。不得宣称 `convert_graph_json_to_script_module`、`attach_quantscript_artifacts`、`parse_graph_quantscript_source` 或 `backend.graph_compile` 已收口。
+
+**最新状态补充（BE-001FR-02）**: planned child path 为 src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs，BE-001FR-03 只允许迁移 `generate_quantscript_from_graph_value`、`generate_node_quantscript`、`quoted`、`render_json_scalar`。`generate_node_quantscript` 只能作为 `pub(super)` 给父级 artifact projection 内部复用。
 
 ### 5.3 `backend.storage_security`
 

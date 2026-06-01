@@ -20457,6 +20457,38 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/480-*.md", @(
+        @("BE-001FR-02", "graph generation plan marker"),
+        @("BE-001FR-03", "next graph generation extraction marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend.graph_compile.quantscript_graph.graph_to_qs_generation", "graph generation child marker"),
+        @("root.backend.graph_compile.quantscript_graph.graph_to_qs_generation", "graph generation coordinate"),
+        @("src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs", "planned child file marker"),
+        @("mod graph_to_qs_generation", "parent module declaration marker"),
+        @("pub(crate) use graph_to_qs_generation::generate_quantscript_from_graph_value", "parent re-export marker"),
+        @("generate_quantscript_from_graph_value", "generator migration marker"),
+        @("generate_node_quantscript", "node helper migration marker"),
+        @("quoted", "quoted helper migration marker"),
+        @("render_json_scalar", "scalar helper migration marker"),
+        @("pub(super)", "parent controlled helper marker"),
+        @("register_routes", "route exclusion marker"),
+        @("convert_graph_json_to_script_module", "formal conversion exclusion marker"),
+        @("attach_quantscript_artifacts", "artifact projection exclusion marker"),
+        @("build_quantscript_node_sources", "node source exclusion marker"),
+        @("parse_graph_quantscript_source", "parser exclusion marker"),
+        @("release transition", "release transition guard marker"),
+        @("sibling horizontal link", "horizontal link guard marker"),
+        @("cargo test -p quantpilot quantscript --lib", "quantscript lib gate"),
+        @("cargo test -p quantpilot --test quantscript_real_strategy_authoring", "authoring gate"),
+        @("cargo test -p quantpilot --test api_graph_versions", "graph versions gate"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {

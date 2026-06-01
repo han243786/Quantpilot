@@ -3004,3 +3004,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/478-backend.graph_compile.quantscript_graph单叶closeout.md` - v4.16.0 BE-001FQ-04 `backend.graph_compile.quantscript_graph` 单叶 closeout，选择 graph_to_qs_generation
 递归边界补充: BE-001FR-01 已建立 `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 单子叶等价基线；下一步只能进入 BE-001FR-02 抽离方案。
 - `markdown/06-milestones/v4.16.0/479-backend.graph_compile.quantscript_graph.graph_to_qs_generation单子叶等价基线.md` - v4.16.0 BE-001FR-01 `graph_to_qs_generation` 等价基线，冻结 graph-to-QS generator
+递归边界补充: BE-001FR-02 已建立 `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 抽离方案；下一步只能进入 BE-001FR-03 实际抽离记录。
+- `markdown/06-milestones/v4.16.0/480-backend.graph_compile.quantscript_graph.graph_to_qs_generation抽离方案.md` - v4.16.0 BE-001FR-02 `graph_to_qs_generation` 抽离方案，固定 planned child
