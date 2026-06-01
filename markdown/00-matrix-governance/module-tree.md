@@ -5394,6 +5394,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001FZ-04）**: BE-001FZ-04 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` 单叶 closeout。`macd_lowering closeout_done` 与 `macd_lowering stop_split: true` 成立；下一步只能进入 BE-001GA-01 `intent_lowering` 父叶残余判断。
 **最新状态补充（BE-001GA-01）**: BE-001GA-01 已完成 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` 父叶残余判断。当前 `no code movement`，`intent_lowering stop_split: false` 与 `double_ma_lowering_selected` 成立；下一步只能进入 BE-001GB-01 单子叶等价基线。
 **最新状态补充（BE-001GB-01）**: BE-001GB-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering` 单子叶等价基线。当前 `no code movement`，`double_ma_lowering baseline_frozen` 成立；下一步只能进入 BE-001GB-02 抽离方案，不得直接创建 child file 或移动 `double_ma` branch。
+**最新状态补充（BE-001GB-02）**: BE-001GB-02 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering` 抽离方案。当前 `no code movement`，`double_ma_lowering plan_frozen` 成立；下一步 BE-001GB-03 只允许创建 planned child、添加 `mod double_ma_lowering;` 并移动 `builtin.intent.double_ma` branch。
 
 | `markdown/06-milestones/v4.16.0/486-backend.graph_compile.quantscript_graph.formal_module_conversion抽离记录.md` backend graph compile quantscript graph formal module conversion extraction | `backend.graph_compile.quantscript_graph.formal_module_conversion` | actual extraction, child file owns `convert_graph_json_to_script_module` | BE-001FT actual extraction | `formal_module_conversion actual_extraction_done`; next step is BE-001FT-04 single leaf closeout |
 | `markdown/06-milestones/v4.16.0/487-backend.graph_compile.quantscript_graph.formal_module_conversion单叶closeout.md` backend graph compile quantscript graph formal module conversion closeout | `backend.graph_compile.quantscript_graph.formal_module_conversion` | single leaf closeout, keep split queue open | BE-001FT single leaf closeout | `formal_module_conversion stop_split: false`; next step is BE-001FU-01 parent residual judgment |
@@ -5414,6 +5415,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 | `markdown/06-milestones/v4.16.0/502-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering单叶closeout.md` backend graph compile quantscript graph formal module conversion intent macd lowering closeout | `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.macd_lowering` | single leaf closeout, stop split | BE-001FZ single leaf closeout | `macd_lowering stop_split: true`; next step is BE-001GA-01 parent residual judgment |
 | `markdown/06-milestones/v4.16.0/503-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering父叶残余判断.md` backend graph compile quantscript graph formal module conversion intent lowering parent residual judgment | `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` | parent residual judgment, select double ma lowering | BE-001GA parent residual judgment | `double_ma_lowering_selected`; next step is BE-001GB-01 single child baseline |
 | `markdown/06-milestones/v4.16.0/504-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering单子叶等价基线.md` backend graph compile quantscript graph formal module conversion intent double ma lowering baseline | `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering` | single child equivalence baseline, freeze double ma branch | BE-001GB single child baseline | `double_ma_lowering baseline_frozen`; next step is BE-001GB-02 extraction plan |
+| `markdown/06-milestones/v4.16.0/505-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering抽离方案.md` backend graph compile quantscript graph formal module conversion intent double ma lowering plan | `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.double_ma_lowering` | extraction plan, planned child and helper signature | BE-001GB extraction plan | `double_ma_lowering plan_frozen`; next step is BE-001GB-03 actual extraction |
 
 #### 5.2.2.1 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
 
@@ -5454,6 +5456,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001FZ-04）**: `macd_lowering closeout_done` 与 `macd_lowering stop_split: true` 成立；下一步回到 BE-001GA-01 父叶残余判断。
 **最新状态补充（BE-001GA-01）**: `intent_lowering parent_residual_judgment` 与 `double_ma_lowering_selected` 成立；下一步只能进入 BE-001GB-01 单子叶等价基线，不能直接创建 child file。
 **最新状态补充（BE-001GB-01）**: `double_ma_lowering baseline_frozen` 成立；下一步只能进入 BE-001GB-02 抽离方案，不能直接创建 child file。
+**最新状态补充（BE-001GB-02）**: `double_ma_lowering plan_frozen` 成立；下一步只能进入 BE-001GB-03 实际抽离记录，不能移动其它 built-in intent branch。
 
 #### 5.2.2.1.1 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.spread_observer_lowering`
 
@@ -5519,6 +5522,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 | crossover branch | `fast > slow` / `instrument` | BUY Intent | BUY emit 不变 |
 
 **最新状态补充（BE-001GB-01）**: `double_ma_lowering baseline_frozen` 成立；下一步只能进入 BE-001GB-02 抽离方案，不得直接移动 branch。
+**最新状态补充（BE-001GB-02）**: `double_ma_lowering plan_frozen` 成立；planned helper 为 `append_double_ma_lowering_lines(cfg, &source_var, instrument, qs_lines)`；下一步只能进入 BE-001GB-03 实际抽离记录。
 
 ### 5.3 `backend.storage_security`
 
