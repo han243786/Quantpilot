@@ -522,3 +522,4 @@
 | v4.16.0 / BE-001GI-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects zscore_lowering |
 | v4.16.0 / BE-001GJ-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.zscore_lowering` zscore_lowering baseline and extraction plan frozen |
 | v4.16.0 / BE-001GJ-02 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.zscore_lowering` zscore_lowering actual extraction and closeout complete |
+| v4.16.0 / BE-001GK-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects shared_intent_context |
