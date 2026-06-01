@@ -481,3 +481,4 @@
 | v4.16.0 / BE-001FR-03 | 新增: `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 实际抽离完成，下一步进入单叶 closeout |
 | v4.16.0 / BE-001FR-04 | 新增: `backend.graph_compile.quantscript_graph.graph_to_qs_generation` 单叶 closeout 已完成，下一步回父叶残余判断 |
 | v4.16.0 / BE-001FS-01 | 新增: `backend.graph_compile.quantscript_graph` 父叶残余判断已完成，下一步进入 `formal_module_conversion` 等价基线 |
+| v4.16.0 / BE-001FT-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion` 单子叶等价基线已建立，下一步进入抽离方案 |

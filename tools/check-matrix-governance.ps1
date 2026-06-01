@@ -20575,6 +20575,41 @@ $v416LandingFiles = @(
         @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
         @("git diff --check", "diff whitespace gate")
     ))
+    ,
+    @("markdown/06-milestones/v4.16.0/484-*.md", @(
+        @("BE-001FT-01", "formal conversion baseline marker"),
+        @("BE-001FT-02", "next formal conversion plan marker"),
+        @("no code movement", "no code movement marker"),
+        @("backend.graph_compile.quantscript_graph.formal_module_conversion", "formal conversion child marker"),
+        @("root.backend.graph_compile.quantscript_graph.formal_module_conversion", "formal conversion coordinate"),
+        @("formal_module_conversion baseline_frozen", "baseline frozen marker"),
+        @("src/backend/graph_compile/quantscript_graph.rs", "current owner marker"),
+        @("src/backend/graph_compile/quantscript_graph/formal_module_conversion.rs", "planned child exclusion marker"),
+        @("convert_graph_json_to_script_module", "formal conversion function marker"),
+        @("ScriptModule", "script module output marker"),
+        @("parse_quant_script_module", "terminal parse marker"),
+        @("graph.nodes", "nodes error marker"),
+        @("graph.edges", "edges error marker"),
+        @("builtin.intent.double_ma", "double ma marker"),
+        @("builtin.intent.rsi", "rsi marker"),
+        @("builtin.intent.ma_deviation", "ma deviation marker"),
+        @("builtin.intent.macd", "macd marker"),
+        @("builtin.intent.momentum", "momentum marker"),
+        @("builtin.intent.zscore", "zscore marker"),
+        @("builtin.intent.spread_observer", "spread observer marker"),
+        @("risk.profile", "risk profile marker"),
+        @("execution.profile", "execution profile marker"),
+        @("src/compile_api.rs", "compile caller marker"),
+        @("src/lib.rs", "root re-export marker"),
+        @("release transition guard", "release guard marker"),
+        @("sibling horizontal link", "horizontal link guard marker"),
+        @("cargo fmt --check", "cargo fmt gate"),
+        @("cargo check -p quantpilot", "cargo check gate"),
+        @("tools\check-utf8.ps1", "utf8 gate"),
+        @("tools\check-matrix-governance.ps1", "matrix governance gate"),
+        @("tools\check-full-feature-tree.ps1", "full feature tree gate"),
+        @("git diff --check", "diff whitespace gate")
+    ))
 )
 
 foreach ($entry in $v416LandingFiles) {

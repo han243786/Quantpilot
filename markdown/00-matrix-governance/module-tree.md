@@ -5355,7 +5355,7 @@ AI 声称 BE-001FR-01 已完成时，必须说明当前只是 `no code movement`
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion`
 **父模块**: `backend.graph_compile.quantscript_graph`
-**状态**: v4.16 BE-001FS-01 已选择为下一子叶；BE-001FT-01 尚未建立等价基线。
+**状态**: v4.16 BE-001FT-01 单子叶等价基线已建立，当前 `no code movement`。
 **真实文件**:
 - `src/backend/graph_compile/quantscript_graph.rs`
 
@@ -5365,13 +5365,15 @@ AI 声称 BE-001FR-01 已完成时，必须说明当前只是 `no code movement`
 **关键 public 方法**:
 | 方法 | 输入 | 输出 | 调用方 | 禁止事项 |
 | --- | --- | --- | --- | --- |
-| `convert_graph_json_to_script_module` | graph `Value` | `ScriptModule` | compile/runtime/test caller | 在 BE-001FT-01 前不得移动或改写分支语义 |
+| `convert_graph_json_to_script_module` | graph `Value` | `ScriptModule` | compile/runtime/test caller | 不得移动或改写分支语义；下一步只能 BE-001FT-02 抽离方案 |
 
 **父级通信规则**:
 该候选只能经由 `backend.graph_compile.quantscript_graph` 父级继续建基线；不得直接连接 `graph_to_qs_generation` child，不得新增 sibling horizontal link。
 
 **幻觉检查点**:
 AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断，`formal_module_conversion_selected` 只代表下一基线选择，尚未创建 child file，也未移动 `convert_graph_json_to_script_module`。
+
+**最新状态补充（BE-001FT-01）**: BE-001FT-01 已建立 `backend.graph_compile.quantscript_graph.formal_module_conversion` 单子叶等价基线。`formal_module_conversion baseline_frozen` 成立，`src/backend/graph_compile/quantscript_graph.rs` 仍是真实 owner；下一步只能进入 BE-001FT-02 抽离方案，不得直接创建 planned child、迁移 `convert_graph_json_to_script_module`、改写 data/risk/execution/intent 分支或启动 release transition。
 
 ### 5.3 `backend.storage_security`
 
