@@ -18,6 +18,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/App.jsx`
     - `frontend/src/app/DesktopTitleBar.jsx`
     - `frontend/src/app/DesktopTitleBar.test.jsx`
+    - `frontend/src/app/AppRouteHost.jsx`
+    - `frontend/src/app/AppRouteHost.test.jsx`
     - `frontend/src/app/AppRoot.jsx`
     - `frontend/src/app/AppRoot.test.jsx`
     - `frontend/src/app/AppShellFallback.jsx`
@@ -28,16 +30,18 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/app/useAppEnvironmentEvents.test.jsx`
     - `frontend/src/app/useAppInitialization.js`
     - `frontend/src/app/useAppInitialization.test.jsx`
+    - `frontend/src/app/useAppRoute.js`
+    - `frontend/src/app/useAppRoute.test.jsx`
     - `frontend/src/app/useDesktopWindowChrome.js`
     - `frontend/src/app/useDesktopWindowChrome.test.jsx`
   - Child queue:
-    - `frontend.app_shell.route_host`
     - `frontend.app_shell.global_overlays`
   - Closed child leaves:
     - `frontend.app_shell.bootstrap_root`
     - `frontend.app_shell.startup_readiness`
     - `frontend.app_shell.environment_events`
     - `frontend.app_shell.desktop_window_chrome`
+    - `frontend.app_shell.route_host`
 
 ## Pending Parent Queue
 

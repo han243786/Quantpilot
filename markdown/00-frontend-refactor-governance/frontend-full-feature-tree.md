@@ -18,6 +18,8 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `frontend/src/App.jsx`
     - `frontend/src/app/DesktopTitleBar.jsx`
     - `frontend/src/app/DesktopTitleBar.test.jsx`
+    - `frontend/src/app/AppRouteHost.jsx`
+    - `frontend/src/app/AppRouteHost.test.jsx`
     - `frontend/src/app/AppRoot.jsx`
     - `frontend/src/app/AppRoot.test.jsx`
     - `frontend/src/app/AppShellFallback.jsx`
@@ -28,6 +30,8 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `frontend/src/app/useAppEnvironmentEvents.test.jsx`
     - `frontend/src/app/useAppInitialization.js`
     - `frontend/src/app/useAppInitialization.test.jsx`
+    - `frontend/src/app/useAppRoute.js`
+    - `frontend/src/app/useAppRoute.test.jsx`
     - `frontend/src/app/useDesktopWindowChrome.js`
     - `frontend/src/app/useDesktopWindowChrome.test.jsx`
   - Evidence:
@@ -37,6 +41,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0006-frontend-app-shell-startup-readiness-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0007-frontend-app-shell-environment-events-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0008-frontend-app-shell-desktop-window-chrome-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0009-frontend-app-shell-route-host-closeout.md`
 
 ## Evidence Rules
 
