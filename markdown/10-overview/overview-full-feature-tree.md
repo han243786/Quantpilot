@@ -3083,3 +3083,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/513-递归叶子细分判定硬规则固化.md` - v4.16.0 GOV-LEAF-SPLIT-GATE 递归叶子细分判定硬规则
 递归边界补充: BE-001GE-01 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects ma_deviation_lowering；下一步: BE-001GF-01 ma_deviation_lowering baseline_plan。
 - `markdown/06-milestones/v4.16.0/514-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering父叶残余判断.md` - v4.16.0 BE-001GE-01 intent_lowering parent residual judgment selects ma_deviation_lowering
+递归边界补充: BE-001GF-01 `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.ma_deviation_lowering` ma_deviation_lowering baseline and extraction plan frozen；下一步: BE-001GF-02 ma_deviation_lowering extract_closeout。
+- `markdown/06-milestones/v4.16.0/515-backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.ma_deviation_lowering等价基线与抽离方案.md` - v4.16.0 BE-001GF-01 ma_deviation_lowering baseline and extraction plan frozen

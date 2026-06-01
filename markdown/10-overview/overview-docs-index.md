@@ -514,3 +514,4 @@
 | v4.16.0 / BE-001GD-04 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.rsi_lowering` 单叶 closeout 完成，下一步回到父叶残余判断 |
 | v4.16.0 / GOV-LEAF-SPLIT-GATE | 新增: 递归叶子细分判定硬规则固化；后续单叶 closeout / 父叶残余判断必须包含 `leaf_split_decision_gate` 判定 |
 | v4.16.0 / BE-001GE-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects ma_deviation_lowering |
+| v4.16.0 / BE-001GF-01 | 新增: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.ma_deviation_lowering` ma_deviation_lowering baseline and extraction plan frozen |
