@@ -5461,7 +5461,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 
 **层级路径**: `root.backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering`
 **父模块**: `backend.graph_compile.quantscript_graph.formal_module_conversion`
-**状态**: v4.16 BE-001GC-01 父叶残余判断已完成，`intent_lowering stop_split: false`，下一步选择 `rsi_lowering`。
+**状态**: v4.16 BE-001GO-01 父叶 closeout 已完成，`intent_lowering stop_split: true`，下一步上浮到 `formal_module_conversion` 父叶残余判断。
 
 **当前 owner**:
 
@@ -5500,6 +5500,7 @@ AI 声称 BE-001FS-01 已完成时，必须说明当前只是父叶残余判断�
 **最新状态补充（BE-001GB-03）**: `double_ma_lowering actual_extraction_done` 成立；父级通过 `double_ma_lowering::append_double_ma_lowering_lines` 单向调用 child。
 **最新状态补充（BE-001GB-04）**: `double_ma_lowering closeout_done` 与 `double_ma_lowering stop_split: true` 成立；下一步回到 BE-001GC-01 父叶残余判断。
 **最新状态补充（BE-001GC-01）**: `intent_lowering parent_residual_judgment` 与 `rsi_lowering_selected` 成立；下一步只能进入 BE-001GD-01 单子叶等价基线，不能直接创建 child file。
+**最新状态补充（BE-001GO-01）**: `intent_lowering parent_closeout`、`intent_lowering recursive_children_closed` 与 `intent_lowering stop_split: true` 成立；下一步只能上浮到 BE-001GP-01 `formal_module_conversion` 父叶残余判断。
 **最新状态补充（BE-001GD-01）**: `rsi_lowering baseline_frozen` 成立；下一步只能进入 BE-001GD-02 抽离方案，不能直接创建 child file。
 **最新状态补充（BE-001GD-02）**: `rsi_lowering plan_frozen` 成立；下一步只能进入 BE-001GD-03 实际抽离记录，不能移动其它 built-in intent branch。
 **最新状态补充（BE-001GD-03）**: `rsi_lowering actual_extraction_done` 成立；父级通过 `rsi_lowering::append_rsi_lowering_lines` 单向调用 child。
@@ -6896,3 +6897,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001GM-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent residual judgment selects unsupported_intent_failure；下一步: BE-001GN-01 unsupported_intent_failure baseline_plan。
 **最新状态补充(BE-001GN-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.unsupported_intent_failure` unsupported_intent_failure equivalence baseline and extraction plan；下一步: BE-001GN-02 unsupported_intent_failure extract_closeout。
 **最新状态补充(BE-001GN-02)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering.unsupported_intent_failure` unsupported_intent_failure actual extraction and closeout complete；下一步: BE-001GO-01 intent_lowering parent residual closeout。
+**最新状态补充(BE-001GO-01)**: `backend.graph_compile.quantscript_graph.formal_module_conversion.intent_lowering` intent_lowering parent closeout sets stop_split true；下一步: BE-001GP-01 formal_module_conversion parent residual judgment。
