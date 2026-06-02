@@ -6117,6 +6117,8 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_vault stop_split: true`；type re-export facade 已关闭，`src/credential_vault.rs` implementation migration 不属于本 closeout，下一步回到 `backend.storage_security` 父叶残余判断。
 **最新父叶残余判断(BE-001JL-01)**:
 `backend.storage_security.credential_vault_implementation` 被选为下一轮真实安全实现子叶；下一步必须先冻结 vault implementation 安全基线，不得直接迁移 encryption/key derivation/persistence/restore/CRUD 代码。
+**最新安全等价基线(BE-001JM-01)**:
+`backend.storage_security.credential_vault_implementation` 冻结 `src/credential_vault.rs` 的 `CredentialVault` public surface、machine-key cache、PBKDF2/AES-GCM encrypt/decrypt、backup restore、atomic save、permission hardening、Zeroizing 与 service CRUD 语义；BE-001JM-02 若移动代码，只能做等价 owner extraction，并保留 root compatibility shim。
 
 **回归保护**:
 `cargo test credential`；`cargo test storage_lifecycle`；涉及日志时复核 safe log 测试。
@@ -7385,3 +7387,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001JJ-02)**: `backend.storage_security.credential_vault` backend.storage_security.credential_vault facade extraction closeout complete；下一步: BE-001JK-01 backend.storage_security.credential_vault single_leaf_closeout。
 **最新状态补充(BE-001JK-01)**: `backend.storage_security.credential_vault` backend.storage_security.credential_vault single leaf closeout stops further facade split；下一步: BE-001JL-01 backend.storage_security parent_residual_judgment。
 **最新状态补充(BE-001JL-01)**: `backend.storage_security` backend.storage_security parent residual judgment selects credential_vault_implementation；下一步: BE-001JM-01 backend.storage_security.credential_vault_implementation baseline_plan。
+**最新状态补充(BE-001JM-01)**: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation safety baseline and extraction plan；下一步: BE-001JM-02 backend.storage_security.credential_vault_implementation extract_closeout。
