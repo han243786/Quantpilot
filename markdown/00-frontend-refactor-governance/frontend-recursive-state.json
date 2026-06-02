@@ -4,10 +4,9 @@
   "scope": "frontend",
   "current_parent": "frontend.design_system_styles.responsive_panel_overrides",
   "parent_return": "frontend.design_system_styles",
-  "current_step": "FE-0193",
-  "current_phase": "frontend_responsive_panel_overrides_child_parent_baseline",
+  "current_step": "FE-0194",
+  "current_phase": "frontend_responsive_workspace_editor_breakpoints_closed",
   "current_child_queue": [
-    "frontend.design_system_styles.responsive_panel_overrides.workspace_editor_breakpoints",
     "frontend.design_system_styles.responsive_panel_overrides.runtime_event_research_panels",
     "frontend.design_system_styles.responsive_panel_overrides.motion_and_runtime_helpers",
     "frontend.design_system_styles.responsive_panel_overrides.tutorial_overlay_styles",
@@ -164,7 +163,8 @@
     "frontend.design_system_styles.shared_component_primitives.legacy_qp_aliases",
     "frontend.design_system_styles.shared_component_primitives.loading_skeleton_motion",
     "frontend.design_system_styles.shared_component_primitives.monthly_heatmap_styles",
-    "frontend.design_system_styles.shared_component_primitives"
+    "frontend.design_system_styles.shared_component_primitives",
+    "frontend.design_system_styles.responsive_panel_overrides.workspace_editor_breakpoints"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

@@ -58,6 +58,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Record: `markdown/00-frontend-refactor-governance/records/FE-0193-frontend-responsive-panel-overrides-baseline.md`
       - Current owned and split-target files:
         - `frontend/src/styles-responsive-panels.css`
+        - `frontend/src/styles-responsive-panels/workspace-editor-breakpoints.css`
       - Important consumers:
         - `frontend/src/styleEntrypoint.js`
         - `frontend/src/pages/StrategyWorkspacePage.jsx`
@@ -73,7 +74,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/components/GovernedTimelinePanel.jsx`
         - `frontend/src/components/ApprovalPanel.jsx`
       - Current subchild queue:
-        - `frontend.design_system_styles.responsive_panel_overrides.workspace_editor_breakpoints`
         - `frontend.design_system_styles.responsive_panel_overrides.runtime_event_research_panels`
         - `frontend.design_system_styles.responsive_panel_overrides.motion_and_runtime_helpers`
         - `frontend.design_system_styles.responsive_panel_overrides.tutorial_overlay_styles`
@@ -82,7 +82,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend.design_system_styles.responsive_panel_overrides.workspace_debug_approval_print`
         - `frontend.design_system_styles.responsive_panel_overrides.legacy_page_inline_migrations`
       - Closed subchild leaves:
-        - none.
+        - `frontend.design_system_styles.responsive_panel_overrides.workspace_editor_breakpoints`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0194-frontend-responsive-workspace-editor-breakpoints-closeout.md`
+          - Public surface:
+            - `frontend/src/styles-responsive-panels/workspace-editor-breakpoints.css`
+            - `frontend/src/styles-responsive-panels.css`
   - Closed child parent:
     - `frontend.design_system_styles.shared_component_primitives`
       - Status: closed after recursive subchild queue finished.
