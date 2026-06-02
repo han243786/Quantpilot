@@ -79,9 +79,26 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/pages/strategyHub*`
         - `frontend/src/pages/strategyWorkspace*`
       - Current subchild queue:
-        - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles`
         - `frontend.design_system_styles.page_style_contracts.strategy_hub_page_style_contracts`
         - `frontend.design_system_styles.page_style_contracts.strategy_workspace_page_style_contracts`
+      - Active nested child parent:
+        - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles`
+          - Status: child parent baseline established.
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0204-frontend-backtest-analysis-page-styles-baseline.md`
+          - Current owned and split-target files:
+            - `frontend/src/pages/backtest-analysis.css`
+          - Important consumers:
+            - `frontend/src/pages/backtestViews/shared/BacktestAnalysisLayout.jsx`
+            - `frontend/src/pages/backtestViews/detailPageAnalysis/*`
+            - `frontend/src/pages/backtestViews/comparePageAnalysis/*`
+          - Current subchild queue:
+            - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.shell_tokens_surface_chrome`
+            - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.route_bar_and_typography`
+            - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.summary_cards_and_page_grid`
+            - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.analysis_sections_and_card_contracts`
+            - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.responsive_compare_motion_overrides`
+          - Closed subchild leaves:
+            - none.
       - Closed subchild leaves:
         - none.
   - Closed child parent:

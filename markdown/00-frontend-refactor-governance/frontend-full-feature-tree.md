@@ -803,3 +803,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0201-frontend-responsive-legacy-page-inline-migrations-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0202-frontend-responsive-panel-overrides-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0203-frontend-page-style-contracts-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0204-frontend-backtest-analysis-page-styles-baseline.md`
