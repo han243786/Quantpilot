@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001LI-01",
-  "last_committed_sha": "46d90c3b",
+  "last_committed_batch": "BE-001LJ-01",
+  "last_committed_sha": "e018687a",
   "current_parent": "backend.ops_governance",
-  "current_step": "BE-001LK-01",
-  "current_phase": "baseline_plan",
+  "current_step": "BE-001LK-02",
+  "current_phase": "extract_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
