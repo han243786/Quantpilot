@@ -15,6 +15,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0062-frontend-graph-editor-baseline.md`
   - Current owned and split-target files:
     - `frontend/src/pages/EditorPage.jsx`
+    - `frontend/src/pages/EditorPage.test.jsx`
     - `frontend/src/components/StrategyCanvas.jsx`
     - `frontend/src/components/StrategyCanvas.focus.test.jsx`
     - `frontend/src/components/StrategyCanvas.interaction.test.jsx`
@@ -144,6 +145,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.graph_editor.editor_store_actions.node_mutation_actions`
     - `frontend.graph_editor.editor_store_actions.edge_removal_actions`
     - `frontend.graph_editor.editor_store_actions`
+    - `frontend.graph_editor.legacy_editor_page_shell`
 
 ## Last Closed Parent
 

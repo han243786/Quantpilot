@@ -321,6 +321,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
 - User-visible behavior: graph editing UI renders and mutates strategy graphs, validates node/edge topology, projects node cards and property panels, compiles graph semantics, and bridges graph source artifacts.
 - Owned and split-target files:
   - `frontend/src/pages/EditorPage.jsx`
+  - `frontend/src/pages/EditorPage.test.jsx`
   - `frontend/src/components/StrategyCanvas.jsx`
   - `frontend/src/components/StrategyCanvas.focus.test.jsx`
   - `frontend/src/components/StrategyCanvas.interaction.test.jsx`
@@ -443,3 +444,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0092-frontend-graph-editor-editor-store-node-mutation-actions-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0093-frontend-graph-editor-editor-store-edge-removal-actions-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0094-frontend-graph-editor-editor-store-actions-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0095-frontend-graph-editor-legacy-editor-page-shell-closeout.md`
