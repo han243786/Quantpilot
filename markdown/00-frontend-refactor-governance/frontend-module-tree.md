@@ -18,6 +18,10 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/styleEntrypoint.js`
     - `frontend/src/design-system.css`
     - `frontend/src/design-system/reset-and-native-controls.css`
+    - `frontend/src/design-system/theme-tokens.css`
+    - `frontend/src/design-system/legacy-token-aliases.css`
+    - `frontend/src/design-system/scrollbars.css`
+    - `frontend/src/design-system/focus-selection.css`
     - `frontend/src/styles.css`
     - `frontend/src/styles-responsive-panels.css`
     - `frontend/src/shared.css`
@@ -54,9 +58,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Current owned and split-target files:
         - `frontend/src/design-system.css`
         - `frontend/src/design-system/reset-and-native-controls.css`
+        - `frontend/src/design-system/theme-tokens.css`
+        - `frontend/src/design-system/legacy-token-aliases.css`
+        - `frontend/src/design-system/scrollbars.css`
+        - `frontend/src/design-system/focus-selection.css`
       - Current subchild queue:
-        - `frontend.design_system_styles.design_tokens_and_native_controls.theme_tokens_and_aliases`
-        - `frontend.design_system_styles.design_tokens_and_native_controls.focus_selection_scrollbars`
         - `frontend.design_system_styles.design_tokens_and_native_controls.shell_chrome_styles`
         - `frontend.design_system_styles.design_tokens_and_native_controls.workspace_navigation_primitives`
         - `frontend.design_system_styles.design_tokens_and_native_controls.overlays_resizers_motion`
@@ -65,6 +71,18 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0180-frontend-design-system-reset-native-closeout.md`
           - Public surface:
             - `frontend/src/design-system/reset-and-native-controls.css`
+            - `frontend/src/design-system.css`
+        - `frontend.design_system_styles.design_tokens_and_native_controls.theme_tokens_and_aliases`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0181-frontend-design-system-theme-tokens-closeout.md`
+          - Public surface:
+            - `frontend/src/design-system/theme-tokens.css`
+            - `frontend/src/design-system/legacy-token-aliases.css`
+            - `frontend/src/design-system.css`
+        - `frontend.design_system_styles.design_tokens_and_native_controls.focus_selection_scrollbars`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0182-frontend-design-system-focus-scrollbars-closeout.md`
+          - Public surface:
+            - `frontend/src/design-system/scrollbars.css`
+            - `frontend/src/design-system/focus-selection.css`
             - `frontend/src/design-system.css`
   - Closed child leaves:
     - `frontend.design_system_styles.global_style_entry`

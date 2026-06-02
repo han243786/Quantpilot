@@ -1,0 +1,14 @@
+/* ── 焦点 ─────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 1px solid var(--ad-accent);
+  outline-offset: 1px;
+}
+
+/* ── 选中 ─────────────────────────────────────────────── */
+
+::selection {
+  background: var(--ad-accent-soft);
+  color: var(--ad-text);
+}
+
