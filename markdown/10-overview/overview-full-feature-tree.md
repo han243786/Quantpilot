@@ -274,6 +274,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
+- `src/backend/storage_security/credential_vault/implementation/secret_pattern_extraction.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs`
@@ -2185,6 +2186,7 @@ storage/
 - `src/backend/storage_security/credential_vault/implementation.rs` — 凭证保险库实现 parent owner, 保留 public API facade、secret pattern extraction 和 type/tests; 改 public surface 或 parent-owned type 时改这里
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs` — credential vault AES-GCM codec child; 改 nonce/tag、version framing、AAD、encrypt/decrypt 分支时改这里
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs` — credential vault machine-key cache/init and key derivation child; 改 machine key 文件、cache、PBKDF2/SHA-256 派生时改这里
+- `src/backend/storage_security/credential_vault/implementation/secret_pattern_extraction.rs` — credential vault safe-log pattern extraction child; 改 `extract_secret_patterns` traversal、Zeroizing clone wrapping 或 `len() >= 4` threshold 时改这里
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs` — credential vault service CRUD parent child; 改 parent mediation、get/list read projection 或 CRUD facade helper 时改这里
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs` — credential vault service mutation child; 改 set/delete、empty-field validation、missing delete error 或 mutation save handoff 时改这里
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs` — credential vault service read projection child; 改 get/list、missing read、Zeroizing clone wrapping 或 service key listing 时改这里
@@ -3446,3 +3448,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/669-backend.storage_security.credential_vault_implementation.parent_residual_judgment.secret_pattern_extraction.md` - v4.16.0 BE-001KG-01 backend.storage_security.credential_vault_implementation parent residual judgment selects secret_pattern_extraction
 递归边界补充: BE-001KH-01 `backend.storage_security.credential_vault_implementation.secret_pattern_extraction` backend.storage_security.credential_vault_implementation.secret_pattern_extraction equivalence baseline and extraction plan；下一步: BE-001KH-02 backend.storage_security.credential_vault_implementation.secret_pattern_extraction extract_closeout。
 - `markdown/06-milestones/v4.16.0/670-backend.storage_security.credential_vault_implementation.secret_pattern_extraction.baseline_plan.md` - v4.16.0 BE-001KH-01 backend.storage_security.credential_vault_implementation.secret_pattern_extraction equivalence baseline and extraction plan
+递归边界补充: BE-001KH-02 `backend.storage_security.credential_vault_implementation.secret_pattern_extraction` backend.storage_security.credential_vault_implementation.secret_pattern_extraction actual extraction complete；下一步: BE-001KH-03 backend.storage_security.credential_vault_implementation.secret_pattern_extraction single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/671-backend.storage_security.credential_vault_implementation.secret_pattern_extraction.extract_closeout.md` - v4.16.0 BE-001KH-02 backend.storage_security.credential_vault_implementation.secret_pattern_extraction actual extraction complete

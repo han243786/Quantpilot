@@ -846,6 +846,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
+- `src/backend/storage_security/credential_vault/implementation/secret_pattern_extraction.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs`
@@ -6079,6 +6080,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
+- `src/backend/storage_security/credential_vault/implementation/secret_pattern_extraction.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs`
@@ -7508,3 +7510,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_vault_implementation.secret_pattern_extraction` 被选为下一轮子叶；该子叶只冻结 public `extract_secret_patterns`、entries traversal、`Zeroizing<String>` clone wrapping、当前 `len() >= 4` threshold filtering 与 safe-log pattern collection。`service_crud` 已 closeout，parent-owned types、load/save/persistence children、implementation-local tests、root shim 与 release transition 均不得在 BE-001KH-01 迁移。
 **最新等价基线(BE-001KH-01)**:
 `backend.storage_security.credential_vault_implementation.secret_pattern_extraction` 冻结 public `extract_secret_patterns(&self) -> Vec<Zeroizing<String>>`、poisoned lock recovery、all entries traversal、`SecretString` clone into `Zeroizing<String>`、当前真实 `len() >= 4` threshold filtering、empty result 与 no-save/no-mutation 行为。BE-001KH-02 只能新增 `secret_pattern_extraction` child helper 并补 4 字符阈值测试；不得移动 parent-owned types、CRUD/persistence children、root shim 或 release transition。
+**最新抽离记录(BE-001KH-02)**:
+`backend.storage_security.credential_vault_implementation.secret_pattern_extraction` 已迁入 `src/backend/storage_security/credential_vault/implementation/secret_pattern_extraction.rs`；`src/backend/storage_security/credential_vault/implementation.rs` 保留 public `extract_secret_patterns` facade，并新增 4 字符阈值守卫测试以冻结当前 `len() >= 4` 行为。parent-owned types、CRUD/persistence children、root shim 与 release transition 均未迁移。

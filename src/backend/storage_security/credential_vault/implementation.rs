@@ -7,6 +7,7 @@ use zeroize::{Zeroize, Zeroizing};
 
 mod crypto_codec;
 mod machine_key_management;
+mod secret_pattern_extraction;
 mod service_crud;
 mod vault_persistence_restore;
 
@@ -103,12 +104,7 @@ impl CredentialVault {
 impl CredentialVault {
     /// 提取所有已存储凭证的字段值，供 safe_log 脱敏模块使用
     pub fn extract_secret_patterns(&self) -> Vec<Zeroizing<String>> {
-        let data = self.data.lock().unwrap_or_else(|e| e.into_inner());
-        data.entries
-            .values()
-            .flat_map(|entry| entry.values().map(|v| Zeroizing::new(v.0.clone())))
-            .filter(|v| v.len() >= 4) // v2.5.0: 阈值 8→4, 防止短 API key 在日志中明文出现
-            .collect()
+        secret_pattern_extraction::extract_secret_patterns(self)
     }
 }
 
@@ -428,6 +424,23 @@ mod tests {
             let patterns = vault.extract_secret_patterns();
             // 只有 >= 8 的值才会返回
             assert!(patterns.is_empty());
+        });
+    }
+
+    #[test]
+    fn test_extract_secret_patterns_keeps_four_character_values() {
+        run_vault_test(|| {
+            let env = VaultTestEnv::new();
+            env.clean_credentials();
+
+            let vault = env.load_vault();
+
+            let mut fields = CredentialFields::new();
+            fields.insert("threshold".to_string(), "abcd".to_string());
+            vault.set_service("test", fields).unwrap();
+
+            let patterns = vault.extract_secret_patterns();
+            assert!(patterns.iter().any(|p| p.as_str() == "abcd"));
         });
     }
 
