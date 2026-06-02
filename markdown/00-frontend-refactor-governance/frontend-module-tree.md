@@ -51,6 +51,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/hooks/useStrategyHubInspectorData.js`
     - `frontend/src/utils/strategyHubStrategyIdentity.js`
     - `frontend/src/utils/strategyHubFormatters.js`
+    - `frontend/src/utils/strategyHubHeroSummary.js`
+    - `frontend/src/utils/strategyHubHeroSummary.test.js`
     - `frontend/src/utils/strategyHubRosterProjection.js`
     - `frontend/src/utils/strategyHubRosterProjection.test.js`
     - `frontend/src/utils/strategyHubRosterRowActions.js`
@@ -79,7 +81,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/components/propertyPanelViews.jsx`
     - `frontend/src/components/StrategyResearchConsole.jsx`
   - Child queue:
-    - `frontend.strategy_hub.hero_summary`
     - `frontend.strategy_hub.roster_projection`
     - `frontend.strategy_hub.roster_row_actions`
     - `frontend.strategy_hub.inspector_projection`
@@ -90,6 +91,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
   - Closed child leaves:
     - `frontend.strategy_hub.route_shell`
     - `frontend.strategy_hub.directory_model`
+    - `frontend.strategy_hub.hero_summary`
 
 ## Last Closed Parent
 

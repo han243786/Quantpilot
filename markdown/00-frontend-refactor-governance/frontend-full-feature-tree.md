@@ -275,6 +275,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/hooks/useStrategyHubInspectorData.js`
   - `frontend/src/utils/strategyHubStrategyIdentity.js`
   - `frontend/src/utils/strategyHubFormatters.js`
+  - `frontend/src/utils/strategyHubHeroSummary.js`
+  - `frontend/src/utils/strategyHubHeroSummary.test.js`
   - `frontend/src/utils/strategyHubRosterProjection.js`
   - `frontend/src/utils/strategyHubRosterProjection.test.js`
   - `frontend/src/utils/strategyHubRosterRowActions.js`
@@ -293,3 +295,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0050-frontend-strategy-hub-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0051-frontend-strategy-hub-route-shell-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0052-frontend-strategy-hub-directory-model-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0053-frontend-strategy-hub-hero-summary-closeout.md`

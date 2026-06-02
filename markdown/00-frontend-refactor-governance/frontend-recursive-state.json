@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.strategy_hub",
-  "current_step": "FE-0052",
-  "current_phase": "frontend_strategy_hub_directory_model_closeout",
+  "current_step": "FE-0053",
+  "current_phase": "frontend_strategy_hub_hero_summary_closeout",
   "current_child_queue": [
-    "frontend.strategy_hub.hero_summary",
     "frontend.strategy_hub.roster_projection",
     "frontend.strategy_hub.roster_row_actions",
     "frontend.strategy_hub.inspector_projection",
@@ -34,7 +33,8 @@
     "frontend.strategy_workspace.version_experiment_collaboration_cards",
     "frontend.strategy_workspace.layout_styles",
     "frontend.strategy_hub.route_shell",
-    "frontend.strategy_hub.directory_model"
+    "frontend.strategy_hub.directory_model",
+    "frontend.strategy_hub.hero_summary"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
