@@ -590,6 +590,7 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 - `src/backend/strategy_config/diff.rs`
 - `src/backend/strategy_config/diff/artifact_diff.rs`
 - `src/backend/strategy_config/diff/evidence_diff.rs`
+- `src/backend/strategy_config/diff/evidence_diff/machine_trajectory.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/strategy_config_api.rs`
 - `tests/api_ai_proposal.rs`
@@ -700,6 +701,8 @@ diff 子叶只比较 strategy config artifact 和 evidence，不拥有 graph ver
 `backend.strategy_config.diff.evidence_diff.machine_trajectory` 被选为下一轮抽离子叶；risk plane、execution capability 与 metrics evidence diff 保持开放残余。
 **最新基线(BE-001IL-01)**:
 `backend.strategy_config.diff.evidence_diff.machine_trajectory` 等价基线已冻结；下一步只允许迁移 machine trajectory report/comparison/signature helpers，shared helper 仍由 evidence_diff 父叶控制。
+**最新抽离(BE-001IL-02)**:
+`backend.strategy_config.diff.evidence_diff.machine_trajectory` 已实际抽离到 `src/backend/strategy_config/diff/evidence_diff/machine_trajectory.rs`；shared helper 仍由 evidence_diff 父叶控制，下一步进入单叶 closeout。
 
 **回归保护**:
 `cargo test -p quantpilot strategy_config`；涉及 graph version compare 时运行 `cargo test -p quantpilot --test api_graph_versions`。
@@ -814,6 +817,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/strategy_config/diff.rs`
 - `src/backend/strategy_config/diff/artifact_diff.rs`
 - `src/backend/strategy_config/diff/evidence_diff.rs`
+- `src/backend/strategy_config/diff/evidence_diff/machine_trajectory.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/app_router.rs`
 - `src/app_runtime_helpers.rs`
@@ -7273,3 +7277,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001IJ-01)**: `backend.strategy_config.diff.evidence_diff` backend.strategy_config.diff.evidence_diff single leaf closeout keeps stop_split false；下一步: BE-001IK-01 backend.strategy_config.diff.evidence_diff parent residual judgment。
 **最新状态补充(BE-001IK-01)**: `backend.strategy_config.diff.evidence_diff` backend.strategy_config.diff.evidence_diff parent residual judgment selects machine_trajectory；下一步: BE-001IL-01 backend.strategy_config.diff.evidence_diff.machine_trajectory baseline_plan。
 **最新状态补充(BE-001IL-01)**: `backend.strategy_config.diff.evidence_diff.machine_trajectory` backend.strategy_config.diff.evidence_diff.machine_trajectory equivalence baseline and extraction plan；下一步: BE-001IL-02 backend.strategy_config.diff.evidence_diff.machine_trajectory extract_closeout。
+**最新状态补充(BE-001IL-02)**: `backend.strategy_config.diff.evidence_diff.machine_trajectory` backend.strategy_config.diff.evidence_diff.machine_trajectory actual extraction complete；下一步: BE-001IM-01 backend.strategy_config.diff.evidence_diff.machine_trajectory single_leaf_closeout。
