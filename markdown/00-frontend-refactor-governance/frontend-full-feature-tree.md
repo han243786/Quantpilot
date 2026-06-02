@@ -682,3 +682,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0132-frontend-store-capability-refresh-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0133-frontend-store-editor-actions-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0134-frontend-store-editor-facade-boundary-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0135-frontend-store-editor-selection-focus-closeout.md`
