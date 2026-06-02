@@ -746,6 +746,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/styles-responsive-panels/runtime-event-research-panels.css`
   - `frontend/src/styles-responsive-panels/motion-and-runtime-helpers.css`
   - `frontend/src/styles-responsive-panels/tutorial-overlay.css`
+  - `frontend/src/styles-responsive-panels/dashboard-strategy-config.css`
   - `frontend/src/shared.css`
   - `frontend/src/shared/ad-core-primitives.css`
   - `frontend/src/shared/legacy-qp-aliases.css`
@@ -793,3 +794,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0195-frontend-responsive-runtime-event-research-panels-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0196-frontend-responsive-motion-runtime-helpers-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0197-frontend-responsive-tutorial-overlay-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0198-frontend-responsive-dashboard-strategy-config-closeout.md`
