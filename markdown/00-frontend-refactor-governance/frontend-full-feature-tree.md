@@ -743,6 +743,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/styles.css`
   - `frontend/src/styles-responsive-panels.css`
   - `frontend/src/styles-responsive-panels/workspace-editor-breakpoints.css`
+  - `frontend/src/styles-responsive-panels/runtime-event-research-panels.css`
   - `frontend/src/shared.css`
   - `frontend/src/shared/ad-core-primitives.css`
   - `frontend/src/shared/legacy-qp-aliases.css`
@@ -787,3 +788,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0192-frontend-shared-component-primitives-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0193-frontend-responsive-panel-overrides-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0194-frontend-responsive-workspace-editor-breakpoints-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0195-frontend-responsive-runtime-event-research-panels-closeout.md`

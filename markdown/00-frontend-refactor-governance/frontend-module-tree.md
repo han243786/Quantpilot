@@ -59,6 +59,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Current owned and split-target files:
         - `frontend/src/styles-responsive-panels.css`
         - `frontend/src/styles-responsive-panels/workspace-editor-breakpoints.css`
+        - `frontend/src/styles-responsive-panels/runtime-event-research-panels.css`
       - Important consumers:
         - `frontend/src/styleEntrypoint.js`
         - `frontend/src/pages/StrategyWorkspacePage.jsx`
@@ -74,7 +75,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/components/GovernedTimelinePanel.jsx`
         - `frontend/src/components/ApprovalPanel.jsx`
       - Current subchild queue:
-        - `frontend.design_system_styles.responsive_panel_overrides.runtime_event_research_panels`
         - `frontend.design_system_styles.responsive_panel_overrides.motion_and_runtime_helpers`
         - `frontend.design_system_styles.responsive_panel_overrides.tutorial_overlay_styles`
         - `frontend.design_system_styles.responsive_panel_overrides.dashboard_and_strategy_config`
@@ -86,6 +86,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0194-frontend-responsive-workspace-editor-breakpoints-closeout.md`
           - Public surface:
             - `frontend/src/styles-responsive-panels/workspace-editor-breakpoints.css`
+            - `frontend/src/styles-responsive-panels.css`
+        - `frontend.design_system_styles.responsive_panel_overrides.runtime_event_research_panels`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0195-frontend-responsive-runtime-event-research-panels-closeout.md`
+          - Public surface:
+            - `frontend/src/styles-responsive-panels/runtime-event-research-panels.css`
             - `frontend/src/styles-responsive-panels.css`
   - Closed child parent:
     - `frontend.design_system_styles.shared_component_primitives`
