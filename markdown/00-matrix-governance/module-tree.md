@@ -848,6 +848,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`
+- `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/atomic_save_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/load_restore_entry.rs`
@@ -6080,6 +6081,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`
+- `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/atomic_save_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/load_restore_entry.rs`
@@ -7496,3 +7498,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_vault_implementation.service_crud.service_read_projection` 被选为下一轮子叶；该子叶只冻结 `get_service`、`list_services`、entries lookup、`BTreeMap<String, Zeroizing<String>>` clone projection、service key listing 与 poisoned mutex recovery。`service_mutation_commit` 已 closeout，`set_service`/`delete_service`、parent-owned types、tests、root shim 与 release transition 均不得在 BE-001KE-01 迁移。
 **最新等价基线(BE-001KE-01)**:
 `backend.storage_security.credential_vault_implementation.service_crud.service_read_projection` 冻结 `get_service` 与 `list_services` 的 read-only projection 行为：missing `None`、hit projection、`BTreeMap<String, Zeroizing<String>>` clone wrapping、service key listing、poisoned mutex recovery，并禁止 read path 调用 `save_inner`。BE-001KE-02 只能新增 `service_read_projection` 子模块并迁移 read helpers；`service_mutation_commit` 保持关闭。
+**最新抽离记录(BE-001KE-02)**:
+`backend.storage_security.credential_vault_implementation.service_crud.service_read_projection` 已迁入 `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs`；`src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs` 保留 parent mediation，并分别委托 mutation 与 read projection 两个子模块。`service_mutation_commit` 保持关闭，`src/backend/storage_security/credential_vault/implementation.rs` public facade、parent-owned types、tests、root shim 与 release transition 均未迁移。

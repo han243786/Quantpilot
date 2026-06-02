@@ -276,6 +276,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`
+- `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/atomic_save_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/load_restore_entry.rs`
@@ -2186,6 +2187,7 @@ storage/
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs` — credential vault machine-key cache/init and key derivation child; 改 machine key 文件、cache、PBKDF2/SHA-256 派生时改这里
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs` — credential vault service CRUD parent child; 改 parent mediation、get/list read projection 或 CRUD facade helper 时改这里
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs` — credential vault service mutation child; 改 set/delete、empty-field validation、missing delete error 或 mutation save handoff 时改这里
+- `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs` — credential vault service read projection child; 改 get/list、missing read、Zeroizing clone wrapping 或 service key listing 时改这里
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs` — credential vault persistence/restore parent child; 改 load/save 父级委托时改这里
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/atomic_save_commit.rs` — credential vault atomic save commit child; 改 save tmp/bak rollback、fsync、backup cleanup 或 Unix/Windows permission hardening 时改这里
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/load_restore_entry.rs` — credential vault load/restore entry child; 改 storage-root load、`.bak` restore、existing encrypted read/decode、fresh vault creation 或 initial encrypted write 时改这里
@@ -3434,3 +3436,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/664-backend.storage_security.credential_vault_implementation.service_crud.parent_residual_judgment.service_read_projection.md` - v4.16.0 BE-001KD-01 backend.storage_security.credential_vault_implementation.service_crud parent residual judgment selects service_read_projection
 递归边界补充: BE-001KE-01 `backend.storage_security.credential_vault_implementation.service_crud.service_read_projection` backend.storage_security.credential_vault_implementation.service_crud.service_read_projection equivalence baseline and extraction plan；下一步: BE-001KE-02 backend.storage_security.credential_vault_implementation.service_crud.service_read_projection extract_closeout。
 - `markdown/06-milestones/v4.16.0/665-backend.storage_security.credential_vault_implementation.service_crud.service_read_projection.baseline_plan.md` - v4.16.0 BE-001KE-01 backend.storage_security.credential_vault_implementation.service_crud.service_read_projection equivalence baseline and extraction plan
+递归边界补充: BE-001KE-02 `backend.storage_security.credential_vault_implementation.service_crud.service_read_projection` backend.storage_security.credential_vault_implementation.service_crud.service_read_projection actual extraction complete；下一步: BE-001KE-03 backend.storage_security.credential_vault_implementation.service_crud.service_read_projection single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/666-backend.storage_security.credential_vault_implementation.service_crud.service_read_projection.extract_closeout.md` - v4.16.0 BE-001KE-02 backend.storage_security.credential_vault_implementation.service_crud.service_read_projection actual extraction complete

@@ -1,4 +1,5 @@
 mod service_mutation_commit;
+mod service_read_projection;
 
 use super::{CredentialFields, CredentialVault};
 use anyhow::Result;
@@ -17,13 +18,7 @@ pub(super) fn get_service(
     vault: &CredentialVault,
     service: &str,
 ) -> Option<BTreeMap<String, Zeroizing<String>>> {
-    let data = vault.data.lock().unwrap_or_else(|e| e.into_inner());
-    data.entries.get(service).map(|entry| {
-        entry
-            .iter()
-            .map(|(k, v)| (k.clone(), Zeroizing::new(v.0.clone())))
-            .collect()
-    })
+    service_read_projection::get_service(vault, service)
 }
 
 pub(super) fn delete_service(vault: &CredentialVault, service: &str) -> Result<()> {
@@ -31,6 +26,5 @@ pub(super) fn delete_service(vault: &CredentialVault, service: &str) -> Result<(
 }
 
 pub(super) fn list_services(vault: &CredentialVault) -> Vec<String> {
-    let data = vault.data.lock().unwrap_or_else(|e| e.into_inner());
-    data.entries.keys().cloned().collect()
+    service_read_projection::list_services(vault)
 }
