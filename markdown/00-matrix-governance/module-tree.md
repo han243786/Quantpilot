@@ -589,6 +589,7 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 - `src/backend/strategy_config/preflight.rs`
 - `src/backend/strategy_config/diff.rs`
 - `src/backend/strategy_config/diff/artifact_diff.rs`
+- `src/backend/strategy_config/diff/evidence_diff.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/strategy_config_api.rs`
 - `tests/api_ai_proposal.rs`
@@ -691,6 +692,8 @@ diff 子叶只比较 strategy config artifact 和 evidence，不拥有 graph ver
 `backend.strategy_config.diff.evidence_diff` 被选为下一轮抽离子叶；该子叶聚焦 backtest evidence diagnostics、v4 evidence artifact comparison 与 evidence report schemas。
 **最新基线(BE-001II-01)**:
 `backend.strategy_config.diff.evidence_diff` 等价基线已冻结；下一步只允许迁移 evidence diff report/schema/helper，不得触碰 `artifact_diff` child、route-level artifact diff、graph/backtest storage 或 frontend shape。
+**最新抽离(BE-001II-02)**:
+`backend.strategy_config.diff.evidence_diff` 已实际抽离到 `src/backend/strategy_config/diff/evidence_diff.rs`；`backend.strategy_config.diff` 当前只保留父级 facade/re-export，下一步进入 evidence_diff 单叶 closeout。
 
 **回归保护**:
 `cargo test -p quantpilot strategy_config`；涉及 graph version compare 时运行 `cargo test -p quantpilot --test api_graph_versions`。
@@ -804,6 +807,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/strategy_config/preflight.rs`
 - `src/backend/strategy_config/diff.rs`
 - `src/backend/strategy_config/diff/artifact_diff.rs`
+- `src/backend/strategy_config/diff/evidence_diff.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/app_router.rs`
 - `src/app_runtime_helpers.rs`
@@ -7259,3 +7263,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001IG-01)**: `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff single leaf closeout sets stop_split true；下一步: BE-001IH-01 backend.strategy_config.diff parent residual judgment。
 **最新状态补充(BE-001IH-01)**: `backend.strategy_config.diff` backend.strategy_config.diff parent residual judgment selects evidence_diff；下一步: BE-001II-01 backend.strategy_config.diff.evidence_diff baseline_plan。
 **最新状态补充(BE-001II-01)**: `backend.strategy_config.diff.evidence_diff` backend.strategy_config.diff.evidence_diff equivalence baseline and extraction plan；下一步: BE-001II-02 backend.strategy_config.diff.evidence_diff extract_closeout。
+**最新状态补充(BE-001II-02)**: `backend.strategy_config.diff.evidence_diff` backend.strategy_config.diff.evidence_diff actual extraction complete；下一步: BE-001IJ-01 backend.strategy_config.diff.evidence_diff single_leaf_closeout。
