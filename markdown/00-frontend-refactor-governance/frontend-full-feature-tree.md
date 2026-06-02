@@ -335,6 +335,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/components/PropertyPanel.layout.test.jsx`
   - `frontend/src/components/PropertyPanel.compileSummary.test.jsx`
   - `frontend/src/components/PropertyPanel.strategyIr.test.jsx`
+  - `frontend/src/components/propertyPanelAuthoringCards.jsx`
+  - `frontend/src/components/propertyPanelAuthoringCards.test.jsx`
   - `frontend/src/components/propertyPanelLayoutPrimitives.jsx`
   - `frontend/src/components/propertyPanelLayoutPrimitives.test.jsx`
   - `frontend/src/components/propertyPanelViews.jsx`
@@ -370,3 +372,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0065-frontend-graph-editor-node-card-presentation-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0066-frontend-graph-editor-property-panel-model-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0067-frontend-graph-editor-property-panel-layout-primitives-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0068-frontend-graph-editor-property-panel-authoring-cards-closeout.md`
