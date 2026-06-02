@@ -34,6 +34,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/backtestViews/strategyBacktestsIndex/strategyBacktestsIndexModel.js`
     - `frontend/src/pages/backtestViews/strategyBacktestsIndex/strategyBacktestsIndexModel.test.js`
     - `frontend/src/pages/backtestViews/detailPageAnalysis/index.js`
+    - `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailCoreArtifactSections.jsx`
+    - `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailCoreArtifactSections.test.jsx`
     - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailPageModel.js`
     - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailPageModel.test.js`
     - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailSummaryModel.js`
@@ -61,7 +63,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Status: promoted to active child parent after first detail model extraction.
       - Record: `markdown/00-frontend-refactor-governance/records/FE-0110-frontend-backtest-views-detail-page-model-closeout.md`
       - Current subchild queue:
-        - `frontend.backtest_views.detail_page_analysis.core_artifact_sections`
         - `frontend.backtest_views.detail_page_analysis.evidence_report_sections`
         - `frontend.backtest_views.detail_page_analysis.replay_output_explanation_sections`
       - Closed subchild leaves:
@@ -69,6 +70,9 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Public surface: `frontend/src/pages/backtestViews/detailPageAnalysis/index.js`
         - `frontend.backtest_views.detail_page_analysis.summary_and_context`
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0111-frontend-backtest-views-detail-summary-context-closeout.md`
+          - Public surface: `frontend/src/pages/backtestViews/detailPageAnalysis/index.js`
+        - `frontend.backtest_views.detail_page_analysis.core_artifact_sections`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0112-frontend-backtest-views-detail-core-artifact-sections-closeout.md`
           - Public surface: `frontend/src/pages/backtestViews/detailPageAnalysis/index.js`
   - Closed child leaves:
     - `frontend.backtest_views.analysis_layout_shared`
