@@ -3,11 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.capabilities",
-  "current_step": "FE-0036",
-  "current_phase": "frontend_capabilities_store_refresh_projection_closeout",
-  "current_child_queue": [
-    "frontend.capabilities.store_capability_refresh.public_action_facade"
-  ],
+  "current_step": "FE-0037",
+  "current_phase": "frontend_capabilities_store_refresh_facade_closeout",
+  "current_child_queue": [],
   "next_parent": "frontend.strategy_workspace",
   "closed_parents": [
     "frontend.app_shell",
@@ -31,7 +29,9 @@
     "frontend.capabilities.module_registry_gate.registry_assembly",
     "frontend.capabilities.module_registry_gate.public_facade",
     "frontend.capabilities.module_registry_gate",
-    "frontend.capabilities.store_capability_refresh.refresh_state_projection"
+    "frontend.capabilities.store_capability_refresh.refresh_state_projection",
+    "frontend.capabilities.store_capability_refresh.public_action_facade",
+    "frontend.capabilities.store_capability_refresh"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
