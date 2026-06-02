@@ -373,6 +373,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/graph/validationRules.js`
   - `frontend/src/graph/validationRules.test.js`
   - `frontend/src/graph/compileGraph.js`
+  - `frontend/src/graph/compileGraphCoreIr.js`
+  - `frontend/src/graph/compileGraphCoreIr.test.js`
   - `frontend/src/graph/compileGraphSupport.js`
   - `frontend/src/graph/compileGraphSupport.test.js`
   - `frontend/src/graph/compileGraph.diagnostics.test.js`
@@ -404,3 +406,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0077-frontend-graph-editor-validation-rules-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0078-frontend-graph-editor-graph-factory-validation-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0079-frontend-graph-editor-compile-support-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0080-frontend-graph-editor-core-ir-lowering-closeout.md`
