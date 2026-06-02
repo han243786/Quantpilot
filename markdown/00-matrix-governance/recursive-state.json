@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001KM-01",
-  "last_committed_sha": "5dcb559b",
+  "last_committed_batch": "BE-001KN-01",
+  "last_committed_sha": "1e8d43f2",
   "current_parent": "backend.storage_security.credential_api_handler_implementation",
-  "current_step": "BE-001KO-01",
-  "current_phase": "baseline_plan",
+  "current_step": "BE-001KO-02",
+  "current_phase": "extract_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
