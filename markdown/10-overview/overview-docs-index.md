@@ -606,3 +606,4 @@
 | v4.16.0 / BE-001IQ-01 | 新增: `backend.strategy_config.diff.evidence_diff` backend.strategy_config.diff.evidence_diff parent residual judgment selects execution_capability |
 | v4.16.0 / BE-001IR-01 | 新增: `backend.strategy_config.diff.evidence_diff.execution_capability` backend.strategy_config.diff.evidence_diff.execution_capability equivalence baseline and extraction plan |
 | v4.16.0 / BE-001IR-02 | 新增: `backend.strategy_config.diff.evidence_diff.execution_capability` backend.strategy_config.diff.evidence_diff.execution_capability actual extraction complete |
+| v4.16.0 / BE-001IS-01 | 新增: `backend.strategy_config.diff.evidence_diff.execution_capability` backend.strategy_config.diff.evidence_diff.execution_capability single leaf closeout stops further split |
