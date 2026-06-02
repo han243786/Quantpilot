@@ -240,6 +240,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
 - Owned and split-target files:
   - `frontend/src/pages/StrategyHubPage.jsx`
   - `frontend/src/pages/StrategyHubPage.test.jsx`
+  - `frontend/src/pages/strategyHubRouteShell.js`
+  - `frontend/src/pages/strategyHubRouteShell.test.js`
   - `frontend/src/pages/StrategyHubPanelFallbacks.jsx`
   - `frontend/src/pages/StrategyHubSectionFallbacks.jsx`
   - `frontend/src/pages/StrategyHubHeroSection.jsx`
@@ -287,3 +289,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/utils/strategyHubCompareQueueActions.test.js`
 - Evidence:
   - `markdown/00-frontend-refactor-governance/records/FE-0050-frontend-strategy-hub-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0051-frontend-strategy-hub-route-shell-closeout.md`

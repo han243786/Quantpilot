@@ -16,6 +16,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
   - Current owned and split-target files:
     - `frontend/src/pages/StrategyHubPage.jsx`
     - `frontend/src/pages/StrategyHubPage.test.jsx`
+    - `frontend/src/pages/strategyHubRouteShell.js`
+    - `frontend/src/pages/strategyHubRouteShell.test.js`
     - `frontend/src/pages/StrategyHubPanelFallbacks.jsx`
     - `frontend/src/pages/StrategyHubSectionFallbacks.jsx`
     - `frontend/src/pages/StrategyHubHeroSection.jsx`
@@ -75,7 +77,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/components/propertyPanelViews.jsx`
     - `frontend/src/components/StrategyResearchConsole.jsx`
   - Child queue:
-    - `frontend.strategy_hub.route_shell`
     - `frontend.strategy_hub.directory_model`
     - `frontend.strategy_hub.hero_summary`
     - `frontend.strategy_hub.roster_projection`
@@ -86,7 +87,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.strategy_hub.shared_component_boundary`
     - `frontend.strategy_hub.layout_styles`
   - Closed child leaves:
-    - None.
+    - `frontend.strategy_hub.route_shell`
 
 ## Last Closed Parent
 
