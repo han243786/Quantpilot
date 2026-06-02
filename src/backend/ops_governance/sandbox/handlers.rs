@@ -3,83 +3,9 @@ use crate::*;
 // ── 沙箱验证服务 ──
 // Block 5 核心技术闸门：AI 提案必须经过独立沙箱回放验证方可提交审批
 
-/// 可重用的沙箱验证核心逻辑（供 API handler 和异步自动触发调用）
-pub(crate) async fn run_sandbox_verification(
-    state: &AppState,
-    request: &RequestSandboxVerificationRequest,
-) -> Result<SandboxVerificationReport, (StatusCode, String)> {
-    let ai_proposal = load_or_fetch_ai_proposal(state, &request.proposal_id).await?;
-
-    if ai_proposal.status != RuntimeAiProposalStatus::StaticCheckPassed {
-        return Err(json_bad_request(
-            "SANDBOX_VERIFICATION_DENIED",
-            "沙箱验证要求 AI 提案已通过静态检查",
-        ));
-    }
-
-    let now_ms = current_time_ms();
-    let sandbox_run_id = format!("sbx-run-{}", now_ms);
-
-    let replay_days: u64 = std::env::var("QUANTPILOT_SANDBOX_REPLAY_WINDOW_DAYS")
-        .ok()
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(30);
-    let replay_window = ReplayWindow {
-        from_ts: epoch_ms_to_iso8601(now_ms.saturating_sub(replay_days * 24 * 3600 * 1000)),
-        to_ts: epoch_ms_to_iso8601(now_ms),
-    };
-
-    let (baseline_metrics, candidate_metrics, fidelity) =
-        compute_comparison_metrics(state, &ai_proposal).await?;
-
-    let diffs = compute_metrics_diff(&baseline_metrics, &candidate_metrics);
-    let verdict = determine_sandbox_verdict(&diffs);
-    let warnings = compute_sandbox_warnings(&diffs, fidelity.as_str());
-
-    let report = SandboxVerificationReport {
-        proposal_id: request.proposal_id.clone(),
-        sandbox_run_id,
-        replay_window,
-        baseline_metrics,
-        candidate_metrics,
-        diffs,
-        verdict,
-        warnings,
-        replay_fidelity: fidelity,
-        generated_at_ms: now_ms,
-    };
-
-    if let Err(e) = crate::storage_lifecycle::ensure_storage_quota(
-        std::path::Path::new("storage"),
-        "sandbox-reports",
-        crate::storage_lifecycle::StorageLifecycle::Transient,
-    ) {
-        return Err(io_error(e));
-    }
-    persist_json(
-        &state.sandbox_report_store_dir,
-        &report.proposal_id,
-        &report,
-    )
-    .await
-    .map_err(io_error)?;
-    state
-        .sandbox_reports
-        .write()
-        .await
-        .insert(request.proposal_id.clone(), report.clone());
-
-    state
-        .evidence_metrics
-        .report_generation_count
-        .fetch_add(1, Ordering::Relaxed);
-
-    Ok(report)
-}
-
 // ── 指标计算函数 ──
 
-fn compute_metrics_diff(
+pub(super) fn compute_metrics_diff(
     baseline: &SandboxMetrics,
     candidate: &SandboxMetrics,
 ) -> SandboxMetricsDiff {
@@ -103,7 +29,7 @@ fn format_diff(diff: f64) -> String {
     }
 }
 
-fn determine_sandbox_verdict(diffs: &SandboxMetricsDiff) -> SandboxVerdict {
+pub(super) fn determine_sandbox_verdict(diffs: &SandboxMetricsDiff) -> SandboxVerdict {
     let mut improved = 0u8;
     let mut severe_degradation = false;
 
@@ -138,7 +64,7 @@ fn determine_sandbox_verdict(diffs: &SandboxMetricsDiff) -> SandboxVerdict {
     }
 }
 
-fn compute_sandbox_warnings(diffs: &SandboxMetricsDiff, fidelity: &str) -> Vec<String> {
+pub(super) fn compute_sandbox_warnings(diffs: &SandboxMetricsDiff, fidelity: &str) -> Vec<String> {
     let mut warnings = Vec::new();
     if fidelity == "partial" {
         warnings.push("回放忠实度部分覆盖: 候选与基线使用同一数据集，对比参考价值有限。建议使用独立数据集重新验证。".to_string());
@@ -200,7 +126,7 @@ fn count_v4_risk_rejections(artifact: &qrpc_core_ir::v4::V4BacktestArtifact) -> 
         .count()
 }
 
-async fn compute_comparison_metrics(
+pub(super) async fn compute_comparison_metrics(
     state: &AppState,
     ai_proposal: &RuntimeAiProposalRecord,
 ) -> Result<(SandboxMetrics, SandboxMetrics, String), (StatusCode, String)> {
@@ -246,7 +172,7 @@ fn backtest_to_sandbox_metrics(backtest: &BacktestRecord) -> SandboxMetrics {
     }
 }
 
-async fn load_or_fetch_ai_proposal(
+pub(super) async fn load_or_fetch_ai_proposal(
     state: &AppState,
     proposal_id: &str,
 ) -> Result<RuntimeAiProposalRecord, (StatusCode, String)> {
