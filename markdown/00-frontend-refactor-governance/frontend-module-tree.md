@@ -11,8 +11,9 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 ## Active Parent
 
 - `frontend.graph_editor`
-  - Status: parent baseline established.
+  - Status: parent closed.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0062-frontend-graph-editor-baseline.md`
+  - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0096-frontend-graph-editor-parent-closeout.md`
   - Current owned and split-target files:
     - `frontend/src/pages/EditorPage.jsx`
     - `frontend/src/pages/EditorPage.test.jsx`
@@ -109,9 +110,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/templates/strategyTemplates.js`
     - `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js`
     - `frontend/src/capabilities/capabilityGovernanceCore.js`
-  - Child queue:
-    - `frontend.graph_editor.editor_store_actions`
-    - `frontend.graph_editor.legacy_editor_page_shell`
+  - Child queue: closed.
   - Closed child leaves:
     - `frontend.graph_editor.canvas_interaction_shell`
     - `frontend.graph_editor.canvas_focus_viewport`
@@ -513,6 +512,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 - `frontend.capabilities`
 - `frontend.strategy_workspace`
 - `frontend.strategy_hub`
+- `frontend.graph_editor`
 
 ## Deferred Merge Notes
 

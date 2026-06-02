@@ -3,12 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.graph_editor",
-  "current_step": "FE-0095",
-  "current_phase": "frontend_graph_editor_legacy_editor_page_shell_closeout",
-  "current_child_queue": [
-    "frontend.graph_editor.editor_store_actions",
-    "frontend.graph_editor.legacy_editor_page_shell"
-  ],
+  "current_step": "FE-0096",
+  "current_phase": "frontend_graph_editor_parent_closeout",
+  "current_child_queue": [],
   "next_parent": "frontend.runtime_panels",
   "closed_parents": [
     "frontend.app_shell",
@@ -16,7 +13,8 @@
     "frontend.api_client",
     "frontend.capabilities",
     "frontend.strategy_workspace",
-    "frontend.strategy_hub"
+    "frontend.strategy_hub",
+    "frontend.graph_editor"
   ],
   "closed_children": [
     "frontend.strategy_workspace.route_shell",

@@ -315,7 +315,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
 
 ## Active Frontend Parent: `frontend.graph_editor`
 
-- Status: parent baseline established.
+- Status: parent closed.
 - Record:
   - `markdown/00-frontend-refactor-governance/records/FE-0062-frontend-graph-editor-baseline.md`
 - User-visible behavior: graph editing UI renders and mutates strategy graphs, validates node/edge topology, projects node cards and property panels, compiles graph semantics, and bridges graph source artifacts.
@@ -445,3 +445,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0093-frontend-graph-editor-editor-store-edge-removal-actions-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0094-frontend-graph-editor-editor-store-actions-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0095-frontend-graph-editor-legacy-editor-page-shell-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0096-frontend-graph-editor-parent-closeout.md`
