@@ -103,7 +103,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/BacktestDetailPage.jsx`
     - `frontend/src/pages/BacktestComparePage.jsx`
   - Child queue:
-    - `frontend.store.runtime_transport_selection`
+    - closed.
   - Active child parent:
     - none.
   - Closed child parent:
@@ -329,6 +329,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Public surface:
         - `frontend/src/store/graphStore.js` (`refreshCapabilities`)
         - `frontend/src/store/graphStoreCapabilityRefresh.js`
+    - `frontend.store.runtime_transport_selection`
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0175-frontend-store-runtime-transport-selection-closeout.md`
+      - Public surface:
+        - `frontend/src/store/graphStoreRuntimeTransport.js`
+        - `frontend/src/store/graphStoreRuntimeTransport.test.js`
 
 ## Last Closed Parent
 

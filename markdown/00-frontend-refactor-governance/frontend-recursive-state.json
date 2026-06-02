@@ -3,11 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.store",
-  "current_step": "FE-0174",
-  "current_phase": "frontend_store_runtime_history_parent_closed",
-  "current_child_queue": [
-    "frontend.store.runtime_transport_selection"
-  ],
+  "current_step": "FE-0175",
+  "current_phase": "frontend_store_runtime_transport_selection_closed",
+  "current_child_queue": [],
   "next_parent": "frontend.design_system_styles",
   "closed_parents": [
     "frontend.app_shell",
@@ -139,7 +137,8 @@
     "frontend.store.runtime_history.detail_selection_flow",
     "frontend.store.runtime_history.artifact_persistence_flow",
     "frontend.store.runtime_history.api_projection_state_contract",
-    "frontend.store.runtime_history"
+    "frontend.store.runtime_history",
+    "frontend.store.runtime_transport_selection"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
