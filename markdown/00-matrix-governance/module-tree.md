@@ -846,7 +846,8 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
-- `src/backend/storage_security/credential_vault/implementation/service_crud.rs`
+- `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs`
+- `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/atomic_save_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/load_restore_entry.rs`
@@ -6077,7 +6078,8 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
-- `src/backend/storage_security/credential_vault/implementation/service_crud.rs`
+- `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs`
+- `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/atomic_save_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/load_restore_entry.rs`
@@ -6184,7 +6186,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 **最新等价基线(BE-001KA-01)**:
 `backend.storage_security.credential_vault_implementation.service_crud` 冻结 `set_service` empty-field rejection、fields-to-`SecretString` conversion、insert/overwrite、save handoff，`get_service` missing/hit behavior 与 `Zeroizing<String>` wrapping，`delete_service` missing error/remove/save behavior，以及 `list_services` cloned key listing。BE-001KA-02 只能迁移 CRUD method bodies into parent-only helpers，并保留 `CredentialVault` public facade；不得移动 parent-owned types、load/persistence children、secret pattern extraction、tests、root shim 或 release transition。
 **最新抽离记录(BE-001KA-02)**:
-`backend.storage_security.credential_vault_implementation.service_crud` 已迁入 `src/backend/storage_security/credential_vault/implementation/service_crud.rs`；`src/backend/storage_security/credential_vault/implementation.rs` 保留 `CredentialVault` public CRUD facade，并通过 `service_crud` helper 执行 map mutation/lookup、validation、Zeroizing wrapping 与 save handoff。parent-owned types、load/persistence children、secret pattern extraction、tests、root shim 与 release transition 均未迁移。
+`backend.storage_security.credential_vault_implementation.service_crud` 已升格为 `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs` parent module；`src/backend/storage_security/credential_vault/implementation.rs` 保留 `CredentialVault` public CRUD facade，并通过 `service_crud` helper 执行 map mutation/lookup、validation、Zeroizing wrapping 与 save handoff。parent-owned types、load/persistence children、secret pattern extraction、tests、root shim 与 release transition 均未迁移。
 
 **回归保护**:
 `cargo test credential`；`cargo test storage_lifecycle`；涉及日志时复核 safe log 测试。
@@ -7486,3 +7488,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_vault_implementation.service_crud.service_mutation_commit` 被选为下一轮子叶；该子叶只冻结 `set_service`、`delete_service`、empty-field validation、fields-to-`SecretString` conversion、insert/overwrite/remove、missing-service delete error 与 save handoff。`get_service`、`list_services`、read projection、`Zeroizing<String>` wrapping、parent-owned types、tests、root shim 与 release transition 均保持残余，不得在 BE-001KC-01 迁移。
 **最新等价基线(BE-001KC-01)**:
 `backend.storage_security.credential_vault_implementation.service_crud.service_mutation_commit` 冻结 `set_service` 与 `delete_service` 的 mutation/save 行为：empty-field validation、fields-to-`SecretString` conversion、insert/overwrite、remove、missing-service delete error、poisoned mutex recovery 与 save handoff。BE-001KC-02 只能把当前 `service_crud` owner 转成 parent module directory，并将 mutation helpers 放入 `service_mutation_commit` 子模块；`get_service`/`list_services` 与 read projection 仍保持残余。
+**最新抽离记录(BE-001KC-02)**:
+`backend.storage_security.credential_vault_implementation.service_crud.service_mutation_commit` 已迁入 `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`；`src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs` 保留 parent mediation，并继续持有 `get_service`/`list_services` read projection 残余。`src/backend/storage_security/credential_vault/implementation.rs` public facade、parent-owned types、tests、root shim 与 release transition 均未迁移。

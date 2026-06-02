@@ -1,4 +1,6 @@
-use super::{CredentialFields, CredentialVault, SecretString};
+mod service_mutation_commit;
+
+use super::{CredentialFields, CredentialVault};
 use anyhow::Result;
 use std::collections::BTreeMap;
 use zeroize::Zeroizing;
@@ -8,16 +10,7 @@ pub(super) fn set_service(
     service: &str,
     fields: CredentialFields,
 ) -> Result<()> {
-    if fields.is_empty() {
-        anyhow::bail!("凭证字段不能为空");
-    }
-    let mut data = vault.data.lock().unwrap_or_else(|e| e.into_inner());
-    let entry: BTreeMap<String, SecretString> = fields
-        .into_iter()
-        .map(|(k, v)| (k, SecretString(v)))
-        .collect();
-    data.entries.insert(service.to_string(), entry);
-    vault.save_inner(&data)
+    service_mutation_commit::set_service(vault, service, fields)
 }
 
 pub(super) fn get_service(
@@ -34,11 +27,7 @@ pub(super) fn get_service(
 }
 
 pub(super) fn delete_service(vault: &CredentialVault, service: &str) -> Result<()> {
-    let mut data = vault.data.lock().unwrap_or_else(|e| e.into_inner());
-    if data.entries.remove(service).is_none() {
-        anyhow::bail!("标签 '{}' 不存在", service);
-    }
-    vault.save_inner(&data)
+    service_mutation_commit::delete_service(vault, service)
 }
 
 pub(super) fn list_services(vault: &CredentialVault) -> Vec<String> {
