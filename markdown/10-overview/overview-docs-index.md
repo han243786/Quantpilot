@@ -735,3 +735,4 @@
 | v4.16.0 / BE-001LO-03 | 新增: `backend.ops_governance.sandbox` backend.ops_governance.sandbox single leaf closeout continues split |
 | v4.16.0 / BE-001LP-01 | 新增: `backend.ops_governance.sandbox` backend.ops_governance.sandbox parent residual judgment selects report_api |
 | v4.16.0 / BE-001LQ-01 | 新增: `backend.ops_governance.sandbox.report_api` backend.ops_governance.sandbox.report_api equivalence baseline and extraction plan |
+| v4.16.0 / BE-001LQ-02 | 新增: `backend.ops_governance.sandbox.report_api` backend.ops_governance.sandbox.report_api actual extraction complete |
