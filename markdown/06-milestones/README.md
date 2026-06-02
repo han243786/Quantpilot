@@ -1070,3 +1070,4 @@
 | v4.16.0 / BE-001LA-01 | 新增: `backend.storage_security.credential_api_handler_implementation` backend.storage_security.credential_api_handler_implementation parent residual judgment selects delete_mutation |
 | v4.16.0 / BE-001LB-01 | 新增: `backend.storage_security.credential_api_handler_implementation.delete_mutation` backend.storage_security.credential_api_handler_implementation.delete_mutation equivalence baseline and extraction plan |
 | v4.16.0 / BE-001LB-02 | 新增: `backend.storage_security.credential_api_handler_implementation.delete_mutation` backend.storage_security.credential_api_handler_implementation.delete_mutation actual extraction complete |
+| v4.16.0 / BE-001LB-03 | 新增: `backend.storage_security.credential_api_handler_implementation.delete_mutation` backend.storage_security.credential_api_handler_implementation.delete_mutation single leaf closeout continues split |
