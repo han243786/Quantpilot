@@ -48,6 +48,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/store/graphStoreEditorDraftActions.test.js`
     - `frontend/src/store/graphStoreEditorEdgeActions.js`
     - `frontend/src/store/graphStoreEditorEdgeActions.test.js`
+    - `frontend/src/store/graphStoreEditorNodeCreationActions.js`
     - `frontend/src/store/graphStoreEditorNodeActions.js`
     - `frontend/src/store/graphStoreEditorNodeActions.test.js`
     - `frontend/src/store/graphStoreEditorSelectionActions.js`
@@ -109,12 +110,13 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Status: active recursive split.
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0138-frontend-store-editor-node-mutation-actions-baseline.md`
           - Current subchild queue:
-            - `frontend.store.editor_actions.node_mutation_actions.node_creation`
             - `frontend.store.editor_actions.node_mutation_actions.node_position_viewport`
             - `frontend.store.editor_actions.node_mutation_actions.node_config_identity`
             - `frontend.store.editor_actions.node_mutation_actions.node_ui_collapse`
           - Closed subchild leaves:
-            - none.
+            - `frontend.store.editor_actions.node_mutation_actions.node_creation`
+              - Record: `markdown/00-frontend-refactor-governance/records/FE-0139-frontend-store-editor-node-creation-closeout.md`
+              - Public surface: `frontend/src/store/graphStoreEditorNodeCreationActions.js`
       - Closed subchild leaves:
         - `frontend.store.editor_actions.facade_boundary`
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0134-frontend-store-editor-facade-boundary-closeout.md`

@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.store.editor_actions.node_mutation_actions",
-  "current_step": "FE-0138",
-  "current_phase": "frontend_store_editor_node_mutation_actions_baseline_established",
+  "current_step": "FE-0139",
+  "current_phase": "frontend_store_editor_node_creation_closed",
   "current_child_queue": [
-    "frontend.store.editor_actions.node_mutation_actions.node_creation",
     "frontend.store.editor_actions.node_mutation_actions.node_position_viewport",
     "frontend.store.editor_actions.node_mutation_actions.node_config_identity",
     "frontend.store.editor_actions.node_mutation_actions.node_ui_collapse"
@@ -111,7 +110,8 @@
     "frontend.store.editor_actions.facade_boundary",
     "frontend.store.editor_actions.selection_focus",
     "frontend.store.editor_actions.draft_source_actions",
-    "frontend.store.editor_actions.template_loading_actions"
+    "frontend.store.editor_actions.template_loading_actions",
+    "frontend.store.editor_actions.node_mutation_actions.node_creation"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
