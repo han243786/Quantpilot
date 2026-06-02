@@ -343,6 +343,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/hooks/usePropertyPanelActions.js`
   - `frontend/src/hooks/propertyPanelSelectors.js`
   - `frontend/src/hooks/propertyPanelShared.js`
+  - `frontend/src/hooks/propertyPanelShared.test.js`
   - `frontend/src/nodes/BaseNodeCard.jsx`
   - `frontend/src/nodes/BaseNodeCard.test.jsx`
   - `frontend/src/nodes/NodePriceOverlay.jsx`
@@ -365,3 +366,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0063-frontend-graph-editor-canvas-interaction-shell-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0064-frontend-graph-editor-canvas-focus-viewport-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0065-frontend-graph-editor-node-card-presentation-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0066-frontend-graph-editor-property-panel-model-closeout.md`

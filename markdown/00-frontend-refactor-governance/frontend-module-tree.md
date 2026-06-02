@@ -37,6 +37,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/hooks/usePropertyPanelActions.js`
     - `frontend/src/hooks/propertyPanelSelectors.js`
     - `frontend/src/hooks/propertyPanelShared.js`
+    - `frontend/src/hooks/propertyPanelShared.test.js`
     - `frontend/src/nodes/BaseNodeCard.jsx`
     - `frontend/src/nodes/BaseNodeCard.test.jsx`
     - `frontend/src/nodes/NodePriceOverlay.jsx`
@@ -70,7 +71,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js`
     - `frontend/src/capabilities/capabilityGovernanceCore.js`
   - Child queue:
-    - `frontend.graph_editor.property_panel_model`
     - `frontend.graph_editor.property_panel_views`
     - `frontend.graph_editor.module_palette`
     - `frontend.graph_editor.graph_factory_validation`
@@ -82,6 +82,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.graph_editor.canvas_interaction_shell`
     - `frontend.graph_editor.canvas_focus_viewport`
     - `frontend.graph_editor.node_card_presentation`
+    - `frontend.graph_editor.property_panel_model`
 
 ## Last Closed Parent
 
