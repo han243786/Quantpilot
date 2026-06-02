@@ -6,21 +6,15 @@ use super::scoped_cv_key;
 use crate::auth;
 use crate::AppState;
 
+mod service_path_validation;
+
 /// DELETE /api/credentials/:service → { "deleted": "okx" }
 pub(super) async fn delete_credential(
     user_id: auth::UserId,
     State(state): State<AppState>,
     Path(service): Path<String>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
-    if service.is_empty()
-        || service.len() > 64
-        || service.contains('/')
-        || service.contains('\\')
-        || service.contains("..")
-        || service.contains('\0')
-    {
-        return Err((StatusCode::BAD_REQUEST, "凭证标签无效".to_string()));
-    }
+    let service = service_path_validation::validate_service_path(service)?;
     let vault = state.credential_vault.as_ref().ok_or_else(|| {
         (
             StatusCode::SERVICE_UNAVAILABLE,

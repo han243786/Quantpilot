@@ -6095,6 +6095,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/credential_vault.rs`
 - `src/backend/storage_security/credential_api_handler_implementation.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/delete_mutation.rs`
+- `src/backend/storage_security/credential_api_handler_implementation/delete_mutation/service_path_validation.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/key_scope.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/list_projection.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/set_mutation.rs`
@@ -7604,3 +7605,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_api_handler_implementation.delete_mutation.service_path_validation` 被选为下一轮子叶；该子叶只拥有 DELETE path service validation gate：reject empty、len>64、`/`、`\`、`..`、`\0` 并保持原始 valid service string。vault availability、parent key bridge handoff、delete commit/error mapping、audit、response、route/list/set/key/auth/vault internals 与 release transition 均不得在 BE-001LD-01/02 顺手迁移。
 
 `backend.storage_security.credential_api_handler_implementation.delete_mutation.service_path_validation` 冻结 DELETE path service label gate：输入来自 `Path(service): Path<String>`；invalid 条件为 empty、len>64、contains `/`、contains `\`、contains `..`、contains `\0`；valid service 必须保持原始 String，不得 trim/normalize/lowercase/encode/sanitize；invalid 时保持 `400 BAD_REQUEST` 与 `凭证标签无效`。BE-001LD-02 只能新增 service_path_validation child file 并移动该 gate；vault availability、parent key bridge、delete_service、error mapping、audit、response、route/list/set/key/auth/vault internals 与 release transition 均不得顺手迁移。
+
+`backend.storage_security.credential_api_handler_implementation.delete_mutation.service_path_validation` 已迁入 `src/backend/storage_security/credential_api_handler_implementation/delete_mutation/service_path_validation.rs`；父 `src/backend/storage_security/credential_api_handler_implementation/delete_mutation.rs` 新增 `mod service_path_validation`，并在 `delete_credential` 的 `Path(service)` 提取后立即委托 `validate_service_path`。vault availability、parent key bridge、delete_service、error mapping、audit、response、route/list/set/key/auth/vault internals 与 release transition 均未迁移。
