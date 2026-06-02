@@ -2,13 +2,15 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.store",
-  "current_step": "FE-0160",
-  "current_phase": "frontend_store_compile_flow_parent_closed",
+  "current_parent": "frontend.store.runtime_session",
+  "current_step": "FE-0161",
+  "current_phase": "frontend_store_runtime_session_baseline",
   "current_child_queue": [
-    "frontend.store.runtime_session",
-    "frontend.store.runtime_history",
-    "frontend.store.runtime_transport_selection"
+    "frontend.store.runtime_session.simulation_stream_action",
+    "frontend.store.runtime_session.backtest_action",
+    "frontend.store.runtime_session.v4_simulation_action",
+    "frontend.store.runtime_session.backtest_experiment_action",
+    "frontend.store.runtime_session.lifecycle_stop_reset_actions"
   ],
   "next_parent": "frontend.design_system_styles",
   "closed_parents": [
