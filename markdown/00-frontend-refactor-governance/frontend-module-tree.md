@@ -18,6 +18,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/components/StrategyCanvas.jsx`
     - `frontend/src/components/StrategyCanvas.focus.test.jsx`
     - `frontend/src/components/StrategyCanvas.interaction.test.jsx`
+    - `frontend/src/components/strategyCanvasInteractionShell.js`
+    - `frontend/src/components/strategyCanvasInteractionShell.test.js`
     - `frontend/src/components/StrategyCanvasMiniMap.jsx`
     - `frontend/src/components/strategyCanvasFocus.js`
     - `frontend/src/components/strategyCanvasFocus.test.js`
@@ -66,7 +68,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js`
     - `frontend/src/capabilities/capabilityGovernanceCore.js`
   - Child queue:
-    - `frontend.graph_editor.canvas_interaction_shell`
     - `frontend.graph_editor.canvas_focus_viewport`
     - `frontend.graph_editor.node_card_presentation`
     - `frontend.graph_editor.property_panel_model`
@@ -78,7 +79,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.graph_editor.editor_store_actions`
     - `frontend.graph_editor.legacy_editor_page_shell`
   - Closed child leaves:
-    - empty.
+    - `frontend.graph_editor.canvas_interaction_shell`
 
 ## Last Closed Parent
 

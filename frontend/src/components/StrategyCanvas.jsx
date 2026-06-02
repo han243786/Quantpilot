@@ -2,7 +2,6 @@ import {
   Suspense,
   lazy,
   memo,
-  startTransition,
   useCallback,
   useEffect,
   useMemo,
@@ -22,7 +21,6 @@ import { buildNodeCardData } from "../nodes/nodeCardPresentation";
 import { isValidConnection } from "../graph/validation";
 import { useGraphStore } from "../store/graphStore";
 import {
-  buildCanvasFocusBounds,
   collectIssueNodeIds,
   collectRecentNodeIds,
   CANVAS_FOCUS_MODES,
@@ -32,6 +30,11 @@ import {
   resolveCanvasRecommendations,
   resolveCanvasFocusTargetIds
 } from "./strategyCanvasFocus";
+import {
+  focusCanvasTargets,
+  resolveNodeCardMode,
+  scheduleAfterFirstPaint
+} from "./strategyCanvasInteractionShell";
 import { collectVisibleNodeIds } from "./strategyCanvasViewport";
 import { canvasFocusStatusLabel } from "../utils/workspaceContextLabels";
 
@@ -56,86 +59,8 @@ const CANVAS_LANE_LABELS = {
   runtime: "运行时"
 };
 
-function resolveNodeCardMode() {
-  if (typeof window === "undefined") return "staged";
-  const params = new URLSearchParams(window.location.search);
-  return params.get("node_card_mode") === "full" ? "full" : "staged";
-}
-
 function CanvasOverlayFallback() {
   return <div className="canvas-overlay-skeleton" aria-hidden="true" />;
-}
-
-function scheduleAfterFirstPaint(callback) {
-  if (typeof window === "undefined") {
-    callback();
-    return () => {};
-  }
-
-  let frameId = null;
-  let idleId = null;
-  let timeoutId = null;
-  let disposed = false;
-
-  const run = () => {
-    if (disposed) return;
-    startTransition(() => {
-      callback();
-    });
-  };
-
-  const queueIdle = () => {
-    if (typeof window.requestIdleCallback === "function") {
-      idleId = window.requestIdleCallback(run, { timeout: 600 });
-      return;
-    }
-    timeoutId = window.setTimeout(run, 0);
-  };
-
-  frameId = window.requestAnimationFrame(queueIdle);
-
-  return () => {
-    disposed = true;
-    if (frameId !== null) window.cancelAnimationFrame(frameId);
-    if (idleId !== null && typeof window.cancelIdleCallback === "function") {
-      window.cancelIdleCallback(idleId);
-    }
-    if (timeoutId !== null) window.clearTimeout(timeoutId);
-  };
-}
-
-function focusCanvasTargets(reactFlow, nodes, targetIds, anchorId = null) {
-  if (!Array.isArray(targetIds) || targetIds.length === 0) return;
-
-  if (anchorId) {
-    const node = nodes.find((item) => item.id === anchorId);
-    if (!node) return;
-
-    reactFlow.setCenter(node.position.x + 120, node.position.y + 60, {
-      zoom: 0.92,
-      duration: 260
-    });
-    return;
-  }
-
-  const bounds = buildCanvasFocusBounds(nodes, targetIds);
-  if (!bounds) return;
-
-  if (targetIds.length === 1) {
-    const node = nodes.find((item) => item.id === targetIds[0]);
-    if (!node) return;
-
-    reactFlow.setCenter(node.position.x + 120, node.position.y + 60, {
-      zoom: 0.92,
-      duration: 260
-    });
-    return;
-  }
-
-  reactFlow.fitBounds(bounds, {
-    duration: 280,
-    padding: 0.18
-  });
 }
 
 function FlowInner({

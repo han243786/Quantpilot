@@ -324,6 +324,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/components/StrategyCanvas.jsx`
   - `frontend/src/components/StrategyCanvas.focus.test.jsx`
   - `frontend/src/components/StrategyCanvas.interaction.test.jsx`
+  - `frontend/src/components/strategyCanvasInteractionShell.js`
+  - `frontend/src/components/strategyCanvasInteractionShell.test.js`
   - `frontend/src/components/StrategyCanvasMiniMap.jsx`
   - `frontend/src/components/strategyCanvasFocus.js`
   - `frontend/src/components/strategyCanvasFocus.test.js`
@@ -358,3 +360,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/store/graphStore.editorActions.test.js`
 - Evidence:
   - `markdown/00-frontend-refactor-governance/records/FE-0062-frontend-graph-editor-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0063-frontend-graph-editor-canvas-interaction-shell-closeout.md`

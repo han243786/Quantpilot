@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.graph_editor",
-  "current_step": "FE-0062",
-  "current_phase": "frontend_graph_editor_baseline",
+  "current_step": "FE-0063",
+  "current_phase": "frontend_graph_editor_canvas_interaction_shell_closeout",
   "current_child_queue": [
-    "frontend.graph_editor.canvas_interaction_shell",
     "frontend.graph_editor.canvas_focus_viewport",
     "frontend.graph_editor.node_card_presentation",
     "frontend.graph_editor.property_panel_model",
@@ -46,7 +45,8 @@
     "frontend.strategy_hub.recent_activity_compare",
     "frontend.strategy_hub.template_library",
     "frontend.strategy_hub.shared_component_boundary",
-    "frontend.strategy_hub.layout_styles"
+    "frontend.strategy_hub.layout_styles",
+    "frontend.graph_editor.canvas_interaction_shell"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
