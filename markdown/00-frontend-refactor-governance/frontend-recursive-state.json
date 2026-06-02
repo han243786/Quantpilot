@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.store.editor_actions",
-  "current_step": "FE-0133",
-  "current_phase": "frontend_store_editor_actions_baseline_established",
+  "current_step": "FE-0134",
+  "current_phase": "frontend_store_editor_facade_boundary_closed",
   "current_child_queue": [
-    "frontend.store.editor_actions.facade_boundary",
     "frontend.store.editor_actions.selection_focus",
     "frontend.store.editor_actions.draft_source_actions",
     "frontend.store.editor_actions.template_loading_actions",
@@ -109,7 +108,8 @@
     "frontend.store.persistence_startup.persistence_helper_contract.version_audit_normalizers",
     "frontend.store.persistence_startup.persistence_helper_contract",
     "frontend.store.persistence_startup",
-    "frontend.store.capability_refresh"
+    "frontend.store.capability_refresh",
+    "frontend.store.editor_actions.facade_boundary"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

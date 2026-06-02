@@ -5,7 +5,9 @@ import {
   buildCapabilityRefreshFailureState,
   buildRemoteCapabilityRefreshState
 } from "./graphStoreCapabilityRefresh";
+import { createGraphStoreCompileActions } from "./graphStoreCompileActions";
 import { createGraphStoreEditorActions } from "./graphStoreEditorActions";
+import { createGraphStorePersistenceActions } from "./graphStorePersistenceActions";
 import { createGraphStoreRuntimeActions } from "./graphStoreRuntimeActions";
 import { createGraphStoreStartupActions } from "./graphStoreStartupActions";
 
@@ -35,5 +37,7 @@ export const useGraphStore = create((set, get) => ({
 
   ...createGraphStoreStartupActions(set, get),
   ...createGraphStoreEditorActions(set, get),
+  ...createGraphStoreCompileActions(set, get),
+  ...createGraphStorePersistenceActions(set, get),
   ...createGraphStoreRuntimeActions(set, get)
 }));
