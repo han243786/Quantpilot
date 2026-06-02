@@ -7674,3 +7674,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.ops_governance.sandbox.verification_run.report_commit stop_split: true`；该叶只拥有 sandbox report quota、persistence、cache insert 与 evidence metric increment 这一组 durable commit sequence。继续拆会触发 micro_leaf_without_owner、communication_cost_rises、local_proof_missing 与 line_count_only；下一步回到 `backend.ops_governance.sandbox.verification_run` 父叶残余判断。
 
 `backend.ops_governance.sandbox.verification_run.proposal_gate` 被选为下一轮子叶；report_commit 已关闭，proposal_gate 是 verification_run 内剩余的首个独立 failure boundary，当前负责 proposal load/fetch、`StaticCheckPassed` eligibility gate 与 `SANDBOX_VERIFICATION_DENIED` bad-request error。BE-001LW-01 必须先冻结该 gate，不得迁移 replay window、metrics、report assembly、report_commit、report_api、root bridge 或 runtime mutation internals。
+
+`backend.ops_governance.sandbox.verification_run.proposal_gate` baseline 已冻结：该子叶接收 `state` 与 `request`，返回 `RuntimeAiProposalRecord`，并严格保持 `load_or_fetch_ai_proposal`、`StaticCheckPassed` eligibility gate、`SANDBOX_VERIFICATION_DENIED` code 与中文错误信息。BE-001LW-02 只能创建 verification_run 私有 child module，不得迁移 replay window、metrics、report assembly 或 closed report_commit leaf。
