@@ -2184,7 +2184,7 @@ storage/
 - `src/compile_api.rs` — root compile API compatibility marker; real implementation lives in `src/backend/graph_compile/compile.rs`
 - `src/compile_artifact_builders.rs` — 编译产物组装; 改策略包/迁移包结构时改这里
 - `src/compile_diagnostics.rs` — 编译诊断; 改编译错误/警告格式时改这里
-- `src/credential_api.rs` — 凭证管理 API (set/list/delete); 改凭证 CRUD 时改这里
+- `src/backend/storage_security/credential_api_handler_implementation.rs` — 凭证管理 API handler implementation (set/list/delete); 改凭证 CRUD 时改这里
 - `src/backend/storage_security/credential_vault/implementation.rs` — 凭证保险库实现 parent owner, 保留 public API facade、secret pattern extraction 和 type/tests; 改 public surface 或 parent-owned type 时改这里
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs` — credential vault AES-GCM codec child; 改 nonce/tag、version framing、AAD、encrypt/decrypt 分支时改这里
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs` — credential vault machine-key cache/init and key derivation child; 改 machine key 文件、cache、PBKDF2/SHA-256 派生时改这里
@@ -3478,3 +3478,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/682-backend.storage_security.parent_residual_judgment.credential_api_handler_implementation.md` - v4.16.0 BE-001KN-01 backend.storage_security parent residual judgment selects credential_api_handler_implementation
 递归边界补充: BE-001KO-01 `backend.storage_security.credential_api_handler_implementation` backend.storage_security.credential_api_handler_implementation safety equivalence baseline and extraction plan；下一步: BE-001KO-02 backend.storage_security.credential_api_handler_implementation extract_closeout。
 - `markdown/06-milestones/v4.16.0/683-backend.storage_security.credential_api_handler_implementation.baseline_plan.md` - v4.16.0 BE-001KO-01 backend.storage_security.credential_api_handler_implementation safety equivalence baseline and extraction plan
+递归边界补充: BE-001KO-02 `backend.storage_security.credential_api_handler_implementation` backend.storage_security.credential_api_handler_implementation actual extraction complete；下一步: BE-001KO-03 backend.storage_security.credential_api_handler_implementation single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/684-backend.storage_security.credential_api_handler_implementation.extract_closeout.md` - v4.16.0 BE-001KO-02 backend.storage_security.credential_api_handler_implementation actual extraction complete

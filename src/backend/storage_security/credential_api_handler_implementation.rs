@@ -4,8 +4,9 @@ use axum::routing::{delete, get};
 use axum::{Json, Router};
 use std::collections::BTreeMap;
 
-use super::auth::{self, UserId};
-use super::AppState;
+use super::CredentialVault;
+use crate::auth::{self, UserId};
+use crate::AppState;
 
 pub(super) fn register_credential_routes(router: Router<AppState>) -> Router<AppState> {
     router
@@ -21,10 +22,7 @@ fn scoped_cv_key(user_id: &UserId, service: &str) -> String {
     format!("{}:{}", user_id.0, service)
 }
 
-fn unscoped_services_for(
-    vault: &super::credential_vault::CredentialVault,
-    user_id: &UserId,
-) -> Vec<String> {
+fn unscoped_services_for(vault: &CredentialVault, user_id: &UserId) -> Vec<String> {
     let prefix = format!("{}:", user_id.0);
     vault
         .list_services()

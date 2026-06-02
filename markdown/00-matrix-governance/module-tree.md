@@ -6093,7 +6093,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/load_restore_entry.rs`
 - `src/storage_lifecycle.rs`
 - `src/credential_vault.rs`
-- `src/credential_api.rs`
+- `src/backend/storage_security/credential_api_handler_implementation.rs`
 - `src/safe_log.rs`
 - `src/auth/mod.rs`
 - `src/auth_middleware.rs`
@@ -6118,19 +6118,19 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 **最新父叶选择(BE-001JC-01)**:
 `backend.storage_security` 已被选为下一轮递归对象；BE-001JD-01 必须先建立安全等价基线，保留 auth、storage lifecycle、safe log 与 backup 暂停保护。
 **最新安全等价基线(BE-001JD-01)**:
-`backend.storage_security` 当前只冻结 parent facade、credential API facade 与 credential vault re-export facade；`src/credential_api.rs`、`src/credential_vault.rs`、`src/storage_lifecycle.rs`、`src/safe_log.rs`、`src/auth/mod.rs`、`src/auth_middleware.rs`、`src/rate_limiter.rs` 与 `src/backup.rs` 的敏感实现语义继续暂停迁移。
+`backend.storage_security` 当前只冻结 parent facade、credential API facade 与 credential vault re-export facade；former root credential API file、`src/credential_vault.rs`、`src/storage_lifecycle.rs`、`src/safe_log.rs`、`src/auth/mod.rs`、`src/auth_middleware.rs`、`src/rate_limiter.rs` 与 `src/backup.rs` 的敏感实现语义继续暂停迁移。
 **最新抽离记录(BE-001JD-02)**:
 `backend.storage_security` facade extraction 已确认完成；本步 no code movement，敏感实现仍留在原文件，下一步进入单叶 closeout 判断是否继续细分。
 **最新子叶关闭判断(BE-001JE-01)**:
 `backend.storage_security stop_split: false`；credential API、vault、auth、quota、atomic write、storage lifecycle、safe log 与 backup 仍是真实安全子域，下一步进入父叶残余判断并继续执行安全基线。
 **最新父叶残余判断(BE-001JF-01)**:
-`backend.storage_security.credential_api` 被选为下一轮子叶；本轮仅处理 route facade，`src/credential_api.rs` handler migration 继续暂停，下一步冻结 credential_api 子叶基线。
+`backend.storage_security.credential_api` 被选为下一轮子叶；本轮仅处理 route facade，former root credential API handler migration 继续暂停，下一步冻结 credential_api 子叶基线。
 **最新等价基线(BE-001JG-01)**:
-`backend.storage_security.credential_api` 冻结为 route facade；`src/credential_api.rs` 仍拥有 list/set/delete handler、user scoping、validation、audit logging、status code 与 JSON response shape。
+`backend.storage_security.credential_api` 冻结为 route facade；former root credential API file 仍拥有 list/set/delete handler、user scoping、validation、audit logging、status code 与 JSON response shape。
 **最新抽离记录(BE-001JG-02)**:
-`backend.storage_security.credential_api` facade extraction 已确认完成；本步 no code movement，`src/credential_api.rs` handler migration 继续暂停。
+`backend.storage_security.credential_api` facade extraction 已确认完成；本步 no code movement，former root credential API handler migration 继续暂停。
 **最新子叶关闭判断(BE-001JH-01)**:
-`backend.storage_security.credential_api stop_split: true`；route facade 已关闭，`src/credential_api.rs` handler migration 不属于本 closeout，下一步回到 `backend.storage_security` 父叶残余判断。
+`backend.storage_security.credential_api stop_split: true`；route facade 已关闭，former root credential API handler migration 不属于本 closeout，下一步回到 `backend.storage_security` 父叶残余判断。
 **最新父叶残余判断(BE-001JI-01)**:
 `backend.storage_security.credential_vault` 被选为下一轮子叶；本轮只处理 type re-export facade，`src/credential_vault.rs` 的加密、machine key、PBKDF2、backup restore 与 atomic write 语义继续暂停。
 **最新等价基线(BE-001JJ-01)**:
@@ -7537,6 +7537,8 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新父叶关闭判断(BE-001KM-01)**:
 `backend.storage_security.credential_vault_implementation stop_split: true`；machine-key、crypto、persistence/restore、CRUD、secret extraction、type surface 与 implementation-local tests 均已关闭。父叶仅保留 child module declarations、public re-export、public facade delegation、private `save_inner` bridge 与 `#[cfg(test)] mod tests;` 入口，继续拆 facade/import 微叶会命中 micro_leaf_without_owner 与 communication_cost_rises。下一步回到 `backend.storage_security` 父叶残余判断。
 **最新父叶残余判断(BE-001KN-01)**:
-`backend.storage_security.credential_api_handler_implementation` 被选为下一轮真实 handler 安全子叶；此前 `backend.storage_security.credential_api` 的 route facade closeout 仍只代表 facade split 已关闭，`src/credential_api.rs` handler 迁移曾被暂停并现在必须先冻结 handler-level safety semantics。下一步 BE-001KO-01 必须冻结 route paths、UserId scoping、service validation、empty-field rejection、vault error mapping、audit logging、status code 与 JSON response shape；实际迁移时必须经 `backend.storage_security` 父层桥接，禁止 credential_api facade 与 handler implementation sibling 横向直连。
+`backend.storage_security.credential_api_handler_implementation` 被选为下一轮真实 handler 安全子叶；此前 `backend.storage_security.credential_api` 的 route facade closeout 仍只代表 facade split 已关闭，former root credential API handler 迁移曾被暂停并现在必须先冻结 handler-level safety semantics。下一步 BE-001KO-01 必须冻结 route paths、UserId scoping、service validation、empty-field rejection、vault error mapping、audit logging、status code 与 JSON response shape；实际迁移时必须经 `backend.storage_security` 父层桥接，禁止 credential_api facade 与 handler implementation sibling 横向直连。
 **最新安全等价基线(BE-001KO-01)**:
-`backend.storage_security.credential_api_handler_implementation` 冻结 `src/credential_api.rs` 的 `/api/credentials` list/set/delete handler owner：route paths、HTTP methods、`{user_id}:{service}` scoping、service validation、fields object conversion/empty rejection、vault unavailable/storage/delete error mapping、audit logging、status code 与 JSON response shape 均不得改变。BE-001KO-02 只能把 handler owner 迁入 planned handler implementation child file，并通过 `backend.storage_security` 父层桥接让 `credential_api` route facade 调用；不得移动 auth/AppState/vault internals/safe_log/rate_limiter/backup/storage_lifecycle，也不得做 sibling 横向直连或 release transition。
+`backend.storage_security.credential_api_handler_implementation` 冻结 former root credential API handler 的 `/api/credentials` list/set/delete handler owner：route paths、HTTP methods、`{user_id}:{service}` scoping、service validation、fields object conversion/empty rejection、vault unavailable/storage/delete error mapping、audit logging、status code 与 JSON response shape 均不得改变。BE-001KO-02 只能把 handler owner 迁入 planned handler implementation child file，并通过 `backend.storage_security` 父层桥接让 `credential_api` route facade 调用；不得移动 auth/AppState/vault internals/safe_log/rate_limiter/backup/storage_lifecycle，也不得做 sibling 横向直连或 release transition。
+**最新抽离记录(BE-001KO-02)**:
+`backend.storage_security.credential_api_handler_implementation` 已迁入 `src/backend/storage_security/credential_api_handler_implementation.rs`；former root credential API file 已移除，`src/lib.rs` 不再声明 root private `credential_api`。`src/backend/storage_security.rs` 新增父层 private handler bridge，`src/backend/storage_security/credential_api.rs` route facade 通过父桥接调用 handler implementation，未引入 sibling 横向直连。route paths、HTTP methods、UserId scoping、validation、vault error mapping、audit logging、status code 与 JSON response shape 保持等价；下一步进入 BE-001KO-03 单叶 closeout。

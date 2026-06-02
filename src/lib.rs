@@ -28,7 +28,6 @@ mod collaboration;
 pub mod compile_api;
 mod compile_artifact_builders;
 mod compile_diagnostics;
-mod credential_api;
 pub mod credential_vault;
 mod error_codes;
 mod formal_quantscript_authoring_types;
