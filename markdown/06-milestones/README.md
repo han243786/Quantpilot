@@ -1042,3 +1042,4 @@
 | v4.16.0 / BE-001KL-02 | 新增: `backend.storage_security.credential_vault_implementation.implementation_test_harness` backend.storage_security.credential_vault_implementation.implementation_test_harness actual extraction complete |
 | v4.16.0 / BE-001KL-03 | 新增: `backend.storage_security.credential_vault_implementation.implementation_test_harness` backend.storage_security.credential_vault_implementation.implementation_test_harness single leaf closeout stops further split |
 | v4.16.0 / BE-001KM-01 | 新增: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation parent residual judgment closes implementation parent |
+| v4.16.0 / BE-001KN-01 | 新增: `backend.storage_security` backend.storage_security parent residual judgment selects credential_api_handler_implementation |
