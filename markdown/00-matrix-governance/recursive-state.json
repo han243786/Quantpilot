@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001JG-02",
-  "last_committed_sha": "2d7c5ff",
-  "current_parent": "backend.storage_security",
-  "current_step": "BE-001JI-01",
-  "current_phase": "parent_residual_judgment",
+  "last_committed_batch": "BE-001JH-01",
+  "last_committed_sha": "e0a1b25",
+  "current_parent": "backend.storage_security.credential_vault",
+  "current_step": "BE-001JJ-01",
+  "current_phase": "baseline_plan",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -25,7 +25,7 @@
     "app_state_wiring",
     "test_support"
   ],
-  "next_recommended_child": "backend.storage_security",
+  "next_recommended_child": "backend.storage_security.credential_vault",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

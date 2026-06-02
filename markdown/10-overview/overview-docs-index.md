@@ -626,3 +626,4 @@
 | v4.16.0 / BE-001JG-01 | 新增: `backend.storage_security.credential_api` backend.storage_security.credential_api route facade baseline and plan |
 | v4.16.0 / BE-001JG-02 | 新增: `backend.storage_security.credential_api` backend.storage_security.credential_api facade extraction closeout complete |
 | v4.16.0 / BE-001JH-01 | 新增: `backend.storage_security.credential_api` backend.storage_security.credential_api single leaf closeout stops further facade split |
+| v4.16.0 / BE-001JI-01 | 新增: `backend.storage_security` backend.storage_security parent residual judgment selects credential_vault |

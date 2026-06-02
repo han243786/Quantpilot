@@ -715,3 +715,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001JG-01 `backend.storage_security.credential_api` backend.storage_security.credential_api route facade baseline and plan；下一步: BE-001JG-02 backend.storage_security.credential_api extract_closeout。
 - BE-001JG-02 `backend.storage_security.credential_api` backend.storage_security.credential_api facade extraction closeout complete；下一步: BE-001JH-01 backend.storage_security.credential_api single_leaf_closeout。
 - BE-001JH-01 `backend.storage_security.credential_api` backend.storage_security.credential_api single leaf closeout stops further facade split；下一步: BE-001JI-01 backend.storage_security parent_residual_judgment。
+- BE-001JI-01 `backend.storage_security` backend.storage_security parent residual judgment selects credential_vault；下一步: BE-001JJ-01 backend.storage_security.credential_vault baseline_plan。
