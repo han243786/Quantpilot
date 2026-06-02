@@ -6097,6 +6097,8 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security` 当前只冻结 parent facade、credential API facade 与 credential vault re-export facade；`src/credential_api.rs`、`src/credential_vault.rs`、`src/storage_lifecycle.rs`、`src/safe_log.rs`、`src/auth/mod.rs`、`src/auth_middleware.rs`、`src/rate_limiter.rs` 与 `src/backup.rs` 的敏感实现语义继续暂停迁移。
 **最新抽离记录(BE-001JD-02)**:
 `backend.storage_security` facade extraction 已确认完成；本步 no code movement，敏感实现仍留在原文件，下一步进入单叶 closeout 判断是否继续细分。
+**最新子叶关闭判断(BE-001JE-01)**:
+`backend.storage_security stop_split: false`；credential API、vault、auth、quota、atomic write、storage lifecycle、safe log 与 backup 仍是真实安全子域，下一步进入父叶残余判断并继续执行安全基线。
 
 **回归保护**:
 `cargo test credential`；`cargo test storage_lifecycle`；涉及日志时复核 safe log 测试。
@@ -7355,3 +7357,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001JC-01)**: `backend` backend parent residual judgment selects storage_security safety baseline；下一步: BE-001JD-01 backend.storage_security baseline_plan。
 **最新状态补充(BE-001JD-01)**: `backend.storage_security` backend.storage_security safety equivalence baseline and extraction plan；下一步: BE-001JD-02 backend.storage_security extract_closeout。
 **最新状态补充(BE-001JD-02)**: `backend.storage_security` backend.storage_security facade extraction closeout keeps sensitive semantics paused；下一步: BE-001JE-01 backend.storage_security single_leaf_closeout。
+**最新状态补充(BE-001JE-01)**: `backend.storage_security` backend.storage_security single leaf closeout keeps stop_split false；下一步: BE-001JF-01 backend.storage_security parent_residual_judgment。

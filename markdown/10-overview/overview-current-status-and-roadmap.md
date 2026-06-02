@@ -710,3 +710,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001JC-01 `backend` backend parent residual judgment selects storage_security safety baseline；下一步: BE-001JD-01 backend.storage_security baseline_plan。
 - BE-001JD-01 `backend.storage_security` backend.storage_security safety equivalence baseline and extraction plan；下一步: BE-001JD-02 backend.storage_security extract_closeout。
 - BE-001JD-02 `backend.storage_security` backend.storage_security facade extraction closeout keeps sensitive semantics paused；下一步: BE-001JE-01 backend.storage_security single_leaf_closeout。
+- BE-001JE-01 `backend.storage_security` backend.storage_security single leaf closeout keeps stop_split false；下一步: BE-001JF-01 backend.storage_security parent_residual_judgment。
