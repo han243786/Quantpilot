@@ -2,20 +2,11 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.runtime_panels",
-  "current_step": "FE-0105",
-  "current_phase": "frontend_runtime_panels_replay_and_explanations_closeout",
-  "current_child_queue": [
-    "frontend.runtime_panels.event_stream_shell",
-    "frontend.runtime_panels.strategy_research_model",
-    "frontend.runtime_panels.history_sections",
-    "frontend.runtime_panels.event_feed_and_candles",
-    "frontend.runtime_panels.runtime_diagnostics_surface",
-    "frontend.runtime_panels.evidence_timeline_reports",
-    "frontend.runtime_panels.mutation_controls",
-    "frontend.runtime_panels.replay_and_explanations"
-  ],
-  "next_parent": "frontend.backtest_views",
+  "current_parent": "frontend.backtest_views",
+  "current_step": "FE-0106",
+  "current_phase": "frontend_backtest_views_baseline_pending",
+  "current_child_queue": [],
+  "next_parent": "frontend.store",
   "closed_parents": [
     "frontend.app_shell",
     "frontend.routing",
@@ -23,7 +14,8 @@
     "frontend.capabilities",
     "frontend.strategy_workspace",
     "frontend.strategy_hub",
-    "frontend.graph_editor"
+    "frontend.graph_editor",
+    "frontend.runtime_panels"
   ],
   "closed_children": [
     "frontend.strategy_workspace.route_shell",

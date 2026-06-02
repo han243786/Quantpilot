@@ -447,11 +447,13 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0095-frontend-graph-editor-legacy-editor-page-shell-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0096-frontend-graph-editor-parent-closeout.md`
 
-## Active Frontend Parent: `frontend.runtime_panels`
+## Closed Frontend Parent: `frontend.runtime_panels`
 
-- Status: parent baseline established.
+- Status: parent closed.
 - Record:
   - `markdown/00-frontend-refactor-governance/records/FE-0097-frontend-runtime-panels-baseline.md`
+- Closeout:
+  - `markdown/00-frontend-refactor-governance/records/FE-0106-frontend-runtime-panels-parent-closeout.md`
 - User-visible behavior: runtime panels render live run/backtest events, persisted run/backtest history, runtime diagnostics, replay timelines, evidence summaries, report generation entry points, mutation controls, and strategy research console runtime lanes.
 - Owned and split-target files:
   - `frontend/src/components/EventStreamPanel.jsx`
@@ -524,3 +526,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0103-frontend-runtime-panels-evidence-timeline-reports-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0104-frontend-runtime-panels-mutation-controls-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0105-frontend-runtime-panels-replay-explanations-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0106-frontend-runtime-panels-parent-closeout.md`

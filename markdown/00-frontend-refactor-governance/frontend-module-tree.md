@@ -10,9 +10,17 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Active Parent
 
+- `frontend.backtest_views`
+  - Status: pending baseline.
+  - Baseline will be established in the next recursive step after `frontend.runtime_panels` parent closeout.
+  - Child queue: pending baseline.
+
+## Last Closed Parent
+
 - `frontend.runtime_panels`
-  - Status: parent baseline established.
+  - Status: parent closed.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0097-frontend-runtime-panels-baseline.md`
+  - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0106-frontend-runtime-panels-parent-closeout.md`
   - Current owned and split-target files:
     - `frontend/src/components/EventStreamPanel.jsx`
     - `frontend/src/components/EventStreamPanel.backtestArtifacts.test.jsx`
@@ -86,16 +94,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/store/graphStoreRuntimeHistoryApi.js`
     - `frontend/src/store/graphStoreRuntimeSelectionState.js`
   - Child queue:
-    - `frontend.runtime_panels.event_stream_shell`
-    - `frontend.runtime_panels.strategy_research_model`
-    - `frontend.runtime_panels.history_sections`
-    - `frontend.runtime_panels.event_feed_and_candles`
-    - `frontend.runtime_panels.runtime_diagnostics_surface`
-    - `frontend.runtime_panels.evidence_timeline_reports`
-    - `frontend.runtime_panels.mutation_controls`
-    - `frontend.runtime_panels.replay_and_explanations`
-    - `frontend.runtime_panels.mutation_controls`
-    - `frontend.runtime_panels.replay_and_explanations`
+    - closed.
   - Closed child leaves:
     - `frontend.runtime_panels.event_stream_shell`
     - `frontend.runtime_panels.strategy_research_model`
@@ -103,8 +102,10 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.runtime_panels.event_feed_and_candles`
     - `frontend.runtime_panels.runtime_diagnostics_surface`
     - `frontend.runtime_panels.evidence_timeline_reports`
+    - `frontend.runtime_panels.mutation_controls`
+    - `frontend.runtime_panels.replay_and_explanations`
 
-## Last Closed Parent
+## Previously Closed Parent
 
 - `frontend.graph_editor`
   - Status: parent closed.
@@ -594,7 +595,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Pending Parent Queue
 
-- `frontend.backtest_views`
 - `frontend.store`
 - `frontend.design_system_styles`
 - `frontend.test_support`
@@ -608,6 +608,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 - `frontend.strategy_workspace`
 - `frontend.strategy_hub`
 - `frontend.graph_editor`
+- `frontend.runtime_panels`
 
 ## Deferred Merge Notes
 
