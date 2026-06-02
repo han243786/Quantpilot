@@ -687,6 +687,8 @@ diff 子叶只比较 strategy config artifact 和 evidence，不拥有 graph ver
 `backend.strategy_config.diff.artifact_diff` 已实际抽离到 `src/backend/strategy_config/diff/artifact_diff.rs`；`backend.strategy_config.diff` 仅保留 evidence diff 与受控 re-export，下一步进入 artifact_diff 单叶 closeout。
 **最新子叶关闭(BE-001IG-01)**:
 `backend.strategy_config.diff.artifact_diff stop_split: true`；route/report/builder 保持同叶持有，`evidence_diff` 仍为 diff 父叶开放残余。
+**最新残余选择(BE-001IH-01)**:
+`backend.strategy_config.diff.evidence_diff` 被选为下一轮抽离子叶；该子叶聚焦 backtest evidence diagnostics、v4 evidence artifact comparison 与 evidence report schemas。
 
 **回归保护**:
 `cargo test -p quantpilot strategy_config`；涉及 graph version compare 时运行 `cargo test -p quantpilot --test api_graph_versions`。
@@ -7253,3 +7255,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001IF-01)**: `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff equivalence baseline and extraction plan；下一步: BE-001IF-02 backend.strategy_config.diff.artifact_diff extract_closeout。
 **最新状态补充(BE-001IF-02)**: `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff actual extraction complete；下一步: BE-001IG-01 backend.strategy_config.diff.artifact_diff single_leaf_closeout。
 **最新状态补充(BE-001IG-01)**: `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff single leaf closeout sets stop_split true；下一步: BE-001IH-01 backend.strategy_config.diff parent residual judgment。
+**最新状态补充(BE-001IH-01)**: `backend.strategy_config.diff` backend.strategy_config.diff parent residual judgment selects evidence_diff；下一步: BE-001II-01 backend.strategy_config.diff.evidence_diff baseline_plan。

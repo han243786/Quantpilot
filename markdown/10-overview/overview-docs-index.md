@@ -591,3 +591,4 @@
 | v4.16.0 / BE-001IF-01 | 新增: `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff equivalence baseline and extraction plan |
 | v4.16.0 / BE-001IF-02 | 新增: `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff actual extraction complete |
 | v4.16.0 / BE-001IG-01 | 新增: `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff single leaf closeout sets stop_split true |
+| v4.16.0 / BE-001IH-01 | 新增: `backend.strategy_config.diff` backend.strategy_config.diff parent residual judgment selects evidence_diff |
