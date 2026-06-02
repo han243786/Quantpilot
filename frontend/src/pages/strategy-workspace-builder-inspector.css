@@ -1,0 +1,310 @@
+.workspace-mode-banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+}
+
+.workspace-mode-banner strong,
+.workspace-mode-banner span {
+  display: block;
+}
+
+.workspace-mode-banner span {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.workspace-mode-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.workspace-mode-strip strong {
+  min-width: 0;
+  color: var(--ad-text);
+  font-size: var(--ad-font-size-md);
+  line-height: 1.25;
+}
+
+.workspace-mode-strip__pills {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.strategy-workspace-builder {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 340px;
+  min-height: 720px;
+  height: calc(100vh - 245px);
+  overflow: auto;
+}
+
+.strategy-workspace-builder--split {
+  grid-template-columns: 240px minmax(0, 1fr) 420px;
+}
+
+.strategy-workspace-builder__rail {
+  display: grid;
+  gap: 12px;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.workspace-inspector-stack {
+  align-content: start;
+}
+
+.workspace-section-card__header--stack {
+  margin-bottom: 10px;
+}
+
+.workspace-inspector-stack__controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.workspace-inspector-stack__reason {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: var(--ad-radius-md);
+  border: 1px solid rgba(var(--ad-border-rgb), 0.18);
+  background: rgba(11, 18, 28, 0.58);
+  opacity: 1;
+  transition: opacity 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+}
+
+.workspace-inspector-stack__reason strong {
+  font-size: var(--ad-font-size-sm);
+  letter-spacing: 0.01em;
+}
+
+.workspace-inspector-stack__reason span {
+  color: var(--muted);
+  font-size: var(--ad-font-size-sm);
+  line-height: 1.5;
+}
+
+.workspace-inspector-stack__reason-focus {
+  color: var(--text) !important;
+}
+
+.workspace-inspector-stack__reason--info {
+  border-color: rgba(97, 157, 226, 0.24);
+}
+
+.workspace-inspector-stack__reason--warning {
+  border-color: rgba(246, 198, 106, 0.24);
+}
+
+.workspace-inspector-stack__reason--warning strong {
+  color: var(--ad-warning);
+}
+
+.workspace-inspector-stack__reason--info strong {
+  color: var(--ad-text-secondary);
+}
+
+.workspace-inspector-stack__reason--faded {
+  opacity: 0.3;
+}
+
+.workspace-inspector-nav {
+  display: grid;
+  gap: 10px;
+}
+
+.workspace-inspector-nav__tab {
+  display: grid;
+  gap: 5px;
+  padding: 12px 14px;
+  text-align: left;
+  border: 1px solid rgba(var(--ad-border-rgb), 0.14);
+  border-radius: var(--ad-radius-md);
+  background: rgba(11, 18, 28, 0.54);
+  color: var(--text);
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.workspace-inspector-nav__tab strong,
+.workspace-inspector-nav__tab span {
+  display: block;
+}
+
+.workspace-inspector-nav__tab strong {
+  font-size: var(--ad-font-size-md);
+}
+
+.workspace-inspector-nav__tab span {
+  color: var(--muted);
+  font-size: var(--ad-font-size-sm);
+  line-height: 1.5;
+}
+
+.workspace-inspector-nav__tab:hover,
+.workspace-inspector-nav__tab--active {
+  border-color: rgba(97, 157, 226, 0.34);
+  background: rgba(12, 19, 30, 0.9);
+}
+
+.workspace-inspector-nav__tab--active {
+  transform: translateY(-1px);
+}
+
+.workspace-inspector-stack__primary,
+.workspace-inspector-stack__secondary {
+  display: grid;
+  gap: 10px;
+}
+
+.workspace-inspector-disclosure {
+  display: grid;
+  gap: 8px;
+}
+
+.workspace-inspector-disclosure__toggle {
+  justify-self: flex-start;
+}
+
+.workspace-inspector-disclosure__toggle--active {
+  border-color: rgba(97, 157, 226, 0.28);
+  background: rgba(18, 27, 40, 0.78);
+}
+
+.workspace-inspector-disclosure__panel {
+  display: grid;
+}
+
+.workspace-inspector-shell .property-section {
+  border: none;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.workspace-inspector-shell .property-section + .property-section {
+  margin-top: 4px;
+}
+
+.workspace-inspector-shell .property-card {
+  background: rgba(11, 18, 28, 0.72);
+}
+
+.workspace-inspector-shell__meta {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.workspace-inspector-shell__context {
+  margin-bottom: 12px;
+}
+
+.workspace-inspector-shell__context-card {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid rgba(95, 168, 224, 0.18);
+  border-radius: var(--ad-radius-md);
+}
+
+.workspace-inspector-shell__context-kicker {
+  color: var(--ad-text-secondary);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.workspace-inspector-shell__context-title {
+  color: var(--ad-text-secondary);
+  font-size: var(--ad-font-size-md);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.workspace-inspector-shell__context-summary,
+.workspace-inspector-shell__context-note {
+  color: var(--muted);
+  font-size: var(--ad-font-size-sm);
+  line-height: 1.55;
+}
+
+.workspace-inspector-shell__context-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.workspace-inspector-shell__summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.workspace-inspector-shell__summary-card {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid rgba(var(--ad-border-rgb), 0.14);
+  border-radius: var(--ad-radius-md);
+  background: rgba(8, 15, 24, 0.58);
+}
+
+.workspace-inspector-shell__summary-card span,
+.workspace-inspector-shell__summary-card small {
+  color: var(--muted);
+  font-size: var(--ad-font-size-xs);
+  line-height: 1.45;
+}
+
+.workspace-inspector-shell__summary-card strong {
+  color: var(--ad-text-secondary);
+  font-size: var(--ad-font-size-md);
+  line-height: 1.3;
+}
+
+.workspace-inspector-shell__summary-card--warning {
+  border-color: rgba(245, 158, 11, 0.18);
+}
+
+.workspace-inspector-shell__summary-card--danger {
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.workspace-inspector-shell__summary-card--info {
+  border-color: rgba(56, 189, 248, 0.22);
+}
+
+.workspace-inspector-shell__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.strategy-workspace-builder .module-sidebar,
+.strategy-workspace-builder .strategy-canvas-shell,
+.strategy-workspace-builder .property-panel {
+  min-height: 0;
+}
+
+.strategy-workspace-builder .module-sidebar,
+.strategy-workspace-builder .strategy-canvas-shell,
+.strategy-workspace-builder .property-panel {
+  background: transparent;
+}

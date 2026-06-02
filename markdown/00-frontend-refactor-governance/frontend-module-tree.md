@@ -38,6 +38,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/StrategyWorkspaceCollaborationCard.jsx`
     - `frontend/src/pages/StrategyWorkspaceCollaborationCard.test.jsx`
     - `frontend/src/pages/strategy-workspace.css`
+    - `frontend/src/pages/strategy-workspace-shell.css`
+    - `frontend/src/pages/strategy-workspace-overview-diagnostics.css`
+    - `frontend/src/pages/strategy-workspace-builder-inspector.css`
+    - `frontend/src/pages/strategy-workspace-cards-runtime.css`
+    - `frontend/src/pages/strategy-workspace-responsive.css`
     - `frontend/src/hooks/useStrategyWorkspaceSharedModel.js`
     - `frontend/src/hooks/useStrategyWorkspacePageData.js`
     - `frontend/src/hooks/strategyWorkspacePageDataProjection.js`
@@ -72,8 +77,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/components/StrategyResearchConsole.jsx`
     - `frontend/src/store/graphStore.js`
     - `frontend/src/router.js`
-  - Child queue:
-    - `frontend.strategy_workspace.layout_styles`
+  - Child queue: closed.
   - Closed child leaves:
     - `frontend.strategy_workspace.route_shell`
     - `frontend.strategy_workspace.shared_model_and_page_data`
@@ -83,6 +87,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.strategy_workspace.dashboard_overview`
     - `frontend.strategy_workspace.monitor_research_source_tabs`
     - `frontend.strategy_workspace.version_experiment_collaboration_cards`
+    - `frontend.strategy_workspace.layout_styles`
 
 ## Last Closed Parent
 

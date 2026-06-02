@@ -190,6 +190,11 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/strategyWorkspaceGovernanceCardsShell.js`
   - `frontend/src/pages/strategyWorkspaceGovernanceCardsShell.test.js`
   - `frontend/src/pages/strategy-workspace.css`
+  - `frontend/src/pages/strategy-workspace-shell.css`
+  - `frontend/src/pages/strategy-workspace-overview-diagnostics.css`
+  - `frontend/src/pages/strategy-workspace-builder-inspector.css`
+  - `frontend/src/pages/strategy-workspace-cards-runtime.css`
+  - `frontend/src/pages/strategy-workspace-responsive.css`
   - `frontend/src/hooks/useStrategyWorkspaceSharedModel.js`
   - `frontend/src/hooks/useStrategyWorkspacePageData.js`
   - `frontend/src/hooks/strategyWorkspacePageDataProjection.js`
@@ -222,3 +227,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0045-frontend-strategy-workspace-dashboard-overview-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0046-frontend-strategy-workspace-monitor-research-source-tabs-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0047-frontend-strategy-workspace-version-experiment-collaboration-cards-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0048-frontend-strategy-workspace-layout-styles-closeout.md`
