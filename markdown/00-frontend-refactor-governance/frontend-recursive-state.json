@@ -3,8 +3,8 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.strategy_hub",
-  "current_step": "FE-0060",
-  "current_phase": "frontend_strategy_hub_layout_styles_closeout",
+  "current_step": "FE-0061",
+  "current_phase": "frontend_strategy_hub_parent_closeout",
   "current_child_queue": [],
   "next_parent": "frontend.graph_editor",
   "closed_parents": [
@@ -12,7 +12,8 @@
     "frontend.routing",
     "frontend.api_client",
     "frontend.capabilities",
-    "frontend.strategy_workspace"
+    "frontend.strategy_workspace",
+    "frontend.strategy_hub"
   ],
   "closed_children": [
     "frontend.strategy_workspace.route_shell",

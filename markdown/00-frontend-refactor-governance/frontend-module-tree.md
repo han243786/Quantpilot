@@ -11,8 +11,9 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 ## Active Parent
 
 - `frontend.strategy_hub`
-  - Status: parent baseline established.
+  - Status: parent closed.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0050-frontend-strategy-hub-baseline.md`
+  - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0061-frontend-strategy-hub-parent-closeout.md`
   - Current owned and split-target files:
     - `frontend/src/pages/StrategyHubPage.jsx`
     - `frontend/src/pages/StrategyHubPage.test.jsx`
