@@ -462,6 +462,7 @@ src/backend/ops_governance/sandbox/report_api.rs — 沙箱验证 report API
 src/backend/ops_governance/sandbox/verification_run.rs — 沙箱验证 runner
 src/backend/ops_governance/sandbox/verification_run/proposal_gate.rs — 沙箱验证 proposal eligibility gate 子叶
 src/backend/ops_governance/sandbox/verification_run/replay_window.rs — 沙箱验证 replay window shape 子叶
+src/backend/ops_governance/sandbox/verification_run/report_assembly.rs — 沙箱验证 report DTO assembly 子叶
 src/backend/ops_governance/sandbox/verification_run/report_commit.rs — 沙箱验证 report 持久化提交子叶
   └── AI 提案独立回放验证, catch_unwind + 3 重试
 
@@ -2265,6 +2266,7 @@ storage/
 - `src/backend/ops_governance/sandbox/verification_run.rs` — reusable sandbox verification runner and report persistence side effects
 - `src/backend/ops_governance/sandbox/verification_run/proposal_gate.rs` — sandbox verification proposal eligibility gate child
 - `src/backend/ops_governance/sandbox/verification_run/replay_window.rs` — sandbox verification replay window shape child
+- `src/backend/ops_governance/sandbox/verification_run/report_assembly.rs` — sandbox verification report DTO assembly child
 - `src/backend/ops_governance/sandbox/verification_run/report_commit.rs` — sandbox report persistence commit child
 - `src/snapshot_service.rs` — 快照服务, SHA-256 签名; 改快照/验签时改这里
 - `src/strategy_config_api.rs` — v4 策略配置 artifact、preflight、artifact diff、正式版本配置契约 diff 和显式 v4 backtest evidence diff API; 改策略配置契约、PaperSimulated/PaperActual 边界、capability freshness、Risk Plane 静态契约、配置域状态或证据差异口径时改这里 🆕 v4.11.0
@@ -3642,3 +3644,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/754-backend.ops_governance.sandbox.verification_run.parent_residual_judgment.report_assembly.md` - v4.16.0 BE-001LZ-01 backend.ops_governance.sandbox.verification_run parent residual judgment selects report_assembly
 递归边界补充: BE-001MA-01 `backend.ops_governance.sandbox.verification_run.report_assembly` backend.ops_governance.sandbox.verification_run.report_assembly equivalence baseline and extraction plan；下一步: BE-001MA-02 backend.ops_governance.sandbox.verification_run.report_assembly extract_closeout。
 - `markdown/06-milestones/v4.16.0/755-backend.ops_governance.sandbox.verification_run.report_assembly.baseline_plan.md` - v4.16.0 BE-001MA-01 backend.ops_governance.sandbox.verification_run.report_assembly equivalence baseline and extraction plan
+递归边界补充: BE-001MA-02 `backend.ops_governance.sandbox.verification_run.report_assembly` backend.ops_governance.sandbox.verification_run.report_assembly actual extraction complete；下一步: BE-001MA-03 backend.ops_governance.sandbox.verification_run.report_assembly single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/756-backend.ops_governance.sandbox.verification_run.report_assembly.extract_closeout.md` - v4.16.0 BE-001MA-02 backend.ops_governance.sandbox.verification_run.report_assembly actual extraction complete

@@ -7,6 +7,7 @@ use super::{
 
 mod proposal_gate;
 mod replay_window;
+mod report_assembly;
 mod report_commit;
 
 /// 可重用的沙箱验证核心逻辑（供 API handler 和异步自动触发调用）
@@ -25,8 +26,9 @@ pub(crate) async fn run_sandbox_verification(
     let verdict = determine_sandbox_verdict(&diffs);
     let warnings = compute_sandbox_warnings(&diffs, fidelity.as_str());
 
-    let report = SandboxVerificationReport {
-        proposal_id: request.proposal_id.clone(),
+    let report = report_assembly::build_report(
+        request,
+        now_ms,
         sandbox_run_id,
         replay_window,
         baseline_metrics,
@@ -34,9 +36,8 @@ pub(crate) async fn run_sandbox_verification(
         diffs,
         verdict,
         warnings,
-        replay_fidelity: fidelity,
-        generated_at_ms: now_ms,
-    };
+        fidelity,
+    );
 
     report_commit::commit_report(state, request, &report).await?;
 
