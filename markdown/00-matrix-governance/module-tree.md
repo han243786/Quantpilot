@@ -6137,6 +6137,8 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_vault_implementation.machine_key_management stop_split: true`；继续拆成 cache/init 与 derivation 会命中 micro_leaf_without_owner 和 communication_cost_rises，不能增强当前等价证明。下一步回到 `backend.storage_security.credential_vault_implementation` 父叶残余判断，继续处理 crypto/persistence/CRUD/secret extraction 残余。
 **最新父叶残余判断(BE-001JQ-01)**:
 `backend.storage_security.credential_vault_implementation.crypto_codec` 被选为下一轮内部安全子叶；该子叶只冻结 nonce/tag constants、versioned ciphertext framing、AES-GCM seal/open、AAD、decrypt version routing 与 corrupt payload handling，不拥有 machine-key cache/init、key derivation internals、vault persistence、backup restore、service CRUD、secret pattern extraction 或 release transition。下一步进入 BE-001JR-01 baseline_plan。
+**最新等价基线(BE-001JR-01)**:
+`backend.storage_security.credential_vault_implementation.crypto_codec` 冻结 `NONCE_LEN = 12`、`TAG_LEN = 16`、`encrypt_with_machine_key` 与 `decrypt_with_machine_key`；BE-001JR-02 只能迁移 versioned ciphertext framing、AES-GCM seal/open、AAD、nonce/tag handling、decrypt version routing 与 corrupt payload checks，不得移动 machine-key cache/init、key derivation internals、vault persistence、backup restore、service CRUD、secret pattern extraction 或 root compatibility shim。
 
 **回归保护**:
 `cargo test credential`；`cargo test storage_lifecycle`；涉及日志时复核 safe log 测试。
@@ -7413,3 +7415,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001JP-02)**: `backend.storage_security.credential_vault_implementation.machine_key_management` backend.storage_security.credential_vault_implementation.machine_key_management actual extraction complete；下一步: BE-001JP-03 backend.storage_security.credential_vault_implementation.machine_key_management single_leaf_closeout。
 **最新状态补充(BE-001JP-03)**: `backend.storage_security.credential_vault_implementation.machine_key_management` backend.storage_security.credential_vault_implementation.machine_key_management single leaf closeout stops further split；下一步: BE-001JQ-01 backend.storage_security.credential_vault_implementation parent_residual_judgment。
 **最新状态补充(BE-001JQ-01)**: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation parent residual judgment selects crypto_codec；下一步: BE-001JR-01 backend.storage_security.credential_vault_implementation.crypto_codec baseline_plan。
+**最新状态补充(BE-001JR-01)**: `backend.storage_security.credential_vault_implementation.crypto_codec` backend.storage_security.credential_vault_implementation.crypto_codec equivalence baseline and extraction plan；下一步: BE-001JR-02 backend.storage_security.credential_vault_implementation.crypto_codec extract_closeout。
