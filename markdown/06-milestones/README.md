@@ -1103,3 +1103,4 @@
 | v4.16.0 / BE-001LS-02 | 新增: `backend.ops_governance.sandbox.verification_run` backend.ops_governance.sandbox.verification_run actual extraction complete |
 | v4.16.0 / BE-001LS-03 | 新增: `backend.ops_governance.sandbox.verification_run` backend.ops_governance.sandbox.verification_run single leaf closeout continues split |
 | v4.16.0 / BE-001LT-01 | 新增: `backend.ops_governance.sandbox.verification_run` backend.ops_governance.sandbox.verification_run parent residual judgment selects report_commit |
+| v4.16.0 / BE-001LU-01 | 新增: `backend.ops_governance.sandbox.verification_run.report_commit` backend.ops_governance.sandbox.verification_run.report_commit equivalence baseline and extraction plan |
