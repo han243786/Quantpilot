@@ -103,7 +103,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Status: active recursive split.
       - Record: `markdown/00-frontend-refactor-governance/records/FE-0133-frontend-store-editor-actions-baseline.md`
       - Current subchild queue:
-        - `frontend.store.editor_actions.draft_source_actions`
         - `frontend.store.editor_actions.template_loading_actions`
         - `frontend.store.editor_actions.node_mutation_actions`
         - `frontend.store.editor_actions.edge_mutation_actions`
@@ -118,6 +117,9 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend.store.editor_actions.selection_focus`
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0135-frontend-store-editor-selection-focus-closeout.md`
           - Public surface: `frontend/src/store/graphStoreEditorSelectionActions.js`
+        - `frontend.store.editor_actions.draft_source_actions`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0136-frontend-store-editor-draft-source-actions-closeout.md`
+          - Public surface: `frontend/src/store/graphStoreEditorDraftActions.js`
   - Closed child parent:
     - `frontend.store.persistence_startup`
       - Status: closed after recursive subchild queue finished.
