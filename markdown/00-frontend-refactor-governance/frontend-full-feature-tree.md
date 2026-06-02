@@ -732,6 +732,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/main.jsx`
   - `frontend/src/styleEntrypoint.js`
   - `frontend/src/design-system.css`
+  - `frontend/src/design-system/reset-and-native-controls.css`
   - `frontend/src/styles.css`
   - `frontend/src/styles-responsive-panels.css`
   - `frontend/src/shared.css`
@@ -759,3 +760,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0177-frontend-design-system-styles-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0178-frontend-design-system-global-style-entry-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0179-frontend-design-system-core-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0180-frontend-design-system-reset-native-closeout.md`

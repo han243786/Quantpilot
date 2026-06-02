@@ -17,6 +17,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/main.jsx`
     - `frontend/src/styleEntrypoint.js`
     - `frontend/src/design-system.css`
+    - `frontend/src/design-system/reset-and-native-controls.css`
     - `frontend/src/styles.css`
     - `frontend/src/styles-responsive-panels.css`
     - `frontend/src/shared.css`
@@ -52,15 +53,19 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Record: `markdown/00-frontend-refactor-governance/records/FE-0179-frontend-design-system-core-baseline.md`
       - Current owned and split-target files:
         - `frontend/src/design-system.css`
+        - `frontend/src/design-system/reset-and-native-controls.css`
       - Current subchild queue:
-        - `frontend.design_system_styles.design_tokens_and_native_controls.reset_and_native_controls`
         - `frontend.design_system_styles.design_tokens_and_native_controls.theme_tokens_and_aliases`
         - `frontend.design_system_styles.design_tokens_and_native_controls.focus_selection_scrollbars`
         - `frontend.design_system_styles.design_tokens_and_native_controls.shell_chrome_styles`
         - `frontend.design_system_styles.design_tokens_and_native_controls.workspace_navigation_primitives`
         - `frontend.design_system_styles.design_tokens_and_native_controls.overlays_resizers_motion`
       - Closed subchild leaves:
-        - none yet.
+        - `frontend.design_system_styles.design_tokens_and_native_controls.reset_and_native_controls`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0180-frontend-design-system-reset-native-closeout.md`
+          - Public surface:
+            - `frontend/src/design-system/reset-and-native-controls.css`
+            - `frontend/src/design-system.css`
   - Closed child leaves:
     - `frontend.design_system_styles.global_style_entry`
       - Record: `markdown/00-frontend-refactor-governance/records/FE-0178-frontend-design-system-global-style-entry-closeout.md`
