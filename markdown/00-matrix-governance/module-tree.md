@@ -703,6 +703,8 @@ diff 子叶只比较 strategy config artifact 和 evidence，不拥有 graph ver
 `backend.strategy_config.diff.evidence_diff.machine_trajectory` 等价基线已冻结；下一步只允许迁移 machine trajectory report/comparison/signature helpers，shared helper 仍由 evidence_diff 父叶控制。
 **最新抽离(BE-001IL-02)**:
 `backend.strategy_config.diff.evidence_diff.machine_trajectory` 已实际抽离到 `src/backend/strategy_config/diff/evidence_diff/machine_trajectory.rs`；shared helper 仍由 evidence_diff 父叶控制，下一步进入单叶 closeout。
+**最新子叶关闭判断(BE-001IM-01)**:
+`backend.strategy_config.diff.evidence_diff.machine_trajectory stop_split: true`；私有 projection helpers 不再继续拆，下一步回到 evidence_diff 父叶残余判断。
 
 **回归保护**:
 `cargo test -p quantpilot strategy_config`；涉及 graph version compare 时运行 `cargo test -p quantpilot --test api_graph_versions`。
@@ -7278,3 +7280,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001IK-01)**: `backend.strategy_config.diff.evidence_diff` backend.strategy_config.diff.evidence_diff parent residual judgment selects machine_trajectory；下一步: BE-001IL-01 backend.strategy_config.diff.evidence_diff.machine_trajectory baseline_plan。
 **最新状态补充(BE-001IL-01)**: `backend.strategy_config.diff.evidence_diff.machine_trajectory` backend.strategy_config.diff.evidence_diff.machine_trajectory equivalence baseline and extraction plan；下一步: BE-001IL-02 backend.strategy_config.diff.evidence_diff.machine_trajectory extract_closeout。
 **最新状态补充(BE-001IL-02)**: `backend.strategy_config.diff.evidence_diff.machine_trajectory` backend.strategy_config.diff.evidence_diff.machine_trajectory actual extraction complete；下一步: BE-001IM-01 backend.strategy_config.diff.evidence_diff.machine_trajectory single_leaf_closeout。
+**最新状态补充(BE-001IM-01)**: `backend.strategy_config.diff.evidence_diff.machine_trajectory` backend.strategy_config.diff.evidence_diff.machine_trajectory single leaf closeout stops further split；下一步: BE-001IN-01 backend.strategy_config.diff.evidence_diff parent_residual_judgment。
