@@ -33,6 +33,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/components/propertyPanelAuthoringCards.test.jsx`
     - `frontend/src/components/propertyPanelCompileSourceCards.jsx`
     - `frontend/src/components/propertyPanelCompileSourceCards.test.jsx`
+    - `frontend/src/components/propertyPanelEntityCards.jsx`
+    - `frontend/src/components/propertyPanelEntityCards.test.jsx`
     - `frontend/src/components/propertyPanelLayoutPrimitives.jsx`
     - `frontend/src/components/propertyPanelLayoutPrimitives.test.jsx`
     - `frontend/src/components/propertyPanelViews.jsx`
@@ -77,7 +79,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js`
     - `frontend/src/capabilities/capabilityGovernanceCore.js`
   - Child queue:
-    - `frontend.graph_editor.property_panel_views.entity_cards`
     - `frontend.graph_editor.property_panel_views.section_composers`
     - `frontend.graph_editor.module_palette`
     - `frontend.graph_editor.graph_factory_validation`
@@ -93,6 +94,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.graph_editor.property_panel_views.layout_primitives`
     - `frontend.graph_editor.property_panel_views.authoring_cards`
     - `frontend.graph_editor.property_panel_views.compile_source_cards`
+    - `frontend.graph_editor.property_panel_views.entity_cards`
 
 ## Last Closed Parent
 
