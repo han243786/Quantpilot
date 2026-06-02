@@ -289,6 +289,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/strategy_config/diff/artifact_diff.rs`
 - `src/backend/strategy_config/diff/evidence_diff.rs`
 - `src/backend/strategy_config/diff/evidence_diff/machine_trajectory.rs`
+- `src/backend/strategy_config/diff/evidence_diff/risk_plane.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/runtime/backtest/v4_projection.rs`
 - `src/runtime/backtest/v4_request_resolution.rs`
@@ -3287,3 +3288,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/600-backend.strategy_config.diff.evidence_diff.parent_residual_judgment.risk_plane.md` - v4.16.0 BE-001IN-01 backend.strategy_config.diff.evidence_diff parent residual judgment selects risk_plane
 递归边界补充: BE-001IO-01 `backend.strategy_config.diff.evidence_diff.risk_plane` backend.strategy_config.diff.evidence_diff.risk_plane equivalence baseline and extraction plan；下一步: BE-001IO-02 backend.strategy_config.diff.evidence_diff.risk_plane extract_closeout。
 - `markdown/06-milestones/v4.16.0/601-backend.strategy_config.diff.evidence_diff.risk_plane.baseline_plan.md` - v4.16.0 BE-001IO-01 backend.strategy_config.diff.evidence_diff.risk_plane equivalence baseline and extraction plan
+递归边界补充: BE-001IO-02 `backend.strategy_config.diff.evidence_diff.risk_plane` backend.strategy_config.diff.evidence_diff.risk_plane actual extraction complete；下一步: BE-001IP-01 backend.strategy_config.diff.evidence_diff.risk_plane single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/602-backend.strategy_config.diff.evidence_diff.risk_plane.extract_closeout.md` - v4.16.0 BE-001IO-02 backend.strategy_config.diff.evidence_diff.risk_plane actual extraction complete
