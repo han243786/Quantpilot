@@ -51,9 +51,39 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/BacktestComparePage.jsx`
     - `frontend/src/components/*`
   - Child queue:
-    - `frontend.design_system_styles.page_style_contracts`
+    - None.
   - Active child parent:
-    - none.
+    - `frontend.design_system_styles.page_style_contracts`
+      - Status: child parent baseline established.
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0203-frontend-page-style-contracts-baseline.md`
+      - Current owned and split-target files:
+        - `frontend/src/pages/backtest-analysis.css`
+        - `frontend/src/pages/strategy-hub.css`
+        - `frontend/src/pages/strategy-hub-shell-hero.css`
+        - `frontend/src/pages/strategy-hub-notes-tasks-status.css`
+        - `frontend/src/pages/strategy-hub-layout-template.css`
+        - `frontend/src/pages/strategy-hub-roster.css`
+        - `frontend/src/pages/strategy-hub-inspector-activity.css`
+        - `frontend/src/pages/strategy-hub-responsive.css`
+        - `frontend/src/pages/strategy-workspace.css`
+        - `frontend/src/pages/strategy-workspace-shell.css`
+        - `frontend/src/pages/strategy-workspace-overview-diagnostics.css`
+        - `frontend/src/pages/strategy-workspace-builder-inspector.css`
+        - `frontend/src/pages/strategy-workspace-cards-runtime.css`
+        - `frontend/src/pages/strategy-workspace-responsive.css`
+      - Important consumers:
+        - `frontend/src/pages/backtestViews/shared/BacktestAnalysisLayout.jsx`
+        - `frontend/src/pages/StrategyHubPage.jsx`
+        - `frontend/src/pages/StrategyWorkspacePage.jsx`
+        - `frontend/src/pages/backtestViews/*`
+        - `frontend/src/pages/strategyHub*`
+        - `frontend/src/pages/strategyWorkspace*`
+      - Current subchild queue:
+        - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles`
+        - `frontend.design_system_styles.page_style_contracts.strategy_hub_page_style_contracts`
+        - `frontend.design_system_styles.page_style_contracts.strategy_workspace_page_style_contracts`
+      - Closed subchild leaves:
+        - none.
   - Closed child parent:
     - `frontend.design_system_styles.responsive_panel_overrides`
       - Status: closed after recursive subchild queue finished.

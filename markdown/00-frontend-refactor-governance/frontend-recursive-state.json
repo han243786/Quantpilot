@@ -2,12 +2,14 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.design_system_styles",
-  "parent_return": null,
-  "current_step": "FE-0202",
-  "current_phase": "frontend_responsive_panel_overrides_child_parent_closed",
+  "current_parent": "frontend.design_system_styles.page_style_contracts",
+  "parent_return": "frontend.design_system_styles",
+  "current_step": "FE-0203",
+  "current_phase": "frontend_page_style_contracts_child_parent_baseline",
   "current_child_queue": [
-    "frontend.design_system_styles.page_style_contracts"
+    "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles",
+    "frontend.design_system_styles.page_style_contracts.strategy_hub_page_style_contracts",
+    "frontend.design_system_styles.page_style_contracts.strategy_workspace_page_style_contracts"
   ],
   "return_child_queue_after_closeout": [],
   "next_parent": "frontend.test_support",
