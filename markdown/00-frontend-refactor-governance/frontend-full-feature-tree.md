@@ -588,3 +588,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0116-frontend-backtest-views-compare-page-model-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0117-frontend-backtest-views-compare-equity-overlay-chart-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0118-frontend-backtest-views-compare-cards-summary-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0119-frontend-backtest-views-compare-page-analysis-parent-closeout.md`
