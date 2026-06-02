@@ -64,6 +64,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/graph/validation.js`
     - `frontend/src/graph/validationSupport.js`
     - `frontend/src/graph/validationSupport.test.js`
+    - `frontend/src/graph/validationRules.js`
+    - `frontend/src/graph/validationRules.test.js`
     - `frontend/src/graph/compileGraph.js`
     - `frontend/src/graph/compileGraph.diagnostics.test.js`
     - `frontend/src/graph/compileGraph.multiSymbol.test.js`
@@ -91,7 +93,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js`
     - `frontend/src/capabilities/capabilityGovernanceCore.js`
   - Child queue:
-    - `frontend.graph_editor.graph_factory_validation.validation_rules`
     - `frontend.graph_editor.graph_compiler_core_ir`
     - `frontend.graph_editor.quantscript_bridge`
     - `frontend.graph_editor.editor_store_actions`
@@ -111,6 +112,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.graph_editor.graph_factory_validation.validation_support`
     - `frontend.graph_editor.graph_factory_validation.node_factory`
     - `frontend.graph_editor.graph_factory_validation.seed_graph_factory`
+    - `frontend.graph_editor.graph_factory_validation.validation_rules`
 
 ## Last Closed Parent
 

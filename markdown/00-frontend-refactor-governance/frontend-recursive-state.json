@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.graph_editor",
-  "current_step": "FE-0076",
-  "current_phase": "frontend_graph_editor_graph_factory_validation_seed_graph_factory_closeout",
+  "current_step": "FE-0077",
+  "current_phase": "frontend_graph_editor_graph_factory_validation_validation_rules_closeout",
   "current_child_queue": [
-    "frontend.graph_editor.graph_factory_validation.validation_rules",
     "frontend.graph_editor.graph_compiler_core_ir",
     "frontend.graph_editor.quantscript_bridge",
     "frontend.graph_editor.editor_store_actions",
@@ -54,7 +53,8 @@
     "frontend.graph_editor.module_palette",
     "frontend.graph_editor.graph_factory_validation.validation_support",
     "frontend.graph_editor.graph_factory_validation.node_factory",
-    "frontend.graph_editor.graph_factory_validation.seed_graph_factory"
+    "frontend.graph_editor.graph_factory_validation.seed_graph_factory",
+    "frontend.graph_editor.graph_factory_validation.validation_rules"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
