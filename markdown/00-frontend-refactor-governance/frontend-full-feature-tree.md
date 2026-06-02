@@ -395,6 +395,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/graph/createGraph.test.js`
   - `frontend/src/graph/graphFactoryDefaults.js`
   - `frontend/src/graph/graphFactoryDefaults.test.js`
+  - `frontend/src/graph/quantscriptArtifactTargets.js`
+  - `frontend/src/graph/quantscriptArtifactTargets.test.js`
 - Evidence:
   - `markdown/00-frontend-refactor-governance/records/FE-0062-frontend-graph-editor-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0063-frontend-graph-editor-canvas-interaction-shell-closeout.md`
@@ -420,3 +422,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0083-frontend-graph-editor-graph-compiler-core-ir-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0084-frontend-graph-editor-quantscript-formal-generation-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0085-frontend-graph-editor-quantscript-graph-source-generation-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0086-frontend-graph-editor-quantscript-artifact-targets-closeout.md`
