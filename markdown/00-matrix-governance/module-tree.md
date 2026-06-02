@@ -846,6 +846,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
+- `src/backend/storage_security/credential_vault/implementation/service_crud.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/atomic_save_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/load_restore_entry.rs`
@@ -6076,6 +6077,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
+- `src/backend/storage_security/credential_vault/implementation/service_crud.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/atomic_save_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/load_restore_entry.rs`
@@ -6181,6 +6183,8 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_vault_implementation.service_crud` 被选为下一轮内部 CRUD 子叶；该子叶只冻结 `set_service`、`get_service`、`delete_service`、`list_services`、`VaultData.entries` map mutation/lookup、empty-field validation、missing-service delete error、`Zeroizing<String>` read wrapping 与 save handoff。`SecretString`、`VaultData`/`CredentialFields`/`CredentialVault` parent-owned types、load/persistence children、secret pattern extraction、root shim、tests 与 release transition 均不得在 BE-001KA-01 迁移。
 **最新等价基线(BE-001KA-01)**:
 `backend.storage_security.credential_vault_implementation.service_crud` 冻结 `set_service` empty-field rejection、fields-to-`SecretString` conversion、insert/overwrite、save handoff，`get_service` missing/hit behavior 与 `Zeroizing<String>` wrapping，`delete_service` missing error/remove/save behavior，以及 `list_services` cloned key listing。BE-001KA-02 只能迁移 CRUD method bodies into parent-only helpers，并保留 `CredentialVault` public facade；不得移动 parent-owned types、load/persistence children、secret pattern extraction、tests、root shim 或 release transition。
+**最新抽离记录(BE-001KA-02)**:
+`backend.storage_security.credential_vault_implementation.service_crud` 已迁入 `src/backend/storage_security/credential_vault/implementation/service_crud.rs`；`src/backend/storage_security/credential_vault/implementation.rs` 保留 `CredentialVault` public CRUD facade，并通过 `service_crud` helper 执行 map mutation/lookup、validation、Zeroizing wrapping 与 save handoff。parent-owned types、load/persistence children、secret pattern extraction、tests、root shim 与 release transition 均未迁移。
 
 **回归保护**:
 `cargo test credential`；`cargo test storage_lifecycle`；涉及日志时复核 safe log 测试。
@@ -7475,3 +7479,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001JY-01)**: `backend.storage_security.credential_vault_implementation.vault_persistence_restore` backend.storage_security.credential_vault_implementation.vault_persistence_restore parent closeout stops persistence split；下一步: BE-001JZ-01 backend.storage_security.credential_vault_implementation parent_residual_judgment。
 **最新状态补充(BE-001JZ-01)**: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation parent residual judgment selects service_crud；下一步: BE-001KA-01 backend.storage_security.credential_vault_implementation.service_crud baseline_plan。
 **最新状态补充(BE-001KA-01)**: `backend.storage_security.credential_vault_implementation.service_crud` backend.storage_security.credential_vault_implementation.service_crud equivalence baseline and extraction plan；下一步: BE-001KA-02 backend.storage_security.credential_vault_implementation.service_crud extract_closeout。
+**最新状态补充(BE-001KA-02)**: `backend.storage_security.credential_vault_implementation.service_crud` backend.storage_security.credential_vault_implementation.service_crud actual extraction complete；下一步: BE-001KA-03 backend.storage_security.credential_vault_implementation.service_crud single_leaf_closeout。

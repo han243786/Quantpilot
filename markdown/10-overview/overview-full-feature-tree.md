@@ -274,6 +274,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
+- `src/backend/storage_security/credential_vault/implementation/service_crud.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/atomic_save_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/load_restore_entry.rs`
@@ -2179,9 +2180,10 @@ storage/
 - `src/compile_artifact_builders.rs` — 编译产物组装; 改策略包/迁移包结构时改这里
 - `src/compile_diagnostics.rs` — 编译诊断; 改编译错误/警告格式时改这里
 - `src/credential_api.rs` — 凭证管理 API (set/list/delete); 改凭证 CRUD 时改这里
-- `src/backend/storage_security/credential_vault/implementation.rs` — 凭证保险库实现 parent owner, 保留 public API、service CRUD、secret pattern extraction 和 type/tests; 改 CRUD 或 public surface 时改这里
+- `src/backend/storage_security/credential_vault/implementation.rs` — 凭证保险库实现 parent owner, 保留 public API facade、secret pattern extraction 和 type/tests; 改 public surface 或 parent-owned type 时改这里
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs` — credential vault AES-GCM codec child; 改 nonce/tag、version framing、AAD、encrypt/decrypt 分支时改这里
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs` — credential vault machine-key cache/init and key derivation child; 改 machine key 文件、cache、PBKDF2/SHA-256 派生时改这里
+- `src/backend/storage_security/credential_vault/implementation/service_crud.rs` — credential vault service CRUD child; 改 set/get/delete/list、empty-field validation、missing delete error、Zeroizing read wrapping 或 CRUD save handoff 时改这里
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs` — credential vault persistence/restore parent child; 改 load/save 父级委托时改这里
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/atomic_save_commit.rs` — credential vault atomic save commit child; 改 save tmp/bak rollback、fsync、backup cleanup 或 Unix/Windows permission hardening 时改这里
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/load_restore_entry.rs` — credential vault load/restore entry child; 改 storage-root load、`.bak` restore、existing encrypted read/decode、fresh vault creation 或 initial encrypted write 时改这里
@@ -3414,3 +3416,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/656-backend.storage_security.credential_vault_implementation.parent_residual_judgment.service_crud.md` - v4.16.0 BE-001JZ-01 backend.storage_security.credential_vault_implementation parent residual judgment selects service_crud
 递归边界补充: BE-001KA-01 `backend.storage_security.credential_vault_implementation.service_crud` backend.storage_security.credential_vault_implementation.service_crud equivalence baseline and extraction plan；下一步: BE-001KA-02 backend.storage_security.credential_vault_implementation.service_crud extract_closeout。
 - `markdown/06-milestones/v4.16.0/657-backend.storage_security.credential_vault_implementation.service_crud.baseline_plan.md` - v4.16.0 BE-001KA-01 backend.storage_security.credential_vault_implementation.service_crud equivalence baseline and extraction plan
+递归边界补充: BE-001KA-02 `backend.storage_security.credential_vault_implementation.service_crud` backend.storage_security.credential_vault_implementation.service_crud actual extraction complete；下一步: BE-001KA-03 backend.storage_security.credential_vault_implementation.service_crud single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/658-backend.storage_security.credential_vault_implementation.service_crud.extract_closeout.md` - v4.16.0 BE-001KA-02 backend.storage_security.credential_vault_implementation.service_crud actual extraction complete

@@ -7,6 +7,7 @@ use zeroize::{Zeroize, Zeroizing};
 
 mod crypto_codec;
 mod machine_key_management;
+mod service_crud;
 mod vault_persistence_restore;
 
 fn storage_root() -> String {
@@ -64,16 +65,7 @@ impl CredentialVault {
 
     /// 按标签整体设置凭证字段，同一标签下的所有字段原子替换
     pub fn set_service(&self, service: &str, fields: CredentialFields) -> Result<()> {
-        if fields.is_empty() {
-            anyhow::bail!("凭证字段不能为空");
-        }
-        let mut data = self.data.lock().unwrap_or_else(|e| e.into_inner());
-        let entry: BTreeMap<String, SecretString> = fields
-            .into_iter()
-            .map(|(k, v)| (k, SecretString(v)))
-            .collect();
-        data.entries.insert(service.to_string(), entry);
-        self.save_inner(&data)
+        service_crud::set_service(self, service, fields)
     }
 
     /// 获取标签下的全部凭证字段。
@@ -88,27 +80,15 @@ impl CredentialVault {
     /// - 若需长期持有，用 `Zeroizing::new(value)` 包裹
     /// - 参考 `test_runner.rs:load_exchange_credentials()` 的调用模式
     pub fn get_service(&self, service: &str) -> Option<BTreeMap<String, Zeroizing<String>>> {
-        // v1.1.11: 返回 Zeroizing 强制调用方在 Drop 时清零明文
-        let data = self.data.lock().unwrap_or_else(|e| e.into_inner());
-        data.entries.get(service).map(|entry| {
-            entry
-                .iter()
-                .map(|(k, v)| (k.clone(), Zeroizing::new(v.0.clone())))
-                .collect()
-        })
+        service_crud::get_service(self, service)
     }
 
     pub fn delete_service(&self, service: &str) -> Result<()> {
-        let mut data = self.data.lock().unwrap_or_else(|e| e.into_inner());
-        if data.entries.remove(service).is_none() {
-            anyhow::bail!("标签 '{}' 不存在", service);
-        }
-        self.save_inner(&data)
+        service_crud::delete_service(self, service)
     }
 
     pub fn list_services(&self) -> Vec<String> {
-        let data = self.data.lock().unwrap_or_else(|e| e.into_inner());
-        data.entries.keys().cloned().collect()
+        service_crud::list_services(self)
     }
 
     // ── 内部持久化: 原子写入 (tmp + rename + bak 回滚) ──────
