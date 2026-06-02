@@ -268,6 +268,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/StrategyHubCompareQueueSection.jsx`
   - `frontend/src/pages/strategy-hub.css`
   - `frontend/src/hooks/useStrategyDirectoryModel.js`
+  - `frontend/src/hooks/strategyDirectoryModelProjection.js`
+  - `frontend/src/hooks/strategyDirectoryModelProjection.test.js`
   - `frontend/src/hooks/useStrategyHubBodyData.js`
   - `frontend/src/hooks/useStrategyHubRosterData.js`
   - `frontend/src/hooks/useStrategyHubInspectorData.js`
@@ -290,3 +292,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
 - Evidence:
   - `markdown/00-frontend-refactor-governance/records/FE-0050-frontend-strategy-hub-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0051-frontend-strategy-hub-route-shell-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0052-frontend-strategy-hub-directory-model-closeout.md`
