@@ -763,6 +763,8 @@ diff 子叶只比较 strategy config artifact 和 evidence，不拥有 graph ver
 
 **父级通信规则**:
 AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的契约关系；不得绕过 approval、sandbox 或 mutation ledger。
+**最新等价基线(BE-001IZ-01)**:
+`backend.strategy_config.ai_proposal_binding` 冻结为 no-op route pocket；`register_routes(router)` 必须原样返回 `Router<AppState>`，不得新增 route、迁移 runtime AI proposal handler 或改写 artifact/preflight/diff 行为。
 
 **回归保护**:
 `cargo test -p quantpilot --test api_ai_proposal`；涉及 approval/sandbox 时运行对应 mutation 和 sandbox 测试。
@@ -7332,3 +7334,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001IW-01)**: `backend.strategy_config.diff.evidence_diff` backend.strategy_config.diff.evidence_diff parent closeout retains report assembly and shared helpers；下一步: BE-001IX-01 backend.strategy_config.diff parent_residual_judgment。
 **最新状态补充(BE-001IX-01)**: `backend.strategy_config.diff` backend.strategy_config.diff parent closeout keeps facade and child mediation；下一步: BE-001IY-01 backend.strategy_config parent_residual_judgment。
 **最新状态补充(BE-001IY-01)**: `backend.strategy_config` backend.strategy_config parent residual judgment selects ai_proposal_binding；下一步: BE-001IZ-01 backend.strategy_config.ai_proposal_binding baseline_plan。
+**最新状态补充(BE-001IZ-01)**: `backend.strategy_config.ai_proposal_binding` backend.strategy_config.ai_proposal_binding no-op route pocket baseline and plan；下一步: BE-001IZ-02 backend.strategy_config.ai_proposal_binding extract_closeout。

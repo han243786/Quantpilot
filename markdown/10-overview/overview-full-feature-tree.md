@@ -3316,3 +3316,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/613-backend.strategy_config.diff.parent_closeout.md` - v4.16.0 BE-001IX-01 backend.strategy_config.diff parent closeout keeps facade and child mediation
 递归边界补充: BE-001IY-01 `backend.strategy_config` backend.strategy_config parent residual judgment selects ai_proposal_binding；下一步: BE-001IZ-01 backend.strategy_config.ai_proposal_binding baseline_plan。
 - `markdown/06-milestones/v4.16.0/614-backend.strategy_config.parent_residual_judgment.ai_proposal_binding.md` - v4.16.0 BE-001IY-01 backend.strategy_config parent residual judgment selects ai_proposal_binding
+递归边界补充: BE-001IZ-01 `backend.strategy_config.ai_proposal_binding` backend.strategy_config.ai_proposal_binding no-op route pocket baseline and plan；下一步: BE-001IZ-02 backend.strategy_config.ai_proposal_binding extract_closeout。
+- `markdown/06-milestones/v4.16.0/615-backend.strategy_config.ai_proposal_binding.baseline_plan.md` - v4.16.0 BE-001IZ-01 backend.strategy_config.ai_proposal_binding no-op route pocket baseline and plan
