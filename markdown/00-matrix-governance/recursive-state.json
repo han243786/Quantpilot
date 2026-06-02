@@ -1,10 +1,10 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001KY-02",
-  "last_committed_sha": "ae0a67dc",
-  "current_parent": "backend.storage_security.credential_api_handler_implementation.set_mutation",
-  "current_step": "BE-001KZ-01",
+  "last_committed_batch": "BE-001KY-03",
+  "last_committed_sha": "c533dcaf",
+  "current_parent": "backend.storage_security.credential_api_handler_implementation",
+  "current_step": "BE-001LA-01",
   "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
@@ -34,7 +34,8 @@
     "storage_security.credential_api_handler_implementation.list_projection",
     "storage_security.credential_api_handler_implementation.key_scope",
     "storage_security.credential_api_handler_implementation.set_mutation.service_and_fields_validation",
-    "storage_security.credential_api_handler_implementation.set_mutation.storage_commit"
+    "storage_security.credential_api_handler_implementation.set_mutation.storage_commit",
+    "storage_security.credential_api_handler_implementation.set_mutation"
   ],
   "open_residuals": [
     "storage_security",
@@ -42,7 +43,7 @@
     "app_state_wiring",
     "test_support"
   ],
-  "next_recommended_child": "backend.storage_security.credential_api_handler_implementation.set_mutation",
+  "next_recommended_child": "backend.storage_security.credential_api_handler_implementation",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
