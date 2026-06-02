@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { StrategyCardNote } from "./StrategyHubSharedComponents";
+import {
+  getInitialStrategyTemplateLibraryExpanded,
+  projectStrategyHubTemplateLibraryView
+} from "../utils/strategyHubTemplateLibraryView";
 
 const TEMPLATE_LIBRARY_NOTE =
   "将起始策略图加载到当前草稿，不创建第二套模板传输流程。";
@@ -7,13 +11,14 @@ const TEMPLATE_LIBRARY_NOTE =
 export default function StrategyHubTemplateLibrarySection({ model }) {
   const [activeTemplateId, setActiveTemplateId] = useState("");
   const [error, setError] = useState("");
-  // v3.6.0 U5: 首次访问默认展开模板库
-  const [isExpanded, setIsExpanded] = useState(() => {
-    if (localStorage.getItem("quantpilot_template_visited")) return false;
-    localStorage.setItem("quantpilot_template_visited", "1");
-    return true;
-  });
-  const templates = Array.isArray(model.templateLibrary) ? model.templateLibrary : [];
+  const [isExpanded, setIsExpanded] = useState(() =>
+    getInitialStrategyTemplateLibraryExpanded()
+  );
+  const view = projectStrategyHubTemplateLibraryView(
+    model.templateLibrary,
+    activeTemplateId,
+    isExpanded
+  );
 
   async function handleApplyTemplate(templateId) {
     setActiveTemplateId(templateId);
@@ -28,9 +33,7 @@ export default function StrategyHubTemplateLibrarySection({ model }) {
 
   return (
     <section
-      className={`strategy-template-library strategy-activity-card${
-        isExpanded ? " strategy-template-library--expanded" : " strategy-template-library--collapsed"
-      }`}
+      className={view.className}
       data-testid="strategy-template-library"
     >
       <div className="strategy-card-header">
@@ -56,8 +59,7 @@ export default function StrategyHubTemplateLibrarySection({ model }) {
 
       {isExpanded ? (
         <div className="strategy-template-grid" id="strategy-template-library-grid">
-          {templates.map((template) => {
-            const isLoading = activeTemplateId === template.id;
+          {view.templates.map((template) => {
             return (
               <article
                 key={template.id}
@@ -73,13 +75,13 @@ export default function StrategyHubTemplateLibrarySection({ model }) {
                     {template.runtimeVersion ? (
                       <span className="status-pill warning">{template.runtimeVersion}</span>
                     ) : null}
-                    <span className="status-pill info">{template.symbols.join(", ")}</span>
+                    <span className="status-pill info">{template.symbolsLabel}</span>
                   </div>
                 </div>
                 <p>{template.description}</p>
                 <div className="strategy-template-meta">
-                  <span>{template.supportedModules.length} 个模块</span>
-                  <span>{template.symbols.length} 个标的</span>
+                  <span>{template.supportedModuleCount} 个模块</span>
+                  <span>{template.symbolCount} 个标的</span>
                 </div>
                 <button
                   type="button"
@@ -88,7 +90,7 @@ export default function StrategyHubTemplateLibrarySection({ model }) {
                   disabled={Boolean(activeTemplateId)}
                   onClick={() => void handleApplyTemplate(template.id)}
                 >
-                  {isLoading ? "正在加载模板..." : "加载到草稿"}
+                  {template.isLoading ? "正在加载模板..." : "加载到草稿"}
                 </button>
               </article>
             );

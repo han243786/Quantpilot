@@ -277,6 +277,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/utils/strategyHubFormatters.js`
   - `frontend/src/utils/strategyHubHeroSummary.js`
   - `frontend/src/utils/strategyHubHeroSummary.test.js`
+  - `frontend/src/utils/strategyHubTemplateLibraryView.js`
+  - `frontend/src/utils/strategyHubTemplateLibraryView.test.js`
   - `frontend/src/utils/strategyHubRosterProjection.js`
   - `frontend/src/utils/strategyHubRosterProjection.test.js`
   - `frontend/src/utils/strategyHubRosterRowActions.js`
@@ -300,3 +302,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0055-frontend-strategy-hub-roster-row-actions-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0056-frontend-strategy-hub-inspector-projection-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0057-frontend-strategy-hub-recent-activity-compare-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0058-frontend-strategy-hub-template-library-closeout.md`
