@@ -3,11 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.backtest_views.detail_page_analysis",
-  "current_step": "FE-0113",
-  "current_phase": "frontend_backtest_views_detail_evidence_report_sections_closed",
-  "current_child_queue": [
-    "frontend.backtest_views.detail_page_analysis.replay_output_explanation_sections"
-  ],
+  "current_step": "FE-0114",
+  "current_phase": "frontend_backtest_views_detail_replay_output_explanation_sections_closed",
+  "current_child_queue": [],
   "next_parent": "frontend.store",
   "closed_parents": [
     "frontend.app_shell",
@@ -85,7 +83,8 @@
     "frontend.backtest_views.detail_page_analysis.artifact_model",
     "frontend.backtest_views.detail_page_analysis.summary_and_context",
     "frontend.backtest_views.detail_page_analysis.core_artifact_sections",
-    "frontend.backtest_views.detail_page_analysis.evidence_report_sections"
+    "frontend.backtest_views.detail_page_analysis.evidence_report_sections",
+    "frontend.backtest_views.detail_page_analysis.replay_output_explanation_sections"
   ],
   "open_residuals": [
     "frontend.backtest_views.compare_page_analysis"

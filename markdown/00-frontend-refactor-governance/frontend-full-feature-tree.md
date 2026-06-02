@@ -559,6 +559,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailCoreArtifactSections.test.jsx`
   - `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailEvidenceReportSections.jsx`
   - `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailEvidenceReportSections.test.jsx`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailReplayOutputExplanationSections.jsx`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailReplayOutputExplanationSections.test.jsx`
   - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailPageModel.js`
   - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailPageModel.test.js`
   - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailSummaryModel.js`
@@ -574,3 +576,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0111-frontend-backtest-views-detail-summary-context-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0112-frontend-backtest-views-detail-core-artifact-sections-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0113-frontend-backtest-views-detail-evidence-report-sections-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0114-frontend-backtest-views-detail-replay-output-explanation-sections-closeout.md`
