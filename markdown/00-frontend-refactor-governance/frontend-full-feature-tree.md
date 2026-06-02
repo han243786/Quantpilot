@@ -671,6 +671,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/store/graphStoreRuntimeSelectionState.js`
   - `frontend/src/store/graphStoreRuntimeSelectionState.test.js`
   - `frontend/src/store/graphStoreRuntimeBacktestActions.js`
+  - `frontend/src/store/graphStoreRuntimeBacktestExperimentActions.js`
   - `frontend/src/store/graphStoreRuntimeSessionActions.js`
   - `frontend/src/store/graphStoreRuntimeSessionShared.js`
   - `frontend/src/store/graphStoreRuntimeSessionState.js`
