@@ -45,6 +45,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailSummaryModel.js`
     - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailSummaryModel.test.js`
     - `frontend/src/pages/backtestViews/comparePageAnalysis/index.js`
+    - `frontend/src/pages/backtestViews/comparePageAnalysis/BacktestCompareEquityOverlayChart.jsx`
+    - `frontend/src/pages/backtestViews/comparePageAnalysis/BacktestCompareEquityOverlayChart.test.jsx`
     - `frontend/src/pages/backtestViews/comparePageAnalysis/backtestComparePageModel.js`
     - `frontend/src/pages/backtestViews/comparePageAnalysis/backtestComparePageModel.test.js`
     - `frontend/src/pages/backtest-analysis.css`
@@ -70,10 +72,12 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Status: promoted to active child parent after first compare model extraction.
       - Record: `markdown/00-frontend-refactor-governance/records/FE-0116-frontend-backtest-views-compare-page-model-closeout.md`
       - Current subchild queue:
-        - `frontend.backtest_views.compare_page_analysis.equity_overlay_chart`
         - `frontend.backtest_views.compare_page_analysis.compare_cards_and_summary`
       - Closed subchild leaves:
         - `frontend.backtest_views.compare_page_analysis.artifact_model`
+          - Public surface: `frontend/src/pages/backtestViews/comparePageAnalysis/index.js`
+        - `frontend.backtest_views.compare_page_analysis.equity_overlay_chart`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0117-frontend-backtest-views-compare-equity-overlay-chart-closeout.md`
           - Public surface: `frontend/src/pages/backtestViews/comparePageAnalysis/index.js`
   - Closed child parent:
     - `frontend.backtest_views.detail_page_analysis`

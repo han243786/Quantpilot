@@ -8,7 +8,6 @@ import {
   strategyWorkspacePath
 } from "../router";
 import { useI18n } from "../i18n";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import {
   AnalysisHero,
   AnalysisSection,
@@ -26,54 +25,13 @@ import {
   MetricPair
 } from "./backtestViews/shared";
 import {
+  BacktestCompareEquityOverlayChart,
   buildBacktestCompareMeta,
   buildBacktestCompareSummary,
   buildBacktestCompareSummaryItems,
   normalizeCompareBacktestIds,
   resolveBacktestCompareStrategyId
 } from "./backtestViews/comparePageAnalysis";
-
-function EquityOverlayChart({ details }) {
-  const { t } = useI18n();
-  const [a, b] = details;
-  const curveA = a?.backtest_artifacts?.equity_curve || [];
-  const curveB = b?.backtest_artifacts?.equity_curve || [];
-  const benchA = a?.backtest_artifacts?.benchmark_equity_curve || a?.backtest_artifacts?.equity_curve || [];
-  const maxLen = Math.max(curveA.length, curveB.length);
-
-  const merged = Array.from({ length: maxLen }, (_, i) => ({
-    cycle: i,
-    a: curveA[i]?.equity ?? null,
-    b: curveB[i]?.equity ?? null,
-    benchmark: benchA[i]?.equity ?? null,
-  })).filter((p) => p.a != null || p.b != null);
-
-  if (merged.length === 0) {
-    return <div className="muted-line" style={{ padding: 20, textAlign: "center" }}>{t("无权益曲线数据")}</div>;
-  }
-
-  return (
-    <div style={{ width: "100%", height: 280, background: "var(--ad-panel)", borderRadius: "var(--ad-radius-md)", padding: "12px 8px 4px 0" }}>
-      <ResponsiveContainer>
-        <LineChart data={merged} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--ad-border)" />
-          <XAxis dataKey="cycle" stroke="var(--ad-text-muted)" fontSize={11} tickLine={false} />
-          <YAxis stroke="var(--ad-text-muted)" fontSize={11} tickLine={false} width={60} />
-          <Tooltip
-            contentStyle={{ background: "var(--ad-card)", border: "1px solid var(--ad-border)", borderRadius: 4, fontSize: 12 }}
-            formatter={(value) => [value?.toFixed(2), ""]}
-          />
-          <Legend />
-          <Line name={a?.backtest_id?.slice(0, 8) || "A"} type="monotone" dataKey="a" stroke="var(--ad-chart-line-a)" strokeWidth={1.5} dot={false} connectNulls />
-          <Line name={b?.backtest_id?.slice(0, 8) || "B"} type="monotone" dataKey="b" stroke="var(--ad-chart-line-b)" strokeWidth={1.5} dot={false} connectNulls />
-          {benchA.some(p => p.equity != null) && (
-            <Line name={t("买入持有基准")} type="monotone" dataKey="benchmark" stroke="var(--ad-text-muted)" strokeWidth={1} strokeDasharray="4 4" dot={false} connectNulls />
-          )}
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
 
 export default function BacktestComparePage({ backtestIds = [], strategyId = "" }) {
   const { t } = useI18n();
@@ -303,7 +261,7 @@ export default function BacktestComparePage({ backtestIds = [], strategyId = "" 
               title={t("叠加权益曲线")}
               summary={t("两条曲线叠加在同一时间轴，A线为鼠尾草绿，B线为Adobe蓝。")}
             >
-              <EquityOverlayChart details={state.details} />
+              <BacktestCompareEquityOverlayChart details={state.details} />
             </AnalysisSection>
           ) : null}
 
