@@ -2,11 +2,12 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.store.editor_actions",
-  "current_step": "FE-0143",
-  "current_phase": "frontend_store_editor_node_mutation_actions_parent_closed",
+  "current_parent": "frontend.store.editor_actions.edge_mutation_actions",
+  "current_step": "FE-0144",
+  "current_phase": "frontend_store_editor_edge_mutation_actions_baselined",
   "current_child_queue": [
-    "frontend.store.editor_actions.edge_mutation_actions"
+    "frontend.store.editor_actions.edge_mutation_actions.add_edge_action",
+    "frontend.store.editor_actions.edge_mutation_actions.remove_selected_action"
   ],
   "next_parent": "frontend.design_system_styles",
   "closed_parents": [
