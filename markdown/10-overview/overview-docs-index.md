@@ -588,3 +588,4 @@
 | v4.16.0 / BE-001IC-02 | 新增: `backend.strategy_config.diff` backend.strategy_config.diff actual extraction complete |
 | v4.16.0 / BE-001ID-01 | 新增: `backend.strategy_config.diff` backend.strategy_config.diff single leaf closeout keeps stop_split false |
 | v4.16.0 / BE-001IE-01 | 新增: `backend.strategy_config.diff` backend.strategy_config.diff parent residual judgment selects artifact_diff |
+| v4.16.0 / BE-001IF-01 | 新增: `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff equivalence baseline and extraction plan |

@@ -680,6 +680,8 @@ preflight 子叶只能通过 `backend.strategy_config` 暴露 API；不得直接
 
 **父级通信规则**:
 diff 子叶只比较 strategy config artifact 和 evidence，不拥有 graph version 或 backtest record 的状态所有权。
+**最新子叶计划(BE-001IF-01)**:
+`backend.strategy_config.diff.artifact_diff` 冻结为下一步抽离目标；只允许迁移 route-level artifact diff request/report 与 graph-version artifact bridge，evidence diff 保持父叶开放残余。
 
 **回归保护**:
 `cargo test -p quantpilot strategy_config`；涉及 graph version compare 时运行 `cargo test -p quantpilot --test api_graph_versions`。
@@ -7242,3 +7244,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001IC-02)**: `backend.strategy_config.diff` backend.strategy_config.diff actual extraction complete；下一步: BE-001ID-01 backend.strategy_config.diff single_leaf_closeout。
 **最新状态补充(BE-001ID-01)**: `backend.strategy_config.diff` backend.strategy_config.diff single leaf closeout keeps stop_split false；下一步: BE-001IE-01 backend.strategy_config.diff parent residual judgment。
 **最新状态补充(BE-001IE-01)**: `backend.strategy_config.diff` backend.strategy_config.diff parent residual judgment selects artifact_diff；下一步: BE-001IF-01 backend.strategy_config.diff.artifact_diff baseline_plan。
+**最新状态补充(BE-001IF-01)**: `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff equivalence baseline and extraction plan；下一步: BE-001IF-02 backend.strategy_config.diff.artifact_diff extract_closeout。
