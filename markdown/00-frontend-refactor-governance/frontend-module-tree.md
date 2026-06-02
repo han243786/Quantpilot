@@ -11,11 +11,67 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 ## Active Parent
 
 - `frontend.strategy_workspace`
-  - Status: pending baseline.
-  - Record: to be established by the next recursive step.
-  - Current owned and split-target files: pending baseline.
-  - Important consumers: pending baseline.
-  - Child queue: pending baseline.
+  - Status: parent baseline established.
+  - Record: `markdown/00-frontend-refactor-governance/records/FE-0039-frontend-strategy-workspace-baseline.md`
+  - Current owned and split-target files:
+    - `frontend/src/pages/StrategyWorkspacePage.jsx`
+    - `frontend/src/pages/StrategyWorkspacePage.codeMode.test.jsx`
+    - `frontend/src/pages/StrategyWorkspacePageSections.jsx`
+    - `frontend/src/pages/StrategyWorkspacePanelFallbacks.jsx`
+    - `frontend/src/pages/StrategyWorkspaceDashboard.jsx`
+    - `frontend/src/pages/StrategyWorkspaceOverviewTab.jsx`
+    - `frontend/src/pages/StrategyWorkspaceCodeTab.jsx`
+    - `frontend/src/pages/StrategyWorkspaceDiagnosticsTab.jsx`
+    - `frontend/src/pages/StrategyWorkspaceResearchTab.jsx`
+    - `frontend/src/pages/StrategyWorkspaceMonitorTab.jsx`
+    - `frontend/src/pages/StrategyWorkspaceDebugTab.jsx`
+    - `frontend/src/pages/StrategyWorkspaceSourceTab.jsx`
+    - `frontend/src/pages/StrategyWorkspaceIssueQueueCard.jsx`
+    - `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.jsx`
+    - `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.test.jsx`
+    - `frontend/src/pages/StrategyWorkspaceExperimentCard.jsx`
+    - `frontend/src/pages/StrategyWorkspaceExperimentCard.test.jsx`
+    - `frontend/src/pages/StrategyWorkspaceCollaborationCard.jsx`
+    - `frontend/src/pages/StrategyWorkspaceCollaborationCard.test.jsx`
+    - `frontend/src/pages/strategy-workspace.css`
+    - `frontend/src/hooks/useStrategyWorkspaceSharedModel.js`
+    - `frontend/src/hooks/useStrategyWorkspacePageData.js`
+    - `frontend/src/hooks/useStrategyWorkspaceUiState.js`
+    - `frontend/src/hooks/useWorkspaceActionBarActions.js`
+    - `frontend/src/hooks/useWorkspaceActionBarModel.js`
+    - `frontend/src/hooks/workspaceActionBarShared.js`
+    - `frontend/src/hooks/workspaceActionSelectors.js`
+    - `frontend/src/utils/strategyWorkspaceIssueQueue.js`
+    - `frontend/src/utils/strategyWorkspaceIssueQueue.test.js`
+    - `frontend/src/utils/workspaceContextLabels.js`
+    - `frontend/src/components/TopToolbar.jsx`
+    - `frontend/src/components/TopToolbar.capabilities.test.jsx`
+    - `frontend/src/components/TopToolbar.exportFailure.test.jsx`
+    - `frontend/src/components/TopToolbar.failureNotices.test.jsx`
+    - `frontend/src/components/TopToolbar.formalSourceMode.test.jsx`
+    - `frontend/src/components/TopToolbar.persistenceFailure.test.jsx`
+  - Important consumers:
+    - `frontend/src/components/ModuleSidebar.jsx`
+    - `frontend/src/components/StrategyCanvas.jsx`
+    - `frontend/src/components/StrategyCanvasMiniMap.jsx`
+    - `frontend/src/components/PropertyPanel.jsx`
+    - `frontend/src/components/StrategyCodePanel.jsx`
+    - `frontend/src/components/StrategyParamsPanel.jsx`
+    - `frontend/src/components/DiagnosticsPanel.jsx`
+    - `frontend/src/components/EventStreamPanel.jsx`
+    - `frontend/src/components/StrategyResearchConsole.jsx`
+    - `frontend/src/store/graphStore.js`
+    - `frontend/src/router.js`
+  - Child queue:
+    - `frontend.strategy_workspace.route_shell`
+    - `frontend.strategy_workspace.shared_model_and_page_data`
+    - `frontend.strategy_workspace.issue_queue_state`
+    - `frontend.strategy_workspace.workspace_toolbar_bridge`
+    - `frontend.strategy_workspace.code_mode_shell`
+    - `frontend.strategy_workspace.dashboard_overview`
+    - `frontend.strategy_workspace.monitor_research_source_tabs`
+    - `frontend.strategy_workspace.version_experiment_collaboration_cards`
+    - `frontend.strategy_workspace.layout_styles`
   - Closed child leaves: none yet.
 
 ## Last Closed Parent

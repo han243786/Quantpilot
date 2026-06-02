@@ -153,3 +153,46 @@ Each landed feature area should link to:
 ## Deferred Merge Notes
 
 Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md` until frontend refactor is fully closed and merge-back is explicitly started.
+
+## Active Frontend Parent: `frontend.strategy_workspace`
+
+- Status: parent baseline established.
+- Record:
+  - `markdown/00-frontend-refactor-governance/records/FE-0039-frontend-strategy-workspace-baseline.md`
+- Owned and split-target files:
+  - `frontend/src/pages/StrategyWorkspacePage.jsx`
+  - `frontend/src/pages/StrategyWorkspacePage.codeMode.test.jsx`
+  - `frontend/src/pages/StrategyWorkspacePageSections.jsx`
+  - `frontend/src/pages/StrategyWorkspacePanelFallbacks.jsx`
+  - `frontend/src/pages/StrategyWorkspaceDashboard.jsx`
+  - `frontend/src/pages/StrategyWorkspaceOverviewTab.jsx`
+  - `frontend/src/pages/StrategyWorkspaceCodeTab.jsx`
+  - `frontend/src/pages/StrategyWorkspaceDiagnosticsTab.jsx`
+  - `frontend/src/pages/StrategyWorkspaceResearchTab.jsx`
+  - `frontend/src/pages/StrategyWorkspaceMonitorTab.jsx`
+  - `frontend/src/pages/StrategyWorkspaceDebugTab.jsx`
+  - `frontend/src/pages/StrategyWorkspaceSourceTab.jsx`
+  - `frontend/src/pages/StrategyWorkspaceIssueQueueCard.jsx`
+  - `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.jsx`
+  - `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.test.jsx`
+  - `frontend/src/pages/StrategyWorkspaceExperimentCard.jsx`
+  - `frontend/src/pages/StrategyWorkspaceExperimentCard.test.jsx`
+  - `frontend/src/pages/StrategyWorkspaceCollaborationCard.jsx`
+  - `frontend/src/pages/StrategyWorkspaceCollaborationCard.test.jsx`
+  - `frontend/src/pages/strategy-workspace.css`
+  - `frontend/src/hooks/useStrategyWorkspaceSharedModel.js`
+  - `frontend/src/hooks/useStrategyWorkspacePageData.js`
+  - `frontend/src/hooks/useStrategyWorkspaceUiState.js`
+  - `frontend/src/hooks/useWorkspaceActionBarActions.js`
+  - `frontend/src/hooks/useWorkspaceActionBarModel.js`
+  - `frontend/src/hooks/workspaceActionBarShared.js`
+  - `frontend/src/hooks/workspaceActionSelectors.js`
+  - `frontend/src/utils/strategyWorkspaceIssueQueue.js`
+  - `frontend/src/utils/strategyWorkspaceIssueQueue.test.js`
+  - `frontend/src/utils/workspaceContextLabels.js`
+  - `frontend/src/components/TopToolbar.jsx`
+  - `frontend/src/components/TopToolbar.capabilities.test.jsx`
+  - `frontend/src/components/TopToolbar.exportFailure.test.jsx`
+  - `frontend/src/components/TopToolbar.failureNotices.test.jsx`
+  - `frontend/src/components/TopToolbar.formalSourceMode.test.jsx`
+  - `frontend/src/components/TopToolbar.persistenceFailure.test.jsx`
