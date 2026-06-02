@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { attachQuantScriptArtifacts } from "./quantscript";
+import {
+  attachQuantScriptArtifacts,
+  generateFormalQuantScript,
+  generateGraphQuantScript
+} from "./quantscript";
 
 describe("generateFormalQuantScript", () => {
   it("preserves exchange and runtime targets on formal artifacts", () => {
@@ -82,5 +86,7 @@ describe("generateFormalQuantScript", () => {
       runtime_node_id: null,
       execution_node_id: null
     });
+    expect(generateFormalQuantScript(graph)).toBe(graph.metadata.artifacts.quantscript.formal_source);
+    expect(generateGraphQuantScript(graph)).toBe(graph.metadata.artifacts.quantscript.graph_source);
   });
 });

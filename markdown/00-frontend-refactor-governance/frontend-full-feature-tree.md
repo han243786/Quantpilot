@@ -387,6 +387,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/graph/quantscript.test.js`
   - `frontend/src/graph/quantscriptFormal.js`
   - `frontend/src/graph/quantscriptFormal.test.js`
+  - `frontend/src/graph/quantscriptGraphSource.js`
+  - `frontend/src/graph/quantscriptGraphSource.test.js`
   - `frontend/src/graph/spread.test.js`
   - `frontend/src/store/graphStoreEditorActions.js`
   - `frontend/src/store/graphStore.editorActions.test.js`
@@ -417,3 +419,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0082-frontend-graph-editor-topology-diagnostics-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0083-frontend-graph-editor-graph-compiler-core-ir-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0084-frontend-graph-editor-quantscript-formal-generation-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0085-frontend-graph-editor-quantscript-graph-source-generation-closeout.md`

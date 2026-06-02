@@ -81,6 +81,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/graph/quantscript.test.js`
     - `frontend/src/graph/quantscriptFormal.js`
     - `frontend/src/graph/quantscriptFormal.test.js`
+    - `frontend/src/graph/quantscriptGraphSource.js`
+    - `frontend/src/graph/quantscriptGraphSource.test.js`
     - `frontend/src/graph/spread.test.js`
     - `frontend/src/store/graphStoreEditorActions.js`
     - `frontend/src/store/graphStore.editorActions.test.js`
@@ -103,7 +105,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js`
     - `frontend/src/capabilities/capabilityGovernanceCore.js`
   - Child queue:
-    - `frontend.graph_editor.quantscript_bridge.graph_source_generation`
     - `frontend.graph_editor.quantscript_bridge.artifact_targets`
     - `frontend.graph_editor.quantscript_bridge.graph_source_parser`
     - `frontend.graph_editor.editor_store_actions`
@@ -131,6 +132,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.graph_editor.graph_compiler_core_ir.topology_diagnostics`
     - `frontend.graph_editor.graph_compiler_core_ir`
     - `frontend.graph_editor.quantscript_bridge.formal_generation`
+    - `frontend.graph_editor.quantscript_bridge.graph_source_generation`
 
 ## Last Closed Parent
 
