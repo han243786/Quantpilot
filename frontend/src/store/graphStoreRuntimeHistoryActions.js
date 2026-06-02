@@ -2,7 +2,7 @@ import {
   clearBacktestCompareSelectionState,
   replaceBacktestCompareSelectionState,
   toggleBacktestCompareSelectionState
-} from "./graphStoreRuntimeHistoryState";
+} from "./graphStoreRuntimeHistoryCompareSelection";
 import {
   discardBacktestRecordFlow,
   discardExperimentRecordFlow,
