@@ -15,6 +15,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`
   - Current owned and split-target files:
     - `frontend/src/store/graphStore.js`
+    - `frontend/src/store/graphStoreGraphLifecycleActions.js`
     - `frontend/src/store/graphStore.backtestArtifacts.test.js`
     - `frontend/src/store/graphStore.capabilities.test.js`
     - `frontend/src/store/graphStore.detailLoadErrors.test.js`
@@ -97,13 +98,15 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.store.persistence_startup`
       - Status: active recursive split.
       - Current subchild queue:
-        - `frontend.store.persistence_startup.graph_lifecycle_actions`
         - `frontend.store.persistence_startup.version_audit_actions`
         - `frontend.store.persistence_startup.persistence_helper_contract`
       - Closed subchild leaves:
         - `frontend.store.persistence_startup.startup_actions`
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0123-frontend-store-startup-actions-closeout.md`
           - Public surface: `frontend/src/store/graphStoreStartupActions.js`
+        - `frontend.store.persistence_startup.graph_lifecycle_actions`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0124-frontend-store-graph-lifecycle-actions-closeout.md`
+          - Public surface: `frontend/src/store/graphStoreGraphLifecycleActions.js`
   - Closed child leaves:
     - `frontend.store.root_shell`
       - Record: `markdown/00-frontend-refactor-governance/records/FE-0122-frontend-store-root-shell-closeout.md`

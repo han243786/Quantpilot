@@ -601,6 +601,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
 - User-visible behavior: frontend store state drives graph editing, compile flows, runtime sessions, persisted runtime/backtest history, startup recovery, capability refresh, graph persistence, and route/page state consumed across the application.
 - Owned and split-target files:
   - `frontend/src/store/graphStore.js`
+  - `frontend/src/store/graphStoreGraphLifecycleActions.js`
   - `frontend/src/store/graphStore.backtestArtifacts.test.js`
   - `frontend/src/store/graphStore.capabilities.test.js`
   - `frontend/src/store/graphStore.detailLoadErrors.test.js`
@@ -664,3 +665,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0122-frontend-store-root-shell-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0123-frontend-store-startup-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0124-frontend-store-graph-lifecycle-actions-closeout.md`

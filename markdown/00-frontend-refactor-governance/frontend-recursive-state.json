@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.store.persistence_startup",
-  "current_step": "FE-0123",
-  "current_phase": "frontend_store_persistence_startup_actions_closed",
+  "current_step": "FE-0124",
+  "current_phase": "frontend_store_graph_lifecycle_actions_closed",
   "current_child_queue": [
-    "frontend.store.persistence_startup.graph_lifecycle_actions",
     "frontend.store.persistence_startup.version_audit_actions",
     "frontend.store.persistence_startup.persistence_helper_contract"
   ],
@@ -96,7 +95,8 @@
     "frontend.backtest_views.compare_page_analysis.compare_cards_and_summary",
     "frontend.backtest_views.compare_page_analysis",
     "frontend.store.root_shell",
-    "frontend.store.persistence_startup.startup_actions"
+    "frontend.store.persistence_startup.startup_actions",
+    "frontend.store.persistence_startup.graph_lifecycle_actions"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
