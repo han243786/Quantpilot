@@ -829,3 +829,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001LR-01 `backend.ops_governance.sandbox` backend.ops_governance.sandbox parent residual judgment selects verification_run；下一步: BE-001LS-01 backend.ops_governance.sandbox.verification_run baseline_plan。
 - BE-001LS-01 `backend.ops_governance.sandbox.verification_run` backend.ops_governance.sandbox.verification_run equivalence baseline and extraction plan；下一步: BE-001LS-02 backend.ops_governance.sandbox.verification_run extract_closeout。
 - BE-001LS-02 `backend.ops_governance.sandbox.verification_run` backend.ops_governance.sandbox.verification_run actual extraction complete；下一步: BE-001LS-03 backend.ops_governance.sandbox.verification_run single_leaf_closeout。
+- BE-001LS-03 `backend.ops_governance.sandbox.verification_run` backend.ops_governance.sandbox.verification_run single leaf closeout continues split；下一步: BE-001LT-01 backend.ops_governance.sandbox.verification_run parent_residual_judgment。
