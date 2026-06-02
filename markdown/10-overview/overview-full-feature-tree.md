@@ -276,6 +276,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
 - `src/backend/storage_security/credential_vault/implementation/secret_pattern_extraction.rs`
 - `src/backend/storage_security/credential_vault/implementation/type_surface.rs`
+- `src/backend/storage_security/credential_vault/implementation/tests.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs`
@@ -2189,6 +2190,7 @@ storage/
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs` — credential vault machine-key cache/init and key derivation child; 改 machine key 文件、cache、PBKDF2/SHA-256 派生时改这里
 - `src/backend/storage_security/credential_vault/implementation/secret_pattern_extraction.rs` — credential vault safe-log pattern extraction child; 改 `extract_secret_patterns` traversal、Zeroizing clone wrapping 或 `len() >= 4` threshold 时改这里
 - `src/backend/storage_security/credential_vault/implementation/type_surface.rs` — credential vault shared type/public facade surface child; 改 `SecretString` serde/drop zeroize、`VaultData.entries` shape、`CredentialFields` alias、`CredentialVault` field layout 或 `storage_root` fallback 时改这里
+- `src/backend/storage_security/credential_vault/implementation/tests.rs` — credential vault implementation-local test harness child; 改 vault unit test setup、temp storage fixture、serialized test guard 或 implementation-local assertions 时改这里
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs` — credential vault service CRUD parent child; 改 parent mediation、get/list read projection 或 CRUD facade helper 时改这里
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs` — credential vault service mutation child; 改 set/delete、empty-field validation、missing delete error 或 mutation save handoff 时改这里
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs` — credential vault service read projection child; 改 get/list、missing read、Zeroizing clone wrapping 或 service key listing 时改这里
@@ -3466,3 +3468,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/677-backend.storage_security.credential_vault_implementation.parent_residual_judgment.implementation_test_harness.md` - v4.16.0 BE-001KK-01 backend.storage_security.credential_vault_implementation parent residual judgment selects implementation_test_harness
 递归边界补充: BE-001KL-01 `backend.storage_security.credential_vault_implementation.implementation_test_harness` backend.storage_security.credential_vault_implementation.implementation_test_harness equivalence baseline and extraction plan；下一步: BE-001KL-02 backend.storage_security.credential_vault_implementation.implementation_test_harness extract_closeout。
 - `markdown/06-milestones/v4.16.0/678-backend.storage_security.credential_vault_implementation.implementation_test_harness.baseline_plan.md` - v4.16.0 BE-001KL-01 backend.storage_security.credential_vault_implementation.implementation_test_harness equivalence baseline and extraction plan
+递归边界补充: BE-001KL-02 `backend.storage_security.credential_vault_implementation.implementation_test_harness` backend.storage_security.credential_vault_implementation.implementation_test_harness actual extraction complete；下一步: BE-001KL-03 backend.storage_security.credential_vault_implementation.implementation_test_harness single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/679-backend.storage_security.credential_vault_implementation.implementation_test_harness.extract_closeout.md` - v4.16.0 BE-001KL-02 backend.storage_security.credential_vault_implementation.implementation_test_harness actual extraction complete

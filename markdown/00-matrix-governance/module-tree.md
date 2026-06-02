@@ -848,6 +848,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
 - `src/backend/storage_security/credential_vault/implementation/secret_pattern_extraction.rs`
 - `src/backend/storage_security/credential_vault/implementation/type_surface.rs`
+- `src/backend/storage_security/credential_vault/implementation/tests.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs`
@@ -6083,6 +6084,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
 - `src/backend/storage_security/credential_vault/implementation/secret_pattern_extraction.rs`
 - `src/backend/storage_security/credential_vault/implementation/type_surface.rs`
+- `src/backend/storage_security/credential_vault/implementation/tests.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs`
@@ -7528,3 +7530,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_vault_implementation.implementation_test_harness` 被选为下一轮子叶；该子叶只冻结 inline `#[cfg(test)] mod tests`、`VAULT_TEST_LOCK`、`VaultTestEnv`、`run_vault_test` 与 15 个 credential vault unit tests。production method bodies、child module bodies、root shim 与 release transition 均不得在 BE-001KL-01 迁移。
 **最新等价基线(BE-001KL-01)**:
 `backend.storage_security.credential_vault_implementation.implementation_test_harness` 冻结 inline `#[cfg(test)] mod tests`、`VAULT_TEST_LOCK`、`VaultTestEnv`、`run_vault_test` 与 15 个 load/CRUD/persistence/list/secret extraction unit tests。BE-001KL-02 只能新增 planned `tests` child file 并移动现有测试块；不得修改 assertions、production method bodies、child module bodies、type surface、root shim 或 release transition。
+**最新抽离记录(BE-001KL-02)**:
+`backend.storage_security.credential_vault_implementation.implementation_test_harness` 已迁入 `src/backend/storage_security/credential_vault/implementation/tests.rs`；`src/backend/storage_security/credential_vault/implementation.rs` 仅保留 `#[cfg(test)] mod tests;` 作为测试子模块入口。production method bodies、child module bodies、type surface、root shim 与 release transition 均未迁移。
