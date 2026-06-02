@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { useI18n } from "../i18n";
-import { useGraphStore } from "../store/graphStore";
 import { API_BASE } from "../store/graphStorePersistenceHelpers";
 import { humanizeErrorText } from "../utils/errorText";
+import {
+  buildSourceScenarioHttpError,
+  buildSourceScenarioRunRequest,
+  buildSourceScenarioStepPresentation,
+  extractSourceScenarioActualValue
+} from "./strategyWorkspaceAuxiliaryTabsShell";
 
 export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
   const { t } = useI18n();
@@ -33,14 +38,10 @@ export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
     setRunning(true);
     setRunResult(null);
     try {
-      const resp = await fetch("/api/test/scenario/run", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ source }),
-      });
+      const resp = await fetch("/api/test/scenario/run", buildSourceScenarioRunRequest(source));
       if (!resp.ok) {
         const text = await resp.text();
-        setRunResult({ error: `HTTP ${resp.status}: ${text.slice(0, 300)}` });
+        setRunResult(buildSourceScenarioHttpError(resp.status, text));
       } else {
         setRunResult(await resp.json());
       }
@@ -105,18 +106,18 @@ export default function StrategyWorkspaceSourceTab({ graphId, onRunScenario }) {
                 </thead>
                 <tbody>
                   {runResult.steps?.map((step, i) => {
-                    const icon = step.status === "passed" ? "✓" : step.status === "failed" ? "✗" : "⊘";
-                    const color = step.status === "passed" ? "var(--ad-success)" : step.status === "failed" ? "var(--ad-error)" : "var(--ad-text-muted)";
+                    const presentation = buildSourceScenarioStepPresentation(step.status);
+                    const actualValue = extractSourceScenarioActualValue(step.message);
                     return (
                       <tr key={i}>
-                        <td className="qs-step-icon" style={{ color }}>{icon}</td>
+                        <td className="qs-step-icon" style={{ color: presentation.color }}>{presentation.icon}</td>
                         <td>{step.name}</td>
                         <td className="qs-step-duration">{step.duration_ms}ms</td>
                         <td className="qs-step-message">
                           {step.message?.slice(0, 200)}
-                          {step.status === "failed" && step.message?.includes("actual:") && (
+                          {step.status === "failed" && actualValue != null && (
                             <span className="qs-step-actual">
-                              {" "}[actual: {step.message.match(/actual:\s*([^)]+)/)?.[1] || "?"}]
+                              {" "}[actual: {actualValue}]
                             </span>
                           )}
                         </td>

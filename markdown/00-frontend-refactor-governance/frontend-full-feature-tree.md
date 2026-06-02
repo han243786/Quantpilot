@@ -178,6 +178,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/StrategyWorkspaceMonitorTab.jsx`
   - `frontend/src/pages/StrategyWorkspaceDebugTab.jsx`
   - `frontend/src/pages/StrategyWorkspaceSourceTab.jsx`
+  - `frontend/src/pages/strategyWorkspaceAuxiliaryTabsShell.js`
+  - `frontend/src/pages/strategyWorkspaceAuxiliaryTabsShell.test.js`
   - `frontend/src/pages/StrategyWorkspaceIssueQueueCard.jsx`
   - `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.jsx`
   - `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.test.jsx`
@@ -216,3 +218,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0043-frontend-strategy-workspace-toolbar-bridge-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0044-frontend-strategy-workspace-code-mode-shell-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0045-frontend-strategy-workspace-dashboard-overview-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0046-frontend-strategy-workspace-monitor-research-source-tabs-closeout.md`
