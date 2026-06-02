@@ -7,6 +7,12 @@ import { OkxCredentialInput } from "./CredentialInput";
 import DeployButton from "./DeployButton";
 import { API_BASE } from "../utils/api";
 import { useGraphStore } from "../store/graphStore";
+import {
+  buildStrategyPackage,
+  buildStrategyPackageFilename,
+  buildToolbarLayoutProps,
+  resolveToolbarVariant
+} from "./topToolbarBridge";
 
 function ToolbarNotices({ capabilityAlert, notice, setNotice }) {
   const { t } = useI18n();
@@ -667,22 +673,12 @@ function downloadJson(filename, payload) {
   URL.revokeObjectURL(url);
 }
 
-function buildStrategyPackage(graph) {
-  return {
-    schema_version: "quantpilot/strategy-package/v1",
-    exported_at: new Date().toISOString(),
-    graph_id: graph.metadata?.graph_id || "draft_graph",
-    name: graph.metadata?.name || "Untitled Strategy",
-    graph
-  };
-}
-
 export default function TopToolbar({ variant = "default" }) {
   const model = useWorkspaceActionBarModel();
   const actionLock = useGraphStore((state) => state.actionLock);
   const importStrategyPackage = useGraphStore((state) => state.importStrategyPackage);
   const isCompiling = actionLock === "compiling";
-  const isWorkspace = variant === "workspace";
+  const toolbarVariant = resolveToolbarVariant(variant);
   const [saving, setSaving] = useState(false);
   const [showCredentials, setShowCredentials] = useState(false);
   const importFileRef = useRef(null);
@@ -705,10 +701,7 @@ export default function TopToolbar({ variant = "default" }) {
 
   const handleExportStrategyPackage = useCallback(({ graph }) => {
     const payload = buildStrategyPackage(graph);
-    const safeName = String(payload.name || payload.graph_id || "strategy")
-      .replace(/[^\w.-]+/g, "_")
-      .slice(0, 80);
-    downloadJson(`${safeName || "strategy"}_strategy_package.json`, payload);
+    downloadJson(buildStrategyPackageFilename(payload), payload);
     model.setNotice?.({
       id: Date.now(),
       type: "success",
@@ -746,8 +739,26 @@ export default function TopToolbar({ variant = "default" }) {
     }
   }, [importStrategyPackage, model, t]);
 
+  const toolbarLayoutProps = buildToolbarLayoutProps({
+    model,
+    saving,
+    isCompiling,
+    onOpenCredentials: () => setShowCredentials(true),
+    handleSaveGraph: guardedSaveGraph,
+    handleExportQuantScript: guardedExportQuantScript,
+    handleExportRuntimeConfig: guardedExportRuntimeConfig,
+    handleExportStrategyPackage,
+    handleImportStrategyPackageClick,
+    exportStrategyPackageTitle: t(
+      "\u5bfc\u51fa\u5f53\u524d\u7b56\u7565\u56fe\u3001\u5de5\u4f5c\u6458\u8981\u4e0e\u5143\u6570\u636e\u4e3a\u53ef\u5206\u4eab JSON \u5305\u3002"
+    ),
+    importStrategyPackageTitle: t(
+      "\u4ece JSON \u7b56\u7565\u5305\u5bfc\u5165\u4e3a\u65b0\u7684\u8349\u7a3f\u7b56\u7565\u56fe\u3002"
+    )
+  });
+
   return (
-    <header className={`top-toolbar${isWorkspace ? " top-toolbar--workspace" : ""}`}>
+    <header className={toolbarVariant.headerClassName}>
       <input
         ref={importFileRef}
         type="file"
@@ -756,10 +767,10 @@ export default function TopToolbar({ variant = "default" }) {
         onChange={handleImportStrategyPackageFile}
         data-testid="toolbar-import-strategy-package-input"
       />
-      {isWorkspace ? (
-        <WorkspaceToolbarLayout {...model} saving={saving} isCompiling={isCompiling} onOpenCredentials={() => setShowCredentials(true)} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} handleExportStrategyPackage={handleExportStrategyPackage} handleImportStrategyPackageClick={handleImportStrategyPackageClick} exportStrategyPackageTitle={t("导出当前策略图、工件摘要与元数据为可分享 JSON 包。")} importStrategyPackageTitle={t("从 JSON 策略包导入为新的草稿策略图。")} />
+      {toolbarVariant.isWorkspace ? (
+        <WorkspaceToolbarLayout {...toolbarLayoutProps} />
       ) : (
-        <DefaultToolbarLayout {...model} saving={saving} isCompiling={isCompiling} onOpenCredentials={() => setShowCredentials(true)} handleSaveGraph={guardedSaveGraph} handleExportQuantScript={guardedExportQuantScript} handleExportRuntimeConfig={guardedExportRuntimeConfig} handleExportStrategyPackage={handleExportStrategyPackage} handleImportStrategyPackageClick={handleImportStrategyPackageClick} exportStrategyPackageTitle={t("导出当前策略图、工件摘要与元数据为可分享 JSON 包。")} importStrategyPackageTitle={t("从 JSON 策略包导入为新的草稿策略图。")} />
+        <DefaultToolbarLayout {...toolbarLayoutProps} />
       )}
       {showCredentials ? (
         <CredentialPanel onClose={() => setShowCredentials(false)} />

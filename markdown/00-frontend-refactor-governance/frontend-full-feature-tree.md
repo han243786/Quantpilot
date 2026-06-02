@@ -197,6 +197,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/utils/strategyWorkspaceIssueQueue.test.js`
   - `frontend/src/utils/workspaceContextLabels.js`
   - `frontend/src/components/TopToolbar.jsx`
+  - `frontend/src/components/topToolbarBridge.js`
+  - `frontend/src/components/topToolbarBridge.test.js`
   - `frontend/src/components/TopToolbar.capabilities.test.jsx`
   - `frontend/src/components/TopToolbar.exportFailure.test.jsx`
   - `frontend/src/components/TopToolbar.failureNotices.test.jsx`
@@ -207,3 +209,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0040-frontend-strategy-workspace-route-shell-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0041-frontend-strategy-workspace-shared-model-page-data-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0042-frontend-strategy-workspace-issue-queue-state-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0043-frontend-strategy-workspace-toolbar-bridge-closeout.md`

@@ -51,6 +51,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/utils/strategyWorkspaceIssueQueue.test.js`
     - `frontend/src/utils/workspaceContextLabels.js`
     - `frontend/src/components/TopToolbar.jsx`
+    - `frontend/src/components/topToolbarBridge.js`
+    - `frontend/src/components/topToolbarBridge.test.js`
     - `frontend/src/components/TopToolbar.capabilities.test.jsx`
     - `frontend/src/components/TopToolbar.exportFailure.test.jsx`
     - `frontend/src/components/TopToolbar.failureNotices.test.jsx`
@@ -69,7 +71,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/store/graphStore.js`
     - `frontend/src/router.js`
   - Child queue:
-    - `frontend.strategy_workspace.workspace_toolbar_bridge`
     - `frontend.strategy_workspace.code_mode_shell`
     - `frontend.strategy_workspace.dashboard_overview`
     - `frontend.strategy_workspace.monitor_research_source_tabs`
@@ -79,6 +80,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.strategy_workspace.route_shell`
     - `frontend.strategy_workspace.shared_model_and_page_data`
     - `frontend.strategy_workspace.issue_queue_state`
+    - `frontend.strategy_workspace.workspace_toolbar_bridge`
 
 ## Last Closed Parent
 
