@@ -746,6 +746,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/shared/ad-core-primitives.css`
   - `frontend/src/shared/legacy-qp-aliases.css`
   - `frontend/src/shared/loading-skeleton-motion.css`
+  - `frontend/src/shared/monthly-heatmap.css`
   - `frontend/src/pages/backtest-analysis.css`
   - `frontend/src/pages/strategy-hub.css`
   - `frontend/src/pages/strategy-hub-shell-hero.css`
@@ -781,3 +782,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0188-frontend-shared-ad-core-primitives-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0189-frontend-shared-legacy-qp-aliases-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0190-frontend-shared-loading-skeleton-motion-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0191-frontend-shared-monthly-heatmap-closeout.md`
