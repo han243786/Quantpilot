@@ -400,3 +400,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0075-frontend-graph-editor-node-factory-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0076-frontend-graph-editor-seed-graph-factory-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0077-frontend-graph-editor-validation-rules-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0078-frontend-graph-editor-graph-factory-validation-parent-closeout.md`

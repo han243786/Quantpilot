@@ -113,6 +113,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.graph_editor.graph_factory_validation.node_factory`
     - `frontend.graph_editor.graph_factory_validation.seed_graph_factory`
     - `frontend.graph_editor.graph_factory_validation.validation_rules`
+    - `frontend.graph_editor.graph_factory_validation`
 
 ## Last Closed Parent
 
