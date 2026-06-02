@@ -720,3 +720,4 @@
 | v4.16.0 / BE-001LF-03 | 新增: `backend.storage_security.credential_api_handler_implementation.delete_mutation.delete_commit` backend.storage_security.credential_api_handler_implementation.delete_mutation.delete_commit single leaf closeout stops further split |
 | v4.16.0 / BE-001LG-01 | 新增: `backend.storage_security.credential_api_handler_implementation.delete_mutation` backend.storage_security.credential_api_handler_implementation.delete_mutation parent residual judgment closes parent |
 | v4.16.0 / BE-001LH-01 | 新增: `backend.storage_security.credential_api_handler_implementation` backend.storage_security.credential_api_handler_implementation parent residual judgment closes parent |
+| v4.16.0 / BE-001LI-01 | 新增: `backend.storage_security` backend.storage_security parent residual judgment closes parent |
