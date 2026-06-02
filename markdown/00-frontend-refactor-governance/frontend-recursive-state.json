@@ -3,11 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.store.persistence_startup.persistence_helper_contract",
-  "current_step": "FE-0129",
-  "current_phase": "frontend_store_graph_shape_validation_contract_closed",
-  "current_child_queue": [
-    "frontend.store.persistence_startup.persistence_helper_contract.version_audit_normalizers"
-  ],
+  "current_step": "FE-0130",
+  "current_phase": "frontend_store_version_audit_normalizers_closed",
+  "current_child_queue": [],
   "next_parent": "frontend.design_system_styles",
   "closed_parents": [
     "frontend.app_shell",
@@ -100,7 +98,8 @@
     "frontend.store.persistence_startup.persistence_helper_contract.transport_contract",
     "frontend.store.persistence_startup.persistence_helper_contract.storage_cache_contract",
     "frontend.store.persistence_startup.persistence_helper_contract.actor_collaboration_contract",
-    "frontend.store.persistence_startup.persistence_helper_contract.graph_shape_validation_contract"
+    "frontend.store.persistence_startup.persistence_helper_contract.graph_shape_validation_contract",
+    "frontend.store.persistence_startup.persistence_helper_contract.version_audit_normalizers"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

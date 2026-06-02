@@ -648,6 +648,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/store/graphStorePersistenceHelpers.js`
   - `frontend/src/store/graphStorePersistenceStorage.js`
   - `frontend/src/store/graphStorePersistenceTransport.js`
+  - `frontend/src/store/graphStoreVersionAuditNormalizers.js`
   - `frontend/src/store/graphStoreRuntimeActions.js`
   - `frontend/src/store/graphStoreRuntimeHelpers.js`
   - `frontend/src/store/graphStoreRuntimeHistoryActions.js`
@@ -676,3 +677,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0127-frontend-store-persistence-storage-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0128-frontend-store-actor-collaboration-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0129-frontend-store-graph-shape-validation-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0130-frontend-store-version-audit-normalizers-closeout.md`
