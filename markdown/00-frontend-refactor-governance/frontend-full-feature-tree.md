@@ -343,6 +343,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/components/propertyPanelEntityCards.test.jsx`
   - `frontend/src/components/propertyPanelLayoutPrimitives.jsx`
   - `frontend/src/components/propertyPanelLayoutPrimitives.test.jsx`
+  - `frontend/src/components/propertyPanelSectionComposers.jsx`
+  - `frontend/src/components/propertyPanelSectionComposers.test.jsx`
   - `frontend/src/components/propertyPanelViews.jsx`
   - `frontend/src/components/CompilePanel.integration.test.jsx`
   - `frontend/src/components/ModuleSidebar.jsx`
@@ -379,3 +381,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0068-frontend-graph-editor-property-panel-authoring-cards-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0069-frontend-graph-editor-property-panel-compile-source-cards-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0070-frontend-graph-editor-property-panel-entity-cards-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0071-frontend-graph-editor-property-panel-section-composers-closeout.md`
