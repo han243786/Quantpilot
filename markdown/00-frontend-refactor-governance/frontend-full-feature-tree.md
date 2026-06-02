@@ -232,9 +232,9 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0048-frontend-strategy-workspace-layout-styles-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0049-frontend-strategy-workspace-parent-closeout.md`
 
-## Active Frontend Parent: `frontend.strategy_hub`
+## Closed Frontend Parent: `frontend.strategy_hub`
 
-- Status: parent baseline established.
+- Status: parent closed.
 - Record:
   - `markdown/00-frontend-refactor-governance/records/FE-0050-frontend-strategy-hub-baseline.md`
 - Owned and split-target files:
@@ -312,3 +312,49 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0059-frontend-strategy-hub-shared-component-boundary-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0060-frontend-strategy-hub-layout-styles-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0061-frontend-strategy-hub-parent-closeout.md`
+
+## Active Frontend Parent: `frontend.graph_editor`
+
+- Status: parent baseline established.
+- Record:
+  - `markdown/00-frontend-refactor-governance/records/FE-0062-frontend-graph-editor-baseline.md`
+- User-visible behavior: graph editing UI renders and mutates strategy graphs, validates node/edge topology, projects node cards and property panels, compiles graph semantics, and bridges graph source artifacts.
+- Owned and split-target files:
+  - `frontend/src/pages/EditorPage.jsx`
+  - `frontend/src/components/StrategyCanvas.jsx`
+  - `frontend/src/components/StrategyCanvas.focus.test.jsx`
+  - `frontend/src/components/StrategyCanvas.interaction.test.jsx`
+  - `frontend/src/components/StrategyCanvasMiniMap.jsx`
+  - `frontend/src/components/strategyCanvasFocus.js`
+  - `frontend/src/components/strategyCanvasFocus.test.js`
+  - `frontend/src/components/strategyCanvasViewport.js`
+  - `frontend/src/components/strategyCanvasViewport.test.js`
+  - `frontend/src/components/PropertyPanel.jsx`
+  - `frontend/src/components/PropertyPanel.layout.test.jsx`
+  - `frontend/src/components/PropertyPanel.compileSummary.test.jsx`
+  - `frontend/src/components/PropertyPanel.strategyIr.test.jsx`
+  - `frontend/src/components/propertyPanelViews.jsx`
+  - `frontend/src/components/CompilePanel.integration.test.jsx`
+  - `frontend/src/components/ModuleSidebar.jsx`
+  - `frontend/src/components/ModuleSidebar.test.jsx`
+  - `frontend/src/hooks/usePropertyPanelModel.js`
+  - `frontend/src/hooks/usePropertyPanelActions.js`
+  - `frontend/src/hooks/propertyPanelSelectors.js`
+  - `frontend/src/hooks/propertyPanelShared.js`
+  - `frontend/src/nodes/BaseNodeCard.jsx`
+  - `frontend/src/nodes/BaseNodeCard.test.jsx`
+  - `frontend/src/nodes/nodeCardPresentation.js`
+  - `frontend/src/nodes/nodeCardPresentation.test.js`
+  - `frontend/src/graph/createGraph.js`
+  - `frontend/src/graph/createNode.js`
+  - `frontend/src/graph/validation.js`
+  - `frontend/src/graph/compileGraph.js`
+  - `frontend/src/graph/compileGraph.diagnostics.test.js`
+  - `frontend/src/graph/compileGraph.multiSymbol.test.js`
+  - `frontend/src/graph/quantscript.js`
+  - `frontend/src/graph/quantscript.test.js`
+  - `frontend/src/graph/spread.test.js`
+  - `frontend/src/store/graphStoreEditorActions.js`
+  - `frontend/src/store/graphStore.editorActions.test.js`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0062-frontend-graph-editor-baseline.md`

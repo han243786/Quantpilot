@@ -10,6 +10,78 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Active Parent
 
+- `frontend.graph_editor`
+  - Status: parent baseline established.
+  - Record: `markdown/00-frontend-refactor-governance/records/FE-0062-frontend-graph-editor-baseline.md`
+  - Current owned and split-target files:
+    - `frontend/src/pages/EditorPage.jsx`
+    - `frontend/src/components/StrategyCanvas.jsx`
+    - `frontend/src/components/StrategyCanvas.focus.test.jsx`
+    - `frontend/src/components/StrategyCanvas.interaction.test.jsx`
+    - `frontend/src/components/StrategyCanvasMiniMap.jsx`
+    - `frontend/src/components/strategyCanvasFocus.js`
+    - `frontend/src/components/strategyCanvasFocus.test.js`
+    - `frontend/src/components/strategyCanvasViewport.js`
+    - `frontend/src/components/strategyCanvasViewport.test.js`
+    - `frontend/src/components/PropertyPanel.jsx`
+    - `frontend/src/components/PropertyPanel.layout.test.jsx`
+    - `frontend/src/components/PropertyPanel.compileSummary.test.jsx`
+    - `frontend/src/components/PropertyPanel.strategyIr.test.jsx`
+    - `frontend/src/components/propertyPanelViews.jsx`
+    - `frontend/src/components/CompilePanel.integration.test.jsx`
+    - `frontend/src/components/ModuleSidebar.jsx`
+    - `frontend/src/components/ModuleSidebar.test.jsx`
+    - `frontend/src/hooks/usePropertyPanelModel.js`
+    - `frontend/src/hooks/usePropertyPanelActions.js`
+    - `frontend/src/hooks/propertyPanelSelectors.js`
+    - `frontend/src/hooks/propertyPanelShared.js`
+    - `frontend/src/nodes/BaseNodeCard.jsx`
+    - `frontend/src/nodes/BaseNodeCard.test.jsx`
+    - `frontend/src/nodes/nodeCardPresentation.js`
+    - `frontend/src/nodes/nodeCardPresentation.test.js`
+    - `frontend/src/graph/createGraph.js`
+    - `frontend/src/graph/createNode.js`
+    - `frontend/src/graph/validation.js`
+    - `frontend/src/graph/compileGraph.js`
+    - `frontend/src/graph/compileGraph.diagnostics.test.js`
+    - `frontend/src/graph/compileGraph.multiSymbol.test.js`
+    - `frontend/src/graph/quantscript.js`
+    - `frontend/src/graph/quantscript.test.js`
+    - `frontend/src/graph/spread.test.js`
+    - `frontend/src/store/graphStoreEditorActions.js`
+    - `frontend/src/store/graphStore.editorActions.test.js`
+  - Important consumers:
+    - `frontend/src/pages/StrategyWorkspaceCodeTab.jsx`
+    - `frontend/src/pages/StrategyWorkspacePage.codeMode.test.jsx`
+    - `frontend/src/components/StrategyCodePanel.jsx`
+    - `frontend/src/components/StrategyDiagnosticsPanel.jsx`
+    - `frontend/src/components/StrategyParamsPanel.jsx`
+    - `frontend/src/components/EventStreamPanel.nodeFocus.test.jsx`
+    - `frontend/src/store/graphStore.js`
+    - `frontend/src/store/graphStoreCompileActions.js`
+    - `frontend/src/store/graphStoreCompileOutcomeMapping.js`
+    - `frontend/src/store/graphStorePersistenceActions.js`
+    - `frontend/src/store/graphStorePersistenceHelpers.js`
+    - `frontend/src/templates/strategyTemplates.js`
+    - `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js`
+    - `frontend/src/capabilities/capabilityGovernanceCore.js`
+  - Child queue:
+    - `frontend.graph_editor.canvas_interaction_shell`
+    - `frontend.graph_editor.canvas_focus_viewport`
+    - `frontend.graph_editor.node_card_presentation`
+    - `frontend.graph_editor.property_panel_model`
+    - `frontend.graph_editor.property_panel_views`
+    - `frontend.graph_editor.module_palette`
+    - `frontend.graph_editor.graph_factory_validation`
+    - `frontend.graph_editor.graph_compiler_core_ir`
+    - `frontend.graph_editor.quantscript_bridge`
+    - `frontend.graph_editor.editor_store_actions`
+    - `frontend.graph_editor.legacy_editor_page_shell`
+  - Closed child leaves:
+    - empty.
+
+## Last Closed Parent
+
 - `frontend.strategy_hub`
   - Status: parent closed.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0050-frontend-strategy-hub-baseline.md`
@@ -103,7 +175,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.strategy_hub.shared_component_boundary`
     - `frontend.strategy_hub.layout_styles`
 
-## Last Closed Parent
+## Previously Closed Parent
 
 - `frontend.strategy_workspace`
   - Status: parent closed.
@@ -360,7 +432,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Pending Parent Queue
 
-- `frontend.graph_editor`
 - `frontend.runtime_panels`
 - `frontend.backtest_views`
 - `frontend.store`
@@ -374,6 +445,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 - `frontend.api_client`
 - `frontend.capabilities`
 - `frontend.strategy_workspace`
+- `frontend.strategy_hub`
 
 ## Deferred Merge Notes
 
