@@ -266,6 +266,12 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/StrategyHubRecentRunItem.jsx`
   - `frontend/src/pages/StrategyHubCompareQueueSection.jsx`
   - `frontend/src/pages/strategy-hub.css`
+  - `frontend/src/pages/strategy-hub-shell-hero.css`
+  - `frontend/src/pages/strategy-hub-notes-tasks-status.css`
+  - `frontend/src/pages/strategy-hub-layout-template.css`
+  - `frontend/src/pages/strategy-hub-roster.css`
+  - `frontend/src/pages/strategy-hub-inspector-activity.css`
+  - `frontend/src/pages/strategy-hub-responsive.css`
   - `frontend/src/hooks/useStrategyDirectoryModel.js`
   - `frontend/src/hooks/strategyDirectoryModelProjection.js`
   - `frontend/src/hooks/strategyDirectoryModelProjection.test.js`
@@ -304,3 +310,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0057-frontend-strategy-hub-recent-activity-compare-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0058-frontend-strategy-hub-template-library-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0059-frontend-strategy-hub-shared-component-boundary-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0060-frontend-strategy-hub-layout-styles-closeout.md`
