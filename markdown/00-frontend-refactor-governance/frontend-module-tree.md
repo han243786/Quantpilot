@@ -11,8 +11,9 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 ## Active Parent
 
 - `frontend.store`
-  - Status: parent baseline established.
+  - Status: parent closed; pending next parent baseline.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`
+  - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0176-frontend-store-parent-closeout.md`
   - Current owned and split-target files:
     - `frontend/src/store/graphStore.js`
     - `frontend/src/store/graphStoreGraphLifecycleActions.js`
@@ -336,6 +337,24 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/store/graphStoreRuntimeTransport.test.js`
 
 ## Last Closed Parent
+
+- `frontend.store`
+  - Status: parent closed.
+  - Record: `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`
+  - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0176-frontend-store-parent-closeout.md`
+  - Closed child parents:
+    - `frontend.store.persistence_startup`
+    - `frontend.store.editor_actions`
+    - `frontend.store.compile_flow`
+    - `frontend.store.runtime_session`
+    - `frontend.store.runtime_history`
+  - Closed child leaves:
+    - `frontend.store.root_shell`
+    - `frontend.store.capability_refresh`
+    - `frontend.store.runtime_transport_selection`
+  - Next parent candidate: `frontend.design_system_styles`
+
+## Previous Closed Parent
 
 - `frontend.backtest_views`
   - Status: parent closed.
