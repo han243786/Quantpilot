@@ -2,19 +2,19 @@ use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::routing::{delete, get};
 use axum::{Json, Router};
-use std::collections::BTreeMap;
 
 use crate::auth::{self, UserId};
 use crate::AppState;
 
 mod key_scope;
 mod list_projection;
+mod set_mutation;
 
 pub(super) fn register_credential_routes(router: Router<AppState>) -> Router<AppState> {
     router
         .route(
             "/api/credentials",
-            get(list_projection::list_credentials).post(set_credential),
+            get(list_projection::list_credentials).post(set_mutation::set_credential),
         )
         .route("/api/credentials/:service", delete(delete_credential))
 }
@@ -22,59 +22,6 @@ pub(super) fn register_credential_routes(router: Router<AppState>) -> Router<App
 /// v2.3.3: 按用户隔离凭证 — vault key 格式为 `{user_id}:{service}`
 fn scoped_cv_key(user_id: &UserId, service: &str) -> String {
     key_scope::scoped_cv_key(user_id, service)
-}
-
-/// POST /api/credentials ← { "service": "okx", "fields": {"key":"...","secret":"..."} }
-async fn set_credential(
-    user_id: auth::UserId,
-    State(state): State<AppState>,
-    Json(body): Json<serde_json::Value>,
-) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
-    let vault = state.credential_vault.as_ref().ok_or_else(|| {
-        (
-            StatusCode::SERVICE_UNAVAILABLE,
-            "凭证保险库未初始化".to_string(),
-        )
-    })?;
-
-    let service = body["service"]
-        .as_str()
-        .filter(|s| {
-            !s.trim().is_empty()
-                && s.len() <= 64
-                && !s.contains('/')
-                && !s.contains('\\')
-                && !s.contains("..")
-        })
-        .ok_or_else(|| (StatusCode::BAD_REQUEST, "缺少 'service' 字段".to_string()))?;
-
-    let fields_obj = body["fields"]
-        .as_object()
-        .ok_or_else(|| (StatusCode::BAD_REQUEST, "缺少 'fields' 对象".to_string()))?;
-
-    let mut fields: BTreeMap<String, String> = BTreeMap::new();
-    for (k, v) in fields_obj {
-        let val = v.as_str().unwrap_or_default().to_string();
-        if val.is_empty() {
-            return Err((
-                StatusCode::BAD_REQUEST,
-                format!("字段 '{}' 的值不能为空", k),
-            ));
-        }
-        fields.insert(k.clone(), val);
-    }
-
-    let scoped_key = scoped_cv_key(&user_id, service);
-    vault.set_service(&scoped_key, fields).map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("凭证存储失败: {}", e),
-        )
-    })?;
-
-    safe_eprintln!("[audit] 用户 {} 设置凭证 service={}", user_id.0, service);
-
-    Ok(Json(serde_json::json!({ "stored": service })))
 }
 
 /// DELETE /api/credentials/:service → { "deleted": "okx" }

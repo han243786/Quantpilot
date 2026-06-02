@@ -6096,6 +6096,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/backend/storage_security/credential_api_handler_implementation.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/key_scope.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/list_projection.rs`
+- `src/backend/storage_security/credential_api_handler_implementation/set_mutation.rs`
 - `src/safe_log.rs`
 - `src/auth/mod.rs`
 - `src/auth_middleware.rs`
@@ -7566,3 +7567,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_api_handler_implementation.set_mutation` 被选为下一轮 POST mutation 子叶；该子叶只拥有 `POST /api/credentials` 的 vault availability、service validation、fields object validation/conversion/empty rejection、parent key bridge handoff、vault `set_service`、audit logging 与 `{"stored": service}` response。delete mutation、route registration、list projection、key_scope child internals、auth/vault internals 与 release transition 均不得在 BE-001KU-01/02 顺手迁移。
 **最新等价基线(BE-001KU-01)**:
 `backend.storage_security.credential_api_handler_implementation.set_mutation` 冻结 `set_credential` / `POST /api/credentials`：vault unavailable mapping、service as_str + trim-empty/len>64/slash/backslash/`..` validation、fields object validation、`unwrap_or_default().to_string()` conversion、empty field rejection、parent `scoped_cv_key` bridge handoff、vault `set_service`、audit log 与 `{"stored": service}` response 均不得改变。BE-001KU-02 只能新增 set_mutation child file 并移动 `set_credential`；delete、route registration ownership、list/key child internals、auth/vault internals 与 release transition 均不得顺手迁移。
+**最新抽离记录(BE-001KU-02)**:
+`backend.storage_security.credential_api_handler_implementation.set_mutation` 已迁入 `src/backend/storage_security/credential_api_handler_implementation/set_mutation.rs`；父文件新增 `mod set_mutation` 并将 `POST /api/credentials` route registration 委托为 `set_mutation::set_credential`。set child 通过 `super::scoped_cv_key` 使用父层 key bridge，未横向调用 key_scope sibling；delete、route registration ownership、list/key child internals、auth/vault internals 与 release transition 均未迁移。
