@@ -6094,6 +6094,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/storage_lifecycle.rs`
 - `src/credential_vault.rs`
 - `src/backend/storage_security/credential_api_handler_implementation.rs`
+- `src/backend/storage_security/credential_api_handler_implementation/key_scope.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/list_projection.rs`
 - `src/safe_log.rs`
 - `src/auth/mod.rs`
@@ -7557,3 +7558,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_api_handler_implementation.key_scope` 被选为下一轮共享安全子叶；该子叶只冻结并抽离 `{user_id}:{service}` credential key scoping。由于 set/delete 都依赖该格式，先抽 key_scope 可让父层保留 mediated key bridge，避免未来 set/delete sibling 横向依赖。set mutation、delete mutation、route registration、auth/vault internals 与 release transition 均不得在 BE-001KS-01/02 顺手迁移。
 **最新等价基线(BE-001KS-01)**:
 `backend.storage_security.credential_api_handler_implementation.key_scope` 冻结 `scoped_cv_key(&UserId, &str)` 的 exact `{user_id}:{service}` 格式，不得 trim/normalize/sanitize/lowercase/encode service。BE-001KS-02 只能新增 key_scope child file，移动该 helper，并在父文件保留 parent-local bridge 委托给 child；允许新增最小格式单测。set/delete handlers、route registration、list projection、auth/vault internals、status/JSON/audit 与 release transition 均不得顺手迁移。
+**最新抽离记录(BE-001KS-02)**:
+`backend.storage_security.credential_api_handler_implementation.key_scope` 已迁入 `src/backend/storage_security/credential_api_handler_implementation/key_scope.rs`；父文件新增 `mod key_scope`，并保留 parent-local `scoped_cv_key` bridge 委托到 child。set/delete 仍调用父 bridge，未引入 sibling 横向直连；新增最小格式单测覆盖 `UserId(42)` + `binance` => `42:binance`。

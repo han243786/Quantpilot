@@ -7,6 +7,7 @@ use std::collections::BTreeMap;
 use crate::auth::{self, UserId};
 use crate::AppState;
 
+mod key_scope;
 mod list_projection;
 
 pub(super) fn register_credential_routes(router: Router<AppState>) -> Router<AppState> {
@@ -20,7 +21,7 @@ pub(super) fn register_credential_routes(router: Router<AppState>) -> Router<App
 
 /// v2.3.3: 按用户隔离凭证 — vault key 格式为 `{user_id}:{service}`
 fn scoped_cv_key(user_id: &UserId, service: &str) -> String {
-    format!("{}:{}", user_id.0, service)
+    key_scope::scoped_cv_key(user_id, service)
 }
 
 /// POST /api/credentials ← { "service": "okx", "fields": {"key":"...","secret":"..."} }

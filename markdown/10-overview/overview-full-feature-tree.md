@@ -2185,6 +2185,7 @@ storage/
 - `src/compile_artifact_builders.rs` — 编译产物组装; 改策略包/迁移包结构时改这里
 - `src/compile_diagnostics.rs` — 编译诊断; 改编译错误/警告格式时改这里
 - `src/backend/storage_security/credential_api_handler_implementation.rs` — 凭证管理 API handler implementation (set/list/delete); 改凭证 CRUD 时改这里
+- `src/backend/storage_security/credential_api_handler_implementation/key_scope.rs` — 凭证管理 API shared key-scope child; 改 `{user_id}:{service}` credential key format 时改这里
 - `src/backend/storage_security/credential_api_handler_implementation/list_projection.rs` — 凭证管理 API list projection child; 改 GET /api/credentials 的 scoped list projection 时改这里
 - `src/backend/storage_security/credential_vault/implementation.rs` — 凭证保险库实现 parent owner, 保留 public API facade、secret pattern extraction 和 type/tests; 改 public surface 或 parent-owned type 时改这里
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs` — credential vault AES-GCM codec child; 改 nonce/tag、version framing、AAD、encrypt/decrypt 分支时改这里
@@ -3495,3 +3496,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/690-backend.storage_security.credential_api_handler_implementation.parent_residual_judgment.key_scope.md` - v4.16.0 BE-001KR-01 backend.storage_security.credential_api_handler_implementation parent residual judgment selects key_scope
 递归边界补充: BE-001KS-01 `backend.storage_security.credential_api_handler_implementation.key_scope` backend.storage_security.credential_api_handler_implementation.key_scope equivalence baseline and extraction plan；下一步: BE-001KS-02 backend.storage_security.credential_api_handler_implementation.key_scope extract_closeout。
 - `markdown/06-milestones/v4.16.0/691-backend.storage_security.credential_api_handler_implementation.key_scope.baseline_plan.md` - v4.16.0 BE-001KS-01 backend.storage_security.credential_api_handler_implementation.key_scope equivalence baseline and extraction plan
+递归边界补充: BE-001KS-02 `backend.storage_security.credential_api_handler_implementation.key_scope` backend.storage_security.credential_api_handler_implementation.key_scope actual extraction complete；下一步: BE-001KS-03 backend.storage_security.credential_api_handler_implementation.key_scope single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/692-backend.storage_security.credential_api_handler_implementation.key_scope.extract_closeout.md` - v4.16.0 BE-001KS-02 backend.storage_security.credential_api_handler_implementation.key_scope actual extraction complete
