@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useI18n } from "../i18n";
 import { isCapabilitySyncBlocked } from "../capabilities/supportMatrix";
-import { StrategyCardNote } from "../pages/StrategyHubSharedComponents";
+import { StrategyCardNote } from "./strategySharedComponents";
 import { useGraphStore } from "../store/graphStore";
 
 const categoryOrder = ["data", "intent", "agent", "risk", "execution", "runtime"];
@@ -436,4 +436,3 @@ export default function ModuleSidebar({ workspaceContext = null }) {
     </aside>
   );
 }
-

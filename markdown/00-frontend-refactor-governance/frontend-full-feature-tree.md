@@ -247,7 +247,6 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/StrategyHubHeroSection.jsx`
   - `frontend/src/pages/StrategyHubInlineNote.jsx`
   - `frontend/src/pages/StrategyHubBodySection.jsx`
-  - `frontend/src/pages/StrategyHubSharedComponents.jsx`
   - `frontend/src/pages/StrategyHubTemplateLibrarySection.jsx`
   - `frontend/src/pages/StrategyHubTemplateLibrarySection.test.jsx`
   - `frontend/src/pages/StrategyHubRosterSection.jsx`
@@ -273,8 +272,9 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/hooks/useStrategyHubBodyData.js`
   - `frontend/src/hooks/useStrategyHubRosterData.js`
   - `frontend/src/hooks/useStrategyHubInspectorData.js`
+  - `frontend/src/components/strategySharedComponents.jsx`
   - `frontend/src/utils/strategyHubStrategyIdentity.js`
-  - `frontend/src/utils/strategyHubFormatters.js`
+  - `frontend/src/utils/strategyFormatters.js`
   - `frontend/src/utils/strategyHubHeroSummary.js`
   - `frontend/src/utils/strategyHubHeroSummary.test.js`
   - `frontend/src/utils/strategyHubTemplateLibraryView.js`
@@ -303,3 +303,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0056-frontend-strategy-hub-inspector-projection-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0057-frontend-strategy-hub-recent-activity-compare-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0058-frontend-strategy-hub-template-library-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0059-frontend-strategy-hub-shared-component-boundary-closeout.md`

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { translateText, useI18n } from "../i18n";
-import { StrategyCardNote } from "../pages/StrategyHubSharedComponents";
+import { StrategyCardNote } from "./strategySharedComponents";
 import {
   deriveConfigureCardOrder,
   derivePriorityFieldGroups,
@@ -1495,4 +1495,3 @@ export function NodeRuntimeSection({ model }) {
     </PropertySection>
   );
 }
-

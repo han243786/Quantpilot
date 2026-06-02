@@ -1,5 +1,5 @@
 import StrategyHubInlineNote from "./StrategyHubInlineNote";
-import { StrategyMetricCard, StrategyOpsCard } from "./StrategyHubSharedComponents";
+import { StrategyMetricCard, StrategyOpsCard } from "../components/strategySharedComponents";
 import { buildStrategyHubMetricCards, buildStrategyHubOpsCards } from "../utils/strategyHubHeroSummary";
 import { navigateTo, strategyWorkspacePath } from "../router";
 

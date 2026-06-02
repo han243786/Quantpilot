@@ -1,5 +1,5 @@
 import { useGraphStore } from "../store/graphStore";
-import { StrategyCardNote } from "../pages/StrategyHubSharedComponents";
+import { StrategyCardNote } from "./strategySharedComponents";
 import { getRuntimeStatusMeta, runtimeStatusLabel } from "../utils/runtimeStatus";
 import { buildRuntimeDiagnosticsProjection } from "../utils/runtimeDiagnosticsProjection";
 import GovernedTimelinePanel from "./GovernedTimelinePanel";

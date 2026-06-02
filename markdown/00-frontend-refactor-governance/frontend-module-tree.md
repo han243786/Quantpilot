@@ -23,7 +23,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/StrategyHubHeroSection.jsx`
     - `frontend/src/pages/StrategyHubInlineNote.jsx`
     - `frontend/src/pages/StrategyHubBodySection.jsx`
-    - `frontend/src/pages/StrategyHubSharedComponents.jsx`
     - `frontend/src/pages/StrategyHubTemplateLibrarySection.jsx`
     - `frontend/src/pages/StrategyHubTemplateLibrarySection.test.jsx`
     - `frontend/src/pages/StrategyHubRosterSection.jsx`
@@ -49,8 +48,9 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/hooks/useStrategyHubBodyData.js`
     - `frontend/src/hooks/useStrategyHubRosterData.js`
     - `frontend/src/hooks/useStrategyHubInspectorData.js`
+    - `frontend/src/components/strategySharedComponents.jsx`
     - `frontend/src/utils/strategyHubStrategyIdentity.js`
-    - `frontend/src/utils/strategyHubFormatters.js`
+    - `frontend/src/utils/strategyFormatters.js`
     - `frontend/src/utils/strategyHubHeroSummary.js`
     - `frontend/src/utils/strategyHubHeroSummary.test.js`
     - `frontend/src/utils/strategyHubTemplateLibraryView.js`
@@ -83,7 +83,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/components/propertyPanelViews.jsx`
     - `frontend/src/components/StrategyResearchConsole.jsx`
   - Child queue:
-    - `frontend.strategy_hub.shared_component_boundary`
     - `frontend.strategy_hub.layout_styles`
   - Closed child leaves:
     - `frontend.strategy_hub.route_shell`
@@ -94,6 +93,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.strategy_hub.inspector_projection`
     - `frontend.strategy_hub.recent_activity_compare`
     - `frontend.strategy_hub.template_library`
+    - `frontend.strategy_hub.shared_component_boundary`
 
 ## Last Closed Parent
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StrategyCardNote } from "./StrategyHubSharedComponents";
+import { StrategyCardNote } from "../components/strategySharedComponents";
 import {
   getInitialStrategyTemplateLibraryExpanded,
   projectStrategyHubTemplateLibraryView

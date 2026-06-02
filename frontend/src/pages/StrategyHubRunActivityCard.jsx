@@ -1,4 +1,4 @@
-import { ActivityListCard } from "./StrategyHubSharedComponents";
+import { ActivityListCard } from "../components/strategySharedComponents";
 
 export default function StrategyHubRunActivityCard({ items }) {
   return (

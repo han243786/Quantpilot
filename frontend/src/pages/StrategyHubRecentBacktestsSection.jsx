@@ -1,4 +1,4 @@
-import { StrategyTaskGroup } from "./StrategyHubSharedComponents";
+import { StrategyTaskGroup } from "../components/strategySharedComponents";
 import {
   projectStrategyHubRecentBacktestActionGroup,
   runStrategyHubRecentBacktestAction

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { StrategyCardNote } from "./StrategyHubSharedComponents";
+import { StrategyCardNote } from "../components/strategySharedComponents";
 import { buildRepairPathInsight } from "../utils/repairPathInsights";
 import { buildWorkspaceIssueQueueFilterModel } from "../hooks/strategyWorkspaceIssueQueueState";
 import {

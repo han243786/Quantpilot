@@ -1,5 +1,5 @@
 import { StrategyRouteBar } from "./BacktestAnalysisLayout";
-import { StrategyCardNote, StrategyTaskGroup } from "./StrategyHubSharedComponents";
+import { StrategyCardNote, StrategyTaskGroup } from "../components/strategySharedComponents";
 import {
   projectStrategyHubInspectorActionGroups,
   runStrategyHubInspectorAction

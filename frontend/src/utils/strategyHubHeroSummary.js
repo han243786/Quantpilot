@@ -1,4 +1,4 @@
-import { formatCount, formatTime } from "./strategyHubFormatters";
+import { formatCount, formatTime } from "./strategyFormatters";
 
 export function buildStrategyHubMetricCards(hubSummary) {
   return [

@@ -7,7 +7,7 @@ export function formatValue(value) {
   return String(value);
 }
 
-export { formatTime, formatPercent } from "../utils/strategyHubFormatters";
+export { formatTime, formatPercent } from "../utils/strategyFormatters";
 
 export function formatRatio(value) {
   if (!Number.isFinite(value)) return "-";

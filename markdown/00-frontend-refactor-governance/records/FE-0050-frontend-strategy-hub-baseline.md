@@ -34,7 +34,6 @@ The graph store, router helpers, template definitions, and runtime/backtest deta
 - `frontend/src/pages/StrategyHubHeroSection.jsx`
 - `frontend/src/pages/StrategyHubInlineNote.jsx`
 - `frontend/src/pages/StrategyHubBodySection.jsx`
-- `frontend/src/pages/StrategyHubSharedComponents.jsx`
 - `frontend/src/pages/StrategyHubTemplateLibrarySection.jsx`
 - `frontend/src/pages/StrategyHubTemplateLibrarySection.test.jsx`
 - `frontend/src/pages/StrategyHubRosterSection.jsx`
@@ -58,8 +57,9 @@ The graph store, router helpers, template definitions, and runtime/backtest deta
 - `frontend/src/hooks/useStrategyHubBodyData.js`
 - `frontend/src/hooks/useStrategyHubRosterData.js`
 - `frontend/src/hooks/useStrategyHubInspectorData.js`
+- `frontend/src/components/strategySharedComponents.jsx`
 - `frontend/src/utils/strategyHubStrategyIdentity.js`
-- `frontend/src/utils/strategyHubFormatters.js`
+- `frontend/src/utils/strategyFormatters.js`
 - `frontend/src/utils/strategyHubRosterProjection.js`
 - `frontend/src/utils/strategyHubRosterProjection.test.js`
 - `frontend/src/utils/strategyHubRosterRowActions.js`
@@ -138,8 +138,7 @@ The graph store, router helpers, template definitions, and runtime/backtest deta
 - Keep graph-store state mutation and persistence behavior in store-owned APIs; hub leaves may wrap or project model data but must not rewrite store contracts.
 - Keep router path builders owned by `frontend.routing`; hub leaves may call them but must not duplicate route construction.
 - Keep template definitions owned by the templates module; hub leaves may render or apply templates through the existing model boundary.
-- Resolve `StrategyHubSharedComponents.jsx` leakage through the dedicated shared-component boundary leaf instead of letting workspace or generic components keep importing a hub-named file.
-- Keep `strategyHubFormatters.js` imports stable until either the formatter is proven hub-only or moved through the shared-component boundary leaf.
+- Shared component and formatter leakage is resolved through `frontend.strategy_hub.shared_component_boundary`; workspace and generic components consume neutral shared files instead of hub-named files.
 - Split `strategy-hub.css` after the structural UI leaves so style regions can follow the final component boundaries.
 
 ## First Leaf

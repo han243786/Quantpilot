@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-import { StrategyCardNote } from "./StrategyHubSharedComponents";
+import { StrategyCardNote } from "../components/strategySharedComponents";
 import { WorkspacePanelFallback } from "./StrategyWorkspacePanelFallbacks";
 import { useI18n } from "../i18n";
 import {
