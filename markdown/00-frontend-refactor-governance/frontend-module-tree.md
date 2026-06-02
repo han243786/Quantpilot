@@ -94,7 +94,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/BacktestDetailPage.jsx`
     - `frontend/src/pages/BacktestComparePage.jsx`
   - Child queue:
-    - `frontend.store.capability_refresh`
     - `frontend.store.editor_actions`
     - `frontend.store.compile_flow`
     - `frontend.store.runtime_session`
@@ -145,6 +144,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Public surface:
         - `frontend/src/store/graphStore.js`
         - `frontend/src/store/graphStoreRootState.js`
+    - `frontend.store.capability_refresh`
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0132-frontend-store-capability-refresh-closeout.md`
+      - Public surface:
+        - `frontend/src/store/graphStore.js` (`refreshCapabilities`)
+        - `frontend/src/store/graphStoreCapabilityRefresh.js`
 
 ## Last Closed Parent
 

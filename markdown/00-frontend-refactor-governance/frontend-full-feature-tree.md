@@ -679,3 +679,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0129-frontend-store-graph-shape-validation-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0130-frontend-store-version-audit-normalizers-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0131-frontend-store-persistence-startup-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0132-frontend-store-capability-refresh-closeout.md`
