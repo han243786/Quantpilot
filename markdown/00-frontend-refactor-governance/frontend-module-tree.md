@@ -141,6 +141,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.graph_editor.editor_store_actions.selection_focus`
     - `frontend.graph_editor.editor_store_actions.draft_source_actions`
     - `frontend.graph_editor.editor_store_actions.template_loading_actions`
+    - `frontend.graph_editor.editor_store_actions.node_mutation_actions`
 
 ## Last Closed Parent
 

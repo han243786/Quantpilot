@@ -395,6 +395,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/store/graphStoreEditorActions.js`
   - `frontend/src/store/graphStoreEditorDraftActions.js`
   - `frontend/src/store/graphStoreEditorDraftActions.test.js`
+  - `frontend/src/store/graphStoreEditorNodeActions.js`
+  - `frontend/src/store/graphStoreEditorNodeActions.test.js`
   - `frontend/src/store/graphStoreEditorSelectionActions.js`
   - `frontend/src/store/graphStoreEditorSelectionActions.test.js`
   - `frontend/src/store/graphStoreEditorTemplateActions.js`
@@ -436,3 +438,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0089-frontend-graph-editor-editor-store-selection-focus-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0090-frontend-graph-editor-editor-store-draft-source-actions-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0091-frontend-graph-editor-editor-store-template-loading-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0092-frontend-graph-editor-editor-store-node-mutation-actions-closeout.md`
