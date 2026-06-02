@@ -7526,3 +7526,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_vault_implementation.type_surface stop_split: true`；当前子叶已完整持有 shared data-model / public facade surface，继续拆 `SecretString` / `VaultData` / `CredentialFields` / `CredentialVault` 会命中 micro_leaf_without_owner 与 communication_cost_rises。下一步回到 `backend.storage_security.credential_vault_implementation` 父叶残余判断。
 **最新父叶残余判断(BE-001KK-01)**:
 `backend.storage_security.credential_vault_implementation.implementation_test_harness` 被选为下一轮子叶；该子叶只冻结 inline `#[cfg(test)] mod tests`、`VAULT_TEST_LOCK`、`VaultTestEnv`、`run_vault_test` 与 15 个 credential vault unit tests。production method bodies、child module bodies、root shim 与 release transition 均不得在 BE-001KL-01 迁移。
+**最新等价基线(BE-001KL-01)**:
+`backend.storage_security.credential_vault_implementation.implementation_test_harness` 冻结 inline `#[cfg(test)] mod tests`、`VAULT_TEST_LOCK`、`VaultTestEnv`、`run_vault_test` 与 15 个 load/CRUD/persistence/list/secret extraction unit tests。BE-001KL-02 只能新增 planned `tests` child file 并移动现有测试块；不得修改 assertions、production method bodies、child module bodies、type surface、root shim 或 release transition。
