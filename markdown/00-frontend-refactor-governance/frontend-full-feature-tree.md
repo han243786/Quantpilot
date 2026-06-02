@@ -405,6 +405,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/store/graphStoreEditorNodePositionActions.js`
   - `frontend/src/store/graphStoreEditorSelectionActions.js`
   - `frontend/src/store/graphStoreEditorSelectionActions.test.js`
+  - `frontend/src/store/graphStoreEditorNodeUiActions.js`
   - `frontend/src/store/graphStoreEditorTemplateActions.js`
   - `frontend/src/store/graphStoreEditorTemplateActions.test.js`
   - `frontend/src/store/graphStore.editorActions.test.js`
@@ -692,3 +693,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0139-frontend-store-editor-node-creation-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0140-frontend-store-editor-node-position-viewport-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0141-frontend-store-editor-node-config-identity-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0142-frontend-store-editor-node-ui-collapse-closeout.md`
