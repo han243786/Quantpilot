@@ -668,3 +668,4 @@
 | v4.16.0 / BE-001KE-02 | 新增: `backend.storage_security.credential_vault_implementation.service_crud.service_read_projection` backend.storage_security.credential_vault_implementation.service_crud.service_read_projection actual extraction complete |
 | v4.16.0 / BE-001KE-03 | 新增: `backend.storage_security.credential_vault_implementation.service_crud.service_read_projection` backend.storage_security.credential_vault_implementation.service_crud.service_read_projection single leaf closeout stops further split |
 | v4.16.0 / BE-001KF-01 | 新增: `backend.storage_security.credential_vault_implementation.service_crud` backend.storage_security.credential_vault_implementation.service_crud parent closeout stops CRUD split |
+| v4.16.0 / BE-001KG-01 | 新增: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation parent residual judgment selects secret_pattern_extraction |
