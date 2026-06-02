@@ -112,7 +112,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Status: active recursive split.
           - Baseline record: `markdown/00-frontend-refactor-governance/records/FE-0155-frontend-store-compile-helper-contract-baseline.md`
           - Current subchild queue:
-            - `frontend.store.compile_flow.compile_helper_contract.strategy_ir_protocol_mapping_bridge`
+            - closed.
           - Closed subchild leaves:
             - `frontend.store.compile_flow.compile_helper_contract.diagnostic_helpers`
               - Record: `markdown/00-frontend-refactor-governance/records/FE-0156-frontend-store-compile-diagnostic-helpers-closeout.md`
@@ -120,6 +120,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
             - `frontend.store.compile_flow.compile_helper_contract.summary_resolution_helpers`
               - Record: `markdown/00-frontend-refactor-governance/records/FE-0157-frontend-store-compile-summary-resolution-helpers-closeout.md`
               - Public surface: `frontend/src/store/graphStoreCompileSummary.js`
+            - `frontend.store.compile_flow.compile_helper_contract.strategy_ir_protocol_mapping_bridge`
+              - Record: `markdown/00-frontend-refactor-governance/records/FE-0158-frontend-store-compile-protocol-mapping-bridge-closeout.md`
+              - Public surface:
+                - `frontend/src/store/graphStoreCompileProtocolMapping.js`
+                - `frontend/src/store/graphStoreCompileHelpers.js`
       - Closed subchild leaves:
         - `frontend.store.compile_flow.source_apply_actions`
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0150-frontend-store-compile-source-apply-actions-closeout.md`
