@@ -2,15 +2,16 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.store",
-  "current_step": "FE-0132",
-  "current_phase": "frontend_store_capability_refresh_closed",
+  "current_parent": "frontend.store.editor_actions",
+  "current_step": "FE-0133",
+  "current_phase": "frontend_store_editor_actions_baseline_established",
   "current_child_queue": [
-    "frontend.store.editor_actions",
-    "frontend.store.compile_flow",
-    "frontend.store.runtime_session",
-    "frontend.store.runtime_history",
-    "frontend.store.runtime_transport_selection"
+    "frontend.store.editor_actions.facade_boundary",
+    "frontend.store.editor_actions.selection_focus",
+    "frontend.store.editor_actions.draft_source_actions",
+    "frontend.store.editor_actions.template_loading_actions",
+    "frontend.store.editor_actions.node_mutation_actions",
+    "frontend.store.editor_actions.edge_mutation_actions"
   ],
   "next_parent": "frontend.design_system_styles",
   "closed_parents": [
