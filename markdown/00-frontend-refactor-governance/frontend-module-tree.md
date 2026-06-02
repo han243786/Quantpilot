@@ -105,8 +105,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
   - Child queue:
     - `frontend.store.runtime_transport_selection`
   - Active child parent:
+    - none.
+  - Closed child parent:
     - `frontend.store.runtime_history`
-      - Status: active recursive split.
+      - Status: closed after recursive subchild queue finished.
+      - Parent closeout record: `markdown/00-frontend-refactor-governance/records/FE-0174-frontend-store-runtime-history-parent-closeout.md`
       - Baseline record: `markdown/00-frontend-refactor-governance/records/FE-0168-frontend-store-runtime-history-baseline.md`
       - Current subchild queue:
         - closed.
@@ -142,7 +145,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
             - `frontend/src/store/graphStoreRuntimeHistoryProjection.js`
             - `frontend/src/store/graphStoreRuntimeHistoryState.js`
             - `frontend/src/store/graphStoreRuntimeHistoryFlow.js`
-  - Closed child parent:
     - `frontend.store.runtime_session`
       - Status: closed after recursive subchild queue finished.
       - Parent closeout record: `markdown/00-frontend-refactor-governance/records/FE-0167-frontend-store-runtime-session-parent-closeout.md`
