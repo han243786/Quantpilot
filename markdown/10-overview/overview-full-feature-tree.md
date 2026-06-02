@@ -460,6 +460,7 @@ sandbox_verification.rs         — 沙箱验证兼容桥
 src/backend/ops_governance/sandbox/handlers.rs — 沙箱验证实现
 src/backend/ops_governance/sandbox/report_api.rs — 沙箱验证 report API
 src/backend/ops_governance/sandbox/verification_run.rs — 沙箱验证 runner
+src/backend/ops_governance/sandbox/verification_run/proposal_gate.rs — 沙箱验证 proposal eligibility gate 子叶
 src/backend/ops_governance/sandbox/verification_run/report_commit.rs — 沙箱验证 report 持久化提交子叶
   └── AI 提案独立回放验证, catch_unwind + 3 重试
 
@@ -2261,6 +2262,7 @@ storage/
 - `src/backend/ops_governance/sandbox/handlers.rs` — 沙箱验证, AI 提案回放, v4 artifact replay-shape 对比, 提供 proposal sandbox report 读取给审批阻断; 改验证逻辑或 CandidateUnderperforms 判定时改这里
 - `src/backend/ops_governance/sandbox/report_api.rs` — sandbox report API route registrar and GET/POST handlers
 - `src/backend/ops_governance/sandbox/verification_run.rs` — reusable sandbox verification runner and report persistence side effects
+- `src/backend/ops_governance/sandbox/verification_run/proposal_gate.rs` — sandbox verification proposal eligibility gate child
 - `src/backend/ops_governance/sandbox/verification_run/report_commit.rs` — sandbox report persistence commit child
 - `src/snapshot_service.rs` — 快照服务, SHA-256 签名; 改快照/验签时改这里
 - `src/strategy_config_api.rs` — v4 策略配置 artifact、preflight、artifact diff、正式版本配置契约 diff 和显式 v4 backtest evidence diff API; 改策略配置契约、PaperSimulated/PaperActual 边界、capability freshness、Risk Plane 静态契约、配置域状态或证据差异口径时改这里 🆕 v4.11.0
@@ -3622,3 +3624,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/746-backend.ops_governance.sandbox.verification_run.parent_residual_judgment.proposal_gate.md` - v4.16.0 BE-001LV-01 backend.ops_governance.sandbox.verification_run parent residual judgment selects proposal_gate
 递归边界补充: BE-001LW-01 `backend.ops_governance.sandbox.verification_run.proposal_gate` backend.ops_governance.sandbox.verification_run.proposal_gate equivalence baseline and extraction plan；下一步: BE-001LW-02 backend.ops_governance.sandbox.verification_run.proposal_gate extract_closeout。
 - `markdown/06-milestones/v4.16.0/747-backend.ops_governance.sandbox.verification_run.proposal_gate.baseline_plan.md` - v4.16.0 BE-001LW-01 backend.ops_governance.sandbox.verification_run.proposal_gate equivalence baseline and extraction plan
+递归边界补充: BE-001LW-02 `backend.ops_governance.sandbox.verification_run.proposal_gate` backend.ops_governance.sandbox.verification_run.proposal_gate actual extraction complete；下一步: BE-001LW-03 backend.ops_governance.sandbox.verification_run.proposal_gate single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/748-backend.ops_governance.sandbox.verification_run.proposal_gate.extract_closeout.md` - v4.16.0 BE-001LW-02 backend.ops_governance.sandbox.verification_run.proposal_gate actual extraction complete

@@ -747,3 +747,4 @@
 | v4.16.0 / BE-001LU-03 | 新增: `backend.ops_governance.sandbox.verification_run.report_commit` backend.ops_governance.sandbox.verification_run.report_commit single leaf closeout stops further split |
 | v4.16.0 / BE-001LV-01 | 新增: `backend.ops_governance.sandbox.verification_run` backend.ops_governance.sandbox.verification_run parent residual judgment selects proposal_gate |
 | v4.16.0 / BE-001LW-01 | 新增: `backend.ops_governance.sandbox.verification_run.proposal_gate` backend.ops_governance.sandbox.verification_run.proposal_gate equivalence baseline and extraction plan |
+| v4.16.0 / BE-001LW-02 | 新增: `backend.ops_governance.sandbox.verification_run.proposal_gate` backend.ops_governance.sandbox.verification_run.proposal_gate actual extraction complete |

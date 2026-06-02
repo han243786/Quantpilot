@@ -5,6 +5,7 @@ use super::{
     determine_sandbox_verdict, load_or_fetch_ai_proposal,
 };
 
+mod proposal_gate;
 mod report_commit;
 
 /// 可重用的沙箱验证核心逻辑（供 API handler 和异步自动触发调用）
@@ -12,14 +13,7 @@ pub(crate) async fn run_sandbox_verification(
     state: &AppState,
     request: &RequestSandboxVerificationRequest,
 ) -> Result<SandboxVerificationReport, (StatusCode, String)> {
-    let ai_proposal = load_or_fetch_ai_proposal(state, &request.proposal_id).await?;
-
-    if ai_proposal.status != RuntimeAiProposalStatus::StaticCheckPassed {
-        return Err(json_bad_request(
-            "SANDBOX_VERIFICATION_DENIED",
-            "沙箱验证要求 AI 提案已通过静态检查",
-        ));
-    }
+    let ai_proposal = proposal_gate::load_eligible_proposal(state, request).await?;
 
     let now_ms = current_time_ms();
     let sandbox_run_id = format!("sbx-run-{}", now_ms);
