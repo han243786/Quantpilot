@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001LU-01",
-  "last_committed_sha": "120cb6c9",
-  "current_parent": "backend.ops_governance.sandbox.verification_run.report_commit",
-  "current_step": "BE-001LU-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001LU-02",
+  "last_committed_sha": "0648b69a",
+  "current_parent": "backend.ops_governance.sandbox.verification_run",
+  "current_step": "BE-001LV-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -42,14 +42,15 @@
     "storage_security.credential_api_handler_implementation",
     "storage_security",
     "ops_governance.hotswap",
-    "ops_governance.sandbox.report_api"
+    "ops_governance.sandbox.report_api",
+    "ops_governance.sandbox.verification_run.report_commit"
   ],
   "open_residuals": [
     "ops_governance",
     "app_state_wiring",
     "test_support"
   ],
-  "next_recommended_child": "backend.ops_governance.sandbox.verification_run.report_commit",
+  "next_recommended_child": "backend.ops_governance.sandbox.verification_run",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

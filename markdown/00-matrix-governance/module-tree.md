@@ -7670,3 +7670,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.ops_governance.sandbox.verification_run.report_commit` baseline 已冻结：该子叶只接收 `state`、`request` 与已组装的 `report`，保持 quota check、`persist_json`、cache insert 与 evidence metric increment 的顺序；父 runner 继续负责 proposal gate、replay window、metrics、report assembly 与最终 `Ok(report)`。BE-001LU-02 只能创建 verification_run 私有 child module，不得暴露 sibling shortcut 或 release transition。
 
 `backend.ops_governance.sandbox.verification_run.report_commit` 已迁入 `src/backend/ops_governance/sandbox/verification_run/report_commit.rs`；verification_run 父节点通过私有 child module 调用 `commit_report`，继续保持 report assembly 与最终 `Ok(report)` 在父 runner 内。该抽离未暴露 sandbox facade、report_api sibling、root bridge 或 runtime mutation shortcut。
+
+`backend.ops_governance.sandbox.verification_run.report_commit stop_split: true`；该叶只拥有 sandbox report quota、persistence、cache insert 与 evidence metric increment 这一组 durable commit sequence。继续拆会触发 micro_leaf_without_owner、communication_cost_rises、local_proof_missing 与 line_count_only；下一步回到 `backend.ops_governance.sandbox.verification_run` 父叶残余判断。
