@@ -6098,6 +6098,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/backend/storage_security/credential_api_handler_implementation/list_projection.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/set_mutation.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/set_mutation/service_and_fields_validation.rs`
+- `src/backend/storage_security/credential_api_handler_implementation/set_mutation/storage_commit.rs`
 - `src/safe_log.rs`
 - `src/auth/mod.rs`
 - `src/auth_middleware.rs`
@@ -7584,3 +7585,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_api_handler_implementation.set_mutation.storage_commit` 被选为下一轮子叶；该子叶只拥有 POST set 的 vault `set_service`、storage failure mapping、audit logging 与 `{"stored": service}` success response。vault availability、service/fields validation、parent key bridge handoff、delete mutation、route registration、list/key child internals、auth/vault internals 与 release transition 均不得在 BE-001KY-01/02 顺手迁移。
 
 `backend.storage_security.credential_api_handler_implementation.set_mutation.storage_commit` 冻结 POST set storage commit phase：必须调用 `vault.set_service(&scoped_key, fields)`，任意 storage error 映射为 `500 INTERNAL_SERVER_ERROR` 且保持 `凭证存储失败: {error}` 文案；只在成功后 audit，audit log 保持 `[audit] 用户 {user_id} 设置凭证 service={service}`；成功响应保持 `{"stored": service}` 且不得新增字段。BE-001KY-02 只能新增 storage_commit child file 并移动 commit/error/audit/success phase；vault availability、validation、parent key bridge、delete、route/list/key/auth/vault internals 与 release transition 均不得顺手迁移。
+
+`backend.storage_security.credential_api_handler_implementation.set_mutation.storage_commit` 已迁入 `src/backend/storage_security/credential_api_handler_implementation/set_mutation/storage_commit.rs`；父 `src/backend/storage_security/credential_api_handler_implementation/set_mutation.rs` 新增 `mod storage_commit`，并在 validation 与 parent `scoped_cv_key` bridge 后委托 `storage_commit::commit_set_credential`。vault availability、validation、parent key bridge、delete、route/list/key/auth/vault internals 与 release transition 均未迁移。
