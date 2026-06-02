@@ -2,9 +2,15 @@ import { Suspense, lazy } from "react";
 import { StrategyCardNote } from "./StrategyHubSharedComponents";
 import { WorkspacePanelFallback } from "./StrategyWorkspacePanelFallbacks";
 import { useI18n } from "../i18n";
-
-const TASK_LANES_NOTE =
-  "一次只保持一个主通道活跃，必要时再展开辅助通道。";
+import {
+  CODE_MODE_TASK_LANES_NOTE,
+  buildCodeInspectorDisclosureLabel,
+  buildCodeInspectorTabClassName,
+  buildCodeLaneFocusMessage,
+  buildCodeLaneNoticeClassName,
+  isCodeInspectorExpanded,
+  resolveCodeLaneStatusTone
+} from "./strategyWorkspaceCodeModeShell";
 
 const ModuleSidebar = lazy(() => import("../components/ModuleSidebar"));
 const StrategyCodePanel = lazy(() => import("../components/StrategyCodePanel"));
@@ -68,14 +74,12 @@ export default function StrategyWorkspaceCodeTab({
               <div className="workspace-section-card__header workspace-section-card__header--stack">
                 <div>
                   <div className="panel-title strategy-card-title-note">
-                    <StrategyCardNote label="任务通道" note={TASK_LANES_NOTE} />
+                    <StrategyCardNote label="任务通道" note={CODE_MODE_TASK_LANES_NOTE} />
                   </div>
                 </div>
                 <div className="workspace-inspector-stack__controls">
                   <span
-                    className={`status-pill ${
-                      ui.codeLaneState.mode === "manual" ? "warning" : "muted"
-                    }`}
+                    className={`status-pill ${resolveCodeLaneStatusTone(ui.codeLaneState)}`}
                   >
                     {ui.canvasWorkspaceContext.laneStatus}
                   </span>
@@ -91,9 +95,7 @@ export default function StrategyWorkspaceCodeTab({
               </div>
               {ui.codeLaneNotice ? (
                 <div
-                  className={`workspace-inspector-stack__reason workspace-inspector-stack__reason--${ui.codeLaneNotice.tone}${
-                    ui.isCodeLaneNoticeVisible ? "" : " workspace-inspector-stack__reason--faded"
-                  }`}
+                  className={buildCodeLaneNoticeClassName(ui.codeLaneNotice, ui.isCodeLaneNoticeVisible)}
                   role="status"
                   aria-live="polite"
                   onMouseEnter={ui.handleCodeLaneNoticeMouseEnter}
@@ -103,9 +105,7 @@ export default function StrategyWorkspaceCodeTab({
                   <span>{ui.codeLaneNotice.message}</span>
                   {ui.codeLaneNotice.focusLabel ? (
                     <span className="workspace-inspector-stack__reason-focus">
-                      {ui.codeLaneNotice.focusChanged
-                        ? `画布焦点已切换到 ${ui.codeLaneNotice.focusLabel}。`
-                        : `画布焦点保持在 ${ui.codeLaneNotice.focusLabel}。`}
+                      {buildCodeLaneFocusMessage(ui.codeLaneNotice)}
                     </span>
                   ) : null}
                 </div>
@@ -115,11 +115,7 @@ export default function StrategyWorkspaceCodeTab({
                 {codeInspectorPanels.map((panel) => (
                   <button
                     key={panel.id}
-                    className={`workspace-inspector-nav__tab${
-                      activeInspectorDefinition.id === panel.id
-                        ? " workspace-inspector-nav__tab--active"
-                        : ""
-                    }`}
+                    className={buildCodeInspectorTabClassName(activeInspectorDefinition.id, panel.id)}
                     onClick={() => ui.activateCodeInspector(panel.id, { pin: true })}
                   >
                     <strong>{panel.label}</strong>
@@ -139,7 +135,7 @@ export default function StrategyWorkspaceCodeTab({
 
               <div className="workspace-inspector-stack__secondary">
                 {secondaryInspectorDefinitions.map((panel) => {
-                  const isExpanded = ui.expandedCodeInspectors.includes(panel.id);
+                  const isExpanded = isCodeInspectorExpanded(ui.expandedCodeInspectors, panel.id);
                   return (
                     <div key={panel.id} className="workspace-inspector-disclosure">
                       <button
@@ -150,7 +146,7 @@ export default function StrategyWorkspaceCodeTab({
                         }`}
                         onClick={() => ui.toggleExpandedInspector(panel.id)}
                       >
-                        {isExpanded ? "隐藏" : "显示"} {panel.label}通道
+                        {buildCodeInspectorDisclosureLabel(isExpanded, panel.label)}
                       </button>
                       {isExpanded ? (
                         <div className="workspace-inspector-disclosure__panel">
