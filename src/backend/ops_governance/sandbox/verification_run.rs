@@ -5,6 +5,8 @@ use super::{
     determine_sandbox_verdict, load_or_fetch_ai_proposal,
 };
 
+mod report_commit;
+
 /// 可重用的沙箱验证核心逻辑（供 API handler 和异步自动触发调用）
 pub(crate) async fn run_sandbox_verification(
     state: &AppState,
@@ -51,30 +53,7 @@ pub(crate) async fn run_sandbox_verification(
         generated_at_ms: now_ms,
     };
 
-    if let Err(e) = crate::storage_lifecycle::ensure_storage_quota(
-        std::path::Path::new("storage"),
-        "sandbox-reports",
-        crate::storage_lifecycle::StorageLifecycle::Transient,
-    ) {
-        return Err(io_error(e));
-    }
-    persist_json(
-        &state.sandbox_report_store_dir,
-        &report.proposal_id,
-        &report,
-    )
-    .await
-    .map_err(io_error)?;
-    state
-        .sandbox_reports
-        .write()
-        .await
-        .insert(request.proposal_id.clone(), report.clone());
-
-    state
-        .evidence_metrics
-        .report_generation_count
-        .fetch_add(1, Ordering::Relaxed);
+    report_commit::commit_report(state, request, &report).await?;
 
     Ok(report)
 }
