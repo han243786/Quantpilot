@@ -101,13 +101,26 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.store.runtime_history`
     - `frontend.store.runtime_transport_selection`
   - Active child parent:
+    - pending next child selection from child queue.
+  - Closed child parent:
     - `frontend.store.persistence_startup`
-      - Status: active recursive split.
+      - Status: closed after recursive subchild queue finished.
+      - Parent closeout record: `markdown/00-frontend-refactor-governance/records/FE-0131-frontend-store-persistence-startup-parent-closeout.md`
       - Current subchild queue:
         - closed.
-      - Active nested child parent:
+      - Closed subchild leaves:
+        - `frontend.store.persistence_startup.startup_actions`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0123-frontend-store-startup-actions-closeout.md`
+          - Public surface: `frontend/src/store/graphStoreStartupActions.js`
+        - `frontend.store.persistence_startup.graph_lifecycle_actions`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0124-frontend-store-graph-lifecycle-actions-closeout.md`
+          - Public surface: `frontend/src/store/graphStoreGraphLifecycleActions.js`
+        - `frontend.store.persistence_startup.version_audit_actions`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0125-frontend-store-version-audit-actions-closeout.md`
+          - Public surface: `frontend/src/store/graphStoreVersionAuditActions.js`
+      - Closed nested child parent:
         - `frontend.store.persistence_startup.persistence_helper_contract`
-          - Status: active recursive split.
+          - Status: closed after recursive subchild queue finished.
           - Current subchild queue:
             - closed.
           - Closed subchild leaves:
@@ -126,16 +139,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
             - `frontend.store.persistence_startup.persistence_helper_contract.version_audit_normalizers`
               - Record: `markdown/00-frontend-refactor-governance/records/FE-0130-frontend-store-version-audit-normalizers-closeout.md`
               - Public surface: `frontend/src/store/graphStoreVersionAuditNormalizers.js`
-      - Closed subchild leaves:
-        - `frontend.store.persistence_startup.startup_actions`
-          - Record: `markdown/00-frontend-refactor-governance/records/FE-0123-frontend-store-startup-actions-closeout.md`
-          - Public surface: `frontend/src/store/graphStoreStartupActions.js`
-        - `frontend.store.persistence_startup.graph_lifecycle_actions`
-          - Record: `markdown/00-frontend-refactor-governance/records/FE-0124-frontend-store-graph-lifecycle-actions-closeout.md`
-          - Public surface: `frontend/src/store/graphStoreGraphLifecycleActions.js`
-        - `frontend.store.persistence_startup.version_audit_actions`
-          - Record: `markdown/00-frontend-refactor-governance/records/FE-0125-frontend-store-version-audit-actions-closeout.md`
-          - Public surface: `frontend/src/store/graphStoreVersionAuditActions.js`
   - Closed child leaves:
     - `frontend.store.root_shell`
       - Record: `markdown/00-frontend-refactor-governance/records/FE-0122-frontend-store-root-shell-closeout.md`
