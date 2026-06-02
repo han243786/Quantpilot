@@ -360,4 +360,78 @@ describe("RuntimeDiagnosticsPanel", () => {
     );
     expect(screen.getByTestId("runtime-diagnostics-risk-detail")).toHaveTextContent("0.4500");
   });
+
+  it("renders guidance instead of the diagnostics surface when no active node can be resolved", () => {
+    const { container } = render(
+      <RuntimeDiagnosticsPanel
+        graph={{ nodes: [] }}
+        runtime={{ highlightedNodeIds: [], events: [] }}
+      />
+    );
+
+    expect(container.querySelector(".runtime-diagnostics-card")).not.toBeNull();
+    expect(screen.queryByTestId("runtime-diagnostics-panel")).not.toBeInTheDocument();
+  });
+
+  it("falls back to the graph store selected-node action when no explicit selector is provided", () => {
+    const graph = {
+      nodes: [
+        {
+          id: "risk",
+          name: "Risk",
+          type: "risk",
+          runtime_state: {
+            status: "warning",
+            last_event_type: "RiskDecisionProduced",
+            last_event_time: 1_710_000_008_000,
+            last_message: "Risk decision produced",
+            metrics: {},
+            error: null
+          }
+        },
+        {
+          id: "execution",
+          name: "Execution",
+          type: "execution",
+          runtime_state: {
+            status: "running",
+            last_event_type: "ExecutionPlanned",
+            last_event_time: 1_710_000_010_000,
+            last_message: "Execution planned",
+            metrics: {},
+            error: null
+          }
+        }
+      ]
+    };
+    const runtime = {
+      highlightedNodeIds: ["risk", "execution"],
+      events: [
+        {
+          event_id: "evt_risk_1",
+          event_type: "RiskDecisionProduced",
+          node_id: "risk",
+          event_time_ms: 1_710_000_008_000,
+          severity: "Warn",
+          summary: "Risk decision produced",
+          payload: { status: "Clamped" }
+        },
+        {
+          event_id: "evt_exec_1",
+          event_type: "ExecutionPlanned",
+          node_id: "execution",
+          event_time_ms: 1_710_000_010_000,
+          severity: "Info",
+          summary: "Execution planned",
+          payload: { side: "Buy", qty: 0.25 }
+        }
+      ]
+    };
+
+    render(<RuntimeDiagnosticsPanel graph={graph} runtime={runtime} selectedNodeId="risk" />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Execution" }));
+
+    expect(useGraphStore.getState().selectedNodeId).toBe("execution");
+  });
 });
