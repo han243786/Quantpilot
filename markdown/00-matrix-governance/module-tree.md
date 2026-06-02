@@ -844,6 +844,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/storage_security/credential_api.rs`
 - `src/backend/storage_security/credential_vault.rs`
 - `src/backend/storage_security/credential_vault/implementation.rs`
+- `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
 - `src/backend/ops_governance/alerts.rs`
 - `src/backend/ops_governance/chaos.rs`
@@ -6070,6 +6071,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/backend/storage_security/credential_api.rs`
 - `src/backend/storage_security/credential_vault.rs`
 - `src/backend/storage_security/credential_vault/implementation.rs`
+- `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
 - `src/storage_lifecycle.rs`
 - `src/credential_vault.rs`
@@ -6139,6 +6141,8 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_vault_implementation.crypto_codec` 被选为下一轮内部安全子叶；该子叶只冻结 nonce/tag constants、versioned ciphertext framing、AES-GCM seal/open、AAD、decrypt version routing 与 corrupt payload handling，不拥有 machine-key cache/init、key derivation internals、vault persistence、backup restore、service CRUD、secret pattern extraction 或 release transition。下一步进入 BE-001JR-01 baseline_plan。
 **最新等价基线(BE-001JR-01)**:
 `backend.storage_security.credential_vault_implementation.crypto_codec` 冻结 `NONCE_LEN = 12`、`TAG_LEN = 16`、`encrypt_with_machine_key` 与 `decrypt_with_machine_key`；BE-001JR-02 只能迁移 versioned ciphertext framing、AES-GCM seal/open、AAD、nonce/tag handling、decrypt version routing 与 corrupt payload checks，不得移动 machine-key cache/init、key derivation internals、vault persistence、backup restore、service CRUD、secret pattern extraction 或 root compatibility shim。
+**最新抽离记录(BE-001JR-02)**:
+`backend.storage_security.credential_vault_implementation.crypto_codec` 已迁入 `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`；`src/backend/storage_security/credential_vault/implementation.rs` 只通过 `pub(super)` codec helper 调用该子模块。machine-key cache/init 与 key derivation internals 仍由 `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs` 持有，vault persistence、backup restore、service CRUD、secret pattern extraction、root shim 与 release transition 均未迁移。
 
 **回归保护**:
 `cargo test credential`；`cargo test storage_lifecycle`；涉及日志时复核 safe log 测试。
@@ -7416,3 +7420,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001JP-03)**: `backend.storage_security.credential_vault_implementation.machine_key_management` backend.storage_security.credential_vault_implementation.machine_key_management single leaf closeout stops further split；下一步: BE-001JQ-01 backend.storage_security.credential_vault_implementation parent_residual_judgment。
 **最新状态补充(BE-001JQ-01)**: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation parent residual judgment selects crypto_codec；下一步: BE-001JR-01 backend.storage_security.credential_vault_implementation.crypto_codec baseline_plan。
 **最新状态补充(BE-001JR-01)**: `backend.storage_security.credential_vault_implementation.crypto_codec` backend.storage_security.credential_vault_implementation.crypto_codec equivalence baseline and extraction plan；下一步: BE-001JR-02 backend.storage_security.credential_vault_implementation.crypto_codec extract_closeout。
+**最新状态补充(BE-001JR-02)**: `backend.storage_security.credential_vault_implementation.crypto_codec` backend.storage_security.credential_vault_implementation.crypto_codec actual extraction complete；下一步: BE-001JR-03 backend.storage_security.credential_vault_implementation.crypto_codec single_leaf_closeout。
