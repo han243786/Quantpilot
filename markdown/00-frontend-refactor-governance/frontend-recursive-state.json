@@ -2,11 +2,19 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.design_system_styles",
-  "current_step": "FE-0178",
-  "current_phase": "frontend_design_system_styles_global_style_entry_closed",
+  "current_parent": "frontend.design_system_styles.design_tokens_and_native_controls",
+  "parent_return": "frontend.design_system_styles",
+  "current_step": "FE-0179",
+  "current_phase": "frontend_design_system_core_baseline",
   "current_child_queue": [
-    "frontend.design_system_styles.design_tokens_and_native_controls",
+    "frontend.design_system_styles.design_tokens_and_native_controls.reset_and_native_controls",
+    "frontend.design_system_styles.design_tokens_and_native_controls.theme_tokens_and_aliases",
+    "frontend.design_system_styles.design_tokens_and_native_controls.focus_selection_scrollbars",
+    "frontend.design_system_styles.design_tokens_and_native_controls.shell_chrome_styles",
+    "frontend.design_system_styles.design_tokens_and_native_controls.workspace_navigation_primitives",
+    "frontend.design_system_styles.design_tokens_and_native_controls.overlays_resizers_motion"
+  ],
+  "return_child_queue_after_closeout": [
     "frontend.design_system_styles.shared_component_primitives",
     "frontend.design_system_styles.responsive_panel_overrides",
     "frontend.design_system_styles.page_style_contracts"

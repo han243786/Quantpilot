@@ -43,12 +43,24 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/BacktestComparePage.jsx`
     - `frontend/src/components/*`
   - Child queue:
-    - `frontend.design_system_styles.design_tokens_and_native_controls`
     - `frontend.design_system_styles.shared_component_primitives`
     - `frontend.design_system_styles.responsive_panel_overrides`
     - `frontend.design_system_styles.page_style_contracts`
   - Active child parent:
-    - none yet.
+    - `frontend.design_system_styles.design_tokens_and_native_controls`
+      - Status: child parent baseline established.
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0179-frontend-design-system-core-baseline.md`
+      - Current owned and split-target files:
+        - `frontend/src/design-system.css`
+      - Current subchild queue:
+        - `frontend.design_system_styles.design_tokens_and_native_controls.reset_and_native_controls`
+        - `frontend.design_system_styles.design_tokens_and_native_controls.theme_tokens_and_aliases`
+        - `frontend.design_system_styles.design_tokens_and_native_controls.focus_selection_scrollbars`
+        - `frontend.design_system_styles.design_tokens_and_native_controls.shell_chrome_styles`
+        - `frontend.design_system_styles.design_tokens_and_native_controls.workspace_navigation_primitives`
+        - `frontend.design_system_styles.design_tokens_and_native_controls.overlays_resizers_motion`
+      - Closed subchild leaves:
+        - none yet.
   - Closed child leaves:
     - `frontend.design_system_styles.global_style_entry`
       - Record: `markdown/00-frontend-refactor-governance/records/FE-0178-frontend-design-system-global-style-entry-closeout.md`
