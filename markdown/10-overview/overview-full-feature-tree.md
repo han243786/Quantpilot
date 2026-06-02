@@ -271,6 +271,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/graph_compile/quantscript_graph/graph_to_qs_generation.rs`
 - `src/backend/storage_security/credential_api.rs`
 - `src/backend/storage_security/credential_vault.rs`
+- `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/backend/ops_governance/alerts.rs`
 - `src/backend/ops_governance/chaos.rs`
 - `src/backend/ops_governance/hotswap.rs`
@@ -2173,7 +2174,8 @@ storage/
 - `src/compile_artifact_builders.rs` — 编译产物组装; 改策略包/迁移包结构时改这里
 - `src/compile_diagnostics.rs` — 编译诊断; 改编译错误/警告格式时改这里
 - `src/credential_api.rs` — 凭证管理 API (set/list/delete); 改凭证 CRUD 时改这里
-- `src/credential_vault.rs` — 凭证保险库, AES-256-GCM; 改加密/存储/原子写入时改这里
+- `src/backend/storage_security/credential_vault/implementation.rs` — 凭证保险库实现, AES-256-GCM、key derivation、backup restore、atomic save 和 service CRUD owner; 改加密/存储/原子写入时改这里
+- `src/credential_vault.rs` — credential vault root compatibility shim; real implementation lives in `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/error_codes.rs` — 全局错误码注册表; 新增诊断码或 API error_code 时改这里
 - `src/formal_quantscript_authoring_types.rs` — QS 正式编写类型; 改 QS 编写 API 类型时改这里
 - `src/frontend_api_types.rs` — 前端 API 类型定义; 改前后端接口类型时改这里
@@ -3352,3 +3354,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/631-backend.storage_security.parent_residual_judgment.credential_vault_implementation.md` - v4.16.0 BE-001JL-01 backend.storage_security parent residual judgment selects credential_vault_implementation
 递归边界补充: BE-001JM-01 `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation safety baseline and extraction plan；下一步: BE-001JM-02 backend.storage_security.credential_vault_implementation extract_closeout。
 - `markdown/06-milestones/v4.16.0/632-backend.storage_security.credential_vault_implementation.baseline_plan.md` - v4.16.0 BE-001JM-01 backend.storage_security.credential_vault_implementation safety baseline and extraction plan
+递归边界补充: BE-001JM-02 `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation actual extraction complete；下一步: BE-001JN-01 backend.storage_security.credential_vault_implementation single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/633-backend.storage_security.credential_vault_implementation.extract_closeout.md` - v4.16.0 BE-001JM-02 backend.storage_security.credential_vault_implementation actual extraction complete
