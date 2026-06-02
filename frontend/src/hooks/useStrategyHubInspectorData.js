@@ -1,14 +1,14 @@
 import { useMemo } from "react";
 import {
-  getStrategyInspectorNextMove,
   projectInspectorBacktests,
   projectInspectorCompareQueue,
-  projectInspectorRuns
+  projectInspectorRuns,
+  projectStrategyHubInspectorOverview
 } from "../utils/strategyHubInspectorProjection";
 
 export function useStrategyHubInspectorData(selectedStrategy, compareSelection) {
-  const nextMove = useMemo(
-    () => getStrategyInspectorNextMove(selectedStrategy),
+  const overview = useMemo(
+    () => projectStrategyHubInspectorOverview(selectedStrategy),
     [selectedStrategy]
   );
 
@@ -25,7 +25,7 @@ export function useStrategyHubInspectorData(selectedStrategy, compareSelection) 
   );
 
   return {
-    nextMove,
+    overview,
     recentBacktests,
     recentRuns,
     compareQueue
