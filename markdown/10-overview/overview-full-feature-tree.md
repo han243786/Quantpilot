@@ -275,6 +275,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs`
+- `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/atomic_save_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/load_restore_entry.rs`
 - `src/backend/ops_governance/alerts.rs`
 - `src/backend/ops_governance/chaos.rs`
@@ -2181,7 +2182,8 @@ storage/
 - `src/backend/storage_security/credential_vault/implementation.rs` — 凭证保险库实现 parent owner, 保留 public API、service CRUD、secret pattern extraction 和 type/tests; 改 CRUD 或 public surface 时改这里
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs` — credential vault AES-GCM codec child; 改 nonce/tag、version framing、AAD、encrypt/decrypt 分支时改这里
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs` — credential vault machine-key cache/init and key derivation child; 改 machine key 文件、cache、PBKDF2/SHA-256 派生时改这里
-- `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs` — credential vault persistence/restore parent child; 改 load/save 父级委托或 save rollback、fsync、permission hardening 时改这里
+- `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs` — credential vault persistence/restore parent child; 改 load/save 父级委托时改这里
+- `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/atomic_save_commit.rs` — credential vault atomic save commit child; 改 save tmp/bak rollback、fsync、backup cleanup 或 Unix/Windows permission hardening 时改这里
 - `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore/load_restore_entry.rs` — credential vault load/restore entry child; 改 storage-root load、`.bak` restore、existing encrypted read/decode、fresh vault creation 或 initial encrypted write 时改这里
 - `src/credential_vault.rs` — credential vault root compatibility shim; real implementation lives in `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/error_codes.rs` — 全局错误码注册表; 新增诊断码或 API error_code 时改这里
@@ -3402,3 +3404,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/651-backend.storage_security.credential_vault_implementation.vault_persistence_restore.parent_residual_judgment.atomic_save_commit.md` - v4.16.0 BE-001JW-01 backend.storage_security.credential_vault_implementation.vault_persistence_restore parent residual judgment selects atomic_save_commit
 递归边界补充: BE-001JX-01 `backend.storage_security.credential_vault_implementation.vault_persistence_restore.atomic_save_commit` backend.storage_security.credential_vault_implementation.vault_persistence_restore.atomic_save_commit equivalence baseline and extraction plan；下一步: BE-001JX-02 backend.storage_security.credential_vault_implementation.vault_persistence_restore.atomic_save_commit extract_closeout。
 - `markdown/06-milestones/v4.16.0/652-backend.storage_security.credential_vault_implementation.vault_persistence_restore.atomic_save_commit.baseline_plan.md` - v4.16.0 BE-001JX-01 backend.storage_security.credential_vault_implementation.vault_persistence_restore.atomic_save_commit equivalence baseline and extraction plan
+递归边界补充: BE-001JX-02 `backend.storage_security.credential_vault_implementation.vault_persistence_restore.atomic_save_commit` backend.storage_security.credential_vault_implementation.vault_persistence_restore.atomic_save_commit actual extraction complete；下一步: BE-001JX-03 backend.storage_security.credential_vault_implementation.vault_persistence_restore.atomic_save_commit single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/653-backend.storage_security.credential_vault_implementation.vault_persistence_restore.atomic_save_commit.extract_closeout.md` - v4.16.0 BE-001JX-02 backend.storage_security.credential_vault_implementation.vault_persistence_restore.atomic_save_commit actual extraction complete
