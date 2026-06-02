@@ -826,3 +826,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001LQ-01 `backend.ops_governance.sandbox.report_api` backend.ops_governance.sandbox.report_api equivalence baseline and extraction plan；下一步: BE-001LQ-02 backend.ops_governance.sandbox.report_api extract_closeout。
 - BE-001LQ-02 `backend.ops_governance.sandbox.report_api` backend.ops_governance.sandbox.report_api actual extraction complete；下一步: BE-001LQ-03 backend.ops_governance.sandbox.report_api single_leaf_closeout。
 - BE-001LQ-03 `backend.ops_governance.sandbox.report_api` backend.ops_governance.sandbox.report_api single leaf closeout stops further split；下一步: BE-001LR-01 backend.ops_governance.sandbox parent_residual_judgment。
+- BE-001LR-01 `backend.ops_governance.sandbox` backend.ops_governance.sandbox parent residual judgment selects verification_run；下一步: BE-001LS-01 backend.ops_governance.sandbox.verification_run baseline_plan。
