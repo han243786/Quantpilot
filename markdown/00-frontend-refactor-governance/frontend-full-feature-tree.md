@@ -162,6 +162,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
 - Owned and split-target files:
   - `frontend/src/pages/StrategyWorkspacePage.jsx`
   - `frontend/src/pages/StrategyWorkspacePage.codeMode.test.jsx`
+  - `frontend/src/pages/strategyWorkspaceRouteShell.js`
+  - `frontend/src/pages/strategyWorkspaceRouteShell.test.js`
   - `frontend/src/pages/StrategyWorkspacePageSections.jsx`
   - `frontend/src/pages/StrategyWorkspacePanelFallbacks.jsx`
   - `frontend/src/pages/StrategyWorkspaceDashboard.jsx`
@@ -196,3 +198,6 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/components/TopToolbar.failureNotices.test.jsx`
   - `frontend/src/components/TopToolbar.formalSourceMode.test.jsx`
   - `frontend/src/components/TopToolbar.persistenceFailure.test.jsx`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0039-frontend-strategy-workspace-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0040-frontend-strategy-workspace-route-shell-closeout.md`

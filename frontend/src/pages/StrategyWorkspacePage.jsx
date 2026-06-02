@@ -14,6 +14,13 @@ import { useGraphStore } from "../store/graphStore";
 import { projectCapabilityView } from "../capabilities/capabilityProjection";
 import TopToolbar from "../components/TopToolbar";
 import { StrategyRouteBar } from "./BacktestAnalysisLayout";
+import {
+  CODE_INSPECTOR_DEFS,
+  buildWorkspaceTabPanelProps,
+  buildWorkspaceTabs,
+  isWorkspaceSurfaceVisible,
+  shouldMountWorkspaceTab
+} from "./strategyWorkspaceRouteShell";
 
 const StrategyWorkspaceDashboard = lazy(() => import("./StrategyWorkspaceDashboard"));
 const StrategyWorkspaceOverviewTab = lazy(() => import("./StrategyWorkspaceOverviewTab"));
@@ -23,20 +30,6 @@ const StrategyWorkspaceResearchTab = lazy(() => import("./StrategyWorkspaceResea
 const StrategyWorkspaceMonitorTab = lazy(() => import("./StrategyWorkspaceMonitorTab"));
 const StrategyWorkspaceDebugTab = lazy(() => import("./StrategyWorkspaceDebugTab"));
 const StrategyWorkspaceSourceTab = lazy(() => import("./StrategyWorkspaceSourceTab"));
-
-// v1.3.3: 常量定义在组件外部，渲染时通过t()包裹
-const WORKSPACE_TAB_DEFS = [
-  { id: "dashboard", labelKey: "总览", kickerKey: "任务总览" },
-  { id: "code", labelKey: "构建", kickerKey: "构建工作区" },
-  { id: "research", labelKey: "研究回测", kickerKey: "研究回测工作区" },
-  { id: "monitor", labelKey: "运行监控", kickerKey: "运行监控工作区" },
-  { id: "source", labelKey: "源码", kickerKey: "源码工作区" }
-];
-const CODE_INSPECTOR_DEFS = [
-  { id: "params", label: "配置" },
-  { id: "diagnostics", label: "检查" },
-  { id: "code", label: "源码" }
-];
 
 export default function StrategyWorkspacePage({ strategyId }) {
   const { t } = useI18n();
@@ -110,24 +103,18 @@ export default function StrategyWorkspacePage({ strategyId }) {
     [capabilities, capabilityMessage, capabilitySource, capabilityStatus]
   );
   const workspaceTabs = useMemo(
-    () =>
-      WORKSPACE_TAB_DEFS.map((tab) => ({
-        ...tab,
-        capability: capabilityView.workspace.surfaces[tab.id]
-      })).filter((tab) => tab.capability?.visible),
+    () => buildWorkspaceTabs(capabilityView),
     [capabilityView.workspace.surfaces]
   );
   const openBacktestsAction = capabilityView.uiActions.actions.open_backtests;
-  const isWorkspaceSurfaceVisible = (surfaceKey) =>
-    capabilityView.workspace.surfaces[surfaceKey]?.visible === true;
   const shouldMountTab = (surfaceKey) =>
-    isWorkspaceSurfaceVisible(surfaceKey) &&
-    (ui.activeTab === surfaceKey || visitedTabs.has(surfaceKey));
-  const tabPanelProps = (surfaceKey) => ({
-    className: "workspace-tab-panel",
-    style: { display: ui.activeTab === surfaceKey ? "block" : "none" },
-    "aria-hidden": ui.activeTab !== surfaceKey
-  });
+    shouldMountWorkspaceTab({
+      capabilityView,
+      activeTab: ui.activeTab,
+      visitedTabs,
+      surfaceKey
+    });
+  const tabPanelProps = (surfaceKey) => buildWorkspaceTabPanelProps(ui.activeTab, surfaceKey);
 
   useEffect(() => {
     setVisitedTabs((previous) => {
@@ -140,7 +127,7 @@ export default function StrategyWorkspacePage({ strategyId }) {
 
   useEffect(() => {
     if (ui.status !== "ready") return;
-    if (isWorkspaceSurfaceVisible(ui.activeTab)) return;
+    if (isWorkspaceSurfaceVisible(capabilityView, ui.activeTab)) return;
     const nextTab = workspaceTabs.find((tab) => tab.capability?.visible);
     if (nextTab) {
       ui.setActiveTab(nextTab.id);
