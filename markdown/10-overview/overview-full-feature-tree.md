@@ -3342,3 +3342,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/626-backend.storage_security.credential_api.single_leaf_closeout.md` - v4.16.0 BE-001JH-01 backend.storage_security.credential_api single leaf closeout stops further facade split
 递归边界补充: BE-001JI-01 `backend.storage_security` backend.storage_security parent residual judgment selects credential_vault；下一步: BE-001JJ-01 backend.storage_security.credential_vault baseline_plan。
 - `markdown/06-milestones/v4.16.0/627-backend.storage_security.parent_residual_judgment.credential_vault.md` - v4.16.0 BE-001JI-01 backend.storage_security parent residual judgment selects credential_vault
+递归边界补充: BE-001JJ-01 `backend.storage_security.credential_vault` backend.storage_security.credential_vault re-export facade baseline and plan；下一步: BE-001JJ-02 backend.storage_security.credential_vault extract_closeout。
+- `markdown/06-milestones/v4.16.0/628-backend.storage_security.credential_vault.baseline_plan.md` - v4.16.0 BE-001JJ-01 backend.storage_security.credential_vault re-export facade baseline and plan
