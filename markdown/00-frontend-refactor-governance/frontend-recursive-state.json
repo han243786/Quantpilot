@@ -3,8 +3,8 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.runtime_panels",
-  "current_step": "FE-0102",
-  "current_phase": "frontend_runtime_panels_runtime_diagnostics_surface_closeout",
+  "current_step": "FE-0103",
+  "current_phase": "frontend_runtime_panels_evidence_timeline_reports_closeout",
   "current_child_queue": [
     "frontend.runtime_panels.event_stream_shell",
     "frontend.runtime_panels.strategy_research_model",
@@ -82,7 +82,8 @@
     "frontend.runtime_panels.strategy_research_model",
     "frontend.runtime_panels.history_sections",
     "frontend.runtime_panels.event_feed_and_candles",
-    "frontend.runtime_panels.runtime_diagnostics_surface"
+    "frontend.runtime_panels.runtime_diagnostics_surface",
+    "frontend.runtime_panels.evidence_timeline_reports"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

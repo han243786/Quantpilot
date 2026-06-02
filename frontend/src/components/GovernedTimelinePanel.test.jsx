@@ -94,4 +94,38 @@ describe("GovernedTimelinePanel", () => {
     expect(selected).toHaveTextContent("MAX_WEIGHT_CLAMPED");
     expect(selected).toHaveTextContent("sha256:capab...abcdef");
   });
+
+  it("filters timeline evidence by severity and module without leaking stale selection", () => {
+    render(<GovernedTimelinePanel source={{ timeline }} testId="timeline-filter" />);
+
+    fireEvent.change(screen.getByTestId("timeline-filter-severity-filter"), {
+      target: { value: "Warn" }
+    });
+    expect(screen.getByTestId("timeline-filter-item-evt_risk")).toBeInTheDocument();
+    expect(screen.queryByTestId("timeline-filter-item-evt_capability")).toBeNull();
+    expect(screen.queryByTestId("timeline-filter-item-evt_agent_debug")).toBeNull();
+    expect(screen.getByTestId("timeline-filter-selected-detail")).toHaveTextContent("evt_risk");
+
+    fireEvent.change(screen.getByTestId("timeline-filter-module-filter"), {
+      target: { value: "runtime_governance" }
+    });
+    expect(screen.queryByTestId("timeline-filter-stage-risk")).toBeNull();
+    expect(screen.queryByTestId("timeline-filter-selected-detail")).toBeNull();
+
+    fireEvent.change(screen.getByTestId("timeline-filter-severity-filter"), {
+      target: { value: "all" }
+    });
+    expect(screen.getByTestId("timeline-filter-item-evt_capability")).toBeInTheDocument();
+    expect(screen.getByTestId("timeline-filter-selected-detail")).toHaveTextContent(
+      "evt_capability"
+    );
+  });
+
+  it("keeps empty timeline evidence inspectable without selecting a phantom event", () => {
+    render(<GovernedTimelinePanel source={{ timeline: [] }} testId="timeline-empty" />);
+
+    expect(screen.getByTestId("timeline-empty-retained-count")).toHaveTextContent("0/0");
+    expect(screen.queryByTestId("timeline-empty-selected-detail")).toBeNull();
+    expect(screen.queryByTestId("timeline-empty-stage-system")).toBeNull();
+  });
 });

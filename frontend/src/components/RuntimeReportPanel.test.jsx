@@ -166,4 +166,43 @@ describe("RuntimeReportPanel", () => {
     );
     expect(screen.getByTestId("runtime-report-reveal")).toHaveTextContent("打开报告");
   });
+
+  it("stays dormant until the report source identity is complete", () => {
+    const { container } = render(<RuntimeReportPanel sourceKind="run" />);
+
+    expect(container).toBeEmptyDOMElement();
+    expect(fetchRuntimeReports).not.toHaveBeenCalled();
+    expect(createRuntimeReport).not.toHaveBeenCalled();
+  });
+
+  it("filters reports to the active source identity", async () => {
+    fetchRuntimeReports.mockResolvedValueOnce([
+      readyReport({
+        report_id: "report_run_other_abcdef123456",
+        source_id: "other_run"
+      }),
+      readyReport()
+    ]);
+
+    render(<RuntimeReportPanel sourceKind="run" sourceId="run_001" />);
+
+    await waitFor(() => expect(fetchRuntimeReports).toHaveBeenCalled());
+
+    expect(screen.getByTestId("runtime-report-list")).toHaveTextContent(
+      "report_run_run_001_abcdef123456"
+    );
+    expect(screen.queryByTestId("runtime-report-list-item-report_run_other_abcdef123456")).toBeNull();
+    expect(screen.getByTestId("runtime-report-panel")).not.toHaveTextContent("other_run");
+  });
+
+  it("surfaces refresh failures without creating a stale report entry", async () => {
+    fetchRuntimeReports.mockRejectedValueOnce(new Error("report service offline"));
+
+    render(<RuntimeReportPanel sourceKind="run" sourceId="run_001" />);
+
+    await waitFor(() =>
+      expect(screen.getByTestId("runtime-report-panel")).toHaveTextContent("report service offline")
+    );
+    expect(screen.queryByTestId("runtime-report-list")).toBeNull();
+  });
 });

@@ -91,15 +91,16 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.runtime_panels.history_sections`
     - `frontend.runtime_panels.event_feed_and_candles`
     - `frontend.runtime_panels.runtime_diagnostics_surface`
-    - `frontend.runtime_panels.history_sections`
-    - `frontend.runtime_panels.event_feed_and_candles`
-    - `frontend.runtime_panels.runtime_diagnostics_surface`
     - `frontend.runtime_panels.evidence_timeline_reports`
     - `frontend.runtime_panels.mutation_controls`
     - `frontend.runtime_panels.replay_and_explanations`
   - Closed child leaves:
     - `frontend.runtime_panels.event_stream_shell`
     - `frontend.runtime_panels.strategy_research_model`
+    - `frontend.runtime_panels.history_sections`
+    - `frontend.runtime_panels.event_feed_and_candles`
+    - `frontend.runtime_panels.runtime_diagnostics_surface`
+    - `frontend.runtime_panels.evidence_timeline_reports`
 
 ## Last Closed Parent
 
