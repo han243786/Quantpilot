@@ -2,10 +2,13 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.store.runtime_session",
-  "current_step": "FE-0166",
-  "current_phase": "frontend_store_runtime_session_lifecycle_stop_reset_actions_closed",
-  "current_child_queue": [],
+  "current_parent": "frontend.store",
+  "current_step": "FE-0167",
+  "current_phase": "frontend_store_runtime_session_parent_closed",
+  "current_child_queue": [
+    "frontend.store.runtime_history",
+    "frontend.store.runtime_transport_selection"
+  ],
   "next_parent": "frontend.design_system_styles",
   "closed_parents": [
     "frontend.app_shell",
@@ -130,7 +133,8 @@
     "frontend.store.runtime_session.backtest_action",
     "frontend.store.runtime_session.v4_simulation_action",
     "frontend.store.runtime_session.backtest_experiment_action",
-    "frontend.store.runtime_session.lifecycle_stop_reset_actions"
+    "frontend.store.runtime_session.lifecycle_stop_reset_actions",
+    "frontend.store.runtime_session"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
