@@ -3,8 +3,8 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.runtime_panels",
-  "current_step": "FE-0100",
-  "current_phase": "frontend_runtime_panels_history_sections_closeout",
+  "current_step": "FE-0101",
+  "current_phase": "frontend_runtime_panels_event_feed_and_candles_closeout",
   "current_child_queue": [
     "frontend.runtime_panels.event_stream_shell",
     "frontend.runtime_panels.strategy_research_model",
@@ -80,7 +80,8 @@
     "frontend.graph_editor.legacy_editor_page_shell",
     "frontend.runtime_panels.event_stream_shell",
     "frontend.runtime_panels.strategy_research_model",
-    "frontend.runtime_panels.history_sections"
+    "frontend.runtime_panels.history_sections",
+    "frontend.runtime_panels.event_feed_and_candles"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

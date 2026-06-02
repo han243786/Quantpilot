@@ -24,6 +24,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/components/EventStreamPanel.nodeFocus.test.jsx`
     - `frontend/src/components/EventStreamPanel.refreshFeedback.test.jsx`
     - `frontend/src/components/EventStreamPanel.runtimeArtifactActions.test.jsx`
+    - `frontend/src/components/EventFeedSection.test.jsx`
     - `frontend/src/components/BacktestHistorySection.jsx`
     - `frontend/src/components/BacktestHistorySection.test.jsx`
     - `frontend/src/components/RunHistorySection.jsx`
@@ -88,6 +89,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.runtime_panels.event_stream_shell`
     - `frontend.runtime_panels.strategy_research_model`
     - `frontend.runtime_panels.history_sections`
+    - `frontend.runtime_panels.event_feed_and_candles`
     - `frontend.runtime_panels.history_sections`
     - `frontend.runtime_panels.event_feed_and_candles`
     - `frontend.runtime_panels.runtime_diagnostics_surface`
