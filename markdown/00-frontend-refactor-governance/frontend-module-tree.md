@@ -89,12 +89,12 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
             - `frontend/src/pages/backtest-analysis.css`
             - `frontend/src/pages/backtest-analysis/shell-tokens-surface-chrome.css`
             - `frontend/src/pages/backtest-analysis/route-bar-and-typography.css`
+            - `frontend/src/pages/backtest-analysis/summary-cards-page-grid.css`
           - Important consumers:
             - `frontend/src/pages/backtestViews/shared/BacktestAnalysisLayout.jsx`
             - `frontend/src/pages/backtestViews/detailPageAnalysis/*`
             - `frontend/src/pages/backtestViews/comparePageAnalysis/*`
           - Current subchild queue:
-            - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.summary_cards_and_page_grid`
             - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.analysis_sections_and_card_contracts`
             - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.responsive_compare_motion_overrides`
           - Closed subchild leaves:
@@ -107,6 +107,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
               - Record: `markdown/00-frontend-refactor-governance/records/FE-0206-frontend-backtest-analysis-route-bar-typography-closeout.md`
               - Public surface:
                 - `frontend/src/pages/backtest-analysis/route-bar-and-typography.css`
+                - `frontend/src/pages/backtest-analysis.css`
+            - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.summary_cards_and_page_grid`
+              - Record: `markdown/00-frontend-refactor-governance/records/FE-0207-frontend-backtest-analysis-summary-cards-page-grid-closeout.md`
+              - Public surface:
+                - `frontend/src/pages/backtest-analysis/summary-cards-page-grid.css`
                 - `frontend/src/pages/backtest-analysis.css`
       - Closed subchild leaves:
         - none.
