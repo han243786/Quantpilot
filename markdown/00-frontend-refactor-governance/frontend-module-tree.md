@@ -98,12 +98,20 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/BacktestDetailPage.jsx`
     - `frontend/src/pages/BacktestComparePage.jsx`
   - Child queue:
-    - `frontend.store.compile_flow`
     - `frontend.store.runtime_session`
     - `frontend.store.runtime_history`
     - `frontend.store.runtime_transport_selection`
   - Active child parent:
-    - none.
+    - `frontend.store.compile_flow`
+      - Status: active recursive split.
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0149-frontend-store-compile-flow-baseline.md`
+      - Current subchild queue:
+        - `frontend.store.compile_flow.source_apply_actions`
+        - `frontend.store.compile_flow.export_actions`
+        - `frontend.store.compile_flow.current_graph_compile_action`
+        - `frontend.store.compile_flow.backend_compile_flow_contract`
+        - `frontend.store.compile_flow.outcome_state_contract`
+        - `frontend.store.compile_flow.compile_helper_contract`
   - Closed child parent:
     - `frontend.store.editor_actions`
       - Status: closed after recursive subchild queue finished.

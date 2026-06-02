@@ -702,3 +702,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0146-frontend-store-editor-edge-remove-selected-action-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0147-frontend-store-editor-edge-mutation-actions-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0148-frontend-store-editor-actions-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0149-frontend-store-compile-flow-baseline.md`
