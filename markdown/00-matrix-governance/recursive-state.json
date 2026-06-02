@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001LF-01",
-  "last_committed_sha": "37d8c4bf",
-  "current_parent": "backend.storage_security.credential_api_handler_implementation.delete_mutation.delete_commit",
-  "current_step": "BE-001LF-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001LF-02",
+  "last_committed_sha": "f25524ec",
+  "current_parent": "backend.storage_security.credential_api_handler_implementation.delete_mutation",
+  "current_step": "BE-001LG-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -36,7 +36,8 @@
     "storage_security.credential_api_handler_implementation.set_mutation.service_and_fields_validation",
     "storage_security.credential_api_handler_implementation.set_mutation.storage_commit",
     "storage_security.credential_api_handler_implementation.set_mutation",
-    "storage_security.credential_api_handler_implementation.delete_mutation.service_path_validation"
+    "storage_security.credential_api_handler_implementation.delete_mutation.service_path_validation",
+    "storage_security.credential_api_handler_implementation.delete_mutation.delete_commit"
   ],
   "open_residuals": [
     "storage_security",
@@ -44,7 +45,7 @@
     "app_state_wiring",
     "test_support"
   ],
-  "next_recommended_child": "backend.storage_security.credential_api_handler_implementation.delete_mutation.delete_commit",
+  "next_recommended_child": "backend.storage_security.credential_api_handler_implementation.delete_mutation",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
