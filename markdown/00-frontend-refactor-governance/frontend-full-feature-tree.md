@@ -442,3 +442,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0091-frontend-graph-editor-editor-store-template-loading-actions-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0092-frontend-graph-editor-editor-store-node-mutation-actions-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0093-frontend-graph-editor-editor-store-edge-removal-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0094-frontend-graph-editor-editor-store-actions-parent-closeout.md`
