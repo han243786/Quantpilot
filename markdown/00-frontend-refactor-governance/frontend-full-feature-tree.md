@@ -639,6 +639,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/store/graphStoreCompileProtocolMapping.js`
   - `frontend/src/store/graphStoreCompileSourceActions.js`
   - `frontend/src/store/graphStoreCompileState.js`
+  - `frontend/src/store/graphStoreCompileSummary.js`
   - `frontend/src/store/graphStoreEditorActions.js`
   - `frontend/src/store/graphStoreEditorDraftActions.js`
   - `frontend/src/store/graphStoreEditorDraftActions.test.js`
