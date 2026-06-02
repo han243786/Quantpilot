@@ -689,3 +689,4 @@
 | v4.16.0 / BE-001KQ-01 | 新增: `backend.storage_security.credential_api_handler_implementation.list_projection` backend.storage_security.credential_api_handler_implementation.list_projection equivalence baseline and extraction plan |
 | v4.16.0 / BE-001KQ-02 | 新增: `backend.storage_security.credential_api_handler_implementation.list_projection` backend.storage_security.credential_api_handler_implementation.list_projection actual extraction complete |
 | v4.16.0 / BE-001KQ-03 | 新增: `backend.storage_security.credential_api_handler_implementation.list_projection` backend.storage_security.credential_api_handler_implementation.list_projection single leaf closeout stops further split |
+| v4.16.0 / BE-001KR-01 | 新增: `backend.storage_security.credential_api_handler_implementation` backend.storage_security.credential_api_handler_implementation parent residual judgment selects key_scope |
