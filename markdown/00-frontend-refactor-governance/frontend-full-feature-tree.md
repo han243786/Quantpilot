@@ -565,6 +565,9 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailPageModel.test.js`
   - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailSummaryModel.js`
   - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailSummaryModel.test.js`
+  - `frontend/src/pages/backtestViews/comparePageAnalysis/index.js`
+  - `frontend/src/pages/backtestViews/comparePageAnalysis/backtestComparePageModel.js`
+  - `frontend/src/pages/backtestViews/comparePageAnalysis/backtestComparePageModel.test.js`
   - `frontend/src/pages/backtest-analysis.css`
   - `frontend/src/components/DrawdownChart.jsx`
   - `frontend/src/components/MonthlyReturnsHeatmap.jsx`
@@ -578,3 +581,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0113-frontend-backtest-views-detail-evidence-report-sections-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0114-frontend-backtest-views-detail-replay-output-explanation-sections-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0115-frontend-backtest-views-detail-page-analysis-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0116-frontend-backtest-views-compare-page-model-closeout.md`

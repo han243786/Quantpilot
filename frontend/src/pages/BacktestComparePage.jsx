@@ -25,6 +25,13 @@ import {
   maxDrawdownFromSummary,
   MetricPair
 } from "./backtestViews/shared";
+import {
+  buildBacktestCompareMeta,
+  buildBacktestCompareSummary,
+  buildBacktestCompareSummaryItems,
+  normalizeCompareBacktestIds,
+  resolveBacktestCompareStrategyId
+} from "./backtestViews/comparePageAnalysis";
 
 function EquityOverlayChart({ details }) {
   const { t } = useI18n();
@@ -79,7 +86,7 @@ export default function BacktestComparePage({ backtestIds = [], strategyId = "" 
 
   useEffect(() => {
     let disposed = false;
-    const ids = [...new Set((backtestIds || []).filter(Boolean))].slice(0, 2);
+    const ids = normalizeCompareBacktestIds(backtestIds);
 
     if (ids.length < 2) {
       setState({
@@ -119,38 +126,18 @@ export default function BacktestComparePage({ backtestIds = [], strategyId = "" 
     };
   }, [backtestIds, reloadTick]);
 
-  const summary = useMemo(() => {
-    if (state.details.length < 2) return null;
-    const [left, right] = state.details;
-    const leftSummary = comparisonMetrics(left)?.summary || {};
-    const rightSummary = comparisonMetrics(right)?.summary || {};
-    return {
-      returnDelta:
-        (leftSummary.total_return_ratio || 0) - (rightSummary.total_return_ratio || 0),
-      drawdownDelta:
-        (maxDrawdownFromSummary(leftSummary) || 0) - (maxDrawdownFromSummary(rightSummary) || 0),
-      tradeDelta: (leftSummary.trade_count || 0) - (rightSummary.trade_count || 0)
-    };
-  }, [state.details]);
+  const summary = useMemo(() => buildBacktestCompareSummary(state.details), [state.details]);
 
-  const summaryItems = summary
-    ? [
-        { label: t("收益差值"), value: formatRatio(summary.returnDelta) },
-        { label: t("回撤差值"), value: formatRatio(summary.drawdownDelta) },
-        { label: t("成交差值"), value: formatValue(summary.tradeDelta) }
-      ]
-    : [];
+  const summaryItems = useMemo(
+    () => buildBacktestCompareSummaryItems({ t, summary }),
+    [summary, t]
+  );
 
   const resolvedStrategyId = useMemo(() => {
-    if (strategyId) return strategyId;
-    if (state.details.length !== 2) return "";
-    const leftGraphId = state.details[0]?.graph_id || "";
-    const rightGraphId = state.details[1]?.graph_id || "";
-    return leftGraphId && leftGraphId === rightGraphId ? leftGraphId : "";
+    return resolveBacktestCompareStrategyId({ strategyId, details: state.details });
   }, [state.details, strategyId]);
 
-  const compareMeta =
-    (backtestIds || []).filter(Boolean).slice(0, 2).join(" vs ") || "-";
+  const compareMeta = buildBacktestCompareMeta(backtestIds);
 
   return (
     <div

@@ -2,11 +2,12 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.backtest_views",
-  "current_step": "FE-0115",
-  "current_phase": "frontend_backtest_views_detail_page_analysis_parent_closed",
+  "current_parent": "frontend.backtest_views.compare_page_analysis",
+  "current_step": "FE-0116",
+  "current_phase": "frontend_backtest_views_compare_page_model_closed",
   "current_child_queue": [
-    "frontend.backtest_views.compare_page_analysis"
+    "frontend.backtest_views.compare_page_analysis.equity_overlay_chart",
+    "frontend.backtest_views.compare_page_analysis.compare_cards_and_summary"
   ],
   "next_parent": "frontend.store",
   "closed_parents": [
@@ -87,7 +88,8 @@
     "frontend.backtest_views.detail_page_analysis.core_artifact_sections",
     "frontend.backtest_views.detail_page_analysis.evidence_report_sections",
     "frontend.backtest_views.detail_page_analysis.replay_output_explanation_sections",
-    "frontend.backtest_views.detail_page_analysis"
+    "frontend.backtest_views.detail_page_analysis",
+    "frontend.backtest_views.compare_page_analysis.artifact_model"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
