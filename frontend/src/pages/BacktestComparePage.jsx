@@ -11,21 +11,12 @@ import { useI18n } from "../i18n";
 import {
   AnalysisHero,
   AnalysisSection,
-  AnalysisStatusBanner,
-  comparisonMetrics,
-  datasetLabelsFromDetail,
-  executionAssumptionsLabelFromDetail,
-  formatRatio,
-  formatSharpeRatio,
-  formatProfitFactor,
-  formatAnnualizedReturn,
-  formatTime,
-  formatValue,
-  maxDrawdownFromSummary,
-  MetricPair
+  AnalysisStatusBanner
 } from "./backtestViews/shared";
 import {
+  BacktestCompareCardsSection,
   BacktestCompareEquityOverlayChart,
+  BacktestCompareSummarySidebar,
   buildBacktestCompareMeta,
   buildBacktestCompareSummary,
   buildBacktestCompareSummaryItems,
@@ -171,89 +162,12 @@ export default function BacktestComparePage({ backtestIds = [], strategyId = "" 
 
       {state.status === "ready" ? (
         <div className="analysis-page-grid">
-          <div className="analysis-main-column">
-            <AnalysisSection
-              kicker={t("对比卡片")}
-              title={t("实验并排视图")}
-              summary={t("在同一个策略范围内对齐展示收益、回撤、成交数、数据集范围与执行假设。")}
-            >
-              <div
-                className="analysis-card-grid analysis-card-grid--two"
-                data-testid="backtest-compare-card-grid"
-              >
-                {state.details.map((detail) => {
-                  const metrics = comparisonMetrics(detail);
-                  const summaryMetrics = metrics?.summary || {};
-                  const datasets = datasetLabelsFromDetail(detail);
-                  return (
-                    <div
-                      key={detail.backtest_id}
-                      className="open-orders-card analysis-compare-card"
-                      data-testid={`backtest-compare-card-${detail.backtest_id}`}
-                    >
-                      <div className="open-orders-header">
-                        <div>
-                          <div className="mini-list-title">{detail.backtest_id}</div>
-                          <div className="muted-line">
-                            {t("策略")}：{detail.graph_id} | {t("编译")}：{detail.compile_id}
-                          </div>
-                        </div>
-                        <button
-                          className="ad-btn ad-btn--ghost compact-btn"
-                          data-testid={`backtest-compare-open-detail-${detail.backtest_id}`}
-                          onClick={() =>
-                            navigateTo(backtestDetailPath(detail.backtest_id, resolvedStrategyId))
-                          }
-                        >
-                          {t("打开详情")}
-                        </button>
-                      </div>
-                      <div className="account-metric-grid">
-                        <div className="account-metric-card">
-                          <span>{t("收益")}</span>
-                          <strong>{formatRatio(summaryMetrics.total_return_ratio)}</strong>
-                        </div>
-                        <div className="account-metric-card">
-                          <span>{t("夏普")}</span>
-                          <strong>{formatSharpeRatio(summaryMetrics.risk_adjusted?.sharpe_ratio)}</strong>
-                        </div>
-                        <div className="account-metric-card">
-                          <span>{t("最大回撤")}</span>
-                          <strong>{formatRatio(maxDrawdownFromSummary(summaryMetrics))}</strong>
-                        </div>
-                        <div className="account-metric-card">
-                          <span>{t("盈亏比")}</span>
-                          <strong>{formatProfitFactor(summaryMetrics.trade_analysis?.profit_factor)}</strong>
-                        </div>
-                        <div className="account-metric-card">
-                          <span>{t("成交数")}</span>
-                          <strong>{formatValue(summaryMetrics.trade_count)}</strong>
-                        </div>
-                        <div className="account-metric-card">
-                          <span>{t("最终权益")}</span>
-                          <strong>{formatValue(summaryMetrics.final_equity)}</strong>
-                        </div>
-                      </div>
-                      <MetricPair label={t("年化收益")} value={formatAnnualizedReturn(summaryMetrics.annualized_return)} />
-                      <MetricPair label={t("索提诺")} value={formatSharpeRatio(summaryMetrics.risk_adjusted?.sortino_ratio)} />
-                      <MetricPair label={t("卡尔玛")} value={formatSharpeRatio(summaryMetrics.risk_adjusted?.calmar_ratio)} />
-                      <MetricPair
-                        label={t("回放来源")}
-                        value={detail.backtest_artifacts?.manifest?.backtest_spec?.replay_source || "-"}
-                      />
-                      <MetricPair label={t("开始时间")} value={formatTime(metrics?.started_at_ms)} />
-                      <MetricPair label={t("结束时间")} value={formatTime(metrics?.ended_at_ms)} />
-                      <MetricPair label={t("数据集")} value={datasets.join(", ") || "-"} />
-                      <MetricPair
-                        label={t("执行假设")}
-                        value={executionAssumptionsLabelFromDetail(detail)}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </AnalysisSection>
-          </div>
+          <BacktestCompareCardsSection
+            details={state.details}
+            onOpenDetail={(backtestId) =>
+              navigateTo(backtestDetailPath(backtestId, resolvedStrategyId))
+            }
+          />
 
           {state.details.length === 2 ? (
             <AnalysisSection
@@ -265,24 +179,11 @@ export default function BacktestComparePage({ backtestIds = [], strategyId = "" 
             </AnalysisSection>
           ) : null}
 
-          <div className="analysis-sidebar-column">
-            <AnalysisSection
-              kicker={t("策略上下文")}
-              title={t("对比摘要")}
-              summary={t("在对比页、详情页和工作区之间切换时，持续保留差值视图与对比范围。")}
-            >
-              <div className="open-orders-card" data-testid="backtest-compare-summary-card">
-                <MetricPair label={t("策略 ID")} value={resolvedStrategyId || "-"} />
-                <MetricPair label={t("收益差值")} value={formatRatio(summary?.returnDelta)} />
-                <MetricPair label={t("回撤差值")} value={formatRatio(summary?.drawdownDelta)} />
-                <MetricPair label={t("成交差值")} value={formatValue(summary?.tradeDelta)} />
-                <MetricPair
-                  label={t("已对比回测")}
-                  value={state.details.map((detail) => detail.backtest_id).join(" vs ")}
-                />
-              </div>
-            </AnalysisSection>
-          </div>
+          <BacktestCompareSummarySidebar
+            details={state.details}
+            resolvedStrategyId={resolvedStrategyId}
+            summary={summary}
+          />
         </div>
       ) : null}
     </div>

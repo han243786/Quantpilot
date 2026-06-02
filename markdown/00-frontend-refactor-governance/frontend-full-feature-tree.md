@@ -566,6 +566,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailSummaryModel.js`
   - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailSummaryModel.test.js`
   - `frontend/src/pages/backtestViews/comparePageAnalysis/index.js`
+  - `frontend/src/pages/backtestViews/comparePageAnalysis/BacktestCompareCardsAndSummary.jsx`
+  - `frontend/src/pages/backtestViews/comparePageAnalysis/BacktestCompareCardsAndSummary.test.jsx`
   - `frontend/src/pages/backtestViews/comparePageAnalysis/BacktestCompareEquityOverlayChart.jsx`
   - `frontend/src/pages/backtestViews/comparePageAnalysis/BacktestCompareEquityOverlayChart.test.jsx`
   - `frontend/src/pages/backtestViews/comparePageAnalysis/backtestComparePageModel.js`
@@ -585,3 +587,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0115-frontend-backtest-views-detail-page-analysis-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0116-frontend-backtest-views-compare-page-model-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0117-frontend-backtest-views-compare-equity-overlay-chart-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0118-frontend-backtest-views-compare-cards-summary-closeout.md`
