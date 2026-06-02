@@ -187,6 +187,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/StrategyWorkspaceExperimentCard.test.jsx`
   - `frontend/src/pages/StrategyWorkspaceCollaborationCard.jsx`
   - `frontend/src/pages/StrategyWorkspaceCollaborationCard.test.jsx`
+  - `frontend/src/pages/strategyWorkspaceGovernanceCardsShell.js`
+  - `frontend/src/pages/strategyWorkspaceGovernanceCardsShell.test.js`
   - `frontend/src/pages/strategy-workspace.css`
   - `frontend/src/hooks/useStrategyWorkspaceSharedModel.js`
   - `frontend/src/hooks/useStrategyWorkspacePageData.js`
@@ -219,3 +221,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0044-frontend-strategy-workspace-code-mode-shell-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0045-frontend-strategy-workspace-dashboard-overview-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0046-frontend-strategy-workspace-monitor-research-source-tabs-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0047-frontend-strategy-workspace-version-experiment-collaboration-cards-closeout.md`

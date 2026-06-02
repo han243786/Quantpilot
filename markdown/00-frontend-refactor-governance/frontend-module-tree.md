@@ -73,7 +73,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/store/graphStore.js`
     - `frontend/src/router.js`
   - Child queue:
-    - `frontend.strategy_workspace.version_experiment_collaboration_cards`
     - `frontend.strategy_workspace.layout_styles`
   - Closed child leaves:
     - `frontend.strategy_workspace.route_shell`
@@ -83,6 +82,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.strategy_workspace.code_mode_shell`
     - `frontend.strategy_workspace.dashboard_overview`
     - `frontend.strategy_workspace.monitor_research_source_tabs`
+    - `frontend.strategy_workspace.version_experiment_collaboration_cards`
 
 ## Last Closed Parent
 

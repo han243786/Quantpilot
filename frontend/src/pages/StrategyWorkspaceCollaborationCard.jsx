@@ -1,22 +1,25 @@
 import { useEffect } from "react";
 import { useGraphStore } from "../store/graphStore";
-
-function formatTime(value) {
-  return value ? new Date(value).toLocaleString() : "-";
-}
-
-function formatActor(actor, fallback = "未分配") {
-  return actor?.display_name || actor?.actor_id || fallback;
-}
+import {
+  buildWorkspaceCollaborationRows,
+  formatWorkspaceAuditActorLine,
+  formatWorkspaceGovernanceTime as formatTime,
+  shouldRefreshWorkspaceAuditHistory
+} from "./strategyWorkspaceGovernanceCardsShell";
 
 export default function StrategyWorkspaceCollaborationCard({ graphId, collaboration, lastRun, lastBacktest }) {
   const graphAuditHistory = useGraphStore((state) => state.graphAuditHistory);
   const graphAuditHistoryStatus = useGraphStore((state) => state.graphAuditHistoryStatus);
   const graphAuditHistoryMessage = useGraphStore((state) => state.graphAuditHistoryMessage);
   const refreshGraphAuditHistory = useGraphStore((state) => state.refreshGraphAuditHistory);
+  const collaborationRows = buildWorkspaceCollaborationRows({
+    collaboration,
+    lastRun,
+    lastBacktest
+  });
 
   useEffect(() => {
-    if (!graphId || graphId === "draft_graph") return;
+    if (!shouldRefreshWorkspaceAuditHistory(graphId)) return;
     void refreshGraphAuditHistory(graphId);
   }, [graphId, refreshGraphAuditHistory]);
 
@@ -33,31 +36,12 @@ export default function StrategyWorkspaceCollaborationCard({ graphId, collaborat
       </div>
 
       <div className="strategy-inspector-metrics">
-        <div className="kv-line" data-testid="workspace-owner-row">
-          <span>所有者</span>
-          <strong>{formatActor(collaboration?.owner)}</strong>
-        </div>
-        <div className="kv-line" data-testid="workspace-editors-row">
-          <span>协作者</span>
-          <strong>
-            {Array.isArray(collaboration?.editors) && collaboration.editors.length > 0
-              ? collaboration.editors.map((actor) => formatActor(actor)).join(", ")
-              : "未分配协作者"}
-          </strong>
-        </div>
-        <div className="kv-line" data-testid="workspace-last-saved-row">
-          <span>最近保存人</span>
-          <strong>{formatActor(collaboration?.last_saved_by, "-")}</strong>
-        </div>
-        <div className="kv-line" data-testid="workspace-last-run-row">
-          <span>最近执行人</span>
-          <strong>
-            {formatActor(
-              lastRun?.actor || lastBacktest?.actor || collaboration?.last_run_actor,
-              "-"
-            )}
-          </strong>
-        </div>
+        {collaborationRows.map((row) => (
+          <div className="kv-line" data-testid={row.testId} key={row.testId}>
+            <span>{row.label}</span>
+            <strong>{row.value}</strong>
+          </div>
+        ))}
       </div>
 
       {graphAuditHistoryStatus === "loading" ? <div className="muted-line">正在加载审计历史...</div> : null}
@@ -81,7 +65,7 @@ export default function StrategyWorkspaceCollaborationCard({ graphId, collaborat
             </div>
             <div className="muted-line">{entry.summary}</div>
             <div className="muted-line">
-              {formatActor(entry.actor)}{entry.target_id ? ` / ${entry.target_id}` : ""}
+              {formatWorkspaceAuditActorLine(entry)}
             </div>
           </div>
         ))}

@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { useGraphStore } from "../store/graphStore";
-
-function formatTime(value) {
-  return value ? new Date(value).toLocaleString() : "-";
-}
-
-function formatList(items = []) {
-  return items.length ? items.join(", ") : "-";
-}
+import {
+  buildWorkspaceVersionDraftSummary,
+  buildWorkspaceVersionEvidenceOptions,
+  formatWorkspaceGovernanceTime as formatTime,
+  formatWorkspaceVersionCountChanges as formatCountChanges,
+  formatWorkspaceVersionList as formatList,
+  selectWorkspaceVersionCompareEntries,
+  toggleWorkspaceVersionCompareSelection,
+  workspaceConfigChangeLabels as configChangeLabels,
+  workspaceConfigDomainLabel as configDomainLabel
+} from "./strategyWorkspaceGovernanceCardsShell";
 
 function DiffList({ title, diff, testId }) {
   return (
@@ -35,29 +38,6 @@ function DiffList({ title, diff, testId }) {
       </div>
     </div>
   );
-}
-
-function configDomainLabel(domainId) {
-  const labels = {
-    market: "市场与数据",
-    observation: "观察与信号",
-    state_machine: "状态机",
-    risk: "Risk Plane",
-    execution: "执行边界",
-    evidence: "证据",
-    ai_governance: "AI 治理",
-    snapshot: "快照"
-  };
-  return labels[domainId] || domainId || "-";
-}
-
-function configChangeLabels(change) {
-  const labels = [];
-  if (change.lifecycle_changed) labels.push("生命周期");
-  if (change.readiness_changed) labels.push("就绪状态");
-  if (change.source_refs_changed) labels.push("来源证据");
-  if (change.findings_changed) labels.push("诊断");
-  return labels.length ? labels.join(" / ") : "-";
 }
 
 function StrategyConfigVersionDiff({ diff }) {
@@ -111,12 +91,6 @@ function StrategyConfigVersionDiff({ diff }) {
       )}
     </div>
   );
-}
-
-function formatCountChanges(changes = []) {
-  return changes.length
-    ? changes.map((change) => `${change.key}: ${change.left_count}->${change.right_count}`).join(" / ")
-    : "-";
 }
 
 function StrategyConfigEvidenceDiff({ diff }) {
@@ -255,26 +229,12 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
 
   const previewMeta = graphVersionPreview?.graph?.metadata || null;
   const draftSummary = useMemo(
-    () => ({
-      graphId: currentGraph?.metadata?.graph_id || "draft_graph",
-      updatedAt: currentGraph?.metadata?.updated_at || null,
-      nodeCount: currentGraph?.nodes?.length || 0,
-      edgeCount: currentGraph?.edges?.length || 0
-    }),
+    () => buildWorkspaceVersionDraftSummary(currentGraph),
     [currentGraph]
   );
-  const selectedCompareEntries = compareSelection
-    .map((versionId) => graphVersions.find((entry) => entry.version_id === versionId))
-    .filter(Boolean);
+  const selectedCompareEntries = selectWorkspaceVersionCompareEntries(compareSelection, graphVersions);
   const evidenceBacktestOptions = useMemo(
-    () =>
-      (backtestHistory || [])
-        .filter((entry) => !entry.graph_id || entry.graph_id === graphId)
-        .map((entry) => ({
-          id: entry.backtest_id,
-          label: `${entry.backtest_id}${entry.created_at_ms ? ` · ${formatTime(entry.created_at_ms)}` : ""}`
-        }))
-        .filter((entry) => entry.id),
+    () => buildWorkspaceVersionEvidenceOptions(backtestHistory, graphId),
     [backtestHistory, graphId]
   );
 
@@ -286,15 +246,7 @@ export default function StrategyWorkspaceVersionHistoryCard({ graphId, currentGr
   }
 
   function toggleCompareSelection(versionId) {
-    setCompareSelection((current) => {
-      if (current.includes(versionId)) {
-        return current.filter((item) => item !== versionId);
-      }
-      if (current.length >= 2) {
-        return [current[1], versionId];
-      }
-      return [...current, versionId];
-    });
+    setCompareSelection((current) => toggleWorkspaceVersionCompareSelection(current, versionId));
   }
 
   async function handleCompareVersions() {
