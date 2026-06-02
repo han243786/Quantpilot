@@ -527,3 +527,25 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0104-frontend-runtime-panels-mutation-controls-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0105-frontend-runtime-panels-replay-explanations-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0106-frontend-runtime-panels-parent-closeout.md`
+
+## Active Frontend Parent: `frontend.backtest_views`
+
+- Status: parent baseline established.
+- Record:
+  - `markdown/00-frontend-refactor-governance/records/FE-0107-frontend-backtest-views-baseline.md`
+- User-visible behavior: backtest analysis views render strategy-scoped backtest lists, persisted backtest detail analysis, backtest comparison, shared analysis hero/section layout, summary metric helpers, drawdown visualization, and monthly return heatmap widgets.
+- Owned and split-target files:
+  - `frontend/src/pages/StrategyBacktestsPage.jsx`
+  - `frontend/src/pages/StrategyBacktestsPage.test.jsx`
+  - `frontend/src/pages/BacktestDetailPage.jsx`
+  - `frontend/src/pages/BacktestDetailPage.test.jsx`
+  - `frontend/src/pages/BacktestComparePage.jsx`
+  - `frontend/src/pages/BacktestComparePage.test.jsx`
+  - `frontend/src/pages/BacktestAnalysisLayout.jsx`
+  - `frontend/src/pages/backtestAnalysisShared.jsx`
+  - `frontend/src/pages/backtestAnalysisShared.test.jsx`
+  - `frontend/src/pages/backtest-analysis.css`
+  - `frontend/src/components/DrawdownChart.jsx`
+  - `frontend/src/components/MonthlyReturnsHeatmap.jsx`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0107-frontend-backtest-views-baseline.md`

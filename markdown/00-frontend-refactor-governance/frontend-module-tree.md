@@ -11,9 +11,41 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 ## Active Parent
 
 - `frontend.backtest_views`
-  - Status: pending baseline.
-  - Baseline will be established in the next recursive step after `frontend.runtime_panels` parent closeout.
-  - Child queue: pending baseline.
+  - Status: parent baseline established.
+  - Record: `markdown/00-frontend-refactor-governance/records/FE-0107-frontend-backtest-views-baseline.md`
+  - Current owned and split-target files:
+    - `frontend/src/pages/StrategyBacktestsPage.jsx`
+    - `frontend/src/pages/StrategyBacktestsPage.test.jsx`
+    - `frontend/src/pages/BacktestDetailPage.jsx`
+    - `frontend/src/pages/BacktestDetailPage.test.jsx`
+    - `frontend/src/pages/BacktestComparePage.jsx`
+    - `frontend/src/pages/BacktestComparePage.test.jsx`
+    - `frontend/src/pages/BacktestAnalysisLayout.jsx`
+    - `frontend/src/pages/backtestAnalysisShared.jsx`
+    - `frontend/src/pages/backtestAnalysisShared.test.jsx`
+    - `frontend/src/pages/backtest-analysis.css`
+    - `frontend/src/components/DrawdownChart.jsx`
+    - `frontend/src/components/MonthlyReturnsHeatmap.jsx`
+  - Important consumers:
+    - `frontend/src/router.js`
+    - `frontend/src/app/AppRouteHost.jsx`
+    - `frontend/src/pages/StrategyWorkspacePage.jsx`
+    - `frontend/src/pages/StrategyWorkspaceOverviewTab.jsx`
+    - `frontend/src/pages/StrategyWorkspaceResearchTab.jsx`
+    - `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.jsx`
+    - `frontend/src/pages/StrategyHubPage.jsx`
+    - `frontend/src/pages/StrategyHubRecentBacktestsSection.jsx`
+    - `frontend/src/components/BacktestHistorySection.jsx`
+    - `frontend/src/components/StrategyBacktestsPanel.jsx`
+    - `frontend/src/components/EventStreamPanel.jsx`
+    - `frontend/src/store/graphStore.js`
+  - Child queue:
+    - `frontend.backtest_views.analysis_layout_shared`
+    - `frontend.backtest_views.strategy_backtests_index`
+    - `frontend.backtest_views.detail_page_analysis`
+    - `frontend.backtest_views.compare_page_analysis`
+  - Closed child leaves:
+    - none yet.
 
 ## Last Closed Parent
 

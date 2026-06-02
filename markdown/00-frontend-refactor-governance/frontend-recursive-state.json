@@ -3,9 +3,14 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.backtest_views",
-  "current_step": "FE-0106",
-  "current_phase": "frontend_backtest_views_baseline_pending",
-  "current_child_queue": [],
+  "current_step": "FE-0107",
+  "current_phase": "frontend_backtest_views_baseline",
+  "current_child_queue": [
+    "frontend.backtest_views.analysis_layout_shared",
+    "frontend.backtest_views.strategy_backtests_index",
+    "frontend.backtest_views.detail_page_analysis",
+    "frontend.backtest_views.compare_page_analysis"
+  ],
   "next_parent": "frontend.store",
   "closed_parents": [
     "frontend.app_shell",
