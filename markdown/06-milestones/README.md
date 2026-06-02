@@ -1007,3 +1007,4 @@
 | v4.16.0 / BE-001JT-01 | 新增: `backend.storage_security.credential_vault_implementation.vault_persistence_restore` backend.storage_security.credential_vault_implementation.vault_persistence_restore equivalence baseline and extraction plan |
 | v4.16.0 / BE-001JT-02 | 新增: `backend.storage_security.credential_vault_implementation.vault_persistence_restore` backend.storage_security.credential_vault_implementation.vault_persistence_restore actual extraction complete |
 | v4.16.0 / BE-001JT-03 | 新增: `backend.storage_security.credential_vault_implementation.vault_persistence_restore` backend.storage_security.credential_vault_implementation.vault_persistence_restore single leaf closeout keeps stop_split false |
+| v4.16.0 / BE-001JU-01 | 新增: `backend.storage_security.credential_vault_implementation.vault_persistence_restore` backend.storage_security.credential_vault_implementation.vault_persistence_restore parent residual judgment selects load_restore_entry |
