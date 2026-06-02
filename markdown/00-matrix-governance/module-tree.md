@@ -6097,6 +6097,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/backend/storage_security/credential_api_handler_implementation/key_scope.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/list_projection.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/set_mutation.rs`
+- `src/backend/storage_security/credential_api_handler_implementation/set_mutation/service_and_fields_validation.rs`
 - `src/safe_log.rs`
 - `src/auth/mod.rs`
 - `src/auth_middleware.rs`
@@ -7575,3 +7576,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_api_handler_implementation.set_mutation.service_and_fields_validation` 被选为下一轮输入验证子叶；该子叶只拥有 POST service label extraction/validation、fields object validation、field value conversion/empty rejection 与 `BTreeMap<String, String>` construction。vault availability、parent key bridge handoff、vault `set_service`、audit logging、success response、delete mutation、route registration 与 release transition 均不得在 BE-001KW-01/02 顺手迁移。
 **最新等价基线(BE-001KW-01)**:
 `backend.storage_security.credential_api_handler_implementation.set_mutation.service_and_fields_validation` 冻结 POST service/fields validation：service 必须 as_str 且拒绝 trim-empty、len>64、`/`、`\`、`..`，并保留原始 service 字符串；fields 必须 object，字段值按 `as_str().unwrap_or_default().to_string()` 转换并拒绝 empty converted value，字段名 clone 后插入 `BTreeMap<String, String>`。BE-001KW-02 只能新增 validation child file 并移动该阶段；vault availability、parent key bridge、vault set、storage error mapping、audit、success response 与 release transition 均不得顺手迁移。
+
+`backend.storage_security.credential_api_handler_implementation.set_mutation.service_and_fields_validation` 已迁入 `src/backend/storage_security/credential_api_handler_implementation/set_mutation/service_and_fields_validation.rs`；父 `src/backend/storage_security/credential_api_handler_implementation/set_mutation.rs` 新增 `mod service_and_fields_validation` 并在 `set_credential` 内委托 `validate_set_request`。vault availability、parent `scoped_cv_key` bridge、vault `set_service`、storage error mapping、audit logging 与 `{"stored": service}` response 仍由父 set mutation 持有，未引入 sibling 横向直连或 release transition。

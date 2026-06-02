@@ -1,11 +1,12 @@
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
-use std::collections::BTreeMap;
 
 use super::scoped_cv_key;
 use crate::auth;
 use crate::AppState;
+
+mod service_and_fields_validation;
 
 /// POST /api/credentials ← { "service": "okx", "fields": {"key":"...","secret":"..."} }
 pub(super) async fn set_credential(
@@ -20,34 +21,9 @@ pub(super) async fn set_credential(
         )
     })?;
 
-    let service = body["service"]
-        .as_str()
-        .filter(|s| {
-            !s.trim().is_empty()
-                && s.len() <= 64
-                && !s.contains('/')
-                && !s.contains('\\')
-                && !s.contains("..")
-        })
-        .ok_or_else(|| (StatusCode::BAD_REQUEST, "缺少 'service' 字段".to_string()))?;
+    let (service, fields) = service_and_fields_validation::validate_set_request(&body)?;
 
-    let fields_obj = body["fields"]
-        .as_object()
-        .ok_or_else(|| (StatusCode::BAD_REQUEST, "缺少 'fields' 对象".to_string()))?;
-
-    let mut fields: BTreeMap<String, String> = BTreeMap::new();
-    for (k, v) in fields_obj {
-        let val = v.as_str().unwrap_or_default().to_string();
-        if val.is_empty() {
-            return Err((
-                StatusCode::BAD_REQUEST,
-                format!("字段 '{}' 的值不能为空", k),
-            ));
-        }
-        fields.insert(k.clone(), val);
-    }
-
-    let scoped_key = scoped_cv_key(&user_id, service);
+    let scoped_key = scoped_cv_key(&user_id, &service);
     vault.set_service(&scoped_key, fields).map_err(|e| {
         (
             StatusCode::INTERNAL_SERVER_ERROR,
