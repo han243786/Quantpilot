@@ -133,6 +133,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0032-frontend-capabilities-normalization-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0033-frontend-capabilities-module-registry-contracts-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0034-frontend-capabilities-module-registry-assembly-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0035-frontend-capabilities-module-registry-public-facade-closeout.md`
 
 ## Evidence Rules
 

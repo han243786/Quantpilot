@@ -55,7 +55,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/StrategyWorkspaceExperimentCard.jsx`
     - `frontend/src/graph/compileGraph.js`
   - Child queue:
-    - `frontend.capabilities.module_registry_gate.public_facade`
     - `frontend.capabilities.store_capability_refresh`
   - Closed child leaves:
     - `frontend.capabilities.support_matrix_truth.sync_block_gate`
@@ -72,6 +71,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.capabilities.builtin_capability_snapshot`
     - `frontend.capabilities.module_registry_gate.contract_validation`
     - `frontend.capabilities.module_registry_gate.registry_assembly`
+    - `frontend.capabilities.module_registry_gate.public_facade`
+    - `frontend.capabilities.module_registry_gate`
 
 ## Last Closed Parent
 
