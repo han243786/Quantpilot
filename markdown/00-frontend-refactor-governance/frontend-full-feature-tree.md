@@ -187,6 +187,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/hooks/strategyWorkspacePageDataProjection.js`
   - `frontend/src/hooks/strategyWorkspacePageDataProjection.test.js`
   - `frontend/src/hooks/useStrategyWorkspaceUiState.js`
+  - `frontend/src/hooks/strategyWorkspaceIssueQueueState.js`
+  - `frontend/src/hooks/strategyWorkspaceIssueQueueState.test.js`
   - `frontend/src/hooks/useWorkspaceActionBarActions.js`
   - `frontend/src/hooks/useWorkspaceActionBarModel.js`
   - `frontend/src/hooks/workspaceActionBarShared.js`
@@ -204,3 +206,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0039-frontend-strategy-workspace-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0040-frontend-strategy-workspace-route-shell-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0041-frontend-strategy-workspace-shared-model-page-data-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0042-frontend-strategy-workspace-issue-queue-state-closeout.md`
