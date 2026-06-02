@@ -10,9 +10,20 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Active Parent
 
+- `frontend.strategy_workspace`
+  - Status: pending baseline.
+  - Record: to be established by the next recursive step.
+  - Current owned and split-target files: pending baseline.
+  - Important consumers: pending baseline.
+  - Child queue: pending baseline.
+  - Closed child leaves: none yet.
+
+## Last Closed Parent
+
 - `frontend.capabilities`
-  - Status: parent baseline established.
+  - Status: parent closed.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0022-frontend-capabilities-baseline.md`
+  - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0038-frontend-capabilities-parent-closeout.md`
   - Current owned and split-target files:
     - `frontend/src/capabilities/supportMatrix.js`
     - `frontend/src/capabilities/supportMatrix.test.js`
@@ -80,7 +91,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.capabilities.store_capability_refresh.public_action_facade`
     - `frontend.capabilities.store_capability_refresh`
 
-## Last Closed Parent
+## Previously Closed Parent
 
 - `frontend.api_client`
   - Status: parent closed.
@@ -182,7 +193,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Pending Parent Queue
 
-- `frontend.strategy_workspace`
 - `frontend.strategy_hub`
 - `frontend.graph_editor`
 - `frontend.runtime_panels`
@@ -196,6 +206,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 - `frontend.app_shell`
 - `frontend.routing`
 - `frontend.api_client`
+- `frontend.capabilities`
 
 ## Deferred Merge Notes
 
