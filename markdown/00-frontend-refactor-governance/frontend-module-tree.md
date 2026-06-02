@@ -10,9 +10,17 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Active Parent
 
+- `frontend.strategy_hub`
+  - Status: queued for baseline discovery.
+  - Record: pending FE-0050.
+  - Child queue: baseline pending.
+
+## Last Closed Parent
+
 - `frontend.strategy_workspace`
-  - Status: parent baseline established.
+  - Status: parent closed.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0039-frontend-strategy-workspace-baseline.md`
+  - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0049-frontend-strategy-workspace-parent-closeout.md`
   - Current owned and split-target files:
     - `frontend/src/pages/StrategyWorkspacePage.jsx`
     - `frontend/src/pages/StrategyWorkspacePage.codeMode.test.jsx`
@@ -89,7 +97,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.strategy_workspace.version_experiment_collaboration_cards`
     - `frontend.strategy_workspace.layout_styles`
 
-## Last Closed Parent
+## Previously Closed Parent
 
 - `frontend.capabilities`
   - Status: parent closed.
@@ -264,7 +272,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Pending Parent Queue
 
-- `frontend.strategy_hub`
 - `frontend.graph_editor`
 - `frontend.runtime_panels`
 - `frontend.backtest_views`
@@ -278,6 +285,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 - `frontend.routing`
 - `frontend.api_client`
 - `frontend.capabilities`
+- `frontend.strategy_workspace`
 
 ## Deferred Merge Notes
 

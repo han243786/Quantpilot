@@ -154,11 +154,13 @@ Each landed feature area should link to:
 
 Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md` until frontend refactor is fully closed and merge-back is explicitly started.
 
-## Active Frontend Parent: `frontend.strategy_workspace`
+## Closed Frontend Parent: `frontend.strategy_workspace`
 
-- Status: parent baseline established.
+- Status: parent closed.
 - Record:
   - `markdown/00-frontend-refactor-governance/records/FE-0039-frontend-strategy-workspace-baseline.md`
+- Closeout:
+  - `markdown/00-frontend-refactor-governance/records/FE-0049-frontend-strategy-workspace-parent-closeout.md`
 - Owned and split-target files:
   - `frontend/src/pages/StrategyWorkspacePage.jsx`
   - `frontend/src/pages/StrategyWorkspacePage.codeMode.test.jsx`
@@ -228,3 +230,9 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0046-frontend-strategy-workspace-monitor-research-source-tabs-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0047-frontend-strategy-workspace-version-experiment-collaboration-cards-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0048-frontend-strategy-workspace-layout-styles-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0049-frontend-strategy-workspace-parent-closeout.md`
+
+## Active Frontend Parent: `frontend.strategy_hub`
+
+- Status: queued for baseline discovery.
+- Record: pending FE-0050.

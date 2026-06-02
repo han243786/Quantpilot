@@ -2,16 +2,17 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.strategy_workspace",
-  "current_step": "FE-0048",
-  "current_phase": "frontend_strategy_workspace_layout_styles_closeout",
+  "current_parent": "frontend.strategy_hub",
+  "current_step": "FE-0049",
+  "current_phase": "frontend_strategy_workspace_parent_closeout",
   "current_child_queue": [],
-  "next_parent": "frontend.strategy_hub",
+  "next_parent": "frontend.graph_editor",
   "closed_parents": [
     "frontend.app_shell",
     "frontend.routing",
     "frontend.api_client",
-    "frontend.capabilities"
+    "frontend.capabilities",
+    "frontend.strategy_workspace"
   ],
   "closed_children": [
     "frontend.strategy_workspace.route_shell",
