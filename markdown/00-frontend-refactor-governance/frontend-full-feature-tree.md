@@ -361,3 +361,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
 - Evidence:
   - `markdown/00-frontend-refactor-governance/records/FE-0062-frontend-graph-editor-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0063-frontend-graph-editor-canvas-interaction-shell-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0064-frontend-graph-editor-canvas-focus-viewport-closeout.md`

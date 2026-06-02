@@ -68,7 +68,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js`
     - `frontend/src/capabilities/capabilityGovernanceCore.js`
   - Child queue:
-    - `frontend.graph_editor.canvas_focus_viewport`
     - `frontend.graph_editor.node_card_presentation`
     - `frontend.graph_editor.property_panel_model`
     - `frontend.graph_editor.property_panel_views`
@@ -80,6 +79,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.graph_editor.legacy_editor_page_shell`
   - Closed child leaves:
     - `frontend.graph_editor.canvas_interaction_shell`
+    - `frontend.graph_editor.canvas_focus_viewport`
 
 ## Last Closed Parent
 
