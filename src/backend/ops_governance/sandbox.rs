@@ -4,6 +4,10 @@ use crate::AppState;
 
 pub const MODULE_ID: &str = "backend.ops_governance.sandbox";
 
+mod handlers;
+
+pub(crate) use handlers::{load_sandbox_report_from_disk, run_sandbox_verification};
+
 pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
-    crate::sandbox_verification::register_sandbox_verification_routes(router)
+    handlers::register_routes(router)
 }

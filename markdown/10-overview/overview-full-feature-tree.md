@@ -456,7 +456,8 @@ runtime_response_mapping.rs     — 运行时响应映射
 runtime_validation.rs           — 运行时验证
   └── graph_id, compile_id, 参数合法性校验
 
-sandbox_verification.rs         — 沙箱验证
+sandbox_verification.rs         — 沙箱验证兼容桥
+src/backend/ops_governance/sandbox/handlers.rs — 沙箱验证实现
   └── AI 提案独立回放验证, catch_unwind + 3 重试
 
 frontend_runtime_mapping.rs     — 前端运行时映射
@@ -2253,7 +2254,8 @@ storage/
 - `src/runtime_response_mapping.rs` — 运行时响应映射; 改后端→前端响应格式时改这里
 - `src/runtime_validation.rs` — 运行时验证; 改参数校验时改这里
 - `src/safe_log.rs` — 安全日志, 输出前清除 secret/key; 改日志脱敏时改这里
-- `src/sandbox_verification.rs` — 沙箱验证, AI 提案回放, v4 artifact replay-shape 对比, 提供 proposal sandbox report 读取给审批阻断; 改验证逻辑或 CandidateUnderperforms 判定时改这里 🆕 v4.11.0
+- `src/sandbox_verification.rs` — 沙箱验证兼容桥; 保持 runtime mutation 既有 sandbox runner 和 disk loader 调用
+- `src/backend/ops_governance/sandbox/handlers.rs` — 沙箱验证, AI 提案回放, v4 artifact replay-shape 对比, 提供 proposal sandbox report 读取给审批阻断; 改验证逻辑或 CandidateUnderperforms 判定时改这里
 - `src/snapshot_service.rs` — 快照服务, SHA-256 签名; 改快照/验签时改这里
 - `src/strategy_config_api.rs` — v4 策略配置 artifact、preflight、artifact diff、正式版本配置契约 diff 和显式 v4 backtest evidence diff API; 改策略配置契约、PaperSimulated/PaperActual 边界、capability freshness、Risk Plane 静态契约、配置域状态或证据差异口径时改这里 🆕 v4.11.0
 - `src/storage_lifecycle.rs` — 存储生命周期, 三级分类 (Permanent/Temporary/Transient); 改存储策略时改这里
@@ -3582,3 +3584,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/730-backend.ops_governance.parent_residual_judgment.sandbox.md` - v4.16.0 BE-001LN-01 backend.ops_governance parent residual judgment selects sandbox
 递归边界补充: BE-001LO-01 `backend.ops_governance.sandbox` backend.ops_governance.sandbox equivalence baseline and extraction plan；下一步: BE-001LO-02 backend.ops_governance.sandbox extract_closeout。
 - `markdown/06-milestones/v4.16.0/731-backend.ops_governance.sandbox.baseline_plan.md` - v4.16.0 BE-001LO-01 backend.ops_governance.sandbox equivalence baseline and extraction plan
+递归边界补充: BE-001LO-02 `backend.ops_governance.sandbox` backend.ops_governance.sandbox actual extraction complete；下一步: BE-001LO-03 backend.ops_governance.sandbox single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/732-backend.ops_governance.sandbox.extract_closeout.md` - v4.16.0 BE-001LO-02 backend.ops_governance.sandbox actual extraction complete
