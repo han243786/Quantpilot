@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.store.runtime_session",
-  "current_step": "FE-0161",
-  "current_phase": "frontend_store_runtime_session_baseline",
+  "current_step": "FE-0162",
+  "current_phase": "frontend_store_runtime_session_simulation_stream_action_closed",
   "current_child_queue": [
-    "frontend.store.runtime_session.simulation_stream_action",
     "frontend.store.runtime_session.backtest_action",
     "frontend.store.runtime_session.v4_simulation_action",
     "frontend.store.runtime_session.backtest_experiment_action",
@@ -131,7 +130,8 @@
     "frontend.store.compile_flow.compile_helper_contract.summary_resolution_helpers",
     "frontend.store.compile_flow.compile_helper_contract.strategy_ir_protocol_mapping_bridge",
     "frontend.store.compile_flow.compile_helper_contract",
-    "frontend.store.compile_flow"
+    "frontend.store.compile_flow",
+    "frontend.store.runtime_session.simulation_stream_action"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

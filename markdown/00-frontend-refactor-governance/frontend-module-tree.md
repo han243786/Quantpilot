@@ -105,13 +105,16 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Status: active recursive split.
       - Baseline record: `markdown/00-frontend-refactor-governance/records/FE-0161-frontend-store-runtime-session-baseline.md`
       - Current subchild queue:
-        - `frontend.store.runtime_session.simulation_stream_action`
         - `frontend.store.runtime_session.backtest_action`
         - `frontend.store.runtime_session.v4_simulation_action`
         - `frontend.store.runtime_session.backtest_experiment_action`
         - `frontend.store.runtime_session.lifecycle_stop_reset_actions`
       - Closed subchild leaves:
-        - none.
+        - `frontend.store.runtime_session.simulation_stream_action`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0162-frontend-store-runtime-simulation-stream-closeout.md`
+          - Public surfaces:
+            - `frontend/src/store/graphStoreRuntimeSimulationActions.js`
+            - `frontend/src/store/graphStoreRuntimeSessionShared.js`
   - Closed child parent:
     - `frontend.store.compile_flow`
       - Status: closed after recursive subchild queue finished.
