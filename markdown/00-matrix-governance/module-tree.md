@@ -714,6 +714,8 @@ diff 子叶只比较 strategy config artifact 和 evidence，不拥有 graph ver
 `backend.strategy_config.diff.evidence_diff.risk_plane` 已实际抽离到 `src/backend/strategy_config/diff/evidence_diff/risk_plane.rs`；shared helper 仍由 evidence_diff 父叶控制，下一步进入单叶 closeout。
 **最新子叶关闭判断(BE-001IP-01)**:
 `backend.strategy_config.diff.evidence_diff.risk_plane stop_split: true`；action/reason count 与 signature helper 不再继续拆，下一步回到 evidence_diff 父叶残余判断。
+**最新残余选择(BE-001IQ-01)**:
+`backend.strategy_config.diff.evidence_diff.execution_capability` 被选为下一轮抽离子叶；metrics 与 shared helpers 保持开放残余。
 
 **回归保护**:
 `cargo test -p quantpilot strategy_config`；涉及 graph version compare 时运行 `cargo test -p quantpilot --test api_graph_versions`。
@@ -7295,3 +7297,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001IO-01)**: `backend.strategy_config.diff.evidence_diff.risk_plane` backend.strategy_config.diff.evidence_diff.risk_plane equivalence baseline and extraction plan；下一步: BE-001IO-02 backend.strategy_config.diff.evidence_diff.risk_plane extract_closeout。
 **最新状态补充(BE-001IO-02)**: `backend.strategy_config.diff.evidence_diff.risk_plane` backend.strategy_config.diff.evidence_diff.risk_plane actual extraction complete；下一步: BE-001IP-01 backend.strategy_config.diff.evidence_diff.risk_plane single_leaf_closeout。
 **最新状态补充(BE-001IP-01)**: `backend.strategy_config.diff.evidence_diff.risk_plane` backend.strategy_config.diff.evidence_diff.risk_plane single leaf closeout stops further split；下一步: BE-001IQ-01 backend.strategy_config.diff.evidence_diff parent_residual_judgment。
+**最新状态补充(BE-001IQ-01)**: `backend.strategy_config.diff.evidence_diff` backend.strategy_config.diff.evidence_diff parent residual judgment selects execution_capability；下一步: BE-001IR-01 backend.strategy_config.diff.evidence_diff.execution_capability baseline_plan。
