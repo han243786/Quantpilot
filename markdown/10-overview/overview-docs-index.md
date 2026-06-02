@@ -672,3 +672,4 @@
 | v4.16.0 / BE-001KH-01 | 新增: `backend.storage_security.credential_vault_implementation.secret_pattern_extraction` backend.storage_security.credential_vault_implementation.secret_pattern_extraction equivalence baseline and extraction plan |
 | v4.16.0 / BE-001KH-02 | 新增: `backend.storage_security.credential_vault_implementation.secret_pattern_extraction` backend.storage_security.credential_vault_implementation.secret_pattern_extraction actual extraction complete |
 | v4.16.0 / BE-001KH-03 | 新增: `backend.storage_security.credential_vault_implementation.secret_pattern_extraction` backend.storage_security.credential_vault_implementation.secret_pattern_extraction single leaf closeout stops further split |
+| v4.16.0 / BE-001KI-01 | 新增: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation parent residual judgment selects type_surface |
