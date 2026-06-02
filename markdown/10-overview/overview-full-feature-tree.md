@@ -3576,3 +3576,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/727-backend.ops_governance.hotswap.baseline_plan.md` - v4.16.0 BE-001LM-01 backend.ops_governance.hotswap equivalence baseline and extraction plan
 递归边界补充: BE-001LM-02 `backend.ops_governance.hotswap` backend.ops_governance.hotswap actual extraction complete；下一步: BE-001LM-03 backend.ops_governance.hotswap single_leaf_closeout。
 - `markdown/06-milestones/v4.16.0/728-backend.ops_governance.hotswap.extract_closeout.md` - v4.16.0 BE-001LM-02 backend.ops_governance.hotswap actual extraction complete
+递归边界补充: BE-001LM-03 `backend.ops_governance.hotswap` backend.ops_governance.hotswap single leaf closeout stops further split；下一步: BE-001LN-01 backend.ops_governance parent_residual_judgment。
+- `markdown/06-milestones/v4.16.0/729-backend.ops_governance.hotswap.single_leaf_closeout.md` - v4.16.0 BE-001LM-03 backend.ops_governance.hotswap single leaf closeout stops further split
