@@ -118,6 +118,9 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `frontend/src/modules/moduleRegistry.js`
     - `frontend/src/modules/moduleRegistry.test.js`
     - `frontend/src/modules/builtinModules.js`
+    - `frontend/src/store/graphStore.js`
+    - `frontend/src/store/graphStoreCapabilityRefresh.js`
+    - `frontend/src/store/graphStoreCapabilityRefresh.test.js`
     - `frontend/src/store/graphStore.capabilities.test.js`
   - Evidence:
     - `markdown/00-frontend-refactor-governance/records/FE-0022-frontend-capabilities-baseline.md`
@@ -134,6 +137,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0033-frontend-capabilities-module-registry-contracts-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0034-frontend-capabilities-module-registry-assembly-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0035-frontend-capabilities-module-registry-public-facade-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0036-frontend-capabilities-store-refresh-projection-closeout.md`
 
 ## Evidence Rules
 

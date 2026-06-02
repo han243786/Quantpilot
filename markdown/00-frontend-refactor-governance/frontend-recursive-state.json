@@ -3,10 +3,10 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.capabilities",
-  "current_step": "FE-0035",
-  "current_phase": "frontend_capabilities_module_registry_public_facade_closeout",
+  "current_step": "FE-0036",
+  "current_phase": "frontend_capabilities_store_refresh_projection_closeout",
   "current_child_queue": [
-    "frontend.capabilities.store_capability_refresh"
+    "frontend.capabilities.store_capability_refresh.public_action_facade"
   ],
   "next_parent": "frontend.strategy_workspace",
   "closed_parents": [
@@ -30,7 +30,8 @@
     "frontend.capabilities.module_registry_gate.contract_validation",
     "frontend.capabilities.module_registry_gate.registry_assembly",
     "frontend.capabilities.module_registry_gate.public_facade",
-    "frontend.capabilities.module_registry_gate"
+    "frontend.capabilities.module_registry_gate",
+    "frontend.capabilities.store_capability_refresh.refresh_state_projection"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

@@ -5,9 +5,6 @@ import { humanizeErrorText } from "../utils/errorText";
 const RECOVERY_MAX_RETRIES = 10;
 const RECOVERY_RETRY_DELAY_MS = 1500;
 import {
-  attachValidationWithRegistry,
-  buildRegistryFromCapabilities,
-  createSafeFallbackCapabilities,
   defaultCapabilities as DEFAULT_CAPABILITIES,
   defaultRegistry,
   fallbackRunnableGraph,
@@ -15,15 +12,17 @@ import {
   unwrapPage,
   graphExistsInIndex,
   isDeprecatedBuiltinSampleGraph,
-  loadCapabilitiesFromCache,
   loadGraphFromStorage,
   normalizeGraphIndex,
   resolveLoadedGraphWithRegistry,
   resolveStrategyIrDraft,
-  saveCapabilitiesToCache,
   saveGraphToStorage,
   scheduleBackgroundTask
 } from "./graphStoreHelpers";
+import {
+  buildCapabilityRefreshFailureState,
+  buildRemoteCapabilityRefreshState
+} from "./graphStoreCapabilityRefresh";
 import { createGraphStoreEditorActions } from "./graphStoreEditorActions";
 import { createGraphStoreRuntimeActions } from "./graphStoreRuntimeActions";
 
@@ -101,60 +100,17 @@ export const useGraphStore = create((set, get) => ({
 
     try {
       const capabilities = await fetchJson("/capabilities");
-      const nextRegistry = buildRegistryFromCapabilities(capabilities);
-      const nextGraph = attachValidationWithRegistry(get().graph, nextRegistry);
-      saveCapabilitiesToCache(capabilities);
-      saveGraphToStorage(nextGraph);
-      set({
-        registry: nextRegistry,
-        capabilities,
-        capabilityStatus: "ready",
-        capabilitySource: "remote",
-        capabilityMessage: "",
-        graph: nextGraph,
-        quantScriptDraft:
-          nextGraph.metadata?.artifacts?.quantscript?.graph_source || get().quantScriptDraft,
-        strategyIrDraft: resolveStrategyIrDraft(nextGraph, get().strategyIrDraft)
-      });
-      return capabilities;
+      const refresh = buildRemoteCapabilityRefreshState(capabilities, get());
+      set(refresh.state);
+      return refresh.capabilities;
     } catch (error) {
-      const message = humanizeErrorText(error, "能力加载失败。");
-      const cachedCapabilities = loadCapabilitiesFromCache();
-
-      if (cachedCapabilities) {
-        const cachedRegistry = buildRegistryFromCapabilities(cachedCapabilities);
-        const nextGraph = attachValidationWithRegistry(get().graph, cachedRegistry);
-        saveGraphToStorage(nextGraph);
-        set({
-          registry: cachedRegistry,
-          capabilities: cachedCapabilities,
-          capabilityStatus: "degraded",
-          capabilitySource: "cache",
-          capabilityMessage: "能力加载失败，已启用本地缓存的能力快照。最终可用性取决于后端实时验证。",
-          graph: nextGraph,
-          quantScriptDraft:
-            nextGraph.metadata?.artifacts?.quantscript?.graph_source || get().quantScriptDraft,
-          strategyIrDraft: resolveStrategyIrDraft(nextGraph, get().strategyIrDraft)
-        });
-        return cachedCapabilities;
-      }
-
-      const safeFallbackCapabilities = createSafeFallbackCapabilities(message);
-      const fallbackRegistry = buildRegistryFromCapabilities(safeFallbackCapabilities);
-      const nextGraph = attachValidationWithRegistry(get().graph, fallbackRegistry);
-      saveGraphToStorage(nextGraph);
-      set({
-        registry: fallbackRegistry,
-        capabilities: safeFallbackCapabilities,
-        capabilityStatus: "error",
-        capabilitySource: "safe_fallback",
-          capabilityMessage: "能力加载失败，已进入安全回退模式。为避免暴露虚假能力，模块可见性和编译/运行操作已收紧至最安全配置。",
-          graph: nextGraph,
-          quantScriptDraft:
-          nextGraph.metadata?.artifacts?.quantscript?.graph_source || get().quantScriptDraft,
-          strategyIrDraft: resolveStrategyIrDraft(nextGraph, get().strategyIrDraft)
-        });
-      return safeFallbackCapabilities;
+      const refresh = buildCapabilityRefreshFailureState(error, get(), {
+        loadFailureFallback: "能力加载失败。",
+        cacheFallbackMessage: "能力加载失败，已启用本地缓存的能力快照。最终可用性取决于后端实时验证。",
+        safeFallbackMessage: "能力加载失败，已进入安全回退模式。为避免暴露虚假能力，模块可见性和编译/运行操作已收紧至最安全配置。"
+      });
+      set(refresh.state);
+      return refresh.capabilities;
     }
   },
 
