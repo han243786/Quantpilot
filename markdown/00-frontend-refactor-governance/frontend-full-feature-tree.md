@@ -297,3 +297,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0052-frontend-strategy-hub-directory-model-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0053-frontend-strategy-hub-hero-summary-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0054-frontend-strategy-hub-roster-projection-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0055-frontend-strategy-hub-roster-row-actions-closeout.md`
