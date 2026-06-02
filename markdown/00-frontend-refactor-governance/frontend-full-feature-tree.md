@@ -665,9 +665,11 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/store/graphStoreRuntimeHistoryActions.js`
   - `frontend/src/store/graphStoreRuntimeHistoryApi.js`
   - `frontend/src/store/graphStoreRuntimeHistoryCompareSelection.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryFailure.js`
   - `frontend/src/store/graphStoreRuntimeHistoryFlow.js`
   - `frontend/src/store/graphStoreRuntimeHistoryFlow.test.js`
   - `frontend/src/store/graphStoreRuntimeHistoryProjection.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryRefreshFlow.js`
   - `frontend/src/store/graphStoreRuntimeHistoryState.js`
   - `frontend/src/store/graphStoreRuntimeLifecycleActions.js`
   - `frontend/src/store/graphStoreRuntimeSelectionState.js`
