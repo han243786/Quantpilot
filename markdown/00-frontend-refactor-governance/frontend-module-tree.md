@@ -11,9 +11,82 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 ## Active Parent
 
 - `frontend.strategy_hub`
-  - Status: queued for baseline discovery.
-  - Record: pending FE-0050.
-  - Child queue: baseline pending.
+  - Status: parent baseline established.
+  - Record: `markdown/00-frontend-refactor-governance/records/FE-0050-frontend-strategy-hub-baseline.md`
+  - Current owned and split-target files:
+    - `frontend/src/pages/StrategyHubPage.jsx`
+    - `frontend/src/pages/StrategyHubPage.test.jsx`
+    - `frontend/src/pages/StrategyHubPanelFallbacks.jsx`
+    - `frontend/src/pages/StrategyHubSectionFallbacks.jsx`
+    - `frontend/src/pages/StrategyHubHeroSection.jsx`
+    - `frontend/src/pages/StrategyHubInlineNote.jsx`
+    - `frontend/src/pages/StrategyHubBodySection.jsx`
+    - `frontend/src/pages/StrategyHubSharedComponents.jsx`
+    - `frontend/src/pages/StrategyHubTemplateLibrarySection.jsx`
+    - `frontend/src/pages/StrategyHubTemplateLibrarySection.test.jsx`
+    - `frontend/src/pages/StrategyHubRosterSection.jsx`
+    - `frontend/src/pages/StrategyHubRosterDirectorySection.jsx`
+    - `frontend/src/pages/StrategyHubRosterToolbar.jsx`
+    - `frontend/src/pages/StrategyHubRosterTableSection.jsx`
+    - `frontend/src/pages/StrategyHubRosterTableSection.test.jsx`
+    - `frontend/src/pages/StrategyHubRosterTableRow.jsx`
+    - `frontend/src/pages/StrategyHubRosterRowActions.jsx`
+    - `frontend/src/pages/StrategyHubActivityPanelsSection.jsx`
+    - `frontend/src/pages/StrategyHubBacktestActivityCard.jsx`
+    - `frontend/src/pages/StrategyHubRunActivityCard.jsx`
+    - `frontend/src/pages/StrategyHubInspectorSection.jsx`
+    - `frontend/src/pages/StrategyHubInspectorOverviewSection.jsx`
+    - `frontend/src/pages/StrategyHubRecentBacktestsSection.jsx`
+    - `frontend/src/pages/StrategyHubRecentRunsSection.jsx`
+    - `frontend/src/pages/StrategyHubRecentRunItem.jsx`
+    - `frontend/src/pages/StrategyHubCompareQueueSection.jsx`
+    - `frontend/src/pages/strategy-hub.css`
+    - `frontend/src/hooks/useStrategyDirectoryModel.js`
+    - `frontend/src/hooks/useStrategyHubBodyData.js`
+    - `frontend/src/hooks/useStrategyHubRosterData.js`
+    - `frontend/src/hooks/useStrategyHubInspectorData.js`
+    - `frontend/src/utils/strategyHubStrategyIdentity.js`
+    - `frontend/src/utils/strategyHubFormatters.js`
+    - `frontend/src/utils/strategyHubRosterProjection.js`
+    - `frontend/src/utils/strategyHubRosterProjection.test.js`
+    - `frontend/src/utils/strategyHubRosterRowActions.js`
+    - `frontend/src/utils/strategyHubRosterRowActions.test.js`
+    - `frontend/src/utils/strategyHubInspectorProjection.js`
+    - `frontend/src/utils/strategyHubInspectorProjection.test.js`
+    - `frontend/src/utils/strategyHubInspectorActions.js`
+    - `frontend/src/utils/strategyHubInspectorActions.test.js`
+    - `frontend/src/utils/strategyHubRecentRunsView.js`
+    - `frontend/src/utils/strategyHubRecentRunsView.test.js`
+    - `frontend/src/utils/strategyHubRecentBacktestsActions.js`
+    - `frontend/src/utils/strategyHubRecentBacktestsActions.test.js`
+    - `frontend/src/utils/strategyHubCompareQueueActions.js`
+    - `frontend/src/utils/strategyHubCompareQueueActions.test.js`
+  - Important consumers:
+    - `frontend/src/app/AppRouteHost.jsx`
+    - `frontend/src/router.js`
+    - `frontend/src/store/graphStore.js`
+    - `frontend/src/templates/strategyTemplates.js`
+    - `frontend/src/pages/backtestAnalysisShared.jsx`
+    - `frontend/src/pages/StrategyWorkspaceCodeTab.jsx`
+    - `frontend/src/pages/StrategyWorkspaceIssueQueueCard.jsx`
+    - `frontend/src/pages/StrategyWorkspacePageSections.jsx`
+    - `frontend/src/components/ModuleSidebar.jsx`
+    - `frontend/src/components/RuntimeDiagnosticsPanel.jsx`
+    - `frontend/src/components/propertyPanelViews.jsx`
+    - `frontend/src/components/StrategyResearchConsole.jsx`
+  - Child queue:
+    - `frontend.strategy_hub.route_shell`
+    - `frontend.strategy_hub.directory_model`
+    - `frontend.strategy_hub.hero_summary`
+    - `frontend.strategy_hub.roster_projection`
+    - `frontend.strategy_hub.roster_row_actions`
+    - `frontend.strategy_hub.inspector_projection`
+    - `frontend.strategy_hub.recent_activity_compare`
+    - `frontend.strategy_hub.template_library`
+    - `frontend.strategy_hub.shared_component_boundary`
+    - `frontend.strategy_hub.layout_styles`
+  - Closed child leaves:
+    - None.
 
 ## Last Closed Parent
 

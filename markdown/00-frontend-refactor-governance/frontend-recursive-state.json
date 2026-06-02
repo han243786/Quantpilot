@@ -3,9 +3,20 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.strategy_hub",
-  "current_step": "FE-0049",
-  "current_phase": "frontend_strategy_workspace_parent_closeout",
-  "current_child_queue": [],
+  "current_step": "FE-0050",
+  "current_phase": "frontend_strategy_hub_baseline",
+  "current_child_queue": [
+    "frontend.strategy_hub.route_shell",
+    "frontend.strategy_hub.directory_model",
+    "frontend.strategy_hub.hero_summary",
+    "frontend.strategy_hub.roster_projection",
+    "frontend.strategy_hub.roster_row_actions",
+    "frontend.strategy_hub.inspector_projection",
+    "frontend.strategy_hub.recent_activity_compare",
+    "frontend.strategy_hub.template_library",
+    "frontend.strategy_hub.shared_component_boundary",
+    "frontend.strategy_hub.layout_styles"
+  ],
   "next_parent": "frontend.graph_editor",
   "closed_parents": [
     "frontend.app_shell",
