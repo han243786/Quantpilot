@@ -846,6 +846,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
+- `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs`
 - `src/backend/ops_governance/alerts.rs`
 - `src/backend/ops_governance/chaos.rs`
 - `src/backend/ops_governance/hotswap.rs`
@@ -6073,6 +6074,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
+- `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs`
 - `src/storage_lifecycle.rs`
 - `src/credential_vault.rs`
 - `src/credential_api.rs`
@@ -6149,6 +6151,8 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_vault_implementation.vault_persistence_restore` 被选为下一轮内部安全子叶；该子叶只冻结 load entry、storage-root paths、`.bak` restore、encrypted vault read/decode、fresh vault creation、initial encrypted write、`save_inner`、atomic secret write 与 permission hardening，不拥有 machine-key cache/init、crypto codec internals、service CRUD map mutation、secret pattern extraction 或 release transition。下一步进入 BE-001JT-01 baseline_plan。
 **最新等价基线(BE-001JT-01)**:
 `backend.storage_security.credential_vault_implementation.vault_persistence_restore` 冻结 `CredentialVault::load` / `load_from_storage_root` 的 storage-root paths、`.bak` restore、encrypted read/decode、JSON parse、fresh vault creation、initial encrypted write，以及 `save_inner` 的 tmp/bak/rename rollback、fsync best-effort、backup cleanup、Unix `0o600` 与 Windows `icacls` hardening。BE-001JT-02 不得移动 service CRUD map mutation、secret pattern extraction、machine-key child、crypto codec child、root shim 或 release transition。
+**最新抽离记录(BE-001JT-02)**:
+`backend.storage_security.credential_vault_implementation.vault_persistence_restore` 已迁入 `src/backend/storage_security/credential_vault/implementation/vault_persistence_restore.rs`；`src/backend/storage_security/credential_vault/implementation.rs` 保留 public `CredentialVault` 方法、service CRUD、secret extraction、type owner 与 tests，仅委托 load/save persistence helper。machine-key、crypto codec、service CRUD map mutation、secret pattern extraction、root shim 与 release transition 均未迁移。
 
 **回归保护**:
 `cargo test credential`；`cargo test storage_lifecycle`；涉及日志时复核 safe log 测试。
@@ -7430,3 +7434,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001JR-03)**: `backend.storage_security.credential_vault_implementation.crypto_codec` backend.storage_security.credential_vault_implementation.crypto_codec single leaf closeout stops further split；下一步: BE-001JS-01 backend.storage_security.credential_vault_implementation parent_residual_judgment。
 **最新状态补充(BE-001JS-01)**: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation parent residual judgment selects vault_persistence_restore；下一步: BE-001JT-01 backend.storage_security.credential_vault_implementation.vault_persistence_restore baseline_plan。
 **最新状态补充(BE-001JT-01)**: `backend.storage_security.credential_vault_implementation.vault_persistence_restore` backend.storage_security.credential_vault_implementation.vault_persistence_restore equivalence baseline and extraction plan；下一步: BE-001JT-02 backend.storage_security.credential_vault_implementation.vault_persistence_restore extract_closeout。
+**最新状态补充(BE-001JT-02)**: `backend.storage_security.credential_vault_implementation.vault_persistence_restore` backend.storage_security.credential_vault_implementation.vault_persistence_restore actual extraction complete；下一步: BE-001JT-03 backend.storage_security.credential_vault_implementation.vault_persistence_restore single_leaf_closeout。

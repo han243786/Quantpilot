@@ -1,6 +1,4 @@
 use anyhow::Result;
-use crypto_codec::{decrypt_with_machine_key, encrypt_with_machine_key};
-use machine_key_management::get_machine_key_for_path;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -9,6 +7,7 @@ use zeroize::{Zeroize, Zeroizing};
 
 mod crypto_codec;
 mod machine_key_management;
+mod vault_persistence_restore;
 
 fn storage_root() -> String {
     std::env::var("QUANTPILOT_STORAGE_ROOT").unwrap_or_else(|_| "storage".into())
@@ -60,53 +59,7 @@ impl CredentialVault {
     }
 
     pub(crate) fn load_from_storage_root<P: AsRef<Path>>(storage_root: P) -> Result<Self> {
-        let storage_root = storage_root.as_ref();
-        // 触发机器密钥初始化（可能失败，不再静默降级）
-        let machine_key_path = storage_root.join(".machine_key");
-        let machine_key = get_machine_key_for_path(&machine_key_path)?;
-
-        let path = storage_root.join(".credentials");
-        // v2.1.0: 崩溃恢复 — 若 .bak 残留且主文件不存在, 从 bak 恢复
-        let bak = path.with_extension("bak");
-        if !path.exists() && bak.exists() {
-            eprintln!("[vault] 检测到 .bak 残留文件，正在恢复...");
-            std::fs::rename(&bak, &path).map_err(|e| {
-                anyhow::anyhow!(
-                    "凭证备份恢复失败: {}，请手动检查 {} 和 {}",
-                    e,
-                    path.display(),
-                    bak.display()
-                )
-            })?;
-        }
-        let data = if path.exists() {
-            let encrypted = std::fs::read(&path)?;
-            let decrypted = decrypt_with_machine_key(&encrypted, &machine_key)
-                .map_err(|_| anyhow::anyhow!("凭证文件损坏或密钥不匹配, 请重新设置凭证"))?;
-            // v2.1.x: JSON损坏时返回错误，不再静默清空凭证数据
-            serde_json::from_str(&decrypted).map_err(|e| {
-                anyhow::anyhow!(
-                    "凭证JSON解析失败: {}，请重新设置凭证 (备份文件: {})",
-                    e,
-                    bak.display()
-                )
-            })?
-        } else {
-            // 首次启动: 创建空 vault 并持久化, 避免 API 返回 503
-            let data = VaultData::default();
-            if let Some(parent) = path.parent() {
-                std::fs::create_dir_all(parent)?;
-            }
-            let json = serde_json::to_string(&data)?;
-            let encrypted = encrypt_with_machine_key(&json, &machine_key)?;
-            crate::storage_lifecycle::atomic_write_secret_file(&path, &encrypted)?;
-            data
-        };
-        Ok(Self {
-            path,
-            machine_key,
-            data: Mutex::new(data),
-        })
+        vault_persistence_restore::load_from_storage_root(storage_root)
     }
 
     /// 按标签整体设置凭证字段，同一标签下的所有字段原子替换
@@ -161,71 +114,7 @@ impl CredentialVault {
     // ── 内部持久化: 原子写入 (tmp + rename + bak 回滚) ──────
 
     fn save_inner(&self, data: &VaultData) -> Result<()> {
-        if let Some(parent) = self.path.parent() {
-            std::fs::create_dir_all(parent)?;
-        }
-        let json = serde_json::to_string(data)?;
-        let encrypted = encrypt_with_machine_key(&json, &self.machine_key)?;
-
-        let tmp = self.path.with_extension("tmp");
-        let bak = self.path.with_extension("bak");
-
-        // 保留旧文件的备份用于回滚
-        let had_old = self.path.exists();
-        if had_old {
-            let _ = std::fs::remove_file(&bak);
-            std::fs::rename(&self.path, &bak)?;
-        }
-
-        // 写临时文件
-        if let Err(e) = std::fs::write(&tmp, &encrypted) {
-            // 写入失败：从 bak 恢复
-            if had_old {
-                let _ = std::fs::rename(&bak, &self.path);
-            }
-            return Err(anyhow::anyhow!("凭证写入失败: {}", e));
-        }
-        // fsync tmp 文件确保密文落盘后再 rename
-        if let Ok(f) = std::fs::File::open(&tmp) {
-            let _ = f.sync_all();
-        }
-
-        // 原子替换
-        if let Err(e) = std::fs::rename(&tmp, &self.path) {
-            // rename 失败：从 bak 恢复
-            if had_old {
-                let _ = std::fs::rename(&bak, &self.path);
-            }
-            let _ = std::fs::remove_file(&tmp);
-            return Err(anyhow::anyhow!("凭证保存失败: {}", e));
-        }
-        // fsync 父目录确保 rename 落盘
-        if let Some(parent) = self.path.parent() {
-            if let Ok(f) = std::fs::File::open(parent) {
-                let _ = f.sync_all();
-            }
-        }
-
-        // 成功：清理 bak，设置安全权限
-        let _ = std::fs::remove_file(&bak);
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-            std::fs::set_permissions(&self.path, std::fs::Permissions::from_mode(0o600)).ok();
-        }
-        #[cfg(windows)]
-        {
-            let username = std::env::var("USERNAME").unwrap_or_default();
-            let _ = std::process::Command::new("icacls")
-                .args([
-                    self.path.to_str().unwrap_or(""),
-                    "/inheritance:r",
-                    "/grant",
-                    &format!("{}:F", username),
-                ])
-                .output();
-        }
-        Ok(())
+        vault_persistence_restore::save_inner(&self.path, &self.machine_key, data)
     }
 }
 
