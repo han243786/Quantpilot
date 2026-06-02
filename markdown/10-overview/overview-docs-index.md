@@ -620,3 +620,4 @@
 | v4.16.0 / BE-001JB-01 | 新增: `backend.strategy_config` backend.strategy_config parent closeout keeps route aggregation facade |
 | v4.16.0 / BE-001JC-01 | 新增: `backend` backend parent residual judgment selects storage_security safety baseline |
 | v4.16.0 / BE-001JD-01 | 新增: `backend.storage_security` backend.storage_security safety equivalence baseline and extraction plan |
+| v4.16.0 / BE-001JD-02 | 新增: `backend.storage_security` backend.storage_security facade extraction closeout keeps sensitive semantics paused |
