@@ -6105,6 +6105,8 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_api` 冻结为 route facade；`src/credential_api.rs` 仍拥有 list/set/delete handler、user scoping、validation、audit logging、status code 与 JSON response shape。
 **最新抽离记录(BE-001JG-02)**:
 `backend.storage_security.credential_api` facade extraction 已确认完成；本步 no code movement，`src/credential_api.rs` handler migration 继续暂停。
+**最新子叶关闭判断(BE-001JH-01)**:
+`backend.storage_security.credential_api stop_split: true`；route facade 已关闭，`src/credential_api.rs` handler migration 不属于本 closeout，下一步回到 `backend.storage_security` 父叶残余判断。
 
 **回归保护**:
 `cargo test credential`；`cargo test storage_lifecycle`；涉及日志时复核 safe log 测试。
@@ -7367,3 +7369,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001JF-01)**: `backend.storage_security` backend.storage_security parent residual judgment selects credential_api；下一步: BE-001JG-01 backend.storage_security.credential_api baseline_plan。
 **最新状态补充(BE-001JG-01)**: `backend.storage_security.credential_api` backend.storage_security.credential_api route facade baseline and plan；下一步: BE-001JG-02 backend.storage_security.credential_api extract_closeout。
 **最新状态补充(BE-001JG-02)**: `backend.storage_security.credential_api` backend.storage_security.credential_api facade extraction closeout complete；下一步: BE-001JH-01 backend.storage_security.credential_api single_leaf_closeout。
+**最新状态补充(BE-001JH-01)**: `backend.storage_security.credential_api` backend.storage_security.credential_api single leaf closeout stops further facade split；下一步: BE-001JI-01 backend.storage_security parent_residual_judgment。
