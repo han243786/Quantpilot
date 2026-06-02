@@ -72,6 +72,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/store/graphStoreRuntimeHistoryActions.js`
     - `frontend/src/store/graphStoreRuntimeHistoryApi.js`
     - `frontend/src/store/graphStoreRuntimeHistoryCompareSelection.js`
+    - `frontend/src/store/graphStoreRuntimeHistoryDetailFlow.js`
     - `frontend/src/store/graphStoreRuntimeHistoryFailure.js`
     - `frontend/src/store/graphStoreRuntimeHistoryFlow.js`
     - `frontend/src/store/graphStoreRuntimeHistoryFlow.test.js`
@@ -107,7 +108,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Status: active recursive split.
       - Baseline record: `markdown/00-frontend-refactor-governance/records/FE-0168-frontend-store-runtime-history-baseline.md`
       - Current subchild queue:
-        - `frontend.store.runtime_history.detail_selection_flow`
         - `frontend.store.runtime_history.artifact_persistence_flow`
         - `frontend.store.runtime_history.api_projection_state_contract`
       - Closed subchild leaves:
@@ -122,6 +122,12 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Public surfaces:
             - `frontend/src/store/graphStoreRuntimeHistoryRefreshFlow.js`
             - `frontend/src/store/graphStoreRuntimeHistoryFailure.js`
+            - `frontend/src/store/graphStoreRuntimeHistoryFlow.js`
+        - `frontend.store.runtime_history.detail_selection_flow`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0171-frontend-store-runtime-history-detail-selection-closeout.md`
+          - Public surfaces:
+            - `frontend/src/store/graphStoreRuntimeHistoryDetailFlow.js`
+            - `frontend/src/store/graphStoreRuntimeHistoryProjection.js`
             - `frontend/src/store/graphStoreRuntimeHistoryFlow.js`
   - Closed child parent:
     - `frontend.store.runtime_session`
