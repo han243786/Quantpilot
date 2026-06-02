@@ -4,10 +4,9 @@
   "scope": "frontend",
   "current_parent": "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles",
   "parent_return": "frontend.design_system_styles.page_style_contracts",
-  "current_step": "FE-0204",
-  "current_phase": "frontend_backtest_analysis_page_styles_child_parent_baseline",
+  "current_step": "FE-0205",
+  "current_phase": "frontend_backtest_analysis_shell_tokens_surface_chrome_closed",
   "current_child_queue": [
-    "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.shell_tokens_surface_chrome",
     "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.route_bar_and_typography",
     "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.summary_cards_and_page_grid",
     "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.analysis_sections_and_card_contracts",
@@ -171,7 +170,8 @@
     "frontend.design_system_styles.responsive_panel_overrides.quantscript_editor_and_source_tabs",
     "frontend.design_system_styles.responsive_panel_overrides.workspace_debug_approval_print",
     "frontend.design_system_styles.responsive_panel_overrides.legacy_page_inline_migrations",
-    "frontend.design_system_styles.responsive_panel_overrides"
+    "frontend.design_system_styles.responsive_panel_overrides",
+    "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.shell_tokens_surface_chrome"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

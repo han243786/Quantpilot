@@ -764,6 +764,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/strategy-hub-inspector-activity.css`
   - `frontend/src/pages/strategy-hub-responsive.css`
   - `frontend/src/pages/strategy-workspace.css`
+  - `frontend/src/pages/backtest-analysis/shell-tokens-surface-chrome.css`
   - `frontend/src/pages/strategy-workspace-shell.css`
   - `frontend/src/pages/strategy-workspace-overview-diagnostics.css`
   - `frontend/src/pages/strategy-workspace-builder-inspector.css`
@@ -804,3 +805,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0202-frontend-responsive-panel-overrides-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0203-frontend-page-style-contracts-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0204-frontend-backtest-analysis-page-styles-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0205-frontend-backtest-analysis-shell-tokens-surface-chrome-closeout.md`
