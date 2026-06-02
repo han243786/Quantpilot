@@ -1,29 +1,8 @@
+import { createNodePositionAllocator } from "./nodeFactoryLayout";
+
 let sequence = 1;
 
-const laneX = {
-  data: 120,
-  intent: 420,
-  agent: 720,
-  risk: 1020,
-  execution: 1320,
-  runtime: 40
-};
-
-const laneYCounter = {
-  data: 120,
-  intent: 120,
-  agent: 120,
-  risk: 120,
-  execution: 120,
-  runtime: 24
-};
-
-function nextPosition(category) {
-  const x = laneX[category] || 120;
-  const y = laneYCounter[category] || 120;
-  laneYCounter[category] = y + 180;
-  return { x, y };
-}
+const nextPosition = createNodePositionAllocator();
 
 export function createNodeFromModule(moduleDef) {
   const id = `node_${moduleDef.category}_${sequence++}`;

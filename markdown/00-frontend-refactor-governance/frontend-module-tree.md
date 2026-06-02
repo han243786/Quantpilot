@@ -58,6 +58,9 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/nodes/nodeCardPresentation.test.js`
     - `frontend/src/graph/createGraph.js`
     - `frontend/src/graph/createNode.js`
+    - `frontend/src/graph/createNode.test.js`
+    - `frontend/src/graph/nodeFactoryLayout.js`
+    - `frontend/src/graph/nodeFactoryLayout.test.js`
     - `frontend/src/graph/validation.js`
     - `frontend/src/graph/validationSupport.js`
     - `frontend/src/graph/validationSupport.test.js`
@@ -85,7 +88,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js`
     - `frontend/src/capabilities/capabilityGovernanceCore.js`
   - Child queue:
-    - `frontend.graph_editor.graph_factory_validation.node_factory`
     - `frontend.graph_editor.graph_factory_validation.seed_graph_factory`
     - `frontend.graph_editor.graph_factory_validation.validation_rules`
     - `frontend.graph_editor.graph_compiler_core_ir`
@@ -105,6 +107,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.graph_editor.property_panel_views`
     - `frontend.graph_editor.module_palette`
     - `frontend.graph_editor.graph_factory_validation.validation_support`
+    - `frontend.graph_editor.graph_factory_validation.node_factory`
 
 ## Last Closed Parent
 
