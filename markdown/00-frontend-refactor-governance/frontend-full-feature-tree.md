@@ -554,6 +554,9 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/backtestViews/strategyBacktestsIndex/index.js`
   - `frontend/src/pages/backtestViews/strategyBacktestsIndex/strategyBacktestsIndexModel.js`
   - `frontend/src/pages/backtestViews/strategyBacktestsIndex/strategyBacktestsIndexModel.test.js`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/index.js`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailPageModel.js`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailPageModel.test.js`
   - `frontend/src/pages/backtest-analysis.css`
   - `frontend/src/components/DrawdownChart.jsx`
   - `frontend/src/components/MonthlyReturnsHeatmap.jsx`
@@ -561,3 +564,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0107-frontend-backtest-views-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0108-frontend-backtest-views-analysis-layout-shared-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0109-frontend-backtest-views-strategy-index-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0110-frontend-backtest-views-detail-page-model-closeout.md`

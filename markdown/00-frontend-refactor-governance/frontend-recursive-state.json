@@ -2,12 +2,14 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.backtest_views",
-  "current_step": "FE-0109",
-  "current_phase": "frontend_backtest_views_strategy_backtests_index_closed",
+  "current_parent": "frontend.backtest_views.detail_page_analysis",
+  "current_step": "FE-0110",
+  "current_phase": "frontend_backtest_views_detail_page_analysis_subtree_active",
   "current_child_queue": [
-    "frontend.backtest_views.detail_page_analysis",
-    "frontend.backtest_views.compare_page_analysis"
+    "frontend.backtest_views.detail_page_analysis.summary_and_context",
+    "frontend.backtest_views.detail_page_analysis.core_artifact_sections",
+    "frontend.backtest_views.detail_page_analysis.evidence_report_sections",
+    "frontend.backtest_views.detail_page_analysis.replay_output_explanation_sections"
   ],
   "next_parent": "frontend.store",
   "closed_parents": [
@@ -82,9 +84,12 @@
     "frontend.runtime_panels.mutation_controls",
     "frontend.runtime_panels.replay_and_explanations",
     "frontend.backtest_views.analysis_layout_shared",
-    "frontend.backtest_views.strategy_backtests_index"
+    "frontend.backtest_views.strategy_backtests_index",
+    "frontend.backtest_views.detail_page_analysis.artifact_model"
   ],
-  "open_residuals": [],
+  "open_residuals": [
+    "frontend.backtest_views.compare_page_analysis"
+  ],
   "hot_global_files_forbidden_until_merge": [
     "markdown/00-matrix-governance/module-tree.md",
     "markdown/00-matrix-governance/guidance-matrix.md",

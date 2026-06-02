@@ -32,6 +32,7 @@ import {
   benchmarkComparisonFromSummary,
   MetricPair
 } from "./backtestViews/shared";
+import { buildBacktestDetailPageModel } from "./backtestViews/detailPageAnalysis";
 import { buildDiagnosticsExplanationEntries } from "../utils/runtimeExplanation";
 import {
   buildGovernanceIdentityRows,
@@ -86,36 +87,31 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
     });
   }, [backtestId, loadBacktestDetail]);
 
-  const selectedSummary = runtime.selectedBacktestId
-    ? runtime.backtestHistory.find(
-        (item) => item.backtest_id === runtime.selectedBacktestId
-      ) || null
-    : null;
-
-  const metrics = runtime.backtestArtifacts?.metrics || null;
-  const manifest = runtime.backtestArtifacts?.manifest || null;
-  const equityCurve = runtime.backtestArtifacts?.equity_curve?.points || [];
-  const trades = runtime.backtestArtifacts?.trade_ledger?.trades || [];
-  const outputArtifacts = manifest?.output_artifacts || [];
-  const v4Artifact = runtime.backtestArtifacts?.v4_artifact || null;
-  const v4MicroMetrics = v4Artifact?.microstructure_metrics || null;
-  const summary = metrics?.summary || null;
-  const startedAt = metrics?.started_at_ms || null;
-  const endedAt = metrics?.ended_at_ms || null;
-  const resolvedStrategyId =
-    strategyId || selectedSummary?.graph_id || runtime.backtestArtifacts?.graph_id || "";
+  const {
+    selectedSummary,
+    metrics,
+    manifest,
+    equityCurve,
+    trades,
+    outputArtifacts,
+    v4Artifact,
+    v4MicroMetrics,
+    summary,
+    startedAt,
+    endedAt,
+    resolvedStrategyId,
+    curvePreview,
+    tradePreview,
+    timelineSource
+  } = useMemo(
+    () => buildBacktestDetailPageModel({ runtime, strategyId, backtestId }),
+    [backtestId, runtime, strategyId]
+  );
   const governanceRows = useMemo(
     () => buildGovernanceIdentityRows(governanceFromRuntime(runtime)),
     [runtime]
   );
 
-  const curvePreview = useMemo(() => {
-    if (!Array.isArray(equityCurve) || equityCurve.length === 0) return [];
-    if (equityCurve.length <= 8) return equityCurve;
-    return [...equityCurve.slice(0, 4), ...equityCurve.slice(-4)];
-  }, [equityCurve]);
-
-  const tradePreview = useMemo(() => trades.slice(0, 8), [trades]);
   const riskExplanationEntries = useMemo(
     () => buildDiagnosticsExplanationEntries(graph, runtime.diagnostics, "risk"),
     [graph, runtime.diagnostics]
@@ -124,16 +120,6 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
     () => buildDiagnosticsExplanationEntries(graph, runtime.diagnostics, "order"),
     [graph, runtime.diagnostics]
   );
-  const timelineSource = useMemo(
-    () => ({
-      timeline: runtime.timeline,
-      events: runtime.events,
-      retained_key_event_index: runtime.retainedKeyEventIndex,
-      compact_evidence: runtime.compactEvidence
-    }),
-    [runtime.compactEvidence, runtime.events, runtime.retainedKeyEventIndex, runtime.timeline]
-  );
-
   const [summaryExpanded, setSummaryExpanded] = useState(false);
 
   const riskAdj = useMemo(() => riskAdjustedFromSummary(summary), [summary]);
