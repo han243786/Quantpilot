@@ -730,6 +730,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
 - User-visible behavior: global frontend styling, design tokens, native control defaults, shared component primitives, responsive panel overrides, and page-level style entry contracts stay stable while style ownership is recursively clarified.
 - Owned and split-target files:
   - `frontend/src/main.jsx`
+  - `frontend/src/styleEntrypoint.js`
   - `frontend/src/design-system.css`
   - `frontend/src/styles.css`
   - `frontend/src/styles-responsive-panels.css`
@@ -756,3 +757,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend.design_system_styles.page_style_contracts`
 - Evidence:
   - `markdown/00-frontend-refactor-governance/records/FE-0177-frontend-design-system-styles-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0178-frontend-design-system-global-style-entry-closeout.md`

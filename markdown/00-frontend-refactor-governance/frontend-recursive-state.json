@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.design_system_styles",
-  "current_step": "FE-0177",
-  "current_phase": "frontend_design_system_styles_baseline",
+  "current_step": "FE-0178",
+  "current_phase": "frontend_design_system_styles_global_style_entry_closed",
   "current_child_queue": [
-    "frontend.design_system_styles.global_style_entry",
     "frontend.design_system_styles.design_tokens_and_native_controls",
     "frontend.design_system_styles.shared_component_primitives",
     "frontend.design_system_styles.responsive_panel_overrides",

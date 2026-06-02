@@ -15,6 +15,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0177-frontend-design-system-styles-baseline.md`
   - Current owned and split-target files:
     - `frontend/src/main.jsx`
+    - `frontend/src/styleEntrypoint.js`
     - `frontend/src/design-system.css`
     - `frontend/src/styles.css`
     - `frontend/src/styles-responsive-panels.css`
@@ -42,7 +43,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/BacktestComparePage.jsx`
     - `frontend/src/components/*`
   - Child queue:
-    - `frontend.design_system_styles.global_style_entry`
     - `frontend.design_system_styles.design_tokens_and_native_controls`
     - `frontend.design_system_styles.shared_component_primitives`
     - `frontend.design_system_styles.responsive_panel_overrides`
@@ -50,7 +50,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
   - Active child parent:
     - none yet.
   - Closed child leaves:
-    - none yet.
+    - `frontend.design_system_styles.global_style_entry`
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0178-frontend-design-system-global-style-entry-closeout.md`
+      - Public surface:
+        - `frontend/src/styleEntrypoint.js`
+        - `frontend/src/main.jsx`
 
 ## Closed Parent Detail
 
