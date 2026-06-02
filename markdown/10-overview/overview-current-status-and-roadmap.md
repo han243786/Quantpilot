@@ -814,3 +814,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001LK-01 `backend.ops_governance` backend.ops_governance equivalence baseline and extraction plan；下一步: BE-001LK-02 backend.ops_governance extract_closeout。
 - BE-001LK-02 `backend.ops_governance` backend.ops_governance facade extraction closeout；下一步: BE-001LK-03 backend.ops_governance single_leaf_closeout。
 - BE-001LK-03 `backend.ops_governance` backend.ops_governance single leaf closeout continues split；下一步: BE-001LL-01 backend.ops_governance parent_residual_judgment。
+- BE-001LL-01 `backend.ops_governance` backend.ops_governance parent residual judgment selects hotswap；下一步: BE-001LM-01 backend.ops_governance.hotswap baseline_plan。
