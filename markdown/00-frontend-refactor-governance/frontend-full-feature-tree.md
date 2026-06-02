@@ -739,6 +739,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/design-system/focus-selection.css`
   - `frontend/src/design-system/shell-chrome.css`
   - `frontend/src/design-system/workspace-navigation.css`
+  - `frontend/src/design-system/overlays-resizers-motion.css`
   - `frontend/src/styles.css`
   - `frontend/src/styles-responsive-panels.css`
   - `frontend/src/shared.css`
@@ -771,3 +772,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0182-frontend-design-system-focus-scrollbars-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0183-frontend-design-system-shell-chrome-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0184-frontend-design-system-workspace-navigation-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0185-frontend-design-system-overlays-resizers-motion-closeout.md`

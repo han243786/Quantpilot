@@ -4,11 +4,9 @@
   "scope": "frontend",
   "current_parent": "frontend.design_system_styles.design_tokens_and_native_controls",
   "parent_return": "frontend.design_system_styles",
-  "current_step": "FE-0184",
-  "current_phase": "frontend_design_system_workspace_navigation_closed",
-  "current_child_queue": [
-    "frontend.design_system_styles.design_tokens_and_native_controls.overlays_resizers_motion"
-  ],
+  "current_step": "FE-0185",
+  "current_phase": "frontend_design_system_overlays_resizers_motion_closed",
+  "current_child_queue": [],
   "return_child_queue_after_closeout": [
     "frontend.design_system_styles.shared_component_primitives",
     "frontend.design_system_styles.responsive_panel_overrides",
@@ -152,7 +150,8 @@
     "frontend.design_system_styles.design_tokens_and_native_controls.theme_tokens_and_aliases",
     "frontend.design_system_styles.design_tokens_and_native_controls.focus_selection_scrollbars",
     "frontend.design_system_styles.design_tokens_and_native_controls.shell_chrome_styles",
-    "frontend.design_system_styles.design_tokens_and_native_controls.workspace_navigation_primitives"
+    "frontend.design_system_styles.design_tokens_and_native_controls.workspace_navigation_primitives",
+    "frontend.design_system_styles.design_tokens_and_native_controls.overlays_resizers_motion"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

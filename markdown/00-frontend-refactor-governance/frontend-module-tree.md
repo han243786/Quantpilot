@@ -24,6 +24,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/design-system/focus-selection.css`
     - `frontend/src/design-system/shell-chrome.css`
     - `frontend/src/design-system/workspace-navigation.css`
+    - `frontend/src/design-system/overlays-resizers-motion.css`
     - `frontend/src/styles.css`
     - `frontend/src/styles-responsive-panels.css`
     - `frontend/src/shared.css`
@@ -66,8 +67,9 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/design-system/focus-selection.css`
         - `frontend/src/design-system/shell-chrome.css`
         - `frontend/src/design-system/workspace-navigation.css`
+        - `frontend/src/design-system/overlays-resizers-motion.css`
       - Current subchild queue:
-        - `frontend.design_system_styles.design_tokens_and_native_controls.overlays_resizers_motion`
+        - closed.
       - Closed subchild leaves:
         - `frontend.design_system_styles.design_tokens_and_native_controls.reset_and_native_controls`
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0180-frontend-design-system-reset-native-closeout.md`
@@ -95,6 +97,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0184-frontend-design-system-workspace-navigation-closeout.md`
           - Public surface:
             - `frontend/src/design-system/workspace-navigation.css`
+            - `frontend/src/design-system.css`
+        - `frontend.design_system_styles.design_tokens_and_native_controls.overlays_resizers_motion`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0185-frontend-design-system-overlays-resizers-motion-closeout.md`
+          - Public surface:
+            - `frontend/src/design-system/overlays-resizers-motion.css`
             - `frontend/src/design-system.css`
   - Closed child leaves:
     - `frontend.design_system_styles.global_style_entry`
