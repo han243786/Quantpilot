@@ -1058,3 +1058,4 @@
 | v4.16.0 / BE-001KU-01 | 新增: `backend.storage_security.credential_api_handler_implementation.set_mutation` backend.storage_security.credential_api_handler_implementation.set_mutation equivalence baseline and extraction plan |
 | v4.16.0 / BE-001KU-02 | 新增: `backend.storage_security.credential_api_handler_implementation.set_mutation` backend.storage_security.credential_api_handler_implementation.set_mutation actual extraction complete |
 | v4.16.0 / BE-001KU-03 | 新增: `backend.storage_security.credential_api_handler_implementation.set_mutation` backend.storage_security.credential_api_handler_implementation.set_mutation single leaf closeout continues split |
+| v4.16.0 / BE-001KV-01 | 新增: `backend.storage_security.credential_api_handler_implementation.set_mutation` backend.storage_security.credential_api_handler_implementation.set_mutation parent residual judgment selects service_and_fields_validation |

@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001KU-02",
-  "last_committed_sha": "64bb89e",
-  "current_parent": "backend.storage_security.credential_api_handler_implementation.set_mutation",
-  "current_step": "BE-001KV-01",
-  "current_phase": "parent_residual_judgment",
+  "last_committed_batch": "BE-001KU-03",
+  "last_committed_sha": "18174dae",
+  "current_parent": "backend.storage_security.credential_api_handler_implementation.set_mutation.service_and_fields_validation",
+  "current_step": "BE-001KW-01",
+  "current_phase": "baseline_plan",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -40,7 +40,7 @@
     "app_state_wiring",
     "test_support"
   ],
-  "next_recommended_child": "backend.storage_security.credential_api_handler_implementation.set_mutation",
+  "next_recommended_child": "backend.storage_security.credential_api_handler_implementation.set_mutation.service_and_fields_validation",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
