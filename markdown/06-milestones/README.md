@@ -1002,3 +1002,4 @@
 | v4.16.0 / BE-001JQ-01 | 新增: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation parent residual judgment selects crypto_codec |
 | v4.16.0 / BE-001JR-01 | 新增: `backend.storage_security.credential_vault_implementation.crypto_codec` backend.storage_security.credential_vault_implementation.crypto_codec equivalence baseline and extraction plan |
 | v4.16.0 / BE-001JR-02 | 新增: `backend.storage_security.credential_vault_implementation.crypto_codec` backend.storage_security.credential_vault_implementation.crypto_codec actual extraction complete |
+| v4.16.0 / BE-001JR-03 | 新增: `backend.storage_security.credential_vault_implementation.crypto_codec` backend.storage_security.credential_vault_implementation.crypto_codec single leaf closeout stops further split |
