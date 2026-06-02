@@ -6094,6 +6094,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/storage_lifecycle.rs`
 - `src/credential_vault.rs`
 - `src/backend/storage_security/credential_api_handler_implementation.rs`
+- `src/backend/storage_security/credential_api_handler_implementation/list_projection.rs`
 - `src/safe_log.rs`
 - `src/auth/mod.rs`
 - `src/auth_middleware.rs`
@@ -7548,3 +7549,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_api_handler_implementation.list_projection` 被选为下一轮子叶；该子叶只拥有 `GET /api/credentials` 的 read/list branch、`unscoped_services_for` scoped prefix filtering/strip、vault unavailable mapping 与 `{"services": services}` JSON response。set mutation、delete mutation、route registration、`scoped_cv_key`、auth/vault internals 与 release transition 均不得在 BE-001KQ-01/02 顺手迁移。
 **最新等价基线(BE-001KQ-01)**:
 `backend.storage_security.credential_api_handler_implementation.list_projection` 冻结 `unscoped_services_for` 与 `list_credentials`：必须按 `{user_id}:` prefix 过滤并只剥离该 prefix，vault 存在时返回 `{"services": services}`，vault 缺失时保持 `503 SERVICE_UNAVAILABLE` 与现有消息。BE-001KQ-02 只能新增 list_projection child file 并移动这两个函数；`scoped_cv_key`、set/delete handlers、route registration、auth/vault internals、audit logging、status code/JSON shape 与 release transition 均不得顺手改动。
+**最新抽离记录(BE-001KQ-02)**:
+`backend.storage_security.credential_api_handler_implementation.list_projection` 已迁入 `src/backend/storage_security/credential_api_handler_implementation/list_projection.rs`；父文件新增 `mod list_projection` 并将 `GET /api/credentials` route registration 委托为 `list_projection::list_credentials`。`set_credential`、`delete_credential`、`scoped_cv_key` 与 route registration ownership 仍保留父文件，未移动 auth/vault internals、audit logging、status code mapping 或 release transition。

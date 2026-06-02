@@ -4,15 +4,16 @@ use axum::routing::{delete, get};
 use axum::{Json, Router};
 use std::collections::BTreeMap;
 
-use super::CredentialVault;
 use crate::auth::{self, UserId};
 use crate::AppState;
+
+mod list_projection;
 
 pub(super) fn register_credential_routes(router: Router<AppState>) -> Router<AppState> {
     router
         .route(
             "/api/credentials",
-            get(list_credentials).post(set_credential),
+            get(list_projection::list_credentials).post(set_credential),
         )
         .route("/api/credentials/:service", delete(delete_credential))
 }
@@ -20,33 +21,6 @@ pub(super) fn register_credential_routes(router: Router<AppState>) -> Router<App
 /// v2.3.3: 按用户隔离凭证 — vault key 格式为 `{user_id}:{service}`
 fn scoped_cv_key(user_id: &UserId, service: &str) -> String {
     format!("{}:{}", user_id.0, service)
-}
-
-fn unscoped_services_for(vault: &CredentialVault, user_id: &UserId) -> Vec<String> {
-    let prefix = format!("{}:", user_id.0);
-    vault
-        .list_services()
-        .into_iter()
-        .filter(|s| s.starts_with(&prefix))
-        .map(|s| s[prefix.len()..].to_string())
-        .collect()
-}
-
-/// GET /api/credentials → { "services": ["okx", "binance"] }
-async fn list_credentials(
-    user_id: auth::UserId,
-    State(state): State<AppState>,
-) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
-    match &state.credential_vault {
-        Some(vault) => {
-            let services = unscoped_services_for(vault, &user_id);
-            Ok(Json(serde_json::json!({ "services": services })))
-        }
-        None => Err((
-            StatusCode::SERVICE_UNAVAILABLE,
-            "凭证保险库未初始化".to_string(),
-        )),
-    }
 }
 
 /// POST /api/credentials ← { "service": "okx", "fields": {"key":"...","secret":"..."} }
