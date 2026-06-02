@@ -60,6 +60,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Current owned and split-target files:
         - `frontend/src/shared.css`
         - `frontend/src/shared/ad-core-primitives.css`
+        - `frontend/src/shared/legacy-qp-aliases.css`
       - Important consumers:
         - `frontend/src/styleEntrypoint.js`
         - `frontend/src/app/AppShellFallback.jsx`
@@ -67,7 +68,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/components/*`
         - `frontend/src/pages/*`
       - Current subchild queue:
-        - `frontend.design_system_styles.shared_component_primitives.legacy_qp_aliases`
         - `frontend.design_system_styles.shared_component_primitives.loading_skeleton_motion`
         - `frontend.design_system_styles.shared_component_primitives.monthly_heatmap_styles`
       - Closed subchild leaves:
@@ -75,6 +75,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0188-frontend-shared-ad-core-primitives-closeout.md`
           - Public surface:
             - `frontend/src/shared/ad-core-primitives.css`
+            - `frontend/src/shared.css`
+        - `frontend.design_system_styles.shared_component_primitives.legacy_qp_aliases`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0189-frontend-shared-legacy-qp-aliases-closeout.md`
+          - Public surface:
+            - `frontend/src/shared/legacy-qp-aliases.css`
             - `frontend/src/shared.css`
   - Closed child parent:
     - `frontend.design_system_styles.design_tokens_and_native_controls`
