@@ -634,6 +634,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/store/graphStoreCompileOutcomeProjection.test.js`
   - `frontend/src/store/graphStoreCompileProtocolFlow.js`
   - `frontend/src/store/graphStoreCompileProtocolMapping.js`
+  - `frontend/src/store/graphStoreCompileSourceActions.js`
   - `frontend/src/store/graphStoreCompileState.js`
   - `frontend/src/store/graphStoreEditorActions.js`
   - `frontend/src/store/graphStoreEditorDraftActions.js`
@@ -703,3 +704,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0147-frontend-store-editor-edge-mutation-actions-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0148-frontend-store-editor-actions-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0149-frontend-store-compile-flow-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0150-frontend-store-compile-source-apply-actions-closeout.md`
