@@ -1,57 +1,17 @@
 use anyhow::Result;
-use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
-use std::sync::Mutex;
-use zeroize::{Zeroize, Zeroizing};
+use std::path::Path;
+use zeroize::Zeroizing;
 
 mod crypto_codec;
 mod machine_key_management;
 mod secret_pattern_extraction;
 mod service_crud;
+mod type_surface;
 mod vault_persistence_restore;
 
-fn storage_root() -> String {
-    std::env::var("QUANTPILOT_STORAGE_ROOT").unwrap_or_else(|_| "storage".into())
-}
-// ── SecretString: Drop 时自动 Zeroize ──────────────────────
-
-#[derive(Debug, Clone)]
-struct SecretString(String);
-
-impl Serialize for SecretString {
-    fn serialize<S: serde::Serializer>(&self, s: S) -> std::result::Result<S::Ok, S::Error> {
-        self.0.serialize(s)
-    }
-}
-
-impl<'de> Deserialize<'de> for SecretString {
-    fn deserialize<D: serde::Deserializer<'de>>(d: D) -> std::result::Result<Self, D::Error> {
-        String::deserialize(d).map(SecretString)
-    }
-}
-
-impl Drop for SecretString {
-    fn drop(&mut self) {
-        self.0.zeroize();
-    }
-}
-
-// ── Vault 类型 ────────────────────────────────────────────
-
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-#[serde(deny_unknown_fields)]
-struct VaultData {
-    entries: BTreeMap<String, BTreeMap<String, SecretString>>,
-}
-
-pub type CredentialFields = BTreeMap<String, String>;
-
-pub struct CredentialVault {
-    path: PathBuf,
-    machine_key: [u8; 32],
-    data: Mutex<VaultData>,
-}
+use type_surface::{storage_root, SecretString, VaultData};
+pub use type_surface::{CredentialFields, CredentialVault};
 
 // ── Vault API ─────────────────────────────────────────────
 

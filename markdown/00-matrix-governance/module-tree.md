@@ -847,6 +847,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
 - `src/backend/storage_security/credential_vault/implementation/secret_pattern_extraction.rs`
+- `src/backend/storage_security/credential_vault/implementation/type_surface.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs`
@@ -6081,6 +6082,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/backend/storage_security/credential_vault/implementation/crypto_codec.rs`
 - `src/backend/storage_security/credential_vault/implementation/machine_key_management.rs`
 - `src/backend/storage_security/credential_vault/implementation/secret_pattern_extraction.rs`
+- `src/backend/storage_security/credential_vault/implementation/type_surface.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/mod.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_mutation_commit.rs`
 - `src/backend/storage_security/credential_vault/implementation/service_crud/service_read_projection.rs`
@@ -7518,3 +7520,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_vault_implementation.type_surface` 被选为下一轮子叶；该子叶只冻结 `SecretString`、`VaultData.entries`、`CredentialFields`、`CredentialVault` public facade/field owner、`storage_root` fallback 与 `save_inner` parent mediation。machine/crypto/persistence/CRUD/secret extraction children 已 closeout，implementation-local tests、root shim 与 release transition 均不得在 BE-001KJ-01 迁移。
 **最新等价基线(BE-001KJ-01)**:
 `backend.storage_security.credential_vault_implementation.type_surface` 冻结 `SecretString` plaintext serde 与 Drop zeroize、`VaultData.entries` 存储形状、public `CredentialFields` alias、public `CredentialVault` field layout、`storage_root()` fallback，以及 closed children 通过 parent boundary 访问共享类型所需的 `pub(super)` 可见性。BE-001KJ-02 只能新增 planned `type_surface` child file 并迁移这些类型/辅助；不得移动 `CredentialVault` 方法体、tests、child module bodies、root shim 或 release transition。
+**最新抽离记录(BE-001KJ-02)**:
+`backend.storage_security.credential_vault_implementation.type_surface` 已迁入 `src/backend/storage_security/credential_vault/implementation/type_surface.rs`；`src/backend/storage_security/credential_vault/implementation.rs` 保留 parent behavior facade、public `CredentialFields` / `CredentialVault` re-export 与各方法体委托。内部 `SecretString`、`VaultData`、`CredentialVault` fields 通过 `pub(super)` 维持 sibling children 访问；tests、child module bodies、root shim 与 release transition 均未迁移。
