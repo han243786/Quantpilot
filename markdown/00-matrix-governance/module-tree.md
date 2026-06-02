@@ -588,6 +588,7 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 - `src/backend/strategy_config/artifact/builder_core.rs`
 - `src/backend/strategy_config/preflight.rs`
 - `src/backend/strategy_config/diff.rs`
+- `src/backend/strategy_config/diff/artifact_diff.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/strategy_config_api.rs`
 - `tests/api_ai_proposal.rs`
@@ -682,6 +683,8 @@ preflight 子叶只能通过 `backend.strategy_config` 暴露 API；不得直接
 diff 子叶只比较 strategy config artifact 和 evidence，不拥有 graph version 或 backtest record 的状态所有权。
 **最新子叶计划(BE-001IF-01)**:
 `backend.strategy_config.diff.artifact_diff` 冻结为下一步抽离目标；只允许迁移 route-level artifact diff request/report 与 graph-version artifact bridge，evidence diff 保持父叶开放残余。
+**最新子叶抽离(BE-001IF-02)**:
+`backend.strategy_config.diff.artifact_diff` 已实际抽离到 `src/backend/strategy_config/diff/artifact_diff.rs`；`backend.strategy_config.diff` 仅保留 evidence diff 与受控 re-export，下一步进入 artifact_diff 单叶 closeout。
 
 **回归保护**:
 `cargo test -p quantpilot strategy_config`；涉及 graph version compare 时运行 `cargo test -p quantpilot --test api_graph_versions`。
@@ -794,6 +797,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/strategy_config/artifact/schema_model.rs`
 - `src/backend/strategy_config/preflight.rs`
 - `src/backend/strategy_config/diff.rs`
+- `src/backend/strategy_config/diff/artifact_diff.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/app_router.rs`
 - `src/app_runtime_helpers.rs`
@@ -7245,3 +7249,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001ID-01)**: `backend.strategy_config.diff` backend.strategy_config.diff single leaf closeout keeps stop_split false；下一步: BE-001IE-01 backend.strategy_config.diff parent residual judgment。
 **最新状态补充(BE-001IE-01)**: `backend.strategy_config.diff` backend.strategy_config.diff parent residual judgment selects artifact_diff；下一步: BE-001IF-01 backend.strategy_config.diff.artifact_diff baseline_plan。
 **最新状态补充(BE-001IF-01)**: `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff equivalence baseline and extraction plan；下一步: BE-001IF-02 backend.strategy_config.diff.artifact_diff extract_closeout。
+**最新状态补充(BE-001IF-02)**: `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff actual extraction complete；下一步: BE-001IG-01 backend.strategy_config.diff.artifact_diff single_leaf_closeout。

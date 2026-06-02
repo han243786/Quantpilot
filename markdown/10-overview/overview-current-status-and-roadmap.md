@@ -678,3 +678,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001ID-01 `backend.strategy_config.diff` backend.strategy_config.diff single leaf closeout keeps stop_split false；下一步: BE-001IE-01 backend.strategy_config.diff parent residual judgment。
 - BE-001IE-01 `backend.strategy_config.diff` backend.strategy_config.diff parent residual judgment selects artifact_diff；下一步: BE-001IF-01 backend.strategy_config.diff.artifact_diff baseline_plan。
 - BE-001IF-01 `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff equivalence baseline and extraction plan；下一步: BE-001IF-02 backend.strategy_config.diff.artifact_diff extract_closeout。
+- BE-001IF-02 `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff actual extraction complete；下一步: BE-001IG-01 backend.strategy_config.diff.artifact_diff single_leaf_closeout。

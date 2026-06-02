@@ -286,6 +286,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/strategy_config/artifact/schema_model.rs`
 - `src/backend/strategy_config/preflight.rs`
 - `src/backend/strategy_config/diff.rs`
+- `src/backend/strategy_config/diff/artifact_diff.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/runtime/backtest/v4_projection.rs`
 - `src/runtime/backtest/v4_request_resolution.rs`
@@ -3260,3 +3261,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/588-backend.strategy_config.diff.parent_residual_judgment.artifact_diff.md` - v4.16.0 BE-001IE-01 backend.strategy_config.diff parent residual judgment selects artifact_diff
 递归边界补充: BE-001IF-01 `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff equivalence baseline and extraction plan；下一步: BE-001IF-02 backend.strategy_config.diff.artifact_diff extract_closeout。
 - `markdown/06-milestones/v4.16.0/589-backend.strategy_config.diff.artifact_diff.baseline_plan.md` - v4.16.0 BE-001IF-01 backend.strategy_config.diff.artifact_diff equivalence baseline and extraction plan
+递归边界补充: BE-001IF-02 `backend.strategy_config.diff.artifact_diff` backend.strategy_config.diff.artifact_diff actual extraction complete；下一步: BE-001IG-01 backend.strategy_config.diff.artifact_diff single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/590-backend.strategy_config.diff.artifact_diff.extract_closeout.md` - v4.16.0 BE-001IF-02 backend.strategy_config.diff.artifact_diff actual extraction complete
