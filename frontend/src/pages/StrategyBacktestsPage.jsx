@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import StrategyBacktestsPanel from "../components/StrategyBacktestsPanel";
 import {
   backtestComparePath,
@@ -11,11 +11,9 @@ import {
   AnalysisHero,
   AnalysisSection,
   AnalysisStatusBanner,
-  formatPercent,
-  formatTime,
-  formatValue,
   MetricPair
 } from "./backtestViews/shared";
+import { buildStrategyBacktestsIndexModel } from "./backtestViews/strategyBacktestsIndex";
 import { useStrategyWorkspaceSharedModel } from "../hooks/useStrategyWorkspaceSharedModel";
 import { useStrategyResearchUiState } from "../hooks/useStrategyResearchUiState";
 import { useStrategyResearchSelectors } from "../hooks/strategyResearchSelectors";
@@ -49,30 +47,13 @@ export default function StrategyBacktestsPage({ strategyId }) {
     return () => window.clearTimeout(timeoutId);
   }, [panelNotice]);
 
-  const strategyName =
-    graph.metadata?.graph_id === strategyId ? graph.metadata?.name || strategyId : strategyId;
-  const selectedBacktest = selectors.filteredBacktests[0] || null;
-  const summaryItems = [
-    { label: "回测数", value: formatValue(selectors.filteredBacktests.length) },
-    { label: "对比队列", value: formatValue(selectors.compareSelection.length) },
-    {
-      label: "最近收益",
-      value: formatPercent(selectedBacktest?.summary?.total_return_ratio)
-    },
-    {
-      label: "最近回测",
-      value: selectedBacktest ? formatTime(selectedBacktest.created_at_ms) : "-"
-    }
-  ];
-
-  const compareButtonDisabled = selectors.compareSelection.length !== 2;
-  const isGraphLoading = graph.metadata?.graph_id !== strategyId;
-
-  const datasetText = useMemo(() => {
-    if (graph.metadata?.graph_id !== strategyId) return "-";
-    const labels = selectors.filteredBacktests[0]?.filters?.dataset_labels;
-    return labels?.join(", ") || "-";
-  }, [graph.metadata?.graph_id, selectors.filteredBacktests, strategyId]);
+  const {
+    strategyName,
+    summaryItems,
+    compareButtonDisabled,
+    isGraphLoading,
+    datasetText
+  } = buildStrategyBacktestsIndexModel({ graph, selectors, strategyId });
 
   return (
     <div className="detail-page strategy-backtests-page">

@@ -30,6 +30,9 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/backtestViews/shared/DrawdownChart.jsx`
     - `frontend/src/pages/backtestViews/shared/MonthlyReturnsHeatmap.jsx`
     - `frontend/src/pages/backtestViews/shared/index.js`
+    - `frontend/src/pages/backtestViews/strategyBacktestsIndex/index.js`
+    - `frontend/src/pages/backtestViews/strategyBacktestsIndex/strategyBacktestsIndexModel.js`
+    - `frontend/src/pages/backtestViews/strategyBacktestsIndex/strategyBacktestsIndexModel.test.js`
     - `frontend/src/pages/backtest-analysis.css`
     - `frontend/src/components/DrawdownChart.jsx`
     - `frontend/src/components/MonthlyReturnsHeatmap.jsx`
@@ -47,7 +50,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/components/EventStreamPanel.jsx`
     - `frontend/src/store/graphStore.js`
   - Child queue:
-    - `frontend.backtest_views.strategy_backtests_index`
     - `frontend.backtest_views.detail_page_analysis`
     - `frontend.backtest_views.compare_page_analysis`
   - Closed child leaves:
@@ -59,6 +61,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/pages/backtestAnalysisShared.jsx`
         - `frontend/src/components/DrawdownChart.jsx`
         - `frontend/src/components/MonthlyReturnsHeatmap.jsx`
+    - `frontend.backtest_views.strategy_backtests_index`
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0109-frontend-backtest-views-strategy-index-closeout.md`
+      - Public surface: `frontend/src/pages/backtestViews/strategyBacktestsIndex/index.js`
+      - Owned route shell:
+        - `frontend/src/pages/StrategyBacktestsPage.jsx`
 
 ## Last Closed Parent
 
