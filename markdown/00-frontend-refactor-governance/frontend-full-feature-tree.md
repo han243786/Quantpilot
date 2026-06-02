@@ -511,3 +511,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/utils/v4RuntimeEvidence.test.js`
 - Evidence:
   - `markdown/00-frontend-refactor-governance/records/FE-0097-frontend-runtime-panels-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0098-frontend-runtime-panels-event-stream-shell-closeout.md`

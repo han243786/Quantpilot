@@ -89,7 +89,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.runtime_panels.evidence_timeline_reports`
     - `frontend.runtime_panels.mutation_controls`
     - `frontend.runtime_panels.replay_and_explanations`
-  - Closed child leaves: empty.
+  - Closed child leaves:
+    - `frontend.runtime_panels.event_stream_shell`
 
 ## Last Closed Parent
 
