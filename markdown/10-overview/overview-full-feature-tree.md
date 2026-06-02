@@ -3254,3 +3254,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/585-backend.strategy_config.diff.baseline_plan.md` - v4.16.0 BE-001IC-01 backend.strategy_config.diff equivalence baseline and extraction plan
 递归边界补充: BE-001IC-02 `backend.strategy_config.diff` backend.strategy_config.diff actual extraction complete；下一步: BE-001ID-01 backend.strategy_config.diff single_leaf_closeout。
 - `markdown/06-milestones/v4.16.0/586-backend.strategy_config.diff.extract_closeout.md` - v4.16.0 BE-001IC-02 backend.strategy_config.diff actual extraction complete
+递归边界补充: BE-001ID-01 `backend.strategy_config.diff` backend.strategy_config.diff single leaf closeout keeps stop_split false；下一步: BE-001IE-01 backend.strategy_config.diff parent residual judgment。
+- `markdown/06-milestones/v4.16.0/587-backend.strategy_config.diff.single_leaf_closeout.md` - v4.16.0 BE-001ID-01 backend.strategy_config.diff single leaf closeout keeps stop_split false
