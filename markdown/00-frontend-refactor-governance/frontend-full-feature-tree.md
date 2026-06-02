@@ -599,7 +599,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0119-frontend-backtest-views-compare-page-analysis-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0120-frontend-backtest-views-parent-closeout.md`
 
-## Active Frontend Parent: `frontend.store`
+## Closed Frontend Parent: `frontend.store`
 
 - Status: parent baseline established.
 - Record:
@@ -721,3 +721,38 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0149-frontend-store-compile-flow-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0150-frontend-store-compile-source-apply-actions-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0151-frontend-store-compile-export-actions-closeout.md`
+
+## Active Frontend Parent: `frontend.design_system_styles`
+
+- Status: parent baseline established.
+- Record:
+  - `markdown/00-frontend-refactor-governance/records/FE-0177-frontend-design-system-styles-baseline.md`
+- User-visible behavior: global frontend styling, design tokens, native control defaults, shared component primitives, responsive panel overrides, and page-level style entry contracts stay stable while style ownership is recursively clarified.
+- Owned and split-target files:
+  - `frontend/src/main.jsx`
+  - `frontend/src/design-system.css`
+  - `frontend/src/styles.css`
+  - `frontend/src/styles-responsive-panels.css`
+  - `frontend/src/shared.css`
+  - `frontend/src/pages/backtest-analysis.css`
+  - `frontend/src/pages/strategy-hub.css`
+  - `frontend/src/pages/strategy-hub-shell-hero.css`
+  - `frontend/src/pages/strategy-hub-notes-tasks-status.css`
+  - `frontend/src/pages/strategy-hub-layout-template.css`
+  - `frontend/src/pages/strategy-hub-roster.css`
+  - `frontend/src/pages/strategy-hub-inspector-activity.css`
+  - `frontend/src/pages/strategy-hub-responsive.css`
+  - `frontend/src/pages/strategy-workspace.css`
+  - `frontend/src/pages/strategy-workspace-shell.css`
+  - `frontend/src/pages/strategy-workspace-overview-diagnostics.css`
+  - `frontend/src/pages/strategy-workspace-builder-inspector.css`
+  - `frontend/src/pages/strategy-workspace-cards-runtime.css`
+  - `frontend/src/pages/strategy-workspace-responsive.css`
+- Candidate child queue:
+  - `frontend.design_system_styles.global_style_entry`
+  - `frontend.design_system_styles.design_tokens_and_native_controls`
+  - `frontend.design_system_styles.shared_component_primitives`
+  - `frontend.design_system_styles.responsive_panel_overrides`
+  - `frontend.design_system_styles.page_style_contracts`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0177-frontend-design-system-styles-baseline.md`

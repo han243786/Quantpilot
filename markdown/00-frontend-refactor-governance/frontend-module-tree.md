@@ -10,6 +10,50 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Active Parent
 
+- `frontend.design_system_styles`
+  - Status: parent baseline established.
+  - Record: `markdown/00-frontend-refactor-governance/records/FE-0177-frontend-design-system-styles-baseline.md`
+  - Current owned and split-target files:
+    - `frontend/src/main.jsx`
+    - `frontend/src/design-system.css`
+    - `frontend/src/styles.css`
+    - `frontend/src/styles-responsive-panels.css`
+    - `frontend/src/shared.css`
+    - `frontend/src/pages/backtest-analysis.css`
+    - `frontend/src/pages/strategy-hub.css`
+    - `frontend/src/pages/strategy-hub-shell-hero.css`
+    - `frontend/src/pages/strategy-hub-notes-tasks-status.css`
+    - `frontend/src/pages/strategy-hub-layout-template.css`
+    - `frontend/src/pages/strategy-hub-roster.css`
+    - `frontend/src/pages/strategy-hub-inspector-activity.css`
+    - `frontend/src/pages/strategy-hub-responsive.css`
+    - `frontend/src/pages/strategy-workspace.css`
+    - `frontend/src/pages/strategy-workspace-shell.css`
+    - `frontend/src/pages/strategy-workspace-overview-diagnostics.css`
+    - `frontend/src/pages/strategy-workspace-builder-inspector.css`
+    - `frontend/src/pages/strategy-workspace-cards-runtime.css`
+    - `frontend/src/pages/strategy-workspace-responsive.css`
+  - Important consumers:
+    - `frontend/src/main.jsx`
+    - `frontend/src/app/AppRoot.jsx`
+    - `frontend/src/pages/StrategyWorkspacePage.jsx`
+    - `frontend/src/pages/StrategyHubPage.jsx`
+    - `frontend/src/pages/BacktestDetailPage.jsx`
+    - `frontend/src/pages/BacktestComparePage.jsx`
+    - `frontend/src/components/*`
+  - Child queue:
+    - `frontend.design_system_styles.global_style_entry`
+    - `frontend.design_system_styles.design_tokens_and_native_controls`
+    - `frontend.design_system_styles.shared_component_primitives`
+    - `frontend.design_system_styles.responsive_panel_overrides`
+    - `frontend.design_system_styles.page_style_contracts`
+  - Active child parent:
+    - none yet.
+  - Closed child leaves:
+    - none yet.
+
+## Closed Parent Detail
+
 - `frontend.store`
   - Status: parent closed; pending next parent baseline.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`
@@ -352,7 +396,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.store.root_shell`
     - `frontend.store.capability_refresh`
     - `frontend.store.runtime_transport_selection`
-  - Next parent candidate: `frontend.design_system_styles`
+  - Next parent candidate: `frontend.test_support`
 
 ## Previous Closed Parent
 
@@ -1050,7 +1094,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Pending Parent Queue
 
-- `frontend.design_system_styles`
 - `frontend.test_support`
 
 ## Closed Nodes
@@ -1064,6 +1107,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 - `frontend.graph_editor`
 - `frontend.runtime_panels`
 - `frontend.backtest_views`
+- `frontend.store`
 
 ## Deferred Merge Notes
 
