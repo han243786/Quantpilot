@@ -664,7 +664,7 @@ preflight 子叶只能通过 `backend.strategy_config` 暴露 API；不得直接
 
 **层级路径**: `root.backend.strategy_config.diff`
 **父模块**: `backend.strategy_config`
-**状态**: v4.16 BE-001ID-01 已完成 diff 单叶 closeout；`backend.strategy_config.diff stop_split: false`，下一步进入 diff 父级残余判断，优先评估 `artifact_diff` 与 `evidence_diff` 内部子叶。
+**状态**: v4.16 BE-001IE-01 已完成 diff 父级残余判断；优先选择 `backend.strategy_config.diff.artifact_diff`，`evidence_diff` 保持开放残余。
 **真实文件**:
 - `src/backend/strategy_config/diff.rs`
 - `src/strategy_config_api.rs`
@@ -7241,3 +7241,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001IC-01)**: `backend.strategy_config.diff` backend.strategy_config.diff equivalence baseline and extraction plan；下一步: BE-001IC-02 backend.strategy_config.diff extract_closeout。
 **最新状态补充(BE-001IC-02)**: `backend.strategy_config.diff` backend.strategy_config.diff actual extraction complete；下一步: BE-001ID-01 backend.strategy_config.diff single_leaf_closeout。
 **最新状态补充(BE-001ID-01)**: `backend.strategy_config.diff` backend.strategy_config.diff single leaf closeout keeps stop_split false；下一步: BE-001IE-01 backend.strategy_config.diff parent residual judgment。
+**最新状态补充(BE-001IE-01)**: `backend.strategy_config.diff` backend.strategy_config.diff parent residual judgment selects artifact_diff；下一步: BE-001IF-01 backend.strategy_config.diff.artifact_diff baseline_plan。
