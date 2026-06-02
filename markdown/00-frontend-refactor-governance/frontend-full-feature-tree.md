@@ -523,3 +523,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0102-frontend-runtime-panels-runtime-diagnostics-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0103-frontend-runtime-panels-evidence-timeline-reports-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0104-frontend-runtime-panels-mutation-controls-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0105-frontend-runtime-panels-replay-explanations-closeout.md`

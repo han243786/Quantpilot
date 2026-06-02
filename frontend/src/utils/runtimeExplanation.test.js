@@ -96,4 +96,12 @@ describe("runtimeExplanation", () => {
       })
     ).toBe("legacy reason text");
   });
+
+  it("falls back to node id and ignores unsupported detail families", () => {
+    const [entry] = buildDiagnosticsExplanationEntries({ nodes: [] }, diagnostics, "risk");
+
+    expect(entry.nodeName).toBe("risk_node");
+    expect(buildDiagnosticsExplanationEntries(graph, diagnostics, "unknown")).toEqual([]);
+    expect(buildDiagnosticsExplanationEntries(graph, null, "risk")).toEqual([]);
+  });
 });

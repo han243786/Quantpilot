@@ -288,4 +288,93 @@ describe("EventReplaySection", () => {
 
     expect(screen.getByTestId("event-replay-window")).toHaveTextContent("1-6/8");
   });
+
+  it("stays dormant until a persisted run or backtest source is selected", () => {
+    const { container } = render(<EventReplaySection runtime={{}} />);
+
+    expect(container).toBeEmptyDOMElement();
+    expect(fetchRunReplay).not.toHaveBeenCalled();
+    expect(fetchBacktestReplay).not.toHaveBeenCalled();
+  });
+
+  it("surfaces replay load failures without rendering stale rows", async () => {
+    fetchRunReplay.mockRejectedValueOnce(new Error("replay service offline"));
+
+    render(<EventReplaySection runtime={{ selectedHistoryRunId: "run_error" }} />);
+
+    fireEvent.click(screen.getByTestId("event-replay-load"));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("event-replay-section")).toHaveTextContent(
+        "replay service offline"
+      )
+    );
+    expect(screen.queryByTestId("event-replay-events")).toBeNull();
+  });
+
+  it("uses legacy cursor fallback when sequence cursors are unavailable", async () => {
+    fetchRunReplay
+      .mockResolvedValueOnce({
+        kind: "run",
+        record_id: "run_legacy",
+        graph_id: "graph_001",
+        source_event_count: 8,
+        total_events: 8,
+        cursor: 0,
+        limit: 12,
+        window_end: 6,
+        fill_event_count: 0,
+        account: {},
+        checkpoints: [],
+        events: [
+          {
+            sequence_no: 1,
+            event: { event_type: "RuntimeNotice", summary: "Started", payload: {} }
+          }
+        ],
+        previous_cursor: null,
+        next_cursor: 6,
+        previous_sequence_cursor: null,
+        next_sequence_cursor: null
+      })
+      .mockResolvedValueOnce({
+        kind: "run",
+        record_id: "run_legacy",
+        graph_id: "graph_001",
+        source_event_count: 8,
+        total_events: 8,
+        cursor: 6,
+        limit: 12,
+        window_end: 8,
+        fill_event_count: 0,
+        account: {},
+        checkpoints: [],
+        events: [],
+        previous_cursor: 0,
+        next_cursor: null,
+        previous_sequence_cursor: null,
+        next_sequence_cursor: null
+      });
+
+    render(<EventReplaySection runtime={{ selectedHistoryRunId: "run_legacy" }} />);
+
+    fireEvent.click(screen.getByTestId("event-replay-load"));
+
+    await waitFor(() =>
+      expect(fetchRunReplay).toHaveBeenNthCalledWith(1, "run_legacy", {
+        sequence_cursor: 1,
+        limit: 12
+      })
+    );
+
+    fireEvent.click(screen.getByTestId("event-replay-next"));
+
+    await waitFor(() =>
+      expect(fetchRunReplay).toHaveBeenNthCalledWith(2, "run_legacy", {
+        cursor: 6,
+        limit: 12
+      })
+    );
+    expect(screen.getByTestId("event-replay-window")).toHaveTextContent("7-8/8");
+  });
 });
