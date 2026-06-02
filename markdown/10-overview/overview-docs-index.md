@@ -659,3 +659,4 @@
 | v4.16.0 / BE-001KA-01 | 新增: `backend.storage_security.credential_vault_implementation.service_crud` backend.storage_security.credential_vault_implementation.service_crud equivalence baseline and extraction plan |
 | v4.16.0 / BE-001KA-02 | 新增: `backend.storage_security.credential_vault_implementation.service_crud` backend.storage_security.credential_vault_implementation.service_crud actual extraction complete |
 | v4.16.0 / BE-001KA-03 | 新增: `backend.storage_security.credential_vault_implementation.service_crud` backend.storage_security.credential_vault_implementation.service_crud single leaf closeout keeps stop_split false |
+| v4.16.0 / BE-001KB-01 | 新增: `backend.storage_security.credential_vault_implementation.service_crud` backend.storage_security.credential_vault_implementation.service_crud parent residual judgment selects service_mutation_commit |
