@@ -627,6 +627,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/store/graphStoreCapabilityRefresh.test.js`
   - `frontend/src/store/graphStoreCompileActions.js`
   - `frontend/src/store/graphStoreCompileApi.js`
+  - `frontend/src/store/graphStoreCompileCurrentGraphActions.js`
   - `frontend/src/store/graphStoreCompileExportActions.js`
   - `frontend/src/store/graphStoreCompileFlow.js`
   - `frontend/src/store/graphStoreCompileHelpers.js`
