@@ -59,6 +59,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Record: `markdown/00-frontend-refactor-governance/records/FE-0187-frontend-shared-component-primitives-baseline.md`
       - Current owned and split-target files:
         - `frontend/src/shared.css`
+        - `frontend/src/shared/ad-core-primitives.css`
       - Important consumers:
         - `frontend/src/styleEntrypoint.js`
         - `frontend/src/app/AppShellFallback.jsx`
@@ -66,12 +67,15 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/components/*`
         - `frontend/src/pages/*`
       - Current subchild queue:
-        - `frontend.design_system_styles.shared_component_primitives.ad_core_primitives`
         - `frontend.design_system_styles.shared_component_primitives.legacy_qp_aliases`
         - `frontend.design_system_styles.shared_component_primitives.loading_skeleton_motion`
         - `frontend.design_system_styles.shared_component_primitives.monthly_heatmap_styles`
       - Closed subchild leaves:
-        - none.
+        - `frontend.design_system_styles.shared_component_primitives.ad_core_primitives`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0188-frontend-shared-ad-core-primitives-closeout.md`
+          - Public surface:
+            - `frontend/src/shared/ad-core-primitives.css`
+            - `frontend/src/shared.css`
   - Closed child parent:
     - `frontend.design_system_styles.design_tokens_and_native_controls`
       - Status: closed after recursive subchild queue finished.

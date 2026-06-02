@@ -743,6 +743,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/styles.css`
   - `frontend/src/styles-responsive-panels.css`
   - `frontend/src/shared.css`
+  - `frontend/src/shared/ad-core-primitives.css`
   - `frontend/src/pages/backtest-analysis.css`
   - `frontend/src/pages/strategy-hub.css`
   - `frontend/src/pages/strategy-hub-shell-hero.css`
@@ -775,3 +776,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0185-frontend-design-system-overlays-resizers-motion-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0186-frontend-design-system-core-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0187-frontend-shared-component-primitives-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0188-frontend-shared-ad-core-primitives-closeout.md`
