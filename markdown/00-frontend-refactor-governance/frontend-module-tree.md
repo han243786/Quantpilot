@@ -54,6 +54,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/store/graphStoreEditorSelectionActions.test.js`
     - `frontend/src/store/graphStoreEditorTemplateActions.js`
     - `frontend/src/store/graphStoreEditorTemplateActions.test.js`
+    - `frontend/src/store/graphStoreActorCollaboration.js`
     - `frontend/src/store/graphStoreHelpers.js`
     - `frontend/src/store/graphStorePersistenceActions.js`
     - `frontend/src/store/graphStorePersistenceConsistency.test.js`
@@ -108,7 +109,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Current subchild queue:
             - `frontend.store.persistence_startup.persistence_helper_contract.graph_shape_validation_contract`
             - `frontend.store.persistence_startup.persistence_helper_contract.version_audit_normalizers`
-            - `frontend.store.persistence_startup.persistence_helper_contract.actor_collaboration_contract`
           - Closed subchild leaves:
             - `frontend.store.persistence_startup.persistence_helper_contract.transport_contract`
               - Record: `markdown/00-frontend-refactor-governance/records/FE-0126-frontend-store-persistence-transport-closeout.md`
@@ -116,6 +116,9 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
             - `frontend.store.persistence_startup.persistence_helper_contract.storage_cache_contract`
               - Record: `markdown/00-frontend-refactor-governance/records/FE-0127-frontend-store-persistence-storage-closeout.md`
               - Public surface: `frontend/src/store/graphStorePersistenceStorage.js`
+            - `frontend.store.persistence_startup.persistence_helper_contract.actor_collaboration_contract`
+              - Record: `markdown/00-frontend-refactor-governance/records/FE-0128-frontend-store-actor-collaboration-closeout.md`
+              - Public surface: `frontend/src/store/graphStoreActorCollaboration.js`
       - Closed subchild leaves:
         - `frontend.store.persistence_startup.startup_actions`
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0123-frontend-store-startup-actions-closeout.md`
