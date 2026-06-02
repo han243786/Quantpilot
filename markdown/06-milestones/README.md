@@ -995,3 +995,4 @@
 | v4.16.0 / BE-001JM-01 | 新增: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation safety baseline and extraction plan |
 | v4.16.0 / BE-001JM-02 | 新增: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation actual extraction complete |
 | v4.16.0 / BE-001JN-01 | 新增: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation single leaf closeout keeps stop_split false |
+| v4.16.0 / BE-001JO-01 | 新增: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation parent residual judgment selects machine_key_management |

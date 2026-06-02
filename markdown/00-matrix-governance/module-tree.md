@@ -6125,6 +6125,8 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_vault_implementation` 已实际迁移到 `src/backend/storage_security/credential_vault/implementation.rs`；`src/credential_vault.rs` 保留 root compatibility shim，`CredentialFields` / `CredentialVault` public surface、key derivation、encrypt/decrypt、backup restore、atomic save、permission hardening、Zeroizing 与 service CRUD 语义保持不变。
 **最新子叶关闭判断(BE-001JN-01)**:
 `backend.storage_security.credential_vault_implementation stop_split: false`；当前实现 owner 同时包含 machine-key management、PBKDF2/AES-GCM crypto codec、vault load/restore/persistence、service CRUD、secret pattern extraction 与 implementation-local tests。细分判断命中 public boundary、state phase、strategy branch 与 independent failure mode，下一步必须进入 BE-001JO-01 父叶残余判断，不得直接继续移动安全实现。
+**最新父叶残余判断(BE-001JO-01)**:
+`backend.storage_security.credential_vault_implementation.machine_key_management` 被选为下一轮内部安全子叶；该子叶只冻结 machine-key cache/init、key file load/create 与 key derivation，不拥有 AES-GCM encrypt/decrypt、vault persistence、backup restore、service CRUD、secret pattern extraction 或 release transition。下一步进入 BE-001JP-01 baseline_plan。
 
 **回归保护**:
 `cargo test credential`；`cargo test storage_lifecycle`；涉及日志时复核 safe log 测试。
@@ -7396,3 +7398,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001JM-01)**: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation safety baseline and extraction plan；下一步: BE-001JM-02 backend.storage_security.credential_vault_implementation extract_closeout。
 **最新状态补充(BE-001JM-02)**: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation actual extraction complete；下一步: BE-001JN-01 backend.storage_security.credential_vault_implementation single_leaf_closeout。
 **最新状态补充(BE-001JN-01)**: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation single leaf closeout keeps stop_split false；下一步: BE-001JO-01 backend.storage_security.credential_vault_implementation parent_residual_judgment。
+**最新状态补充(BE-001JO-01)**: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation parent residual judgment selects machine_key_management；下一步: BE-001JP-01 backend.storage_security.credential_vault_implementation.machine_key_management baseline_plan。
