@@ -3,8 +3,8 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.graph_editor",
-  "current_step": "FE-0089",
-  "current_phase": "frontend_graph_editor_editor_store_actions_selection_focus_closeout",
+  "current_step": "FE-0090",
+  "current_phase": "frontend_graph_editor_editor_store_actions_draft_source_actions_closeout",
   "current_child_queue": [
     "frontend.graph_editor.editor_store_actions",
     "frontend.graph_editor.legacy_editor_page_shell"
@@ -64,7 +64,8 @@
     "frontend.graph_editor.quantscript_bridge.artifact_targets",
     "frontend.graph_editor.quantscript_bridge.graph_source_parser",
     "frontend.graph_editor.quantscript_bridge",
-    "frontend.graph_editor.editor_store_actions.selection_focus"
+    "frontend.graph_editor.editor_store_actions.selection_focus",
+    "frontend.graph_editor.editor_store_actions.draft_source_actions"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
