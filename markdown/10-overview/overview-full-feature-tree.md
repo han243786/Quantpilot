@@ -3562,3 +3562,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/720-backend.storage_security.credential_api_handler_implementation.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001LH-01 backend.storage_security.credential_api_handler_implementation parent residual judgment closes parent
 递归边界补充: BE-001LI-01 `backend.storage_security` backend.storage_security parent residual judgment closes parent；下一步: BE-001LJ-01 backend parent_residual_judgment。
 - `markdown/06-milestones/v4.16.0/721-backend.storage_security.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001LI-01 backend.storage_security parent residual judgment closes parent
+递归边界补充: BE-001LJ-01 `backend` backend parent residual judgment selects ops_governance；下一步: BE-001LK-01 backend.ops_governance baseline_plan。
+- `markdown/06-milestones/v4.16.0/722-backend.parent_residual_judgment.ops_governance.md` - v4.16.0 BE-001LJ-01 backend parent residual judgment selects ops_governance

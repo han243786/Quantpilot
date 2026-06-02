@@ -810,3 +810,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001LG-01 `backend.storage_security.credential_api_handler_implementation.delete_mutation` backend.storage_security.credential_api_handler_implementation.delete_mutation parent residual judgment closes parent；下一步: BE-001LH-01 backend.storage_security.credential_api_handler_implementation parent_residual_judgment。
 - BE-001LH-01 `backend.storage_security.credential_api_handler_implementation` backend.storage_security.credential_api_handler_implementation parent residual judgment closes parent；下一步: BE-001LI-01 backend.storage_security parent_residual_judgment。
 - BE-001LI-01 `backend.storage_security` backend.storage_security parent residual judgment closes parent；下一步: BE-001LJ-01 backend parent_residual_judgment。
+- BE-001LJ-01 `backend` backend parent residual judgment selects ops_governance；下一步: BE-001LK-01 backend.ops_governance baseline_plan。
