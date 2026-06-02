@@ -7,12 +7,14 @@ use crate::AppState;
 
 pub const MODULE_ID: &str = "backend.ops_governance.hotswap";
 
+mod handlers;
+
 pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
     router
-        .route("/api/hotswap", post(crate::hotswap_api::submit_hotswap))
-        .route("/api/hotswap/list", get(crate::hotswap_api::list_hotswaps))
+        .route("/api/hotswap", post(handlers::submit_hotswap))
+        .route("/api/hotswap/list", get(handlers::list_hotswaps))
         .route(
             "/api/hotswap/:hotswap_id",
-            get(crate::hotswap_api::get_hotswap_status),
+            get(handlers::get_hotswap_status),
         )
 }

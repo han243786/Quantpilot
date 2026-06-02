@@ -35,7 +35,6 @@ mod frontend_api_types;
 mod frontend_runtime_mapping;
 mod graph_api;
 mod graph_version_compare;
-mod hotswap_api;
 pub mod migration_sender;
 mod rate_limiter;
 mod runbook;

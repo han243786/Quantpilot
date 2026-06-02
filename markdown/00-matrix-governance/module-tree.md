@@ -6228,7 +6228,7 @@ AI 声称“安全存储已覆盖”时，必须指出 vault、storage lifecycle
 - `src/snapshot_service.rs`
 - `src/runbook.rs`
 - `src/chaos_experiment.rs`
-- `src/hotswap_api.rs`
+- `src/backend/ops_governance/hotswap/handlers.rs`
 - `src/collaboration.rs`
 - `src/migration_sender.rs`
 
@@ -7627,12 +7627,14 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 
 `backend.ops_governance` 被选为下一轮顶层残余；该子域拥有 hotswap、sandbox verification、alerts、snapshots、runbook 与 chaos route facades，触及 runtime governance、auditability、operational controls 与 smoke/test safety surfaces。下一步必须先冻结 ops governance 顶层等价基线，不得直接移动 AppState owner、test support fixtures、runtime/capability/storage security internals 或 release-transition policy。
 
-`backend.ops_governance` 冻结 parent route facade 与六个 route child facade：hotswap、sandbox、alerts、snapshots、runbook、chaos。`src/hotswap_api.rs`、`src/sandbox_verification.rs`、`src/alert_engine.rs`、`src/snapshot_service.rs`、`src/runbook.rs`、`src/chaos_experiment.rs` 的 root handler migration 继续 deferred；BE-001LK-02 只能确认已存在的 ops governance facade extraction closeout，不得移动 handler logic、AppState owner/lock order、runtime/capability/storage security/app_state_wiring/test_support internals、ops sibling shortcuts 或 release transition。
+`backend.ops_governance` 冻结 parent route facade 与六个 route child facade：hotswap、sandbox、alerts、snapshots、runbook、chaos。BE-001LK-02 时 hotswap、sandbox、alerts、snapshots、runbook、chaos 的 root handler migration 继续 deferred；BE-001LM-02 后 hotswap handler owner 已迁入 `src/backend/ops_governance/hotswap/handlers.rs`，其余 ops root handler migration 仍然 deferred。不得移动 AppState owner/lock order、runtime/capability/storage security/app_state_wiring/test_support internals、ops sibling shortcuts 或 release transition。
 
-`backend.ops_governance` facade extraction 已确认完成；`src/backend/ops_governance.rs` 与 hotswap/sandbox/alerts/snapshots/runbook/chaos child facade files 均已在位，且仍只通过 parent/child facade 委托到 root handlers。`src/hotswap_api.rs`、`src/sandbox_verification.rs`、`src/alert_engine.rs`、`src/snapshot_service.rs`、`src/runbook.rs`、`src/chaos_experiment.rs` migration 继续 deferred；AppState owner/lock order 与 release transition 均未迁移。
+`backend.ops_governance` facade extraction 已确认完成；`src/backend/ops_governance.rs` 与 hotswap/sandbox/alerts/snapshots/runbook/chaos child facade files 均已在位。BE-001LM-02 后 hotswap facade 委托到本地 child handlers；`src/sandbox_verification.rs`、`src/alert_engine.rs`、`src/snapshot_service.rs`、`src/runbook.rs`、`src/chaos_experiment.rs` migration 继续 deferred；AppState owner/lock order 与 release transition 均未迁移。
 
 `backend.ops_governance stop_split: false`；当前 parent 同时拥有 hotswap、sandbox verification、alerts、snapshots、runbook、chaos 六个 ops route domains。各域拥有独立 route ownership 与 failure modes，继续细拆可让后续 root handler migration 逐域冻结和验证；下一步回到该节点父叶残余判断并选择一个子叶基线。
 
-`backend.ops_governance.hotswap` 被选为下一轮子叶；它是 ops governance parent order 中第一个真实 child facade，当前只拥有 `/api/hotswap`、`/api/hotswap/list`、`/api/hotswap/:hotswap_id` 三条 route registration 并委托到 `src/hotswap_api.rs`。sandbox、alerts、snapshots、runbook、chaos 继续留在 `backend.ops_governance` parent residual queue；BE-001LM-01 必须先冻结 hotswap baseline，不得直接迁移 sibling ops handlers、AppState owner/lock order 或 release transition。
+`backend.ops_governance.hotswap` 被选为下一轮子叶；它是 ops governance parent order 中第一个真实 child facade，当前只拥有 `/api/hotswap`、`/api/hotswap/list`、`/api/hotswap/:hotswap_id` 三条 route registration。BE-001LM-02 后该 facade 委托到 `src/backend/ops_governance/hotswap/handlers.rs`；sandbox、alerts、snapshots、runbook、chaos 继续留在 `backend.ops_governance` parent residual queue，不得直接迁移 sibling ops handlers、AppState owner/lock order 或 release transition。
 
-`backend.ops_governance.hotswap` baseline 已冻结：route chain 为 `src/app_router.rs` -> `backend.interface_boundary` -> `backend.interface_boundary.ops_governance_bridge` -> `backend.ops_governance` -> `backend.ops_governance.hotswap` -> `src/hotswap_api.rs`。三条 route、三个 handler、`SubmitHotSwapRequest` 默认窗口字段、`AppState.hotswap_records` scoped storage、400/404 problem JSON 均不得漂移；当前未发现 dedicated hotswap test，BE-001LM-02 只能做最小 handler owner movement 并以 compile/governance gates 证明。
+`backend.ops_governance.hotswap` baseline 已冻结：route chain 为 `src/app_router.rs` -> `backend.interface_boundary` -> `backend.interface_boundary.ops_governance_bridge` -> `backend.ops_governance` -> `backend.ops_governance.hotswap`。三条 route、三个 handler、`SubmitHotSwapRequest` 默认窗口字段、`AppState.hotswap_records` scoped storage、400/404 problem JSON 均不得漂移；当前未发现 dedicated hotswap test，BE-001LM-02 已执行最小 handler owner movement 并以 compile/governance gates 证明。
+
+`backend.ops_governance.hotswap` handler owner 已迁入 `src/backend/ops_governance/hotswap/handlers.rs`；`src/backend/ops_governance/hotswap.rs` 只保留 child facade 与 local handler wiring，原 root hotswap module 已删除。`auth::UserId`、`AppState.hotswap_records`、三条 `/api/hotswap*` route、400/404 problem JSON 与 list projection 保持不变；sandbox/alerts/snapshots/runbook/chaos sibling domains 未迁移。

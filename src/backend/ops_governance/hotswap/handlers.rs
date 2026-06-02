@@ -6,11 +6,11 @@ use axum::{
 };
 use serde_json::json;
 
-use super::auth;
-use super::frontend_api_types::{
+use crate::auth;
+use crate::frontend_api_types::{
     HotSwapRecord, HotSwapResponse, HotSwapStatusResponse, SubmitHotSwapRequest,
 };
-use super::AppState;
+use crate::AppState;
 
 pub(super) async fn submit_hotswap(
     user_id: auth::UserId,
@@ -35,7 +35,6 @@ pub(super) async fn submit_hotswap(
         events: Vec::new(),
     };
 
-    // Compatibility validation
     if body.module_targets.is_empty() {
         return (
             StatusCode::BAD_REQUEST,

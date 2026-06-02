@@ -357,7 +357,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 | `/api/capabilities` | 能力声明 | `src/backend/capability/snapshot.rs` |
 | `/api/quantscript/formal/*` | QS 正式编译 | `src/backend/graph_compile/compile.rs` |
 | `/api/collaboration/*` | 协作 | `collaboration.rs` |
-| `/api/hotswap/*` | 模块热替换 | `hotswap_api.rs` |
+| `/api/hotswap/*` | 模块热替换 | `src/backend/ops_governance/hotswap/handlers.rs` |
 | `/api/migration/*` | 数据迁移 | `migration_sender.rs` |
 | SPA fallback | 前端静态文件 | `dist/index.html` |
 
@@ -586,7 +586,7 @@ cli_support.rs                  — CLI 支持
 migration_sender.rs             — 数据迁移
   └── 跨版本数据迁移逻辑
 
-hotswap_api.rs                  — 模块热替换
+src/backend/ops_governance/hotswap/handlers.rs — 模块热替换
   └── 运行时模块替换 API
 ```
 
@@ -2218,7 +2218,7 @@ storage/
 - `src/backend/graph_compile/quantscript_graph/route_surface.rs` — QS graph route facade child, owns load/parse HTTP handlers
 - `src/backend/graph_compile/quantscript_graph/strategy_graph_parser.rs` — strategy_graph source parser child, owns source-to-imported-graph parsing before artifact attachment
 - `src/graph_version_compare.rs` — 图版本对比; 改版本 diff 算法、配置契约 diff 或 evidence diff 响应挂接时改这里
-- `src/hotswap_api.rs` — 模块热替换 API; 改热替换接口时改这里
+- `src/backend/ops_governance/hotswap/handlers.rs` — 模块热替换 API; 改热替换接口时改这里
 - `src/middleware.rs` — 通用中间件; 改请求处理管道时改这里
 - `src/migration_sender.rs` — 数据迁移; 改跨版本迁移时改这里
 - `src/rate_limiter.rs` — 速率限制; 改限速策略时改这里
@@ -3574,3 +3574,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/726-backend.ops_governance.parent_residual_judgment.hotswap.md` - v4.16.0 BE-001LL-01 backend.ops_governance parent residual judgment selects hotswap
 递归边界补充: BE-001LM-01 `backend.ops_governance.hotswap` backend.ops_governance.hotswap equivalence baseline and extraction plan；下一步: BE-001LM-02 backend.ops_governance.hotswap extract_closeout。
 - `markdown/06-milestones/v4.16.0/727-backend.ops_governance.hotswap.baseline_plan.md` - v4.16.0 BE-001LM-01 backend.ops_governance.hotswap equivalence baseline and extraction plan
+递归边界补充: BE-001LM-02 `backend.ops_governance.hotswap` backend.ops_governance.hotswap actual extraction complete；下一步: BE-001LM-03 backend.ops_governance.hotswap single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/728-backend.ops_governance.hotswap.extract_closeout.md` - v4.16.0 BE-001LM-02 backend.ops_governance.hotswap actual extraction complete
