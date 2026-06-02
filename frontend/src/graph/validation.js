@@ -1,64 +1,12 @@
-import { DEFAULT_CAPABILITIES, normalizeCapabilities } from "../modules/builtinModules";
-
-const allowedChain = {
-  data: ["intent"],
-  intent: ["agent"],
-  agent: ["risk"],
-  risk: ["execution"],
-  execution: [],
-  runtime: []
-};
-
-const typeLabels = {
-  data: "数据",
-  intent: "意图",
-  agent: "代理",
-  risk: "风控",
-  execution: "执行",
-  runtime: "运行"
-};
-
-function capabilitySet(values, fallback) {
-  return new Set(Array.isArray(values) && values.length > 0 ? values : fallback);
-}
-
-function supportMap(entries, keyField = "key") {
-  return new Map(
-    (Array.isArray(entries) ? entries : [])
-      .filter((entry) => entry && typeof entry === "object" && entry[keyField])
-      .map((entry) => [entry[keyField], entry])
-  );
-}
-
-function capabilityEntryStatus(entry, fallbackSet, key) {
-  if (entry) return entry.status === "supported";
-  return fallbackSet.has(key);
-}
-
-function capabilityReason(entry, fallback = "") {
-  return entry?.reason || fallback;
-}
-
-function compareValues(leftValue, operator, rightValue) {
-  if (operator === "<") return leftValue < rightValue;
-  if (operator === "<=") return leftValue <= rightValue;
-  if (operator === ">") return leftValue > rightValue;
-  if (operator === ">=") return leftValue >= rightValue;
-  if (operator === "===") return leftValue === rightValue;
-  return true;
-}
-
-function buildIssue(level, scope, targetId, code, message, hint = "") {
-  return {
-    id: `${scope}_${targetId}_${code}`,
-    level,
-    scope,
-    target_id: targetId,
-    code,
-    message,
-    hint
-  };
-}
+import {
+  allowedChain,
+  buildCapabilityIndex,
+  buildIssue,
+  capabilityEntryStatus,
+  capabilityReason,
+  compareValues,
+  typeLabels
+} from "./validationSupport";
 
 export function isValidConnection(graph, registry, connection) {
   const sourceNode = graph.nodes.find((node) => node.id === connection.source);
@@ -119,28 +67,17 @@ export function isValidConnection(graph, registry, connection) {
 }
 
 export function validateGraph(graph, registry) {
-  const capabilities = normalizeCapabilities(registry?.capabilities || DEFAULT_CAPABILITIES);
-  const supportedRuntimeModes = capabilitySet(
-    capabilities.runtime?.supported_modes,
-    DEFAULT_CAPABILITIES.runtime.supported_modes
-  );
-  const supportedExecutionModules = capabilitySet(
-    capabilities.runtime?.supported_execution_modules,
-    DEFAULT_CAPABILITIES.runtime.supported_execution_modules
-  );
-  const supportedSymbols = capabilitySet(
-    capabilities.market_data?.supported_symbols,
-    DEFAULT_CAPABILITIES.market_data.supported_symbols
-  );
-  const supportedExchanges = capabilitySet(
-    capabilities.market_data?.supported_exchanges,
-    DEFAULT_CAPABILITIES.market_data.supported_exchanges
-  );
-  const runtimeModeSupport = supportMap(capabilities.runtime?.mode_support);
-  const executionModuleSupport = supportMap(capabilities.runtime?.execution_module_support);
-  const exchangeSupport = supportMap(capabilities.market_data?.exchange_support);
-  const symbolSupport = supportMap(capabilities.market_data?.symbol_support);
-  const frontendModuleSupport = supportMap(capabilities.frontend?.module_support, "module_key");
+  const {
+    supportedRuntimeModes,
+    supportedExecutionModules,
+    supportedSymbols,
+    supportedExchanges,
+    runtimeModeSupport,
+    executionModuleSupport,
+    exchangeSupport,
+    symbolSupport,
+    frontendModuleSupport
+  } = buildCapabilityIndex(registry);
 
   const nodeIssues = {};
   const edgeIssues = {};

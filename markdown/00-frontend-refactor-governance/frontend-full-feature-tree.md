@@ -365,6 +365,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/graph/createGraph.js`
   - `frontend/src/graph/createNode.js`
   - `frontend/src/graph/validation.js`
+  - `frontend/src/graph/validationSupport.js`
+  - `frontend/src/graph/validationSupport.test.js`
   - `frontend/src/graph/compileGraph.js`
   - `frontend/src/graph/compileGraph.diagnostics.test.js`
   - `frontend/src/graph/compileGraph.multiSymbol.test.js`
@@ -386,3 +388,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0071-frontend-graph-editor-property-panel-section-composers-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0072-frontend-graph-editor-property-panel-views-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0073-frontend-graph-editor-module-palette-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0074-frontend-graph-editor-validation-support-closeout.md`
