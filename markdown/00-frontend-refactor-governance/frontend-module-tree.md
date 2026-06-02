@@ -58,6 +58,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/store/graphStorePersistenceActions.js`
     - `frontend/src/store/graphStorePersistenceConsistency.test.js`
     - `frontend/src/store/graphStorePersistenceHelpers.js`
+    - `frontend/src/store/graphStorePersistenceTransport.js`
     - `frontend/src/store/graphStoreRuntimeActions.js`
     - `frontend/src/store/graphStoreRuntimeHelpers.js`
     - `frontend/src/store/graphStoreRuntimeHistoryActions.js`
@@ -99,7 +100,19 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.store.persistence_startup`
       - Status: active recursive split.
       - Current subchild queue:
+        - closed.
+      - Active nested child parent:
         - `frontend.store.persistence_startup.persistence_helper_contract`
+          - Status: active recursive split.
+          - Current subchild queue:
+            - `frontend.store.persistence_startup.persistence_helper_contract.storage_cache_contract`
+            - `frontend.store.persistence_startup.persistence_helper_contract.graph_shape_validation_contract`
+            - `frontend.store.persistence_startup.persistence_helper_contract.version_audit_normalizers`
+            - `frontend.store.persistence_startup.persistence_helper_contract.actor_collaboration_contract`
+          - Closed subchild leaves:
+            - `frontend.store.persistence_startup.persistence_helper_contract.transport_contract`
+              - Record: `markdown/00-frontend-refactor-governance/records/FE-0126-frontend-store-persistence-transport-closeout.md`
+              - Public surface: `frontend/src/store/graphStorePersistenceTransport.js`
       - Closed subchild leaves:
         - `frontend.store.persistence_startup.startup_actions`
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0123-frontend-store-startup-actions-closeout.md`

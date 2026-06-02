@@ -1,5 +1,4 @@
 import { createModuleRegistry } from "../modules/moduleRegistry";
-import { API_BASE } from "../api/client";
 import {
   DEFAULT_CAPABILITIES,
   applyCapabilitiesToModules,
@@ -9,8 +8,16 @@ import { createEmptyGraph } from "../graph/createGraph";
 import { validateGraph } from "../graph/validation";
 import { attachQuantScriptArtifacts } from "../graph/quantscript";
 import { buildActionFailureMessage } from "../utils/actionFailure";
-import { humanizeErrorText, sanitizeDisplayText } from "../utils/errorText";
-import { fetchWithTimeout } from "../utils/api";
+import { sanitizeDisplayText } from "../utils/errorText";
+import { fetchJson } from "./graphStorePersistenceTransport";
+
+export {
+  API_BASE,
+  deleteJson,
+  fetchJson,
+  postJson,
+  unwrapPage
+} from "./graphStorePersistenceTransport";
 
 const STORAGE_KEY = "quantpilot_frontend_graph";
 const CAPABILITY_CACHE_KEY = "quantpilot_capabilities_cache";
@@ -230,86 +237,6 @@ function normalizeGraphShape(graph) {
     validation_state: graph.validation_state || {},
     compile_summary: graph.compile_summary || {}
   };
-}
-
-
-export async function fetchJson(path) {
-  const response = await fetchWithTimeout(`${API_BASE}${path}`);
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(humanizeErrorText(text, `Request failed with status ${response.status}.`));
-  }
-  return response.json();
-}
-
-export function unwrapPage(json) {
-  if (json && typeof json === "object" && Array.isArray(json.data) && typeof json.total === "number") {
-    return json.data;
-  }
-  return json;
-}
-
-async function postJson(path, body) {
-  const response = await fetchWithTimeout(`${API_BASE}${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    let payload = null;
-    try {
-      payload = JSON.parse(text);
-    } catch (e) {
-      console.warn("graphStorePersistenceHelpers: postJson parse failed", e);
-    }
-
-    const error = new Error(
-      humanizeErrorText(
-        payload?.message || text,
-        `Request failed with status ${response.status}.`
-      )
-    );
-    error.status = response.status;
-    error.error = payload?.error || null;
-    error.details = Array.isArray(payload?.details) ? payload.details : [];
-    error.partial_artifacts = payload?.partial_artifacts || null;
-    throw error;
-  }
-
-  const json = await response.json();
-  return json;
-}
-
-async function deleteJson(path) {
-  const response = await fetchWithTimeout(`${API_BASE}${path}`, {
-    method: "DELETE"
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    let payload = null;
-    try {
-      payload = JSON.parse(text);
-    } catch (e) {
-      console.warn("graphStorePersistenceHelpers: deleteJson parse failed", e);
-    }
-
-    const error = new Error(
-      humanizeErrorText(
-        payload?.message || text,
-        `Request failed with status ${response.status}.`
-      )
-    );
-    error.status = response.status;
-    error.error = payload?.error || null;
-    error.details = Array.isArray(payload?.details) ? payload.details : [];
-    throw error;
-  }
-
-  const json = await response.json();
-  return json;
 }
 
 function buildRegistryFromCapabilities(capabilities) {
@@ -674,11 +601,9 @@ function graphExistsInIndex(graph, graphIndex = []) {
 
 
 export {
-  API_BASE,
   CAPABILITY_CACHE_KEY,
   STORAGE_KEY,
   createSafeFallbackCapabilities,
-  deleteJson,
   DEFAULT_CAPABILITIES as defaultCapabilities,
   defaultRegistry,
   fallbackRunnableGraph,
@@ -692,7 +617,6 @@ export {
   normalizeGraphVersionCompare,
   normalizeGraphVersions,
   normalizeGraphShape,
-  postJson,
   recordRecentNodeIds,
   resolveGraphActor,
   resolveGraphForDetail,
