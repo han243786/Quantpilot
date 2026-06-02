@@ -627,6 +627,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/store/graphStoreCapabilityRefresh.test.js`
   - `frontend/src/store/graphStoreCompileActions.js`
   - `frontend/src/store/graphStoreCompileApi.js`
+  - `frontend/src/store/graphStoreCompileExportActions.js`
   - `frontend/src/store/graphStoreCompileFlow.js`
   - `frontend/src/store/graphStoreCompileHelpers.js`
   - `frontend/src/store/graphStoreCompileOutcomeMapping.js`
@@ -705,3 +706,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0148-frontend-store-editor-actions-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0149-frontend-store-compile-flow-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0150-frontend-store-compile-source-apply-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0151-frontend-store-compile-export-actions-closeout.md`

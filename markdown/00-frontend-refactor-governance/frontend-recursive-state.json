@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.store.compile_flow",
-  "current_step": "FE-0150",
-  "current_phase": "frontend_store_compile_source_apply_actions_closed",
+  "current_step": "FE-0151",
+  "current_phase": "frontend_store_compile_export_actions_closed",
   "current_child_queue": [
-    "frontend.store.compile_flow.export_actions",
     "frontend.store.compile_flow.current_graph_compile_action",
     "frontend.store.compile_flow.backend_compile_flow_contract",
     "frontend.store.compile_flow.outcome_state_contract",
@@ -122,7 +121,8 @@
     "frontend.store.editor_actions.edge_mutation_actions.remove_selected_action",
     "frontend.store.editor_actions.edge_mutation_actions",
     "frontend.store.editor_actions",
-    "frontend.store.compile_flow.source_apply_actions"
+    "frontend.store.compile_flow.source_apply_actions",
+    "frontend.store.compile_flow.export_actions"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
