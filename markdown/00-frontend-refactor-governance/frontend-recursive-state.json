@@ -4,10 +4,9 @@
   "scope": "frontend",
   "current_parent": "frontend.design_system_styles.shared_component_primitives",
   "parent_return": "frontend.design_system_styles",
-  "current_step": "FE-0189",
-  "current_phase": "frontend_shared_legacy_qp_aliases_closed",
+  "current_step": "FE-0190",
+  "current_phase": "frontend_shared_loading_skeleton_motion_closed",
   "current_child_queue": [
-    "frontend.design_system_styles.shared_component_primitives.loading_skeleton_motion",
     "frontend.design_system_styles.shared_component_primitives.monthly_heatmap_styles"
   ],
   "return_child_queue_after_closeout": [
@@ -156,7 +155,8 @@
     "frontend.design_system_styles.design_tokens_and_native_controls.overlays_resizers_motion",
     "frontend.design_system_styles.design_tokens_and_native_controls",
     "frontend.design_system_styles.shared_component_primitives.ad_core_primitives",
-    "frontend.design_system_styles.shared_component_primitives.legacy_qp_aliases"
+    "frontend.design_system_styles.shared_component_primitives.legacy_qp_aliases",
+    "frontend.design_system_styles.shared_component_primitives.loading_skeleton_motion"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

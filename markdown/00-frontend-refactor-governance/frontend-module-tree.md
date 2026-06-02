@@ -61,6 +61,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/shared.css`
         - `frontend/src/shared/ad-core-primitives.css`
         - `frontend/src/shared/legacy-qp-aliases.css`
+        - `frontend/src/shared/loading-skeleton-motion.css`
       - Important consumers:
         - `frontend/src/styleEntrypoint.js`
         - `frontend/src/app/AppShellFallback.jsx`
@@ -68,7 +69,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/components/*`
         - `frontend/src/pages/*`
       - Current subchild queue:
-        - `frontend.design_system_styles.shared_component_primitives.loading_skeleton_motion`
         - `frontend.design_system_styles.shared_component_primitives.monthly_heatmap_styles`
       - Closed subchild leaves:
         - `frontend.design_system_styles.shared_component_primitives.ad_core_primitives`
@@ -80,6 +80,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0189-frontend-shared-legacy-qp-aliases-closeout.md`
           - Public surface:
             - `frontend/src/shared/legacy-qp-aliases.css`
+            - `frontend/src/shared.css`
+        - `frontend.design_system_styles.shared_component_primitives.loading_skeleton_motion`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0190-frontend-shared-loading-skeleton-motion-closeout.md`
+          - Public surface:
+            - `frontend/src/shared/loading-skeleton-motion.css`
             - `frontend/src/shared.css`
   - Closed child parent:
     - `frontend.design_system_styles.design_tokens_and_native_controls`
