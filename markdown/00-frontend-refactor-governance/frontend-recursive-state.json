@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.store.editor_actions.edge_mutation_actions",
-  "current_step": "FE-0144",
-  "current_phase": "frontend_store_editor_edge_mutation_actions_baselined",
+  "current_step": "FE-0145",
+  "current_phase": "frontend_store_editor_edge_add_action_closed",
   "current_child_queue": [
-    "frontend.store.editor_actions.edge_mutation_actions.add_edge_action",
     "frontend.store.editor_actions.edge_mutation_actions.remove_selected_action"
   ],
   "next_parent": "frontend.design_system_styles",
@@ -114,7 +113,8 @@
     "frontend.store.editor_actions.node_mutation_actions.node_position_viewport",
     "frontend.store.editor_actions.node_mutation_actions.node_config_identity",
     "frontend.store.editor_actions.node_mutation_actions.node_ui_collapse",
-    "frontend.store.editor_actions.node_mutation_actions"
+    "frontend.store.editor_actions.node_mutation_actions",
+    "frontend.store.editor_actions.edge_mutation_actions.add_edge_action"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
