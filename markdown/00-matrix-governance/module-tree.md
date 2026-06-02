@@ -592,6 +592,7 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 - `src/backend/strategy_config/diff/evidence_diff.rs`
 - `src/backend/strategy_config/diff/evidence_diff/machine_trajectory.rs`
 - `src/backend/strategy_config/diff/evidence_diff/risk_plane.rs`
+- `src/backend/strategy_config/diff/evidence_diff/execution_capability.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/strategy_config_api.rs`
 - `tests/api_ai_proposal.rs`
@@ -718,6 +719,8 @@ diff 子叶只比较 strategy config artifact 和 evidence，不拥有 graph ver
 `backend.strategy_config.diff.evidence_diff.execution_capability` 被选为下一轮抽离子叶；metrics 与 shared helpers 保持开放残余。
 **最新基线(BE-001IR-01)**:
 `backend.strategy_config.diff.evidence_diff.execution_capability` 等价基线已冻结；下一步只允许迁移 execution capability report/comparison/signature helper 与 `json_label`。
+**最新抽离(BE-001IR-02)**:
+`backend.strategy_config.diff.evidence_diff.execution_capability` 已实际抽离到 `src/backend/strategy_config/diff/evidence_diff/execution_capability.rs`；metrics 与 shared helpers 仍由 evidence_diff 父叶控制，下一步进入单叶 closeout。
 
 **回归保护**:
 `cargo test -p quantpilot strategy_config`；涉及 graph version compare 时运行 `cargo test -p quantpilot --test api_graph_versions`。
@@ -834,6 +837,7 @@ AI proposal binding 子叶只能记录 strategy config 与 runtime mutation 的�
 - `src/backend/strategy_config/diff/evidence_diff.rs`
 - `src/backend/strategy_config/diff/evidence_diff/machine_trajectory.rs`
 - `src/backend/strategy_config/diff/evidence_diff/risk_plane.rs`
+- `src/backend/strategy_config/diff/evidence_diff/execution_capability.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/app_router.rs`
 - `src/app_runtime_helpers.rs`
@@ -7301,3 +7305,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001IP-01)**: `backend.strategy_config.diff.evidence_diff.risk_plane` backend.strategy_config.diff.evidence_diff.risk_plane single leaf closeout stops further split；下一步: BE-001IQ-01 backend.strategy_config.diff.evidence_diff parent_residual_judgment。
 **最新状态补充(BE-001IQ-01)**: `backend.strategy_config.diff.evidence_diff` backend.strategy_config.diff.evidence_diff parent residual judgment selects execution_capability；下一步: BE-001IR-01 backend.strategy_config.diff.evidence_diff.execution_capability baseline_plan。
 **最新状态补充(BE-001IR-01)**: `backend.strategy_config.diff.evidence_diff.execution_capability` backend.strategy_config.diff.evidence_diff.execution_capability equivalence baseline and extraction plan；下一步: BE-001IR-02 backend.strategy_config.diff.evidence_diff.execution_capability extract_closeout。
+**最新状态补充(BE-001IR-02)**: `backend.strategy_config.diff.evidence_diff.execution_capability` backend.strategy_config.diff.evidence_diff.execution_capability actual extraction complete；下一步: BE-001IS-01 backend.strategy_config.diff.evidence_diff.execution_capability single_leaf_closeout。

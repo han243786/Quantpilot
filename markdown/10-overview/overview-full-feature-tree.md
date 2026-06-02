@@ -290,6 +290,7 @@ v4 provider 范围: v4 只确保 OKX 单一 provider 切面; 美股、港股、A
 - `src/backend/strategy_config/diff/evidence_diff.rs`
 - `src/backend/strategy_config/diff/evidence_diff/machine_trajectory.rs`
 - `src/backend/strategy_config/diff/evidence_diff/risk_plane.rs`
+- `src/backend/strategy_config/diff/evidence_diff/execution_capability.rs`
 - `src/backend/strategy_config/ai_proposal_binding.rs`
 - `src/runtime/backtest/v4_projection.rs`
 - `src/runtime/backtest/v4_request_resolution.rs`
@@ -3296,3 +3297,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/604-backend.strategy_config.diff.evidence_diff.parent_residual_judgment.execution_capability.md` - v4.16.0 BE-001IQ-01 backend.strategy_config.diff.evidence_diff parent residual judgment selects execution_capability
 递归边界补充: BE-001IR-01 `backend.strategy_config.diff.evidence_diff.execution_capability` backend.strategy_config.diff.evidence_diff.execution_capability equivalence baseline and extraction plan；下一步: BE-001IR-02 backend.strategy_config.diff.evidence_diff.execution_capability extract_closeout。
 - `markdown/06-milestones/v4.16.0/605-backend.strategy_config.diff.evidence_diff.execution_capability.baseline_plan.md` - v4.16.0 BE-001IR-01 backend.strategy_config.diff.evidence_diff.execution_capability equivalence baseline and extraction plan
+递归边界补充: BE-001IR-02 `backend.strategy_config.diff.evidence_diff.execution_capability` backend.strategy_config.diff.evidence_diff.execution_capability actual extraction complete；下一步: BE-001IS-01 backend.strategy_config.diff.evidence_diff.execution_capability single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/606-backend.strategy_config.diff.evidence_diff.execution_capability.extract_closeout.md` - v4.16.0 BE-001IR-02 backend.strategy_config.diff.evidence_diff.execution_capability actual extraction complete
