@@ -465,7 +465,9 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/components/EventStreamPanel.refreshFeedback.test.jsx`
   - `frontend/src/components/EventStreamPanel.runtimeArtifactActions.test.jsx`
   - `frontend/src/components/BacktestHistorySection.jsx`
+  - `frontend/src/components/BacktestHistorySection.test.jsx`
   - `frontend/src/components/RunHistorySection.jsx`
+  - `frontend/src/components/RunHistorySection.test.jsx`
   - `frontend/src/components/StrategyBacktestsPanel.jsx`
   - `frontend/src/components/StrategyEventsPanel.jsx`
   - `frontend/src/components/StrategyRunsPanel.jsx`
@@ -515,3 +517,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0097-frontend-runtime-panels-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0098-frontend-runtime-panels-event-stream-shell-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0099-frontend-runtime-panels-strategy-research-model-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0100-frontend-runtime-panels-history-sections-closeout.md`
