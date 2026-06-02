@@ -1,0 +1,102 @@
+.analysis-section {
+  padding: 16px;
+}
+
+.analysis-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.analysis-section-header > div:first-child {
+  min-width: 0;
+}
+
+.analysis-section-kicker {
+  font-size: var(--ad-font-size-xs);
+  color: var(--analysis-kicker-color, var(--muted));
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.analysis-section-title {
+  margin: 0;
+  font-size: clamp(20px, 2.2vw, 26px);
+  line-height: 1.2;
+  color: var(--analysis-title-color);
+}
+
+.analysis-section-summary {
+  margin: 6px 0 0;
+  color: var(--analysis-copy-color, var(--muted));
+  font-size: var(--ad-font-size-md);
+  line-height: 1.5;
+}
+
+.analysis-section-body {
+  display: grid;
+  gap: 12px;
+}
+
+.analysis-card-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.analysis-card-grid--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.analysis-status-banner {
+  color: #b0b8c4;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 24px rgba(0, 0, 0, 0.16);
+}
+
+.analysis-status-banner--error {
+  color: #c8b8b8;
+}
+
+.analysis-compare-card {
+  margin-top: 0;
+}
+
+.analysis-card-grid .open-orders-card,
+.analysis-card-grid .backtest-summary-card,
+.analysis-card-grid .backtest-history-card,
+.analysis-card-grid .run-history-card {
+  margin-top: 0;
+}
+
+.analysis-followup-section {
+  padding: 14px;
+}
+
+.strategy-analysis-page .open-orders-card,
+.strategy-analysis-page .backtest-summary-card,
+.strategy-analysis-page .backtest-history-card,
+.strategy-analysis-page .run-history-card {
+  border-color: var(--analysis-card-border);
+  background: var(--analysis-card-bg);
+}
+
+.strategy-analysis-page .kv-line span,
+.strategy-analysis-page .account-metric-card span,
+.strategy-analysis-page .open-order-grid span {
+  color: var(--analysis-meta-color, var(--muted));
+}
+
+.strategy-analysis-page .kv-line strong,
+.strategy-analysis-page .account-metric-card strong,
+.strategy-analysis-page .open-order-grid strong,
+.strategy-analysis-page .open-order-topline strong {
+  color: var(--analysis-card-title-color);
+}
+
+.analysis-hero .toolbar-group,
+.analysis-section .toolbar-group {
+  align-self: flex-start;
+}
+
