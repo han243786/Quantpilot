@@ -62,10 +62,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/store/graphStore.js`
   - Child queue:
     - `frontend.backtest_views.compare_page_analysis`
-  - Active child parent:
+  - Closed child parent:
     - `frontend.backtest_views.detail_page_analysis`
-      - Status: promoted to active child parent after first detail model extraction.
-      - Record: `markdown/00-frontend-refactor-governance/records/FE-0110-frontend-backtest-views-detail-page-model-closeout.md`
+      - Status: closed after recursive subchild queue finished.
+      - Baseline record: `markdown/00-frontend-refactor-governance/records/FE-0110-frontend-backtest-views-detail-page-model-closeout.md`
+      - Parent closeout record: `markdown/00-frontend-refactor-governance/records/FE-0115-frontend-backtest-views-detail-page-analysis-parent-closeout.md`
       - Current subchild queue:
         - closed.
       - Closed subchild leaves:

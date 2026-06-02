@@ -577,3 +577,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0112-frontend-backtest-views-detail-core-artifact-sections-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0113-frontend-backtest-views-detail-evidence-report-sections-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0114-frontend-backtest-views-detail-replay-output-explanation-sections-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0115-frontend-backtest-views-detail-page-analysis-parent-closeout.md`
