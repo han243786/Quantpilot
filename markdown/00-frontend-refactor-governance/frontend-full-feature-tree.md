@@ -488,7 +488,9 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/components/EvidenceSummaryCards.jsx`
   - `frontend/src/hooks/useStrategyResearchModel.js`
   - `frontend/src/hooks/useStrategyResearchActions.js`
+  - `frontend/src/hooks/useStrategyResearchActions.test.js`
   - `frontend/src/hooks/useStrategyResearchUiState.js`
+  - `frontend/src/hooks/useStrategyResearchUiState.test.js`
   - `frontend/src/hooks/strategyResearchSelectors.js`
   - `frontend/src/hooks/strategyResearchSelectors.test.js`
   - `frontend/src/hooks/useOrderAnimation.js`
@@ -512,3 +514,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
 - Evidence:
   - `markdown/00-frontend-refactor-governance/records/FE-0097-frontend-runtime-panels-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0098-frontend-runtime-panels-event-stream-shell-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0099-frontend-runtime-panels-strategy-research-model-closeout.md`

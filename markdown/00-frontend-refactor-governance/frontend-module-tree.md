@@ -48,7 +48,9 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/components/EvidenceSummaryCards.jsx`
     - `frontend/src/hooks/useStrategyResearchModel.js`
     - `frontend/src/hooks/useStrategyResearchActions.js`
+    - `frontend/src/hooks/useStrategyResearchActions.test.js`
     - `frontend/src/hooks/useStrategyResearchUiState.js`
+    - `frontend/src/hooks/useStrategyResearchUiState.test.js`
     - `frontend/src/hooks/strategyResearchSelectors.js`
     - `frontend/src/hooks/strategyResearchSelectors.test.js`
     - `frontend/src/hooks/useOrderAnimation.js`
@@ -91,6 +93,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.runtime_panels.replay_and_explanations`
   - Closed child leaves:
     - `frontend.runtime_panels.event_stream_shell`
+    - `frontend.runtime_panels.strategy_research_model`
 
 ## Last Closed Parent
 
