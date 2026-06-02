@@ -168,6 +168,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/StrategyWorkspacePanelFallbacks.jsx`
   - `frontend/src/pages/StrategyWorkspaceDashboard.jsx`
   - `frontend/src/pages/StrategyWorkspaceOverviewTab.jsx`
+  - `frontend/src/pages/strategyWorkspaceDashboardOverviewShell.js`
+  - `frontend/src/pages/strategyWorkspaceDashboardOverviewShell.test.js`
   - `frontend/src/pages/StrategyWorkspaceCodeTab.jsx`
   - `frontend/src/pages/strategyWorkspaceCodeModeShell.js`
   - `frontend/src/pages/strategyWorkspaceCodeModeShell.test.js`
@@ -213,3 +215,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0042-frontend-strategy-workspace-issue-queue-state-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0043-frontend-strategy-workspace-toolbar-bridge-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0044-frontend-strategy-workspace-code-mode-shell-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0045-frontend-strategy-workspace-dashboard-overview-closeout.md`
