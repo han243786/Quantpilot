@@ -299,3 +299,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0054-frontend-strategy-hub-roster-projection-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0055-frontend-strategy-hub-roster-row-actions-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0056-frontend-strategy-hub-inspector-projection-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0057-frontend-strategy-hub-recent-activity-compare-closeout.md`

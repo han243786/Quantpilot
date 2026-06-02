@@ -81,7 +81,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/components/propertyPanelViews.jsx`
     - `frontend/src/components/StrategyResearchConsole.jsx`
   - Child queue:
-    - `frontend.strategy_hub.recent_activity_compare`
     - `frontend.strategy_hub.template_library`
     - `frontend.strategy_hub.shared_component_boundary`
     - `frontend.strategy_hub.layout_styles`
@@ -92,6 +91,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.strategy_hub.roster_projection`
     - `frontend.strategy_hub.roster_row_actions`
     - `frontend.strategy_hub.inspector_projection`
+    - `frontend.strategy_hub.recent_activity_compare`
 
 ## Last Closed Parent
 
