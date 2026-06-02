@@ -748,6 +748,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/styles-responsive-panels/tutorial-overlay.css`
   - `frontend/src/styles-responsive-panels/dashboard-strategy-config.css`
   - `frontend/src/styles-responsive-panels/quantscript-editor-source-tabs.css`
+  - `frontend/src/styles-responsive-panels/workspace-debug-approval-print.css`
   - `frontend/src/shared.css`
   - `frontend/src/shared/ad-core-primitives.css`
   - `frontend/src/shared/legacy-qp-aliases.css`
@@ -797,3 +798,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0197-frontend-responsive-tutorial-overlay-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0198-frontend-responsive-dashboard-strategy-config-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0199-frontend-responsive-quantscript-editor-source-tabs-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0200-frontend-responsive-workspace-debug-approval-print-closeout.md`

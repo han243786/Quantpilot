@@ -1,0 +1,82 @@
+/* ── 调试选项卡 ── */
+
+.workspace-debug-empty {
+  padding: var(--ad-space-6);
+  text-align: center;
+  color: var(--ad-text-muted);
+}
+
+.workspace-debug-container {
+  padding: var(--ad-space-4);
+  overflow: auto;
+}
+.workspace-debug-container .property-card { margin-bottom: var(--ad-space-4); }
+
+.workspace-debug-chart { margin-bottom: var(--ad-space-3); }
+.workspace-debug-chart__label {
+  font-size: var(--ad-font-size-xs);
+  color: var(--ad-text-muted);
+  margin-bottom: var(--ad-space-1);
+}
+.workspace-debug-chart__svg {
+  border: 1px solid var(--ad-border);
+  border-radius: var(--ad-radius-md);
+  background: var(--ad-bg);
+}
+
+.workspace-debug-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ad-font-size-sm);
+}
+.workspace-debug-table__header { position: sticky; top: 0; background: var(--ad-panel); }
+.workspace-debug-table th {
+  padding: 6px 8px;
+  text-align: right;
+  border-bottom: 1px solid var(--ad-border-strong);
+}
+.workspace-debug-table td {
+  padding: 4px 8px;
+  text-align: right;
+}
+.workspace-debug-table tr:not(:first-child):not(.workspace-debug-table__header) {
+  border-bottom: 1px solid var(--ad-card);
+}
+
+/* ── ApprovalPanel ── */
+.approval-flex-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.approval-report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ad-font-size-sm);
+}
+.approval-report-table th,
+.approval-report-table td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--ad-border);
+}
+.workspace-debug-table .bar-index { color: var(--ad-text-muted); }
+.workspace-debug-table .val-number { color: var(--ad-text-secondary); font-family: var(--ad-font-mono); }
+.workspace-debug-table .val-null { color: var(--ad-text-muted); }
+
+/* ── 打印样式 ── */
+@media print {
+  html, body, #root { background: #fff; color: #000; overflow: visible; }
+  .ad-sidebar, .ad-titlebar, .ad-command-bar, .ad-overlay,
+  .ad-command-palette, .ad-offline-banner, .ad-skip-link { display: none; }
+  .ad-main-content { margin-left: 0; height: auto; overflow: visible; }
+  .editor-page { height: auto; display: block; }
+  .main-workspace { grid-template-columns: 1fr; }
+  .event-panel, .property-panel, .module-sidebar { display: none; }
+  .strategy-canvas-shell { height: auto; min-height: 400px; }
+  pre, code, table { background: #fff; color: #000; border-color: #ccc; }
+  a { color: #000; text-decoration: underline; }
+}
+
