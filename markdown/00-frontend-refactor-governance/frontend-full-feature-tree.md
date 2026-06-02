@@ -413,3 +413,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0080-frontend-graph-editor-core-ir-lowering-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0081-frontend-graph-editor-runtime-config-lowering-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0082-frontend-graph-editor-topology-diagnostics-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0083-frontend-graph-editor-graph-compiler-core-ir-parent-closeout.md`

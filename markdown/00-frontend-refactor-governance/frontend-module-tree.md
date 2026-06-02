@@ -125,6 +125,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.graph_editor.graph_compiler_core_ir.core_ir_lowering`
     - `frontend.graph_editor.graph_compiler_core_ir.runtime_config_lowering`
     - `frontend.graph_editor.graph_compiler_core_ir.topology_diagnostics`
+    - `frontend.graph_editor.graph_compiler_core_ir`
 
 ## Last Closed Parent
 
