@@ -4,10 +4,9 @@
   "scope": "frontend",
   "current_parent": "frontend.design_system_styles.responsive_panel_overrides",
   "parent_return": "frontend.design_system_styles",
-  "current_step": "FE-0198",
-  "current_phase": "frontend_responsive_dashboard_strategy_config_closed",
+  "current_step": "FE-0199",
+  "current_phase": "frontend_responsive_quantscript_editor_source_tabs_closed",
   "current_child_queue": [
-    "frontend.design_system_styles.responsive_panel_overrides.quantscript_editor_and_source_tabs",
     "frontend.design_system_styles.responsive_panel_overrides.workspace_debug_approval_print",
     "frontend.design_system_styles.responsive_panel_overrides.legacy_page_inline_migrations"
   ],
@@ -164,7 +163,8 @@
     "frontend.design_system_styles.responsive_panel_overrides.runtime_event_research_panels",
     "frontend.design_system_styles.responsive_panel_overrides.motion_and_runtime_helpers",
     "frontend.design_system_styles.responsive_panel_overrides.tutorial_overlay_styles",
-    "frontend.design_system_styles.responsive_panel_overrides.dashboard_and_strategy_config"
+    "frontend.design_system_styles.responsive_panel_overrides.dashboard_and_strategy_config",
+    "frontend.design_system_styles.responsive_panel_overrides.quantscript_editor_and_source_tabs"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

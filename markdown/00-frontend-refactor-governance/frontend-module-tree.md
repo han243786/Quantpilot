@@ -63,6 +63,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/styles-responsive-panels/motion-and-runtime-helpers.css`
         - `frontend/src/styles-responsive-panels/tutorial-overlay.css`
         - `frontend/src/styles-responsive-panels/dashboard-strategy-config.css`
+        - `frontend/src/styles-responsive-panels/quantscript-editor-source-tabs.css`
       - Important consumers:
         - `frontend/src/styleEntrypoint.js`
         - `frontend/src/pages/StrategyWorkspacePage.jsx`
@@ -78,7 +79,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/components/GovernedTimelinePanel.jsx`
         - `frontend/src/components/ApprovalPanel.jsx`
       - Current subchild queue:
-        - `frontend.design_system_styles.responsive_panel_overrides.quantscript_editor_and_source_tabs`
         - `frontend.design_system_styles.responsive_panel_overrides.workspace_debug_approval_print`
         - `frontend.design_system_styles.responsive_panel_overrides.legacy_page_inline_migrations`
       - Closed subchild leaves:
@@ -106,6 +106,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0198-frontend-responsive-dashboard-strategy-config-closeout.md`
           - Public surface:
             - `frontend/src/styles-responsive-panels/dashboard-strategy-config.css`
+            - `frontend/src/styles-responsive-panels.css`
+        - `frontend.design_system_styles.responsive_panel_overrides.quantscript_editor_and_source_tabs`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0199-frontend-responsive-quantscript-editor-source-tabs-closeout.md`
+          - Public surface:
+            - `frontend/src/styles-responsive-panels/quantscript-editor-source-tabs.css`
             - `frontend/src/styles-responsive-panels.css`
   - Closed child parent:
     - `frontend.design_system_styles.shared_component_primitives`
