@@ -2,16 +2,20 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.design_system_styles",
-  "parent_return": null,
-  "current_step": "FE-0186",
-  "current_phase": "frontend_design_system_core_child_parent_closed",
+  "current_parent": "frontend.design_system_styles.shared_component_primitives",
+  "parent_return": "frontend.design_system_styles",
+  "current_step": "FE-0187",
+  "current_phase": "frontend_shared_component_primitives_baseline",
   "current_child_queue": [
-    "frontend.design_system_styles.shared_component_primitives",
+    "frontend.design_system_styles.shared_component_primitives.ad_core_primitives",
+    "frontend.design_system_styles.shared_component_primitives.legacy_qp_aliases",
+    "frontend.design_system_styles.shared_component_primitives.loading_skeleton_motion",
+    "frontend.design_system_styles.shared_component_primitives.monthly_heatmap_styles"
+  ],
+  "return_child_queue_after_closeout": [
     "frontend.design_system_styles.responsive_panel_overrides",
     "frontend.design_system_styles.page_style_contracts"
   ],
-  "return_child_queue_after_closeout": [],
   "next_parent": "frontend.test_support",
   "closed_parents": [
     "frontend.app_shell",

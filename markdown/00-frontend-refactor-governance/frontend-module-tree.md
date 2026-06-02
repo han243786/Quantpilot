@@ -51,11 +51,27 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/BacktestComparePage.jsx`
     - `frontend/src/components/*`
   - Child queue:
-    - `frontend.design_system_styles.shared_component_primitives`
     - `frontend.design_system_styles.responsive_panel_overrides`
     - `frontend.design_system_styles.page_style_contracts`
   - Active child parent:
-    - none.
+    - `frontend.design_system_styles.shared_component_primitives`
+      - Status: child parent baseline established.
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0187-frontend-shared-component-primitives-baseline.md`
+      - Current owned and split-target files:
+        - `frontend/src/shared.css`
+      - Important consumers:
+        - `frontend/src/styleEntrypoint.js`
+        - `frontend/src/app/AppShellFallback.jsx`
+        - `frontend/src/pages/backtestViews/shared/MonthlyReturnsHeatmap.jsx`
+        - `frontend/src/components/*`
+        - `frontend/src/pages/*`
+      - Current subchild queue:
+        - `frontend.design_system_styles.shared_component_primitives.ad_core_primitives`
+        - `frontend.design_system_styles.shared_component_primitives.legacy_qp_aliases`
+        - `frontend.design_system_styles.shared_component_primitives.loading_skeleton_motion`
+        - `frontend.design_system_styles.shared_component_primitives.monthly_heatmap_styles`
+      - Closed subchild leaves:
+        - none.
   - Closed child parent:
     - `frontend.design_system_styles.design_tokens_and_native_controls`
       - Status: closed after recursive subchild queue finished.

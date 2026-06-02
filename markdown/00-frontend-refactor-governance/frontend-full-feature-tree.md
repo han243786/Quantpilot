@@ -774,3 +774,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0184-frontend-design-system-workspace-navigation-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0185-frontend-design-system-overlays-resizers-motion-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0186-frontend-design-system-core-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0187-frontend-shared-component-primitives-baseline.md`
