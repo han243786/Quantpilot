@@ -36,6 +36,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/backtestViews/detailPageAnalysis/index.js`
     - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailPageModel.js`
     - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailPageModel.test.js`
+    - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailSummaryModel.js`
+    - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailSummaryModel.test.js`
     - `frontend/src/pages/backtest-analysis.css`
     - `frontend/src/components/DrawdownChart.jsx`
     - `frontend/src/components/MonthlyReturnsHeatmap.jsx`
@@ -59,12 +61,14 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Status: promoted to active child parent after first detail model extraction.
       - Record: `markdown/00-frontend-refactor-governance/records/FE-0110-frontend-backtest-views-detail-page-model-closeout.md`
       - Current subchild queue:
-        - `frontend.backtest_views.detail_page_analysis.summary_and_context`
         - `frontend.backtest_views.detail_page_analysis.core_artifact_sections`
         - `frontend.backtest_views.detail_page_analysis.evidence_report_sections`
         - `frontend.backtest_views.detail_page_analysis.replay_output_explanation_sections`
       - Closed subchild leaves:
         - `frontend.backtest_views.detail_page_analysis.artifact_model`
+          - Public surface: `frontend/src/pages/backtestViews/detailPageAnalysis/index.js`
+        - `frontend.backtest_views.detail_page_analysis.summary_and_context`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0111-frontend-backtest-views-detail-summary-context-closeout.md`
           - Public surface: `frontend/src/pages/backtestViews/detailPageAnalysis/index.js`
   - Closed child leaves:
     - `frontend.backtest_views.analysis_layout_shared`
