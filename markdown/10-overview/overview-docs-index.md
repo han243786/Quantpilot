@@ -724,3 +724,4 @@
 | v4.16.0 / BE-001LJ-01 | 新增: `backend` backend parent residual judgment selects ops_governance |
 | v4.16.0 / BE-001LK-01 | 新增: `backend.ops_governance` backend.ops_governance equivalence baseline and extraction plan |
 | v4.16.0 / BE-001LK-02 | 新增: `backend.ops_governance` backend.ops_governance facade extraction closeout |
+| v4.16.0 / BE-001LK-03 | 新增: `backend.ops_governance` backend.ops_governance single leaf closeout continues split |
