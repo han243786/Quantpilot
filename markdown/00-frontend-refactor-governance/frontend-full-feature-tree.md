@@ -113,6 +113,8 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `frontend/src/capabilities/capabilityNormalization.test.js`
     - `frontend/src/modules/moduleRegistryContracts.js`
     - `frontend/src/modules/moduleRegistryContracts.test.js`
+    - `frontend/src/modules/moduleRegistryAssembly.js`
+    - `frontend/src/modules/moduleRegistryAssembly.test.js`
     - `frontend/src/modules/moduleRegistry.js`
     - `frontend/src/modules/moduleRegistry.test.js`
     - `frontend/src/modules/builtinModules.js`
@@ -130,6 +132,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0031-frontend-capabilities-builtin-default-snapshot-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0032-frontend-capabilities-normalization-closeout.md`
     - `markdown/00-frontend-refactor-governance/records/FE-0033-frontend-capabilities-module-registry-contracts-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0034-frontend-capabilities-module-registry-assembly-closeout.md`
 
 ## Evidence Rules
 
