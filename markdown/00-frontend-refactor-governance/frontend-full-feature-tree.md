@@ -661,8 +661,10 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/store/graphStoreRootState.js`
   - `frontend/src/store/graphStoreRootState.test.js`
   - `frontend/src/store/graphStoreStartupActions.js`
+  - `frontend/src/store/graphStoreVersionAuditActions.js`
 - Evidence:
   - `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0122-frontend-store-root-shell-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0123-frontend-store-startup-actions-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0124-frontend-store-graph-lifecycle-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0125-frontend-store-version-audit-actions-closeout.md`
