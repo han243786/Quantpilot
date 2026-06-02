@@ -51,10 +51,38 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/BacktestComparePage.jsx`
     - `frontend/src/components/*`
   - Child queue:
-    - `frontend.design_system_styles.responsive_panel_overrides`
     - `frontend.design_system_styles.page_style_contracts`
   - Active child parent:
-    - none.
+    - `frontend.design_system_styles.responsive_panel_overrides`
+      - Status: child parent baseline established.
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0193-frontend-responsive-panel-overrides-baseline.md`
+      - Current owned and split-target files:
+        - `frontend/src/styles-responsive-panels.css`
+      - Important consumers:
+        - `frontend/src/styleEntrypoint.js`
+        - `frontend/src/pages/StrategyWorkspacePage.jsx`
+        - `frontend/src/pages/StrategyHubPage.jsx`
+        - `frontend/src/pages/EditorPage.jsx`
+        - `frontend/src/pages/RunbookPage.jsx`
+        - `frontend/src/pages/ChaosPage.jsx`
+        - `frontend/src/pages/SnapshotsPage.jsx`
+        - `frontend/src/pages/AlertsPage.jsx`
+        - `frontend/src/components/EventStreamPanel.jsx`
+        - `frontend/src/components/StrategyResearchConsole.jsx`
+        - `frontend/src/components/RuntimeMutationPanel.jsx`
+        - `frontend/src/components/GovernedTimelinePanel.jsx`
+        - `frontend/src/components/ApprovalPanel.jsx`
+      - Current subchild queue:
+        - `frontend.design_system_styles.responsive_panel_overrides.workspace_editor_breakpoints`
+        - `frontend.design_system_styles.responsive_panel_overrides.runtime_event_research_panels`
+        - `frontend.design_system_styles.responsive_panel_overrides.motion_and_runtime_helpers`
+        - `frontend.design_system_styles.responsive_panel_overrides.tutorial_overlay_styles`
+        - `frontend.design_system_styles.responsive_panel_overrides.dashboard_and_strategy_config`
+        - `frontend.design_system_styles.responsive_panel_overrides.quantscript_editor_and_source_tabs`
+        - `frontend.design_system_styles.responsive_panel_overrides.workspace_debug_approval_print`
+        - `frontend.design_system_styles.responsive_panel_overrides.legacy_page_inline_migrations`
+      - Closed subchild leaves:
+        - none.
   - Closed child parent:
     - `frontend.design_system_styles.shared_component_primitives`
       - Status: closed after recursive subchild queue finished.

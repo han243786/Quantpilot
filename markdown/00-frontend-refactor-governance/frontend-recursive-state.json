@@ -2,15 +2,23 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.design_system_styles",
-  "parent_return": null,
-  "current_step": "FE-0192",
-  "current_phase": "frontend_shared_component_primitives_child_parent_closed",
+  "current_parent": "frontend.design_system_styles.responsive_panel_overrides",
+  "parent_return": "frontend.design_system_styles",
+  "current_step": "FE-0193",
+  "current_phase": "frontend_responsive_panel_overrides_child_parent_baseline",
   "current_child_queue": [
-    "frontend.design_system_styles.responsive_panel_overrides",
+    "frontend.design_system_styles.responsive_panel_overrides.workspace_editor_breakpoints",
+    "frontend.design_system_styles.responsive_panel_overrides.runtime_event_research_panels",
+    "frontend.design_system_styles.responsive_panel_overrides.motion_and_runtime_helpers",
+    "frontend.design_system_styles.responsive_panel_overrides.tutorial_overlay_styles",
+    "frontend.design_system_styles.responsive_panel_overrides.dashboard_and_strategy_config",
+    "frontend.design_system_styles.responsive_panel_overrides.quantscript_editor_and_source_tabs",
+    "frontend.design_system_styles.responsive_panel_overrides.workspace_debug_approval_print",
+    "frontend.design_system_styles.responsive_panel_overrides.legacy_page_inline_migrations"
+  ],
+  "return_child_queue_after_closeout": [
     "frontend.design_system_styles.page_style_contracts"
   ],
-  "return_child_queue_after_closeout": [],
   "next_parent": "frontend.test_support",
   "closed_parents": [
     "frontend.app_shell",
