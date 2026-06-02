@@ -137,6 +137,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.graph_editor.quantscript_bridge.graph_source_generation`
     - `frontend.graph_editor.quantscript_bridge.artifact_targets`
     - `frontend.graph_editor.quantscript_bridge.graph_source_parser`
+    - `frontend.graph_editor.quantscript_bridge`
 
 ## Last Closed Parent
 
