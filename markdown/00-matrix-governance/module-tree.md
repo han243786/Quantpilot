@@ -6095,6 +6095,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/credential_vault.rs`
 - `src/backend/storage_security/credential_api_handler_implementation.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/delete_mutation.rs`
+- `src/backend/storage_security/credential_api_handler_implementation/delete_mutation/delete_commit.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/delete_mutation/service_path_validation.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/key_scope.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/list_projection.rs`
@@ -7613,3 +7614,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_api_handler_implementation.delete_mutation.delete_commit` 被选为下一轮子叶；该子叶只拥有 DELETE credential 的 vault `delete_service`、not-found/internal error mapping、audit logging 与 `{"deleted": service}` success response。vault availability、service path validation、parent key bridge handoff、route/list/set/key/auth/vault internals 与 release transition 均不得在 BE-001LF-01/02 顺手迁移。
 
 `backend.storage_security.credential_api_handler_implementation.delete_mutation.delete_commit` 冻结 DELETE storage commit phase：必须调用 `vault.delete_service(&scoped_key)`；delete error text 包含 `不存在` 时映射 `404 NOT_FOUND` 且保持 `标签 '{service}' 不存在`，其他 error 映射 `500 INTERNAL_SERVER_ERROR` 且保持 `凭证删除失败: {error}`；只在成功后 audit，audit log 保持 `[audit] 用户 {user_id} 删除凭证 service={service}`；成功响应保持 `{"deleted": service}` 且不得新增字段。BE-001LF-02 只能新增 delete_commit child file 并移动 delete_service/error/audit/success phase；vault availability、validation、parent key bridge、route/list/set/key/auth/vault internals 与 release transition 均不得顺手迁移。
+
+`backend.storage_security.credential_api_handler_implementation.delete_mutation.delete_commit` 已迁入 `src/backend/storage_security/credential_api_handler_implementation/delete_mutation/delete_commit.rs`；父 `src/backend/storage_security/credential_api_handler_implementation/delete_mutation.rs` 新增 `mod delete_commit`，并在 validation、vault availability 与 parent `scoped_cv_key` bridge 后委托 `delete_commit::commit_delete_credential`。vault availability、validation、parent key bridge、route/list/set/key/auth/vault internals 与 release transition 均未迁移。

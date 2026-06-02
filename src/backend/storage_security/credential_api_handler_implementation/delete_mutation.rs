@@ -6,6 +6,7 @@ use super::scoped_cv_key;
 use crate::auth;
 use crate::AppState;
 
+mod delete_commit;
 mod service_path_validation;
 
 /// DELETE /api/credentials/:service → { "deleted": "okx" }
@@ -23,18 +24,5 @@ pub(super) async fn delete_credential(
     })?;
 
     let scoped_key = scoped_cv_key(&user_id, &service);
-    vault.delete_service(&scoped_key).map_err(|e| {
-        if e.to_string().contains("不存在") {
-            (StatusCode::NOT_FOUND, format!("标签 '{}' 不存在", service))
-        } else {
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                format!("凭证删除失败: {}", e),
-            )
-        }
-    })?;
-
-    safe_eprintln!("[audit] 用户 {} 删除凭证 service={}", user_id.0, service);
-
-    Ok(Json(serde_json::json!({ "deleted": service })))
+    delete_commit::commit_delete_credential(vault, &user_id, &scoped_key, service)
 }
