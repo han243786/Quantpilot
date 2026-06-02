@@ -624,3 +624,4 @@
 | v4.16.0 / BE-001JE-01 | 新增: `backend.storage_security` backend.storage_security single leaf closeout keeps stop_split false |
 | v4.16.0 / BE-001JF-01 | 新增: `backend.storage_security` backend.storage_security parent residual judgment selects credential_api |
 | v4.16.0 / BE-001JG-01 | 新增: `backend.storage_security.credential_api` backend.storage_security.credential_api route facade baseline and plan |
+| v4.16.0 / BE-001JG-02 | 新增: `backend.storage_security.credential_api` backend.storage_security.credential_api facade extraction closeout complete |
