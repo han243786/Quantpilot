@@ -184,6 +184,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/strategy-workspace.css`
   - `frontend/src/hooks/useStrategyWorkspaceSharedModel.js`
   - `frontend/src/hooks/useStrategyWorkspacePageData.js`
+  - `frontend/src/hooks/strategyWorkspacePageDataProjection.js`
+  - `frontend/src/hooks/strategyWorkspacePageDataProjection.test.js`
   - `frontend/src/hooks/useStrategyWorkspaceUiState.js`
   - `frontend/src/hooks/useWorkspaceActionBarActions.js`
   - `frontend/src/hooks/useWorkspaceActionBarModel.js`
@@ -201,3 +203,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
 - Evidence:
   - `markdown/00-frontend-refactor-governance/records/FE-0039-frontend-strategy-workspace-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0040-frontend-strategy-workspace-route-shell-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0041-frontend-strategy-workspace-shared-model-page-data-closeout.md`

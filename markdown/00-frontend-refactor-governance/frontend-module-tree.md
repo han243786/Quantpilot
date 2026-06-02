@@ -38,6 +38,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/strategy-workspace.css`
     - `frontend/src/hooks/useStrategyWorkspaceSharedModel.js`
     - `frontend/src/hooks/useStrategyWorkspacePageData.js`
+    - `frontend/src/hooks/strategyWorkspacePageDataProjection.js`
+    - `frontend/src/hooks/strategyWorkspacePageDataProjection.test.js`
     - `frontend/src/hooks/useStrategyWorkspaceUiState.js`
     - `frontend/src/hooks/useWorkspaceActionBarActions.js`
     - `frontend/src/hooks/useWorkspaceActionBarModel.js`
@@ -65,7 +67,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/store/graphStore.js`
     - `frontend/src/router.js`
   - Child queue:
-    - `frontend.strategy_workspace.shared_model_and_page_data`
     - `frontend.strategy_workspace.issue_queue_state`
     - `frontend.strategy_workspace.workspace_toolbar_bridge`
     - `frontend.strategy_workspace.code_mode_shell`
@@ -75,6 +76,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.strategy_workspace.layout_styles`
   - Closed child leaves:
     - `frontend.strategy_workspace.route_shell`
+    - `frontend.strategy_workspace.shared_model_and_page_data`
 
 ## Last Closed Parent
 

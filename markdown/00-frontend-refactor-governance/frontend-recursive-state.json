@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.strategy_workspace",
-  "current_step": "FE-0040",
-  "current_phase": "frontend_strategy_workspace_route_shell_closeout",
+  "current_step": "FE-0041",
+  "current_phase": "frontend_strategy_workspace_shared_model_page_data_closeout",
   "current_child_queue": [
-    "frontend.strategy_workspace.shared_model_and_page_data",
     "frontend.strategy_workspace.issue_queue_state",
     "frontend.strategy_workspace.workspace_toolbar_bridge",
     "frontend.strategy_workspace.code_mode_shell",
@@ -23,7 +22,8 @@
     "frontend.capabilities"
   ],
   "closed_children": [
-    "frontend.strategy_workspace.route_shell"
+    "frontend.strategy_workspace.route_shell",
+    "frontend.strategy_workspace.shared_model_and_page_data"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
