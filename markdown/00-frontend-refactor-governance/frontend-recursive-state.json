@@ -3,8 +3,8 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.graph_editor",
-  "current_step": "FE-0071",
-  "current_phase": "frontend_graph_editor_property_panel_views_section_composers_closeout",
+  "current_step": "FE-0072",
+  "current_phase": "frontend_graph_editor_property_panel_views_parent_closeout",
   "current_child_queue": [
     "frontend.graph_editor.module_palette",
     "frontend.graph_editor.graph_factory_validation",
@@ -50,7 +50,8 @@
     "frontend.graph_editor.property_panel_views.authoring_cards",
     "frontend.graph_editor.property_panel_views.compile_source_cards",
     "frontend.graph_editor.property_panel_views.entity_cards",
-    "frontend.graph_editor.property_panel_views.section_composers"
+    "frontend.graph_editor.property_panel_views.section_composers",
+    "frontend.graph_editor.property_panel_views"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

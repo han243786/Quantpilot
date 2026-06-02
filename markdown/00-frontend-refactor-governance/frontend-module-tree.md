@@ -97,6 +97,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.graph_editor.property_panel_views.compile_source_cards`
     - `frontend.graph_editor.property_panel_views.entity_cards`
     - `frontend.graph_editor.property_panel_views.section_composers`
+    - `frontend.graph_editor.property_panel_views`
 
 ## Last Closed Parent
 
