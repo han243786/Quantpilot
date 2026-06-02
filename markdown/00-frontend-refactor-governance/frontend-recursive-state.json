@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.graph_editor",
-  "current_step": "FE-0080",
-  "current_phase": "frontend_graph_editor_graph_compiler_core_ir_core_ir_lowering_closeout",
+  "current_step": "FE-0081",
+  "current_phase": "frontend_graph_editor_graph_compiler_core_ir_runtime_config_lowering_closeout",
   "current_child_queue": [
-    "frontend.graph_editor.graph_compiler_core_ir.runtime_config_lowering",
     "frontend.graph_editor.graph_compiler_core_ir.topology_diagnostics",
     "frontend.graph_editor.quantscript_bridge",
     "frontend.graph_editor.editor_store_actions",
@@ -58,7 +57,8 @@
     "frontend.graph_editor.graph_factory_validation.validation_rules",
     "frontend.graph_editor.graph_factory_validation",
     "frontend.graph_editor.graph_compiler_core_ir.compile_support",
-    "frontend.graph_editor.graph_compiler_core_ir.core_ir_lowering"
+    "frontend.graph_editor.graph_compiler_core_ir.core_ir_lowering",
+    "frontend.graph_editor.graph_compiler_core_ir.runtime_config_lowering"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
