@@ -55,9 +55,12 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.design_system_styles.responsive_panel_overrides`
     - `frontend.design_system_styles.page_style_contracts`
   - Active child parent:
+    - none.
+  - Closed child parent:
     - `frontend.design_system_styles.design_tokens_and_native_controls`
-      - Status: child parent baseline established.
-      - Record: `markdown/00-frontend-refactor-governance/records/FE-0179-frontend-design-system-core-baseline.md`
+      - Status: closed after recursive subchild queue finished.
+      - Baseline record: `markdown/00-frontend-refactor-governance/records/FE-0179-frontend-design-system-core-baseline.md`
+      - Parent closeout record: `markdown/00-frontend-refactor-governance/records/FE-0186-frontend-design-system-core-parent-closeout.md`
       - Current owned and split-target files:
         - `frontend/src/design-system.css`
         - `frontend/src/design-system/reset-and-native-controls.css`
