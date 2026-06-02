@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.store",
-  "current_step": "FE-0121",
-  "current_phase": "frontend_store_baseline_established",
+  "current_step": "FE-0122",
+  "current_phase": "frontend_store_root_shell_closed",
   "current_child_queue": [
-    "frontend.store.root_shell",
     "frontend.store.persistence_startup",
     "frontend.store.capability_refresh",
     "frontend.store.editor_actions",
@@ -99,7 +98,8 @@
     "frontend.backtest_views.compare_page_analysis.artifact_model",
     "frontend.backtest_views.compare_page_analysis.equity_overlay_chart",
     "frontend.backtest_views.compare_page_analysis.compare_cards_and_summary",
-    "frontend.backtest_views.compare_page_analysis"
+    "frontend.backtest_views.compare_page_analysis",
+    "frontend.store.root_shell"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

@@ -5,7 +5,6 @@ import { humanizeErrorText } from "../utils/errorText";
 const RECOVERY_MAX_RETRIES = 10;
 const RECOVERY_RETRY_DELAY_MS = 1500;
 import {
-  defaultCapabilities as DEFAULT_CAPABILITIES,
   defaultRegistry,
   fallbackRunnableGraph,
   fetchJson,
@@ -19,6 +18,7 @@ import {
   saveGraphToStorage,
   scheduleBackgroundTask
 } from "./graphStoreHelpers";
+import { createInitialGraphStoreState } from "./graphStoreRootState";
 import {
   buildCapabilityRefreshFailureState,
   buildRemoteCapabilityRefreshState
@@ -29,71 +29,7 @@ import { createGraphStoreRuntimeActions } from "./graphStoreRuntimeActions";
 export { fetchJson } from "./graphStoreHelpers";
 
 export const useGraphStore = create((set, get) => ({
-  registry: defaultRegistry,
-  capabilities: DEFAULT_CAPABILITIES,
-  capabilityStatus: "ready",
-  capabilitySource: "remote",
-  capabilityMessage: "",
-  graphIndex: [],
-  graphIndexStatus: "idle",
-  graphIndexMessage: "",
-  graphVersions: [],
-  graphVersionsStatus: "idle",
-  graphVersionsMessage: "",
-  graphVersionPreview: null,
-  graphVersionPreviewStatus: "idle",
-  graphVersionPreviewMessage: "",
-  graphVersionCompare: null,
-  graphVersionCompareStatus: "idle",
-  graphVersionCompareMessage: "",
-  graphAuditHistory: [],
-  graphAuditHistoryStatus: "idle",
-  graphAuditHistoryMessage: "",
-  graph: fallbackRunnableGraph(defaultRegistry),
-  selectedNodeId: null,
-  selectedEdgeId: null,
-  selectedCompileDiagnosticTarget: null,
-  runtime: {
-    runId: null,
-    runKind: null,
-    status: "idle",
-    connectionState: "disconnected",
-    account: null,
-    artifactPersistenceStatus: "idle",
-    backtestArtifacts: null,
-    diagnostics: null,
-    governance: null,
-    events: [],
-    timeline: [],
-    retainedKeyEventIndex: null,
-    compactEvidence: null,
-    parameterMutations: [],
-    backendError: null,
-    history: [],
-    historyStatus: "idle",
-    backtestHistory: [],
-    backtestHistoryStatus: "idle",
-    experiments: [],
-    experimentsStatus: "idle",
-    backtestCompareSelection: {},
-    actionLock: null, // v1.0.5: 统一锁 "compiling"|"saving"|"runtime"
-    compileResultNotice: null,
-    diagnosticFocusRequested: false,
-    selectedHistoryRunId: null,
-    selectedRunStatus: "idle",
-    selectedBacktestId: null,
-    selectedExperimentId: null,
-    selectedExperiment: null,
-    selectedExperimentStatus: "idle",
-    highlightedNodeIds: []
-  },
-  compileResult: null,
-  compileStatus: "idle",
-  runtimeController: null,
-  quantScriptDraft: "",
-  formalQuantScriptDraft: null,
-  formalQuantScriptOverride: null,
-  strategyIrDraft: resolveStrategyIrDraft(fallbackRunnableGraph(defaultRegistry), ""),
+  ...createInitialGraphStoreState(),
 
   async refreshCapabilities() {
     set({ capabilityStatus: "loading", capabilityMessage: "" });

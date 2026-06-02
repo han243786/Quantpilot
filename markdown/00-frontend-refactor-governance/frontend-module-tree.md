@@ -71,6 +71,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/store/graphStoreRuntimeSessionState.js`
     - `frontend/src/store/graphStoreRuntimeTransport.js`
     - `frontend/src/store/graphStoreRuntimeTransport.test.js`
+    - `frontend/src/store/graphStoreRootState.js`
+    - `frontend/src/store/graphStoreRootState.test.js`
   - Important consumers:
     - `frontend/src/app/AppRoot.jsx`
     - `frontend/src/app/useAppInitialization.js`
@@ -84,7 +86,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/BacktestDetailPage.jsx`
     - `frontend/src/pages/BacktestComparePage.jsx`
   - Child queue:
-    - `frontend.store.root_shell`
     - `frontend.store.persistence_startup`
     - `frontend.store.capability_refresh`
     - `frontend.store.editor_actions`
@@ -93,7 +94,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.store.runtime_history`
     - `frontend.store.runtime_transport_selection`
   - Closed child leaves:
-    - none.
+    - `frontend.store.root_shell`
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0122-frontend-store-root-shell-closeout.md`
+      - Public surface:
+        - `frontend/src/store/graphStore.js`
+        - `frontend/src/store/graphStoreRootState.js`
 
 ## Last Closed Parent
 

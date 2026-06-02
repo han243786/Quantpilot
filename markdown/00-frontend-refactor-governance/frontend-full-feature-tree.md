@@ -657,5 +657,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/store/graphStoreRuntimeSessionState.js`
   - `frontend/src/store/graphStoreRuntimeTransport.js`
   - `frontend/src/store/graphStoreRuntimeTransport.test.js`
+  - `frontend/src/store/graphStoreRootState.js`
+  - `frontend/src/store/graphStoreRootState.test.js`
 - Evidence:
   - `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0122-frontend-store-root-shell-closeout.md`
