@@ -3586,3 +3586,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/731-backend.ops_governance.sandbox.baseline_plan.md` - v4.16.0 BE-001LO-01 backend.ops_governance.sandbox equivalence baseline and extraction plan
 递归边界补充: BE-001LO-02 `backend.ops_governance.sandbox` backend.ops_governance.sandbox actual extraction complete；下一步: BE-001LO-03 backend.ops_governance.sandbox single_leaf_closeout。
 - `markdown/06-milestones/v4.16.0/732-backend.ops_governance.sandbox.extract_closeout.md` - v4.16.0 BE-001LO-02 backend.ops_governance.sandbox actual extraction complete
+递归边界补充: BE-001LO-03 `backend.ops_governance.sandbox` backend.ops_governance.sandbox single leaf closeout continues split；下一步: BE-001LP-01 backend.ops_governance.sandbox parent_residual_judgment。
+- `markdown/06-milestones/v4.16.0/733-backend.ops_governance.sandbox.single_leaf_closeout.md` - v4.16.0 BE-001LO-03 backend.ops_governance.sandbox single leaf closeout continues split
