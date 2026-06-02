@@ -22,6 +22,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/design-system/legacy-token-aliases.css`
     - `frontend/src/design-system/scrollbars.css`
     - `frontend/src/design-system/focus-selection.css`
+    - `frontend/src/design-system/shell-chrome.css`
     - `frontend/src/styles.css`
     - `frontend/src/styles-responsive-panels.css`
     - `frontend/src/shared.css`
@@ -62,8 +63,8 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/design-system/legacy-token-aliases.css`
         - `frontend/src/design-system/scrollbars.css`
         - `frontend/src/design-system/focus-selection.css`
+        - `frontend/src/design-system/shell-chrome.css`
       - Current subchild queue:
-        - `frontend.design_system_styles.design_tokens_and_native_controls.shell_chrome_styles`
         - `frontend.design_system_styles.design_tokens_and_native_controls.workspace_navigation_primitives`
         - `frontend.design_system_styles.design_tokens_and_native_controls.overlays_resizers_motion`
       - Closed subchild leaves:
@@ -83,6 +84,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Public surface:
             - `frontend/src/design-system/scrollbars.css`
             - `frontend/src/design-system/focus-selection.css`
+            - `frontend/src/design-system.css`
+        - `frontend.design_system_styles.design_tokens_and_native_controls.shell_chrome_styles`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0183-frontend-design-system-shell-chrome-closeout.md`
+          - Public surface:
+            - `frontend/src/design-system/shell-chrome.css`
             - `frontend/src/design-system.css`
   - Closed child leaves:
     - `frontend.design_system_styles.global_style_entry`
