@@ -2,9 +2,9 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.store.compile_flow.compile_helper_contract",
-  "current_step": "FE-0158",
-  "current_phase": "frontend_store_compile_helper_strategy_ir_protocol_mapping_bridge_closed",
+  "current_parent": "frontend.store.compile_flow",
+  "current_step": "FE-0159",
+  "current_phase": "frontend_store_compile_helper_contract_parent_closed",
   "current_child_queue": [],
   "next_parent": "frontend.design_system_styles",
   "closed_parents": [
@@ -123,7 +123,8 @@
     "frontend.store.compile_flow.outcome_state_contract",
     "frontend.store.compile_flow.compile_helper_contract.diagnostic_helpers",
     "frontend.store.compile_flow.compile_helper_contract.summary_resolution_helpers",
-    "frontend.store.compile_flow.compile_helper_contract.strategy_ir_protocol_mapping_bridge"
+    "frontend.store.compile_flow.compile_helper_contract.strategy_ir_protocol_mapping_bridge",
+    "frontend.store.compile_flow.compile_helper_contract"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

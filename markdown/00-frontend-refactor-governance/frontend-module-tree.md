@@ -108,8 +108,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Current subchild queue:
         - closed.
       - Active nested child parent:
+        - none.
+      - Closed nested child parent:
         - `frontend.store.compile_flow.compile_helper_contract`
-          - Status: active recursive split.
+          - Status: closed after recursive subchild queue finished.
+          - Parent closeout record: `markdown/00-frontend-refactor-governance/records/FE-0159-frontend-store-compile-helper-contract-parent-closeout.md`
           - Baseline record: `markdown/00-frontend-refactor-governance/records/FE-0155-frontend-store-compile-helper-contract-baseline.md`
           - Current subchild queue:
             - closed.
