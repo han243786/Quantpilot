@@ -1114,3 +1114,4 @@
 | v4.16.0 / BE-001LY-01 | 新增: `backend.ops_governance.sandbox.verification_run.replay_window` backend.ops_governance.sandbox.verification_run.replay_window equivalence baseline and extraction plan |
 | v4.16.0 / BE-001LY-02 | 新增: `backend.ops_governance.sandbox.verification_run.replay_window` backend.ops_governance.sandbox.verification_run.replay_window actual extraction complete |
 | v4.16.0 / BE-001LY-03 | 新增: `backend.ops_governance.sandbox.verification_run.replay_window` backend.ops_governance.sandbox.verification_run.replay_window single leaf closeout stops further split |
+| v4.16.0 / BE-001LZ-01 | 新增: `backend.ops_governance.sandbox.verification_run` backend.ops_governance.sandbox.verification_run parent residual judgment selects report_assembly |
