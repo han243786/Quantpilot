@@ -963,3 +963,4 @@
 | v4.16.0 / BE-001IN-01 | 新增: `backend.strategy_config.diff.evidence_diff` backend.strategy_config.diff.evidence_diff parent residual judgment selects risk_plane |
 | v4.16.0 / BE-001IO-01 | 新增: `backend.strategy_config.diff.evidence_diff.risk_plane` backend.strategy_config.diff.evidence_diff.risk_plane equivalence baseline and extraction plan |
 | v4.16.0 / BE-001IO-02 | 新增: `backend.strategy_config.diff.evidence_diff.risk_plane` backend.strategy_config.diff.evidence_diff.risk_plane actual extraction complete |
+| v4.16.0 / BE-001IP-01 | 新增: `backend.strategy_config.diff.evidence_diff.risk_plane` backend.strategy_config.diff.evidence_diff.risk_plane single leaf closeout stops further split |
