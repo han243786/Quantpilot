@@ -638,3 +638,4 @@
 | v4.16.0 / BE-001JP-01 | 新增: `backend.storage_security.credential_vault_implementation.machine_key_management` backend.storage_security.credential_vault_implementation.machine_key_management equivalence baseline and extraction plan |
 | v4.16.0 / BE-001JP-02 | 新增: `backend.storage_security.credential_vault_implementation.machine_key_management` backend.storage_security.credential_vault_implementation.machine_key_management actual extraction complete |
 | v4.16.0 / BE-001JP-03 | 新增: `backend.storage_security.credential_vault_implementation.machine_key_management` backend.storage_security.credential_vault_implementation.machine_key_management single leaf closeout stops further split |
+| v4.16.0 / BE-001JQ-01 | 新增: `backend.storage_security.credential_vault_implementation` backend.storage_security.credential_vault_implementation parent residual judgment selects crypto_codec |
