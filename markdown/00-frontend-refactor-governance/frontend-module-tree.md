@@ -65,6 +65,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/styles-responsive-panels/dashboard-strategy-config.css`
         - `frontend/src/styles-responsive-panels/quantscript-editor-source-tabs.css`
         - `frontend/src/styles-responsive-panels/workspace-debug-approval-print.css`
+        - `frontend/src/styles-responsive-panels/legacy-page-inline-migrations.css`
       - Important consumers:
         - `frontend/src/styleEntrypoint.js`
         - `frontend/src/pages/StrategyWorkspacePage.jsx`
@@ -80,7 +81,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/components/GovernedTimelinePanel.jsx`
         - `frontend/src/components/ApprovalPanel.jsx`
       - Current subchild queue:
-        - `frontend.design_system_styles.responsive_panel_overrides.legacy_page_inline_migrations`
+        - None.
       - Closed subchild leaves:
         - `frontend.design_system_styles.responsive_panel_overrides.workspace_editor_breakpoints`
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0194-frontend-responsive-workspace-editor-breakpoints-closeout.md`
@@ -116,6 +117,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0200-frontend-responsive-workspace-debug-approval-print-closeout.md`
           - Public surface:
             - `frontend/src/styles-responsive-panels/workspace-debug-approval-print.css`
+            - `frontend/src/styles-responsive-panels.css`
+        - `frontend.design_system_styles.responsive_panel_overrides.legacy_page_inline_migrations`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0201-frontend-responsive-legacy-page-inline-migrations-closeout.md`
+          - Public surface:
+            - `frontend/src/styles-responsive-panels/legacy-page-inline-migrations.css`
             - `frontend/src/styles-responsive-panels.css`
   - Closed child parent:
     - `frontend.design_system_styles.shared_component_primitives`

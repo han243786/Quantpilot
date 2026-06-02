@@ -4,11 +4,9 @@
   "scope": "frontend",
   "current_parent": "frontend.design_system_styles.responsive_panel_overrides",
   "parent_return": "frontend.design_system_styles",
-  "current_step": "FE-0200",
-  "current_phase": "frontend_responsive_workspace_debug_approval_print_closed",
-  "current_child_queue": [
-    "frontend.design_system_styles.responsive_panel_overrides.legacy_page_inline_migrations"
-  ],
+  "current_step": "FE-0201",
+  "current_phase": "frontend_responsive_legacy_page_inline_migrations_closed",
+  "current_child_queue": [],
   "return_child_queue_after_closeout": [
     "frontend.design_system_styles.page_style_contracts"
   ],
@@ -164,7 +162,8 @@
     "frontend.design_system_styles.responsive_panel_overrides.tutorial_overlay_styles",
     "frontend.design_system_styles.responsive_panel_overrides.dashboard_and_strategy_config",
     "frontend.design_system_styles.responsive_panel_overrides.quantscript_editor_and_source_tabs",
-    "frontend.design_system_styles.responsive_panel_overrides.workspace_debug_approval_print"
+    "frontend.design_system_styles.responsive_panel_overrides.workspace_debug_approval_print",
+    "frontend.design_system_styles.responsive_panel_overrides.legacy_page_inline_migrations"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
