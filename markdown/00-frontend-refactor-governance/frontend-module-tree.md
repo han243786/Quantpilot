@@ -60,6 +60,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/styles-responsive-panels.css`
         - `frontend/src/styles-responsive-panels/workspace-editor-breakpoints.css`
         - `frontend/src/styles-responsive-panels/runtime-event-research-panels.css`
+        - `frontend/src/styles-responsive-panels/motion-and-runtime-helpers.css`
       - Important consumers:
         - `frontend/src/styleEntrypoint.js`
         - `frontend/src/pages/StrategyWorkspacePage.jsx`
@@ -75,7 +76,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/components/GovernedTimelinePanel.jsx`
         - `frontend/src/components/ApprovalPanel.jsx`
       - Current subchild queue:
-        - `frontend.design_system_styles.responsive_panel_overrides.motion_and_runtime_helpers`
         - `frontend.design_system_styles.responsive_panel_overrides.tutorial_overlay_styles`
         - `frontend.design_system_styles.responsive_panel_overrides.dashboard_and_strategy_config`
         - `frontend.design_system_styles.responsive_panel_overrides.quantscript_editor_and_source_tabs`
@@ -91,6 +91,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0195-frontend-responsive-runtime-event-research-panels-closeout.md`
           - Public surface:
             - `frontend/src/styles-responsive-panels/runtime-event-research-panels.css`
+            - `frontend/src/styles-responsive-panels.css`
+        - `frontend.design_system_styles.responsive_panel_overrides.motion_and_runtime_helpers`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0196-frontend-responsive-motion-runtime-helpers-closeout.md`
+          - Public surface:
+            - `frontend/src/styles-responsive-panels/motion-and-runtime-helpers.css`
             - `frontend/src/styles-responsive-panels.css`
   - Closed child parent:
     - `frontend.design_system_styles.shared_component_primitives`
