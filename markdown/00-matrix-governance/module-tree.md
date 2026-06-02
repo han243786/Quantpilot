@@ -6093,6 +6093,8 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 涉及原子写、目录同步、TTL 清理、quota 检查和密钥清洗顺序。
 **最新父叶选择(BE-001JC-01)**:
 `backend.storage_security` 已被选为下一轮递归对象；BE-001JD-01 必须先建立安全等价基线，保留 auth、storage lifecycle、safe log 与 backup 暂停保护。
+**最新安全等价基线(BE-001JD-01)**:
+`backend.storage_security` 当前只冻结 parent facade、credential API facade 与 credential vault re-export facade；`src/credential_api.rs`、`src/credential_vault.rs`、`src/storage_lifecycle.rs`、`src/safe_log.rs`、`src/auth/mod.rs`、`src/auth_middleware.rs`、`src/rate_limiter.rs` 与 `src/backup.rs` 的敏感实现语义继续暂停迁移。
 
 **回归保护**:
 `cargo test credential`；`cargo test storage_lifecycle`；涉及日志时复核 safe log 测试。
@@ -7349,3 +7351,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001JA-01)**: `backend.strategy_config.ai_proposal_binding` backend.strategy_config.ai_proposal_binding single leaf closeout stops further split；下一步: BE-001JB-01 backend.strategy_config parent_residual_judgment。
 **最新状态补充(BE-001JB-01)**: `backend.strategy_config` backend.strategy_config parent closeout keeps route aggregation facade；下一步: BE-001JC-01 backend parent_residual_judgment。
 **最新状态补充(BE-001JC-01)**: `backend` backend parent residual judgment selects storage_security safety baseline；下一步: BE-001JD-01 backend.storage_security baseline_plan。
+**最新状态补充(BE-001JD-01)**: `backend.storage_security` backend.storage_security safety equivalence baseline and extraction plan；下一步: BE-001JD-02 backend.storage_security extract_closeout。

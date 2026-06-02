@@ -3326,3 +3326,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/618-backend.strategy_config.parent_closeout.md` - v4.16.0 BE-001JB-01 backend.strategy_config parent closeout keeps route aggregation facade
 递归边界补充: BE-001JC-01 `backend` backend parent residual judgment selects storage_security safety baseline；下一步: BE-001JD-01 backend.storage_security baseline_plan。
 - `markdown/06-milestones/v4.16.0/619-backend.parent_residual_judgment.storage_security.md` - v4.16.0 BE-001JC-01 backend parent residual judgment selects storage_security safety baseline
+递归边界补充: BE-001JD-01 `backend.storage_security` backend.storage_security safety equivalence baseline and extraction plan；下一步: BE-001JD-02 backend.storage_security extract_closeout。
+- `markdown/06-milestones/v4.16.0/620-backend.storage_security.safety_baseline_plan.md` - v4.16.0 BE-001JD-01 backend.storage_security safety equivalence baseline and extraction plan
