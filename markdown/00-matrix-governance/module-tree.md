@@ -6094,6 +6094,7 @@ AI 声称 BE-001HF-01 已完成时，必须说明当前只是 `no code movement`
 - `src/storage_lifecycle.rs`
 - `src/credential_vault.rs`
 - `src/backend/storage_security/credential_api_handler_implementation.rs`
+- `src/backend/storage_security/credential_api_handler_implementation/delete_mutation.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/key_scope.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/list_projection.rs`
 - `src/backend/storage_security/credential_api_handler_implementation/set_mutation.rs`
@@ -7595,3 +7596,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.storage_security.credential_api_handler_implementation.delete_mutation` 被选为下一轮子叶；该子叶只拥有 `DELETE /api/credentials/:service` 的 path service validation、vault unavailable mapping、parent key bridge handoff、vault `delete_service`、not-found/internal error mapping、audit logging 与 `{"deleted": service}` response。route registration、list/set/key child internals、auth/vault internals 与 release transition 均不得在 BE-001LB-01/02 顺手迁移。
 
 `backend.storage_security.credential_api_handler_implementation.delete_mutation` 冻结 DELETE credential mutation：service path string 必须拒绝 empty、len>64、`/`、`\`、`..`、`\0`，并保留原始 service 字符串；vault missing 保持 `503 SERVICE_UNAVAILABLE`；child 只能通过 parent `scoped_cv_key` bridge 计算 scoped key；`delete_service` error text 包含 `不存在` 时映射 `404 NOT_FOUND` 与 `标签 '{service}' 不存在`，其他 error 映射 `500 INTERNAL_SERVER_ERROR` 与 `凭证删除失败: {error}`；成功后 audit 并返回 `{"deleted": service}`。BE-001LB-02 只能新增 delete_mutation child file 并移动 delete handler；route registration、parent key bridge、list/set/key/auth/vault internals 与 release transition 均不得顺手迁移。
+
+`backend.storage_security.credential_api_handler_implementation.delete_mutation` 已迁入 `src/backend/storage_security/credential_api_handler_implementation/delete_mutation.rs`；父 `src/backend/storage_security/credential_api_handler_implementation.rs` 新增 `mod delete_mutation` 并将 DELETE route registration 委托为 `delete_mutation::delete_credential`。delete child 通过 `super::scoped_cv_key` 使用父层 key bridge，未引入 sibling 横向直连；route registration ownership、list/set/key child internals、auth/vault internals 与 release transition 均未迁移。
