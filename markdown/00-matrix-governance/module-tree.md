@@ -7686,3 +7686,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.ops_governance.sandbox.verification_run.replay_window` baseline 已冻结：该子叶无输入，返回 `now_ms`、`sandbox_run_id` 与 `ReplayWindow`，并严格保持 `QUANTPILOT_SANDBOX_REPLAY_WINDOW_DAYS` env parsing、30 天默认值、`saturating_sub` arithmetic 与 ISO8601 conversion。BE-001LY-02 只能创建 verification_run 私有 child module，不得迁移 metrics、report assembly 或 closed children。
 
 `backend.ops_governance.sandbox.verification_run.replay_window` 已迁入 `src/backend/ops_governance/sandbox/verification_run/replay_window.rs`；verification_run 父节点通过私有 child module 调用 `build_replay_window`，继续保持 metrics、report assembly、proposal_gate 与 report_commit 在各自边界内。该抽离未暴露 sandbox facade、report_api sibling、root bridge 或 runtime mutation shortcut。
+
+`backend.ops_governance.sandbox.verification_run.replay_window stop_split: true`；该叶只拥有 current timestamp、sandbox run id、replay-days env parsing/defaulting 与 `ReplayWindow` construction 这一组 shape boundary。继续拆会触发 micro_leaf_without_owner、communication_cost_rises、local_proof_missing 与 line_count_only；下一步回到 `backend.ops_governance.sandbox.verification_run` 父叶残余判断。
