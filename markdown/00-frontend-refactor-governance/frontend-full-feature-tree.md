@@ -592,3 +592,70 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0118-frontend-backtest-views-compare-cards-summary-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0119-frontend-backtest-views-compare-page-analysis-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0120-frontend-backtest-views-parent-closeout.md`
+
+## Active Frontend Parent: `frontend.store`
+
+- Status: parent baseline established.
+- Record:
+  - `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`
+- User-visible behavior: frontend store state drives graph editing, compile flows, runtime sessions, persisted runtime/backtest history, startup recovery, capability refresh, graph persistence, and route/page state consumed across the application.
+- Owned and split-target files:
+  - `frontend/src/store/graphStore.js`
+  - `frontend/src/store/graphStore.backtestArtifacts.test.js`
+  - `frontend/src/store/graphStore.capabilities.test.js`
+  - `frontend/src/store/graphStore.detailLoadErrors.test.js`
+  - `frontend/src/store/graphStore.diagnostics.test.js`
+  - `frontend/src/store/graphStore.editorActions.test.js`
+  - `frontend/src/store/graphStore.export.test.js`
+  - `frontend/src/store/graphStore.recentNodes.test.js`
+  - `frontend/src/store/graphStore.runtimeActionLock.test.js`
+  - `frontend/src/store/graphStore.runtimeErrors.test.js`
+  - `frontend/src/store/graphStore.saveGraphRollback.test.js`
+  - `frontend/src/store/graphStore.startupRecovery.test.js`
+  - `frontend/src/store/graphStore.strategyIrCompile.test.js`
+  - `frontend/src/store/graphStore.strategyIrDraft.test.js`
+  - `frontend/src/store/graphStore.templates.test.js`
+  - `frontend/src/store/graphStore.versionHistory.test.js`
+  - `frontend/src/store/graphStoreCapabilityRefresh.js`
+  - `frontend/src/store/graphStoreCapabilityRefresh.test.js`
+  - `frontend/src/store/graphStoreCompileActions.js`
+  - `frontend/src/store/graphStoreCompileApi.js`
+  - `frontend/src/store/graphStoreCompileFlow.js`
+  - `frontend/src/store/graphStoreCompileHelpers.js`
+  - `frontend/src/store/graphStoreCompileOutcomeMapping.js`
+  - `frontend/src/store/graphStoreCompileOutcomeProjection.js`
+  - `frontend/src/store/graphStoreCompileOutcomeProjection.test.js`
+  - `frontend/src/store/graphStoreCompileProtocolFlow.js`
+  - `frontend/src/store/graphStoreCompileProtocolMapping.js`
+  - `frontend/src/store/graphStoreCompileState.js`
+  - `frontend/src/store/graphStoreEditorActions.js`
+  - `frontend/src/store/graphStoreEditorDraftActions.js`
+  - `frontend/src/store/graphStoreEditorDraftActions.test.js`
+  - `frontend/src/store/graphStoreEditorEdgeActions.js`
+  - `frontend/src/store/graphStoreEditorEdgeActions.test.js`
+  - `frontend/src/store/graphStoreEditorNodeActions.js`
+  - `frontend/src/store/graphStoreEditorNodeActions.test.js`
+  - `frontend/src/store/graphStoreEditorSelectionActions.js`
+  - `frontend/src/store/graphStoreEditorSelectionActions.test.js`
+  - `frontend/src/store/graphStoreEditorTemplateActions.js`
+  - `frontend/src/store/graphStoreEditorTemplateActions.test.js`
+  - `frontend/src/store/graphStoreHelpers.js`
+  - `frontend/src/store/graphStorePersistenceActions.js`
+  - `frontend/src/store/graphStorePersistenceConsistency.test.js`
+  - `frontend/src/store/graphStorePersistenceHelpers.js`
+  - `frontend/src/store/graphStoreRuntimeActions.js`
+  - `frontend/src/store/graphStoreRuntimeHelpers.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryActions.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryApi.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryFlow.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryFlow.test.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryProjection.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryState.js`
+  - `frontend/src/store/graphStoreRuntimeSelectionState.js`
+  - `frontend/src/store/graphStoreRuntimeSelectionState.test.js`
+  - `frontend/src/store/graphStoreRuntimeSessionActions.js`
+  - `frontend/src/store/graphStoreRuntimeSessionState.js`
+  - `frontend/src/store/graphStoreRuntimeTransport.js`
+  - `frontend/src/store/graphStoreRuntimeTransport.test.js`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`

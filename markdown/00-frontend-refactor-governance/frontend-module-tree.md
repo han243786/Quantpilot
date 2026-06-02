@@ -8,6 +8,93 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 - `root.frontend`
 
+## Active Parent
+
+- `frontend.store`
+  - Status: parent baseline established.
+  - Record: `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`
+  - Current owned and split-target files:
+    - `frontend/src/store/graphStore.js`
+    - `frontend/src/store/graphStore.backtestArtifacts.test.js`
+    - `frontend/src/store/graphStore.capabilities.test.js`
+    - `frontend/src/store/graphStore.detailLoadErrors.test.js`
+    - `frontend/src/store/graphStore.diagnostics.test.js`
+    - `frontend/src/store/graphStore.editorActions.test.js`
+    - `frontend/src/store/graphStore.export.test.js`
+    - `frontend/src/store/graphStore.recentNodes.test.js`
+    - `frontend/src/store/graphStore.runtimeActionLock.test.js`
+    - `frontend/src/store/graphStore.runtimeErrors.test.js`
+    - `frontend/src/store/graphStore.saveGraphRollback.test.js`
+    - `frontend/src/store/graphStore.startupRecovery.test.js`
+    - `frontend/src/store/graphStore.strategyIrCompile.test.js`
+    - `frontend/src/store/graphStore.strategyIrDraft.test.js`
+    - `frontend/src/store/graphStore.templates.test.js`
+    - `frontend/src/store/graphStore.versionHistory.test.js`
+    - `frontend/src/store/graphStoreCapabilityRefresh.js`
+    - `frontend/src/store/graphStoreCapabilityRefresh.test.js`
+    - `frontend/src/store/graphStoreCompileActions.js`
+    - `frontend/src/store/graphStoreCompileApi.js`
+    - `frontend/src/store/graphStoreCompileFlow.js`
+    - `frontend/src/store/graphStoreCompileHelpers.js`
+    - `frontend/src/store/graphStoreCompileOutcomeMapping.js`
+    - `frontend/src/store/graphStoreCompileOutcomeProjection.js`
+    - `frontend/src/store/graphStoreCompileOutcomeProjection.test.js`
+    - `frontend/src/store/graphStoreCompileProtocolFlow.js`
+    - `frontend/src/store/graphStoreCompileProtocolMapping.js`
+    - `frontend/src/store/graphStoreCompileState.js`
+    - `frontend/src/store/graphStoreEditorActions.js`
+    - `frontend/src/store/graphStoreEditorDraftActions.js`
+    - `frontend/src/store/graphStoreEditorDraftActions.test.js`
+    - `frontend/src/store/graphStoreEditorEdgeActions.js`
+    - `frontend/src/store/graphStoreEditorEdgeActions.test.js`
+    - `frontend/src/store/graphStoreEditorNodeActions.js`
+    - `frontend/src/store/graphStoreEditorNodeActions.test.js`
+    - `frontend/src/store/graphStoreEditorSelectionActions.js`
+    - `frontend/src/store/graphStoreEditorSelectionActions.test.js`
+    - `frontend/src/store/graphStoreEditorTemplateActions.js`
+    - `frontend/src/store/graphStoreEditorTemplateActions.test.js`
+    - `frontend/src/store/graphStoreHelpers.js`
+    - `frontend/src/store/graphStorePersistenceActions.js`
+    - `frontend/src/store/graphStorePersistenceConsistency.test.js`
+    - `frontend/src/store/graphStorePersistenceHelpers.js`
+    - `frontend/src/store/graphStoreRuntimeActions.js`
+    - `frontend/src/store/graphStoreRuntimeHelpers.js`
+    - `frontend/src/store/graphStoreRuntimeHistoryActions.js`
+    - `frontend/src/store/graphStoreRuntimeHistoryApi.js`
+    - `frontend/src/store/graphStoreRuntimeHistoryFlow.js`
+    - `frontend/src/store/graphStoreRuntimeHistoryFlow.test.js`
+    - `frontend/src/store/graphStoreRuntimeHistoryProjection.js`
+    - `frontend/src/store/graphStoreRuntimeHistoryState.js`
+    - `frontend/src/store/graphStoreRuntimeSelectionState.js`
+    - `frontend/src/store/graphStoreRuntimeSelectionState.test.js`
+    - `frontend/src/store/graphStoreRuntimeSessionActions.js`
+    - `frontend/src/store/graphStoreRuntimeSessionState.js`
+    - `frontend/src/store/graphStoreRuntimeTransport.js`
+    - `frontend/src/store/graphStoreRuntimeTransport.test.js`
+  - Important consumers:
+    - `frontend/src/app/AppRoot.jsx`
+    - `frontend/src/app/useAppInitialization.js`
+    - `frontend/src/components/TopToolbar.jsx`
+    - `frontend/src/components/StrategyCanvas.jsx`
+    - `frontend/src/components/EventStreamPanel.jsx`
+    - `frontend/src/components/StrategyBacktestsPanel.jsx`
+    - `frontend/src/pages/StrategyWorkspacePage.jsx`
+    - `frontend/src/pages/StrategyHubPage.jsx`
+    - `frontend/src/pages/StrategyBacktestsPage.jsx`
+    - `frontend/src/pages/BacktestDetailPage.jsx`
+    - `frontend/src/pages/BacktestComparePage.jsx`
+  - Child queue:
+    - `frontend.store.root_shell`
+    - `frontend.store.persistence_startup`
+    - `frontend.store.capability_refresh`
+    - `frontend.store.editor_actions`
+    - `frontend.store.compile_flow`
+    - `frontend.store.runtime_session`
+    - `frontend.store.runtime_history`
+    - `frontend.store.runtime_transport_selection`
+  - Closed child leaves:
+    - none.
+
 ## Last Closed Parent
 
 - `frontend.backtest_views`
@@ -704,7 +791,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Pending Parent Queue
 
-- `frontend.store`
 - `frontend.design_system_styles`
 - `frontend.test_support`
 
