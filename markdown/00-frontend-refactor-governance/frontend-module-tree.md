@@ -109,9 +109,12 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Current subchild queue:
         - `frontend.store.editor_actions.edge_mutation_actions`
       - Active nested child parent:
+        - none.
+      - Closed nested child parent:
         - `frontend.store.editor_actions.node_mutation_actions`
-          - Status: active recursive split.
-          - Record: `markdown/00-frontend-refactor-governance/records/FE-0138-frontend-store-editor-node-mutation-actions-baseline.md`
+          - Status: closed after recursive subchild queue finished.
+          - Parent closeout record: `markdown/00-frontend-refactor-governance/records/FE-0143-frontend-store-editor-node-mutation-actions-parent-closeout.md`
+          - Baseline record: `markdown/00-frontend-refactor-governance/records/FE-0138-frontend-store-editor-node-mutation-actions-baseline.md`
           - Current subchild queue:
             - closed.
           - Closed subchild leaves:

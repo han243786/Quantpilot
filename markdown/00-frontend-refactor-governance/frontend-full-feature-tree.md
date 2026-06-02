@@ -694,3 +694,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0140-frontend-store-editor-node-position-viewport-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0141-frontend-store-editor-node-config-identity-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0142-frontend-store-editor-node-ui-collapse-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0143-frontend-store-editor-node-mutation-actions-parent-closeout.md`
