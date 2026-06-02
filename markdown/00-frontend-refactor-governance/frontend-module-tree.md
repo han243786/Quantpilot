@@ -8,11 +8,12 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 - `root.frontend`
 
-## Active Parent
+## Last Closed Parent
 
 - `frontend.backtest_views`
-  - Status: parent baseline established.
+  - Status: parent closed.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0107-frontend-backtest-views-baseline.md`
+  - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0120-frontend-backtest-views-parent-closeout.md`
   - Current owned and split-target files:
     - `frontend/src/pages/StrategyBacktestsPage.jsx`
     - `frontend/src/pages/StrategyBacktestsPage.test.jsx`
@@ -123,7 +124,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Owned route shell:
         - `frontend/src/pages/StrategyBacktestsPage.jsx`
 
-## Last Closed Parent
+## Closed Parent History
 
 - `frontend.runtime_panels`
   - Status: parent closed.
@@ -717,6 +718,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 - `frontend.strategy_hub`
 - `frontend.graph_editor`
 - `frontend.runtime_panels`
+- `frontend.backtest_views`
 
 ## Deferred Merge Notes
 

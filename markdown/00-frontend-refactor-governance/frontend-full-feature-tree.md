@@ -528,11 +528,13 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0105-frontend-runtime-panels-replay-explanations-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0106-frontend-runtime-panels-parent-closeout.md`
 
-## Active Frontend Parent: `frontend.backtest_views`
+## Closed Frontend Parent: `frontend.backtest_views`
 
-- Status: parent baseline established.
+- Status: parent closed.
 - Record:
   - `markdown/00-frontend-refactor-governance/records/FE-0107-frontend-backtest-views-baseline.md`
+- Closeout:
+  - `markdown/00-frontend-refactor-governance/records/FE-0120-frontend-backtest-views-parent-closeout.md`
 - User-visible behavior: backtest analysis views render strategy-scoped backtest lists, persisted backtest detail analysis, backtest comparison, shared analysis hero/section layout, summary metric helpers, drawdown visualization, and monthly return heatmap widgets.
 - Owned and split-target files:
   - `frontend/src/pages/StrategyBacktestsPage.jsx`
@@ -589,3 +591,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0117-frontend-backtest-views-compare-equity-overlay-chart-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0118-frontend-backtest-views-compare-cards-summary-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0119-frontend-backtest-views-compare-page-analysis-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0120-frontend-backtest-views-parent-closeout.md`
