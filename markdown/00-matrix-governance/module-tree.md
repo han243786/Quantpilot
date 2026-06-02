@@ -610,6 +610,8 @@ AI 声称 S9 已完成时，必须指出这是文档级 closeout，不是发布�
 
 **父级通信规则**:
 必须通过后端 API 和 capability 真源对外提供配置状态。
+**最新父叶关闭判断(BE-001JB-01)**:
+`backend.strategy_config stop_split: true`；artifact、preflight、diff 与 ai_proposal_binding 均已关闭，`src/backend/strategy_config.rs` 保留为 route aggregation facade，下一步回到 `backend` 父叶残余判断。
 
 **回归保护**:
 `cargo test -p quantpilot strategy_config`；`powershell tools/check-openapi-route-diff.ps1`。
@@ -7341,3 +7343,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001IZ-01)**: `backend.strategy_config.ai_proposal_binding` backend.strategy_config.ai_proposal_binding no-op route pocket baseline and plan；下一步: BE-001IZ-02 backend.strategy_config.ai_proposal_binding extract_closeout。
 **最新状态补充(BE-001IZ-02)**: `backend.strategy_config.ai_proposal_binding` backend.strategy_config.ai_proposal_binding no-code extraction closeout complete；下一步: BE-001JA-01 backend.strategy_config.ai_proposal_binding single_leaf_closeout。
 **最新状态补充(BE-001JA-01)**: `backend.strategy_config.ai_proposal_binding` backend.strategy_config.ai_proposal_binding single leaf closeout stops further split；下一步: BE-001JB-01 backend.strategy_config parent_residual_judgment。
+**最新状态补充(BE-001JB-01)**: `backend.strategy_config` backend.strategy_config parent closeout keeps route aggregation facade；下一步: BE-001JC-01 backend parent_residual_judgment。

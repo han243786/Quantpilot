@@ -3322,3 +3322,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/616-backend.strategy_config.ai_proposal_binding.extract_closeout.md` - v4.16.0 BE-001IZ-02 backend.strategy_config.ai_proposal_binding no-code extraction closeout complete
 递归边界补充: BE-001JA-01 `backend.strategy_config.ai_proposal_binding` backend.strategy_config.ai_proposal_binding single leaf closeout stops further split；下一步: BE-001JB-01 backend.strategy_config parent_residual_judgment。
 - `markdown/06-milestones/v4.16.0/617-backend.strategy_config.ai_proposal_binding.single_leaf_closeout.md` - v4.16.0 BE-001JA-01 backend.strategy_config.ai_proposal_binding single leaf closeout stops further split
+递归边界补充: BE-001JB-01 `backend.strategy_config` backend.strategy_config parent closeout keeps route aggregation facade；下一步: BE-001JC-01 backend parent_residual_judgment。
+- `markdown/06-milestones/v4.16.0/618-backend.strategy_config.parent_closeout.md` - v4.16.0 BE-001JB-01 backend.strategy_config parent closeout keeps route aggregation facade
