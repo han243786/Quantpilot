@@ -3312,3 +3312,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/611-backend.strategy_config.diff.evidence_diff.metrics.single_leaf_closeout.md` - v4.16.0 BE-001IV-01 backend.strategy_config.diff.evidence_diff.metrics single leaf closeout stops further split
 递归边界补充: BE-001IW-01 `backend.strategy_config.diff.evidence_diff` backend.strategy_config.diff.evidence_diff parent closeout retains report assembly and shared helpers；下一步: BE-001IX-01 backend.strategy_config.diff parent_residual_judgment。
 - `markdown/06-milestones/v4.16.0/612-backend.strategy_config.diff.evidence_diff.parent_closeout.md` - v4.16.0 BE-001IW-01 backend.strategy_config.diff.evidence_diff parent closeout retains report assembly and shared helpers
+递归边界补充: BE-001IX-01 `backend.strategy_config.diff` backend.strategy_config.diff parent closeout keeps facade and child mediation；下一步: BE-001IY-01 backend.strategy_config parent_residual_judgment。
+- `markdown/06-milestones/v4.16.0/613-backend.strategy_config.diff.parent_closeout.md` - v4.16.0 BE-001IX-01 backend.strategy_config.diff parent closeout keeps facade and child mediation

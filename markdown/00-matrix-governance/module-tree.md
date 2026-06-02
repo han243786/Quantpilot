@@ -734,6 +734,8 @@ diff 子叶只比较 strategy config artifact 和 evidence，不拥有 graph ver
 `backend.strategy_config.diff.evidence_diff.metrics stop_split: true`；field diff 与 stable float helper 不再继续拆，下一步回到 evidence_diff 父叶残余判断。
 **最新父叶关闭判断(BE-001IW-01)**:
 `backend.strategy_config.diff.evidence_diff stop_split: true`；report assembly、backtest binding diagnostics 与 shared status/count/divergence helpers 留在 evidence_diff 父叶统一调度，不再拆出 shared_helpers 或 report_assembly 子叶，下一步回到 diff 父叶残余判断。
+**最新父叶关闭判断(BE-001IX-01)**:
+`backend.strategy_config.diff stop_split: true`；artifact_diff 与 evidence_diff 均已关闭，`src/backend/strategy_config/diff.rs` 保留为 route registration 与受控 re-export facade，不再拆 facade-only 子叶，下一步回到 strategy_config 父叶残余判断。
 
 **回归保护**:
 `cargo test -p quantpilot strategy_config`；涉及 graph version compare 时运行 `cargo test -p quantpilot --test api_graph_versions`。
@@ -7326,3 +7328,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001IU-02)**: `backend.strategy_config.diff.evidence_diff.metrics` backend.strategy_config.diff.evidence_diff.metrics actual extraction complete；下一步: BE-001IV-01 backend.strategy_config.diff.evidence_diff.metrics single_leaf_closeout。
 **最新状态补充(BE-001IV-01)**: `backend.strategy_config.diff.evidence_diff.metrics` backend.strategy_config.diff.evidence_diff.metrics single leaf closeout stops further split；下一步: BE-001IW-01 backend.strategy_config.diff.evidence_diff parent_residual_judgment。
 **最新状态补充(BE-001IW-01)**: `backend.strategy_config.diff.evidence_diff` backend.strategy_config.diff.evidence_diff parent closeout retains report assembly and shared helpers；下一步: BE-001IX-01 backend.strategy_config.diff parent_residual_judgment。
+**最新状态补充(BE-001IX-01)**: `backend.strategy_config.diff` backend.strategy_config.diff parent closeout keeps facade and child mediation；下一步: BE-001IY-01 backend.strategy_config parent_residual_judgment。
