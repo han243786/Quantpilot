@@ -313,7 +313,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0060-frontend-strategy-hub-layout-styles-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0061-frontend-strategy-hub-parent-closeout.md`
 
-## Active Frontend Parent: `frontend.graph_editor`
+## Closed Frontend Parent: `frontend.graph_editor`
 
 - Status: parent closed.
 - Record:
@@ -446,3 +446,68 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0094-frontend-graph-editor-editor-store-actions-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0095-frontend-graph-editor-legacy-editor-page-shell-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0096-frontend-graph-editor-parent-closeout.md`
+
+## Active Frontend Parent: `frontend.runtime_panels`
+
+- Status: parent baseline established.
+- Record:
+  - `markdown/00-frontend-refactor-governance/records/FE-0097-frontend-runtime-panels-baseline.md`
+- User-visible behavior: runtime panels render live run/backtest events, persisted run/backtest history, runtime diagnostics, replay timelines, evidence summaries, report generation entry points, mutation controls, and strategy research console runtime lanes.
+- Owned and split-target files:
+  - `frontend/src/components/EventStreamPanel.jsx`
+  - `frontend/src/components/EventStreamPanel.backtestArtifacts.test.jsx`
+  - `frontend/src/components/EventStreamPanel.backtestHistory.test.jsx`
+  - `frontend/src/components/EventStreamPanel.dataQuality.test.jsx`
+  - `frontend/src/components/EventStreamPanel.executionExplanation.test.jsx`
+  - `frontend/src/components/EventStreamPanel.historyExplanation.test.jsx`
+  - `frontend/src/components/EventStreamPanel.layout.test.jsx`
+  - `frontend/src/components/EventStreamPanel.nodeFocus.test.jsx`
+  - `frontend/src/components/EventStreamPanel.refreshFeedback.test.jsx`
+  - `frontend/src/components/EventStreamPanel.runtimeArtifactActions.test.jsx`
+  - `frontend/src/components/BacktestHistorySection.jsx`
+  - `frontend/src/components/RunHistorySection.jsx`
+  - `frontend/src/components/StrategyBacktestsPanel.jsx`
+  - `frontend/src/components/StrategyEventsPanel.jsx`
+  - `frontend/src/components/StrategyRunsPanel.jsx`
+  - `frontend/src/components/StrategyResearchConsole.jsx`
+  - `frontend/src/components/StrategyResearchConsole.test.jsx`
+  - `frontend/src/components/AssetCandlesPanel.jsx`
+  - `frontend/src/components/AssetCandlesPanel.test.jsx`
+  - `frontend/src/components/EventReplaySection.jsx`
+  - `frontend/src/components/EventReplaySection.test.jsx`
+  - `frontend/src/components/RuntimeDiagnosticsPanel.jsx`
+  - `frontend/src/components/RuntimeDiagnosticsPanel.test.jsx`
+  - `frontend/src/components/RuntimeMutationPanel.jsx`
+  - `frontend/src/components/RuntimeMutationPanel.test.jsx`
+  - `frontend/src/components/RuntimeReportPanel.jsx`
+  - `frontend/src/components/RuntimeReportPanel.test.jsx`
+  - `frontend/src/components/GovernedTimelinePanel.jsx`
+  - `frontend/src/components/GovernedTimelinePanel.test.jsx`
+  - `frontend/src/components/V4RuntimeEvidencePanel.jsx`
+  - `frontend/src/components/V4RuntimeEvidencePanel.test.jsx`
+  - `frontend/src/components/EvidenceSummaryCards.jsx`
+  - `frontend/src/hooks/useStrategyResearchModel.js`
+  - `frontend/src/hooks/useStrategyResearchActions.js`
+  - `frontend/src/hooks/useStrategyResearchUiState.js`
+  - `frontend/src/hooks/strategyResearchSelectors.js`
+  - `frontend/src/hooks/strategyResearchSelectors.test.js`
+  - `frontend/src/hooks/useOrderAnimation.js`
+  - `frontend/src/utils/runtimeDiagnosticsProjection.js`
+  - `frontend/src/utils/runtimeDiagnosticsProjection.test.js`
+  - `frontend/src/utils/runtimeEvidenceSummary.js`
+  - `frontend/src/utils/runtimeEvidenceSummary.test.js`
+  - `frontend/src/utils/runtimeExplanation.js`
+  - `frontend/src/utils/runtimeExplanation.test.js`
+  - `frontend/src/utils/runtimeGovernance.js`
+  - `frontend/src/utils/runtimeGovernance.test.js`
+  - `frontend/src/utils/runtimeMutation.js`
+  - `frontend/src/utils/runtimeMutation.test.js`
+  - `frontend/src/utils/runtimeStatus.js`
+  - `frontend/src/utils/runtimeTimeline.js`
+  - `frontend/src/utils/runtimeTimeline.test.js`
+  - `frontend/src/utils/runtimeAiProposal.js`
+  - `frontend/src/utils/runtimeAiProposal.test.js`
+  - `frontend/src/utils/v4RuntimeEvidence.js`
+  - `frontend/src/utils/v4RuntimeEvidence.test.js`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0097-frontend-runtime-panels-baseline.md`
