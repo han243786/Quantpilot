@@ -2,17 +2,13 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.store",
-  "current_step": "FE-0122",
-  "current_phase": "frontend_store_root_shell_closed",
+  "current_parent": "frontend.store.persistence_startup",
+  "current_step": "FE-0123",
+  "current_phase": "frontend_store_persistence_startup_actions_closed",
   "current_child_queue": [
-    "frontend.store.persistence_startup",
-    "frontend.store.capability_refresh",
-    "frontend.store.editor_actions",
-    "frontend.store.compile_flow",
-    "frontend.store.runtime_session",
-    "frontend.store.runtime_history",
-    "frontend.store.runtime_transport_selection"
+    "frontend.store.persistence_startup.graph_lifecycle_actions",
+    "frontend.store.persistence_startup.version_audit_actions",
+    "frontend.store.persistence_startup.persistence_helper_contract"
   ],
   "next_parent": "frontend.design_system_styles",
   "closed_parents": [
@@ -99,7 +95,8 @@
     "frontend.backtest_views.compare_page_analysis.equity_overlay_chart",
     "frontend.backtest_views.compare_page_analysis.compare_cards_and_summary",
     "frontend.backtest_views.compare_page_analysis",
-    "frontend.store.root_shell"
+    "frontend.store.root_shell",
+    "frontend.store.persistence_startup.startup_actions"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
