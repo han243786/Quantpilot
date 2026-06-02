@@ -53,9 +53,12 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
   - Child queue:
     - `frontend.design_system_styles.page_style_contracts`
   - Active child parent:
+    - none.
+  - Closed child parent:
     - `frontend.design_system_styles.responsive_panel_overrides`
-      - Status: child parent baseline established.
-      - Record: `markdown/00-frontend-refactor-governance/records/FE-0193-frontend-responsive-panel-overrides-baseline.md`
+      - Status: closed after recursive subchild queue finished.
+      - Baseline record: `markdown/00-frontend-refactor-governance/records/FE-0193-frontend-responsive-panel-overrides-baseline.md`
+      - Parent closeout record: `markdown/00-frontend-refactor-governance/records/FE-0202-frontend-responsive-panel-overrides-parent-closeout.md`
       - Current owned and split-target files:
         - `frontend/src/styles-responsive-panels.css`
         - `frontend/src/styles-responsive-panels/workspace-editor-breakpoints.css`
@@ -81,7 +84,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/components/GovernedTimelinePanel.jsx`
         - `frontend/src/components/ApprovalPanel.jsx`
       - Current subchild queue:
-        - None.
+        - closed.
       - Closed subchild leaves:
         - `frontend.design_system_styles.responsive_panel_overrides.workspace_editor_breakpoints`
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0194-frontend-responsive-workspace-editor-breakpoints-closeout.md`
@@ -123,7 +126,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Public surface:
             - `frontend/src/styles-responsive-panels/legacy-page-inline-migrations.css`
             - `frontend/src/styles-responsive-panels.css`
-  - Closed child parent:
     - `frontend.design_system_styles.shared_component_primitives`
       - Status: closed after recursive subchild queue finished.
       - Baseline record: `markdown/00-frontend-refactor-governance/records/FE-0187-frontend-shared-component-primitives-baseline.md`
