@@ -54,9 +54,12 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.design_system_styles.responsive_panel_overrides`
     - `frontend.design_system_styles.page_style_contracts`
   - Active child parent:
+    - none.
+  - Closed child parent:
     - `frontend.design_system_styles.shared_component_primitives`
-      - Status: child parent baseline established.
-      - Record: `markdown/00-frontend-refactor-governance/records/FE-0187-frontend-shared-component-primitives-baseline.md`
+      - Status: closed after recursive subchild queue finished.
+      - Baseline record: `markdown/00-frontend-refactor-governance/records/FE-0187-frontend-shared-component-primitives-baseline.md`
+      - Parent closeout record: `markdown/00-frontend-refactor-governance/records/FE-0192-frontend-shared-component-primitives-parent-closeout.md`
       - Current owned and split-target files:
         - `frontend/src/shared.css`
         - `frontend/src/shared/ad-core-primitives.css`
@@ -92,7 +95,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
           - Public surface:
             - `frontend/src/shared/monthly-heatmap.css`
             - `frontend/src/shared.css`
-  - Closed child parent:
     - `frontend.design_system_styles.design_tokens_and_native_controls`
       - Status: closed after recursive subchild queue finished.
       - Baseline record: `markdown/00-frontend-refactor-governance/records/FE-0179-frontend-design-system-core-baseline.md`

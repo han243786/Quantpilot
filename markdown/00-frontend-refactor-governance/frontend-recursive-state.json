@@ -2,15 +2,15 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.design_system_styles.shared_component_primitives",
-  "parent_return": "frontend.design_system_styles",
-  "current_step": "FE-0191",
-  "current_phase": "frontend_shared_monthly_heatmap_closed",
-  "current_child_queue": [],
-  "return_child_queue_after_closeout": [
+  "current_parent": "frontend.design_system_styles",
+  "parent_return": null,
+  "current_step": "FE-0192",
+  "current_phase": "frontend_shared_component_primitives_child_parent_closed",
+  "current_child_queue": [
     "frontend.design_system_styles.responsive_panel_overrides",
     "frontend.design_system_styles.page_style_contracts"
   ],
+  "return_child_queue_after_closeout": [],
   "next_parent": "frontend.test_support",
   "closed_parents": [
     "frontend.app_shell",
@@ -155,7 +155,8 @@
     "frontend.design_system_styles.shared_component_primitives.ad_core_primitives",
     "frontend.design_system_styles.shared_component_primitives.legacy_qp_aliases",
     "frontend.design_system_styles.shared_component_primitives.loading_skeleton_motion",
-    "frontend.design_system_styles.shared_component_primitives.monthly_heatmap_styles"
+    "frontend.design_system_styles.shared_component_primitives.monthly_heatmap_styles",
+    "frontend.design_system_styles.shared_component_primitives"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [
