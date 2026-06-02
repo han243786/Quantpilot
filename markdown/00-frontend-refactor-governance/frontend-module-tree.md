@@ -23,6 +23,13 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/pages/BacktestAnalysisLayout.jsx`
     - `frontend/src/pages/backtestAnalysisShared.jsx`
     - `frontend/src/pages/backtestAnalysisShared.test.jsx`
+    - `frontend/src/pages/backtestViews/shared/BacktestAnalysisLayout.jsx`
+    - `frontend/src/pages/backtestViews/shared/BacktestAnalysisLayout.test.jsx`
+    - `frontend/src/pages/backtestViews/shared/backtestAnalysisShared.jsx`
+    - `frontend/src/pages/backtestViews/shared/backtestAnalysisShared.test.jsx`
+    - `frontend/src/pages/backtestViews/shared/DrawdownChart.jsx`
+    - `frontend/src/pages/backtestViews/shared/MonthlyReturnsHeatmap.jsx`
+    - `frontend/src/pages/backtestViews/shared/index.js`
     - `frontend/src/pages/backtest-analysis.css`
     - `frontend/src/components/DrawdownChart.jsx`
     - `frontend/src/components/MonthlyReturnsHeatmap.jsx`
@@ -40,12 +47,18 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/components/EventStreamPanel.jsx`
     - `frontend/src/store/graphStore.js`
   - Child queue:
-    - `frontend.backtest_views.analysis_layout_shared`
     - `frontend.backtest_views.strategy_backtests_index`
     - `frontend.backtest_views.detail_page_analysis`
     - `frontend.backtest_views.compare_page_analysis`
   - Closed child leaves:
-    - none yet.
+    - `frontend.backtest_views.analysis_layout_shared`
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0108-frontend-backtest-views-analysis-layout-shared-closeout.md`
+      - Public surface: `frontend/src/pages/backtestViews/shared/index.js`
+      - Compatibility facades:
+        - `frontend/src/pages/BacktestAnalysisLayout.jsx`
+        - `frontend/src/pages/backtestAnalysisShared.jsx`
+        - `frontend/src/components/DrawdownChart.jsx`
+        - `frontend/src/components/MonthlyReturnsHeatmap.jsx`
 
 ## Last Closed Parent
 

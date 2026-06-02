@@ -10,14 +10,12 @@ import {
 import {
   AnalysisHero,
   AnalysisSection,
-  AnalysisStatusBanner
-} from "./BacktestAnalysisLayout";
-import {
+  AnalysisStatusBanner,
   formatPercent,
   formatTime,
   formatValue,
   MetricPair
-} from "./backtestAnalysisShared";
+} from "./backtestViews/shared";
 import { useStrategyWorkspaceSharedModel } from "../hooks/useStrategyWorkspaceSharedModel";
 import { useStrategyResearchUiState } from "../hooks/useStrategyResearchUiState";
 import { useStrategyResearchSelectors } from "../hooks/strategyResearchSelectors";

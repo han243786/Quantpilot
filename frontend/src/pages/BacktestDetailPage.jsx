@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import DrawdownChart from "../components/DrawdownChart";
-import MonthlyReturnsHeatmap from "../components/MonthlyReturnsHeatmap";
 import EventStreamPanel from "../components/EventStreamPanel";
 import GovernedTimelinePanel from "../components/GovernedTimelinePanel";
 import RuntimeReportPanel from "../components/RuntimeReportPanel";
@@ -13,8 +11,11 @@ import {
   strategyWorkspacePath
 } from "../router";
 import { useI18n } from "../i18n";
-import { AnalysisHero, AnalysisSection } from "./BacktestAnalysisLayout";
 import {
+  AnalysisHero,
+  AnalysisSection,
+  DrawdownChart,
+  MonthlyReturnsHeatmap,
   formatRatio,
   formatTime,
   formatValue,
@@ -30,7 +31,7 @@ import {
   drawdownAnalysisFromSummary,
   benchmarkComparisonFromSummary,
   MetricPair
-} from "./backtestAnalysisShared";
+} from "./backtestViews/shared";
 import { buildDiagnosticsExplanationEntries } from "../utils/runtimeExplanation";
 import {
   buildGovernanceIdentityRows,

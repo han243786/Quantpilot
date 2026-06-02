@@ -3,10 +3,9 @@
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
   "current_parent": "frontend.backtest_views",
-  "current_step": "FE-0107",
-  "current_phase": "frontend_backtest_views_baseline",
+  "current_step": "FE-0108",
+  "current_phase": "frontend_backtest_views_analysis_layout_shared_closed",
   "current_child_queue": [
-    "frontend.backtest_views.analysis_layout_shared",
     "frontend.backtest_views.strategy_backtests_index",
     "frontend.backtest_views.detail_page_analysis",
     "frontend.backtest_views.compare_page_analysis"
@@ -82,7 +81,8 @@
     "frontend.runtime_panels.runtime_diagnostics_surface",
     "frontend.runtime_panels.evidence_timeline_reports",
     "frontend.runtime_panels.mutation_controls",
-    "frontend.runtime_panels.replay_and_explanations"
+    "frontend.runtime_panels.replay_and_explanations",
+    "frontend.backtest_views.analysis_layout_shared"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

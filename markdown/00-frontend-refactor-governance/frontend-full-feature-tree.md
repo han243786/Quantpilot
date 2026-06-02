@@ -544,8 +544,16 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/BacktestAnalysisLayout.jsx`
   - `frontend/src/pages/backtestAnalysisShared.jsx`
   - `frontend/src/pages/backtestAnalysisShared.test.jsx`
+  - `frontend/src/pages/backtestViews/shared/BacktestAnalysisLayout.jsx`
+  - `frontend/src/pages/backtestViews/shared/BacktestAnalysisLayout.test.jsx`
+  - `frontend/src/pages/backtestViews/shared/backtestAnalysisShared.jsx`
+  - `frontend/src/pages/backtestViews/shared/backtestAnalysisShared.test.jsx`
+  - `frontend/src/pages/backtestViews/shared/DrawdownChart.jsx`
+  - `frontend/src/pages/backtestViews/shared/MonthlyReturnsHeatmap.jsx`
+  - `frontend/src/pages/backtestViews/shared/index.js`
   - `frontend/src/pages/backtest-analysis.css`
   - `frontend/src/components/DrawdownChart.jsx`
   - `frontend/src/components/MonthlyReturnsHeatmap.jsx`
 - Evidence:
   - `markdown/00-frontend-refactor-governance/records/FE-0107-frontend-backtest-views-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0108-frontend-backtest-views-analysis-layout-shared-closeout.md`

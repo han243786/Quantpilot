@@ -12,9 +12,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import {
   AnalysisHero,
   AnalysisSection,
-  AnalysisStatusBanner
-} from "./BacktestAnalysisLayout";
-import {
+  AnalysisStatusBanner,
   comparisonMetrics,
   datasetLabelsFromDetail,
   executionAssumptionsLabelFromDetail,
@@ -26,7 +24,7 @@ import {
   formatValue,
   maxDrawdownFromSummary,
   MetricPair
-} from "./backtestAnalysisShared";
+} from "./backtestViews/shared";
 
 function EquityOverlayChart({ details }) {
   const { t } = useI18n();
