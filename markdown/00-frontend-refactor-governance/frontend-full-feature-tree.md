@@ -349,6 +349,8 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/components/CompilePanel.integration.test.jsx`
   - `frontend/src/components/ModuleSidebar.jsx`
   - `frontend/src/components/ModuleSidebar.test.jsx`
+  - `frontend/src/components/moduleSidebarModel.js`
+  - `frontend/src/components/moduleSidebarModel.test.js`
   - `frontend/src/hooks/usePropertyPanelModel.js`
   - `frontend/src/hooks/usePropertyPanelActions.js`
   - `frontend/src/hooks/propertyPanelSelectors.js`
@@ -383,3 +385,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0070-frontend-graph-editor-property-panel-entity-cards-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0071-frontend-graph-editor-property-panel-section-composers-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0072-frontend-graph-editor-property-panel-views-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0073-frontend-graph-editor-module-palette-closeout.md`
