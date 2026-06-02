@@ -1091,3 +1091,4 @@
 | v4.16.0 / BE-001LM-02 | 新增: `backend.ops_governance.hotswap` backend.ops_governance.hotswap actual extraction complete |
 | v4.16.0 / BE-001LM-03 | 新增: `backend.ops_governance.hotswap` backend.ops_governance.hotswap single leaf closeout stops further split |
 | v4.16.0 / BE-001LN-01 | 新增: `backend.ops_governance` backend.ops_governance parent residual judgment selects sandbox |
+| v4.16.0 / BE-001LO-01 | 新增: `backend.ops_governance.sandbox` backend.ops_governance.sandbox equivalence baseline and extraction plan |
