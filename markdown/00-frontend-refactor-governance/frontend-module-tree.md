@@ -109,9 +109,12 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Current subchild queue:
         - closed.
       - Active nested child parent:
+        - none.
+      - Closed nested child parent:
         - `frontend.store.editor_actions.edge_mutation_actions`
-          - Status: active recursive split.
-          - Record: `markdown/00-frontend-refactor-governance/records/FE-0144-frontend-store-editor-edge-mutation-actions-baseline.md`
+          - Status: closed after recursive subchild queue finished.
+          - Parent closeout record: `markdown/00-frontend-refactor-governance/records/FE-0147-frontend-store-editor-edge-mutation-actions-parent-closeout.md`
+          - Baseline record: `markdown/00-frontend-refactor-governance/records/FE-0144-frontend-store-editor-edge-mutation-actions-baseline.md`
           - Current subchild queue:
             - closed.
           - Closed subchild leaves:
@@ -121,7 +124,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
             - `frontend.store.editor_actions.edge_mutation_actions.remove_selected_action`
               - Record: `markdown/00-frontend-refactor-governance/records/FE-0146-frontend-store-editor-edge-remove-selected-action-closeout.md`
               - Public surface: `frontend/src/store/graphStoreEditorEdgeRemovalActions.js`
-      - Closed nested child parent:
         - `frontend.store.editor_actions.node_mutation_actions`
           - Status: closed after recursive subchild queue finished.
           - Parent closeout record: `markdown/00-frontend-refactor-governance/records/FE-0143-frontend-store-editor-node-mutation-actions-parent-closeout.md`
