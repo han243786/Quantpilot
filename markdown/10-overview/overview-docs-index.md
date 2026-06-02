@@ -613,3 +613,4 @@
 | v4.16.0 / BE-001IV-01 | 新增: `backend.strategy_config.diff.evidence_diff.metrics` backend.strategy_config.diff.evidence_diff.metrics single leaf closeout stops further split |
 | v4.16.0 / BE-001IW-01 | 新增: `backend.strategy_config.diff.evidence_diff` backend.strategy_config.diff.evidence_diff parent closeout retains report assembly and shared helpers |
 | v4.16.0 / BE-001IX-01 | 新增: `backend.strategy_config.diff` backend.strategy_config.diff parent closeout keeps facade and child mediation |
+| v4.16.0 / BE-001IY-01 | 新增: `backend.strategy_config` backend.strategy_config parent residual judgment selects ai_proposal_binding |
