@@ -1018,3 +1018,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001PV-01 `root.contracts.qrpc_core.plugin_contract.taxonomy_extension` equivalence baseline and extraction plan; next step: BE-001PV-02 root.contracts.qrpc_core.plugin_contract.taxonomy_extension extract_closeout.
 - BE-001PV-02 `root.contracts.qrpc_core.plugin_contract.taxonomy_extension` actual extraction complete; next step: BE-001PV-03 root.contracts.qrpc_core.plugin_contract.taxonomy_extension single_leaf_closeout.
 - BE-001PV-03 `root.contracts.qrpc_core.plugin_contract.taxonomy_extension` single leaf closeout sets `stop_split: true`; next step: BE-001PW-01 root.contracts.qrpc_core.plugin_contract parent_residual_judgment selects capability_contract.
+- BE-001PW-01 `root.contracts.qrpc_core.plugin_contract` parent residual judgment selects `contracts.qrpc_core.plugin_contract.capability_contract`; next step: BE-001PX-01 root.contracts.qrpc_core.plugin_contract.capability_contract baseline_plan.
