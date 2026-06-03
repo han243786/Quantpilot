@@ -3860,3 +3860,5 @@ Recursive boundary supplement: BE-001NT-03 `backend.ops_governance.snapshots.sig
 - `markdown/06-milestones/v4.16.0/849-backend.ops_governance.snapshots.signature_contract.single_leaf_closeout.md` - v4.16.0 BE-001NT-03 backend.ops_governance.snapshots.signature_contract single leaf closeout stops further split
 Recursive boundary supplement: BE-001NU-01 `backend.ops_governance.snapshots.route_facade` static closeout and parent closeout selection; next step: BE-001NV-01 backend.ops_governance.snapshots parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/850-backend.ops_governance.snapshots.parent_residual_judgment.route_facade.md` - v4.16.0 BE-001NU-01 backend.ops_governance.snapshots route_facade static closeout and parent closeout selection
+Recursive boundary supplement: BE-001NV-01 `backend.ops_governance.snapshots` parent residual judgment closes parent; next step: BE-001NW-01 backend.ops_governance parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/851-backend.ops_governance.snapshots.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001NV-01 backend.ops_governance.snapshots parent residual judgment closes parent

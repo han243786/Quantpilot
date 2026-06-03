@@ -850,3 +850,4 @@
 | v4.16.0 / BE-001NT-02 | Added: `backend.ops_governance.snapshots.signature_contract` actual extraction complete |
 | v4.16.0 / BE-001NT-03 | Added: `backend.ops_governance.snapshots.signature_contract` single leaf closeout stops further split |
 | v4.16.0 / BE-001NU-01 | Added: `backend.ops_governance.snapshots.route_facade` static closeout and parent closeout selection |
+| v4.16.0 / BE-001NV-01 | Added: `backend.ops_governance.snapshots` parent residual judgment closes parent |
