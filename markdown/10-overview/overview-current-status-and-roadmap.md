@@ -925,3 +925,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001NM-01 `backend.ops_governance.snapshots` parent residual judgment selects read_routes; next step: BE-001NN-01 backend.ops_governance.snapshots.read_routes baseline_plan.
 - BE-001NN-01 `backend.ops_governance.snapshots.read_routes` equivalence baseline and extraction plan; next step: BE-001NN-02 backend.ops_governance.snapshots.read_routes extract_closeout.
 - BE-001NN-02 `backend.ops_governance.snapshots.read_routes` actual extraction complete; next step: BE-001NN-03 backend.ops_governance.snapshots.read_routes single_leaf_closeout.
+- BE-001NN-03 `backend.ops_governance.snapshots.read_routes` single leaf closeout stops further split; next step: BE-001NO-01 backend.ops_governance.snapshots parent_residual_judgment.
