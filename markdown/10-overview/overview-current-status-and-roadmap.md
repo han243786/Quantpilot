@@ -938,3 +938,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001NT-01 `backend.ops_governance.snapshots.signature_contract` equivalence baseline and extraction plan; next step: BE-001NT-02 backend.ops_governance.snapshots.signature_contract extract_closeout.
 - BE-001NT-02 `backend.ops_governance.snapshots.signature_contract` actual extraction complete; next step: BE-001NT-03 backend.ops_governance.snapshots.signature_contract single_leaf_closeout.
 - BE-001NT-03 `backend.ops_governance.snapshots.signature_contract` single leaf closeout stops further split; next step: BE-001NU-01 backend.ops_governance.snapshots parent_residual_judgment.
+- BE-001NU-01 `backend.ops_governance.snapshots.route_facade` static closeout and parent closeout selection; next step: BE-001NV-01 backend.ops_governance.snapshots parent_residual_judgment.
