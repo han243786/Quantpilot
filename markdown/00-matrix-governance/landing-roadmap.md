@@ -185,3 +185,4 @@ Latest recursive supplement: BE-001PE-01 froze the `root.contracts` baseline and
 Latest recursive supplement: BE-001PF-01 selected `contracts.api_surface` as the first contracts child; schema semantics and all Rust behavior remain frozen until the single leaf closeout.
 Latest recursive supplement: BE-001PG-01 kept `contracts.api_surface` equivalent and set `stop_split: false` because OpenAPI HTTP and AsyncAPI runtime events are separate schema owners.
 Latest recursive supplement: BE-001PH-01 selected `contracts.api_surface.openapi_http`; `contracts/asyncapi/runtime-events.yaml` remains queued as its own schema owner.
+Latest recursive supplement: BE-001PI-01 closed `contracts.api_surface.openapi_http` with `stop_split: true`; `contracts/openapi/root.yaml` remains the single OpenAPI HTTP schema owner.

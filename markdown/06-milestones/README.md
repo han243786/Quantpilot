@@ -1274,3 +1274,4 @@
 | v4.16.0 / BE-001PF-01 | `v4.16.0/911-root.contracts.parent_residual_judgment.api_surface.md` | `root.contracts` selects `contracts.api_surface` |
 | v4.16.0 / BE-001PG-01 | `v4.16.0/912-root.contracts.api_surface.single_leaf_closeout.md` | `root.contracts.api_surface` closeout continues split |
 | v4.16.0 / BE-001PH-01 | `v4.16.0/913-root.contracts.api_surface.parent_residual_judgment.openapi_http.md` | `root.contracts.api_surface` selects `openapi_http` |
+| v4.16.0 / BE-001PI-01 | `v4.16.0/914-root.contracts.api_surface.openapi_http.single_leaf_closeout.md` | `root.contracts.api_surface.openapi_http` closeout |
