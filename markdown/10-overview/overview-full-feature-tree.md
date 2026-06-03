@@ -3900,3 +3900,5 @@ Recursive boundary supplement: BE-001OD-03 `backend.ops_governance.runbook.route
 - `markdown/06-milestones/v4.16.0/867-backend.ops_governance.runbook.route_facade.single_leaf_closeout.md` - v4.16.0 BE-001OD-03 backend.ops_governance.runbook.route_facade single leaf closeout
 Recursive boundary supplement: BE-001OE-01 `backend.ops_governance.runbook` parent closeout; next step: BE-001OF-01 backend.ops_governance parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/868-backend.ops_governance.runbook.parent_closeout.md` - v4.16.0 BE-001OE-01 backend.ops_governance.runbook parent closeout
+Recursive boundary supplement: BE-001OF-01 `backend.ops_governance` parent residual judgment selects chaos; next step: BE-001OG-01 backend.ops_governance.chaos baseline_plan.
+- `markdown/06-milestones/v4.16.0/869-backend.ops_governance.parent_residual_judgment.chaos.md` - v4.16.0 BE-001OF-01 backend.ops_governance parent residual judgment selects chaos

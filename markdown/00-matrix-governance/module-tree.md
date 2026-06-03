@@ -7824,3 +7824,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.ops_governance.runbook.route_facade` has been extracted into `src/backend/ops_governance/runbook/handlers/route_facade.rs`; route registration binds to parent-owned list/detail handler bridges, preserving the no-sibling-shortcut rule.
 `backend.ops_governance.runbook.route_facade stop_split: true`; it is closed as the complete runbook route registration surface. The runbook parent has no remaining internal child queue.
 `backend.ops_governance.runbook close_parent: true`; scenario_catalog, read_routes, and route_facade are closed. The remaining ops governance residual candidate is `backend.ops_governance.chaos`.
+`backend.ops_governance.chaos` is selected next; chaos still has a thin backend facade plus `src/chaos_experiment.rs` implementation owner containing route registration, create/list/get handlers, perturbation execution, report persistence/loading, ID validation, and tests.
