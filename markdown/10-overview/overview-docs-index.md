@@ -794,3 +794,4 @@
 | v4.16.0 / BE-001MT-03 | Added: `backend.ops_governance.alerts.rule_catalog` single leaf closeout stops further split |
 | v4.16.0 / BE-001MU-01 | Added: `backend.ops_governance.alerts` parent residual judgment selects acknowledge_flow |
 | v4.16.0 / BE-001MV-01 | Added: `backend.ops_governance.alerts.acknowledge_flow` equivalence baseline and extraction plan |
+| v4.16.0 / BE-001MV-02 | Added: `backend.ops_governance.alerts.acknowledge_flow` actual extraction complete |

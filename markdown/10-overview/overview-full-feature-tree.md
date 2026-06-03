@@ -3734,3 +3734,6 @@ Recursive boundary supplement: BE-001MU-01 `backend.ops_governance.alerts` paren
 - `markdown/06-milestones/v4.16.0/793-backend.ops_governance.alerts.parent_residual_judgment.acknowledge_flow.md` - v4.16.0 BE-001MU-01 backend.ops_governance.alerts parent residual judgment selects acknowledge_flow
 Recursive boundary supplement: BE-001MV-01 `backend.ops_governance.alerts.acknowledge_flow` equivalence baseline and extraction plan; next step: BE-001MV-02 backend.ops_governance.alerts.acknowledge_flow extract_closeout.
 - `markdown/06-milestones/v4.16.0/794-backend.ops_governance.alerts.acknowledge_flow.baseline_plan.md` - v4.16.0 BE-001MV-01 backend.ops_governance.alerts.acknowledge_flow equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001MV-02 `backend.ops_governance.alerts.acknowledge_flow` actual extraction complete; next step: BE-001MV-03 backend.ops_governance.alerts.acknowledge_flow single_leaf_closeout.
+- `src/backend/ops_governance/alerts/handlers/acknowledge_flow.rs` - backend.ops_governance.alerts.acknowledge_flow implementation
+- `markdown/06-milestones/v4.16.0/795-backend.ops_governance.alerts.acknowledge_flow.extract_closeout.md` - v4.16.0 BE-001MV-02 backend.ops_governance.alerts.acknowledge_flow actual extraction complete
