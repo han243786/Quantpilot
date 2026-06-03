@@ -3784,3 +3784,5 @@ Recursive boundary supplement: BE-001NC-03 `backend.ops_governance.alerts.read_r
 - `markdown/06-milestones/v4.16.0/815-backend.ops_governance.alerts.read_routes.extract_closeout.md` - v4.16.0 BE-001NC-03 backend.ops_governance.alerts.read_routes actual extraction complete
 Recursive boundary supplement: BE-001NC-04 `backend.ops_governance.alerts.read_routes` single leaf closeout stops further split; next step: BE-001ND-01 backend.ops_governance.alerts parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/816-backend.ops_governance.alerts.read_routes.single_leaf_closeout.md` - v4.16.0 BE-001NC-04 backend.ops_governance.alerts.read_routes single leaf closeout stops further split
+Recursive boundary supplement: BE-001ND-01 `backend.ops_governance.alerts.route_facade` static closeout and recovery_bridge selection; next step: BE-001NE-01 backend.ops_governance.alerts.recovery_bridge baseline_plan.
+- `markdown/06-milestones/v4.16.0/817-backend.ops_governance.alerts.parent_residual_judgment.route_facade.md` - v4.16.0 BE-001ND-01 backend.ops_governance.alerts route_facade static closeout and recovery_bridge selection

@@ -816,3 +816,4 @@
 | v4.16.0 / BE-001NC-02 | Added: `backend.ops_governance.alerts.read_routes` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001NC-03 | Added: `backend.ops_governance.alerts.read_routes` actual extraction complete |
 | v4.16.0 / BE-001NC-04 | Added: `backend.ops_governance.alerts.read_routes` single leaf closeout stops further split |
+| v4.16.0 / BE-001ND-01 | Added: `backend.ops_governance.alerts.route_facade` static closeout and recovery_bridge selection |
