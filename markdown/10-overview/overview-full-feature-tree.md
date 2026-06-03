@@ -3889,3 +3889,5 @@ Recursive boundary supplement: BE-001OB-02 `backend.ops_governance.runbook.read_
 - `markdown/06-milestones/v4.16.0/862-backend.ops_governance.runbook.read_routes.extract_closeout.md` - v4.16.0 BE-001OB-02 backend.ops_governance.runbook.read_routes actual extraction complete
 Recursive boundary supplement: BE-001OB-03 `backend.ops_governance.runbook.read_routes` single leaf closeout; next step: BE-001OC-01 backend.ops_governance.runbook parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/863-backend.ops_governance.runbook.read_routes.single_leaf_closeout.md` - v4.16.0 BE-001OB-03 backend.ops_governance.runbook.read_routes single leaf closeout
+Recursive boundary supplement: BE-001OC-01 `backend.ops_governance.runbook` parent residual judgment selects route_facade; next step: BE-001OD-01 backend.ops_governance.runbook.route_facade baseline_plan.
+- `markdown/06-milestones/v4.16.0/864-backend.ops_governance.runbook.parent_residual_judgment.route_facade.md` - v4.16.0 BE-001OC-01 backend.ops_governance.runbook parent residual judgment selects route_facade
