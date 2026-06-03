@@ -860,3 +860,4 @@
 | v4.16.0 / BE-001NZ-02 | Added: `backend.ops_governance.runbook.scenario_catalog` actual extraction complete |
 | v4.16.0 / BE-001NZ-03 | Added: `backend.ops_governance.runbook.scenario_catalog` single leaf closeout |
 | v4.16.0 / BE-001OA-01 | Added: `backend.ops_governance.runbook` parent residual judgment selects read_routes |
+| v4.16.0 / BE-001OB-01 | Added: `backend.ops_governance.runbook.read_routes` equivalence baseline and extraction plan |
