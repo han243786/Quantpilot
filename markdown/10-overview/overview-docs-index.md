@@ -894,3 +894,4 @@
 | v4.16.0 / BE-001OQ-03 | Added: `backend.ops_governance.chaos.experiment_creation.memory_commit` single leaf closeout |
 | v4.16.0 / BE-001OR-01 | Added: `backend.ops_governance.chaos.experiment_creation` parent closeout |
 | v4.16.0 / BE-001OS-01 | Added: `backend.ops_governance.chaos` parent residual judgment selects read_routes |
+| v4.16.0 / BE-001OT-01 | Added: `backend.ops_governance.chaos.read_routes` equivalence baseline and extraction plan |
