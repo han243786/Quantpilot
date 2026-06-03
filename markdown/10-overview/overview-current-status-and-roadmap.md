@@ -867,3 +867,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001ML-01 `backend.ops_governance.sandbox` parent residual judgment selects proposal_loader; next step: BE-001MM-01 backend.ops_governance.sandbox.proposal_loader baseline_plan.
 - BE-001MM-01 `backend.ops_governance.sandbox.proposal_loader` equivalence baseline and extraction plan; next step: BE-001MM-02 backend.ops_governance.sandbox.proposal_loader extract_closeout.
 - BE-001MM-02 `backend.ops_governance.sandbox.proposal_loader` actual extraction complete; next step: BE-001MM-03 backend.ops_governance.sandbox.proposal_loader single_leaf_closeout.
+- BE-001MM-03 `backend.ops_governance.sandbox.proposal_loader` single leaf closeout stops further split; next step: BE-001MN-01 backend.ops_governance.sandbox parent_residual_judgment.
