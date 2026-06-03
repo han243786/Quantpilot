@@ -932,3 +932,4 @@
 | v4.16.0 / BE-001PW-01 | Added: `root.contracts.qrpc_core.plugin_contract` parent residual judgment selects `capability_contract` |
 | v4.16.0 / BE-001PX-01 | Added: `root.contracts.qrpc_core.plugin_contract.capability_contract` baseline plan |
 | v4.16.0 / BE-001PX-02 | Added: `root.contracts.qrpc_core.plugin_contract.capability_contract` actual extraction closeout |
+| v4.16.0 / BE-001PX-03 | Added: `root.contracts.qrpc_core.plugin_contract.capability_contract` single leaf closeout |
