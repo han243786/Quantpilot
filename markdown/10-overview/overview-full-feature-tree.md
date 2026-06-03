@@ -3728,3 +3728,5 @@ Recursive boundary supplement: BE-001MT-01 `backend.ops_governance.alerts.rule_c
 Recursive boundary supplement: BE-001MT-02 `backend.ops_governance.alerts.rule_catalog` actual extraction complete; next step: BE-001MT-03 backend.ops_governance.alerts.rule_catalog single_leaf_closeout.
 - `src/backend/ops_governance/alerts/handlers/rule_catalog.rs` - backend.ops_governance.alerts.rule_catalog implementation
 - `markdown/06-milestones/v4.16.0/791-backend.ops_governance.alerts.rule_catalog.extract_closeout.md` - v4.16.0 BE-001MT-02 backend.ops_governance.alerts.rule_catalog actual extraction complete
+Recursive boundary supplement: BE-001MT-03 `backend.ops_governance.alerts.rule_catalog` single leaf closeout stops further split; next step: BE-001MU-01 backend.ops_governance.alerts parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/792-backend.ops_governance.alerts.rule_catalog.single_leaf_closeout.md` - v4.16.0 BE-001MT-03 backend.ops_governance.alerts.rule_catalog single leaf closeout stops further split
