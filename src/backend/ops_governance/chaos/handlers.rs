@@ -2,15 +2,10 @@ use crate::*;
 mod experiment_creation;
 mod read_routes;
 mod report_persistence;
+mod route_facade;
 
 pub(super) fn register_chaos_routes(router: Router<AppState>) -> Router<AppState> {
-    router
-        .route("/api/v1/chaos/experiments", post(create_experiment))
-        .route("/api/v1/chaos/experiments", get(list_experiments))
-        .route(
-            "/api/v1/chaos/experiments/:experiment_id",
-            get(get_experiment),
-        )
+    route_facade::register_chaos_routes(router)
 }
 
 async fn create_experiment(

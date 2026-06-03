@@ -7855,3 +7855,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.ops_governance.chaos.read_routes stop_split: true`; it is closed as the complete chaos list/detail read boundary. Next chaos residual candidate is `backend.ops_governance.chaos.route_facade`.
 `backend.ops_governance.chaos.route_facade` is selected next; it owns create/list/detail chaos route registration and must bind only to chaos parent handler bridges.
 `backend.ops_governance.chaos.route_facade` baseline is frozen: BE-001OV-02 may move only route registration into a private child module, keeping parent-owned create/list/detail handler bridges.
+`backend.ops_governance.chaos.route_facade` has been extracted into `src/backend/ops_governance/chaos/handlers/route_facade.rs`; chaos handler parent retains the route registration bridge and route_facade binds only to parent handler bridges.
