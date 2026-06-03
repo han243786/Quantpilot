@@ -3838,3 +3838,5 @@ Recursive boundary supplement: BE-001NP-01 `backend.ops_governance.snapshots.res
 Recursive boundary supplement: BE-001NP-02 `backend.ops_governance.snapshots.restore_flow` actual extraction complete; next step: BE-001NP-03 backend.ops_governance.snapshots.restore_flow single_leaf_closeout.
 - `src/backend/ops_governance/snapshots/handlers/restore_flow.rs` - backend.ops_governance.snapshots.restore_flow implementation
 - `markdown/06-milestones/v4.16.0/840-backend.ops_governance.snapshots.restore_flow.extract_closeout.md` - v4.16.0 BE-001NP-02 backend.ops_governance.snapshots.restore_flow actual extraction complete
+Recursive boundary supplement: BE-001NP-03 `backend.ops_governance.snapshots.restore_flow` single leaf closeout stops further split; next step: BE-001NQ-01 backend.ops_governance.snapshots parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/841-backend.ops_governance.snapshots.restore_flow.single_leaf_closeout.md` - v4.16.0 BE-001NP-03 backend.ops_governance.snapshots.restore_flow single leaf closeout stops further split
