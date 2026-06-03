@@ -3893,3 +3893,6 @@ Recursive boundary supplement: BE-001OC-01 `backend.ops_governance.runbook` pare
 - `markdown/06-milestones/v4.16.0/864-backend.ops_governance.runbook.parent_residual_judgment.route_facade.md` - v4.16.0 BE-001OC-01 backend.ops_governance.runbook parent residual judgment selects route_facade
 Recursive boundary supplement: BE-001OD-01 `backend.ops_governance.runbook.route_facade` equivalence baseline and extraction plan; next step: BE-001OD-02 backend.ops_governance.runbook.route_facade extract_closeout.
 - `markdown/06-milestones/v4.16.0/865-backend.ops_governance.runbook.route_facade.baseline_plan.md` - v4.16.0 BE-001OD-01 backend.ops_governance.runbook.route_facade equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001OD-02 `backend.ops_governance.runbook.route_facade` actual extraction complete; next step: BE-001OD-03 backend.ops_governance.runbook.route_facade single_leaf_closeout.
+- `src/backend/ops_governance/runbook/handlers/route_facade.rs` - backend.ops_governance.runbook.route_facade implementation
+- `markdown/06-milestones/v4.16.0/866-backend.ops_governance.runbook.route_facade.extract_closeout.md` - v4.16.0 BE-001OD-02 backend.ops_governance.runbook.route_facade actual extraction complete

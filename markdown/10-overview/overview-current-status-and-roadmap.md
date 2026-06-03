@@ -954,3 +954,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001OB-03 `backend.ops_governance.runbook.read_routes` single leaf closeout; next step: BE-001OC-01 backend.ops_governance.runbook parent_residual_judgment.
 - BE-001OC-01 `backend.ops_governance.runbook` parent residual judgment selects route_facade; next step: BE-001OD-01 backend.ops_governance.runbook.route_facade baseline_plan.
 - BE-001OD-01 `backend.ops_governance.runbook.route_facade` equivalence baseline and extraction plan; next step: BE-001OD-02 backend.ops_governance.runbook.route_facade extract_closeout.
+- BE-001OD-02 `backend.ops_governance.runbook.route_facade` actual extraction complete; next step: BE-001OD-03 backend.ops_governance.runbook.route_facade single_leaf_closeout.
