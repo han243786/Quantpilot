@@ -1,5 +1,6 @@
 use crate::*;
 mod perturbation_execution;
+mod report_projection;
 
 pub(super) async fn create_experiment(
     user_id: auth::UserId,
@@ -26,10 +27,7 @@ pub(super) async fn create_experiment(
         .report_generation_failure_count
         .load(Ordering::Relaxed);
 
-    let metrics_before = ChaosSteadyStateMetrics {
-        data_freshness_p95_ms: 120.0,
-        execution_planned_rate_per_min: 4.0,
-    };
+    let metrics_before = baseline_metrics();
 
     execute_perturbation(
         state.chaos_store_dir.as_ref(),
@@ -51,74 +49,7 @@ pub(super) async fn create_experiment(
         .report_generation_failure_count
         .load(Ordering::Relaxed);
 
-    let metrics_during = match request.experiment_type {
-        ChaosExperimentType::DataLatencyInjection => ChaosSteadyStateMetrics {
-            data_freshness_p95_ms: metrics_before.data_freshness_p95_ms + request.injection.value,
-            execution_planned_rate_per_min: 0.0,
-        },
-        ChaosExperimentType::EventLossInjection => ChaosSteadyStateMetrics {
-            data_freshness_p95_ms: metrics_before.data_freshness_p95_ms,
-            execution_planned_rate_per_min: metrics_before.execution_planned_rate_per_min * 0.99,
-        },
-        ChaosExperimentType::DiskPressureInjection => ChaosSteadyStateMetrics {
-            data_freshness_p95_ms: metrics_before.data_freshness_p95_ms + 200.0,
-            execution_planned_rate_per_min: metrics_before.execution_planned_rate_per_min * 0.7,
-        },
-        ChaosExperimentType::ClockSkewInjection => ChaosSteadyStateMetrics {
-            data_freshness_p95_ms: metrics_before.data_freshness_p95_ms + 500.0,
-            execution_planned_rate_per_min: metrics_before.execution_planned_rate_per_min * 0.8,
-        },
-    };
-
-    let metrics_after = ChaosSteadyStateMetrics {
-        data_freshness_p95_ms: metrics_before.data_freshness_p95_ms + 5.0,
-        execution_planned_rate_per_min: metrics_before.execution_planned_rate_per_min - 0.1,
-    };
-
-    let passed = match request.experiment_type {
-        ChaosExperimentType::DataLatencyInjection => {
-            metrics_after.data_freshness_p95_ms < 500.0
-                && metrics_after.execution_planned_rate_per_min > 0.0
-        }
-        ChaosExperimentType::EventLossInjection => metrics_after.data_freshness_p95_ms < 500.0,
-        ChaosExperimentType::DiskPressureInjection => {
-            metrics_after.execution_planned_rate_per_min > 0.0
-        }
-        ChaosExperimentType::ClockSkewInjection => metrics_after.data_freshness_p95_ms < 1000.0,
-    };
-
-    let alerts_triggered = match request.experiment_type {
-        ChaosExperimentType::DataLatencyInjection => vec!["data_freshness_critical".to_string()],
-        ChaosExperimentType::EventLossInjection => vec!["event_orphan_detected".to_string()],
-        ChaosExperimentType::DiskPressureInjection => {
-            vec!["storage_watermark_critical".to_string()]
-        }
-        ChaosExperimentType::ClockSkewInjection => vec!["data_freshness_critical".to_string()],
-    };
-
-    let degradation_actions = match request.experiment_type {
-        ChaosExperimentType::DataLatencyInjection => vec!["execution_paused".to_string()],
-        ChaosExperimentType::DiskPressureInjection => {
-            vec!["debug_disabled".to_string(), "data_sampled".to_string()]
-        }
-        ChaosExperimentType::EventLossInjection => vec!["run_marked_untrusted".to_string()],
-        ChaosExperimentType::ClockSkewInjection => vec!["clock_skew_alerted".to_string()],
-    };
-
-    let report = ChaosExperimentReport {
-        experiment_id: experiment_id.clone(),
-        experiment_type: request.experiment_type,
-        executed_at: epoch_ms_to_iso8601(now_ms),
-        injection: request.injection,
-        steady_state_metrics_before: metrics_before,
-        steady_state_metrics_during: metrics_during,
-        steady_state_metrics_after: metrics_after,
-        alerts_triggered,
-        degradation_actions,
-        recovery_duration_ms: 35000,
-        passed,
-        notes: request.notes,
-    };
+    let report = build_experiment_report(experiment_id.clone(), now_ms, request, metrics_before);
 
     super::persist_chaos_report(&state.chaos_store_dir, &report)
         .await
@@ -138,4 +69,17 @@ async fn execute_perturbation(
     duration_ms: u64,
 ) {
     perturbation_execution::execute_perturbation(store_dir, experiment_type, duration_ms).await
+}
+
+fn baseline_metrics() -> ChaosSteadyStateMetrics {
+    report_projection::baseline_metrics()
+}
+
+fn build_experiment_report(
+    experiment_id: String,
+    now_ms: u64,
+    request: CreateChaosExperimentRequest,
+    metrics_before: ChaosSteadyStateMetrics,
+) -> ChaosExperimentReport {
+    report_projection::build_experiment_report(experiment_id, now_ms, request, metrics_before)
 }
