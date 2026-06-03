@@ -998,3 +998,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001PB-01 `backend.test_support` single leaf closeout sets `stop_split: true`; next step: BE-001PC-01 backend parent_closeout.
 - BE-001PC-01 `backend` parent closeout; next step: BE-001PD-01 root parent_residual_judgment selects root.contracts.
 - BE-001PD-01 `root` parent residual judgment selects `root.contracts`; next step: BE-001PE-01 root.contracts baseline_plan.
+- BE-001PE-01 `root.contracts` baseline plan freezes the contracts parent and queues `contracts.api_surface`, `contracts.qrpc_core`, `contracts.core_ir`, `contracts.compiler_bridge`, `contracts.runtime_support`, `contracts.quantscript`, and `contracts.plugin_metadata`; next step: BE-001PF-01 root.contracts parent_residual_judgment selects contracts.api_surface.

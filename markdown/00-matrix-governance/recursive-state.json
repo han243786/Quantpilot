@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001PC-01",
-  "last_committed_sha": "5bbdfa5c",
+  "last_committed_batch": "BE-001PD-01",
+  "last_committed_sha": "328d6c38",
   "current_parent": "root.contracts",
-  "current_step": "BE-001PE-01",
-  "current_phase": "baseline_plan",
+  "current_step": "BE-001PF-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -91,10 +91,16 @@
     "backend"
   ],
   "open_residuals": [
-    "contracts",
+    "contracts.api_surface",
+    "contracts.qrpc_core",
+    "contracts.core_ir",
+    "contracts.compiler_bridge",
+    "contracts.runtime_support",
+    "contracts.quantscript",
+    "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts",
+  "next_recommended_child": "root.contracts.api_surface",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

@@ -1270,3 +1270,4 @@
 | v4.16.0 / BE-001PB-01 | Added: `backend.test_support` single leaf closeout |
 | v4.16.0 / BE-001PC-01 | Added: `backend` parent closeout |
 | v4.16.0 / BE-001PD-01 | Added: `root` parent residual judgment selects `root.contracts` |
+| v4.16.0 / BE-001PE-01 | `v4.16.0/910-root.contracts.baseline_plan.md` | `root.contracts` baseline plan and L2 child queue |
