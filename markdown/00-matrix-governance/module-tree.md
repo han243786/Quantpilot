@@ -7710,3 +7710,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.ops_governance.sandbox.comparison_metrics` 被选为下一轮子叶；metrics_evaluation 已关闭，comparison_metrics 是 sandbox helpers 中剩余的 backtest selection/projection owner，当前负责 `compute_comparison_metrics`、`backtest_to_sandbox_metrics`、v4 replay-shape helper、risk rejection counter 与相关测试。BE-001MF-01 必须先冻结该 comparison boundary，不得迁移 proposal loader、disk loader、closed children、root bridge 或 runtime mutation internals。
 
 `backend.ops_governance.sandbox.comparison_metrics` baseline 已冻结：该子叶拥有 backtest filtering/sorting、baseline/candidate metrics selection、fidelity fallback、`BacktestRecord` 到 `SandboxMetrics` projection、v4 replay-shape helper、risk rejection counter 与相关测试。BE-001MF-02 不得迁移 metrics_evaluation、proposal loader、disk loader 或 closed children。
+
+`backend.ops_governance.sandbox.comparison_metrics` 已迁入 `src/backend/ops_governance/sandbox/comparison_metrics.rs`；sandbox parent 通过私有 child module 导入 `compute_comparison_metrics`，并继续给 verification_run 提供 parent-controlled boundary。metrics_evaluation、proposal loader、disk loader、report_api 与 verification_run closed children 均未迁移。
