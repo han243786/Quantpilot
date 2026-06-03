@@ -776,3 +776,4 @@
 | v4.16.0 / BE-001MJ-03 | 新增: `backend.ops_governance.sandbox.comparison_metrics.backtest_projection` backend.ops_governance.sandbox.comparison_metrics.backtest_projection single leaf closeout stops further split |
 | v4.16.0 / BE-001MK-01 | Added: `backend.ops_governance.sandbox.comparison_metrics` parent residual judgment closes parent |
 | v4.16.0 / BE-001ML-01 | Added: `backend.ops_governance.sandbox` parent residual judgment selects proposal_loader |
+| v4.16.0 / BE-001MM-01 | Added: `backend.ops_governance.sandbox.proposal_loader` equivalence baseline and extraction plan |
