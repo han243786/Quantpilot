@@ -1278,3 +1278,4 @@
 | v4.16.0 / BE-001PJ-01 | `v4.16.0/915-root.contracts.api_surface.parent_residual_judgment.asyncapi_runtime_events.md` | `root.contracts.api_surface` selects `asyncapi_runtime_events` |
 | v4.16.0 / BE-001PK-01 | `v4.16.0/916-root.contracts.api_surface.asyncapi_runtime_events.single_leaf_closeout.md` | `root.contracts.api_surface.asyncapi_runtime_events` closeout |
 | v4.16.0 / BE-001PL-01 | `v4.16.0/917-root.contracts.api_surface.parent_closeout.md` | `root.contracts.api_surface` parent closeout |
+| v4.16.0 / BE-001PM-01 | `v4.16.0/918-root.contracts.parent_residual_judgment.qrpc_core.md` | `root.contracts` selects `contracts.qrpc_core` |

@@ -1006,3 +1006,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001PJ-01 `root.contracts.api_surface` parent residual judgment selects `contracts.api_surface.asyncapi_runtime_events`; next step: BE-001PK-01 root.contracts.api_surface.asyncapi_runtime_events single_leaf_closeout.
 - BE-001PK-01 `root.contracts.api_surface.asyncapi_runtime_events` single leaf closeout sets `stop_split: true`; next step: BE-001PL-01 root.contracts.api_surface parent_closeout.
 - BE-001PL-01 `root.contracts.api_surface` parent closeout; next step: BE-001PM-01 root.contracts parent_residual_judgment selects contracts.qrpc_core.
+- BE-001PM-01 `root.contracts` parent residual judgment selects `contracts.qrpc_core`; next step: BE-001PN-01 root.contracts.qrpc_core baseline_plan.

@@ -189,3 +189,4 @@ Latest recursive supplement: BE-001PI-01 closed `contracts.api_surface.openapi_h
 Latest recursive supplement: BE-001PJ-01 selected `contracts.api_surface.asyncapi_runtime_events`; backend SSE handler behavior and runtime event producers remain frozen.
 Latest recursive supplement: BE-001PK-01 closed `contracts.api_surface.asyncapi_runtime_events` with `stop_split: true`; all api_surface children are now ready for parent closeout.
 Latest recursive supplement: BE-001PL-01 closed `root.contracts.api_surface`; the next contracts residual candidate is `contracts.qrpc_core`.
+Latest recursive supplement: BE-001PM-01 selected `contracts.qrpc_core`; protocol structs, plugin contracts, Strategy IR, typed errors, event proto, and Rust behavior remain frozen until the qrpc_core baseline.

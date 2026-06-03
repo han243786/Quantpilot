@@ -4006,3 +4006,5 @@ Recursive boundary supplement: BE-001PK-01 `root.contracts.api_surface.asyncapi_
 - `markdown/06-milestones/v4.16.0/916-root.contracts.api_surface.asyncapi_runtime_events.single_leaf_closeout.md` - v4.16.0 BE-001PK-01 root.contracts.api_surface.asyncapi_runtime_events single leaf closeout
 Recursive boundary supplement: BE-001PL-01 `root.contracts.api_surface` parent closeout; next step: BE-001PM-01 root.contracts parent_residual_judgment selects contracts.qrpc_core.
 - `markdown/06-milestones/v4.16.0/917-root.contracts.api_surface.parent_closeout.md` - v4.16.0 BE-001PL-01 root.contracts.api_surface parent closeout
+Recursive boundary supplement: BE-001PM-01 `root.contracts` parent residual judgment selects contracts.qrpc_core; next step: BE-001PN-01 root.contracts.qrpc_core baseline_plan.
+- `markdown/06-milestones/v4.16.0/918-root.contracts.parent_residual_judgment.qrpc_core.md` - v4.16.0 BE-001PM-01 root.contracts parent residual judgment selects qrpc_core
