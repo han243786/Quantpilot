@@ -830,3 +830,4 @@
 | v4.16.0 / BE-001NJ-02 | Added: `backend.ops_governance.snapshots.snapshot_id_validation` actual extraction complete |
 | v4.16.0 / BE-001NJ-03 | Added: `backend.ops_governance.snapshots.snapshot_id_validation` single leaf closeout stops further split |
 | v4.16.0 / BE-001NK-01 | Added: `backend.ops_governance.snapshots` parent residual judgment selects create_flow |
+| v4.16.0 / BE-001NL-01 | Added: `backend.ops_governance.snapshots.create_flow` equivalence baseline and extraction plan |

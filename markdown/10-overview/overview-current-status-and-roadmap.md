@@ -919,3 +919,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001NJ-02 `backend.ops_governance.snapshots.snapshot_id_validation` actual extraction complete; next step: BE-001NJ-03 backend.ops_governance.snapshots.snapshot_id_validation single_leaf_closeout.
 - BE-001NJ-03 `backend.ops_governance.snapshots.snapshot_id_validation` single leaf closeout stops further split; next step: BE-001NK-01 backend.ops_governance.snapshots parent_residual_judgment.
 - BE-001NK-01 `backend.ops_governance.snapshots` parent residual judgment selects create_flow; next step: BE-001NL-01 backend.ops_governance.snapshots.create_flow baseline_plan.
+- BE-001NL-01 `backend.ops_governance.snapshots.create_flow` equivalence baseline and extraction plan; next step: BE-001NL-02 backend.ops_governance.snapshots.create_flow extract_closeout.
