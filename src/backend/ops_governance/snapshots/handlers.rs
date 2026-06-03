@@ -3,6 +3,7 @@ mod create_flow;
 mod persistence;
 mod read_routes;
 mod restore_flow;
+mod signature_contract;
 
 mod snapshot_id_validation;
 
@@ -35,20 +36,14 @@ fn build_signature_input(
     event_slice_bounds: &EventSliceBounds,
     created_at_ms: u64,
 ) -> serde_json::Value {
-    json!({
-        "capability_hash": capability_hash,
-        "strategy_version": strategy_version,
-        "parameter_version": parameter_version,
-        "core_ir_digest": core_ir_digest,
-        "event_slice_bounds": {
-            "from_event_id": &event_slice_bounds.from_event_id,
-            "to_event_id": &event_slice_bounds.to_event_id,
-            "from_sequence": event_slice_bounds.from_sequence,
-            "to_sequence": event_slice_bounds.to_sequence,
-            "event_count": event_slice_bounds.event_count,
-        },
-        "created_at_ms": created_at_ms,
-    })
+    signature_contract::build_signature_input(
+        capability_hash,
+        strategy_version,
+        parameter_version,
+        core_ir_digest,
+        event_slice_bounds,
+        created_at_ms,
+    )
 }
 
 // ── 持久化辅助函数 ──

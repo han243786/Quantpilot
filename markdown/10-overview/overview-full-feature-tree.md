@@ -3853,3 +3853,6 @@ Recursive boundary supplement: BE-001NS-01 `backend.ops_governance.snapshots` pa
 - `markdown/06-milestones/v4.16.0/846-backend.ops_governance.snapshots.parent_residual_judgment.signature_contract.md` - v4.16.0 BE-001NS-01 backend.ops_governance.snapshots parent residual judgment selects signature_contract
 Recursive boundary supplement: BE-001NT-01 `backend.ops_governance.snapshots.signature_contract` equivalence baseline and extraction plan; next step: BE-001NT-02 backend.ops_governance.snapshots.signature_contract extract_closeout.
 - `markdown/06-milestones/v4.16.0/847-backend.ops_governance.snapshots.signature_contract.baseline_plan.md` - v4.16.0 BE-001NT-01 backend.ops_governance.snapshots.signature_contract equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001NT-02 `backend.ops_governance.snapshots.signature_contract` actual extraction complete; next step: BE-001NT-03 backend.ops_governance.snapshots.signature_contract single_leaf_closeout.
+- `src/backend/ops_governance/snapshots/handlers/signature_contract.rs` - backend.ops_governance.snapshots.signature_contract implementation
+- `markdown/06-milestones/v4.16.0/848-backend.ops_governance.snapshots.signature_contract.extract_closeout.md` - v4.16.0 BE-001NT-02 backend.ops_governance.snapshots.signature_contract actual extraction complete
