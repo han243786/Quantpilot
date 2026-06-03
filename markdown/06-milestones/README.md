@@ -1199,3 +1199,4 @@
 | v4.16.0 / BE-001NN-02 | Added: `backend.ops_governance.snapshots.read_routes` actual extraction complete |
 | v4.16.0 / BE-001NN-03 | Added: `backend.ops_governance.snapshots.read_routes` single leaf closeout stops further split |
 | v4.16.0 / BE-001NO-01 | Added: `backend.ops_governance.snapshots` parent residual judgment selects restore_flow |
+| v4.16.0 / BE-001NP-01 | Added: `backend.ops_governance.snapshots.restore_flow` equivalence baseline and extraction plan |
