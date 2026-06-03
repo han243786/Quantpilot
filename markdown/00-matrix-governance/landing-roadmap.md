@@ -191,3 +191,4 @@ Latest recursive supplement: BE-001PK-01 closed `contracts.api_surface.asyncapi_
 Latest recursive supplement: BE-001PL-01 closed `root.contracts.api_surface`; the next contracts residual candidate is `contracts.qrpc_core`.
 Latest recursive supplement: BE-001PM-01 selected `contracts.qrpc_core`; protocol structs, plugin contracts, Strategy IR, typed errors, event proto, and Rust behavior remain frozen until the qrpc_core baseline.
 Latest recursive supplement: BE-001PN-01 froze the `root.contracts.qrpc_core` baseline and queued nine qrpc_core child owners, with `error_contract` selected next.
+Latest recursive supplement: BE-001PO-01 selected `contracts.qrpc_core.error_contract`; only `qrpc_core/src/error.rs` is in scope for the next single leaf closeout.

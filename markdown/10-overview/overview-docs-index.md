@@ -919,3 +919,4 @@
 | v4.16.0 / BE-001PL-01 | Added: `root.contracts.api_surface` parent closeout |
 | v4.16.0 / BE-001PM-01 | Added: `root.contracts` parent residual judgment selects `contracts.qrpc_core` |
 | v4.16.0 / BE-001PN-01 | Added: `root.contracts.qrpc_core` baseline plan |
+| v4.16.0 / BE-001PO-01 | Added: `root.contracts.qrpc_core` parent residual judgment selects `contracts.qrpc_core.error_contract` |

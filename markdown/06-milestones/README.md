@@ -1280,3 +1280,4 @@
 | v4.16.0 / BE-001PL-01 | `v4.16.0/917-root.contracts.api_surface.parent_closeout.md` | `root.contracts.api_surface` parent closeout |
 | v4.16.0 / BE-001PM-01 | `v4.16.0/918-root.contracts.parent_residual_judgment.qrpc_core.md` | `root.contracts` selects `contracts.qrpc_core` |
 | v4.16.0 / BE-001PN-01 | `v4.16.0/919-root.contracts.qrpc_core.baseline_plan.md` | `root.contracts.qrpc_core` baseline plan |
+| v4.16.0 / BE-001PO-01 | `v4.16.0/920-root.contracts.qrpc_core.parent_residual_judgment.error_contract.md` | `root.contracts.qrpc_core` selects `error_contract` |
