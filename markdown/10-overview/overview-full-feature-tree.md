@@ -4002,3 +4002,5 @@ Recursive boundary supplement: BE-001PI-01 `root.contracts.api_surface.openapi_h
 - `markdown/06-milestones/v4.16.0/914-root.contracts.api_surface.openapi_http.single_leaf_closeout.md` - v4.16.0 BE-001PI-01 root.contracts.api_surface.openapi_http single leaf closeout
 Recursive boundary supplement: BE-001PJ-01 `root.contracts.api_surface` parent residual judgment selects contracts.api_surface.asyncapi_runtime_events; next step: BE-001PK-01 root.contracts.api_surface.asyncapi_runtime_events single_leaf_closeout.
 - `markdown/06-milestones/v4.16.0/915-root.contracts.api_surface.parent_residual_judgment.asyncapi_runtime_events.md` - v4.16.0 BE-001PJ-01 root.contracts.api_surface parent residual judgment selects asyncapi_runtime_events
+Recursive boundary supplement: BE-001PK-01 `root.contracts.api_surface.asyncapi_runtime_events` single leaf closeout sets stop_split true; next step: BE-001PL-01 root.contracts.api_surface parent_closeout.
+- `markdown/06-milestones/v4.16.0/916-root.contracts.api_surface.asyncapi_runtime_events.single_leaf_closeout.md` - v4.16.0 BE-001PK-01 root.contracts.api_surface.asyncapi_runtime_events single leaf closeout
