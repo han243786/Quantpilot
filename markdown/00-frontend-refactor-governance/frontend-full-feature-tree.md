@@ -814,3 +814,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0207-frontend-backtest-analysis-summary-cards-page-grid-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0208-frontend-backtest-analysis-sections-card-contracts-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0209-frontend-backtest-analysis-responsive-compare-motion-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0210-frontend-backtest-analysis-page-styles-parent-closeout.md`

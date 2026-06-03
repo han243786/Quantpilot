@@ -81,10 +81,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Current subchild queue:
         - `frontend.design_system_styles.page_style_contracts.strategy_hub_page_style_contracts`
         - `frontend.design_system_styles.page_style_contracts.strategy_workspace_page_style_contracts`
-      - Active nested child parent:
+      - Closed nested child parent:
         - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles`
-          - Status: child parent baseline established.
+          - Status: closed after recursive subchild queue finished.
           - Record: `markdown/00-frontend-refactor-governance/records/FE-0204-frontend-backtest-analysis-page-styles-baseline.md`
+          - Parent closeout record: `markdown/00-frontend-refactor-governance/records/FE-0210-frontend-backtest-analysis-page-styles-parent-closeout.md`
           - Current owned and split-target files:
             - `frontend/src/pages/backtest-analysis.css`
             - `frontend/src/pages/backtest-analysis/shell-tokens-surface-chrome.css`
