@@ -7696,3 +7696,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.ops_governance.sandbox.verification_run.report_assembly` 已迁入 `src/backend/ops_governance/sandbox/verification_run/report_assembly.rs`；verification_run 父节点通过私有 child module 调用 `build_report`，继续保持 metrics、diff/verdict/warnings、proposal_gate、replay_window 与 report_commit 在各自边界内。该抽离未暴露 sandbox facade、report_api sibling、root bridge 或 runtime mutation shortcut。
 
 `backend.ops_governance.sandbox.verification_run.report_assembly stop_split: true`；该叶只拥有 already-computed values 到 `SandboxVerificationReport` 的 DTO field mapping，并且只 clone `request.proposal_id`。继续拆会触发 micro_leaf_without_owner、communication_cost_rises、local_proof_missing 与 line_count_only；下一步回到 `backend.ops_governance.sandbox.verification_run` 父叶残余判断。
+
+`backend.ops_governance.sandbox.verification_run close_parent: true`；verification_run 已关闭 report_commit、proposal_gate、replay_window 与 report_assembly 四个子叶，剩余代码是 runner parent orchestration。`metrics_pipeline` 候选被拒绝，因为它只会包装现有 parent-controlled helper calls 并返回 wide tuple，触发 communication_cost_rises 与 local_proof_missing；后续如需处理 metric helpers，应回到 `backend.ops_governance.sandbox` 父级残余判断。
