@@ -887,3 +887,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001MV-03 `backend.ops_governance.alerts.acknowledge_flow` single leaf closeout stops further split; next step: BE-001MW-01 backend.ops_governance.alerts parent_residual_judgment.
 - BE-001MW-01 `backend.ops_governance.alerts` parent residual judgment selects trigger_engine; next step: BE-001MX-01 backend.ops_governance.alerts.trigger_engine baseline_plan.
 - BE-001MX-01 `backend.ops_governance.alerts.trigger_engine` equivalence baseline and extraction plan; next step: BE-001MX-02 backend.ops_governance.alerts.trigger_engine extract_closeout.
+- BE-001MX-02 `backend.ops_governance.alerts.trigger_engine` actual extraction complete; next step: BE-001MX-03 backend.ops_governance.alerts.trigger_engine single_leaf_closeout.

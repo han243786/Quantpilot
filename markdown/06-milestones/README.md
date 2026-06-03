@@ -1159,3 +1159,4 @@
 | v4.16.0 / BE-001MV-03 | Added: `backend.ops_governance.alerts.acknowledge_flow` single leaf closeout stops further split |
 | v4.16.0 / BE-001MW-01 | Added: `backend.ops_governance.alerts` parent residual judgment selects trigger_engine |
 | v4.16.0 / BE-001MX-01 | Added: `backend.ops_governance.alerts.trigger_engine` equivalence baseline and extraction plan |
+| v4.16.0 / BE-001MX-02 | Added: `backend.ops_governance.alerts.trigger_engine` actual extraction complete |
