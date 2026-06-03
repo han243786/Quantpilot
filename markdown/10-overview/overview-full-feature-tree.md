@@ -3757,3 +3757,5 @@ Recursive boundary supplement: BE-001MZ-02 `backend.ops_governance.alerts.predic
 - `markdown/06-milestones/v4.16.0/803-backend.ops_governance.alerts.predicate_checks.extract_closeout.md` - v4.16.0 BE-001MZ-02 backend.ops_governance.alerts.predicate_checks actual extraction complete
 Recursive boundary supplement: BE-001MZ-03 `backend.ops_governance.alerts.predicate_checks` single leaf closeout stops further split; next step: BE-001NA-01 backend.ops_governance.alerts parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/804-backend.ops_governance.alerts.predicate_checks.single_leaf_closeout.md` - v4.16.0 BE-001MZ-03 backend.ops_governance.alerts.predicate_checks single leaf closeout stops further split
+Recursive boundary supplement: BE-001NA-01 `backend.ops_governance.alerts` parent residual judgment selects persistence; next step: BE-001NA-02 backend.ops_governance.alerts.persistence baseline_plan.
+- `markdown/06-milestones/v4.16.0/805-backend.ops_governance.alerts.parent_residual_judgment.persistence.md` - v4.16.0 BE-001NA-01 backend.ops_governance.alerts parent residual judgment selects persistence
