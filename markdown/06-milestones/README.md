@@ -1232,3 +1232,4 @@
 | v4.16.0 / BE-001OF-01 | Added: `backend.ops_governance` parent residual judgment selects chaos |
 | v4.16.0 / BE-001OG-01 | Added: `backend.ops_governance.chaos` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001OG-02 | Added: `backend.ops_governance.chaos` actual extraction complete |
+| v4.16.0 / BE-001OG-03 | Added: `backend.ops_governance.chaos` single leaf closeout continues split |
