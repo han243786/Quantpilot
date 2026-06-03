@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001MZ-01",
-  "last_committed_sha": "eb323140",
-  "current_parent": "backend.ops_governance.alerts.predicate_checks",
-  "current_step": "BE-001MZ-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001MZ-02",
+  "last_committed_sha": "4e7c8744",
+  "current_parent": "backend.ops_governance.alerts",
+  "current_step": "BE-001NA-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -57,14 +57,15 @@
     "ops_governance.sandbox",
     "ops_governance.alerts.rule_catalog",
     "ops_governance.alerts.acknowledge_flow",
-    "ops_governance.alerts.trigger_engine"
+    "ops_governance.alerts.trigger_engine",
+    "ops_governance.alerts.predicate_checks"
   ],
   "open_residuals": [
     "ops_governance",
     "app_state_wiring",
     "test_support"
   ],
-  "next_recommended_child": "backend.ops_governance.alerts.predicate_checks",
+  "next_recommended_child": "backend.ops_governance.alerts.persistence",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

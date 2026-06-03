@@ -803,3 +803,4 @@
 | v4.16.0 / BE-001MY-01 | Added: `backend.ops_governance.alerts` parent residual judgment selects predicate_checks |
 | v4.16.0 / BE-001MZ-01 | Added: `backend.ops_governance.alerts.predicate_checks` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001MZ-02 | Added: `backend.ops_governance.alerts.predicate_checks` actual extraction complete |
+| v4.16.0 / BE-001MZ-03 | Added: `backend.ops_governance.alerts.predicate_checks` single leaf closeout stops further split |

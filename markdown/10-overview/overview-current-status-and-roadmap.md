@@ -892,3 +892,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001MY-01 `backend.ops_governance.alerts` parent residual judgment selects predicate_checks; next step: BE-001MZ-01 backend.ops_governance.alerts.predicate_checks baseline_plan.
 - BE-001MZ-01 `backend.ops_governance.alerts.predicate_checks` equivalence baseline and extraction plan; next step: BE-001MZ-02 backend.ops_governance.alerts.predicate_checks extract_closeout.
 - BE-001MZ-02 `backend.ops_governance.alerts.predicate_checks` actual extraction complete; next step: BE-001MZ-03 backend.ops_governance.alerts.predicate_checks single_leaf_closeout.
+- BE-001MZ-03 `backend.ops_governance.alerts.predicate_checks` single leaf closeout stops further split; next step: BE-001NA-01 backend.ops_governance.alerts parent_residual_judgment.

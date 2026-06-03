@@ -3755,3 +3755,5 @@ Recursive boundary supplement: BE-001MZ-01 `backend.ops_governance.alerts.predic
 Recursive boundary supplement: BE-001MZ-02 `backend.ops_governance.alerts.predicate_checks` actual extraction complete; next step: BE-001MZ-03 backend.ops_governance.alerts.predicate_checks single_leaf_closeout.
 - `src/backend/ops_governance/alerts/handlers/predicate_checks.rs` - backend.ops_governance.alerts.predicate_checks implementation
 - `markdown/06-milestones/v4.16.0/803-backend.ops_governance.alerts.predicate_checks.extract_closeout.md` - v4.16.0 BE-001MZ-02 backend.ops_governance.alerts.predicate_checks actual extraction complete
+Recursive boundary supplement: BE-001MZ-03 `backend.ops_governance.alerts.predicate_checks` single leaf closeout stops further split; next step: BE-001NA-01 backend.ops_governance.alerts parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/804-backend.ops_governance.alerts.predicate_checks.single_leaf_closeout.md` - v4.16.0 BE-001MZ-03 backend.ops_governance.alerts.predicate_checks single leaf closeout stops further split
