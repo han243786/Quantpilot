@@ -4012,3 +4012,5 @@ Recursive boundary supplement: BE-001PN-01 `root.contracts.qrpc_core` baseline f
 - `markdown/06-milestones/v4.16.0/919-root.contracts.qrpc_core.baseline_plan.md` - v4.16.0 BE-001PN-01 root.contracts.qrpc_core baseline plan
 Recursive boundary supplement: BE-001PO-01 `root.contracts.qrpc_core` parent residual judgment selects error_contract; next step: BE-001PP-01 root.contracts.qrpc_core.error_contract single_leaf_closeout.
 - `markdown/06-milestones/v4.16.0/920-root.contracts.qrpc_core.parent_residual_judgment.error_contract.md` - v4.16.0 BE-001PO-01 root.contracts.qrpc_core parent residual judgment selects error_contract
+Recursive boundary supplement: BE-001PP-01 `root.contracts.qrpc_core.error_contract` single leaf closeout sets stop_split true; next step: BE-001PQ-01 root.contracts.qrpc_core parent_residual_judgment selects event_envelope_proto.
+- `markdown/06-milestones/v4.16.0/921-root.contracts.qrpc_core.error_contract.single_leaf_closeout.md` - v4.16.0 BE-001PP-01 root.contracts.qrpc_core.error_contract single leaf closeout
