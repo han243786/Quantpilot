@@ -3956,3 +3956,5 @@ Recursive boundary supplement: BE-001OQ-03 `backend.ops_governance.chaos.experim
 - `markdown/06-milestones/v4.16.0/892-backend.ops_governance.chaos.experiment_creation.memory_commit.single_leaf_closeout.md` - v4.16.0 BE-001OQ-03 backend.ops_governance.chaos.experiment_creation.memory_commit single leaf closeout
 Recursive boundary supplement: BE-001OR-01 `backend.ops_governance.chaos.experiment_creation` parent closeout; next step: BE-001OS-01 backend.ops_governance.chaos parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/893-backend.ops_governance.chaos.experiment_creation.parent_closeout.md` - v4.16.0 BE-001OR-01 backend.ops_governance.chaos.experiment_creation parent closeout
+Recursive boundary supplement: BE-001OS-01 `backend.ops_governance.chaos` parent residual judgment selects read_routes; next step: BE-001OT-01 backend.ops_governance.chaos.read_routes baseline_plan.
+- `markdown/06-milestones/v4.16.0/894-backend.ops_governance.chaos.parent_residual_judgment.read_routes.md` - v4.16.0 BE-001OS-01 backend.ops_governance.chaos parent residual judgment selects read_routes
