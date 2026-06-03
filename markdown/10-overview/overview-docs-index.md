@@ -819,3 +819,4 @@
 | v4.16.0 / BE-001ND-01 | Added: `backend.ops_governance.alerts.route_facade` static closeout and recovery_bridge selection |
 | v4.16.0 / BE-001NE-01 | Added: `backend.ops_governance.alerts.recovery_bridge` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001NE-02 | Added: `backend.ops_governance.alerts.recovery_bridge` actual extraction complete |
+| v4.16.0 / BE-001NE-03 | Added: `backend.ops_governance.alerts.recovery_bridge` single leaf closeout stops further split |

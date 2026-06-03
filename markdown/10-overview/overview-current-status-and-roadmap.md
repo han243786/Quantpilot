@@ -908,3 +908,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001ND-01 `backend.ops_governance.alerts.route_facade` static closeout and recovery_bridge selection; next step: BE-001NE-01 backend.ops_governance.alerts.recovery_bridge baseline_plan.
 - BE-001NE-01 `backend.ops_governance.alerts.recovery_bridge` equivalence baseline and extraction plan; next step: BE-001NE-02 backend.ops_governance.alerts.recovery_bridge extract_closeout.
 - BE-001NE-02 `backend.ops_governance.alerts.recovery_bridge` actual extraction complete; next step: BE-001NE-03 backend.ops_governance.alerts.recovery_bridge single_leaf_closeout.
+- BE-001NE-03 `backend.ops_governance.alerts.recovery_bridge` single leaf closeout stops further split; next step: BE-001NF-01 backend.ops_governance.alerts parent_residual_judgment.
