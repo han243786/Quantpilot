@@ -3986,3 +3986,5 @@ Recursive boundary supplement: BE-001PA-01 `backend` parent residual judgment se
 - `markdown/06-milestones/v4.16.0/906-backend.parent_residual_judgment.test_support.md` - v4.16.0 BE-001PA-01 backend parent residual judgment selects backend.test_support
 Recursive boundary supplement: BE-001PB-01 `backend.test_support` single leaf closeout; next step: BE-001PC-01 backend parent_closeout.
 - `markdown/06-milestones/v4.16.0/907-backend.test_support.single_leaf_closeout.md` - v4.16.0 BE-001PB-01 backend.test_support single leaf closeout
+Recursive boundary supplement: BE-001PC-01 `backend` parent closeout; next step: BE-001PD-01 root parent_residual_judgment selects root.contracts.
+- `markdown/06-milestones/v4.16.0/908-backend.parent_closeout.md` - v4.16.0 BE-001PC-01 backend parent closeout
