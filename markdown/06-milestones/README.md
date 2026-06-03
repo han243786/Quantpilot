@@ -1214,3 +1214,4 @@
 | v4.16.0 / BE-001NV-01 | Added: `backend.ops_governance.snapshots` parent residual judgment closes parent |
 | v4.16.0 / BE-001NW-01 | Added: `backend.ops_governance` parent residual judgment selects runbook |
 | v4.16.0 / BE-001NX-01 | Added: `backend.ops_governance.runbook` equivalence baseline and extraction plan |
+| v4.16.0 / BE-001NX-02 | Added: `backend.ops_governance.runbook` actual extraction complete |

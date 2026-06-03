@@ -4,6 +4,8 @@ use crate::AppState;
 
 pub const MODULE_ID: &str = "backend.ops_governance.runbook";
 
+mod handlers;
+
 pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
-    crate::runbook::register_runbook_routes(router)
+    handlers::register_runbook_routes(router)
 }
