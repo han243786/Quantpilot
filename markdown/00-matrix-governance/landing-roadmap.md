@@ -180,3 +180,4 @@ Latest recursive supplement: BE-001OZ-01 closed `backend.app_state_wiring` as a 
 Latest recursive supplement: BE-001PA-01 selected `backend.test_support` as the final backend top-level residual. Test asset retirement, legacy test deletion, E2E cleanup, and production route changes remain frozen.
 Latest recursive supplement: BE-001PB-01 closed `backend.test_support` as a single test-support facade with `stop_split: true`. All backend top-level residuals are closed; next step is `backend` parent closeout.
 Latest recursive supplement: BE-001PC-01 closed `backend` for the current Rust backend extraction scope. The next root-level Rust residual candidate is `root.contracts`, while `root.executor` remains queued.
+Latest recursive supplement: BE-001PD-01 selected `root.contracts` as the next Rust-facing top-level residual. Contract schemas and protocol semantics remain frozen until BE-001PE-01 baseline_plan.
