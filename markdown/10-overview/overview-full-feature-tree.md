@@ -3797,3 +3797,5 @@ Recursive boundary supplement: BE-001NF-01 `backend.ops_governance.alerts` paren
 - `markdown/06-milestones/v4.16.0/821-backend.ops_governance.alerts.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001NF-01 backend.ops_governance.alerts parent residual judgment closes parent
 Recursive boundary supplement: BE-001NG-01 `backend.ops_governance` parent residual judgment selects snapshots; next step: BE-001NH-01 backend.ops_governance.snapshots baseline_plan.
 - `markdown/06-milestones/v4.16.0/822-backend.ops_governance.parent_residual_judgment.snapshots.md` - v4.16.0 BE-001NG-01 backend.ops_governance parent residual judgment selects snapshots
+Recursive boundary supplement: BE-001NH-01 `backend.ops_governance.snapshots` equivalence baseline and extraction plan; next step: BE-001NH-02 backend.ops_governance.snapshots extract_closeout.
+- `markdown/06-milestones/v4.16.0/823-backend.ops_governance.snapshots.baseline_plan.md` - v4.16.0 BE-001NH-01 backend.ops_governance.snapshots equivalence baseline and extraction plan
