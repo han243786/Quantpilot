@@ -4029,3 +4029,5 @@ Recursive boundary supplement: BE-001PV-01 `root.contracts.qrpc_core.plugin_cont
 Recursive boundary supplement: BE-001PV-02 `root.contracts.qrpc_core.plugin_contract.taxonomy_extension` actual extraction complete; next step: BE-001PV-03 root.contracts.qrpc_core.plugin_contract.taxonomy_extension single_leaf_closeout.
 - `markdown/06-milestones/v4.16.0/928-root.contracts.qrpc_core.plugin_contract.taxonomy_extension.extract_closeout.md` - v4.16.0 BE-001PV-02 root.contracts.qrpc_core.plugin_contract.taxonomy_extension actual extraction closeout
 - `qrpc_core/src/plugin/taxonomy_extension.rs` - Extracted qrpc plugin taxonomy and extension-point contract child
+Recursive boundary supplement: BE-001PV-03 `root.contracts.qrpc_core.plugin_contract.taxonomy_extension` single leaf closeout sets stop_split true; next step: BE-001PW-01 root.contracts.qrpc_core.plugin_contract parent_residual_judgment selects capability_contract.
+- `markdown/06-milestones/v4.16.0/929-root.contracts.qrpc_core.plugin_contract.taxonomy_extension.single_leaf_closeout.md` - v4.16.0 BE-001PV-03 root.contracts.qrpc_core.plugin_contract.taxonomy_extension single leaf closeout
