@@ -1185,3 +1185,4 @@
 | v4.16.0 / BE-001NG-01 | Added: `backend.ops_governance` parent residual judgment selects snapshots |
 | v4.16.0 / BE-001NH-01 | Added: `backend.ops_governance.snapshots` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001NH-02 | Added: `backend.ops_governance.snapshots` actual extraction complete |
+| v4.16.0 / BE-001NH-03 | Added: `backend.ops_governance.snapshots` single leaf closeout continues split |

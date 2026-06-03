@@ -3802,3 +3802,5 @@ Recursive boundary supplement: BE-001NH-01 `backend.ops_governance.snapshots` eq
 Recursive boundary supplement: BE-001NH-02 `backend.ops_governance.snapshots` actual extraction complete; next step: BE-001NH-03 backend.ops_governance.snapshots single_leaf_closeout.
 - `src/backend/ops_governance/snapshots/handlers.rs` - backend.ops_governance.snapshots handler implementation
 - `markdown/06-milestones/v4.16.0/824-backend.ops_governance.snapshots.extract_closeout.md` - v4.16.0 BE-001NH-02 backend.ops_governance.snapshots actual extraction complete
+Recursive boundary supplement: BE-001NH-03 `backend.ops_governance.snapshots` single leaf closeout continues split; next step: BE-001NI-01 backend.ops_governance.snapshots parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/825-backend.ops_governance.snapshots.single_leaf_closeout.md` - v4.16.0 BE-001NH-03 backend.ops_governance.snapshots single leaf closeout continues split
