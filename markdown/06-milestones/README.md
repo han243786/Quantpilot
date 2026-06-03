@@ -1286,3 +1286,4 @@
 | v4.16.0 / BE-001PR-01 | `v4.16.0/923-root.contracts.qrpc_core.event_envelope_proto.single_leaf_closeout.md` | `root.contracts.qrpc_core.event_envelope_proto` closeout |
 | v4.16.0 / BE-001PS-01 | `v4.16.0/924-root.contracts.qrpc_core.parent_residual_judgment.plugin_contract.md` | `root.contracts.qrpc_core` selects `plugin_contract` |
 | v4.16.0 / BE-001PT-01 | `v4.16.0/925-root.contracts.qrpc_core.plugin_contract.baseline_plan.md` | `root.contracts.qrpc_core.plugin_contract` baseline plan |
+| v4.16.0 / BE-001PU-01 | `v4.16.0/926-root.contracts.qrpc_core.plugin_contract.parent_residual_judgment.taxonomy_extension.md` | `root.contracts.qrpc_core.plugin_contract` selects `taxonomy_extension` |

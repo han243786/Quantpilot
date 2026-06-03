@@ -4022,3 +4022,5 @@ Recursive boundary supplement: BE-001PS-01 `root.contracts.qrpc_core` parent res
 - `markdown/06-milestones/v4.16.0/924-root.contracts.qrpc_core.parent_residual_judgment.plugin_contract.md` - v4.16.0 BE-001PS-01 root.contracts.qrpc_core parent residual judgment selects plugin_contract
 Recursive boundary supplement: BE-001PT-01 `root.contracts.qrpc_core.plugin_contract` baseline frozen; child queue is taxonomy_extension, capability_contract, execution_security_dependency, manifest_validation, and registry.
 - `markdown/06-milestones/v4.16.0/925-root.contracts.qrpc_core.plugin_contract.baseline_plan.md` - v4.16.0 BE-001PT-01 root.contracts.qrpc_core.plugin_contract baseline plan
+Recursive boundary supplement: BE-001PU-01 `root.contracts.qrpc_core.plugin_contract` parent residual judgment selects taxonomy_extension; next step: BE-001PV-01 root.contracts.qrpc_core.plugin_contract.taxonomy_extension baseline_plan.
+- `markdown/06-milestones/v4.16.0/926-root.contracts.qrpc_core.plugin_contract.parent_residual_judgment.taxonomy_extension.md` - v4.16.0 BE-001PU-01 root.contracts.qrpc_core.plugin_contract parent residual judgment selects taxonomy_extension

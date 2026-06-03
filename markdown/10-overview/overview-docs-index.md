@@ -925,3 +925,4 @@
 | v4.16.0 / BE-001PR-01 | Added: `root.contracts.qrpc_core.event_envelope_proto` single leaf closeout |
 | v4.16.0 / BE-001PS-01 | Added: `root.contracts.qrpc_core` parent residual judgment selects `contracts.qrpc_core.plugin_contract` |
 | v4.16.0 / BE-001PT-01 | Added: `root.contracts.qrpc_core.plugin_contract` baseline plan |
+| v4.16.0 / BE-001PU-01 | Added: `root.contracts.qrpc_core.plugin_contract` parent residual judgment selects `taxonomy_extension` |
