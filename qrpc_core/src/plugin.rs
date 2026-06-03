@@ -3,9 +3,11 @@ use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
 mod capability_contract;
+mod execution_security_dependency;
 mod taxonomy_extension;
 
 pub use capability_contract::*;
+pub use execution_security_dependency::*;
 pub use taxonomy_extension::*;
 
 pub const PLUGIN_MANIFEST_V1_VERSION: &str = "quantpilot/plugin-manifest/v1";
@@ -229,46 +231,6 @@ impl PluginManifest {
 pub struct PluginDisplay {
     pub name: String,
     pub summary: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct PluginExecution {
-    pub engine: PluginExecutionEngine,
-    pub entrypoint: String,
-}
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum PluginExecutionEngine {
-    Builtin,
-    QuantScript,
-    Native,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct PluginCompatibility {
-    pub core_ir_version: String,
-    pub capability_api_version: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct PluginSecurity {
-    pub max_compute_ms: u64,
-    pub max_memory_mb: u64,
-    #[serde(default)]
-    pub allow_network: bool,
-    // v2.0.0: 硬限制 — 子进程沙箱实际执行, 覆盖 max_compute_ms
-    #[serde(default)]
-    pub enforce_max_compute_ms: Option<u64>,
-    // v2.0.0: 硬限制 — 子进程沙箱实际执行, 覆盖 max_memory_mb
-    #[serde(default)]
-    pub enforce_max_memory_mb: Option<u64>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct PluginDependency {
-    pub plugin_id: String,
-    pub version_req: String,
 }
 
 #[derive(Debug, Default, Clone)]
