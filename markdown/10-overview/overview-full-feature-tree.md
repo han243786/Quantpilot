@@ -4008,3 +4008,5 @@ Recursive boundary supplement: BE-001PL-01 `root.contracts.api_surface` parent c
 - `markdown/06-milestones/v4.16.0/917-root.contracts.api_surface.parent_closeout.md` - v4.16.0 BE-001PL-01 root.contracts.api_surface parent closeout
 Recursive boundary supplement: BE-001PM-01 `root.contracts` parent residual judgment selects contracts.qrpc_core; next step: BE-001PN-01 root.contracts.qrpc_core baseline_plan.
 - `markdown/06-milestones/v4.16.0/918-root.contracts.parent_residual_judgment.qrpc_core.md` - v4.16.0 BE-001PM-01 root.contracts parent residual judgment selects qrpc_core
+Recursive boundary supplement: BE-001PN-01 `root.contracts.qrpc_core` baseline frozen; next step: BE-001PO-01 root.contracts.qrpc_core parent_residual_judgment selects error_contract.
+- `markdown/06-milestones/v4.16.0/919-root.contracts.qrpc_core.baseline_plan.md` - v4.16.0 BE-001PN-01 root.contracts.qrpc_core baseline plan
