@@ -34,7 +34,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/tests/e2e/*.spec.js`
     - `frontend/src/main.jsx`
   - Child queue:
-    - `frontend.test_support.e2e_api_harness`
     - `frontend.test_support.e2e_bootstrap_review_fixtures`
   - Closed child leaves:
     - `frontend.test_support.vitest_runtime_setup`
@@ -57,6 +56,12 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/test/fixtures/runtime/capabilityRejections.js`
         - `frontend/src/test/fixtures/runtime/editorBootstrap.js`
         - `frontend/src/test/fixtures/runtime/runSuccess.js`
+    - `frontend.test_support.e2e_api_harness`
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0219-frontend-test-support-e2e-api-harness-closeout.md`
+      - Public surface:
+        - `frontend/tests/e2e/support/apiHarness.js`
+        - `createApiMockHarness(page)`
+        - harness methods: `fulfill`, `json`, `text`, `handle`, `installGuard`, `expectNoUnexpectedApiRequests`
 
 ## Recently Closed Parent
 
