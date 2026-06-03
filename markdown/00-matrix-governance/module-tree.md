@@ -7852,3 +7852,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.ops_governance.chaos.read_routes` is selected next; it owns list/detail read handlers, scoped filtering, newest-first sorting, in-memory detail lookup, and parent-mediated disk fallback. Route facade remains queued.
 `backend.ops_governance.chaos.read_routes` baseline is frozen: BE-001OT-02 may move only list/detail read handlers and local read projection helpers into a private child module, while route facade and persistence internals stay outside.
 `backend.ops_governance.chaos.read_routes` has been extracted into `src/backend/ops_governance/chaos/handlers/read_routes.rs`; chaos handler parent retains route-facing read bridges and disk fallback remains parent-mediated.
+`backend.ops_governance.chaos.read_routes stop_split: true`; it is closed as the complete chaos list/detail read boundary. Next chaos residual candidate is `backend.ops_governance.chaos.route_facade`.
