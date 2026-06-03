@@ -459,6 +459,7 @@ runtime_validation.rs           — 运行时验证
 sandbox_verification.rs         — 沙箱验证兼容桥
 src/backend/ops_governance/sandbox/handlers.rs — 沙箱验证实现
 src/backend/ops_governance/sandbox/comparison_metrics.rs — 沙箱 backtest comparison metrics 子叶
+src/backend/ops_governance/sandbox/comparison_metrics/backtest_projection.rs — 沙箱 backtest projection 子叶
 src/backend/ops_governance/sandbox/comparison_metrics/v4_replay_shape.rs — 沙箱 v4 replay-shape comparison 子叶
 src/backend/ops_governance/sandbox/metrics_evaluation.rs — 沙箱 metric diff/verdict/warnings 评价子叶
 src/backend/ops_governance/sandbox/report_api.rs — 沙箱验证 report API
@@ -2266,6 +2267,7 @@ storage/
 - `src/sandbox_verification.rs` — 沙箱验证兼容桥; 保持 runtime mutation 既有 sandbox runner 和 disk loader 调用
 - `src/backend/ops_governance/sandbox/handlers.rs` — 沙箱验证, AI 提案回放, v4 artifact replay-shape 对比, 提供 proposal sandbox report 读取给审批阻断; 改验证逻辑或 CandidateUnderperforms 判定时改这里
 - `src/backend/ops_governance/sandbox/comparison_metrics.rs` — sandbox backtest comparison metrics and v4 replay-shape helper child
+- `src/backend/ops_governance/sandbox/comparison_metrics/backtest_projection.rs` — sandbox backtest projection child
 - `src/backend/ops_governance/sandbox/comparison_metrics/v4_replay_shape.rs` — sandbox v4 replay-shape comparison child
 - `src/backend/ops_governance/sandbox/metrics_evaluation.rs` — sandbox metric diff, verdict, and warning evaluation child
 - `src/backend/ops_governance/sandbox/report_api.rs` — sandbox report API route registrar and GET/POST handlers
@@ -3684,3 +3686,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/771-backend.ops_governance.sandbox.comparison_metrics.parent_residual_judgment.backtest_projection.md` - v4.16.0 BE-001MI-01 backend.ops_governance.sandbox.comparison_metrics parent residual judgment selects backtest_projection
 递归边界补充: BE-001MJ-01 `backend.ops_governance.sandbox.comparison_metrics.backtest_projection` backend.ops_governance.sandbox.comparison_metrics.backtest_projection equivalence baseline and extraction plan；下一步: BE-001MJ-02 backend.ops_governance.sandbox.comparison_metrics.backtest_projection extract_closeout。
 - `markdown/06-milestones/v4.16.0/772-backend.ops_governance.sandbox.comparison_metrics.backtest_projection.baseline_plan.md` - v4.16.0 BE-001MJ-01 backend.ops_governance.sandbox.comparison_metrics.backtest_projection equivalence baseline and extraction plan
+递归边界补充: BE-001MJ-02 `backend.ops_governance.sandbox.comparison_metrics.backtest_projection` backend.ops_governance.sandbox.comparison_metrics.backtest_projection actual extraction complete；下一步: BE-001MJ-03 backend.ops_governance.sandbox.comparison_metrics.backtest_projection single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/773-backend.ops_governance.sandbox.comparison_metrics.backtest_projection.extract_closeout.md` - v4.16.0 BE-001MJ-02 backend.ops_governance.sandbox.comparison_metrics.backtest_projection actual extraction complete
