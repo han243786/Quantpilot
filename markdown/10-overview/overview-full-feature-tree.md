@@ -458,6 +458,7 @@ runtime_validation.rs           — 运行时验证
 
 sandbox_verification.rs         — 沙箱验证兼容桥
 src/backend/ops_governance/sandbox/handlers.rs — 沙箱验证实现
+src/backend/ops_governance/sandbox/metrics_evaluation.rs — 沙箱 metric diff/verdict/warnings 评价子叶
 src/backend/ops_governance/sandbox/report_api.rs — 沙箱验证 report API
 src/backend/ops_governance/sandbox/verification_run.rs — 沙箱验证 runner
 src/backend/ops_governance/sandbox/verification_run/proposal_gate.rs — 沙箱验证 proposal eligibility gate 子叶
@@ -2262,6 +2263,7 @@ storage/
 - `src/safe_log.rs` — 安全日志, 输出前清除 secret/key; 改日志脱敏时改这里
 - `src/sandbox_verification.rs` — 沙箱验证兼容桥; 保持 runtime mutation 既有 sandbox runner 和 disk loader 调用
 - `src/backend/ops_governance/sandbox/handlers.rs` — 沙箱验证, AI 提案回放, v4 artifact replay-shape 对比, 提供 proposal sandbox report 读取给审批阻断; 改验证逻辑或 CandidateUnderperforms 判定时改这里
+- `src/backend/ops_governance/sandbox/metrics_evaluation.rs` — sandbox metric diff, verdict, and warning evaluation child
 - `src/backend/ops_governance/sandbox/report_api.rs` — sandbox report API route registrar and GET/POST handlers
 - `src/backend/ops_governance/sandbox/verification_run.rs` — reusable sandbox verification runner and report persistence side effects
 - `src/backend/ops_governance/sandbox/verification_run/proposal_gate.rs` — sandbox verification proposal eligibility gate child
@@ -3654,3 +3656,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/759-backend.ops_governance.sandbox.parent_residual_judgment.metrics_evaluation.md` - v4.16.0 BE-001MC-01 backend.ops_governance.sandbox parent residual judgment selects metrics_evaluation
 递归边界补充: BE-001MD-01 `backend.ops_governance.sandbox.metrics_evaluation` backend.ops_governance.sandbox.metrics_evaluation equivalence baseline and extraction plan；下一步: BE-001MD-02 backend.ops_governance.sandbox.metrics_evaluation extract_closeout。
 - `markdown/06-milestones/v4.16.0/760-backend.ops_governance.sandbox.metrics_evaluation.baseline_plan.md` - v4.16.0 BE-001MD-01 backend.ops_governance.sandbox.metrics_evaluation equivalence baseline and extraction plan
+递归边界补充: BE-001MD-02 `backend.ops_governance.sandbox.metrics_evaluation` backend.ops_governance.sandbox.metrics_evaluation actual extraction complete；下一步: BE-001MD-03 backend.ops_governance.sandbox.metrics_evaluation single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/761-backend.ops_governance.sandbox.metrics_evaluation.extract_closeout.md` - v4.16.0 BE-001MD-02 backend.ops_governance.sandbox.metrics_evaluation actual extraction complete

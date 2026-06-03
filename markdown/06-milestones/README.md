@@ -1121,3 +1121,4 @@
 | v4.16.0 / BE-001MB-01 | 新增: `backend.ops_governance.sandbox.verification_run` backend.ops_governance.sandbox.verification_run parent residual judgment closes parent |
 | v4.16.0 / BE-001MC-01 | 新增: `backend.ops_governance.sandbox` backend.ops_governance.sandbox parent residual judgment selects metrics_evaluation |
 | v4.16.0 / BE-001MD-01 | 新增: `backend.ops_governance.sandbox.metrics_evaluation` backend.ops_governance.sandbox.metrics_evaluation equivalence baseline and extraction plan |
+| v4.16.0 / BE-001MD-02 | 新增: `backend.ops_governance.sandbox.metrics_evaluation` backend.ops_governance.sandbox.metrics_evaluation actual extraction complete |
