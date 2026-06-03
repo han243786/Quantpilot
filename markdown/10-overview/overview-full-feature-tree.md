@@ -3925,3 +3925,5 @@ Recursive boundary supplement: BE-001OK-01 `backend.ops_governance.chaos.experim
 Recursive boundary supplement: BE-001OK-02 `backend.ops_governance.chaos.experiment_creation` actual extraction complete; next step: BE-001OK-03 backend.ops_governance.chaos.experiment_creation single_leaf_closeout.
 - `src/backend/ops_governance/chaos/handlers/experiment_creation.rs` - backend.ops_governance.chaos.experiment_creation implementation
 - `markdown/06-milestones/v4.16.0/879-backend.ops_governance.chaos.experiment_creation.extract_closeout.md` - v4.16.0 BE-001OK-02 backend.ops_governance.chaos.experiment_creation actual extraction complete
+Recursive boundary supplement: BE-001OK-03 `backend.ops_governance.chaos.experiment_creation` single leaf closeout continues split; next step: BE-001OL-01 backend.ops_governance.chaos.experiment_creation parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/880-backend.ops_governance.chaos.experiment_creation.single_leaf_closeout.md` - v4.16.0 BE-001OK-03 backend.ops_governance.chaos.experiment_creation single leaf closeout continues split
