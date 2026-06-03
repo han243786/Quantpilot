@@ -3817,3 +3817,6 @@ Recursive boundary supplement: BE-001NK-01 `backend.ops_governance.snapshots` pa
 - `markdown/06-milestones/v4.16.0/830-backend.ops_governance.snapshots.parent_residual_judgment.create_flow.md` - v4.16.0 BE-001NK-01 backend.ops_governance.snapshots parent residual judgment selects create_flow
 Recursive boundary supplement: BE-001NL-01 `backend.ops_governance.snapshots.create_flow` equivalence baseline and extraction plan; next step: BE-001NL-02 backend.ops_governance.snapshots.create_flow extract_closeout.
 - `markdown/06-milestones/v4.16.0/831-backend.ops_governance.snapshots.create_flow.baseline_plan.md` - v4.16.0 BE-001NL-01 backend.ops_governance.snapshots.create_flow equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001NL-02 `backend.ops_governance.snapshots.create_flow` actual extraction complete; next step: BE-001NL-03 backend.ops_governance.snapshots.create_flow single_leaf_closeout.
+- `src/backend/ops_governance/snapshots/handlers/create_flow.rs` - backend.ops_governance.snapshots.create_flow implementation
+- `markdown/06-milestones/v4.16.0/832-backend.ops_governance.snapshots.create_flow.extract_closeout.md` - v4.16.0 BE-001NL-02 backend.ops_governance.snapshots.create_flow actual extraction complete
