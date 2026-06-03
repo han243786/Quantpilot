@@ -3909,3 +3909,5 @@ Recursive boundary supplement: BE-001OG-02 `backend.ops_governance.chaos` actual
 - `markdown/06-milestones/v4.16.0/871-backend.ops_governance.chaos.extract_closeout.md` - v4.16.0 BE-001OG-02 backend.ops_governance.chaos actual extraction complete
 Recursive boundary supplement: BE-001OG-03 `backend.ops_governance.chaos` single leaf closeout continues split; next step: BE-001OH-01 backend.ops_governance.chaos parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/872-backend.ops_governance.chaos.single_leaf_closeout.md` - v4.16.0 BE-001OG-03 backend.ops_governance.chaos single leaf closeout continues split
+Recursive boundary supplement: BE-001OH-01 `backend.ops_governance.chaos` parent residual judgment selects report_persistence; next step: BE-001OI-01 backend.ops_governance.chaos.report_persistence baseline_plan.
+- `markdown/06-milestones/v4.16.0/873-backend.ops_governance.chaos.parent_residual_judgment.report_persistence.md` - v4.16.0 BE-001OH-01 backend.ops_governance.chaos parent residual judgment selects report_persistence
