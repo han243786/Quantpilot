@@ -882,3 +882,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001MT-02 `backend.ops_governance.alerts.rule_catalog` actual extraction complete; next step: BE-001MT-03 backend.ops_governance.alerts.rule_catalog single_leaf_closeout.
 - BE-001MT-03 `backend.ops_governance.alerts.rule_catalog` single leaf closeout stops further split; next step: BE-001MU-01 backend.ops_governance.alerts parent_residual_judgment.
 - BE-001MU-01 `backend.ops_governance.alerts` parent residual judgment selects acknowledge_flow; next step: BE-001MV-01 backend.ops_governance.alerts.acknowledge_flow baseline_plan.
+- BE-001MV-01 `backend.ops_governance.alerts.acknowledge_flow` equivalence baseline and extraction plan; next step: BE-001MV-02 backend.ops_governance.alerts.acknowledge_flow extract_closeout.
