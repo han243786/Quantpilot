@@ -3856,3 +3856,5 @@ Recursive boundary supplement: BE-001NT-01 `backend.ops_governance.snapshots.sig
 Recursive boundary supplement: BE-001NT-02 `backend.ops_governance.snapshots.signature_contract` actual extraction complete; next step: BE-001NT-03 backend.ops_governance.snapshots.signature_contract single_leaf_closeout.
 - `src/backend/ops_governance/snapshots/handlers/signature_contract.rs` - backend.ops_governance.snapshots.signature_contract implementation
 - `markdown/06-milestones/v4.16.0/848-backend.ops_governance.snapshots.signature_contract.extract_closeout.md` - v4.16.0 BE-001NT-02 backend.ops_governance.snapshots.signature_contract actual extraction complete
+Recursive boundary supplement: BE-001NT-03 `backend.ops_governance.snapshots.signature_contract` single leaf closeout stops further split; next step: BE-001NU-01 backend.ops_governance.snapshots parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/849-backend.ops_governance.snapshots.signature_contract.single_leaf_closeout.md` - v4.16.0 BE-001NT-03 backend.ops_governance.snapshots.signature_contract single leaf closeout stops further split
