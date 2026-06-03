@@ -4,10 +4,9 @@
   "scope": "frontend",
   "current_parent": "frontend.test_support",
   "parent_return": "root.frontend",
-  "current_step": "FE-0216",
-  "current_phase": "frontend_test_support_vitest_runtime_setup_closed",
+  "current_step": "FE-0217",
+  "current_phase": "frontend_test_support_dev_test_bridge_closed",
   "current_child_queue": [
-    "frontend.test_support.dev_test_bridge",
     "frontend.test_support.unit_fixture_catalog",
     "frontend.test_support.e2e_api_harness",
     "frontend.test_support.e2e_bootstrap_review_fixtures"
@@ -26,7 +25,8 @@
     "frontend.backtest_views",
     "frontend.store",
     "frontend.design_system_styles",
-    "frontend.test_support.vitest_runtime_setup"
+    "frontend.test_support.vitest_runtime_setup",
+    "frontend.test_support.dev_test_bridge"
   ],
   "closed_children": [
     "frontend.strategy_workspace.route_shell",

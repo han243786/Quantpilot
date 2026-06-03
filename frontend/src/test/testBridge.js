@@ -9,7 +9,7 @@ export function installTestBridge() {
   if (!import.meta.env.DEV) return;
 
   const api = {
-    // ── Navigation ──
+    // Navigation
     navigateTo(path) {
       navigateTo(path);
     },
@@ -18,7 +18,7 @@ export function installTestBridge() {
       return parseRoute(window.location.pathname, window.location.search);
     },
 
-    // ── Canvas State ──
+    // Canvas state
     getNodeCount() {
       return useGraphStore.getState().graph.nodes?.length ?? 0;
     },
@@ -40,7 +40,7 @@ export function installTestBridge() {
       return useGraphStore.getState().selectedEdgeId;
     },
 
-    // ── Graph Meta ──
+    // Graph metadata
     getGraphId() {
       return useGraphStore.getState().graph.metadata?.graph_id ?? null;
     },
@@ -49,7 +49,7 @@ export function installTestBridge() {
       return useGraphStore.getState().graph.metadata?.name ?? null;
     },
 
-    // ── Compile Status ──
+    // Compile status
     getCompileStatus() {
       const summary = useGraphStore.getState().graph.compile_summary;
       return {
@@ -60,7 +60,7 @@ export function installTestBridge() {
       };
     },
 
-    // ── Runtime Status ──
+    // Runtime status
     getRuntimeStatus() {
       return useGraphStore.getState().runtime.status;
     },
@@ -71,12 +71,12 @@ export function installTestBridge() {
       return status;
     },
 
-    // ── Capability Status ──
+    // Capability status
     getCapabilityAlert() {
       return useGraphStore.getState().capabilityAlert ?? null;
     },
 
-    // ── Workspace Tab ──
+    // Workspace tab
     getActiveTab() {
       // The active tab is stored in a separate UI store
       // We look for the tab button with the --active class
@@ -88,7 +88,7 @@ export function installTestBridge() {
       return null;
     },
 
-    // ── Hub / Roster ──
+    // Hub and roster
     getRosterItems() {
       const rows = document.querySelectorAll("[data-testid='strategy-hub-roster-table-body'] tr, [data-testid='strategy-hub-roster-table-body'] > div");
       return Array.from(rows).map((row) => {
@@ -100,7 +100,7 @@ export function installTestBridge() {
       });
     },
 
-    // ── Layout Snapshot ──
+    // Layout snapshot
     getLayoutSnapshot() {
       const areas = [".top-toolbar", ".strategy-workspace-tabbar", ".react-flow", ".property-panel",
         ".module-sidebar", ".event-stream-panel", ".strategy-hub-hero",
@@ -122,7 +122,7 @@ export function installTestBridge() {
       return snapshot;
     },
 
-    // ── Highlight Element (for screenshot debugging) ──
+    // Highlight element for screenshot debugging
     highlightElement(selector) {
       const el = document.querySelector(selector);
       if (!el) return false;
@@ -134,7 +134,7 @@ export function installTestBridge() {
       return true;
     },
 
-    // ── Raw Store Access ──
+    // Raw store access
     getRawState() {
       return JSON.parse(JSON.stringify(useGraphStore.getState()));
     },

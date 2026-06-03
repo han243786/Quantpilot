@@ -34,7 +34,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/tests/e2e/*.spec.js`
     - `frontend/src/main.jsx`
   - Child queue:
-    - `frontend.test_support.dev_test_bridge`
     - `frontend.test_support.unit_fixture_catalog`
     - `frontend.test_support.e2e_api_harness`
     - `frontend.test_support.e2e_bootstrap_review_fixtures`
@@ -44,6 +43,10 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Public surface:
         - `frontend/vitest.config.js`
         - `frontend/src/test/setup.js`
+    - `frontend.test_support.dev_test_bridge`
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0217-frontend-test-support-dev-test-bridge-closeout.md`
+      - Public surface:
+        - `frontend/src/test/testBridge.js`
 
 ## Recently Closed Parent
 
