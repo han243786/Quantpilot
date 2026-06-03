@@ -1176,3 +1176,4 @@
 | v4.16.0 / BE-001NC-01 | Added: `backend.ops_governance.alerts` parent residual judgment selects read_routes |
 | v4.16.0 / BE-001NC-02 | Added: `backend.ops_governance.alerts.read_routes` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001NC-03 | Added: `backend.ops_governance.alerts.read_routes` actual extraction complete |
+| v4.16.0 / BE-001NC-04 | Added: `backend.ops_governance.alerts.read_routes` single leaf closeout stops further split |
