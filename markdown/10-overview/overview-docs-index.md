@@ -866,3 +866,4 @@
 | v4.16.0 / BE-001OC-01 | Added: `backend.ops_governance.runbook` parent residual judgment selects route_facade |
 | v4.16.0 / BE-001OD-01 | Added: `backend.ops_governance.runbook.route_facade` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001OD-02 | Added: `backend.ops_governance.runbook.route_facade` actual extraction complete |
+| v4.16.0 / BE-001OD-03 | Added: `backend.ops_governance.runbook.route_facade` single leaf closeout |
