@@ -182,3 +182,4 @@ Latest recursive supplement: BE-001PB-01 closed `backend.test_support` as a sing
 Latest recursive supplement: BE-001PC-01 closed `backend` for the current Rust backend extraction scope. The next root-level Rust residual candidate is `root.contracts`, while `root.executor` remains queued.
 Latest recursive supplement: BE-001PD-01 selected `root.contracts` as the next Rust-facing top-level residual. Contract schemas and protocol semantics remain frozen until BE-001PE-01 baseline_plan.
 Latest recursive supplement: BE-001PE-01 froze the `root.contracts` baseline and registered api surface, QRPC core, Core IR, compiler bridge, runtime support, QuantScript, and plugin metadata as the contracts child queue.
+Latest recursive supplement: BE-001PF-01 selected `contracts.api_surface` as the first contracts child; schema semantics and all Rust behavior remain frozen until the single leaf closeout.
