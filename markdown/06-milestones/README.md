@@ -1284,3 +1284,4 @@
 | v4.16.0 / BE-001PP-01 | `v4.16.0/921-root.contracts.qrpc_core.error_contract.single_leaf_closeout.md` | `root.contracts.qrpc_core.error_contract` closeout |
 | v4.16.0 / BE-001PQ-01 | `v4.16.0/922-root.contracts.qrpc_core.parent_residual_judgment.event_envelope_proto.md` | `root.contracts.qrpc_core` selects `event_envelope_proto` |
 | v4.16.0 / BE-001PR-01 | `v4.16.0/923-root.contracts.qrpc_core.event_envelope_proto.single_leaf_closeout.md` | `root.contracts.qrpc_core.event_envelope_proto` closeout |
+| v4.16.0 / BE-001PS-01 | `v4.16.0/924-root.contracts.qrpc_core.parent_residual_judgment.plugin_contract.md` | `root.contracts.qrpc_core` selects `plugin_contract` |

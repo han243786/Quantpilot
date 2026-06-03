@@ -195,3 +195,4 @@ Latest recursive supplement: BE-001PO-01 selected `contracts.qrpc_core.error_con
 Latest recursive supplement: BE-001PP-01 closed `contracts.qrpc_core.error_contract` with `stop_split: true`; next qrpc_core residual candidate is `event_envelope_proto`.
 Latest recursive supplement: BE-001PQ-01 selected `contracts.qrpc_core.event_envelope_proto`; runtime producers, AsyncAPI schema, backend SSE handlers, and lib.rs DTOs remain frozen.
 Latest recursive supplement: BE-001PR-01 closed `contracts.qrpc_core.event_envelope_proto` with `stop_split: true`; next qrpc_core residual candidate is `plugin_contract`.
+Latest recursive supplement: BE-001PS-01 selected `contracts.qrpc_core.plugin_contract`; physical `plugins/*` registry placeholders remain queued under `contracts.plugin_metadata`.
