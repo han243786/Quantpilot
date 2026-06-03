@@ -3849,3 +3849,5 @@ Recursive boundary supplement: BE-001NR-02 `backend.ops_governance.snapshots.per
 - `markdown/06-milestones/v4.16.0/844-backend.ops_governance.snapshots.persistence.extract_closeout.md` - v4.16.0 BE-001NR-02 backend.ops_governance.snapshots.persistence actual extraction complete
 Recursive boundary supplement: BE-001NR-03 `backend.ops_governance.snapshots.persistence` single leaf closeout stops further split; next step: BE-001NS-01 backend.ops_governance.snapshots parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/845-backend.ops_governance.snapshots.persistence.single_leaf_closeout.md` - v4.16.0 BE-001NR-03 backend.ops_governance.snapshots.persistence single leaf closeout stops further split
+Recursive boundary supplement: BE-001NS-01 `backend.ops_governance.snapshots` parent residual judgment selects signature_contract; next step: BE-001NT-01 backend.ops_governance.snapshots.signature_contract baseline_plan.
+- `markdown/06-milestones/v4.16.0/846-backend.ops_governance.snapshots.parent_residual_judgment.signature_contract.md` - v4.16.0 BE-001NS-01 backend.ops_governance.snapshots parent residual judgment selects signature_contract
