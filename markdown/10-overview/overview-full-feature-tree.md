@@ -3712,3 +3712,5 @@ Recursive boundary supplement: BE-001MO-03 `backend.ops_governance.sandbox.repor
 - `markdown/06-milestones/v4.16.0/783-backend.ops_governance.sandbox.report_disk_loader.single_leaf_closeout.md` - v4.16.0 BE-001MO-03 backend.ops_governance.sandbox.report_disk_loader single leaf closeout stops further split
 Recursive boundary supplement: BE-001MP-01 `backend.ops_governance.sandbox` parent residual judgment closes parent; next step: BE-001MQ-01 backend.ops_governance parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/784-backend.ops_governance.sandbox.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001MP-01 backend.ops_governance.sandbox parent residual judgment closes parent
+Recursive boundary supplement: BE-001MQ-01 `backend.ops_governance` parent residual judgment selects alerts; next step: BE-001MR-01 backend.ops_governance.alerts baseline_plan.
+- `markdown/06-milestones/v4.16.0/785-backend.ops_governance.parent_residual_judgment.alerts.md` - v4.16.0 BE-001MQ-01 backend.ops_governance parent residual judgment selects alerts
