@@ -3804,3 +3804,5 @@ Recursive boundary supplement: BE-001NH-02 `backend.ops_governance.snapshots` ac
 - `markdown/06-milestones/v4.16.0/824-backend.ops_governance.snapshots.extract_closeout.md` - v4.16.0 BE-001NH-02 backend.ops_governance.snapshots actual extraction complete
 Recursive boundary supplement: BE-001NH-03 `backend.ops_governance.snapshots` single leaf closeout continues split; next step: BE-001NI-01 backend.ops_governance.snapshots parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/825-backend.ops_governance.snapshots.single_leaf_closeout.md` - v4.16.0 BE-001NH-03 backend.ops_governance.snapshots single leaf closeout continues split
+Recursive boundary supplement: BE-001NI-01 `backend.ops_governance.snapshots` parent residual judgment selects snapshot_id_validation; next step: BE-001NJ-01 backend.ops_governance.snapshots.snapshot_id_validation baseline_plan.
+- `markdown/06-milestones/v4.16.0/826-backend.ops_governance.snapshots.parent_residual_judgment.snapshot_id_validation.md` - v4.16.0 BE-001NI-01 backend.ops_governance.snapshots parent residual judgment selects snapshot_id_validation
