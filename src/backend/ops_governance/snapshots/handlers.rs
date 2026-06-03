@@ -1,7 +1,6 @@
 use crate::*;
-use axum::extract::Query;
-
 mod create_flow;
+mod read_routes;
 
 mod snapshot_id_validation;
 
@@ -10,8 +9,11 @@ mod snapshot_id_validation;
 
 pub(super) fn register_snapshot_routes(router: Router<AppState>) -> Router<AppState> {
     router
-        .route("/api/v1/snapshots", get(list_snapshots))
-        .route("/api/v1/snapshots/:snapshot_id", get(get_snapshot))
+        .route("/api/v1/snapshots", get(read_routes::list_snapshots))
+        .route(
+            "/api/v1/snapshots/:snapshot_id",
+            get(read_routes::get_snapshot),
+        )
         .route(
             "/api/v1/snapshots/:snapshot_id/restore",
             post(restore_snapshot),
@@ -45,30 +47,6 @@ fn build_signature_input(
         },
         "created_at_ms": created_at_ms,
     })
-}
-
-// ── 快照查询 ──
-
-async fn list_snapshots(
-    State(state): State<AppState>,
-    Query(pagination): Query<PaginationQuery>,
-) -> Result<Json<PaginatedResponse<DeploymentSignatureSnapshot>>, (StatusCode, String)> {
-    let mut snapshots: Vec<DeploymentSignatureSnapshot> =
-        state.snapshots.read().await.values().cloned().collect();
-    snapshots.sort_by(|a, b| b.created_at_ms.cmp(&a.created_at_ms));
-    Ok(Json(paginate(snapshots, pagination)))
-}
-
-async fn get_snapshot(
-    State(state): State<AppState>,
-    Path(snapshot_id): Path<String>,
-) -> Result<Json<DeploymentSignatureSnapshot>, (StatusCode, String)> {
-    if let Some(snapshot) = state.snapshots.read().await.get(&snapshot_id).cloned() {
-        return Ok(Json(snapshot));
-    }
-    load_snapshot_from_disk(&state.snapshot_store_dir, &snapshot_id)
-        .await
-        .map(Json)
 }
 
 // ── 一键恢复 ──
