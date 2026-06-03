@@ -824,3 +824,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0217-frontend-test-support-dev-test-bridge-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0218-frontend-test-support-unit-fixture-catalog-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0219-frontend-test-support-e2e-api-harness-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0220-frontend-test-support-e2e-bootstrap-review-fixtures-closeout.md`

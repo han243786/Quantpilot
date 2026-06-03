@@ -33,8 +33,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/src/**/*.test.{js,jsx}`
     - `frontend/tests/e2e/*.spec.js`
     - `frontend/src/main.jsx`
-  - Child queue:
-    - `frontend.test_support.e2e_bootstrap_review_fixtures`
+  - Child queue: []
   - Closed child leaves:
     - `frontend.test_support.vitest_runtime_setup`
       - Record: `markdown/00-frontend-refactor-governance/records/FE-0216-frontend-test-support-vitest-runtime-setup-closeout.md`
@@ -62,6 +61,18 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/tests/e2e/support/apiHarness.js`
         - `createApiMockHarness(page)`
         - harness methods: `fulfill`, `json`, `text`, `handle`, `installGuard`, `expectNoUnexpectedApiRequests`
+    - `frontend.test_support.e2e_bootstrap_review_fixtures`
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0220-frontend-test-support-e2e-bootstrap-review-fixtures-closeout.md`
+      - Public surface:
+        - `frontend/tests/e2e/support/analysisReviewFixtures.js`
+        - `frontend/tests/e2e/support/workspaceBootstrapMocks.js`
+        - `frontend/tests/e2e/support/workspaceGraphFixture.js`
+        - `REVIEW_GRAPH_ID`
+        - `REVIEW_COMPILE_ID`
+        - `buildReviewGraphFixture()`
+        - `installAnalysisReviewMocks(page)`
+        - `installWorkspaceBootstrapMocks(api, options)`
+        - `buildWorkspaceGraphFixture()`
 
 ## Recently Closed Parent
 
