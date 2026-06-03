@@ -927,3 +927,4 @@
 | v4.16.0 / BE-001PT-01 | Added: `root.contracts.qrpc_core.plugin_contract` baseline plan |
 | v4.16.0 / BE-001PU-01 | Added: `root.contracts.qrpc_core.plugin_contract` parent residual judgment selects `taxonomy_extension` |
 | v4.16.0 / BE-001PV-01 | Added: `root.contracts.qrpc_core.plugin_contract.taxonomy_extension` baseline plan |
+| v4.16.0 / BE-001PV-02 | Added: `root.contracts.qrpc_core.plugin_contract.taxonomy_extension` actual extraction closeout |

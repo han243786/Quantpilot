@@ -1288,3 +1288,4 @@
 | v4.16.0 / BE-001PT-01 | `v4.16.0/925-root.contracts.qrpc_core.plugin_contract.baseline_plan.md` | `root.contracts.qrpc_core.plugin_contract` baseline plan |
 | v4.16.0 / BE-001PU-01 | `v4.16.0/926-root.contracts.qrpc_core.plugin_contract.parent_residual_judgment.taxonomy_extension.md` | `root.contracts.qrpc_core.plugin_contract` selects `taxonomy_extension` |
 | v4.16.0 / BE-001PV-01 | `v4.16.0/927-root.contracts.qrpc_core.plugin_contract.taxonomy_extension.baseline_plan.md` | `root.contracts.qrpc_core.plugin_contract.taxonomy_extension` baseline plan |
+| v4.16.0 / BE-001PV-02 | `v4.16.0/928-root.contracts.qrpc_core.plugin_contract.taxonomy_extension.extract_closeout.md` | `root.contracts.qrpc_core.plugin_contract.taxonomy_extension` actual extraction complete |
