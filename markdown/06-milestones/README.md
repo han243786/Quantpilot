@@ -1181,3 +1181,4 @@
 | v4.16.0 / BE-001NE-01 | Added: `backend.ops_governance.alerts.recovery_bridge` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001NE-02 | Added: `backend.ops_governance.alerts.recovery_bridge` actual extraction complete |
 | v4.16.0 / BE-001NE-03 | Added: `backend.ops_governance.alerts.recovery_bridge` single leaf closeout stops further split |
+| v4.16.0 / BE-001NF-01 | Added: `backend.ops_governance.alerts` parent residual judgment closes parent |

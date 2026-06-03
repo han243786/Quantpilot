@@ -3793,3 +3793,5 @@ Recursive boundary supplement: BE-001NE-02 `backend.ops_governance.alerts.recove
 - `markdown/06-milestones/v4.16.0/819-backend.ops_governance.alerts.recovery_bridge.extract_closeout.md` - v4.16.0 BE-001NE-02 backend.ops_governance.alerts.recovery_bridge actual extraction complete
 Recursive boundary supplement: BE-001NE-03 `backend.ops_governance.alerts.recovery_bridge` single leaf closeout stops further split; next step: BE-001NF-01 backend.ops_governance.alerts parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/820-backend.ops_governance.alerts.recovery_bridge.single_leaf_closeout.md` - v4.16.0 BE-001NE-03 backend.ops_governance.alerts.recovery_bridge single leaf closeout stops further split
+Recursive boundary supplement: BE-001NF-01 `backend.ops_governance.alerts` parent residual judgment closes parent; next step: BE-001NG-01 backend.ops_governance parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/821-backend.ops_governance.alerts.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001NF-01 backend.ops_governance.alerts parent residual judgment closes parent
