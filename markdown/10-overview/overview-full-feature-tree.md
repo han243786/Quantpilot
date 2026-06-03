@@ -3869,3 +3869,5 @@ Recursive boundary supplement: BE-001NX-01 `backend.ops_governance.runbook` equi
 Recursive boundary supplement: BE-001NX-02 `backend.ops_governance.runbook` actual extraction complete; next step: BE-001NX-03 backend.ops_governance.runbook single_leaf_closeout.
 - `src/backend/ops_governance/runbook/handlers.rs` - backend.ops_governance.runbook handler implementation
 - `markdown/06-milestones/v4.16.0/854-backend.ops_governance.runbook.extract_closeout.md` - v4.16.0 BE-001NX-02 backend.ops_governance.runbook actual extraction complete
+Recursive boundary supplement: BE-001NX-03 `backend.ops_governance.runbook` single leaf closeout continues split; next step: BE-001NY-01 backend.ops_governance.runbook parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/855-backend.ops_governance.runbook.single_leaf_closeout.md` - v4.16.0 BE-001NX-03 backend.ops_governance.runbook single leaf closeout continues split

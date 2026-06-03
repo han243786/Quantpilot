@@ -943,3 +943,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001NW-01 `backend.ops_governance` parent residual judgment selects runbook; next step: BE-001NX-01 backend.ops_governance.runbook baseline_plan.
 - BE-001NX-01 `backend.ops_governance.runbook` equivalence baseline and extraction plan; next step: BE-001NX-02 backend.ops_governance.runbook extract_closeout.
 - BE-001NX-02 `backend.ops_governance.runbook` actual extraction complete; next step: BE-001NX-03 backend.ops_governance.runbook single_leaf_closeout.
+- BE-001NX-03 `backend.ops_governance.runbook` single leaf closeout continues split; next step: BE-001NY-01 backend.ops_governance.runbook parent_residual_judgment.
