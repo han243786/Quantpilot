@@ -1,4 +1,5 @@
 use crate::*;
+mod perturbation_execution;
 
 pub(super) async fn create_experiment(
     user_id: auth::UserId,
@@ -30,45 +31,12 @@ pub(super) async fn create_experiment(
         execution_planned_rate_per_min: 4.0,
     };
 
-    const DEFAULT_CHAOS_MAX_DURATION_MS: u64 = 10_000;
-    let max_duration_ms: u64 = std::env::var("QUANTPILOT_CHAOS_MAX_DURATION_MS")
-        .ok()
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(DEFAULT_CHAOS_MAX_DURATION_MS);
-
-    match request.experiment_type {
-        ChaosExperimentType::DiskPressureInjection => {
-            let temp_dir = state.chaos_store_dir.join("temp_pressure");
-            let _ = tokio::fs::create_dir_all(&temp_dir).await;
-            for i in 0..10 {
-                let data = vec![0u8; 1024 * 1024];
-                let _ = tokio::fs::write(temp_dir.join(format!("pressure_{}.bin", i)), &data).await;
-            }
-            tokio::time::sleep(tokio::time::Duration::from_millis(
-                request.injection.duration_ms.min(max_duration_ms),
-            ))
-            .await;
-            let _ = tokio::fs::remove_dir_all(&temp_dir).await;
-        }
-        ChaosExperimentType::DataLatencyInjection => {
-            tokio::time::sleep(tokio::time::Duration::from_millis(
-                request.injection.duration_ms.min(max_duration_ms),
-            ))
-            .await;
-        }
-        ChaosExperimentType::EventLossInjection => {
-            tokio::time::sleep(tokio::time::Duration::from_millis(
-                request.injection.duration_ms.min(max_duration_ms),
-            ))
-            .await;
-        }
-        ChaosExperimentType::ClockSkewInjection => {
-            tokio::time::sleep(tokio::time::Duration::from_millis(
-                request.injection.duration_ms.min(max_duration_ms),
-            ))
-            .await;
-        }
-    }
+    execute_perturbation(
+        state.chaos_store_dir.as_ref(),
+        request.experiment_type,
+        request.injection.duration_ms,
+    )
+    .await;
 
     state
         .chaos_mode
@@ -162,4 +130,12 @@ pub(super) async fn create_experiment(
         .insert(auth::scoped_key(&user_id, &experiment_id), report.clone());
 
     Ok(Json(report))
+}
+
+async fn execute_perturbation(
+    store_dir: &FsPath,
+    experiment_type: ChaosExperimentType,
+    duration_ms: u64,
+) {
+    perturbation_execution::execute_perturbation(store_dir, experiment_type, duration_ms).await
 }
