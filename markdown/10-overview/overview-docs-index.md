@@ -916,3 +916,4 @@
 | v4.16.0 / BE-001PI-01 | Added: `root.contracts.api_surface.openapi_http` single leaf closeout |
 | v4.16.0 / BE-001PJ-01 | Added: `root.contracts.api_surface` parent residual judgment selects `contracts.api_surface.asyncapi_runtime_events` |
 | v4.16.0 / BE-001PK-01 | Added: `root.contracts.api_surface.asyncapi_runtime_events` single leaf closeout |
+| v4.16.0 / BE-001PL-01 | Added: `root.contracts.api_surface` parent closeout |
