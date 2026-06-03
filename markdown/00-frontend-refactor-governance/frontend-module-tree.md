@@ -79,7 +79,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `frontend/src/pages/strategyHub*`
         - `frontend/src/pages/strategyWorkspace*`
       - Current subchild queue:
-        - `frontend.design_system_styles.page_style_contracts.strategy_hub_page_style_contracts`
         - `frontend.design_system_styles.page_style_contracts.strategy_workspace_page_style_contracts`
       - Closed nested child parent:
         - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles`
@@ -126,7 +125,16 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
                 - `frontend/src/pages/backtest-analysis/responsive-compare-motion-overrides.css`
                 - `frontend/src/pages/backtest-analysis.css`
       - Closed subchild leaves:
-        - none.
+        - `frontend.design_system_styles.page_style_contracts.strategy_hub_page_style_contracts`
+          - Record: `markdown/00-frontend-refactor-governance/records/FE-0211-frontend-strategy-hub-page-style-contracts-closeout.md`
+          - Public surface:
+            - `frontend/src/pages/strategy-hub.css`
+            - `frontend/src/pages/strategy-hub-shell-hero.css`
+            - `frontend/src/pages/strategy-hub-notes-tasks-status.css`
+            - `frontend/src/pages/strategy-hub-layout-template.css`
+            - `frontend/src/pages/strategy-hub-roster.css`
+            - `frontend/src/pages/strategy-hub-inspector-activity.css`
+            - `frontend/src/pages/strategy-hub-responsive.css`
   - Closed child parent:
     - `frontend.design_system_styles.responsive_panel_overrides`
       - Status: closed after recursive subchild queue finished.
