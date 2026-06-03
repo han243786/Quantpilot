@@ -1,6 +1,6 @@
 # Frontend Full Feature Tree
 
-Status: initialized empty from frontend-local truth.
+Status: frontend-local recursive refactor closed; merge-back preflight prepared.
 
 This file is the frontend-only full feature tree. It starts blank by design and will be filled only by frontend extraction evidence.
 
@@ -86,7 +86,7 @@ This file is the frontend-only full feature tree. It starts blank by design and 
     - `markdown/00-frontend-refactor-governance/records/FE-0021-frontend-api-client-parent-closeout.md`
 
 - `frontend.capabilities`
-  - Status: parent baseline established.
+  - Status: parent closed.
   - User-visible behavior: backend capability snapshots gate frontend modules, workspace surfaces, toolbar/runtime actions, and safe fallback messaging.
   - Active frontend-local paths:
     - `frontend/src/capabilities/supportMatrix.js`
@@ -601,7 +601,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
 
 ## Closed Frontend Parent: `frontend.store`
 
-- Status: parent baseline established.
+- Status: parent closed.
 - Record:
   - `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`
 - User-visible behavior: frontend store state drives graph editing, compile flows, runtime sessions, persisted runtime/backtest history, startup recovery, capability refresh, graph persistence, and route/page state consumed across the application.
@@ -722,9 +722,9 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0150-frontend-store-compile-source-apply-actions-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0151-frontend-store-compile-export-actions-closeout.md`
 
-## Active Frontend Parent: `frontend.design_system_styles`
+## Closed Frontend Parent: `frontend.design_system_styles`
 
-- Status: parent baseline established.
+- Status: parent closed.
 - Record:
   - `markdown/00-frontend-refactor-governance/records/FE-0177-frontend-design-system-styles-baseline.md`
 - User-visible behavior: global frontend styling, design tokens, native control defaults, shared component primitives, responsive panel overrides, and page-level style entry contracts stay stable while style ownership is recursively clarified.
@@ -819,6 +819,28 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0212-frontend-strategy-workspace-page-style-contracts-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0213-frontend-page-style-contracts-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0214-frontend-design-system-styles-parent-closeout.md`
+
+## Closed Frontend Parent: `frontend.test_support`
+
+- Status: parent closed.
+- User-visible behavior: frontend unit-test setup, dev-only test bridge, shared unit fixtures, E2E API mocking, and E2E bootstrap/review fixtures remain stable for test and development workflows.
+- Active frontend-local paths:
+  - `frontend/vitest.config.js`
+  - `frontend/src/test/setup.js`
+  - `frontend/src/test/testBridge.js`
+  - `frontend/src/test/fixtures/README.md`
+  - `frontend/src/test/fixtures/capabilities/backend-capabilities-v1.json`
+  - `frontend/src/test/fixtures/capabilities/capabilityFallbacks.js`
+  - `frontend/src/test/fixtures/runtime/backtestSuccess.js`
+  - `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js`
+  - `frontend/src/test/fixtures/runtime/capabilityRejections.js`
+  - `frontend/src/test/fixtures/runtime/editorBootstrap.js`
+  - `frontend/src/test/fixtures/runtime/runSuccess.js`
+  - `frontend/tests/e2e/support/analysisReviewFixtures.js`
+  - `frontend/tests/e2e/support/apiHarness.js`
+  - `frontend/tests/e2e/support/workspaceBootstrapMocks.js`
+  - `frontend/tests/e2e/support/workspaceGraphFixture.js`
+- Evidence:
   - `markdown/00-frontend-refactor-governance/records/FE-0215-frontend-test-support-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0216-frontend-test-support-vitest-runtime-setup-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0217-frontend-test-support-dev-test-bridge-closeout.md`
@@ -826,5 +848,12 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0219-frontend-test-support-e2e-api-harness-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0220-frontend-test-support-e2e-bootstrap-review-fixtures-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0221-frontend-test-support-parent-closeout.md`
-  - `markdown/00-frontend-refactor-governance/records/FE-0222-frontend-recursive-refactor-closeout.md`
-  - `markdown/00-frontend-refactor-governance/records/FE-0223-frontend-completion-audit-cleanup.md`
+
+## Frontend Recursive Closeout And Preflight Evidence
+
+- `markdown/00-frontend-refactor-governance/records/FE-0222-frontend-recursive-refactor-closeout.md`
+- `markdown/00-frontend-refactor-governance/records/FE-0223-frontend-completion-audit-cleanup.md`
+- `markdown/00-frontend-refactor-governance/frontend-global-merge-back-map.md`
+- `markdown/00-frontend-refactor-governance/frontend-e2e-current-state-inventory.md`
+- `markdown/00-frontend-refactor-governance/frontend-backend-main-thread-handoff-prompt.md`
+- `markdown/00-frontend-refactor-governance/records/FE-0224-frontend-global-e2e-preflight-handoff.md`
