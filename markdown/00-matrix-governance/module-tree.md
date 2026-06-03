@@ -7857,3 +7857,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.ops_governance.chaos.route_facade` baseline is frozen: BE-001OV-02 may move only route registration into a private child module, keeping parent-owned create/list/detail handler bridges.
 `backend.ops_governance.chaos.route_facade` has been extracted into `src/backend/ops_governance/chaos/handlers/route_facade.rs`; chaos handler parent retains the route registration bridge and route_facade binds only to parent handler bridges.
 `backend.ops_governance.chaos.route_facade stop_split: true`; it is closed as the complete chaos route registration boundary. The chaos parent has no remaining internal child queue.
+`backend.ops_governance.chaos close_parent: true`; report_persistence, experiment_creation, read_routes, and route_facade are closed. The ops_governance parent has no remaining internal child queue.

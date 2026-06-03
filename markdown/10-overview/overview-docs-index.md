@@ -901,3 +901,4 @@
 | v4.16.0 / BE-001OV-01 | Added: `backend.ops_governance.chaos.route_facade` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001OV-02 | Added: `backend.ops_governance.chaos.route_facade` actual extraction complete |
 | v4.16.0 / BE-001OV-03 | Added: `backend.ops_governance.chaos.route_facade` single leaf closeout |
+| v4.16.0 / BE-001OW-01 | Added: `backend.ops_governance.chaos` parent closeout |
