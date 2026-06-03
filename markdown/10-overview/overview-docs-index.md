@@ -787,3 +787,4 @@
 | v4.16.0 / BE-001MQ-01 | Added: `backend.ops_governance` parent residual judgment selects alerts |
 | v4.16.0 / BE-001MR-01 | Added: `backend.ops_governance.alerts` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001MR-02 | Added: `backend.ops_governance.alerts` actual extraction complete |
+| v4.16.0 / BE-001MR-03 | Added: `backend.ops_governance.alerts` single leaf closeout continues split |
