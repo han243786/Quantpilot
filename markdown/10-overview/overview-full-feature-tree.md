@@ -3761,3 +3761,6 @@ Recursive boundary supplement: BE-001NA-01 `backend.ops_governance.alerts` paren
 - `markdown/06-milestones/v4.16.0/805-backend.ops_governance.alerts.parent_residual_judgment.persistence.md` - v4.16.0 BE-001NA-01 backend.ops_governance.alerts parent residual judgment selects persistence
 Recursive boundary supplement: BE-001NA-02 `backend.ops_governance.alerts.persistence` equivalence baseline and extraction plan; next step: BE-001NA-03 backend.ops_governance.alerts.persistence extract_closeout.
 - `markdown/06-milestones/v4.16.0/806-backend.ops_governance.alerts.persistence.baseline_plan.md` - v4.16.0 BE-001NA-02 backend.ops_governance.alerts.persistence equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001NA-03 `backend.ops_governance.alerts.persistence` actual extraction complete; next step: BE-001NA-04 backend.ops_governance.alerts.persistence single_leaf_closeout.
+- `src/backend/ops_governance/alerts/handlers/persistence.rs` - backend.ops_governance.alerts.persistence implementation
+- `markdown/06-milestones/v4.16.0/807-backend.ops_governance.alerts.persistence.extract_closeout.md` - v4.16.0 BE-001NA-03 backend.ops_governance.alerts.persistence actual extraction complete
