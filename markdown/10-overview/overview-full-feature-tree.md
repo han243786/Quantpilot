@@ -3873,3 +3873,5 @@ Recursive boundary supplement: BE-001NX-03 `backend.ops_governance.runbook` sing
 - `markdown/06-milestones/v4.16.0/855-backend.ops_governance.runbook.single_leaf_closeout.md` - v4.16.0 BE-001NX-03 backend.ops_governance.runbook single leaf closeout continues split
 Recursive boundary supplement: BE-001NY-01 `backend.ops_governance.runbook` parent residual judgment selects scenario_catalog; next step: BE-001NZ-01 backend.ops_governance.runbook.scenario_catalog baseline_plan.
 - `markdown/06-milestones/v4.16.0/856-backend.ops_governance.runbook.parent_residual_judgment.scenario_catalog.md` - v4.16.0 BE-001NY-01 backend.ops_governance.runbook parent residual judgment selects scenario_catalog
+Recursive boundary supplement: BE-001NZ-01 `backend.ops_governance.runbook.scenario_catalog` equivalence baseline and extraction plan; next step: BE-001NZ-02 backend.ops_governance.runbook.scenario_catalog extract_closeout.
+- `markdown/06-milestones/v4.16.0/857-backend.ops_governance.runbook.scenario_catalog.baseline_plan.md` - v4.16.0 BE-001NZ-01 backend.ops_governance.runbook.scenario_catalog equivalence baseline and extraction plan
