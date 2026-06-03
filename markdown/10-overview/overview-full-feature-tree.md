@@ -459,6 +459,7 @@ runtime_validation.rs           — 运行时验证
 sandbox_verification.rs         — 沙箱验证兼容桥
 src/backend/ops_governance/sandbox/handlers.rs — 沙箱验证实现
 src/backend/ops_governance/sandbox/comparison_metrics.rs — 沙箱 backtest comparison metrics 子叶
+src/backend/ops_governance/sandbox/comparison_metrics/v4_replay_shape.rs — 沙箱 v4 replay-shape comparison 子叶
 src/backend/ops_governance/sandbox/metrics_evaluation.rs — 沙箱 metric diff/verdict/warnings 评价子叶
 src/backend/ops_governance/sandbox/report_api.rs — 沙箱验证 report API
 src/backend/ops_governance/sandbox/verification_run.rs — 沙箱验证 runner
@@ -2265,6 +2266,7 @@ storage/
 - `src/sandbox_verification.rs` — 沙箱验证兼容桥; 保持 runtime mutation 既有 sandbox runner 和 disk loader 调用
 - `src/backend/ops_governance/sandbox/handlers.rs` — 沙箱验证, AI 提案回放, v4 artifact replay-shape 对比, 提供 proposal sandbox report 读取给审批阻断; 改验证逻辑或 CandidateUnderperforms 判定时改这里
 - `src/backend/ops_governance/sandbox/comparison_metrics.rs` — sandbox backtest comparison metrics and v4 replay-shape helper child
+- `src/backend/ops_governance/sandbox/comparison_metrics/v4_replay_shape.rs` — sandbox v4 replay-shape comparison child
 - `src/backend/ops_governance/sandbox/metrics_evaluation.rs` — sandbox metric diff, verdict, and warning evaluation child
 - `src/backend/ops_governance/sandbox/report_api.rs` — sandbox report API route registrar and GET/POST handlers
 - `src/backend/ops_governance/sandbox/verification_run.rs` — reusable sandbox verification runner and report persistence side effects
@@ -3674,3 +3676,5 @@ grep -n "credential_vault" markdown/10-overview/overview-full-feature-tree.md
 - `markdown/06-milestones/v4.16.0/767-backend.ops_governance.sandbox.comparison_metrics.parent_residual_judgment.v4_replay_shape.md` - v4.16.0 BE-001MG-01 backend.ops_governance.sandbox.comparison_metrics parent residual judgment selects v4_replay_shape
 递归边界补充: BE-001MH-01 `backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape` backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape equivalence baseline and extraction plan；下一步: BE-001MH-02 backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape extract_closeout。
 - `markdown/06-milestones/v4.16.0/768-backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape.baseline_plan.md` - v4.16.0 BE-001MH-01 backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape equivalence baseline and extraction plan
+递归边界补充: BE-001MH-02 `backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape` backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape actual extraction complete；下一步: BE-001MH-03 backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/769-backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape.extract_closeout.md` - v4.16.0 BE-001MH-02 backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape actual extraction complete
