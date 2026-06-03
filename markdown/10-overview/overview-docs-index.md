@@ -842,3 +842,4 @@
 | v4.16.0 / BE-001NP-02 | Added: `backend.ops_governance.snapshots.restore_flow` actual extraction complete |
 | v4.16.0 / BE-001NP-03 | Added: `backend.ops_governance.snapshots.restore_flow` single leaf closeout stops further split |
 | v4.16.0 / BE-001NQ-01 | Added: `backend.ops_governance.snapshots` parent residual judgment selects persistence |
+| v4.16.0 / BE-001NR-01 | Added: `backend.ops_governance.snapshots.persistence` equivalence baseline and extraction plan |
