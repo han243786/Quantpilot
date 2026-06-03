@@ -978,3 +978,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001OO-02 `backend.ops_governance.chaos.experiment_creation.report_projection` actual extraction complete; next step: BE-001OO-03 backend.ops_governance.chaos.experiment_creation.report_projection single_leaf_closeout.
 - BE-001OO-03 `backend.ops_governance.chaos.experiment_creation.report_projection` single leaf closeout; next step: BE-001OP-01 backend.ops_governance.chaos.experiment_creation parent_residual_judgment.
 - BE-001OP-01 `backend.ops_governance.chaos.experiment_creation` parent residual judgment selects memory_commit; next step: BE-001OQ-01 backend.ops_governance.chaos.experiment_creation.memory_commit baseline_plan.
+- BE-001OQ-01 `backend.ops_governance.chaos.experiment_creation.memory_commit` equivalence baseline and extraction plan; next step: BE-001OQ-02 backend.ops_governance.chaos.experiment_creation.memory_commit extract_closeout.
