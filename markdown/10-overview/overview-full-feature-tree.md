@@ -3967,3 +3967,5 @@ Recursive boundary supplement: BE-001OT-03 `backend.ops_governance.chaos.read_ro
 - `markdown/06-milestones/v4.16.0/897-backend.ops_governance.chaos.read_routes.single_leaf_closeout.md` - v4.16.0 BE-001OT-03 backend.ops_governance.chaos.read_routes single leaf closeout
 Recursive boundary supplement: BE-001OU-01 `backend.ops_governance.chaos` parent residual judgment selects route_facade; next step: BE-001OV-01 backend.ops_governance.chaos.route_facade baseline_plan.
 - `markdown/06-milestones/v4.16.0/898-backend.ops_governance.chaos.parent_residual_judgment.route_facade.md` - v4.16.0 BE-001OU-01 backend.ops_governance.chaos parent residual judgment selects route_facade
+Recursive boundary supplement: BE-001OV-01 `backend.ops_governance.chaos.route_facade` equivalence baseline and extraction plan; next step: BE-001OV-02 backend.ops_governance.chaos.route_facade extract_closeout.
+- `markdown/06-milestones/v4.16.0/899-backend.ops_governance.chaos.route_facade.baseline_plan.md` - v4.16.0 BE-001OV-01 backend.ops_governance.chaos.route_facade equivalence baseline and extraction plan

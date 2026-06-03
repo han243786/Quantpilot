@@ -898,3 +898,4 @@
 | v4.16.0 / BE-001OT-02 | Added: `backend.ops_governance.chaos.read_routes` actual extraction complete |
 | v4.16.0 / BE-001OT-03 | Added: `backend.ops_governance.chaos.read_routes` single leaf closeout |
 | v4.16.0 / BE-001OU-01 | Added: `backend.ops_governance.chaos` parent residual judgment selects route_facade |
+| v4.16.0 / BE-001OV-01 | Added: `backend.ops_governance.chaos.route_facade` equivalence baseline and extraction plan |
