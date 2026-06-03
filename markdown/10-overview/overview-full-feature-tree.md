@@ -3920,3 +3920,5 @@ Recursive boundary supplement: BE-001OI-03 `backend.ops_governance.chaos.report_
 - `markdown/06-milestones/v4.16.0/876-backend.ops_governance.chaos.report_persistence.single_leaf_closeout.md` - v4.16.0 BE-001OI-03 backend.ops_governance.chaos.report_persistence single leaf closeout
 Recursive boundary supplement: BE-001OJ-01 `backend.ops_governance.chaos` parent residual judgment selects experiment_creation; next step: BE-001OK-01 backend.ops_governance.chaos.experiment_creation baseline_plan.
 - `markdown/06-milestones/v4.16.0/877-backend.ops_governance.chaos.parent_residual_judgment.experiment_creation.md` - v4.16.0 BE-001OJ-01 backend.ops_governance.chaos parent residual judgment selects experiment_creation
+Recursive boundary supplement: BE-001OK-01 `backend.ops_governance.chaos.experiment_creation` equivalence baseline and extraction plan; next step: BE-001OK-02 backend.ops_governance.chaos.experiment_creation extract_closeout.
+- `markdown/06-milestones/v4.16.0/878-backend.ops_governance.chaos.experiment_creation.baseline_plan.md` - v4.16.0 BE-001OK-01 backend.ops_governance.chaos.experiment_creation equivalence baseline and extraction plan
