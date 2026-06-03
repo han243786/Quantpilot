@@ -3770,3 +3770,6 @@ Recursive boundary supplement: BE-001NB-01 `backend.ops_governance.alerts` paren
 - `markdown/06-milestones/v4.16.0/809-backend.ops_governance.alerts.parent_residual_judgment.startup_initialization.md` - v4.16.0 BE-001NB-01 backend.ops_governance.alerts parent residual judgment selects startup_initialization
 Recursive boundary supplement: BE-001NB-02 `backend.ops_governance.alerts.startup_initialization` equivalence baseline and extraction plan; next step: BE-001NB-03 backend.ops_governance.alerts.startup_initialization extract_closeout.
 - `markdown/06-milestones/v4.16.0/810-backend.ops_governance.alerts.startup_initialization.baseline_plan.md` - v4.16.0 BE-001NB-02 backend.ops_governance.alerts.startup_initialization equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001NB-03 `backend.ops_governance.alerts.startup_initialization` actual extraction complete; next step: BE-001NB-04 backend.ops_governance.alerts.startup_initialization single_leaf_closeout.
+- `src/backend/ops_governance/alerts/handlers/startup_initialization.rs` - backend.ops_governance.alerts.startup_initialization implementation
+- `markdown/06-milestones/v4.16.0/811-backend.ops_governance.alerts.startup_initialization.extract_closeout.md` - v4.16.0 BE-001NB-03 backend.ops_governance.alerts.startup_initialization actual extraction complete

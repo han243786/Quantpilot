@@ -899,3 +899,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001NA-04 `backend.ops_governance.alerts.persistence` single leaf closeout stops further split; next step: BE-001NB-01 backend.ops_governance.alerts parent_residual_judgment.
 - BE-001NB-01 `backend.ops_governance.alerts` parent residual judgment selects startup_initialization; next step: BE-001NB-02 backend.ops_governance.alerts.startup_initialization baseline_plan.
 - BE-001NB-02 `backend.ops_governance.alerts.startup_initialization` equivalence baseline and extraction plan; next step: BE-001NB-03 backend.ops_governance.alerts.startup_initialization extract_closeout.
+- BE-001NB-03 `backend.ops_governance.alerts.startup_initialization` actual extraction complete; next step: BE-001NB-04 backend.ops_governance.alerts.startup_initialization single_leaf_closeout.

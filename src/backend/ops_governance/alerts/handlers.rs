@@ -4,6 +4,7 @@ mod acknowledge_flow;
 mod persistence;
 mod predicate_checks;
 mod rule_catalog;
+mod startup_initialization;
 mod trigger_engine;
 
 // ── 告警规则引擎 ──
@@ -54,10 +55,7 @@ async fn should_fire_alert(state: &AppState, user_id: &auth::UserId, rule: &Aler
 }
 
 pub(super) async fn init_alert_rules(state: &AppState) {
-    let mut rules = state.alert_rules.write().await;
-    if rules.is_empty() {
-        *rules = rule_catalog::default_alert_rules();
-    }
+    startup_initialization::init_alert_rules(state, rule_catalog::default_alert_rules).await
 }
 
 async fn persist_alert_firing(store_dir: &FsPath, firing: &AlertFiring) -> std::io::Result<()> {

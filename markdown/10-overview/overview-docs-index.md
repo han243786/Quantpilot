@@ -810,3 +810,4 @@
 | v4.16.0 / BE-001NA-04 | Added: `backend.ops_governance.alerts.persistence` single leaf closeout stops further split |
 | v4.16.0 / BE-001NB-01 | Added: `backend.ops_governance.alerts` parent residual judgment selects startup_initialization |
 | v4.16.0 / BE-001NB-02 | Added: `backend.ops_governance.alerts.startup_initialization` equivalence baseline and extraction plan |
+| v4.16.0 / BE-001NB-03 | Added: `backend.ops_governance.alerts.startup_initialization` actual extraction complete |
