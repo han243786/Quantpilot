@@ -10,9 +10,14 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Active Parent
 
+- none.
+
+## Recently Closed Parent
+
 - `frontend.test_support`
-  - Status: parent baseline established.
+  - Status: parent closed; no pending next parent baseline.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0215-frontend-test-support-baseline.md`
+  - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0221-frontend-test-support-parent-closeout.md`
   - Current owned files:
     - `frontend/vitest.config.js`
     - `frontend/src/test/setup.js`
@@ -73,8 +78,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `installAnalysisReviewMocks(page)`
         - `installWorkspaceBootstrapMocks(api, options)`
         - `buildWorkspaceGraphFixture()`
-
-## Recently Closed Parent
 
 - `frontend.design_system_styles`
   - Status: parent closed; pending next parent baseline.

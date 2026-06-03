@@ -2,10 +2,10 @@
   "version": "frontend-v0",
   "protocol": "frontend-recursive-isolated-v1",
   "scope": "frontend",
-  "current_parent": "frontend.test_support",
+  "current_parent": "root.frontend",
   "parent_return": "root.frontend",
-  "current_step": "FE-0220",
-  "current_phase": "frontend_test_support_e2e_bootstrap_review_fixtures_closed",
+  "current_step": "FE-0221",
+  "current_phase": "frontend_test_support_parent_closed",
   "current_child_queue": [],
   "return_child_queue_after_closeout": [],
   "next_parent": null,
@@ -25,7 +25,8 @@
     "frontend.test_support.dev_test_bridge",
     "frontend.test_support.unit_fixture_catalog",
     "frontend.test_support.e2e_api_harness",
-    "frontend.test_support.e2e_bootstrap_review_fixtures"
+    "frontend.test_support.e2e_bootstrap_review_fixtures",
+    "frontend.test_support"
   ],
   "closed_children": [
     "frontend.strategy_workspace.route_shell",
