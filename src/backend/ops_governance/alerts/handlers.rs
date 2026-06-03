@@ -4,6 +4,7 @@ mod acknowledge_flow;
 mod persistence;
 mod predicate_checks;
 mod read_routes;
+mod recovery_bridge;
 mod rule_catalog;
 mod startup_initialization;
 mod trigger_engine;
@@ -46,5 +47,5 @@ async fn persist_alert_firing(store_dir: &FsPath, firing: &AlertFiring) -> std::
 /// 这是正确的语义, 因为若触发条件已不再满足则问题已解决。
 async fn is_condition_resolved(state: &AppState, user_id: &auth::UserId, rule: &AlertRule) -> bool {
     // 告警恢复 = 触发条件不再成立
-    !should_fire_alert(state, user_id, rule).await
+    recovery_bridge::is_condition_resolved(state, user_id, rule).await
 }

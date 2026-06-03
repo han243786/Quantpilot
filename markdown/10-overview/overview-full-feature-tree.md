@@ -3788,3 +3788,6 @@ Recursive boundary supplement: BE-001ND-01 `backend.ops_governance.alerts.route_
 - `markdown/06-milestones/v4.16.0/817-backend.ops_governance.alerts.parent_residual_judgment.route_facade.md` - v4.16.0 BE-001ND-01 backend.ops_governance.alerts route_facade static closeout and recovery_bridge selection
 Recursive boundary supplement: BE-001NE-01 `backend.ops_governance.alerts.recovery_bridge` equivalence baseline and extraction plan; next step: BE-001NE-02 backend.ops_governance.alerts.recovery_bridge extract_closeout.
 - `markdown/06-milestones/v4.16.0/818-backend.ops_governance.alerts.recovery_bridge.baseline_plan.md` - v4.16.0 BE-001NE-01 backend.ops_governance.alerts.recovery_bridge equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001NE-02 `backend.ops_governance.alerts.recovery_bridge` actual extraction complete; next step: BE-001NE-03 backend.ops_governance.alerts.recovery_bridge single_leaf_closeout.
+- `src/backend/ops_governance/alerts/handlers/recovery_bridge.rs` - backend.ops_governance.alerts.recovery_bridge implementation
+- `markdown/06-milestones/v4.16.0/819-backend.ops_governance.alerts.recovery_bridge.extract_closeout.md` - v4.16.0 BE-001NE-02 backend.ops_governance.alerts.recovery_bridge actual extraction complete
