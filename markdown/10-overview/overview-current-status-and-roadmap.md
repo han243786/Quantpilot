@@ -875,3 +875,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001MP-01 `backend.ops_governance.sandbox` parent residual judgment closes parent; next step: BE-001MQ-01 backend.ops_governance parent_residual_judgment.
 - BE-001MQ-01 `backend.ops_governance` parent residual judgment selects alerts; next step: BE-001MR-01 backend.ops_governance.alerts baseline_plan.
 - BE-001MR-01 `backend.ops_governance.alerts` equivalence baseline and extraction plan; next step: BE-001MR-02 backend.ops_governance.alerts extract_closeout.
+- BE-001MR-02 `backend.ops_governance.alerts` actual extraction complete; next step: BE-001MR-03 backend.ops_governance.alerts single_leaf_closeout.

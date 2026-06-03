@@ -3716,3 +3716,6 @@ Recursive boundary supplement: BE-001MQ-01 `backend.ops_governance` parent resid
 - `markdown/06-milestones/v4.16.0/785-backend.ops_governance.parent_residual_judgment.alerts.md` - v4.16.0 BE-001MQ-01 backend.ops_governance parent residual judgment selects alerts
 Recursive boundary supplement: BE-001MR-01 `backend.ops_governance.alerts` equivalence baseline and extraction plan; next step: BE-001MR-02 backend.ops_governance.alerts extract_closeout.
 - `markdown/06-milestones/v4.16.0/786-backend.ops_governance.alerts.baseline_plan.md` - v4.16.0 BE-001MR-01 backend.ops_governance.alerts equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001MR-02 `backend.ops_governance.alerts` actual extraction complete; next step: BE-001MR-03 backend.ops_governance.alerts single_leaf_closeout.
+- `src/backend/ops_governance/alerts/handlers.rs` - backend.ops_governance.alerts handler implementation
+- `markdown/06-milestones/v4.16.0/787-backend.ops_governance.alerts.extract_closeout.md` - v4.16.0 BE-001MR-02 backend.ops_governance.alerts actual extraction complete

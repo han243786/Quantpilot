@@ -786,3 +786,4 @@
 | v4.16.0 / BE-001MP-01 | Added: `backend.ops_governance.sandbox` parent residual judgment closes parent |
 | v4.16.0 / BE-001MQ-01 | Added: `backend.ops_governance` parent residual judgment selects alerts |
 | v4.16.0 / BE-001MR-01 | Added: `backend.ops_governance.alerts` equivalence baseline and extraction plan |
+| v4.16.0 / BE-001MR-02 | Added: `backend.ops_governance.alerts` actual extraction complete |
