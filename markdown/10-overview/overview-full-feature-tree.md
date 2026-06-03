@@ -3773,3 +3773,5 @@ Recursive boundary supplement: BE-001NB-02 `backend.ops_governance.alerts.startu
 Recursive boundary supplement: BE-001NB-03 `backend.ops_governance.alerts.startup_initialization` actual extraction complete; next step: BE-001NB-04 backend.ops_governance.alerts.startup_initialization single_leaf_closeout.
 - `src/backend/ops_governance/alerts/handlers/startup_initialization.rs` - backend.ops_governance.alerts.startup_initialization implementation
 - `markdown/06-milestones/v4.16.0/811-backend.ops_governance.alerts.startup_initialization.extract_closeout.md` - v4.16.0 BE-001NB-03 backend.ops_governance.alerts.startup_initialization actual extraction complete
+Recursive boundary supplement: BE-001NB-04 `backend.ops_governance.alerts.startup_initialization` single leaf closeout stops further split; next step: BE-001NC-01 backend.ops_governance.alerts parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/812-backend.ops_governance.alerts.startup_initialization.single_leaf_closeout.md` - v4.16.0 BE-001NB-04 backend.ops_governance.alerts.startup_initialization single leaf closeout stops further split
