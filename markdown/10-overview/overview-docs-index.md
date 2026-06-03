@@ -774,3 +774,4 @@
 | v4.16.0 / BE-001MJ-01 | 新增: `backend.ops_governance.sandbox.comparison_metrics.backtest_projection` backend.ops_governance.sandbox.comparison_metrics.backtest_projection equivalence baseline and extraction plan |
 | v4.16.0 / BE-001MJ-02 | 新增: `backend.ops_governance.sandbox.comparison_metrics.backtest_projection` backend.ops_governance.sandbox.comparison_metrics.backtest_projection actual extraction complete |
 | v4.16.0 / BE-001MJ-03 | 新增: `backend.ops_governance.sandbox.comparison_metrics.backtest_projection` backend.ops_governance.sandbox.comparison_metrics.backtest_projection single leaf closeout stops further split |
+| v4.16.0 / BE-001MK-01 | Added: `backend.ops_governance.sandbox.comparison_metrics` parent residual judgment closes parent |
