@@ -7831,3 +7831,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.ops_governance.chaos.report_persistence` is selected next; it owns report storage quota checks, atomic JSON writes, experiment ID validation, disk read fallback, deserialization, and error mapping.
 `backend.ops_governance.chaos.report_persistence` baseline is frozen: BE-001OI-02 may move only persistence, disk loading, and ID validation into a private child while keeping parent bridge functions for create/detail handlers.
 `backend.ops_governance.chaos.report_persistence` has been extracted into `src/backend/ops_governance/chaos/handlers/report_persistence.rs`; chaos create/detail handlers continue through parent bridge functions.
+`backend.ops_governance.chaos.report_persistence stop_split: true`; it is closed as the complete chaos disk persistence and ID validation boundary. Next chaos residual candidate is `backend.ops_governance.chaos.experiment_creation`.

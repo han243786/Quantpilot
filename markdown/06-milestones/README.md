@@ -1236,3 +1236,4 @@
 | v4.16.0 / BE-001OH-01 | Added: `backend.ops_governance.chaos` parent residual judgment selects report_persistence |
 | v4.16.0 / BE-001OI-01 | Added: `backend.ops_governance.chaos.report_persistence` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001OI-02 | Added: `backend.ops_governance.chaos.report_persistence` actual extraction complete |
+| v4.16.0 / BE-001OI-03 | Added: `backend.ops_governance.chaos.report_persistence` single leaf closeout |
