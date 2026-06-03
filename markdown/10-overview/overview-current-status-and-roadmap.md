@@ -932,3 +932,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001NP-03 `backend.ops_governance.snapshots.restore_flow` single leaf closeout stops further split; next step: BE-001NQ-01 backend.ops_governance.snapshots parent_residual_judgment.
 - BE-001NQ-01 `backend.ops_governance.snapshots` parent residual judgment selects persistence; next step: BE-001NR-01 backend.ops_governance.snapshots.persistence baseline_plan.
 - BE-001NR-01 `backend.ops_governance.snapshots.persistence` equivalence baseline and extraction plan; next step: BE-001NR-02 backend.ops_governance.snapshots.persistence extract_closeout.
+- BE-001NR-02 `backend.ops_governance.snapshots.persistence` actual extraction complete; next step: BE-001NR-03 backend.ops_governance.snapshots.persistence single_leaf_closeout.

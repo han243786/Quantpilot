@@ -3844,3 +3844,6 @@ Recursive boundary supplement: BE-001NQ-01 `backend.ops_governance.snapshots` pa
 - `markdown/06-milestones/v4.16.0/842-backend.ops_governance.snapshots.parent_residual_judgment.persistence.md` - v4.16.0 BE-001NQ-01 backend.ops_governance.snapshots parent residual judgment selects persistence
 Recursive boundary supplement: BE-001NR-01 `backend.ops_governance.snapshots.persistence` equivalence baseline and extraction plan; next step: BE-001NR-02 backend.ops_governance.snapshots.persistence extract_closeout.
 - `markdown/06-milestones/v4.16.0/843-backend.ops_governance.snapshots.persistence.baseline_plan.md` - v4.16.0 BE-001NR-01 backend.ops_governance.snapshots.persistence equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001NR-02 `backend.ops_governance.snapshots.persistence` actual extraction complete; next step: BE-001NR-03 backend.ops_governance.snapshots.persistence single_leaf_closeout.
+- `src/backend/ops_governance/snapshots/handlers/persistence.rs` - backend.ops_governance.snapshots.persistence implementation
+- `markdown/06-milestones/v4.16.0/844-backend.ops_governance.snapshots.persistence.extract_closeout.md` - v4.16.0 BE-001NR-02 backend.ops_governance.snapshots.persistence actual extraction complete
