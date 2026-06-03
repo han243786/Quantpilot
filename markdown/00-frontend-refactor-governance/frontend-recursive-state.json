@@ -4,11 +4,9 @@
   "scope": "frontend",
   "current_parent": "frontend.design_system_styles.page_style_contracts",
   "parent_return": "frontend.design_system_styles",
-  "current_step": "FE-0211",
-  "current_phase": "frontend_strategy_hub_page_style_contracts_closed",
-  "current_child_queue": [
-    "frontend.design_system_styles.page_style_contracts.strategy_workspace_page_style_contracts"
-  ],
+  "current_step": "FE-0212",
+  "current_phase": "frontend_strategy_workspace_page_style_contracts_closed",
+  "current_child_queue": [],
   "return_child_queue_after_closeout": [],
   "next_parent": "frontend.test_support",
   "closed_parents": [
@@ -171,7 +169,8 @@
     "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.analysis_sections_and_card_contracts",
     "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.responsive_compare_motion_overrides",
     "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles",
-    "frontend.design_system_styles.page_style_contracts.strategy_hub_page_style_contracts"
+    "frontend.design_system_styles.page_style_contracts.strategy_hub_page_style_contracts",
+    "frontend.design_system_styles.page_style_contracts.strategy_workspace_page_style_contracts"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

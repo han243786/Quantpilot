@@ -816,3 +816,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0209-frontend-backtest-analysis-responsive-compare-motion-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0210-frontend-backtest-analysis-page-styles-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0211-frontend-strategy-hub-page-style-contracts-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0212-frontend-strategy-workspace-page-style-contracts-closeout.md`
