@@ -846,3 +846,4 @@
 | v4.16.0 / BE-001NR-02 | Added: `backend.ops_governance.snapshots.persistence` actual extraction complete |
 | v4.16.0 / BE-001NR-03 | Added: `backend.ops_governance.snapshots.persistence` single leaf closeout stops further split |
 | v4.16.0 / BE-001NS-01 | Added: `backend.ops_governance.snapshots` parent residual judgment selects signature_contract |
+| v4.16.0 / BE-001NT-01 | Added: `backend.ops_governance.snapshots.signature_contract` equivalence baseline and extraction plan |
