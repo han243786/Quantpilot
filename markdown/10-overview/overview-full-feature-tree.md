@@ -3864,3 +3864,5 @@ Recursive boundary supplement: BE-001NV-01 `backend.ops_governance.snapshots` pa
 - `markdown/06-milestones/v4.16.0/851-backend.ops_governance.snapshots.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001NV-01 backend.ops_governance.snapshots parent residual judgment closes parent
 Recursive boundary supplement: BE-001NW-01 `backend.ops_governance` parent residual judgment selects runbook; next step: BE-001NX-01 backend.ops_governance.runbook baseline_plan.
 - `markdown/06-milestones/v4.16.0/852-backend.ops_governance.parent_residual_judgment.runbook.md` - v4.16.0 BE-001NW-01 backend.ops_governance parent residual judgment selects runbook
+Recursive boundary supplement: BE-001NX-01 `backend.ops_governance.runbook` equivalence baseline and extraction plan; next step: BE-001NX-02 backend.ops_governance.runbook extract_closeout.
+- `markdown/06-milestones/v4.16.0/853-backend.ops_governance.runbook.baseline_plan.md` - v4.16.0 BE-001NX-01 backend.ops_governance.runbook equivalence baseline and extraction plan
