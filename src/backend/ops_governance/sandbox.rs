@@ -5,13 +5,13 @@ use crate::AppState;
 pub const MODULE_ID: &str = "backend.ops_governance.sandbox";
 
 mod comparison_metrics;
-mod handlers;
 mod metrics_evaluation;
 mod proposal_loader;
 mod report_api;
+mod report_disk_loader;
 mod verification_run;
 
-pub(crate) use handlers::load_sandbox_report_from_disk;
+pub(crate) use report_disk_loader::load_sandbox_report_from_disk;
 pub(crate) use verification_run::run_sandbox_verification;
 
 use comparison_metrics::compute_comparison_metrics;

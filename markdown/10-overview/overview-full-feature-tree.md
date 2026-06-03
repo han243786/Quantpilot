@@ -3705,3 +3705,6 @@ Recursive boundary supplement: BE-001MN-01 `backend.ops_governance.sandbox` pare
 - `markdown/06-milestones/v4.16.0/780-backend.ops_governance.sandbox.parent_residual_judgment.report_disk_loader.md` - v4.16.0 BE-001MN-01 backend.ops_governance.sandbox parent residual judgment selects report_disk_loader
 Recursive boundary supplement: BE-001MO-01 `backend.ops_governance.sandbox.report_disk_loader` equivalence baseline and extraction plan; next step: BE-001MO-02 backend.ops_governance.sandbox.report_disk_loader extract_closeout.
 - `markdown/06-milestones/v4.16.0/781-backend.ops_governance.sandbox.report_disk_loader.baseline_plan.md` - v4.16.0 BE-001MO-01 backend.ops_governance.sandbox.report_disk_loader equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001MO-02 `backend.ops_governance.sandbox.report_disk_loader` actual extraction complete; next step: BE-001MO-03 backend.ops_governance.sandbox.report_disk_loader single_leaf_closeout.
+- `src/backend/ops_governance/sandbox/report_disk_loader.rs` - backend.ops_governance.sandbox.report_disk_loader implementation
+- `markdown/06-milestones/v4.16.0/782-backend.ops_governance.sandbox.report_disk_loader.extract_closeout.md` - v4.16.0 BE-001MO-02 backend.ops_governance.sandbox.report_disk_loader actual extraction complete
