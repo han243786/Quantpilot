@@ -3994,3 +3994,5 @@ Recursive boundary supplement: BE-001PE-01 `root.contracts` baseline frozen; nex
 - `markdown/06-milestones/v4.16.0/910-root.contracts.baseline_plan.md` - v4.16.0 BE-001PE-01 root.contracts baseline plan
 Recursive boundary supplement: BE-001PF-01 `root.contracts` parent residual judgment selects contracts.api_surface; next step: BE-001PG-01 root.contracts.api_surface single_leaf_closeout.
 - `markdown/06-milestones/v4.16.0/911-root.contracts.parent_residual_judgment.api_surface.md` - v4.16.0 BE-001PF-01 root.contracts parent residual judgment selects contracts.api_surface
+Recursive boundary supplement: BE-001PG-01 `root.contracts.api_surface` single leaf closeout sets stop_split false; next step: BE-001PH-01 root.contracts.api_surface parent_residual_judgment selects contracts.api_surface.openapi_http.
+- `markdown/06-milestones/v4.16.0/912-root.contracts.api_surface.single_leaf_closeout.md` - v4.16.0 BE-001PG-01 root.contracts.api_surface single leaf closeout

@@ -183,3 +183,4 @@ Latest recursive supplement: BE-001PC-01 closed `backend` for the current Rust b
 Latest recursive supplement: BE-001PD-01 selected `root.contracts` as the next Rust-facing top-level residual. Contract schemas and protocol semantics remain frozen until BE-001PE-01 baseline_plan.
 Latest recursive supplement: BE-001PE-01 froze the `root.contracts` baseline and registered api surface, QRPC core, Core IR, compiler bridge, runtime support, QuantScript, and plugin metadata as the contracts child queue.
 Latest recursive supplement: BE-001PF-01 selected `contracts.api_surface` as the first contracts child; schema semantics and all Rust behavior remain frozen until the single leaf closeout.
+Latest recursive supplement: BE-001PG-01 kept `contracts.api_surface` equivalent and set `stop_split: false` because OpenAPI HTTP and AsyncAPI runtime events are separate schema owners.

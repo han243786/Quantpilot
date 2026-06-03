@@ -911,3 +911,4 @@
 | v4.16.0 / BE-001PD-01 | Added: `root` parent residual judgment selects `root.contracts` |
 | v4.16.0 / BE-001PE-01 | Added: `root.contracts` baseline plan |
 | v4.16.0 / BE-001PF-01 | Added: `root.contracts` parent residual judgment selects `contracts.api_surface` |
+| v4.16.0 / BE-001PG-01 | Added: `root.contracts.api_surface` single leaf closeout |
