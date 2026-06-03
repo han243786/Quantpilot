@@ -906,3 +906,4 @@
 | v4.16.0 / BE-001OY-01 | Added: `backend` parent residual judgment selects `backend.app_state_wiring` |
 | v4.16.0 / BE-001OZ-01 | Added: `backend.app_state_wiring` single leaf closeout |
 | v4.16.0 / BE-001PA-01 | Added: `backend` parent residual judgment selects `backend.test_support` |
+| v4.16.0 / BE-001PB-01 | Added: `backend.test_support` single leaf closeout |
