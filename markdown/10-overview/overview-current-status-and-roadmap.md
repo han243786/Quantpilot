@@ -994,3 +994,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001OX-01 `backend.ops_governance` parent closeout; next step: BE-001OY-01 backend parent_residual_judgment selects backend.app_state_wiring.
 - BE-001OY-01 `backend` parent residual judgment selects `backend.app_state_wiring`; next step: BE-001OZ-01 backend.app_state_wiring single_leaf_closeout.
 - BE-001OZ-01 `backend.app_state_wiring` single leaf closeout sets `stop_split: true`; next step: BE-001PA-01 backend parent_residual_judgment selects backend.test_support.
+- BE-001PA-01 `backend` parent residual judgment selects `backend.test_support`; next step: BE-001PB-01 backend.test_support single_leaf_closeout.

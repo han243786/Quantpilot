@@ -3982,3 +3982,5 @@ Recursive boundary supplement: BE-001OY-01 `backend` parent residual judgment se
 - `markdown/06-milestones/v4.16.0/904-backend.parent_residual_judgment.app_state_wiring.md` - v4.16.0 BE-001OY-01 backend parent residual judgment selects backend.app_state_wiring
 Recursive boundary supplement: BE-001OZ-01 `backend.app_state_wiring` single leaf closeout; next step: BE-001PA-01 backend parent_residual_judgment selects backend.test_support.
 - `markdown/06-milestones/v4.16.0/905-backend.app_state_wiring.single_leaf_closeout.md` - v4.16.0 BE-001OZ-01 backend.app_state_wiring single leaf closeout
+Recursive boundary supplement: BE-001PA-01 `backend` parent residual judgment selects backend.test_support; next step: BE-001PB-01 backend.test_support single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/906-backend.parent_residual_judgment.test_support.md` - v4.16.0 BE-001PA-01 backend parent residual judgment selects backend.test_support

@@ -177,3 +177,4 @@ E2E 整理不属于 v4.16.0 的抽离范围。测试资产汰换会在后续方�
 Latest recursive supplement: BE-001OX-01 closed `backend.ops_governance`; hotswap, sandbox, alerts, snapshots, runbook, and chaos are closed. The backend residual queue now contains `backend.app_state_wiring` and `backend.test_support`, with BE-001OY-01 selecting `backend.app_state_wiring`.
 Latest recursive supplement: BE-001OY-01 selected `backend.app_state_wiring` as the next backend top-level residual. AppState owner, lock order, health schema, frontend caller, and release transition remain frozen.
 Latest recursive supplement: BE-001OZ-01 closed `backend.app_state_wiring` as a single wiring leaf with `stop_split: true`. The remaining backend top-level residual is `backend.test_support`.
+Latest recursive supplement: BE-001PA-01 selected `backend.test_support` as the final backend top-level residual. Test asset retirement, legacy test deletion, E2E cleanup, and production route changes remain frozen.
