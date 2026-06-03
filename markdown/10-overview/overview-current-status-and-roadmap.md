@@ -1013,3 +1013,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001PQ-01 `root.contracts.qrpc_core` parent residual judgment selects `contracts.qrpc_core.event_envelope_proto`; next step: BE-001PR-01 root.contracts.qrpc_core.event_envelope_proto single_leaf_closeout.
 - BE-001PR-01 `root.contracts.qrpc_core.event_envelope_proto` single leaf closeout sets `stop_split: true`; next step: BE-001PS-01 root.contracts.qrpc_core parent_residual_judgment selects plugin_contract.
 - BE-001PS-01 `root.contracts.qrpc_core` parent residual judgment selects `contracts.qrpc_core.plugin_contract`; next step: BE-001PT-01 root.contracts.qrpc_core.plugin_contract baseline_plan.
+- BE-001PT-01 `root.contracts.qrpc_core.plugin_contract` baseline frozen; children are taxonomy_extension, capability_contract, execution_security_dependency, manifest_validation, and registry. Next step: BE-001PU-01 root.contracts.qrpc_core.plugin_contract parent_residual_judgment selects taxonomy_extension.

@@ -924,3 +924,4 @@
 | v4.16.0 / BE-001PQ-01 | Added: `root.contracts.qrpc_core` parent residual judgment selects `contracts.qrpc_core.event_envelope_proto` |
 | v4.16.0 / BE-001PR-01 | Added: `root.contracts.qrpc_core.event_envelope_proto` single leaf closeout |
 | v4.16.0 / BE-001PS-01 | Added: `root.contracts.qrpc_core` parent residual judgment selects `contracts.qrpc_core.plugin_contract` |
+| v4.16.0 / BE-001PT-01 | Added: `root.contracts.qrpc_core.plugin_contract` baseline plan |
