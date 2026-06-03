@@ -3913,3 +3913,6 @@ Recursive boundary supplement: BE-001OH-01 `backend.ops_governance.chaos` parent
 - `markdown/06-milestones/v4.16.0/873-backend.ops_governance.chaos.parent_residual_judgment.report_persistence.md` - v4.16.0 BE-001OH-01 backend.ops_governance.chaos parent residual judgment selects report_persistence
 Recursive boundary supplement: BE-001OI-01 `backend.ops_governance.chaos.report_persistence` equivalence baseline and extraction plan; next step: BE-001OI-02 backend.ops_governance.chaos.report_persistence extract_closeout.
 - `markdown/06-milestones/v4.16.0/874-backend.ops_governance.chaos.report_persistence.baseline_plan.md` - v4.16.0 BE-001OI-01 backend.ops_governance.chaos.report_persistence equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001OI-02 `backend.ops_governance.chaos.report_persistence` actual extraction complete; next step: BE-001OI-03 backend.ops_governance.chaos.report_persistence single_leaf_closeout.
+- `src/backend/ops_governance/chaos/handlers/report_persistence.rs` - backend.ops_governance.chaos.report_persistence implementation
+- `markdown/06-milestones/v4.16.0/875-backend.ops_governance.chaos.report_persistence.extract_closeout.md` - v4.16.0 BE-001OI-02 backend.ops_governance.chaos.report_persistence actual extraction complete

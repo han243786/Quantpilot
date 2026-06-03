@@ -1,4 +1,5 @@
 use crate::*;
+mod report_persistence;
 
 // ── 混沌实验框架 ──
 // Block 5: 围绕稳态指标的季度扰动验证
@@ -234,48 +235,14 @@ async fn persist_chaos_report(
     store_dir: &FsPath,
     report: &ChaosExperimentReport,
 ) -> std::io::Result<()> {
-    crate::storage_lifecycle::ensure_storage_quota(
-        std::path::Path::new("storage"),
-        "chaos",
-        crate::storage_lifecycle::StorageLifecycle::Transient,
-    )?;
-    fs::create_dir_all(&store_dir).await?;
-    let file_path = store_dir.join(format!("{}.json", report.experiment_id));
-    // v2.3.3: 使用统一原子写入 (含 fsync)
-    crate::runtime_persistence::atomic_write_json(&file_path, report).await
+    report_persistence::persist_chaos_report(store_dir, report).await
 }
 
 async fn load_chaos_report_from_disk(
     store_dir: &FsPath,
     experiment_id: &str,
 ) -> Result<ChaosExperimentReport, (StatusCode, String)> {
-    if let Err(msg) = validate_experiment_id(experiment_id) {
-        return Err(json_bad_request("invalid_experiment_id", msg));
-    }
-    let file_path = store_dir.join(format!("{}.json", experiment_id));
-    let json = fs::read(&file_path).await.map_err(|_| {
-        json_bad_request("not_found", format!("混沌实验 '{}' 不存在", experiment_id))
-    })?;
-    serde_json::from_slice(&json).map_err(|error| internal_error(anyhow::anyhow!("{}", error)))
-}
-
-fn validate_experiment_id(id: &str) -> Result<(), String> {
-    if id.is_empty() {
-        return Err("experiment_id 不能为空".to_string());
-    }
-    if id.len() > 128 {
-        return Err("experiment_id 长度不能超过 128 字符".to_string());
-    }
-    if id.contains("..") || id.contains('/') || id.contains('\\') || id.contains('\0') {
-        return Err("experiment_id 不能包含路径分隔符".to_string());
-    }
-    if !id
-        .chars()
-        .all(|ch| ch.is_ascii_alphanumeric() || ch == '_' || ch == '-')
-    {
-        return Err("experiment_id 只能使用 ASCII 字母、数字、'_' 或 '-'".to_string());
-    }
-    Ok(())
+    report_persistence::load_chaos_report_from_disk(store_dir, experiment_id).await
 }
 
 #[cfg(test)]
