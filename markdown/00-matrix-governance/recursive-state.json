@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001MJ-01",
-  "last_committed_sha": "7ddb300b",
-  "current_parent": "backend.ops_governance.sandbox.comparison_metrics.backtest_projection",
-  "current_step": "BE-001MJ-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001MJ-02",
+  "last_committed_sha": "b6f224ef",
+  "current_parent": "backend.ops_governance.sandbox.comparison_metrics",
+  "current_step": "BE-001MK-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -49,14 +49,15 @@
     "ops_governance.sandbox.verification_run.report_assembly",
     "ops_governance.sandbox.verification_run",
     "ops_governance.sandbox.metrics_evaluation",
-    "ops_governance.sandbox.comparison_metrics.v4_replay_shape"
+    "ops_governance.sandbox.comparison_metrics.v4_replay_shape",
+    "ops_governance.sandbox.comparison_metrics.backtest_projection"
   ],
   "open_residuals": [
     "ops_governance",
     "app_state_wiring",
     "test_support"
   ],
-  "next_recommended_child": "backend.ops_governance.sandbox.comparison_metrics.backtest_projection",
+  "next_recommended_child": "backend.ops_governance.sandbox.comparison_metrics",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
