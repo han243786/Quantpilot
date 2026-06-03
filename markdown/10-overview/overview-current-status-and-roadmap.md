@@ -984,3 +984,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001OR-01 `backend.ops_governance.chaos.experiment_creation` parent closeout; next step: BE-001OS-01 backend.ops_governance.chaos parent_residual_judgment.
 - BE-001OS-01 `backend.ops_governance.chaos` parent residual judgment selects read_routes; next step: BE-001OT-01 backend.ops_governance.chaos.read_routes baseline_plan.
 - BE-001OT-01 `backend.ops_governance.chaos.read_routes` equivalence baseline and extraction plan; next step: BE-001OT-02 backend.ops_governance.chaos.read_routes extract_closeout.
+- BE-001OT-02 `backend.ops_governance.chaos.read_routes` actual extraction complete; next step: BE-001OT-03 backend.ops_governance.chaos.read_routes single_leaf_closeout.

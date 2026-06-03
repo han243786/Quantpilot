@@ -3960,3 +3960,6 @@ Recursive boundary supplement: BE-001OS-01 `backend.ops_governance.chaos` parent
 - `markdown/06-milestones/v4.16.0/894-backend.ops_governance.chaos.parent_residual_judgment.read_routes.md` - v4.16.0 BE-001OS-01 backend.ops_governance.chaos parent residual judgment selects read_routes
 Recursive boundary supplement: BE-001OT-01 `backend.ops_governance.chaos.read_routes` equivalence baseline and extraction plan; next step: BE-001OT-02 backend.ops_governance.chaos.read_routes extract_closeout.
 - `markdown/06-milestones/v4.16.0/895-backend.ops_governance.chaos.read_routes.baseline_plan.md` - v4.16.0 BE-001OT-01 backend.ops_governance.chaos.read_routes equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001OT-02 `backend.ops_governance.chaos.read_routes` actual extraction complete; next step: BE-001OT-03 backend.ops_governance.chaos.read_routes single_leaf_closeout.
+- `src/backend/ops_governance/chaos/handlers/read_routes.rs` - backend.ops_governance.chaos.read_routes implementation
+- `markdown/06-milestones/v4.16.0/896-backend.ops_governance.chaos.read_routes.extract_closeout.md` - v4.16.0 BE-001OT-02 backend.ops_governance.chaos.read_routes actual extraction complete

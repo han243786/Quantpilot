@@ -1,5 +1,6 @@
 use crate::*;
 mod experiment_creation;
+mod read_routes;
 mod report_persistence;
 
 pub(super) fn register_chaos_routes(router: Router<AppState>) -> Router<AppState> {
@@ -22,33 +23,17 @@ async fn create_experiment(
 
 async fn list_experiments(
     user_id: auth::UserId,
-    State(state): State<AppState>,
+    state: State<AppState>,
 ) -> Result<Json<Vec<ChaosExperimentReport>>, (StatusCode, String)> {
-    let prefix = auth::scoped_key(&user_id, "");
-    let mut experiments: Vec<ChaosExperimentReport> = state
-        .chaos_experiments
-        .read()
-        .await
-        .iter()
-        .filter(|(key, _)| key.starts_with(&prefix))
-        .map(|(_, value)| value.clone())
-        .collect();
-    experiments.sort_by(|a, b| b.executed_at.cmp(&a.executed_at));
-    Ok(Json(experiments))
+    read_routes::list_experiments(user_id, state).await
 }
 
 async fn get_experiment(
     user_id: auth::UserId,
-    State(state): State<AppState>,
-    Path(experiment_id): Path<String>,
+    state: State<AppState>,
+    experiment_id: Path<String>,
 ) -> Result<Json<ChaosExperimentReport>, (StatusCode, String)> {
-    let scoped = auth::scoped_key(&user_id, &experiment_id);
-    if let Some(report) = state.chaos_experiments.read().await.get(&scoped).cloned() {
-        return Ok(Json(report));
-    }
-    load_chaos_report_from_disk(&state.chaos_store_dir, &experiment_id)
-        .await
-        .map(Json)
+    read_routes::get_experiment(user_id, state, experiment_id).await
 }
 
 async fn persist_chaos_report(
