@@ -1003,3 +1003,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001PG-01 `root.contracts.api_surface` single leaf closeout sets `stop_split: false`; next step: BE-001PH-01 root.contracts.api_surface parent_residual_judgment selects contracts.api_surface.openapi_http.
 - BE-001PH-01 `root.contracts.api_surface` parent residual judgment selects `contracts.api_surface.openapi_http`; next step: BE-001PI-01 root.contracts.api_surface.openapi_http single_leaf_closeout.
 - BE-001PI-01 `root.contracts.api_surface.openapi_http` single leaf closeout sets `stop_split: true`; next step: BE-001PJ-01 root.contracts.api_surface parent_residual_judgment selects contracts.api_surface.asyncapi_runtime_events.
+- BE-001PJ-01 `root.contracts.api_surface` parent residual judgment selects `contracts.api_surface.asyncapi_runtime_events`; next step: BE-001PK-01 root.contracts.api_surface.asyncapi_runtime_events single_leaf_closeout.

@@ -186,3 +186,4 @@ Latest recursive supplement: BE-001PF-01 selected `contracts.api_surface` as the
 Latest recursive supplement: BE-001PG-01 kept `contracts.api_surface` equivalent and set `stop_split: false` because OpenAPI HTTP and AsyncAPI runtime events are separate schema owners.
 Latest recursive supplement: BE-001PH-01 selected `contracts.api_surface.openapi_http`; `contracts/asyncapi/runtime-events.yaml` remains queued as its own schema owner.
 Latest recursive supplement: BE-001PI-01 closed `contracts.api_surface.openapi_http` with `stop_split: true`; `contracts/openapi/root.yaml` remains the single OpenAPI HTTP schema owner.
+Latest recursive supplement: BE-001PJ-01 selected `contracts.api_surface.asyncapi_runtime_events`; backend SSE handler behavior and runtime event producers remain frozen.
