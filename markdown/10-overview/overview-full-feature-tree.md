@@ -3741,3 +3741,5 @@ Recursive boundary supplement: BE-001MV-03 `backend.ops_governance.alerts.acknow
 - `markdown/06-milestones/v4.16.0/796-backend.ops_governance.alerts.acknowledge_flow.single_leaf_closeout.md` - v4.16.0 BE-001MV-03 backend.ops_governance.alerts.acknowledge_flow single leaf closeout stops further split
 Recursive boundary supplement: BE-001MW-01 `backend.ops_governance.alerts` parent residual judgment selects trigger_engine; next step: BE-001MX-01 backend.ops_governance.alerts.trigger_engine baseline_plan.
 - `markdown/06-milestones/v4.16.0/797-backend.ops_governance.alerts.parent_residual_judgment.trigger_engine.md` - v4.16.0 BE-001MW-01 backend.ops_governance.alerts parent residual judgment selects trigger_engine
+Recursive boundary supplement: BE-001MX-01 `backend.ops_governance.alerts.trigger_engine` equivalence baseline and extraction plan; next step: BE-001MX-02 backend.ops_governance.alerts.trigger_engine extract_closeout.
+- `markdown/06-milestones/v4.16.0/798-backend.ops_governance.alerts.trigger_engine.baseline_plan.md` - v4.16.0 BE-001MX-01 backend.ops_governance.alerts.trigger_engine equivalence baseline and extraction plan
