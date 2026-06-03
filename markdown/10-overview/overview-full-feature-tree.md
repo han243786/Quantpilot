@@ -3737,3 +3737,5 @@ Recursive boundary supplement: BE-001MV-01 `backend.ops_governance.alerts.acknow
 Recursive boundary supplement: BE-001MV-02 `backend.ops_governance.alerts.acknowledge_flow` actual extraction complete; next step: BE-001MV-03 backend.ops_governance.alerts.acknowledge_flow single_leaf_closeout.
 - `src/backend/ops_governance/alerts/handlers/acknowledge_flow.rs` - backend.ops_governance.alerts.acknowledge_flow implementation
 - `markdown/06-milestones/v4.16.0/795-backend.ops_governance.alerts.acknowledge_flow.extract_closeout.md` - v4.16.0 BE-001MV-02 backend.ops_governance.alerts.acknowledge_flow actual extraction complete
+Recursive boundary supplement: BE-001MV-03 `backend.ops_governance.alerts.acknowledge_flow` single leaf closeout stops further split; next step: BE-001MW-01 backend.ops_governance.alerts parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/796-backend.ops_governance.alerts.acknowledge_flow.single_leaf_closeout.md` - v4.16.0 BE-001MV-03 backend.ops_governance.alerts.acknowledge_flow single leaf closeout stops further split
