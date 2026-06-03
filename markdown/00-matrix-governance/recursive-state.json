@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001MJ-03",
-  "last_committed_sha": "ab1ad88a",
+  "last_committed_batch": "BE-001MK-01",
+  "last_committed_sha": "3d362cb7",
   "current_parent": "backend.ops_governance.sandbox",
-  "current_step": "BE-001ML-01",
-  "current_phase": "parent_residual_judgment",
+  "current_step": "BE-001MM-01",
+  "current_phase": "baseline_plan",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -58,7 +58,7 @@
     "app_state_wiring",
     "test_support"
   ],
-  "next_recommended_child": "backend.ops_governance.sandbox",
+  "next_recommended_child": "backend.ops_governance.sandbox.proposal_loader",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
