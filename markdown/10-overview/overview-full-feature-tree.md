@@ -3954,3 +3954,5 @@ Recursive boundary supplement: BE-001OQ-02 `backend.ops_governance.chaos.experim
 - `markdown/06-milestones/v4.16.0/891-backend.ops_governance.chaos.experiment_creation.memory_commit.extract_closeout.md` - v4.16.0 BE-001OQ-02 backend.ops_governance.chaos.experiment_creation.memory_commit actual extraction complete
 Recursive boundary supplement: BE-001OQ-03 `backend.ops_governance.chaos.experiment_creation.memory_commit` single leaf closeout; next step: BE-001OR-01 backend.ops_governance.chaos.experiment_creation parent_closeout.
 - `markdown/06-milestones/v4.16.0/892-backend.ops_governance.chaos.experiment_creation.memory_commit.single_leaf_closeout.md` - v4.16.0 BE-001OQ-03 backend.ops_governance.chaos.experiment_creation.memory_commit single leaf closeout
+Recursive boundary supplement: BE-001OR-01 `backend.ops_governance.chaos.experiment_creation` parent closeout; next step: BE-001OS-01 backend.ops_governance.chaos parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/893-backend.ops_governance.chaos.experiment_creation.parent_closeout.md` - v4.16.0 BE-001OR-01 backend.ops_governance.chaos.experiment_creation parent closeout

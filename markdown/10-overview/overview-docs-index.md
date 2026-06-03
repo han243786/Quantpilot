@@ -892,3 +892,4 @@
 | v4.16.0 / BE-001OQ-01 | Added: `backend.ops_governance.chaos.experiment_creation.memory_commit` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001OQ-02 | Added: `backend.ops_governance.chaos.experiment_creation.memory_commit` actual extraction complete |
 | v4.16.0 / BE-001OQ-03 | Added: `backend.ops_governance.chaos.experiment_creation.memory_commit` single leaf closeout |
+| v4.16.0 / BE-001OR-01 | Added: `backend.ops_governance.chaos.experiment_creation` parent closeout |
