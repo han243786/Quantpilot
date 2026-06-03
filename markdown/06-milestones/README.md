@@ -1282,3 +1282,4 @@
 | v4.16.0 / BE-001PN-01 | `v4.16.0/919-root.contracts.qrpc_core.baseline_plan.md` | `root.contracts.qrpc_core` baseline plan |
 | v4.16.0 / BE-001PO-01 | `v4.16.0/920-root.contracts.qrpc_core.parent_residual_judgment.error_contract.md` | `root.contracts.qrpc_core` selects `error_contract` |
 | v4.16.0 / BE-001PP-01 | `v4.16.0/921-root.contracts.qrpc_core.error_contract.single_leaf_closeout.md` | `root.contracts.qrpc_core.error_contract` closeout |
+| v4.16.0 / BE-001PQ-01 | `v4.16.0/922-root.contracts.qrpc_core.parent_residual_judgment.event_envelope_proto.md` | `root.contracts.qrpc_core` selects `event_envelope_proto` |
