@@ -3811,3 +3811,5 @@ Recursive boundary supplement: BE-001NJ-01 `backend.ops_governance.snapshots.sna
 Recursive boundary supplement: BE-001NJ-02 `backend.ops_governance.snapshots.snapshot_id_validation` actual extraction complete; next step: BE-001NJ-03 backend.ops_governance.snapshots.snapshot_id_validation single_leaf_closeout.
 - `src/backend/ops_governance/snapshots/handlers/snapshot_id_validation.rs` - backend.ops_governance.snapshots.snapshot_id_validation implementation
 - `markdown/06-milestones/v4.16.0/828-backend.ops_governance.snapshots.snapshot_id_validation.extract_closeout.md` - v4.16.0 BE-001NJ-02 backend.ops_governance.snapshots.snapshot_id_validation actual extraction complete
+Recursive boundary supplement: BE-001NJ-03 `backend.ops_governance.snapshots.snapshot_id_validation` single leaf closeout stops further split; next step: BE-001NK-01 backend.ops_governance.snapshots parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/829-backend.ops_governance.snapshots.snapshot_id_validation.single_leaf_closeout.md` - v4.16.0 BE-001NJ-03 backend.ops_governance.snapshots.snapshot_id_validation single leaf closeout stops further split
