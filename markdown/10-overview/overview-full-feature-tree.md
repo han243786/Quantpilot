@@ -3775,3 +3775,5 @@ Recursive boundary supplement: BE-001NB-03 `backend.ops_governance.alerts.startu
 - `markdown/06-milestones/v4.16.0/811-backend.ops_governance.alerts.startup_initialization.extract_closeout.md` - v4.16.0 BE-001NB-03 backend.ops_governance.alerts.startup_initialization actual extraction complete
 Recursive boundary supplement: BE-001NB-04 `backend.ops_governance.alerts.startup_initialization` single leaf closeout stops further split; next step: BE-001NC-01 backend.ops_governance.alerts parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/812-backend.ops_governance.alerts.startup_initialization.single_leaf_closeout.md` - v4.16.0 BE-001NB-04 backend.ops_governance.alerts.startup_initialization single leaf closeout stops further split
+Recursive boundary supplement: BE-001NC-01 `backend.ops_governance.alerts` parent residual judgment selects read_routes; next step: BE-001NC-02 backend.ops_governance.alerts.read_routes baseline_plan.
+- `markdown/06-milestones/v4.16.0/813-backend.ops_governance.alerts.parent_residual_judgment.read_routes.md` - v4.16.0 BE-001NC-01 backend.ops_governance.alerts parent residual judgment selects read_routes
