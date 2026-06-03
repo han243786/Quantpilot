@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001MO-01",
-  "last_committed_sha": "6b95228a",
-  "current_parent": "backend.ops_governance.sandbox.report_disk_loader",
-  "current_step": "BE-001MO-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001MO-02",
+  "last_committed_sha": "4b71b6c6",
+  "current_parent": "backend.ops_governance.sandbox",
+  "current_step": "BE-001MP-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -52,14 +52,15 @@
     "ops_governance.sandbox.comparison_metrics.v4_replay_shape",
     "ops_governance.sandbox.comparison_metrics.backtest_projection",
     "ops_governance.sandbox.comparison_metrics",
-    "ops_governance.sandbox.proposal_loader"
+    "ops_governance.sandbox.proposal_loader",
+    "ops_governance.sandbox.report_disk_loader"
   ],
   "open_residuals": [
     "ops_governance",
     "app_state_wiring",
     "test_support"
   ],
-  "next_recommended_child": "backend.ops_governance.sandbox.report_disk_loader",
+  "next_recommended_child": "backend.ops_governance.sandbox",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

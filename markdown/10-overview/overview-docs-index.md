@@ -782,3 +782,4 @@
 | v4.16.0 / BE-001MN-01 | Added: `backend.ops_governance.sandbox` parent residual judgment selects report_disk_loader |
 | v4.16.0 / BE-001MO-01 | Added: `backend.ops_governance.sandbox.report_disk_loader` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001MO-02 | Added: `backend.ops_governance.sandbox.report_disk_loader` actual extraction complete |
+| v4.16.0 / BE-001MO-03 | Added: `backend.ops_governance.sandbox.report_disk_loader` single leaf closeout stops further split |
