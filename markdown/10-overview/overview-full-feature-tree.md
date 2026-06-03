@@ -3904,3 +3904,6 @@ Recursive boundary supplement: BE-001OF-01 `backend.ops_governance` parent resid
 - `markdown/06-milestones/v4.16.0/869-backend.ops_governance.parent_residual_judgment.chaos.md` - v4.16.0 BE-001OF-01 backend.ops_governance parent residual judgment selects chaos
 Recursive boundary supplement: BE-001OG-01 `backend.ops_governance.chaos` equivalence baseline and extraction plan; next step: BE-001OG-02 backend.ops_governance.chaos extract_closeout.
 - `markdown/06-milestones/v4.16.0/870-backend.ops_governance.chaos.baseline_plan.md` - v4.16.0 BE-001OG-01 backend.ops_governance.chaos equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001OG-02 `backend.ops_governance.chaos` actual extraction complete; next step: BE-001OG-03 backend.ops_governance.chaos single_leaf_closeout.
+- `src/backend/ops_governance/chaos/handlers.rs` - backend.ops_governance.chaos handler implementation
+- `markdown/06-milestones/v4.16.0/871-backend.ops_governance.chaos.extract_closeout.md` - v4.16.0 BE-001OG-02 backend.ops_governance.chaos actual extraction complete
