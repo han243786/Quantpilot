@@ -3,6 +3,7 @@ use crate::*;
 mod acknowledge_flow;
 mod persistence;
 mod predicate_checks;
+mod read_routes;
 mod rule_catalog;
 mod startup_initialization;
 mod trigger_engine;
@@ -12,8 +13,8 @@ mod trigger_engine;
 
 pub(super) fn register_alert_routes(router: Router<AppState>) -> Router<AppState> {
     router
-        .route("/api/v1/alerts", get(list_alerts))
-        .route("/api/v1/alerts/rules", get(list_alert_rules))
+        .route("/api/v1/alerts", get(read_routes::list_alerts))
+        .route("/api/v1/alerts/rules", get(read_routes::list_alert_rules))
         .route(
             "/api/v1/alerts/:firing_id/acknowledge",
             post(acknowledge_flow::acknowledge_alert),
@@ -25,30 +26,6 @@ pub(super) fn register_alert_routes(router: Router<AppState>) -> Router<AppState
 }
 
 // ── API 处理函数 ──
-
-async fn list_alerts(
-    user_id: auth::UserId,
-    State(state): State<AppState>,
-) -> Result<Json<AlertListResponse>, (StatusCode, String)> {
-    let prefix = auth::scoped_key(&user_id, "");
-    let firings: Vec<AlertFiring> = state
-        .alert_firings
-        .read()
-        .await
-        .iter()
-        .filter(|(key, _)| key.starts_with(&prefix))
-        .map(|(_, value)| value.clone())
-        .collect();
-    let rules = state.alert_rules.read().await.clone();
-    Ok(Json(AlertListResponse { firings, rules }))
-}
-
-async fn list_alert_rules(
-    State(state): State<AppState>,
-) -> Result<Json<Vec<AlertRule>>, (StatusCode, String)> {
-    let rules = state.alert_rules.read().await.clone();
-    Ok(Json(rules))
-}
 
 async fn should_fire_alert(state: &AppState, user_id: &auth::UserId, rule: &AlertRule) -> bool {
     predicate_checks::should_fire_alert(state, user_id, rule).await
