@@ -3752,3 +3752,6 @@ Recursive boundary supplement: BE-001MY-01 `backend.ops_governance.alerts` paren
 - `markdown/06-milestones/v4.16.0/801-backend.ops_governance.alerts.parent_residual_judgment.predicate_checks.md` - v4.16.0 BE-001MY-01 backend.ops_governance.alerts parent residual judgment selects predicate_checks
 Recursive boundary supplement: BE-001MZ-01 `backend.ops_governance.alerts.predicate_checks` equivalence baseline and extraction plan; next step: BE-001MZ-02 backend.ops_governance.alerts.predicate_checks extract_closeout.
 - `markdown/06-milestones/v4.16.0/802-backend.ops_governance.alerts.predicate_checks.baseline_plan.md` - v4.16.0 BE-001MZ-01 backend.ops_governance.alerts.predicate_checks equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001MZ-02 `backend.ops_governance.alerts.predicate_checks` actual extraction complete; next step: BE-001MZ-03 backend.ops_governance.alerts.predicate_checks single_leaf_closeout.
+- `src/backend/ops_governance/alerts/handlers/predicate_checks.rs` - backend.ops_governance.alerts.predicate_checks implementation
+- `markdown/06-milestones/v4.16.0/803-backend.ops_governance.alerts.predicate_checks.extract_closeout.md` - v4.16.0 BE-001MZ-02 backend.ops_governance.alerts.predicate_checks actual extraction complete
