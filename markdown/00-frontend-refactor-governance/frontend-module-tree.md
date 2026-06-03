@@ -8,6 +8,38 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 - `root.frontend`
 
+## Active Parent
+
+- `frontend.test_support`
+  - Status: parent baseline established.
+  - Record: `markdown/00-frontend-refactor-governance/records/FE-0215-frontend-test-support-baseline.md`
+  - Current owned files:
+    - `frontend/vitest.config.js`
+    - `frontend/src/test/setup.js`
+    - `frontend/src/test/testBridge.js`
+    - `frontend/src/test/fixtures/README.md`
+    - `frontend/src/test/fixtures/capabilities/backend-capabilities-v1.json`
+    - `frontend/src/test/fixtures/capabilities/capabilityFallbacks.js`
+    - `frontend/src/test/fixtures/runtime/backtestSuccess.js`
+    - `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js`
+    - `frontend/src/test/fixtures/runtime/capabilityRejections.js`
+    - `frontend/src/test/fixtures/runtime/editorBootstrap.js`
+    - `frontend/src/test/fixtures/runtime/runSuccess.js`
+    - `frontend/tests/e2e/support/analysisReviewFixtures.js`
+    - `frontend/tests/e2e/support/apiHarness.js`
+    - `frontend/tests/e2e/support/workspaceBootstrapMocks.js`
+    - `frontend/tests/e2e/support/workspaceGraphFixture.js`
+  - Important consumers:
+    - `frontend/src/**/*.test.{js,jsx}`
+    - `frontend/tests/e2e/*.spec.js`
+    - `frontend/src/main.jsx`
+  - Child queue:
+    - `frontend.test_support.vitest_runtime_setup`
+    - `frontend.test_support.dev_test_bridge`
+    - `frontend.test_support.unit_fixture_catalog`
+    - `frontend.test_support.e2e_api_harness`
+    - `frontend.test_support.e2e_bootstrap_review_fixtures`
+
 ## Recently Closed Parent
 
 - `frontend.design_system_styles`
@@ -1355,7 +1387,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 ## Pending Parent Queue
 
-- `frontend.test_support`
+- none.
 
 ## Closed Nodes
 
