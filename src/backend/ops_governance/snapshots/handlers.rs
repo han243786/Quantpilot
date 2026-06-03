@@ -1,6 +1,8 @@
 use crate::*;
 use axum::extract::Query;
 
+mod snapshot_id_validation;
+
 // ── 签名快照服务 ──
 // Block 5: deployment_revision 激活时生成不可变签名快照，支持一键恢复
 
@@ -261,7 +263,7 @@ async fn load_snapshot_from_disk(
     store_dir: &FsPath,
     snapshot_id: &str,
 ) -> Result<DeploymentSignatureSnapshot, (StatusCode, String)> {
-    if let Err(msg) = validate_snapshot_id(snapshot_id) {
+    if let Err(msg) = snapshot_id_validation::validate_snapshot_id(snapshot_id) {
         return Err(json_bad_request("invalid_snapshot_id", msg));
     }
     let file_path = store_dir.join(format!("{}.json", snapshot_id));
@@ -269,25 +271,6 @@ async fn load_snapshot_from_disk(
         .await
         .map_err(|_| json_bad_request("not_found", format!("快照 '{}' 不存在", snapshot_id)))?;
     serde_json::from_slice(&json).map_err(|error| internal_error(anyhow::anyhow!("{}", error)))
-}
-
-fn validate_snapshot_id(id: &str) -> Result<(), String> {
-    if id.is_empty() {
-        return Err("snapshot_id 不能为空".to_string());
-    }
-    if id.len() > 128 {
-        return Err("snapshot_id 长度不能超过 128 字符".to_string());
-    }
-    if id.contains("..") || id.contains('/') || id.contains('\\') || id.contains('\0') {
-        return Err("snapshot_id 不能包含路径分隔符".to_string());
-    }
-    if !id
-        .chars()
-        .all(|ch| ch.is_ascii_alphanumeric() || ch == '_' || ch == '-')
-    {
-        return Err("snapshot_id 只能使用 ASCII 字母、数字、'_' 或 '-'".to_string());
-    }
-    Ok(())
 }
 
 #[cfg(test)]
@@ -319,31 +302,6 @@ mod tests {
         };
         assert_eq!(bounds.event_count, 10);
         assert_eq!(bounds.from_sequence, 1);
-    }
-
-    #[test]
-    fn validate_snapshot_id_rejects_invalid() {
-        let cases = ["..", "a/b", "a\\b", "\0x"];
-        for case in &cases {
-            assert!(
-                super::validate_snapshot_id(case).is_err(),
-                "ID '{}' 应被拒绝",
-                case
-            );
-        }
-        assert!(super::validate_snapshot_id("").is_err());
-    }
-
-    #[test]
-    fn validate_snapshot_id_accepts_valid() {
-        let cases = ["snap-123", "abc_def", "my-snapshot-001"];
-        for case in &cases {
-            assert!(
-                super::validate_snapshot_id(case).is_ok(),
-                "ID '{}' 应被接受",
-                case
-            );
-        }
     }
 
     #[test]
