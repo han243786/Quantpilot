@@ -822,3 +822,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0215-frontend-test-support-baseline.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0216-frontend-test-support-vitest-runtime-setup-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0217-frontend-test-support-dev-test-bridge-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0218-frontend-test-support-unit-fixture-catalog-closeout.md`

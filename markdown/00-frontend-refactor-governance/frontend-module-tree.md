@@ -34,7 +34,6 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/tests/e2e/*.spec.js`
     - `frontend/src/main.jsx`
   - Child queue:
-    - `frontend.test_support.unit_fixture_catalog`
     - `frontend.test_support.e2e_api_harness`
     - `frontend.test_support.e2e_bootstrap_review_fixtures`
   - Closed child leaves:
@@ -47,6 +46,17 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
       - Record: `markdown/00-frontend-refactor-governance/records/FE-0217-frontend-test-support-dev-test-bridge-closeout.md`
       - Public surface:
         - `frontend/src/test/testBridge.js`
+    - `frontend.test_support.unit_fixture_catalog`
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0218-frontend-test-support-unit-fixture-catalog-closeout.md`
+      - Public surface:
+        - `frontend/src/test/fixtures/README.md`
+        - `frontend/src/test/fixtures/capabilities/backend-capabilities-v1.json`
+        - `frontend/src/test/fixtures/capabilities/capabilityFallbacks.js`
+        - `frontend/src/test/fixtures/runtime/backtestSuccess.js`
+        - `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js`
+        - `frontend/src/test/fixtures/runtime/capabilityRejections.js`
+        - `frontend/src/test/fixtures/runtime/editorBootstrap.js`
+        - `frontend/src/test/fixtures/runtime/runSuccess.js`
 
 ## Recently Closed Parent
 
