@@ -992,3 +992,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001OV-03 `backend.ops_governance.chaos.route_facade` single leaf closeout; next step: BE-001OW-01 backend.ops_governance.chaos parent_closeout.
 - BE-001OW-01 `backend.ops_governance.chaos` parent closeout; next step: BE-001OX-01 backend.ops_governance parent_closeout.
 - BE-001OX-01 `backend.ops_governance` parent closeout; next step: BE-001OY-01 backend parent_residual_judgment selects backend.app_state_wiring.
+- BE-001OY-01 `backend` parent residual judgment selects `backend.app_state_wiring`; next step: BE-001OZ-01 backend.app_state_wiring single_leaf_closeout.

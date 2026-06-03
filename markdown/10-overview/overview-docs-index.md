@@ -903,3 +903,4 @@
 | v4.16.0 / BE-001OV-03 | Added: `backend.ops_governance.chaos.route_facade` single leaf closeout |
 | v4.16.0 / BE-001OW-01 | Added: `backend.ops_governance.chaos` parent closeout |
 | v4.16.0 / BE-001OX-01 | Added: `backend.ops_governance` parent closeout |
+| v4.16.0 / BE-001OY-01 | Added: `backend` parent residual judgment selects `backend.app_state_wiring` |

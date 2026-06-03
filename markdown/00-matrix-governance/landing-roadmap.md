@@ -175,3 +175,4 @@ BE-001AF-02 已建立 `runtime.mutation.parameter_mutation` 抽离方案；当�
 
 E2E 整理不属于 v4.16.0 的抽离范围。测试资产汰换会在后续方案中处理，当前只登记废弃候选、替代证据和风险窗口。
 Latest recursive supplement: BE-001OX-01 closed `backend.ops_governance`; hotswap, sandbox, alerts, snapshots, runbook, and chaos are closed. The backend residual queue now contains `backend.app_state_wiring` and `backend.test_support`, with BE-001OY-01 selecting `backend.app_state_wiring`.
+Latest recursive supplement: BE-001OY-01 selected `backend.app_state_wiring` as the next backend top-level residual. AppState owner, lock order, health schema, frontend caller, and release transition remain frozen.
