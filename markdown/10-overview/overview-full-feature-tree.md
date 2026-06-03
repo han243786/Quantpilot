@@ -3696,3 +3696,6 @@ Recursive boundary supplement: BE-001ML-01 `backend.ops_governance.sandbox` pare
 - `markdown/06-milestones/v4.16.0/776-backend.ops_governance.sandbox.parent_residual_judgment.proposal_loader.md` - v4.16.0 BE-001ML-01 backend.ops_governance.sandbox parent residual judgment selects proposal_loader
 Recursive boundary supplement: BE-001MM-01 `backend.ops_governance.sandbox.proposal_loader` equivalence baseline and extraction plan; next step: BE-001MM-02 backend.ops_governance.sandbox.proposal_loader extract_closeout.
 - `markdown/06-milestones/v4.16.0/777-backend.ops_governance.sandbox.proposal_loader.baseline_plan.md` - v4.16.0 BE-001MM-01 backend.ops_governance.sandbox.proposal_loader equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001MM-02 `backend.ops_governance.sandbox.proposal_loader` actual extraction complete; next step: BE-001MM-03 backend.ops_governance.sandbox.proposal_loader single_leaf_closeout.
+- `src/backend/ops_governance/sandbox/proposal_loader.rs` - backend.ops_governance.sandbox.proposal_loader implementation
+- `markdown/06-milestones/v4.16.0/778-backend.ops_governance.sandbox.proposal_loader.extract_closeout.md` - v4.16.0 BE-001MM-02 backend.ops_governance.sandbox.proposal_loader actual extraction complete

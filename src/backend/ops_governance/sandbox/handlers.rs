@@ -3,16 +3,6 @@ use crate::*;
 // ── 沙箱验证服务 ──
 // Block 5 核心技术闸门：AI 提案必须经过独立沙箱回放验证方可提交审批
 
-pub(super) async fn load_or_fetch_ai_proposal(
-    state: &AppState,
-    proposal_id: &str,
-) -> Result<RuntimeAiProposalRecord, (StatusCode, String)> {
-    if let Some(record) = state.ai_proposals.read().await.get(proposal_id).cloned() {
-        return Ok(record);
-    }
-    load_runtime_ai_proposal_record(state.ai_proposal_store_dir.as_ref(), proposal_id).await
-}
-
 pub(crate) async fn load_sandbox_report_from_disk(
     store_dir: &FsPath,
     proposal_id: &str,

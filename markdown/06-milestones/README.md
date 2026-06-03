@@ -1138,3 +1138,4 @@
 | v4.16.0 / BE-001MK-01 | Added: `backend.ops_governance.sandbox.comparison_metrics` parent residual judgment closes parent |
 | v4.16.0 / BE-001ML-01 | Added: `backend.ops_governance.sandbox` parent residual judgment selects proposal_loader |
 | v4.16.0 / BE-001MM-01 | Added: `backend.ops_governance.sandbox.proposal_loader` equivalence baseline and extraction plan |
+| v4.16.0 / BE-001MM-02 | Added: `backend.ops_governance.sandbox.proposal_loader` actual extraction complete |
