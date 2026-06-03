@@ -1216,3 +1216,4 @@
 | v4.16.0 / BE-001NX-01 | Added: `backend.ops_governance.runbook` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001NX-02 | Added: `backend.ops_governance.runbook` actual extraction complete |
 | v4.16.0 / BE-001NX-03 | Added: `backend.ops_governance.runbook` single leaf closeout continues split |
+| v4.16.0 / BE-001NY-01 | Added: `backend.ops_governance.runbook` parent residual judgment selects scenario_catalog |
