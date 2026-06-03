@@ -1,4 +1,5 @@
 use crate::*;
+mod memory_commit;
 mod perturbation_execution;
 mod report_projection;
 
@@ -54,11 +55,13 @@ pub(super) async fn create_experiment(
     super::persist_chaos_report(&state.chaos_store_dir, &report)
         .await
         .map_err(io_error)?;
-    state
-        .chaos_experiments
-        .write()
-        .await
-        .insert(auth::scoped_key(&user_id, &experiment_id), report.clone());
+    commit_experiment_to_memory(
+        state.chaos_experiments.as_ref(),
+        &user_id,
+        &experiment_id,
+        &report,
+    )
+    .await;
 
     Ok(Json(report))
 }
@@ -82,4 +85,13 @@ fn build_experiment_report(
     metrics_before: ChaosSteadyStateMetrics,
 ) -> ChaosExperimentReport {
     report_projection::build_experiment_report(experiment_id, now_ms, request, metrics_before)
+}
+
+async fn commit_experiment_to_memory(
+    experiments: &tokio::sync::RwLock<std::collections::BTreeMap<String, ChaosExperimentReport>>,
+    user_id: &auth::UserId,
+    experiment_id: &str,
+    report: &ChaosExperimentReport,
+) {
+    memory_commit::commit_experiment_to_memory(experiments, user_id, experiment_id, report).await
 }
