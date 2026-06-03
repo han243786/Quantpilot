@@ -965,3 +965,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001OI-01 `backend.ops_governance.chaos.report_persistence` equivalence baseline and extraction plan; next step: BE-001OI-02 backend.ops_governance.chaos.report_persistence extract_closeout.
 - BE-001OI-02 `backend.ops_governance.chaos.report_persistence` actual extraction complete; next step: BE-001OI-03 backend.ops_governance.chaos.report_persistence single_leaf_closeout.
 - BE-001OI-03 `backend.ops_governance.chaos.report_persistence` single leaf closeout; next step: BE-001OJ-01 backend.ops_governance.chaos parent_residual_judgment.
+- BE-001OJ-01 `backend.ops_governance.chaos` parent residual judgment selects experiment_creation; next step: BE-001OK-01 backend.ops_governance.chaos.experiment_creation baseline_plan.
