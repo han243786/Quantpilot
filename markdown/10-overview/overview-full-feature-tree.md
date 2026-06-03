@@ -4035,3 +4035,6 @@ Recursive boundary supplement: BE-001PW-01 `root.contracts.qrpc_core.plugin_cont
 - `markdown/06-milestones/v4.16.0/930-root.contracts.qrpc_core.plugin_contract.parent_residual_judgment.capability_contract.md` - v4.16.0 BE-001PW-01 root.contracts.qrpc_core.plugin_contract parent residual judgment selects capability_contract
 Recursive boundary supplement: BE-001PX-01 `root.contracts.qrpc_core.plugin_contract.capability_contract` equivalence baseline and extraction plan; next step: BE-001PX-02 root.contracts.qrpc_core.plugin_contract.capability_contract extract_closeout.
 - `markdown/06-milestones/v4.16.0/931-root.contracts.qrpc_core.plugin_contract.capability_contract.baseline_plan.md` - v4.16.0 BE-001PX-01 root.contracts.qrpc_core.plugin_contract.capability_contract baseline plan
+Recursive boundary supplement: BE-001PX-02 `root.contracts.qrpc_core.plugin_contract.capability_contract` actual extraction complete; next step: BE-001PX-03 root.contracts.qrpc_core.plugin_contract.capability_contract single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/932-root.contracts.qrpc_core.plugin_contract.capability_contract.extract_closeout.md` - v4.16.0 BE-001PX-02 root.contracts.qrpc_core.plugin_contract.capability_contract actual extraction closeout
+- `qrpc_core/src/plugin/capability_contract.rs` - Extracted qrpc plugin capability contract child

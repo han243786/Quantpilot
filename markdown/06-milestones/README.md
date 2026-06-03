@@ -1292,3 +1292,4 @@
 | v4.16.0 / BE-001PV-03 | `v4.16.0/929-root.contracts.qrpc_core.plugin_contract.taxonomy_extension.single_leaf_closeout.md` | `root.contracts.qrpc_core.plugin_contract.taxonomy_extension` single leaf closeout |
 | v4.16.0 / BE-001PW-01 | `v4.16.0/930-root.contracts.qrpc_core.plugin_contract.parent_residual_judgment.capability_contract.md` | `root.contracts.qrpc_core.plugin_contract` selects `capability_contract` |
 | v4.16.0 / BE-001PX-01 | `v4.16.0/931-root.contracts.qrpc_core.plugin_contract.capability_contract.baseline_plan.md` | `root.contracts.qrpc_core.plugin_contract.capability_contract` baseline plan |
+| v4.16.0 / BE-001PX-02 | `v4.16.0/932-root.contracts.qrpc_core.plugin_contract.capability_contract.extract_closeout.md` | `root.contracts.qrpc_core.plugin_contract.capability_contract` actual extraction complete |
