@@ -1223,3 +1223,4 @@
 | v4.16.0 / BE-001OA-01 | Added: `backend.ops_governance.runbook` parent residual judgment selects read_routes |
 | v4.16.0 / BE-001OB-01 | Added: `backend.ops_governance.runbook.read_routes` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001OB-02 | Added: `backend.ops_governance.runbook.read_routes` actual extraction complete |
+| v4.16.0 / BE-001OB-03 | Added: `backend.ops_governance.runbook.read_routes` single leaf closeout |

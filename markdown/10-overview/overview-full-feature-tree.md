@@ -3887,3 +3887,5 @@ Recursive boundary supplement: BE-001OB-01 `backend.ops_governance.runbook.read_
 Recursive boundary supplement: BE-001OB-02 `backend.ops_governance.runbook.read_routes` actual extraction complete; next step: BE-001OB-03 backend.ops_governance.runbook.read_routes single_leaf_closeout.
 - `src/backend/ops_governance/runbook/handlers/read_routes.rs` - backend.ops_governance.runbook.read_routes implementation
 - `markdown/06-milestones/v4.16.0/862-backend.ops_governance.runbook.read_routes.extract_closeout.md` - v4.16.0 BE-001OB-02 backend.ops_governance.runbook.read_routes actual extraction complete
+Recursive boundary supplement: BE-001OB-03 `backend.ops_governance.runbook.read_routes` single leaf closeout; next step: BE-001OC-01 backend.ops_governance.runbook parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/863-backend.ops_governance.runbook.read_routes.single_leaf_closeout.md` - v4.16.0 BE-001OB-03 backend.ops_governance.runbook.read_routes single leaf closeout

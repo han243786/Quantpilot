@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001OB-01",
-  "last_committed_sha": "561601ae",
-  "current_parent": "backend.ops_governance.runbook.read_routes",
-  "current_step": "BE-001OB-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001OB-02",
+  "last_committed_sha": "2f2b28c9",
+  "current_parent": "backend.ops_governance.runbook",
+  "current_step": "BE-001OC-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -73,14 +73,15 @@
     "ops_governance.snapshots.signature_contract",
     "ops_governance.snapshots.route_facade",
     "ops_governance.snapshots",
-    "ops_governance.runbook.scenario_catalog"
+    "ops_governance.runbook.scenario_catalog",
+    "ops_governance.runbook.read_routes"
   ],
   "open_residuals": [
     "ops_governance",
     "app_state_wiring",
     "test_support"
   ],
-  "next_recommended_child": "backend.ops_governance.runbook.read_routes",
+  "next_recommended_child": "backend.ops_governance.runbook.route_facade",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
