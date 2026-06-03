@@ -1169,3 +1169,4 @@
 | v4.16.0 / BE-001NA-02 | Added: `backend.ops_governance.alerts.persistence` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001NA-03 | Added: `backend.ops_governance.alerts.persistence` actual extraction complete |
 | v4.16.0 / BE-001NA-04 | Added: `backend.ops_governance.alerts.persistence` single leaf closeout stops further split |
+| v4.16.0 / BE-001NB-01 | Added: `backend.ops_governance.alerts` parent residual judgment selects startup_initialization |
