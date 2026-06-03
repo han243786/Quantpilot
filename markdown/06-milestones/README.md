@@ -1119,3 +1119,4 @@
 | v4.16.0 / BE-001MA-02 | 新增: `backend.ops_governance.sandbox.verification_run.report_assembly` backend.ops_governance.sandbox.verification_run.report_assembly actual extraction complete |
 | v4.16.0 / BE-001MA-03 | 新增: `backend.ops_governance.sandbox.verification_run.report_assembly` backend.ops_governance.sandbox.verification_run.report_assembly single leaf closeout stops further split |
 | v4.16.0 / BE-001MB-01 | 新增: `backend.ops_governance.sandbox.verification_run` backend.ops_governance.sandbox.verification_run parent residual judgment closes parent |
+| v4.16.0 / BE-001MC-01 | 新增: `backend.ops_governance.sandbox` backend.ops_governance.sandbox parent residual judgment selects metrics_evaluation |
