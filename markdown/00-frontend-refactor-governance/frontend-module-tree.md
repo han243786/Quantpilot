@@ -16,7 +16,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 ## Recently Closed Parent
 
 - `frontend.test_support`
-  - Status: parent closed; no pending next parent baseline.
+  - Status: parent closed; all frontend parent baselines completed.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0215-frontend-test-support-baseline.md`
   - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0221-frontend-test-support-parent-closeout.md`
   - Current owned files:
@@ -81,7 +81,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
         - `buildWorkspaceGraphFixture()`
 
 - `frontend.design_system_styles`
-  - Status: parent closed; pending next parent baseline.
+  - Status: parent closed; subsequent parent baselines completed.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0177-frontend-design-system-styles-baseline.md`
   - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0214-frontend-design-system-styles-parent-closeout.md`
   - Current owned and split-target files:
@@ -386,7 +386,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 ## Closed Parent Detail
 
 - `frontend.store`
-  - Status: parent closed; pending next parent baseline.
+  - Status: parent closed; subsequent parent baselines completed.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`
   - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0176-frontend-store-parent-closeout.md`
   - Current owned and split-target files:
