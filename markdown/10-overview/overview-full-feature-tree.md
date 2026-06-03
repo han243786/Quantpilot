@@ -3840,3 +3840,5 @@ Recursive boundary supplement: BE-001NP-02 `backend.ops_governance.snapshots.res
 - `markdown/06-milestones/v4.16.0/840-backend.ops_governance.snapshots.restore_flow.extract_closeout.md` - v4.16.0 BE-001NP-02 backend.ops_governance.snapshots.restore_flow actual extraction complete
 Recursive boundary supplement: BE-001NP-03 `backend.ops_governance.snapshots.restore_flow` single leaf closeout stops further split; next step: BE-001NQ-01 backend.ops_governance.snapshots parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/841-backend.ops_governance.snapshots.restore_flow.single_leaf_closeout.md` - v4.16.0 BE-001NP-03 backend.ops_governance.snapshots.restore_flow single leaf closeout stops further split
+Recursive boundary supplement: BE-001NQ-01 `backend.ops_governance.snapshots` parent residual judgment selects persistence; next step: BE-001NR-01 backend.ops_governance.snapshots.persistence baseline_plan.
+- `markdown/06-milestones/v4.16.0/842-backend.ops_governance.snapshots.parent_residual_judgment.persistence.md` - v4.16.0 BE-001NQ-01 backend.ops_governance.snapshots parent residual judgment selects persistence
