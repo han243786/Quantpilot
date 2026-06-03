@@ -1130,3 +1130,4 @@
 | v4.16.0 / BE-001MG-01 | 新增: `backend.ops_governance.sandbox.comparison_metrics` backend.ops_governance.sandbox.comparison_metrics parent residual judgment selects v4_replay_shape |
 | v4.16.0 / BE-001MH-01 | 新增: `backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape` backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape equivalence baseline and extraction plan |
 | v4.16.0 / BE-001MH-02 | 新增: `backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape` backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape actual extraction complete |
+| v4.16.0 / BE-001MH-03 | 新增: `backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape` backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape single leaf closeout stops further split |
