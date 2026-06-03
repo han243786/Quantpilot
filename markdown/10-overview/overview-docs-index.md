@@ -884,3 +884,4 @@
 | v4.16.0 / BE-001OM-01 | Added: `backend.ops_governance.chaos.experiment_creation.perturbation_execution` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001OM-02 | Added: `backend.ops_governance.chaos.experiment_creation.perturbation_execution` actual extraction complete |
 | v4.16.0 / BE-001OM-03 | Added: `backend.ops_governance.chaos.experiment_creation.perturbation_execution` single leaf closeout |
+| v4.16.0 / BE-001ON-01 | Added: `backend.ops_governance.chaos.experiment_creation` parent residual judgment selects report_projection |
