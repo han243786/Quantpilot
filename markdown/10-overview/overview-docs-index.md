@@ -888,3 +888,4 @@
 | v4.16.0 / BE-001OO-01 | Added: `backend.ops_governance.chaos.experiment_creation.report_projection` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001OO-02 | Added: `backend.ops_governance.chaos.experiment_creation.report_projection` actual extraction complete |
 | v4.16.0 / BE-001OO-03 | Added: `backend.ops_governance.chaos.experiment_creation.report_projection` single leaf closeout |
+| v4.16.0 / BE-001OP-01 | Added: `backend.ops_governance.chaos.experiment_creation` parent residual judgment selects memory_commit |
