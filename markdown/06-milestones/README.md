@@ -1273,3 +1273,4 @@
 | v4.16.0 / BE-001PE-01 | `v4.16.0/910-root.contracts.baseline_plan.md` | `root.contracts` baseline plan and L2 child queue |
 | v4.16.0 / BE-001PF-01 | `v4.16.0/911-root.contracts.parent_residual_judgment.api_surface.md` | `root.contracts` selects `contracts.api_surface` |
 | v4.16.0 / BE-001PG-01 | `v4.16.0/912-root.contracts.api_surface.single_leaf_closeout.md` | `root.contracts.api_surface` closeout continues split |
+| v4.16.0 / BE-001PH-01 | `v4.16.0/913-root.contracts.api_surface.parent_residual_judgment.openapi_http.md` | `root.contracts.api_surface` selects `openapi_http` |

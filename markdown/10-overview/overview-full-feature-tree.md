@@ -3996,3 +3996,5 @@ Recursive boundary supplement: BE-001PF-01 `root.contracts` parent residual judg
 - `markdown/06-milestones/v4.16.0/911-root.contracts.parent_residual_judgment.api_surface.md` - v4.16.0 BE-001PF-01 root.contracts parent residual judgment selects contracts.api_surface
 Recursive boundary supplement: BE-001PG-01 `root.contracts.api_surface` single leaf closeout sets stop_split false; next step: BE-001PH-01 root.contracts.api_surface parent_residual_judgment selects contracts.api_surface.openapi_http.
 - `markdown/06-milestones/v4.16.0/912-root.contracts.api_surface.single_leaf_closeout.md` - v4.16.0 BE-001PG-01 root.contracts.api_surface single leaf closeout
+Recursive boundary supplement: BE-001PH-01 `root.contracts.api_surface` parent residual judgment selects contracts.api_surface.openapi_http; next step: BE-001PI-01 root.contracts.api_surface.openapi_http single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/913-root.contracts.api_surface.parent_residual_judgment.openapi_http.md` - v4.16.0 BE-001PH-01 root.contracts.api_surface parent residual judgment selects openapi_http

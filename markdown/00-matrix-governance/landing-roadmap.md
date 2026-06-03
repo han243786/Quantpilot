@@ -184,3 +184,4 @@ Latest recursive supplement: BE-001PD-01 selected `root.contracts` as the next R
 Latest recursive supplement: BE-001PE-01 froze the `root.contracts` baseline and registered api surface, QRPC core, Core IR, compiler bridge, runtime support, QuantScript, and plugin metadata as the contracts child queue.
 Latest recursive supplement: BE-001PF-01 selected `contracts.api_surface` as the first contracts child; schema semantics and all Rust behavior remain frozen until the single leaf closeout.
 Latest recursive supplement: BE-001PG-01 kept `contracts.api_surface` equivalent and set `stop_split: false` because OpenAPI HTTP and AsyncAPI runtime events are separate schema owners.
+Latest recursive supplement: BE-001PH-01 selected `contracts.api_surface.openapi_http`; `contracts/asyncapi/runtime-events.yaml` remains queued as its own schema owner.
