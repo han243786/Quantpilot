@@ -1,12 +1,13 @@
 # Frontend Module Tree
 
-Status: initialized empty from frontend-local truth.
+Status: frontend-local recursive refactor closed.
 
 This is the frontend-only module tree for parallel refactor work. It is not copied from the global tree and must not be treated as merged global truth.
 
 ## Root
 
 - `root.frontend`
+  - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0222-frontend-recursive-refactor-closeout.md`
 
 ## Active Parent
 
@@ -726,7 +727,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend.store.root_shell`
     - `frontend.store.capability_refresh`
     - `frontend.store.runtime_transport_selection`
-  - Next parent candidate: `frontend.test_support`
+  - Next parent candidate: none. `frontend.test_support` is now closed.
 
 ## Previous Closed Parent
 
