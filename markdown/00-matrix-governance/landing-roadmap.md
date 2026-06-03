@@ -198,3 +198,4 @@ Latest recursive supplement: BE-001PR-01 closed `contracts.qrpc_core.event_envel
 Latest recursive supplement: BE-001PS-01 selected `contracts.qrpc_core.plugin_contract`; physical `plugins/*` registry placeholders remain queued under `contracts.plugin_metadata`.
 Latest recursive supplement: BE-001PT-01 froze the `root.contracts.qrpc_core.plugin_contract` baseline and queued taxonomy, capability, execution/security/dependency, manifest validation, and registry child owners.
 Latest recursive supplement: BE-001PU-01 selected `contracts.qrpc_core.plugin_contract.taxonomy_extension`; enum variants, serde rename rules, mapping strings, and all Rust behavior remain frozen until its baseline.
+Latest recursive supplement: BE-001PV-01 froze the `taxonomy_extension` extraction baseline; next step may move only PluginKind, ExtensionPoint, and their mapping impls under the plugin contract parent.
