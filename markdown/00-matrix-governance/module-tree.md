@@ -7716,3 +7716,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.ops_governance.sandbox.comparison_metrics stop_split: false`；该父叶仍包含 `v4_replay_shape` 与 `backtest_projection` 两个 concrete owners。v4 replay-shape 是纯 artifact comparison 并已有直接测试，backtest_projection 负责 AppState backtest selection、metrics projection 与 fidelity fallback；下一步进入 comparison_metrics parent residual judgment。
 
 `backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape` 被选为下一轮子叶；它是 comparison_metrics 内的 pure artifact comparison owner，当前负责 `compare_v4_backtest_artifact_replay_shape`、`count_v4_risk_rejections` 与直接测试。BE-001MH-01 必须先冻结该 boundary，不得迁移 `compute_comparison_metrics`、`backtest_to_sandbox_metrics`、closed siblings、root bridge 或 runtime mutation internals。
+
+`backend.ops_governance.sandbox.comparison_metrics.v4_replay_shape` baseline 已冻结：该子叶拥有 v4 artifact fill-rate/symbol/trajectory/risk-rejection comparison、risk rejection counter 与直接测试。BE-001MH-02 只能创建 comparison_metrics 私有 child module，不得迁移 `compute_comparison_metrics`、`backtest_to_sandbox_metrics`、closed siblings、root bridge 或 runtime mutation internals。
