@@ -7712,3 +7712,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.ops_governance.sandbox.comparison_metrics` baseline 已冻结：该子叶拥有 backtest filtering/sorting、baseline/candidate metrics selection、fidelity fallback、`BacktestRecord` 到 `SandboxMetrics` projection、v4 replay-shape helper、risk rejection counter 与相关测试。BE-001MF-02 不得迁移 metrics_evaluation、proposal loader、disk loader 或 closed children。
 
 `backend.ops_governance.sandbox.comparison_metrics` 已迁入 `src/backend/ops_governance/sandbox/comparison_metrics.rs`；sandbox parent 通过私有 child module 导入 `compute_comparison_metrics`，并继续给 verification_run 提供 parent-controlled boundary。metrics_evaluation、proposal loader、disk loader、report_api 与 verification_run closed children 均未迁移。
+
+`backend.ops_governance.sandbox.comparison_metrics stop_split: false`；该父叶仍包含 `v4_replay_shape` 与 `backtest_projection` 两个 concrete owners。v4 replay-shape 是纯 artifact comparison 并已有直接测试，backtest_projection 负责 AppState backtest selection、metrics projection 与 fidelity fallback；下一步进入 comparison_metrics parent residual judgment。
