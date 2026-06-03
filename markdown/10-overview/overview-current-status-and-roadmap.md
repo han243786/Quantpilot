@@ -850,3 +850,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001MC-01 `backend.ops_governance.sandbox` backend.ops_governance.sandbox parent residual judgment selects metrics_evaluation；下一步: BE-001MD-01 backend.ops_governance.sandbox.metrics_evaluation baseline_plan。
 - BE-001MD-01 `backend.ops_governance.sandbox.metrics_evaluation` backend.ops_governance.sandbox.metrics_evaluation equivalence baseline and extraction plan；下一步: BE-001MD-02 backend.ops_governance.sandbox.metrics_evaluation extract_closeout。
 - BE-001MD-02 `backend.ops_governance.sandbox.metrics_evaluation` backend.ops_governance.sandbox.metrics_evaluation actual extraction complete；下一步: BE-001MD-03 backend.ops_governance.sandbox.metrics_evaluation single_leaf_closeout。
+- BE-001MD-03 `backend.ops_governance.sandbox.metrics_evaluation` backend.ops_governance.sandbox.metrics_evaluation single leaf closeout stops further split；下一步: BE-001ME-01 backend.ops_governance.sandbox parent_residual_judgment。

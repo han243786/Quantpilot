@@ -7704,3 +7704,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `backend.ops_governance.sandbox.metrics_evaluation` baseline 已冻结：该子叶拥有 `compute_metrics_diff`、private `format_diff`、`determine_sandbox_verdict`、`compute_sandbox_warnings` 与三条直接单元测试，sandbox parent 继续通过 parent-controlled boundary 暴露 diff/verdict/warnings 给 verification_run。BE-001MD-02 不得迁移 comparison metrics、v4 replay-shape helper、proposal loader、disk loader 或 closed children。
 
 `backend.ops_governance.sandbox.metrics_evaluation` 已迁入 `src/backend/ops_governance/sandbox/metrics_evaluation.rs`；sandbox parent 通过私有 child module 导入 diff/verdict/warnings functions，并继续给 verification_run 提供 parent-controlled boundary。comparison metrics、v4 replay-shape helper、proposal loader、disk loader、report_api 与 verification_run closed children 均未迁移。
+
+`backend.ops_governance.sandbox.metrics_evaluation stop_split: true`；该叶只拥有 metric diff formatting、verdict determination、warning generation 与局部单元测试这一组 pure evaluation boundary。继续拆会触发 communication_cost_rises、local_proof_scatter 与 line_count_only；下一步回到 `backend.ops_governance.sandbox` 父叶残余判断。
