@@ -4,11 +4,9 @@
   "scope": "frontend",
   "current_parent": "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles",
   "parent_return": "frontend.design_system_styles.page_style_contracts",
-  "current_step": "FE-0208",
-  "current_phase": "frontend_backtest_analysis_sections_card_contracts_closed",
-  "current_child_queue": [
-    "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.responsive_compare_motion_overrides"
-  ],
+  "current_step": "FE-0209",
+  "current_phase": "frontend_backtest_analysis_responsive_compare_motion_overrides_closed",
+  "current_child_queue": [],
   "return_child_queue_after_closeout": [
     "frontend.design_system_styles.page_style_contracts.strategy_hub_page_style_contracts",
     "frontend.design_system_styles.page_style_contracts.strategy_workspace_page_style_contracts"
@@ -171,7 +169,8 @@
     "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.shell_tokens_surface_chrome",
     "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.route_bar_and_typography",
     "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.summary_cards_and_page_grid",
-    "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.analysis_sections_and_card_contracts"
+    "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.analysis_sections_and_card_contracts",
+    "frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.responsive_compare_motion_overrides"
   ],
   "open_residuals": [],
   "hot_global_files_forbidden_until_merge": [

@@ -91,12 +91,13 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
             - `frontend/src/pages/backtest-analysis/route-bar-and-typography.css`
             - `frontend/src/pages/backtest-analysis/summary-cards-page-grid.css`
             - `frontend/src/pages/backtest-analysis/analysis-sections-card-contracts.css`
+            - `frontend/src/pages/backtest-analysis/responsive-compare-motion-overrides.css`
           - Important consumers:
             - `frontend/src/pages/backtestViews/shared/BacktestAnalysisLayout.jsx`
             - `frontend/src/pages/backtestViews/detailPageAnalysis/*`
             - `frontend/src/pages/backtestViews/comparePageAnalysis/*`
           - Current subchild queue:
-            - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.responsive_compare_motion_overrides`
+            - closed.
           - Closed subchild leaves:
             - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.shell_tokens_surface_chrome`
               - Record: `markdown/00-frontend-refactor-governance/records/FE-0205-frontend-backtest-analysis-shell-tokens-surface-chrome-closeout.md`
@@ -117,6 +118,11 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
               - Record: `markdown/00-frontend-refactor-governance/records/FE-0208-frontend-backtest-analysis-sections-card-contracts-closeout.md`
               - Public surface:
                 - `frontend/src/pages/backtest-analysis/analysis-sections-card-contracts.css`
+                - `frontend/src/pages/backtest-analysis.css`
+            - `frontend.design_system_styles.page_style_contracts.backtest_analysis_page_styles.responsive_compare_motion_overrides`
+              - Record: `markdown/00-frontend-refactor-governance/records/FE-0209-frontend-backtest-analysis-responsive-compare-motion-closeout.md`
+              - Public surface:
+                - `frontend/src/pages/backtest-analysis/responsive-compare-motion-overrides.css`
                 - `frontend/src/pages/backtest-analysis.css`
       - Closed subchild leaves:
         - none.

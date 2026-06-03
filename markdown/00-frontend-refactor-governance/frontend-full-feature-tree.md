@@ -768,6 +768,7 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `frontend/src/pages/backtest-analysis/route-bar-and-typography.css`
   - `frontend/src/pages/backtest-analysis/summary-cards-page-grid.css`
   - `frontend/src/pages/backtest-analysis/analysis-sections-card-contracts.css`
+  - `frontend/src/pages/backtest-analysis/responsive-compare-motion-overrides.css`
   - `frontend/src/pages/strategy-workspace-shell.css`
   - `frontend/src/pages/strategy-workspace-overview-diagnostics.css`
   - `frontend/src/pages/strategy-workspace-builder-inspector.css`
@@ -812,3 +813,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0206-frontend-backtest-analysis-route-bar-typography-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0207-frontend-backtest-analysis-summary-cards-page-grid-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0208-frontend-backtest-analysis-sections-card-contracts-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0209-frontend-backtest-analysis-responsive-compare-motion-closeout.md`
