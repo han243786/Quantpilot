@@ -947,3 +947,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001NY-01 `backend.ops_governance.runbook` parent residual judgment selects scenario_catalog; next step: BE-001NZ-01 backend.ops_governance.runbook.scenario_catalog baseline_plan.
 - BE-001NZ-01 `backend.ops_governance.runbook.scenario_catalog` equivalence baseline and extraction plan; next step: BE-001NZ-02 backend.ops_governance.runbook.scenario_catalog extract_closeout.
 - BE-001NZ-02 `backend.ops_governance.runbook.scenario_catalog` actual extraction complete; next step: BE-001NZ-03 backend.ops_governance.runbook.scenario_catalog single_leaf_closeout.
+- BE-001NZ-03 `backend.ops_governance.runbook.scenario_catalog` single leaf closeout; next step: BE-001OA-01 backend.ops_governance.runbook parent_residual_judgment.

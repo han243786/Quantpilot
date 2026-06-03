@@ -858,3 +858,4 @@
 | v4.16.0 / BE-001NY-01 | Added: `backend.ops_governance.runbook` parent residual judgment selects scenario_catalog |
 | v4.16.0 / BE-001NZ-01 | Added: `backend.ops_governance.runbook.scenario_catalog` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001NZ-02 | Added: `backend.ops_governance.runbook.scenario_catalog` actual extraction complete |
+| v4.16.0 / BE-001NZ-03 | Added: `backend.ops_governance.runbook.scenario_catalog` single leaf closeout |

@@ -3878,3 +3878,5 @@ Recursive boundary supplement: BE-001NZ-01 `backend.ops_governance.runbook.scena
 Recursive boundary supplement: BE-001NZ-02 `backend.ops_governance.runbook.scenario_catalog` actual extraction complete; next step: BE-001NZ-03 backend.ops_governance.runbook.scenario_catalog single_leaf_closeout.
 - `src/backend/ops_governance/runbook/handlers/scenario_catalog.rs` - backend.ops_governance.runbook.scenario_catalog implementation
 - `markdown/06-milestones/v4.16.0/858-backend.ops_governance.runbook.scenario_catalog.extract_closeout.md` - v4.16.0 BE-001NZ-02 backend.ops_governance.runbook.scenario_catalog actual extraction complete
+Recursive boundary supplement: BE-001NZ-03 `backend.ops_governance.runbook.scenario_catalog` single leaf closeout; next step: BE-001OA-01 backend.ops_governance.runbook parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/859-backend.ops_governance.runbook.scenario_catalog.single_leaf_closeout.md` - v4.16.0 BE-001NZ-03 backend.ops_governance.runbook.scenario_catalog single leaf closeout
