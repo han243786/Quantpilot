@@ -820,3 +820,4 @@ Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md
   - `markdown/00-frontend-refactor-governance/records/FE-0213-frontend-page-style-contracts-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0214-frontend-design-system-styles-parent-closeout.md`
   - `markdown/00-frontend-refactor-governance/records/FE-0215-frontend-test-support-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0216-frontend-test-support-vitest-runtime-setup-closeout.md`

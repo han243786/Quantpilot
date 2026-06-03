@@ -34,11 +34,16 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
     - `frontend/tests/e2e/*.spec.js`
     - `frontend/src/main.jsx`
   - Child queue:
-    - `frontend.test_support.vitest_runtime_setup`
     - `frontend.test_support.dev_test_bridge`
     - `frontend.test_support.unit_fixture_catalog`
     - `frontend.test_support.e2e_api_harness`
     - `frontend.test_support.e2e_bootstrap_review_fixtures`
+  - Closed child leaves:
+    - `frontend.test_support.vitest_runtime_setup`
+      - Record: `markdown/00-frontend-refactor-governance/records/FE-0216-frontend-test-support-vitest-runtime-setup-closeout.md`
+      - Public surface:
+        - `frontend/vitest.config.js`
+        - `frontend/src/test/setup.js`
 
 ## Recently Closed Parent
 
