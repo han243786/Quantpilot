@@ -174,3 +174,4 @@ BE-001AF-02 已建立 `runtime.mutation.parameter_mutation` 抽离方案；当�
 | 重构 | 后续方案 | 未启动 | 切换主入口、替换旧路径、退役旧实现和调整调用拓扑 |
 
 E2E 整理不属于 v4.16.0 的抽离范围。测试资产汰换会在后续方案中处理，当前只登记废弃候选、替代证据和风险窗口。
+Latest recursive supplement: BE-001OX-01 closed `backend.ops_governance`; hotswap, sandbox, alerts, snapshots, runbook, and chaos are closed. The backend residual queue now contains `backend.app_state_wiring` and `backend.test_support`, with BE-001OY-01 selecting `backend.app_state_wiring`.
