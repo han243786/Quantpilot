@@ -3748,3 +3748,5 @@ Recursive boundary supplement: BE-001MX-02 `backend.ops_governance.alerts.trigge
 - `markdown/06-milestones/v4.16.0/799-backend.ops_governance.alerts.trigger_engine.extract_closeout.md` - v4.16.0 BE-001MX-02 backend.ops_governance.alerts.trigger_engine actual extraction complete
 Recursive boundary supplement: BE-001MX-03 `backend.ops_governance.alerts.trigger_engine` single leaf closeout stops further split; next step: BE-001MY-01 backend.ops_governance.alerts parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/800-backend.ops_governance.alerts.trigger_engine.single_leaf_closeout.md` - v4.16.0 BE-001MX-03 backend.ops_governance.alerts.trigger_engine single leaf closeout stops further split
+Recursive boundary supplement: BE-001MY-01 `backend.ops_governance.alerts` parent residual judgment selects predicate_checks; next step: BE-001MZ-01 backend.ops_governance.alerts.predicate_checks baseline_plan.
+- `markdown/06-milestones/v4.16.0/801-backend.ops_governance.alerts.parent_residual_judgment.predicate_checks.md` - v4.16.0 BE-001MY-01 backend.ops_governance.alerts parent residual judgment selects predicate_checks
