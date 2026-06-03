@@ -3799,3 +3799,6 @@ Recursive boundary supplement: BE-001NG-01 `backend.ops_governance` parent resid
 - `markdown/06-milestones/v4.16.0/822-backend.ops_governance.parent_residual_judgment.snapshots.md` - v4.16.0 BE-001NG-01 backend.ops_governance parent residual judgment selects snapshots
 Recursive boundary supplement: BE-001NH-01 `backend.ops_governance.snapshots` equivalence baseline and extraction plan; next step: BE-001NH-02 backend.ops_governance.snapshots extract_closeout.
 - `markdown/06-milestones/v4.16.0/823-backend.ops_governance.snapshots.baseline_plan.md` - v4.16.0 BE-001NH-01 backend.ops_governance.snapshots equivalence baseline and extraction plan
+Recursive boundary supplement: BE-001NH-02 `backend.ops_governance.snapshots` actual extraction complete; next step: BE-001NH-03 backend.ops_governance.snapshots single_leaf_closeout.
+- `src/backend/ops_governance/snapshots/handlers.rs` - backend.ops_governance.snapshots handler implementation
+- `markdown/06-milestones/v4.16.0/824-backend.ops_governance.snapshots.extract_closeout.md` - v4.16.0 BE-001NH-02 backend.ops_governance.snapshots actual extraction complete

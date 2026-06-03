@@ -4,6 +4,8 @@ use crate::AppState;
 
 pub const MODULE_ID: &str = "backend.ops_governance.snapshots";
 
+mod handlers;
+
 pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
-    crate::snapshot_service::register_snapshot_routes(router)
+    handlers::register_snapshot_routes(router)
 }
