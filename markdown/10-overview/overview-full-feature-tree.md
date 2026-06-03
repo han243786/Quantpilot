@@ -3723,3 +3723,5 @@ Recursive boundary supplement: BE-001MR-03 `backend.ops_governance.alerts` singl
 - `markdown/06-milestones/v4.16.0/788-backend.ops_governance.alerts.single_leaf_closeout.md` - v4.16.0 BE-001MR-03 backend.ops_governance.alerts single leaf closeout continues split
 Recursive boundary supplement: BE-001MS-01 `backend.ops_governance.alerts` parent residual judgment selects rule_catalog; next step: BE-001MT-01 backend.ops_governance.alerts.rule_catalog baseline_plan.
 - `markdown/06-milestones/v4.16.0/789-backend.ops_governance.alerts.parent_residual_judgment.rule_catalog.md` - v4.16.0 BE-001MS-01 backend.ops_governance.alerts parent residual judgment selects rule_catalog
+Recursive boundary supplement: BE-001MT-01 `backend.ops_governance.alerts.rule_catalog` equivalence baseline and extraction plan; next step: BE-001MT-02 backend.ops_governance.alerts.rule_catalog extract_closeout.
+- `markdown/06-milestones/v4.16.0/790-backend.ops_governance.alerts.rule_catalog.baseline_plan.md` - v4.16.0 BE-001MT-01 backend.ops_governance.alerts.rule_catalog equivalence baseline and extraction plan

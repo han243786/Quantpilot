@@ -789,3 +789,4 @@
 | v4.16.0 / BE-001MR-02 | Added: `backend.ops_governance.alerts` actual extraction complete |
 | v4.16.0 / BE-001MR-03 | Added: `backend.ops_governance.alerts` single leaf closeout continues split |
 | v4.16.0 / BE-001MS-01 | Added: `backend.ops_governance.alerts` parent residual judgment selects rule_catalog |
+| v4.16.0 / BE-001MT-01 | Added: `backend.ops_governance.alerts.rule_catalog` equivalence baseline and extraction plan |
