@@ -763,3 +763,4 @@
 | v4.16.0 / BE-001MD-02 | 新增: `backend.ops_governance.sandbox.metrics_evaluation` backend.ops_governance.sandbox.metrics_evaluation actual extraction complete |
 | v4.16.0 / BE-001MD-03 | 新增: `backend.ops_governance.sandbox.metrics_evaluation` backend.ops_governance.sandbox.metrics_evaluation single leaf closeout stops further split |
 | v4.16.0 / BE-001ME-01 | 新增: `backend.ops_governance.sandbox` backend.ops_governance.sandbox parent residual judgment selects comparison_metrics |
+| v4.16.0 / BE-001MF-01 | 新增: `backend.ops_governance.sandbox.comparison_metrics` backend.ops_governance.sandbox.comparison_metrics equivalence baseline and extraction plan |
