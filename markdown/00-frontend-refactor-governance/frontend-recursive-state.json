@@ -4,8 +4,8 @@
   "scope": "frontend",
   "current_parent": "frontend.design_system_styles",
   "parent_return": "root.frontend",
-  "current_step": "FE-0213",
-  "current_phase": "frontend_page_style_contracts_parent_closed",
+  "current_step": "FE-0214",
+  "current_phase": "frontend_design_system_styles_parent_closed",
   "current_child_queue": [],
   "return_child_queue_after_closeout": [],
   "next_parent": "frontend.test_support",
@@ -19,7 +19,8 @@
     "frontend.graph_editor",
     "frontend.runtime_panels",
     "frontend.backtest_views",
-    "frontend.store"
+    "frontend.store",
+    "frontend.design_system_styles"
   ],
   "closed_children": [
     "frontend.strategy_workspace.route_shell",

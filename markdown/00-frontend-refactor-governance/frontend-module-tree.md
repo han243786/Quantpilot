@@ -8,11 +8,12 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 
 - `root.frontend`
 
-## Active Parent
+## Recently Closed Parent
 
 - `frontend.design_system_styles`
-  - Status: parent baseline established.
+  - Status: parent closed; pending next parent baseline.
   - Record: `markdown/00-frontend-refactor-governance/records/FE-0177-frontend-design-system-styles-baseline.md`
+  - Closeout: `markdown/00-frontend-refactor-governance/records/FE-0214-frontend-design-system-styles-parent-closeout.md`
   - Current owned and split-target files:
     - `frontend/src/main.jsx`
     - `frontend/src/styleEntrypoint.js`
@@ -1368,6 +1369,7 @@ This is the frontend-only module tree for parallel refactor work. It is not copi
 - `frontend.runtime_panels`
 - `frontend.backtest_views`
 - `frontend.store`
+- `frontend.design_system_styles`
 
 ## Deferred Merge Notes
 
