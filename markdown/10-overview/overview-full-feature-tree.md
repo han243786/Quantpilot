@@ -4111,3 +4111,5 @@ Recursive boundary supplement: BE-001QO-03 `root.contracts.qrpc_core.strategy_ir
 - `markdown/06-milestones/v4.16.0/964-root.contracts.qrpc_core.strategy_ir.logic_position.single_leaf_closeout.md` - v4.16.0 BE-001QO-03 root.contracts.qrpc_core.strategy_ir.logic_position single leaf closeout
 Recursive boundary supplement: BE-001QP-01 `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects risk_contract; next step: BE-001QQ-01 root.contracts.qrpc_core.strategy_ir.risk_contract baseline_plan.
 - `markdown/06-milestones/v4.16.0/965-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.risk_contract.md` - v4.16.0 BE-001QP-01 root.contracts.qrpc_core.strategy_ir parent residual judgment selects risk_contract
+Recursive boundary supplement: BE-001QQ-01 `root.contracts.qrpc_core.strategy_ir.risk_contract` equivalence baseline and extraction plan; next step: BE-001QQ-02 root.contracts.qrpc_core.strategy_ir.risk_contract extract_closeout.
+- `markdown/06-milestones/v4.16.0/966-root.contracts.qrpc_core.strategy_ir.risk_contract.baseline_plan.md` - v4.16.0 BE-001QQ-01 root.contracts.qrpc_core.strategy_ir.risk_contract baseline plan

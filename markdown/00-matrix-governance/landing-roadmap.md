@@ -237,3 +237,4 @@ Latest recursive supplement: BE-001QO-01 froze the `logic_position` extraction b
 Latest recursive supplement: BE-001QO-02 extracted `contracts.qrpc_core.strategy_ir.logic_position` into a private child module while preserving Strategy IR parent re-exports and qrpc-core tests.
 Latest recursive supplement: BE-001QO-03 closed `contracts.qrpc_core.strategy_ir.logic_position` with `stop_split: true`; next Strategy IR residual candidate is `risk_contract`.
 Latest recursive supplement: BE-001QP-01 selected `contracts.qrpc_core.strategy_ir.risk_contract`; risk rule/profile fields, default behavior, and unknownable risk values remain frozen until its baseline.
+Latest recursive supplement: BE-001QQ-01 froze the `risk_contract` extraction baseline; next step may move only `StrategyRiskRules` and `StrategyRiskProfileRef` under the Strategy IR parent.
