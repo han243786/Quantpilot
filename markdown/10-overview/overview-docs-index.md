@@ -959,3 +959,4 @@
 | v4.16.0 / BE-001QL-01 | Added: `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects `signal_indicator` |
 | v4.16.0 / BE-001QM-01 | Added: `root.contracts.qrpc_core.strategy_ir.signal_indicator` baseline plan |
 | v4.16.0 / BE-001QM-02 | Added: `root.contracts.qrpc_core.strategy_ir.signal_indicator` actual extraction closeout |
+| v4.16.0 / BE-001QM-03 | Added: `root.contracts.qrpc_core.strategy_ir.signal_indicator` single leaf closeout |
