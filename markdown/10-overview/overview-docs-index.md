@@ -936,3 +936,4 @@
 | v4.16.0 / BE-001PY-01 | Added: `root.contracts.qrpc_core.plugin_contract` parent residual judgment selects `execution_security_dependency` |
 | v4.16.0 / BE-001PZ-01 | Added: `root.contracts.qrpc_core.plugin_contract.execution_security_dependency` baseline plan |
 | v4.16.0 / BE-001PZ-02 | Added: `root.contracts.qrpc_core.plugin_contract.execution_security_dependency` actual extraction closeout |
+| v4.16.0 / BE-001PZ-03 | Added: `root.contracts.qrpc_core.plugin_contract.execution_security_dependency` single leaf closeout |

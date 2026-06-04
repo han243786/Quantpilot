@@ -1297,3 +1297,4 @@
 | v4.16.0 / BE-001PY-01 | `v4.16.0/934-root.contracts.qrpc_core.plugin_contract.parent_residual_judgment.execution_security_dependency.md` | `root.contracts.qrpc_core.plugin_contract` selects `execution_security_dependency` |
 | v4.16.0 / BE-001PZ-01 | `v4.16.0/935-root.contracts.qrpc_core.plugin_contract.execution_security_dependency.baseline_plan.md` | `root.contracts.qrpc_core.plugin_contract.execution_security_dependency` baseline plan |
 | v4.16.0 / BE-001PZ-02 | `v4.16.0/936-root.contracts.qrpc_core.plugin_contract.execution_security_dependency.extract_closeout.md` | `root.contracts.qrpc_core.plugin_contract.execution_security_dependency` actual extraction complete |
+| v4.16.0 / BE-001PZ-03 | `v4.16.0/937-root.contracts.qrpc_core.plugin_contract.execution_security_dependency.single_leaf_closeout.md` | `root.contracts.qrpc_core.plugin_contract.execution_security_dependency` single leaf closeout |
