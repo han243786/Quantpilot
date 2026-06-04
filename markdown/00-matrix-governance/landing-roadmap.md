@@ -281,3 +281,4 @@ Latest recursive supplement: BE-001RJ-01 selected `contracts.qrpc_core.strategy_
 Latest recursive supplement: BE-001RK-01 froze the `test_fixture` extraction baseline; next step may move only root validation local tests and `SAMPLE_JSON` into a cfg-test child file.
 Latest recursive supplement: BE-001RK-02 extracted `contracts.qrpc_core.strategy_ir.root_validation.test_fixture` into a cfg-test child file while preserving qrpc-core test behavior.
 Latest recursive supplement: BE-001RK-03 closed `contracts.qrpc_core.strategy_ir.root_validation.test_fixture` with `stop_split: true`; next step returns to root_validation parent residual judgment.
+Latest recursive supplement: BE-001RL-01 closed `contracts.qrpc_core.strategy_ir.root_validation` as a compact parent facade; next step returns to strategy_ir parent residual judgment.
