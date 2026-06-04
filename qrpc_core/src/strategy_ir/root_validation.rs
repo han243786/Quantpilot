@@ -7,6 +7,7 @@ use super::{
     StrategyRiskRules, StrategyUnknown, STRATEGY_IR_V0_VERSION,
 };
 
+mod data_execution_validation;
 mod identity_required_validation;
 mod risk_validation;
 mod signal_logic_validation;
@@ -40,86 +41,7 @@ impl StrategyIr {
 
         risk_validation::validate_risk(self, &mut errors);
 
-        for (index, requirement) in self.data_requirements.iter().enumerate() {
-            if requirement.data_id.trim().is_empty() {
-                errors.push(format!("data_requirements[{index}].data_id 是必需的"));
-            }
-            if requirement.fields.is_empty() {
-                errors.push(format!(
-                    "data_requirements[{index}].fields 必须包含至少一个字段"
-                ));
-            }
-            validate_unknownable(
-                &requirement.venue,
-                &format!("data_requirements[{index}].venue"),
-                &mut errors,
-            );
-            validate_unknownable(
-                &requirement.symbol,
-                &format!("data_requirements[{index}].symbol"),
-                &mut errors,
-            );
-            validate_unknownable(
-                &requirement.granularity,
-                &format!("data_requirements[{index}].granularity"),
-                &mut errors,
-            );
-            validate_unknownable(
-                &requirement.lookback,
-                &format!("data_requirements[{index}].lookback"),
-                &mut errors,
-            );
-        }
-
-        validate_unknownable(
-            &self.execution.venue_type,
-            "execution.venue_type",
-            &mut errors,
-        );
-        validate_unknownable(
-            &self.execution.order_type,
-            "execution.order_type",
-            &mut errors,
-        );
-        validate_unknownable(
-            &self.execution.slippage_model,
-            "execution.slippage_model",
-            &mut errors,
-        );
-        validate_unknownable_opt(
-            self.execution.time_in_force.as_ref(),
-            "execution.time_in_force",
-            &mut errors,
-        );
-        validate_unknownable_opt(
-            self.execution.latency_assumption_ms.as_ref(),
-            "execution.latency_assumption_ms",
-            &mut errors,
-        );
-        validate_unknownable_opt(
-            self.execution.capital_base.as_ref(),
-            "execution.capital_base",
-            &mut errors,
-        );
-        if let Some(profile) = &self.execution_profile {
-            if profile.profile_id.trim() != "paper" {
-                errors.push(
-                    "execution_profile.profile_id 在当前运行时中必须为 \"paper\"".to_string(),
-                );
-            }
-            if let Some(value) = profile.fee_bps {
-                if !value.is_finite() || value < 0.0 {
-                    errors.push("execution_profile.fee_bps 必须是有限数且大于等于 0".to_string());
-                }
-            }
-            if let Some(value) = profile.slippage_bps {
-                if !value.is_finite() || value < 0.0 {
-                    errors.push(
-                        "execution_profile.slippage_bps 必须是有限数且大于等于 0".to_string(),
-                    );
-                }
-            }
-        }
+        data_execution_validation::validate_data_and_execution(self, &mut errors);
 
         for (index, item) in self.unknowns.iter().enumerate() {
             if item.path.trim().is_empty() {

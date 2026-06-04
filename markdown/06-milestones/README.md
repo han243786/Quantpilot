@@ -1360,3 +1360,4 @@
 | v4.16.0 / BE-001RE-03 | `v4.16.0/997-root.contracts.qrpc_core.strategy_ir.root_validation.risk_validation.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.risk_validation` single leaf closeout |
 | v4.16.0 / BE-001RF-01 | `v4.16.0/998-root.contracts.qrpc_core.strategy_ir.root_validation.parent_residual_judgment.data_execution_validation.md` | `root.contracts.qrpc_core.strategy_ir.root_validation` selects `data_execution_validation` |
 | v4.16.0 / BE-001RG-01 | `v4.16.0/999-root.contracts.qrpc_core.strategy_ir.root_validation.data_execution_validation.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.data_execution_validation` baseline plan |
+| v4.16.0 / BE-001RG-02 | `v4.16.0/1000-root.contracts.qrpc_core.strategy_ir.root_validation.data_execution_validation.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.data_execution_validation` actual extraction complete |
