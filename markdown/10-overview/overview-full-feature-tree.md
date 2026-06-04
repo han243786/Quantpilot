@@ -4342,3 +4342,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 递归边界补充: BE-001SQ-02 `root.contracts.qrpc_core.rfc_execution_contracts` root.contracts.qrpc_core.rfc_execution_contracts actual extraction complete；下一步: BE-001SQ-03 root.contracts.qrpc_core.rfc_execution_contracts single_leaf_closeout。
 - `markdown/06-milestones/v4.16.0/1068-root.contracts.qrpc_core.rfc_execution_contracts.extract_closeout.md` - v4.16.0 BE-001SQ-02 root.contracts.qrpc_core.rfc_execution_contracts actual extraction complete
 - `qrpc_core/src/rfc_execution_contracts.rs` - Extracted qrpc-core RFC execution contracts from MarketScope through HandoffSnapshot
+递归边界补充: BE-001SQ-03 `root.contracts.qrpc_core.rfc_execution_contracts` root.contracts.qrpc_core.rfc_execution_contracts single leaf closeout continues split；下一步: BE-001SR-01 root.contracts.qrpc_core.rfc_execution_contracts parent_residual_judgment selects data_request。
+- `markdown/06-milestones/v4.16.0/1069-root.contracts.qrpc_core.rfc_execution_contracts.single_leaf_closeout.md` - v4.16.0 BE-001SQ-03 root.contracts.qrpc_core.rfc_execution_contracts single leaf closeout continues split
