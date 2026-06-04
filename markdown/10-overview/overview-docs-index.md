@@ -980,3 +980,4 @@
 | v4.16.0 / BE-001QW-01 | Added: `root.contracts.qrpc_core.strategy_ir.gap_unknown_annotation` baseline plan |
 | v4.16.0 / BE-001QW-02 | Added: `root.contracts.qrpc_core.strategy_ir.gap_unknown_annotation` actual extraction closeout |
 | v4.16.0 / BE-001QW-03 | Added: `root.contracts.qrpc_core.strategy_ir.gap_unknown_annotation` single leaf closeout |
+| v4.16.0 / BE-001QX-01 | Added: `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects `root_validation` |
