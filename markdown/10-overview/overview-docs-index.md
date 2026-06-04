@@ -1029,3 +1029,4 @@
 | v4.16.0 / BE-001RU-03 | Added: `root.contracts.qrpc_core.artifact_specs.canonical_digest` single leaf closeout |
 | v4.16.0 / BE-001RV-01 | Added: `root.contracts.qrpc_core.artifact_specs` parent residual judgment selects `run_backtest_specs` |
 | v4.16.0 / BE-001RW-01 | Added: `root.contracts.qrpc_core.artifact_specs.run_backtest_specs` baseline plan |
+| v4.16.0 / BE-001RW-02 | Added: `root.contracts.qrpc_core.artifact_specs.run_backtest_specs` actual extraction closeout |
