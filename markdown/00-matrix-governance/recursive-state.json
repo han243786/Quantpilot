@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001RI-02",
-  "last_committed_sha": "1d0841f9",
-  "current_parent": "root.contracts.qrpc_core.strategy_ir.root_validation.unknown_marker_validation",
-  "current_step": "BE-001RI-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001RI-03",
+  "last_committed_sha": "be489fb8",
+  "current_parent": "root.contracts.qrpc_core.strategy_ir.root_validation",
+  "current_step": "BE-001RJ-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -111,7 +111,8 @@
     "contracts.qrpc_core.strategy_ir.root_validation.identity_required_validation",
     "contracts.qrpc_core.strategy_ir.root_validation.signal_logic_validation",
     "contracts.qrpc_core.strategy_ir.root_validation.risk_validation",
-    "contracts.qrpc_core.strategy_ir.root_validation.data_execution_validation"
+    "contracts.qrpc_core.strategy_ir.root_validation.data_execution_validation",
+    "contracts.qrpc_core.strategy_ir.root_validation.unknown_marker_validation"
   ],
   "open_residuals": [
     "contracts.qrpc_core.strategy_ir.root_validation",
@@ -127,7 +128,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.qrpc_core.strategy_ir.root_validation.unknown_marker_validation",
+  "next_recommended_child": "root.contracts.qrpc_core.strategy_ir.root_validation.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
