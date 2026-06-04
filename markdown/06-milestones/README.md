@@ -1453,3 +1453,4 @@
 | v4.16.0 / BE-001TB-01 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts` root.contracts.qrpc_core.rfc_execution_contracts parent residual judgment closes parent |
 | v4.16.0 / BE-001TC-01 | 新增: `root.contracts.qrpc_core` root.contracts.qrpc_core parent residual judgment selects test_fixture |
 | v4.16.0 / BE-001TD-01 | 新增: `root.contracts.qrpc_core.test_fixture` root.contracts.qrpc_core.test_fixture equivalence baseline and extraction plan |
+| v4.16.0 / BE-001TD-02 | 新增: `root.contracts.qrpc_core.test_fixture` root.contracts.qrpc_core.test_fixture actual extraction complete |

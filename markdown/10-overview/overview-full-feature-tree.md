@@ -4395,3 +4395,6 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1091-root.contracts.qrpc_core.parent_residual_judgment.test_fixture.md` - v4.16.0 BE-001TC-01 root.contracts.qrpc_core parent residual judgment selects test_fixture
 递归边界补充: BE-001TD-01 `root.contracts.qrpc_core.test_fixture` root.contracts.qrpc_core.test_fixture equivalence baseline and extraction plan；下一步: BE-001TD-02 root.contracts.qrpc_core.test_fixture extract_closeout。
 - `markdown/06-milestones/v4.16.0/1092-root.contracts.qrpc_core.test_fixture.baseline_plan.md` - v4.16.0 BE-001TD-01 root.contracts.qrpc_core.test_fixture equivalence baseline and extraction plan
+递归边界补充: BE-001TD-02 `root.contracts.qrpc_core.test_fixture` root.contracts.qrpc_core.test_fixture actual extraction complete；下一步: BE-001TD-03 root.contracts.qrpc_core.test_fixture single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/1093-root.contracts.qrpc_core.test_fixture.extract_closeout.md` - v4.16.0 BE-001TD-02 root.contracts.qrpc_core.test_fixture actual extraction complete
+- `qrpc_core/src/tests.rs` - Extracted qrpc-core crate-root test fixture and regression tests
