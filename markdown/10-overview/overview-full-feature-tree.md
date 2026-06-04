@@ -4071,3 +4071,5 @@ Recursive boundary supplement: BE-001QE-01 `root.contracts.qrpc_core.plugin_cont
 - `markdown/06-milestones/v4.16.0/946-root.contracts.qrpc_core.plugin_contract.parent_closeout.md` - v4.16.0 BE-001QE-01 root.contracts.qrpc_core.plugin_contract parent closeout
 Recursive boundary supplement: BE-001QF-01 `root.contracts.qrpc_core` parent residual judgment selects strategy_ir; next step: BE-001QG-01 root.contracts.qrpc_core.strategy_ir baseline_plan.
 - `markdown/06-milestones/v4.16.0/947-root.contracts.qrpc_core.parent_residual_judgment.strategy_ir.md` - v4.16.0 BE-001QF-01 root.contracts.qrpc_core parent residual judgment selects strategy_ir
+Recursive boundary supplement: BE-001QG-01 `root.contracts.qrpc_core.strategy_ir` baseline frozen; child queue is version_unknown_error, metadata_source, signal_indicator, logic_position, risk_contract, data_requirement, execution_contract, gap_unknown_annotation, and root_validation.
+- `markdown/06-milestones/v4.16.0/948-root.contracts.qrpc_core.strategy_ir.baseline_plan.md` - v4.16.0 BE-001QG-01 root.contracts.qrpc_core.strategy_ir baseline plan

@@ -947,3 +947,4 @@
 | v4.16.0 / BE-001QD-03 | Added: `root.contracts.qrpc_core.plugin_contract.registry` single leaf closeout |
 | v4.16.0 / BE-001QE-01 | Added: `root.contracts.qrpc_core.plugin_contract` parent closeout |
 | v4.16.0 / BE-001QF-01 | Added: `root.contracts.qrpc_core` parent residual judgment selects `strategy_ir` |
+| v4.16.0 / BE-001QG-01 | Added: `root.contracts.qrpc_core.strategy_ir` baseline plan |

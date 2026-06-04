@@ -219,3 +219,4 @@ Latest recursive supplement: BE-001QD-02 extracted `contracts.qrpc_core.plugin_c
 Latest recursive supplement: BE-001QD-03 closed `contracts.qrpc_core.plugin_contract.registry` with `stop_split: true`; all plugin_contract children are now ready for parent closeout.
 Latest recursive supplement: BE-001QE-01 closed `contracts.qrpc_core.plugin_contract`; the next qrpc_core residual candidate is `strategy_ir`.
 Latest recursive supplement: BE-001QF-01 selected `contracts.qrpc_core.strategy_ir`; Strategy IR DTOs, validation behavior, indicator kind surfaces, gap annotations, and all Rust behavior remain frozen until its baseline.
+Latest recursive supplement: BE-001QG-01 froze the `root.contracts.qrpc_core.strategy_ir` baseline and queued version/unknown/error, metadata/source, signal/indicator, logic/position, risk, data, execution, gap/unknown, and root validation child owners.

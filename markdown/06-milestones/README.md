@@ -1308,3 +1308,4 @@
 | v4.16.0 / BE-001QD-03 | `v4.16.0/945-root.contracts.qrpc_core.plugin_contract.registry.single_leaf_closeout.md` | `root.contracts.qrpc_core.plugin_contract.registry` single leaf closeout |
 | v4.16.0 / BE-001QE-01 | `v4.16.0/946-root.contracts.qrpc_core.plugin_contract.parent_closeout.md` | `root.contracts.qrpc_core.plugin_contract` parent closeout |
 | v4.16.0 / BE-001QF-01 | `v4.16.0/947-root.contracts.qrpc_core.parent_residual_judgment.strategy_ir.md` | `root.contracts.qrpc_core` selects `strategy_ir` |
+| v4.16.0 / BE-001QG-01 | `v4.16.0/948-root.contracts.qrpc_core.strategy_ir.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir` baseline plan |
