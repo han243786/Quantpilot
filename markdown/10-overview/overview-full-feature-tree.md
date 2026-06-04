@@ -4122,3 +4122,6 @@ Recursive boundary supplement: BE-001QR-01 `root.contracts.qrpc_core.strategy_ir
 - `markdown/06-milestones/v4.16.0/969-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.data_requirement.md` - v4.16.0 BE-001QR-01 root.contracts.qrpc_core.strategy_ir parent residual judgment selects data_requirement
 Recursive boundary supplement: BE-001QS-01 `root.contracts.qrpc_core.strategy_ir.data_requirement` equivalence baseline and extraction plan; next step: BE-001QS-02 root.contracts.qrpc_core.strategy_ir.data_requirement extract_closeout.
 - `markdown/06-milestones/v4.16.0/970-root.contracts.qrpc_core.strategy_ir.data_requirement.baseline_plan.md` - v4.16.0 BE-001QS-01 root.contracts.qrpc_core.strategy_ir.data_requirement baseline plan
+Recursive boundary supplement: BE-001QS-02 `root.contracts.qrpc_core.strategy_ir.data_requirement` actual extraction complete; next step: BE-001QS-03 root.contracts.qrpc_core.strategy_ir.data_requirement single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/971-root.contracts.qrpc_core.strategy_ir.data_requirement.extract_closeout.md` - v4.16.0 BE-001QS-02 root.contracts.qrpc_core.strategy_ir.data_requirement actual extraction closeout
+- `qrpc_core/src/strategy_ir/data_requirement.rs` - Extracted Strategy IR data requirement DTO child

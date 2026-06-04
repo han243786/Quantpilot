@@ -1,12 +1,14 @@
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
+mod data_requirement;
 mod logic_position;
 mod metadata_source;
 mod risk_contract;
 mod signal_indicator;
 mod version_unknown_error;
 
+pub use data_requirement::*;
 pub use logic_position::*;
 pub use metadata_source::*;
 pub use risk_contract::*;
@@ -280,29 +282,6 @@ impl StrategyIr {
             Err(StrategyIrValidationError { errors })
         }
     }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(deny_unknown_fields)]
-pub struct DataRequirement {
-    pub data_id: String,
-    pub venue: KnownOrUnknown<String>,
-    pub symbol: KnownOrUnknown<String>,
-    pub data_type: DataRequirementType,
-    pub granularity: KnownOrUnknown<String>,
-    pub lookback: KnownOrUnknown<u32>,
-    pub fields: Vec<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum DataRequirementType {
-    Kline,
-    Quote,
-    Tick,
-    OrderBook,
-    Fundamental,
-    Event,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

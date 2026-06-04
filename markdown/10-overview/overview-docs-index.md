@@ -970,3 +970,4 @@
 | v4.16.0 / BE-001QQ-03 | Added: `root.contracts.qrpc_core.strategy_ir.risk_contract` single leaf closeout |
 | v4.16.0 / BE-001QR-01 | Added: `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects `data_requirement` |
 | v4.16.0 / BE-001QS-01 | Added: `root.contracts.qrpc_core.strategy_ir.data_requirement` baseline plan |
+| v4.16.0 / BE-001QS-02 | Added: `root.contracts.qrpc_core.strategy_ir.data_requirement` actual extraction closeout |

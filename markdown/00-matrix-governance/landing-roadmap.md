@@ -242,3 +242,4 @@ Latest recursive supplement: BE-001QQ-02 extracted `contracts.qrpc_core.strategy
 Latest recursive supplement: BE-001QQ-03 closed `contracts.qrpc_core.strategy_ir.risk_contract` with `stop_split: true`; next Strategy IR residual candidate is `data_requirement`.
 Latest recursive supplement: BE-001QR-01 selected `contracts.qrpc_core.strategy_ir.data_requirement`; data requirement fields, data type enum variants, and unknownable data values remain frozen until its baseline.
 Latest recursive supplement: BE-001QS-01 froze the `data_requirement` extraction baseline; next step may move only `DataRequirement` and `DataRequirementType` under the Strategy IR parent.
+Latest recursive supplement: BE-001QS-02 extracted `contracts.qrpc_core.strategy_ir.data_requirement` into a private child module while preserving Strategy IR parent re-exports and qrpc-core tests.
