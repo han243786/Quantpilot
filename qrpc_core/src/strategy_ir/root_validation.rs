@@ -8,6 +8,7 @@ use super::{
 };
 
 mod identity_required_validation;
+mod signal_logic_validation;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
@@ -34,53 +35,7 @@ impl StrategyIr {
         let mut errors = Vec::new();
 
         identity_required_validation::validate_identity_and_required_fields(self, &mut errors);
-
-        for (index, signal) in self.signals.iter().enumerate() {
-            if signal.signal_id.trim().is_empty() {
-                errors.push(format!("signals[{index}].signal_id 是必需的"));
-            }
-            if signal.name.trim().is_empty() {
-                errors.push(format!("signals[{index}].name 是必需的"));
-            }
-            if signal.indicator.inputs.is_empty() {
-                errors.push(format!(
-                    "signals[{index}].indicator.inputs 必须包含至少一个输入"
-                ));
-            }
-            if matches!(signal.indicator.kind, IndicatorKind::Spread)
-                && signal.indicator.inputs.len() < 2
-            {
-                errors.push(format!(
-                    "signals[{index}].indicator.inputs 对于 spread 必须包含至少两个输入"
-                ));
-            }
-            if !indicator_kind_supported(&signal.indicator.kind) {
-                errors.push(format!(
-                    "signals[{index}].indicator.kind {:?} 不被当前运行时支持",
-                    signal.indicator.kind
-                ));
-            }
-        }
-
-        for (index, rule) in self.logic.entry_rules.iter().enumerate() {
-            validate_logic_rule(rule, &format!("logic.entry_rules[{index}]"), &mut errors);
-        }
-        for (index, rule) in self.logic.exit_rules.iter().enumerate() {
-            validate_logic_rule(rule, &format!("logic.exit_rules[{index}]"), &mut errors);
-        }
-
-        validate_unknownable(
-            &self.logic.position_sizing.value,
-            "logic.position_sizing.value",
-            &mut errors,
-        );
-        if let Some(rule) = &self.logic.rebalance_rule {
-            validate_unknownable(
-                &rule.frequency,
-                "logic.rebalance_rule.frequency",
-                &mut errors,
-            );
-        }
+        signal_logic_validation::validate_signal_and_logic(self, &mut errors);
 
         validate_unknownable(
             &self.risk_rules.max_position_ratio,
@@ -228,15 +183,6 @@ impl StrategyIr {
         } else {
             Err(StrategyIrValidationError { errors })
         }
-    }
-}
-
-fn validate_logic_rule(rule: &LogicRule, path: &str, errors: &mut Vec<String>) {
-    if rule.rule_id.trim().is_empty() {
-        errors.push(format!("{path}.rule_id 是必需的"));
-    }
-    if rule.condition.trim().is_empty() {
-        errors.push(format!("{path}.condition 是必需的"));
     }
 }
 
