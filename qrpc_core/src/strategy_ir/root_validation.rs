@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeSet;
 
 use super::{
     supported_indicator_kinds, DataRequirement, GapAnnotation, IndicatorKind, KnownOrUnknown,
@@ -7,6 +6,8 @@ use super::{
     StrategyIrValidationError, StrategyLogic, StrategyMetadata, StrategyRiskProfileRef,
     StrategyRiskRules, StrategyUnknown, STRATEGY_IR_V0_VERSION,
 };
+
+mod identity_required_validation;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
@@ -32,54 +33,7 @@ impl StrategyIr {
     pub fn validation_errors(&self) -> Vec<String> {
         let mut errors = Vec::new();
 
-        if self.ir_version != STRATEGY_IR_V0_VERSION {
-            errors.push(format!(
-                "ir_version 必须是 {STRATEGY_IR_V0_VERSION}，但实际为 {}",
-                self.ir_version
-            ));
-        }
-
-        if self.metadata.strategy_id.trim().is_empty() {
-            errors.push("metadata.strategy_id 是必需的".to_string());
-        }
-        if self.metadata.name.trim().is_empty() {
-            errors.push("metadata.name 是必需的".to_string());
-        }
-        if self.metadata.summary.trim().is_empty() {
-            errors.push("metadata.summary 是必需的".to_string());
-        }
-
-        if self.signals.is_empty() {
-            errors.push("signals 必须包含至少一个信号".to_string());
-        }
-        if self.data_requirements.is_empty() {
-            errors.push("data_requirements 必须包含至少一个数据要求".to_string());
-        }
-        if self.logic.entry_rules.is_empty() {
-            errors.push("logic.entry_rules 必须包含至少一条规则".to_string());
-        }
-
-        validate_unique_ids(
-            self.signals.iter().map(|item| item.signal_id.as_str()),
-            "signals",
-            &mut errors,
-        );
-        validate_unique_ids(
-            self.data_requirements
-                .iter()
-                .map(|item| item.data_id.as_str()),
-            "data_requirements",
-            &mut errors,
-        );
-        validate_unique_ids(
-            self.logic
-                .entry_rules
-                .iter()
-                .chain(self.logic.exit_rules.iter())
-                .map(|item| item.rule_id.as_str()),
-            "logic rules",
-            &mut errors,
-        );
+        identity_required_validation::validate_identity_and_required_fields(self, &mut errors);
 
         for (index, signal) in self.signals.iter().enumerate() {
             if signal.signal_id.trim().is_empty() {
@@ -273,19 +227,6 @@ impl StrategyIr {
             Ok(())
         } else {
             Err(StrategyIrValidationError { errors })
-        }
-    }
-}
-
-fn validate_unique_ids<'a>(
-    values: impl Iterator<Item = &'a str>,
-    label: &str,
-    errors: &mut Vec<String>,
-) {
-    let mut seen = BTreeSet::new();
-    for value in values {
-        if !seen.insert(value.to_string()) {
-            errors.push(format!("{label} 包含重复的 id: {value}"));
         }
     }
 }
