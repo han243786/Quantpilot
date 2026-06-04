@@ -1428,3 +1428,4 @@
 | v4.16.0 / BE-001SO-01 | `v4.16.0/1065-root.contracts.qrpc_core.runtime_io_contract.parent_residual_judgment.close_parent.md` | `root.contracts.qrpc_core.runtime_io_contract` parent closeout |
 | v4.16.0 / BE-001SP-01 | 新增: `root.contracts.qrpc_core` root.contracts.qrpc_core parent residual judgment selects rfc_execution_contracts |
 | v4.16.0 / BE-001SQ-01 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts` root.contracts.qrpc_core.rfc_execution_contracts equivalence baseline and extraction plan |
+| v4.16.0 / BE-001SQ-02 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts` root.contracts.qrpc_core.rfc_execution_contracts actual extraction complete |
