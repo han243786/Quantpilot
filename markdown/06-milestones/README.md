@@ -1383,3 +1383,4 @@
 | v4.16.0 / BE-001RR-01 | `v4.16.0/1020-root.contracts.qrpc_core.parent_residual_judgment.artifact_specs.md` | `root.contracts.qrpc_core` selects `artifact_specs` |
 | v4.16.0 / BE-001RS-01 | `v4.16.0/1021-root.contracts.qrpc_core.artifact_specs.baseline_plan.md` | `root.contracts.qrpc_core.artifact_specs` baseline plan |
 | v4.16.0 / BE-001RS-02 | `v4.16.0/1022-root.contracts.qrpc_core.artifact_specs.extract_closeout.md` | `root.contracts.qrpc_core.artifact_specs` actual extraction complete |
+| v4.16.0 / BE-001RS-03 | `v4.16.0/1023-root.contracts.qrpc_core.artifact_specs.single_leaf_closeout.md` | `root.contracts.qrpc_core.artifact_specs` continues split |

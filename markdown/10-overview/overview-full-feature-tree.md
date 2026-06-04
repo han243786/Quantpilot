@@ -4239,3 +4239,5 @@ Recursive boundary supplement: BE-001RS-01 `root.contracts.qrpc_core.artifact_sp
 Recursive boundary supplement: BE-001RS-02 `root.contracts.qrpc_core.artifact_specs` actual extraction complete; next step: BE-001RS-03 root.contracts.qrpc_core.artifact_specs single_leaf_closeout.
 - `markdown/06-milestones/v4.16.0/1022-root.contracts.qrpc_core.artifact_specs.extract_closeout.md` - v4.16.0 BE-001RS-02 root.contracts.qrpc_core.artifact_specs actual extraction closeout
 - `qrpc_core/src/artifact_specs.rs` - Extracted qrpc-core canonical digest, run/backtest specs, dataset/execution projections, and artifact bundle contracts
+Recursive boundary supplement: BE-001RS-03 `root.contracts.qrpc_core.artifact_specs` single leaf closeout sets continue_split true; next step: BE-001RT-01 root.contracts.qrpc_core.artifact_specs parent_residual_judgment selects canonical_digest.
+- `markdown/06-milestones/v4.16.0/1023-root.contracts.qrpc_core.artifact_specs.single_leaf_closeout.md` - v4.16.0 BE-001RS-03 root.contracts.qrpc_core.artifact_specs single leaf closeout continues split
