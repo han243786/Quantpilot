@@ -1066,3 +1066,4 @@
 | v4.16.0 / BE-001SN-03 | Added: `root.contracts.qrpc_core.runtime_io_contract.backtest_output` single leaf closeout |
 | v4.16.0 / BE-001SO-01 | Added: `root.contracts.qrpc_core.runtime_io_contract` parent closeout |
 | v4.16.0 / BE-001SP-01 | 新增: `root.contracts.qrpc_core` root.contracts.qrpc_core parent residual judgment selects rfc_execution_contracts |
+| v4.16.0 / BE-001SQ-01 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts` root.contracts.qrpc_core.rfc_execution_contracts equivalence baseline and extraction plan |
