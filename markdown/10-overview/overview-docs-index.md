@@ -972,3 +972,4 @@
 | v4.16.0 / BE-001QS-01 | Added: `root.contracts.qrpc_core.strategy_ir.data_requirement` baseline plan |
 | v4.16.0 / BE-001QS-02 | Added: `root.contracts.qrpc_core.strategy_ir.data_requirement` actual extraction closeout |
 | v4.16.0 / BE-001QS-03 | Added: `root.contracts.qrpc_core.strategy_ir.data_requirement` single leaf closeout |
+| v4.16.0 / BE-001QT-01 | Added: `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects `execution_contract` |

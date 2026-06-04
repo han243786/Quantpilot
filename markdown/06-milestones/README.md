@@ -1333,3 +1333,4 @@
 | v4.16.0 / BE-001QS-01 | `v4.16.0/970-root.contracts.qrpc_core.strategy_ir.data_requirement.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.data_requirement` baseline plan |
 | v4.16.0 / BE-001QS-02 | `v4.16.0/971-root.contracts.qrpc_core.strategy_ir.data_requirement.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.data_requirement` actual extraction complete |
 | v4.16.0 / BE-001QS-03 | `v4.16.0/972-root.contracts.qrpc_core.strategy_ir.data_requirement.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.data_requirement` single leaf closeout |
+| v4.16.0 / BE-001QT-01 | `v4.16.0/973-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.execution_contract.md` | `root.contracts.qrpc_core.strategy_ir` selects `execution_contract` |
