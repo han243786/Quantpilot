@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001SW-02",
-  "last_committed_sha": "3e7dcf22",
-  "current_parent": "root.contracts.qrpc_core.rfc_execution_contracts.order_contract",
-  "current_step": "BE-001SW-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001SW-03",
+  "last_committed_sha": "9f8e320d",
+  "current_parent": "root.contracts.qrpc_core.rfc_execution_contracts",
+  "current_step": "BE-001SX-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -130,7 +130,8 @@
     "contracts.qrpc_core.runtime_io_contract.backtest_output",
     "contracts.qrpc_core.runtime_io_contract",
     "contracts.qrpc_core.rfc_execution_contracts.data_request",
-    "contracts.qrpc_core.rfc_execution_contracts.allocation"
+    "contracts.qrpc_core.rfc_execution_contracts.allocation",
+    "contracts.qrpc_core.rfc_execution_contracts.order_contract"
   ],
   "open_residuals": [
     "contracts.qrpc_core.rfc_execution_contracts",
@@ -141,7 +142,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.qrpc_core.rfc_execution_contracts.order_contract",
+  "next_recommended_child": "root.contracts.qrpc_core.rfc_execution_contracts.execution_feedback",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
