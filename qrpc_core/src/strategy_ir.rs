@@ -3,6 +3,7 @@ use std::collections::BTreeSet;
 
 mod data_requirement;
 mod execution_contract;
+mod gap_unknown_annotation;
 mod logic_position;
 mod metadata_source;
 mod risk_contract;
@@ -11,6 +12,7 @@ mod version_unknown_error;
 
 pub use data_requirement::*;
 pub use execution_contract::*;
+pub use gap_unknown_annotation::*;
 pub use logic_position::*;
 pub use metadata_source::*;
 pub use risk_contract::*;
@@ -284,39 +286,6 @@ impl StrategyIr {
             Err(StrategyIrValidationError { errors })
         }
     }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct GapAnnotation {
-    pub gap_type: GapType,
-    pub summary: String,
-    pub severity: GapSeverity,
-    pub blocking: bool,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum GapType {
-    Expression,
-    Data,
-    Execution,
-    Risk,
-    Other,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum GapSeverity {
-    Low,
-    Medium,
-    High,
-    Critical,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct StrategyUnknown {
-    pub path: String,
-    pub reason: String,
 }
 
 fn validate_unique_ids<'a>(
