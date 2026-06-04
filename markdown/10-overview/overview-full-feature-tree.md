@@ -4082,3 +4082,5 @@ Recursive boundary supplement: BE-001QI-02 `root.contracts.qrpc_core.strategy_ir
 - `qrpc_core/src/strategy_ir/version_unknown_error.rs` - Extracted Strategy IR version, unknown wrapper, and validation error diagnostic child
 Recursive boundary supplement: BE-001QI-03 `root.contracts.qrpc_core.strategy_ir.version_unknown_error` single leaf closeout sets stop_split true; next step: BE-001QJ-01 root.contracts.qrpc_core.strategy_ir parent_residual_judgment selects metadata_source.
 - `markdown/06-milestones/v4.16.0/952-root.contracts.qrpc_core.strategy_ir.version_unknown_error.single_leaf_closeout.md` - v4.16.0 BE-001QI-03 root.contracts.qrpc_core.strategy_ir.version_unknown_error single leaf closeout
+Recursive boundary supplement: BE-001QJ-01 `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects metadata_source; next step: BE-001QK-01 root.contracts.qrpc_core.strategy_ir.metadata_source baseline_plan.
+- `markdown/06-milestones/v4.16.0/953-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.metadata_source.md` - v4.16.0 BE-001QJ-01 root.contracts.qrpc_core.strategy_ir parent residual judgment selects metadata_source

@@ -1313,3 +1313,4 @@
 | v4.16.0 / BE-001QI-01 | `v4.16.0/950-root.contracts.qrpc_core.strategy_ir.version_unknown_error.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.version_unknown_error` baseline plan |
 | v4.16.0 / BE-001QI-02 | `v4.16.0/951-root.contracts.qrpc_core.strategy_ir.version_unknown_error.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.version_unknown_error` actual extraction complete |
 | v4.16.0 / BE-001QI-03 | `v4.16.0/952-root.contracts.qrpc_core.strategy_ir.version_unknown_error.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.version_unknown_error` single leaf closeout |
+| v4.16.0 / BE-001QJ-01 | `v4.16.0/953-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.metadata_source.md` | `root.contracts.qrpc_core.strategy_ir` selects `metadata_source` |

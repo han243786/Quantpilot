@@ -1041,3 +1041,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001QI-01 `root.contracts.qrpc_core.strategy_ir.version_unknown_error` equivalence baseline and extraction plan; next step: BE-001QI-02 root.contracts.qrpc_core.strategy_ir.version_unknown_error extract_closeout.
 - BE-001QI-02 `root.contracts.qrpc_core.strategy_ir.version_unknown_error` actual extraction complete; next step: BE-001QI-03 root.contracts.qrpc_core.strategy_ir.version_unknown_error single_leaf_closeout.
 - BE-001QI-03 `root.contracts.qrpc_core.strategy_ir.version_unknown_error` single leaf closeout sets `stop_split: true`; next step: BE-001QJ-01 root.contracts.qrpc_core.strategy_ir parent_residual_judgment selects metadata_source.
+- BE-001QJ-01 `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects `contracts.qrpc_core.strategy_ir.metadata_source`; next step: BE-001QK-01 root.contracts.qrpc_core.strategy_ir.metadata_source baseline_plan.
