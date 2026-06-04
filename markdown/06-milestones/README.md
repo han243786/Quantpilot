@@ -1356,3 +1356,4 @@
 | v4.16.0 / BE-001RC-03 | `v4.16.0/993-root.contracts.qrpc_core.strategy_ir.root_validation.signal_logic_validation.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.signal_logic_validation` single leaf closeout |
 | v4.16.0 / BE-001RD-01 | `v4.16.0/994-root.contracts.qrpc_core.strategy_ir.root_validation.parent_residual_judgment.risk_validation.md` | `root.contracts.qrpc_core.strategy_ir.root_validation` selects `risk_validation` |
 | v4.16.0 / BE-001RE-01 | `v4.16.0/995-root.contracts.qrpc_core.strategy_ir.root_validation.risk_validation.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.risk_validation` baseline plan |
+| v4.16.0 / BE-001RE-02 | `v4.16.0/996-root.contracts.qrpc_core.strategy_ir.root_validation.risk_validation.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.risk_validation` actual extraction complete |

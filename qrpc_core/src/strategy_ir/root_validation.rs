@@ -8,6 +8,7 @@ use super::{
 };
 
 mod identity_required_validation;
+mod risk_validation;
 mod signal_logic_validation;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -37,51 +38,7 @@ impl StrategyIr {
         identity_required_validation::validate_identity_and_required_fields(self, &mut errors);
         signal_logic_validation::validate_signal_and_logic(self, &mut errors);
 
-        validate_unknownable(
-            &self.risk_rules.max_position_ratio,
-            "risk_rules.max_position_ratio",
-            &mut errors,
-        );
-        validate_unknownable(
-            &self.risk_rules.stop_loss_ratio,
-            "risk_rules.stop_loss_ratio",
-            &mut errors,
-        );
-        validate_unknownable_opt(
-            self.risk_rules.take_profit_ratio.as_ref(),
-            "risk_rules.take_profit_ratio",
-            &mut errors,
-        );
-        validate_unknownable_opt(
-            self.risk_rules.max_drawdown_ratio.as_ref(),
-            "risk_rules.max_drawdown_ratio",
-            &mut errors,
-        );
-        validate_unknownable_opt(
-            self.risk_rules.max_trades_per_day.as_ref(),
-            "risk_rules.max_trades_per_day",
-            &mut errors,
-        );
-        if let Some(profile) = &self.risk_profile {
-            if profile.profile_id.trim() != "global" {
-                errors.push("risk_profile.profile_id 在当前运行时中必须为 \"global\"".to_string());
-            }
-            if let Some(value) = profile.max_position {
-                if !value.is_finite() || value <= 0.0 {
-                    errors.push("risk_profile.max_position 必须大于 0".to_string());
-                }
-            }
-            if let Some(value) = profile.max_total_leverage {
-                if value < 1.0 {
-                    errors.push("risk_profile.max_total_leverage 必须大于等于 1".to_string());
-                }
-            }
-            if let Some(value) = profile.max_exchange_leverage {
-                if value < 1.0 {
-                    errors.push("risk_profile.max_exchange_leverage 必须大于等于 1".to_string());
-                }
-            }
-        }
+        risk_validation::validate_risk(self, &mut errors);
 
         for (index, requirement) in self.data_requirements.iter().enumerate() {
             if requirement.data_id.trim().is_empty() {
