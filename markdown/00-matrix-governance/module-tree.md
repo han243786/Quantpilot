@@ -8018,3 +8018,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.qrpc_core.runtime_io_contract` selected `backtest_output`; it owns backtest equity, metric groups, summary, period return, and final output DTOs.
 `root.contracts.qrpc_core.runtime_io_contract.backtest_output baseline_frozen: true`; BE-001SN-02 may create a private runtime IO child module and move only final backtest output DTOs and nested metric DTOs. `SessionOutput` and `PortfolioState` remain parent-mediated through the runtime IO facade.
 `root.contracts.qrpc_core.runtime_io_contract.backtest_output extracted: true`; `qrpc_core/src/runtime_io_contract/backtest_output.rs` now owns final backtest output DTOs and nested metric DTOs. `qrpc_core/src/runtime_io_contract.rs` is now a pure facade over runtime IO children.
+`root.contracts.qrpc_core.runtime_io_contract.backtest_output stop_split: true`; backtest output is now one compact final schema child owner. All runtime IO children are closed.
