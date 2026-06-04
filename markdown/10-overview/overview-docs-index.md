@@ -1036,3 +1036,4 @@
 | v4.16.0 / BE-001RY-02 | Added: `root.contracts.qrpc_core.artifact_specs.artifact_bundle_contract` actual extraction closeout |
 | v4.16.0 / BE-001RY-03 | Added: `root.contracts.qrpc_core.artifact_specs.artifact_bundle_contract` single leaf closeout |
 | v4.16.0 / BE-001RZ-01 | Added: `root.contracts.qrpc_core.artifact_specs` parent closeout |
+| v4.16.0 / BE-001SA-01 | Added: `root.contracts.qrpc_core` parent residual judgment selects `runtime_io_contract` |

@@ -4270,3 +4270,5 @@ Recursive boundary supplement: BE-001RY-03 `root.contracts.qrpc_core.artifact_sp
 - `markdown/06-milestones/v4.16.0/1035-root.contracts.qrpc_core.artifact_specs.artifact_bundle_contract.single_leaf_closeout.md` - v4.16.0 BE-001RY-03 root.contracts.qrpc_core.artifact_specs.artifact_bundle_contract single leaf closeout
 Recursive boundary supplement: BE-001RZ-01 `root.contracts.qrpc_core.artifact_specs` parent residual judgment closes parent; next step: BE-001SA-01 root.contracts.qrpc_core parent_residual_judgment selects runtime_io_contract.
 - `markdown/06-milestones/v4.16.0/1036-root.contracts.qrpc_core.artifact_specs.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001RZ-01 root.contracts.qrpc_core.artifact_specs parent closeout
+Recursive boundary supplement: BE-001SA-01 `root.contracts.qrpc_core` parent residual judgment selects runtime_io_contract; next step: BE-001SB-01 root.contracts.qrpc_core.runtime_io_contract baseline_plan.
+- `markdown/06-milestones/v4.16.0/1037-root.contracts.qrpc_core.parent_residual_judgment.runtime_io_contract.md` - v4.16.0 BE-001SA-01 root.contracts.qrpc_core parent residual judgment selects runtime_io_contract
