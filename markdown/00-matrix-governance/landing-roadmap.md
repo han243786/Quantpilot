@@ -304,3 +304,4 @@ Latest recursive supplement: BE-001RW-01 froze the `run_backtest_specs` extracti
 Latest recursive supplement: BE-001RW-02 extracted `contracts.qrpc_core.artifact_specs.run_backtest_specs` into a private artifact specs child module while preserving parent and crate-root public exports.
 Latest recursive supplement: BE-001RW-03 closed `contracts.qrpc_core.artifact_specs.run_backtest_specs` with `stop_split: true`; next artifact specs residual candidate is `artifact_bundle_contract`.
 Latest recursive supplement: BE-001RX-01 selected `contracts.qrpc_core.artifact_specs.artifact_bundle_contract`; strategy/core-IR/compile artifact DTOs and bundle contracts remain frozen until its baseline.
+Latest recursive supplement: BE-001RY-01 froze the `artifact_bundle_contract` extraction baseline; next step may move only strategy/core-IR/compile artifact DTOs and bundle contracts into an artifact specs child module.

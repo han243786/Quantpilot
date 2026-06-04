@@ -1393,3 +1393,4 @@
 | v4.16.0 / BE-001RW-02 | `v4.16.0/1030-root.contracts.qrpc_core.artifact_specs.run_backtest_specs.extract_closeout.md` | `root.contracts.qrpc_core.artifact_specs.run_backtest_specs` actual extraction complete |
 | v4.16.0 / BE-001RW-03 | `v4.16.0/1031-root.contracts.qrpc_core.artifact_specs.run_backtest_specs.single_leaf_closeout.md` | `root.contracts.qrpc_core.artifact_specs.run_backtest_specs` single leaf closeout |
 | v4.16.0 / BE-001RX-01 | `v4.16.0/1032-root.contracts.qrpc_core.artifact_specs.parent_residual_judgment.artifact_bundle_contract.md` | `root.contracts.qrpc_core.artifact_specs` selects `artifact_bundle_contract` |
+| v4.16.0 / BE-001RY-01 | `v4.16.0/1033-root.contracts.qrpc_core.artifact_specs.artifact_bundle_contract.baseline_plan.md` | `root.contracts.qrpc_core.artifact_specs.artifact_bundle_contract` baseline plan |
