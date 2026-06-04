@@ -985,3 +985,4 @@
 | v4.16.0 / BE-001QY-02 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation` actual extraction closeout |
 | v4.16.0 / BE-001QY-03 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation` single leaf closeout continues split |
 | v4.16.0 / BE-001QZ-01 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation` parent residual judgment selects `identity_required_validation` |
+| v4.16.0 / BE-001RA-01 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.identity_required_validation` baseline plan |

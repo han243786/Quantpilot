@@ -257,3 +257,4 @@ Latest recursive supplement: BE-001QY-01 froze the `root_validation` extraction 
 Latest recursive supplement: BE-001QY-02 extracted `contracts.qrpc_core.strategy_ir.root_validation` into a private child module while preserving Strategy IR parent re-exports and qrpc-core tests.
 Latest recursive supplement: BE-001QY-03 kept `contracts.qrpc_core.strategy_ir.root_validation` open with `continue_split: true`; next child candidate is `identity_required_validation`.
 Latest recursive supplement: BE-001QZ-01 selected `contracts.qrpc_core.strategy_ir.root_validation.identity_required_validation`; version, metadata required fields, top-level required collections, and unique id checks remain frozen until its baseline.
+Latest recursive supplement: BE-001RA-01 froze the `identity_required_validation` extraction baseline; next step may move only version, required-field, required-collection, duplicate-id, and `validate_unique_ids` logic under the root validation parent.
