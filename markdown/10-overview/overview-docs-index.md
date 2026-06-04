@@ -1008,3 +1008,4 @@
 | v4.16.0 / BE-001RJ-01 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation` parent residual judgment selects `test_fixture` |
 | v4.16.0 / BE-001RK-01 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture` baseline plan |
 | v4.16.0 / BE-001RK-02 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture` actual extraction closeout |
+| v4.16.0 / BE-001RK-03 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture` single leaf closeout |

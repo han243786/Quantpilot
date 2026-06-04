@@ -1369,3 +1369,4 @@
 | v4.16.0 / BE-001RJ-01 | `v4.16.0/1006-root.contracts.qrpc_core.strategy_ir.root_validation.parent_residual_judgment.test_fixture.md` | `root.contracts.qrpc_core.strategy_ir.root_validation` selects `test_fixture` |
 | v4.16.0 / BE-001RK-01 | `v4.16.0/1007-root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture` baseline plan |
 | v4.16.0 / BE-001RK-02 | `v4.16.0/1008-root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture` actual extraction complete |
+| v4.16.0 / BE-001RK-03 | `v4.16.0/1009-root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture` single leaf closeout |
