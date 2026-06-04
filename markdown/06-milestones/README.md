@@ -1328,3 +1328,4 @@
 | v4.16.0 / BE-001QP-01 | `v4.16.0/965-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.risk_contract.md` | `root.contracts.qrpc_core.strategy_ir` selects `risk_contract` |
 | v4.16.0 / BE-001QQ-01 | `v4.16.0/966-root.contracts.qrpc_core.strategy_ir.risk_contract.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.risk_contract` baseline plan |
 | v4.16.0 / BE-001QQ-02 | `v4.16.0/967-root.contracts.qrpc_core.strategy_ir.risk_contract.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.risk_contract` actual extraction complete |
+| v4.16.0 / BE-001QQ-03 | `v4.16.0/968-root.contracts.qrpc_core.strategy_ir.risk_contract.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.risk_contract` single leaf closeout |

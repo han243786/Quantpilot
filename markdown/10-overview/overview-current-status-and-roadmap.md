@@ -1056,3 +1056,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001QP-01 `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects `contracts.qrpc_core.strategy_ir.risk_contract`; next step: BE-001QQ-01 root.contracts.qrpc_core.strategy_ir.risk_contract baseline_plan.
 - BE-001QQ-01 `root.contracts.qrpc_core.strategy_ir.risk_contract` equivalence baseline and extraction plan; next step: BE-001QQ-02 root.contracts.qrpc_core.strategy_ir.risk_contract extract_closeout.
 - BE-001QQ-02 `root.contracts.qrpc_core.strategy_ir.risk_contract` actual extraction complete; next step: BE-001QQ-03 root.contracts.qrpc_core.strategy_ir.risk_contract single_leaf_closeout.
+- BE-001QQ-03 `root.contracts.qrpc_core.strategy_ir.risk_contract` single leaf closeout sets `stop_split: true`; next step: BE-001QR-01 root.contracts.qrpc_core.strategy_ir parent_residual_judgment selects data_requirement.

@@ -4116,3 +4116,5 @@ Recursive boundary supplement: BE-001QQ-01 `root.contracts.qrpc_core.strategy_ir
 Recursive boundary supplement: BE-001QQ-02 `root.contracts.qrpc_core.strategy_ir.risk_contract` actual extraction complete; next step: BE-001QQ-03 root.contracts.qrpc_core.strategy_ir.risk_contract single_leaf_closeout.
 - `markdown/06-milestones/v4.16.0/967-root.contracts.qrpc_core.strategy_ir.risk_contract.extract_closeout.md` - v4.16.0 BE-001QQ-02 root.contracts.qrpc_core.strategy_ir.risk_contract actual extraction closeout
 - `qrpc_core/src/strategy_ir/risk_contract.rs` - Extracted Strategy IR risk rule/profile DTO child
+Recursive boundary supplement: BE-001QQ-03 `root.contracts.qrpc_core.strategy_ir.risk_contract` single leaf closeout sets stop_split true; next step: BE-001QR-01 root.contracts.qrpc_core.strategy_ir parent_residual_judgment selects data_requirement.
+- `markdown/06-milestones/v4.16.0/968-root.contracts.qrpc_core.strategy_ir.risk_contract.single_leaf_closeout.md` - v4.16.0 BE-001QQ-03 root.contracts.qrpc_core.strategy_ir.risk_contract single leaf closeout
