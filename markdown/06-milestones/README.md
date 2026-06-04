@@ -1385,3 +1385,4 @@
 | v4.16.0 / BE-001RS-02 | `v4.16.0/1022-root.contracts.qrpc_core.artifact_specs.extract_closeout.md` | `root.contracts.qrpc_core.artifact_specs` actual extraction complete |
 | v4.16.0 / BE-001RS-03 | `v4.16.0/1023-root.contracts.qrpc_core.artifact_specs.single_leaf_closeout.md` | `root.contracts.qrpc_core.artifact_specs` continues split |
 | v4.16.0 / BE-001RT-01 | `v4.16.0/1024-root.contracts.qrpc_core.artifact_specs.parent_residual_judgment.canonical_digest.md` | `root.contracts.qrpc_core.artifact_specs` selects `canonical_digest` |
+| v4.16.0 / BE-001RU-01 | `v4.16.0/1025-root.contracts.qrpc_core.artifact_specs.canonical_digest.baseline_plan.md` | `root.contracts.qrpc_core.artifact_specs.canonical_digest` baseline plan |
