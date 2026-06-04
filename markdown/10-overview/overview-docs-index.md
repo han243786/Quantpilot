@@ -1097,3 +1097,4 @@
 | v4.16.0 / BE-001TE-01 | 新增: `root.contracts.qrpc_core` root.contracts.qrpc_core parent residual judgment closes parent |
 | v4.16.0 / BE-001TF-01 | 新增: `root.contracts` root.contracts parent residual judgment selects core_ir |
 | v4.16.0 / BE-001TG-01 | 新增: `root.contracts.core_ir` root.contracts.core_ir equivalence baseline and extraction plan |
+| v4.16.0 / BE-001TH-01 | 新增: `root.contracts.core_ir` root.contracts.core_ir parent residual judgment selects v1_contract |
