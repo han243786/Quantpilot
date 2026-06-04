@@ -223,3 +223,4 @@ Latest recursive supplement: BE-001QG-01 froze the `root.contracts.qrpc_core.str
 Latest recursive supplement: BE-001QH-01 selected `contracts.qrpc_core.strategy_ir.version_unknown_error`; version string, unknown marker semantics, and validation error diagnostics remain frozen until its baseline.
 Latest recursive supplement: BE-001QI-01 froze the `version_unknown_error` extraction baseline; next step may move only the Strategy IR version constant, unknown wrapper, `is_unknown`, and validation error diagnostic type under the Strategy IR parent.
 Latest recursive supplement: BE-001QI-02 extracted `contracts.qrpc_core.strategy_ir.version_unknown_error` into a private child module while preserving Strategy IR parent re-exports and qrpc-core tests.
+Latest recursive supplement: BE-001QI-03 closed `contracts.qrpc_core.strategy_ir.version_unknown_error` with `stop_split: true`; next Strategy IR residual candidate is `metadata_source`.
