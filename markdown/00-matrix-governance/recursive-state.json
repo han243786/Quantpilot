@@ -130,6 +130,7 @@
     "smart_pre_commit",
     "lightweight_two_step",
     "homogeneous_leaf_batching",
+    "same_parent_parallel_children",
     "recursive_governance_generator",
     "recursive_state_cursor"
   ],

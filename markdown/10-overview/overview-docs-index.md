@@ -26,7 +26,7 @@
 | `proposal-examples.md` | 轻量、标准、重型三档提案样例 |
 | `release-transition-protocol.md` | 发布过渡期连接协议 |
 | `landing-roadmap.md` | v4.12.0 至 v4.16.0 治理落地与模块化抽离路线 |
-| `recursive-speed-protocol.md` | v4.16+ 递归模块化高速执行协议 |
+| `recursive-speed-protocol.md` | v4.16+ 递归模块化高速执行协议，含同父级子叶并行 wave |
 | `recursive-state.json` | 当前递归状态游标 |
 
 ## 架构原则 (`01-principles/`)
@@ -989,3 +989,4 @@
 | v4.16.0 / BE-001RA-02 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.identity_required_validation` actual extraction closeout |
 | v4.16.0 / BE-001RA-03 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.identity_required_validation` single leaf closeout |
 | v4.16.0 / BE-001RB-01 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation` parent residual judgment selects `signal_logic_validation` |
+| v4.16.0 / GOV-SAME-PARENT-PARALLEL | Added: guarded same-parent child parallel wave protocol |

@@ -11,8 +11,8 @@
 
 | 矩阵 | 影响节点 | 变更类型 |
 | --- | --- | --- |
-| 流程矩阵 | 递归执行节奏、轻量两段式、同构叶批处理、状态游标 | 提速 |
-| 规范矩阵 | pre-commit 分流、父子通信、leaf split gate、批处理边界 | 收紧 |
+| 流程矩阵 | 递归执行节奏、轻量两段式、同构叶批处理、同父级子叶并行、状态游标 | 提速 |
+| 规范矩阵 | pre-commit 分流、父子通信、leaf split gate、批处理/并行边界 | 收紧 |
 | 引导矩阵 | 全量树、模块树、递归状态游标、治理生成器 | 扩展 |
 
 本协议只降低重复劳动和无效等待，不降低等价证明、父子通信、禁止横向连接、发布过渡保护和 leaf split 判定强度。
@@ -88,6 +88,45 @@ homogeneous_leaf_batching
 
 ## 4. 递归治理生成器
 
+same_parent_parallel_children
+
+同一父级下多个子叶允许并行处理，但只允许在同一个已冻结 parent queue 内并行。该能力用于减少父叶残余判断、基线撰写、抽离记录和验证等待之间的串行空耗，不改变父子通信规则。
+
+允许条件:
+
+1. `same_parent_queue_frozen`: 所有候选子叶来自同一 parent，且 parent baseline / parent residual judgment 已冻结候选队列。
+2. `independent_white_box`: 每个子叶都有独立白箱边界、输入输出、处理 owner、排除范围和 `leaf_split_decision_gate`。
+3. `write_set_declared`: 每个子叶必须声明将写入的 Rust 文件、文档文件和父级 facade 文件。
+4. `no_shared_mutable_state`: 候选之间不共享可变状态、锁顺序、持久化 owner、schema owner 或外部 API owner。
+5. `parent_facade_lock`: 若多个子叶都需要改同一个父级 facade，child 文件准备可以并行，但父级 facade 合并必须由一个 parent coordinator 串行完成。
+6. `no_sibling_horizontal_link`: 并行不允许引入 sibling horizontal link；所有通信仍经 parent。
+7. `shared_gate_sufficient`: 同一 targeted gate 可以覆盖共同等价面；若某子叶需要额外 gate，必须在该子叶自己的证明中列出。
+
+并行批次固定产物:
+
+1. `parallel_wave_manifest`: 列出 parent、并行 child 列表、各 child write set、共享 parent facade lock、共享 gate 和各自 extra gate。
+2. 每个 child 仍有独立 `baseline_plan`、`extract_closeout`、`single_leaf_closeout` 或在批次文档中有独立同名章节。
+3. 每个 child 仍有独立 `leaf_split_decision_result` 和 `next_recursive_step`。
+4. 提交可以按 child 分开提交，也可以按同一 parallel wave 合并提交；无论哪种方式，每个可验证 wave step 必须提交一次。
+
+强停止条件:
+
+1. 任一候选需要新增 public API / route / schema / persistence / lock owner。
+2. 任一候选需要另一个 sibling 的内部 helper、私有类型或状态。
+3. 任一候选改动失败会污染其他候选的等价证明。
+4. 父级 facade 合并无法保持单向 parent 调用。
+5. 需要 release transition 才能解释并行收益。
+
+失败恢复:
+
+1. 某个 child 门禁失败时，先从 parallel wave 移除该 child。
+2. 其他 child 只有在 write set 和证明仍独立时才允许继续提交。
+3. 失败 child 必须回到自己的 baseline 或 parent residual judgment，不得借其他 sibling 的 closeout 继续前进。
+
+---
+
+## 5. 递归治理生成器
+
 recursive_governance_generator
 
 `tools/update-recursive-governance.ps1` 用于创建递归 milestone skeleton 并同步常用索引:
@@ -103,7 +142,7 @@ recursive_governance_generator
 
 ---
 
-## 5. 递归状态游标
+## 6. 递归状态游标
 
 recursive_state_cursor
 
@@ -129,7 +168,7 @@ recursive_state_cursor
 3. AI 不得主动提出 release transition。
 4. 只有开发者明确指出 release transition 时，才能提出子模块横向连接优化。
 5. `leaf_split_decision_gate` 必须在后续单叶 closeout / 父叶残余判断中触发。
-6. 每个可验证步骤仍需要提交；只是允许轻量叶合并阶段、同构叶批处理和智能门禁分流。
+6. 每个可验证步骤仍需要提交；只是允许轻量叶合并阶段、同构叶批处理、同父级子叶并行和智能门禁分流。
 
 ---
 

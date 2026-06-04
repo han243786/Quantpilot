@@ -1264,7 +1264,7 @@ recursive-state.json              — 当前递归状态游标
 
 自动化门禁: `tools/check-matrix-governance.ps1` 校验三矩阵入口、提案模板、模块树漂移、里程碑索引、发布过渡协议和递归高速执行协议。
 提案样例库: `markdown/00-matrix-governance/proposal-examples.md` 提供轻量、标准、重型三档最小样例。
-递归高速协议: `markdown/00-matrix-governance/recursive-speed-protocol.md` 固化智能门禁、两段式、同构批处理、治理生成器和状态游标规则。
+递归高速协议: `markdown/00-matrix-governance/recursive-speed-protocol.md` 固化智能门禁、两段式、同构批处理、同父级子叶并行、治理生成器和状态游标规则。
 递归状态游标: `markdown/00-matrix-governance/recursive-state.json` 记录当前递归 parent、phase、closed children、open residuals 和一次性提示黑名单。
 
 治理接管路线:
@@ -4165,3 +4165,5 @@ Recursive boundary supplement: BE-001RA-03 `root.contracts.qrpc_core.strategy_ir
 - `markdown/06-milestones/v4.16.0/988-root.contracts.qrpc_core.strategy_ir.root_validation.identity_required_validation.single_leaf_closeout.md` - v4.16.0 BE-001RA-03 root.contracts.qrpc_core.strategy_ir.root_validation.identity_required_validation single leaf closeout
 Recursive boundary supplement: BE-001RB-01 `root.contracts.qrpc_core.strategy_ir.root_validation` parent residual judgment selects signal_logic_validation; next step: BE-001RC-01 root.contracts.qrpc_core.strategy_ir.root_validation.signal_logic_validation baseline_plan.
 - `markdown/06-milestones/v4.16.0/989-root.contracts.qrpc_core.strategy_ir.root_validation.parent_residual_judgment.signal_logic_validation.md` - v4.16.0 BE-001RB-01 root.contracts.qrpc_core.strategy_ir.root_validation parent residual judgment selects signal_logic_validation
+Recursive governance supplement: GOV-SAME-PARENT-PARALLEL allows guarded same-parent child parallel waves without changing the active Rust cursor.
+- `markdown/06-milestones/v4.16.0/990-governance.same_parent_parallel_children.protocol_update.md` - v4.16.0 guarded same-parent child parallel wave protocol update
