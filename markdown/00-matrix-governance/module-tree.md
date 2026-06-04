@@ -8020,3 +8020,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.qrpc_core.runtime_io_contract.backtest_output extracted: true`; `qrpc_core/src/runtime_io_contract/backtest_output.rs` now owns final backtest output DTOs and nested metric DTOs. `qrpc_core/src/runtime_io_contract.rs` is now a pure facade over runtime IO children.
 `root.contracts.qrpc_core.runtime_io_contract.backtest_output stop_split: true`; backtest output is now one compact final schema child owner. All runtime IO children are closed.
 `root.contracts.qrpc_core.runtime_io_contract parent_closeout: true`; runtime IO is now a compact parent facade owning child `mod` declarations and `pub use` exports. Next cursor returns to `root.contracts.qrpc_core`.
+**最新状态补充(BE-001SP-01)**: `root.contracts.qrpc_core` root.contracts.qrpc_core parent residual judgment selects rfc_execution_contracts；下一步: BE-001SQ-01 root.contracts.qrpc_core.rfc_execution_contracts baseline_plan。
