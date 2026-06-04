@@ -255,3 +255,4 @@ Latest recursive supplement: BE-001QW-03 closed `contracts.qrpc_core.strategy_ir
 Latest recursive supplement: BE-001QX-01 selected `contracts.qrpc_core.strategy_ir.root_validation`; root Strategy IR DTO, public validation methods, private validation helpers, and local validation tests remain frozen until its baseline.
 Latest recursive supplement: BE-001QY-01 froze the `root_validation` extraction baseline; next step may move only `StrategyIr`, public validation methods, private validation helpers, and local Strategy IR tests under the Strategy IR parent.
 Latest recursive supplement: BE-001QY-02 extracted `contracts.qrpc_core.strategy_ir.root_validation` into a private child module while preserving Strategy IR parent re-exports and qrpc-core tests.
+Latest recursive supplement: BE-001QY-03 kept `contracts.qrpc_core.strategy_ir.root_validation` open with `continue_split: true`; next child candidate is `identity_required_validation`.
