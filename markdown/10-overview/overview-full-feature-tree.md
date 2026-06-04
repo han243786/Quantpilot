@@ -4058,3 +4058,5 @@ Recursive boundary supplement: BE-001QB-02 `root.contracts.qrpc_core.plugin_cont
 - `qrpc_core/src/plugin/manifest_validation.rs` - Extracted qrpc plugin manifest schema and validation child
 Recursive boundary supplement: BE-001QB-03 `root.contracts.qrpc_core.plugin_contract.manifest_validation` single leaf closeout sets stop_split true; next step: BE-001QC-01 root.contracts.qrpc_core.plugin_contract parent_residual_judgment selects registry.
 - `markdown/06-milestones/v4.16.0/941-root.contracts.qrpc_core.plugin_contract.manifest_validation.single_leaf_closeout.md` - v4.16.0 BE-001QB-03 root.contracts.qrpc_core.plugin_contract.manifest_validation single leaf closeout
+Recursive boundary supplement: BE-001QC-01 `root.contracts.qrpc_core.plugin_contract` parent residual judgment selects registry; next step: BE-001QD-01 root.contracts.qrpc_core.plugin_contract.registry baseline_plan.
+- `markdown/06-milestones/v4.16.0/942-root.contracts.qrpc_core.plugin_contract.parent_residual_judgment.registry.md` - v4.16.0 BE-001QC-01 root.contracts.qrpc_core.plugin_contract parent residual judgment selects registry
