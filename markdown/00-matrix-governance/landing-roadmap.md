@@ -298,3 +298,4 @@ Latest recursive supplement: BE-001RS-03 kept `contracts.qrpc_core.artifact_spec
 Latest recursive supplement: BE-001RT-01 selected `contracts.qrpc_core.artifact_specs.canonical_digest`; digest algorithm, digest DTO, and canonical JSON SHA-256 helper remain frozen until its baseline.
 Latest recursive supplement: BE-001RU-01 froze the `canonical_digest` extraction baseline; next step may move only digest algorithm, digest DTO, and canonical JSON SHA-256 helper into an artifact specs child module.
 Latest recursive supplement: BE-001RU-02 extracted `contracts.qrpc_core.artifact_specs.canonical_digest` into a private artifact specs child module while preserving parent and crate-root public exports.
+Latest recursive supplement: BE-001RU-03 closed `contracts.qrpc_core.artifact_specs.canonical_digest` with `stop_split: true`; next artifact specs residual candidate is `run_backtest_specs`.
