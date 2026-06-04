@@ -1345,3 +1345,4 @@
 | v4.16.0 / BE-001QY-01 | `v4.16.0/982-root.contracts.qrpc_core.strategy_ir.root_validation.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.root_validation` baseline plan |
 | v4.16.0 / BE-001QY-02 | `v4.16.0/983-root.contracts.qrpc_core.strategy_ir.root_validation.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.root_validation` actual extraction complete |
 | v4.16.0 / BE-001QY-03 | `v4.16.0/984-root.contracts.qrpc_core.strategy_ir.root_validation.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.root_validation` continues split |
+| v4.16.0 / BE-001QZ-01 | `v4.16.0/985-root.contracts.qrpc_core.strategy_ir.root_validation.parent_residual_judgment.identity_required_validation.md` | `root.contracts.qrpc_core.strategy_ir.root_validation` selects `identity_required_validation` |
