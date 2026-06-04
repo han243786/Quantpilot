@@ -4091,3 +4091,5 @@ Recursive boundary supplement: BE-001QK-02 `root.contracts.qrpc_core.strategy_ir
 - `qrpc_core/src/strategy_ir/metadata_source.rs` - Extracted Strategy IR metadata and source DTO child
 Recursive boundary supplement: BE-001QK-03 `root.contracts.qrpc_core.strategy_ir.metadata_source` single leaf closeout sets stop_split true; next step: BE-001QL-01 root.contracts.qrpc_core.strategy_ir parent_residual_judgment selects signal_indicator.
 - `markdown/06-milestones/v4.16.0/956-root.contracts.qrpc_core.strategy_ir.metadata_source.single_leaf_closeout.md` - v4.16.0 BE-001QK-03 root.contracts.qrpc_core.strategy_ir.metadata_source single leaf closeout
+Recursive boundary supplement: BE-001QL-01 `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects signal_indicator; next step: BE-001QM-01 root.contracts.qrpc_core.strategy_ir.signal_indicator baseline_plan.
+- `markdown/06-milestones/v4.16.0/957-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.signal_indicator.md` - v4.16.0 BE-001QL-01 root.contracts.qrpc_core.strategy_ir parent residual judgment selects signal_indicator

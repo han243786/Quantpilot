@@ -1045,3 +1045,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001QK-01 `root.contracts.qrpc_core.strategy_ir.metadata_source` equivalence baseline and extraction plan; next step: BE-001QK-02 root.contracts.qrpc_core.strategy_ir.metadata_source extract_closeout.
 - BE-001QK-02 `root.contracts.qrpc_core.strategy_ir.metadata_source` actual extraction complete; next step: BE-001QK-03 root.contracts.qrpc_core.strategy_ir.metadata_source single_leaf_closeout.
 - BE-001QK-03 `root.contracts.qrpc_core.strategy_ir.metadata_source` single leaf closeout sets `stop_split: true`; next step: BE-001QL-01 root.contracts.qrpc_core.strategy_ir parent_residual_judgment selects signal_indicator.
+- BE-001QL-01 `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects `contracts.qrpc_core.strategy_ir.signal_indicator`; next step: BE-001QM-01 root.contracts.qrpc_core.strategy_ir.signal_indicator baseline_plan.

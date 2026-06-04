@@ -1317,3 +1317,4 @@
 | v4.16.0 / BE-001QK-01 | `v4.16.0/954-root.contracts.qrpc_core.strategy_ir.metadata_source.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.metadata_source` baseline plan |
 | v4.16.0 / BE-001QK-02 | `v4.16.0/955-root.contracts.qrpc_core.strategy_ir.metadata_source.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.metadata_source` actual extraction complete |
 | v4.16.0 / BE-001QK-03 | `v4.16.0/956-root.contracts.qrpc_core.strategy_ir.metadata_source.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.metadata_source` single leaf closeout |
+| v4.16.0 / BE-001QL-01 | `v4.16.0/957-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.signal_indicator.md` | `root.contracts.qrpc_core.strategy_ir` selects `signal_indicator` |
