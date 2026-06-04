@@ -1102,3 +1102,4 @@
 | v4.16.0 / BE-001TI-02 | 新增: `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract actual extraction complete |
 | v4.16.0 / BE-001TI-03 | 新增: `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract single leaf closeout continues split |
 | v4.16.0 / BE-001TJ-01 | 新增: `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract parent residual judgment selects root_graph_contract |
+| v4.16.0 / BE-001TK-01 | 新增: `root.contracts.core_ir.v1_contract.root_graph_contract` root.contracts.core_ir.v1_contract.root_graph_contract equivalence baseline and extraction plan |
