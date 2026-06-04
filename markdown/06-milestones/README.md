@@ -1423,3 +1423,4 @@
 | v4.16.0 / BE-001SL-03 | `v4.16.0/1060-root.contracts.qrpc_core.runtime_io_contract.runtime_output.single_leaf_closeout.md` | `root.contracts.qrpc_core.runtime_io_contract.runtime_output` single leaf closeout |
 | v4.16.0 / BE-001SM-01 | `v4.16.0/1061-root.contracts.qrpc_core.runtime_io_contract.parent_residual_judgment.backtest_output.md` | `root.contracts.qrpc_core.runtime_io_contract` selects `backtest_output` |
 | v4.16.0 / BE-001SN-01 | `v4.16.0/1062-root.contracts.qrpc_core.runtime_io_contract.backtest_output.baseline_plan.md` | `root.contracts.qrpc_core.runtime_io_contract.backtest_output` baseline plan |
+| v4.16.0 / BE-001SN-02 | `v4.16.0/1063-root.contracts.qrpc_core.runtime_io_contract.backtest_output.extract_closeout.md` | `root.contracts.qrpc_core.runtime_io_contract.backtest_output` actual extraction complete |
