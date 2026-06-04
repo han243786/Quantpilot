@@ -4295,3 +4295,5 @@ Recursive boundary supplement: BE-001SF-01 `root.contracts.qrpc_core.runtime_io_
 Recursive boundary supplement: BE-001SF-02 `root.contracts.qrpc_core.runtime_io_contract.decision_flow` actual extraction complete; next step: BE-001SF-03 root.contracts.qrpc_core.runtime_io_contract.decision_flow single_leaf_closeout.
 - `markdown/06-milestones/v4.16.0/1047-root.contracts.qrpc_core.runtime_io_contract.decision_flow.extract_closeout.md` - v4.16.0 BE-001SF-02 root.contracts.qrpc_core.runtime_io_contract.decision_flow actual extraction closeout
 - `qrpc_core/src/runtime_io_contract/decision_flow.rs` - Extracted qrpc-core runtime IO intent/action/target/agent/risk decision DTOs
+Recursive boundary supplement: BE-001SF-03 `root.contracts.qrpc_core.runtime_io_contract.decision_flow` single leaf closeout sets stop_split true; next step: BE-001SG-01 root.contracts.qrpc_core.runtime_io_contract parent_residual_judgment selects execution_io.
+- `markdown/06-milestones/v4.16.0/1048-root.contracts.qrpc_core.runtime_io_contract.decision_flow.single_leaf_closeout.md` - v4.16.0 BE-001SF-03 root.contracts.qrpc_core.runtime_io_contract.decision_flow single leaf closeout

@@ -1047,3 +1047,4 @@
 | v4.16.0 / BE-001SE-01 | Added: `root.contracts.qrpc_core.runtime_io_contract` parent residual judgment selects `decision_flow` |
 | v4.16.0 / BE-001SF-01 | Added: `root.contracts.qrpc_core.runtime_io_contract.decision_flow` baseline plan |
 | v4.16.0 / BE-001SF-02 | Added: `root.contracts.qrpc_core.runtime_io_contract.decision_flow` actual extraction closeout |
+| v4.16.0 / BE-001SF-03 | Added: `root.contracts.qrpc_core.runtime_io_contract.decision_flow` single leaf closeout |
