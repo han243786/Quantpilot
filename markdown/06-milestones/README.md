@@ -1409,3 +1409,4 @@
 | v4.16.0 / BE-001SF-01 | `v4.16.0/1046-root.contracts.qrpc_core.runtime_io_contract.decision_flow.baseline_plan.md` | `root.contracts.qrpc_core.runtime_io_contract.decision_flow` baseline plan |
 | v4.16.0 / BE-001SF-02 | `v4.16.0/1047-root.contracts.qrpc_core.runtime_io_contract.decision_flow.extract_closeout.md` | `root.contracts.qrpc_core.runtime_io_contract.decision_flow` actual extraction complete |
 | v4.16.0 / BE-001SF-03 | `v4.16.0/1048-root.contracts.qrpc_core.runtime_io_contract.decision_flow.single_leaf_closeout.md` | `root.contracts.qrpc_core.runtime_io_contract.decision_flow` single leaf closeout |
+| v4.16.0 / BE-001SG-01 | `v4.16.0/1049-root.contracts.qrpc_core.runtime_io_contract.parent_residual_judgment.execution_io.md` | `root.contracts.qrpc_core.runtime_io_contract` selects `execution_io` |
