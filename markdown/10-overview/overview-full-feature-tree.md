@@ -4245,3 +4245,6 @@ Recursive boundary supplement: BE-001RT-01 `root.contracts.qrpc_core.artifact_sp
 - `markdown/06-milestones/v4.16.0/1024-root.contracts.qrpc_core.artifact_specs.parent_residual_judgment.canonical_digest.md` - v4.16.0 BE-001RT-01 root.contracts.qrpc_core.artifact_specs parent residual judgment selects canonical_digest
 Recursive boundary supplement: BE-001RU-01 `root.contracts.qrpc_core.artifact_specs.canonical_digest` equivalence baseline frozen; next step: BE-001RU-02 root.contracts.qrpc_core.artifact_specs.canonical_digest extract_closeout.
 - `markdown/06-milestones/v4.16.0/1025-root.contracts.qrpc_core.artifact_specs.canonical_digest.baseline_plan.md` - v4.16.0 BE-001RU-01 root.contracts.qrpc_core.artifact_specs.canonical_digest baseline plan
+Recursive boundary supplement: BE-001RU-02 `root.contracts.qrpc_core.artifact_specs.canonical_digest` actual extraction complete; next step: BE-001RU-03 root.contracts.qrpc_core.artifact_specs.canonical_digest single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/1026-root.contracts.qrpc_core.artifact_specs.canonical_digest.extract_closeout.md` - v4.16.0 BE-001RU-02 root.contracts.qrpc_core.artifact_specs.canonical_digest actual extraction closeout
+- `qrpc_core/src/artifact_specs/canonical_digest.rs` - Extracted qrpc-core artifact digest algorithm, digest DTO, and canonical JSON SHA-256 helper

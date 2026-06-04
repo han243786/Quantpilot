@@ -1025,3 +1025,4 @@
 | v4.16.0 / BE-001RS-03 | Added: `root.contracts.qrpc_core.artifact_specs` single leaf closeout continues split |
 | v4.16.0 / BE-001RT-01 | Added: `root.contracts.qrpc_core.artifact_specs` parent residual judgment selects `canonical_digest` |
 | v4.16.0 / BE-001RU-01 | Added: `root.contracts.qrpc_core.artifact_specs.canonical_digest` baseline plan |
+| v4.16.0 / BE-001RU-02 | Added: `root.contracts.qrpc_core.artifact_specs.canonical_digest` actual extraction closeout |
