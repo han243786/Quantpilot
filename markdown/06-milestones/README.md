@@ -1367,3 +1367,4 @@
 | v4.16.0 / BE-001RI-02 | `v4.16.0/1004-root.contracts.qrpc_core.strategy_ir.root_validation.unknown_marker_validation.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.unknown_marker_validation` actual extraction complete |
 | v4.16.0 / BE-001RI-03 | `v4.16.0/1005-root.contracts.qrpc_core.strategy_ir.root_validation.unknown_marker_validation.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.unknown_marker_validation` single leaf closeout |
 | v4.16.0 / BE-001RJ-01 | `v4.16.0/1006-root.contracts.qrpc_core.strategy_ir.root_validation.parent_residual_judgment.test_fixture.md` | `root.contracts.qrpc_core.strategy_ir.root_validation` selects `test_fixture` |
+| v4.16.0 / BE-001RK-01 | `v4.16.0/1007-root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture` baseline plan |

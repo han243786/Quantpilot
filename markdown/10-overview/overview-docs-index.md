@@ -1006,3 +1006,4 @@
 | v4.16.0 / BE-001RI-02 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.unknown_marker_validation` actual extraction closeout |
 | v4.16.0 / BE-001RI-03 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.unknown_marker_validation` single leaf closeout |
 | v4.16.0 / BE-001RJ-01 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation` parent residual judgment selects `test_fixture` |
+| v4.16.0 / BE-001RK-01 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture` baseline plan |

@@ -278,3 +278,4 @@ Latest recursive supplement: BE-001RI-01 froze the `unknown_marker_validation` e
 Latest recursive supplement: BE-001RI-02 extracted `contracts.qrpc_core.strategy_ir.root_validation.unknown_marker_validation` into a private child module while preserving validation ordering, parent wrapper bridge mediation, and qrpc-core checks.
 Latest recursive supplement: BE-001RI-03 closed `contracts.qrpc_core.strategy_ir.root_validation.unknown_marker_validation` with `stop_split: true`; next step returns to root_validation parent residual judgment.
 Latest recursive supplement: BE-001RJ-01 selected `contracts.qrpc_core.strategy_ir.root_validation.test_fixture`; local sample JSON and root validation unit tests remain frozen until its baseline.
+Latest recursive supplement: BE-001RK-01 froze the `test_fixture` extraction baseline; next step may move only root validation local tests and `SAMPLE_JSON` into a cfg-test child file.
