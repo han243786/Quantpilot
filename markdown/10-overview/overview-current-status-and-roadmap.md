@@ -1029,3 +1029,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001QA-01 `root.contracts.qrpc_core.plugin_contract` parent residual judgment selects `contracts.qrpc_core.plugin_contract.manifest_validation`; next step: BE-001QB-01 root.contracts.qrpc_core.plugin_contract.manifest_validation baseline_plan.
 - BE-001QB-01 `root.contracts.qrpc_core.plugin_contract.manifest_validation` equivalence baseline and extraction plan; next step: BE-001QB-02 root.contracts.qrpc_core.plugin_contract.manifest_validation extract_closeout.
 - BE-001QB-02 `root.contracts.qrpc_core.plugin_contract.manifest_validation` actual extraction complete; next step: BE-001QB-03 root.contracts.qrpc_core.plugin_contract.manifest_validation single_leaf_closeout.
+- BE-001QB-03 `root.contracts.qrpc_core.plugin_contract.manifest_validation` single leaf closeout sets `stop_split: true`; next step: BE-001QC-01 root.contracts.qrpc_core.plugin_contract parent_residual_judgment selects registry.

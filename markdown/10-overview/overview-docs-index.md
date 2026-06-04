@@ -940,3 +940,4 @@
 | v4.16.0 / BE-001QA-01 | Added: `root.contracts.qrpc_core.plugin_contract` parent residual judgment selects `manifest_validation` |
 | v4.16.0 / BE-001QB-01 | Added: `root.contracts.qrpc_core.plugin_contract.manifest_validation` baseline plan |
 | v4.16.0 / BE-001QB-02 | Added: `root.contracts.qrpc_core.plugin_contract.manifest_validation` actual extraction closeout |
+| v4.16.0 / BE-001QB-03 | Added: `root.contracts.qrpc_core.plugin_contract.manifest_validation` single leaf closeout |

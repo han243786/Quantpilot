@@ -212,3 +212,4 @@ Latest recursive supplement: BE-001PZ-03 closed `contracts.qrpc_core.plugin_cont
 Latest recursive supplement: BE-001QA-01 selected `contracts.qrpc_core.plugin_contract.manifest_validation`; manifest fields, serde attributes, validation rules, and all Rust behavior remain frozen until its baseline.
 Latest recursive supplement: BE-001QB-01 froze the `manifest_validation` extraction baseline; next step may move only manifest schema DTOs and `PluginManifest::validate` under the plugin contract parent.
 Latest recursive supplement: BE-001QB-02 extracted `contracts.qrpc_core.plugin_contract.manifest_validation` into a private child module while preserving plugin parent re-exports and qrpc-core tests.
+Latest recursive supplement: BE-001QB-03 closed `contracts.qrpc_core.plugin_contract.manifest_validation` with `stop_split: true`; next plugin contract residual candidate is `registry`.
