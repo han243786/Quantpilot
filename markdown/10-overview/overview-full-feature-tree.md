@@ -4136,3 +4136,5 @@ Recursive boundary supplement: BE-001QU-02 `root.contracts.qrpc_core.strategy_ir
 - `qrpc_core/src/strategy_ir/execution_contract.rs` - Extracted Strategy IR execution DTO child
 Recursive boundary supplement: BE-001QU-03 `root.contracts.qrpc_core.strategy_ir.execution_contract` single leaf closeout sets stop_split true; next step: BE-001QV-01 root.contracts.qrpc_core.strategy_ir parent_residual_judgment selects gap_unknown_annotation.
 - `markdown/06-milestones/v4.16.0/976-root.contracts.qrpc_core.strategy_ir.execution_contract.single_leaf_closeout.md` - v4.16.0 BE-001QU-03 root.contracts.qrpc_core.strategy_ir.execution_contract single leaf closeout
+Recursive boundary supplement: BE-001QV-01 `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects gap_unknown_annotation; next step: BE-001QW-01 root.contracts.qrpc_core.strategy_ir.gap_unknown_annotation baseline_plan.
+- `markdown/06-milestones/v4.16.0/977-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.gap_unknown_annotation.md` - v4.16.0 BE-001QV-01 root.contracts.qrpc_core.strategy_ir parent residual judgment selects gap_unknown_annotation

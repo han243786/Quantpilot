@@ -1337,3 +1337,4 @@
 | v4.16.0 / BE-001QU-01 | `v4.16.0/974-root.contracts.qrpc_core.strategy_ir.execution_contract.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.execution_contract` baseline plan |
 | v4.16.0 / BE-001QU-02 | `v4.16.0/975-root.contracts.qrpc_core.strategy_ir.execution_contract.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.execution_contract` actual extraction complete |
 | v4.16.0 / BE-001QU-03 | `v4.16.0/976-root.contracts.qrpc_core.strategy_ir.execution_contract.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.execution_contract` single leaf closeout |
+| v4.16.0 / BE-001QV-01 | `v4.16.0/977-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.gap_unknown_annotation.md` | `root.contracts.qrpc_core.strategy_ir` selects `gap_unknown_annotation` |
