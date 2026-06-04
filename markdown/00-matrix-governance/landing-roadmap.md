@@ -218,3 +218,4 @@ Latest recursive supplement: BE-001QD-01 froze the `registry` extraction baselin
 Latest recursive supplement: BE-001QD-02 extracted `contracts.qrpc_core.plugin_contract.registry` into a private child module while preserving plugin parent re-exports and qrpc-core tests.
 Latest recursive supplement: BE-001QD-03 closed `contracts.qrpc_core.plugin_contract.registry` with `stop_split: true`; all plugin_contract children are now ready for parent closeout.
 Latest recursive supplement: BE-001QE-01 closed `contracts.qrpc_core.plugin_contract`; the next qrpc_core residual candidate is `strategy_ir`.
+Latest recursive supplement: BE-001QF-01 selected `contracts.qrpc_core.strategy_ir`; Strategy IR DTOs, validation behavior, indicator kind surfaces, gap annotations, and all Rust behavior remain frozen until its baseline.

@@ -1035,3 +1035,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001QD-02 `root.contracts.qrpc_core.plugin_contract.registry` actual extraction complete; next step: BE-001QD-03 root.contracts.qrpc_core.plugin_contract.registry single_leaf_closeout.
 - BE-001QD-03 `root.contracts.qrpc_core.plugin_contract.registry` single leaf closeout sets `stop_split: true`; next step: BE-001QE-01 root.contracts.qrpc_core.plugin_contract parent_closeout.
 - BE-001QE-01 `root.contracts.qrpc_core.plugin_contract` parent closeout; next step: BE-001QF-01 root.contracts.qrpc_core parent_residual_judgment selects strategy_ir.
+- BE-001QF-01 `root.contracts.qrpc_core` parent residual judgment selects `contracts.qrpc_core.strategy_ir`; next step: BE-001QG-01 root.contracts.qrpc_core.strategy_ir baseline_plan.
