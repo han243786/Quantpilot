@@ -307,3 +307,4 @@ Latest recursive supplement: BE-001RX-01 selected `contracts.qrpc_core.artifact_
 Latest recursive supplement: BE-001RY-01 froze the `artifact_bundle_contract` extraction baseline; next step may move only strategy/core-IR/compile artifact DTOs and bundle contracts into an artifact specs child module.
 Latest recursive supplement: BE-001RY-02 extracted `contracts.qrpc_core.artifact_specs.artifact_bundle_contract` into a private artifact specs child module while preserving parent and crate-root public exports.
 Latest recursive supplement: BE-001RY-03 closed `contracts.qrpc_core.artifact_specs.artifact_bundle_contract` with `stop_split: true`; next step returns to artifact specs parent residual judgment.
+Latest recursive supplement: BE-001RZ-01 closed `contracts.qrpc_core.artifact_specs` as a compact parent facade; next qrpc_core residual candidate is `runtime_io_contract`.
