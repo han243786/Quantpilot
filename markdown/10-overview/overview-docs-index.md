@@ -997,3 +997,4 @@
 | v4.16.0 / BE-001RE-01 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.risk_validation` baseline plan |
 | v4.16.0 / BE-001RE-02 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.risk_validation` actual extraction closeout |
 | v4.16.0 / BE-001RE-03 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.risk_validation` single leaf closeout |
+| v4.16.0 / BE-001RF-01 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation` parent residual judgment selects `data_execution_validation` |
