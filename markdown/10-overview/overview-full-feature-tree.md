@@ -4100,3 +4100,5 @@ Recursive boundary supplement: BE-001QM-02 `root.contracts.qrpc_core.strategy_ir
 - `qrpc_core/src/strategy_ir/signal_indicator.rs` - Extracted Strategy IR signal/indicator DTO and registry child
 Recursive boundary supplement: BE-001QM-03 `root.contracts.qrpc_core.strategy_ir.signal_indicator` single leaf closeout sets stop_split true; next step: BE-001QN-01 root.contracts.qrpc_core.strategy_ir parent_residual_judgment selects logic_position.
 - `markdown/06-milestones/v4.16.0/960-root.contracts.qrpc_core.strategy_ir.signal_indicator.single_leaf_closeout.md` - v4.16.0 BE-001QM-03 root.contracts.qrpc_core.strategy_ir.signal_indicator single leaf closeout
+Recursive boundary supplement: BE-001QN-01 `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects logic_position; next step: BE-001QO-01 root.contracts.qrpc_core.strategy_ir.logic_position baseline_plan.
+- `markdown/06-milestones/v4.16.0/961-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.logic_position.md` - v4.16.0 BE-001QN-01 root.contracts.qrpc_core.strategy_ir parent residual judgment selects logic_position
