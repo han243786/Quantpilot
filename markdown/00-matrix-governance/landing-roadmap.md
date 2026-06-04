@@ -251,3 +251,4 @@ Latest recursive supplement: BE-001QU-03 closed `contracts.qrpc_core.strategy_ir
 Latest recursive supplement: BE-001QV-01 selected `contracts.qrpc_core.strategy_ir.gap_unknown_annotation`; gap annotation fields, gap enums, and strategy unknown marker fields remain frozen until its baseline.
 Latest recursive supplement: BE-001QW-01 froze the `gap_unknown_annotation` extraction baseline; next step may move only `GapAnnotation`, `GapType`, `GapSeverity`, and `StrategyUnknown` under the Strategy IR parent.
 Latest recursive supplement: BE-001QW-02 extracted `contracts.qrpc_core.strategy_ir.gap_unknown_annotation` into a private child module while preserving Strategy IR parent re-exports and qrpc-core tests.
+Latest recursive supplement: BE-001QW-03 closed `contracts.qrpc_core.strategy_ir.gap_unknown_annotation` with `stop_split: true`; next Strategy IR residual candidate is `root_validation`.

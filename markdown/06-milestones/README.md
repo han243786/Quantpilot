@@ -1340,3 +1340,4 @@
 | v4.16.0 / BE-001QV-01 | `v4.16.0/977-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.gap_unknown_annotation.md` | `root.contracts.qrpc_core.strategy_ir` selects `gap_unknown_annotation` |
 | v4.16.0 / BE-001QW-01 | `v4.16.0/978-root.contracts.qrpc_core.strategy_ir.gap_unknown_annotation.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.gap_unknown_annotation` baseline plan |
 | v4.16.0 / BE-001QW-02 | `v4.16.0/979-root.contracts.qrpc_core.strategy_ir.gap_unknown_annotation.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.gap_unknown_annotation` actual extraction complete |
+| v4.16.0 / BE-001QW-03 | `v4.16.0/980-root.contracts.qrpc_core.strategy_ir.gap_unknown_annotation.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.gap_unknown_annotation` single leaf closeout |
