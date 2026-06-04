@@ -1014,3 +1014,4 @@
 | v4.16.0 / BE-001RN-01 | Added: `root.contracts.qrpc_core` parent residual judgment selects `protocol_primitives` |
 | v4.16.0 / BE-001RO-01 | Added: `root.contracts.qrpc_core.protocol_primitives` baseline plan |
 | v4.16.0 / BE-001RO-02 | Added: `root.contracts.qrpc_core.protocol_primitives` actual extraction closeout |
+| v4.16.0 / BE-001RO-03 | Added: `root.contracts.qrpc_core.protocol_primitives` single leaf closeout |

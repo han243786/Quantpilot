@@ -4221,3 +4221,5 @@ Recursive boundary supplement: BE-001RO-01 `root.contracts.qrpc_core.protocol_pr
 Recursive boundary supplement: BE-001RO-02 `root.contracts.qrpc_core.protocol_primitives` actual extraction complete; next step: BE-001RO-03 root.contracts.qrpc_core.protocol_primitives single_leaf_closeout.
 - `markdown/06-milestones/v4.16.0/1014-root.contracts.qrpc_core.protocol_primitives.extract_closeout.md` - v4.16.0 BE-001RO-02 root.contracts.qrpc_core.protocol_primitives actual extraction closeout
 - `qrpc_core/src/protocol_primitives.rs` - Extracted qrpc-core primitive constants, enums, symbol serde/parse behavior, display behavior, and defaults
+Recursive boundary supplement: BE-001RO-03 `root.contracts.qrpc_core.protocol_primitives` single leaf closeout sets stop_split true; next step: BE-001RP-01 root.contracts.qrpc_core parent_residual_judgment selects runtime_protocol_config.
+- `markdown/06-milestones/v4.16.0/1015-root.contracts.qrpc_core.protocol_primitives.single_leaf_closeout.md` - v4.16.0 BE-001RO-03 root.contracts.qrpc_core.protocol_primitives single leaf closeout
