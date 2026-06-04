@@ -943,3 +943,4 @@
 | v4.16.0 / BE-001QB-03 | Added: `root.contracts.qrpc_core.plugin_contract.manifest_validation` single leaf closeout |
 | v4.16.0 / BE-001QC-01 | Added: `root.contracts.qrpc_core.plugin_contract` parent residual judgment selects `registry` |
 | v4.16.0 / BE-001QD-01 | Added: `root.contracts.qrpc_core.plugin_contract.registry` baseline plan |
+| v4.16.0 / BE-001QD-02 | Added: `root.contracts.qrpc_core.plugin_contract.registry` actual extraction closeout |
