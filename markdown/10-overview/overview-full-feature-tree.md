@@ -4292,3 +4292,6 @@ Recursive boundary supplement: BE-001SE-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1045-root.contracts.qrpc_core.runtime_io_contract.parent_residual_judgment.decision_flow.md` - v4.16.0 BE-001SE-01 root.contracts.qrpc_core.runtime_io_contract parent residual judgment selects decision_flow
 Recursive boundary supplement: BE-001SF-01 `root.contracts.qrpc_core.runtime_io_contract.decision_flow` equivalence baseline frozen; next step: BE-001SF-02 root.contracts.qrpc_core.runtime_io_contract.decision_flow extract_closeout.
 - `markdown/06-milestones/v4.16.0/1046-root.contracts.qrpc_core.runtime_io_contract.decision_flow.baseline_plan.md` - v4.16.0 BE-001SF-01 root.contracts.qrpc_core.runtime_io_contract.decision_flow baseline plan
+Recursive boundary supplement: BE-001SF-02 `root.contracts.qrpc_core.runtime_io_contract.decision_flow` actual extraction complete; next step: BE-001SF-03 root.contracts.qrpc_core.runtime_io_contract.decision_flow single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/1047-root.contracts.qrpc_core.runtime_io_contract.decision_flow.extract_closeout.md` - v4.16.0 BE-001SF-02 root.contracts.qrpc_core.runtime_io_contract.decision_flow actual extraction closeout
+- `qrpc_core/src/runtime_io_contract/decision_flow.rs` - Extracted qrpc-core runtime IO intent/action/target/agent/risk decision DTOs
