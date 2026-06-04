@@ -4402,3 +4402,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1094-root.contracts.qrpc_core.test_fixture.single_leaf_closeout.md` - v4.16.0 BE-001TD-03 root.contracts.qrpc_core.test_fixture single leaf closeout stops split
 递归边界补充: BE-001TE-01 `root.contracts.qrpc_core` root.contracts.qrpc_core parent residual judgment closes parent；下一步: BE-001TF-01 root.contracts parent_residual_judgment selects core_ir。
 - `markdown/06-milestones/v4.16.0/1095-root.contracts_qrpc_core.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001TE-01 root.contracts.qrpc_core parent residual judgment closes parent
+递归边界补充: BE-001TF-01 `root.contracts` root.contracts parent residual judgment selects core_ir；下一步: BE-001TG-01 root.contracts.core_ir baseline_plan。
+- `markdown/06-milestones/v4.16.0/1096-root.contracts.parent_residual_judgment.core_ir.md` - v4.16.0 BE-001TF-01 root.contracts parent residual judgment selects core_ir

@@ -1095,3 +1095,4 @@
 | v4.16.0 / BE-001TD-02 | 新增: `root.contracts.qrpc_core.test_fixture` root.contracts.qrpc_core.test_fixture actual extraction complete |
 | v4.16.0 / BE-001TD-03 | 新增: `root.contracts.qrpc_core.test_fixture` root.contracts.qrpc_core.test_fixture single leaf closeout stops split |
 | v4.16.0 / BE-001TE-01 | 新增: `root.contracts.qrpc_core` root.contracts.qrpc_core parent residual judgment closes parent |
+| v4.16.0 / BE-001TF-01 | 新增: `root.contracts` root.contracts parent residual judgment selects core_ir |
