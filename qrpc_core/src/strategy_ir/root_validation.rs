@@ -11,6 +11,7 @@ mod data_execution_validation;
 mod identity_required_validation;
 mod risk_validation;
 mod signal_logic_validation;
+mod unknown_marker_validation;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
@@ -43,14 +44,7 @@ impl StrategyIr {
 
         data_execution_validation::validate_data_and_execution(self, &mut errors);
 
-        for (index, item) in self.unknowns.iter().enumerate() {
-            if item.path.trim().is_empty() {
-                errors.push(format!("unknowns[{index}].path 是必需的"));
-            }
-            if item.reason.trim().is_empty() {
-                errors.push(format!("unknowns[{index}].reason 是必需的"));
-            }
-        }
+        unknown_marker_validation::validate_unknowns(self, &mut errors);
 
         errors
     }
@@ -70,11 +64,7 @@ fn indicator_kind_supported(kind: &IndicatorKind) -> bool {
 }
 
 fn validate_unknownable<T>(value: &KnownOrUnknown<T>, path: &str, errors: &mut Vec<String>) {
-    if let KnownOrUnknown::Unknown(marker) = value {
-        if marker != "unknown" {
-            errors.push(format!("{path} 未知标记必须为 \"unknown\""));
-        }
-    }
+    unknown_marker_validation::validate_unknownable(value, path, errors);
 }
 
 fn validate_unknownable_opt<T>(
@@ -82,9 +72,7 @@ fn validate_unknownable_opt<T>(
     path: &str,
     errors: &mut Vec<String>,
 ) {
-    if let Some(value) = value {
-        validate_unknownable(value, path, errors);
-    }
+    unknown_marker_validation::validate_unknownable_opt(value, path, errors);
 }
 
 #[cfg(test)]
