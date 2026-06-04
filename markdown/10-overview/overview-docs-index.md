@@ -966,3 +966,4 @@
 | v4.16.0 / BE-001QO-03 | Added: `root.contracts.qrpc_core.strategy_ir.logic_position` single leaf closeout |
 | v4.16.0 / BE-001QP-01 | Added: `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects `risk_contract` |
 | v4.16.0 / BE-001QQ-01 | Added: `root.contracts.qrpc_core.strategy_ir.risk_contract` baseline plan |
+| v4.16.0 / BE-001QQ-02 | Added: `root.contracts.qrpc_core.strategy_ir.risk_contract` actual extraction closeout |
