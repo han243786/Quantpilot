@@ -1300,3 +1300,4 @@
 | v4.16.0 / BE-001PZ-03 | `v4.16.0/937-root.contracts.qrpc_core.plugin_contract.execution_security_dependency.single_leaf_closeout.md` | `root.contracts.qrpc_core.plugin_contract.execution_security_dependency` single leaf closeout |
 | v4.16.0 / BE-001QA-01 | `v4.16.0/938-root.contracts.qrpc_core.plugin_contract.parent_residual_judgment.manifest_validation.md` | `root.contracts.qrpc_core.plugin_contract` selects `manifest_validation` |
 | v4.16.0 / BE-001QB-01 | `v4.16.0/939-root.contracts.qrpc_core.plugin_contract.manifest_validation.baseline_plan.md` | `root.contracts.qrpc_core.plugin_contract.manifest_validation` baseline plan |
+| v4.16.0 / BE-001QB-02 | `v4.16.0/940-root.contracts.qrpc_core.plugin_contract.manifest_validation.extract_closeout.md` | `root.contracts.qrpc_core.plugin_contract.manifest_validation` actual extraction complete |

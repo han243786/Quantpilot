@@ -4053,3 +4053,6 @@ Recursive boundary supplement: BE-001QA-01 `root.contracts.qrpc_core.plugin_cont
 - `markdown/06-milestones/v4.16.0/938-root.contracts.qrpc_core.plugin_contract.parent_residual_judgment.manifest_validation.md` - v4.16.0 BE-001QA-01 root.contracts.qrpc_core.plugin_contract parent residual judgment selects manifest_validation
 Recursive boundary supplement: BE-001QB-01 `root.contracts.qrpc_core.plugin_contract.manifest_validation` equivalence baseline and extraction plan; next step: BE-001QB-02 root.contracts.qrpc_core.plugin_contract.manifest_validation extract_closeout.
 - `markdown/06-milestones/v4.16.0/939-root.contracts.qrpc_core.plugin_contract.manifest_validation.baseline_plan.md` - v4.16.0 BE-001QB-01 root.contracts.qrpc_core.plugin_contract.manifest_validation baseline plan
+Recursive boundary supplement: BE-001QB-02 `root.contracts.qrpc_core.plugin_contract.manifest_validation` actual extraction complete; next step: BE-001QB-03 root.contracts.qrpc_core.plugin_contract.manifest_validation single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/940-root.contracts.qrpc_core.plugin_contract.manifest_validation.extract_closeout.md` - v4.16.0 BE-001QB-02 root.contracts.qrpc_core.plugin_contract.manifest_validation actual extraction closeout
+- `qrpc_core/src/plugin/manifest_validation.rs` - Extracted qrpc plugin manifest schema and validation child
