@@ -949,3 +949,4 @@
 | v4.16.0 / BE-001QF-01 | Added: `root.contracts.qrpc_core` parent residual judgment selects `strategy_ir` |
 | v4.16.0 / BE-001QG-01 | Added: `root.contracts.qrpc_core.strategy_ir` baseline plan |
 | v4.16.0 / BE-001QH-01 | Added: `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects `version_unknown_error` |
+| v4.16.0 / BE-001QI-01 | Added: `root.contracts.qrpc_core.strategy_ir.version_unknown_error` baseline plan |

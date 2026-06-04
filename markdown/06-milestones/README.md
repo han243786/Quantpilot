@@ -1310,3 +1310,4 @@
 | v4.16.0 / BE-001QF-01 | `v4.16.0/947-root.contracts.qrpc_core.parent_residual_judgment.strategy_ir.md` | `root.contracts.qrpc_core` selects `strategy_ir` |
 | v4.16.0 / BE-001QG-01 | `v4.16.0/948-root.contracts.qrpc_core.strategy_ir.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir` baseline plan |
 | v4.16.0 / BE-001QH-01 | `v4.16.0/949-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.version_unknown_error.md` | `root.contracts.qrpc_core.strategy_ir` selects `version_unknown_error` |
+| v4.16.0 / BE-001QI-01 | `v4.16.0/950-root.contracts.qrpc_core.strategy_ir.version_unknown_error.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.version_unknown_error` baseline plan |
