@@ -1073,3 +1073,4 @@
 | v4.16.0 / BE-001SS-01 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts.data_request` root.contracts.qrpc_core.rfc_execution_contracts.data_request equivalence baseline and extraction plan |
 | v4.16.0 / BE-001SS-02 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts.data_request` root.contracts.qrpc_core.rfc_execution_contracts.data_request actual extraction complete |
 | v4.16.0 / BE-001SS-03 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts.data_request` root.contracts.qrpc_core.rfc_execution_contracts.data_request single leaf closeout stops split |
+| v4.16.0 / BE-001ST-01 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts` root.contracts.qrpc_core.rfc_execution_contracts parent residual judgment selects allocation |
