@@ -4227,3 +4227,6 @@ Recursive boundary supplement: BE-001RP-01 `root.contracts.qrpc_core` parent res
 - `markdown/06-milestones/v4.16.0/1016-root.contracts.qrpc_core.parent_residual_judgment.runtime_protocol_config.md` - v4.16.0 BE-001RP-01 root.contracts.qrpc_core parent residual judgment selects runtime_protocol_config
 Recursive boundary supplement: BE-001RQ-01 `root.contracts.qrpc_core.runtime_protocol_config` equivalence baseline frozen; next step: BE-001RQ-02 root.contracts.qrpc_core.runtime_protocol_config extract_closeout.
 - `markdown/06-milestones/v4.16.0/1017-root.contracts.qrpc_core.runtime_protocol_config.baseline_plan.md` - v4.16.0 BE-001RQ-01 root.contracts.qrpc_core.runtime_protocol_config baseline plan
+Recursive boundary supplement: BE-001RQ-02 `root.contracts.qrpc_core.runtime_protocol_config` actual extraction complete; next step: BE-001RQ-03 root.contracts.qrpc_core.runtime_protocol_config single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/1018-root.contracts.qrpc_core.runtime_protocol_config.extract_closeout.md` - v4.16.0 BE-001RQ-02 root.contracts.qrpc_core.runtime_protocol_config actual extraction closeout
+- `qrpc_core/src/runtime_protocol_config.rs` - Extracted qrpc-core runtime config DTOs, universe config DTOs, defaults, and compiled protocol container
