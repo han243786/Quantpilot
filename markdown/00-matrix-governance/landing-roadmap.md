@@ -287,3 +287,4 @@ Latest recursive supplement: BE-001RN-01 selected `contracts.qrpc_core.protocol_
 Latest recursive supplement: BE-001RO-01 froze the `protocol_primitives` extraction baseline; next step may move only primitive constants, enums, Symbol serde/parse/display/default behavior into a qrpc-core child module.
 Latest recursive supplement: BE-001RO-02 extracted `contracts.qrpc_core.protocol_primitives` into a private qrpc-core child module while preserving crate-root public exports and qrpc-core checks.
 Latest recursive supplement: BE-001RO-03 closed `contracts.qrpc_core.protocol_primitives` with `stop_split: true`; next qrpc_core residual candidate is `runtime_protocol_config`.
+Latest recursive supplement: BE-001RP-01 selected `contracts.qrpc_core.runtime_protocol_config`; runtime config DTOs, defaults, and compiled protocol container remain frozen until its baseline.
