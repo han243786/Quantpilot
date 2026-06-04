@@ -1085,3 +1085,4 @@
 | v4.16.0 / BE-001SY-01 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts.execution_feedback` root.contracts.qrpc_core.rfc_execution_contracts.execution_feedback equivalence baseline and extraction plan |
 | v4.16.0 / BE-001SY-02 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts.execution_feedback` root.contracts.qrpc_core.rfc_execution_contracts.execution_feedback actual extraction complete |
 | v4.16.0 / BE-001SY-03 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts.execution_feedback` root.contracts.qrpc_core.rfc_execution_contracts.execution_feedback single leaf closeout stops split |
+| v4.16.0 / BE-001SZ-01 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts` root.contracts.qrpc_core.rfc_execution_contracts parent residual judgment selects handoff_snapshot |
