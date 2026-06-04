@@ -217,3 +217,4 @@ Latest recursive supplement: BE-001QC-01 selected `contracts.qrpc_core.plugin_co
 Latest recursive supplement: BE-001QD-01 froze the `registry` extraction baseline; next step may move only `PluginRegistry` and its impl under the plugin contract parent.
 Latest recursive supplement: BE-001QD-02 extracted `contracts.qrpc_core.plugin_contract.registry` into a private child module while preserving plugin parent re-exports and qrpc-core tests.
 Latest recursive supplement: BE-001QD-03 closed `contracts.qrpc_core.plugin_contract.registry` with `stop_split: true`; all plugin_contract children are now ready for parent closeout.
+Latest recursive supplement: BE-001QE-01 closed `contracts.qrpc_core.plugin_contract`; the next qrpc_core residual candidate is `strategy_ir`.

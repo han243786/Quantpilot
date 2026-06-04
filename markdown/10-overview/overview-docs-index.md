@@ -945,3 +945,4 @@
 | v4.16.0 / BE-001QD-01 | Added: `root.contracts.qrpc_core.plugin_contract.registry` baseline plan |
 | v4.16.0 / BE-001QD-02 | Added: `root.contracts.qrpc_core.plugin_contract.registry` actual extraction closeout |
 | v4.16.0 / BE-001QD-03 | Added: `root.contracts.qrpc_core.plugin_contract.registry` single leaf closeout |
+| v4.16.0 / BE-001QE-01 | Added: `root.contracts.qrpc_core.plugin_contract` parent closeout |

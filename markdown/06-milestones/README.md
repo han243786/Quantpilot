@@ -1306,3 +1306,4 @@
 | v4.16.0 / BE-001QD-01 | `v4.16.0/943-root.contracts.qrpc_core.plugin_contract.registry.baseline_plan.md` | `root.contracts.qrpc_core.plugin_contract.registry` baseline plan |
 | v4.16.0 / BE-001QD-02 | `v4.16.0/944-root.contracts.qrpc_core.plugin_contract.registry.extract_closeout.md` | `root.contracts.qrpc_core.plugin_contract.registry` actual extraction complete |
 | v4.16.0 / BE-001QD-03 | `v4.16.0/945-root.contracts.qrpc_core.plugin_contract.registry.single_leaf_closeout.md` | `root.contracts.qrpc_core.plugin_contract.registry` single leaf closeout |
+| v4.16.0 / BE-001QE-01 | `v4.16.0/946-root.contracts.qrpc_core.plugin_contract.parent_closeout.md` | `root.contracts.qrpc_core.plugin_contract` parent closeout |

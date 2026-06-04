@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001QD-02",
-  "last_committed_sha": "bdcac3d9",
-  "current_parent": "root.contracts.qrpc_core.plugin_contract",
-  "current_step": "BE-001QE-01",
-  "current_phase": "parent_closeout",
+  "last_committed_batch": "BE-001QD-03",
+  "last_committed_sha": "4815ac1d",
+  "current_parent": "root.contracts.qrpc_core",
+  "current_step": "BE-001QF-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -98,7 +98,8 @@
     "contracts.qrpc_core.plugin_contract.capability_contract",
     "contracts.qrpc_core.plugin_contract.execution_security_dependency",
     "contracts.qrpc_core.plugin_contract.manifest_validation",
-    "contracts.qrpc_core.plugin_contract.registry"
+    "contracts.qrpc_core.plugin_contract.registry",
+    "contracts.qrpc_core.plugin_contract"
   ],
   "open_residuals": [
     "contracts.qrpc_core.strategy_ir",
@@ -114,7 +115,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.qrpc_core.plugin_contract",
+  "next_recommended_child": "root.contracts.qrpc_core.strategy_ir",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
