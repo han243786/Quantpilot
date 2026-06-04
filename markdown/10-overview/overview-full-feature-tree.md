@@ -4333,3 +4333,5 @@ Recursive boundary supplement: BE-001SN-02 `root.contracts.qrpc_core.runtime_io_
 - `qrpc_core/src/runtime_io_contract/backtest_output.rs` - Extracted qrpc-core runtime IO final backtest output DTOs and nested metric DTOs
 Recursive boundary supplement: BE-001SN-03 `root.contracts.qrpc_core.runtime_io_contract.backtest_output` single leaf closeout sets stop_split true; next step: BE-001SO-01 root.contracts.qrpc_core.runtime_io_contract parent_residual_judgment closes parent.
 - `markdown/06-milestones/v4.16.0/1064-root.contracts.qrpc_core.runtime_io_contract.backtest_output.single_leaf_closeout.md` - v4.16.0 BE-001SN-03 root.contracts.qrpc_core.runtime_io_contract.backtest_output single leaf closeout
+Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_contract` parent residual judgment closes parent; next step: BE-001SP-01 root.contracts.qrpc_core parent_residual_judgment selects rfc_execution_contracts.
+- `markdown/06-milestones/v4.16.0/1065-root.contracts.qrpc_core.runtime_io_contract.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001SO-01 root.contracts.qrpc_core.runtime_io_contract parent closeout

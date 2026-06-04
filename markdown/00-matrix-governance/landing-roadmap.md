@@ -336,3 +336,4 @@ Latest recursive supplement: BE-001SM-01 selected `contracts.qrpc_core.runtime_i
 Latest recursive supplement: BE-001SN-01 froze the `backtest_output` extraction baseline; next step may move only final backtest output DTOs and nested metric DTOs into a runtime IO child module.
 Latest recursive supplement: BE-001SN-02 extracted `contracts.qrpc_core.runtime_io_contract.backtest_output` into a private runtime IO child module; the runtime IO parent is now a pure facade.
 Latest recursive supplement: BE-001SN-03 closed `contracts.qrpc_core.runtime_io_contract.backtest_output` with `stop_split: true`; next step closes the runtime IO parent.
+Latest recursive supplement: BE-001SO-01 closed `contracts.qrpc_core.runtime_io_contract` as a compact parent facade; next qrpc_core residual candidate is `rfc_execution_contracts`.
