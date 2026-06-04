@@ -246,3 +246,4 @@ Latest recursive supplement: BE-001QS-02 extracted `contracts.qrpc_core.strategy
 Latest recursive supplement: BE-001QS-03 closed `contracts.qrpc_core.strategy_ir.data_requirement` with `stop_split: true`; next Strategy IR residual candidate is `execution_contract`.
 Latest recursive supplement: BE-001QT-01 selected `contracts.qrpc_core.strategy_ir.execution_contract`; execution fields, profile fields, default behavior, and unknownable execution values remain frozen until its baseline.
 Latest recursive supplement: BE-001QU-01 froze the `execution_contract` extraction baseline; next step may move only `StrategyExecution` and `StrategyExecutionProfileRef` under the Strategy IR parent.
+Latest recursive supplement: BE-001QU-02 extracted `contracts.qrpc_core.strategy_ir.execution_contract` into a private child module while preserving Strategy IR parent re-exports and qrpc-core tests.

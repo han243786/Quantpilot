@@ -4131,3 +4131,6 @@ Recursive boundary supplement: BE-001QT-01 `root.contracts.qrpc_core.strategy_ir
 - `markdown/06-milestones/v4.16.0/973-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.execution_contract.md` - v4.16.0 BE-001QT-01 root.contracts.qrpc_core.strategy_ir parent residual judgment selects execution_contract
 Recursive boundary supplement: BE-001QU-01 `root.contracts.qrpc_core.strategy_ir.execution_contract` equivalence baseline and extraction plan; next step: BE-001QU-02 root.contracts.qrpc_core.strategy_ir.execution_contract extract_closeout.
 - `markdown/06-milestones/v4.16.0/974-root.contracts.qrpc_core.strategy_ir.execution_contract.baseline_plan.md` - v4.16.0 BE-001QU-01 root.contracts.qrpc_core.strategy_ir.execution_contract baseline plan
+Recursive boundary supplement: BE-001QU-02 `root.contracts.qrpc_core.strategy_ir.execution_contract` actual extraction complete; next step: BE-001QU-03 root.contracts.qrpc_core.strategy_ir.execution_contract single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/975-root.contracts.qrpc_core.strategy_ir.execution_contract.extract_closeout.md` - v4.16.0 BE-001QU-02 root.contracts.qrpc_core.strategy_ir.execution_contract actual extraction closeout
+- `qrpc_core/src/strategy_ir/execution_contract.rs` - Extracted Strategy IR execution DTO child
