@@ -1060,3 +1060,4 @@
 | v4.16.0 / BE-001SL-01 | Added: `root.contracts.qrpc_core.runtime_io_contract.runtime_output` baseline plan |
 | v4.16.0 / BE-001SL-02 | Added: `root.contracts.qrpc_core.runtime_io_contract.runtime_output` actual extraction closeout |
 | v4.16.0 / BE-001SL-03 | Added: `root.contracts.qrpc_core.runtime_io_contract.runtime_output` single leaf closeout |
+| v4.16.0 / BE-001SM-01 | Added: `root.contracts.qrpc_core.runtime_io_contract` parent residual judgment selects `backtest_output` |

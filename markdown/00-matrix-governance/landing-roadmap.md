@@ -332,3 +332,4 @@ Latest recursive supplement: BE-001SK-01 selected `contracts.qrpc_core.runtime_i
 Latest recursive supplement: BE-001SL-01 froze the `runtime_output` extraction baseline; next step may move only runtime event, cycle output, and session output DTOs into a runtime IO child module.
 Latest recursive supplement: BE-001SL-02 extracted `contracts.qrpc_core.runtime_io_contract.runtime_output` into a private runtime IO child module while preserving parent and crate-root public exports.
 Latest recursive supplement: BE-001SL-03 closed `contracts.qrpc_core.runtime_io_contract.runtime_output` with `stop_split: true`; next runtime IO residual candidate is `backtest_output`.
+Latest recursive supplement: BE-001SM-01 selected `contracts.qrpc_core.runtime_io_contract.backtest_output`; backtest equity, metric groups, summary, period return, and final output DTOs remain frozen until its baseline.
