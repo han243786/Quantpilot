@@ -285,3 +285,4 @@ Latest recursive supplement: BE-001RL-01 closed `contracts.qrpc_core.strategy_ir
 Latest recursive supplement: BE-001RM-01 closed `contracts.qrpc_core.strategy_ir` as a compact parent facade; next step returns to qrpc_core parent residual judgment selecting protocol_primitives.
 Latest recursive supplement: BE-001RN-01 selected `contracts.qrpc_core.protocol_primitives`; qrpc-core primitive constants, enums, serde/display/default behavior remain frozen until its baseline.
 Latest recursive supplement: BE-001RO-01 froze the `protocol_primitives` extraction baseline; next step may move only primitive constants, enums, Symbol serde/parse/display/default behavior into a qrpc-core child module.
+Latest recursive supplement: BE-001RO-02 extracted `contracts.qrpc_core.protocol_primitives` into a private qrpc-core child module while preserving crate-root public exports and qrpc-core checks.

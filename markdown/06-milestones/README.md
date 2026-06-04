@@ -1374,3 +1374,4 @@
 | v4.16.0 / BE-001RM-01 | `v4.16.0/1011-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.close_parent.md` | `root.contracts.qrpc_core.strategy_ir` parent closeout |
 | v4.16.0 / BE-001RN-01 | `v4.16.0/1012-root.contracts.qrpc_core.parent_residual_judgment.protocol_primitives.md` | `root.contracts.qrpc_core` selects `protocol_primitives` |
 | v4.16.0 / BE-001RO-01 | `v4.16.0/1013-root.contracts.qrpc_core.protocol_primitives.baseline_plan.md` | `root.contracts.qrpc_core.protocol_primitives` baseline plan |
+| v4.16.0 / BE-001RO-02 | `v4.16.0/1014-root.contracts.qrpc_core.protocol_primitives.extract_closeout.md` | `root.contracts.qrpc_core.protocol_primitives` actual extraction complete |
