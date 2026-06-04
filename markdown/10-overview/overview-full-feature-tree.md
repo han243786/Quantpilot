@@ -4065,3 +4065,5 @@ Recursive boundary supplement: BE-001QD-01 `root.contracts.qrpc_core.plugin_cont
 Recursive boundary supplement: BE-001QD-02 `root.contracts.qrpc_core.plugin_contract.registry` actual extraction complete; next step: BE-001QD-03 root.contracts.qrpc_core.plugin_contract.registry single_leaf_closeout.
 - `markdown/06-milestones/v4.16.0/944-root.contracts.qrpc_core.plugin_contract.registry.extract_closeout.md` - v4.16.0 BE-001QD-02 root.contracts.qrpc_core.plugin_contract.registry actual extraction closeout
 - `qrpc_core/src/plugin/registry.rs` - Extracted qrpc plugin in-memory registry child
+Recursive boundary supplement: BE-001QD-03 `root.contracts.qrpc_core.plugin_contract.registry` single leaf closeout sets stop_split true; next step: BE-001QE-01 root.contracts.qrpc_core.plugin_contract parent_closeout.
+- `markdown/06-milestones/v4.16.0/945-root.contracts.qrpc_core.plugin_contract.registry.single_leaf_closeout.md` - v4.16.0 BE-001QD-03 root.contracts.qrpc_core.plugin_contract.registry single leaf closeout
