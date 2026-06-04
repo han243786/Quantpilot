@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001QN-01",
-  "last_committed_sha": "0f0b8a7d",
+  "last_committed_batch": "BE-001QO-01",
+  "last_committed_sha": "7d8d0a3f",
   "current_parent": "root.contracts.qrpc_core.strategy_ir.logic_position",
-  "current_step": "BE-001QO-02",
-  "current_phase": "extract_closeout",
+  "current_step": "BE-001QO-03",
+  "current_phase": "single_leaf_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",

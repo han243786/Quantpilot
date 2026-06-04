@@ -4104,3 +4104,6 @@ Recursive boundary supplement: BE-001QN-01 `root.contracts.qrpc_core.strategy_ir
 - `markdown/06-milestones/v4.16.0/961-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.logic_position.md` - v4.16.0 BE-001QN-01 root.contracts.qrpc_core.strategy_ir parent residual judgment selects logic_position
 Recursive boundary supplement: BE-001QO-01 `root.contracts.qrpc_core.strategy_ir.logic_position` equivalence baseline and extraction plan; next step: BE-001QO-02 root.contracts.qrpc_core.strategy_ir.logic_position extract_closeout.
 - `markdown/06-milestones/v4.16.0/962-root.contracts.qrpc_core.strategy_ir.logic_position.baseline_plan.md` - v4.16.0 BE-001QO-01 root.contracts.qrpc_core.strategy_ir.logic_position baseline plan
+Recursive boundary supplement: BE-001QO-02 `root.contracts.qrpc_core.strategy_ir.logic_position` actual extraction complete; next step: BE-001QO-03 root.contracts.qrpc_core.strategy_ir.logic_position single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/963-root.contracts.qrpc_core.strategy_ir.logic_position.extract_closeout.md` - v4.16.0 BE-001QO-02 root.contracts.qrpc_core.strategy_ir.logic_position actual extraction closeout
+- `qrpc_core/src/strategy_ir/logic_position.rs` - Extracted Strategy IR logic/action/position sizing/rebalance DTO child

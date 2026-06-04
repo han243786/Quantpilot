@@ -234,3 +234,4 @@ Latest recursive supplement: BE-001QM-02 extracted `contracts.qrpc_core.strategy
 Latest recursive supplement: BE-001QM-03 closed `contracts.qrpc_core.strategy_ir.signal_indicator` with `stop_split: true`; next Strategy IR residual candidate is `logic_position`.
 Latest recursive supplement: BE-001QN-01 selected `contracts.qrpc_core.strategy_ir.logic_position`; logic/action/position sizing/rebalance fields and serde shape remain frozen until its baseline.
 Latest recursive supplement: BE-001QO-01 froze the `logic_position` extraction baseline; next step may move only logic/action/position sizing/rebalance DTOs under the Strategy IR parent.
+Latest recursive supplement: BE-001QO-02 extracted `contracts.qrpc_core.strategy_ir.logic_position` into a private child module while preserving Strategy IR parent re-exports and qrpc-core tests.

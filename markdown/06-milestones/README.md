@@ -1323,3 +1323,4 @@
 | v4.16.0 / BE-001QM-03 | `v4.16.0/960-root.contracts.qrpc_core.strategy_ir.signal_indicator.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.signal_indicator` single leaf closeout |
 | v4.16.0 / BE-001QN-01 | `v4.16.0/961-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.logic_position.md` | `root.contracts.qrpc_core.strategy_ir` selects `logic_position` |
 | v4.16.0 / BE-001QO-01 | `v4.16.0/962-root.contracts.qrpc_core.strategy_ir.logic_position.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.logic_position` baseline plan |
+| v4.16.0 / BE-001QO-02 | `v4.16.0/963-root.contracts.qrpc_core.strategy_ir.logic_position.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.logic_position` actual extraction complete |
