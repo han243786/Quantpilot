@@ -59,7 +59,7 @@ Current selected boundary:
 
 | Order | Child | Stage to enter | Split note |
 | --- | --- | --- | --- |
-| 1 | `root.contracts.qrpc_core.strategy_ir.version_unknown_error` | `single_leaf_closeout` | Compact identity and diagnostic surface; likely `stop_split: true`. |
+| 1 | `root.contracts.qrpc_core.strategy_ir.version_unknown_error` | `baseline_plan` | Compact identity and diagnostic surface, but it still needs physical isolation before closeout. |
 | 2 | `root.contracts.qrpc_core.strategy_ir.metadata_source` | `baseline_plan` | Metadata/source DTO group; likely extractable. |
 | 3 | `root.contracts.qrpc_core.strategy_ir.signal_indicator` | `baseline_plan` | Signal DTOs, indicator enum, and indicator registries. |
 | 4 | `root.contracts.qrpc_core.strategy_ir.logic_position` | `baseline_plan` | Logic rules, actions, position sizing, and rebalance DTOs. |
