@@ -4277,3 +4277,5 @@ Recursive boundary supplement: BE-001SB-01 `root.contracts.qrpc_core.runtime_io_
 Recursive boundary supplement: BE-001SB-02 `root.contracts.qrpc_core.runtime_io_contract` actual extraction complete; next step: BE-001SB-03 root.contracts.qrpc_core.runtime_io_contract single_leaf_closeout.
 - `markdown/06-milestones/v4.16.0/1039-root.contracts.qrpc_core.runtime_io_contract.extract_closeout.md` - v4.16.0 BE-001SB-02 root.contracts.qrpc_core.runtime_io_contract actual extraction closeout
 - `qrpc_core/src/runtime_io_contract.rs` - Extracted qrpc-core runtime input/output DTOs from RawKline through BacktestOutput
+Recursive boundary supplement: BE-001SB-03 `root.contracts.qrpc_core.runtime_io_contract` single leaf closeout sets continue_split true; next step: BE-001SC-01 root.contracts.qrpc_core.runtime_io_contract parent_residual_judgment selects market_data_io.
+- `markdown/06-milestones/v4.16.0/1040-root.contracts.qrpc_core.runtime_io_contract.single_leaf_closeout.md` - v4.16.0 BE-001SB-03 root.contracts.qrpc_core.runtime_io_contract single leaf closeout continues split
