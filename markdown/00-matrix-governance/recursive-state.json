@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001SJ-02",
-  "last_committed_sha": "08cce05e",
-  "current_parent": "root.contracts.qrpc_core.runtime_io_contract.portfolio_state",
-  "current_step": "BE-001SJ-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001SJ-03",
+  "last_committed_sha": "b0fd15a2",
+  "current_parent": "root.contracts.qrpc_core.runtime_io_contract",
+  "current_step": "BE-001SK-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -124,7 +124,8 @@
     "contracts.qrpc_core.artifact_specs",
     "contracts.qrpc_core.runtime_io_contract.market_data_io",
     "contracts.qrpc_core.runtime_io_contract.decision_flow",
-    "contracts.qrpc_core.runtime_io_contract.execution_io"
+    "contracts.qrpc_core.runtime_io_contract.execution_io",
+    "contracts.qrpc_core.runtime_io_contract.portfolio_state"
   ],
   "open_residuals": [
     "contracts.qrpc_core.runtime_io_contract",
@@ -136,7 +137,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.qrpc_core.runtime_io_contract.portfolio_state",
+  "next_recommended_child": "root.contracts.qrpc_core.runtime_io_contract.runtime_output",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

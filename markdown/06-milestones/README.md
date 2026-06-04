@@ -1416,3 +1416,4 @@
 | v4.16.0 / BE-001SI-01 | `v4.16.0/1053-root.contracts.qrpc_core.runtime_io_contract.parent_residual_judgment.portfolio_state.md` | `root.contracts.qrpc_core.runtime_io_contract` selects `portfolio_state` |
 | v4.16.0 / BE-001SJ-01 | `v4.16.0/1054-root.contracts.qrpc_core.runtime_io_contract.portfolio_state.baseline_plan.md` | `root.contracts.qrpc_core.runtime_io_contract.portfolio_state` baseline plan |
 | v4.16.0 / BE-001SJ-02 | `v4.16.0/1055-root.contracts.qrpc_core.runtime_io_contract.portfolio_state.extract_closeout.md` | `root.contracts.qrpc_core.runtime_io_contract.portfolio_state` actual extraction complete |
+| v4.16.0 / BE-001SJ-03 | `v4.16.0/1056-root.contracts.qrpc_core.runtime_io_contract.portfolio_state.single_leaf_closeout.md` | `root.contracts.qrpc_core.runtime_io_contract.portfolio_state` single leaf closeout |

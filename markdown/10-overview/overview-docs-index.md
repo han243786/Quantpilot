@@ -1055,3 +1055,4 @@
 | v4.16.0 / BE-001SI-01 | Added: `root.contracts.qrpc_core.runtime_io_contract` parent residual judgment selects `portfolio_state` |
 | v4.16.0 / BE-001SJ-01 | Added: `root.contracts.qrpc_core.runtime_io_contract.portfolio_state` baseline plan |
 | v4.16.0 / BE-001SJ-02 | Added: `root.contracts.qrpc_core.runtime_io_contract.portfolio_state` actual extraction closeout |
+| v4.16.0 / BE-001SJ-03 | Added: `root.contracts.qrpc_core.runtime_io_contract.portfolio_state` single leaf closeout |
