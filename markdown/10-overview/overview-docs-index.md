@@ -975,3 +975,4 @@
 | v4.16.0 / BE-001QT-01 | Added: `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects `execution_contract` |
 | v4.16.0 / BE-001QU-01 | Added: `root.contracts.qrpc_core.strategy_ir.execution_contract` baseline plan |
 | v4.16.0 / BE-001QU-02 | Added: `root.contracts.qrpc_core.strategy_ir.execution_contract` actual extraction closeout |
+| v4.16.0 / BE-001QU-03 | Added: `root.contracts.qrpc_core.strategy_ir.execution_contract` single leaf closeout |
