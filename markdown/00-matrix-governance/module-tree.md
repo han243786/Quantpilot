@@ -8063,3 +8063,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001TI-01)**: `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract equivalence baseline and extraction plan；下一步: BE-001TI-02 root.contracts.core_ir.v1_contract extract_closeout。
 **最新状态补充(BE-001TI-02)**: `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract actual extraction complete；下一步: BE-001TI-03 root.contracts.core_ir.v1_contract single_leaf_closeout。
 `root.contracts.core_ir.v1_contract extracted: true`; `qrpc_core_ir/src/v1.rs` now owns v1 Core IR schema, helpers, DAG validation, and local test. `qrpc_core_ir/src/lib.rs` now re-exports `v1::*` and keeps `pub mod v4`.
+**最新状态补充(BE-001TI-03)**: `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract single leaf closeout continues split；下一步: BE-001TJ-01 root.contracts.core_ir.v1_contract parent_residual_judgment selects root_graph_contract。

@@ -4413,3 +4413,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 递归边界补充: BE-001TI-02 `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract actual extraction complete；下一步: BE-001TI-03 root.contracts.core_ir.v1_contract single_leaf_closeout。
 - `markdown/06-milestones/v4.16.0/1100-root.contracts.core_ir.v1_contract.extract_closeout.md` - v4.16.0 BE-001TI-02 root.contracts.core_ir.v1_contract actual extraction complete
 - `qrpc_core_ir/src/v1.rs` - Extracted qrpc-core-ir v1 Core IR schema, helpers, validation, and tests
+递归边界补充: BE-001TI-03 `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract single leaf closeout continues split；下一步: BE-001TJ-01 root.contracts.core_ir.v1_contract parent_residual_judgment selects root_graph_contract。
+- `markdown/06-milestones/v4.16.0/1101-root.contracts.core_ir.v1_contract.single_leaf_closeout.md` - v4.16.0 BE-001TI-03 root.contracts.core_ir.v1_contract single leaf closeout continues split
