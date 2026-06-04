@@ -1018,3 +1018,4 @@
 | v4.16.0 / BE-001RP-01 | Added: `root.contracts.qrpc_core` parent residual judgment selects `runtime_protocol_config` |
 | v4.16.0 / BE-001RQ-01 | Added: `root.contracts.qrpc_core.runtime_protocol_config` baseline plan |
 | v4.16.0 / BE-001RQ-02 | Added: `root.contracts.qrpc_core.runtime_protocol_config` actual extraction closeout |
+| v4.16.0 / BE-001RQ-03 | Added: `root.contracts.qrpc_core.runtime_protocol_config` single leaf closeout |
