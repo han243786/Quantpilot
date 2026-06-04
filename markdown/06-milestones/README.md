@@ -1380,3 +1380,4 @@
 | v4.16.0 / BE-001RQ-01 | `v4.16.0/1017-root.contracts.qrpc_core.runtime_protocol_config.baseline_plan.md` | `root.contracts.qrpc_core.runtime_protocol_config` baseline plan |
 | v4.16.0 / BE-001RQ-02 | `v4.16.0/1018-root.contracts.qrpc_core.runtime_protocol_config.extract_closeout.md` | `root.contracts.qrpc_core.runtime_protocol_config` actual extraction complete |
 | v4.16.0 / BE-001RQ-03 | `v4.16.0/1019-root.contracts.qrpc_core.runtime_protocol_config.single_leaf_closeout.md` | `root.contracts.qrpc_core.runtime_protocol_config` single leaf closeout |
+| v4.16.0 / BE-001RR-01 | `v4.16.0/1020-root.contracts.qrpc_core.parent_residual_judgment.artifact_specs.md` | `root.contracts.qrpc_core` selects `artifact_specs` |

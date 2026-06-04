@@ -291,3 +291,4 @@ Latest recursive supplement: BE-001RP-01 selected `contracts.qrpc_core.runtime_p
 Latest recursive supplement: BE-001RQ-01 froze the `runtime_protocol_config` extraction baseline; next step may move only runtime config DTOs, universe config DTOs, defaults, and compiled protocol container into a qrpc-core child module.
 Latest recursive supplement: BE-001RQ-02 extracted `contracts.qrpc_core.runtime_protocol_config` into a private qrpc-core child module while preserving crate-root public exports and qrpc-core checks.
 Latest recursive supplement: BE-001RQ-03 closed `contracts.qrpc_core.runtime_protocol_config` with `stop_split: true`; next qrpc_core residual candidate is `artifact_specs`.
+Latest recursive supplement: BE-001RR-01 selected `contracts.qrpc_core.artifact_specs`; canonical digest, run/backtest specs, dataset/execution assumptions, and artifact bundle contracts remain frozen until its baseline.
