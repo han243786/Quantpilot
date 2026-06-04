@@ -1081,3 +1081,4 @@
 | v4.16.0 / BE-001SW-01 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts.order_contract` root.contracts.qrpc_core.rfc_execution_contracts.order_contract equivalence baseline and extraction plan |
 | v4.16.0 / BE-001SW-02 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts.order_contract` root.contracts.qrpc_core.rfc_execution_contracts.order_contract actual extraction complete |
 | v4.16.0 / BE-001SW-03 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts.order_contract` root.contracts.qrpc_core.rfc_execution_contracts.order_contract single leaf closeout stops split |
+| v4.16.0 / BE-001SX-01 | 新增: `root.contracts.qrpc_core.rfc_execution_contracts` root.contracts.qrpc_core.rfc_execution_contracts parent residual judgment selects execution_feedback |
