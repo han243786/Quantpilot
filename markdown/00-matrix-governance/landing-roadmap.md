@@ -323,3 +323,4 @@ Latest recursive supplement: BE-001SF-03 closed `contracts.qrpc_core.runtime_io_
 Latest recursive supplement: BE-001SG-01 selected `contracts.qrpc_core.runtime_io_contract.execution_io`; simulated order, execution plan, fill report, open order, and fill result DTOs remain frozen until its baseline.
 Latest recursive supplement: BE-001SH-01 froze the `execution_io` extraction baseline; next step may move only simulated order, execution plan, fill report, open order, and fill result DTOs into a runtime IO child module.
 Latest recursive supplement: BE-001SH-02 extracted `contracts.qrpc_core.runtime_io_contract.execution_io` into a private runtime IO child module while preserving parent and crate-root public exports.
+Latest recursive supplement: BE-001SH-03 closed `contracts.qrpc_core.runtime_io_contract.execution_io` with `stop_split: true`; next runtime IO residual candidate is `portfolio_state`.

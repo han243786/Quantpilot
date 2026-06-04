@@ -1051,3 +1051,4 @@
 | v4.16.0 / BE-001SG-01 | Added: `root.contracts.qrpc_core.runtime_io_contract` parent residual judgment selects `execution_io` |
 | v4.16.0 / BE-001SH-01 | Added: `root.contracts.qrpc_core.runtime_io_contract.execution_io` baseline plan |
 | v4.16.0 / BE-001SH-02 | Added: `root.contracts.qrpc_core.runtime_io_contract.execution_io` actual extraction closeout |
+| v4.16.0 / BE-001SH-03 | Added: `root.contracts.qrpc_core.runtime_io_contract.execution_io` single leaf closeout |
