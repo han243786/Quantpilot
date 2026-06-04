@@ -1351,3 +1351,4 @@
 | v4.16.0 / BE-001RA-03 | `v4.16.0/988-root.contracts.qrpc_core.strategy_ir.root_validation.identity_required_validation.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.identity_required_validation` single leaf closeout |
 | v4.16.0 / BE-001RB-01 | `v4.16.0/989-root.contracts.qrpc_core.strategy_ir.root_validation.parent_residual_judgment.signal_logic_validation.md` | `root.contracts.qrpc_core.strategy_ir.root_validation` selects `signal_logic_validation` |
 | v4.16.0 / GOV-SAME-PARENT-PARALLEL | `v4.16.0/990-governance.same_parent_parallel_children.protocol_update.md` | Recursive speed protocol allows guarded same-parent child parallel waves |
+| v4.16.0 / BE-001RC-01 | `v4.16.0/991-root.contracts.qrpc_core.strategy_ir.root_validation.signal_logic_validation.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.signal_logic_validation` baseline plan |
