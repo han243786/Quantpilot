@@ -1402,3 +1402,4 @@
 | v4.16.0 / BE-001SB-02 | `v4.16.0/1039-root.contracts.qrpc_core.runtime_io_contract.extract_closeout.md` | `root.contracts.qrpc_core.runtime_io_contract` actual extraction complete |
 | v4.16.0 / BE-001SB-03 | `v4.16.0/1040-root.contracts.qrpc_core.runtime_io_contract.single_leaf_closeout.md` | `root.contracts.qrpc_core.runtime_io_contract` continues split |
 | v4.16.0 / BE-001SC-01 | `v4.16.0/1041-root.contracts.qrpc_core.runtime_io_contract.parent_residual_judgment.market_data_io.md` | `root.contracts.qrpc_core.runtime_io_contract` selects `market_data_io` |
+| v4.16.0 / BE-001SD-01 | `v4.16.0/1042-root.contracts.qrpc_core.runtime_io_contract.market_data_io.baseline_plan.md` | `root.contracts.qrpc_core.runtime_io_contract.market_data_io` baseline plan |
