@@ -4216,3 +4216,5 @@ Recursive boundary supplement: BE-001RM-01 `root.contracts.qrpc_core.strategy_ir
 - `markdown/06-milestones/v4.16.0/1011-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001RM-01 root.contracts.qrpc_core.strategy_ir parent closeout
 Recursive boundary supplement: BE-001RN-01 `root.contracts.qrpc_core` parent residual judgment selects protocol_primitives; next step: BE-001RO-01 root.contracts.qrpc_core.protocol_primitives baseline_plan.
 - `markdown/06-milestones/v4.16.0/1012-root.contracts.qrpc_core.parent_residual_judgment.protocol_primitives.md` - v4.16.0 BE-001RN-01 root.contracts.qrpc_core parent residual judgment selects protocol_primitives
+Recursive boundary supplement: BE-001RO-01 `root.contracts.qrpc_core.protocol_primitives` equivalence baseline frozen; next step: BE-001RO-02 root.contracts.qrpc_core.protocol_primitives extract_closeout.
+- `markdown/06-milestones/v4.16.0/1013-root.contracts.qrpc_core.protocol_primitives.baseline_plan.md` - v4.16.0 BE-001RO-01 root.contracts.qrpc_core.protocol_primitives baseline plan

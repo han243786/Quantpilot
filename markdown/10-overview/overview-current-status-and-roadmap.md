@@ -1101,3 +1101,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001RL-01 `root.contracts.qrpc_core.strategy_ir.root_validation` parent residual judgment closes the root validation parent; next step: BE-001RM-01 root.contracts.qrpc_core.strategy_ir parent_residual_judgment.
 - BE-001RM-01 `root.contracts.qrpc_core.strategy_ir` parent residual judgment closes the Strategy IR parent; next step: BE-001RN-01 root.contracts.qrpc_core parent_residual_judgment selects protocol_primitives.
 - BE-001RN-01 `root.contracts.qrpc_core` parent residual judgment selects `contracts.qrpc_core.protocol_primitives`; next step: BE-001RO-01 root.contracts.qrpc_core.protocol_primitives baseline_plan.
+- BE-001RO-01 `root.contracts.qrpc_core.protocol_primitives` freezes primitive constants, enums, serde/display/default behavior, and crate facade baseline; next step: BE-001RO-02 root.contracts.qrpc_core.protocol_primitives extract_closeout.
