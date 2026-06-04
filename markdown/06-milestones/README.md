@@ -1372,3 +1372,4 @@
 | v4.16.0 / BE-001RK-03 | `v4.16.0/1009-root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture` single leaf closeout |
 | v4.16.0 / BE-001RL-01 | `v4.16.0/1010-root.contracts.qrpc_core.strategy_ir.root_validation.parent_residual_judgment.close_parent.md` | `root.contracts.qrpc_core.strategy_ir.root_validation` parent closeout |
 | v4.16.0 / BE-001RM-01 | `v4.16.0/1011-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.close_parent.md` | `root.contracts.qrpc_core.strategy_ir` parent closeout |
+| v4.16.0 / BE-001RN-01 | `v4.16.0/1012-root.contracts.qrpc_core.parent_residual_judgment.protocol_primitives.md` | `root.contracts.qrpc_core` selects `protocol_primitives` |

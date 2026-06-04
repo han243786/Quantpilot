@@ -1011,3 +1011,4 @@
 | v4.16.0 / BE-001RK-03 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.test_fixture` single leaf closeout |
 | v4.16.0 / BE-001RL-01 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation` parent closeout |
 | v4.16.0 / BE-001RM-01 | Added: `root.contracts.qrpc_core.strategy_ir` parent closeout |
+| v4.16.0 / BE-001RN-01 | Added: `root.contracts.qrpc_core` parent residual judgment selects `protocol_primitives` |

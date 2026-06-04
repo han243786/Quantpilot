@@ -283,3 +283,4 @@ Latest recursive supplement: BE-001RK-02 extracted `contracts.qrpc_core.strategy
 Latest recursive supplement: BE-001RK-03 closed `contracts.qrpc_core.strategy_ir.root_validation.test_fixture` with `stop_split: true`; next step returns to root_validation parent residual judgment.
 Latest recursive supplement: BE-001RL-01 closed `contracts.qrpc_core.strategy_ir.root_validation` as a compact parent facade; next step returns to strategy_ir parent residual judgment.
 Latest recursive supplement: BE-001RM-01 closed `contracts.qrpc_core.strategy_ir` as a compact parent facade; next step returns to qrpc_core parent residual judgment selecting protocol_primitives.
+Latest recursive supplement: BE-001RN-01 selected `contracts.qrpc_core.protocol_primitives`; qrpc-core primitive constants, enums, serde/display/default behavior remain frozen until its baseline.
