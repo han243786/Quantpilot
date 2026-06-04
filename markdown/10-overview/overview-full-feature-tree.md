@@ -4149,3 +4149,6 @@ Recursive boundary supplement: BE-001QX-01 `root.contracts.qrpc_core.strategy_ir
 - `markdown/06-milestones/v4.16.0/981-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.root_validation.md` - v4.16.0 BE-001QX-01 root.contracts.qrpc_core.strategy_ir parent residual judgment selects root_validation
 Recursive boundary supplement: BE-001QY-01 `root.contracts.qrpc_core.strategy_ir.root_validation` equivalence baseline and extraction plan; next step: BE-001QY-02 root.contracts.qrpc_core.strategy_ir.root_validation extract_closeout.
 - `markdown/06-milestones/v4.16.0/982-root.contracts.qrpc_core.strategy_ir.root_validation.baseline_plan.md` - v4.16.0 BE-001QY-01 root.contracts.qrpc_core.strategy_ir.root_validation baseline plan
+Recursive boundary supplement: BE-001QY-02 `root.contracts.qrpc_core.strategy_ir.root_validation` actual extraction complete; next step: BE-001QY-03 root.contracts.qrpc_core.strategy_ir.root_validation single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/983-root.contracts.qrpc_core.strategy_ir.root_validation.extract_closeout.md` - v4.16.0 BE-001QY-02 root.contracts.qrpc_core.strategy_ir.root_validation actual extraction closeout
+- `qrpc_core/src/strategy_ir/root_validation.rs` - Extracted Strategy IR root DTO, validation methods, private validation helpers, and local validation tests
