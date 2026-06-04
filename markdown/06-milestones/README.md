@@ -1311,3 +1311,4 @@
 | v4.16.0 / BE-001QG-01 | `v4.16.0/948-root.contracts.qrpc_core.strategy_ir.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir` baseline plan |
 | v4.16.0 / BE-001QH-01 | `v4.16.0/949-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.version_unknown_error.md` | `root.contracts.qrpc_core.strategy_ir` selects `version_unknown_error` |
 | v4.16.0 / BE-001QI-01 | `v4.16.0/950-root.contracts.qrpc_core.strategy_ir.version_unknown_error.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.version_unknown_error` baseline plan |
+| v4.16.0 / BE-001QI-02 | `v4.16.0/951-root.contracts.qrpc_core.strategy_ir.version_unknown_error.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.version_unknown_error` actual extraction complete |
