@@ -1070,3 +1070,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001QW-02 `root.contracts.qrpc_core.strategy_ir.gap_unknown_annotation` actual extraction complete; next step: BE-001QW-03 root.contracts.qrpc_core.strategy_ir.gap_unknown_annotation single_leaf_closeout.
 - BE-001QW-03 `root.contracts.qrpc_core.strategy_ir.gap_unknown_annotation` single leaf closeout sets `stop_split: true`; next step: BE-001QX-01 root.contracts.qrpc_core.strategy_ir parent_residual_judgment selects root_validation.
 - BE-001QX-01 `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects `contracts.qrpc_core.strategy_ir.root_validation`; next step: BE-001QY-01 root.contracts.qrpc_core.strategy_ir.root_validation baseline_plan.
+- BE-001QY-01 `root.contracts.qrpc_core.strategy_ir.root_validation` equivalence baseline and extraction plan; next step: BE-001QY-02 root.contracts.qrpc_core.strategy_ir.root_validation extract_closeout.
