@@ -4086,3 +4086,6 @@ Recursive boundary supplement: BE-001QJ-01 `root.contracts.qrpc_core.strategy_ir
 - `markdown/06-milestones/v4.16.0/953-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.metadata_source.md` - v4.16.0 BE-001QJ-01 root.contracts.qrpc_core.strategy_ir parent residual judgment selects metadata_source
 Recursive boundary supplement: BE-001QK-01 `root.contracts.qrpc_core.strategy_ir.metadata_source` equivalence baseline and extraction plan; next step: BE-001QK-02 root.contracts.qrpc_core.strategy_ir.metadata_source extract_closeout.
 - `markdown/06-milestones/v4.16.0/954-root.contracts.qrpc_core.strategy_ir.metadata_source.baseline_plan.md` - v4.16.0 BE-001QK-01 root.contracts.qrpc_core.strategy_ir.metadata_source baseline plan
+Recursive boundary supplement: BE-001QK-02 `root.contracts.qrpc_core.strategy_ir.metadata_source` actual extraction complete; next step: BE-001QK-03 root.contracts.qrpc_core.strategy_ir.metadata_source single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/955-root.contracts.qrpc_core.strategy_ir.metadata_source.extract_closeout.md` - v4.16.0 BE-001QK-02 root.contracts.qrpc_core.strategy_ir.metadata_source actual extraction closeout
+- `qrpc_core/src/strategy_ir/metadata_source.rs` - Extracted Strategy IR metadata and source DTO child

@@ -954,3 +954,4 @@
 | v4.16.0 / BE-001QI-03 | Added: `root.contracts.qrpc_core.strategy_ir.version_unknown_error` single leaf closeout |
 | v4.16.0 / BE-001QJ-01 | Added: `root.contracts.qrpc_core.strategy_ir` parent residual judgment selects `metadata_source` |
 | v4.16.0 / BE-001QK-01 | Added: `root.contracts.qrpc_core.strategy_ir.metadata_source` baseline plan |
+| v4.16.0 / BE-001QK-02 | Added: `root.contracts.qrpc_core.strategy_ir.metadata_source` actual extraction closeout |
