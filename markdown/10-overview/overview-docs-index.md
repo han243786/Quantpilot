@@ -1000,3 +1000,4 @@
 | v4.16.0 / BE-001RF-01 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation` parent residual judgment selects `data_execution_validation` |
 | v4.16.0 / BE-001RG-01 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.data_execution_validation` baseline plan |
 | v4.16.0 / BE-001RG-02 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.data_execution_validation` actual extraction closeout |
+| v4.16.0 / BE-001RG-03 | Added: `root.contracts.qrpc_core.strategy_ir.root_validation.data_execution_validation` single leaf closeout |
