@@ -4274,3 +4274,6 @@ Recursive boundary supplement: BE-001SA-01 `root.contracts.qrpc_core` parent res
 - `markdown/06-milestones/v4.16.0/1037-root.contracts.qrpc_core.parent_residual_judgment.runtime_io_contract.md` - v4.16.0 BE-001SA-01 root.contracts.qrpc_core parent residual judgment selects runtime_io_contract
 Recursive boundary supplement: BE-001SB-01 `root.contracts.qrpc_core.runtime_io_contract` equivalence baseline frozen; next step: BE-001SB-02 root.contracts.qrpc_core.runtime_io_contract extract_closeout.
 - `markdown/06-milestones/v4.16.0/1038-root.contracts.qrpc_core.runtime_io_contract.baseline_plan.md` - v4.16.0 BE-001SB-01 root.contracts.qrpc_core.runtime_io_contract baseline plan
+Recursive boundary supplement: BE-001SB-02 `root.contracts.qrpc_core.runtime_io_contract` actual extraction complete; next step: BE-001SB-03 root.contracts.qrpc_core.runtime_io_contract single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/1039-root.contracts.qrpc_core.runtime_io_contract.extract_closeout.md` - v4.16.0 BE-001SB-02 root.contracts.qrpc_core.runtime_io_contract actual extraction closeout
+- `qrpc_core/src/runtime_io_contract.rs` - Extracted qrpc-core runtime input/output DTOs from RawKline through BacktestOutput

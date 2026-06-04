@@ -1399,3 +1399,4 @@
 | v4.16.0 / BE-001RZ-01 | `v4.16.0/1036-root.contracts.qrpc_core.artifact_specs.parent_residual_judgment.close_parent.md` | `root.contracts.qrpc_core.artifact_specs` parent closeout |
 | v4.16.0 / BE-001SA-01 | `v4.16.0/1037-root.contracts.qrpc_core.parent_residual_judgment.runtime_io_contract.md` | `root.contracts.qrpc_core` selects `runtime_io_contract` |
 | v4.16.0 / BE-001SB-01 | `v4.16.0/1038-root.contracts.qrpc_core.runtime_io_contract.baseline_plan.md` | `root.contracts.qrpc_core.runtime_io_contract` baseline plan |
+| v4.16.0 / BE-001SB-02 | `v4.16.0/1039-root.contracts.qrpc_core.runtime_io_contract.extract_closeout.md` | `root.contracts.qrpc_core.runtime_io_contract` actual extraction complete |
