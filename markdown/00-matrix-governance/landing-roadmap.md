@@ -230,3 +230,4 @@ Latest recursive supplement: BE-001QK-02 extracted `contracts.qrpc_core.strategy
 Latest recursive supplement: BE-001QK-03 closed `contracts.qrpc_core.strategy_ir.metadata_source` with `stop_split: true`; next Strategy IR residual candidate is `signal_indicator`.
 Latest recursive supplement: BE-001QL-01 selected `contracts.qrpc_core.strategy_ir.signal_indicator`; signal/indicator fields, serde shape, indicator enum variants, and declared/supported indicator registries remain frozen until its baseline.
 Latest recursive supplement: BE-001QM-01 froze the `signal_indicator` extraction baseline; next step may move only signal/indicator DTOs, `IndicatorKind`, indicator registry constants, and public registry functions under the Strategy IR parent.
+Latest recursive supplement: BE-001QM-02 extracted `contracts.qrpc_core.strategy_ir.signal_indicator` into a private child module while preserving Strategy IR parent re-exports and qrpc-core tests.

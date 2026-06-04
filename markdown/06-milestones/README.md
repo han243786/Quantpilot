@@ -1319,3 +1319,4 @@
 | v4.16.0 / BE-001QK-03 | `v4.16.0/956-root.contracts.qrpc_core.strategy_ir.metadata_source.single_leaf_closeout.md` | `root.contracts.qrpc_core.strategy_ir.metadata_source` single leaf closeout |
 | v4.16.0 / BE-001QL-01 | `v4.16.0/957-root.contracts.qrpc_core.strategy_ir.parent_residual_judgment.signal_indicator.md` | `root.contracts.qrpc_core.strategy_ir` selects `signal_indicator` |
 | v4.16.0 / BE-001QM-01 | `v4.16.0/958-root.contracts.qrpc_core.strategy_ir.signal_indicator.baseline_plan.md` | `root.contracts.qrpc_core.strategy_ir.signal_indicator` baseline plan |
+| v4.16.0 / BE-001QM-02 | `v4.16.0/959-root.contracts.qrpc_core.strategy_ir.signal_indicator.extract_closeout.md` | `root.contracts.qrpc_core.strategy_ir.signal_indicator` actual extraction complete |
