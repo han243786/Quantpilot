@@ -309,3 +309,4 @@ Latest recursive supplement: BE-001RY-02 extracted `contracts.qrpc_core.artifact
 Latest recursive supplement: BE-001RY-03 closed `contracts.qrpc_core.artifact_specs.artifact_bundle_contract` with `stop_split: true`; next step returns to artifact specs parent residual judgment.
 Latest recursive supplement: BE-001RZ-01 closed `contracts.qrpc_core.artifact_specs` as a compact parent facade; next qrpc_core residual candidate is `runtime_io_contract`.
 Latest recursive supplement: BE-001SA-01 selected `contracts.qrpc_core.runtime_io_contract`; runtime input/output DTOs remain frozen until its baseline.
+Latest recursive supplement: BE-001SB-01 froze the `runtime_io_contract` extraction baseline; next step may move only runtime input/output DTOs from `RawKline` through `BacktestOutput` into a qrpc-core child module.

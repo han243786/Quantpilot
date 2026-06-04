@@ -1126,3 +1126,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001RY-03 `root.contracts.qrpc_core.artifact_specs.artifact_bundle_contract` single leaf closeout sets `stop_split: true`; next step: BE-001RZ-01 root.contracts.qrpc_core.artifact_specs parent_residual_judgment.
 - BE-001RZ-01 `root.contracts.qrpc_core.artifact_specs` parent residual judgment closes artifact_specs parent; next step: BE-001SA-01 root.contracts.qrpc_core parent_residual_judgment selects runtime_io_contract.
 - BE-001SA-01 `root.contracts.qrpc_core` parent residual judgment selects `contracts.qrpc_core.runtime_io_contract`; next step: BE-001SB-01 root.contracts.qrpc_core.runtime_io_contract baseline_plan.
+- BE-001SB-01 `root.contracts.qrpc_core.runtime_io_contract` freezes runtime input/output DTOs from `RawKline` through `BacktestOutput`; next step: BE-001SB-02 root.contracts.qrpc_core.runtime_io_contract extract_closeout.
