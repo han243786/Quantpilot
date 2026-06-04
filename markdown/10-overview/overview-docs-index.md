@@ -1040,3 +1040,4 @@
 | v4.16.0 / BE-001SB-01 | Added: `root.contracts.qrpc_core.runtime_io_contract` baseline plan |
 | v4.16.0 / BE-001SB-02 | Added: `root.contracts.qrpc_core.runtime_io_contract` actual extraction closeout |
 | v4.16.0 / BE-001SB-03 | Added: `root.contracts.qrpc_core.runtime_io_contract` single leaf closeout continues split |
+| v4.16.0 / BE-001SC-01 | Added: `root.contracts.qrpc_core.runtime_io_contract` parent residual judgment selects `market_data_io` |

@@ -312,3 +312,4 @@ Latest recursive supplement: BE-001SA-01 selected `contracts.qrpc_core.runtime_i
 Latest recursive supplement: BE-001SB-01 froze the `runtime_io_contract` extraction baseline; next step may move only runtime input/output DTOs from `RawKline` through `BacktestOutput` into a qrpc-core child module.
 Latest recursive supplement: BE-001SB-02 extracted `contracts.qrpc_core.runtime_io_contract` into a private qrpc-core child module while preserving crate-root public exports.
 Latest recursive supplement: BE-001SB-03 kept `contracts.qrpc_core.runtime_io_contract` open with `continue_split: true`; next child candidate is `market_data_io`.
+Latest recursive supplement: BE-001SC-01 selected `contracts.qrpc_core.runtime_io_contract.market_data_io`; raw and normalized market data DTOs remain frozen until its baseline.
