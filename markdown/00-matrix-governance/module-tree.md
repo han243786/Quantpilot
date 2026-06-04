@@ -8056,3 +8056,4 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001TD-02)**: `root.contracts.qrpc_core.test_fixture` root.contracts.qrpc_core.test_fixture actual extraction complete；下一步: BE-001TD-03 root.contracts.qrpc_core.test_fixture single_leaf_closeout。
 `root.contracts.qrpc_core.test_fixture extracted: true`; `qrpc_core/src/tests.rs` now owns `sample_runtime_protocol` and crate-root regression tests. `qrpc_core/src/lib.rs` is now production facade plus a cfg-test module declaration.
 **最新状态补充(BE-001TD-03)**: `root.contracts.qrpc_core.test_fixture` root.contracts.qrpc_core.test_fixture single leaf closeout stops split；下一步: BE-001TE-01 root.contracts.qrpc_core parent_residual_judgment closes parent。
+**最新状态补充(BE-001TE-01)**: `root.contracts.qrpc_core` root.contracts.qrpc_core parent residual judgment closes parent；下一步: BE-001TF-01 root.contracts parent_residual_judgment selects core_ir。
