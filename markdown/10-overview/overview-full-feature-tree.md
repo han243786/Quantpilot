@@ -2308,8 +2308,9 @@ storage/
 **qrpc_core_ir**:
 - `qrpc_core_ir/Cargo.toml` — qrpc_core_ir 包配置
 - `qrpc_core_ir/src/lib.rs` — v3 类型定义 + v4 模块导出
-- `qrpc_core_ir/src/v4.rs` — v4 parent facade and residual contract families (machine/runtime/venue/type-system validators, compat bridge, memory type_ref/memory_writes 校验, `MachineState.child_machine` 与复杂度预算); 改 v4 parent wiring or residual v4 contract families 时改这里 🆕 v4.16.0
+- `qrpc_core_ir/src/v4.rs` — v4 parent facade and residual contract families (graph/runtime/venue/type-system validators, compat bridge, memory type_ref/memory_writes 校验, complexity budget); 改 v4 parent wiring or residual v4 contract families 时改这里 🆕 v4.16.0
 - `qrpc_core_ir/src/v4/backtest_artifact_contract.rs` — v4 backtest artifact DTO family (`V4BacktestArtifact`, microstructure metrics, machine trajectory, risk-plane decision, execution capability source records); 改 v4 artifact schema DTO 时改这里 🆕 v4.16.0
+- `qrpc_core_ir/src/v4/machine_contract.rs` — v4 machine schema/taxonomy and local static validation (`V4MachineContract`, states, groups, transitions, memory fields, nested child-machine validation); 改 v4 machine schema or machine static validation 时改这里 🆕 v4.16.0
 
 **qrpc_compiler**:
 - `qrpc_compiler/Cargo.toml` — qrpc_compiler 包配置
@@ -4479,3 +4480,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1129-root.contracts.core_ir.v4_contracts.parent_residual_judgment.machine_contract.md` - v4.16.0 BE-001TY-01 root.contracts.core_ir.v4_contracts parent residual judgment selects machine_contract
 递归边界补充: BE-001TZ-01 `root.contracts.core_ir.v4_contracts.machine_contract` root.contracts.core_ir.v4_contracts.machine_contract equivalence baseline and extraction plan；下一步: BE-001TZ-02 root.contracts.core_ir.v4_contracts.machine_contract extract_closeout。
 - `markdown/06-milestones/v4.16.0/1130-root.contracts.core_ir.v4_contracts.machine_contract.baseline_plan.md` - v4.16.0 BE-001TZ-01 root.contracts.core_ir.v4_contracts.machine_contract equivalence baseline and extraction plan
+递归边界补充: BE-001TZ-02 `root.contracts.core_ir.v4_contracts.machine_contract` root.contracts.core_ir.v4_contracts.machine_contract actual extraction complete；下一步: BE-001TZ-03 root.contracts.core_ir.v4_contracts.machine_contract single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/1131-root.contracts.core_ir.v4_contracts.machine_contract.extract_closeout.md` - v4.16.0 BE-001TZ-02 root.contracts.core_ir.v4_contracts.machine_contract actual extraction complete
