@@ -1132,3 +1132,4 @@
 | v4.16.0 / BE-001TZ-01 | 新增: `root.contracts.core_ir.v4_contracts.machine_contract` root.contracts.core_ir.v4_contracts.machine_contract equivalence baseline and extraction plan |
 | v4.16.0 / BE-001TZ-02 | 新增: `root.contracts.core_ir.v4_contracts.machine_contract` root.contracts.core_ir.v4_contracts.machine_contract actual extraction complete |
 | v4.16.0 / BE-001TZ-03 | 新增: `root.contracts.core_ir.v4_contracts.machine_contract` root.contracts.core_ir.v4_contracts.machine_contract single leaf closeout continues split |
+| v4.16.0 / BE-001UA-01 | 新增: `root.contracts.core_ir.v4_contracts.machine_contract` root.contracts.core_ir.v4_contracts.machine_contract parent residual judgment selects static_validation |
