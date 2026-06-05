@@ -2313,6 +2313,7 @@ storage/
 - `qrpc_core_ir/src/v4/machine_contract.rs` — v4 machine schema/taxonomy facade (`V4MachineContract`, states, groups, transitions, memory fields, machine policy enums); 改 v4 machine schema or taxonomy 时改这里 🆕 v4.16.0
 - `qrpc_core_ir/src/v4/machine_contract/static_validation.rs` — v4 machine static validation behavior (`V4MachineContract::validate_static_contract`, state/group/transition/memory/child-machine/policy conflict checks); 改 v4 machine validation behavior or error strings 时改这里 🆕 v4.16.0
 - `qrpc_core_ir/src/v4/machine_graph_contract.rs` — v4 machine graph schema, event catalog schema, graph/event/risk-plane validation, and parent-only traversal helpers for complexity metrics; 改 v4 graph schema or graph validation behavior 时改这里 🆕 v4.16.0
+- `qrpc_core_ir/src/v4/machine_graph_contract/event_catalog.rs` — v4 graph event catalog schema and local event catalog validation; 改 v4 event catalog DTOs or catalog-local validation 时改这里 🆕 v4.16.0
 
 **qrpc_compiler**:
 - `qrpc_compiler/Cargo.toml` — qrpc_compiler 包配置
@@ -4508,3 +4509,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1142-root.contracts.core_ir.v4_contracts.machine_graph_contract.parent_residual_judgment.event_catalog.md` - v4.16.0 BE-001UF-01 root.contracts.core_ir.v4_contracts.machine_graph_contract parent residual judgment selects event_catalog
 递归边界补充: BE-001UG-01 `root.contracts.core_ir.v4_contracts.machine_graph_contract.event_catalog` root.contracts.core_ir.v4_contracts.machine_graph_contract.event_catalog equivalence baseline and extraction plan；下一步: BE-001UG-02 root.contracts.core_ir.v4_contracts.machine_graph_contract.event_catalog extract_closeout。
 - `markdown/06-milestones/v4.16.0/1143-root.contracts.core_ir.v4_contracts.machine_graph_contract.event_catalog.baseline_plan.md` - v4.16.0 BE-001UG-01 root.contracts.core_ir.v4_contracts.machine_graph_contract.event_catalog equivalence baseline and extraction plan
+递归边界补充: BE-001UG-02 `root.contracts.core_ir.v4_contracts.machine_graph_contract.event_catalog` root.contracts.core_ir.v4_contracts.machine_graph_contract.event_catalog actual extraction complete；下一步: BE-001UG-03 root.contracts.core_ir.v4_contracts.machine_graph_contract.event_catalog single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/1144-root.contracts.core_ir.v4_contracts.machine_graph_contract.event_catalog.extract_closeout.md` - v4.16.0 BE-001UG-02 root.contracts.core_ir.v4_contracts.machine_graph_contract.event_catalog actual extraction complete
