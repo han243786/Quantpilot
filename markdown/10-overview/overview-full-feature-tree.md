@@ -763,6 +763,7 @@ Cargo.toml [workspace]
 ### 4.3 qrpc_compiler — 编译层
 
 **文件**: `qrpc_compiler/src/lib.rs`
+**子模块文件**: `qrpc_compiler/src/runtime_protocol_validation.rs`
 
 将 Core IR 编译为可执行指令。负责:
 - 策略图 → Core IR 转换
@@ -2347,6 +2348,7 @@ storage/
 **qrpc_compiler**:
 - `qrpc_compiler/Cargo.toml` — qrpc_compiler 包配置
 - `qrpc_compiler/src/lib.rs` — 编译层入口; 改 Core IR 编译逻辑时改这里
+- `qrpc_compiler/src/runtime_protocol_validation.rs` — runtime protocol validation child module; 改 runtime protocol validation-only behavior 时改这里
 
 **qrpc_runtime**:
 - `qrpc_runtime/Cargo.toml` — qrpc_runtime 包配置
@@ -4804,3 +4806,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1275-root.contracts.compiler_bridge.parent_residual_judgment.runtime_protocol_validation.md` - v4.16.0 BE-001XA-01 root.contracts.compiler_bridge parent residual judgment selects runtime_protocol_validation
 递归边界补充: BE-001XB-01 `root.contracts.compiler_bridge.runtime_protocol_validation` root.contracts.compiler_bridge.runtime_protocol_validation equivalence baseline and extraction plan；下一步: BE-001XC-01 root.contracts.compiler_bridge.runtime_protocol_validation extract_closeout。
 - `markdown/06-milestones/v4.16.0/1276-root.contracts.compiler_bridge.runtime_protocol_validation.baseline_plan.md` - v4.16.0 BE-001XB-01 root.contracts.compiler_bridge.runtime_protocol_validation equivalence baseline and extraction plan
+递归边界补充: BE-001XC-01 `root.contracts.compiler_bridge.runtime_protocol_validation` root.contracts.compiler_bridge.runtime_protocol_validation actual extraction complete；下一步: BE-001XD-01 root.contracts.compiler_bridge.runtime_protocol_validation single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/1277-root.contracts.compiler_bridge.runtime_protocol_validation.extract_closeout.md` - v4.16.0 BE-001XC-01 root.contracts.compiler_bridge.runtime_protocol_validation actual extraction complete
