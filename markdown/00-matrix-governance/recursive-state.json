@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001VS-02",
-  "last_committed_sha": "ba72988c",
-  "current_parent": "root.contracts.core_ir.v4_contracts.complexity_budget_contract",
-  "current_step": "BE-001VS-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001VS-03",
+  "last_committed_sha": "8983a09d",
+  "current_parent": "root.contracts.core_ir.v4_contracts",
+  "current_step": "BE-001VT-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -163,7 +163,8 @@
     "contracts.core_ir.v4_contracts.qs_type_system_contract",
     "contracts.core_ir.v4_contracts.version_manifest",
     "contracts.core_ir.v4_contracts.plugin_governance_contract",
-    "contracts.core_ir.v4_contracts.reproducibility_contract"
+    "contracts.core_ir.v4_contracts.reproducibility_contract",
+    "contracts.core_ir.v4_contracts.complexity_budget_contract"
   ],
   "open_residuals": [
     "contracts.core_ir",
@@ -173,7 +174,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.core_ir.v4_contracts.complexity_budget_contract",
+  "next_recommended_child": "root.contracts.core_ir.v4_contracts",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
