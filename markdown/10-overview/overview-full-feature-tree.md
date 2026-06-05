@@ -2308,7 +2308,8 @@ storage/
 **qrpc_core_ir**:
 - `qrpc_core_ir/Cargo.toml` — qrpc_core_ir 包配置
 - `qrpc_core_ir/src/lib.rs` — v3 类型定义 + v4 模块导出
-- `qrpc_core_ir/src/v4.rs` — v4 全量类型 (47+ struct/enum, 40+ 验证, 兼容桥, backtest artifact, memory type_ref/memory_writes 校验, `MachineState.child_machine` 与复杂度预算); 改 v4 类型系统、嵌套状态机或 artifact schema 时改这里 🆕 v4.7.0
+- `qrpc_core_ir/src/v4.rs` — v4 parent facade and residual contract families (machine/runtime/venue/type-system validators, compat bridge, memory type_ref/memory_writes 校验, `MachineState.child_machine` 与复杂度预算); 改 v4 parent wiring or residual v4 contract families 时改这里 🆕 v4.16.0
+- `qrpc_core_ir/src/v4/backtest_artifact_contract.rs` — v4 backtest artifact DTO family (`V4BacktestArtifact`, microstructure metrics, machine trajectory, risk-plane decision, execution capability source records); 改 v4 artifact schema DTO 时改这里 🆕 v4.16.0
 
 **qrpc_compiler**:
 - `qrpc_compiler/Cargo.toml` — qrpc_compiler 包配置
@@ -4470,3 +4471,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1125-root.contracts.core_ir.v4_contracts.parent_residual_judgment.backtest_artifact_contract.md` - v4.16.0 BE-001TW-01 root.contracts.core_ir.v4_contracts parent residual judgment selects backtest_artifact_contract
 递归边界补充: BE-001TX-01 `root.contracts.core_ir.v4_contracts.backtest_artifact_contract` root.contracts.core_ir.v4_contracts.backtest_artifact_contract equivalence baseline and extraction plan；下一步: BE-001TX-02 root.contracts.core_ir.v4_contracts.backtest_artifact_contract extract_closeout。
 - `markdown/06-milestones/v4.16.0/1126-root.contracts.core_ir.v4_contracts.backtest_artifact_contract.baseline_plan.md` - v4.16.0 BE-001TX-01 root.contracts.core_ir.v4_contracts.backtest_artifact_contract equivalence baseline and extraction plan
+递归边界补充: BE-001TX-02 `root.contracts.core_ir.v4_contracts.backtest_artifact_contract` root.contracts.core_ir.v4_contracts.backtest_artifact_contract actual extraction complete；下一步: BE-001TX-03 root.contracts.core_ir.v4_contracts.backtest_artifact_contract single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/1127-root.contracts.core_ir.v4_contracts.backtest_artifact_contract.extract_closeout.md` - v4.16.0 BE-001TX-02 root.contracts.core_ir.v4_contracts.backtest_artifact_contract actual extraction complete
