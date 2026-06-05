@@ -1611,3 +1611,4 @@
 | v4.16.0 / BE-001WJ-01 | 新增: `root.contracts.core_ir.v4_contracts.core_ir_compat_bridge` root.contracts.core_ir.v4_contracts.core_ir_compat_bridge parent residual judgment selects core_ir_validation |
 | v4.16.0 / BE-001WK-01 | 新增: `root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.core_ir_validation` root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.core_ir_validation equivalence baseline and extraction plan |
 | v4.16.0 / BE-001WK-02 | 新增: `root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.core_ir_validation` root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.core_ir_validation actual extraction complete |
+| v4.16.0 / BE-001WK-03 | 新增: `root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.core_ir_validation` root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.core_ir_validation single leaf closeout continues split |
