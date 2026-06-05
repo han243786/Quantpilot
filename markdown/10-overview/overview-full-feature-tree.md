@@ -2314,6 +2314,7 @@ storage/
 - `qrpc_core_ir/src/v4/machine_contract/static_validation.rs` — v4 machine static validation behavior (`V4MachineContract::validate_static_contract`, state/group/transition/memory/child-machine/policy conflict checks); 改 v4 machine validation behavior or error strings 时改这里 🆕 v4.16.0
 - `qrpc_core_ir/src/v4/machine_graph_contract.rs` — v4 machine graph schema, event catalog schema, graph/event/risk-plane validation, and parent-only traversal helpers for complexity metrics; 改 v4 graph schema or graph validation behavior 时改这里 🆕 v4.16.0
 - `qrpc_core_ir/src/v4/machine_graph_contract/event_catalog.rs` — v4 graph event catalog schema and local event catalog validation; 改 v4 event catalog DTOs or catalog-local validation 时改这里 🆕 v4.16.0
+- `qrpc_core_ir/src/v4/machine_graph_contract/static_validation.rs` — v4 graph static validation behavior (`V4MachineGraphContract::validate_static_contract`, DAG/event/risk-plane checks, event party helper); 改 v4 graph validation behavior or error strings 时改这里 🆕 v4.16.0
 
 **qrpc_compiler**:
 - `qrpc_compiler/Cargo.toml` — qrpc_compiler 包配置
@@ -4517,3 +4518,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1146-root.contracts.core_ir.v4_contracts.machine_graph_contract.parent_residual_judgment.graph_static_validation.md` - v4.16.0 BE-001UH-01 root.contracts.core_ir.v4_contracts.machine_graph_contract parent residual judgment selects graph_static_validation
 递归边界补充: BE-001UI-01 `root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation` root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation equivalence baseline and extraction plan；下一步: BE-001UI-02 root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation extract_closeout。
 - `markdown/06-milestones/v4.16.0/1147-root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation.baseline_plan.md` - v4.16.0 BE-001UI-01 root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation equivalence baseline and extraction plan
+递归边界补充: BE-001UI-02 `root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation` root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation actual extraction complete；下一步: BE-001UI-03 root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/1148-root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation.extract_closeout.md` - v4.16.0 BE-001UI-02 root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation actual extraction complete
