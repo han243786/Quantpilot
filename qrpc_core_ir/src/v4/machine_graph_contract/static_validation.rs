@@ -1,10 +1,11 @@
 mod event_usage_validation;
 mod graph_acyclic_validation;
+mod machine_identity_validation;
 mod risk_plane_validation;
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
-use super::{collect_machine_family, V4MachineGraphContract};
+use super::V4MachineGraphContract;
 use crate::v4::V4_MACHINE_GRAPH_CONTRACT_VERSION;
 
 impl V4MachineGraphContract {
@@ -24,43 +25,8 @@ impl V4MachineGraphContract {
             errors.push("at least one machine is required".to_string());
         }
 
-        let mut machines_by_id = BTreeMap::new();
-        let mut all_machines_by_id = BTreeMap::new();
-        for machine in &self.machines {
-            if machine.machine_id.trim().is_empty() {
-                errors.push("machine_id is required".to_string());
-            } else if machines_by_id
-                .insert(machine.machine_id.as_str(), machine)
-                .is_some()
-            {
-                errors.push(format!("duplicate machine `{}`", machine.machine_id));
-            }
-            let mut family = Vec::new();
-            collect_machine_family(machine, &mut family);
-            for family_machine in family {
-                if family_machine.machine_id.trim().is_empty() {
-                    continue;
-                }
-                if all_machines_by_id
-                    .insert(family_machine.machine_id.as_str(), family_machine)
-                    .is_some()
-                {
-                    errors.push(format!(
-                        "duplicate machine `{}` across top-level and nested machines",
-                        family_machine.machine_id
-                    ));
-                }
-            }
-
-            if let Err(machine_errors) = machine.validate_static_contract() {
-                for machine_error in machine_errors {
-                    errors.push(format!(
-                        "machine `{}` failed static contract: {}",
-                        machine.machine_id, machine_error
-                    ));
-                }
-            }
-        }
+        let machine_identity = self.validate_machine_identity();
+        errors.extend(machine_identity.errors);
 
         let mut edge_ids = BTreeSet::new();
         for edge in &self.edges {
@@ -75,13 +41,19 @@ impl V4MachineGraphContract {
                     edge.edge_id
                 ));
             }
-            if !machines_by_id.contains_key(edge.source_machine_id.as_str()) {
+            if !machine_identity
+                .machines_by_id
+                .contains_key(edge.source_machine_id.as_str())
+            {
                 errors.push(format!(
                     "edge `{}` references unknown source_machine_id `{}`",
                     edge.edge_id, edge.source_machine_id
                 ));
             }
-            if !machines_by_id.contains_key(edge.target_machine_id.as_str()) {
+            if !machine_identity
+                .machines_by_id
+                .contains_key(edge.target_machine_id.as_str())
+            {
                 errors.push(format!(
                     "edge `{}` references unknown target_machine_id `{}`",
                     edge.edge_id, edge.target_machine_id
@@ -96,8 +68,8 @@ impl V4MachineGraphContract {
         }
 
         errors.extend(self.validate_graph_acyclic().err().unwrap_or_default());
-        errors.extend(self.validate_event_catalog(&all_machines_by_id));
-        errors.extend(self.validate_risk_plane(&machines_by_id));
+        errors.extend(self.validate_event_catalog(&machine_identity.all_machines_by_id));
+        errors.extend(self.validate_risk_plane(&machine_identity.machines_by_id));
 
         if errors.is_empty() {
             Ok(())
