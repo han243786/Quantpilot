@@ -1596,3 +1596,4 @@
 | v4.16.0 / BE-001WB-02 | 新增: `root.contracts.core_ir.v4_contracts.compile_time_capability_report` root.contracts.core_ir.v4_contracts.compile_time_capability_report actual extraction complete |
 | v4.16.0 / BE-001WB-03 | 新增: `root.contracts.core_ir.v4_contracts.compile_time_capability_report` root.contracts.core_ir.v4_contracts.compile_time_capability_report single leaf closeout continues split |
 | v4.16.0 / BE-001WC-01 | 新增: `root.contracts.core_ir.v4_contracts.compile_time_capability_report` root.contracts.core_ir.v4_contracts.compile_time_capability_report parent residual judgment selects report_builder |
+| v4.16.0 / BE-001WD-01 | 新增: `root.contracts.core_ir.v4_contracts.compile_time_capability_report.report_builder` root.contracts.core_ir.v4_contracts.compile_time_capability_report.report_builder equivalence baseline and extraction plan |
