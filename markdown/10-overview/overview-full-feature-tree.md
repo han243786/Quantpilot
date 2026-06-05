@@ -4451,3 +4451,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - qrpc_core_ir/src/v1/tests.rs - Extracted qrpc-core-ir v1 cfg-test round-trip fixture
 递归边界补充: BE-001TQ-03 `root.contracts.core_ir.v1_contract.test_fixture` root.contracts.core_ir.v1_contract.test_fixture single leaf closeout stops split；下一步: BE-001TR-01 root.contracts.core_ir.v1_contract parent_residual_judgment closes parent。
 - `markdown/06-milestones/v4.16.0/1117-root.contracts.core_ir.v1_contract.test_fixture.single_leaf_closeout.md` - v4.16.0 BE-001TQ-03 root.contracts.core_ir.v1_contract.test_fixture single leaf closeout stops split
+递归边界补充: BE-001TR-01 `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract parent residual judgment closes parent；下一步: BE-001TS-01 root.contracts.core_ir parent_residual_judgment selects v4_contracts。
+- `markdown/06-milestones/v4.16.0/1118-root.contracts.core_ir.v1_contract.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001TR-01 root.contracts.core_ir.v1_contract parent residual judgment closes parent
