@@ -1,10 +1,10 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001VB-03",
-  "last_committed_sha": "a2ee3b95",
-  "current_parent": "root.contracts.core_ir.v4_contracts.machine_graph_contract",
-  "current_step": "BE-001VC-01",
+  "last_committed_batch": "BE-001VC-01",
+  "last_committed_sha": "d4144d37",
+  "current_parent": "root.contracts.core_ir.v4_contracts",
+  "current_step": "BE-001VD-01",
   "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
@@ -155,7 +155,8 @@
     "contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation.machine_identity_validation",
     "contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation.edge_identity_validation",
     "contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation",
-    "contracts.core_ir.v4_contracts.machine_graph_contract.traversal_helpers"
+    "contracts.core_ir.v4_contracts.machine_graph_contract.traversal_helpers",
+    "contracts.core_ir.v4_contracts.machine_graph_contract"
   ],
   "open_residuals": [
     "contracts.core_ir",
@@ -165,7 +166,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.core_ir.v4_contracts.machine_graph_contract",
+  "next_recommended_child": "root.contracts.core_ir.v4_contracts",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
