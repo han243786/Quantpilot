@@ -1,5 +1,6 @@
 mod backtest_artifact_contract;
 mod complexity_budget_contract;
+mod developer_learning_pipeline_contract;
 mod machine_contract;
 mod machine_graph_contract;
 mod plugin_governance_contract;
@@ -13,6 +14,7 @@ mod version_manifest;
 
 pub use backtest_artifact_contract::*;
 pub use complexity_budget_contract::*;
+pub use developer_learning_pipeline_contract::*;
 pub use machine_contract::*;
 pub use machine_graph_contract::*;
 pub use plugin_governance_contract::*;
@@ -28,26 +30,6 @@ use qs_type_system_contract::default_qs_type_system_version;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct DeveloperLearningPipelineContract {
-    #[serde(default = "default_learning_pipeline_contract_version")]
-    pub schema_version: String,
-    #[serde(default = "default_true")]
-    pub core_pipeline_in_repo: bool,
-    #[serde(default = "default_learning_dir")]
-    pub local_learning_dir: String,
-    #[serde(default = "default_true")]
-    pub local_learning_dir_gitignored: bool,
-    #[serde(default = "default_true")]
-    pub write_requires_explicit_user_command: bool,
-    #[serde(default)]
-    pub included_in_regular_gates: bool,
-    #[serde(default = "default_true")]
-    pub major_closeout_question_required: bool,
-    #[serde(default = "default_true")]
-    pub owner_first_iteration_only: bool,
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct V4StaticContractBundle {
@@ -237,21 +219,6 @@ pub struct V4PluginCapabilityReportEntry {
     pub diagnostics: Vec<String>,
 }
 
-impl Default for DeveloperLearningPipelineContract {
-    fn default() -> Self {
-        Self {
-            schema_version: V4_LEARNING_PIPELINE_CONTRACT_VERSION.to_string(),
-            core_pipeline_in_repo: true,
-            local_learning_dir: default_learning_dir(),
-            local_learning_dir_gitignored: true,
-            write_requires_explicit_user_command: true,
-            included_in_regular_gates: false,
-            major_closeout_question_required: true,
-            owner_first_iteration_only: true,
-        }
-    }
-}
-
 impl Default for V4StaticContractBundle {
     fn default() -> Self {
         Self {
@@ -268,49 +235,6 @@ impl Default for V4StaticContractBundle {
             venue_matrices: Vec::new(),
             plugin_manifests: Vec::new(),
             metadata: BTreeMap::new(),
-        }
-    }
-}
-
-impl DeveloperLearningPipelineContract {
-    pub fn validate_static_contract(&self) -> Result<(), Vec<String>> {
-        let mut errors = Vec::new();
-
-        if self.schema_version != V4_LEARNING_PIPELINE_CONTRACT_VERSION {
-            errors.push(format!(
-                "schema_version must be `{}`",
-                V4_LEARNING_PIPELINE_CONTRACT_VERSION
-            ));
-        }
-        if !self.core_pipeline_in_repo {
-            errors.push("core learning pipeline must live in the repository".to_string());
-        }
-        if self.local_learning_dir != default_learning_dir() {
-            errors.push(format!(
-                "local_learning_dir must be `{}`",
-                default_learning_dir()
-            ));
-        }
-        if !self.local_learning_dir_gitignored {
-            errors.push("local learning records must stay gitignored".to_string());
-        }
-        if !self.write_requires_explicit_user_command {
-            errors.push("learning records must require explicit user command".to_string());
-        }
-        if self.included_in_regular_gates {
-            errors.push("learning pipeline must not enter regular mandatory gates".to_string());
-        }
-        if !self.major_closeout_question_required {
-            errors.push("MAJOR closeout must ask the learning pipeline question".to_string());
-        }
-        if !self.owner_first_iteration_only {
-            errors.push("first learning pipeline iteration must stay owner-first".to_string());
-        }
-
-        if errors.is_empty() {
-            Ok(())
-        } else {
-            Err(errors)
         }
     }
 }
@@ -1854,10 +1778,6 @@ fn default_machine_event_catalog_version() -> String {
     V4_MACHINE_EVENT_CATALOG_VERSION.to_string()
 }
 
-fn default_learning_pipeline_contract_version() -> String {
-    V4_LEARNING_PIPELINE_CONTRACT_VERSION.to_string()
-}
-
 fn default_compile_time_capability_request_version() -> String {
     V4_COMPILE_TIME_CAPABILITY_REQUEST_VERSION.to_string()
 }
@@ -1872,10 +1792,6 @@ fn default_core_ir_compat_bridge_version() -> String {
 
 fn default_v4_backtest_artifact_version() -> String {
     V4_BACKTEST_ARTIFACT_VERSION.to_string()
-}
-
-fn default_learning_dir() -> String {
-    "markdown/learning/".to_string()
 }
 
 fn default_transition_conflict_policy() -> TransitionConflictPolicy {
