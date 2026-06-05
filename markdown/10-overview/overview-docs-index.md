@@ -1228,3 +1228,4 @@
 | v4.16.0 / BE-001VX-01 | 新增: `root.contracts.core_ir.v4_contracts.static_contract_bundle` root.contracts.core_ir.v4_contracts.static_contract_bundle parent residual judgment selects static_validation |
 | v4.16.0 / BE-001VY-01 | 新增: `root.contracts.core_ir.v4_contracts.static_contract_bundle.static_validation` root.contracts.core_ir.v4_contracts.static_contract_bundle.static_validation equivalence baseline and extraction plan |
 | v4.16.0 / BE-001VY-02 | 新增: `root.contracts.core_ir.v4_contracts.static_contract_bundle.static_validation` root.contracts.core_ir.v4_contracts.static_contract_bundle.static_validation actual extraction complete |
+| v4.16.0 / BE-001VY-03 | 新增: `root.contracts.core_ir.v4_contracts.static_contract_bundle.static_validation` root.contracts.core_ir.v4_contracts.static_contract_bundle.static_validation single leaf closeout stops split |
