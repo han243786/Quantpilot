@@ -1361,3 +1361,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001WV-01 `root.contracts.core_ir.v4_contracts.core_ir_compat_bridge` root.contracts.core_ir.v4_contracts.core_ir_compat_bridge parent residual judgment closes parent；下一步: BE-001WW-01 root.contracts.core_ir.v4_contracts parent_residual_judgment。
 - BE-001WW-01 `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts parent residual judgment closes parent；下一步: BE-001WX-01 root.contracts.core_ir parent_residual_judgment。
 - BE-001WX-01 `root.contracts.core_ir` root.contracts.core_ir parent residual judgment closes parent；下一步: BE-001WY-01 root.contracts parent_residual_judgment selects contracts.compiler_bridge。
+- BE-001WY-01 `root.contracts` root.contracts parent residual judgment selects contracts.compiler_bridge；下一步: BE-001WZ-01 root.contracts.compiler_bridge baseline_plan。
