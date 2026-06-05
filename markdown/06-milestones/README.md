@@ -1569,3 +1569,4 @@
 | v4.16.0 / BE-001VN-01 | 新增: `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts parent residual judgment selects plugin_governance_contract |
 | v4.16.0 / BE-001VO-01 | 新增: `root.contracts.core_ir.v4_contracts.plugin_governance_contract` root.contracts.core_ir.v4_contracts.plugin_governance_contract equivalence baseline and extraction plan |
 | v4.16.0 / BE-001VO-02 | 新增: `root.contracts.core_ir.v4_contracts.plugin_governance_contract` root.contracts.core_ir.v4_contracts.plugin_governance_contract actual extraction complete |
+| v4.16.0 / BE-001VO-03 | 新增: `root.contracts.core_ir.v4_contracts.plugin_governance_contract` root.contracts.core_ir.v4_contracts.plugin_governance_contract single leaf closeout stops split |
