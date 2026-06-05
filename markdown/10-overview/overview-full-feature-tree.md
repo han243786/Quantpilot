@@ -2308,9 +2308,10 @@ storage/
 **qrpc_core_ir**:
 - `qrpc_core_ir/Cargo.toml` — qrpc_core_ir 包配置
 - `qrpc_core_ir/src/lib.rs` — v3 类型定义 + v4 模块导出
-- `qrpc_core_ir/src/v4.rs` — v4 parent facade and residual contract families (runtime/venue/type-system validators, compat bridge, complexity budget); 改 v4 parent wiring or residual v4 contract families 时改这里 🆕 v4.16.0
+- `qrpc_core_ir/src/v4.rs` — v4 parent facade and residual contract families (version manifest, plugin governance, reports, compat bridge, complexity budget); 改 v4 parent wiring or residual v4 contract families 时改这里 🆕 v4.16.0
 - `qrpc_core_ir/src/v4/backtest_artifact_contract.rs` — v4 backtest artifact DTO family (`V4BacktestArtifact`, microstructure metrics, machine trajectory, risk-plane decision, execution capability source records); 改 v4 artifact schema DTO 时改这里 🆕 v4.16.0
 - `qrpc_core_ir/src/v4/qs_state_machine_profile.rs` — v4 QS state-machine profile policy contract, defaults, and validation; 改 QS profile policy fields, defaults, or validation errors 时改这里 🆕 v4.16.0
+- `qrpc_core_ir/src/v4/qs_type_system_contract.rs` — v4 QS type-system contract, scalar/composite/type-ref DTOs, first-wave QS type constants, defaults, and static/type-ref validation helpers; 改 QS type fields, type constants, defaults, or validation errors 时改这里 🆕 v4.16.0
 - `qrpc_core_ir/src/v4/runtime_mode_contract.rs` — v4 runtime trading mode contract, runtime execution event constants, default mode specs, validation, and settlement lookup helpers; 改 runtime mode fields, mode defaults, execution events, or runtime mode validation errors 时改这里 🆕 v4.16.0
 - `qrpc_core_ir/src/v4/venue_capability_matrix.rs` — v4 venue execution capability matrix contract, first-wave execution capability list, support source mapping, unsupported matrix defaults, and venue capability validation; 改 venue capability fields, first-wave capability list, source/mode support rules, or venue matrix validation errors 时改这里 🆕 v4.16.0
 - `qrpc_core_ir/src/v4/machine_contract.rs` — v4 machine schema/taxonomy facade (`V4MachineContract`, states, groups, transitions, memory fields, machine policy enums); 改 v4 machine schema or taxonomy 时改这里 🆕 v4.16.0
@@ -4633,3 +4634,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1198-root.contracts.core_ir.v4_contracts.parent_residual_judgment.qs_type_system_contract.md` - v4.16.0 BE-001VJ-01 root.contracts.core_ir.v4_contracts parent residual judgment selects qs_type_system_contract
 递归边界补充: BE-001VK-01 `root.contracts.core_ir.v4_contracts.qs_type_system_contract` root.contracts.core_ir.v4_contracts.qs_type_system_contract equivalence baseline and extraction plan；下一步: BE-001VK-02 root.contracts.core_ir.v4_contracts.qs_type_system_contract extract_closeout。
 - `markdown/06-milestones/v4.16.0/1199-root.contracts.core_ir.v4_contracts.qs_type_system_contract.baseline_plan.md` - v4.16.0 BE-001VK-01 root.contracts.core_ir.v4_contracts.qs_type_system_contract equivalence baseline and extraction plan
+递归边界补充: BE-001VK-02 `root.contracts.core_ir.v4_contracts.qs_type_system_contract` root.contracts.core_ir.v4_contracts.qs_type_system_contract actual extraction complete；下一步: BE-001VK-03 root.contracts.core_ir.v4_contracts.qs_type_system_contract single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/1200-root.contracts.core_ir.v4_contracts.qs_type_system_contract.extract_closeout.md` - v4.16.0 BE-001VK-02 root.contracts.core_ir.v4_contracts.qs_type_system_contract actual extraction complete
