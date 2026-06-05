@@ -1109,3 +1109,4 @@
 | v4.16.0 / BE-001TM-01 | 新增: `root.contracts.core_ir.v1_contract.data_indicator_expression_contract` root.contracts.core_ir.v1_contract.data_indicator_expression_contract equivalence baseline and extraction plan |
 | v4.16.0 / BE-001TM-02 | 新增: `root.contracts.core_ir.v1_contract.data_indicator_expression_contract` root.contracts.core_ir.v1_contract.data_indicator_expression_contract actual extraction complete |
 | v4.16.0 / BE-001TM-03 | 新增: `root.contracts.core_ir.v1_contract.data_indicator_expression_contract` root.contracts.core_ir.v1_contract.data_indicator_expression_contract single leaf closeout stops split |
+| v4.16.0 / BE-001TN-01 | 新增: `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract parent residual judgment selects policy_execution_contract |
