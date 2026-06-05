@@ -1188,3 +1188,4 @@
 | v4.16.0 / BE-001VD-01 | 新增: `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts parent residual judgment selects qs_state_machine_profile |
 | v4.16.0 / BE-001VE-01 | 新增: `root.contracts.core_ir.v4_contracts.qs_state_machine_profile` root.contracts.core_ir.v4_contracts.qs_state_machine_profile equivalence baseline and extraction plan |
 | v4.16.0 / BE-001VE-02 | 新增: `root.contracts.core_ir.v4_contracts.qs_state_machine_profile` root.contracts.core_ir.v4_contracts.qs_state_machine_profile actual extraction complete |
+| v4.16.0 / BE-001VE-03 | 新增: `root.contracts.core_ir.v4_contracts.qs_state_machine_profile` root.contracts.core_ir.v4_contracts.qs_state_machine_profile single leaf closeout stops split |
