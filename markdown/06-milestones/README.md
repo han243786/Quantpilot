@@ -1488,3 +1488,4 @@
 | v4.16.0 / BE-001TW-01 | 新增: `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts parent residual judgment selects backtest_artifact_contract |
 | v4.16.0 / BE-001TX-01 | 新增: `root.contracts.core_ir.v4_contracts.backtest_artifact_contract` root.contracts.core_ir.v4_contracts.backtest_artifact_contract equivalence baseline and extraction plan |
 | v4.16.0 / BE-001TX-02 | 新增: `root.contracts.core_ir.v4_contracts.backtest_artifact_contract` root.contracts.core_ir.v4_contracts.backtest_artifact_contract actual extraction complete |
+| v4.16.0 / BE-001TX-03 | 新增: `root.contracts.core_ir.v4_contracts.backtest_artifact_contract` root.contracts.core_ir.v4_contracts.backtest_artifact_contract single leaf closeout stops split |
