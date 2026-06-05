@@ -1273,3 +1273,4 @@
 | v4.16.0 / BE-001WW-01 | 新增: `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts parent residual judgment closes parent |
 | v4.16.0 / BE-001WX-01 | 新增: `root.contracts.core_ir` root.contracts.core_ir parent residual judgment closes parent |
 | v4.16.0 / BE-001WY-01 | 新增: `root.contracts` root.contracts parent residual judgment selects contracts.compiler_bridge |
+| v4.16.0 / BE-001WZ-01 | 新增: `root.contracts.compiler_bridge` root.contracts.compiler_bridge equivalence baseline and split plan |
