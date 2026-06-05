@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001WR-03",
-  "last_committed_sha": "09593d43",
-  "current_parent": "root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder.event_catalog_builder",
-  "current_step": "BE-001WS-01",
-  "current_phase": "parent_residual_judgment",
+  "last_committed_batch": "BE-001WS-01",
+  "last_committed_sha": "274d857c",
+  "current_parent": "root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder.machine_builder",
+  "current_step": "BE-001WT-01",
+  "current_phase": "baseline_plan",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -180,7 +180,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder.event_catalog_builder",
+  "next_recommended_child": "root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder.machine_builder",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
