@@ -8090,3 +8090,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 **最新状态补充(BE-001TQ-03)**: `root.contracts.core_ir.v1_contract.test_fixture` root.contracts.core_ir.v1_contract.test_fixture single leaf closeout stops split；下一步: BE-001TR-01 root.contracts.core_ir.v1_contract parent_residual_judgment closes parent。
 **最新状态补充(BE-001TR-01)**: `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract parent residual judgment closes parent；下一步: BE-001TS-01 root.contracts.core_ir parent_residual_judgment selects v4_contracts。
 `root.contracts.core_ir.v1_contract parent_closeout: true`; `qrpc_core_ir/src/v1.rs` is now a closed parent facade over root graph, data/expression, policy/execution, and cfg-test children. Next cursor returns to `root.contracts.core_ir.v4_contracts`.
+**最新状态补充(BE-001TS-01)**: `root.contracts.core_ir` root.contracts.core_ir parent residual judgment selects v4_contracts；下一步: BE-001TT-01 root.contracts.core_ir.v4_contracts baseline_plan。
+`root.contracts.core_ir` selected `v4_contracts`; v1_contract is closed, and `qrpc_core_ir/src/v4.rs` is the remaining parent-sized v4 contract family owner before crate facade closeout.
