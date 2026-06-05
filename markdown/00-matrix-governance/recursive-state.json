@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001WD-02",
-  "last_committed_sha": "5f3984f4",
-  "current_parent": "root.contracts.core_ir.v4_contracts.compile_time_capability_report.report_builder",
-  "current_step": "BE-001WD-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001WD-03",
+  "last_committed_sha": "5617595a",
+  "current_parent": "root.contracts.core_ir.v4_contracts.compile_time_capability_report",
+  "current_step": "BE-001WE-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -167,7 +167,8 @@
     "contracts.core_ir.v4_contracts.complexity_budget_contract",
     "contracts.core_ir.v4_contracts.developer_learning_pipeline_contract",
     "contracts.core_ir.v4_contracts.static_contract_bundle.static_validation",
-    "contracts.core_ir.v4_contracts.static_contract_bundle"
+    "contracts.core_ir.v4_contracts.static_contract_bundle",
+    "contracts.core_ir.v4_contracts.compile_time_capability_report.report_builder"
   ],
   "open_residuals": [
     "contracts.core_ir",
@@ -177,7 +178,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.core_ir.v4_contracts.compile_time_capability_report.report_builder",
+  "next_recommended_child": "root.contracts.core_ir.v4_contracts.compile_time_capability_report.report_validation",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
