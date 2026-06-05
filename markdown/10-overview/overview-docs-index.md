@@ -1113,3 +1113,4 @@
 | v4.16.0 / BE-001TO-01 | 新增: `root.contracts.core_ir.v1_contract.policy_execution_contract` root.contracts.core_ir.v1_contract.policy_execution_contract equivalence baseline and extraction plan |
 | v4.16.0 / BE-001TO-02 | 新增: `root.contracts.core_ir.v1_contract.policy_execution_contract` root.contracts.core_ir.v1_contract.policy_execution_contract actual extraction complete |
 | v4.16.0 / BE-001TO-03 | 新增: `root.contracts.core_ir.v1_contract.policy_execution_contract` root.contracts.core_ir.v1_contract.policy_execution_contract single leaf closeout stops split |
+| v4.16.0 / BE-001TP-01 | 新增: `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract parent residual judgment selects test_fixture |
