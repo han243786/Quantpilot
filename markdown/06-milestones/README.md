@@ -1574,3 +1574,4 @@
 | v4.16.0 / BE-001VQ-01 | 新增: `root.contracts.core_ir.v4_contracts.reproducibility_contract` root.contracts.core_ir.v4_contracts.reproducibility_contract equivalence baseline and extraction plan |
 | v4.16.0 / BE-001VQ-02 | 新增: `root.contracts.core_ir.v4_contracts.reproducibility_contract` root.contracts.core_ir.v4_contracts.reproducibility_contract actual extraction complete |
 | v4.16.0 / BE-001VQ-03 | 新增: `root.contracts.core_ir.v4_contracts.reproducibility_contract` root.contracts.core_ir.v4_contracts.reproducibility_contract single leaf closeout stops split |
+| v4.16.0 / BE-001VR-01 | 新增: `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts parent residual judgment selects complexity_budget_contract |
