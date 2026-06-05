@@ -1183,3 +1183,4 @@
 | v4.16.0 / BE-001VA-01 | 新增: `root.contracts.core_ir.v4_contracts.machine_graph_contract` root.contracts.core_ir.v4_contracts.machine_graph_contract parent residual judgment selects traversal_helpers |
 | v4.16.0 / BE-001VB-01 | 新增: `root.contracts.core_ir.v4_contracts.machine_graph_contract.traversal_helpers` root.contracts.core_ir.v4_contracts.machine_graph_contract.traversal_helpers equivalence baseline and extraction plan |
 | v4.16.0 / BE-001VB-02 | 新增: `root.contracts.core_ir.v4_contracts.machine_graph_contract.traversal_helpers` root.contracts.core_ir.v4_contracts.machine_graph_contract.traversal_helpers actual extraction complete |
+| v4.16.0 / BE-001VB-03 | 新增: `root.contracts.core_ir.v4_contracts.machine_graph_contract.traversal_helpers` root.contracts.core_ir.v4_contracts.machine_graph_contract.traversal_helpers single leaf closeout stops split |
