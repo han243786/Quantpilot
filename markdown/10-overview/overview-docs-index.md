@@ -1275,3 +1275,4 @@
 | v4.16.0 / BE-001WY-01 | 新增: `root.contracts` root.contracts parent residual judgment selects contracts.compiler_bridge |
 | v4.16.0 / BE-001WZ-01 | 新增: `root.contracts.compiler_bridge` root.contracts.compiler_bridge equivalence baseline and split plan |
 | v4.16.0 / BE-001XA-01 | 新增: `root.contracts.compiler_bridge` root.contracts.compiler_bridge parent residual judgment selects runtime_protocol_validation |
+| v4.16.0 / BE-001XB-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_validation` root.contracts.compiler_bridge.runtime_protocol_validation equivalence baseline and extraction plan |
