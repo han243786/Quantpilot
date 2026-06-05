@@ -1,10 +1,10 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001WW-01",
-  "last_committed_sha": "74176564",
-  "current_parent": "root.contracts.core_ir",
-  "current_step": "BE-001WX-01",
+  "last_committed_batch": "BE-001WX-01",
+  "last_committed_sha": "604ae535",
+  "current_parent": "root.contracts",
+  "current_step": "BE-001WY-01",
   "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
@@ -177,17 +177,17 @@
     "contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder.machine_builder",
     "contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder",
     "contracts.core_ir.v4_contracts.core_ir_compat_bridge",
-    "contracts.core_ir.v4_contracts"
+    "contracts.core_ir.v4_contracts",
+    "contracts.core_ir"
   ],
   "open_residuals": [
-    "contracts.core_ir",
     "contracts.compiler_bridge",
     "contracts.runtime_support",
     "contracts.quantscript",
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.core_ir",
+  "next_recommended_child": "root.contracts.compiler_bridge",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

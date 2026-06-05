@@ -1271,3 +1271,4 @@
 | v4.16.0 / BE-001WU-01 | 新增: `root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder` root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder parent residual judgment closes parent |
 | v4.16.0 / BE-001WV-01 | 新增: `root.contracts.core_ir.v4_contracts.core_ir_compat_bridge` root.contracts.core_ir.v4_contracts.core_ir_compat_bridge parent residual judgment closes parent |
 | v4.16.0 / BE-001WW-01 | 新增: `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts parent residual judgment closes parent |
+| v4.16.0 / BE-001WX-01 | 新增: `root.contracts.core_ir` root.contracts.core_ir parent residual judgment closes parent |
