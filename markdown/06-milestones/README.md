@@ -1556,3 +1556,4 @@
 | v4.16.0 / BE-001VG-03 | 新增: `root.contracts.core_ir.v4_contracts.runtime_mode_contract` root.contracts.core_ir.v4_contracts.runtime_mode_contract single leaf closeout stops split |
 | v4.16.0 / BE-001VH-01 | 新增: `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts parent residual judgment selects venue_capability_matrix |
 | v4.16.0 / BE-001VI-01 | 新增: `root.contracts.core_ir.v4_contracts.venue_capability_matrix` root.contracts.core_ir.v4_contracts.venue_capability_matrix equivalence baseline and extraction plan |
+| v4.16.0 / BE-001VI-02 | 新增: `root.contracts.core_ir.v4_contracts.venue_capability_matrix` root.contracts.core_ir.v4_contracts.venue_capability_matrix actual extraction complete |
