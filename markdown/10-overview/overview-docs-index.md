@@ -1122,3 +1122,4 @@
 | v4.16.0 / BE-001TT-01 | 新增: `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts equivalence baseline and split plan |
 | v4.16.0 / BE-001TU-01 | 新增: `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts parent residual judgment selects schema_identity_constants |
 | v4.16.0 / BE-001TV-01 | 新增: `root.contracts.core_ir.v4_contracts.schema_identity_constants` root.contracts.core_ir.v4_contracts.schema_identity_constants equivalence baseline and extraction plan |
+| v4.16.0 / BE-001TV-02 | 新增: `root.contracts.core_ir.v4_contracts.schema_identity_constants` root.contracts.core_ir.v4_contracts.schema_identity_constants actual extraction complete |
