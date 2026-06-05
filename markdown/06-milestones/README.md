@@ -1502,3 +1502,4 @@
 | v4.16.0 / BE-001UE-01 | 新增: `root.contracts.core_ir.v4_contracts.machine_graph_contract` root.contracts.core_ir.v4_contracts.machine_graph_contract equivalence baseline and extraction plan |
 | v4.16.0 / BE-001UE-02 | 新增: `root.contracts.core_ir.v4_contracts.machine_graph_contract` root.contracts.core_ir.v4_contracts.machine_graph_contract actual extraction complete |
 | v4.16.0 / BE-001UE-03 | 新增: `root.contracts.core_ir.v4_contracts.machine_graph_contract` root.contracts.core_ir.v4_contracts.machine_graph_contract single leaf closeout continues split |
+| v4.16.0 / BE-001UF-01 | 新增: `root.contracts.core_ir.v4_contracts.machine_graph_contract` root.contracts.core_ir.v4_contracts.machine_graph_contract parent residual judgment selects event_catalog |
