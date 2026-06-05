@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 
 use super::{
     default_machine_graph_contract_version, default_machine_graph_edge_activation,
-    default_risk_plane_min_priority, default_true, MachineTemplateKind, V4MachineContract,
+    default_risk_plane_min_priority, default_true, V4MachineContract,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
