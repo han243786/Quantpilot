@@ -1593,3 +1593,4 @@
 | v4.16.0 / BE-001VZ-01 | 新增: `root.contracts.core_ir.v4_contracts.static_contract_bundle` root.contracts.core_ir.v4_contracts.static_contract_bundle parent residual judgment closes parent |
 | v4.16.0 / BE-001WA-01 | 新增: `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts parent residual judgment selects compile_time_capability_report |
 | v4.16.0 / BE-001WB-01 | 新增: `root.contracts.core_ir.v4_contracts.compile_time_capability_report` root.contracts.core_ir.v4_contracts.compile_time_capability_report equivalence baseline and extraction plan |
+| v4.16.0 / BE-001WB-02 | 新增: `root.contracts.core_ir.v4_contracts.compile_time_capability_report` root.contracts.core_ir.v4_contracts.compile_time_capability_report actual extraction complete |
