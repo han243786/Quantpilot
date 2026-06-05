@@ -1582,3 +1582,4 @@
 | v4.16.0 / BE-001VU-01 | 新增: `root.contracts.core_ir.v4_contracts.developer_learning_pipeline_contract` root.contracts.core_ir.v4_contracts.developer_learning_pipeline_contract equivalence baseline and extraction plan |
 | v4.16.0 / BE-001VU-02 | 新增: `root.contracts.core_ir.v4_contracts.developer_learning_pipeline_contract` root.contracts.core_ir.v4_contracts.developer_learning_pipeline_contract actual extraction complete |
 | v4.16.0 / BE-001VU-03 | 新增: `root.contracts.core_ir.v4_contracts.developer_learning_pipeline_contract` root.contracts.core_ir.v4_contracts.developer_learning_pipeline_contract single leaf closeout stops split |
+| v4.16.0 / BE-001VV-01 | 新增: `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts parent residual judgment selects static_contract_bundle |
