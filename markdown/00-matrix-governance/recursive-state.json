@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001UR-01",
-  "last_committed_sha": "9fb3750e",
-  "current_parent": "root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation",
-  "current_step": "BE-001US-01",
-  "current_phase": "parent_residual_judgment",
+  "last_committed_batch": "BE-001US-01",
+  "last_committed_sha": "bbe3c7c0",
+  "current_parent": "root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation.graph_acyclic_validation",
+  "current_step": "BE-001UT-01",
+  "current_phase": "baseline_plan",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
