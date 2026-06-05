@@ -2310,7 +2310,8 @@ storage/
 - `qrpc_core_ir/src/lib.rs` — v3 类型定义 + v4 模块导出
 - `qrpc_core_ir/src/v4.rs` — v4 parent facade and residual contract families (graph/runtime/venue/type-system validators, compat bridge, memory type_ref/memory_writes 校验, complexity budget); 改 v4 parent wiring or residual v4 contract families 时改这里 🆕 v4.16.0
 - `qrpc_core_ir/src/v4/backtest_artifact_contract.rs` — v4 backtest artifact DTO family (`V4BacktestArtifact`, microstructure metrics, machine trajectory, risk-plane decision, execution capability source records); 改 v4 artifact schema DTO 时改这里 🆕 v4.16.0
-- `qrpc_core_ir/src/v4/machine_contract.rs` — v4 machine schema/taxonomy and local static validation (`V4MachineContract`, states, groups, transitions, memory fields, nested child-machine validation); 改 v4 machine schema or machine static validation 时改这里 🆕 v4.16.0
+- `qrpc_core_ir/src/v4/machine_contract.rs` — v4 machine schema/taxonomy facade (`V4MachineContract`, states, groups, transitions, memory fields, machine policy enums); 改 v4 machine schema or taxonomy 时改这里 🆕 v4.16.0
+- `qrpc_core_ir/src/v4/machine_contract/static_validation.rs` — v4 machine static validation behavior (`V4MachineContract::validate_static_contract`, state/group/transition/memory/child-machine/policy conflict checks); 改 v4 machine validation behavior or error strings 时改这里 🆕 v4.16.0
 
 **qrpc_compiler**:
 - `qrpc_compiler/Cargo.toml` — qrpc_compiler 包配置
@@ -4488,3 +4489,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1133-root.contracts.core_ir.v4_contracts.machine_contract.parent_residual_judgment.static_validation.md` - v4.16.0 BE-001UA-01 root.contracts.core_ir.v4_contracts.machine_contract parent residual judgment selects static_validation
 递归边界补充: BE-001UB-01 `root.contracts.core_ir.v4_contracts.machine_contract.static_validation` root.contracts.core_ir.v4_contracts.machine_contract.static_validation equivalence baseline and extraction plan；下一步: BE-001UB-02 root.contracts.core_ir.v4_contracts.machine_contract.static_validation extract_closeout。
 - `markdown/06-milestones/v4.16.0/1134-root.contracts.core_ir.v4_contracts.machine_contract.static_validation.baseline_plan.md` - v4.16.0 BE-001UB-01 root.contracts.core_ir.v4_contracts.machine_contract.static_validation equivalence baseline and extraction plan
+递归边界补充: BE-001UB-02 `root.contracts.core_ir.v4_contracts.machine_contract.static_validation` root.contracts.core_ir.v4_contracts.machine_contract.static_validation actual extraction complete；下一步: BE-001UB-03 root.contracts.core_ir.v4_contracts.machine_contract.static_validation single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/1135-root.contracts.core_ir.v4_contracts.machine_contract.static_validation.extract_closeout.md` - v4.16.0 BE-001UB-02 root.contracts.core_ir.v4_contracts.machine_contract.static_validation actual extraction complete
