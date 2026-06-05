@@ -1477,3 +1477,4 @@
 | v4.16.0 / BE-001TP-01 | 新增: `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract parent residual judgment selects test_fixture |
 | v4.16.0 / BE-001TQ-01 | 新增: `root.contracts.core_ir.v1_contract.test_fixture` root.contracts.core_ir.v1_contract.test_fixture equivalence baseline and extraction plan |
 | v4.16.0 / BE-001TQ-02 | 新增: `root.contracts.core_ir.v1_contract.test_fixture` root.contracts.core_ir.v1_contract.test_fixture actual extraction complete |
+| v4.16.0 / BE-001TQ-03 | 新增: `root.contracts.core_ir.v1_contract.test_fixture` root.contracts.core_ir.v1_contract.test_fixture single leaf closeout stops split |
