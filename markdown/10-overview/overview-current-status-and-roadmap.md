@@ -1208,3 +1208,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001TQ-03 `root.contracts.core_ir.v1_contract.test_fixture` root.contracts.core_ir.v1_contract.test_fixture single leaf closeout stops split；下一步: BE-001TR-01 root.contracts.core_ir.v1_contract parent_residual_judgment closes parent。
 - BE-001TR-01 `root.contracts.core_ir.v1_contract` root.contracts.core_ir.v1_contract parent residual judgment closes parent；下一步: BE-001TS-01 root.contracts.core_ir parent_residual_judgment selects v4_contracts。
 - BE-001TS-01 `root.contracts.core_ir` root.contracts.core_ir parent residual judgment selects v4_contracts；下一步: BE-001TT-01 root.contracts.core_ir.v4_contracts baseline_plan。
+- BE-001TT-01 `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts equivalence baseline and split plan；下一步: BE-001TU-01 root.contracts.core_ir.v4_contracts parent_residual_judgment selects schema_identity_constants。

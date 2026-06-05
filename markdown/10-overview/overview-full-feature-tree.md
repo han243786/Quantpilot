@@ -4455,3 +4455,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1118-root.contracts.core_ir.v1_contract.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001TR-01 root.contracts.core_ir.v1_contract parent residual judgment closes parent
 递归边界补充: BE-001TS-01 `root.contracts.core_ir` root.contracts.core_ir parent residual judgment selects v4_contracts；下一步: BE-001TT-01 root.contracts.core_ir.v4_contracts baseline_plan。
 - `markdown/06-milestones/v4.16.0/1119-root.contracts.core_ir.parent_residual_judgment.v4_contracts.md` - v4.16.0 BE-001TS-01 root.contracts.core_ir parent residual judgment selects v4_contracts
+递归边界补充: BE-001TT-01 `root.contracts.core_ir.v4_contracts` root.contracts.core_ir.v4_contracts equivalence baseline and split plan；下一步: BE-001TU-01 root.contracts.core_ir.v4_contracts parent_residual_judgment selects schema_identity_constants。
+- `markdown/06-milestones/v4.16.0/1120-root.contracts.core_ir.v4_contracts.baseline_plan.md` - v4.16.0 BE-001TT-01 root.contracts.core_ir.v4_contracts equivalence baseline and split plan
