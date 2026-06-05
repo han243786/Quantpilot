@@ -1,9 +1,8 @@
+mod edge_identity_validation;
 mod event_usage_validation;
 mod graph_acyclic_validation;
 mod machine_identity_validation;
 mod risk_plane_validation;
-
-use std::collections::BTreeSet;
 
 use super::V4MachineGraphContract;
 use crate::v4::V4_MACHINE_GRAPH_CONTRACT_VERSION;
@@ -28,45 +27,7 @@ impl V4MachineGraphContract {
         let machine_identity = self.validate_machine_identity();
         errors.extend(machine_identity.errors);
 
-        let mut edge_ids = BTreeSet::new();
-        for edge in &self.edges {
-            if edge.edge_id.trim().is_empty() {
-                errors.push("edge_id is required".to_string());
-            } else if !edge_ids.insert(edge.edge_id.as_str()) {
-                errors.push(format!("duplicate edge `{}`", edge.edge_id));
-            }
-            if edge.event_type.trim().is_empty() {
-                errors.push(format!(
-                    "edge `{}` must declare an event_type",
-                    edge.edge_id
-                ));
-            }
-            if !machine_identity
-                .machines_by_id
-                .contains_key(edge.source_machine_id.as_str())
-            {
-                errors.push(format!(
-                    "edge `{}` references unknown source_machine_id `{}`",
-                    edge.edge_id, edge.source_machine_id
-                ));
-            }
-            if !machine_identity
-                .machines_by_id
-                .contains_key(edge.target_machine_id.as_str())
-            {
-                errors.push(format!(
-                    "edge `{}` references unknown target_machine_id `{}`",
-                    edge.edge_id, edge.target_machine_id
-                ));
-            }
-            if edge.source_machine_id == edge.target_machine_id {
-                errors.push(format!(
-                    "edge `{}` must not connect a machine to itself",
-                    edge.edge_id
-                ));
-            }
-        }
-
+        errors.extend(self.validate_edge_identity(&machine_identity.machines_by_id));
         errors.extend(self.validate_graph_acyclic().err().unwrap_or_default());
         errors.extend(self.validate_event_catalog(&machine_identity.all_machines_by_id));
         errors.extend(self.validate_risk_plane(&machine_identity.machines_by_id));
