@@ -1181,3 +1181,4 @@
 | v4.16.0 / BE-001UY-03 | 新增: `root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation.edge_identity_validation` root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation.edge_identity_validation single leaf closeout stops split |
 | v4.16.0 / BE-001UZ-01 | 新增: `root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation` root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation single leaf closeout stops split |
 | v4.16.0 / BE-001VA-01 | 新增: `root.contracts.core_ir.v4_contracts.machine_graph_contract` root.contracts.core_ir.v4_contracts.machine_graph_contract parent residual judgment selects traversal_helpers |
+| v4.16.0 / BE-001VB-01 | 新增: `root.contracts.core_ir.v4_contracts.machine_graph_contract.traversal_helpers` root.contracts.core_ir.v4_contracts.machine_graph_contract.traversal_helpers equivalence baseline and extraction plan |
