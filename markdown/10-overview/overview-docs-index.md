@@ -1260,3 +1260,4 @@
 | v4.16.0 / BE-001WP-01 | 新增: `root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder` root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder equivalence baseline and extraction plan |
 | v4.16.0 / BE-001WP-02 | 新增: `root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder` root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder actual extraction complete |
 | v4.16.0 / BE-001WP-03 | 新增: `root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder` root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder single leaf closeout continues split |
+| v4.16.0 / BE-001WQ-01 | 新增: `root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder` root.contracts.core_ir.v4_contracts.core_ir_compat_bridge.compat_graph_builder parent residual judgment selects event_catalog_builder |
