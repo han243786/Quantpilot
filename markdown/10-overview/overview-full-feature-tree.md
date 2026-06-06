@@ -4957,3 +4957,5 @@ Recursive boundary supplement: BE-001YT-01 `runtime_facade_coordinator.portfolio
 Recursive boundary supplement: BE-001YT-02 `runtime_facade_coordinator.portfolio_projection` actual extraction complete; next step: BE-001YT-03 single_leaf_closeout.
 - `qrpc_runtime/src/runtime_facade_coordinator/portfolio_projection.rs` - runtime facade coordinator portfolio event projection and mark-to-market refresh
 - `markdown/06-milestones/v4.16.0/1342-root.contracts.runtime_support.runtime_facade_coordinator.portfolio_projection.extract_closeout.md` - v4.16.0 BE-001YT-02 runtime_facade_coordinator.portfolio_projection actual extraction complete
+Recursive boundary supplement: BE-001YT-03 `runtime_facade_coordinator.portfolio_projection` single leaf closeout stops split; next step: BE-001YU-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1343-root.contracts.runtime_support.runtime_facade_coordinator.portfolio_projection.single_leaf_closeout.md` - v4.16.0 BE-001YT-03 runtime_facade_coordinator.portfolio_projection single leaf closeout
