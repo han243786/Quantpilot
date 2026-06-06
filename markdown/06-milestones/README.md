@@ -1669,3 +1669,4 @@
 | v4.16.0 / BE-001XZ-01 | 新增: `root.contracts.compiler_bridge.strategy_ir_lowering` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001YA-01 | 新增: `root.contracts.compiler_bridge.strategy_ir_lowering` extract closeout |
 | v4.16.0 / BE-001YA-02 | 新增: `root.contracts.compiler_bridge.strategy_ir_lowering` single leaf closeout stops split |
+| v4.16.0 / BE-001YB-01 | 新增: `root.contracts.compiler_bridge` parent residual judgment closes parent |
