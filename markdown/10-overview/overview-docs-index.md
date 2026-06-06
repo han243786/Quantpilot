@@ -1358,3 +1358,4 @@
 | v4.16.0 / BE-001ZC-01 | Added: `data_module.quality_diagnostics` baseline plan |
 | v4.16.0 / BE-001ZC-02 | Added: `data_module.quality_diagnostics` actual extraction complete |
 | v4.16.0 / BE-001ZC-03 | Added: `data_module.quality_diagnostics` single leaf closeout stops split |
+| v4.16.0 / BE-001ZD-01 | Added: `data_module` parent residual judgment selects `collection_orchestration` |

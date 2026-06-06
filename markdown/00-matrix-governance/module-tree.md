@@ -8560,3 +8560,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.data_module.quality_diagnostics extracted: true`; `qrpc_runtime/src/data_module/quality_diagnostics.rs` now owns normalized market data quality snapshots, source health projection, preview/summary rendering, and cached snapshot status refresh.
 **Latest state supplement (BE-001ZC-03)**: `root.contracts.runtime_support.data_module.quality_diagnostics` single leaf closeout complete; next step: BE-001ZD-01 parent_residual_judgment.
 `root.contracts.runtime_support.data_module.quality_diagnostics stop_split: true`; quality flags, health, freshness, preview, summary, and cached status refresh stay together as one normalized market data quality owner.
+**Latest state supplement (BE-001ZD-01)**: `root.contracts.runtime_support.data_module` parent residual judgment selected `collection_orchestration`; next step: BE-001ZE-01 baseline_plan.
+`root.contracts.runtime_support.data_module.collection_orchestration selected: true`; this child owns provider entrypoint orchestration, source deduplication, collection composition, normalized data accumulation, and runtime event assembly.

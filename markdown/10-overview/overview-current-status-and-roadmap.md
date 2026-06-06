@@ -1447,3 +1447,4 @@ Latest recursive supplement: BE-001ZB-01 selected `data_module.quality_diagnosti
 Latest recursive supplement: BE-001ZC-01 froze the `data_module.quality_diagnostics` baseline; next movement may add a quality diagnostics child module while preserving parent-visible helpers.
 Latest recursive supplement: BE-001ZC-02 extracted `data_module.quality_diagnostics`; `qrpc_runtime/src/data_module/quality_diagnostics.rs` now owns quality snapshots, health flags, previews, summaries, and cached snapshot status refresh.
 Latest recursive supplement: BE-001ZC-03 closed `data_module.quality_diagnostics` with `stop_split: true`; next recursive step returns to `data_module` parent residual judgment.
+Latest recursive supplement: BE-001ZD-01 selected `data_module.collection_orchestration`; next baseline covers provider entrypoint, source deduplication, data collection composition, and runtime event assembly.
