@@ -8516,3 +8516,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.runtime_facade_coordinator.config_generation stop_split: true`; the child remains terminal because mutation and read projections share one config generation state owner.
 **Latest state supplement (BE-001YQ-01)**: `root.contracts.runtime_support.runtime_facade_coordinator` parent residual judgment selected `provider_delegation_helpers`; next step: BE-001YR-01 baseline_plan.
 `root.contracts.runtime_support.runtime_facade_coordinator.provider_delegation_helpers selected: true`; this child owns the data, intent, agent, merge, risk, execution, and open-order provider helper chain while portfolio projection remains queued separately.
+**Latest state supplement (BE-001YR-01)**: `root.contracts.runtime_support.runtime_facade_coordinator.provider_delegation_helpers` baseline frozen; next step: BE-001YR-02 actual_extraction.
+`root.contracts.runtime_support.runtime_facade_coordinator.provider_delegation_helpers baseline_frozen: true`; the next movement may add a child module for provider helper delegation while keeping portfolio projection helpers and tests parent-owned.

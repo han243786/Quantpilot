@@ -1425,3 +1425,4 @@ Latest recursive supplement: BE-001YP-01 froze the `config_generation` baseline;
 Latest recursive supplement: BE-001YP-02 extracted `config_generation`; `qrpc_runtime/src/runtime_facade_coordinator/config_generation.rs` now owns module config swap/apply and generation history methods.
 Latest recursive supplement: BE-001YP-03 closed `config_generation` with `stop_split: true`; next recursive step returns to `runtime_facade_coordinator` parent residual judgment.
 Latest recursive supplement: BE-001YQ-01 selected `provider_delegation_helpers`; next baseline covers data, intent, agent, merge, risk, execution, and open-order provider helper methods.
+Latest recursive supplement: BE-001YR-01 froze the `provider_delegation_helpers` baseline; next movement may add `qrpc_runtime/src/runtime_facade_coordinator/provider_delegation_helpers.rs` and move only provider helper methods.
