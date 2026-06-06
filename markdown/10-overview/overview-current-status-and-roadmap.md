@@ -1411,3 +1411,4 @@ Latest recursive supplement: BE-001YH-03 closed `constructor_provider_wiring` wi
 Latest recursive supplement: BE-001YI-01 selected `session_cycle_orchestration`; next baseline covers `run_session`, `run_slow_cycle`, `run_fast_cycle`, and `run_cycle` orchestration.
 Latest recursive supplement: BE-001YJ-01 froze the `session_cycle_orchestration` baseline; next movement may add `qrpc_runtime/src/runtime_facade_coordinator/session_cycle_orchestration.rs` and move only session/cycle orchestration methods.
 Latest recursive supplement: BE-001YJ-02 extracted `session_cycle_orchestration`; `qrpc_runtime/src/runtime_facade_coordinator/session_cycle_orchestration.rs` now owns session/cycle orchestration while provider helper implementations remain in the parent.
+Latest recursive supplement: BE-001YJ-03 closed `session_cycle_orchestration` with `stop_split: true`; next recursive step returns to `runtime_facade_coordinator` parent residual judgment.
