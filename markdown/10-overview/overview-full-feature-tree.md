@@ -4976,3 +4976,5 @@ Recursive boundary supplement: BE-001YY-01 `root.contracts.runtime_support.data_
 - `markdown/06-milestones/v4.16.0/1350-root.contracts.runtime_support.data_module.baseline_plan.md` - v4.16.0 BE-001YY-01 root.contracts.runtime_support.data_module baseline plan
 Recursive boundary supplement: BE-001YZ-01 `data_module` parent residual judgment selected `source_mapping`; next step: BE-001ZA-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1351-root.contracts.runtime_support.data_module.parent_residual_judgment.source_mapping.md` - v4.16.0 BE-001YZ-01 data_module parent residual judgment selects source_mapping
+Recursive boundary supplement: BE-001ZA-01 `data_module.source_mapping` baseline_frozen; next step: BE-001ZA-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1352-root.contracts.runtime_support.data_module.source_mapping.baseline_plan.md` - v4.16.0 BE-001ZA-01 data_module.source_mapping baseline plan

@@ -379,3 +379,4 @@ Latest recursive supplement: BE-001YW-01 closed `runtime_facade_coordinator`; ne
 Latest recursive supplement: BE-001YX-01 selected `data_module`; next step is its baseline plan.
 Latest recursive supplement: BE-001YY-01 froze the `data_module` baseline; next step selects the first data-module child.
 Latest recursive supplement: BE-001YZ-01 selected `data_module.source_mapping`; next step is its baseline plan.
+Latest recursive supplement: BE-001ZA-01 froze the `data_module.source_mapping` baseline; next step is actual extraction.
