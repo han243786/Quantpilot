@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001YR-02",
-  "last_committed_sha": "247cce46",
-  "current_parent": "root.contracts.runtime_support.runtime_facade_coordinator.provider_delegation_helpers",
-  "current_step": "BE-001YR-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001YR-03",
+  "last_committed_sha": "2a494106",
+  "current_parent": "root.contracts.runtime_support.runtime_facade_coordinator",
+  "current_step": "BE-001YS-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -192,7 +192,8 @@
     "contracts.runtime_support.runtime_facade_coordinator.session_cycle_orchestration",
     "contracts.runtime_support.runtime_facade_coordinator.execution_market_entrypoints",
     "contracts.runtime_support.runtime_facade_coordinator.state_config_accessors",
-    "contracts.runtime_support.runtime_facade_coordinator.config_generation"
+    "contracts.runtime_support.runtime_facade_coordinator.config_generation",
+    "contracts.runtime_support.runtime_facade_coordinator.provider_delegation_helpers"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -200,7 +201,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.runtime_facade_coordinator.provider_delegation_helpers",
+  "next_recommended_child": "root.contracts.runtime_support.runtime_facade_coordinator.portfolio_projection",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
