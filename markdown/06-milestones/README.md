@@ -1693,3 +1693,4 @@
 | v4.16.0 / BE-001YN-02 | Added: `runtime_facade_coordinator.state_config_accessors` actual extraction complete |
 | v4.16.0 / BE-001YN-03 | Added: `runtime_facade_coordinator.state_config_accessors` single leaf closeout stops split |
 | v4.16.0 / BE-001YO-01 | Added: `runtime_facade_coordinator` parent residual judgment selects `config_generation` |
+| v4.16.0 / BE-001YP-01 | Added: `runtime_facade_coordinator.config_generation` baseline plan |

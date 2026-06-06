@@ -4934,3 +4934,5 @@ Recursive boundary supplement: BE-001YN-03 `runtime_facade_coordinator.state_con
 - `markdown/06-milestones/v4.16.0/1331-root.contracts.runtime_support.runtime_facade_coordinator.state_config_accessors.single_leaf_closeout.md` - v4.16.0 BE-001YN-03 runtime_facade_coordinator.state_config_accessors single leaf closeout
 Recursive boundary supplement: BE-001YO-01 `runtime_facade_coordinator` parent residual judgment selected `config_generation`; next step: BE-001YP-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1332-root.contracts.runtime_support.runtime_facade_coordinator.parent_residual_judgment.config_generation.md` - v4.16.0 BE-001YO-01 runtime_facade_coordinator parent residual judgment selects config_generation
+Recursive boundary supplement: BE-001YP-01 `runtime_facade_coordinator.config_generation` baseline_frozen; next step: BE-001YP-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1333-root.contracts.runtime_support.runtime_facade_coordinator.config_generation.baseline_plan.md` - v4.16.0 BE-001YP-01 runtime_facade_coordinator.config_generation baseline plan

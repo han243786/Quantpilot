@@ -8508,3 +8508,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.runtime_facade_coordinator.state_config_accessors stop_split: true`; the child remains terminal because further splitting would fragment thin accessor/control methods without creating independent owners.
 **Latest state supplement (BE-001YO-01)**: `root.contracts.runtime_support.runtime_facade_coordinator` parent residual judgment selected `config_generation`; next step: BE-001YP-01 baseline_plan.
 `root.contracts.runtime_support.runtime_facade_coordinator.config_generation selected: true`; this child owns module config swap/apply, deterministic revision generation, generation counter reads, and generation history projection.
+**Latest state supplement (BE-001YP-01)**: `root.contracts.runtime_support.runtime_facade_coordinator.config_generation` baseline frozen; next step: BE-001YP-02 actual_extraction.
+`root.contracts.runtime_support.runtime_facade_coordinator.config_generation baseline_frozen: true`; the next movement may add a child module for config swap/apply and generation history while keeping provider helpers and portfolio projection in the parent.
