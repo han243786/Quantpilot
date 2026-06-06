@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001ZA-02",
-  "last_committed_sha": "d6bd96a6",
-  "current_parent": "root.contracts.runtime_support.data_module.source_mapping",
-  "current_step": "BE-001ZA-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001ZA-03",
+  "last_committed_sha": "720c8c15",
+  "current_parent": "root.contracts.runtime_support.data_module",
+  "current_step": "BE-001ZB-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -196,7 +196,8 @@
     "contracts.runtime_support.runtime_facade_coordinator.provider_delegation_helpers",
     "contracts.runtime_support.runtime_facade_coordinator.portfolio_projection",
     "contracts.runtime_support.runtime_facade_coordinator.coordinator_test_harness",
-    "contracts.runtime_support.runtime_facade_coordinator"
+    "contracts.runtime_support.runtime_facade_coordinator",
+    "contracts.runtime_support.data_module.source_mapping"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -204,7 +205,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.data_module.source_mapping",
+  "next_recommended_child": "root.contracts.runtime_support.data_module.quality_diagnostics",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
