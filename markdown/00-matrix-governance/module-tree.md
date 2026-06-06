@@ -8548,3 +8548,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.data_module.source_mapping selected: true`; this child owns Core IR data bindings to `DataSourceConfig` restoration and source-hint parsers.
 **Latest state supplement (BE-001ZA-01)**: `root.contracts.runtime_support.data_module.source_mapping` baseline frozen; next step: BE-001ZA-02 actual_extraction.
 `root.contracts.runtime_support.data_module.source_mapping baseline_frozen: true`; movement may add a child module for `data_sources_from_core_ir` and its source-hint parsers while preserving the parent-visible function surface.
+**Latest state supplement (BE-001ZA-02)**: `root.contracts.runtime_support.data_module.source_mapping` actual extraction complete; next step: BE-001ZA-03 single_leaf_closeout.
+`root.contracts.runtime_support.data_module.source_mapping extracted: true`; `qrpc_runtime/src/data_module/source_mapping.rs` now owns Core IR data binding to runtime source config restoration and source-hint parsers.
