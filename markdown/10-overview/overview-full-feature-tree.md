@@ -4981,3 +4981,5 @@ Recursive boundary supplement: BE-001ZA-01 `data_module.source_mapping` baseline
 Recursive boundary supplement: BE-001ZA-02 `data_module.source_mapping` actual extraction complete; next step: BE-001ZA-03 single_leaf_closeout.
 - `qrpc_runtime/src/data_module/source_mapping.rs` - runtime data module Core IR source mapping and source-hint parsing
 - `markdown/06-milestones/v4.16.0/1353-root.contracts.runtime_support.data_module.source_mapping.extract_closeout.md` - v4.16.0 BE-001ZA-02 data_module.source_mapping actual extraction complete
+Recursive boundary supplement: BE-001ZA-03 `data_module.source_mapping` single leaf closeout stops split; next step: BE-001ZB-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1354-root.contracts.runtime_support.data_module.source_mapping.single_leaf_closeout.md` - v4.16.0 BE-001ZA-03 data_module.source_mapping single leaf closeout

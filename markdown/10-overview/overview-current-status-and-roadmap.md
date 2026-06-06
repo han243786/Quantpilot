@@ -1442,3 +1442,4 @@ Latest recursive supplement: BE-001YY-01 froze the `data_module` baseline; next 
 Latest recursive supplement: BE-001YZ-01 selected `data_module.source_mapping`; next baseline covers Core IR data binding to runtime data source config restoration.
 Latest recursive supplement: BE-001ZA-01 froze the `data_module.source_mapping` baseline; next movement may add a source mapping child module without changing call sites.
 Latest recursive supplement: BE-001ZA-02 extracted `data_module.source_mapping`; `qrpc_runtime/src/data_module/source_mapping.rs` now owns Core IR source mapping and hint parsing.
+Latest recursive supplement: BE-001ZA-03 closed `data_module.source_mapping` with `stop_split: true`; next recursive step returns to `data_module` parent residual judgment.

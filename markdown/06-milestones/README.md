@@ -1714,3 +1714,4 @@
 | v4.16.0 / BE-001YZ-01 | Added: `data_module` parent residual judgment selects `source_mapping` |
 | v4.16.0 / BE-001ZA-01 | Added: `data_module.source_mapping` baseline plan |
 | v4.16.0 / BE-001ZA-02 | Added: `data_module.source_mapping` actual extraction complete |
+| v4.16.0 / BE-001ZA-03 | Added: `data_module.source_mapping` single leaf closeout stops split |

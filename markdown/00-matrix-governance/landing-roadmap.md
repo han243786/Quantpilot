@@ -381,3 +381,4 @@ Latest recursive supplement: BE-001YY-01 froze the `data_module` baseline; next 
 Latest recursive supplement: BE-001YZ-01 selected `data_module.source_mapping`; next step is its baseline plan.
 Latest recursive supplement: BE-001ZA-01 froze the `data_module.source_mapping` baseline; next step is actual extraction.
 Latest recursive supplement: BE-001ZA-02 extracted `data_module.source_mapping`; next step is single-leaf closeout.
+Latest recursive supplement: BE-001ZA-03 closed `data_module.source_mapping`; next step returns to `data_module`.
