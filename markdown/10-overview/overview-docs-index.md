@@ -1299,3 +1299,4 @@
 | v4.16.0 / BE-001XU-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.agent_policy_lowering` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001XU-02 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.agent_policy_lowering` actual extraction complete |
 | v4.16.0 / BE-001XU-03 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.agent_policy_lowering` single leaf closeout stops split |
+| v4.16.0 / BE-001XV-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering` parent residual judgment selects risk_policy_lowering |
