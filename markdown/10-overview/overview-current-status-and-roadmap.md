@@ -1428,3 +1428,4 @@ Latest recursive supplement: BE-001YQ-01 selected `provider_delegation_helpers`;
 Latest recursive supplement: BE-001YR-01 froze the `provider_delegation_helpers` baseline; next movement may add `qrpc_runtime/src/runtime_facade_coordinator/provider_delegation_helpers.rs` and move only provider helper methods.
 Latest recursive supplement: BE-001YR-02 extracted `provider_delegation_helpers`; `qrpc_runtime/src/runtime_facade_coordinator/provider_delegation_helpers.rs` now owns the provider helper chain.
 Latest recursive supplement: BE-001YR-03 closed `provider_delegation_helpers` with `stop_split: true`; next recursive step returns to `runtime_facade_coordinator` parent residual judgment.
+Latest recursive supplement: BE-001YS-01 selected `portfolio_projection`; next baseline covers portfolio update events, quote maps, mark-price refresh, exposure projection, and equity estimates.
