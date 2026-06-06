@@ -1457,3 +1457,4 @@ Latest recursive supplement: BE-001ZF-01 selected `data_module.exchange_surface_
 Latest recursive supplement: BE-001ZG-01 froze `data_module.exchange_surface_wave` baseline; next movement may extract endpoint/provider helpers and OKX/Binance payload parsers into one exchange surface child.
 Latest recursive supplement: BE-001ZG-02 extracted `data_module.exchange_surface_wave`; `qrpc_runtime/src/data_module/exchange_surface.rs` now owns exchange endpoint/provider helpers and OKX/Binance raw payload parsing.
 Latest governance supplement: GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 adds `tools/evaluate-leaf-granularity.ps1`; bottom-leaf closeout now has read-only `normalized_split_score` evidence for STOP/WAVE/SPLIT/PRECISION.
+Latest recursive supplement: BE-001ZG-03 closed `data_module.exchange_surface_wave` with `stop_split: true`; the next recursive step returns to `data_module` parent residual judgment, expected candidate `normalization`.

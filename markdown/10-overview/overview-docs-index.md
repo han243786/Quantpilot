@@ -1368,3 +1368,4 @@
 | v4.16.0 / BE-001ZG-01 | Added: `data_module.exchange_surface_wave` baseline plan |
 | v4.16.0 / BE-001ZG-02 | Added: `data_module.exchange_surface_wave` actual extraction complete |
 | v4.16.0 / GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 | Added: read-only leaf granularity scoring tool with `normalized_split_score` evidence |
+| v4.16.0 / BE-001ZG-03 | Added: `data_module.exchange_surface_wave` single leaf closeout stops split |

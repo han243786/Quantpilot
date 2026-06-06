@@ -5016,3 +5016,5 @@ Recursive boundary supplement: BE-001ZG-02 `data_module.exchange_surface_wave` a
 Recursive governance supplement: GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 adds read-only bottom-leaf scoring to recursive governance; closeout documents can cite `normalized_split_score` evidence.
 - `tools/evaluate-leaf-granularity.ps1` - read-only leaf granularity scoring tool
 - `markdown/06-milestones/v4.16.0/1368-governance.leaf_granularity_judge_tool.md` - v4.16.0 GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 leaf granularity judge tool
+Recursive boundary supplement: BE-001ZG-03 `data_module.exchange_surface_wave` single leaf closeout stops split; next step: BE-001ZH-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1369-root.contracts.runtime_support.data_module.exchange_surface_wave.single_leaf_closeout.md` - v4.16.0 BE-001ZG-03 data_module.exchange_surface_wave single leaf closeout

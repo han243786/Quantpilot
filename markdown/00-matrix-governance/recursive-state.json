@@ -8,11 +8,11 @@
     "GOV-LEAF-GRANULARITY-SMART-JUDGE-01",
     "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01"
   ],
-  "last_committed_batch": "BE-001ZD-01",
-  "last_committed_sha": "4e0c573b",
-  "current_parent": "root.contracts.runtime_support.data_module.exchange_surface_wave",
-  "current_step": "BE-001ZG-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01",
+  "last_committed_sha": "54524fce",
+  "current_parent": "root.contracts.runtime_support.data_module",
+  "current_step": "BE-001ZH-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -206,7 +206,10 @@
     "contracts.runtime_support.runtime_facade_coordinator",
     "contracts.runtime_support.data_module.source_mapping",
     "contracts.runtime_support.data_module.quality_diagnostics",
-    "contracts.runtime_support.data_module.collection_orchestration"
+    "contracts.runtime_support.data_module.collection_orchestration",
+    "contracts.runtime_support.data_module.exchange_endpoints",
+    "contracts.runtime_support.data_module.exchange_payload_parsing",
+    "contracts.runtime_support.data_module.exchange_surface_wave"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -214,7 +217,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.data_module.exchange_surface_wave",
+  "next_recommended_child": "root.contracts.runtime_support.data_module.normalization",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
