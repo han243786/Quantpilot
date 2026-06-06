@@ -1,17 +1,16 @@
 use anyhow::{anyhow, bail, Result};
 use qrpc_core::StrategyIr;
 use qrpc_core::{
-    PAPER_EXECUTION_PROFILE_DEFAULT_FEE_BPS,
     GLOBAL_RISK_PROFILE_DEFAULT_MAX_EXCHANGE_LEVERAGE,
     GLOBAL_RISK_PROFILE_DEFAULT_MAX_TOTAL_LEVERAGE,
-    GLOBAL_RISK_PROFILE_DEFAULT_MIN_ACTION_INTERVAL_MS,
+    GLOBAL_RISK_PROFILE_DEFAULT_MIN_ACTION_INTERVAL_MS, PAPER_EXECUTION_PROFILE_DEFAULT_FEE_BPS,
 };
 use qrpc_core_ir::{
     indicator_threshold_compare_expr, moving_average_compare_expr, AgentPolicy, AgentPolicyKind,
     ArithmeticOp, ComparisonOp, CoreIndicatorKind, CoreMetadata, CoreSourceKind, CoreStrategyIr,
     CoreTimeInForce, CustomExprSpec, CustomValueExpr, DataBinding, DataBindingKind, ExecutionRule,
-    ExecutionSizingKind, IndicatorNode, RiskPolicy, ScalarExpr, SeriesExpr, SeriesField, SignalKind,
-    SignalRule, SpreadSpec, SpreadValueKind, CUSTOM_EXPR_V1_VERSION,
+    ExecutionSizingKind, IndicatorNode, RiskPolicy, ScalarExpr, SeriesExpr, SeriesField,
+    SignalKind, SignalRule, SpreadSpec, SpreadValueKind, CUSTOM_EXPR_V1_VERSION,
 };
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -19,7 +18,6 @@ use super::{
     build_spread_spec, lower_rebalance_schedule, parse_strategy_signal_compare,
     strategy_indicator_usize_param,
 };
-
 
 pub(super) fn lower_strategy_ir_to_core_ir(strategy_ir: &StrategyIr) -> Result<CoreStrategyIr> {
     strategy_ir

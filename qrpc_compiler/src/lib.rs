@@ -7,10 +7,9 @@ use qrpc_core::{
     CompiledRuntimeProtocol, IntentConfig, IntentKind, RuntimeProtocolCoreConfig, StrategyIr,
 };
 use qrpc_core_ir::{
-    AlignAsofSpec, AlignDirection, ComparisonOp, CoreMetadata,
-    CoreSourceKind, CoreStrategyIr,
-    RebalanceSchedule as CoreRebalanceSchedule, SeriesAggregation,
-    SeriesExpr, SeriesField, SpreadSpec, SpreadValueKind,
+    AlignAsofSpec, AlignDirection, ComparisonOp, CoreMetadata, CoreSourceKind, CoreStrategyIr,
+    RebalanceSchedule as CoreRebalanceSchedule, SeriesAggregation, SeriesExpr, SeriesField,
+    SpreadSpec, SpreadValueKind,
 };
 use serde_json::Value;
 use sha2::{Digest, Sha256};
@@ -76,7 +75,6 @@ pub fn lower_runtime_protocol_to_core_ir_with_metadata(
 pub fn lower_strategy_ir_to_core_ir(strategy_ir: &StrategyIr) -> Result<CoreStrategyIr> {
     strategy_ir_lowering::lower_strategy_ir_to_core_ir(strategy_ir)
 }
-
 
 fn parse_strategy_signal_compare(condition: &str) -> Option<(String, ComparisonOp, f64)> {
     let trimmed = condition.trim();
@@ -270,9 +268,7 @@ mod tests {
         StrategyExecution, StrategyIr, StrategyLogic, StrategyMetadata, StrategyRiskRules,
         StrategySource, StrategySourceType, Symbol,
     };
-    use qrpc_core_ir::{
-        AgentPolicyKind, CoreIndicatorKind, ScalarExpr, CUSTOM_EXPR_V1_VERSION,
-    };
+    use qrpc_core_ir::{AgentPolicyKind, CoreIndicatorKind, ScalarExpr, CUSTOM_EXPR_V1_VERSION};
     use serde_json::json;
 
     #[test]
