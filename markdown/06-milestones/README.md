@@ -1676,3 +1676,4 @@
 | v4.16.0 / BE-001YF-01 | Added: `root.contracts.runtime_support.runtime_facade_coordinator` baseline plan |
 | v4.16.0 / BE-001YF-02 | Added: `root.contracts.runtime_support.runtime_facade_coordinator` actual extraction complete |
 | v4.16.0 / BE-001YF-03 | Added: `root.contracts.runtime_support.runtime_facade_coordinator` single leaf closeout continues split |
+| v4.16.0 / BE-001YG-01 | Added: `runtime_facade_coordinator` parent residual judgment selects `constructor_provider_wiring` |
