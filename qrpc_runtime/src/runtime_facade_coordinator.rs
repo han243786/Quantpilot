@@ -1,19 +1,11 @@
 use crate::{
-    agent_module::{AgentEvaluationRequest, AgentModuleProvider},
-    config_tracker,
-    data_module::{DataCollectionRequest, DataModuleProvider},
-    execution_module::{ExecutionModuleProvider, ExecutionPlanningRequest},
-    intent_module::{IntentEvaluationRequest, IntentModuleProvider},
-    merge::{MergeDecisionRecord, StrategyInput},
-    merge_coordinator,
-    risk_checker::{RiskCheckOutput, RiskCheckRequest, RiskCheckerProvider},
-    risk_monitor, runtime_state,
+    agent_module::AgentModuleProvider, config_tracker, data_module::DataModuleProvider,
+    execution_module::ExecutionModuleProvider, intent_module::IntentModuleProvider,
+    merge_coordinator, risk_checker::RiskCheckerProvider, risk_monitor, runtime_state,
 };
-use anyhow::Result;
 use qrpc_core::{
-    AgentDecision, CoreStrategyIr, Exchange, ExchangeExposure, ExecutionPlan, FillReport,
-    IntentKind, IntentSignal, NormalizedMarketData, PortfolioState, RiskDecision, RiskDecisionMode,
-    RuntimeEvent, RuntimeEventType, Symbol,
+    CoreStrategyIr, Exchange, ExchangeExposure, NormalizedMarketData, PortfolioState,
+    RiskDecisionMode, RuntimeEvent, RuntimeEventType, Symbol,
 };
 use serde_json::json;
 use std::collections::BTreeMap;
@@ -22,6 +14,7 @@ use std::sync::{Arc, Mutex};
 mod config_generation;
 mod constructor_provider_wiring;
 mod execution_market_entrypoints;
+mod provider_delegation_helpers;
 mod session_cycle_orchestration;
 mod state_config_accessors;
 
@@ -124,236 +117,6 @@ impl RuntimeCoordinator {
         }
     }
 
-    fn collect_normalized_data(
-        &mut self,
-        cycle_name: &str,
-        now_ms: u64,
-        trace_id: &str,
-        runtime_events: &mut Vec<RuntimeEvent>,
-    ) -> Result<Vec<NormalizedMarketData>> {
-        let output = self.data_module.collect(DataCollectionRequest {
-            cycle_name,
-            core_ir: &self.core_ir,
-            data_fetch_counts: &mut self.state.data_fetch_counts,
-            now_ms,
-            trace_id,
-        })?;
-        runtime_events.extend(output.events);
-        Ok(output.normalized_data)
-    }
-
-    fn evaluate_intents(
-        &self,
-        intent_kinds: &[IntentKind],
-        normalized_data: &[NormalizedMarketData],
-        now_ms: u64,
-        trace_id: &str,
-        runtime_events: &mut Vec<RuntimeEvent>,
-    ) -> Vec<IntentSignal> {
-        let output = self
-            .intent_module
-            .evaluate_intents(IntentEvaluationRequest {
-                intent_kinds,
-                core_ir: &self.core_ir,
-                normalized_data,
-                now_ms,
-                trace_id,
-            });
-        runtime_events.extend(output.events);
-        output.signals
-    }
-
-    fn evaluate_agents(
-        &mut self,
-        cycle_name: &str,
-        signals: &[IntentSignal],
-        now_ms: u64,
-        trace_id: &str,
-        runtime_events: &mut Vec<RuntimeEvent>,
-    ) -> Vec<AgentDecision> {
-        let output = self.agent_module.evaluate_agents(AgentEvaluationRequest {
-            cycle_name,
-            signals,
-            core_ir: &self.core_ir,
-            portfolio: &self.state.portfolio,
-            last_rebalance_at_ms: &self.state.last_rebalance_at_ms,
-            now_ms,
-            trace_id,
-        });
-        for agent_id in &output.evaluated_rebalance_agent_ids {
-            self.state
-                .last_rebalance_at_ms
-                .insert(agent_id.clone(), now_ms);
-        }
-        runtime_events.extend(output.events);
-        output.decisions
-    }
-
-    /// 合并引擎：多策略场景下汇聚 Agent 决策为统一候选
-    fn merge_agent_decisions(
-        &mut self,
-        cycle_name: &str,
-        decisions: &[AgentDecision],
-        _signals: &[IntentSignal],
-        trace_id: &str,
-        runtime_events: &mut Vec<RuntimeEvent>,
-    ) -> (Vec<AgentDecision>, Option<MergeDecisionRecord>) {
-        if decisions.is_empty() {
-            return (Vec::new(), None);
-        }
-        // 单策略场景：直接透传
-        if decisions.len() <= 1 {
-            return (decisions.to_vec(), None);
-        }
-        // 多策略场景：调用合并引擎
-        let strategy_input = StrategyInput {
-            strategy_id: cycle_name.to_string(),
-            weight: 1.0,
-            agent_decisions: decisions.to_vec(),
-        };
-        match self.merge.engine.merge(&[strategy_input]) {
-            Ok(output) => {
-                runtime_events.push(RuntimeEvent {
-                    event_id: format!("evt-merge-{}-{}", cycle_name, runtime_events.len()),
-                    event_type: RuntimeEventType::AgentDecisionProduced,
-                    trace_id: trace_id.to_string(),
-                    source_id: "merge_engine".to_string(),
-                    ts_ms: 0, // v1.2.1: 合成事件不使用墙钟，保证回测确定性
-                    payload: serde_json::json!({
-                        "message": "merge engine produced unified decisions",
-                        "input_count": decisions.len(),
-                        "output_count": output.decisions.len(),
-                        "merge_policy": format!("{:?}", self.merge.policy),
-                        "conflicts": output.conflict_count,
-                        "suppressed": output.suppressed_count,
-                    }),
-                });
-                let record = output.merge_records.first().cloned();
-                (output.decisions, record)
-            }
-            Err(_err) => {
-                runtime_events.push(RuntimeEvent {
-                    event_id: format!("evt-merge-err-{}-{}", cycle_name, runtime_events.len()),
-                    event_type: RuntimeEventType::RuntimeWarning,
-                    trace_id: trace_id.to_string(),
-                    source_id: "merge_engine".to_string(),
-                    ts_ms: 0, // v1.2.1: 合成事件不使用墙钟，保证回测确定性
-                    payload: serde_json::json!({
-                        "message": "merge engine fallback to pass-through",
-                    }),
-                });
-                (decisions.to_vec(), None)
-            }
-        }
-    }
-
-    /// 查询合并记录（供 API 使用）
-    pub fn merge_records(&self) -> &[MergeDecisionRecord] {
-        &self.merge.records
-    }
-
-    fn evaluate_risks(
-        &mut self,
-        decisions: &[AgentDecision],
-        now_ms: u64,
-        trace_id: &str,
-        runtime_events: &mut Vec<RuntimeEvent>,
-    ) -> Vec<RiskDecision> {
-        let output = self
-            .risk_checker
-            .evaluate(RiskCheckRequest {
-                decisions,
-                core_ir: &self.core_ir,
-                portfolio: &self.state.portfolio,
-                last_action_at_ms: &self.state.last_action_at_ms,
-                now_ms,
-                trace_id,
-                mode: self.risk_mode,
-            })
-            .unwrap_or_else(|_| RiskCheckOutput {
-                decisions: vec![],
-                events: vec![],
-                approved_agent_ids: std::collections::BTreeSet::new(),
-            });
-
-        for agent_id in &output.approved_agent_ids {
-            self.state
-                .last_action_at_ms
-                .insert(agent_id.clone(), now_ms);
-        }
-        runtime_events.extend(output.events);
-        output.decisions
-    }
-
-    fn plan_execution(
-        &self,
-        risk_decisions: &[RiskDecision],
-        normalized_data: &[NormalizedMarketData],
-        now_ms: u64,
-        trace_id: &str,
-        runtime_events: &mut Vec<RuntimeEvent>,
-    ) -> Vec<ExecutionPlan> {
-        let output = self
-            .execution_module
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .plan_execution(ExecutionPlanningRequest {
-                risk_decisions,
-                core_ir: &self.core_ir,
-                normalized_data,
-                portfolio: &self.state.portfolio,
-                now_ms,
-                trace_id,
-            });
-        runtime_events.extend(output.events);
-        output.plans
-    }
-
-    fn execute_plans(
-        &mut self,
-        plans: &[ExecutionPlan],
-        normalized_data: &[NormalizedMarketData],
-        now_ms: u64,
-        trace_id: &str,
-        runtime_events: &mut Vec<RuntimeEvent>,
-    ) -> Result<Vec<FillReport>> {
-        let mut fills = Vec::new();
-
-        for plan in plans {
-            let result = self
-                .execution_module
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .submit_plan(
-                    plan,
-                    normalized_data,
-                    &mut self.state.portfolio,
-                    now_ms,
-                    trace_id,
-                );
-            let mut result = result;
-            runtime_events.append(&mut result.events);
-            fills.extend(result.fills);
-        }
-
-        Ok(fills)
-    }
-    fn process_open_orders(
-        &mut self,
-        normalized_data: &[NormalizedMarketData],
-        now_ms: u64,
-        trace_id: &str,
-        runtime_events: &mut Vec<RuntimeEvent>,
-    ) -> Result<Vec<FillReport>> {
-        let result = self
-            .execution_module
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .on_market_update(normalized_data, &mut self.state.portfolio, now_ms, trace_id);
-        let mut result = result;
-        runtime_events.append(&mut result.events);
-        Ok(result.fills)
-    }
     fn refresh_portfolio_state(&mut self, normalized_data: &[NormalizedMarketData], now_ms: u64) {
         let quotes = quote_price_map(normalized_data);
         let mut exposures: BTreeMap<Exchange, (f64, f64)> = BTreeMap::new();
@@ -444,13 +207,19 @@ fn quote_price_map(normalized_data: &[NormalizedMarketData]) -> BTreeMap<(Exchan
 mod tests {
     use super::*;
     use crate::{
-        data_module::DataCollectionOutput, AgentEvaluationOutput, ExecutionPlanner,
-        ExecutionPlanningOutput, ExecutionSubmitter, IntentEvaluationOutput,
+        agent_module::AgentEvaluationRequest,
+        data_module::{DataCollectionOutput, DataCollectionRequest},
+        execution_module::ExecutionPlanningRequest,
+        intent_module::IntentEvaluationRequest,
+        risk_checker::{RiskCheckOutput, RiskCheckRequest},
+        AgentEvaluationOutput, ExecutionPlanner, ExecutionPlanningOutput, ExecutionSubmitter,
+        IntentEvaluationOutput,
     };
+    use anyhow::Result;
     use qrpc_compiler::compile_runtime_protocol_config;
     use qrpc_core::{
-        AgentConfig, DataKind, DataSourceConfig, DecisionStatus, IntentConfig, MarketType,
-        RiskConfig, RuntimeProtocolCoreConfig,
+        AgentConfig, DataKind, DataSourceConfig, DecisionStatus, ExecutionPlan, IntentConfig,
+        IntentKind, MarketType, RiskConfig, RiskDecision, RuntimeProtocolCoreConfig,
     };
     use std::collections::BTreeSet;
 

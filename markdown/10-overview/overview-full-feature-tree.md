@@ -4945,3 +4945,6 @@ Recursive boundary supplement: BE-001YQ-01 `runtime_facade_coordinator` parent r
 - `markdown/06-milestones/v4.16.0/1336-root.contracts.runtime_support.runtime_facade_coordinator.parent_residual_judgment.provider_delegation_helpers.md` - v4.16.0 BE-001YQ-01 runtime_facade_coordinator parent residual judgment selects provider_delegation_helpers
 Recursive boundary supplement: BE-001YR-01 `runtime_facade_coordinator.provider_delegation_helpers` baseline_frozen; next step: BE-001YR-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1337-root.contracts.runtime_support.runtime_facade_coordinator.provider_delegation_helpers.baseline_plan.md` - v4.16.0 BE-001YR-01 runtime_facade_coordinator.provider_delegation_helpers baseline plan
+Recursive boundary supplement: BE-001YR-02 `runtime_facade_coordinator.provider_delegation_helpers` actual extraction complete; next step: BE-001YR-03 single_leaf_closeout.
+- `qrpc_runtime/src/runtime_facade_coordinator/provider_delegation_helpers.rs` - runtime facade coordinator provider delegation helper methods
+- `markdown/06-milestones/v4.16.0/1338-root.contracts.runtime_support.runtime_facade_coordinator.provider_delegation_helpers.extract_closeout.md` - v4.16.0 BE-001YR-02 runtime_facade_coordinator.provider_delegation_helpers actual extraction complete
