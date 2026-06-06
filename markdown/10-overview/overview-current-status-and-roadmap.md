@@ -1420,3 +1420,4 @@ Latest recursive supplement: BE-001YM-01 selected `state_config_accessors`; next
 Latest recursive supplement: BE-001YN-01 froze the `state_config_accessors` baseline; next movement may add `qrpc_runtime/src/runtime_facade_coordinator/state_config_accessors.rs` and move only accessor/control methods.
 Latest recursive supplement: BE-001YN-02 extracted `state_config_accessors`; `qrpc_runtime/src/runtime_facade_coordinator/state_config_accessors.rs` now owns public state/provider/risk/execution-assumption accessors.
 Latest recursive supplement: BE-001YN-03 closed `state_config_accessors` with `stop_split: true`; next recursive step returns to `runtime_facade_coordinator` parent residual judgment.
+Latest recursive supplement: BE-001YO-01 selected `config_generation`; next baseline covers module config swap/apply and generation history accessors.
