@@ -1,10 +1,10 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001XR-03",
-  "last_committed_sha": "38833833",
-  "current_parent": "root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering",
-  "current_step": "BE-001XS-01",
+  "last_committed_batch": "BE-001XS-01",
+  "last_committed_sha": "cd022af5",
+  "current_parent": "root.contracts.compiler_bridge.runtime_protocol_lowering",
+  "current_step": "BE-001XT-01",
   "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
@@ -181,7 +181,8 @@
     "contracts.core_ir",
     "contracts.compiler_bridge.runtime_protocol_validation",
     "contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.condition_lowering",
-    "contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.fallback_description"
+    "contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.fallback_description",
+    "contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering"
   ],
   "open_residuals": [
     "contracts.compiler_bridge",
@@ -190,7 +191,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering",
+  "next_recommended_child": "root.contracts.compiler_bridge.runtime_protocol_lowering",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
