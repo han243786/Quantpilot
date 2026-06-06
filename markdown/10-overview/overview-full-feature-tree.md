@@ -4925,3 +4925,5 @@ Recursive boundary supplement: BE-001YL-03 `runtime_facade_coordinator.execution
 - `markdown/06-milestones/v4.16.0/1327-root.contracts.runtime_support.runtime_facade_coordinator.execution_market_entrypoints.single_leaf_closeout.md` - v4.16.0 BE-001YL-03 runtime_facade_coordinator.execution_market_entrypoints single leaf closeout stops split
 Recursive boundary supplement: BE-001YM-01 `runtime_facade_coordinator` parent residual judgment selects `state_config_accessors`; next step: BE-001YN-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1328-root.contracts.runtime_support.runtime_facade_coordinator.parent_residual_judgment.state_config_accessors.md` - v4.16.0 BE-001YM-01 runtime_facade_coordinator parent residual judgment selects state_config_accessors
+Recursive boundary supplement: BE-001YN-01 `runtime_facade_coordinator.state_config_accessors` baseline_frozen; next step: BE-001YN-02 actual extraction.
+- `markdown/06-milestones/v4.16.0/1329-root.contracts.runtime_support.runtime_facade_coordinator.state_config_accessors.baseline_plan.md` - v4.16.0 BE-001YN-01 runtime_facade_coordinator.state_config_accessors baseline plan

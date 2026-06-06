@@ -1417,3 +1417,4 @@ Latest recursive supplement: BE-001YL-01 froze the `execution_market_entrypoints
 Latest recursive supplement: BE-001YL-02 extracted `execution_market_entrypoints`; `qrpc_runtime/src/runtime_facade_coordinator/execution_market_entrypoints.rs` now owns execution and market-data public entrypoints.
 Latest recursive supplement: BE-001YL-03 closed `execution_market_entrypoints` with `stop_split: true`; next recursive step returns to `runtime_facade_coordinator` parent residual judgment.
 Latest recursive supplement: BE-001YM-01 selected `state_config_accessors`; next baseline covers public state/provider/risk accessors while excluding config generation methods.
+Latest recursive supplement: BE-001YN-01 froze the `state_config_accessors` baseline; next movement may add `qrpc_runtime/src/runtime_facade_coordinator/state_config_accessors.rs` and move only accessor/control methods.

@@ -1328,3 +1328,4 @@
 | v4.16.0 / BE-001YL-02 | Added: `runtime_facade_coordinator.execution_market_entrypoints` actual extraction complete |
 | v4.16.0 / BE-001YL-03 | Added: `runtime_facade_coordinator.execution_market_entrypoints` single leaf closeout stops split |
 | v4.16.0 / BE-001YM-01 | Added: `runtime_facade_coordinator` parent residual judgment selects `state_config_accessors` |
+| v4.16.0 / BE-001YN-01 | Added: `runtime_facade_coordinator.state_config_accessors` baseline plan |
