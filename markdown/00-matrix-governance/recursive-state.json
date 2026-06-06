@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001YL-02",
-  "last_committed_sha": "c684822a",
-  "current_parent": "root.contracts.runtime_support.runtime_facade_coordinator.execution_market_entrypoints",
-  "current_step": "BE-001YL-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001YL-03",
+  "last_committed_sha": "beba537e",
+  "current_parent": "root.contracts.runtime_support.runtime_facade_coordinator",
+  "current_step": "BE-001YM-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -189,7 +189,8 @@
     "contracts.compiler_bridge.strategy_ir_lowering",
     "contracts.compiler_bridge",
     "contracts.runtime_support.runtime_facade_coordinator.constructor_provider_wiring",
-    "contracts.runtime_support.runtime_facade_coordinator.session_cycle_orchestration"
+    "contracts.runtime_support.runtime_facade_coordinator.session_cycle_orchestration",
+    "contracts.runtime_support.runtime_facade_coordinator.execution_market_entrypoints"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -197,7 +198,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.runtime_facade_coordinator.execution_market_entrypoints",
+  "next_recommended_child": "root.contracts.runtime_support.runtime_facade_coordinator.state_config_accessors",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
