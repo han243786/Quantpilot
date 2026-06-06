@@ -1293,3 +1293,4 @@
 | v4.16.0 / BE-001XQ-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering` parent residual judgment selects fallback_description |
 | v4.16.0 / BE-001XR-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.fallback_description` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001XR-02 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.fallback_description` actual extraction complete |
+| v4.16.0 / BE-001XR-03 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.fallback_description` single leaf closeout stops split |
