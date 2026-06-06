@@ -21,7 +21,7 @@ use super::{
 };
 
 
-pub fn lower_strategy_ir_to_core_ir(strategy_ir: &StrategyIr) -> Result<CoreStrategyIr> {
+pub(super) fn lower_strategy_ir_to_core_ir(strategy_ir: &StrategyIr) -> Result<CoreStrategyIr> {
     strategy_ir
         .validate()
         .map_err(|err| anyhow::anyhow!(err.to_string()))?;
