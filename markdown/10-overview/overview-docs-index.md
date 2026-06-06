@@ -1311,3 +1311,4 @@
 | v4.16.0 / BE-001YB-01 | 新增: `root.contracts.compiler_bridge` parent residual judgment closes parent |
 | v4.16.0 / BE-001YC-01 | Added: `root.contracts` parent residual judgment selects `contracts.runtime_support` |
 | v4.16.0 / BE-001YD-01 | Added: `root.contracts.runtime_support` baseline plan |
+| v4.16.0 / BE-001YE-01 | Added: `root.contracts.runtime_support` parent residual judgment selects `runtime_facade_coordinator` |
