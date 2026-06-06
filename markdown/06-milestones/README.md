@@ -1724,3 +1724,4 @@
 | v4.16.0 / GOV-LEAF-GRANULARITY-SMART-JUDGE-01 | `v4.16.0/1361-governance.leaf_granularity_smart_judge.md` | Terminal-leaf scoring added to recursive governance; bottom leaves resolve to STOP/WAVE/SPLIT/PRECISION before further split |
 | v4.16.0 / BE-001ZE-01 | `v4.16.0/1362-root.contracts.runtime_support.data_module.collection_orchestration.baseline_plan.md` | Added: `data_module.collection_orchestration` baseline plan with leaf granularity smart judge decision `SPLIT` |
 | v4.16.0 / BE-001ZE-02 | `v4.16.0/1363-root.contracts.runtime_support.data_module.collection_orchestration.extract_closeout.md` | Added: `data_module.collection_orchestration` actual extraction complete |
+| v4.16.0 / BE-001ZE-03 | `v4.16.0/1364-root.contracts.runtime_support.data_module.collection_orchestration.single_leaf_closeout.md` | Added: `data_module.collection_orchestration` single leaf closeout stops split |

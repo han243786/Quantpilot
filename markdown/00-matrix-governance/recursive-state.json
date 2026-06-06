@@ -5,9 +5,9 @@
   "latest_governance_batch": "GOV-LEAF-GRANULARITY-SMART-JUDGE-01",
   "last_committed_batch": "BE-001ZD-01",
   "last_committed_sha": "4e0c573b",
-  "current_parent": "root.contracts.runtime_support.data_module.collection_orchestration",
-  "current_step": "BE-001ZE-03",
-  "current_phase": "single_leaf_closeout",
+  "current_parent": "root.contracts.runtime_support.data_module",
+  "current_step": "BE-001ZF-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -200,7 +200,8 @@
     "contracts.runtime_support.runtime_facade_coordinator.coordinator_test_harness",
     "contracts.runtime_support.runtime_facade_coordinator",
     "contracts.runtime_support.data_module.source_mapping",
-    "contracts.runtime_support.data_module.quality_diagnostics"
+    "contracts.runtime_support.data_module.quality_diagnostics",
+    "contracts.runtime_support.data_module.collection_orchestration"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -208,7 +209,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.data_module.collection_orchestration",
+  "next_recommended_child": "root.contracts.runtime_support.data_module.exchange_endpoints",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
