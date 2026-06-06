@@ -338,3 +338,4 @@ Latest recursive supplement: BE-001SN-02 extracted `contracts.qrpc_core.runtime_
 Latest recursive supplement: BE-001SN-03 closed `contracts.qrpc_core.runtime_io_contract.backtest_output` with `stop_split: true`; next step closes the runtime IO parent.
 Latest recursive supplement: BE-001SO-01 closed `contracts.qrpc_core.runtime_io_contract` as a compact parent facade; next qrpc_core residual candidate is `rfc_execution_contracts`.
 Latest recursive supplement: BE-001YC-01 selected `contracts.runtime_support` as the next `root.contracts` child; next step is BE-001YD-01 `root.contracts.runtime_support` baseline_plan over the `qrpc-runtime` crate boundary.
+Latest recursive supplement: BE-001YD-01 froze the `root.contracts.runtime_support` baseline over the `qrpc-runtime` crate; next step is BE-001YE-01 parent residual judgment selecting `runtime_facade_coordinator`.

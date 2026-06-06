@@ -4885,3 +4885,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1309-root.contracts.compiler_bridge.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001YB-01 root.contracts.compiler_bridge parent residual judgment closes parent
 Recursive boundary supplement: BE-001YC-01 `root.contracts` parent residual judgment selects `contracts.runtime_support`; next step: BE-001YD-01 root.contracts.runtime_support baseline_plan.
 - `markdown/06-milestones/v4.16.0/1310-root.contracts.parent_residual_judgment.runtime_support.md` - v4.16.0 BE-001YC-01 root.contracts parent residual judgment selects contracts.runtime_support
+Recursive boundary supplement: BE-001YD-01 `root.contracts.runtime_support` baseline_frozen; next step: BE-001YE-01 root.contracts.runtime_support parent_residual_judgment selects runtime_facade_coordinator.
+- `markdown/06-milestones/v4.16.0/1311-root.contracts.runtime_support.baseline_plan.md` - v4.16.0 BE-001YD-01 root.contracts.runtime_support baseline plan

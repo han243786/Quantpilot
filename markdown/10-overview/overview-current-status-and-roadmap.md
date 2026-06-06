@@ -1399,3 +1399,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001YA-02 `root.contracts.compiler_bridge.strategy_ir_lowering` single leaf closeout stops split；下一步: BE-001YB-01 root.contracts.compiler_bridge parent_residual_judgment。
 - BE-001YB-01 `root.contracts.compiler_bridge` parent residual judgment closes parent；下一步: BE-001YC-01 root.contracts parent_residual_judgment。
 Latest recursive supplement: BE-001YC-01 selected `contracts.runtime_support` as the next `root.contracts` child. The next step is BE-001YD-01 `root.contracts.runtime_support` baseline_plan over the `qrpc-runtime` crate boundary.
+Latest recursive supplement: BE-001YD-01 froze the `root.contracts.runtime_support` baseline over the `qrpc-runtime` crate and queued runtime facade/coordinator, data, intent, agent, evaluator, execution, fill, risk, sandbox, v4, live, plugin, ops compatibility, and metric children.
