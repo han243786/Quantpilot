@@ -8552,3 +8552,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.data_module.source_mapping extracted: true`; `qrpc_runtime/src/data_module/source_mapping.rs` now owns Core IR data binding to runtime source config restoration and source-hint parsers.
 **Latest state supplement (BE-001ZA-03)**: `root.contracts.runtime_support.data_module.source_mapping` single leaf closeout complete; next step: BE-001ZB-01 parent_residual_judgment.
 `root.contracts.runtime_support.data_module.source_mapping stop_split: true`; source mapping stays terminal because hint parsers and config restoration share one output contract.
+**Latest state supplement (BE-001ZB-01)**: `root.contracts.runtime_support.data_module` parent residual judgment selected `quality_diagnostics`; next step: BE-001ZC-01 baseline_plan.
+`root.contracts.runtime_support.data_module.quality_diagnostics selected: true`; this child owns source health, freshness, gap, flag, preview, and summary behavior for normalized market data.
