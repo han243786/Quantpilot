@@ -4927,3 +4927,6 @@ Recursive boundary supplement: BE-001YM-01 `runtime_facade_coordinator` parent r
 - `markdown/06-milestones/v4.16.0/1328-root.contracts.runtime_support.runtime_facade_coordinator.parent_residual_judgment.state_config_accessors.md` - v4.16.0 BE-001YM-01 runtime_facade_coordinator parent residual judgment selects state_config_accessors
 Recursive boundary supplement: BE-001YN-01 `runtime_facade_coordinator.state_config_accessors` baseline_frozen; next step: BE-001YN-02 actual extraction.
 - `markdown/06-milestones/v4.16.0/1329-root.contracts.runtime_support.runtime_facade_coordinator.state_config_accessors.baseline_plan.md` - v4.16.0 BE-001YN-01 runtime_facade_coordinator.state_config_accessors baseline plan
+Recursive boundary supplement: BE-001YN-02 `runtime_facade_coordinator.state_config_accessors` actual extraction complete; next step: BE-001YN-03 single_leaf_closeout.
+- `qrpc_runtime/src/runtime_facade_coordinator/state_config_accessors.rs` - runtime facade coordinator state/provider/risk/execution-assumption accessors
+- `markdown/06-milestones/v4.16.0/1330-root.contracts.runtime_support.runtime_facade_coordinator.state_config_accessors.extract_closeout.md` - v4.16.0 BE-001YN-02 runtime_facade_coordinator.state_config_accessors actual extraction complete

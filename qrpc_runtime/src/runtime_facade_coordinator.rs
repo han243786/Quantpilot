@@ -23,6 +23,7 @@ use std::sync::{Arc, Mutex};
 mod constructor_provider_wiring;
 mod execution_market_entrypoints;
 mod session_cycle_orchestration;
+mod state_config_accessors;
 
 /// 配置代际记录
 #[derive(Debug, Clone)]
@@ -79,64 +80,6 @@ impl std::fmt::Debug for RuntimeCoordinator {
 }
 
 impl RuntimeCoordinator {
-    pub fn portfolio_state(&self) -> &PortfolioState {
-        &self.state.portfolio
-    }
-
-    pub fn data_fetch_counts(&self) -> &BTreeMap<String, u32> {
-        &self.state.data_fetch_counts
-    }
-
-    pub fn last_action_at_ms(&self) -> &BTreeMap<String, u64> {
-        &self.state.last_action_at_ms
-    }
-
-    pub fn last_rebalance_at_ms(&self) -> &BTreeMap<String, u64> {
-        &self.state.last_rebalance_at_ms
-    }
-
-    pub fn data_module(&self) -> &(dyn DataModuleProvider + Send + Sync) {
-        self.data_module.as_ref()
-    }
-
-    pub fn intent_module(&self) -> &(dyn IntentModuleProvider + Send + Sync) {
-        self.intent_module.as_ref()
-    }
-
-    pub fn agent_module(&self) -> &(dyn AgentModuleProvider + Send + Sync) {
-        self.agent_module.as_ref()
-    }
-
-    pub fn risk_checker(&self) -> &(dyn RiskCheckerProvider + Send + Sync) {
-        self.risk_checker.as_ref()
-    }
-
-    pub fn risk_mode(&self) -> RiskDecisionMode {
-        self.risk_mode
-    }
-
-    pub fn set_risk_mode(&mut self, mode: RiskDecisionMode) {
-        self.risk_mode = mode;
-    }
-
-    /// v1.2.0: 设置 RiskMonitor 实时风控监控器
-    pub fn set_risk_monitor(&mut self, monitor: risk_monitor::RiskMonitor) {
-        self.risk_monitor = Some(monitor);
-        self.risk_stopped = false;
-    }
-
-    /// v1.2.0: 查询 RiskMonitor 是否已触发停止
-    pub fn is_risk_stopped(&self) -> bool {
-        self.risk_stopped
-    }
-
-    /// v1.2.0: 重置 RiskMonitor 停止标志（用于恢复运行）
-    pub fn reset_risk_stopped(&mut self) {
-        self.risk_stopped = false;
-    }
-
-    /// 存储候选模块配置，在下一次 epoch barrier 激活
-    /// 返回新的 deployment_revision（sha256 哈希）
     pub fn swap_module_config(
         &mut self,
         module_key: &str,
@@ -209,21 +152,6 @@ impl RuntimeCoordinator {
             .lock()
             .map(|h| h.clone())
             .unwrap_or_default()
-    }
-
-    pub fn execution_module_provider_key(&self) -> &'static str {
-        self.execution_module
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .provider_key()
-    }
-
-    /// v1.1.0: 设置执行假设（滑点/冲击/价差/延迟模型）
-    pub fn set_execution_assumptions(&self, assumptions: crate::slippage::ExecutionAssumptions) {
-        self.execution_module
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .set_execution_assumptions(assumptions);
     }
 
     pub fn portfolio_update_event(
