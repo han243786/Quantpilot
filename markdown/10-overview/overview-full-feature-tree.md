@@ -5009,3 +5009,6 @@ Recursive boundary supplement: BE-001ZF-01 `data_module` parent residual judgmen
 - `markdown/06-milestones/v4.16.0/1365-root.contracts.runtime_support.data_module.parent_residual_judgment.exchange_surface_wave.md` - v4.16.0 BE-001ZF-01 data_module parent residual judgment selects exchange_surface_wave
 Recursive boundary supplement: BE-001ZG-01 `data_module.exchange_surface_wave` baseline_frozen; next step: BE-001ZG-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1366-root.contracts.runtime_support.data_module.exchange_surface_wave.baseline_plan.md` - v4.16.0 BE-001ZG-01 data_module.exchange_surface_wave baseline plan
+Recursive boundary supplement: BE-001ZG-02 `data_module.exchange_surface_wave` actual extraction complete; next step: BE-001ZG-03 single_leaf_closeout.
+- `qrpc_runtime/src/data_module/exchange_surface.rs` - runtime data module exchange endpoint surface and OKX/Binance raw payload parsing
+- `markdown/06-milestones/v4.16.0/1367-root.contracts.runtime_support.data_module.exchange_surface_wave.extract_closeout.md` - v4.16.0 BE-001ZG-02 data_module.exchange_surface_wave actual extraction complete

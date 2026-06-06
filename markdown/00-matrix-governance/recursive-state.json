@@ -5,9 +5,9 @@
   "latest_governance_batch": "GOV-LEAF-GRANULARITY-SMART-JUDGE-01",
   "last_committed_batch": "BE-001ZD-01",
   "last_committed_sha": "4e0c573b",
-  "current_parent": "root.contracts.runtime_support.data_module",
-  "current_step": "BE-001ZG-02",
-  "current_phase": "actual_extraction",
+  "current_parent": "root.contracts.runtime_support.data_module.exchange_surface_wave",
+  "current_step": "BE-001ZG-03",
+  "current_phase": "single_leaf_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",

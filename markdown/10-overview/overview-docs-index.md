@@ -1366,3 +1366,4 @@
 | v4.16.0 / BE-001ZE-03 | Added: `data_module.collection_orchestration` single leaf closeout stops split |
 | v4.16.0 / BE-001ZF-01 | Added: `data_module` parent residual judgment selects `exchange_surface_wave` same-parent wave |
 | v4.16.0 / BE-001ZG-01 | Added: `data_module.exchange_surface_wave` baseline plan |
+| v4.16.0 / BE-001ZG-02 | Added: `data_module.exchange_surface_wave` actual extraction complete |
