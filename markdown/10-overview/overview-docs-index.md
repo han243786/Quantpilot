@@ -1297,3 +1297,4 @@
 | v4.16.0 / BE-001XS-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering` parent residual judgment closes parent |
 | v4.16.0 / BE-001XT-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering` parent residual judgment selects agent_policy_lowering |
 | v4.16.0 / BE-001XU-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.agent_policy_lowering` equivalence baseline and extraction plan |
+| v4.16.0 / BE-001XU-02 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.agent_policy_lowering` actual extraction complete |
