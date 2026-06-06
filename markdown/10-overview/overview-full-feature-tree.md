@@ -764,6 +764,7 @@ Cargo.toml [workspace]
 
 **文件**: `qrpc_compiler/src/lib.rs`
 **子模块文件**: `qrpc_compiler/src/runtime_protocol_validation.rs`
+**子模块文件**: `qrpc_compiler/src/runtime_protocol_lowering.rs`
 
 将 Core IR 编译为可执行指令。负责:
 - 策略图 → Core IR 转换
@@ -2349,6 +2350,7 @@ storage/
 - `qrpc_compiler/Cargo.toml` — qrpc_compiler 包配置
 - `qrpc_compiler/src/lib.rs` — 编译层入口; 改 Core IR 编译逻辑时改这里
 - `qrpc_compiler/src/runtime_protocol_validation.rs` — runtime protocol validation child module; 改 runtime protocol validation-only behavior 时改这里
+- `qrpc_compiler/src/runtime_protocol_lowering.rs` — runtime protocol lowering child module; 改 runtime protocol Core IR conversion behavior 时改这里
 
 **qrpc_runtime**:
 - `qrpc_runtime/Cargo.toml` — qrpc_runtime 包配置
@@ -4814,3 +4816,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1279-root.contracts.compiler_bridge.parent_residual_judgment.runtime_protocol_lowering.md` - v4.16.0 BE-001XE-01 root.contracts.compiler_bridge parent residual judgment selects runtime_protocol_lowering
 递归边界补充: BE-001XF-01 `root.contracts.compiler_bridge.runtime_protocol_lowering` root.contracts.compiler_bridge.runtime_protocol_lowering equivalence baseline and extraction plan；下一步: BE-001XG-01 root.contracts.compiler_bridge.runtime_protocol_lowering extract_closeout。
 - `markdown/06-milestones/v4.16.0/1280-root.contracts.compiler_bridge.runtime_protocol_lowering.baseline_plan.md` - v4.16.0 BE-001XF-01 root.contracts.compiler_bridge.runtime_protocol_lowering equivalence baseline and extraction plan
+递归边界补充: BE-001XG-01 `root.contracts.compiler_bridge.runtime_protocol_lowering` root.contracts.compiler_bridge.runtime_protocol_lowering actual extraction complete；下一步: BE-001XH-01 root.contracts.compiler_bridge.runtime_protocol_lowering single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/1281-root.contracts.compiler_bridge.runtime_protocol_lowering.extract_closeout.md` - v4.16.0 BE-001XG-01 root.contracts.compiler_bridge.runtime_protocol_lowering actual extraction complete
