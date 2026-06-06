@@ -1392,3 +1392,4 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001XW-01 `root.contracts.compiler_bridge.runtime_protocol_lowering.risk_policy_lowering` equivalence baseline and extraction plan；下一步: BE-001XW-02 root.contracts.compiler_bridge.runtime_protocol_lowering.risk_policy_lowering extract_closeout。
 - BE-001XW-02 `root.contracts.compiler_bridge.runtime_protocol_lowering.risk_policy_lowering` actual extraction complete；下一步: BE-001XW-03 root.contracts.compiler_bridge.runtime_protocol_lowering.risk_policy_lowering single_leaf_closeout。
 - BE-001XW-03 `root.contracts.compiler_bridge.runtime_protocol_lowering.risk_policy_lowering` single leaf closeout stops split；下一步: BE-001XX-01 root.contracts.compiler_bridge.runtime_protocol_lowering parent_residual_judgment。
+- BE-001XX-01 `root.contracts.compiler_bridge.runtime_protocol_lowering` parent residual judgment closes parent；下一步: BE-001XY-01 root.contracts.compiler_bridge parent_residual_judgment。

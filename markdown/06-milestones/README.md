@@ -1664,3 +1664,4 @@
 | v4.16.0 / BE-001XW-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.risk_policy_lowering` equivalence baseline and extraction plan |
 | v4.16.0 / BE-001XW-02 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.risk_policy_lowering` actual extraction complete |
 | v4.16.0 / BE-001XW-03 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.risk_policy_lowering` single leaf closeout stops split |
+| v4.16.0 / BE-001XX-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering` parent residual judgment closes parent |
