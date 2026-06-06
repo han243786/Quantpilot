@@ -1343,3 +1343,4 @@
 | v4.16.0 / BE-001YT-01 | Added: `runtime_facade_coordinator.portfolio_projection` baseline plan |
 | v4.16.0 / BE-001YT-02 | Added: `runtime_facade_coordinator.portfolio_projection` actual extraction complete |
 | v4.16.0 / BE-001YT-03 | Added: `runtime_facade_coordinator.portfolio_projection` single leaf closeout stops split |
+| v4.16.0 / BE-001YU-01 | Added: `runtime_facade_coordinator` parent residual judgment selects `coordinator_test_harness` |

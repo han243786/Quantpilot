@@ -371,3 +371,4 @@ Latest recursive supplement: BE-001YS-01 selected `portfolio_projection`; next s
 Latest recursive supplement: BE-001YT-01 froze the `portfolio_projection` baseline; next step is actual extraction.
 Latest recursive supplement: BE-001YT-02 extracted `portfolio_projection`; next step is single-leaf closeout.
 Latest recursive supplement: BE-001YT-03 closed `portfolio_projection` with `stop_split: true`; next step returns to `runtime_facade_coordinator` parent residual judgment.
+Latest recursive supplement: BE-001YU-01 selected `coordinator_test_harness`; next step is its baseline plan.
