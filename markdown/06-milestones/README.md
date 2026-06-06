@@ -1648,3 +1648,4 @@
 | v4.16.0 / BE-001XK-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering` root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering actual extraction complete |
 | v4.16.0 / BE-001XL-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering` root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering single leaf closeout keeps split open |
 | v4.16.0 / BE-001XM-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering` root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering parent residual judgment selects condition_lowering |
+| v4.16.0 / BE-001XN-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.condition_lowering` root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.condition_lowering equivalence baseline and extraction plan |
