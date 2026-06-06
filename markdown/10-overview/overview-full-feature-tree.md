@@ -4883,3 +4883,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1308-root.contracts.compiler_bridge.strategy_ir_lowering.single_leaf_closeout.md` - v4.16.0 BE-001YA-02 root.contracts.compiler_bridge.strategy_ir_lowering single leaf closeout stops split
 递归边界补充: BE-001YB-01 `root.contracts.compiler_bridge` parent residual judgment closes parent；下一步: BE-001YC-01 root.contracts parent_residual_judgment。
 - `markdown/06-milestones/v4.16.0/1309-root.contracts.compiler_bridge.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001YB-01 root.contracts.compiler_bridge parent residual judgment closes parent
+Recursive boundary supplement: BE-001YC-01 `root.contracts` parent residual judgment selects `contracts.runtime_support`; next step: BE-001YD-01 root.contracts.runtime_support baseline_plan.
+- `markdown/06-milestones/v4.16.0/1310-root.contracts.parent_residual_judgment.runtime_support.md` - v4.16.0 BE-001YC-01 root.contracts parent residual judgment selects contracts.runtime_support
