@@ -1367,3 +1367,4 @@
 | v4.16.0 / BE-001ZF-01 | Added: `data_module` parent residual judgment selects `exchange_surface_wave` same-parent wave |
 | v4.16.0 / BE-001ZG-01 | Added: `data_module.exchange_surface_wave` baseline plan |
 | v4.16.0 / BE-001ZG-02 | Added: `data_module.exchange_surface_wave` actual extraction complete |
+| v4.16.0 / GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 | Added: read-only leaf granularity scoring tool with `normalized_split_score` evidence |

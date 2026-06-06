@@ -90,12 +90,18 @@ leaf_granularity_smart_judge
 
 评分目标:
 
-`final_decision = split_benefit + leaf_size_fit - risk_penalty - governance_cost - system_efficiency_penalty`
+各指标先按 0-100 打分，再按权重计算:
+
+`weighted_delta = 0.40*split_benefit + 0.20*leaf_size_fit - 0.20*risk_penalty - 0.15*governance_cost - 0.05*system_efficiency_penalty`
+
+`normalized_split_score = clamp(40 + weighted_delta, 0, 100)`
+
+`normalized_split_score` 是唯一用于 STOP/WAVE/SPLIT/PRECISION 的分数。`40` 是中性基线，用于保留既有阈值并让负向成本可以直接把微叶压回 STOP。
 
 | 指标 | 权重 | 说明 |
 | --- | --- | --- |
 | split_benefit | 40 | 独立 owner、清晰输入输出、可独立测试、降低父级复杂度、减少耦合或共享状态 |
-| leaf_size_fit | 20 | LOC、函数数量、public/pub(crate) surface、分支密度是否支持成为稳定叶子 |
+| leaf_size_fit | 20 | 当前体量是否形成继续拆分压力；低于 100 LOC 为低分，超过 800 LOC 为高分，150-600 LOC 默认只给中低分以鼓励终端叶稳定。 |
 | risk_penalty | 20 | public API、route/schema、状态机、交易语义、持久化、锁、安全、live execution、跨 crate 或编译契约风险 |
 | governance_cost | 15 | 新增文档、facade、门禁、索引、提交和证明成本 |
 | system_efficiency_penalty | 5 | 是否增加薄包装、无价值 re-export/import、parent-child 转发层或可读性损耗 |
@@ -106,10 +112,10 @@ leaf_granularity_smart_judge
 
 | 决策 | 条件 | 执行动作 |
 | --- | --- | --- |
-| STOP | `final_decision < 40`，或 LOC < 100 且无强收益 | 停止细拆，登记 `stop_split: true` |
-| WAVE | `final_decision` 40-64，且同父级存在同构 child | 合入 `same_parent_wave`，不单独走完整治理 |
-| SPLIT | `final_decision >= 65` 且 `risk_penalty < 40` | 允许继续拆分，优先走标准批次 |
-| PRECISION | `final_decision >= 65` 且命中高风险触发器 | 单叶精细治理，不得批处理隐藏风险 |
+| STOP | `normalized_split_score < 40`，或 LOC < 100 且无强收益 | 停止细拆，登记 `stop_split: true` |
+| WAVE | `normalized_split_score` 40-64，且同父级存在同构 child | 合入 `same_parent_wave`，不单独走完整治理 |
+| SPLIT | `normalized_split_score >= 65` 且未命中高风险触发器 | 允许继续拆分，优先走标准批次 |
+| PRECISION | `normalized_split_score >= 65` 且命中高风险触发器 | 单叶精细治理，不得批处理隐藏风险 |
 
 叶子体量控制:
 
@@ -134,6 +140,23 @@ leaf_granularity_smart_judge
 | risk_score | 风险分 |
 | final_decision | STOP / WAVE / SPLIT / PRECISION |
 | reason | 主要理由 |
+
+自动评估入口:
+
+`tools/evaluate-leaf-granularity.ps1` 是只读评分脚本。它读取一个或多个候选叶子文件，统计 LOC、函数数、public surface、分支密度、领域关键词、风险标签、治理成本和系统效率损耗，并输出 `normalized_split_score` 与固定决策。
+
+示例:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\evaluate-leaf-granularity.ps1 `
+  -LeafId root.contracts.runtime_support.data_module.exchange_surface_wave `
+  -ParentId root.contracts.runtime_support.data_module `
+  -Path qrpc_runtime/src/data_module/exchange_surface.rs `
+  -Depth 4 `
+  -SameParentWaveCandidate
+```
+
+脚本结果不替代开发者判断，但后续单叶 closeout / 父叶残余判断若不采用脚本结果，必须在 milestone 中说明人工覆盖理由。
 
 ---
 

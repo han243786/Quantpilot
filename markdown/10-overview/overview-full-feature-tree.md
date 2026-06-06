@@ -2844,6 +2844,7 @@ storage/
 - `tools/check-full-feature-tree.ps1` — 全量树校验 🆕 v4.0.0
 - `tools/run-smart-pre-commit.ps1` — staged-file 智能 pre-commit 分流
 - `tools/update-recursive-governance.ps1` — 递归治理 skeleton 与索引生成器
+- `tools/evaluate-leaf-granularity.ps1` — 只读叶子粒度评分工具，输出 `normalized_split_score` 与 STOP/WAVE/SPLIT/PRECISION
 
 **其他工具**:
 - `tools/run-closeout-gates.bat` — 一键 26 项 closeout
@@ -5012,3 +5013,6 @@ Recursive boundary supplement: BE-001ZG-01 `data_module.exchange_surface_wave` b
 Recursive boundary supplement: BE-001ZG-02 `data_module.exchange_surface_wave` actual extraction complete; next step: BE-001ZG-03 single_leaf_closeout.
 - `qrpc_runtime/src/data_module/exchange_surface.rs` - runtime data module exchange endpoint surface and OKX/Binance raw payload parsing
 - `markdown/06-milestones/v4.16.0/1367-root.contracts.runtime_support.data_module.exchange_surface_wave.extract_closeout.md` - v4.16.0 BE-001ZG-02 data_module.exchange_surface_wave actual extraction complete
+Recursive governance supplement: GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 adds read-only bottom-leaf scoring to recursive governance; closeout documents can cite `normalized_split_score` evidence.
+- `tools/evaluate-leaf-granularity.ps1` - read-only leaf granularity scoring tool
+- `markdown/06-milestones/v4.16.0/1368-governance.leaf_granularity_judge_tool.md` - v4.16.0 GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 leaf granularity judge tool

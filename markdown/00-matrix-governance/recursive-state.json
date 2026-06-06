@@ -2,7 +2,12 @@
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v2",
   "protocol_upgrade_batch": "GOV-RECURSIVE-COST-CONTROL-01",
-  "latest_governance_batch": "GOV-LEAF-GRANULARITY-SMART-JUDGE-01",
+  "latest_governance_batch": "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01",
+  "governance_history": [
+    "GOV-RECURSIVE-COST-CONTROL-01",
+    "GOV-LEAF-GRANULARITY-SMART-JUDGE-01",
+    "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01"
+  ],
   "last_committed_batch": "BE-001ZD-01",
   "last_committed_sha": "4e0c573b",
   "current_parent": "root.contracts.runtime_support.data_module.exchange_surface_wave",
@@ -221,6 +226,7 @@
     "forced_precision_downgrade",
     "tiered_gate_matrix",
     "leaf_granularity_smart_judge",
+    "leaf_granularity_judge_tool",
     "recursive_governance_generator",
     "recursive_state_cursor"
   ],
@@ -246,7 +252,9 @@
       "risk_penalty": 20,
       "governance_cost": 15,
       "system_efficiency_penalty": 5
-    }
+    },
+    "score_formula": "normalized_split_score = clamp(40 + 0.40*split_benefit + 0.20*leaf_size_fit - 0.20*risk_penalty - 0.15*governance_cost - 0.05*system_efficiency_penalty, 0, 100)",
+    "readonly_tool": "tools/evaluate-leaf-granularity.ps1"
   },
   "forbidden_carryover_prompts": [
     "one_time_progress_report",

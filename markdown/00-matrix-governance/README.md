@@ -65,3 +65,4 @@
 | v4.15.0 | 三矩阵完全接管 closeout |
 | v4.16.0 / GOV-RECURSIVE-COST-CONTROL-01 | 递归高速协议升级为 `recursive-high-speed-v2`，允许同父级可审计批次作为可验证步骤，同时强制保留 child 级白箱证据和降档触发器 |
 | v4.16.0 / GOV-LEAF-GRANULARITY-SMART-JUDGE-01 | 末端叶子智能判定接管 leaf split gate，按 split benefit、leaf size、risk、governance cost 和 system efficiency 决定 STOP/WAVE/SPLIT/PRECISION |
+| v4.16.0 / GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 | 只读叶子粒度评分脚本接入治理体系，输出 `normalized_split_score` 和 STOP/WAVE/SPLIT/PRECISION 证据 |

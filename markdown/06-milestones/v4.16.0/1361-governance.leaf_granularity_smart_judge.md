@@ -24,10 +24,18 @@ The audit found three governance pressure signals:
 
 ## Scoring Model
 
+Every metric is scored on a 0-100 scale, then normalized:
+
+`weighted_delta = 0.40*split_benefit + 0.20*leaf_size_fit - 0.20*risk_penalty - 0.15*governance_cost - 0.05*system_efficiency_penalty`
+
+`normalized_split_score = clamp(40 + weighted_delta, 0, 100)`
+
+The `40` baseline keeps medium leaves from splitting by default. The split must earn its way above the threshold.
+
 | Metric | Weight | Meaning |
 | --- | --- | --- |
 | `split_benefit` | 40 | Independent owner, input/output clarity, testability, parent complexity reduction, coupling reduction. |
-| `leaf_size_fit` | 20 | LOC, function count, public surface, and branch density. |
+| `leaf_size_fit` | 20 | Size pressure for another split; terminal-sized leaves receive lower scores than oversized leaves. |
 | `risk_penalty` | 20 | Public API, route/schema, state machine, trading semantics, persistence, lock, security, live execution, cross-crate, or compiler-contract risk. |
 | `governance_cost` | 15 | Milestone, facade, gate, index, commit, and proof cost. |
 | `system_efficiency_penalty` | 5 | Thin wrapper, useless re-export/import, parent-child forwarding, or readability loss. |
@@ -36,10 +44,10 @@ The audit found three governance pressure signals:
 
 | Decision | Rule | Action |
 | --- | --- | --- |
-| `STOP` | Low net score, LOC under 100 without strong benefit, or helper-only fragment. | Mark `stop_split: true`. |
-| `WAVE` | Medium net score with same-parent homogeneous children. | Use `same_parent_wave`, not standalone full governance. |
-| `SPLIT` | Strong net score and low risk. | Continue split, preferably batched under the same parent. |
-| `PRECISION` | Strong net score with high-risk surface. | Use single-leaf precision governance. |
+| `STOP` | `normalized_split_score < 40`, LOC under 100 without strong benefit, or helper-only fragment. | Mark `stop_split: true`. |
+| `WAVE` | `normalized_split_score` 40-64 with same-parent homogeneous children. | Use `same_parent_wave`, not standalone full governance. |
+| `SPLIT` | `normalized_split_score >= 65` and no high-risk trigger. | Continue split, preferably batched under the same parent. |
+| `PRECISION` | `normalized_split_score >= 65` with high-risk surface. | Use single-leaf precision governance. |
 
 ## Terminal Leaf Size Rule
 
@@ -53,6 +61,18 @@ Ordinary logic leaves should normally end at 150-600 LOC or one cohesive busines
 ## Governance Impact
 
 This protocol reduces governance load by making the scoring decision part of the recursive gate. It preserves final effect by forcing high-risk surfaces into Precision mode while routing low-value micro-splits to `STOP` or `WAVE`.
+
+## Automation
+
+`tools/evaluate-leaf-granularity.ps1` operationalizes this judge as a read-only script. It reports metrics, weighted scores, `normalized_split_score`, final decision, reason, and recommended action.
+
+Example:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\evaluate-leaf-granularity.ps1 -LeafId root.contracts.runtime_support.data_module.exchange_surface_wave -Path qrpc_runtime/src/data_module/exchange_surface.rs -Depth 4 -SameParentWaveCandidate
+```
+
+The script is not allowed to move the recursive cursor or edit governance files. It is an evidence generator for closeout and parent residual decisions.
 
 ## Gates
 

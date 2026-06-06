@@ -1728,3 +1728,4 @@
 | v4.16.0 / BE-001ZF-01 | `v4.16.0/1365-root.contracts.runtime_support.data_module.parent_residual_judgment.exchange_surface_wave.md` | Added: `data_module` parent residual judgment selects `exchange_surface_wave` same-parent wave |
 | v4.16.0 / BE-001ZG-01 | `v4.16.0/1366-root.contracts.runtime_support.data_module.exchange_surface_wave.baseline_plan.md` | Added: `data_module.exchange_surface_wave` baseline plan |
 | v4.16.0 / BE-001ZG-02 | `v4.16.0/1367-root.contracts.runtime_support.data_module.exchange_surface_wave.extract_closeout.md` | Added: `data_module.exchange_surface_wave` actual extraction complete |
+| v4.16.0 / GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 | `v4.16.0/1368-governance.leaf_granularity_judge_tool.md` | Added: read-only leaf granularity scoring tool with `normalized_split_score` evidence |

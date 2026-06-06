@@ -139,6 +139,8 @@ foreach ($path in $requiredCoreDocs) {
     Assert-FileExists $path
 }
 
+Assert-FileExists "tools/evaluate-leaf-granularity.ps1"
+
 $requiredMilestonePatterns = @(
     @("markdown/06-milestones/v4.12.0/01-*.md", "v4.12 plan"),
     @("markdown/06-milestones/v4.12.0/02-*.md", "v4.12 landing record"),
@@ -21994,6 +21996,8 @@ $recursiveSpeedTokens = @(
     @("release transition", "release transition guard"),
     @("leaf_split_decision_gate", "leaf split decision gate guard"),
     @("leaf_granularity_smart_judge", "leaf granularity smart judge marker"),
+    @("tools/evaluate-leaf-granularity.ps1", "leaf granularity judge tool path"),
+    @("normalized_split_score", "leaf granularity normalized split score"),
     @("STOP / WAVE / SPLIT / PRECISION", "terminal leaf decision outputs"),
     @("split_benefit", "leaf scoring split benefit metric"),
     @("governance_cost", "leaf scoring governance cost metric"),
@@ -22011,6 +22015,7 @@ $recursiveStateTokens = @(
     @("recursive-high-speed-v2", "recursive high speed state protocol"),
     @("GOV-RECURSIVE-COST-CONTROL-01", "recursive cost control protocol upgrade"),
     @("GOV-LEAF-GRANULARITY-SMART-JUDGE-01", "leaf granularity smart judge protocol upgrade"),
+    @("GOV-LEAF-GRANULARITY-JUDGE-TOOL-01", "leaf granularity judge tool protocol upgrade"),
     @("current_parent", "current parent field"),
     @("current_phase", "current phase field"),
     @("closed_children", "closed children field"),
@@ -22018,6 +22023,7 @@ $recursiveStateTokens = @(
     @("cost_controlled_same_parent_wave", "cost controlled same-parent wave marker"),
     @("forced_precision_downgrade", "forced precision downgrade marker"),
     @("leaf_granularity_smart_judge", "leaf granularity smart judge state marker"),
+    @("leaf_granularity_judge_tool", "leaf granularity judge tool state marker"),
     @("leaf_granularity_control", "leaf granularity control state block"),
     @("forbidden_carryover_prompts", "forbidden carryover prompts field"),
     @("ai_must_not_propose", "AI release transition guard field")
