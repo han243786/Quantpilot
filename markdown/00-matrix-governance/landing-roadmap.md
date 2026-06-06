@@ -341,3 +341,4 @@ Latest recursive supplement: BE-001YC-01 selected `contracts.runtime_support` as
 Latest recursive supplement: BE-001YD-01 froze the `root.contracts.runtime_support` baseline over the `qrpc-runtime` crate; next step is BE-001YE-01 parent residual judgment selecting `runtime_facade_coordinator`.
 Latest recursive supplement: BE-001YE-01 selected `runtime_facade_coordinator` as the first `root.contracts.runtime_support` child; next step is BE-001YF-01 child baseline over `qrpc_runtime/src/lib.rs`.
 Latest recursive supplement: BE-001YF-01 froze the `runtime_facade_coordinator` baseline; next movement may extract coordinator implementation from `qrpc_runtime/src/lib.rs` while preserving crate-root exports.
+Latest recursive supplement: BE-001YF-02 extracted `runtime_facade_coordinator`; `qrpc_runtime/src/runtime_facade_coordinator.rs` now owns the coordinator implementation while the crate root remains the runtime support facade.
