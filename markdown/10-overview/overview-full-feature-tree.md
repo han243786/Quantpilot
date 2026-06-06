@@ -4918,3 +4918,6 @@ Recursive boundary supplement: BE-001YK-01 `runtime_facade_coordinator` parent r
 - `markdown/06-milestones/v4.16.0/1324-root.contracts.runtime_support.runtime_facade_coordinator.parent_residual_judgment.execution_market_entrypoints.md` - v4.16.0 BE-001YK-01 runtime_facade_coordinator parent residual judgment selects execution_market_entrypoints
 Recursive boundary supplement: BE-001YL-01 `runtime_facade_coordinator.execution_market_entrypoints` baseline_frozen; next step: BE-001YL-02 actual extraction.
 - `markdown/06-milestones/v4.16.0/1325-root.contracts.runtime_support.runtime_facade_coordinator.execution_market_entrypoints.baseline_plan.md` - v4.16.0 BE-001YL-01 runtime_facade_coordinator.execution_market_entrypoints baseline plan
+Recursive boundary supplement: BE-001YL-02 `runtime_facade_coordinator.execution_market_entrypoints` actual extraction complete; next step: BE-001YL-03 single_leaf_closeout.
+- `qrpc_runtime/src/runtime_facade_coordinator/execution_market_entrypoints.rs` - runtime facade coordinator execution and market-data entrypoints
+- `markdown/06-milestones/v4.16.0/1326-root.contracts.runtime_support.runtime_facade_coordinator.execution_market_entrypoints.extract_closeout.md` - v4.16.0 BE-001YL-02 runtime_facade_coordinator.execution_market_entrypoints actual extraction complete

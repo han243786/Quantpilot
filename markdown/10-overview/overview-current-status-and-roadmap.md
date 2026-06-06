@@ -1414,3 +1414,4 @@ Latest recursive supplement: BE-001YJ-02 extracted `session_cycle_orchestration`
 Latest recursive supplement: BE-001YJ-03 closed `session_cycle_orchestration` with `stop_split: true`; next recursive step returns to `runtime_facade_coordinator` parent residual judgment.
 Latest recursive supplement: BE-001YK-01 selected `execution_market_entrypoints`; next baseline covers `submit_execution_plan` and `on_market_data`.
 Latest recursive supplement: BE-001YL-01 froze the `execution_market_entrypoints` baseline; next movement may add `qrpc_runtime/src/runtime_facade_coordinator/execution_market_entrypoints.rs` and move only the two public entrypoint methods.
+Latest recursive supplement: BE-001YL-02 extracted `execution_market_entrypoints`; `qrpc_runtime/src/runtime_facade_coordinator/execution_market_entrypoints.rs` now owns execution and market-data public entrypoints.
