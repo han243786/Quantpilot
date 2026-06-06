@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001XV-01",
-  "last_committed_sha": "2339ee17",
+  "last_committed_batch": "BE-001XW-01",
+  "last_committed_sha": "2646e4f0",
   "current_parent": "root.contracts.compiler_bridge.runtime_protocol_lowering.risk_policy_lowering",
-  "current_step": "BE-001XW-01",
-  "current_phase": "baseline_plan",
+  "current_step": "BE-001XW-02",
+  "current_phase": "extract_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
