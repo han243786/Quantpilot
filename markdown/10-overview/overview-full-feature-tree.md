@@ -4961,3 +4961,5 @@ Recursive boundary supplement: BE-001YT-03 `runtime_facade_coordinator.portfolio
 - `markdown/06-milestones/v4.16.0/1343-root.contracts.runtime_support.runtime_facade_coordinator.portfolio_projection.single_leaf_closeout.md` - v4.16.0 BE-001YT-03 runtime_facade_coordinator.portfolio_projection single leaf closeout
 Recursive boundary supplement: BE-001YU-01 `runtime_facade_coordinator` parent residual judgment selected `coordinator_test_harness`; next step: BE-001YV-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1344-root.contracts.runtime_support.runtime_facade_coordinator.parent_residual_judgment.coordinator_test_harness.md` - v4.16.0 BE-001YU-01 runtime_facade_coordinator parent residual judgment selects coordinator_test_harness
+Recursive boundary supplement: BE-001YV-01 `runtime_facade_coordinator.coordinator_test_harness` baseline_frozen; next step: BE-001YV-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1345-root.contracts.runtime_support.runtime_facade_coordinator.coordinator_test_harness.baseline_plan.md` - v4.16.0 BE-001YV-01 runtime_facade_coordinator.coordinator_test_harness baseline plan
