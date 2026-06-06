@@ -1,11 +1,11 @@
 {
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v1",
-  "last_committed_batch": "BE-001YV-02",
-  "last_committed_sha": "49293643",
-  "current_parent": "root.contracts.runtime_support.runtime_facade_coordinator.coordinator_test_harness",
-  "current_step": "BE-001YV-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001YV-03",
+  "last_committed_sha": "63ac9973",
+  "current_parent": "root.contracts.runtime_support.runtime_facade_coordinator",
+  "current_step": "BE-001YW-01",
+  "current_phase": "parent_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -194,7 +194,8 @@
     "contracts.runtime_support.runtime_facade_coordinator.state_config_accessors",
     "contracts.runtime_support.runtime_facade_coordinator.config_generation",
     "contracts.runtime_support.runtime_facade_coordinator.provider_delegation_helpers",
-    "contracts.runtime_support.runtime_facade_coordinator.portfolio_projection"
+    "contracts.runtime_support.runtime_facade_coordinator.portfolio_projection",
+    "contracts.runtime_support.runtime_facade_coordinator.coordinator_test_harness"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -202,7 +203,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.runtime_facade_coordinator.coordinator_test_harness",
+  "next_recommended_child": "root.contracts.runtime_support.runtime_facade_coordinator.parent_closeout",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
