@@ -1412,3 +1412,4 @@ Latest recursive supplement: BE-001YI-01 selected `session_cycle_orchestration`;
 Latest recursive supplement: BE-001YJ-01 froze the `session_cycle_orchestration` baseline; next movement may add `qrpc_runtime/src/runtime_facade_coordinator/session_cycle_orchestration.rs` and move only session/cycle orchestration methods.
 Latest recursive supplement: BE-001YJ-02 extracted `session_cycle_orchestration`; `qrpc_runtime/src/runtime_facade_coordinator/session_cycle_orchestration.rs` now owns session/cycle orchestration while provider helper implementations remain in the parent.
 Latest recursive supplement: BE-001YJ-03 closed `session_cycle_orchestration` with `stop_split: true`; next recursive step returns to `runtime_facade_coordinator` parent residual judgment.
+Latest recursive supplement: BE-001YK-01 selected `execution_market_entrypoints`; next baseline covers `submit_execution_plan` and `on_market_data`.
