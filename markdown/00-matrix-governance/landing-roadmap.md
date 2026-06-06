@@ -355,3 +355,4 @@ Latest recursive supplement: BE-001YK-01 selected `execution_market_entrypoints`
 Latest recursive supplement: BE-001YL-01 froze the `execution_market_entrypoints` baseline; next step is actual extraction.
 Latest recursive supplement: BE-001YL-02 extracted `execution_market_entrypoints`; next step is single-leaf closeout.
 Latest recursive supplement: BE-001YL-03 closed `execution_market_entrypoints` with `stop_split: true`; next step is selecting the next `runtime_facade_coordinator` child.
+Latest recursive supplement: BE-001YM-01 selected `state_config_accessors`; next step is its baseline plan.
