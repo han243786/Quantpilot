@@ -767,6 +767,7 @@ Cargo.toml [workspace]
 **子模块文件**: `qrpc_compiler/src/runtime_protocol_lowering.rs`
 **子模块文件**: `qrpc_compiler/src/runtime_protocol_lowering/intent_signal_lowering.rs`
 **子模块文件**: `qrpc_compiler/src/runtime_protocol_lowering/intent_signal_lowering/condition_lowering.rs`
+**子模块文件**: `qrpc_compiler/src/strategy_ir_lowering.rs`
 
 将 Core IR 编译为可执行指令。负责:
 - 策略图 → Core IR 转换
@@ -2355,6 +2356,7 @@ storage/
 - `qrpc_compiler/src/runtime_protocol_lowering.rs` — runtime protocol lowering child module; 改 runtime protocol Core IR conversion behavior 时改这里
 - `qrpc_compiler/src/runtime_protocol_lowering/intent_signal_lowering.rs` — runtime intent/signal lowering child module; 改 runtime intent indicator/signal conversion时改这里
 - `qrpc_compiler/src/runtime_protocol_lowering/intent_signal_lowering/condition_lowering.rs` — runtime structured condition lowering child module; 改 runtime intent condition expression conversion 时改这里
+- `qrpc_compiler/src/strategy_ir_lowering.rs` — strategy IR lowering child module; 改 StrategyIr→CoreIr 转换、indicator/indicator lowering、logic rule lowering、spread/custom expression lowering 时改这里
 
 **qrpc_runtime**:
 - `qrpc_runtime/Cargo.toml` — qrpc_runtime 包配置
