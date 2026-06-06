@@ -1695,3 +1695,4 @@
 | v4.16.0 / BE-001YO-01 | Added: `runtime_facade_coordinator` parent residual judgment selects `config_generation` |
 | v4.16.0 / BE-001YP-01 | Added: `runtime_facade_coordinator.config_generation` baseline plan |
 | v4.16.0 / BE-001YP-02 | Added: `runtime_facade_coordinator.config_generation` actual extraction complete |
+| v4.16.0 / BE-001YP-03 | Added: `runtime_facade_coordinator.config_generation` single leaf closeout stops split |

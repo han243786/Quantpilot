@@ -1423,3 +1423,4 @@ Latest recursive supplement: BE-001YN-03 closed `state_config_accessors` with `s
 Latest recursive supplement: BE-001YO-01 selected `config_generation`; next baseline covers module config swap/apply and generation history accessors.
 Latest recursive supplement: BE-001YP-01 froze the `config_generation` baseline; next movement may add `qrpc_runtime/src/runtime_facade_coordinator/config_generation.rs` and move only config generation methods.
 Latest recursive supplement: BE-001YP-02 extracted `config_generation`; `qrpc_runtime/src/runtime_facade_coordinator/config_generation.rs` now owns module config swap/apply and generation history methods.
+Latest recursive supplement: BE-001YP-03 closed `config_generation` with `stop_split: true`; next recursive step returns to `runtime_facade_coordinator` parent residual judgment.

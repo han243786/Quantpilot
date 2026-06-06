@@ -362,3 +362,4 @@ Latest recursive supplement: BE-001YN-03 closed `state_config_accessors` with `s
 Latest recursive supplement: BE-001YO-01 selected `config_generation`; next step is its baseline plan.
 Latest recursive supplement: BE-001YP-01 froze the `config_generation` baseline; next step is actual extraction.
 Latest recursive supplement: BE-001YP-02 extracted `config_generation`; next step is single-leaf closeout.
+Latest recursive supplement: BE-001YP-03 closed `config_generation` with `stop_split: true`; next step returns to `runtime_facade_coordinator` parent residual judgment.
