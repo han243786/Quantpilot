@@ -4921,3 +4921,5 @@ Recursive boundary supplement: BE-001YL-01 `runtime_facade_coordinator.execution
 Recursive boundary supplement: BE-001YL-02 `runtime_facade_coordinator.execution_market_entrypoints` actual extraction complete; next step: BE-001YL-03 single_leaf_closeout.
 - `qrpc_runtime/src/runtime_facade_coordinator/execution_market_entrypoints.rs` - runtime facade coordinator execution and market-data entrypoints
 - `markdown/06-milestones/v4.16.0/1326-root.contracts.runtime_support.runtime_facade_coordinator.execution_market_entrypoints.extract_closeout.md` - v4.16.0 BE-001YL-02 runtime_facade_coordinator.execution_market_entrypoints actual extraction complete
+Recursive boundary supplement: BE-001YL-03 `runtime_facade_coordinator.execution_market_entrypoints` single leaf closeout stops split; next step: BE-001YM-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1327-root.contracts.runtime_support.runtime_facade_coordinator.execution_market_entrypoints.single_leaf_closeout.md` - v4.16.0 BE-001YL-03 runtime_facade_coordinator.execution_market_entrypoints single leaf closeout stops split

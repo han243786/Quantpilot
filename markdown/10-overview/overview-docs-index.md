@@ -1326,3 +1326,4 @@
 | v4.16.0 / BE-001YK-01 | Added: `runtime_facade_coordinator` parent residual judgment selects `execution_market_entrypoints` |
 | v4.16.0 / BE-001YL-01 | Added: `runtime_facade_coordinator.execution_market_entrypoints` baseline plan |
 | v4.16.0 / BE-001YL-02 | Added: `runtime_facade_coordinator.execution_market_entrypoints` actual extraction complete |
+| v4.16.0 / BE-001YL-03 | Added: `runtime_facade_coordinator.execution_market_entrypoints` single leaf closeout stops split |
