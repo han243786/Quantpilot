@@ -766,6 +766,7 @@ Cargo.toml [workspace]
 **子模块文件**: `qrpc_compiler/src/runtime_protocol_validation.rs`
 **子模块文件**: `qrpc_compiler/src/runtime_protocol_lowering.rs`
 **子模块文件**: `qrpc_compiler/src/runtime_protocol_lowering/intent_signal_lowering.rs`
+**子模块文件**: `qrpc_compiler/src/runtime_protocol_lowering/intent_signal_lowering/condition_lowering.rs`
 
 将 Core IR 编译为可执行指令。负责:
 - 策略图 → Core IR 转换
@@ -2353,6 +2354,7 @@ storage/
 - `qrpc_compiler/src/runtime_protocol_validation.rs` — runtime protocol validation child module; 改 runtime protocol validation-only behavior 时改这里
 - `qrpc_compiler/src/runtime_protocol_lowering.rs` — runtime protocol lowering child module; 改 runtime protocol Core IR conversion behavior 时改这里
 - `qrpc_compiler/src/runtime_protocol_lowering/intent_signal_lowering.rs` — runtime intent/signal lowering child module; 改 runtime intent indicator/signal conversion时改这里
+- `qrpc_compiler/src/runtime_protocol_lowering/intent_signal_lowering/condition_lowering.rs` — runtime structured condition lowering child module; 改 runtime intent condition expression conversion 时改这里
 
 **qrpc_runtime**:
 - `qrpc_runtime/Cargo.toml` — qrpc_runtime 包配置
@@ -4834,3 +4836,5 @@ Recursive boundary supplement: BE-001SO-01 `root.contracts.qrpc_core.runtime_io_
 - `markdown/06-milestones/v4.16.0/1287-root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.parent_residual_judgment.condition_lowering.md` - v4.16.0 BE-001XM-01 root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering parent residual judgment selects condition_lowering
 递归边界补充: BE-001XN-01 `root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.condition_lowering` root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.condition_lowering equivalence baseline and extraction plan；下一步: BE-001XO-01 root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.condition_lowering extract_closeout。
 - `markdown/06-milestones/v4.16.0/1288-root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.condition_lowering.baseline_plan.md` - v4.16.0 BE-001XN-01 root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.condition_lowering equivalence baseline and extraction plan
+递归边界补充: BE-001XO-01 `root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.condition_lowering` root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.condition_lowering actual extraction complete；下一步: BE-001XP-01 root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.condition_lowering single_leaf_closeout。
+- `markdown/06-milestones/v4.16.0/1289-root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.condition_lowering.extract_closeout.md` - v4.16.0 BE-001XO-01 root.contracts.compiler_bridge.runtime_protocol_lowering.intent_signal_lowering.condition_lowering actual extraction complete
