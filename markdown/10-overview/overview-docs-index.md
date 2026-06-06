@@ -1279,3 +1279,4 @@
 | v4.16.0 / BE-001XC-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_validation` root.contracts.compiler_bridge.runtime_protocol_validation actual extraction complete |
 | v4.16.0 / BE-001XD-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_validation` root.contracts.compiler_bridge.runtime_protocol_validation single leaf closeout stops split |
 | v4.16.0 / BE-001XE-01 | 新增: `root.contracts.compiler_bridge` root.contracts.compiler_bridge parent residual judgment selects runtime_protocol_lowering |
+| v4.16.0 / BE-001XF-01 | 新增: `root.contracts.compiler_bridge.runtime_protocol_lowering` root.contracts.compiler_bridge.runtime_protocol_lowering equivalence baseline and extraction plan |
