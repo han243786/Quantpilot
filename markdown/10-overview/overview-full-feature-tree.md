@@ -4954,3 +4954,6 @@ Recursive boundary supplement: BE-001YS-01 `runtime_facade_coordinator` parent r
 - `markdown/06-milestones/v4.16.0/1340-root.contracts.runtime_support.runtime_facade_coordinator.parent_residual_judgment.portfolio_projection.md` - v4.16.0 BE-001YS-01 runtime_facade_coordinator parent residual judgment selects portfolio_projection
 Recursive boundary supplement: BE-001YT-01 `runtime_facade_coordinator.portfolio_projection` baseline_frozen; next step: BE-001YT-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1341-root.contracts.runtime_support.runtime_facade_coordinator.portfolio_projection.baseline_plan.md` - v4.16.0 BE-001YT-01 runtime_facade_coordinator.portfolio_projection baseline plan
+Recursive boundary supplement: BE-001YT-02 `runtime_facade_coordinator.portfolio_projection` actual extraction complete; next step: BE-001YT-03 single_leaf_closeout.
+- `qrpc_runtime/src/runtime_facade_coordinator/portfolio_projection.rs` - runtime facade coordinator portfolio event projection and mark-to-market refresh
+- `markdown/06-milestones/v4.16.0/1342-root.contracts.runtime_support.runtime_facade_coordinator.portfolio_projection.extract_closeout.md` - v4.16.0 BE-001YT-02 runtime_facade_coordinator.portfolio_projection actual extraction complete

@@ -1,4 +1,4 @@
-use super::{portfolio_equity_estimate, RuntimeCoordinator};
+use super::{portfolio_projection::portfolio_equity_estimate, RuntimeCoordinator};
 use anyhow::Result;
 use qrpc_core::{IntentKind, RuntimeCycleOutput, SessionOutput};
 

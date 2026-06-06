@@ -3,17 +3,14 @@ use crate::{
     execution_module::ExecutionModuleProvider, intent_module::IntentModuleProvider,
     merge_coordinator, risk_checker::RiskCheckerProvider, risk_monitor, runtime_state,
 };
-use qrpc_core::{
-    CoreStrategyIr, Exchange, ExchangeExposure, NormalizedMarketData, PortfolioState,
-    RiskDecisionMode, RuntimeEvent, RuntimeEventType, Symbol,
-};
-use serde_json::json;
+use qrpc_core::{CoreStrategyIr, RiskDecisionMode};
 use std::collections::BTreeMap;
 use std::sync::{Arc, Mutex};
 
 mod config_generation;
 mod constructor_provider_wiring;
 mod execution_market_entrypoints;
+mod portfolio_projection;
 mod provider_delegation_helpers;
 mod session_cycle_orchestration;
 mod state_config_accessors;
@@ -72,137 +69,6 @@ impl std::fmt::Debug for RuntimeCoordinator {
     }
 }
 
-impl RuntimeCoordinator {
-    pub fn portfolio_update_event(
-        &self,
-        source_id: &str,
-        trace_id: &str,
-        now_ms: u64,
-    ) -> RuntimeEvent {
-        let equity_estimate = portfolio_equity_estimate(&self.state.portfolio);
-        let open_orders = self
-            .state
-            .portfolio
-            .open_orders
-            .iter()
-            .map(|order| {
-                json!({
-                    "order_id": order.order_id,
-                    "side": format!("{:?}", order.side),
-                    "remaining_qty": order.remaining_qty,
-                    "limit_price": order.limit_price,
-                    "reserved_cash": order.reserved_cash,
-                    "reserved_qty": order.reserved_qty,
-                })
-            })
-            .collect::<Vec<_>>();
-        RuntimeEvent {
-            event_id: format!("evt-portfolio-{source_id}-{now_ms}"),
-            event_type: RuntimeEventType::PortfolioUpdated,
-            trace_id: trace_id.to_string(),
-            source_id: source_id.to_string(),
-            ts_ms: now_ms,
-            payload: json!({
-                "cash_balance": self.state.portfolio.cash_balance,
-                "available_cash_balance": self.state.portfolio.available_cash_balance,
-                "frozen_cash_balance": self.state.portfolio.frozen_cash_balance,
-                "total_gross_notional": self.state.portfolio.total_gross_notional,
-                "total_net_notional": self.state.portfolio.total_net_notional,
-                "total_leverage": self.state.portfolio.total_leverage,
-                "equity_estimate": equity_estimate,
-                "positions": self.state.portfolio.positions.len(),
-                "open_order_count": self.state.portfolio.open_orders.len(),
-                "open_orders": open_orders,
-            }),
-        }
-    }
-
-    fn refresh_portfolio_state(&mut self, normalized_data: &[NormalizedMarketData], now_ms: u64) {
-        let quotes = quote_price_map(normalized_data);
-        let mut exposures: BTreeMap<Exchange, (f64, f64)> = BTreeMap::new();
-
-        for position in &mut self.state.portfolio.positions {
-            // v2.3.0: 若无新行情, 保持上次市价并记录陈旧状态
-            position.mark_price = quotes
-                .get(&(position.exchange.clone(), position.symbol.clone()))
-                .copied()
-                .unwrap_or(position.mark_price);
-            // 无行情时标记: 使用 avg_entry_price 作为保守估计 (不做多, 也不做空)
-            if position.mark_price <= 0.0 {
-                position.mark_price = position.avg_entry_price.max(0.01);
-            }
-            position.unrealized_pnl =
-                (position.mark_price - position.avg_entry_price) * position.net_qty;
-            let gross = position.net_qty.abs() * position.mark_price;
-            let net = position.net_qty * position.mark_price;
-            let entry = exposures.entry(position.exchange.clone()).or_default();
-            entry.0 += gross;
-            entry.1 += net;
-        }
-
-        self.state.portfolio.exchange_exposures = exposures
-            .into_iter()
-            .map(
-                |(exchange, (gross_notional, net_notional))| ExchangeExposure {
-                    leverage: 0.0,
-                    exchange,
-                    gross_notional,
-                    net_notional,
-                },
-            )
-            .collect();
-
-        self.state.portfolio.total_gross_notional = self
-            .state
-            .portfolio
-            .exchange_exposures
-            .iter()
-            .map(|item| item.gross_notional)
-            .sum();
-        self.state.portfolio.total_net_notional = self
-            .state
-            .portfolio
-            .exchange_exposures
-            .iter()
-            .map(|item| item.net_notional)
-            .sum();
-        let equity_estimate = portfolio_equity_estimate(&self.state.portfolio);
-        // v2.3.0: 使用比例下限替代固定 floor(1.0), 避免小额权益时杠杆被低估
-        let initial_equity = 100_000.0;
-        let equity_floor = 1_000.0_f64.max(initial_equity * 0.001);
-        self.state.portfolio.total_leverage = if equity_estimate.abs() > f64::EPSILON {
-            self.state.portfolio.total_gross_notional / equity_estimate.abs().max(equity_floor)
-        } else {
-            0.0
-        };
-        for exposure in &mut self.state.portfolio.exchange_exposures {
-            exposure.leverage = if equity_estimate.abs() > f64::EPSILON {
-                exposure.gross_notional / equity_estimate.abs().max(equity_floor)
-            } else {
-                0.0
-            };
-        }
-        self.state.portfolio.updated_at_ms = now_ms;
-    }
-}
-
-fn portfolio_equity_estimate(portfolio: &PortfolioState) -> f64 {
-    portfolio.cash_balance + portfolio.total_net_notional
-}
-
-fn quote_price_map(normalized_data: &[NormalizedMarketData]) -> BTreeMap<(Exchange, Symbol), f64> {
-    normalized_data
-        .iter()
-        .filter_map(|item| match item {
-            NormalizedMarketData::Quote(quote) => Some((
-                (quote.exchange.clone(), quote.symbol.clone()),
-                quote.mid_price,
-            )),
-            _ => None,
-        })
-        .collect()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -218,8 +84,9 @@ mod tests {
     use anyhow::Result;
     use qrpc_compiler::compile_runtime_protocol_config;
     use qrpc_core::{
-        AgentConfig, DataKind, DataSourceConfig, DecisionStatus, ExecutionPlan, IntentConfig,
-        IntentKind, MarketType, RiskConfig, RiskDecision, RuntimeProtocolCoreConfig,
+        AgentConfig, DataKind, DataSourceConfig, DecisionStatus, Exchange, ExecutionPlan,
+        IntentConfig, IntentKind, MarketType, NormalizedMarketData, PortfolioState, RiskConfig,
+        RiskDecision, RuntimeEventType, RuntimeProtocolCoreConfig, Symbol,
     };
     use std::collections::BTreeSet;
 
