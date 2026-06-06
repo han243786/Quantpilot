@@ -1350,3 +1350,4 @@
 | v4.16.0 / BE-001YW-01 | Added: `runtime_facade_coordinator` parent closeout |
 | v4.16.0 / BE-001YX-01 | Added: `runtime_support` parent residual judgment selects `data_module` |
 | v4.16.0 / BE-001YY-01 | Added: `runtime_support.data_module` baseline plan |
+| v4.16.0 / BE-001YZ-01 | Added: `data_module` parent residual judgment selects `source_mapping` |

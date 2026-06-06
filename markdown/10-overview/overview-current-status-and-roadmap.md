@@ -1439,3 +1439,4 @@ Latest recursive supplement: BE-001YV-03 closed `coordinator_test_harness` with 
 Latest recursive supplement: BE-001YW-01 closed `runtime_facade_coordinator` as a compact parent facade; next recursive step returns to `root.contracts.runtime_support` parent residual judgment.
 Latest recursive supplement: BE-001YX-01 selected `data_module`; next baseline covers provider facade, source mapping, diagnostics/quality, exchange parsing, mock data, historical cache, and tests.
 Latest recursive supplement: BE-001YY-01 froze the `data_module` baseline; next recursive step selects the first data-module child.
+Latest recursive supplement: BE-001YZ-01 selected `data_module.source_mapping`; next baseline covers Core IR data binding to runtime data source config restoration.
