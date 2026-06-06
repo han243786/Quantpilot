@@ -1,11 +1,12 @@
 mod agent_policy_lowering;
 mod intent_signal_lowering;
+mod risk_policy_lowering;
 
 use anyhow::Result;
-use qrpc_core::{DataKind, RiskConfig, RuntimeProtocolCoreConfig};
+use qrpc_core::{DataKind, RuntimeProtocolCoreConfig};
 use qrpc_core_ir::{
     CoreMetadata, CoreStrategyIr, CoreTimeInForce, DataBinding, DataBindingKind, ExecutionRule,
-    ExecutionSizingKind, RiskPolicy,
+    ExecutionSizingKind,
 };
 use std::collections::BTreeMap;
 
@@ -112,7 +113,7 @@ pub(super) fn lower_runtime_protocol_to_core_ir_with_metadata(
         .risks
         .iter()
         .filter(|risk| risk.enabled)
-        .map(lower_runtime_risk_to_policy)
+        .map(risk_policy_lowering::lower_runtime_risk_to_policy)
         .collect();
 
     // v1.0.1: DAG 环检测 — 编译前校验策略图无环
@@ -121,25 +122,4 @@ pub(super) fn lower_runtime_protocol_to_core_ir_with_metadata(
         .map_err(|errs| anyhow::anyhow!("策略图 DAG 校验失败: {:?}", errs))?;
 
     Ok(core_ir)
-}
-
-fn lower_runtime_risk_to_policy(risk: &RiskConfig) -> RiskPolicy {
-    RiskPolicy {
-        policy_id: risk.risk_id.clone(),
-        name: risk.name.clone(),
-        observed_agent_ids: risk.observed_agent_ids.clone(),
-        max_position_ratio: risk.max_position_ratio,
-        max_single_weight: risk.max_single_weight,
-        max_concentration_ratio: risk.max_concentration_ratio,
-        max_symbol_net_exposure_ratio: risk.max_symbol_net_exposure_ratio,
-        max_portfolio_net_exposure_ratio: risk.max_portfolio_net_exposure_ratio,
-        max_turnover: risk.max_turnover,
-        min_trade_weight: risk.min_trade_weight,
-        max_new_positions_per_rebalance: risk.max_new_positions_per_rebalance,
-        max_total_leverage: risk.max_total_leverage,
-        max_exchange_leverage: risk.max_exchange_leverage,
-        min_action_interval_ms: risk.min_action_interval_ms,
-        enabled: risk.enabled,
-        max_cross_symbol_leverage: None,
-    }
 }
