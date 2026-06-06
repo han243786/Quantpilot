@@ -389,3 +389,4 @@ Latest recursive supplement: BE-001ZC-03 closed `data_module.quality_diagnostics
 Latest recursive supplement: BE-001ZD-01 selected `data_module.collection_orchestration`; next step is its baseline plan.
 Latest governance supplement: GOV-RECURSIVE-COST-CONTROL-01 upgrades recursive speed governance to `recursive-high-speed-v2`; same-parent waves may become verifiable steps only with child-level white-box evidence and forced precision downgrade triggers.
 Latest governance supplement: GOV-LEAF-GRANULARITY-SMART-JUDGE-01 adds terminal-leaf scoring to recursive governance; bottom leaves must resolve to STOP/WAVE/SPLIT/PRECISION from weighted split benefit, size fit, risk, governance cost, and system efficiency.
+Latest recursive supplement: BE-001ZE-01 froze `data_module.collection_orchestration` baseline; leaf granularity smart judge resolves to `SPLIT`, and the next movement may extract only the provider collect implementation.

@@ -6,8 +6,8 @@
   "last_committed_batch": "BE-001ZD-01",
   "last_committed_sha": "4e0c573b",
   "current_parent": "root.contracts.runtime_support.data_module.collection_orchestration",
-  "current_step": "BE-001ZE-01",
-  "current_phase": "baseline_plan",
+  "current_step": "BE-001ZE-02",
+  "current_phase": "actual_extraction",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",

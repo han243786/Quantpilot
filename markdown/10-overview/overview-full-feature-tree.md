@@ -4998,3 +4998,5 @@ Recursive governance supplement: GOV-RECURSIVE-COST-CONTROL-01 upgrades recursiv
 - `markdown/06-milestones/v4.16.0/1360-governance.recursive_cost_controlled_speed_protocol.md` - v4.16.0 GOV-RECURSIVE-COST-CONTROL-01 recursive cost-controlled speed protocol
 Recursive governance supplement: GOV-LEAF-GRANULARITY-SMART-JUDGE-01 adds terminal-leaf scoring to recursive governance; bottom leaves must resolve to STOP/WAVE/SPLIT/PRECISION before further split.
 - `markdown/06-milestones/v4.16.0/1361-governance.leaf_granularity_smart_judge.md` - v4.16.0 GOV-LEAF-GRANULARITY-SMART-JUDGE-01 terminal leaf granularity smart judge
+Recursive boundary supplement: BE-001ZE-01 `data_module.collection_orchestration` baseline_frozen; next step: BE-001ZE-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1362-root.contracts.runtime_support.data_module.collection_orchestration.baseline_plan.md` - v4.16.0 BE-001ZE-01 data_module.collection_orchestration baseline plan
