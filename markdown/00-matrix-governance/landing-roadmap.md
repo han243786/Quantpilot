@@ -347,3 +347,4 @@ Latest recursive supplement: BE-001YG-01 selected `constructor_provider_wiring` 
 Latest recursive supplement: BE-001YH-01 froze the `constructor_provider_wiring` baseline; next step is actual extraction of constructor/provider methods into a runtime_facade_coordinator child module.
 Latest recursive supplement: BE-001YH-02 extracted `constructor_provider_wiring`; next step is single-leaf closeout and split decision.
 Latest recursive supplement: BE-001YH-03 closed `constructor_provider_wiring` with `stop_split: true`; next step is selecting the next `runtime_facade_coordinator` child.
+Latest recursive supplement: BE-001YI-01 selected `session_cycle_orchestration`; next step is its baseline plan.
