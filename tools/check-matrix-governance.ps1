@@ -22004,11 +22004,14 @@ foreach ($check in $recursiveSpeedTokens) {
 
 $recursiveStateCursor = "markdown/00-matrix-governance/recursive-state.json"
 $recursiveStateTokens = @(
-    @("recursive-high-speed-v1", "recursive high speed state protocol"),
+    @("recursive-high-speed-v2", "recursive high speed state protocol"),
+    @("GOV-RECURSIVE-COST-CONTROL-01", "recursive cost control protocol upgrade"),
     @("current_parent", "current parent field"),
     @("current_phase", "current phase field"),
     @("closed_children", "closed children field"),
     @("open_residuals", "open residuals field"),
+    @("cost_controlled_same_parent_wave", "cost controlled same-parent wave marker"),
+    @("forced_precision_downgrade", "forced precision downgrade marker"),
     @("forbidden_carryover_prompts", "forbidden carryover prompts field"),
     @("ai_must_not_propose", "AI release transition guard field")
 )

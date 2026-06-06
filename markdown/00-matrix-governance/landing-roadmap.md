@@ -387,3 +387,4 @@ Latest recursive supplement: BE-001ZC-01 froze the `data_module.quality_diagnost
 Latest recursive supplement: BE-001ZC-02 extracted `data_module.quality_diagnostics`; next step is single-leaf closeout.
 Latest recursive supplement: BE-001ZC-03 closed `data_module.quality_diagnostics`; next step returns to `data_module`.
 Latest recursive supplement: BE-001ZD-01 selected `data_module.collection_orchestration`; next step is its baseline plan.
+Latest governance supplement: GOV-RECURSIVE-COST-CONTROL-01 upgrades recursive speed governance to `recursive-high-speed-v2`; same-parent waves may become verifiable steps only with child-level white-box evidence and forced precision downgrade triggers.

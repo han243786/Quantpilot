@@ -1,6 +1,7 @@
 {
   "version": "v4.16.0",
-  "protocol": "recursive-high-speed-v1",
+  "protocol": "recursive-high-speed-v2",
+  "protocol_upgrade_batch": "GOV-RECURSIVE-COST-CONTROL-01",
   "last_committed_batch": "BE-001ZD-01",
   "last_committed_sha": "4e0c573b",
   "current_parent": "root.contracts.runtime_support.data_module.collection_orchestration",
@@ -212,9 +213,19 @@
     "lightweight_two_step",
     "homogeneous_leaf_batching",
     "same_parent_parallel_children",
+    "cost_controlled_same_parent_wave",
+    "batch_verifiable_step",
+    "batch_whitebox_child_rows",
+    "forced_precision_downgrade",
+    "tiered_gate_matrix",
     "recursive_governance_generator",
     "recursive_state_cursor"
   ],
+  "active_speed_mode": {
+    "default": "cost_controlled_same_parent_wave",
+    "fallback": "precision_single_leaf",
+    "rust_cursor_unchanged": true
+  },
   "forbidden_carryover_prompts": [
     "one_time_progress_report",
     "three_leaf_pause_target",

@@ -1,9 +1,11 @@
 # 递归高速执行协议
 
 > Protocol: recursive_speed_protocol
+> Version: recursive-high-speed-v2
 > Scope: v4.16+ 递归模块化抽离、整理、等价 closeout。
 > Owner: 三矩阵治理层。
 > Decision: 高速执行协议独立维护于治理层，不再作为 v4.16 批次文档混入递归流水。
+> Effective: GOV-RECURSIVE-COST-CONTROL-01 起生效；当前 Rust 递归游标不因本协议升级移动。
 
 ---
 
@@ -11,11 +13,74 @@
 
 | 矩阵 | 影响节点 | 变更类型 |
 | --- | --- | --- |
-| 流程矩阵 | 递归执行节奏、轻量两段式、同构叶批处理、同父级子叶并行、状态游标 | 提速 |
-| 规范矩阵 | pre-commit 分流、父子通信、leaf split gate、批处理/并行边界 | 收紧 |
-| 引导矩阵 | 全量树、模块树、递归状态游标、治理生成器 | 扩展 |
+| 流程矩阵 | 递归执行节奏、轻量两段式、同构叶批处理、同父级子叶并行、成本受控批次、状态游标 | 提速 |
+| 规范矩阵 | pre-commit 分流、父子通信、leaf split gate、批处理/并行边界、强制降档触发器 | 收紧 |
+| 引导矩阵 | 全量树、模块树、递归状态游标、治理生成器、批次白箱表 | 扩展 |
 
 本协议只降低重复劳动和无效等待，不降低等价证明、父子通信、禁止横向连接、发布过渡保护和 leaf split 判定强度。
+
+---
+
+## 0. v2 成本受控高速层
+
+cost_controlled_recursive_speed
+
+v2 的核心变化是把“可验证步骤”从只能是单叶小步，扩展为同一父级下可审计的 `same_parent_wave`。批次提速只能压缩重复文档、重复游标更新和重复提交；不得压缩每个 child 的白箱边界、等价证据、门禁记录和 split 判定。
+
+### 0.1 效果不退不变量
+
+以下不变量优先级高于任何提速规则:
+
+1. 父子通信规则保持硬规则；child 之间不得直接横向调用。
+2. Public API、route、schema、persistence、lock owner、状态机语义和外部契约不得被隐式改变。
+3. 每个 child 必须保留独立输入、输出、owner、排除范围、文件写集、等价面和 `leaf_split_decision_result`。
+4. 每个 parent closeout 必须确认其所有 child 已关闭、残余 facade 合理、模块树和全量树同步。
+5. 发布过渡保护不变；AI 不得主动提出 release transition，开发者明确进入发布过渡后才允许横向连接优化提案。
+
+### 0.2 三档执行判定
+
+| 执行档 | 触发条件 | 允许产物 | 必须门禁 |
+| --- | --- | --- | --- |
+| Precision single-leaf | 命中高风险触发器，或等价面无法共享 | 单叶 baseline、extract、closeout、parent residual 分开落文档和提交 | 受影响 crate test、`cargo check -p quantpilot`、治理门禁 |
+| Standard same-parent wave | 同一 parent 队列已冻结，child 独立，write set 可分离，共享 gate 足以覆盖共同等价面 | 一个批次文档内包含每个 child 的独立白箱行、抽离行、closeout 行和 split 判定；一个 wave 提交 | shared gate + child extra gate、`cargo check -p quantpilot`、治理门禁 |
+| Fast closeout | 无代码移动或极薄 facade，split gate 明确 `stop_split: true`，继续细拆只会增加通信成本 | 单个 closeout 文档或批次 closeout 行 | 文档门禁；若有 Rust 改动则补 Rust gate |
+
+`same_parent_wave` 只有在每个 child 都能单独证明时才成立。缺少任一 child 行时，该批次不得 closeout。
+
+### 0.3 强制降档触发器
+
+命中任一条件时，必须从批次模式降回 Precision single-leaf:
+
+1. 需要新增或改变 public API、route、schema、persistence owner、lock owner 或跨 crate 外部契约。
+2. 涉及状态机推进顺序、并发锁顺序、交易执行语义、凭证安全、实时交易、沙箱回放真实性或编译契约。
+3. 某 child 需要另一个 sibling 的私有 helper、私有类型、私有状态或测试夹具。
+4. 共享 gate 不能覆盖某 child 的失败模式，且 child extra gate 不能在同一 wave 内清晰补足。
+5. 父级 facade 合并无法维持单向 parent 调用，或失败会污染其他 child 的等价证明。
+6. 需要 release transition 才能解释性能收益。
+
+### 0.4 成本上限规则
+
+为了防止治理成本失控，递归执行默认采用以下上限:
+
+1. 同一 parent 下的同构轻量 child 优先合成一个 `same_parent_wave`，不再为每个 child 固定拆成多份独立 milestone。
+2. 标准批次只允许一个主 milestone 文档；child 证据用表格和小节承载，除非触发 Precision single-leaf。
+3. 游标只在 wave 完成、parent closeout 或决策分叉时更新；不得为纯粹中间提示反复更新。
+4. 提交粒度以“可验证 wave step”为单位；不得把同一 wave 拆成无行为差异的多次文档提交。
+5. 全量高成本门禁集中在 Rust 改动、parent closeout 和风险升档处；docs-only 游标或索引同步走文档门禁。
+
+### 0.5 批次白箱表
+
+每个 `same_parent_wave` 文档必须包含下列表格列:
+
+| 列 | 含义 |
+| --- | --- |
+| child | 完整模块树坐标 |
+| baseline boundary | 输入、输出、owner、排除范围 |
+| write set | Rust 文件、父级 facade、治理文档 |
+| movement | 抽离动作或无代码移动说明 |
+| equivalence gate | shared gate 与 child extra gate |
+| closeout decision | `stop_split` / `continue_split` 与理由 |
+| residuals | 仍留在 parent 或转入下一轮的内容 |
 
 ---
 
@@ -86,7 +151,7 @@ homogeneous_leaf_batching
 
 ---
 
-## 4. 递归治理生成器
+## 4. 同父级子叶并行
 
 same_parent_parallel_children
 
@@ -169,6 +234,19 @@ recursive_state_cursor
 4. 只有开发者明确指出 release transition 时，才能提出子模块横向连接优化。
 5. `leaf_split_decision_gate` 必须在后续单叶 closeout / 父叶残余判断中触发。
 6. 每个可验证步骤仍需要提交；只是允许轻量叶合并阶段、同构叶批处理、同父级子叶并行和智能门禁分流。
+7. 批次可以成为可验证步骤，但必须保留每个 child 的独立白箱行、独立 split 判定、独立残余说明和独立失败隔离路径。
+8. 任何提速规则与效果不退不变量冲突时，必须立即降档到 Precision single-leaf。
+
+---
+
+## 门禁分层
+
+| 场景 | 最小门禁 | 升档门禁 |
+| --- | --- | --- |
+| docs-only 协议、索引、游标同步 | `git diff --check`、UTF-8、full-feature-tree、matrix governance | 若触及 pre-commit 或生成器，再补 hook sync / generator dry run |
+| 标准 Rust wave | `cargo fmt --check`、affected crate check/test、`cargo check -p quantpilot`、文档门禁 | 若涉及 API、状态机、持久化或锁，升到 Precision single-leaf |
+| parent closeout | 受影响 crate test、`cargo check -p quantpilot`、模块树 / 全量树 / 矩阵治理 | 若 parent 是跨 crate 契约，再补相关 crate test |
+| release transition | 仅开发者明确声明后可进入 | 必须新增 release-transition 证明，不得由本协议自动触发 |
 
 ---
 
