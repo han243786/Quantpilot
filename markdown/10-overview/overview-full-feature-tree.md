@@ -4900,3 +4900,6 @@ Recursive boundary supplement: BE-001YG-01 `runtime_facade_coordinator` parent r
 - `markdown/06-milestones/v4.16.0/1316-root.contracts.runtime_support.runtime_facade_coordinator.parent_residual_judgment.constructor_provider_wiring.md` - v4.16.0 BE-001YG-01 runtime_facade_coordinator parent residual judgment selects constructor_provider_wiring
 Recursive boundary supplement: BE-001YH-01 `runtime_facade_coordinator.constructor_provider_wiring` baseline_frozen; next step: BE-001YH-02 actual extraction.
 - `markdown/06-milestones/v4.16.0/1317-root.contracts.runtime_support.runtime_facade_coordinator.constructor_provider_wiring.baseline_plan.md` - v4.16.0 BE-001YH-01 runtime_facade_coordinator.constructor_provider_wiring baseline plan
+Recursive boundary supplement: BE-001YH-02 `runtime_facade_coordinator.constructor_provider_wiring` actual extraction complete; next step: BE-001YH-03 single_leaf_closeout.
+- `qrpc_runtime/src/runtime_facade_coordinator/constructor_provider_wiring.rs` - runtime facade coordinator constructor and provider injection wiring
+- `markdown/06-milestones/v4.16.0/1318-root.contracts.runtime_support.runtime_facade_coordinator.constructor_provider_wiring.extract_closeout.md` - v4.16.0 BE-001YH-02 runtime_facade_coordinator.constructor_provider_wiring actual extraction complete
