@@ -4985,3 +4985,5 @@ Recursive boundary supplement: BE-001ZA-03 `data_module.source_mapping` single l
 - `markdown/06-milestones/v4.16.0/1354-root.contracts.runtime_support.data_module.source_mapping.single_leaf_closeout.md` - v4.16.0 BE-001ZA-03 data_module.source_mapping single leaf closeout
 Recursive boundary supplement: BE-001ZB-01 `data_module` parent residual judgment selected `quality_diagnostics`; next step: BE-001ZC-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1355-root.contracts.runtime_support.data_module.parent_residual_judgment.quality_diagnostics.md` - v4.16.0 BE-001ZB-01 data_module parent residual judgment selects quality_diagnostics
+Recursive boundary supplement: BE-001ZC-01 `data_module.quality_diagnostics` baseline_frozen; next step: BE-001ZC-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1356-root.contracts.runtime_support.data_module.quality_diagnostics.baseline_plan.md` - v4.16.0 BE-001ZC-01 data_module.quality_diagnostics baseline plan

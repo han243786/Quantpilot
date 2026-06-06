@@ -8554,3 +8554,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.data_module.source_mapping stop_split: true`; source mapping stays terminal because hint parsers and config restoration share one output contract.
 **Latest state supplement (BE-001ZB-01)**: `root.contracts.runtime_support.data_module` parent residual judgment selected `quality_diagnostics`; next step: BE-001ZC-01 baseline_plan.
 `root.contracts.runtime_support.data_module.quality_diagnostics selected: true`; this child owns source health, freshness, gap, flag, preview, and summary behavior for normalized market data.
+**Latest state supplement (BE-001ZC-01)**: `root.contracts.runtime_support.data_module.quality_diagnostics` baseline frozen; next step: BE-001ZC-02 actual_extraction.
+`root.contracts.runtime_support.data_module.quality_diagnostics baseline_frozen: true`; movement may add a child module for quality snapshots, health flags, market data previews, summary rendering, and cached snapshot status refresh.
