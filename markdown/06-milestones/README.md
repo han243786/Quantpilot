@@ -1710,3 +1710,4 @@
 | v4.16.0 / BE-001YV-03 | Added: `runtime_facade_coordinator.coordinator_test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-001YW-01 | Added: `runtime_facade_coordinator` parent closeout |
 | v4.16.0 / BE-001YX-01 | Added: `runtime_support` parent residual judgment selects `data_module` |
+| v4.16.0 / BE-001YY-01 | Added: `runtime_support.data_module` baseline plan |

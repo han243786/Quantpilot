@@ -8542,3 +8542,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.runtime_facade_coordinator parent_closeout: true`; the parent now owns only module declarations, `ConfigGenerationEntry`, `RuntimeCoordinator` field layout, debug projection, and the test-harness module declaration.
 **Latest state supplement (BE-001YX-01)**: `root.contracts.runtime_support` parent residual judgment selected `data_module`; next step: BE-001YY-01 baseline_plan.
 `root.contracts.runtime_support.data_module selected: true`; this child owns provider facade, data collection orchestration, source mapping, diagnostics/quality, exchange endpoint parsing, mock data generation, historical cache, and tests.
+**Latest state supplement (BE-001YY-01)**: `root.contracts.runtime_support.data_module` baseline frozen; next step: BE-001YZ-01 parent_residual_judgment.
+`root.contracts.runtime_support.data_module baseline_frozen: true`; child queue is `source_mapping`, `quality_diagnostics`, `collection_orchestration`, `exchange_endpoints`, `exchange_payload_parsing`, `normalization`, `mock_data_generation`, `historical_cache`, `http_transport`, and `test_harness`.
