@@ -1701,3 +1701,4 @@
 | v4.16.0 / BE-001YR-02 | Added: `runtime_facade_coordinator.provider_delegation_helpers` actual extraction complete |
 | v4.16.0 / BE-001YR-03 | Added: `runtime_facade_coordinator.provider_delegation_helpers` single leaf closeout stops split |
 | v4.16.0 / BE-001YS-01 | Added: `runtime_facade_coordinator` parent residual judgment selects `portfolio_projection` |
+| v4.16.0 / BE-001YT-01 | Added: `runtime_facade_coordinator.portfolio_projection` baseline plan |

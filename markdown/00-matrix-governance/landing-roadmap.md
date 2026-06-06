@@ -368,3 +368,4 @@ Latest recursive supplement: BE-001YR-01 froze the `provider_delegation_helpers`
 Latest recursive supplement: BE-001YR-02 extracted `provider_delegation_helpers`; next step is single-leaf closeout.
 Latest recursive supplement: BE-001YR-03 closed `provider_delegation_helpers` with `stop_split: true`; next step returns to `runtime_facade_coordinator` parent residual judgment.
 Latest recursive supplement: BE-001YS-01 selected `portfolio_projection`; next step is its baseline plan.
+Latest recursive supplement: BE-001YT-01 froze the `portfolio_projection` baseline; next step is actual extraction.
