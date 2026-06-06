@@ -1685,3 +1685,4 @@
 | v4.16.0 / BE-001YJ-02 | Added: `runtime_facade_coordinator.session_cycle_orchestration` actual extraction complete |
 | v4.16.0 / BE-001YJ-03 | Added: `runtime_facade_coordinator.session_cycle_orchestration` single leaf closeout stops split |
 | v4.16.0 / BE-001YK-01 | Added: `runtime_facade_coordinator` parent residual judgment selects `execution_market_entrypoints` |
+| v4.16.0 / BE-001YL-01 | Added: `runtime_facade_coordinator.execution_market_entrypoints` baseline plan |
