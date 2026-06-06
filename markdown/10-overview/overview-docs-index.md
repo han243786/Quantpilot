@@ -26,7 +26,7 @@
 | `proposal-examples.md` | 轻量、标准、重型三档提案样例 |
 | `release-transition-protocol.md` | 发布过渡期连接协议 |
 | `landing-roadmap.md` | v4.12.0 至 v4.16.0 治理落地与模块化抽离路线 |
-| `recursive-speed-protocol.md` | v4.16+ 递归模块化高速执行协议，含同父级子叶并行 wave、成本受控批次、强制降档和批次白箱表 |
+| `recursive-speed-protocol.md` | v4.16+ 递归模块化高速执行协议，含同父级子叶并行 wave、成本受控批次、强制降档、批次白箱表和末端叶子智能判定 |
 | `recursive-state.json` | 当前递归状态游标 |
 
 ## 架构原则 (`01-principles/`)
@@ -1360,3 +1360,4 @@
 | v4.16.0 / BE-001ZC-03 | Added: `data_module.quality_diagnostics` single leaf closeout stops split |
 | v4.16.0 / BE-001ZD-01 | Added: `data_module` parent residual judgment selects `collection_orchestration` |
 | v4.16.0 / GOV-RECURSIVE-COST-CONTROL-01 | Added: recursive speed protocol upgraded to `recursive-high-speed-v2` with cost-controlled same-parent waves and forced precision downgrade triggers |
+| v4.16.0 / GOV-LEAF-GRANULARITY-SMART-JUDGE-01 | Added: terminal-leaf scoring gate for STOP/WAVE/SPLIT/PRECISION decisions |

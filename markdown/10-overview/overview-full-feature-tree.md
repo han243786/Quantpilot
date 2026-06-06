@@ -1269,7 +1269,7 @@ recursive-state.json              — 当前递归状态游标
 
 自动化门禁: `tools/check-matrix-governance.ps1` 校验三矩阵入口、提案模板、模块树漂移、里程碑索引、发布过渡协议和递归高速执行协议。
 提案样例库: `markdown/00-matrix-governance/proposal-examples.md` 提供轻量、标准、重型三档最小样例。
-递归高速协议: `markdown/00-matrix-governance/recursive-speed-protocol.md` 固化智能门禁、两段式、同构批处理、同父级子叶并行、成本受控 same-parent wave、强制精细降档、治理生成器和状态游标规则。
+递归高速协议: `markdown/00-matrix-governance/recursive-speed-protocol.md` 固化智能门禁、两段式、同构批处理、同父级子叶并行、成本受控 same-parent wave、强制精细降档、末端叶子智能判定、治理生成器和状态游标规则。
 递归状态游标: `markdown/00-matrix-governance/recursive-state.json` 记录当前递归 parent、phase、closed children、open residuals 和一次性提示黑名单。
 
 治理接管路线:
@@ -4996,3 +4996,5 @@ Recursive boundary supplement: BE-001ZD-01 `data_module` parent residual judgmen
 - `markdown/06-milestones/v4.16.0/1359-root.contracts.runtime_support.data_module.parent_residual_judgment.collection_orchestration.md` - v4.16.0 BE-001ZD-01 data_module parent residual judgment selects collection_orchestration
 Recursive governance supplement: GOV-RECURSIVE-COST-CONTROL-01 upgrades recursive speed governance to `recursive-high-speed-v2`; same-parent waves may become verifiable steps only with child-level white-box evidence and forced precision downgrade triggers.
 - `markdown/06-milestones/v4.16.0/1360-governance.recursive_cost_controlled_speed_protocol.md` - v4.16.0 GOV-RECURSIVE-COST-CONTROL-01 recursive cost-controlled speed protocol
+Recursive governance supplement: GOV-LEAF-GRANULARITY-SMART-JUDGE-01 adds terminal-leaf scoring to recursive governance; bottom leaves must resolve to STOP/WAVE/SPLIT/PRECISION before further split.
+- `markdown/06-milestones/v4.16.0/1361-governance.leaf_granularity_smart_judge.md` - v4.16.0 GOV-LEAF-GRANULARITY-SMART-JUDGE-01 terminal leaf granularity smart judge

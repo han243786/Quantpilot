@@ -82,6 +82,59 @@ v2 的核心变化是把“可验证步骤”从只能是单叶小步，扩展�
 | closeout decision | `stop_split` / `continue_split` 与理由 |
 | residuals | 仍留在 parent 或转入下一轮的内容 |
 
+### 0.6 末端叶子智能判定
+
+leaf_granularity_smart_judge
+
+只读审计发现: v4.16 递归已关闭大量 child，Rust 文件中位规模偏小，且历史 milestone 明显存在“单叶动作过度文档化”的成本信号。因此后续底层叶子不得再以“还能拆”为继续拆分理由，必须先通过末端叶子评分。
+
+评分目标:
+
+`final_decision = split_benefit + leaf_size_fit - risk_penalty - governance_cost - system_efficiency_penalty`
+
+| 指标 | 权重 | 说明 |
+| --- | --- | --- |
+| split_benefit | 40 | 独立 owner、清晰输入输出、可独立测试、降低父级复杂度、减少耦合或共享状态 |
+| leaf_size_fit | 20 | LOC、函数数量、public/pub(crate) surface、分支密度是否支持成为稳定叶子 |
+| risk_penalty | 20 | public API、route/schema、状态机、交易语义、持久化、锁、安全、live execution、跨 crate 或编译契约风险 |
+| governance_cost | 15 | 新增文档、facade、门禁、索引、提交和证明成本 |
+| system_efficiency_penalty | 5 | 是否增加薄包装、无价值 re-export/import、parent-child 转发层或可读性损耗 |
+
+判定输出:
+
+决策集合固定为 `STOP / WAVE / SPLIT / PRECISION`。
+
+| 决策 | 条件 | 执行动作 |
+| --- | --- | --- |
+| STOP | `final_decision < 40`，或 LOC < 100 且无强收益 | 停止细拆，登记 `stop_split: true` |
+| WAVE | `final_decision` 40-64，且同父级存在同构 child | 合入 `same_parent_wave`，不单独走完整治理 |
+| SPLIT | `final_decision >= 65` 且 `risk_penalty < 40` | 允许继续拆分，优先走标准批次 |
+| PRECISION | `final_decision >= 65` 且命中高风险触发器 | 单叶精细治理，不得批处理隐藏风险 |
+
+叶子体量控制:
+
+1. 普通逻辑叶推荐终端区间为 150-600 LOC 或一个完整业务事务。
+2. LOC < 100 的 child 默认 `STOP`，除非能证明拆分会显著降低父级复杂度或隔离独立失败模式。
+3. LOC < 200 且治理成本高时默认 `WAVE` 或 `STOP`，不得创建独立四段式 milestone。
+4. LOC > 800 且复杂度、分支、public surface 或状态 owner 明显增大时，才优先评估 `SPLIT`。
+5. 单函数、单 helper、薄 accessor、纯 re-export、薄 facade、DTO pocket 默认不得继续细拆；public contract、交易状态机、安全凭证、持久化、route/schema、live execution、compiler lowering 例外。
+
+评分记录至少包含:
+
+| 字段 | 含义 |
+| --- | --- |
+| leaf_id | 完整模块树坐标 |
+| loc | 当前代码规模 |
+| function_count | 函数/方法数量 |
+| public_surface | public 或 pub(crate) surface |
+| complexity_score | 分支、状态、错误路径和事务复杂度 |
+| dependency_score | parent/sibling/cross-crate 依赖压力 |
+| split_benefit | 拆分收益分 |
+| governance_cost | 治理成本分 |
+| risk_score | 风险分 |
+| final_decision | STOP / WAVE / SPLIT / PRECISION |
+| reason | 主要理由 |
+
 ---
 
 ## 1. 智能 pre-commit

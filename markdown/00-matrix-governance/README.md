@@ -27,7 +27,7 @@
 | `proposal-examples.md` | 轻量、标准、重型三档提案样例 |
 | `release-transition-protocol.md` | 发布过渡期的横向连接、旁路缓存、热路径直连和可撤销证明 |
 | `landing-roadmap.md` | v4.12.0 至 v4.15.0 的治理完全落地路线 |
-| `recursive-speed-protocol.md` | v4.16+ 递归模块化的高速执行协议、智能门禁、两段式、同构批处理、同父级 wave、成本受控降档和状态游标规则 |
+| `recursive-speed-protocol.md` | v4.16+ 递归模块化的高速执行协议、智能门禁、两段式、同构批处理、同父级 wave、成本受控降档、末端叶子智能判定和状态游标规则 |
 | `recursive-state.json` | 当前递归游标，记录 parent、phase、closed children、open residuals 和一次性提示黑名单 |
 
 ---
@@ -64,3 +64,4 @@
 | v4.14.0 | 治理门禁自动化 |
 | v4.15.0 | 三矩阵完全接管 closeout |
 | v4.16.0 / GOV-RECURSIVE-COST-CONTROL-01 | 递归高速协议升级为 `recursive-high-speed-v2`，允许同父级可审计批次作为可验证步骤，同时强制保留 child 级白箱证据和降档触发器 |
+| v4.16.0 / GOV-LEAF-GRANULARITY-SMART-JUDGE-01 | 末端叶子智能判定接管 leaf split gate，按 split benefit、leaf size、risk、governance cost 和 system efficiency 决定 STOP/WAVE/SPLIT/PRECISION |

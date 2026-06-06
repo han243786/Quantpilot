@@ -21993,6 +21993,10 @@ $recursiveSpeedTokens = @(
     @("sibling horizontal link", "sibling horizontal link guard"),
     @("release transition", "release transition guard"),
     @("leaf_split_decision_gate", "leaf split decision gate guard"),
+    @("leaf_granularity_smart_judge", "leaf granularity smart judge marker"),
+    @("STOP / WAVE / SPLIT / PRECISION", "terminal leaf decision outputs"),
+    @("split_benefit", "leaf scoring split benefit metric"),
+    @("governance_cost", "leaf scoring governance cost metric"),
     @("tools/run-smart-pre-commit.ps1", "smart pre-commit tool path"),
     @("tools/update-recursive-governance.ps1", "recursive governance generator path"),
     @("markdown/00-matrix-governance/recursive-state.json", "recursive state cursor path")
@@ -22006,12 +22010,15 @@ $recursiveStateCursor = "markdown/00-matrix-governance/recursive-state.json"
 $recursiveStateTokens = @(
     @("recursive-high-speed-v2", "recursive high speed state protocol"),
     @("GOV-RECURSIVE-COST-CONTROL-01", "recursive cost control protocol upgrade"),
+    @("GOV-LEAF-GRANULARITY-SMART-JUDGE-01", "leaf granularity smart judge protocol upgrade"),
     @("current_parent", "current parent field"),
     @("current_phase", "current phase field"),
     @("closed_children", "closed children field"),
     @("open_residuals", "open residuals field"),
     @("cost_controlled_same_parent_wave", "cost controlled same-parent wave marker"),
     @("forced_precision_downgrade", "forced precision downgrade marker"),
+    @("leaf_granularity_smart_judge", "leaf granularity smart judge state marker"),
+    @("leaf_granularity_control", "leaf granularity control state block"),
     @("forbidden_carryover_prompts", "forbidden carryover prompts field"),
     @("ai_must_not_propose", "AI release transition guard field")
 )

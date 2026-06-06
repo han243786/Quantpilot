@@ -1721,3 +1721,4 @@
 | v4.16.0 / BE-001ZC-03 | Added: `data_module.quality_diagnostics` single leaf closeout stops split |
 | v4.16.0 / BE-001ZD-01 | Added: `data_module` parent residual judgment selects `collection_orchestration` |
 | v4.16.0 / GOV-RECURSIVE-COST-CONTROL-01 | `v4.16.0/1360-governance.recursive_cost_controlled_speed_protocol.md` | Recursive speed protocol upgraded to `recursive-high-speed-v2` with cost-controlled same-parent waves and forced precision downgrade triggers |
+| v4.16.0 / GOV-LEAF-GRANULARITY-SMART-JUDGE-01 | `v4.16.0/1361-governance.leaf_granularity_smart_judge.md` | Terminal-leaf scoring added to recursive governance; bottom leaves resolve to STOP/WAVE/SPLIT/PRECISION before further split |
