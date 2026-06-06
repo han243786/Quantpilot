@@ -1437,3 +1437,4 @@ Latest recursive supplement: BE-001YV-01 froze the `coordinator_test_harness` ba
 Latest recursive supplement: BE-001YV-02 extracted `coordinator_test_harness`; `qrpc_runtime/src/runtime_facade_coordinator/coordinator_test_harness.rs` now owns coordinator-specific test fixtures and integration tests.
 Latest recursive supplement: BE-001YV-03 closed `coordinator_test_harness` with `stop_split: true`; next recursive step returns to `runtime_facade_coordinator` parent closeout.
 Latest recursive supplement: BE-001YW-01 closed `runtime_facade_coordinator` as a compact parent facade; next recursive step returns to `root.contracts.runtime_support` parent residual judgment.
+Latest recursive supplement: BE-001YX-01 selected `data_module`; next baseline covers provider facade, source mapping, diagnostics/quality, exchange parsing, mock data, historical cache, and tests.

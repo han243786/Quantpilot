@@ -8540,3 +8540,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.runtime_facade_coordinator.coordinator_test_harness stop_split: true`; test fixtures and integration tests stay together as one test-only white-box leaf.
 **Latest state supplement (BE-001YW-01)**: `root.contracts.runtime_support.runtime_facade_coordinator` parent closeout complete; next step: BE-001YX-01 root.contracts.runtime_support parent_residual_judgment.
 `root.contracts.runtime_support.runtime_facade_coordinator parent_closeout: true`; the parent now owns only module declarations, `ConfigGenerationEntry`, `RuntimeCoordinator` field layout, debug projection, and the test-harness module declaration.
+**Latest state supplement (BE-001YX-01)**: `root.contracts.runtime_support` parent residual judgment selected `data_module`; next step: BE-001YY-01 baseline_plan.
+`root.contracts.runtime_support.data_module selected: true`; this child owns provider facade, data collection orchestration, source mapping, diagnostics/quality, exchange endpoint parsing, mock data generation, historical cache, and tests.

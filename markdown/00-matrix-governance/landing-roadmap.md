@@ -376,3 +376,4 @@ Latest recursive supplement: BE-001YV-01 froze the `coordinator_test_harness` ba
 Latest recursive supplement: BE-001YV-02 extracted `coordinator_test_harness`; next step is single-leaf closeout.
 Latest recursive supplement: BE-001YV-03 closed `coordinator_test_harness`; next step is `runtime_facade_coordinator` parent closeout.
 Latest recursive supplement: BE-001YW-01 closed `runtime_facade_coordinator`; next step returns to `root.contracts.runtime_support`.
+Latest recursive supplement: BE-001YX-01 selected `data_module`; next step is its baseline plan.
