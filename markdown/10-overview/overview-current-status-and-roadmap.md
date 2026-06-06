@@ -1434,3 +1434,4 @@ Latest recursive supplement: BE-001YT-02 extracted `portfolio_projection`; `qrpc
 Latest recursive supplement: BE-001YT-03 closed `portfolio_projection` with `stop_split: true`; next recursive step returns to `runtime_facade_coordinator` parent residual judgment.
 Latest recursive supplement: BE-001YU-01 selected `coordinator_test_harness`; next baseline covers coordinator integration tests, noop providers, reject-all risk fixture, and sample config.
 Latest recursive supplement: BE-001YV-01 froze the `coordinator_test_harness` baseline; next movement may add `qrpc_runtime/src/runtime_facade_coordinator/coordinator_test_harness.rs` and move only test harness code.
+Latest recursive supplement: BE-001YV-02 extracted `coordinator_test_harness`; `qrpc_runtime/src/runtime_facade_coordinator/coordinator_test_harness.rs` now owns coordinator-specific test fixtures and integration tests.

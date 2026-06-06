@@ -8534,3 +8534,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.runtime_facade_coordinator.coordinator_test_harness selected: true`; this child owns coordinator integration tests, noop provider fixtures, reject-all risk checker fixture, and the sample runtime protocol config.
 **Latest state supplement (BE-001YV-01)**: `root.contracts.runtime_support.runtime_facade_coordinator.coordinator_test_harness` baseline frozen; next step: BE-001YV-02 actual_extraction.
 `root.contracts.runtime_support.runtime_facade_coordinator.coordinator_test_harness baseline_frozen: true`; the next movement may add a test-only child module while keeping production coordinator struct/debug/module declarations parent-owned.
+**Latest state supplement (BE-001YV-02)**: `root.contracts.runtime_support.runtime_facade_coordinator.coordinator_test_harness` actual extraction complete; next step: BE-001YV-03 single_leaf_closeout.
+`root.contracts.runtime_support.runtime_facade_coordinator.coordinator_test_harness extracted: true`; `qrpc_runtime/src/runtime_facade_coordinator/coordinator_test_harness.rs` now owns coordinator-specific test fixtures and integration tests.
