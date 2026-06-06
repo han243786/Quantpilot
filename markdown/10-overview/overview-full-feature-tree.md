@@ -5005,3 +5005,5 @@ Recursive boundary supplement: BE-001ZE-02 `data_module.collection_orchestration
 - `markdown/06-milestones/v4.16.0/1363-root.contracts.runtime_support.data_module.collection_orchestration.extract_closeout.md` - v4.16.0 BE-001ZE-02 data_module.collection_orchestration actual extraction complete
 Recursive boundary supplement: BE-001ZE-03 `data_module.collection_orchestration` single leaf closeout stops split; next step: BE-001ZF-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1364-root.contracts.runtime_support.data_module.collection_orchestration.single_leaf_closeout.md` - v4.16.0 BE-001ZE-03 data_module.collection_orchestration single leaf closeout
+Recursive boundary supplement: BE-001ZF-01 `data_module` parent residual judgment selected `exchange_surface_wave`; next step: BE-001ZG-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1365-root.contracts.runtime_support.data_module.parent_residual_judgment.exchange_surface_wave.md` - v4.16.0 BE-001ZF-01 data_module parent residual judgment selects exchange_surface_wave

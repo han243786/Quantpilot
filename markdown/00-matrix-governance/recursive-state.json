@@ -6,8 +6,8 @@
   "last_committed_batch": "BE-001ZD-01",
   "last_committed_sha": "4e0c573b",
   "current_parent": "root.contracts.runtime_support.data_module",
-  "current_step": "BE-001ZF-01",
-  "current_phase": "parent_residual_judgment",
+  "current_step": "BE-001ZG-01",
+  "current_phase": "baseline_plan",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -209,7 +209,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.data_module.exchange_endpoints",
+  "next_recommended_child": "root.contracts.runtime_support.data_module.exchange_surface_wave",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

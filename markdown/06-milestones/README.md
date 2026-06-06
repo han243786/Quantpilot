@@ -1725,3 +1725,4 @@
 | v4.16.0 / BE-001ZE-01 | `v4.16.0/1362-root.contracts.runtime_support.data_module.collection_orchestration.baseline_plan.md` | Added: `data_module.collection_orchestration` baseline plan with leaf granularity smart judge decision `SPLIT` |
 | v4.16.0 / BE-001ZE-02 | `v4.16.0/1363-root.contracts.runtime_support.data_module.collection_orchestration.extract_closeout.md` | Added: `data_module.collection_orchestration` actual extraction complete |
 | v4.16.0 / BE-001ZE-03 | `v4.16.0/1364-root.contracts.runtime_support.data_module.collection_orchestration.single_leaf_closeout.md` | Added: `data_module.collection_orchestration` single leaf closeout stops split |
+| v4.16.0 / BE-001ZF-01 | `v4.16.0/1365-root.contracts.runtime_support.data_module.parent_residual_judgment.exchange_surface_wave.md` | Added: `data_module` parent residual judgment selects `exchange_surface_wave` same-parent wave |

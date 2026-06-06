@@ -392,3 +392,4 @@ Latest governance supplement: GOV-LEAF-GRANULARITY-SMART-JUDGE-01 adds terminal-
 Latest recursive supplement: BE-001ZE-01 froze `data_module.collection_orchestration` baseline; leaf granularity smart judge resolves to `SPLIT`, and the next movement may extract only the provider collect implementation.
 Latest recursive supplement: BE-001ZE-02 extracted `data_module.collection_orchestration`; `qrpc_runtime/src/data_module/collection_orchestration.rs` now owns the provider collect transaction.
 Latest recursive supplement: BE-001ZE-03 closed `data_module.collection_orchestration` with `stop_split: true`; next data-module residual candidate is `exchange_endpoints`.
+Latest recursive supplement: BE-001ZF-01 selected `data_module.exchange_surface_wave`; the next baseline should batch `exchange_endpoints` and `exchange_payload_parsing` instead of creating a standalone endpoint micro leaf.
