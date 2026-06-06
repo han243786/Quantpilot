@@ -1,23 +1,20 @@
 mod runtime_protocol_lowering;
 mod runtime_protocol_validation;
-pub mod strategy_ir_lowering;
+mod strategy_ir_lowering;
 
 use anyhow::{bail, Result};
 use qrpc_core::{
     CompiledRuntimeProtocol, IntentConfig, IntentKind, RuntimeProtocolCoreConfig, StrategyIr,
 };
 use qrpc_core_ir::{
-    indicator_threshold_compare_expr, moving_average_compare_expr, AgentPolicy, AgentPolicyKind,
-    AlignAsofSpec, AlignDirection, ArithmeticOp, ComparisonOp, CoreIndicatorKind, CoreMetadata,
-    CoreSourceKind, CoreStrategyIr, CoreTimeInForce, CustomExprSpec, CustomValueExpr, DataBinding,
-    DataBindingKind, ExecutionRule, ExecutionSizingKind, IndicatorNode,
-    RebalanceSchedule as CoreRebalanceSchedule, RiskPolicy, ScalarExpr, SeriesAggregation,
-    SeriesExpr, SeriesField, SignalKind, SignalRule, SpreadSpec, SpreadValueKind,
-    CUSTOM_EXPR_V1_VERSION,
+    AlignAsofSpec, AlignDirection, ComparisonOp, CoreMetadata,
+    CoreSourceKind, CoreStrategyIr,
+    RebalanceSchedule as CoreRebalanceSchedule, SeriesAggregation,
+    SeriesExpr, SeriesField, SpreadSpec, SpreadValueKind,
 };
 use serde_json::Value;
 use sha2::{Digest, Sha256};
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 
 pub fn validate_runtime_protocol_config(config: &RuntimeProtocolCoreConfig) -> Result<()> {
     runtime_protocol_validation::validate_runtime_protocol_config(config)
@@ -272,6 +269,9 @@ mod tests {
         RebalanceSchedule as RuntimeRebalanceSchedule, RiskConfig, SignalDefinition,
         StrategyExecution, StrategyIr, StrategyLogic, StrategyMetadata, StrategyRiskRules,
         StrategySource, StrategySourceType, Symbol,
+    };
+    use qrpc_core_ir::{
+        AgentPolicyKind, CoreIndicatorKind, ScalarExpr, CUSTOM_EXPR_V1_VERSION,
     };
     use serde_json::json;
 

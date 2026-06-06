@@ -1395,4 +1395,5 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - BE-001XX-01 `root.contracts.compiler_bridge.runtime_protocol_lowering` parent residual judgment closes parent；下一步: BE-001XY-01 root.contracts.compiler_bridge parent_residual_judgment。
 - BE-001XY-01 `root.contracts.compiler_bridge` parent residual judgment selects strategy_ir_lowering；下一步: BE-001XZ-01 root.contracts.compiler_bridge.strategy_ir_lowering baseline_plan。
 - BE-001XZ-01 `root.contracts.compiler_bridge.strategy_ir_lowering` equivalence baseline and extraction plan；下一步: BE-001YA-01 root.contracts.compiler_bridge.strategy_ir_lowering extract_closeout。
-- BE-001YA-01 `root.contracts.compiler_bridge.strategy_ir_lowering` extract closeout stops split；下一步: BE-001YB-01 root.contracts.compiler_bridge parent_residual_judgment。
+- BE-001YA-01 `root.contracts.compiler_bridge.strategy_ir_lowering` extract closeout complete；下一步: BE-001YA-02 root.contracts.compiler_bridge.strategy_ir_lowering single_leaf_closeout。
+- BE-001YA-02 `root.contracts.compiler_bridge.strategy_ir_lowering` single leaf closeout stops split；下一步: BE-001YB-01 root.contracts.compiler_bridge parent_residual_judgment。
