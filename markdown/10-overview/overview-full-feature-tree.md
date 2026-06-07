@@ -5112,3 +5112,5 @@ Recursive boundary supplement: BE-002AD-02 `agent_module.shared_scoring_portfoli
 - `markdown/06-milestones/v4.16.0/1411-root.contracts.runtime_support.agent_module.shared_scoring_portfolio_helpers.single_leaf_closeout.md` - v4.16.0 BE-002AD-02 agent_module.shared_scoring_portfolio_helpers single leaf closeout
 Recursive boundary supplement: BE-002AE-01 `agent_module` parent residual judgment selected `test_harness`; next step: BE-002AF-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1412-root.contracts.runtime_support.agent_module.parent_residual_judgment.test_harness.md` - v4.16.0 BE-002AE-01 agent_module parent residual judgment selects test_harness
+Recursive boundary supplement: BE-002AF-01 `agent_module.test_harness` baseline frozen; next step: BE-002AF-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1413-root.contracts.runtime_support.agent_module.test_harness.baseline_plan.md` - v4.16.0 BE-002AF-01 agent_module.test_harness baseline plan

@@ -1501,3 +1501,4 @@ Latest recursive supplement: BE-002AC-01 selected `agent_module.shared_scoring_p
 Latest recursive supplement: BE-002AD-01 keeps `agent_module.shared_scoring_portfolio_helpers` parent-owned; no helper child file is opened because parent-mediated access is already the cleanest boundary.
 Latest recursive supplement: BE-002AD-02 closed `agent_module.shared_scoring_portfolio_helpers` with `stop_split: true`; next recursive step returns to `agent_module` parent residual judgment with expected candidate `test_harness`.
 Latest recursive supplement: BE-002AE-01 selected `agent_module.test_harness`; next baseline covers local agent-module tests and fixtures while excluding production code.
+Latest recursive supplement: BE-002AF-01 froze `agent_module.test_harness` baseline; next movement may add a test-only child file and move only the local test module.
