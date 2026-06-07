@@ -1751,3 +1751,4 @@
 | v4.16.0 / BE-001ZQ-01 | `v4.16.0/1388-root.contracts.runtime_support.data_module.test_harness.baseline_plan.md` | Added: `data_module.test_harness` baseline plan |
 | v4.16.0 / BE-001ZQ-02 | `v4.16.0/1389-root.contracts.runtime_support.data_module.test_harness.extract_closeout.md` | Added: `data_module.test_harness` actual extraction complete |
 | v4.16.0 / BE-001ZQ-03 | `v4.16.0/1390-root.contracts.runtime_support.data_module.test_harness.single_leaf_closeout.md` | Added: `data_module.test_harness` single leaf closeout stops split |
+| v4.16.0 / BE-001ZR-01 | `v4.16.0/1391-root.contracts.runtime_support.data_module.parent_residual_judgment.close_parent.md` | Added: `data_module` parent closeout |
