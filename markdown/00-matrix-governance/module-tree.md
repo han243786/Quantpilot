@@ -8640,3 +8640,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.agent_module.weighted_signal_decisions selected: true`; this child owns slow-cycle weighted signal decisions while rebalance, arbitrage, event emission, provider dispatch, and tests remain parent or later-child owned.
 **Latest state supplement (BE-001ZX-01)**: `root.contracts.runtime_support.agent_module.weighted_signal_decisions` baseline frozen; next step: BE-001ZX-02 actual_extraction.
 `root.contracts.runtime_support.agent_module.weighted_signal_decisions allowed_movement`; move only weighted decision construction and signal grouping into a planned child file while shared helper ownership remains parent-mediated.
+**Latest state supplement (BE-001ZX-02)**: `root.contracts.runtime_support.agent_module.weighted_signal_decisions` actual extraction complete; next step: BE-001ZX-03 single_leaf_closeout.
+`root.contracts.runtime_support.agent_module.weighted_signal_decisions extracted`; `qrpc_runtime/src/agent_module/weighted_signal_decisions.rs` owns weighted decision construction and grouping while shared scoring/portfolio helpers remain parent-mediated.
