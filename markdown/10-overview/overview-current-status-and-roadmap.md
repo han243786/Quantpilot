@@ -1599,3 +1599,4 @@ Latest recursive supplement: BE-002CV-02 closed `sandbox_replay_timeline.sandbox
 Latest recursive supplement: BE-002CW-01 selected `sandbox_replay_timeline.realtime_sandbox`; next baseline should freeze `RealTimeSandbox` movement before code changes.
 Latest recursive supplement: BE-002CX-01 froze `sandbox_replay_timeline.realtime_sandbox` baseline; next movement may add a realtime sandbox child and keep fast-backtest parent-owned.
 Latest recursive supplement: BE-002CY-01 extracted `sandbox_replay_timeline.realtime_sandbox`; `qrpc_runtime/src/sandbox/realtime_sandbox.rs` now owns `RealTimeSandbox` and its impl blocks, and the next step is single leaf closeout.
+Latest recursive supplement: BE-002CY-02 closed `sandbox_replay_timeline.realtime_sandbox` with `stop_split: true`; the next recursive step returns to sandbox parent residual judgment with expected candidate `fast_backtest_sandbox`.
