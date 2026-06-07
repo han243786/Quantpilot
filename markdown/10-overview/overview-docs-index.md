@@ -1429,3 +1429,4 @@
 | v4.16.0 / BE-002AN-01 | Added: `core_ir_evaluator` parent residual judgment selects `spread_custom_expression_wave` |
 | v4.16.0 / BE-002AO-01 | Added: `spread_custom_expression_wave` baseline plan |
 | v4.16.0 / BE-002AO-02 | Added: `spread_custom_expression_wave` actual extraction complete |
+| v4.16.0 / BE-002AO-03 | Added: `spread_custom_expression_wave` single leaf closeout stops split |

@@ -5150,3 +5150,5 @@ Recursive boundary supplement: BE-002AO-01 `spread_custom_expression_wave` basel
 Recursive boundary supplement: BE-002AO-02 `spread_custom_expression_wave` actual extraction complete; next step: BE-002AO-03 single_leaf_closeout.
 - `qrpc_runtime/src/core_ir_evaluator/spread_custom_expression_wave.rs` - Runtime Core IR evaluator Spread and Custom expression wave, owns Custom, legacy Spread, typed Spread, series expression materialization, aggregation, alignment, scope discovery, and reference-price helpers
 - `markdown/06-milestones/v4.16.0/1429-root.contracts.runtime_support.core_ir_evaluator.spread_custom_expression_wave.extract_closeout.md` - v4.16.0 BE-002AO-02 spread_custom_expression_wave extract closeout
+Recursive boundary supplement: BE-002AO-03 `spread_custom_expression_wave` single leaf closeout complete; next step: BE-002AP-01 core_ir_evaluator parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1430-root.contracts.runtime_support.core_ir_evaluator.spread_custom_expression_wave.single_leaf_closeout.md` - v4.16.0 BE-002AO-03 spread_custom_expression_wave single leaf closeout

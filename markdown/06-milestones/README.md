@@ -1790,3 +1790,4 @@
 | v4.16.0 / BE-002AN-01 | `v4.16.0/1427-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.spread_custom_expression_wave.md` | Added: `core_ir_evaluator` parent residual judgment selects `spread_custom_expression_wave` |
 | v4.16.0 / BE-002AO-01 | `v4.16.0/1428-root.contracts.runtime_support.core_ir_evaluator.spread_custom_expression_wave.baseline_plan.md` | Added: `spread_custom_expression_wave` baseline plan |
 | v4.16.0 / BE-002AO-02 | `v4.16.0/1429-root.contracts.runtime_support.core_ir_evaluator.spread_custom_expression_wave.extract_closeout.md` | Added: `spread_custom_expression_wave` actual extraction complete |
+| v4.16.0 / BE-002AO-03 | `v4.16.0/1430-root.contracts.runtime_support.core_ir_evaluator.spread_custom_expression_wave.single_leaf_closeout.md` | Added: `spread_custom_expression_wave` single leaf closeout stops split |
