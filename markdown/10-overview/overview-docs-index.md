@@ -1422,3 +1422,4 @@
 | v4.16.0 / BE-002AK-01 | Added: `classic_indicator_wave` baseline plan |
 | v4.16.0 / BE-002AK-02 | Added: `classic_indicator_wave` actual extraction complete |
 | v4.16.0 / BE-002AK-03 | Added: `classic_indicator_wave` single leaf closeout stops split |
+| v4.16.0 / BE-002AL-01 | Added: `core_ir_evaluator` parent residual judgment selects `advanced_indicator_wave` |
