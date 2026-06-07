@@ -1498,3 +1498,4 @@ Latest recursive supplement: BE-002AB-01 froze `agent_module.cross_venue_arbitra
 Latest recursive supplement: BE-002AB-02 extracted `agent_module.cross_venue_arbitrage`; arbitrage decision construction and total cost buffer calculation now live in `qrpc_runtime/src/agent_module/cross_venue_arbitrage.rs`.
 Latest recursive supplement: BE-002AB-03 closed `agent_module.cross_venue_arbitrage` with `stop_split: true`; next recursive step returns to `agent_module` parent residual judgment with expected candidate `shared_scoring_portfolio_helpers`.
 Latest recursive supplement: BE-002AC-01 selected `agent_module.shared_scoring_portfolio_helpers`; next baseline must decide whether helper ownership stays parent-owned or moves behind parent-mediated access.
+Latest recursive supplement: BE-002AD-01 keeps `agent_module.shared_scoring_portfolio_helpers` parent-owned; no helper child file is opened because parent-mediated access is already the cleanest boundary.

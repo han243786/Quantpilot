@@ -1409,3 +1409,4 @@
 | v4.16.0 / BE-002AB-02 | Added: `agent_module.cross_venue_arbitrage` actual extraction complete |
 | v4.16.0 / BE-002AB-03 | Added: `agent_module.cross_venue_arbitrage` single leaf closeout stops split |
 | v4.16.0 / BE-002AC-01 | Added: `agent_module` parent residual judgment selects `shared_scoring_portfolio_helpers` |
+| v4.16.0 / BE-002AD-01 | Added: `agent_module.shared_scoring_portfolio_helpers` parent-owned baseline plan |

@@ -1770,3 +1770,4 @@
 | v4.16.0 / BE-002AB-02 | `v4.16.0/1407-root.contracts.runtime_support.agent_module.cross_venue_arbitrage.extract_closeout.md` | Added: `agent_module.cross_venue_arbitrage` actual extraction complete |
 | v4.16.0 / BE-002AB-03 | `v4.16.0/1408-root.contracts.runtime_support.agent_module.cross_venue_arbitrage.single_leaf_closeout.md` | Added: `agent_module.cross_venue_arbitrage` single leaf closeout stops split |
 | v4.16.0 / BE-002AC-01 | `v4.16.0/1409-root.contracts.runtime_support.agent_module.parent_residual_judgment.shared_scoring_portfolio_helpers.md` | Added: `agent_module` parent residual judgment selects `shared_scoring_portfolio_helpers` |
+| v4.16.0 / BE-002AD-01 | `v4.16.0/1410-root.contracts.runtime_support.agent_module.shared_scoring_portfolio_helpers.baseline_plan.md` | Added: `agent_module.shared_scoring_portfolio_helpers` parent-owned baseline plan |
