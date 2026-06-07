@@ -5040,3 +5040,5 @@ Recursive boundary supplement: BE-001ZK-03 `data_module.mock_data_generation` si
 - `markdown/06-milestones/v4.16.0/1378-root.contracts.runtime_support.data_module.mock_data_generation.single_leaf_closeout.md` - v4.16.0 BE-001ZK-03 data_module.mock_data_generation single leaf closeout
 Recursive boundary supplement: BE-001ZL-01 `data_module` parent residual judgment selected `historical_cache`; next step: BE-001ZM-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1379-root.contracts.runtime_support.data_module.parent_residual_judgment.historical_cache.md` - v4.16.0 BE-001ZL-01 data_module parent residual judgment selects historical_cache
+Recursive boundary supplement: BE-001ZM-01 `data_module.historical_cache` baseline_frozen; next step: BE-001ZM-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1380-root.contracts.runtime_support.data_module.historical_cache.baseline_plan.md` - v4.16.0 BE-001ZM-01 data_module.historical_cache baseline plan
