@@ -1539,3 +1539,4 @@ Latest recursive supplement: BE-002BA-01 froze `fill_engine` baseline; next recu
 Latest recursive supplement: BE-002BB-01 selected `fill_engine.event_projection_wave`; next baseline covers only open, partial, cancel, reject, and fill event builders.
 Latest recursive supplement: BE-002BC-01 froze `event_projection_wave` baseline; next movement may add the child file and move only the five event builders.
 Latest recursive supplement: BE-002BD-01 extracted `event_projection_wave`; `qrpc_runtime/src/fill_engine/event_projection_wave.rs` now owns fill-engine event builders.
+Latest recursive supplement: BE-002BD-02 closed `event_projection_wave` with `stop_split: true`; next recursive step returns to `fill_engine` parent residual judgment with expected candidate `portfolio_reservation_accounting`.

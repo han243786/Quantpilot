@@ -1450,3 +1450,4 @@
 | v4.16.0 / BE-002BB-01 | Added: `fill_engine` parent residual judgment selects `event_projection_wave` |
 | v4.16.0 / BE-002BC-01 | Added: `event_projection_wave` baseline plan |
 | v4.16.0 / BE-002BD-01 | Added: `event_projection_wave` actual extraction complete |
+| v4.16.0 / BE-002BD-02 | Added: `event_projection_wave` single leaf closeout stops split |

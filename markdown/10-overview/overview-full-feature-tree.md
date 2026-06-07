@@ -5195,3 +5195,5 @@ Recursive boundary supplement: BE-002BC-01 `event_projection_wave` baseline froz
 Recursive boundary supplement: BE-002BD-01 `event_projection_wave` actual extraction complete; next step: BE-002BD-02 single_leaf_closeout.
 - `qrpc_runtime/src/fill_engine/event_projection_wave.rs` - Runtime fill engine event projection child
 - `markdown/06-milestones/v4.16.0/1450-root.contracts.runtime_support.fill_engine.event_projection_wave.extract_closeout.md` - v4.16.0 BE-002BD-01 event_projection_wave extract closeout
+Recursive boundary supplement: BE-002BD-02 `event_projection_wave` single leaf closeout complete; next step: BE-002BE-01 fill_engine parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1451-root.contracts.runtime_support.fill_engine.event_projection_wave.single_leaf_closeout.md` - v4.16.0 BE-002BD-02 event_projection_wave single leaf closeout
