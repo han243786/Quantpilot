@@ -5129,3 +5129,6 @@ Recursive boundary supplement: BE-002AJ-01 `core_ir_evaluator` parent residual j
 - `markdown/06-milestones/v4.16.0/1419-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.classic_indicator_wave.md` - v4.16.0 BE-002AJ-01 core_ir_evaluator parent residual judgment selects classic_indicator_wave
 Recursive boundary supplement: BE-002AK-01 `classic_indicator_wave` baseline frozen; next step: BE-002AK-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1420-root.contracts.runtime_support.core_ir_evaluator.classic_indicator_wave.baseline_plan.md` - v4.16.0 BE-002AK-01 classic_indicator_wave baseline plan
+Recursive boundary supplement: BE-002AK-02 `classic_indicator_wave` actual extraction complete; next step: BE-002AK-03 single_leaf_closeout.
+- `qrpc_runtime/src/core_ir_evaluator/classic_indicator_wave.rs` - Runtime Core IR evaluator classic indicator wave, owns MA family, RSI, MACD, Momentum, ZScore, and QuoteObserve evaluator entrypoints
+- `markdown/06-milestones/v4.16.0/1421-root.contracts.runtime_support.core_ir_evaluator.classic_indicator_wave.extract_closeout.md` - v4.16.0 BE-002AK-02 classic_indicator_wave extract closeout

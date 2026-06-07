@@ -1509,3 +1509,4 @@ Latest recursive supplement: BE-002AH-01 selected `runtime_support.core_ir_evalu
 Latest recursive supplement: BE-002AI-01 froze `core_ir_evaluator` baseline; first child queue uses same-parent waves for classic indicators, advanced indicators, spread/custom expression evaluation, shared lookup/math helpers, and test harness.
 Latest recursive supplement: BE-002AJ-01 selected `core_ir_evaluator.classic_indicator_wave`; next baseline covers MA family, RSI, MACD, Momentum, ZScore, and QuoteObserve evaluator entrypoints.
 Latest recursive supplement: BE-002AK-01 froze `classic_indicator_wave` baseline; next movement may add `qrpc_runtime/src/core_ir_evaluator/classic_indicator_wave.rs` and move only the six classic evaluator entrypoints.
+Latest recursive supplement: BE-002AK-02 extracted `classic_indicator_wave`; `qrpc_runtime/src/core_ir_evaluator/classic_indicator_wave.rs` now owns MA family, RSI, MACD, Momentum, ZScore, and QuoteObserve evaluator entrypoints.

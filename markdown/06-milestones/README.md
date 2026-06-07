@@ -1781,3 +1781,4 @@
 | v4.16.0 / BE-002AI-01 | `v4.16.0/1418-root.contracts.runtime_support.core_ir_evaluator.baseline_plan.md` | Added: `core_ir_evaluator` baseline plan with same-parent wave child queue |
 | v4.16.0 / BE-002AJ-01 | `v4.16.0/1419-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.classic_indicator_wave.md` | Added: `core_ir_evaluator` parent residual judgment selects `classic_indicator_wave` |
 | v4.16.0 / BE-002AK-01 | `v4.16.0/1420-root.contracts.runtime_support.core_ir_evaluator.classic_indicator_wave.baseline_plan.md` | Added: `classic_indicator_wave` baseline plan |
+| v4.16.0 / BE-002AK-02 | `v4.16.0/1421-root.contracts.runtime_support.core_ir_evaluator.classic_indicator_wave.extract_closeout.md` | Added: `classic_indicator_wave` actual extraction complete |

@@ -1420,3 +1420,4 @@
 | v4.16.0 / BE-002AI-01 | Added: `core_ir_evaluator` baseline plan with same-parent wave child queue |
 | v4.16.0 / BE-002AJ-01 | Added: `core_ir_evaluator` parent residual judgment selects `classic_indicator_wave` |
 | v4.16.0 / BE-002AK-01 | Added: `classic_indicator_wave` baseline plan |
+| v4.16.0 / BE-002AK-02 | Added: `classic_indicator_wave` actual extraction complete |
