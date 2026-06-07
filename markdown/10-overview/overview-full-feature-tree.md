@@ -5250,3 +5250,5 @@ Recursive boundary supplement: BE-002BV-02 `risk_support.direction_cross_constra
 - `markdown/06-milestones/v4.16.0/1474-root.contracts.runtime_support.risk_support.direction_cross_constraints.single_leaf_closeout.md` - v4.16.0 BE-002BV-02 direction_cross_constraints single leaf closeout
 Recursive boundary supplement: BE-002BW-01 `risk_support` parent residual judgment selected `action_clamp_helpers`; next step: BE-002BX-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1475-root.contracts.runtime_support.risk_support.parent_residual_judgment.action_clamp_helpers.md` - v4.16.0 BE-002BW-01 risk_support parent residual judgment selects action_clamp_helpers
+Recursive boundary supplement: BE-002BX-01 `risk_support.action_clamp_helpers` baseline frozen; next step: BE-002BY-01 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1476-root.contracts.runtime_support.risk_support.action_clamp_helpers.baseline_plan.md` - v4.16.0 BE-002BX-01 action_clamp_helpers baseline plan
