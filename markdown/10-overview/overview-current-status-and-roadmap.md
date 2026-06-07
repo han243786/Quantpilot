@@ -1572,3 +1572,4 @@ Latest recursive supplement: BE-002CA-01 froze `risk_support.portfolio_target_cl
 Latest recursive supplement: BE-002CB-01 extracted `risk_support.portfolio_target_clamp_helpers`; `qrpc_runtime/src/risk_checker/portfolio_target_clamp_helpers.rs` now owns portfolio-target clamp helpers.
 Latest recursive supplement: BE-002CB-02 closed `risk_support.portfolio_target_clamp_helpers` with `stop_split: true`; next recursive step returns to `risk_support` parent residual judgment with expected candidate `exposure_math_helpers`.
 Latest recursive supplement: BE-002CC-01 selected `risk_support.exposure_math_helpers`; next baseline should move only shared exposure and equity math helpers.
+Latest recursive supplement: BE-002CD-01 froze `risk_support.exposure_math_helpers` baseline; next movement may add an exposure math child file and move four shared math helpers.

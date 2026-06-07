@@ -1844,3 +1844,4 @@
 | v4.16.0 / BE-002CB-01 | `v4.16.0/1481-root.contracts.runtime_support.risk_support.portfolio_target_clamp_helpers.extract_closeout.md` | Added: `portfolio_target_clamp_helpers` actual extraction complete |
 | v4.16.0 / BE-002CB-02 | `v4.16.0/1482-root.contracts.runtime_support.risk_support.portfolio_target_clamp_helpers.single_leaf_closeout.md` | Added: `portfolio_target_clamp_helpers` single leaf closeout stops split |
 | v4.16.0 / BE-002CC-01 | `v4.16.0/1483-root.contracts.runtime_support.risk_support.parent_residual_judgment.exposure_math_helpers.md` | Added: `risk_support` parent residual judgment selects `exposure_math_helpers` |
+| v4.16.0 / BE-002CD-01 | `v4.16.0/1484-root.contracts.runtime_support.risk_support.exposure_math_helpers.baseline_plan.md` | Added: `exposure_math_helpers` baseline plan |
