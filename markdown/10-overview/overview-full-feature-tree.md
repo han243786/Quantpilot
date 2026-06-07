@@ -5018,3 +5018,5 @@ Recursive governance supplement: GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 adds read-on
 - `markdown/06-milestones/v4.16.0/1368-governance.leaf_granularity_judge_tool.md` - v4.16.0 GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 leaf granularity judge tool
 Recursive boundary supplement: BE-001ZG-03 `data_module.exchange_surface_wave` single leaf closeout stops split; next step: BE-001ZH-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1369-root.contracts.runtime_support.data_module.exchange_surface_wave.single_leaf_closeout.md` - v4.16.0 BE-001ZG-03 data_module.exchange_surface_wave single leaf closeout
+Recursive boundary supplement: BE-001ZH-01 `data_module` parent residual judgment selected `normalization`; next step: BE-001ZI-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1370-root.contracts.runtime_support.data_module.parent_residual_judgment.normalization.md` - v4.16.0 BE-001ZH-01 data_module parent residual judgment selects normalization

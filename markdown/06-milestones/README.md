@@ -1730,3 +1730,4 @@
 | v4.16.0 / BE-001ZG-02 | `v4.16.0/1367-root.contracts.runtime_support.data_module.exchange_surface_wave.extract_closeout.md` | Added: `data_module.exchange_surface_wave` actual extraction complete |
 | v4.16.0 / GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 | `v4.16.0/1368-governance.leaf_granularity_judge_tool.md` | Added: read-only leaf granularity scoring tool with `normalized_split_score` evidence |
 | v4.16.0 / BE-001ZG-03 | `v4.16.0/1369-root.contracts.runtime_support.data_module.exchange_surface_wave.single_leaf_closeout.md` | Added: `data_module.exchange_surface_wave` single leaf closeout stops split |
+| v4.16.0 / BE-001ZH-01 | `v4.16.0/1370-root.contracts.runtime_support.data_module.parent_residual_judgment.normalization.md` | Added: `data_module` parent residual judgment selects `normalization` |
