@@ -1486,3 +1486,4 @@ Latest recursive supplement: BE-001ZT-02 closed `runtime_support.intent_module` 
 Latest recursive supplement: BE-001ZU-01 selected `runtime_support.agent_module`; next baseline covers weighted signals, portfolio rebalance, cross-venue arbitrage, shared scoring/portfolio helpers, and local tests.
 Latest recursive supplement: BE-001ZV-01 froze `runtime_support.agent_module` baseline; child queue starts with `weighted_signal_decisions` and keeps public provider dispatch parent-mediated.
 Latest recursive supplement: BE-001ZW-01 selected `agent_module.weighted_signal_decisions`; next baseline covers slow-cycle weighted signal decisions and proposed actions.
+Latest recursive supplement: BE-001ZX-01 froze `agent_module.weighted_signal_decisions` baseline; next movement may add a child file and move only weighted signal decision flow plus grouping helper.

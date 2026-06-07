@@ -8638,3 +8638,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.agent_module continue_split: true`; despite conservative leaf-tool STOP, stronger ownership evidence opens policy-family children for weighted signals, portfolio rebalance, cross-venue arbitrage, shared helpers, and test harness.
 **Latest state supplement (BE-001ZW-01)**: `root.contracts.runtime_support.agent_module` parent residual judgment selected `weighted_signal_decisions`; next step: BE-001ZX-01 baseline_plan.
 `root.contracts.runtime_support.agent_module.weighted_signal_decisions selected: true`; this child owns slow-cycle weighted signal decisions while rebalance, arbitrage, event emission, provider dispatch, and tests remain parent or later-child owned.
+**Latest state supplement (BE-001ZX-01)**: `root.contracts.runtime_support.agent_module.weighted_signal_decisions` baseline frozen; next step: BE-001ZX-02 actual_extraction.
+`root.contracts.runtime_support.agent_module.weighted_signal_decisions allowed_movement`; move only weighted decision construction and signal grouping into a planned child file while shared helper ownership remains parent-mediated.
