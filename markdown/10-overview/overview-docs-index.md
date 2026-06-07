@@ -1411,3 +1411,4 @@
 | v4.16.0 / BE-002AC-01 | Added: `agent_module` parent residual judgment selects `shared_scoring_portfolio_helpers` |
 | v4.16.0 / BE-002AD-01 | Added: `agent_module.shared_scoring_portfolio_helpers` parent-owned baseline plan |
 | v4.16.0 / BE-002AD-02 | Added: `agent_module.shared_scoring_portfolio_helpers` single leaf closeout stops split |
+| v4.16.0 / BE-002AE-01 | Added: `agent_module` parent residual judgment selects `test_harness` |

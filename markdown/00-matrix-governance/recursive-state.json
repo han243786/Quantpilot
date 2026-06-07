@@ -9,11 +9,11 @@
     "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01",
     "GOV-TERMINAL-LEAF-CONTROL-V2-01"
   ],
-  "last_committed_batch": "BE-002AD-01",
-  "last_committed_sha": "da98e533",
-  "current_parent": "root.contracts.runtime_support.agent_module",
-  "current_step": "BE-002AE-01",
-  "current_phase": "parent_residual_judgment",
+  "last_committed_batch": "BE-002AD-02",
+  "last_committed_sha": "c667ea9",
+  "current_parent": "root.contracts.runtime_support.agent_module.test_harness",
+  "current_step": "BE-002AF-01",
+  "current_phase": "baseline_plan",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
