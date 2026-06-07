@@ -5073,3 +5073,5 @@ Recursive boundary supplement: BE-001ZT-01 `runtime_support.intent_module` basel
 - `markdown/06-milestones/v4.16.0/1393-root.contracts.runtime_support.intent_module.baseline_plan.md` - v4.16.0 BE-001ZT-01 runtime_support.intent_module baseline plan
 Recursive boundary supplement: BE-001ZT-02 `runtime_support.intent_module` single leaf closeout complete; next step: BE-001ZU-01 runtime_support parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1394-root.contracts.runtime_support.intent_module.single_leaf_closeout.md` - v4.16.0 BE-001ZT-02 runtime_support.intent_module single leaf closeout
+Recursive boundary supplement: BE-001ZU-01 `runtime_support` parent residual judgment selected `agent_module`; next step: BE-001ZV-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1395-root.contracts.runtime_support.parent_residual_judgment.agent_module.md` - v4.16.0 BE-001ZU-01 runtime_support parent residual judgment selects agent_module
