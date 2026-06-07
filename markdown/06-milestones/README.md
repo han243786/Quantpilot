@@ -1878,3 +1878,4 @@
 | v4.16.0 / BE-002DB-02 | `v4.16.0/1515-root.contracts.runtime_support.sandbox_replay_timeline.fast_backtest_sandbox.single_leaf_closeout.md` | Added: `fast_backtest_sandbox` single leaf closeout stops split |
 | v4.16.0 / BE-002DC-01 | `v4.16.0/1516-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.test_harness.md` | Added: `sandbox_replay_timeline` parent residual judgment selects `test_harness` |
 | v4.16.0 / BE-002DD-01 | `v4.16.0/1517-root.contracts.runtime_support.sandbox_replay_timeline.test_harness.baseline_plan.md` | Added: `sandbox_replay_timeline.test_harness` baseline plan |
+| v4.16.0 / BE-002DE-01 | `v4.16.0/1518-root.contracts.runtime_support.sandbox_replay_timeline.test_harness.extract_closeout.md` | Added: `sandbox_replay_timeline.test_harness` actual extraction complete |

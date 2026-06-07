@@ -5343,3 +5343,6 @@ Recursive boundary supplement: BE-002DC-01 `sandbox_replay_timeline` parent resi
 - `markdown/06-milestones/v4.16.0/1516-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.test_harness.md` - v4.16.0 BE-002DC-01 sandbox_replay_timeline parent residual judgment selects test_harness
 Recursive boundary supplement: BE-002DD-01 `sandbox_replay_timeline.test_harness` baseline frozen; next step: BE-002DE-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1517-root.contracts.runtime_support.sandbox_replay_timeline.test_harness.baseline_plan.md` - v4.16.0 BE-002DD-01 sandbox_replay_timeline test_harness baseline plan
+Recursive boundary supplement: BE-002DE-01 `sandbox_replay_timeline.test_harness` actual extraction complete; next step: BE-002DE-02 single_leaf_closeout.
+- `qrpc_runtime/src/sandbox/test_harness.rs` - Runtime sandbox local test harness child
+- `markdown/06-milestones/v4.16.0/1518-root.contracts.runtime_support.sandbox_replay_timeline.test_harness.extract_closeout.md` - v4.16.0 BE-002DE-01 sandbox test_harness extract closeout
