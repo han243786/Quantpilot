@@ -1406,3 +1406,4 @@
 | v4.16.0 / BE-001ZZ-03 | Added: `agent_module.portfolio_rebalance` single leaf closeout stops split |
 | v4.16.0 / BE-002AA-01 | Added: `agent_module` parent residual judgment selects `cross_venue_arbitrage` |
 | v4.16.0 / BE-002AB-01 | Added: `agent_module.cross_venue_arbitrage` baseline plan |
+| v4.16.0 / BE-002AB-02 | Added: `agent_module.cross_venue_arbitrage` actual extraction complete |

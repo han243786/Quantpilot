@@ -5099,3 +5099,6 @@ Recursive boundary supplement: BE-002AA-01 `agent_module` parent residual judgme
 - `markdown/06-milestones/v4.16.0/1405-root.contracts.runtime_support.agent_module.parent_residual_judgment.cross_venue_arbitrage.md` - v4.16.0 BE-002AA-01 agent_module parent residual judgment selects cross_venue_arbitrage
 Recursive boundary supplement: BE-002AB-01 `agent_module.cross_venue_arbitrage` baseline frozen; next step: BE-002AB-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1406-root.contracts.runtime_support.agent_module.cross_venue_arbitrage.baseline_plan.md` - v4.16.0 BE-002AB-01 agent_module.cross_venue_arbitrage baseline plan
+Recursive boundary supplement: BE-002AB-02 `agent_module.cross_venue_arbitrage` actual extraction complete; next step: BE-002AB-03 single_leaf_closeout.
+- `qrpc_runtime/src/agent_module/cross_venue_arbitrage.rs` - Runtime agent cross-venue arbitrage decision child
+- `markdown/06-milestones/v4.16.0/1407-root.contracts.runtime_support.agent_module.cross_venue_arbitrage.extract_closeout.md` - v4.16.0 BE-002AB-02 agent_module.cross_venue_arbitrage extract closeout
