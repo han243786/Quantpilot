@@ -1754,3 +1754,4 @@
 | v4.16.0 / BE-001ZR-01 | `v4.16.0/1391-root.contracts.runtime_support.data_module.parent_residual_judgment.close_parent.md` | Added: `data_module` parent closeout |
 | v4.16.0 / BE-001ZS-01 | `v4.16.0/1392-root.contracts.runtime_support.parent_residual_judgment.intent_module.md` | Added: `runtime_support` parent residual judgment selects `intent_module` |
 | v4.16.0 / BE-001ZT-01 | `v4.16.0/1393-root.contracts.runtime_support.intent_module.baseline_plan.md` | Added: `runtime_support.intent_module` baseline plan with terminal STOP decision |
+| v4.16.0 / BE-001ZT-02 | `v4.16.0/1394-root.contracts.runtime_support.intent_module.single_leaf_closeout.md` | Added: `runtime_support.intent_module` single leaf closeout stops split |
