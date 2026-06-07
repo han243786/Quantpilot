@@ -1800,3 +1800,4 @@
 | v4.16.0 / BE-002AS-03 | `v4.16.0/1437-root.contracts.runtime_support.core_ir_evaluator.test_harness.single_leaf_closeout.md` | Added: `test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-002AT-01 | `v4.16.0/1438-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.close_parent.md` | Added: `core_ir_evaluator` parent closeout |
 | v4.16.0 / BE-002AU-01 | `v4.16.0/1439-root.contracts.runtime_support.parent_residual_judgment.execution_module.md` | Added: `runtime_support` parent residual judgment selects `execution_module` |
+| v4.16.0 / BE-002AV-01 | `v4.16.0/1440-root.contracts.runtime_support.execution_module.baseline_plan.md` | Added: `execution_module` baseline plan with test-harness-only child queue |

@@ -1439,3 +1439,4 @@
 | v4.16.0 / BE-002AS-03 | Added: `test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-002AT-01 | Added: `core_ir_evaluator` parent closeout |
 | v4.16.0 / BE-002AU-01 | Added: `runtime_support` parent residual judgment selects `execution_module` |
+| v4.16.0 / BE-002AV-01 | Added: `execution_module` baseline plan with test-harness-only child queue |
