@@ -1548,3 +1548,4 @@ Latest recursive supplement: BE-002BH-01 selected `fill_engine.fill_report_execu
 Latest recursive supplement: BE-002BI-01 froze `fill_report_execution_helpers` baseline; next movement may move nine private execution/fill-report helpers.
 Latest recursive supplement: BE-002BJ-01 extracted `fill_report_execution_helpers`; `qrpc_runtime/src/fill_engine/fill_report_execution_helpers.rs` now owns private execution and fill-report helpers.
 Latest recursive supplement: BE-002BJ-02 closed `fill_report_execution_helpers` with `stop_split: true`; next recursive step returns to `fill_engine` parent residual judgment with expected candidate `test_harness`.
+Latest recursive supplement: BE-002BK-01 selected `fill_engine.test_harness`; next baseline should move only local fill-engine tests and fixtures while production orchestration and public portfolio mutation remain parent-owned.

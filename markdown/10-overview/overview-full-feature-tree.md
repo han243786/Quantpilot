@@ -5215,3 +5215,5 @@ Recursive boundary supplement: BE-002BJ-01 `fill_report_execution_helpers` actua
 - `markdown/06-milestones/v4.16.0/1458-root.contracts.runtime_support.fill_engine.fill_report_execution_helpers.extract_closeout.md` - v4.16.0 BE-002BJ-01 fill_report_execution_helpers extract closeout
 Recursive boundary supplement: BE-002BJ-02 `fill_report_execution_helpers` single leaf closeout complete; next step: BE-002BK-01 fill_engine parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1459-root.contracts.runtime_support.fill_engine.fill_report_execution_helpers.single_leaf_closeout.md` - v4.16.0 BE-002BJ-02 fill_report_execution_helpers single leaf closeout
+Recursive boundary supplement: BE-002BK-01 `fill_engine` parent residual judgment selected `test_harness`; next step: BE-002BL-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1460-root.contracts.runtime_support.fill_engine.parent_residual_judgment.test_harness.md` - v4.16.0 BE-002BK-01 fill_engine parent residual judgment selects test_harness
