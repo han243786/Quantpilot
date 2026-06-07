@@ -5201,3 +5201,6 @@ Recursive boundary supplement: BE-002BE-01 `fill_engine` parent residual judgmen
 - `markdown/06-milestones/v4.16.0/1452-root.contracts.runtime_support.fill_engine.parent_residual_judgment.portfolio_reservation_accounting.md` - v4.16.0 BE-002BE-01 fill_engine parent residual judgment selects portfolio_reservation_accounting
 Recursive boundary supplement: BE-002BF-01 `portfolio_reservation_accounting` baseline frozen; next step: BE-002BG-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1453-root.contracts.runtime_support.fill_engine.portfolio_reservation_accounting.baseline_plan.md` - v4.16.0 BE-002BF-01 portfolio_reservation_accounting baseline plan
+Recursive boundary supplement: BE-002BG-01 `portfolio_reservation_accounting` actual extraction complete; next step: BE-002BG-02 single_leaf_closeout.
+- `qrpc_runtime/src/fill_engine/portfolio_reservation_accounting.rs` - Runtime fill engine portfolio reservation accounting child
+- `markdown/06-milestones/v4.16.0/1454-root.contracts.runtime_support.fill_engine.portfolio_reservation_accounting.extract_closeout.md` - v4.16.0 BE-002BG-01 portfolio_reservation_accounting extract closeout

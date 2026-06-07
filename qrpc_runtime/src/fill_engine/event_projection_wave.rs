@@ -79,6 +79,11 @@ pub(super) fn reject_event(
     now_ms: u64,
     trace_id: &str,
 ) -> RuntimeEvent {
+    let explanation_summary = if reason.ends_with('?') {
+        format!("Order rejected: {reason}")
+    } else {
+        format!("Order rejected: {reason}.")
+    };
     RuntimeEvent {
         event_id: format!("evt-order-reject-{}-{now_ms}", order_id),
         event_type: RuntimeEventType::ExecutionPlanned,
@@ -91,7 +96,7 @@ pub(super) fn reject_event(
             "order_id": order_id,
             "reason": reason,
             "reason_text": reason,
-            "explanation_summary": format!("Order rejected: {reason}."),
+            "explanation_summary": explanation_summary,
         }),
     }
 }
