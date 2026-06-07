@@ -1864,3 +1864,4 @@
 | v4.16.0 / BE-002CQ-02 | `v4.16.0/1501-root.contracts.runtime_support.sandbox_replay_timeline.unified_timeline.single_leaf_closeout.md` | Added: `unified_timeline` single leaf closeout stops split |
 | v4.16.0 / BE-002CR-01 | `v4.16.0/1502-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.replay_builder.md` | Added: `sandbox_replay_timeline` parent residual judgment selects `replay_builder` |
 | v4.16.0 / BE-002CS-01 | `v4.16.0/1503-root.contracts.runtime_support.sandbox_replay_timeline.replay_builder.baseline_closeout.md` | Added: `replay_builder` baseline closeout stops split |
+| v4.16.0 / BE-002CT-01 | `v4.16.0/1504-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.sandbox_mode_surface.md` | Added: `sandbox_replay_timeline` parent residual judgment selects `sandbox_mode_surface` |

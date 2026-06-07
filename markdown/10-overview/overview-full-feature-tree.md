@@ -5312,3 +5312,5 @@ Recursive boundary supplement: BE-002CR-01 `sandbox_replay_timeline` parent resi
 - `markdown/06-milestones/v4.16.0/1502-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.replay_builder.md` - v4.16.0 BE-002CR-01 sandbox_replay_timeline parent residual judgment selects replay_builder
 Recursive boundary supplement: BE-002CS-01 `replay_builder` baseline closeout complete; next step: BE-002CT-01 sandbox_replay_timeline parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1503-root.contracts.runtime_support.sandbox_replay_timeline.replay_builder.baseline_closeout.md` - v4.16.0 BE-002CS-01 replay_builder baseline closeout
+Recursive boundary supplement: BE-002CT-01 `sandbox_replay_timeline` parent residual judgment selected `sandbox_mode_surface`; next step: BE-002CU-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1504-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.sandbox_mode_surface.md` - v4.16.0 BE-002CT-01 sandbox_replay_timeline parent residual judgment selects sandbox_mode_surface
