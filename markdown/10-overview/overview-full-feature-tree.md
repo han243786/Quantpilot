@@ -5234,3 +5234,6 @@ Recursive boundary supplement: BE-002BQ-01 `risk_support` parent residual judgme
 - `markdown/06-milestones/v4.16.0/1467-root.contracts.runtime_support.risk_support.parent_residual_judgment.event_payload_projection.md` - v4.16.0 BE-002BQ-01 risk_support parent residual judgment selects event_payload_projection
 Recursive boundary supplement: BE-002BR-01 `risk_support.event_payload_projection` baseline frozen; next step: BE-002BS-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1468-root.contracts.runtime_support.risk_support.event_payload_projection.baseline_plan.md` - v4.16.0 BE-002BR-01 event_payload_projection baseline plan
+Recursive boundary supplement: BE-002BS-01 `risk_support.event_payload_projection` actual extraction complete; next step: BE-002BS-02 single_leaf_closeout.
+- `qrpc_runtime/src/risk_checker/event_payload_projection.rs` - Runtime risk checker event payload projection child
+- `markdown/06-milestones/v4.16.0/1469-root.contracts.runtime_support.risk_support.event_payload_projection.extract_closeout.md` - v4.16.0 BE-002BS-01 event_payload_projection extract closeout
