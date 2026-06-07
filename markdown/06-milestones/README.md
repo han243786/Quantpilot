@@ -1883,3 +1883,4 @@
 | v4.16.0 / BE-002DF-01 | `v4.16.0/1520-root.contracts.runtime_support.sandbox_replay_timeline.parent_closeout.md` | Added: `sandbox_replay_timeline` parent closeout |
 | v4.16.0 / BE-002DG-01 | `v4.16.0/1521-root.contracts.runtime_support.parent_residual_judgment.v4_runtime_support.md` | Added: `runtime_support` parent residual judgment selects `v4_runtime_support` |
 | v4.16.0 / BE-002DH-01 | `v4.16.0/1522-root.contracts.runtime_support.v4_runtime_support.baseline_plan.md` | Added: `v4_runtime_support` baseline plan |
+| v4.16.0 / BE-002DI-01 | `v4.16.0/1523-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.type_surface.md` | Added: `v4_runtime_support` parent residual judgment selects `type_surface` |
