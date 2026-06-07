@@ -1817,3 +1817,4 @@
 | v4.16.0 / BE-002BG-01 | `v4.16.0/1454-root.contracts.runtime_support.fill_engine.portfolio_reservation_accounting.extract_closeout.md` | Added: `portfolio_reservation_accounting` actual extraction complete |
 | v4.16.0 / BE-002BG-02 | `v4.16.0/1455-root.contracts.runtime_support.fill_engine.portfolio_reservation_accounting.single_leaf_closeout.md` | Added: `portfolio_reservation_accounting` single leaf closeout stops split |
 | v4.16.0 / BE-002BH-01 | `v4.16.0/1456-root.contracts.runtime_support.fill_engine.parent_residual_judgment.fill_report_execution_helpers.md` | Added: `fill_engine` parent residual judgment selects `fill_report_execution_helpers` |
+| v4.16.0 / BE-002BI-01 | `v4.16.0/1457-root.contracts.runtime_support.fill_engine.fill_report_execution_helpers.baseline_plan.md` | Added: `fill_report_execution_helpers` baseline plan |

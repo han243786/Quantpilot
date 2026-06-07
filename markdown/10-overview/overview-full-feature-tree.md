@@ -5208,3 +5208,5 @@ Recursive boundary supplement: BE-002BG-02 `portfolio_reservation_accounting` si
 - `markdown/06-milestones/v4.16.0/1455-root.contracts.runtime_support.fill_engine.portfolio_reservation_accounting.single_leaf_closeout.md` - v4.16.0 BE-002BG-02 portfolio_reservation_accounting single leaf closeout
 Recursive boundary supplement: BE-002BH-01 `fill_engine` parent residual judgment selected `fill_report_execution_helpers`; next step: BE-002BI-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1456-root.contracts.runtime_support.fill_engine.parent_residual_judgment.fill_report_execution_helpers.md` - v4.16.0 BE-002BH-01 fill_engine parent residual judgment selects fill_report_execution_helpers
+Recursive boundary supplement: BE-002BI-01 `fill_report_execution_helpers` baseline frozen; next step: BE-002BJ-01 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1457-root.contracts.runtime_support.fill_engine.fill_report_execution_helpers.baseline_plan.md` - v4.16.0 BE-002BI-01 fill_report_execution_helpers baseline plan
