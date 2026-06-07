@@ -1380,3 +1380,4 @@
 | v4.16.0 / BE-001ZK-03 | Added: `data_module.mock_data_generation` single leaf closeout stops split |
 | v4.16.0 / BE-001ZL-01 | Added: `data_module` parent residual judgment selects `historical_cache` |
 | v4.16.0 / BE-001ZM-01 | Added: `data_module.historical_cache` baseline plan |
+| v4.16.0 / BE-001ZM-02 | Added: `data_module.historical_cache` actual extraction complete |

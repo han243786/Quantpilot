@@ -5042,3 +5042,6 @@ Recursive boundary supplement: BE-001ZL-01 `data_module` parent residual judgmen
 - `markdown/06-milestones/v4.16.0/1379-root.contracts.runtime_support.data_module.parent_residual_judgment.historical_cache.md` - v4.16.0 BE-001ZL-01 data_module parent residual judgment selects historical_cache
 Recursive boundary supplement: BE-001ZM-01 `data_module.historical_cache` baseline_frozen; next step: BE-001ZM-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1380-root.contracts.runtime_support.data_module.historical_cache.baseline_plan.md` - v4.16.0 BE-001ZM-01 data_module.historical_cache baseline plan
+Recursive boundary supplement: BE-001ZM-02 `data_module.historical_cache` actual extraction complete; next step: BE-001ZM-03 single_leaf_closeout.
+- `qrpc_runtime/src/data_module/historical_cache.rs` - runtime data module historical replay cache and historical kline fetch orchestration
+- `markdown/06-milestones/v4.16.0/1381-root.contracts.runtime_support.data_module.historical_cache.extract_closeout.md` - v4.16.0 BE-001ZM-02 data_module.historical_cache actual extraction complete
