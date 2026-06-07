@@ -1779,3 +1779,4 @@
 | v4.16.0 / BE-002AG-01 | `v4.16.0/1416-root.contracts.runtime_support.agent_module.parent_residual_judgment.close_parent.md` | Added: `agent_module` parent closeout |
 | v4.16.0 / BE-002AH-01 | `v4.16.0/1417-root.contracts.runtime_support.parent_residual_judgment.core_ir_evaluator.md` | Added: `runtime_support` parent residual judgment selects `core_ir_evaluator` |
 | v4.16.0 / BE-002AI-01 | `v4.16.0/1418-root.contracts.runtime_support.core_ir_evaluator.baseline_plan.md` | Added: `core_ir_evaluator` baseline plan with same-parent wave child queue |
+| v4.16.0 / BE-002AJ-01 | `v4.16.0/1419-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.classic_indicator_wave.md` | Added: `core_ir_evaluator` parent residual judgment selects `classic_indicator_wave` |
