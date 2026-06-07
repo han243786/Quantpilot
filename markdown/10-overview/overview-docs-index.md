@@ -1471,3 +1471,4 @@
 | v4.16.0 / BE-002BS-01 | Added: `event_payload_projection` actual extraction complete |
 | v4.16.0 / BE-002BS-02 | Added: `event_payload_projection` single leaf closeout stops split |
 | v4.16.0 / BE-002BT-01 | Added: `risk_support` parent residual judgment selects `direction_cross_constraints` |
+| v4.16.0 / BE-002BU-01 | Added: `direction_cross_constraints` baseline plan |
