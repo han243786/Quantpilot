@@ -5162,3 +5162,6 @@ Recursive boundary supplement: BE-002AR-01 `core_ir_evaluator` parent residual j
 - `markdown/06-milestones/v4.16.0/1434-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.test_harness.md` - v4.16.0 BE-002AR-01 core_ir_evaluator parent residual judgment selects test_harness
 Recursive boundary supplement: BE-002AS-01 `test_harness` baseline frozen; next step: BE-002AS-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1435-root.contracts.runtime_support.core_ir_evaluator.test_harness.baseline_plan.md` - v4.16.0 BE-002AS-01 test_harness baseline plan
+Recursive boundary supplement: BE-002AS-02 `test_harness` actual extraction complete; next step: BE-002AS-03 single_leaf_closeout.
+- `qrpc_runtime/src/core_ir_evaluator/test_harness.rs` - Runtime Core IR evaluator local test harness child
+- `markdown/06-milestones/v4.16.0/1436-root.contracts.runtime_support.core_ir_evaluator.test_harness.extract_closeout.md` - v4.16.0 BE-002AS-02 test_harness extract closeout

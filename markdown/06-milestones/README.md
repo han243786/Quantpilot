@@ -1796,3 +1796,4 @@
 | v4.16.0 / BE-002AQ-02 | `v4.16.0/1433-root.contracts.runtime_support.core_ir_evaluator.shared_lookup_math_helpers.single_leaf_closeout.md` | Added: `shared_lookup_math_helpers` single leaf closeout stops split |
 | v4.16.0 / BE-002AR-01 | `v4.16.0/1434-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.test_harness.md` | Added: `core_ir_evaluator` parent residual judgment selects `test_harness` |
 | v4.16.0 / BE-002AS-01 | `v4.16.0/1435-root.contracts.runtime_support.core_ir_evaluator.test_harness.baseline_plan.md` | Added: `test_harness` baseline plan |
+| v4.16.0 / BE-002AS-02 | `v4.16.0/1436-root.contracts.runtime_support.core_ir_evaluator.test_harness.extract_closeout.md` | Added: `test_harness` actual extraction complete |
