@@ -1484,3 +1484,4 @@ Latest recursive supplement: BE-001ZS-01 selected `runtime_support.intent_module
 Latest recursive supplement: BE-001ZT-01 froze `runtime_support.intent_module` baseline with terminal STOP decision; next recursive step is single leaf closeout.
 Latest recursive supplement: BE-001ZT-02 closed `runtime_support.intent_module` with `stop_split: true`; next recursive step returns to `runtime_support` parent residual judgment with expected candidate `agent_module`.
 Latest recursive supplement: BE-001ZU-01 selected `runtime_support.agent_module`; next baseline covers weighted signals, portfolio rebalance, cross-venue arbitrage, shared scoring/portfolio helpers, and local tests.
+Latest recursive supplement: BE-001ZV-01 froze `runtime_support.agent_module` baseline; child queue starts with `weighted_signal_decisions` and keeps public provider dispatch parent-mediated.

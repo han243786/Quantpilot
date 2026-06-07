@@ -1756,3 +1756,4 @@
 | v4.16.0 / BE-001ZT-01 | `v4.16.0/1393-root.contracts.runtime_support.intent_module.baseline_plan.md` | Added: `runtime_support.intent_module` baseline plan with terminal STOP decision |
 | v4.16.0 / BE-001ZT-02 | `v4.16.0/1394-root.contracts.runtime_support.intent_module.single_leaf_closeout.md` | Added: `runtime_support.intent_module` single leaf closeout stops split |
 | v4.16.0 / BE-001ZU-01 | `v4.16.0/1395-root.contracts.runtime_support.parent_residual_judgment.agent_module.md` | Added: `runtime_support` parent residual judgment selects `agent_module` |
+| v4.16.0 / BE-001ZV-01 | `v4.16.0/1396-root.contracts.runtime_support.agent_module.baseline_plan.md` | Added: `runtime_support.agent_module` baseline plan with policy-family child queue |

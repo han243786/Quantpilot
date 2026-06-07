@@ -8634,3 +8634,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.intent_module stop_split: true`; runtime intent generation stays one terminal child, with `agent_module` remaining the next queued runtime-support child.
 **Latest state supplement (BE-001ZU-01)**: `root.contracts.runtime_support` parent residual judgment selected `agent_module`; next step: BE-001ZV-01 baseline_plan.
 `root.contracts.runtime_support.agent_module selected: true`; this child owns runtime agent decision generation from intent signals, Core IR agent policies, and portfolio state while risk, execution, fill, sandbox, v4 runtime, live execution, plugin, ops compatibility, and metrics support remain queued.
+**Latest state supplement (BE-001ZV-01)**: `root.contracts.runtime_support.agent_module` baseline frozen; next step: BE-001ZW-01 parent_residual_judgment.
+`root.contracts.runtime_support.agent_module continue_split: true`; despite conservative leaf-tool STOP, stronger ownership evidence opens policy-family children for weighted signals, portfolio rebalance, cross-venue arbitrage, shared helpers, and test harness.
