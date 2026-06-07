@@ -1807,3 +1807,4 @@
 | v4.16.0 / BE-002AX-03 | `v4.16.0/1444-root.contracts.runtime_support.execution_module.test_harness.single_leaf_closeout.md` | Added: `execution_module.test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-002AY-01 | `v4.16.0/1445-root.contracts.runtime_support.execution_module.parent_residual_judgment.close_parent.md` | Added: `execution_module` parent closeout |
 | v4.16.0 / BE-002AZ-01 | `v4.16.0/1446-root.contracts.runtime_support.parent_residual_judgment.fill_engine.md` | Added: `runtime_support` parent residual judgment selects `fill_engine` |
+| v4.16.0 / BE-002BA-01 | `v4.16.0/1447-root.contracts.runtime_support.fill_engine.baseline_plan.md` | Added: `fill_engine` baseline plan with cost-controlled same-parent wave queue |
