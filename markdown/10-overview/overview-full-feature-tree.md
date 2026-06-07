@@ -5264,3 +5264,5 @@ Recursive boundary supplement: BE-002CA-01 `risk_support.portfolio_target_clamp_
 Recursive boundary supplement: BE-002CB-01 `risk_support.portfolio_target_clamp_helpers` actual extraction complete; next step: BE-002CB-02 single_leaf_closeout.
 - `qrpc_runtime/src/risk_checker/portfolio_target_clamp_helpers.rs` - Runtime risk checker portfolio-target clamp helper child
 - `markdown/06-milestones/v4.16.0/1481-root.contracts.runtime_support.risk_support.portfolio_target_clamp_helpers.extract_closeout.md` - v4.16.0 BE-002CB-01 portfolio_target_clamp_helpers extract closeout
+Recursive boundary supplement: BE-002CB-02 `risk_support.portfolio_target_clamp_helpers` single leaf closeout complete; next step: BE-002CC-01 risk_support parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1482-root.contracts.runtime_support.risk_support.portfolio_target_clamp_helpers.single_leaf_closeout.md` - v4.16.0 BE-002CB-02 portfolio_target_clamp_helpers single leaf closeout
