@@ -1494,3 +1494,4 @@ Latest recursive supplement: BE-001ZZ-01 froze `agent_module.portfolio_rebalance
 Latest recursive supplement: BE-001ZZ-02 extracted `agent_module.portfolio_rebalance`; rebalance cadence and target allocation now live in `qrpc_runtime/src/agent_module/portfolio_rebalance.rs`.
 Latest recursive supplement: BE-001ZZ-03 closed `agent_module.portfolio_rebalance` with `stop_split: true`; next recursive step returns to `agent_module` parent residual judgment with expected candidate `cross_venue_arbitrage`.
 Latest recursive supplement: BE-002AA-01 selected `agent_module.cross_venue_arbitrage`; next baseline covers fast-cycle quote arbitrage, explicit spread-signal arbitrage, spread triggers, cost buffers, leg selection, and sell-side availability clamps.
+Latest recursive supplement: BE-002AB-01 froze `agent_module.cross_venue_arbitrage` baseline; next movement may add a child file and move only arbitrage decision construction plus total cost buffer calculation.
