@@ -5,9 +5,11 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::{fs, path::PathBuf};
 
+#[cfg(target_os = "windows")]
+use super::fetch_json_via_powershell;
 use super::{
-    block_on_http, exchange_surface, fetch_json_via_powershell, normalize_kline_series,
-    HISTORICAL_CACHE_MAX_BYTES, HISTORICAL_CACHE_TTL_MS, HTTP_TIMEOUT_SECS,
+    block_on_http, exchange_surface, normalize_kline_series, HISTORICAL_CACHE_MAX_BYTES,
+    HISTORICAL_CACHE_TTL_MS, HTTP_TIMEOUT_SECS,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
