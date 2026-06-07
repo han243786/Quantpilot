@@ -5108,3 +5108,5 @@ Recursive boundary supplement: BE-002AC-01 `agent_module` parent residual judgme
 - `markdown/06-milestones/v4.16.0/1409-root.contracts.runtime_support.agent_module.parent_residual_judgment.shared_scoring_portfolio_helpers.md` - v4.16.0 BE-002AC-01 agent_module parent residual judgment selects shared_scoring_portfolio_helpers
 Recursive boundary supplement: BE-002AD-01 `agent_module.shared_scoring_portfolio_helpers` baseline keeps helper ownership parent-owned; next step: BE-002AD-02 single_leaf_closeout.
 - `markdown/06-milestones/v4.16.0/1410-root.contracts.runtime_support.agent_module.shared_scoring_portfolio_helpers.baseline_plan.md` - v4.16.0 BE-002AD-01 agent_module.shared_scoring_portfolio_helpers parent-owned baseline plan
+Recursive boundary supplement: BE-002AD-02 `agent_module.shared_scoring_portfolio_helpers` single leaf closeout complete; next step: BE-002AE-01 agent_module parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1411-root.contracts.runtime_support.agent_module.shared_scoring_portfolio_helpers.single_leaf_closeout.md` - v4.16.0 BE-002AD-02 agent_module.shared_scoring_portfolio_helpers single leaf closeout
