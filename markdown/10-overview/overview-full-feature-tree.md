@@ -5255,3 +5255,5 @@ Recursive boundary supplement: BE-002BX-01 `risk_support.action_clamp_helpers` b
 Recursive boundary supplement: BE-002BY-01 `risk_support.action_clamp_helpers` actual extraction complete; next step: BE-002BY-02 single_leaf_closeout.
 - `qrpc_runtime/src/risk_checker/action_clamp_helpers.rs` - Runtime risk checker action-list clamp helper child
 - `markdown/06-milestones/v4.16.0/1477-root.contracts.runtime_support.risk_support.action_clamp_helpers.extract_closeout.md` - v4.16.0 BE-002BY-01 action_clamp_helpers extract closeout
+Recursive boundary supplement: BE-002BY-02 `risk_support.action_clamp_helpers` single leaf closeout complete; next step: BE-002BZ-01 risk_support parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1478-root.contracts.runtime_support.risk_support.action_clamp_helpers.single_leaf_closeout.md` - v4.16.0 BE-002BY-02 action_clamp_helpers single leaf closeout
