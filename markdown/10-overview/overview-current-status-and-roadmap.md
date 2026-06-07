@@ -1567,3 +1567,4 @@ Latest recursive supplement: BE-002BW-01 selected `risk_support.action_clamp_hel
 Latest recursive supplement: BE-002BX-01 froze `risk_support.action_clamp_helpers` baseline; next movement may add an action-clamp child file and move six action-list clamp helpers.
 Latest recursive supplement: BE-002BY-01 extracted `risk_support.action_clamp_helpers`; `qrpc_runtime/src/risk_checker/action_clamp_helpers.rs` now owns action-list clamp helpers.
 Latest recursive supplement: BE-002BY-02 closed `risk_support.action_clamp_helpers` with `stop_split: true`; next recursive step returns to `risk_support` parent residual judgment with expected candidate `portfolio_target_clamp_helpers`.
+Latest recursive supplement: BE-002BZ-01 selected `risk_support.portfolio_target_clamp_helpers`; next baseline should move only portfolio-target clamp orchestration and target-weight mutation helpers.

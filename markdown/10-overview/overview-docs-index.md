@@ -1478,3 +1478,4 @@
 | v4.16.0 / BE-002BX-01 | Added: `action_clamp_helpers` baseline plan |
 | v4.16.0 / BE-002BY-01 | Added: `action_clamp_helpers` actual extraction complete |
 | v4.16.0 / BE-002BY-02 | Added: `action_clamp_helpers` single leaf closeout stops split |
+| v4.16.0 / BE-002BZ-01 | Added: `risk_support` parent residual judgment selects `portfolio_target_clamp_helpers` |
