@@ -5123,3 +5123,5 @@ Recursive boundary supplement: BE-002AG-01 `agent_module` parent closeout comple
 - `markdown/06-milestones/v4.16.0/1416-root.contracts.runtime_support.agent_module.parent_residual_judgment.close_parent.md` - v4.16.0 BE-002AG-01 agent_module parent closeout
 Recursive boundary supplement: BE-002AH-01 `runtime_support` parent residual judgment selected `core_ir_evaluator`; next step: BE-002AI-01 core_ir_evaluator baseline_plan.
 - `markdown/06-milestones/v4.16.0/1417-root.contracts.runtime_support.parent_residual_judgment.core_ir_evaluator.md` - v4.16.0 BE-002AH-01 runtime_support parent residual judgment selects core_ir_evaluator
+Recursive boundary supplement: BE-002AI-01 `core_ir_evaluator` baseline frozen; next step: BE-002AJ-01 parent_residual_judgment selects classic_indicator_wave.
+- `markdown/06-milestones/v4.16.0/1418-root.contracts.runtime_support.core_ir_evaluator.baseline_plan.md` - v4.16.0 BE-002AI-01 core_ir_evaluator baseline plan
