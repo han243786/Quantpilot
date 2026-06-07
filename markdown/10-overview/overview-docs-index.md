@@ -1388,3 +1388,4 @@
 | v4.16.0 / BE-001ZO-03 | Added: `data_module.http_transport` single leaf closeout stops split |
 | v4.16.0 / BE-001ZP-01 | Added: `data_module` parent residual judgment selects `test_harness` |
 | v4.16.0 / BE-001ZQ-01 | Added: `data_module.test_harness` baseline plan |
+| v4.16.0 / BE-001ZQ-02 | Added: `data_module.test_harness` actual extraction complete |

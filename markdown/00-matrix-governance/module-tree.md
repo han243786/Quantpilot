@@ -8620,3 +8620,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.data_module.test_harness selected: true`; this child owns local data-module unit-test fixtures and assertions while production facade, request cache, breaker logic, transport, historical cache, mock generation, normalization, source mapping, and quality diagnostics remain outside this child.
 **Latest state supplement (BE-001ZQ-01)**: `root.contracts.runtime_support.data_module.test_harness` baseline frozen; next step: BE-001ZQ-02 actual_extraction.
 `root.contracts.runtime_support.data_module.test_harness baseline_frozen: true`; the next movement may add the planned test harness child file and move only local data-module tests and fixtures.
+**Latest state supplement (BE-001ZQ-02)**: `root.contracts.runtime_support.data_module.test_harness` actual extraction complete; next step: BE-001ZQ-03 single_leaf_closeout.
+`root.contracts.runtime_support.data_module.test_harness extracted: true`; `qrpc_runtime/src/data_module/test_harness.rs` now owns local data-module fixtures and assertions while production facade logic remains in the parent.

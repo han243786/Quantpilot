@@ -5060,3 +5060,6 @@ Recursive boundary supplement: BE-001ZP-01 `data_module` parent residual judgmen
 - `markdown/06-milestones/v4.16.0/1387-root.contracts.runtime_support.data_module.parent_residual_judgment.test_harness.md` - v4.16.0 BE-001ZP-01 data_module parent residual judgment selects test_harness
 Recursive boundary supplement: BE-001ZQ-01 `data_module.test_harness` baseline_frozen; next step: BE-001ZQ-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1388-root.contracts.runtime_support.data_module.test_harness.baseline_plan.md` - v4.16.0 BE-001ZQ-01 data_module.test_harness baseline plan
+Recursive boundary supplement: BE-001ZQ-02 `data_module.test_harness` actual extraction complete; next step: BE-001ZQ-03 single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/1389-root.contracts.runtime_support.data_module.test_harness.extract_closeout.md` - v4.16.0 BE-001ZQ-02 data_module.test_harness actual extraction complete
+- `qrpc_runtime/src/data_module/test_harness.rs` - data module test harness child, owns local data-module fixtures and assertions.
