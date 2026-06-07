@@ -6,7 +6,8 @@
   "governance_history": [
     "GOV-RECURSIVE-COST-CONTROL-01",
     "GOV-LEAF-GRANULARITY-SMART-JUDGE-01",
-    "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01"
+    "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01",
+    "GOV-TERMINAL-LEAF-CONTROL-V2-01"
   ],
   "last_committed_batch": "BE-001ZI-01",
   "last_committed_sha": "8e10058c",
@@ -258,6 +259,26 @@
     },
     "score_formula": "normalized_split_score = clamp(40 + 0.40*split_benefit + 0.20*leaf_size_fit - 0.20*risk_penalty - 0.15*governance_cost - 0.05*system_efficiency_penalty, 0, 100)",
     "readonly_tool": "tools/evaluate-leaf-granularity.ps1"
+  },
+  "terminal_leaf_control_v2": {
+    "script_output_block": "terminal_leaf_control",
+    "target_terminal_loc_range": "150-600",
+    "size_buckets": [
+      "micro_under_100",
+      "small_100_149",
+      "terminal_target_150_600",
+      "split_pressure_601_800",
+      "oversized_over_800"
+    ],
+    "governance_modes": [
+      "stop_split",
+      "same_parent_wave",
+      "standard_same_parent_wave",
+      "precision_single_leaf"
+    ],
+    "standalone_full_governance_allowed_only_for": "precision_single_leaf",
+    "micro_leaf_default": "stop_split",
+    "high_cost_small_leaf_default": "same_parent_wave_or_stop_split"
   },
   "forbidden_carryover_prompts": [
     "one_time_progress_report",

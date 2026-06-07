@@ -26,7 +26,7 @@
 | `proposal-examples.md` | 轻量、标准、重型三档提案样例 |
 | `release-transition-protocol.md` | 发布过渡期连接协议 |
 | `landing-roadmap.md` | v4.12.0 至 v4.16.0 治理落地与模块化抽离路线 |
-| `recursive-speed-protocol.md` | v4.16+ 递归模块化高速执行协议，含同父级子叶并行 wave、成本受控批次、强制降档、批次白箱表和末端叶子智能判定 |
+| `recursive-speed-protocol.md` | v4.16+ 递归模块化高速执行协议，含同父级子叶并行 wave、成本受控批次、强制降档、批次白箱表、末端叶子智能判定和 terminal leaf control v2 |
 | `recursive-state.json` | 当前递归状态游标 |
 
 ## 架构原则 (`01-principles/`)
@@ -1372,3 +1372,4 @@
 | v4.16.0 / BE-001ZH-01 | Added: `data_module` parent residual judgment selects `normalization` |
 | v4.16.0 / BE-001ZI-01 | Added: `data_module.normalization` baseline plan |
 | v4.16.0 / BE-001ZI-02 | Added: `data_module.normalization` actual extraction complete |
+| v4.16.0 / GOV-TERMINAL-LEAF-CONTROL-V2-01 | Added: terminal leaf control v2, including `terminal_leaf_control`, `governance_mode`, and standalone full governance limits |

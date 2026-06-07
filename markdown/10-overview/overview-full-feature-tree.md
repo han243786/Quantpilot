@@ -1269,7 +1269,7 @@ recursive-state.json              — 当前递归状态游标
 
 自动化门禁: `tools/check-matrix-governance.ps1` 校验三矩阵入口、提案模板、模块树漂移、里程碑索引、发布过渡协议和递归高速执行协议。
 提案样例库: `markdown/00-matrix-governance/proposal-examples.md` 提供轻量、标准、重型三档最小样例。
-递归高速协议: `markdown/00-matrix-governance/recursive-speed-protocol.md` 固化智能门禁、两段式、同构批处理、同父级子叶并行、成本受控 same-parent wave、强制精细降档、末端叶子智能判定、治理生成器和状态游标规则。
+递归高速协议: `markdown/00-matrix-governance/recursive-speed-protocol.md` 固化智能门禁、两段式、同构批处理、同父级子叶并行、成本受控 same-parent wave、强制精细降档、末端叶子智能判定、terminal leaf control v2、治理生成器和状态游标规则。
 递归状态游标: `markdown/00-matrix-governance/recursive-state.json` 记录当前递归 parent、phase、closed children、open residuals 和一次性提示黑名单。
 
 治理接管路线:
@@ -5025,3 +5025,5 @@ Recursive boundary supplement: BE-001ZI-01 `data_module.normalization` baseline_
 Recursive boundary supplement: BE-001ZI-02 `data_module.normalization` actual extraction complete; next step: BE-001ZI-03 single_leaf_closeout.
 - `qrpc_runtime/src/data_module/normalization.rs` - runtime data module raw-to-normalized market data conversion
 - `markdown/06-milestones/v4.16.0/1372-root.contracts.runtime_support.data_module.normalization.extract_closeout.md` - v4.16.0 BE-001ZI-02 data_module.normalization actual extraction complete
+Recursive governance supplement: GOV-TERMINAL-LEAF-CONTROL-V2-01 integrates read-only over-splitting findings into terminal leaf control; the judge now emits `terminal_leaf_control.governance_mode` and reserves standalone full governance for `precision_single_leaf`.
+- `markdown/06-milestones/v4.16.0/1373-governance.terminal_leaf_control_v2.md` - v4.16.0 GOV-TERMINAL-LEAF-CONTROL-V2-01 terminal leaf control v2

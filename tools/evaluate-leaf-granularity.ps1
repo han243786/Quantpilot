@@ -62,6 +62,15 @@ function Get-LeafSizeFitScore {
     return 90
 }
 
+function Get-LeafSizeBucket {
+    param([int] $Loc)
+    if ($Loc -lt 100) { return "micro_under_100" }
+    if ($Loc -lt 150) { return "small_100_149" }
+    if ($Loc -le 600) { return "terminal_target_150_600" }
+    if ($Loc -le 800) { return "split_pressure_601_800" }
+    return "oversized_over_800"
+}
+
 function Get-SplitBenefitScore {
     param(
         [int] $Loc,
@@ -284,6 +293,17 @@ $action = switch ($decision) {
     "PRECISION" { "Use precision single-leaf governance and do not batch away high-risk evidence." }
 }
 
+$sizeBucket = Get-LeafSizeBucket -Loc $loc
+$governanceMode = switch ($decision) {
+    "STOP" { "stop_split" }
+    "WAVE" { "same_parent_wave" }
+    "SPLIT" { "standard_same_parent_wave" }
+    "PRECISION" { "precision_single_leaf" }
+}
+$standaloneFullGovernanceAllowed = $decision -eq "PRECISION"
+$microLeafDefaultStop = $loc -lt 100 -and $splitBenefit -lt 80
+$highCostLeafNeedsWaveOrStop = $loc -lt 200 -and $governanceCost -ge 50 -and $decision -ne "SPLIT" -and $decision -ne "PRECISION"
+
 $result = [ordered]@{
     leaf_id = $LeafId
     parent_id = $ParentId
@@ -308,6 +328,14 @@ $result = [ordered]@{
         weighted_delta = [Math]::Round($weightedDelta, 2)
         normalized_split_score = $normalizedScore
     }
+    terminal_leaf_control = [ordered]@{
+        target_terminal_loc_range = "150-600"
+        size_bucket = $sizeBucket
+        governance_mode = $governanceMode
+        standalone_full_governance_allowed = $standaloneFullGovernanceAllowed
+        micro_leaf_default_stop = $microLeafDefaultStop
+        high_cost_leaf_needs_wave_or_stop = $highCostLeafNeedsWaveOrStop
+    }
     decision = $decision
     reason = $reason
     recommended_action = $action
@@ -331,6 +359,10 @@ Write-Host ""
 Write-Host "Scores:"
 Write-Host ("  split_benefit={0}, leaf_size_fit={1}, risk_penalty={2}, governance_cost={3}, system_efficiency_penalty={4}" -f $splitBenefit, $leafSizeFit, $riskPenalty, $governanceCost, $systemEfficiencyPenalty)
 Write-Host ("  weighted_delta={0}, normalized_split_score={1}" -f ([Math]::Round($weightedDelta, 2)), $normalizedScore)
+Write-Host ""
+Write-Host "Terminal leaf control:"
+Write-Host ("  size_bucket={0}, governance_mode={1}, standalone_full_governance_allowed={2}" -f $sizeBucket, $governanceMode, $standaloneFullGovernanceAllowed)
+Write-Host ("  micro_leaf_default_stop={0}, high_cost_leaf_needs_wave_or_stop={1}" -f $microLeafDefaultStop, $highCostLeafNeedsWaveOrStop)
 Write-Host ""
 Write-Host "Recommended action:"
 Write-Host "  $action"

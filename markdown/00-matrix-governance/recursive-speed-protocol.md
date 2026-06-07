@@ -158,6 +158,31 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\evaluate-leaf-granular
 
 脚本结果不替代开发者判断，但后续单叶 closeout / 父叶残余判断若不采用脚本结果，必须在 milestone 中说明人工覆盖理由。
 
+### 0.7 末端叶子体量控制 v2
+
+terminal_leaf_control_v2
+
+只读判断进一步确认: 底层叶子过细会同时抬高治理成本、parent-child 转发成本、索引同步成本和人类复核成本。因此 leaf split gate 必须把“继续拆分收益”与“治理负担”放在同一张秤上，而不是只看代码还能不能再切。
+
+`tools/evaluate-leaf-granularity.ps1` 必须输出 `terminal_leaf_control` 区块，并至少包含:
+
+| 字段 | 含义 |
+| --- | --- |
+| `target_terminal_loc_range` | 普通逻辑叶推荐终端区间，当前固定为 `150-600` |
+| `size_bucket` | `micro_under_100` / `small_100_149` / `terminal_target_150_600` / `split_pressure_601_800` / `oversized_over_800` |
+| `governance_mode` | `stop_split` / `same_parent_wave` / `standard_same_parent_wave` / `precision_single_leaf` |
+| `standalone_full_governance_allowed` | 只有 `precision_single_leaf` 可以为 true；普通 SPLIT 优先并入同父级标准 wave |
+| `micro_leaf_default_stop` | 微叶默认停止细拆，除非开发者提供强 owner 收益证据 |
+| `high_cost_leaf_needs_wave_or_stop` | 小叶且治理成本高时只能走 WAVE 或 STOP，不得创建独立四段式治理 |
+
+治理模式硬规则:
+
+1. `STOP` -> `governance_mode=stop_split`，只登记 closeout 与残余判断，不再拆出 baseline/extract/closeout 三连文档。
+2. `WAVE` -> `governance_mode=same_parent_wave`，同父级同构子叶合并为一批，但每个 child 仍保留白箱行和等价证据。
+3. `SPLIT` -> `governance_mode=standard_same_parent_wave`，允许继续拆，但默认不得独立四段式；优先在同父级 wave 内推进。
+4. `PRECISION` -> `governance_mode=precision_single_leaf`，只有命中 public contract、route/schema、状态机、持久化、锁、安全、live execution、compiler contract 等高风险面时才使用完整单叶治理。
+5. 若人工覆盖脚本建议，milestone 必须写明: 覆盖前决策、覆盖后决策、强 owner 收益证据、风险隔离收益、额外门禁。
+
 ---
 
 ## 1. 智能 pre-commit

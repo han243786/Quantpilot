@@ -21998,6 +21998,10 @@ $recursiveSpeedTokens = @(
     @("leaf_granularity_smart_judge", "leaf granularity smart judge marker"),
     @("tools/evaluate-leaf-granularity.ps1", "leaf granularity judge tool path"),
     @("normalized_split_score", "leaf granularity normalized split score"),
+    @("terminal_leaf_control_v2", "terminal leaf control v2 marker"),
+    @("terminal_leaf_control", "terminal leaf control script output"),
+    @("governance_mode", "terminal leaf governance mode output"),
+    @("standalone_full_governance_allowed", "standalone full governance limiter"),
     @("STOP / WAVE / SPLIT / PRECISION", "terminal leaf decision outputs"),
     @("split_benefit", "leaf scoring split benefit metric"),
     @("governance_cost", "leaf scoring governance cost metric"),
@@ -22016,6 +22020,7 @@ $recursiveStateTokens = @(
     @("GOV-RECURSIVE-COST-CONTROL-01", "recursive cost control protocol upgrade"),
     @("GOV-LEAF-GRANULARITY-SMART-JUDGE-01", "leaf granularity smart judge protocol upgrade"),
     @("GOV-LEAF-GRANULARITY-JUDGE-TOOL-01", "leaf granularity judge tool protocol upgrade"),
+    @("GOV-TERMINAL-LEAF-CONTROL-V2-01", "terminal leaf control v2 protocol upgrade"),
     @("current_parent", "current parent field"),
     @("current_phase", "current phase field"),
     @("closed_children", "closed children field"),
@@ -22025,6 +22030,7 @@ $recursiveStateTokens = @(
     @("leaf_granularity_smart_judge", "leaf granularity smart judge state marker"),
     @("leaf_granularity_judge_tool", "leaf granularity judge tool state marker"),
     @("leaf_granularity_control", "leaf granularity control state block"),
+    @("terminal_leaf_control_v2", "terminal leaf control v2 state block"),
     @("forbidden_carryover_prompts", "forbidden carryover prompts field"),
     @("ai_must_not_propose", "AI release transition guard field")
 )
