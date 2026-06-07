@@ -1437,3 +1437,4 @@
 | v4.16.0 / BE-002AS-01 | Added: `test_harness` baseline plan |
 | v4.16.0 / BE-002AS-02 | Added: `test_harness` actual extraction complete |
 | v4.16.0 / BE-002AS-03 | Added: `test_harness` single leaf closeout stops split |
+| v4.16.0 / BE-002AT-01 | Added: `core_ir_evaluator` parent closeout |
