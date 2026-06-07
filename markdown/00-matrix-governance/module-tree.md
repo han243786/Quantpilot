@@ -8770,3 +8770,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.fill_engine.test_harness extracted: true`; `qrpc_runtime/src/fill_engine/test_harness.rs` now owns local fill-engine tests and fixtures while production orchestration, public portfolio mutation, and closed helper children remain parent-owned or outside scope.
 **Latest state supplement (BE-002BM-02)**: `root.contracts.runtime_support.fill_engine.test_harness` single leaf closeout complete; next step: BE-002BN-01 parent_closeout.
 `root.contracts.runtime_support.fill_engine.test_harness stop_split: true`; terminal leaf control score is 36 with `governance_mode=stop_split`, so the test-only harness remains one terminal child. All planned `fill_engine` children are now closed.
+**Latest state supplement (BE-002BN-01)**: `root.contracts.runtime_support.fill_engine` parent closeout complete; next step: BE-002BO-01 runtime_support parent_residual_judgment.
+`root.contracts.runtime_support.fill_engine parent_closeout: true`; event projection, accounting, fill-report helpers, and test harness are closed. The remaining parent is a compact lifecycle/public portfolio-mutation owner.
