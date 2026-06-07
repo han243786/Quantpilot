@@ -1784,3 +1784,4 @@
 | v4.16.0 / BE-002AK-02 | `v4.16.0/1421-root.contracts.runtime_support.core_ir_evaluator.classic_indicator_wave.extract_closeout.md` | Added: `classic_indicator_wave` actual extraction complete |
 | v4.16.0 / BE-002AK-03 | `v4.16.0/1422-root.contracts.runtime_support.core_ir_evaluator.classic_indicator_wave.single_leaf_closeout.md` | Added: `classic_indicator_wave` single leaf closeout stops split |
 | v4.16.0 / BE-002AL-01 | `v4.16.0/1423-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.advanced_indicator_wave.md` | Added: `core_ir_evaluator` parent residual judgment selects `advanced_indicator_wave` |
+| v4.16.0 / BE-002AM-01 | `v4.16.0/1424-root.contracts.runtime_support.core_ir_evaluator.advanced_indicator_wave.baseline_plan.md` | Added: `advanced_indicator_wave` baseline plan |
