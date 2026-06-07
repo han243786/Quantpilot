@@ -5306,3 +5306,5 @@ Recursive boundary supplement: BE-002CP-01 `unified_timeline` baseline frozen; n
 Recursive boundary supplement: BE-002CQ-01 `unified_timeline` actual extraction complete; next step: BE-002CQ-02 single_leaf_closeout.
 - `qrpc_runtime/src/sandbox/unified_timeline.rs` - Runtime sandbox unified timeline child
 - `markdown/06-milestones/v4.16.0/1500-root.contracts.runtime_support.sandbox_replay_timeline.unified_timeline.extract_closeout.md` - v4.16.0 BE-002CQ-01 unified_timeline extract closeout
+Recursive boundary supplement: BE-002CQ-02 `unified_timeline` single leaf closeout complete; next step: BE-002CR-01 sandbox_replay_timeline parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1501-root.contracts.runtime_support.sandbox_replay_timeline.unified_timeline.single_leaf_closeout.md` - v4.16.0 BE-002CQ-02 unified_timeline single leaf closeout
