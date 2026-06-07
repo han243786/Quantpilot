@@ -1805,3 +1805,4 @@
 | v4.16.0 / BE-002AX-01 | `v4.16.0/1442-root.contracts.runtime_support.execution_module.test_harness.baseline_plan.md` | Added: `execution_module.test_harness` baseline plan |
 | v4.16.0 / BE-002AX-02 | `v4.16.0/1443-root.contracts.runtime_support.execution_module.test_harness.extract_closeout.md` | Added: `execution_module.test_harness` actual extraction complete |
 | v4.16.0 / BE-002AX-03 | `v4.16.0/1444-root.contracts.runtime_support.execution_module.test_harness.single_leaf_closeout.md` | Added: `execution_module.test_harness` single leaf closeout stops split |
+| v4.16.0 / BE-002AY-01 | `v4.16.0/1445-root.contracts.runtime_support.execution_module.parent_residual_judgment.close_parent.md` | Added: `execution_module` parent closeout |

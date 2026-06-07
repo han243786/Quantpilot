@@ -1444,3 +1444,4 @@
 | v4.16.0 / BE-002AX-01 | Added: `execution_module.test_harness` baseline plan |
 | v4.16.0 / BE-002AX-02 | Added: `execution_module.test_harness` actual extraction complete |
 | v4.16.0 / BE-002AX-03 | Added: `execution_module.test_harness` single leaf closeout stops split |
+| v4.16.0 / BE-002AY-01 | Added: `execution_module` parent closeout |
