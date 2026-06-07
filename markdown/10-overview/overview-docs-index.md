@@ -1392,3 +1392,4 @@
 | v4.16.0 / BE-001ZQ-03 | Added: `data_module.test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-001ZR-01 | Added: `data_module` parent closeout |
 | v4.16.0 / BE-001ZS-01 | Added: `runtime_support` parent residual judgment selects `intent_module` |
+| v4.16.0 / BE-001ZT-01 | Added: `runtime_support.intent_module` baseline plan with terminal STOP decision |
