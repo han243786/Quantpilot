@@ -1534,3 +1534,4 @@ Latest recursive supplement: BE-002AX-01 froze `execution_module.test_harness` b
 Latest recursive supplement: BE-002AX-02 extracted `execution_module.test_harness`; local execution-module tests now live in `qrpc_runtime/src/execution_module/test_harness.rs`.
 Latest recursive supplement: BE-002AX-03 closed `execution_module.test_harness` with `stop_split: true`; next recursive step returns to `execution_module` parent closeout judgment.
 Latest recursive supplement: BE-002AY-01 closed `execution_module` as a parent; the next runtime-support residual candidate is `fill_engine`.
+Latest recursive supplement: BE-002AZ-01 selected `runtime_support.fill_engine`; next baseline freezes fill lifecycle, event projection, reservation/portfolio accounting, fill report helpers, and tests.
