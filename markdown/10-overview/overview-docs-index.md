@@ -1467,3 +1467,4 @@
 | v4.16.0 / BE-002BO-01 | Added: `runtime_support` parent residual judgment selects `risk_support` |
 | v4.16.0 / BE-002BP-01 | Added: `risk_support` baseline plan with limited same-parent wave queue |
 | v4.16.0 / BE-002BQ-01 | Added: `risk_support` parent residual judgment selects `event_payload_projection` |
+| v4.16.0 / BE-002BR-01 | Added: `event_payload_projection` baseline plan |

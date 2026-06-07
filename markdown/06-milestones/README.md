@@ -1828,3 +1828,4 @@
 | v4.16.0 / BE-002BO-01 | `v4.16.0/1465-root.contracts.runtime_support.parent_residual_judgment.risk_support.md` | Added: `runtime_support` parent residual judgment selects `risk_support` |
 | v4.16.0 / BE-002BP-01 | `v4.16.0/1466-root.contracts.runtime_support.risk_support.baseline_plan.md` | Added: `risk_support` baseline plan with limited same-parent wave queue |
 | v4.16.0 / BE-002BQ-01 | `v4.16.0/1467-root.contracts.runtime_support.risk_support.parent_residual_judgment.event_payload_projection.md` | Added: `risk_support` parent residual judgment selects `event_payload_projection` |
+| v4.16.0 / BE-002BR-01 | `v4.16.0/1468-root.contracts.runtime_support.risk_support.event_payload_projection.baseline_plan.md` | Added: `event_payload_projection` baseline plan |
