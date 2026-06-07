@@ -1801,3 +1801,4 @@
 | v4.16.0 / BE-002AT-01 | `v4.16.0/1438-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.close_parent.md` | Added: `core_ir_evaluator` parent closeout |
 | v4.16.0 / BE-002AU-01 | `v4.16.0/1439-root.contracts.runtime_support.parent_residual_judgment.execution_module.md` | Added: `runtime_support` parent residual judgment selects `execution_module` |
 | v4.16.0 / BE-002AV-01 | `v4.16.0/1440-root.contracts.runtime_support.execution_module.baseline_plan.md` | Added: `execution_module` baseline plan with test-harness-only child queue |
+| v4.16.0 / BE-002AW-01 | `v4.16.0/1441-root.contracts.runtime_support.execution_module.parent_residual_judgment.test_harness.md` | Added: `execution_module` parent residual judgment selects `test_harness` |

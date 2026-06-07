@@ -1529,3 +1529,4 @@ Latest recursive supplement: BE-002AS-03 closed `core_ir_evaluator.test_harness`
 Latest recursive supplement: BE-002AT-01 closed `core_ir_evaluator` as a parent; the next runtime-support residual candidate is `execution_module`.
 Latest recursive supplement: BE-002AU-01 selected `runtime_support.execution_module`; next baseline freezes execution provider facade, order planning, payload semantics, market/portfolio helpers, and tests.
 Latest recursive supplement: BE-002AV-01 froze `execution_module` baseline; only the local test harness is opened as a child while production provider/planning/helper ownership remains parent-owned.
+Latest recursive supplement: BE-002AW-01 selected `execution_module.test_harness`; next baseline should move only local execution-module tests and fixtures.
