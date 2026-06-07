@@ -1525,3 +1525,4 @@ Latest recursive supplement: BE-002AQ-02 closed `core_ir_evaluator.shared_lookup
 Latest recursive supplement: BE-002AR-01 selected `core_ir_evaluator.test_harness`; next baseline should move only local evaluator tests while production registry, helpers, and evaluator children remain parent-owned.
 Latest recursive supplement: BE-002AS-01 froze `core_ir_evaluator.test_harness` baseline; next movement may add a test-only child file and move only local evaluator tests and fixtures.
 Latest recursive supplement: BE-002AS-02 extracted `core_ir_evaluator.test_harness`; local evaluator tests now live in `qrpc_runtime/src/core_ir_evaluator/test_harness.rs`.
+Latest recursive supplement: BE-002AS-03 closed `core_ir_evaluator.test_harness` with `stop_split: true`; next recursive step returns to `core_ir_evaluator` parent closeout judgment.

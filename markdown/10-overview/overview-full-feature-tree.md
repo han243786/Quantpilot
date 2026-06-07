@@ -5165,3 +5165,5 @@ Recursive boundary supplement: BE-002AS-01 `test_harness` baseline frozen; next 
 Recursive boundary supplement: BE-002AS-02 `test_harness` actual extraction complete; next step: BE-002AS-03 single_leaf_closeout.
 - `qrpc_runtime/src/core_ir_evaluator/test_harness.rs` - Runtime Core IR evaluator local test harness child
 - `markdown/06-milestones/v4.16.0/1436-root.contracts.runtime_support.core_ir_evaluator.test_harness.extract_closeout.md` - v4.16.0 BE-002AS-02 test_harness extract closeout
+Recursive boundary supplement: BE-002AS-03 `test_harness` single leaf closeout complete; next step: BE-002AT-01 core_ir_evaluator parent_closeout.
+- `markdown/06-milestones/v4.16.0/1437-root.contracts.runtime_support.core_ir_evaluator.test_harness.single_leaf_closeout.md` - v4.16.0 BE-002AS-03 test_harness single leaf closeout
