@@ -1452,3 +1452,4 @@
 | v4.16.0 / BE-002BD-01 | Added: `event_projection_wave` actual extraction complete |
 | v4.16.0 / BE-002BD-02 | Added: `event_projection_wave` single leaf closeout stops split |
 | v4.16.0 / BE-002BE-01 | Added: `fill_engine` parent residual judgment selects `portfolio_reservation_accounting` |
+| v4.16.0 / BE-002BF-01 | Added: `portfolio_reservation_accounting` baseline plan |

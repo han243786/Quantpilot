@@ -5199,3 +5199,5 @@ Recursive boundary supplement: BE-002BD-02 `event_projection_wave` single leaf c
 - `markdown/06-milestones/v4.16.0/1451-root.contracts.runtime_support.fill_engine.event_projection_wave.single_leaf_closeout.md` - v4.16.0 BE-002BD-02 event_projection_wave single leaf closeout
 Recursive boundary supplement: BE-002BE-01 `fill_engine` parent residual judgment selected `portfolio_reservation_accounting`; next step: BE-002BF-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1452-root.contracts.runtime_support.fill_engine.parent_residual_judgment.portfolio_reservation_accounting.md` - v4.16.0 BE-002BE-01 fill_engine parent residual judgment selects portfolio_reservation_accounting
+Recursive boundary supplement: BE-002BF-01 `portfolio_reservation_accounting` baseline frozen; next step: BE-002BG-01 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1453-root.contracts.runtime_support.fill_engine.portfolio_reservation_accounting.baseline_plan.md` - v4.16.0 BE-002BF-01 portfolio_reservation_accounting baseline plan
