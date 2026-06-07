@@ -5273,3 +5273,5 @@ Recursive boundary supplement: BE-002CD-01 `risk_support.exposure_math_helpers` 
 Recursive boundary supplement: BE-002CE-01 `risk_support.exposure_math_helpers` actual extraction complete; next step: BE-002CE-02 single_leaf_closeout.
 - `qrpc_runtime/src/risk_checker/exposure_math_helpers.rs` - Runtime risk checker shared exposure and equity math helper child
 - `markdown/06-milestones/v4.16.0/1485-root.contracts.runtime_support.risk_support.exposure_math_helpers.extract_closeout.md` - v4.16.0 BE-002CE-01 exposure_math_helpers extract closeout
+Recursive boundary supplement: BE-002CE-02 `risk_support.exposure_math_helpers` single leaf closeout complete; next step: BE-002CF-01 risk_support parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1486-root.contracts.runtime_support.risk_support.exposure_math_helpers.single_leaf_closeout.md` - v4.16.0 BE-002CE-02 exposure_math_helpers single leaf closeout
