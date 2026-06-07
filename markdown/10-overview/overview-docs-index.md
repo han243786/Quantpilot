@@ -1524,3 +1524,4 @@
 | v4.16.0 / BE-002DH-01 | Added: `v4_runtime_support` baseline plan |
 | v4.16.0 / BE-002DI-01 | Added: `v4_runtime_support` parent residual judgment selects `type_surface` |
 | v4.16.0 / BE-002DJ-01 | Added: `v4_runtime_support.type_surface` baseline plan |
+| v4.16.0 / BE-002DK-01 | Added: `v4_runtime_support.type_surface` actual extraction complete |

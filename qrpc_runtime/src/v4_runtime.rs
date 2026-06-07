@@ -1,3 +1,7 @@
+mod type_surface;
+
+pub use self::type_surface::*;
+
 include!("v4_runtime_types.rs");
 
 impl V4PaperSimulatedRuntime {

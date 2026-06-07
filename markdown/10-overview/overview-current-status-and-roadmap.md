@@ -1613,3 +1613,4 @@ Latest recursive supplement: BE-002DG-01 selected `runtime_support.v4_runtime_su
 Latest recursive supplement: BE-002DH-01 froze `runtime_support.v4_runtime_support` baseline; terminal leaf control resolves to `WAVE`, and the next step is v4 runtime support parent residual judgment.
 Latest recursive supplement: BE-002DI-01 selected `runtime_support.v4_runtime_support.type_surface`; next baseline should freeze v4 DTOs, constants, alias, and runtime type definition.
 Latest recursive supplement: BE-002DJ-01 froze `runtime_support.v4_runtime_support.type_surface` baseline; next movement may extract only the v4 type surface and preserve runtime behavior.
+Latest recursive supplement: BE-002DK-01 extracted `runtime_support.v4_runtime_support.type_surface`; `qrpc_runtime/src/v4_runtime/type_surface.rs` now owns the public v4 type surface.

@@ -5358,3 +5358,6 @@ Recursive boundary supplement: BE-002DI-01 `v4_runtime_support` parent residual 
 - `markdown/06-milestones/v4.16.0/1523-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.type_surface.md` - v4.16.0 BE-002DI-01 v4_runtime_support parent residual judgment selects type_surface
 Recursive boundary supplement: BE-002DJ-01 `v4_runtime_support.type_surface` baseline frozen; next step: BE-002DK-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1524-root.contracts.runtime_support.v4_runtime_support.type_surface.baseline_plan.md` - v4.16.0 BE-002DJ-01 v4_runtime_support type_surface baseline plan
+Recursive boundary supplement: BE-002DK-01 `v4_runtime_support.type_surface` actual extraction complete; next step: BE-002DK-02 single_leaf_closeout.
+- `qrpc_runtime/src/v4_runtime/type_surface.rs` - Runtime v4 public type surface child
+- `markdown/06-milestones/v4.16.0/1525-root.contracts.runtime_support.v4_runtime_support.type_surface.extract_closeout.md` - v4.16.0 BE-002DK-01 v4_runtime_support type_surface extract closeout
