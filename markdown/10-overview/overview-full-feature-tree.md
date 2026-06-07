@@ -5356,3 +5356,5 @@ Recursive boundary supplement: BE-002DH-01 `v4_runtime_support` baseline frozen;
 - `markdown/06-milestones/v4.16.0/1522-root.contracts.runtime_support.v4_runtime_support.baseline_plan.md` - v4.16.0 BE-002DH-01 v4_runtime_support baseline plan
 Recursive boundary supplement: BE-002DI-01 `v4_runtime_support` parent residual judgment selected `type_surface`; next step: BE-002DJ-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1523-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.type_surface.md` - v4.16.0 BE-002DI-01 v4_runtime_support parent residual judgment selects type_surface
+Recursive boundary supplement: BE-002DJ-01 `v4_runtime_support.type_surface` baseline frozen; next step: BE-002DK-01 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1524-root.contracts.runtime_support.v4_runtime_support.type_surface.baseline_plan.md` - v4.16.0 BE-002DJ-01 v4_runtime_support type_surface baseline plan
