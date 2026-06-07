@@ -5127,3 +5127,5 @@ Recursive boundary supplement: BE-002AI-01 `core_ir_evaluator` baseline frozen; 
 - `markdown/06-milestones/v4.16.0/1418-root.contracts.runtime_support.core_ir_evaluator.baseline_plan.md` - v4.16.0 BE-002AI-01 core_ir_evaluator baseline plan
 Recursive boundary supplement: BE-002AJ-01 `core_ir_evaluator` parent residual judgment selected `classic_indicator_wave`; next step: BE-002AK-01 classic_indicator_wave baseline_plan.
 - `markdown/06-milestones/v4.16.0/1419-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.classic_indicator_wave.md` - v4.16.0 BE-002AJ-01 core_ir_evaluator parent residual judgment selects classic_indicator_wave
+Recursive boundary supplement: BE-002AK-01 `classic_indicator_wave` baseline frozen; next step: BE-002AK-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1420-root.contracts.runtime_support.core_ir_evaluator.classic_indicator_wave.baseline_plan.md` - v4.16.0 BE-002AK-01 classic_indicator_wave baseline plan

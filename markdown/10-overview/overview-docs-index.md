@@ -1419,3 +1419,4 @@
 | v4.16.0 / BE-002AH-01 | Added: `runtime_support` parent residual judgment selects `core_ir_evaluator` |
 | v4.16.0 / BE-002AI-01 | Added: `core_ir_evaluator` baseline plan with same-parent wave child queue |
 | v4.16.0 / BE-002AJ-01 | Added: `core_ir_evaluator` parent residual judgment selects `classic_indicator_wave` |
+| v4.16.0 / BE-002AK-01 | Added: `classic_indicator_wave` baseline plan |
