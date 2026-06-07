@@ -1425,3 +1425,4 @@
 | v4.16.0 / BE-002AL-01 | Added: `core_ir_evaluator` parent residual judgment selects `advanced_indicator_wave` |
 | v4.16.0 / BE-002AM-01 | Added: `advanced_indicator_wave` baseline plan |
 | v4.16.0 / BE-002AM-02 | Added: `advanced_indicator_wave` actual extraction complete |
+| v4.16.0 / BE-002AM-03 | Added: `advanced_indicator_wave` single leaf closeout stops split |
