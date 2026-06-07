@@ -5077,3 +5077,5 @@ Recursive boundary supplement: BE-001ZU-01 `runtime_support` parent residual jud
 - `markdown/06-milestones/v4.16.0/1395-root.contracts.runtime_support.parent_residual_judgment.agent_module.md` - v4.16.0 BE-001ZU-01 runtime_support parent residual judgment selects agent_module
 Recursive boundary supplement: BE-001ZV-01 `runtime_support.agent_module` baseline frozen with policy-family child queue; next step: BE-001ZW-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1396-root.contracts.runtime_support.agent_module.baseline_plan.md` - v4.16.0 BE-001ZV-01 runtime_support.agent_module baseline plan
+Recursive boundary supplement: BE-001ZW-01 `agent_module` parent residual judgment selected `weighted_signal_decisions`; next step: BE-001ZX-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1397-root.contracts.runtime_support.agent_module.parent_residual_judgment.weighted_signal_decisions.md` - v4.16.0 BE-001ZW-01 agent_module parent residual judgment selects weighted_signal_decisions

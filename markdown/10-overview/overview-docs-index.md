@@ -1396,3 +1396,4 @@
 | v4.16.0 / BE-001ZT-02 | Added: `runtime_support.intent_module` single leaf closeout stops split |
 | v4.16.0 / BE-001ZU-01 | Added: `runtime_support` parent residual judgment selects `agent_module` |
 | v4.16.0 / BE-001ZV-01 | Added: `runtime_support.agent_module` baseline plan with policy-family child queue |
+| v4.16.0 / BE-001ZW-01 | Added: `agent_module` parent residual judgment selects `weighted_signal_decisions` |
