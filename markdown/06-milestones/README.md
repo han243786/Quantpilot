@@ -1880,3 +1880,4 @@
 | v4.16.0 / BE-002DD-01 | `v4.16.0/1517-root.contracts.runtime_support.sandbox_replay_timeline.test_harness.baseline_plan.md` | Added: `sandbox_replay_timeline.test_harness` baseline plan |
 | v4.16.0 / BE-002DE-01 | `v4.16.0/1518-root.contracts.runtime_support.sandbox_replay_timeline.test_harness.extract_closeout.md` | Added: `sandbox_replay_timeline.test_harness` actual extraction complete |
 | v4.16.0 / BE-002DE-02 | `v4.16.0/1519-root.contracts.runtime_support.sandbox_replay_timeline.test_harness.single_leaf_closeout.md` | Added: `sandbox_replay_timeline.test_harness` single leaf closeout stops split |
+| v4.16.0 / BE-002DF-01 | `v4.16.0/1520-root.contracts.runtime_support.sandbox_replay_timeline.parent_closeout.md` | Added: `sandbox_replay_timeline` parent closeout |
