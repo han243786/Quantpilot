@@ -5031,3 +5031,5 @@ Recursive boundary supplement: BE-001ZI-03 `data_module.normalization` single le
 - `markdown/06-milestones/v4.16.0/1374-root.contracts.runtime_support.data_module.normalization.single_leaf_closeout.md` - v4.16.0 BE-001ZI-03 data_module.normalization single leaf closeout
 Recursive boundary supplement: BE-001ZJ-01 `data_module` parent residual judgment selected `mock_data_generation`; next step: BE-001ZK-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1375-root.contracts.runtime_support.data_module.parent_residual_judgment.mock_data_generation.md` - v4.16.0 BE-001ZJ-01 data_module parent residual judgment selects mock_data_generation
+Recursive boundary supplement: BE-001ZK-01 `data_module.mock_data_generation` baseline_frozen; next step: BE-001ZK-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1376-root.contracts.runtime_support.data_module.mock_data_generation.baseline_plan.md` - v4.16.0 BE-001ZK-01 data_module.mock_data_generation baseline plan

@@ -1375,3 +1375,4 @@
 | v4.16.0 / GOV-TERMINAL-LEAF-CONTROL-V2-01 | Added: terminal leaf control v2, including `terminal_leaf_control`, `governance_mode`, and standalone full governance limits |
 | v4.16.0 / BE-001ZI-03 | Added: `data_module.normalization` single leaf closeout stops split |
 | v4.16.0 / BE-001ZJ-01 | Added: `data_module` parent residual judgment selects `mock_data_generation` |
+| v4.16.0 / BE-001ZK-01 | Added: `data_module.mock_data_generation` baseline plan |
