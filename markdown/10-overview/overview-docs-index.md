@@ -1399,3 +1399,4 @@
 | v4.16.0 / BE-001ZW-01 | Added: `agent_module` parent residual judgment selects `weighted_signal_decisions` |
 | v4.16.0 / BE-001ZX-01 | Added: `agent_module.weighted_signal_decisions` baseline plan |
 | v4.16.0 / BE-001ZX-02 | Added: `agent_module.weighted_signal_decisions` actual extraction complete |
+| v4.16.0 / BE-001ZX-03 | Added: `agent_module.weighted_signal_decisions` single leaf closeout stops split |

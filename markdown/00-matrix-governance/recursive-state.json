@@ -9,11 +9,11 @@
     "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01",
     "GOV-TERMINAL-LEAF-CONTROL-V2-01"
   ],
-  "last_committed_batch": "BE-001ZX-01",
-  "last_committed_sha": "16caeae6",
-  "current_parent": "root.contracts.runtime_support.agent_module.weighted_signal_decisions",
-  "current_step": "BE-001ZX-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001ZX-02",
+  "last_committed_sha": "6a1486ae",
+  "current_parent": "root.contracts.runtime_support.agent_module",
+  "current_step": "BE-001ZY-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -217,7 +217,8 @@
     "contracts.runtime_support.data_module.http_transport",
     "contracts.runtime_support.data_module.test_harness",
     "contracts.runtime_support.data_module",
-    "contracts.runtime_support.intent_module"
+    "contracts.runtime_support.intent_module",
+    "contracts.runtime_support.agent_module.weighted_signal_decisions"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -225,7 +226,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.agent_module.weighted_signal_decisions",
+  "next_recommended_child": "root.contracts.runtime_support.agent_module.portfolio_rebalance",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

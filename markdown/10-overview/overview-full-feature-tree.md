@@ -5084,3 +5084,5 @@ Recursive boundary supplement: BE-001ZX-01 `agent_module.weighted_signal_decisio
 Recursive boundary supplement: BE-001ZX-02 `agent_module.weighted_signal_decisions` actual extraction complete; next step: BE-001ZX-03 single_leaf_closeout.
 - `qrpc_runtime/src/agent_module/weighted_signal_decisions.rs` - Runtime agent weighted signal decision child
 - `markdown/06-milestones/v4.16.0/1399-root.contracts.runtime_support.agent_module.weighted_signal_decisions.extract_closeout.md` - v4.16.0 BE-001ZX-02 agent_module.weighted_signal_decisions extract closeout
+Recursive boundary supplement: BE-001ZX-03 `agent_module.weighted_signal_decisions` single leaf closeout complete; next step: BE-001ZY-01 agent_module parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1400-root.contracts.runtime_support.agent_module.weighted_signal_decisions.single_leaf_closeout.md` - v4.16.0 BE-001ZX-03 agent_module.weighted_signal_decisions single leaf closeout
