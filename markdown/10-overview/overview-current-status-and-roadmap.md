@@ -1471,3 +1471,4 @@ Latest recursive supplement: BE-001ZL-01 selected `data_module.historical_cache`
 Latest recursive supplement: BE-001ZM-01 froze the `data_module.historical_cache` baseline; next movement may add the planned historical cache child module and move only the historical cache surface.
 Latest recursive supplement: BE-001ZM-02 extracted `data_module.historical_cache`; `qrpc_runtime/src/data_module/historical_cache.rs` now owns historical replay cache load, persistence, stale fallback, and historical kline fetch orchestration.
 Latest recursive supplement: BE-001ZM-03 closed `data_module.historical_cache` with `stop_split: true`; next recursive step returns to `data_module` parent residual judgment with expected candidate `http_transport`.
+Latest recursive supplement: BE-001ZN-01 selected `data_module.http_transport`; next baseline covers ping probing, OKX live fetch, JSON request retry/fallback, Tokio blocking bridge, and Windows PowerShell fallback.
