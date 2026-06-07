@@ -5323,3 +5323,5 @@ Recursive boundary supplement: BE-002CV-02 `sandbox_mode_surface` single leaf cl
 - `markdown/06-milestones/v4.16.0/1507-root.contracts.runtime_support.sandbox_replay_timeline.sandbox_mode_surface.single_leaf_closeout.md` - v4.16.0 BE-002CV-02 sandbox_mode_surface single leaf closeout
 Recursive boundary supplement: BE-002CW-01 `sandbox_replay_timeline` parent residual judgment selected `realtime_sandbox`; next step: BE-002CX-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1508-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.realtime_sandbox.md` - v4.16.0 BE-002CW-01 sandbox_replay_timeline parent residual judgment selects realtime_sandbox
+Recursive boundary supplement: BE-002CX-01 `realtime_sandbox` baseline frozen; next step: BE-002CY-01 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1509-root.contracts.runtime_support.sandbox_replay_timeline.realtime_sandbox.baseline_plan.md` - v4.16.0 BE-002CX-01 realtime_sandbox baseline plan

@@ -1597,3 +1597,4 @@ Latest recursive supplement: BE-002CU-01 froze `sandbox_replay_timeline.sandbox_
 Latest recursive supplement: BE-002CV-01 extracted `sandbox_replay_timeline.sandbox_mode_surface`; `qrpc_runtime/src/sandbox/mode_surface.rs` now owns public sandbox mode/control constants, DTOs, and trait.
 Latest recursive supplement: BE-002CV-02 closed `sandbox_replay_timeline.sandbox_mode_surface` with `stop_split: true`; next recursive step returns to sandbox parent residual judgment with expected candidate `realtime_sandbox`.
 Latest recursive supplement: BE-002CW-01 selected `sandbox_replay_timeline.realtime_sandbox`; next baseline should freeze `RealTimeSandbox` movement before code changes.
+Latest recursive supplement: BE-002CX-01 froze `sandbox_replay_timeline.realtime_sandbox` baseline; next movement may add a realtime sandbox child and keep fast-backtest parent-owned.
