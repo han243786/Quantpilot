@@ -5045,3 +5045,5 @@ Recursive boundary supplement: BE-001ZM-01 `data_module.historical_cache` baseli
 Recursive boundary supplement: BE-001ZM-02 `data_module.historical_cache` actual extraction complete; next step: BE-001ZM-03 single_leaf_closeout.
 - `qrpc_runtime/src/data_module/historical_cache.rs` - runtime data module historical replay cache and historical kline fetch orchestration
 - `markdown/06-milestones/v4.16.0/1381-root.contracts.runtime_support.data_module.historical_cache.extract_closeout.md` - v4.16.0 BE-001ZM-02 data_module.historical_cache actual extraction complete
+Recursive boundary supplement: BE-001ZM-03 `data_module.historical_cache` single leaf closeout stops split; next step: BE-001ZN-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1382-root.contracts.runtime_support.data_module.historical_cache.single_leaf_closeout.md` - v4.16.0 BE-001ZM-03 data_module.historical_cache single leaf closeout

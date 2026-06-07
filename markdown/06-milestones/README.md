@@ -1742,3 +1742,4 @@
 | v4.16.0 / BE-001ZL-01 | `v4.16.0/1379-root.contracts.runtime_support.data_module.parent_residual_judgment.historical_cache.md` | Added: `data_module` parent residual judgment selects `historical_cache` |
 | v4.16.0 / BE-001ZM-01 | `v4.16.0/1380-root.contracts.runtime_support.data_module.historical_cache.baseline_plan.md` | Added: `data_module.historical_cache` baseline plan |
 | v4.16.0 / BE-001ZM-02 | `v4.16.0/1381-root.contracts.runtime_support.data_module.historical_cache.extract_closeout.md` | Added: `data_module.historical_cache` actual extraction complete |
+| v4.16.0 / BE-001ZM-03 | `v4.16.0/1382-root.contracts.runtime_support.data_module.historical_cache.single_leaf_closeout.md` | Added: `data_module.historical_cache` single leaf closeout stops split |

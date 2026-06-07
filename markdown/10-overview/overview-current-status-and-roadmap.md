@@ -1470,3 +1470,4 @@ Latest recursive supplement: BE-001ZK-03 closed `data_module.mock_data_generatio
 Latest recursive supplement: BE-001ZL-01 selected `data_module.historical_cache`; next baseline covers historical cache path safety, fresh/stale load, persistence, historical raw kline fetch, and backtest historical bars.
 Latest recursive supplement: BE-001ZM-01 froze the `data_module.historical_cache` baseline; next movement may add the planned historical cache child module and move only the historical cache surface.
 Latest recursive supplement: BE-001ZM-02 extracted `data_module.historical_cache`; `qrpc_runtime/src/data_module/historical_cache.rs` now owns historical replay cache load, persistence, stale fallback, and historical kline fetch orchestration.
+Latest recursive supplement: BE-001ZM-03 closed `data_module.historical_cache` with `stop_split: true`; next recursive step returns to `data_module` parent residual judgment with expected candidate `http_transport`.
