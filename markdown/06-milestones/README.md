@@ -1765,3 +1765,4 @@
 | v4.16.0 / BE-001ZZ-01 | `v4.16.0/1402-root.contracts.runtime_support.agent_module.portfolio_rebalance.baseline_plan.md` | Added: `agent_module.portfolio_rebalance` baseline plan |
 | v4.16.0 / BE-001ZZ-02 | `v4.16.0/1403-root.contracts.runtime_support.agent_module.portfolio_rebalance.extract_closeout.md` | Added: `agent_module.portfolio_rebalance` actual extraction complete |
 | v4.16.0 / BE-001ZZ-03 | `v4.16.0/1404-root.contracts.runtime_support.agent_module.portfolio_rebalance.single_leaf_closeout.md` | Added: `agent_module.portfolio_rebalance` single leaf closeout stops split |
+| v4.16.0 / BE-002AA-01 | `v4.16.0/1405-root.contracts.runtime_support.agent_module.parent_residual_judgment.cross_venue_arbitrage.md` | Added: `agent_module` parent residual judgment selects `cross_venue_arbitrage` |

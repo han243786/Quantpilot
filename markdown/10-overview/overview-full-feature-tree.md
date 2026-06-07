@@ -5095,3 +5095,5 @@ Recursive boundary supplement: BE-001ZZ-02 `agent_module.portfolio_rebalance` ac
 - `markdown/06-milestones/v4.16.0/1403-root.contracts.runtime_support.agent_module.portfolio_rebalance.extract_closeout.md` - v4.16.0 BE-001ZZ-02 agent_module.portfolio_rebalance extract closeout
 Recursive boundary supplement: BE-001ZZ-03 `agent_module.portfolio_rebalance` single leaf closeout complete; next step: BE-002AA-01 agent_module parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1404-root.contracts.runtime_support.agent_module.portfolio_rebalance.single_leaf_closeout.md` - v4.16.0 BE-001ZZ-03 agent_module.portfolio_rebalance single leaf closeout
+Recursive boundary supplement: BE-002AA-01 `agent_module` parent residual judgment selected `cross_venue_arbitrage`; next step: BE-002AB-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1405-root.contracts.runtime_support.agent_module.parent_residual_judgment.cross_venue_arbitrage.md` - v4.16.0 BE-002AA-01 agent_module parent residual judgment selects cross_venue_arbitrage
