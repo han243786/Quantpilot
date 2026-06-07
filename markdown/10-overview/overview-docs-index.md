@@ -1385,3 +1385,4 @@
 | v4.16.0 / BE-001ZN-01 | Added: `data_module` parent residual judgment selects `http_transport` |
 | v4.16.0 / BE-001ZO-01 | Added: `data_module.http_transport` baseline plan |
 | v4.16.0 / BE-001ZO-02 | Added: `data_module.http_transport` actual extraction complete |
+| v4.16.0 / BE-001ZO-03 | Added: `data_module.http_transport` single leaf closeout stops split |
