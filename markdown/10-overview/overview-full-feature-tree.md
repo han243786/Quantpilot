@@ -5152,3 +5152,5 @@ Recursive boundary supplement: BE-002AO-02 `spread_custom_expression_wave` actua
 - `markdown/06-milestones/v4.16.0/1429-root.contracts.runtime_support.core_ir_evaluator.spread_custom_expression_wave.extract_closeout.md` - v4.16.0 BE-002AO-02 spread_custom_expression_wave extract closeout
 Recursive boundary supplement: BE-002AO-03 `spread_custom_expression_wave` single leaf closeout complete; next step: BE-002AP-01 core_ir_evaluator parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1430-root.contracts.runtime_support.core_ir_evaluator.spread_custom_expression_wave.single_leaf_closeout.md` - v4.16.0 BE-002AO-03 spread_custom_expression_wave single leaf closeout
+Recursive boundary supplement: BE-002AP-01 `core_ir_evaluator` parent residual judgment selected `shared_lookup_math_helpers`; next step: BE-002AQ-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1431-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.shared_lookup_math_helpers.md` - v4.16.0 BE-002AP-01 core_ir_evaluator parent residual judgment selects shared_lookup_math_helpers
