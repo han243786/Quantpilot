@@ -1504,3 +1504,4 @@
 | v4.16.0 / BE-002CR-01 | Added: `sandbox_replay_timeline` parent residual judgment selects `replay_builder` |
 | v4.16.0 / BE-002CS-01 | Added: `replay_builder` baseline closeout stops split |
 | v4.16.0 / BE-002CT-01 | Added: `sandbox_replay_timeline` parent residual judgment selects `sandbox_mode_surface` |
+| v4.16.0 / BE-002CU-01 | Added: `sandbox_mode_surface` baseline plan |

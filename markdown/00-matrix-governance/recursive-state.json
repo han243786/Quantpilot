@@ -9,11 +9,11 @@
     "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01",
     "GOV-TERMINAL-LEAF-CONTROL-V2-01"
   ],
-  "last_committed_batch": "BE-002CS-01",
-  "last_committed_sha": "bea96c15",
+  "last_committed_batch": "BE-002CT-01",
+  "last_committed_sha": "1a157430",
   "current_parent": "root.contracts.runtime_support.sandbox_replay_timeline.sandbox_mode_surface",
-  "current_step": "BE-002CU-01",
-  "current_phase": "baseline_plan",
+  "current_step": "BE-002CV-01",
+  "current_phase": "actual_extraction",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -254,7 +254,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.sandbox_replay_timeline.sandbox_mode_surface.baseline_plan",
+  "next_recommended_child": "root.contracts.runtime_support.sandbox_replay_timeline.sandbox_mode_surface.actual_extraction",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
