@@ -1840,3 +1840,4 @@
 | v4.16.0 / BE-002BY-01 | `v4.16.0/1477-root.contracts.runtime_support.risk_support.action_clamp_helpers.extract_closeout.md` | Added: `action_clamp_helpers` actual extraction complete |
 | v4.16.0 / BE-002BY-02 | `v4.16.0/1478-root.contracts.runtime_support.risk_support.action_clamp_helpers.single_leaf_closeout.md` | Added: `action_clamp_helpers` single leaf closeout stops split |
 | v4.16.0 / BE-002BZ-01 | `v4.16.0/1479-root.contracts.runtime_support.risk_support.parent_residual_judgment.portfolio_target_clamp_helpers.md` | Added: `risk_support` parent residual judgment selects `portfolio_target_clamp_helpers` |
+| v4.16.0 / BE-002CA-01 | `v4.16.0/1480-root.contracts.runtime_support.risk_support.portfolio_target_clamp_helpers.baseline_plan.md` | Added: `portfolio_target_clamp_helpers` baseline plan |
