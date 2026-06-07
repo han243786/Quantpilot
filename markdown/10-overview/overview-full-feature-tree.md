@@ -5156,3 +5156,5 @@ Recursive boundary supplement: BE-002AP-01 `core_ir_evaluator` parent residual j
 - `markdown/06-milestones/v4.16.0/1431-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.shared_lookup_math_helpers.md` - v4.16.0 BE-002AP-01 core_ir_evaluator parent residual judgment selects shared_lookup_math_helpers
 Recursive boundary supplement: BE-002AQ-01 `shared_lookup_math_helpers` baseline keeps helper ownership parent-owned; next step: BE-002AQ-02 single_leaf_closeout.
 - `markdown/06-milestones/v4.16.0/1432-root.contracts.runtime_support.core_ir_evaluator.shared_lookup_math_helpers.baseline_plan.md` - v4.16.0 BE-002AQ-01 shared_lookup_math_helpers parent-owned baseline plan
+Recursive boundary supplement: BE-002AQ-02 `shared_lookup_math_helpers` single leaf closeout complete; next step: BE-002AR-01 core_ir_evaluator parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1433-root.contracts.runtime_support.core_ir_evaluator.shared_lookup_math_helpers.single_leaf_closeout.md` - v4.16.0 BE-002AQ-02 shared_lookup_math_helpers single leaf closeout
