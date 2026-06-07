@@ -1504,3 +1504,4 @@ Latest recursive supplement: BE-002AE-01 selected `agent_module.test_harness`; n
 Latest recursive supplement: BE-002AF-01 froze `agent_module.test_harness` baseline; next movement may add a test-only child file and move only the local test module.
 Latest recursive supplement: BE-002AF-02 extracted `agent_module.test_harness`; local fixtures and agent-module tests now live in `qrpc_runtime/src/agent_module/test_harness.rs`.
 Latest recursive supplement: BE-002AF-03 closed `agent_module.test_harness` with `stop_split: true`; next recursive step returns to `agent_module` parent closeout judgment.
+Latest recursive supplement: BE-002AG-01 closed `agent_module` as a parent; weighted signal decisions, portfolio rebalance, cross-venue arbitrage, shared helpers, and test harness are closed, and the next runtime-support residual candidate is `core_ir_evaluator`.
