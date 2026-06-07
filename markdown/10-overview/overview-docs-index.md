@@ -1373,3 +1373,4 @@
 | v4.16.0 / BE-001ZI-01 | Added: `data_module.normalization` baseline plan |
 | v4.16.0 / BE-001ZI-02 | Added: `data_module.normalization` actual extraction complete |
 | v4.16.0 / GOV-TERMINAL-LEAF-CONTROL-V2-01 | Added: terminal leaf control v2, including `terminal_leaf_control`, `governance_mode`, and standalone full governance limits |
+| v4.16.0 / BE-001ZI-03 | Added: `data_module.normalization` single leaf closeout stops split |

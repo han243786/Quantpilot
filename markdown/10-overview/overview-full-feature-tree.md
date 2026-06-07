@@ -5027,3 +5027,5 @@ Recursive boundary supplement: BE-001ZI-02 `data_module.normalization` actual ex
 - `markdown/06-milestones/v4.16.0/1372-root.contracts.runtime_support.data_module.normalization.extract_closeout.md` - v4.16.0 BE-001ZI-02 data_module.normalization actual extraction complete
 Recursive governance supplement: GOV-TERMINAL-LEAF-CONTROL-V2-01 integrates read-only over-splitting findings into terminal leaf control; the judge now emits `terminal_leaf_control.governance_mode` and reserves standalone full governance for `precision_single_leaf`.
 - `markdown/06-milestones/v4.16.0/1373-governance.terminal_leaf_control_v2.md` - v4.16.0 GOV-TERMINAL-LEAF-CONTROL-V2-01 terminal leaf control v2
+Recursive boundary supplement: BE-001ZI-03 `data_module.normalization` single leaf closeout stops split; next step: BE-001ZJ-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1374-root.contracts.runtime_support.data_module.normalization.single_leaf_closeout.md` - v4.16.0 BE-001ZI-03 data_module.normalization single leaf closeout
