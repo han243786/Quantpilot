@@ -5029,3 +5029,5 @@ Recursive governance supplement: GOV-TERMINAL-LEAF-CONTROL-V2-01 integrates read
 - `markdown/06-milestones/v4.16.0/1373-governance.terminal_leaf_control_v2.md` - v4.16.0 GOV-TERMINAL-LEAF-CONTROL-V2-01 terminal leaf control v2
 Recursive boundary supplement: BE-001ZI-03 `data_module.normalization` single leaf closeout stops split; next step: BE-001ZJ-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1374-root.contracts.runtime_support.data_module.normalization.single_leaf_closeout.md` - v4.16.0 BE-001ZI-03 data_module.normalization single leaf closeout
+Recursive boundary supplement: BE-001ZJ-01 `data_module` parent residual judgment selected `mock_data_generation`; next step: BE-001ZK-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1375-root.contracts.runtime_support.data_module.parent_residual_judgment.mock_data_generation.md` - v4.16.0 BE-001ZJ-01 data_module parent residual judgment selects mock_data_generation
