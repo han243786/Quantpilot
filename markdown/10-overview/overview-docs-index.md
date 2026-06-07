@@ -1482,3 +1482,4 @@
 | v4.16.0 / BE-002CA-01 | Added: `portfolio_target_clamp_helpers` baseline plan |
 | v4.16.0 / BE-002CB-01 | Added: `portfolio_target_clamp_helpers` actual extraction complete |
 | v4.16.0 / BE-002CB-02 | Added: `portfolio_target_clamp_helpers` single leaf closeout stops split |
+| v4.16.0 / BE-002CC-01 | Added: `risk_support` parent residual judgment selects `exposure_math_helpers` |

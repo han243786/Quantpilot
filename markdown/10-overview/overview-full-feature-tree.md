@@ -5266,3 +5266,5 @@ Recursive boundary supplement: BE-002CB-01 `risk_support.portfolio_target_clamp_
 - `markdown/06-milestones/v4.16.0/1481-root.contracts.runtime_support.risk_support.portfolio_target_clamp_helpers.extract_closeout.md` - v4.16.0 BE-002CB-01 portfolio_target_clamp_helpers extract closeout
 Recursive boundary supplement: BE-002CB-02 `risk_support.portfolio_target_clamp_helpers` single leaf closeout complete; next step: BE-002CC-01 risk_support parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1482-root.contracts.runtime_support.risk_support.portfolio_target_clamp_helpers.single_leaf_closeout.md` - v4.16.0 BE-002CB-02 portfolio_target_clamp_helpers single leaf closeout
+Recursive boundary supplement: BE-002CC-01 `risk_support` parent residual judgment selected `exposure_math_helpers`; next step: BE-002CD-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1483-root.contracts.runtime_support.risk_support.parent_residual_judgment.exposure_math_helpers.md` - v4.16.0 BE-002CC-01 risk_support parent residual judgment selects exposure_math_helpers
