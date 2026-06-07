@@ -1509,3 +1509,4 @@
 | v4.16.0 / BE-002CV-02 | Added: `sandbox_mode_surface` single leaf closeout stops split |
 | v4.16.0 / BE-002CW-01 | Added: `sandbox_replay_timeline` parent residual judgment selects `realtime_sandbox` |
 | v4.16.0 / BE-002CX-01 | Added: `realtime_sandbox` baseline plan |
+| v4.16.0 / BE-002CY-01 | Added: `realtime_sandbox` actual extraction complete |
