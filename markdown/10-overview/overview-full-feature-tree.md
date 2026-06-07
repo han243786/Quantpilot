@@ -5261,3 +5261,6 @@ Recursive boundary supplement: BE-002BZ-01 `risk_support` parent residual judgme
 - `markdown/06-milestones/v4.16.0/1479-root.contracts.runtime_support.risk_support.parent_residual_judgment.portfolio_target_clamp_helpers.md` - v4.16.0 BE-002BZ-01 risk_support parent residual judgment selects portfolio_target_clamp_helpers
 Recursive boundary supplement: BE-002CA-01 `risk_support.portfolio_target_clamp_helpers` baseline frozen; next step: BE-002CB-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1480-root.contracts.runtime_support.risk_support.portfolio_target_clamp_helpers.baseline_plan.md` - v4.16.0 BE-002CA-01 portfolio_target_clamp_helpers baseline plan
+Recursive boundary supplement: BE-002CB-01 `risk_support.portfolio_target_clamp_helpers` actual extraction complete; next step: BE-002CB-02 single_leaf_closeout.
+- `qrpc_runtime/src/risk_checker/portfolio_target_clamp_helpers.rs` - Runtime risk checker portfolio-target clamp helper child
+- `markdown/06-milestones/v4.16.0/1481-root.contracts.runtime_support.risk_support.portfolio_target_clamp_helpers.extract_closeout.md` - v4.16.0 BE-002CB-01 portfolio_target_clamp_helpers extract closeout
