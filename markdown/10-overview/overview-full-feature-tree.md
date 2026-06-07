@@ -5036,3 +5036,5 @@ Recursive boundary supplement: BE-001ZK-01 `data_module.mock_data_generation` ba
 Recursive boundary supplement: BE-001ZK-02 `data_module.mock_data_generation` actual extraction complete; next step: BE-001ZK-03 single_leaf_closeout.
 - `qrpc_runtime/src/data_module/mock_data_generation.rs` - runtime data module deterministic mock market data generation
 - `markdown/06-milestones/v4.16.0/1377-root.contracts.runtime_support.data_module.mock_data_generation.extract_closeout.md` - v4.16.0 BE-001ZK-02 data_module.mock_data_generation actual extraction complete
+Recursive boundary supplement: BE-001ZK-03 `data_module.mock_data_generation` single leaf closeout stops split; next step: BE-001ZL-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1378-root.contracts.runtime_support.data_module.mock_data_generation.single_leaf_closeout.md` - v4.16.0 BE-001ZK-03 data_module.mock_data_generation single leaf closeout
