@@ -5337,3 +5337,5 @@ Recursive boundary supplement: BE-002DA-01 `fast_backtest_sandbox` baseline froz
 Recursive boundary supplement: BE-002DB-01 `fast_backtest_sandbox` actual extraction complete; next step: BE-002DB-02 single_leaf_closeout.
 - `qrpc_runtime/src/sandbox/fast_backtest_sandbox.rs` - Runtime fast backtest sandbox child
 - `markdown/06-milestones/v4.16.0/1514-root.contracts.runtime_support.sandbox_replay_timeline.fast_backtest_sandbox.extract_closeout.md` - v4.16.0 BE-002DB-01 fast_backtest_sandbox extract closeout
+Recursive boundary supplement: BE-002DB-02 `fast_backtest_sandbox` single leaf closeout complete; next step: BE-002DC-01 sandbox_replay_timeline parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1515-root.contracts.runtime_support.sandbox_replay_timeline.fast_backtest_sandbox.single_leaf_closeout.md` - v4.16.0 BE-002DB-02 fast_backtest_sandbox single leaf closeout

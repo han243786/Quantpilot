@@ -9,11 +9,11 @@
     "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01",
     "GOV-TERMINAL-LEAF-CONTROL-V2-01"
   ],
-  "last_committed_batch": "BE-002DA-01",
-  "last_committed_sha": "91749dcc",
-  "current_parent": "root.contracts.runtime_support.sandbox_replay_timeline.fast_backtest_sandbox",
-  "current_step": "BE-002DB-02",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002DB-01",
+  "last_committed_sha": "b87d4b74",
+  "current_parent": "root.contracts.runtime_support.sandbox_replay_timeline",
+  "current_step": "BE-002DC-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -248,7 +248,8 @@
     "contracts.runtime_support.sandbox_replay_timeline.unified_timeline",
     "contracts.runtime_support.sandbox_replay_timeline.replay_builder",
     "contracts.runtime_support.sandbox_replay_timeline.sandbox_mode_surface",
-    "contracts.runtime_support.sandbox_replay_timeline.realtime_sandbox"
+    "contracts.runtime_support.sandbox_replay_timeline.realtime_sandbox",
+    "contracts.runtime_support.sandbox_replay_timeline.fast_backtest_sandbox"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -256,7 +257,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.sandbox_replay_timeline.fast_backtest_sandbox.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.runtime_support.sandbox_replay_timeline.test_harness",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
