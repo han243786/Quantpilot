@@ -5219,3 +5219,6 @@ Recursive boundary supplement: BE-002BK-01 `fill_engine` parent residual judgmen
 - `markdown/06-milestones/v4.16.0/1460-root.contracts.runtime_support.fill_engine.parent_residual_judgment.test_harness.md` - v4.16.0 BE-002BK-01 fill_engine parent residual judgment selects test_harness
 Recursive boundary supplement: BE-002BL-01 `fill_engine.test_harness` baseline frozen; next step: BE-002BM-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1461-root.contracts.runtime_support.fill_engine.test_harness.baseline_plan.md` - v4.16.0 BE-002BL-01 fill_engine test_harness baseline plan
+Recursive boundary supplement: BE-002BM-01 `fill_engine.test_harness` actual extraction complete; next step: BE-002BM-02 single_leaf_closeout.
+- `qrpc_runtime/src/fill_engine/test_harness.rs` - Runtime fill engine test-only child
+- `markdown/06-milestones/v4.16.0/1462-root.contracts.runtime_support.fill_engine.test_harness.extract_closeout.md` - v4.16.0 BE-002BM-01 fill_engine test_harness extract closeout

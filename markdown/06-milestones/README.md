@@ -1822,3 +1822,4 @@
 | v4.16.0 / BE-002BJ-02 | `v4.16.0/1459-root.contracts.runtime_support.fill_engine.fill_report_execution_helpers.single_leaf_closeout.md` | Added: `fill_report_execution_helpers` single leaf closeout stops split |
 | v4.16.0 / BE-002BK-01 | `v4.16.0/1460-root.contracts.runtime_support.fill_engine.parent_residual_judgment.test_harness.md` | Added: `fill_engine` parent residual judgment selects `test_harness` |
 | v4.16.0 / BE-002BL-01 | `v4.16.0/1461-root.contracts.runtime_support.fill_engine.test_harness.baseline_plan.md` | Added: `fill_engine.test_harness` baseline plan |
+| v4.16.0 / BE-002BM-01 | `v4.16.0/1462-root.contracts.runtime_support.fill_engine.test_harness.extract_closeout.md` | Added: `fill_engine.test_harness` actual extraction complete |
