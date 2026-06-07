@@ -5090,3 +5090,6 @@ Recursive boundary supplement: BE-001ZY-01 `agent_module` parent residual judgme
 - `markdown/06-milestones/v4.16.0/1401-root.contracts.runtime_support.agent_module.parent_residual_judgment.portfolio_rebalance.md` - v4.16.0 BE-001ZY-01 agent_module parent residual judgment selects portfolio_rebalance
 Recursive boundary supplement: BE-001ZZ-01 `agent_module.portfolio_rebalance` baseline frozen; next step: BE-001ZZ-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1402-root.contracts.runtime_support.agent_module.portfolio_rebalance.baseline_plan.md` - v4.16.0 BE-001ZZ-01 agent_module.portfolio_rebalance baseline plan
+Recursive boundary supplement: BE-001ZZ-02 `agent_module.portfolio_rebalance` actual extraction complete; next step: BE-001ZZ-03 single_leaf_closeout.
+- `qrpc_runtime/src/agent_module/portfolio_rebalance.rs` - Runtime agent portfolio rebalance decision child
+- `markdown/06-milestones/v4.16.0/1403-root.contracts.runtime_support.agent_module.portfolio_rebalance.extract_closeout.md` - v4.16.0 BE-001ZZ-02 agent_module.portfolio_rebalance extract closeout

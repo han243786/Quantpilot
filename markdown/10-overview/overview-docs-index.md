@@ -1402,3 +1402,4 @@
 | v4.16.0 / BE-001ZX-03 | Added: `agent_module.weighted_signal_decisions` single leaf closeout stops split |
 | v4.16.0 / BE-001ZY-01 | Added: `agent_module` parent residual judgment selects `portfolio_rebalance` |
 | v4.16.0 / BE-001ZZ-01 | Added: `agent_module.portfolio_rebalance` baseline plan |
+| v4.16.0 / BE-001ZZ-02 | Added: `agent_module.portfolio_rebalance` actual extraction complete |
