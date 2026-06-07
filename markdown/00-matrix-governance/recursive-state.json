@@ -9,11 +9,11 @@
     "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01",
     "GOV-TERMINAL-LEAF-CONTROL-V2-01"
   ],
-  "last_committed_batch": "BE-002BL-01",
-  "last_committed_sha": "65e9f190",
-  "current_parent": "root.contracts.runtime_support.fill_engine.test_harness",
-  "current_step": "BE-002BM-02",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002BM-01",
+  "last_committed_sha": "b401c045",
+  "current_parent": "root.contracts.runtime_support.fill_engine",
+  "current_step": "BE-002BN-01",
+  "current_phase": "parent_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -234,7 +234,8 @@
     "contracts.runtime_support.execution_module",
     "contracts.runtime_support.fill_engine.event_projection_wave",
     "contracts.runtime_support.fill_engine.portfolio_reservation_accounting",
-    "contracts.runtime_support.fill_engine.fill_report_execution_helpers"
+    "contracts.runtime_support.fill_engine.fill_report_execution_helpers",
+    "contracts.runtime_support.fill_engine.test_harness"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -242,7 +243,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.fill_engine.test_harness.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.runtime_support.fill_engine.parent_closeout",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
