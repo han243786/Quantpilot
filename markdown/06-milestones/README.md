@@ -1856,3 +1856,4 @@
 | v4.16.0 / BE-002CK-01 | `v4.16.0/1493-root.contracts.runtime_support.sandbox_replay_timeline.baseline_plan.md` | Added: `sandbox_replay_timeline` baseline plan with limited child queue |
 | v4.16.0 / BE-002CL-01 | `v4.16.0/1494-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.timeline_data_providers.md` | Added: `sandbox_replay_timeline` parent residual judgment selects `timeline_data_providers` |
 | v4.16.0 / BE-002CM-01 | `v4.16.0/1495-root.contracts.runtime_support.sandbox_replay_timeline.timeline_data_providers.baseline_plan.md` | Added: `timeline_data_providers` baseline plan |
+| v4.16.0 / BE-002CN-01 | `v4.16.0/1496-root.contracts.runtime_support.sandbox_replay_timeline.timeline_data_providers.extract_closeout.md` | Added: `timeline_data_providers` actual extraction complete |

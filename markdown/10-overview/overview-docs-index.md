@@ -1495,3 +1495,4 @@
 | v4.16.0 / BE-002CK-01 | Added: `sandbox_replay_timeline` baseline plan with limited child queue |
 | v4.16.0 / BE-002CL-01 | Added: `sandbox_replay_timeline` parent residual judgment selects `timeline_data_providers` |
 | v4.16.0 / BE-002CM-01 | Added: `timeline_data_providers` baseline plan |
+| v4.16.0 / BE-002CN-01 | Added: `timeline_data_providers` actual extraction complete |

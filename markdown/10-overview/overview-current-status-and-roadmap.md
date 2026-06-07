@@ -1584,3 +1584,4 @@ Latest recursive supplement: BE-002CJ-01 selected `runtime_support.sandbox_repla
 Latest recursive supplement: BE-002CK-01 froze `runtime_support.sandbox_replay_timeline` baseline; the child queue opens timeline providers, unified timeline, replay builder, sandbox surfaces, realtime/fast backtest sandbox, and tests.
 Latest recursive supplement: BE-002CL-01 selected `sandbox_replay_timeline.timeline_data_providers`; next baseline should cover timeline provider implementations before unified timeline movement.
 Latest recursive supplement: BE-002CM-01 froze `sandbox_replay_timeline.timeline_data_providers` baseline; next movement may move provider trait/types and interval conversion before `UnifiedTimeline`.
+Latest recursive supplement: BE-002CN-01 extracted `sandbox_replay_timeline.timeline_data_providers`; `qrpc_runtime/src/sandbox/timeline_data_providers.rs` now owns provider implementations and `timeline.rs` keeps `UnifiedTimeline`.
