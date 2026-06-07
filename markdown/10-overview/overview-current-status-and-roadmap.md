@@ -1467,3 +1467,4 @@ Latest recursive supplement: BE-001ZJ-01 selected `data_module.mock_data_generat
 Latest recursive supplement: BE-001ZK-01 froze the `data_module.mock_data_generation` baseline; next movement may add the planned mock data generation child module and move only the mock generation surface.
 Latest recursive supplement: BE-001ZK-02 extracted `data_module.mock_data_generation`; `qrpc_runtime/src/data_module/mock_data_generation.rs` now owns deterministic mock quote/kline generation and backtest mock bars.
 Latest recursive supplement: BE-001ZK-03 closed `data_module.mock_data_generation` with `stop_split: true`; next recursive step returns to `data_module` parent residual judgment with expected candidate `historical_cache`.
+Latest recursive supplement: BE-001ZL-01 selected `data_module.historical_cache`; next baseline covers historical cache path safety, fresh/stale load, persistence, historical raw kline fetch, and backtest historical bars.
