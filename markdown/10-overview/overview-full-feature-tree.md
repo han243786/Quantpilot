@@ -5319,3 +5319,5 @@ Recursive boundary supplement: BE-002CU-01 `sandbox_mode_surface` baseline froze
 Recursive boundary supplement: BE-002CV-01 `sandbox_mode_surface` actual extraction complete; next step: BE-002CV-02 single_leaf_closeout.
 - `qrpc_runtime/src/sandbox/mode_surface.rs` - Runtime sandbox public mode/control surface child
 - `markdown/06-milestones/v4.16.0/1506-root.contracts.runtime_support.sandbox_replay_timeline.sandbox_mode_surface.extract_closeout.md` - v4.16.0 BE-002CV-01 sandbox_mode_surface extract closeout
+Recursive boundary supplement: BE-002CV-02 `sandbox_mode_surface` single leaf closeout complete; next step: BE-002CW-01 sandbox_replay_timeline parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1507-root.contracts.runtime_support.sandbox_replay_timeline.sandbox_mode_surface.single_leaf_closeout.md` - v4.16.0 BE-002CV-02 sandbox_mode_surface single leaf closeout

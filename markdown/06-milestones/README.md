@@ -1867,3 +1867,4 @@
 | v4.16.0 / BE-002CT-01 | `v4.16.0/1504-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.sandbox_mode_surface.md` | Added: `sandbox_replay_timeline` parent residual judgment selects `sandbox_mode_surface` |
 | v4.16.0 / BE-002CU-01 | `v4.16.0/1505-root.contracts.runtime_support.sandbox_replay_timeline.sandbox_mode_surface.baseline_plan.md` | Added: `sandbox_mode_surface` baseline plan |
 | v4.16.0 / BE-002CV-01 | `v4.16.0/1506-root.contracts.runtime_support.sandbox_replay_timeline.sandbox_mode_surface.extract_closeout.md` | Added: `sandbox_mode_surface` actual extraction complete |
+| v4.16.0 / BE-002CV-02 | `v4.16.0/1507-root.contracts.runtime_support.sandbox_replay_timeline.sandbox_mode_surface.single_leaf_closeout.md` | Added: `sandbox_mode_surface` single leaf closeout stops split |
