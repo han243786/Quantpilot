@@ -5145,3 +5145,5 @@ Recursive boundary supplement: BE-002AM-03 `advanced_indicator_wave` single leaf
 - `markdown/06-milestones/v4.16.0/1426-root.contracts.runtime_support.core_ir_evaluator.advanced_indicator_wave.single_leaf_closeout.md` - v4.16.0 BE-002AM-03 advanced_indicator_wave single leaf closeout
 Recursive boundary supplement: BE-002AN-01 `core_ir_evaluator` parent residual judgment selected `spread_custom_expression_wave`; next step: BE-002AO-01 spread_custom_expression_wave baseline_plan.
 - `markdown/06-milestones/v4.16.0/1427-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.spread_custom_expression_wave.md` - v4.16.0 BE-002AN-01 core_ir_evaluator parent residual judgment selects spread_custom_expression_wave
+Recursive boundary supplement: BE-002AO-01 `spread_custom_expression_wave` baseline frozen; next step: BE-002AO-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1428-root.contracts.runtime_support.core_ir_evaluator.spread_custom_expression_wave.baseline_plan.md` - v4.16.0 BE-002AO-01 spread_custom_expression_wave baseline plan
