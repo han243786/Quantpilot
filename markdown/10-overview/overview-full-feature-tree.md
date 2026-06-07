@@ -5049,3 +5049,5 @@ Recursive boundary supplement: BE-001ZM-03 `data_module.historical_cache` single
 - `markdown/06-milestones/v4.16.0/1382-root.contracts.runtime_support.data_module.historical_cache.single_leaf_closeout.md` - v4.16.0 BE-001ZM-03 data_module.historical_cache single leaf closeout
 Recursive boundary supplement: BE-001ZN-01 `data_module` parent residual judgment selected `http_transport`; next step: BE-001ZO-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1383-root.contracts.runtime_support.data_module.parent_residual_judgment.http_transport.md` - v4.16.0 BE-001ZN-01 data_module parent residual judgment selects http_transport
+Recursive boundary supplement: BE-001ZO-01 `data_module.http_transport` baseline_frozen; next step: BE-001ZO-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1384-root.contracts.runtime_support.data_module.http_transport.baseline_plan.md` - v4.16.0 BE-001ZO-01 data_module.http_transport baseline plan

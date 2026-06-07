@@ -1744,3 +1744,4 @@
 | v4.16.0 / BE-001ZM-02 | `v4.16.0/1381-root.contracts.runtime_support.data_module.historical_cache.extract_closeout.md` | Added: `data_module.historical_cache` actual extraction complete |
 | v4.16.0 / BE-001ZM-03 | `v4.16.0/1382-root.contracts.runtime_support.data_module.historical_cache.single_leaf_closeout.md` | Added: `data_module.historical_cache` single leaf closeout stops split |
 | v4.16.0 / BE-001ZN-01 | `v4.16.0/1383-root.contracts.runtime_support.data_module.parent_residual_judgment.http_transport.md` | Added: `data_module` parent residual judgment selects `http_transport` |
+| v4.16.0 / BE-001ZO-01 | `v4.16.0/1384-root.contracts.runtime_support.data_module.http_transport.baseline_plan.md` | Added: `data_module.http_transport` baseline plan |

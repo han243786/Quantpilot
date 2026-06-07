@@ -1383,3 +1383,4 @@
 | v4.16.0 / BE-001ZM-02 | Added: `data_module.historical_cache` actual extraction complete |
 | v4.16.0 / BE-001ZM-03 | Added: `data_module.historical_cache` single leaf closeout stops split |
 | v4.16.0 / BE-001ZN-01 | Added: `data_module` parent residual judgment selects `http_transport` |
+| v4.16.0 / BE-001ZO-01 | Added: `data_module.http_transport` baseline plan |
