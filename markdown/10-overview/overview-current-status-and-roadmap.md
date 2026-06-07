@@ -1492,3 +1492,4 @@ Latest recursive supplement: BE-001ZX-03 closed `agent_module.weighted_signal_de
 Latest recursive supplement: BE-001ZY-01 selected `agent_module.portfolio_rebalance`; next baseline covers cadence gates, rebalance universe, target allocation, current weights, and portfolio target DTO assembly.
 Latest recursive supplement: BE-001ZZ-01 froze `agent_module.portfolio_rebalance` baseline; next movement may add a child file and move only cadence, rebalance plan, target decision, and target-weight assignment logic.
 Latest recursive supplement: BE-001ZZ-02 extracted `agent_module.portfolio_rebalance`; rebalance cadence and target allocation now live in `qrpc_runtime/src/agent_module/portfolio_rebalance.rs`.
+Latest recursive supplement: BE-001ZZ-03 closed `agent_module.portfolio_rebalance` with `stop_split: true`; next recursive step returns to `agent_module` parent residual judgment with expected candidate `cross_venue_arbitrage`.

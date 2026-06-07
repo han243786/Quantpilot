@@ -8650,3 +8650,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.agent_module.portfolio_rebalance allowed_movement`; move only rebalance cadence, `RebalanceSymbolPlan`, target decision, and target-weight assignment while shared scoring/portfolio helpers remain parent-mediated.
 **Latest state supplement (BE-001ZZ-02)**: `root.contracts.runtime_support.agent_module.portfolio_rebalance` actual extraction complete; next step: BE-001ZZ-03 single_leaf_closeout.
 `root.contracts.runtime_support.agent_module.portfolio_rebalance extracted`; `qrpc_runtime/src/agent_module/portfolio_rebalance.rs` owns rebalance cadence, target decision construction, and target-weight assignment while shared scoring/portfolio helpers remain parent-mediated.
+**Latest state supplement (BE-001ZZ-03)**: `root.contracts.runtime_support.agent_module.portfolio_rebalance` single leaf closeout complete; next step: BE-002AA-01 `agent_module` parent_residual_judgment.
+`root.contracts.runtime_support.agent_module.portfolio_rebalance stop_split: true`; terminal leaf control score is 34 with `governance_mode=stop_split`, so no allocation-mode micro-split is opened.

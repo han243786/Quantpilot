@@ -1403,3 +1403,4 @@
 | v4.16.0 / BE-001ZY-01 | Added: `agent_module` parent residual judgment selects `portfolio_rebalance` |
 | v4.16.0 / BE-001ZZ-01 | Added: `agent_module.portfolio_rebalance` baseline plan |
 | v4.16.0 / BE-001ZZ-02 | Added: `agent_module.portfolio_rebalance` actual extraction complete |
+| v4.16.0 / BE-001ZZ-03 | Added: `agent_module.portfolio_rebalance` single leaf closeout stops split |
