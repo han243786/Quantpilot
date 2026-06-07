@@ -1747,3 +1747,4 @@
 | v4.16.0 / BE-001ZO-01 | `v4.16.0/1384-root.contracts.runtime_support.data_module.http_transport.baseline_plan.md` | Added: `data_module.http_transport` baseline plan |
 | v4.16.0 / BE-001ZO-02 | `v4.16.0/1385-root.contracts.runtime_support.data_module.http_transport.extract_closeout.md` | Added: `data_module.http_transport` actual extraction complete |
 | v4.16.0 / BE-001ZO-03 | `v4.16.0/1386-root.contracts.runtime_support.data_module.http_transport.single_leaf_closeout.md` | Added: `data_module.http_transport` single leaf closeout stops split |
+| v4.16.0 / BE-001ZP-01 | `v4.16.0/1387-root.contracts.runtime_support.data_module.parent_residual_judgment.test_harness.md` | Added: `data_module` parent residual judgment selects `test_harness` |

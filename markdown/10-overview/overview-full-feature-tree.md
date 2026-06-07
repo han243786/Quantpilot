@@ -5056,3 +5056,5 @@ Recursive boundary supplement: BE-001ZO-02 `data_module.http_transport` actual e
 - `qrpc_runtime/src/data_module/http_transport.rs` - data module HTTP transport child, owns ping probing, OKX live fetch, JSON retry/fallback, Tokio blocking bridge, and Windows PowerShell fallback.
 Recursive boundary supplement: BE-001ZO-03 `data_module.http_transport` single leaf closeout stops split; next step: BE-001ZP-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1386-root.contracts.runtime_support.data_module.http_transport.single_leaf_closeout.md` - v4.16.0 BE-001ZO-03 data_module.http_transport single leaf closeout
+Recursive boundary supplement: BE-001ZP-01 `data_module` parent residual judgment selected `test_harness`; next step: BE-001ZQ-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1387-root.contracts.runtime_support.data_module.parent_residual_judgment.test_harness.md` - v4.16.0 BE-001ZP-01 data_module parent residual judgment selects test_harness
