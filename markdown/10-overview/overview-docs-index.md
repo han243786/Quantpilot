@@ -1513,3 +1513,4 @@
 | v4.16.0 / BE-002CY-02 | Added: `realtime_sandbox` single leaf closeout stops split |
 | v4.16.0 / BE-002CZ-01 | Added: `sandbox_replay_timeline` parent residual judgment selects `fast_backtest_sandbox` |
 | v4.16.0 / BE-002DA-01 | Added: `fast_backtest_sandbox` baseline plan |
+| v4.16.0 / BE-002DB-01 | Added: `fast_backtest_sandbox` actual extraction complete |

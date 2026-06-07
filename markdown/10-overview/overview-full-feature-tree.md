@@ -5334,3 +5334,6 @@ Recursive boundary supplement: BE-002CZ-01 `sandbox_replay_timeline` parent resi
 - `markdown/06-milestones/v4.16.0/1512-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.fast_backtest_sandbox.md` - v4.16.0 BE-002CZ-01 sandbox_replay_timeline parent residual judgment selects fast_backtest_sandbox
 Recursive boundary supplement: BE-002DA-01 `fast_backtest_sandbox` baseline frozen; next step: BE-002DB-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1513-root.contracts.runtime_support.sandbox_replay_timeline.fast_backtest_sandbox.baseline_plan.md` - v4.16.0 BE-002DA-01 fast_backtest_sandbox baseline plan
+Recursive boundary supplement: BE-002DB-01 `fast_backtest_sandbox` actual extraction complete; next step: BE-002DB-02 single_leaf_closeout.
+- `qrpc_runtime/src/sandbox/fast_backtest_sandbox.rs` - Runtime fast backtest sandbox child
+- `markdown/06-milestones/v4.16.0/1514-root.contracts.runtime_support.sandbox_replay_timeline.fast_backtest_sandbox.extract_closeout.md` - v4.16.0 BE-002DB-01 fast_backtest_sandbox extract closeout
