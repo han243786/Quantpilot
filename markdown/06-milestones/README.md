@@ -1809,3 +1809,4 @@
 | v4.16.0 / BE-002AZ-01 | `v4.16.0/1446-root.contracts.runtime_support.parent_residual_judgment.fill_engine.md` | Added: `runtime_support` parent residual judgment selects `fill_engine` |
 | v4.16.0 / BE-002BA-01 | `v4.16.0/1447-root.contracts.runtime_support.fill_engine.baseline_plan.md` | Added: `fill_engine` baseline plan with cost-controlled same-parent wave queue |
 | v4.16.0 / BE-002BB-01 | `v4.16.0/1448-root.contracts.runtime_support.fill_engine.parent_residual_judgment.event_projection_wave.md` | Added: `fill_engine` parent residual judgment selects `event_projection_wave` |
+| v4.16.0 / BE-002BC-01 | `v4.16.0/1449-root.contracts.runtime_support.fill_engine.event_projection_wave.baseline_plan.md` | Added: `event_projection_wave` baseline plan |

@@ -1537,3 +1537,4 @@ Latest recursive supplement: BE-002AY-01 closed `execution_module` as a parent; 
 Latest recursive supplement: BE-002AZ-01 selected `runtime_support.fill_engine`; next baseline freezes fill lifecycle, event projection, reservation/portfolio accounting, fill report helpers, and tests.
 Latest recursive supplement: BE-002BA-01 froze `fill_engine` baseline; next recursive step selects `event_projection_wave` as the lowest-risk same-parent extraction.
 Latest recursive supplement: BE-002BB-01 selected `fill_engine.event_projection_wave`; next baseline covers only open, partial, cancel, reject, and fill event builders.
+Latest recursive supplement: BE-002BC-01 froze `event_projection_wave` baseline; next movement may add the child file and move only the five event builders.
