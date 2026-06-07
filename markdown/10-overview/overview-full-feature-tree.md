@@ -5067,3 +5067,5 @@ Recursive boundary supplement: BE-001ZQ-03 `data_module.test_harness` single lea
 - `markdown/06-milestones/v4.16.0/1390-root.contracts.runtime_support.data_module.test_harness.single_leaf_closeout.md` - v4.16.0 BE-001ZQ-03 data_module.test_harness single leaf closeout
 Recursive boundary supplement: BE-001ZR-01 `data_module` parent closeout complete; next step: BE-001ZS-01 runtime_support parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1391-root.contracts.runtime_support.data_module.parent_residual_judgment.close_parent.md` - v4.16.0 BE-001ZR-01 data_module parent closeout
+Recursive boundary supplement: BE-001ZS-01 `runtime_support` parent residual judgment selected `intent_module`; next step: BE-001ZT-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1392-root.contracts.runtime_support.parent_residual_judgment.intent_module.md` - v4.16.0 BE-001ZS-01 runtime_support parent residual judgment selects intent_module

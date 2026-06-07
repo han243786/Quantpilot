@@ -8626,3 +8626,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.data_module.test_harness stop_split: true`; terminal leaf control score is 33 with `governance_mode=stop_split`, so local parser/provider/cache/mock-generator assertions stay together as one terminal test harness.
 **Latest state supplement (BE-001ZR-01)**: `root.contracts.runtime_support.data_module` parent closeout complete; next step: BE-001ZS-01 `root.contracts.runtime_support` parent_residual_judgment.
 `root.contracts.runtime_support.data_module parent_closeout: true`; all planned data-module children are closed and the remaining parent is a compact facade/orchestration owner.
+**Latest state supplement (BE-001ZS-01)**: `root.contracts.runtime_support` parent residual judgment selected `intent_module`; next step: BE-001ZT-01 baseline_plan.
+`root.contracts.runtime_support.intent_module selected: true`; this child owns runtime intent generation from normalized data and Core IR signal semantics while agent, risk, execution, fill, sandbox, v4 runtime, live execution, plugin, ops compatibility, and metrics support remain queued.
