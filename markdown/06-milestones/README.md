@@ -1737,3 +1737,4 @@
 | v4.16.0 / BE-001ZI-03 | `v4.16.0/1374-root.contracts.runtime_support.data_module.normalization.single_leaf_closeout.md` | Added: `data_module.normalization` single leaf closeout stops split |
 | v4.16.0 / BE-001ZJ-01 | `v4.16.0/1375-root.contracts.runtime_support.data_module.parent_residual_judgment.mock_data_generation.md` | Added: `data_module` parent residual judgment selects `mock_data_generation` |
 | v4.16.0 / BE-001ZK-01 | `v4.16.0/1376-root.contracts.runtime_support.data_module.mock_data_generation.baseline_plan.md` | Added: `data_module.mock_data_generation` baseline plan |
+| v4.16.0 / BE-001ZK-02 | `v4.16.0/1377-root.contracts.runtime_support.data_module.mock_data_generation.extract_closeout.md` | Added: `data_module.mock_data_generation` actual extraction complete |
