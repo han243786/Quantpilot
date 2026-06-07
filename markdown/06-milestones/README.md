@@ -1777,3 +1777,4 @@
 | v4.16.0 / BE-002AF-02 | `v4.16.0/1414-root.contracts.runtime_support.agent_module.test_harness.extract_closeout.md` | Added: `agent_module.test_harness` actual extraction complete |
 | v4.16.0 / BE-002AF-03 | `v4.16.0/1415-root.contracts.runtime_support.agent_module.test_harness.single_leaf_closeout.md` | Added: `agent_module.test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-002AG-01 | `v4.16.0/1416-root.contracts.runtime_support.agent_module.parent_residual_judgment.close_parent.md` | Added: `agent_module` parent closeout |
+| v4.16.0 / BE-002AH-01 | `v4.16.0/1417-root.contracts.runtime_support.parent_residual_judgment.core_ir_evaluator.md` | Added: `runtime_support` parent residual judgment selects `core_ir_evaluator` |

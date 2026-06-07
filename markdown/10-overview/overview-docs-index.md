@@ -1416,3 +1416,4 @@
 | v4.16.0 / BE-002AF-02 | Added: `agent_module.test_harness` actual extraction complete |
 | v4.16.0 / BE-002AF-03 | Added: `agent_module.test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-002AG-01 | Added: `agent_module` parent closeout |
+| v4.16.0 / BE-002AH-01 | Added: `runtime_support` parent residual judgment selects `core_ir_evaluator` |
