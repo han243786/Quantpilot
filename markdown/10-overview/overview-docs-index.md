@@ -1370,3 +1370,4 @@
 | v4.16.0 / GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 | Added: read-only leaf granularity scoring tool with `normalized_split_score` evidence |
 | v4.16.0 / BE-001ZG-03 | Added: `data_module.exchange_surface_wave` single leaf closeout stops split |
 | v4.16.0 / BE-001ZH-01 | Added: `data_module` parent residual judgment selects `normalization` |
+| v4.16.0 / BE-001ZI-01 | Added: `data_module.normalization` baseline plan |
