@@ -1458,3 +1458,4 @@
 | v4.16.0 / BE-002BH-01 | Added: `fill_engine` parent residual judgment selects `fill_report_execution_helpers` |
 | v4.16.0 / BE-002BI-01 | Added: `fill_report_execution_helpers` baseline plan |
 | v4.16.0 / BE-002BJ-01 | Added: `fill_report_execution_helpers` actual extraction complete |
+| v4.16.0 / BE-002BJ-02 | Added: `fill_report_execution_helpers` single leaf closeout stops split |
