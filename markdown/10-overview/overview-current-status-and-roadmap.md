@@ -1575,3 +1575,4 @@ Latest recursive supplement: BE-002CC-01 selected `risk_support.exposure_math_he
 Latest recursive supplement: BE-002CD-01 froze `risk_support.exposure_math_helpers` baseline; next movement may add an exposure math child file and move four shared math helpers.
 Latest recursive supplement: BE-002CE-01 extracted `risk_support.exposure_math_helpers`; `qrpc_runtime/src/risk_checker/exposure_math_helpers.rs` now owns the shared exposure/equity math helpers.
 Latest recursive supplement: BE-002CE-02 closed `risk_support.exposure_math_helpers` with `stop_split: true`; next recursive step returns to `risk_support` parent residual judgment with expected candidate `test_harness`.
+Latest recursive supplement: BE-002CF-01 selected `risk_support.test_harness`; next baseline should move only local risk-checker tests and fixtures.

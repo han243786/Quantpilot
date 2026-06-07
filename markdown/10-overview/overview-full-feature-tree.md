@@ -5275,3 +5275,5 @@ Recursive boundary supplement: BE-002CE-01 `risk_support.exposure_math_helpers` 
 - `markdown/06-milestones/v4.16.0/1485-root.contracts.runtime_support.risk_support.exposure_math_helpers.extract_closeout.md` - v4.16.0 BE-002CE-01 exposure_math_helpers extract closeout
 Recursive boundary supplement: BE-002CE-02 `risk_support.exposure_math_helpers` single leaf closeout complete; next step: BE-002CF-01 risk_support parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1486-root.contracts.runtime_support.risk_support.exposure_math_helpers.single_leaf_closeout.md` - v4.16.0 BE-002CE-02 exposure_math_helpers single leaf closeout
+Recursive boundary supplement: BE-002CF-01 `risk_support` parent residual judgment selected `test_harness`; next step: BE-002CG-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1487-root.contracts.runtime_support.risk_support.parent_residual_judgment.test_harness.md` - v4.16.0 BE-002CF-01 risk_support parent residual judgment selects test_harness
