@@ -1848,3 +1848,4 @@
 | v4.16.0 / BE-002CE-01 | `v4.16.0/1485-root.contracts.runtime_support.risk_support.exposure_math_helpers.extract_closeout.md` | Added: `exposure_math_helpers` actual extraction complete |
 | v4.16.0 / BE-002CE-02 | `v4.16.0/1486-root.contracts.runtime_support.risk_support.exposure_math_helpers.single_leaf_closeout.md` | Added: `exposure_math_helpers` single leaf closeout stops split |
 | v4.16.0 / BE-002CF-01 | `v4.16.0/1487-root.contracts.runtime_support.risk_support.parent_residual_judgment.test_harness.md` | Added: `risk_support` parent residual judgment selects `test_harness` |
+| v4.16.0 / BE-002CG-01 | `v4.16.0/1488-root.contracts.runtime_support.risk_support.test_harness.baseline_plan.md` | Added: `risk_support.test_harness` baseline plan |

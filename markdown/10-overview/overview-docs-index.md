@@ -1487,3 +1487,4 @@
 | v4.16.0 / BE-002CE-01 | Added: `exposure_math_helpers` actual extraction complete |
 | v4.16.0 / BE-002CE-02 | Added: `exposure_math_helpers` single leaf closeout stops split |
 | v4.16.0 / BE-002CF-01 | Added: `risk_support` parent residual judgment selects `test_harness` |
+| v4.16.0 / BE-002CG-01 | Added: `risk_support.test_harness` baseline plan |
