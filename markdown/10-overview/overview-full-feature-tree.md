@@ -5361,3 +5361,5 @@ Recursive boundary supplement: BE-002DJ-01 `v4_runtime_support.type_surface` bas
 Recursive boundary supplement: BE-002DK-01 `v4_runtime_support.type_surface` actual extraction complete; next step: BE-002DK-02 single_leaf_closeout.
 - `qrpc_runtime/src/v4_runtime/type_surface.rs` - Runtime v4 public type surface child
 - `markdown/06-milestones/v4.16.0/1525-root.contracts.runtime_support.v4_runtime_support.type_surface.extract_closeout.md` - v4.16.0 BE-002DK-01 v4_runtime_support type_surface extract closeout
+Recursive boundary supplement: BE-002DK-02 `v4_runtime_support.type_surface` single leaf closeout complete; next step: BE-002DL-01 v4_runtime_support parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1526-root.contracts.runtime_support.v4_runtime_support.type_surface.single_leaf_closeout.md` - v4.16.0 BE-002DK-02 v4_runtime_support type_surface single leaf closeout
