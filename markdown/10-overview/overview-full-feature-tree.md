@@ -5147,3 +5147,6 @@ Recursive boundary supplement: BE-002AN-01 `core_ir_evaluator` parent residual j
 - `markdown/06-milestones/v4.16.0/1427-root.contracts.runtime_support.core_ir_evaluator.parent_residual_judgment.spread_custom_expression_wave.md` - v4.16.0 BE-002AN-01 core_ir_evaluator parent residual judgment selects spread_custom_expression_wave
 Recursive boundary supplement: BE-002AO-01 `spread_custom_expression_wave` baseline frozen; next step: BE-002AO-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1428-root.contracts.runtime_support.core_ir_evaluator.spread_custom_expression_wave.baseline_plan.md` - v4.16.0 BE-002AO-01 spread_custom_expression_wave baseline plan
+Recursive boundary supplement: BE-002AO-02 `spread_custom_expression_wave` actual extraction complete; next step: BE-002AO-03 single_leaf_closeout.
+- `qrpc_runtime/src/core_ir_evaluator/spread_custom_expression_wave.rs` - Runtime Core IR evaluator Spread and Custom expression wave, owns Custom, legacy Spread, typed Spread, series expression materialization, aggregation, alignment, scope discovery, and reference-price helpers
+- `markdown/06-milestones/v4.16.0/1429-root.contracts.runtime_support.core_ir_evaluator.spread_custom_expression_wave.extract_closeout.md` - v4.16.0 BE-002AO-02 spread_custom_expression_wave extract closeout
