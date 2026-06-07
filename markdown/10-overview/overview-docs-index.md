@@ -1447,3 +1447,4 @@
 | v4.16.0 / BE-002AY-01 | Added: `execution_module` parent closeout |
 | v4.16.0 / BE-002AZ-01 | Added: `runtime_support` parent residual judgment selects `fill_engine` |
 | v4.16.0 / BE-002BA-01 | Added: `fill_engine` baseline plan with cost-controlled same-parent wave queue |
+| v4.16.0 / BE-002BB-01 | Added: `fill_engine` parent residual judgment selects `event_projection_wave` |

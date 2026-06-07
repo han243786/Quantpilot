@@ -5188,3 +5188,5 @@ Recursive boundary supplement: BE-002AZ-01 `runtime_support` parent residual jud
 - `markdown/06-milestones/v4.16.0/1446-root.contracts.runtime_support.parent_residual_judgment.fill_engine.md` - v4.16.0 BE-002AZ-01 runtime_support parent residual judgment selects fill_engine
 Recursive boundary supplement: BE-002BA-01 `fill_engine` baseline frozen; next step: BE-002BB-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1447-root.contracts.runtime_support.fill_engine.baseline_plan.md` - v4.16.0 BE-002BA-01 fill_engine baseline plan
+Recursive boundary supplement: BE-002BB-01 `fill_engine` parent residual judgment selected `event_projection_wave`; next step: BE-002BC-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1448-root.contracts.runtime_support.fill_engine.parent_residual_judgment.event_projection_wave.md` - v4.16.0 BE-002BB-01 fill_engine parent residual judgment selects event_projection_wave
