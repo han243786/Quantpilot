@@ -1465,3 +1465,4 @@
 | v4.16.0 / BE-002BM-02 | Added: `fill_engine.test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-002BN-01 | Added: `fill_engine` parent closeout |
 | v4.16.0 / BE-002BO-01 | Added: `runtime_support` parent residual judgment selects `risk_support` |
+| v4.16.0 / BE-002BP-01 | Added: `risk_support` baseline plan with limited same-parent wave queue |

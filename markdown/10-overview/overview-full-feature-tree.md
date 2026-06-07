@@ -5228,3 +5228,5 @@ Recursive boundary supplement: BE-002BN-01 `fill_engine` parent closeout complet
 - `markdown/06-milestones/v4.16.0/1464-root.contracts.runtime_support.fill_engine.parent_closeout.md` - v4.16.0 BE-002BN-01 fill_engine parent closeout
 Recursive boundary supplement: BE-002BO-01 `runtime_support` parent residual judgment selected `risk_support`; next step: BE-002BP-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1465-root.contracts.runtime_support.parent_residual_judgment.risk_support.md` - v4.16.0 BE-002BO-01 runtime_support parent residual judgment selects risk_support
+Recursive boundary supplement: BE-002BP-01 `risk_support` baseline frozen; next step: BE-002BQ-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1466-root.contracts.runtime_support.risk_support.baseline_plan.md` - v4.16.0 BE-002BP-01 risk_support baseline plan
