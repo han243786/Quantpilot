@@ -1616,3 +1616,4 @@ Latest recursive supplement: BE-002DJ-01 froze `runtime_support.v4_runtime_suppo
 Latest recursive supplement: BE-002DK-01 extracted `runtime_support.v4_runtime_support.type_surface`; `qrpc_runtime/src/v4_runtime/type_surface.rs` now owns the public v4 type surface.
 Latest recursive supplement: BE-002DK-02 closed `runtime_support.v4_runtime_support.type_surface` with `stop_split: true`; next step returns to v4_runtime_support parent residual judgment.
 Latest recursive supplement: BE-002DL-01 selected `runtime_support.v4_runtime_support.graph_symbol_expansion`; next baseline should freeze multi-symbol v4 graph expansion.
+Latest recursive supplement: BE-002DM-01 froze `runtime_support.v4_runtime_support.graph_symbol_expansion` baseline; next movement may extract only graph symbol expansion helpers.

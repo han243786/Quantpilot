@@ -1888,3 +1888,4 @@
 | v4.16.0 / BE-002DK-01 | `v4.16.0/1525-root.contracts.runtime_support.v4_runtime_support.type_surface.extract_closeout.md` | Added: `v4_runtime_support.type_surface` actual extraction complete |
 | v4.16.0 / BE-002DK-02 | `v4.16.0/1526-root.contracts.runtime_support.v4_runtime_support.type_surface.single_leaf_closeout.md` | Added: `v4_runtime_support.type_surface` single leaf closeout stops split |
 | v4.16.0 / BE-002DL-01 | `v4.16.0/1527-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.graph_symbol_expansion.md` | Added: `v4_runtime_support` parent residual judgment selects `graph_symbol_expansion` |
+| v4.16.0 / BE-002DM-01 | `v4.16.0/1528-root.contracts.runtime_support.v4_runtime_support.graph_symbol_expansion.baseline_plan.md` | Added: `v4_runtime_support.graph_symbol_expansion` baseline plan |

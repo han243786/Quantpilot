@@ -1527,3 +1527,4 @@
 | v4.16.0 / BE-002DK-01 | Added: `v4_runtime_support.type_surface` actual extraction complete |
 | v4.16.0 / BE-002DK-02 | Added: `v4_runtime_support.type_surface` single leaf closeout stops split |
 | v4.16.0 / BE-002DL-01 | Added: `v4_runtime_support` parent residual judgment selects `graph_symbol_expansion` |
+| v4.16.0 / BE-002DM-01 | Added: `v4_runtime_support.graph_symbol_expansion` baseline plan |
