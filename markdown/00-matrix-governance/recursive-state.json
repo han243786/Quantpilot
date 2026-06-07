@@ -9,11 +9,11 @@
     "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01",
     "GOV-TERMINAL-LEAF-CONTROL-V2-01"
   ],
-  "last_committed_batch": "BE-002AK-01",
-  "last_committed_sha": "013ad97b",
-  "current_parent": "root.contracts.runtime_support.core_ir_evaluator.classic_indicator_wave",
-  "current_step": "BE-002AK-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002AK-02",
+  "last_committed_sha": "fcd5e981",
+  "current_parent": "root.contracts.runtime_support.core_ir_evaluator",
+  "current_step": "BE-002AL-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -223,7 +223,8 @@
     "contracts.runtime_support.agent_module.cross_venue_arbitrage",
     "contracts.runtime_support.agent_module.shared_scoring_portfolio_helpers",
     "contracts.runtime_support.agent_module.test_harness",
-    "contracts.runtime_support.agent_module"
+    "contracts.runtime_support.agent_module",
+    "contracts.runtime_support.core_ir_evaluator.classic_indicator_wave"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -231,7 +232,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.core_ir_evaluator.classic_indicator_wave.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.runtime_support.core_ir_evaluator.advanced_indicator_wave",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

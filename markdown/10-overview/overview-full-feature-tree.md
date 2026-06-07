@@ -5132,3 +5132,5 @@ Recursive boundary supplement: BE-002AK-01 `classic_indicator_wave` baseline fro
 Recursive boundary supplement: BE-002AK-02 `classic_indicator_wave` actual extraction complete; next step: BE-002AK-03 single_leaf_closeout.
 - `qrpc_runtime/src/core_ir_evaluator/classic_indicator_wave.rs` - Runtime Core IR evaluator classic indicator wave, owns MA family, RSI, MACD, Momentum, ZScore, and QuoteObserve evaluator entrypoints
 - `markdown/06-milestones/v4.16.0/1421-root.contracts.runtime_support.core_ir_evaluator.classic_indicator_wave.extract_closeout.md` - v4.16.0 BE-002AK-02 classic_indicator_wave extract closeout
+Recursive boundary supplement: BE-002AK-03 `classic_indicator_wave` single leaf closeout complete; next step: BE-002AL-01 core_ir_evaluator parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1422-root.contracts.runtime_support.core_ir_evaluator.classic_indicator_wave.single_leaf_closeout.md` - v4.16.0 BE-002AK-03 classic_indicator_wave single leaf closeout

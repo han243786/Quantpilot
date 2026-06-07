@@ -1510,3 +1510,4 @@ Latest recursive supplement: BE-002AI-01 froze `core_ir_evaluator` baseline; fir
 Latest recursive supplement: BE-002AJ-01 selected `core_ir_evaluator.classic_indicator_wave`; next baseline covers MA family, RSI, MACD, Momentum, ZScore, and QuoteObserve evaluator entrypoints.
 Latest recursive supplement: BE-002AK-01 froze `classic_indicator_wave` baseline; next movement may add `qrpc_runtime/src/core_ir_evaluator/classic_indicator_wave.rs` and move only the six classic evaluator entrypoints.
 Latest recursive supplement: BE-002AK-02 extracted `classic_indicator_wave`; `qrpc_runtime/src/core_ir_evaluator/classic_indicator_wave.rs` now owns MA family, RSI, MACD, Momentum, ZScore, and QuoteObserve evaluator entrypoints.
+Latest recursive supplement: BE-002AK-03 closed `classic_indicator_wave` with `stop_split: true`; next recursive step returns to `core_ir_evaluator` parent residual judgment with expected candidate `advanced_indicator_wave`.
