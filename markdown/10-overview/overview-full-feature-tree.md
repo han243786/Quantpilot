@@ -5297,3 +5297,5 @@ Recursive boundary supplement: BE-002CM-01 `timeline_data_providers` baseline fr
 Recursive boundary supplement: BE-002CN-01 `timeline_data_providers` actual extraction complete; next step: BE-002CN-02 single_leaf_closeout.
 - `qrpc_runtime/src/sandbox/timeline_data_providers.rs` - Runtime sandbox timeline data provider child
 - `markdown/06-milestones/v4.16.0/1496-root.contracts.runtime_support.sandbox_replay_timeline.timeline_data_providers.extract_closeout.md` - v4.16.0 BE-002CN-01 timeline_data_providers extract closeout
+Recursive boundary supplement: BE-002CN-02 `timeline_data_providers` single leaf closeout complete; next step: BE-002CO-01 sandbox_replay_timeline parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1497-root.contracts.runtime_support.sandbox_replay_timeline.timeline_data_providers.single_leaf_closeout.md` - v4.16.0 BE-002CN-02 timeline_data_providers single leaf closeout
