@@ -1561,3 +1561,4 @@ Latest recursive supplement: BE-002BS-01 extracted `risk_support.event_payload_p
 Latest recursive supplement: BE-002BS-02 closed `risk_support.event_payload_projection` with `stop_split: true`; next recursive step returns to `risk_support` parent residual judgment with expected candidate `direction_cross_constraints`.
 Latest recursive supplement: BE-002BT-01 selected `risk_support.direction_cross_constraints`; next baseline should move only direction-conflict and cross-symbol constraint passes.
 Latest recursive supplement: BE-002BU-01 froze `risk_support.direction_cross_constraints` baseline; next movement may add a constraint child file and move only two post-processing helpers.
+Latest recursive supplement: BE-002BV-01 extracted `risk_support.direction_cross_constraints`; `qrpc_runtime/src/risk_checker/direction_cross_constraints.rs` now owns direction-conflict and cross-symbol constraint helpers.

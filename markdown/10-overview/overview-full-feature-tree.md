@@ -5243,3 +5243,6 @@ Recursive boundary supplement: BE-002BT-01 `risk_support` parent residual judgme
 - `markdown/06-milestones/v4.16.0/1471-root.contracts.runtime_support.risk_support.parent_residual_judgment.direction_cross_constraints.md` - v4.16.0 BE-002BT-01 risk_support parent residual judgment selects direction_cross_constraints
 Recursive boundary supplement: BE-002BU-01 `risk_support.direction_cross_constraints` baseline frozen; next step: BE-002BV-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1472-root.contracts.runtime_support.risk_support.direction_cross_constraints.baseline_plan.md` - v4.16.0 BE-002BU-01 direction_cross_constraints baseline plan
+Recursive boundary supplement: BE-002BV-01 `risk_support.direction_cross_constraints` actual extraction complete; next step: BE-002BV-02 single_leaf_closeout.
+- `qrpc_runtime/src/risk_checker/direction_cross_constraints.rs` - Runtime risk checker direction and cross-symbol constraints child
+- `markdown/06-milestones/v4.16.0/1473-root.contracts.runtime_support.risk_support.direction_cross_constraints.extract_closeout.md` - v4.16.0 BE-002BV-01 direction_cross_constraints extract closeout
