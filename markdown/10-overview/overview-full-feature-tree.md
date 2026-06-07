@@ -5301,3 +5301,5 @@ Recursive boundary supplement: BE-002CN-02 `timeline_data_providers` single leaf
 - `markdown/06-milestones/v4.16.0/1497-root.contracts.runtime_support.sandbox_replay_timeline.timeline_data_providers.single_leaf_closeout.md` - v4.16.0 BE-002CN-02 timeline_data_providers single leaf closeout
 Recursive boundary supplement: BE-002CO-01 `sandbox_replay_timeline` parent residual judgment selected `unified_timeline`; next step: BE-002CP-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1498-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.unified_timeline.md` - v4.16.0 BE-002CO-01 sandbox_replay_timeline parent residual judgment selects unified_timeline
+Recursive boundary supplement: BE-002CP-01 `unified_timeline` baseline frozen; next step: BE-002CQ-01 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1499-root.contracts.runtime_support.sandbox_replay_timeline.unified_timeline.baseline_plan.md` - v4.16.0 BE-002CP-01 unified_timeline baseline plan
