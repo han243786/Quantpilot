@@ -1493,3 +1493,4 @@
 | v4.16.0 / BE-002CI-01 | Added: `risk_support` parent closeout |
 | v4.16.0 / BE-002CJ-01 | Added: `runtime_support` parent residual judgment selects `sandbox_replay_timeline` |
 | v4.16.0 / BE-002CK-01 | Added: `sandbox_replay_timeline` baseline plan with limited child queue |
+| v4.16.0 / BE-002CL-01 | Added: `sandbox_replay_timeline` parent residual judgment selects `timeline_data_providers` |

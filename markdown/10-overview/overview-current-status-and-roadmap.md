@@ -1582,3 +1582,4 @@ Latest recursive supplement: BE-002CH-02 closed `risk_support.test_harness` with
 Latest recursive supplement: BE-002CI-01 closed `runtime_support.risk_support`; next recursive step returns to `runtime_support` parent residual judgment with expected candidate `sandbox_replay_timeline`.
 Latest recursive supplement: BE-002CJ-01 selected `runtime_support.sandbox_replay_timeline`; next baseline should freeze `qrpc_runtime/src/sandbox` before any movement.
 Latest recursive supplement: BE-002CK-01 froze `runtime_support.sandbox_replay_timeline` baseline; the child queue opens timeline providers, unified timeline, replay builder, sandbox surfaces, realtime/fast backtest sandbox, and tests.
+Latest recursive supplement: BE-002CL-01 selected `sandbox_replay_timeline.timeline_data_providers`; next baseline should cover timeline provider implementations before unified timeline movement.

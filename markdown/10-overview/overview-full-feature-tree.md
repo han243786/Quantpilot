@@ -5290,3 +5290,5 @@ Recursive boundary supplement: BE-002CJ-01 `runtime_support` parent residual jud
 - `markdown/06-milestones/v4.16.0/1492-root.contracts.runtime_support.parent_residual_judgment.sandbox_replay_timeline.md` - v4.16.0 BE-002CJ-01 runtime_support parent residual judgment selects sandbox_replay_timeline
 Recursive boundary supplement: BE-002CK-01 `sandbox_replay_timeline` baseline frozen; next step: BE-002CL-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1493-root.contracts.runtime_support.sandbox_replay_timeline.baseline_plan.md` - v4.16.0 BE-002CK-01 sandbox_replay_timeline baseline plan
+Recursive boundary supplement: BE-002CL-01 `sandbox_replay_timeline` parent residual judgment selected `timeline_data_providers`; next step: BE-002CM-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1494-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.timeline_data_providers.md` - v4.16.0 BE-002CL-01 sandbox_replay_timeline parent residual judgment selects timeline_data_providers

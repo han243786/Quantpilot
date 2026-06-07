@@ -1854,3 +1854,4 @@
 | v4.16.0 / BE-002CI-01 | `v4.16.0/1491-root.contracts.runtime_support.risk_support.parent_closeout.md` | Added: `risk_support` parent closeout |
 | v4.16.0 / BE-002CJ-01 | `v4.16.0/1492-root.contracts.runtime_support.parent_residual_judgment.sandbox_replay_timeline.md` | Added: `runtime_support` parent residual judgment selects `sandbox_replay_timeline` |
 | v4.16.0 / BE-002CK-01 | `v4.16.0/1493-root.contracts.runtime_support.sandbox_replay_timeline.baseline_plan.md` | Added: `sandbox_replay_timeline` baseline plan with limited child queue |
+| v4.16.0 / BE-002CL-01 | `v4.16.0/1494-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.timeline_data_providers.md` | Added: `sandbox_replay_timeline` parent residual judgment selects `timeline_data_providers` |
