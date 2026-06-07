@@ -1529,3 +1529,4 @@
 | v4.16.0 / BE-002DL-01 | Added: `v4_runtime_support` parent residual judgment selects `graph_symbol_expansion` |
 | v4.16.0 / BE-002DM-01 | Added: `v4_runtime_support.graph_symbol_expansion` baseline plan |
 | v4.16.0 / BE-002DN-01 | Added: `v4_runtime_support.graph_symbol_expansion` actual extraction complete |
+| v4.16.0 / BE-002DN-02 | Added: `v4_runtime_support.graph_symbol_expansion` single leaf closeout stops split |

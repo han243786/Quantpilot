@@ -5370,3 +5370,5 @@ Recursive boundary supplement: BE-002DM-01 `v4_runtime_support.graph_symbol_expa
 Recursive boundary supplement: BE-002DN-01 `v4_runtime_support.graph_symbol_expansion` actual extraction complete; next step: BE-002DN-02 single_leaf_closeout.
 - `qrpc_runtime/src/v4_runtime/graph_symbol_expansion.rs` - Runtime v4 graph symbol expansion child
 - `markdown/06-milestones/v4.16.0/1529-root.contracts.runtime_support.v4_runtime_support.graph_symbol_expansion.extract_closeout.md` - v4.16.0 BE-002DN-01 v4_runtime_support graph_symbol_expansion extract closeout
+Recursive boundary supplement: BE-002DN-02 `v4_runtime_support.graph_symbol_expansion` single leaf closeout complete; next step: BE-002DO-01 v4_runtime_support parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1530-root.contracts.runtime_support.v4_runtime_support.graph_symbol_expansion.single_leaf_closeout.md` - v4.16.0 BE-002DN-02 v4_runtime_support graph_symbol_expansion single leaf closeout
