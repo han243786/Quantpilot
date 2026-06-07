@@ -5303,3 +5303,6 @@ Recursive boundary supplement: BE-002CO-01 `sandbox_replay_timeline` parent resi
 - `markdown/06-milestones/v4.16.0/1498-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.unified_timeline.md` - v4.16.0 BE-002CO-01 sandbox_replay_timeline parent residual judgment selects unified_timeline
 Recursive boundary supplement: BE-002CP-01 `unified_timeline` baseline frozen; next step: BE-002CQ-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1499-root.contracts.runtime_support.sandbox_replay_timeline.unified_timeline.baseline_plan.md` - v4.16.0 BE-002CP-01 unified_timeline baseline plan
+Recursive boundary supplement: BE-002CQ-01 `unified_timeline` actual extraction complete; next step: BE-002CQ-02 single_leaf_closeout.
+- `qrpc_runtime/src/sandbox/unified_timeline.rs` - Runtime sandbox unified timeline child
+- `markdown/06-milestones/v4.16.0/1500-root.contracts.runtime_support.sandbox_replay_timeline.unified_timeline.extract_closeout.md` - v4.16.0 BE-002CQ-01 unified_timeline extract closeout
