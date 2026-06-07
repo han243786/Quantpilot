@@ -5104,3 +5104,5 @@ Recursive boundary supplement: BE-002AB-02 `agent_module.cross_venue_arbitrage` 
 - `markdown/06-milestones/v4.16.0/1407-root.contracts.runtime_support.agent_module.cross_venue_arbitrage.extract_closeout.md` - v4.16.0 BE-002AB-02 agent_module.cross_venue_arbitrage extract closeout
 Recursive boundary supplement: BE-002AB-03 `agent_module.cross_venue_arbitrage` single leaf closeout complete; next step: BE-002AC-01 agent_module parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1408-root.contracts.runtime_support.agent_module.cross_venue_arbitrage.single_leaf_closeout.md` - v4.16.0 BE-002AB-03 agent_module.cross_venue_arbitrage single leaf closeout
+Recursive boundary supplement: BE-002AC-01 `agent_module` parent residual judgment selected `shared_scoring_portfolio_helpers`; next step: BE-002AD-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1409-root.contracts.runtime_support.agent_module.parent_residual_judgment.shared_scoring_portfolio_helpers.md` - v4.16.0 BE-002AC-01 agent_module parent residual judgment selects shared_scoring_portfolio_helpers
