@@ -5022,3 +5022,6 @@ Recursive boundary supplement: BE-001ZH-01 `data_module` parent residual judgmen
 - `markdown/06-milestones/v4.16.0/1370-root.contracts.runtime_support.data_module.parent_residual_judgment.normalization.md` - v4.16.0 BE-001ZH-01 data_module parent residual judgment selects normalization
 Recursive boundary supplement: BE-001ZI-01 `data_module.normalization` baseline_frozen; next step: BE-001ZI-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1371-root.contracts.runtime_support.data_module.normalization.baseline_plan.md` - v4.16.0 BE-001ZI-01 data_module.normalization baseline plan
+Recursive boundary supplement: BE-001ZI-02 `data_module.normalization` actual extraction complete; next step: BE-001ZI-03 single_leaf_closeout.
+- `qrpc_runtime/src/data_module/normalization.rs` - runtime data module raw-to-normalized market data conversion
+- `markdown/06-milestones/v4.16.0/1372-root.contracts.runtime_support.data_module.normalization.extract_closeout.md` - v4.16.0 BE-001ZI-02 data_module.normalization actual extraction complete

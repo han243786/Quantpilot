@@ -1371,3 +1371,4 @@
 | v4.16.0 / BE-001ZG-03 | Added: `data_module.exchange_surface_wave` single leaf closeout stops split |
 | v4.16.0 / BE-001ZH-01 | Added: `data_module` parent residual judgment selects `normalization` |
 | v4.16.0 / BE-001ZI-01 | Added: `data_module.normalization` baseline plan |
+| v4.16.0 / BE-001ZI-02 | Added: `data_module.normalization` actual extraction complete |

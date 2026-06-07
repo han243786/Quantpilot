@@ -1732,3 +1732,4 @@
 | v4.16.0 / BE-001ZG-03 | `v4.16.0/1369-root.contracts.runtime_support.data_module.exchange_surface_wave.single_leaf_closeout.md` | Added: `data_module.exchange_surface_wave` single leaf closeout stops split |
 | v4.16.0 / BE-001ZH-01 | `v4.16.0/1370-root.contracts.runtime_support.data_module.parent_residual_judgment.normalization.md` | Added: `data_module` parent residual judgment selects `normalization` |
 | v4.16.0 / BE-001ZI-01 | `v4.16.0/1371-root.contracts.runtime_support.data_module.normalization.baseline_plan.md` | Added: `data_module.normalization` baseline plan |
+| v4.16.0 / BE-001ZI-02 | `v4.16.0/1372-root.contracts.runtime_support.data_module.normalization.extract_closeout.md` | Added: `data_module.normalization` actual extraction complete |

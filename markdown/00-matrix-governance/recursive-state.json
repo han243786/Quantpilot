@@ -8,11 +8,11 @@
     "GOV-LEAF-GRANULARITY-SMART-JUDGE-01",
     "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01"
   ],
-  "last_committed_batch": "BE-001ZH-01",
-  "last_committed_sha": "9c9bf363",
+  "last_committed_batch": "BE-001ZI-01",
+  "last_committed_sha": "8e10058c",
   "current_parent": "root.contracts.runtime_support.data_module.normalization",
-  "current_step": "BE-001ZI-02",
-  "current_phase": "actual_extraction",
+  "current_step": "BE-001ZI-03",
+  "current_phase": "single_leaf_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",

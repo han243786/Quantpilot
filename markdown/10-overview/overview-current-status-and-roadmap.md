@@ -1460,3 +1460,4 @@ Latest governance supplement: GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 adds `tools/eva
 Latest recursive supplement: BE-001ZG-03 closed `data_module.exchange_surface_wave` with `stop_split: true`; the next recursive step returns to `data_module` parent residual judgment, expected candidate `normalization`.
 Latest recursive supplement: BE-001ZH-01 selected `data_module.normalization`; next baseline covers raw-to-normalized Kline/Quote conversion while excluding mock, historical cache, HTTP transport, in-memory cache, provider orchestration, and tests.
 Latest recursive supplement: BE-001ZI-01 froze the `data_module.normalization` baseline; next movement may add `qrpc_runtime/src/data_module/normalization.rs` and move only normalization helpers.
+Latest recursive supplement: BE-001ZI-02 extracted `data_module.normalization`; `qrpc_runtime/src/data_module/normalization.rs` now owns raw-to-normalized Kline/Quote conversion and quote snapshot construction.
