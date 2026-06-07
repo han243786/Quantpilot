@@ -1454,3 +1454,4 @@
 | v4.16.0 / BE-002BE-01 | Added: `fill_engine` parent residual judgment selects `portfolio_reservation_accounting` |
 | v4.16.0 / BE-002BF-01 | Added: `portfolio_reservation_accounting` baseline plan |
 | v4.16.0 / BE-002BG-01 | Added: `portfolio_reservation_accounting` actual extraction complete |
+| v4.16.0 / BE-002BG-02 | Added: `portfolio_reservation_accounting` single leaf closeout stops split |

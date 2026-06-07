@@ -1543,3 +1543,4 @@ Latest recursive supplement: BE-002BD-02 closed `event_projection_wave` with `st
 Latest recursive supplement: BE-002BE-01 selected `fill_engine.portfolio_reservation_accounting`; next baseline decides the accounting helper movement and public `apply_fill_to_portfolio` handling.
 Latest recursive supplement: BE-002BF-01 froze `portfolio_reservation_accounting` baseline; next movement may move six private accounting helpers while public `apply_fill_to_portfolio` remains parent-owned.
 Latest recursive supplement: BE-002BG-01 extracted `portfolio_reservation_accounting`; `qrpc_runtime/src/fill_engine/portfolio_reservation_accounting.rs` now owns private reservation/accounting helpers.
+Latest recursive supplement: BE-002BG-02 closed `portfolio_reservation_accounting` with `stop_split: true`; next recursive step returns to `fill_engine` parent residual judgment with expected candidate `fill_report_execution_helpers`.

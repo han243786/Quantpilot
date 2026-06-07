@@ -5204,3 +5204,5 @@ Recursive boundary supplement: BE-002BF-01 `portfolio_reservation_accounting` ba
 Recursive boundary supplement: BE-002BG-01 `portfolio_reservation_accounting` actual extraction complete; next step: BE-002BG-02 single_leaf_closeout.
 - `qrpc_runtime/src/fill_engine/portfolio_reservation_accounting.rs` - Runtime fill engine portfolio reservation accounting child
 - `markdown/06-milestones/v4.16.0/1454-root.contracts.runtime_support.fill_engine.portfolio_reservation_accounting.extract_closeout.md` - v4.16.0 BE-002BG-01 portfolio_reservation_accounting extract closeout
+Recursive boundary supplement: BE-002BG-02 `portfolio_reservation_accounting` single leaf closeout complete; next step: BE-002BH-01 fill_engine parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1455-root.contracts.runtime_support.fill_engine.portfolio_reservation_accounting.single_leaf_closeout.md` - v4.16.0 BE-002BG-02 portfolio_reservation_accounting single leaf closeout
