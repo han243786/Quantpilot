@@ -1873,3 +1873,4 @@
 | v4.16.0 / BE-002CY-01 | `v4.16.0/1510-root.contracts.runtime_support.sandbox_replay_timeline.realtime_sandbox.extract_closeout.md` | Added: `realtime_sandbox` actual extraction complete |
 | v4.16.0 / BE-002CY-02 | `v4.16.0/1511-root.contracts.runtime_support.sandbox_replay_timeline.realtime_sandbox.single_leaf_closeout.md` | Added: `realtime_sandbox` single leaf closeout stops split |
 | v4.16.0 / BE-002CZ-01 | `v4.16.0/1512-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.fast_backtest_sandbox.md` | Added: `sandbox_replay_timeline` parent residual judgment selects `fast_backtest_sandbox` |
+| v4.16.0 / BE-002DA-01 | `v4.16.0/1513-root.contracts.runtime_support.sandbox_replay_timeline.fast_backtest_sandbox.baseline_plan.md` | Added: `fast_backtest_sandbox` baseline plan |
