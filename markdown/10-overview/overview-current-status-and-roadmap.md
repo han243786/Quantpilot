@@ -1591,3 +1591,4 @@ Latest recursive supplement: BE-002CP-01 froze `sandbox_replay_timeline.unified_
 Latest recursive supplement: BE-002CQ-01 extracted `sandbox_replay_timeline.unified_timeline`; `qrpc_runtime/src/sandbox/unified_timeline.rs` now owns `UnifiedTimeline`.
 Latest recursive supplement: BE-002CQ-02 closed `sandbox_replay_timeline.unified_timeline` with `stop_split: true`; next recursive step returns to sandbox parent residual judgment with expected candidate `replay_builder`.
 Latest recursive supplement: BE-002CR-01 selected `sandbox_replay_timeline.replay_builder`; next baseline should inspect the existing `replay.rs` module before any movement.
+Latest recursive supplement: BE-002CS-01 closed `sandbox_replay_timeline.replay_builder` with `stop_split: true`; next recursive step returns to sandbox parent residual judgment with expected candidate `sandbox_mode_surface`.

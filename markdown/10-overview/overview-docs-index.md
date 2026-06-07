@@ -1502,3 +1502,4 @@
 | v4.16.0 / BE-002CQ-01 | Added: `unified_timeline` actual extraction complete |
 | v4.16.0 / BE-002CQ-02 | Added: `unified_timeline` single leaf closeout stops split |
 | v4.16.0 / BE-002CR-01 | Added: `sandbox_replay_timeline` parent residual judgment selects `replay_builder` |
+| v4.16.0 / BE-002CS-01 | Added: `replay_builder` baseline closeout stops split |
