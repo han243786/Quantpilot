@@ -5210,3 +5210,6 @@ Recursive boundary supplement: BE-002BH-01 `fill_engine` parent residual judgmen
 - `markdown/06-milestones/v4.16.0/1456-root.contracts.runtime_support.fill_engine.parent_residual_judgment.fill_report_execution_helpers.md` - v4.16.0 BE-002BH-01 fill_engine parent residual judgment selects fill_report_execution_helpers
 Recursive boundary supplement: BE-002BI-01 `fill_report_execution_helpers` baseline frozen; next step: BE-002BJ-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1457-root.contracts.runtime_support.fill_engine.fill_report_execution_helpers.baseline_plan.md` - v4.16.0 BE-002BI-01 fill_report_execution_helpers baseline plan
+Recursive boundary supplement: BE-002BJ-01 `fill_report_execution_helpers` actual extraction complete; next step: BE-002BJ-02 single_leaf_closeout.
+- `qrpc_runtime/src/fill_engine/fill_report_execution_helpers.rs` - Runtime fill engine execution and fill-report helper child
+- `markdown/06-milestones/v4.16.0/1458-root.contracts.runtime_support.fill_engine.fill_report_execution_helpers.extract_closeout.md` - v4.16.0 BE-002BJ-01 fill_report_execution_helpers extract closeout

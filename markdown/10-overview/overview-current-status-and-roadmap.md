@@ -1546,3 +1546,4 @@ Latest recursive supplement: BE-002BG-01 extracted `portfolio_reservation_accoun
 Latest recursive supplement: BE-002BG-02 closed `portfolio_reservation_accounting` with `stop_split: true`; next recursive step returns to `fill_engine` parent residual judgment with expected candidate `fill_report_execution_helpers`.
 Latest recursive supplement: BE-002BH-01 selected `fill_engine.fill_report_execution_helpers`; next baseline decides helper movement for marketability, assumptions, order reconstruction, and fill-report construction.
 Latest recursive supplement: BE-002BI-01 froze `fill_report_execution_helpers` baseline; next movement may move nine private execution/fill-report helpers.
+Latest recursive supplement: BE-002BJ-01 extracted `fill_report_execution_helpers`; `qrpc_runtime/src/fill_engine/fill_report_execution_helpers.rs` now owns private execution and fill-report helpers.
