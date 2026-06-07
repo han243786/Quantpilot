@@ -1831,3 +1831,4 @@
 | v4.16.0 / BE-002BR-01 | `v4.16.0/1468-root.contracts.runtime_support.risk_support.event_payload_projection.baseline_plan.md` | Added: `event_payload_projection` baseline plan |
 | v4.16.0 / BE-002BS-01 | `v4.16.0/1469-root.contracts.runtime_support.risk_support.event_payload_projection.extract_closeout.md` | Added: `event_payload_projection` actual extraction complete |
 | v4.16.0 / BE-002BS-02 | `v4.16.0/1470-root.contracts.runtime_support.risk_support.event_payload_projection.single_leaf_closeout.md` | Added: `event_payload_projection` single leaf closeout stops split |
+| v4.16.0 / BE-002BT-01 | `v4.16.0/1471-root.contracts.runtime_support.risk_support.parent_residual_judgment.direction_cross_constraints.md` | Added: `risk_support` parent residual judgment selects `direction_cross_constraints` |

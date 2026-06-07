@@ -1559,3 +1559,4 @@ Latest recursive supplement: BE-002BQ-01 selected `risk_support.event_payload_pr
 Latest recursive supplement: BE-002BR-01 froze `risk_support.event_payload_projection` baseline; next movement may add a projection child file and move only five event/summary/stats helpers.
 Latest recursive supplement: BE-002BS-01 extracted `risk_support.event_payload_projection`; `qrpc_runtime/src/risk_checker/event_payload_projection.rs` now owns risk event payload, reason summary, and stats projection helpers.
 Latest recursive supplement: BE-002BS-02 closed `risk_support.event_payload_projection` with `stop_split: true`; next recursive step returns to `risk_support` parent residual judgment with expected candidate `direction_cross_constraints`.
+Latest recursive supplement: BE-002BT-01 selected `risk_support.direction_cross_constraints`; next baseline should move only direction-conflict and cross-symbol constraint passes.
