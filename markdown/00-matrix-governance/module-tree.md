@@ -8712,3 +8712,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.core_ir_evaluator.shared_lookup_math_helpers stop_split: true`; the helper pocket remains terminal and parent-owned. The remaining core_ir_evaluator candidate is `test_harness`.
 **Latest state supplement (BE-002AR-01)**: `root.contracts.runtime_support.core_ir_evaluator` parent residual judgment selected `test_harness`; next step: BE-002AS-01 baseline_plan.
 `root.contracts.runtime_support.core_ir_evaluator.test_harness selected: true`; this candidate owns only local evaluator tests and fixtures. Production registry, helpers, evaluator children, and public API remain outside the movement.
+**Latest state supplement (BE-002AS-01)**: `root.contracts.runtime_support.core_ir_evaluator.test_harness` baseline frozen; next step: BE-002AS-02 actual_extraction.
+`root.contracts.runtime_support.core_ir_evaluator.test_harness baseline_frozen: true`; the next movement may add the planned test-only child module and move only local evaluator tests and fixtures while production registry, helpers, evaluator children, and public API remain parent-owned.
