@@ -1853,3 +1853,4 @@
 | v4.16.0 / BE-002CH-02 | `v4.16.0/1490-root.contracts.runtime_support.risk_support.test_harness.single_leaf_closeout.md` | Added: `risk_support.test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-002CI-01 | `v4.16.0/1491-root.contracts.runtime_support.risk_support.parent_closeout.md` | Added: `risk_support` parent closeout |
 | v4.16.0 / BE-002CJ-01 | `v4.16.0/1492-root.contracts.runtime_support.parent_residual_judgment.sandbox_replay_timeline.md` | Added: `runtime_support` parent residual judgment selects `sandbox_replay_timeline` |
+| v4.16.0 / BE-002CK-01 | `v4.16.0/1493-root.contracts.runtime_support.sandbox_replay_timeline.baseline_plan.md` | Added: `sandbox_replay_timeline` baseline plan with limited child queue |
