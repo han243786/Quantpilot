@@ -5230,3 +5230,5 @@ Recursive boundary supplement: BE-002BO-01 `runtime_support` parent residual jud
 - `markdown/06-milestones/v4.16.0/1465-root.contracts.runtime_support.parent_residual_judgment.risk_support.md` - v4.16.0 BE-002BO-01 runtime_support parent residual judgment selects risk_support
 Recursive boundary supplement: BE-002BP-01 `risk_support` baseline frozen; next step: BE-002BQ-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1466-root.contracts.runtime_support.risk_support.baseline_plan.md` - v4.16.0 BE-002BP-01 risk_support baseline plan
+Recursive boundary supplement: BE-002BQ-01 `risk_support` parent residual judgment selected `event_payload_projection`; next step: BE-002BR-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1467-root.contracts.runtime_support.risk_support.parent_residual_judgment.event_payload_projection.md` - v4.16.0 BE-002BQ-01 risk_support parent residual judgment selects event_payload_projection

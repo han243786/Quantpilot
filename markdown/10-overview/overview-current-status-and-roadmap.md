@@ -1555,3 +1555,4 @@ Latest recursive supplement: BE-002BM-02 closed `fill_engine.test_harness` with 
 Latest recursive supplement: BE-002BN-01 closed `runtime_support.fill_engine` as a parent; next recursive step returns to `runtime_support` parent residual judgment.
 Latest recursive supplement: BE-002BO-01 selected `runtime_support.risk_support`; next baseline should freeze the `qrpc_runtime/src/risk_checker.rs` risk-checking boundary and preserve runtime facade/provider separation.
 Latest recursive supplement: BE-002BP-01 froze `risk_support` baseline; a limited same-parent wave queue opens event payload projection, direction/cross-symbol constraints, action clamps, portfolio target clamps, exposure math, and test harness while public provider/evaluate surface remains parent-owned.
+Latest recursive supplement: BE-002BQ-01 selected `risk_support.event_payload_projection`; next baseline should move only event payload, reason summary, and stats projection helpers.
