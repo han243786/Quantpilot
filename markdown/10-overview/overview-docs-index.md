@@ -1474,3 +1474,4 @@
 | v4.16.0 / BE-002BU-01 | Added: `direction_cross_constraints` baseline plan |
 | v4.16.0 / BE-002BV-01 | Added: `direction_cross_constraints` actual extraction complete |
 | v4.16.0 / BE-002BV-02 | Added: `direction_cross_constraints` single leaf closeout stops split |
+| v4.16.0 / BE-002BW-01 | Added: `risk_support` parent residual judgment selects `action_clamp_helpers` |

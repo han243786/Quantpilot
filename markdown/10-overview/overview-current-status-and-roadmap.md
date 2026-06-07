@@ -1563,3 +1563,4 @@ Latest recursive supplement: BE-002BT-01 selected `risk_support.direction_cross_
 Latest recursive supplement: BE-002BU-01 froze `risk_support.direction_cross_constraints` baseline; next movement may add a constraint child file and move only two post-processing helpers.
 Latest recursive supplement: BE-002BV-01 extracted `risk_support.direction_cross_constraints`; `qrpc_runtime/src/risk_checker/direction_cross_constraints.rs` now owns direction-conflict and cross-symbol constraint helpers.
 Latest recursive supplement: BE-002BV-02 closed `risk_support.direction_cross_constraints` with `stop_split: true`; next recursive step returns to `risk_support` parent residual judgment with expected candidate `action_clamp_helpers`.
+Latest recursive supplement: BE-002BW-01 selected `risk_support.action_clamp_helpers`; next baseline should move only action-list clamp helpers while portfolio-target clamps and exposure math remain outside.

@@ -1835,3 +1835,4 @@
 | v4.16.0 / BE-002BU-01 | `v4.16.0/1472-root.contracts.runtime_support.risk_support.direction_cross_constraints.baseline_plan.md` | Added: `direction_cross_constraints` baseline plan |
 | v4.16.0 / BE-002BV-01 | `v4.16.0/1473-root.contracts.runtime_support.risk_support.direction_cross_constraints.extract_closeout.md` | Added: `direction_cross_constraints` actual extraction complete |
 | v4.16.0 / BE-002BV-02 | `v4.16.0/1474-root.contracts.runtime_support.risk_support.direction_cross_constraints.single_leaf_closeout.md` | Added: `direction_cross_constraints` single leaf closeout stops split |
+| v4.16.0 / BE-002BW-01 | `v4.16.0/1475-root.contracts.runtime_support.risk_support.parent_residual_judgment.action_clamp_helpers.md` | Added: `risk_support` parent residual judgment selects `action_clamp_helpers` |
