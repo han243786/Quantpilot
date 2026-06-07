@@ -5363,3 +5363,5 @@ Recursive boundary supplement: BE-002DK-01 `v4_runtime_support.type_surface` act
 - `markdown/06-milestones/v4.16.0/1525-root.contracts.runtime_support.v4_runtime_support.type_surface.extract_closeout.md` - v4.16.0 BE-002DK-01 v4_runtime_support type_surface extract closeout
 Recursive boundary supplement: BE-002DK-02 `v4_runtime_support.type_surface` single leaf closeout complete; next step: BE-002DL-01 v4_runtime_support parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1526-root.contracts.runtime_support.v4_runtime_support.type_surface.single_leaf_closeout.md` - v4.16.0 BE-002DK-02 v4_runtime_support type_surface single leaf closeout
+Recursive boundary supplement: BE-002DL-01 `v4_runtime_support` parent residual judgment selected `graph_symbol_expansion`; next step: BE-002DM-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1527-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.graph_symbol_expansion.md` - v4.16.0 BE-002DL-01 v4_runtime_support parent residual judgment selects graph_symbol_expansion
