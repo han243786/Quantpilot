@@ -1532,3 +1532,4 @@ Latest recursive supplement: BE-002AV-01 froze `execution_module` baseline; only
 Latest recursive supplement: BE-002AW-01 selected `execution_module.test_harness`; next baseline should move only local execution-module tests and fixtures.
 Latest recursive supplement: BE-002AX-01 froze `execution_module.test_harness` baseline; next movement may add a test-only child file and move only local execution-module tests.
 Latest recursive supplement: BE-002AX-02 extracted `execution_module.test_harness`; local execution-module tests now live in `qrpc_runtime/src/execution_module/test_harness.rs`.
+Latest recursive supplement: BE-002AX-03 closed `execution_module.test_harness` with `stop_split: true`; next recursive step returns to `execution_module` parent closeout judgment.
