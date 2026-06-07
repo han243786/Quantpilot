@@ -1610,3 +1610,4 @@ Latest recursive supplement: BE-002DE-01 extracted `sandbox_replay_timeline.test
 Latest recursive supplement: BE-002DE-02 closed `sandbox_replay_timeline.test_harness` with `stop_split: true`; all planned sandbox_replay_timeline children are closed and the next step is parent closeout.
 Latest recursive supplement: BE-002DF-01 closed `sandbox_replay_timeline` as a parent; next recursive step returns to `runtime_support` parent residual judgment.
 Latest recursive supplement: BE-002DG-01 selected `runtime_support.v4_runtime_support`; next baseline should freeze v4 runtime orchestration, simulated execution, DTO/type surface, and local v4 runtime tests.
+Latest recursive supplement: BE-002DH-01 froze `runtime_support.v4_runtime_support` baseline; terminal leaf control resolves to `WAVE`, and the next step is v4 runtime support parent residual judgment.

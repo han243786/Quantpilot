@@ -395,3 +395,4 @@ Latest recursive supplement: BE-001ZE-03 closed `data_module.collection_orchestr
 Latest recursive supplement: BE-001ZF-01 selected `data_module.exchange_surface_wave`; the next baseline should batch `exchange_endpoints` and `exchange_payload_parsing` instead of creating a standalone endpoint micro leaf.
 Latest recursive supplement: BE-001ZG-01 froze `data_module.exchange_surface_wave` baseline; next movement may extract endpoint/provider helpers and OKX/Binance payload parsers into one exchange surface child.
 Latest recursive supplement: BE-002DG-01 selected `runtime_support.v4_runtime_support`; next baseline should freeze v4 runtime orchestration, simulated execution, DTO/type surface, and local v4 runtime tests.
+Latest recursive supplement: BE-002DH-01 froze `runtime_support.v4_runtime_support`; terminal leaf control resolves to `WAVE`, so v4 runtime support must continue through same-parent child waves.
