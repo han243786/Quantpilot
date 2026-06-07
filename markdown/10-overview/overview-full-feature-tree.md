@@ -5086,3 +5086,5 @@ Recursive boundary supplement: BE-001ZX-02 `agent_module.weighted_signal_decisio
 - `markdown/06-milestones/v4.16.0/1399-root.contracts.runtime_support.agent_module.weighted_signal_decisions.extract_closeout.md` - v4.16.0 BE-001ZX-02 agent_module.weighted_signal_decisions extract closeout
 Recursive boundary supplement: BE-001ZX-03 `agent_module.weighted_signal_decisions` single leaf closeout complete; next step: BE-001ZY-01 agent_module parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1400-root.contracts.runtime_support.agent_module.weighted_signal_decisions.single_leaf_closeout.md` - v4.16.0 BE-001ZX-03 agent_module.weighted_signal_decisions single leaf closeout
+Recursive boundary supplement: BE-001ZY-01 `agent_module` parent residual judgment selected `portfolio_rebalance`; next step: BE-001ZZ-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1401-root.contracts.runtime_support.agent_module.parent_residual_judgment.portfolio_rebalance.md` - v4.16.0 BE-001ZY-01 agent_module parent residual judgment selects portfolio_rebalance

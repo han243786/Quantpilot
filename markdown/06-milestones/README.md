@@ -1761,3 +1761,4 @@
 | v4.16.0 / BE-001ZX-01 | `v4.16.0/1398-root.contracts.runtime_support.agent_module.weighted_signal_decisions.baseline_plan.md` | Added: `agent_module.weighted_signal_decisions` baseline plan |
 | v4.16.0 / BE-001ZX-02 | `v4.16.0/1399-root.contracts.runtime_support.agent_module.weighted_signal_decisions.extract_closeout.md` | Added: `agent_module.weighted_signal_decisions` actual extraction complete |
 | v4.16.0 / BE-001ZX-03 | `v4.16.0/1400-root.contracts.runtime_support.agent_module.weighted_signal_decisions.single_leaf_closeout.md` | Added: `agent_module.weighted_signal_decisions` single leaf closeout stops split |
+| v4.16.0 / BE-001ZY-01 | `v4.16.0/1401-root.contracts.runtime_support.agent_module.parent_residual_judgment.portfolio_rebalance.md` | Added: `agent_module` parent residual judgment selects `portfolio_rebalance` |

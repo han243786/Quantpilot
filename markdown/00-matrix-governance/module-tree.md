@@ -8644,3 +8644,5 @@ AI 声称 BE-001FL-01 已完成时，必须说明当前只是 `no code movement`
 `root.contracts.runtime_support.agent_module.weighted_signal_decisions extracted`; `qrpc_runtime/src/agent_module/weighted_signal_decisions.rs` owns weighted decision construction and grouping while shared scoring/portfolio helpers remain parent-mediated.
 **Latest state supplement (BE-001ZX-03)**: `root.contracts.runtime_support.agent_module.weighted_signal_decisions` single leaf closeout complete; next step: BE-001ZY-01 `agent_module` parent_residual_judgment.
 `root.contracts.runtime_support.agent_module.weighted_signal_decisions stop_split: true`; terminal leaf control score is 21 with `governance_mode=stop_split`, so no deeper split is opened.
+**Latest state supplement (BE-001ZY-01)**: `root.contracts.runtime_support.agent_module` parent residual judgment selected `portfolio_rebalance`; next step: BE-001ZZ-01 baseline_plan.
+`root.contracts.runtime_support.agent_module.portfolio_rebalance selected: true`; this child owns slow-cycle rebalance cadence, universe selection, allocation methods, current-weight projection, and portfolio target decision assembly.

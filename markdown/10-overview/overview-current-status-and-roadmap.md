@@ -1489,3 +1489,4 @@ Latest recursive supplement: BE-001ZW-01 selected `agent_module.weighted_signal_
 Latest recursive supplement: BE-001ZX-01 froze `agent_module.weighted_signal_decisions` baseline; next movement may add a child file and move only weighted signal decision flow plus grouping helper.
 Latest recursive supplement: BE-001ZX-02 extracted `agent_module.weighted_signal_decisions`; weighted signal decision construction and grouping now live in `qrpc_runtime/src/agent_module/weighted_signal_decisions.rs`.
 Latest recursive supplement: BE-001ZX-03 closed `agent_module.weighted_signal_decisions` with `stop_split: true`; next recursive step returns to `agent_module` parent residual judgment with expected candidate `portfolio_rebalance`.
+Latest recursive supplement: BE-001ZY-01 selected `agent_module.portfolio_rebalance`; next baseline covers cadence gates, rebalance universe, target allocation, current weights, and portfolio target DTO assembly.
