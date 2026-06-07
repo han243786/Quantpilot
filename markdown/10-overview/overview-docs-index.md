@@ -1516,3 +1516,4 @@
 | v4.16.0 / BE-002DB-01 | Added: `fast_backtest_sandbox` actual extraction complete |
 | v4.16.0 / BE-002DB-02 | Added: `fast_backtest_sandbox` single leaf closeout stops split |
 | v4.16.0 / BE-002DC-01 | Added: `sandbox_replay_timeline` parent residual judgment selects `test_harness` |
+| v4.16.0 / BE-002DD-01 | Added: `sandbox_replay_timeline.test_harness` baseline plan |

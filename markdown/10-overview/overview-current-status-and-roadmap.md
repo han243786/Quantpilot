@@ -1605,3 +1605,4 @@ Latest recursive supplement: BE-002DA-01 froze `sandbox_replay_timeline.fast_bac
 Latest recursive supplement: BE-002DB-01 extracted `sandbox_replay_timeline.fast_backtest_sandbox`; `qrpc_runtime/src/sandbox/fast_backtest_sandbox.rs` now owns fast backtest sandbox behavior and benchmark equity projection.
 Latest recursive supplement: BE-002DB-02 closed `sandbox_replay_timeline.fast_backtest_sandbox` with `stop_split: true`; the next recursive step returns to sandbox parent residual judgment with expected candidate `test_harness`.
 Latest recursive supplement: BE-002DC-01 selected `sandbox_replay_timeline.test_harness`; next baseline should move only local sandbox tests while shared helpers stay parent-owned.
+Latest recursive supplement: BE-002DD-01 froze `sandbox_replay_timeline.test_harness` baseline; next movement may add a test-only child and move only local sandbox tests and fixture.

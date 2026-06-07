@@ -5341,3 +5341,5 @@ Recursive boundary supplement: BE-002DB-02 `fast_backtest_sandbox` single leaf c
 - `markdown/06-milestones/v4.16.0/1515-root.contracts.runtime_support.sandbox_replay_timeline.fast_backtest_sandbox.single_leaf_closeout.md` - v4.16.0 BE-002DB-02 fast_backtest_sandbox single leaf closeout
 Recursive boundary supplement: BE-002DC-01 `sandbox_replay_timeline` parent residual judgment selected `test_harness`; next step: BE-002DD-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1516-root.contracts.runtime_support.sandbox_replay_timeline.parent_residual_judgment.test_harness.md` - v4.16.0 BE-002DC-01 sandbox_replay_timeline parent residual judgment selects test_harness
+Recursive boundary supplement: BE-002DD-01 `sandbox_replay_timeline.test_harness` baseline frozen; next step: BE-002DE-01 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1517-root.contracts.runtime_support.sandbox_replay_timeline.test_harness.baseline_plan.md` - v4.16.0 BE-002DD-01 sandbox_replay_timeline test_harness baseline plan
