@@ -5279,3 +5279,6 @@ Recursive boundary supplement: BE-002CF-01 `risk_support` parent residual judgme
 - `markdown/06-milestones/v4.16.0/1487-root.contracts.runtime_support.risk_support.parent_residual_judgment.test_harness.md` - v4.16.0 BE-002CF-01 risk_support parent residual judgment selects test_harness
 Recursive boundary supplement: BE-002CG-01 `risk_support.test_harness` baseline frozen; next step: BE-002CH-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1488-root.contracts.runtime_support.risk_support.test_harness.baseline_plan.md` - v4.16.0 BE-002CG-01 risk_support.test_harness baseline plan
+Recursive boundary supplement: BE-002CH-01 `risk_support.test_harness` actual extraction complete; next step: BE-002CH-02 single_leaf_closeout.
+- `qrpc_runtime/src/risk_checker/test_harness.rs` - Runtime risk checker local test harness child
+- `markdown/06-milestones/v4.16.0/1489-root.contracts.runtime_support.risk_support.test_harness.extract_closeout.md` - v4.16.0 BE-002CH-01 risk_support.test_harness extract closeout
