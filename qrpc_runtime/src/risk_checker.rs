@@ -10,10 +10,14 @@ use std::collections::{BTreeMap, BTreeSet};
 mod action_clamp_helpers;
 mod direction_cross_constraints;
 mod event_payload_projection;
+mod exposure_math_helpers;
 mod portfolio_target_clamp_helpers;
 use action_clamp_helpers::clamp_actions;
 use direction_cross_constraints::{apply_cross_symbol_constraints, apply_direction_conflict_check};
 use event_payload_projection::build_risk_event_payload;
+use exposure_math_helpers::{
+    available_sell_ratio, portfolio_equity, portfolio_net_exposure_ratio, symbol_net_exposure_ratio,
+};
 use portfolio_target_clamp_helpers::clamp_portfolio_target_limits;
 
 #[derive(Debug, Clone)]
@@ -346,44 +350,6 @@ fn push_reason_code(reason_codes: &mut Vec<RiskReasonCode>, reason_code: RiskRea
     if !reason_codes.contains(&reason_code) {
         reason_codes.push(reason_code);
     }
-}
-
-fn available_sell_ratio(
-    portfolio: &PortfolioState,
-    exchange: &Exchange,
-    symbol: &Symbol,
-    reference_price: f64,
-    equity: f64,
-) -> f64 {
-    if !reference_price.is_finite() || reference_price <= 0.0 {
-        return 0.0;
-    }
-    let available_qty = portfolio
-        .positions
-        .iter()
-        .find(|position| &position.exchange == exchange && &position.symbol == symbol)
-        .map(|position| (position.net_qty.max(0.0) - position.frozen_qty).max(0.0))
-        .unwrap_or(0.0);
-    (available_qty * reference_price / equity).max(0.0)
-}
-
-fn portfolio_equity(portfolio: &PortfolioState) -> f64 {
-    portfolio.cash_balance + portfolio.total_net_notional
-}
-
-fn symbol_net_exposure_ratio(portfolio: &PortfolioState, symbol: &Symbol, equity: f64) -> f64 {
-    portfolio
-        .positions
-        .iter()
-        .filter(|position| &position.symbol == symbol)
-        .map(|position| position.net_qty * position.mark_price)
-        .sum::<f64>()
-        .abs()
-        / equity
-}
-
-fn portfolio_net_exposure_ratio(portfolio: &PortfolioState, equity: f64) -> f64 {
-    (portfolio.total_net_notional / equity).abs()
 }
 
 #[cfg(test)]

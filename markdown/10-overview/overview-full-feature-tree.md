@@ -5270,3 +5270,6 @@ Recursive boundary supplement: BE-002CC-01 `risk_support` parent residual judgme
 - `markdown/06-milestones/v4.16.0/1483-root.contracts.runtime_support.risk_support.parent_residual_judgment.exposure_math_helpers.md` - v4.16.0 BE-002CC-01 risk_support parent residual judgment selects exposure_math_helpers
 Recursive boundary supplement: BE-002CD-01 `risk_support.exposure_math_helpers` baseline frozen; next step: BE-002CE-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1484-root.contracts.runtime_support.risk_support.exposure_math_helpers.baseline_plan.md` - v4.16.0 BE-002CD-01 exposure_math_helpers baseline plan
+Recursive boundary supplement: BE-002CE-01 `risk_support.exposure_math_helpers` actual extraction complete; next step: BE-002CE-02 single_leaf_closeout.
+- `qrpc_runtime/src/risk_checker/exposure_math_helpers.rs` - Runtime risk checker shared exposure and equity math helper child
+- `markdown/06-milestones/v4.16.0/1485-root.contracts.runtime_support.risk_support.exposure_math_helpers.extract_closeout.md` - v4.16.0 BE-002CE-01 exposure_math_helpers extract closeout
