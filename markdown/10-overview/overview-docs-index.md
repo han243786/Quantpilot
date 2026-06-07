@@ -1489,3 +1489,4 @@
 | v4.16.0 / BE-002CF-01 | Added: `risk_support` parent residual judgment selects `test_harness` |
 | v4.16.0 / BE-002CG-01 | Added: `risk_support.test_harness` baseline plan |
 | v4.16.0 / BE-002CH-01 | Added: `risk_support.test_harness` actual extraction complete |
+| v4.16.0 / BE-002CH-02 | Added: `risk_support.test_harness` single leaf closeout stops split |

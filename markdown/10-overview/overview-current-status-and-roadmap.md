@@ -1578,3 +1578,4 @@ Latest recursive supplement: BE-002CE-02 closed `risk_support.exposure_math_help
 Latest recursive supplement: BE-002CF-01 selected `risk_support.test_harness`; next baseline should move only local risk-checker tests and fixtures.
 Latest recursive supplement: BE-002CG-01 froze `risk_support.test_harness` baseline; next movement may add a test-only child module and move only local risk-checker tests.
 Latest recursive supplement: BE-002CH-01 extracted `risk_support.test_harness`; `qrpc_runtime/src/risk_checker/test_harness.rs` now owns local risk-checker tests and fixtures.
+Latest recursive supplement: BE-002CH-02 closed `risk_support.test_harness` with `stop_split: true`; all planned `risk_support` children are now closed.

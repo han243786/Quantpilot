@@ -1850,3 +1850,4 @@
 | v4.16.0 / BE-002CF-01 | `v4.16.0/1487-root.contracts.runtime_support.risk_support.parent_residual_judgment.test_harness.md` | Added: `risk_support` parent residual judgment selects `test_harness` |
 | v4.16.0 / BE-002CG-01 | `v4.16.0/1488-root.contracts.runtime_support.risk_support.test_harness.baseline_plan.md` | Added: `risk_support.test_harness` baseline plan |
 | v4.16.0 / BE-002CH-01 | `v4.16.0/1489-root.contracts.runtime_support.risk_support.test_harness.extract_closeout.md` | Added: `risk_support.test_harness` actual extraction complete |
+| v4.16.0 / BE-002CH-02 | `v4.16.0/1490-root.contracts.runtime_support.risk_support.test_harness.single_leaf_closeout.md` | Added: `risk_support.test_harness` single leaf closeout stops split |
