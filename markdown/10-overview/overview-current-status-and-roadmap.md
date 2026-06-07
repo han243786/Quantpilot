@@ -1522,3 +1522,4 @@ Latest recursive supplement: BE-002AO-03 closed `spread_custom_expression_wave` 
 Latest recursive supplement: BE-002AP-01 selected `core_ir_evaluator.shared_lookup_math_helpers`; next baseline decides whether shared lookup/math helpers remain parent-owned or move behind parent-mediated access.
 Latest recursive supplement: BE-002AQ-01 keeps `core_ir_evaluator.shared_lookup_math_helpers` parent-owned; no child file is opened because extraction would add sibling-helper pressure or wrapper churn.
 Latest recursive supplement: BE-002AQ-02 closed `core_ir_evaluator.shared_lookup_math_helpers` with `stop_split: true`; next recursive step returns to `core_ir_evaluator` parent residual judgment with expected candidate `test_harness`.
+Latest recursive supplement: BE-002AR-01 selected `core_ir_evaluator.test_harness`; next baseline should move only local evaluator tests while production registry, helpers, and evaluator children remain parent-owned.

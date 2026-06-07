@@ -1433,3 +1433,4 @@
 | v4.16.0 / BE-002AP-01 | Added: `core_ir_evaluator` parent residual judgment selects `shared_lookup_math_helpers` |
 | v4.16.0 / BE-002AQ-01 | Added: `shared_lookup_math_helpers` parent-owned baseline plan |
 | v4.16.0 / BE-002AQ-02 | Added: `shared_lookup_math_helpers` single leaf closeout stops split |
+| v4.16.0 / BE-002AR-01 | Added: `core_ir_evaluator` parent residual judgment selects `test_harness` |
