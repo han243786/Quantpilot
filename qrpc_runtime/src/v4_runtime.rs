@@ -1,5 +1,10 @@
+mod graph_symbol_expansion;
 mod type_surface;
 
+use self::graph_symbol_expansion::symbol_for_machine_id;
+pub use self::graph_symbol_expansion::{
+    expand_v4_graph_for_symbols, normalize_v4_backtest_symbols,
+};
 pub use self::type_surface::*;
 
 include!("v4_runtime_types.rs");

@@ -5367,3 +5367,6 @@ Recursive boundary supplement: BE-002DL-01 `v4_runtime_support` parent residual 
 - `markdown/06-milestones/v4.16.0/1527-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.graph_symbol_expansion.md` - v4.16.0 BE-002DL-01 v4_runtime_support parent residual judgment selects graph_symbol_expansion
 Recursive boundary supplement: BE-002DM-01 `v4_runtime_support.graph_symbol_expansion` baseline frozen; next step: BE-002DN-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1528-root.contracts.runtime_support.v4_runtime_support.graph_symbol_expansion.baseline_plan.md` - v4.16.0 BE-002DM-01 v4_runtime_support graph_symbol_expansion baseline plan
+Recursive boundary supplement: BE-002DN-01 `v4_runtime_support.graph_symbol_expansion` actual extraction complete; next step: BE-002DN-02 single_leaf_closeout.
+- `qrpc_runtime/src/v4_runtime/graph_symbol_expansion.rs` - Runtime v4 graph symbol expansion child
+- `markdown/06-milestones/v4.16.0/1529-root.contracts.runtime_support.v4_runtime_support.graph_symbol_expansion.extract_closeout.md` - v4.16.0 BE-002DN-01 v4_runtime_support graph_symbol_expansion extract closeout
