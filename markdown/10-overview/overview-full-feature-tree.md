@@ -5346,3 +5346,5 @@ Recursive boundary supplement: BE-002DD-01 `sandbox_replay_timeline.test_harness
 Recursive boundary supplement: BE-002DE-01 `sandbox_replay_timeline.test_harness` actual extraction complete; next step: BE-002DE-02 single_leaf_closeout.
 - `qrpc_runtime/src/sandbox/test_harness.rs` - Runtime sandbox local test harness child
 - `markdown/06-milestones/v4.16.0/1518-root.contracts.runtime_support.sandbox_replay_timeline.test_harness.extract_closeout.md` - v4.16.0 BE-002DE-01 sandbox test_harness extract closeout
+Recursive boundary supplement: BE-002DE-02 `sandbox_replay_timeline.test_harness` single leaf closeout complete; next step: BE-002DF-01 sandbox_replay_timeline parent_closeout.
+- `markdown/06-milestones/v4.16.0/1519-root.contracts.runtime_support.sandbox_replay_timeline.test_harness.single_leaf_closeout.md` - v4.16.0 BE-002DE-02 sandbox test_harness single leaf closeout

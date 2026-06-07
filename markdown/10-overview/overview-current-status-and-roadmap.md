@@ -1607,3 +1607,4 @@ Latest recursive supplement: BE-002DB-02 closed `sandbox_replay_timeline.fast_ba
 Latest recursive supplement: BE-002DC-01 selected `sandbox_replay_timeline.test_harness`; next baseline should move only local sandbox tests while shared helpers stay parent-owned.
 Latest recursive supplement: BE-002DD-01 froze `sandbox_replay_timeline.test_harness` baseline; next movement may add a test-only child and move only local sandbox tests and fixture.
 Latest recursive supplement: BE-002DE-01 extracted `sandbox_replay_timeline.test_harness`; `qrpc_runtime/src/sandbox/test_harness.rs` now owns local sandbox tests and fixture.
+Latest recursive supplement: BE-002DE-02 closed `sandbox_replay_timeline.test_harness` with `stop_split: true`; all planned sandbox_replay_timeline children are closed and the next step is parent closeout.
