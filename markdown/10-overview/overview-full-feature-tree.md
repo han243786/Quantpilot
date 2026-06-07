@@ -5284,3 +5284,5 @@ Recursive boundary supplement: BE-002CH-01 `risk_support.test_harness` actual ex
 - `markdown/06-milestones/v4.16.0/1489-root.contracts.runtime_support.risk_support.test_harness.extract_closeout.md` - v4.16.0 BE-002CH-01 risk_support.test_harness extract closeout
 Recursive boundary supplement: BE-002CH-02 `risk_support.test_harness` single leaf closeout complete; next step: BE-002CI-01 risk_support parent_closeout.
 - `markdown/06-milestones/v4.16.0/1490-root.contracts.runtime_support.risk_support.test_harness.single_leaf_closeout.md` - v4.16.0 BE-002CH-02 risk_support.test_harness single leaf closeout
+Recursive boundary supplement: BE-002CI-01 `risk_support` parent closeout complete; next step: BE-002CJ-01 runtime_support parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1491-root.contracts.runtime_support.risk_support.parent_closeout.md` - v4.16.0 BE-002CI-01 risk_support parent closeout

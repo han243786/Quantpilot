@@ -9,11 +9,11 @@
     "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01",
     "GOV-TERMINAL-LEAF-CONTROL-V2-01"
   ],
-  "last_committed_batch": "BE-002CH-01",
-  "last_committed_sha": "204e11f8",
-  "current_parent": "root.contracts.runtime_support.risk_support",
-  "current_step": "BE-002CI-01",
-  "current_phase": "parent_closeout",
+  "last_committed_batch": "BE-002CH-02",
+  "last_committed_sha": "296debef",
+  "current_parent": "root.contracts.runtime_support",
+  "current_step": "BE-002CJ-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -242,7 +242,8 @@
     "contracts.runtime_support.risk_support.action_clamp_helpers",
     "contracts.runtime_support.risk_support.portfolio_target_clamp_helpers",
     "contracts.runtime_support.risk_support.exposure_math_helpers",
-    "contracts.runtime_support.risk_support.test_harness"
+    "contracts.runtime_support.risk_support.test_harness",
+    "contracts.runtime_support.risk_support"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -250,7 +251,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.risk_support.parent_closeout",
+  "next_recommended_child": "root.contracts.runtime_support.sandbox_replay_timeline",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
