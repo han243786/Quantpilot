@@ -1812,3 +1812,4 @@
 | v4.16.0 / BE-002BC-01 | `v4.16.0/1449-root.contracts.runtime_support.fill_engine.event_projection_wave.baseline_plan.md` | Added: `event_projection_wave` baseline plan |
 | v4.16.0 / BE-002BD-01 | `v4.16.0/1450-root.contracts.runtime_support.fill_engine.event_projection_wave.extract_closeout.md` | Added: `event_projection_wave` actual extraction complete |
 | v4.16.0 / BE-002BD-02 | `v4.16.0/1451-root.contracts.runtime_support.fill_engine.event_projection_wave.single_leaf_closeout.md` | Added: `event_projection_wave` single leaf closeout stops split |
+| v4.16.0 / BE-002BE-01 | `v4.16.0/1452-root.contracts.runtime_support.fill_engine.parent_residual_judgment.portfolio_reservation_accounting.md` | Added: `fill_engine` parent residual judgment selects `portfolio_reservation_accounting` |
