@@ -1414,3 +1414,4 @@
 | v4.16.0 / BE-002AE-01 | Added: `agent_module` parent residual judgment selects `test_harness` |
 | v4.16.0 / BE-002AF-01 | Added: `agent_module.test_harness` baseline plan |
 | v4.16.0 / BE-002AF-02 | Added: `agent_module.test_harness` actual extraction complete |
+| v4.16.0 / BE-002AF-03 | Added: `agent_module.test_harness` single leaf closeout stops split |
