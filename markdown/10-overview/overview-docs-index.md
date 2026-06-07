@@ -1441,3 +1441,4 @@
 | v4.16.0 / BE-002AU-01 | Added: `runtime_support` parent residual judgment selects `execution_module` |
 | v4.16.0 / BE-002AV-01 | Added: `execution_module` baseline plan with test-harness-only child queue |
 | v4.16.0 / BE-002AW-01 | Added: `execution_module` parent residual judgment selects `test_harness` |
+| v4.16.0 / BE-002AX-01 | Added: `execution_module.test_harness` baseline plan |
