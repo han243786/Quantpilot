@@ -9,11 +9,11 @@
     "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01",
     "GOV-TERMINAL-LEAF-CONTROL-V2-01"
   ],
-  "last_committed_batch": "BE-001ZQ-01",
-  "last_committed_sha": "c1ef6586",
-  "current_parent": "root.contracts.runtime_support.data_module.test_harness",
-  "current_step": "BE-001ZQ-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-001ZQ-02",
+  "last_committed_sha": "bdbecba5",
+  "current_parent": "root.contracts.runtime_support.data_module",
+  "current_step": "BE-001ZR-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -214,7 +214,8 @@
     "contracts.runtime_support.data_module.normalization",
     "contracts.runtime_support.data_module.mock_data_generation",
     "contracts.runtime_support.data_module.historical_cache",
-    "contracts.runtime_support.data_module.http_transport"
+    "contracts.runtime_support.data_module.http_transport",
+    "contracts.runtime_support.data_module.test_harness"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -222,7 +223,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.data_module.test_harness",
+  "next_recommended_child": "root.contracts.runtime_support.data_module.parent_closeout",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

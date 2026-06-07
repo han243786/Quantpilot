@@ -5063,3 +5063,5 @@ Recursive boundary supplement: BE-001ZQ-01 `data_module.test_harness` baseline_f
 Recursive boundary supplement: BE-001ZQ-02 `data_module.test_harness` actual extraction complete; next step: BE-001ZQ-03 single_leaf_closeout.
 - `markdown/06-milestones/v4.16.0/1389-root.contracts.runtime_support.data_module.test_harness.extract_closeout.md` - v4.16.0 BE-001ZQ-02 data_module.test_harness actual extraction complete
 - `qrpc_runtime/src/data_module/test_harness.rs` - data module test harness child, owns local data-module fixtures and assertions.
+Recursive boundary supplement: BE-001ZQ-03 `data_module.test_harness` single leaf closeout stops split; next step: BE-001ZR-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1390-root.contracts.runtime_support.data_module.test_harness.single_leaf_closeout.md` - v4.16.0 BE-001ZQ-03 data_module.test_harness single leaf closeout

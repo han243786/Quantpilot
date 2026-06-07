@@ -1478,3 +1478,4 @@ Latest recursive supplement: BE-001ZO-03 closed `data_module.http_transport` wit
 Latest recursive supplement: BE-001ZP-01 selected `data_module.test_harness`; next baseline covers the local unit-test fixtures/assertions currently embedded in `qrpc_runtime/src/data_module.rs`.
 Latest recursive supplement: BE-001ZQ-01 froze the `data_module.test_harness` baseline; next movement may add the planned test harness child file and move only local unit tests and fixtures.
 Latest recursive supplement: BE-001ZQ-02 extracted `data_module.test_harness`; `qrpc_runtime/src/data_module/test_harness.rs` now owns local data-module fixtures and assertions.
+Latest recursive supplement: BE-001ZQ-03 closed `data_module.test_harness` with `stop_split: true`; next recursive step returns to `data_module` parent residual judgment for parent closeout.
