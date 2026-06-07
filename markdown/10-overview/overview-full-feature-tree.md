@@ -5350,3 +5350,5 @@ Recursive boundary supplement: BE-002DE-02 `sandbox_replay_timeline.test_harness
 - `markdown/06-milestones/v4.16.0/1519-root.contracts.runtime_support.sandbox_replay_timeline.test_harness.single_leaf_closeout.md` - v4.16.0 BE-002DE-02 sandbox test_harness single leaf closeout
 Recursive boundary supplement: BE-002DF-01 `sandbox_replay_timeline` parent closeout complete; next step: BE-002DG-01 runtime_support parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1520-root.contracts.runtime_support.sandbox_replay_timeline.parent_closeout.md` - v4.16.0 BE-002DF-01 sandbox_replay_timeline parent closeout
+Recursive boundary supplement: BE-002DG-01 `runtime_support` parent residual judgment selected `v4_runtime_support`; next step: BE-002DH-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1521-root.contracts.runtime_support.parent_residual_judgment.v4_runtime_support.md` - v4.16.0 BE-002DG-01 runtime_support parent residual judgment selects v4_runtime_support
