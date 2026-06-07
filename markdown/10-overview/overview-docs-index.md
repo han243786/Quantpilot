@@ -1449,3 +1449,4 @@
 | v4.16.0 / BE-002BA-01 | Added: `fill_engine` baseline plan with cost-controlled same-parent wave queue |
 | v4.16.0 / BE-002BB-01 | Added: `fill_engine` parent residual judgment selects `event_projection_wave` |
 | v4.16.0 / BE-002BC-01 | Added: `event_projection_wave` baseline plan |
+| v4.16.0 / BE-002BD-01 | Added: `event_projection_wave` actual extraction complete |

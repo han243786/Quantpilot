@@ -5192,3 +5192,6 @@ Recursive boundary supplement: BE-002BB-01 `fill_engine` parent residual judgmen
 - `markdown/06-milestones/v4.16.0/1448-root.contracts.runtime_support.fill_engine.parent_residual_judgment.event_projection_wave.md` - v4.16.0 BE-002BB-01 fill_engine parent residual judgment selects event_projection_wave
 Recursive boundary supplement: BE-002BC-01 `event_projection_wave` baseline frozen; next step: BE-002BD-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1449-root.contracts.runtime_support.fill_engine.event_projection_wave.baseline_plan.md` - v4.16.0 BE-002BC-01 event_projection_wave baseline plan
+Recursive boundary supplement: BE-002BD-01 `event_projection_wave` actual extraction complete; next step: BE-002BD-02 single_leaf_closeout.
+- `qrpc_runtime/src/fill_engine/event_projection_wave.rs` - Runtime fill engine event projection child
+- `markdown/06-milestones/v4.16.0/1450-root.contracts.runtime_support.fill_engine.event_projection_wave.extract_closeout.md` - v4.16.0 BE-002BD-01 event_projection_wave extract closeout
