@@ -5226,3 +5226,5 @@ Recursive boundary supplement: BE-002BM-02 `fill_engine.test_harness` single lea
 - `markdown/06-milestones/v4.16.0/1463-root.contracts.runtime_support.fill_engine.test_harness.single_leaf_closeout.md` - v4.16.0 BE-002BM-02 fill_engine test_harness single leaf closeout
 Recursive boundary supplement: BE-002BN-01 `fill_engine` parent closeout complete; next step: BE-002BO-01 runtime_support parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1464-root.contracts.runtime_support.fill_engine.parent_closeout.md` - v4.16.0 BE-002BN-01 fill_engine parent closeout
+Recursive boundary supplement: BE-002BO-01 `runtime_support` parent residual judgment selected `risk_support`; next step: BE-002BP-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1465-root.contracts.runtime_support.parent_residual_judgment.risk_support.md` - v4.16.0 BE-002BO-01 runtime_support parent residual judgment selects risk_support

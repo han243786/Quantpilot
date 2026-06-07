@@ -1553,3 +1553,4 @@ Latest recursive supplement: BE-002BL-01 froze `fill_engine.test_harness` baseli
 Latest recursive supplement: BE-002BM-01 extracted `fill_engine.test_harness`; `qrpc_runtime/src/fill_engine/test_harness.rs` now owns local fill-engine tests and fixtures.
 Latest recursive supplement: BE-002BM-02 closed `fill_engine.test_harness` with `stop_split: true`; all planned `fill_engine` children are now closed.
 Latest recursive supplement: BE-002BN-01 closed `runtime_support.fill_engine` as a parent; next recursive step returns to `runtime_support` parent residual judgment.
+Latest recursive supplement: BE-002BO-01 selected `runtime_support.risk_support`; next baseline should freeze the `qrpc_runtime/src/risk_checker.rs` risk-checking boundary and preserve runtime facade/provider separation.
