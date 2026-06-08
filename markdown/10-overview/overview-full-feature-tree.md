@@ -5376,3 +5376,6 @@ Recursive boundary supplement: BE-002DO-01 `v4_runtime_support` parent residual 
 - `markdown/06-milestones/v4.16.0/1531-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.runtime_constructor_mode_gate.md` - v4.16.0 BE-002DO-01 v4_runtime_support parent residual judgment selects runtime_constructor_mode_gate
 Recursive boundary supplement: BE-002DP-01 `v4_runtime_support.runtime_constructor_mode_gate` baseline frozen; next step: BE-002DQ-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1532-root.contracts.runtime_support.v4_runtime_support.runtime_constructor_mode_gate.baseline_plan.md` - v4.16.0 BE-002DP-01 v4_runtime_support runtime_constructor_mode_gate baseline plan
+Recursive boundary supplement: BE-002DQ-01 `v4_runtime_support.runtime_constructor_mode_gate` actual extraction complete; next step: BE-002DQ-02 single_leaf_closeout.
+- `qrpc_runtime/src/v4_runtime/runtime_constructor_mode_gate.rs` - Runtime v4 constructor and mode-gate child
+- `markdown/06-milestones/v4.16.0/1533-root.contracts.runtime_support.v4_runtime_support.runtime_constructor_mode_gate.extract_closeout.md` - v4.16.0 BE-002DQ-01 v4_runtime_support runtime_constructor_mode_gate extract closeout

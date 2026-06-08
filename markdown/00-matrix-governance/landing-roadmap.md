@@ -406,3 +406,4 @@ Latest recursive supplement: BE-002DN-01 extracted `runtime_support.v4_runtime_s
 Latest recursive supplement: BE-002DN-02 closed `runtime_support.v4_runtime_support.graph_symbol_expansion`; next v4 residual candidate is `runtime_constructor_mode_gate`.
 Latest recursive supplement: BE-002DO-01 selected `runtime_support.v4_runtime_support.runtime_constructor_mode_gate`; next baseline freezes constructor and mode-gate behavior.
 Latest recursive supplement: BE-002DP-01 froze `runtime_support.v4_runtime_support.runtime_constructor_mode_gate`; next movement may extract constructor and execution-capability policy attachment methods.
+Latest recursive supplement: BE-002DQ-01 extracted `runtime_support.v4_runtime_support.runtime_constructor_mode_gate`; next step is single leaf closeout.

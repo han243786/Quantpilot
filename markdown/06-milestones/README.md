@@ -1893,3 +1893,4 @@
 | v4.16.0 / BE-002DN-02 | `v4.16.0/1530-root.contracts.runtime_support.v4_runtime_support.graph_symbol_expansion.single_leaf_closeout.md` | Added: `v4_runtime_support.graph_symbol_expansion` single leaf closeout stops split |
 | v4.16.0 / BE-002DO-01 | `v4.16.0/1531-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.runtime_constructor_mode_gate.md` | Added: `v4_runtime_support` parent residual judgment selects `runtime_constructor_mode_gate` |
 | v4.16.0 / BE-002DP-01 | `v4.16.0/1532-root.contracts.runtime_support.v4_runtime_support.runtime_constructor_mode_gate.baseline_plan.md` | Added: `v4_runtime_support.runtime_constructor_mode_gate` baseline plan |
+| v4.16.0 / BE-002DQ-01 | `v4.16.0/1533-root.contracts.runtime_support.v4_runtime_support.runtime_constructor_mode_gate.extract_closeout.md` | Added: `v4_runtime_support.runtime_constructor_mode_gate` actual extraction complete |

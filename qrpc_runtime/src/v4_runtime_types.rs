@@ -6,14 +6,13 @@ use qrpc_core_ir::v4::{
     default_v4_runtime_mode_contract, CapabilitySupportSource, ComplexityMetrics,
     EventFreshnessRequirement, ExecutionCapabilityKind, MachineCachePolicy,
     MachineEventPayloadField, MachineEventSourceKind, MachineRecoveryPolicy, MachineSilencePolicy,
-    MachineTemplateKind, MachineTransition, RuntimeSettlementAuthority, RuntimeTradingMode,
-    V4BacktestArtifact, V4BacktestExecutionCapabilitySourceRecord,
-    V4BacktestMachineTrajectoryPoint, V4BacktestRiskPlaneDecisionRecord, V4MachineContract,
-    V4MachineGraphContract, VenueCapabilityMatrix, V4_BACKTEST_ARTIFACT_VERSION,
-    V4_RUNTIME_EVENT_REJECTED_EVENT,
+    MachineTemplateKind, MachineTransition, RuntimeSettlementAuthority, V4BacktestArtifact,
+    V4BacktestExecutionCapabilitySourceRecord, V4BacktestMachineTrajectoryPoint,
+    V4BacktestRiskPlaneDecisionRecord, V4MachineContract, VenueCapabilityMatrix,
+    V4_BACKTEST_ARTIFACT_VERSION, V4_RUNTIME_EVENT_REJECTED_EVENT,
 };
 use serde_json::{json, Value};
-use std::collections::{BTreeMap, BTreeSet, VecDeque};
+use std::collections::{BTreeMap, BTreeSet};
 
 const V4_RUNTIME_MAX_EVENT_STEPS: usize = 1_024;
 const V4_RUNTIME_MAX_EVENT_LOG_ENTRIES: usize = 100_000;
