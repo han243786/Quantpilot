@@ -1539,3 +1539,4 @@
 | v4.16.0 / BE-002DT-01 | Added: `v4_runtime_support.event_replay_orchestration` actual extraction complete |
 | v4.16.0 / BE-002DT-02 | Added: `v4_runtime_support.event_replay_orchestration` single leaf closeout stops split |
 | v4.16.0 / BE-002DU-01 | Added: `v4_runtime_support` parent residual judgment selects `machine_transition_engine` |
+| v4.16.0 / BE-002DV-01 | Added: `v4_runtime_support.machine_transition_engine` baseline plan |

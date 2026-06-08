@@ -1900,3 +1900,4 @@
 | v4.16.0 / BE-002DT-01 | `v4.16.0/1537-root.contracts.runtime_support.v4_runtime_support.event_replay_orchestration.extract_closeout.md` | Added: `v4_runtime_support.event_replay_orchestration` actual extraction complete |
 | v4.16.0 / BE-002DT-02 | `v4.16.0/1538-root.contracts.runtime_support.v4_runtime_support.event_replay_orchestration.single_leaf_closeout.md` | Added: `v4_runtime_support.event_replay_orchestration` single leaf closeout stops split |
 | v4.16.0 / BE-002DU-01 | `v4.16.0/1539-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.machine_transition_engine.md` | Added: `v4_runtime_support` parent residual judgment selects `machine_transition_engine` |
+| v4.16.0 / BE-002DV-01 | `v4.16.0/1540-root.contracts.runtime_support.v4_runtime_support.machine_transition_engine.baseline_plan.md` | Added: `v4_runtime_support.machine_transition_engine` baseline plan |
