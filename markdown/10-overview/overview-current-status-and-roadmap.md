@@ -1626,3 +1626,4 @@ Latest recursive supplement: BE-002DQ-02 closed `runtime_support.v4_runtime_supp
 Latest recursive supplement: BE-002DR-01 selected `runtime_support.v4_runtime_support.event_replay_orchestration`; next baseline should freeze replay/input orchestration and artifact projection.
 Latest recursive supplement: BE-002DS-01 froze `runtime_support.v4_runtime_support.event_replay_orchestration` baseline; next movement may extract replay/input orchestration and local output/idle helpers.
 Latest recursive supplement: BE-002DT-01 extracted `runtime_support.v4_runtime_support.event_replay_orchestration`; `qrpc_runtime/src/v4_runtime/event_replay_orchestration.rs` now owns replay/input orchestration and local output helpers.
+Latest recursive supplement: BE-002DT-02 closed `runtime_support.v4_runtime_support.event_replay_orchestration` with `stop_split: true`; next step returns to v4_runtime_support parent residual judgment.
