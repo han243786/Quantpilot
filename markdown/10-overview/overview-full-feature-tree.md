@@ -5401,3 +5401,5 @@ Recursive boundary supplement: BE-002DW-02 `v4_runtime_support.machine_transitio
 - `markdown/06-milestones/v4.16.0/1542-root.contracts.runtime_support.v4_runtime_support.machine_transition_engine.single_leaf_closeout.md` - v4.16.0 BE-002DW-02 v4_runtime_support machine_transition_engine single leaf closeout
 Recursive boundary supplement: BE-002DX-01 `v4_runtime_support` parent residual judgment selected `risk_execution_gate`; next step: BE-002DY-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1543-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.risk_execution_gate.md` - v4.16.0 BE-002DX-01 v4_runtime_support parent residual judgment selects risk_execution_gate
+Recursive boundary supplement: BE-002DY-01 `v4_runtime_support.risk_execution_gate` baseline frozen; next step: BE-002DZ-01 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1544-root.contracts.runtime_support.v4_runtime_support.risk_execution_gate.baseline_plan.md` - v4.16.0 BE-002DY-01 v4_runtime_support risk_execution_gate baseline plan

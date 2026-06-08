@@ -1543,3 +1543,4 @@
 | v4.16.0 / BE-002DW-01 | Added: `v4_runtime_support.machine_transition_engine` actual extraction complete |
 | v4.16.0 / BE-002DW-02 | Added: `v4_runtime_support.machine_transition_engine` single leaf closeout stops split |
 | v4.16.0 / BE-002DX-01 | Added: `v4_runtime_support` parent residual judgment selects `risk_execution_gate` |
+| v4.16.0 / BE-002DY-01 | Added: `v4_runtime_support.risk_execution_gate` baseline plan |
