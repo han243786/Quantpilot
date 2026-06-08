@@ -412,3 +412,4 @@ Latest recursive supplement: BE-002DR-01 selected `runtime_support.v4_runtime_su
 Latest recursive supplement: BE-002DS-01 froze `runtime_support.v4_runtime_support.event_replay_orchestration`; next movement may extract replay/input orchestration and local output helpers.
 Latest recursive supplement: BE-002DT-01 extracted `runtime_support.v4_runtime_support.event_replay_orchestration`; next step is single leaf closeout.
 Latest recursive supplement: BE-002DT-02 closed `runtime_support.v4_runtime_support.event_replay_orchestration`; next step returns to v4 runtime support residual judgment.
+Latest recursive supplement: BE-002DU-01 selected `runtime_support.v4_runtime_support.machine_transition_engine`; next baseline freezes transition mechanics.

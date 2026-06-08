@@ -5390,3 +5390,5 @@ Recursive boundary supplement: BE-002DT-01 `v4_runtime_support.event_replay_orch
 - `markdown/06-milestones/v4.16.0/1537-root.contracts.runtime_support.v4_runtime_support.event_replay_orchestration.extract_closeout.md` - v4.16.0 BE-002DT-01 v4_runtime_support event_replay_orchestration extract closeout
 Recursive boundary supplement: BE-002DT-02 `v4_runtime_support.event_replay_orchestration` single leaf closeout complete; next step: BE-002DU-01 v4_runtime_support parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1538-root.contracts.runtime_support.v4_runtime_support.event_replay_orchestration.single_leaf_closeout.md` - v4.16.0 BE-002DT-02 v4_runtime_support event_replay_orchestration single leaf closeout
+Recursive boundary supplement: BE-002DU-01 `v4_runtime_support` parent residual judgment selected `machine_transition_engine`; next step: BE-002DV-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1539-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.machine_transition_engine.md` - v4.16.0 BE-002DU-01 v4_runtime_support parent residual judgment selects machine_transition_engine
