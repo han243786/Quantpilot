@@ -1896,3 +1896,4 @@
 | v4.16.0 / BE-002DQ-01 | `v4.16.0/1533-root.contracts.runtime_support.v4_runtime_support.runtime_constructor_mode_gate.extract_closeout.md` | Added: `v4_runtime_support.runtime_constructor_mode_gate` actual extraction complete |
 | v4.16.0 / BE-002DQ-02 | `v4.16.0/1534-root.contracts.runtime_support.v4_runtime_support.runtime_constructor_mode_gate.single_leaf_closeout.md` | Added: `v4_runtime_support.runtime_constructor_mode_gate` single leaf closeout stops split |
 | v4.16.0 / BE-002DR-01 | `v4.16.0/1535-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.event_replay_orchestration.md` | Added: `v4_runtime_support` parent residual judgment selects `event_replay_orchestration` |
+| v4.16.0 / BE-002DS-01 | `v4.16.0/1536-root.contracts.runtime_support.v4_runtime_support.event_replay_orchestration.baseline_plan.md` | Added: `v4_runtime_support.event_replay_orchestration` baseline plan |
