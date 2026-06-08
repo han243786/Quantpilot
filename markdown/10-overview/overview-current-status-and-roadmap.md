@@ -1619,3 +1619,4 @@ Latest recursive supplement: BE-002DL-01 selected `runtime_support.v4_runtime_su
 Latest recursive supplement: BE-002DM-01 froze `runtime_support.v4_runtime_support.graph_symbol_expansion` baseline; next movement may extract only graph symbol expansion helpers.
 Latest recursive supplement: BE-002DN-01 extracted `runtime_support.v4_runtime_support.graph_symbol_expansion`; `qrpc_runtime/src/v4_runtime/graph_symbol_expansion.rs` now owns multi-symbol graph expansion helpers.
 Latest recursive supplement: BE-002DN-02 closed `runtime_support.v4_runtime_support.graph_symbol_expansion` with `stop_split: true`; next step returns to v4_runtime_support parent residual judgment.
+Latest recursive supplement: BE-002DO-01 selected `runtime_support.v4_runtime_support.runtime_constructor_mode_gate`; next baseline should freeze constructor and runtime-mode gate behavior.
