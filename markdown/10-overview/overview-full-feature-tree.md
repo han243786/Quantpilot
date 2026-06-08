@@ -5397,3 +5397,5 @@ Recursive boundary supplement: BE-002DV-01 `v4_runtime_support.machine_transitio
 Recursive boundary supplement: BE-002DW-01 `v4_runtime_support.machine_transition_engine` actual extraction complete; next step: BE-002DW-02 single_leaf_closeout.
 - `qrpc_runtime/src/v4_runtime/machine_transition_engine.rs` - Runtime v4 machine transition engine child
 - `markdown/06-milestones/v4.16.0/1541-root.contracts.runtime_support.v4_runtime_support.machine_transition_engine.extract_closeout.md` - v4.16.0 BE-002DW-01 v4_runtime_support machine_transition_engine extract closeout
+Recursive boundary supplement: BE-002DW-02 `v4_runtime_support.machine_transition_engine` single leaf closeout complete; next step: BE-002DX-01 v4_runtime_support parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1542-root.contracts.runtime_support.v4_runtime_support.machine_transition_engine.single_leaf_closeout.md` - v4.16.0 BE-002DW-02 v4_runtime_support machine_transition_engine single leaf closeout

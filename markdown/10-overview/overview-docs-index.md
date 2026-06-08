@@ -1541,3 +1541,4 @@
 | v4.16.0 / BE-002DU-01 | Added: `v4_runtime_support` parent residual judgment selects `machine_transition_engine` |
 | v4.16.0 / BE-002DV-01 | Added: `v4_runtime_support.machine_transition_engine` baseline plan |
 | v4.16.0 / BE-002DW-01 | Added: `v4_runtime_support.machine_transition_engine` actual extraction complete |
+| v4.16.0 / BE-002DW-02 | Added: `v4_runtime_support.machine_transition_engine` single leaf closeout stops split |
