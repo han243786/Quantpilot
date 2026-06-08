@@ -5379,3 +5379,5 @@ Recursive boundary supplement: BE-002DP-01 `v4_runtime_support.runtime_construct
 Recursive boundary supplement: BE-002DQ-01 `v4_runtime_support.runtime_constructor_mode_gate` actual extraction complete; next step: BE-002DQ-02 single_leaf_closeout.
 - `qrpc_runtime/src/v4_runtime/runtime_constructor_mode_gate.rs` - Runtime v4 constructor and mode-gate child
 - `markdown/06-milestones/v4.16.0/1533-root.contracts.runtime_support.v4_runtime_support.runtime_constructor_mode_gate.extract_closeout.md` - v4.16.0 BE-002DQ-01 v4_runtime_support runtime_constructor_mode_gate extract closeout
+Recursive boundary supplement: BE-002DQ-02 `v4_runtime_support.runtime_constructor_mode_gate` single leaf closeout complete; next step: BE-002DR-01 v4_runtime_support parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1534-root.contracts.runtime_support.v4_runtime_support.runtime_constructor_mode_gate.single_leaf_closeout.md` - v4.16.0 BE-002DQ-02 v4_runtime_support runtime_constructor_mode_gate single leaf closeout
