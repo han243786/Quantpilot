@@ -5385,3 +5385,6 @@ Recursive boundary supplement: BE-002DR-01 `v4_runtime_support` parent residual 
 - `markdown/06-milestones/v4.16.0/1535-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.event_replay_orchestration.md` - v4.16.0 BE-002DR-01 v4_runtime_support parent residual judgment selects event_replay_orchestration
 Recursive boundary supplement: BE-002DS-01 `v4_runtime_support.event_replay_orchestration` baseline frozen; next step: BE-002DT-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1536-root.contracts.runtime_support.v4_runtime_support.event_replay_orchestration.baseline_plan.md` - v4.16.0 BE-002DS-01 v4_runtime_support event_replay_orchestration baseline plan
+Recursive boundary supplement: BE-002DT-01 `v4_runtime_support.event_replay_orchestration` actual extraction complete; next step: BE-002DT-02 single_leaf_closeout.
+- `qrpc_runtime/src/v4_runtime/event_replay_orchestration.rs` - Runtime v4 replay/input orchestration child
+- `markdown/06-milestones/v4.16.0/1537-root.contracts.runtime_support.v4_runtime_support.event_replay_orchestration.extract_closeout.md` - v4.16.0 BE-002DT-01 v4_runtime_support event_replay_orchestration extract closeout
