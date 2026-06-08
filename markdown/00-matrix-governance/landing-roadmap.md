@@ -408,3 +408,4 @@ Latest recursive supplement: BE-002DO-01 selected `runtime_support.v4_runtime_su
 Latest recursive supplement: BE-002DP-01 froze `runtime_support.v4_runtime_support.runtime_constructor_mode_gate`; next movement may extract constructor and execution-capability policy attachment methods.
 Latest recursive supplement: BE-002DQ-01 extracted `runtime_support.v4_runtime_support.runtime_constructor_mode_gate`; next step is single leaf closeout.
 Latest recursive supplement: BE-002DQ-02 closed `runtime_support.v4_runtime_support.runtime_constructor_mode_gate`; next step returns to v4 runtime support residual judgment.
+Latest recursive supplement: BE-002DR-01 selected `runtime_support.v4_runtime_support.event_replay_orchestration`; next baseline freezes replay/input orchestration.
