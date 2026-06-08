@@ -1629,3 +1629,4 @@ Latest recursive supplement: BE-002DT-01 extracted `runtime_support.v4_runtime_s
 Latest recursive supplement: BE-002DT-02 closed `runtime_support.v4_runtime_support.event_replay_orchestration` with `stop_split: true`; next step returns to v4_runtime_support parent residual judgment.
 Latest recursive supplement: BE-002DU-01 selected `runtime_support.v4_runtime_support.machine_transition_engine`; next baseline should freeze transition matching and application.
 Latest recursive supplement: BE-002DV-01 froze `runtime_support.v4_runtime_support.machine_transition_engine` baseline; next movement may extract transition mechanics while gates and simulated execution hooks stay parent-owned.
+Latest recursive supplement: BE-002DW-01 extracted `runtime_support.v4_runtime_support.machine_transition_engine`; `qrpc_runtime/src/v4_runtime/machine_transition_engine.rs` now owns transition processing and matching helpers.

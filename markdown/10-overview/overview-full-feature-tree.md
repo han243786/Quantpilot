@@ -5394,3 +5394,6 @@ Recursive boundary supplement: BE-002DU-01 `v4_runtime_support` parent residual 
 - `markdown/06-milestones/v4.16.0/1539-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.machine_transition_engine.md` - v4.16.0 BE-002DU-01 v4_runtime_support parent residual judgment selects machine_transition_engine
 Recursive boundary supplement: BE-002DV-01 `v4_runtime_support.machine_transition_engine` baseline frozen; next step: BE-002DW-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1540-root.contracts.runtime_support.v4_runtime_support.machine_transition_engine.baseline_plan.md` - v4.16.0 BE-002DV-01 v4_runtime_support machine_transition_engine baseline plan
+Recursive boundary supplement: BE-002DW-01 `v4_runtime_support.machine_transition_engine` actual extraction complete; next step: BE-002DW-02 single_leaf_closeout.
+- `qrpc_runtime/src/v4_runtime/machine_transition_engine.rs` - Runtime v4 machine transition engine child
+- `markdown/06-milestones/v4.16.0/1541-root.contracts.runtime_support.v4_runtime_support.machine_transition_engine.extract_closeout.md` - v4.16.0 BE-002DW-01 v4_runtime_support machine_transition_engine extract closeout
