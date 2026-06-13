@@ -1943,3 +1943,4 @@
 | v4.16.0 / BE-002EY-01 | `v4.16.0/1580-root.contracts.runtime_support.v4_runtime_support.test_harness.extract_closeout.md` | Added: `v4_runtime_support.test_harness` actual extraction complete |
 | v4.16.0 / BE-002EY-02 | `v4.16.0/1581-root.contracts.runtime_support.v4_runtime_support.test_harness.single_leaf_closeout.md` | Added: `v4_runtime_support.test_harness` single leaf closeout keeps split open |
 | v4.16.0 / BE-002EZ-01 | `v4.16.0/1582-root.contracts.runtime_support.v4_runtime_support.test_harness.parent_residual_judgment.fixture_builders.md` | Added: `v4_runtime_support.test_harness` parent residual judgment selects `fixture_builders` |
+| v4.16.0 / BE-002FA-01 | `v4.16.0/1583-root.contracts.runtime_support.v4_runtime_support.test_harness.fixture_builders.baseline_plan.md` | Added: `v4_runtime_support.test_harness.fixture_builders` baseline plan |

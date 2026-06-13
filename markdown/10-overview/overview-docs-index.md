@@ -1589,3 +1589,4 @@
 | v4.16.0 / BE-002EY-01 | Added: `v4_runtime_support.test_harness` actual extraction complete |
 | v4.16.0 / BE-002EY-02 | Added: `v4_runtime_support.test_harness` single leaf closeout keeps split open |
 | v4.16.0 / BE-002EZ-01 | Added: `v4_runtime_support.test_harness` parent residual judgment selects `fixture_builders` |
+| v4.16.0 / BE-002FA-01 | Added: `v4_runtime_support.test_harness.fixture_builders` baseline plan |

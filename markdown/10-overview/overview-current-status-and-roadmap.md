@@ -1671,3 +1671,4 @@ Latest recursive supplement: BE-002EX-01 froze `runtime_support.v4_runtime_suppo
 Latest recursive supplement: BE-002EY-01 extracted `runtime_support.v4_runtime_support.test_harness`; next step is single leaf closeout.
 Latest recursive supplement: BE-002EY-02 kept `runtime_support.v4_runtime_support.test_harness` open; next step is parent residual judgment inside the test harness.
 Latest recursive supplement: BE-002EZ-01 selected `runtime_support.v4_runtime_support.test_harness.fixture_builders`; next baseline freezes shared v4 test fixture movement only.
+Latest recursive supplement: BE-002FA-01 froze `runtime_support.v4_runtime_support.test_harness.fixture_builders` baseline; next movement may move shared fixture helpers only.
