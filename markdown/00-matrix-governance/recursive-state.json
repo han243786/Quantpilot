@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002FX-02",
-  "last_committed_sha": "d0e8540a",
-  "current_parent": "root.contracts.quantscript.syntax_ast_surface",
-  "current_step": "BE-002FX-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002FX-03",
+  "last_committed_sha": "bc90c32f",
+  "current_parent": "root.contracts.quantscript",
+  "current_step": "BE-002FY-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -278,7 +278,8 @@
     "contracts.runtime_support.v4_runtime_support.test_harness.live_capability_guard_tests",
     "contracts.runtime_support.v4_runtime_support.test_harness",
     "contracts.runtime_support.v4_runtime_support",
-    "contracts.runtime_support"
+    "contracts.runtime_support",
+    "contracts.quantscript.syntax_ast_surface"
   ],
   "open_residuals": [
     "contracts.quantscript.legacy_config_compat",
@@ -292,7 +293,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.syntax_ast_surface.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.quantscript.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

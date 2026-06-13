@@ -5588,3 +5588,5 @@ Recursive boundary supplement: BE-002FX-02 `root.contracts.quantscript.syntax_as
 - `quantscript/src/syntax_ast_surface/types.rs` - QuantScript type annotation child
 - `quantscript/src/syntax_ast_surface/hir.rs` - QuantScript typed HIR DTO child
 - `markdown/06-milestones/v4.16.0/1613-root.contracts.quantscript.syntax_ast_surface.extract_closeout.md` - v4.16.0 BE-002FX-02 quantscript syntax_ast_surface extract closeout
+Recursive boundary supplement: BE-002FX-03 `root.contracts.quantscript.syntax_ast_surface` single leaf closeout complete; next step: BE-002FY-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1614-root.contracts.quantscript.syntax_ast_surface.single_leaf_closeout.md` - v4.16.0 BE-002FX-03 quantscript syntax_ast_surface single leaf closeout
