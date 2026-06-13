@@ -1765,3 +1765,4 @@ Latest recursive supplement: BE-002HC-01 froze `contracts.quantscript.analysis_d
 Latest recursive supplement: BE-002HC-02 extracted `contracts.quantscript.analysis_diagnostics.symbol_whitelist_gate`; next step is single leaf closeout and split judgment.
 Latest recursive supplement: BE-002HC-03 closed `contracts.quantscript.analysis_diagnostics.symbol_whitelist_gate` with `stop_split: true`; next step returns to analysis_diagnostics parent residual judgment.
 Latest recursive supplement: BE-002HD-01 selected `contracts.quantscript.analysis_diagnostics.fetch_lookback_warning_gate`; next baseline freezes QS0503 fetch lookback warnings.
+Latest recursive supplement: BE-002HE-01 froze `contracts.quantscript.analysis_diagnostics.fetch_lookback_warning_gate`; next movement may extract QS0503 fetch lookback warnings only.
