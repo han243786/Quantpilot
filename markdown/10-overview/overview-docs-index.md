@@ -1553,3 +1553,4 @@
 | v4.16.0 / BE-002EC-02 | Added: `v4_runtime_support.simulated_execution_engine` continues precision split |
 | v4.16.0 / BE-002ED-01 | Added: `simulated_execution_engine` parent residual judgment selects `runtime_adapter` |
 | v4.16.0 / BE-002EE-01 | Added: `simulated_execution_engine.runtime_adapter` baseline plan |
+| v4.16.0 / BE-002EF-01 | Added: `simulated_execution_engine.runtime_adapter` actual extraction complete |
