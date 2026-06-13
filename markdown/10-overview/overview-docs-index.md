@@ -1630,3 +1630,4 @@
 | v4.16.0 / BE-002GB-02 | Added: `quantscript.typed_resolution` structural extraction complete |
 | v4.16.0 / BE-002GB-03 | Added: `quantscript.typed_resolution` single leaf closeout continues split |
 | v4.16.0 / BE-002GC-01 | Added: `quantscript.typed_resolution` parent residual judgment selects `public_type_surface` |
+| v4.16.0 / BE-002GD-01 | Added: `quantscript.typed_resolution.public_type_surface` baseline plan |

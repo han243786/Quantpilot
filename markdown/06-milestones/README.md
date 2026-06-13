@@ -1984,3 +1984,4 @@
 | v4.16.0 / BE-002GB-02 | `v4.16.0/1621-root.contracts.quantscript.typed_resolution.extract_closeout.md` | Added: `quantscript.typed_resolution` structural extraction complete |
 | v4.16.0 / BE-002GB-03 | `v4.16.0/1622-root.contracts.quantscript.typed_resolution.single_leaf_closeout.md` | Added: `quantscript.typed_resolution` single leaf closeout continues split |
 | v4.16.0 / BE-002GC-01 | `v4.16.0/1623-root.contracts.quantscript.typed_resolution.parent_residual_judgment.public_type_surface.md` | Added: `quantscript.typed_resolution` parent residual judgment selects `public_type_surface` |
+| v4.16.0 / BE-002GD-01 | `v4.16.0/1624-root.contracts.quantscript.typed_resolution.public_type_surface.baseline_plan.md` | Added: `quantscript.typed_resolution.public_type_surface` baseline plan |
