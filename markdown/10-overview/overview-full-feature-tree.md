@@ -5577,3 +5577,5 @@ Recursive boundary supplement: BE-002FU-01 `root.contracts` parent residual judg
 - `markdown/06-milestones/v4.16.0/1609-root.contracts.parent_residual_judgment.quantscript.md` - v4.16.0 BE-002FU-01 root.contracts parent residual judgment selects quantscript
 Recursive boundary supplement: BE-002FV-01 `root.contracts.quantscript` baseline frozen; next step: BE-002FW-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1610-root.contracts.quantscript.baseline_plan.md` - v4.16.0 BE-002FV-01 root.contracts quantscript baseline plan
+Recursive boundary supplement: BE-002FW-01 `root.contracts.quantscript` parent residual judgment selected `syntax_ast_surface`; next step: BE-002FX-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1611-root.contracts.quantscript.parent_residual_judgment.syntax_ast_surface.md` - v4.16.0 BE-002FW-01 quantscript parent residual judgment selects syntax_ast_surface

@@ -9062,3 +9062,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript selected: true`; QuantScript owns parser, typed HIR, resolve semantics, lowering, diagnostics, static audit, authoring samples, and boundary samples. Plugin metadata and executor remain queued outside this selected child.
 **Latest state supplement (BE-002FV-01)**: `root.contracts.quantscript` baseline frozen; next step: BE-002FW-01 parent_residual_judgment.
 `root.contracts.quantscript baseline_frozen: true`; child queue is `syntax_ast_surface`, `legacy_config_compat`, `typed_resolution`, `analysis_diagnostics`, `evaluator_normalization`, `runtime_lowering`, `v4_static_audit`, `test_plan_surface`, and `authoring_docs_samples`.
+**Latest state supplement (BE-002FW-01)**: `root.contracts.quantscript` parent residual judgment selected `syntax_ast_surface`; next step: BE-002FX-01 baseline_plan.
+`root.contracts.quantscript.syntax_ast_surface selected: true`; this child owns formal parser, AST DTOs, type annotations, HIR DTO surface, and public facade re-exports while typed resolution, lowering, audit, and compatibility helpers remain queued.

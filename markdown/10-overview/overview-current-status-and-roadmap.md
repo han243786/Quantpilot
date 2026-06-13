@@ -1699,3 +1699,4 @@ Latest recursive supplement: BE-002FS-01 closed `runtime_support.v4_runtime_supp
 Latest recursive supplement: BE-002FT-01 closed `runtime_support`; next step returns to root.contracts parent residual judgment.
 Latest recursive supplement: BE-002FU-01 selected `contracts.quantscript`; next baseline freezes the QuantScript parser/HIR/resolve/lowering/diagnostics/static-audit contract.
 Latest recursive supplement: BE-002FV-01 froze `contracts.quantscript` baseline; next step selects the first QuantScript child.
+Latest recursive supplement: BE-002FW-01 selected `contracts.quantscript.syntax_ast_surface`; next baseline freezes parser, AST, type, and HIR DTO surfaces.

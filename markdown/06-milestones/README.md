@@ -1971,3 +1971,4 @@
 | v4.16.0 / BE-002FT-01 | `v4.16.0/1608-root.contracts.runtime_support.parent_closeout.md` | Added: `runtime_support` parent closeout |
 | v4.16.0 / BE-002FU-01 | `v4.16.0/1609-root.contracts.parent_residual_judgment.quantscript.md` | Added: `root.contracts` parent residual judgment selects `quantscript` |
 | v4.16.0 / BE-002FV-01 | `v4.16.0/1610-root.contracts.quantscript.baseline_plan.md` | Added: `root.contracts.quantscript` baseline plan |
+| v4.16.0 / BE-002FW-01 | `v4.16.0/1611-root.contracts.quantscript.parent_residual_judgment.syntax_ast_surface.md` | Added: `quantscript` parent residual judgment selects `syntax_ast_surface` |
