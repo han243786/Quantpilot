@@ -1730,3 +1730,4 @@ Latest recursive supplement: BE-002GJ-03 closed `contracts.quantscript.typed_res
 Latest recursive supplement: BE-002GK-01 selected `contracts.quantscript.typed_resolution.resolver_orchestration_surface`; next baseline freezes module/function/block/statement/expression lowering only.
 Latest recursive supplement: BE-002GL-01 froze `contracts.quantscript.typed_resolution.resolver_orchestration_surface`; next movement may extract resolver orchestration only.
 Latest recursive supplement: BE-002GL-02 extracted `contracts.quantscript.typed_resolution.resolver_orchestration_surface`; next step is single leaf closeout and split judgment.
+Latest recursive supplement: BE-002GL-03 closed `contracts.quantscript.typed_resolution.resolver_orchestration_surface` with `stop_split: true`; next step returns to typed_resolution parent residual judgment.

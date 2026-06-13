@@ -1649,3 +1649,4 @@
 | v4.16.0 / BE-002GK-01 | Added: `quantscript.typed_resolution` parent residual judgment selects `resolver_orchestration_surface` |
 | v4.16.0 / BE-002GL-01 | Added: `quantscript.typed_resolution.resolver_orchestration_surface` baseline plan |
 | v4.16.0 / BE-002GL-02 | Added: `quantscript.typed_resolution.resolver_orchestration_surface` actual extraction complete |
+| v4.16.0 / BE-002GL-03 | Added: `quantscript.typed_resolution.resolver_orchestration_surface` single leaf closeout stops split |

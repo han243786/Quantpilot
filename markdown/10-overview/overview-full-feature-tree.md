@@ -5661,3 +5661,5 @@ Recursive boundary supplement: BE-002GL-01 `root.contracts.quantscript.typed_res
 Recursive boundary supplement: BE-002GL-02 `root.contracts.quantscript.typed_resolution.resolver_orchestration_surface` actual extraction complete; next step: BE-002GL-03 single_leaf_closeout.
 - `quantscript/src/resolve/resolver_orchestration_surface.rs` - QuantScript typed-resolution resolver orchestration and AST-to-HIR lowering child
 - `markdown/06-milestones/v4.16.0/1641-root.contracts.quantscript.typed_resolution.resolver_orchestration_surface.extract_closeout.md` - v4.16.0 BE-002GL-02 quantscript typed_resolution resolver_orchestration_surface extract closeout
+Recursive boundary supplement: BE-002GL-03 `root.contracts.quantscript.typed_resolution.resolver_orchestration_surface` single leaf closeout complete; next step: BE-002GM-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1642-root.contracts.quantscript.typed_resolution.resolver_orchestration_surface.single_leaf_closeout.md` - v4.16.0 BE-002GL-03 quantscript typed_resolution resolver_orchestration_surface single leaf closeout
