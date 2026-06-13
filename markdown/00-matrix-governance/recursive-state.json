@@ -10,11 +10,11 @@
     "GOV-TERMINAL-LEAF-CONTROL-V2-01",
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01"
   ],
-  "last_committed_batch": "BE-002EE-01",
-  "last_committed_sha": "208e8e2f",
+  "last_committed_batch": "BE-002EF-01",
+  "last_committed_sha": "bc0e0289",
   "current_parent": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine",
-  "current_step": "BE-002EF-02",
-  "current_phase": "single_leaf_closeout",
+  "current_step": "BE-002EG-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -258,7 +258,8 @@
     "contracts.runtime_support.v4_runtime_support.runtime_constructor_mode_gate",
     "contracts.runtime_support.v4_runtime_support.event_replay_orchestration",
     "contracts.runtime_support.v4_runtime_support.machine_transition_engine",
-    "contracts.runtime_support.v4_runtime_support.risk_execution_gate"
+    "contracts.runtime_support.v4_runtime_support.risk_execution_gate",
+    "contracts.runtime_support.v4_runtime_support.simulated_execution_engine.runtime_adapter"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -266,7 +267,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.runtime_adapter.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.order_lifecycle_flow",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

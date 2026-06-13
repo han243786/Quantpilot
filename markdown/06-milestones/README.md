@@ -1915,3 +1915,4 @@
 | v4.16.0 / BE-002ED-01 | `v4.16.0/1552-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment.runtime_adapter.md` | Added: `simulated_execution_engine` parent residual judgment selects `runtime_adapter` |
 | v4.16.0 / BE-002EE-01 | `v4.16.0/1553-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.runtime_adapter.baseline_plan.md` | Added: `simulated_execution_engine.runtime_adapter` baseline plan |
 | v4.16.0 / BE-002EF-01 | `v4.16.0/1554-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.runtime_adapter.extract_closeout.md` | Added: `simulated_execution_engine.runtime_adapter` actual extraction complete |
+| v4.16.0 / BE-002EF-02 | `v4.16.0/1555-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.runtime_adapter.single_leaf_closeout.md` | Added: `simulated_execution_engine.runtime_adapter` single leaf closeout stops split |

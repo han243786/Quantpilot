@@ -1554,3 +1554,4 @@
 | v4.16.0 / BE-002ED-01 | Added: `simulated_execution_engine` parent residual judgment selects `runtime_adapter` |
 | v4.16.0 / BE-002EE-01 | Added: `simulated_execution_engine.runtime_adapter` baseline plan |
 | v4.16.0 / BE-002EF-01 | Added: `simulated_execution_engine.runtime_adapter` actual extraction complete |
+| v4.16.0 / BE-002EF-02 | Added: `simulated_execution_engine.runtime_adapter` single leaf closeout stops split |
