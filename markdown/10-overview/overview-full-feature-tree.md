@@ -5694,3 +5694,5 @@ Recursive boundary supplement: BE-002GS-02 `root.contracts.quantscript.analysis_
 - `markdown/06-milestones/v4.16.0/1654-root.contracts.quantscript.analysis_diagnostics.extract_closeout.md` - v4.16.0 BE-002GS-02 quantscript analysis_diagnostics extract closeout
 Recursive boundary supplement: BE-002GS-03 `root.contracts.quantscript.analysis_diagnostics` single leaf closeout complete with `stop_split: false`; next step: BE-002GT-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1655-root.contracts.quantscript.analysis_diagnostics.single_leaf_closeout.md` - v4.16.0 BE-002GS-03 quantscript analysis_diagnostics single leaf closeout
+Recursive boundary supplement: BE-002GT-01 `root.contracts.quantscript.analysis_diagnostics` parent residual judgment selected `unsupported_construct_gate`; next step: BE-002GU-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1656-root.contracts.quantscript.analysis_diagnostics.parent_residual_judgment.unsupported_construct_gate.md` - v4.16.0 BE-002GT-01 quantscript analysis_diagnostics parent residual judgment selects unsupported_construct_gate
