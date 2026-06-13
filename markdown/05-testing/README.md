@@ -3,7 +3,7 @@
 > Scope: active testing documents only.
 > Updated: 2026-06-13.
 
-This directory now keeps only testing documents that still participate in current governance, recursive refactor baselines, or active test evidence collection.
+This directory keeps only testing documents that still participate in current governance, recursive refactor baselines, or active test evidence collection.
 
 Active files:
 
@@ -14,4 +14,4 @@ Active files:
 
 Historical audit reports, old testing plans, retired matrices, and obsolete latest-style reports live under `markdown/09-archive/testing-retired/`.
 
-Old ignored screenshot and JSON report artifacts from the legacy `markdown/测试/` surface live under `markdown/09-archive/testing-artifacts-retired/` and are not part of the active testing document surface.
+Old ignored screenshot and JSON report artifacts from the retired testing artifact surface are covered by `markdown/09-archive/testing-artifacts-retired/README.md`. Those local artifact directories may be cleaned when they are outside the active evidence surface.
