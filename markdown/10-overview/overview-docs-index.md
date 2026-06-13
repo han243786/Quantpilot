@@ -1562,3 +1562,4 @@
 | v4.16.0 / BE-002EG-01 | Added: `simulated_execution_engine` parent residual judgment selects `order_lifecycle_flow` |
 | v4.16.0 / BE-002EH-01 | Added: `simulated_execution_engine.order_lifecycle_flow` baseline plan |
 | v4.16.0 / BE-002EI-01 | Added: `simulated_execution_engine.order_lifecycle_flow` actual extraction complete |
+| v4.16.0 / BE-002EI-02 | Added: `simulated_execution_engine.order_lifecycle_flow` single leaf closeout stops split |
