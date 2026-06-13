@@ -5679,3 +5679,5 @@ Recursive boundary supplement: BE-002GP-01 `root.contracts.quantscript.typed_res
 Recursive boundary supplement: BE-002GP-02 `root.contracts.quantscript.typed_resolution.resolver_test_harness` actual extraction complete; next step: BE-002GP-03 single_leaf_closeout.
 - `quantscript/src/resolve/resolver_test_harness.rs` - QuantScript typed-resolution resolver-local test harness child
 - `markdown/06-milestones/v4.16.0/1649-root.contracts.quantscript.typed_resolution.resolver_test_harness.extract_closeout.md` - v4.16.0 BE-002GP-02 quantscript typed_resolution resolver_test_harness extract closeout
+Recursive boundary supplement: BE-002GP-03 `root.contracts.quantscript.typed_resolution.resolver_test_harness` single leaf closeout complete; next step: BE-002GQ-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1650-root.contracts.quantscript.typed_resolution.resolver_test_harness.single_leaf_closeout.md` - v4.16.0 BE-002GP-03 quantscript typed_resolution resolver_test_harness single leaf closeout

@@ -9140,3 +9140,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.typed_resolution.resolver_test_harness baseline_frozen: true`; the next movement may create a test-only child file and move only resolver-local tests plus their test-only imports.
 **Latest state supplement (BE-002GP-02)**: `root.contracts.quantscript.typed_resolution.resolver_test_harness` actual extraction complete; next step: BE-002GP-03 single_leaf_closeout.
 `root.contracts.quantscript.typed_resolution.resolver_test_harness extracted: true`; `quantscript/src/resolve/resolver_test_harness.rs` now owns resolver-local tests while production resolver facade and private state/type scaffolding remain parent-owned.
+**Latest state supplement (BE-002GP-03)**: `root.contracts.quantscript.typed_resolution.resolver_test_harness` single leaf closeout complete; next step: BE-002GQ-01 parent_residual_judgment.
+`root.contracts.quantscript.typed_resolution.resolver_test_harness stop_split: true`; terminal leaf control returned `STOP` over 420 reported LOC and 24 counted functions, so resolver-local tests remain one terminal test-only owner.

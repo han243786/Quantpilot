@@ -1738,3 +1738,4 @@ Latest recursive supplement: BE-002GN-03 closed `contracts.quantscript.typed_res
 Latest recursive supplement: BE-002GO-01 selected `contracts.quantscript.typed_resolution.resolver_test_harness`; next baseline freezes resolver-local tests only.
 Latest recursive supplement: BE-002GP-01 froze `contracts.quantscript.typed_resolution.resolver_test_harness`; next movement may extract resolver-local tests only.
 Latest recursive supplement: BE-002GP-02 extracted `contracts.quantscript.typed_resolution.resolver_test_harness`; next step is single leaf closeout and split judgment.
+Latest recursive supplement: BE-002GP-03 closed `contracts.quantscript.typed_resolution.resolver_test_harness` with `stop_split: true`; next step returns to typed_resolution parent residual judgment.

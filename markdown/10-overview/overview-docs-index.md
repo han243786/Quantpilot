@@ -1657,3 +1657,4 @@
 | v4.16.0 / BE-002GO-01 | Added: `quantscript.typed_resolution` parent residual judgment selects `resolver_test_harness` |
 | v4.16.0 / BE-002GP-01 | Added: `quantscript.typed_resolution.resolver_test_harness` baseline plan |
 | v4.16.0 / BE-002GP-02 | Added: `quantscript.typed_resolution.resolver_test_harness` actual extraction complete |
+| v4.16.0 / BE-002GP-03 | Added: `quantscript.typed_resolution.resolver_test_harness` single leaf closeout stops split |
