@@ -1911,3 +1911,4 @@
 | v4.16.0 / BE-002EA-01 | `v4.16.0/1547-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.simulated_execution_engine.md` | Added: `v4_runtime_support` parent residual judgment selects `simulated_execution_engine` |
 | v4.16.0 / BE-002EB-01 | `v4.16.0/1549-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.baseline_plan.md` | Added: `v4_runtime_support.simulated_execution_engine` precision baseline plan |
 | v4.16.0 / BE-002EC-01 | `v4.16.0/1550-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.extract_closeout.md` | Added: `v4_runtime_support.simulated_execution_engine` actual extraction complete |
+| v4.16.0 / BE-002EC-02 | `v4.16.0/1551-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.single_leaf_closeout.md` | Added: `v4_runtime_support.simulated_execution_engine` continues precision split |

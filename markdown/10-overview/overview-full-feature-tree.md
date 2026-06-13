@@ -5418,6 +5418,8 @@ Recursive boundary supplement: BE-002EB-01 `v4_runtime_support.simulated_executi
 Recursive boundary supplement: BE-002EC-01 `v4_runtime_support.simulated_execution_engine` actual extraction complete; next step: BE-002EC-02 single_leaf_closeout.
 - `qrpc_runtime/src/v4_runtime/simulated_execution_engine.rs` - Runtime v4 simulated execution engine child
 - `markdown/06-milestones/v4.16.0/1550-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.extract_closeout.md` - v4.16.0 BE-002EC-01 v4_runtime_support simulated_execution_engine extract closeout
+Recursive boundary supplement: BE-002EC-02 `v4_runtime_support.simulated_execution_engine` single leaf closeout keeps precision split open; next step: BE-002ED-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1551-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.single_leaf_closeout.md` - v4.16.0 BE-002EC-02 v4_runtime_support simulated_execution_engine single leaf closeout
 Governance-next trial supplement: `governance-next` is a non-authoritative QPCursor trial wrapper; legacy governance remains authoritative until explicit promote evidence exists.
 - `governance-next/README.md` - Governance-next旁路孵化区入口
 - `governance-next/00-operating-principles.md` - Governance-next分层原则与旧治理隔离边界

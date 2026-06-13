@@ -1639,3 +1639,4 @@ Latest recursive supplement: BE-002DZ-02 closed `runtime_support.v4_runtime_supp
 Latest recursive supplement: BE-002EA-01 selected `runtime_support.v4_runtime_support.simulated_execution_engine`; next baseline should freeze simulated execution behavior before code movement.
 Latest recursive supplement: BE-002EB-01 froze `runtime_support.v4_runtime_support.simulated_execution_engine` precision baseline; next movement may extract simulated execution behavior into a dedicated v4 runtime child.
 Latest recursive supplement: BE-002EC-01 extracted `runtime_support.v4_runtime_support.simulated_execution_engine`; next step is single leaf closeout.
+Latest recursive supplement: BE-002EC-02 kept `runtime_support.v4_runtime_support.simulated_execution_engine` open with `continue_split: true`; next child candidate is `runtime_adapter`.
