@@ -508,3 +508,4 @@ Latest recursive supplement: BE-002GG-01 selected `contracts.quantscript.typed_r
 Latest recursive supplement: BE-002GH-01 froze `contracts.quantscript.typed_resolution.semantic_inference_surface`; next step is actual extraction.
 Latest recursive supplement: BE-002GH-02 extracted `contracts.quantscript.typed_resolution.semantic_inference_surface`; next step is semantic inference leaf closeout.
 Latest recursive supplement: BE-002GH-03 closed `contracts.quantscript.typed_resolution.semantic_inference_surface`; next step is typed_resolution parent residual judgment.
+Latest recursive supplement: BE-002GI-01 selected `contracts.quantscript.typed_resolution.type_inference_binding_surface`; next baseline freezes type inference and binding helpers.
