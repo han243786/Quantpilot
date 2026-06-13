@@ -430,3 +430,4 @@ Latest recursive supplement: BE-002EE-01 froze `runtime_support.v4_runtime_suppo
 Latest recursive supplement: BE-002EF-01 extracted `runtime_support.v4_runtime_support.simulated_execution_engine.runtime_adapter`; next step is single leaf closeout.
 Latest recursive supplement: BE-002EF-02 closed `runtime_support.v4_runtime_support.simulated_execution_engine.runtime_adapter`; next simulated execution child candidate is `order_lifecycle_flow`.
 Latest governance supplement: GOV-GOVERNANCE-NEXT-PROMOTION-01 promotes `governance-next/` to the default authority; old matrix governance remains only as compatibility archive and historical gate material.
+Latest recursive supplement: BE-002EG-01 selected `runtime_support.v4_runtime_support.simulated_execution_engine.order_lifecycle_flow`; next baseline must freeze order lifecycle helper movement without pulling fill ledger or trigger mechanics.

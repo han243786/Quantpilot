@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002EF-01",
-  "last_committed_sha": "bc0e0289",
-  "current_parent": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine",
-  "current_step": "BE-002EG-01",
-  "current_phase": "parent_residual_judgment",
+  "last_committed_batch": "BE-002EG-01",
+  "last_committed_sha": "46feea76",
+  "current_parent": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.order_lifecycle_flow",
+  "current_step": "BE-002EH-01",
+  "current_phase": "baseline_plan",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",

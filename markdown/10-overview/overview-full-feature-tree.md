@@ -5443,3 +5443,5 @@ Governance-next authority supplement: `governance-next` is the default governanc
 Document cleanup archive supplement: inactive testing and review reports moved out of active doc surfaces; historical evidence remains under `markdown/09-archive`.
 - `markdown/09-archive/testing-retired/README.md` - Retired testing and audit report archive policy
 - `markdown/09-archive/reviews-retired/README.md` - Retired review report archive policy
+Recursive boundary supplement: BE-002EG-01 `simulated_execution_engine` parent residual judgment selected `order_lifecycle_flow`; next step: BE-002EH-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1557-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment.order_lifecycle_flow.md` - v4.16.0 BE-002EG-01 simulated_execution_engine parent residual judgment selects order_lifecycle_flow
