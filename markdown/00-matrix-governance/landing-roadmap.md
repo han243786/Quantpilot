@@ -488,3 +488,4 @@ Latest recursive supplement: BE-002FW-01 selected `contracts.quantscript.syntax_
 Latest recursive supplement: BE-002FX-01 froze `contracts.quantscript.syntax_ast_surface`; next step decides actual extraction or structural closeout.
 Latest recursive supplement: BE-002FX-02 extracted `contracts.quantscript.syntax_ast_surface`; next step is single leaf closeout.
 Latest recursive supplement: BE-002FX-03 closed `contracts.quantscript.syntax_ast_surface`; next step returns to QuantScript parent residual judgment.
+Latest recursive supplement: BE-002FY-01 selected `contracts.quantscript.legacy_config_compat`; next baseline freezes deprecated config-style compatibility.

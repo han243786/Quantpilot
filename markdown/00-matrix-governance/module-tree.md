@@ -9070,3 +9070,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.syntax_ast_surface extracted: true`; `script`, `types`, and `hir` are now under a syntax_ast_surface parent facade, while crate-root public exports and internal compatibility aliases are preserved.
 **Latest state supplement (BE-002FX-03)**: `root.contracts.quantscript.syntax_ast_surface` single leaf closeout complete; next step: BE-002FY-01 parent_residual_judgment.
 `root.contracts.quantscript.syntax_ast_surface stop_split: true`; parser, AST, type, and HIR DTO surfaces remain one terminal syntax parent, and parser internals are not split in this pass.
+**Latest state supplement (BE-002FY-01)**: `root.contracts.quantscript` parent residual judgment selected `legacy_config_compat`; next step: BE-002FZ-01 baseline_plan.
+`root.contracts.quantscript.legacy_config_compat selected: true`; deprecated config-style parser, DTOs, source-kind detection, compile helpers, and legacy tests are selected for extraction from the QuantScript parent facade.

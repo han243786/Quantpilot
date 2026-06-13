@@ -5590,3 +5590,5 @@ Recursive boundary supplement: BE-002FX-02 `root.contracts.quantscript.syntax_as
 - `markdown/06-milestones/v4.16.0/1613-root.contracts.quantscript.syntax_ast_surface.extract_closeout.md` - v4.16.0 BE-002FX-02 quantscript syntax_ast_surface extract closeout
 Recursive boundary supplement: BE-002FX-03 `root.contracts.quantscript.syntax_ast_surface` single leaf closeout complete; next step: BE-002FY-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1614-root.contracts.quantscript.syntax_ast_surface.single_leaf_closeout.md` - v4.16.0 BE-002FX-03 quantscript syntax_ast_surface single leaf closeout
+Recursive boundary supplement: BE-002FY-01 `root.contracts.quantscript` parent residual judgment selected `legacy_config_compat`; next step: BE-002FZ-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1615-root.contracts.quantscript.parent_residual_judgment.legacy_config_compat.md` - v4.16.0 BE-002FY-01 quantscript parent residual judgment selects legacy_config_compat
