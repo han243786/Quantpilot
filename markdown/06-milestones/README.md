@@ -1976,3 +1976,4 @@
 | v4.16.0 / BE-002FX-02 | `v4.16.0/1613-root.contracts.quantscript.syntax_ast_surface.extract_closeout.md` | Added: `quantscript.syntax_ast_surface` actual extraction complete |
 | v4.16.0 / BE-002FX-03 | `v4.16.0/1614-root.contracts.quantscript.syntax_ast_surface.single_leaf_closeout.md` | Added: `quantscript.syntax_ast_surface` single leaf closeout stops split |
 | v4.16.0 / BE-002FY-01 | `v4.16.0/1615-root.contracts.quantscript.parent_residual_judgment.legacy_config_compat.md` | Added: `quantscript` parent residual judgment selects `legacy_config_compat` |
+| v4.16.0 / BE-002FZ-01 | `v4.16.0/1616-root.contracts.quantscript.legacy_config_compat.baseline_plan.md` | Added: `quantscript.legacy_config_compat` baseline plan |
