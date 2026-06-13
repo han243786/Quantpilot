@@ -1748,3 +1748,4 @@ Latest recursive supplement: BE-002GT-01 selected `contracts.quantscript.analysi
 Latest recursive supplement: BE-002GU-01 froze `contracts.quantscript.analysis_diagnostics.unsupported_construct_gate`; next movement may extract unsupported construct diagnostics only.
 Latest recursive supplement: BE-002GU-02 extracted `contracts.quantscript.analysis_diagnostics.unsupported_construct_gate`; next step is single leaf closeout and split judgment.
 Latest recursive supplement: BE-002GU-03 closed `contracts.quantscript.analysis_diagnostics.unsupported_construct_gate` with `stop_split: true`; next step returns to analysis_diagnostics parent residual judgment.
+Latest recursive supplement: BE-002GV-01 selected `contracts.quantscript.analysis_diagnostics.lookahead_window_gate`; next baseline freezes QS0401/QS0402/QS0403 lookahead-window diagnostics.
