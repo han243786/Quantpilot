@@ -2008,3 +2008,4 @@
 | v4.16.0 / BE-002GN-02 | `v4.16.0/1645-root.contracts.quantscript.typed_resolution.resolver_support_surface.extract_closeout.md` | Added: `quantscript.typed_resolution.resolver_support_surface` actual extraction complete |
 | v4.16.0 / BE-002GN-03 | `v4.16.0/1646-root.contracts.quantscript.typed_resolution.resolver_support_surface.single_leaf_closeout.md` | Added: `quantscript.typed_resolution.resolver_support_surface` single leaf closeout stops split |
 | v4.16.0 / BE-002GO-01 | `v4.16.0/1647-root.contracts.quantscript.typed_resolution.parent_residual_judgment.resolver_test_harness.md` | Added: `quantscript.typed_resolution` parent residual judgment selects `resolver_test_harness` |
+| v4.16.0 / BE-002GP-01 | `v4.16.0/1648-root.contracts.quantscript.typed_resolution.resolver_test_harness.baseline_plan.md` | Added: `quantscript.typed_resolution.resolver_test_harness` baseline plan |

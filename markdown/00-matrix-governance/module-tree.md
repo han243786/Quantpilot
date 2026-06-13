@@ -9136,3 +9136,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.typed_resolution.resolver_support_surface stop_split: true`; terminal leaf control returned `STOP` over 160 LOC and 13 parent-visible support helpers, so resolver support remains one terminal helper owner.
 **Latest state supplement (BE-002GO-01)**: `root.contracts.quantscript.typed_resolution` parent residual judgment selected `resolver_test_harness`; next step: BE-002GP-01 baseline_plan.
 `root.contracts.quantscript.typed_resolution.resolver_test_harness selected: true`; this child owns resolver-local tests only. Production resolver facade, private resolver state/type scaffolding, and closed resolver behavior children remain outside this selected child.
+**Latest state supplement (BE-002GP-01)**: `root.contracts.quantscript.typed_resolution.resolver_test_harness` baseline frozen; next step: BE-002GP-02 actual_extraction.
+`root.contracts.quantscript.typed_resolution.resolver_test_harness baseline_frozen: true`; the next movement may create a test-only child file and move only resolver-local tests plus their test-only imports.
