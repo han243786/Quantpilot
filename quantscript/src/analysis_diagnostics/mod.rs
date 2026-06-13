@@ -1,5 +1,6 @@
 pub(crate) mod analysis;
 pub(crate) mod diagnostics;
+mod indirect_recursion_gate;
 mod lookahead_window_gate;
 mod unsupported_construct_gate;
 mod warmup_fetch_gate;
