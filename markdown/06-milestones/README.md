@@ -2003,3 +2003,4 @@
 | v4.16.0 / BE-002GL-01 | `v4.16.0/1640-root.contracts.quantscript.typed_resolution.resolver_orchestration_surface.baseline_plan.md` | Added: `quantscript.typed_resolution.resolver_orchestration_surface` baseline plan |
 | v4.16.0 / BE-002GL-02 | `v4.16.0/1641-root.contracts.quantscript.typed_resolution.resolver_orchestration_surface.extract_closeout.md` | Added: `quantscript.typed_resolution.resolver_orchestration_surface` actual extraction complete |
 | v4.16.0 / BE-002GL-03 | `v4.16.0/1642-root.contracts.quantscript.typed_resolution.resolver_orchestration_surface.single_leaf_closeout.md` | Added: `quantscript.typed_resolution.resolver_orchestration_surface` single leaf closeout stops split |
+| v4.16.0 / BE-002GM-01 | `v4.16.0/1643-root.contracts.quantscript.typed_resolution.parent_residual_judgment.resolver_support_surface.md` | Added: `quantscript.typed_resolution` parent residual judgment selects `resolver_support_surface` |

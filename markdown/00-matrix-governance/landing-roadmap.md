@@ -516,3 +516,4 @@ Latest recursive supplement: BE-002GK-01 selected `contracts.quantscript.typed_r
 Latest recursive supplement: BE-002GL-01 froze `contracts.quantscript.typed_resolution.resolver_orchestration_surface`; next step is actual extraction.
 Latest recursive supplement: BE-002GL-02 extracted `contracts.quantscript.typed_resolution.resolver_orchestration_surface`; next step is resolver orchestration leaf closeout.
 Latest recursive supplement: BE-002GL-03 closed `contracts.quantscript.typed_resolution.resolver_orchestration_surface`; next step is typed_resolution parent residual judgment.
+Latest recursive supplement: BE-002GM-01 selected `contracts.quantscript.typed_resolution.resolver_support_surface`; next baseline freezes resolver support helpers only.
