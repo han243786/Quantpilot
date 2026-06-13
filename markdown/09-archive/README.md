@@ -34,3 +34,4 @@
 | 日期 | 动作 | 原路径 | 新路径 | 原因 |
 |------|------|--------|--------|------|
 | 2026-06-13 | 退役旧设计模板 | `../templates/design-doc-template.md` | `planning-retired/design-doc-template.md` | v4.15+ 已由三矩阵提案流程接管，旧模板不再作为当前提案入口 |
+| 2026-06-13 | 退役旧项目全量简报 | `../10-overview/overview-project-briefing-v2.3.2.md` | `overview-retired/overview-project-briefing-v2.3.2.md` | v2.3.2 时间点快照已被当前状态、总览索引和 v4.16 治理入口替代，不再作为活跃 overview |
