@@ -5647,3 +5647,5 @@ Recursive boundary supplement: BE-002GJ-01 `root.contracts.quantscript.typed_res
 Recursive boundary supplement: BE-002GJ-02 `root.contracts.quantscript.typed_resolution.type_inference_binding_surface` actual extraction complete; next step: BE-002GJ-03 single_leaf_closeout.
 - `quantscript/src/resolve/type_inference_binding_surface.rs` - QuantScript typed-resolution type inference and binding validation child
 - `markdown/06-milestones/v4.16.0/1637-root.contracts.quantscript.typed_resolution.type_inference_binding_surface.extract_closeout.md` - v4.16.0 BE-002GJ-02 quantscript typed_resolution type_inference_binding_surface extract closeout
+Recursive boundary supplement: BE-002GJ-03 `root.contracts.quantscript.typed_resolution.type_inference_binding_surface` single leaf closeout complete; next step: BE-002GK-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1638-root.contracts.quantscript.typed_resolution.type_inference_binding_surface.single_leaf_closeout.md` - v4.16.0 BE-002GJ-03 quantscript typed_resolution type_inference_binding_surface single leaf closeout
