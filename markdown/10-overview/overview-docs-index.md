@@ -1612,3 +1612,4 @@
 | v4.16.0 / BE-002FP-01 | Added: `v4_runtime_support.test_harness.live_capability_guard_tests` baseline plan |
 | v4.16.0 / BE-002FQ-01 | Added: `v4_runtime_support.test_harness.live_capability_guard_tests` actual extraction complete |
 | v4.16.0 / BE-002FQ-02 | Added: `v4_runtime_support.test_harness.live_capability_guard_tests` single leaf closeout stops split |
+| v4.16.0 / BE-002FR-01 | Added: `v4_runtime_support.test_harness` parent closeout |
