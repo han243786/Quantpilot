@@ -1653,3 +1653,4 @@
 | v4.16.0 / BE-002GM-01 | Added: `quantscript.typed_resolution` parent residual judgment selects `resolver_support_surface` |
 | v4.16.0 / BE-002GN-01 | Added: `quantscript.typed_resolution.resolver_support_surface` baseline plan |
 | v4.16.0 / BE-002GN-02 | Added: `quantscript.typed_resolution.resolver_support_surface` actual extraction complete |
+| v4.16.0 / BE-002GN-03 | Added: `quantscript.typed_resolution.resolver_support_surface` single leaf closeout stops split |
