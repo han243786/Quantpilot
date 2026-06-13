@@ -1992,3 +1992,4 @@
 | v4.16.0 / BE-002GF-02 | `v4.16.0/1629-root.contracts.quantscript.typed_resolution.callable_classification_surface.extract_closeout.md` | Added: `quantscript.typed_resolution.callable_classification_surface` actual extraction complete |
 | v4.16.0 / BE-002GF-03 | `v4.16.0/1630-root.contracts.quantscript.typed_resolution.callable_classification_surface.single_leaf_closeout.md` | Added: `quantscript.typed_resolution.callable_classification_surface` single leaf closeout stops split |
 | v4.16.0 / BE-002GG-01 | `v4.16.0/1631-root.contracts.quantscript.typed_resolution.parent_residual_judgment.semantic_inference_surface.md` | Added: `quantscript.typed_resolution` parent residual judgment selects `semantic_inference_surface` |
+| v4.16.0 / BE-002GH-01 | `v4.16.0/1632-root.contracts.quantscript.typed_resolution.semantic_inference_surface.baseline_plan.md` | Added: `quantscript.typed_resolution.semantic_inference_surface` baseline plan |
