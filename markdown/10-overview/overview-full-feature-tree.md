@@ -5475,3 +5475,6 @@ Recursive boundary supplement: BE-002EM-01 `simulated_execution_engine` parent r
 - `markdown/06-milestones/v4.16.0/1565-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment.fill_ledger_accounting.md` - v4.16.0 BE-002EM-01 simulated_execution_engine parent residual judgment selects fill_ledger_accounting
 Recursive boundary supplement: BE-002EN-01 `simulated_execution_engine.fill_ledger_accounting` baseline frozen; next step: BE-002EO-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1566-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.fill_ledger_accounting.baseline_plan.md` - v4.16.0 BE-002EN-01 simulated_execution_engine fill_ledger_accounting baseline plan
+Recursive boundary supplement: BE-002EO-01 `simulated_execution_engine.fill_ledger_accounting` actual extraction complete; next step: BE-002EO-02 single_leaf_closeout.
+- `qrpc_runtime/src/v4_runtime/simulated_execution_engine/fill_ledger_accounting.rs` - Runtime v4 simulated execution fill ledger accounting child
+- `markdown/06-milestones/v4.16.0/1567-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.fill_ledger_accounting.extract_closeout.md` - v4.16.0 BE-002EO-01 simulated_execution_engine fill_ledger_accounting extract closeout
