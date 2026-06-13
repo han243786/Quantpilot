@@ -1646,3 +1646,4 @@
 | v4.16.0 / BE-002GJ-01 | Added: `quantscript.typed_resolution.type_inference_binding_surface` baseline plan |
 | v4.16.0 / BE-002GJ-02 | Added: `quantscript.typed_resolution.type_inference_binding_surface` actual extraction complete |
 | v4.16.0 / BE-002GJ-03 | Added: `quantscript.typed_resolution.type_inference_binding_surface` single leaf closeout stops split |
+| v4.16.0 / BE-002GK-01 | Added: `quantscript.typed_resolution` parent residual judgment selects `resolver_orchestration_surface` |
