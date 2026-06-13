@@ -2395,7 +2395,7 @@ storage/
 - `quantscript/src/syntax_ast_surface.rs` — QS syntax/AST/HIR/type parent facade; 改 QS 语法表面聚合时改这里
 - `quantscript/src/syntax_ast_surface/script.rs` — QS 词法/语法解析; 改 QS 语法时改这里
 - `quantscript/src/syntax_ast_surface/hir.rs` — 高级中间表示; 改 QS 语义模型时改这里
-- `quantscript/src/analysis.rs` — 语义分析; 改类型检查时改这里
+- `quantscript/src/analysis_diagnostics/analysis.rs` — 语义分析; 改类型检查时改这里
 - `quantscript/src/resolve/mod.rs` — typed-HIR 符号解析父模块; 改 QS 函数注册或 resolver 语义时改这里
 - `quantscript/src/resolve/public_type_surface.rs` — typed-HIR resolver public DTO/enum surface; 改 resolver 对外类型契约时改这里
 - `quantscript/src/resolve/callable_classification_surface.rs` — typed-HIR callable/helper classification and registry seeding; 改 QS helper/callable taxonomy 时改这里
@@ -2403,7 +2403,7 @@ storage/
 - `quantscript/src/resolve/type_inference_binding_surface.rs` — typed-HIR type inference and resolver binding validation; 改 QS 类型推断或绑定诊断时改这里
 - `quantscript/src/syntax_ast_surface/types.rs` — QS 类型系统; 改类型定义时改这里
 - `quantscript/src/evaluator.rs` — 表达式求值; 改表达式语义时改这里
-- `quantscript/src/diagnostics.rs` — QS 诊断码; 新增诊断时改这里
+- `quantscript/src/analysis_diagnostics/diagnostics.rs` — QS 诊断码; 新增诊断时改这里
 - `quantscript/src/test_plan.rs` — 测试计划生成; 改场景生成时改这里
 - `quantscript/src/v4_static_audit.rs` — v4 状态机静态审计; 改 v4 QS 审计、state 内嵌套 machine、memory `QsTypeRef` 解析或 QSV 诊断码时改这里 🆕 v4.7.0
 - `quantscript/src/lowering/mod.rs` — lowering 模块入口
@@ -5687,3 +5687,8 @@ Recursive boundary supplement: BE-002GR-01 `root.contracts.quantscript` parent r
 - `markdown/06-milestones/v4.16.0/1652-root.contracts.quantscript.parent_residual_judgment.analysis_diagnostics.md` - v4.16.0 BE-002GR-01 quantscript parent residual judgment selects analysis_diagnostics
 Recursive boundary supplement: BE-002GS-01 `root.contracts.quantscript.analysis_diagnostics` baseline frozen; next step: BE-002GS-02 actual_extraction_or_structural_closeout.
 - `markdown/06-milestones/v4.16.0/1653-root.contracts.quantscript.analysis_diagnostics.baseline_plan.md` - v4.16.0 BE-002GS-01 quantscript analysis_diagnostics baseline plan
+Recursive boundary supplement: BE-002GS-02 `root.contracts.quantscript.analysis_diagnostics` structural extraction complete; next step: BE-002GS-03 single_leaf_closeout.
+- `quantscript/src/analysis_diagnostics/mod.rs` - QuantScript analysis diagnostics parent facade
+- `quantscript/src/analysis_diagnostics/analysis.rs` - QuantScript analysis checks child
+- `quantscript/src/analysis_diagnostics/diagnostics.rs` - QuantScript diagnostic DTO and span child
+- `markdown/06-milestones/v4.16.0/1654-root.contracts.quantscript.analysis_diagnostics.extract_closeout.md` - v4.16.0 BE-002GS-02 quantscript analysis_diagnostics extract closeout

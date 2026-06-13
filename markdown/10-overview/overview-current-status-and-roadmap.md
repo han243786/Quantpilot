@@ -1742,3 +1742,4 @@ Latest recursive supplement: BE-002GP-03 closed `contracts.quantscript.typed_res
 Latest recursive supplement: BE-002GQ-01 closed `contracts.quantscript.typed_resolution`; next step returns to QuantScript parent residual judgment.
 Latest recursive supplement: BE-002GR-01 selected `contracts.quantscript.analysis_diagnostics`; next baseline freezes analysis and diagnostic DTO boundaries.
 Latest recursive supplement: BE-002GS-01 froze `contracts.quantscript.analysis_diagnostics`; next movement may structurally extract analysis and diagnostics under one parent.
+Latest recursive supplement: BE-002GS-02 structurally extracted `contracts.quantscript.analysis_diagnostics`; next step is single leaf closeout and split judgment.

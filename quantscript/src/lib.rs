@@ -1,5 +1,4 @@
-mod analysis;
-mod diagnostics;
+mod analysis_diagnostics;
 mod evaluator;
 mod legacy_config_compat;
 mod lowering;
@@ -11,8 +10,9 @@ mod v4_static_audit;
 use anyhow::Result;
 use qrpc_core::RuntimeProtocolCoreConfig;
 
-pub use analysis::{analyze_script_module, ScriptAnalysis};
-pub use diagnostics::{Diagnostic, DiagnosticSeverity, Span, SpanContext};
+pub use analysis_diagnostics::{
+    analyze_script_module, Diagnostic, DiagnosticSeverity, ScriptAnalysis, Span, SpanContext,
+};
 pub use evaluator::normalize_script_module;
 #[allow(deprecated)]
 pub use legacy_config_compat::{
@@ -54,6 +54,7 @@ pub use v4_static_audit::{
     V4QsStaticAuditReport, V4QsStaticAuditVerdict, V4_QS_RUNTIME_HANDOFF_REPORT_VERSION,
 };
 
+pub(crate) use analysis_diagnostics::{analysis, diagnostics};
 pub(crate) use syntax_ast_surface::{hir, script, types};
 
 pub fn parse_formal_quant_script_config(input: &str) -> Result<RuntimeProtocolCoreConfig> {

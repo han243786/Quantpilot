@@ -1661,3 +1661,4 @@
 | v4.16.0 / BE-002GQ-01 | Added: `quantscript.typed_resolution` parent closeout |
 | v4.16.0 / BE-002GR-01 | Added: `quantscript` parent residual judgment selects `analysis_diagnostics` |
 | v4.16.0 / BE-002GS-01 | Added: `quantscript.analysis_diagnostics` baseline plan |
+| v4.16.0 / BE-002GS-02 | Added: `quantscript.analysis_diagnostics` structural extraction complete |
