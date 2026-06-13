@@ -1760,3 +1760,4 @@ Latest recursive supplement: BE-002GZ-01 selected `contracts.quantscript.analysi
 Latest recursive supplement: BE-002HA-01 froze `contracts.quantscript.analysis_diagnostics.indirect_recursion_gate`; next movement may extract indirect recursion diagnostics only.
 Latest recursive supplement: BE-002HA-02 extracted `contracts.quantscript.analysis_diagnostics.indirect_recursion_gate`; next step is single leaf closeout and split judgment.
 Latest recursive supplement: BE-002HA-03 closed `contracts.quantscript.analysis_diagnostics.indirect_recursion_gate` with `stop_split: true`; next step returns to analysis_diagnostics parent residual judgment.
+Latest recursive supplement: BE-002HB-01 selected `contracts.quantscript.analysis_diagnostics.symbol_whitelist_gate`; next baseline freezes known symbol catalog and QS0505 whitelist diagnostics.
