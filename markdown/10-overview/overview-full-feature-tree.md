@@ -5488,3 +5488,6 @@ Recursive boundary supplement: BE-002EP-01 `simulated_execution_engine` parent r
 - `markdown/06-milestones/v4.16.0/1569-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment.snapshot_metrics_projection.md` - v4.16.0 BE-002EP-01 simulated_execution_engine parent residual judgment selects snapshot_metrics_projection
 Recursive boundary supplement: BE-002EQ-01 `simulated_execution_engine.snapshot_metrics_projection` baseline frozen; next step: BE-002ER-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1570-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.snapshot_metrics_projection.baseline_plan.md` - v4.16.0 BE-002EQ-01 simulated_execution_engine snapshot_metrics_projection baseline plan
+Recursive boundary supplement: BE-002ER-01 `simulated_execution_engine.snapshot_metrics_projection` actual extraction complete; next step: BE-002ER-02 single_leaf_closeout.
+- `qrpc_runtime/src/v4_runtime/simulated_execution_engine/snapshot_metrics_projection.rs` - Runtime v4 simulated execution snapshot and metrics projection child
+- `markdown/06-milestones/v4.16.0/1571-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.snapshot_metrics_projection.extract_closeout.md` - v4.16.0 BE-002ER-01 simulated_execution_engine snapshot_metrics_projection extract closeout

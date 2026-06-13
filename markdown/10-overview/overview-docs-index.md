@@ -1577,3 +1577,4 @@
 | v4.16.0 / BE-002EO-02 | Added: `simulated_execution_engine.fill_ledger_accounting` single leaf closeout stops split |
 | v4.16.0 / BE-002EP-01 | Added: `simulated_execution_engine` parent residual judgment selects `snapshot_metrics_projection` |
 | v4.16.0 / BE-002EQ-01 | Added: `simulated_execution_engine.snapshot_metrics_projection` baseline plan |
+| v4.16.0 / BE-002ER-01 | Added: `simulated_execution_engine.snapshot_metrics_projection` actual extraction complete |
