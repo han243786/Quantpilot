@@ -145,14 +145,15 @@ mode_stack:
 
 ## 7. 生成器辅助
 
-`tools/new-qpcursor-trial.ps1` 可以从旧 `recursive-state.json` 生成 QPCursor 草案，用于减少手工重复和接力漂移。
+`tools/new-qpcursor-trial.ps1` 可以从旧 `recursive-state.json` 生成 QPCursor 草案，用于减少手工重复和接力漂移。promotion 后，生成器产物不再只是旁路试运行素材，而是新治理游标的起草器。
 
-生成器输出只能是草案，必须人工或代理补齐:
+生成器输出必须补齐:
 
 1. `allowed_workset` 的真实文件范围。
 2. `evidence` 的实际命令结果。
-3. `trial judgment` 的质量判断。
-4. 若与旧治理冲突，必须保留 `legacy_governance_authority: preserved` 并回退旧治理。
+3. `governance_heat` 的 G0-G5 判定。
+4. `local_invariants` 的模块、接口、边界约束。
+5. 与旧治理存在差异时，记录 `legacy_governance_mode: archived_reference`，不得恢复旧默认权威。
 
 示例:
 

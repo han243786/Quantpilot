@@ -1,14 +1,18 @@
 {
   "version": "v4.16.0",
-  "protocol": "recursive-high-speed-v2",
+  "protocol": "qpcursor-authoritative-v1",
+  "legacy_protocol": "recursive-high-speed-v2",
   "protocol_upgrade_batch": "GOV-RECURSIVE-COST-CONTROL-01",
-  "latest_governance_batch": "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
+  "authority": "governance-next",
+  "legacy_governance_mode": "archived_reference",
+  "latest_governance_batch": "GOV-GOVERNANCE-NEXT-PROMOTION-01",
   "governance_history": [
     "GOV-RECURSIVE-COST-CONTROL-01",
     "GOV-LEAF-GRANULARITY-SMART-JUDGE-01",
     "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01",
     "GOV-TERMINAL-LEAF-CONTROL-V2-01",
-    "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01"
+    "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
+    "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
   "last_committed_batch": "BE-002EF-01",
   "last_committed_sha": "bc0e0289",
@@ -285,12 +289,16 @@
     "recursive_state_cursor",
     "qpcursor_trial_generator",
     "untracked_full_feature_tree_preflight",
-    "split_decision_governance_packaging_separation"
+    "split_decision_governance_packaging_separation",
+    "qpcursor_authoritative_default",
+    "legacy_governance_archived_reference"
   ],
   "active_speed_mode": {
-    "default": "cost_controlled_same_parent_wave",
+    "default": "qpcursor_authoritative",
+    "legacy_default": "cost_controlled_same_parent_wave",
     "fallback": "precision_single_leaf",
-    "rust_cursor_unchanged": true
+    "rust_cursor_unchanged": true,
+    "legacy_matrices_archived": true
   },
   "leaf_granularity_control": {
     "default_terminal_loc_range": "150-600",

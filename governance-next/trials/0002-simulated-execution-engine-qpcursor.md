@@ -1,19 +1,19 @@
 # QPCursor Trial 0002: simulated_execution_engine
 
-> governance_next_trial: true
-> legacy_governance_authority: preserved
-> status: actual_extraction_complete
+> historical_trial: true
+> legacy_governance_mode: archived_reference_after_promotion
+> status: actual_extraction_complete_evidence
 > created_from_commit: `201f0d4d`
 
-This trial wraps the second recursive step after `risk_execution_gate` closeout.
+This trial was captured before `GOV-GOVERNANCE-NEXT-PROMOTION-01`. After promotion it is evidence that QPCursor handoff works, not an active authority boundary.
 
 ## Authority Boundary
 
 | Layer | Status | Rule |
 | --- | --- | --- |
-| Legacy governance | authoritative | `markdown/00-matrix-governance/recursive-state.json` remains the source of truth. |
-| Governance next | trial wrapper | This file adds a QPCursor handoff view only. |
-| Conflict resolution | legacy wins | Any conflict falls back to the legacy recursive protocol. |
+| Legacy governance | archived_reference | `markdown/00-matrix-governance/recursive-state.json` remains a temporary cursor store. |
+| Governance next | authoritative | QPCursor handoff is now the default governance view. |
+| Conflict resolution | governance-next wins | Any conflict is resolved through `governance-next/05-authoritative-operating-model.md`. |
 
 ## Short Cursor
 
@@ -74,7 +74,7 @@ Final heat: `G4 architecture heat`.
 
 ## Trial Judgment
 
-This QPCursor is sufficient for handoff because it names the legacy authority, heat level, stop conditions, and next legal recursive action.
+This QPCursor is sufficient for handoff because it names the archived cursor source, heat level, stop conditions, and next legal recursive action.
 
 Post GOV-GOVERNANCE-NEXT-OPTIMIZATION-01 judgment:
 

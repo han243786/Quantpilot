@@ -1555,3 +1555,4 @@
 | v4.16.0 / BE-002EE-01 | Added: `simulated_execution_engine.runtime_adapter` baseline plan |
 | v4.16.0 / BE-002EF-01 | Added: `simulated_execution_engine.runtime_adapter` actual extraction complete |
 | v4.16.0 / BE-002EF-02 | Added: `simulated_execution_engine.runtime_adapter` single leaf closeout stops split |
+| v4.16.0 / GOV-GOVERNANCE-NEXT-PROMOTION-01 | Added: `governance-next` promoted to default authority and legacy matrix archived |

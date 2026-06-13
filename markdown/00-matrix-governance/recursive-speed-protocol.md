@@ -6,6 +6,9 @@
 > Owner: 三矩阵治理层。
 > Decision: 高速执行协议独立维护于治理层，不再作为 v4.16 批次文档混入递归流水。
 > Effective: GOV-RECURSIVE-COST-CONTROL-01 起生效；当前 Rust 递归游标不因本协议升级移动。
+> Superseded by: `governance-next/05-authoritative-operating-model.md` at `GOV-GOVERNANCE-NEXT-PROMOTION-01`.
+
+本文件保留为旧递归高速协议的兼容档案。promotion 后，递归重构默认由 QPCursor、治理热度和局部不变量驱动；本协议只能提供历史规则、旧提速术语和兼容门禁素材，不再覆盖新治理入口。
 
 ---
 
@@ -198,13 +201,13 @@ terminal_leaf_control_v2
 
 governance_generation_and_index_reduction
 
-GOV-GOVERNANCE-NEXT-OPTIMIZATION-01 起，递归治理允许把重复登记从手写迁移为生成器辅助，但生成物仍必须通过旧门禁。
+GOV-GOVERNANCE-NEXT-PROMOTION-01 起，递归治理允许把重复登记从手写迁移为生成器辅助；生成物必须通过新治理 evidence 和兼容门禁。
 
 1. `tools/new-qpcursor-trial.ps1` 可从 `recursive-state.json` 生成 `governance-next/trials/*-qpcursor.md` 草案。
-2. QPCursor 草案不自动生效，必须由代理补齐 allowed workset、evidence、trial judgment，并明确 `legacy_governance_authority: preserved`。
+2. QPCursor 草案必须由代理补齐 allowed workset、evidence、governance heat、local invariants，并明确 `legacy_governance_mode: archived_reference`。
 3. `check-full-feature-tree.ps1` 必须覆盖 `governance-next`，并检查未跟踪的活跃源码/文档文件是否已被全量树登记。
 4. 新增文件不能只依赖 staged 视角；未跟踪文件若属于活跃源码、脚本、配置或治理文档，也必须被提示覆盖。
-5. 长期路线: 将 README、docs index、roadmap、module-tree supplement 中重复的 append-only 行收敛为一个权威事件流，其它索引改为脚本生成或周期性同步。promote 前不得删除旧索引。
+5. 长期路线: 将 README、docs index、roadmap、module-tree supplement 中重复的 append-only 行收敛为一个权威事件流，其它索引改为脚本生成或周期性同步。旧索引在替代生成器落地前继续作为兼容索引保留。
 
 ---
 

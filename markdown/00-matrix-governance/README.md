@@ -1,8 +1,8 @@
 # 三矩阵治理总览
 
-> 生效范围: 全部变更。
-> 目的: 把 QuantPilot 的开发治理升级为可支撑无限规模扩张的控制平面。
-> 状态: v4.15.0 起成为默认开发约束体系。
+> 生效范围: 兼容档案、历史规则、旧门禁素材。
+> 目的: 保留 QuantPilot v4.12-v4.16 旧三矩阵治理事实，供新治理引用和门禁兼容。
+> 状态: `GOV-GOVERNANCE-NEXT-PROMOTION-01` 起不再是默认权威入口；默认入口为 `governance-next/README.md`。
 
 ---
 
@@ -15,7 +15,7 @@
 | 引导矩阵 | `guidance-matrix.md` | 全量树 | 从需求定位到模块、文件、接口、测试、文档和模块树节点 |
 | 模块树 | `module-tree.md` | 全量树新增白箱层 | 模块输入、输出、关键 public 方法、父子关系和通信边界 |
 
-旧文件不删除。`General_Policy.md`、`principles-super-standardization.md` 和 `overview-full-feature-tree.md` 先作为三矩阵的历史主干被引用，后续只在有明确迁移方案时再逐步收敛。
+旧文件不删除。`General_Policy.md`、`principles-super-standardization.md` 和 `overview-full-feature-tree.md` 继续作为历史主干和兼容事实来源被引用，但新任务不再从本文件启动治理流程。
 
 ---
 
@@ -44,14 +44,22 @@
 
 ## 4. 使用入口
 
-每次变更先阅读并执行:
+promote 后，默认使用入口改为:
 
-1. `proposal-flow.md` 判定轻量、标准或重型。
-2. `guidance-matrix.md` 定位影响节点。
-3. `standard-matrix.md` 检查硬规则。
-4. `process-matrix.md` 推进状态机。
-5. 如涉及发布性能优化，再进入 `release-transition-protocol.md`。
-6. 如处于 v4.16+ 递归模块化执行，再进入 `recursive-speed-protocol.md` 和 `recursive-state.json`。
+1. `governance-next/README.md`。
+2. `governance-next/05-authoritative-operating-model.md`。
+3. `governance-next/01-qpcursor-protocol.md`。
+4. `governance-next/02-governance-heat-trigger.md`。
+5. `governance-next/03-local-invariants.md`。
+
+本目录只在以下场景读取:
+
+1. 兼容门禁需要确认旧三矩阵文件存在。
+2. 新治理需要引用旧规则的历史来源。
+3. 递归游标仍暂存在 `recursive-state.json`。
+4. 模块树和全量树尚未迁入 QPCursor 状态文件。
+
+旧流程不得覆盖 QPCursor 的 allowed workset、stop_if、治理热度和 evidence。
 
 ---
 
@@ -68,3 +76,4 @@
 | v4.16.0 / GOV-LEAF-GRANULARITY-JUDGE-TOOL-01 | 只读叶子粒度评分脚本接入治理体系，输出 `normalized_split_score` 和 STOP/WAVE/SPLIT/PRECISION 证据 |
 | v4.16.0 / GOV-TERMINAL-LEAF-CONTROL-V2-01 | 将只读发现固化为 `terminal_leaf_control_v2`，脚本输出 `governance_mode`，限制底层小叶独立四段式治理 |
 | v4.16.0 / GOV-GOVERNANCE-NEXT-OPTIMIZATION-01 | 叶子判定拆分为 `split_decision` 与 `governance_packaging`，超大高风险叶升为 precision baseline，并接入 QPCursor 生成器、未跟踪文件预检和索引降重路线 |
+| v4.16.0 / GOV-GOVERNANCE-NEXT-PROMOTION-01 | `governance-next/` 正式成为默认权威入口，旧三矩阵降级为兼容档案和历史门禁素材 |
