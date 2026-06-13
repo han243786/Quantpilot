@@ -5524,3 +5524,5 @@ Recursive boundary supplement: BE-002FB-02 `v4_runtime_support.test_harness.fixt
 - `markdown/06-milestones/v4.16.0/1585-root.contracts.runtime_support.v4_runtime_support.test_harness.fixture_builders.single_leaf_closeout.md` - v4.16.0 BE-002FB-02 v4_runtime_support test_harness fixture_builders single leaf closeout
 Recursive boundary supplement: BE-002FC-01 `v4_runtime_support.test_harness` parent residual judgment selected `payload_validation_tests`; next step: BE-002FD-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1586-root.contracts.runtime_support.v4_runtime_support.test_harness.parent_residual_judgment.payload_validation_tests.md` - v4.16.0 BE-002FC-01 v4_runtime_support test_harness parent residual judgment selects payload_validation_tests
+Recursive boundary supplement: BE-002FD-01 `v4_runtime_support.test_harness.payload_validation_tests` baseline frozen; next step: BE-002FE-01 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1587-root.contracts.runtime_support.v4_runtime_support.test_harness.payload_validation_tests.baseline_plan.md` - v4.16.0 BE-002FD-01 v4_runtime_support test_harness payload_validation_tests baseline plan

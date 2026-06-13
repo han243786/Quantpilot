@@ -1947,3 +1947,4 @@
 | v4.16.0 / BE-002FB-01 | `v4.16.0/1584-root.contracts.runtime_support.v4_runtime_support.test_harness.fixture_builders.extract_closeout.md` | Added: `v4_runtime_support.test_harness.fixture_builders` actual extraction complete |
 | v4.16.0 / BE-002FB-02 | `v4.16.0/1585-root.contracts.runtime_support.v4_runtime_support.test_harness.fixture_builders.single_leaf_closeout.md` | Added: `v4_runtime_support.test_harness.fixture_builders` single leaf closeout stops split |
 | v4.16.0 / BE-002FC-01 | `v4.16.0/1586-root.contracts.runtime_support.v4_runtime_support.test_harness.parent_residual_judgment.payload_validation_tests.md` | Added: `v4_runtime_support.test_harness` parent residual judgment selects `payload_validation_tests` |
+| v4.16.0 / BE-002FD-01 | `v4.16.0/1587-root.contracts.runtime_support.v4_runtime_support.test_harness.payload_validation_tests.baseline_plan.md` | Added: `v4_runtime_support.test_harness.payload_validation_tests` baseline plan |
