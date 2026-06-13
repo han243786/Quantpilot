@@ -5457,3 +5457,6 @@ Recursive boundary supplement: BE-002EG-01 `simulated_execution_engine` parent r
 - `markdown/06-milestones/v4.16.0/1557-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment.order_lifecycle_flow.md` - v4.16.0 BE-002EG-01 simulated_execution_engine parent residual judgment selects order_lifecycle_flow
 Recursive boundary supplement: BE-002EH-01 `simulated_execution_engine.order_lifecycle_flow` baseline frozen; next step: BE-002EI-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1558-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.order_lifecycle_flow.baseline_plan.md` - v4.16.0 BE-002EH-01 simulated_execution_engine order_lifecycle_flow baseline plan
+Recursive boundary supplement: BE-002EI-01 `simulated_execution_engine.order_lifecycle_flow` actual extraction complete; next step: BE-002EI-02 single_leaf_closeout.
+- `qrpc_runtime/src/v4_runtime/simulated_execution_engine/order_lifecycle_flow.rs` - Runtime v4 simulated execution order lifecycle child
+- `markdown/06-milestones/v4.16.0/1559-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.order_lifecycle_flow.extract_closeout.md` - v4.16.0 BE-002EI-01 simulated_execution_engine order_lifecycle_flow extract closeout

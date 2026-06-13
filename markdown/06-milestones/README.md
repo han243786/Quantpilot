@@ -1919,3 +1919,4 @@
 | v4.16.0 / GOV-GOVERNANCE-NEXT-PROMOTION-01 | `v4.16.0/1556-governance-next-authority-promotion.md` | Added: `governance-next` promoted to default authority and legacy matrix archived |
 | v4.16.0 / BE-002EG-01 | `v4.16.0/1557-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment.order_lifecycle_flow.md` | Added: `simulated_execution_engine` parent residual judgment selects `order_lifecycle_flow` |
 | v4.16.0 / BE-002EH-01 | `v4.16.0/1558-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.order_lifecycle_flow.baseline_plan.md` | Added: `simulated_execution_engine.order_lifecycle_flow` baseline plan |
+| v4.16.0 / BE-002EI-01 | `v4.16.0/1559-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.order_lifecycle_flow.extract_closeout.md` | Added: `simulated_execution_engine.order_lifecycle_flow` actual extraction complete |
