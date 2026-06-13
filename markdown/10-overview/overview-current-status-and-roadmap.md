@@ -1638,3 +1638,4 @@ Latest recursive supplement: BE-002DZ-01 extracted `runtime_support.v4_runtime_s
 Latest recursive supplement: BE-002DZ-02 closed `runtime_support.v4_runtime_support.risk_execution_gate` with `stop_split: true`; next step returns to v4_runtime_support parent residual judgment.
 Latest recursive supplement: BE-002EA-01 selected `runtime_support.v4_runtime_support.simulated_execution_engine`; next baseline should freeze simulated execution behavior before code movement.
 Latest recursive supplement: BE-002EB-01 froze `runtime_support.v4_runtime_support.simulated_execution_engine` precision baseline; next movement may extract simulated execution behavior into a dedicated v4 runtime child.
+Latest recursive supplement: BE-002EC-01 extracted `runtime_support.v4_runtime_support.simulated_execution_engine`; next step is single leaf closeout.

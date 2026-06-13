@@ -324,3 +324,24 @@ fn matching_transition<'a>(
             && transition_freshness_matches(transition.event.freshness.clone(), event)
     })
 }
+
+fn transition_source_matches(
+    expected_source: Option<&str>,
+    event: &V4RuntimeEventEnvelope,
+) -> bool {
+    expected_source
+        .map(|source| source == event.source)
+        .unwrap_or(true)
+}
+
+fn transition_freshness_matches(
+    freshness: Option<EventFreshnessRequirement>,
+    _event: &V4RuntimeEventEnvelope,
+) -> bool {
+    matches!(
+        freshness,
+        None | Some(EventFreshnessRequirement::FreshOnly)
+            | Some(EventFreshnessRequirement::FreshOrStale)
+            | Some(EventFreshnessRequirement::RecoveringAllowed)
+    )
+}

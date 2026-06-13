@@ -1,5 +1,5 @@
 ﻿impl V4SimulatedExecutionRuntimeState {
-    fn new(config: V4SimulatedExecutionConfig, sequence: u64) -> Self {
+    pub(super) fn new(config: V4SimulatedExecutionConfig, sequence: u64) -> Self {
         Self {
             cash_balance: config.starting_cash,
             config,
@@ -14,7 +14,7 @@
         }
     }
 
-    fn submit_order(
+    pub(super) fn submit_order(
         &mut self,
         request: V4SimulatedOrderRequest,
         source_event_sequence: u64,
@@ -216,7 +216,7 @@
         }
     }
 
-    fn amend_order(
+    pub(super) fn amend_order(
         &mut self,
         order_id: &str,
         new_reference_price: Option<f64>,
@@ -371,7 +371,7 @@
         }
     }
 
-    fn expire_orders(&mut self, now_ms: u64) -> V4SimulatedExecutionOutcome {
+    pub(super) fn expire_orders(&mut self, now_ms: u64) -> V4SimulatedExecutionOutcome {
         let mut events = Vec::new();
         for index in 0..self.orders.len() {
             let Some(expire_at_ms) = self.orders[index].expire_at_ms else {
@@ -421,7 +421,7 @@
         }
     }
 
-    fn update_market_price(
+    pub(super) fn update_market_price(
         &mut self,
         venue_id: &str,
         symbol: &str,
@@ -1022,7 +1022,7 @@
         }
     }
 
-    fn snapshot(&self) -> V4SimulatedExecutionSnapshot {
+    pub(super) fn snapshot(&self) -> V4SimulatedExecutionSnapshot {
         let point = self.asset_point(
             self.asset_curve
                 .last()
@@ -1051,7 +1051,9 @@
         }
     }
 
-    fn microstructure_metrics(&self) -> qrpc_core_ir::v4::V4BacktestMicrostructureMetrics {
+    pub(super) fn microstructure_metrics(
+        &self,
+    ) -> qrpc_core_ir::v4::V4BacktestMicrostructureMetrics {
         let orders = self
             .orders
             .iter()
@@ -1081,74 +1083,6 @@
             .collect::<Vec<_>>();
         compute_microstructure_metrics(&orders, &fills)
     }
-}
-
-fn transition_source_matches(
-    expected_source: Option<&str>,
-    event: &V4RuntimeEventEnvelope,
-) -> bool {
-    expected_source
-        .map(|source| source == event.source)
-        .unwrap_or(true)
-}
-
-fn transition_freshness_matches(
-    freshness: Option<EventFreshnessRequirement>,
-    _event: &V4RuntimeEventEnvelope,
-) -> bool {
-    matches!(
-        freshness,
-        None | Some(EventFreshnessRequirement::FreshOnly)
-            | Some(EventFreshnessRequirement::FreshOrStale)
-            | Some(EventFreshnessRequirement::RecoveringAllowed)
-    )
-}
-
-fn validate_payload_field_type(
-    field: &MachineEventPayloadField,
-    value: &Value,
-) -> Result<(), String> {
-    let type_name = field.type_name.trim().to_ascii_lowercase();
-    let ok = match type_name.as_str() {
-        "string" | "symbol" | "venue" | "account" | "side" | "position_side" | "order_type"
-        | "time_in_force" | "freshness" | "runtime_mode" | "order_permission" => value.is_string(),
-        "bool" | "boolean" => value.is_boolean(),
-        "u64" | "uint" => value.as_u64().is_some(),
-        "i64" | "int" | "integer" => value.as_i64().is_some() || value.as_u64().is_some(),
-        "f64" | "decimal" | "number" | "price" | "quantity" | "notional" | "percent" | "ratio"
-        | "fee" | "slippage" | "leverage" => value.as_f64().is_some_and(f64::is_finite),
-        "object" | "map" => value.is_object(),
-        "array" | "list" => value.is_array(),
-        other => return Err(format!("unsupported catalog type `{}`", other)),
-    };
-
-    if ok {
-        Ok(())
-    } else {
-        Err(format!(
-            "expected `{}`, got {}",
-            field.type_name,
-            payload_type_label(value)
-        ))
-    }
-}
-
-fn payload_type_label(value: &Value) -> &'static str {
-    match value {
-        Value::Null => "null",
-        Value::Bool(_) => "bool",
-        Value::Number(number) if number.is_i64() => "i64",
-        Value::Number(number) if number.is_u64() => "u64",
-        Value::Number(_) => "f64",
-        Value::String(_) => "string",
-        Value::Array(_) => "array",
-        Value::Object(_) => "object",
-    }
-}
-
-#[allow(dead_code)]
-fn recovery_policy_allows_async(policy: &MachineRecoveryPolicy) -> bool {
-    matches!(policy, MachineRecoveryPolicy::AsyncRecover)
 }
 
 impl V4SimulatedPositionAction {
