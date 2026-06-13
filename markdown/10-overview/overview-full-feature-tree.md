@@ -5463,6 +5463,11 @@ Document cleanup archive supplement 3: legacy generated testing artifacts and st
 - `markdown/09-archive/testing-artifacts-retired/README.md` - Retired ignored screenshot and JSON report artifact archive policy
 - `markdown/09-archive/implementation-retired/README.md` - Retired implementation notes archive policy
 - `markdown/09-archive/implementation-retired/implementation-capability-governance-registry.generated.md` - Stale generated capability governance snapshot retained for history
+
+Document cleanup archive supplement 4: retired inactive template entry and documented archive authority.
+- `markdown/09-archive/README.md` - Archive boundary, current authority pointers, and dead-doc cleanup rules
+- `markdown/09-archive/dead-docs-cleanup-2026-06-13.md` - 2026-06-13 inactive dead-doc review and cleanup evidence
+- `markdown/09-archive/planning-retired/design-doc-template.md` - Retired v1/v2 design doc template superseded by matrix proposal flow
 Recursive boundary supplement: BE-002EG-01 `simulated_execution_engine` parent residual judgment selected `order_lifecycle_flow`; next step: BE-002EH-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1557-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment.order_lifecycle_flow.md` - v4.16.0 BE-002EG-01 simulated_execution_engine parent residual judgment selects order_lifecycle_flow
 Recursive boundary supplement: BE-002EH-01 `simulated_execution_engine.order_lifecycle_flow` baseline frozen; next step: BE-002EI-01 actual_extraction.
