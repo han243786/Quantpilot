@@ -1671,3 +1671,4 @@
 | v4.16.0 / BE-002GW-01 | Added: `quantscript.analysis_diagnostics.lookahead_window_gate` baseline plan |
 | v4.16.0 / BE-002GW-02 | Added: `quantscript.analysis_diagnostics.lookahead_window_gate` actual extraction complete |
 | v4.16.0 / BE-002GW-03 | Added: `quantscript.analysis_diagnostics.lookahead_window_gate` single leaf closeout stops split |
+| v4.16.0 / BE-002GX-01 | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `warmup_fetch_gate` |
