@@ -5738,3 +5738,6 @@ Recursive boundary supplement: BE-002HB-01 `root.contracts.quantscript.analysis_
 - `markdown/06-milestones/v4.16.0/1672-root.contracts.quantscript.analysis_diagnostics.parent_residual_judgment.symbol_whitelist_gate.md` - v4.16.0 BE-002HB-01 quantscript analysis_diagnostics parent residual judgment selects symbol_whitelist_gate
 Recursive boundary supplement: BE-002HC-01 `root.contracts.quantscript.analysis_diagnostics.symbol_whitelist_gate` baseline frozen; next step: BE-002HC-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1673-root.contracts.quantscript.analysis_diagnostics.symbol_whitelist_gate.baseline_plan.md` - v4.16.0 BE-002HC-01 quantscript analysis_diagnostics symbol_whitelist_gate baseline plan
+Recursive boundary supplement: BE-002HC-02 `root.contracts.quantscript.analysis_diagnostics.symbol_whitelist_gate` actual extraction complete; next step: BE-002HC-03 single_leaf_closeout.
+- `quantscript/src/analysis_diagnostics/symbol_whitelist_gate.rs` - QuantScript symbol whitelist gate child
+- `markdown/06-milestones/v4.16.0/1674-root.contracts.quantscript.analysis_diagnostics.symbol_whitelist_gate.extract_closeout.md` - v4.16.0 BE-002HC-02 quantscript analysis_diagnostics symbol_whitelist_gate extract closeout

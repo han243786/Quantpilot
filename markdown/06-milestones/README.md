@@ -2034,3 +2034,4 @@
 | v4.16.0 / BE-002HA-03 | `v4.16.0/1671-root.contracts.quantscript.analysis_diagnostics.indirect_recursion_gate.single_leaf_closeout.md` | Added: `quantscript.analysis_diagnostics.indirect_recursion_gate` single leaf closeout stops split |
 | v4.16.0 / BE-002HB-01 | `v4.16.0/1672-root.contracts.quantscript.analysis_diagnostics.parent_residual_judgment.symbol_whitelist_gate.md` | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `symbol_whitelist_gate` |
 | v4.16.0 / BE-002HC-01 | `v4.16.0/1673-root.contracts.quantscript.analysis_diagnostics.symbol_whitelist_gate.baseline_plan.md` | Added: `quantscript.analysis_diagnostics.symbol_whitelist_gate` baseline plan |
+| v4.16.0 / BE-002HC-02 | `v4.16.0/1674-root.contracts.quantscript.analysis_diagnostics.symbol_whitelist_gate.extract_closeout.md` | Added: `quantscript.analysis_diagnostics.symbol_whitelist_gate` actual extraction complete |

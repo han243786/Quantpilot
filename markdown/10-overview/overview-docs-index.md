@@ -1681,3 +1681,4 @@
 | v4.16.0 / BE-002HA-03 | Added: `quantscript.analysis_diagnostics.indirect_recursion_gate` single leaf closeout stops split |
 | v4.16.0 / BE-002HB-01 | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `symbol_whitelist_gate` |
 | v4.16.0 / BE-002HC-01 | Added: `quantscript.analysis_diagnostics.symbol_whitelist_gate` baseline plan |
+| v4.16.0 / BE-002HC-02 | Added: `quantscript.analysis_diagnostics.symbol_whitelist_gate` actual extraction complete |
