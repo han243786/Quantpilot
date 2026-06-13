@@ -51,6 +51,7 @@
 /tmp_test.txt
 
 # Test artifacts (screenshots and reports)
+markdown/05-testing/screenshots/
 markdown/测试/screenshots/
 markdown/测试/test-reports/
 markdown/测试/测试报告-*.md

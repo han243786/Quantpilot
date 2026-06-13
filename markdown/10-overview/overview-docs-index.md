@@ -75,6 +75,7 @@
 | `手动全量实机测试检查单.md` | 当前仍被 v4.16 基线引用的手动 smoke 检查 |
 | `../09-archive/testing-retired/` | 历史测试、审计和旧矩阵归档 |
 | `../09-archive/testing-artifacts-retired/` | 旧 `markdown/测试/` 截图与 JSON 报告生成物归档 |
+| `screenshots/` | 2026-06-13 从活跃跟踪中移除；生成截图保持本地忽略，除非当前里程碑明确提升为 tracked evidence。 |
 
 ## 里程碑 (`06-milestones/`)
 

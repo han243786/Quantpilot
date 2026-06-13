@@ -9,6 +9,7 @@ The local artifact subdirectories are intentionally ignored by Git and may be ab
 
 | Path | Content |
 |------|---------|
+| `markdown/05-testing/screenshots/` | Tracked legacy PNG captures removed from the active testing surface on 2026-06-13. |
 | `screenshots/` | Old UI screenshot captures from retired manual and scripted testing flows. |
 | `test-reports/` | Old JSON scenario reports from retired local testing flows. |
 
@@ -17,5 +18,6 @@ Cleanup rule:
 - Historical audit value must live in Git-tracked Markdown reports under `markdown/09-archive/testing-retired/`.
 - Ignored screenshot and JSON artifact directories are local cache material, not long-term project documentation.
 - A cleanup may delete those ignored directories when they are not part of the current testing surface.
+- Generated screenshots under `markdown/05-testing/screenshots/` must remain ignored unless a current governance batch explicitly names a tracked evidence target.
 
 Active testing documentation lives in `markdown/05-testing/`. Retired testing and audit documents live in `markdown/09-archive/testing-retired/`.
