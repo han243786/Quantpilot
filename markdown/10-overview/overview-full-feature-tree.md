@@ -2400,6 +2400,7 @@ storage/
 - `quantscript/src/resolve/public_type_surface.rs` — typed-HIR resolver public DTO/enum surface; 改 resolver 对外类型契约时改这里
 - `quantscript/src/resolve/callable_classification_surface.rs` — typed-HIR callable/helper classification and registry seeding; 改 QS helper/callable taxonomy 时改这里
 - `quantscript/src/resolve/semantic_inference_surface.rs` — typed-HIR expression semantic and manual indicator inference; 改 QS 语义推断时改这里
+- `quantscript/src/resolve/type_inference_binding_surface.rs` — typed-HIR type inference and resolver binding validation; 改 QS 类型推断或绑定诊断时改这里
 - `quantscript/src/syntax_ast_surface/types.rs` — QS 类型系统; 改类型定义时改这里
 - `quantscript/src/evaluator.rs` — 表达式求值; 改表达式语义时改这里
 - `quantscript/src/diagnostics.rs` — QS 诊断码; 新增诊断时改这里
@@ -5643,3 +5644,6 @@ Recursive boundary supplement: BE-002GI-01 `root.contracts.quantscript.typed_res
 - `markdown/06-milestones/v4.16.0/1635-root.contracts.quantscript.typed_resolution.parent_residual_judgment.type_inference_binding_surface.md` - v4.16.0 BE-002GI-01 quantscript typed_resolution parent residual judgment selects type_inference_binding_surface
 Recursive boundary supplement: BE-002GJ-01 `root.contracts.quantscript.typed_resolution.type_inference_binding_surface` baseline frozen; next step: BE-002GJ-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1636-root.contracts.quantscript.typed_resolution.type_inference_binding_surface.baseline_plan.md` - v4.16.0 BE-002GJ-01 quantscript typed_resolution type_inference_binding_surface baseline plan
+Recursive boundary supplement: BE-002GJ-02 `root.contracts.quantscript.typed_resolution.type_inference_binding_surface` actual extraction complete; next step: BE-002GJ-03 single_leaf_closeout.
+- `quantscript/src/resolve/type_inference_binding_surface.rs` - QuantScript typed-resolution type inference and binding validation child
+- `markdown/06-milestones/v4.16.0/1637-root.contracts.quantscript.typed_resolution.type_inference_binding_surface.extract_closeout.md` - v4.16.0 BE-002GJ-02 quantscript typed_resolution type_inference_binding_surface extract closeout

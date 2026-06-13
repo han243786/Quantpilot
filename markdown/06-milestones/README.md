@@ -1997,3 +1997,4 @@
 | v4.16.0 / BE-002GH-03 | `v4.16.0/1634-root.contracts.quantscript.typed_resolution.semantic_inference_surface.single_leaf_closeout.md` | Added: `quantscript.typed_resolution.semantic_inference_surface` single leaf closeout stops split |
 | v4.16.0 / BE-002GI-01 | `v4.16.0/1635-root.contracts.quantscript.typed_resolution.parent_residual_judgment.type_inference_binding_surface.md` | Added: `quantscript.typed_resolution` parent residual judgment selects `type_inference_binding_surface` |
 | v4.16.0 / BE-002GJ-01 | `v4.16.0/1636-root.contracts.quantscript.typed_resolution.type_inference_binding_surface.baseline_plan.md` | Added: `quantscript.typed_resolution.type_inference_binding_surface` baseline plan |
+| v4.16.0 / BE-002GJ-02 | `v4.16.0/1637-root.contracts.quantscript.typed_resolution.type_inference_binding_surface.extract_closeout.md` | Added: `quantscript.typed_resolution.type_inference_binding_surface` actual extraction complete |
