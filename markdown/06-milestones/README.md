@@ -2015,3 +2015,4 @@
 | v4.16.0 / BE-002GR-01 | `v4.16.0/1652-root.contracts.quantscript.parent_residual_judgment.analysis_diagnostics.md` | Added: `quantscript` parent residual judgment selects `analysis_diagnostics` |
 | v4.16.0 / BE-002GS-01 | `v4.16.0/1653-root.contracts.quantscript.analysis_diagnostics.baseline_plan.md` | Added: `quantscript.analysis_diagnostics` baseline plan |
 | v4.16.0 / BE-002GS-02 | `v4.16.0/1654-root.contracts.quantscript.analysis_diagnostics.extract_closeout.md` | Added: `quantscript.analysis_diagnostics` structural extraction complete |
+| v4.16.0 / BE-002GS-03 | `v4.16.0/1655-root.contracts.quantscript.analysis_diagnostics.single_leaf_closeout.md` | Added: `quantscript.analysis_diagnostics` single leaf closeout continues split |

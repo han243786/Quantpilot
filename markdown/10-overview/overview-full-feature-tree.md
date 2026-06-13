@@ -5692,3 +5692,5 @@ Recursive boundary supplement: BE-002GS-02 `root.contracts.quantscript.analysis_
 - `quantscript/src/analysis_diagnostics/analysis.rs` - QuantScript analysis checks child
 - `quantscript/src/analysis_diagnostics/diagnostics.rs` - QuantScript diagnostic DTO and span child
 - `markdown/06-milestones/v4.16.0/1654-root.contracts.quantscript.analysis_diagnostics.extract_closeout.md` - v4.16.0 BE-002GS-02 quantscript analysis_diagnostics extract closeout
+Recursive boundary supplement: BE-002GS-03 `root.contracts.quantscript.analysis_diagnostics` single leaf closeout complete with `stop_split: false`; next step: BE-002GT-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1655-root.contracts.quantscript.analysis_diagnostics.single_leaf_closeout.md` - v4.16.0 BE-002GS-03 quantscript analysis_diagnostics single leaf closeout
