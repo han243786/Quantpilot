@@ -1967,3 +1967,4 @@
 | v4.16.0 / BE-002FQ-01 | `v4.16.0/1604-root.contracts.runtime_support.v4_runtime_support.test_harness.live_capability_guard_tests.extract_closeout.md` | Added: `v4_runtime_support.test_harness.live_capability_guard_tests` actual extraction complete |
 | v4.16.0 / BE-002FQ-02 | `v4.16.0/1605-root.contracts.runtime_support.v4_runtime_support.test_harness.live_capability_guard_tests.single_leaf_closeout.md` | Added: `v4_runtime_support.test_harness.live_capability_guard_tests` single leaf closeout stops split |
 | v4.16.0 / BE-002FR-01 | `v4.16.0/1606-root.contracts.runtime_support.v4_runtime_support.test_harness.parent_closeout.md` | Added: `v4_runtime_support.test_harness` parent closeout |
+| v4.16.0 / BE-002FS-01 | `v4.16.0/1607-root.contracts.runtime_support.v4_runtime_support.parent_closeout.md` | Added: `v4_runtime_support` parent closeout |
