@@ -55,6 +55,7 @@ legacy_governance_authority: preserved
 | Trial | Scope | Status |
 | --- | --- | --- |
 | `trials/0001-risk-execution-gate-qpcursor.md` | `root.contracts.runtime_support.v4_runtime_support.risk_execution_gate` | handoff_ready |
+| `trials/0002-simulated-execution-engine-qpcursor.md` | `root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine` | handoff_ready |
 
 ## 6. promote 前置条件
 

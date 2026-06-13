@@ -5408,6 +5408,8 @@ Recursive boundary supplement: BE-002DZ-01 `v4_runtime_support.risk_execution_ga
 - `markdown/06-milestones/v4.16.0/1545-root.contracts.runtime_support.v4_runtime_support.risk_execution_gate.extract_closeout.md` - v4.16.0 BE-002DZ-01 v4_runtime_support risk_execution_gate extract closeout
 Recursive boundary supplement: BE-002DZ-02 `v4_runtime_support.risk_execution_gate` single leaf closeout complete; next step: BE-002EA-01 v4_runtime_support parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1546-root.contracts.runtime_support.v4_runtime_support.risk_execution_gate.single_leaf_closeout.md` - v4.16.0 BE-002DZ-02 v4_runtime_support risk_execution_gate single leaf closeout
+Recursive boundary supplement: BE-002EA-01 `v4_runtime_support` parent residual judgment selected `simulated_execution_engine`; next step: BE-002EB-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1547-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.simulated_execution_engine.md` - v4.16.0 BE-002EA-01 v4_runtime_support parent residual judgment selects simulated_execution_engine
 Governance-next trial supplement: `governance-next` is a non-authoritative QPCursor trial wrapper; legacy governance remains authoritative until explicit promote evidence exists.
 - `governance-next/README.md` - Governance-next旁路孵化区入口
 - `governance-next/00-operating-principles.md` - Governance-next分层原则与旧治理隔离边界
@@ -5416,3 +5418,4 @@ Governance-next trial supplement: `governance-next` is a non-authoritative QPCur
 - `governance-next/03-local-invariants.md` - 局部不变量绑定规则
 - `governance-next/04-adoption-and-promotion.md` - 旁路接入与promote条件
 - `governance-next/trials/0001-risk-execution-gate-qpcursor.md` - Governance-next trial 0001 risk_execution_gate QPCursor样本
+- `governance-next/trials/0002-simulated-execution-engine-qpcursor.md` - Governance-next trial 0002 simulated_execution_engine QPCursor样本

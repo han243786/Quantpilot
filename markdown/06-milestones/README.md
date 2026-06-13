@@ -1907,3 +1907,4 @@
 | v4.16.0 / BE-002DY-01 | `v4.16.0/1544-root.contracts.runtime_support.v4_runtime_support.risk_execution_gate.baseline_plan.md` | Added: `v4_runtime_support.risk_execution_gate` baseline plan |
 | v4.16.0 / BE-002DZ-01 | `v4.16.0/1545-root.contracts.runtime_support.v4_runtime_support.risk_execution_gate.extract_closeout.md` | Added: `v4_runtime_support.risk_execution_gate` actual extraction complete |
 | v4.16.0 / BE-002DZ-02 | `v4.16.0/1546-root.contracts.runtime_support.v4_runtime_support.risk_execution_gate.single_leaf_closeout.md` | Added: `v4_runtime_support.risk_execution_gate` single leaf closeout stops split |
+| v4.16.0 / BE-002EA-01 | `v4.16.0/1547-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.simulated_execution_engine.md` | Added: `v4_runtime_support` parent residual judgment selects `simulated_execution_engine` |

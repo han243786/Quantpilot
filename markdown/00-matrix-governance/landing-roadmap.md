@@ -420,3 +420,4 @@ Latest recursive supplement: BE-002DX-01 selected `runtime_support.v4_runtime_su
 Latest recursive supplement: BE-002DY-01 froze `runtime_support.v4_runtime_support.risk_execution_gate`; next movement may extract gate decision evaluation and recording.
 Latest recursive supplement: BE-002DZ-01 extracted `runtime_support.v4_runtime_support.risk_execution_gate`; next step is single leaf closeout.
 Latest recursive supplement: BE-002DZ-02 closed `runtime_support.v4_runtime_support.risk_execution_gate`; next step returns to v4_runtime_support residual judgment.
+Latest recursive supplement: BE-002EA-01 selected `runtime_support.v4_runtime_support.simulated_execution_engine`; next baseline freezes simulated execution behavior.
