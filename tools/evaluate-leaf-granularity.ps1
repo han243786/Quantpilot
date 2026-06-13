@@ -265,24 +265,50 @@ $weightedDelta =
 $normalizedScore = Clamp-Score (40 + $weightedDelta)
 
 $highRisk = $riskPenalty -ge 60
+$highRiskTags = @("state_machine", "trading_semantics", "security", "live_execution", "compiler_contract", "persistence", "route_schema", "lock")
+$hasHighRiskTag = $false
+foreach ($tag in $risk.tags) {
+    if ($highRiskTags -contains $tag) {
+        $hasHighRiskTag = $true
+        break
+    }
+}
+$oversizedHighRiskLeaf = $loc -gt 800 -and $hasHighRiskTag
 $helperOnly = ($loc -lt 100 -and $functionCount -le 2 -and $publicSurface -le 2)
 
 $decision = "STOP"
 $reason = "low split score or terminal-sized cohesive leaf"
-if ($helperOnly -and $splitBenefit -lt 80) {
+$splitDecision = "STOP"
+$governancePackaging = "stop_split"
+if ($oversizedHighRiskLeaf) {
+    $decision = "PRECISION"
+    $splitDecision = "CONTINUE"
+    $governancePackaging = "precision_single_leaf"
+    $reason = "oversized high-risk leaf requires precision baseline before movement"
+} elseif ($helperOnly -and $splitBenefit -lt 80) {
     $decision = "STOP"
+    $splitDecision = "STOP"
+    $governancePackaging = "stop_split"
     $reason = "helper-only or micro leaf; governance and communication cost exceed split value"
 } elseif ($normalizedScore -ge 65 -and $highRisk) {
     $decision = "PRECISION"
+    $splitDecision = "CONTINUE"
+    $governancePackaging = "precision_single_leaf"
     $reason = "strong split pressure with high-risk surface"
 } elseif ($normalizedScore -ge 65) {
     $decision = "SPLIT"
+    $splitDecision = "CONTINUE"
+    $governancePackaging = "standard_same_parent_wave"
     $reason = "strong split pressure and risk is not high enough to force precision mode"
 } elseif ($normalizedScore -ge 40 -and $SameParentWaveCandidate) {
     $decision = "WAVE"
+    $splitDecision = "STOP"
+    $governancePackaging = "same_parent_wave"
     $reason = "medium split pressure; handle only as same-parent wave"
 } elseif ($normalizedScore -ge 40) {
     $decision = "STOP"
+    $splitDecision = "STOP"
+    $governancePackaging = "stop_split"
     $reason = "medium score without same-parent wave candidate; avoid standalone governance"
 }
 
@@ -294,12 +320,7 @@ $action = switch ($decision) {
 }
 
 $sizeBucket = Get-LeafSizeBucket -Loc $loc
-$governanceMode = switch ($decision) {
-    "STOP" { "stop_split" }
-    "WAVE" { "same_parent_wave" }
-    "SPLIT" { "standard_same_parent_wave" }
-    "PRECISION" { "precision_single_leaf" }
-}
+$governanceMode = $governancePackaging
 $standaloneFullGovernanceAllowed = $decision -eq "PRECISION"
 $microLeafDefaultStop = $loc -lt 100 -and $splitBenefit -lt 80
 $highCostLeafNeedsWaveOrStop = $loc -lt 200 -and $governanceCost -ge 50 -and $decision -ne "SPLIT" -and $decision -ne "PRECISION"
@@ -318,6 +339,7 @@ $result = [ordered]@{
         domain_count = $domains.Count
         domains = @($domains | Sort-Object)
         risk_tags = @($risk.tags)
+        oversized_high_risk_leaf = $oversizedHighRiskLeaf
     }
     scores = [ordered]@{
         split_benefit = $splitBenefit
@@ -332,10 +354,15 @@ $result = [ordered]@{
         target_terminal_loc_range = "150-600"
         size_bucket = $sizeBucket
         governance_mode = $governanceMode
+        split_decision = $splitDecision
+        governance_packaging = $governancePackaging
+        final_decision = $decision
         standalone_full_governance_allowed = $standaloneFullGovernanceAllowed
         micro_leaf_default_stop = $microLeafDefaultStop
         high_cost_leaf_needs_wave_or_stop = $highCostLeafNeedsWaveOrStop
     }
+    split_decision = $splitDecision
+    governance_packaging = $governancePackaging
     decision = $decision
     reason = $reason
     recommended_action = $action
@@ -348,6 +375,8 @@ if ($AsJson) {
 
 Write-Host "Leaf granularity evaluation"
 Write-Host "Leaf: $LeafId"
+Write-Host "Split decision: $splitDecision"
+Write-Host "Governance packaging: $governancePackaging"
 Write-Host "Decision: $decision"
 Write-Host "Score: $normalizedScore"
 Write-Host "Reason: $reason"
@@ -361,7 +390,7 @@ Write-Host ("  split_benefit={0}, leaf_size_fit={1}, risk_penalty={2}, governanc
 Write-Host ("  weighted_delta={0}, normalized_split_score={1}" -f ([Math]::Round($weightedDelta, 2)), $normalizedScore)
 Write-Host ""
 Write-Host "Terminal leaf control:"
-Write-Host ("  size_bucket={0}, governance_mode={1}, standalone_full_governance_allowed={2}" -f $sizeBucket, $governanceMode, $standaloneFullGovernanceAllowed)
+Write-Host ("  size_bucket={0}, governance_mode={1}, split_decision={2}, governance_packaging={3}, standalone_full_governance_allowed={4}" -f $sizeBucket, $governanceMode, $splitDecision, $governancePackaging, $standaloneFullGovernanceAllowed)
 Write-Host ("  micro_leaf_default_stop={0}, high_cost_leaf_needs_wave_or_stop={1}" -f $microLeafDefaultStop, $highCostLeafNeedsWaveOrStop)
 Write-Host ""
 Write-Host "Recommended action:"

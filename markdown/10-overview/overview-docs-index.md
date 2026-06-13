@@ -1547,3 +1547,4 @@
 | v4.16.0 / BE-002DZ-01 | Added: `v4_runtime_support.risk_execution_gate` actual extraction complete |
 | v4.16.0 / BE-002DZ-02 | Added: `v4_runtime_support.risk_execution_gate` single leaf closeout stops split |
 | v4.16.0 / BE-002EA-01 | Added: `v4_runtime_support` parent residual judgment selects `simulated_execution_engine` |
+| v4.16.0 / GOV-GOVERNANCE-NEXT-OPTIMIZATION-01 | Added: governance-next optimization with split decision vs governance packaging, precision baseline escalation, QPCursor generation, untracked active file coverage, and index reduction route |

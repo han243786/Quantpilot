@@ -72,4 +72,10 @@ Final heat: `G4 architecture heat`.
 
 ## Trial Judgment
 
-This QPCursor is sufficient for handoff because it names the legacy authority, heat level, stop conditions, and next legal recursive action. It also exposes one governance quality issue: `WAVE` is ambiguous for an oversized G4 candidate and needs an escalation override rule before promote.
+This QPCursor is sufficient for handoff because it names the legacy authority, heat level, stop conditions, and next legal recursive action.
+
+Post GOV-GOVERNANCE-NEXT-OPTIMIZATION-01 judgment:
+
+- The earlier `WAVE` ambiguity is resolved by separating `split_decision` from `governance_packaging`.
+- `qrpc_runtime/src/v4_simulated_execution.rs` now evaluates as `split_decision=CONTINUE`, `governance_packaging=precision_single_leaf`, `final_decision=PRECISION`.
+- The next baseline must be a precision baseline before code movement.

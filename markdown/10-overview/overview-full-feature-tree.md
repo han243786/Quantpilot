@@ -2844,7 +2844,8 @@ storage/
 - `tools/check-full-feature-tree.ps1` — 全量树校验 🆕 v4.0.0
 - `tools/run-smart-pre-commit.ps1` — staged-file 智能 pre-commit 分流
 - `tools/update-recursive-governance.ps1` — 递归治理 skeleton 与索引生成器
-- `tools/evaluate-leaf-granularity.ps1` — 只读叶子粒度评分工具，输出 `normalized_split_score` 与 STOP/WAVE/SPLIT/PRECISION
+- `tools/new-qpcursor-trial.ps1` — QPCursor trial 草案生成器
+- `tools/evaluate-leaf-granularity.ps1` — 只读叶子粒度评分工具，输出 `normalized_split_score`、`split_decision`、`governance_packaging` 与 STOP/WAVE/SPLIT/PRECISION
 
 **其他工具**:
 - `tools/run-closeout-gates.bat` — 一键 26 项 closeout
@@ -5027,6 +5028,8 @@ Recursive boundary supplement: BE-001ZI-02 `data_module.normalization` actual ex
 - `markdown/06-milestones/v4.16.0/1372-root.contracts.runtime_support.data_module.normalization.extract_closeout.md` - v4.16.0 BE-001ZI-02 data_module.normalization actual extraction complete
 Recursive governance supplement: GOV-TERMINAL-LEAF-CONTROL-V2-01 integrates read-only over-splitting findings into terminal leaf control; the judge now emits `terminal_leaf_control.governance_mode` and reserves standalone full governance for `precision_single_leaf`.
 - `markdown/06-milestones/v4.16.0/1373-governance.terminal_leaf_control_v2.md` - v4.16.0 GOV-TERMINAL-LEAF-CONTROL-V2-01 terminal leaf control v2
+Recursive governance supplement: GOV-GOVERNANCE-NEXT-OPTIMIZATION-01 separates split decision from governance packaging, forces oversized high-risk leaves into precision baseline, adds QPCursor generation, and checks untracked active files in full-feature-tree.
+- `markdown/06-milestones/v4.16.0/1548-governance.governance_next_optimization.md` - v4.16.0 GOV-GOVERNANCE-NEXT-OPTIMIZATION-01 governance next optimization
 Recursive boundary supplement: BE-001ZI-03 `data_module.normalization` single leaf closeout stops split; next step: BE-001ZJ-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1374-root.contracts.runtime_support.data_module.normalization.single_leaf_closeout.md` - v4.16.0 BE-001ZI-03 data_module.normalization single leaf closeout
 Recursive boundary supplement: BE-001ZJ-01 `data_module` parent residual judgment selected `mock_data_generation`; next step: BE-001ZK-01 baseline_plan.

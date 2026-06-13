@@ -79,9 +79,11 @@ $hasGovernance = Test-AnyPath $stagedPaths {
         $path -like 'markdown/00-matrix-governance/*' -or
         $path -like 'markdown/06-milestones/*' -or
         $path -like 'markdown/10-overview/*' -or
+        $path -like 'governance-next/*' -or
         $path -eq 'tools/check-matrix-governance.ps1' -or
         $path -eq 'tools/check-full-feature-tree.ps1' -or
         $path -eq 'tools/check-utf8.ps1' -or
+        $path -eq 'tools/new-qpcursor-trial.ps1' -or
         $path -eq 'tools/run-smart-pre-commit.ps1' -or
         $path -eq 'tools/update-recursive-governance.ps1' -or
         $path -eq 'scripts/pre-commit'

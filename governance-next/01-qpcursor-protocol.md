@@ -143,6 +143,26 @@ mode_stack:
 8. 写入 evidence。
 9. 推进、阻断或请求扩范围。
 
-## 7. 停止规则
+## 7. 生成器辅助
+
+`tools/new-qpcursor-trial.ps1` 可以从旧 `recursive-state.json` 生成 QPCursor 草案，用于减少手工重复和接力漂移。
+
+生成器输出只能是草案，必须人工或代理补齐:
+
+1. `allowed_workset` 的真实文件范围。
+2. `evidence` 的实际命令结果。
+3. `trial judgment` 的质量判断。
+4. 若与旧治理冲突，必须保留 `legacy_governance_authority: preserved` 并回退旧治理。
+
+示例:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\new-qpcursor-trial.ps1 `
+  -TrialId 0003 `
+  -Scope root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine `
+  -LeafPath qrpc_runtime/src/v4_simulated_execution.rs
+```
+
+## 8. 停止规则
 
 如果代理发现需要触碰游标外文件、改变外部接口、改变 capability、改变 API、改变持久化 schema、改变执行模式语义，必须停止并输出范围变更请求。

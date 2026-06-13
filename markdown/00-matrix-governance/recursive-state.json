@@ -2,12 +2,13 @@
   "version": "v4.16.0",
   "protocol": "recursive-high-speed-v2",
   "protocol_upgrade_batch": "GOV-RECURSIVE-COST-CONTROL-01",
-  "latest_governance_batch": "GOV-TERMINAL-LEAF-CONTROL-V2-01",
+  "latest_governance_batch": "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
   "governance_history": [
     "GOV-RECURSIVE-COST-CONTROL-01",
     "GOV-LEAF-GRANULARITY-SMART-JUDGE-01",
     "GOV-LEAF-GRANULARITY-JUDGE-TOOL-01",
-    "GOV-TERMINAL-LEAF-CONTROL-V2-01"
+    "GOV-TERMINAL-LEAF-CONTROL-V2-01",
+    "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01"
   ],
   "last_committed_batch": "BE-002DZ-02",
   "last_committed_sha": "201f0d4d",
@@ -280,7 +281,10 @@
     "leaf_granularity_judge_tool",
     "terminal_leaf_control_v2",
     "recursive_governance_generator",
-    "recursive_state_cursor"
+    "recursive_state_cursor",
+    "qpcursor_trial_generator",
+    "untracked_full_feature_tree_preflight",
+    "split_decision_governance_packaging_separation"
   ],
   "active_speed_mode": {
     "default": "cost_controlled_same_parent_wave",

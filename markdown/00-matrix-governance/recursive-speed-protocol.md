@@ -96,7 +96,13 @@ leaf_granularity_smart_judge
 
 `normalized_split_score = clamp(40 + weighted_delta, 0, 100)`
 
-`normalized_split_score` 是唯一用于 STOP/WAVE/SPLIT/PRECISION 的分数。`40` 是中性基线，用于保留既有阈值并让负向成本可以直接把微叶压回 STOP。
+`normalized_split_score` 是基础分数，但不再单独承担全部语义。GOV-GOVERNANCE-NEXT-OPTIMIZATION-01 起，脚本必须同时输出:
+
+- `split_decision`: 是否继续细拆，只能是 `STOP` 或 `CONTINUE`。
+- `governance_packaging`: 如何治理交付，只能是 `stop_split`、`same_parent_wave`、`standard_same_parent_wave` 或 `precision_single_leaf`。
+- `final_decision`: 兼容旧记录的 `STOP / WAVE / SPLIT / PRECISION`。
+
+`40` 是中性基线，用于保留既有阈值并让负向成本可以直接把微叶压回 STOP。`WAVE` 只表示治理打包方式，不得单独解释为继续拆分许可。
 
 | 指标 | 权重 | 说明 |
 | --- | --- | --- |
@@ -113,16 +119,16 @@ leaf_granularity_smart_judge
 | 决策 | 条件 | 执行动作 |
 | --- | --- | --- |
 | STOP | `normalized_split_score < 40`，或 LOC < 100 且无强收益 | 停止细拆，登记 `stop_split: true` |
-| WAVE | `normalized_split_score` 40-64，且同父级存在同构 child | 合入 `same_parent_wave`，不单独走完整治理 |
+| WAVE | `normalized_split_score` 40-64，且同父级存在同构 child | `split_decision=STOP`，合入 `same_parent_wave` 或仅作为父级 wave 证据，不单独走完整治理 |
 | SPLIT | `normalized_split_score >= 65` 且未命中高风险触发器 | 允许继续拆分，优先走标准批次 |
-| PRECISION | `normalized_split_score >= 65` 且命中高风险触发器 | 单叶精细治理，不得批处理隐藏风险 |
+| PRECISION | `normalized_split_score >= 65` 且命中高风险触发器，或 `LOC > 800` 且命中状态机、交易语义、安全、live execution、compiler contract、持久化、route/schema 或锁风险 | 单叶精细治理，不得批处理隐藏风险；先做 precision baseline，再决定是否抽离 |
 
 叶子体量控制:
 
 1. 普通逻辑叶推荐终端区间为 150-600 LOC 或一个完整业务事务。
 2. LOC < 100 的 child 默认 `STOP`，除非能证明拆分会显著降低父级复杂度或隔离独立失败模式。
 3. LOC < 200 且治理成本高时默认 `WAVE` 或 `STOP`，不得创建独立四段式 milestone。
-4. LOC > 800 且复杂度、分支、public surface 或状态 owner 明显增大时，才优先评估 `SPLIT`。
+4. LOC > 800 且复杂度、分支、public surface 或状态 owner 明显增大时，才优先评估 `SPLIT`；若同时命中 G4/G5 风险标签，必须升为 `PRECISION`。
 5. 单函数、单 helper、薄 accessor、纯 re-export、薄 facade、DTO pocket 默认不得继续细拆；public contract、交易状态机、安全凭证、持久化、route/schema、live execution、compiler lowering 例外。
 
 评分记录至少包含:
@@ -138,12 +144,14 @@ leaf_granularity_smart_judge
 | split_benefit | 拆分收益分 |
 | governance_cost | 治理成本分 |
 | risk_score | 风险分 |
+| split_decision | STOP / CONTINUE |
+| governance_packaging | stop_split / same_parent_wave / standard_same_parent_wave / precision_single_leaf |
 | final_decision | STOP / WAVE / SPLIT / PRECISION |
 | reason | 主要理由 |
 
 自动评估入口:
 
-`tools/evaluate-leaf-granularity.ps1` 是只读评分脚本。它读取一个或多个候选叶子文件，统计 LOC、函数数、public surface、分支密度、领域关键词、风险标签、治理成本和系统效率损耗，并输出 `normalized_split_score` 与固定决策。
+`tools/evaluate-leaf-granularity.ps1` 是只读评分脚本。它读取一个或多个候选叶子文件，统计 LOC、函数数、public surface、分支密度、领域关键词、风险标签、治理成本和系统效率损耗，并输出 `normalized_split_score`、`split_decision`、`governance_packaging` 与兼容旧记录的 `final_decision`。
 
 示例:
 
@@ -171,6 +179,9 @@ terminal_leaf_control_v2
 | `target_terminal_loc_range` | 普通逻辑叶推荐终端区间，当前固定为 `150-600` |
 | `size_bucket` | `micro_under_100` / `small_100_149` / `terminal_target_150_600` / `split_pressure_601_800` / `oversized_over_800` |
 | `governance_mode` | `stop_split` / `same_parent_wave` / `standard_same_parent_wave` / `precision_single_leaf` |
+| `split_decision` | `STOP` / `CONTINUE`，表示是否继续拆分 |
+| `governance_packaging` | 当前证据应该如何落地，避免把 WAVE 误读成继续拆分许可 |
+| `final_decision` | 兼容旧 milestone 的 STOP/WAVE/SPLIT/PRECISION |
 | `standalone_full_governance_allowed` | 只有 `precision_single_leaf` 可以为 true；普通 SPLIT 优先并入同父级标准 wave |
 | `micro_leaf_default_stop` | 微叶默认停止细拆，除非开发者提供强 owner 收益证据 |
 | `high_cost_leaf_needs_wave_or_stop` | 小叶且治理成本高时只能走 WAVE 或 STOP，不得创建独立四段式治理 |
@@ -182,6 +193,18 @@ terminal_leaf_control_v2
 3. `SPLIT` -> `governance_mode=standard_same_parent_wave`，允许继续拆，但默认不得独立四段式；优先在同父级 wave 内推进。
 4. `PRECISION` -> `governance_mode=precision_single_leaf`，只有命中 public contract、route/schema、状态机、持久化、锁、安全、live execution、compiler contract 等高风险面时才使用完整单叶治理。
 5. 若人工覆盖脚本建议，milestone 必须写明: 覆盖前决策、覆盖后决策、强 owner 收益证据、风险隔离收益、额外门禁。
+
+### 0.8 治理生成与索引降重
+
+governance_generation_and_index_reduction
+
+GOV-GOVERNANCE-NEXT-OPTIMIZATION-01 起，递归治理允许把重复登记从手写迁移为生成器辅助，但生成物仍必须通过旧门禁。
+
+1. `tools/new-qpcursor-trial.ps1` 可从 `recursive-state.json` 生成 `governance-next/trials/*-qpcursor.md` 草案。
+2. QPCursor 草案不自动生效，必须由代理补齐 allowed workset、evidence、trial judgment，并明确 `legacy_governance_authority: preserved`。
+3. `check-full-feature-tree.ps1` 必须覆盖 `governance-next`，并检查未跟踪的活跃源码/文档文件是否已被全量树登记。
+4. 新增文件不能只依赖 staged 视角；未跟踪文件若属于活跃源码、脚本、配置或治理文档，也必须被提示覆盖。
+5. 长期路线: 将 README、docs index、roadmap、module-tree supplement 中重复的 append-only 行收敛为一个权威事件流，其它索引改为脚本生成或周期性同步。promote 前不得删除旧索引。
 
 ---
 

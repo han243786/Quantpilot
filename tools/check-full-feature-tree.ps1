@@ -169,6 +169,7 @@ Add-Files "contracts" @(".yaml", ".yml") ([ref]$activeFiles)
 Add-Files "config" @(".yaml", ".yml", ".json") ([ref]$activeFiles)
 Add-Files "release" @(".yaml", ".yml") ([ref]$activeFiles)
 Add-Files "plugins" @(".json") ([ref]$activeFiles)
+Add-Files "governance-next" @(".md", ".json", ".yaml", ".yml") ([ref]$activeFiles)
 
 $rootFiles = @(
     "Cargo.toml",
@@ -217,6 +218,41 @@ if ($uncoveredFiles.Count -gt 0) {
 }
 else {
     Add-Pass "all non-excluded active files are covered by exact repo-relative path"
+}
+
+Write-Host "`n=== Step 4b: untracked active file coverage check ===" -ForegroundColor Yellow
+$untrackedFiles = @()
+if (Get-Command git -ErrorAction SilentlyContinue) {
+    $untrackedFiles = @(& git -C $repoResolved ls-files --others --exclude-standard |
+        ForEach-Object { Normalize-RepoPath $_ } |
+        Where-Object {
+            $_ -match '\.(rs|js|jsx|ts|tsx|md|ps1|bat|toml|json|yaml|yml|html|css)$' -or
+            $_ -match '^(Dockerfile|docker-compose\.yml|nginx\.conf|start\.bat|start\.ps1|\.env\.example)$'
+        } |
+        Where-Object { -not (Test-Excluded $_ $excludes) } |
+        Sort-Object -Unique)
+}
+
+$untrackedUncovered = @()
+foreach ($file in $untrackedFiles) {
+    $covered = ($treeText -match [regex]::Escape($file))
+    if (-not $covered) {
+        $untrackedUncovered += $file
+    }
+}
+
+Write-Host "[INFO] untracked active files: $($untrackedFiles.Count)" -ForegroundColor Cyan
+if ($untrackedUncovered.Count -gt 0) {
+    Add-Failure "untracked active files not covered by exact repo-relative path: $($untrackedUncovered.Count)"
+    $untrackedUncovered | Sort-Object | Select-Object -First 120 | ForEach-Object {
+        Write-Host "    $_" -ForegroundColor DarkYellow
+    }
+    if ($untrackedUncovered.Count -gt 120) {
+        Write-Host "    ... plus $($untrackedUncovered.Count - 120) more" -ForegroundColor DarkYellow
+    }
+}
+else {
+    Add-Pass "all non-excluded untracked active files are covered or none exist"
 }
 
 Write-Host "`n=== Step 5: required section check ===" -ForegroundColor Yellow
