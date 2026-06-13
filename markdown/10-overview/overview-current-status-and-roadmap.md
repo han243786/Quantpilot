@@ -1713,3 +1713,4 @@ Latest recursive supplement: BE-002GB-02 structurally extracted `contracts.quant
 Latest recursive supplement: BE-002GB-03 closed the structural extraction step for `contracts.quantscript.typed_resolution` but kept `stop_split: false`; next step selects an internal resolver child.
 Latest recursive supplement: BE-002GC-01 selected `contracts.quantscript.typed_resolution.public_type_surface`; next baseline freezes public resolver DTOs and enums before behavior movement.
 Latest recursive supplement: BE-002GD-01 froze `contracts.quantscript.typed_resolution.public_type_surface`; next movement may extract public resolver DTOs/enums into `quantscript/src/resolve/public_type_surface.rs`.
+Latest recursive supplement: BE-002GD-02 extracted `contracts.quantscript.typed_resolution.public_type_surface`; public resolver DTOs/enums now live in `quantscript/src/resolve/public_type_surface.rs`.

@@ -2397,6 +2397,7 @@ storage/
 - `quantscript/src/syntax_ast_surface/hir.rs` — 高级中间表示; 改 QS 语义模型时改这里
 - `quantscript/src/analysis.rs` — 语义分析; 改类型检查时改这里
 - `quantscript/src/resolve/mod.rs` — typed-HIR 符号解析父模块; 改 QS 函数注册或 resolver 语义时改这里
+- `quantscript/src/resolve/public_type_surface.rs` — typed-HIR resolver public DTO/enum surface; 改 resolver 对外类型契约时改这里
 - `quantscript/src/syntax_ast_surface/types.rs` — QS 类型系统; 改类型定义时改这里
 - `quantscript/src/evaluator.rs` — 表达式求值; 改表达式语义时改这里
 - `quantscript/src/diagnostics.rs` — QS 诊断码; 新增诊断时改这里
@@ -5613,3 +5614,6 @@ Recursive boundary supplement: BE-002GC-01 `root.contracts.quantscript.typed_res
 - `markdown/06-milestones/v4.16.0/1623-root.contracts.quantscript.typed_resolution.parent_residual_judgment.public_type_surface.md` - v4.16.0 BE-002GC-01 quantscript typed_resolution parent residual judgment selects public_type_surface
 Recursive boundary supplement: BE-002GD-01 `root.contracts.quantscript.typed_resolution.public_type_surface` baseline frozen; next step: BE-002GD-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1624-root.contracts.quantscript.typed_resolution.public_type_surface.baseline_plan.md` - v4.16.0 BE-002GD-01 quantscript typed_resolution public_type_surface baseline plan
+Recursive boundary supplement: BE-002GD-02 `root.contracts.quantscript.typed_resolution.public_type_surface` actual extraction complete; next step: BE-002GD-03 single_leaf_closeout.
+- `quantscript/src/resolve/public_type_surface.rs` - QuantScript typed-resolution public DTO and enum child
+- `markdown/06-milestones/v4.16.0/1625-root.contracts.quantscript.typed_resolution.public_type_surface.extract_closeout.md` - v4.16.0 BE-002GD-02 quantscript typed_resolution public_type_surface extract closeout
