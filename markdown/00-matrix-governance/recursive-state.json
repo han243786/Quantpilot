@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002EI-02",
-  "last_committed_sha": "78059b4",
-  "current_parent": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine",
-  "current_step": "BE-002EJ-01",
-  "current_phase": "parent_residual_judgment",
+  "last_committed_batch": "BE-002EJ-01",
+  "last_committed_sha": "a78d223c",
+  "current_parent": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.market_trigger_flow",
+  "current_step": "BE-002EK-01",
+  "current_phase": "baseline_plan",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -272,7 +272,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment",
+  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.market_trigger_flow",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
