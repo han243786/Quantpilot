@@ -2391,6 +2391,7 @@ storage/
 **quantscript**:
 - `quantscript/Cargo.toml` — quantscript 包配置
 - `quantscript/src/lib.rs` — crate 入口
+- `quantscript/src/legacy_config_compat.rs` — deprecated config-style QuantScript compatibility; 改旧配置式 QS 兼容入口时改这里
 - `quantscript/src/syntax_ast_surface.rs` — QS syntax/AST/HIR/type parent facade; 改 QS 语法表面聚合时改这里
 - `quantscript/src/syntax_ast_surface/script.rs` — QS 词法/语法解析; 改 QS 语法时改这里
 - `quantscript/src/syntax_ast_surface/hir.rs` — 高级中间表示; 改 QS 语义模型时改这里
@@ -5594,3 +5595,6 @@ Recursive boundary supplement: BE-002FY-01 `root.contracts.quantscript` parent r
 - `markdown/06-milestones/v4.16.0/1615-root.contracts.quantscript.parent_residual_judgment.legacy_config_compat.md` - v4.16.0 BE-002FY-01 quantscript parent residual judgment selects legacy_config_compat
 Recursive boundary supplement: BE-002FZ-01 `root.contracts.quantscript.legacy_config_compat` baseline frozen; next step: BE-002FZ-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1616-root.contracts.quantscript.legacy_config_compat.baseline_plan.md` - v4.16.0 BE-002FZ-01 quantscript legacy_config_compat baseline plan
+Recursive boundary supplement: BE-002FZ-02 `root.contracts.quantscript.legacy_config_compat` actual extraction complete; next step: BE-002FZ-03 single_leaf_closeout.
+- `quantscript/src/legacy_config_compat.rs` - QuantScript deprecated config compatibility child module
+- `markdown/06-milestones/v4.16.0/1617-root.contracts.quantscript.legacy_config_compat.extract_closeout.md` - v4.16.0 BE-002FZ-02 quantscript legacy_config_compat extract closeout

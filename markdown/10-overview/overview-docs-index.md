@@ -1623,3 +1623,4 @@
 | v4.16.0 / BE-002FX-03 | Added: `quantscript.syntax_ast_surface` single leaf closeout stops split |
 | v4.16.0 / BE-002FY-01 | Added: `quantscript` parent residual judgment selects `legacy_config_compat` |
 | v4.16.0 / BE-002FZ-01 | Added: `quantscript.legacy_config_compat` baseline plan |
+| v4.16.0 / BE-002FZ-02 | Added: `quantscript.legacy_config_compat` actual extraction complete |
