@@ -1979,3 +1979,4 @@
 | v4.16.0 / BE-002FZ-01 | `v4.16.0/1616-root.contracts.quantscript.legacy_config_compat.baseline_plan.md` | Added: `quantscript.legacy_config_compat` baseline plan |
 | v4.16.0 / BE-002FZ-02 | `v4.16.0/1617-root.contracts.quantscript.legacy_config_compat.extract_closeout.md` | Added: `quantscript.legacy_config_compat` actual extraction complete |
 | v4.16.0 / BE-002FZ-03 | `v4.16.0/1618-root.contracts.quantscript.legacy_config_compat.single_leaf_closeout.md` | Added: `quantscript.legacy_config_compat` single leaf closeout stops split |
+| v4.16.0 / BE-002GA-01 | `v4.16.0/1619-root.contracts.quantscript.parent_residual_judgment.typed_resolution.md` | Added: `quantscript` parent residual judgment selects `typed_resolution` |

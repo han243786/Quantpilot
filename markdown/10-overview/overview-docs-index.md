@@ -1625,3 +1625,4 @@
 | v4.16.0 / BE-002FZ-01 | Added: `quantscript.legacy_config_compat` baseline plan |
 | v4.16.0 / BE-002FZ-02 | Added: `quantscript.legacy_config_compat` actual extraction complete |
 | v4.16.0 / BE-002FZ-03 | Added: `quantscript.legacy_config_compat` single leaf closeout stops split |
+| v4.16.0 / BE-002GA-01 | Added: `quantscript` parent residual judgment selects `typed_resolution` |
