@@ -1585,3 +1585,4 @@
 | v4.16.0 / BE-002EU-02 | Added: `simulated_execution_engine.validation_capability_helpers` single leaf closeout stops split |
 | v4.16.0 / BE-002EV-01 | Added: `simulated_execution_engine` parent closeout |
 | v4.16.0 / BE-002EW-01 | Added: `v4_runtime_support` parent residual judgment selects `test_harness` |
+| v4.16.0 / BE-002EX-01 | Added: `v4_runtime_support.test_harness` baseline plan |

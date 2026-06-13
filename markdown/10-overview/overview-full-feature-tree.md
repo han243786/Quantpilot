@@ -5506,3 +5506,5 @@ Recursive boundary supplement: BE-002EV-01 `simulated_execution_engine` parent c
 - `markdown/06-milestones/v4.16.0/1577-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_closeout.md` - v4.16.0 BE-002EV-01 simulated_execution_engine parent closeout
 Recursive boundary supplement: BE-002EW-01 `v4_runtime_support` parent residual judgment selected `test_harness`; next step: BE-002EX-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1578-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.test_harness.md` - v4.16.0 BE-002EW-01 v4_runtime_support parent residual judgment selects test_harness
+Recursive boundary supplement: BE-002EX-01 `v4_runtime_support.test_harness` baseline frozen; next step: BE-002EY-01 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1579-root.contracts.runtime_support.v4_runtime_support.test_harness.baseline_plan.md` - v4.16.0 BE-002EX-01 v4_runtime_support test_harness baseline plan
