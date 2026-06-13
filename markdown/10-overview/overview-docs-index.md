@@ -1608,3 +1608,4 @@
 | v4.16.0 / BE-002FM-01 | Added: `v4_runtime_support.test_harness.runtime_recovery_snapshot_tests` baseline plan |
 | v4.16.0 / BE-002FN-01 | Added: `v4_runtime_support.test_harness.runtime_recovery_snapshot_tests` actual extraction complete |
 | v4.16.0 / BE-002FN-02 | Added: `v4_runtime_support.test_harness.runtime_recovery_snapshot_tests` single leaf closeout stops split |
+| v4.16.0 / BE-002FO-01 | Added: `v4_runtime_support.test_harness` parent residual judgment selects `live_capability_guard_tests` |
