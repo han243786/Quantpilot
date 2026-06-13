@@ -9066,3 +9066,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.syntax_ast_surface selected: true`; this child owns formal parser, AST DTOs, type annotations, HIR DTO surface, and public facade re-exports while typed resolution, lowering, audit, and compatibility helpers remain queued.
 **Latest state supplement (BE-002FX-01)**: `root.contracts.quantscript.syntax_ast_surface` baseline frozen; next step: BE-002FX-02 actual_extraction_or_structural_closeout.
 `root.contracts.quantscript.syntax_ast_surface baseline_frozen: true`; public parser, AST, type, and HIR DTO exports are frozen before deciding whether to add a facade-only extraction or close the already separated physical boundary.
+**Latest state supplement (BE-002FX-02)**: `root.contracts.quantscript.syntax_ast_surface` actual extraction complete; next step: BE-002FX-03 single_leaf_closeout.
+`root.contracts.quantscript.syntax_ast_surface extracted: true`; `script`, `types`, and `hir` are now under a syntax_ast_surface parent facade, while crate-root public exports and internal compatibility aliases are preserved.

@@ -1619,3 +1619,4 @@
 | v4.16.0 / BE-002FV-01 | Added: `root.contracts.quantscript` baseline plan |
 | v4.16.0 / BE-002FW-01 | Added: `quantscript` parent residual judgment selects `syntax_ast_surface` |
 | v4.16.0 / BE-002FX-01 | Added: `quantscript.syntax_ast_surface` baseline plan |
+| v4.16.0 / BE-002FX-02 | Added: `quantscript.syntax_ast_surface` actual extraction complete |

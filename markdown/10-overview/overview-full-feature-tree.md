@@ -2391,11 +2391,12 @@ storage/
 **quantscript**:
 - `quantscript/Cargo.toml` — quantscript 包配置
 - `quantscript/src/lib.rs` — crate 入口
-- `quantscript/src/script.rs` — QS 词法/语法解析; 改 QS 语法时改这里
-- `quantscript/src/hir.rs` — 高级中间表示; 改 QS 语义模型时改这里
+- `quantscript/src/syntax_ast_surface.rs` — QS syntax/AST/HIR/type parent facade; 改 QS 语法表面聚合时改这里
+- `quantscript/src/syntax_ast_surface/script.rs` — QS 词法/语法解析; 改 QS 语法时改这里
+- `quantscript/src/syntax_ast_surface/hir.rs` — 高级中间表示; 改 QS 语义模型时改这里
 - `quantscript/src/analysis.rs` — 语义分析; 改类型检查时改这里
 - `quantscript/src/resolve.rs` — 符号解析; 改 QS 函数注册时改这里
-- `quantscript/src/types.rs` — QS 类型系统; 改类型定义时改这里
+- `quantscript/src/syntax_ast_surface/types.rs` — QS 类型系统; 改类型定义时改这里
 - `quantscript/src/evaluator.rs` — 表达式求值; 改表达式语义时改这里
 - `quantscript/src/diagnostics.rs` — QS 诊断码; 新增诊断时改这里
 - `quantscript/src/test_plan.rs` — 测试计划生成; 改场景生成时改这里
@@ -5581,3 +5582,9 @@ Recursive boundary supplement: BE-002FW-01 `root.contracts.quantscript` parent r
 - `markdown/06-milestones/v4.16.0/1611-root.contracts.quantscript.parent_residual_judgment.syntax_ast_surface.md` - v4.16.0 BE-002FW-01 quantscript parent residual judgment selects syntax_ast_surface
 Recursive boundary supplement: BE-002FX-01 `root.contracts.quantscript.syntax_ast_surface` baseline frozen; next step: BE-002FX-02 actual_extraction_or_structural_closeout.
 - `markdown/06-milestones/v4.16.0/1612-root.contracts.quantscript.syntax_ast_surface.baseline_plan.md` - v4.16.0 BE-002FX-01 quantscript syntax_ast_surface baseline plan
+Recursive boundary supplement: BE-002FX-02 `root.contracts.quantscript.syntax_ast_surface` actual extraction complete; next step: BE-002FX-03 single_leaf_closeout.
+- `quantscript/src/syntax_ast_surface.rs` - QuantScript syntax AST surface parent facade
+- `quantscript/src/syntax_ast_surface/script.rs` - QuantScript formal parser and AST child
+- `quantscript/src/syntax_ast_surface/types.rs` - QuantScript type annotation child
+- `quantscript/src/syntax_ast_surface/hir.rs` - QuantScript typed HIR DTO child
+- `markdown/06-milestones/v4.16.0/1613-root.contracts.quantscript.syntax_ast_surface.extract_closeout.md` - v4.16.0 BE-002FX-02 quantscript syntax_ast_surface extract closeout

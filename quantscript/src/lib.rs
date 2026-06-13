@@ -1,12 +1,10 @@
 mod analysis;
 mod diagnostics;
 mod evaluator;
-mod hir;
 mod lowering;
 mod resolve;
-mod script;
+mod syntax_ast_surface;
 mod test_plan;
-mod types;
 mod v4_static_audit;
 
 use anyhow::{anyhow, bail, Context, Result};
@@ -21,10 +19,6 @@ use std::path::Path;
 pub use analysis::{analyze_script_module, ScriptAnalysis};
 pub use diagnostics::{Diagnostic, DiagnosticSeverity, Span, SpanContext};
 pub use evaluator::normalize_script_module;
-pub use hir::{
-    DefId, ExprId, HirBindingPattern, HirCallArg, HirExpr, HirExprKind, HirFunction, HirImport,
-    HirImportName, HirLetStmt, HirMatchArm, HirMatchArmBody, HirParam, HirStmt, TypedHirModule,
-};
 pub use lowering::{
     lower_script_to_runtime_config, lower_script_to_runtime_config_with_context,
     InstrumentPoolEligibilityRule, InstrumentPoolFeatureDef, InstrumentPoolRebalanceRule,
@@ -41,19 +35,25 @@ pub use resolve::{
     ResolvedSeriesViewKind, ResolvedWindowAggregateKind, ResolvedWindowAggregateView,
     RsiHelperKind,
 };
-pub use script::{
+pub use syntax_ast_surface::{
     parse_expr, parse_quant_script_module, BinaryOp, CallArg, Expr, FunctionDecl, ImportDecl,
     ImportName, Item, MatchArm, MatchArmBody, Param, ScriptModule, StepBlock, Stmt, TestAction,
     TestBlock, TestParamValue, UnaryOp,
 };
+pub use syntax_ast_surface::{
+    parse_type_annotation, DefId, ExprId, HirBindingPattern, HirCallArg, HirExpr, HirExprKind,
+    HirFunction, HirImport, HirImportName, HirLetStmt, HirMatchArm, HirMatchArmBody, HirParam,
+    HirStmt, Type, TypeArena, TypeId, TypedHirModule,
+};
 pub use test_plan::{
     extract_test_plan, split_test_items, TestActionDef, TestParamValueDef, TestPlan, TestStep,
 };
-pub use types::{parse_type_annotation, Type, TypeArena, TypeId};
 pub use v4_static_audit::{
     audit_v4_quant_script_static, build_v4_qs_runtime_handoff, V4QsRuntimeHandoffReport,
     V4QsStaticAuditReport, V4QsStaticAuditVerdict, V4_QS_RUNTIME_HANDOFF_REPORT_VERSION,
 };
+
+pub(crate) use syntax_ast_surface::{hir, script, types};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct QuantScriptProgram {
