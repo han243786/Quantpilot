@@ -5491,3 +5491,5 @@ Recursive boundary supplement: BE-002EQ-01 `simulated_execution_engine.snapshot_
 Recursive boundary supplement: BE-002ER-01 `simulated_execution_engine.snapshot_metrics_projection` actual extraction complete; next step: BE-002ER-02 single_leaf_closeout.
 - `qrpc_runtime/src/v4_runtime/simulated_execution_engine/snapshot_metrics_projection.rs` - Runtime v4 simulated execution snapshot and metrics projection child
 - `markdown/06-milestones/v4.16.0/1571-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.snapshot_metrics_projection.extract_closeout.md` - v4.16.0 BE-002ER-01 simulated_execution_engine snapshot_metrics_projection extract closeout
+Recursive boundary supplement: BE-002ER-02 `simulated_execution_engine.snapshot_metrics_projection` single leaf closeout complete; next step: BE-002ES-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1572-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.snapshot_metrics_projection.single_leaf_closeout.md` - v4.16.0 BE-002ER-02 simulated_execution_engine snapshot_metrics_projection single leaf closeout
