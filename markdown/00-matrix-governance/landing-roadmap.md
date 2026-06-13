@@ -496,3 +496,4 @@ Latest recursive supplement: BE-002GA-01 selected `contracts.quantscript.typed_r
 Latest recursive supplement: BE-002GB-01 froze `contracts.quantscript.typed_resolution`; next step decides actual extraction or structural closeout.
 Latest recursive supplement: BE-002GB-02 structurally extracted `contracts.quantscript.typed_resolution`; next step is single leaf closeout.
 Latest recursive supplement: BE-002GB-03 closed `contracts.quantscript.typed_resolution` extraction as equivalent but kept `stop_split: false`; next step selects an internal resolver child.
+Latest recursive supplement: BE-002GC-01 selected `contracts.quantscript.typed_resolution.public_type_surface`; next baseline freezes public resolver DTOs and enums.
