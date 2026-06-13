@@ -1719,3 +1719,4 @@ Latest recursive supplement: BE-002GE-01 selected `contracts.quantscript.typed_r
 Latest recursive supplement: BE-002GF-01 froze `contracts.quantscript.typed_resolution.callable_classification_surface`; next movement may extract callable/helper classifiers only.
 Latest recursive supplement: BE-002GF-02 extracted `contracts.quantscript.typed_resolution.callable_classification_surface`; next step is single leaf closeout and split judgment.
 Latest recursive supplement: BE-002GF-03 closed `contracts.quantscript.typed_resolution.callable_classification_surface` with `stop_split: true`; next step returns to typed_resolution parent residual judgment.
+Latest recursive supplement: BE-002GG-01 selected `contracts.quantscript.typed_resolution.semantic_inference_surface`; next baseline freezes expression semantic and manual indicator inference only.

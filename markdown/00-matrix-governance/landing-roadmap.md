@@ -504,3 +504,4 @@ Latest recursive supplement: BE-002GE-01 selected `contracts.quantscript.typed_r
 Latest recursive supplement: BE-002GF-01 froze `contracts.quantscript.typed_resolution.callable_classification_surface`; next movement may extract callable classification helpers.
 Latest recursive supplement: BE-002GF-02 extracted `contracts.quantscript.typed_resolution.callable_classification_surface`; next step is callable classification leaf closeout.
 Latest recursive supplement: BE-002GF-03 closed `contracts.quantscript.typed_resolution.callable_classification_surface`; next step is typed_resolution parent residual judgment.
+Latest recursive supplement: BE-002GG-01 selected `contracts.quantscript.typed_resolution.semantic_inference_surface`; next baseline freezes semantic inference helpers.
