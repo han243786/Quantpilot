@@ -5565,3 +5565,5 @@ Recursive boundary supplement: BE-002FP-01 `v4_runtime_support.test_harness.live
 Recursive boundary supplement: BE-002FQ-01 `v4_runtime_support.test_harness.live_capability_guard_tests` actual extraction complete; next step: BE-002FQ-02 single_leaf_closeout.
 - `qrpc_runtime/src/v4_runtime/test_harness/live_capability_guard_tests.rs` - Runtime v4 live/capability/risk guard tests child
 - `markdown/06-milestones/v4.16.0/1604-root.contracts.runtime_support.v4_runtime_support.test_harness.live_capability_guard_tests.extract_closeout.md` - v4.16.0 BE-002FQ-01 v4_runtime_support test_harness live_capability_guard_tests extract closeout
+Recursive boundary supplement: BE-002FQ-02 `v4_runtime_support.test_harness.live_capability_guard_tests` single leaf closeout complete; next step: BE-002FR-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1605-root.contracts.runtime_support.v4_runtime_support.test_harness.live_capability_guard_tests.single_leaf_closeout.md` - v4.16.0 BE-002FQ-02 v4_runtime_support test_harness live_capability_guard_tests single leaf closeout
