@@ -1637,3 +1637,4 @@
 | v4.16.0 / BE-002GE-01 | Added: `quantscript.typed_resolution` parent residual judgment selects `callable_classification_surface` |
 | v4.16.0 / BE-002GF-01 | Added: `quantscript.typed_resolution.callable_classification_surface` baseline plan |
 | v4.16.0 / BE-002GF-02 | Added: `quantscript.typed_resolution.callable_classification_surface` actual extraction complete |
+| v4.16.0 / BE-002GF-03 | Added: `quantscript.typed_resolution.callable_classification_surface` single leaf closeout stops split |

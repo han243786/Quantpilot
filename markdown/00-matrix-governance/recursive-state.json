@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002GF-02",
-  "last_committed_sha": "b8b25e80",
-  "current_parent": "root.contracts.quantscript.typed_resolution.callable_classification_surface",
-  "current_step": "BE-002GF-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002GF-03",
+  "last_committed_sha": "19bdcf19",
+  "current_parent": "root.contracts.quantscript.typed_resolution",
+  "current_step": "BE-002GG-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -281,7 +281,8 @@
     "contracts.runtime_support",
     "contracts.quantscript.syntax_ast_surface",
     "contracts.quantscript.legacy_config_compat",
-    "contracts.quantscript.typed_resolution.public_type_surface"
+    "contracts.quantscript.typed_resolution.public_type_surface",
+    "contracts.quantscript.typed_resolution.callable_classification_surface"
   ],
   "open_residuals": [
     "contracts.quantscript.analysis_diagnostics",
@@ -293,7 +294,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.typed_resolution.callable_classification_surface.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.quantscript.typed_resolution.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
