@@ -441,5 +441,4 @@ fn recovery_policy_allows_async(policy: &MachineRecoveryPolicy) -> bool {
 }
 
 #[cfg(test)]
-#[path = "v4_runtime_tests.rs"]
-mod tests;
+mod test_harness;

@@ -784,7 +784,7 @@ qrpc_runtime/src/
   ├── v4_runtime.rs           — v4.0.0 PaperSimulated 运行时 🆕 v4.0.0
   ├── v4_runtime_types.rs     — v4 runtime 类型/初始化辅助 🆕 v4.8.0
   ├── v4_simulated_execution.rs — v4 模拟撮合/订单/持仓/资产曲线 🆕 v4.8.0
-  ├── v4_runtime_tests.rs     — v4 runtime 单元测试模块 🆕 v4.8.0
+  ├── v4_runtime/test_harness.rs — v4 runtime test-only child module 🆕 v4.16.0
   │   ├── V4PaperSimulatedRuntime     — 核心结构体; 改 v4 运行时行为时改这里
   │   ├── submit_event()              — 事件提交 → process_event()
   │   ├── advance_time()              — 静默检测
@@ -2357,7 +2357,7 @@ storage/
 - `qrpc_runtime/src/v4_runtime.rs` — v4 runtime 主事件循环; 改 PaperSimulated/PaperActual 边界、tick replay、Market 事件注入、多交易对 machine 展开、嵌套 machine 路由/snapshot 或 v4 运行时行为时改这里 🆕 v4.7.0
 - `qrpc_runtime/src/v4_runtime_types.rs` — v4 runtime 类型定义与初始化辅助; 改 runtime snapshot/input/output 类型或 machine 初始化时改这里 🆕 v4.8.0
 - `qrpc_runtime/src/v4_simulated_execution.rs` — v4 模拟撮合引擎; 改 OCO/trailing/GTD/amend、订单/成交/持仓/资产曲线时改这里 🆕 v4.8.0
-- `qrpc_runtime/src/v4_runtime_tests.rs` — v4 runtime 单元测试模块; 改 v4 runtime 行为测试时改这里 🆕 v4.8.0
+- `qrpc_runtime/src/v4_runtime/test_harness.rs` — v4 runtime test-only child module; 改 v4 runtime 行为测试时改这里 🆕 v4.16.0
 - `qrpc_runtime/src/compat.rs` — 模块热替换兼容性检查; 改热替换规则时改这里
 - `qrpc_runtime/src/core_ir_evaluator.rs` — Core IR 求值器, 18 种指标 evaluator; 改指标计算时改这里
 - `qrpc_runtime/src/backtest_metrics.rs` — 回测 12 项指标; 改回测公式或 equity_curve 诊断时改这里
@@ -5508,3 +5508,6 @@ Recursive boundary supplement: BE-002EW-01 `v4_runtime_support` parent residual 
 - `markdown/06-milestones/v4.16.0/1578-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.test_harness.md` - v4.16.0 BE-002EW-01 v4_runtime_support parent residual judgment selects test_harness
 Recursive boundary supplement: BE-002EX-01 `v4_runtime_support.test_harness` baseline frozen; next step: BE-002EY-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1579-root.contracts.runtime_support.v4_runtime_support.test_harness.baseline_plan.md` - v4.16.0 BE-002EX-01 v4_runtime_support test_harness baseline plan
+Recursive boundary supplement: BE-002EY-01 `v4_runtime_support.test_harness` actual extraction complete; next step: BE-002EY-02 single_leaf_closeout.
+- `qrpc_runtime/src/v4_runtime/test_harness.rs` - Runtime v4 test-only child module
+- `markdown/06-milestones/v4.16.0/1580-root.contracts.runtime_support.v4_runtime_support.test_harness.extract_closeout.md` - v4.16.0 BE-002EY-01 v4_runtime_support test_harness extract closeout
