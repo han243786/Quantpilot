@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002EL-01",
-  "last_committed_sha": "cd630784",
-  "current_parent": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.market_trigger_flow",
-  "current_step": "BE-002EL-02",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002EL-02",
+  "last_committed_sha": "3fac6b4d",
+  "current_parent": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine",
+  "current_step": "BE-002EM-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -264,7 +264,8 @@
     "contracts.runtime_support.v4_runtime_support.machine_transition_engine",
     "contracts.runtime_support.v4_runtime_support.risk_execution_gate",
     "contracts.runtime_support.v4_runtime_support.simulated_execution_engine.runtime_adapter",
-    "contracts.runtime_support.v4_runtime_support.simulated_execution_engine.order_lifecycle_flow"
+    "contracts.runtime_support.v4_runtime_support.simulated_execution_engine.order_lifecycle_flow",
+    "contracts.runtime_support.v4_runtime_support.simulated_execution_engine.market_trigger_flow"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -272,7 +273,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.market_trigger_flow.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

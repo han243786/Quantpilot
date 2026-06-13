@@ -1566,3 +1566,4 @@
 | v4.16.0 / BE-002EJ-01 | Added: `simulated_execution_engine` parent residual judgment selects `market_trigger_flow` |
 | v4.16.0 / BE-002EK-01 | Added: `simulated_execution_engine.market_trigger_flow` baseline plan |
 | v4.16.0 / BE-002EL-01 | Added: `simulated_execution_engine.market_trigger_flow` actual extraction complete |
+| v4.16.0 / BE-002EL-02 | Added: `simulated_execution_engine.market_trigger_flow` single leaf closeout stops split |

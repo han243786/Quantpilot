@@ -5469,3 +5469,5 @@ Recursive boundary supplement: BE-002EK-01 `simulated_execution_engine.market_tr
 Recursive boundary supplement: BE-002EL-01 `simulated_execution_engine.market_trigger_flow` actual extraction complete; next step: BE-002EL-02 single_leaf_closeout.
 - `qrpc_runtime/src/v4_runtime/simulated_execution_engine/market_trigger_flow.rs` - Runtime v4 simulated execution market trigger child
 - `markdown/06-milestones/v4.16.0/1563-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.market_trigger_flow.extract_closeout.md` - v4.16.0 BE-002EL-01 simulated_execution_engine market_trigger_flow extract closeout
+Recursive boundary supplement: BE-002EL-02 `simulated_execution_engine.market_trigger_flow` single leaf closeout complete; next step: BE-002EM-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1564-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.market_trigger_flow.single_leaf_closeout.md` - v4.16.0 BE-002EL-02 simulated_execution_engine market_trigger_flow single leaf closeout
