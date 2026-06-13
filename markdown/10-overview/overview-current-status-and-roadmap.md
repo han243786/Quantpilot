@@ -1751,3 +1751,4 @@ Latest recursive supplement: BE-002GU-03 closed `contracts.quantscript.analysis_
 Latest recursive supplement: BE-002GV-01 selected `contracts.quantscript.analysis_diagnostics.lookahead_window_gate`; next baseline freezes QS0401/QS0402/QS0403 lookahead-window diagnostics.
 Latest recursive supplement: BE-002GW-01 froze `contracts.quantscript.analysis_diagnostics.lookahead_window_gate`; next movement may extract lookahead-window diagnostics only.
 Latest recursive supplement: BE-002GW-02 extracted `contracts.quantscript.analysis_diagnostics.lookahead_window_gate`; next step is single leaf closeout and split judgment.
+Latest recursive supplement: BE-002GW-03 closed `contracts.quantscript.analysis_diagnostics.lookahead_window_gate` with `stop_split: true`; next step returns to analysis_diagnostics parent residual judgment.
