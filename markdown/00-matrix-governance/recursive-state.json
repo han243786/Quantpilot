@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002FA-01",
-  "last_committed_sha": "e7c1b93b",
+  "last_committed_batch": "BE-002FB-01",
+  "last_committed_sha": "85dcd7e5",
   "current_parent": "root.contracts.runtime_support.v4_runtime_support.test_harness.fixture_builders",
-  "current_step": "BE-002FB-01",
-  "current_phase": "actual_extraction",
+  "current_step": "BE-002FB-02",
+  "current_phase": "single_leaf_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -277,7 +277,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.test_harness.fixture_builders",
+  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.test_harness.fixture_builders.single_leaf_closeout",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

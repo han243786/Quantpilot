@@ -5517,3 +5517,6 @@ Recursive boundary supplement: BE-002EZ-01 `v4_runtime_support.test_harness` par
 - `markdown/06-milestones/v4.16.0/1582-root.contracts.runtime_support.v4_runtime_support.test_harness.parent_residual_judgment.fixture_builders.md` - v4.16.0 BE-002EZ-01 v4_runtime_support test_harness parent residual judgment selects fixture_builders
 Recursive boundary supplement: BE-002FA-01 `v4_runtime_support.test_harness.fixture_builders` baseline frozen; next step: BE-002FB-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1583-root.contracts.runtime_support.v4_runtime_support.test_harness.fixture_builders.baseline_plan.md` - v4.16.0 BE-002FA-01 v4_runtime_support test_harness fixture_builders baseline plan
+Recursive boundary supplement: BE-002FB-01 `v4_runtime_support.test_harness.fixture_builders` actual extraction complete; next step: BE-002FB-02 single_leaf_closeout.
+- `qrpc_runtime/src/v4_runtime/test_harness/fixture_builders.rs` - Runtime v4 test fixture builder child
+- `markdown/06-milestones/v4.16.0/1584-root.contracts.runtime_support.v4_runtime_support.test_harness.fixture_builders.extract_closeout.md` - v4.16.0 BE-002FB-01 v4_runtime_support test_harness fixture_builders extract closeout
