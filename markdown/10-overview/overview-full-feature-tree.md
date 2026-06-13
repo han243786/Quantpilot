@@ -5422,6 +5422,8 @@ Recursive boundary supplement: BE-002EC-02 `v4_runtime_support.simulated_executi
 - `markdown/06-milestones/v4.16.0/1551-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.single_leaf_closeout.md` - v4.16.0 BE-002EC-02 v4_runtime_support simulated_execution_engine single leaf closeout
 Recursive boundary supplement: BE-002ED-01 `simulated_execution_engine` parent residual judgment selected `runtime_adapter`; next step: BE-002EE-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1552-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment.runtime_adapter.md` - v4.16.0 BE-002ED-01 simulated_execution_engine parent residual judgment selects runtime_adapter
+Recursive boundary supplement: BE-002EE-01 `simulated_execution_engine.runtime_adapter` baseline frozen; next step: BE-002EF-01 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1553-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.runtime_adapter.baseline_plan.md` - v4.16.0 BE-002EE-01 simulated_execution_engine runtime_adapter baseline plan
 Governance-next trial supplement: `governance-next` is a non-authoritative QPCursor trial wrapper; legacy governance remains authoritative until explicit promote evidence exists.
 - `governance-next/README.md` - Governance-next旁路孵化区入口
 - `governance-next/00-operating-principles.md` - Governance-next分层原则与旧治理隔离边界

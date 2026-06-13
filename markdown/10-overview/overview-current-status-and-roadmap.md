@@ -1641,3 +1641,4 @@ Latest recursive supplement: BE-002EB-01 froze `runtime_support.v4_runtime_suppo
 Latest recursive supplement: BE-002EC-01 extracted `runtime_support.v4_runtime_support.simulated_execution_engine`; next step is single leaf closeout.
 Latest recursive supplement: BE-002EC-02 kept `runtime_support.v4_runtime_support.simulated_execution_engine` open with `continue_split: true`; next child candidate is `runtime_adapter`.
 Latest recursive supplement: BE-002ED-01 selected `runtime_support.v4_runtime_support.simulated_execution_engine.runtime_adapter`; next baseline should freeze the adapter layer only.
+Latest recursive supplement: BE-002EE-01 froze `runtime_support.v4_runtime_support.simulated_execution_engine.runtime_adapter` baseline; next movement may extract the adapter layer.
