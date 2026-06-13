@@ -5547,3 +5547,5 @@ Recursive boundary supplement: BE-002FJ-01 `v4_runtime_support.test_harness.simu
 Recursive boundary supplement: BE-002FK-01 `v4_runtime_support.test_harness.simulated_execution_scenarios` actual extraction complete; next step: BE-002FK-02 single_leaf_closeout.
 - `qrpc_runtime/src/v4_runtime/test_harness/simulated_execution_scenarios.rs` - Runtime v4 simulated execution scenario tests child
 - `markdown/06-milestones/v4.16.0/1596-root.contracts.runtime_support.v4_runtime_support.test_harness.simulated_execution_scenarios.extract_closeout.md` - v4.16.0 BE-002FK-01 v4_runtime_support test_harness simulated_execution_scenarios extract closeout
+Recursive boundary supplement: BE-002FK-02 `v4_runtime_support.test_harness.simulated_execution_scenarios` single leaf closeout complete; next step: BE-002FL-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1597-root.contracts.runtime_support.v4_runtime_support.test_harness.simulated_execution_scenarios.single_leaf_closeout.md` - v4.16.0 BE-002FK-02 v4_runtime_support test_harness simulated_execution_scenarios single leaf closeout
