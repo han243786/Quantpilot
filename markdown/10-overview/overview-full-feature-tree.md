@@ -5667,3 +5667,6 @@ Recursive boundary supplement: BE-002GM-01 `root.contracts.quantscript.typed_res
 - `markdown/06-milestones/v4.16.0/1643-root.contracts.quantscript.typed_resolution.parent_residual_judgment.resolver_support_surface.md` - v4.16.0 BE-002GM-01 quantscript typed_resolution parent residual judgment selects resolver_support_surface
 Recursive boundary supplement: BE-002GN-01 `root.contracts.quantscript.typed_resolution.resolver_support_surface` baseline frozen; next step: BE-002GN-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1644-root.contracts.quantscript.typed_resolution.resolver_support_surface.baseline_plan.md` - v4.16.0 BE-002GN-01 quantscript typed_resolution resolver_support_surface baseline plan
+Recursive boundary supplement: BE-002GN-02 `root.contracts.quantscript.typed_resolution.resolver_support_surface` actual extraction complete; next step: BE-002GN-03 single_leaf_closeout.
+- `quantscript/src/resolve/resolver_support_surface.rs` - QuantScript typed-resolution resolver support helper child
+- `markdown/06-milestones/v4.16.0/1645-root.contracts.quantscript.typed_resolution.resolver_support_surface.extract_closeout.md` - v4.16.0 BE-002GN-02 quantscript typed_resolution resolver_support_surface extract closeout
