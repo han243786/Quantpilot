@@ -1599,3 +1599,4 @@
 | v4.16.0 / BE-002FF-01 | Added: `v4_runtime_support.test_harness` parent residual judgment selects `graph_replay_scenarios` |
 | v4.16.0 / BE-002FG-01 | Added: `v4_runtime_support.test_harness.graph_replay_scenarios` baseline plan |
 | v4.16.0 / BE-002FH-01 | Added: `v4_runtime_support.test_harness.graph_replay_scenarios` actual extraction complete |
+| v4.16.0 / BE-002FH-02 | Added: `v4_runtime_support.test_harness.graph_replay_scenarios` single leaf closeout stops split |
