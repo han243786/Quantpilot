@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002GM-01",
-  "last_committed_sha": "70656e13",
+  "last_committed_batch": "BE-002GN-01",
+  "last_committed_sha": "7c1e46bd",
   "current_parent": "root.contracts.quantscript.typed_resolution.resolver_support_surface",
-  "current_step": "BE-002GN-01",
-  "current_phase": "baseline_plan",
+  "current_step": "BE-002GN-02",
+  "current_phase": "actual_extraction",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -297,7 +297,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.typed_resolution.resolver_support_surface.baseline_plan",
+  "next_recommended_child": "root.contracts.quantscript.typed_resolution.resolver_support_surface.actual_extraction",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
