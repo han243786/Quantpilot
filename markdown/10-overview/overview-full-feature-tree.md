@@ -5535,3 +5535,6 @@ Recursive boundary supplement: BE-002FF-01 `v4_runtime_support.test_harness` par
 - `markdown/06-milestones/v4.16.0/1590-root.contracts.runtime_support.v4_runtime_support.test_harness.parent_residual_judgment.graph_replay_scenarios.md` - v4.16.0 BE-002FF-01 v4_runtime_support test_harness parent residual judgment selects graph_replay_scenarios
 Recursive boundary supplement: BE-002FG-01 `v4_runtime_support.test_harness.graph_replay_scenarios` baseline frozen; next step: BE-002FH-01 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1591-root.contracts.runtime_support.v4_runtime_support.test_harness.graph_replay_scenarios.baseline_plan.md` - v4.16.0 BE-002FG-01 v4_runtime_support test_harness graph_replay_scenarios baseline plan
+Recursive boundary supplement: BE-002FH-01 `v4_runtime_support.test_harness.graph_replay_scenarios` actual extraction complete; next step: BE-002FH-02 single_leaf_closeout.
+- `qrpc_runtime/src/v4_runtime/test_harness/graph_replay_scenarios.rs` - Runtime v4 graph and replay scenario tests child
+- `markdown/06-milestones/v4.16.0/1592-root.contracts.runtime_support.v4_runtime_support.test_harness.graph_replay_scenarios.extract_closeout.md` - v4.16.0 BE-002FH-01 v4_runtime_support test_harness graph_replay_scenarios extract closeout
