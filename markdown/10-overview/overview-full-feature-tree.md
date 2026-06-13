@@ -5683,3 +5683,5 @@ Recursive boundary supplement: BE-002GP-03 `root.contracts.quantscript.typed_res
 - `markdown/06-milestones/v4.16.0/1650-root.contracts.quantscript.typed_resolution.resolver_test_harness.single_leaf_closeout.md` - v4.16.0 BE-002GP-03 quantscript typed_resolution resolver_test_harness single leaf closeout
 Recursive boundary supplement: BE-002GQ-01 `root.contracts.quantscript.typed_resolution` parent closeout complete; next step: BE-002GR-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1651-root.contracts.quantscript.typed_resolution.parent_closeout.md` - v4.16.0 BE-002GQ-01 quantscript typed_resolution parent closeout
+Recursive boundary supplement: BE-002GR-01 `root.contracts.quantscript` parent residual judgment selected `analysis_diagnostics`; next step: BE-002GS-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1652-root.contracts.quantscript.parent_residual_judgment.analysis_diagnostics.md` - v4.16.0 BE-002GR-01 quantscript parent residual judgment selects analysis_diagnostics

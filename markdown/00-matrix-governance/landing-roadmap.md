@@ -525,3 +525,4 @@ Latest recursive supplement: BE-002GP-01 froze `contracts.quantscript.typed_reso
 Latest recursive supplement: BE-002GP-02 extracted `contracts.quantscript.typed_resolution.resolver_test_harness`; next step is single leaf closeout.
 Latest recursive supplement: BE-002GP-03 closed `contracts.quantscript.typed_resolution.resolver_test_harness`; next step returns to typed_resolution parent residual judgment.
 Latest recursive supplement: BE-002GQ-01 closed `contracts.quantscript.typed_resolution`; next step returns to QuantScript parent residual judgment.
+Latest recursive supplement: BE-002GR-01 selected `contracts.quantscript.analysis_diagnostics`; next baseline freezes analysis and diagnostics.

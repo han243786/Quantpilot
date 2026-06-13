@@ -2012,3 +2012,4 @@
 | v4.16.0 / BE-002GP-02 | `v4.16.0/1649-root.contracts.quantscript.typed_resolution.resolver_test_harness.extract_closeout.md` | Added: `quantscript.typed_resolution.resolver_test_harness` actual extraction complete |
 | v4.16.0 / BE-002GP-03 | `v4.16.0/1650-root.contracts.quantscript.typed_resolution.resolver_test_harness.single_leaf_closeout.md` | Added: `quantscript.typed_resolution.resolver_test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-002GQ-01 | `v4.16.0/1651-root.contracts.quantscript.typed_resolution.parent_closeout.md` | Added: `quantscript.typed_resolution` parent closeout |
+| v4.16.0 / BE-002GR-01 | `v4.16.0/1652-root.contracts.quantscript.parent_residual_judgment.analysis_diagnostics.md` | Added: `quantscript` parent residual judgment selects `analysis_diagnostics` |
