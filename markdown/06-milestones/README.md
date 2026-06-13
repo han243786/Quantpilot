@@ -1941,3 +1941,4 @@
 | v4.16.0 / BE-002EW-01 | `v4.16.0/1578-root.contracts.runtime_support.v4_runtime_support.parent_residual_judgment.test_harness.md` | Added: `v4_runtime_support` parent residual judgment selects `test_harness` |
 | v4.16.0 / BE-002EX-01 | `v4.16.0/1579-root.contracts.runtime_support.v4_runtime_support.test_harness.baseline_plan.md` | Added: `v4_runtime_support.test_harness` baseline plan |
 | v4.16.0 / BE-002EY-01 | `v4.16.0/1580-root.contracts.runtime_support.v4_runtime_support.test_harness.extract_closeout.md` | Added: `v4_runtime_support.test_harness` actual extraction complete |
+| v4.16.0 / BE-002EY-02 | `v4.16.0/1581-root.contracts.runtime_support.v4_runtime_support.test_harness.single_leaf_closeout.md` | Added: `v4_runtime_support.test_harness` single leaf closeout keeps split open |

@@ -5511,3 +5511,5 @@ Recursive boundary supplement: BE-002EX-01 `v4_runtime_support.test_harness` bas
 Recursive boundary supplement: BE-002EY-01 `v4_runtime_support.test_harness` actual extraction complete; next step: BE-002EY-02 single_leaf_closeout.
 - `qrpc_runtime/src/v4_runtime/test_harness.rs` - Runtime v4 test-only child module
 - `markdown/06-milestones/v4.16.0/1580-root.contracts.runtime_support.v4_runtime_support.test_harness.extract_closeout.md` - v4.16.0 BE-002EY-01 v4_runtime_support test_harness extract closeout
+Recursive boundary supplement: BE-002EY-02 `v4_runtime_support.test_harness` single leaf closeout keeps split open; next step: BE-002EZ-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1581-root.contracts.runtime_support.v4_runtime_support.test_harness.single_leaf_closeout.md` - v4.16.0 BE-002EY-02 v4_runtime_support test_harness single leaf closeout keeps split open

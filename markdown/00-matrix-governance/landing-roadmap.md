@@ -454,3 +454,4 @@ Latest recursive supplement: BE-002EV-01 closed `runtime_support.v4_runtime_supp
 Latest recursive supplement: BE-002EW-01 selected `runtime_support.v4_runtime_support.test_harness`; next baseline freezes local v4 runtime tests and fixtures only.
 Latest recursive supplement: BE-002EX-01 froze `runtime_support.v4_runtime_support.test_harness` baseline; next movement may move local v4 runtime tests into a test-only child module.
 Latest recursive supplement: BE-002EY-01 extracted `runtime_support.v4_runtime_support.test_harness`; next step is single leaf closeout.
+Latest recursive supplement: BE-002EY-02 kept `runtime_support.v4_runtime_support.test_harness` open; next step is parent residual judgment inside the test harness.
