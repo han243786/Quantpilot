@@ -5513,3 +5513,5 @@ Recursive boundary supplement: BE-002EY-01 `v4_runtime_support.test_harness` act
 - `markdown/06-milestones/v4.16.0/1580-root.contracts.runtime_support.v4_runtime_support.test_harness.extract_closeout.md` - v4.16.0 BE-002EY-01 v4_runtime_support test_harness extract closeout
 Recursive boundary supplement: BE-002EY-02 `v4_runtime_support.test_harness` single leaf closeout keeps split open; next step: BE-002EZ-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1581-root.contracts.runtime_support.v4_runtime_support.test_harness.single_leaf_closeout.md` - v4.16.0 BE-002EY-02 v4_runtime_support test_harness single leaf closeout keeps split open
+Recursive boundary supplement: BE-002EZ-01 `v4_runtime_support.test_harness` parent residual judgment selected `fixture_builders`; next step: BE-002FA-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1582-root.contracts.runtime_support.v4_runtime_support.test_harness.parent_residual_judgment.fixture_builders.md` - v4.16.0 BE-002EZ-01 v4_runtime_support test_harness parent residual judgment selects fixture_builders
