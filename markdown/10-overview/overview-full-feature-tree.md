@@ -2398,6 +2398,7 @@ storage/
 - `quantscript/src/analysis.rs` — 语义分析; 改类型检查时改这里
 - `quantscript/src/resolve/mod.rs` — typed-HIR 符号解析父模块; 改 QS 函数注册或 resolver 语义时改这里
 - `quantscript/src/resolve/public_type_surface.rs` — typed-HIR resolver public DTO/enum surface; 改 resolver 对外类型契约时改这里
+- `quantscript/src/resolve/callable_classification_surface.rs` — typed-HIR callable/helper classification and registry seeding; 改 QS helper/callable taxonomy 时改这里
 - `quantscript/src/syntax_ast_surface/types.rs` — QS 类型系统; 改类型定义时改这里
 - `quantscript/src/evaluator.rs` — 表达式求值; 改表达式语义时改这里
 - `quantscript/src/diagnostics.rs` — QS 诊断码; 新增诊断时改这里
@@ -5623,3 +5624,6 @@ Recursive boundary supplement: BE-002GE-01 `root.contracts.quantscript.typed_res
 - `markdown/06-milestones/v4.16.0/1627-root.contracts.quantscript.typed_resolution.parent_residual_judgment.callable_classification_surface.md` - v4.16.0 BE-002GE-01 quantscript typed_resolution parent residual judgment selects callable_classification_surface
 Recursive boundary supplement: BE-002GF-01 `root.contracts.quantscript.typed_resolution.callable_classification_surface` baseline frozen; next step: BE-002GF-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1628-root.contracts.quantscript.typed_resolution.callable_classification_surface.baseline_plan.md` - v4.16.0 BE-002GF-01 quantscript typed_resolution callable_classification_surface baseline plan
+Recursive boundary supplement: BE-002GF-02 `root.contracts.quantscript.typed_resolution.callable_classification_surface` actual extraction complete; next step: BE-002GF-03 single_leaf_closeout.
+- `quantscript/src/resolve/callable_classification_surface.rs` - QuantScript typed-resolution callable/helper classifier and registry seeding child
+- `markdown/06-milestones/v4.16.0/1629-root.contracts.quantscript.typed_resolution.callable_classification_surface.extract_closeout.md` - v4.16.0 BE-002GF-02 quantscript typed_resolution callable_classification_surface extract closeout
