@@ -1710,3 +1710,4 @@ Latest recursive supplement: BE-002FZ-03 closed `contracts.quantscript.legacy_co
 Latest recursive supplement: BE-002GA-01 selected `contracts.quantscript.typed_resolution`; next baseline freezes typed-HIR resolution, `Resolved*` exports, callable classification helpers, resolver diagnostics, and typed-HIR behavior.
 Latest recursive supplement: BE-002GB-01 froze `contracts.quantscript.typed_resolution`; next step decides actual extraction versus structural closeout because `resolve.rs` is already the physical typed-resolution owner.
 Latest recursive supplement: BE-002GB-02 structurally extracted `contracts.quantscript.typed_resolution`; `quantscript/src/resolve/mod.rs` now owns the resolver module with Rust module path preserved.
+Latest recursive supplement: BE-002GB-03 closed the structural extraction step for `contracts.quantscript.typed_resolution` but kept `stop_split: false`; next step selects an internal resolver child.

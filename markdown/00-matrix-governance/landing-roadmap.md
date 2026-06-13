@@ -495,3 +495,4 @@ Latest recursive supplement: BE-002FZ-03 closed `contracts.quantscript.legacy_co
 Latest recursive supplement: BE-002GA-01 selected `contracts.quantscript.typed_resolution`; next baseline freezes typed-HIR resolution only.
 Latest recursive supplement: BE-002GB-01 froze `contracts.quantscript.typed_resolution`; next step decides actual extraction or structural closeout.
 Latest recursive supplement: BE-002GB-02 structurally extracted `contracts.quantscript.typed_resolution`; next step is single leaf closeout.
+Latest recursive supplement: BE-002GB-03 closed `contracts.quantscript.typed_resolution` extraction as equivalent but kept `stop_split: false`; next step selects an internal resolver child.

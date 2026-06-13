@@ -1982,3 +1982,4 @@
 | v4.16.0 / BE-002GA-01 | `v4.16.0/1619-root.contracts.quantscript.parent_residual_judgment.typed_resolution.md` | Added: `quantscript` parent residual judgment selects `typed_resolution` |
 | v4.16.0 / BE-002GB-01 | `v4.16.0/1620-root.contracts.quantscript.typed_resolution.baseline_plan.md` | Added: `quantscript.typed_resolution` baseline plan |
 | v4.16.0 / BE-002GB-02 | `v4.16.0/1621-root.contracts.quantscript.typed_resolution.extract_closeout.md` | Added: `quantscript.typed_resolution` structural extraction complete |
+| v4.16.0 / BE-002GB-03 | `v4.16.0/1622-root.contracts.quantscript.typed_resolution.single_leaf_closeout.md` | Added: `quantscript.typed_resolution` single leaf closeout continues split |

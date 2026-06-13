@@ -1628,3 +1628,4 @@
 | v4.16.0 / BE-002GA-01 | Added: `quantscript` parent residual judgment selects `typed_resolution` |
 | v4.16.0 / BE-002GB-01 | Added: `quantscript.typed_resolution` baseline plan |
 | v4.16.0 / BE-002GB-02 | Added: `quantscript.typed_resolution` structural extraction complete |
+| v4.16.0 / BE-002GB-03 | Added: `quantscript.typed_resolution` single leaf closeout continues split |
