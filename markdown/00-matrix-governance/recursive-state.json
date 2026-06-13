@@ -10,11 +10,11 @@
     "GOV-TERMINAL-LEAF-CONTROL-V2-01",
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01"
   ],
-  "last_committed_batch": "BE-002DZ-02",
-  "last_committed_sha": "201f0d4d",
+  "last_committed_batch": "BE-002EA-01",
+  "last_committed_sha": "5ebb9ac9",
   "current_parent": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine",
-  "current_step": "BE-002EB-01",
-  "current_phase": "baseline_plan",
+  "current_step": "BE-002EC-01",
+  "current_phase": "actual_extraction",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -266,7 +266,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.baseline_plan",
+  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.actual_extraction",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
