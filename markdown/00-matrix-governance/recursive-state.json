@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002FE-01",
-  "last_committed_sha": "11c13da9",
-  "current_parent": "root.contracts.runtime_support.v4_runtime_support.test_harness.payload_validation_tests",
-  "current_step": "BE-002FE-02",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002FE-02",
+  "last_committed_sha": "1d85f18c",
+  "current_parent": "root.contracts.runtime_support.v4_runtime_support.test_harness",
+  "current_step": "BE-002FF-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -270,7 +270,8 @@
     "contracts.runtime_support.v4_runtime_support.simulated_execution_engine.snapshot_metrics_projection",
     "contracts.runtime_support.v4_runtime_support.simulated_execution_engine.validation_capability_helpers",
     "contracts.runtime_support.v4_runtime_support.simulated_execution_engine",
-    "contracts.runtime_support.v4_runtime_support.test_harness.fixture_builders"
+    "contracts.runtime_support.v4_runtime_support.test_harness.fixture_builders",
+    "contracts.runtime_support.v4_runtime_support.test_harness.payload_validation_tests"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -278,7 +279,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.test_harness.payload_validation_tests.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.test_harness.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
