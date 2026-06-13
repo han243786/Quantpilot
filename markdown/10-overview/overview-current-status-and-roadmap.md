@@ -1754,3 +1754,4 @@ Latest recursive supplement: BE-002GW-02 extracted `contracts.quantscript.analys
 Latest recursive supplement: BE-002GW-03 closed `contracts.quantscript.analysis_diagnostics.lookahead_window_gate` with `stop_split: true`; next step returns to analysis_diagnostics parent residual judgment.
 Latest recursive supplement: BE-002GX-01 selected `contracts.quantscript.analysis_diagnostics.warmup_fetch_gate`; next baseline freezes required warmup and fetch lookback diagnostics.
 Latest recursive supplement: BE-002GY-01 froze `contracts.quantscript.analysis_diagnostics.warmup_fetch_gate`; next movement may extract required warmup and fetch lookback diagnostics only.
+Latest recursive supplement: BE-002GY-02 extracted `contracts.quantscript.analysis_diagnostics.warmup_fetch_gate`; next step is single leaf closeout and split judgment.

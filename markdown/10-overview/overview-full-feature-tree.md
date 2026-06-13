@@ -2398,6 +2398,7 @@ storage/
 - `quantscript/src/analysis_diagnostics/analysis.rs` — 语义分析; 改类型检查时改这里
 - `quantscript/src/analysis_diagnostics/unsupported_construct_gate.rs` — QS unsupported construct, direct recursion, and non-universe loop diagnostics
 - `quantscript/src/analysis_diagnostics/lookahead_window_gate.rs` — QS negative index, trailing-window, and centered-window lookahead diagnostics
+- `quantscript/src/analysis_diagnostics/warmup_fetch_gate.rs` — QS required warmup inference and fetch/get_data lookback diagnostics
 - `quantscript/src/resolve/mod.rs` — typed-HIR 符号解析父模块; 改 QS 函数注册或 resolver 语义时改这里
 - `quantscript/src/resolve/public_type_surface.rs` — typed-HIR resolver public DTO/enum surface; 改 resolver 对外类型契约时改这里
 - `quantscript/src/resolve/callable_classification_surface.rs` — typed-HIR callable/helper classification and registry seeding; 改 QS helper/callable taxonomy 时改这里
@@ -5718,3 +5719,6 @@ Recursive boundary supplement: BE-002GX-01 `root.contracts.quantscript.analysis_
 - `markdown/06-milestones/v4.16.0/1664-root.contracts.quantscript.analysis_diagnostics.parent_residual_judgment.warmup_fetch_gate.md` - v4.16.0 BE-002GX-01 quantscript analysis_diagnostics parent residual judgment selects warmup_fetch_gate
 Recursive boundary supplement: BE-002GY-01 `root.contracts.quantscript.analysis_diagnostics.warmup_fetch_gate` baseline frozen; next step: BE-002GY-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1665-root.contracts.quantscript.analysis_diagnostics.warmup_fetch_gate.baseline_plan.md` - v4.16.0 BE-002GY-01 quantscript analysis_diagnostics warmup_fetch_gate baseline plan
+Recursive boundary supplement: BE-002GY-02 `root.contracts.quantscript.analysis_diagnostics.warmup_fetch_gate` actual extraction complete; next step: BE-002GY-03 single_leaf_closeout.
+- `quantscript/src/analysis_diagnostics/warmup_fetch_gate.rs` - QuantScript warmup fetch gate child
+- `markdown/06-milestones/v4.16.0/1666-root.contracts.quantscript.analysis_diagnostics.warmup_fetch_gate.extract_closeout.md` - v4.16.0 BE-002GY-02 quantscript analysis_diagnostics warmup_fetch_gate extract closeout
