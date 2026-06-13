@@ -57,7 +57,8 @@
 
 | 文档 | 说明 |
 |------|------|
-| `guide-api-reference.md` | API 参考 |
+| `../../contracts/openapi/root.yaml` | API 参考权威契约 |
+| `overview-system-architecture.md` | API 参考叙述入口 |
 | `guide-formal-quantscript-syntax.md` | 正式 QuantScript 语法 |
 | `guide-quantscript-trunk-baseline.md` | QuantScript 主干基线 |
 | `guide-paper-to-strategy-development.md` | Paper 运行到策略开发 |
@@ -69,8 +70,10 @@
 
 | 文档 | 说明 |
 |------|------|
-| `全量审计报告-2026-05-10.md` | 最新审计报告 |
-| `测试自动化脚本化方案.md` | 测试自动化方案 |
+| `README.md` | 当前活跃测试面说明 |
+| `meta-pipeline-log.md` | 元流水线证据日志 |
+| `手动全量实机测试检查单.md` | 当前仍被 v4.16 基线引用的手动 smoke 检查 |
+| `../09-archive/testing-retired/` | 历史测试、审计和旧矩阵归档 |
 
 ## 里程碑 (`06-milestones/`)
 

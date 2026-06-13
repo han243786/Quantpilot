@@ -346,7 +346,7 @@ quantpilot/
 | 系统架构 | `markdown/10-overview/overview-system-architecture.md` | 完整架构参考手册 |
 | 协议规范 | `markdown/02-protocol/RFC-*.md` | 20 个 RFC 数据结构定义 |
 | QS 语法 | `markdown/04-guides/guide-formal-quantscript-syntax.md` | QuantScript 语法参考 |
-| 十角色诱错 | `markdown/05-testing/十角色全量诱错测试矩阵.md` | 诱错测试矩阵 |
+| 十角色诱错 | `markdown/09-archive/testing-retired/十角色全量诱错测试矩阵.md` | 诱错测试矩阵 |
 
 ---
 

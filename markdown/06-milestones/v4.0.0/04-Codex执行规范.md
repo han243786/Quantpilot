@@ -164,7 +164,7 @@ Codex 必须使用 Codex 的多 Agent 能力, 按以下 5 维度并行执行审�
 
 **Agent 产出验证**: 每个执行代码修改的 Agent 必须在报告完成前运行 `cargo check --workspace` 确认 0 错误.
 
-**审计报告**: 合并输出到 `markdown/05-testing/自由维度诱错审计-v4.0.0-第1轮.md`.
+**审计报告**: 合并输出后长期归档到 `markdown/09-archive/testing-retired/自由维度诱错审计-v4.0.0-第1轮.md`.
 
 **阻断**: S0 发现必须当前修复, 修复后重新验证全部门禁.
 

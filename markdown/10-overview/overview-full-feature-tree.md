@@ -1388,15 +1388,8 @@ guide-user-guide-en.md                       — English user guide
 ### 7.5 测试与审计 (markdown/05-testing/)
 
 ```
-全量审计报告.md
-测试报告-latest.md
-测试自动化脚本化方案.md
-实机场景化测试指南.md
+README.md                                    — 当前活跃测试面说明
 手动全量实机测试检查单.md
-自由维度诱错审计-v3.7.1-第1轮.md
-自由维度诱错审计-v4.0.0-第1轮.md           — v4 审计报告
-自由维度诱错审计-v4.7.0-第1轮.md           — 嵌套状态机 5 维诱错审计
-Claude产品UX功能完整度审计核查-v4.7.0-2026-05-26.md — Claude 产品/UX/功能完整度发现的代码侧核查与里程碑分流
 meta-pipeline-log.md                         — 元流水线日志
 ```
 
@@ -5443,6 +5436,23 @@ Governance-next authority supplement: `governance-next` is the default governanc
 Document cleanup archive supplement: inactive testing and review reports moved out of active doc surfaces; historical evidence remains under `markdown/09-archive`.
 - `markdown/09-archive/testing-retired/README.md` - Retired testing and audit report archive policy
 - `markdown/09-archive/reviews-retired/README.md` - Retired review report archive policy
+Document cleanup archive supplement 2: deprecated API reference and older active-surface testing reports retired; active indexes now point at current authority.
+- `markdown/05-testing/README.md` - Active testing surface policy
+- `markdown/09-archive/guides-retired/README.md` - Retired guides archive policy
+- `markdown/09-archive/guides-retired/guide-api-reference.md` - Deprecated API reference retained for history
+- `markdown/09-archive/testing-retired/Claude产品UX功能完整度审计核查-v4.7.0-2026-05-26.md` - Retired v4.7 Claude product UX audit
+- `markdown/09-archive/testing-retired/GP合规矩阵-v1.0.2.md` - Retired GP compliance matrix
+- `markdown/09-archive/testing-retired/测试报告-latest.md` - Retired old latest-style test report
+- `markdown/09-archive/testing-retired/测试自动化脚本化方案.md` - Retired old testing automation plan
+- `markdown/09-archive/testing-retired/全量审计报告.md` - Retired old full audit report
+- `markdown/09-archive/testing-retired/全量审计报告-v1.0.0.md` - Retired v1.0.0 full audit report
+- `markdown/09-archive/testing-retired/十角色全量诱错测试矩阵.md` - Retired ten-role inducement matrix
+- `markdown/09-archive/testing-retired/实机场景化测试指南.md` - Retired old live scenario testing guide
+- `markdown/09-archive/testing-retired/自由维度诱错审计-v3.7.1-第1轮.md` - Retired v3.7.1 free-dimension audit
+- `markdown/09-archive/testing-retired/自由维度诱错审计-v4.0.0-第1轮.md` - Retired v4.0.0 free-dimension audit
+- `markdown/09-archive/testing-retired/自由维度诱错审计-v4.4.0-第1轮.md` - Retired v4.4.0 free-dimension audit
+- `markdown/09-archive/testing-retired/自由维度诱错审计-v4.7.0-第1轮.md` - Retired v4.7.0 free-dimension audit round 1
+- `markdown/09-archive/testing-retired/自由维度诱错审计-v4.7.0-第2轮.md` - Retired v4.7.0 free-dimension audit round 2
 Recursive boundary supplement: BE-002EG-01 `simulated_execution_engine` parent residual judgment selected `order_lifecycle_flow`; next step: BE-002EH-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1557-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment.order_lifecycle_flow.md` - v4.16.0 BE-002EG-01 simulated_execution_engine parent residual judgment selects order_lifecycle_flow
 Recursive boundary supplement: BE-002EH-01 `simulated_execution_engine.order_lifecycle_flow` baseline frozen; next step: BE-002EI-01 actual_extraction.

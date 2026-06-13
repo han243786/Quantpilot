@@ -45,6 +45,6 @@
 | 功能演进契约 | `03-implementation/governance/implementation-feature-evolution-contract.md` |
 | 开发者学习流水线 | `03-implementation/governance/implementation-developer-learning-pipeline.md` |
 | v4 状态机/交易场所能力契约 | `03-implementation/governance/implementation-v4-machine-and-venue-contract.md` |
-| API 参考 | `04-guides/guide-api-reference.md` |
+| API 参考 | `../contracts/openapi/root.yaml` + `10-overview/overview-system-architecture.md` |
 | 中文用户指南 | `04-guides/guide-user-guide-zh.md` |
 | 当前状态 | `10-overview/overview-current-status-and-roadmap.md` |

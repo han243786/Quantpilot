@@ -56,7 +56,7 @@
 ## 四、S0/P1/P2/P3 发现与修复状态
 
 > 本节由 Codex 在完成自由维度诱错审计 (超级规范化 §8.5) 后填写。
-> 审计报告存放于 `markdown/05-testing/自由维度诱错审计-v4.0.0-第1轮.md`。
+> 审计报告长期归档于 `markdown/09-archive/testing-retired/自由维度诱错审计-v4.0.0-第1轮.md`。
 
 | 严重度 | 发现数 | 已修复 | 遗留 | 流向 |
 |:------:|:-----:|:-----:|:----:|------|
@@ -235,4 +235,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-learning-closeou
 | 基准版本 | v3.7.1 (9b19a09) |
 | v4 实现 HEAD | 88306bf |
 | 当前 HEAD | 88306bf |
-| 审计报告 | `markdown/05-testing/自由维度诱错审计-v4.0.0-第1轮.md` |
+| 审计报告 | `markdown/09-archive/testing-retired/自由维度诱错审计-v4.0.0-第1轮.md` |

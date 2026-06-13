@@ -157,8 +157,8 @@ git log --oneline HEAD~10..HEAD | grep -c "S0"
 # 修复后全部门禁通过
 .\tools\run-closeout-gates.bat
 
-# 自由维度审计报告落库
-ls markdown/05-testing/自由维度诱错审计-*.md
+# 自由维度审计报告长期归档
+ls markdown/09-archive/testing-retired/自由维度诱错审计-*.md
 ```
 
 ---

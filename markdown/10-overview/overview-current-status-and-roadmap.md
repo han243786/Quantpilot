@@ -388,7 +388,7 @@ v4.7.0 是当前 MINOR 集成收口：在 v4.5.0 tick replay 和高级订单、v
 - [v4.15.0 规划方案](../06-milestones/v4.15.0/01-规划方案.md)
 - [v4.15.0 治理 closeout](../06-milestones/v4.15.0/02-治理closeout.md)
 - [v4.16.0 模块化抽离第一波规划](../06-milestones/v4.16.0/01-规划方案.md)
-- [Claude 产品/UX/功能完整度审计核查](../05-testing/Claude产品UX功能完整度审计核查-v4.7.0-2026-05-26.md)
+- [Claude 产品/UX/功能完整度审计核查](../09-archive/testing-retired/Claude产品UX功能完整度审计核查-v4.7.0-2026-05-26.md)
 - [支持矩阵](../03-implementation/governance/implementation-support-matrix.md)
 - [编译链合约](../03-implementation/governance/implementation-compile-chain-contract.md)
 - [功能演进契约](../03-implementation/governance/implementation-feature-evolution-contract.md)

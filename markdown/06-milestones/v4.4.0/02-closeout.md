@@ -35,7 +35,7 @@
 
 ## 三、自由维度诱错
 
-审计报告: `markdown/05-testing/自由维度诱错审计-v4.4.0-第1轮.md`
+审计报告: `markdown/09-archive/testing-retired/自由维度诱错审计-v4.4.0-第1轮.md`
 
 结论: 无 S0。已覆盖类型契约、QS 静态审计、runtime 路由、证据回放、UI/治理五个维度。
 
