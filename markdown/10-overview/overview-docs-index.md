@@ -1574,3 +1574,4 @@
 | v4.16.0 / BE-002EM-01 | Added: `simulated_execution_engine` parent residual judgment selects `fill_ledger_accounting` |
 | v4.16.0 / BE-002EN-01 | Added: `simulated_execution_engine.fill_ledger_accounting` baseline plan |
 | v4.16.0 / BE-002EO-01 | Added: `simulated_execution_engine.fill_ledger_accounting` actual extraction complete |
+| v4.16.0 / BE-002EO-02 | Added: `simulated_execution_engine.fill_ledger_accounting` single leaf closeout stops split |

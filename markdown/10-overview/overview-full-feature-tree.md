@@ -5482,3 +5482,5 @@ Recursive boundary supplement: BE-002EN-01 `simulated_execution_engine.fill_ledg
 Recursive boundary supplement: BE-002EO-01 `simulated_execution_engine.fill_ledger_accounting` actual extraction complete; next step: BE-002EO-02 single_leaf_closeout.
 - `qrpc_runtime/src/v4_runtime/simulated_execution_engine/fill_ledger_accounting.rs` - Runtime v4 simulated execution fill ledger accounting child
 - `markdown/06-milestones/v4.16.0/1567-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.fill_ledger_accounting.extract_closeout.md` - v4.16.0 BE-002EO-01 simulated_execution_engine fill_ledger_accounting extract closeout
+Recursive boundary supplement: BE-002EO-02 `simulated_execution_engine.fill_ledger_accounting` single leaf closeout complete; next step: BE-002EP-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1568-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.fill_ledger_accounting.single_leaf_closeout.md` - v4.16.0 BE-002EO-02 simulated_execution_engine fill_ledger_accounting single leaf closeout
