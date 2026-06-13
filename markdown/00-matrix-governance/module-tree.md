@@ -9076,3 +9076,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.legacy_config_compat baseline_frozen: true`; deprecated config-style DTOs, parser helpers, compile helpers, source-kind detection, and legacy tests may move into a child module while crate-root public exports remain stable.
 **Latest state supplement (BE-002FZ-02)**: `root.contracts.quantscript.legacy_config_compat` actual extraction complete; next step: BE-002FZ-03 single_leaf_closeout.
 `root.contracts.quantscript.legacy_config_compat extracted: true`; deprecated config compatibility now lives in `quantscript/src/legacy_config_compat.rs`, and crate-root public re-exports remain stable.
+**Latest state supplement (BE-002FZ-03)**: `root.contracts.quantscript.legacy_config_compat` single leaf closeout complete; next step: BE-002GA-01 parent_residual_judgment.
+`root.contracts.quantscript.legacy_config_compat stop_split: true`; deprecated config-style QS remains one terminal compatibility owner, with no tokenizer/parser/helper micro-split selected.

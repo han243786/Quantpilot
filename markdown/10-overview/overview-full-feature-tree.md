@@ -5598,3 +5598,5 @@ Recursive boundary supplement: BE-002FZ-01 `root.contracts.quantscript.legacy_co
 Recursive boundary supplement: BE-002FZ-02 `root.contracts.quantscript.legacy_config_compat` actual extraction complete; next step: BE-002FZ-03 single_leaf_closeout.
 - `quantscript/src/legacy_config_compat.rs` - QuantScript deprecated config compatibility child module
 - `markdown/06-milestones/v4.16.0/1617-root.contracts.quantscript.legacy_config_compat.extract_closeout.md` - v4.16.0 BE-002FZ-02 quantscript legacy_config_compat extract closeout
+Recursive boundary supplement: BE-002FZ-03 `root.contracts.quantscript.legacy_config_compat` single leaf closeout complete; next step: BE-002GA-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1618-root.contracts.quantscript.legacy_config_compat.single_leaf_closeout.md` - v4.16.0 BE-002FZ-03 quantscript legacy_config_compat single leaf closeout

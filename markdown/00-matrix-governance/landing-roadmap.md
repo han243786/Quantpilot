@@ -491,3 +491,4 @@ Latest recursive supplement: BE-002FX-03 closed `contracts.quantscript.syntax_as
 Latest recursive supplement: BE-002FY-01 selected `contracts.quantscript.legacy_config_compat`; next baseline freezes deprecated config-style compatibility.
 Latest recursive supplement: BE-002FZ-01 froze `contracts.quantscript.legacy_config_compat`; next movement may extract deprecated config compatibility from the crate root.
 Latest recursive supplement: BE-002FZ-02 extracted `contracts.quantscript.legacy_config_compat`; next step is single leaf closeout.
+Latest recursive supplement: BE-002FZ-03 closed `contracts.quantscript.legacy_config_compat`; next step returns to QuantScript parent residual judgment.
