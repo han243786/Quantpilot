@@ -5464,3 +5464,5 @@ Recursive boundary supplement: BE-002EI-02 `simulated_execution_engine.order_lif
 - `markdown/06-milestones/v4.16.0/1560-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.order_lifecycle_flow.single_leaf_closeout.md` - v4.16.0 BE-002EI-02 simulated_execution_engine order_lifecycle_flow single leaf closeout
 Recursive boundary supplement: BE-002EJ-01 `simulated_execution_engine` parent residual judgment selected `market_trigger_flow`; next step: BE-002EK-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1561-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment.market_trigger_flow.md` - v4.16.0 BE-002EJ-01 simulated_execution_engine parent residual judgment selects market_trigger_flow
+Recursive boundary supplement: BE-002EK-01 `simulated_execution_engine.market_trigger_flow` baseline frozen; next step: BE-002EL-01 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1562-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.market_trigger_flow.baseline_plan.md` - v4.16.0 BE-002EK-01 simulated_execution_engine market_trigger_flow baseline plan
