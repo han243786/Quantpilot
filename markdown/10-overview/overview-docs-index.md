@@ -1664,3 +1664,4 @@
 | v4.16.0 / BE-002GS-02 | Added: `quantscript.analysis_diagnostics` structural extraction complete |
 | v4.16.0 / BE-002GS-03 | Added: `quantscript.analysis_diagnostics` single leaf closeout continues split |
 | v4.16.0 / BE-002GT-01 | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `unsupported_construct_gate` |
+| v4.16.0 / BE-002GU-01 | Added: `quantscript.analysis_diagnostics.unsupported_construct_gate` baseline plan |
