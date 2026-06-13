@@ -439,3 +439,4 @@ Latest recursive supplement: BE-002EK-01 froze `runtime_support.v4_runtime_suppo
 Latest recursive supplement: BE-002EL-01 extracted `runtime_support.v4_runtime_support.simulated_execution_engine.market_trigger_flow`; next step is single leaf closeout.
 Latest recursive supplement: BE-002EL-02 closed `runtime_support.v4_runtime_support.simulated_execution_engine.market_trigger_flow`; next step returns to simulated execution parent residual judgment.
 Latest recursive supplement: BE-002EM-01 selected `runtime_support.v4_runtime_support.simulated_execution_engine.fill_ledger_accounting`; next baseline freezes fill and ledger mutation without moving `submit_order` wholesale.
+Latest recursive supplement: BE-002EN-01 froze `runtime_support.v4_runtime_support.simulated_execution_engine.fill_ledger_accounting` baseline; next movement may extract fill/accounting helpers only.

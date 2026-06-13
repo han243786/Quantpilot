@@ -1568,3 +1568,4 @@
 | v4.16.0 / BE-002EL-01 | Added: `simulated_execution_engine.market_trigger_flow` actual extraction complete |
 | v4.16.0 / BE-002EL-02 | Added: `simulated_execution_engine.market_trigger_flow` single leaf closeout stops split |
 | v4.16.0 / BE-002EM-01 | Added: `simulated_execution_engine` parent residual judgment selects `fill_ledger_accounting` |
+| v4.16.0 / BE-002EN-01 | Added: `simulated_execution_engine.fill_ledger_accounting` baseline plan |
