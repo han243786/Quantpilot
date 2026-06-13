@@ -1545,3 +1545,4 @@
 | v4.16.0 / BE-002DX-01 | Added: `v4_runtime_support` parent residual judgment selects `risk_execution_gate` |
 | v4.16.0 / BE-002DY-01 | Added: `v4_runtime_support.risk_execution_gate` baseline plan |
 | v4.16.0 / BE-002DZ-01 | Added: `v4_runtime_support.risk_execution_gate` actual extraction complete |
+| v4.16.0 / BE-002DZ-02 | Added: `v4_runtime_support.risk_execution_gate` single leaf closeout stops split |

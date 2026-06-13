@@ -5406,6 +5406,8 @@ Recursive boundary supplement: BE-002DY-01 `v4_runtime_support.risk_execution_ga
 Recursive boundary supplement: BE-002DZ-01 `v4_runtime_support.risk_execution_gate` actual extraction complete; next step: BE-002DZ-02 single_leaf_closeout.
 - `qrpc_runtime/src/v4_runtime/risk_execution_gate.rs` - Runtime v4 risk/execution gate child
 - `markdown/06-milestones/v4.16.0/1545-root.contracts.runtime_support.v4_runtime_support.risk_execution_gate.extract_closeout.md` - v4.16.0 BE-002DZ-01 v4_runtime_support risk_execution_gate extract closeout
+Recursive boundary supplement: BE-002DZ-02 `v4_runtime_support.risk_execution_gate` single leaf closeout complete; next step: BE-002EA-01 v4_runtime_support parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1546-root.contracts.runtime_support.v4_runtime_support.risk_execution_gate.single_leaf_closeout.md` - v4.16.0 BE-002DZ-02 v4_runtime_support risk_execution_gate single leaf closeout
 Governance-next trial supplement: `governance-next` is a non-authoritative QPCursor trial wrapper; legacy governance remains authoritative until explicit promote evidence exists.
 - `governance-next/README.md` - Governance-next旁路孵化区入口
 - `governance-next/00-operating-principles.md` - Governance-next分层原则与旧治理隔离边界
