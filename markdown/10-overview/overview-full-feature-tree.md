@@ -5573,3 +5573,5 @@ Recursive boundary supplement: BE-002FS-01 `v4_runtime_support` parent closeout 
 - `markdown/06-milestones/v4.16.0/1607-root.contracts.runtime_support.v4_runtime_support.parent_closeout.md` - v4.16.0 BE-002FS-01 v4_runtime_support parent closeout
 Recursive boundary supplement: BE-002FT-01 `runtime_support` parent closeout complete; next step: BE-002FU-01 root.contracts parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1608-root.contracts.runtime_support.parent_closeout.md` - v4.16.0 BE-002FT-01 runtime_support parent closeout
+Recursive boundary supplement: BE-002FU-01 `root.contracts` parent residual judgment selected `quantscript`; next step: BE-002FV-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1609-root.contracts.parent_residual_judgment.quantscript.md` - v4.16.0 BE-002FU-01 root.contracts parent residual judgment selects quantscript

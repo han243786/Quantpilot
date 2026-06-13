@@ -9058,3 +9058,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.runtime_support.v4_runtime_support parent_closeout: true`; type surface, graph symbol expansion, constructor/mode gate, event replay, transition engine, risk execution gate, simulated execution engine, and test harness children are all closed.
 **Latest state supplement (BE-002FT-01)**: `root.contracts.runtime_support` parent closeout complete; next step: BE-002FU-01 root.contracts parent_residual_judgment.
 `root.contracts.runtime_support parent_closeout: true`; runtime facade coordinator, data, intent, agent, core IR evaluator, execution, fill, risk, sandbox replay, and v4 runtime support children are all closed.
+**Latest state supplement (BE-002FU-01)**: `root.contracts` parent residual judgment selected `contracts.quantscript`; next step: BE-002FV-01 baseline_plan.
+`root.contracts.quantscript selected: true`; QuantScript owns parser, typed HIR, resolve semantics, lowering, diagnostics, static audit, authoring samples, and boundary samples. Plugin metadata and executor remain queued outside this selected child.
