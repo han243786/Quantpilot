@@ -4,7 +4,7 @@
 
 目标不是添加更多不相关的功能。目标是将当前运行时、成交、风险和数据流整合到一个统一的交易沙箱中。
 
-关于 CI、回放和服务级别测试所使用的可重复性边界，请参阅 [implementation-test-mode.md](D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/runtime/implementation-test-mode.md)。
+关于 CI、回放和服务级别测试所使用的可重复性边界，请参阅 [implementation-test-mode.md](./implementation-test-mode.md)。
 
 ## 目标模式
 

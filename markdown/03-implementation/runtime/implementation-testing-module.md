@@ -4,7 +4,7 @@
 
 其角色不是创建独立的回测世界。其角色是用可靠的成交语义、回放支持和回归覆盖来加强统一的交易沙箱。
 
-关于 CI、回放和 E2E 流程所使用的确定性测试模式边界，请参阅 [implementation-test-mode.md](D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/runtime/implementation-test-mode.md)。关于如何解释针对性测试、完整门禁包装器和隔离的 E2E 合约，请参阅 [implementation-test-layer-expectations.md](D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/runtime/implementation-test-layer-expectations.md)。
+关于 CI、回放和 E2E 流程所使用的确定性测试模式边界，请参阅 [implementation-test-mode.md](./implementation-test-mode.md)。关于如何解释针对性测试、完整门禁包装器和隔离的 E2E 合约，请参阅 [implementation-test-layer-expectations.md](./implementation-test-layer-expectations.md)。
 
 ## 当前角色
 

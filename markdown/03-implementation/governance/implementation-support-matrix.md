@@ -203,6 +203,6 @@ QuantPilot 当前固定为单机交易工具: 面向单人本地桌面使用, �
 
 ## 参考
 
-- [当前状态与发布状态](../10-overview/overview-current-status-and-roadmap.md)
+- [当前状态与发布状态](../../10-overview/overview-current-status-and-roadmap.md)
 - [编译链合约](implementation-compile-chain-contract.md)
 - [首次发布就绪状态](../../09-archive/planning-retired/implementation-first-release-readiness.md)

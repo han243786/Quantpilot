@@ -13,3 +13,5 @@ Active files:
 | `手动全量实机测试检查单.md` | Manual smoke coverage still referenced by v4.16 runtime/report baselines. |
 
 Historical audit reports, old testing plans, retired matrices, and obsolete latest-style reports live under `markdown/09-archive/testing-retired/`.
+
+Old ignored screenshot and JSON report artifacts from the legacy `markdown/测试/` surface live under `markdown/09-archive/testing-artifacts-retired/` and are not part of the active testing document surface.

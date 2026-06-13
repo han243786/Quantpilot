@@ -51,7 +51,7 @@
 - `target/`, `node_modules/`, `frontend/dist/`, `storage/`, `tmp/`
 - `markdown/learning/` (GP §1.11: 本地忽略)
 - 历史里程碑归档 (`markdown/06-milestones/vX.Y.Z/`) 按版本目录摘要
-- `frontend/test-results/`, `markdown/测试/test-reports/` (生成物)
+- `frontend/test-results/`, `markdown/测试/test-reports/`, `markdown/09-archive/testing-artifacts-retired/test-reports/` (生成物)
 
 ### 0.4 维护规则 (阻断级)
 
@@ -5453,6 +5453,10 @@ Document cleanup archive supplement 2: deprecated API reference and older active
 - `markdown/09-archive/testing-retired/自由维度诱错审计-v4.4.0-第1轮.md` - Retired v4.4.0 free-dimension audit
 - `markdown/09-archive/testing-retired/自由维度诱错审计-v4.7.0-第1轮.md` - Retired v4.7.0 free-dimension audit round 1
 - `markdown/09-archive/testing-retired/自由维度诱错审计-v4.7.0-第2轮.md` - Retired v4.7.0 free-dimension audit round 2
+Document cleanup archive supplement 3: legacy generated testing artifacts and stale implementation registry snapshot moved out of active surfaces.
+- `markdown/09-archive/testing-artifacts-retired/README.md` - Retired ignored screenshot and JSON report artifact archive policy
+- `markdown/09-archive/implementation-retired/README.md` - Retired implementation notes archive policy
+- `markdown/09-archive/implementation-retired/implementation-capability-governance-registry.generated.md` - Stale generated capability governance snapshot retained for history
 Recursive boundary supplement: BE-002EG-01 `simulated_execution_engine` parent residual judgment selected `order_lifecycle_flow`; next step: BE-002EH-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1557-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment.order_lifecycle_flow.md` - v4.16.0 BE-002EG-01 simulated_execution_engine parent residual judgment selects order_lifecycle_flow
 Recursive boundary supplement: BE-002EH-01 `simulated_execution_engine.order_lifecycle_flow` baseline frozen; next step: BE-002EI-01 actual_extraction.

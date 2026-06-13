@@ -18,15 +18,15 @@
 机器可读配套文件：
 
 - [frontend/src/capabilities/capabilityGovernance.js](/D:/rust-js-pr/QuantPilot/quantpilot/frontend/src/capabilities/capabilityGovernance.js)
-- [implementation-capability-governance-registry.generated.md](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/governance/implementation-capability-governance-registry.generated.md)
+- [implementation-capability-governance-registry.generated.md](./implementation-capability-governance-registry.generated.md)
 
 ## 真实数据源链
 
 能力治理遵循以下链条：
 
 1. 后端 `/api/capabilities`
-2. [implementation-support-matrix.md](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/governance/implementation-support-matrix.md)
-3. [运行时治理合约](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/runtime/implementation-runtime-governance-contract.md)
+2. [implementation-support-matrix.md](./implementation-support-matrix.md)
+3. [运行时治理合约](../runtime/implementation-runtime-governance-contract.md)
 4. 前端支持矩阵和能力门禁
 5. README、UI 提示、测试和验收检查
 
@@ -165,8 +165,8 @@
 
 ## 参考
 
-- [implementation-support-matrix.md](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/governance/implementation-support-matrix.md)
-- [implementation-compile-chain-contract.md](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/governance/implementation-compile-chain-contract.md)
-- [运行时治理合约](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/runtime/implementation-runtime-governance-contract.md)
-- [已归档功能收口台账](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/archive/planning-retired/implementation-functional-closeout-task-table.md)
-- [overview-current-status-and-roadmap.md](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/overview/overview-current-status-and-roadmap.md)
+- [implementation-support-matrix.md](./implementation-support-matrix.md)
+- [implementation-compile-chain-contract.md](./implementation-compile-chain-contract.md)
+- [运行时治理合约](../runtime/implementation-runtime-governance-contract.md)
+- [首次发布就绪状态](../../09-archive/planning-retired/implementation-first-release-readiness.md)
+- [overview-current-status-and-roadmap.md](../../10-overview/overview-current-status-and-roadmap.md)

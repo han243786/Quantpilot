@@ -54,6 +54,9 @@
 markdown/测试/screenshots/
 markdown/测试/test-reports/
 markdown/测试/测试报告-*.md
+markdown/09-archive/testing-artifacts-retired/screenshots/
+markdown/09-archive/testing-artifacts-retired/test-reports/
+markdown/09-archive/testing-artifacts-retired/测试报告-*.md
 
 # Local owner learning notes (not pushed to GitHub)
 /markdown/learning/

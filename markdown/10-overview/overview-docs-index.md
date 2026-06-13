@@ -74,6 +74,7 @@
 | `meta-pipeline-log.md` | 元流水线证据日志 |
 | `手动全量实机测试检查单.md` | 当前仍被 v4.16 基线引用的手动 smoke 检查 |
 | `../09-archive/testing-retired/` | 历史测试、审计和旧矩阵归档 |
+| `../09-archive/testing-artifacts-retired/` | 旧 `markdown/测试/` 截图与 JSON 报告生成物归档 |
 
 ## 里程碑 (`06-milestones/`)
 
@@ -378,6 +379,9 @@
 ## 归档 (`09-archive/`)
 
 已退役的设计笔记、追踪文档、历史审计报告。
+- `testing-retired/`：历史测试、审计和旧矩阵文档。
+- `testing-artifacts-retired/`：旧 `markdown/测试/` ignored 截图与 JSON 报告生成物。
+- `implementation-retired/`：旧实现笔记与过期实现快照。
 | v4.16.0 / BE-001DY-01 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 单子叶等价基线已建立，下一步进入 BE-001DY-02 抽离方案 |
 | v4.16.0 / BE-001DY-02 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 抽离方案已建立，下一步进入 BE-001DY-03 实际抽离记录 |
 | v4.16.0 / BE-001DY-03 | 新增: `runtime.mutation.parameter_mutation.transition_lifecycle.rollback_record_identity_import_pass` 抽离记录已建立，下一步进入 BE-001DY-04 单叶 closeout |

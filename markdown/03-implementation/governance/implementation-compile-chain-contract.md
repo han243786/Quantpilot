@@ -74,5 +74,5 @@ QuantPilot 编译必须严格按此顺序解读：
 
 - [支持矩阵](./implementation-support-matrix.md)
 - [能力治理](./implementation-capability-governance.md)
-- [当前状态与发布状态](../../overview/overview-current-status-and-roadmap.md)
-- [已归档功能收口台账](../../archive/planning-retired/implementation-functional-closeout-task-table.md)
+- [当前状态与发布状态](../../10-overview/overview-current-status-and-roadmap.md)
+- [首次发布就绪状态](../../09-archive/planning-retired/implementation-first-release-readiness.md)

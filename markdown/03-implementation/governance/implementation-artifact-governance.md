@@ -118,6 +118,6 @@ Beta 阶段保留策略偏保守。默认策略是"保留面向生产的记录�
 
 ## 参考
 
-- [implementation-support-matrix.md](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/governance/implementation-support-matrix.md)
-- [implementation-testing-module.md](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/implementation/runtime/implementation-testing-module.md)
-- [Current Status And Release State](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/overview/overview-current-status-and-roadmap.md)
+- [implementation-support-matrix.md](./implementation-support-matrix.md)
+- [implementation-testing-module.md](../runtime/implementation-testing-module.md)
+- [Current Status And Release State](../../10-overview/overview-current-status-and-roadmap.md)

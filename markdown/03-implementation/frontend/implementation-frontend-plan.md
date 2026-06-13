@@ -4,10 +4,7 @@
 
 本文件是当前前端改版的执行版方案，用来替代此前分散的排版与美化草稿。
 
-相关历史材料：
-
-- [Frontend Layout Guide](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/archive/frontend-layout-guide.md)
-- [Frontend Visual Guide](/D:/rust-js-pr/QuantPilot/quantpilot/markdown/archive/frontend-visual-guide.md)
+此前分散的排版与视觉草稿不再作为活跃入口；历史材料统一收敛到 `markdown/09-archive/`。
 
 本文件只关心三件事：
 
