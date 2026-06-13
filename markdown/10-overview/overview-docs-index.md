@@ -1641,3 +1641,4 @@
 | v4.16.0 / BE-002GG-01 | Added: `quantscript.typed_resolution` parent residual judgment selects `semantic_inference_surface` |
 | v4.16.0 / BE-002GH-01 | Added: `quantscript.typed_resolution.semantic_inference_surface` baseline plan |
 | v4.16.0 / BE-002GH-02 | Added: `quantscript.typed_resolution.semantic_inference_surface` actual extraction complete |
+| v4.16.0 / BE-002GH-03 | Added: `quantscript.typed_resolution.semantic_inference_surface` single leaf closeout stops split |
