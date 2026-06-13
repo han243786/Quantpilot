@@ -2025,3 +2025,4 @@
 | v4.16.0 / BE-002GW-02 | `v4.16.0/1662-root.contracts.quantscript.analysis_diagnostics.lookahead_window_gate.extract_closeout.md` | Added: `quantscript.analysis_diagnostics.lookahead_window_gate` actual extraction complete |
 | v4.16.0 / BE-002GW-03 | `v4.16.0/1663-root.contracts.quantscript.analysis_diagnostics.lookahead_window_gate.single_leaf_closeout.md` | Added: `quantscript.analysis_diagnostics.lookahead_window_gate` single leaf closeout stops split |
 | v4.16.0 / BE-002GX-01 | `v4.16.0/1664-root.contracts.quantscript.analysis_diagnostics.parent_residual_judgment.warmup_fetch_gate.md` | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `warmup_fetch_gate` |
+| v4.16.0 / BE-002GY-01 | `v4.16.0/1665-root.contracts.quantscript.analysis_diagnostics.warmup_fetch_gate.baseline_plan.md` | Added: `quantscript.analysis_diagnostics.warmup_fetch_gate` baseline plan |

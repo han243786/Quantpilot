@@ -5716,3 +5716,5 @@ Recursive boundary supplement: BE-002GW-03 `root.contracts.quantscript.analysis_
 - `markdown/06-milestones/v4.16.0/1663-root.contracts.quantscript.analysis_diagnostics.lookahead_window_gate.single_leaf_closeout.md` - v4.16.0 BE-002GW-03 quantscript analysis_diagnostics lookahead_window_gate single leaf closeout
 Recursive boundary supplement: BE-002GX-01 `root.contracts.quantscript.analysis_diagnostics` parent residual judgment selected `warmup_fetch_gate`; next step: BE-002GY-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1664-root.contracts.quantscript.analysis_diagnostics.parent_residual_judgment.warmup_fetch_gate.md` - v4.16.0 BE-002GX-01 quantscript analysis_diagnostics parent residual judgment selects warmup_fetch_gate
+Recursive boundary supplement: BE-002GY-01 `root.contracts.quantscript.analysis_diagnostics.warmup_fetch_gate` baseline frozen; next step: BE-002GY-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1665-root.contracts.quantscript.analysis_diagnostics.warmup_fetch_gate.baseline_plan.md` - v4.16.0 BE-002GY-01 quantscript analysis_diagnostics warmup_fetch_gate baseline plan
