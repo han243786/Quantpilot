@@ -1616,3 +1616,4 @@
 | v4.16.0 / BE-002FS-01 | Added: `v4_runtime_support` parent closeout |
 | v4.16.0 / BE-002FT-01 | Added: `runtime_support` parent closeout |
 | v4.16.0 / BE-002FU-01 | Added: `root.contracts` parent residual judgment selects `quantscript` |
+| v4.16.0 / BE-002FV-01 | Added: `root.contracts.quantscript` baseline plan |

@@ -483,3 +483,4 @@ Latest recursive supplement: BE-002FR-01 closed `runtime_support.v4_runtime_supp
 Latest recursive supplement: BE-002FS-01 closed `runtime_support.v4_runtime_support`; next step returns to runtime_support parent residual judgment.
 Latest recursive supplement: BE-002FT-01 closed `runtime_support`; next step returns to root.contracts parent residual judgment.
 Latest recursive supplement: BE-002FU-01 selected `contracts.quantscript`; next baseline freezes the QuantScript language-contract parent.
+Latest recursive supplement: BE-002FV-01 froze `contracts.quantscript` baseline; next step is QuantScript parent residual judgment.
