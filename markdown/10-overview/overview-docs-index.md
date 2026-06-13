@@ -1614,3 +1614,4 @@
 | v4.16.0 / BE-002FQ-02 | Added: `v4_runtime_support.test_harness.live_capability_guard_tests` single leaf closeout stops split |
 | v4.16.0 / BE-002FR-01 | Added: `v4_runtime_support.test_harness` parent closeout |
 | v4.16.0 / BE-002FS-01 | Added: `v4_runtime_support` parent closeout |
+| v4.16.0 / BE-002FT-01 | Added: `runtime_support` parent closeout |
