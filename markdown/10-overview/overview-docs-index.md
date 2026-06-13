@@ -1674,3 +1674,4 @@
 | v4.16.0 / BE-002GX-01 | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `warmup_fetch_gate` |
 | v4.16.0 / BE-002GY-01 | Added: `quantscript.analysis_diagnostics.warmup_fetch_gate` baseline plan |
 | v4.16.0 / BE-002GY-02 | Added: `quantscript.analysis_diagnostics.warmup_fetch_gate` actual extraction complete |
+| v4.16.0 / BE-002GY-03 | Added: `quantscript.analysis_diagnostics.warmup_fetch_gate` single leaf closeout stops split |

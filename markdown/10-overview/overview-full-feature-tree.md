@@ -5722,3 +5722,5 @@ Recursive boundary supplement: BE-002GY-01 `root.contracts.quantscript.analysis_
 Recursive boundary supplement: BE-002GY-02 `root.contracts.quantscript.analysis_diagnostics.warmup_fetch_gate` actual extraction complete; next step: BE-002GY-03 single_leaf_closeout.
 - `quantscript/src/analysis_diagnostics/warmup_fetch_gate.rs` - QuantScript warmup fetch gate child
 - `markdown/06-milestones/v4.16.0/1666-root.contracts.quantscript.analysis_diagnostics.warmup_fetch_gate.extract_closeout.md` - v4.16.0 BE-002GY-02 quantscript analysis_diagnostics warmup_fetch_gate extract closeout
+Recursive boundary supplement: BE-002GY-03 `root.contracts.quantscript.analysis_diagnostics.warmup_fetch_gate` single leaf closeout complete with `stop_split: true`; next step: BE-002GZ-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1667-root.contracts.quantscript.analysis_diagnostics.warmup_fetch_gate.single_leaf_closeout.md` - v4.16.0 BE-002GY-03 quantscript analysis_diagnostics warmup_fetch_gate single leaf closeout
