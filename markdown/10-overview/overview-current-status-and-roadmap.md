@@ -1715,3 +1715,4 @@ Latest recursive supplement: BE-002GC-01 selected `contracts.quantscript.typed_r
 Latest recursive supplement: BE-002GD-01 froze `contracts.quantscript.typed_resolution.public_type_surface`; next movement may extract public resolver DTOs/enums into `quantscript/src/resolve/public_type_surface.rs`.
 Latest recursive supplement: BE-002GD-02 extracted `contracts.quantscript.typed_resolution.public_type_surface`; public resolver DTOs/enums now live in `quantscript/src/resolve/public_type_surface.rs`.
 Latest recursive supplement: BE-002GD-03 closed `contracts.quantscript.typed_resolution.public_type_surface` with `stop_split: true`; next step returns to typed-resolution parent residual judgment.
+Latest recursive supplement: BE-002GE-01 selected `contracts.quantscript.typed_resolution.callable_classification_surface`; next baseline freezes callable/helper classifiers and registry seeding.

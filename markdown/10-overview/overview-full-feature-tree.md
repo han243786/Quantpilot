@@ -5619,3 +5619,5 @@ Recursive boundary supplement: BE-002GD-02 `root.contracts.quantscript.typed_res
 - `markdown/06-milestones/v4.16.0/1625-root.contracts.quantscript.typed_resolution.public_type_surface.extract_closeout.md` - v4.16.0 BE-002GD-02 quantscript typed_resolution public_type_surface extract closeout
 Recursive boundary supplement: BE-002GD-03 `root.contracts.quantscript.typed_resolution.public_type_surface` single leaf closeout complete; next step: BE-002GE-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1626-root.contracts.quantscript.typed_resolution.public_type_surface.single_leaf_closeout.md` - v4.16.0 BE-002GD-03 quantscript typed_resolution public_type_surface single leaf closeout
+Recursive boundary supplement: BE-002GE-01 `root.contracts.quantscript.typed_resolution` parent residual judgment selected `callable_classification_surface`; next step: BE-002GF-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1627-root.contracts.quantscript.typed_resolution.parent_residual_judgment.callable_classification_surface.md` - v4.16.0 BE-002GE-01 quantscript typed_resolution parent residual judgment selects callable_classification_surface
