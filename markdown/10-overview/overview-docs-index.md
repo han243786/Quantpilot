@@ -1678,3 +1678,4 @@
 | v4.16.0 / BE-002GZ-01 | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `indirect_recursion_gate` |
 | v4.16.0 / BE-002HA-01 | Added: `quantscript.analysis_diagnostics.indirect_recursion_gate` baseline plan |
 | v4.16.0 / BE-002HA-02 | Added: `quantscript.analysis_diagnostics.indirect_recursion_gate` actual extraction complete |
+| v4.16.0 / BE-002HA-03 | Added: `quantscript.analysis_diagnostics.indirect_recursion_gate` single leaf closeout stops split |

@@ -2031,3 +2031,4 @@
 | v4.16.0 / BE-002GZ-01 | `v4.16.0/1668-root.contracts.quantscript.analysis_diagnostics.parent_residual_judgment.indirect_recursion_gate.md` | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `indirect_recursion_gate` |
 | v4.16.0 / BE-002HA-01 | `v4.16.0/1669-root.contracts.quantscript.analysis_diagnostics.indirect_recursion_gate.baseline_plan.md` | Added: `quantscript.analysis_diagnostics.indirect_recursion_gate` baseline plan |
 | v4.16.0 / BE-002HA-02 | `v4.16.0/1670-root.contracts.quantscript.analysis_diagnostics.indirect_recursion_gate.extract_closeout.md` | Added: `quantscript.analysis_diagnostics.indirect_recursion_gate` actual extraction complete |
+| v4.16.0 / BE-002HA-03 | `v4.16.0/1671-root.contracts.quantscript.analysis_diagnostics.indirect_recursion_gate.single_leaf_closeout.md` | Added: `quantscript.analysis_diagnostics.indirect_recursion_gate` single leaf closeout stops split |

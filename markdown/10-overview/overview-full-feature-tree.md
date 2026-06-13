@@ -5732,3 +5732,5 @@ Recursive boundary supplement: BE-002HA-01 `root.contracts.quantscript.analysis_
 Recursive boundary supplement: BE-002HA-02 `root.contracts.quantscript.analysis_diagnostics.indirect_recursion_gate` actual extraction complete; next step: BE-002HA-03 single_leaf_closeout.
 - `quantscript/src/analysis_diagnostics/indirect_recursion_gate.rs` - QuantScript indirect recursion gate child
 - `markdown/06-milestones/v4.16.0/1670-root.contracts.quantscript.analysis_diagnostics.indirect_recursion_gate.extract_closeout.md` - v4.16.0 BE-002HA-02 quantscript analysis_diagnostics indirect_recursion_gate extract closeout
+Recursive boundary supplement: BE-002HA-03 `root.contracts.quantscript.analysis_diagnostics.indirect_recursion_gate` single leaf closeout complete with `stop_split: true`; next step: BE-002HB-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1671-root.contracts.quantscript.analysis_diagnostics.indirect_recursion_gate.single_leaf_closeout.md` - v4.16.0 BE-002HA-03 quantscript analysis_diagnostics indirect_recursion_gate single leaf closeout
