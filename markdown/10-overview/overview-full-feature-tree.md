@@ -5500,3 +5500,5 @@ Recursive boundary supplement: BE-002ET-01 `simulated_execution_engine.validatio
 Recursive boundary supplement: BE-002EU-01 `simulated_execution_engine.validation_capability_helpers` actual extraction complete; next step: BE-002EU-02 single_leaf_closeout.
 - `qrpc_runtime/src/v4_runtime/simulated_execution_engine/validation_capability_helpers.rs` - Runtime v4 simulated execution validation and capability helper child
 - `markdown/06-milestones/v4.16.0/1575-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.validation_capability_helpers.extract_closeout.md` - v4.16.0 BE-002EU-01 simulated_execution_engine validation_capability_helpers extract closeout
+Recursive boundary supplement: BE-002EU-02 `simulated_execution_engine.validation_capability_helpers` single leaf closeout complete; next step: BE-002EV-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1576-root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.validation_capability_helpers.single_leaf_closeout.md` - v4.16.0 BE-002EU-02 simulated_execution_engine validation_capability_helpers single leaf closeout

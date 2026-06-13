@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002EU-01",
-  "last_committed_sha": "bdb2fc21",
-  "current_parent": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.validation_capability_helpers",
-  "current_step": "BE-002EU-02",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002EU-02",
+  "last_committed_sha": "c572f585",
+  "current_parent": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine",
+  "current_step": "BE-002EV-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -267,7 +267,8 @@
     "contracts.runtime_support.v4_runtime_support.simulated_execution_engine.order_lifecycle_flow",
     "contracts.runtime_support.v4_runtime_support.simulated_execution_engine.market_trigger_flow",
     "contracts.runtime_support.v4_runtime_support.simulated_execution_engine.fill_ledger_accounting",
-    "contracts.runtime_support.v4_runtime_support.simulated_execution_engine.snapshot_metrics_projection"
+    "contracts.runtime_support.v4_runtime_support.simulated_execution_engine.snapshot_metrics_projection",
+    "contracts.runtime_support.v4_runtime_support.simulated_execution_engine.validation_capability_helpers"
   ],
   "open_residuals": [
     "contracts.runtime_support",
@@ -275,7 +276,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.validation_capability_helpers.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.runtime_support.v4_runtime_support.simulated_execution_engine.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
