@@ -1658,3 +1658,4 @@ Latest recursive supplement: BE-002EN-01 froze `runtime_support.v4_runtime_suppo
 Latest recursive supplement: BE-002EO-01 extracted `runtime_support.v4_runtime_support.simulated_execution_engine.fill_ledger_accounting`; next step is single leaf closeout.
 Latest recursive supplement: BE-002EO-02 closed `runtime_support.v4_runtime_support.simulated_execution_engine.fill_ledger_accounting` with `stop_split: true`; next step returns to simulated execution parent residual judgment.
 Latest recursive supplement: BE-002EP-01 selected `runtime_support.v4_runtime_support.simulated_execution_engine.snapshot_metrics_projection`; next baseline freezes snapshot, asset curve, and microstructure projection helpers.
+Latest recursive supplement: BE-002EQ-01 froze `runtime_support.v4_runtime_support.simulated_execution_engine.snapshot_metrics_projection` baseline; next movement may extract projection helpers only.
