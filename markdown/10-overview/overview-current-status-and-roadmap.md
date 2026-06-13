@@ -1633,3 +1633,4 @@ Latest recursive supplement: BE-002DW-01 extracted `runtime_support.v4_runtime_s
 Latest recursive supplement: BE-002DW-02 closed `runtime_support.v4_runtime_support.machine_transition_engine` with `stop_split: true`; next step returns to v4_runtime_support parent residual judgment.
 Latest recursive supplement: BE-002DX-01 selected `runtime_support.v4_runtime_support.risk_execution_gate`; next baseline should freeze risk-plane and execution-capability gate behavior.
 Latest recursive supplement: BE-002DY-01 froze `runtime_support.v4_runtime_support.risk_execution_gate` baseline; next movement may extract gate decision evaluation and recording.
+Latest recursive supplement: BE-002DZ-01 extracted `runtime_support.v4_runtime_support.risk_execution_gate`; `qrpc_runtime/src/v4_runtime/risk_execution_gate.rs` now owns risk/execution gate decision evaluation and recording.
