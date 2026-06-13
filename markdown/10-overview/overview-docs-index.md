@@ -1580,3 +1580,4 @@
 | v4.16.0 / BE-002ER-01 | Added: `simulated_execution_engine.snapshot_metrics_projection` actual extraction complete |
 | v4.16.0 / BE-002ER-02 | Added: `simulated_execution_engine.snapshot_metrics_projection` single leaf closeout stops split |
 | v4.16.0 / BE-002ES-01 | Added: `simulated_execution_engine` parent residual judgment selects `validation_capability_helpers` |
+| v4.16.0 / BE-002ET-01 | Added: `simulated_execution_engine.validation_capability_helpers` baseline plan |
