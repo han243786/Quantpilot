@@ -5440,3 +5440,6 @@ Governance-next authority supplement: `governance-next` is the default governanc
 - `governance-next/trials/0001-risk-execution-gate-qpcursor.md` - Governance-next trial 0001 risk_execution_gate QPCursor样本
 - `governance-next/trials/0002-simulated-execution-engine-qpcursor.md` - Governance-next trial 0002 simulated_execution_engine QPCursor样本
 - `markdown/06-milestones/v4.16.0/1556-governance-next-authority-promotion.md` - v4.16.0 GOV-GOVERNANCE-NEXT-PROMOTION-01 governance-next authority promotion
+Document cleanup archive supplement: inactive testing and review reports moved out of active doc surfaces; historical evidence remains under `markdown/09-archive`.
+- `markdown/09-archive/testing-retired/README.md` - Retired testing and audit report archive policy
+- `markdown/09-archive/reviews-retired/README.md` - Retired review report archive policy
