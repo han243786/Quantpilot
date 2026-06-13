@@ -1678,3 +1678,4 @@ Latest recursive supplement: BE-002FC-01 selected `runtime_support.v4_runtime_su
 Latest recursive supplement: BE-002FD-01 froze `runtime_support.v4_runtime_support.test_harness.payload_validation_tests` baseline; next movement may move five payload/config rejection tests only.
 Latest recursive supplement: BE-002FE-01 extracted `runtime_support.v4_runtime_support.test_harness.payload_validation_tests`; next step is single leaf closeout.
 Latest recursive supplement: BE-002FE-02 closed `runtime_support.v4_runtime_support.test_harness.payload_validation_tests`; next step returns to test harness parent residual judgment.
+Latest recursive supplement: BE-002FF-01 selected `runtime_support.v4_runtime_support.test_harness.graph_replay_scenarios`; next baseline freezes graph/replay scenario tests only.
