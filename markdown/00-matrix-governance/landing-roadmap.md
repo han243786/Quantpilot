@@ -499,3 +499,4 @@ Latest recursive supplement: BE-002GB-03 closed `contracts.quantscript.typed_res
 Latest recursive supplement: BE-002GC-01 selected `contracts.quantscript.typed_resolution.public_type_surface`; next baseline freezes public resolver DTOs and enums.
 Latest recursive supplement: BE-002GD-01 froze `contracts.quantscript.typed_resolution.public_type_surface`; next movement may extract the public resolver type surface.
 Latest recursive supplement: BE-002GD-02 extracted `contracts.quantscript.typed_resolution.public_type_surface`; next step is single leaf closeout.
+Latest recursive supplement: BE-002GD-03 closed `contracts.quantscript.typed_resolution.public_type_surface`; next step returns to typed-resolution parent residual judgment.

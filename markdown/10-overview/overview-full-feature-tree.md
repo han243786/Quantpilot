@@ -5617,3 +5617,5 @@ Recursive boundary supplement: BE-002GD-01 `root.contracts.quantscript.typed_res
 Recursive boundary supplement: BE-002GD-02 `root.contracts.quantscript.typed_resolution.public_type_surface` actual extraction complete; next step: BE-002GD-03 single_leaf_closeout.
 - `quantscript/src/resolve/public_type_surface.rs` - QuantScript typed-resolution public DTO and enum child
 - `markdown/06-milestones/v4.16.0/1625-root.contracts.quantscript.typed_resolution.public_type_surface.extract_closeout.md` - v4.16.0 BE-002GD-02 quantscript typed_resolution public_type_surface extract closeout
+Recursive boundary supplement: BE-002GD-03 `root.contracts.quantscript.typed_resolution.public_type_surface` single leaf closeout complete; next step: BE-002GE-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1626-root.contracts.quantscript.typed_resolution.public_type_surface.single_leaf_closeout.md` - v4.16.0 BE-002GD-03 quantscript typed_resolution public_type_surface single leaf closeout
