@@ -1720,3 +1720,4 @@
 | v4.16.0 / BE-002HY-01 | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface` baseline plan |
 | v4.16.0 / BE-002HY-02 | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface` actual extraction complete |
 | v4.16.0 / BE-002HY-03 | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface` single leaf closeout stops split |
+| v4.16.0 / BE-002HZ-01 | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface` parent residual judgment selects `integration_test_harness` |

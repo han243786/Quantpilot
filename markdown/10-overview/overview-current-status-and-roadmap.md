@@ -1801,3 +1801,4 @@ Latest recursive supplement: BE-002HX-01 selected `contracts.quantscript.runtime
 Latest recursive supplement: BE-002HY-01 froze `contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface`; next movement may extract profile detection into its child module.
 Latest recursive supplement: BE-002HY-02 extracted `contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface`; next step is single leaf closeout.
 Latest recursive supplement: BE-002HY-03 closed `contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface` with `stop_split: true`; next step returns to lowering_orchestrator_surface parent residual judgment.
+Latest recursive supplement: BE-002HZ-01 selected `contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness`; next baseline freezes the colocated lowering integration tests.
