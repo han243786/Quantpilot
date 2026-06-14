@@ -5940,3 +5940,5 @@ Recursive boundary supplement: BE-002JB-02 `root.contracts.quantscript.runtime_l
 - `markdown/06-milestones/v4.16.0/1762-root.contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference.extract_closeout.md` - v4.16.0 BE-002JB-02 spread_intent_inference extract closeout
 Recursive boundary supplement: BE-002JB-03 `root.contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference` single leaf closeout complete with `stop_split: true`; next step: intent_inference parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1763-root.contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference.single_leaf_closeout.md` - v4.16.0 BE-002JB-03 spread_intent_inference single leaf closeout
+Recursive boundary supplement: BE-002JC-01 `root.contracts.quantscript.runtime_lowering.intent_inference` parent closeout complete; next step: runtime_lowering parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1764-root.contracts.quantscript.runtime_lowering.intent_inference.parent_closeout.md` - v4.16.0 BE-002JC-01 intent_inference parent closeout

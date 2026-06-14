@@ -14,10 +14,10 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002JB-02",
-  "last_committed_sha": "e888e44b",
-  "current_parent": "root.contracts.quantscript.runtime_lowering.intent_inference",
-  "current_step": "BE-002JC-01",
+  "last_committed_batch": "BE-002JB-03",
+  "last_committed_sha": "fcd1da22",
+  "current_parent": "root.contracts.quantscript.runtime_lowering",
+  "current_step": "BE-002JD-01",
   "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
@@ -315,7 +315,8 @@
     "contracts.quantscript.runtime_lowering.universe_lowering",
     "contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration",
     "contracts.quantscript.runtime_lowering.intent_inference.single_indicator_intent_inference",
-    "contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference"
+    "contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference",
+    "contracts.quantscript.runtime_lowering.intent_inference"
   ],
   "open_residuals": [
     "contracts.quantscript.runtime_lowering",
@@ -325,7 +326,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.intent_inference.parent_residual_judgment",
+  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

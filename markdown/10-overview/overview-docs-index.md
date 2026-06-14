@@ -1771,3 +1771,4 @@
 | v4.16.0 / BE-002JB-01 | Added: `spread_intent_inference` baseline plan |
 | v4.16.0 / BE-002JB-02 | Added: `spread_intent_inference` actual extraction complete |
 | v4.16.0 / BE-002JB-03 | Added: `spread_intent_inference` single leaf closeout stops split |
+| v4.16.0 / BE-002JC-01 | Added: `intent_inference` parent closeout |

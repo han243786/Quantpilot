@@ -2124,3 +2124,4 @@
 | v4.16.0 / BE-002JB-01 | `v4.16.0/1761-root.contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference.baseline_plan.md` | Added: `spread_intent_inference` baseline plan |
 | v4.16.0 / BE-002JB-02 | `v4.16.0/1762-root.contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference.extract_closeout.md` | Added: `spread_intent_inference` actual extraction complete |
 | v4.16.0 / BE-002JB-03 | `v4.16.0/1763-root.contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference.single_leaf_closeout.md` | Added: `spread_intent_inference` single leaf closeout stops split |
+| v4.16.0 / BE-002JC-01 | `v4.16.0/1764-root.contracts.quantscript.runtime_lowering.intent_inference.parent_closeout.md` | Added: `intent_inference` parent closeout |
