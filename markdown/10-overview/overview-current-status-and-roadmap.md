@@ -1873,3 +1873,4 @@ Latest recursive supplement: BE-002JM-02 extracted `contracts.quantscript.runtim
 Latest recursive supplement: BE-002JM-03 closed `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_zscore_formula` with `stop_split: true`; next step returns to manual_formula_fallback parent residual judgment.
 Latest recursive supplement: BE-002JN-01 closed `contracts.quantscript.runtime_lowering.manual_formula_fallback`; next step returns to runtime_lowering parent residual judgment.
 Latest recursive supplement: BE-002JO-01 closed `contracts.quantscript.runtime_lowering`; next step returns to quantscript parent residual judgment.
+Latest recursive supplement: BE-002JP-01 selected `contracts.quantscript.v4_static_audit`; next baseline freezes the static-audit and runtime-handoff contract.

@@ -2145,3 +2145,4 @@
 | v4.16.0 / BE-002JM-03 | `v4.16.0/1782-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_zscore_formula.single_leaf_closeout.md` | Added: `manual_zscore_formula` single leaf closeout stops split |
 | v4.16.0 / BE-002JN-01 | `v4.16.0/1783-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.parent_closeout.md` | Added: `manual_formula_fallback` parent closeout |
 | v4.16.0 / BE-002JO-01 | `v4.16.0/1784-root.contracts.quantscript.runtime_lowering.parent_closeout.md` | Added: `runtime_lowering` parent closeout |
+| v4.16.0 / BE-002JP-01 | `v4.16.0/1785-root.contracts.quantscript.parent_residual_judgment.v4_static_audit.md` | Added: `quantscript` parent residual judgment selects `v4_static_audit` |

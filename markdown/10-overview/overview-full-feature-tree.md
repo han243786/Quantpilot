@@ -5986,3 +5986,5 @@ Recursive boundary supplement: BE-002JN-01 `root.contracts.quantscript.runtime_l
 - `markdown/06-milestones/v4.16.0/1783-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.parent_closeout.md` - v4.16.0 BE-002JN-01 manual_formula_fallback parent closeout
 Recursive boundary supplement: BE-002JO-01 `root.contracts.quantscript.runtime_lowering` parent closeout complete; next step: quantscript parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1784-root.contracts.quantscript.runtime_lowering.parent_closeout.md` - v4.16.0 BE-002JO-01 runtime_lowering parent closeout
+Recursive boundary supplement: BE-002JP-01 `root.contracts.quantscript` parent residual judgment selected `v4_static_audit`; next step: BE-002JQ-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1785-root.contracts.quantscript.parent_residual_judgment.v4_static_audit.md` - v4.16.0 BE-002JP-01 quantscript parent residual judgment selects v4_static_audit

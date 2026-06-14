@@ -1792,3 +1792,4 @@
 | v4.16.0 / BE-002JM-03 | Added: `manual_zscore_formula` single leaf closeout stops split |
 | v4.16.0 / BE-002JN-01 | Added: `manual_formula_fallback` parent closeout |
 | v4.16.0 / BE-002JO-01 | Added: `runtime_lowering` parent closeout |
+| v4.16.0 / BE-002JP-01 | Added: `quantscript` parent residual judgment selects `v4_static_audit` |
