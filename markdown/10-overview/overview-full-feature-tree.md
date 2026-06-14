@@ -6125,3 +6125,7 @@ Recursive boundary supplement: BE-002KY-01 `root.contracts.plugin_metadata` non-
 - `markdown/06-milestones/v4.16.0/1846-root.contracts.plugin_metadata.single_leaf_closeout.md` - v4.16.0 BE-002KY-01 plugin_metadata non-code leaf closeout
 Recursive boundary supplement: BE-002KZ-01 `root.contracts` parent closeout complete; next step: root parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1847-root.contracts.parent_closeout.md` - v4.16.0 BE-002KZ-01 contracts parent closeout
+Recursive boundary supplement: BE-002LA-01 `root` parent residual judgment selected `executor`; next step: BE-002LB-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1848-root.parent_residual_judgment.executor.md` - v4.16.0 BE-002LA-01 root parent residual judgment selects executor
+Recursive boundary supplement: BE-002LB-01 `root.executor` baseline frozen; next step: BE-002LC-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1849-root.executor.baseline_plan.md` - v4.16.0 BE-002LB-01 executor baseline plan

@@ -9536,3 +9536,7 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.plugin_metadata stop_split: true`; physical plugin metadata is small and cohesive, with no Rust movement required.
 **Latest state supplement (BE-002KZ-01)**: `root.contracts` parent closeout complete; next step: BE-002LA-01 parent_residual_judgment.
 `root.contracts parent_closeout: true`; API schemas, qrpc-core, Core IR, compiler bridge, runtime support, QuantScript, and physical plugin metadata are closed. The only remaining root residual is `executor`.
+**Latest state supplement (BE-002LA-01)**: `root` parent residual judgment selected `executor`; next step: BE-002LB-01 baseline_plan.
+`root.executor selected: true`; this child owns standalone Rust execution process state, audit, guard, runner, migration API, market connectivity, OKX REST, and credential support. Frontend executor UI stays outside this Rust pass.
+**Latest state supplement (BE-002LB-01)**: `root.executor` baseline frozen; next step: BE-002LC-01 parent_residual_judgment.
+`root.executor baseline_frozen: true`; child queue is `executor.state` and `executor.runner`, with backend/runtime state ownership and release-transition shortcuts frozen outside.

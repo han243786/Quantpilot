@@ -1936,3 +1936,5 @@ Latest recursive supplement: BE-002KW-01 closed `contracts.quantscript`; next st
 Latest recursive supplement: BE-002KX-01 selected `contracts.plugin_metadata`; it is a non-code metadata leaf.
 Latest recursive supplement: BE-002KY-01 closed `contracts.plugin_metadata` with `stop_split: true`; next step is contracts parent closeout.
 Latest recursive supplement: BE-002KZ-01 closed `contracts`; next step returns to root parent residual judgment with `executor` remaining.
+Latest recursive supplement: BE-002LA-01 selected `root.executor`; the Rust executor pass excludes frontend-executor UI.
+Latest recursive supplement: BE-002LB-01 froze `root.executor`; next step selects between executor state and runner children.
