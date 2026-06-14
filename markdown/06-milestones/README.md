@@ -2120,3 +2120,4 @@
 | v4.16.0 / BE-002IZ-01 | `v4.16.0/1757-root.contracts.quantscript.runtime_lowering.intent_inference.single_indicator_intent_inference.baseline_plan.md` | Added: `single_indicator_intent_inference` baseline plan |
 | v4.16.0 / BE-002IZ-02 | `v4.16.0/1758-root.contracts.quantscript.runtime_lowering.intent_inference.single_indicator_intent_inference.extract_closeout.md` | Added: `single_indicator_intent_inference` actual extraction complete |
 | v4.16.0 / BE-002IZ-03 | `v4.16.0/1759-root.contracts.quantscript.runtime_lowering.intent_inference.single_indicator_intent_inference.single_leaf_closeout.md` | Added: `single_indicator_intent_inference` single leaf closeout stops split |
+| v4.16.0 / BE-002JA-01 | `v4.16.0/1760-root.contracts.quantscript.runtime_lowering.intent_inference.parent_residual_judgment.spread_intent_inference.md` | Added: `intent_inference` parent residual judgment selects `spread_intent_inference` |
