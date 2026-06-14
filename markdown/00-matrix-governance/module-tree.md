@@ -9227,6 +9227,8 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 **Latest state supplement (BE-002HL-01)**: `root.contracts.quantscript.analysis_diagnostics` parent closeout complete; next step: BE-002HM-01 quantscript parent_residual_judgment.
 `root.contracts.quantscript.analysis_diagnostics parent_closeout: true`; the residual parent is an 80-line coordinator with public analysis surface and a parent-owned `contains_emit_in_stmts` helper.
 **Latest state supplement (BE-002HM-01)**: `root.contracts.quantscript` parent residual judgment selected `evaluator_normalization`; next step: BE-002HN-01 baseline_plan.
-`root.contracts.quantscript.evaluator_normalization selected: true`; this child owns `quantscript/src/evaluator.rs` and must preserve the public `normalize_script_module` surface.
+`root.contracts.quantscript.evaluator_normalization selected: true`; this child owns the evaluator normalization surface and must preserve the public `normalize_script_module` surface.
 **Latest state supplement (BE-002HN-01)**: `root.contracts.quantscript.evaluator_normalization` baseline frozen; next step: BE-002HN-02 module_shell_extraction.
-`root.contracts.quantscript.evaluator_normalization baseline_frozen: true`; the next movement may convert current `quantscript/src/evaluator.rs` into a planned evaluator module-directory shell without changing `normalize_script_module` behavior.
+`root.contracts.quantscript.evaluator_normalization baseline_frozen: true`; the next movement may convert the former flat evaluator file into a planned evaluator module-directory shell without changing `normalize_script_module` behavior.
+**Latest state supplement (BE-002HN-02)**: `root.contracts.quantscript.evaluator_normalization` module shell extraction complete; next step: BE-002HO-01 parent_residual_judgment.
+`root.contracts.quantscript.evaluator_normalization shell_extracted: true`; `quantscript/src/evaluator/mod.rs` now owns the unchanged evaluator implementation while `quantscript/src/lib.rs` keeps the same `mod evaluator;` declaration and `normalize_script_module` re-export.

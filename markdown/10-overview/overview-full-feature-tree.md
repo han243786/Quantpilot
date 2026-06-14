@@ -2406,7 +2406,7 @@ storage/
 - `quantscript/src/resolve/semantic_inference_surface.rs` — typed-HIR expression semantic and manual indicator inference; 改 QS 语义推断时改这里
 - `quantscript/src/resolve/type_inference_binding_surface.rs` — typed-HIR type inference and resolver binding validation; 改 QS 类型推断或绑定诊断时改这里
 - `quantscript/src/syntax_ast_surface/types.rs` — QS 类型系统; 改类型定义时改这里
-- `quantscript/src/evaluator.rs` — 表达式求值; 改表达式语义时改这里
+- `quantscript/src/evaluator/mod.rs` — 表达式求值; 改表达式语义时改这里
 - `quantscript/src/analysis_diagnostics/diagnostics.rs` — QS 诊断码; 新增诊断时改这里
 - `quantscript/src/test_plan.rs` — 测试计划生成; 改场景生成时改这里
 - `quantscript/src/v4_static_audit.rs` — v4 状态机静态审计; 改 v4 QS 审计、state 内嵌套 machine、memory `QsTypeRef` 解析或 QSV 诊断码时改这里 🆕 v4.7.0
@@ -5785,3 +5785,6 @@ Recursive boundary supplement: BE-002HM-01 `root.contracts.quantscript` parent r
 - `markdown/06-milestones/v4.16.0/1693-root.contracts.quantscript.parent_residual_judgment.evaluator_normalization.md` - v4.16.0 BE-002HM-01 quantscript parent residual judgment selects evaluator_normalization
 Recursive boundary supplement: BE-002HN-01 `root.contracts.quantscript.evaluator_normalization` baseline frozen; next step: BE-002HN-02 module_shell_extraction.
 - `markdown/06-milestones/v4.16.0/1694-root.contracts.quantscript.evaluator_normalization.baseline_plan.md` - v4.16.0 BE-002HN-01 quantscript evaluator_normalization baseline plan
+Recursive boundary supplement: BE-002HN-02 `root.contracts.quantscript.evaluator_normalization` module shell extraction complete; next step: BE-002HO-01 parent_residual_judgment.
+- `quantscript/src/evaluator/mod.rs` - QuantScript evaluator normalization module shell
+- `markdown/06-milestones/v4.16.0/1695-root.contracts.quantscript.evaluator_normalization.module_shell_extraction.md` - v4.16.0 BE-002HN-02 quantscript evaluator_normalization module shell extraction
