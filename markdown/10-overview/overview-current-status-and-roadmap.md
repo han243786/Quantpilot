@@ -1927,3 +1927,4 @@ Latest recursive supplement: BE-002KP-01 selected `contracts.quantscript.v4_stat
 Latest recursive supplement: BE-002KQ-01 froze `contracts.quantscript.v4_static_audit.state_group_parser`; next movement may extract only state-group declaration parsing and `StateGroup` assembly.
 Latest recursive supplement: BE-002KQ-02 extracted `contracts.quantscript.v4_static_audit.state_group_parser`; next step is single leaf closeout.
 Latest recursive supplement: BE-002KQ-03 closed `contracts.quantscript.v4_static_audit.state_group_parser` with `stop_split: true`; next step returns to v4_static_audit parent residual judgment.
+Latest recursive supplement: BE-002KR-01 closed `contracts.quantscript.v4_static_audit`; next step returns to the quantscript parent residual judgment.

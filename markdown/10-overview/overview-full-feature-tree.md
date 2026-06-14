@@ -6107,3 +6107,5 @@ Recursive boundary supplement: BE-002KQ-02 `root.contracts.quantscript.v4_static
 - `markdown/06-milestones/v4.16.0/1837-root.contracts.quantscript.v4_static_audit.state_group_parser.extract_closeout.md` - v4.16.0 BE-002KQ-02 state_group_parser extract closeout
 Recursive boundary supplement: BE-002KQ-03 `root.contracts.quantscript.v4_static_audit.state_group_parser` single leaf closeout complete with `stop_split: true`; next step: v4_static_audit parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1838-root.contracts.quantscript.v4_static_audit.state_group_parser.single_leaf_closeout.md` - v4.16.0 BE-002KQ-03 state_group_parser single leaf closeout
+Recursive boundary supplement: BE-002KR-01 `root.contracts.quantscript.v4_static_audit` parent closeout complete; next step: quantscript parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1839-root.contracts.quantscript.v4_static_audit.parent_closeout.md` - v4.16.0 BE-002KR-01 v4_static_audit parent closeout

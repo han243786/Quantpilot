@@ -1846,3 +1846,4 @@
 | v4.16.0 / BE-002KQ-01 | Added: `state_group_parser` baseline plan |
 | v4.16.0 / BE-002KQ-02 | Added: `state_group_parser` actual extraction complete |
 | v4.16.0 / BE-002KQ-03 | Added: `state_group_parser` single leaf closeout stops split |
+| v4.16.0 / BE-002KR-01 | Added: `v4_static_audit` parent closeout |
