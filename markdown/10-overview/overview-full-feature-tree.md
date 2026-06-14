@@ -5959,3 +5959,6 @@ Recursive boundary supplement: BE-002JH-01 `root.contracts.quantscript.runtime_l
 - `markdown/06-milestones/v4.16.0/1771-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.parent_residual_judgment.manual_momentum_formula.md` - v4.16.0 BE-002JH-01 manual_formula_fallback parent residual judgment selects manual_momentum_formula
 Recursive boundary supplement: BE-002JI-01 `root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_momentum_formula` baseline frozen; next step: BE-002JI-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1772-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_momentum_formula.baseline_plan.md` - v4.16.0 BE-002JI-01 manual_momentum_formula baseline plan
+Recursive boundary supplement: BE-002JI-02 `root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_momentum_formula` actual extraction complete; next step: BE-002JI-03 single_leaf_closeout.
+- `quantscript/src/lowering/fallback/manual_momentum_formula.rs` - Quantscript manual momentum fallback recognizer child
+- `markdown/06-milestones/v4.16.0/1773-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_momentum_formula.extract_closeout.md` - v4.16.0 BE-002JI-02 manual_momentum_formula extract closeout
