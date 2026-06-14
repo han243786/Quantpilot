@@ -5953,3 +5953,5 @@ Recursive boundary supplement: BE-002JG-01 `root.contracts.quantscript.runtime_l
 Recursive boundary supplement: BE-002JG-02 `root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_rsi_formula` actual extraction complete; next step: BE-002JG-03 single_leaf_closeout.
 - `quantscript/src/lowering/fallback/manual_rsi_formula.rs` - Quantscript manual RSI fallback recognizer child
 - `markdown/06-milestones/v4.16.0/1769-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_rsi_formula.extract_closeout.md` - v4.16.0 BE-002JG-02 manual_rsi_formula extract closeout
+Recursive boundary supplement: BE-002JG-03 `root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_rsi_formula` single leaf closeout complete with `stop_split: true`; next step: manual_formula_fallback parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1770-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_rsi_formula.single_leaf_closeout.md` - v4.16.0 BE-002JG-03 manual_rsi_formula single leaf closeout
