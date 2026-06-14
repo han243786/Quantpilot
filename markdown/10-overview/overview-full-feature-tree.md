@@ -5946,3 +5946,5 @@ Recursive boundary supplement: BE-002JD-01 `root.contracts.quantscript.runtime_l
 - `markdown/06-milestones/v4.16.0/1765-root.contracts.quantscript.runtime_lowering.parent_residual_judgment.manual_formula_fallback.md` - v4.16.0 BE-002JD-01 runtime_lowering parent residual judgment selects manual_formula_fallback
 Recursive boundary supplement: BE-002JE-01 `root.contracts.quantscript.runtime_lowering.manual_formula_fallback` precision baseline frozen; next step: BE-002JF-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1766-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.baseline_plan.md` - v4.16.0 BE-002JE-01 manual_formula_fallback precision baseline plan
+Recursive boundary supplement: BE-002JF-01 `root.contracts.quantscript.runtime_lowering.manual_formula_fallback` parent residual judgment selected `manual_rsi_formula`; next step: BE-002JG-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1767-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.parent_residual_judgment.manual_rsi_formula.md` - v4.16.0 BE-002JF-01 manual_formula_fallback parent residual judgment selects manual_rsi_formula
