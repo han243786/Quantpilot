@@ -1788,3 +1788,4 @@
 | v4.16.0 / BE-002JK-03 | Added: `manual_macd_formula` single leaf closeout stops split |
 | v4.16.0 / BE-002JL-01 | Added: `manual_formula_fallback` parent residual judgment selects `manual_zscore_formula` |
 | v4.16.0 / BE-002JM-01 | Added: `manual_zscore_formula` baseline plan |
+| v4.16.0 / BE-002JM-02 | Added: `manual_zscore_formula` actual extraction complete |
