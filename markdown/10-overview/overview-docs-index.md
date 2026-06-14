@@ -1794,3 +1794,4 @@
 | v4.16.0 / BE-002JO-01 | Added: `runtime_lowering` parent closeout |
 | v4.16.0 / BE-002JP-01 | Added: `quantscript` parent residual judgment selects `v4_static_audit` |
 | v4.16.0 / BE-002JQ-01 | Added: `v4_static_audit` precision baseline plan |
+| v4.16.0 / BE-002JR-01 | Added: `v4_static_audit` parent residual judgment selects `runtime_handoff_builder` |
