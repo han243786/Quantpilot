@@ -1776,3 +1776,4 @@ Latest recursive supplement: BE-002HH-01 selected `contracts.quantscript.analysi
 Latest recursive supplement: BE-002HI-01 froze `contracts.quantscript.analysis_diagnostics.dead_code_emit_gate`; next movement may extract QS0612 dead-code emit diagnostics only.
 Latest recursive supplement: BE-002HI-02 extracted `contracts.quantscript.analysis_diagnostics.dead_code_emit_gate`; next step is single leaf closeout and split judgment.
 Latest recursive supplement: BE-002HI-03 closed `contracts.quantscript.analysis_diagnostics.dead_code_emit_gate` with `stop_split: true`; next step returns to analysis_diagnostics parent residual judgment.
+Latest recursive supplement: BE-002HJ-01 selected `contracts.quantscript.analysis_diagnostics.strategy_presence_gate`; next baseline freezes QS0610/QS0611 strategy presence diagnostics.

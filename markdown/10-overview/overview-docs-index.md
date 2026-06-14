@@ -1695,3 +1695,4 @@
 | v4.16.0 / BE-002HI-01 | Added: `quantscript.analysis_diagnostics.dead_code_emit_gate` baseline plan |
 | v4.16.0 / BE-002HI-02 | Added: `quantscript.analysis_diagnostics.dead_code_emit_gate` actual extraction complete |
 | v4.16.0 / BE-002HI-03 | Added: `quantscript.analysis_diagnostics.dead_code_emit_gate` single leaf closeout stops split |
+| v4.16.0 / BE-002HJ-01 | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `strategy_presence_gate` |
