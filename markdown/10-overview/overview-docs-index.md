@@ -1690,3 +1690,4 @@
 | v4.16.0 / BE-002HF-01 | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `index_bounds_gate` |
 | v4.16.0 / BE-002HG-01 | Added: `quantscript.analysis_diagnostics.index_bounds_gate` baseline plan |
 | v4.16.0 / BE-002HG-02 | Added: `quantscript.analysis_diagnostics.index_bounds_gate` actual extraction complete |
+| v4.16.0 / BE-002HG-03 | Added: `quantscript.analysis_diagnostics.index_bounds_gate` single leaf closeout stops split |
