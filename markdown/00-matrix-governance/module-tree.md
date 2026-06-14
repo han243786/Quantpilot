@@ -9568,3 +9568,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.strategy_lifecycle_routes extracted: true`; `src-executor/strategy_lifecycle_routes.rs` now owns strategy list/detail/deploy/start/stop route handlers while v4 deploy helpers and runner support files remain parent-owned.
 **Latest state supplement (BE-002LJ-03)**: `root.executor.runner.strategy_lifecycle_routes` single leaf closeout complete; next step: BE-002LK-01 parent_residual_judgment.
 `root.executor.runner.strategy_lifecycle_routes stop_split: true`; terminal leaf control returned `STOP` with score 38 over a 294 LOC strategy lifecycle route child.
+**Latest state supplement (BE-002LK-01)**: `root.executor.runner` parent residual judgment selected `market_stream_routes`; next step: BE-002LL-01 baseline_plan.
+`root.executor.runner.market_stream_routes selected: true`; this child starts with kline projection and strategy event SSE route handlers while route registration and runner setup remain parent-owned.

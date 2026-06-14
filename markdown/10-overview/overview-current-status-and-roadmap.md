@@ -1952,3 +1952,4 @@ Latest recursive supplement: BE-002LI-01 selected `executor.runner.strategy_life
 Latest recursive supplement: BE-002LJ-01 froze `strategy_lifecycle_routes`; next movement may extract only list/detail/deploy/start/stop handlers.
 Latest recursive supplement: BE-002LJ-02 extracted strategy lifecycle handlers into `src-executor/strategy_lifecycle_routes.rs`; next step is single leaf closeout.
 Latest recursive supplement: BE-002LJ-03 closed `executor.runner.strategy_lifecycle_routes` with `stop_split: true`; next step returns to runner parent residual judgment.
+Latest recursive supplement: BE-002LK-01 selected `executor.runner.market_stream_routes`; next baseline freezes kline/SSE route extraction.
