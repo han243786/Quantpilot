@@ -2218,3 +2218,4 @@
 | v4.16.0 / BE-002LF-01 | `v4.16.0/1855-root.executor.runner.baseline_plan.md` | Added: `executor.runner` baseline plan |
 | v4.16.0 / BE-002LG-01 | `v4.16.0/1856-root.executor.runner.parent_residual_judgment.provider_order_routes.md` | Added: `executor.runner` parent residual judgment selects `provider_order_routes` |
 | v4.16.0 / BE-002LH-01 | `v4.16.0/1857-root.executor.runner.provider_order_routes.baseline_plan.md` | Added: `provider_order_routes` baseline plan |
+| v4.16.0 / BE-002LH-02 | `v4.16.0/1858-root.executor.runner.provider_order_routes.extract_closeout.md` | Added: `provider_order_routes` handler extraction complete |

@@ -6146,3 +6146,6 @@ Recursive boundary supplement: BE-002LG-01 `root.executor.runner` parent residua
 - `markdown/06-milestones/v4.16.0/1856-root.executor.runner.parent_residual_judgment.provider_order_routes.md` - v4.16.0 BE-002LG-01 executor.runner parent residual judgment selects provider_order_routes
 Recursive boundary supplement: BE-002LH-01 `root.executor.runner.provider_order_routes` baseline frozen; next step: BE-002LH-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1857-root.executor.runner.provider_order_routes.baseline_plan.md` - v4.16.0 BE-002LH-01 provider_order_routes baseline plan
+Recursive boundary supplement: BE-002LH-02 `root.executor.runner.provider_order_routes` actual extraction complete; next step: BE-002LH-03 single_leaf_closeout.
+- `src-executor/provider_order_routes.rs` - Executor OKX demo provider order route handlers child
+- `markdown/06-milestones/v4.16.0/1858-root.executor.runner.provider_order_routes.extract_closeout.md` - v4.16.0 BE-002LH-02 provider_order_routes extract closeout
