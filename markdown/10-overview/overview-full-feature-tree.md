@@ -6129,3 +6129,7 @@ Recursive boundary supplement: BE-002LA-01 `root` parent residual judgment selec
 - `markdown/06-milestones/v4.16.0/1848-root.parent_residual_judgment.executor.md` - v4.16.0 BE-002LA-01 root parent residual judgment selects executor
 Recursive boundary supplement: BE-002LB-01 `root.executor` baseline frozen; next step: BE-002LC-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1849-root.executor.baseline_plan.md` - v4.16.0 BE-002LB-01 executor baseline plan
+Recursive boundary supplement: BE-002LC-01 `root.executor` parent residual judgment selected `state`; next step: BE-002LD-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1850-root.executor.parent_residual_judgment.state.md` - v4.16.0 BE-002LC-01 executor parent residual judgment selects state
+Recursive boundary supplement: BE-002LD-01 `root.executor.state` baseline frozen; next step: BE-002LD-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1851-root.executor.state.baseline_plan.md` - v4.16.0 BE-002LD-01 executor.state baseline plan

@@ -1857,3 +1857,5 @@
 | v4.16.0 / BE-002KZ-01 | Added: `contracts` parent closeout |
 | v4.16.0 / BE-002LA-01 | Added: `root` parent residual judgment selects `executor` |
 | v4.16.0 / BE-002LB-01 | Added: `executor` baseline plan |
+| v4.16.0 / BE-002LC-01 | Added: `executor` parent residual judgment selects `state` |
+| v4.16.0 / BE-002LD-01 | Added: `executor.state` baseline plan |

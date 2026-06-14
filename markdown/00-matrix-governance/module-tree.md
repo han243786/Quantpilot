@@ -9540,3 +9540,7 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor selected: true`; this child owns standalone Rust execution process state, audit, guard, runner, migration API, market connectivity, OKX REST, and credential support. Frontend executor UI stays outside this Rust pass.
 **Latest state supplement (BE-002LB-01)**: `root.executor` baseline frozen; next step: BE-002LC-01 parent_residual_judgment.
 `root.executor baseline_frozen: true`; child queue is `executor.state` and `executor.runner`, with backend/runtime state ownership and release-transition shortcuts frozen outside.
+**Latest state supplement (BE-002LC-01)**: `root.executor` parent residual judgment selected `state`; next step: BE-002LD-01 baseline_plan.
+`root.executor.state selected: true`; this child owns executor state persistence, execution mode state, audit append support, API guard, credential storage support, and health/mode/params route handlers.
+**Latest state supplement (BE-002LD-01)**: `root.executor.state` baseline frozen; next step: BE-002LD-02 actual_extraction.
+`root.executor.state baseline_frozen: true`; approved movement is limited to extracting health/mode/params handlers from `src-executor/main.rs` into `src-executor/state_routes.rs` while preserving route registration in the parent.

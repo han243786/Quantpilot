@@ -1938,3 +1938,5 @@ Latest recursive supplement: BE-002KY-01 closed `contracts.plugin_metadata` with
 Latest recursive supplement: BE-002KZ-01 closed `contracts`; next step returns to root parent residual judgment with `executor` remaining.
 Latest recursive supplement: BE-002LA-01 selected `root.executor`; the Rust executor pass excludes frontend-executor UI.
 Latest recursive supplement: BE-002LB-01 froze `root.executor`; next step selects between executor state and runner children.
+Latest recursive supplement: BE-002LC-01 selected `executor.state`; next baseline freezes state route extraction from executor main.
+Latest recursive supplement: BE-002LD-01 froze `executor.state`; next movement may extract health/mode/params handlers into `state_routes`.
