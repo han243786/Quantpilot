@@ -9558,3 +9558,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.provider_order_routes baseline_frozen: true`; approved movement is limited to the three OKX demo provider route handlers into `src-executor/provider_order_routes.rs`.
 **Latest state supplement (BE-002LH-02)**: `root.executor.runner.provider_order_routes` actual extraction complete; next step: BE-002LH-03 single_leaf_closeout.
 `root.executor.runner.provider_order_routes extracted: true`; `src-executor/provider_order_routes.rs` now owns OKX demo submit/query/cancel route handlers while provider helper functions remain parent-owned.
+**Latest state supplement (BE-002LH-03)**: `root.executor.runner.provider_order_routes` single leaf closeout complete; next step: BE-002LI-01 parent_residual_judgment.
+`root.executor.runner.provider_order_routes stop_split: true`; terminal leaf control returned `STOP` with score 21 over a 128 LOC provider route child.

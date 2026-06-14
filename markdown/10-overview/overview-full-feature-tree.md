@@ -6149,3 +6149,5 @@ Recursive boundary supplement: BE-002LH-01 `root.executor.runner.provider_order_
 Recursive boundary supplement: BE-002LH-02 `root.executor.runner.provider_order_routes` actual extraction complete; next step: BE-002LH-03 single_leaf_closeout.
 - `src-executor/provider_order_routes.rs` - Executor OKX demo provider order route handlers child
 - `markdown/06-milestones/v4.16.0/1858-root.executor.runner.provider_order_routes.extract_closeout.md` - v4.16.0 BE-002LH-02 provider_order_routes extract closeout
+Recursive boundary supplement: BE-002LH-03 `root.executor.runner.provider_order_routes` single leaf closeout complete with `stop_split: true`; next step: runner parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1859-root.executor.runner.provider_order_routes.single_leaf_closeout.md` - v4.16.0 BE-002LH-03 provider_order_routes single leaf closeout

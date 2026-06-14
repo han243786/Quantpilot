@@ -1947,3 +1947,4 @@ Latest recursive supplement: BE-002LF-01 froze `executor.runner`; next step sele
 Latest recursive supplement: BE-002LG-01 selected `executor.runner.provider_order_routes`; next baseline freezes OKX demo provider route extraction.
 Latest recursive supplement: BE-002LH-01 froze `provider_order_routes`; next movement may extract only submit/query/cancel handlers.
 Latest recursive supplement: BE-002LH-02 extracted OKX demo provider handlers into `src-executor/provider_order_routes.rs`; next step is single leaf closeout.
+Latest recursive supplement: BE-002LH-03 closed `executor.runner.provider_order_routes` with `stop_split: true`; next step returns to runner parent residual judgment.

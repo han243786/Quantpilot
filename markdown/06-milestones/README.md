@@ -2219,3 +2219,4 @@
 | v4.16.0 / BE-002LG-01 | `v4.16.0/1856-root.executor.runner.parent_residual_judgment.provider_order_routes.md` | Added: `executor.runner` parent residual judgment selects `provider_order_routes` |
 | v4.16.0 / BE-002LH-01 | `v4.16.0/1857-root.executor.runner.provider_order_routes.baseline_plan.md` | Added: `provider_order_routes` baseline plan |
 | v4.16.0 / BE-002LH-02 | `v4.16.0/1858-root.executor.runner.provider_order_routes.extract_closeout.md` | Added: `provider_order_routes` handler extraction complete |
+| v4.16.0 / BE-002LH-03 | `v4.16.0/1859-root.executor.runner.provider_order_routes.single_leaf_closeout.md` | Added: `provider_order_routes` single leaf closeout stops split |
