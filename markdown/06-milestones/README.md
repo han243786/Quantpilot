@@ -2100,3 +2100,4 @@
 | v4.16.0 / BE-002IL-03 | `v4.16.0/1737-root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.entrypoint_runtime_config_assembly.single_leaf_closeout.md` | Added: `entrypoint_runtime_config_assembly` single leaf closeout stops split |
 | v4.16.0 / BE-002IM-01 | `v4.16.0/1738-root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.parent_closeout.md` | Added: `lowering_orchestrator_surface` parent closeout |
 | v4.16.0 / BE-002IN-01 | `v4.16.0/1739-root.contracts.quantscript.runtime_lowering.parent_residual_judgment.universe_lowering.md` | Added: `runtime_lowering` parent residual judgment selects `universe_lowering` |
+| v4.16.0 / BE-002IO-01 | `v4.16.0/1740-root.contracts.quantscript.runtime_lowering.universe_lowering.baseline_plan.md` | Added: `universe_lowering` precision baseline plan |
