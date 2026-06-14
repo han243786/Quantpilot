@@ -1,4 +1,4 @@
-use crate::{Diagnostic, Span};
+use crate::Diagnostic;
 use qrpc_core_ir::v4::{
     ExecutionCapabilityKind, MachineActionSpec, MachineCachePolicy, MachineEventSelector,
     MachineGraphEdge, MachineGraphEdgeActivation, MachineGraphRiskPlane, MachineMemoryField,
@@ -14,7 +14,12 @@ use std::collections::BTreeMap;
 mod audit_entrypoint;
 mod capability_type_parser;
 mod event_catalog_derivation;
+mod parser_utilities_diagnostics;
 mod runtime_handoff_builder;
+
+use parser_utilities_diagnostics::{
+    diag, prepare_lines, split_csv_words, split_words, PreparedLine,
+};
 
 pub const V4_QS_STATIC_AUDIT_REPORT_VERSION: &str = "quantpilot/qs-v4-static-audit-report/v1";
 pub const V4_QS_RUNTIME_HANDOFF_REPORT_VERSION: &str = "quantpilot/qs-v4-runtime-handoff-report/v1";
@@ -56,11 +61,6 @@ pub enum V4QsStaticAuditVerdict {
 struct ParsedV4QsStaticDocument {
     graph: V4MachineGraphContract,
     request: V4CompileTimeCapabilityRequest,
-}
-
-struct PreparedLine {
-    number: usize,
-    text: String,
 }
 
 struct ParsedMachine {
@@ -786,50 +786,6 @@ fn parse_execution_capability(input: &str) -> Result<ExecutionCapabilityKind, St
 
 fn parse_qs_type_ref(input: &str) -> Result<QsTypeRef, String> {
     capability_type_parser::parse_qs_type_ref(input)
-}
-
-fn prepare_lines(input: &str) -> Vec<PreparedLine> {
-    input
-        .lines()
-        .enumerate()
-        .filter_map(|(index, line)| {
-            let without_slash_comment = line.split_once("//").map(|(head, _)| head).unwrap_or(line);
-            let without_comment = without_slash_comment
-                .split_once('#')
-                .map(|(head, _)| head)
-                .unwrap_or(without_slash_comment);
-            let text = without_comment.trim();
-            if text.is_empty() {
-                None
-            } else {
-                Some(PreparedLine {
-                    number: index + 1,
-                    text: text.to_string(),
-                })
-            }
-        })
-        .collect()
-}
-
-fn split_words(input: &str) -> Vec<&str> {
-    input.split_whitespace().collect()
-}
-
-fn split_csv_words(input: &str) -> Vec<String> {
-    input
-        .split(',')
-        .map(str::trim)
-        .filter(|value| !value.is_empty())
-        .map(ToString::to_string)
-        .collect()
-}
-
-fn diag(code: &'static str, message: impl Into<String>, line_number: usize) -> Diagnostic {
-    Diagnostic::error(
-        code,
-        message,
-        Some(Span::module(format!("line {line_number}"))),
-    )
 }
 
 #[cfg(test)]
