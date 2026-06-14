@@ -15,7 +15,7 @@
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
   "last_committed_batch": "BE-002HL-01",
-  "last_committed_sha": "3d030b93",
+  "last_committed_sha": "55d8bce6",
   "current_parent": "root.contracts.quantscript",
   "current_step": "BE-002HM-01",
   "current_phase": "parent_residual_judgment",
@@ -309,7 +309,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.evaluator_normalization.parent_residual_judgment",
+  "next_recommended_child": "root.contracts.quantscript.evaluator_normalization.baseline_plan",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

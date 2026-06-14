@@ -9226,3 +9226,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.analysis_diagnostics.strategy_presence_gate stop_split: true`; terminal leaf control returned `STOP` over 119 LOC and 4 functions, so this strategy presence diagnostic leaf must not continue splitting unless a future developer proposal supplies stronger ownership evidence.
 **Latest state supplement (BE-002HL-01)**: `root.contracts.quantscript.analysis_diagnostics` parent closeout complete; next step: BE-002HM-01 quantscript parent_residual_judgment.
 `root.contracts.quantscript.analysis_diagnostics parent_closeout: true`; the residual parent is an 80-line coordinator with public analysis surface and a parent-owned `contains_emit_in_stmts` helper.
+**Latest state supplement (BE-002HM-01)**: `root.contracts.quantscript` parent residual judgment selected `evaluator_normalization`; next step: BE-002HN-01 baseline_plan.
+`root.contracts.quantscript.evaluator_normalization selected: true`; this child owns `quantscript/src/evaluator.rs` and must preserve the public `normalize_script_module` surface.
