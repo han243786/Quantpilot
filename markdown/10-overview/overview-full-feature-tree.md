@@ -6012,3 +6012,6 @@ Recursive boundary supplement: BE-002JV-01 `root.contracts.quantscript.v4_static
 - `markdown/06-milestones/v4.16.0/1795-root.contracts.quantscript.v4_static_audit.parent_residual_judgment.capability_type_parser.md` - v4.16.0 BE-002JV-01 v4_static_audit parent residual judgment selects capability_type_parser
 Recursive boundary supplement: BE-002JW-01 `root.contracts.quantscript.v4_static_audit.capability_type_parser` baseline frozen; next step: BE-002JW-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1796-root.contracts.quantscript.v4_static_audit.capability_type_parser.baseline_plan.md` - v4.16.0 BE-002JW-01 capability_type_parser baseline plan
+Recursive boundary supplement: BE-002JW-02 `root.contracts.quantscript.v4_static_audit.capability_type_parser` actual extraction complete; next step: BE-002JW-03 single_leaf_closeout.
+- `quantscript/src/v4_static_audit/capability_type_parser.rs` - Quantscript v4 static audit capability/type parser child
+- `markdown/06-milestones/v4.16.0/1797-root.contracts.quantscript.v4_static_audit.capability_type_parser.extract_closeout.md` - v4.16.0 BE-002JW-02 capability_type_parser extract closeout

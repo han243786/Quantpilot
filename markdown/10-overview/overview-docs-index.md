@@ -1804,3 +1804,4 @@
 | v4.16.0 / BE-002JU-03 | Added: `audit_entrypoint` single leaf closeout stops split |
 | v4.16.0 / BE-002JV-01 | Added: `v4_static_audit` parent residual judgment selects `capability_type_parser` |
 | v4.16.0 / BE-002JW-01 | Added: `capability_type_parser` baseline plan |
+| v4.16.0 / BE-002JW-02 | Added: `capability_type_parser` actual extraction complete |
