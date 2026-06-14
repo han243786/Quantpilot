@@ -14,10 +14,10 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002LD-02",
-  "last_committed_sha": "ffe310fa",
-  "current_parent": "root.executor",
-  "current_step": "BE-002LE-01",
+  "last_committed_batch": "BE-002LD-03",
+  "last_committed_sha": "bcf46911",
+  "current_parent": "root.executor.runner",
+  "current_step": "BE-002LG-01",
   "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
@@ -347,7 +347,7 @@
   "open_residuals": [
     "executor"
   ],
-  "next_recommended_child": "root.executor.parent_residual_judgment",
+  "next_recommended_child": "root.executor.runner.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

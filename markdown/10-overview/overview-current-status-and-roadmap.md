@@ -1942,3 +1942,5 @@ Latest recursive supplement: BE-002LC-01 selected `executor.state`; next baselin
 Latest recursive supplement: BE-002LD-01 froze `executor.state`; next movement may extract health/mode/params handlers into `state_routes`.
 Latest recursive supplement: BE-002LD-02 extracted `executor.state` route handlers into `src-executor/state_routes.rs`; next step is single leaf closeout.
 Latest recursive supplement: BE-002LD-03 closed `executor.state` with `stop_split: true`; next step returns to executor parent residual judgment.
+Latest recursive supplement: BE-002LE-01 selected `executor.runner`; next baseline freezes runner route extraction.
+Latest recursive supplement: BE-002LF-01 froze `executor.runner`; next step selects the first runner route child.

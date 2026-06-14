@@ -9548,3 +9548,7 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.state extracted: true`; `src-executor/state_routes.rs` now owns health, mode, and params route handlers while `src-executor/main.rs` keeps route registration and process startup.
 **Latest state supplement (BE-002LD-03)**: `root.executor.state` single leaf closeout complete; next step: BE-002LE-01 parent_residual_judgment.
 `root.executor.state stop_split: true`; terminal leaf control returned `STOP` with score 39 over a 257 LOC terminal-size state route child.
+**Latest state supplement (BE-002LE-01)**: `root.executor` parent residual judgment selected `runner`; next step: BE-002LF-01 baseline_plan.
+`root.executor.runner selected: true`; this child owns strategy lifecycle routes, runner pool, migration API, market feed, kline/SSE routes, OKX REST/demo provider routes, and runner support files.
+**Latest state supplement (BE-002LF-01)**: `root.executor.runner` baseline frozen; next step: BE-002LG-01 parent_residual_judgment.
+`root.executor.runner baseline_frozen: true`; child queue is `provider_order_routes`, `strategy_lifecycle_routes`, `market_stream_routes`, `v4_deploy_support`, and `runner_support_files`.

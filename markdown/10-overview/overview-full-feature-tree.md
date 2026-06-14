@@ -6138,3 +6138,7 @@ Recursive boundary supplement: BE-002LD-02 `root.executor.state` actual extracti
 - `markdown/06-milestones/v4.16.0/1852-root.executor.state.extract_closeout.md` - v4.16.0 BE-002LD-02 executor.state extract closeout
 Recursive boundary supplement: BE-002LD-03 `root.executor.state` single leaf closeout complete with `stop_split: true`; next step: executor parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1853-root.executor.state.single_leaf_closeout.md` - v4.16.0 BE-002LD-03 executor.state single leaf closeout
+Recursive boundary supplement: BE-002LE-01 `root.executor` parent residual judgment selected `runner`; next step: BE-002LF-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1854-root.executor.parent_residual_judgment.runner.md` - v4.16.0 BE-002LE-01 executor parent residual judgment selects runner
+Recursive boundary supplement: BE-002LF-01 `root.executor.runner` baseline frozen; next step: BE-002LG-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1855-root.executor.runner.baseline_plan.md` - v4.16.0 BE-002LF-01 executor.runner baseline plan
