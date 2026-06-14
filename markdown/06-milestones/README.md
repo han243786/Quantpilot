@@ -2059,3 +2059,4 @@
 | v4.16.0 / BE-002HO-01 | `v4.16.0/1696-root.contracts.quantscript.evaluator_normalization.parent_residual_judgment.folding_value_wave.md` | Added: `quantscript.evaluator_normalization` parent residual judgment selects `folding_value_wave` |
 | v4.16.0 / BE-002HP-01 | `v4.16.0/1697-root.contracts.quantscript.evaluator_normalization.folding_value_wave.baseline_plan.md` | Added: `quantscript.evaluator_normalization.folding_value_wave` baseline plan |
 | v4.16.0 / BE-002HP-02 | `v4.16.0/1698-root.contracts.quantscript.evaluator_normalization.folding_value_wave.extract_closeout.md` | Added: `quantscript.evaluator_normalization.folding_value_wave` actual extraction complete |
+| v4.16.0 / BE-002HP-03 | `v4.16.0/1699-root.contracts.quantscript.evaluator_normalization.folding_value_wave.single_leaf_closeout.md` | Added: `quantscript.evaluator_normalization.folding_value_wave` single leaf closeout stops split |

@@ -5795,3 +5795,5 @@ Recursive boundary supplement: BE-002HP-01 `root.contracts.quantscript.evaluator
 Recursive boundary supplement: BE-002HP-02 `root.contracts.quantscript.evaluator_normalization.folding_value_wave` actual extraction complete; next step: BE-002HP-03 single_leaf_closeout.
 - `quantscript/src/evaluator/folding_value_wave.rs` - QuantScript evaluator folding/value helper wave child
 - `markdown/06-milestones/v4.16.0/1698-root.contracts.quantscript.evaluator_normalization.folding_value_wave.extract_closeout.md` - v4.16.0 BE-002HP-02 quantscript evaluator_normalization folding_value_wave extract closeout
+Recursive boundary supplement: BE-002HP-03 `root.contracts.quantscript.evaluator_normalization.folding_value_wave` single leaf closeout complete with `stop_split: true`; next step: BE-002HQ-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1699-root.contracts.quantscript.evaluator_normalization.folding_value_wave.single_leaf_closeout.md` - v4.16.0 BE-002HP-03 quantscript evaluator_normalization folding_value_wave single leaf closeout

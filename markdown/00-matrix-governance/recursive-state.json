@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002HP-01",
-  "last_committed_sha": "39d01672",
+  "last_committed_batch": "BE-002HP-02",
+  "last_committed_sha": "27d9bdfc",
   "current_parent": "root.contracts.quantscript.evaluator_normalization.folding_value_wave",
-  "current_step": "BE-002HP-02",
-  "current_phase": "extract_closeout",
+  "current_step": "BE-002HP-03",
+  "current_phase": "single_leaf_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -298,7 +298,8 @@
     "contracts.quantscript.analysis_diagnostics.index_bounds_gate",
     "contracts.quantscript.analysis_diagnostics.dead_code_emit_gate",
     "contracts.quantscript.analysis_diagnostics.strategy_presence_gate",
-    "contracts.quantscript.analysis_diagnostics"
+    "contracts.quantscript.analysis_diagnostics",
+    "contracts.quantscript.evaluator_normalization.folding_value_wave"
   ],
   "open_residuals": [
     "contracts.quantscript.evaluator_normalization",
@@ -309,7 +310,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.evaluator_normalization.folding_value_wave.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.quantscript.evaluator_normalization.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
