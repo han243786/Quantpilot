@@ -1826,3 +1826,5 @@
 | v4.16.0 / BE-002KG-01 | Added: `state_block_parser` baseline plan |
 | v4.16.0 / BE-002KG-02 | Added: `state_block_parser` actual extraction complete |
 | v4.16.0 / BE-002KG-03 | Added: `state_block_parser` single leaf closeout stops split |
+| v4.16.0 / BE-002KH-01 | Added: `v4_static_audit` parent residual judgment selects `transition_parser` |
+| v4.16.0 / BE-002KI-01 | Added: `transition_parser` baseline plan |

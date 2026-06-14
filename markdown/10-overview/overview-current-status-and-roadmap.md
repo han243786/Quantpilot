@@ -1907,3 +1907,5 @@ Latest recursive supplement: BE-002KF-01 selected `contracts.quantscript.v4_stat
 Latest recursive supplement: BE-002KG-01 froze `contracts.quantscript.v4_static_audit.state_block_parser`; next movement may extract state line/block parsing and child-machine handoff helpers.
 Latest recursive supplement: BE-002KG-02 extracted `contracts.quantscript.v4_static_audit.state_block_parser`; next step is single leaf closeout.
 Latest recursive supplement: BE-002KG-03 closed `contracts.quantscript.v4_static_audit.state_block_parser` with `stop_split: true`; next step returns to v4_static_audit parent residual judgment.
+Latest recursive supplement: BE-002KH-01 selected `contracts.quantscript.v4_static_audit.transition_parser`; next baseline freezes transition line parsing.
+Latest recursive supplement: BE-002KI-01 froze `contracts.quantscript.v4_static_audit.transition_parser`; next movement may extract only transition grammar parsing and `MachineTransition` assembly.
