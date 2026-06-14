@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002IG-02",
-  "last_committed_sha": "bb72d4f1",
-  "current_parent": "root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness.rebalance_lowering_tests",
-  "current_step": "BE-002IG-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002IG-03",
+  "last_committed_sha": "fdd45e76",
+  "current_parent": "root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness",
+  "current_step": "BE-002IH-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -315,7 +315,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness.parent_residual_judgment",
+  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness.basic_runtime_smoke_tests.baseline_plan",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
