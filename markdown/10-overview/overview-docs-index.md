@@ -1756,3 +1756,4 @@
 | v4.16.0 / BE-002IS-01 | Added: `universe_construct_expansion` baseline plan |
 | v4.16.0 / BE-002IS-02 | Added: `universe_construct_expansion` actual extraction complete |
 | v4.16.0 / BE-002IS-03 | Added: `universe_construct_expansion` single leaf closeout stops split |
+| v4.16.0 / BE-002IT-01 | Added: `universe_lowering` parent closeout |

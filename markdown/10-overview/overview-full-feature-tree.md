@@ -5907,3 +5907,5 @@ Recursive boundary supplement: BE-002IS-02 `root.contracts.quantscript.runtime_l
 - `markdown/06-milestones/v4.16.0/1747-root.contracts.quantscript.runtime_lowering.universe_lowering.universe_construct_expansion.extract_closeout.md` - v4.16.0 BE-002IS-02 universe_construct_expansion extract closeout
 Recursive boundary supplement: BE-002IS-03 `root.contracts.quantscript.runtime_lowering.universe_lowering.universe_construct_expansion` single leaf closeout complete with `stop_split: true`; next step: universe_lowering parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1748-root.contracts.quantscript.runtime_lowering.universe_lowering.universe_construct_expansion.single_leaf_closeout.md` - v4.16.0 BE-002IS-03 universe_construct_expansion single leaf closeout
+Recursive boundary supplement: BE-002IT-01 `root.contracts.quantscript.runtime_lowering.universe_lowering` parent closeout complete; next step: runtime_lowering parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1749-root.contracts.quantscript.runtime_lowering.universe_lowering.parent_closeout.md` - v4.16.0 BE-002IT-01 universe_lowering parent closeout
