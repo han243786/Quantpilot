@@ -6096,3 +6096,5 @@ Recursive boundary supplement: BE-002KO-01 `root.contracts.quantscript.v4_static
 Recursive boundary supplement: BE-002KO-02 `root.contracts.quantscript.v4_static_audit.risk_plane_parser` actual extraction complete; next step: BE-002KO-03 single_leaf_closeout.
 - `quantscript/src/v4_static_audit/risk_plane_parser.rs` - Quantscript v4 static audit risk plane parser child
 - `markdown/06-milestones/v4.16.0/1833-root.contracts.quantscript.v4_static_audit.risk_plane_parser.extract_closeout.md` - v4.16.0 BE-002KO-02 risk_plane_parser extract closeout
+Recursive boundary supplement: BE-002KO-03 `root.contracts.quantscript.v4_static_audit.risk_plane_parser` single leaf closeout complete with `stop_split: true`; next step: v4_static_audit parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1834-root.contracts.quantscript.v4_static_audit.risk_plane_parser.single_leaf_closeout.md` - v4.16.0 BE-002KO-03 risk_plane_parser single leaf closeout

@@ -2194,3 +2194,4 @@
 | v4.16.0 / BE-002KN-01 | `v4.16.0/1831-root.contracts.quantscript.v4_static_audit.parent_residual_judgment.risk_plane_parser.md` | Added: `v4_static_audit` parent residual judgment selects `risk_plane_parser` |
 | v4.16.0 / BE-002KO-01 | `v4.16.0/1832-root.contracts.quantscript.v4_static_audit.risk_plane_parser.baseline_plan.md` | Added: `risk_plane_parser` baseline plan |
 | v4.16.0 / BE-002KO-02 | `v4.16.0/1833-root.contracts.quantscript.v4_static_audit.risk_plane_parser.extract_closeout.md` | Added: `risk_plane_parser` actual extraction complete |
+| v4.16.0 / BE-002KO-03 | `v4.16.0/1834-root.contracts.quantscript.v4_static_audit.risk_plane_parser.single_leaf_closeout.md` | Added: `risk_plane_parser` single leaf closeout stops split |

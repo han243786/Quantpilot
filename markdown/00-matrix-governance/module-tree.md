@@ -9508,3 +9508,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.v4_static_audit.risk_plane_parser baseline_frozen: true`; approved movement is limited to `parse_risk_plane` into a child module while preserving the parent wrapper and graph-level defaults.
 **Latest state supplement (BE-002KO-02)**: `root.contracts.quantscript.v4_static_audit.risk_plane_parser` actual extraction complete; next step: BE-002KO-03 single_leaf_closeout.
 `root.contracts.quantscript.v4_static_audit.risk_plane_parser extracted: true`; `quantscript/src/v4_static_audit/risk_plane_parser.rs` now owns risk-plane declaration parsing, machine id expansion, priority validation, and `MachineGraphRiskPlane` assembly.
+**Latest state supplement (BE-002KO-03)**: `root.contracts.quantscript.v4_static_audit.risk_plane_parser` single leaf closeout complete; next step: BE-002KP-01 parent_residual_judgment.
+`root.contracts.quantscript.v4_static_audit.risk_plane_parser stop_split: true`; terminal leaf control returned `STOP` with score 24 over a 39 LOC micro parser child. Further splitting would fragment one cohesive risk-plane grammar rule.
