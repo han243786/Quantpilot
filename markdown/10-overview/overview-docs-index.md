@@ -1733,3 +1733,4 @@
 | v4.16.0 / BE-002IE-02 | Added: `integration_test_harness.spread_lowering_tests` actual extraction complete |
 | v4.16.0 / BE-002IE-03 | Added: `integration_test_harness.spread_lowering_tests` single leaf closeout stops split |
 | v4.16.0 / BE-002IF-01 | Added: `integration_test_harness` parent residual judgment selects `rebalance_lowering_tests` |
+| v4.16.0 / BE-002IG-01 | Added: `integration_test_harness.rebalance_lowering_tests` baseline plan |
