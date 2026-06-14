@@ -1744,3 +1744,4 @@
 | v4.16.0 / BE-002IK-01 | Added: `lowering_orchestrator_surface` parent residual judgment selects `entrypoint_runtime_config_assembly` |
 | v4.16.0 / BE-002IL-01 | Added: `entrypoint_runtime_config_assembly` baseline plan |
 | v4.16.0 / BE-002IL-02 | Added: `entrypoint_runtime_config_assembly` actual extraction complete |
+| v4.16.0 / BE-002IL-03 | Added: `entrypoint_runtime_config_assembly` single leaf closeout stops split |
