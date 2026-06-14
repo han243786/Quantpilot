@@ -1714,3 +1714,4 @@
 | v4.16.0 / BE-002HS-01 | Added: `quantscript.evaluator_normalization` parent closeout |
 | v4.16.0 / BE-002HT-01 | Added: `quantscript` parent residual judgment selects `runtime_lowering` |
 | v4.16.0 / BE-002HU-01 | Added: `quantscript.runtime_lowering` baseline plan |
+| v4.16.0 / BE-002HV-01 | Added: `quantscript.runtime_lowering` parent residual judgment selects `lowering_orchestrator_surface` |
