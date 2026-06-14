@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002KG-01",
-  "last_committed_sha": "155ac5c5",
-  "current_parent": "root.contracts.quantscript.v4_static_audit.state_block_parser",
-  "current_step": "BE-002KG-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002KG-02",
+  "last_committed_sha": "1daad2d7",
+  "current_parent": "root.contracts.quantscript.v4_static_audit",
+  "current_step": "BE-002KH-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -329,7 +329,8 @@
     "contracts.quantscript.v4_static_audit.event_catalog_derivation",
     "contracts.quantscript.v4_static_audit.parser_utilities_diagnostics",
     "contracts.quantscript.v4_static_audit.static_document_parser",
-    "contracts.quantscript.v4_static_audit.machine_block_parser"
+    "contracts.quantscript.v4_static_audit.machine_block_parser",
+    "contracts.quantscript.v4_static_audit.state_block_parser"
   ],
   "open_residuals": [
     "contracts.quantscript.v4_static_audit",
@@ -338,7 +339,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.v4_static_audit.state_block_parser.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.quantscript.v4_static_audit.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
