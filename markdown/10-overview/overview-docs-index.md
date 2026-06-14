@@ -1704,3 +1704,4 @@
 | v4.16.0 / BE-002HN-01 | Added: `quantscript.evaluator_normalization` baseline plan |
 | v4.16.0 / BE-002HN-02 | Added: `quantscript.evaluator_normalization` module shell extraction |
 | v4.16.0 / BE-002HO-01 | Added: `quantscript.evaluator_normalization` parent residual judgment selects `folding_value_wave` |
+| v4.16.0 / BE-002HP-01 | Added: `quantscript.evaluator_normalization.folding_value_wave` baseline plan |
