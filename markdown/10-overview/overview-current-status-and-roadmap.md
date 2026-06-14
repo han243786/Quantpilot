@@ -1770,3 +1770,4 @@ Latest recursive supplement: BE-002HE-02 extracted `contracts.quantscript.analys
 Latest recursive supplement: BE-002HE-03 closed `contracts.quantscript.analysis_diagnostics.fetch_lookback_warning_gate` with `stop_split: true`; next step returns to analysis_diagnostics parent residual judgment.
 Latest recursive supplement: BE-002HF-01 selected `contracts.quantscript.analysis_diagnostics.index_bounds_gate`; next baseline freezes data source lookback map and QS0404 index-bound diagnostics.
 Latest recursive supplement: BE-002HG-01 froze `contracts.quantscript.analysis_diagnostics.index_bounds_gate`; next movement may extract QS0404 index-bound diagnostics only.
+Latest recursive supplement: BE-002HG-02 extracted `contracts.quantscript.analysis_diagnostics.index_bounds_gate`; next step is single leaf closeout and split judgment.

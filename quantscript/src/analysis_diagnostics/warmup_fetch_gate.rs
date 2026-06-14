@@ -185,7 +185,7 @@ fn collect_fetch_lookbacks_from_expr(expr: &Expr, out: &mut Vec<usize>) {
     }
 }
 
-pub(super) fn fetch_lookback(expr: &Expr) -> Option<usize> {
+pub(in crate::analysis_diagnostics) fn fetch_lookback(expr: &Expr) -> Option<usize> {
     let Expr::Call { callee, args } = expr else {
         return None;
     };

@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002HF-01",
-  "last_committed_sha": "2a1e1f0c",
+  "last_committed_batch": "BE-002HG-01",
+  "last_committed_sha": "dfbcd910",
   "current_parent": "root.contracts.quantscript.analysis_diagnostics.index_bounds_gate",
-  "current_step": "BE-002HG-01",
-  "current_phase": "baseline_plan",
+  "current_step": "BE-002HG-02",
+  "current_phase": "actual_extraction",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -294,7 +294,8 @@
     "contracts.quantscript.analysis_diagnostics.warmup_fetch_gate",
     "contracts.quantscript.analysis_diagnostics.indirect_recursion_gate",
     "contracts.quantscript.analysis_diagnostics.symbol_whitelist_gate",
-    "contracts.quantscript.analysis_diagnostics.fetch_lookback_warning_gate"
+    "contracts.quantscript.analysis_diagnostics.fetch_lookback_warning_gate",
+    "contracts.quantscript.analysis_diagnostics.index_bounds_gate"
   ],
   "open_residuals": [
     "contracts.quantscript.analysis_diagnostics",
@@ -306,7 +307,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.analysis_diagnostics.index_bounds_gate.actual_extraction",
+  "next_recommended_child": "root.contracts.quantscript.analysis_diagnostics.index_bounds_gate.single_leaf_closeout",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
