@@ -6169,3 +6169,5 @@ Recursive boundary supplement: BE-002LL-02 `root.executor.runner.market_stream_r
 - `markdown/06-milestones/v4.16.0/1866-root.executor.runner.market_stream_routes.extract_closeout.md` - v4.16.0 BE-002LL-02 market_stream_routes extract closeout
 Recursive boundary supplement: BE-002LL-03 `root.executor.runner.market_stream_routes` single leaf closeout complete with `stop_split: true`; next step: runner parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1867-root.executor.runner.market_stream_routes.single_leaf_closeout.md` - v4.16.0 BE-002LL-03 market_stream_routes single leaf closeout
+Recursive boundary supplement: BE-002LM-01 `root.executor.runner` parent residual judgment selected `v4_deploy_support`; next step: BE-002LN-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1868-root.executor.runner.parent_residual_judgment.v4_deploy_support.md` - v4.16.0 BE-002LM-01 executor.runner parent residual judgment selects v4_deploy_support

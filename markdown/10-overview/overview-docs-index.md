@@ -1875,3 +1875,4 @@
 | v4.16.0 / BE-002LL-01 | Added: `market_stream_routes` baseline plan |
 | v4.16.0 / BE-002LL-02 | Added: `market_stream_routes` handler extraction complete |
 | v4.16.0 / BE-002LL-03 | Added: `market_stream_routes` single leaf closeout stops split |
+| v4.16.0 / BE-002LM-01 | Added: `executor.runner` parent residual judgment selects `v4_deploy_support` |
