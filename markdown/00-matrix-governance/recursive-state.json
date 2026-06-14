@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002HY-01",
-  "last_committed_sha": "90dd51d0",
+  "last_committed_batch": "BE-002HY-02",
+  "last_committed_sha": "5dfbfb0f",
   "current_parent": "root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface",
-  "current_step": "BE-002HY-02",
-  "current_phase": "actual_extraction",
+  "current_step": "BE-002HY-03",
+  "current_phase": "single_leaf_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -301,7 +301,8 @@
     "contracts.quantscript.analysis_diagnostics",
     "contracts.quantscript.evaluator_normalization.folding_value_wave",
     "contracts.quantscript.evaluator_normalization.helper_inline_execution_wave",
-    "contracts.quantscript.evaluator_normalization"
+    "contracts.quantscript.evaluator_normalization",
+    "contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface"
   ],
   "open_residuals": [
     "contracts.quantscript.runtime_lowering",
@@ -311,7 +312,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
