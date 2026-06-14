@@ -2064,3 +2064,4 @@
 | v4.16.0 / BE-002HR-01 | `v4.16.0/1701-root.contracts.quantscript.evaluator_normalization.helper_inline_execution_wave.baseline_plan.md` | Added: `quantscript.evaluator_normalization.helper_inline_execution_wave` baseline plan |
 | v4.16.0 / BE-002HR-02 | `v4.16.0/1702-root.contracts.quantscript.evaluator_normalization.helper_inline_execution_wave.extract_closeout.md` | Added: `quantscript.evaluator_normalization.helper_inline_execution_wave` actual extraction complete |
 | v4.16.0 / BE-002HR-03 | `v4.16.0/1703-root.contracts.quantscript.evaluator_normalization.helper_inline_execution_wave.single_leaf_closeout.md` | Added: `quantscript.evaluator_normalization.helper_inline_execution_wave` single leaf closeout stops split |
+| v4.16.0 / BE-002HS-01 | `v4.16.0/1704-root.contracts.quantscript.evaluator_normalization.parent_closeout.md` | Added: `quantscript.evaluator_normalization` parent closeout |
