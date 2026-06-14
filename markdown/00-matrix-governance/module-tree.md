@@ -9494,3 +9494,7 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.v4_static_audit.memory_parser extracted: true`; `quantscript/src/v4_static_audit/memory_parser.rs` now owns memory field declaration parsing and `MachineMemoryField` assembly while type parsing remains reached through the parent wrapper.
 **Latest state supplement (BE-002KK-03)**: `root.contracts.quantscript.v4_static_audit.memory_parser` single leaf closeout complete; next step: BE-002KL-01 parent_residual_judgment.
 `root.contracts.quantscript.v4_static_audit.memory_parser stop_split: true`; terminal leaf control returned `STOP` with score 24 over a 33 LOC micro parser child. Further splitting would only fragment one memory grammar rule.
+**Latest state supplement (BE-002KL-01)**: `root.contracts.quantscript.v4_static_audit` parent residual judgment selected `edge_parser`; next step: BE-002KM-01 baseline_plan.
+`root.contracts.quantscript.v4_static_audit.edge_parser selected: true`; this child owns graph edge declaration parsing and `MachineGraphEdge` assembly. State-group, risk-plane, machine-template, DTO, and test owners remain outside.
+**Latest state supplement (BE-002KM-01)**: `root.contracts.quantscript.v4_static_audit.edge_parser` baseline frozen; next step: BE-002KM-02 actual_extraction.
+`root.contracts.quantscript.v4_static_audit.edge_parser baseline_frozen: true`; approved movement is limited to `parse_edge` into a child module while preserving the parent wrapper and edge defaults.

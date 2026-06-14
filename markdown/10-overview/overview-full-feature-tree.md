@@ -6080,3 +6080,7 @@ Recursive boundary supplement: BE-002KK-02 `root.contracts.quantscript.v4_static
 - `markdown/06-milestones/v4.16.0/1825-root.contracts.quantscript.v4_static_audit.memory_parser.extract_closeout.md` - v4.16.0 BE-002KK-02 memory_parser extract closeout
 Recursive boundary supplement: BE-002KK-03 `root.contracts.quantscript.v4_static_audit.memory_parser` single leaf closeout complete with `stop_split: true`; next step: v4_static_audit parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1826-root.contracts.quantscript.v4_static_audit.memory_parser.single_leaf_closeout.md` - v4.16.0 BE-002KK-03 memory_parser single leaf closeout
+Recursive boundary supplement: BE-002KL-01 `root.contracts.quantscript.v4_static_audit` parent residual judgment selected `edge_parser`; next step: BE-002KM-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1827-root.contracts.quantscript.v4_static_audit.parent_residual_judgment.edge_parser.md` - v4.16.0 BE-002KL-01 v4_static_audit parent residual judgment selects edge_parser
+Recursive boundary supplement: BE-002KM-01 `root.contracts.quantscript.v4_static_audit.edge_parser` baseline frozen; next step: BE-002KM-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1828-root.contracts.quantscript.v4_static_audit.edge_parser.baseline_plan.md` - v4.16.0 BE-002KM-01 edge_parser baseline plan
