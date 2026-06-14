@@ -14,8 +14,8 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002JM-03",
-  "last_committed_sha": "b80a279",
+  "last_committed_batch": "BE-002JN-01",
+  "last_committed_sha": "2012e68a",
   "current_parent": "root.contracts.quantscript.runtime_lowering",
   "current_step": "BE-002JO-01",
   "current_phase": "parent_residual_judgment",
