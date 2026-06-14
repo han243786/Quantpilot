@@ -1836,3 +1836,4 @@
 | v4.16.0 / BE-002KK-03 | Added: `memory_parser` single leaf closeout stops split |
 | v4.16.0 / BE-002KL-01 | Added: `v4_static_audit` parent residual judgment selects `edge_parser` |
 | v4.16.0 / BE-002KM-01 | Added: `edge_parser` baseline plan |
+| v4.16.0 / BE-002KM-02 | Added: `edge_parser` actual extraction complete |

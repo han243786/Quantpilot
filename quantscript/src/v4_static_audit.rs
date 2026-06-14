@@ -1,15 +1,14 @@
 use crate::Diagnostic;
 use qrpc_core_ir::v4::{
-    ExecutionCapabilityKind, MachineEventCatalog, MachineGraphEdge, MachineGraphEdgeActivation,
-    MachineGraphRiskPlane, MachineMemoryField, MachineState, MachineTemplateKind,
-    MachineTransition, QsTypeRef, RuntimeTradingMode, StateGroup, TransitionConflictPolicy,
-    V4CompileTimeCapabilityReport, V4CompileTimeCapabilityRequest, V4MachineGraphContract,
-    V4StaticContractBundle,
+    ExecutionCapabilityKind, MachineEventCatalog, MachineGraphEdge, MachineGraphRiskPlane,
+    MachineMemoryField, MachineState, MachineTemplateKind, MachineTransition, QsTypeRef,
+    RuntimeTradingMode, StateGroup, TransitionConflictPolicy, V4CompileTimeCapabilityReport,
+    V4CompileTimeCapabilityRequest, V4MachineGraphContract, V4StaticContractBundle,
 };
-use std::collections::BTreeMap;
 
 mod audit_entrypoint;
 mod capability_type_parser;
+mod edge_parser;
 mod event_catalog_derivation;
 mod machine_block_parser;
 mod memory_parser;
@@ -143,25 +142,8 @@ fn parse_edge(
     edge_index: usize,
     line_number: usize,
 ) -> Result<MachineGraphEdge, Diagnostic> {
-    let parts = split_words(input);
-    if parts.len() != 5 || parts[1] != "->" || parts[3] != "on" {
-        return Err(diag(
-            "QSV4120",
-            "edge 语法必须是 `edge <source> -> <target> on <event>`",
-            line_number,
-        ));
-    }
-    Ok(MachineGraphEdge {
-        edge_id: format!("edge.{edge_index}.{}.{}", parts[0], parts[2]),
-        source_machine_id: parts[0].to_string(),
-        target_machine_id: parts[2].to_string(),
-        event_type: parts[4].to_string(),
-        activation: MachineGraphEdgeActivation::Always,
-        required: true,
-        metadata: BTreeMap::new(),
-    })
+    edge_parser::parse_edge(input, edge_index, line_number)
 }
-
 fn parse_risk_plane(input: &str, line_number: usize) -> Result<MachineGraphRiskPlane, Diagnostic> {
     let parts = split_words(input);
     if parts.is_empty() {

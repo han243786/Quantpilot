@@ -9498,3 +9498,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.v4_static_audit.edge_parser selected: true`; this child owns graph edge declaration parsing and `MachineGraphEdge` assembly. State-group, risk-plane, machine-template, DTO, and test owners remain outside.
 **Latest state supplement (BE-002KM-01)**: `root.contracts.quantscript.v4_static_audit.edge_parser` baseline frozen; next step: BE-002KM-02 actual_extraction.
 `root.contracts.quantscript.v4_static_audit.edge_parser baseline_frozen: true`; approved movement is limited to `parse_edge` into a child module while preserving the parent wrapper and edge defaults.
+**Latest state supplement (BE-002KM-02)**: `root.contracts.quantscript.v4_static_audit.edge_parser` actual extraction complete; next step: BE-002KM-03 single_leaf_closeout.
+`root.contracts.quantscript.v4_static_audit.edge_parser extracted: true`; `quantscript/src/v4_static_audit/edge_parser.rs` now owns graph edge declaration parsing and `MachineGraphEdge` assembly while risk-plane parsing remains parent-owned.
