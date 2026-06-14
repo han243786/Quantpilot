@@ -1811,3 +1811,4 @@
 | v4.16.0 / BE-002JY-02 | Added: `event_catalog_derivation` actual extraction complete |
 | v4.16.0 / BE-002JY-03 | Added: `event_catalog_derivation` single leaf closeout stops split |
 | v4.16.0 / BE-002JZ-01 | Added: `v4_static_audit` parent residual judgment selects `parser_utilities_diagnostics` |
+| v4.16.0 / BE-002KA-01 | Added: `parser_utilities_diagnostics` baseline plan |

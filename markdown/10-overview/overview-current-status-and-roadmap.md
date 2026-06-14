@@ -1892,3 +1892,4 @@ Latest recursive supplement: BE-002JY-01 froze `contracts.quantscript.v4_static_
 Latest recursive supplement: BE-002JY-02 extracted `contracts.quantscript.v4_static_audit.event_catalog_derivation`; next step is single leaf closeout.
 Latest recursive supplement: BE-002JY-03 closed `contracts.quantscript.v4_static_audit.event_catalog_derivation` with `stop_split: true`; next step returns to v4_static_audit parent residual judgment.
 Latest recursive supplement: BE-002JZ-01 selected `contracts.quantscript.v4_static_audit.parser_utilities_diagnostics`; next baseline freezes shared parser utility ownership.
+Latest recursive supplement: BE-002KA-01 froze `contracts.quantscript.v4_static_audit.parser_utilities_diagnostics`; next movement may extract parser utility helpers.
