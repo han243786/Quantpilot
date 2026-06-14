@@ -1898,3 +1898,4 @@ Latest recursive supplement: BE-002KA-03 closed `contracts.quantscript.v4_static
 Latest recursive supplement: BE-002KB-01 selected `contracts.quantscript.v4_static_audit.static_document_parser`; next baseline freezes top-level v4_strategy parsing.
 Latest recursive supplement: BE-002KC-01 froze `contracts.quantscript.v4_static_audit.static_document_parser`; next movement may extract the top-level document parser.
 Latest recursive supplement: BE-002KC-02 extracted `contracts.quantscript.v4_static_audit.static_document_parser`; next step is single leaf closeout.
+Latest recursive supplement: BE-002KC-03 closed `contracts.quantscript.v4_static_audit.static_document_parser` with `stop_split: true`; next step returns to v4_static_audit parent residual judgment.

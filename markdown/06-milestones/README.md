@@ -2170,3 +2170,4 @@
 | v4.16.0 / BE-002KB-01 | `v4.16.0/1807-root.contracts.quantscript.v4_static_audit.parent_residual_judgment.static_document_parser.md` | Added: `v4_static_audit` parent residual judgment selects `static_document_parser` |
 | v4.16.0 / BE-002KC-01 | `v4.16.0/1808-root.contracts.quantscript.v4_static_audit.static_document_parser.baseline_plan.md` | Added: `static_document_parser` baseline plan |
 | v4.16.0 / BE-002KC-02 | `v4.16.0/1809-root.contracts.quantscript.v4_static_audit.static_document_parser.extract_closeout.md` | Added: `static_document_parser` actual extraction complete |
+| v4.16.0 / BE-002KC-03 | `v4.16.0/1810-root.contracts.quantscript.v4_static_audit.static_document_parser.single_leaf_closeout.md` | Added: `static_document_parser` single leaf closeout stops split |
