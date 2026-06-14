@@ -6173,3 +6173,6 @@ Recursive boundary supplement: BE-002LM-01 `root.executor.runner` parent residua
 - `markdown/06-milestones/v4.16.0/1868-root.executor.runner.parent_residual_judgment.v4_deploy_support.md` - v4.16.0 BE-002LM-01 executor.runner parent residual judgment selects v4_deploy_support
 Recursive boundary supplement: BE-002LN-01 `root.executor.runner.v4_deploy_support` baseline frozen; next step: BE-002LN-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1869-root.executor.runner.v4_deploy_support.baseline_plan.md` - v4.16.0 BE-002LN-01 v4_deploy_support baseline plan
+Recursive boundary supplement: BE-002LN-02 `root.executor.runner.v4_deploy_support` actual extraction complete; next step: BE-002LN-03 single_leaf_closeout.
+- `src-executor/v4_deploy_support.rs` - Executor v4 deploy preflight and static bundle helper child
+- `markdown/06-milestones/v4.16.0/1870-root.executor.runner.v4_deploy_support.extract_closeout.md` - v4.16.0 BE-002LN-02 v4_deploy_support extract closeout

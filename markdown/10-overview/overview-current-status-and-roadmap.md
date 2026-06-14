@@ -1958,3 +1958,4 @@ Latest recursive supplement: BE-002LL-02 extracted kline/SSE handlers into `src-
 Latest recursive supplement: BE-002LL-03 closed `executor.runner.market_stream_routes` with `stop_split: true`; next step returns to runner parent residual judgment.
 Latest recursive supplement: BE-002LM-01 selected `executor.runner.v4_deploy_support`; next baseline freezes v4 deploy/preflight helper extraction.
 Latest recursive supplement: BE-002LN-01 froze `v4_deploy_support`; next movement may extract v4 deploy/preflight/static bundle helpers.
+Latest recursive supplement: BE-002LN-02 extracted v4 deploy/preflight/static bundle helpers into `src-executor/v4_deploy_support.rs`; next step is single leaf closeout.
