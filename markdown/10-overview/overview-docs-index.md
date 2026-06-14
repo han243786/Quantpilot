@@ -1785,3 +1785,4 @@
 | v4.16.0 / BE-002JJ-01 | Added: `manual_formula_fallback` parent residual judgment selects `manual_macd_formula` |
 | v4.16.0 / BE-002JK-01 | Added: `manual_macd_formula` baseline plan |
 | v4.16.0 / BE-002JK-02 | Added: `manual_macd_formula` actual extraction complete |
+| v4.16.0 / BE-002JK-03 | Added: `manual_macd_formula` single leaf closeout stops split |

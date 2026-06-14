@@ -1866,3 +1866,4 @@ Latest recursive supplement: BE-002JI-03 closed `contracts.quantscript.runtime_l
 Latest recursive supplement: BE-002JJ-01 selected `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_macd_formula`; next baseline freezes MACD line/histogram and EMA pair recognition only.
 Latest recursive supplement: BE-002JK-01 froze `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_macd_formula`; next movement may extract MACD line/histogram and EMA pair recognition.
 Latest recursive supplement: BE-002JK-02 extracted `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_macd_formula`; next step is single leaf closeout.
+Latest recursive supplement: BE-002JK-03 closed `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_macd_formula` with `stop_split: true`; next step returns to manual_formula_fallback parent residual judgment.

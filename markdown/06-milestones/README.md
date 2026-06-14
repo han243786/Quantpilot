@@ -2138,3 +2138,4 @@
 | v4.16.0 / BE-002JJ-01 | `v4.16.0/1775-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.parent_residual_judgment.manual_macd_formula.md` | Added: `manual_formula_fallback` parent residual judgment selects `manual_macd_formula` |
 | v4.16.0 / BE-002JK-01 | `v4.16.0/1776-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_macd_formula.baseline_plan.md` | Added: `manual_macd_formula` baseline plan |
 | v4.16.0 / BE-002JK-02 | `v4.16.0/1777-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_macd_formula.extract_closeout.md` | Added: `manual_macd_formula` actual extraction complete |
+| v4.16.0 / BE-002JK-03 | `v4.16.0/1778-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_macd_formula.single_leaf_closeout.md` | Added: `manual_macd_formula` single leaf closeout stops split |
