@@ -2069,3 +2069,4 @@
 | v4.16.0 / BE-002HU-01 | `v4.16.0/1706-root.contracts.quantscript.runtime_lowering.baseline_plan.md` | Added: `quantscript.runtime_lowering` baseline plan |
 | v4.16.0 / BE-002HV-01 | `v4.16.0/1707-root.contracts.quantscript.runtime_lowering.parent_residual_judgment.lowering_orchestrator_surface.md` | Added: `quantscript.runtime_lowering` parent residual judgment selects `lowering_orchestrator_surface` |
 | v4.16.0 / BE-002HW-01 | `v4.16.0/1708-root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.baseline_plan.md` | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface` baseline plan |
+| v4.16.0 / BE-002HX-01 | `v4.16.0/1709-root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.parent_residual_judgment.profile_detection_surface.md` | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface` parent residual judgment selects `profile_detection_surface` |
