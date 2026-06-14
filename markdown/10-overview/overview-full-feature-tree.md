@@ -5933,3 +5933,5 @@ Recursive boundary supplement: BE-002IZ-03 `root.contracts.quantscript.runtime_l
 - `markdown/06-milestones/v4.16.0/1759-root.contracts.quantscript.runtime_lowering.intent_inference.single_indicator_intent_inference.single_leaf_closeout.md` - v4.16.0 BE-002IZ-03 single_indicator_intent_inference single leaf closeout
 Recursive boundary supplement: BE-002JA-01 `root.contracts.quantscript.runtime_lowering.intent_inference` parent residual judgment selected `spread_intent_inference`; next step: BE-002JB-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1760-root.contracts.quantscript.runtime_lowering.intent_inference.parent_residual_judgment.spread_intent_inference.md` - v4.16.0 BE-002JA-01 intent_inference parent residual judgment selects spread_intent_inference
+Recursive boundary supplement: BE-002JB-01 `root.contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference` baseline frozen; next step: BE-002JB-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1761-root.contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference.baseline_plan.md` - v4.16.0 BE-002JB-01 spread_intent_inference baseline plan
