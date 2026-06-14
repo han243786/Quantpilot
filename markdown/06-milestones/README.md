@@ -2142,3 +2142,4 @@
 | v4.16.0 / BE-002JL-01 | `v4.16.0/1779-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.parent_residual_judgment.manual_zscore_formula.md` | Added: `manual_formula_fallback` parent residual judgment selects `manual_zscore_formula` |
 | v4.16.0 / BE-002JM-01 | `v4.16.0/1780-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_zscore_formula.baseline_plan.md` | Added: `manual_zscore_formula` baseline plan |
 | v4.16.0 / BE-002JM-02 | `v4.16.0/1781-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_zscore_formula.extract_closeout.md` | Added: `manual_zscore_formula` actual extraction complete |
+| v4.16.0 / BE-002JM-03 | `v4.16.0/1782-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_zscore_formula.single_leaf_closeout.md` | Added: `manual_zscore_formula` single leaf closeout stops split |
