@@ -1727,3 +1727,4 @@
 | v4.16.0 / BE-002IB-01 | Added: `integration_test_harness` parent residual judgment selects `manual_formula_tests` |
 | v4.16.0 / BE-002IC-01 | Added: `integration_test_harness.manual_formula_tests` baseline plan |
 | v4.16.0 / BE-002IC-02 | Added: `integration_test_harness.manual_formula_tests` actual extraction complete |
+| v4.16.0 / BE-002IC-03 | Added: `integration_test_harness.manual_formula_tests` single leaf closeout stops split |
