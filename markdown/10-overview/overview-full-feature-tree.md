@@ -5747,3 +5747,6 @@ Recursive boundary supplement: BE-002HD-01 `root.contracts.quantscript.analysis_
 - `markdown/06-milestones/v4.16.0/1676-root.contracts.quantscript.analysis_diagnostics.parent_residual_judgment.fetch_lookback_warning_gate.md` - v4.16.0 BE-002HD-01 quantscript analysis_diagnostics parent residual judgment selects fetch_lookback_warning_gate
 Recursive boundary supplement: BE-002HE-01 `root.contracts.quantscript.analysis_diagnostics.fetch_lookback_warning_gate` baseline frozen; next step: BE-002HE-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1677-root.contracts.quantscript.analysis_diagnostics.fetch_lookback_warning_gate.baseline_plan.md` - v4.16.0 BE-002HE-01 quantscript analysis_diagnostics fetch_lookback_warning_gate baseline plan
+Recursive boundary supplement: BE-002HE-02 `root.contracts.quantscript.analysis_diagnostics.fetch_lookback_warning_gate` actual extraction complete; next step: BE-002HE-03 single_leaf_closeout.
+- `quantscript/src/analysis_diagnostics/fetch_lookback_warning_gate.rs` - QuantScript fetch lookback warning gate child
+- `markdown/06-milestones/v4.16.0/1678-root.contracts.quantscript.analysis_diagnostics.fetch_lookback_warning_gate.extract_closeout.md` - v4.16.0 BE-002HE-02 quantscript analysis_diagnostics fetch_lookback_warning_gate extract closeout

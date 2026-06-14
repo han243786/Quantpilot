@@ -201,7 +201,10 @@ pub(super) fn fetch_lookback(expr: &Expr) -> Option<usize> {
     arg_number_named(args, "lookback").map(|value| value.max(1.0) as usize)
 }
 
-pub(super) fn arg_number_named(args: &[CallArg], name: &str) -> Option<f64> {
+pub(in crate::analysis_diagnostics) fn arg_number_named(
+    args: &[CallArg],
+    name: &str,
+) -> Option<f64> {
     args.iter()
         .find(|arg| arg.name.as_deref() == Some(name))
         .and_then(|arg| match &arg.value {

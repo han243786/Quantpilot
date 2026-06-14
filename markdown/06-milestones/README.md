@@ -2038,3 +2038,4 @@
 | v4.16.0 / BE-002HC-03 | `v4.16.0/1675-root.contracts.quantscript.analysis_diagnostics.symbol_whitelist_gate.single_leaf_closeout.md` | Added: `quantscript.analysis_diagnostics.symbol_whitelist_gate` single leaf closeout stops split |
 | v4.16.0 / BE-002HD-01 | `v4.16.0/1676-root.contracts.quantscript.analysis_diagnostics.parent_residual_judgment.fetch_lookback_warning_gate.md` | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `fetch_lookback_warning_gate` |
 | v4.16.0 / BE-002HE-01 | `v4.16.0/1677-root.contracts.quantscript.analysis_diagnostics.fetch_lookback_warning_gate.baseline_plan.md` | Added: `quantscript.analysis_diagnostics.fetch_lookback_warning_gate` baseline plan |
+| v4.16.0 / BE-002HE-02 | `v4.16.0/1678-root.contracts.quantscript.analysis_diagnostics.fetch_lookback_warning_gate.extract_closeout.md` | Added: `quantscript.analysis_diagnostics.fetch_lookback_warning_gate` actual extraction complete |
