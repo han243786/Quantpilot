@@ -5811,3 +5811,5 @@ Recursive boundary supplement: BE-002HS-01 `root.contracts.quantscript.evaluator
 Recursive boundary supplement: BE-002HT-01 `root.contracts.quantscript` parent residual judgment selected `runtime_lowering`; next step: BE-002HU-01 baseline_plan.
 - `quantscript/src/lowering/mod.rs` - QuantScript runtime lowering module entry and re-export surface
 - `markdown/06-milestones/v4.16.0/1705-root.contracts.quantscript.parent_residual_judgment.runtime_lowering.md` - v4.16.0 BE-002HT-01 quantscript parent residual judgment selects runtime_lowering
+Recursive boundary supplement: BE-002HU-01 `root.contracts.quantscript.runtime_lowering` baseline frozen; next step: BE-002HV-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1706-root.contracts.quantscript.runtime_lowering.baseline_plan.md` - v4.16.0 BE-002HU-01 quantscript runtime_lowering baseline plan

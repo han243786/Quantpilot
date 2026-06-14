@@ -2066,3 +2066,4 @@
 | v4.16.0 / BE-002HR-03 | `v4.16.0/1703-root.contracts.quantscript.evaluator_normalization.helper_inline_execution_wave.single_leaf_closeout.md` | Added: `quantscript.evaluator_normalization.helper_inline_execution_wave` single leaf closeout stops split |
 | v4.16.0 / BE-002HS-01 | `v4.16.0/1704-root.contracts.quantscript.evaluator_normalization.parent_closeout.md` | Added: `quantscript.evaluator_normalization` parent closeout |
 | v4.16.0 / BE-002HT-01 | `v4.16.0/1705-root.contracts.quantscript.parent_residual_judgment.runtime_lowering.md` | Added: `quantscript` parent residual judgment selects `runtime_lowering` |
+| v4.16.0 / BE-002HU-01 | `v4.16.0/1706-root.contracts.quantscript.runtime_lowering.baseline_plan.md` | Added: `quantscript.runtime_lowering` baseline plan |

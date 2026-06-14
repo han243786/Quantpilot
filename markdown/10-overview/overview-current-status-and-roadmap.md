@@ -1794,3 +1794,4 @@ Latest recursive supplement: BE-002HR-02 extracted `contracts.quantscript.evalua
 Latest recursive supplement: BE-002HR-03 closed `contracts.quantscript.evaluator_normalization.helper_inline_execution_wave` with `stop_split: true`; next step returns to evaluator_normalization parent residual judgment.
 Latest recursive supplement: BE-002HS-01 closed `contracts.quantscript.evaluator_normalization`; next step returns to quantscript parent residual judgment.
 Latest recursive supplement: BE-002HT-01 selected `contracts.quantscript.runtime_lowering`; next baseline freezes the existing `quantscript/src/lowering/` subtree.
+Latest recursive supplement: BE-002HU-01 froze `contracts.quantscript.runtime_lowering`; next step selects one lowering child through parent residual judgment.
