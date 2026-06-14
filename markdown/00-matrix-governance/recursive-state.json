@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002IQ-01",
-  "last_committed_sha": "b88cab68",
+  "last_committed_batch": "BE-002IQ-02",
+  "last_committed_sha": "2578dcd2",
   "current_parent": "root.contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection",
-  "current_step": "BE-002IQ-02",
-  "current_phase": "actual_extraction",
+  "current_step": "BE-002IQ-03",
+  "current_phase": "single_leaf_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -309,7 +309,8 @@
     "contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness.basic_runtime_smoke_tests",
     "contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness",
     "contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.entrypoint_runtime_config_assembly",
-    "contracts.quantscript.runtime_lowering.lowering_orchestrator_surface"
+    "contracts.quantscript.runtime_lowering.lowering_orchestrator_surface",
+    "contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection"
   ],
   "open_residuals": [
     "contracts.quantscript.runtime_lowering",
@@ -319,7 +320,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.universe_lowering.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
