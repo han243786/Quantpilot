@@ -1808,3 +1808,4 @@
 | v4.16.0 / BE-002JW-03 | Added: `capability_type_parser` single leaf closeout stops split |
 | v4.16.0 / BE-002JX-01 | Added: `v4_static_audit` parent residual judgment selects `event_catalog_derivation` |
 | v4.16.0 / BE-002JY-01 | Added: `event_catalog_derivation` baseline plan |
+| v4.16.0 / BE-002JY-02 | Added: `event_catalog_derivation` actual extraction complete |

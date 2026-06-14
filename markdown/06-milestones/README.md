@@ -2161,3 +2161,4 @@
 | v4.16.0 / BE-002JW-03 | `v4.16.0/1798-root.contracts.quantscript.v4_static_audit.capability_type_parser.single_leaf_closeout.md` | Added: `capability_type_parser` single leaf closeout stops split |
 | v4.16.0 / BE-002JX-01 | `v4.16.0/1799-root.contracts.quantscript.v4_static_audit.parent_residual_judgment.event_catalog_derivation.md` | Added: `v4_static_audit` parent residual judgment selects `event_catalog_derivation` |
 | v4.16.0 / BE-002JY-01 | `v4.16.0/1800-root.contracts.quantscript.v4_static_audit.event_catalog_derivation.baseline_plan.md` | Added: `event_catalog_derivation` baseline plan |
+| v4.16.0 / BE-002JY-02 | `v4.16.0/1801-root.contracts.quantscript.v4_static_audit.event_catalog_derivation.extract_closeout.md` | Added: `event_catalog_derivation` actual extraction complete |

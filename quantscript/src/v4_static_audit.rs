@@ -1,20 +1,19 @@
 use crate::{Diagnostic, Span};
 use qrpc_core_ir::v4::{
-    ExecutionCapabilityKind, MachineActionSpec, MachineCachePolicy, MachineEventCatalog,
-    MachineEventPayloadField, MachineEventScope, MachineEventSelector, MachineEventSourceKind,
-    MachineEventTypeSpec, MachineGraphEdge, MachineGraphEdgeActivation, MachineGraphRiskPlane,
-    MachineMemoryField, MachineRecoveryPolicy, MachineSilencePolicy, MachineState,
-    MachineTemplateKind, MachineTransition, QsTypeRef, RuntimeTradingMode, StateGroup,
-    TransitionConflictPolicy, V4CompileTimeCapabilityReport, V4CompileTimeCapabilityRequest,
-    V4MachineContract, V4MachineGraphContract, V4StaticContractBundle,
-    V4_COMPILE_TIME_CAPABILITY_REQUEST_VERSION, V4_MACHINE_CONTRACT_VERSION,
-    V4_MACHINE_EVENT_CATALOG_VERSION, V4_MACHINE_GRAPH_CONTRACT_VERSION,
+    ExecutionCapabilityKind, MachineActionSpec, MachineCachePolicy, MachineEventSelector,
+    MachineGraphEdge, MachineGraphEdgeActivation, MachineGraphRiskPlane, MachineMemoryField,
+    MachineRecoveryPolicy, MachineSilencePolicy, MachineState, MachineTemplateKind,
+    MachineTransition, QsTypeRef, RuntimeTradingMode, StateGroup, TransitionConflictPolicy,
+    V4CompileTimeCapabilityReport, V4CompileTimeCapabilityRequest, V4MachineContract,
+    V4MachineGraphContract, V4StaticContractBundle, V4_COMPILE_TIME_CAPABILITY_REQUEST_VERSION,
+    V4_MACHINE_CONTRACT_VERSION, V4_MACHINE_GRAPH_CONTRACT_VERSION,
 };
 use serde_json::Value;
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 
 mod audit_entrypoint;
 mod capability_type_parser;
+mod event_catalog_derivation;
 mod runtime_handoff_builder;
 
 pub const V4_QS_STATIC_AUDIT_REPORT_VERSION: &str = "quantpilot/qs-v4-static-audit-report/v1";
@@ -239,7 +238,7 @@ fn parse_v4_static_document(input: &str) -> Result<ParsedV4QsStaticDocument, Vec
         risk_plane,
         metadata: graph_metadata,
     };
-    graph.event_catalog = Some(derive_event_catalog(&graph));
+    graph.event_catalog = Some(event_catalog_derivation::derive_event_catalog(&graph));
 
     Ok(ParsedV4QsStaticDocument {
         request: V4CompileTimeCapabilityRequest {
@@ -768,106 +767,6 @@ fn parse_risk_plane(input: &str, line_number: usize) -> Result<MachineGraphRiskP
     })
 }
 
-fn derive_event_catalog(graph: &V4MachineGraphContract) -> MachineEventCatalog {
-    let risk_machine_ids = graph
-        .risk_plane
-        .as_ref()
-        .map(|risk_plane| {
-            risk_plane
-                .machine_ids
-                .iter()
-                .map(String::as_str)
-                .collect::<BTreeSet<_>>()
-        })
-        .unwrap_or_default();
-    let mut emitters: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
-    let mut consumers: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
-
-    for machine in graph.machines.iter().flat_map(machine_family) {
-        for transition in &machine.transitions {
-            consumers
-                .entry(transition.event.event_type.clone())
-                .or_default()
-                .insert(machine.machine_id.clone());
-            if let Some(action) = &transition.action {
-                for event_type in &action.emits {
-                    emitters
-                        .entry(event_type.clone())
-                        .or_default()
-                        .insert(machine.machine_id.clone());
-                }
-            }
-        }
-    }
-    for edge in &graph.edges {
-        emitters
-            .entry(edge.event_type.clone())
-            .or_default()
-            .insert(edge.source_machine_id.clone());
-        consumers
-            .entry(edge.event_type.clone())
-            .or_default()
-            .insert(edge.target_machine_id.clone());
-    }
-
-    let event_types = emitters
-        .keys()
-        .chain(consumers.keys())
-        .cloned()
-        .collect::<BTreeSet<_>>();
-    let events = event_types
-        .into_iter()
-        .map(|event_type| {
-            let allowed_emitters = emitters
-                .remove(&event_type)
-                .unwrap_or_default()
-                .into_iter()
-                .collect::<Vec<_>>();
-            let allowed_consumers = consumers
-                .remove(&event_type)
-                .unwrap_or_default()
-                .into_iter()
-                .collect::<Vec<_>>();
-            let source_kind = if allowed_emitters
-                .iter()
-                .any(|machine_id| risk_machine_ids.contains(machine_id.as_str()))
-                || event_type.starts_with("risk.")
-            {
-                MachineEventSourceKind::RiskPlane
-            } else if allowed_emitters.is_empty() && event_type.starts_with("market.") {
-                MachineEventSourceKind::MarketData
-            } else {
-                MachineEventSourceKind::Machine
-            };
-            MachineEventTypeSpec {
-                event_type,
-                source_kind,
-                scope: MachineEventScope::Graph,
-                payload_fields: Vec::<MachineEventPayloadField>::new(),
-                allowed_emitters,
-                allowed_consumers,
-                replayable: true,
-            }
-        })
-        .collect();
-
-    MachineEventCatalog {
-        schema_version: V4_MACHINE_EVENT_CATALOG_VERSION.to_string(),
-        events,
-        metadata: BTreeMap::new(),
-    }
-}
-
-fn machine_family(machine: &V4MachineContract) -> Vec<&V4MachineContract> {
-    let mut machines = vec![machine];
-    for state in &machine.states {
-        if let Some(child_machine) = state.child_machine.as_deref() {
-            machines.extend(machine_family(child_machine));
-        }
-    }
-    machines
-}
-
 fn parse_machine_template(input: &str) -> Result<MachineTemplateKind, String> {
     match input {
         "observation" => Ok(MachineTemplateKind::Observation),
@@ -941,6 +840,7 @@ mod tests {
         PluginRuntimePermission, PluginSideEffect, VenueCapabilityMatrix,
     };
     use qrpc_core_ir::v4::{QsScalarTypeKind, V4CapabilityReportVerdict};
+    use std::collections::BTreeSet;
 
     const SAMPLE_V4_QS: &str = r#"
 v4_strategy strategy.v4.sample {
