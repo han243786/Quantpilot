@@ -5902,3 +5902,6 @@ Recursive boundary supplement: BE-002IR-01 `root.contracts.quantscript.runtime_l
 - `markdown/06-milestones/v4.16.0/1745-root.contracts.quantscript.runtime_lowering.universe_lowering.parent_residual_judgment.universe_construct_expansion.md` - v4.16.0 BE-002IR-01 universe_lowering parent residual judgment selects universe_construct_expansion
 Recursive boundary supplement: BE-002IS-01 `root.contracts.quantscript.runtime_lowering.universe_lowering.universe_construct_expansion` baseline frozen; next step: BE-002IS-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1746-root.contracts.quantscript.runtime_lowering.universe_lowering.universe_construct_expansion.baseline_plan.md` - v4.16.0 BE-002IS-01 universe_construct_expansion baseline plan
+Recursive boundary supplement: BE-002IS-02 `root.contracts.quantscript.runtime_lowering.universe_lowering.universe_construct_expansion` actual extraction complete; next step: BE-002IS-03 single_leaf_closeout.
+- `quantscript/src/lowering/universe/universe_construct_expansion.rs` - QuantScript universe construct expansion and substitution child module
+- `markdown/06-milestones/v4.16.0/1747-root.contracts.quantscript.runtime_lowering.universe_lowering.universe_construct_expansion.extract_closeout.md` - v4.16.0 BE-002IS-02 universe_construct_expansion extract closeout
