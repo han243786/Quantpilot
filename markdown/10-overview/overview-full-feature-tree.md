@@ -5891,3 +5891,5 @@ Recursive boundary supplement: BE-002IO-01 `root.contracts.quantscript.runtime_l
 - `markdown/06-milestones/v4.16.0/1740-root.contracts.quantscript.runtime_lowering.universe_lowering.baseline_plan.md` - v4.16.0 BE-002IO-01 universe_lowering precision baseline plan
 Recursive boundary supplement: BE-002IP-01 `root.contracts.quantscript.runtime_lowering.universe_lowering` parent residual judgment selected `rebalance_directive_detection`; next step: BE-002IQ-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1741-root.contracts.quantscript.runtime_lowering.universe_lowering.parent_residual_judgment.rebalance_directive_detection.md` - v4.16.0 BE-002IP-01 universe_lowering parent residual judgment selects rebalance_directive_detection
+Recursive boundary supplement: BE-002IQ-01 `root.contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection` baseline frozen; next step: BE-002IQ-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1742-root.contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection.baseline_plan.md` - v4.16.0 BE-002IQ-01 rebalance_directive_detection baseline plan

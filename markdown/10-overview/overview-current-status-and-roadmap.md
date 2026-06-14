@@ -1830,3 +1830,4 @@ Latest recursive supplement: BE-002IM-01 closed `contracts.quantscript.runtime_l
 Latest recursive supplement: BE-002IN-01 selected `contracts.quantscript.runtime_lowering.universe_lowering`; next baseline freezes the oversized high-risk universe lowering owner under precision single-leaf governance.
 Latest recursive supplement: BE-002IO-01 froze `contracts.quantscript.runtime_lowering.universe_lowering`; next step selects an internal child, starting from `rebalance_directive_detection`.
 Latest recursive supplement: BE-002IP-01 selected `contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection`; next baseline freezes rebalance directive detection only.
+Latest recursive supplement: BE-002IQ-01 froze `contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection`; next movement may extract only rebalance directive detection.
