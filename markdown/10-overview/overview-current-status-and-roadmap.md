@@ -1900,3 +1900,4 @@ Latest recursive supplement: BE-002KC-01 froze `contracts.quantscript.v4_static_
 Latest recursive supplement: BE-002KC-02 extracted `contracts.quantscript.v4_static_audit.static_document_parser`; next step is single leaf closeout.
 Latest recursive supplement: BE-002KC-03 closed `contracts.quantscript.v4_static_audit.static_document_parser` with `stop_split: true`; next step returns to v4_static_audit parent residual judgment.
 Latest recursive supplement: BE-002KD-01 selected `contracts.quantscript.v4_static_audit.machine_block_parser`; next baseline freezes machine envelope parsing and machine contract assembly.
+Latest recursive supplement: BE-002KE-01 froze `contracts.quantscript.v4_static_audit.machine_block_parser`; next movement may extract the machine block parser wrapper boundary.
