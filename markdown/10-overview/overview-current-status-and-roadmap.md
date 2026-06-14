@@ -1841,3 +1841,4 @@ Latest recursive supplement: BE-002IT-01 closed `contracts.quantscript.runtime_l
 Latest recursive supplement: BE-002IU-01 selected `contracts.quantscript.runtime_lowering.intent_inference`; next baseline freezes intent inference before any Rust movement.
 Latest recursive supplement: BE-002IV-01 froze `contracts.quantscript.runtime_lowering.intent_inference`; next step selects one internal intent inference child.
 Latest recursive supplement: BE-002IW-01 selected `contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration`; next baseline freezes orchestration movement only.
+Latest recursive supplement: BE-002IX-01 froze `contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration`; next movement may extract only top-level intent orchestration.

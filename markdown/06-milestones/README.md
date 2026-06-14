@@ -2113,3 +2113,4 @@
 | v4.16.0 / BE-002IU-01 | `v4.16.0/1750-root.contracts.quantscript.runtime_lowering.parent_residual_judgment.intent_inference.md` | Added: `runtime_lowering` parent residual judgment selects `intent_inference` |
 | v4.16.0 / BE-002IV-01 | `v4.16.0/1751-root.contracts.quantscript.runtime_lowering.intent_inference.baseline_plan.md` | Added: `intent_inference` precision baseline plan |
 | v4.16.0 / BE-002IW-01 | `v4.16.0/1752-root.contracts.quantscript.runtime_lowering.intent_inference.parent_residual_judgment.intent_collection_orchestration.md` | Added: `intent_inference` parent residual judgment selects `intent_collection_orchestration` |
+| v4.16.0 / BE-002IX-01 | `v4.16.0/1753-root.contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration.baseline_plan.md` | Added: `intent_collection_orchestration` baseline plan |

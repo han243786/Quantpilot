@@ -5915,3 +5915,5 @@ Recursive boundary supplement: BE-002IV-01 `root.contracts.quantscript.runtime_l
 - `markdown/06-milestones/v4.16.0/1751-root.contracts.quantscript.runtime_lowering.intent_inference.baseline_plan.md` - v4.16.0 BE-002IV-01 intent_inference precision baseline plan
 Recursive boundary supplement: BE-002IW-01 `root.contracts.quantscript.runtime_lowering.intent_inference` parent residual judgment selected `intent_collection_orchestration`; next step: BE-002IX-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1752-root.contracts.quantscript.runtime_lowering.intent_inference.parent_residual_judgment.intent_collection_orchestration.md` - v4.16.0 BE-002IW-01 intent_inference parent residual judgment selects intent_collection_orchestration
+Recursive boundary supplement: BE-002IX-01 `root.contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration` baseline frozen; next step: BE-002IX-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1753-root.contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration.baseline_plan.md` - v4.16.0 BE-002IX-01 intent_collection_orchestration baseline plan
