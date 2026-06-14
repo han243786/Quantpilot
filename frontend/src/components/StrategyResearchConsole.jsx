@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { EventPanelIntro } from "./EventStreamPanel";
 import { useStrategyResearchModel } from "../hooks/useStrategyResearchModel";
-import { StrategyCardNote } from "../pages/StrategyHubSharedComponents";
+import { StrategyCardNote } from "./strategySharedComponents";
 import StrategyBacktestsPanel from "./StrategyBacktestsPanel";
 import StrategyEventsPanel from "./StrategyEventsPanel";
 import StrategyRunsPanel from "./StrategyRunsPanel";

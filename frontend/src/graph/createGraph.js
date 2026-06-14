@@ -1,15 +1,9 @@
 import { createNodeFromModule } from "./createNode";
-
-function connect(sourceNode, sourcePort, targetNode, targetPort) {
-  return {
-    id: `edge_${sourceNode.id}_${targetNode.id}_${sourcePort}_${targetPort}`,
-    source_node_id: sourceNode.id,
-    source_port: sourcePort,
-    target_node_id: targetNode.id,
-    target_port: targetPort,
-    edge_type: `${sourceNode.type}_to_${targetNode.type}`
-  };
-}
+import {
+  createGraphEdge,
+  createInitialCompileSummary,
+  createInitialValidationState
+} from "./graphFactoryDefaults";
 
 export function createSampleGraph(registry) {
   const runtimeNode = createNodeFromModule(registry.getByKey("builtin.runtime.control"));
@@ -48,12 +42,12 @@ export function createSampleGraph(registry) {
   runtimeNode.config.mode = "paper";
 
   const edges = [
-    connect(kline, "market_data_out", longBuy, "data_input"),
-    connect(kline, "market_data_out", longSell, "data_input"),
-    connect(longBuy, "intent_out", longAgent, "intent_input"),
-    connect(longSell, "intent_out", longAgent, "intent_input"),
-    connect(longAgent, "agent_out", risk, "agent_input"),
-    connect(risk, "risk_out", execution, "risk_input")
+    createGraphEdge(kline, "market_data_out", longBuy, "data_input"),
+    createGraphEdge(kline, "market_data_out", longSell, "data_input"),
+    createGraphEdge(longBuy, "intent_out", longAgent, "intent_input"),
+    createGraphEdge(longSell, "intent_out", longAgent, "intent_input"),
+    createGraphEdge(longAgent, "agent_out", risk, "agent_input"),
+    createGraphEdge(risk, "risk_out", execution, "risk_input")
   ];
 
   return {
@@ -77,30 +71,8 @@ export function createSampleGraph(registry) {
     },
     nodes: [runtimeNode, kline, longBuy, longSell, longAgent, risk, execution],
     edges,
-    validation_state: {
-      is_valid: false,
-      is_runnable: false,
-      node_issues: {},
-      edge_issues: {},
-      graph_issues: [],
-      issue_counts: { error: 0, warning: 0, info: 0 },
-      last_validated_at: null
-    },
-    compile_summary: {
-      compilable: false,
-      last_compile_id: null,
-      last_compile_at: null,
-      topology_order: [],
-      outputs: {
-        data_sources: 0,
-        intent_generators: 0,
-        agents: 0,
-        risk_controls: 0,
-        executions: 0
-      },
-      warnings: [],
-      errors: []
-    }
+    validation_state: createInitialValidationState(),
+    compile_summary: createInitialCompileSummary()
   };
 }
 
@@ -128,30 +100,7 @@ export function createEmptyGraph(registry) {
     },
     nodes: [],
     edges: [],
-    validation_state: {
-      is_valid: false,
-      is_runnable: false,
-      node_issues: {},
-      edge_issues: {},
-      graph_issues: [],
-      issue_counts: { error: 0, warning: 0, info: 0 },
-      last_validated_at: null
-    },
-    compile_summary: {
-      compilable: false,
-      last_compile_id: null,
-      last_compile_at: null,
-      topology_order: [],
-      outputs: {
-        data_sources: 0,
-        intent_generators: 0,
-        agents: 0,
-        risk_controls: 0,
-        executions: 0
-      },
-      warnings: [],
-      errors: []
-    }
+    validation_state: createInitialValidationState(),
+    compile_summary: createInitialCompileSummary()
   };
 }
-

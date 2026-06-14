@@ -1,20 +1,12 @@
 import { useMemo } from "react";
-import { StrategyCardNote } from "./StrategyHubSharedComponents";
+import { StrategyCardNote } from "../components/strategySharedComponents";
 import { buildRepairPathInsight } from "../utils/repairPathInsights";
+import { buildWorkspaceIssueQueueFilterModel } from "../hooks/strategyWorkspaceIssueQueueState";
 import {
   DEFAULT_WORKSPACE_ISSUE_FILTERS,
   diagnosticQueueNodeType,
   diagnosticQueueSource,
-  filterWorkspaceIssueQueue,
-  filterWorkspaceIssueQueueByNodeType,
-  filterWorkspaceIssueQueueBySource,
-  workspaceIssueFiltersDirty,
-  workspaceIssueQueueCounts,
-  workspaceIssueQueueNodeTypeCounts,
-  workspaceIssueQueueNodeTypeOrder,
   workspaceIssueQueueSeverityLabel,
-  workspaceIssueQueueSourceCounts,
-  workspaceIssueQueueSourceOrder,
   workspaceIssueSeverityText
 } from "../utils/strategyWorkspaceIssueQueue";
 
@@ -37,44 +29,30 @@ function WorkspaceIssueQueueCard({
   graph = null,
   repairPathState = null
 }) {
+  const queueModel = useMemo(
+    () => buildWorkspaceIssueQueueFilterModel(items, filters),
+    [filters, items]
+  );
   const {
     severityFilter,
     actionableOnly,
     showSourceFilters,
     sourceFilter,
     nodeTypeFilter
-  } = {
-    ...DEFAULT_WORKSPACE_ISSUE_FILTERS,
-    ...(filters || {})
-  };
-  const isDirty = workspaceIssueFiltersDirty(filters);
-  const counts = useMemo(() => workspaceIssueQueueCounts(items), [items]);
-  const sourceCounts = useMemo(() => workspaceIssueQueueSourceCounts(items), [items]);
-  const orderedSources = useMemo(() => workspaceIssueQueueSourceOrder(items), [items]);
-  const baseFilteredItems = useMemo(
-    () => filterWorkspaceIssueQueue(items, severityFilter, actionableOnly),
-    [actionableOnly, items, severityFilter]
-  );
-  const sourceFilteredItems = useMemo(
-    () => filterWorkspaceIssueQueueBySource(baseFilteredItems, sourceFilter),
-    [baseFilteredItems, sourceFilter]
-  );
-  const nodeTypeCounts = useMemo(
-    () => workspaceIssueQueueNodeTypeCounts(sourceFilteredItems),
-    [sourceFilteredItems]
-  );
-  const orderedNodeTypes = useMemo(
-    () => workspaceIssueQueueNodeTypeOrder(sourceFilteredItems),
-    [sourceFilteredItems]
-  );
-  const filteredItems = useMemo(
-    () => filterWorkspaceIssueQueueByNodeType(sourceFilteredItems, nodeTypeFilter),
-    [nodeTypeFilter, sourceFilteredItems]
-  );
+  } = queueModel.filters;
+  const {
+    counts,
+    filteredItems,
+    isDirty,
+    nodeTypeCounts,
+    orderedNodeTypes,
+    orderedSources,
+    sourceCounts,
+    sourceFilteredItems
+  } = queueModel;
 
   const updateFilters = (patch) => {
-    const nextPatch =
-      typeof patch === "function" ? patch(filters || DEFAULT_WORKSPACE_ISSUE_FILTERS) : patch;
+    const nextPatch = typeof patch === "function" ? patch(queueModel.filters) : patch;
     onFiltersChange?.(nextPatch);
   };
 

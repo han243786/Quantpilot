@@ -8,14 +8,18 @@ const StrategyHubRecentRunsSection = lazy(() => import("./StrategyHubRecentRunsS
 const StrategyHubCompareQueueSection = lazy(() => import("./StrategyHubCompareQueueSection"));
 
 export default function StrategyHubInspectorSection({ model, selectedStrategy, compareSelection }) {
-  const { recentBacktests, recentRuns, compareQueue } = useStrategyHubInspectorData(
+  const { overview, recentBacktests, recentRuns, compareQueue } = useStrategyHubInspectorData(
     selectedStrategy,
     compareSelection
   );
 
   return (
     <aside className="strategy-inspector-card">
-      <StrategyHubInspectorOverviewSection model={model} selectedStrategy={selectedStrategy} />
+      <StrategyHubInspectorOverviewSection
+        model={model}
+        selectedStrategy={selectedStrategy}
+        overview={overview}
+      />
 
       {selectedStrategy ? (
         <>

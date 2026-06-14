@@ -1,5 +1,5 @@
 import { backtestDetailPath, navigateTo } from "../router";
-import { ActivityListCard, StrategyTaskGroup } from "./StrategyHubSharedComponents";
+import { ActivityListCard, StrategyTaskGroup } from "../components/strategySharedComponents";
 
 export default function StrategyHubBacktestActivityCard({ model, items }) {
   return (

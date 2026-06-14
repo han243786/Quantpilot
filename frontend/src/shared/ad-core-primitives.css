@@ -1,0 +1,220 @@
+/* ═══════════════════════════════════════════════════════
+   QuantPilot Shared Component Styles (Adobe-Style)
+   v0.5.0 | 使用 --ad-* 令牌 | 保留 qp-* 类名兼容旧组件
+   ═══════════════════════════════════════════════════════ */
+
+/* ── 卡片 (Adobe 风格) ── */
+
+.ad-card {
+  background: var(--ad-card);
+  border: 1px solid var(--ad-border);
+  border-radius: var(--ad-radius-md);
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02), var(--ad-shadow-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+}
+.ad-card:hover {
+  border-color: var(--ad-border-strong);
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), var(--ad-shadow-md);
+}
+.ad-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.ad-card__title {
+  font-weight: 600;
+  font-size: var(--ad-font-size-sm);
+  color: var(--ad-text);
+}
+.ad-card__meta {
+  font-size: var(--ad-font-size-xs);
+  color: var(--ad-text-secondary);
+  margin-top: 4px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ad-card__body {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--ad-border);
+  font-size: var(--ad-font-size-sm);
+  color: var(--ad-text-secondary);
+  line-height: 1.6;
+}
+
+/* ── 标签/徽章 (扁平) ── */
+
+.ad-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: var(--ad-radius-sm);
+  font-size: var(--ad-font-size-xs);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: opacity 0.12s ease;
+}
+.ad-badge--ok { background: var(--ad-success-soft); color: var(--ad-success); }
+.ad-badge--warn { background: var(--ad-warning-soft); color: var(--ad-warning); }
+.ad-badge--err { background: var(--ad-error-soft); color: var(--ad-error); }
+.ad-badge--info { background: var(--ad-accent-soft); color: var(--ad-accent); }
+.ad-badge--muted { background: rgba(110,110,110,0.15); color: var(--ad-text-muted); }
+
+/* ── 按钮 (Adobe 扁平风格) ── */
+
+.ad-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--ad-radius-sm);
+  border: 1px solid var(--ad-border);
+  background: transparent;
+  color: var(--ad-text-secondary);
+  cursor: pointer;
+  font-size: var(--ad-font-size-sm);
+  font-family: var(--ad-font-ui);
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+.ad-btn:active {
+  transform: scale(0.97);
+}
+.ad-btn:hover { background: var(--ad-panel-hover); color: var(--ad-text); border-color: var(--ad-border-strong); }
+.ad-btn--primary { background: var(--ad-accent); color: #fff; border-color: var(--ad-accent); }
+.ad-btn--primary:hover { background: var(--ad-accent-hover); }
+.ad-btn--danger { color: var(--ad-error); border-color: rgba(231,76,60,0.25); }
+.ad-btn--danger:hover { background: var(--ad-error-soft); }
+.ad-btn--ghost { border-color: transparent; }
+.ad-btn--ghost:hover { background: var(--ad-panel-hover); }
+.ad-btn--sm { padding: 2px 6px; font-size: var(--ad-font-size-xs); }
+
+/* ── 加载/错误/空状态 ── */
+
+.ad-loading {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--ad-text-muted);
+  font-size: var(--ad-font-size-sm);
+}
+.ad-error {
+  padding: 10px 14px;
+  background: var(--ad-error-soft);
+  color: var(--ad-error);
+  border-radius: var(--ad-radius-sm);
+  margin-bottom: 12px;
+  font-size: var(--ad-font-size-sm);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ad-empty {
+  text-align: center;
+  padding: 32px 0;
+  color: var(--ad-text-muted);
+  font-size: var(--ad-font-size-sm);
+}
+
+/* ── 表格 ── */
+
+.ad-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ad-font-size-sm);
+  font-family: var(--ad-font-mono);
+}
+.ad-table th {
+  text-align: left;
+  padding: 4px 8px;
+  font-size: var(--ad-font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ad-text-muted);
+  border-bottom: 1px solid var(--ad-border);
+  font-family: var(--ad-font-ui);
+}
+.ad-table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid rgba(64,64,64,0.3);
+  color: var(--ad-text);
+}
+.ad-table tr:last-child td { border-bottom: none; }
+.ad-table tbody tr:hover td { background: rgba(255, 255, 255, 0.02); }
+.ad-table .up { color: var(--ad-success); }
+.ad-table .down { color: var(--ad-error); }
+
+/* ── 指标 ── */
+
+.ad-metric {
+  font-family: var(--ad-font-mono);
+  font-size: var(--ad-font-size-sm);
+}
+
+/* ── 输入框 ── */
+
+.ad-input {
+  width: 100%;
+  padding: 5px 8px;
+  border: 1px solid var(--ad-border);
+  border-radius: var(--ad-radius-sm);
+  background: rgba(0,0,0,0.2);
+  color: var(--ad-text);
+  font-size: var(--ad-font-size-sm);
+  font-family: var(--ad-font-ui);
+  transition: border-color 0.1s;
+}
+.ad-input:focus { outline: none; border-color: var(--ad-accent); }
+.ad-input::placeholder { color: var(--ad-text-muted); }
+
+/* ── 分隔线 / 时间轴 ── */
+
+.ad-divider {
+  height: 1px;
+  background: var(--ad-border);
+  margin: 12px 0;
+  border: none;
+}
+.ad-timeline {
+  padding-left: 14px;
+  border-left: 2px solid var(--ad-border);
+}
+.ad-timeline__item {
+  position: relative;
+  padding: 4px 0 10px 14px;
+  font-size: var(--ad-font-size-xs);
+  color: var(--ad-text-secondary);
+}
+.ad-timeline__item::before {
+  content: "";
+  position: absolute;
+  left: -20px; top: 7px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ad-border-strong);
+}
+
+/* ── 页面容器 ── */
+
+.ad-page {
+  color: var(--ad-text);
+  font-family: var(--ad-font-ui);
+  font-size: var(--ad-font-size-md);
+  line-height: 1.5;
+  padding: var(--ad-space-4);
+}
+.ad-page h2 { margin: 0 0 12px; font-size: var(--ad-font-size-lg); font-weight: 600; line-height: 1.25; color: var(--ad-text); }
+.ad-page h3 { margin: 16px 0 8px; font-size: var(--ad-font-size-xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.25; color: var(--ad-text-muted); }
+
+/* ── 动画 ── */
+
+@keyframes ad-fade-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.ad-fade-in { animation: ad-fade-in 0.15s ease-out; }

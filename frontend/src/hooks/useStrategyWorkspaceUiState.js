@@ -1,14 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { canvasFocusStatusLabel } from "../utils/workspaceContextLabels";
 import {
-  DEFAULT_WORKSPACE_ISSUE_FILTERS,
-  filterWorkspaceIssueQueue,
-  filterWorkspaceIssueQueueByNodeType,
-  filterWorkspaceIssueQueueBySource,
-  workspaceIssueQueueNodeTypeOrder,
-  workspaceIssueQueueSourceOrder
-} from "../utils/strategyWorkspaceIssueQueue";
-const WORKSPACE_ISSUE_FILTERS_STORAGE_KEY = "quantpilot_workspace_issue_filters";
+  normalizeWorkspaceIssueFilters,
+  persistWorkspaceIssueFilters,
+  readStoredWorkspaceIssueFilters,
+  workspaceIssueFiltersStorageScope,
+  workspaceIssueFiltersSummary
+} from "./strategyWorkspaceIssueQueueState";
 const DEFAULT_CODE_LANE_STATE = {
   mode: "auto",
   pinnedLaneId: null
@@ -18,122 +16,6 @@ const CODE_LANE_NOTICE_FADE_DELAY_MS = 4500;
 function codeLaneNoticePayload(message, tone = "info") {
   if (!message) return null;
   return { title: "工作区栏位已自动切换", message, tone };
-}
-
-function workspaceIssueFiltersStorageScope(strategyId, graphId) {
-  return strategyId || graphId || "draft_graph";
-}
-
-function readStoredWorkspaceIssueFilters(scope) {
-  if (typeof window === "undefined" || !window.localStorage) {
-    return DEFAULT_WORKSPACE_ISSUE_FILTERS;
-  }
-
-  try {
-    const raw = window.localStorage.getItem(WORKSPACE_ISSUE_FILTERS_STORAGE_KEY);
-    if (!raw) return DEFAULT_WORKSPACE_ISSUE_FILTERS;
-    const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed !== "object") {
-      return DEFAULT_WORKSPACE_ISSUE_FILTERS;
-    }
-    const storedFilters = parsed[scope];
-    if (!storedFilters || typeof storedFilters !== "object") {
-      return DEFAULT_WORKSPACE_ISSUE_FILTERS;
-    }
-    return {
-      ...DEFAULT_WORKSPACE_ISSUE_FILTERS,
-      ...storedFilters
-    };
-  } catch (e) {
-    console.warn("useStrategyWorkspaceUiState: read filters failed", e);
-    return DEFAULT_WORKSPACE_ISSUE_FILTERS;
-  }
-}
-
-function persistWorkspaceIssueFilters(scope, filters) {
-  if (typeof window === "undefined" || !window.localStorage) {
-    return;
-  }
-
-  try {
-    const raw = window.localStorage.getItem(WORKSPACE_ISSUE_FILTERS_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : {};
-    const nextPayload = parsed && typeof parsed === "object" ? parsed : {};
-    nextPayload[scope] = {
-      ...DEFAULT_WORKSPACE_ISSUE_FILTERS,
-      ...(filters || {})
-    };
-    window.localStorage.setItem(
-      WORKSPACE_ISSUE_FILTERS_STORAGE_KEY,
-      JSON.stringify(nextPayload)
-    );
-  } catch (e) {
-    console.warn("useStrategyWorkspaceUiState: persist filters failed", e);
-  }
-}
-
-function normalizeWorkspaceIssueFilters(filters, items = []) {
-  const nextFilters = {
-    ...DEFAULT_WORKSPACE_ISSUE_FILTERS,
-    ...(filters || {})
-  };
-  const baseFilteredItems = filterWorkspaceIssueQueue(
-    items,
-    nextFilters.severityFilter,
-    nextFilters.actionableOnly
-  );
-  const orderedSources = workspaceIssueQueueSourceOrder(items);
-  if (
-    nextFilters.sourceFilter !== "all" &&
-    !orderedSources.includes(nextFilters.sourceFilter)
-  ) {
-    nextFilters.sourceFilter = "all";
-  }
-  if (nextFilters.sourceFilter === "all") {
-    nextFilters.nodeTypeFilter = "all";
-    return nextFilters;
-  }
-  const sourceFilteredItems = filterWorkspaceIssueQueueBySource(
-    baseFilteredItems,
-    nextFilters.sourceFilter
-  );
-  const orderedNodeTypes = workspaceIssueQueueNodeTypeOrder(sourceFilteredItems);
-  if (
-    nextFilters.nodeTypeFilter !== "all" &&
-    !orderedNodeTypes.includes(nextFilters.nodeTypeFilter)
-  ) {
-    nextFilters.nodeTypeFilter = "all";
-  }
-  return nextFilters;
-}
-
-function workspaceIssueFiltersSummary(filters) {
-  const current = {
-    ...DEFAULT_WORKSPACE_ISSUE_FILTERS,
-    ...(filters || {})
-  };
-  const parts = [];
-
-  if (current.severityFilter !== "all") {
-    parts.push(
-      current.severityFilter === "error"
-        ? "错误"
-        : current.severityFilter === "warning"
-          ? "警告"
-          : current.severityFilter
-    );
-  }
-  if (current.actionableOnly) {
-    parts.push("仅可操作项");
-  }
-  if (current.sourceFilter !== "all") {
-    parts.push(current.sourceFilter);
-  }
-  if (current.nodeTypeFilter !== "all") {
-    parts.push(current.nodeTypeFilter);
-  }
-
-  return parts.length > 0 ? parts.join(" / ") : "无活动筛选";
 }
 
 export function useStrategyWorkspaceUiState({
@@ -434,4 +316,3 @@ export function useStrategyWorkspaceUiState({
     handleSelectIssueQueueItem
   };
 }
-

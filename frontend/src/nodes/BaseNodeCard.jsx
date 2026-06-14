@@ -1,56 +1,7 @@
-import { memo, useEffect, useRef } from "react";
+import { memo } from "react";
 import { Handle, Position } from "@xyflow/react";
 import { useGraphStore } from "../store/graphStore";
-
-/**
- * PriceOverlay — v2.5.0 P2-5: 价格涌动效果
- *
- * 在 data 类型节点上显示实时价格。
- * - useRef 持有 DOM 元素引用
- * - 通过 Zustand store.subscribe 直接监听价格变化
- * - 更新时直接设置 ref.current.textContent，绕过 React 虚拟 DOM
- * - React.memo((), => true) 确保该组件永不重渲染
- * - Chrome React Profiler 不会显示该组件的重渲染记录
- */
-const PriceOverlay = memo(function PriceOverlay({ nodeId }) {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    // 设置初始价格（从当前 store 状态读取）
-    const initialPrice = useGraphStore
-      .getState()
-      .graph.nodes.find((n) => n.id === nodeId)?.runtime_state?.metrics
-      ?.latest_price;
-    if (initialPrice != null && ref.current) {
-      ref.current.textContent = String(initialPrice);
-    }
-
-    // 订阅 store 变化 — 直接操作 DOM，不触发 React 重渲染
-    const unsub = useGraphStore.subscribe((state, prevState) => {
-      if (state.graph.nodes === prevState.graph.nodes) return;
-
-      const node = state.graph.nodes.find((n) => n.id === nodeId);
-      if (!node || node.type !== "data") return;
-
-      const price = node.runtime_state?.metrics?.latest_price;
-      if (price != null && ref.current) {
-        ref.current.textContent = String(price);
-      }
-    });
-
-    return unsub;
-  }, [nodeId]);
-
-  return (
-    <span
-      ref={ref}
-      className="ticker-price-overlay"
-      data-testid={`ticker-price-${nodeId}`}
-    >
-      --
-    </span>
-  );
-}, () => true);
+import NodePriceOverlay from "./NodePriceOverlay";
 
 function stopCanvasControlEvent(event) {
   event.stopPropagation();
@@ -109,7 +60,7 @@ const BaseNodeCard = memo(function BaseNodeCard({ data, selected }) {
       onClick={() => setSelectedNode(nodeId)}
     >
       {/* v2.5.0 P2-5: 价格涌动效果 — data 节点显示实时价格覆盖层 */}
-      {nodeType === "data" && <PriceOverlay nodeId={nodeId} />}
+      {nodeType === "data" && <NodePriceOverlay nodeId={nodeId} />}
 
       {inputPorts.length > 0 ? (
         inputPorts.map((port, index) => (

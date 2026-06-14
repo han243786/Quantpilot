@@ -1,0 +1,173 @@
+@media (max-width: 1760px) {
+  .strategy-directory-table {
+    --strategy-roster-data-columns: minmax(150px, 1.3fr) 86px 126px 56px 64px 72px;
+    --strategy-roster-action-columns: minmax(96px, 0.85fr) minmax(74px, 0.58fr);
+    --strategy-roster-columns: 28px var(--strategy-roster-data-columns) var(--strategy-roster-action-columns);
+  }
+
+  .strategy-directory-table__head,
+  .strategy-row {
+    gap: 8px;
+  }
+
+  .strategy-directory-table__head--roster,
+  .strategy-row-shell {
+    gap: 8px;
+  }
+
+  .strategy-row-shell {
+    padding: 0 8px;
+  }
+
+  .strategy-row__actions {
+    gap: 8px;
+  }
+
+  .strategy-row__action-button {
+    padding-inline: 8px;
+    font-size: var(--ad-font-size-sm);
+  }
+}
+
+@media (max-width: 1540px) {
+  .strategy-hub-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 1280px) {
+  .strategy-hub-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .strategy-template-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .strategy-hub-status-strip,
+  .strategy-hub-kpis,
+  .strategy-hub-ops {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+@media (max-width: 960px) {
+  .strategy-hub-page {
+    padding: 18px;
+  }
+
+  .strategy-hub-status-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: hidden;
+  }
+
+  .strategy-hub-status-strip .strategy-kpi-card strong,
+  .strategy-hub-status-strip .strategy-ops-card strong {
+    white-space: normal;
+  }
+
+  .strategy-hub-hero {
+    display: grid;
+  }
+
+  .strategy-hub-status-strip,
+  .strategy-hub-kpis,
+  .strategy-hub-ops,
+  .strategy-hub-grid,
+  .strategy-template-grid,
+  .strategy-activity-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .strategy-directory-table {
+    --strategy-roster-data-columns: minmax(0, 1.35fr) 92px 132px 72px 72px 92px;
+    --strategy-roster-action-columns: 112px 82px;
+    --strategy-roster-columns: 32px var(--strategy-roster-data-columns) var(--strategy-roster-action-columns);
+  }
+
+  .strategy-roster-toolbar,
+  .strategy-activity-item,
+  .strategy-cockpit-summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .strategy-roster-toolbar,
+  .strategy-activity-item {
+    display: grid;
+  }
+
+  .strategy-row__main {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .strategy-hub-page {
+    padding: 14px;
+  }
+
+  .strategy-hub-hero,
+  .strategy-directory-card,
+  .strategy-inspector-card,
+  .strategy-kpi-card,
+  .strategy-activity-card {
+    padding: 14px;
+  }
+
+  .strategy-row-shell {
+    grid-template-columns: 32px minmax(0, 1fr);
+    padding: 10px;
+  }
+
+  .strategy-directory-table__head--roster {
+    display: none;
+  }
+
+  .strategy-row {
+    grid-column: 2;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .strategy-row__actions {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-items: stretch;
+  }
+
+  .strategy-row__actions .ad-btn--ghost,
+  .strategy-row__actions .ad-btn--danger {
+    min-width: 0;
+  }
+
+  .strategy-row__select {
+    align-self: start;
+  }
+
+  .strategy-row__main,
+  .strategy-row__activity,
+  .strategy-row__cell {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+  }
+
+  .strategy-row__main::before,
+  .strategy-row__activity::before,
+  .strategy-row__cell::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: var(--ad-font-size-xs);
+  }
+
+  .strategy-row__main > *,
+  .strategy-row__activity > *,
+  .strategy-row__cell > * {
+    grid-column: 2;
+  }
+
+  .strategy-inline-note__popup {
+    width: min(320px, calc(100vw - 32px));
+  }
+}

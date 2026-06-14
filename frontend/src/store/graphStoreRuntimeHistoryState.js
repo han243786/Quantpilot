@@ -1,61 +1,8 @@
 import { buildPersistedRuntimeSelectionState } from "./graphStoreRuntimeSelectionState";
-
-function sanitizeCompareSelection(backtestIds) {
-  return Array.isArray(backtestIds)
-    ? [...new Set(backtestIds.filter(Boolean))].slice(0, 2)
-    : [];
-}
-
-// v1.0.5: 策略作用域 — 用 state.graph.metadata.graph_id 作为 key
-function _strategyId(state) {
-  return state.graph?.metadata?.graph_id || "_global";
-}
-
-export function getCompareSelection(state) {
-  const raw = state.runtime.backtestCompareSelection;
-  if (!raw) return [];
-  if (Array.isArray(raw)) return raw;
-  return raw[_strategyId(state)] || [];
-}
-
-export function toggleBacktestCompareSelectionState(state, backtestId) {
-  const existing = getCompareSelection(state);
-  const next = existing.includes(backtestId)
-    ? existing.filter((id) => id !== backtestId)
-    : existing.length >= 2
-      ? existing
-      : [...existing, backtestId];
-  const raw = state.runtime.backtestCompareSelection;
-  const base = Array.isArray(raw) ? {} : { ...raw };
-  return {
-    runtime: {
-      ...state.runtime,
-      backtestCompareSelection: { ...base, [_strategyId(state)]: next }
-    }
-  };
-}
-
-export function clearBacktestCompareSelectionState(state) {
-  const raw = state.runtime.backtestCompareSelection;
-  const base = Array.isArray(raw) ? {} : { ...raw };
-  return {
-    runtime: {
-      ...state.runtime,
-      backtestCompareSelection: { ...base, [_strategyId(state)]: [] }
-    }
-  };
-}
-
-export function replaceBacktestCompareSelectionState(state, backtestIds) {
-  const raw = state.runtime.backtestCompareSelection;
-  const base = Array.isArray(raw) ? {} : { ...raw };
-  return {
-    runtime: {
-      ...state.runtime,
-      backtestCompareSelection: { ...base, [_strategyId(state)]: sanitizeCompareSelection(backtestIds) }
-    }
-  };
-}
+import {
+  buildBacktestCompareSelectionMap,
+  getCompareSelection
+} from "./graphStoreRuntimeHistoryCompareSelection";
 
 export function buildRunHistoryLoadingState(state) {
   return {
@@ -97,16 +44,14 @@ export function buildBacktestHistoryLoadingState(state) {
 
 export function buildBacktestHistoryReadyState(state, backtestHistory) {
   const current = getCompareSelection(state);
-  const raw = state.runtime.backtestCompareSelection;
-  const base = Array.isArray(raw) ? {} : { ...raw };
   return {
     runtime: {
       ...state.runtime,
       backtestHistory,
       backtestHistoryStatus: "ready",
-      backtestCompareSelection: { ...base, [_strategyId(state)]: current.filter(
+      backtestCompareSelection: buildBacktestCompareSelectionMap(state, current.filter(
         (backtestId) => backtestHistory.some((item) => item.backtest_id === backtestId)
-      )}
+      ))
     }
   };
 }

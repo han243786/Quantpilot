@@ -14,6 +14,7 @@ import { WorkspaceIssueQueueCard } from "./StrategyWorkspaceIssueQueueCard";
 import StrategyWorkspaceCollaborationCard from "./StrategyWorkspaceCollaborationCard";
 import StrategyWorkspaceExperimentCard from "./StrategyWorkspaceExperimentCard";
 import StrategyWorkspaceVersionHistoryCard from "./StrategyWorkspaceVersionHistoryCard";
+import { buildWorkspaceOverviewActionCards } from "./strategyWorkspaceDashboardOverviewShell";
 
 export default function StrategyWorkspaceOverviewTab({
   strategyId,
@@ -35,35 +36,17 @@ export default function StrategyWorkspaceOverviewTab({
   lastBacktest,
   formatTime
 }) {
-  const overviewActionCards = [
-    {
-      kicker: "构建",
-      title: "打开构建工作区",
-      note: "只有需要结构调整、连线或源码修复时再进入。",
-      meta: `${graph.nodes.length} 节点 / ${graph.edges.length} 连线`,
-      tone: "muted",
-      cta: "打开构建模式",
-      onClick: () => ui.setActiveTab("code")
-    },
-    {
-      kicker: "诊断",
-      title: "查看编译与校验阻塞",
-      note: "先从修复队列定位问题，再进入完整诊断。",
-      meta: `${compileCounts.error} 错误 / ${compileCounts.warning} 警告`,
-      tone: compileCounts.error > 0 ? "danger" : compileCounts.warning > 0 ? "warning" : "info",
-      cta: "打开诊断",
-      onClick: () => ui.setActiveTab("diagnostics")
-    },
-    {
-      kicker: "研究",
-      title: "打开模拟与回测历史",
-      note: "从工作区进入回测索引和对比流程。",
-      meta: `${recentRuns.length} 模拟 / ${recentBacktests.length} 回测`,
-      tone: recentBacktests.length > 0 || recentRuns.length > 0 ? "info" : "muted",
-      cta: "打开回测",
-      onClick: () => navigateTo(strategyBacktestsPath(strategyId))
-    }
-  ];
+  const overviewActionCards = buildWorkspaceOverviewActionCards({
+    graph,
+    compileCounts,
+    recentRuns,
+    recentBacktests
+  }).map((item) => ({
+    ...item,
+    onClick: item.targetTab
+      ? () => ui.setActiveTab(item.targetTab)
+      : () => navigateTo(strategyBacktestsPath(strategyId))
+  }));
 
   return (
     <div className="strategy-workspace-overview" data-testid="strategy-workspace-overview-tab">

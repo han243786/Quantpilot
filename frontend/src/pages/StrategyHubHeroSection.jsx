@@ -1,36 +1,18 @@
 import StrategyHubInlineNote from "./StrategyHubInlineNote";
-import { StrategyMetricCard, StrategyOpsCard } from "./StrategyHubSharedComponents";
-import { formatCount, formatTime } from "../utils/strategyHubFormatters";
+import { StrategyMetricCard, StrategyOpsCard } from "../components/strategySharedComponents";
+import { buildStrategyHubMetricCards, buildStrategyHubOpsCards } from "../utils/strategyHubHeroSummary";
 import { navigateTo, strategyWorkspacePath } from "../router";
 
 export default function StrategyHubHeroSection({ model }) {
   const openTutorial = () => {
     window.dispatchEvent(new CustomEvent("qp-open-tutorial"));
   };
-  const headerCards = [
-    {
-      label: "策略文件",
-      value: formatCount(model.hubSummary.trackedCount),
-      note: "当前由后端真实追踪、可在策略中心加载的策略文件数量。"
-    },
-    {
-      label: "可运行策略",
-      value: formatCount(model.hubSummary.runnableCount),
-      note: "当前没有明显阻塞，可以直接编译或启动模拟的策略数量。"
-    },
-    {
-      label: "可研究策略",
-      value: formatCount(model.hubSummary.researchReadyCount),
-      note: "至少已经有一条持久化回测，可继续查看或对比的策略数量。"
-    },
-    {
-      label: "最近活动",
-      value: model.hubSummary.latestActivityAt
-        ? formatTime(model.hubSummary.latestActivityAt)
-        : "暂无活动",
-      note: `对比队列：已选 ${formatCount(model.hubSummary.compareCount)} 项`
-    }
-  ];
+  const metricCards = buildStrategyHubMetricCards(model.hubSummary);
+  const opsCards = buildStrategyHubOpsCards({
+    hubSummary: model.hubSummary,
+    compareSelection: model.compareSelection,
+    selectedStrategyCount: model.selectedStrategyCount
+  });
 
   return (
     <>
@@ -85,33 +67,18 @@ export default function StrategyHubHeroSection({ model }) {
       </header>
 
       <section className="strategy-hub-status-strip" aria-label="策略中心状态总览">
-        {headerCards.map((item) => (
+        {metricCards.map((item) => (
           <StrategyMetricCard key={item.label} label={item.label} value={item.value} note={item.note} />
         ))}
-        <StrategyOpsCard
-          title="待修复"
-          value={formatCount(model.hubSummary.issueCount)}
-          note="当前仍被编译或校验问题阻塞的策略数量。"
-          tone="danger"
-        />
-        <StrategyOpsCard
-          title="运行就绪"
-          value={formatCount(model.hubSummary.runnableCount)}
-          note="可直接进入模拟或回测复盘的策略数量。"
-          tone="success"
-        />
-        <StrategyOpsCard
-          title="对比队列"
-          value={formatCount(model.compareSelection.length)}
-          note="进入对比页前，这里应刚好保留两条回测。"
-          tone="info"
-        />
-        <StrategyOpsCard
-          title="已选策略"
-          value={formatCount(model.selectedStrategyCount)}
-          note="进入工作区前，可先用勾选把管理范围收敛到一小组策略。"
-          tone="muted"
-        />
+        {opsCards.map((item) => (
+          <StrategyOpsCard
+            key={item.title}
+            title={item.title}
+            value={item.value}
+            note={item.note}
+            tone={item.tone}
+          />
+        ))}
       </section>
     </>
   );

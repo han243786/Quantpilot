@@ -1,0 +1,859 @@
+# Frontend Full Feature Tree
+
+Status: frontend-local recursive refactor closed; merge-back preflight prepared.
+
+This file is the frontend-only full feature tree. It starts blank by design and will be filled only by frontend extraction evidence.
+
+## Root
+
+- `frontend`
+
+## Feature Areas
+
+- `frontend.app_shell`
+  - Status: parent closed.
+  - User-visible behavior: React root bootstraps the application, initializes the graph store, renders route content behind the app shell, and hosts desktop/browser shell affordances.
+  - Active frontend-local paths:
+    - `frontend/src/main.jsx`
+    - `frontend/src/App.jsx`
+    - `frontend/src/app/AppGlobalOverlays.jsx`
+    - `frontend/src/app/AppGlobalOverlays.test.jsx`
+    - `frontend/src/app/DesktopTitleBar.jsx`
+    - `frontend/src/app/DesktopTitleBar.test.jsx`
+    - `frontend/src/app/AppRouteHost.jsx`
+    - `frontend/src/app/AppRouteHost.test.jsx`
+    - `frontend/src/app/AppRoot.jsx`
+    - `frontend/src/app/AppRoot.test.jsx`
+    - `frontend/src/app/AppShellFallback.jsx`
+    - `frontend/src/app/AppShellFallback.test.jsx`
+    - `frontend/src/app/installGlobalErrorHandlers.js`
+    - `frontend/src/app/installGlobalErrorHandlers.test.js`
+    - `frontend/src/app/useAppEnvironmentEvents.js`
+    - `frontend/src/app/useAppEnvironmentEvents.test.jsx`
+    - `frontend/src/app/useAppInitialization.js`
+    - `frontend/src/app/useAppInitialization.test.jsx`
+    - `frontend/src/app/useAppRoute.js`
+    - `frontend/src/app/useAppRoute.test.jsx`
+    - `frontend/src/app/useDesktopWindowChrome.js`
+    - `frontend/src/app/useDesktopWindowChrome.test.jsx`
+  - Evidence:
+    - `markdown/00-frontend-refactor-governance/records/FE-0002-frontend-app-shell-baseline.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0003-frontend-app-shell-bootstrap-root-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0004-frontend-isolated-coverage-gate.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0006-frontend-app-shell-startup-readiness-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0007-frontend-app-shell-environment-events-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0008-frontend-app-shell-desktop-window-chrome-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0009-frontend-app-shell-route-host-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0010-frontend-app-shell-global-overlays-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0011-frontend-app-shell-parent-closeout.md`
+
+- `frontend.routing`
+  - Status: parent closed.
+  - User-visible behavior: path builders, route parsing, and navigation dispatch keep shell navigation and routed feature entry stable.
+  - Active frontend-local paths:
+    - `frontend/src/router.js`
+    - `frontend/src/router.test.js`
+    - `frontend/src/routing/navigationDispatch.js`
+    - `frontend/src/routing/navigationDispatch.test.js`
+    - `frontend/src/routing/routeContract.js`
+    - `frontend/src/routing/routeContract.test.js`
+    - `frontend/src/routing/shellNavigation.js`
+    - `frontend/src/routing/shellNavigation.test.js`
+  - Evidence:
+    - `markdown/00-frontend-refactor-governance/records/FE-0012-frontend-routing-baseline.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0013-frontend-routing-route-contract-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0014-frontend-routing-navigation-dispatch-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0015-frontend-routing-shell-navigation-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0016-frontend-routing-parent-closeout.md`
+
+- `frontend.api_client`
+  - Status: parent closed.
+  - User-visible behavior: frontend HTTP requests resolve the API base, apply timeout handling, send JSON requests, and surface server errors consistently.
+  - Active frontend-local paths:
+    - `frontend/src/api/apiBase.js`
+    - `frontend/src/api/apiBase.test.js`
+    - `frontend/src/api/fetchHelpers.js`
+    - `frontend/src/api/fetchHelpers.test.js`
+    - `frontend/src/api/apiTransport.js`
+    - `frontend/src/api/apiTransport.test.js`
+    - `frontend/src/api/client.js`
+    - `frontend/src/utils/api.js`
+  - Evidence:
+    - `markdown/00-frontend-refactor-governance/records/FE-0017-frontend-api-client-baseline.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0018-frontend-api-client-base-resolution-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0019-frontend-api-client-request-transport-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0020-frontend-api-client-compat-fetch-helpers-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0021-frontend-api-client-parent-closeout.md`
+
+- `frontend.capabilities`
+  - Status: parent closed.
+  - User-visible behavior: backend capability snapshots gate frontend modules, workspace surfaces, toolbar/runtime actions, and safe fallback messaging.
+  - Active frontend-local paths:
+    - `frontend/src/capabilities/supportMatrix.js`
+    - `frontend/src/capabilities/supportMatrix.test.js`
+    - `frontend/src/capabilities/capabilityActionBlocks.js`
+    - `frontend/src/capabilities/capabilityActionBlocks.test.js`
+    - `frontend/src/capabilities/capabilityCatalog.js`
+    - `frontend/src/capabilities/capabilityCatalog.test.js`
+    - `frontend/src/capabilities/capabilityBoundary.js`
+    - `frontend/src/capabilities/capabilityBoundary.test.js`
+    - `frontend/src/capabilities/capabilitySync.js`
+    - `frontend/src/capabilities/capabilitySync.test.js`
+    - `frontend/src/capabilities/capabilityProjection.js`
+    - `frontend/src/capabilities/capabilityProjection.test.js`
+    - `frontend/src/capabilities/capabilityGovernanceCore.js`
+    - `frontend/src/capabilities/capabilityGovernanceCore.test.js`
+    - `frontend/src/capabilities/capabilityGovernanceRegistry.js`
+    - `frontend/src/capabilities/capabilityGovernanceRegistry.test.js`
+    - `frontend/src/capabilities/capabilityGovernance.js`
+    - `frontend/src/capabilities/capabilityGovernance.test.js`
+    - `frontend/src/capabilities/builtinCapabilitySnapshot.js`
+    - `frontend/src/capabilities/builtinCapabilitySnapshot.test.js`
+    - `frontend/src/capabilities/capabilityNormalization.js`
+    - `frontend/src/capabilities/capabilityNormalization.test.js`
+    - `frontend/src/modules/moduleRegistryContracts.js`
+    - `frontend/src/modules/moduleRegistryContracts.test.js`
+    - `frontend/src/modules/moduleRegistryAssembly.js`
+    - `frontend/src/modules/moduleRegistryAssembly.test.js`
+    - `frontend/src/modules/moduleRegistry.js`
+    - `frontend/src/modules/moduleRegistry.test.js`
+    - `frontend/src/modules/builtinModules.js`
+    - `frontend/src/store/graphStore.js`
+    - `frontend/src/store/graphStoreCapabilityRefresh.js`
+    - `frontend/src/store/graphStoreCapabilityRefresh.test.js`
+    - `frontend/src/store/graphStore.capabilities.test.js`
+  - Evidence:
+    - `markdown/00-frontend-refactor-governance/records/FE-0022-frontend-capabilities-baseline.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0023-frontend-capabilities-sync-block-gate-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0024-frontend-capabilities-catalog-maps-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0025-frontend-capabilities-boundary-context-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0026-frontend-capabilities-action-block-reason-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0027-frontend-capabilities-projection-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0028-frontend-capabilities-governance-core-contract-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0029-frontend-capabilities-governance-registry-entries-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0030-frontend-capabilities-governance-public-facade-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0031-frontend-capabilities-builtin-default-snapshot-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0032-frontend-capabilities-normalization-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0033-frontend-capabilities-module-registry-contracts-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0034-frontend-capabilities-module-registry-assembly-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0035-frontend-capabilities-module-registry-public-facade-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0036-frontend-capabilities-store-refresh-projection-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0037-frontend-capabilities-store-refresh-facade-closeout.md`
+    - `markdown/00-frontend-refactor-governance/records/FE-0038-frontend-capabilities-parent-closeout.md`
+
+## Evidence Rules
+
+Each landed feature area should link to:
+
+- Owning module node.
+- User-visible behavior preserved.
+- Source files owned by the feature area.
+- Equivalence baseline or closeout record.
+
+## Deferred Merge Notes
+
+Do not mirror this file into `markdown/10-overview/overview-full-feature-tree.md` until frontend refactor is fully closed and merge-back is explicitly started.
+
+## Closed Frontend Parent: `frontend.strategy_workspace`
+
+- Status: parent closed.
+- Record:
+  - `markdown/00-frontend-refactor-governance/records/FE-0039-frontend-strategy-workspace-baseline.md`
+- Closeout:
+  - `markdown/00-frontend-refactor-governance/records/FE-0049-frontend-strategy-workspace-parent-closeout.md`
+- Owned and split-target files:
+  - `frontend/src/pages/StrategyWorkspacePage.jsx`
+  - `frontend/src/pages/StrategyWorkspacePage.codeMode.test.jsx`
+  - `frontend/src/pages/strategyWorkspaceRouteShell.js`
+  - `frontend/src/pages/strategyWorkspaceRouteShell.test.js`
+  - `frontend/src/pages/StrategyWorkspacePageSections.jsx`
+  - `frontend/src/pages/StrategyWorkspacePanelFallbacks.jsx`
+  - `frontend/src/pages/StrategyWorkspaceDashboard.jsx`
+  - `frontend/src/pages/StrategyWorkspaceOverviewTab.jsx`
+  - `frontend/src/pages/strategyWorkspaceDashboardOverviewShell.js`
+  - `frontend/src/pages/strategyWorkspaceDashboardOverviewShell.test.js`
+  - `frontend/src/pages/StrategyWorkspaceCodeTab.jsx`
+  - `frontend/src/pages/strategyWorkspaceCodeModeShell.js`
+  - `frontend/src/pages/strategyWorkspaceCodeModeShell.test.js`
+  - `frontend/src/pages/StrategyWorkspaceDiagnosticsTab.jsx`
+  - `frontend/src/pages/StrategyWorkspaceResearchTab.jsx`
+  - `frontend/src/pages/StrategyWorkspaceMonitorTab.jsx`
+  - `frontend/src/pages/StrategyWorkspaceDebugTab.jsx`
+  - `frontend/src/pages/StrategyWorkspaceSourceTab.jsx`
+  - `frontend/src/pages/strategyWorkspaceAuxiliaryTabsShell.js`
+  - `frontend/src/pages/strategyWorkspaceAuxiliaryTabsShell.test.js`
+  - `frontend/src/pages/StrategyWorkspaceIssueQueueCard.jsx`
+  - `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.jsx`
+  - `frontend/src/pages/StrategyWorkspaceVersionHistoryCard.test.jsx`
+  - `frontend/src/pages/StrategyWorkspaceExperimentCard.jsx`
+  - `frontend/src/pages/StrategyWorkspaceExperimentCard.test.jsx`
+  - `frontend/src/pages/StrategyWorkspaceCollaborationCard.jsx`
+  - `frontend/src/pages/StrategyWorkspaceCollaborationCard.test.jsx`
+  - `frontend/src/pages/strategyWorkspaceGovernanceCardsShell.js`
+  - `frontend/src/pages/strategyWorkspaceGovernanceCardsShell.test.js`
+  - `frontend/src/pages/strategy-workspace.css`
+  - `frontend/src/pages/strategy-workspace-shell.css`
+  - `frontend/src/pages/strategy-workspace-overview-diagnostics.css`
+  - `frontend/src/pages/strategy-workspace-builder-inspector.css`
+  - `frontend/src/pages/strategy-workspace-cards-runtime.css`
+  - `frontend/src/pages/strategy-workspace-responsive.css`
+  - `frontend/src/hooks/useStrategyWorkspaceSharedModel.js`
+  - `frontend/src/hooks/useStrategyWorkspacePageData.js`
+  - `frontend/src/hooks/strategyWorkspacePageDataProjection.js`
+  - `frontend/src/hooks/strategyWorkspacePageDataProjection.test.js`
+  - `frontend/src/hooks/useStrategyWorkspaceUiState.js`
+  - `frontend/src/hooks/strategyWorkspaceIssueQueueState.js`
+  - `frontend/src/hooks/strategyWorkspaceIssueQueueState.test.js`
+  - `frontend/src/hooks/useWorkspaceActionBarActions.js`
+  - `frontend/src/hooks/useWorkspaceActionBarModel.js`
+  - `frontend/src/hooks/workspaceActionBarShared.js`
+  - `frontend/src/hooks/workspaceActionSelectors.js`
+  - `frontend/src/utils/strategyWorkspaceIssueQueue.js`
+  - `frontend/src/utils/strategyWorkspaceIssueQueue.test.js`
+  - `frontend/src/utils/workspaceContextLabels.js`
+  - `frontend/src/components/TopToolbar.jsx`
+  - `frontend/src/components/topToolbarBridge.js`
+  - `frontend/src/components/topToolbarBridge.test.js`
+  - `frontend/src/components/TopToolbar.capabilities.test.jsx`
+  - `frontend/src/components/TopToolbar.exportFailure.test.jsx`
+  - `frontend/src/components/TopToolbar.failureNotices.test.jsx`
+  - `frontend/src/components/TopToolbar.formalSourceMode.test.jsx`
+  - `frontend/src/components/TopToolbar.persistenceFailure.test.jsx`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0039-frontend-strategy-workspace-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0040-frontend-strategy-workspace-route-shell-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0041-frontend-strategy-workspace-shared-model-page-data-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0042-frontend-strategy-workspace-issue-queue-state-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0043-frontend-strategy-workspace-toolbar-bridge-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0044-frontend-strategy-workspace-code-mode-shell-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0045-frontend-strategy-workspace-dashboard-overview-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0046-frontend-strategy-workspace-monitor-research-source-tabs-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0047-frontend-strategy-workspace-version-experiment-collaboration-cards-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0048-frontend-strategy-workspace-layout-styles-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0049-frontend-strategy-workspace-parent-closeout.md`
+
+## Closed Frontend Parent: `frontend.strategy_hub`
+
+- Status: parent closed.
+- Record:
+  - `markdown/00-frontend-refactor-governance/records/FE-0050-frontend-strategy-hub-baseline.md`
+- Owned and split-target files:
+  - `frontend/src/pages/StrategyHubPage.jsx`
+  - `frontend/src/pages/StrategyHubPage.test.jsx`
+  - `frontend/src/pages/strategyHubRouteShell.js`
+  - `frontend/src/pages/strategyHubRouteShell.test.js`
+  - `frontend/src/pages/StrategyHubPanelFallbacks.jsx`
+  - `frontend/src/pages/StrategyHubSectionFallbacks.jsx`
+  - `frontend/src/pages/StrategyHubHeroSection.jsx`
+  - `frontend/src/pages/StrategyHubInlineNote.jsx`
+  - `frontend/src/pages/StrategyHubBodySection.jsx`
+  - `frontend/src/pages/StrategyHubTemplateLibrarySection.jsx`
+  - `frontend/src/pages/StrategyHubTemplateLibrarySection.test.jsx`
+  - `frontend/src/pages/StrategyHubRosterSection.jsx`
+  - `frontend/src/pages/StrategyHubRosterDirectorySection.jsx`
+  - `frontend/src/pages/StrategyHubRosterToolbar.jsx`
+  - `frontend/src/pages/StrategyHubRosterTableSection.jsx`
+  - `frontend/src/pages/StrategyHubRosterTableSection.test.jsx`
+  - `frontend/src/pages/StrategyHubRosterTableRow.jsx`
+  - `frontend/src/pages/StrategyHubRosterRowActions.jsx`
+  - `frontend/src/pages/StrategyHubActivityPanelsSection.jsx`
+  - `frontend/src/pages/StrategyHubBacktestActivityCard.jsx`
+  - `frontend/src/pages/StrategyHubRunActivityCard.jsx`
+  - `frontend/src/pages/StrategyHubInspectorSection.jsx`
+  - `frontend/src/pages/StrategyHubInspectorOverviewSection.jsx`
+  - `frontend/src/pages/StrategyHubRecentBacktestsSection.jsx`
+  - `frontend/src/pages/StrategyHubRecentRunsSection.jsx`
+  - `frontend/src/pages/StrategyHubRecentRunItem.jsx`
+  - `frontend/src/pages/StrategyHubCompareQueueSection.jsx`
+  - `frontend/src/pages/strategy-hub.css`
+  - `frontend/src/pages/strategy-hub-shell-hero.css`
+  - `frontend/src/pages/strategy-hub-notes-tasks-status.css`
+  - `frontend/src/pages/strategy-hub-layout-template.css`
+  - `frontend/src/pages/strategy-hub-roster.css`
+  - `frontend/src/pages/strategy-hub-inspector-activity.css`
+  - `frontend/src/pages/strategy-hub-responsive.css`
+  - `frontend/src/hooks/useStrategyDirectoryModel.js`
+  - `frontend/src/hooks/strategyDirectoryModelProjection.js`
+  - `frontend/src/hooks/strategyDirectoryModelProjection.test.js`
+  - `frontend/src/hooks/useStrategyHubBodyData.js`
+  - `frontend/src/hooks/useStrategyHubRosterData.js`
+  - `frontend/src/hooks/useStrategyHubInspectorData.js`
+  - `frontend/src/components/strategySharedComponents.jsx`
+  - `frontend/src/utils/strategyHubStrategyIdentity.js`
+  - `frontend/src/utils/strategyFormatters.js`
+  - `frontend/src/utils/strategyHubHeroSummary.js`
+  - `frontend/src/utils/strategyHubHeroSummary.test.js`
+  - `frontend/src/utils/strategyHubTemplateLibraryView.js`
+  - `frontend/src/utils/strategyHubTemplateLibraryView.test.js`
+  - `frontend/src/utils/strategyHubRosterProjection.js`
+  - `frontend/src/utils/strategyHubRosterProjection.test.js`
+  - `frontend/src/utils/strategyHubRosterRowActions.js`
+  - `frontend/src/utils/strategyHubRosterRowActions.test.js`
+  - `frontend/src/utils/strategyHubInspectorProjection.js`
+  - `frontend/src/utils/strategyHubInspectorProjection.test.js`
+  - `frontend/src/utils/strategyHubInspectorActions.js`
+  - `frontend/src/utils/strategyHubInspectorActions.test.js`
+  - `frontend/src/utils/strategyHubRecentRunsView.js`
+  - `frontend/src/utils/strategyHubRecentRunsView.test.js`
+  - `frontend/src/utils/strategyHubRecentBacktestsActions.js`
+  - `frontend/src/utils/strategyHubRecentBacktestsActions.test.js`
+  - `frontend/src/utils/strategyHubCompareQueueActions.js`
+  - `frontend/src/utils/strategyHubCompareQueueActions.test.js`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0050-frontend-strategy-hub-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0051-frontend-strategy-hub-route-shell-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0052-frontend-strategy-hub-directory-model-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0053-frontend-strategy-hub-hero-summary-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0054-frontend-strategy-hub-roster-projection-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0055-frontend-strategy-hub-roster-row-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0056-frontend-strategy-hub-inspector-projection-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0057-frontend-strategy-hub-recent-activity-compare-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0058-frontend-strategy-hub-template-library-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0059-frontend-strategy-hub-shared-component-boundary-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0060-frontend-strategy-hub-layout-styles-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0061-frontend-strategy-hub-parent-closeout.md`
+
+## Closed Frontend Parent: `frontend.graph_editor`
+
+- Status: parent closed.
+- Record:
+  - `markdown/00-frontend-refactor-governance/records/FE-0062-frontend-graph-editor-baseline.md`
+- User-visible behavior: graph editing UI renders and mutates strategy graphs, validates node/edge topology, projects node cards and property panels, compiles graph semantics, and bridges graph source artifacts.
+- Owned and split-target files:
+  - `frontend/src/pages/EditorPage.jsx`
+  - `frontend/src/pages/EditorPage.test.jsx`
+  - `frontend/src/components/StrategyCanvas.jsx`
+  - `frontend/src/components/StrategyCanvas.focus.test.jsx`
+  - `frontend/src/components/StrategyCanvas.interaction.test.jsx`
+  - `frontend/src/components/strategyCanvasInteractionShell.js`
+  - `frontend/src/components/strategyCanvasInteractionShell.test.js`
+  - `frontend/src/components/StrategyCanvasMiniMap.jsx`
+  - `frontend/src/components/strategyCanvasFocus.js`
+  - `frontend/src/components/strategyCanvasFocus.test.js`
+  - `frontend/src/components/strategyCanvasViewport.js`
+  - `frontend/src/components/strategyCanvasViewport.test.js`
+  - `frontend/src/components/PropertyPanel.jsx`
+  - `frontend/src/components/PropertyPanel.layout.test.jsx`
+  - `frontend/src/components/PropertyPanel.compileSummary.test.jsx`
+  - `frontend/src/components/PropertyPanel.strategyIr.test.jsx`
+  - `frontend/src/components/propertyPanelAuthoringCards.jsx`
+  - `frontend/src/components/propertyPanelAuthoringCards.test.jsx`
+  - `frontend/src/components/propertyPanelCompileSourceCards.jsx`
+  - `frontend/src/components/propertyPanelCompileSourceCards.test.jsx`
+  - `frontend/src/components/propertyPanelEntityCards.jsx`
+  - `frontend/src/components/propertyPanelEntityCards.test.jsx`
+  - `frontend/src/components/propertyPanelLayoutPrimitives.jsx`
+  - `frontend/src/components/propertyPanelLayoutPrimitives.test.jsx`
+  - `frontend/src/components/propertyPanelSectionComposers.jsx`
+  - `frontend/src/components/propertyPanelSectionComposers.test.jsx`
+  - `frontend/src/components/propertyPanelViews.jsx`
+  - `frontend/src/components/CompilePanel.integration.test.jsx`
+  - `frontend/src/components/ModuleSidebar.jsx`
+  - `frontend/src/components/ModuleSidebar.test.jsx`
+  - `frontend/src/components/moduleSidebarModel.js`
+  - `frontend/src/components/moduleSidebarModel.test.js`
+  - `frontend/src/hooks/usePropertyPanelModel.js`
+  - `frontend/src/hooks/usePropertyPanelActions.js`
+  - `frontend/src/hooks/propertyPanelSelectors.js`
+  - `frontend/src/hooks/propertyPanelShared.js`
+  - `frontend/src/hooks/propertyPanelShared.test.js`
+  - `frontend/src/nodes/BaseNodeCard.jsx`
+  - `frontend/src/nodes/BaseNodeCard.test.jsx`
+  - `frontend/src/nodes/NodePriceOverlay.jsx`
+  - `frontend/src/nodes/NodePriceOverlay.test.jsx`
+  - `frontend/src/nodes/nodeCardPresentation.js`
+  - `frontend/src/nodes/nodeCardPresentation.test.js`
+  - `frontend/src/graph/createGraph.js`
+  - `frontend/src/graph/createNode.js`
+  - `frontend/src/graph/createNode.test.js`
+  - `frontend/src/graph/nodeFactoryLayout.js`
+  - `frontend/src/graph/nodeFactoryLayout.test.js`
+  - `frontend/src/graph/validation.js`
+  - `frontend/src/graph/validationSupport.js`
+  - `frontend/src/graph/validationSupport.test.js`
+  - `frontend/src/graph/validationRules.js`
+  - `frontend/src/graph/validationRules.test.js`
+  - `frontend/src/graph/compileGraph.js`
+  - `frontend/src/graph/compileGraphCoreIr.js`
+  - `frontend/src/graph/compileGraphCoreIr.test.js`
+  - `frontend/src/graph/compileGraphRuntimeConfig.js`
+  - `frontend/src/graph/compileGraphRuntimeConfig.test.js`
+  - `frontend/src/graph/compileGraphSupport.js`
+  - `frontend/src/graph/compileGraphSupport.test.js`
+  - `frontend/src/graph/compileGraphTopology.js`
+  - `frontend/src/graph/compileGraphTopology.test.js`
+  - `frontend/src/graph/compileGraph.diagnostics.test.js`
+  - `frontend/src/graph/compileGraph.multiSymbol.test.js`
+  - `frontend/src/graph/quantscript.js`
+  - `frontend/src/graph/quantscript.test.js`
+  - `frontend/src/graph/quantscriptFormal.js`
+  - `frontend/src/graph/quantscriptFormal.test.js`
+  - `frontend/src/graph/quantscriptGraphSource.js`
+  - `frontend/src/graph/quantscriptGraphSource.test.js`
+  - `frontend/src/graph/quantscriptParser.js`
+  - `frontend/src/graph/quantscriptParser.test.js`
+  - `frontend/src/graph/spread.test.js`
+  - `frontend/src/store/graphStoreEditorActions.js`
+  - `frontend/src/store/graphStoreEditorDraftActions.js`
+  - `frontend/src/store/graphStoreEditorDraftActions.test.js`
+  - `frontend/src/store/graphStoreEditorEdgeActions.js`
+  - `frontend/src/store/graphStoreEditorEdgeCreationActions.js`
+  - `frontend/src/store/graphStoreEditorEdgeRemovalActions.js`
+  - `frontend/src/store/graphStoreEditorEdgeActions.test.js`
+  - `frontend/src/store/graphStoreEditorNodeConfigActions.js`
+  - `frontend/src/store/graphStoreEditorNodeCreationActions.js`
+  - `frontend/src/store/graphStoreEditorNodeActions.js`
+  - `frontend/src/store/graphStoreEditorNodeActions.test.js`
+  - `frontend/src/store/graphStoreEditorNodePositionActions.js`
+  - `frontend/src/store/graphStoreEditorSelectionActions.js`
+  - `frontend/src/store/graphStoreEditorSelectionActions.test.js`
+  - `frontend/src/store/graphStoreEditorNodeUiActions.js`
+  - `frontend/src/store/graphStoreEditorTemplateActions.js`
+  - `frontend/src/store/graphStoreEditorTemplateActions.test.js`
+  - `frontend/src/store/graphStore.editorActions.test.js`
+  - `frontend/src/graph/createGraph.test.js`
+  - `frontend/src/graph/graphFactoryDefaults.js`
+  - `frontend/src/graph/graphFactoryDefaults.test.js`
+  - `frontend/src/graph/quantscriptArtifactTargets.js`
+  - `frontend/src/graph/quantscriptArtifactTargets.test.js`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0062-frontend-graph-editor-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0063-frontend-graph-editor-canvas-interaction-shell-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0064-frontend-graph-editor-canvas-focus-viewport-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0065-frontend-graph-editor-node-card-presentation-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0066-frontend-graph-editor-property-panel-model-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0067-frontend-graph-editor-property-panel-layout-primitives-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0068-frontend-graph-editor-property-panel-authoring-cards-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0069-frontend-graph-editor-property-panel-compile-source-cards-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0070-frontend-graph-editor-property-panel-entity-cards-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0071-frontend-graph-editor-property-panel-section-composers-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0072-frontend-graph-editor-property-panel-views-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0073-frontend-graph-editor-module-palette-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0074-frontend-graph-editor-validation-support-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0075-frontend-graph-editor-node-factory-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0076-frontend-graph-editor-seed-graph-factory-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0077-frontend-graph-editor-validation-rules-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0078-frontend-graph-editor-graph-factory-validation-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0079-frontend-graph-editor-compile-support-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0080-frontend-graph-editor-core-ir-lowering-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0081-frontend-graph-editor-runtime-config-lowering-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0082-frontend-graph-editor-topology-diagnostics-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0083-frontend-graph-editor-graph-compiler-core-ir-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0084-frontend-graph-editor-quantscript-formal-generation-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0085-frontend-graph-editor-quantscript-graph-source-generation-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0086-frontend-graph-editor-quantscript-artifact-targets-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0087-frontend-graph-editor-quantscript-graph-source-parser-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0088-frontend-graph-editor-quantscript-bridge-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0089-frontend-graph-editor-editor-store-selection-focus-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0090-frontend-graph-editor-editor-store-draft-source-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0091-frontend-graph-editor-editor-store-template-loading-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0092-frontend-graph-editor-editor-store-node-mutation-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0093-frontend-graph-editor-editor-store-edge-removal-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0094-frontend-graph-editor-editor-store-actions-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0095-frontend-graph-editor-legacy-editor-page-shell-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0096-frontend-graph-editor-parent-closeout.md`
+
+## Closed Frontend Parent: `frontend.runtime_panels`
+
+- Status: parent closed.
+- Record:
+  - `markdown/00-frontend-refactor-governance/records/FE-0097-frontend-runtime-panels-baseline.md`
+- Closeout:
+  - `markdown/00-frontend-refactor-governance/records/FE-0106-frontend-runtime-panels-parent-closeout.md`
+- User-visible behavior: runtime panels render live run/backtest events, persisted run/backtest history, runtime diagnostics, replay timelines, evidence summaries, report generation entry points, mutation controls, and strategy research console runtime lanes.
+- Owned and split-target files:
+  - `frontend/src/components/EventStreamPanel.jsx`
+  - `frontend/src/components/EventStreamPanel.backtestArtifacts.test.jsx`
+  - `frontend/src/components/EventStreamPanel.backtestHistory.test.jsx`
+  - `frontend/src/components/EventStreamPanel.dataQuality.test.jsx`
+  - `frontend/src/components/EventStreamPanel.executionExplanation.test.jsx`
+  - `frontend/src/components/EventStreamPanel.historyExplanation.test.jsx`
+  - `frontend/src/components/EventStreamPanel.layout.test.jsx`
+  - `frontend/src/components/EventStreamPanel.nodeFocus.test.jsx`
+  - `frontend/src/components/EventStreamPanel.refreshFeedback.test.jsx`
+  - `frontend/src/components/EventStreamPanel.runtimeArtifactActions.test.jsx`
+  - `frontend/src/components/EventFeedSection.test.jsx`
+  - `frontend/src/components/BacktestHistorySection.jsx`
+  - `frontend/src/components/BacktestHistorySection.test.jsx`
+  - `frontend/src/components/RunHistorySection.jsx`
+  - `frontend/src/components/RunHistorySection.test.jsx`
+  - `frontend/src/components/StrategyBacktestsPanel.jsx`
+  - `frontend/src/components/StrategyEventsPanel.jsx`
+  - `frontend/src/components/StrategyRunsPanel.jsx`
+  - `frontend/src/components/StrategyResearchConsole.jsx`
+  - `frontend/src/components/StrategyResearchConsole.test.jsx`
+  - `frontend/src/components/AssetCandlesPanel.jsx`
+  - `frontend/src/components/AssetCandlesPanel.test.jsx`
+  - `frontend/src/components/EventReplaySection.jsx`
+  - `frontend/src/components/EventReplaySection.test.jsx`
+  - `frontend/src/components/RuntimeDiagnosticsPanel.jsx`
+  - `frontend/src/components/RuntimeDiagnosticsPanel.test.jsx`
+  - `frontend/src/components/RuntimeMutationPanel.jsx`
+  - `frontend/src/components/RuntimeMutationPanel.test.jsx`
+  - `frontend/src/components/RuntimeReportPanel.jsx`
+  - `frontend/src/components/RuntimeReportPanel.test.jsx`
+  - `frontend/src/components/GovernedTimelinePanel.jsx`
+  - `frontend/src/components/GovernedTimelinePanel.test.jsx`
+  - `frontend/src/components/V4RuntimeEvidencePanel.jsx`
+  - `frontend/src/components/V4RuntimeEvidencePanel.test.jsx`
+  - `frontend/src/components/EvidenceSummaryCards.jsx`
+  - `frontend/src/hooks/useStrategyResearchModel.js`
+  - `frontend/src/hooks/useStrategyResearchActions.js`
+  - `frontend/src/hooks/useStrategyResearchActions.test.js`
+  - `frontend/src/hooks/useStrategyResearchUiState.js`
+  - `frontend/src/hooks/useStrategyResearchUiState.test.js`
+  - `frontend/src/hooks/strategyResearchSelectors.js`
+  - `frontend/src/hooks/strategyResearchSelectors.test.js`
+  - `frontend/src/hooks/useOrderAnimation.js`
+  - `frontend/src/utils/runtimeDiagnosticsProjection.js`
+  - `frontend/src/utils/runtimeDiagnosticsProjection.test.js`
+  - `frontend/src/utils/runtimeEvidenceSummary.js`
+  - `frontend/src/utils/runtimeEvidenceSummary.test.js`
+  - `frontend/src/utils/runtimeExplanation.js`
+  - `frontend/src/utils/runtimeExplanation.test.js`
+  - `frontend/src/utils/runtimeGovernance.js`
+  - `frontend/src/utils/runtimeGovernance.test.js`
+  - `frontend/src/utils/runtimeMutation.js`
+  - `frontend/src/utils/runtimeMutation.test.js`
+  - `frontend/src/utils/runtimeStatus.js`
+  - `frontend/src/utils/runtimeTimeline.js`
+  - `frontend/src/utils/runtimeTimeline.test.js`
+  - `frontend/src/utils/runtimeAiProposal.js`
+  - `frontend/src/utils/runtimeAiProposal.test.js`
+  - `frontend/src/utils/v4RuntimeEvidence.js`
+  - `frontend/src/utils/v4RuntimeEvidence.test.js`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0097-frontend-runtime-panels-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0098-frontend-runtime-panels-event-stream-shell-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0099-frontend-runtime-panels-strategy-research-model-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0100-frontend-runtime-panels-history-sections-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0101-frontend-runtime-panels-event-feed-candles-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0102-frontend-runtime-panels-runtime-diagnostics-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0103-frontend-runtime-panels-evidence-timeline-reports-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0104-frontend-runtime-panels-mutation-controls-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0105-frontend-runtime-panels-replay-explanations-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0106-frontend-runtime-panels-parent-closeout.md`
+
+## Closed Frontend Parent: `frontend.backtest_views`
+
+- Status: parent closed.
+- Record:
+  - `markdown/00-frontend-refactor-governance/records/FE-0107-frontend-backtest-views-baseline.md`
+- Closeout:
+  - `markdown/00-frontend-refactor-governance/records/FE-0120-frontend-backtest-views-parent-closeout.md`
+- User-visible behavior: backtest analysis views render strategy-scoped backtest lists, persisted backtest detail analysis, backtest comparison, shared analysis hero/section layout, summary metric helpers, drawdown visualization, and monthly return heatmap widgets.
+- Owned and split-target files:
+  - `frontend/src/pages/StrategyBacktestsPage.jsx`
+  - `frontend/src/pages/StrategyBacktestsPage.test.jsx`
+  - `frontend/src/pages/BacktestDetailPage.jsx`
+  - `frontend/src/pages/BacktestDetailPage.test.jsx`
+  - `frontend/src/pages/BacktestComparePage.jsx`
+  - `frontend/src/pages/BacktestComparePage.test.jsx`
+  - `frontend/src/pages/BacktestAnalysisLayout.jsx`
+  - `frontend/src/pages/backtestAnalysisShared.jsx`
+  - `frontend/src/pages/backtestAnalysisShared.test.jsx`
+  - `frontend/src/pages/backtestViews/shared/BacktestAnalysisLayout.jsx`
+  - `frontend/src/pages/backtestViews/shared/BacktestAnalysisLayout.test.jsx`
+  - `frontend/src/pages/backtestViews/shared/backtestAnalysisShared.jsx`
+  - `frontend/src/pages/backtestViews/shared/backtestAnalysisShared.test.jsx`
+  - `frontend/src/pages/backtestViews/shared/DrawdownChart.jsx`
+  - `frontend/src/pages/backtestViews/shared/MonthlyReturnsHeatmap.jsx`
+  - `frontend/src/pages/backtestViews/shared/index.js`
+  - `frontend/src/pages/backtestViews/strategyBacktestsIndex/index.js`
+  - `frontend/src/pages/backtestViews/strategyBacktestsIndex/strategyBacktestsIndexModel.js`
+  - `frontend/src/pages/backtestViews/strategyBacktestsIndex/strategyBacktestsIndexModel.test.js`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/index.js`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailCoreArtifactSections.jsx`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailCoreArtifactSections.test.jsx`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailEvidenceReportSections.jsx`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailEvidenceReportSections.test.jsx`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailReplayOutputExplanationSections.jsx`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailReplayOutputExplanationSections.test.jsx`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailPageModel.js`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailPageModel.test.js`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailSummaryModel.js`
+  - `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailSummaryModel.test.js`
+  - `frontend/src/pages/backtestViews/comparePageAnalysis/index.js`
+  - `frontend/src/pages/backtestViews/comparePageAnalysis/BacktestCompareCardsAndSummary.jsx`
+  - `frontend/src/pages/backtestViews/comparePageAnalysis/BacktestCompareCardsAndSummary.test.jsx`
+  - `frontend/src/pages/backtestViews/comparePageAnalysis/BacktestCompareEquityOverlayChart.jsx`
+  - `frontend/src/pages/backtestViews/comparePageAnalysis/BacktestCompareEquityOverlayChart.test.jsx`
+  - `frontend/src/pages/backtestViews/comparePageAnalysis/backtestComparePageModel.js`
+  - `frontend/src/pages/backtestViews/comparePageAnalysis/backtestComparePageModel.test.js`
+  - `frontend/src/pages/backtest-analysis.css`
+  - `frontend/src/components/DrawdownChart.jsx`
+  - `frontend/src/components/MonthlyReturnsHeatmap.jsx`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0107-frontend-backtest-views-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0108-frontend-backtest-views-analysis-layout-shared-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0109-frontend-backtest-views-strategy-index-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0110-frontend-backtest-views-detail-page-model-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0111-frontend-backtest-views-detail-summary-context-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0112-frontend-backtest-views-detail-core-artifact-sections-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0113-frontend-backtest-views-detail-evidence-report-sections-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0114-frontend-backtest-views-detail-replay-output-explanation-sections-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0115-frontend-backtest-views-detail-page-analysis-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0116-frontend-backtest-views-compare-page-model-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0117-frontend-backtest-views-compare-equity-overlay-chart-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0118-frontend-backtest-views-compare-cards-summary-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0119-frontend-backtest-views-compare-page-analysis-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0120-frontend-backtest-views-parent-closeout.md`
+
+## Closed Frontend Parent: `frontend.store`
+
+- Status: parent closed.
+- Record:
+  - `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`
+- User-visible behavior: frontend store state drives graph editing, compile flows, runtime sessions, persisted runtime/backtest history, startup recovery, capability refresh, graph persistence, and route/page state consumed across the application.
+- Owned and split-target files:
+  - `frontend/src/store/graphStore.js`
+  - `frontend/src/store/graphStoreGraphLifecycleActions.js`
+  - `frontend/src/store/graphStore.backtestArtifacts.test.js`
+  - `frontend/src/store/graphStore.capabilities.test.js`
+  - `frontend/src/store/graphStore.detailLoadErrors.test.js`
+  - `frontend/src/store/graphStore.diagnostics.test.js`
+  - `frontend/src/store/graphStore.editorActions.test.js`
+  - `frontend/src/store/graphStore.export.test.js`
+  - `frontend/src/store/graphStore.recentNodes.test.js`
+  - `frontend/src/store/graphStore.runtimeActionLock.test.js`
+  - `frontend/src/store/graphStore.runtimeErrors.test.js`
+  - `frontend/src/store/graphStore.saveGraphRollback.test.js`
+  - `frontend/src/store/graphStore.startupRecovery.test.js`
+  - `frontend/src/store/graphStore.strategyIrCompile.test.js`
+  - `frontend/src/store/graphStore.strategyIrDraft.test.js`
+  - `frontend/src/store/graphStore.templates.test.js`
+  - `frontend/src/store/graphStore.versionHistory.test.js`
+  - `frontend/src/store/graphStoreCapabilityRefresh.js`
+  - `frontend/src/store/graphStoreCapabilityRefresh.test.js`
+  - `frontend/src/store/graphStoreCompileActions.js`
+  - `frontend/src/store/graphStoreCompileApi.js`
+  - `frontend/src/store/graphStoreCompileCurrentGraphActions.js`
+  - `frontend/src/store/graphStoreCompileDiagnostics.js`
+  - `frontend/src/store/graphStoreCompileExportActions.js`
+  - `frontend/src/store/graphStoreCompileFlow.js`
+  - `frontend/src/store/graphStoreCompileHelpers.js`
+  - `frontend/src/store/graphStoreCompileOutcomeMapping.js`
+  - `frontend/src/store/graphStoreCompileOutcomeProjection.js`
+  - `frontend/src/store/graphStoreCompileOutcomeProjection.test.js`
+  - `frontend/src/store/graphStoreCompileProtocolFlow.js`
+  - `frontend/src/store/graphStoreCompileProtocolMapping.js`
+  - `frontend/src/store/graphStoreCompileSourceActions.js`
+  - `frontend/src/store/graphStoreCompileState.js`
+  - `frontend/src/store/graphStoreCompileSummary.js`
+  - `frontend/src/store/graphStoreEditorActions.js`
+  - `frontend/src/store/graphStoreEditorDraftActions.js`
+  - `frontend/src/store/graphStoreEditorDraftActions.test.js`
+  - `frontend/src/store/graphStoreEditorEdgeActions.js`
+  - `frontend/src/store/graphStoreEditorEdgeActions.test.js`
+  - `frontend/src/store/graphStoreEditorNodeActions.js`
+  - `frontend/src/store/graphStoreEditorNodeActions.test.js`
+  - `frontend/src/store/graphStoreEditorSelectionActions.js`
+  - `frontend/src/store/graphStoreEditorSelectionActions.test.js`
+  - `frontend/src/store/graphStoreEditorTemplateActions.js`
+  - `frontend/src/store/graphStoreEditorTemplateActions.test.js`
+  - `frontend/src/store/graphStoreActorCollaboration.js`
+  - `frontend/src/store/graphStoreGraphShapeValidation.js`
+  - `frontend/src/store/graphStoreHelpers.js`
+  - `frontend/src/store/graphStorePersistenceActions.js`
+  - `frontend/src/store/graphStorePersistenceConsistency.test.js`
+  - `frontend/src/store/graphStorePersistenceHelpers.js`
+  - `frontend/src/store/graphStorePersistenceStorage.js`
+  - `frontend/src/store/graphStorePersistenceTransport.js`
+  - `frontend/src/store/graphStoreVersionAuditNormalizers.js`
+  - `frontend/src/store/graphStoreRuntimeActions.js`
+  - `frontend/src/store/graphStoreRuntimeHelpers.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryActions.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryApi.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryArtifactFlow.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryCompareSelection.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryDetailFlow.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryFailure.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryFlow.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryFlow.test.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryProjection.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryRefreshFlow.js`
+  - `frontend/src/store/graphStoreRuntimeHistoryState.js`
+  - `frontend/src/store/graphStoreRuntimeLifecycleActions.js`
+  - `frontend/src/store/graphStoreRuntimeSelectionState.js`
+  - `frontend/src/store/graphStoreRuntimeSelectionState.test.js`
+  - `frontend/src/store/graphStoreRuntimeBacktestActions.js`
+  - `frontend/src/store/graphStoreRuntimeBacktestExperimentActions.js`
+  - `frontend/src/store/graphStoreRuntimeSessionActions.js`
+  - `frontend/src/store/graphStoreRuntimeSessionShared.js`
+  - `frontend/src/store/graphStoreRuntimeSessionState.js`
+  - `frontend/src/store/graphStoreRuntimeSimulationActions.js`
+  - `frontend/src/store/graphStoreRuntimeV4SimulationActions.js`
+  - `frontend/src/store/graphStoreRuntimeTransport.js`
+  - `frontend/src/store/graphStoreRuntimeTransport.test.js`
+  - `frontend/src/store/graphStoreRootState.js`
+  - `frontend/src/store/graphStoreRootState.test.js`
+  - `frontend/src/store/graphStoreStartupActions.js`
+  - `frontend/src/store/graphStoreVersionAuditActions.js`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0121-frontend-store-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0122-frontend-store-root-shell-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0123-frontend-store-startup-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0124-frontend-store-graph-lifecycle-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0125-frontend-store-version-audit-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0126-frontend-store-persistence-transport-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0127-frontend-store-persistence-storage-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0128-frontend-store-actor-collaboration-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0129-frontend-store-graph-shape-validation-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0130-frontend-store-version-audit-normalizers-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0131-frontend-store-persistence-startup-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0132-frontend-store-capability-refresh-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0133-frontend-store-editor-actions-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0134-frontend-store-editor-facade-boundary-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0135-frontend-store-editor-selection-focus-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0136-frontend-store-editor-draft-source-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0137-frontend-store-editor-template-loading-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0138-frontend-store-editor-node-mutation-actions-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0139-frontend-store-editor-node-creation-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0140-frontend-store-editor-node-position-viewport-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0141-frontend-store-editor-node-config-identity-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0142-frontend-store-editor-node-ui-collapse-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0143-frontend-store-editor-node-mutation-actions-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0144-frontend-store-editor-edge-mutation-actions-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0145-frontend-store-editor-edge-add-action-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0146-frontend-store-editor-edge-remove-selected-action-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0147-frontend-store-editor-edge-mutation-actions-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0148-frontend-store-editor-actions-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0149-frontend-store-compile-flow-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0150-frontend-store-compile-source-apply-actions-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0151-frontend-store-compile-export-actions-closeout.md`
+
+## Closed Frontend Parent: `frontend.design_system_styles`
+
+- Status: parent closed.
+- Record:
+  - `markdown/00-frontend-refactor-governance/records/FE-0177-frontend-design-system-styles-baseline.md`
+- User-visible behavior: global frontend styling, design tokens, native control defaults, shared component primitives, responsive panel overrides, and page-level style entry contracts stay stable while style ownership is recursively clarified.
+- Owned and split-target files:
+  - `frontend/src/main.jsx`
+  - `frontend/src/styleEntrypoint.js`
+  - `frontend/src/design-system.css`
+  - `frontend/src/design-system/reset-and-native-controls.css`
+  - `frontend/src/design-system/theme-tokens.css`
+  - `frontend/src/design-system/legacy-token-aliases.css`
+  - `frontend/src/design-system/scrollbars.css`
+  - `frontend/src/design-system/focus-selection.css`
+  - `frontend/src/design-system/shell-chrome.css`
+  - `frontend/src/design-system/workspace-navigation.css`
+  - `frontend/src/design-system/overlays-resizers-motion.css`
+  - `frontend/src/styles.css`
+  - `frontend/src/styles-responsive-panels.css`
+  - `frontend/src/styles-responsive-panels/workspace-editor-breakpoints.css`
+  - `frontend/src/styles-responsive-panels/runtime-event-research-panels.css`
+  - `frontend/src/styles-responsive-panels/motion-and-runtime-helpers.css`
+  - `frontend/src/styles-responsive-panels/tutorial-overlay.css`
+  - `frontend/src/styles-responsive-panels/dashboard-strategy-config.css`
+  - `frontend/src/styles-responsive-panels/quantscript-editor-source-tabs.css`
+  - `frontend/src/styles-responsive-panels/workspace-debug-approval-print.css`
+  - `frontend/src/styles-responsive-panels/legacy-page-inline-migrations.css`
+  - `frontend/src/shared.css`
+  - `frontend/src/shared/ad-core-primitives.css`
+  - `frontend/src/shared/legacy-qp-aliases.css`
+  - `frontend/src/shared/loading-skeleton-motion.css`
+  - `frontend/src/shared/monthly-heatmap.css`
+  - `frontend/src/pages/backtest-analysis.css`
+  - `frontend/src/pages/strategy-hub.css`
+  - `frontend/src/pages/strategy-hub-shell-hero.css`
+  - `frontend/src/pages/strategy-hub-notes-tasks-status.css`
+  - `frontend/src/pages/strategy-hub-layout-template.css`
+  - `frontend/src/pages/strategy-hub-roster.css`
+  - `frontend/src/pages/strategy-hub-inspector-activity.css`
+  - `frontend/src/pages/strategy-hub-responsive.css`
+  - `frontend/src/pages/strategy-workspace.css`
+  - `frontend/src/pages/backtest-analysis/shell-tokens-surface-chrome.css`
+  - `frontend/src/pages/backtest-analysis/route-bar-and-typography.css`
+  - `frontend/src/pages/backtest-analysis/summary-cards-page-grid.css`
+  - `frontend/src/pages/backtest-analysis/analysis-sections-card-contracts.css`
+  - `frontend/src/pages/backtest-analysis/responsive-compare-motion-overrides.css`
+  - `frontend/src/pages/strategy-workspace-shell.css`
+  - `frontend/src/pages/strategy-workspace-overview-diagnostics.css`
+  - `frontend/src/pages/strategy-workspace-builder-inspector.css`
+  - `frontend/src/pages/strategy-workspace-cards-runtime.css`
+  - `frontend/src/pages/strategy-workspace-responsive.css`
+- Candidate child queue:
+  - `frontend.design_system_styles.global_style_entry`
+  - `frontend.design_system_styles.design_tokens_and_native_controls`
+  - `frontend.design_system_styles.shared_component_primitives`
+  - `frontend.design_system_styles.responsive_panel_overrides`
+  - `frontend.design_system_styles.page_style_contracts`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0177-frontend-design-system-styles-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0178-frontend-design-system-global-style-entry-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0179-frontend-design-system-core-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0180-frontend-design-system-reset-native-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0181-frontend-design-system-theme-tokens-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0182-frontend-design-system-focus-scrollbars-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0183-frontend-design-system-shell-chrome-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0184-frontend-design-system-workspace-navigation-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0185-frontend-design-system-overlays-resizers-motion-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0186-frontend-design-system-core-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0187-frontend-shared-component-primitives-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0188-frontend-shared-ad-core-primitives-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0189-frontend-shared-legacy-qp-aliases-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0190-frontend-shared-loading-skeleton-motion-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0191-frontend-shared-monthly-heatmap-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0192-frontend-shared-component-primitives-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0193-frontend-responsive-panel-overrides-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0194-frontend-responsive-workspace-editor-breakpoints-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0195-frontend-responsive-runtime-event-research-panels-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0196-frontend-responsive-motion-runtime-helpers-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0197-frontend-responsive-tutorial-overlay-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0198-frontend-responsive-dashboard-strategy-config-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0199-frontend-responsive-quantscript-editor-source-tabs-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0200-frontend-responsive-workspace-debug-approval-print-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0201-frontend-responsive-legacy-page-inline-migrations-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0202-frontend-responsive-panel-overrides-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0203-frontend-page-style-contracts-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0204-frontend-backtest-analysis-page-styles-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0205-frontend-backtest-analysis-shell-tokens-surface-chrome-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0206-frontend-backtest-analysis-route-bar-typography-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0207-frontend-backtest-analysis-summary-cards-page-grid-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0208-frontend-backtest-analysis-sections-card-contracts-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0209-frontend-backtest-analysis-responsive-compare-motion-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0210-frontend-backtest-analysis-page-styles-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0211-frontend-strategy-hub-page-style-contracts-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0212-frontend-strategy-workspace-page-style-contracts-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0213-frontend-page-style-contracts-parent-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0214-frontend-design-system-styles-parent-closeout.md`
+
+## Closed Frontend Parent: `frontend.test_support`
+
+- Status: parent closed.
+- User-visible behavior: frontend unit-test setup, dev-only test bridge, shared unit fixtures, E2E API mocking, and E2E bootstrap/review fixtures remain stable for test and development workflows.
+- Active frontend-local paths:
+  - `frontend/vitest.config.js`
+  - `frontend/src/test/setup.js`
+  - `frontend/src/test/testBridge.js`
+  - `frontend/src/test/fixtures/README.md`
+  - `frontend/src/test/fixtures/capabilities/backend-capabilities-v1.json`
+  - `frontend/src/test/fixtures/capabilities/capabilityFallbacks.js`
+  - `frontend/src/test/fixtures/runtime/backtestSuccess.js`
+  - `frontend/src/test/fixtures/runtime/buildValidatedSampleGraph.js`
+  - `frontend/src/test/fixtures/runtime/capabilityRejections.js`
+  - `frontend/src/test/fixtures/runtime/editorBootstrap.js`
+  - `frontend/src/test/fixtures/runtime/runSuccess.js`
+  - `frontend/tests/e2e/support/analysisReviewFixtures.js`
+  - `frontend/tests/e2e/support/apiHarness.js`
+  - `frontend/tests/e2e/support/workspaceBootstrapMocks.js`
+  - `frontend/tests/e2e/support/workspaceGraphFixture.js`
+- Evidence:
+  - `markdown/00-frontend-refactor-governance/records/FE-0215-frontend-test-support-baseline.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0216-frontend-test-support-vitest-runtime-setup-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0217-frontend-test-support-dev-test-bridge-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0218-frontend-test-support-unit-fixture-catalog-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0219-frontend-test-support-e2e-api-harness-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0220-frontend-test-support-e2e-bootstrap-review-fixtures-closeout.md`
+  - `markdown/00-frontend-refactor-governance/records/FE-0221-frontend-test-support-parent-closeout.md`
+
+## Frontend Recursive Closeout And Preflight Evidence
+
+- `markdown/00-frontend-refactor-governance/records/FE-0222-frontend-recursive-refactor-closeout.md`
+- `markdown/00-frontend-refactor-governance/records/FE-0223-frontend-completion-audit-cleanup.md`
+- `markdown/00-frontend-refactor-governance/frontend-global-merge-back-map.md`
+- `markdown/00-frontend-refactor-governance/frontend-e2e-current-state-inventory.md`
+- `markdown/00-frontend-refactor-governance/frontend-backend-main-thread-handoff-prompt.md`
+- `markdown/00-frontend-refactor-governance/records/FE-0224-frontend-global-e2e-preflight-handoff.md`

@@ -1,0 +1,180 @@
+/* ── QuantScript 编辑器 ── */
+
+.qs-editor-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.qs-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.qs-editor-header h1 { margin: 0; }
+.qs-editor-header__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.qs-editor-shell {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  height: 400px;
+  border: 1px solid var(--ad-border);
+  border-radius: var(--ad-radius-sm);
+  background: var(--ad-panel);
+  overflow: hidden;
+}
+
+.qs-editor-line-numbers {
+  margin: 0;
+  padding: 12px 10px;
+  border-right: 1px solid var(--ad-border);
+  background: var(--ad-bg-raised);
+  color: var(--ad-text-muted);
+  font-family: var(--ad-font-mono);
+  font-size: var(--ad-font-size-md);
+  line-height: 1.4;
+  text-align: right;
+  user-select: none;
+  overflow: hidden;
+}
+
+.qs-editor-line-numbers span {
+  display: block;
+  min-height: 1.4em;
+}
+
+.qs-editor-textarea {
+  width: 100%;
+  height: 100%;
+  font-family: var(--ad-font-mono);
+  font-size: var(--ad-font-size-md);
+  line-height: 1.4;
+  padding: 12px;
+  border: 0;
+  background: transparent;
+  color: var(--ad-text);
+  resize: vertical;
+  outline: none;
+}
+
+.qs-editor-error {
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--ad-error-soft);
+  border: 1px solid var(--ad-error);
+  border-radius: var(--ad-radius-md);
+  color: var(--ad-error);
+  font-family: var(--ad-font-mono);
+}
+
+.qs-editor-report {
+  margin-top: 16px;
+}
+.qs-editor-report__header {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.qs-editor-report__header h3 { margin: 0; }
+.qs-editor-report__badge {
+  padding: 2px 8px;
+  border-radius: var(--ad-radius-lg);
+  font-size: var(--ad-font-size-sm);
+  color: var(--ad-text);
+}
+.qs-editor-report__badge--passed { background: var(--ad-success); }
+.qs-editor-report__badge--failed { background: var(--ad-error); }
+.qs-editor-report__duration {
+  font-size: 12px;
+  color: var(--ad-text-muted);
+}
+.qs-editor-report__graph-id {
+  margin-bottom: 12px;
+  font-size: var(--ad-font-size-sm);
+  color: var(--ad-text-muted);
+}
+
+.qs-editor-report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ad-font-size-md);
+}
+.qs-editor-report-table thead tr {
+  background: var(--ad-card);
+}
+.qs-editor-report-table th,
+.qs-editor-report-table td {
+  padding: 8px;
+}
+.qs-editor-report-table th:first-child { width: 30px; text-align: left; }
+.qs-editor-report-table th:nth-child(2) { text-align: left; }
+.qs-editor-report-table th:nth-child(3) { width: 70px; text-align: right; }
+.qs-editor-report-table th:nth-child(4) { text-align: left; }
+.qs-editor-report-table td { border-bottom: 1px solid var(--ad-border); }
+.qs-editor-report-table .qs-step-icon {
+  font-weight: bold;
+}
+.qs-editor-report-table .qs-step-icon--passed {
+  color: var(--ad-success);
+}
+.qs-editor-report-table .qs-step-icon--failed {
+  color: var(--ad-error);
+}
+.qs-editor-report-table .qs-step-icon--skipped {
+  color: var(--ad-text-muted);
+}
+.qs-editor-report-table .qs-step-duration {
+  text-align: right;
+  color: var(--ad-text-muted);
+}
+.qs-editor-report-table .qs-step-message {
+  font-size: var(--ad-font-size-sm);
+  color: var(--ad-text-secondary);
+  max-width: 500px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.qs-editor-report-table .qs-step-actual {
+  color: var(--ad-error);
+  font-weight: bold;
+}
+
+.qs-editor-footer {
+  margin-top: var(--ad-space-6);
+  font-size: var(--ad-font-size-xs);
+  color: var(--ad-text-muted);
+  border-top: 1px solid var(--ad-border);
+  padding-top: var(--ad-space-3);
+}
+
+/* ── 源码选项卡 ── */
+
+.qs-source-tab {
+  padding: var(--ad-space-4);
+}
+.qs-source-tab__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--ad-space-3);
+}
+.qs-source-tab__header h3 { margin: 0; }
+
+.qs-source-code {
+  background: var(--ad-panel);
+  color: var(--ad-text);
+  padding: var(--ad-space-4);
+  border-radius: var(--ad-radius-md);
+  font-family: var(--ad-font-mono);
+  font-size: var(--ad-font-size-md);
+  line-height: 1.5;
+  overflow: auto;
+  max-height: 60vh;
+  border: 1px solid var(--ad-border);
+  overscroll-behavior: contain;
+}

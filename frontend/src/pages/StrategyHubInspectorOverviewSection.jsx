@@ -1,16 +1,11 @@
 import { StrategyRouteBar } from "./BacktestAnalysisLayout";
-import { StrategyCardNote, StrategyTaskGroup } from "./StrategyHubSharedComponents";
-import {
-  projectStrategyHubInspectorOverview
-} from "../utils/strategyHubInspectorProjection";
+import { StrategyCardNote, StrategyTaskGroup } from "../components/strategySharedComponents";
 import {
   projectStrategyHubInspectorActionGroups,
   runStrategyHubInspectorAction
 } from "../utils/strategyHubInspectorActions";
 
-export default function StrategyHubInspectorOverviewSection({ model, selectedStrategy }) {
-  const overview = projectStrategyHubInspectorOverview(selectedStrategy);
-
+export default function StrategyHubInspectorOverviewSection({ model, selectedStrategy, overview }) {
   if (!selectedStrategy) {
     return <div className="strategy-directory-empty">{overview.emptyText}</div>;
   }

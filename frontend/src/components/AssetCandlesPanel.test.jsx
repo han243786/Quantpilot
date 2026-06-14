@@ -50,6 +50,69 @@ describe("AssetCandlesPanel", () => {
     expect(screen.getByTestId("asset-candles-samples")).toHaveTextContent("2");
   });
 
+  it("prefers live event snapshots over matching run history when no backtest replay exists", () => {
+    render(
+      <AssetCandlesPanel
+        graph={buildGraph("live")}
+        runtime={{
+          backtestArtifacts: null,
+          events: [
+            {
+              event_type: "PortfolioUpdated",
+              event_time_ms: 1_700_000_000_000,
+              payload: { equity_estimate: 10_000 }
+            },
+            {
+              event_type: "PortfolioUpdated",
+              event_time_ms: 1_700_000_060_000,
+              payload: { equity_estimate: 10_900 }
+            }
+          ],
+          history: [
+            {
+              graph_id: "asset_graph",
+              created_at_ms: 1_699_999_000_000,
+              account: { equity_estimate: 8_000 }
+            }
+          ]
+        }}
+      />
+    );
+
+    expect(screen.getByTestId("asset-candles-title")).toHaveTextContent("\u5b9e\u76d8");
+    expect(screen.getByTestId("asset-candles-source")).toHaveTextContent("\u5f53\u524d\u8fd0\u884c");
+    expect(screen.getByTestId("asset-candles-current-equity")).toHaveTextContent(/10,900\.00/);
+    expect(screen.getByTestId("asset-candles-samples")).toHaveTextContent("2");
+  });
+
+  it("falls back to graph-matched history snapshots when live snapshots are absent", () => {
+    render(
+      <AssetCandlesPanel
+        graph={buildGraph("paper")}
+        runtime={{
+          backtestArtifacts: null,
+          events: [],
+          history: [
+            {
+              graph_id: "other_graph",
+              created_at_ms: 1_700_000_000_000,
+              account: { equity_estimate: 9_000 }
+            },
+            {
+              graph_id: "asset_graph",
+              created_at_ms: 1_700_000_060_000,
+              account: { cash_balance: 10_000, total_net_notional: 500 }
+            }
+          ]
+        }}
+      />
+    );
+
+    expect(screen.getByTestId("asset-candles-source")).toHaveTextContent("\u6700\u8fd1\u8fd0\u884c");
+    expect(screen.getByTestId("asset-candles-current-equity")).toHaveTextContent(/10,500\.00/);
+    expect(screen.getByTestId("asset-candles-samples")).toHaveTextContent("1");
+  });
+
   it("renders the empty-state structure when no snapshots are available", () => {
     render(
       <AssetCandlesPanel

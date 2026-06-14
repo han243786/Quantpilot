@@ -1,0 +1,201 @@
+@media (max-width: 1540px) {
+  .strategy-workspace-overview,
+  .strategy-workspace-diagnostics {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+
+  .workspace-monitor-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1280px) {
+  .strategy-workspace-tabbar,
+  .workspace-metric-grid--triple {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .workspace-overview-actions,
+  .workspace-diagnostics-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-inspector-shell__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .strategy-workspace-builder {
+    grid-template-columns: 240px minmax(0, 1fr) 320px;
+  }
+
+  .strategy-workspace-builder--split {
+    grid-template-columns: 220px minmax(0, 1fr) 360px;
+  }
+}
+
+@media (max-width: 1180px) {
+  .strategy-workspace-page {
+    padding: 16px;
+  }
+
+  .workspace-small-screen-warning {
+    display: block;
+  }
+
+  .strategy-workspace-overview,
+  .strategy-workspace-diagnostics,
+  .workspace-overview-grid--dual,
+  .workspace-metric-grid,
+  .workspace-overview-hero,
+  .workspace-diagnostics-hero,
+  .workspace-monitor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .module-sidebar-lanes,
+  .canvas-lanes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .strategy-workspace-builder {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .strategy-workspace-builder__rail {
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .workspace-inspector-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-inspector-stack__controls {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .workspace-toolbar-shell .top-toolbar--workspace .top-toolbar-main--workspace,
+  .top-toolbar-utility-row {
+    flex-direction: column;
+  }
+
+  .strategy-workspace-builder .module-sidebar,
+  .strategy-workspace-builder .strategy-canvas-shell,
+  .strategy-workspace-builder .property-panel {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 860px) {
+  .strategy-workspace-header,
+  .workspace-mode-banner,
+  .workspace-mode-strip {
+    flex-direction: column;
+  }
+
+  .workspace-mode-strip {
+    align-items: stretch;
+  }
+
+  .workspace-mode-strip__pills {
+    justify-content: flex-start;
+  }
+
+  .strategy-workspace-tabbar {
+    grid-template-columns: 1fr;
+  }
+
+  .ad-tabbar--workspace-modes {
+    align-items: stretch;
+    flex-wrap: wrap;
+    padding-bottom: 8px;
+  }
+
+  .ad-tabbar--workspace-modes .ad-tabbar__spacer {
+    display: none;
+  }
+
+  .ad-tab--workspace-mode {
+    flex: 1 1 150px;
+  }
+
+  .canvas-lanes,
+  .module-sidebar-lanes {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .strategy-workspace-page {
+    padding: 12px;
+  }
+
+  .strategy-workspace-header,
+  .workspace-section-card,
+  .workspace-metric-card,
+  .workspace-tab,
+  .workspace-mode-banner,
+  .workspace-mode-strip,
+  .workspace-monitor-card,
+  .strategy-workspace-builder,
+  .strategy-workspace-research__panel {
+    border-radius: var(--ad-radius-md);
+  }
+
+  .workspace-overview-item,
+  .strategy-workspace-header__stats,
+  .workspace-diagnostics-source-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .workspace-overview-hero,
+  .workspace-diagnostics-hero {
+    padding: 16px;
+  }
+
+  .workspace-section-card__header,
+  .workspace-issue-queue__header,
+  .workspace-issue-queue__filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .workspace-section-card__header > .ad-btn--ghost,
+  .workspace-section-card__header > .ad-btn--primary,
+  .workspace-issue-queue__actions,
+  .workspace-issue-queue__severity,
+  .workspace-issue-queue__sources,
+  .workspace-issue-queue__node-types {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .workspace-issue-queue__filter,
+  .workspace-action-card {
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .toolbar-center--workspace,
+  .toolbar-status-strip {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .workspace-event-fallback__body {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-monitor-metric {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .workspace-monitor-metric strong {
+    max-width: 100%;
+    text-align: left;
+  }
+}

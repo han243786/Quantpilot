@@ -109,6 +109,9 @@ describe("runtime mutation contract reader", () => {
     });
 
     expect(normalized.proposal_id).toBe(proposal.proposal_id);
+    expect(normalized.graph_id).toBe(proposal.graph_id);
+    expect(normalized.old_value).toBe(proposal.old_value);
+    expect(normalized.new_value).toBe(proposal.new_value);
     expect(normalized.created_at_ms).toBe(proposal.created_at_ms);
     expect(normalized.governance.proposed_parameter_version).toBe("sha256:new");
   });

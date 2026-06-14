@@ -1,0 +1,40 @@
+/* ── 旧变量兼容别名 ──────────────────────────────────── */
+
+:root {
+  --bg: var(--ad-bg);
+  --panel: var(--ad-panel);
+  --panel-2: var(--ad-panel);
+  --panel-3: var(--ad-bg-raised);
+  --border: var(--ad-border);
+  --border-strong: var(--ad-border-strong);
+  --text: var(--ad-text);
+  --muted: var(--ad-text-muted);
+  --shadow-lg: var(--ad-shadow-lg);
+  --shadow-md: var(--ad-shadow-md);
+  --accent-cool: var(--ad-accent-soft);
+  --accent-mint: var(--ad-accent-soft);
+  --accent-warm: var(--ad-warning-soft);
+  --danger: var(--ad-error);
+  --warning: var(--ad-warning);
+  --success: var(--ad-success);
+  --surface-glow: none;
+  --focus-ring: 0 0 0 1px var(--ad-accent);
+  --radius-panel: var(--ad-radius-panel);
+  --radius-card: var(--ad-radius-md);
+  /* v0.4.0 W1-4 qp-* 旧变量 */
+  --qp-bg: var(--ad-bg);
+  --qp-surface: var(--ad-card);
+  --qp-border: var(--ad-border);
+  --qp-primary: var(--ad-accent);
+  --qp-text: var(--ad-text);
+  --qp-text-muted: var(--ad-text-muted);
+  --qp-radius: var(--ad-radius-md);
+  --qp-gap: var(--ad-space-2);
+  /* 链阶段色标 */
+  --data: var(--ad-accent);
+  --intent: #4a8a9a;
+  --agent: var(--ad-warning);
+  --risk: var(--ad-error);
+  --execution: var(--ad-success);
+  --runtime: var(--ad-text-muted);
+}

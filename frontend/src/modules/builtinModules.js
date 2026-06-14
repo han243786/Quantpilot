@@ -1,15 +1,15 @@
+import { SUPPORTED_SYMBOLS } from "../capabilities/supportMatrix";
 import {
-  DECLARED_INDICATOR_KINDS,
-  SUPPORTED_EXCHANGES,
-  SUPPORTED_FRONTEND_MODULE_KEYS,
-  SUPPORTED_INDICATOR_KINDS,
-  SUPPORTED_RUNTIME_EXECUTION_MODULES,
-  SUPPORTED_RUNTIME_MODES,
-  SUPPORTED_SYMBOLS,
-  WORKSPACE_SURFACE_MAP,
-  CAPABILITY_ACTION_MAP
-} from "../capabilities/supportMatrix";
+  DEFAULT_CAPABILITIES,
+  createSafeFallbackCapabilities
+} from "../capabilities/builtinCapabilitySnapshot";
+import { normalizeCapabilities as normalizeCapabilitiesForBuiltinModules } from "../capabilities/capabilityNormalization";
 import { sanitizeDisplayText } from "../utils/errorText";
+
+export {
+  DEFAULT_CAPABILITIES,
+  createSafeFallbackCapabilities
+} from "../capabilities/builtinCapabilitySnapshot";
 
 const exchangeOptions = [
   { label: "Binance", value: "binance" },
@@ -29,59 +29,6 @@ const commonNode = (category, name, quickFields, summaryFields) => ({
   quick_fields: quickFields,
   summary_fields: summaryFields
 });
-
-export const DEFAULT_CAPABILITIES = {
-  api_version: "quantpilot-capabilities/v1",
-  schema_version: "quantpilot/capabilities-schema/v1",
-  schema_hash: "sha256:86c21d2a4193728bc3332b29910f1d9934ab71b710342698bb82e96fad478a45",
-  chain_stages: ["data", "intent", "agent", "risk", "execution", "fill"],
-  strategy_ir: {
-    declared_indicator_kinds: DECLARED_INDICATOR_KINDS,
-    supported_indicator_kinds: SUPPORTED_INDICATOR_KINDS
-  },
-  runtime: {
-    supported_modes: SUPPORTED_RUNTIME_MODES,
-    supported_execution_modules: SUPPORTED_RUNTIME_EXECUTION_MODULES
-  },
-  market_data: {
-    supported_exchanges: SUPPORTED_EXCHANGES,
-    supported_symbols: SUPPORTED_SYMBOLS
-  },
-  frontend: {
-    supported_module_keys: SUPPORTED_FRONTEND_MODULE_KEYS,
-    unsupported_module_reasons: {}
-  },
-  workspace: {
-    surfaces: Object.keys(WORKSPACE_SURFACE_MAP).map((key) => ({
-      key,
-      status: "supported",
-      reason: null,
-      source: "backend:/api/capabilities.workspace.surfaces"
-    }))
-  },
-  ui_actions: {
-    actions: Object.keys(CAPABILITY_ACTION_MAP).map((key) => ({
-      key,
-      status: "supported",
-      reason: null,
-      source: "backend:/api/capabilities.ui_actions.actions"
-    }))
-  },
-  versioning: {
-    model_version: "quantpilot/versioning-model/v1",
-    strategy_version_source: "frontend_runtime_config.metadata.version",
-    parameter_version_policy: "immutable_generation_pointer",
-    deployment_revision_policy: "strategy_version_plus_compile_id_plus_capability_hash"
-  },
-  permission_boundary: {
-    model_version: "quantpilot/permission-boundary/v1",
-    execution_owner_module: "builtin.execution.paper",
-    live_execution_allowed: false,
-    ai_write_policy: "proposal_only",
-    plugin_network_default: "deny",
-    non_execution_order_access: "deny"
-  }
-};
 
 export const allBuiltinModules = [
   {
@@ -1036,231 +983,10 @@ export const allBuiltinModules = [
   }
 ];
 
-function normalizeSupportStatus(status) {
-  if (status === "supported") return "supported";
-  if (status === "declared_only") return "declared_only";
-  return "unsupported";
-}
-
-function normalizeNamedSupportEntries(entries, fallbackKeys = []) {
-  if (Array.isArray(entries) && entries.length > 0) {
-    return entries.map((entry) => ({
-      key: entry.key,
-      status: normalizeSupportStatus(entry.status),
-      reason: sanitizeDisplayText(entry.reason, "")
-    }));
-  }
-
-  return fallbackKeys.map((key) => ({
-    key,
-    status: "supported",
-    reason: ""
-  }));
-}
-
-function normalizeIndicatorSupportEntries(entries, declaredKinds = [], supportedKinds = []) {
-  if (Array.isArray(entries) && entries.length > 0) {
-    return entries.map((entry) => ({
-      kind: entry.kind,
-      status: normalizeSupportStatus(entry.status),
-      reason: sanitizeDisplayText(entry.reason, "")
-    }));
-  }
-
-  const supportedKindSet = new Set(supportedKinds);
-  return declaredKinds.map((kind) => ({
-    kind,
-    status: supportedKindSet.has(kind) ? "supported" : "declared_only",
-    reason: ""
-  }));
-}
-
-function normalizeEnumValue(value, allowedValues, fallbackValue) {
-  return allowedValues.includes(value) ? value : fallbackValue;
-}
-
-function normalizeBooleanValue(value, fallbackValue) {
-  return typeof value === "boolean" ? value : fallbackValue;
-}
-
-function normalizePermissionBoundary(permissionBoundary) {
-  const source =
-    permissionBoundary && typeof permissionBoundary === "object" ? permissionBoundary : {};
-
-  return {
-    model_version: sanitizeDisplayText(
-      source.model_version,
-      DEFAULT_CAPABILITIES.permission_boundary.model_version
-    ),
-    execution_owner_module: sanitizeDisplayText(
-      source.execution_owner_module,
-      DEFAULT_CAPABILITIES.permission_boundary.execution_owner_module
-    ),
-    live_execution_allowed: normalizeBooleanValue(source.live_execution_allowed, false),
-    ai_write_policy: normalizeEnumValue(
-      source.ai_write_policy,
-      ["proposal_only", "disabled"],
-      "disabled"
-    ),
-    plugin_network_default: normalizeEnumValue(
-      source.plugin_network_default,
-      ["deny", "allow"],
-      "deny"
-    ),
-    non_execution_order_access: normalizeEnumValue(
-      source.non_execution_order_access,
-      ["deny", "allow"],
-      "deny"
-    )
-  };
-}
-
-function normalizeFrontendCapabilities(frontendCapabilities = {}) {
-  const legacySupportedModuleKeys = Array.isArray(frontendCapabilities.supported_module_keys)
-    ? frontendCapabilities.supported_module_keys
-    : DEFAULT_CAPABILITIES.frontend.supported_module_keys;
-  const legacyUnsupportedReasons = {
-    ...DEFAULT_CAPABILITIES.frontend.unsupported_module_reasons,
-    ...(frontendCapabilities.unsupported_module_reasons || {})
-  };
-  const declaredModuleKeys =
-    Array.isArray(frontendCapabilities.declared_module_keys) &&
-    frontendCapabilities.declared_module_keys.length > 0
-      ? frontendCapabilities.declared_module_keys
-      : Array.from(
-          new Set([
-            ...allBuiltinModules.map((moduleDef) => moduleDef.module_key),
-            ...legacySupportedModuleKeys,
-            ...Object.keys(legacyUnsupportedReasons)
-          ])
-        );
-
-  const moduleSupportEntries =
-    Array.isArray(frontendCapabilities.module_support) && frontendCapabilities.module_support.length > 0
-      ? frontendCapabilities.module_support.map((entry) => ({
-          module_key: entry.module_key,
-          status: normalizeSupportStatus(entry.status),
-          reason: sanitizeDisplayText(entry.reason, "")
-        }))
-      : declaredModuleKeys.map((module_key) => ({
-          module_key,
-          status: legacySupportedModuleKeys.includes(module_key) ? "supported" : "declared_only",
-          reason: sanitizeDisplayText(legacyUnsupportedReasons[module_key], "")
-        }));
-
-  const supportedModuleKeys = moduleSupportEntries
-    .filter((entry) => entry.status === "supported")
-    .map((entry) => entry.module_key);
-  const unsupportedModuleReasons = { ...legacyUnsupportedReasons };
-
-  for (const entry of moduleSupportEntries) {
-    if (entry.status !== "supported" && entry.reason) {
-      unsupportedModuleReasons[entry.module_key] = entry.reason;
-    }
-  }
-
-  return {
-    ...DEFAULT_CAPABILITIES.frontend,
-    ...frontendCapabilities,
-    declared_module_keys: declaredModuleKeys,
-    supported_module_keys: supportedModuleKeys,
-    unsupported_module_reasons: unsupportedModuleReasons,
-    module_support: moduleSupportEntries
-  };
-}
-
-function normalizeUiCapabilityEntries(entries, fallbackMap, source) {
-  const fallbackEntries = Object.keys(fallbackMap).map((key) => ({
-    key,
-    status: "supported",
-    reason: "",
-    source
-  }));
-  const sourceEntries = Array.isArray(entries) && entries.length > 0 ? entries : fallbackEntries;
-
-  return sourceEntries
-    .filter((entry) => entry && typeof entry === "object" && entry.key)
-    .map((entry) => ({
-      key: entry.key,
-      status: normalizeSupportStatus(entry.status),
-      reason: sanitizeDisplayText(entry.reason, ""),
-      source: sanitizeDisplayText(entry.source, source)
-    }));
-}
-
-function normalizeWorkspaceCapabilities(workspaceCapabilities = {}) {
-  return {
-    surfaces: normalizeUiCapabilityEntries(
-      workspaceCapabilities.surfaces,
-      WORKSPACE_SURFACE_MAP,
-      "backend:/api/capabilities.workspace.surfaces"
-    )
-  };
-}
-
-function normalizeUiActionCapabilities(uiActionCapabilities = {}) {
-  return {
-    actions: normalizeUiCapabilityEntries(
-      uiActionCapabilities.actions,
-      CAPABILITY_ACTION_MAP,
-      "backend:/api/capabilities.ui_actions.actions"
-    )
-  };
-}
-
 export function normalizeCapabilities(capabilities) {
-  if (!capabilities || typeof capabilities !== "object") {
-    return DEFAULT_CAPABILITIES;
-  }
-
-  const strategyIr = {
-    ...DEFAULT_CAPABILITIES.strategy_ir,
-    ...capabilities.strategy_ir
-  };
-  const runtime = {
-    ...DEFAULT_CAPABILITIES.runtime,
-    ...capabilities.runtime
-  };
-  const marketData = {
-    ...DEFAULT_CAPABILITIES.market_data,
-    ...capabilities.market_data
-  };
-
-  return {
-    ...DEFAULT_CAPABILITIES,
-    ...capabilities,
-    strategy_ir: {
-      ...strategyIr,
-      indicator_support: normalizeIndicatorSupportEntries(
-        strategyIr.indicator_support,
-        strategyIr.declared_indicator_kinds,
-        strategyIr.supported_indicator_kinds
-      )
-    },
-    runtime: {
-      ...runtime,
-      mode_support: normalizeNamedSupportEntries(runtime.mode_support, runtime.supported_modes),
-      execution_module_support: normalizeNamedSupportEntries(
-        runtime.execution_module_support,
-        runtime.supported_execution_modules
-      )
-    },
-    market_data: {
-      ...marketData,
-      exchange_support: normalizeNamedSupportEntries(
-        marketData.exchange_support,
-        marketData.supported_exchanges
-      ),
-      symbol_support: normalizeNamedSupportEntries(
-        marketData.symbol_support,
-        marketData.supported_symbols
-      )
-    },
-    frontend: normalizeFrontendCapabilities(capabilities.frontend),
-    workspace: normalizeWorkspaceCapabilities(capabilities.workspace),
-    ui_actions: normalizeUiActionCapabilities(capabilities.ui_actions),
-    permission_boundary: normalizePermissionBoundary(capabilities.permission_boundary)
-  };
+  return normalizeCapabilitiesForBuiltinModules(capabilities, {
+    knownModuleKeys: allBuiltinModules.map((moduleDef) => moduleDef.module_key)
+  });
 }
 
 export function applyCapabilitiesToModules(capabilities = DEFAULT_CAPABILITIES) {
@@ -1313,69 +1039,6 @@ export function applyCapabilitiesToModules(capabilities = DEFAULT_CAPABILITIES) 
         : { status: "unsupported", reason }
     };
   });
-}
-
-export function createSafeFallbackCapabilities(reason = "能力清单加载失败，当前进入安全回退模式。") {
-  return {
-    api_version: DEFAULT_CAPABILITIES.api_version,
-    schema_version: DEFAULT_CAPABILITIES.schema_version,
-    schema_hash: "safe-fallback",
-    chain_stages: [...DEFAULT_CAPABILITIES.chain_stages],
-    strategy_ir: {
-      declared_indicator_kinds: [...DEFAULT_CAPABILITIES.strategy_ir.declared_indicator_kinds],
-      supported_indicator_kinds: [...DEFAULT_CAPABILITIES.strategy_ir.declared_indicator_kinds],
-      indicator_support: DEFAULT_CAPABILITIES.strategy_ir.declared_indicator_kinds.map((kind) => ({
-        kind,
-        status: "declared_only",
-        reason
-      }))
-    },
-    runtime: {
-      supported_modes: ["paper"],
-      supported_execution_modules: ["builtin.execution.paper"],
-      mode_support: [{ key: "paper", status: "declared_only", reason }],
-      execution_module_support: [{ key: "builtin.execution.paper", status: "declared_only", reason }]
-    },
-    market_data: {
-      supported_exchanges: ["binance", "okx"],
-      supported_symbols: ["BTCUSDT", "ETHUSDT", "SOLUSDT"],
-      exchange_support: ["binance", "okx"].map(e => ({ exchange: e, status: "declared_only", reason })),
-      symbol_support: ["BTCUSDT", "ETHUSDT", "SOLUSDT"].map(s => ({ symbol: s, status: "declared_only", reason }))
-    },
-    frontend: {
-      declared_module_keys: [...SUPPORTED_FRONTEND_MODULE_KEYS],
-      supported_module_keys: [...SUPPORTED_FRONTEND_MODULE_KEYS],
-      unsupported_module_reasons: {},
-      module_support: SUPPORTED_FRONTEND_MODULE_KEYS.map((moduleKey) => ({
-        module_key: moduleKey,
-        status: "declared_only",
-        reason
-      }))
-    },
-    workspace: {
-      surfaces: Object.keys(WORKSPACE_SURFACE_MAP).map((key) => ({
-        key,
-        status: "declared_only",
-        reason,
-        source: "safe_fallback"
-      }))
-    },
-    ui_actions: {
-      actions: Object.keys(CAPABILITY_ACTION_MAP).map((key) => ({
-        key,
-        status: "declared_only",
-        reason,
-        source: "safe_fallback"
-      }))
-    },
-    versioning: { ...DEFAULT_CAPABILITIES.versioning },
-    permission_boundary: {
-      ...DEFAULT_CAPABILITIES.permission_boundary,
-      live_execution_allowed: false,
-      ai_write_policy: "disabled",
-      plugin_network_default: "deny"
-    }
-  };
 }
 
 export const builtinModules = applyCapabilitiesToModules(DEFAULT_CAPABILITIES);

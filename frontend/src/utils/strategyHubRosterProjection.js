@@ -1,4 +1,4 @@
-import { formatCount, formatPercent, formatTime } from "./strategyHubFormatters";
+import { formatCount, formatPercent, formatTime } from "./strategyFormatters";
 
 export function projectStrategyHubActivityItems(activityTimeline = []) {
   const projectItem = (item) => ({

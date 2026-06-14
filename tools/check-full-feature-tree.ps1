@@ -6,6 +6,7 @@
 param(
     [string]$TreeFile = "markdown/10-overview/overview-full-feature-tree.md",
     [string]$ExcludeFile = "tools/full-feature-tree-excludes.txt",
+    [string[]]$AdditionalCoverageFiles = @("markdown/00-frontend-refactor-governance/frontend-full-feature-tree.md"),
     [string]$RepoRoot = "."
 )
 
@@ -86,6 +87,23 @@ if (-not (Test-Path -LiteralPath $treePath)) {
 $treeContent = Get-Content -LiteralPath $treePath -Encoding UTF8
 $treeText = $treeContent -join "`n"
 Write-Host "[INFO] tree file: $TreeFile ($($treeContent.Count) lines)" -ForegroundColor Cyan
+
+$coverageText = $treeText
+$loadedCoverageFiles = @()
+foreach ($coverageFile in $AdditionalCoverageFiles) {
+    $coveragePath = Join-Path $RepoRoot $coverageFile
+    if (-not (Test-Path -LiteralPath $coveragePath)) {
+        continue
+    }
+
+    $coverageContent = Get-Content -LiteralPath $coveragePath -Encoding UTF8
+    $coverageText = $coverageText + "`n" + ($coverageContent -join "`n")
+    $loadedCoverageFiles += $coverageFile
+}
+if ($loadedCoverageFiles.Count -gt 0) {
+    Write-Host "[INFO] coverage supplement files: $($loadedCoverageFiles.Count)" -ForegroundColor Cyan
+    $loadedCoverageFiles | ForEach-Object { Write-Host "  $_" -ForegroundColor DarkCyan }
+}
 
 $excludes = @()
 $excludePath = Join-Path $RepoRoot $ExcludeFile
@@ -199,7 +217,7 @@ foreach ($file in $activeFiles) {
         continue
     }
 
-    $covered = ($treeText -match [regex]::Escape($file))
+    $covered = ($coverageText -match [regex]::Escape($file))
     if (-not $covered) {
         $uncoveredFiles += $file
     }

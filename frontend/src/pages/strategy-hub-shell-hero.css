@@ -1,0 +1,59 @@
+.strategy-hub-page {
+  min-height: 100vh;
+  padding: 24px;
+  background: var(--ad-bg);
+}
+
+.strategy-hub-hero,
+.strategy-directory-card,
+.strategy-inspector-card,
+.strategy-kpi-card,
+.strategy-activity-card {
+  border: 1px solid rgba(var(--ad-border-rgb), 0.16);
+  border-radius: var(--ad-radius-md);
+  background: var(--ad-panel);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), var(--shadow-md);
+}
+
+.strategy-hub-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 24px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--ad-border);
+}
+
+.strategy-hub-hero__copy {
+  display: grid;
+  gap: 8px;
+  max-width: 760px;
+}
+
+.strategy-hub-hero .strategy-route-bar,
+.strategy-inspector-card .strategy-route-bar {
+  margin-bottom: 0;
+  color: rgba(191, 208, 229, 0.72);
+}
+
+.strategy-hub-kicker {
+  font-size: var(--ad-font-size-xs);
+  color: rgba(125, 211, 252, 0.82);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.strategy-hub-hero__actions {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.strategy-hub-hero__cta {
+  margin-top: 12px;
+  font-size: var(--ad-font-size-lg);
+  padding: 8px 20px;
+  font-weight: 600;
+}

@@ -1,0 +1,115 @@
+.strategy-inspector-title {
+  display: grid;
+  gap: 4px;
+}
+
+.strategy-inspector-title strong {
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.strategy-inspector-title span {
+  color: var(--muted);
+}
+
+.strategy-cockpit-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.strategy-cockpit-summary__item {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid rgba(var(--ad-border-rgb), 0.12);
+  border-radius: var(--ad-radius-md);
+  background: rgba(8, 14, 23, 0.52);
+}
+
+.strategy-cockpit-summary__item span {
+  color: var(--muted);
+  font-size: var(--ad-font-size-sm);
+}
+
+.strategy-next-move {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid rgba(var(--ad-border-rgb), 0.14);
+  border-radius: var(--ad-radius-md);
+  background: rgba(9, 15, 24, 0.72);
+}
+
+.strategy-inspector-metrics,
+.strategy-inspector-list,
+.strategy-inspector-section,
+.strategy-compare-queue {
+  display: grid;
+  gap: 10px;
+}
+
+.strategy-inspector-section {
+  padding-top: 14px;
+  border-top: 1px solid rgba(var(--ad-border-rgb), 0.12);
+}
+
+.strategy-inspector-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(var(--ad-border-rgb), 0.14);
+  border-radius: var(--ad-radius-md);
+  background: rgba(11, 18, 28, 0.74);
+}
+
+.strategy-inspector-item__actions,
+.strategy-compare-queue__chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.strategy-activity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.strategy-activity-list {
+  display: grid;
+  gap: 10px;
+}
+
+.strategy-activity-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(var(--ad-border-rgb), 0.14);
+  border-radius: var(--ad-radius-md);
+  background: rgba(8, 14, 23, 0.48);
+}
+
+.strategy-activity-item__copy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.strategy-activity-item__title,
+.strategy-activity-item__meta,
+.strategy-activity-item__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.strategy-activity-item__meta,
+.strategy-activity-item__copy small {
+  color: var(--muted);
+}

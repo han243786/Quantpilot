@@ -65,6 +65,14 @@ describe("RuntimeMutationPanel", () => {
     onRollbackProposal.mockReset();
   });
 
+  it("stays dormant until the mutation source identity is complete", () => {
+    const { container } = render(<RuntimeMutationPanel sourceKind="run" />);
+
+    expect(container).toBeEmptyDOMElement();
+    expect(onActivateProposal).not.toHaveBeenCalled();
+    expect(onRollbackProposal).not.toHaveBeenCalled();
+  });
+
   it("renders mutation proposals and emits activation requests with capability context", () => {
     render(
       <RuntimeMutationPanel
@@ -145,6 +153,9 @@ describe("RuntimeMutationPanel", () => {
 
     expect(screen.getByTestId("runtime-mutation-panel")).toHaveTextContent("待处理");
     expect(screen.getByTestId("runtime-mutation-panel")).toHaveTextContent("已生效");
+    expect(screen.getByTestId("runtime-mutation-panel")).toHaveTextContent(
+      "next_cycle_start #4"
+    );
     expect(screen.getByTestId("runtime-mutation-panel")).not.toHaveTextContent("{");
   });
 
@@ -210,5 +221,44 @@ describe("RuntimeMutationPanel", () => {
         target_parameter_version: "sha256:old"
       }
     );
+  });
+
+  it("allows safe-window denied proposals to retry activation while rollback stays locked", () => {
+    render(
+      <RuntimeMutationPanel
+        sourceKind="run"
+        sourceId="run_1"
+        capabilityContext={capabilityContext}
+        initialMutations={[
+          proposal({
+            proposal_id: "parameter_mutation_denied",
+            status: "safe_window_denied",
+            safe_window_state: {
+              status: "denied",
+              reason_code: "SAFE_WINDOW_OPEN_ORDERS"
+            }
+          })
+        ]}
+        onActivateProposal={onActivateProposal}
+        onRollbackProposal={onRollbackProposal}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId("runtime-mutation-panel-activate-parameter_mutation_denied"));
+
+    expect(onActivateProposal).toHaveBeenCalledWith(
+      expect.objectContaining({ proposal_id: "parameter_mutation_denied" }),
+      {
+        capability_context: capabilityContext,
+        activation_boundary: {
+          requested: "next_cycle_start",
+          resolved_sequence_no: null
+        }
+      }
+    );
+    expect(
+      screen.getByTestId("runtime-mutation-panel-rollback-parameter_mutation_denied")
+    ).toBeDisabled();
+    expect(onRollbackProposal).not.toHaveBeenCalled();
   });
 });

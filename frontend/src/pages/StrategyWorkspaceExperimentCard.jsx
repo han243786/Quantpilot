@@ -6,19 +6,12 @@ import {
 import { projectUiActions } from "../capabilities/capabilityProjection";
 import { useGraphStore } from "../store/graphStore";
 import { backtestDetailPath, navigateTo } from "../router";
-
-function parseNumberList(input, parser = Number) {
-  return input
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean)
-    .map((value) => parser(value))
-    .filter((value) => Number.isFinite(value));
-}
-
-function formatPercent(value) {
-  return `${value >= 0 ? "+" : ""}${(value * 100).toFixed(2)}%`;
-}
+import {
+  buildWorkspaceExperimentStartPayload,
+  formatWorkspaceExperimentPercent as formatPercent,
+  selectWorkspaceActiveExperiment,
+  selectWorkspaceGraphExperiments
+} from "./strategyWorkspaceGovernanceCardsShell";
 
 export default function StrategyWorkspaceExperimentCard({ strategyId, currentGraph }) {
   const experiments = useGraphStore((state) => state.runtime.experiments);
@@ -38,18 +31,13 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
   const [feeGridDraft, setFeeGridDraft] = useState("5, 10, 20");
   const [slippageGridDraft, setSlippageGridDraft] = useState("5");
   const [latencyGridDraft, setLatencyGridDraft] = useState("0, 100");
+  const currentGraphId = currentGraph?.metadata?.graph_id || strategyId;
 
   const graphExperiments = useMemo(
-    () =>
-      (experiments || []).filter(
-        (entry) => entry.graph_id === (currentGraph?.metadata?.graph_id || strategyId)
-      ),
-    [currentGraph?.metadata?.graph_id, experiments, strategyId]
+    () => selectWorkspaceGraphExperiments(experiments, currentGraphId),
+    [currentGraphId, experiments]
   );
-  const activeExperiment =
-    selectedExperiment?.graph_id === (currentGraph?.metadata?.graph_id || strategyId)
-      ? selectedExperiment
-      : null;
+  const activeExperiment = selectWorkspaceActiveExperiment(selectedExperiment, currentGraphId);
   const capabilitySyncBlocked = isCapabilitySyncBlocked(capabilityStatus, capabilitySource);
   const runSweepAction = projectUiActions({
     capabilities,
@@ -70,12 +58,12 @@ export default function StrategyWorkspaceExperimentCard({ strategyId, currentGra
       return;
     }
 
-    await startBacktestExperiment({
+    await startBacktestExperiment(buildWorkspaceExperimentStartPayload({
       experimentName,
-      feeBps: parseNumberList(feeGridDraft, Number),
-      slippageBps: parseNumberList(slippageGridDraft, Number),
-      latencyMs: parseNumberList(latencyGridDraft, (value) => Number.parseInt(value, 10))
-    });
+      feeGridDraft,
+      slippageGridDraft,
+      latencyGridDraft
+    }));
   }
 
   return (

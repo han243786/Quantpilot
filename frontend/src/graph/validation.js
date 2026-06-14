@@ -1,64 +1,17 @@
-import { DEFAULT_CAPABILITIES, normalizeCapabilities } from "../modules/builtinModules";
-
-const allowedChain = {
-  data: ["intent"],
-  intent: ["agent"],
-  agent: ["risk"],
-  risk: ["execution"],
-  execution: [],
-  runtime: []
-};
-
-const typeLabels = {
-  data: "数据",
-  intent: "意图",
-  agent: "代理",
-  risk: "风控",
-  execution: "执行",
-  runtime: "运行"
-};
-
-function capabilitySet(values, fallback) {
-  return new Set(Array.isArray(values) && values.length > 0 ? values : fallback);
-}
-
-function supportMap(entries, keyField = "key") {
-  return new Map(
-    (Array.isArray(entries) ? entries : [])
-      .filter((entry) => entry && typeof entry === "object" && entry[keyField])
-      .map((entry) => [entry[keyField], entry])
-  );
-}
-
-function capabilityEntryStatus(entry, fallbackSet, key) {
-  if (entry) return entry.status === "supported";
-  return fallbackSet.has(key);
-}
-
-function capabilityReason(entry, fallback = "") {
-  return entry?.reason || fallback;
-}
-
-function compareValues(leftValue, operator, rightValue) {
-  if (operator === "<") return leftValue < rightValue;
-  if (operator === "<=") return leftValue <= rightValue;
-  if (operator === ">") return leftValue > rightValue;
-  if (operator === ">=") return leftValue >= rightValue;
-  if (operator === "===") return leftValue === rightValue;
-  return true;
-}
-
-function buildIssue(level, scope, targetId, code, message, hint = "") {
-  return {
-    id: `${scope}_${targetId}_${code}`,
-    level,
-    scope,
-    target_id: targetId,
-    code,
-    message,
-    hint
-  };
-}
+import {
+  allowedChain,
+  buildCapabilityIndex,
+  buildIssue,
+  capabilityEntryStatus,
+  capabilityReason,
+  compareValues,
+  typeLabels
+} from "./validationSupport";
+import {
+  buildGraphEdgeIndex,
+  resolveNodeEdges,
+  summarizeGraphNodeTypes
+} from "./validationRules";
 
 export function isValidConnection(graph, registry, connection) {
   const sourceNode = graph.nodes.find((node) => node.id === connection.source);
@@ -119,28 +72,17 @@ export function isValidConnection(graph, registry, connection) {
 }
 
 export function validateGraph(graph, registry) {
-  const capabilities = normalizeCapabilities(registry?.capabilities || DEFAULT_CAPABILITIES);
-  const supportedRuntimeModes = capabilitySet(
-    capabilities.runtime?.supported_modes,
-    DEFAULT_CAPABILITIES.runtime.supported_modes
-  );
-  const supportedExecutionModules = capabilitySet(
-    capabilities.runtime?.supported_execution_modules,
-    DEFAULT_CAPABILITIES.runtime.supported_execution_modules
-  );
-  const supportedSymbols = capabilitySet(
-    capabilities.market_data?.supported_symbols,
-    DEFAULT_CAPABILITIES.market_data.supported_symbols
-  );
-  const supportedExchanges = capabilitySet(
-    capabilities.market_data?.supported_exchanges,
-    DEFAULT_CAPABILITIES.market_data.supported_exchanges
-  );
-  const runtimeModeSupport = supportMap(capabilities.runtime?.mode_support);
-  const executionModuleSupport = supportMap(capabilities.runtime?.execution_module_support);
-  const exchangeSupport = supportMap(capabilities.market_data?.exchange_support);
-  const symbolSupport = supportMap(capabilities.market_data?.symbol_support);
-  const frontendModuleSupport = supportMap(capabilities.frontend?.module_support, "module_key");
+  const {
+    supportedRuntimeModes,
+    supportedExecutionModules,
+    supportedSymbols,
+    supportedExchanges,
+    runtimeModeSupport,
+    executionModuleSupport,
+    exchangeSupport,
+    symbolSupport,
+    frontendModuleSupport
+  } = buildCapabilityIndex(registry);
 
   const nodeIssues = {};
   const edgeIssues = {};
@@ -165,18 +107,10 @@ export function validateGraph(graph, registry) {
   };
 
   // v1.0.5: 预建边索引, O(E)一次性, 避免节点循环内重复 edges.filter O(N*E)
-  const edgesByTarget = new Map();
-  const edgesBySource = new Map();
-  for (const edge of graph.edges) {
-    if (!edgesByTarget.has(edge.target_node_id)) edgesByTarget.set(edge.target_node_id, []);
-    edgesByTarget.get(edge.target_node_id).push(edge);
-    if (!edgesBySource.has(edge.source_node_id)) edgesBySource.set(edge.source_node_id, []);
-    edgesBySource.get(edge.source_node_id).push(edge);
-  }
+  const edgeIndex = buildGraphEdgeIndex(graph.edges);
 
   graph.nodes.forEach((node) => {
-    const incoming = edgesByTarget.get(node.id) || [];
-    const outgoing = edgesBySource.get(node.id) || [];
+    const { incoming, outgoing } = resolveNodeEdges(edgeIndex, node.id);
 
     const moduleDef = registry.getByKey(node.module_key);
     if (!moduleDef) {
@@ -439,7 +373,16 @@ export function validateGraph(graph, registry) {
     }
   });
 
-  const runtimeCount = graph.nodes.filter((node) => node.type === "runtime").length;
+  const {
+    runtimeCount,
+    hasExecution,
+    hasRisk,
+    hasAgent,
+    hasIntent,
+    hasData,
+    executionCount
+  } = summarizeGraphNodeTypes(graph.nodes);
+
   if (runtimeCount === 0) {
     addGraphIssue(buildIssue("error", "graph", "graph", "MISSING_RUNTIME", "缺少运行控制节点。"));
   }
@@ -448,12 +391,6 @@ export function validateGraph(graph, registry) {
       buildIssue("error", "graph", "graph", "MULTIPLE_RUNTIME", "当前仅支持一个运行控制节点。")
     );
   }
-
-  const hasExecution = graph.nodes.some((node) => node.type === "execution");
-  const hasRisk = graph.nodes.some((node) => node.type === "risk");
-  const hasAgent = graph.nodes.some((node) => node.type === "agent");
-  const hasIntent = graph.nodes.some((node) => node.type === "intent");
-  const hasData = graph.nodes.some((node) => node.type === "data");
 
   if (hasExecution && !hasRisk) {
     addGraphIssue(buildIssue("error", "graph", "graph", "MISSING_RISK", "执行节点上游必须连接风控节点。"));
@@ -470,7 +407,7 @@ export function validateGraph(graph, registry) {
 
   graph.nodes.forEach((node) => {
     if (node.type === "intent") {
-      const hasOutput = (edgesBySource.get(node.id) || []).length > 0;
+      const hasOutput = resolveNodeEdges(edgeIndex, node.id).outgoing.length > 0;
       if (!hasOutput) {
         addNodeIssue(
           node.id,
@@ -486,7 +423,7 @@ export function validateGraph(graph, registry) {
     hasAgent &&
     hasRisk &&
     hasExecution &&
-    graph.nodes.filter((node) => node.type === "execution").length === 1 &&
+    executionCount === 1 &&
     counts.error === 0;
 
   return {

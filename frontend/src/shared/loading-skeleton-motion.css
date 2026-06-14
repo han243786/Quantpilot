@@ -1,0 +1,19 @@
+/* ── 减少动画偏好 ── */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-block { animation: none; }
+  .ad-card { transition: none; transform: none; }
+  .ad-btn { transition: none; transform: none; }
+  .ad-btn:active { transform: none; }
+  @keyframes skeleton-pulse { 0%, 100% { opacity: 0.4; } }
+}
+
+/* ── v1.0.2 骨架屏 ───────────────────────────────────── */
+.app-loading-shell__skeleton { display: flex; flex-direction: column; gap: 8px; width: 200px; margin: 0 auto 20px; }
+.skeleton-block { height: 12px; border-radius: var(--ad-radius-sm); background: var(--ad-card); animation: skeleton-pulse 1.5s ease-in-out infinite; }
+.skeleton-block--wide { width: 100%; }
+.skeleton-block--medium { width: 70%; }
+.skeleton-block--short { width: 40%; }
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}

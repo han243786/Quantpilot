@@ -1,4 +1,4 @@
-import { StrategyCardNote } from "./StrategyHubSharedComponents";
+import { StrategyCardNote } from "../components/strategySharedComponents";
 
 export function WorkspaceMetricCard({ label, value, note, tone = "muted" }) {
   return (

@@ -1,10 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import DrawdownChart from "../components/DrawdownChart";
-import MonthlyReturnsHeatmap from "../components/MonthlyReturnsHeatmap";
 import EventStreamPanel from "../components/EventStreamPanel";
-import GovernedTimelinePanel from "../components/GovernedTimelinePanel";
-import RuntimeReportPanel from "../components/RuntimeReportPanel";
-import V4RuntimeEvidencePanel from "../components/V4RuntimeEvidencePanel";
 import { useGraphStore } from "../store/graphStore";
 import {
   navigateTo,
@@ -13,65 +8,26 @@ import {
   strategyWorkspacePath
 } from "../router";
 import { useI18n } from "../i18n";
-import { AnalysisHero, AnalysisSection } from "./BacktestAnalysisLayout";
 import {
-  formatRatio,
+  AnalysisHero,
+  AnalysisSection,
   formatTime,
-  formatValue,
-  formatSharpeRatio,
-  formatProfitFactor,
-  formatAnnualizedReturn,
-  formatDays,
-  sharpeColor,
-  profitFactorColor,
-  maxDrawdownFromSummary,
-  riskAdjustedFromSummary,
-  tradeAnalysisFromSummary,
-  drawdownAnalysisFromSummary,
-  benchmarkComparisonFromSummary,
   MetricPair
-} from "./backtestAnalysisShared";
+} from "./backtestViews/shared";
+import {
+  BacktestDetailCoreArtifactSections,
+  BacktestDetailGovernedTimelineSection,
+  BacktestDetailReplayOutputExplanationSections,
+  BacktestDetailReportLifecycleSection,
+  BacktestDetailV4ArtifactSection,
+  buildBacktestDetailPageModel,
+  buildBacktestDetailSummaryModel
+} from "./backtestViews/detailPageAnalysis";
 import { buildDiagnosticsExplanationEntries } from "../utils/runtimeExplanation";
 import {
   buildGovernanceIdentityRows,
   governanceFromRuntime
 } from "../utils/runtimeGovernance";
-
-function ExplanationDetailCard({ title, summary, entries, testId, emptyText }) {
-  return (
-    <div className="open-orders-card" data-testid={testId}>
-      <div className="open-orders-header">
-        <div>
-          <div className="mini-list-title">{title}</div>
-          <div className="muted-line">{summary}</div>
-        </div>
-        <strong>{entries.length}</strong>
-      </div>
-      {entries.length === 0 ? <div className="muted-line">{emptyText}</div> : null}
-      {entries.map((entry) => (
-        <div
-          key={entry.nodeId}
-          className="open-order-item"
-          data-testid={`${testId}-entry-${entry.nodeId}`}
-        >
-          <div className="open-order-topline">
-            <strong>{entry.nodeName}</strong>
-            <span>{entry.nodeId}</span>
-          </div>
-          {entry.explanationSummary ? <div className="muted-line">{entry.explanationSummary}</div> : null}
-          <div className="open-order-grid">
-            {entry.rows.map((row) => (
-              <div key={`${entry.nodeId}_${row.key}`}>
-                <span>{row.label}</span>
-                <strong>{row.value}</strong>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
   const { t } = useI18n();
@@ -85,36 +41,31 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
     });
   }, [backtestId, loadBacktestDetail]);
 
-  const selectedSummary = runtime.selectedBacktestId
-    ? runtime.backtestHistory.find(
-        (item) => item.backtest_id === runtime.selectedBacktestId
-      ) || null
-    : null;
-
-  const metrics = runtime.backtestArtifacts?.metrics || null;
-  const manifest = runtime.backtestArtifacts?.manifest || null;
-  const equityCurve = runtime.backtestArtifacts?.equity_curve?.points || [];
-  const trades = runtime.backtestArtifacts?.trade_ledger?.trades || [];
-  const outputArtifacts = manifest?.output_artifacts || [];
-  const v4Artifact = runtime.backtestArtifacts?.v4_artifact || null;
-  const v4MicroMetrics = v4Artifact?.microstructure_metrics || null;
-  const summary = metrics?.summary || null;
-  const startedAt = metrics?.started_at_ms || null;
-  const endedAt = metrics?.ended_at_ms || null;
-  const resolvedStrategyId =
-    strategyId || selectedSummary?.graph_id || runtime.backtestArtifacts?.graph_id || "";
+  const {
+    selectedSummary,
+    metrics,
+    manifest,
+    equityCurve,
+    trades,
+    outputArtifacts,
+    v4Artifact,
+    v4MicroMetrics,
+    summary,
+    startedAt,
+    endedAt,
+    resolvedStrategyId,
+    curvePreview,
+    tradePreview,
+    timelineSource
+  } = useMemo(
+    () => buildBacktestDetailPageModel({ runtime, strategyId, backtestId }),
+    [backtestId, runtime, strategyId]
+  );
   const governanceRows = useMemo(
     () => buildGovernanceIdentityRows(governanceFromRuntime(runtime)),
     [runtime]
   );
 
-  const curvePreview = useMemo(() => {
-    if (!Array.isArray(equityCurve) || equityCurve.length === 0) return [];
-    if (equityCurve.length <= 8) return equityCurve;
-    return [...equityCurve.slice(0, 4), ...equityCurve.slice(-4)];
-  }, [equityCurve]);
-
-  const tradePreview = useMemo(() => trades.slice(0, 8), [trades]);
   const riskExplanationEntries = useMemo(
     () => buildDiagnosticsExplanationEntries(graph, runtime.diagnostics, "risk"),
     [graph, runtime.diagnostics]
@@ -123,97 +74,21 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
     () => buildDiagnosticsExplanationEntries(graph, runtime.diagnostics, "order"),
     [graph, runtime.diagnostics]
   );
-  const timelineSource = useMemo(
-    () => ({
-      timeline: runtime.timeline,
-      events: runtime.events,
-      retained_key_event_index: runtime.retainedKeyEventIndex,
-      compact_evidence: runtime.compactEvidence
-    }),
-    [runtime.compactEvidence, runtime.events, runtime.retainedKeyEventIndex, runtime.timeline]
-  );
-
   const [summaryExpanded, setSummaryExpanded] = useState(false);
 
-  const riskAdj = useMemo(() => riskAdjustedFromSummary(summary), [summary]);
-  const tradeAnaly = useMemo(() => tradeAnalysisFromSummary(summary), [summary]);
-  const drawdownAnaly = useMemo(() => drawdownAnalysisFromSummary(summary), [summary]);
-  const benchComp = useMemo(() => benchmarkComparisonFromSummary(summary), [summary]);
-
-  const visibleSummaryItems = [
-    {
-      label: t("收益"),
-      value: formatRatio(summary?.total_return_ratio)
-    },
-    {
-      label: t("年化收益"),
-      value: formatAnnualizedReturn(summary?.annualized_return)
-    },
-    {
-      label: t("夏普"),
-      value: formatSharpeRatio(riskAdj.sharpe_ratio),
-      color: sharpeColor(riskAdj.sharpe_ratio),
-      tooltip: t("风险调整后收益。>1 良好, >2 优秀, <0 表示收益低于无风险利率")
-    },
-    {
-      label: t("最大回撤"),
-      value: formatRatio(maxDrawdownFromSummary(summary))
-    },
-    {
-      label: t("盈亏比"),
-      value: formatProfitFactor(tradeAnaly.profit_factor),
-      color: profitFactorColor(tradeAnaly.profit_factor)
-    }
-  ];
-
-  const foldedSummaryItems = [
-    {
-      label: t("索提诺"),
-      value: formatSharpeRatio(riskAdj.sortino_ratio),
-      tooltip: t("下行风险调整收益。仅惩罚负波动, 更适合评估下跌风险")
-    },
-    {
-      label: t("卡尔玛"),
-      value: formatSharpeRatio(riskAdj.calmar_ratio),
-      tooltip: t("年化收益÷最大回撤。衡量每单位最大亏损能产生多少收益")
-    },
-    {
-      label: t("年化波动率"),
-      value: formatAnnualizedReturn(summary?.annualized_volatility),
-    },
-    {
-      label: t("最大回撤持续"),
-      value: formatDays(drawdownAnaly.max_drawdown_duration_days)
-    },
-    benchComp ? {
-      label: "Alpha",
-      value: formatRatio(benchComp.alpha)
-    } : null,
-    benchComp ? {
-      label: "Beta",
-      value: benchComp.beta?.toFixed(2) ?? "-"
-    } : null,
-    {
-      label: t("胜率"),
-      value: summary?.win_rate != null && Number.isFinite(summary.win_rate) ? `${(summary.win_rate * 100).toFixed(1)}%` : "-"
-    },
-    {
-      label: t("成交数"),
-      value: formatValue(summary?.trade_count ?? trades.length)
-    },
-    {
-      label: t("协议"),
-      value: manifest?.protocol_name || selectedSummary?.protocol_name || "-"
-    },
-    {
-      label: t("最终权益"),
-      value: formatValue(summary?.final_equity || metrics?.final_account?.equity_estimate)
-    }
-  ].filter(Boolean);
-
-  const summaryItems = summaryExpanded
-    ? [...visibleSummaryItems, ...foldedSummaryItems]
-    : visibleSummaryItems;
+  const { summaryItems } = useMemo(
+    () =>
+      buildBacktestDetailSummaryModel({
+        t,
+        summary,
+        metrics,
+        manifest,
+        selectedSummary,
+        trades,
+        summaryExpanded
+      }),
+    [manifest, metrics, selectedSummary, summary, summaryExpanded, t, trades]
+  );
 
   if (runtime.backendError) {
     return (
@@ -311,339 +186,47 @@ export default function BacktestDetailPage({ backtestId, strategyId = "" }) {
 
       <div className="analysis-page-grid">
         <div className="analysis-main-column">
-          <AnalysisSection
-            testId="backtest-detail-core-artifacts"
-            kicker={t("工件概览")}
-            title={t("核心工件")}
-            summary={t("先以持久化的 manifest 和 metrics 工件作为主要审查入口，再按需展开回放预览或完整事件流。")}
-          >
-            <div className="analysis-card-grid analysis-card-grid--two">
-              <div className="open-orders-card" data-testid="backtest-detail-manifest-card">
-                <div className="open-orders-header">
-                  <div>
-                    <div className="mini-list-title">{t("清单工件")}</div>
-                    <div className="muted-line">
-                      {t("与策略关联的 manifest 上下文、编译链路与回放来源。")}
-                    </div>
-                  </div>
-                  <strong>{manifest?.manifest_id || "-"}</strong>
-                </div>
-                <MetricPair label={t("创建时间")} value={formatTime(manifest?.created_at_ms)} />
-                <MetricPair
-                  label={t("编译 ID")}
-                  value={manifest?.compile_id || selectedSummary?.compile_id || "-"}
-                />
-                <MetricPair
-                  label={t("运行规格")}
-                  value={manifest?.backtest_spec?.run_spec?.schema_version || "-"}
-                />
-                <MetricPair
-                  label={t("回放来源")}
-                  value={manifest?.backtest_spec?.replay_source || "-"}
-                />
-                <MetricPair
-                  label={t("策略工件")}
-                  value={manifest?.compile_artifacts?.strategy?.artifact_id || "-"}
-                  testId="backtest-detail-manifest-strategy-artifact"
-                />
-                <MetricPair
-                  label={t("编译工件")}
-                  value={manifest?.compile_artifacts?.compile?.artifact_id || "-"}
-                  testId="backtest-detail-manifest-compile-artifact"
-                />
-                <MetricPair
-                  label={t("核心中间表示工件")}
-                  value={manifest?.compile_artifacts?.core_ir?.artifact_id || "-"}
-                  testId="backtest-detail-manifest-core-ir-artifact"
-                />
-                <div className="mini-list" data-testid="backtest-detail-governance-card">
-                  <div className="mini-list-title">{t("治理身份")}</div>
-                  {governanceRows.map((row) => (
-                    <MetricPair
-                      key={row.key}
-                      label={row.label}
-                      value={row.value}
-                      fullValue={row.fullValue}
-                      testId={`backtest-detail-governance-${row.key}`}
-                    />
-                  ))}
-                </div>
-              </div>
+          <BacktestDetailCoreArtifactSections
+            t={t}
+            selectedSummary={selectedSummary}
+            manifest={manifest}
+            metrics={metrics}
+            summary={summary}
+            startedAt={startedAt}
+            endedAt={endedAt}
+            governanceRows={governanceRows}
+            equityCurve={equityCurve}
+            periodReturns={runtime.backtestArtifacts?.period_returns || []}
+            metricsArtifactId={runtime.backtestArtifacts?.metrics?.artifact_id || "-"}
+            eventsLength={runtime.events.length}
+          />
 
-              <div className="open-orders-card" data-testid="backtest-detail-metrics-card">
-                <div className="open-orders-header">
-                  <div>
-                    <div className="mini-list-title">{t("指标工件")}</div>
-                    <div className="muted-line">
-                      {t("当前策略实验的持久化结果摘要。")}
-                    </div>
-                  </div>
-                  <strong>{runtime.backtestArtifacts?.metrics?.artifact_id || "-"}</strong>
-                </div>
-                <MetricPair label={t("开始时间")} value={formatTime(startedAt)} />
-                <MetricPair label={t("结束时间")} value={formatTime(endedAt)} />
-                <MetricPair
-                  label={t("步数")}
-                  value={formatValue(summary?.step_count)}
-                  testId="backtest-detail-metrics-step-count"
-                />
-                <MetricPair label={t("会话数")} value={formatValue(metrics?.session_count)} />
-                <MetricPair
-                  label={t("事件数")}
-                  value={formatValue(metrics?.event_count || runtime.events.length)}
-                  testId="backtest-detail-metrics-event-count"
-                />
-              </div>
-            </div>
-          </AnalysisSection>
+          <BacktestDetailGovernedTimelineSection
+            t={t}
+            timelineSource={timelineSource}
+          />
 
-          <AnalysisSection
-            testId="backtest-detail-drawdown-chart"
-            kicker={t("回撤分析")}
-            title={t("回撤曲线")}
-            summary={t("峰值到谷底的回撤深度可视化，展示策略风险暴露的持续时间。")}
-          >
-            <DrawdownChart
-              equityCurve={equityCurve}
-              title={t("回撤深度")}
-            />
-          </AnalysisSection>
+          <BacktestDetailV4ArtifactSection
+            v4Artifact={v4Artifact}
+            v4MicroMetrics={v4MicroMetrics}
+          />
 
-          <AnalysisSection
-            testId="backtest-detail-monthly-returns"
-            kicker={t("收益率分解")}
-            title={t("月度收益率")}
-            summary={t("每月收益率热力图，颜色深浅表示收益大小，用于评估策略在不同月份的一致性。")}
-          >
-            <MonthlyReturnsHeatmap
-              periodReturns={runtime.backtestArtifacts?.period_returns || []}
-              title={t("月度收益")}
-            />
-          </AnalysisSection>
+          <BacktestDetailReportLifecycleSection
+            t={t}
+            sourceId={runtime.selectedBacktestId || backtestId}
+            timelineSource={timelineSource}
+          />
 
-          <AnalysisSection
-            testId="backtest-detail-governed-timeline"
-            kicker={t("证据链")}
-            title={t("治理时间轴")}
-            summary={t("按 envelope 阶段、保留级别和模块查看回测证据，并优先保留关键事件。")}
-          >
-            <GovernedTimelinePanel
-              source={timelineSource}
-              title={t("回测证据时间轴")}
-              summary={t("同一 timeline item 同时服务详情、回放、压缩证据和后续报告输入。")}
-              testId="backtest-detail-timeline"
-            />
-          </AnalysisSection>
-
-          {v4Artifact ? (
-            <AnalysisSection
-              testId="backtest-detail-v4-evidence"
-              kicker="v4"
-              title="v4 Machine Evidence"
-              summary="State-machine trajectory, Risk Plane decisions, and execution capability sources captured by the v4 backtest artifact."
-            >
-              <V4RuntimeEvidencePanel
-                source={v4Artifact}
-                testId="backtest-detail-v4-evidence-panel"
-              />
-              <div className="open-orders-card" data-testid="backtest-detail-v4-artifact-card">
-                <div className="open-orders-header">
-                  <div>
-                    <div className="mini-list-title">v4 Backtest Artifact</div>
-                    <div className="muted-line">{v4Artifact.schema_version}</div>
-                  </div>
-                  <strong>{v4Artifact.symbols?.join(", ") || "-"}</strong>
-                </div>
-                <MetricPair label="Replay" value={v4Artifact.replay_mode || "-"} />
-                <MetricPair label="Bars" value={formatValue(v4Artifact.input_bar_count)} />
-                <MetricPair label="Ticks" value={formatValue(v4Artifact.input_tick_count || 0)} />
-                <MetricPair
-                  label="Trajectory"
-                  value={formatValue(v4Artifact.machine_trajectory?.length || 0)}
-                />
-                <MetricPair
-                  label="Risk decisions"
-                  value={formatValue(v4Artifact.risk_plane_decisions?.length || 0)}
-                />
-                <MetricPair
-                  label="Capability sources"
-                  value={formatValue(v4Artifact.execution_capability_sources?.length || 0)}
-                />
-              </div>
-              {v4MicroMetrics ? (
-                <div className="open-orders-card" data-testid="backtest-detail-v4-microstructure-card">
-                  <div className="open-orders-header">
-                    <div>
-                      <div className="mini-list-title">Microstructure Metrics</div>
-                      <div className="muted-line">v4.5.0 tick replay execution evidence</div>
-                    </div>
-                    <strong>{formatValue(v4MicroMetrics.submitted_order_count)}</strong>
-                  </div>
-                  <MetricPair label="Fill rate" value={formatRatio(v4MicroMetrics.fill_rate)} />
-                  <MetricPair
-                    label="Avg slippage bps"
-                    value={formatValue(v4MicroMetrics.average_slippage_bps)}
-                  />
-                  <MetricPair
-                    label="Queue estimate"
-                    value={formatRatio(v4MicroMetrics.queue_position_estimate)}
-                  />
-                  <MetricPair
-                    label="VWAP deviation bps"
-                    value={formatValue(v4MicroMetrics.vwap_deviation_bps)}
-                  />
-                </div>
-              ) : null}
-            </AnalysisSection>
-          ) : null}
-
-          <AnalysisSection
-            testId="backtest-detail-report-lifecycle"
-            kicker={t("报告生命周期")}
-            title={t("证据报告")}
-            summary={t("从压缩证据生成可导出的报告，报告只链接来源证据和治理身份，不复制完整原始日志。")}
-          >
-            <RuntimeReportPanel
-              sourceKind="backtest"
-              sourceId={runtime.selectedBacktestId || backtestId}
-              evidenceSource={timelineSource}
-              title={t("回测证据报告")}
-              summary={t("生成、打开和导出当前回测的治理报告。")}
-            />
-          </AnalysisSection>
-
-          <AnalysisSection
-            testId="backtest-detail-replay-preview"
-            kicker={t("回放预览")}
-            title={t("权益曲线与成交样本")}
-            summary={t("详情页只保留高信号的回放切片，让它保持为策略分析视图，而不是原始日志堆叠。")}
-          >
-            <div className="analysis-card-grid analysis-card-grid--two">
-              <div className="open-orders-card" data-testid="backtest-detail-equity-card">
-                <div className="open-orders-header">
-                  <div>
-                    <div className="mini-list-title">{t("权益曲线工件")}</div>
-                    <div className="muted-line">
-                      {t("预览曲线首尾片段，以便快速确认策略层面的权益表现。")}
-                    </div>
-                  </div>
-                  <strong>{runtime.backtestArtifacts?.equity_curve?.artifact_id || "-"}</strong>
-                </div>
-                {curvePreview.length === 0 ? (
-                  <div className="muted-line">{t("这次回测没有可用的权益曲线样本。")}</div>
-                ) : null}
-                {curvePreview.map((point, index) => (
-                  <div key={`${point.ts_ms}_${index}`} className="open-order-item">
-                    <div className="open-order-topline">
-                      <strong>{formatTime(point.ts_ms)}</strong>
-                    </div>
-                    <div className="open-order-grid">
-                      <div>
-                        <span>{t("权益")}</span>
-                        <strong>{formatValue(point.equity)}</strong>
-                      </div>
-                      <div>
-                        <span>{t("现金")}</span>
-                        <strong>{formatValue(point.cash_balance)}</strong>
-                      </div>
-                      <div>
-                        <span>{t("净名义价值")}</span>
-                        <strong>{formatValue(point.net_notional)}</strong>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="open-orders-card" data-testid="backtest-detail-trade-card">
-                <div className="open-orders-header">
-                  <div>
-                    <div className="mini-list-title">{t("成交账本工件")}</div>
-                    <div className="muted-line">
-                      {t("抽样展示已执行成交，便于审计与回放交叉核验。")}
-                    </div>
-                  </div>
-                  <strong>{runtime.backtestArtifacts?.trade_ledger?.artifact_id || "-"}</strong>
-                </div>
-                {tradePreview.length === 0 ? (
-                  <div className="muted-line">{t("这次回测没有记录成交。")}</div>
-                ) : null}
-                {tradePreview.map((trade) => (
-                  <div key={trade.fill_id} className="open-order-item">
-                    <div className="open-order-topline">
-                      <strong>{trade.fill_id}</strong>
-                      <span>{trade.cycle_name}</span>
-                    </div>
-                    <div className="open-order-grid">
-                      <div>
-                        <span>{t("方向")}</span>
-                        <strong>{trade.side}</strong>
-                      </div>
-                      <div>
-                        <span>{t("数量")}</span>
-                        <strong>{formatValue(trade.filled_qty)}</strong>
-                      </div>
-                      <div>
-                        <span>{t("价格")}</span>
-                        <strong>{formatValue(trade.filled_price)}</strong>
-                      </div>
-                      <div>
-                        <span>{t("手续费")}</span>
-                        <strong>{formatValue(trade.fee_paid)}</strong>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </AnalysisSection>
-
-          <AnalysisSection
-            testId="backtest-detail-output-artifacts"
-            kicker={t("输出引用")}
-            title={t("持久化输出文件")}
-            summary={t("保留文件级可追溯性，但不把页面变成纯存储列表。")}
-          >
-            <div className="open-orders-card" data-testid="backtest-detail-output-card">
-              <div className="open-orders-header">
-                <div>
-                  <div className="mini-list-title">{t("输出文件")}</div>
-                  <div className="muted-line">{t("记录在当前策略实验 manifest 下的文件列表。")}</div>
-                </div>
-                <strong>{outputArtifacts.length}</strong>
-              </div>
-              {outputArtifacts.length === 0 ? (
-                <div className="muted-line">{t("这次回测没有记录任何输出文件引用。")}</div>
-              ) : null}
-              {outputArtifacts.map((artifact) => (
-                <MetricPair key={artifact.artifact_id} label={artifact.kind} value={artifact.file_name} />
-              ))}
-            </div>
-          </AnalysisSection>
-
-          <AnalysisSection
-            testId="backtest-detail-explanations"
-            kicker={t("执行解释")}
-            title={t("风控与订单解释")}
-            summary={t("复用同一套 runtime_diagnostics explanation rows，在详情页直接展示风控裁剪和订单执行语义。")}
-          >
-            <div className="analysis-card-grid analysis-card-grid--two">
-              <ExplanationDetailCard
-                title={t("风控详情")}
-                summary={t("选取 detail payload 中已结构化的 risk_detail_rows，不再重新拼第二套解释协议。")}
-                entries={riskExplanationEntries}
-                testId="backtest-detail-risk-card"
-                emptyText={t("当前回测详情还没有可展示的风控解释。")}
-              />
-              <ExplanationDetailCard
-                title={t("订单详情")}
-                summary={t("沿用同一 explanation rows 展示下单来源、生命周期和订单语义。")}
-                entries={orderExplanationEntries}
-                testId="backtest-detail-order-card"
-                emptyText={t("当前回测详情还没有可展示的订单解释。")}
-              />
-            </div>
-          </AnalysisSection>
+          <BacktestDetailReplayOutputExplanationSections
+            t={t}
+            curvePreview={curvePreview}
+            tradePreview={tradePreview}
+            equityCurveArtifactId={runtime.backtestArtifacts?.equity_curve?.artifact_id || "-"}
+            tradeLedgerArtifactId={runtime.backtestArtifacts?.trade_ledger?.artifact_id || "-"}
+            outputArtifacts={outputArtifacts}
+            riskExplanationEntries={riskExplanationEntries}
+            orderExplanationEntries={orderExplanationEntries}
+          />
         </div>
 
         <div className="analysis-sidebar-column">

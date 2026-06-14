@@ -232,7 +232,10 @@ export function mutationEventPayloadToProposal(event = {}) {
     proposal_id: payload.proposal_id,
     source_kind: payload.source_kind,
     source_id: payload.source_id,
+    graph_id: payload.graph_id,
     target: payload.target,
+    old_value: payload.old_value,
+    new_value: payload.new_value,
     old_parameter_version: payload.old_parameter_version,
     proposed_parameter_version: payload.proposed_parameter_version,
     status: payload.status,
@@ -245,6 +248,7 @@ export function mutationEventPayloadToProposal(event = {}) {
     actor: payload.actor,
     reason: payload.reason,
     governance: payload.governance,
+    lifecycle: payload.lifecycle,
     created_at_ms: event.event_time_ms || payload.created_at_ms,
     updated_at_ms: event.event_time_ms || payload.updated_at_ms
   });

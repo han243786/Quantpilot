@@ -1,6 +1,6 @@
 import { Suspense, lazy } from "react";
 import { StrategyHubInspectorSectionFallback } from "./StrategyHubSectionFallbacks";
-import { StrategyCardNote } from "./StrategyHubSharedComponents";
+import { StrategyCardNote } from "../components/strategySharedComponents";
 
 const StrategyHubRosterToolbar = lazy(() => import("./StrategyHubRosterToolbar"));
 const StrategyHubRosterTableSection = lazy(() => import("./StrategyHubRosterTableSection"));
