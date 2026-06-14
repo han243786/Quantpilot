@@ -1851,3 +1851,4 @@
 | v4.16.0 / BE-002KT-01 | Added: `test_plan_surface` existing leaf closeout |
 | v4.16.0 / BE-002KU-01 | Added: `quantscript` parent residual judgment selects `authoring_docs_samples` |
 | v4.16.0 / BE-002KV-01 | Added: `authoring_docs_samples` non-code leaf closeout |
+| v4.16.0 / BE-002KW-01 | Added: `quantscript` parent closeout |

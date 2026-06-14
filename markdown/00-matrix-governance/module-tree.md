@@ -9528,3 +9528,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.authoring_docs_samples selected: true`; this non-code child owns crate-local QS authoring guides, examples, authoring samples, and boundary samples.
 **Latest state supplement (BE-002KV-01)**: `root.contracts.quantscript.authoring_docs_samples` non-code leaf closeout complete; next step: BE-002KW-01 parent_closeout.
 `root.contracts.quantscript.authoring_docs_samples stop_split: true`; no Rust movement is needed, and global test scenarios remain outside this quantscript child.
+**Latest state supplement (BE-002KW-01)**: `root.contracts.quantscript` parent closeout complete; next step: BE-002KX-01 parent_residual_judgment.
+`root.contracts.quantscript parent_closeout: true`; all planned quantscript child owners are closed, and the remaining crate root is a public facade/re-export surface.
