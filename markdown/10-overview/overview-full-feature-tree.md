@@ -6044,3 +6044,5 @@ Recursive boundary supplement: BE-002KC-02 `root.contracts.quantscript.v4_static
 - `markdown/06-milestones/v4.16.0/1809-root.contracts.quantscript.v4_static_audit.static_document_parser.extract_closeout.md` - v4.16.0 BE-002KC-02 static_document_parser extract closeout
 Recursive boundary supplement: BE-002KC-03 `root.contracts.quantscript.v4_static_audit.static_document_parser` single leaf closeout complete with `stop_split: true`; next step: v4_static_audit parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1810-root.contracts.quantscript.v4_static_audit.static_document_parser.single_leaf_closeout.md` - v4.16.0 BE-002KC-03 static_document_parser single leaf closeout
+Recursive boundary supplement: BE-002KD-01 `root.contracts.quantscript.v4_static_audit` parent residual judgment selected `machine_block_parser`; next step: BE-002KE-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1811-root.contracts.quantscript.v4_static_audit.parent_residual_judgment.machine_block_parser.md` - v4.16.0 BE-002KD-01 v4_static_audit parent residual judgment selects machine_block_parser
