@@ -2117,3 +2117,4 @@
 | v4.16.0 / BE-002IX-02 | `v4.16.0/1754-root.contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration.extract_closeout.md` | Added: `intent_collection_orchestration` actual extraction complete |
 | v4.16.0 / BE-002IX-03 | `v4.16.0/1755-root.contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration.single_leaf_closeout.md` | Added: `intent_collection_orchestration` single leaf closeout stops split |
 | v4.16.0 / BE-002IY-01 | `v4.16.0/1756-root.contracts.quantscript.runtime_lowering.intent_inference.parent_residual_judgment.single_indicator_intent_inference.md` | Added: `intent_inference` parent residual judgment selects `single_indicator_intent_inference` |
+| v4.16.0 / BE-002IZ-01 | `v4.16.0/1757-root.contracts.quantscript.runtime_lowering.intent_inference.single_indicator_intent_inference.baseline_plan.md` | Added: `single_indicator_intent_inference` baseline plan |
