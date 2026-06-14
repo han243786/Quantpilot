@@ -14,8 +14,8 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002IY-01",
-  "last_committed_sha": "b0451eb0",
+  "last_committed_batch": "BE-002IZ-01",
+  "last_committed_sha": "affdc464",
   "current_parent": "root.contracts.quantscript.runtime_lowering.intent_inference.single_indicator_intent_inference",
   "current_step": "BE-002IZ-02",
   "current_phase": "actual_extraction",
@@ -323,7 +323,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.intent_inference.single_indicator_intent_inference.actual_extraction",
+  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.intent_inference.single_indicator_intent_inference.single_leaf_closeout",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

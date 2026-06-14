@@ -1765,3 +1765,4 @@
 | v4.16.0 / BE-002IX-03 | Added: `intent_collection_orchestration` single leaf closeout stops split |
 | v4.16.0 / BE-002IY-01 | Added: `intent_inference` parent residual judgment selects `single_indicator_intent_inference` |
 | v4.16.0 / BE-002IZ-01 | Added: `single_indicator_intent_inference` baseline plan |
+| v4.16.0 / BE-002IZ-02 | Added: `single_indicator_intent_inference` actual extraction complete |
