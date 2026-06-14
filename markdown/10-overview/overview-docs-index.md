@@ -1753,3 +1753,4 @@
 | v4.16.0 / BE-002IQ-02 | Added: `rebalance_directive_detection` actual extraction complete |
 | v4.16.0 / BE-002IQ-03 | Added: `rebalance_directive_detection` single leaf closeout stops split |
 | v4.16.0 / BE-002IR-01 | Added: `universe_lowering` parent residual judgment selects `universe_construct_expansion` |
+| v4.16.0 / BE-002IS-01 | Added: `universe_construct_expansion` baseline plan |

@@ -1834,3 +1834,4 @@ Latest recursive supplement: BE-002IQ-01 froze `contracts.quantscript.runtime_lo
 Latest recursive supplement: BE-002IQ-02 extracted `contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection`; next step is single leaf closeout.
 Latest recursive supplement: BE-002IQ-03 closed `contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection` with `stop_split: true`; next step returns to universe_lowering parent residual judgment.
 Latest recursive supplement: BE-002IR-01 selected `contracts.quantscript.runtime_lowering.universe_lowering.universe_construct_expansion`; next baseline freezes universe construct expansion only.
+Latest recursive supplement: BE-002IS-01 froze `contracts.quantscript.runtime_lowering.universe_lowering.universe_construct_expansion`; next movement may extract only AST expansion and substitution.

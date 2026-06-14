@@ -2106,3 +2106,4 @@
 | v4.16.0 / BE-002IQ-02 | `v4.16.0/1743-root.contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection.extract_closeout.md` | Added: `rebalance_directive_detection` actual extraction complete |
 | v4.16.0 / BE-002IQ-03 | `v4.16.0/1744-root.contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection.single_leaf_closeout.md` | Added: `rebalance_directive_detection` single leaf closeout stops split |
 | v4.16.0 / BE-002IR-01 | `v4.16.0/1745-root.contracts.quantscript.runtime_lowering.universe_lowering.parent_residual_judgment.universe_construct_expansion.md` | Added: `universe_lowering` parent residual judgment selects `universe_construct_expansion` |
+| v4.16.0 / BE-002IS-01 | `v4.16.0/1746-root.contracts.quantscript.runtime_lowering.universe_lowering.universe_construct_expansion.baseline_plan.md` | Added: `universe_construct_expansion` baseline plan |
