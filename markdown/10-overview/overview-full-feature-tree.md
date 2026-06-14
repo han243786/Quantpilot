@@ -5816,3 +5816,5 @@ Recursive boundary supplement: BE-002HU-01 `root.contracts.quantscript.runtime_l
 Recursive boundary supplement: BE-002HV-01 `root.contracts.quantscript.runtime_lowering` parent residual judgment selected `lowering_orchestrator_surface`; next step: BE-002HW-01 baseline_plan.
 - `quantscript/src/lowering/orchestrator.rs` - QuantScript runtime lowering public orchestrator and integration tests
 - `markdown/06-milestones/v4.16.0/1707-root.contracts.quantscript.runtime_lowering.parent_residual_judgment.lowering_orchestrator_surface.md` - v4.16.0 BE-002HV-01 quantscript runtime_lowering parent residual judgment selects lowering_orchestrator_surface
+Recursive boundary supplement: BE-002HW-01 `root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface` baseline frozen; next step: BE-002HX-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1708-root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.baseline_plan.md` - v4.16.0 BE-002HW-01 quantscript runtime_lowering lowering_orchestrator_surface baseline plan
