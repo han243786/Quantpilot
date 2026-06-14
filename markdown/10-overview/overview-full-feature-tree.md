@@ -5774,3 +5774,6 @@ Recursive boundary supplement: BE-002HJ-01 `root.contracts.quantscript.analysis_
 - `markdown/06-milestones/v4.16.0/1688-root.contracts.quantscript.analysis_diagnostics.parent_residual_judgment.strategy_presence_gate.md` - v4.16.0 BE-002HJ-01 quantscript analysis_diagnostics parent residual judgment selects strategy_presence_gate
 Recursive boundary supplement: BE-002HK-01 `root.contracts.quantscript.analysis_diagnostics.strategy_presence_gate` baseline frozen; next step: BE-002HK-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1689-root.contracts.quantscript.analysis_diagnostics.strategy_presence_gate.baseline_plan.md` - v4.16.0 BE-002HK-01 quantscript analysis_diagnostics strategy_presence_gate baseline plan
+Recursive boundary supplement: BE-002HK-02 `root.contracts.quantscript.analysis_diagnostics.strategy_presence_gate` actual extraction complete; next step: BE-002HK-03 single_leaf_closeout.
+- `quantscript/src/analysis_diagnostics/strategy_presence_gate.rs` - QuantScript strategy presence diagnostic gate child
+- `markdown/06-milestones/v4.16.0/1690-root.contracts.quantscript.analysis_diagnostics.strategy_presence_gate.extract_closeout.md` - v4.16.0 BE-002HK-02 quantscript analysis_diagnostics strategy_presence_gate extract closeout

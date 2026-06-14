@@ -2050,3 +2050,4 @@
 | v4.16.0 / BE-002HI-03 | `v4.16.0/1687-root.contracts.quantscript.analysis_diagnostics.dead_code_emit_gate.single_leaf_closeout.md` | Added: `quantscript.analysis_diagnostics.dead_code_emit_gate` single leaf closeout stops split |
 | v4.16.0 / BE-002HJ-01 | `v4.16.0/1688-root.contracts.quantscript.analysis_diagnostics.parent_residual_judgment.strategy_presence_gate.md` | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `strategy_presence_gate` |
 | v4.16.0 / BE-002HK-01 | `v4.16.0/1689-root.contracts.quantscript.analysis_diagnostics.strategy_presence_gate.baseline_plan.md` | Added: `quantscript.analysis_diagnostics.strategy_presence_gate` baseline plan |
+| v4.16.0 / BE-002HK-02 | `v4.16.0/1690-root.contracts.quantscript.analysis_diagnostics.strategy_presence_gate.extract_closeout.md` | Added: `quantscript.analysis_diagnostics.strategy_presence_gate` actual extraction complete |

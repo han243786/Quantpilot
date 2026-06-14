@@ -5,6 +5,7 @@ mod fetch_lookback_warning_gate;
 mod index_bounds_gate;
 mod indirect_recursion_gate;
 mod lookahead_window_gate;
+mod strategy_presence_gate;
 mod symbol_whitelist_gate;
 mod unsupported_construct_gate;
 mod warmup_fetch_gate;

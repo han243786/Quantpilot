@@ -5,13 +5,14 @@ use super::indirect_recursion_gate::detect_indirect_recursion;
 use super::lookahead_window_gate::{
     collect_centered_window_diagnostics, collect_series_index_diagnostics,
 };
+use super::strategy_presence_gate::{check_strategy_has_emit, check_strategy_has_fetch};
 use super::symbol_whitelist_gate::check_fetch_symbol_whitelist;
 use super::unsupported_construct_gate::collect_unsupported_construct_diagnostics;
 use super::warmup_fetch_gate::{collect_warmup_diagnostics, infer_required_warmup_bars};
 
-use crate::diagnostics::{Diagnostic, DiagnosticSeverity, Span};
+use crate::diagnostics::{Diagnostic, DiagnosticSeverity};
 use crate::resolve::ResolveResult;
-use crate::script::{Expr, Item, MatchArmBody, ScriptModule, Stmt};
+use crate::script::{MatchArmBody, ScriptModule, Stmt};
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct ScriptAnalysis {
@@ -47,128 +48,6 @@ pub fn analyze_script_module(module: &ScriptModule, resolved: &ResolveResult) ->
         required_warmup_bars,
         diagnostics,
     }
-}
-
-// B1-1: 空 strategy 提前诊断
-fn check_strategy_has_fetch(module: &ScriptModule) -> Vec<Diagnostic> {
-    for item in &module.items {
-        if let Item::Function(function) = item {
-            if function.name == "strategy" {
-                if !contains_fetch_like_call_in_stmts(&function.body) {
-                    return vec![Diagnostic::error(
-                        "QS0610",
-                        "策略函数必须包含至少一个 fetch() 调用来获取市场数据",
-                        Some(Span::function("strategy")),
-                    )];
-                }
-                return vec![];
-            }
-        }
-    }
-    vec![]
-}
-
-fn contains_fetch_like_call_in_stmts(stmts: &[Stmt]) -> bool {
-    stmts.iter().any(|stmt| match stmt {
-        Stmt::Let { value, .. } | Stmt::Expr(value) | Stmt::Return(Some(value)) => {
-            contains_fetch_like_call_in_expr(value)
-        }
-        Stmt::Return(None) => false,
-        Stmt::EmitIntent { args } => args
-            .iter()
-            .any(|arg| contains_fetch_like_call_in_expr(&arg.value)),
-        Stmt::If {
-            condition,
-            then_branch,
-            else_if_branches,
-            else_branch,
-        } => {
-            contains_fetch_like_call_in_expr(condition)
-                || contains_fetch_like_call_in_stmts(then_branch)
-                || else_if_branches.iter().any(|(c, b)| {
-                    contains_fetch_like_call_in_expr(c) || contains_fetch_like_call_in_stmts(b)
-                })
-                || else_branch
-                    .as_ref()
-                    .is_some_and(|b| contains_fetch_like_call_in_stmts(b))
-        }
-        Stmt::For { iterable, body, .. } => {
-            contains_fetch_like_call_in_expr(iterable) || contains_fetch_like_call_in_stmts(body)
-        }
-        Stmt::While { condition, body } => {
-            contains_fetch_like_call_in_expr(condition) || contains_fetch_like_call_in_stmts(body)
-        }
-        Stmt::Match { expr, arms } => {
-            contains_fetch_like_call_in_expr(expr)
-                || arms.iter().any(|arm| match &arm.body {
-                    MatchArmBody::Statement(stmt) => {
-                        contains_fetch_like_call_in_stmts(std::slice::from_ref(stmt.as_ref()))
-                    }
-                    MatchArmBody::Expr(expr) => contains_fetch_like_call_in_expr(expr),
-                })
-        }
-    })
-}
-
-fn contains_fetch_like_call_in_expr(expr: &Expr) -> bool {
-    match expr {
-        Expr::Call { callee, args } => {
-            if matches!(
-                callee.as_ref(),
-                Expr::Identifier(name) if name == "fetch" || name == "get_data"
-            ) {
-                return true;
-            }
-            contains_fetch_like_call_in_expr(callee)
-                || args
-                    .iter()
-                    .any(|arg| contains_fetch_like_call_in_expr(&arg.value))
-        }
-        Expr::List(items) => items.iter().any(contains_fetch_like_call_in_expr),
-        Expr::Member { object, .. }
-        | Expr::Await(object)
-        | Expr::Try(object)
-        | Expr::Unary { expr: object, .. } => contains_fetch_like_call_in_expr(object),
-        Expr::Index { object, index } => {
-            contains_fetch_like_call_in_expr(object) || contains_fetch_like_call_in_expr(index)
-        }
-        Expr::Slice { object, start, end } => {
-            contains_fetch_like_call_in_expr(object)
-                || start
-                    .as_ref()
-                    .is_some_and(|s| contains_fetch_like_call_in_expr(s))
-                || end
-                    .as_ref()
-                    .is_some_and(|e| contains_fetch_like_call_in_expr(e))
-        }
-        Expr::Binary { left, right, .. }
-        | Expr::Range {
-            start: left,
-            end: right,
-        } => contains_fetch_like_call_in_expr(left) || contains_fetch_like_call_in_expr(right),
-        Expr::Raw(_) | Expr::Identifier(_) | Expr::Number(_) | Expr::String(_) | Expr::Bool(_) => {
-            false
-        }
-    }
-}
-
-// B1-5: 无 emit 诊断
-fn check_strategy_has_emit(module: &ScriptModule) -> Vec<Diagnostic> {
-    for item in &module.items {
-        if let Item::Function(function) = item {
-            if function.name == "strategy" {
-                if !contains_emit_in_stmts(&function.body) {
-                    return vec![Diagnostic::error(
-                        "QS0611",
-                        "策略函数必须包含至少一个 emit Intent() 调用来输出交易信号",
-                        Some(Span::function("strategy")),
-                    )];
-                }
-                return vec![];
-            }
-        }
-    }
-    vec![]
 }
 
 pub(in crate::analysis_diagnostics) fn contains_emit_in_stmts(stmts: &[Stmt]) -> bool {

@@ -1778,3 +1778,4 @@ Latest recursive supplement: BE-002HI-02 extracted `contracts.quantscript.analys
 Latest recursive supplement: BE-002HI-03 closed `contracts.quantscript.analysis_diagnostics.dead_code_emit_gate` with `stop_split: true`; next step returns to analysis_diagnostics parent residual judgment.
 Latest recursive supplement: BE-002HJ-01 selected `contracts.quantscript.analysis_diagnostics.strategy_presence_gate`; next baseline freezes QS0610/QS0611 strategy presence diagnostics.
 Latest recursive supplement: BE-002HK-01 froze `contracts.quantscript.analysis_diagnostics.strategy_presence_gate`; next movement may extract QS0610/QS0611 strategy presence diagnostics only.
+Latest recursive supplement: BE-002HK-02 extracted `contracts.quantscript.analysis_diagnostics.strategy_presence_gate`; next step is single leaf closeout and split judgment.
