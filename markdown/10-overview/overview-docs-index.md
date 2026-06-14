@@ -1718,3 +1718,4 @@
 | v4.16.0 / BE-002HW-01 | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface` baseline plan |
 | v4.16.0 / BE-002HX-01 | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface` parent residual judgment selects `profile_detection_surface` |
 | v4.16.0 / BE-002HY-01 | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface` baseline plan |
+| v4.16.0 / BE-002HY-02 | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface` actual extraction complete |

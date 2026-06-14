@@ -1799,3 +1799,4 @@ Latest recursive supplement: BE-002HV-01 selected `contracts.quantscript.runtime
 Latest recursive supplement: BE-002HW-01 froze `contracts.quantscript.runtime_lowering.lowering_orchestrator_surface`; next residual judgment chooses an internal child before Rust movement.
 Latest recursive supplement: BE-002HX-01 selected `contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface`; next baseline freezes risk/execution profile parsing.
 Latest recursive supplement: BE-002HY-01 froze `contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface`; next movement may extract profile detection into its child module.
+Latest recursive supplement: BE-002HY-02 extracted `contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.profile_detection_surface`; next step is single leaf closeout.

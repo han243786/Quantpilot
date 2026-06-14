@@ -17,6 +17,7 @@ mod fallback;
 mod helper_env;
 mod intents;
 mod orchestrator;
+mod profile_detection_surface;
 mod semantic;
 mod shared;
 mod source_recovery;
