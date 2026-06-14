@@ -13,15 +13,14 @@ mod event_catalog_derivation;
 mod machine_block_parser;
 mod memory_parser;
 mod parser_utilities_diagnostics;
+mod risk_plane_parser;
 mod runtime_handoff_builder;
 mod state_block_parser;
 mod static_document_parser;
 mod transition_parser;
 
 use machine_block_parser::ParsedMachine;
-use parser_utilities_diagnostics::{
-    diag, prepare_lines, split_csv_words, split_words, PreparedLine,
-};
+use parser_utilities_diagnostics::{diag, prepare_lines, split_words, PreparedLine};
 use static_document_parser::ParsedV4QsStaticDocument;
 
 pub const V4_QS_STATIC_AUDIT_REPORT_VERSION: &str = "quantpilot/qs-v4-static-audit-report/v1";
@@ -145,39 +144,8 @@ fn parse_edge(
     edge_parser::parse_edge(input, edge_index, line_number)
 }
 fn parse_risk_plane(input: &str, line_number: usize) -> Result<MachineGraphRiskPlane, Diagnostic> {
-    let parts = split_words(input);
-    if parts.is_empty() {
-        return Err(diag(
-            "QSV4121",
-            "risk_plane 必须声明至少一个 machine id",
-            line_number,
-        ));
-    }
-    let mut machine_ids = Vec::new();
-    let mut min_priority = 9_000;
-    let mut cursor = 0;
-    while cursor < parts.len() {
-        if parts[cursor] == "priority" {
-            cursor += 1;
-            let Some(value) = parts.get(cursor) else {
-                return Err(diag("QSV4122", "risk_plane priority 缺少数值", line_number));
-            };
-            min_priority = value
-                .parse::<i32>()
-                .map_err(|_| diag("QSV4123", "risk_plane priority 必须是整数", line_number))?;
-            cursor += 1;
-        } else {
-            machine_ids.extend(split_csv_words(parts[cursor]));
-            cursor += 1;
-        }
-    }
-    Ok(MachineGraphRiskPlane {
-        required: true,
-        machine_ids,
-        min_priority,
-    })
+    risk_plane_parser::parse_risk_plane(input, line_number)
 }
-
 fn parse_machine_template(input: &str) -> Result<MachineTemplateKind, String> {
     match input {
         "observation" => Ok(MachineTemplateKind::Observation),

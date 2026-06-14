@@ -1,7 +1,7 @@
 use crate::Diagnostic;
 use qrpc_core_ir::v4::{MachineActionSpec, MachineEventSelector, MachineTransition};
 
-use super::{diag, split_csv_words, split_words};
+use super::parser_utilities_diagnostics::{diag, split_csv_words, split_words};
 
 pub(super) fn parse_transition(
     input: &str,
