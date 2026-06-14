@@ -5783,3 +5783,5 @@ Recursive boundary supplement: BE-002HL-01 `root.contracts.quantscript.analysis_
 - `markdown/06-milestones/v4.16.0/1692-root.contracts.quantscript.analysis_diagnostics.parent_closeout.md` - v4.16.0 BE-002HL-01 quantscript analysis_diagnostics parent closeout
 Recursive boundary supplement: BE-002HM-01 `root.contracts.quantscript` parent residual judgment selected `evaluator_normalization`; next step: BE-002HN-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1693-root.contracts.quantscript.parent_residual_judgment.evaluator_normalization.md` - v4.16.0 BE-002HM-01 quantscript parent residual judgment selects evaluator_normalization
+Recursive boundary supplement: BE-002HN-01 `root.contracts.quantscript.evaluator_normalization` baseline frozen; next step: BE-002HN-02 module_shell_extraction.
+- `markdown/06-milestones/v4.16.0/1694-root.contracts.quantscript.evaluator_normalization.baseline_plan.md` - v4.16.0 BE-002HN-01 quantscript evaluator_normalization baseline plan

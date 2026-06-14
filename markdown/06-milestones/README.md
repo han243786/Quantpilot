@@ -2054,3 +2054,4 @@
 | v4.16.0 / BE-002HK-03 | `v4.16.0/1691-root.contracts.quantscript.analysis_diagnostics.strategy_presence_gate.single_leaf_closeout.md` | Added: `quantscript.analysis_diagnostics.strategy_presence_gate` single leaf closeout stops split |
 | v4.16.0 / BE-002HL-01 | `v4.16.0/1692-root.contracts.quantscript.analysis_diagnostics.parent_closeout.md` | Added: `quantscript.analysis_diagnostics` parent closeout |
 | v4.16.0 / BE-002HM-01 | `v4.16.0/1693-root.contracts.quantscript.parent_residual_judgment.evaluator_normalization.md` | Added: `quantscript` parent residual judgment selects `evaluator_normalization` |
+| v4.16.0 / BE-002HN-01 | `v4.16.0/1694-root.contracts.quantscript.evaluator_normalization.baseline_plan.md` | Added: `quantscript.evaluator_normalization` baseline plan |
