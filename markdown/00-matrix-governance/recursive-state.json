@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002JI-01",
-  "last_committed_sha": "a84a9e2f",
-  "current_parent": "root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_momentum_formula",
-  "current_step": "BE-002JI-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002JI-02",
+  "last_committed_sha": "a59299ec",
+  "current_parent": "root.contracts.quantscript.runtime_lowering.manual_formula_fallback",
+  "current_step": "BE-002JJ-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -317,7 +317,8 @@
     "contracts.quantscript.runtime_lowering.intent_inference.single_indicator_intent_inference",
     "contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference",
     "contracts.quantscript.runtime_lowering.intent_inference",
-    "contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_rsi_formula"
+    "contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_rsi_formula",
+    "contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_momentum_formula"
   ],
   "open_residuals": [
     "contracts.quantscript.runtime_lowering",
@@ -327,7 +328,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_momentum_formula.single_leaf_closeout",
+  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.manual_formula_fallback.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
