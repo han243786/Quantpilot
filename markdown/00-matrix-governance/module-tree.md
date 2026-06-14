@@ -9572,3 +9572,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.market_stream_routes selected: true`; this child starts with kline projection and strategy event SSE route handlers while route registration and runner setup remain parent-owned.
 **Latest state supplement (BE-002LL-01)**: `root.executor.runner.market_stream_routes` baseline frozen; next step: BE-002LL-02 actual_extraction.
 `root.executor.runner.market_stream_routes baseline_frozen: true`; approved movement is limited to `get_klines` and `strategy_events_sse` into `src-executor/market_stream_routes.rs`.
+**Latest state supplement (BE-002LL-02)**: `root.executor.runner.market_stream_routes` actual extraction complete; next step: BE-002LL-03 single_leaf_closeout.
+`root.executor.runner.market_stream_routes extracted: true`; `src-executor/market_stream_routes.rs` now owns kline projection and strategy event SSE route handlers while route registration and runner setup remain parent-owned.
