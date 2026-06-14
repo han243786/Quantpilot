@@ -5942,3 +5942,5 @@ Recursive boundary supplement: BE-002JB-03 `root.contracts.quantscript.runtime_l
 - `markdown/06-milestones/v4.16.0/1763-root.contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference.single_leaf_closeout.md` - v4.16.0 BE-002JB-03 spread_intent_inference single leaf closeout
 Recursive boundary supplement: BE-002JC-01 `root.contracts.quantscript.runtime_lowering.intent_inference` parent closeout complete; next step: runtime_lowering parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1764-root.contracts.quantscript.runtime_lowering.intent_inference.parent_closeout.md` - v4.16.0 BE-002JC-01 intent_inference parent closeout
+Recursive boundary supplement: BE-002JD-01 `root.contracts.quantscript.runtime_lowering` parent residual judgment selected `manual_formula_fallback`; next step: BE-002JE-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1765-root.contracts.quantscript.runtime_lowering.parent_residual_judgment.manual_formula_fallback.md` - v4.16.0 BE-002JD-01 runtime_lowering parent residual judgment selects manual_formula_fallback
