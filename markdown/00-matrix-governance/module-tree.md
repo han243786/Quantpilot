@@ -9552,3 +9552,7 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner selected: true`; this child owns strategy lifecycle routes, runner pool, migration API, market feed, kline/SSE routes, OKX REST/demo provider routes, and runner support files.
 **Latest state supplement (BE-002LF-01)**: `root.executor.runner` baseline frozen; next step: BE-002LG-01 parent_residual_judgment.
 `root.executor.runner baseline_frozen: true`; child queue is `provider_order_routes`, `strategy_lifecycle_routes`, `market_stream_routes`, `v4_deploy_support`, and `runner_support_files`.
+**Latest state supplement (BE-002LG-01)**: `root.executor.runner` parent residual judgment selected `provider_order_routes`; next step: BE-002LH-01 baseline_plan.
+`root.executor.runner.provider_order_routes selected: true`; this child starts with OKX demo provider submit/query/cancel handlers while helper functions remain parent-owned for the first extraction.
+**Latest state supplement (BE-002LH-01)**: `root.executor.runner.provider_order_routes` baseline frozen; next step: BE-002LH-02 actual_extraction.
+`root.executor.runner.provider_order_routes baseline_frozen: true`; approved movement is limited to the three OKX demo provider route handlers into `src-executor/provider_order_routes.rs`.

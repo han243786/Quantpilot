@@ -1863,3 +1863,5 @@
 | v4.16.0 / BE-002LD-03 | Added: `executor.state` single leaf closeout stops split |
 | v4.16.0 / BE-002LE-01 | Added: `executor` parent residual judgment selects `runner` |
 | v4.16.0 / BE-002LF-01 | Added: `executor.runner` baseline plan |
+| v4.16.0 / BE-002LG-01 | Added: `executor.runner` parent residual judgment selects `provider_order_routes` |
+| v4.16.0 / BE-002LH-01 | Added: `provider_order_routes` baseline plan |

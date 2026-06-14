@@ -6142,3 +6142,7 @@ Recursive boundary supplement: BE-002LE-01 `root.executor` parent residual judgm
 - `markdown/06-milestones/v4.16.0/1854-root.executor.parent_residual_judgment.runner.md` - v4.16.0 BE-002LE-01 executor parent residual judgment selects runner
 Recursive boundary supplement: BE-002LF-01 `root.executor.runner` baseline frozen; next step: BE-002LG-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1855-root.executor.runner.baseline_plan.md` - v4.16.0 BE-002LF-01 executor.runner baseline plan
+Recursive boundary supplement: BE-002LG-01 `root.executor.runner` parent residual judgment selected `provider_order_routes`; next step: BE-002LH-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1856-root.executor.runner.parent_residual_judgment.provider_order_routes.md` - v4.16.0 BE-002LG-01 executor.runner parent residual judgment selects provider_order_routes
+Recursive boundary supplement: BE-002LH-01 `root.executor.runner.provider_order_routes` baseline frozen; next step: BE-002LH-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1857-root.executor.runner.provider_order_routes.baseline_plan.md` - v4.16.0 BE-002LH-01 provider_order_routes baseline plan
