@@ -1814,3 +1814,4 @@
 | v4.16.0 / BE-002KA-01 | Added: `parser_utilities_diagnostics` baseline plan |
 | v4.16.0 / BE-002KA-02 | Added: `parser_utilities_diagnostics` actual extraction complete |
 | v4.16.0 / BE-002KA-03 | Added: `parser_utilities_diagnostics` single leaf closeout stops split |
+| v4.16.0 / BE-002KB-01 | Added: `v4_static_audit` parent residual judgment selects `static_document_parser` |
