@@ -1886,3 +1886,4 @@ Latest recursive supplement: BE-002JU-03 closed `contracts.quantscript.v4_static
 Latest recursive supplement: BE-002JV-01 selected `contracts.quantscript.v4_static_audit.capability_type_parser`; next baseline freezes runtime mode, execution capability, and QS type-ref parsing.
 Latest recursive supplement: BE-002JW-01 froze `contracts.quantscript.v4_static_audit.capability_type_parser`; next movement may extract the pure capability/type parser cluster.
 Latest recursive supplement: BE-002JW-02 extracted `contracts.quantscript.v4_static_audit.capability_type_parser`; next step is single leaf closeout.
+Latest recursive supplement: BE-002JW-03 closed `contracts.quantscript.v4_static_audit.capability_type_parser` with `stop_split: true`; next step returns to v4_static_audit parent residual judgment.

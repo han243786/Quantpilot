@@ -2158,3 +2158,4 @@
 | v4.16.0 / BE-002JV-01 | `v4.16.0/1795-root.contracts.quantscript.v4_static_audit.parent_residual_judgment.capability_type_parser.md` | Added: `v4_static_audit` parent residual judgment selects `capability_type_parser` |
 | v4.16.0 / BE-002JW-01 | `v4.16.0/1796-root.contracts.quantscript.v4_static_audit.capability_type_parser.baseline_plan.md` | Added: `capability_type_parser` baseline plan |
 | v4.16.0 / BE-002JW-02 | `v4.16.0/1797-root.contracts.quantscript.v4_static_audit.capability_type_parser.extract_closeout.md` | Added: `capability_type_parser` actual extraction complete |
+| v4.16.0 / BE-002JW-03 | `v4.16.0/1798-root.contracts.quantscript.v4_static_audit.capability_type_parser.single_leaf_closeout.md` | Added: `capability_type_parser` single leaf closeout stops split |
