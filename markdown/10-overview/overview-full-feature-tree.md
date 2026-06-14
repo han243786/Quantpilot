@@ -5975,3 +5975,5 @@ Recursive boundary supplement: BE-002JK-03 `root.contracts.quantscript.runtime_l
 - `markdown/06-milestones/v4.16.0/1778-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_macd_formula.single_leaf_closeout.md` - v4.16.0 BE-002JK-03 manual_macd_formula single leaf closeout
 Recursive boundary supplement: BE-002JL-01 `root.contracts.quantscript.runtime_lowering.manual_formula_fallback` parent residual judgment selected `manual_zscore_formula`; next step: BE-002JM-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1779-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.parent_residual_judgment.manual_zscore_formula.md` - v4.16.0 BE-002JL-01 manual_formula_fallback parent residual judgment selects manual_zscore_formula
+Recursive boundary supplement: BE-002JM-01 `root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_zscore_formula` baseline frozen; next step: BE-002JM-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1780-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_zscore_formula.baseline_plan.md` - v4.16.0 BE-002JM-01 manual_zscore_formula baseline plan

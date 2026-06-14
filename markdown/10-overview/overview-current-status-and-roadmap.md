@@ -1868,3 +1868,4 @@ Latest recursive supplement: BE-002JK-01 froze `contracts.quantscript.runtime_lo
 Latest recursive supplement: BE-002JK-02 extracted `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_macd_formula`; next step is single leaf closeout.
 Latest recursive supplement: BE-002JK-03 closed `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_macd_formula` with `stop_split: true`; next step returns to manual_formula_fallback parent residual judgment.
 Latest recursive supplement: BE-002JL-01 selected `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_zscore_formula`; next baseline freezes direct ZScore and legacy operand recovery only.
+Latest recursive supplement: BE-002JM-01 froze `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_zscore_formula`; next movement may extract ZScore binding and operand recovery.
