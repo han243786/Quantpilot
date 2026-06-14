@@ -1820,3 +1820,4 @@
 | v4.16.0 / BE-002KC-03 | Added: `static_document_parser` single leaf closeout stops split |
 | v4.16.0 / BE-002KD-01 | Added: `v4_static_audit` parent residual judgment selects `machine_block_parser` |
 | v4.16.0 / BE-002KE-01 | Added: `machine_block_parser` baseline plan |
+| v4.16.0 / BE-002KE-02 | Added: `machine_block_parser` actual extraction complete |
