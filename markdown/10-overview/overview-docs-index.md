@@ -1687,3 +1687,4 @@
 | v4.16.0 / BE-002HE-01 | Added: `quantscript.analysis_diagnostics.fetch_lookback_warning_gate` baseline plan |
 | v4.16.0 / BE-002HE-02 | Added: `quantscript.analysis_diagnostics.fetch_lookback_warning_gate` actual extraction complete |
 | v4.16.0 / BE-002HE-03 | Added: `quantscript.analysis_diagnostics.fetch_lookback_warning_gate` single leaf closeout stops split |
+| v4.16.0 / BE-002HF-01 | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `index_bounds_gate` |
