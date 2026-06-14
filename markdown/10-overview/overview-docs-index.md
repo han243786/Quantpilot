@@ -1799,3 +1799,4 @@
 | v4.16.0 / BE-002JS-02 | Added: `runtime_handoff_builder` actual extraction complete |
 | v4.16.0 / BE-002JS-03 | Added: `runtime_handoff_builder` single leaf closeout stops split |
 | v4.16.0 / BE-002JT-01 | Added: `v4_static_audit` parent residual judgment selects `audit_entrypoint` |
+| v4.16.0 / BE-002JU-01 | Added: `audit_entrypoint` baseline plan |
