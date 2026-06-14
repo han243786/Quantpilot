@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002HK-02",
-  "last_committed_sha": "88d9ae40",
-  "current_parent": "root.contracts.quantscript.analysis_diagnostics.strategy_presence_gate",
-  "current_step": "BE-002HK-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002HK-03",
+  "last_committed_sha": "294f7e4a",
+  "current_parent": "root.contracts.quantscript",
+  "current_step": "BE-002HL-01",
+  "current_phase": "parent_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -297,10 +297,10 @@
     "contracts.quantscript.analysis_diagnostics.fetch_lookback_warning_gate",
     "contracts.quantscript.analysis_diagnostics.index_bounds_gate",
     "contracts.quantscript.analysis_diagnostics.dead_code_emit_gate",
-    "contracts.quantscript.analysis_diagnostics.strategy_presence_gate"
+    "contracts.quantscript.analysis_diagnostics.strategy_presence_gate",
+    "contracts.quantscript.analysis_diagnostics"
   ],
   "open_residuals": [
-    "contracts.quantscript.analysis_diagnostics",
     "contracts.quantscript.evaluator_normalization",
     "contracts.quantscript.runtime_lowering",
     "contracts.quantscript.v4_static_audit",
@@ -309,7 +309,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.analysis_diagnostics.parent_residual_judgment",
+  "next_recommended_child": "root.contracts.quantscript.evaluator_normalization.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

@@ -1699,3 +1699,4 @@
 | v4.16.0 / BE-002HK-01 | Added: `quantscript.analysis_diagnostics.strategy_presence_gate` baseline plan |
 | v4.16.0 / BE-002HK-02 | Added: `quantscript.analysis_diagnostics.strategy_presence_gate` actual extraction complete |
 | v4.16.0 / BE-002HK-03 | Added: `quantscript.analysis_diagnostics.strategy_presence_gate` single leaf closeout stops split |
+| v4.16.0 / BE-002HL-01 | Added: `quantscript.analysis_diagnostics` parent closeout |
