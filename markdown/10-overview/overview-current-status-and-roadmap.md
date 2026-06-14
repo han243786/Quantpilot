@@ -1854,3 +1854,4 @@ Latest recursive supplement: BE-002JB-02 extracted `contracts.quantscript.runtim
 Latest recursive supplement: BE-002JB-03 closed `contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference` with `stop_split: true`; next step returns to intent_inference parent residual judgment.
 Latest recursive supplement: BE-002JC-01 closed `contracts.quantscript.runtime_lowering.intent_inference`; next step returns to runtime_lowering parent residual judgment.
 Latest recursive supplement: BE-002JD-01 selected `contracts.quantscript.runtime_lowering.manual_formula_fallback`; next baseline freezes handwritten manual formula fallback recognition only.
+Latest recursive supplement: BE-002JE-01 froze `contracts.quantscript.runtime_lowering.manual_formula_fallback`; next step selects one internal fallback child before Rust movement.

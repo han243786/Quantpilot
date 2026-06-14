@@ -2126,3 +2126,4 @@
 | v4.16.0 / BE-002JB-03 | `v4.16.0/1763-root.contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference.single_leaf_closeout.md` | Added: `spread_intent_inference` single leaf closeout stops split |
 | v4.16.0 / BE-002JC-01 | `v4.16.0/1764-root.contracts.quantscript.runtime_lowering.intent_inference.parent_closeout.md` | Added: `intent_inference` parent closeout |
 | v4.16.0 / BE-002JD-01 | `v4.16.0/1765-root.contracts.quantscript.runtime_lowering.parent_residual_judgment.manual_formula_fallback.md` | Added: `runtime_lowering` parent residual judgment selects `manual_formula_fallback` |
+| v4.16.0 / BE-002JE-01 | `v4.16.0/1766-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.baseline_plan.md` | Added: `manual_formula_fallback` precision baseline plan |
