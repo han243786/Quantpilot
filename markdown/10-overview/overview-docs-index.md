@@ -1738,3 +1738,4 @@
 | v4.16.0 / BE-002IG-03 | Added: `integration_test_harness.rebalance_lowering_tests` single leaf closeout stops split |
 | v4.16.0 / BE-002IH-01 | Added: `integration_test_harness` parent residual judgment selects `basic_runtime_smoke_tests` |
 | v4.16.0 / BE-002II-01 | Added: `integration_test_harness.basic_runtime_smoke_tests` baseline plan |
+| v4.16.0 / BE-002II-02 | Added: `integration_test_harness.basic_runtime_smoke_tests` actual extraction complete |
