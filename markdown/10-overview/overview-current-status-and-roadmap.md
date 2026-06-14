@@ -1930,3 +1930,5 @@ Latest recursive supplement: BE-002KQ-03 closed `contracts.quantscript.v4_static
 Latest recursive supplement: BE-002KR-01 closed `contracts.quantscript.v4_static_audit`; next step returns to the quantscript parent residual judgment.
 Latest recursive supplement: BE-002KS-01 selected `contracts.quantscript.test_plan_surface`; it is already file-isolated.
 Latest recursive supplement: BE-002KT-01 closed `contracts.quantscript.test_plan_surface` with `stop_split: true`; next step returns to quantscript parent residual judgment.
+Latest recursive supplement: BE-002KU-01 selected `contracts.quantscript.authoring_docs_samples`; it is a non-code docs/sample leaf.
+Latest recursive supplement: BE-002KV-01 closed `contracts.quantscript.authoring_docs_samples` with `stop_split: true`; next step is quantscript parent closeout.

@@ -2202,3 +2202,5 @@
 | v4.16.0 / BE-002KR-01 | `v4.16.0/1839-root.contracts.quantscript.v4_static_audit.parent_closeout.md` | Added: `v4_static_audit` parent closeout |
 | v4.16.0 / BE-002KS-01 | `v4.16.0/1840-root.contracts.quantscript.parent_residual_judgment.test_plan_surface.md` | Added: `quantscript` parent residual judgment selects `test_plan_surface` |
 | v4.16.0 / BE-002KT-01 | `v4.16.0/1841-root.contracts.quantscript.test_plan_surface.single_leaf_closeout.md` | Added: `test_plan_surface` existing leaf closeout |
+| v4.16.0 / BE-002KU-01 | `v4.16.0/1842-root.contracts.quantscript.parent_residual_judgment.authoring_docs_samples.md` | Added: `quantscript` parent residual judgment selects `authoring_docs_samples` |
+| v4.16.0 / BE-002KV-01 | `v4.16.0/1843-root.contracts.quantscript.authoring_docs_samples.single_leaf_closeout.md` | Added: `authoring_docs_samples` non-code leaf closeout |

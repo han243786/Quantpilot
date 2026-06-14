@@ -1849,3 +1849,5 @@
 | v4.16.0 / BE-002KR-01 | Added: `v4_static_audit` parent closeout |
 | v4.16.0 / BE-002KS-01 | Added: `quantscript` parent residual judgment selects `test_plan_surface` |
 | v4.16.0 / BE-002KT-01 | Added: `test_plan_surface` existing leaf closeout |
+| v4.16.0 / BE-002KU-01 | Added: `quantscript` parent residual judgment selects `authoring_docs_samples` |
+| v4.16.0 / BE-002KV-01 | Added: `authoring_docs_samples` non-code leaf closeout |

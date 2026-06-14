@@ -9524,3 +9524,7 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.test_plan_surface selected: true`; existing file `quantscript/src/test_plan.rs` owns public test-plan DTOs, extraction helpers, test item splitting, and local tests.
 **Latest state supplement (BE-002KT-01)**: `root.contracts.quantscript.test_plan_surface` existing leaf closeout complete; next step: BE-002KU-01 parent_residual_judgment.
 `root.contracts.quantscript.test_plan_surface stop_split: true`; terminal leaf control returned `STOP` with score 43 over a 218 LOC terminal-size public surface. Further splitting would fragment DTO and extraction ownership.
+**Latest state supplement (BE-002KU-01)**: `root.contracts.quantscript` parent residual judgment selected `authoring_docs_samples`; next step: BE-002KV-01 single_leaf_closeout.
+`root.contracts.quantscript.authoring_docs_samples selected: true`; this non-code child owns crate-local QS authoring guides, examples, authoring samples, and boundary samples.
+**Latest state supplement (BE-002KV-01)**: `root.contracts.quantscript.authoring_docs_samples` non-code leaf closeout complete; next step: BE-002KW-01 parent_closeout.
+`root.contracts.quantscript.authoring_docs_samples stop_split: true`; no Rust movement is needed, and global test scenarios remain outside this quantscript child.
