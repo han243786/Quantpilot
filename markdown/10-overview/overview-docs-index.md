@@ -1761,3 +1761,4 @@
 | v4.16.0 / BE-002IV-01 | Added: `intent_inference` precision baseline plan |
 | v4.16.0 / BE-002IW-01 | Added: `intent_inference` parent residual judgment selects `intent_collection_orchestration` |
 | v4.16.0 / BE-002IX-01 | Added: `intent_collection_orchestration` baseline plan |
+| v4.16.0 / BE-002IX-02 | Added: `intent_collection_orchestration` actual extraction complete |

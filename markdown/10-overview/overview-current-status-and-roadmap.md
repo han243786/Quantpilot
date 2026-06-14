@@ -1842,3 +1842,4 @@ Latest recursive supplement: BE-002IU-01 selected `contracts.quantscript.runtime
 Latest recursive supplement: BE-002IV-01 froze `contracts.quantscript.runtime_lowering.intent_inference`; next step selects one internal intent inference child.
 Latest recursive supplement: BE-002IW-01 selected `contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration`; next baseline freezes orchestration movement only.
 Latest recursive supplement: BE-002IX-01 froze `contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration`; next movement may extract only top-level intent orchestration.
+Latest recursive supplement: BE-002IX-02 extracted `contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration`; next step is single leaf closeout.
