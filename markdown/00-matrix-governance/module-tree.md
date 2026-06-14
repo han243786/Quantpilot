@@ -9502,3 +9502,7 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.v4_static_audit.edge_parser extracted: true`; `quantscript/src/v4_static_audit/edge_parser.rs` now owns graph edge declaration parsing and `MachineGraphEdge` assembly while risk-plane parsing remains parent-owned.
 **Latest state supplement (BE-002KM-03)**: `root.contracts.quantscript.v4_static_audit.edge_parser` single leaf closeout complete; next step: BE-002KN-01 parent_residual_judgment.
 `root.contracts.quantscript.v4_static_audit.edge_parser stop_split: true`; terminal leaf control returned `STOP` with score 27 over a 27 LOC micro parser child. Further splitting would fragment one graph edge grammar rule.
+**Latest state supplement (BE-002KN-01)**: `root.contracts.quantscript.v4_static_audit` parent residual judgment selected `risk_plane_parser`; next step: BE-002KO-01 baseline_plan.
+`root.contracts.quantscript.v4_static_audit.risk_plane_parser selected: true`; this child owns risk-plane declaration parsing, priority validation, machine id expansion, and `MachineGraphRiskPlane` assembly. State-group, machine-template, DTO, and test owners remain outside.
+**Latest state supplement (BE-002KO-01)**: `root.contracts.quantscript.v4_static_audit.risk_plane_parser` baseline frozen; next step: BE-002KO-02 actual_extraction.
+`root.contracts.quantscript.v4_static_audit.risk_plane_parser baseline_frozen: true`; approved movement is limited to `parse_risk_plane` into a child module while preserving the parent wrapper and graph-level defaults.
