@@ -1860,3 +1860,4 @@ Latest recursive supplement: BE-002JG-01 froze `contracts.quantscript.runtime_lo
 Latest recursive supplement: BE-002JG-02 extracted `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_rsi_formula`; next step is single leaf closeout.
 Latest recursive supplement: BE-002JG-03 closed `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_rsi_formula` with `stop_split: true`; next step returns to manual_formula_fallback parent residual judgment.
 Latest recursive supplement: BE-002JH-01 selected `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_momentum_formula`; next baseline freezes momentum direct and ratio fallback recognition only.
+Latest recursive supplement: BE-002JI-01 froze `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_momentum_formula`; next movement may extract momentum direct/ratio recognition and legacy latest/lookback matching.
