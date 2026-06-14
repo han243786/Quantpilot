@@ -5999,3 +5999,5 @@ Recursive boundary supplement: BE-002JS-02 `root.contracts.quantscript.v4_static
 - `markdown/06-milestones/v4.16.0/1789-root.contracts.quantscript.v4_static_audit.runtime_handoff_builder.extract_closeout.md` - v4.16.0 BE-002JS-02 runtime_handoff_builder extract closeout
 Recursive boundary supplement: BE-002JS-03 `root.contracts.quantscript.v4_static_audit.runtime_handoff_builder` single leaf closeout complete with `stop_split: true`; next step: v4_static_audit parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1790-root.contracts.quantscript.v4_static_audit.runtime_handoff_builder.single_leaf_closeout.md` - v4.16.0 BE-002JS-03 runtime_handoff_builder single leaf closeout
+Recursive boundary supplement: BE-002JT-01 `root.contracts.quantscript.v4_static_audit` parent residual judgment selected `audit_entrypoint`; next step: BE-002JU-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1791-root.contracts.quantscript.v4_static_audit.parent_residual_judgment.audit_entrypoint.md` - v4.16.0 BE-002JT-01 v4_static_audit parent residual judgment selects audit_entrypoint
