@@ -9586,3 +9586,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.v4_deploy_support stop_split: true`; terminal leaf control returned `STOP` with score 43 over a 411 LOC v4 deploy support child.
 **Latest state supplement (BE-002LO-01)**: `root.executor.runner` parent residual judgment selected discovered `provider_order_support`; next step: BE-002LP-01 baseline_plan.
 `root.executor.runner.provider_order_support selected: true`; this child starts with OKX demo provider DTOs, request validation, credential loading, provider error shaping, and audit payload helpers while provider route handlers remain closed.
+**Latest state supplement (BE-002LP-01)**: `root.executor.runner.provider_order_support` baseline frozen; next step: BE-002LP-02 actual_extraction.
+`root.executor.runner.provider_order_support baseline_frozen: true`; approved movement is limited to OKX demo provider support helpers into `src-executor/provider_order_support.rs`.

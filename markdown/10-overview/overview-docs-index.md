@@ -1880,3 +1880,4 @@
 | v4.16.0 / BE-002LN-02 | Added: `v4_deploy_support` helper extraction complete |
 | v4.16.0 / BE-002LN-03 | Added: `v4_deploy_support` single leaf closeout stops split |
 | v4.16.0 / BE-002LO-01 | Added: `executor.runner` parent residual judgment selects discovered `provider_order_support` |
+| v4.16.0 / BE-002LP-01 | Added: `provider_order_support` baseline plan |
