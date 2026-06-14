@@ -2163,3 +2163,4 @@
 | v4.16.0 / BE-002JY-01 | `v4.16.0/1800-root.contracts.quantscript.v4_static_audit.event_catalog_derivation.baseline_plan.md` | Added: `event_catalog_derivation` baseline plan |
 | v4.16.0 / BE-002JY-02 | `v4.16.0/1801-root.contracts.quantscript.v4_static_audit.event_catalog_derivation.extract_closeout.md` | Added: `event_catalog_derivation` actual extraction complete |
 | v4.16.0 / BE-002JY-03 | `v4.16.0/1802-root.contracts.quantscript.v4_static_audit.event_catalog_derivation.single_leaf_closeout.md` | Added: `event_catalog_derivation` single leaf closeout stops split |
+| v4.16.0 / BE-002JZ-01 | `v4.16.0/1803-root.contracts.quantscript.v4_static_audit.parent_residual_judgment.parser_utilities_diagnostics.md` | Added: `v4_static_audit` parent residual judgment selects `parser_utilities_diagnostics` |
