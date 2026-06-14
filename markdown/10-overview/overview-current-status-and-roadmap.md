@@ -1890,3 +1890,4 @@ Latest recursive supplement: BE-002JW-03 closed `contracts.quantscript.v4_static
 Latest recursive supplement: BE-002JX-01 selected `contracts.quantscript.v4_static_audit.event_catalog_derivation`; next baseline freezes graph event catalog projection.
 Latest recursive supplement: BE-002JY-01 froze `contracts.quantscript.v4_static_audit.event_catalog_derivation`; next movement may extract event catalog projection.
 Latest recursive supplement: BE-002JY-02 extracted `contracts.quantscript.v4_static_audit.event_catalog_derivation`; next step is single leaf closeout.
+Latest recursive supplement: BE-002JY-03 closed `contracts.quantscript.v4_static_audit.event_catalog_derivation` with `stop_split: true`; next step returns to v4_static_audit parent residual judgment.

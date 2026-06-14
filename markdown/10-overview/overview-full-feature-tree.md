@@ -6024,3 +6024,5 @@ Recursive boundary supplement: BE-002JY-01 `root.contracts.quantscript.v4_static
 Recursive boundary supplement: BE-002JY-02 `root.contracts.quantscript.v4_static_audit.event_catalog_derivation` actual extraction complete; next step: BE-002JY-03 single_leaf_closeout.
 - `quantscript/src/v4_static_audit/event_catalog_derivation.rs` - Quantscript v4 static audit event catalog derivation child
 - `markdown/06-milestones/v4.16.0/1801-root.contracts.quantscript.v4_static_audit.event_catalog_derivation.extract_closeout.md` - v4.16.0 BE-002JY-02 event_catalog_derivation extract closeout
+Recursive boundary supplement: BE-002JY-03 `root.contracts.quantscript.v4_static_audit.event_catalog_derivation` single leaf closeout complete with `stop_split: true`; next step: v4_static_audit parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1802-root.contracts.quantscript.v4_static_audit.event_catalog_derivation.single_leaf_closeout.md` - v4.16.0 BE-002JY-03 event_catalog_derivation single leaf closeout
