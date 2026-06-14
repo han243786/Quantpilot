@@ -1723,3 +1723,4 @@
 | v4.16.0 / BE-002HZ-01 | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface` parent residual judgment selects `integration_test_harness` |
 | v4.16.0 / BE-002IA-01 | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness` baseline plan |
 | v4.16.0 / BE-002IA-02 | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness` actual extraction complete |
+| v4.16.0 / BE-002IA-03 | Added: `quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness` single leaf closeout keeps split open |
