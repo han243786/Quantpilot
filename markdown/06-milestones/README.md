@@ -2098,3 +2098,4 @@
 | v4.16.0 / BE-002IL-01 | `v4.16.0/1735-root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.entrypoint_runtime_config_assembly.baseline_plan.md` | Added: `entrypoint_runtime_config_assembly` baseline plan |
 | v4.16.0 / BE-002IL-02 | `v4.16.0/1736-root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.entrypoint_runtime_config_assembly.extract_closeout.md` | Added: `entrypoint_runtime_config_assembly` actual extraction complete |
 | v4.16.0 / BE-002IL-03 | `v4.16.0/1737-root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.entrypoint_runtime_config_assembly.single_leaf_closeout.md` | Added: `entrypoint_runtime_config_assembly` single leaf closeout stops split |
+| v4.16.0 / BE-002IM-01 | `v4.16.0/1738-root.contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.parent_closeout.md` | Added: `lowering_orchestrator_surface` parent closeout |
