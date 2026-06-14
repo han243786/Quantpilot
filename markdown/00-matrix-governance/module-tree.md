@@ -9514,3 +9514,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.v4_static_audit.state_group_parser selected: true`; this child owns flat state-group declaration parsing, state id expansion, conflict-policy defaulting, and `StateGroup` assembly. Machine-template parsing, DTOs, and tests remain outside.
 **Latest state supplement (BE-002KQ-01)**: `root.contracts.quantscript.v4_static_audit.state_group_parser` baseline frozen; next step: BE-002KQ-02 actual_extraction.
 `root.contracts.quantscript.v4_static_audit.state_group_parser baseline_frozen: true`; approved movement is limited to `parse_state_group` into a child module while preserving the parent wrapper and default fields.
+**Latest state supplement (BE-002KQ-02)**: `root.contracts.quantscript.v4_static_audit.state_group_parser` actual extraction complete; next step: BE-002KQ-03 single_leaf_closeout.
+`root.contracts.quantscript.v4_static_audit.state_group_parser extracted: true`; `quantscript/src/v4_static_audit/state_group_parser.rs` now owns flat state-group declaration parsing, member expansion, conflict-policy defaulting, and `StateGroup` assembly.
