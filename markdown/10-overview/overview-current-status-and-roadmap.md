@@ -1881,3 +1881,4 @@ Latest recursive supplement: BE-002JS-02 extracted `contracts.quantscript.v4_sta
 Latest recursive supplement: BE-002JS-03 closed `contracts.quantscript.v4_static_audit.runtime_handoff_builder` with `stop_split: true`; next step returns to v4_static_audit parent residual judgment.
 Latest recursive supplement: BE-002JT-01 selected `contracts.quantscript.v4_static_audit.audit_entrypoint`; next baseline freezes static-audit orchestration only.
 Latest recursive supplement: BE-002JU-01 froze `contracts.quantscript.v4_static_audit.audit_entrypoint`; next movement may extract only the public audit entrypoint implementation body.
+Latest recursive supplement: BE-002JU-02 extracted `contracts.quantscript.v4_static_audit.audit_entrypoint`; next step is single leaf closeout.

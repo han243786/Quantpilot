@@ -2153,3 +2153,4 @@
 | v4.16.0 / BE-002JS-03 | `v4.16.0/1790-root.contracts.quantscript.v4_static_audit.runtime_handoff_builder.single_leaf_closeout.md` | Added: `runtime_handoff_builder` single leaf closeout stops split |
 | v4.16.0 / BE-002JT-01 | `v4.16.0/1791-root.contracts.quantscript.v4_static_audit.parent_residual_judgment.audit_entrypoint.md` | Added: `v4_static_audit` parent residual judgment selects `audit_entrypoint` |
 | v4.16.0 / BE-002JU-01 | `v4.16.0/1792-root.contracts.quantscript.v4_static_audit.audit_entrypoint.baseline_plan.md` | Added: `audit_entrypoint` baseline plan |
+| v4.16.0 / BE-002JU-02 | `v4.16.0/1793-root.contracts.quantscript.v4_static_audit.audit_entrypoint.extract_closeout.md` | Added: `audit_entrypoint` actual extraction complete |
