@@ -2103,3 +2103,4 @@
 | v4.16.0 / BE-002IO-01 | `v4.16.0/1740-root.contracts.quantscript.runtime_lowering.universe_lowering.baseline_plan.md` | Added: `universe_lowering` precision baseline plan |
 | v4.16.0 / BE-002IP-01 | `v4.16.0/1741-root.contracts.quantscript.runtime_lowering.universe_lowering.parent_residual_judgment.rebalance_directive_detection.md` | Added: `universe_lowering` parent residual judgment selects `rebalance_directive_detection` |
 | v4.16.0 / BE-002IQ-01 | `v4.16.0/1742-root.contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection.baseline_plan.md` | Added: `rebalance_directive_detection` baseline plan |
+| v4.16.0 / BE-002IQ-02 | `v4.16.0/1743-root.contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection.extract_closeout.md` | Added: `rebalance_directive_detection` actual extraction complete |

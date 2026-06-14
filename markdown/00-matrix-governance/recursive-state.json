@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002IP-01",
-  "last_committed_sha": "fd1447fc",
+  "last_committed_batch": "BE-002IQ-01",
+  "last_committed_sha": "b88cab68",
   "current_parent": "root.contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection",
-  "current_step": "BE-002IQ-01",
-  "current_phase": "baseline_plan",
+  "current_step": "BE-002IQ-02",
+  "current_phase": "actual_extraction",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -319,7 +319,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection.actual_extraction",
+  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.universe_lowering.rebalance_directive_detection.single_leaf_closeout",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",

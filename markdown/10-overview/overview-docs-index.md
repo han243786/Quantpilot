@@ -1750,3 +1750,4 @@
 | v4.16.0 / BE-002IO-01 | Added: `universe_lowering` precision baseline plan |
 | v4.16.0 / BE-002IP-01 | Added: `universe_lowering` parent residual judgment selects `rebalance_directive_detection` |
 | v4.16.0 / BE-002IQ-01 | Added: `rebalance_directive_detection` baseline plan |
+| v4.16.0 / BE-002IQ-02 | Added: `rebalance_directive_detection` actual extraction complete |
