@@ -2115,3 +2115,4 @@
 | v4.16.0 / BE-002IW-01 | `v4.16.0/1752-root.contracts.quantscript.runtime_lowering.intent_inference.parent_residual_judgment.intent_collection_orchestration.md` | Added: `intent_inference` parent residual judgment selects `intent_collection_orchestration` |
 | v4.16.0 / BE-002IX-01 | `v4.16.0/1753-root.contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration.baseline_plan.md` | Added: `intent_collection_orchestration` baseline plan |
 | v4.16.0 / BE-002IX-02 | `v4.16.0/1754-root.contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration.extract_closeout.md` | Added: `intent_collection_orchestration` actual extraction complete |
+| v4.16.0 / BE-002IX-03 | `v4.16.0/1755-root.contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration.single_leaf_closeout.md` | Added: `intent_collection_orchestration` single leaf closeout stops split |

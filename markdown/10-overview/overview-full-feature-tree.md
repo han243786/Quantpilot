@@ -5920,3 +5920,5 @@ Recursive boundary supplement: BE-002IX-01 `root.contracts.quantscript.runtime_l
 Recursive boundary supplement: BE-002IX-02 `root.contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration` actual extraction complete; next step: BE-002IX-03 single_leaf_closeout.
 - `quantscript/src/lowering/intents/intent_collection_orchestration.rs` - QuantScript intent inference top-level collection and traversal child module
 - `markdown/06-milestones/v4.16.0/1754-root.contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration.extract_closeout.md` - v4.16.0 BE-002IX-02 intent_collection_orchestration extract closeout
+Recursive boundary supplement: BE-002IX-03 `root.contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration` single leaf closeout complete with `stop_split: true`; next step: intent_inference parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1755-root.contracts.quantscript.runtime_lowering.intent_inference.intent_collection_orchestration.single_leaf_closeout.md` - v4.16.0 BE-002IX-03 intent_collection_orchestration single leaf closeout
