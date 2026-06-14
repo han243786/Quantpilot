@@ -1741,3 +1741,4 @@
 | v4.16.0 / BE-002II-02 | Added: `integration_test_harness.basic_runtime_smoke_tests` actual extraction complete |
 | v4.16.0 / BE-002II-03 | Added: `integration_test_harness.basic_runtime_smoke_tests` single leaf closeout stops split |
 | v4.16.0 / BE-002IJ-01 | Added: `integration_test_harness` parent closeout |
+| v4.16.0 / BE-002IK-01 | Added: `lowering_orchestrator_surface` parent residual judgment selects `entrypoint_runtime_config_assembly` |
