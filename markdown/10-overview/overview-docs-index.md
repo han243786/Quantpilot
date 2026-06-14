@@ -1691,3 +1691,4 @@
 | v4.16.0 / BE-002HG-01 | Added: `quantscript.analysis_diagnostics.index_bounds_gate` baseline plan |
 | v4.16.0 / BE-002HG-02 | Added: `quantscript.analysis_diagnostics.index_bounds_gate` actual extraction complete |
 | v4.16.0 / BE-002HG-03 | Added: `quantscript.analysis_diagnostics.index_bounds_gate` single leaf closeout stops split |
+| v4.16.0 / BE-002HH-01 | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `dead_code_emit_gate` |
