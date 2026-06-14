@@ -5801,3 +5801,6 @@ Recursive boundary supplement: BE-002HQ-01 `root.contracts.quantscript.evaluator
 - `markdown/06-milestones/v4.16.0/1700-root.contracts.quantscript.evaluator_normalization.parent_residual_judgment.helper_inline_execution_wave.md` - v4.16.0 BE-002HQ-01 quantscript evaluator_normalization parent residual judgment selects helper_inline_execution_wave
 Recursive boundary supplement: BE-002HR-01 `root.contracts.quantscript.evaluator_normalization.helper_inline_execution_wave` baseline frozen; next step: BE-002HR-02 extract_closeout.
 - `markdown/06-milestones/v4.16.0/1701-root.contracts.quantscript.evaluator_normalization.helper_inline_execution_wave.baseline_plan.md` - v4.16.0 BE-002HR-01 quantscript evaluator_normalization helper_inline_execution_wave baseline plan
+Recursive boundary supplement: BE-002HR-02 `root.contracts.quantscript.evaluator_normalization.helper_inline_execution_wave` actual extraction complete; next step: BE-002HR-03 single_leaf_closeout.
+- `quantscript/src/evaluator/helper_inline_execution_wave.rs` - QuantScript evaluator helper inline execution wave child
+- `markdown/06-milestones/v4.16.0/1702-root.contracts.quantscript.evaluator_normalization.helper_inline_execution_wave.extract_closeout.md` - v4.16.0 BE-002HR-02 quantscript evaluator_normalization helper_inline_execution_wave extract closeout
