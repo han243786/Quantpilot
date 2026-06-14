@@ -1769,3 +1769,4 @@
 | v4.16.0 / BE-002IZ-03 | Added: `single_indicator_intent_inference` single leaf closeout stops split |
 | v4.16.0 / BE-002JA-01 | Added: `intent_inference` parent residual judgment selects `spread_intent_inference` |
 | v4.16.0 / BE-002JB-01 | Added: `spread_intent_inference` baseline plan |
+| v4.16.0 / BE-002JB-02 | Added: `spread_intent_inference` actual extraction complete |

@@ -1850,3 +1850,4 @@ Latest recursive supplement: BE-002IZ-02 extracted `contracts.quantscript.runtim
 Latest recursive supplement: BE-002IZ-03 closed `contracts.quantscript.runtime_lowering.intent_inference.single_indicator_intent_inference` with `stop_split: true`; next step returns to intent_inference parent residual judgment.
 Latest recursive supplement: BE-002JA-01 selected `contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference`; next baseline freezes formal spread matching, operand decoding, params, and resample/align parsing only.
 Latest recursive supplement: BE-002JB-01 froze `contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference`; next movement may extract only the spread builder and spread operand/params helpers.
+Latest recursive supplement: BE-002JB-02 extracted `contracts.quantscript.runtime_lowering.intent_inference.spread_intent_inference`; next step is single leaf closeout.
