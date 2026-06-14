@@ -2045,3 +2045,4 @@
 | v4.16.0 / BE-002HG-02 | `v4.16.0/1682-root.contracts.quantscript.analysis_diagnostics.index_bounds_gate.extract_closeout.md` | Added: `quantscript.analysis_diagnostics.index_bounds_gate` actual extraction complete |
 | v4.16.0 / BE-002HG-03 | `v4.16.0/1683-root.contracts.quantscript.analysis_diagnostics.index_bounds_gate.single_leaf_closeout.md` | Added: `quantscript.analysis_diagnostics.index_bounds_gate` single leaf closeout stops split |
 | v4.16.0 / BE-002HH-01 | `v4.16.0/1684-root.contracts.quantscript.analysis_diagnostics.parent_residual_judgment.dead_code_emit_gate.md` | Added: `quantscript.analysis_diagnostics` parent residual judgment selects `dead_code_emit_gate` |
+| v4.16.0 / BE-002HI-01 | `v4.16.0/1685-root.contracts.quantscript.analysis_diagnostics.dead_code_emit_gate.baseline_plan.md` | Added: `quantscript.analysis_diagnostics.dead_code_emit_gate` baseline plan |
