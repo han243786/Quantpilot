@@ -1748,3 +1748,4 @@
 | v4.16.0 / BE-002IM-01 | Added: `lowering_orchestrator_surface` parent closeout |
 | v4.16.0 / BE-002IN-01 | Added: `runtime_lowering` parent residual judgment selects `universe_lowering` |
 | v4.16.0 / BE-002IO-01 | Added: `universe_lowering` precision baseline plan |
+| v4.16.0 / BE-002IP-01 | Added: `universe_lowering` parent residual judgment selects `rebalance_directive_detection` |
