@@ -1806,3 +1806,4 @@ Latest recursive supplement: BE-002IA-01 froze `contracts.quantscript.runtime_lo
 Latest recursive supplement: BE-002IA-02 extracted `contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness`; next step is single leaf closeout.
 Latest recursive supplement: BE-002IA-03 kept `contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness` split open under `PRECISION`; next step is internal parent residual judgment.
 Latest recursive supplement: BE-002IB-01 selected `contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness.manual_formula_tests`; next baseline freezes manual formula recognition tests.
+Latest recursive supplement: BE-002IC-01 froze `contracts.quantscript.runtime_lowering.lowering_orchestrator_surface.integration_test_harness.manual_formula_tests`; next movement may extract only manual formula recognition/rejection tests.
