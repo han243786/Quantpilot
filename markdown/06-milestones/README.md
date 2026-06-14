@@ -2198,3 +2198,4 @@
 | v4.16.0 / BE-002KP-01 | `v4.16.0/1835-root.contracts.quantscript.v4_static_audit.parent_residual_judgment.state_group_parser.md` | Added: `v4_static_audit` parent residual judgment selects `state_group_parser` |
 | v4.16.0 / BE-002KQ-01 | `v4.16.0/1836-root.contracts.quantscript.v4_static_audit.state_group_parser.baseline_plan.md` | Added: `state_group_parser` baseline plan |
 | v4.16.0 / BE-002KQ-02 | `v4.16.0/1837-root.contracts.quantscript.v4_static_audit.state_group_parser.extract_closeout.md` | Added: `state_group_parser` actual extraction complete |
+| v4.16.0 / BE-002KQ-03 | `v4.16.0/1838-root.contracts.quantscript.v4_static_audit.state_group_parser.single_leaf_closeout.md` | Added: `state_group_parser` single leaf closeout stops split |

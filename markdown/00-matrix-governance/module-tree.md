@@ -9516,3 +9516,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.v4_static_audit.state_group_parser baseline_frozen: true`; approved movement is limited to `parse_state_group` into a child module while preserving the parent wrapper and default fields.
 **Latest state supplement (BE-002KQ-02)**: `root.contracts.quantscript.v4_static_audit.state_group_parser` actual extraction complete; next step: BE-002KQ-03 single_leaf_closeout.
 `root.contracts.quantscript.v4_static_audit.state_group_parser extracted: true`; `quantscript/src/v4_static_audit/state_group_parser.rs` now owns flat state-group declaration parsing, member expansion, conflict-policy defaulting, and `StateGroup` assembly.
+**Latest state supplement (BE-002KQ-03)**: `root.contracts.quantscript.v4_static_audit.state_group_parser` single leaf closeout complete; next step: BE-002KR-01 parent_residual_judgment.
+`root.contracts.quantscript.v4_static_audit.state_group_parser stop_split: true`; terminal leaf control returned `STOP` with score 25 over a 29 LOC micro parser child. Further splitting would fragment one cohesive state-group grammar rule.
