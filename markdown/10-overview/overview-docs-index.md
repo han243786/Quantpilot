@@ -1872,3 +1872,4 @@
 | v4.16.0 / BE-002LJ-02 | Added: `strategy_lifecycle_routes` handler extraction complete |
 | v4.16.0 / BE-002LJ-03 | Added: `strategy_lifecycle_routes` single leaf closeout stops split |
 | v4.16.0 / BE-002LK-01 | Added: `executor.runner` parent residual judgment selects `market_stream_routes` |
+| v4.16.0 / BE-002LL-01 | Added: `market_stream_routes` baseline plan |

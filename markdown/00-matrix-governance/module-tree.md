@@ -9570,3 +9570,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.strategy_lifecycle_routes stop_split: true`; terminal leaf control returned `STOP` with score 38 over a 294 LOC strategy lifecycle route child.
 **Latest state supplement (BE-002LK-01)**: `root.executor.runner` parent residual judgment selected `market_stream_routes`; next step: BE-002LL-01 baseline_plan.
 `root.executor.runner.market_stream_routes selected: true`; this child starts with kline projection and strategy event SSE route handlers while route registration and runner setup remain parent-owned.
+**Latest state supplement (BE-002LL-01)**: `root.executor.runner.market_stream_routes` baseline frozen; next step: BE-002LL-02 actual_extraction.
+`root.executor.runner.market_stream_routes baseline_frozen: true`; approved movement is limited to `get_klines` and `strategy_events_sse` into `src-executor/market_stream_routes.rs`.
