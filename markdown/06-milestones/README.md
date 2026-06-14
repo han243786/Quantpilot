@@ -2110,3 +2110,4 @@
 | v4.16.0 / BE-002IS-02 | `v4.16.0/1747-root.contracts.quantscript.runtime_lowering.universe_lowering.universe_construct_expansion.extract_closeout.md` | Added: `universe_construct_expansion` actual extraction complete |
 | v4.16.0 / BE-002IS-03 | `v4.16.0/1748-root.contracts.quantscript.runtime_lowering.universe_lowering.universe_construct_expansion.single_leaf_closeout.md` | Added: `universe_construct_expansion` single leaf closeout stops split |
 | v4.16.0 / BE-002IT-01 | `v4.16.0/1749-root.contracts.quantscript.runtime_lowering.universe_lowering.parent_closeout.md` | Added: `universe_lowering` parent closeout |
+| v4.16.0 / BE-002IU-01 | `v4.16.0/1750-root.contracts.quantscript.runtime_lowering.parent_residual_judgment.intent_inference.md` | Added: `runtime_lowering` parent residual judgment selects `intent_inference` |
