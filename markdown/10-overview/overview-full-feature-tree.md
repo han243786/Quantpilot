@@ -6158,3 +6158,5 @@ Recursive boundary supplement: BE-002LJ-01 `root.executor.runner.strategy_lifecy
 Recursive boundary supplement: BE-002LJ-02 `root.executor.runner.strategy_lifecycle_routes` actual extraction complete; next step: BE-002LJ-03 single_leaf_closeout.
 - `src-executor/strategy_lifecycle_routes.rs` - Executor strategy lifecycle route handlers child
 - `markdown/06-milestones/v4.16.0/1862-root.executor.runner.strategy_lifecycle_routes.extract_closeout.md` - v4.16.0 BE-002LJ-02 strategy_lifecycle_routes extract closeout
+Recursive boundary supplement: BE-002LJ-03 `root.executor.runner.strategy_lifecycle_routes` single leaf closeout complete with `stop_split: true`; next step: runner parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1863-root.executor.runner.strategy_lifecycle_routes.single_leaf_closeout.md` - v4.16.0 BE-002LJ-03 strategy_lifecycle_routes single leaf closeout

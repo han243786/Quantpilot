@@ -9566,3 +9566,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.strategy_lifecycle_routes baseline_frozen: true`; approved movement is limited to route handlers into `src-executor/strategy_lifecycle_routes.rs`.
 **Latest state supplement (BE-002LJ-02)**: `root.executor.runner.strategy_lifecycle_routes` actual extraction complete; next step: BE-002LJ-03 single_leaf_closeout.
 `root.executor.runner.strategy_lifecycle_routes extracted: true`; `src-executor/strategy_lifecycle_routes.rs` now owns strategy list/detail/deploy/start/stop route handlers while v4 deploy helpers and runner support files remain parent-owned.
+**Latest state supplement (BE-002LJ-03)**: `root.executor.runner.strategy_lifecycle_routes` single leaf closeout complete; next step: BE-002LK-01 parent_residual_judgment.
+`root.executor.runner.strategy_lifecycle_routes stop_split: true`; terminal leaf control returned `STOP` with score 38 over a 294 LOC strategy lifecycle route child.
