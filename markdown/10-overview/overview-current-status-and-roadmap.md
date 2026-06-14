@@ -1960,3 +1960,4 @@ Latest recursive supplement: BE-002LM-01 selected `executor.runner.v4_deploy_sup
 Latest recursive supplement: BE-002LN-01 froze `v4_deploy_support`; next movement may extract v4 deploy/preflight/static bundle helpers.
 Latest recursive supplement: BE-002LN-02 extracted v4 deploy/preflight/static bundle helpers into `src-executor/v4_deploy_support.rs`; next step is single leaf closeout.
 Latest recursive supplement: BE-002LN-03 closed `executor.runner.v4_deploy_support` with `stop_split: true`; next step returns to runner parent residual judgment.
+Latest recursive supplement: BE-002LO-01 selected discovered `executor.runner.provider_order_support`; next baseline freezes OKX demo provider support extraction.

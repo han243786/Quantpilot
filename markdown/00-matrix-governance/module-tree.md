@@ -9584,3 +9584,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.v4_deploy_support extracted: true`; `src-executor/v4_deploy_support.rs` now owns v4 deploy, preflight, JSON helper, and static bundle support while route modules and audit append remain parent-owned.
 **Latest state supplement (BE-002LN-03)**: `root.executor.runner.v4_deploy_support` single leaf closeout complete; next step: BE-002LO-01 parent_residual_judgment.
 `root.executor.runner.v4_deploy_support stop_split: true`; terminal leaf control returned `STOP` with score 43 over a 411 LOC v4 deploy support child.
+**Latest state supplement (BE-002LO-01)**: `root.executor.runner` parent residual judgment selected discovered `provider_order_support`; next step: BE-002LP-01 baseline_plan.
+`root.executor.runner.provider_order_support selected: true`; this child starts with OKX demo provider DTOs, request validation, credential loading, provider error shaping, and audit payload helpers while provider route handlers remain closed.
