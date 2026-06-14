@@ -1839,3 +1839,4 @@ Latest recursive supplement: BE-002IS-02 extracted `contracts.quantscript.runtim
 Latest recursive supplement: BE-002IS-03 closed `contracts.quantscript.runtime_lowering.universe_lowering.universe_construct_expansion` with `stop_split: true`; next step returns to universe_lowering parent residual judgment.
 Latest recursive supplement: BE-002IT-01 closed `contracts.quantscript.runtime_lowering.universe_lowering`; next step returns to runtime_lowering parent residual judgment.
 Latest recursive supplement: BE-002IU-01 selected `contracts.quantscript.runtime_lowering.intent_inference`; next baseline freezes intent inference before any Rust movement.
+Latest recursive supplement: BE-002IV-01 froze `contracts.quantscript.runtime_lowering.intent_inference`; next step selects one internal intent inference child.
