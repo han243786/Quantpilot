@@ -1790,3 +1790,4 @@
 | v4.16.0 / BE-002JM-01 | Added: `manual_zscore_formula` baseline plan |
 | v4.16.0 / BE-002JM-02 | Added: `manual_zscore_formula` actual extraction complete |
 | v4.16.0 / BE-002JM-03 | Added: `manual_zscore_formula` single leaf closeout stops split |
+| v4.16.0 / BE-002JN-01 | Added: `manual_formula_fallback` parent closeout |
