@@ -1830,3 +1830,5 @@
 | v4.16.0 / BE-002KI-01 | Added: `transition_parser` baseline plan |
 | v4.16.0 / BE-002KI-02 | Added: `transition_parser` actual extraction complete |
 | v4.16.0 / BE-002KI-03 | Added: `transition_parser` single leaf closeout stops split |
+| v4.16.0 / BE-002KJ-01 | Added: `v4_static_audit` parent residual judgment selects `memory_parser` |
+| v4.16.0 / BE-002KK-01 | Added: `memory_parser` baseline plan |

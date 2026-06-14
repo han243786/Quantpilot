@@ -2183,3 +2183,5 @@
 | v4.16.0 / BE-002KI-01 | `v4.16.0/1820-root.contracts.quantscript.v4_static_audit.transition_parser.baseline_plan.md` | Added: `transition_parser` baseline plan |
 | v4.16.0 / BE-002KI-02 | `v4.16.0/1821-root.contracts.quantscript.v4_static_audit.transition_parser.extract_closeout.md` | Added: `transition_parser` actual extraction complete |
 | v4.16.0 / BE-002KI-03 | `v4.16.0/1822-root.contracts.quantscript.v4_static_audit.transition_parser.single_leaf_closeout.md` | Added: `transition_parser` single leaf closeout stops split |
+| v4.16.0 / BE-002KJ-01 | `v4.16.0/1823-root.contracts.quantscript.v4_static_audit.parent_residual_judgment.memory_parser.md` | Added: `v4_static_audit` parent residual judgment selects `memory_parser` |
+| v4.16.0 / BE-002KK-01 | `v4.16.0/1824-root.contracts.quantscript.v4_static_audit.memory_parser.baseline_plan.md` | Added: `memory_parser` baseline plan |
