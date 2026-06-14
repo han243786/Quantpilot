@@ -1776,3 +1776,4 @@
 | v4.16.0 / BE-002JE-01 | Added: `manual_formula_fallback` precision baseline plan |
 | v4.16.0 / BE-002JF-01 | Added: `manual_formula_fallback` parent residual judgment selects `manual_rsi_formula` |
 | v4.16.0 / BE-002JG-01 | Added: `manual_rsi_formula` baseline plan |
+| v4.16.0 / BE-002JG-02 | Added: `manual_rsi_formula` actual extraction complete |

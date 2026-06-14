@@ -1857,3 +1857,4 @@ Latest recursive supplement: BE-002JD-01 selected `contracts.quantscript.runtime
 Latest recursive supplement: BE-002JE-01 froze `contracts.quantscript.runtime_lowering.manual_formula_fallback`; next step selects one internal fallback child before Rust movement.
 Latest recursive supplement: BE-002JF-01 selected `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_rsi_formula`; next baseline freezes RSI manual formula fallback recognition only.
 Latest recursive supplement: BE-002JG-01 froze `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_rsi_formula`; next movement may extract RSI shell, RS pair matching, balanced smoothing checks, and method mapping only.
+Latest recursive supplement: BE-002JG-02 extracted `contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_rsi_formula`; next step is single leaf closeout.

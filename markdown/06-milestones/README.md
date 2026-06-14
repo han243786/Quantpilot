@@ -2129,3 +2129,4 @@
 | v4.16.0 / BE-002JE-01 | `v4.16.0/1766-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.baseline_plan.md` | Added: `manual_formula_fallback` precision baseline plan |
 | v4.16.0 / BE-002JF-01 | `v4.16.0/1767-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.parent_residual_judgment.manual_rsi_formula.md` | Added: `manual_formula_fallback` parent residual judgment selects `manual_rsi_formula` |
 | v4.16.0 / BE-002JG-01 | `v4.16.0/1768-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_rsi_formula.baseline_plan.md` | Added: `manual_rsi_formula` baseline plan |
+| v4.16.0 / BE-002JG-02 | `v4.16.0/1769-root.contracts.quantscript.runtime_lowering.manual_formula_fallback.manual_rsi_formula.extract_closeout.md` | Added: `manual_rsi_formula` actual extraction complete |
