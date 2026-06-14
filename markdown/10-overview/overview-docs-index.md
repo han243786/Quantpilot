@@ -1854,3 +1854,4 @@
 | v4.16.0 / BE-002KW-01 | Added: `quantscript` parent closeout |
 | v4.16.0 / BE-002KX-01 | Added: `contracts` parent residual judgment selects `plugin_metadata` |
 | v4.16.0 / BE-002KY-01 | Added: `plugin_metadata` non-code leaf closeout |
+| v4.16.0 / BE-002KZ-01 | Added: `contracts` parent closeout |
