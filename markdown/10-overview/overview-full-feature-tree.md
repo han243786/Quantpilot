@@ -5808,3 +5808,6 @@ Recursive boundary supplement: BE-002HR-03 `root.contracts.quantscript.evaluator
 - `markdown/06-milestones/v4.16.0/1703-root.contracts.quantscript.evaluator_normalization.helper_inline_execution_wave.single_leaf_closeout.md` - v4.16.0 BE-002HR-03 quantscript evaluator_normalization helper_inline_execution_wave single leaf closeout
 Recursive boundary supplement: BE-002HS-01 `root.contracts.quantscript.evaluator_normalization` parent closeout complete; next step: BE-002HT-01 quantscript parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1704-root.contracts.quantscript.evaluator_normalization.parent_closeout.md` - v4.16.0 BE-002HS-01 quantscript evaluator_normalization parent closeout
+Recursive boundary supplement: BE-002HT-01 `root.contracts.quantscript` parent residual judgment selected `runtime_lowering`; next step: BE-002HU-01 baseline_plan.
+- `quantscript/src/lowering/mod.rs` - QuantScript runtime lowering module entry and re-export surface
+- `markdown/06-milestones/v4.16.0/1705-root.contracts.quantscript.parent_residual_judgment.runtime_lowering.md` - v4.16.0 BE-002HT-01 quantscript parent residual judgment selects runtime_lowering

@@ -1712,3 +1712,4 @@
 | v4.16.0 / BE-002HR-02 | Added: `quantscript.evaluator_normalization.helper_inline_execution_wave` actual extraction complete |
 | v4.16.0 / BE-002HR-03 | Added: `quantscript.evaluator_normalization.helper_inline_execution_wave` single leaf closeout stops split |
 | v4.16.0 / BE-002HS-01 | Added: `quantscript.evaluator_normalization` parent closeout |
+| v4.16.0 / BE-002HT-01 | Added: `quantscript` parent residual judgment selects `runtime_lowering` |
