@@ -2222,3 +2222,4 @@
 | v4.16.0 / BE-002LH-03 | `v4.16.0/1859-root.executor.runner.provider_order_routes.single_leaf_closeout.md` | Added: `provider_order_routes` single leaf closeout stops split |
 | v4.16.0 / BE-002LI-01 | `v4.16.0/1860-root.executor.runner.parent_residual_judgment.strategy_lifecycle_routes.md` | Added: `executor.runner` parent residual judgment selects `strategy_lifecycle_routes` |
 | v4.16.0 / BE-002LJ-01 | `v4.16.0/1861-root.executor.runner.strategy_lifecycle_routes.baseline_plan.md` | Added: `strategy_lifecycle_routes` baseline plan |
+| v4.16.0 / BE-002LJ-02 | `v4.16.0/1862-root.executor.runner.strategy_lifecycle_routes.extract_closeout.md` | Added: `strategy_lifecycle_routes` handler extraction complete |

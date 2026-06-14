@@ -1950,3 +1950,4 @@ Latest recursive supplement: BE-002LH-02 extracted OKX demo provider handlers in
 Latest recursive supplement: BE-002LH-03 closed `executor.runner.provider_order_routes` with `stop_split: true`; next step returns to runner parent residual judgment.
 Latest recursive supplement: BE-002LI-01 selected `executor.runner.strategy_lifecycle_routes`; next baseline freezes strategy lifecycle handler extraction.
 Latest recursive supplement: BE-002LJ-01 froze `strategy_lifecycle_routes`; next movement may extract only list/detail/deploy/start/stop handlers.
+Latest recursive supplement: BE-002LJ-02 extracted strategy lifecycle handlers into `src-executor/strategy_lifecycle_routes.rs`; next step is single leaf closeout.
