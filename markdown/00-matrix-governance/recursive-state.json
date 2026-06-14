@@ -16,9 +16,9 @@
   ],
   "last_committed_batch": "BE-002IX-03",
   "last_committed_sha": "41caeeef",
-  "current_parent": "root.contracts.quantscript.runtime_lowering.intent_inference",
-  "current_step": "BE-002IY-01",
-  "current_phase": "parent_residual_judgment",
+  "current_parent": "root.contracts.quantscript.runtime_lowering.intent_inference.single_indicator_intent_inference",
+  "current_step": "BE-002IZ-01",
+  "current_phase": "baseline_plan",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -323,7 +323,7 @@
     "contracts.plugin_metadata",
     "executor"
   ],
-  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.intent_inference.parent_residual_judgment",
+  "next_recommended_child": "root.contracts.quantscript.runtime_lowering.intent_inference.single_indicator_intent_inference.baseline_plan",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
