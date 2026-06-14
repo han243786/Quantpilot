@@ -6151,3 +6151,7 @@ Recursive boundary supplement: BE-002LH-02 `root.executor.runner.provider_order_
 - `markdown/06-milestones/v4.16.0/1858-root.executor.runner.provider_order_routes.extract_closeout.md` - v4.16.0 BE-002LH-02 provider_order_routes extract closeout
 Recursive boundary supplement: BE-002LH-03 `root.executor.runner.provider_order_routes` single leaf closeout complete with `stop_split: true`; next step: runner parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1859-root.executor.runner.provider_order_routes.single_leaf_closeout.md` - v4.16.0 BE-002LH-03 provider_order_routes single leaf closeout
+Recursive boundary supplement: BE-002LI-01 `root.executor.runner` parent residual judgment selected `strategy_lifecycle_routes`; next step: BE-002LJ-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1860-root.executor.runner.parent_residual_judgment.strategy_lifecycle_routes.md` - v4.16.0 BE-002LI-01 executor.runner parent residual judgment selects strategy_lifecycle_routes
+Recursive boundary supplement: BE-002LJ-01 `root.executor.runner.strategy_lifecycle_routes` baseline frozen; next step: BE-002LJ-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1861-root.executor.runner.strategy_lifecycle_routes.baseline_plan.md` - v4.16.0 BE-002LJ-01 strategy_lifecycle_routes baseline plan
