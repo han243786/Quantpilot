@@ -1928,3 +1928,5 @@ Latest recursive supplement: BE-002KQ-01 froze `contracts.quantscript.v4_static_
 Latest recursive supplement: BE-002KQ-02 extracted `contracts.quantscript.v4_static_audit.state_group_parser`; next step is single leaf closeout.
 Latest recursive supplement: BE-002KQ-03 closed `contracts.quantscript.v4_static_audit.state_group_parser` with `stop_split: true`; next step returns to v4_static_audit parent residual judgment.
 Latest recursive supplement: BE-002KR-01 closed `contracts.quantscript.v4_static_audit`; next step returns to the quantscript parent residual judgment.
+Latest recursive supplement: BE-002KS-01 selected `contracts.quantscript.test_plan_surface`; it is already file-isolated.
+Latest recursive supplement: BE-002KT-01 closed `contracts.quantscript.test_plan_surface` with `stop_split: true`; next step returns to quantscript parent residual judgment.

@@ -2200,3 +2200,5 @@
 | v4.16.0 / BE-002KQ-02 | `v4.16.0/1837-root.contracts.quantscript.v4_static_audit.state_group_parser.extract_closeout.md` | Added: `state_group_parser` actual extraction complete |
 | v4.16.0 / BE-002KQ-03 | `v4.16.0/1838-root.contracts.quantscript.v4_static_audit.state_group_parser.single_leaf_closeout.md` | Added: `state_group_parser` single leaf closeout stops split |
 | v4.16.0 / BE-002KR-01 | `v4.16.0/1839-root.contracts.quantscript.v4_static_audit.parent_closeout.md` | Added: `v4_static_audit` parent closeout |
+| v4.16.0 / BE-002KS-01 | `v4.16.0/1840-root.contracts.quantscript.parent_residual_judgment.test_plan_surface.md` | Added: `quantscript` parent residual judgment selects `test_plan_surface` |
+| v4.16.0 / BE-002KT-01 | `v4.16.0/1841-root.contracts.quantscript.test_plan_surface.single_leaf_closeout.md` | Added: `test_plan_surface` existing leaf closeout |

@@ -9520,3 +9520,7 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.v4_static_audit.state_group_parser stop_split: true`; terminal leaf control returned `STOP` with score 25 over a 29 LOC micro parser child. Further splitting would fragment one cohesive state-group grammar rule.
 **Latest state supplement (BE-002KR-01)**: `root.contracts.quantscript.v4_static_audit` parent closeout complete; next step: BE-002KS-01 parent_residual_judgment.
 `root.contracts.quantscript.v4_static_audit parent_closeout: true`; remaining parent surface is public DTOs, entrypoints, wrapper bridge functions, local tests, and one tiny machine-template enum mapping that is too small to justify a new child.
+**Latest state supplement (BE-002KS-01)**: `root.contracts.quantscript` parent residual judgment selected `test_plan_surface`; next step: BE-002KT-01 single_leaf_closeout.
+`root.contracts.quantscript.test_plan_surface selected: true`; existing file `quantscript/src/test_plan.rs` owns public test-plan DTOs, extraction helpers, test item splitting, and local tests.
+**Latest state supplement (BE-002KT-01)**: `root.contracts.quantscript.test_plan_surface` existing leaf closeout complete; next step: BE-002KU-01 parent_residual_judgment.
+`root.contracts.quantscript.test_plan_surface stop_split: true`; terminal leaf control returned `STOP` with score 43 over a 218 LOC terminal-size public surface. Further splitting would fragment DTO and extraction ownership.

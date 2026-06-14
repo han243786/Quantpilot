@@ -6109,3 +6109,7 @@ Recursive boundary supplement: BE-002KQ-03 `root.contracts.quantscript.v4_static
 - `markdown/06-milestones/v4.16.0/1838-root.contracts.quantscript.v4_static_audit.state_group_parser.single_leaf_closeout.md` - v4.16.0 BE-002KQ-03 state_group_parser single leaf closeout
 Recursive boundary supplement: BE-002KR-01 `root.contracts.quantscript.v4_static_audit` parent closeout complete; next step: quantscript parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1839-root.contracts.quantscript.v4_static_audit.parent_closeout.md` - v4.16.0 BE-002KR-01 v4_static_audit parent closeout
+Recursive boundary supplement: BE-002KS-01 `root.contracts.quantscript` parent residual judgment selected `test_plan_surface`; next step: BE-002KT-01 single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/1840-root.contracts.quantscript.parent_residual_judgment.test_plan_surface.md` - v4.16.0 BE-002KS-01 quantscript parent residual judgment selects test_plan_surface
+Recursive boundary supplement: BE-002KT-01 `root.contracts.quantscript.test_plan_surface` existing leaf closeout complete with `stop_split: true`; next step: quantscript parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1841-root.contracts.quantscript.test_plan_surface.single_leaf_closeout.md` - v4.16.0 BE-002KT-01 test_plan_surface existing leaf closeout
