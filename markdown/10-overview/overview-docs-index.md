@@ -1729,3 +1729,4 @@
 | v4.16.0 / BE-002IC-02 | Added: `integration_test_harness.manual_formula_tests` actual extraction complete |
 | v4.16.0 / BE-002IC-03 | Added: `integration_test_harness.manual_formula_tests` single leaf closeout stops split |
 | v4.16.0 / BE-002ID-01 | Added: `integration_test_harness` parent residual judgment selects `spread_lowering_tests` |
+| v4.16.0 / BE-002IE-01 | Added: `integration_test_harness.spread_lowering_tests` baseline plan |
