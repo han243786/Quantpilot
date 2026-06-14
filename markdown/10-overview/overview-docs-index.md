@@ -1878,3 +1878,4 @@
 | v4.16.0 / BE-002LM-01 | Added: `executor.runner` parent residual judgment selects `v4_deploy_support` |
 | v4.16.0 / BE-002LN-01 | Added: `v4_deploy_support` baseline plan |
 | v4.16.0 / BE-002LN-02 | Added: `v4_deploy_support` helper extraction complete |
+| v4.16.0 / BE-002LN-03 | Added: `v4_deploy_support` single leaf closeout stops split |

@@ -9582,3 +9582,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.v4_deploy_support baseline_frozen: true`; approved movement is limited to v4 deploy/preflight/static bundle helpers into `src-executor/v4_deploy_support.rs`.
 **Latest state supplement (BE-002LN-02)**: `root.executor.runner.v4_deploy_support` actual extraction complete; next step: BE-002LN-03 single_leaf_closeout.
 `root.executor.runner.v4_deploy_support extracted: true`; `src-executor/v4_deploy_support.rs` now owns v4 deploy, preflight, JSON helper, and static bundle support while route modules and audit append remain parent-owned.
+**Latest state supplement (BE-002LN-03)**: `root.executor.runner.v4_deploy_support` single leaf closeout complete; next step: BE-002LO-01 parent_residual_judgment.
+`root.executor.runner.v4_deploy_support stop_split: true`; terminal leaf control returned `STOP` with score 43 over a 411 LOC v4 deploy support child.

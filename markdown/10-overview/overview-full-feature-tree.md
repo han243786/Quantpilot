@@ -6176,3 +6176,5 @@ Recursive boundary supplement: BE-002LN-01 `root.executor.runner.v4_deploy_suppo
 Recursive boundary supplement: BE-002LN-02 `root.executor.runner.v4_deploy_support` actual extraction complete; next step: BE-002LN-03 single_leaf_closeout.
 - `src-executor/v4_deploy_support.rs` - Executor v4 deploy preflight and static bundle helper child
 - `markdown/06-milestones/v4.16.0/1870-root.executor.runner.v4_deploy_support.extract_closeout.md` - v4.16.0 BE-002LN-02 v4_deploy_support extract closeout
+Recursive boundary supplement: BE-002LN-03 `root.executor.runner.v4_deploy_support` single leaf closeout complete with `stop_split: true`; next step: runner parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1871-root.executor.runner.v4_deploy_support.single_leaf_closeout.md` - v4.16.0 BE-002LN-03 v4_deploy_support single leaf closeout
