@@ -2213,3 +2213,4 @@
 | v4.16.0 / BE-002LC-01 | `v4.16.0/1850-root.executor.parent_residual_judgment.state.md` | Added: `executor` parent residual judgment selects `state` |
 | v4.16.0 / BE-002LD-01 | `v4.16.0/1851-root.executor.state.baseline_plan.md` | Added: `executor.state` baseline plan |
 | v4.16.0 / BE-002LD-02 | `v4.16.0/1852-root.executor.state.extract_closeout.md` | Added: `executor.state` route extraction complete |
+| v4.16.0 / BE-002LD-03 | `v4.16.0/1853-root.executor.state.single_leaf_closeout.md` | Added: `executor.state` single leaf closeout stops split |

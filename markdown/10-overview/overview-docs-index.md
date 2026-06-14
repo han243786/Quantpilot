@@ -1860,3 +1860,4 @@
 | v4.16.0 / BE-002LC-01 | Added: `executor` parent residual judgment selects `state` |
 | v4.16.0 / BE-002LD-01 | Added: `executor.state` baseline plan |
 | v4.16.0 / BE-002LD-02 | Added: `executor.state` route extraction complete |
+| v4.16.0 / BE-002LD-03 | Added: `executor.state` single leaf closeout stops split |

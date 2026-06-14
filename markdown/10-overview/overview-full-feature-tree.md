@@ -6136,3 +6136,5 @@ Recursive boundary supplement: BE-002LD-01 `root.executor.state` baseline frozen
 Recursive boundary supplement: BE-002LD-02 `root.executor.state` actual extraction complete; next step: BE-002LD-03 single_leaf_closeout.
 - `src-executor/state_routes.rs` - Executor state route handlers child
 - `markdown/06-milestones/v4.16.0/1852-root.executor.state.extract_closeout.md` - v4.16.0 BE-002LD-02 executor.state extract closeout
+Recursive boundary supplement: BE-002LD-03 `root.executor.state` single leaf closeout complete with `stop_split: true`; next step: executor parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1853-root.executor.state.single_leaf_closeout.md` - v4.16.0 BE-002LD-03 executor.state single leaf closeout
