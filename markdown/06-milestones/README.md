@@ -2229,3 +2229,4 @@
 | v4.16.0 / BE-002LL-02 | `v4.16.0/1866-root.executor.runner.market_stream_routes.extract_closeout.md` | Added: `market_stream_routes` handler extraction complete |
 | v4.16.0 / BE-002LL-03 | `v4.16.0/1867-root.executor.runner.market_stream_routes.single_leaf_closeout.md` | Added: `market_stream_routes` single leaf closeout stops split |
 | v4.16.0 / BE-002LM-01 | `v4.16.0/1868-root.executor.runner.parent_residual_judgment.v4_deploy_support.md` | Added: `executor.runner` parent residual judgment selects `v4_deploy_support` |
+| v4.16.0 / BE-002LN-01 | `v4.16.0/1869-root.executor.runner.v4_deploy_support.baseline_plan.md` | Added: `v4_deploy_support` baseline plan |

@@ -9578,3 +9578,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.market_stream_routes stop_split: true`; terminal leaf control returned `STOP` with score 31 over a 183 LOC market stream route child.
 **Latest state supplement (BE-002LM-01)**: `root.executor.runner` parent residual judgment selected `v4_deploy_support`; next step: BE-002LN-01 baseline_plan.
 `root.executor.runner.v4_deploy_support selected: true`; this child starts with v4 deploy parsing, preflight, JSON helper, and static bundle support while route modules remain closed.
+**Latest state supplement (BE-002LN-01)**: `root.executor.runner.v4_deploy_support` baseline frozen; next step: BE-002LN-02 actual_extraction.
+`root.executor.runner.v4_deploy_support baseline_frozen: true`; approved movement is limited to v4 deploy/preflight/static bundle helpers into `src-executor/v4_deploy_support.rs`.
