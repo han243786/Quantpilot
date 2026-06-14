@@ -9530,3 +9530,7 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.contracts.quantscript.authoring_docs_samples stop_split: true`; no Rust movement is needed, and global test scenarios remain outside this quantscript child.
 **Latest state supplement (BE-002KW-01)**: `root.contracts.quantscript` parent closeout complete; next step: BE-002KX-01 parent_residual_judgment.
 `root.contracts.quantscript parent_closeout: true`; all planned quantscript child owners are closed, and the remaining crate root is a public facade/re-export surface.
+**Latest state supplement (BE-002KX-01)**: `root.contracts` parent residual judgment selected `plugin_metadata`; next step: BE-002KY-01 single_leaf_closeout.
+`root.contracts.plugin_metadata selected: true`; this non-code child owns physical `plugins/*` metadata and registry placeholders while Rust plugin contracts remain closed under `contracts.qrpc_core.plugin_contract`.
+**Latest state supplement (BE-002KY-01)**: `root.contracts.plugin_metadata` non-code leaf closeout complete; next step: BE-002KZ-01 parent_closeout.
+`root.contracts.plugin_metadata stop_split: true`; physical plugin metadata is small and cohesive, with no Rust movement required.

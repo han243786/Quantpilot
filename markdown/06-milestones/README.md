@@ -2205,3 +2205,5 @@
 | v4.16.0 / BE-002KU-01 | `v4.16.0/1842-root.contracts.quantscript.parent_residual_judgment.authoring_docs_samples.md` | Added: `quantscript` parent residual judgment selects `authoring_docs_samples` |
 | v4.16.0 / BE-002KV-01 | `v4.16.0/1843-root.contracts.quantscript.authoring_docs_samples.single_leaf_closeout.md` | Added: `authoring_docs_samples` non-code leaf closeout |
 | v4.16.0 / BE-002KW-01 | `v4.16.0/1844-root.contracts.quantscript.parent_closeout.md` | Added: `quantscript` parent closeout |
+| v4.16.0 / BE-002KX-01 | `v4.16.0/1845-root.contracts.parent_residual_judgment.plugin_metadata.md` | Added: `contracts` parent residual judgment selects `plugin_metadata` |
+| v4.16.0 / BE-002KY-01 | `v4.16.0/1846-root.contracts.plugin_metadata.single_leaf_closeout.md` | Added: `plugin_metadata` non-code leaf closeout |

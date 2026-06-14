@@ -6119,3 +6119,7 @@ Recursive boundary supplement: BE-002KV-01 `root.contracts.quantscript.authoring
 - `markdown/06-milestones/v4.16.0/1843-root.contracts.quantscript.authoring_docs_samples.single_leaf_closeout.md` - v4.16.0 BE-002KV-01 authoring_docs_samples non-code leaf closeout
 Recursive boundary supplement: BE-002KW-01 `root.contracts.quantscript` parent closeout complete; next step: contracts parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1844-root.contracts.quantscript.parent_closeout.md` - v4.16.0 BE-002KW-01 quantscript parent closeout
+Recursive boundary supplement: BE-002KX-01 `root.contracts` parent residual judgment selected `plugin_metadata`; next step: BE-002KY-01 single_leaf_closeout.
+- `markdown/06-milestones/v4.16.0/1845-root.contracts.parent_residual_judgment.plugin_metadata.md` - v4.16.0 BE-002KX-01 contracts parent residual judgment selects plugin_metadata
+Recursive boundary supplement: BE-002KY-01 `root.contracts.plugin_metadata` non-code leaf closeout complete with `stop_split: true`; next step: contracts parent_closeout.
+- `markdown/06-milestones/v4.16.0/1846-root.contracts.plugin_metadata.single_leaf_closeout.md` - v4.16.0 BE-002KY-01 plugin_metadata non-code leaf closeout

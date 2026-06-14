@@ -1933,3 +1933,5 @@ Latest recursive supplement: BE-002KT-01 closed `contracts.quantscript.test_plan
 Latest recursive supplement: BE-002KU-01 selected `contracts.quantscript.authoring_docs_samples`; it is a non-code docs/sample leaf.
 Latest recursive supplement: BE-002KV-01 closed `contracts.quantscript.authoring_docs_samples` with `stop_split: true`; next step is quantscript parent closeout.
 Latest recursive supplement: BE-002KW-01 closed `contracts.quantscript`; next step returns to contracts parent residual judgment.
+Latest recursive supplement: BE-002KX-01 selected `contracts.plugin_metadata`; it is a non-code metadata leaf.
+Latest recursive supplement: BE-002KY-01 closed `contracts.plugin_metadata` with `stop_split: true`; next step is contracts parent closeout.
