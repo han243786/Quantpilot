@@ -1940,3 +1940,4 @@ Latest recursive supplement: BE-002LA-01 selected `root.executor`; the Rust exec
 Latest recursive supplement: BE-002LB-01 froze `root.executor`; next step selects between executor state and runner children.
 Latest recursive supplement: BE-002LC-01 selected `executor.state`; next baseline freezes state route extraction from executor main.
 Latest recursive supplement: BE-002LD-01 froze `executor.state`; next movement may extract health/mode/params handlers into `state_routes`.
+Latest recursive supplement: BE-002LD-02 extracted `executor.state` route handlers into `src-executor/state_routes.rs`; next step is single leaf closeout.

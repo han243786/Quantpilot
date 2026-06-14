@@ -6133,3 +6133,6 @@ Recursive boundary supplement: BE-002LC-01 `root.executor` parent residual judgm
 - `markdown/06-milestones/v4.16.0/1850-root.executor.parent_residual_judgment.state.md` - v4.16.0 BE-002LC-01 executor parent residual judgment selects state
 Recursive boundary supplement: BE-002LD-01 `root.executor.state` baseline frozen; next step: BE-002LD-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1851-root.executor.state.baseline_plan.md` - v4.16.0 BE-002LD-01 executor.state baseline plan
+Recursive boundary supplement: BE-002LD-02 `root.executor.state` actual extraction complete; next step: BE-002LD-03 single_leaf_closeout.
+- `src-executor/state_routes.rs` - Executor state route handlers child
+- `markdown/06-milestones/v4.16.0/1852-root.executor.state.extract_closeout.md` - v4.16.0 BE-002LD-02 executor.state extract closeout

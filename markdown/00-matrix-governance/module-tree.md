@@ -9544,3 +9544,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.state selected: true`; this child owns executor state persistence, execution mode state, audit append support, API guard, credential storage support, and health/mode/params route handlers.
 **Latest state supplement (BE-002LD-01)**: `root.executor.state` baseline frozen; next step: BE-002LD-02 actual_extraction.
 `root.executor.state baseline_frozen: true`; approved movement is limited to extracting health/mode/params handlers from `src-executor/main.rs` into `src-executor/state_routes.rs` while preserving route registration in the parent.
+**Latest state supplement (BE-002LD-02)**: `root.executor.state` actual extraction complete; next step: BE-002LD-03 single_leaf_closeout.
+`root.executor.state extracted: true`; `src-executor/state_routes.rs` now owns health, mode, and params route handlers while `src-executor/main.rs` keeps route registration and process startup.
