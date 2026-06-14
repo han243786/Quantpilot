@@ -1778,3 +1778,4 @@
 | v4.16.0 / BE-002JG-01 | Added: `manual_rsi_formula` baseline plan |
 | v4.16.0 / BE-002JG-02 | Added: `manual_rsi_formula` actual extraction complete |
 | v4.16.0 / BE-002JG-03 | Added: `manual_rsi_formula` single leaf closeout stops split |
+| v4.16.0 / BE-002JH-01 | Added: `manual_formula_fallback` parent residual judgment selects `manual_momentum_formula` |
