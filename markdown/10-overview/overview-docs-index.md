@@ -1842,3 +1842,5 @@
 | v4.16.0 / BE-002KO-01 | Added: `risk_plane_parser` baseline plan |
 | v4.16.0 / BE-002KO-02 | Added: `risk_plane_parser` actual extraction complete |
 | v4.16.0 / BE-002KO-03 | Added: `risk_plane_parser` single leaf closeout stops split |
+| v4.16.0 / BE-002KP-01 | Added: `v4_static_audit` parent residual judgment selects `state_group_parser` |
+| v4.16.0 / BE-002KQ-01 | Added: `state_group_parser` baseline plan |

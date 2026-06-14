@@ -1923,3 +1923,5 @@ Latest recursive supplement: BE-002KN-01 selected `contracts.quantscript.v4_stat
 Latest recursive supplement: BE-002KO-01 froze `contracts.quantscript.v4_static_audit.risk_plane_parser`; next movement may extract only risk-plane declaration parsing and `MachineGraphRiskPlane` assembly.
 Latest recursive supplement: BE-002KO-02 extracted `contracts.quantscript.v4_static_audit.risk_plane_parser`; next step is single leaf closeout.
 Latest recursive supplement: BE-002KO-03 closed `contracts.quantscript.v4_static_audit.risk_plane_parser` with `stop_split: true`; next step returns to v4_static_audit parent residual judgment.
+Latest recursive supplement: BE-002KP-01 selected `contracts.quantscript.v4_static_audit.state_group_parser`; next baseline freezes state-group parsing.
+Latest recursive supplement: BE-002KQ-01 froze `contracts.quantscript.v4_static_audit.state_group_parser`; next movement may extract only state-group declaration parsing and `StateGroup` assembly.
