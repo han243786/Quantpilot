@@ -1984,3 +1984,4 @@ Latest recursive supplement: BE-002LY-01 selected `okx_rest.lookup_validation_su
 Latest recursive supplement: BE-002LZ-01 froze `lookup_validation_surface`; next movement may extract lookup path and validation helpers.
 Latest recursive supplement: BE-002LZ-02 extracted `lookup_validation_surface`; next step is single leaf closeout.
 Latest recursive supplement: BE-002LZ-03 closed `okx_rest.lookup_validation_surface` with `stop_split: true`; next step returns to `okx_rest` parent residual judgment.
+Latest recursive supplement: BE-002MA-01 selected `okx_rest.test_harness`; next baseline freezes local tests and smoke probe helpers.

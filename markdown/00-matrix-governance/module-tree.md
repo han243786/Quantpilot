@@ -9632,3 +9632,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.okx_rest.lookup_validation_surface extracted: src-executor/okx_rest/lookup_validation_surface.rs`; parent retains facade, public type/constant definitions, child wiring, and local tests.
 **Latest state supplement (BE-002LZ-03)**: `root.executor.runner.runner_support_files.okx_rest.lookup_validation_surface` single leaf closeout complete; next step returns to okx_rest parent residual judgment.
 `root.executor.runner.runner_support_files.okx_rest.lookup_validation_surface stop_split: true`; terminal leaf control returned `STOP` with score 25.
+**Latest state supplement (BE-002MA-01)**: `root.executor.runner.runner_support_files.okx_rest` parent residual judgment selected `test_harness`; next step: BE-002MB-01 baseline_plan.
+`root.executor.runner.runner_support_files.okx_rest.test_harness selected: true`; this child starts with local tests, credential probe helpers, retry helpers, and ignored live OKX smoke probes.
