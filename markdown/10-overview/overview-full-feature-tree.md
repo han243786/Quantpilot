@@ -6220,3 +6220,5 @@ Recursive boundary supplement: BE-002LX-01 `root.executor.runner.runner_support_
 Recursive boundary supplement: BE-002LX-02 `root.executor.runner.runner_support_files.okx_rest.order_action_surface` actual extraction complete; next step: BE-002LX-03 single_leaf_closeout.
 - `src-executor/okx_rest/order_action_surface.rs` - OKX REST action wrapper child for place/query/cancel/balance flows
 - `markdown/06-milestones/v4.16.0/1890-root.executor.runner.runner_support_files.okx_rest.order_action_surface.extract_closeout.md` - v4.16.0 BE-002LX-02 order_action_surface actual extraction closeout
+Recursive boundary supplement: BE-002LX-03 `root.executor.runner.runner_support_files.okx_rest.order_action_surface` single leaf closeout complete; next step: BE-002LY-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1891-root.executor.runner.runner_support_files.okx_rest.order_action_surface.single_leaf_closeout.md` - v4.16.0 BE-002LX-03 order_action_surface single leaf closeout

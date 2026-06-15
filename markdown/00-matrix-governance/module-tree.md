@@ -9622,3 +9622,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.okx_rest.order_action_surface baseline_frozen: true`; approved movement is limited to public place/query/cancel/balance wrappers and their profile-aware variants.
 **Latest state supplement (BE-002LX-02)**: `root.executor.runner.runner_support_files.okx_rest.order_action_surface` actual extraction complete; next step: BE-002LX-03 single_leaf_closeout.
 `root.executor.runner.runner_support_files.okx_rest.order_action_surface extracted: src-executor/okx_rest/order_action_surface.rs`; parent retains facade, shared types/constants, lookup validation helpers, and local tests.
+**Latest state supplement (BE-002LX-03)**: `root.executor.runner.runner_support_files.okx_rest.order_action_surface` single leaf closeout complete; next step returns to okx_rest parent residual judgment.
+`root.executor.runner.runner_support_files.okx_rest.order_action_surface stop_split: true`; terminal leaf control returned `STOP` with score 21.

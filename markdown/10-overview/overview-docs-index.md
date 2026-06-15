@@ -1898,3 +1898,4 @@
 | v4.16.0 / BE-002LW-01 | Added: `okx_rest` parent residual judgment selects `order_action_surface` |
 | v4.16.0 / BE-002LX-01 | Added: `order_action_surface` baseline plan |
 | v4.16.0 / BE-002LX-02 | Added: `order_action_surface` actual extraction closeout |
+| v4.16.0 / BE-002LX-03 | Added: `order_action_surface` single leaf closeout stops split |
