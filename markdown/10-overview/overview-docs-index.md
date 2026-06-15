@@ -1929,3 +1929,4 @@
 | v4.16.0 / BE-002MM-01 | Added: `live_runner` parent residual judgment selects `v4_market_metadata_helpers` |
 | v4.16.0 / BE-002MN-01 | Added: `v4_market_metadata_helpers` baseline plan |
 | v4.16.0 / BE-002MN-02 | Added: `v4_market_metadata_helpers` actual extraction closeout |
+| v4.16.0 / BE-002MN-03 | Added: `v4_market_metadata_helpers` single leaf closeout stops split |

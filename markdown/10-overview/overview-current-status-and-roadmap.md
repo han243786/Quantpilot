@@ -2010,3 +2010,4 @@ Latest recursive supplement: BE-002ML-03 closed `live_runner.runner_pool_orchest
 Latest recursive supplement: BE-002MM-01 selected `live_runner.v4_market_metadata_helpers`; next baseline freezes V4 market metadata helper movement.
 Latest recursive supplement: BE-002MN-01 froze `v4_market_metadata_helpers`; next movement may extract V4 market matrix and graph metadata helper functions.
 Latest recursive supplement: BE-002MN-02 extracted `v4_market_metadata_helpers`; next step is single leaf closeout.
+Latest recursive supplement: BE-002MN-03 closed `live_runner.v4_market_metadata_helpers` with `stop_split: true`; next step returns to `live_runner` parent residual judgment.

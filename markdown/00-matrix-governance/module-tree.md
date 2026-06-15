@@ -9684,3 +9684,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers baseline_frozen: true`; approved movement is limited to V4 market matrix construction and graph metadata default venue/symbol helpers.
 **Latest state supplement (BE-002MN-02)**: `root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers` actual extraction complete; next step: BE-002MN-03 single_leaf_closeout.
 `root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers extracted: src-executor/live_runner/v4_market_metadata_helpers.rs`; parent keeps module wiring and local tests.
+**Latest state supplement (BE-002MN-03)**: `root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers` single leaf closeout complete; next step returns to `live_runner` parent residual judgment.
+`root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers stop_split: true`; terminal leaf control returned `STOP` with score 24.
