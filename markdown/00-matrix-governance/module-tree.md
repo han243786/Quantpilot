@@ -9626,3 +9626,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.okx_rest.order_action_surface stop_split: true`; terminal leaf control returned `STOP` with score 21.
 **Latest state supplement (BE-002LY-01)**: `root.executor.runner.runner_support_files.okx_rest` parent residual judgment selected `lookup_validation_surface`; next step: BE-002LZ-01 baseline_plan.
 `root.executor.runner.runner_support_files.okx_rest.lookup_validation_surface selected: true`; this child starts with OKX order lookup path construction and lookup validation helpers.
+**Latest state supplement (BE-002LZ-01)**: `root.executor.runner.runner_support_files.okx_rest.lookup_validation_surface` baseline frozen; next step: BE-002LZ-02 actual_extraction.
+`root.executor.runner.runner_support_files.okx_rest.lookup_validation_surface baseline_frozen: true`; approved movement is limited to OKX order lookup path construction and validation helpers.
