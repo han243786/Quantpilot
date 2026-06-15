@@ -1993,3 +1993,4 @@ Latest recursive supplement: BE-002MD-01 selected `runner_support_files.live_run
 Latest recursive supplement: BE-002ME-01 froze `live_runner`; next step selects its internal child.
 Latest recursive supplement: BE-002ME-02 selected `live_runner.v3_live_runner`; next baseline freezes V3 live runner movement.
 Latest recursive supplement: BE-002MF-01 froze `v3_live_runner`; next movement may extract V3 live runner logic.
+Latest recursive supplement: BE-002MF-02 extracted `v3_live_runner`; next step is single leaf closeout.

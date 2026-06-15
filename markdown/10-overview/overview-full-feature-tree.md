@@ -6250,3 +6250,6 @@ Recursive boundary supplement: BE-002ME-02 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1903-root.executor.runner.runner_support_files.live_runner.parent_residual_judgment.v3_live_runner.md` - v4.16.0 BE-002ME-02 live_runner parent residual judgment selects v3_live_runner
 Recursive boundary supplement: BE-002MF-01 `root.executor.runner.runner_support_files.live_runner.v3_live_runner` baseline frozen; next step: BE-002MF-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1904-root.executor.runner.runner_support_files.live_runner.v3_live_runner.baseline_plan.md` - v4.16.0 BE-002MF-01 v3_live_runner baseline plan
+Recursive boundary supplement: BE-002MF-02 `root.executor.runner.runner_support_files.live_runner.v3_live_runner` actual extraction complete; next step: BE-002MF-03 single_leaf_closeout.
+- `src-executor/live_runner/v3_live_runner.rs` - V3 live runner event, cycle, trigger, and subscription child
+- `markdown/06-milestones/v4.16.0/1905-root.executor.runner.runner_support_files.live_runner.v3_live_runner.extract_closeout.md` - v4.16.0 BE-002MF-02 v3_live_runner actual extraction closeout
