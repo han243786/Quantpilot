@@ -6222,3 +6222,5 @@ Recursive boundary supplement: BE-002LX-02 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1890-root.executor.runner.runner_support_files.okx_rest.order_action_surface.extract_closeout.md` - v4.16.0 BE-002LX-02 order_action_surface actual extraction closeout
 Recursive boundary supplement: BE-002LX-03 `root.executor.runner.runner_support_files.okx_rest.order_action_surface` single leaf closeout complete; next step: BE-002LY-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1891-root.executor.runner.runner_support_files.okx_rest.order_action_surface.single_leaf_closeout.md` - v4.16.0 BE-002LX-03 order_action_surface single leaf closeout
+Recursive boundary supplement: BE-002LY-01 `root.executor.runner.runner_support_files.okx_rest` parent residual judgment selected `lookup_validation_surface`; next step: BE-002LZ-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1892-root.executor.runner.runner_support_files.okx_rest.parent_residual_judgment.lookup_validation_surface.md` - v4.16.0 BE-002LY-01 okx_rest parent residual judgment selects lookup_validation_surface

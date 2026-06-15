@@ -1980,3 +1980,4 @@ Latest recursive supplement: BE-002LW-01 selected `okx_rest.order_action_surface
 Latest recursive supplement: BE-002LX-01 froze `order_action_surface`; next movement may extract public action wrappers.
 Latest recursive supplement: BE-002LX-02 extracted `order_action_surface`; next step is single leaf closeout.
 Latest recursive supplement: BE-002LX-03 closed `okx_rest.order_action_surface` with `stop_split: true`; next step returns to `okx_rest` parent residual judgment.
+Latest recursive supplement: BE-002LY-01 selected `okx_rest.lookup_validation_surface`; next baseline freezes lookup path and validation helpers.
