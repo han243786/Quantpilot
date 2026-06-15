@@ -9664,3 +9664,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch stop_split: true`; terminal leaf control returned `STOP` with score 23.
 **Latest state supplement (BE-002MI-01)**: `root.executor.runner.runner_support_files.live_runner` parent residual judgment selected `v4_runner`; next step: BE-002MJ-01 baseline_plan.
 `root.executor.runner.runner_support_files.live_runner.v4_runner selected: true`; this child starts with `V4Runner`, `V4ExecutorEvidenceEvent`, V4 websocket handling, evidence projection, and subscription filtering.
+**Latest state supplement (BE-002MJ-01)**: `root.executor.runner.runner_support_files.live_runner.v4_runner` baseline frozen; next step: BE-002MJ-02 actual_extraction.
+`root.executor.runner.runner_support_files.live_runner.v4_runner baseline_frozen: true`; approved movement is limited to `V4Runner`, `V4ExecutorEvidenceEvent`, and the direct `impl V4Runner`.
