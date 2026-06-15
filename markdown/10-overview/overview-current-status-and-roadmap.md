@@ -2018,3 +2018,4 @@ Latest recursive supplement: BE-002MP-03 closed `live_runner.test_harness` with 
 Latest recursive supplement: BE-002MQ-01 closed `runner_support_files.live_runner`; next step returns to `runner_support_files` parent residual judgment.
 Latest recursive supplement: BE-002MR-01 selected `runner_support_files.ws_client`; next baseline freezes websocket client support-file movement.
 Latest recursive supplement: BE-002MS-01 froze `ws_client` as an existing isolated leaf; next step is single leaf closeout.
+Latest recursive supplement: BE-002MS-02 closed `runner_support_files.ws_client` with `stop_split: true`; next step returns to `runner_support_files` parent residual judgment.
