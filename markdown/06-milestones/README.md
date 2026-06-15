@@ -2263,3 +2263,4 @@
 | v4.16.0 / BE-002MC-01 | `v4.16.0/1900-root.executor.runner.runner_support_files.okx_rest.parent_closeout.md` | Added: `okx_rest` parent closeout |
 | v4.16.0 / BE-002MD-01 | `v4.16.0/1901-root.executor.runner.runner_support_files.parent_residual_judgment.live_runner.md` | Added: `runner_support_files` parent residual judgment selects `live_runner` |
 | v4.16.0 / BE-002ME-01 | `v4.16.0/1902-root.executor.runner.runner_support_files.live_runner.baseline_plan.md` | Added: `live_runner` baseline plan |
+| v4.16.0 / BE-002ME-02 | `v4.16.0/1903-root.executor.runner.runner_support_files.live_runner.parent_residual_judgment.v3_live_runner.md` | Added: `live_runner` parent residual judgment selects `v3_live_runner` |

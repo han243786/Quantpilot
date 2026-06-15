@@ -1991,3 +1991,4 @@ Latest recursive supplement: BE-002MB-03 closed `okx_rest.test_harness` with `st
 Latest recursive supplement: BE-002MC-01 closed `okx_rest` parent; next step returns to `runner_support_files` parent residual judgment.
 Latest recursive supplement: BE-002MD-01 selected `runner_support_files.live_runner`; next baseline freezes live runner parent scope.
 Latest recursive supplement: BE-002ME-01 froze `live_runner`; next step selects its internal child.
+Latest recursive supplement: BE-002ME-02 selected `live_runner.v3_live_runner`; next baseline freezes V3 live runner movement.
