@@ -2288,3 +2288,4 @@
 | v4.16.0 / BE-002MP-02 | `v4.16.0/1925-root.executor.runner.runner_support_files.live_runner.test_harness.extract_closeout.md` | Added: `test_harness` actual extraction closeout |
 | v4.16.0 / BE-002MP-03 | `v4.16.0/1926-root.executor.runner.runner_support_files.live_runner.test_harness.single_leaf_closeout.md` | Added: `test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-002MQ-01 | `v4.16.0/1927-root.executor.runner.runner_support_files.live_runner.parent_closeout.md` | Added: `live_runner` parent closeout |
+| v4.16.0 / BE-002MR-01 | `v4.16.0/1928-root.executor.runner.runner_support_files.parent_residual_judgment.ws_client.md` | Added: `runner_support_files` parent residual judgment selects `ws_client` |

@@ -2016,3 +2016,4 @@ Latest recursive supplement: BE-002MP-01 froze `test_harness`; next movement may
 Latest recursive supplement: BE-002MP-02 extracted `test_harness`; next step is single leaf closeout.
 Latest recursive supplement: BE-002MP-03 closed `live_runner.test_harness` with `stop_split: true`; next step is `live_runner` parent closeout.
 Latest recursive supplement: BE-002MQ-01 closed `runner_support_files.live_runner`; next step returns to `runner_support_files` parent residual judgment.
+Latest recursive supplement: BE-002MR-01 selected `runner_support_files.ws_client`; next baseline freezes websocket client support-file movement.
