@@ -1,104 +1,22 @@
 /// v3.7.0/v4.8.0: 实时策略运行器 — PaperSimulated 本地撮合 / PaperActual provider 回执
-use crate::executor_state::{ActiveStrategy, TriggerEvent};
 #[cfg(test)]
 use crate::executor_state::{ExecutionMode, RuntimeKind};
-use crate::ws_client::WsEvent;
 #[cfg(test)]
 use qrpc_core::RuntimeEventType;
 use qrpc_core::Symbol;
-use std::collections::{BTreeMap, HashMap};
-use tokio::sync::{broadcast, mpsc};
+#[cfg(test)]
+use std::collections::BTreeMap;
+#[cfg(test)]
+use tokio::sync::broadcast;
 
 mod runner_instance_dispatch;
+mod runner_pool_orchestration;
 mod v3_live_runner;
 mod v4_runner;
 pub use runner_instance_dispatch::RunnerInstance;
+pub use runner_pool_orchestration::RunnerPool;
 pub use v3_live_runner::{LiveRunner, RunnerStatus};
 pub use v4_runner::{V4ExecutorEvidenceEvent, V4Runner};
-
-pub struct RunnerPool {
-    pub runners: BTreeMap<String, RunnerInstance>,
-    pub trigger_broadcast: broadcast::Sender<TriggerEvent>,
-    pub v4_evidence_broadcast: broadcast::Sender<V4ExecutorEvidenceEvent>,
-    pub ws_tx_map: HashMap<String, mpsc::UnboundedSender<WsEvent>>,
-    /// v3.3.0: symbol→[strategy_id] 反向索引, O(1)查找替代O(N*M)遍历
-    pub symbol_index: HashMap<String, Vec<String>>,
-}
-
-impl RunnerPool {
-    pub fn new(bc: broadcast::Sender<TriggerEvent>) -> Self {
-        let (v4_evidence_broadcast, _) = broadcast::channel(256);
-        Self {
-            runners: BTreeMap::new(),
-            trigger_broadcast: bc,
-            v4_evidence_broadcast,
-            ws_tx_map: HashMap::new(),
-            symbol_index: HashMap::new(),
-        }
-    }
-    pub fn register_exchange(&mut self, exchange: &str, tx: mpsc::UnboundedSender<WsEvent>) {
-        self.ws_tx_map.insert(exchange.into(), tx);
-    }
-    pub fn register(&mut self, s: &ActiveStrategy) -> anyhow::Result<()> {
-        let sid = s.strategy_id.clone();
-        // v3.3.0: 建立反向索引
-        for sym in &s.subscribed_symbols {
-            let key = sym.as_str().to_uppercase();
-            self.symbol_index.entry(key).or_default().push(sid.clone());
-        }
-        self.runners.insert(
-            sid,
-            RunnerInstance::from_strategy(
-                s,
-                self.trigger_broadcast.clone(),
-                self.v4_evidence_broadcast.clone(),
-            )?,
-        );
-        Ok(())
-    }
-    /// v3.2.2: 从RunnerPool移除停止的策略
-    pub fn remove(&mut self, strategy_id: &str) {
-        // v3.3.0: 清理反向索引
-        for ids in self.symbol_index.values_mut() {
-            ids.retain(|id| id != strategy_id);
-        }
-        if let Some(runner) = self.runners.get_mut(strategy_id) {
-            runner.set_stopped();
-        }
-        self.runners.remove(strategy_id);
-    }
-    pub fn broadcast_ws_event(&mut self, event: WsEvent) {
-        // v3.3.0: 反向索引 O(1) — 仅遍历订阅了对应symbol的策略
-        match &event {
-            WsEvent::Ticker { symbol, .. } | WsEvent::Kline { symbol, .. } => {
-                let key = symbol.to_uppercase();
-                let mut target_ids: Vec<String> =
-                    self.symbol_index.get(&key).cloned().unwrap_or_default();
-                for (id, runner) in &self.runners {
-                    if runner.subscribed_symbols().is_empty() && !target_ids.contains(id) {
-                        target_ids.push(id.clone());
-                    }
-                }
-                for id in &target_ids {
-                    if let Some(runner) = self.runners.get_mut(id) {
-                        runner.handle_ws_event(event.clone());
-                    }
-                }
-            }
-            WsEvent::Connected { .. } => {
-                for runner in self.runners.values_mut() {
-                    runner.handle_ws_event(event.clone());
-                }
-            }
-            #[cfg(test)]
-            WsEvent::Disconnected { .. } => {
-                for runner in self.runners.values_mut() {
-                    runner.handle_ws_event(event.clone());
-                }
-            }
-        }
-    }
-}
 
 fn executor_v4_market_matrix(
     venue_id: impl Into<String>,
@@ -162,6 +80,8 @@ fn graph_metadata_string(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::executor_state::ActiveStrategy;
+    use crate::ws_client::WsEvent;
     use qrpc_core::{CoreStrategyIr, RuntimeEvent};
     use qrpc_core_ir::{
         v4::{RuntimeTradingMode, V4MachineGraphContract, V4StaticContractBundle},

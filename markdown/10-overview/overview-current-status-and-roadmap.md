@@ -2005,3 +2005,4 @@ Latest recursive supplement: BE-002MJ-02 extracted `v4_runner`; next step is sin
 Latest recursive supplement: BE-002MJ-03 closed `live_runner.v4_runner` with `stop_split: true`; next step returns to `live_runner` parent residual judgment.
 Latest recursive supplement: BE-002MK-01 selected `live_runner.runner_pool_orchestration`; next baseline freezes RunnerPool movement.
 Latest recursive supplement: BE-002ML-01 froze `runner_pool_orchestration`; next movement may extract RunnerPool and direct impl.
+Latest recursive supplement: BE-002ML-02 extracted `runner_pool_orchestration`; next step is single leaf closeout.

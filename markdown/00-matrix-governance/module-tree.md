@@ -9674,3 +9674,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration selected: true`; this child starts with `RunnerPool`, runner registration/removal, symbol reverse indexing, exchange sender registration, and websocket event fan-out.
 **Latest state supplement (BE-002ML-01)**: `root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration` baseline frozen; next step: BE-002ML-02 actual_extraction.
 `root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration baseline_frozen: true`; approved movement is limited to `RunnerPool` and its direct impl.
+**Latest state supplement (BE-002ML-02)**: `root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration` actual extraction complete; next step: BE-002ML-03 single_leaf_closeout.
+`root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration extracted: src-executor/live_runner/runner_pool_orchestration.rs`; parent re-exports `RunnerPool` while retaining V4 helpers and tests.
