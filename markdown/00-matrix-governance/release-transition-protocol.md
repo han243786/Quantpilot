@@ -55,6 +55,14 @@ AI 不得主动建议进入发布过渡。
 
 缺任一项，不得进入实现。
 
+每条例外还必须同步登记到:
+
+```text
+markdown/00-matrix-governance/release-transition-exception.md
+```
+
+默认 `status: none` 表示当前没有发布过渡例外。只有开发者明确授权后，才能进入 `proposed` 或 `approved`。
+
 ---
 
 ## 5. 横向连接申请模板
@@ -96,4 +104,4 @@ AI 不得主动建议进入发布过渡。
 - 禁止让发布态性能边成为开发态默认结构。
 - 禁止缺少回退方案的横向连接。
 - 禁止绕过 Risk Plane、capability 真源、审批、沙箱验证或审计证据。
-
+- 禁止缺少 `release-transition-exception.md` 授权记录的发布态性能边。

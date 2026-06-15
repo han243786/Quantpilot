@@ -915,7 +915,8 @@ unknown                                      → NotFoundPage (404)
 ```
 
 **全局 UI**:
-- `frontend/src/components/LeftSidebar.jsx` — 左侧导航栏
+- `frontend/src/components/LeftSidebar.jsx` — 左侧导航栏入口
+- `frontend/src/components/SidebarRail.jsx` — 左侧导航栏 rail 实现; 改主界面侧边栏结构、导航项渲染或展开态时改这里
 - `frontend/src/components/TopToolbar.jsx` — 顶部工具栏 (含 capability 同步状态、v4 模拟运行入口、策略包导入/导出) 🆕 v4.9.0
 - `frontend/src/components/CommandPalette.jsx` — ⌘K 命令面板 (页面跳转 + 保存/编译/运行/回测命令)
 - `frontend/src/components/TutorialOverlay.jsx` — 教程覆盖层
@@ -1261,14 +1262,31 @@ guidance-matrix.md                — 引导矩阵: 全量树 + 模块树定位�
 module-tree.md                    — 模块树: 白箱网络、输入输出、关键 public 方法、父子通信边界
 proposal-flow.md                  — 提案状态机、三档执行判定表、提案模板
 proposal-examples.md              — 轻量、标准、重型三档提案样例
+work-mode-routing.md              — 工作入口路由: 重构、推进、切面打磨三种开发模式 + 文档债清理维护模式
+governance-quality-speed-guard.md — 治理质量与速率护栏: 旧路径文档债、工作模式入口卡、轻量卡防滥用
+advance-mode-protocol.md          — 推进模式协议: 开辟、落实、测试、跳转、返回、写入
+aspect-polish-protocol.md         — 切面打磨协议: 三档执行、轻量执行卡、隔离、分叉、优化、裁剪, 同步代码与治理资产
+aspect-cutover-record.md          — 切面打磨裁剪运行层记录
 release-transition-protocol.md    — 发布过渡期连接协议
+release-transition-exception.md   — 发布过渡例外授权记录
+current-work-cursor.yaml          — 四种工作入口共享的当前治理游标
+topology-ledger.ndjson            — 拓扑治理 ledger
 landing-roadmap.md                — v4.12.0 至 v4.16.0 治理落地与模块化抽离路线
 recursive-speed-protocol.md       — v4.16+ 递归高速执行协议
 recursive-state.json              — 当前递归状态游标
 ```
 
 自动化门禁: `tools/check-matrix-governance.ps1` 校验三矩阵入口、提案模板、模块树漂移、里程碑索引、发布过渡协议和递归高速执行协议。
+拓扑运行层门禁: `tools/check-topology-runtime-governance.ps1` 校验四入口术语、当前工作游标、topology ledger、切面裁剪记录和发布过渡例外授权。
+拓扑运行层游标: `markdown/00-matrix-governance/current-work-cursor.yaml` 记录四种工作入口的当前治理坐标。
+拓扑运行层 ledger: `markdown/00-matrix-governance/topology-ledger.ndjson` 记录 active / closeout 状态。
+切面裁剪运行记录: `markdown/00-matrix-governance/aspect-cutover-record.md` 记录分叉、共享状态、双跑、回滚和裁剪结果。
+发布过渡例外记录: `markdown/00-matrix-governance/release-transition-exception.md` 记录开发者授权、性能证据、直连边和回滚计划。
 提案样例库: `markdown/00-matrix-governance/proposal-examples.md` 提供轻量、标准、重型三档最小样例。
+工作入口路由: `markdown/00-matrix-governance/work-mode-routing.md` 将任务分为重构、推进、切面打磨三种开发模式和文档债清理维护模式，防止所有任务被递归重构流程吞并。
+治理质量与速率护栏: `markdown/00-matrix-governance/governance-quality-speed-guard.md` 固化旧路径文档债分批清理、工作模式入口卡、轻量卡升档触发器和 closeout 质量速率判断。
+推进模式协议: `markdown/00-matrix-governance/advance-mode-protocol.md` 固化开辟、落实、测试、跳转、返回、写入，并要求新增能力先定位已有端口和新增端口，局部调用其他模式后必须回到推进验收。
+切面打磨协议: `markdown/00-matrix-governance/aspect-polish-protocol.md` 固化三档执行、轻量执行卡、隔离、分叉、优化、裁剪，并要求代码、模块树、全量树、契约、测试、文档和状态游标按档位同步分叉与裁剪。
 递归高速协议: `markdown/00-matrix-governance/recursive-speed-protocol.md` 固化智能门禁、两段式、同构批处理、同父级子叶并行、成本受控 same-parent wave、强制精细降档、末端叶子智能判定、terminal leaf control v2、治理生成器和状态游标规则。
 递归状态游标: `markdown/00-matrix-governance/recursive-state.json` 记录当前递归 parent、phase、closed children、open residuals 和一次性提示黑名单。
 
@@ -2581,6 +2599,7 @@ storage/
 - `frontend/src/components/GovernedTimelinePanel.test.jsx` — 治理时间线测试
 - `frontend/src/components/Icons.jsx` — 前端共享图标; 改本地 icon 时改这里
 - `frontend/src/components/LeftSidebar.test.jsx` — 左侧导航测试
+- `frontend/src/components/SidebarRail.jsx` — 主界面侧边栏 rail; `LeftSidebar.jsx` 薄入口委托到这里
 - `frontend/src/components/ModuleSidebar.jsx` — 模块侧栏; 改模块列表/拖拽入口时改这里
 - `frontend/src/components/ModuleSidebar.test.jsx` — 模块侧栏测试
 - `frontend/src/components/PropertyPanel.compileSummary.test.jsx` — 属性面板编译摘要测试
@@ -2837,6 +2856,7 @@ storage/
 - `tools/check-openapi-route-diff.ps1` — OpenAPI path 与 Rust route 基线 diff, 可用 `-FailOnDiff` 阻断 🆕 v4.8.1
 - `tools/check-feature-evolution.ps1` — 功能演进检查
 - `tools/check-matrix-governance.ps1` — 三矩阵治理检查, 校验治理入口、提案模板、模块树漂移和发布过渡协议 🆕 v4.14.0
+- `tools/check-topology-runtime-governance.ps1` — 拓扑治理运行层检查, 校验四入口术语、当前工作游标、topology ledger、切面裁剪记录和发布过渡例外授权 🆕 v4.16.0
 - `tools/check-learning-closeout.ps1` — 学习流水线 closeout
 - `tools/check-pre-commit-hook.ps1` — Pre-commit hook 同步检查
 - `tools/check-cleanup-boundary.ps1` — 清理边界检查

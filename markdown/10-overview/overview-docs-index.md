@@ -1,6 +1,7 @@
 # QuantPilot 文档索引
 
 > v4.7.0 代码基线 / v4.15.0 三矩阵完全接管 / v4.16.0 模块化抽离规划 | 最后更新 2026-05-30
+> 冷热定位: compatibility docs index；保留可发现性，当前主动任务入口以 `00-matrix-governance` 的工作模式路由和质量速率护栏为准。
 
 ## 从这里开始
 
@@ -24,9 +25,17 @@
 | `module-tree.md` | 模块树白箱网络 |
 | `proposal-flow.md` | 提案状态机、三档执行判定表和模板 |
 | `proposal-examples.md` | 轻量、标准、重型三档提案样例 |
+| `work-mode-routing.md` | 工作入口路由: 重构、推进、切面打磨三种开发模式 + 文档债清理维护模式 |
+| `governance-quality-speed-guard.md` | 治理质量与速率护栏: 旧路径文档债、工作模式入口卡、轻量卡防滥用 |
+| `advance-mode-protocol.md` | 推进模式协议: 开辟、落实、测试、跳转、返回、写入 |
+| `aspect-polish-protocol.md` | 切面打磨协议: 三档执行、轻量执行卡、隔离、分叉、优化、裁剪，并同步代码与治理资产 |
+| `aspect-cutover-record.md` | 切面打磨裁剪运行层记录 |
 | `release-transition-protocol.md` | 发布过渡期连接协议 |
-| `landing-roadmap.md` | v4.12.0 至 v4.16.0 治理落地与模块化抽离路线 |
-| `recursive-speed-protocol.md` | v4.16+ 递归模块化高速执行协议，含同父级子叶并行 wave、成本受控批次、强制降档、批次白箱表、末端叶子智能判定和 terminal leaf control v2 |
+| `release-transition-exception.md` | 发布过渡例外授权记录 |
+| `current-work-cursor.yaml` | 四种工作入口共享的当前治理游标 |
+| `topology-ledger.ndjson` | 拓扑治理 ledger |
+| `landing-roadmap.md` | historical/frozen: v4.12.0 至 v4.16.0 治理落地与模块化抽离路线 |
+| `recursive-speed-protocol.md` | refactor-only compatibility: v4.16+ 递归模块化高速执行协议，含同父级子叶并行 wave、成本受控批次、强制降档、批次白箱表、末端叶子智能判定和 terminal leaf control v2 |
 | `recursive-state.json` | 当前递归状态游标 |
 
 ## 架构原则 (`01-principles/`)

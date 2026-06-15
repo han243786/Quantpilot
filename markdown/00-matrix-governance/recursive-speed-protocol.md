@@ -7,6 +7,7 @@
 > Decision: 高速执行协议独立维护于治理层，不再作为 v4.16 批次文档混入递归流水。
 > Effective: GOV-RECURSIVE-COST-CONTROL-01 起生效；当前 Rust 递归游标不因本协议升级移动。
 > Superseded by: `governance-next/05-authoritative-operating-model.md` at `GOV-GOVERNANCE-NEXT-PROMOTION-01`.
+> Mode boundary: refactor-only compatibility material；不得作为推进模式或切面打磨模式默认入口。
 
 本文件保留为旧递归高速协议的兼容档案。promotion 后，递归重构默认由 QPCursor、治理热度和局部不变量驱动；本协议只能提供历史规则、旧提速术语和兼容门禁素材，不再覆盖新治理入口。
 

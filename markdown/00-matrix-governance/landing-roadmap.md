@@ -1,6 +1,7 @@
 # 三矩阵治理落地路线
 
 > 状态: v4.15.0 已完成接管，v4.16.0 起进入模块化三步走的抽离阶段。
+> 冷热定位: historical/frozen landing roadmap；当前日常任务入口改用 `work-mode-routing.md`、`advance-mode-protocol.md`、`aspect-polish-protocol.md` 和 `governance-quality-speed-guard.md`。
 > 目标: 把三矩阵从文档草案推进到项目级默认控制平面。
 > 范围: 文档治理、提案流程、模块树、引导矩阵、发布过渡协议和后续门禁规划。
 

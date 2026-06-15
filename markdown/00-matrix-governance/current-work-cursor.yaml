@@ -1,0 +1,35 @@
+cursor_id: GOV-L4-RUNTIME-PATCH-01
+status: closed
+work_mode_stack:
+  - mode: advance
+    step: topology-runtime-governance-hardening
+topology_slice:
+  parent_node: root.docs.matrix_governance
+  child_nodes:
+    - root.docs.matrix_governance.work_mode_runtime
+    - root.docs.matrix_governance.aspect_cutover
+    - root.docs.matrix_governance.release_transition_exception
+  changed_edges:
+    - work_mode_routing -> current_work_cursor
+    - aspect_polish_protocol -> aspect_cutover_record
+    - release_transition_protocol -> release_transition_exception
+allowed_workset:
+  editable_files:
+    - markdown/00-matrix-governance
+    - markdown/10-overview/overview-docs-index.md
+    - markdown/10-overview/overview-full-feature-tree.md
+    - tools/check-topology-runtime-governance.ps1
+  readonly_files:
+    - markdown/00-matrix-governance/module-tree.md
+    - governance-next
+forbidden_operations:
+  - sibling_direct_dependency_without_release_transition_exception
+  - rewrite_module_tree_or_full_feature_tree_for_size_only
+  - mix_feature_work_into_doc_debt_cleanup
+gates:
+  - powershell -NoProfile -ExecutionPolicy Bypass -File tools/check-topology-runtime-governance.ps1
+  - powershell -NoProfile -ExecutionPolicy Bypass -File tools/check-utf8.ps1
+  - git diff --check
+closeout_required: false
+next_action: decide whether to wire the topology runtime governance check into broader CI
+handoff_notes: "Closed after topology runtime governance check, UTF-8 check, diff check, and full-feature-tree active coverage passed. Remaining tree failures are legacy doc-debt paths tracked outside this patch."

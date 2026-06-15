@@ -79,8 +79,8 @@
   --ad-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
 
   /* 侧边栏尺寸 */
-  --ad-sidebar-collapsed: 48px;
-  --ad-sidebar-expanded: 160px;
+  --ad-sidebar-collapsed: 56px;
+  --ad-sidebar-expanded: 188px;
 
   /* 滚动条 */
   scrollbar-width: thin;
