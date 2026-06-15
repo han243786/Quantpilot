@@ -6284,3 +6284,5 @@ Recursive boundary supplement: BE-002ML-03 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1918-root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration.single_leaf_closeout.md` - v4.16.0 BE-002ML-03 runner_pool_orchestration single leaf closeout
 Recursive boundary supplement: BE-002MM-01 `root.executor.runner.runner_support_files.live_runner` parent residual judgment selected `v4_market_metadata_helpers`; next step: BE-002MN-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1919-root.executor.runner.runner_support_files.live_runner.parent_residual_judgment.v4_market_metadata_helpers.md` - v4.16.0 BE-002MM-01 live_runner parent residual judgment selects v4_market_metadata_helpers
+Recursive boundary supplement: BE-002MN-01 `root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers` baseline frozen; next step: BE-002MN-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1920-root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers.baseline_plan.md` - v4.16.0 BE-002MN-01 v4_market_metadata_helpers baseline plan
