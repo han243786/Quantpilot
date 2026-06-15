@@ -9652,3 +9652,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner.v3_live_runner baseline_frozen: true`; approved movement is limited to `LiveRunner`, `RunnerStatus`, V3 event handling, fast/slow cycle logic, trigger detection, and subscription filtering.
 **Latest state supplement (BE-002MF-02)**: `root.executor.runner.runner_support_files.live_runner.v3_live_runner` actual extraction complete; next step: BE-002MF-03 single_leaf_closeout.
 `root.executor.runner.runner_support_files.live_runner.v3_live_runner extracted: src-executor/live_runner/v3_live_runner.rs`; parent re-exports `LiveRunner` and `RunnerStatus` while retaining RunnerInstance, RunnerPool, V4 runner, V4 helpers, and tests.
+**Latest state supplement (BE-002MF-03)**: `root.executor.runner.runner_support_files.live_runner.v3_live_runner` single leaf closeout complete; next step returns to `live_runner` parent residual judgment.
+`root.executor.runner.runner_support_files.live_runner.v3_live_runner stop_split: true`; terminal leaf control returned `STOP` with score 37.
