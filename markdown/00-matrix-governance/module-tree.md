@@ -9638,3 +9638,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.okx_rest.test_harness baseline_frozen: true`; approved movement is limited to the local `#[cfg(test)]` test module and test-only imports.
 **Latest state supplement (BE-002MB-02)**: `root.executor.runner.runner_support_files.okx_rest.test_harness` actual extraction complete; next step: BE-002MB-03 single_leaf_closeout.
 `root.executor.runner.runner_support_files.okx_rest.test_harness extracted: src-executor/okx_rest/test_harness.rs`; parent retains production facade, type/constants, re-exports, and child wiring.
+**Latest state supplement (BE-002MB-03)**: `root.executor.runner.runner_support_files.okx_rest.test_harness` single leaf closeout complete; next step returns to okx_rest parent residual judgment.
+`root.executor.runner.runner_support_files.okx_rest.test_harness stop_split: true`; terminal leaf control returned `STOP` with score 37.
