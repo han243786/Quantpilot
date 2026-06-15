@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002LT-02",
-  "last_committed_sha": "7e9a8034",
-  "current_parent": "root.executor.runner.runner_support_files.okx_rest.signing_request_surface",
-  "current_step": "BE-002LT-03",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002LT-03",
+  "last_committed_sha": "1218f8d1",
+  "current_parent": "root.executor.runner.runner_support_files.okx_rest",
+  "current_step": "BE-002LU-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -347,12 +347,13 @@
     "executor.runner.strategy_lifecycle_routes",
     "executor.runner.market_stream_routes",
     "executor.runner.v4_deploy_support",
-    "executor.runner.provider_order_support"
+    "executor.runner.provider_order_support",
+    "executor.runner.runner_support_files.okx_rest.signing_request_surface"
   ],
   "open_residuals": [
     "executor"
   ],
-  "next_recommended_child": "root.executor.runner.runner_support_files.okx_rest.signing_request_surface.single_leaf_closeout",
+  "next_recommended_child": "root.executor.runner.runner_support_files.okx_rest.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
