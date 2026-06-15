@@ -9708,3 +9708,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.kline_buffer baseline_frozen: true`; terminal leaf control returned `STOP` with score 40, so no internal extraction is approved.
 **Latest state supplement (BE-002MU-02)**: `root.executor.runner.runner_support_files.kline_buffer` single leaf closeout complete; next step returns to `runner_support_files` parent residual judgment.
 `root.executor.runner.runner_support_files.kline_buffer stop_split: true`; `src-executor/kline_buffer.rs` remains the terminal K-line buffer support-file leaf.
+**Latest state supplement (BE-002MV-01)**: `root.executor.runner.runner_support_files` parent residual judgment selected `migration_api`; next step: BE-002MW-01 baseline_plan.
+`root.executor.runner.runner_support_files.migration_api selected: true`; terminal leaf control returned `STOP` with score 23 over the existing isolated migration API file.
