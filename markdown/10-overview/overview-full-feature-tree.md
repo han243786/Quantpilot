@@ -6280,3 +6280,5 @@ Recursive boundary supplement: BE-002ML-01 `root.executor.runner.runner_support_
 Recursive boundary supplement: BE-002ML-02 `root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration` actual extraction complete; next step: BE-002ML-03 single_leaf_closeout.
 - `src-executor/live_runner/runner_pool_orchestration.rs` - live runner pool registration, removal, reverse index, and websocket fan-out child
 - `markdown/06-milestones/v4.16.0/1917-root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration.extract_closeout.md` - v4.16.0 BE-002ML-02 runner_pool_orchestration actual extraction closeout
+Recursive boundary supplement: BE-002ML-03 `root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration` single leaf closeout complete; next step: BE-002MM-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1918-root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration.single_leaf_closeout.md` - v4.16.0 BE-002ML-03 runner_pool_orchestration single leaf closeout

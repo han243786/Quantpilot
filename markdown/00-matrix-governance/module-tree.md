@@ -9676,3 +9676,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration baseline_frozen: true`; approved movement is limited to `RunnerPool` and its direct impl.
 **Latest state supplement (BE-002ML-02)**: `root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration` actual extraction complete; next step: BE-002ML-03 single_leaf_closeout.
 `root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration extracted: src-executor/live_runner/runner_pool_orchestration.rs`; parent re-exports `RunnerPool` while retaining V4 helpers and tests.
+**Latest state supplement (BE-002ML-03)**: `root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration` single leaf closeout complete; next step returns to `live_runner` parent residual judgment.
+`root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration stop_split: true`; terminal leaf control returned `STOP` with score 32.
