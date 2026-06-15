@@ -6293,3 +6293,5 @@ Recursive boundary supplement: BE-002MN-03 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1922-root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers.single_leaf_closeout.md` - v4.16.0 BE-002MN-03 v4_market_metadata_helpers single leaf closeout
 Recursive boundary supplement: BE-002MO-01 `root.executor.runner.runner_support_files.live_runner` parent residual judgment selected `test_harness`; next step: BE-002MP-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1923-root.executor.runner.runner_support_files.live_runner.parent_residual_judgment.test_harness.md` - v4.16.0 BE-002MO-01 live_runner parent residual judgment selects test_harness
+Recursive boundary supplement: BE-002MP-01 `root.executor.runner.runner_support_files.live_runner.test_harness` baseline frozen; next step: BE-002MP-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1924-root.executor.runner.runner_support_files.live_runner.test_harness.baseline_plan.md` - v4.16.0 BE-002MP-01 test_harness baseline plan

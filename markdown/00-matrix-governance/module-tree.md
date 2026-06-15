@@ -9688,3 +9688,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers stop_split: true`; terminal leaf control returned `STOP` with score 24.
 **Latest state supplement (BE-002MO-01)**: `root.executor.runner.runner_support_files.live_runner` parent residual judgment selected `test_harness`; next step: BE-002MP-01 baseline_plan.
 `root.executor.runner.runner_support_files.live_runner.test_harness selected: true`; this child starts with the local V3 trigger tests and V4 realtime paper-simulated runner loop smoke test.
+**Latest state supplement (BE-002MP-01)**: `root.executor.runner.runner_support_files.live_runner.test_harness` baseline frozen; next step: BE-002MP-02 actual_extraction.
+`root.executor.runner.runner_support_files.live_runner.test_harness baseline_frozen: true`; approved movement is limited to the local `#[cfg(test)] mod tests`.
