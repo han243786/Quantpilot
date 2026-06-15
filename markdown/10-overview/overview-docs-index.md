@@ -1932,3 +1932,4 @@
 | v4.16.0 / BE-002MN-03 | Added: `v4_market_metadata_helpers` single leaf closeout stops split |
 | v4.16.0 / BE-002MO-01 | Added: `live_runner` parent residual judgment selects `test_harness` |
 | v4.16.0 / BE-002MP-01 | Added: `test_harness` baseline plan |
+| v4.16.0 / BE-002MP-02 | Added: `test_harness` actual extraction closeout |
