@@ -2261,3 +2261,4 @@
 | v4.16.0 / BE-002MB-02 | `v4.16.0/1898-root.executor.runner.runner_support_files.okx_rest.test_harness.extract_closeout.md` | Added: `test_harness` actual extraction closeout |
 | v4.16.0 / BE-002MB-03 | `v4.16.0/1899-root.executor.runner.runner_support_files.okx_rest.test_harness.single_leaf_closeout.md` | Added: `test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-002MC-01 | `v4.16.0/1900-root.executor.runner.runner_support_files.okx_rest.parent_closeout.md` | Added: `okx_rest` parent closeout |
+| v4.16.0 / BE-002MD-01 | `v4.16.0/1901-root.executor.runner.runner_support_files.parent_residual_judgment.live_runner.md` | Added: `runner_support_files` parent residual judgment selects `live_runner` |

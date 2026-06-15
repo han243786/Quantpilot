@@ -6242,3 +6242,5 @@ Recursive boundary supplement: BE-002MB-03 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1899-root.executor.runner.runner_support_files.okx_rest.test_harness.single_leaf_closeout.md` - v4.16.0 BE-002MB-03 test_harness single leaf closeout
 Recursive boundary supplement: BE-002MC-01 `root.executor.runner.runner_support_files.okx_rest` parent closeout complete; next step: BE-002MD-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1900-root.executor.runner.runner_support_files.okx_rest.parent_closeout.md` - v4.16.0 BE-002MC-01 okx_rest parent closeout
+Recursive boundary supplement: BE-002MD-01 `root.executor.runner.runner_support_files` parent residual judgment selected `live_runner`; next step: BE-002ME-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1901-root.executor.runner.runner_support_files.parent_residual_judgment.live_runner.md` - v4.16.0 BE-002MD-01 runner_support_files parent residual judgment selects live_runner
