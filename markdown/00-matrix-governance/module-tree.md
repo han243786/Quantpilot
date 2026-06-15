@@ -9666,3 +9666,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner.v4_runner selected: true`; this child starts with `V4Runner`, `V4ExecutorEvidenceEvent`, V4 websocket handling, evidence projection, and subscription filtering.
 **Latest state supplement (BE-002MJ-01)**: `root.executor.runner.runner_support_files.live_runner.v4_runner` baseline frozen; next step: BE-002MJ-02 actual_extraction.
 `root.executor.runner.runner_support_files.live_runner.v4_runner baseline_frozen: true`; approved movement is limited to `V4Runner`, `V4ExecutorEvidenceEvent`, and the direct `impl V4Runner`.
+**Latest state supplement (BE-002MJ-02)**: `root.executor.runner.runner_support_files.live_runner.v4_runner` actual extraction complete; next step: BE-002MJ-03 single_leaf_closeout.
+`root.executor.runner.runner_support_files.live_runner.v4_runner extracted: src-executor/live_runner/v4_runner.rs`; parent re-exports `V4Runner` and `V4ExecutorEvidenceEvent` while retaining RunnerPool, V4 helpers, and tests.

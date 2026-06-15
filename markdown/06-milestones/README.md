@@ -2273,3 +2273,4 @@
 | v4.16.0 / BE-002MH-03 | `v4.16.0/1910-root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch.single_leaf_closeout.md` | Added: `runner_instance_dispatch` single leaf closeout stops split |
 | v4.16.0 / BE-002MI-01 | `v4.16.0/1911-root.executor.runner.runner_support_files.live_runner.parent_residual_judgment.v4_runner.md` | Added: `live_runner` parent residual judgment selects `v4_runner` |
 | v4.16.0 / BE-002MJ-01 | `v4.16.0/1912-root.executor.runner.runner_support_files.live_runner.v4_runner.baseline_plan.md` | Added: `v4_runner` baseline plan |
+| v4.16.0 / BE-002MJ-02 | `v4.16.0/1913-root.executor.runner.runner_support_files.live_runner.v4_runner.extract_closeout.md` | Added: `v4_runner` actual extraction closeout |
