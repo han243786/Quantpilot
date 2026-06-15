@@ -6318,3 +6318,6 @@ Recursive boundary supplement: BE-002MU-02 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1933-root.executor.runner.runner_support_files.kline_buffer.single_leaf_closeout.md` - v4.16.0 BE-002MU-02 kline_buffer single leaf closeout
 Recursive boundary supplement: BE-002MV-01 `root.executor.runner.runner_support_files` parent residual judgment selected `migration_api`; next step: BE-002MW-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1934-root.executor.runner.runner_support_files.parent_residual_judgment.migration_api.md` - v4.16.0 BE-002MV-01 runner_support_files parent residual judgment selects migration_api
+Recursive boundary supplement: BE-002MW-01 `root.executor.runner.runner_support_files.migration_api` baseline frozen as an existing isolated file; next step: BE-002MW-02 single_leaf_closeout.
+- `src-executor/migration_api.rs` - Strategy migration package DTOs, signature validation, package decoding, and executor registration support file
+- `markdown/06-milestones/v4.16.0/1935-root.executor.runner.runner_support_files.migration_api.baseline_plan.md` - v4.16.0 BE-002MW-01 migration_api existing leaf baseline plan
