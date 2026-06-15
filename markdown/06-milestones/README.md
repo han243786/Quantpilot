@@ -2281,3 +2281,4 @@
 | v4.16.0 / BE-002ML-03 | `v4.16.0/1918-root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration.single_leaf_closeout.md` | Added: `runner_pool_orchestration` single leaf closeout stops split |
 | v4.16.0 / BE-002MM-01 | `v4.16.0/1919-root.executor.runner.runner_support_files.live_runner.parent_residual_judgment.v4_market_metadata_helpers.md` | Added: `live_runner` parent residual judgment selects `v4_market_metadata_helpers` |
 | v4.16.0 / BE-002MN-01 | `v4.16.0/1920-root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers.baseline_plan.md` | Added: `v4_market_metadata_helpers` baseline plan |
+| v4.16.0 / BE-002MN-02 | `v4.16.0/1921-root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers.extract_closeout.md` | Added: `v4_market_metadata_helpers` actual extraction closeout |

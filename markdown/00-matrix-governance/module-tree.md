@@ -9682,3 +9682,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers selected: true`; this child starts with V4 execution capability matrix construction and graph metadata default venue/symbol resolution.
 **Latest state supplement (BE-002MN-01)**: `root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers` baseline frozen; next step: BE-002MN-02 actual_extraction.
 `root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers baseline_frozen: true`; approved movement is limited to V4 market matrix construction and graph metadata default venue/symbol helpers.
+**Latest state supplement (BE-002MN-02)**: `root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers` actual extraction complete; next step: BE-002MN-03 single_leaf_closeout.
+`root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers extracted: src-executor/live_runner/v4_market_metadata_helpers.rs`; parent keeps module wiring and local tests.

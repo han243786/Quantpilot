@@ -1928,3 +1928,4 @@
 | v4.16.0 / BE-002ML-03 | Added: `runner_pool_orchestration` single leaf closeout stops split |
 | v4.16.0 / BE-002MM-01 | Added: `live_runner` parent residual judgment selects `v4_market_metadata_helpers` |
 | v4.16.0 / BE-002MN-01 | Added: `v4_market_metadata_helpers` baseline plan |
+| v4.16.0 / BE-002MN-02 | Added: `v4_market_metadata_helpers` actual extraction closeout |

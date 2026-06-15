@@ -3,7 +3,6 @@
 use crate::executor_state::{ExecutionMode, RuntimeKind};
 #[cfg(test)]
 use qrpc_core::RuntimeEventType;
-use qrpc_core::Symbol;
 #[cfg(test)]
 use std::collections::BTreeMap;
 #[cfg(test)]
@@ -12,77 +11,22 @@ use tokio::sync::broadcast;
 mod runner_instance_dispatch;
 mod runner_pool_orchestration;
 mod v3_live_runner;
+mod v4_market_metadata_helpers;
 mod v4_runner;
 pub use runner_instance_dispatch::RunnerInstance;
 pub use runner_pool_orchestration::RunnerPool;
 pub use v3_live_runner::{LiveRunner, RunnerStatus};
+use v4_market_metadata_helpers::{
+    executor_v4_market_matrix, resolve_v4_runner_default_symbol, resolve_v4_runner_venue_id,
+};
 pub use v4_runner::{V4ExecutorEvidenceEvent, V4Runner};
-
-fn executor_v4_market_matrix(
-    venue_id: impl Into<String>,
-) -> qrpc_core_ir::v4::VenueCapabilityMatrix {
-    let mut matrix = qrpc_core_ir::v4::unsupported_v4_first_wave_matrix(venue_id);
-    for entry in &mut matrix.capabilities {
-        if matches!(
-            entry.capability,
-            qrpc_core_ir::v4::ExecutionCapabilityKind::Market
-                | qrpc_core_ir::v4::ExecutionCapabilityKind::Gtc
-                | qrpc_core_ir::v4::ExecutionCapabilityKind::ClientOrderId
-        ) {
-            entry.source = qrpc_core_ir::v4::CapabilitySupportSource::RuntimeSimulated;
-            entry.supported_modes = vec![qrpc_core_ir::v4::RuntimeTradingMode::PaperSimulated];
-        }
-    }
-    matrix
-}
-
-fn resolve_v4_runner_venue_id(graph: &qrpc_core_ir::v4::V4MachineGraphContract) -> String {
-    graph_metadata_string(graph, "default_venue_id")
-        .or_else(|| graph_metadata_string(graph, "core_venue_kind"))
-        .unwrap_or_else(|| V4Runner::DEFAULT_REALTIME_PAPER_VENUE_ID.to_string())
-}
-
-fn resolve_v4_runner_default_symbol(
-    graph: &qrpc_core_ir::v4::V4MachineGraphContract,
-    subscribed_symbols: &[Symbol],
-) -> String {
-    graph_metadata_string(graph, "default_symbol")
-        .or_else(|| {
-            graph
-                .metadata
-                .get("symbols")
-                .and_then(|value| value.as_array())
-                .and_then(|symbols| symbols.first())
-                .and_then(|value| value.as_str())
-                .map(str::to_string)
-        })
-        .or_else(|| {
-            subscribed_symbols
-                .first()
-                .map(|symbol| symbol.as_str().to_string())
-        })
-        .unwrap_or_else(|| "BTCUSDT".to_string())
-}
-
-fn graph_metadata_string(
-    graph: &qrpc_core_ir::v4::V4MachineGraphContract,
-    key: &str,
-) -> Option<String> {
-    graph
-        .metadata
-        .get(key)
-        .and_then(|value| value.as_str())
-        .map(str::trim)
-        .filter(|value| !value.is_empty())
-        .map(str::to_string)
-}
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::executor_state::ActiveStrategy;
     use crate::ws_client::WsEvent;
-    use qrpc_core::{CoreStrategyIr, RuntimeEvent};
+    use qrpc_core::{CoreStrategyIr, RuntimeEvent, Symbol};
     use qrpc_core_ir::{
         v4::{RuntimeTradingMode, V4MachineGraphContract, V4StaticContractBundle},
         CoreMetadata, CoreSourceKind, CoreTimeInForce, ExecutionRule, ExecutionSizingKind,
