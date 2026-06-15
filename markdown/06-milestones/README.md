@@ -2235,3 +2235,4 @@
 | v4.16.0 / BE-002LO-01 | `v4.16.0/1872-root.executor.runner.parent_residual_judgment.provider_order_support.md` | Added: `executor.runner` parent residual judgment selects discovered `provider_order_support` |
 | v4.16.0 / BE-002LP-01 | `v4.16.0/1873-root.executor.runner.provider_order_support.baseline_plan.md` | Added: `provider_order_support` baseline plan |
 | v4.16.0 / BE-002LP-02 | `v4.16.0/1874-root.executor.runner.provider_order_support.extract_closeout.md` | Added: `provider_order_support` helper extraction complete |
+| v4.16.0 / BE-002LP-03 | `v4.16.0/1875-root.executor.runner.provider_order_support.single_leaf_closeout.md` | Added: `provider_order_support` single leaf closeout stops split |
