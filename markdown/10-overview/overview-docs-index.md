@@ -1888,3 +1888,4 @@
 | v4.16.0 / BE-002LR-02 | Added: `runner_support_files` parent residual judgment selects `okx_rest` |
 | v4.16.0 / BE-002LS-01 | Added: `okx_rest` precision baseline plan |
 | v4.16.0 / BE-002LS-02 | Added: `okx_rest` parent residual judgment selects `signing_request_surface` |
+| v4.16.0 / BE-002LT-01 | Added: `signing_request_surface` baseline plan |

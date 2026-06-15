@@ -9602,3 +9602,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.okx_rest baseline_frozen: true`; child queue is `signing_request_surface`, `transport_response_surface`, `order_action_surface`, `lookup_validation_surface`, and `test_harness`.
 **Latest state supplement (BE-002LS-02)**: `root.executor.runner.runner_support_files.okx_rest` parent residual judgment selected `signing_request_surface`; next step: BE-002LT-01 baseline_plan.
 `root.executor.runner.runner_support_files.okx_rest.signing_request_surface selected: true`; this child starts with credential validation, timestamp/signing, signed request construction, and signing-focused tests.
+**Latest state supplement (BE-002LT-01)**: `root.executor.runner.runner_support_files.okx_rest.signing_request_surface` baseline frozen; next step: BE-002LT-02 actual_extraction.
+`root.executor.runner.runner_support_files.okx_rest.signing_request_surface baseline_frozen: true`; approved movement is limited to signing/request helpers and signing-focused tests into the planned signing request surface module.

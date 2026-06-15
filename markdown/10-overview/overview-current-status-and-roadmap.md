@@ -1969,3 +1969,4 @@ Latest recursive supplement: BE-002LR-01 froze `runner_support_files`; next step
 Latest recursive supplement: BE-002LR-02 selected `executor.runner.runner_support_files.okx_rest`; next baseline freezes the OKX REST adapter surface.
 Latest recursive supplement: BE-002LS-01 froze `okx_rest` as a precision child; next step selects its first internal surface.
 Latest recursive supplement: BE-002LS-02 selected `okx_rest.signing_request_surface`; next baseline freezes signing and signed request construction.
+Latest recursive supplement: BE-002LT-01 froze `signing_request_surface`; next movement may extract signing/request helpers.
