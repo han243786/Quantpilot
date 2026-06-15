@@ -6271,3 +6271,5 @@ Recursive boundary supplement: BE-002MJ-01 `root.executor.runner.runner_support_
 Recursive boundary supplement: BE-002MJ-02 `root.executor.runner.runner_support_files.live_runner.v4_runner` actual extraction complete; next step: BE-002MJ-03 single_leaf_closeout.
 - `src-executor/live_runner/v4_runner.rs` - V4 live runner state, evidence event, and websocket handling child
 - `markdown/06-milestones/v4.16.0/1913-root.executor.runner.runner_support_files.live_runner.v4_runner.extract_closeout.md` - v4.16.0 BE-002MJ-02 v4_runner actual extraction closeout
+Recursive boundary supplement: BE-002MJ-03 `root.executor.runner.runner_support_files.live_runner.v4_runner` single leaf closeout complete; next step: BE-002MK-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1914-root.executor.runner.runner_support_files.live_runner.v4_runner.single_leaf_closeout.md` - v4.16.0 BE-002MJ-03 v4_runner single leaf closeout

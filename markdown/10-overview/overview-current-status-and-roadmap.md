@@ -2002,3 +2002,4 @@ Latest recursive supplement: BE-002MH-03 closed `live_runner.runner_instance_dis
 Latest recursive supplement: BE-002MI-01 selected `live_runner.v4_runner`; next baseline freezes V4 live runner movement.
 Latest recursive supplement: BE-002MJ-01 froze `v4_runner`; next movement may extract V4 runner state, evidence event, and direct impl.
 Latest recursive supplement: BE-002MJ-02 extracted `v4_runner`; next step is single leaf closeout.
+Latest recursive supplement: BE-002MJ-03 closed `live_runner.v4_runner` with `stop_split: true`; next step returns to `live_runner` parent residual judgment.

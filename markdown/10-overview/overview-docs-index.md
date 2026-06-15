@@ -1921,3 +1921,4 @@
 | v4.16.0 / BE-002MI-01 | Added: `live_runner` parent residual judgment selects `v4_runner` |
 | v4.16.0 / BE-002MJ-01 | Added: `v4_runner` baseline plan |
 | v4.16.0 / BE-002MJ-02 | Added: `v4_runner` actual extraction closeout |
+| v4.16.0 / BE-002MJ-03 | Added: `v4_runner` single leaf closeout stops split |
