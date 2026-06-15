@@ -1936,3 +1936,4 @@
 | v4.16.0 / BE-002MP-03 | Added: `test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-002MQ-01 | Added: `live_runner` parent closeout |
 | v4.16.0 / BE-002MR-01 | Added: `runner_support_files` parent residual judgment selects `ws_client` |
+| v4.16.0 / BE-002MS-01 | Added: `ws_client` existing leaf baseline plan |

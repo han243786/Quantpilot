@@ -9698,3 +9698,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner parent_closeout: true`; residual parent file is a compact facade with module declarations, re-exports, helper imports, and test wiring.
 **Latest state supplement (BE-002MR-01)**: `root.executor.runner.runner_support_files` parent residual judgment selected `ws_client`; next step: BE-002MS-01 baseline_plan.
 `root.executor.runner.runner_support_files.ws_client selected: true`; this child starts with websocket event types, proxy-aware connection setup, OKX public stream parsing, ticker/kline projection, subscription orchestration, reconnect/backoff behavior, and local tests.
+**Latest state supplement (BE-002MS-01)**: `root.executor.runner.runner_support_files.ws_client` baseline frozen as an existing isolated file; next step: BE-002MS-02 single_leaf_closeout.
+`root.executor.runner.runner_support_files.ws_client baseline_frozen: true`; terminal leaf control returned `STOP` with score 49, so no internal extraction is approved.

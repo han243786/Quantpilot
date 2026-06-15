@@ -6304,3 +6304,6 @@ Recursive boundary supplement: BE-002MQ-01 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1927-root.executor.runner.runner_support_files.live_runner.parent_closeout.md` - v4.16.0 BE-002MQ-01 live_runner parent closeout
 Recursive boundary supplement: BE-002MR-01 `root.executor.runner.runner_support_files` parent residual judgment selected `ws_client`; next step: BE-002MS-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1928-root.executor.runner.runner_support_files.parent_residual_judgment.ws_client.md` - v4.16.0 BE-002MR-01 runner_support_files parent residual judgment selects ws_client
+Recursive boundary supplement: BE-002MS-01 `root.executor.runner.runner_support_files.ws_client` baseline frozen as an existing isolated file; next step: BE-002MS-02 single_leaf_closeout.
+- `src-executor/ws_client.rs` - WebSocket event, OKX market feed, proxy connection, parsing, and local test support file
+- `markdown/06-milestones/v4.16.0/1929-root.executor.runner.runner_support_files.ws_client.baseline_plan.md` - v4.16.0 BE-002MS-01 ws_client existing leaf baseline plan
