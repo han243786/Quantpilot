@@ -1970,3 +1970,4 @@ Latest recursive supplement: BE-002LR-02 selected `executor.runner.runner_suppor
 Latest recursive supplement: BE-002LS-01 froze `okx_rest` as a precision child; next step selects its first internal surface.
 Latest recursive supplement: BE-002LS-02 selected `okx_rest.signing_request_surface`; next baseline freezes signing and signed request construction.
 Latest recursive supplement: BE-002LT-01 froze `signing_request_surface`; next movement may extract signing/request helpers.
+Latest recursive supplement: BE-002LT-02 extracted signing/request helpers into `src-executor/okx_rest/signing_request_surface.rs`; next step is single leaf closeout.

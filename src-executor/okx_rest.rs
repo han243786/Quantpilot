@@ -2,9 +2,13 @@
 /// 文档: https://www.okx.com/docs-v5/
 /// Demo trading: https://www.okx.com/api/v5 (需在 headers 中设置 x-simulated-trading: 1)
 use anyhow::{bail, Context, Result};
-use base64::Engine;
-use ring::hmac;
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use std::time::Duration;
+
+mod signing_request_surface;
+pub use signing_request_surface::build_signed_request;
+
+#[cfg(test)]
+use signing_request_surface::{build_signed_request_with_timestamp, okx_timestamp};
 
 const OKX_REST_BASE: &str = "https://www.okx.com";
 const OKX_REST_BASE_URL_ENV: &str = "QUANTPILOT_OKX_REST_BASE_URL";
@@ -59,33 +63,6 @@ pub struct OkxSignedRequest {
     pub sdk_flag: String,
 }
 
-/// 生成 OKX API 签名 (HMAC-SHA256)
-/// 签名消息: timestamp + method + request_path + body
-fn sign_okx(
-    timestamp: &str,
-    method: &str,
-    request_path: &str,
-    body: &str,
-    secret: &str,
-) -> Result<String> {
-    let sign_str = format!("{}{}{}{}", timestamp, method, request_path, body);
-    let key = hmac::Key::new(hmac::HMAC_SHA256, secret.as_bytes());
-    let signature = hmac::sign(&key, sign_str.as_bytes());
-    Ok(base64::engine::general_purpose::STANDARD.encode(signature.as_ref()))
-}
-
-fn okx_timestamp() -> String {
-    let dur = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap_or_default();
-    let secs = dur.as_secs();
-    let millis = dur.subsec_millis();
-    // OKX API v5 要求 ISO 8601 格式: 2025-05-21T00:00:00.000Z
-    // 使用 chrono (已是项目依赖) 进行格式化
-    let dt = chrono::DateTime::from_timestamp(secs as i64, millis * 1_000_000).unwrap_or_default();
-    dt.format("%Y-%m-%dT%H:%M:%S.%3fZ").to_string()
-}
-
 /// 下单请求
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -109,93 +86,6 @@ pub struct OkxCancelOrderRequest {
     pub ord_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cl_ord_id: Option<String>,
-}
-
-fn validate_credentials(api_key: &str, secret: &str, passphrase: &str) -> Result<()> {
-    if api_key.is_empty() || secret.is_empty() || passphrase.is_empty() {
-        bail!("OKX API 凭证不能为空: api_key/secret/passphrase 必须全部提供");
-    }
-    Ok(())
-}
-
-pub fn build_signed_request(
-    profile: OkxTradingProfile,
-    credentials: &OkxCredentials,
-    method: &str,
-    request_path: &str,
-    body: &str,
-) -> Result<OkxSignedRequest> {
-    validate_credentials(
-        &credentials.api_key,
-        &credentials.secret,
-        &credentials.passphrase,
-    )?;
-    let method = method.trim().to_ascii_uppercase();
-    if method.is_empty() {
-        bail!("OKX 请求 method 不能为空");
-    }
-    if !request_path.starts_with("/api/v5/") {
-        bail!("OKX 模拟盘请求路径必须固定在 /api/v5/ 下");
-    }
-    let timestamp = okx_timestamp();
-    build_signed_request_with_timestamp(
-        profile,
-        credentials,
-        &method,
-        request_path,
-        body,
-        &timestamp,
-    )
-}
-
-fn build_signed_request_with_timestamp(
-    profile: OkxTradingProfile,
-    credentials: &OkxCredentials,
-    method: &str,
-    request_path: &str,
-    body: &str,
-    timestamp: &str,
-) -> Result<OkxSignedRequest> {
-    let signature = sign_okx(timestamp, method, request_path, body, &credentials.secret)?;
-    let mut headers = vec![
-        ("OK-ACCESS-KEY".to_string(), credentials.api_key.clone()),
-        ("OK-ACCESS-SIGN".to_string(), signature),
-        ("OK-ACCESS-TIMESTAMP".to_string(), timestamp.to_string()),
-        (
-            "OK-ACCESS-PASSPHRASE".to_string(),
-            credentials.passphrase.clone(),
-        ),
-        ("Content-Type".to_string(), "application/json".to_string()),
-    ];
-    if let Some((name, value)) = profile.simulated_trading_header {
-        headers.push((name.to_string(), value.to_string()));
-    }
-
-    Ok(OkxSignedRequest {
-        method: method.to_string(),
-        path: request_path.to_string(),
-        url: format!(
-            "{}{}",
-            resolved_rest_base_url(profile.rest_base_url)?,
-            request_path
-        ),
-        body: body.to_string(),
-        headers,
-        audit_environment: profile.audit_environment.to_string(),
-        sdk_flag: profile.sdk_flag.to_string(),
-    })
-}
-
-fn resolved_rest_base_url(default_base_url: &str) -> Result<String> {
-    let raw = std::env::var(OKX_REST_BASE_URL_ENV).unwrap_or_else(|_| default_base_url.to_string());
-    let base_url = raw.trim().trim_end_matches('/').to_string();
-    if !base_url.starts_with("https://") {
-        bail!("{OKX_REST_BASE_URL_ENV} 必须是 https:// 开头的 OKX REST base URL");
-    }
-    if base_url.contains("/api/v5") {
-        bail!("{OKX_REST_BASE_URL_ENV} 只允许配置 base URL，不包含 /api/v5 路径");
-    }
-    Ok(base_url)
 }
 
 fn okx_rest_proxy_url() -> Option<String> {
@@ -480,36 +370,7 @@ pub fn fetch_balance_with_profile(
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_format_okx_sign_string() {
-        let sig = sign_okx(
-            "2024-01-01T00:00:00.000Z",
-            "POST",
-            "/api/v5/trade/order",
-            "{}",
-            "test_secret",
-        );
-        assert!(sig.is_ok());
-        // 签名应为 base64 编码字符串
-        let sig_str = sig.unwrap();
-        assert!(!sig_str.is_empty());
-        // base64 decode 应该成功
-        base64::engine::general_purpose::STANDARD
-            .decode(&sig_str)
-            .expect("签名应为有效 base64");
-    }
-
-    #[test]
-    fn test_okx_timestamp_is_valid() {
-        let ts = okx_timestamp();
-        let parsed =
-            chrono::DateTime::parse_from_rfc3339(&ts).expect("OKX 时间戳应为 RFC3339/ISO8601 格式");
-        assert!(ts.ends_with('Z'));
-        assert!(ts.contains('.'));
-        // 2024年之后的时间戳
-        assert!(parsed.timestamp() > 1_700_000_000);
-    }
+    use std::time::{SystemTime, UNIX_EPOCH};
 
     #[test]
     fn okx_order_request_serializes_okx_v5_field_names() {
@@ -543,37 +404,6 @@ mod tests {
             Some(OKX_SIMULATED_TRADING_HEADER)
         );
         assert_eq!(profile.audit_environment, OKX_DEMO_AUDIT_ENVIRONMENT);
-    }
-
-    #[test]
-    fn okx_demo_signed_request_pins_simulated_header_and_flag() {
-        let credentials = OkxCredentials {
-            api_key: "key".to_string(),
-            secret: "secret".to_string(),
-            passphrase: "pass".to_string(),
-        };
-        let signed = build_signed_request_with_timestamp(
-            OkxTradingProfile::demo(),
-            &credentials,
-            "POST",
-            OKX_ORDER_PATH,
-            r#"{"instId":"BTC-USDT"}"#,
-            "2026-05-25T00:00:00.000Z",
-        )
-        .unwrap();
-
-        assert_eq!(signed.method, "POST");
-        assert_eq!(signed.path, OKX_ORDER_PATH);
-        assert_eq!(signed.sdk_flag, "1");
-        assert_eq!(signed.audit_environment, OKX_DEMO_AUDIT_ENVIRONMENT);
-        assert!(signed
-            .headers
-            .iter()
-            .any(|(name, value)| name == "x-simulated-trading" && value == "1"));
-        assert!(!signed
-            .headers
-            .iter()
-            .any(|(name, value)| name == "x-simulated-trading" && value == "0"));
     }
 
     #[test]
@@ -632,8 +462,6 @@ mod tests {
             Option<&str>,
             Option<&str>,
         ) -> Result<serde_json::Value> = cancel_order;
-        assert!(validate_credentials("", "secret", "passphrase").is_err());
-        assert!(validate_credentials("key", "secret", "passphrase").is_ok());
     }
 
     fn probe_credentials_from_env() -> Option<OkxCredentials> {

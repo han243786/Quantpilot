@@ -6199,3 +6199,6 @@ Recursive boundary supplement: BE-002LS-02 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1880-root.executor.runner.runner_support_files.okx_rest.parent_residual_judgment.signing_request_surface.md` - v4.16.0 BE-002LS-02 okx_rest parent residual judgment selects signing_request_surface
 Recursive boundary supplement: BE-002LT-01 `root.executor.runner.runner_support_files.okx_rest.signing_request_surface` baseline frozen; next step: BE-002LT-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1881-root.executor.runner.runner_support_files.okx_rest.signing_request_surface.baseline_plan.md` - v4.16.0 BE-002LT-01 signing_request_surface baseline plan
+Recursive boundary supplement: BE-002LT-02 `root.executor.runner.runner_support_files.okx_rest.signing_request_surface` actual extraction complete; next step: BE-002LT-03 single_leaf_closeout.
+- `src-executor/okx_rest/signing_request_surface.rs` - OKX REST signing, timestamp, signed request construction, base URL resolution, and signing-focused tests child
+- `markdown/06-milestones/v4.16.0/1882-root.executor.runner.runner_support_files.okx_rest.signing_request_surface.extract_closeout.md` - v4.16.0 BE-002LT-02 signing_request_surface extract closeout

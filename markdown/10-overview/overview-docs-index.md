@@ -1889,3 +1889,4 @@
 | v4.16.0 / BE-002LS-01 | Added: `okx_rest` precision baseline plan |
 | v4.16.0 / BE-002LS-02 | Added: `okx_rest` parent residual judgment selects `signing_request_surface` |
 | v4.16.0 / BE-002LT-01 | Added: `signing_request_surface` baseline plan |
+| v4.16.0 / BE-002LT-02 | Added: `signing_request_surface` helper extraction complete |
