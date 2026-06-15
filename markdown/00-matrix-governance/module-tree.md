@@ -9648,3 +9648,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner baseline_frozen: true`; child queue is `v3_live_runner`, `runner_instance_dispatch`, `v4_runner`, `runner_pool_orchestration`, `v4_market_metadata_helpers`, and `test_harness`.
 **Latest state supplement (BE-002ME-02)**: `root.executor.runner.runner_support_files.live_runner` parent residual judgment selected `v3_live_runner`; next step: BE-002MF-01 baseline_plan.
 `root.executor.runner.runner_support_files.live_runner.v3_live_runner selected: true`; this child starts with `LiveRunner`, `RunnerStatus`, V3 websocket event handling, fast/slow runtime cycles, trigger detection, and subscription filtering.
+**Latest state supplement (BE-002MF-01)**: `root.executor.runner.runner_support_files.live_runner.v3_live_runner` baseline frozen; next step: BE-002MF-02 actual_extraction.
+`root.executor.runner.runner_support_files.live_runner.v3_live_runner baseline_frozen: true`; approved movement is limited to `LiveRunner`, `RunnerStatus`, V3 event handling, fast/slow cycle logic, trigger detection, and subscription filtering.

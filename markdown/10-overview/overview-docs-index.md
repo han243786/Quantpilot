@@ -1911,3 +1911,4 @@
 | v4.16.0 / BE-002MD-01 | Added: `runner_support_files` parent residual judgment selects `live_runner` |
 | v4.16.0 / BE-002ME-01 | Added: `live_runner` baseline plan |
 | v4.16.0 / BE-002ME-02 | Added: `live_runner` parent residual judgment selects `v3_live_runner` |
+| v4.16.0 / BE-002MF-01 | Added: `v3_live_runner` baseline plan |
