@@ -1,11 +1,15 @@
 /// v3.5.0/v4.8.0: OKX REST API 客户端 (demo trading only)
 /// 文档: https://www.okx.com/docs-v5/
 /// Demo trading: https://www.okx.com/api/v5 (需在 headers 中设置 x-simulated-trading: 1)
-use anyhow::{bail, Context, Result};
-use std::time::Duration;
+use anyhow::{bail, Result};
 
 mod signing_request_surface;
+mod transport_response_surface;
 pub use signing_request_surface::build_signed_request;
+use transport_response_surface::send_signed_request;
+
+#[cfg(test)]
+use transport_response_surface::send_signed_request_raw;
 
 #[cfg(test)]
 use signing_request_surface::{build_signed_request_with_timestamp, okx_timestamp};
@@ -86,95 +90,6 @@ pub struct OkxCancelOrderRequest {
     pub ord_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cl_ord_id: Option<String>,
-}
-
-fn okx_rest_proxy_url() -> Option<String> {
-    [
-        OKX_REST_PROXY_ENV,
-        "ALL_PROXY",
-        "all_proxy",
-        "HTTPS_PROXY",
-        "https_proxy",
-        "HTTP_PROXY",
-        "http_proxy",
-    ]
-    .into_iter()
-    .find_map(|name| {
-        std::env::var(name)
-            .ok()
-            .map(|value| value.trim().to_string())
-            .filter(|value| !value.is_empty())
-    })
-}
-
-fn okx_rest_agent() -> Result<ureq::Agent> {
-    let mut builder = ureq::AgentBuilder::new()
-        .timeout_connect(Duration::from_secs(OKX_REST_CONNECT_TIMEOUT_SECS))
-        .timeout_read(Duration::from_secs(OKX_REST_READ_TIMEOUT_SECS))
-        .timeout_write(Duration::from_secs(OKX_REST_WRITE_TIMEOUT_SECS));
-    if let Some(proxy_url) = okx_rest_proxy_url() {
-        let proxy = ureq::Proxy::new(&proxy_url)
-            .with_context(|| format!("OKX REST proxy 配置无效: {}", proxy_url))?;
-        builder = builder.proxy(proxy);
-    }
-    Ok(builder.build())
-}
-
-fn send_signed_request_raw(request: OkxSignedRequest) -> Result<serde_json::Value> {
-    let agent = okx_rest_agent()?;
-    let mut req = agent.request(&request.method, &request.url);
-    for (name, value) in &request.headers {
-        req = req.set(name, value);
-    }
-    let response_result = if request.body.is_empty() {
-        req.call()
-    } else {
-        req.send_string(&request.body)
-    };
-    let response = response_result.or_else(|error| match error {
-        ureq::Error::Status(_, response) => Ok(response),
-        other => Err(other),
-    })?;
-    let res: serde_json::Value = response.into_json()?;
-    Ok(res)
-}
-
-fn send_signed_request(request: OkxSignedRequest, action: &str) -> Result<serde_json::Value> {
-    let res = send_signed_request_raw(request)?;
-    ensure_okx_success(action, &res)?;
-    Ok(res)
-}
-
-fn ensure_okx_success(action: &str, response: &serde_json::Value) -> Result<()> {
-    if response.get("code").and_then(|c| c.as_str()) != Some("0") {
-        let code = response
-            .get("code")
-            .and_then(|c| c.as_str())
-            .unwrap_or("unknown");
-        let msg = response
-            .get("msg")
-            .and_then(|m| m.as_str())
-            .unwrap_or("未知错误");
-        bail!("OKX {}失败 [code={}]: {}", action, code, msg);
-    }
-
-    if let Some(first) = response
-        .get("data")
-        .and_then(|data| data.as_array())
-        .and_then(|items| items.first())
-    {
-        if let Some(s_code) = first.get("sCode").and_then(|value| value.as_str()) {
-            if s_code != "0" {
-                let s_msg = first
-                    .get("sMsg")
-                    .and_then(|value| value.as_str())
-                    .unwrap_or("未知错误");
-                bail!("OKX {}失败 [sCode={}]: {}", action, s_code, s_msg);
-            }
-        }
-    }
-
-    Ok(())
 }
 
 /// 提交订单到 OKX 模拟盘。
@@ -370,7 +285,7 @@ pub fn fetch_balance_with_profile(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::time::{SystemTime, UNIX_EPOCH};
+    use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
     #[test]
     fn okx_order_request_serializes_okx_v5_field_names() {
