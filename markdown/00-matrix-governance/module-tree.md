@@ -9678,3 +9678,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration extracted: src-executor/live_runner/runner_pool_orchestration.rs`; parent re-exports `RunnerPool` while retaining V4 helpers and tests.
 **Latest state supplement (BE-002ML-03)**: `root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration` single leaf closeout complete; next step returns to `live_runner` parent residual judgment.
 `root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration stop_split: true`; terminal leaf control returned `STOP` with score 32.
+**Latest state supplement (BE-002MM-01)**: `root.executor.runner.runner_support_files.live_runner` parent residual judgment selected `v4_market_metadata_helpers`; next step: BE-002MN-01 baseline_plan.
+`root.executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers selected: true`; this child starts with V4 execution capability matrix construction and graph metadata default venue/symbol resolution.

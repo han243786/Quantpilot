@@ -2007,3 +2007,4 @@ Latest recursive supplement: BE-002MK-01 selected `live_runner.runner_pool_orche
 Latest recursive supplement: BE-002ML-01 froze `runner_pool_orchestration`; next movement may extract RunnerPool and direct impl.
 Latest recursive supplement: BE-002ML-02 extracted `runner_pool_orchestration`; next step is single leaf closeout.
 Latest recursive supplement: BE-002ML-03 closed `live_runner.runner_pool_orchestration` with `stop_split: true`; next step returns to `live_runner` parent residual judgment.
+Latest recursive supplement: BE-002MM-01 selected `live_runner.v4_market_metadata_helpers`; next baseline freezes V4 market metadata helper movement.
