@@ -6264,3 +6264,5 @@ Recursive boundary supplement: BE-002MH-02 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1909-root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch.extract_closeout.md` - v4.16.0 BE-002MH-02 runner_instance_dispatch actual extraction closeout
 Recursive boundary supplement: BE-002MH-03 `root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch` single leaf closeout complete; next step: BE-002MI-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1910-root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch.single_leaf_closeout.md` - v4.16.0 BE-002MH-03 runner_instance_dispatch single leaf closeout
+Recursive boundary supplement: BE-002MI-01 `root.executor.runner.runner_support_files.live_runner` parent residual judgment selected `v4_runner`; next step: BE-002MJ-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1911-root.executor.runner.runner_support_files.live_runner.parent_residual_judgment.v4_runner.md` - v4.16.0 BE-002MI-01 live_runner parent residual judgment selects v4_runner

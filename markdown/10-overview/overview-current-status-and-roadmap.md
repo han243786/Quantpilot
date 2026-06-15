@@ -1999,3 +1999,4 @@ Latest recursive supplement: BE-002MG-01 selected `live_runner.runner_instance_d
 Latest recursive supplement: BE-002MH-01 froze `runner_instance_dispatch`; next movement may extract RunnerInstance variant dispatch.
 Latest recursive supplement: BE-002MH-02 extracted `runner_instance_dispatch`; next step is single leaf closeout.
 Latest recursive supplement: BE-002MH-03 closed `live_runner.runner_instance_dispatch` with `stop_split: true`; next step returns to `live_runner` parent residual judgment.
+Latest recursive supplement: BE-002MI-01 selected `live_runner.v4_runner`; next baseline freezes V4 live runner movement.

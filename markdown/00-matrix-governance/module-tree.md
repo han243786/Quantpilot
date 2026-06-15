@@ -9662,3 +9662,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch extracted: src-executor/live_runner/runner_instance_dispatch.rs`; parent re-exports `RunnerInstance` while retaining RunnerPool, V4 runner, V4 helpers, and tests.
 **Latest state supplement (BE-002MH-03)**: `root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch` single leaf closeout complete; next step returns to `live_runner` parent residual judgment.
 `root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch stop_split: true`; terminal leaf control returned `STOP` with score 23.
+**Latest state supplement (BE-002MI-01)**: `root.executor.runner.runner_support_files.live_runner` parent residual judgment selected `v4_runner`; next step: BE-002MJ-01 baseline_plan.
+`root.executor.runner.runner_support_files.live_runner.v4_runner selected: true`; this child starts with `V4Runner`, `V4ExecutorEvidenceEvent`, V4 websocket handling, evidence projection, and subscription filtering.
