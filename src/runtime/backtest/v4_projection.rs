@@ -148,7 +148,7 @@ pub(super) fn frontend_events_from_v4_backtest_artifact(
                 "open_orders": [],
                 "equity_estimate": point.equity,
                 "trace_id": format!("{}_v4_portfolio_trace_{}", backtest_id, index),
-                "projection": {
+                "artifact_projection": {
                     "session_index": index,
                     "cycle_name": "v4",
                     "session_started_at_ms": point.ts_ms
@@ -171,7 +171,7 @@ pub(super) fn frontend_events_from_v4_backtest_artifact(
                 "reason_code": if decision.approved { "V4_RISK_APPROVED" } else { "V4_RISK_REJECTED" },
                 "decision": decision,
                 "trace_id": format!("{}_v4_risk_trace_{}", backtest_id, index),
-                "projection": {
+                "artifact_projection": {
                     "session_index": index,
                     "cycle_name": "v4",
                     "session_started_at_ms": decision.ts_ms
@@ -193,7 +193,7 @@ pub(super) fn frontend_events_from_v4_backtest_artifact(
                 "orders": if source.accepted { 1 } else { 0 },
                 "capability_source": source,
                 "trace_id": format!("{}_v4_execution_trace_{}", backtest_id, index),
-                "projection": {
+                "artifact_projection": {
                     "session_index": index,
                     "cycle_name": "v4",
                     "session_started_at_ms": source.ts_ms
@@ -214,7 +214,7 @@ pub(super) fn frontend_events_from_v4_backtest_artifact(
             json!({
                 "trajectory": point,
                 "trace_id": format!("{}_v4_machine_trace_{}", backtest_id, index),
-                "projection": {
+                "artifact_projection": {
                     "session_index": index,
                     "cycle_name": "v4",
                     "session_started_at_ms": point.ts_ms

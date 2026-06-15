@@ -294,7 +294,6 @@ pub(crate) fn ui_action_capabilities() -> Vec<UiCapabilityEntry> {
         "export_runtime_config",
         "export_quantscript",
         "compile",
-        "start_simulation",
         "start_v4_simulation",
         "run_backtest",
         "stop_runtime",

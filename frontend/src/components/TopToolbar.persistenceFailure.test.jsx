@@ -48,7 +48,7 @@ describe("TopToolbar save/load failure notices", () => {
         })),
         exportQuantScript: vi.fn(() => "graph persistence_failure_graph"),
         compileCurrentGraph: vi.fn(),
-        startRuntime: vi.fn(),
+        startV4Simulation: vi.fn(),
         startBacktest: vi.fn(),
         stopRuntime: vi.fn(),
         resetRuntime: vi.fn(),

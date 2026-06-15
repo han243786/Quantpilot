@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 import { backendCapabilitiesFixture } from "../../src/test/fixtures/capabilities/capabilityFallbacks";
 import { createApiMockHarness } from "./support/apiHarness";
 import { installWorkspaceBootstrapMocks } from "./support/workspaceBootstrapMocks";
+import { buildWorkspaceGraphFixture } from "./support/workspaceGraphFixture";
 
 const visualAlertFixture = {
   firings: [],
@@ -113,9 +114,31 @@ const visualRunbookFixture = [
 ];
 
 async function installVisualRegressionMocks(page) {
+  await page.addInitScript(() => {
+    window.localStorage?.setItem("qp.tutorial.seen", "1");
+    window.localStorage?.setItem("quantpilot.tutorial.seen", "1");
+    window.localStorage?.setItem("quantpilot.theme", "dark");
+    const fixedNow = 1_700_000_000_000;
+    const RealDate = Date;
+    class FixedDate extends RealDate {
+      constructor(...args) {
+        super(...(args.length > 0 ? args : [fixedNow]));
+      }
+
+      static now() {
+        return fixedNow;
+      }
+    }
+    FixedDate.UTC = RealDate.UTC;
+    FixedDate.parse = RealDate.parse;
+    FixedDate.prototype = RealDate.prototype;
+    window.Date = FixedDate;
+  });
   const api = await createApiMockHarness(page);
+  const graphFixture = buildWorkspaceGraphFixture();
+  graphFixture.metadata.updated_at = 1_716_543_299_000;
   await api.json("**/api/capabilities", backendCapabilitiesFixture);
-  await installWorkspaceBootstrapMocks(api);
+  await installWorkspaceBootstrapMocks(api, { graphFixture });
   await api.json("**/api/v1/alerts", visualAlertFixture);
   await api.json("**/api/v1/snapshots", visualSnapshotFixture);
   await api.json("**/api/v1/runbook", visualRunbookFixture);

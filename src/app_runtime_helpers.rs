@@ -182,61 +182,6 @@ pub(super) async fn health(State(state): State<AppState>) -> impl IntoResponse {
     }))
 }
 
-pub(super) fn artifact_replay_source(
-    source: FrontendBacktestReplaySource,
-) -> ArtifactBacktestReplaySource {
-    match source {
-        FrontendBacktestReplaySource::HistoricalReplay => {
-            ArtifactBacktestReplaySource::HistoricalReplay
-        }
-        FrontendBacktestReplaySource::DeterministicMock => {
-            ArtifactBacktestReplaySource::DeterministicMock
-        }
-    }
-}
-
-#[allow(clippy::too_many_arguments)]
-pub(super) fn build_backtest_spec(
-    backtest_id: &str,
-    replay_source: FrontendBacktestReplaySource,
-    request: &FrontendRunRequest,
-    compiled: &qrpc_core::CompiledRuntimeProtocol,
-    artifacts: &CompileArtifactBundle,
-    requested_at_ms: u64,
-    execution_assumptions: ExecutionAssumptionSpec,
-    execution_assumption_sources: ExecutionAssumptionSourceSummary,
-) -> BacktestSpec {
-    let mut run_spec = RunSpec::from_runtime_protocol(
-        RunSpecRuntimeProtocolInput {
-            graph_id: request.runtime_config.metadata.graph_id.clone(),
-            compile_id: request.runtime_config.metadata.compile_id.clone(),
-            run_mode: RunModeSpec::Backtest,
-            runtime_mode: request.runtime_config.metadata.mode.clone(),
-            protocol_name: compiled.protocol_name.clone(),
-            config_hash: compiled.config_hash.clone(),
-            core_ir_digest: artifacts.core_ir.digest.clone(),
-        },
-        &compiled.config,
-    );
-
-    run_spec.execution_assumptions = execution_assumptions;
-    run_spec.execution_assumption_sources = Some(execution_assumption_sources);
-    let snapshot = qrpc_core::MarketDataSnapshotSpec::from_runtime_protocol(
-        format!("market_snapshot_{backtest_id}"),
-        artifact_replay_source(replay_source),
-        requested_at_ms,
-        &compiled.config,
-    );
-
-    BacktestSpec::new(
-        backtest_id.to_string(),
-        artifact_replay_source(replay_source),
-        requested_at_ms,
-        run_spec,
-        snapshot,
-    )
-}
-
 pub(super) fn current_time_ms() -> u64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)

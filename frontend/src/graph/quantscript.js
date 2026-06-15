@@ -13,6 +13,12 @@ export function attachQuantScriptArtifacts(graph) {
   );
   const graphScript = generateGraphQuantScript(graph);
   const formalScript = generateFormalQuantScript(graph);
+  const existingFormalSource = graph.metadata?.artifacts?.quantscript?.formal_source;
+  const runtimeFormalSource =
+    typeof existingFormalSource === "string" &&
+    /^\s*v4_strategy\s+\S+\s*\{/m.test(existingFormalSource)
+      ? existingFormalSource
+      : formalScript;
   const labelTargets = buildQuantScriptLabelTargets(graph);
   const runtimeTargets = buildQuantScriptRuntimeTargets(graph);
   return {
@@ -24,7 +30,7 @@ export function attachQuantScriptArtifacts(graph) {
         ...(graph.metadata?.artifacts || {}),
         quantscript: {
           graph_source: graphScript,
-          formal_source: formalScript,
+          formal_source: runtimeFormalSource,
           node_sources: nodeScripts,
           label_targets: labelTargets,
           runtime_targets: runtimeTargets,

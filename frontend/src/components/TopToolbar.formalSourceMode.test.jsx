@@ -50,7 +50,7 @@ describe("TopToolbar formal compile source mode", () => {
         exportRuntimeConfig: vi.fn(),
         exportQuantScript: vi.fn(),
         compileCurrentGraph: vi.fn(),
-        startRuntime: vi.fn(),
+        startV4Simulation: vi.fn(),
         startBacktest: vi.fn(),
         stopRuntime: vi.fn(),
         resetRuntime: vi.fn(),

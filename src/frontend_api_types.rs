@@ -151,17 +151,7 @@ pub(super) struct FrontendRunRequest {
     #[serde(default)]
     pub(super) graph_json: Option<Value>,
     #[serde(default)]
-    pub(super) runtime_targets: CompileRuntimeTargets,
-    #[serde(default)]
     pub(super) backtest_options: FrontendBacktestOptions,
-}
-
-impl FrontendRunRequest {
-    pub(super) fn backtest_replay_source(&self) -> FrontendBacktestReplaySource {
-        self.backtest_options
-            .replay_source
-            .unwrap_or(FrontendBacktestReplaySource::HistoricalReplay)
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -215,8 +205,6 @@ pub(super) struct FrontendExperimentRequest {
     pub(super) runtime_config: FrontendRuntimeConfig,
     #[serde(default)]
     pub(super) graph_json: Option<Value>,
-    #[serde(default)]
-    pub(super) runtime_targets: CompileRuntimeTargets,
     #[serde(default)]
     pub(super) backtest_options: FrontendBacktestOptions,
     #[serde(default)]
@@ -294,15 +282,6 @@ pub(super) struct FrontendInputRef {
     pub(super) source_id: String,
     pub(super) source_port: String,
     pub(super) target_port: String,
-}
-
-#[derive(Debug, Serialize)]
-pub(super) struct RunStartResponse {
-    pub(super) run_id: String,
-    pub(super) graph_id: String,
-    pub(super) compile_id: String,
-    pub(super) event_count: usize,
-    pub(super) status: &'static str,
 }
 
 #[derive(Debug, Serialize)]

@@ -172,7 +172,7 @@ describe("support matrix truth source", () => {
       "/api/quantscript/formal/compile",
       "/api/runtime/compile"
     ]);
-    expect(CAPABILITY_ACTION_MAP.start_simulation.apiPaths).toContain("/api/runtime/test-run");
+    expect(CAPABILITY_ACTION_MAP.start_v4_simulation.apiPaths).toContain("/api/runtime/v4/run");
     expect(CAPABILITY_ACTION_MAP.run_backtest.apiPaths).toContain("/api/runtime/backtest");
     expect(CAPABILITY_ACTION_MAP.run_parameter_sweep.apiPaths).toContain(
       "/api/runtime/experiments/backtest-sweep"

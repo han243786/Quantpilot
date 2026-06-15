@@ -10,10 +10,6 @@ pub const MODULE_ID: &str = "backend.runtime.routes.run";
 pub(crate) fn register_routes(router: Router<AppState>) -> Router<AppState> {
     router
         .route(
-            "/api/runtime/test-run",
-            post(runtime_handlers::start_test_run),
-        )
-        .route(
             "/api/runtime/v4/run",
             post(runtime_handlers::start_v4_runtime_run),
         )

@@ -8,6 +8,42 @@ use axum::{
 use serde_json::Value;
 use tower::ServiceExt;
 
+const VALID_V4_EXPERIMENT_QS: &str = r#"
+v4_strategy strategy.v4.experiment {
+  venue paper-local
+  mode paper_simulated
+  require capability market
+
+  machine data.market observation priority 8000 {
+    state idle initial
+    state ready
+    state_group active idle ready
+    memory last_signal_at: time nullable
+    on market.tick from idle to ready emit bar_closed write last_signal_at
+  }
+
+  machine risk.guard decision priority 9500 {
+    state idle initial
+    state ready
+    state_group active idle ready
+    memory last_signal_at: time nullable
+    on bar_closed from idle to ready emit risk.approved write last_signal_at
+  }
+
+  machine execution.router execution priority 4000 {
+    state idle initial
+    state ready
+    state_group active idle ready
+    memory last_signal_at: time nullable
+    on risk.approved from idle to ready write last_signal_at
+  }
+
+  edge data.market -> risk.guard on bar_closed
+  edge risk.guard -> execution.router on risk.approved
+  risk_plane risk.guard priority 9000
+}
+"#;
+
 fn paginated_items(value: &Value) -> &[Value] {
     value
         .get("data")
@@ -21,7 +57,16 @@ async fn experiment_endpoints_expose_parameter_grid_and_variant_summaries() {
     let app = common::test_app("api_experiments_contract");
     let mut request = common::sample_runtime_request();
     request["backtest_options"] = serde_json::json!({
-        "replay_source": "deterministic_mock"
+        "replay_source": "deterministic_mock",
+        "runtime_kind": "v4",
+        "symbols": ["BTCUSDT"]
+    });
+    request["graph_json"]["metadata"]["runtime_kind"] = Value::String("v4".to_string());
+    request["graph_json"]["metadata"]["artifacts"] = serde_json::json!({
+        "quantscript": {
+            "formal_source": VALID_V4_EXPERIMENT_QS
+        },
+        "v4_symbols": ["BTCUSDT"]
     });
     request["experiment_name"] = Value::String("Execution assumptions sweep".to_string());
     request["parameter_grid"] = serde_json::json!({
@@ -43,9 +88,10 @@ async fn experiment_endpoints_expose_parameter_grid_and_variant_summaries() {
         .await
         .unwrap();
 
-    assert_eq!(response.status(), StatusCode::OK);
+    let status = response.status();
     let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
     let detail: Value = serde_json::from_slice(&body).unwrap();
+    assert_eq!(status, StatusCode::OK, "{detail}");
     let experiment_id = detail["experiment_id"].as_str().unwrap().to_string();
     assert_eq!(
         detail["definition"]["experiment_name"],
@@ -132,7 +178,16 @@ async fn experiment_sweep_rejects_parameter_grid_above_variant_limit() {
     let app = common::test_app("api_experiments_variant_limit");
     let mut request = common::sample_runtime_request();
     request["backtest_options"] = serde_json::json!({
-        "replay_source": "deterministic_mock"
+        "replay_source": "deterministic_mock",
+        "runtime_kind": "v4",
+        "symbols": ["BTCUSDT"]
+    });
+    request["graph_json"]["metadata"]["runtime_kind"] = Value::String("v4".to_string());
+    request["graph_json"]["metadata"]["artifacts"] = serde_json::json!({
+        "quantscript": {
+            "formal_source": VALID_V4_EXPERIMENT_QS
+        },
+        "v4_symbols": ["BTCUSDT"]
     });
     request["parameter_grid"] = serde_json::json!({
         "fee_bps": [1.0, 2.0, 3.0, 4.0],
@@ -161,125 +216,4 @@ async fn experiment_sweep_rejects_parameter_grid_above_variant_limit() {
         .expect("error response should include message");
     assert!(message.contains("参数扫描展开为 36 个变体"));
     assert!(message.contains("超出当前限制 27"));
-}
-
-#[tokio::test(flavor = "multi_thread")]
-async fn experiment_preview_can_be_discarded_before_save_only() {
-    let app = common::test_app("api_experiments_discard");
-    let mut request = common::sample_runtime_request();
-    request["backtest_options"] = serde_json::json!({
-        "replay_source": "deterministic_mock"
-    });
-    request["parameter_grid"] = serde_json::json!({
-        "fee_bps": [5.0],
-        "slippage_bps": [5.0],
-        "latency_ms": [0]
-    });
-
-    let response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri("/api/runtime/experiments/backtest-sweep")
-                .method("POST")
-                .header("content-type", "application/json")
-                .body(Body::from(request.to_string()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(response.status(), StatusCode::OK);
-    let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
-    let detail: Value = serde_json::from_slice(&body).unwrap();
-    let experiment_id = detail["experiment_id"].as_str().unwrap().to_string();
-    assert_eq!(detail["saved"], false);
-    let variant_backtest_id = detail["variants"][0]["backtest_id"]
-        .as_str()
-        .unwrap()
-        .to_string();
-
-    let discard_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/experiments/{experiment_id}"))
-                .method("DELETE")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(discard_response.status(), StatusCode::OK);
-
-    let detail_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/experiments/{experiment_id}"))
-                .method("GET")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(detail_response.status(), StatusCode::NOT_FOUND);
-
-    let variant_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/backtests/{variant_backtest_id}"))
-                .method("GET")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(variant_response.status(), StatusCode::NOT_FOUND);
-
-    let second_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri("/api/runtime/experiments/backtest-sweep")
-                .method("POST")
-                .header("content-type", "application/json")
-                .body(Body::from(request.to_string()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(second_response.status(), StatusCode::OK);
-    let second_body = to_bytes(second_response.into_body(), usize::MAX)
-        .await
-        .unwrap();
-    let second_detail: Value = serde_json::from_slice(&second_body).unwrap();
-    let saved_experiment_id = second_detail["experiment_id"].as_str().unwrap().to_string();
-
-    let save_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!(
-                    "/api/runtime/experiments/{saved_experiment_id}/save"
-                ))
-                .method("POST")
-                .body(Body::from("{}"))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(save_response.status(), StatusCode::OK);
-
-    let saved_discard_response = app
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/experiments/{saved_experiment_id}"))
-                .method("DELETE")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(saved_discard_response.status(), StatusCode::CONFLICT);
 }

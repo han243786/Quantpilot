@@ -8,7 +8,7 @@ import { humanizeErrorText } from "../utils/errorText";
 const ACTION_COMMAND_DEFS = [
   { id: "save-graph", labelKey: "保存策略图", keys: ["save"], sectionKey: "操作", action: "saveGraph" },
   { id: "compile-graph", labelKey: "编译当前策略", keys: ["compile"], sectionKey: "操作", action: "compileCurrentGraph" },
-  { id: "run-runtime", labelKey: "运行模拟", keys: ["run"], sectionKey: "操作", action: "startRuntime" },
+  { id: "run-runtime", labelKey: "运行模拟", keys: ["run"], sectionKey: "操作", action: "startV4Simulation" },
   { id: "run-backtest", labelKey: "运行回测", keys: ["backtest"], sectionKey: "操作", action: "startBacktest" },
 ];
 const COMMAND_DEFS = [...COMMAND_NAVIGATION_DEFS, ...ACTION_COMMAND_DEFS];

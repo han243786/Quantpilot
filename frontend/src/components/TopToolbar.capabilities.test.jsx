@@ -5,11 +5,19 @@ import { I18nProvider } from "../i18n";
 import { useGraphStore } from "../store/graphStore";
 import { backendCapabilitiesFixture } from "../test/fixtures/capabilities/capabilityFallbacks";
 
+const TEST_V4_SOURCE = "v4_strategy toolbar.test { machine observe {} }";
+
 function buildGraph(overrides = {}) {
   return {
     metadata: {
       name: "Capability Test Graph",
       graph_id: "capability_test_graph",
+      runtime_kind: "v4",
+      artifacts: {
+        quantscript: {
+          formal_source: TEST_V4_SOURCE
+        }
+      },
       ...(overrides.metadata || {})
     },
     nodes: [],
@@ -48,7 +56,7 @@ describe("TopToolbar capability fallback UI", () => {
         })),
         exportQuantScript: vi.fn(() => "graph capability_test_graph"),
         compileCurrentGraph: vi.fn(),
-        startRuntime: vi.fn(),
+        startV4Simulation: vi.fn(),
         startBacktest: vi.fn(),
         stopRuntime: vi.fn(),
         resetRuntime: vi.fn(),

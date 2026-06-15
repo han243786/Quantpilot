@@ -8,8 +8,7 @@ import {
 } from "./graphStoreHelpers";
 import {
   buildBacktestCompletionState,
-  buildRuntimeConnectingState,
-  resolveRuntimeTargets
+  buildRuntimeConnectingState
 } from "./graphStoreRuntimeSessionState";
 import {
   getRuntimeCapabilityBlockReason,
@@ -55,7 +54,6 @@ export function createGraphStoreRuntimeBacktestActions(set, get) {
           actor: resolveGraphActor(graph),
           capability_context: capabilityContext,
           runtime_config: result.runtime_config,
-          runtime_targets: resolveRuntimeTargets(result),
           graph_json: graph,
           backtest_options: {
             replay_source: "deterministic_mock",

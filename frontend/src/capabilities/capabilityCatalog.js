@@ -229,25 +229,6 @@ export const CAPABILITY_ACTION_MAP = {
       "运行时编译仍然是可运行输出的最终真源。"
     ]
   },
-  start_simulation: {
-    label: "启动模拟",
-    apiPaths: [
-      "/api/runtime/test-run",
-      "/api/runtime/runs/:run_id",
-      "/api/runtime/runs/:run_id/save",
-      "/api/runtime/runs/:run_id/events",
-      "/api/runtime/runs/:run_id/status",
-      "/api/runtime/mutations",
-      "/api/runtime/mutations/:proposal_id",
-      "/api/runtime/mutations/:proposal_id/activate",
-      "/api/runtime/mutations/:proposal_id/rollback"
-    ],
-    blockedDuringCapabilitySync: true,
-    notes: [
-      "当前 Beta 边界内仅支持纸面模拟运行时。",
-      "缓存回退模式下仍可见，但依旧受后端校验约束。"
-    ]
-  },
   start_v4_simulation: {
     label: "v4 模拟运行",
     apiPaths: ["/api/runtime/v4/run"],

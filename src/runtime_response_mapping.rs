@@ -216,21 +216,6 @@ pub(super) fn backtest_filter_metadata(record: &BacktestRecord) -> BacktestFilte
     }
 }
 
-pub(super) fn run_start_response(
-    run_id: String,
-    graph_id: String,
-    compile_id: String,
-    event_count: usize,
-) -> RunStartResponse {
-    RunStartResponse {
-        run_id,
-        graph_id,
-        compile_id,
-        event_count,
-        status: "queued",
-    }
-}
-
 #[allow(clippy::too_many_arguments)]
 pub(super) fn backtest_run_response(
     backtest_id: String,

@@ -39,7 +39,7 @@ Runtime bootstrap and structured error fixtures.
   - successful compile precondition fixture
 - [runSuccess.js](/D:/rust-js-pr/QuantPilot/quantpilot/frontend/src/test/fixtures/runtime/runSuccess.js)
   Shared successful simulation responses for:
-  - `/api/runtime/test-run`
+  - `/api/runtime/v4/run`
   - `/api/runtime/runs`
   - `/api/runtime/runs/:run_id`
   - `/api/runtime/runs/:run_id/events`

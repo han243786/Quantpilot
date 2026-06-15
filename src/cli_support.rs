@@ -114,6 +114,7 @@ pub(super) async fn run_v4_strategy_from_cli(graph_id_or_path: String) -> anyhow
     let source = fs::read_to_string(&source_path)
         .await
         .with_context(|| format!("读取 v4 QS 文件 `{}` 失败", source_path.display()))?;
+    let source = source.trim_start_matches('\u{feff}');
     let audit = quantscript::audit_v4_quant_script_static(&source, &cli_v4_static_bundle());
     let handoff = quantscript::build_v4_qs_runtime_handoff(&audit);
     if !handoff.accepted_for_runtime_handoff {

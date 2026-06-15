@@ -386,69 +386,6 @@ pub(super) fn validate_backtest_execution_assumption_overrides(
     Ok(())
 }
 
-pub(super) fn resolved_execution_assumption_sources(
-    request: &FrontendRunRequest,
-) -> ExecutionAssumptionSourceSummary {
-    let overrides = request.backtest_options.execution_assumptions.as_ref();
-    let execution_config = request
-        .runtime_config
-        .executions
-        .first()
-        .map(|node| &node.config);
-
-    let fee_bps = if overrides.and_then(|value| value.fee_bps).is_some() {
-        ExecutionAssumptionValueSource::RequestOverride
-    } else if execution_config
-        .and_then(|config| config.get("fee_bps"))
-        .is_some()
-    {
-        ExecutionAssumptionValueSource::ProfileDefault
-    } else {
-        ExecutionAssumptionValueSource::BackendFallback
-    };
-
-    let slippage_bps = if overrides.and_then(|value| value.slippage_bps).is_some() {
-        ExecutionAssumptionValueSource::RequestOverride
-    } else if execution_config
-        .and_then(|config| config.get("slippage_bps"))
-        .is_some()
-    {
-        ExecutionAssumptionValueSource::ProfileDefault
-    } else {
-        ExecutionAssumptionValueSource::BackendFallback
-    };
-
-    let latency_ms = if overrides.and_then(|value| value.latency_ms).is_some() {
-        ExecutionAssumptionValueSource::RequestOverride
-    } else {
-        ExecutionAssumptionValueSource::BackendFallback
-    };
-
-    ExecutionAssumptionSourceSummary {
-        fee_bps,
-        slippage_bps,
-        latency_ms,
-    }
-}
-
-pub(super) fn apply_backtest_execution_assumption_overrides(
-    runtime_protocol: &RuntimeProtocolCoreConfig,
-    overrides: Option<&FrontendExecutionAssumptionOverrides>,
-) -> RuntimeProtocolCoreConfig {
-    let Some(overrides) = overrides else {
-        return runtime_protocol.clone();
-    };
-
-    let mut adjusted = runtime_protocol.clone();
-    if let Some(fee_bps) = overrides.fee_bps {
-        adjusted.taker_fee_bps = fee_bps;
-    }
-    if let Some(slippage_bps) = overrides.slippage_bps {
-        adjusted.default_slippage_bps = slippage_bps;
-    }
-    adjusted
-}
-
 pub(super) fn resolved_backtest_execution_assumptions(
     runtime_protocol: &RuntimeProtocolCoreConfig,
     overrides: Option<&FrontendExecutionAssumptionOverrides>,

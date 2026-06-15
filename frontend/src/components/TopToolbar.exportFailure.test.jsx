@@ -52,7 +52,7 @@ describe("TopToolbar export config failure notice", () => {
         })),
         exportQuantScript: vi.fn(() => "graph export_failure_graph"),
         compileCurrentGraph: vi.fn(),
-        startRuntime: vi.fn(),
+        startV4Simulation: vi.fn(),
         startBacktest: vi.fn(),
         stopRuntime: vi.fn(),
         resetRuntime: vi.fn(),

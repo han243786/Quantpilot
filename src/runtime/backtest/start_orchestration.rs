@@ -67,7 +67,6 @@ pub(crate) async fn start_backtest_experiment(
             capability_context: request.capability_context.clone(),
             runtime_config: request.runtime_config.clone(),
             graph_json: request.graph_json.clone(),
-            runtime_targets: request.runtime_targets.clone(),
             backtest_options: FrontendBacktestOptions {
                 replay_source: Some(replay_source),
                 replay_mode: request.backtest_options.replay_mode.clone(),

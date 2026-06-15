@@ -171,7 +171,7 @@ export function resolveWorkspaceActionState({
     capabilities
   });
   const startSimulationCapabilityReason = getCapabilityActionBlockReason({
-    actionKey: "start_simulation",
+    actionKey: "start_v4_simulation",
     capabilityStatus,
     capabilitySource,
     capabilityMessage,
@@ -268,7 +268,8 @@ export function resolveWorkspaceActionState({
       runtime.status !== "running" &&
       runtime.status !== "connecting" &&
       !capabilitySyncBlocked &&
-      isActionEnabled("start_simulation"),
+      isActionEnabled("start_v4_simulation") &&
+      hasV4RuntimeSource,
     canStartV4Simulation:
       runtime.status !== "running" &&
       runtime.status !== "connecting" &&

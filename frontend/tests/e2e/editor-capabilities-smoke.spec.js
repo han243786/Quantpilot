@@ -176,7 +176,7 @@ test("simulation start surfaces backend structured capability rejection", async 
   await mockEditorBootstrap(api);
   await mockFormalCompileUnavailable(api);
   await api.json("**/api/runtime/compile", backendCompileOkFixture);
-  await api.json("**/api/runtime/test-run", capabilityRejectionFixtures.runtimeModeUnsupported, 400);
+  await api.json("**/api/runtime/v4/run", capabilityRejectionFixtures.runtimeModeUnsupported, 400);
   await api.installGuard();
 
   await enterCurrentWorkspace(page);

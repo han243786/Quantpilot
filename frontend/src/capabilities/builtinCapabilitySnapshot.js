@@ -13,7 +13,7 @@ import {
 export const DEFAULT_CAPABILITIES = {
   api_version: "quantpilot-capabilities/v1",
   schema_version: "quantpilot/capabilities-schema/v1",
-  schema_hash: "sha256:86c21d2a4193728bc3332b29910f1d9934ab71b710342698bb82e96fad478a45",
+  schema_hash: "sha256:b4422abf545a8ef161cb800880b89ae76a56a6eec7f74289432491d19a03cd11",
   chain_stages: ["data", "intent", "agent", "risk", "execution", "fill"],
   strategy_ir: {
     declared_indicator_kinds: DECLARED_INDICATOR_KINDS,

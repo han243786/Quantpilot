@@ -4,27 +4,6 @@ use qrpc_core::{RebalanceSchedule, Symbol};
 /// 动量指标默认阈值比率 (§5.1)
 const DEFAULT_MOMENTUM_THRESHOLD: f64 = 0.02;
 
-/// v0.5.2: 改为接受两个 CompileRuntimeTargets, 消除对 MappedRuntimeConfig 的依赖。
-/// provided 优先级高于 fallback。
-pub(super) fn merge_runtime_targets(
-    provided: &CompileRuntimeTargets,
-    fallback: &CompileRuntimeTargets,
-) -> CompileRuntimeTargets {
-    let mut source_to_node = fallback.source_to_node.clone();
-    source_to_node.extend(provided.source_to_node.clone());
-    CompileRuntimeTargets {
-        source_to_node,
-        runtime_node_id: provided
-            .runtime_node_id
-            .clone()
-            .or_else(|| fallback.runtime_node_id.clone()),
-        execution_node_id: provided
-            .execution_node_id
-            .clone()
-            .or_else(|| fallback.execution_node_id.clone()),
-    }
-}
-
 pub(super) fn frontend_runtime_config_from_core_with_template(
     runtime_protocol: &RuntimeProtocolCoreConfig,
     template: &FrontendRuntimeConfig,

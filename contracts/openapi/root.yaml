@@ -252,35 +252,6 @@ paths:
       x-chain-stage: runtime
       x-stability: stable
 
-  /api/runtime/test-run:
-    post:
-      operationId: startTestRun
-      summary: 启动实时仿真运行
-      tags: [runtime]
-      x-owner: backend-runtime
-      x-chain-stage: runtime
-      x-stability: stable
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [runtime_config]
-              properties:
-                actor:
-                  type: object
-                capability_context:
-                  type: object
-                runtime_config:
-                  type: object
-                graph_json:
-                  type: object
-                runtime_targets:
-                  type: object
-                backtest_options:
-                  type: object
-
   /api/runtime/v4/run:
     post:
       operationId: startV4RuntimeRun

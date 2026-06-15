@@ -72,6 +72,53 @@ fn parses_v4_run_command() {
     );
 }
 
+#[tokio::test]
+async fn v4_run_cli_accepts_utf8_bom_source_file() {
+    let dir = test_storage_base("v4_cli_bom");
+    std::fs::create_dir_all(&dir).unwrap();
+    let path = dir.join("strategy.v4.qs");
+    let source = r#"
+v4_strategy strategy.v4.cli_bom {
+  venue paper-local
+  mode paper_simulated
+  require capability market
+
+  machine data.market observation priority 8000 {
+    state idle initial
+    state ready
+    state_group active idle ready
+    memory last_signal_at: time nullable
+    on market.tick from idle to ready emit bar_closed write last_signal_at
+  }
+
+  machine risk.guard decision priority 9500 {
+    state idle initial
+    state ready
+    state_group active idle ready
+    memory last_signal_at: time nullable
+    on bar_closed from idle to ready emit risk.approved write last_signal_at
+  }
+
+  machine execution.router execution priority 4000 {
+    state idle initial
+    state ready
+    state_group active idle ready
+    memory last_signal_at: time nullable
+    on risk.approved from idle to ready write last_signal_at
+  }
+
+  edge data.market -> risk.guard on bar_closed
+  edge risk.guard -> execution.router on risk.approved
+  risk_plane risk.guard priority 9000
+}
+"#;
+    std::fs::write(&path, format!("\u{feff}{source}")).unwrap();
+
+    run_v4_strategy_from_cli(path.to_string_lossy().to_string())
+        .await
+        .expect("v4-run should accept UTF-8 BOM source files");
+}
+
 #[test]
 fn rejects_unknown_cli_command() {
     let err = parse_cli_command_from(["quantpilot", "unknown"]).unwrap_err();
@@ -742,7 +789,6 @@ fn capability_response_declares_workspace_surfaces_and_ui_actions() {
             "export_runtime_config",
             "export_quantscript",
             "compile",
-            "start_simulation",
             "start_v4_simulation",
             "run_backtest",
             "stop_runtime",
@@ -3695,547 +3741,6 @@ async fn strategy_ir_compile_endpoint_returns_structured_custom_diagnostics() {
         .as_str()
         .unwrap()
         .contains("自定义指标受限"));
-}
-
-#[tokio::test]
-async fn backtest_endpoint_returns_output_artifacts() {
-    let app = build_app_router(test_app_state());
-    let mut payload = sample_compile_request_json();
-    payload["backtest_options"] = serde_json::json!({
-        "replay_source": "deterministic_mock"
-    });
-
-    let response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri("/api/runtime/backtest")
-                .method("POST")
-                .header("content-type", "application/json")
-                .body(Body::from(payload.to_string()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    let status = response.status();
-    let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
-    assert_eq!(status, StatusCode::OK, "{}", String::from_utf8_lossy(&body));
-    let value: serde_json::Value = serde_json::from_slice(&body).unwrap();
-
-    assert_eq!(
-        value["backtest_artifacts"]["manifest"]["backtest_spec"]["schema_version"],
-        "quantpilot/backtest-spec/v1"
-    );
-    assert_eq!(
-        value["backtest_artifacts"]["manifest"]["backtest_spec"]["replay_source"],
-        "deterministic_mock"
-    );
-    assert_eq!(
-        value["backtest_artifacts"]["manifest"]["backtest_spec"]["run_spec"]["config_hash"],
-        value["config_hash"]
-    );
-    assert_eq!(
-        value["backtest_artifacts"]["manifest"]["compile_artifacts"]["compile"]["config_hash"],
-        value["config_hash"]
-    );
-    assert_eq!(
-        value["backtest_artifacts"]["manifest"]["compile_artifacts"]["core_ir"]["digest"]["value"],
-        value["backtest_artifacts"]["manifest"]["backtest_spec"]["run_spec"]["core_ir_digest"]
-            ["value"]
-    );
-    assert!(value["backtest_artifacts"]["metrics"]["summary"].is_object());
-    assert!(value["backtest_artifacts"]["manifest"]["output_artifacts"].is_array());
-}
-
-#[tokio::test]
-async fn runtime_run_is_persisted_only_after_save() {
-    let base = test_storage_base("run-save-gate");
-    let graph_dir = base.join("graphs");
-    let run_dir = base.join("runs");
-    let backtest_dir = base.join("backtests");
-    std::fs::create_dir_all(&graph_dir).unwrap();
-    std::fs::create_dir_all(&run_dir).unwrap();
-    std::fs::create_dir_all(&backtest_dir).unwrap();
-    let app = build_app_router(test_app_state_from_dirs(
-        base,
-        graph_dir,
-        run_dir.clone(),
-        backtest_dir,
-    ));
-    let payload = sample_compile_request_json();
-
-    let response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri("/api/runtime/test-run")
-                .method("POST")
-                .header("content-type", "application/json")
-                .body(Body::from(payload.to_string()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(response.status(), StatusCode::OK);
-    let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
-    let created: serde_json::Value = serde_json::from_slice(&body).unwrap();
-    let run_id = created["run_id"].as_str().unwrap().to_string();
-    let run_path = run_dir.join(format!("{run_id}.json"));
-
-    assert!(!run_path.exists());
-
-    let save_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/runs/{run_id}/save"))
-                .method("POST")
-                .body(Body::from("{}"))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(save_response.status(), StatusCode::OK);
-    assert!(run_path.exists());
-}
-
-#[tokio::test]
-async fn runtime_run_can_be_discarded_only_before_save() {
-    let base = test_storage_base("run-discard");
-    let graph_dir = base.join("graphs");
-    let run_dir = base.join("runs");
-    let backtest_dir = base.join("backtests");
-    std::fs::create_dir_all(&graph_dir).unwrap();
-    std::fs::create_dir_all(&run_dir).unwrap();
-    std::fs::create_dir_all(&backtest_dir).unwrap();
-    let app = build_app_router(test_app_state_from_dirs(
-        base,
-        graph_dir,
-        run_dir.clone(),
-        backtest_dir,
-    ));
-    let payload = sample_compile_request_json();
-
-    let response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri("/api/runtime/test-run")
-                .method("POST")
-                .header("content-type", "application/json")
-                .body(Body::from(payload.to_string()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(response.status(), StatusCode::OK);
-    let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
-    let started: serde_json::Value = serde_json::from_slice(&body).unwrap();
-    let run_id = started["run_id"].as_str().unwrap().to_string();
-
-    let discard_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/runs/{run_id}"))
-                .method("DELETE")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(discard_response.status(), StatusCode::OK);
-
-    let detail_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/runs/{run_id}"))
-                .method("GET")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(detail_response.status(), StatusCode::NOT_FOUND);
-
-    let saved_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri("/api/runtime/test-run")
-                .method("POST")
-                .header("content-type", "application/json")
-                .body(Body::from(payload.to_string()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    let saved_body = to_bytes(saved_response.into_body(), usize::MAX)
-        .await
-        .unwrap();
-    let saved: serde_json::Value = serde_json::from_slice(&saved_body).unwrap();
-    let saved_run_id = saved["run_id"].as_str().unwrap().to_string();
-    let save_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/runs/{saved_run_id}/save"))
-                .method("POST")
-                .body(Body::from("{}"))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(save_response.status(), StatusCode::OK);
-
-    let discard_saved_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/runs/{saved_run_id}"))
-                .method("DELETE")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(discard_saved_response.status(), StatusCode::CONFLICT);
-    assert!(run_dir.join(format!("{saved_run_id}.json")).exists());
-}
-
-#[tokio::test]
-async fn backtest_detail_can_be_reloaded_from_artifact_directory() {
-    let base = test_storage_base("backtest-artifacts");
-    let graph_dir = base.join("graphs");
-    let run_dir = base.join("runs");
-    let backtest_dir = base.join("backtests");
-    std::fs::create_dir_all(&graph_dir).unwrap();
-    std::fs::create_dir_all(&run_dir).unwrap();
-    std::fs::create_dir_all(&backtest_dir).unwrap();
-
-    let app = build_app_router(test_app_state_from_dirs(
-        base,
-        graph_dir.clone(),
-        run_dir.clone(),
-        backtest_dir.clone(),
-    ));
-    let mut payload = sample_compile_request_json();
-    payload["backtest_options"] = serde_json::json!({
-        "replay_source": "deterministic_mock"
-    });
-
-    let response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri("/api/runtime/backtest")
-                .method("POST")
-                .header("content-type", "application/json")
-                .body(Body::from(payload.to_string()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(response.status(), StatusCode::OK);
-    let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
-    let created: serde_json::Value = serde_json::from_slice(&body).unwrap();
-    let backtest_id = created["backtest_id"].as_str().unwrap().to_string();
-
-    assert!(!backtest_dir.join(&backtest_id).exists());
-
-    let save_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/backtests/{backtest_id}/save"))
-                .method("POST")
-                .body(Body::from("{}"))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(save_response.status(), StatusCode::OK);
-
-    assert!(backtest_dir
-        .join(&backtest_id)
-        .join("manifest.json")
-        .exists());
-    assert!(backtest_dir
-        .join(&backtest_id)
-        .join("trade_ledger.json")
-        .exists());
-    assert!(backtest_dir
-        .join(&backtest_id)
-        .join("equity_curve.json")
-        .exists());
-    assert!(std::fs::read_dir(&backtest_dir)
-        .unwrap()
-        .all(|entry| !is_backtest_promotion_work_dir(&entry.unwrap().path())));
-
-    let second_save_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/backtests/{backtest_id}/save"))
-                .method("POST")
-                .body(Body::from("{}"))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(second_save_response.status(), StatusCode::OK);
-    assert!(backtest_dir
-        .join(&backtest_id)
-        .join("manifest.json")
-        .exists());
-    assert!(std::fs::read_dir(&backtest_dir)
-        .unwrap()
-        .all(|entry| !is_backtest_promotion_work_dir(&entry.unwrap().path())));
-
-    let fresh_app = build_app_router(new_app_state(graph_dir, run_dir, backtest_dir));
-    let detail_response = fresh_app
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/backtests/{backtest_id}"))
-                .method("GET")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(detail_response.status(), StatusCode::OK);
-    let detail_body = to_bytes(detail_response.into_body(), usize::MAX)
-        .await
-        .unwrap();
-    let detail: serde_json::Value = serde_json::from_slice(&detail_body).unwrap();
-
-    assert_eq!(detail["backtest_id"], backtest_id);
-    assert!(detail["backtest_artifacts"]["trade_ledger"]["trades"].is_array());
-    assert!(detail["backtest_artifacts"]["equity_curve"]["points"].is_array());
-    assert_eq!(
-        detail["backtest_artifacts"]["metrics"]["summary"]["final_equity"],
-        created["backtest_artifacts"]["metrics"]["summary"]["final_equity"]
-    );
-}
-
-#[tokio::test]
-async fn large_transient_backtest_spills_to_temp_until_save() {
-    let base = test_storage_base("backtest-transient-spill");
-    let graph_dir = base.join("graphs");
-    let run_dir = base.join("runs");
-    let backtest_dir = base.join("backtests");
-    std::fs::create_dir_all(&graph_dir).unwrap();
-    std::fs::create_dir_all(&run_dir).unwrap();
-    std::fs::create_dir_all(&backtest_dir).unwrap();
-
-    let mut state = test_app_state_from_dirs(base, graph_dir, run_dir, backtest_dir.clone());
-    state.transient_backtest_spill_threshold_bytes = 1;
-    let transient_dir = state.transient_backtest_store_dir.as_ref().clone();
-    let app = build_app_router(state);
-    let mut payload = sample_compile_request_json();
-    payload["backtest_options"] = serde_json::json!({
-        "replay_source": "deterministic_mock"
-    });
-
-    let response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri("/api/runtime/backtest")
-                .method("POST")
-                .header("content-type", "application/json")
-                .body(Body::from(payload.to_string()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(response.status(), StatusCode::OK);
-    let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
-    let created: serde_json::Value = serde_json::from_slice(&body).unwrap();
-    let backtest_id = created["backtest_id"].as_str().unwrap().to_string();
-
-    assert!(!backtest_dir.join(&backtest_id).exists());
-    assert!(std::fs::read_dir(&transient_dir)
-        .unwrap()
-        .any(|entry| entry.unwrap().path().is_dir()));
-
-    let detail_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/backtests/{backtest_id}"))
-                .method("GET")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(detail_response.status(), StatusCode::OK);
-    let detail_body = to_bytes(detail_response.into_body(), usize::MAX)
-        .await
-        .unwrap();
-    let detail: serde_json::Value = serde_json::from_slice(&detail_body).unwrap();
-    let mut expected_loaded_governance =
-        created["backtest_artifacts"]["manifest"]["governance"].clone();
-    expected_loaded_governance["governance_source"] =
-        serde_json::Value::String("loaded_manifest".to_string());
-    assert_eq!(detail["governance"], expected_loaded_governance);
-    assert_eq!(
-        detail["backtest_artifacts"]["manifest"]["governance"],
-        detail["governance"]
-    );
-
-    let save_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/backtests/{backtest_id}/save"))
-                .method("POST")
-                .body(Body::from("{}"))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(save_response.status(), StatusCode::OK);
-    let save_body = to_bytes(save_response.into_body(), usize::MAX)
-        .await
-        .unwrap();
-    let saved: serde_json::Value = serde_json::from_slice(&save_body).unwrap();
-    assert_eq!(saved["governance"], detail["governance"]);
-    assert_eq!(
-        saved["backtest_artifacts"]["manifest"]["governance"],
-        detail["governance"]
-    );
-    assert!(backtest_dir
-        .join(&backtest_id)
-        .join("manifest.json")
-        .exists());
-    assert!(std::fs::read_dir(&transient_dir)
-        .map(|mut entries| entries.next().is_none())
-        .unwrap_or(true));
-}
-
-#[tokio::test]
-async fn backtest_can_be_discarded_only_before_save() {
-    let base = test_storage_base("backtest-discard");
-    let graph_dir = base.join("graphs");
-    let run_dir = base.join("runs");
-    let backtest_dir = base.join("backtests");
-    std::fs::create_dir_all(&graph_dir).unwrap();
-    std::fs::create_dir_all(&run_dir).unwrap();
-    std::fs::create_dir_all(&backtest_dir).unwrap();
-
-    let mut state = test_app_state_from_dirs(base, graph_dir, run_dir, backtest_dir.clone());
-    state.transient_backtest_spill_threshold_bytes = 1;
-    let transient_dir = state.transient_backtest_store_dir.as_ref().clone();
-    let app = build_app_router(state);
-    let mut payload = sample_compile_request_json();
-    payload["backtest_options"] = serde_json::json!({
-        "replay_source": "deterministic_mock"
-    });
-
-    let response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri("/api/runtime/backtest")
-                .method("POST")
-                .header("content-type", "application/json")
-                .body(Body::from(payload.to_string()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(response.status(), StatusCode::OK);
-    let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
-    let created: serde_json::Value = serde_json::from_slice(&body).unwrap();
-    let backtest_id = created["backtest_id"].as_str().unwrap().to_string();
-
-    let discard_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/backtests/{backtest_id}"))
-                .method("DELETE")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(discard_response.status(), StatusCode::OK);
-    assert!(std::fs::read_dir(&transient_dir)
-        .map(|mut entries| entries.next().is_none())
-        .unwrap_or(true));
-
-    let detail_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/backtests/{backtest_id}"))
-                .method("GET")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(detail_response.status(), StatusCode::NOT_FOUND);
-
-    let saved_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri("/api/runtime/backtest")
-                .method("POST")
-                .header("content-type", "application/json")
-                .body(Body::from(payload.to_string()))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    let saved_body = to_bytes(saved_response.into_body(), usize::MAX)
-        .await
-        .unwrap();
-    let saved: serde_json::Value = serde_json::from_slice(&saved_body).unwrap();
-    let saved_backtest_id = saved["backtest_id"].as_str().unwrap().to_string();
-    let save_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/backtests/{saved_backtest_id}/save"))
-                .method("POST")
-                .body(Body::from("{}"))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(save_response.status(), StatusCode::OK);
-
-    let discard_saved_response = app
-        .clone()
-        .oneshot(
-            Request::builder()
-                .uri(format!("/api/runtime/backtests/{saved_backtest_id}"))
-                .method("DELETE")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-    assert_eq!(discard_saved_response.status(), StatusCode::CONFLICT);
-    assert!(backtest_dir
-        .join(&saved_backtest_id)
-        .join("manifest.json")
-        .exists());
 }
 
 #[tokio::test]

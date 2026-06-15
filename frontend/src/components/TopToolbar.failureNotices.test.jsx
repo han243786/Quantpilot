@@ -4,11 +4,19 @@ import TopToolbar from "./TopToolbar";
 import { I18nProvider } from "../i18n";
 import { useGraphStore } from "../store/graphStore";
 
+const TEST_V4_SOURCE = "v4_strategy toolbar.failure { machine observe {} }";
+
 function buildGraph(overrides = {}) {
   return {
     metadata: {
       name: "Failure Notice Graph",
       graph_id: "failure_notice_graph",
+      runtime_kind: "v4",
+      artifacts: {
+        quantscript: {
+          formal_source: TEST_V4_SOURCE
+        }
+      },
       ...(overrides.metadata || {})
     },
     nodes: [],
@@ -80,7 +88,7 @@ describe("TopToolbar failure notices", () => {
           }));
           return null;
         }),
-        startRuntime: vi.fn(),
+        startV4Simulation: vi.fn(),
         startBacktest: vi.fn()
       });
     });
@@ -99,7 +107,7 @@ describe("TopToolbar failure notices", () => {
     act(() => {
       useGraphStore.setState({
         compileCurrentGraph: vi.fn(async () => ({ runtime_config: {}, compile_id: "compile_ok" })),
-        startRuntime: vi.fn(async () => {
+        startV4Simulation: vi.fn(async () => {
           useGraphStore.setState((state) => ({
             runtime: {
               ...state.runtime,
@@ -127,7 +135,7 @@ describe("TopToolbar failure notices", () => {
     act(() => {
       useGraphStore.setState({
         compileCurrentGraph: vi.fn(async () => ({ runtime_config: {}, compile_id: "compile_ok" })),
-        startRuntime: vi.fn(),
+        startV4Simulation: vi.fn(),
         startBacktest: vi.fn(async () => {
           useGraphStore.setState((state) => ({
             runtime: {

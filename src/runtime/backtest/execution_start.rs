@@ -1,5 +1,3 @@
-#[path = "legacy_dispatch.rs"]
-mod legacy_dispatch;
 #[path = "v4_projection.rs"]
 mod v4_projection;
 #[path = "v4_request_resolution.rs"]
@@ -7,9 +5,6 @@ mod v4_request_resolution;
 #[path = "v4_runtime_execution.rs"]
 mod v4_runtime_execution;
 
-use legacy_dispatch::{
-    prepare_legacy_backtest_dispatch, run_legacy_backtest_dispatch, LegacyBacktestDispatchOutput,
-};
 use v4_projection::{
     build_v4_backtest_output, frontend_events_from_v4_backtest_artifact,
     v4_equity_curve_from_artifact,
@@ -22,10 +17,9 @@ use v4_runtime_execution::run_v4_backtest_runtime_execution;
 
 use crate::{
     account_summary_from_portfolio, attach_runtime_event_envelopes, auth, backtest_run_response,
-    build_backtest_artifact_views, build_backtest_spec, build_compile_runtime_targets_from_graph,
-    collaboration_with_run_actor, collect_frontend_events_for_backtest, current_time_ms,
-    internal_error, io_error, json_bad_request, json_bad_request_with_details,
-    maybe_spill_transient_backtest_record, merge_runtime_targets, normalize_actor_identity,
+    build_backtest_artifact_views, collaboration_with_run_actor, current_time_ms, internal_error,
+    io_error, json_bad_request, json_bad_request_with_details, maybe_spill_transient_backtest_record,
+    normalize_actor_identity,
     prepend_capability_snapshot_event, runtime_governance_snapshot,
     validate_backtest_execution_assumption_overrides, validate_runtime_capability_guard,
     validate_runtime_config_capabilities, validate_runtime_event_envelopes, AppState,
@@ -87,117 +81,10 @@ pub(super) async fn execute_backtest_request(
     if is_v4_backtest_request(request, graph_json) {
         return execute_v4_backtest_request(state, user_id, request, graph_json, id_suffix).await;
     }
-    let legacy_dispatch_plan = prepare_legacy_backtest_dispatch(graph_json, request)?;
-    let protocol_name = legacy_dispatch_plan.compiled.protocol_name.clone();
-    let config_hash = legacy_dispatch_plan.compiled.config_hash.clone();
-    let now_ms = current_time_ms();
-    let actor = normalize_actor_identity(request.actor.clone());
-    let _collaboration = collaboration_with_run_actor(
-        &state.graph_store_dir,
-        &request.runtime_config.metadata.graph_id,
-        &actor,
-    )
-    .await?;
-    let LegacyBacktestDispatchOutput {
-        compiled,
-        artifacts,
-        replay_source,
-        resolved_execution_assumptions,
-        resolved_execution_assumption_sources,
-        backtest,
-    } = run_legacy_backtest_dispatch(legacy_dispatch_plan, request, now_ms).await?;
-    let graph_targets = build_compile_runtime_targets_from_graph(graph_json);
-    let runtime_targets = merge_runtime_targets(&request.runtime_targets, &graph_targets);
-    // v1.3.7: 添加计数器后缀防止同一毫秒内ID碰撞
-    static BACKTEST_SEQ: AtomicU64 = AtomicU64::new(0);
-    let backtest_id = match id_suffix {
-        Some(suffix) => format!("backtest_{}_{}", now_ms, suffix),
-        None => format!(
-            "backtest_{}_{}",
-            now_ms,
-            BACKTEST_SEQ.fetch_add(1, Ordering::Relaxed)
-        ),
-    };
-    let governance =
-        runtime_governance_snapshot(&request.runtime_config.metadata, Some(config_hash.as_str()));
-    let mut events = collect_frontend_events_for_backtest(&backtest, &runtime_targets);
-    prepend_capability_snapshot_event(
-        &mut events,
-        &backtest_id,
-        &request.runtime_config.metadata.mode,
-        now_ms,
-        &governance,
-    );
-    attach_runtime_event_envelopes(
-        &mut events,
-        &backtest_id,
-        &request.runtime_config.metadata.mode,
-        &governance,
-    );
-    validate_runtime_event_envelopes(&events, &backtest_id, &governance)
-        .map_err(|message| internal_error(anyhow::anyhow!(message)))?;
-    let account = account_summary_from_portfolio(&backtest.final_portfolio);
-    let backtest_spec = build_backtest_spec(
-        &backtest_id,
-        replay_source,
-        request,
-        &compiled,
-        &artifacts,
-        now_ms,
-        resolved_execution_assumptions,
-        resolved_execution_assumption_sources,
-    );
-
-    let record = BacktestRecord {
-        backtest_id: backtest_id.clone(),
-        graph_id: request.runtime_config.metadata.graph_id.clone(),
-        compile_id: request.runtime_config.metadata.compile_id.clone(),
-        created_at_ms: now_ms,
-        protocol_name: protocol_name.clone(),
-        config_hash: config_hash.clone(),
-        account: account.clone(),
-        events: events.clone(),
-        backtest: backtest.clone(),
-        backtest_spec: Some(backtest_spec.clone()),
-        artifacts: Some(artifacts.clone()),
-        backtest_artifacts: None,
-        governance,
-        actor: Some(actor.clone()),
-        degraded: false,
-    };
-
-    let backtest_artifacts = build_backtest_artifact_views(&record).map_err(internal_error)?;
-    let record = BacktestRecord {
-        backtest_artifacts: Some(backtest_artifacts.clone()),
-        ..record
-    };
-    let spilled = maybe_spill_transient_backtest_record(
-        state.transient_backtest_store_dir.as_ref(),
-        &record,
-        state.transient_backtest_spill_threshold_bytes,
-    )
-    .await
-    .map_err(io_error)?;
-    if !spilled {
-        state
-            .backtests
-            .write()
-            .await
-            .insert(auth::scoped_key(user_id, &backtest_id), record.clone());
-    }
-
-    safe_eprintln!(
-        "[audit] 回测完成 — user={} backtest={} graph={} compile={} events={} trades={} return={:.2}%",
-        user_id.0,
-        backtest_id,
-        request.runtime_config.metadata.graph_id,
-        request.runtime_config.metadata.compile_id,
-        record.events.len(),
-        record.backtest.summary.trade_count,
-        record.backtest.summary.total_return_ratio * 100.0
-    );
-
-    Ok(record)
+    Err(json_bad_request(
+        "legacy_backtest_disabled",
+        "backtest now requires v4 runtime_kind and v4 machine graph artifacts",
+    ))
 }
 
 async fn execute_v4_backtest_request(

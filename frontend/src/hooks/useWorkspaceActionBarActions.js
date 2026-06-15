@@ -24,7 +24,6 @@ export function useWorkspaceActionBarActions({ onNotice } = {}) {
   const exportRuntimeConfig = useGraphStore((state) => state.exportRuntimeConfig);
   const exportQuantScript = useGraphStore((state) => state.exportQuantScript);
   const compileCurrentGraph = useGraphStore((state) => state.compileCurrentGraph);
-  const startRuntime = useGraphStore((state) => state.startRuntime);
   const startV4Simulation = useGraphStore((state) => state.startV4Simulation);
   const startBacktest = useGraphStore((state) => state.startBacktest);
   const stopRuntime = useGraphStore((state) => state.stopRuntime);
@@ -116,7 +115,7 @@ export function useWorkspaceActionBarActions({ onNotice } = {}) {
       return;
     }
 
-    await startRuntime();
+    await startV4Simulation();
 
     const { runtime: nextRuntime } = useGraphStore.getState();
     if (nextRuntime.status === "error" && nextRuntime.backendError) {

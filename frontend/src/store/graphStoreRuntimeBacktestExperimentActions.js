@@ -1,7 +1,6 @@
 import { buildCapabilityContext } from "../capabilities/supportMatrix";
 import { humanizeErrorText } from "../utils/errorText";
 import { postJson, resolveGraphActor } from "./graphStoreHelpers";
-import { resolveRuntimeTargets } from "./graphStoreRuntimeSessionState";
 import { getRuntimeCapabilityBlockReason } from "./graphStoreRuntimeSessionShared";
 
 export function createGraphStoreRuntimeBacktestExperimentActions(set, get) {
@@ -45,7 +44,6 @@ export function createGraphStoreRuntimeBacktestExperimentActions(set, get) {
           actor: resolveGraphActor(graph),
           capability_context: capabilityContext,
           runtime_config: result.runtime_config,
-          runtime_targets: resolveRuntimeTargets(result),
           graph_json: graph,
           backtest_options: {
             replay_source: "deterministic_mock",

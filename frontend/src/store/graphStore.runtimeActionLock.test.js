@@ -17,7 +17,7 @@ describe("graphStore runtimeActionLock", () => {
     vi.unstubAllGlobals();
   });
 
-  it("startRuntime returns early when lock is held", async () => {
+  it("startV4Simulation returns early when lock is held", async () => {
     const compileSpy = vi.fn();
     useGraphStore.setState({
       actionLock: "runtime",
@@ -25,7 +25,7 @@ describe("graphStore runtimeActionLock", () => {
       graph: buildValidatedSampleGraph(initialState.registry),
     });
 
-    await useGraphStore.getState().startRuntime();
+    await useGraphStore.getState().startV4Simulation();
     expect(compileSpy).not.toHaveBeenCalled();
   });
 
@@ -41,7 +41,7 @@ describe("graphStore runtimeActionLock", () => {
     expect(compileSpy).not.toHaveBeenCalled();
   });
 
-  it("releases lock after startRuntime completes (simulated)", async () => {
+  it("releases lock after v4 runtime completes (simulated)", async () => {
     const graph = buildValidatedSampleGraph(initialState.registry);
     useGraphStore.setState({
       graph,
