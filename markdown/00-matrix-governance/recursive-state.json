@@ -14,10 +14,10 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002MB-03",
-  "last_committed_sha": "ccc314e9",
-  "current_parent": "root.executor.runner.runner_support_files.okx_rest",
-  "current_step": "BE-002MC-01",
+  "last_committed_batch": "BE-002MC-01",
+  "last_committed_sha": "4f9a3697",
+  "current_parent": "root.executor.runner.runner_support_files",
+  "current_step": "BE-002MD-01",
   "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
@@ -352,12 +352,13 @@
     "executor.runner.runner_support_files.okx_rest.transport_response_surface",
     "executor.runner.runner_support_files.okx_rest.order_action_surface",
     "executor.runner.runner_support_files.okx_rest.lookup_validation_surface",
-    "executor.runner.runner_support_files.okx_rest.test_harness"
+    "executor.runner.runner_support_files.okx_rest.test_harness",
+    "executor.runner.runner_support_files.okx_rest"
   ],
   "open_residuals": [
     "executor"
   ],
-  "next_recommended_child": "root.executor.runner.runner_support_files.okx_rest.parent_residual_judgment",
+  "next_recommended_child": "root.executor.runner.runner_support_files.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
