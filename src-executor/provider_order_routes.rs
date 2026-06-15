@@ -2,12 +2,13 @@ use axum::{extract::State, http::StatusCode, Json};
 use std::sync::Arc;
 
 use super::executor_state::ExecutorState;
-use super::{
-    append_audit, build_okx_demo_order_request, ensure_okx_demo_provider_mode, internal_error,
-    load_okx_demo_credentials, okx_demo_lookup_audit_payload, okx_demo_order_audit_payload,
-    okx_demo_provider_audit_details, okx_demo_provider_response, okx_provider_error, okx_rest,
-    OkxDemoOrderLookupRequest, OkxDemoOrderSubmitRequest,
+use super::provider_order_support::{
+    build_okx_demo_order_request, ensure_okx_demo_provider_mode, load_okx_demo_credentials,
+    okx_demo_lookup_audit_payload, okx_demo_order_audit_payload, okx_demo_provider_audit_details,
+    okx_demo_provider_response, okx_provider_error, OkxDemoOrderLookupRequest,
+    OkxDemoOrderSubmitRequest,
 };
+use super::{append_audit, internal_error, okx_rest};
 
 pub(super) async fn submit_okx_demo_order(
     State(state): State<Arc<ExecutorState>>,

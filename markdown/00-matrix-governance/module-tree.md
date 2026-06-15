@@ -9588,3 +9588,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.provider_order_support selected: true`; this child starts with OKX demo provider DTOs, request validation, credential loading, provider error shaping, and audit payload helpers while provider route handlers remain closed.
 **Latest state supplement (BE-002LP-01)**: `root.executor.runner.provider_order_support` baseline frozen; next step: BE-002LP-02 actual_extraction.
 `root.executor.runner.provider_order_support baseline_frozen: true`; approved movement is limited to OKX demo provider support helpers into `src-executor/provider_order_support.rs`.
+**Latest state supplement (BE-002LP-02)**: `root.executor.runner.provider_order_support` actual extraction complete; next step: BE-002LP-03 single_leaf_closeout.
+`root.executor.runner.provider_order_support extracted: true`; `src-executor/provider_order_support.rs` now owns OKX demo provider DTOs, validation, credential loading, provider error shaping, audit payload helpers, and provider response helpers while route handling remains in `provider_order_routes`.

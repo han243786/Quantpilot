@@ -2283,7 +2283,7 @@ storage/
 
 ### E.3 执行端: `src-executor/`
 
-- `src-executor/main.rs` — 执行端入口, Axum Router :3001, 含 OKX demo provider submit/query/cancel 路由、PaperActual 启动前 demo 凭证校验与 v4 strategy_config_preflight 启动阻断; 改执行端启动或 provider 回执入口时改这里 🆕 v4.11.0
+- `src-executor/main.rs` — 执行端入口, Axum Router :3001, 保留进程启动、路由装配、共享审计写入与错误包装; 改执行端启动或顶层路由装配时改这里 🆕 v4.11.0
 - `src-executor/executor_state.rs` — 执行端核心状态, ExecutionMode/StrategyStatus; 改状态机时改这里
 - `src-executor/live_runner.rs` — 实时运行器, RunnerPool v3/v4 双 runner、OKX Market→v4 event 转换、v4 evidence 广播; 改策略执行循环时改这里 🆕 v4.2.0
 - `src-executor/ws_client.rs` — OKX WebSocket 客户端; 改 WS 连接/行情订阅时改这里
@@ -6182,3 +6182,6 @@ Recursive boundary supplement: BE-002LO-01 `root.executor.runner` parent residua
 - `markdown/06-milestones/v4.16.0/1872-root.executor.runner.parent_residual_judgment.provider_order_support.md` - v4.16.0 BE-002LO-01 executor.runner parent residual judgment selects provider_order_support
 Recursive boundary supplement: BE-002LP-01 `root.executor.runner.provider_order_support` baseline frozen; next step: BE-002LP-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1873-root.executor.runner.provider_order_support.baseline_plan.md` - v4.16.0 BE-002LP-01 provider_order_support baseline plan
+Recursive boundary supplement: BE-002LP-02 `root.executor.runner.provider_order_support` actual extraction complete; next step: BE-002LP-03 single_leaf_closeout.
+- `src-executor/provider_order_support.rs` - Executor OKX demo provider DTOs, validation, credential loading, provider error shaping, audit payload, and response projection child
+- `markdown/06-milestones/v4.16.0/1874-root.executor.runner.provider_order_support.extract_closeout.md` - v4.16.0 BE-002LP-02 provider_order_support extract closeout
