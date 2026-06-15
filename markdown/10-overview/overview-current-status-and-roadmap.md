@@ -1967,3 +1967,4 @@ Latest recursive supplement: BE-002LP-03 closed `executor.runner.provider_order_
 Latest recursive supplement: BE-002LQ-01 selected `executor.runner.runner_support_files`; next baseline freezes existing runner support files.
 Latest recursive supplement: BE-002LR-01 froze `runner_support_files`; next step selects the first support-file child.
 Latest recursive supplement: BE-002LR-02 selected `executor.runner.runner_support_files.okx_rest`; next baseline freezes the OKX REST adapter surface.
+Latest recursive supplement: BE-002LS-01 froze `okx_rest` as a precision child; next step selects its first internal surface.

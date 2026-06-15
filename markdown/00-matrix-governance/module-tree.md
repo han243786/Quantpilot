@@ -9598,3 +9598,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files baseline_frozen: true`; child queue is `okx_rest`, `live_runner`, `ws_client`, `kline_buffer`, and `migration_api`.
 **Latest state supplement (BE-002LR-02)**: `root.executor.runner.runner_support_files` parent residual judgment selected `okx_rest`; next step: BE-002LS-01 baseline_plan.
 `root.executor.runner.runner_support_files.okx_rest selected: true`; this child starts with OKX REST signing, transport, order/query/cancel, lookup validation, and balance fetch behavior.
+**Latest state supplement (BE-002LS-01)**: `root.executor.runner.runner_support_files.okx_rest` baseline frozen; next step: BE-002LS-02 parent_residual_judgment.
+`root.executor.runner.runner_support_files.okx_rest baseline_frozen: true`; child queue is `signing_request_surface`, `transport_response_surface`, `order_action_surface`, `lookup_validation_surface`, and `test_harness`.

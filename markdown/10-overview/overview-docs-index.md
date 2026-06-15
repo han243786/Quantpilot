@@ -1886,3 +1886,4 @@
 | v4.16.0 / BE-002LQ-01 | Added: `executor.runner` parent residual judgment selects `runner_support_files` |
 | v4.16.0 / BE-002LR-01 | Added: `runner_support_files` baseline plan |
 | v4.16.0 / BE-002LR-02 | Added: `runner_support_files` parent residual judgment selects `okx_rest` |
+| v4.16.0 / BE-002LS-01 | Added: `okx_rest` precision baseline plan |
