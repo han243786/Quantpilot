@@ -9610,3 +9610,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.okx_rest.signing_request_surface stop_split: true`; terminal leaf control returned `STOP` with score 35 over a 189 LOC signing child.
 **Latest state supplement (BE-002LU-01)**: `root.executor.runner.runner_support_files.okx_rest` parent residual judgment selected `transport_response_surface`; next step: BE-002LV-01 baseline_plan.
 `root.executor.runner.runner_support_files.okx_rest.transport_response_surface selected: true`; this child starts with proxy selection, REST agent setup, raw signed request dispatch, and OKX response success/error projection.
+**Latest state supplement (BE-002LV-01)**: `root.executor.runner.runner_support_files.okx_rest.transport_response_surface` baseline frozen; next step: BE-002LV-02 actual_extraction.
+`root.executor.runner.runner_support_files.okx_rest.transport_response_surface baseline_frozen: true`; approved movement is limited to proxy selection, REST agent setup, raw/success-checked signed request dispatch, and OKX response success validation.

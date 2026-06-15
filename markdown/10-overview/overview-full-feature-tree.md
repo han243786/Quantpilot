@@ -6206,3 +6206,5 @@ Recursive boundary supplement: BE-002LT-03 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1883-root.executor.runner.runner_support_files.okx_rest.signing_request_surface.single_leaf_closeout.md` - v4.16.0 BE-002LT-03 signing_request_surface single leaf closeout
 Recursive boundary supplement: BE-002LU-01 `root.executor.runner.runner_support_files.okx_rest` parent residual judgment selected `transport_response_surface`; next step: BE-002LV-01 baseline_plan.
 - `markdown/06-milestones/v4.16.0/1884-root.executor.runner.runner_support_files.okx_rest.parent_residual_judgment.transport_response_surface.md` - v4.16.0 BE-002LU-01 okx_rest parent residual judgment selects transport_response_surface
+Recursive boundary supplement: BE-002LV-01 `root.executor.runner.runner_support_files.okx_rest.transport_response_surface` baseline frozen; next step: BE-002LV-02 actual_extraction.
+- `markdown/06-milestones/v4.16.0/1885-root.executor.runner.runner_support_files.okx_rest.transport_response_surface.baseline_plan.md` - v4.16.0 BE-002LV-01 transport_response_surface baseline plan
