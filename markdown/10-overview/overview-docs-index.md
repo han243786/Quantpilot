@@ -1885,3 +1885,4 @@
 | v4.16.0 / BE-002LP-03 | Added: `provider_order_support` single leaf closeout stops split |
 | v4.16.0 / BE-002LQ-01 | Added: `executor.runner` parent residual judgment selects `runner_support_files` |
 | v4.16.0 / BE-002LR-01 | Added: `runner_support_files` baseline plan |
+| v4.16.0 / BE-002LR-02 | Added: `runner_support_files` parent residual judgment selects `okx_rest` |
