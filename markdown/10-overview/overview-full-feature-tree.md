@@ -6329,3 +6329,5 @@ Recursive boundary supplement: BE-002MY-01 `root.executor.runner` parent closeou
 - `markdown/06-milestones/v4.16.0/1938-root.executor.runner.parent_closeout.md` - v4.16.0 BE-002MY-01 executor.runner parent closeout
 Recursive boundary supplement: BE-002MZ-01 `root.executor` parent closeout complete; next step: BE-002NA-01 root parent_closeout.
 - `markdown/06-milestones/v4.16.0/1939-root.executor.parent_closeout.md` - v4.16.0 BE-002MZ-01 executor parent closeout
+Recursive boundary supplement: BE-002NA-01 `root` parent closeout complete; recursive cursor has no open residuals.
+- `markdown/06-milestones/v4.16.0/1940-root.parent_closeout.md` - v4.16.0 BE-002NA-01 root parent closeout

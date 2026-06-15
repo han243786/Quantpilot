@@ -1947,3 +1947,4 @@
 | v4.16.0 / BE-002MX-01 | Added: `runner_support_files` parent closeout |
 | v4.16.0 / BE-002MY-01 | Added: `executor.runner` parent closeout |
 | v4.16.0 / BE-002MZ-01 | Added: `executor` parent closeout |
+| v4.16.0 / BE-002NA-01 | Added: root parent closeout |

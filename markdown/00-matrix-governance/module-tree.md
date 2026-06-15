@@ -9720,3 +9720,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner parent_closeout: true`; all planned runner route/support children are closed.
 **Latest state supplement (BE-002MZ-01)**: `root.executor` parent closeout complete; next step: BE-002NA-01 root parent_closeout.
 `root.executor parent_closeout: true`; executor state and runner children are closed.
+**Latest state supplement (BE-002NA-01)**: `root` parent closeout complete; recursive cursor has no open residuals.
+`root parent_closeout: true`; current recursive refactor cursor is complete.

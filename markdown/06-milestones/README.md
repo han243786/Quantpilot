@@ -2300,3 +2300,4 @@
 | v4.16.0 / BE-002MX-01 | `v4.16.0/1937-root.executor.runner.runner_support_files.parent_closeout.md` | Added: `runner_support_files` parent closeout |
 | v4.16.0 / BE-002MY-01 | `v4.16.0/1938-root.executor.runner.parent_closeout.md` | Added: `executor.runner` parent closeout |
 | v4.16.0 / BE-002MZ-01 | `v4.16.0/1939-root.executor.parent_closeout.md` | Added: `executor` parent closeout |
+| v4.16.0 / BE-002NA-01 | `v4.16.0/1940-root.parent_closeout.md` | Added: root parent closeout |
