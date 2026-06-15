@@ -6235,3 +6235,6 @@ Recursive boundary supplement: BE-002MA-01 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1896-root.executor.runner.runner_support_files.okx_rest.parent_residual_judgment.test_harness.md` - v4.16.0 BE-002MA-01 okx_rest parent residual judgment selects test_harness
 Recursive boundary supplement: BE-002MB-01 `root.executor.runner.runner_support_files.okx_rest.test_harness` baseline frozen; next step: BE-002MB-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1897-root.executor.runner.runner_support_files.okx_rest.test_harness.baseline_plan.md` - v4.16.0 BE-002MB-01 test_harness baseline plan
+Recursive boundary supplement: BE-002MB-02 `root.executor.runner.runner_support_files.okx_rest.test_harness` actual extraction complete; next step: BE-002MB-03 single_leaf_closeout.
+- `src-executor/okx_rest/test_harness.rs` - OKX REST local tests and ignored live smoke probe harness
+- `markdown/06-milestones/v4.16.0/1898-root.executor.runner.runner_support_files.okx_rest.test_harness.extract_closeout.md` - v4.16.0 BE-002MB-02 test_harness actual extraction closeout

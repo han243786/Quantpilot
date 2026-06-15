@@ -1905,3 +1905,4 @@
 | v4.16.0 / BE-002LZ-03 | Added: `lookup_validation_surface` single leaf closeout stops split |
 | v4.16.0 / BE-002MA-01 | Added: `okx_rest` parent residual judgment selects `test_harness` |
 | v4.16.0 / BE-002MB-01 | Added: `test_harness` baseline plan |
+| v4.16.0 / BE-002MB-02 | Added: `test_harness` actual extraction closeout |

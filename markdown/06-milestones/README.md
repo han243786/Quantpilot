@@ -2258,3 +2258,4 @@
 | v4.16.0 / BE-002LZ-03 | `v4.16.0/1895-root.executor.runner.runner_support_files.okx_rest.lookup_validation_surface.single_leaf_closeout.md` | Added: `lookup_validation_surface` single leaf closeout stops split |
 | v4.16.0 / BE-002MA-01 | `v4.16.0/1896-root.executor.runner.runner_support_files.okx_rest.parent_residual_judgment.test_harness.md` | Added: `okx_rest` parent residual judgment selects `test_harness` |
 | v4.16.0 / BE-002MB-01 | `v4.16.0/1897-root.executor.runner.runner_support_files.okx_rest.test_harness.baseline_plan.md` | Added: `test_harness` baseline plan |
+| v4.16.0 / BE-002MB-02 | `v4.16.0/1898-root.executor.runner.runner_support_files.okx_rest.test_harness.extract_closeout.md` | Added: `test_harness` actual extraction closeout |
