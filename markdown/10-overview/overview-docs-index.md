@@ -1945,3 +1945,4 @@
 | v4.16.0 / BE-002MW-01 | Added: `migration_api` existing leaf baseline plan |
 | v4.16.0 / BE-002MW-02 | Added: `migration_api` single leaf closeout stops split |
 | v4.16.0 / BE-002MX-01 | Added: `runner_support_files` parent closeout |
+| v4.16.0 / BE-002MY-01 | Added: `executor.runner` parent closeout |

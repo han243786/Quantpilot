@@ -2026,3 +2026,4 @@ Latest recursive supplement: BE-002MV-01 selected `runner_support_files.migratio
 Latest recursive supplement: BE-002MW-01 froze `runner_support_files.migration_api` as an existing isolated leaf; next step is single leaf closeout.
 Latest recursive supplement: BE-002MW-02 closed `runner_support_files.migration_api` with `stop_split: true`; next step is `runner_support_files` parent closeout.
 Latest recursive supplement: BE-002MX-01 closed `runner_support_files`; next step is `executor.runner` parent closeout.
+Latest recursive supplement: BE-002MY-01 closed `executor.runner`; next step is `executor` parent closeout.
