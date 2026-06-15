@@ -6204,3 +6204,5 @@ Recursive boundary supplement: BE-002LT-02 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1882-root.executor.runner.runner_support_files.okx_rest.signing_request_surface.extract_closeout.md` - v4.16.0 BE-002LT-02 signing_request_surface extract closeout
 Recursive boundary supplement: BE-002LT-03 `root.executor.runner.runner_support_files.okx_rest.signing_request_surface` single leaf closeout complete with `stop_split: true`; next step: okx_rest parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1883-root.executor.runner.runner_support_files.okx_rest.signing_request_surface.single_leaf_closeout.md` - v4.16.0 BE-002LT-03 signing_request_surface single leaf closeout
+Recursive boundary supplement: BE-002LU-01 `root.executor.runner.runner_support_files.okx_rest` parent residual judgment selected `transport_response_surface`; next step: BE-002LV-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1884-root.executor.runner.runner_support_files.okx_rest.parent_residual_judgment.transport_response_surface.md` - v4.16.0 BE-002LU-01 okx_rest parent residual judgment selects transport_response_surface
