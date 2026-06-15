@@ -9644,3 +9644,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.okx_rest parent_closeout: true`; parent residual is a compact facade with public types/constants, re-exports, child wiring, and test harness wiring.
 **Latest state supplement (BE-002MD-01)**: `root.executor.runner.runner_support_files` parent residual judgment selected `live_runner`; next step: BE-002ME-01 baseline_plan.
 `root.executor.runner.runner_support_files.live_runner selected: true`; this child starts with V3/V4 live runner handling, runner instance dispatch, runner pool orchestration, V4 market metadata helpers, and local tests.
+**Latest state supplement (BE-002ME-01)**: `root.executor.runner.runner_support_files.live_runner` baseline frozen; next step: BE-002ME-02 parent_residual_judgment.
+`root.executor.runner.runner_support_files.live_runner baseline_frozen: true`; child queue is `v3_live_runner`, `runner_instance_dispatch`, `v4_runner`, `runner_pool_orchestration`, `v4_market_metadata_helpers`, and `test_harness`.

@@ -1909,3 +1909,4 @@
 | v4.16.0 / BE-002MB-03 | Added: `test_harness` single leaf closeout stops split |
 | v4.16.0 / BE-002MC-01 | Added: `okx_rest` parent closeout |
 | v4.16.0 / BE-002MD-01 | Added: `runner_support_files` parent residual judgment selects `live_runner` |
+| v4.16.0 / BE-002ME-01 | Added: `live_runner` baseline plan |
