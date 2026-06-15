@@ -6202,3 +6202,5 @@ Recursive boundary supplement: BE-002LT-01 `root.executor.runner.runner_support_
 Recursive boundary supplement: BE-002LT-02 `root.executor.runner.runner_support_files.okx_rest.signing_request_surface` actual extraction complete; next step: BE-002LT-03 single_leaf_closeout.
 - `src-executor/okx_rest/signing_request_surface.rs` - OKX REST signing, timestamp, signed request construction, base URL resolution, and signing-focused tests child
 - `markdown/06-milestones/v4.16.0/1882-root.executor.runner.runner_support_files.okx_rest.signing_request_surface.extract_closeout.md` - v4.16.0 BE-002LT-02 signing_request_surface extract closeout
+Recursive boundary supplement: BE-002LT-03 `root.executor.runner.runner_support_files.okx_rest.signing_request_surface` single leaf closeout complete with `stop_split: true`; next step: okx_rest parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1883-root.executor.runner.runner_support_files.okx_rest.signing_request_surface.single_leaf_closeout.md` - v4.16.0 BE-002LT-03 signing_request_surface single leaf closeout

@@ -1971,3 +1971,4 @@ Latest recursive supplement: BE-002LS-01 froze `okx_rest` as a precision child; 
 Latest recursive supplement: BE-002LS-02 selected `okx_rest.signing_request_surface`; next baseline freezes signing and signed request construction.
 Latest recursive supplement: BE-002LT-01 froze `signing_request_surface`; next movement may extract signing/request helpers.
 Latest recursive supplement: BE-002LT-02 extracted signing/request helpers into `src-executor/okx_rest/signing_request_surface.rs`; next step is single leaf closeout.
+Latest recursive supplement: BE-002LT-03 closed `okx_rest.signing_request_surface` with `stop_split: true`; next step returns to `okx_rest` parent residual judgment.
