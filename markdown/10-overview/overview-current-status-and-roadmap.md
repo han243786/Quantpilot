@@ -2021,3 +2021,4 @@ Latest recursive supplement: BE-002MS-01 froze `ws_client` as an existing isolat
 Latest recursive supplement: BE-002MS-02 closed `runner_support_files.ws_client` with `stop_split: true`; next step returns to `runner_support_files` parent residual judgment.
 Latest recursive supplement: BE-002MT-01 selected `runner_support_files.kline_buffer`; next baseline freezes K-line buffer support-file movement.
 Latest recursive supplement: BE-002MU-01 froze `runner_support_files.kline_buffer` as an existing isolated leaf; next step is single leaf closeout.
+Latest recursive supplement: BE-002MU-02 closed `runner_support_files.kline_buffer` with `stop_split: true`; next step returns to `runner_support_files` parent residual judgment.

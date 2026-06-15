@@ -6314,3 +6314,5 @@ Recursive boundary supplement: BE-002MT-01 `root.executor.runner.runner_support_
 Recursive boundary supplement: BE-002MU-01 `root.executor.runner.runner_support_files.kline_buffer` baseline frozen as an existing isolated file; next step: BE-002MU-02 single_leaf_closeout.
 - `src-executor/kline_buffer.rs` - K-line pool, ticker-to-bar projection, OHLCV merge, recent-bar projection, and latest-price support file
 - `markdown/06-milestones/v4.16.0/1932-root.executor.runner.runner_support_files.kline_buffer.baseline_plan.md` - v4.16.0 BE-002MU-01 kline_buffer existing leaf baseline plan
+Recursive boundary supplement: BE-002MU-02 `root.executor.runner.runner_support_files.kline_buffer` single leaf closeout complete; next step: BE-002MV-01 parent_residual_judgment.
+- `markdown/06-milestones/v4.16.0/1933-root.executor.runner.runner_support_files.kline_buffer.single_leaf_closeout.md` - v4.16.0 BE-002MU-02 kline_buffer single leaf closeout
