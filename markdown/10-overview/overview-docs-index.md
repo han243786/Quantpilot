@@ -1902,3 +1902,4 @@
 | v4.16.0 / BE-002LY-01 | Added: `okx_rest` parent residual judgment selects `lookup_validation_surface` |
 | v4.16.0 / BE-002LZ-01 | Added: `lookup_validation_surface` baseline plan |
 | v4.16.0 / BE-002LZ-02 | Added: `lookup_validation_surface` actual extraction closeout |
+| v4.16.0 / BE-002LZ-03 | Added: `lookup_validation_surface` single leaf closeout stops split |
