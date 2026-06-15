@@ -1933,3 +1933,4 @@
 | v4.16.0 / BE-002MO-01 | Added: `live_runner` parent residual judgment selects `test_harness` |
 | v4.16.0 / BE-002MP-01 | Added: `test_harness` baseline plan |
 | v4.16.0 / BE-002MP-02 | Added: `test_harness` actual extraction closeout |
+| v4.16.0 / BE-002MP-03 | Added: `test_harness` single leaf closeout stops split |
