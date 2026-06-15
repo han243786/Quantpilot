@@ -6195,3 +6195,5 @@ Recursive boundary supplement: BE-002LR-02 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1878-root.executor.runner.runner_support_files.parent_residual_judgment.okx_rest.md` - v4.16.0 BE-002LR-02 runner_support_files parent residual judgment selects okx_rest
 Recursive boundary supplement: BE-002LS-01 `root.executor.runner.runner_support_files.okx_rest` baseline frozen; next step: BE-002LS-02 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1879-root.executor.runner.runner_support_files.okx_rest.baseline_plan.md` - v4.16.0 BE-002LS-01 okx_rest precision baseline plan
+Recursive boundary supplement: BE-002LS-02 `root.executor.runner.runner_support_files.okx_rest` parent residual judgment selected `signing_request_surface`; next step: BE-002LT-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1880-root.executor.runner.runner_support_files.okx_rest.parent_residual_judgment.signing_request_surface.md` - v4.16.0 BE-002LS-02 okx_rest parent residual judgment selects signing_request_surface
