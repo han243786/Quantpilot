@@ -9704,3 +9704,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.ws_client stop_split: true`; `src-executor/ws_client.rs` remains the terminal websocket client support-file leaf.
 **Latest state supplement (BE-002MT-01)**: `root.executor.runner.runner_support_files` parent residual judgment selected `kline_buffer`; next step: BE-002MU-01 baseline_plan.
 `root.executor.runner.runner_support_files.kline_buffer selected: true`; this child starts with the existing K-line pool, ticker-to-bar projection, OHLCV merge behavior, recent-bar projection, and latest-price lookup.
+**Latest state supplement (BE-002MU-01)**: `root.executor.runner.runner_support_files.kline_buffer` baseline frozen as an existing isolated file; next step: BE-002MU-02 single_leaf_closeout.
+`root.executor.runner.runner_support_files.kline_buffer baseline_frozen: true`; terminal leaf control returned `STOP` with score 40, so no internal extraction is approved.
