@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002MS-01",
-  "last_committed_sha": "24bdbcda",
-  "current_parent": "root.executor.runner.runner_support_files.ws_client",
-  "current_step": "BE-002MS-02",
-  "current_phase": "single_leaf_closeout",
+  "last_committed_batch": "BE-002MS-02",
+  "last_committed_sha": "7a1ba0f4",
+  "current_parent": "root.executor.runner.runner_support_files",
+  "current_step": "BE-002MT-01",
+  "current_phase": "parent_residual_judgment",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -360,12 +360,13 @@
     "executor.runner.runner_support_files.live_runner.runner_pool_orchestration",
     "executor.runner.runner_support_files.live_runner.v4_market_metadata_helpers",
     "executor.runner.runner_support_files.live_runner.test_harness",
-    "executor.runner.runner_support_files.live_runner"
+    "executor.runner.runner_support_files.live_runner",
+    "executor.runner.runner_support_files.ws_client"
   ],
   "open_residuals": [
     "executor"
   ],
-  "next_recommended_child": "root.executor.runner.runner_support_files.ws_client.single_leaf_closeout",
+  "next_recommended_child": "root.executor.runner.runner_support_files.parent_residual_judgment",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
