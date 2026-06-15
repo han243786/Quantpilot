@@ -1938,3 +1938,4 @@
 | v4.16.0 / BE-002MR-01 | Added: `runner_support_files` parent residual judgment selects `ws_client` |
 | v4.16.0 / BE-002MS-01 | Added: `ws_client` existing leaf baseline plan |
 | v4.16.0 / BE-002MS-02 | Added: `ws_client` single leaf closeout stops split |
+| v4.16.0 / BE-002MT-01 | Added: `runner_support_files` parent residual judgment selects `kline_buffer` |

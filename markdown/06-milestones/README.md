@@ -2291,3 +2291,4 @@
 | v4.16.0 / BE-002MR-01 | `v4.16.0/1928-root.executor.runner.runner_support_files.parent_residual_judgment.ws_client.md` | Added: `runner_support_files` parent residual judgment selects `ws_client` |
 | v4.16.0 / BE-002MS-01 | `v4.16.0/1929-root.executor.runner.runner_support_files.ws_client.baseline_plan.md` | Added: `ws_client` existing leaf baseline plan |
 | v4.16.0 / BE-002MS-02 | `v4.16.0/1930-root.executor.runner.runner_support_files.ws_client.single_leaf_closeout.md` | Added: `ws_client` single leaf closeout stops split |
+| v4.16.0 / BE-002MT-01 | `v4.16.0/1931-root.executor.runner.runner_support_files.parent_residual_judgment.kline_buffer.md` | Added: `runner_support_files` parent residual judgment selects `kline_buffer` |

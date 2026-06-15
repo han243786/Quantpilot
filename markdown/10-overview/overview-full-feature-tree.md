@@ -6309,3 +6309,5 @@ Recursive boundary supplement: BE-002MS-01 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1929-root.executor.runner.runner_support_files.ws_client.baseline_plan.md` - v4.16.0 BE-002MS-01 ws_client existing leaf baseline plan
 Recursive boundary supplement: BE-002MS-02 `root.executor.runner.runner_support_files.ws_client` single leaf closeout complete; next step: BE-002MT-01 parent_residual_judgment.
 - `markdown/06-milestones/v4.16.0/1930-root.executor.runner.runner_support_files.ws_client.single_leaf_closeout.md` - v4.16.0 BE-002MS-02 ws_client single leaf closeout
+Recursive boundary supplement: BE-002MT-01 `root.executor.runner.runner_support_files` parent residual judgment selected `kline_buffer`; next step: BE-002MU-01 baseline_plan.
+- `markdown/06-milestones/v4.16.0/1931-root.executor.runner.runner_support_files.parent_residual_judgment.kline_buffer.md` - v4.16.0 BE-002MT-01 runner_support_files parent residual judgment selects kline_buffer
