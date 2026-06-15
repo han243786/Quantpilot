@@ -9718,3 +9718,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files parent_closeout: true`; all planned support-file children are closed.
 **Latest state supplement (BE-002MY-01)**: `root.executor.runner` parent closeout complete; next step: BE-002MZ-01 parent_closeout.
 `root.executor.runner parent_closeout: true`; all planned runner route/support children are closed.
+**Latest state supplement (BE-002MZ-01)**: `root.executor` parent closeout complete; next step: BE-002NA-01 root parent_closeout.
+`root.executor parent_closeout: true`; executor state and runner children are closed.
