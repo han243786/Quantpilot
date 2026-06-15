@@ -1,10 +1,13 @@
 use anyhow::Result;
 
 use super::{
-    build_signed_request, clean_optional_token, okx_order_lookup_path,
-    transport_response_surface::send_signed_request, validate_order_lookup, OkxCancelOrderRequest,
-    OkxCredentials, OkxOrderRequest, OkxTradingProfile, OKX_BALANCE_PATH, OKX_CANCEL_ORDER_PATH,
-    OKX_ORDER_PATH,
+    build_signed_request,
+    lookup_validation_surface::{
+        clean_optional_token, okx_order_lookup_path, validate_order_lookup,
+    },
+    transport_response_surface::send_signed_request,
+    OkxCancelOrderRequest, OkxCredentials, OkxOrderRequest, OkxTradingProfile, OKX_BALANCE_PATH,
+    OKX_CANCEL_ORDER_PATH, OKX_ORDER_PATH,
 };
 
 /// 提交订单到 OKX 模拟盘。

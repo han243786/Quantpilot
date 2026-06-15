@@ -6226,3 +6226,6 @@ Recursive boundary supplement: BE-002LY-01 `root.executor.runner.runner_support_
 - `markdown/06-milestones/v4.16.0/1892-root.executor.runner.runner_support_files.okx_rest.parent_residual_judgment.lookup_validation_surface.md` - v4.16.0 BE-002LY-01 okx_rest parent residual judgment selects lookup_validation_surface
 Recursive boundary supplement: BE-002LZ-01 `root.executor.runner.runner_support_files.okx_rest.lookup_validation_surface` baseline frozen; next step: BE-002LZ-02 actual_extraction.
 - `markdown/06-milestones/v4.16.0/1893-root.executor.runner.runner_support_files.okx_rest.lookup_validation_surface.baseline_plan.md` - v4.16.0 BE-002LZ-01 lookup_validation_surface baseline plan
+Recursive boundary supplement: BE-002LZ-02 `root.executor.runner.runner_support_files.okx_rest.lookup_validation_surface` actual extraction complete; next step: BE-002LZ-03 single_leaf_closeout.
+- `src-executor/okx_rest/lookup_validation_surface.rs` - OKX REST order lookup path construction and validation helper child
+- `markdown/06-milestones/v4.16.0/1894-root.executor.runner.runner_support_files.okx_rest.lookup_validation_surface.extract_closeout.md` - v4.16.0 BE-002LZ-02 lookup_validation_surface actual extraction closeout

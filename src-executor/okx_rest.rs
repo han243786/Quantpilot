@@ -1,16 +1,19 @@
+mod lookup_validation_surface;
 /// v3.5.0/v4.8.0: OKX REST API 客户端 (demo trading only)
 /// 文档: https://www.okx.com/docs-v5/
 /// Demo trading: https://www.okx.com/api/v5 (需在 headers 中设置 x-simulated-trading: 1)
-use anyhow::{bail, Result};
-
 mod order_action_surface;
 mod signing_request_surface;
 mod transport_response_surface;
+pub use lookup_validation_surface::okx_order_lookup_path;
 pub use order_action_surface::{
     cancel_order, cancel_order_with_profile, fetch_balance, fetch_balance_with_profile,
     place_order, place_order_with_profile, query_order, query_order_with_profile,
 };
 pub use signing_request_surface::build_signed_request;
+
+#[cfg(test)]
+use anyhow::Result;
 
 #[cfg(test)]
 use transport_response_surface::send_signed_request_raw;
@@ -94,60 +97,6 @@ pub struct OkxCancelOrderRequest {
     pub ord_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cl_ord_id: Option<String>,
-}
-
-pub fn okx_order_lookup_path(
-    inst_id: &str,
-    ord_id: Option<&str>,
-    cl_ord_id: Option<&str>,
-) -> Result<String> {
-    validate_order_lookup(inst_id, ord_id, cl_ord_id)?;
-    let mut path = format!("{}?instId={}", OKX_ORDER_PATH, inst_id.trim());
-    if let Some(ord_id) = clean_optional_token(ord_id) {
-        path.push_str("&ordId=");
-        path.push_str(&ord_id);
-    }
-    if let Some(cl_ord_id) = clean_optional_token(cl_ord_id) {
-        path.push_str("&clOrdId=");
-        path.push_str(&cl_ord_id);
-    }
-    Ok(path)
-}
-
-fn validate_order_lookup(
-    inst_id: &str,
-    ord_id: Option<&str>,
-    cl_ord_id: Option<&str>,
-) -> Result<()> {
-    let inst_id = inst_id.trim();
-    if inst_id.is_empty() || !inst_id.chars().all(valid_okx_inst_char) {
-        bail!("OKX instId 不能为空，且只能包含 ASCII 字母、数字和连字符");
-    }
-    if clean_optional_token(ord_id).is_none() && clean_optional_token(cl_ord_id).is_none() {
-        bail!("OKX 查单/撤单必须提供 ordId 或 clOrdId");
-    }
-    for token in [ord_id, cl_ord_id].into_iter().flatten() {
-        let token = token.trim();
-        if token.is_empty() || !token.chars().all(valid_okx_id_char) {
-            bail!("OKX ordId/clOrdId 只能包含 ASCII 字母、数字、连字符和下划线");
-        }
-    }
-    Ok(())
-}
-
-fn clean_optional_token(value: Option<&str>) -> Option<String> {
-    value
-        .map(str::trim)
-        .filter(|value| !value.is_empty())
-        .map(str::to_string)
-}
-
-fn valid_okx_inst_char(ch: char) -> bool {
-    ch.is_ascii_alphanumeric() || ch == '-'
-}
-
-fn valid_okx_id_char(ch: char) -> bool {
-    ch.is_ascii_alphanumeric() || ch == '-' || ch == '_'
 }
 
 #[cfg(test)]
