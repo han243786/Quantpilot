@@ -14,11 +14,11 @@
     "GOV-GOVERNANCE-NEXT-OPTIMIZATION-01",
     "GOV-GOVERNANCE-NEXT-PROMOTION-01"
   ],
-  "last_committed_batch": "BE-002LV-01",
-  "last_committed_sha": "c59e7385",
+  "last_committed_batch": "BE-002LV-02",
+  "last_committed_sha": "a4ae00fb",
   "current_parent": "root.executor.runner.runner_support_files.okx_rest.transport_response_surface",
-  "current_step": "BE-002LV-02",
-  "current_phase": "actual_extraction",
+  "current_step": "BE-002LV-03",
+  "current_phase": "single_leaf_closeout",
   "leaf_split_decision_gate_required": true,
   "closed_children": [
     "interface_boundary",
@@ -353,7 +353,7 @@
   "open_residuals": [
     "executor"
   ],
-  "next_recommended_child": "root.executor.runner.runner_support_files.okx_rest.transport_response_surface.actual_extraction",
+  "next_recommended_child": "root.executor.runner.runner_support_files.okx_rest.transport_response_surface.single_leaf_closeout",
   "allowed_speedups": [
     "smart_pre_commit",
     "lightweight_two_step",
