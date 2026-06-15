@@ -9592,3 +9592,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.provider_order_support extracted: true`; `src-executor/provider_order_support.rs` now owns OKX demo provider DTOs, validation, credential loading, provider error shaping, audit payload helpers, and provider response helpers while route handling remains in `provider_order_routes`.
 **Latest state supplement (BE-002LP-03)**: `root.executor.runner.provider_order_support` single leaf closeout complete; next step: BE-002LQ-01 parent_residual_judgment.
 `root.executor.runner.provider_order_support stop_split: true`; terminal leaf control returned `STOP` with score 46 over a 401 LOC provider support child.
+**Latest state supplement (BE-002LQ-01)**: `root.executor.runner` parent residual judgment selected `runner_support_files`; next step: BE-002LR-01 baseline_plan.
+`root.executor.runner.runner_support_files selected: true`; this child starts with the existing live runner, migration API, kline buffer, websocket client, and OKX REST adapter files.

@@ -1964,3 +1964,4 @@ Latest recursive supplement: BE-002LO-01 selected discovered `executor.runner.pr
 Latest recursive supplement: BE-002LP-01 froze `provider_order_support`; next movement may extract OKX demo provider support helpers.
 Latest recursive supplement: BE-002LP-02 extracted OKX demo provider support helpers into `src-executor/provider_order_support.rs`; next step is single leaf closeout.
 Latest recursive supplement: BE-002LP-03 closed `executor.runner.provider_order_support` with `stop_split: true`; next step returns to runner parent residual judgment.
+Latest recursive supplement: BE-002LQ-01 selected `executor.runner.runner_support_files`; next baseline freezes existing runner support files.
