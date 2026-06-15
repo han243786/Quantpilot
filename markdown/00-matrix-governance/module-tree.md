@@ -9670,3 +9670,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner.v4_runner extracted: src-executor/live_runner/v4_runner.rs`; parent re-exports `V4Runner` and `V4ExecutorEvidenceEvent` while retaining RunnerPool, V4 helpers, and tests.
 **Latest state supplement (BE-002MJ-03)**: `root.executor.runner.runner_support_files.live_runner.v4_runner` single leaf closeout complete; next step returns to `live_runner` parent residual judgment.
 `root.executor.runner.runner_support_files.live_runner.v4_runner stop_split: true`; terminal leaf control returned `STOP` with score 35.
+**Latest state supplement (BE-002MK-01)**: `root.executor.runner.runner_support_files.live_runner` parent residual judgment selected `runner_pool_orchestration`; next step: BE-002ML-01 baseline_plan.
+`root.executor.runner.runner_support_files.live_runner.runner_pool_orchestration selected: true`; this child starts with `RunnerPool`, runner registration/removal, symbol reverse indexing, exchange sender registration, and websocket event fan-out.
