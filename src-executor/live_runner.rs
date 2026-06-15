@@ -1,7 +1,7 @@
-#[cfg(test)]
-use crate::executor_state::ExecutionMode;
 /// v3.7.0/v4.8.0: 实时策略运行器 — PaperSimulated 本地撮合 / PaperActual provider 回执
-use crate::executor_state::{ActiveStrategy, RuntimeKind, TriggerEvent};
+use crate::executor_state::{ActiveStrategy, TriggerEvent};
+#[cfg(test)]
+use crate::executor_state::{ExecutionMode, RuntimeKind};
 use crate::kline_buffer::KlinePool;
 use crate::ws_client::WsEvent;
 #[cfg(test)]
@@ -15,7 +15,9 @@ use qrpc_runtime::{
 use std::collections::{BTreeMap, HashMap};
 use tokio::sync::{broadcast, mpsc};
 
+mod runner_instance_dispatch;
 mod v3_live_runner;
+pub use runner_instance_dispatch::RunnerInstance;
 pub use v3_live_runner::{LiveRunner, RunnerStatus};
 
 pub struct RunnerPool {
@@ -25,60 +27,6 @@ pub struct RunnerPool {
     pub ws_tx_map: HashMap<String, mpsc::UnboundedSender<WsEvent>>,
     /// v3.3.0: symbol→[strategy_id] 反向索引, O(1)查找替代O(N*M)遍历
     pub symbol_index: HashMap<String, Vec<String>>,
-}
-
-#[allow(clippy::large_enum_variant)]
-pub enum RunnerInstance {
-    V3(LiveRunner),
-    V4(V4Runner),
-}
-
-impl RunnerInstance {
-    fn from_strategy(
-        s: &ActiveStrategy,
-        trigger_broadcast: broadcast::Sender<TriggerEvent>,
-        v4_evidence_broadcast: broadcast::Sender<V4ExecutorEvidenceEvent>,
-    ) -> anyhow::Result<Self> {
-        match s.runtime_kind {
-            RuntimeKind::V3 => Ok(Self::V3(LiveRunner::from_strategy(s, trigger_broadcast))),
-            RuntimeKind::V4 => Ok(Self::V4(V4Runner::from_strategy(s, v4_evidence_broadcast)?)),
-        }
-    }
-
-    fn handle_ws_event(&mut self, event: WsEvent) {
-        match self {
-            Self::V3(runner) => runner.handle_ws_event(event),
-            Self::V4(runner) => runner.handle_ws_event(event),
-        }
-    }
-
-    fn subscribed_symbols(&self) -> &[Symbol] {
-        match self {
-            Self::V3(runner) => &runner.subscribed_symbols,
-            Self::V4(runner) => &runner.subscribed_symbols,
-        }
-    }
-
-    pub fn kline_pool(&self) -> Option<&KlinePool> {
-        match self {
-            Self::V3(runner) => Some(&runner.kline_pool),
-            Self::V4(runner) => Some(&runner.kline_pool),
-        }
-    }
-
-    pub fn v4_memory_snapshot(&self, now_ms: u64) -> Option<V4RuntimeMemorySnapshot> {
-        match self {
-            Self::V3(_) => None,
-            Self::V4(runner) => Some(runner.runtime.memory_snapshot(now_ms)),
-        }
-    }
-
-    fn set_stopped(&mut self) {
-        match self {
-            Self::V3(runner) => runner.status = RunnerStatus::Stopped,
-            Self::V4(runner) => runner.status = RunnerStatus::Stopped,
-        }
-    }
 }
 
 pub struct V4Runner {
