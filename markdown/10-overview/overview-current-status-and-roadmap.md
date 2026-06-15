@@ -1988,3 +1988,4 @@ Latest recursive supplement: BE-002MA-01 selected `okx_rest.test_harness`; next 
 Latest recursive supplement: BE-002MB-01 froze `test_harness`; next movement may extract the local OKX REST test module.
 Latest recursive supplement: BE-002MB-02 extracted `test_harness`; next step is single leaf closeout.
 Latest recursive supplement: BE-002MB-03 closed `okx_rest.test_harness` with `stop_split: true`; next step returns to `okx_rest` parent residual judgment.
+Latest recursive supplement: BE-002MC-01 closed `okx_rest` parent; next step returns to `runner_support_files` parent residual judgment.

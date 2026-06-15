@@ -9640,3 +9640,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.okx_rest.test_harness extracted: src-executor/okx_rest/test_harness.rs`; parent retains production facade, type/constants, re-exports, and child wiring.
 **Latest state supplement (BE-002MB-03)**: `root.executor.runner.runner_support_files.okx_rest.test_harness` single leaf closeout complete; next step returns to okx_rest parent residual judgment.
 `root.executor.runner.runner_support_files.okx_rest.test_harness stop_split: true`; terminal leaf control returned `STOP` with score 37.
+**Latest state supplement (BE-002MC-01)**: `root.executor.runner.runner_support_files.okx_rest` parent closeout complete; next step returns to `runner_support_files` parent residual judgment.
+`root.executor.runner.runner_support_files.okx_rest parent_closeout: true`; parent residual is a compact facade with public types/constants, re-exports, child wiring, and test harness wiring.

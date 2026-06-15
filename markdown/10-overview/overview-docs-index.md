@@ -1907,3 +1907,4 @@
 | v4.16.0 / BE-002MB-01 | Added: `test_harness` baseline plan |
 | v4.16.0 / BE-002MB-02 | Added: `test_harness` actual extraction closeout |
 | v4.16.0 / BE-002MB-03 | Added: `test_harness` single leaf closeout stops split |
+| v4.16.0 / BE-002MC-01 | Added: `okx_rest` parent closeout |
