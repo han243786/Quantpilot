@@ -9594,3 +9594,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.provider_order_support stop_split: true`; terminal leaf control returned `STOP` with score 46 over a 401 LOC provider support child.
 **Latest state supplement (BE-002LQ-01)**: `root.executor.runner` parent residual judgment selected `runner_support_files`; next step: BE-002LR-01 baseline_plan.
 `root.executor.runner.runner_support_files selected: true`; this child starts with the existing live runner, migration API, kline buffer, websocket client, and OKX REST adapter files.
+**Latest state supplement (BE-002LR-01)**: `root.executor.runner.runner_support_files` baseline frozen; next step: BE-002LR-02 parent_residual_judgment.
+`root.executor.runner.runner_support_files baseline_frozen: true`; child queue is `okx_rest`, `live_runner`, `ws_client`, `kline_buffer`, and `migration_api`.
