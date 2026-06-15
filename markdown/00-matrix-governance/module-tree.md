@@ -9616,3 +9616,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.okx_rest.transport_response_surface extracted: true`; `src-executor/okx_rest/transport_response_surface.rs` now owns proxy selection, REST agent setup, raw/success-checked signed request dispatch, and OKX response success validation.
 **Latest state supplement (BE-002LV-03)**: `root.executor.runner.runner_support_files.okx_rest.transport_response_surface` single leaf closeout complete; next step: BE-002LW-01 parent_residual_judgment.
 `root.executor.runner.runner_support_files.okx_rest.transport_response_surface stop_split: true`; terminal leaf control returned `STOP` with score 31 over a 91 LOC transport child.
+**Latest state supplement (BE-002LW-01)**: `root.executor.runner.runner_support_files.okx_rest` parent residual judgment selected `order_action_surface`; next step: BE-002LX-01 baseline_plan.
+`root.executor.runner.runner_support_files.okx_rest.order_action_surface selected: true`; this child starts with public place/query/cancel/balance wrappers and their profile-aware variants.

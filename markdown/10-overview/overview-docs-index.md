@@ -1895,3 +1895,4 @@
 | v4.16.0 / BE-002LV-01 | Added: `transport_response_surface` baseline plan |
 | v4.16.0 / BE-002LV-02 | Added: `transport_response_surface` helper extraction complete |
 | v4.16.0 / BE-002LV-03 | Added: `transport_response_surface` single leaf closeout stops split |
+| v4.16.0 / BE-002LW-01 | Added: `okx_rest` parent residual judgment selects `order_action_surface` |

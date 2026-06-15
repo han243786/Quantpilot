@@ -1976,3 +1976,4 @@ Latest recursive supplement: BE-002LU-01 selected `okx_rest.transport_response_s
 Latest recursive supplement: BE-002LV-01 froze `transport_response_surface`; next movement may extract transport/response helpers.
 Latest recursive supplement: BE-002LV-02 extracted transport/response helpers into `src-executor/okx_rest/transport_response_surface.rs`; next step is single leaf closeout.
 Latest recursive supplement: BE-002LV-03 closed `okx_rest.transport_response_surface` with `stop_split: true`; next step returns to `okx_rest` parent residual judgment.
+Latest recursive supplement: BE-002LW-01 selected `okx_rest.order_action_surface`; next baseline freezes public order/query/cancel/balance wrappers.
