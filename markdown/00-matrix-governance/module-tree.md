@@ -9660,3 +9660,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch baseline_frozen: true`; approved movement is limited to `RunnerInstance` and its V3/V4 variant dispatch impl.
 **Latest state supplement (BE-002MH-02)**: `root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch` actual extraction complete; next step: BE-002MH-03 single_leaf_closeout.
 `root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch extracted: src-executor/live_runner/runner_instance_dispatch.rs`; parent re-exports `RunnerInstance` while retaining RunnerPool, V4 runner, V4 helpers, and tests.
+**Latest state supplement (BE-002MH-03)**: `root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch` single leaf closeout complete; next step returns to `live_runner` parent residual judgment.
+`root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch stop_split: true`; terminal leaf control returned `STOP` with score 23.
