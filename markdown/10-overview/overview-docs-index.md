@@ -1943,3 +1943,4 @@
 | v4.16.0 / BE-002MU-02 | Added: `kline_buffer` single leaf closeout stops split |
 | v4.16.0 / BE-002MV-01 | Added: `runner_support_files` parent residual judgment selects `migration_api` |
 | v4.16.0 / BE-002MW-01 | Added: `migration_api` existing leaf baseline plan |
+| v4.16.0 / BE-002MW-02 | Added: `migration_api` single leaf closeout stops split |

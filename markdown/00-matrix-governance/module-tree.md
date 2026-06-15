@@ -9712,3 +9712,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.migration_api selected: true`; terminal leaf control returned `STOP` with score 23 over the existing isolated migration API file.
 **Latest state supplement (BE-002MW-01)**: `root.executor.runner.runner_support_files.migration_api` baseline frozen as an existing isolated file; next step: BE-002MW-02 single_leaf_closeout.
 `root.executor.runner.runner_support_files.migration_api baseline_frozen: true`; no internal extraction is approved.
+**Latest state supplement (BE-002MW-02)**: `root.executor.runner.runner_support_files.migration_api` single leaf closeout complete; next step: BE-002MX-01 parent_closeout.
+`root.executor.runner.runner_support_files.migration_api stop_split: true`; `src-executor/migration_api.rs` remains the terminal migration API support-file leaf.
