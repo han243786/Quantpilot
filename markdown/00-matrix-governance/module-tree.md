@@ -9656,3 +9656,5 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 `root.executor.runner.runner_support_files.live_runner.v3_live_runner stop_split: true`; terminal leaf control returned `STOP` with score 37.
 **Latest state supplement (BE-002MG-01)**: `root.executor.runner.runner_support_files.live_runner` parent residual judgment selected `runner_instance_dispatch`; next step: BE-002MH-01 baseline_plan.
 `root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch selected: true`; this child starts with `RunnerInstance` construction, event dispatch, subscribed-symbol projection, K-line pool projection, V4 memory snapshot projection, and stopped-state projection.
+**Latest state supplement (BE-002MH-01)**: `root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch` baseline frozen; next step: BE-002MH-02 actual_extraction.
+`root.executor.runner.runner_support_files.live_runner.runner_instance_dispatch baseline_frozen: true`; approved movement is limited to `RunnerInstance` and its V3/V4 variant dispatch impl.

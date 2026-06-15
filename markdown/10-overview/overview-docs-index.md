@@ -1915,3 +1915,4 @@
 | v4.16.0 / BE-002MF-02 | Added: `v3_live_runner` actual extraction closeout |
 | v4.16.0 / BE-002MF-03 | Added: `v3_live_runner` single leaf closeout stops split |
 | v4.16.0 / BE-002MG-01 | Added: `live_runner` parent residual judgment selects `runner_instance_dispatch` |
+| v4.16.0 / BE-002MH-01 | Added: `runner_instance_dispatch` baseline plan |
