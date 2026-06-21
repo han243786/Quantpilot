@@ -10383,3 +10383,11 @@ Productization supplement: ADV-SM-PROD-003J Guard Builder bundle-level workspace
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level graph id, machine id/template, transition/event context, parameter paths, and disabled execution readiness for structured guard descriptor projection.
 - `markdown/00-matrix-governance/module-tree.md` - records bundle-level Guard Builder projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003J` as the static contract bundle workspace projection surface slice.
+
+Productization supplement: ADV-SM-PROD-003K Guard Builder timing and fallback policy contract surface.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds `MachineGuardPolicySpec`, `MachineGuardFallbackPolicy`, readiness policy flags, and projection policy payloads for contract-only timeout/cooldown/fallback modeling.
+- `qrpc_core_ir/src/v4/machine_contract/static_validation.rs` - rejects empty structured guard policies and zero-millisecond timeout/cooldown values while preserving runtime-disabled guard execution.
+- `qrpc_core_ir/src/v4.rs` - covers accepted timing/fallback policy readiness and projection plus rejected invalid policy declarations.
+- `qrpc_runtime/src/v4_runtime/test_harness/payload_validation_tests.rs` - keeps the runtime structured guard descriptor rejection test descriptor-compatible with the new optional policy field.
+- `markdown/00-matrix-governance/module-tree.md` - records timing/fallback Guard Builder policy ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003K` as the contract-only timing/fallback policy surface slice.

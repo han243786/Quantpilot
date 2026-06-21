@@ -11563,3 +11563,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003J)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle-level workspace projection surface.
 `V4StaticContractBundle::guard_descriptor_projections`; static contract bundles can project all structured guard descriptors with graph id, machine id/template, transition/event/readiness context, and parameter paths while preserving read-only behavior and runtime fail-closed execution.
+
+**Productization supplement (ADV-SM-PROD-003K)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.contracts.runtime_support.v4_runtime_support.machine_transition_engine`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder timing and fallback policy contract surface.
+`MachineGuardPolicySpec`; structured guard descriptors can declare contract-only timeout, cooldown, and fail-closed fallback policy for workspace/readiness projection while runtime guard execution remains disabled and fail-closed.

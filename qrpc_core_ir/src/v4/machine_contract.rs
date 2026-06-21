@@ -126,7 +126,25 @@ pub struct MachineGuardDescriptor {
     #[serde(default)]
     pub parameter_paths: Vec<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub policy: Option<MachineGuardPolicySpec>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub explanation: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineGuardPolicySpec {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timeout_ms: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cooldown_ms: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fallback: Option<MachineGuardFallbackPolicy>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum MachineGuardFallbackPolicy {
+    FailClosed,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -191,6 +209,10 @@ pub struct MachineGuardDescriptorReadiness {
     pub machine_memory_read_count: usize,
     pub readonly_runtime_fact_read_count: usize,
     pub parameter_path_count: usize,
+    pub policy_declared: bool,
+    pub timeout_declared: bool,
+    pub cooldown_declared: bool,
+    pub fallback_declared: bool,
     pub execution_enabled: bool,
 }
 
@@ -205,6 +227,8 @@ pub struct MachineGuardDescriptorProjection {
     pub readiness: MachineGuardDescriptorReadiness,
     pub reads: Vec<MachineGuardReadRef>,
     pub parameter_paths: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub policy: Option<MachineGuardPolicySpec>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -259,6 +283,22 @@ impl MachineGuardDescriptor {
                 .filter(|read| read.source == MachineGuardReadSource::ReadonlyRuntimeFact)
                 .count(),
             parameter_path_count: self.parameter_paths.len(),
+            policy_declared: self.policy.is_some(),
+            timeout_declared: self
+                .policy
+                .as_ref()
+                .and_then(|policy| policy.timeout_ms)
+                .is_some(),
+            cooldown_declared: self
+                .policy
+                .as_ref()
+                .and_then(|policy| policy.cooldown_ms)
+                .is_some(),
+            fallback_declared: self
+                .policy
+                .as_ref()
+                .and_then(|policy| policy.fallback.as_ref())
+                .is_some(),
             execution_enabled: false,
         }
     }
@@ -279,6 +319,7 @@ impl V4MachineContract {
                     readiness: guard_descriptor.readiness(),
                     reads: guard_descriptor.reads.clone(),
                     parameter_paths: guard_descriptor.parameter_paths.clone(),
+                    policy: guard_descriptor.policy.clone(),
                 })
             })
             .collect()

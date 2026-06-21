@@ -114,6 +114,7 @@ fn v4_runtime_rejects_structured_guard_descriptor_without_execution() {
             },
         ],
         parameter_paths: vec!["guard.min_signal_age_ms".to_string()],
+        policy: None,
         explanation: Some("structured descriptor is not executable yet".to_string()),
     });
     let mut runtime = V4PaperSimulatedRuntime::new(graph).unwrap();

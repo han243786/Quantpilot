@@ -601,6 +601,11 @@ mod tests {
                 },
             ],
             parameter_paths: vec!["guard.threshold".to_string()],
+            policy: Some(MachineGuardPolicySpec {
+                timeout_ms: Some(500),
+                cooldown_ms: Some(1_000),
+                fallback: Some(MachineGuardFallbackPolicy::FailClosed),
+            }),
             explanation: Some("first structured guard descriptor surface".to_string()),
         });
 
@@ -616,6 +621,10 @@ mod tests {
         assert_eq!(readiness.machine_memory_read_count, 1);
         assert_eq!(readiness.readonly_runtime_fact_read_count, 1);
         assert_eq!(readiness.parameter_path_count, 1);
+        assert!(readiness.policy_declared);
+        assert!(readiness.timeout_declared);
+        assert!(readiness.cooldown_declared);
+        assert!(readiness.fallback_declared);
         assert!(!readiness.execution_enabled);
     }
 
@@ -639,6 +648,11 @@ mod tests {
                 "guard.threshold".to_string(),
                 "risk.max_notional".to_string(),
             ],
+            policy: Some(MachineGuardPolicySpec {
+                timeout_ms: Some(250),
+                cooldown_ms: Some(2_000),
+                fallback: Some(MachineGuardFallbackPolicy::FailClosed),
+            }),
             explanation: Some("workspace projection surface".to_string()),
         });
 
@@ -654,6 +668,7 @@ mod tests {
         assert_eq!(projection.readiness.guard_id, "trend_guard");
         assert_eq!(projection.readiness.read_count, 2);
         assert_eq!(projection.readiness.parameter_path_count, 2);
+        assert!(projection.readiness.policy_declared);
         assert!(!projection.readiness.execution_enabled);
         assert_eq!(projection.reads.len(), 2);
         assert_eq!(
@@ -662,6 +677,13 @@ mod tests {
                 "guard.threshold".to_string(),
                 "risk.max_notional".to_string()
             ]
+        );
+        let policy = projection.policy.as_ref().unwrap();
+        assert_eq!(policy.timeout_ms, Some(250));
+        assert_eq!(policy.cooldown_ms, Some(2_000));
+        assert_eq!(
+            policy.fallback,
+            Some(MachineGuardFallbackPolicy::FailClosed)
         );
     }
 
@@ -681,6 +703,7 @@ mod tests {
                 path: "symbol".to_string(),
             }],
             parameter_paths: vec!["guard.threshold".to_string()],
+            policy: None,
             explanation: Some("graph projection surface".to_string()),
         });
 
@@ -717,6 +740,7 @@ mod tests {
                 path: "symbol".to_string(),
             }],
             parameter_paths: vec!["risk.max_notional".to_string()],
+            policy: None,
             explanation: Some("bundle projection surface".to_string()),
         });
 
@@ -767,6 +791,7 @@ mod tests {
                 },
             ],
             parameter_paths: vec!["".to_string(), "graph.edges".to_string()],
+            policy: None,
             explanation: None,
         });
 
@@ -790,6 +815,46 @@ mod tests {
             message.contains("parameter path `graph.edges`")
                 && message.contains("outside the proposal-only guard boundary")
         }));
+    }
+
+    #[test]
+    fn machine_contract_rejects_invalid_structured_guard_descriptor_policy() {
+        let mut machine = sample_machine();
+        machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "policy_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::MachineMemory,
+                path: "last_signal_at".to_string(),
+            }],
+            parameter_paths: vec!["cooldown.ms".to_string()],
+            policy: Some(MachineGuardPolicySpec {
+                timeout_ms: Some(0),
+                cooldown_ms: Some(0),
+                fallback: None,
+            }),
+            explanation: None,
+        });
+
+        let errors = machine.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("timeout_ms must be greater than zero")));
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("cooldown_ms must be greater than zero")));
+
+        let descriptor = machine.transitions[0].guard_descriptor.as_mut().unwrap();
+        descriptor.policy = Some(MachineGuardPolicySpec {
+            timeout_ms: None,
+            cooldown_ms: None,
+            fallback: None,
+        });
+
+        let errors = machine.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message
+                .contains("policy must declare timeout_ms, cooldown_ms, or fallback")));
     }
 
     #[test]
@@ -826,6 +891,7 @@ mod tests {
                 path: "symbol".to_string(),
             }],
             parameter_paths: vec!["guard.allowed_symbol".to_string()],
+            policy: None,
             explanation: Some("guard reads a declared event payload field".to_string()),
         });
 
@@ -847,6 +913,7 @@ mod tests {
                 path: "missing_payload".to_string(),
             }],
             parameter_paths: Vec::new(),
+            policy: None,
             explanation: None,
         });
 

@@ -158,6 +158,29 @@ impl V4MachineContract {
                         ));
                     }
                 }
+                if let Some(policy) = &guard_descriptor.policy {
+                    if policy.timeout_ms.is_none()
+                        && policy.cooldown_ms.is_none()
+                        && policy.fallback.is_none()
+                    {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` policy must declare timeout_ms, cooldown_ms, or fallback",
+                            transition.transition_id, guard_descriptor.guard_id
+                        ));
+                    }
+                    if policy.timeout_ms == Some(0) {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` timeout_ms must be greater than zero",
+                            transition.transition_id, guard_descriptor.guard_id
+                        ));
+                    }
+                    if policy.cooldown_ms == Some(0) {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` cooldown_ms must be greater than zero",
+                            transition.transition_id, guard_descriptor.guard_id
+                        ));
+                    }
+                }
             }
         }
 

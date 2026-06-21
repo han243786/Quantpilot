@@ -10026,3 +10026,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle-level projection of graph id, machine id/template, transition id, event context, parameter paths, and disabled execution readiness. |
 | capability boundary | This does not mutate graph topology, Event Catalog, Memory Schema, capability source, AI approval semantics, or active strategy state. |
 | rollback | Remove the bundle-level projection DTO/helper/test and this record if workspace guard descriptors are later served by a dedicated query endpoint instead of the static contract bundle. |
+
+### ADV-SM-PROD-003K: Guard Builder timing and fallback policy contract surface
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by giving structured guard descriptors an explicit contract-only place for timeout, cooldown, and fail-closed fallback policy before any runtime execution is enabled. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now provides `MachineGuardPolicySpec` and `MachineGuardFallbackPolicy`. `MachineGuardDescriptor` can carry optional timing/fallback policy, readiness exposes whether policy fields are declared, and read-only projections include the policy payload. Static validation rejects empty policies and zero-millisecond timeout/cooldown values. |
+| runtime boundary | Runtime behavior remains unchanged: policy fields are not evaluated, structured guard descriptors still fail closed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers accepted timeout/cooldown/fail-closed policy projection plus rejected empty and zero-millisecond policy declarations. |
+| capability boundary | This does not add guard execution, hidden sleeps, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the guard policy DTOs, readiness/projection fields, validation branch, policy tests, and this record if timing/fallback policy moves into a separate typed Guard Builder contract. |
