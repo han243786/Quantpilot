@@ -1,8 +1,9 @@
 use std::collections::BTreeSet;
 
 use super::{
-    machine_guard_readonly_runtime_fact_allowed, MachineCachePolicy, MachineGuardReadSource,
-    MachineRecoveryPolicy, MachineSilencePolicy, V4MachineContract,
+    machine_guard_parameter_path_allowed, machine_guard_readonly_runtime_fact_allowed,
+    MachineCachePolicy, MachineGuardReadSource, MachineRecoveryPolicy, MachineSilencePolicy,
+    V4MachineContract,
 };
 use crate::v4::V4_MACHINE_CONTRACT_VERSION;
 
@@ -149,6 +150,11 @@ impl V4MachineContract {
                         errors.push(format!(
                             "transition `{}` structured guard `{}` has an empty parameter path",
                             transition.transition_id, guard_descriptor.guard_id
+                        ));
+                    } else if !machine_guard_parameter_path_allowed(parameter_path) {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` parameter path `{}` is outside the proposal-only guard boundary",
+                            transition.transition_id, guard_descriptor.guard_id, parameter_path
                         ));
                     }
                 }

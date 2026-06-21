@@ -150,6 +150,39 @@ pub fn machine_guard_readonly_runtime_fact_allowed(path: &str) -> bool {
     MACHINE_GUARD_READONLY_RUNTIME_FACTS.contains(&path)
 }
 
+pub fn machine_guard_parameter_path_allowed(path: &str) -> bool {
+    let path = path.trim().to_ascii_lowercase();
+    if path.is_empty() {
+        return false;
+    }
+
+    let forbidden = [
+        "topology",
+        "graph.",
+        "graph.edges",
+        "event_catalog",
+        "event_schema",
+        "event.",
+        "capability_source",
+        "capability.source",
+        "active_strategy",
+    ];
+    if forbidden.iter().any(|needle| path.contains(needle)) {
+        return false;
+    }
+
+    let allowed = [
+        "guard",
+        "cooldown",
+        "threshold",
+        "max_notional",
+        "max_position",
+        "max_drawdown",
+        "drawdown",
+    ];
+    allowed.iter().any(|needle| path.contains(needle))
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct MachineGuardDescriptorReadiness {
     pub guard_id: String,

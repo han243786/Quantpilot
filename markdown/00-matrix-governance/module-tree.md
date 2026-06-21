@@ -11548,3 +11548,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003E)**: `root.runtime.mutation.ai_proposal.static_check` and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder proposal-only parameter diff gate.
 `v4.transition.guard proposal-only parameter diff gate`; AI proposal static validation accepts only guard/cooldown/threshold/risk-limit parameter paths for transition guard proposals and rejects topology, graph edge, Event Catalog/schema, capability source, and active strategy mutation attempts.
+
+**Productization supplement (ADV-SM-PROD-003F)**: `root.contracts.core_ir.v4_contracts.machine_contract` and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder descriptor parameter path boundary.
+`MachineGuardDescriptor.parameter_paths proposal-only boundary`; machine contract static validation accepts only guard/cooldown/threshold/risk-limit descriptor parameter paths and rejects topology, graph edge, Event Catalog/schema, capability source, and active strategy mutation attempts before workspace or runtime use.

@@ -638,7 +638,7 @@ mod tests {
                     path: "provider.secret".to_string(),
                 },
             ],
-            parameter_paths: vec!["".to_string()],
+            parameter_paths: vec!["".to_string(), "graph.edges".to_string()],
             explanation: None,
         });
 
@@ -658,6 +658,10 @@ mod tests {
         assert!(errors
             .iter()
             .any(|message| message.contains("has an empty parameter path")));
+        assert!(errors.iter().any(|message| {
+            message.contains("parameter path `graph.edges`")
+                && message.contains("outside the proposal-only guard boundary")
+        }));
     }
 
     #[test]

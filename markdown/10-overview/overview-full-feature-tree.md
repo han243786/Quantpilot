@@ -10352,3 +10352,10 @@ Productization supplement: ADV-SM-PROD-003E Guard Builder proposal-only paramete
 - `src/runtime/mutation/ai_proposal/static_check.rs` - rejects `v4.transition.guard` AI proposal paths that attempt topology, Event Catalog/schema, capability source, active strategy, or other non-guard parameter edits.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder proposal-only parameter diff gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003E` as the AI proposal static-check binding slice for Guard Builder parameters.
+
+Productization supplement: ADV-SM-PROD-003F Guard Builder descriptor parameter path boundary.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - declares the proposal-only guard parameter path boundary used by structured guard descriptors.
+- `qrpc_core_ir/src/v4/machine_contract/static_validation.rs` - rejects `MachineGuardDescriptor.parameter_paths` that attempt topology, Event Catalog/schema, capability source, active strategy, or other non-guard parameter edits.
+- `qrpc_core_ir/src/v4.rs` - covers accepted descriptor guard parameter paths and rejected graph edge parameter paths.
+- `markdown/00-matrix-governance/module-tree.md` - records descriptor parameter path boundary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003F` as the contract-level descriptor parameter boundary slice.
