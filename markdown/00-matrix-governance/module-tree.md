@@ -11533,3 +11533,6 @@ The tracked integration test command covering 11 tracked test binaries passed wi
 
 **Productization supplement (ADV-SM-PROD-002BP)**: `root.runtime.mutation.contract_repair_approval`, `root.tests.api_v4_productization_contract_repair`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own approve durable writeback final packaging audit.
 The final audit records `origin/master` synchronized at `bef3707e3`, no local diff on the target contract-repair files after push, and completion of the accepted evidence boundary without adding hidden cleanup/commit fault controls.
+
+**Productization supplement (ADV-SM-PROD-003A)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.contracts.runtime_support.v4_runtime_support.machine_transition_engine`, `root.runtime.mutation.ai_proposal.static_check`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder structured guard boundary baseline.
+`guard_builder_structured_boundary_baseline`; the first `SM-PROD-003` slice is constrained to a structured guard descriptor/readiness surface over event payload, machine memory, and readonly runtime facts. It must keep runtime guard execution fail-closed, preserve proposal-only guard parameter diffs, and avoid topology, Event Catalog, Memory Schema, capability source, or active-strategy mutation.

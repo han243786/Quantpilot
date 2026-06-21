@@ -9913,3 +9913,15 @@ AI 不允许:
 | implementation | No runtime capability change; this is the final packaging audit for the current `SM-PROD-002` boundary. |
 | vision distance review | `SM-PROD-002` durable approve writeback is complete under the accepted boundary. Future work should start from a new explicitly scoped North Star slice rather than reopening this one by adding hidden fault controls. |
 | rollback | Remove this record if the target files drift from `origin/master` or any cited evidence command fails in a fresh rerun. |
+
+### ADV-SM-PROD-003A: Guard Builder structured guard boundary baseline
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; open `SM-PROD-003` after the `SM-PROD-002` durable writeback closeout by freezing the first Guard Builder boundary before code changes. |
+| current-state evidence | `qrpc_core_ir/src/v4/machine_contract.rs` still stores transition guards as `MachineTransition.guard: Option<String>`. `qrpc_runtime/src/v4_runtime/machine_transition_engine.rs` rejects any non-empty guard as unsupported and fails closed. `src/runtime/mutation/ai_proposal/static_check.rs` maps `v4.transition.guard` to the state-machine proposal domain, and the productization workspace evidence already treats `guard` as an AI proposal diff target behind sandbox, approval, replay-diff, and source-evidence gates. |
+| boundary decision | The first implementation slice for `SM-PROD-003` must add a structured guard descriptor/readiness surface only. That surface may describe reads from event payload, machine memory, and readonly runtime facts, but must not evaluate guards, change transition execution, mutate topology, mutate Event Catalog or Memory Schema, change capability source, or write active strategy state. |
+| acceptance path | Future code evidence should prove: structured guard read-model shape, source-category validation, more specific unsupported-guard fail-closed diagnostics, and proposal-only guard parameter diff gating. Runtime guard execution remains locked until those proofs exist. |
+| implementation | No code change in this record; this is a clean baseline handoff from `SM-PROD-002` to `SM-PROD-003` so later implementation cannot silently expand the guard-builder capability boundary. |
+| vision distance review | The North Star moves from approval writeback completion toward Guard Builder minimum usability, while preserving AI proposal-only and runtime reproducibility constraints. Current distance to full North Star remains dominated by structured guard modeling and later workspace integration, not by the closed `SM-PROD-002` path. |
+| rollback | Remove this record and its governance entries if the next implementation slice chooses a different `SM-PROD-003` first boundary or if code already implements structured guard execution before descriptor/readiness evidence exists. |
