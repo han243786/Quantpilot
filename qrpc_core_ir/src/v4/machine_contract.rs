@@ -191,6 +191,7 @@ pub fn machine_guard_parameter_path_allowed(path: &str) -> bool {
 
     let allowed = [
         "guard",
+        "timeout",
         "cooldown",
         "threshold",
         "max_notional",

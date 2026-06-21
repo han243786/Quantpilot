@@ -10037,3 +10037,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers accepted timeout/cooldown/fail-closed policy projection plus rejected empty and zero-millisecond policy declarations. |
 | capability boundary | This does not add guard execution, hidden sleeps, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the guard policy DTOs, readiness/projection fields, validation branch, policy tests, and this record if timing/fallback policy moves into a separate typed Guard Builder contract. |
+
+### ADV-SM-PROD-003L: Guard Builder timeout proposal path boundary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by aligning the shared Guard Builder proposal-only parameter boundary with the newly-declared timeout policy field. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now accepts timeout parameter paths through `machine_guard_parameter_path_allowed()`. `src/runtime/mutation/ai_proposal/static_check.rs` uses the same helper for `v4.transition.guard`, so AI timeout diffs can pass only with the existing v4 backtest, replay diff, runtime runner, digest, and domain-binding evidence gates. |
+| runtime boundary | Runtime behavior remains unchanged: timeout proposal paths are only static proposal candidates and do not execute timers, evaluate guards, mutate active strategy state, or write policy changes. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers timeout descriptor parameter paths; `cargo test -p quantpilot v4_ai_proposal_static_check` covers accepted timeout guard proposal paths plus existing rejected topology/capability-source paths. |
+| capability boundary | This does not open topology, graph edge, Event Catalog/schema, Memory Schema, capability source, fallback execution, AI automatic apply, or active strategy mutation. |
+| rollback | Remove the timeout allowlist entry, static-check timeout test, descriptor timeout assertion, and this record if timeout proposal diffs move into a separate typed patch contract. |

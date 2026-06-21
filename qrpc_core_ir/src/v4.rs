@@ -600,7 +600,7 @@ mod tests {
                     path: "clock.tick_ms".to_string(),
                 },
             ],
-            parameter_paths: vec!["guard.threshold".to_string()],
+            parameter_paths: vec!["guard.threshold".to_string(), "timeout.ms".to_string()],
             policy: Some(MachineGuardPolicySpec {
                 timeout_ms: Some(500),
                 cooldown_ms: Some(1_000),
@@ -620,7 +620,7 @@ mod tests {
         assert_eq!(readiness.event_payload_read_count, 1);
         assert_eq!(readiness.machine_memory_read_count, 1);
         assert_eq!(readiness.readonly_runtime_fact_read_count, 1);
-        assert_eq!(readiness.parameter_path_count, 1);
+        assert_eq!(readiness.parameter_path_count, 2);
         assert!(readiness.policy_declared);
         assert!(readiness.timeout_declared);
         assert!(readiness.cooldown_declared);

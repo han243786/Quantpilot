@@ -233,7 +233,7 @@ fn validate_ai_proposal_config_domain_binding(
             code: "v4_guard_parameter_path_not_proposal_only".to_string(),
             target: "target.parameter_path".to_string(),
             message:
-                "V4 transition guard proposals may only target guard, cooldown, threshold, or guard risk-limit parameters."
+                "V4 transition guard proposals may only target guard, timeout, cooldown, threshold, or guard risk-limit parameters."
                     .to_string(),
         });
     }
@@ -517,6 +517,35 @@ mod v4_ai_proposal_static_check_tests {
             evidence_hash: hash('a'),
             actor: None,
             reason: "Tune v4 guard risk limit from trajectory evidence".to_string(),
+            capability_context: None,
+            config_domain_binding: Some(v4_binding(old.clone(), new.clone())),
+        };
+
+        let result = ai_proposal_static_check_result(&request, &old, &new, 1, 1);
+
+        assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckPassed);
+        assert!(result.details.is_empty());
+    }
+
+    #[test]
+    fn v4_ai_proposal_static_check_accepts_guard_timeout_parameter_diff_path() {
+        let old = hash('b');
+        let new = hash('c');
+        let request = CreateRuntimeAiProposalRequest {
+            source_kind: RuntimeEvidenceSourceKind::Backtest,
+            source_id: "bt1".to_string(),
+            target: v4_guard_target("timeout.ms"),
+            old_value: json!(500),
+            new_value: json!(1_000),
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: hash('d'),
+            evidence_hash: hash('a'),
+            actor: None,
+            reason: "Tune v4 guard timeout from trajectory evidence".to_string(),
             capability_context: None,
             config_domain_binding: Some(v4_binding(old.clone(), new.clone())),
         };

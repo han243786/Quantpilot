@@ -11566,3 +11566,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003K)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.contracts.runtime_support.v4_runtime_support.machine_transition_engine`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder timing and fallback policy contract surface.
 `MachineGuardPolicySpec`; structured guard descriptors can declare contract-only timeout, cooldown, and fail-closed fallback policy for workspace/readiness projection while runtime guard execution remains disabled and fail-closed.
+
+**Productization supplement (ADV-SM-PROD-003L)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.runtime.mutation.ai_proposal.static_check`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder timeout proposal path boundary.
+`machine_guard_parameter_path_allowed`; shared Guard Builder parameter path validation now admits timeout proposal paths for `v4.transition.guard` while retaining the existing topology, Event Catalog/schema, capability source, and active-strategy mutation exclusions.

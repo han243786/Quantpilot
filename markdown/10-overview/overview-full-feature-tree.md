@@ -10391,3 +10391,10 @@ Productization supplement: ADV-SM-PROD-003K Guard Builder timing and fallback po
 - `qrpc_runtime/src/v4_runtime/test_harness/payload_validation_tests.rs` - keeps the runtime structured guard descriptor rejection test descriptor-compatible with the new optional policy field.
 - `markdown/00-matrix-governance/module-tree.md` - records timing/fallback Guard Builder policy ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003K` as the contract-only timing/fallback policy surface slice.
+
+Productization supplement: ADV-SM-PROD-003L Guard Builder timeout proposal path boundary.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - extends `machine_guard_parameter_path_allowed()` so structured guard descriptor parameter paths and runtime proposal checks share timeout parameter admission.
+- `qrpc_core_ir/src/v4.rs` - covers timeout descriptor parameter paths inside structured guard descriptor readiness.
+- `src/runtime/mutation/ai_proposal/static_check.rs` - covers accepted `v4.transition.guard` timeout proposal paths while retaining rejected topology and capability-source guard proposal paths.
+- `markdown/00-matrix-governance/module-tree.md` - records timeout Guard Builder proposal path ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003L` as the proposal-only timeout path boundary slice.
