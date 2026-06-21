@@ -11578,3 +11578,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003O)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.runtime_support.v4_runtime_support.machine_transition_engine`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder fail-closed execution state projection.
 `MachineGuardExecutionReadinessState::DisabledFailClosed`; structured guard descriptor readiness now exposes the fail-closed execution blocker and bundle summaries aggregate disabled-fail-closed counts while runtime execution remains disabled.
+
+**Productization supplement (ADV-SM-PROD-003P)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.contracts.runtime_support.v4_runtime_support.machine_transition_engine`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder fail-closed blocker reason projection.
+`execution_blocker_code` / `execution_blocker_reason`; structured guard descriptor readiness now exposes the stable disabled-fail-closed blocker code and reason, and runtime structured-guard rejection reuses that reason while execution remains disabled.

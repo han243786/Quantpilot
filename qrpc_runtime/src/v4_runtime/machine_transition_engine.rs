@@ -52,8 +52,11 @@ impl V4PaperSimulatedRuntime {
                 self.record_event_rejected(
                     &event,
                     format!(
-                        "transition `{}` declares structured guard `{}` with {} reads; guard execution is not enabled and v4 runtime fails closed",
-                        transition.transition_id, readiness.guard_id, readiness.read_count
+                        "transition `{}` declares structured guard `{}` with {} reads; {}",
+                        transition.transition_id,
+                        readiness.guard_id,
+                        readiness.read_count,
+                        readiness.execution_blocker_reason
                     ),
                 );
                 continue;

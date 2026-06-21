@@ -635,6 +635,14 @@ mod tests {
             readiness.execution_state,
             MachineGuardExecutionReadinessState::DisabledFailClosed
         );
+        assert_eq!(
+            readiness.execution_blocker_code,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+        );
+        assert_eq!(
+            readiness.execution_blocker_reason,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON
+        );
     }
 
     #[test]
@@ -813,6 +821,14 @@ mod tests {
         assert_eq!(
             projection.guard.guard.readiness.execution_state,
             MachineGuardExecutionReadinessState::DisabledFailClosed
+        );
+        assert_eq!(
+            projection.guard.guard.readiness.execution_blocker_code,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+        );
+        assert_eq!(
+            projection.guard.guard.readiness.execution_blocker_reason,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON
         );
     }
 

@@ -10418,3 +10418,10 @@ Productization supplement: ADV-SM-PROD-003O Guard Builder fail-closed execution 
 - `qrpc_core_ir/src/v4.rs` - covers per-guard and bundle-summary disabled-fail-closed readiness while keeping `execution_enabled=false`.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder fail-closed readiness projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003O` as the fail-closed execution state projection slice.
+
+Productization supplement: ADV-SM-PROD-003P Guard Builder fail-closed blocker reason projection.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds stable disabled-fail-closed blocker code/reason constants and projects them through structured guard descriptor readiness.
+- `qrpc_runtime/src/v4_runtime/machine_transition_engine.rs` - reuses the readiness blocker reason for structured guard runtime rejection while keeping execution fail-closed before state mutation.
+- `qrpc_core_ir/src/v4.rs` - covers per-guard and bundle-projected blocker code/reason while keeping `execution_enabled=false`.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder fail-closed blocker reason projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003P` as the fail-closed blocker code/reason projection slice.

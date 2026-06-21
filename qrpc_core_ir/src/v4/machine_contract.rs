@@ -177,8 +177,31 @@ pub enum MachineGuardExecutionReadinessState {
     DisabledFailClosed,
 }
 
+pub const MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE: &str =
+    "guard_execution_disabled_fail_closed";
+pub const MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON: &str =
+    "guard execution is not enabled and v4 runtime fails closed";
+
 pub const MACHINE_GUARD_READONLY_RUNTIME_FACTS: &[&str] =
     &["clock.tick_ms", "runtime.mode", "capability.snapshot_id"];
+
+impl MachineGuardExecutionReadinessState {
+    pub fn blocker_code(self) -> &'static str {
+        match self {
+            MachineGuardExecutionReadinessState::DisabledFailClosed => {
+                MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+            }
+        }
+    }
+
+    pub fn blocker_reason(self) -> &'static str {
+        match self {
+            MachineGuardExecutionReadinessState::DisabledFailClosed => {
+                MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON
+            }
+        }
+    }
+}
 
 pub fn machine_guard_readonly_runtime_fact_allowed(path: &str) -> bool {
     MACHINE_GUARD_READONLY_RUNTIME_FACTS.contains(&path)
@@ -247,6 +270,8 @@ pub struct MachineGuardDescriptorReadiness {
     pub fallback_declared: bool,
     pub execution_enabled: bool,
     pub execution_state: MachineGuardExecutionReadinessState,
+    pub execution_blocker_code: String,
+    pub execution_blocker_reason: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -306,6 +331,7 @@ impl MachineGuardDescriptor {
 
     pub fn readiness(&self) -> MachineGuardDescriptorReadiness {
         let parameter_path_kinds = self.parameter_path_kinds();
+        let execution_state = MachineGuardExecutionReadinessState::DisabledFailClosed;
         MachineGuardDescriptorReadiness {
             guard_id: self.guard_id.clone(),
             read_count: self.reads.len(),
@@ -362,7 +388,9 @@ impl MachineGuardDescriptor {
                 .and_then(|policy| policy.fallback.as_ref())
                 .is_some(),
             execution_enabled: false,
-            execution_state: MachineGuardExecutionReadinessState::DisabledFailClosed,
+            execution_state,
+            execution_blocker_code: execution_state.blocker_code().to_string(),
+            execution_blocker_reason: execution_state.blocker_reason().to_string(),
         }
     }
 }

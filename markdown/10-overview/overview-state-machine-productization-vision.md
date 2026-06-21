@@ -10081,3 +10081,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers per-guard and bundle-summary disabled-fail-closed readiness state while keeping `execution_enabled=false`. |
 | capability boundary | This does not enable guard execution, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the execution readiness enum/field, bundle disabled-fail-closed count, test assertions, and this record if fail-closed blocker projection moves to a dedicated runtime-readiness query contract. |
+
+### ADV-SM-PROD-003P: Guard Builder fail-closed blocker reason projection
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making the structured guard execution blocker addressable as a stable code and human-readable reason in the read-only readiness model. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now provides `MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE`, `MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON`, and readiness fields `execution_blocker_code` / `execution_blocker_reason`. `MachineGuardExecutionReadinessState::DisabledFailClosed` is the single source for those values. |
+| runtime boundary | Runtime behavior remains fail-closed: `qrpc_runtime/src/v4_runtime/machine_transition_engine.rs` still rejects structured guard descriptors before state mutation, but its rejection reason now reuses the readiness blocker reason instead of duplicating text. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers per-guard and bundle-projected blocker code/reason while keeping `execution_enabled=false`; `cargo test -p qrpc-runtime v4_runtime_rejects_structured_guard_descriptor_without_execution` covers the runtime rejection reason. |
+| capability boundary | This does not enable guard execution, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the blocker constants/helper fields, runtime reason reuse, related test assertions, and this record if fail-closed blocker details move to a dedicated runtime-readiness query contract. |
