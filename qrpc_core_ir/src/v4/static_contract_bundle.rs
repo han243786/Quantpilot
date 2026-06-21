@@ -77,6 +77,7 @@ pub struct StaticContractBundleGuardDescriptorSummary {
     pub condition_threshold_parameter_path_count: usize,
     pub condition_risk_limit_parameter_path_count: usize,
     pub policy_declared_count: usize,
+    pub timing_policy_declared_count: usize,
     pub timeout_declared_count: usize,
     pub cooldown_declared_count: usize,
     pub fallback_declared_count: usize,
@@ -164,6 +165,7 @@ impl V4StaticContractBundle {
             summary.condition_risk_limit_parameter_path_count +=
                 readiness.condition_risk_limit_parameter_path_count;
             summary.policy_declared_count += usize::from(readiness.policy_declared);
+            summary.timing_policy_declared_count += usize::from(readiness.timing_policy_declared);
             summary.timeout_declared_count += usize::from(readiness.timeout_declared);
             summary.cooldown_declared_count += usize::from(readiness.cooldown_declared);
             summary.fallback_declared_count += usize::from(readiness.fallback_declared);

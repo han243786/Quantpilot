@@ -173,9 +173,45 @@ pub struct MachineGuardPolicySpec {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineGuardPolicyProjection {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timeout_ms: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cooldown_ms: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fallback: Option<MachineGuardFallbackPolicy>,
+    pub timing_policy_declared: bool,
+    pub timeout_declared: bool,
+    pub cooldown_declared: bool,
+    pub fallback_declared: bool,
+    pub fallback_fail_closed_declared: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum MachineGuardFallbackPolicy {
     FailClosed,
+}
+
+impl MachineGuardPolicySpec {
+    pub fn projection(&self) -> MachineGuardPolicyProjection {
+        let timeout_declared = self.timeout_ms.is_some();
+        let cooldown_declared = self.cooldown_ms.is_some();
+        let fallback_declared = self.fallback.is_some();
+        MachineGuardPolicyProjection {
+            timeout_ms: self.timeout_ms,
+            cooldown_ms: self.cooldown_ms,
+            fallback: self.fallback.clone(),
+            timing_policy_declared: timeout_declared || cooldown_declared,
+            timeout_declared,
+            cooldown_declared,
+            fallback_declared,
+            fallback_fail_closed_declared: matches!(
+                self.fallback.as_ref(),
+                Some(MachineGuardFallbackPolicy::FailClosed)
+            ),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -321,6 +357,7 @@ pub struct MachineGuardDescriptorReadiness {
     pub condition_threshold_parameter_path_count: usize,
     pub condition_risk_limit_parameter_path_count: usize,
     pub policy_declared: bool,
+    pub timing_policy_declared: bool,
     pub timeout_declared: bool,
     pub cooldown_declared: bool,
     pub fallback_declared: bool,
@@ -347,6 +384,8 @@ pub struct MachineGuardDescriptorProjection {
     pub condition_projections: Vec<MachineGuardConditionProjection>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub policy: Option<MachineGuardPolicySpec>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub policy_projection: Option<MachineGuardPolicyProjection>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -381,6 +420,10 @@ pub struct MachineMemoryField {
 }
 
 impl MachineGuardDescriptor {
+    pub fn policy_projection(&self) -> Option<MachineGuardPolicyProjection> {
+        self.policy.as_ref().map(MachineGuardPolicySpec::projection)
+    }
+
     pub fn condition_projections(&self) -> Vec<MachineGuardConditionProjection> {
         self.conditions
             .iter()
@@ -405,6 +448,7 @@ impl MachineGuardDescriptor {
 
     pub fn readiness(&self) -> MachineGuardDescriptorReadiness {
         let parameter_path_kinds = self.parameter_path_kinds();
+        let policy_projection = self.policy_projection();
         let condition_parameter_path_kinds = self
             .conditions
             .iter()
@@ -535,27 +579,26 @@ impl MachineGuardDescriptor {
                 .filter(|kind| **kind == MachineGuardParameterPathKind::RiskLimit)
                 .count(),
             policy_declared: self.policy.is_some(),
-            timeout_declared: self
-                .policy
+            timing_policy_declared: policy_projection
                 .as_ref()
-                .and_then(|policy| policy.timeout_ms)
-                .is_some(),
-            cooldown_declared: self
-                .policy
+                .map(|policy| policy.timing_policy_declared)
+                .unwrap_or(false),
+            timeout_declared: policy_projection
                 .as_ref()
-                .and_then(|policy| policy.cooldown_ms)
-                .is_some(),
-            fallback_declared: self
-                .policy
+                .map(|policy| policy.timeout_declared)
+                .unwrap_or(false),
+            cooldown_declared: policy_projection
                 .as_ref()
-                .and_then(|policy| policy.fallback.as_ref())
-                .is_some(),
-            fallback_fail_closed_declared: matches!(
-                self.policy
-                    .as_ref()
-                    .and_then(|policy| policy.fallback.as_ref()),
-                Some(MachineGuardFallbackPolicy::FailClosed)
-            ),
+                .map(|policy| policy.cooldown_declared)
+                .unwrap_or(false),
+            fallback_declared: policy_projection
+                .as_ref()
+                .map(|policy| policy.fallback_declared)
+                .unwrap_or(false),
+            fallback_fail_closed_declared: policy_projection
+                .as_ref()
+                .map(|policy| policy.fallback_fail_closed_declared)
+                .unwrap_or(false),
             execution_enabled: false,
             execution_state,
             execution_blocker_code: execution_state.blocker_code().to_string(),
@@ -583,6 +626,7 @@ impl V4MachineContract {
                     conditions: guard_descriptor.conditions.clone(),
                     condition_projections: guard_descriptor.condition_projections(),
                     policy: guard_descriptor.policy.clone(),
+                    policy_projection: guard_descriptor.policy_projection(),
                 })
             })
             .collect()

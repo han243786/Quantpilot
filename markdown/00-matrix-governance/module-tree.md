@@ -11599,3 +11599,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003V)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.contracts.core_ir.v4_contracts.static_contract_bundle`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder fail-closed fallback readiness.
 `fallback_fail_closed_declared`; structured guard readiness and bundle summaries expose explicit fail-closed fallback policy counts while runtime guard and fallback execution remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003W)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.contracts.core_ir.v4_contracts.static_contract_bundle`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder timing policy readiness detail.
+`MachineGuardPolicyProjection` / `timing_policy_declared`; structured guard projections and bundle summaries expose timeout/cooldown timing policy readiness while runtime timers, guard execution, and active strategy writes remain disabled.

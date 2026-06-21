@@ -10468,3 +10468,10 @@ Productization supplement: ADV-SM-PROD-003V Guard Builder fail-closed fallback r
 - `qrpc_core_ir/src/v4.rs` - covers per-guard fail-closed fallback readiness and bundle summary aggregation.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder fail-closed fallback readiness ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003V` as the fail-closed fallback readiness slice.
+
+Productization supplement: ADV-SM-PROD-003W Guard Builder timing policy readiness detail.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds `MachineGuardPolicyProjection`, `policy_projection`, and `timing_policy_declared` so workspace consumers can distinguish timeout/cooldown timing policy readiness from generic policy presence.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates `timing_policy_declared_count` in bundle guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers per-guard timing policy readiness, policy projection payloads, and bundle summary aggregation.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder timing policy readiness detail ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003W` as the timing policy readiness detail slice.
