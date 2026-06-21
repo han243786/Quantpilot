@@ -11569,3 +11569,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003L)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.runtime.mutation.ai_proposal.static_check`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder timeout proposal path boundary.
 `machine_guard_parameter_path_allowed`; shared Guard Builder parameter path validation now admits timeout proposal paths for `v4.transition.guard` while retaining the existing topology, Event Catalog/schema, capability source, and active-strategy mutation exclusions.
+
+**Productization supplement (ADV-SM-PROD-003M)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.runtime.mutation.ai_proposal.static_check`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder parameter path kind projection.
+`MachineGuardParameterPathKind`; shared Guard Builder parameter validation now projects proposal-only path kinds for workspace/readiness consumers while preserving fallback as contract-only and outside AI proposal admission.

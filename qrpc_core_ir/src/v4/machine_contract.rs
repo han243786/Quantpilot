@@ -161,6 +161,16 @@ pub enum MachineGuardReadSource {
     ReadonlyRuntimeFact,
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum MachineGuardParameterPathKind {
+    Guard,
+    Timeout,
+    Cooldown,
+    Threshold,
+    RiskLimit,
+}
+
 pub const MACHINE_GUARD_READONLY_RUNTIME_FACTS: &[&str] =
     &["clock.tick_ms", "runtime.mode", "capability.snapshot_id"];
 
@@ -168,10 +178,10 @@ pub fn machine_guard_readonly_runtime_fact_allowed(path: &str) -> bool {
     MACHINE_GUARD_READONLY_RUNTIME_FACTS.contains(&path)
 }
 
-pub fn machine_guard_parameter_path_allowed(path: &str) -> bool {
+pub fn machine_guard_parameter_path_kind(path: &str) -> Option<MachineGuardParameterPathKind> {
     let path = path.trim().to_ascii_lowercase();
     if path.is_empty() {
-        return false;
+        return None;
     }
 
     let forbidden = [
@@ -186,20 +196,30 @@ pub fn machine_guard_parameter_path_allowed(path: &str) -> bool {
         "active_strategy",
     ];
     if forbidden.iter().any(|needle| path.contains(needle)) {
-        return false;
+        return None;
     }
 
-    let allowed = [
-        "guard",
-        "timeout",
-        "cooldown",
-        "threshold",
-        "max_notional",
-        "max_position",
-        "max_drawdown",
-        "drawdown",
-    ];
-    allowed.iter().any(|needle| path.contains(needle))
+    if path.contains("timeout") {
+        return Some(MachineGuardParameterPathKind::Timeout);
+    }
+    if path.contains("cooldown") {
+        return Some(MachineGuardParameterPathKind::Cooldown);
+    }
+    if path.contains("threshold") {
+        return Some(MachineGuardParameterPathKind::Threshold);
+    }
+    let risk_limit = ["max_notional", "max_position", "max_drawdown", "drawdown"];
+    if risk_limit.iter().any(|needle| path.contains(needle)) {
+        return Some(MachineGuardParameterPathKind::RiskLimit);
+    }
+    if path.contains("guard") {
+        return Some(MachineGuardParameterPathKind::Guard);
+    }
+    None
+}
+
+pub fn machine_guard_parameter_path_allowed(path: &str) -> bool {
+    machine_guard_parameter_path_kind(path).is_some()
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -210,6 +230,11 @@ pub struct MachineGuardDescriptorReadiness {
     pub machine_memory_read_count: usize,
     pub readonly_runtime_fact_read_count: usize,
     pub parameter_path_count: usize,
+    pub guard_parameter_path_count: usize,
+    pub timeout_parameter_path_count: usize,
+    pub cooldown_parameter_path_count: usize,
+    pub threshold_parameter_path_count: usize,
+    pub risk_limit_parameter_path_count: usize,
     pub policy_declared: bool,
     pub timeout_declared: bool,
     pub cooldown_declared: bool,
@@ -228,6 +253,7 @@ pub struct MachineGuardDescriptorProjection {
     pub readiness: MachineGuardDescriptorReadiness,
     pub reads: Vec<MachineGuardReadRef>,
     pub parameter_paths: Vec<String>,
+    pub parameter_path_kinds: Vec<MachineGuardParameterPathKind>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub policy: Option<MachineGuardPolicySpec>,
 }
@@ -264,7 +290,15 @@ pub struct MachineMemoryField {
 }
 
 impl MachineGuardDescriptor {
+    pub fn parameter_path_kinds(&self) -> Vec<MachineGuardParameterPathKind> {
+        self.parameter_paths
+            .iter()
+            .filter_map(|path| machine_guard_parameter_path_kind(path))
+            .collect()
+    }
+
     pub fn readiness(&self) -> MachineGuardDescriptorReadiness {
+        let parameter_path_kinds = self.parameter_path_kinds();
         MachineGuardDescriptorReadiness {
             guard_id: self.guard_id.clone(),
             read_count: self.reads.len(),
@@ -284,6 +318,26 @@ impl MachineGuardDescriptor {
                 .filter(|read| read.source == MachineGuardReadSource::ReadonlyRuntimeFact)
                 .count(),
             parameter_path_count: self.parameter_paths.len(),
+            guard_parameter_path_count: parameter_path_kinds
+                .iter()
+                .filter(|kind| **kind == MachineGuardParameterPathKind::Guard)
+                .count(),
+            timeout_parameter_path_count: parameter_path_kinds
+                .iter()
+                .filter(|kind| **kind == MachineGuardParameterPathKind::Timeout)
+                .count(),
+            cooldown_parameter_path_count: parameter_path_kinds
+                .iter()
+                .filter(|kind| **kind == MachineGuardParameterPathKind::Cooldown)
+                .count(),
+            threshold_parameter_path_count: parameter_path_kinds
+                .iter()
+                .filter(|kind| **kind == MachineGuardParameterPathKind::Threshold)
+                .count(),
+            risk_limit_parameter_path_count: parameter_path_kinds
+                .iter()
+                .filter(|kind| **kind == MachineGuardParameterPathKind::RiskLimit)
+                .count(),
             policy_declared: self.policy.is_some(),
             timeout_declared: self
                 .policy
@@ -320,6 +374,7 @@ impl V4MachineContract {
                     readiness: guard_descriptor.readiness(),
                     reads: guard_descriptor.reads.clone(),
                     parameter_paths: guard_descriptor.parameter_paths.clone(),
+                    parameter_path_kinds: guard_descriptor.parameter_path_kinds(),
                     policy: guard_descriptor.policy.clone(),
                 })
             })

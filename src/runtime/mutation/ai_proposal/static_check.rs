@@ -621,6 +621,38 @@ mod v4_ai_proposal_static_check_tests {
     }
 
     #[test]
+    fn v4_ai_proposal_static_check_rejects_guard_fallback_path() {
+        let old = hash('b');
+        let new = hash('c');
+        let request = CreateRuntimeAiProposalRequest {
+            source_kind: RuntimeEvidenceSourceKind::Backtest,
+            source_id: "bt1".to_string(),
+            target: v4_guard_target("fallback.fail_closed"),
+            old_value: json!(false),
+            new_value: json!(true),
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: hash('d'),
+            evidence_hash: hash('a'),
+            actor: None,
+            reason: "Attempt fallback edit through guard proposal".to_string(),
+            capability_context: None,
+            config_domain_binding: Some(v4_binding(old.clone(), new.clone())),
+        };
+
+        let result = ai_proposal_static_check_result(&request, &old, &new, 1, 1);
+
+        assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckFailed);
+        assert!(result.details.iter().any(|detail| {
+            detail.code == "v4_guard_parameter_path_not_proposal_only"
+                && detail.target == "target.parameter_path"
+        }));
+    }
+
+    #[test]
     fn v4_ai_proposal_static_check_requires_productization_replay_anchor() {
         let old = hash('b');
         let new = hash('c');

@@ -621,6 +621,11 @@ mod tests {
         assert_eq!(readiness.machine_memory_read_count, 1);
         assert_eq!(readiness.readonly_runtime_fact_read_count, 1);
         assert_eq!(readiness.parameter_path_count, 2);
+        assert_eq!(readiness.guard_parameter_path_count, 0);
+        assert_eq!(readiness.timeout_parameter_path_count, 1);
+        assert_eq!(readiness.cooldown_parameter_path_count, 0);
+        assert_eq!(readiness.threshold_parameter_path_count, 1);
+        assert_eq!(readiness.risk_limit_parameter_path_count, 0);
         assert!(readiness.policy_declared);
         assert!(readiness.timeout_declared);
         assert!(readiness.cooldown_declared);
@@ -668,6 +673,8 @@ mod tests {
         assert_eq!(projection.readiness.guard_id, "trend_guard");
         assert_eq!(projection.readiness.read_count, 2);
         assert_eq!(projection.readiness.parameter_path_count, 2);
+        assert_eq!(projection.readiness.threshold_parameter_path_count, 1);
+        assert_eq!(projection.readiness.risk_limit_parameter_path_count, 1);
         assert!(projection.readiness.policy_declared);
         assert!(!projection.readiness.execution_enabled);
         assert_eq!(projection.reads.len(), 2);
@@ -676,6 +683,13 @@ mod tests {
             vec![
                 "guard.threshold".to_string(),
                 "risk.max_notional".to_string()
+            ]
+        );
+        assert_eq!(
+            projection.parameter_path_kinds,
+            vec![
+                MachineGuardParameterPathKind::Threshold,
+                MachineGuardParameterPathKind::RiskLimit,
             ]
         );
         let policy = projection.policy.as_ref().unwrap();

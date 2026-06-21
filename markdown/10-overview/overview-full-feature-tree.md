@@ -10398,3 +10398,10 @@ Productization supplement: ADV-SM-PROD-003L Guard Builder timeout proposal path 
 - `src/runtime/mutation/ai_proposal/static_check.rs` - covers accepted `v4.transition.guard` timeout proposal paths while retaining rejected topology and capability-source guard proposal paths.
 - `markdown/00-matrix-governance/module-tree.md` - records timeout Guard Builder proposal path ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003L` as the proposal-only timeout path boundary slice.
+
+Productization supplement: ADV-SM-PROD-003M Guard Builder parameter path kind projection.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds `MachineGuardParameterPathKind`, `machine_guard_parameter_path_kind()`, readiness path-kind counts, and projection path-kind payloads for read-only workspace consumption.
+- `qrpc_core_ir/src/v4.rs` - covers timeout, threshold, and risk-limit parameter path kind projection in structured guard descriptor readiness/projection tests.
+- `src/runtime/mutation/ai_proposal/static_check.rs` - covers rejected `v4.transition.guard` fallback proposal paths so fallback remains contract-only.
+- `markdown/00-matrix-governance/module-tree.md` - records parameter path kind Guard Builder projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003M` as the path-kind projection and fallback guardrail slice.

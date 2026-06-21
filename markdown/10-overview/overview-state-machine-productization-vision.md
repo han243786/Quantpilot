@@ -10048,3 +10048,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers timeout descriptor parameter paths; `cargo test -p quantpilot v4_ai_proposal_static_check` covers accepted timeout guard proposal paths plus existing rejected topology/capability-source paths. |
 | capability boundary | This does not open topology, graph edge, Event Catalog/schema, Memory Schema, capability source, fallback execution, AI automatic apply, or active strategy mutation. |
 | rollback | Remove the timeout allowlist entry, static-check timeout test, descriptor timeout assertion, and this record if timeout proposal diffs move into a separate typed patch contract. |
+
+### ADV-SM-PROD-003M: Guard Builder parameter path kind projection
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by making proposal-only guard parameter paths auditable as structured kinds instead of opaque strings. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now exposes `MachineGuardParameterPathKind` and `machine_guard_parameter_path_kind()`. Guard descriptor readiness reports guard/timeout/cooldown/threshold/risk-limit parameter counts, projections carry the resolved path kinds, and `machine_guard_parameter_path_allowed()` stays backed by that shared classifier. |
+| runtime boundary | Runtime behavior remains unchanged: path kinds are read-only contract metadata and do not evaluate guards, apply proposals, execute fallback policy, or write active strategy state. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers timeout/threshold/risk-limit kind projection; `cargo test -p quantpilot v4_ai_proposal_static_check` covers fallback path rejection so fallback remains contract-only and not AI proposal-admitted. |
+| capability boundary | This does not add new admitted mutation classes beyond the already-recorded guard, timeout, cooldown, threshold, and risk-limit proposal boundary; topology, Event Catalog/schema, Memory Schema, capability source, fallback execution, AI automatic apply, and active strategy mutation remain closed. |
+| rollback | Remove the parameter kind enum/helper, readiness/projection kind fields, fallback rejection test, and this record if typed Guard Builder patch contracts replace path-string classification. |
