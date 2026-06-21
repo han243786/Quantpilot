@@ -1,267 +1,322 @@
 # QuantPilot
 
-> ⚠️ **实验性软件声明**  
-> 当前版本 (v4.7.0) 仍处于密集开发阶段。尽管已完成多轮全维度诱错审计并进入 v4 执行回放、LiveActual 安全边界和 AI 提案分析收口, 但系统中仍然可能存在未被发现的阻断性缺陷和边界问题。本版本仅适用于实验、研究和离线模拟, **不可用于实盘交易或生产环境**。开发者需要自行精细打磨, 并结合自身使用场景进行充分验证。
+> 单人本地使用的专业量化策略研究、回测、模拟执行与运行治理桌面工具。
+> 本 README 只负责入口导航、当前状态和能力边界说明；事实真源以 `governance-next/`、QPCursor、全量树、模块树、后端 capability、测试门禁和 closeout evidence 为准。
 
-QuantPilot 是一个单机量化交易沙盒, 聚焦于诚实的能力边界、可复现的运行时行为和发布时契约纪律。产品定位固定为单人本地桌面工具, 不按 SaaS、多用户后台或团队账号系统设计。
+## 当前状态
 
-当前版本: **v4.7.0** (v4 执行回放 / LiveActual 安全边界 / AI 提案分析) | [版本历史](./CHANGELOG.md)
+| 维度 | 当前口径 |
+| --- | --- |
+| 代码发布基线 | v4.7.0 |
+| 产品边界口径 | v4.10.0 UX 收口与产品边界固化 |
+| 当前治理入口 | `governance-next/` |
+| 日常开发主控 | QPCursor + 全量树 + 模块树 |
+| 架构推进线 | v4.16.0 模块化抽离与递归治理推进 |
+| 产品定位 | 单人本地桌面量化工具 |
+| 真实资金自动交易 | 当前不作为可用能力承诺 |
+| SaaS / 多租户 / 团队账号 | unsupported |
 
-## 项目治理体系
+代码版本、产品边界和治理推进线不是同一件事。`v4.7.0` 是代码发布基线；`v4.10.0` 固化了单机工具、账户裁剪和策略中心不做搜索筛选等产品边界；`v4.15-v4.16` 是治理和模块化抽离推进线。
 
-v4.15.0 起，QuantPilot 的默认开发治理入口已经完全切换为三矩阵治理。新开发者和 AI 辅助流程应先进入三矩阵，再回到旧主干文档查证细节。
+## QuantPilot 是什么
 
-- [三矩阵治理入口](./markdown/00-matrix-governance/README.md)
-- [三矩阵治理完全落地路线](./markdown/00-matrix-governance/landing-roadmap.md)
-- [三档提案样例](./markdown/00-matrix-governance/proposal-examples.md)
+QuantPilot 是本地运行的量化策略工作台，目标是把策略从想法推进到可编译、可审计、可回放、可治理的运行契约。
 
-旧主干仍由三份文档构成完整的项目知识体系。**新开发者必须理解这三份文档**才能开始贡献代码。
+核心能力包括：
 
-```
-                      ┌─────────────┐
-                      │   全量树     │  ← 第一步: 了解项目里有什么
-                      │  全局透明    │
-                      └──────┬──────┘
-                             │
-              ┌──────────────┼──────────────┐
-              │              │              │
-     ┌────────┴────────┐    │    ┌────────┴────────┐
-     │ 你要改哪些文件？  │    │    │ 你要遵守什么规则？ │
-     └────────┬────────┘    │    └────────┬────────┘
-              │              │              │
-              ▼              │              ▼
-     ┌──────────────┐       │     ┌──────────────┐
-     │ 代码怎么改？   │ ←────┘     │ 流程怎么走？   │
-     └──────┬───────┘             └──────┬───────┘
-            │                            │
-            ▼                            ▼
-   ┌────────────────┐          ┌────────────────┐
-   │  GP            │          │  超级规范化     │
-   │  实现约束       │          │  流程约束       │
-   │                │          │                │
-   │  "代码写成      │          │  "开发怎么管"   │
-   │   什么样"       │          │                │
-   └────────────────┘          └────────────────┘
-```
+- 用策略图或 QuantScript 构建策略。
+- 通过统一编译链生成可验证的运行表示。
+- 运行 paper 模拟、历史回测和参数实验。
+- 用 v4 状态机、Risk Plane、执行能力来源和事件证据解释运行结果。
+- 在执行端观察订单、资产、K 线、策略状态和运行证据。
+- 通过 AI proposal、沙箱验证、审批、激活和回滚管理运行时变更。
+- 明确区分 supported、deferred 和 unsupported 能力，不把未支持能力包装成可用功能。
 
-### 全量树 —— 全局透明
+QuantPilot 不按 SaaS、多租户、多用户后台或团队账号系统设计。
 
-> **回答**: 项目里有什么？每个文件是干什么的？改一个功能会影响哪些文件？
+## 先读什么
 
-全量树是项目的"源代码地图"。它把 160+ 前端文件、47 个后端模块、7 个 Rust crate 逐个拆解, 从系统入口一直展开到每个文件的每个关键函数。**开发者在读任何一行代码之前, 先读这棵树, 就能知道去哪找、改什么。**
+新开发者、Agent 或维护者进入仓库时，默认按以下顺序定位：
 
-- 📄 [全量树](./markdown/10-overview/overview-full-feature-tree.md)
-- 🎯 读者: 所有开发者 (尤其是新人/Agent)
-- 📏 原则: 每个节点和叶子都有说明, 结构跟着代码实际组织走
+1. `governance-next/README.md`: 当前权威治理入口。
 
-### General_Policy (GP) —— 实现约束
+2. `governance-next/05-authoritative-operating-model.md`: 当前运行模型、旧治理关系和证据边界。
 
-> **回答**: 代码写成什么样？什么能做？什么绝对不能做？
+3. `governance-next/01-qpcursor-protocol.md`: QPCursor 接管坐标和工作游标规则。
 
-GP 是项目的"代码宪法"。44 条规则分为架构铁律、代码规范、禁止事项、存储生命周期、前端设计规范、治理约束六大类。每条标注检查方式: 🛡️ 门禁自动检查, 🔍 审计人工核查。**违反 GP 的 PR 不予合并。**
+4. `governance-next/02-governance-heat-trigger.md`: 判断本次变更属于 G0-G5 哪个治理热度。
 
-- 📄 [General_Policy](./markdown/General_Policy.md) — 44 条, 23 条阻断级
-- 🎯 读者: 写代码的人
-- 📏 原则: 每条款标注检查方式, 与门禁脚本/审计流程互锁
+5. `governance-next/03-local-invariants.md`: 绑定模块、切面、接口、状态和边界不变量。
 
-### 超级规范化 —— 流程约束
+6. `markdown/10-overview/overview-state-machine-productization-vision.md`: v4/v5 状态机产品化推进循环的北极星文档。
 
-> **回答**: 开发怎么管？什么阶段做什么检查？版本怎么发布？
+7. `markdown/10-overview/overview-full-feature-tree.md`: 全量树，物理文件地图，回答项目里有什么、文件在哪、改动会影响什么。
 
-超级规范化是项目的"开发程序法"。定义了三层门禁流水线 (pre-commit → PR/CI → closeout-release)、AI 并行审计机制、五维度评分标准、MAJOR 演化通道和元流水线自进化规则。**不通过门禁就不能进入下一阶段。**
+8. `markdown/00-matrix-governance/module-tree.md`: 模块树，逻辑白箱网络，回答模块输入、输出、关键 public 方法、父子通信和回归保护。
 
-- 📄 [超级规范化](./markdown/01-principles/principles-super-standardization.md)
-- 🎯 读者: 管流程的人 (也要求所有开发者遵守)
-- 📏 原则: 阻断规则不可跳过, S0 必须当前修复
+维护提醒：README 不能替代全量树和模块树。若全量树或模块树为空、失真或未同步，先修复事实树，再更新 README。
 
-### 三者关系
+## 用户主流程
 
-| | 全量树 | GP | 超级规范化 |
-|---|---|---|---|
-| 管什么 | 全局透明 | 实现约束 | 流程约束 |
-| 问什么 | 有什么？在哪？ | 怎么写？不能写什么？ | 怎么管？怎么查？ |
-| 类型 | 地图 | 实体法 | 程序法 |
-| 违反后果 | 找不到代码 | PR 不予合并 | 不能进入下一阶段 |
-| 更新频率 | 每次文件变更 | MAJOR/MINOR 条款变更 | 流程优化时 |
-
-三份文档**互不重复**: 全量树不抄 GP 条款, GP 不列文件路径, 超级规范不解释功能。三者通过标注互锁 — GP 标注 🛡️ 的条款对应超级规范的门禁脚本, 全量树标注 `[GP §x.x]` 指向约束来源。
-
-### 开发者上手路径
-
-```
-第一步: 读三矩阵治理   → 判定档位, 定位模块树, 明确提案流程
-第二步: 读全量树       → 了解项目全貌, 知道每个文件干什么
-第三步: 读 GP          → 了解代码规则, 知道什么能做/不能做
-第四步: 读超级规范化    → 了解开发流程, 知道提交前要跑什么门禁
-第五步: 读系统架构      → 了解技术细节, 知道数据怎么流转
+```text
+创建或选择策略
+  -> 构建策略图或编写 QuantScript
+  -> 编译与静态审计
+  -> 回测 / 模拟运行 / 参数扫掠
+  -> 分析证据、指标与运行历史
+  -> 进入执行端做 PaperSimulated / PaperActual 观察和控制
+  -> 通过 AI proposal 与审批链管理受控变更
 ```
 
-| 文档 | 路径 |
-|------|------|
-| 三矩阵治理入口 | [./markdown/00-matrix-governance/README.md](./markdown/00-matrix-governance/README.md) |
-| 全量树 | [./markdown/10-overview/overview-full-feature-tree.md](./markdown/10-overview/overview-full-feature-tree.md) |
-| GP (项目总规则) | [./markdown/General_Policy.md](./markdown/General_Policy.md) |
-| 超级规范化 | [./markdown/01-principles/principles-super-standardization.md](./markdown/01-principles/principles-super-standardization.md) |
-| 系统架构 | [./markdown/10-overview/overview-system-architecture.md](./markdown/10-overview/overview-system-architecture.md) |
-| 使用指南 | [./markdown/10-overview/overview-system-architecture.md#十一使用指南](./markdown/10-overview/overview-system-architecture.md#十一使用指南) |
+## 当前能力概览
+
+| 能力域 | 当前能力 |
+| --- | --- |
+| 策略中心 | 全量策略列表、模板库、近期运行、近期回测、对比队列、检查器、新手入口 |
+| 策略工作区 | 总览、构建、诊断、研究回测、运行监控、源码、模板、版本历史、协作审计、参数扫掠 |
+| 图编辑器 | React Flow 画布、节点池、模块侧栏、连线、属性面板、版本历史、导入导出 |
+| QuantScript | 轻量代码编辑、草稿自动保存、运行测试、Tab 缩进、粘贴保护 |
+| 编译链 | graph -> QS -> parse -> HIR -> lower -> Core IR |
+| 回测 | 历史回放、回测详情、回测对比、12 项指标、事件流、v4 artifact 摘要 |
+| v4 运行证据 | 状态机轨迹、Risk Plane 决策、执行能力来源、复杂度预算、tick replay 证据 |
+| AI 治理 | AI proposal、沙箱验证、L1/L2/L3 审批、签名快照、运行时变更 |
+| 执行端 | PaperSimulated、OKX demo 边界 PaperActual、订单、资产、K 线、策略图、紧急停止 |
+| 安全 | OKX 凭证管理、AES-256-GCM、PBKDF2、本地 JWT 会话、进程间加密通道、日志脱敏 |
+| 全局交互 | Ctrl/Cmd+K 命令面板、Toast、错误边界、教程、离线检测、配额提示、Tauri 桌面壳 |
 
 ## 产品边界
 
-- **运行时模式**: paper (纸面交易); 回测通过 runtime backtest 请求执行
-- **执行模块**: `builtin.execution.paper`, `live.okx` (OKX testnet 模拟盘)
-- **执行端**: 独立进程 (:3001), 策略部署/启动/停止/热调参
-- **已验证交易所**: `binance`, `okx`
-- **已验证交易对**: `BTCUSDT`, `ETHUSDT`, `SOLUSDT`
-- **桌面应用**: Tauri v2 自绘标题栏 Windows 桌面应用 (`start.bat`)
-- **前端**: Adobe 暗色面板设计系统、图编辑器、策略工作区、回测详情/对比、研究控制台、Toast 通知
-- **QuantScript**: 语法解析 → HIR → lowering → Core IR 完整编译管道, 策略脚本一站式编辑
-- **插件**: 18 种指标全部有 evaluator 实现, 零 stub
-- **本地会话与凭证隔离**: AES-256-GCM 凭证保险库, 本地会话/JWT 边界和进程间加密通道；不提供完整账户系统
-- **告警**: 10 条默认规则, 自动恢复 (resolve_condition), 去重
-- **明确不做**: 注销、密码找回、2FA、RBAC、用户资料页；策略中心搜索/筛选/分页/排序也标记为 unsupported
+### Supported
 
-### 已验证的全部指标 (18 种)
+- 单机桌面工具定位。
+- 本地策略管理。
+- 图形化策略构建。
+- QuantScript 编写、静态审计与测试。
+- 统一编译链。
+- PaperSimulated 本地仿真。
+- OKX demo 边界的 PaperActual 演示盘提交。
+- 基础历史回测和 v4 backtest artifact。
+- 参数扫掠。
+- AI proposal 与审批治理。
+- 签名快照和运行证据链。
+- 告警、Runbook、Chaos 实验入口。
+- OKX 凭证管理。
+- 中英双语与 auto/dark/light 主题。
 
-| # | 指标 | # | 指标 |
-|---|------|---|------|
-| 1 | MA Cross | 10 | Bollinger Bands |
-| 2 | RSI | 11 | OBV |
-| 3 | MACD | 12 | CMF |
-| 4 | Momentum | 13 | ADX |
-| 5 | Spread | 14 | Stochastic |
-| 6 | ZScore | 15 | CCI |
-| 7 | Custom | 16 | Parabolic SAR |
-| 8 | QuoteObserve | 17 | Keltner Channel |
-| 9 | ATR | 18 | Donchian Channel |
+### Deferred
 
-## 非宣称能力
+- 更深的证据 drilldown。
+- 更完整的部署包审计视图。
+- v4 strategy config 签名包。
+- 图形化状态机编辑器与 guard builder。
+- 更多 provider 和资产类别扩展。
 
-- 实盘交易 (live trading)
-- 研究级回测语义
-- 真正套利平台支持
-- 第三方插件市场
-- 通过 QuantScript 执行任意主机代码
-- 公开 SaaS 服务
+### Unsupported
+
+- 真实资金自动交易对外可用。
+- 研究级回测平台承诺。
+- 注销、密码找回、2FA / TOTP / WebAuthn。
+- RBAC、管理员用户管理 UI、用户资料页。
+- SaaS 多租户账号系统。
+- 策略中心搜索、筛选、排序、分页。
+- 第三方插件市场。
+- QuantScript 任意主机代码执行。
+- 绕过 Risk Plane 的真实下单。
+- 未声明 provider 能力的静默降级。
+
+## 系统拓扑
+
+```text
+用户桌面
+  |
+  |-- Tauri 桌面壳
+  |     |
+  |     `-- 前端 React SPA (:5173 / frontend/dist)
+  |            |
+  |            `-- 后端 Axum 服务 (:3000)
+  |                   |
+  |                   |-- 编译链
+  |                   |-- 图存储
+  |                   |-- 运行时
+  |                   |-- 回测
+  |                   |-- 能力声明
+  |                   |-- 凭证与本地会话
+  |                   |-- 告警 / 快照 / 审批 / Runbook / Chaos
+  |                   |
+  |                   `-- qrpc_session 加密通道
+  |                          |
+  |                          `-- 执行端 Axum 服务 (:3001)
+  |                                 |
+  |                                 |-- RunnerPool
+  |                                 |-- OKX WebSocket 行情
+  |                                 |-- OKX demo REST 回执
+  |                                 |-- 执行端凭证保险库
+  |                                 `-- frontend-executor SPA
+```
+
+## 仓库阅读法
+
+README 告诉你入口，不承载完整知识。实际开发必须回到全量树、模块树和 `governance-next/`。
+
+| 问题 | 事实来源 |
+| --- | --- |
+| 项目里有哪些文件 | `markdown/10-overview/overview-full-feature-tree.md` |
+| 某个功能在哪个文件 | 全量树对应根节点 |
+| 新增、删除、重命名文件怎么登记 | 全量树维护规则 |
+| 模块输入和输出是什么 | `markdown/00-matrix-governance/module-tree.md` |
+| 哪些 public 方法跨模块暴露 | 模块树白箱节点 |
+| 当前任务怎么接管 | `governance-next/README.md` |
+| 是否需要升级治理强度 | `governance-next/02-governance-heat-trigger.md` |
+| 哪些局部不变量不能破坏 | `governance-next/03-local-invariants.md` |
+| 当前状态机产品化愿景 | `markdown/10-overview/overview-state-machine-productization-vision.md` |
+| 旧三矩阵兼容档案 | `markdown/00-matrix-governance/README.md` |
 
 ## 快速启动
+
+### 一键启动
 
 ```bat
 .\start.bat
 ```
 
-Tauri 自动启动后端 (端口 3000) + 前端 Vite dev server (端口 5173)。
+`start.bat` 会编译后端、启动后端服务，并进入 Tauri 桌面开发流程。
 
-或分开启动:
+### 分开启动
 
 ```powershell
-# 仅后端
+# 后端
 cargo run
-# 仅前端
-cd frontend && npm install && npm run dev
+
+# 主前端
+cd frontend
+npm install
+npm run dev
+
+# 执行端
+cargo run --bin executor
+
+# 执行端前端
+cd frontend-executor
+npm install
+npm run dev
 ```
 
 ## 环境变量
 
+详见 `.env.example`。常用变量如下：
+
 | 变量 | 用途 | 默认值 |
-|------|------|--------|
-| `QUANTPILOT_DEV` | DEV 模式 (跳过认证+限速, 缩短TTL) | `false` |
+| --- | --- | --- |
+| `QUANTPILOT_DEV` | DEV 模式，跳过认证和限速、缩短 TTL | `false` |
 | `QUANTPILOT_STORAGE_ROOT` | 存储根目录 | `storage` |
 | `QUANTPILOT_EXECUTOR_URL` | 执行端地址 | `http://127.0.0.1:3001` |
-| `QUANTPILOT_EXECUTOR_INSECURE` | 跳过执行端 API 守卫 | `false` |
-| `QUANTPILOT_JWT_SECRET` | JWT 密钥 (留空自动生成) | (随机) |
-| `QUANTPILOT_API_KEY` | API 密钥 | (无) |
-| `QUANTPILOT_MARKET_PUBLIC_KEY` | 插件市场 Ed25519 公钥 | (测试向量) |
-| `QUANTPILOT_RATE_LIMIT_RPS` | 全局限速 (请求/秒) | `100` |
-| `QUANTPILOT_LOG_FORMAT` | 日志格式 (compact/json) | `compact` |
+| `QUANTPILOT_EXECUTOR_INSECURE` | 跳过执行端 API 守卫，仅限开发 | `false` |
+| `QUANTPILOT_JWT_SECRET` | JWT 密钥，留空自动生成 | 随机 |
+| `QUANTPILOT_API_KEY` | API 密钥 | 无 |
+| `QUANTPILOT_MARKET_PUBLIC_KEY` | 插件市场 Ed25519 公钥 | 测试向量 |
+| `QUANTPILOT_RATE_LIMIT_RPS` | 全局请求限速 | `100` |
+| `QUANTPILOT_LOG_FORMAT` | 日志格式，`compact` 或 `json` | `compact` |
 | `QUANTPILOT_TRUSTED_PROXY` | 反向代理模式 | `false` |
 
-详见 `.env.example`。
+## 常用开发命令
 
-## 执行端
-
-```powershell
-# 启动执行端 (端口 3001)
-cargo run --bin executor
-```
-
-## CI / 质量门禁
+### Rust
 
 ```powershell
-# 一键收口
-.\tools\run-closeout-gates.bat
-
-# 单项门禁
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-utf8.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-user-facing-text.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-governance.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-stack.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-i18n.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-version-consistency.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-feature-evolution.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-matrix-governance.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-learning-closeout.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-pre-commit-hook.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-cleanup-boundary.ps1
 cargo fmt --check
 cargo check --workspace
 .\scripts\test.ps1 test --workspace
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-clippy-warning-budget.ps1 -MaxWarnings 58
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-executor-warning-budget.ps1 -MaxWarnings 0
-cd frontend; npm run build
-cd frontend; npm run test
-cd frontend; npm run test:e2e
-cd frontend; npm audit --audit-level=moderate
-cd ..\frontend-executor; npm run build
-cd ..
 cargo check --bin executor
 .\scripts\test.ps1 test --bin executor
-.\scripts\scenario-smoke.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-clean-worktree.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-full-feature-tree.ps1
 ```
 
-常规 `test:e2e` 只包含阻断级用户路径。视觉响应式审查和性能采样属于 closeout/review 层级，按需显式执行：
+### 前端
 
-```bash
-cd frontend; npm run test:e2e:visual-review
-cd frontend; npm run test:perf:first-screen
-cd frontend; npm run test:perf:react-flow
+```powershell
+cd frontend
+npm run build
+npm run test
+npm run test:e2e
+npm audit --audit-level=moderate
 ```
 
-### Pre-commit hook
+### 执行端前端
 
-`scripts/pre-commit` 在 `git commit` 时自动执行 UTF-8 检查、`cargo fmt --check`、`cargo check`、`cargo test --no-run`、`vite build`、`vitest run`。
+```powershell
+cd frontend-executor
+npm run build
+```
 
-## v4.7.0 流程收口状态
+### Closeout
 
-| 项 | 状态 | 说明 |
-|----|:--:|------|
-| S0 登录挂起 | ✅ | `ring::rand::SystemRandom` 缓存 + refresh token 生成移出 DB 锁 |
-| P1 凭证 DELETE 405 | ✅ | Axum 0.7 路由参数语法修正为 `:service` |
-| P2 测试进程文件锁 | ✅ | `scripts/test.ps1` / `scripts/test.sh` 在测试前停止本仓库运行进程 |
-| 三层工作流门禁 | ✅ | pre-commit / CI / closeout-release 三层已统一 |
-| 功能演进契约 | ✅ | 新能力必须登记能力边界、回归保护矩阵、兼容性与迁移说明 |
-| Rust 格式基线 | ✅ | 全仓 `cargo fmt` 已落地，pre-commit / CI / closeout 均执行 `cargo fmt --check` |
-| v4 runtime 入口 | ✅ | 后端 `/api/runtime/v4/run`、CLI `v4-run`、前端 `start_v4_simulation` capability 已接入 |
-| 执行端 v4 集成 | ✅ | RunnerPool、部署 API、OKX Market 事件、SSE evidence 和执行端前端面板按 v4.2.0 规划落实 |
-| v4 回测 + 多交易对 | ✅ | `/api/runtime/backtest` 可走 `runtime_kind=v4`, 回测工件包含 `v4_artifact`, v4 模板和多交易对 MachineGraph 展开已接入 |
-| v4 执行回放与高级订单 | ✅ | tick replay、OCO bracket、trailing stop、GTD 过期、cancel/replace amend 和微结构指标已接入 |
-| LiveActual 安全边界 | ✅ | v4 LiveActual 仅在 Risk Plane 与真实执行能力来源满足时开放；runtime_simulated 能力源继续阻断真实路径 |
-| v4 AI 提案与回放分析 | ✅ | v4 AI proposal 仅接受回测工件来源，沙箱比较报告输出轨迹、成交率和风险拒绝摘要 |
-| 版本一致性 | ✅ | Cargo、Tauri、前端 package、lockfile、release manifest、OpenAPI 和启动横幅统一到 `4.7.0` |
-| executor warning 债务 | ✅ | 当前预算 0；新增 warning 会失败 |
-| 完整 closeout | 🚧 | closeout 门禁已扩展为 26 项，第 7 项覆盖三矩阵治理，第 26 项覆盖能力栈一致性与元流水线 DryRun |
+```powershell
+.\tools\run-closeout-gates.bat
+```
+
+## 关键门禁
+
+| 门禁 | 命令 |
+| --- | --- |
+| UTF-8 | `powershell tools/check-utf8.ps1` |
+| 用户文案 | `powershell tools/check-user-facing-text.ps1` |
+| 能力治理 | `powershell tools/check-capability-governance.ps1` |
+| 能力栈 | `powershell tools/check-capability-stack.ps1` |
+| i18n | `powershell tools/check-i18n.ps1` |
+| 版本一致性 | `powershell tools/check-version-consistency.ps1` |
+| 功能演进 | `powershell tools/check-feature-evolution.ps1` |
+| 新治理兼容门禁 | `powershell tools/check-matrix-governance.ps1` |
+| 学习流水线 | `powershell tools/check-learning-closeout.ps1` |
+| 全量树 | `powershell tools/check-full-feature-tree.ps1` |
+| 干净工作区 | `powershell tools/check-clean-worktree.ps1` |
+| QS 场景 smoke | `powershell scripts/scenario-smoke.ps1` |
+
+## README 不承载什么
+
+| 内容 | 应放位置 |
+| --- | --- |
+| 全文件清单 | 全量树 |
+| 模块输入、输出和 public 方法 | 模块树 |
+| 长版本流水账 | milestone / roadmap / topology ledger |
+| closeout 证据 | milestone closeout |
+| GP 条款全文 | `markdown/General_Policy.md` |
+| 流程规则全文 | `governance-next/` 或 `principles-super-standardization.md` |
+| 用户功能完整目录 | `markdown/10-overview/overview-user-functional-facets.md` |
+| API 细节 | `contracts/openapi/root.yaml` |
+| 当前递归推进游标 | QPCursor / recursive state |
+| 临时修复记录 | 对应 milestone 或 closeout evidence |
+
+README 的职责只有三个：
+
+1. 说明 QuantPilot 是什么。
+2. 说明当前状态和边界。
+3. 把读者送到正确的事实真源。
 
 ## 更多文档
 
 | 文档 | 路径 |
-|------|------|
-| 文档索引 (全部文档列表) | `./markdown/README.md` |
-| 系统架构与使用手册 | `./markdown/10-overview/overview-system-architecture.md` |
-| 当前状态与路线图 | `./markdown/10-overview/overview-current-status-and-roadmap.md` |
-| RFC 协议索引 (001-020) | `./markdown/02-protocol/README.md` |
-| 实现契约目录 | `./markdown/03-implementation/governance/` |
-| 功能演进契约 | `./markdown/03-implementation/governance/implementation-feature-evolution-contract.md` |
-| 支持矩阵 | `./markdown/03-implementation/governance/implementation-support-matrix.md` |
-| 里程碑归档 (50+ 版本) | `./markdown/06-milestones/` |
-| 审计与测试报告 | `./markdown/05-testing/` |
+| --- | --- |
+| 文档索引 | `markdown/README.md` |
+| 当前状态与路线图 | `markdown/10-overview/overview-current-status-and-roadmap.md` |
+| 用户功能切面 | `markdown/10-overview/overview-user-functional-facets.md` |
+| 系统架构 | `markdown/10-overview/overview-system-architecture.md` |
+| 详细文档索引 | `markdown/10-overview/overview-docs-index.md` |
+| 支持矩阵 | `markdown/03-implementation/governance/implementation-support-matrix.md` |
+| RFC 协议索引 | `markdown/02-protocol/README.md` |
+| 实现契约目录 | `markdown/03-implementation/governance/` |
+| 里程碑归档 | `markdown/06-milestones/` |
+| 审计与测试报告 | `markdown/05-testing/` |
+
+## 维护提醒
+
+修改 README 前先确认：
+
+- `governance-next/README.md` 仍是权威入口。
+- 全量树和模块树非空，且与当前文件和模块事实一致。
+- README 没有把 unsupported / deferred 写成 supported。
+- README 没有混淆代码版本、产品能力版本和治理推进线。
+- README 没有替代全量树或模块树。
+- README 新增的用户可见能力已经进入后端 capability、OpenAPI、支持矩阵和测试证据。
+
+## 许可与风险提示
+
+QuantPilot 仍处于密集开发和治理推进阶段。当前能力适合本地研究、策略验证、paper 模拟和执行链路观察，不应被理解为真实资金自动交易承诺。任何真实资金路径都必须单独经过 Risk Plane、凭证保险库、执行能力来源、审计证据和发布门禁。
