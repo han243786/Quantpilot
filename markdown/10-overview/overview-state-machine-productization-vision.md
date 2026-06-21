@@ -10126,3 +10126,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers comparator-specific readiness and bundle summary counts for accepted guard conditions. |
 | capability boundary | This does not enable guard execution, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove comparator count fields, summary aggregation, test assertions, and this record if condition comparator reporting moves into a dedicated Guard Builder query contract. |
+
+### ADV-SM-PROD-003T: Guard Builder condition operand readiness
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making each structured condition's operand shape auditable: which read source feeds the left side and which proposal parameter kind feeds the right side. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now reports condition left-read counts by event-payload, machine-memory, and readonly-runtime-fact source, plus condition right-parameter counts by guard, timeout, cooldown, threshold, and risk-limit kind. `qrpc_core_ir/src/v4/static_contract_bundle.rs` aggregates the same operand counts across bundle guard descriptor summaries. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: operand counts are read-only contract metadata, structured guard descriptors still are not evaluated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers condition operand readiness and bundle summary counts for accepted guard conditions. |
+| capability boundary | This does not enable guard execution, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove condition operand count fields, summary aggregation, test assertions, and this record if operand reporting moves into a dedicated Guard Builder query contract. |

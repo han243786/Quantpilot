@@ -11590,3 +11590,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003S)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.contracts.core_ir.v4_contracts.static_contract_bundle`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder condition comparator readiness.
 `equal_condition_count` / `not_equal_condition_count` / comparator count fields; structured guard readiness and bundle summaries expose comparator-specific condition counts while runtime execution remains disabled.
+
+**Productization supplement (ADV-SM-PROD-003T)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.contracts.core_ir.v4_contracts.static_contract_bundle`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder condition operand readiness.
+`condition_event_payload_read_count` / `condition_threshold_parameter_path_count` / operand count fields; structured guard readiness and bundle summaries expose condition left-read sources and right-parameter kinds while runtime execution remains disabled.

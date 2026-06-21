@@ -10448,3 +10448,10 @@ Productization supplement: ADV-SM-PROD-003S Guard Builder condition comparator r
 - `qrpc_core_ir/src/v4.rs` - covers comparator-specific readiness and bundle summary counts for accepted guard conditions.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder condition comparator readiness ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003S` as the comparator readiness slice.
+
+Productization supplement: ADV-SM-PROD-003T Guard Builder condition operand readiness.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds condition operand readiness counts for left read source categories and right proposal parameter path kinds.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates condition operand counts in bundle guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers condition operand readiness and bundle summary counts for accepted guard conditions.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder condition operand readiness ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003T` as the operand readiness slice.

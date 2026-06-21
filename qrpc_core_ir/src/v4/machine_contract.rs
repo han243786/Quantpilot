@@ -302,6 +302,14 @@ pub struct MachineGuardDescriptorReadiness {
     pub greater_than_or_equal_condition_count: usize,
     pub less_than_condition_count: usize,
     pub less_than_or_equal_condition_count: usize,
+    pub condition_event_payload_read_count: usize,
+    pub condition_machine_memory_read_count: usize,
+    pub condition_readonly_runtime_fact_read_count: usize,
+    pub condition_guard_parameter_path_count: usize,
+    pub condition_timeout_parameter_path_count: usize,
+    pub condition_cooldown_parameter_path_count: usize,
+    pub condition_threshold_parameter_path_count: usize,
+    pub condition_risk_limit_parameter_path_count: usize,
     pub policy_declared: bool,
     pub timeout_declared: bool,
     pub cooldown_declared: bool,
@@ -370,6 +378,13 @@ impl MachineGuardDescriptor {
 
     pub fn readiness(&self) -> MachineGuardDescriptorReadiness {
         let parameter_path_kinds = self.parameter_path_kinds();
+        let condition_parameter_path_kinds = self
+            .conditions
+            .iter()
+            .filter_map(|condition| {
+                machine_guard_parameter_path_kind(condition.right_parameter_path.as_str())
+            })
+            .collect::<Vec<_>>();
         let execution_state = MachineGuardExecutionReadinessState::DisabledFailClosed;
         MachineGuardDescriptorReadiness {
             guard_id: self.guard_id.clone(),
@@ -450,6 +465,47 @@ impl MachineGuardDescriptor {
                 .filter(|condition| {
                     condition.comparator == MachineGuardConditionComparator::LessThanOrEqual
                 })
+                .count(),
+            condition_event_payload_read_count: self
+                .conditions
+                .iter()
+                .filter(|condition| {
+                    condition.left_read.source == MachineGuardReadSource::EventPayload
+                })
+                .count(),
+            condition_machine_memory_read_count: self
+                .conditions
+                .iter()
+                .filter(|condition| {
+                    condition.left_read.source == MachineGuardReadSource::MachineMemory
+                })
+                .count(),
+            condition_readonly_runtime_fact_read_count: self
+                .conditions
+                .iter()
+                .filter(|condition| {
+                    condition.left_read.source == MachineGuardReadSource::ReadonlyRuntimeFact
+                })
+                .count(),
+            condition_guard_parameter_path_count: condition_parameter_path_kinds
+                .iter()
+                .filter(|kind| **kind == MachineGuardParameterPathKind::Guard)
+                .count(),
+            condition_timeout_parameter_path_count: condition_parameter_path_kinds
+                .iter()
+                .filter(|kind| **kind == MachineGuardParameterPathKind::Timeout)
+                .count(),
+            condition_cooldown_parameter_path_count: condition_parameter_path_kinds
+                .iter()
+                .filter(|kind| **kind == MachineGuardParameterPathKind::Cooldown)
+                .count(),
+            condition_threshold_parameter_path_count: condition_parameter_path_kinds
+                .iter()
+                .filter(|kind| **kind == MachineGuardParameterPathKind::Threshold)
+                .count(),
+            condition_risk_limit_parameter_path_count: condition_parameter_path_kinds
+                .iter()
+                .filter(|kind| **kind == MachineGuardParameterPathKind::RiskLimit)
                 .count(),
             policy_declared: self.policy.is_some(),
             timeout_declared: self

@@ -639,6 +639,10 @@ mod tests {
         assert_eq!(readiness.greater_than_condition_count, 1);
         assert_eq!(readiness.equal_condition_count, 0);
         assert_eq!(readiness.less_than_condition_count, 0);
+        assert_eq!(readiness.condition_event_payload_read_count, 1);
+        assert_eq!(readiness.condition_machine_memory_read_count, 0);
+        assert_eq!(readiness.condition_threshold_parameter_path_count, 1);
+        assert_eq!(readiness.condition_timeout_parameter_path_count, 0);
         assert!(readiness.policy_declared);
         assert!(readiness.timeout_declared);
         assert!(readiness.cooldown_declared);
@@ -715,6 +719,19 @@ mod tests {
             1
         );
         assert_eq!(projection.readiness.greater_than_condition_count, 0);
+        assert_eq!(projection.readiness.condition_event_payload_read_count, 1);
+        assert_eq!(
+            projection
+                .readiness
+                .condition_threshold_parameter_path_count,
+            1
+        );
+        assert_eq!(
+            projection
+                .readiness
+                .condition_risk_limit_parameter_path_count,
+            0
+        );
         assert!(projection.readiness.policy_declared);
         assert!(!projection.readiness.execution_enabled);
         assert_eq!(projection.reads.len(), 2);
@@ -855,6 +872,9 @@ mod tests {
         assert_eq!(summary.condition_count, 1);
         assert_eq!(summary.not_equal_condition_count, 1);
         assert_eq!(summary.equal_condition_count, 0);
+        assert_eq!(summary.condition_event_payload_read_count, 1);
+        assert_eq!(summary.condition_risk_limit_parameter_path_count, 1);
+        assert_eq!(summary.condition_cooldown_parameter_path_count, 0);
         assert_eq!(summary.policy_declared_count, 1);
         assert_eq!(summary.cooldown_declared_count, 1);
         assert_eq!(summary.fallback_declared_count, 1);
