@@ -1003,9 +1003,9 @@ ComplexityBudgetPanel.jsx    — v4 复杂度预算面板, 展示状态/transiti
 ### 5.6 运维面板
 
 ```
-ApprovalPanel.jsx            — 审批面板 (L1/L2/L3)
+ApprovalPanel.jsx            — 审批面板 (L1/L2/L3, source runner evidence/artifact ref locator, artifact ref verified explanation, proposal evidence binding explanation and sandbox replay diff explanation)
 RuntimeMutationPanel.jsx     — 运行时变更面板 (AI 提案)
-RuntimeDiagnosticsPanel.jsx  — 运行时诊断面板
+RuntimeDiagnosticsPanel.jsx  — 运行时诊断面板, 条件挂载 productization workspace evidence/artifact ref
 RuntimeReportPanel.jsx       — 运行时报告面板
 StrategyDiagnosticsPanel.jsx — 策略诊断面板
 StrategyParamsPanel.jsx      — 策略参数面板 (热调参)
@@ -1824,13 +1824,13 @@ meta-pipeline-log.md                         — 元流水线日志
 - `src/runtime/mutation/shared_governance.rs` - runtime mutation shared governance child，承接 9 个 mutation shared governance helper
 - `src/runtime/mutation/ai_proposal/proposal_creation.rs` - runtime AI proposal proposal creation child，承接 `create_runtime_ai_proposal`
 - `src/runtime/mutation/ai_proposal/approval_persistence.rs` - runtime AI proposal approval persistence child，承接 approval record disk read/write helper
-- `src/runtime/mutation/ai_proposal/sandbox_trigger.rs` - runtime AI proposal sandbox trigger child，承接 sandbox approve gate 与 background sandbox verification helper
+- `src/runtime/mutation/ai_proposal/sandbox_trigger.rs` - runtime AI proposal sandbox trigger child，承接 sandbox approve gate、backend replay diff approval gate、runtime runner verified anchor gate、source backtest runner evidence/artifact ref resolution、proposal evidence hash/anchor binding 与 background sandbox verification helper
 - `src/runtime/mutation/ai_proposal/status_transition.rs` - runtime AI proposal status transition child，承接 approved projection、状态迁移矩阵和 scoped status side effect
-- `src/runtime/mutation/ai_proposal/static_check.rs` - runtime AI proposal static check child，承接 hash/model/static check/config binding/v4 analysis helper 与静态检查单测
+- `src/runtime/mutation/ai_proposal/static_check.rs` - runtime AI proposal static check child，承接 hash/model/static check/config binding/v4 productization replay anchor/runtime runner verified anchor/v4 analysis helper 与静态检查单测
 - `src/runtime/mutation/ai_proposal/source_governance_identity.rs` - runtime AI proposal source governance identity child，承接 source context、governance projection 与 record identity helper
 - `src/runtime/mutation/ai_proposal/event_lifecycle.rs` - runtime AI proposal event lifecycle child，承接 event contract、runtime event builder、lifecycle entry 与 proposal transition persistence helper
 - `src/runtime/mutation/ai_proposal/record_query.rs` - runtime AI proposal record query child，承接 proposal list/detail/read-through loader
-- `src/runtime/mutation/ai_proposal/approval_review.rs` - runtime AI proposal approval review child，承接 approval list/detail/approve/reject/claim handler
+- `src/runtime/mutation/ai_proposal/approval_review.rs` - runtime AI proposal approval review child，承接 approval list/detail/approve/reject/claim handler 与 source runner evidence hydration
 - `src/runtime/report_ops/v1_report_endpoints.rs` - runtime report ops v1 report endpoint child，承接 ops/audit/research 三个 v1 report handler
 - `src/runtime/report_ops/merge_generation_health.rs` - runtime report ops merge/generation/storage health child，承接三条 v1 support/health handler
 - `src/runtime/mutation/parameter_mutation/record_query.rs` - runtime parameter mutation record query child，承接 list/detail read model handler
@@ -2063,6 +2063,7 @@ meta-pipeline-log.md                         — 元流水线日志
 
 ```
 overview-system-architecture.md              — 系统架构总览
+markdown/10-overview/overview-state-machine-productization-vision.md — v4/v5 状态机产品化愿景、推进循环对齐锚点与终局验收
 overview-current-status-and-roadmap.md       — 当前状态与路线图
 overview-full-feature-tree.md                — 本文档 (全量树)
 ```
@@ -2196,7 +2197,7 @@ storage/
 - `src/app_runtime_helpers.rs` — 应用状态工厂, `new_app_state()`; 改存储路径/应用初始化时改这里
 - `src/auth/mod.rs` — 本地会话认证 (注册/登录/刷新/JWT/bcrypt); 改本地会话边界时改这里, 不扩展为完整账户系统
 - `src/auth_middleware.rs` — 认证中间件, JWT 验证; 改认证拦截时改这里
-- `src/backtest_artifacts.rs` — 回测工件管理; 改回测工件格式/存储或 v4 artifact 持久化时改这里 🆕 v4.3.0
+- `src/backtest_artifacts.rs` — 回测工件管理; 改回测工件格式/存储、v4 artifact 持久化、`productization_evidence`、replay verification、artifact replay trace pass、risk-decision trace gate、runtime replay runner readiness、runner execution status、runner digest/count/match evidence、replay input bundle readiness、compiled graph contract readiness 或生成文件名 v4_productization_evidence.json 的 manifest ref 时改这里 🆕 v4.3.0
 - `src/backtest_compare.rs` — 回测对比入口 API; 改对比功能时改这里
 - `src/backtest_compare_core.rs` — 回测对比核心; 改对比算法时改这里
 - `src/backtest_compare_narrative.rs` — 回测对比中文叙述生成; 改分析文案时改这里
@@ -2235,7 +2236,7 @@ storage/
 - `src/credential_vault.rs` — credential vault root compatibility shim; real implementation lives in `src/backend/storage_security/credential_vault/implementation.rs`
 - `src/error_codes.rs` — 全局错误码注册表; 新增诊断码或 API error_code 时改这里
 - `src/formal_quantscript_authoring_types.rs` — QS 正式编写类型; 改 QS 编写 API 类型时改这里
-- `src/frontend_api_types.rs` — 前端 API 类型定义; 改前后端接口类型时改这里
+- `src/frontend_api_types.rs` — 前端 API 类型定义; 改前后端接口类型、SandboxVerificationReport、RuntimeApprovalRecord source runner evidence summary / locator / artifact ref、productization replay diff gate DTO 或 gate evidence hash/anchor 字段时改这里
 - `src/frontend_runtime_mapping.rs` — 前端运行时映射; 改后端→前端数据映射时改这里
 - `src/backend/graph_compile/graph.rs` — 图 CRUD API (save/load/list/delete/versions); 改图存储 API 时改这里
 - `src/graph_api.rs` — root graph API compatibility shim for tests; real implementation lives in `src/backend/graph_compile/graph.rs`
@@ -2263,7 +2264,7 @@ storage/
 - `src/runtime/run/v4_handoff.rs` — `POST /api/runtime/v4/run` handler、request/response、graph resolution、handoff projection 和 simulated capability matrix; 改 v4 handoff run 时改这里 🆕 v4.16.0
 - `src/runtime/run/record_store.rs` — run record list/detail/save/discard handler、manifest save/discard 编排和 graph audit 调用; 改 run record API handler 时改这里 🆕 v4.16.0
 - `src/runtime/run/replay_status.rs` — run replay/status handler、replay cursor/options 编排、status projection 调用和 replay metrics 触发; 改 run replay/status API handler 时改这里 🆕 v4.16.0
-- `src/runtime/backtest/execution_start.rs` — backtest 创建路径 handler、legacy/v4 execution helper 和 transient record 写入; 改 backtest start 执行入口时改这里 🆕 v4.16.0
+- `src/runtime/backtest/execution_start.rs` — backtest 创建路径 handler、legacy/v4 execution helper、v4 replay input bundle `BacktestSpec` 构造、可得时的 compile artifact bundle 持久化和 transient record 写入; 改 backtest start 执行入口、replay input bundle 或 compiled graph contract 持久化时改这里 🆕 v4.16.0
 - `src/runtime/backtest/legacy_dispatch.rs` — legacy backtest compile/assumption/artifact/sandbox replay 父级私有 helper; 改 legacy non-v4 backtest dispatch 时改这里 🆕 v4.16.0
 - `src/runtime/backtest/record_store.rs` — backtest record list/detail/save/discard handler; 改 backtest record API handler 时改这里 🆕 v4.16.0
 - `src/runtime/backtest/v4_projection.rs` — v4 backtest artifact projection helper 与单元测试; 改 `V4BacktestArtifact -> BacktestOutput / FrontendRuntimeEvent` 投影时改这里 🆕 v4.16.0
@@ -2290,7 +2291,7 @@ storage/
 - `src/backend/ops_governance/sandbox/verification_run.rs` — reusable sandbox verification runner and report persistence side effects
 - `src/backend/ops_governance/sandbox/verification_run/proposal_gate.rs` — sandbox verification proposal eligibility gate child
 - `src/backend/ops_governance/sandbox/verification_run/replay_window.rs` — sandbox verification replay window shape child
-- `src/backend/ops_governance/sandbox/verification_run/report_assembly.rs` — sandbox verification report DTO assembly child
+- `src/backend/ops_governance/sandbox/verification_run/report_assembly.rs` — sandbox verification report DTO assembly child; 改 sandbox report gate、productization replay diff status 或 proposal evidence hash/anchor binding 时改这里
 - `src/backend/ops_governance/sandbox/verification_run/report_commit.rs` — sandbox report persistence commit child
 - `src/snapshot_service.rs` — 快照服务, SHA-256 签名; 改快照/验签时改这里
 - `src/strategy_config_api.rs` — v4 策略配置 artifact、preflight、artifact diff、正式版本配置契约 diff 和显式 v4 backtest evidence diff API; 改策略配置契约、PaperSimulated/PaperActual 边界、capability freshness、Risk Plane 静态契约、配置域状态或证据差异口径时改这里 🆕 v4.11.0
@@ -2574,7 +2575,8 @@ storage/
 - `frontend/tests/e2e/support/*.js` — E2E 辅助 (apiHarness, workspaceBootstrapMocks, workspaceGraphFixture, analysisReviewFixtures)
 
 **精确路径补充索引**:
-- `frontend/src/components/ApprovalPanel.jsx` — 审批面板组件; 改审批展示时改这里
+- `frontend/src/components/ApprovalPanel.jsx` — 审批面板组件，展示 source runner evidence/artifact ref locator、artifact ref verified 结论、proposal evidence bound/mismatch 与 sandbox replay diff gate explanation; artifact ref verified 与 proposal evidence binding 必须来自后端，不得由前端推断
+- `frontend/src/components/ApprovalPanel.test.jsx` — 审批面板测试，覆盖 source runner evidence/artifact ref locator、artifact ref verified 结论与 sandbox replay diff gate explanation
 - `frontend/src/components/AssetCandlesPanel.test.jsx` — K 线面板测试
 - `frontend/src/components/BacktestHistorySection.jsx` — 回测历史组件; 改历史展示时改这里
 - `frontend/src/components/CompilePanel.integration.test.jsx` — 编译面板集成测试
@@ -2608,8 +2610,8 @@ storage/
 - `frontend/src/components/PropertyPanel.strategyIr.test.jsx` — 属性面板 Strategy IR 测试
 - `frontend/src/components/propertyPanelViews.jsx` — 属性面板视图拆分; 改面板子视图时改这里
 - `frontend/src/components/RunHistorySection.jsx` — 运行历史组件; 改运行历史时改这里
-- `frontend/src/components/RuntimeDiagnosticsPanel.jsx` — 运行时诊断面板; 改运行诊断时改这里
-- `frontend/src/components/RuntimeDiagnosticsPanel.test.jsx` — 运行时诊断测试
+- `frontend/src/components/RuntimeDiagnosticsPanel.jsx` — 运行时诊断面板，条件透传 productization evidence 与独立 artifact ref; 改运行诊断时改这里
+- `frontend/src/components/RuntimeDiagnosticsPanel.test.jsx` — 运行时诊断测试，覆盖 productization workspace 条件挂载
 - `frontend/src/components/RuntimeMutationPanel.jsx` — 运行时变更面板; 改 AI 提案/审批入口时改这里
 - `frontend/src/components/RuntimeMutationPanel.test.jsx` — 运行时变更测试
 - `frontend/src/components/RuntimeReportPanel.jsx` — 运行报告面板; 改报告展示时改这里
@@ -2637,6 +2639,8 @@ storage/
 - `frontend/src/components/TopToolbar.formalSourceMode.test.jsx` — 顶栏正式源模式测试
 - `frontend/src/components/TopToolbar.persistenceFailure.test.jsx` — 顶栏持久化失败测试
 - `frontend/src/components/ComplexityBudgetPanel.jsx` — v4 复杂度预算面板; 改嵌套状态机预算展示时改这里 🆕 v4.7.0
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` — v4 状态机产品化工作区面板，展示 6 个 evidence panel、runtime runner evidence explanation、proposal/source hash binding、独立 artifact ref 与 AI proposal apply gate
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` — v4 状态机产品化工作区面板测试，覆盖可见面板、runner evidence explanation、proposal/source hash binding、artifact ref、缺证状态和 AI proposal 门禁
 - `frontend/src/components/V4RuntimeEvidencePanel.jsx` — v4 运行证据面板; 改 v4 evidence UI 或嵌套 machine 层级展示时改这里
 - `frontend/src/components/V4RuntimeEvidencePanel.test.jsx` — v4 运行证据面板测试
 - `frontend/src/hooks/propertyPanelSelectors.js` — 属性面板 selector; 改面板数据投影时改这里
@@ -2670,8 +2674,12 @@ storage/
 - `frontend/src/pages/backtestAnalysisShared.test.jsx` — 回测分析共享测试
 - `frontend/src/pages/BacktestComparePage.jsx` — 回测对比页
 - `frontend/src/pages/BacktestComparePage.test.jsx` — 回测对比页测试
-- `frontend/src/pages/BacktestDetailPage.jsx` — 回测详情页, 展示 v4 backtest artifact/evidence/tick 与 microstructure 指标; 改回测分析入口时改这里 🆕 v4.7.0
+- `frontend/src/pages/BacktestDetailPage.jsx` — 回测详情页, 展示 v4 backtest artifact/evidence/productization runner evidence、独立 evidence artifact ref/tick 与 microstructure 指标; 改回测分析入口时改这里 🆕 v4.7.0
 - `frontend/src/pages/BacktestDetailPage.test.jsx` — 回测详情页测试
+- `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailPageModel.js` — 回测详情页模型投影，含 productization evidence locator 与独立 artifact ref
+- `frontend/src/pages/backtestViews/detailPageAnalysis/backtestDetailPageModel.test.js` — 回测详情页模型测试，覆盖 productization evidence locator 与 artifact ref
+- `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailCoreArtifactSections.jsx` — 回测详情核心 artifact/v4 evidence section，展示 productization runner evidence 与独立 artifact ref
+- `frontend/src/pages/backtestViews/detailPageAnalysis/BacktestDetailCoreArtifactSections.test.jsx` — 回测详情核心 artifact/v4 evidence section 测试
 - `frontend/src/pages/ChaosPage.jsx` — 混沌实验页
 - `frontend/src/pages/EditorPage.jsx` — 编辑器页
 - `frontend/src/pages/NotFoundPage.jsx` — 404 页面, 未知路由返回策略中心或设置入口 🆕 v4.8.2
@@ -2794,6 +2802,8 @@ storage/
 - `frontend/src/utils/strategyHubStrategyIdentity.js` — 策略身份工具
 - `frontend/src/utils/strategyWorkspaceIssueQueue.js` — 工作区问题队列工具
 - `frontend/src/utils/strategyWorkspaceIssueQueue.test.js` — 工作区问题队列测试
+- `frontend/src/utils/v4ProductizationWorkspace.js` — v4 状态机产品化工作区投影工具，从同一 evidence source 生成 6 个面板模型、replay trace/risk-decision/runtime runner verified source evidence、proposal/source hash binding、独立 artifact ref 并门禁 AI proposal apply
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` — v4 状态机产品化工作区投影测试，覆盖缺证、replay、runtime_simulated capability、artifact ref、proposal/source hash binding 和 AI proposal 三重门禁
 - `frontend/src/utils/v4RuntimeEvidence.js` — v4 runtime evidence 投影工具; 改层级 machine 或 complexity_metrics 前端投影时改这里
 - `frontend/src/utils/v4RuntimeEvidence.test.js` — v4 runtime evidence 测试
 - `frontend/src/utils/workspaceContextLabels.js` — 工作区上下文标签工具
@@ -2838,11 +2848,15 @@ storage/
 - `tests/api_v1_ops_health.rs` — v1 merge/generation/storage health endpoint smoke 测试
 - `tests/api_run.rs` — 运行 API 测试
 - `tests/api_sse.rs` — SSE API 测试
+- `tests/v4_productization_contract.rs` — v4 状态机产品化双均线样例合约边界测试，锁定 contract identity、DAG role 和 risk-plane-gated execution
+- `tests/v4_productization_evidence.rs` — v4 状态机产品化双均线样例 evidence 边界测试，锁定 replay digest、artifact replay trace、risk decision trace 和 execution capability source
 - `tests/quantscript_real_strategy_authoring.rs` — QS 真实策略编写测试
 - `tests/quantscript_universe_strategy.rs` — QS 多交易对策略测试
 - `tests/report_qs_strategy.rs` — QS 策略报告测试
 - `tests/test_deploy.json` — 部署测试配置
 - `tests/fixtures/runtime/*.json` — 运行时测试 fixtures
+- `tests/fixtures/v4/dual_ma_productization_contract.json` — `SM-PROD-001B` 双均线状态机产品化 contract fixture，作为后续 risk/replay/UI 推进输入
+- `tests/fixtures/v4/dual_ma_productization_evidence.json` — `SM-PROD-001C` / `SM-PROD-001N` / `SM-PROD-001P` 双均线状态机产品化 evidence fixture，包含 digests、replay trace verification、runtime runner readiness、risk decisions、capability source 和 final snapshot
 
 ### E.8 工具与脚本
 
@@ -6351,3 +6365,3924 @@ Recursive boundary supplement: BE-002MZ-01 `root.executor` parent closeout compl
 - `markdown/06-milestones/v4.16.0/1939-root.executor.parent_closeout.md` - v4.16.0 BE-002MZ-01 executor parent closeout
 Recursive boundary supplement: BE-002NA-01 `root` parent closeout complete; recursive cursor has no open residuals.
 - `markdown/06-milestones/v4.16.0/1940-root.parent_closeout.md` - v4.16.0 BE-002NA-01 root parent closeout
+
+Productization supplement: ADV-SM-PROD-001AP sandbox report source evidence bound gate.
+- `src/backend/ops_governance/sandbox/verification_run/report_assembly.rs` - sandbox report productization replay diff gate requires source evidence hash bound anchor.
+- `src/runtime/mutation/ai_proposal/proposal_creation.rs` - proposal creation writes `source_evidence_hash:bound` after source artifact hash binding passes.
+- `src/runtime/mutation/ai_proposal/sandbox_trigger.rs` - approval gate rechecks source evidence hash bound report evidence.
+Productization supplement: ADV-SM-PROD-001AQ sandbox report source evidence explanation.
+- `src/frontend_api_types.rs` - `SandboxReplayDiffGate.source_evidence_hash_bound` DTO field.
+- `frontend/src/components/ApprovalPanel.jsx` - approval sandbox report displays source evidence binding state.
+Productization supplement: ADV-SM-PROD-001AR workspace explicit proposal evidence binding.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - AI proposal apply gate no longer defaults missing proposal evidence hash to bound.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace panel continues to surface proposal evidence bound/mismatch from projection.
+Productization supplement: ADV-SM-PROD-001AS approval action source evidence persistence.
+- `src/runtime/mutation/ai_proposal/approval_review.rs` - approve action refreshes and persists source runner evidence after approval gate passes.
+- `src/runtime/mutation/ai_proposal.rs` - regression test covers approval action source runner evidence persistence.
+Productization supplement: ADV-SM-PROD-001AT sandbox retry proposal identity gate.
+- `src/backend/ops_governance/sandbox/report_api.rs` - sandbox retry rejects path/body proposal id mismatch before report generation.
+Productization supplement: ADV-SM-PROD-001AU sandbox report commit identity gate.
+- `src/backend/ops_governance/sandbox/verification_run/report_commit.rs` - sandbox report memory index uses report proposal id, not request proposal id.
+Productization supplement: ADV-SM-PROD-001AV sandbox request source backtest identity gate.
+- `src/backend/ops_governance/sandbox/verification_run/proposal_gate.rs` - sandbox request backtest id must match the proposal source backtest before verification.
+Productization supplement: ADV-SM-PROD-001AW sandbox metrics source backtest candidate anchoring.
+- `src/backend/ops_governance/sandbox/comparison_metrics/backtest_projection.rs` - backtest-sourced proposal metrics use proposal source backtest as candidate and reject missing source backtest.
+Productization supplement: ADV-SM-PROD-001AX sandbox replay diff source runner anchor scoping.
+- `src/backend/ops_governance/sandbox/verification_run/report_assembly.rs` - backtest-sourced proposal replay diff gate requires runner verified anchor scoped to the proposal source backtest.
+Productization supplement: ADV-SM-PROD-001AY sandbox source evidence hash anchor scoping.
+- `src/runtime/mutation/ai_proposal/proposal_creation.rs` - proposal creation writes source-scoped `source_evidence_hash:bound:<source_id>` anchors.
+- `src/backend/ops_governance/sandbox/verification_run/report_assembly.rs` - backtest-sourced replay diff gate requires source-scoped evidence hash bound anchors.
+Productization supplement: ADV-SM-PROD-001AZ approval replay diff source anchor enforcement.
+- `src/runtime/mutation/ai_proposal/sandbox_trigger.rs` - approval replay diff gate requires source-scoped runner verified and source evidence hash bound anchors.
+- `src/runtime/mutation/ai_proposal.rs` - regression test rejects passed replay diff reports whose source hash bound anchor names another backtest.
+Productization supplement: ADV-SM-PROD-001BA approval UI source-scoped anchor fixture alignment.
+- `frontend/src/components/ApprovalPanel.test.jsx` - approval sandbox report fixture displays source-scoped `source_evidence_hash:bound:<source_id>` anchors.
+Productization supplement: ADV-SM-PROD-001BB approval UI source evidence scope explanation.
+- `frontend/src/components/ApprovalPanel.jsx` - sandbox report replay diff block displays scoped source evidence hash bound source ids.
+- `frontend/src/components/ApprovalPanel.test.jsx` - verifies source-scoped source evidence binding display.
+Productization supplement: ADV-SM-PROD-001BC v4 proposal static source-scoped anchor gate.
+- `src/runtime/mutation/ai_proposal/static_check.rs` - v4 AI proposal static check rejects productization replay diff and runtime runner verified anchors scoped to another backtest.
+Productization supplement: ADV-SM-PROD-001BD exact source anchor segment matching.
+- `src/runtime/mutation/ai_proposal/static_check.rs` - v4 AI proposal static check requires exact source segment matches for scoped productization and runner anchors.
+- `src/backend/ops_governance/sandbox/verification_run/report_assembly.rs` - sandbox replay diff gate rejects prefix source anchor matches.
+- `src/runtime/mutation/ai_proposal/sandbox_trigger.rs` - approval replay diff gate rejects prefix source anchor matches.
+- `src/runtime/mutation/ai_proposal.rs` - regression test rejects `bt10` anchors for a `bt1` proposal.
+Productization supplement: ADV-SM-PROD-001BE productization replay anchor source enforcement.
+- `src/backend/ops_governance/sandbox/verification_run/report_assembly.rs` - sandbox replay diff gate requires source-scoped productization replay anchors.
+- `src/runtime/mutation/ai_proposal/sandbox_trigger.rs` - approval replay diff gate independently requires source-scoped productization replay anchors.
+- `src/runtime/mutation/ai_proposal.rs` - regression test rejects passed reports whose productization replay anchor names another backtest.
+Productization supplement: ADV-SM-PROD-001BF sandbox report loaded proposal identity.
+- `src/backend/ops_governance/sandbox/verification_run/report_assembly.rs` - sandbox reports write proposal identity from the loaded AI proposal record.
+Productization supplement: ADV-SM-PROD-001BG sandbox metrics source scope isolation.
+- `src/backend/ops_governance/sandbox/comparison_metrics/backtest_projection.rs` - sandbox comparison metrics reject ambiguous scoped source backtests and select baselines only inside the source backtest scope.
+Productization supplement: ADV-SM-PROD-001BH sandbox metrics graph scope ambiguity gate.
+- `src/backend/ops_governance/sandbox/comparison_metrics/backtest_projection.rs` - non-backtest-sourced sandbox metrics reject multi-scope graph backtest comparisons.
+Productization supplement: ADV-SM-PROD-001BI sandbox proposal loader scoped memory ambiguity gate.
+- `src/backend/ops_governance/sandbox/proposal_loader.rs` - sandbox proposal loader returns single scoped memory matches and rejects ambiguous scoped proposal ids before disk fallback.
+Productization supplement: ADV-SM-PROD-001BJ sandbox proposal loader disk record identity gate.
+- `src/backend/ops_governance/sandbox/proposal_loader.rs` - sandbox proposal loader rejects disk-loaded proposal records whose internal id differs from the requested proposal id.
+Productization supplement: ADV-SM-PROD-001BK sandbox proposal loader mixed scope ambiguity gate.
+- `src/backend/ops_governance/sandbox/proposal_loader.rs` - sandbox proposal loader rejects mixed unscoped/scoped in-memory records for the same proposal id as ambiguous.
+Productization supplement: ADV-SM-PROD-001BL runtime proposal query record identity gate.
+- `src/runtime/mutation/ai_proposal/record_query.rs` - proposal detail and approval-adjacent loading reject memory or disk records whose internal id differs from the requested proposal id.
+Productization supplement: ADV-SM-PROD-001BM runtime approval user-scope isolation.
+- `src/runtime/mutation/ai_proposal/approval_review.rs` - approval list and approve/reject/claim actions constrain proposal-id matching to approval records visible in the current user scope.
+Productization supplement: ADV-SM-PROD-001BN runtime approval detail record identity gate.
+- `src/runtime/mutation/ai_proposal/approval_review.rs` - approval detail reads reject scoped memory or disk records whose internal approval id differs from the requested approval id.
+Productization supplement: ADV-SM-PROD-001BO runtime approval memory key identity gate.
+- `src/runtime/mutation/ai_proposal/approval_review.rs` - approval action lookup requires the scoped memory key to match the record approval id before claim/reject/approve can mutate it.
+Productization supplement: ADV-SM-PROD-001BP runtime approval storage path segment gate.
+- `src/runtime/mutation/ai_proposal/approval_persistence.rs` - approval save/load paths sanitize approval ids before constructing JSON filenames.
+Productization supplement: ADV-SM-PROD-001BQ runtime proposal approval status persistence.
+- `src/runtime/mutation/ai_proposal/status_transition.rs` - proposal status transitions load disk fallback records, validate identity, persist the updated status, and refresh scoped memory.
+Productization supplement: ADV-SM-PROD-001BR runtime proposal query foreign scope fallback gate.
+- `src/runtime/mutation/ai_proposal/record_query.rs` - user-scoped proposal reads reject disk fallback when another live memory scope owns the requested proposal id.
+Productization supplement: ADV-SM-PROD-001BS runtime proposal status foreign scope fallback gate.
+- `src/runtime/mutation/ai_proposal/status_transition.rs` - proposal status transitions reject disk fallback when another live memory scope owns the requested proposal id.
+Productization supplement: ADV-SM-PROD-001BT runtime proposal list foreign scope fallback gate.
+- `src/runtime/mutation/ai_proposal/record_query.rs` - proposal lists prefer current-scope memory records and exclude disk fallback records owned by another live memory scope.
+Productization supplement: ADV-SM-PROD-001BU runtime approval detail foreign scope fallback gate.
+- `src/runtime/mutation/ai_proposal/approval_review.rs` - approval detail rejects disk fallback when another live memory scope owns the requested approval id.
+Productization supplement: ADV-SM-PROD-001BV runtime expired approval storage path gate.
+- `src/system/entry/backend_process.rs` - expired approval background persistence uses sanitized approval JSON paths and atomic writes.
+Productization supplement: ADV-SM-PROD-001BW runtime expired approval proposal status persistence.
+- `src/system/entry/backend_process.rs` - expired approval processing updates scoped live proposal records and persists disk-backed proposal status through sanitized paths.
+Productization supplement: ADV-SM-PROD-001BX runtime expired approval proposal scope isolation.
+- `src/system/entry/backend_process.rs` - expired approval proposal status propagation derives the proposal memory key from the approval scope and leaves other scoped same-id proposals unchanged.
+Productization supplement: ADV-SM-PROD-001BY runtime expired approval memory key identity gate.
+- `src/system/entry/backend_process.rs` - expired approval scanning skips approval records whose memory key does not match the record approval id.
+Productization supplement: ADV-SM-PROD-001BZ runtime expired approval disk fallback foreign scope gate.
+- `src/system/entry/backend_process.rs` - expired approval proposal disk fallback is skipped when another live memory scope owns the same proposal id.
+Productization supplement: ADV-SM-PROD-001CA runtime expired approval disk proposal identity gate.
+- `src/system/entry/backend_process.rs` - expired approval proposal disk fallback rejects proposal JSON records whose internal id differs from the requested proposal id.
+Productization supplement: ADV-SM-PROD-001CB runtime expired approval live proposal key identity gate.
+- `src/system/entry/backend_process.rs` - expired approval proposal disk fallback is skipped when a live proposal with the requested internal id already exists under a non-target memory key.
+Productization supplement: ADV-SM-PROD-001CC runtime expired approval numeric scope key gate.
+- `src/system/entry/backend_process.rs` - expired approval scanning accepts only unscoped or numeric-scoped approval keys before mutating approval/proposal state.
+Productization supplement: ADV-SM-PROD-001CD runtime expired approval target proposal key identity gate.
+- `src/system/entry/backend_process.rs` - expired approval proposal disk fallback is skipped when the target memory key exists but its record id differs from the requested proposal id.
+Productization supplement: ADV-SM-PROD-001CE runtime expired approval record id delimiter gate.
+- `src/system/entry/backend_process.rs` - expired approval scanning skips approval/proposal record ids containing the auth scope delimiter before scoped key derivation.
+Productization supplement: ADV-SM-PROD-001CF runtime expired approval non-empty record id gate.
+- `src/system/entry/backend_process.rs` - expired approval scanning skips empty approval/proposal record ids before scoped key derivation or disk fallback.
+Productization supplement: ADV-SM-PROD-001CG runtime expired approval lifecycle event identity gate.
+- `src/system/entry/backend_process.rs` - expired approval lifecycle event ids include sanitized approval id segments to distinguish same-timestamp expiry events.
+Productization supplement: ADV-SM-PROD-001CH runtime expired approval deterministic persistence.
+- `src/system/entry/backend_process.rs` - expired approval JSON writes are awaited after the approval write lock is released and before proposal status propagation.
+Productization supplement: ADV-SM-PROD-001CI runtime expired approval duplicate disk identity gate.
+- `src/system/entry/backend_process.rs` - expired approval persistence skips duplicate approval ids in one batch rather than collapsing scoped records into one ownerless JSON file.
+Productization supplement: ADV-SM-PROD-001CJ runtime expired proposal duplicate disk identity gate.
+- `src/system/entry/backend_process.rs` - expired proposal persistence skips duplicate proposal ids in one batch rather than collapsing scoped records into one ownerless JSON file.
+Productization supplement: ADV-SM-PROD-001CK runtime expired proposal duplicate fallback gate.
+- `src/system/entry/backend_process.rs` - duplicate proposal id expiry batches skip ownerless disk fallback instead of importing one disk proposal into multiple scopes.
+Productization supplement: ADV-SM-PROD-001CL runtime approval detail numeric scope fallback gate.
+- `src/runtime/mutation/ai_proposal/approval_review.rs` - approval detail foreign-scope detection treats only numeric auth prefixes as user scopes before blocking disk fallback.
+Productization supplement: ADV-SM-PROD-001CM runtime proposal detail numeric scope fallback gate.
+- `src/runtime/mutation/ai_proposal/record_query.rs` - proposal detail foreign-scope detection treats only numeric auth prefixes as user scopes before blocking disk fallback.
+Productization supplement: ADV-SM-PROD-001CN runtime proposal load numeric scope fallback gate.
+- `src/runtime/mutation/ai_proposal/record_query.rs` - approval-adjacent proposal loading ignores non-numeric prefixed memory keys before ownerless disk fallback while retaining numeric foreign-scope rejection.
+Productization supplement: ADV-SM-PROD-001CO runtime approval list numeric scope visibility gate.
+- `src/runtime/mutation/ai_proposal/approval_review.rs` - approval list requires exact ownerless or numeric-scoped approval keys, excluding non-numeric prefixed memory keys from approval read models.
+Productization supplement: ADV-SM-PROD-001CP runtime proposal status numeric scope fallback gate.
+- `src/runtime/mutation/ai_proposal/status_transition.rs` - proposal status transitions ignore non-numeric prefixed memory keys before ownerless disk fallback while retaining numeric foreign-scope rejection.
+Productization supplement: ADV-SM-PROD-001CQ sandbox proposal loader numeric scope gate.
+- `src/backend/ops_governance/sandbox/proposal_loader.rs` - sandbox proposal loading ignores non-numeric prefixed memory keys before ownerless disk fallback while retaining numeric scoped ambiguity rejection.
+Productization supplement: ADV-SM-PROD-001CR sandbox metrics backtest numeric scope gate.
+- `src/backend/ops_governance/sandbox/comparison_metrics/backtest_projection.rs` - sandbox comparison metrics ignores non-numeric prefixed backtest keys while retaining numeric source/graph scope ambiguity gates.
+Productization supplement: ADV-SM-PROD-001CS sandbox report disk loader sanitized path gate.
+- `src/backend/ops_governance/sandbox/report_disk_loader.rs` - sandbox report disk fallback uses the same sanitized path segment as report persistence.
+Productization supplement: ADV-SM-PROD-001CT snapshot restore audit sanitized path gate.
+- `src/backend/ops_governance/snapshots/handlers/persistence.rs` - snapshot restore audit filenames sanitize embedded snapshot ids before disk write.
+Productization supplement: ADV-SM-PROD-001CU alert firing sanitized path and cleanup gate.
+- `src/backend/ops_governance/alerts/handlers/persistence.rs` - alert firing persistence uses a shared sanitized firing-id path helper.
+- `src/backend/ops_governance/alerts/handlers/trigger_engine.rs` - resolved cleanup removes the same sanitized firing-id file path rather than a scoped memory key filename.
+Productization supplement: ADV-SM-PROD-001CV activation snapshot sanitized path gate.
+- `src/runtime/mutation/parameter_mutation/transition_lifecycle/activation_snapshot_side_effect.rs` - activation-time automatic deployment signature snapshot persistence uses a sanitized snapshot-id JSON path helper.
+Productization supplement: ADV-SM-PROD-001CW mutation run persisted path check gate.
+- `src/runtime/mutation/shared_governance.rs` - runtime parameter mutation event append checks persisted run files through a sanitized source-id JSON path helper before rewriting disk-backed runs.
+Productization supplement: ADV-SM-PROD-001CX snapshot persistence sanitized path gate.
+- `src/backend/ops_governance/snapshots/handlers/persistence.rs` - snapshot body persist/load paths share a sanitized snapshot-id JSON path helper while preserving snapshot id validation.
+Productization supplement: ADV-SM-PROD-001CY chaos report persistence sanitized path gate.
+- `src/backend/ops_governance/chaos/handlers/report_persistence.rs` - chaos experiment report persist/load paths share a sanitized experiment-id JSON path helper while preserving experiment id validation.
+Productization supplement: ADV-SM-PROD-001CZ graph audit persistence sanitized path gate.
+- `src/collaboration.rs` - graph collaboration audit persist/load paths share a sanitized graph-id JSON path helper while preserving graph route validation.
+Productization supplement: ADV-SM-PROD-001DA graph collaboration body path gate.
+- `src/collaboration.rs` - graph collaboration authorization reads graph body files through a sanitized graph-id JSON path helper while preserving actor authorization semantics.
+Productization supplement: ADV-SM-PROD-001DB graph body JSON path gate.
+- `src/backend/graph_compile/graph.rs` - graph body JSON save/load/delete/reveal/optional-read/latest-refresh paths share a sanitized graph-id JSON path helper while preserving graph id validation.
+Productization supplement: ADV-SM-PROD-001DC graph Quantscript artifact path gate.
+- `src/backend/graph_compile/graph.rs` - graph `.qs` artifact persist/read/delete paths share sanitized graph-id and version-id path helpers while preserving JSON and version directory semantics.
+Productization supplement: ADV-SM-PROD-001DD graph version JSON path gate.
+- `src/backend/graph_compile/graph.rs` - graph version `.json` paths sanitize version ids inside the sanitized graph version directory while preserving version validation and route semantics.
+Productization supplement: ADV-SM-PROD-001DE graph version JSON write-site alignment.
+- `src/backend/graph_compile/graph.rs` - graph version `.json` persisted and staging write paths share the same sanitized version-id file helper as read paths.
+Productization supplement: ADV-SM-PROD-001DF graph artifact backup path gate.
+- `src/backend/graph_compile/graph.rs` - graph artifact replacement backup filenames sanitize embedded version ids while preserving rollback semantics.
+Productization supplement: ADV-SM-PROD-001DG graph staging directory path gate.
+- `src/backend/graph_compile/graph.rs` - graph artifact staging directory names sanitize embedded graph ids while preserving staging cleanup and commit semantics.
+Productization supplement: ADV-SM-PROD-001DH graph Quantscript route source path gate.
+- `src/backend/graph_compile/quantscript_graph/route_surface.rs` - route-level graph `.qs` source reads sanitize embedded graph ids while preserving validation, not-found behavior, and parse semantics.
+Productization supplement: ADV-SM-PROD-001DI CLI v4-run graph id fallback path gate.
+- `src/cli_support.rs` - CLI `v4-run` graph-id fallback resolves sanitized `storage/graphs/<id>.qs` filenames while preserving explicit file path inputs.
+Productization supplement: ADV-SM-PROD-001DJ test runner graph artifact path gate.
+- `src/test_runner.rs` - generated test-runner graph `.qs` and `.json` writes sanitize embedded graph ids while preserving compile behavior, atomic temp rename, and visual graph JSON shape.
+Productization supplement: ADV-SM-PROD-001DK graph version directory path gate regression.
+- `src/backend/graph_compile/graph.rs` - graph version parent directories explicitly sanitize embedded graph ids before version `.json` and `.qs` artifact paths are derived.
+Productization supplement: ADV-SM-PROD-001DL runtime report artifact filename path gate regression.
+- `src/runtime_response_mapping.rs` - runtime evidence report artifact `file_name` values inherit sanitized source id segments and do not expose run/backtest id path separators.
+Productization supplement: ADV-SM-PROD-001DM backtest work directory path gate regression.
+- `src/backtest_artifacts.rs` - transient backtest record directories, transient saving work directories, and promotion saving work directories sanitize embedded backtest ids before creating record or work directories.
+Productization supplement: ADV-SM-PROD-001DN runtime generic JSON persistence path gate regression.
+- `src/runtime_persistence.rs` - shared `persist_json` sanitizes caller-provided ids before constructing id-based JSON filenames inside the target store directory.
+Productization supplement: ADV-SM-PROD-001DO runtime report record path helper.
+- `src/runtime_persistence.rs` - runtime report record reads and writes share one sanitized report-id JSON path helper while preserving quota, atomic write, bounded read, and schema behavior.
+Productization supplement: ADV-SM-PROD-001DP runtime parameter mutation record path helper.
+- `src/runtime_persistence.rs` - runtime parameter mutation record reads and writes share one sanitized proposal-id JSON path helper while preserving quota, atomic write, bounded read, and schema behavior.
+Productization supplement: ADV-SM-PROD-001DQ runtime AI proposal record path helper.
+- `src/runtime_persistence.rs` - runtime AI proposal record reads and writes share one sanitized proposal-id JSON path helper while preserving quota, atomic write, bounded read, and schema behavior.
+Productization supplement: ADV-SM-PROD-001DR runtime run record path helper.
+- `src/runtime_persistence.rs` - runtime run record persistence and disk fallback reads share one sanitized run-id JSON path helper while preserving quota, atomic write, memory-first lookup, bounded read, governance normalization, and schema behavior.
+Productization supplement: ADV-SM-PROD-001DS runtime experiment record path helper.
+- `src/runtime_persistence.rs` - runtime experiment record persistence and disk fallback reads share one sanitized experiment-id JSON path helper while preserving quota, atomic write, memory-first lookup, bounded read, and schema behavior.
+Productization supplement: ADV-SM-PROD-001DT runtime backtest record directory helper.
+- `src/runtime_persistence.rs` - runtime backtest persisted-directory fallback reads use one sanitized backtest-id directory helper while preserving validation, memory-first lookup, transient fallback, governance normalization, and schema behavior.
+Productization supplement: ADV-SM-PROD-001DU secret atomic write temp path gate regression.
+- `src/storage_lifecycle.rs` - secret atomic write temp files stay inside the target parent directory and use hidden temp filenames derived from the target file name.
+Productization supplement: ADV-SM-PROD-001DV storage directory lifecycle classification regression.
+- `src/storage_lifecycle.rs` - storage cleanup classifies permanent, temporary, transient, and unknown storage roots before deletion policy executes.
+Productization supplement: ADV-SM-PROD-001DW TTL persistence relative path confinement.
+- `src/storage_lifecycle.rs` - shared TTL persistence rejects absolute paths, root prefixes, and parent-directory escape segments before quota checks, directory creation, or disk writes.
+Productization supplement: ADV-SM-PROD-001DX storage quota directory name confinement.
+- `src/storage_lifecycle.rs` - shared quota checks reject empty, parent-directory, and nested path-like directory names before quota scanning or path joining.
+Productization supplement: ADV-SM-PROD-001DY TTL persistence transient temp file identity.
+- `src/storage_lifecycle.rs` - shared TTL persistence writes through hidden per-write temp files in the target parent directory and removes stale temp files on failed write attempts.
+Productization supplement: ADV-SM-PROD-001DZ TTL persistence current-directory component rejection.
+- `src/storage_lifecycle.rs` - shared TTL persistence rejects current-directory components so the first path component remains a real storage directory owner.
+Productization supplement: ADV-SM-PROD-001EA TTL persistence owner-and-file path requirement.
+- `src/storage_lifecycle.rs` - shared TTL persistence requires at least a storage directory owner segment and a concrete file target segment before quota checks or writes.
+Productization supplement: ADV-SM-PROD-001EB runtime atomic JSON transient temp file identity.
+- `src/runtime_persistence.rs` - shared runtime JSON atomic writes use hidden per-write temp files in the target parent directory and remove stale temp files on failed write attempts.
+Productization supplement: ADV-SM-PROD-001EC runtime list missing-store empty result semantics.
+- `src/runtime_persistence.rs` - runtime run and backtest record list ports return empty result sets for missing store directories without creating directories or surfacing cold-start storage errors.
+Productization supplement: ADV-SM-PROD-001ED runtime generic JSON non-empty id requirement.
+- `src/runtime_persistence.rs` - shared runtime generic JSON persistence rejects empty ids before creating directories or constructing root `.json` files.
+Productization supplement: ADV-SM-PROD-001EE workspace unsupported capability fail-closed semantics.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace blocks evidence readiness and AI proposal apply when execution capability evidence contains `unsupported`.
+Productization supplement: ADV-SM-PROD-001EF workspace unsupported capability explanation.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace shows unsupported capability state directly when fail-closed blocks evidence readiness or AI proposal apply.
+Productization supplement: ADV-SM-PROD-001EG backend source runner unsupported capability gate.
+- `src/runtime/mutation/ai_proposal/sandbox_trigger.rs` - backend approval source runner evidence fails closed when productization evidence contains an unsupported execution capability source.
+Productization supplement: ADV-SM-PROD-001EH approval source runner missing input explanation.
+- `frontend/src/components/ApprovalPanel.jsx` - approval detail displays source runner evidence missing inputs such as `unsupported_execution_capability`.
+Productization supplement: ADV-SM-PROD-001EI Event Catalog and Memory Schema readonly workspace projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection reads contract Event Catalog and machine Memory Schema into explicit readonly panels.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace renders Event Catalog and Memory Schema summaries from contract-derived projection data.
+Productization supplement: ADV-SM-PROD-001EJ productization evidence embedded contract source.
+- `src/backtest_artifacts.rs` - v4 productization evidence carries an optional machine graph contract derived from compile artifacts through the existing Core IR to v4 bridge.
+- `frontend/src/components/RuntimeDiagnosticsPanel.jsx` - runtime diagnostics can mount the productization workspace from evidence that already includes backend contract data.
+Productization supplement: ADV-SM-PROD-001EK Event Catalog and Memory Schema field findings.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection detects transition references to undeclared event types and action writes to undeclared machine memory.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace renders field-level finding details inside the target Event Catalog or Memory Schema panel.
+Productization supplement: ADV-SM-PROD-001EL Event Catalog source and consumer boundary findings.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection detects unregistered event sources, consumers, emitted event types, and emitters against the Event Catalog boundary.
+Productization supplement: ADV-SM-PROD-001EM Event Catalog payload schema findings.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection detects incomplete or contradictory Event Catalog payload field definitions.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace renders payload schema finding targets inside the Event Catalog panel.
+Productization supplement: ADV-SM-PROD-001EN Event Catalog instance payload findings.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection compares optional event instance payloads from source/evidence/artifact/event_log inputs against Event Catalog payload fields.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace renders event instance payload finding targets with instance ids and expected type details.
+Productization supplement: ADV-SM-PROD-001EO Event Catalog and Memory Schema repair targets.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection attaches structured `repair_target` metadata to Event Catalog and Memory Schema findings.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace renders repair target kind/path summaries for finding navigation.
+Productization supplement: ADV-SM-PROD-001EP Workspace repair target selection.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace renders Event Catalog and Memory Schema repair targets as selectable controls and displays the active target kind/path.
+Productization supplement: ADV-SM-PROD-001EQ Workspace repair target grouping.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection groups Event Catalog and Memory Schema repair targets by target kind.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace renders grouped repair target counts before individual target selection.
+Productization supplement: ADV-SM-PROD-001ER Workspace repair action hints.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace repair targets include editor surface and action label hints.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace selected repair target display shows the next action and editor surface.
+Productization supplement: ADV-SM-PROD-001ES Workspace repair drafts.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace repair targets include draft-only, review-required repair draft metadata with mutation disabled.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace selected repair target display shows repair draft status before any editor writes are enabled.
+Productization supplement: ADV-SM-PROD-001ET Workspace repair form previews.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace repair drafts include preview-only form field lists with mutation disabled.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace selected repair target display shows repair form preview status and field names.
+Productization supplement: ADV-SM-PROD-001EU Workspace repair form suggestions.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace repair form preview fields include placeholder and suggested value metadata while mutation remains disabled.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace selected repair target display shows repair form suggestion summaries.
+Productization supplement: ADV-SM-PROD-001EV Workspace local repair draft state.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace selected repair targets render local-only draft inputs seeded from preview suggestions without submitting or mutating contract data.
+Productization supplement: ADV-SM-PROD-001EW Workspace local repair draft diffs.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace selected repair targets show local-only draft changed counts and field-level diff summaries before any submit path exists.
+Productization supplement: ADV-SM-PROD-001EX Workspace local repair proposal payloads.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace selected repair targets derive review-payload-only summaries with changed fields and submit disabled.
+Productization supplement: ADV-SM-PROD-001EY Workspace local repair proposal preflight.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace local repair proposal payloads show submit-disabled preflight readiness and blocked codes.
+Productization supplement: ADV-SM-PROD-001EZ Workspace repair submit-disabled explanations.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace local repair proposal payloads show submit-disabled reasons and an approval entrypoint placeholder.
+Productization supplement: ADV-SM-PROD-001FA Workspace repair approval entrypoint shell.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace local repair proposal payloads render a disabled approval review entrypoint shell with a stable action id and disabled reasons.
+Productization supplement: ADV-SM-PROD-001FB Workspace repair approval request envelopes.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace local repair proposal payloads derive request-envelope-only approval packages with send disabled.
+Productization supplement: ADV-SM-PROD-001FC Workspace repair approval audit inputs.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace local approval request envelopes expose audit-input-only summaries and hash-input-only canonical field paths without computed digests.
+Productization supplement: ADV-SM-PROD-001FD Workspace repair approval route contracts.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace local approval request envelopes expose the future disabled POST route contract and payload kind for contract repair approval requests.
+Productization supplement: ADV-SM-PROD-001FE Workspace repair approval request body previews.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace local approval request envelopes expose body-preview-only request payload summaries while mutation and sending remain disabled.
+Productization supplement: ADV-SM-PROD-001FF Contract repair approval request route skeleton.
+- `src/frontend_api_types.rs` - backend/frontend shared DTOs include body-preview-only contract repair approval request and locked response shapes.
+- `src/runtime/mutation/contract_repair_approval.rs` - runtime mutation child validates Event Catalog / Memory contract repair approval request previews and returns fail-closed locked responses while mutation support is disabled.
+- `src/runtime/mod.rs` - runtime facade exports the contract repair approval request handler.
+- `src/backend/runtime/routes/mutation.rs` - runtime mutation route table registers POST `/api/runtime/v4/productization/contract-repairs/approval-requests`.
+- `tests/api_v4_productization_contract_repair.rs` - API test verifies the route is present, validates body shape, and remains locked before contract mutation persistence exists.
+Productization supplement: ADV-SM-PROD-001FG Contract repair approval record previews.
+- `src/frontend_api_types.rs` - locked contract repair approval responses include preview-only approval record identity and persistence-disabled flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - contract repair approval route derives stable approval id/idempotency preview from canonical request identity while remaining fail-closed.
+- `tests/api_v4_productization_contract_repair.rs` - API test verifies locked responses expose approval preview identity, idempotency key, pending review state, and no-persist flags.
+Productization supplement: ADV-SM-PROD-001FH Contract repair approval read model skeletons.
+- `src/frontend_api_types.rs` - contract repair approval read-model DTOs expose disabled collection/detail shapes before persistence exists.
+- `src/runtime/mutation/contract_repair_approval.rs` - contract repair approval GET handlers return empty/null disabled read models with persistence and mutation disabled.
+- `src/backend/runtime/routes/mutation.rs` - runtime mutation route table registers contract repair approval collection/detail GET routes.
+- `tests/api_v4_productization_contract_repair.rs` - API test verifies disabled collection and detail read models for future repair approval UI.
+Productization supplement: ADV-SM-PROD-001FI Workspace repair approval read model contract display.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - productization workspace local approval envelopes show disabled backend collection/detail read-model readiness without fetching records or enabling mutation.
+Productization supplement: ADV-SM-PROD-001FJ Workspace repair approval read model snapshots.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes optional backend-shaped contract repair approval read model snapshots into status, route status, record count, records, blocked reasons, and enabled flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets render read model snapshot status, record count, and route status while keeping fetching, persistence, and mutation disabled.
+Productization supplement: ADV-SM-PROD-001FK Workspace repair approval locked response previews.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes optional backend locked contract repair approval responses into request metadata, blocked reasons, and approval record preview identity.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets render backend approval preview id, idempotency key, review state, and no-persist flags while keeping submission, persistence, and mutation disabled.
+Productization supplement: ADV-SM-PROD-001FL Workspace repair approval record surfaces.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection derives a contract repair approval record surface that separates persisted read-model records from locked-response preview records.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets render record surface status, persisted count, preview count, visible count, and disabled persistence/mutation flags.
+Productization supplement: ADV-SM-PROD-001FM Contract repair approval record source contracts.
+- `src/frontend_api_types.rs` - contract repair approval collection/detail read-model DTOs include record source status, source kind, persisted count, and preview count fields.
+- `src/runtime/mutation/contract_repair_approval.rs` - disabled contract repair approval GET handlers return record-source-disabled metadata with zero persisted/preview counts.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify collection/detail read models expose disabled record source metadata before persistence is enabled.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection consumes backend record source metadata for the approval record surface.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display approval record source status/kind alongside persisted and preview counts.
+Productization supplement: ADV-SM-PROD-001FN Contract repair approval transient preview caches.
+- `src/lib.rs` - AppState owns an in-memory `contract_repair_approval_previews` map for preview-only contract repair approval records.
+- `src/app_runtime_helpers.rs` - new app state initialization creates the transient contract repair approval preview map.
+- `src/runtime/mutation/contract_repair_approval.rs` - valid locked POST requests insert deterministic approval previews into the transient map, and collection/detail GET routes expose cached previews as non-persistent read models.
+- `tests/api_v4_productization_contract_repair.rs` - API sequence test verifies POST remains locked while subsequent collection/detail GET responses expose the transient preview record with persistence and mutation disabled.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection preserves zero persisted counts and classifies transient read-model records as preview records.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display transient preview cache source status through the approval record surface.
+Productization supplement: ADV-SM-PROD-001FO Contract repair approval review intent skeletons.
+- `src/frontend_api_types.rs` - contract repair approval DTOs include review intent request and locked review response shapes.
+- `src/runtime/mutation/contract_repair_approval.rs` - review intent handler validates disabled claim/approve/reject intents, requires an existing transient preview, and returns locked review-workflow-disabled responses.
+- `src/backend/runtime/routes/mutation.rs` - runtime mutation route table registers POST `/api/runtime/v4/productization/contract-repairs/approval-requests/:approval_id/review`.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify review intents remain locked for existing previews and return not found for missing previews.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes optional locked review intent responses without enabling review execution.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display review intent action, route status, and disabled review/persistence/mutation flags.
+Productization supplement: ADV-SM-PROD-001FP Contract repair approval transient claim markers.
+- `src/frontend_api_types.rs` - contract repair approval preview records include transient review marker fields for disabled claim intents.
+- `src/runtime/mutation/contract_repair_approval.rs` - disabled claim review intents write `claim_intent_recorded` marker fields to transient preview records while keeping formal review state pending.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify new previews start unclaimed and claim intents expose transient marker fields in locked responses and detail reads.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes transient review marker fields from backend preview responses.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display transient claim marker status and reviewer id in backend preview summaries.
+Productization supplement: ADV-SM-PROD-001FQ Contract repair approval transient decision intent markers.
+- `src/runtime/mutation/contract_repair_approval.rs` - disabled review intent handling maps claim, approve, and reject actions to transient marker statuses without changing formal review state.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify disabled approve/reject intents remain locked, preserve pending review state, and only update transient marker fields.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection accepts transient approve/reject marker fields without enabling review execution.
+Productization supplement: ADV-SM-PROD-001FR Contract repair approval review execution gate.
+- `src/frontend_api_types.rs` - locked contract repair approval review responses include an explicit execution gate with required, passed, and blocked formal review preconditions.
+- `src/runtime/mutation/contract_repair_approval.rs` - disabled review intent handling returns a fail-closed execution gate that passes only preview existence and valid intent shape while blocking review workflow, persistence, mutation, and formal reviewer authorization.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked claim/approve responses expose execution gate status, passed gates, and blocked gates.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes backend review execution gates.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display review execution gate status, passed gates, and blocked gates.
+Productization supplement: ADV-SM-PROD-001FS Contract repair approval review execution plan preview.
+- `src/frontend_api_types.rs` - locked contract repair approval review responses include a non-executing plan preview that names target review state, future side-effect categories, and disabled side-effect flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - disabled review intent handling maps claim to `under_review`, approve to `approved`, and reject to `rejected` in the plan preview while keeping execution, persistence, lifecycle emission, and contract mutation disabled.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked claim/approve responses expose plan preview target state and disabled side-effect booleans.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes backend review execution plan previews.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display review execution plan status, action, target review state, and disabled persistence/mutation flags.
+Productization supplement: ADV-SM-PROD-001FT Contract repair approval persistence plan preview.
+- `src/frontend_api_types.rs` - locked contract repair approval review responses include a persistence plan preview naming the dedicated contract repair approval store, record kind, record key, idempotency key, source kind, and blocked persistence gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - disabled review intent handling derives a non-writing persistence plan from the transient approval preview while keeping `persistence_enabled` and `would_write_record` false.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked claim/approve responses expose persistence plan metadata without enabling writes.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes backend persistence plan previews.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display persistence plan store, record key, write status, and disabled persistence status.
+Productization supplement: ADV-SM-PROD-001FU Contract repair approval record snapshot preview.
+- `src/frontend_api_types.rs` - contract repair approval preview records include target metadata, and locked review responses include a non-persistent record snapshot preview.
+- `src/runtime/mutation/contract_repair_approval.rs` - disabled review intent handling derives a record snapshot preview from transient preview data and review intent metadata without writing approval records.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked claim/approve responses expose snapshot target metadata, target review state, reviewer id, and disabled write flags.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes backend record snapshot previews and preview target metadata.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display record snapshot kind, target kind, review state, reviewer, and disabled write status.
+Productization supplement: ADV-SM-PROD-001FV Contract repair approval storage readiness gate.
+- `src/frontend_api_types.rs` - locked contract repair approval review responses include a storage readiness gate with persistence, store, schema, idempotency, and snapshot readiness flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - disabled review intent handling derives a storage readiness gate from persistence plan, persistence path preview, and record snapshot, keeping store readiness and persistence disabled.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked claim/approve responses expose ready schema/idempotency/path/snapshot gates while store readiness remains blocked.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes backend storage readiness gates.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display storage, schema, idempotency, and snapshot readiness states.
+Productization supplement: ADV-SM-PROD-001FW Contract repair approval storage dry-run preview.
+- `src/frontend_api_types.rs` - locked contract repair approval review responses include a storage dry-run preview naming adapter, store, record key, readiness status, acceptance, and write-disabled state.
+- `src/runtime/mutation/contract_repair_approval.rs` - disabled review intent handling derives a non-writing dry-run preview from persistence plan plus storage readiness gate.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked claim/approve responses expose adapter acceptance while `would_write` remains false.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes backend storage dry-run previews.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display dry-run adapter, accepted status, write status, and readiness status.
+Productization supplement: ADV-SM-PROD-001FX Contract repair approval idempotency precheck.
+- `src/frontend_api_types.rs` - locked contract repair approval review responses include an idempotency precheck with key, candidate record key, lookup, conflict, and safe-write flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - disabled review intent handling derives a blocked idempotency precheck from persistence plan without reading or writing the formal approval store.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked claim/approve responses expose idempotency precheck metadata while `safe_to_write` remains false.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes backend idempotency prechecks.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display idempotency lookup, conflict, and safe-write status.
+Productization supplement: ADV-SM-PROD-001FY Contract repair approval lifecycle event dry-run.
+- `src/frontend_api_types.rs` - locked contract repair approval review responses include a lifecycle event dry-run with event id, kind, target review state, actor, reason code, preview sequence, and emit-disabled flag.
+- `src/runtime/mutation/contract_repair_approval.rs` - disabled review intent handling derives a non-emitting lifecycle dry-run from record snapshot plus review action.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked claim/approve responses expose lifecycle dry-run metadata while `would_emit` remains false.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes backend lifecycle event dry-runs.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display lifecycle event kind, target state, actor, and emit status.
+Productization supplement: ADV-SM-PROD-001FZ Contract repair approval contract writeback dry-run.
+- `src/frontend_api_types.rs` - locked contract repair approval review responses include a contract writeback dry-run with patch kind, target metadata, changed fields, approve-only eligibility, and mutation-disabled flag.
+- `src/runtime/mutation/contract_repair_approval.rs` - disabled review intent handling derives a non-mutating contract writeback dry-run from record snapshot plus review action.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked claim/approve responses expose contract writeback dry-run metadata while `would_mutate_contract` remains false.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes backend contract writeback dry-runs.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display writeback patch kind, target kind, approve eligibility, and mutation status.
+Productization supplement: ADV-SM-PROD-001GA Contract repair approval persistence path preview.
+- `src/frontend_api_types.rs` - locked contract repair approval review responses include a persistence path preview with dedicated store kind, sanitized path segment, JSON file name, atomic write requirement, and disk-touch-disabled flag.
+- `src/runtime/mutation/contract_repair_approval.rs` - disabled review intent handling derives a non-writing persistence path preview through `sanitize_storage_path_segment` and keeps store readiness blocked on `contract_repair_approval_store_ready`.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked claim responses expose safe file identity while `would_touch_disk` remains false.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - productization workspace projection normalizes backend persistence path previews.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display persistence file name, atomic write requirement, and disk-touch status.
+Productization supplement: ADV-SM-PROD-001GB Contract repair approval durable request persistence.
+- `src/lib.rs` - `AppState` includes the dedicated `contract_repair_approval_store_dir` boundary for productization repair approval records.
+- `src/app_runtime_helpers.rs` - app state construction derives `contract-repair-approvals` alongside the existing storage roots without reusing AI proposal approval storage.
+- `src/runtime/mutation/contract_repair_approval.rs` - valid repair approval POST requests atomically persist durable request records, list/detail read models merge durable records with in-memory previews, and review intents can load an existing durable request before returning locked review responses.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify POST persistence, persisted list/detail counts, and restart readback while mutation and formal review execution remain disabled.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GB` as the durable request persistence step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GC Contract repair approval durable locked review markers.
+- `src/runtime/mutation/contract_repair_approval.rs` - locked claim/approve/reject review intents persist marker updates back into the dedicated contract repair approval record store only when the request record is already durable.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify claim and reject marker fields survive app restart while formal review state stays pending and mutation remains disabled.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GC` as the durable locked review marker step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GD Contract repair approval durable marker collection read model.
+- `src/runtime/mutation/contract_repair_approval.rs` - collection GET reads durable contract repair approval records and exposes persisted locked review marker fields through the list read model.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify restarted collection GET returns a locked marker, reviewer id, and pending formal review state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GD` as the durable marker collection read-model step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GE Contract repair approval idempotency store lookup.
+- `src/runtime/mutation/contract_repair_approval.rs` - idempotency precheck reads the dedicated contract repair approval store by candidate record key, reports existing records and idempotency conflicts, and still blocks safe writes.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked review responses expose lookup-enabled prechecks with existing durable request records while formal writes remain disabled.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GE` as the idempotency store lookup step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GF Contract repair approval store readiness detection.
+- `src/runtime/mutation/contract_repair_approval.rs` - storage readiness gate reads the dedicated contract repair approval store directory state, reports actual `store_ready`, and still blocks writes on formal approval persistence.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked review responses expose ready store gates while `would_write` and mutation stay disabled.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GF` as the store readiness detection step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GG Contract repair approval execution gate readiness integration.
+- `src/runtime/mutation/contract_repair_approval.rs` - execution gate aggregates storage readiness and idempotency precheck results into required/passed gates while preserving fail-closed blockers for review workflow, approval persistence, mutation, and reviewer authorization.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked review responses expose `contract_repair_approval_store_ready` and `idempotency_precheck_passed` in execution passed gates.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GG` as the execution gate readiness integration step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GH Contract repair approval reviewer identity precondition.
+- `src/runtime/mutation/contract_repair_approval.rs` - execution gate distinguishes non-empty reviewer identity presence from formal reviewer authorization, passing `reviewer_identity_present` while keeping authorization blocked.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked review responses expose `reviewer_identity_present` in execution passed gates.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GH` as the reviewer identity precondition step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GI Contract repair approval reviewer/auth-subject match.
+- `src/runtime/mutation/contract_repair_approval.rs` - execution gate checks whether reviewer identity matches the authenticated subject using `user:{auth_user_id}` while preserving formal authorization as a separate blocked gate.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify free-form reviewer ids keep `reviewer_identity_matches_auth_subject` blocked.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GI` as the reviewer/auth-subject match step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GJ Contract repair approval reviewer identity format.
+- `src/runtime/mutation/contract_repair_approval.rs` - execution gate validates structured reviewer identities with the `user:{numeric_id}` format before subject matching can pass.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify free-form reviewer ids keep `reviewer_identity_format_valid` blocked.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GJ` as the reviewer identity format step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GK Contract repair approval reviewer authorization precheck.
+- `src/frontend_api_types.rs` - locked review responses include `ContractRepairApprovalReviewerAuthorizationPrecheck` with auth subject, identity-format, subject-match, role-policy, authorization, and blocker fields.
+- `src/runtime/mutation/contract_repair_approval.rs` - reviewer authorization precheck reports authorization policy state and identity blockers while keeping formal review execution disabled.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked review responses expose authorization precheck blockers for free-form reviewer ids.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GK` as the reviewer authorization precheck step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GL Contract repair approval default-deny reviewer role policy.
+- `src/frontend_api_types.rs` - `ContractRepairApprovalReviewerAuthorizationPrecheck` exposes policy version, required role, and grant source fields.
+- `src/runtime/mutation/contract_repair_approval.rs` - reviewer authorization precheck reports `quantpilot/contract-repair-reviewer-role-policy/v1` with `grant_source: not_configured`, and execution gate consumes the precheck before `formal_reviewer_authorized` can pass.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify locked review responses expose the default-deny policy fields and remain non-executing.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GL` as the default-deny reviewer role policy step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GM Contract repair approval reviewer grant source.
+- `src/lib.rs` - `AppState` carries the configured read-only contract repair reviewer grants file path.
+- `src/app_runtime_helpers.rs` - app state initialization points `contract_repair_reviewer_grants_path` at `contract-repair-reviewer-grants.json` under the storage root.
+- `src/runtime/mutation/contract_repair_approval.rs` - reviewer authorization precheck reads the grant file, validates policy version, checks `subject` + `contract_repair_reviewer`, and lets the execution gate pass `formal_reviewer_authorized` only when the precheck is authorized.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify a matching grant can authorize `user:0` while the review route still returns locked and keeps persistence, lifecycle, and contract mutation disabled.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GM` as the reviewer grant source step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GN Contract repair approval review transition dry-run.
+- `src/frontend_api_types.rs` - locked review responses include `ContractRepairApprovalReviewTransitionDryRun` with from/to state, reviewer, readiness, transition flag, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - review transition dry-run derives local transition readiness from execution-gate blockers while preserving `would_transition: false`.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify ungranted reviewers keep transition readiness blocked and granted reviewers can become transition-ready while the route stays locked.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes `review_transition_dry_run`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace shows review transition dry-run readiness and transition status.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GN` as the review transition dry-run step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GO Contract repair approval lifecycle readiness dry-run.
+- `src/frontend_api_types.rs` - `ContractRepairApprovalLifecycleEventDryRun` exposes `transition_ready`.
+- `src/runtime/mutation/contract_repair_approval.rs` - lifecycle event dry-run consumes review transition dry-run readiness and sequence while keeping `would_emit: false`.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify lifecycle dry-run is blocked when transition is not ready and ready-blocked when reviewer grant allows local transition readiness.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes lifecycle `transition_ready`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays lifecycle transition readiness.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GO` as the lifecycle readiness dry-run step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GP Contract repair approval record write readiness dry-run.
+- `src/frontend_api_types.rs` - locked review responses include `ContractRepairApprovalRecordWriteDryRun` with writer adapter, store/file identity, readiness booleans, blockers, and `would_write: false`.
+- `src/runtime/mutation/contract_repair_approval.rs` - record write dry-run combines transition readiness, storage readiness, persistence path preview, persistence plan, and idempotency precheck without writing approval records.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify ungranted reviewers remain record-write blocked and granted reviewers can become write-ready while persistence stays disabled.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes `record_write_dry_run`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays record write store, file, transition, idempotency, write readiness, and persist status.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GP` as the record write readiness dry-run step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GQ Contract repair approval authorized claim execution.
+- `src/runtime/mutation/contract_repair_approval.rs` - review intents may execute only the `claim` action when `review_enabled: true`, reviewer authorization passes, approval record persistence is available, and storage/idempotency readiness gates pass; approve/reject remain disabled.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify an authorized claim transitions the durable approval record to `under_review`, survives restart, reports executed transition/record-write status, and keeps contract mutation disabled.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - workspace projection tests verify `review_claim_executed` responses normalize as executed review state without enabling contract mutation.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GQ` as the first controlled formal review execution step for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GR Contract repair approval approve/reject execution preflight.
+- `src/runtime/mutation/contract_repair_approval.rs` - review intent validation admits approve/reject `review_enabled: true` requests into the controlled preflight path, but the route returns `review_decision_execution_blocked`, keeps execution disabled, and leaves lifecycle emission plus contract writeback locked.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify authorized approve preflight reaches the locked decision response, shows ready-but-blocked transition/write/lifecycle surfaces, preserves pending review state, and keeps mutation disabled.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GR` as the fail-closed decision preflight step toward controlled approve/reject execution for `SM-PROD-002`.
+Productization supplement: ADV-SM-PROD-001GS Contract repair approval authorized reject execution.
+- `src/runtime/mutation/contract_repair_approval.rs` - execution gate handling is action-aware: claim and reject may execute when explicitly enabled and fully authorized, while approve remains blocked by contract mutation/writeback requirements.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify authorized reject execution persists `review_state: rejected`, survives restart, reports executed transition/record-write status, and still blocks lifecycle emission plus contract mutation.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GS` as the controlled reject execution step for `SM-PROD-002`, leaving approve execution plus lifecycle/writeback as the remaining decision gap.
+Productization supplement: ADV-SM-PROD-001GT Contract repair approval approve writeback readiness dry-run.
+- `src/frontend_api_types.rs` - `ContractRepairApprovalContractWritebackDryRun` exposes `patch_ready`, `transition_ready`, and `writeback_ready` while keeping `would_mutate_contract` explicit.
+- `src/runtime/mutation/contract_repair_approval.rs` - contract writeback dry-run consumes review transition readiness, marks approve patch targets as ready-blocked when local writeback inputs are present, and keeps lifecycle emission plus contract mutation blockers.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify authorized approve preflight reports ready-but-blocked writeback readiness while preserving pending review state and non-mutating semantics.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes contract writeback readiness booleans.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays patch, transition, and aggregate writeback readiness.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GT` as the approve writeback readiness step before lifecycle emission or contract mutation are enabled.
+Productization supplement: ADV-SM-PROD-001GU Contract repair approval approve execution gate narrowing.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve `review_enabled: true` now enters controlled decision preflight for workflow and approval-persistence readiness, while execution remains blocked by lifecycle emission and contract mutation gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - lifecycle dry-run keeps narrowed approve blockers visible instead of reporting stale workflow/persistence blockers once those preconditions pass.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify authorized approve preflight passes workflow/persistence gates, reports `approve_execution_not_enabled`, and stays locked on lifecycle plus contract mutation.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GU` as the approve execution gate narrowing step after writeback readiness.
+Productization supplement: ADV-SM-PROD-001GV Contract repair approval lifecycle emission readiness dry-run.
+- `src/frontend_api_types.rs` - `ContractRepairApprovalLifecycleEventDryRun` exposes `event_payload_ready` and `emission_ready`.
+- `src/runtime/mutation/contract_repair_approval.rs` - lifecycle dry-run derives event payload readiness from event identity, actor, approval id, and sequence, then reports emission readiness without emitting lifecycle events.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify ready approve preflight and executed reject responses expose lifecycle payload/emission readiness while `would_emit` remains false.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes lifecycle payload and emission readiness booleans.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays lifecycle payload and emission readiness before the emit flag.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GV` as the lifecycle emission readiness step before actual lifecycle emission or contract mutation are enabled.
+Productization supplement: ADV-SM-PROD-001GW Contract repair approval lifecycle entry append dry-run.
+- `src/frontend_api_types.rs` - locked review responses include `ContractRepairApprovalLifecycleEntryAppendDryRun` with event id, review state, sequence, readiness booleans, and `would_append`.
+- `src/runtime/mutation/contract_repair_approval.rs` - lifecycle entry append dry-run derives future approval lifecycle entry readiness from the lifecycle event dry-run while keeping `would_append: false`.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify blocked, approve-ready, and reject-executed responses expose append readiness without mutating approval lifecycle entries.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes lifecycle entry append dry-runs.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays lifecycle entry append readiness separately from lifecycle event emission readiness.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GW` as the lifecycle entry append dry-run step before actual append/emission are enabled.
+Productization supplement: ADV-SM-PROD-001GX Contract repair approval writeback lifecycle dependency.
+- `src/frontend_api_types.rs` - `ContractRepairApprovalContractWritebackDryRun` exposes `lifecycle_append_ready`.
+- `src/runtime/mutation/contract_repair_approval.rs` - contract writeback dry-run consumes lifecycle entry append dry-run and requires lifecycle append readiness before reporting aggregate writeback readiness.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify blocked and approve-ready responses expose lifecycle append readiness as a writeback prerequisite.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes writeback lifecycle append readiness.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays lifecycle append readiness on the contract writeback line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GX` as the writeback dependency step after lifecycle append dry-run.
+Productization supplement: ADV-SM-PROD-001GY Contract repair approval claim/reject lifecycle append execution.
+- `src/frontend_api_types.rs` - `ContractRepairApprovalRecordPreview` carries a defaulted lifecycle ledger of `ContractRepairApprovalLifecycleEntryPreview` entries.
+- `src/runtime/mutation/contract_repair_approval.rs` - authorized claim/reject execution emits the lifecycle dry-run, appends the lifecycle entry to the approval record before persistence, and keeps approve/writeback locked.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify claim/reject lifecycle emission, append status, persisted ledger content, restart readback, and disabled contract mutation.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approval record lifecycle ledger entries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays lifecycle ledger count and latest entry.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GY` as the first real lifecycle append step after readiness and dependency dry-runs.
+Productization supplement: ADV-SM-PROD-001GZ Contract repair approval writeback patch payload readiness.
+- `src/frontend_api_types.rs` - approval request, record preview, record snapshot, and writeback dry-run DTOs carry defaulted `patch_payload`; writeback dry-run exposes `patch_payload_ready` and `missing_patch_fields`.
+- `src/runtime/mutation/contract_repair_approval.rs` - approval idempotency includes patch payload, persisted records retain payload values, and writeback readiness requires payload coverage for every changed field.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify payload roundtrip, missing-payload blockers, approve preflight payload readiness, and disabled contract mutation.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes patch payload and patch payload readiness fields.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace generates request patch payloads from local repair diffs, includes values in hash input, and displays writeback payload readiness.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001GZ` as the writeback payload readiness step before approve execution or contract mutation are enabled.
+Productization supplement: ADV-SM-PROD-001HA Contract repair approval writeback source authority readiness.
+- `src/frontend_api_types.rs` - approval request, record preview, record snapshot, and writeback dry-run DTOs carry defaulted `ContractRepairApprovalContractSourceRef`; writeback dry-run exposes `contract_source_ready` and `missing_contract_source_fields`.
+- `src/runtime/mutation/contract_repair_approval.rs` - approval idempotency includes contract source identity, persisted records retain source refs, and writeback readiness requires source kind/id/version.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify source ref roundtrip, approve preflight source readiness, and disabled contract mutation.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes contract source refs and source readiness fields.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace carries contract source refs in request previews and displays writeback source readiness.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HA` as the writeback source authority step before approve execution or contract mutation are enabled.
+Productization supplement: ADV-SM-PROD-001HB Contract repair approval workspace source-ref propagation.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection derives `contract_source_ref` from the compiled v4 machine graph contract, productization evidence, and evidence artifact digest/hash, then attaches it to Event Catalog and Memory Schema repair targets.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify repair targets carry the v4 machine graph contract source kind, graph id, graph version, and artifact hash.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify local approval hash input includes the `contract_source` identity alongside patch field values.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HB` as the workspace source-ref propagation step before approve execution or contract mutation are enabled.
+Productization supplement: ADV-SM-PROD-001HC Contract repair approval patch plan readiness.
+- `src/frontend_api_types.rs` - contract writeback dry-run responses carry `ContractRepairApprovalContractPatchPlanPreview` and per-field `ContractRepairApprovalContractPatchOperationPreview` entries.
+- `src/runtime/mutation/contract_repair_approval.rs` - writeback dry-run now requires a contract patch plan, maps Memory Schema targets to supported selectors/operations, and blocks event instance payload repairs as evidence-sample patches instead of contract mutation readiness.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify a ready Memory Schema patch plan is exposed while mutation remains disabled.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes patch plan readiness, operations, unsupported fields, and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays contract patch plan readiness on the writeback line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HC` as the patch-plan step before source resolution, approve execution, or contract mutation persistence are enabled.
+Productization supplement: ADV-SM-PROD-001HD Contract repair approval source resolution readiness.
+- `src/frontend_api_types.rs` - contract writeback dry-run responses carry `ContractRepairApprovalContractSourceResolutionDryRun` with source kind/id/version, path, match flags, shape readiness, blockers, and resolved state.
+- `src/runtime/mutation/contract_repair_approval.rs` - review preflight resolves `v4_machine_graph_contract` sources from `graph_store_dir`, verifies graph id/version/artifact/shape, and requires `source_resolution.resolved` before aggregate writeback readiness can pass.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests seed a real graph-source fixture and verify ready-blocked writeback only when the source resolves.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes source resolution fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays source-resolution readiness on the writeback line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HD` as the source-resolution step before approve execution or contract mutation persistence are enabled.
+Productization supplement: ADV-SM-PROD-001HE Contract repair approval patch apply dry-run.
+- `src/frontend_api_types.rs` - contract writeback dry-run responses carry `ContractRepairApprovalContractPatchApplyDryRun` with source/plan/apply readiness, operation counts, applied selectors, persistence flag, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - review preflight rereads the resolved contract source, applies supported contract patch operations to a cloned JSON value only, and requires `patch_apply_dry_run.apply_ready` before aggregate writeback readiness can pass.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify ready-blocked writeback exposes patch apply readiness while preserving disabled mutation semantics.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes patch apply dry-run fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays apply readiness between patch-plan readiness and aggregate writeback readiness.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HE` as the patch apply dry-run step before approve execution or contract mutation persistence are enabled.
+Productization supplement: ADV-SM-PROD-001HF Contract repair approval source write dry-run.
+- `src/frontend_api_types.rs` - contract writeback dry-run responses carry `ContractRepairApprovalContractSourceWriteDryRun` with source path, temp file name, readiness flags, atomic-write metadata, before/after digests, write/touch flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - review preflight prepares a source-write dry-run from the resolved source and patch apply result, computes canonical before/after digests without writing, and requires `source_write_dry_run.write_ready` before aggregate writeback readiness can pass.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify ready-blocked writeback exposes source-write readiness, before/after digests, and disabled source write semantics.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes source write dry-run fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays source-write readiness between apply readiness and aggregate writeback readiness.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HF` as the source-write dry-run step before approve execution or contract mutation persistence are enabled.
+Productization supplement: ADV-SM-PROD-001HG Contract repair approval approve execution readiness gate.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionGate` with approve action, target state, persistence/transition/lifecycle/writeback/mutation readiness, execute flag, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - review preflight derives an approve execution gate after lifecycle and writeback dry-runs, reporting ready-blocked approve execution when dry-run preconditions pass while lifecycle emission and contract mutation gates remain closed.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the approve execution gate reaches ready-blocked status, keeps mutation disabled, and does not execute.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve execution gate fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve execution readiness as one line across persistence, transition, lifecycle, writeback, mutation, and execute state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HG` as the explicit approve execution gate step before lifecycle emission or contract mutation persistence are enabled.
+Productization supplement: ADV-SM-PROD-001HH Contract repair approval approve execution transaction dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionTransactionDryRun` with ordered steps, atomicity scope, readiness flags, would flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a transaction dry-run from approve gate, record write, lifecycle, and contract writeback dry-runs while keeping execution disabled.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify transaction plan readiness, ordered steps, and hard-gate blockers while preserving pending review state.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve execution transaction dry-run fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve transaction readiness, step count, lifecycle/mutation gates, and execute state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HH` as the ordered approve transaction dry-run step before lifecycle emission or contract mutation persistence are enabled.
+Productization supplement: ADV-SM-PROD-001HI Contract repair approval approve execution admission gate.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionAdmissionGate` with admission status, transaction readiness, atomicity readiness, runner state, partial-execution flag, side-effect flag, and gate lists.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives an admission gate from the transaction dry-run, requiring lifecycle emission, contract mutation, and the transaction runner before any approve transaction may start.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify admission stays blocked, partial execution is disallowed, and no side effects are admitted while lifecycle/mutation/runner gates are closed.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve execution admission gate fields and gate lists.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve admission readiness, atomicity scope, runner state, partial execution, and transaction start state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HI` as the no-partial-execution admission gate before lifecycle emission, contract mutation, or the approve transaction runner are enabled.
+Productization supplement: ADV-SM-PROD-001HJ Contract repair approval approve transaction runner dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionTransactionRunnerDryRun` with runner, admission, commit barrier, recovery marker, rollback plan, commit flags, phase order, rollback order, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a runner dry-run from transaction/admission readiness, exposing commit and rollback planning while keeping runner writes and transaction commits disabled.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify runner dry-run readiness, phase order, rollback planning, and non-commit semantics while mutation remains disabled.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve transaction runner dry-run fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner barrier, recovery, rollback, phase count, and commit state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HJ` as the runner planning step before lifecycle emission, contract mutation, recovery marker writes, or transaction commits are enabled.
+Productization supplement: ADV-SM-PROD-001HK Contract repair approval approve recovery marker write dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRecoveryMarkerWriteDryRun` with marker identity, sanitized file metadata, payload/path/storage/runner/write readiness, atomic write, no-write/no-touch flags, payload fields, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a recovery marker write dry-run from storage readiness and runner dry-run readiness while keeping marker writes disabled.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify recovery marker metadata, readiness flags, payload fields, blockers, and no disk write semantics.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve recovery marker write dry-run fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays recovery marker status, file, payload, storage, write, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HK` as the recovery marker write dry-run step before recovery marker persistence or transaction commits are enabled.
+Productization supplement: ADV-SM-PROD-001HL Contract repair approval approve recovery marker idempotency precheck.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRecoveryMarkerIdempotencyPrecheck` with marker key, file name, lookup/conflict status, write readiness, safe-write status, no-write flag, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight performs a read-only recovery marker lookup when the approval store is ready and keeps safe writes blocked until runner readiness.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify marker lookup is enabled, no marker conflict is detected, safe write remains blocked, and no marker write is admitted.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve recovery marker idempotency precheck fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays recovery marker lookup, existing marker, conflict, and safe-write state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HL` as the read-before-write idempotency precheck before recovery marker persistence or transaction commits are enabled.
+Productization supplement: ADV-SM-PROD-001HM Contract repair approval approve recovery marker persistence gate.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRecoveryMarkerPersistenceGate` with plan/write/idempotency/no-conflict/runner/persistence readiness, no-write/no-touch flags, and gate lists.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a recovery marker persistence gate from marker write dry-run and marker idempotency precheck while keeping marker persistence disabled.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify marker persistence plan readiness, passed/blocked gates, and no marker file write or disk touch semantics.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve recovery marker persistence gate fields and gate lists.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays recovery marker persistence plan, runner gate, persistence gate, write, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HM` as the marker persistence gate before recovery marker file writes or transaction commits are enabled.
+Productization supplement: ADV-SM-PROD-001HN Contract repair approval approve transaction commit gate.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionTransactionCommitGate` with runner plan, admission, commit barrier, rollback, recovery marker persistence, commit enablement, no-write/no-touch flags, and gate lists.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a transaction commit gate from runner dry-run state and the recovery marker persistence gate while keeping runner start, marker persistence, transaction commit, and disk touch disabled.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify commit gate plan readiness, marker persistence blockers, and no runner/marker/transaction side effects.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve transaction commit gate fields and gate lists.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve commit plan, marker persistence, commit gate, runner start, marker write, commit, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HN` as the runner commit gate that depends on recovery marker persistence before transaction commit is enabled.
+Productization supplement: ADV-SM-PROD-001HO Contract repair approval lifecycle emission enablement gate.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalLifecycleEmissionEnablementGate` with lifecycle plan readiness, emission/append enablement, no-effect/no-touch flags, and gate lists.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives lifecycle emission enablement from lifecycle event and entry append dry-runs while keeping lifecycle effects disabled.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify lifecycle plan readiness, emission/append blockers, and no lifecycle log touch semantics.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes lifecycle emission enablement fields and gate lists.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays lifecycle plan, emit gate, append gate, emit, append, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HO` as the lifecycle effects gate before lifecycle event emission or entry append is enabled.
+Productization supplement: ADV-SM-PROD-001HP Contract repair approval contract mutation enablement gate.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalContractMutationEnablementGate` with writeback/source-write/lifecycle/mutation readiness, no-mutate/no-write/no-touch flags, and gate lists.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives contract mutation enablement from contract writeback dry-run and lifecycle emission enablement while keeping source mutation disabled.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify contract mutation gate readiness, lifecycle/mutation blockers, and no source-write or disk-touch semantics.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes contract mutation enablement fields and gate lists.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays contract mutation writeback, source-write, lifecycle, mutation API, write, mutate, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HP` as the contract mutation enablement gate before Event Catalog or Memory Schema source persistence is enabled.
+Productization supplement: ADV-SM-PROD-001HQ Contract repair approval approve atomic side-effects gate.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionAtomicSideEffectsGate` with lifecycle, contract mutation, recovery marker, transaction commit, aggregate enablement, no-effect/no-touch flags, and gate lists.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives atomic side-effects readiness from lifecycle emission, contract mutation, recovery marker persistence, and transaction commit gates while keeping every side effect disabled.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify aggregate side-effects plan readiness, remaining blockers, and no lifecycle/source/marker/transaction side effects.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve atomic side-effects gate fields and gate lists.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays atomic side-effects plan, lifecycle, mutation, marker, commit, enablement, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HQ` as the aggregate side-effects gate before the approve runner may persist side effects atomically.
+Productization supplement: ADV-SM-PROD-001HR Contract repair approval approve runner attempt.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerAttempt` with attempt request, atomic side-effects plan/effects readiness, runner attempt enablement, no-start/no-persist/no-rollback flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a fail-closed runner attempt from action/review intent and the atomic side-effects gate while keeping the runner disabled.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify runner attempt recognition, effects/enablement blockers, and no runner or side-effect persistence.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve runner attempt fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve runner attempt request, plan, effects, enablement, start, persist, and rollback state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HR` as the fail-closed runner attempt surface before the approve runner can start.
+Productization supplement: ADV-SM-PROD-001HS Contract repair approval approve runner outcome.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerOutcome` with branch selection, runner-attempt/effects readiness, execution enablement, no-start/no-persist/no-commit/no-rollback flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a fail-closed runner outcome from the runner attempt while keeping the execution branch disabled.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify branch selection, attempt/effects/enablement blockers, and no runner, side-effect, commit, or rollback execution.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve runner outcome fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve runner outcome branch, attempt, effects, enablement, start, persist, commit, and rollback state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HS` as the fail-closed runner result contract before the approve runner can execute.
+Productization supplement: ADV-SM-PROD-001HT Contract repair approval approve runner dispatch.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerDispatchGate` with branch selection, runner execution readiness, route dispatch enablement, no-enter/no-success/no-persist/no-touch flags, and gate lists.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a fail-closed route dispatch gate from the runner outcome while keeping route success and runner branch entry disabled.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify dispatch branch selection, runner/dispatch blockers, and no runner branch entry, route success, side-effect persistence, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve runner dispatch gate fields and gate lists.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve runner dispatch branch, execution, dispatch, enter, success, persist, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HT` as the route-dispatch boundary before the approve runner can return success.
+Productization supplement: ADV-SM-PROD-001HU Contract repair approval approve runner handoff.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerHandoff` with dispatch readiness, route dispatch enablement, expected HTTP/route status, no-call/no-success/no-persist/no-touch flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a handler handoff from the dispatch gate and wires `would_return_success` into the future approve success branch while preserving the locked route.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify expected `423` / `review_decision_execution_blocked` semantics, handoff blockers, and no runner call, success return, side-effect persistence, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve runner handoff fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve runner handoff dispatch, route, expected HTTP/status, call, success, persist, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HU` as the handler handoff before the approve runner can be called from the route.
+Productization supplement: ADV-SM-PROD-001HV Contract repair approval approve runner call dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerCallDryRun` with handoff readiness, runner call enablement, expected runner result, no-call/no-success/no-persist/no-commit/no-rollback/no-touch flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a fail-closed runner call dry-run from the handoff and wires approve success to the call dry-run result while preserving the locked route.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify runner call blockers, expected `not_invoked` result, and no runner call, success return, side-effect persistence, commit, rollback, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve runner call dry-run fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve runner call handoff, enablement, expected result, call, success, persist, commit, rollback, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HV` as the fail-closed runner invocation contract before the approve runner body is implemented.
+Productization supplement: ADV-SM-PROD-001HW Contract repair approval approve runner call body dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerCallBodyDryRun` with runner entrypoint, call readiness, side-effect bundle readiness, atomic readiness, body enablement, no-enter/no-effect/no-commit/no-rollback/no-success/no-touch flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a fail-closed runner body dry-run from the runner call dry-run and atomic side-effects gate, and wires approve success to the body result while preserving the locked route.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify runner body entrypoint, bundle readiness, body blockers, and no body entry, lifecycle emission, contract mutation, marker persistence, commit, rollback, success return, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve runner call body dry-run fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve runner body call, bundle, effects, body enablement, enter, commit, rollback, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HW` as the fail-closed runner body boundary before side effects can be executed atomically.
+Productization supplement: ADV-SM-PROD-001HX Contract repair approval approve runner body phase sequence dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerBodyPhaseSequenceDryRun` with body readiness, forward/rollback sequence readiness, phase execution enablement, ordered phases, ordered rollback phases, no-execute/no-success/no-touch flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a fail-closed runner body phase sequence from the body dry-run and transaction runner dry-run, and wires approve success to the phase sequence result while preserving the locked route.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify forward phase order, rollback order, phase execution blockers, and no phase execution, rollback execution, success return, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve runner body phase sequence fields, phase order, rollback order, and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve runner phase sequence body, phases, rollback, enablement, counts, execute, rollback execute, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HX` as the fail-closed runner body phase order before atomic side effects can execute.
+Productization supplement: ADV-SM-PROD-001HY Contract repair approval approve runner lifecycle phase dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerLifecyclePhaseDryRun` with lifecycle phase presence, lifecycle plan/effects readiness, lifecycle phase enablement, no-emit/no-append/no-log-touch/no-next/no-success/no-touch flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a fail-closed runner lifecycle phase from the body phase sequence dry-run and lifecycle emission enablement gate, and wires approve success to the lifecycle phase result while preserving the locked route.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify lifecycle phase presence, lifecycle plan/effects blockers, lifecycle phase enablement blockers, and no lifecycle emission, append, log touch, next phase progression, success return, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve runner lifecycle phase fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve runner lifecycle sequence, phase presence, plan, effects, enablement, emit, append, touch, and next-phase state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HY` as the fail-closed runner lifecycle phase boundary after ordered body phases.
+Productization supplement: ADV-SM-PROD-001HZ Contract repair approval approve runner source mutation phase dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerSourceMutationPhaseDryRun` with source mutation phase presence, writeback/source-write readiness, lifecycle/API readiness, source phase enablement, no-mutate/no-source-write/no-next/no-success/no-touch flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a fail-closed runner source mutation phase from the body phase sequence dry-run, lifecycle phase dry-run, and contract mutation enablement gate, and wires approve success to the source mutation phase result while preserving the locked route.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify source mutation phase presence, writeback/source-write readiness, lifecycle/API/phase blockers, and no contract mutation, source write, next phase progression, success return, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve runner source mutation phase fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve runner source mutation lifecycle, phase presence, writeback, source-write, effects, API, enablement, mutate, write, next, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001HZ` as the fail-closed runner source mutation phase boundary after lifecycle phase.
+Productization supplement: ADV-SM-PROD-001IA Contract repair approval approve runner recovery marker cleanup phase dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerRecoveryMarkerCleanupPhaseDryRun` with cleanup phase presence, marker persistence plan/readiness, cleanup phase enablement, no-clear/no-commit/no-success/no-touch flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a fail-closed runner recovery marker cleanup phase from the body phase sequence dry-run, source mutation phase dry-run, and recovery marker persistence gate, and wires approve success to the cleanup phase result while preserving the locked route.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify cleanup phase presence, marker persistence plan/readiness blockers, cleanup phase enablement blockers, and no marker cleanup, commit progression, success return, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve runner recovery marker cleanup phase fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve runner cleanup source readiness, cleanup presence, marker plan/readiness, enablement, clear, commit, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IA` as the fail-closed runner recovery marker cleanup phase boundary after source mutation phase.
+Productization supplement: ADV-SM-PROD-001IB Contract repair approval approve runner transaction commit phase dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerTransactionCommitPhaseDryRun` with commit plan/readiness, cleanup readiness, runner/admission/marker readiness, commit phase enablement, no-commit/no-success/no-touch flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a fail-closed runner transaction commit phase from the body phase sequence dry-run, recovery marker cleanup phase dry-run, and transaction commit gate, and wires approve success to the commit phase result while preserving the locked route.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify transaction commit phase plan/readiness blockers, commit gate blockers, and no transaction commit, success return, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve runner transaction commit phase fields and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve runner commit cleanup readiness, plan, runner, admission, marker, gate, phase, commit, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IB` as the fail-closed runner transaction commit phase boundary after recovery marker cleanup.
+Productization supplement: ADV-SM-PROD-001IC Contract repair approval approve runner rollback execution phase dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerRollbackExecutionPhaseDryRun` with rollback sequence readiness, commit phase readiness, rollback plan/readiness, ordered rollback phases, no-restore/no-rollback/no-success/no-touch flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a fail-closed runner rollback execution phase from the body phase sequence dry-run and transaction commit phase dry-run, and wires approve success to the rollback phase result while preserving the locked route.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify rollback order, rollback phase presence, rollback plan blockers, and no contract source restore, approval record restore, marker rollback marking, rollback execution, success return, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve runner rollback execution phase fields, rollback order, and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve runner rollback commit readiness, sequence, phase presence, plan, enablement, rollback count, restore actions, rollback execution, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IC` as the fail-closed runner rollback execution phase boundary after transaction commit phase.
+Productization supplement: ADV-SM-PROD-001ID Contract repair approval approve runner enablement plan dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerEnablementPlanDryRun` with structural/control/phase/rollback/effects readiness, runner activation enablement, required/passed/blocked enablements, no-activate/no-success/no-touch flags, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a fail-closed runner enablement plan from runner control dry-runs and per-phase dry-runs, and wires approve success to the enablement plan result while preserving the locked route.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify structural readiness, blocked control/phase/rollback/effects/activation gates, required enablement count, blocked enablements, and no runner activation, success return, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes approve runner enablement plan fields, enablement lists, and blockers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays approve runner enablement structure, control, phases, rollback, effects, activation, required/blocked counts, activation, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ID` as the fail-closed runner activation checklist after rollback execution visibility.
+Productization supplement: ADV-SM-PROD-001IE Contract repair approval transaction runner enablement switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionTransactionRunnerEnablementDryRun` with switch name, approve-action/plan/execution/atomicity/lifecycle/mutation gates, runner switch state, no-enable/no-start/no-touch flags, and required/passed/blocked gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed transaction runner enablement switch dry-run between admission and transaction runner dry-runs without feeding the switch result back into execution.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify lifecycle, mutation, transaction execution, and runner switch blockers plus no runner enablement, start, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes transaction runner enablement switch readiness, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner switch status, plan, execution, atomicity, lifecycle, mutation, switch, enable, start, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IE` as the first standalone switch refinement after the runner enablement plan.
+Productization supplement: ADV-SM-PROD-001IF Contract repair approval runner attempt enablement switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerAttemptEnablementDryRun` with switch name, attempt request, atomic side-effects plan/readiness, transaction runner enablement readiness, runner attempt switch state, no-enable/no-start/no-persist/no-rollback flags, and required/passed/blocked gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed runner attempt enablement switch dry-run between atomic side-effects and runner attempt dry-runs without feeding the switch result back into runner attempt execution.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify atomic-effects, transaction-runner-switch, and runner-attempt-switch blockers plus no runner attempt enablement, start, persistence, or rollback.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner attempt enablement switch readiness, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays attempt switch status, request, plan, effects, transaction switch, switch, enable, start, persist, and rollback state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IF` as the second standalone switch refinement after the transaction runner enablement switch.
+Productization supplement: ADV-SM-PROD-001IG Contract repair approval runner execution enablement switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerExecutionEnablementDryRun` with switch name, branch selection, runner-attempt readiness, atomic side-effects readiness, runner attempt enablement readiness, runner execution switch state, no-enable/no-start/no-persist/no-commit/no-rollback flags, and required/passed/blocked gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed runner execution enablement switch dry-run between runner attempt and runner outcome without feeding the switch result back into runner outcome execution.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify attempt-readiness, atomic-effects, attempt-switch, and execution-switch blockers plus no runner execution enablement, start, persistence, commit, or rollback.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner execution enablement switch readiness, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays execution switch status, branch, attempt, effects, attempt switch, switch, enable, start, persist, commit, and rollback state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IG` as the third standalone switch refinement after the runner attempt enablement switch.
+Productization supplement: ADV-SM-PROD-001IH Contract repair approval runner route dispatch enablement switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerRouteDispatchEnablementDryRun` with switch name, branch selection, runner execution readiness, runner execution enablement readiness, route dispatch switch state, no-enable/no-enter/no-success/no-persist/no-touch flags, and required/passed/blocked gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed runner route dispatch enablement switch dry-run between runner outcome and dispatch gate without feeding the switch result back into dispatch execution.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify runner-execution, execution-switch, and route-switch blockers plus no route dispatch enablement, branch entry, route success, persistence, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner route dispatch enablement switch readiness, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays route switch status, branch, execution, execution switch, switch, enable, enter, success, persist, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IH` as the fourth standalone switch refinement after the runner execution enablement switch.
+Productization supplement: ADV-SM-PROD-001II Contract repair approval runner call enablement switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerCallEnablementDryRun` with switch name, handoff readiness, route dispatch enablement readiness, runner call switch state, no-enable/no-call/no-success/no-persist/no-commit/no-rollback/no-touch flags, and required/passed/blocked gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed runner call enablement switch dry-run between runner handoff and runner call dry-run without feeding the switch result back into runner invocation.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify handoff, route-switch, and call-switch blockers plus no runner call enablement, invocation, success, persistence, commit, rollback, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner call enablement switch readiness, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays call switch status, handoff, route switch, switch, enable, call, success, persist, commit, rollback, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001II` as the fifth standalone switch refinement after the route dispatch enablement switch.
+Productization supplement: ADV-SM-PROD-001IJ Contract repair approval runner body enablement switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerBodyEnablementDryRun` with switch name, runner call readiness, side-effect bundle readiness, atomic side-effect readiness, runner body switch state, no-enable/no-enter/no-lifecycle/no-mutate/no-marker/no-commit/no-rollback/no-success/no-touch flags, and required/passed/blocked gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed runner body enablement switch dry-run between runner call dry-run and runner call body dry-run without feeding the switch result back into body execution.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify call, atomic-effect, and body-switch blockers plus no runner body enablement, body entry, lifecycle emission, mutation, marker persistence, commit, rollback, success, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner body enablement switch readiness, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays body switch status, call, bundle, effects, switch, enable, enter, lifecycle, mutate, marker, commit, rollback, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IJ` as the sixth standalone switch refinement after the runner call enablement switch.
+Productization supplement: ADV-SM-PROD-001IK Contract repair approval runner phase execution enablement switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerPhaseExecutionEnablementDryRun` with switch name, runner body readiness, forward phase sequence readiness, rollback sequence readiness, phase execution switch state, ordered forward/rollback phases, no-enable/no-execute/no-rollback-execute/no-success/no-touch flags, and required/passed/blocked gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed runner phase execution enablement switch dry-run between runner call body dry-run and body phase sequence dry-run without feeding the switch result back into phase execution.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify body and phase-switch blockers plus ready forward/rollback sequence gates and no phase execution, rollback execution, success, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner phase execution enablement switch readiness, phase order, rollback order, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays phase switch status, body, phases, rollback, switch, enable, forward/rollback counts, execute, rollback execute, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IK` as the seventh standalone switch refinement after the runner body enablement switch.
+Productization supplement: ADV-SM-PROD-001IL Contract repair approval runner lifecycle phase enablement switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerLifecyclePhaseEnablementDryRun` with switch name, phase sequence readiness, phase execution enablement readiness, lifecycle phase presence, lifecycle plan/effects readiness, lifecycle phase switch state, no-enable/no-emit/no-append/no-log-touch/no-next/no-success/no-disk-touch flags, and required/passed/blocked gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed runner lifecycle phase enablement switch dry-run between body phase sequence dry-run and lifecycle phase dry-run without feeding the switch result back into lifecycle execution.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify ready sequence/phase/plan gates plus blocked phase-execution, lifecycle-effects, and lifecycle-switch gates with no lifecycle emission, append, log touch, next progression, success, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner lifecycle phase enablement switch readiness, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays lifecycle switch status, sequence, phase switch, phase presence, plan, effects, switch, enable, emit, append, log, next, success, and disk state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IL` as the eighth standalone switch refinement after the runner phase execution enablement switch.
+Productization supplement: ADV-SM-PROD-001IM Contract repair approval runner source mutation phase enablement switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerSourceMutationPhaseEnablementDryRun` with switch name, source target metadata, phase/lifecycle/source/writeback/source-write/effects/API/mutation readiness, source phase switch state, no-enable/no-mutate/no-source-write/no-next/no-success/no-touch flags, and required/passed/blocked gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed runner source mutation phase enablement switch dry-run between lifecycle phase dry-run and source mutation phase dry-run without feeding the switch result back into source mutation execution.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify ready sequence/source-phase/writeback/source-write gates plus blocked lifecycle/effects/API/mutation/source-switch gates with no contract mutation, source write, next progression, success, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner source mutation phase enablement switch readiness, target metadata, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays source switch status, lifecycle switch/readiness, source phase, writeback, source, effects, API, switch, enable, mutate, write, next, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IM` as the ninth standalone switch refinement after the runner lifecycle phase enablement switch.
+Productization supplement: ADV-SM-PROD-001IN Contract repair approval runner recovery marker cleanup phase enablement switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerRecoveryMarkerCleanupPhaseEnablementDryRun` with switch name, marker metadata, source mutation switch/phase readiness, cleanup phase presence, marker persistence readiness, cleanup switch state, no-enable/no-clear/no-commit/no-success/no-touch flags, and required/passed/blocked gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed runner recovery marker cleanup phase enablement switch dry-run between source mutation phase dry-run and recovery marker cleanup phase dry-run without feeding the switch result back into cleanup execution.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify ready sequence/cleanup-phase/marker-plan gates plus blocked source-switch/source-phase/marker-readiness/cleanup-switch gates with no marker cleanup, commit progression, success, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner recovery marker cleanup phase enablement switch readiness, marker metadata, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays cleanup switch status, source switch/readiness, cleanup phase, marker plan/readiness, switch, enable, clear, commit, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IN` as the tenth standalone switch refinement after the runner source mutation phase enablement switch.
+Productization supplement: ADV-SM-PROD-001IO Contract repair approval runner transaction commit phase enablement switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerTransactionCommitPhaseEnablementDryRun` with switch name, cleanup switch/phase readiness, commit plan/readiness, runner/admission/marker/commit gate readiness, commit switch state, no-enable/no-commit/no-success/no-touch flags, and required/passed/blocked gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed runner transaction commit phase enablement switch dry-run between recovery marker cleanup phase dry-run and transaction commit phase dry-run without feeding the switch result back into commit execution.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify ready sequence/commit-plan/barrier/rollback-plan/marker-plan gates plus blocked cleanup-switch/cleanup/runner/admission/marker/commit-gate/commit-ready/commit-switch gates with no transaction commit, success, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner transaction commit phase enablement switch readiness, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays commit switch status, cleanup switch/readiness, plan, runner, admission, marker, gate, switch, enable, commit, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IO` as the eleventh standalone switch refinement after the runner recovery marker cleanup phase enablement switch.
+Productization supplement: ADV-SM-PROD-001IP Contract repair approval runner rollback execution phase enablement switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerRollbackExecutionPhaseEnablementDryRun` with switch name, commit switch/phase readiness, rollback sequence/phase/plan readiness, rollback order, rollback switch state, no-enable/no-restore/no-rollback/no-success/no-touch flags, and required/passed/blocked gates.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed runner rollback execution phase enablement switch dry-run between transaction commit phase dry-run and rollback execution phase dry-run without feeding the switch result back into rollback execution.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify ready sequence/rollback-sequence/rollback-phase/rollback-plan gates plus blocked commit-switch/commit-phase/rollback-switch gates with no source restore, record restore, marker rollback, rollback execution, success, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner rollback execution phase enablement switch readiness, rollback order, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays rollback switch status, commit switch/readiness, rollback sequence, phase, plan, switch, enable, source, record, marker, rollback, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IP` as the twelfth standalone switch refinement after the runner transaction commit phase enablement switch.
+Productization supplement: ADV-SM-PROD-001IQ Contract repair approval runner activation enablement switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationEnablementDryRun` with switch name, aggregate plan/control/phase/rollback/effects readiness, rollback execution enablement readiness, prior enablements readiness, activation switch state, no-enable/no-activate/no-success/no-touch flags, enablement lists, and gate lists.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed runner activation enablement switch dry-run from the existing enablement plan and rollback execution enablement dry-run without feeding the switch result back into runner activation.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify ready structural-plan gates plus blocked control/phase/rollback/effects/rollback-switch/prior-enablements/activation-switch gates with no runner activation, success, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner activation enablement switch readiness, enablement lists, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays activation switch status, structure, control, phases, rollback, effects, rollback switch, prior enablements, switch, enable, activate, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IQ` as the final standalone activation checklist switch refinement after the runner rollback execution phase enablement switch.
+Productization supplement: ADV-SM-PROD-001IR Contract repair approval runner atomic activation path dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationPathDryRun` with path name, structural/control/phase/rollback/effects readiness, activation enablement readiness, prior enablements readiness, atomic activation requirement, activation step list, no-enable-any-switch/no-activate/no-success/no-touch flags, enablement lists, and gate lists.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed atomic activation path dry-run from the activation enablement dry-run without feeding the path result back into switch writes, runner activation, or route success.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify ready structural/atomic gates plus blocked control/phase/rollback/effects/activation/prior gates with no switch write, runner activation, success, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner atomic activation path readiness, activation steps, enablement lists, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays activation path status, structure, control, phases, rollback, effects, activation switch, prior enablements, atomic requirement, step count, enable-any-switch, activate, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IR` as the first explicit atomic activation path after all standalone activation checklist switches are represented.
+Productization supplement: ADV-SM-PROD-001IS Contract repair approval runner guarded atomic activation execution plan dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationExecutionPlanDryRun` with guarded plan name, source path name, activation path readiness, atomic requirement, write-set/all-or-nothing/rollback/no-partial gates, activation step count, atomic write set, inherited path blockers, no-enable/no-persist/no-activate/no-success/no-touch flags, enablement lists, and gate lists.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed guarded activation execution plan dry-run from the activation path dry-run without feeding the plan result back into switch writes, runner activation, or route success.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify a blocked path gate plus ready write-set/all-or-nothing/rollback/no-partial gates with no switch persistence, runner activation, success, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes guarded activation execution plan readiness, atomic write set, inherited path blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays activation execution status, path readiness, write set, guard, rollback boundary, no-partial state, step count, enable-any-switch, persist-switches, activate, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IS` as the guarded execution plan dry-run after the atomic activation path dry-run.
+Productization supplement: ADV-SM-PROD-001IT Contract repair approval runner activation switch transaction failure-proof dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationSwitchTransactionProofDryRun` with transaction name, plan name, activation execution plan readiness, write-set/all-or-nothing/failure-probe/rollback-action/partial-state proof gates, write/failure/rollback counts, partial-enabled-after-failure count, atomic write set, simulated failure points, rollback actions, inherited execution-plan blockers, and no-write/no-partial-persist/no-commit/no-activate/no-success/no-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a standalone fail-closed activation switch transaction proof dry-run from the guarded activation execution plan, simulating failure at each switch and reverse disable rollback actions without feeding the proof result back into switch writes, runner activation, or route success.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify full simulated failure coverage, rollback action coverage, partial-enabled-after-failure count `0`, inherited execution-plan blocker, and no switch write, partial persistence, commit, runner activation, success, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation switch transaction proof readiness, failure points, rollback actions, counts, inherited blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays switch transaction proof status, plan, write set, guard, probes, rollback coverage, partial proof, partial count, failure/rollback counts, write, partial persistence, commit, activate, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IT` as the failure-proof dry-run before a real all-or-nothing switch-write transaction is introduced.
+Productization supplement: ADV-SM-PROD-001IU Contract repair approval runner activation switch write transaction dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationSwitchWriteTransactionDryRun` with transaction name, transaction proof readiness, write-set/all-or-nothing/failure/rollback/partial proof gates, transaction enabled state, transaction prerequisite readiness, switch-write readiness, partial-enabled-after-failure count, activation switch write order, atomic write set, rollback actions, inherited proof blockers, and no-write/no-partial-persist/no-commit/no-activate/no-success/no-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a fail-closed activation switch write transaction dry-run from the failure-proof dry-run, carrying the atomic write set as the transaction write order while keeping `transaction_enabled: false` and not feeding the transaction result back into runner activation or route success.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify blocked proof and transaction-enabled gates, inherited proof blockers, write order, rollback actions, and no switch write, partial persistence, transaction commit, runner activation, success, or disk touch.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation switch write transaction readiness, transaction enablement, write order, rollback actions, inherited blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays switch write transaction status, proof, write set, guard, partial proof, enabled state, readiness, partial count, step count, write, partial persistence, commit, activate, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IU` as the controlled all-or-nothing activation switch write transaction dry-run behind the failure proof.
+Productization supplement: ADV-SM-PROD-001IV Contract repair approval runner activation switch write transaction enablement dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationSwitchWriteTransactionEnablementDryRun` with switch name, transaction name, transaction proof readiness, write-set/all-or-nothing/failure/rollback/partial proof gates, partial-enabled-after-failure count, transaction enabled state, enablement prerequisite readiness, transaction enablement readiness, atomic write set, rollback actions, inherited proof blockers, and no-enable/no-write/no-partial-persist/no-commit/no-activate/no-success/no-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives an audited activation switch write transaction enablement dry-run from the failure-proof dry-run and updates the switch write transaction dry-run to consume this enablement boundary instead of reading the proof directly.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the audited transaction enablement switch name, disabled transaction state, blocked proof and transaction-enabled gates, inherited proof blockers, and unchanged no-write/no-commit/no-activation behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes transaction enablement switch readiness, atomic write set, rollback actions, inherited blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays switch transaction enablement status, proof, write set, guard, partial proof, enabled state, enablement readiness, partial count, write-set count, enable, write, partial persistence, commit, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IV` as the audited enablement switch dry-run for the activation switch write transaction.
+Productization supplement: ADV-SM-PROD-001IW Contract repair approval runner activation transaction admission gate dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationTransactionAdmissionGateDryRun` with gate name, transaction name, activation path readiness, activation execution-plan readiness, transaction proof readiness, audited switch-write transaction enablement readiness, switch-write transaction readiness, transaction enabled state, transaction shape readiness, final admission readiness, partial-enabled-after-failure count, activation switch write order, atomic write set, rollback actions, inherited upstream blockers, gate lists, and no-admit/no-write/no-partial-persist/no-commit/no-activate/no-success/no-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a final fail-closed activation transaction admission gate dry-run from prior activation path, execution plan, transaction proof, transaction enablement, and switch-write transaction dry-runs without feeding admission back into runner activation or route success.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify blocked path/proof/enablement/transaction admission gates, inherited blockers, write order, rollback actions, transaction shape readiness, and unchanged no-admit/no-write/no-commit/no-activation behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation transaction admission readiness, upstream blockers, write order, rollback actions, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays activation admission status, path, plan, proof, enablement, transaction, transaction shape, admit state, partial count, step count, admit transaction, write, commit, activate, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IW` as the final fail-closed admission gate after the audited activation switch-write transaction.
+Productization supplement: ADV-SM-PROD-001IX Contract repair approval runner activation admission handoff dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationAdmissionHandoffDryRun` with handoff name, source admission gate name, runner structural/control/phase/rollback/effects readiness, activation admission required state, activation transaction admission readiness, runner activation switch state, handoff prerequisite readiness, runner activation handoff readiness, activation switch write order, inherited admission blockers, inherited runner enablement blockers, gate lists, and no-handoff/no-activate/no-success/no-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives a non-cyclic activation admission handoff dry-run from the existing runner enablement plan and activation transaction admission gate without changing `approve_runner_success` or enabling runner activation.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify blocked activation admission and activation switch gates, inherited admission and runner enablement blockers, write order visibility, and unchanged no-handoff/no-activation behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation admission handoff readiness, inherited blockers, write order, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays activation handoff status, structure, control, phases, rollback, effects, admission, activation switch, prerequisites, handoff state, step count, handoff runner, activate, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IX` as the fail-closed handoff between final activation transaction admission and future runner activation.
+Productization supplement: ADV-SM-PROD-001IY Contract repair approval runner activation handoff enablement dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationHandoffEnablementDryRun` with switch name, handoff name, runner structural/control/phase/rollback/effects readiness, activation admission required state, activation transaction admission readiness, handoff prerequisite readiness, existing runner activation switch state, handoff enablement readiness, activation switch write order, inherited handoff blockers, gate lists, and no-enable/no-handoff/no-activate/no-success/no-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the activation handoff enablement dry-run from the activation admission handoff dry-run, reusing `approve_execution_runner_activation_enabled` without changing `approve_runner_success` or enabling runner activation.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify blocked activation admission and activation switch gates, inherited handoff blockers, write order visibility, and unchanged no-enable/no-handoff/no-activation behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation handoff enablement readiness, inherited handoff blockers, write order, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays handoff switch status, structure, control, phases, rollback, effects, admission, switch state, prerequisites, enablement state, step count, enable, handoff, activate, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IY` as the fail-closed audit of the existing runner activation switch at the post-admission handoff boundary.
+Productization supplement: ADV-SM-PROD-001IZ Contract repair approval runner activation handoff attempt dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationHandoffAttemptDryRun` with attempt name, source handoff name, source switch name, runner structural/control/phase/rollback/effects readiness, activation admission required state, activation transaction admission readiness, handoff prerequisite readiness, existing runner activation switch state, handoff enablement readiness, handoff attempt readiness, activation switch write order, inherited handoff enablement blockers, gate lists, and no-start/no-handoff/no-activate/no-success/no-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the activation handoff attempt dry-run from the activation handoff enablement dry-run, requiring only `approve_execution_runner_activation_handoff_enablement_ready` as direct evidence and not changing `approve_runner_success` or enabling runner activation.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the guarded attempt name/source, direct handoff enablement ready gate, inherited blockers, write order visibility, and unchanged no-start/no-handoff/no-activation behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation handoff attempt readiness, inherited handoff enablement blockers, write order, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays handoff attempt status, enablement, attempt, admission, switch state, inherited blocker count, step count, start, handoff, activate, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001IZ` as the guarded post-enable handoff attempt dry-run after the existing activation switch handoff audit.
+Productization supplement: ADV-SM-PROD-001JA Contract repair approval runner activation post-handoff attempt dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationPostHandoffAttemptDryRun` with attempt name, source attempt name, source handoff name, source switch name, runner structural/control/phase/rollback/effects readiness, activation admission required state, activation transaction admission readiness, handoff prerequisite readiness, existing runner activation switch state, handoff enablement readiness, handoff attempt readiness, activation attempt readiness, activation switch write order, inherited handoff attempt blockers, inherited handoff enablement blockers, gate lists, and no-attempt/no-activate/no-success/no-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the activation post-handoff attempt dry-run from the activation handoff attempt dry-run, requiring only `approve_execution_runner_activation_handoff_attempt_ready` as direct evidence and not changing `approve_runner_success` or enabling runner activation.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the guarded activation attempt name/source, direct handoff attempt ready gate, inherited blockers, write order visibility, and unchanged no-attempt/no-activation behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation post-handoff attempt readiness, inherited handoff attempt and enablement blockers, write order, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays activation attempt status, handoff attempt, activation readiness, admission, switch state, inherited blocker counts, step count, attempt activation, activate, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JA` as the guarded non-executing activation attempt dry-run after the activation handoff attempt.
+Productization supplement: ADV-SM-PROD-001JB Contract repair approval runner activation success admission dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationSuccessAdmissionDryRun` with admission name, source attempt names, source handoff name, source switch name, runner structural/control/phase/rollback/effects readiness, activation admission required state, activation transaction admission readiness, handoff prerequisite readiness, existing runner activation switch state, handoff enablement readiness, handoff attempt readiness, activation attempt readiness, post-handoff attempt readiness, success admission readiness, activation switch write order, inherited post-handoff attempt, handoff attempt, and handoff enablement blockers, gate lists, and no-admit/no-activate/no-success/no-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the activation success admission dry-run from the activation post-handoff attempt dry-run, requiring only `approve_execution_runner_activation_post_handoff_attempt_ready` as direct evidence and not changing `approve_runner_success` or enabling runner activation.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the guarded success admission name/source, direct post-handoff attempt ready gate, inherited blockers, write order visibility, and unchanged no-admit/no-activation behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation success admission readiness, inherited post-handoff attempt, handoff attempt, and handoff enablement blockers, write order, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays success admission status, post-handoff attempt readiness, admission readiness, activation readiness, switch state, inherited blocker counts, step count, admit success, activate, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JB` as the guarded non-executing success admission dry-run after the activation post-handoff attempt.
+Productization supplement: ADV-SM-PROD-001JC Contract repair approval runner activation success return dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationSuccessReturnDryRun` with return name, source admission name, source attempt names, source handoff name, source switch name, runner structural/control/phase/rollback/effects readiness, activation admission required state, activation transaction admission readiness, handoff prerequisite readiness, existing runner activation switch state, handoff enablement readiness, handoff attempt readiness, activation attempt readiness, post-handoff attempt readiness, success admission readiness, success return readiness, activation switch write order, inherited success-admission, post-handoff attempt, handoff attempt, and handoff enablement blockers, gate lists, and no-admit/no-activate/no-success/no-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the activation success return dry-run from the activation success admission dry-run, requiring only `approve_execution_runner_activation_success_admission_ready` as direct evidence and not changing `approve_runner_success` or enabling runner activation.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the guarded success return name/source, direct success admission ready gate, inherited blockers, write order visibility, and unchanged no-return/no-activation behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation success return readiness, inherited success-admission, post-handoff attempt, handoff attempt, and handoff enablement blockers, write order, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays success return status, admission readiness, return readiness, activation readiness, switch state, inherited blocker counts, step count, admit success, activate, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JC` as the guarded non-executing success return dry-run after the activation success admission boundary.
+Productization supplement: ADV-SM-PROD-001JD Contract repair approval runner control readiness decomposition.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerControlReadinessDryRun` with gate name, runner attempt, execution, dispatch, call, body, and phase readiness components, aggregate runner control readiness, inherited blockers for each source, gate lists, and no-unblock/no-activate/no-success/no-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner control readiness dry-run from existing runner attempt/outcome/dispatch/call/body/phase-sequence dry-runs, decomposing `approve_execution_runner_control_ready` without changing `approve_runner_success` or enabling runner activation.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the blocked control readiness status, six component gates, inherited blockers, and unchanged no-unblock/no-activation behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner control readiness components, inherited source blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays control readiness status, component readiness, inherited blocker counts, gate counts, unblock, activate, success, and touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JD` as the first decomposition of inherited upstream runner activation blockers.
+Productization supplement: ADV-SM-PROD-001JE Contract repair approval runner attempt readiness decomposition.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerAttemptReadinessDryRun` with gate name, attempt request, atomic side-effects plan/readiness, transaction runner enablement readiness, runner attempt switch state, attempt enablement readiness, final attempt readiness, inherited blockers, gate lists, and no-enable/no-start/no-persist/no-rollback/no-control-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner attempt readiness dry-run from existing runner attempt and attempt enablement dry-runs, decomposing `approve_execution_runner_attempt_ready` into direct request, atomic side-effects readiness, and attempt switch gates without changing `approve_runner_success` or enabling runner execution.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked attempt readiness status, direct blocked gates, inherited blockers, and unchanged no-enable/no-start/no-control-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes attempt readiness components, inherited attempt and attempt-enable blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays attempt readiness status, request/effects/switch readiness, inherited blocker counts, gate counts, enable, start, persist, rollback, and control-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JE` as the first decomposition under runner control readiness.
+Productization supplement: ADV-SM-PROD-001JF Contract repair approval atomic side-effects readiness decomposition.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionAtomicSideEffectsReadinessDryRun` with gate name, plan, lifecycle, mutation, recovery marker, transaction commit, atomic switch, final atomic readiness, inherited blockers, gate lists, and no-emit/no-mutate/no-marker-write/no-commit/no-touch/no-runner-attempt-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the atomic side-effects readiness dry-run from the existing aggregate atomic side-effects gate, decomposing `approve_execution_atomic_side_effects_ready` into direct plan, lifecycle, mutation, marker, commit, and atomic switch gates without changing runner attempt readiness or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked atomic side-effects readiness status, direct blocked gates, inherited aggregate blockers, and unchanged no-side-effect/no-runner-attempt-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes atomic side-effects readiness components, inherited aggregate blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays atomic readiness status, plan/effect/switch readiness, inherited blocker count, gate counts, emit, mutate, marker write, commit write, touch, and runner-attempt unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JF` as the decomposition of the atomic side-effects blocker exposed by runner attempt readiness.
+Productization supplement: ADV-SM-PROD-001JG Contract repair approval lifecycle effects readiness decomposition.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionLifecycleEffectsReadinessDryRun` with gate name, event id, transition, payload, emission, append, lifecycle plan, lifecycle emission switch, lifecycle append switch, final lifecycle effects readiness, inherited blockers, gate lists, and no-emit/no-append/no-touch/no-atomic-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the lifecycle effects readiness dry-run from the existing lifecycle emission enablement gate, decomposing `lifecycle_effects_ready` into direct review transition, lifecycle payload, emission, append, and lifecycle switch gates without changing atomic side-effects readiness or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked lifecycle effects readiness status, direct blocked lifecycle switch gates, inherited lifecycle blockers, and unchanged no-emit/no-append/no-atomic-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes lifecycle effects readiness components, inherited lifecycle blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays lifecycle readiness status, transition/payload/emission/append/switch readiness, inherited blocker count, gate counts, emit, append write, touch, and atomic-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JG` as the decomposition of the lifecycle effects blocker exposed by atomic side-effects readiness.
+Productization supplement: ADV-SM-PROD-001JH Contract repair approval lifecycle event emission switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionLifecycleEventEmissionEnablementDryRun` with switch name, event id, lifecycle plan readiness, event emission switch state, final event emission enablement readiness, inherited lifecycle blockers, gate lists, and no-enable/no-emit/no-append/no-touch/no-lifecycle-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the lifecycle event emission enablement dry-run from the existing lifecycle emission enablement gate, requiring lifecycle emission plan readiness plus `lifecycle_event_emission_enabled` without changing lifecycle effects readiness or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked event emission switch status, direct blocked switch gate, inherited lifecycle blockers, and unchanged no-enable/no-emit/no-lifecycle-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes lifecycle event emission switch readiness, inherited lifecycle blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays lifecycle emit switch status, plan/switch/enablement readiness, inherited blocker count, gate counts, enable, emit, append write, touch, and lifecycle-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JH` as the fail-closed switch dry-run under lifecycle effects readiness.
+Productization supplement: ADV-SM-PROD-001JI Contract repair approval lifecycle entry append switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionLifecycleEntryAppendEnablementDryRun` with switch name, event id, lifecycle plan readiness, entry append switch state, final entry append enablement readiness, inherited lifecycle blockers, gate lists, and no-enable/no-emit/no-append/no-touch/no-lifecycle-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the lifecycle entry append enablement dry-run from the existing lifecycle emission enablement gate, requiring lifecycle emission plan readiness plus `lifecycle_entry_append_enabled` without changing lifecycle effects readiness or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked entry append switch status, direct blocked switch gate, inherited lifecycle blockers, and unchanged no-enable/no-append/no-lifecycle-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes lifecycle entry append switch readiness, inherited lifecycle blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays lifecycle append switch status, plan/switch/enablement readiness, inherited blocker count, gate counts, enable, emit, append write, touch, and lifecycle-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JI` as the sibling fail-closed switch dry-run under lifecycle effects readiness.
+Productization supplement: ADV-SM-PROD-001JJ Contract repair approval contract mutation readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionContractMutationReadinessDryRun` with gate name, target/source paths, writeback readiness, source write readiness, lifecycle effects readiness, contract mutation API switch state, final contract mutation readiness, inherited mutation blockers, gate lists, and no-mutate/no-write/no-touch/no-atomic-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the contract mutation readiness dry-run from the existing contract mutation enablement gate, requiring `contract_writeback_ready`, `contract_source_write_ready`, `lifecycle_effects_ready`, and `contract_mutation_api_enabled` without changing atomic side-effects readiness or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked contract mutation readiness status, direct blocked lifecycle and mutation switch gates, inherited mutation blockers, and unchanged no-mutate/no-write/no-atomic-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes contract mutation readiness, inherited mutation blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays contract mutation readiness status, writeback/source/lifecycle/switch/final readiness, inherited blocker count, gate counts, write, mutate, touch, and atomic-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JJ` as the direct dry-run decomposition of `contract_mutation_ready`.
+Productization supplement: ADV-SM-PROD-001JK Contract repair approval recovery marker persistence readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRecoveryMarkerPersistenceReadinessDryRun` with gate name, marker key/file name, marker persistence plan readiness, marker write readiness, idempotency checked state, no-existing-conflict state, runner readiness, persistence switch state, final recovery marker persistence readiness, inherited marker persistence blockers, gate lists, and no-persist/no-touch/no-commit-unblock/no-atomic-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the recovery marker persistence readiness dry-run from the existing recovery marker persistence gate, requiring `recovery_marker_write_ready`, `recovery_marker_idempotency_checked`, `recovery_marker_no_existing_conflict`, `approve_execution_transaction_runner_ready`, and `approve_recovery_marker_persistence_enabled` without changing transaction commit readiness, atomic side-effects readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked marker persistence readiness status, direct blocked runner and persistence switch gates, inherited marker persistence blockers, and unchanged no-persist/no-commit-unblock/no-atomic-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes recovery marker persistence readiness, inherited marker persistence blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays recovery marker persistence readiness status, marker plan/write/idempotency/conflict/runner/switch/final readiness, inherited blocker count, gate counts, write, touch, commit-unblock, and atomic-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JK` as the direct dry-run decomposition of `recovery_marker_persistence_ready`.
+Productization supplement: ADV-SM-PROD-001JL Contract repair approval transaction commit readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionTransactionCommitReadinessDryRun` with gate name, runner plan readiness, runner switch state, admission readiness, commit barrier readiness, rollback plan readiness, recovery marker persistence plan/readiness, transaction commit switch state, final transaction commit readiness, inherited transaction commit blockers, gate lists, and no-start/no-marker-persist/no-commit/no-touch/no-atomic-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the transaction commit readiness dry-run from the existing transaction commit gate, requiring `approve_execution_transaction_runner_enabled`, `approve_execution_admission_ready`, `commit_barrier_ready`, `rollback_plan_ready`, `recovery_marker_persistence_plan_ready`, `recovery_marker_persistence_ready`, and `approve_execution_transaction_commit_enabled` without changing atomic side-effects readiness or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked transaction commit readiness status, direct blocked runner/admission/marker/switch gates, inherited transaction commit blockers, and unchanged no-start/no-marker-persist/no-commit/no-atomic-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes transaction commit readiness, inherited transaction commit blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays transaction commit readiness status, plan/runner/admission/barrier/rollback/marker/switch/final readiness, inherited blocker count, gate counts, start, marker write, commit, touch, and atomic-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JL` as the direct dry-run decomposition of `approve_execution_transaction_commit_ready`.
+Productization supplement: ADV-SM-PROD-001JM Contract repair approval atomic side-effects switch dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionAtomicSideEffectsEnablementDryRun` with switch name, atomic plan readiness, lifecycle effects readiness, contract mutation readiness, recovery marker persistence readiness, transaction commit readiness, atomic side-effects switch state, final enablement readiness, inherited atomic blockers, gate lists, and no-enable/no-emit/no-mutate/no-marker-persist/no-commit/no-touch/no-readiness-unblock/no-attempt-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the atomic side-effects switch dry-run from the existing atomic side-effects gate, requiring `approve_execution_atomic_side_effects_plan_ready`, `lifecycle_effects_ready`, `contract_mutation_ready`, `recovery_marker_persistence_ready`, `approve_execution_transaction_commit_ready`, and `approve_execution_atomic_side_effects_enabled` without changing atomic side-effects readiness, runner attempt readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked atomic side-effects switch status, direct blocked lifecycle/mutation/marker/commit/switch gates, inherited atomic blockers, and unchanged no-enable/no-emit/no-mutate/no-marker-persist/no-commit/no-readiness-unblock/no-attempt-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes atomic side-effects switch readiness, inherited atomic blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays atomic side-effects switch status, plan/lifecycle/mutation/marker/commit/switch/prerequisite/final readiness, inherited blocker count, gate counts, enable, emit, mutate, marker write, commit write, touch, readiness-unblock, and attempt-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JM` as the fail-closed switch dry-run under atomic side-effects readiness.
+Productization supplement: ADV-SM-PROD-001JN Contract repair approval runner execution readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerExecutionReadinessDryRun` with gate name, branch selection, runner-attempt readiness, atomic side-effects readiness, runner execution switch state, runner execution enablement readiness, final execution readiness, inherited outcome/switch blockers, gate lists, and no-enable/no-start/no-persist/no-commit/no-rollback/no-route-unblock/no-control-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner execution readiness dry-run from existing runner outcome plus runner execution enablement dry-run without changing runner outcome, route dispatch, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked runner execution readiness status, direct blocked attempt/effects/switch gates, inherited outcome/switch blockers, and unchanged no-enable/no-start/no-persist/no-commit/no-rollback/no-route-unblock/no-control-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner execution readiness, inherited outcome/switch blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner execution readiness status, branch/attempt/effects/switch/final readiness, inherited blocker counts, gate counts, enable, start, persist, commit, rollback, route-unblock, and control-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JN` as the direct dry-run decomposition of `approve_execution_runner_execution_ready`.
+Productization supplement: ADV-SM-PROD-001JO Contract repair approval runner dispatch readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerDispatchReadinessDryRun` with gate name, branch selection, runner execution readiness, route dispatch switch state, route dispatch enablement readiness, final dispatch readiness, inherited dispatch/route-switch blockers, gate lists, and no-enter/no-success/no-persist/no-touch/no-handoff-unblock/no-control-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner dispatch readiness dry-run from existing dispatch gate plus route dispatch enablement dry-run without changing handoff, call enablement, call readiness, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked dispatch readiness status, direct blocked execution/route-switch gates, inherited dispatch/route-switch blockers, and unchanged no-enter/no-success/no-persist/no-touch/no-handoff-unblock/no-control-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner dispatch readiness, inherited dispatch/route-switch blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner dispatch readiness status, branch/execution/route switch/route switch readiness/final dispatch readiness, inherited blocker counts, gate counts, enter, success, persist, touch, handoff-unblock, and control-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JO` as the direct dry-run decomposition of `approve_execution_runner_dispatch_ready`.
+Productization supplement: ADV-SM-PROD-001JP Contract repair approval runner handoff readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerHandoffReadinessDryRun` with gate name, dispatch readiness, route dispatch switch state, dispatch-readiness source state, final handoff readiness, expected HTTP/route status, inherited handoff/dispatch blockers, gate lists, and no-call/no-success/no-persist/no-touch/no-call-unblock/no-control-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner handoff readiness dry-run from existing handoff plus dispatch readiness dry-run without changing call enablement, call readiness, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked handoff readiness status, direct blocked dispatch/route-switch gates, inherited handoff/dispatch blockers, and unchanged no-call/no-success/no-persist/no-touch/no-call-unblock/no-control-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner handoff readiness, inherited handoff/dispatch blockers, gate lists, expected status, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner handoff readiness status, dispatch/route/dispatch-readiness/final handoff readiness, expected HTTP/route status, inherited blocker counts, gate counts, call, success, persist, touch, call-unblock, and control-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JP` as the direct dry-run decomposition of `approve_execution_runner_handoff_ready`.
+Productization supplement: ADV-SM-PROD-001JQ Contract repair approval runner call readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerCallReadinessDryRun` with gate name, handoff readiness, runner call switch state, runner call enablement readiness, final call readiness, expected runner result, inherited call/call-switch blockers, gate lists, and no-call/no-success/no-persist/no-commit/no-rollback/no-touch/no-body-unblock/no-control-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner call readiness dry-run from existing call dry-run plus call enablement dry-run without changing body enablement, body readiness, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked call readiness status, direct blocked handoff/call-switch gates, inherited call/call-switch blockers, and unchanged no-call/no-success/no-persist/no-commit/no-rollback/no-touch/no-body-unblock/no-control-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner call readiness, inherited call/call-switch blockers, gate lists, expected runner result, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner call readiness status, handoff/call switch/call-switch readiness/final call readiness, expected runner result, inherited blocker counts, gate counts, call, success, persist, commit, rollback, touch, body-unblock, and control-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JQ` as the direct dry-run decomposition of `approve_execution_runner_call_ready`.
+Productization supplement: ADV-SM-PROD-001JR Contract repair approval runner body readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerBodyReadinessDryRun` with gate name, runner entrypoint, call readiness, side-effect bundle readiness, atomic side-effect readiness, runner body switch state, body enablement readiness, final body readiness, inherited body/body-switch blockers, gate lists, and no-enter/no-lifecycle/no-mutate/no-marker/no-commit/no-rollback/no-success/no-touch/no-phase-unblock/no-control-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner body readiness dry-run from existing call body dry-run plus body enablement dry-run without changing phase execution, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked body readiness status, direct blocked call/atomic/body-switch gates, inherited body/body-switch blockers, and unchanged no-enter/no-lifecycle/no-mutate/no-marker/no-commit/no-rollback/no-success/no-touch/no-phase-unblock/no-control-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner body readiness, inherited body/body-switch blockers, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner body readiness status, call/bundle/effects/body switch/body-switch readiness/final body readiness, inherited blocker counts, gate counts, enter, lifecycle, mutate, marker, commit, rollback, success, touch, phase-unblock, and control-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JR` as the direct dry-run decomposition of `approve_execution_runner_body_ready`.
+Productization supplement: ADV-SM-PROD-001JS Contract repair approval runner phases readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerPhasesReadinessDryRun` with gate name, body readiness, forward phase sequence readiness, rollback sequence readiness, phase execution switch state, phase execution enablement readiness, final phases readiness, inherited phase/phase-switch blockers, gate lists, ordered phases, ordered rollback phases, and no-execute/no-rollback-execute/no-success/no-touch/no-lifecycle-unblock/no-control-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner phases readiness dry-run from existing body phase sequence dry-run plus phase execution enablement dry-run without changing lifecycle execution, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked phases readiness status, direct blocked body/phase-switch gates, inherited phase/phase-switch blockers, and unchanged no-execute/no-rollback-execute/no-success/no-touch/no-lifecycle-unblock/no-control-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner phases readiness, inherited phase/phase-switch blockers, gate lists, ordered phase lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner phases readiness status, body/forward sequence/rollback sequence/phase switch/switch readiness/final phases readiness, inherited blocker counts, gate counts, phase/rollback counts, execute, rollback execute, success, touch, lifecycle-unblock, and control-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JS` as the direct dry-run decomposition of `approve_execution_runner_phases_ready`.
+Productization supplement: ADV-SM-PROD-001JT Contract repair approval runner lifecycle phase readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerLifecyclePhaseReadinessDryRun` with gate name, event id, phase sequence readiness, phase execution enablement readiness, lifecycle phase presence, lifecycle plan/effects readiness, lifecycle phase switch state, lifecycle phase enablement readiness, final lifecycle readiness, inherited lifecycle/lifecycle-switch blockers, gate lists, and no-emit/no-append/no-log-touch/no-next/no-success/no-disk-touch/no-source-unblock/no-control-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner lifecycle phase readiness dry-run from existing lifecycle phase dry-run plus lifecycle phase enablement dry-run without changing source mutation, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked lifecycle phase readiness status, direct blocked lifecycle-effects/lifecycle-switch gates, inherited lifecycle/lifecycle-switch blockers, and unchanged no-emit/no-append/no-log-touch/no-next/no-success/no-disk-touch/no-source-unblock/no-control-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner lifecycle phase readiness, inherited lifecycle/lifecycle-switch blockers, gate lists, event id, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner lifecycle phase readiness status, sequence/phase switch/phase presence/plan/effects/lifecycle switch/switch readiness/final lifecycle readiness, inherited blocker counts, gate counts, emit, append, log, next, success, disk, source-unblock, and control-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JT` as the direct dry-run decomposition of `approve_execution_runner_lifecycle_phase_ready`.
+Productization supplement: ADV-SM-PROD-001JU Contract repair approval runner source mutation phase readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerSourceMutationPhaseReadinessDryRun` with gate name, target/source context, phase sequence readiness, lifecycle phase enablement/readiness, source mutation phase presence, writeback/source-write readiness, lifecycle effects readiness, mutation API readiness, contract mutation readiness, source mutation switch state/readiness, final source mutation readiness, inherited source/source-switch blockers, gate lists, and no-mutate/no-source-write/no-next/no-success/no-disk-touch/no-cleanup-unblock/no-control-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner source mutation phase readiness dry-run from existing source mutation phase dry-run plus source mutation phase enablement dry-run without changing recovery marker cleanup, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked source mutation phase readiness status, direct blocked lifecycle/API/source-switch gates, inherited source/source-switch blockers, and unchanged no-mutate/no-source-write/no-next/no-success/no-disk-touch/no-cleanup-unblock/no-control-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner source mutation phase readiness, inherited source/source-switch blockers, gate lists, target/source context, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner source mutation phase readiness status, sequence/lifecycle switch/lifecycle readiness/phase presence/writeback/source/effects/API/mutation readiness/source switch/switch readiness/final source readiness, inherited blocker counts, gate counts, mutate, write, next, success, touch, cleanup-unblock, and control-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JU` as the direct dry-run decomposition of `approve_execution_runner_source_mutation_phase_ready`.
+Productization supplement: ADV-SM-PROD-001JV Contract repair approval runner recovery marker cleanup phase readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerRecoveryMarkerCleanupPhaseReadinessDryRun` with gate name, marker context, phase sequence readiness, source mutation switch/readiness, cleanup phase presence, marker persistence plan/readiness, cleanup switch state/readiness, final cleanup readiness, inherited cleanup/cleanup-switch blockers, gate lists, and no-clear/no-commit/no-success/no-disk-touch/no-commit-unblock/no-control-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner recovery marker cleanup phase readiness dry-run from existing cleanup phase dry-run plus cleanup phase enablement dry-run without changing transaction commit, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked cleanup phase readiness status, direct blocked source/marker/cleanup-switch gates, inherited cleanup/cleanup-switch blockers, and unchanged no-clear/no-commit/no-success/no-disk-touch/no-commit-unblock/no-control-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner recovery marker cleanup phase readiness, inherited cleanup/cleanup-switch blockers, gate lists, marker context, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner recovery marker cleanup phase readiness status, sequence/source switch/source readiness/phase presence/marker plan/marker readiness/cleanup switch/switch readiness/final cleanup readiness, inherited blocker counts, gate counts, clear, commit, success, touch, commit-unblock, and control-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JV` as the direct dry-run decomposition of `approve_execution_runner_recovery_marker_cleanup_phase_ready`.
+Productization supplement: ADV-SM-PROD-001JW Contract repair approval runner transaction commit phase readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerTransactionCommitPhaseReadinessDryRun` with gate name, phase sequence readiness, cleanup switch/readiness, transaction commit plan/readiness components, commit phase switch state/readiness, final commit readiness, inherited commit/commit-switch blockers, gate lists, and no-commit/no-success/no-disk-touch/no-rollback-unblock/no-control-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner transaction commit phase readiness dry-run from existing transaction commit phase dry-run plus transaction commit phase enablement dry-run without changing rollback execution, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked commit phase readiness status, direct blocked cleanup/commit/switch gates, inherited commit/commit-switch blockers, and unchanged no-commit/no-success/no-disk-touch/no-rollback-unblock/no-control-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner transaction commit phase readiness, inherited commit/commit-switch blockers, gate lists, commit readiness context, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner transaction commit phase readiness status, sequence/cleanup switch/cleanup readiness/plan/runner/admission/marker/gate/commit readiness/commit switch/switch readiness/final commit readiness, inherited blocker counts, gate counts, commit, success, touch, rollback-unblock, and control-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JW` as the direct dry-run decomposition of `approve_execution_runner_transaction_commit_phase_ready`.
+Productization supplement: ADV-SM-PROD-001JX Contract repair approval runner rollback execution phase readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerRollbackExecutionPhaseReadinessDryRun` with gate name, phase sequence readiness, rollback sequence readiness, commit phase switch/readiness, rollback phase presence, rollback plan readiness, rollback switch state/readiness, final rollback readiness, rollback order, inherited rollback/rollback-switch blockers, gate lists, and no-restore-source/no-restore-record/no-marker-rolled-back/no-rollback/no-success/no-disk-touch/no-activation-unblock/no-control-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner rollback execution phase readiness dry-run from existing rollback execution phase dry-run plus rollback execution phase enablement dry-run without changing runner activation, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked rollback execution phase readiness status, direct blocked commit/rollback-switch gates, inherited rollback/rollback-switch blockers, rollback order, and unchanged no-restore/no-rollback/no-success/no-disk-touch/no-activation-unblock/no-control-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner rollback execution phase readiness, inherited rollback/rollback-switch blockers, gate lists, rollback order, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner rollback execution phase readiness status, sequence/rollback sequence/commit switch/commit readiness/rollback phase/plan/rollback switch/switch readiness/final rollback readiness, inherited blocker counts, gate counts, rollback order count, restore actions, rollback, success, touch, activation-unblock, and control-unblock state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JX` as the direct dry-run decomposition of `approve_execution_runner_rollback_execution_phase_ready`.
+Productization supplement: ADV-SM-PROD-001JY Contract repair approval runner activation enablement readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationEnablementReadinessDryRun` with gate name, switch name, structural/control/phase/rollback/effects readiness, rollback execution enablement readiness, prior enablements readiness, activation switch state, enablement prerequisite readiness, final activation enablement readiness, inherited activation-enable blockers, enablement lists, gate lists, and no-enable/no-activate/no-success/no-disk-touch/no-path-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner activation enablement readiness dry-run from existing activation enablement dry-run without changing activation path, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked activation enablement readiness status, direct blocked activation-switch gates, inherited activation-enable blockers, and unchanged no-enable/no-activate/no-success/no-disk-touch/no-path-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner activation enablement readiness, inherited activation-enable blockers, enablement lists, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner activation enablement readiness status, gate, structure/control/phase/rollback/effects readiness, activation switch state, path-unblock, activation, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JY` as the direct dry-run decomposition of `approve_execution_runner_activation_enablement_ready`.
+Productization supplement: ADV-SM-PROD-001JZ Contract repair approval runner activation path readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationPathReadinessDryRun` with gate name, path name, structural/control/phase/rollback/effects readiness, activation enablement readiness, activation enablement readiness-source state, prior enablements readiness, atomic activation requirement, final activation path readiness, activation step count/order, inherited path blockers, inherited activation-enable-readiness blockers, enablement lists, gate lists, and no-enable-switch/no-activate/no-success/no-disk-touch/no-execution-plan-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner activation path readiness dry-run from existing activation path dry-run plus activation enablement readiness dry-run without changing activation execution plan, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked activation path readiness status, direct blocked activation path gates, inherited path/activation-enable-readiness blockers, and unchanged no-enable-switch/no-activate/no-success/no-disk-touch/no-execution-plan-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner activation path readiness, inherited path/activation-enable-readiness blockers, enablement lists, gate lists, activation step count/order, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner activation path readiness status, gate, path, activation switch/readiness, prior enablements, atomic requirement, final readiness, step count, execution-plan unblock, activation, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001JZ` as the direct dry-run decomposition of `approve_execution_runner_activation_path_ready`.
+Productization supplement: ADV-SM-PROD-001KA Contract repair approval runner activation execution plan readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationExecutionPlanReadinessDryRun` with gate name, guarded plan/path names, activation path readiness, path-readiness source state, atomic activation requirement, write-set readiness, all-or-nothing guard readiness, rollback boundary readiness, no-partial activation state, final execution plan readiness, atomic write set, inherited execution-plan blockers, inherited path-readiness blockers, enablement lists, gate lists, and no-enable-switch/no-persist-switches/no-activate/no-success/no-disk-touch/no-switch-proof-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner activation execution plan readiness dry-run from existing activation execution plan dry-run plus activation path readiness dry-run without changing switch transaction proof, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked activation execution plan readiness status, direct blocked execution-plan gates, inherited execution-plan/path-readiness blockers, and unchanged no-enable-switch/no-persist-switches/no-activate/no-success/no-disk-touch/no-switch-proof-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner activation execution plan readiness, inherited execution-plan/path-readiness blockers, enablement lists, gate lists, atomic write set, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner activation execution plan readiness status, gate, path readiness, write set, guard, rollback boundary, no-partial state, final readiness, step count, switch-proof unblock, activation, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KA` as the direct dry-run decomposition of `approve_execution_runner_activation_execution_plan_ready`.
+Productization supplement: ADV-SM-PROD-001KB Contract repair approval runner activation switch transaction proof readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationSwitchTransactionProofReadinessDryRun` with gate name, transaction/plan names, execution plan readiness, execution-plan-readiness source state, write-set readiness, all-or-nothing guard readiness, failure probe coverage, rollback action coverage, partial-state proof readiness, final transaction failure proof readiness, proof artifact counts, atomic write set, simulated failure points, rollback actions, inherited proof blockers, inherited execution-plan-readiness blockers, gate lists, and no-write-switches/no-partial-persist/no-commit/no-activate/no-success/no-disk-touch/no-enable-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner activation switch transaction proof readiness dry-run from existing switch transaction proof dry-run plus activation execution plan readiness dry-run without changing switch-write transaction enablement, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked switch transaction proof readiness status, direct blocked proof gates, inherited proof/execution-plan-readiness blockers, and unchanged no-write-switches/no-partial-persist/no-commit/no-activate/no-success/no-disk-touch/no-enable-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner activation switch transaction proof readiness, inherited proof/execution-plan-readiness blockers, gate lists, atomic write set, simulated failure points, rollback actions, proof counts, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner activation switch transaction proof readiness status, gate, plan readiness, proof coverage, partial proof, final readiness, partial count, enablement-unblock, commit, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KB` as the direct dry-run decomposition of `approve_execution_runner_activation_switch_transaction_proof_ready`.
+Productization supplement: ADV-SM-PROD-001KC Contract repair approval runner activation switch write transaction enablement readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationSwitchWriteTransactionEnablementReadinessDryRun` with gate name, switch/transaction names, transaction failure proof readiness, proof-readiness source state, write-set readiness, all-or-nothing guard readiness, failure probe coverage, rollback action coverage, partial-state proof readiness, partial count, transaction enabled state, enablement prerequisites, final switch-write transaction enablement readiness, atomic write set, rollback actions, inherited enablement/proof-readiness blockers, gate lists, and no-enable/no-write-switches/no-partial-persist/no-commit/no-activate/no-success/no-disk-touch/no-transaction-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner activation switch write transaction enablement readiness dry-run from existing switch-write transaction enablement dry-run plus switch transaction proof readiness dry-run without changing switch-write transaction execution, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked switch-write transaction enablement readiness status, direct blocked enablement gates, inherited enablement/proof-readiness blockers, and unchanged no-enable/no-write-switches/no-partial-persist/no-commit/no-activate/no-success/no-disk-touch/no-transaction-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner activation switch write transaction enablement readiness, inherited enablement/proof-readiness blockers, gate lists, atomic write set, rollback actions, prerequisite/final readiness flags, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner activation switch write transaction enablement readiness status, gate, proof readiness, proof coverage, prerequisites, final readiness, partial count, transaction-unblock, enable, commit, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KC` as the direct dry-run decomposition of `approve_execution_runner_activation_switch_write_transaction_enablement_ready`.
+Productization supplement: ADV-SM-PROD-001KD Contract repair approval runner activation switch write transaction readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationSwitchWriteTransactionReadinessDryRun` with gate name, transaction name, transaction failure proof readiness, switch-write transaction enablement readiness-source state, write-set readiness, all-or-nothing guard readiness, failure probe coverage, rollback action coverage, partial-state proof readiness, transaction enabled state, transaction prerequisites, final switch-write transaction readiness, partial count, activation switch write order, atomic write set, rollback actions, inherited transaction/enablement-readiness blockers, gate lists, and no-write-switches/no-partial-persist/no-commit/no-activate/no-success/no-disk-touch/no-admission-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the runner activation switch write transaction readiness dry-run from existing switch-write transaction dry-run plus switch-write transaction enablement readiness dry-run without changing activation transaction admission, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked switch-write transaction readiness status, direct blocked transaction gates, inherited transaction/enablement-readiness blockers, and unchanged no-write-switches/no-partial-persist/no-commit/no-activate/no-success/no-disk-touch/no-admission-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes runner activation switch write transaction readiness, inherited transaction/enablement-readiness blockers, gate lists, activation switch write order, atomic write set, rollback actions, prerequisite/final readiness flags, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays runner activation switch write transaction readiness status, gate, proof readiness, enablement-readiness, write order count, prerequisites, final readiness, admission-unblock, write, commit, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KD` as the direct dry-run decomposition of `approve_execution_runner_activation_switch_write_transaction_ready`.
+Productization supplement: ADV-SM-PROD-001KE Contract repair approval runner activation transaction admission readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationTransactionAdmissionReadinessDryRun` with gate/source names, transaction name, path/plan/proof/enablement/transaction readiness, switch-write transaction readiness-source state, transaction enabled and shape state, final admission readiness, write order, atomic write set, rollback actions, inherited admission/switch-readiness blockers, gate lists, and no-admit/no-write/no-partial-persist/no-commit/no-activate/no-success/no-disk-touch/no-handoff-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives activation transaction admission readiness from the existing admission gate dry-run plus switch-write transaction readiness dry-run without changing activation admission handoff, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked activation transaction admission readiness status, direct blocked admission gates, inherited admission/switch-readiness blockers, and unchanged no-admit/no-write/no-partial-persist/no-commit/no-activate/no-success/no-disk-touch/no-handoff-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation transaction admission readiness, inherited admission/switch-readiness blockers, gate lists, activation switch write order, atomic write set, rollback actions, final readiness, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays activation transaction admission readiness status, gate/source, path, plan, proof, enablement, transaction readiness, shape, final admission readiness, handoff-unblock, admit, write, commit, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KE` as the direct dry-run decomposition of `approve_execution_runner_activation_transaction_admission_ready`.
+Productization supplement: ADV-SM-PROD-001KF Contract repair approval runner activation admission handoff readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationAdmissionHandoffReadinessDryRun` with gate/handoff/source names, structural/control/phase/rollback/effects readiness, activation admission required state, activation transaction admission readiness, admission-readiness source state, runner activation switch state, handoff prerequisites, final runner activation handoff readiness, activation switch write order, inherited handoff/admission-readiness/runner blockers, gate lists, and no-handoff/no-activate/no-success/no-disk-touch/no-enable-unblock flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives activation admission handoff readiness from the existing handoff dry-run plus activation transaction admission readiness dry-run without changing activation handoff enablement, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked activation admission handoff readiness status, direct blocked handoff gates, inherited handoff/admission-readiness/runner blockers, and unchanged no-handoff/no-activate/no-success/no-disk-touch/no-enable-unblock behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation admission handoff readiness, inherited handoff/admission-readiness/runner blockers, gate lists, activation switch write order, final readiness, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays activation admission handoff readiness status, gate, structure, control, phases, rollback, effects, admission-readiness source, activation switch state, prerequisites, final handoff readiness, enablement-unblock, handoff, activate, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KF` as the direct dry-run decomposition of `approve_execution_runner_activation_admission_handoff_ready`.
+Productization supplement: ADV-SM-PROD-001KG Contract repair approval runner activation handoff enablement readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationHandoffEnablementReadinessDryRun` with gate/switch/handoff names, structural/control/phase/rollback/effects readiness, activation admission required state, activation transaction admission readiness, admission handoff readiness-source state, runner activation switch state, handoff prerequisites, final handoff enablement readiness, activation switch write order, inherited enablement/handoff-readiness blockers, gate lists, and no-attempt-unblock/no-enable/no-handoff/no-activate/no-success/no-disk-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives activation handoff enablement readiness from the existing handoff enablement dry-run plus activation admission handoff readiness dry-run without changing activation handoff attempt, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked activation handoff enablement readiness status, direct blocked enablement gates, inherited enablement/handoff-readiness blockers, and unchanged no-attempt-unblock/no-enable/no-handoff/no-activate/no-success/no-disk-touch behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation handoff enablement readiness, inherited enablement/handoff-readiness blockers, gate lists, activation switch write order, final readiness, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays activation handoff enablement readiness status, gate, structure, control, phases, rollback, effects, handoff-readiness source, activation switch state, prerequisites, final enablement readiness, attempt-unblock, enable, handoff, activate, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KG` as the direct dry-run decomposition of `approve_execution_runner_activation_handoff_enablement_ready`.
+Productization supplement: ADV-SM-PROD-001KH Contract repair approval runner activation handoff attempt readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationHandoffAttemptReadinessDryRun` with gate/attempt/source handoff/source switch names, structural/control/phase/rollback/effects readiness, activation admission required state, activation transaction admission readiness, handoff prerequisites, runner activation switch state, handoff enablement readiness-source state, final handoff attempt readiness, activation switch write order, inherited attempt/enablement-readiness/handoff-enable blockers, gate lists, and no-post-handoff-unblock/no-start/no-handoff/no-activate/no-success/no-disk-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives activation handoff attempt readiness from the existing handoff attempt dry-run plus activation handoff enablement readiness dry-run without changing activation post-handoff attempt, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked activation handoff attempt readiness status, direct blocked attempt gates, inherited attempt/enablement-readiness/handoff-enable blockers, and unchanged no-post-handoff-unblock/no-start/no-handoff/no-activate/no-success/no-disk-touch behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation handoff attempt readiness, inherited attempt/enablement-readiness/handoff-enable blockers, gate lists, activation switch write order, final readiness, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays activation handoff attempt readiness status, gate, structure, control, phases, rollback, effects, enablement-readiness source, activation switch state, final attempt readiness, post-handoff-unblock, start, handoff, activate, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KH` as the direct dry-run decomposition of `approve_execution_runner_activation_handoff_attempt_ready`.
+Productization supplement: ADV-SM-PROD-001KI Contract repair approval runner activation post-handoff attempt readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationPostHandoffAttemptReadinessDryRun` with gate/attempt/source attempt/source handoff/source switch names, structural/control/phase/rollback/effects readiness, activation admission required state, activation transaction admission readiness, handoff prerequisites, runner activation switch state, handoff attempt readiness-source state, final post-handoff attempt readiness, activation switch write order, inherited post-handoff/handoff-attempt-readiness/handoff-attempt/handoff-enable blockers, gate lists, and no-success-unblock/no-attempt-activation/no-activate/no-success/no-disk-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives activation post-handoff attempt readiness from the existing post-handoff attempt dry-run plus activation handoff attempt readiness dry-run without changing activation success admission, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked activation post-handoff attempt readiness status, direct blocked post-handoff gates, inherited post-handoff/handoff-attempt-readiness/handoff-enable blockers, and unchanged no-success-unblock/no-attempt-activation/no-activate/no-success/no-disk-touch behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation post-handoff attempt readiness, inherited post-handoff/handoff-attempt-readiness/handoff-enable blockers, gate lists, activation switch write order, final readiness, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays activation post-handoff attempt readiness status, gate, structure, control, phases, rollback, effects, handoff-attempt-readiness source, activation switch state, final post-handoff readiness, success-unblock, attempt-activation, activate, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KI` as the direct dry-run decomposition of `approve_execution_runner_activation_post_handoff_attempt_ready`.
+Productization supplement: ADV-SM-PROD-001KJ Contract repair approval runner activation success admission readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationSuccessAdmissionReadinessDryRun` with gate/admission/source attempt/source handoff attempt/source handoff/source switch names, structural/control/phase/rollback/effects readiness, activation admission required state, activation transaction admission readiness, handoff prerequisites, runner activation switch state, post-handoff attempt readiness-source state, final success admission readiness, activation switch write order, inherited success-admission/post-handoff-readiness/post-handoff/handoff-attempt/handoff-enable blockers, gate lists, and no-success-return-unblock/no-admit-success/no-activate/no-success/no-disk-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives activation success admission readiness from the existing success admission dry-run plus activation post-handoff attempt readiness dry-run without changing activation success return, control readiness, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked activation success admission readiness status, direct blocked success-admission gates, inherited success-admission/post-handoff-readiness/handoff-enable blockers, and unchanged no-success-return-unblock/no-admit-success/no-activate/no-success/no-disk-touch behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation success admission readiness, inherited success-admission/post-handoff-readiness/handoff-enable blockers, gate lists, activation switch write order, final readiness, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays activation success admission readiness status, gate, structure, control, phases, rollback, effects, post-handoff-readiness source, activation switch state, final success admission readiness, success-return-unblock, admit-success, activate, success, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KJ` as the direct dry-run decomposition of `approve_execution_runner_activation_success_admission_ready`.
+Productization supplement: ADV-SM-PROD-001KK Contract repair approval runner activation success return readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerActivationSuccessReturnReadinessDryRun` with gate/return/source admission/source attempt/source handoff attempt/source handoff/source switch names, structural/control/phase/rollback/effects readiness, activation admission required state, activation transaction admission readiness, handoff prerequisites, runner activation switch state, success admission readiness-source state, final success return readiness, activation switch write order, inherited success-return/success-admission-readiness/success-admission/post-handoff/handoff-attempt/handoff-enable blockers, gate lists, and no-route-success-unblock/no-admit-success/no-activate/no-success/no-disk-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives activation success return readiness from the existing success return dry-run plus activation success admission readiness dry-run without changing control readiness, runner enablement plan, or `approve_runner_success`.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked activation success return readiness status, direct blocked success-return gates, inherited success-return/success-admission-readiness/handoff-enable blockers, and unchanged no-route-success-unblock/no-admit-success/no-activate/no-success/no-disk-touch behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes activation success return readiness, inherited success-return/success-admission-readiness/success-admission/post-handoff/handoff-enable blockers, gate lists, activation switch write order, final readiness, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays activation success return readiness status, gate, structure, control, phases, rollback, effects, success admission, success-admission-readiness source, final success return readiness, route-success-unblock, admit-success, activate, success, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KK` as the direct dry-run decomposition of `approve_execution_runner_activation_success_return_ready`.
+Productization supplement: ADV-SM-PROD-001KL Contract repair approval runner route success readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerRouteSuccessReadinessDryRun` with gate name, target route status name, activation success return source name, enablement plan source name, structural/control/phase/rollback/effects readiness, runner activation switch/readiness state, activation success return readiness-source state, enablement-plan success source state, final route success readiness, inherited success-return/readiness and enablement-plan blockers, gate lists, and no-route-success/no-review-approve-executed/no-activate/no-success/no-disk-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives route success readiness from activation success return readiness plus the existing runner enablement plan without changing `approve_runner_success`, response status, route status, control readiness, or runner enablement plan.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked route success readiness status, direct blocked route success gates, inherited success-return/readiness and enablement-plan blockers, and unchanged no-route-success/no-review-approve-executed/no-activate/no-success/no-disk-touch behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes route success readiness, inherited success-return/readiness and enablement-plan blockers, gate lists, route status target, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays route success readiness status, gate, return readiness, enablement-plan success, runner activation state, inherited blocker counts, gate counts, route-success, approve-executed, success, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KL` as the direct dry-run decomposition of `approve_execution_runner_route_success_ready`.
+Productization supplement: ADV-SM-PROD-001KM Contract repair approval runner route status readiness dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionRunnerRouteStatusReadinessDryRun` with gate name, current response/route statuses, target response/route statuses, expected HTTP status, decision preflight state, review execution enablement, approve runner success state, route-success/final-status readiness, inherited route-success blockers, inherited blocked reasons, gate lists, and no-response-status/no-route-status/no-http-ok/no-disk-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives route status readiness from actual computed response status, route status, blocked reasons, route success readiness, preflight request state, review execution enablement, and `approve_runner_success` without changing `approve_runner_success`, response status, route status, HTTP status, runner activation, route success, or disk effects.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked route status readiness status, current locked response/route status, target `review_approve_executed` status, expected locked HTTP state, inherited route-success blockers, inherited blocked reasons, direct blocked final-status gates, and unchanged no-response-status/no-route-status/no-http-ok/no-disk-touch behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes route status readiness, current and target status fields, expected HTTP status, preflight/review/approve-success flags, inherited route-success blockers, inherited blocked reasons, gate lists, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays route status readiness status, gate, current response/route status, target status, expected HTTP state, preflight/review/approve-success state, route-success source, final readiness, inherited counts, gate counts, response/route/status effects, HTTP OK, and disk-touch state.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KM` as the response-only dry-run decomposition of the final approve route/status boundary.
+Productization supplement: ADV-SM-PROD-001KN Contract repair approval decision lock summary dry-run.
+- `src/frontend_api_types.rs` - review responses carry `ContractRepairApprovalApproveExecutionDecisionLockSummaryDryRun` with current response/route status, target approve-executed status, expected HTTP status, preflight/review/approve-success flags, final lock state, primary blocked reason, blocked reason count, inherited route-status blockers, inherited blocked reasons, and no-execute/no-mutate/no-http-ok/no-disk-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - approve preflight derives the decision lock summary from actual response status, route status, blocked reasons, route status readiness, preflight request state, review execution enablement, and `approve_runner_success` without changing `approve_runner_success`, response status, route status, HTTP status, runner activation, route success, contract mutation, or disk effects.
+- `tests/api_v4_productization_contract_repair.rs` - approve preflight tests verify the ready-blocked decision lock summary status, current locked response/route status, primary blocked reason, inherited route-status blockers, inherited blocked reasons, and unchanged no-execute/no-mutate/no-http-ok/no-disk-touch behavior.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes decision lock summary status, current and target status fields, expected HTTP status, preflight/review/approve-success flags, final lock state, primary blocker, inherited blockers/reasons, and side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - state-machine workspace displays decision lock summary near review intent with current response/route status, target status, expected HTTP state, preflight/review/approve-success state, final lock state, primary blocker, inherited counts, execution/mutation/http/disk effects.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KN` as the user-facing summary/read-model layer for the locked approve decision boundary.
+Productization supplement: ADV-SM-PROD-001KO Contract repair approval record surface decision lock aggregation.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace record-surface projection accepts the normalized review blocked response and aggregates decision lock status, current response/route status, primary blocked reason, final lock state, expected HTTP status, inherited blocker/reason counts, and no-execute/no-mutate/no-http-ok/no-disk-touch flags without changing persisted/preview record counts.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display decision lock status, primary blocked reason, locked state, expected HTTP status, inherited blocker/reason counts, and disabled execution/mutation/disk effects beside the existing approval record surface.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify both default record-surface lock fields and non-empty decision lock aggregation from the review blocked response.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify record-surface display for missing and populated decision lock summaries while persistence, mutation, execution, and disk-touch states remain disabled.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KO` as the read-model surface aggregation step after the decision lock summary dry-run.
+Productization supplement: ADV-SM-PROD-001KP Contract repair approval backend read-model decision lock summary.
+- `src/frontend_api_types.rs` - approval list/detail read-model responses carry `ContractRepairApprovalReadModelDecisionLockSummary` with target approve action, current response/route status, target approve-executed status, expected locked HTTP state, record counts, persistence/mutation flags, final lock state, primary blocker, inherited blocked reasons, and no-execute/no-mutate/no-http-ok/no-disk-touch flags.
+- `src/runtime/mutation/contract_repair_approval.rs` - list/detail read-model handlers derive decision lock summaries from read-model status, route status, record counts, persistence/mutation flags, and blocked reasons without changing routes, counts, review state, execution, mutation, HTTP status, or disk effects.
+- `tests/api_v4_productization_contract_repair.rs` - API tests verify disabled list/detail summaries and persisted-record summaries while approve execution and contract mutation remain locked.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection normalizes read-model decision lock summaries and record-surface aggregation falls back to them when no review blocked response summary is present.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify read-model summary normalization and record-surface fallback fields.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify read-model-provided decision lock summary display on the record surface.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KP` as backend list/detail read-model parity for approve decision lock explanation.
+Productization supplement: ADV-SM-PROD-001KQ Contract repair approval read-model decision lock UI summary.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair targets display the normalized read-model decision lock summary directly beside the read-model contract state with status, primary blocker, final lock state, expected HTTP status, inherited reason count, and disabled execution/mutation/disk-touch effects.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify missing-summary defaults and backend read-model summary display without enabling approve execution, mutation, HTTP OK, or disk effects.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KQ` as the UI visibility lift for backend read-model decision lock explanation.
+Productization supplement: ADV-SM-PROD-001KR Contract repair approval workspace-level decision lock summary chip.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace summary displays an `Approval lock` chip derived from the normalized read-model decision lock summary with status, primary blocker, final locked state, and inherited reason count, reusing the selected-target decision-lock helpers.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify summary-chip defaults and populated backend read-model summary display without changing selected repair target behavior or enabling approve execution, mutation, HTTP OK, or disk effects.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KR` as the workspace-level scan surface for backend read-model decision lock explanation.
+Productization supplement: ADV-SM-PROD-001KS Contract repair approval workspace lock summary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection exposes `contract_repair_approval_workspace_lock_summary` from the normalized approval read model with status, source, primary blocker, final locked state, expected HTTP status, inherited reason count, and disabled execution/mutation/http/disk effects.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify populated read-model summary fields and stable `not_loaded` defaults without enabling mutation or execution.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace summary chip consumes the projection-owned lock summary instead of reconstructing read-model internals in JSX.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify chip display from the projected summary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KS` as the projection contract for workspace-level approval lock explanation.
+Productization supplement: ADV-SM-PROD-001KT Contract repair approval workspace lock boundary chip.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace summary `Approval lock` chip displays expected HTTP status plus no-execute/no-mutate/no-http-ok/no-disk-touch flags from the projection-owned lock summary.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify default and populated boundary chip text without enabling approve execution, mutation, HTTP OK, or disk effects.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KT` as the top-level no-side-effect boundary display for approval lock state.
+Productization supplement: ADV-SM-PROD-001KU Contract repair approval workspace lock source context.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock summary projection carries read-model status, response status, route status, target route status, persisted/preview counts, and record source status/kind beside the lock boundary flags.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify source-context fields for populated read-model summaries and stable defaults for missing summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace summary displays an `Approval source` chip with summary source, response status, route status, record counts, and record source context.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify default and populated source-context chip text.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KU` as the top-level source-context display for approval lock state.
+Productization supplement: ADV-SM-PROD-001KV Contract repair approval workspace lock target context.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock summary projection carries approve target action, target response status, and target route status beside current response/route state.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify target-context fields for populated read-model summaries and stable defaults for missing summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace summary displays an `Approval target` chip with action, target response/route state, and current response/route state.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify default and populated target-context chip text.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KV` as the top-level current-to-target display for approval lock state.
+Productization supplement: ADV-SM-PROD-001KW Contract repair approval workspace lock review-response precedence.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock summary projection accepts the normalized review blocked response and prefers its decision lock summary over backend read-model summary before falling back to `not_loaded`.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify review-response precedence, read-model fallback, source markers, and disabled side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace approval lock/source/target chips consume the precedence-aware projection summary without local selection logic.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify review-response sourced chip text and read-model fallback chip text.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KW` as the top-level freshest-summary precedence for approval lock state.
+Productization supplement: ADV-SM-PROD-001KX Contract repair approval workspace lock inherited blocker count.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock summary projection exposes `inherited_blocker_count` from selected decision lock summary route-status blockers while preserving read-model fallback defaults.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker counts for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval lock` chip displays `blockers` beside `reasons`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker-count chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KX` as the top-level blocker-count display for approval lock state.
+Productization supplement: ADV-SM-PROD-001KY Contract repair approval workspace lock primary inherited blocker.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock summary projection exposes `primary_inherited_blocker` as the first inherited route-status blocker gate or `none`.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify primary inherited blocker defaults and review-response sourced gate names.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval lock` chip displays the primary inherited gate beside blocker count.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify gate text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KY` as the top-level first blocker-gate display for approval lock state.
+Productization supplement: ADV-SM-PROD-001KZ Contract repair approval workspace lock readiness flags.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock summary projection exposes decision execution preflight, review execution enablement, approve runner success, and route-status readiness flags from the selected decision lock summary.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify readiness flag defaults and review-response sourced values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace summary displays an `Approval readiness` chip with preflight/review/approve-success/route-final state.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify readiness chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001KZ` as the top-level readiness-flag display for approval lock state.
+Productization supplement: ADV-SM-PROD-001LA Contract repair approval workspace lock readiness rollup.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock summary projection derives readiness total, passed count, blocked count, and primary readiness blocker from the selected decision lock summary flags.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify readiness rollup defaults, read-model fallback values, and review-response sourced values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval readiness` chip displays `passed`, `blocked`, and `next` beside the four readiness flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify readiness rollup chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LA` as the top-level readiness rollup display for approval lock state.
+Productization supplement: ADV-SM-PROD-001LB Contract repair approval workspace lock primary inherited reason.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock summary projection exposes `primary_inherited_reason` as the first inherited blocked reason or `none`.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify primary inherited reason defaults, read-model fallback values, and review-response sourced values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval lock` chip displays the primary inherited reason beside inherited reason count.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify primary inherited reason chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LB` as the top-level first inherited reason display for approval lock state.
+Productization supplement: ADV-SM-PROD-001LC Contract repair approval workspace lock blocker summary chip.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace summary displays an `Approval blocker` chip composed from existing source, primary inherited blocker, primary inherited reason, and primary readiness blocker fields.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker summary chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LC` as the top-level blocker summary display for approval lock state.
+Productization supplement: ADV-SM-PROD-001LD Contract repair approval workspace lock blocker boundary chip.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays existing final locked state and expected HTTP status beside source, gate, reason, and next readiness blocker.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker boundary chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LD` as the top-level blocker boundary display for approval lock state.
+Productization supplement: ADV-SM-PROD-001LE Contract repair approval workspace lock blocker route chip.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays existing current route status and target route status beside source, gate, reason, next readiness blocker, locked state, and expected HTTP status.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker route chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LE` as the top-level blocker route display for approval lock state.
+Productization supplement: ADV-SM-PROD-001LF Contract repair approval workspace lock blocker response chip.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays existing current response status and target response status beside source, gate, reason, next readiness blocker, locked state, expected HTTP status, and route boundary.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker response chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LF` as the top-level blocker response display for approval lock state.
+Productization supplement: ADV-SM-PROD-001LG Contract repair approval workspace lock blocker side-effect chip.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays existing no-execute, no-mutate, no-http-ok, and no-disk-touch flags beside source, gate, reason, next readiness blocker, locked state, expected HTTP status, route boundary, and response boundary.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker side-effect chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LG` as the top-level blocker side-effect display for approval lock state.
+Productization supplement: ADV-SM-PROD-001LH Contract repair approval workspace blocker summary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace projection exposes `contract_repair_approval_workspace_blocker_summary` derived from existing workspace lock summary fields.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker summary defaults, read-model fallback values, and review-response sourced values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip consumes the projection-owned blocker summary instead of rebuilding every field from the lock summary.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify the blocker chip text remains stable for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LH` as the projection contract for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LI Contract repair approval workspace blocker status projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries the selected lock summary `status` beside source, gate, reason, readiness, boundary, and side-effect fields.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker summary status for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays blocker summary status before source/gate/reason.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker status chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LI` as the status field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LJ Contract repair approval workspace blocker record source projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries `record_counts` and `record_source` text derived from existing workspace lock summary record fields.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker record-source values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays blocker summary record counts and record source beside response/route boundaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker record-source chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LJ` as the record-source fields for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LK Contract repair approval workspace blocker count projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries inherited blocker and reason counts derived from existing workspace lock summary count fields.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker count values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays blocker/reason counts before the first blocker gate and reason.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker count chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LK` as the inherited count fields for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LL Contract repair approval workspace blocker readiness count projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries readiness total, passed count, blocked count, and readiness progress text derived from existing workspace lock summary readiness rollup fields.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker readiness-count values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays readiness progress and blocked-readiness count beside the next readiness blocker.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker readiness-count chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LL` as the readiness-count fields for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LM Contract repair approval workspace blocker ready-state projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries `summary_ready_state` derived from the existing workspace lock summary readiness boolean.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker ready-state values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays summary state immediately after blocker status.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker summary-state chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LM` as the ready-state field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LN Contract repair approval workspace blocker primary blocked reason projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries `primary_blocked_reason` derived from the existing workspace lock summary primary blocked reason.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker primary-blocked-reason values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays the primary blocked reason beside inherited gate/reason detail.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker primary-blocked-reason chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LN` as the primary blocked reason field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LO Contract repair approval workspace blocker target action projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries `target_action` derived from the existing workspace lock summary target action.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker target-action values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays the target action beside status and summary state.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker target-action chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LO` as the target action field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LP Contract repair approval workspace blocker target state projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries `target_state` derived from the existing workspace lock summary target response and target route statuses.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker target-state values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays the target response/route pair beside the target action.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker target-state chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LP` as the target state field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LQ Contract repair approval workspace blocker current state projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries `current_state` derived from the existing workspace lock summary response and route statuses.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker current-state values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays the current response/route pair beside the target action and target state.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker current-state chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LQ` as the current state field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LR Contract repair approval workspace blocker state boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries `state_boundary` derived from the current and target state summary fields.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker state-boundary values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays the current-to-target state boundary beside current and target state.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker state-boundary chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LR` as the state-boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LS Contract repair approval workspace blocker side-effect boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries `side_effect_boundary` derived from existing execute/mutate/http-ok/touch booleans.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker side-effect-boundary values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays the compact side-effect boundary beside record source and individual side-effect flags.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker side-effect-boundary chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LS` as the side-effect-boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LT Contract repair approval workspace blocker readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries `readiness_boundary` derived from readiness progress, blocked count, and next readiness blocker.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker readiness-boundary values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays the compact readiness boundary beside readiness counts.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker readiness-boundary chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LT` as the readiness-boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LU Contract repair approval workspace blocker record boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries `record_boundary` derived from persisted/preview counts and record source text.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker record-boundary values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays the compact record boundary beside record counts and source.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker record-boundary chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LU` as the record-boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LV Contract repair approval workspace blocker lock boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries `lock_boundary` derived from locked state and expected HTTP status.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker lock-boundary values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays the compact lock boundary beside locked state and HTTP status.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker lock-boundary chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LV` as the lock-boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LW Contract repair approval workspace blocker blocker boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries `blocker_boundary` derived from inherited blocker/reason counts and primary blocker detail.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify blocker-boundary values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays the compact blocker boundary beside primary blocker detail.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify blocker-boundary chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LW` as the blocker-boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LX Contract repair approval workspace blocker scan summary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace blocker summary projection carries `scan_summary` derived from status, ready state, target action, source, and the existing boundary summaries.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify scan-summary values for default, read-model fallback, and review-response sourced summaries.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays the first-scan summary before individual detail fields.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify scan-summary chip text for default, read-model fallback, and review-response sourced summaries.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LX` as the scan-summary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LY Contract repair approval workspace blocker runner enablement boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_enablement_boundary` derived from the existing approve runner enablement plan dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner-enable boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner enablement boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated runner-enable chip text and the existing runner enablement detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LY` as the runner-enable boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001LZ Contract repair approval workspace blocker runner route-success boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_route_success_boundary` derived from the existing approve runner route-success readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify route-success boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner route-success boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated route-success chip text and the existing route-success detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001LZ` as the runner route-success boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MA Contract repair approval workspace blocker runner route-status boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_route_status_boundary` derived from the existing approve runner route-status readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify route-status boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner route-status boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated route-status chip text and the existing route-status detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MA` as the runner route-status boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MB Contract repair approval workspace blocker runner-control boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_control_boundary` derived from the existing approve runner control readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner-control boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner-control boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated runner-control chip text and the existing control-readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MB` as the runner-control boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MC Contract repair approval workspace blocker lifecycle-effects boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `lifecycle_effects_boundary` derived from the existing approve lifecycle effects readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify lifecycle-effects boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays lifecycle-effects boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated lifecycle-effects chip text and the existing lifecycle-readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MC` as the lifecycle-effects boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MD Contract repair approval workspace blocker contract mutation boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `contract_mutation_boundary` derived from the existing approve contract mutation readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify contract mutation boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays contract mutation boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated contract mutation chip text and the existing contract-mutation readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MD` as the contract mutation boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001ME Contract repair approval workspace blocker recovery marker boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `recovery_marker_boundary` derived from the existing approve recovery marker persistence readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify recovery marker boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays recovery marker boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated recovery marker chip text and the existing recovery marker persistence readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ME` as the recovery marker boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MF Contract repair approval workspace blocker transaction commit boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `transaction_commit_boundary` derived from the existing approve transaction commit readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify transaction commit boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays transaction commit boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated transaction commit chip text and the existing transaction commit readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MF` as the transaction commit boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MG Contract repair approval workspace blocker atomic side-effects boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `atomic_side_effects_boundary` derived from the existing approve atomic side-effects readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify atomic side-effects boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays atomic side-effects boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated atomic side-effects chip text and the existing atomic side-effects readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MG` as the atomic side-effects boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MH Contract repair approval workspace blocker runner attempt boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_attempt_boundary` derived from the existing approve runner attempt readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner attempt boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner attempt boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated runner attempt chip text and the existing runner attempt readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MH` as the runner attempt boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MI Contract repair approval workspace blocker runner execution boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_execution_boundary` derived from the existing approve runner execution readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner execution boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner execution boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated runner execution chip text and the existing runner execution readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MI` as the runner execution boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MJ Contract repair approval workspace blocker runner dispatch boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_dispatch_boundary` derived from the existing approve runner dispatch readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner dispatch boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner dispatch boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated runner dispatch chip text and the existing runner dispatch readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MJ` as the runner dispatch boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MK Contract repair approval workspace blocker runner handoff boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_handoff_boundary` derived from the existing approve runner handoff readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner handoff boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner handoff boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated runner handoff chip text and the existing runner handoff readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MK` as the runner handoff boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001ML Contract repair approval workspace blocker runner call boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_call_boundary` derived from the existing approve runner call readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner call boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner call boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated runner call chip text and the existing runner call readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ML` as the runner call boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MM Contract repair approval workspace blocker runner body boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_body_boundary` derived from the existing approve runner body readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner body boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner body boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated runner body chip text and the existing runner body readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MM` as the runner body boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MN Contract repair approval workspace blocker runner phases boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_phases_boundary` derived from the existing approve runner phases readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner phases boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner phases boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated runner phases chip text and the existing runner phases readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MN` as the runner phases boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MO Contract repair approval workspace blocker runner lifecycle phase boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_lifecycle_phase_boundary` derived from the existing approve runner lifecycle phase readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner lifecycle phase boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner lifecycle phase boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated runner lifecycle phase chip text and the existing lifecycle phase readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MO` as the runner lifecycle phase boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MP Contract repair approval workspace blocker runner source mutation phase boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_source_mutation_phase_boundary` derived from the existing approve runner source mutation phase readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner source mutation phase boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner source mutation phase boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated runner source mutation phase chip text and the existing source mutation phase readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MP` as the runner source mutation phase boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MQ Contract repair approval workspace blocker runner recovery marker cleanup phase boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_recovery_marker_cleanup_phase_boundary` derived from the existing approve runner recovery marker cleanup phase readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner recovery marker cleanup phase boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner recovery marker cleanup phase boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated runner recovery marker cleanup phase chip text and the existing cleanup phase readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MQ` as the runner recovery marker cleanup phase boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MR Contract repair approval workspace blocker runner transaction commit phase boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_transaction_commit_phase_boundary` derived from the existing approve runner transaction commit phase readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner transaction commit phase boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner transaction commit phase boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests verify populated runner transaction commit phase chip text and the existing commit phase readiness detail line.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MR` as the runner transaction commit phase boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MS Contract repair approval workspace blocker runner rollback execution phase boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_rollback_execution_phase_boundary` derived from the existing approve runner rollback execution phase readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner rollback execution phase boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner rollback execution phase boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed rollback execution phase readiness and verify populated rollback execution phase chip text plus the existing rollback readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner rollback execution phase boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MS` as the runner rollback execution phase boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MT Contract repair approval workspace blocker runner activation enablement readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_activation_enablement_readiness_boundary` derived from the existing approve runner activation enablement readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner activation enablement readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner activation enablement readiness boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation enablement readiness and verify populated activation enablement readiness chip text plus the existing activation readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner activation enablement readiness boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MT` as the runner activation enablement readiness boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MU Contract repair approval workspace blocker runner activation path readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_activation_path_readiness_boundary` derived from the existing approve runner activation path readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner activation path readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner activation path readiness boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation path readiness and verify populated activation path readiness chip text plus the existing activation path readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner activation path readiness boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MU` as the runner activation path readiness boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MV Contract repair approval workspace blocker runner activation execution plan readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_activation_execution_plan_readiness_boundary` derived from the existing approve runner activation execution plan readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner activation execution plan readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner activation execution plan readiness boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation execution plan readiness and verify populated activation execution plan readiness chip text plus the existing activation execution plan readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner activation execution plan readiness boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MV` as the runner activation execution plan readiness boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MW Contract repair approval workspace blocker runner activation switch transaction proof readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_activation_switch_transaction_proof_readiness_boundary` derived from the existing approve runner activation switch transaction proof readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner activation switch transaction proof readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner activation switch transaction proof readiness boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation switch transaction proof readiness and verify populated switch transaction proof readiness chip text plus the existing switch proof readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner activation switch transaction proof readiness boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MW` as the runner activation switch transaction proof readiness boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MX Contract repair approval workspace blocker runner activation switch write transaction enablement readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_activation_switch_write_transaction_enablement_readiness_boundary` derived from the existing approve runner activation switch write transaction enablement readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner activation switch write transaction enablement readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner activation switch write transaction enablement readiness boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation switch write transaction enablement readiness and verify populated switch write transaction enablement readiness chip text plus the existing switch enablement readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner activation switch write transaction enablement readiness boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MX` as the runner activation switch write transaction enablement readiness boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MY Contract repair approval workspace blocker runner activation switch write transaction readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_activation_switch_write_transaction_readiness_boundary` derived from the existing approve runner activation switch write transaction readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner activation switch write transaction readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner activation switch write transaction readiness boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation switch write transaction readiness and verify populated switch write transaction readiness chip text plus the existing switch transaction readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner activation switch write transaction readiness boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MY` as the runner activation switch write transaction readiness boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001MZ Contract repair approval workspace blocker runner activation transaction admission readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_activation_transaction_admission_readiness_boundary` derived from the existing approve runner activation transaction admission readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner activation transaction admission readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner activation transaction admission readiness boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation transaction admission readiness and verify populated admission readiness chip text plus the existing admission readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner activation transaction admission readiness boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001MZ` as the runner activation transaction admission readiness boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001NA Contract repair approval workspace blocker runner activation admission handoff readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_activation_admission_handoff_readiness_boundary` derived from the existing approve runner activation admission handoff readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner activation admission handoff readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace `Approval blocker` chip displays runner activation admission handoff readiness boundary inside the scan summary and detail text.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation admission handoff readiness and verify populated handoff readiness chip text plus the existing handoff readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner activation admission handoff readiness boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NA` as the runner activation admission handoff readiness boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001NB Contract repair approval workspace blocker runner activation handoff enablement readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_activation_handoff_enablement_readiness_boundary` derived from the existing approve runner activation handoff enablement readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner activation handoff enablement readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner activation handoff enablement readiness boundary after admission handoff readiness while keeping execution side effects false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation handoff enablement readiness and verify populated handoff enablement readiness chip text plus the existing handoff enablement readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner activation handoff enablement readiness boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NB` as the runner activation handoff enablement readiness boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001NC Contract repair approval workspace blocker runner activation handoff attempt readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_activation_handoff_attempt_readiness_boundary` derived from the existing approve runner activation handoff attempt readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner activation handoff attempt readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner activation handoff attempt readiness boundary after handoff enablement readiness while keeping execution side effects false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation handoff attempt readiness and verify populated handoff attempt readiness chip text plus the existing handoff attempt readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner activation handoff attempt readiness boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NC` as the runner activation handoff attempt readiness boundary field for top-level blocker summary display.
+Productization supplement: ADV-SM-PROD-001ND Contract repair approval workspace blocker runner activation post-handoff attempt readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_activation_post_handoff_attempt_readiness_boundary` derived from the existing approve runner activation post-handoff attempt readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner activation post-handoff attempt readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner activation post-handoff attempt readiness boundary after handoff attempt readiness while keeping execution side effects false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation post-handoff attempt readiness and verify populated post-handoff attempt readiness chip text plus the existing post-handoff readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner activation post-handoff attempt readiness boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ND` as the runner activation post-handoff attempt readiness boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NE Contract repair approval workspace blocker runner activation success admission readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_activation_success_admission_readiness_boundary` derived from the existing approve runner activation success admission readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner activation success admission readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner activation success admission readiness boundary after post-handoff attempt readiness while keeping success return, runner activation, and disk-touch side effects false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation success admission readiness and verify populated success admission readiness chip text plus the existing success admission readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner activation success admission readiness boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NE` as the runner activation success admission readiness boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NF Contract repair approval workspace blocker runner activation success return readiness boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_activation_success_return_readiness_boundary` derived from the existing approve runner activation success return readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner activation success return readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner activation success return readiness boundary after success admission readiness while keeping route success, runner activation, and disk-touch side effects false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation success return readiness and verify populated success return readiness chip text plus the existing success return readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner activation success return readiness boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NF` as the runner activation success return readiness boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NG Contract repair approval workspace blocker runner route success readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_route_success_readiness_boundary` derived from the existing approve runner route success readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner route success readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner route success readiness detail after the compact route success boundary while keeping route success, approve-executed, runner activation, and disk-touch side effects false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed route success readiness inherited blockers and verify populated route success readiness chip text plus the existing route success readiness detail line.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner route success readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NG` as the runner route success readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NH Contract repair approval workspace blocker runner route status readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_route_status_readiness_boundary` derived from the existing approve runner route status readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner route status readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner route status readiness detail after the compact route status boundary while keeping response status, route status, HTTP OK, and disk-touch side effects false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed route status readiness inherited blockers and verify populated route status readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner route status readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NH` as the runner route status readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NI Contract repair approval workspace blocker runner control readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_control_readiness_boundary` derived from the existing approve runner control readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner control readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner control readiness detail after the compact runner control boundary while keeping activation-control unblock, runner activation, success, and disk-touch side effects false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner control inherited blockers and verify populated control readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner control readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NI` as the runner control readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NJ Contract repair approval workspace blocker lifecycle effects readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `lifecycle_effects_readiness_boundary` derived from the existing approve lifecycle effects readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify lifecycle effects readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays lifecycle effects readiness detail after the compact lifecycle effects boundary while keeping emit, append, lifecycle log touch, and atomic unblock side effects false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed lifecycle effects readiness gates and verify populated lifecycle effects readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the lifecycle effects readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NJ` as the lifecycle effects readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NK Contract repair approval workspace blocker contract mutation readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `contract_mutation_readiness_boundary` derived from the existing approve contract mutation readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify contract mutation readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays contract mutation readiness detail after the compact contract mutation boundary while keeping source write, contract mutation, disk touch, and atomic unblock side effects false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed contract mutation readiness gates and verify populated contract mutation readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the contract mutation readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NK` as the contract mutation readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NL Contract repair approval workspace blocker recovery marker persistence readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `recovery_marker_persistence_readiness_boundary` derived from the existing approve recovery marker persistence readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify recovery marker persistence readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays recovery marker persistence readiness detail after the compact recovery marker boundary while keeping marker persist, disk touch, transaction commit unblock, and atomic unblock side effects false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed recovery marker persistence readiness gates and verify populated recovery marker persistence readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the recovery marker persistence readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NL` as the recovery marker persistence readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NM Contract repair approval workspace blocker transaction commit readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `transaction_commit_readiness_boundary` derived from the existing approve transaction commit readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify transaction commit readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays transaction commit readiness detail after the compact transaction commit boundary while keeping runner start, marker persist, transaction commit, disk touch, and atomic unblock side effects false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed transaction commit readiness gates and verify populated transaction commit readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the transaction commit readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NM` as the transaction commit readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NN Contract repair approval workspace blocker atomic side effects readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `atomic_side_effects_readiness_boundary` derived from the existing approve atomic side-effects readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify atomic side-effects readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays atomic side-effects readiness detail after the compact atomic side-effects boundary while keeping lifecycle emit, contract mutation, marker persist, transaction commit, disk touch, and runner attempt unblock side effects false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed atomic side-effects readiness gates and verify populated atomic side-effects readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the atomic side-effects readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NN` as the atomic side-effects readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NO Contract repair approval workspace blocker runner attempt readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_attempt_readiness_boundary` derived from the existing approve runner attempt readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner attempt readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner attempt readiness detail after the compact runner attempt boundary while keeping runner attempt enable, runner start, side-effect persist, rollback, and control unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner attempt readiness gates and verify populated runner attempt readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner attempt readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NO` as the runner attempt readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NP Contract repair approval workspace blocker runner execution readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_execution_readiness_boundary` derived from the existing approve runner execution readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner execution readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner execution readiness detail after the compact runner execution boundary while keeping runner execution enable, runner start, side-effect persist, transaction commit, rollback, route unblock, and control unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner execution readiness gates and verify populated runner execution readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner execution readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NP` as the runner execution readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NQ Contract repair approval workspace blocker runner dispatch readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_dispatch_readiness_boundary` derived from the existing approve runner dispatch readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner dispatch readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner dispatch readiness detail after the compact runner dispatch boundary while keeping runner branch entry, success return, side-effect persist, disk touch, handoff unblock, and control unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner dispatch readiness gates and verify populated runner dispatch readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner dispatch readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NQ` as the runner dispatch readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NR Contract repair approval workspace blocker runner handoff readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_handoff_readiness_boundary` derived from the existing approve runner handoff readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner handoff readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner handoff readiness detail after the compact runner handoff boundary while keeping runner call, success return, side-effect persist, disk touch, call unblock, and control unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner handoff readiness gates and verify populated runner handoff readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner handoff readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NR` as the runner handoff readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NS Contract repair approval workspace blocker runner call readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_call_readiness_boundary` derived from the existing approve runner call readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner call readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner call readiness detail after the compact runner call boundary while keeping runner call, success return, side-effect persist, transaction commit, rollback, disk touch, body unblock, and control unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner call readiness gates and verify populated runner call readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner call readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NS` as the runner call readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NT Contract repair approval workspace blocker runner body readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_body_readiness_boundary` derived from the existing approve runner body readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner body readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner body readiness detail after the compact runner body boundary while keeping body entry, lifecycle emission, mutation, marker persist, transaction commit, rollback, success return, disk touch, phase unblock, and control unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner body readiness gates and verify populated runner body readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner body readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NT` as the runner body readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NU Contract repair approval workspace blocker runner phases readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_phases_readiness_boundary` derived from the existing approve runner phases readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner phases readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner phases readiness detail after the compact runner phases boundary while keeping forward phase execution, rollback execution, success return, disk touch, lifecycle unblock, and control unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner phases readiness gates and verify populated runner phases readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner phases readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NU` as the runner phases readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NV Contract repair approval workspace blocker runner lifecycle phase readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_lifecycle_phase_readiness_boundary` derived from the existing approve runner lifecycle phase readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner lifecycle phase readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner lifecycle phase readiness detail after the compact runner lifecycle phase boundary while keeping lifecycle emit, append, log touch, next phase, success return, disk touch, source unblock, and control unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner lifecycle phase readiness gates and verify populated runner lifecycle phase readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner lifecycle phase readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NV` as the runner lifecycle phase readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NW Contract repair approval workspace blocker runner source mutation phase readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_source_mutation_phase_readiness_boundary` derived from the existing approve runner source mutation phase readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner source mutation phase readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner source mutation phase readiness detail after the compact runner source mutation phase boundary while keeping contract mutation, source write, next phase, success return, disk touch, cleanup unblock, and control unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner source mutation phase readiness gates and verify populated runner source mutation phase readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner source mutation phase readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NW` as the runner source mutation phase readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NX Contract repair approval workspace blocker runner recovery marker cleanup phase readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_recovery_marker_cleanup_phase_readiness_boundary` derived from the existing approve runner recovery marker cleanup phase readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner recovery marker cleanup phase readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner recovery marker cleanup phase readiness detail after the compact runner recovery marker cleanup phase boundary while keeping recovery marker clear, commit continuation, success return, disk touch, transaction unblock, and control unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner recovery marker cleanup phase readiness gates and verify populated runner recovery marker cleanup phase readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner recovery marker cleanup phase readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NX` as the runner recovery marker cleanup phase readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NY Contract repair approval workspace blocker runner transaction commit phase readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_transaction_commit_phase_readiness_boundary` derived from the existing approve runner transaction commit phase readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner transaction commit phase readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner transaction commit phase readiness detail after the compact runner transaction commit phase boundary while keeping transaction commit, success return, disk touch, rollback unblock, and control unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner transaction commit phase readiness gates and verify populated runner transaction commit phase readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner transaction commit phase readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NY` as the runner transaction commit phase readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001NZ Contract repair approval workspace blocker runner rollback execution phase readiness detailed boundary projection.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection carries `runner_rollback_execution_phase_readiness_boundary` derived from the existing approve runner rollback execution phase readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify runner rollback execution phase readiness detailed boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays runner rollback execution phase readiness detail after the compact runner rollback execution phase boundary while keeping source restore, record restore, marker rolled-back, rollback-on-error, success return, disk touch, activation unblock, and control unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner rollback execution phase readiness gates and verify populated runner rollback execution phase readiness chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner rollback execution phase readiness detailed boundary.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001NZ` as the runner rollback execution phase readiness detailed boundary field for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OA Contract repair approval workspace blocker runner activation enablement readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_activation_enablement_readiness_boundary` with gate name, activation switch name, required/passed gate counts, and required/passed enablement counts from the approve runner activation enablement readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched activation enablement readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays the enriched activation enablement readiness detail while keeping activation enable, activation, success return, disk touch, and activation-path unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation enablement readiness gates/enablements and verify populated chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the activation enablement readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OA` as the activation enablement readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OB Contract repair approval workspace blocker runner activation path readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_activation_path_readiness_boundary` with gate name, required/passed gate counts, and required/passed enablement counts from the approve runner activation path readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched activation path readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays the enriched activation path readiness detail while keeping enable-any, activation, success return, disk touch, and activation execution plan unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation path readiness gates/enablements and verify populated chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the activation path readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OB` as the activation path readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OC Contract repair approval workspace blocker runner activation execution plan readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_activation_execution_plan_readiness_boundary` with gate name, required/passed gate counts, and required/passed enablement counts from the approve runner activation execution plan readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched activation execution plan readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays the enriched activation execution plan readiness detail while keeping enable-any, switch persistence, activation, success return, disk touch, and proof unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation execution plan readiness gates/enablements and verify populated chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the activation execution plan readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OC` as the activation execution plan readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OD Contract repair approval workspace blocker runner activation switch transaction proof readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_activation_switch_transaction_proof_readiness_boundary` with gate name and required/passed gate counts from the approve runner activation switch transaction proof readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched activation switch transaction proof readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays the enriched switch transaction proof readiness detail while keeping switch write, partial persistence, commit, activation, success return, disk touch, and enablement unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed switch transaction proof readiness gates and verify populated chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the switch transaction proof readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OD` as the switch transaction proof readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OE Contract repair approval workspace blocker runner activation switch write transaction enablement readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_activation_switch_write_transaction_enablement_readiness_boundary` with gate name and required/passed gate counts from the approve runner activation switch write transaction enablement readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched switch write transaction enablement readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays the enriched switch write transaction enablement readiness detail while keeping transaction enablement, switch write, partial persistence, commit, activation, success return, disk touch, and transaction unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed switch write transaction enablement readiness gates and verify populated chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the switch write transaction enablement readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OE` as the switch write transaction enablement readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OF Contract repair approval workspace blocker runner activation switch write transaction readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_activation_switch_write_transaction_readiness_boundary` with gate name and required/passed gate counts from the approve runner activation switch write transaction readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched switch write transaction readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays the enriched switch write transaction readiness detail while keeping switch write, partial persistence, commit, activation, success return, disk touch, and admission unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed switch write transaction readiness gates and verify populated chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the switch write transaction readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OF` as the switch write transaction readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OG Contract repair approval workspace blocker runner activation transaction admission readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_activation_transaction_admission_readiness_boundary` with required/passed gate counts from the approve runner activation transaction admission readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched activation transaction admission readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip displays the enriched activation transaction admission readiness detail while keeping admission, switch write, partial persistence, commit, activation, success return, disk touch, and handoff unblock flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation transaction admission readiness gates and verify populated chip text plus scan-summary placement.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the activation transaction admission readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OG` as the activation transaction admission readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OH Contract repair approval workspace blocker runner activation admission handoff readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_activation_admission_handoff_readiness_boundary` with required/passed gate counts from the approve runner activation admission handoff readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched activation admission handoff readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip and readiness detail display the enriched activation admission handoff readiness counts while keeping enablement unblock, handoff, activation, success return, and disk touch flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation admission handoff readiness gates and verify populated chip text, scan-summary placement, and required/passed gate detail text.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the activation admission handoff readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OH` as the activation admission handoff readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OI Contract repair approval workspace blocker runner activation handoff enablement readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_activation_handoff_enablement_readiness_boundary` with required/passed gate counts from the approve runner activation handoff enablement readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched activation handoff enablement readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip and readiness detail display the enriched activation handoff enablement readiness counts while keeping attempt unblock, enablement, handoff, activation, success return, and disk touch flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation handoff enablement readiness gates and verify populated chip text, scan-summary placement, and required/passed gate detail text.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the activation handoff enablement readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OI` as the activation handoff enablement readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OJ Contract repair approval workspace blocker runner activation handoff attempt readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_activation_handoff_attempt_readiness_boundary` with required/passed gate counts from the approve runner activation handoff attempt readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched activation handoff attempt readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip and readiness detail display the enriched activation handoff attempt readiness counts while keeping post-handoff unblock, start, handoff, activation, success return, and disk touch flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation handoff attempt readiness gates and verify populated chip text, scan-summary placement, and required/passed gate detail text.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the activation handoff attempt readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OJ` as the activation handoff attempt readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OK Contract repair approval workspace blocker runner activation post-handoff attempt readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_activation_post_handoff_attempt_readiness_boundary` with required/passed gate counts from the approve runner activation post-handoff attempt readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched activation post-handoff attempt readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip and readiness detail display the enriched activation post-handoff attempt readiness counts while keeping success unblock, attempt activation, activation, success return, and disk touch flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation post-handoff attempt readiness gates and verify populated chip text, scan-summary placement, and required/passed gate detail text.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the activation post-handoff attempt readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OK` as the activation post-handoff attempt readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OL Contract repair approval workspace blocker runner activation success admission readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_activation_success_admission_readiness_boundary` with required/passed gate counts from the approve runner activation success admission readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched activation success admission readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip and readiness detail display the enriched activation success admission readiness counts while keeping return unblock, success admission, activation, success return, and disk touch flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation success admission readiness gates and verify populated chip text, scan-summary placement, and required/passed gate detail text.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the activation success admission readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OL` as the activation success admission readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OM Contract repair approval workspace blocker runner activation success return readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_activation_success_return_readiness_boundary` with required/passed gate counts from the approve runner activation success return readiness dry-run.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched activation success return readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip and readiness detail display the enriched activation success return readiness counts while keeping route unblock, success admission, activation, success return, and disk touch flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed activation success return readiness gates and verify populated chip text, scan-summary placement, and required/passed gate detail text.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the activation success return readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OM` as the activation success return readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001ON Contract repair approval workspace blocker runner route success readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_route_success_readiness_boundary` with passed gate count from the approve runner route success readiness dry-run while preserving existing `gates` and `required` fields.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched route success readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip and readiness detail display the enriched route success readiness passed count while keeping route success, approve executed, activation, success return, and disk touch flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed route success readiness gates and verify populated chip text, scan-summary placement, and passed gate detail text.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the route success readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ON` as the route success readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OO Contract repair approval workspace blocker runner route status readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_route_status_readiness_boundary` with passed gate count from the approve runner route status readiness dry-run while preserving existing `required` and `blocked` fields.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched route status readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip and readiness detail display the enriched route status readiness passed count while keeping response status, route status, HTTP OK, and disk touch flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed route status readiness gates and verify populated chip text, scan-summary placement, and passed gate detail text.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the route status readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OO` as the route status readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OP Contract repair approval workspace blocker runner control readiness detailed boundary refresh.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - workspace lock/blocker summary projection enriches the existing `runner_control_readiness_boundary` with passed gate count from the approve runner control readiness dry-run while preserving existing `required` and `blocked` fields.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - projection tests verify enriched runner control readiness boundary defaults and populated review-response values.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval blocker chip and readiness detail display the enriched runner control readiness passed count while keeping control unblock, activation, success return, and disk touch flags false.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - panel tests feed runner control readiness gates and verify populated chip text, scan-summary placement, and passed gate detail text.
+- `markdown/00-matrix-governance/module-tree.md` - records workspace blocker summary ownership for the runner control readiness boundary detail refresh.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OP` as the runner control readiness boundary detail refresh for top-level blocker summary display.
+
+Productization supplement: ADV-SM-PROD-001OQ Contract repair approval workspace blocker readiness passed-count documentation alignment.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - earlier runner route success readiness, runner route status readiness, and runner control readiness detail supplements explicitly include passed gate count beside existing required/blocked wording.
+- `markdown/00-matrix-governance/module-tree.md` - corresponding module ownership records align the same three readiness boundaries with the already-exposed passed gate count fields.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - no code change; current projection and scan summary behavior remain the source being documented.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - no code change; current Approval blocker chip details remain unchanged.
+
+Productization supplement: ADV-SM-PROD-001OR Contract repair approval workspace blocker activation transaction passed-count documentation alignment.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - earlier activation switch-write transaction enablement, switch-write transaction readiness, and activation transaction admission readiness detail supplements explicitly include required and passed gate counts beside blocked gate count.
+- `markdown/00-matrix-governance/module-tree.md` - corresponding module ownership records align the same three activation transaction readiness boundaries with the already-exposed required/passed gate count fields.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - no code change; current projection and scan summary behavior remain the source being documented.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - no code change; current Approval blocker chip details remain unchanged.
+
+Productization supplement: ADV-SM-PROD-001OS Contract repair approval workspace blocker activation handoff passed-count documentation alignment.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - earlier activation admission handoff, activation handoff enablement, and activation handoff attempt readiness detail supplements explicitly include required and passed gate counts beside blocked gate count.
+- `markdown/00-matrix-governance/module-tree.md` - corresponding module ownership records align the same three activation handoff readiness boundaries with the already-exposed required/passed gate count fields.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - no code change; current projection and scan summary behavior remain the source being documented.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - no code change; current Approval blocker chip details remain unchanged.
+
+Productization supplement: ADV-SM-PROD-001OT Contract repair approval workspace blocker activation success passed-count documentation alignment.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - earlier activation post-handoff attempt, activation success admission, and activation success return readiness detail supplements explicitly include required and passed gate counts beside blocked gate count.
+- `markdown/00-matrix-governance/module-tree.md` - corresponding module ownership records align the same three activation success readiness boundaries with the already-exposed required/passed gate count fields.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - no code change; current projection and scan summary behavior remain the source being documented.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - no code change; current Approval blocker chip details remain unchanged.
+
+Productization supplement: ADV-SM-PROD-001OU Contract repair approval workspace blocker activation entry passed-count documentation alignment.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - earlier activation enablement, activation path, activation execution plan, and activation switch transaction proof readiness detail supplements explicitly include required and passed gate counts beside blocked gate count; the first three also include required and passed enablement counts beside blocked enablement count.
+- `markdown/00-matrix-governance/module-tree.md` - corresponding module ownership records align the same four activation entry readiness boundaries with the already-exposed required/passed count fields.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - no code change; current projection and scan summary behavior remain the source being documented.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - no code change; current Approval blocker chip details remain unchanged.
+
+Productization supplement: ADV-SM-PROD-001OV Contract repair approval workspace blocker compact boundary split documentation.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - documents that compact blocker boundaries intentionally remain blocked-count first-scan summaries while paired detailed readiness boundaries own required/passed/blocked gate counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for the compact/detailed boundary split clarification.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - no code change; current compact and detailed projection strings remain the source being documented.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - no code change; current Approval blocker chip ordering and fallback text remain unchanged.
+
+Productization supplement: ADV-SM-PROD-001OW Contract repair approval workspace blocker fallback scan-summary single-source alignment.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - exports `DEFAULT_CONTRACT_REPAIR_APPROVAL_WORKSPACE_BLOCKER_SUMMARY` from the default workspace blocker projection for panel fallback reuse.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - Approval blocker missing `scan_summary`, next-readiness, readiness-count, readiness-blocked-count, and `readiness_boundary` fallbacks consume the exported default summary instead of stale hand-written fallback values.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - default fallback guard verifies the exported scan summary equals the default projection and contains route-status/control readiness passed-count segments plus the default blocked readiness boundary.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for fallback scan-summary single-source alignment.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OW` as the North Star closeout for stale Approval blocker fallback scan-summary drift.
+
+Productization supplement: ADV-SM-PROD-001OX Contract repair approval workspace blocker display-summary fallback merge alignment.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - exports `mergeWorkspaceBlockerSummaryForDisplay` and uses it to merge partial Approval blocker display summaries with the default workspace blocker summary before rendering.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - component helper test verifies missing/null/empty-string fields fall back to route-status/control readiness defaults while explicit zero remains authoritative.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - `DEFAULT_CONTRACT_REPAIR_APPROVAL_WORKSPACE_BLOCKER_SUMMARY` remains the single fallback source consumed by the panel merge helper.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for display-summary fallback merge alignment.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OX` as the North Star closeout for full Approval blocker display-summary fallback drift.
+
+Productization supplement: ADV-SM-PROD-001OY Contract repair approval workspace lock display-summary fallback merge alignment.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - exports `DEFAULT_CONTRACT_REPAIR_APPROVAL_WORKSPACE_LOCK_SUMMARY` and reuses it when building the default blocker summary.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - exports `mergeWorkspaceLockSummaryForDisplay` and uses it to merge partial Approval lock display summaries before rendering the lock/source/target/readiness chips.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - lock fallback guard verifies the exported default lock summary matches the default projection and preserves blocked-readiness plus no-side-effect defaults.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - component helper test verifies missing/null/empty-string lock fields fall back to defaults while explicit zero and false remain authoritative.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for lock display-summary fallback merge alignment.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OY` as the North Star closeout for Approval lock display-summary fallback drift.
+
+Productization supplement: ADV-SM-PROD-001OZ Contract repair approval workspace lock display literal fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - Approval lock/source/target/readiness rows render directly from the merged workspace lock summary, removing residual local fallback literals.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - existing component render and lock merge-helper tests remain the targeted guard for default display text, explicit zero/false preservation, and omitted-field default recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for lock display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001OZ` as the North Star closeout for Approval lock render fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PA Contract repair approval workspace blocker top-level display literal fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - top-level Approval blocker status/state/source/blocker/readiness/lock fields render directly from the merged workspace blocker summary, removing residual local fallback literals and the now-unused local fallback variable.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - existing component render and blocker merge-helper tests remain the targeted guard for default display text, explicit zero preservation, omitted-field default recovery, and scan/readiness fallback alignment.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for blocker top-level display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PA` as the North Star closeout for Approval blocker top-level render fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PB Contract repair approval workspace runner boundary display literal fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - first Approval blocker runner boundary group renders directly from the merged workspace blocker summary, removing local fallback literals for runner enablement, route success, route success readiness, route status, route status readiness, control, and control readiness.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - blocker merge-helper tests now cover empty/null runner boundary fallback recovery from the default blocker summary while preserving explicit zero counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner boundary display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PB` as the North Star closeout for the first Approval blocker runner boundary fallback cluster.
+
+Productization supplement: ADV-SM-PROD-001PC Contract repair approval workspace lifecycle mutation marker display fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - lifecycle effects, lifecycle effects readiness, contract mutation, contract mutation readiness, recovery marker, and recovery marker persistence readiness render directly from the merged workspace blocker summary, removing their local JSX fallback literals.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - blocker merge-helper tests now cover empty/null lifecycle, mutation, and marker boundary fallback recovery from the default blocker summary while preserving explicit zero counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for lifecycle/mutation/marker display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PC` as the North Star closeout for the lifecycle/mutation/marker Approval blocker fallback cluster.
+
+Productization supplement: ADV-SM-PROD-001PD Contract repair approval workspace transaction atomic display fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - transaction commit, transaction commit readiness, atomic side effects, and atomic side effects readiness render directly from the merged workspace blocker summary, removing their local JSX fallback literals.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - blocker merge-helper tests now cover empty/null transaction and atomic boundary fallback recovery from the default blocker summary while preserving explicit zero counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for transaction/atomic display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PD` as the North Star closeout for the transaction/atomic Approval blocker fallback cluster.
+
+Productization supplement: ADV-SM-PROD-001PE Contract repair approval workspace runner attempt execution dispatch display fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner attempt, runner attempt readiness, runner execution, runner execution readiness, runner dispatch, and runner dispatch readiness render directly from the merged workspace blocker summary, removing their local JSX fallback literals.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - blocker merge-helper tests now cover empty/null attempt, execution, and dispatch boundary fallback recovery from the default blocker summary while preserving explicit zero counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner attempt/execution/dispatch display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PE` as the North Star closeout for the runner attempt/execution/dispatch Approval blocker fallback cluster.
+
+Productization supplement: ADV-SM-PROD-001PF Contract repair approval workspace runner handoff call display fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner handoff, runner handoff readiness, runner call, and runner call readiness render directly from the merged workspace blocker summary, removing their local JSX fallback literals.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - blocker merge-helper tests now cover empty/null handoff and call boundary fallback recovery from the default blocker summary while preserving explicit zero counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner handoff/call display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PF` as the North Star closeout for the runner handoff/call Approval blocker fallback cluster.
+
+Productization supplement: ADV-SM-PROD-001PG Contract repair approval workspace runner body phases display fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner body, runner body readiness, runner phases, and runner phases readiness render directly from the merged workspace blocker summary, removing their local JSX fallback literals.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - blocker merge-helper tests now cover empty/null body and phases boundary fallback recovery from the default blocker summary while preserving explicit zero counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner body/phases display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PG` as the North Star closeout for the runner body/phases Approval blocker fallback cluster.
+
+Productization supplement: ADV-SM-PROD-001PH Contract repair approval workspace runner lifecycle source phase display fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner lifecycle phase, runner lifecycle phase readiness, runner source mutation phase, and runner source mutation phase readiness render directly from the merged workspace blocker summary, removing their local JSX fallback literals.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - blocker merge-helper tests now cover empty/null lifecycle/source phase boundary fallback recovery from the default blocker summary while preserving explicit zero counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner lifecycle/source phase display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PH` as the North Star closeout for the runner lifecycle/source phase Approval blocker fallback cluster.
+
+Productization supplement: ADV-SM-PROD-001PI Contract repair approval workspace runner cleanup commit rollback phase display fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner recovery marker cleanup phase, cleanup phase readiness, transaction commit phase, transaction commit phase readiness, rollback execution phase, and rollback execution phase readiness render directly from the merged workspace blocker summary, removing their local JSX fallback literals.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - blocker merge-helper tests now cover empty/null cleanup, commit, and rollback phase boundary fallback recovery from the default blocker summary while preserving explicit zero counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner cleanup/commit/rollback phase display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PI` as the North Star closeout for the runner cleanup/commit/rollback phase Approval blocker fallback cluster.
+
+Productization supplement: ADV-SM-PROD-001PJ Contract repair approval workspace activation proof display fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - activation enablement readiness, activation path readiness, activation execution plan readiness, and activation switch transaction proof readiness render directly from the merged workspace blocker summary, removing their local JSX fallback literals.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - blocker merge-helper tests now cover empty/null activation proof-prep fallback recovery from the default blocker summary while preserving explicit zero counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for activation proof-prep display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PJ` as the North Star closeout for the activation proof-prep Approval blocker fallback cluster.
+
+Productization supplement: ADV-SM-PROD-001PK Contract repair approval workspace activation write admission handoff display fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - activation switch write transaction enablement, switch write transaction, transaction admission, admission handoff, and handoff enablement readiness render directly from the merged workspace blocker summary, removing their local JSX fallback literals.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - blocker merge-helper tests now cover empty/null activation write/admission/handoff fallback recovery from the default blocker summary while preserving explicit zero counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for activation write/admission/handoff display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PK` as the North Star closeout for the activation write/admission/handoff Approval blocker fallback cluster.
+
+Productization supplement: ADV-SM-PROD-001PL Contract repair approval workspace activation final display fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - activation handoff attempt, post-handoff attempt, success admission, and success return readiness render directly from the merged workspace blocker summary, removing their local JSX fallback literals.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - blocker merge-helper tests now cover empty/null final activation fallback recovery from the default blocker summary while preserving explicit zero counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for final activation display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PL` as the North Star closeout for the final activation Approval blocker fallback cluster.
+
+Productization supplement: ADV-SM-PROD-001PM Contract repair approval workspace blocker tail display fallback removal.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - route boundary, response boundary, record counts, record source, record boundary, and side-effect boundary render directly from the merged workspace blocker summary, removing the remaining local JSX fallback literals on the Approval blocker display row.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - blocker merge-helper tests now cover empty/null tail field fallback recovery from the default blocker summary while preserving explicit zero counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for blocker tail display literal fallback removal.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PM` as the North Star closeout for the Approval blocker display row tail fallback cluster.
+
+Productization supplement: ADV-SM-PROD-001PN Contract repair selected target decision lock display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target read-model decision lock and decision lock summary status/primary/response/route/target/http/reason/inherited-count fields render from `mergeWorkspaceLockSummaryForDisplay` and normalized count helpers, removing local fallback literals from those display blocks.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - lock merge-helper tests now cover empty status, empty primary blocked reason, and explicit zero HTTP status fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target decision lock display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PN` as the North Star closeout for selected-target decision lock display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PO Contract repair selected target backend lifecycle display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target backend preview and lifecycle ledger fields render from component-level display fallback merge helpers, removing local fallback literals from those display blocks.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - backend preview and lifecycle entry merge-helper tests cover empty/null fallback recovery plus explicit false/zero preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target backend lifecycle display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PO` as the North Star closeout for selected-target backend preview/lifecycle display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PP Contract repair selected target record review display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target record surface and review intent fields render from component-level display fallback merge helpers, removing local fallback literals from those display blocks.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - record surface and review intent merge-helper tests cover empty/null fallback recovery plus explicit false/zero preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target record review display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PP` as the North Star closeout for selected-target record surface/review intent display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PQ Contract repair selected target execution display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target review execution gate and execution plan fields render from component-level display fallback merge helpers, removing local fallback literals from those display blocks.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - execution gate and execution plan merge-helper tests cover empty/null fallback recovery plus explicit false/list preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target execution display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PQ` as the North Star closeout for selected-target review execution gate/plan display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PR Contract repair selected target approve gate display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target approve execution gate fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approve gate merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target approve gate display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PR` as the North Star closeout for selected-target approve execution gate display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PS Contract repair selected target approve transaction display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target approve execution transaction fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approve transaction merge-helper tests cover empty/null fallback recovery plus explicit false/list preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target approve transaction display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PS` as the North Star closeout for selected-target approve execution transaction display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PT Contract repair selected target approve admission display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target approve execution admission fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approve admission merge-helper tests cover empty fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target approve admission display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PT` as the North Star closeout for selected-target approve execution admission display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PU Contract repair selected target transaction runner enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target transaction runner enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - transaction runner enablement merge-helper tests cover empty fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target transaction runner enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PU` as the North Star closeout for selected-target transaction runner enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PV Contract repair selected target transaction runner dry-run display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target transaction runner dry-run fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - transaction runner dry-run merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target transaction runner dry-run display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PV` as the North Star closeout for selected-target transaction runner dry-run display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PW Contract repair selected target recovery marker write display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target recovery marker write fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - recovery marker write merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target recovery marker write display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PW` as the North Star closeout for selected-target recovery marker write display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PX Contract repair selected target recovery marker idempotency display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target recovery marker idempotency fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - recovery marker idempotency merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target recovery marker idempotency display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PX` as the North Star closeout for selected-target recovery marker idempotency display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PY Contract repair selected target recovery marker persistence gate display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target recovery marker persistence gate fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - recovery marker persistence gate merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target recovery marker persistence gate display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PY` as the North Star closeout for selected-target recovery marker persistence gate display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001PZ Contract repair selected target recovery marker persistence readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target recovery marker persistence readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - recovery marker persistence readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target recovery marker persistence readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001PZ` as the North Star closeout for selected-target recovery marker persistence readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QA Contract repair selected target transaction commit gate display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target transaction commit gate fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - transaction commit gate merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target transaction commit gate display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QA` as the North Star closeout for selected-target transaction commit gate display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QB Contract repair selected target transaction commit readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target transaction commit readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - transaction commit readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target transaction commit readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QB` as the North Star closeout for selected-target transaction commit readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QC Contract repair selected target atomic side effects gate display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target atomic side effects gate fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - atomic side effects gate merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target atomic side effects gate display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QC` as the North Star closeout for selected-target atomic side effects gate display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QD Contract repair selected target atomic side effects enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target atomic side effects enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - atomic side effects enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target atomic side effects enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QD` as the North Star closeout for selected-target atomic side effects enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QE Contract repair selected target atomic side effects readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target atomic side effects readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - atomic side effects readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target atomic side effects readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QE` as the North Star closeout for selected-target atomic side effects readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QF Contract repair selected target runner attempt enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner attempt enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner attempt enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner attempt enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QF` as the North Star closeout for selected-target runner attempt enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QG Contract repair selected target runner attempt display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner attempt fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner attempt merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner attempt display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QG` as the North Star closeout for selected-target runner attempt display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QH Contract repair selected target runner attempt readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner attempt readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner attempt readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner attempt readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QH` as the North Star closeout for selected-target runner attempt readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QI Contract repair selected target runner execution enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner execution enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner execution enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner execution enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QI` as the North Star closeout for selected-target runner execution enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QJ Contract repair selected target runner execution readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner execution readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner execution readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner execution readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QJ` as the North Star closeout for selected-target runner execution readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QK Contract repair selected target runner outcome display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner outcome fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner outcome merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner outcome display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QK` as the North Star closeout for selected-target runner outcome display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QL Contract repair selected target route dispatch enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target route dispatch enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - route dispatch enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target route dispatch enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QL` as the North Star closeout for selected-target route dispatch enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QM Contract repair selected target runner dispatch display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner dispatch fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner dispatch merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner dispatch display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QM` as the North Star closeout for selected-target runner dispatch display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QN Contract repair selected target runner dispatch readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner dispatch readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner dispatch readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner dispatch readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QN` as the North Star closeout for selected-target runner dispatch readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QO Contract repair selected target runner handoff display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner handoff fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner handoff merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner handoff display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QO` as the North Star closeout for selected-target runner handoff display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QP Contract repair selected target runner handoff readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner handoff readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner handoff readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner handoff readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QP` as the North Star closeout for selected-target runner handoff readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QQ Contract repair selected target runner call enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner call enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner call enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner call enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QQ` as the North Star closeout for selected-target runner call enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QR Contract repair selected target runner call display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner call fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner call merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner call display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QR` as the North Star closeout for selected-target runner call display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QS Contract repair selected target runner call readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner call readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner call readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner call readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QS` as the North Star closeout for selected-target runner call readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QT Contract repair selected target runner body enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner body enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner body enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner body enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QT` as the North Star closeout for selected-target runner body enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QU Contract repair selected target runner body display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner body fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner body merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner body display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QU` as the North Star closeout for selected-target runner body display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QV Contract repair selected target runner body readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner body readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner body readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner body readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QV` as the North Star closeout for selected-target runner body readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QW Contract repair selected target runner phase execution enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner phase execution enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner phase execution enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner phase execution enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QW` as the North Star closeout for selected-target runner phase execution enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QX Contract repair selected target runner phases display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner phases fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner phases merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner phases display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QX` as the North Star closeout for selected-target runner phases display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QY Contract repair selected target runner phases readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner phases readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner phases readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner phases readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QY` as the North Star closeout for selected-target runner phases readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001QZ Contract repair selected target runner lifecycle phase enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner lifecycle phase enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner lifecycle phase enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner lifecycle phase enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001QZ` as the North Star closeout for selected-target runner lifecycle phase enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RA Contract repair selected target runner lifecycle phase display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner lifecycle phase fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner lifecycle phase merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner lifecycle phase display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RA` as the North Star closeout for selected-target runner lifecycle phase display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RB Contract repair selected target runner lifecycle phase readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner lifecycle phase readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner lifecycle phase readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner lifecycle phase readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RB` as the North Star closeout for selected-target runner lifecycle phase readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RC Contract repair selected target runner source mutation phase enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner source mutation phase enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner source mutation phase enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner source mutation phase enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RC` as the North Star closeout for selected-target runner source mutation phase enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RD Contract repair selected target runner source mutation phase display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner source mutation phase fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner source mutation phase merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner source mutation phase display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RD` as the North Star closeout for selected-target runner source mutation phase display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RE Contract repair selected target runner source mutation phase readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner source mutation phase readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner source mutation phase readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner source mutation phase readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RE` as the North Star closeout for selected-target runner source mutation phase readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RF Contract repair selected target runner recovery marker cleanup phase enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner recovery marker cleanup phase enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner recovery marker cleanup phase enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner recovery marker cleanup phase enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RF` as the North Star closeout for selected-target runner recovery marker cleanup phase enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RG Contract repair selected target runner recovery marker cleanup phase display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner recovery marker cleanup phase fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner recovery marker cleanup phase merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner recovery marker cleanup phase display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RG` as the North Star closeout for selected-target runner recovery marker cleanup phase display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RH Contract repair selected target runner recovery marker cleanup phase readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner recovery marker cleanup phase readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner recovery marker cleanup phase readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner recovery marker cleanup phase readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RH` as the North Star closeout for selected-target runner recovery marker cleanup phase readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RI Contract repair selected target runner transaction commit phase enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner transaction commit phase enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner transaction commit phase enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner transaction commit phase enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RI` as the North Star closeout for selected-target runner transaction commit phase enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RJ Contract repair selected target runner transaction commit phase display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner transaction commit phase fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner transaction commit phase merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner transaction commit phase display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RJ` as the North Star closeout for selected-target runner transaction commit phase display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RK Contract repair selected target runner transaction commit phase readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner transaction commit phase readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner transaction commit phase readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner transaction commit phase readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RK` as the North Star closeout for selected-target runner transaction commit phase readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RL Contract repair selected target runner rollback execution phase enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner rollback execution phase enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner rollback execution phase enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner rollback execution phase enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RL` as the North Star closeout for selected-target runner rollback execution phase enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RM Contract repair selected target runner rollback execution phase display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner rollback execution phase fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner rollback execution phase merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner rollback execution phase display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RM` as the North Star closeout for selected-target runner rollback execution phase display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RN Contract repair selected target runner rollback execution phase readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner rollback execution phase readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner rollback execution phase readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner rollback execution phase readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RN` as the North Star closeout for selected-target runner rollback execution phase readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RO Contract repair selected target runner activation enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RO` as the North Star closeout for selected-target runner activation enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RP Contract repair selected target runner activation enablement readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation enablement readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation enablement readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation enablement readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RP` as the North Star closeout for selected-target runner activation enablement readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RQ Contract repair selected target runner activation path display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation path fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation path merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation path display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RQ` as the North Star closeout for selected-target runner activation path display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RR Contract repair selected target runner activation path readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation path readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation path readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation path readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RR` as the North Star closeout for selected-target runner activation path readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RS Contract repair selected target runner activation execution plan display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation execution plan fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation execution plan merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation execution plan display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RS` as the North Star closeout for selected-target runner activation execution plan display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RT Contract repair selected target runner activation execution plan readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation execution plan readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation execution plan readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation execution plan readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RT` as the North Star closeout for selected-target runner activation execution plan readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RU Contract repair selected target runner activation switch transaction proof display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation switch transaction proof fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation switch transaction proof merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation switch transaction proof display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RU` as the North Star closeout for selected-target runner activation switch transaction proof display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RV Contract repair selected target runner activation switch transaction proof readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation switch transaction proof readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation switch transaction proof readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation switch transaction proof readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RV` as the North Star closeout for selected-target runner activation switch transaction proof readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RW Contract repair selected target runner activation switch write transaction enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation switch write transaction enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation switch write transaction enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation switch write transaction enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RW` as the North Star closeout for selected-target runner activation switch write transaction enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RX Contract repair selected target runner activation switch write transaction enablement readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation switch write transaction enablement readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation switch write transaction enablement readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation switch write transaction enablement readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RX` as the North Star closeout for selected-target runner activation switch write transaction enablement readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RY Contract repair selected target runner activation switch write transaction display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation switch write transaction fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation switch write transaction merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation switch write transaction display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RY` as the North Star closeout for selected-target runner activation switch write transaction display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001RZ Contract repair selected target runner activation switch write transaction readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation switch write transaction readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation switch write transaction readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation switch write transaction readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001RZ` as the North Star closeout for selected-target runner activation switch write transaction readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SA Contract repair selected target runner activation transaction admission display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation transaction admission fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation transaction admission merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation transaction admission display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SA` as the North Star closeout for selected-target runner activation transaction admission display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SB Contract repair selected target runner activation transaction admission readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation transaction admission readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation transaction admission readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation transaction admission readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SB` as the North Star closeout for selected-target runner activation transaction admission readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SC Contract repair selected target runner activation admission handoff display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation admission handoff fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation admission handoff merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation admission handoff display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SC` as the North Star closeout for selected-target runner activation admission handoff display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SD Contract repair selected target runner activation admission handoff readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation admission handoff readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation admission handoff readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation admission handoff readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SD` as the North Star closeout for selected-target runner activation admission handoff readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SE Contract repair selected target runner activation handoff enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation handoff enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation handoff enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation handoff enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SE` as the North Star closeout for selected-target runner activation handoff enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SF Contract repair selected target runner activation handoff enablement readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation handoff enablement readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation handoff enablement readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation handoff enablement readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SF` as the North Star closeout for selected-target runner activation handoff enablement readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SG Contract repair selected target runner activation handoff attempt display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation handoff attempt fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation handoff attempt merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation handoff attempt display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SG` as the North Star closeout for selected-target runner activation handoff attempt display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SH Contract repair selected target runner activation handoff attempt readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation handoff attempt readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation handoff attempt readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation handoff attempt readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SH` as the North Star closeout for selected-target runner activation handoff attempt readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SI Contract repair selected target runner activation post-handoff attempt display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation post-handoff attempt fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation post-handoff attempt merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation post-handoff attempt display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SI` as the North Star closeout for selected-target runner activation post-handoff attempt display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SJ Contract repair selected target runner activation post-handoff attempt readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation post-handoff attempt readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation post-handoff attempt readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation post-handoff attempt readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SJ` as the North Star closeout for selected-target runner activation post-handoff attempt readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SK Contract repair selected target runner activation success admission display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation success admission fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation success admission merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation success admission display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SK` as the North Star closeout for selected-target runner activation success admission display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SL Contract repair selected target runner activation success admission readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation success admission readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation success admission readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation success admission readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SL` as the North Star closeout for selected-target runner activation success admission readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SM Contract repair selected target runner activation success return display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation success return fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation success return merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation success return display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SM` as the North Star closeout for selected-target runner activation success return display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SN Contract repair selected target runner activation success return readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner activation success return readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation success return readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner activation success return readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SN` as the North Star closeout for selected-target runner activation success return readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SO Contract repair selected target runner route success readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner route success readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner route success readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner route success readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SO` as the North Star closeout for selected-target runner route success readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SP Contract repair selected target runner route status readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner route status readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner route status readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner route status readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SP` as the North Star closeout for selected-target runner route status readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SQ Contract repair selected target runner control readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner control readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner control readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner control readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SQ` as the North Star closeout for selected-target runner control readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SR Contract repair selected target runner enablement plan display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target runner enablement plan fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner enablement plan merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target runner enablement plan display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SR` as the North Star closeout for selected-target runner enablement plan display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SS Contract repair selected target persistence plan display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target persistence plan fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - persistence plan merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target persistence plan display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SS` as the North Star closeout for selected-target persistence plan display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001ST Contract repair selected target persistence path display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target persistence path fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - persistence path merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target persistence path display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ST` as the North Star closeout for selected-target persistence path display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SU Contract repair selected target record snapshot display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target record snapshot fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - record snapshot merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target record snapshot display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SU` as the North Star closeout for selected-target record snapshot display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SV Contract repair selected target storage readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target storage readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - storage readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target storage readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SV` as the North Star closeout for selected-target storage readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SW Contract repair selected target storage dry-run display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target storage dry-run fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - storage dry-run merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target storage dry-run display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SW` as the North Star closeout for selected-target storage dry-run display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SX Contract repair selected target idempotency precheck display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target idempotency precheck fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - idempotency precheck merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target idempotency precheck display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SX` as the North Star closeout for selected-target idempotency precheck display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SY Contract repair selected target review transition dry-run display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target review transition dry-run fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - review transition dry-run merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target review transition dry-run display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SY` as the North Star closeout for selected-target review transition dry-run display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001SZ Contract repair selected target record write dry-run display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target record write dry-run fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - record write dry-run merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target record write dry-run display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001SZ` as the North Star closeout for selected-target record write dry-run display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TA Contract repair selected target lifecycle dry-run display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target lifecycle dry-run fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - lifecycle dry-run merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target lifecycle dry-run display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TA` as the North Star closeout for selected-target lifecycle dry-run display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TB Contract repair selected target lifecycle entry append dry-run display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target lifecycle entry append dry-run fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - lifecycle entry append dry-run merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target lifecycle entry append dry-run display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TB` as the North Star closeout for selected-target lifecycle entry append dry-run display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TC Contract repair selected target lifecycle entry append switch display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target lifecycle entry append switch fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - lifecycle entry append switch merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target lifecycle entry append switch display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TC` as the North Star closeout for selected-target lifecycle entry append switch display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TD Contract repair selected target contract writeback dry-run display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target contract writeback dry-run fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - contract writeback dry-run merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target contract writeback dry-run display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TD` as the North Star closeout for selected-target contract writeback dry-run display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TE Contract repair selected target contract mutation enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target contract mutation enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - contract mutation enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target contract mutation enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TE` as the North Star closeout for selected-target contract mutation enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TF Contract repair selected target contract mutation readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target contract mutation readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - contract mutation readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target contract mutation readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TF` as the North Star closeout for selected-target contract mutation readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TG Contract repair selected target lifecycle emission enablement display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target lifecycle emission enablement fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - lifecycle emission enablement merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target lifecycle emission enablement display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TG` as the North Star closeout for selected-target lifecycle emission enablement display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TH Contract repair selected target lifecycle effects readiness display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target lifecycle effects readiness fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - lifecycle effects readiness merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target lifecycle effects readiness display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TH` as the North Star closeout for selected-target lifecycle effects readiness display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TI Contract repair selected target lifecycle event emission switch display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target lifecycle event emission switch fields render from a component-level display fallback merge helper, removing local fallback literals from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - lifecycle event emission switch merge-helper tests cover empty/null fallback recovery plus explicit false preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target lifecycle event emission switch display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TI` as the North Star closeout for selected-target lifecycle event emission switch display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TJ Contract repair selected target approval hash input display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target approval hash input fields render from a component-level display fallback merge helper, removing local structural assumptions from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approval hash input merge-helper tests cover empty/null fallback recovery plus canonical field preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target approval hash input display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TJ` as the North Star closeout for selected-target approval hash input display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TK Contract repair selected target approval request envelope display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target approval request envelope summary fields render from a component-level display fallback merge helper, removing local structural assumptions from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approval request envelope merge-helper tests cover empty/null fallback recovery plus array preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target approval request envelope display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TK` as the North Star closeout for selected-target approval request envelope display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TL Contract repair selected target approval audit summary display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target approval audit summary fields render from a component-level display fallback merge helper, removing local structural assumptions from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approval audit summary merge-helper tests cover empty/null fallback recovery plus count preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target approval audit summary display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TL` as the North Star closeout for selected-target approval audit summary display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TM Contract repair selected target approval route contract display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target approval route contract fields render from a component-level display fallback merge helper, removing local structural assumptions from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approval route contract merge-helper tests cover empty/null fallback recovery plus route metadata preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target approval route contract display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TM` as the North Star closeout for selected-target approval route contract display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TN Contract repair selected target approval body preview display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target approval body preview fields render from a component-level display fallback merge helper, removing local structural assumptions from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approval body preview merge-helper tests cover empty/null fallback recovery plus body metadata preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target approval body preview display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TN` as the North Star closeout for selected-target approval body preview display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TO Contract repair selected target approval read-model contract display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target approval read-model contract fields render from a component-level display fallback merge helper, removing local structural assumptions from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approval read-model contract merge-helper tests cover empty/null fallback recovery plus read-model metadata preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected-target approval read-model contract display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TO` as the North Star closeout for selected-target approval read-model contract display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TP Contract repair selected target summary display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target summary fields render from a component-level display fallback merge helper, removing local structural assumptions from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected repair target merge-helper tests cover empty/null fallback recovery plus target metadata preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair target summary display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TP` as the North Star closeout for selected repair target summary display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TQ Contract repair selected repair draft display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair draft fields render from a component-level display fallback merge helper, removing local structural assumptions from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected repair draft merge-helper tests cover empty/null fallback recovery plus draft metadata preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair draft display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TQ` as the North Star closeout for selected repair draft display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TR Contract repair selected repair form preview display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair form preview fields render from a component-level display fallback merge helper, removing local structural assumptions from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected repair form preview merge-helper tests cover empty/null fallback recovery plus field metadata preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair form preview display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TR` as the North Star closeout for selected repair form preview display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TS Contract repair selected proposal payload display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair proposal payload summary fields render from a component-level display fallback merge helper, removing local structural assumptions from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected repair proposal payload merge-helper tests cover empty/null fallback recovery plus changed-field preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair proposal payload display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TS` as the North Star closeout for selected repair proposal payload display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TT Contract repair selected proposal preflight display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair proposal preflight fields render from a component-level display fallback merge helper, removing local structural assumptions from that display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected repair proposal preflight merge-helper tests cover empty/null fallback recovery plus blocked-code preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair proposal preflight display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TT` as the North Star closeout for selected repair proposal preflight display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TU Contract repair selected submit disabled reason display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair submit-disabled reason text and approval-shell disabled-until text render from the proposal payload display fallback merge helper.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected repair proposal payload merge-helper tests cover empty/null disabled reason fallback plus reason preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair submit-disabled reason display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TU` as the North Star closeout for selected repair submit-disabled reason display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TV Contract repair selected approval entrypoint display fallback merge.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair approval entrypoint fields, button label, and shell action id render from a component-level display fallback merge helper.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected repair approval entrypoint merge-helper tests cover empty/null fallback recovery plus gate preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair approval entrypoint display fallback merge.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TV` as the North Star closeout for selected repair approval entrypoint display fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TW Contract repair selected form field name text display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair form field name text renders from a component-level display helper, removing local fallback text from the form preview display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected repair form field name helper tests cover empty/null fallback recovery plus field-name preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair form field name text display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TW` as the North Star closeout for selected repair form field name text fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TX Contract repair selected form suggestion text display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair form suggestion text renders from a component-level display helper, removing local fallback text from the form suggestion display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected repair form suggestion helper tests cover empty/null fallback recovery plus suggested-value and placeholder preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair form suggestion text display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TX` as the North Star closeout for selected repair form suggestion text fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TY Contract repair selected local diff text display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair local diff text renders from a component-level display helper, removing local fallback text from the local draft diff display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected repair local diff helper tests cover empty/null fallback recovery plus empty-value preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair local diff text display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TY` as the North Star closeout for selected repair local diff text fallback drift.
+
+Productization supplement: ADV-SM-PROD-001TZ Contract repair selected array text display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair changed-field, disabled-reason, blocked-code, required-gate, approval-request, body-preview, and hash-input array text render from `joinedDisplayList`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - display list helper tests cover default/custom fallback recovery plus array preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair array text display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001TZ` as the North Star closeout for selected repair array text fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UA Contract repair selected lifecycle ledger display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair approval lifecycle ledger entries and latest-entry summary render from a component-level display helper.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected repair approval lifecycle ledger helper tests cover empty/null fallback recovery plus latest-entry preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair approval lifecycle ledger display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UA` as the North Star closeout for selected repair approval lifecycle ledger fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UB Contract repair selected approve transaction step count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair approve transaction step count renders from `displayListCount`, removing local step-order count fallback from the approve transaction display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - display count helper tests cover non-array, empty-array, and populated-list counts.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair approve transaction step count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UB` as the North Star closeout for selected repair approve transaction step count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UC Contract repair selected transaction runner phase count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair transaction runner phase count renders from `displayListCount`, removing local phase-order count fallback from the transaction runner display block.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - transaction runner dry-run tests assert display-count fallback over normalized phase order.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair transaction runner phase count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UC` as the North Star closeout for selected repair transaction runner phase count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UD Contract repair selected recovery marker persistence count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair recovery marker persistence inherited, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - recovery marker persistence readiness tests assert display-count fallback over normalized gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair recovery marker persistence count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UD` as the North Star closeout for selected repair recovery marker persistence count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UE Contract repair selected transaction commit count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair transaction commit inherited, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - transaction commit readiness tests assert display-count fallback over normalized gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair transaction commit count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UE` as the North Star closeout for selected repair transaction commit count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UF Contract repair selected atomic side effects enablement count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair atomic side effects enablement inherited, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - atomic side effects enablement tests assert display-count fallback over normalized gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair atomic side effects enablement count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UF` as the North Star closeout for selected repair atomic side effects enablement count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UG Contract repair selected atomic side effects readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair atomic side effects readiness inherited, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - atomic side effects readiness tests assert display-count fallback over normalized gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair atomic side effects readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UG` as the North Star closeout for selected repair atomic side effects readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UH Contract repair selected runner attempt readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner attempt readiness inherited attempt, inherited enablement, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner attempt readiness tests assert display-count fallback over normalized blocker and gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner attempt readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UH` as the North Star closeout for selected repair runner attempt readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UI Contract repair selected runner execution readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner execution readiness inherited outcome, inherited enablement, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner execution readiness tests assert display-count fallback over normalized blocker and gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner execution readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UI` as the North Star closeout for selected repair runner execution readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UJ Contract repair selected runner dispatch readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner dispatch readiness inherited dispatch, inherited route-dispatch enablement, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner dispatch readiness tests assert display-count fallback over normalized blocker and gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner dispatch readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UJ` as the North Star closeout for selected repair runner dispatch readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UK Contract repair selected runner handoff readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner handoff readiness inherited handoff, inherited dispatch-readiness, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner handoff readiness tests assert display-count fallback over normalized blocker and gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner handoff readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UK` as the North Star closeout for selected repair runner handoff readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UL Contract repair selected runner call readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner call readiness inherited call, inherited call enablement, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner call readiness tests assert display-count fallback over normalized blocker and gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner call readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UL` as the North Star closeout for selected repair runner call readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UM Contract repair selected runner body readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner body readiness inherited body, inherited body enablement, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner body readiness tests assert display-count fallback over normalized blocker and gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner body readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UM` as the North Star closeout for selected repair runner body readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UN Contract repair selected runner phase execution count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner phase execution enablement phase-order and rollback-order counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner phase execution enablement tests assert display-count fallback over normalized phase and rollback order arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner phase execution count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UN` as the North Star closeout for selected repair runner phase execution count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UO Contract repair selected runner phases count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner phases phase-order and rollback-order counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner phases tests assert display-count fallback over normalized phase and rollback order arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner phases count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UO` as the North Star closeout for selected repair runner phases count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UP Contract repair selected runner phases readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner phases readiness inherited sequence, inherited phase-execution enablement, required, blocked, phase-order, and rollback-order counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner phases readiness tests assert display-count fallback over normalized blocker, gate, phase-order, and rollback-order arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner phases readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UP` as the North Star closeout for selected repair runner phases readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UQ Contract repair selected runner lifecycle phase readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner lifecycle phase readiness inherited lifecycle, inherited lifecycle enablement, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner lifecycle phase readiness tests assert display-count fallback over normalized blocker and gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner lifecycle phase readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UQ` as the North Star closeout for selected repair runner lifecycle phase readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UR Contract repair selected runner source mutation phase readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner source mutation phase readiness inherited source, inherited source enablement, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner source mutation phase readiness tests assert display-count fallback over normalized blocker and gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner source mutation phase readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UR` as the North Star closeout for selected repair runner source mutation phase readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001US Contract repair selected runner recovery marker cleanup phase readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner recovery marker cleanup phase readiness inherited cleanup, inherited cleanup enablement, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner recovery marker cleanup phase readiness tests assert display-count fallback over normalized blocker and gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner recovery marker cleanup phase readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001US` as the North Star closeout for selected repair runner recovery marker cleanup phase readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UT Contract repair selected runner transaction commit phase readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner transaction commit phase readiness inherited commit, inherited commit enablement, required, and blocked gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner transaction commit phase readiness tests assert display-count fallback over normalized blocker and gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner transaction commit phase readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UT` as the North Star closeout for selected repair runner transaction commit phase readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UU Contract repair selected runner rollback execution phase count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner rollback execution phase rollback-order, inherited rollback, inherited rollback enablement, required, blocked, and readiness rollback-order counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner rollback execution phase tests assert display-count fallback over normalized rollback order, blocker, and gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner rollback execution phase count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UU` as the North Star closeout for selected repair runner rollback execution phase count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UV Contract repair selected runner activation path step count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner activation path step count renders from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation path tests assert display-count fallback over normalized activation steps.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner activation path step count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UV` as the North Star closeout for selected repair runner activation path step count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UW Contract repair selected runner activation switch write enablement write-set count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner activation switch write transaction enablement write-set count renders from `displayListCount` with explicit fallback count.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - display count helper and activation switch write transaction enablement tests assert fallback count and array count behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner activation switch write transaction enablement write-set count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UW` as the North Star closeout for selected repair activation switch write transaction enablement write-set count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UX Contract repair selected runner activation switch write transaction count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner activation switch write transaction step, readiness required-gate, readiness passed-gate, and readiness step counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - activation switch write transaction tests assert display-count fallback over normalized activation write order and readiness gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner activation switch write transaction count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UX` as the North Star closeout for selected repair activation switch write transaction count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UY Contract repair selected runner activation transaction admission count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner activation transaction admission step, readiness required-gate, readiness passed-gate, and readiness step counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - activation transaction admission tests assert display-count fallback over normalized activation write order and readiness gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner activation transaction admission count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UY` as the North Star closeout for selected repair activation transaction admission count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001UZ Contract repair selected runner activation admission handoff count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner activation admission handoff step, readiness required-gate, readiness passed-gate, and readiness step counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - activation admission handoff tests assert display-count fallback over normalized activation write order and readiness gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner activation admission handoff count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001UZ` as the North Star closeout for selected repair activation admission handoff count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VA Contract repair selected runner activation handoff enablement count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner activation handoff enablement step, readiness required-gate, readiness passed-gate, and readiness step counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - activation handoff enablement tests assert display-count fallback over normalized activation write order and readiness gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner activation handoff enablement count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VA` as the North Star closeout for selected repair activation handoff enablement count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VB Contract repair selected runner activation handoff attempt count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner activation handoff attempt inherited enablement, step, readiness required-gate, readiness passed-gate, readiness inherited attempt, readiness inherited enablement, and readiness step counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - activation handoff attempt tests assert display-count fallback over normalized inherited blocker, activation write order, and readiness gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner activation handoff attempt count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VB` as the North Star closeout for selected repair activation handoff attempt count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VC Contract repair selected runner activation post-handoff attempt count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner activation post-handoff attempt inherited attempt, inherited enablement, step, readiness required-gate, readiness passed-gate, readiness inherited post, readiness inherited handoff, and readiness step counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - activation post-handoff attempt tests assert display-count fallback over normalized inherited blocker, activation write order, and readiness gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner activation post-handoff attempt count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VC` as the North Star closeout for selected repair activation post-handoff attempt count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VD Contract repair selected runner activation success admission count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner activation success admission inherited post, inherited handoff, inherited enablement, step, readiness required-gate, readiness passed-gate, readiness inherited admission, readiness inherited post, and readiness step counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - activation success admission tests assert display-count fallback over normalized inherited blocker, activation write order, and readiness gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner activation success admission count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VD` as the North Star closeout for selected repair activation success admission count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VE Contract repair selected runner activation success return count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner activation success return inherited admission, inherited post, inherited handoff, inherited enablement, step, readiness required-gate, readiness passed-gate, readiness inherited return, readiness inherited admission, and readiness step counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - activation success return tests assert display-count fallback over normalized inherited blocker, activation write order, and readiness gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner activation success return count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VE` as the North Star closeout for selected repair activation success return count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VF Contract repair selected runner route success readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner route success readiness inherited success-return, inherited enablement-plan, required-gate, passed-gate, and blocked-gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - route success readiness tests assert display-count fallback over normalized inherited blocker and readiness gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner route success readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VF` as the North Star closeout for selected repair route success readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VG Contract repair selected runner route status readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner route status readiness inherited route-success, inherited reason, required-gate, passed-gate, and blocked-gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - route status readiness tests assert display-count fallback over normalized inherited blocker, inherited reason, and readiness gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner route status readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VG` as the North Star closeout for selected repair route status readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VH Contract repair selected runner control readiness count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner control readiness inherited attempt, inherited outcome, inherited dispatch, inherited call, inherited body, inherited phase, required-gate, passed-gate, and blocked-gate counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner control readiness tests assert display-count fallback over normalized inherited blocker and readiness gate arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner control readiness count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VH` as the North Star closeout for selected repair runner control readiness count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VI Contract repair selected runner enablement plan count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair runner enablement plan required and blocked enablement counts render from `displayListCount`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner enablement plan tests assert display-count fallback over normalized required and blocked enablement arrays.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected repair runner enablement plan count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VI` as the North Star closeout for selected repair runner enablement plan count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VJ Contract repair decision lock summary count display fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - decision lock inherited blocked reason and route-status blocker counts render from `displayListCount` with backend fallback counts.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - decision lock count helper tests assert array-priority and backend fallback-count behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for decision lock summary count display fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VJ` as the North Star closeout for decision lock summary count fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VK Contract repair read-model contract source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair read-model contract source object passes raw snapshot status, route status, and record count into `mergeApprovalReadModelContractForDisplay`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - read-model contract merge tests assert null snapshot record count fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for read-model contract source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VK` as the North Star closeout for read-model contract source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VL Contract repair proposal source-ref source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - repair proposal payloads pass raw repair target `contract_source_ref` forward and let downstream envelope/body display merges own missing source-ref fallback recovery.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - body preview merge tests assert undefined source-ref fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for proposal source-ref source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VL` as the North Star closeout for proposal source-ref source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VM Contract repair approval source canonical fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval request envelopes append contract source canonical fields through `approvalContractSourceCanonicalField`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approval source canonical helper tests assert absent, full, and partial source-ref behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for approval source canonical fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VM` as the North Star closeout for approval source canonical fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VN Contract repair approval request id fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval request envelopes and body previews build request ids through `approvalRequestIdForDisplay`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approval request id helper tests assert draft-id priority, target-path fallback, and empty payload behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for approval request id fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VN` as the North Star closeout for approval request id fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VO Contract repair proposal text field fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - repair proposal payload text fields derive draft id, target path, target kind, editor surface, and action label through `repairProposalTextFieldForDisplay`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - repair proposal text field helper tests assert null, empty, and populated fallback behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for proposal text field fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VO` as the North Star closeout for proposal text field fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VP Contract repair selected draft source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair drafts pass raw into draft and form-preview display merges without local `{}` injection.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected repair draft merge tests assert null draft fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected draft source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VP` as the North Star closeout for selected draft source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VQ Contract repair workspace summary source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - workspace lock and blocker summary display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - display object entry helper tests assert null input recovery, empty-string omission, and explicit falsey value preservation.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for workspace summary source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VQ` as the North Star closeout for workspace summary source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VR Contract repair selected display source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected repair target, draft, and form-preview display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected target and form-preview merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected display source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VR` as the North Star closeout for selected display source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VS Contract repair approval backend lifecycle source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval backend preview and lifecycle entry display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - backend preview and lifecycle entry merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for approval backend lifecycle source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VS` as the North Star closeout for approval backend lifecycle source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VT Contract repair approval request surface source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval hash input and request envelope display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - hash input and request envelope merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for approval request surface source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VT` as the North Star closeout for approval request surface source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VU Contract repair approval contract display source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval audit summary, route contract, body preview, and read-model contract display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approval contract display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for approval contract display source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VU` as the North Star closeout for approval contract display source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VV Contract repair selected proposal source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - selected proposal payload, proposal preflight, and approval entrypoint display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - selected proposal display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for selected proposal source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VV` as the North Star closeout for selected proposal source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VW Contract repair approval record review source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approval record surface, review intent, execution gate, and execution plan display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approval record/review display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for approval record review source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VW` as the North Star closeout for approval record review source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VX Contract repair approve decision source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - approve gate, approve transaction, and approve admission display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - approve decision display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for approve decision source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VX` as the North Star closeout for approve decision source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VY Contract repair transaction runner source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - transaction runner enablement and dry-run display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - transaction runner display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for transaction runner source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VY` as the North Star closeout for transaction runner source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001VZ Contract repair recovery marker source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - recovery marker write, idempotency, persistence gate, and persistence readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - recovery marker display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for recovery marker source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001VZ` as the North Star closeout for recovery marker source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WA Contract repair transaction commit source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - transaction commit gate and readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - transaction commit display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for transaction commit source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WA` as the North Star closeout for transaction commit source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WB Contract repair atomic side-effects source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - atomic side-effects gate, enablement, and readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - atomic side-effects display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for atomic side-effects source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WB` as the North Star closeout for atomic side-effects source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WC Contract repair runner attempt source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner attempt enablement, attempt preview, and attempt readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner attempt display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner attempt source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WC` as the North Star closeout for runner attempt source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WD Contract repair runner execution source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner execution enablement, execution readiness, and outcome display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner execution display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner execution source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WD` as the North Star closeout for runner execution source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WE Contract repair route dispatch source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - route dispatch enablement, runner dispatch, and dispatch readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - route dispatch display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for route dispatch source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WE` as the North Star closeout for route dispatch source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WF Contract repair runner handoff source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner handoff and handoff readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner handoff display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner handoff source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WF` as the North Star closeout for runner handoff source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WG Contract repair runner call source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner call enablement, runner call, and call readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner call display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner call source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WG` as the North Star closeout for runner call source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WH Contract repair runner body source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner body enablement, runner body, and body readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner body display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner body source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WH` as the North Star closeout for runner body source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WI Contract repair runner phase source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner phase execution enablement, phases, and phases readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner phase display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner phase source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WI` as the North Star closeout for runner phase source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WJ Contract repair runner lifecycle phase source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner lifecycle phase enablement, lifecycle phase, and lifecycle phase readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner lifecycle phase display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner lifecycle phase source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WJ` as the North Star closeout for runner lifecycle phase source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WK Contract repair runner source mutation phase source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner source mutation phase enablement, phase, and readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner source mutation phase display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner source mutation phase source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WK` as the North Star closeout for runner source mutation phase source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WL Contract repair runner recovery marker cleanup phase source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner recovery marker cleanup phase enablement, cleanup phase, and cleanup phase readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner recovery marker cleanup phase display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner recovery marker cleanup phase source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WL` as the North Star closeout for runner recovery marker cleanup phase source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WM Contract repair runner transaction commit phase source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner transaction commit phase enablement, commit phase, and commit phase readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner transaction commit phase display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner transaction commit phase source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WM` as the North Star closeout for runner transaction commit phase source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WN Contract repair runner rollback execution phase source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner rollback execution phase enablement, rollback execution phase, and rollback execution readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner rollback execution phase display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner rollback execution phase source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WN` as the North Star closeout for runner rollback execution phase source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WO Contract repair runner activation enablement source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner activation enablement and activation enablement readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation enablement display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner activation enablement source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WO` as the North Star closeout for runner activation enablement source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WP Contract repair runner activation path source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner activation path and activation path readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation path display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner activation path source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WP` as the North Star closeout for runner activation path source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WQ Contract repair runner activation execution plan source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner activation execution plan and execution plan readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation execution plan display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner activation execution plan source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WQ` as the North Star closeout for runner activation execution plan source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WR Contract repair runner activation switch transaction proof source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner activation switch transaction proof and proof readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation switch transaction proof display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner activation switch transaction proof source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WR` as the North Star closeout for runner activation switch transaction proof source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WS Contract repair runner activation switch write transaction enablement source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner activation switch write transaction enablement and enablement readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation switch write transaction enablement display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner activation switch write transaction enablement source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WS` as the North Star closeout for runner activation switch write transaction enablement source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WT Contract repair runner activation switch write transaction source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner activation switch write transaction and transaction readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation switch write transaction display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner activation switch write transaction source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WT` as the North Star closeout for runner activation switch write transaction source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WU Contract repair runner activation transaction admission source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner activation transaction admission and admission readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation transaction admission display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner activation transaction admission source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WU` as the North Star closeout for runner activation transaction admission source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WV Contract repair runner activation admission handoff source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner activation admission handoff and handoff readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation admission handoff display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner activation admission handoff source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WV` as the North Star closeout for runner activation admission handoff source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WW Contract repair runner activation handoff enablement source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner activation handoff enablement and handoff enablement readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation handoff enablement display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner activation handoff enablement source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WW` as the North Star closeout for runner activation handoff enablement source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WX Contract repair runner activation handoff attempt source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner activation handoff attempt and handoff attempt readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation handoff attempt display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner activation handoff attempt source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WX` as the North Star closeout for runner activation handoff attempt source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WY Contract repair runner activation post-handoff attempt source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner activation post-handoff attempt and post-handoff attempt readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation post-handoff attempt display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner activation post-handoff attempt source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WY` as the North Star closeout for runner activation post-handoff attempt source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001WZ Contract repair runner activation success admission source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner activation success admission and success admission readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation success admission display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner activation success admission source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001WZ` as the North Star closeout for runner activation success admission source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XA Contract repair runner activation success return source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner activation success return and success return readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner activation success return display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner activation success return source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XA` as the North Star closeout for runner activation success return source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XB Contract repair runner route success readiness source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner route success readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner route success readiness display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner route success readiness source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XB` as the North Star closeout for runner route success readiness source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XC Contract repair runner route status readiness source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner route status readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner route status readiness display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner route status readiness source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XC` as the North Star closeout for runner route status readiness source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XD Contract repair runner control readiness source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner control readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner control readiness display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner control readiness source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XD` as the North Star closeout for runner control readiness source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XE Contract repair runner enablement plan source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - runner enablement plan display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - runner enablement plan display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for runner enablement plan source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XE` as the North Star closeout for runner enablement plan source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XF Contract repair persistence plan source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - persistence plan display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - persistence plan display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for persistence plan source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XF` as the North Star closeout for persistence plan source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XG Contract repair persistence path source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - persistence path display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - persistence path display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for persistence path source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XG` as the North Star closeout for persistence path source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XH Contract repair record snapshot source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - record snapshot display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - record snapshot display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for record snapshot source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XH` as the North Star closeout for record snapshot source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XI Contract repair storage readiness source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - storage readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - storage readiness display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for storage readiness source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XI` as the North Star closeout for storage readiness source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XJ Contract repair storage dry-run source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - storage dry-run display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - storage dry-run display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for storage dry-run source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XJ` as the North Star closeout for storage dry-run source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XK Contract repair idempotency precheck source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - idempotency precheck display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - idempotency precheck display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for idempotency precheck source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XK` as the North Star closeout for idempotency precheck source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XL Contract repair review transition dry-run source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - review transition dry-run display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - review transition dry-run display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for review transition dry-run source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XL` as the North Star closeout for review transition dry-run source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XM Contract repair record write dry-run source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - record write dry-run display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - record write dry-run display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for record write dry-run source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XM` as the North Star closeout for record write dry-run source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XN Contract repair lifecycle dry-run source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - lifecycle dry-run display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - lifecycle dry-run display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for lifecycle dry-run source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XN` as the North Star closeout for lifecycle dry-run source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XO Contract repair lifecycle entry append dry-run source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - lifecycle entry append dry-run display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - lifecycle entry append dry-run display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for lifecycle entry append dry-run source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XO` as the North Star closeout for lifecycle entry append dry-run source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XP Contract repair lifecycle emission enablement source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - lifecycle emission enablement display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - lifecycle emission enablement display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for lifecycle emission enablement source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XP` as the North Star closeout for lifecycle emission enablement source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XQ Contract repair lifecycle effects readiness source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - lifecycle effects readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - lifecycle effects readiness display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for lifecycle effects readiness source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XQ` as the North Star closeout for lifecycle effects readiness source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XR Contract repair lifecycle event emission enablement source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - lifecycle event emission enablement display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - lifecycle event emission enablement display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for lifecycle event emission enablement source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XR` as the North Star closeout for lifecycle event emission enablement source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XS Contract repair lifecycle entry append enablement source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - lifecycle entry append enablement display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - lifecycle entry append enablement display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for lifecycle entry append enablement source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XS` as the North Star closeout for lifecycle entry append enablement source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XT Contract repair contract writeback dry-run source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - contract writeback dry-run display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - contract writeback dry-run display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for contract writeback dry-run source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XT` as the North Star closeout for contract writeback dry-run source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XU Contract repair contract mutation enablement source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - contract mutation enablement display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - contract mutation enablement display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for contract mutation enablement source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XU` as the North Star closeout for contract mutation enablement source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XV Contract repair contract mutation readiness source fallback.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - contract mutation readiness display merges route source-object filtering through `displayObjectEntries`.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - contract mutation readiness display merge tests assert null source fallback recovery.
+- `markdown/00-matrix-governance/module-tree.md` - records governance ownership for contract mutation readiness source fallback.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XV` as the North Star closeout for contract mutation readiness source fallback drift.
+
+Productization supplement: ADV-SM-PROD-001XW Memory Schema field detail readability.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - projects Memory Schema `memory_fields` rows with machine id, field name, type, nullable flag, and explicit default value.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - renders Memory Schema field details so users can read type/default/nullable per field.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - asserts the projection preserves `last_signal_at` type, nullable state, and null default.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - asserts the Memory Schema panel displays field type, nullable, and default details.
+- `markdown/00-matrix-governance/module-tree.md` - records Memory Schema field detail readability ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XW` as the North Star closeout for Memory Schema field detail readability.
+
+Productization supplement: ADV-SM-PROD-001XX Event Catalog event detail readability.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - projects Event Catalog `event_details` rows with event type, source kind, scope, allowed emitters, allowed consumers, and typed payload fields.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - renders Event Catalog event details so users can read source/consumer/payload fields per event.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - asserts the projection preserves `market.tick` source, consumer, emitter, and payload field details.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - asserts the Event Catalog panel displays event source, consumer, and payload field details.
+- `markdown/00-matrix-governance/module-tree.md` - records Event Catalog event detail readability ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XX` as the North Star closeout for Event Catalog event detail readability.
+
+Productization supplement: ADV-SM-PROD-001XY Repair target finding-code readability.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - shows finding code in repair target jump labels and selected target details.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - asserts repair target fallback code, active code preservation, jump label text, and selected target code/path display.
+- `markdown/00-matrix-governance/module-tree.md` - records repair target finding-code readability ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XY` as the North Star closeout for repair target finding-code readability.
+
+Productization supplement: ADV-SM-PROD-001XZ Selected repair target context readability.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - renders selected repair target event/machine/transition/field/instance/expected-type context from existing metadata.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - asserts Event Catalog and Memory Schema selected targets expose their repair context.
+- `markdown/00-matrix-governance/module-tree.md` - records selected repair target context readability ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001XZ` as the North Star closeout for selected repair target context readability.
+
+Productization supplement: ADV-SM-PROD-001YA Finding list context readability.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - renders catalog/memory findings as labeled code plus context text before repair target selection.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - asserts Memory Schema, Event Catalog schema, and Event Catalog instance finding context text.
+- `markdown/00-matrix-governance/module-tree.md` - records finding list context readability ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YA` as the North Star closeout for finding list context readability.
+
+Productization supplement: ADV-SM-PROD-001YB Event Catalog error jump coverage.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - asserts unknown payload field findings project an Event Catalog repair target.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - asserts illegal source and unknown payload field findings render repair jump labels and selected boundary context.
+- `markdown/00-matrix-governance/module-tree.md` - records Event Catalog error jump coverage ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YB` as the North Star closeout for Event Catalog error jump coverage.
+
+Productization supplement: ADV-SM-PROD-001YC Missing payload repair jump coverage.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - asserts missing required payload findings render Event Catalog repair jump labels, selected target context, and preview-only repair fields.
+- `markdown/00-matrix-governance/module-tree.md` - records missing payload repair jump coverage ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YC` as the North Star closeout for missing payload repair jump coverage.
+
+Productization supplement: ADV-SM-PROD-001YD SM-PROD-002 closeout audit.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records the three-item `SM-PROD-002` closeout evidence map.
+- `markdown/00-matrix-governance/module-tree.md` - records `SM-PROD-002` closeout audit ownership.
+- `frontend/src/utils/v4ProductizationWorkspace.js` - supplies `event_details` and `memory_fields` projection evidence for the audit.
+- `frontend/src/components/V4ProductizationWorkspacePanel.jsx` - renders Event Catalog, Memory Schema, finding, and selected repair context evidence used by the audit.
+- `frontend/src/utils/v4ProductizationWorkspace.test.js` - verifies Event Catalog, Memory Schema, and unknown-field projection evidence used by the audit.
+- `frontend/src/components/V4ProductizationWorkspacePanel.test.jsx` - verifies Event Catalog details, Memory Schema details, illegal-source jump, missing-payload jump, unknown-field jump, and memory selected target context evidence.
+
+Productization supplement: ADV-SM-PROD-001YE Contract repair source write execution helper.
+- `src/runtime/mutation/contract_repair_approval.rs` - wraps the existing contract source-write dry-run in an explicit `source_write_enabled` gate and keeps the review route on the no-write default.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies the gated helper can atomically persist a Memory Schema patch to the resolved contract source when the gate is enabled in a focused unit test.
+- `markdown/00-matrix-governance/module-tree.md` - records gated contract source write helper ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YE` as the source persistence primitive step before approve runner route wiring.
+
+Productization supplement: ADV-SM-PROD-001YF Contract repair recovery marker write helper.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds an explicit-gated recovery marker write helper that requires marker write readiness, idempotency safe-to-write, runner readiness, and marker persistence enablement before atomic marker persistence.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies the gated helper writes the approve execution recovery marker JSON when enabled while route preflight remains on the dry-run no-write path.
+- `markdown/00-matrix-governance/module-tree.md` - records gated recovery marker write helper ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YF` as the recovery marker persistence primitive step before approve runner route wiring.
+
+Productization supplement: ADV-SM-PROD-001YG Contract repair lifecycle effects helper.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds explicit-gated lifecycle event and lifecycle entry append helpers that preserve route dry-run defaults while giving the future approve runner a controlled lifecycle primitive.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies the gated lifecycle helper emits an event and appends a lifecycle entry only when explicitly enabled, while disabled gates preserve existing dry-run values.
+- `markdown/00-matrix-governance/module-tree.md` - records gated lifecycle effects helper ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YG` as the lifecycle effects primitive step before approve runner route wiring.
+
+Productization supplement: ADV-SM-PROD-001YH Contract repair recovery marker cleanup helper.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds an explicit-gated recovery marker cleanup helper that deletes the marker file only when cleanup prerequisites and the cleanup phase gate are ready.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies disabled cleanup gates leave marker files untouched and enabled cleanup gates delete the marker while still withholding route success.
+- `markdown/00-matrix-governance/module-tree.md` - records gated recovery marker cleanup helper ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YH` as the recovery marker cleanup primitive step before approve runner route wiring.
+
+Productization supplement: ADV-SM-PROD-001YI Contract repair transaction commit helper.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds explicit-gated transaction commit gate and runner commit phase helpers that preserve route dry-run defaults while giving the future approve runner a controlled commit primitive.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies disabled commit gates preserve dry-run values and enabled commit gates mark the transaction committed without setting route success.
+- `markdown/00-matrix-governance/module-tree.md` - records gated transaction commit helper ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YI` as the transaction commit primitive step before route success wiring.
+
+Productization supplement: ADV-SM-PROD-001YJ Contract repair route success dispatch helper.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds an explicit-gated route success dispatch helper that promotes ready approve runner success dry-runs into `review_approve_executed` dispatch intent while preserving live route defaults.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies disabled route success gates preserve dry-run values and enabled route success gates set dispatch intent without changing live response selection.
+- `markdown/00-matrix-governance/module-tree.md` - records gated route success dispatch helper ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YJ` as the route success dispatch primitive step before final route wiring.
+
+Productization supplement: ADV-SM-PROD-001YK Contract repair live route gate map.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds a single default-locked approve live route gate map for review transition, lifecycle effects, source write, recovery marker persistence/cleanup, transaction commit, commit phase, and route success switches.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies the live route gate map defaults every approve execution switch to locked while the route preflight remains unchanged.
+- `markdown/00-matrix-governance/module-tree.md` - records approve live route gate map ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YK` as the centralized live wiring control step before deliberate route enablement.
+
+Productization supplement: ADV-SM-PROD-001YL Contract repair runner admission gate helper.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds the `transaction_runner_enabled` switch to the approve live route gate map and routes admission through an explicit gated helper.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies disabled runner admission gates preserve dry-run values and enabled admission gates can start the runner admission path without enabling downstream phases.
+- `markdown/00-matrix-governance/module-tree.md` - records approve runner admission gate helper ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YL` as the runner admission map-control step before downstream runner switch wiring.
+
+Productization supplement: ADV-SM-PROD-001YM Contract repair runner control gate map.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `runner_attempt_enabled`, `runner_execution_enabled`, and `route_dispatch_enabled` to the approve live route gate map and threads them through runner attempt, execution, and dispatch control builders.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies enabled runner control switches can make the control chain ready while preserving no runner start, no commit, no success return, and no disk touch behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records approve runner control gate map ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YM` as the runner control map step before runner call/body/phase/activation wiring.
+
+Productization supplement: ADV-SM-PROD-001YN Contract repair runner call gate map.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `runner_call_enabled` to the approve live route gate map and threads it through runner call enablement and runner call dry-run builders.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies an enabled runner call switch can make call readiness ready while preserving no runner invocation, no success return, no persistence, no commit, no rollback, no body/control unblock, and no disk touch behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records approve runner call gate map ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YN` as the runner call map step before runner body/phase/activation wiring.
+
+Productization supplement: ADV-SM-PROD-001YO Contract repair runner body gate map.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `runner_body_enabled` to the approve live route gate map and threads it through runner body enablement and runner call-body dry-run builders.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies an enabled runner body switch can make body readiness ready while preserving no body entry, no lifecycle emission, no mutation, no recovery marker persistence, no commit, no success return, no phase/control unblock, and no disk touch behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records approve runner body gate map ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YO` as the runner body map step before runner phase/activation wiring.
+
+Productization supplement: ADV-SM-PROD-001YP Contract repair runner phase gate map.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `phase_execution_enabled` to the approve live route gate map and threads it through runner phase execution enablement and body phase sequence dry-run builders.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies an enabled runner phase switch can make phase readiness ready while preserving no phase execution, no rollback execution, no success return, no lifecycle/control unblock, and no disk touch behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records approve runner phase gate map ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YP` as the runner phase map step before runner activation wiring.
+
+Productization supplement: ADV-SM-PROD-001YQ Contract repair runner activation gate map.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `runner_activation_enabled` to the approve live route gate map and threads it into runner enablement plan construction for downstream activation dry-runs.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies an enabled runner activation switch can make activation enablement and path readiness ready while preserving no activation side effect, no success return, and no disk touch behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records approve runner activation gate map ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YQ` as the runner activation map step before final route success wiring.
+
+Productization supplement: ADV-SM-PROD-001YR Contract repair route success selection.
+- `src/runtime/mutation/contract_repair_approval.rs` - derives approve runner success from the gated route success dispatch result instead of the earlier enablement-plan dry-run flag.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies locked route success keeps approve runner success false and enabled route success dispatch makes it true without changing default preflight behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records approve route success selection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YR` as the route success selection handoff before verified live approve scenario wiring.
+
+Productization supplement: ADV-SM-PROD-001YS Contract repair verified live gate map scenario.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds test-only verified live route gate map coverage showing an explicitly all-enabled gate set can dispatch route success and feed `review_approve_executed` response selection.
+- `src/runtime/mutation/contract_repair_approval.rs` - keeps the production live route gate map default-locked while the focused scenario proves the all-open route remains side-effect-free and disk-free.
+- `markdown/00-matrix-governance/module-tree.md` - records verified approve live gate map scenario ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YS` as the verified live gate map scenario before deliberate production route activation.
+
+Productization supplement: ADV-SM-PROD-001YT Contract repair approve live route activation policy.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds the private `quantpilot/contract-repair-approve-live-route-policy/v1` parser for the exact `QUANTPILOT_CONTRACT_REPAIR_APPROVE_LIVE_ROUTE=verified-live-approve-route` evidence value.
+- `src/runtime/mutation/contract_repair_approval.rs` - derives the approve live route gate map from the activation policy, preserving absent, blank, and generic-value locks by default.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies only the exact evidence value opens every approve live route gate, while missing or generic values keep all gates locked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve live route activation policy ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YT` as the production activation policy boundary before full end-to-end live route evidence.
+
+Productization supplement: ADV-SM-PROD-001YU Contract repair approve live route environment evidence safety.
+- `src/runtime/mutation/contract_repair_approval.rs` - threads explicit live route policy gates into the review execution gate so lifecycle and contract mutation policy readiness are visible at the endpoint.
+- `src/runtime/mutation/contract_repair_approval.rs` - keeps actual contract source writes behind outer review execution, preventing partial source mutation while final approve route success remains locked.
+- `tests/api_v4_productization_contract_repair.rs` - verifies `QUANTPILOT_CONTRACT_REPAIR_APPROVE_LIVE_ROUTE=verified-live-approve-route` opens outer policy evidence but still returns locked, avoids source writes, and leaves the source contract unchanged.
+- `markdown/00-matrix-governance/module-tree.md` - records approve live route environment evidence safety ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YU` as the endpoint evidence and partial-write guard before full live route success.
+
+Productization supplement: ADV-SM-PROD-001YV Contract repair approve lifecycle readiness inheritance.
+- `src/runtime/mutation/contract_repair_approval.rs` - makes the lifecycle enablement gate inherit already gated live-route event emission and lifecycle entry append results.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies lifecycle enablement becomes ready when gated emit/append results are present, including log-touch intent visibility.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route environment evidence now reaches lifecycle effects readiness while final route success and source writes remain locked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve lifecycle readiness inheritance ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YV` as the lifecycle readiness propagation step before contract mutation and runner readiness.
+
+Productization supplement: ADV-SM-PROD-001YW Contract repair approve contract mutation readiness inheritance.
+- `src/runtime/mutation/contract_repair_approval.rs` - passes the explicit live route source-write policy into contract mutation enablement as the contract mutation API readiness signal.
+- `src/runtime/mutation/contract_repair_approval.rs` - keeps actual contract source writes behind outer review execution so policy readiness does not perform partial source mutation while final route success remains locked.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route environment evidence now reaches contract mutation readiness while source write, disk touch, and final route success remain locked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve contract mutation readiness inheritance ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YW` as the contract mutation readiness propagation step before runner readiness and route success.
+
+Productization supplement: ADV-SM-PROD-001YX Contract repair approve execution readiness inheritance.
+- `src/runtime/mutation/contract_repair_approval.rs` - feeds inherited contract mutation readiness into approve execution readiness instead of a fixed false mutation switch.
+- `src/runtime/mutation/contract_repair_approval.rs` - keeps approve execution and transaction dry-runs no-execute while allowing explicit live-route evidence to prove the readiness chain.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route environment evidence now reaches approve execution and transaction readiness while transaction execution, source write, disk touch, and final route success remain locked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve execution readiness inheritance ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YX` as the approve execution readiness propagation step before runner admission and route success.
+
+Productization supplement: ADV-SM-PROD-001YY Contract repair approve runner readiness marker guard.
+- `src/runtime/mutation/contract_repair_approval.rs` - guards recovery marker writes with outer review execution so explicit live-route runner readiness cannot write a partial marker while final route success remains locked.
+- `tests/api_v4_productization_contract_repair.rs` - verifies store-ready explicit live route evidence reaches admission, runner enablement, and transaction runner readiness without writing a recovery marker or contract source.
+- `markdown/00-matrix-governance/module-tree.md` - records approve runner readiness marker guard ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YY` as the runner readiness and partial marker-write guard step before atomic side-effects and route success.
+
+Productization supplement: ADV-SM-PROD-001YZ Contract repair approve transaction commit readiness inheritance.
+- `src/runtime/mutation/contract_repair_approval.rs` - feeds explicit live-route recovery marker persistence readiness into transaction commit readiness while keeping actual marker writes behind outer review execution.
+- `tests/api_v4_productization_contract_repair.rs` - verifies store-ready explicit live route evidence reaches recovery marker persistence and transaction commit readiness without writing a recovery marker, contract source, or final success response.
+- `markdown/00-matrix-governance/module-tree.md` - records approve transaction commit readiness inheritance ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001YZ` as the transaction commit readiness propagation step before atomic side-effects and route success.
+
+Productization supplement: ADV-SM-PROD-001ZA Contract repair approve atomic side-effects readiness inheritance.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `atomic_side_effects_enabled` to the approve live-route gate map and feeds it into atomic side-effects readiness.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reaches atomic side-effects readiness while all actual lifecycle, mutation, marker, commit, source, route success, and disk effects remain disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records approve atomic side-effects readiness inheritance ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZA` as the atomic side-effects readiness propagation step before runner control/phase/activation and route success.
+
+Productization supplement: ADV-SM-PROD-001ZB Contract repair approve lifecycle phase readiness inheritance.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `lifecycle_phase_enabled` to the approve live-route gate map and feeds it into lifecycle phase enablement and lifecycle phase dry-run readiness.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reaches runner attempt, phase execution, and lifecycle phase readiness while source mutation, marker/source writes, route success, and disk effects remain disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records approve lifecycle phase readiness inheritance ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZB` as the lifecycle phase readiness propagation step before source mutation, cleanup/commit/rollback, activation, and route success.
+
+Productization supplement: ADV-SM-PROD-001ZC Contract repair approve source mutation phase readiness inheritance.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `source_mutation_phase_enabled` to the approve live-route gate map, feeds it into source mutation phase enablement/readiness, and keeps recovery marker cleanup guarded by actual review execution.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reaches source mutation phase readiness while contract/source writes, marker cleanup, route success, and disk effects remain disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records approve source mutation phase readiness inheritance ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZC` as the source mutation phase readiness propagation step before cleanup/commit/rollback, activation, and route success.
+
+Productization supplement: ADV-SM-PROD-001ZD Contract repair approve recovery marker cleanup readiness inheritance.
+- `src/runtime/mutation/contract_repair_approval.rs` - feeds `recovery_marker_cleanup_phase_enabled` into cleanup phase enablement/readiness and keeps cleanup/commit phase actual gates guarded by review execution.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reaches recovery marker cleanup readiness while marker cleanup, commit phase advancement, route success, and disk effects remain disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records approve recovery marker cleanup readiness inheritance ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZD` as the cleanup readiness propagation step before commit/rollback, activation, and route success.
+
+Productization supplement: ADV-SM-PROD-001ZE Contract repair approve transaction commit phase readiness inheritance.
+- `src/runtime/mutation/contract_repair_approval.rs` - feeds `transaction_commit_phase_enabled` into transaction commit phase enablement/readiness while keeping transaction commit phase execution gated by review execution.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reaches transaction commit phase readiness while transaction commit, rollback execution, route success, and disk effects remain disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records approve transaction commit phase readiness inheritance ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZE` as the commit phase readiness propagation step before rollback execution, activation, and route success.
+
+Productization supplement: ADV-SM-PROD-001ZF Contract repair approve rollback execution readiness inheritance.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `rollback_execution_enabled` to the approve live-route gate map and feeds it into rollback execution phase enablement/readiness.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reaches rollback execution readiness while source restore, approval record restore, recovery marker rollback marking, activation switch write transaction, route success, and disk effects remain disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records approve rollback execution readiness inheritance ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZF` as the rollback readiness propagation step before activation switch write transaction and route success.
+
+Productization supplement: ADV-SM-PROD-001ZG Contract repair approve activation switch write transaction readiness inheritance.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `activation_switch_write_transaction_enabled` to the approve live-route gate map and feeds it into activation switch write transaction enablement/readiness.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reaches activation switch write transaction readiness while switch writes, partial persistence, transaction commit, runner activation, route success, and disk effects remain disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records approve activation switch write transaction readiness inheritance ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZG` as the activation switch write transaction readiness propagation step before downstream activation and route success.
+
+Productization supplement: ADV-SM-PROD-001ZH Contract repair approve downstream activation readiness evidence.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reaches activation transaction admission, activation admission handoff, activation handoff enablement, handoff attempt, post-handoff attempt, success admission, and success return readiness while route success and disk effects remain disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records approve downstream activation readiness evidence ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZH` as the downstream activation readiness evidence step before the route-success bridge.
+
+Productization supplement: ADV-SM-PROD-001ZI Contract repair approve route-success readiness bridge.
+- `src/runtime/mutation/contract_repair_approval.rs` - derives route-success readiness from runner activation readiness while keeping route-success dispatch gated by formal review execution.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reaches route-success readiness while `approve_runner_success`, HTTP success, source mutation, and disk effects remain disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records approve route-success readiness bridge ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZI` as the route-success readiness bridge step before formal approve review execution.
+
+Productization supplement: ADV-SM-PROD-001ZJ Contract repair approve formal review execution readiness audit.
+- `src/frontend_api_types.rs` - adds the formal approve review execution readiness dry-run field to the blocked review response.
+- `src/runtime/mutation/contract_repair_approval.rs` - computes the read-only formal review execution readiness audit from existing execution, approve readiness, route-success, and route-status evidence while keeping the formal execution switch false.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reaches the formal review execution audit while decision execution, approval record persistence, contract mutation, HTTP success, and disk effects remain disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records approve formal review execution readiness audit ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZJ` as the final locked formal review execution audit before audited `review_approve_executed`.
+
+Productization supplement: ADV-SM-PROD-001ZK Contract repair approve final atomic readiness audit.
+- `src/frontend_api_types.rs` - adds the final approve atomic readiness dry-run field to the blocked review response.
+- `src/runtime/mutation/contract_repair_approval.rs` - computes the read-only final atomic readiness audit from approval record, lifecycle, contract mutation, recovery marker, transaction commit, route-success, and formal review execution readiness evidence.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies the final atomic audit remains blocked on formal review execution and outer review execution while final side-effect flags stay false.
+- `tests/api_v4_productization_contract_repair.rs` - keeps the live/default approve endpoint checks locked while the new final atomic response field is compiled into the blocked review response.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final atomic readiness audit ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZK` as the final atomic readiness audit before audited `review_approve_executed`.
+
+Productization supplement: ADV-SM-PROD-001ZL Contract repair approve final atomic execution plan audit.
+- `src/frontend_api_types.rs` - adds the final approve atomic execution plan dry-run field to the blocked review response.
+- `src/runtime/mutation/contract_repair_approval.rs` - computes the read-only final atomic execution plan from transaction runner order, cleanup phase readiness, transaction commit phase readiness, rollback execution readiness, and final atomic readiness.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies the execution plan includes recovery marker, review transition, approval record, lifecycle, contract source, marker cleanup, transaction commit, route success, HTTP success, and rollback order while final side-effect flags stay false.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final atomic execution plan audit ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZL` as the execution/rollback plan audit before audited `review_approve_executed`.
+
+Productization supplement: ADV-SM-PROD-001ZM Contract repair approve final atomic admission gate audit.
+- `src/frontend_api_types.rs` - adds the final approve atomic admission gate dry-run field to the blocked review response.
+- `src/runtime/mutation/contract_repair_approval.rs` - computes the read-only final atomic admission gate from the final atomic execution plan, separating structural plan readiness from actual final admission.
+- `src/runtime/mutation/contract_repair_approval.rs` - verifies the admission gate remains blocked on final atomic plan readiness, final atomic readiness, formal review execution, and outer review execution while final entry, HTTP OK, and disk-touch flags stay false.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final atomic admission gate audit ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZM` as the final admission gate audit before audited `review_approve_executed`.
+
+Productization supplement: ADV-SM-PROD-001ZN Contract repair approve formal execution live switch inheritance.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `formal_approve_review_execution_enabled` to the approve live-route gate map and passes it into formal review execution readiness.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence enables the formal approve switch while final review execution, HTTP success, source/marker/disk effects, and default approve preflight remain locked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve formal execution live switch inheritance ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZN` as the final formal switch inheritance step before connecting outer approve execution.
+
+Productization supplement: ADV-SM-PROD-001ZO Contract repair approve formal readiness pre-admission decoupling.
+- `src/runtime/mutation/contract_repair_approval.rs` - lets formal approve review readiness become ready from upstream approve evidence and the formal live switch while keeping `review_execution_enabled` as a downstream final atomic blocker.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports formal readiness ready while outer approve execution, HTTP success, source/marker/disk effects, and final admission remain locked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve formal readiness pre-admission decoupling ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZO` as the cycle-breaking readiness step before connecting final atomic admission to guarded approve execution.
+
+Productization supplement: ADV-SM-PROD-001ZP Contract repair approve final atomic readiness pre-admission decoupling.
+- `src/runtime/mutation/contract_repair_approval.rs` - lets final approve atomic readiness become ready from record, lifecycle, contract mutation, marker, commit, route-success, and formal review evidence while keeping `review_execution_enabled` as the downstream execution-plan/admission blocker.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports final atomic readiness ready while execution plan, admission, HTTP success, source/marker/disk effects, and default approve preflight remain locked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final atomic readiness pre-admission decoupling ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZP` as the final atomic readiness decoupling step before guarded execution-plan/admission enablement.
+
+Productization supplement: ADV-SM-PROD-001ZQ Contract repair approve final atomic execution plan pre-admission decoupling.
+- `src/runtime/mutation/contract_repair_approval.rs` - lets final approve atomic execution plan readiness become ready from execution order, rollback order, runner, cleanup, commit phase, rollback execution, and final atomic readiness while keeping `review_execution_enabled` as the downstream admission blocker.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports final atomic execution plan ready while admission, HTTP success, source/marker/disk effects, and default approve preflight remain locked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final atomic execution plan pre-admission decoupling ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZQ` as the execution-plan decoupling step before guarded final atomic admission enablement.
+
+Productization supplement: ADV-SM-PROD-001ZR Contract repair approve final atomic admission pre-execution decoupling.
+- `src/runtime/mutation/contract_repair_approval.rs` - lets final approve atomic admission become ready from structural plan, execution plan, final atomic readiness, and formal review readiness while keeping final-entry side-effect flags false.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports final atomic admission ready while final execution, HTTP success, source/marker/disk effects, and default approve preflight remain locked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final atomic admission pre-execution decoupling ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZR` as the admission evidence step before guarded final execution-entry enablement.
+
+Productization supplement: ADV-SM-PROD-001ZS Contract repair approve final execution-entry evidence.
+- `src/frontend_api_types.rs` - adds the final approve execution-entry dry-run field to the blocked review response.
+- `src/runtime/mutation/contract_repair_approval.rs` - computes read-only final execution-entry evidence from final atomic admission, route-status readiness, inherited execution/rollback order, and blocked reasons while keeping all final-entry side-effect flags false.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports final-entry admission/rollback/no-partial prerequisites while route-status/review execution keep final entry, HTTP success, source/marker/disk effects, and default approve preflight locked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution-entry evidence ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZS` as the final-entry evidence step before guarded `review_approve_executed` enablement.
+
+Productization supplement: ADV-SM-PROD-001ZT Contract repair approve route-status pre-entry readiness.
+- `src/runtime/mutation/contract_repair_approval.rs` - lets approve route-status readiness become ready from approve preflight and route-success readiness while retaining approve-runner-success, review execution, current response status, expected HTTP status, and no-side-effect flags as evidence.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports route-status readiness ready while final entry remains locked on review execution, and default approve preflight remains blocked by route-success readiness.
+- `markdown/00-matrix-governance/module-tree.md` - records approve route-status pre-entry readiness ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZT` as the route-status readiness decoupling step before guarded final entry enablement.
+
+Productization supplement: ADV-SM-PROD-001ZU Contract repair approve final-entry readiness decoupling.
+- `src/runtime/mutation/contract_repair_approval.rs` - lets final approve execution-entry readiness become ready from admission, route-status, rollback-order, and no-partial evidence while keeping `review_execution_enabled` as the actual execution switch evidence.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports final-entry readiness ready while actual execution, HTTP success, source/marker/disk effects, and review execution remain locked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final-entry readiness decoupling ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZU` as the final-entry readiness decoupling step before guarded `review_approve_executed` enablement.
+
+Productization supplement: ADV-SM-PROD-001ZV Contract repair approve decision-lock final-entry inheritance.
+- `src/frontend_api_types.rs` - adds final-entry readiness and final execution-switch evidence to the approve decision-lock summary DTO.
+- `src/runtime/mutation/contract_repair_approval.rs` - passes final execution-entry evidence into the decision-lock summary and isolates `review_execution_enabled` as the remaining final switch blocker when pre-switch readiness is complete.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports final-entry readiness in the decision-lock summary while actual execution, HTTP success, source/marker/disk effects, and review execution remain locked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve decision-lock final-entry inheritance ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZV` as the lock-summary inheritance step before guarded `review_approve_executed` enablement.
+
+Productization supplement: ADV-SM-PROD-001ZW Contract repair approve final execution switch socket.
+- `src/frontend_api_types.rs` - exposes `approve_final_execution_enabled` in the approve final-entry and decision-lock summary DTOs.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds an approve-specific final execution socket and routes approve-only source write, recovery marker persistence, marker cleanup, transaction commit phase, route success, final-entry, and decision-lock evidence through it while leaving the socket false.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports `approve_final_execution_enabled` as the remaining blocker while actual execution, HTTP success, source/marker/disk effects, and review execution remain locked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution switch socket ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZW` as the approve-specific switch socket step before guarded `review_approve_executed` enablement.
+
+Productization supplement: ADV-SM-PROD-001ZX Contract repair approve final execution switch readiness.
+- `src/frontend_api_types.rs` - adds the approve final execution switch readiness DTO and blocked review response field.
+- `src/runtime/mutation/contract_repair_approval.rs` - computes final execution switch readiness from final-entry, record-write, contract-mutation, recovery-marker, cleanup, commit-phase, route-status, rollback-order, and no-partial evidence while preserving the false socket and no-side-effect flags.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports switch readiness ready-blocked by the false socket, with replay order and no HTTP/source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution switch readiness ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZX` as the final switch readiness proof before guarded socket enablement.
+
+Productization supplement: ADV-SM-PROD-001ZY Contract repair approve final execution rollback readiness.
+- `src/frontend_api_types.rs` - adds the approve final execution rollback readiness DTO and blocked review response field.
+- `src/runtime/mutation/contract_repair_approval.rs` - computes final rollback readiness from final-switch readiness plus rollback execution phase readiness, exposing source/record/marker rollback order coverage while preserving the false socket and no-side-effect flags.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports rollback readiness ready with source/record/marker rollback coverage and no rollback/source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution rollback readiness ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZY` as the rollback coverage proof before guarded socket enablement.
+
+Productization supplement: ADV-SM-PROD-001ZZ Contract repair approve final execution replay plan.
+- `src/frontend_api_types.rs` - adds the approve final execution replay plan DTO and blocked review response field.
+- `src/runtime/mutation/contract_repair_approval.rs` - computes final replay-plan readiness from final-switch and rollback readiness, validating required replay phases from recovery marker write through `return_review_approve_executed` while preserving the false socket and no-side-effect flags.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports replay-plan readiness ready-blocked by the false socket, with required replay phases present, no missing phases, rollback order coverage, and no HTTP/source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution replay plan ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-001ZZ` as the replay-order proof before guarded socket enablement.
+
+Productization supplement: ADV-SM-PROD-002AA Contract repair approve final execution replay executor admission.
+- `src/frontend_api_types.rs` - adds the approve final execution replay executor DTO and blocked review response field.
+- `src/runtime/mutation/contract_repair_approval.rs` - computes replay executor admission from final replay-plan readiness, exposing planned side-effect intents while keeping executor admission blocked by `approve_final_execution_enabled`.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports replay executor admission ready-blocked by the false socket, with replay order inherited, empty replay-plan blockers, and no executor/source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution replay executor admission ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AA` as the executor admission step before guarded replay execution.
+
+Productization supplement: ADV-SM-PROD-002AB Contract repair approve final execution replay executor order contract.
+- `src/frontend_api_types.rs` - extends the approve final execution replay executor DTO with order-contract readiness, expected replay order, and missing/extra executor phase evidence.
+- `src/runtime/mutation/contract_repair_approval.rs` - shares the final replay phase order between replay-plan readiness and executor admission, making executor readiness require an exact order match before `approve_final_execution_enabled` can admit it.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports executor order readiness, exact expected replay order, empty missing/extra phases, and continued no-executor/no-disk behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution replay executor order-contract ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AB` as the executor order proof before guarded replay execution.
+
+Productization supplement: ADV-SM-PROD-002AC Contract repair approve final execution replay executor handler routing.
+- `src/frontend_api_types.rs` - adds the approve final execution replay executor routing DTO and blocked review response field.
+- `src/runtime/mutation/contract_repair_approval.rs` - maps each final replay phase to an explicit executor handler route and reports routing readiness before final execution is admitted.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports routing readiness, exact handler phase coverage, marker/source handler routes, empty missing/extra handler phase lists, and continued no-executor/no-disk behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution replay executor handler-routing ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AC` as the handler-routing proof before guarded replay execution.
+
+Productization supplement: ADV-SM-PROD-002AD Contract repair approve final execution routed write handoff.
+- `src/frontend_api_types.rs` - adds the approve final execution routed write handoff DTO and blocked review response field.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `approve_final_execution_routed_write_handoff_enabled`, reports routed write handoff readiness, and keeps final record/source/marker/commit/route-success write gates behind that handoff socket instead of `approve_final_execution_enabled` alone.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports handoff readiness, enumerates inline final write gates, preserves handoff phase coverage, and keeps no-executor/no-disk behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution routed write handoff ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AD` as the write handoff socket before routed executor execution.
+
+Productization supplement: ADV-SM-PROD-002AE Contract repair approve final execution routed handler plan.
+- `src/frontend_api_types.rs` - adds the approve final execution routed handler plan DTO and blocked review response field.
+- `src/runtime/mutation/contract_repair_approval.rs` - binds each final replay handler to existing marker/transition/record/lifecycle/source/cleanup/commit/route-success readiness evidence and reports handler readiness counts plus ready/blocked handler lists.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports all ten handlers ready, handler phases matching the handoff phases, representative readiness entries, and continued no-executor/no-disk behavior while the handoff is unadmitted.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution routed handler-plan ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AE` as the per-handler readiness proof before routed executor execution.
+
+Productization supplement: ADV-SM-PROD-002AF Contract repair approve final execution routed execution attempt.
+- `src/frontend_api_types.rs` - adds the approve final execution routed execution attempt DTO and blocked review response field.
+- `src/runtime/mutation/contract_repair_approval.rs` - computes execution attempt readiness from the routed handler plan, keeps attempt admission behind the routed write handoff, and exposes the first blocked gate plus ordered handler readiness.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports the attempt ready-blocked by `routed_write_handoff_admitted`, preserves handler order/readiness, and keeps all execution `would_*` flags false.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution routed execution-attempt ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AF` as the final attempt boundary before admitted routed execution.
+
+Productization supplement: ADV-SM-PROD-002AG Contract repair approve final execution legacy inline write isolation.
+- `src/frontend_api_types.rs` - exposes `legacy_inline_final_writes_enabled` in the approve final execution routed write handoff DTO.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `approve_final_execution_legacy_inline_writes_enabled=false` and keeps legacy inline final record/source/marker/commit/route-success write gates behind that socket instead of the routed handoff socket.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports legacy inline final writes disabled while routed handoff/attempt and all side-effect writes remain blocked.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution legacy inline write isolation ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AG` as the legacy inline write isolation step before routed handoff admission.
+
+Productization supplement: ADV-SM-PROD-002AH Contract repair approve final execution routed handoff armament.
+- `src/runtime/mutation/contract_repair_approval.rs` - arms `approve_final_execution_routed_write_handoff_enabled=true` while keeping final execution and legacy inline writes disabled.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports the routed handoff switch true, no handoff-switch blocker, continued final-execution blocker, and continued no-executor/no-disk behavior.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution routed handoff armament ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AH` as the routed handoff armament step before final execution admission.
+
+Productization supplement: ADV-SM-PROD-002AI Contract repair approve final execution admission armament.
+- `src/runtime/mutation/contract_repair_approval.rs` - arms `approve_final_execution_enabled=true` while keeping the routed handoff enabled and legacy inline final writes disabled.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports final execution admission, replay executor admission, routed handoff admission, handler-plan admission, and routed attempt admission while HTTP remains `423` and source/marker writes remain absent.
+- `markdown/00-matrix-governance/module-tree.md` - records approve final execution admission armament ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AI` as the final admission armament step before routed executor execution and route-success release.
+
+Productization supplement: ADV-SM-PROD-002AJ Contract repair approve routed route-success release bridge.
+- `src/frontend_api_types.rs` - adds the approve final execution routed route-success release DTO and blocked review response field.
+- `src/runtime/mutation/contract_repair_approval.rs` - computes routed route-success release readiness from the admitted routed execution attempt, ready route-success/return handler phases, current response/route status, and legacy inline write isolation while keeping the release connection false.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports route-success release readiness ready-blocked by `routed_route_success_release_connected`, current response/route status still blocked, and no source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve routed route-success release bridge ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AJ` as the bridge between admitted routed attempt and real route-success release.
+
+Productization supplement: ADV-SM-PROD-002AK Contract repair approve response/status connection preflight.
+- `src/frontend_api_types.rs` - extends the approve final execution routed route-success release DTO with response-status transition readiness, route-status transition readiness, ordered-handler execution requirement and confirmation, response-status connection readiness, and blocked reason fields.
+- `src/runtime/mutation/contract_repair_approval.rs` - refines the routed route-success release gate so the remaining connection blocker is `ordered_handler_execution_confirmed=false` rather than a generic release connection flag.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports response/status transition readiness and connection readiness true, ordered handler execution required but unconfirmed, and continued HTTP `423` with no source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve response/status connection preflight ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AK` as the concrete final response/status connection preflight before real ordered-handler execution.
+
+Productization supplement: ADV-SM-PROD-002AL Contract repair approve ordered handler execution confirmation dry-run.
+- `src/frontend_api_types.rs` - adds the approve final execution ordered handler execution confirmation DTO and blocked review response field.
+- `src/runtime/mutation/contract_repair_approval.rs` - computes ordered handler execution confirmation from the admitted routed attempt, exact replay order, handler readiness, and an explicit `ordered_handler_execution_connected=false` gate, then passes that blocker into the route-success release bridge.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports ordered handler execution readiness true, all ten handlers ready, unconfirmed handlers enumerated, confirmation blocked by `ordered_handler_execution_connected`, and continued HTTP `423` with no source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve ordered handler execution confirmation dry-run ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AL` as the confirmation handoff before real ordered handler execution and route-success release.
+
+Productization supplement: ADV-SM-PROD-002AM Contract repair approve ordered handler execution connection switch.
+- `src/frontend_api_types.rs` - exposes `ordered_handler_execution_connection_enabled` on the approve final execution ordered handler execution confirmation DTO.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `approve_final_execution_ordered_handler_execution_connected=false` and passes it into the ordered-handler confirmation builder as the explicit connection switch.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports ordered handler execution readiness true, connection switch false, confirmation blocked by `ordered_handler_execution_connection_enabled`, and continued HTTP `423` with no source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve ordered handler execution connection switch ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AM` as the named switch before real ordered handler execution confirmation.
+
+Productization supplement: ADV-SM-PROD-002AN Contract repair approve ordered handler execution connection preflight.
+- `src/frontend_api_types.rs` - extends the approve final execution ordered handler execution confirmation DTO with rollback confirmation, no-partial write guard, and connection preflight readiness fields.
+- `src/runtime/mutation/contract_repair_approval.rs` - passes final execution-entry and rollback readiness evidence into the ordered-handler confirmation builder and makes `ordered_handler_execution_connection_preflight_ready` gate the explicit connection switch.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports rollback confirmation, no-partial guard, and connection preflight ready while the connection switch remains false and HTTP stays `423` with no source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve ordered handler execution connection preflight ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AN` as the rollback/no-partial preflight before arming ordered handler execution.
+
+Productization supplement: ADV-SM-PROD-002AO Contract repair approve ordered handler dry-run execution transcript.
+- `src/frontend_api_types.rs` - extends the approve final execution ordered handler execution confirmation DTO with dry-run transcript readiness, completion, count, side-effect blocking, ordered phases, and phase receipts.
+- `src/runtime/mutation/contract_repair_approval.rs` - derives a side-effect-blocked ordered handler dry-run transcript from the admitted routed execution attempt before evaluating the still-disabled connection switch.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports a complete ten-handler dry-run transcript containing `return_review_approve_executed` while the connection switch remains false and HTTP stays `423` with no source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve ordered handler dry-run execution transcript ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AO` as the dry-run ordered handler transcript before arming ordered handler execution.
+
+Productization supplement: ADV-SM-PROD-002AP Contract repair approve ordered handler connection release with response application lock.
+- `src/frontend_api_types.rs` - extends the approve final execution routed route-success release DTO with response application readiness, switch, applied state, and blocked reason fields.
+- `src/runtime/mutation/contract_repair_approval.rs` - arms ordered handler execution confirmation, admits the route-success release, and keeps actual response/status application behind `routed_route_success_release_application_enabled=false`.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence reports ordered handler confirmation and route-success release admission true while application remains false and HTTP stays `423` with no source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve ordered handler connection release with response application lock ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AP` as the first controlled release boundary before actual HTTP/status application.
+
+Productization supplement: ADV-SM-PROD-002AQ Contract repair approve response application release without disk side effects.
+- `src/frontend_api_types.rs` - extends the approve decision lock summary DTO with routed route-success release applied and final response application success fields.
+- `src/runtime/mutation/contract_repair_approval.rs` - enables routed route-success release application, lets it drive the final `review_approve_executed` response/route status, and keeps durable writes disabled.
+- `tests/api_v4_productization_contract_repair.rs` - verifies explicit live route evidence now returns HTTP `200` and `review_approve_executed` while source, marker, and disk effects remain absent.
+- `markdown/00-matrix-governance/module-tree.md` - records approve response application release ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AQ` as the response/status application release before durable writeback and rollback proof.
+
+Productization supplement: ADV-SM-PROD-002AR Contract repair approve durable writeback bundle preflight.
+- `src/frontend_api_types.rs` - adds the approve final execution durable writeback bundle DTO and exposes it on the review response.
+- `src/runtime/mutation/contract_repair_approval.rs` - computes durable writeback bundle readiness after route-success response application, while keeping `approve_final_execution_durable_writeback_bundle_enabled=false`.
+- `tests/api_v4_productization_contract_repair.rs` - verifies the bundle readiness chain is true, the bundle admission switch is false, execution/rollback order evidence is present, and no record/source/marker/disk effects occur.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable writeback bundle preflight ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AR` as the durable writeback bundle boundary before atomic durable release.
+
+Productization supplement: ADV-SM-PROD-002AS Contract repair approve durable bundle admission with execution lock.
+- `src/frontend_api_types.rs` - extends the durable writeback bundle DTO with execution-enabled and execution-admitted fields.
+- `src/runtime/mutation/contract_repair_approval.rs` - enables durable bundle admission while keeping a separate durable bundle execution switch disabled so disk-effect `would_*` fields remain false.
+- `tests/api_v4_productization_contract_repair.rs` - verifies durable bundle admission is true, execution admission is false, the execution switch is the only bundle blocker, and no record/source/marker/disk effects occur.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable bundle admission with execution lock ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AS` as the durable bundle admission boundary before actual durable execution.
+
+Productization supplement: ADV-SM-PROD-002AT Contract repair approve durable execution dry-run transcript.
+- `src/frontend_api_types.rs` - extends the durable writeback bundle DTO with dry-run execution readiness, completion, count, effect-blocking, ordered phases, and receipts.
+- `src/runtime/mutation/contract_repair_approval.rs` - derives a side-effect-blocked durable dry-run transcript from the admitted routed execution order while excluding response-only phases.
+- `tests/api_v4_productization_contract_repair.rs` - verifies the eight-phase durable transcript includes `write_contract_source` and `commit_transaction` receipts, excludes `return_review_approve_executed`, and still performs no disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable execution dry-run transcript ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AT` as the durable execution transcript boundary before the execution switch is opened.
+
+Productization supplement: ADV-SM-PROD-002AU Contract repair approve durable rollback barrier.
+- `src/frontend_api_types.rs` - extends the durable writeback bundle DTO with rollback dry-run readiness, completion, count, effect-blocking, receipts, coverage pairs, uncovered phase tracking, and rollback barrier readiness.
+- `src/runtime/mutation/contract_repair_approval.rs` - derives rollback coverage from the admitted durable execution order and final rollback order, keeping execution gated until the separate execution switch opens.
+- `tests/api_v4_productization_contract_repair.rs` - verifies rollback barrier readiness, coverage pairs, rollback receipts, empty uncovered durable phases, and continued absence of record/source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable rollback barrier ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AU` as the rollback barrier boundary before actual durable execution.
+
+Productization supplement: ADV-SM-PROD-002AV Contract repair approve durable execution admission with disk application lock.
+- `src/frontend_api_types.rs` - extends the durable writeback bundle DTO with disk-application enabled and admitted fields.
+- `src/runtime/mutation/contract_repair_approval.rs` - enables durable execution admission after rollback barrier proof while keeping actual disk application behind a disabled switch.
+- `tests/api_v4_productization_contract_repair.rs` - verifies durable execution admission is true, disk application admission is false, the disk application switch is the only bundle blocker, and no record/source/marker/disk effects occur.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable execution admission with disk application lock ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AV` as the disk application lock boundary before real atomic durable writes.
+
+Productization supplement: ADV-SM-PROD-002AW Contract repair approve durable disk application write-set plan.
+- `src/frontend_api_types.rs` - extends the durable writeback bundle DTO with disk application plan readiness, completion, effect count, blocked-effects evidence, per-effect planned booleans, file names, source digests, and plan receipts.
+- `src/runtime/mutation/contract_repair_approval.rs` - derives the five-effect disk application plan from admitted durable execution and rollback barrier proof while keeping actual disk application behind the disabled switch.
+- `tests/api_v4_productization_contract_repair.rs` - verifies the five planned effects, file-name evidence, before/after source digests, plan receipts, disk application blocker, and no record/source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable disk application write-set plan ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AW` as the write-set plan boundary before real atomic durable writes.
+
+Productization supplement: ADV-SM-PROD-002AX Contract repair approve durable disk application transaction proof gate.
+- `src/frontend_api_types.rs` - extends the durable writeback bundle DTO with disk application transaction proof readiness, atomic write-set evidence, simulated failure points, rollback action counts, and partial-state proof fields.
+- `src/runtime/mutation/contract_repair_approval.rs` - derives disk application transaction proof from the planned write-set and rollback sequence, and adds `disk_application_transaction_failure_proof_ready` as a gate before disk application can open.
+- `tests/api_v4_productization_contract_repair.rs` - verifies the five planned disk effects, five simulated failure points, three covered rollback actions, two uncovered partial-state slots, the transaction proof blocker, the disk application switch blocker, and no record/source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable disk application transaction proof gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AX` as the rollback-on-failure proof gate before real atomic durable writes.
+
+Productization supplement: ADV-SM-PROD-002AY Contract repair approve durable disk application terminal recovery proof.
+- `src/frontend_api_types.rs` - extends the durable writeback bundle DTO with cleanup recovery action readiness, commit terminal verification readiness, and terminal recovery proof readiness.
+- `src/runtime/mutation/contract_repair_approval.rs` - closes disk application transaction proof by adding recovery marker restore and committed-transaction verification actions to the planned failure recovery set while keeping disk application disabled.
+- `tests/api_v4_productization_contract_repair.rs` - verifies transaction proof readiness, five simulated failure points, five recovery/terminal actions, zero partial-state slots, the disk application switch blocker, and no record/source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable disk application terminal recovery proof ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AY` as the terminal recovery proof boundary before real atomic durable writes.
+
+Productization supplement: ADV-SM-PROD-002AZ Contract repair approve durable disk application executor preflight.
+- `src/frontend_api_types.rs` - extends the durable writeback bundle DTO with disk application executor identity, readiness/admission/effect-blocking, blocker reason, handler counts, ready handlers, blocked handlers, and handler routes.
+- `src/runtime/mutation/contract_repair_approval.rs` - maps the proof-ready durable disk write-set to five executor handler routes while keeping executor admission tied to the disabled disk application switch.
+- `tests/api_v4_productization_contract_repair.rs` - verifies executor readiness, five handler routes, zero blocked handlers, executor admission blocked by the disk application switch, and no record/source/marker/disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable disk application executor preflight ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002AZ` as the executor preflight boundary before real atomic durable writes.
+
+Productization supplement: ADV-SM-PROD-002BA Contract repair approve durable disk executor handler execution harness.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `contract_repair_approval_durable_disk_executor_handlers_apply_happy_path`, which executes recovery marker write, approval record persistence, contract source write, recovery marker cleanup, and transaction commit phase through the existing gated handlers.
+- `tests/api_v4_productization_contract_repair.rs` - remains the endpoint lock verifier while the new lib harness verifies actual handler execution outside endpoint admission.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable disk executor handler execution harness ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BA` as executable handler evidence before endpoint disk application admission opens.
+
+Productization supplement: ADV-SM-PROD-002BB Contract repair approve durable disk application executor helper extraction.
+- `src/runtime/mutation/contract_repair_approval.rs` - extracts `contract_repair_approval_execute_durable_disk_application_handlers`, a reusable internal helper that runs recovery marker write, approval record persistence, contract source write, recovery marker cleanup, and transaction commit phase, then returns execution booleans, receipts, and blockers.
+- `src/runtime/mutation/contract_repair_approval.rs` - updates `contract_repair_approval_durable_disk_executor_handlers_apply_happy_path` to verify the helper boundary while endpoint disk application remains disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable disk application executor helper ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BB` as the helper extraction before endpoint disk application admission.
+
+Productization supplement: ADV-SM-PROD-002BC Contract repair approve durable disk helper failure rollback.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `contract_repair_approval_rollback_durable_disk_application_partial_state`, helper rollback receipts, and failure-exit rollback calls for persist-record, source-write, cleanup, and commit failures.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `contract_repair_approval_durable_disk_executor_rolls_back_record_and_marker_when_source_write_blocks` to verify a source-write blocker removes the newly-created approval record and recovery marker while preserving the contract source.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable disk helper failure rollback ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BC` as helper rollback evidence before endpoint disk application admission.
+
+Productization supplement: ADV-SM-PROD-002BD Contract repair approve durable disk cleanup failure rollback proof.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `contract_repair_approval_durable_disk_executor_restores_source_record_and_marker_when_cleanup_blocks` to force cleanup failure after source write and verify source, record, and marker rollback receipts.
+- `src/runtime/mutation/contract_repair_approval.rs` - keeps endpoint disk application disabled while expanding helper failure coverage from source-write blocked to post-source-write cleanup failure.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable disk cleanup failure rollback proof ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BD` as source-written rollback evidence before endpoint disk application admission.
+
+Productization supplement: ADV-SM-PROD-002BE Contract repair approve durable disk commit failure rollback proof.
+- `src/runtime/mutation/contract_repair_approval.rs` - adds `contract_repair_approval_durable_disk_executor_restores_source_and_record_when_commit_blocks` to force commit readiness failure after cleanup succeeds and verify source/record rollback with marker terminal absence.
+- `src/runtime/mutation/contract_repair_approval.rs` - keeps endpoint disk application disabled while expanding helper failure coverage through the commit-adjacent failure point.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable disk commit failure rollback proof ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BE` as commit-adjacent helper rollback evidence before endpoint disk application admission.
+
+Productization supplement: ADV-SM-PROD-002BF Contract repair approve endpoint helper admission evidence.
+- `src/frontend_api_types.rs` - adds `disk_application_endpoint_helper_*` durable writeback bundle fields for helper name, wiring, admission readiness, admitted state, blocker, and input readiness.
+- `src/runtime/mutation/contract_repair_approval.rs` - populates endpoint helper admission evidence from durable disk executor readiness while keeping disk application blocked.
+- `tests/api_v4_productization_contract_repair.rs` - verifies the approve live-route response exposes helper admission evidence and still plans no disk effects.
+- `markdown/00-matrix-governance/module-tree.md` - records approve endpoint helper admission evidence ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BF` as endpoint-visible helper admission evidence before disk application opens.
+
+Productization supplement: ADV-SM-PROD-002BG Contract repair approve endpoint helper execution socket lock.
+- `src/frontend_api_types.rs` - adds endpoint helper execution connection, blocked, would-execute, and blocked-reason fields to the durable writeback bundle.
+- `src/runtime/mutation/contract_repair_approval.rs` - binds the endpoint helper execution socket to the durable disk application lock so connected evidence does not execute disk effects.
+- `tests/api_v4_productization_contract_repair.rs` - verifies the approve live-route response reports a connected helper execution socket with `would_execute: false`.
+- `markdown/00-matrix-governance/module-tree.md` - records approve endpoint helper execution socket lock ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BG` as the connected-but-locked helper execution socket before disk application opens.
+
+Productization supplement: ADV-SM-PROD-002BH Contract repair approve endpoint helper invocation branch lock.
+- `src/frontend_api_types.rs` - adds `ContractRepairApprovalApproveExecutionDurableDiskApplicationExecution` and exposes it on locked review responses.
+- `src/runtime/mutation/contract_repair_approval.rs` - positions the future helper invocation branch after final approval-record state construction and maps the current locked branch to no-receipt/no-disk evidence.
+- `tests/api_v4_productization_contract_repair.rs` - verifies the approve live-route response exposes the helper invocation result as blocked by the disk application switch.
+- `markdown/00-matrix-governance/module-tree.md` - records approve endpoint helper invocation branch lock ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BH` as the endpoint helper invocation branch lock before disk application opens.
+
+Productization supplement: ADV-SM-PROD-002BI Contract repair approve endpoint durable disk application release.
+- `src/runtime/mutation/contract_repair_approval.rs` - enables the endpoint durable disk application switch, lets durable preflight/rollback barriers stay ready after effects are no longer blocked, and connects decision-lock disk-touch evidence to the durable bundle.
+- `src/frontend_api_types.rs` - keeps the durable disk application execution result in the locked review response shape so committed execution evidence is visible at the endpoint.
+- `tests/api_v4_productization_contract_repair.rs` - renames and updates the approve live-route test to verify persisted approval record, applied source patch, cleared marker, committed helper execution, and `would_touch_disk: true`.
+- `markdown/00-matrix-governance/module-tree.md` - records approve endpoint durable disk application release ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BI` as the endpoint durable disk application release through the helper path.
+
+Productization supplement: ADV-SM-PROD-002BJ Contract repair approve durable rollback endpoint DTO exposure.
+- `src/runtime/mutation/contract_repair_approval.rs` - decouples durable disk execution DTO mapping from the full durable bundle and maps helper rollback evidence into the endpoint-visible result shape.
+- `src/frontend_api_types.rs` - continues to expose `approve_execution_durable_disk_application_execution` as the endpoint carrier for committed and rollback execution evidence.
+- `src/runtime/mutation/contract_repair_approval.rs` - extends the commit-failure rollback test to assert endpoint DTO rollback receipts, blockers, partial-phase flags, and `rollback_executed: true`.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable rollback endpoint DTO exposure ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BJ` as the endpoint-visible rollback DTO bridge before HTTP-level failure stimulation.
+
+Productization supplement: ADV-SM-PROD-002BK Contract repair approve HTTP source-write rollback proof.
+- `src/runtime/mutation/contract_repair_approval.rs` - gates final approve response application on durable helper commit confirmation so helper rollback no longer reports `review_approve_executed`.
+- `tests/api_v4_productization_contract_repair.rs` - adds a Windows file-share lock integration test that lets endpoint preflight read the source but blocks atomic source rename during durable disk application.
+- `tests/api_v4_productization_contract_repair.rs` - verifies the HTTP response is locked with rollback evidence, restored pending record, removed marker, and unchanged source after source-write failure.
+- `markdown/00-matrix-governance/module-tree.md` - records approve HTTP source-write rollback proof ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BK` as the HTTP-level source-write rollback proof without adding production fault injection.
