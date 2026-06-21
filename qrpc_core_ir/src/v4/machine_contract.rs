@@ -153,6 +153,12 @@ pub struct MachineGuardConditionProjection {
     pub right_parameter_path_kind: Option<MachineGuardParameterPathKind>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub right_parameter_path_projection: Option<MachineGuardParameterPathProjection>,
+    #[serde(default)]
+    pub evaluation_enabled: bool,
+    #[serde(default)]
+    pub evaluation_blocker_code: String,
+    #[serde(default)]
+    pub evaluation_blocker_reason: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -488,6 +494,7 @@ impl MachineGuardDescriptor {
     }
 
     pub fn condition_projections(&self) -> Vec<MachineGuardConditionProjection> {
+        let execution_state = MachineGuardExecutionReadinessState::DisabledFailClosed;
         self.conditions
             .iter()
             .map(|condition| MachineGuardConditionProjection {
@@ -509,6 +516,9 @@ impl MachineGuardDescriptor {
                     ),
                     active_strategy_write_enabled: false,
                 }),
+                evaluation_enabled: false,
+                evaluation_blocker_code: execution_state.blocker_code().to_string(),
+                evaluation_blocker_reason: execution_state.blocker_reason().to_string(),
             })
             .collect()
     }

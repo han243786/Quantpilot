@@ -10203,3 +10203,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers condition-level left read binding scopes, right parameter kinds, proposal-only flags, and disabled active strategy writes across machine and bundle projections. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the condition operand projection fields, related test assertions, and this record if condition rendering moves into a dedicated Guard Builder query contract. |
+
+### ADV-SM-PROD-003AA: Guard Builder condition fail-closed readiness projection
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.8`; continue `SM-PROD-003` by making every structured guard condition visibly fail-closed and non-evaluable in the workspace read model. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now adds `evaluation_enabled`, `evaluation_blocker_code`, and `evaluation_blocker_reason` to `MachineGuardConditionProjection`. The projection reuses the same fail-closed blocker constants as descriptor readiness while preserving the raw condition payload and operand projections. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: condition readiness is read-only metadata, no condition is evaluated, no guard is executed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers condition-level disabled evaluation and blocker code/reason across machine and bundle projections. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the condition evaluation readiness fields, related test assertions, and this record if condition readiness moves into a dedicated Guard Builder query contract. |

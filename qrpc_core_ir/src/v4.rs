@@ -788,6 +788,15 @@ mod tests {
             projection.condition_projections[0].right_parameter_path_kind,
             Some(MachineGuardParameterPathKind::Threshold)
         );
+        assert!(!projection.condition_projections[0].evaluation_enabled);
+        assert_eq!(
+            projection.condition_projections[0].evaluation_blocker_code,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+        );
+        assert_eq!(
+            projection.condition_projections[0].evaluation_blocker_reason,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON
+        );
         assert_eq!(
             projection.condition_projections[0]
                 .left_read_projection
@@ -981,6 +990,15 @@ mod tests {
         assert_eq!(summary.condition_risk_limit_parameter_path_count, 1);
         assert_eq!(summary.condition_cooldown_parameter_path_count, 0);
         let condition_projection = &projection.guard.guard.condition_projections[0];
+        assert!(!condition_projection.evaluation_enabled);
+        assert_eq!(
+            condition_projection.evaluation_blocker_code,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+        );
+        assert_eq!(
+            condition_projection.evaluation_blocker_reason,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON
+        );
         assert_eq!(
             condition_projection
                 .left_read_projection

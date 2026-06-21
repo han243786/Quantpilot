@@ -10493,3 +10493,9 @@ Productization supplement: ADV-SM-PROD-003Z Guard Builder condition operand proj
 - `qrpc_core_ir/src/v4.rs` - covers condition-level read binding scopes, right parameter projection kinds, proposal-only flags, and disabled active strategy writes across machine and bundle guard descriptor projections.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder condition operand projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003Z` as the condition operand projection slice.
+
+Productization supplement: ADV-SM-PROD-003AA Guard Builder condition fail-closed readiness projection.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds disabled evaluation and fail-closed blocker fields to `MachineGuardConditionProjection` so workspace consumers can show that each structured guard condition remains non-evaluable.
+- `qrpc_core_ir/src/v4.rs` - covers condition-level disabled evaluation and blocker code/reason across machine and bundle guard descriptor projections.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder condition fail-closed readiness projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AA` as the condition fail-closed readiness projection slice.
