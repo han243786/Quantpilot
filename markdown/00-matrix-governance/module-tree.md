@@ -11620,3 +11620,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003AC)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle parameter mutability summary.
 `parameter_path_proposal_only_count` / active-strategy-write count fields; static bundle summaries aggregate proposal-only guard parameter mutability while active strategy writes remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003AD)**: `root.contracts.core_ir.v4_contracts.machine_contract` and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder policy execution disabled projection.
+`MachineGuardPolicyProjection` disabled execution/write fields; structured guard policy projections expose timeout/cooldown/fallback as metadata-only while timers, fallback execution, and active strategy writes remain disabled.

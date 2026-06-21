@@ -846,6 +846,17 @@ mod tests {
             policy_projection.fallback,
             Some(MachineGuardFallbackPolicy::FailClosed)
         );
+        assert!(!policy_projection.timing_execution_enabled);
+        assert!(!policy_projection.fallback_execution_enabled);
+        assert!(!policy_projection.active_strategy_write_enabled);
+        assert_eq!(
+            policy_projection.execution_blocker_code,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+        );
+        assert_eq!(
+            policy_projection.execution_blocker_reason,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON
+        );
     }
 
     #[test]
@@ -1050,6 +1061,13 @@ mod tests {
         assert!(!policy_projection.timeout_declared);
         assert!(policy_projection.cooldown_declared);
         assert!(policy_projection.fallback_fail_closed_declared);
+        assert!(!policy_projection.timing_execution_enabled);
+        assert!(!policy_projection.fallback_execution_enabled);
+        assert!(!policy_projection.active_strategy_write_enabled);
+        assert_eq!(
+            policy_projection.execution_blocker_code,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+        );
         assert_eq!(summary.execution_enabled_count, 0);
         assert_eq!(summary.execution_disabled_fail_closed_count, 1);
         assert!(!projection.guard.guard.readiness.execution_enabled);

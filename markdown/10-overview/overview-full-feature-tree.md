@@ -10511,3 +10511,9 @@ Productization supplement: ADV-SM-PROD-003AC Guard Builder bundle parameter muta
 - `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for proposal-only guard parameters and disabled active strategy writes.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle parameter mutability summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AC` as the bundle parameter mutability summary slice.
+
+Productization supplement: ADV-SM-PROD-003AD Guard Builder policy execution disabled projection.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds disabled timing execution, fallback execution, active strategy writes, and fail-closed blocker fields to `MachineGuardPolicyProjection`.
+- `qrpc_core_ir/src/v4.rs` - covers disabled timing execution, fallback execution, active strategy writes, and blocker code/reason in policy projections.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder policy execution disabled projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AD` as the policy execution disabled projection slice.

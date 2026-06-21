@@ -195,6 +195,16 @@ pub struct MachineGuardPolicyProjection {
     pub cooldown_declared: bool,
     pub fallback_declared: bool,
     pub fallback_fail_closed_declared: bool,
+    #[serde(default)]
+    pub timing_execution_enabled: bool,
+    #[serde(default)]
+    pub fallback_execution_enabled: bool,
+    #[serde(default)]
+    pub active_strategy_write_enabled: bool,
+    #[serde(default)]
+    pub execution_blocker_code: String,
+    #[serde(default)]
+    pub execution_blocker_reason: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -208,6 +218,7 @@ impl MachineGuardPolicySpec {
         let timeout_declared = self.timeout_ms.is_some();
         let cooldown_declared = self.cooldown_ms.is_some();
         let fallback_declared = self.fallback.is_some();
+        let execution_state = MachineGuardExecutionReadinessState::DisabledFailClosed;
         MachineGuardPolicyProjection {
             timeout_ms: self.timeout_ms,
             cooldown_ms: self.cooldown_ms,
@@ -220,6 +231,11 @@ impl MachineGuardPolicySpec {
                 self.fallback.as_ref(),
                 Some(MachineGuardFallbackPolicy::FailClosed)
             ),
+            timing_execution_enabled: false,
+            fallback_execution_enabled: false,
+            active_strategy_write_enabled: false,
+            execution_blocker_code: execution_state.blocker_code().to_string(),
+            execution_blocker_reason: execution_state.blocker_reason().to_string(),
         }
     }
 }

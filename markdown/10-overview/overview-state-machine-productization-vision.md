@@ -10236,3 +10236,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for proposal-only guard parameters and disabled active strategy writes. |
 | capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the parameter mutability summary fields, aggregation, related test assertions, and this record if parameter mutability reporting moves into a dedicated Guard Builder query contract. |
+
+### ADV-SM-PROD-003AD: Guard Builder policy execution disabled projection
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making timeout/cooldown/fallback policy visibly metadata-only in the workspace read model. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now adds disabled timing execution, disabled fallback execution, disabled active strategy writes, and fail-closed blocker fields to `MachineGuardPolicyProjection`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: policy projection fields are read-only metadata, no timer is scheduled, no fallback is executed, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers disabled timing execution, fallback execution, active strategy writes, and blocker code/reason in policy projections. |
+| capability boundary | This does not enable guard execution, timer scheduling, cooldown enforcement, fallback execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the policy execution disabled projection fields, related test assertions, and this record if policy readiness moves into a dedicated Guard Builder query contract. |
