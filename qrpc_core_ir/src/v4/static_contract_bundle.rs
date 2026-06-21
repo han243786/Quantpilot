@@ -76,6 +76,8 @@ pub struct StaticContractBundleGuardDescriptorSummary {
     pub condition_cooldown_parameter_path_count: usize,
     pub condition_threshold_parameter_path_count: usize,
     pub condition_risk_limit_parameter_path_count: usize,
+    pub condition_evaluation_enabled_count: usize,
+    pub condition_evaluation_disabled_fail_closed_count: usize,
     pub policy_declared_count: usize,
     pub timing_policy_declared_count: usize,
     pub timeout_declared_count: usize,
@@ -164,6 +166,16 @@ impl V4StaticContractBundle {
                 readiness.condition_threshold_parameter_path_count;
             summary.condition_risk_limit_parameter_path_count +=
                 readiness.condition_risk_limit_parameter_path_count;
+            for condition in &projection.guard.guard.condition_projections {
+                summary.condition_evaluation_enabled_count +=
+                    usize::from(condition.evaluation_enabled);
+                summary.condition_evaluation_disabled_fail_closed_count += usize::from(
+                    !condition.evaluation_enabled
+                        && condition.evaluation_blocker_code
+                            == MachineGuardExecutionReadinessState::DisabledFailClosed
+                                .blocker_code(),
+                );
+            }
             summary.policy_declared_count += usize::from(readiness.policy_declared);
             summary.timing_policy_declared_count += usize::from(readiness.timing_policy_declared);
             summary.timeout_declared_count += usize::from(readiness.timeout_declared);

@@ -10214,3 +10214,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers condition-level disabled evaluation and blocker code/reason across machine and bundle projections. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the condition evaluation readiness fields, related test assertions, and this record if condition readiness moves into a dedicated Guard Builder query contract. |
+
+### ADV-SM-PROD-003AB: Guard Builder bundle condition readiness summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.8`; continue `SM-PROD-003` by aggregating condition-level disabled evaluation evidence at the static bundle boundary for workspace overview use. |
+| implementation | `qrpc_core_ir/src/v4/static_contract_bundle.rs` now aggregates `condition_evaluation_enabled_count` and `condition_evaluation_disabled_fail_closed_count` in `StaticContractBundleGuardDescriptorSummary` from condition projections. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: bundle summary fields are read-only metadata, no condition is evaluated, no guard is executed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for disabled condition evaluation and fail-closed blocker counts. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the condition evaluation summary fields, aggregation, related test assertions, and this record if condition readiness aggregation moves into a dedicated Guard Builder query contract. |

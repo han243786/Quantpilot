@@ -11614,3 +11614,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003AA)**: `root.contracts.core_ir.v4_contracts.machine_contract` and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder condition fail-closed readiness projection.
 `MachineGuardConditionProjection.evaluation_enabled` / blocker fields; structured guard condition projections expose disabled evaluation and fail-closed blocker details while runtime guard execution remains disabled.
+
+**Productization supplement (ADV-SM-PROD-003AB)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle condition readiness summary.
+`condition_evaluation_enabled_count` / `condition_evaluation_disabled_fail_closed_count`; static bundle summaries aggregate condition-level disabled evaluation evidence while runtime guard execution remains disabled.

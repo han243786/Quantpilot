@@ -10499,3 +10499,9 @@ Productization supplement: ADV-SM-PROD-003AA Guard Builder condition fail-closed
 - `qrpc_core_ir/src/v4.rs` - covers condition-level disabled evaluation and blocker code/reason across machine and bundle guard descriptor projections.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder condition fail-closed readiness projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AA` as the condition fail-closed readiness projection slice.
+
+Productization supplement: ADV-SM-PROD-003AB Guard Builder bundle condition readiness summary.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates `condition_evaluation_enabled_count` and `condition_evaluation_disabled_fail_closed_count` in static bundle guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for condition-level disabled evaluation and fail-closed counts.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle condition readiness summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AB` as the bundle condition readiness summary slice.
