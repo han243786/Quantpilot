@@ -666,6 +666,41 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_projects_guard_descriptors_with_machine_context() {
+        let mut graph = sample_machine_graph();
+        let intent = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "intent.trend")
+            .unwrap();
+        intent.transitions[0].guard = None;
+        intent.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "intent_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::EventPayload,
+                path: "symbol".to_string(),
+            }],
+            parameter_paths: vec!["guard.threshold".to_string()],
+            explanation: Some("graph projection surface".to_string()),
+        });
+
+        let projections = graph.guard_descriptor_projections();
+
+        assert_eq!(projections.len(), 1);
+        let projection = &projections[0];
+        assert_eq!(projection.machine_id, "intent.trend");
+        assert_eq!(projection.machine_template, MachineTemplateKind::Decision);
+        assert_eq!(projection.guard.transition_id, "intent.trend.transition");
+        assert_eq!(projection.guard.event_type, "bar_closed");
+        assert_eq!(
+            projection.guard.event_source.as_deref(),
+            Some("data.market")
+        );
+        assert_eq!(projection.guard.readiness.guard_id, "intent_guard");
+        assert!(!projection.guard.readiness.execution_enabled);
+    }
+
+    #[test]
     fn machine_contract_rejects_invalid_structured_guard_descriptor() {
         let mut machine = sample_machine();
         machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {

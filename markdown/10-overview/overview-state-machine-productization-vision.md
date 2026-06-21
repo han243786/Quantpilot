@@ -10004,3 +10004,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers workspace projection fields and verifies projected readiness keeps execution disabled. |
 | capability boundary | This does not mutate topology/Event Catalog/Memory Schema/capability source or active strategy state; it only makes the existing descriptor surface consumable as a read model. |
 | rollback | Remove the projection DTO, projection helper, projection test, and this record if workspace guard reads move to a separate query contract. |
+
+### ADV-SM-PROD-003I: Guard Builder graph-level workspace projection surface
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by lifting the read-only guard descriptor projection to the machine graph boundary so workspace consumers can read all structured guard descriptors with machine context. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now provides `MachineGraphGuardDescriptorProjection` and `V4MachineGraphContract::guard_descriptor_projections()`. The projection includes machine id, machine template, and the existing per-transition guard descriptor projection. |
+| runtime boundary | Runtime behavior remains unchanged: graph projection is a read model only, guard descriptors still fail closed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph-level projection of machine id/template, transition id, event context, and disabled execution readiness. |
+| capability boundary | This does not mutate graph topology, Event Catalog, Memory Schema, capability source, AI approval semantics, or active strategy state. |
+| rollback | Remove the graph-level projection DTO/helper/test and this record if workspace guard descriptors are later served by a dedicated query endpoint instead of the core IR graph contract. |

@@ -11557,3 +11557,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003H)**: `root.contracts.core_ir.v4_contracts.machine_contract` and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder read-only workspace projection surface.
 `V4MachineContract::guard_descriptor_projections`; machine contracts can project structured guard descriptors with transition/event context, reads, parameter paths, and readiness while preserving `execution_enabled=false` and runtime fail-closed behavior.
+
+**Productization supplement (ADV-SM-PROD-003I)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder graph-level workspace projection surface.
+`V4MachineGraphContract::guard_descriptor_projections`; machine graphs can project all structured guard descriptors with machine id/template plus transition/event/readiness context while preserving read-only behavior and runtime fail-closed execution.

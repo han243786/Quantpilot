@@ -11,7 +11,8 @@ use std::collections::BTreeMap;
 
 use super::{
     default_machine_graph_contract_version, default_machine_graph_edge_activation,
-    default_risk_plane_min_priority, default_true, V4MachineContract,
+    default_risk_plane_min_priority, default_true, MachineGuardDescriptorProjection,
+    MachineTemplateKind, V4MachineContract,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -61,4 +62,34 @@ pub struct MachineGraphRiskPlane {
     pub machine_ids: Vec<String>,
     #[serde(default = "default_risk_plane_min_priority")]
     pub min_priority: i32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineGraphGuardDescriptorProjection {
+    pub machine_id: String,
+    pub machine_template: MachineTemplateKind,
+    pub guard: MachineGuardDescriptorProjection,
+}
+
+impl V4MachineGraphContract {
+    pub fn guard_descriptor_projections(&self) -> Vec<MachineGraphGuardDescriptorProjection> {
+        let mut all_machines = Vec::new();
+        for machine in &self.machines {
+            collect_machine_family(machine, &mut all_machines);
+        }
+
+        all_machines
+            .into_iter()
+            .flat_map(|machine| {
+                machine
+                    .guard_descriptor_projections()
+                    .into_iter()
+                    .map(move |guard| MachineGraphGuardDescriptorProjection {
+                        machine_id: machine.machine_id.clone(),
+                        machine_template: machine.template.clone(),
+                        guard,
+                    })
+            })
+            .collect()
+    }
 }

@@ -10371,3 +10371,9 @@ Productization supplement: ADV-SM-PROD-003H Guard Builder read-only workspace pr
 - `qrpc_core_ir/src/v4.rs` - covers projected transition/event context, reads, parameter paths, and readiness with execution disabled.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder read-only projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003H` as the workspace projection surface slice.
+
+Productization supplement: ADV-SM-PROD-003I Guard Builder graph-level workspace projection surface.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - adds `MachineGraphGuardDescriptorProjection` and graph-level guard descriptor projection aggregation for read-only workspace consumption.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level machine id/template plus transition/event/readiness context for structured guard descriptor projection.
+- `markdown/00-matrix-governance/module-tree.md` - records graph-level Guard Builder projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003I` as the graph-level workspace projection surface slice.
