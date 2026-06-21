@@ -701,6 +701,53 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_projects_guard_descriptors_with_graph_context() {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        risk.transitions[0].guard = None;
+        risk.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "risk_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::EventPayload,
+                path: "symbol".to_string(),
+            }],
+            parameter_paths: vec!["risk.max_notional".to_string()],
+            explanation: Some("bundle projection surface".to_string()),
+        });
+
+        let projections = bundle.guard_descriptor_projections();
+
+        assert_eq!(projections.len(), 1);
+        let projection = &projections[0];
+        assert_eq!(projection.graph_id, "strategy.v4.sample");
+        assert_eq!(projection.guard.machine_id, "risk.guard");
+        assert_eq!(
+            projection.guard.machine_template,
+            MachineTemplateKind::Decision
+        );
+        assert_eq!(
+            projection.guard.guard.transition_id,
+            "risk.guard.transition"
+        );
+        assert_eq!(projection.guard.guard.event_type, "intent.long");
+        assert_eq!(
+            projection.guard.guard.event_source.as_deref(),
+            Some("intent.trend")
+        );
+        assert_eq!(projection.guard.guard.readiness.guard_id, "risk_guard");
+        assert_eq!(
+            projection.guard.guard.parameter_paths,
+            vec!["risk.max_notional".to_string()]
+        );
+        assert!(!projection.guard.guard.readiness.execution_enabled);
+    }
+
+    #[test]
     fn machine_contract_rejects_invalid_structured_guard_descriptor() {
         let mut machine = sample_machine();
         machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {

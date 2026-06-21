@@ -11560,3 +11560,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003I)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder graph-level workspace projection surface.
 `V4MachineGraphContract::guard_descriptor_projections`; machine graphs can project all structured guard descriptors with machine id/template plus transition/event/readiness context while preserving read-only behavior and runtime fail-closed execution.
+
+**Productization supplement (ADV-SM-PROD-003J)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle-level workspace projection surface.
+`V4StaticContractBundle::guard_descriptor_projections`; static contract bundles can project all structured guard descriptors with graph id, machine id/template, transition/event/readiness context, and parameter paths while preserving read-only behavior and runtime fail-closed execution.

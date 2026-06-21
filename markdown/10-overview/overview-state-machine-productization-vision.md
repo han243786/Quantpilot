@@ -10015,3 +10015,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph-level projection of machine id/template, transition id, event context, and disabled execution readiness. |
 | capability boundary | This does not mutate graph topology, Event Catalog, Memory Schema, capability source, AI approval semantics, or active strategy state. |
 | rollback | Remove the graph-level projection DTO/helper/test and this record if workspace guard descriptors are later served by a dedicated query endpoint instead of the core IR graph contract. |
+
+### ADV-SM-PROD-003J: Guard Builder bundle-level workspace projection surface
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by lifting the read-only guard descriptor projection to the static contract bundle boundary so workspace consumers can read structured guards across graphs with graph context. |
+| implementation | `qrpc_core_ir/src/v4/static_contract_bundle.rs` now provides `StaticContractBundleGuardDescriptorProjection` and `V4StaticContractBundle::guard_descriptor_projections()`. The projection includes graph id plus the existing graph-level machine and transition guard descriptor projection. |
+| runtime boundary | Runtime behavior remains unchanged: bundle projection is a read model only, guard descriptors still fail closed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle-level projection of graph id, machine id/template, transition id, event context, parameter paths, and disabled execution readiness. |
+| capability boundary | This does not mutate graph topology, Event Catalog, Memory Schema, capability source, AI approval semantics, or active strategy state. |
+| rollback | Remove the bundle-level projection DTO/helper/test and this record if workspace guard descriptors are later served by a dedicated query endpoint instead of the static contract bundle. |

@@ -10377,3 +10377,9 @@ Productization supplement: ADV-SM-PROD-003I Guard Builder graph-level workspace 
 - `qrpc_core_ir/src/v4.rs` - covers graph-level machine id/template plus transition/event/readiness context for structured guard descriptor projection.
 - `markdown/00-matrix-governance/module-tree.md` - records graph-level Guard Builder projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003I` as the graph-level workspace projection surface slice.
+
+Productization supplement: ADV-SM-PROD-003J Guard Builder bundle-level workspace projection surface.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - adds `StaticContractBundleGuardDescriptorProjection` and bundle-level guard descriptor projection aggregation for read-only workspace consumption across graphs.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level graph id, machine id/template, transition/event context, parameter paths, and disabled execution readiness for structured guard descriptor projection.
+- `markdown/00-matrix-governance/module-tree.md` - records bundle-level Guard Builder projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003J` as the static contract bundle workspace projection surface slice.

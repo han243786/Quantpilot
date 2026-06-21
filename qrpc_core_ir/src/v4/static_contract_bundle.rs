@@ -5,9 +5,10 @@ use std::collections::BTreeMap;
 mod static_validation;
 
 use super::{
-    ComplexityBudgetContract, DeveloperLearningPipelineContract, PluginGovernanceContract,
-    PluginManifestSpec, QsStateMachineProfile, QsTypeSystemContract, ReproducibilityContract,
-    RuntimeModeContract, V4MachineGraphContract, V4VersionManifest, VenueCapabilityMatrix,
+    ComplexityBudgetContract, DeveloperLearningPipelineContract,
+    MachineGraphGuardDescriptorProjection, PluginGovernanceContract, PluginManifestSpec,
+    QsStateMachineProfile, QsTypeSystemContract, ReproducibilityContract, RuntimeModeContract,
+    V4MachineGraphContract, V4VersionManifest, VenueCapabilityMatrix,
     V4_STATIC_CONTRACT_BUNDLE_VERSION,
 };
 
@@ -41,6 +42,12 @@ pub struct V4StaticContractBundle {
     pub metadata: BTreeMap<String, Value>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct StaticContractBundleGuardDescriptorProjection {
+    pub graph_id: String,
+    pub guard: MachineGraphGuardDescriptorProjection,
+}
+
 impl Default for V4StaticContractBundle {
     fn default() -> Self {
         Self {
@@ -58,6 +65,25 @@ impl Default for V4StaticContractBundle {
             plugin_manifests: Vec::new(),
             metadata: BTreeMap::new(),
         }
+    }
+}
+
+impl V4StaticContractBundle {
+    pub fn guard_descriptor_projections(
+        &self,
+    ) -> Vec<StaticContractBundleGuardDescriptorProjection> {
+        self.machine_graphs
+            .iter()
+            .flat_map(|graph| {
+                graph
+                    .guard_descriptor_projections()
+                    .into_iter()
+                    .map(move |guard| StaticContractBundleGuardDescriptorProjection {
+                        graph_id: graph.graph_id.clone(),
+                        guard,
+                    })
+            })
+            .collect()
     }
 }
 
