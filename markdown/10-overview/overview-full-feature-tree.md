@@ -10432,3 +10432,12 @@ Productization supplement: ADV-SM-PROD-003Q Guard Builder duplicate input static
 - `qrpc_core_ir/src/v4.rs` - covers duplicate machine-memory reads and duplicate guard parameter paths.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder duplicate input hygiene ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003Q` as the duplicate input static hygiene slice.
+
+Productization supplement: ADV-SM-PROD-003R Guard Builder condition contract surface.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds `MachineGuardConditionSpec` and `MachineGuardConditionComparator`, projects condition payloads, and exposes condition counts in structured guard readiness.
+- `qrpc_core_ir/src/v4/machine_contract/static_validation.rs` - rejects blank or duplicate condition ids, undeclared condition read references, and undeclared condition parameter paths.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates guard descriptor `condition_count` in bundle readiness summaries.
+- `qrpc_core_ir/src/v4.rs` - covers accepted condition projection/readiness plus rejected invalid condition references.
+- `qrpc_runtime/src/v4_runtime/test_harness/payload_validation_tests.rs` - keeps the runtime structured guard rejection fixture on an explicit empty condition set while execution remains disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder condition contract surface ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003R` as the contract-only structured condition slice.

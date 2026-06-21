@@ -175,6 +175,60 @@ impl V4MachineContract {
                         ));
                     }
                 }
+                let mut guard_condition_ids = BTreeSet::new();
+                for condition in &guard_descriptor.conditions {
+                    if condition.condition_id.trim().is_empty() {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` has a condition without condition_id",
+                            transition.transition_id, guard_descriptor.guard_id
+                        ));
+                    } else if !guard_condition_ids.insert(condition.condition_id.trim()) {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` declares duplicate condition `{}`",
+                            transition.transition_id,
+                            guard_descriptor.guard_id,
+                            condition.condition_id
+                        ));
+                    }
+                    if condition.left_read.path.trim().is_empty() {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` condition `{}` has an empty left read path",
+                            transition.transition_id,
+                            guard_descriptor.guard_id,
+                            condition.condition_id
+                        ));
+                    } else if !guard_reads.contains(&(
+                        condition.left_read.source.as_str(),
+                        condition.left_read.path.trim(),
+                    )) {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` condition `{}` references undeclared {} read `{}`",
+                            transition.transition_id,
+                            guard_descriptor.guard_id,
+                            condition.condition_id,
+                            condition.left_read.source.as_str(),
+                            condition.left_read.path
+                        ));
+                    }
+                    if condition.right_parameter_path.trim().is_empty() {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` condition `{}` has an empty right parameter path",
+                            transition.transition_id,
+                            guard_descriptor.guard_id,
+                            condition.condition_id
+                        ));
+                    } else if !guard_parameter_paths
+                        .contains(&condition.right_parameter_path.trim().to_ascii_lowercase())
+                    {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` condition `{}` references undeclared parameter path `{}`",
+                            transition.transition_id,
+                            guard_descriptor.guard_id,
+                            condition.condition_id,
+                            condition.right_parameter_path
+                        ));
+                    }
+                }
                 if let Some(policy) = &guard_descriptor.policy {
                     if policy.timeout_ms.is_none()
                         && policy.cooldown_ms.is_none()

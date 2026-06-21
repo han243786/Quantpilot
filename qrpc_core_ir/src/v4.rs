@@ -601,6 +601,15 @@ mod tests {
                 },
             ],
             parameter_paths: vec!["guard.threshold".to_string(), "timeout.ms".to_string()],
+            conditions: vec![MachineGuardConditionSpec {
+                condition_id: "ema_above_threshold".to_string(),
+                left_read: MachineGuardReadRef {
+                    source: MachineGuardReadSource::EventPayload,
+                    path: "ema_fast".to_string(),
+                },
+                comparator: MachineGuardConditionComparator::GreaterThan,
+                right_parameter_path: "guard.threshold".to_string(),
+            }],
             policy: Some(MachineGuardPolicySpec {
                 timeout_ms: Some(500),
                 cooldown_ms: Some(1_000),
@@ -626,6 +635,7 @@ mod tests {
         assert_eq!(readiness.cooldown_parameter_path_count, 0);
         assert_eq!(readiness.threshold_parameter_path_count, 1);
         assert_eq!(readiness.risk_limit_parameter_path_count, 0);
+        assert_eq!(readiness.condition_count, 1);
         assert!(readiness.policy_declared);
         assert!(readiness.timeout_declared);
         assert!(readiness.cooldown_declared);
@@ -665,6 +675,15 @@ mod tests {
                 "guard.threshold".to_string(),
                 "risk.max_notional".to_string(),
             ],
+            conditions: vec![MachineGuardConditionSpec {
+                condition_id: "ema_threshold_check".to_string(),
+                left_read: MachineGuardReadRef {
+                    source: MachineGuardReadSource::EventPayload,
+                    path: "ema_fast".to_string(),
+                },
+                comparator: MachineGuardConditionComparator::GreaterThanOrEqual,
+                right_parameter_path: "guard.threshold".to_string(),
+            }],
             policy: Some(MachineGuardPolicySpec {
                 timeout_ms: Some(250),
                 cooldown_ms: Some(2_000),
@@ -687,6 +706,7 @@ mod tests {
         assert_eq!(projection.readiness.parameter_path_count, 2);
         assert_eq!(projection.readiness.threshold_parameter_path_count, 1);
         assert_eq!(projection.readiness.risk_limit_parameter_path_count, 1);
+        assert_eq!(projection.readiness.condition_count, 1);
         assert!(projection.readiness.policy_declared);
         assert!(!projection.readiness.execution_enabled);
         assert_eq!(projection.reads.len(), 2);
@@ -704,6 +724,8 @@ mod tests {
                 MachineGuardParameterPathKind::RiskLimit,
             ]
         );
+        assert_eq!(projection.conditions.len(), 1);
+        assert_eq!(projection.conditions[0].condition_id, "ema_threshold_check");
         let policy = projection.policy.as_ref().unwrap();
         assert_eq!(policy.timeout_ms, Some(250));
         assert_eq!(policy.cooldown_ms, Some(2_000));
@@ -729,6 +751,7 @@ mod tests {
                 path: "symbol".to_string(),
             }],
             parameter_paths: vec!["guard.threshold".to_string()],
+            conditions: Vec::new(),
             policy: None,
             explanation: Some("graph projection surface".to_string()),
         });
@@ -766,6 +789,15 @@ mod tests {
                 path: "symbol".to_string(),
             }],
             parameter_paths: vec!["risk.max_notional".to_string(), "cooldown.ms".to_string()],
+            conditions: vec![MachineGuardConditionSpec {
+                condition_id: "symbol_risk_limit_check".to_string(),
+                left_read: MachineGuardReadRef {
+                    source: MachineGuardReadSource::EventPayload,
+                    path: "symbol".to_string(),
+                },
+                comparator: MachineGuardConditionComparator::NotEqual,
+                right_parameter_path: "risk.max_notional".to_string(),
+            }],
             policy: Some(MachineGuardPolicySpec {
                 timeout_ms: None,
                 cooldown_ms: Some(3_000),
@@ -812,6 +844,7 @@ mod tests {
         assert_eq!(summary.parameter_path_count, 2);
         assert_eq!(summary.cooldown_parameter_path_count, 1);
         assert_eq!(summary.risk_limit_parameter_path_count, 1);
+        assert_eq!(summary.condition_count, 1);
         assert_eq!(summary.policy_declared_count, 1);
         assert_eq!(summary.cooldown_declared_count, 1);
         assert_eq!(summary.fallback_declared_count, 1);
@@ -852,6 +885,7 @@ mod tests {
                 },
             ],
             parameter_paths: vec!["".to_string(), "graph.edges".to_string()],
+            conditions: Vec::new(),
             policy: None,
             explanation: None,
         });
@@ -894,6 +928,7 @@ mod tests {
                 },
             ],
             parameter_paths: vec!["guard.threshold".to_string(), "GUARD.THRESHOLD".to_string()],
+            conditions: Vec::new(),
             policy: None,
             explanation: None,
         });
@@ -911,6 +946,63 @@ mod tests {
     }
 
     #[test]
+    fn machine_contract_rejects_invalid_structured_guard_descriptor_conditions() {
+        let mut machine = sample_machine();
+        machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "condition_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::MachineMemory,
+                path: "last_signal_at".to_string(),
+            }],
+            parameter_paths: vec!["guard.threshold".to_string()],
+            conditions: vec![
+                MachineGuardConditionSpec {
+                    condition_id: "".to_string(),
+                    left_read: MachineGuardReadRef {
+                        source: MachineGuardReadSource::MachineMemory,
+                        path: "last_signal_at".to_string(),
+                    },
+                    comparator: MachineGuardConditionComparator::GreaterThan,
+                    right_parameter_path: "guard.threshold".to_string(),
+                },
+                MachineGuardConditionSpec {
+                    condition_id: "missing_read".to_string(),
+                    left_read: MachineGuardReadRef {
+                        source: MachineGuardReadSource::EventPayload,
+                        path: "missing_payload".to_string(),
+                    },
+                    comparator: MachineGuardConditionComparator::Equal,
+                    right_parameter_path: "guard.threshold".to_string(),
+                },
+                MachineGuardConditionSpec {
+                    condition_id: "missing_parameter".to_string(),
+                    left_read: MachineGuardReadRef {
+                        source: MachineGuardReadSource::MachineMemory,
+                        path: "last_signal_at".to_string(),
+                    },
+                    comparator: MachineGuardConditionComparator::LessThan,
+                    right_parameter_path: "guard.missing".to_string(),
+                },
+            ],
+            policy: None,
+            explanation: None,
+        });
+
+        let errors = machine.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("has a condition without condition_id")));
+        assert!(errors.iter().any(|message| {
+            message.contains("condition `missing_read`")
+                && message.contains("references undeclared event_payload read `missing_payload`")
+        }));
+        assert!(errors.iter().any(|message| {
+            message.contains("condition `missing_parameter`")
+                && message.contains("references undeclared parameter path `guard.missing`")
+        }));
+    }
+
+    #[test]
     fn machine_contract_rejects_invalid_structured_guard_descriptor_policy() {
         let mut machine = sample_machine();
         machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
@@ -920,6 +1012,7 @@ mod tests {
                 path: "last_signal_at".to_string(),
             }],
             parameter_paths: vec!["cooldown.ms".to_string()],
+            conditions: Vec::new(),
             policy: Some(MachineGuardPolicySpec {
                 timeout_ms: Some(0),
                 cooldown_ms: Some(0),
@@ -984,6 +1077,7 @@ mod tests {
                 path: "symbol".to_string(),
             }],
             parameter_paths: vec!["guard.allowed_symbol".to_string()],
+            conditions: Vec::new(),
             policy: None,
             explanation: Some("guard reads a declared event payload field".to_string()),
         });
@@ -1006,6 +1100,7 @@ mod tests {
                 path: "missing_payload".to_string(),
             }],
             parameter_paths: Vec::new(),
+            conditions: Vec::new(),
             policy: None,
             explanation: None,
         });

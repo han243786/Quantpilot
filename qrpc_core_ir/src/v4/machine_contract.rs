@@ -125,10 +125,31 @@ pub struct MachineGuardDescriptor {
     pub reads: Vec<MachineGuardReadRef>,
     #[serde(default)]
     pub parameter_paths: Vec<String>,
+    #[serde(default)]
+    pub conditions: Vec<MachineGuardConditionSpec>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub policy: Option<MachineGuardPolicySpec>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub explanation: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineGuardConditionSpec {
+    pub condition_id: String,
+    pub left_read: MachineGuardReadRef,
+    pub comparator: MachineGuardConditionComparator,
+    pub right_parameter_path: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum MachineGuardConditionComparator {
+    Equal,
+    NotEqual,
+    GreaterThan,
+    GreaterThanOrEqual,
+    LessThan,
+    LessThanOrEqual,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -274,6 +295,7 @@ pub struct MachineGuardDescriptorReadiness {
     pub cooldown_parameter_path_count: usize,
     pub threshold_parameter_path_count: usize,
     pub risk_limit_parameter_path_count: usize,
+    pub condition_count: usize,
     pub policy_declared: bool,
     pub timeout_declared: bool,
     pub cooldown_declared: bool,
@@ -296,6 +318,7 @@ pub struct MachineGuardDescriptorProjection {
     pub reads: Vec<MachineGuardReadRef>,
     pub parameter_paths: Vec<String>,
     pub parameter_path_kinds: Vec<MachineGuardParameterPathKind>,
+    pub conditions: Vec<MachineGuardConditionSpec>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub policy: Option<MachineGuardPolicySpec>,
 }
@@ -381,6 +404,7 @@ impl MachineGuardDescriptor {
                 .iter()
                 .filter(|kind| **kind == MachineGuardParameterPathKind::RiskLimit)
                 .count(),
+            condition_count: self.conditions.len(),
             policy_declared: self.policy.is_some(),
             timeout_declared: self
                 .policy
@@ -421,6 +445,7 @@ impl V4MachineContract {
                     reads: guard_descriptor.reads.clone(),
                     parameter_paths: guard_descriptor.parameter_paths.clone(),
                     parameter_path_kinds: guard_descriptor.parameter_path_kinds(),
+                    conditions: guard_descriptor.conditions.clone(),
                     policy: guard_descriptor.policy.clone(),
                 })
             })

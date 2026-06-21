@@ -11584,3 +11584,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003Q)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.contracts.core_ir.v4_contracts.machine_contract.static_validation`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder duplicate input static hygiene.
 `MachineGuardReadSource::as_str`; structured guard descriptor static validation rejects duplicate reads and duplicate proposal parameter paths before workspace or runtime use while execution remains disabled.
+
+**Productization supplement (ADV-SM-PROD-003R)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.contracts.core_ir.v4_contracts.machine_contract.static_validation`, `root.contracts.core_ir.v4_contracts.static_contract_bundle`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder condition contract surface.
+`MachineGuardConditionSpec`; structured guard descriptors can carry contract-only condition ids, read references, comparators, and right-side proposal parameter paths, with static validation and bundle summary counts while runtime execution remains disabled.

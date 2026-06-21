@@ -10103,3 +10103,15 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers duplicate machine-memory reads and duplicate guard parameter paths. |
 | capability boundary | This does not enable guard execution, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the duplicate read/path validation, source label helper, related test assertions, and this record if duplicate descriptor handling moves into a dedicated Guard Builder authoring schema. |
+
+### ADV-SM-PROD-003R: Guard Builder condition contract surface
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by moving from opaque guard strings toward a structured condition contract that can be inspected before runtime execution is allowed. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now provides `MachineGuardConditionSpec` and `MachineGuardConditionComparator`. Structured guard descriptors can declare condition ids, a left read, comparator, and a right proposal parameter path. Readiness and projections expose condition counts and condition payloads, and `qrpc_core_ir/src/v4/static_contract_bundle.rs` aggregates `condition_count` in bundle summaries. |
+| static validation | `qrpc_core_ir/src/v4/machine_contract/static_validation.rs` rejects blank condition ids, duplicate condition ids, conditions that reference undeclared reads, and conditions that reference undeclared parameter paths. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: conditions are contract/readiness metadata only, structured guard descriptors still are not evaluated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers accepted condition projection/readiness, bundle summary condition counts, and rejected invalid condition references. |
+| capability boundary | This does not enable guard execution, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the condition DTOs/readiness/projection/summary fields, validation branch, test assertions, and this record if structured guard conditions move into a dedicated Guard Builder expression schema. |
