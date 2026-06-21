@@ -10170,3 +10170,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers per-guard timing policy readiness, policy projection payloads, and bundle summary aggregation. |
 | capability boundary | This does not enable guard execution, timer scheduling, cooldown enforcement, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the timing policy projection/readiness/summary fields, related test assertions, and this record if timing policy reporting moves into a dedicated Guard Builder query contract. |
+
+### ADV-SM-PROD-003X: Guard Builder read binding projection
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making every structured guard read directly renderable as an event payload field, machine memory field, or readonly runtime fact binding. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now provides `MachineGuardReadProjection` and `MachineGuardReadBindingScope`. Structured guard descriptor projections carry `read_projections` with the read source label, path, and binding scope alongside the raw read payload. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: read projections are read-only contract metadata, no runtime facts are read, structured guard descriptors still are not evaluated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers per-guard read projection labels and binding scopes across machine and bundle guard descriptor projections. |
+| capability boundary | This does not enable guard execution, runtime read access, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the read projection DTO/helper/field, related test assertions, and this record if read binding reporting moves into a dedicated Guard Builder query contract. |

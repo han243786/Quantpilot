@@ -738,6 +738,22 @@ mod tests {
         assert!(projection.readiness.timing_policy_declared);
         assert!(!projection.readiness.execution_enabled);
         assert_eq!(projection.reads.len(), 2);
+        assert_eq!(projection.read_projections.len(), 2);
+        assert_eq!(projection.read_projections[0].source_label, "event_payload");
+        assert_eq!(
+            projection.read_projections[0].binding_scope,
+            MachineGuardReadBindingScope::EventPayloadField
+        );
+        assert_eq!(projection.read_projections[0].path, "ema_fast");
+        assert_eq!(
+            projection.read_projections[1].source_label,
+            "machine_memory"
+        );
+        assert_eq!(
+            projection.read_projections[1].binding_scope,
+            MachineGuardReadBindingScope::MachineMemoryField
+        );
+        assert_eq!(projection.read_projections[1].path, "last_signal_at");
         assert_eq!(
             projection.parameter_paths,
             vec![
@@ -875,6 +891,15 @@ mod tests {
             Some("intent.trend")
         );
         assert_eq!(projection.guard.guard.readiness.guard_id, "risk_guard");
+        assert_eq!(projection.guard.guard.read_projections.len(), 1);
+        assert_eq!(
+            projection.guard.guard.read_projections[0].binding_scope,
+            MachineGuardReadBindingScope::EventPayloadField
+        );
+        assert_eq!(
+            projection.guard.guard.read_projections[0].source_label,
+            "event_payload"
+        );
         assert_eq!(
             projection.guard.guard.parameter_paths,
             vec!["risk.max_notional".to_string(), "cooldown.ms".to_string()]

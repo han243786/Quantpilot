@@ -10475,3 +10475,9 @@ Productization supplement: ADV-SM-PROD-003W Guard Builder timing policy readines
 - `qrpc_core_ir/src/v4.rs` - covers per-guard timing policy readiness, policy projection payloads, and bundle summary aggregation.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder timing policy readiness detail ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003W` as the timing policy readiness detail slice.
+
+Productization supplement: ADV-SM-PROD-003X Guard Builder read binding projection.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds `MachineGuardReadProjection`, `MachineGuardReadBindingScope`, and `read_projections` so workspace consumers can render structured guard reads as event payload fields, machine memory fields, or readonly runtime facts.
+- `qrpc_core_ir/src/v4.rs` - covers read projection labels and binding scopes across machine and bundle guard descriptor projections.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder read binding projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003X` as the read binding projection slice.

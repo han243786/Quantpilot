@@ -221,10 +221,26 @@ pub struct MachineGuardReadRef {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineGuardReadProjection {
+    pub source: MachineGuardReadSource,
+    pub source_label: String,
+    pub path: String,
+    pub binding_scope: MachineGuardReadBindingScope,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum MachineGuardReadSource {
     EventPayload,
     MachineMemory,
+    ReadonlyRuntimeFact,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum MachineGuardReadBindingScope {
+    EventPayloadField,
+    MachineMemoryField,
     ReadonlyRuntimeFact,
 }
 
@@ -234,6 +250,29 @@ impl MachineGuardReadSource {
             MachineGuardReadSource::EventPayload => "event_payload",
             MachineGuardReadSource::MachineMemory => "machine_memory",
             MachineGuardReadSource::ReadonlyRuntimeFact => "readonly_runtime_fact",
+        }
+    }
+
+    pub fn binding_scope(&self) -> MachineGuardReadBindingScope {
+        match self {
+            MachineGuardReadSource::EventPayload => MachineGuardReadBindingScope::EventPayloadField,
+            MachineGuardReadSource::MachineMemory => {
+                MachineGuardReadBindingScope::MachineMemoryField
+            }
+            MachineGuardReadSource::ReadonlyRuntimeFact => {
+                MachineGuardReadBindingScope::ReadonlyRuntimeFact
+            }
+        }
+    }
+}
+
+impl MachineGuardReadRef {
+    pub fn projection(&self) -> MachineGuardReadProjection {
+        MachineGuardReadProjection {
+            source: self.source.clone(),
+            source_label: self.source.as_str().to_string(),
+            path: self.path.clone(),
+            binding_scope: self.source.binding_scope(),
         }
     }
 }
@@ -378,6 +417,8 @@ pub struct MachineGuardDescriptorProjection {
     pub event_source: Option<String>,
     pub readiness: MachineGuardDescriptorReadiness,
     pub reads: Vec<MachineGuardReadRef>,
+    #[serde(default)]
+    pub read_projections: Vec<MachineGuardReadProjection>,
     pub parameter_paths: Vec<String>,
     pub parameter_path_kinds: Vec<MachineGuardParameterPathKind>,
     pub conditions: Vec<MachineGuardConditionSpec>,
@@ -420,6 +461,13 @@ pub struct MachineMemoryField {
 }
 
 impl MachineGuardDescriptor {
+    pub fn read_projections(&self) -> Vec<MachineGuardReadProjection> {
+        self.reads
+            .iter()
+            .map(MachineGuardReadRef::projection)
+            .collect()
+    }
+
     pub fn policy_projection(&self) -> Option<MachineGuardPolicyProjection> {
         self.policy.as_ref().map(MachineGuardPolicySpec::projection)
     }
@@ -621,6 +669,7 @@ impl V4MachineContract {
                     event_source: transition.event.source.clone(),
                     readiness: guard_descriptor.readiness(),
                     reads: guard_descriptor.reads.clone(),
+                    read_projections: guard_descriptor.read_projections(),
                     parameter_paths: guard_descriptor.parameter_paths.clone(),
                     parameter_path_kinds: guard_descriptor.parameter_path_kinds(),
                     conditions: guard_descriptor.conditions.clone(),
