@@ -11518,3 +11518,12 @@ Rust recursive state remains at `root.contracts.runtime_support.v4_runtime_suppo
 
 **Productization supplement (ADV-SM-PROD-002BK)**: `root.runtime.mutation.contract_repair_approval`, `root.tests.api_v4_productization_contract_repair`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own approve HTTP source-write rollback proof.
 `contract_repair_approval_approve_live_route_rolls_back_when_source_write_is_file_locked`; a real Windows file-share lock now exercises the open endpoint durable disk path through HTTP, blocks source atomic rename, returns locked durable execution evidence, restores the pending approval record, removes the marker, and leaves the source unchanged.
+
+**Productization supplement (ADV-SM-PROD-002BL)**: `root.runtime.mutation.contract_repair_approval`, `root.tests.api_v4_productization_contract_repair`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own approve HTTP cleanup/commit stimulus boundary.
+The remaining cleanup/commit HTTP failure-stimulus decision is closed without adding production fault injection: source-write has real HTTP OS-lock proof, cleanup/commit remain covered by helper rollback tests plus endpoint DTO mapping, and future work must not introduce hidden switches solely to force those failure windows.
+
+**Productization supplement (ADV-SM-PROD-002BM)**: `root.runtime.mutation.contract_repair_approval`, `root.tests.api_v4_productization_contract_repair`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own approve durable writeback completion audit.
+The audit binds the current accepted evidence set: HTTP success, HTTP source-write rollback, helper cleanup/commit rollback, endpoint rollback DTO mapping, and governance checks. The remaining risk is broad regression breadth rather than a known missing durable writeback behavior.
+
+**Productization supplement (ADV-SM-PROD-002BN)**: `root.runtime.mutation.contract_repair_approval`, `root.tests.api_v4_productization_contract_repair`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own approve durable writeback broad lib regression evidence.
+`cargo test -p quantpilot --lib` passed with `444 passed`, `0 failed`, and `1 ignored`, reducing the broad Rust library regression risk around the open durable writeback path without changing the accepted cleanup/commit HTTP-stimulus boundary.

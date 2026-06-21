@@ -10286,3 +10286,22 @@ Productization supplement: ADV-SM-PROD-002BK Contract repair approve HTTP source
 - `tests/api_v4_productization_contract_repair.rs` - verifies the HTTP response is locked with rollback evidence, restored pending record, removed marker, and unchanged source after source-write failure.
 - `markdown/00-matrix-governance/module-tree.md` - records approve HTTP source-write rollback proof ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BK` as the HTTP-level source-write rollback proof without adding production fault injection.
+
+Productization supplement: ADV-SM-PROD-002BL Contract repair approve HTTP cleanup/commit stimulus boundary.
+- `src/runtime/mutation/contract_repair_approval.rs` - remains unchanged at runtime; cleanup failure requires an internal marker-removal window, and commit failure has no endpoint file-system operation to stimulate without hidden hooks.
+- `tests/api_v4_productization_contract_repair.rs` - keeps source-write as the only HTTP OS-lock rollback stimulus and relies on helper rollback tests plus endpoint DTO mapping for cleanup/commit evidence.
+- `markdown/00-matrix-governance/module-tree.md` - records approve HTTP cleanup/commit stimulus boundary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BL` as the boundary decision that forbids adding production fault-injection switches solely for cleanup/commit HTTP tests.
+
+Productization supplement: ADV-SM-PROD-002BM Contract repair approve durable writeback completion audit.
+- `src/runtime/mutation/contract_repair_approval.rs` - provides the audited durable helper path, rollback helper, endpoint execution DTO mapping, and disk-application commit confirmation behavior.
+- `tests/api_v4_productization_contract_repair.rs` - provides HTTP success and HTTP source-write rollback coverage for the endpoint durable disk path.
+- `src/runtime/mutation/contract_repair_approval.rs` - provides helper cleanup/commit rollback tests and endpoint DTO rollback mapping assertions for the bounded evidence set.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable writeback completion audit ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BM` as the evidence matrix and verification scope before broad regression and commit packaging.
+
+Productization supplement: ADV-SM-PROD-002BN Contract repair approve durable writeback broad lib regression.
+- `src/runtime/mutation/contract_repair_approval.rs` - remains covered by the full library regression surface, including durable helper success and rollback tests.
+- `tests/api_v4_productization_contract_repair.rs` - remains the endpoint-specific integration coverage while lib regression reduces adjacent runtime/persistence risk.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable writeback broad lib regression evidence ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BN` with `cargo test -p quantpilot --lib` passing `444 passed`, `0 failed`, and `1 ignored`.

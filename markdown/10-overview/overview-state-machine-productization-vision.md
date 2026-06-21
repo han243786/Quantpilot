@@ -9851,9 +9851,43 @@ AI 不允许:
 | --- | --- |
 | vision alignment | Bind `2.8` and `2.9`; continue `SM-PROD-002` by proving an HTTP approve request can hit the open durable disk application path, fail during source write, and return rollback evidence without adding a production fault-injection switch. |
 | detail supplement | A Windows file-share lock allows the endpoint preflight to read the contract source but blocks the later atomic rename, exercising the helper rollback path through the actual review HTTP route. The response remains locked, the transient approval state stays pending, the approval record is restored, the recovery marker is removed, and the source remains unchanged. |
-| opening | Use this as the endpoint-level rollback proof for the source-write failure window; remaining work is deciding whether additional HTTP-level cleanup/commit failure stimuli can be produced without test-only production hooks. |
+| opening | Use this as the endpoint-level rollback proof for the source-write failure window; remaining work is a boundary decision on whether additional HTTP-level cleanup/commit failure stimuli can be produced without test-only production hooks. |
 | implementation | Moved final response application behind durable helper commit confirmation so durable helper failure no longer reports `review_approve_executed`, and added a Windows-only integration test using a real file lock as the failure stimulus. |
 | tests | `contract_repair_approval_approve_live_route_rolls_back_when_source_write_is_file_locked` verifies HTTP `423`, `review_approve_durable_disk_application_blocked`, rollback receipts, removed recovery marker, restored pending record, unchanged source, and endpoint-visible durable execution blockers. |
-| write-in | Module tree records approve durable disk commit failure rollback proof ownership; full feature tree records the commit-adjacent failure test evidence. |
-| vision distance review | `SM-PROD-002` now has helper rollback proof for source-write blocked, cleanup failure after source write, commit failure after cleanup, and the success path. Remaining gap is endpoint admission through the helper under the disk application switch. |
-| rollback | Remove the commit-failure rollback test and this record; keep `002BC`/`002BD` helper rollback behavior and endpoint disk application lock unchanged. |
+| write-in | Module tree and full feature tree record approve HTTP source-write rollback proof ownership. |
+| vision distance review | `SM-PROD-002` now has endpoint admission through the helper under the disk application switch, HTTP source-write rollback proof, helper cleanup/commit rollback proof, and the success path. Remaining gap is the cleanup/commit HTTP-stimulus boundary decision. |
+| rollback | Remove the HTTP source-write rollback test and this record; keep `002BI` endpoint durable disk application release and helper rollback behavior unchanged. |
+
+### ADV-SM-PROD-002BL: Contract repair approve HTTP cleanup/commit stimulus boundary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.8` and `2.9`; continue `SM-PROD-002` by deciding the remaining cleanup/commit HTTP failure stimuli without expanding the production fault surface. |
+| detail supplement | Cleanup failure requires a recovery marker to be written and then fail removal inside the same HTTP request; pre-creating the marker changes the route into an idempotency conflict before helper execution, while external locks before marker creation either block marker write or depend on unstable platform directory semantics. Commit failure has no durable file-system operation in the endpoint path; it is a pure commit-phase gate already covered by helper rollback and endpoint DTO mapping. |
+| boundary decision | Do not add production-only or test-only fault-injection switches for cleanup/commit HTTP tests. The accepted evidence boundary is: HTTP proof for the real OS source-write failure window, helper-level cleanup/commit rollback proof, and endpoint-visible DTO proof that helper rollback states can be returned. |
+| implementation | No runtime capability change; this is a North Star clarification that prevents accidental scope expansion while preserving existing rollback behavior and observability. |
+| tests | Reuse `contract_repair_approval_approve_live_route_rolls_back_when_source_write_is_file_locked`, `contract_repair_approval_durable_disk_executor_restores_source_record_and_marker_when_cleanup_blocks`, and `contract_repair_approval_durable_disk_executor_restores_source_and_record_when_commit_blocks` as the bounded evidence set. |
+| vision distance review | `SM-PROD-002` durable approve writeback is functionally converged for the current boundary; remaining work moves to completion audit, broad regression, and any explicitly scoped observability polish rather than adding hidden fault controls. |
+| rollback | Remove this clarification only if a real, stable, non-hook HTTP cleanup or commit failure stimulus is found. |
+
+### ADV-SM-PROD-002BM: Contract repair approve durable writeback completion audit
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.8` and `2.9`; audit `SM-PROD-002` against the bounded durable approve writeback evidence set after the disk application switch is open. |
+| evidence matrix | Success path: `contract_repair_approval_approve_live_route_environment_executes_durable_disk_application` proves HTTP `200`, helper admission, record persistence, source patch write, marker cleanup, commit receipt, and endpoint `would_touch_disk`. Source-write failure: `contract_repair_approval_approve_live_route_rolls_back_when_source_write_is_file_locked` proves HTTP `423`, pending response state, rollback receipts, removed marker, restored approval record, and unchanged source. Cleanup/commit failure: helper tests prove rollback after source write and after marker cleanup, while DTO mapping proves those rollback states can be endpoint-visible without adding hidden hooks. |
+| boundary check | The audit accepts `002BL` as the cleanup/commit HTTP stimulus boundary and treats production fault-injection switches as out of scope. Any future cleanup/commit HTTP proof must use a stable real failure stimulus and update this audit before changing runtime behavior. |
+| verification scope | Required regression set: `cargo test -p quantpilot --test api_v4_productization_contract_repair`, `cargo test -p quantpilot durable_disk_executor --lib`, `git diff --check` for the touched files, `tools/check-matrix-governance.ps1`, and `tools/check-full-feature-tree.ps1`. |
+| vision distance review | `SM-PROD-002` is ready for broad regression and commit packaging under the current boundary; remaining risk is verification breadth, not a known missing durable writeback behavior. |
+| rollback | Remove this audit if any evidence command fails or if a later requirement expands the accepted evidence boundary. |
+
+### ADV-SM-PROD-002BN: Contract repair approve durable writeback broad lib regression
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.8` and `2.9`; reduce the remaining broad-regression risk identified by `002BM` without changing runtime behavior. |
+| regression evidence | `cargo test -p quantpilot --lib` passed with `444 passed`, `0 failed`, and `1 ignored`, covering the contract repair durable helper tests plus adjacent runtime mutation, persistence, governance, auth, graph compile, artifact, and response mapping unit tests in the current worktree. |
+| boundary check | This evidence does not expand `SM-PROD-002` beyond the accepted `002BL` cleanup/commit HTTP-stimulus boundary; it only proves the open durable writeback path remains compatible with the wider Rust library test surface. |
+| implementation | No code change; this is a verification record for the current durable approve writeback completion audit. |
+| vision distance review | `SM-PROD-002` is now constrained mainly by packaging/commit hygiene and any future full integration sweep, not by known lib-level regressions. |
+| rollback | Remove this record if the cited lib regression is invalidated by a later failing rerun in the same evidence scope. |
