@@ -10317,3 +10317,10 @@ Productization supplement: ADV-SM-PROD-002BP Contract repair approve durable wri
 - `markdown/10-overview/overview-state-machine-productization-vision.md`, `markdown/00-matrix-governance/module-tree.md`, and `markdown/10-overview/overview-full-feature-tree.md` - record the final accepted evidence boundary and packaging state.
 - `markdown/00-matrix-governance/module-tree.md` - records approve durable writeback final packaging audit ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BP` as the completion audit for the current `SM-PROD-002` boundary.
+
+Productization supplement: ADV-SM-PROD-003A Guard Builder structured guard boundary baseline.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - remains the current transition guard schema owner; guards are still `MachineTransition.guard: Option<String>` before structured Guard Builder modeling is introduced.
+- `qrpc_runtime/src/v4_runtime/machine_transition_engine.rs` - remains the runtime fail-closed owner for non-empty unsupported transition guards; this record does not enable guard execution.
+- `src/runtime/mutation/ai_proposal/static_check.rs` - remains the AI proposal static-check owner for `v4.transition.guard` domain binding and must preserve proposal-only guard parameter diff semantics.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder structured guard boundary baseline ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003A` as the clean handoff from `SM-PROD-002` to the first `SM-PROD-003` slice.
