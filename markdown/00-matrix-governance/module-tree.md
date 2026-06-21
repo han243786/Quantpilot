@@ -11623,3 +11623,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003AD)**: `root.contracts.core_ir.v4_contracts.machine_contract` and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder policy execution disabled projection.
 `MachineGuardPolicyProjection` disabled execution/write fields; structured guard policy projections expose timeout/cooldown/fallback as metadata-only while timers, fallback execution, and active strategy writes remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003AE)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle policy execution summary.
+`policy_timing_execution_enabled_count` / policy fallback and write count fields; static bundle summaries aggregate disabled timeout/cooldown/fallback execution evidence while runtime policy execution remains disabled.

@@ -1056,6 +1056,18 @@ mod tests {
         assert_eq!(summary.cooldown_declared_count, 1);
         assert_eq!(summary.fallback_declared_count, 1);
         assert_eq!(summary.fallback_fail_closed_declared_count, 1);
+        assert_eq!(summary.policy_timing_execution_enabled_count, 0);
+        assert_eq!(
+            summary.policy_timing_execution_disabled_fail_closed_count,
+            1
+        );
+        assert_eq!(summary.policy_fallback_execution_enabled_count, 0);
+        assert_eq!(
+            summary.policy_fallback_execution_disabled_fail_closed_count,
+            1
+        );
+        assert_eq!(summary.policy_active_strategy_write_enabled_count, 0);
+        assert_eq!(summary.policy_active_strategy_write_disabled_count, 1);
         let policy_projection = projection.guard.guard.policy_projection.as_ref().unwrap();
         assert!(policy_projection.timing_policy_declared);
         assert!(!policy_projection.timeout_declared);

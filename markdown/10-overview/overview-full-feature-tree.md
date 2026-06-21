@@ -10517,3 +10517,9 @@ Productization supplement: ADV-SM-PROD-003AD Guard Builder policy execution disa
 - `qrpc_core_ir/src/v4.rs` - covers disabled timing execution, fallback execution, active strategy writes, and blocker code/reason in policy projections.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder policy execution disabled projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AD` as the policy execution disabled projection slice.
+
+Productization supplement: ADV-SM-PROD-003AE Guard Builder bundle policy execution summary.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates policy timing execution, fallback execution, active strategy write, and fail-closed disabled counts in static bundle guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for disabled timing execution, fallback execution, active strategy writes, and fail-closed blocker counts.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle policy execution summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AE` as the bundle policy execution summary slice.

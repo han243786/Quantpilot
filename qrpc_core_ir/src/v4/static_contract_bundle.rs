@@ -87,6 +87,12 @@ pub struct StaticContractBundleGuardDescriptorSummary {
     pub cooldown_declared_count: usize,
     pub fallback_declared_count: usize,
     pub fallback_fail_closed_declared_count: usize,
+    pub policy_timing_execution_enabled_count: usize,
+    pub policy_timing_execution_disabled_fail_closed_count: usize,
+    pub policy_fallback_execution_enabled_count: usize,
+    pub policy_fallback_execution_disabled_fail_closed_count: usize,
+    pub policy_active_strategy_write_enabled_count: usize,
+    pub policy_active_strategy_write_disabled_count: usize,
     pub execution_enabled_count: usize,
     pub execution_disabled_fail_closed_count: usize,
 }
@@ -194,6 +200,30 @@ impl V4StaticContractBundle {
             summary.fallback_declared_count += usize::from(readiness.fallback_declared);
             summary.fallback_fail_closed_declared_count +=
                 usize::from(readiness.fallback_fail_closed_declared);
+            if let Some(policy) = &projection.guard.guard.policy_projection {
+                summary.policy_timing_execution_enabled_count +=
+                    usize::from(policy.timing_execution_enabled);
+                summary.policy_timing_execution_disabled_fail_closed_count += usize::from(
+                    !policy.timing_execution_enabled
+                        && policy.timing_policy_declared
+                        && policy.execution_blocker_code
+                            == MachineGuardExecutionReadinessState::DisabledFailClosed
+                                .blocker_code(),
+                );
+                summary.policy_fallback_execution_enabled_count +=
+                    usize::from(policy.fallback_execution_enabled);
+                summary.policy_fallback_execution_disabled_fail_closed_count += usize::from(
+                    !policy.fallback_execution_enabled
+                        && policy.fallback_declared
+                        && policy.execution_blocker_code
+                            == MachineGuardExecutionReadinessState::DisabledFailClosed
+                                .blocker_code(),
+                );
+                summary.policy_active_strategy_write_enabled_count +=
+                    usize::from(policy.active_strategy_write_enabled);
+                summary.policy_active_strategy_write_disabled_count +=
+                    usize::from(!policy.active_strategy_write_enabled);
+            }
             summary.execution_enabled_count += usize::from(readiness.execution_enabled);
             summary.execution_disabled_fail_closed_count += usize::from(
                 readiness.execution_state
