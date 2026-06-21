@@ -633,6 +633,10 @@ mod tests {
                     source: MachineGuardReadSource::MachineMemory,
                     path: "unknown_memory".to_string(),
                 },
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::ReadonlyRuntimeFact,
+                    path: "provider.secret".to_string(),
+                },
             ],
             parameter_paths: vec!["".to_string()],
             explanation: None,
@@ -648,6 +652,9 @@ mod tests {
         assert!(errors
             .iter()
             .any(|message| message.contains("reads undeclared memory field `unknown_memory`")));
+        assert!(errors.iter().any(|message| {
+            message.contains("reads unknown readonly runtime fact `provider.secret`")
+        }));
         assert!(errors
             .iter()
             .any(|message| message.contains("has an empty parameter path")));

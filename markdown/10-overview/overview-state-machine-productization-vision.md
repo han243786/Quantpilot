@@ -9949,3 +9949,14 @@ AI 不允许:
 | capability boundary | This does not add guard expression evaluation, nested payload path evaluation, topology mutation, Event Catalog editing, Memory Schema editing, AI approval changes, or active strategy writes. |
 | vision distance review | `SM-PROD-003` now proves that structured guard event-payload reads are tied to the same event catalog authority used by graph communication. Remaining work is machine-memory/runtime-fact projection into the workspace and proposal-only parameter diff binding. |
 | rollback | Remove the graph-level guard payload read validation/tests and this record if future guard descriptors move payload read validation to a dedicated guard builder contract module. |
+
+### ADV-SM-PROD-003D: Guard Builder readonly runtime fact catalog binding
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by constraining structured guard `readonly_runtime_fact` reads to a bounded static catalog before any runtime execution is allowed. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now exposes the first allowed readonly runtime facts: `clock.tick_ms`, `runtime.mode`, and `capability.snapshot_id`. Machine contract static validation rejects any structured guard read with source `readonly_runtime_fact` that falls outside this catalog. |
+| runtime boundary | Runtime behavior remains unchanged from `003B` and `003C`: structured guard descriptors still fail closed and are not evaluated. This slice only makes the read model auditable. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers accepted `clock.tick_ms` readiness and rejected unknown readonly runtime facts. |
+| capability boundary | This does not evaluate guard expressions, read live runtime state, mutate topology/Event Catalog/Memory Schema/capability source, change AI approval semantics, or write active strategy state. |
+| rollback | Remove the readonly runtime fact catalog helper, validation branch, test assertion, and this record if Guard Builder runtime facts move under a separate runtime projection contract. |

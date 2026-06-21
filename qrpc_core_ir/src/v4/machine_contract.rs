@@ -143,6 +143,13 @@ pub enum MachineGuardReadSource {
     ReadonlyRuntimeFact,
 }
 
+pub const MACHINE_GUARD_READONLY_RUNTIME_FACTS: &[&str] =
+    &["clock.tick_ms", "runtime.mode", "capability.snapshot_id"];
+
+pub fn machine_guard_readonly_runtime_fact_allowed(path: &str) -> bool {
+    MACHINE_GUARD_READONLY_RUNTIME_FACTS.contains(&path)
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct MachineGuardDescriptorReadiness {
     pub guard_id: String,

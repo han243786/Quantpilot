@@ -11542,3 +11542,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003C)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder event payload read catalog binding.
 `guard_descriptor event_payload read catalog binding`; graph static validation requires structured guard event-payload reads to resolve against the transition event's catalog payload fields, keeping guard reads under the Event Catalog authority while runtime evaluation stays disabled.
+
+**Productization supplement (ADV-SM-PROD-003D)**: `root.contracts.core_ir.v4_contracts.machine_contract` and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder readonly runtime fact catalog binding.
+`guard_descriptor readonly_runtime_fact catalog binding`; machine contract static validation only accepts readonly runtime fact reads from the bounded catalog `clock.tick_ms`, `runtime.mode`, and `capability.snapshot_id`, keeping guard runtime-state reads contract-only while execution remains disabled.

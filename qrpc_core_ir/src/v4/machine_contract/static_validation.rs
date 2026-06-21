@@ -1,8 +1,8 @@
 use std::collections::BTreeSet;
 
 use super::{
-    MachineCachePolicy, MachineGuardReadSource, MachineRecoveryPolicy, MachineSilencePolicy,
-    V4MachineContract,
+    machine_guard_readonly_runtime_fact_allowed, MachineCachePolicy, MachineGuardReadSource,
+    MachineRecoveryPolicy, MachineSilencePolicy, V4MachineContract,
 };
 use crate::v4::V4_MACHINE_CONTRACT_VERSION;
 
@@ -132,6 +132,14 @@ impl V4MachineContract {
                     {
                         errors.push(format!(
                             "transition `{}` structured guard `{}` reads undeclared memory field `{}`",
+                            transition.transition_id, guard_descriptor.guard_id, read.path
+                        ));
+                    }
+                    if read.source == MachineGuardReadSource::ReadonlyRuntimeFact
+                        && !machine_guard_readonly_runtime_fact_allowed(read.path.as_str())
+                    {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` reads unknown readonly runtime fact `{}`",
                             transition.transition_id, guard_descriptor.guard_id, read.path
                         ));
                     }

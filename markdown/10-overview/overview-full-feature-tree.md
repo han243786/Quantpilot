@@ -10340,3 +10340,10 @@ Productization supplement: ADV-SM-PROD-003C Guard Builder event payload read cat
 - `qrpc_core_ir/src/v4.rs` - covers accepted declared guard payload reads and rejected unknown guard payload reads at graph validation level.
 - `markdown/00-matrix-governance/module-tree.md` - records guard payload read catalog binding ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003C` as the Event Catalog binding slice for structured Guard Builder reads.
+
+Productization supplement: ADV-SM-PROD-003D Guard Builder readonly runtime fact catalog binding.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - declares the bounded readonly runtime fact catalog for structured guard reads.
+- `qrpc_core_ir/src/v4/machine_contract/static_validation.rs` - rejects structured guard `readonly_runtime_fact` reads outside the catalog while guard execution remains disabled.
+- `qrpc_core_ir/src/v4.rs` - covers accepted catalog runtime facts and rejected unknown runtime facts for guard descriptors.
+- `markdown/00-matrix-governance/module-tree.md` - records readonly runtime fact catalog binding ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003D` as the runtime fact read binding slice for structured Guard Builder reads.
