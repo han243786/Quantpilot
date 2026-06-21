@@ -768,6 +768,19 @@ mod tests {
                 MachineGuardParameterPathKind::RiskLimit,
             ]
         );
+        assert_eq!(projection.parameter_path_projections.len(), 2);
+        assert_eq!(
+            projection.parameter_path_projections[0].kind,
+            Some(MachineGuardParameterPathKind::Threshold)
+        );
+        assert!(projection.parameter_path_projections[0].proposal_only);
+        assert!(!projection.parameter_path_projections[0].active_strategy_write_enabled);
+        assert_eq!(
+            projection.parameter_path_projections[1].kind,
+            Some(MachineGuardParameterPathKind::RiskLimit)
+        );
+        assert!(projection.parameter_path_projections[1].proposal_only);
+        assert!(!projection.parameter_path_projections[1].active_strategy_write_enabled);
         assert_eq!(projection.conditions.len(), 1);
         assert_eq!(projection.conditions[0].condition_id, "ema_threshold_check");
         assert_eq!(projection.condition_projections.len(), 1);
@@ -910,6 +923,23 @@ mod tests {
                 MachineGuardParameterPathKind::RiskLimit,
                 MachineGuardParameterPathKind::Cooldown,
             ]
+        );
+        assert_eq!(projection.guard.guard.parameter_path_projections.len(), 2);
+        assert_eq!(
+            projection.guard.guard.parameter_path_projections[0].kind,
+            Some(MachineGuardParameterPathKind::RiskLimit)
+        );
+        assert!(projection.guard.guard.parameter_path_projections[0].proposal_only);
+        assert!(
+            !projection.guard.guard.parameter_path_projections[0].active_strategy_write_enabled
+        );
+        assert_eq!(
+            projection.guard.guard.parameter_path_projections[1].kind,
+            Some(MachineGuardParameterPathKind::Cooldown)
+        );
+        assert!(projection.guard.guard.parameter_path_projections[1].proposal_only);
+        assert!(
+            !projection.guard.guard.parameter_path_projections[1].active_strategy_write_enabled
         );
         let summary = bundle.guard_descriptor_summary();
         assert_eq!(summary.guard_descriptor_count, 1);

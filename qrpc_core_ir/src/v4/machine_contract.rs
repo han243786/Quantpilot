@@ -287,6 +287,15 @@ pub enum MachineGuardParameterPathKind {
     RiskLimit,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineGuardParameterPathProjection {
+    pub path: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kind: Option<MachineGuardParameterPathKind>,
+    pub proposal_only: bool,
+    pub active_strategy_write_enabled: bool,
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum MachineGuardExecutionReadinessState {
@@ -421,6 +430,8 @@ pub struct MachineGuardDescriptorProjection {
     pub read_projections: Vec<MachineGuardReadProjection>,
     pub parameter_paths: Vec<String>,
     pub parameter_path_kinds: Vec<MachineGuardParameterPathKind>,
+    #[serde(default)]
+    pub parameter_path_projections: Vec<MachineGuardParameterPathProjection>,
     pub conditions: Vec<MachineGuardConditionSpec>,
     pub condition_projections: Vec<MachineGuardConditionProjection>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -491,6 +502,21 @@ impl MachineGuardDescriptor {
         self.parameter_paths
             .iter()
             .filter_map(|path| machine_guard_parameter_path_kind(path))
+            .collect()
+    }
+
+    pub fn parameter_path_projections(&self) -> Vec<MachineGuardParameterPathProjection> {
+        self.parameter_paths
+            .iter()
+            .map(|path| {
+                let kind = machine_guard_parameter_path_kind(path);
+                MachineGuardParameterPathProjection {
+                    path: path.clone(),
+                    kind,
+                    proposal_only: kind.is_some(),
+                    active_strategy_write_enabled: false,
+                }
+            })
             .collect()
     }
 
@@ -672,6 +698,7 @@ impl V4MachineContract {
                     read_projections: guard_descriptor.read_projections(),
                     parameter_paths: guard_descriptor.parameter_paths.clone(),
                     parameter_path_kinds: guard_descriptor.parameter_path_kinds(),
+                    parameter_path_projections: guard_descriptor.parameter_path_projections(),
                     conditions: guard_descriptor.conditions.clone(),
                     condition_projections: guard_descriptor.condition_projections(),
                     policy: guard_descriptor.policy.clone(),

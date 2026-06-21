@@ -11605,3 +11605,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003X)**: `root.contracts.core_ir.v4_contracts.machine_contract` and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder read binding projection.
 `MachineGuardReadProjection` / `MachineGuardReadBindingScope`; structured guard descriptor projections expose each read as event payload field, machine memory field, or readonly runtime fact metadata while runtime read access and guard execution remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003Y)**: `root.contracts.core_ir.v4_contracts.machine_contract` and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder proposal-only parameter projection.
+`MachineGuardParameterPathProjection`; structured guard descriptor projections expose each parameter path with resolved kind, proposal-only status, and disabled active strategy writes while the allowed path boundary remains unchanged.

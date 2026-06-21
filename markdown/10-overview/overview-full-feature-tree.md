@@ -10481,3 +10481,9 @@ Productization supplement: ADV-SM-PROD-003X Guard Builder read binding projectio
 - `qrpc_core_ir/src/v4.rs` - covers read projection labels and binding scopes across machine and bundle guard descriptor projections.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder read binding projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003X` as the read binding projection slice.
+
+Productization supplement: ADV-SM-PROD-003Y Guard Builder proposal-only parameter projection.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds `MachineGuardParameterPathProjection` and `parameter_path_projections` so workspace consumers can inspect each structured guard parameter path with resolved kind, proposal-only status, and disabled active strategy writes.
+- `qrpc_core_ir/src/v4.rs` - covers parameter path projection kind, proposal-only, and active-strategy-write-disabled flags across machine and bundle guard descriptor projections.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder proposal-only parameter projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003Y` as the proposal-only parameter projection slice.

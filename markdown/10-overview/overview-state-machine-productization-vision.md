@@ -10181,3 +10181,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers per-guard read projection labels and binding scopes across machine and bundle guard descriptor projections. |
 | capability boundary | This does not enable guard execution, runtime read access, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the read projection DTO/helper/field, related test assertions, and this record if read binding reporting moves into a dedicated Guard Builder query contract. |
+
+### ADV-SM-PROD-003Y: Guard Builder proposal-only parameter projection
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by making each structured guard parameter path explicitly visible as proposal-only metadata rather than requiring workspace consumers to infer mutability from parallel path/kind arrays. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now provides `MachineGuardParameterPathProjection`. Structured guard descriptor projections carry `parameter_path_projections` with the raw path, resolved parameter kind, `proposal_only=true` for in-bound paths, and `active_strategy_write_enabled=false`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: parameter path projections are read-only contract metadata, no proposal is applied, no guard parameter is written, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers per-guard and bundle-projected parameter path kinds, proposal-only flags, and disabled active strategy writes. |
+| capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the parameter path projection DTO/helper/field, related test assertions, and this record if parameter mutability reporting moves into a dedicated Guard Builder query contract. |
