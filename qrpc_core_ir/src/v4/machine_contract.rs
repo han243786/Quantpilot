@@ -145,10 +145,14 @@ pub struct MachineGuardConditionSpec {
 pub struct MachineGuardConditionProjection {
     pub condition_id: String,
     pub left_read: MachineGuardReadRef,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub left_read_projection: Option<MachineGuardReadProjection>,
     pub comparator: MachineGuardConditionComparator,
     pub right_parameter_path: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub right_parameter_path_kind: Option<MachineGuardParameterPathKind>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub right_parameter_path_projection: Option<MachineGuardParameterPathProjection>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -489,11 +493,22 @@ impl MachineGuardDescriptor {
             .map(|condition| MachineGuardConditionProjection {
                 condition_id: condition.condition_id.clone(),
                 left_read: condition.left_read.clone(),
+                left_read_projection: Some(condition.left_read.projection()),
                 comparator: condition.comparator.clone(),
                 right_parameter_path: condition.right_parameter_path.clone(),
                 right_parameter_path_kind: machine_guard_parameter_path_kind(
                     condition.right_parameter_path.as_str(),
                 ),
+                right_parameter_path_projection: Some(MachineGuardParameterPathProjection {
+                    path: condition.right_parameter_path.clone(),
+                    kind: machine_guard_parameter_path_kind(
+                        condition.right_parameter_path.as_str(),
+                    ),
+                    proposal_only: machine_guard_parameter_path_allowed(
+                        condition.right_parameter_path.as_str(),
+                    ),
+                    active_strategy_write_enabled: false,
+                }),
             })
             .collect()
     }

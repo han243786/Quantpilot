@@ -11608,3 +11608,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003Y)**: `root.contracts.core_ir.v4_contracts.machine_contract` and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder proposal-only parameter projection.
 `MachineGuardParameterPathProjection`; structured guard descriptor projections expose each parameter path with resolved kind, proposal-only status, and disabled active strategy writes while the allowed path boundary remains unchanged.
+
+**Productization supplement (ADV-SM-PROD-003Z)**: `root.contracts.core_ir.v4_contracts.machine_contract` and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder condition operand projection.
+`MachineGuardConditionProjection.left_read_projection` / `right_parameter_path_projection`; structured guard condition projections expose renderable operand bindings while condition execution and active strategy writes remain disabled.

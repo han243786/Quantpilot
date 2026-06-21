@@ -10192,3 +10192,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers per-guard and bundle-projected parameter path kinds, proposal-only flags, and disabled active strategy writes. |
 | capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the parameter path projection DTO/helper/field, related test assertions, and this record if parameter mutability reporting moves into a dedicated Guard Builder query contract. |
+
+### ADV-SM-PROD-003Z: Guard Builder condition operand projection
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making each structured guard condition directly renderable with its left read binding and right proposal parameter metadata. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now enriches `MachineGuardConditionProjection` with `left_read_projection` and `right_parameter_path_projection`. Condition projections preserve the raw condition payload while carrying the same read binding and proposal-only parameter metadata exposed by descriptor-level projections. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: condition operand projections are read-only contract metadata, no condition is evaluated, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers condition-level left read binding scopes, right parameter kinds, proposal-only flags, and disabled active strategy writes across machine and bundle projections. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the condition operand projection fields, related test assertions, and this record if condition rendering moves into a dedicated Guard Builder query contract. |

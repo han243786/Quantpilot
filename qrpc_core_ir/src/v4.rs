@@ -789,9 +789,35 @@ mod tests {
             Some(MachineGuardParameterPathKind::Threshold)
         );
         assert_eq!(
+            projection.condition_projections[0]
+                .left_read_projection
+                .as_ref()
+                .unwrap()
+                .binding_scope,
+            MachineGuardReadBindingScope::EventPayloadField
+        );
+        assert_eq!(
+            projection.condition_projections[0]
+                .left_read_projection
+                .as_ref()
+                .unwrap()
+                .path,
+            "ema_fast"
+        );
+        assert_eq!(
             projection.condition_projections[0].right_parameter_path,
             "guard.threshold"
         );
+        let right_parameter_projection = projection.condition_projections[0]
+            .right_parameter_path_projection
+            .as_ref()
+            .unwrap();
+        assert_eq!(
+            right_parameter_projection.kind,
+            Some(MachineGuardParameterPathKind::Threshold)
+        );
+        assert!(right_parameter_projection.proposal_only);
+        assert!(!right_parameter_projection.active_strategy_write_enabled);
         let policy = projection.policy.as_ref().unwrap();
         assert_eq!(policy.timeout_ms, Some(250));
         assert_eq!(policy.cooldown_ms, Some(2_000));
@@ -954,6 +980,37 @@ mod tests {
         assert_eq!(summary.condition_event_payload_read_count, 1);
         assert_eq!(summary.condition_risk_limit_parameter_path_count, 1);
         assert_eq!(summary.condition_cooldown_parameter_path_count, 0);
+        let condition_projection = &projection.guard.guard.condition_projections[0];
+        assert_eq!(
+            condition_projection
+                .left_read_projection
+                .as_ref()
+                .unwrap()
+                .binding_scope,
+            MachineGuardReadBindingScope::EventPayloadField
+        );
+        assert_eq!(
+            condition_projection
+                .right_parameter_path_projection
+                .as_ref()
+                .unwrap()
+                .kind,
+            Some(MachineGuardParameterPathKind::RiskLimit)
+        );
+        assert!(
+            condition_projection
+                .right_parameter_path_projection
+                .as_ref()
+                .unwrap()
+                .proposal_only
+        );
+        assert!(
+            !condition_projection
+                .right_parameter_path_projection
+                .as_ref()
+                .unwrap()
+                .active_strategy_write_enabled
+        );
         assert_eq!(summary.policy_declared_count, 1);
         assert_eq!(summary.timing_policy_declared_count, 1);
         assert_eq!(summary.cooldown_declared_count, 1);

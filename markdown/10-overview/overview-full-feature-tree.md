@@ -10487,3 +10487,9 @@ Productization supplement: ADV-SM-PROD-003Y Guard Builder proposal-only paramete
 - `qrpc_core_ir/src/v4.rs` - covers parameter path projection kind, proposal-only, and active-strategy-write-disabled flags across machine and bundle guard descriptor projections.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder proposal-only parameter projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003Y` as the proposal-only parameter projection slice.
+
+Productization supplement: ADV-SM-PROD-003Z Guard Builder condition operand projection.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - enriches `MachineGuardConditionProjection` with `left_read_projection` and `right_parameter_path_projection` so workspace consumers can render condition operands without rejoining descriptor-level read and parameter arrays.
+- `qrpc_core_ir/src/v4.rs` - covers condition-level read binding scopes, right parameter projection kinds, proposal-only flags, and disabled active strategy writes across machine and bundle guard descriptor projections.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder condition operand projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003Z` as the condition operand projection slice.
