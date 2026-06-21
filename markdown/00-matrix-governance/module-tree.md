@@ -11539,3 +11539,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003B)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.contracts.runtime_support.v4_runtime_support.machine_transition_engine`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder structured descriptor readiness surface.
 `MachineTransition.guard_descriptor`; structured guard descriptors may declare event-payload, machine-memory, and readonly-runtime-fact reads plus proposal parameter paths. Static validation and readiness are contract-only, while runtime guard execution remains fail-closed with a descriptor-specific rejection reason.
+
+**Productization supplement (ADV-SM-PROD-003C)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract.graph_static_validation`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder event payload read catalog binding.
+`guard_descriptor event_payload read catalog binding`; graph static validation requires structured guard event-payload reads to resolve against the transition event's catalog payload fields, keeping guard reads under the Event Catalog authority while runtime evaluation stays disabled.

@@ -1,7 +1,9 @@
 use std::collections::BTreeMap;
 
 use super::super::machine_event_party_allowed;
-use crate::v4::{MachineEventTypeSpec, V4MachineContract, V4MachineGraphContract};
+use crate::v4::{
+    MachineEventTypeSpec, MachineGuardReadSource, V4MachineContract, V4MachineGraphContract,
+};
 
 impl V4MachineGraphContract {
     pub(super) fn validate_event_parties(
@@ -33,6 +35,28 @@ impl V4MachineGraphContract {
                             source,
                             transition.event.event_type
                         ));
+                    }
+                }
+
+                if let Some(guard_descriptor) = &transition.guard_descriptor {
+                    for read in &guard_descriptor.reads {
+                        if read.source != MachineGuardReadSource::EventPayload {
+                            continue;
+                        }
+                        if !spec
+                            .payload_fields
+                            .iter()
+                            .any(|field| field.name == read.path)
+                        {
+                            errors.push(format!(
+                                "machine `{}` transition `{}` structured guard `{}` reads unknown event payload field `{}` from event `{}`",
+                                machine.machine_id,
+                                transition.transition_id,
+                                guard_descriptor.guard_id,
+                                read.path,
+                                transition.event.event_type
+                            ));
+                        }
                     }
                 }
 

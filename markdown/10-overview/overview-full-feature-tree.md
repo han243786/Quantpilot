@@ -10334,3 +10334,9 @@ Productization supplement: ADV-SM-PROD-003B Guard Builder structured descriptor 
 - `quantscript/src/v4_static_audit/transition_parser.rs` and `qrpc_core_ir/src/v4/core_ir_compat_bridge/compat_graph_builder/machine_builder.rs` - keep generated transitions descriptor-free by default.
 - `markdown/00-matrix-governance/module-tree.md` - records structured descriptor readiness ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003B` as the first code-backed `SM-PROD-003` descriptor/readiness slice.
+
+Productization supplement: ADV-SM-PROD-003C Guard Builder event payload read catalog binding.
+- `qrpc_core_ir/src/v4/machine_graph_contract/static_validation/event_usage_validation/event_party_validation.rs` - validates structured guard `event_payload` reads against the transition event's Event Catalog payload fields.
+- `qrpc_core_ir/src/v4.rs` - covers accepted declared guard payload reads and rejected unknown guard payload reads at graph validation level.
+- `markdown/00-matrix-governance/module-tree.md` - records guard payload read catalog binding ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003C` as the Event Catalog binding slice for structured Guard Builder reads.

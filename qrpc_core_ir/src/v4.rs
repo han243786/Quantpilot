@@ -672,6 +672,54 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_accepts_guard_descriptor_event_payload_read_from_catalog() {
+        let mut graph = sample_machine_graph();
+        let intent = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "intent.trend")
+            .unwrap();
+        intent.transitions[0].guard = None;
+        intent.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "bar_symbol_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::EventPayload,
+                path: "symbol".to_string(),
+            }],
+            parameter_paths: vec!["guard.allowed_symbol".to_string()],
+            explanation: Some("guard reads a declared event payload field".to_string()),
+        });
+
+        assert_eq!(graph.validate_static_contract(), Ok(()));
+    }
+
+    #[test]
+    fn machine_graph_rejects_guard_descriptor_unknown_event_payload_read() {
+        let mut graph = sample_machine_graph();
+        let intent = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "intent.trend")
+            .unwrap();
+        intent.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "missing_payload_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::EventPayload,
+                path: "missing_payload".to_string(),
+            }],
+            parameter_paths: Vec::new(),
+            explanation: None,
+        });
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("structured guard `missing_payload_guard`")
+                && message.contains("unknown event payload field `missing_payload`")
+                && message.contains("event `bar_closed`")
+        }));
+    }
+
+    #[test]
     fn machine_graph_rejects_cycle() {
         let mut graph = sample_machine_graph();
         graph.edges.push(sample_graph_edge(

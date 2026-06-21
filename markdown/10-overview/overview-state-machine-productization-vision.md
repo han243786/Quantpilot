@@ -9937,3 +9937,15 @@ AI 不允许:
 | capability boundary | This slice does not evaluate guard expressions, does not mutate topology/Event Catalog/Memory Schema/capability source, does not change AI approval semantics, and does not write active strategy state. |
 | vision distance review | `SM-PROD-003` now has the first durable contract shape for structured Guard Builder inputs and a fail-closed runtime explanation. Remaining work is workspace projection/UI exposure and proposal-only guard parameter diff binding on top of this descriptor surface. |
 | rollback | Remove `guard_descriptor` DTOs/readiness/static validation/runtime rejection branch/tests and this record if later evidence shows the descriptor should be modeled somewhere other than `MachineTransition`. |
+
+### ADV-SM-PROD-003C: Guard Builder event payload read catalog binding
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, and `2.7`; continue `SM-PROD-003` by connecting structured guard event-payload reads to the existing Event Catalog boundary instead of leaving them as unchecked strings. |
+| implementation | Graph static validation now checks each `guard_descriptor` read with source `event_payload` against the payload fields declared for the transition's event type in `event_catalog`. Unknown event payload reads produce a machine/transition/guard/event-specific error. |
+| runtime boundary | Runtime behavior is unchanged from `003B`: structured guard descriptors still fail closed and are not evaluated. This slice only strengthens static contract evidence before runtime. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` passed with 4 tests; `cargo test -p qrpc-core-ir --lib` passed with 58 tests; `cargo fmt --check` passed. |
+| capability boundary | This does not add guard expression evaluation, nested payload path evaluation, topology mutation, Event Catalog editing, Memory Schema editing, AI approval changes, or active strategy writes. |
+| vision distance review | `SM-PROD-003` now proves that structured guard event-payload reads are tied to the same event catalog authority used by graph communication. Remaining work is machine-memory/runtime-fact projection into the workspace and proposal-only parameter diff binding. |
+| rollback | Remove the graph-level guard payload read validation/tests and this record if future guard descriptors move payload read validation to a dedicated guard builder contract module. |
