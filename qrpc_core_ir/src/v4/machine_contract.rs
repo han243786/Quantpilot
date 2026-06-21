@@ -142,6 +142,16 @@ pub struct MachineGuardConditionSpec {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineGuardConditionProjection {
+    pub condition_id: String,
+    pub left_read: MachineGuardReadRef,
+    pub comparator: MachineGuardConditionComparator,
+    pub right_parameter_path: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub right_parameter_path_kind: Option<MachineGuardParameterPathKind>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum MachineGuardConditionComparator {
     Equal,
@@ -333,6 +343,7 @@ pub struct MachineGuardDescriptorProjection {
     pub parameter_paths: Vec<String>,
     pub parameter_path_kinds: Vec<MachineGuardParameterPathKind>,
     pub conditions: Vec<MachineGuardConditionSpec>,
+    pub condition_projections: Vec<MachineGuardConditionProjection>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub policy: Option<MachineGuardPolicySpec>,
 }
@@ -369,6 +380,21 @@ pub struct MachineMemoryField {
 }
 
 impl MachineGuardDescriptor {
+    pub fn condition_projections(&self) -> Vec<MachineGuardConditionProjection> {
+        self.conditions
+            .iter()
+            .map(|condition| MachineGuardConditionProjection {
+                condition_id: condition.condition_id.clone(),
+                left_read: condition.left_read.clone(),
+                comparator: condition.comparator.clone(),
+                right_parameter_path: condition.right_parameter_path.clone(),
+                right_parameter_path_kind: machine_guard_parameter_path_kind(
+                    condition.right_parameter_path.as_str(),
+                ),
+            })
+            .collect()
+    }
+
     pub fn parameter_path_kinds(&self) -> Vec<MachineGuardParameterPathKind> {
         self.parameter_paths
             .iter()
@@ -548,6 +574,7 @@ impl V4MachineContract {
                     parameter_paths: guard_descriptor.parameter_paths.clone(),
                     parameter_path_kinds: guard_descriptor.parameter_path_kinds(),
                     conditions: guard_descriptor.conditions.clone(),
+                    condition_projections: guard_descriptor.condition_projections(),
                     policy: guard_descriptor.policy.clone(),
                 })
             })

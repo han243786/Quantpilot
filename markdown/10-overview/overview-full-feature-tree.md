@@ -10455,3 +10455,9 @@ Productization supplement: ADV-SM-PROD-003T Guard Builder condition operand read
 - `qrpc_core_ir/src/v4.rs` - covers condition operand readiness and bundle summary counts for accepted guard conditions.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder condition operand readiness ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003T` as the operand readiness slice.
+
+Productization supplement: ADV-SM-PROD-003U Guard Builder condition kind projection.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds `MachineGuardConditionProjection` and `MachineGuardDescriptor::condition_projections()` so workspace projections expose derived right-side proposal parameter kinds per condition.
+- `qrpc_core_ir/src/v4.rs` - covers condition projection payloads and right-parameter kind resolution for accepted guard conditions.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder condition kind projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003U` as the condition kind projection slice.

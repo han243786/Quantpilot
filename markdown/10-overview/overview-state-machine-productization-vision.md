@@ -10137,3 +10137,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers condition operand readiness and bundle summary counts for accepted guard conditions. |
 | capability boundary | This does not enable guard execution, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove condition operand count fields, summary aggregation, test assertions, and this record if operand reporting moves into a dedicated Guard Builder query contract. |
+
+### ADV-SM-PROD-003U: Guard Builder condition kind projection
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making each structured condition's right-side proposal parameter kind directly visible to workspace consumers instead of requiring them to reclassify path strings. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now provides `MachineGuardConditionProjection` and `MachineGuardDescriptor::condition_projections()`. `MachineGuardDescriptorProjection` carries both raw condition payloads and derived condition projections with `right_parameter_path_kind`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: condition projections are read-only contract metadata, structured guard descriptors still are not evaluated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers condition projection payloads and right-parameter kind resolution for accepted guard conditions. |
+| capability boundary | This does not enable guard execution, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the condition projection DTO/helper/field, related test assertions, and this record if condition kind projection moves into a dedicated Guard Builder query contract. |

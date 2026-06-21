@@ -751,6 +751,15 @@ mod tests {
         );
         assert_eq!(projection.conditions.len(), 1);
         assert_eq!(projection.conditions[0].condition_id, "ema_threshold_check");
+        assert_eq!(projection.condition_projections.len(), 1);
+        assert_eq!(
+            projection.condition_projections[0].right_parameter_path_kind,
+            Some(MachineGuardParameterPathKind::Threshold)
+        );
+        assert_eq!(
+            projection.condition_projections[0].right_parameter_path,
+            "guard.threshold"
+        );
         let policy = projection.policy.as_ref().unwrap();
         assert_eq!(policy.timeout_ms, Some(250));
         assert_eq!(policy.cooldown_ms, Some(2_000));

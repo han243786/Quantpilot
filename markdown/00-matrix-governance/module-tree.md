@@ -11593,3 +11593,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003T)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.contracts.core_ir.v4_contracts.static_contract_bundle`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder condition operand readiness.
 `condition_event_payload_read_count` / `condition_threshold_parameter_path_count` / operand count fields; structured guard readiness and bundle summaries expose condition left-read sources and right-parameter kinds while runtime execution remains disabled.
+
+**Productization supplement (ADV-SM-PROD-003U)**: `root.contracts.core_ir.v4_contracts.machine_contract` and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder condition kind projection.
+`MachineGuardConditionProjection`; structured guard descriptor projections carry condition payloads with derived right-side proposal parameter kinds while runtime execution remains disabled.
