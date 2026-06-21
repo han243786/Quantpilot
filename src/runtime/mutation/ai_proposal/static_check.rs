@@ -142,38 +142,6 @@ fn is_v4_guard_proposal_target(target: &RuntimeParameterMutationTarget) -> bool 
     target.module_key == "v4.transition.guard"
 }
 
-fn is_allowed_v4_guard_parameter_path(path: &str) -> bool {
-    let path = path.trim().to_ascii_lowercase();
-    if path.is_empty() {
-        return false;
-    }
-    let forbidden = [
-        "topology",
-        "graph.",
-        "graph.edges",
-        "event_catalog",
-        "event_schema",
-        "event.",
-        "capability_source",
-        "capability.source",
-        "active_strategy",
-    ];
-    if forbidden.iter().any(|needle| path.contains(needle)) {
-        return false;
-    }
-
-    let allowed = [
-        "guard",
-        "cooldown",
-        "threshold",
-        "max_notional",
-        "max_position",
-        "max_drawdown",
-        "drawdown",
-    ];
-    allowed.iter().any(|needle| path.contains(needle))
-}
-
 fn expected_config_domain_for_target(
     target: &RuntimeParameterMutationTarget,
 ) -> StrategyConfigProposalDomain {
@@ -259,7 +227,7 @@ fn validate_ai_proposal_config_domain_binding(
         });
     }
     if is_v4_guard_proposal_target(&request.target)
-        && !is_allowed_v4_guard_parameter_path(&request.target.parameter_path)
+        && !qrpc_core_ir::v4::machine_guard_parameter_path_allowed(&request.target.parameter_path)
     {
         details.push(RuntimeAiProposalStaticCheckDetail {
             code: "v4_guard_parameter_path_not_proposal_only".to_string(),

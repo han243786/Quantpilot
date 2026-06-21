@@ -10359,3 +10359,9 @@ Productization supplement: ADV-SM-PROD-003F Guard Builder descriptor parameter p
 - `qrpc_core_ir/src/v4.rs` - covers accepted descriptor guard parameter paths and rejected graph edge parameter paths.
 - `markdown/00-matrix-governance/module-tree.md` - records descriptor parameter path boundary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003F` as the contract-level descriptor parameter boundary slice.
+
+Productization supplement: ADV-SM-PROD-003G Guard Builder parameter boundary single authority.
+- `src/runtime/mutation/ai_proposal/static_check.rs` - uses `qrpc_core_ir::v4::machine_guard_parameter_path_allowed` for `v4.transition.guard` proposal path validation instead of a duplicate runtime-local boundary list.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - remains the shared source of truth for Guard Builder parameter path boundary checks.
+- `markdown/00-matrix-governance/module-tree.md` - records shared Guard Builder parameter boundary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003G` as the no-drift authority slice for guard parameters.

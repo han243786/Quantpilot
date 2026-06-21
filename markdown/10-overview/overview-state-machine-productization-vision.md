@@ -9982,3 +9982,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers accepted `guard.threshold` descriptor paths and rejected `graph.edges` descriptor paths. |
 | capability boundary | This does not add guard execution, active strategy writes, Event Catalog editing, Memory Schema editing, or capability source mutation. |
 | rollback | Remove the descriptor parameter path helper, validation branch, test assertion, and this record if Guard Builder descriptor parameters are later replaced by a typed patch schema. |
+
+### ADV-SM-PROD-003G: Guard Builder parameter boundary single authority
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by keeping descriptor validation and AI proposal static checks on one shared guard parameter path authority. |
+| implementation | `src/runtime/mutation/ai_proposal/static_check.rs` now calls `qrpc_core_ir::v4::machine_guard_parameter_path_allowed` for `v4.transition.guard` proposal path validation instead of maintaining a duplicate runtime allowlist/denylist. |
+| runtime boundary | Runtime behavior remains unchanged: proposals are still only statically checked, guard descriptors are still not evaluated, and active strategy state is not written by this slice. |
+| tests | `cargo test -p quantpilot v4_ai_proposal_static_check` continues to cover accepted guard parameter diffs and rejected topology/capability-source paths through the shared core helper. |
+| capability boundary | This does not change the allowed path set; it prevents contract and runtime proposal checks from drifting into different capability boundaries. |
+| rollback | Restore the local static-check helper and remove this record only if the AI proposal boundary intentionally diverges from the descriptor contract in a later typed patch model. |
