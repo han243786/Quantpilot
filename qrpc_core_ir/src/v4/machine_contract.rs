@@ -171,6 +171,12 @@ pub enum MachineGuardParameterPathKind {
     RiskLimit,
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum MachineGuardExecutionReadinessState {
+    DisabledFailClosed,
+}
+
 pub const MACHINE_GUARD_READONLY_RUNTIME_FACTS: &[&str] =
     &["clock.tick_ms", "runtime.mode", "capability.snapshot_id"];
 
@@ -240,6 +246,7 @@ pub struct MachineGuardDescriptorReadiness {
     pub cooldown_declared: bool,
     pub fallback_declared: bool,
     pub execution_enabled: bool,
+    pub execution_state: MachineGuardExecutionReadinessState,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -355,6 +362,7 @@ impl MachineGuardDescriptor {
                 .and_then(|policy| policy.fallback.as_ref())
                 .is_some(),
             execution_enabled: false,
+            execution_state: MachineGuardExecutionReadinessState::DisabledFailClosed,
         }
     }
 }

@@ -10411,3 +10411,10 @@ Productization supplement: ADV-SM-PROD-003N Guard Builder bundle readiness summa
 - `qrpc_core_ir/src/v4.rs` - covers bundle summary counts for reads, cooldown/risk-limit parameter kinds, policy declarations, fallback declarations, and disabled execution.
 - `markdown/00-matrix-governance/module-tree.md` - records bundle-level Guard Builder readiness summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003N` as the bundle readiness summary slice.
+
+Productization supplement: ADV-SM-PROD-003O Guard Builder fail-closed execution state projection.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds `MachineGuardExecutionReadinessState::DisabledFailClosed` to structured guard descriptor readiness so workspace projections can explain the execution blocker.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates `execution_disabled_fail_closed_count` in `StaticContractBundleGuardDescriptorSummary`.
+- `qrpc_core_ir/src/v4.rs` - covers per-guard and bundle-summary disabled-fail-closed readiness while keeping `execution_enabled=false`.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder fail-closed readiness projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003O` as the fail-closed execution state projection slice.

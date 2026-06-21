@@ -6,10 +6,10 @@ mod static_validation;
 
 use super::{
     ComplexityBudgetContract, DeveloperLearningPipelineContract,
-    MachineGraphGuardDescriptorProjection, PluginGovernanceContract, PluginManifestSpec,
-    QsStateMachineProfile, QsTypeSystemContract, ReproducibilityContract, RuntimeModeContract,
-    V4MachineGraphContract, V4VersionManifest, VenueCapabilityMatrix,
-    V4_STATIC_CONTRACT_BUNDLE_VERSION,
+    MachineGraphGuardDescriptorProjection, MachineGuardExecutionReadinessState,
+    PluginGovernanceContract, PluginManifestSpec, QsStateMachineProfile, QsTypeSystemContract,
+    ReproducibilityContract, RuntimeModeContract, V4MachineGraphContract, V4VersionManifest,
+    VenueCapabilityMatrix, V4_STATIC_CONTRACT_BUNDLE_VERSION,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -66,6 +66,7 @@ pub struct StaticContractBundleGuardDescriptorSummary {
     pub cooldown_declared_count: usize,
     pub fallback_declared_count: usize,
     pub execution_enabled_count: usize,
+    pub execution_disabled_fail_closed_count: usize,
 }
 
 impl Default for V4StaticContractBundle {
@@ -126,6 +127,10 @@ impl V4StaticContractBundle {
             summary.cooldown_declared_count += usize::from(readiness.cooldown_declared);
             summary.fallback_declared_count += usize::from(readiness.fallback_declared);
             summary.execution_enabled_count += usize::from(readiness.execution_enabled);
+            summary.execution_disabled_fail_closed_count += usize::from(
+                readiness.execution_state
+                    == MachineGuardExecutionReadinessState::DisabledFailClosed,
+            );
         }
         summary
     }

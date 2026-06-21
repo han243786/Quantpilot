@@ -10070,3 +10070,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle-level summary aggregation for reads, cooldown/risk-limit parameter kinds, policy declarations, fallback declarations, and `execution_enabled_count=0`. |
 | capability boundary | This does not add guard execution, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle summary DTO/helper/test assertions and this record if workspace guard readiness summaries move to a dedicated query contract. |
+
+### ADV-SM-PROD-003O: Guard Builder fail-closed execution state projection
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.8`; continue `SM-PROD-003` by making the structured guard execution blocker explicit in the read-only readiness model instead of exposing only a boolean. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now provides `MachineGuardExecutionReadinessState::DisabledFailClosed` and attaches it to every structured guard descriptor readiness. `qrpc_core_ir/src/v4/static_contract_bundle.rs` aggregates `execution_disabled_fail_closed_count` in the bundle readiness summary. |
+| runtime boundary | Runtime behavior remains unchanged: `qrpc_runtime/src/v4_runtime/machine_transition_engine.rs` still rejects structured guard descriptors before state mutation, and this slice only mirrors that fail-closed state into read-only contract projections. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers per-guard and bundle-summary disabled-fail-closed readiness state while keeping `execution_enabled=false`. |
+| capability boundary | This does not enable guard execution, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the execution readiness enum/field, bundle disabled-fail-closed count, test assertions, and this record if fail-closed blocker projection moves to a dedicated runtime-readiness query contract. |

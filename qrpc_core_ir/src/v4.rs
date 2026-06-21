@@ -631,6 +631,10 @@ mod tests {
         assert!(readiness.cooldown_declared);
         assert!(readiness.fallback_declared);
         assert!(!readiness.execution_enabled);
+        assert_eq!(
+            readiness.execution_state,
+            MachineGuardExecutionReadinessState::DisabledFailClosed
+        );
     }
 
     #[test]
@@ -804,7 +808,12 @@ mod tests {
         assert_eq!(summary.cooldown_declared_count, 1);
         assert_eq!(summary.fallback_declared_count, 1);
         assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 1);
         assert!(!projection.guard.guard.readiness.execution_enabled);
+        assert_eq!(
+            projection.guard.guard.readiness.execution_state,
+            MachineGuardExecutionReadinessState::DisabledFailClosed
+        );
     }
 
     #[test]
