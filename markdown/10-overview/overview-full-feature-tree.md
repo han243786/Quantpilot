@@ -10505,3 +10505,9 @@ Productization supplement: ADV-SM-PROD-003AB Guard Builder bundle condition read
 - `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for condition-level disabled evaluation and fail-closed counts.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle condition readiness summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AB` as the bundle condition readiness summary slice.
+
+Productization supplement: ADV-SM-PROD-003AC Guard Builder bundle parameter mutability summary.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates `parameter_path_proposal_only_count`, `parameter_path_active_strategy_write_enabled_count`, and `parameter_path_active_strategy_write_disabled_count` in static bundle guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for proposal-only guard parameters and disabled active strategy writes.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle parameter mutability summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AC` as the bundle parameter mutability summary slice.

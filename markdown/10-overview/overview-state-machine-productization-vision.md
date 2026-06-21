@@ -10225,3 +10225,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for disabled condition evaluation and fail-closed blocker counts. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the condition evaluation summary fields, aggregation, related test assertions, and this record if condition readiness aggregation moves into a dedicated Guard Builder query contract. |
+
+### ADV-SM-PROD-003AC: Guard Builder bundle parameter mutability summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by aggregating proposal-only parameter path mutability at the static bundle boundary for workspace overview use. |
+| implementation | `qrpc_core_ir/src/v4/static_contract_bundle.rs` now aggregates `parameter_path_proposal_only_count`, `parameter_path_active_strategy_write_enabled_count`, and `parameter_path_active_strategy_write_disabled_count` in `StaticContractBundleGuardDescriptorSummary` from parameter path projections. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: summary fields are read-only metadata, no proposal is applied, no guard parameter is written, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for proposal-only guard parameters and disabled active strategy writes. |
+| capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the parameter mutability summary fields, aggregation, related test assertions, and this record if parameter mutability reporting moves into a dedicated Guard Builder query contract. |

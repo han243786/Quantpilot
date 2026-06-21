@@ -11617,3 +11617,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003AB)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle condition readiness summary.
 `condition_evaluation_enabled_count` / `condition_evaluation_disabled_fail_closed_count`; static bundle summaries aggregate condition-level disabled evaluation evidence while runtime guard execution remains disabled.
+
+**Productization supplement (ADV-SM-PROD-003AC)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle parameter mutability summary.
+`parameter_path_proposal_only_count` / active-strategy-write count fields; static bundle summaries aggregate proposal-only guard parameter mutability while active strategy writes remain disabled.
