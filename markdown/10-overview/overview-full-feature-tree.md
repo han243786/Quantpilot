@@ -10425,3 +10425,10 @@ Productization supplement: ADV-SM-PROD-003P Guard Builder fail-closed blocker re
 - `qrpc_core_ir/src/v4.rs` - covers per-guard and bundle-projected blocker code/reason while keeping `execution_enabled=false`.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder fail-closed blocker reason projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003P` as the fail-closed blocker code/reason projection slice.
+
+Productization supplement: ADV-SM-PROD-003Q Guard Builder duplicate input static hygiene.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - exposes stable `MachineGuardReadSource::as_str()` labels for structured guard validation diagnostics.
+- `qrpc_core_ir/src/v4/machine_contract/static_validation.rs` - rejects duplicate structured guard reads and duplicate proposal parameter paths before workspace or runtime use.
+- `qrpc_core_ir/src/v4.rs` - covers duplicate machine-memory reads and duplicate guard parameter paths.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder duplicate input hygiene ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003Q` as the duplicate input static hygiene slice.

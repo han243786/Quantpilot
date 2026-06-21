@@ -161,6 +161,16 @@ pub enum MachineGuardReadSource {
     ReadonlyRuntimeFact,
 }
 
+impl MachineGuardReadSource {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            MachineGuardReadSource::EventPayload => "event_payload",
+            MachineGuardReadSource::MachineMemory => "machine_memory",
+            MachineGuardReadSource::ReadonlyRuntimeFact => "readonly_runtime_fact",
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum MachineGuardParameterPathKind {

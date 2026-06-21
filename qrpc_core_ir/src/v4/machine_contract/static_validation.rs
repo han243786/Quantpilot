@@ -121,11 +121,20 @@ impl V4MachineContract {
                         transition.transition_id, guard_descriptor.guard_id
                     ));
                 }
+                let mut guard_reads = BTreeSet::new();
                 for read in &guard_descriptor.reads {
                     if read.path.trim().is_empty() {
                         errors.push(format!(
                             "transition `{}` structured guard `{}` has an empty read path",
                             transition.transition_id, guard_descriptor.guard_id
+                        ));
+                    } else if !guard_reads.insert((read.source.as_str(), read.path.trim())) {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` declares duplicate {} read `{}`",
+                            transition.transition_id,
+                            guard_descriptor.guard_id,
+                            read.source.as_str(),
+                            read.path
                         ));
                     }
                     if read.source == MachineGuardReadSource::MachineMemory
@@ -145,11 +154,19 @@ impl V4MachineContract {
                         ));
                     }
                 }
+                let mut guard_parameter_paths = BTreeSet::new();
                 for parameter_path in &guard_descriptor.parameter_paths {
                     if parameter_path.trim().is_empty() {
                         errors.push(format!(
                             "transition `{}` structured guard `{}` has an empty parameter path",
                             transition.transition_id, guard_descriptor.guard_id
+                        ));
+                    } else if !guard_parameter_paths
+                        .insert(parameter_path.trim().to_ascii_lowercase())
+                    {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` declares duplicate parameter path `{}`",
+                            transition.transition_id, guard_descriptor.guard_id, parameter_path
                         ));
                     } else if !machine_guard_parameter_path_allowed(parameter_path) {
                         errors.push(format!(

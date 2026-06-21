@@ -10092,3 +10092,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers per-guard and bundle-projected blocker code/reason while keeping `execution_enabled=false`; `cargo test -p qrpc-runtime v4_runtime_rejects_structured_guard_descriptor_without_execution` covers the runtime rejection reason. |
 | capability boundary | This does not enable guard execution, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the blocker constants/helper fields, runtime reason reuse, related test assertions, and this record if fail-closed blocker details move to a dedicated runtime-readiness query contract. |
+
+### ADV-SM-PROD-003Q: Guard Builder duplicate input static hygiene
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by ensuring structured guard descriptor inputs remain deterministic and auditable before any runtime execution is allowed. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now exposes stable `MachineGuardReadSource::as_str()` labels, and `qrpc_core_ir/src/v4/machine_contract/static_validation.rs` rejects duplicate structured guard reads and duplicate proposal parameter paths. Parameter path duplicate detection uses the same lowercase normalization implied by the proposal boundary classifier. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: duplicate hygiene is static contract validation only, structured guard descriptors still are not evaluated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers duplicate machine-memory reads and duplicate guard parameter paths. |
+| capability boundary | This does not enable guard execution, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the duplicate read/path validation, source label helper, related test assertions, and this record if duplicate descriptor handling moves into a dedicated Guard Builder authoring schema. |
