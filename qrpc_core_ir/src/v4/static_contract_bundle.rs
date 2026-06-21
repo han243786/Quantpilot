@@ -62,6 +62,12 @@ pub struct StaticContractBundleGuardDescriptorSummary {
     pub threshold_parameter_path_count: usize,
     pub risk_limit_parameter_path_count: usize,
     pub condition_count: usize,
+    pub equal_condition_count: usize,
+    pub not_equal_condition_count: usize,
+    pub greater_than_condition_count: usize,
+    pub greater_than_or_equal_condition_count: usize,
+    pub less_than_condition_count: usize,
+    pub less_than_or_equal_condition_count: usize,
     pub policy_declared_count: usize,
     pub timeout_declared_count: usize,
     pub cooldown_declared_count: usize,
@@ -124,6 +130,14 @@ impl V4StaticContractBundle {
             summary.threshold_parameter_path_count += readiness.threshold_parameter_path_count;
             summary.risk_limit_parameter_path_count += readiness.risk_limit_parameter_path_count;
             summary.condition_count += readiness.condition_count;
+            summary.equal_condition_count += readiness.equal_condition_count;
+            summary.not_equal_condition_count += readiness.not_equal_condition_count;
+            summary.greater_than_condition_count += readiness.greater_than_condition_count;
+            summary.greater_than_or_equal_condition_count +=
+                readiness.greater_than_or_equal_condition_count;
+            summary.less_than_condition_count += readiness.less_than_condition_count;
+            summary.less_than_or_equal_condition_count +=
+                readiness.less_than_or_equal_condition_count;
             summary.policy_declared_count += usize::from(readiness.policy_declared);
             summary.timeout_declared_count += usize::from(readiness.timeout_declared);
             summary.cooldown_declared_count += usize::from(readiness.cooldown_declared);

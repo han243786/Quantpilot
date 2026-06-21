@@ -296,6 +296,12 @@ pub struct MachineGuardDescriptorReadiness {
     pub threshold_parameter_path_count: usize,
     pub risk_limit_parameter_path_count: usize,
     pub condition_count: usize,
+    pub equal_condition_count: usize,
+    pub not_equal_condition_count: usize,
+    pub greater_than_condition_count: usize,
+    pub greater_than_or_equal_condition_count: usize,
+    pub less_than_condition_count: usize,
+    pub less_than_or_equal_condition_count: usize,
     pub policy_declared: bool,
     pub timeout_declared: bool,
     pub cooldown_declared: bool,
@@ -405,6 +411,46 @@ impl MachineGuardDescriptor {
                 .filter(|kind| **kind == MachineGuardParameterPathKind::RiskLimit)
                 .count(),
             condition_count: self.conditions.len(),
+            equal_condition_count: self
+                .conditions
+                .iter()
+                .filter(|condition| condition.comparator == MachineGuardConditionComparator::Equal)
+                .count(),
+            not_equal_condition_count: self
+                .conditions
+                .iter()
+                .filter(|condition| {
+                    condition.comparator == MachineGuardConditionComparator::NotEqual
+                })
+                .count(),
+            greater_than_condition_count: self
+                .conditions
+                .iter()
+                .filter(|condition| {
+                    condition.comparator == MachineGuardConditionComparator::GreaterThan
+                })
+                .count(),
+            greater_than_or_equal_condition_count: self
+                .conditions
+                .iter()
+                .filter(|condition| {
+                    condition.comparator == MachineGuardConditionComparator::GreaterThanOrEqual
+                })
+                .count(),
+            less_than_condition_count: self
+                .conditions
+                .iter()
+                .filter(|condition| {
+                    condition.comparator == MachineGuardConditionComparator::LessThan
+                })
+                .count(),
+            less_than_or_equal_condition_count: self
+                .conditions
+                .iter()
+                .filter(|condition| {
+                    condition.comparator == MachineGuardConditionComparator::LessThanOrEqual
+                })
+                .count(),
             policy_declared: self.policy.is_some(),
             timeout_declared: self
                 .policy

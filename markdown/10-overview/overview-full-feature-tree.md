@@ -10441,3 +10441,10 @@ Productization supplement: ADV-SM-PROD-003R Guard Builder condition contract sur
 - `qrpc_runtime/src/v4_runtime/test_harness/payload_validation_tests.rs` - keeps the runtime structured guard rejection fixture on an explicit empty condition set while execution remains disabled.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder condition contract surface ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003R` as the contract-only structured condition slice.
+
+Productization supplement: ADV-SM-PROD-003S Guard Builder condition comparator readiness.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds comparator-specific condition readiness counts for equal, not-equal, greater-than, greater-than-or-equal, less-than, and less-than-or-equal structured guard conditions.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates comparator-specific condition counts in bundle guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers comparator-specific readiness and bundle summary counts for accepted guard conditions.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder condition comparator readiness ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003S` as the comparator readiness slice.

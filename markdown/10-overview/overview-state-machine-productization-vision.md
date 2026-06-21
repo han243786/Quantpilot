@@ -10115,3 +10115,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers accepted condition projection/readiness, bundle summary condition counts, and rejected invalid condition references. |
 | capability boundary | This does not enable guard execution, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the condition DTOs/readiness/projection/summary fields, validation branch, test assertions, and this record if structured guard conditions move into a dedicated Guard Builder expression schema. |
+
+### ADV-SM-PROD-003S: Guard Builder condition comparator readiness
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making structured condition comparators auditable in readiness and bundle summaries instead of leaving them only inside raw condition payloads. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now reports comparator-specific condition counts for equal, not-equal, greater-than, greater-than-or-equal, less-than, and less-than-or-equal conditions. `qrpc_core_ir/src/v4/static_contract_bundle.rs` aggregates the same counts across bundle guard descriptor summaries. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: comparator counts are read-only contract metadata, structured guard descriptors still are not evaluated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers comparator-specific readiness and bundle summary counts for accepted guard conditions. |
+| capability boundary | This does not enable guard execution, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove comparator count fields, summary aggregation, test assertions, and this record if condition comparator reporting moves into a dedicated Guard Builder query contract. |
