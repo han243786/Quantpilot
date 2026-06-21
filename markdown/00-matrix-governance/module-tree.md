@@ -11572,3 +11572,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003M)**: `root.contracts.core_ir.v4_contracts.machine_contract`, `root.runtime.mutation.ai_proposal.static_check`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder parameter path kind projection.
 `MachineGuardParameterPathKind`; shared Guard Builder parameter validation now projects proposal-only path kinds for workspace/readiness consumers while preserving fallback as contract-only and outside AI proposal admission.
+
+**Productization supplement (ADV-SM-PROD-003N)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle readiness summary.
+`V4StaticContractBundle::guard_descriptor_summary`; static contract bundles can aggregate structured guard descriptor readiness counts for workspace consumers while preserving read-only and fail-closed behavior.

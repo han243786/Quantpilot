@@ -10405,3 +10405,9 @@ Productization supplement: ADV-SM-PROD-003M Guard Builder parameter path kind pr
 - `src/runtime/mutation/ai_proposal/static_check.rs` - covers rejected `v4.transition.guard` fallback proposal paths so fallback remains contract-only.
 - `markdown/00-matrix-governance/module-tree.md` - records parameter path kind Guard Builder projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003M` as the path-kind projection and fallback guardrail slice.
+
+Productization supplement: ADV-SM-PROD-003N Guard Builder bundle readiness summary.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - adds `StaticContractBundleGuardDescriptorSummary` and `V4StaticContractBundle::guard_descriptor_summary()` for read-only workspace aggregation of structured guard descriptor readiness.
+- `qrpc_core_ir/src/v4.rs` - covers bundle summary counts for reads, cooldown/risk-limit parameter kinds, policy declarations, fallback declarations, and disabled execution.
+- `markdown/00-matrix-governance/module-tree.md` - records bundle-level Guard Builder readiness summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003N` as the bundle readiness summary slice.

@@ -48,6 +48,26 @@ pub struct StaticContractBundleGuardDescriptorProjection {
     pub guard: MachineGraphGuardDescriptorProjection,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
+pub struct StaticContractBundleGuardDescriptorSummary {
+    pub guard_descriptor_count: usize,
+    pub read_count: usize,
+    pub event_payload_read_count: usize,
+    pub machine_memory_read_count: usize,
+    pub readonly_runtime_fact_read_count: usize,
+    pub parameter_path_count: usize,
+    pub guard_parameter_path_count: usize,
+    pub timeout_parameter_path_count: usize,
+    pub cooldown_parameter_path_count: usize,
+    pub threshold_parameter_path_count: usize,
+    pub risk_limit_parameter_path_count: usize,
+    pub policy_declared_count: usize,
+    pub timeout_declared_count: usize,
+    pub cooldown_declared_count: usize,
+    pub fallback_declared_count: usize,
+    pub execution_enabled_count: usize,
+}
+
 impl Default for V4StaticContractBundle {
     fn default() -> Self {
         Self {
@@ -84,6 +104,30 @@ impl V4StaticContractBundle {
                     })
             })
             .collect()
+    }
+
+    pub fn guard_descriptor_summary(&self) -> StaticContractBundleGuardDescriptorSummary {
+        let mut summary = StaticContractBundleGuardDescriptorSummary::default();
+        for projection in self.guard_descriptor_projections() {
+            let readiness = &projection.guard.guard.readiness;
+            summary.guard_descriptor_count += 1;
+            summary.read_count += readiness.read_count;
+            summary.event_payload_read_count += readiness.event_payload_read_count;
+            summary.machine_memory_read_count += readiness.machine_memory_read_count;
+            summary.readonly_runtime_fact_read_count += readiness.readonly_runtime_fact_read_count;
+            summary.parameter_path_count += readiness.parameter_path_count;
+            summary.guard_parameter_path_count += readiness.guard_parameter_path_count;
+            summary.timeout_parameter_path_count += readiness.timeout_parameter_path_count;
+            summary.cooldown_parameter_path_count += readiness.cooldown_parameter_path_count;
+            summary.threshold_parameter_path_count += readiness.threshold_parameter_path_count;
+            summary.risk_limit_parameter_path_count += readiness.risk_limit_parameter_path_count;
+            summary.policy_declared_count += usize::from(readiness.policy_declared);
+            summary.timeout_declared_count += usize::from(readiness.timeout_declared);
+            summary.cooldown_declared_count += usize::from(readiness.cooldown_declared);
+            summary.fallback_declared_count += usize::from(readiness.fallback_declared);
+            summary.execution_enabled_count += usize::from(readiness.execution_enabled);
+        }
+        summary
     }
 }
 

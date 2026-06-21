@@ -753,8 +753,12 @@ mod tests {
                 source: MachineGuardReadSource::EventPayload,
                 path: "symbol".to_string(),
             }],
-            parameter_paths: vec!["risk.max_notional".to_string()],
-            policy: None,
+            parameter_paths: vec!["risk.max_notional".to_string(), "cooldown.ms".to_string()],
+            policy: Some(MachineGuardPolicySpec {
+                timeout_ms: None,
+                cooldown_ms: Some(3_000),
+                fallback: Some(MachineGuardFallbackPolicy::FailClosed),
+            }),
             explanation: Some("bundle projection surface".to_string()),
         });
 
@@ -780,8 +784,26 @@ mod tests {
         assert_eq!(projection.guard.guard.readiness.guard_id, "risk_guard");
         assert_eq!(
             projection.guard.guard.parameter_paths,
-            vec!["risk.max_notional".to_string()]
+            vec!["risk.max_notional".to_string(), "cooldown.ms".to_string()]
         );
+        assert_eq!(
+            projection.guard.guard.parameter_path_kinds,
+            vec![
+                MachineGuardParameterPathKind::RiskLimit,
+                MachineGuardParameterPathKind::Cooldown,
+            ]
+        );
+        let summary = bundle.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 1);
+        assert_eq!(summary.read_count, 1);
+        assert_eq!(summary.event_payload_read_count, 1);
+        assert_eq!(summary.parameter_path_count, 2);
+        assert_eq!(summary.cooldown_parameter_path_count, 1);
+        assert_eq!(summary.risk_limit_parameter_path_count, 1);
+        assert_eq!(summary.policy_declared_count, 1);
+        assert_eq!(summary.cooldown_declared_count, 1);
+        assert_eq!(summary.fallback_declared_count, 1);
+        assert_eq!(summary.execution_enabled_count, 0);
         assert!(!projection.guard.guard.readiness.execution_enabled);
     }
 

@@ -10059,3 +10059,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers timeout/threshold/risk-limit kind projection; `cargo test -p quantpilot v4_ai_proposal_static_check` covers fallback path rejection so fallback remains contract-only and not AI proposal-admitted. |
 | capability boundary | This does not add new admitted mutation classes beyond the already-recorded guard, timeout, cooldown, threshold, and risk-limit proposal boundary; topology, Event Catalog/schema, Memory Schema, capability source, fallback execution, AI automatic apply, and active strategy mutation remain closed. |
 | rollback | Remove the parameter kind enum/helper, readiness/projection kind fields, fallback rejection test, and this record if typed Guard Builder patch contracts replace path-string classification. |
+
+### ADV-SM-PROD-003N: Guard Builder bundle readiness summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by giving workspace consumers a bundle-level read-only summary of structured guard descriptor readiness instead of requiring each consumer to rescan every graph projection. |
+| implementation | `qrpc_core_ir/src/v4/static_contract_bundle.rs` now provides `StaticContractBundleGuardDescriptorSummary` and `V4StaticContractBundle::guard_descriptor_summary()`. The summary aggregates descriptor counts, read counts, parameter path kind counts, policy declaration counts, and execution-enabled counts across bundle projections. |
+| runtime boundary | Runtime behavior remains unchanged: the summary is a read model only, guard descriptors and policy fields still fail closed, and active strategy state is not written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle-level summary aggregation for reads, cooldown/risk-limit parameter kinds, policy declarations, fallback declarations, and `execution_enabled_count=0`. |
+| capability boundary | This does not add guard execution, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle summary DTO/helper/test assertions and this record if workspace guard readiness summaries move to a dedicated query contract. |
