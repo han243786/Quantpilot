@@ -10461,3 +10461,10 @@ Productization supplement: ADV-SM-PROD-003U Guard Builder condition kind project
 - `qrpc_core_ir/src/v4.rs` - covers condition projection payloads and right-parameter kind resolution for accepted guard conditions.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder condition kind projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003U` as the condition kind projection slice.
+
+Productization supplement: ADV-SM-PROD-003V Guard Builder fail-closed fallback readiness.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds `fallback_fail_closed_declared` to structured guard descriptor readiness so workspace consumers can distinguish fail-closed fallback policy from generic fallback presence.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates `fallback_fail_closed_declared_count` in bundle guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers per-guard fail-closed fallback readiness and bundle summary aggregation.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder fail-closed fallback readiness ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003V` as the fail-closed fallback readiness slice.

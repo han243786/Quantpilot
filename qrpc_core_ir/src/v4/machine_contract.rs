@@ -324,6 +324,7 @@ pub struct MachineGuardDescriptorReadiness {
     pub timeout_declared: bool,
     pub cooldown_declared: bool,
     pub fallback_declared: bool,
+    pub fallback_fail_closed_declared: bool,
     pub execution_enabled: bool,
     pub execution_state: MachineGuardExecutionReadinessState,
     pub execution_blocker_code: String,
@@ -549,6 +550,12 @@ impl MachineGuardDescriptor {
                 .as_ref()
                 .and_then(|policy| policy.fallback.as_ref())
                 .is_some(),
+            fallback_fail_closed_declared: matches!(
+                self.policy
+                    .as_ref()
+                    .and_then(|policy| policy.fallback.as_ref()),
+                Some(MachineGuardFallbackPolicy::FailClosed)
+            ),
             execution_enabled: false,
             execution_state,
             execution_blocker_code: execution_state.blocker_code().to_string(),

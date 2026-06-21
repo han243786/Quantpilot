@@ -80,6 +80,7 @@ pub struct StaticContractBundleGuardDescriptorSummary {
     pub timeout_declared_count: usize,
     pub cooldown_declared_count: usize,
     pub fallback_declared_count: usize,
+    pub fallback_fail_closed_declared_count: usize,
     pub execution_enabled_count: usize,
     pub execution_disabled_fail_closed_count: usize,
 }
@@ -166,6 +167,8 @@ impl V4StaticContractBundle {
             summary.timeout_declared_count += usize::from(readiness.timeout_declared);
             summary.cooldown_declared_count += usize::from(readiness.cooldown_declared);
             summary.fallback_declared_count += usize::from(readiness.fallback_declared);
+            summary.fallback_fail_closed_declared_count +=
+                usize::from(readiness.fallback_fail_closed_declared);
             summary.execution_enabled_count += usize::from(readiness.execution_enabled);
             summary.execution_disabled_fail_closed_count += usize::from(
                 readiness.execution_state

@@ -10148,3 +10148,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers condition projection payloads and right-parameter kind resolution for accepted guard conditions. |
 | capability boundary | This does not enable guard execution, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the condition projection DTO/helper/field, related test assertions, and this record if condition kind projection moves into a dedicated Guard Builder query contract. |
+
+### ADV-SM-PROD-003V: Guard Builder fail-closed fallback readiness
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making fail-closed fallback policy explicit in readiness and bundle summaries instead of exposing only a generic fallback-present flag. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now reports `fallback_fail_closed_declared` on structured guard descriptor readiness. `qrpc_core_ir/src/v4/static_contract_bundle.rs` aggregates `fallback_fail_closed_declared_count` across bundle guard descriptor summaries. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: fallback policy is read-only contract metadata, structured guard descriptors still are not evaluated, fallback execution is not invoked, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers per-guard fail-closed fallback readiness and bundle summary aggregation. |
+| capability boundary | This does not enable guard execution, expression evaluation, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the fail-closed fallback readiness/summary fields, related test assertions, and this record if fallback policy reporting moves into a dedicated Guard Builder query contract. |
