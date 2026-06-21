@@ -138,6 +138,42 @@ fn is_v4_ai_proposal_target(target: &RuntimeParameterMutationTarget) -> bool {
     target.module_key.starts_with("v4.") || target.parameter_path.starts_with("v4.")
 }
 
+fn is_v4_guard_proposal_target(target: &RuntimeParameterMutationTarget) -> bool {
+    target.module_key == "v4.transition.guard"
+}
+
+fn is_allowed_v4_guard_parameter_path(path: &str) -> bool {
+    let path = path.trim().to_ascii_lowercase();
+    if path.is_empty() {
+        return false;
+    }
+    let forbidden = [
+        "topology",
+        "graph.",
+        "graph.edges",
+        "event_catalog",
+        "event_schema",
+        "event.",
+        "capability_source",
+        "capability.source",
+        "active_strategy",
+    ];
+    if forbidden.iter().any(|needle| path.contains(needle)) {
+        return false;
+    }
+
+    let allowed = [
+        "guard",
+        "cooldown",
+        "threshold",
+        "max_notional",
+        "max_position",
+        "max_drawdown",
+        "drawdown",
+    ];
+    allowed.iter().any(|needle| path.contains(needle))
+}
+
 fn expected_config_domain_for_target(
     target: &RuntimeParameterMutationTarget,
 ) -> StrategyConfigProposalDomain {
@@ -222,7 +258,103 @@ fn validate_ai_proposal_config_domain_binding(
             message: "AI proposal 必须声明至少一个配置证据锚点。".to_string(),
         });
     }
+    if is_v4_guard_proposal_target(&request.target)
+        && !is_allowed_v4_guard_parameter_path(&request.target.parameter_path)
+    {
+        details.push(RuntimeAiProposalStaticCheckDetail {
+            code: "v4_guard_parameter_path_not_proposal_only".to_string(),
+            target: "target.parameter_path".to_string(),
+            message:
+                "V4 transition guard proposals may only target guard, cooldown, threshold, or guard risk-limit parameters."
+                    .to_string(),
+        });
+    }
+    if request.target.module_key.starts_with("v4.") {
+        if !binding
+            .evidence_anchor_ids
+            .iter()
+            .any(|anchor| is_productization_replay_anchor(anchor))
+        {
+            details.push(RuntimeAiProposalStaticCheckDetail {
+                code: "strategy_config_ai_binding_productization_replay_diff_required"
+                    .to_string(),
+                target: "config_domain_binding.evidence_anchor_ids".to_string(),
+                message:
+                    "V4 AI proposal candidates require a productization replay diff evidence anchor."
+                        .to_string(),
+            });
+        } else if request.source_kind == RuntimeEvidenceSourceKind::Backtest
+            && !binding.evidence_anchor_ids.iter().any(|anchor| {
+                is_productization_replay_anchor_for_source(anchor, &request.source_id)
+            })
+        {
+            details.push(RuntimeAiProposalStaticCheckDetail {
+                code: "strategy_config_ai_binding_productization_replay_diff_source_mismatch"
+                    .to_string(),
+                target: "config_domain_binding.evidence_anchor_ids".to_string(),
+                message:
+                    "V4 AI proposal productization replay diff anchor must name the source backtest."
+                        .to_string(),
+            });
+        }
+    }
+    if request.target.module_key.starts_with("v4.") {
+        if !binding
+            .evidence_anchor_ids
+            .iter()
+            .any(|anchor| is_runtime_runner_verified_anchor(anchor))
+        {
+            details.push(RuntimeAiProposalStaticCheckDetail {
+                code: "strategy_config_ai_binding_runtime_runner_verified_required".to_string(),
+                target: "config_domain_binding.evidence_anchor_ids".to_string(),
+                message:
+                    "V4 AI proposal candidates require a verified runtime replay runner evidence anchor."
+                        .to_string(),
+            });
+        } else if request.source_kind == RuntimeEvidenceSourceKind::Backtest
+            && !binding.evidence_anchor_ids.iter().any(|anchor| {
+                is_runtime_runner_verified_anchor_for_source(anchor, &request.source_id)
+            })
+        {
+            details.push(RuntimeAiProposalStaticCheckDetail {
+                code: "strategy_config_ai_binding_runtime_runner_verified_source_mismatch"
+                    .to_string(),
+                target: "config_domain_binding.evidence_anchor_ids".to_string(),
+                message:
+                    "V4 AI proposal runtime runner verified anchor must name the source backtest."
+                        .to_string(),
+            });
+        }
+    }
     details
+}
+
+fn is_productization_replay_anchor(anchor: &str) -> bool {
+    let anchor = anchor.to_ascii_lowercase();
+    anchor.contains("productization") || anchor.contains("replay_diff")
+}
+
+fn is_productization_replay_anchor_for_source(anchor: &str, source_id: &str) -> bool {
+    let anchor = anchor.to_ascii_lowercase();
+    is_productization_replay_anchor(&anchor) && anchor_has_source_segment(&anchor, source_id)
+}
+
+fn is_runtime_runner_verified_anchor(anchor: &str) -> bool {
+    let anchor = anchor.to_ascii_lowercase();
+    (anchor.contains("runtime_replay_runner") || anchor.contains("runtime_runner"))
+        && anchor.contains("verified")
+}
+
+fn is_runtime_runner_verified_anchor_for_source(anchor: &str, source_id: &str) -> bool {
+    let anchor = anchor.to_ascii_lowercase();
+    is_runtime_runner_verified_anchor(&anchor) && anchor_has_source_segment(&anchor, source_id)
+}
+
+fn anchor_has_source_segment(anchor: &str, source_id: &str) -> bool {
+    let source_id = source_id.to_ascii_lowercase();
+    anchor
+        .split(':')
+        .any(|segment| segment.eq_ignore_ascii_case(&source_id))
 }
 
 #[allow(dead_code)]
@@ -283,6 +415,14 @@ mod v4_ai_proposal_static_check_tests {
         }
     }
 
+    fn v4_guard_target(parameter_path: &str) -> RuntimeParameterMutationTarget {
+        RuntimeParameterMutationTarget {
+            node_id: "risk.guard".to_string(),
+            module_key: "v4.transition.guard".to_string(),
+            parameter_path: parameter_path.to_string(),
+        }
+    }
+
     fn v4_binding(
         before_digest: String,
         after_digest: String,
@@ -291,7 +431,11 @@ mod v4_ai_proposal_static_check_tests {
             target_domain: StrategyConfigProposalDomain::StateMachine,
             before_digest,
             after_digest,
-            evidence_anchor_ids: vec!["backtest:bt1".to_string()],
+            evidence_anchor_ids: vec![
+                "backtest:bt1".to_string(),
+                "productization_replay_diff:bt1".to_string(),
+                "runtime_replay_runner:verified:bt1".to_string(),
+            ],
         }
     }
 
@@ -384,6 +528,297 @@ mod v4_ai_proposal_static_check_tests {
 
         assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckPassed);
         assert!(result.details.is_empty());
+    }
+
+    #[test]
+    fn v4_ai_proposal_static_check_accepts_guard_parameter_diff_path() {
+        let old = hash('b');
+        let new = hash('c');
+        let request = CreateRuntimeAiProposalRequest {
+            source_kind: RuntimeEvidenceSourceKind::Backtest,
+            source_id: "bt1".to_string(),
+            target: v4_guard_target("risk.max_notional"),
+            old_value: json!(1),
+            new_value: json!(2),
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: hash('d'),
+            evidence_hash: hash('a'),
+            actor: None,
+            reason: "Tune v4 guard risk limit from trajectory evidence".to_string(),
+            capability_context: None,
+            config_domain_binding: Some(v4_binding(old.clone(), new.clone())),
+        };
+
+        let result = ai_proposal_static_check_result(&request, &old, &new, 1, 1);
+
+        assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckPassed);
+        assert!(result.details.is_empty());
+    }
+
+    #[test]
+    fn v4_ai_proposal_static_check_rejects_guard_topology_path() {
+        let old = hash('b');
+        let new = hash('c');
+        let request = CreateRuntimeAiProposalRequest {
+            source_kind: RuntimeEvidenceSourceKind::Backtest,
+            source_id: "bt1".to_string(),
+            target: v4_guard_target("graph.edges"),
+            old_value: json!(1),
+            new_value: json!(2),
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: hash('d'),
+            evidence_hash: hash('a'),
+            actor: None,
+            reason: "Attempt topology edit through guard proposal".to_string(),
+            capability_context: None,
+            config_domain_binding: Some(v4_binding(old.clone(), new.clone())),
+        };
+
+        let result = ai_proposal_static_check_result(&request, &old, &new, 1, 1);
+
+        assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckFailed);
+        assert!(result.details.iter().any(|detail| {
+            detail.code == "v4_guard_parameter_path_not_proposal_only"
+                && detail.target == "target.parameter_path"
+        }));
+    }
+
+    #[test]
+    fn v4_ai_proposal_static_check_rejects_guard_capability_source_path() {
+        let old = hash('b');
+        let new = hash('c');
+        let request = CreateRuntimeAiProposalRequest {
+            source_kind: RuntimeEvidenceSourceKind::Backtest,
+            source_id: "bt1".to_string(),
+            target: v4_guard_target("execution.capability_source"),
+            old_value: json!(1),
+            new_value: json!(2),
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: hash('d'),
+            evidence_hash: hash('a'),
+            actor: None,
+            reason: "Attempt capability source edit through guard proposal".to_string(),
+            capability_context: None,
+            config_domain_binding: Some(v4_binding(old.clone(), new.clone())),
+        };
+
+        let result = ai_proposal_static_check_result(&request, &old, &new, 1, 1);
+
+        assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckFailed);
+        assert!(result.details.iter().any(|detail| {
+            detail.code == "v4_guard_parameter_path_not_proposal_only"
+                && detail.target == "target.parameter_path"
+        }));
+    }
+
+    #[test]
+    fn v4_ai_proposal_static_check_requires_productization_replay_anchor() {
+        let old = hash('b');
+        let new = hash('c');
+        let request = CreateRuntimeAiProposalRequest {
+            source_kind: RuntimeEvidenceSourceKind::Backtest,
+            source_id: "bt1".to_string(),
+            target: v4_target(),
+            old_value: json!(1),
+            new_value: json!(2),
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: hash('d'),
+            evidence_hash: hash('a'),
+            actor: None,
+            reason: "Tune v4 machine timeout from trajectory evidence".to_string(),
+            capability_context: None,
+            config_domain_binding: Some(RuntimeAiProposalConfigDomainBinding {
+                target_domain: StrategyConfigProposalDomain::StateMachine,
+                before_digest: old.clone(),
+                after_digest: new.clone(),
+                evidence_anchor_ids: vec!["backtest:bt1".to_string()],
+            }),
+        };
+
+        let result = ai_proposal_static_check_result(&request, &old, &new, 1, 1);
+
+        assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckFailed);
+        assert!(result.details.iter().any(|detail| {
+            detail.code == "strategy_config_ai_binding_productization_replay_diff_required"
+        }));
+    }
+
+    #[test]
+    fn v4_ai_proposal_static_check_requires_runtime_runner_verified_anchor() {
+        let old = hash('b');
+        let new = hash('c');
+        let request = CreateRuntimeAiProposalRequest {
+            source_kind: RuntimeEvidenceSourceKind::Backtest,
+            source_id: "bt1".to_string(),
+            target: v4_target(),
+            old_value: json!(1),
+            new_value: json!(2),
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: hash('d'),
+            evidence_hash: hash('a'),
+            actor: None,
+            reason: "Tune v4 machine timeout from trajectory evidence".to_string(),
+            capability_context: None,
+            config_domain_binding: Some(RuntimeAiProposalConfigDomainBinding {
+                target_domain: StrategyConfigProposalDomain::StateMachine,
+                before_digest: old.clone(),
+                after_digest: new.clone(),
+                evidence_anchor_ids: vec![
+                    "backtest:bt1".to_string(),
+                    "productization_replay_diff:bt1".to_string(),
+                ],
+            }),
+        };
+
+        let result = ai_proposal_static_check_result(&request, &old, &new, 1, 1);
+
+        assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckFailed);
+        assert!(result.details.iter().any(|detail| {
+            detail.code == "strategy_config_ai_binding_runtime_runner_verified_required"
+        }));
+    }
+
+    #[test]
+    fn v4_ai_proposal_static_check_requires_productization_anchor_for_source_backtest() {
+        let old = hash('b');
+        let new = hash('c');
+        let request = CreateRuntimeAiProposalRequest {
+            source_kind: RuntimeEvidenceSourceKind::Backtest,
+            source_id: "bt1".to_string(),
+            target: v4_target(),
+            old_value: json!(1),
+            new_value: json!(2),
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: hash('d'),
+            evidence_hash: hash('a'),
+            actor: None,
+            reason: "Tune v4 machine timeout from trajectory evidence".to_string(),
+            capability_context: None,
+            config_domain_binding: Some(RuntimeAiProposalConfigDomainBinding {
+                target_domain: StrategyConfigProposalDomain::StateMachine,
+                before_digest: old.clone(),
+                after_digest: new.clone(),
+                evidence_anchor_ids: vec![
+                    "backtest:bt1".to_string(),
+                    "productization_replay_diff:other-bt".to_string(),
+                    "runtime_replay_runner:verified:bt1".to_string(),
+                ],
+            }),
+        };
+
+        let result = ai_proposal_static_check_result(&request, &old, &new, 1, 1);
+
+        assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckFailed);
+        assert!(result.details.iter().any(|detail| {
+            detail.code == "strategy_config_ai_binding_productization_replay_diff_source_mismatch"
+        }));
+    }
+
+    #[test]
+    fn v4_ai_proposal_static_check_requires_runtime_runner_anchor_for_source_backtest() {
+        let old = hash('b');
+        let new = hash('c');
+        let request = CreateRuntimeAiProposalRequest {
+            source_kind: RuntimeEvidenceSourceKind::Backtest,
+            source_id: "bt1".to_string(),
+            target: v4_target(),
+            old_value: json!(1),
+            new_value: json!(2),
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: hash('d'),
+            evidence_hash: hash('a'),
+            actor: None,
+            reason: "Tune v4 machine timeout from trajectory evidence".to_string(),
+            capability_context: None,
+            config_domain_binding: Some(RuntimeAiProposalConfigDomainBinding {
+                target_domain: StrategyConfigProposalDomain::StateMachine,
+                before_digest: old.clone(),
+                after_digest: new.clone(),
+                evidence_anchor_ids: vec![
+                    "backtest:bt1".to_string(),
+                    "productization_replay_diff:bt1".to_string(),
+                    "runtime_replay_runner:verified:other-bt".to_string(),
+                ],
+            }),
+        };
+
+        let result = ai_proposal_static_check_result(&request, &old, &new, 1, 1);
+
+        assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckFailed);
+        assert!(result.details.iter().any(|detail| {
+            detail.code == "strategy_config_ai_binding_runtime_runner_verified_source_mismatch"
+        }));
+    }
+
+    #[test]
+    fn v4_ai_proposal_static_check_rejects_prefix_source_anchor_match() {
+        let old = hash('b');
+        let new = hash('c');
+        let request = CreateRuntimeAiProposalRequest {
+            source_kind: RuntimeEvidenceSourceKind::Backtest,
+            source_id: "bt1".to_string(),
+            target: v4_target(),
+            old_value: json!(1),
+            new_value: json!(2),
+            model: RuntimeAiModelIdentity {
+                provider: "test".to_string(),
+                model: "local".to_string(),
+                model_version: "v1".to_string(),
+            },
+            prompt_hash: hash('d'),
+            evidence_hash: hash('a'),
+            actor: None,
+            reason: "Tune v4 machine timeout from trajectory evidence".to_string(),
+            capability_context: None,
+            config_domain_binding: Some(RuntimeAiProposalConfigDomainBinding {
+                target_domain: StrategyConfigProposalDomain::StateMachine,
+                before_digest: old.clone(),
+                after_digest: new.clone(),
+                evidence_anchor_ids: vec![
+                    "backtest:bt1".to_string(),
+                    "productization_replay_diff:bt10".to_string(),
+                    "runtime_replay_runner:verified:bt10".to_string(),
+                ],
+            }),
+        };
+
+        let result = ai_proposal_static_check_result(&request, &old, &new, 1, 1);
+
+        assert_eq!(result.status, RuntimeAiProposalStatus::StaticCheckFailed);
+        assert!(result.details.iter().any(|detail| {
+            detail.code == "strategy_config_ai_binding_productization_replay_diff_source_mismatch"
+        }));
+        assert!(result.details.iter().any(|detail| {
+            detail.code == "strategy_config_ai_binding_runtime_runner_verified_source_mismatch"
+        }));
     }
 
     #[test]

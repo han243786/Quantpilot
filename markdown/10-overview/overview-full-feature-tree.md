@@ -10347,3 +10347,8 @@ Productization supplement: ADV-SM-PROD-003D Guard Builder readonly runtime fact 
 - `qrpc_core_ir/src/v4.rs` - covers accepted catalog runtime facts and rejected unknown runtime facts for guard descriptors.
 - `markdown/00-matrix-governance/module-tree.md` - records readonly runtime fact catalog binding ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003D` as the runtime fact read binding slice for structured Guard Builder reads.
+
+Productization supplement: ADV-SM-PROD-003E Guard Builder proposal-only parameter diff gate.
+- `src/runtime/mutation/ai_proposal/static_check.rs` - rejects `v4.transition.guard` AI proposal paths that attempt topology, Event Catalog/schema, capability source, active strategy, or other non-guard parameter edits.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder proposal-only parameter diff gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003E` as the AI proposal static-check binding slice for Guard Builder parameters.

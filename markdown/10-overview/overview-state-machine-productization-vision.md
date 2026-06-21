@@ -9960,3 +9960,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers accepted `clock.tick_ms` readiness and rejected unknown readonly runtime facts. |
 | capability boundary | This does not evaluate guard expressions, read live runtime state, mutate topology/Event Catalog/Memory Schema/capability source, change AI approval semantics, or write active strategy state. |
 | rollback | Remove the readonly runtime fact catalog helper, validation branch, test assertion, and this record if Guard Builder runtime facts move under a separate runtime projection contract. |
+
+### ADV-SM-PROD-003E: Guard Builder proposal-only parameter diff gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by hardening AI proposal static checks so `v4.transition.guard` can only carry proposal-only guard parameter diffs. |
+| implementation | `src/runtime/mutation/ai_proposal/static_check.rs` now validates `v4.transition.guard` target paths against the Guard Builder proposal boundary. Guard proposal paths must describe guard/cooldown/threshold/risk-limit parameters and are rejected if they attempt topology, graph edge, Event Catalog/schema, capability source, or active strategy mutation. |
+| runtime boundary | This slice only affects AI proposal static validation. It does not approve, apply, execute, or evaluate guards and does not write active strategy state. |
+| tests | `cargo test -p quantpilot v4_ai_proposal_static_check` covers accepted guard risk-limit parameter diffs and rejected topology/capability-source guard proposals. |
+| capability boundary | This preserves the `SM-PROD-003A` boundary: guard descriptors stay contract-only, runtime execution stays fail-closed, and AI remains proposal-only. |
+| rollback | Remove the `v4.transition.guard` path gate, its static-check tests, and this record if Guard Builder proposal diffs move into a richer typed patch contract. |
