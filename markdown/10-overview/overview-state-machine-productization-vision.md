@@ -9891,3 +9891,14 @@ AI 不允许:
 | implementation | No code change; this is a verification record for the current durable approve writeback completion audit. |
 | vision distance review | `SM-PROD-002` is now constrained mainly by packaging/commit hygiene and any future full integration sweep, not by known lib-level regressions. |
 | rollback | Remove this record if the cited lib regression is invalidated by a later failing rerun in the same evidence scope. |
+
+### ADV-SM-PROD-002BO: Contract repair approve durable writeback tracked integration sweep
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.8` and `2.9`; close the stable integration-regression evidence gap identified after `002BN` without depending on untracked local tests. |
+| regression evidence | The tracked integration command `cargo test -p quantpilot --test api_auth --test api_collaboration --test api_experiments --test api_graph_versions --test api_run --test api_v1_ops_health --test api_v1_reports --test api_v4_productization_contract_repair --test quantscript_real_strategy_authoring --test quantscript_universe_strategy --test report_qs_strategy` passed. The tracked suite covered 64 integration tests, including the contract repair approve success and HTTP source-write rollback tests. |
+| boundary check | `cargo test -p quantpilot --tests` also passed in the current worktree, including untracked v4 productization tests, but this record cites only tracked integration binaries so remote evidence does not depend on local untracked files. |
+| implementation | No runtime capability change; this is a stable verification record for packaging readiness. |
+| vision distance review | `SM-PROD-002` durable approve writeback now has targeted, lib-wide, and tracked integration regression evidence under the accepted cleanup/commit stimulus boundary. Remaining risk is final packaging hygiene, not known behavior. |
+| rollback | Remove this record if the cited tracked integration command fails in the same repo state. |

@@ -10305,3 +10305,9 @@ Productization supplement: ADV-SM-PROD-002BN Contract repair approve durable wri
 - `tests/api_v4_productization_contract_repair.rs` - remains the endpoint-specific integration coverage while lib regression reduces adjacent runtime/persistence risk.
 - `markdown/00-matrix-governance/module-tree.md` - records approve durable writeback broad lib regression evidence ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BN` with `cargo test -p quantpilot --lib` passing `444 passed`, `0 failed`, and `1 ignored`.
+
+Productization supplement: ADV-SM-PROD-002BO Contract repair approve durable writeback tracked integration sweep.
+- `tests/api_v4_productization_contract_repair.rs` - remains the tracked integration owner for approve durable disk application success and HTTP source-write rollback proof.
+- `tests/api_auth.rs`, `tests/api_collaboration.rs`, `tests/api_experiments.rs`, `tests/api_graph_versions.rs`, `tests/api_run.rs`, `tests/api_v1_ops_health.rs`, `tests/api_v1_reports.rs`, `tests/quantscript_real_strategy_authoring.rs`, `tests/quantscript_universe_strategy.rs`, and `tests/report_qs_strategy.rs` - form the adjacent tracked integration sweep that passed with the contract repair suite.
+- `markdown/00-matrix-governance/module-tree.md` - records approve durable writeback tracked integration sweep evidence ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-002BO` as a tracked-only integration evidence record that does not depend on untracked local v4 productization tests.

@@ -11527,3 +11527,6 @@ The audit binds the current accepted evidence set: HTTP success, HTTP source-wri
 
 **Productization supplement (ADV-SM-PROD-002BN)**: `root.runtime.mutation.contract_repair_approval`, `root.tests.api_v4_productization_contract_repair`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own approve durable writeback broad lib regression evidence.
 `cargo test -p quantpilot --lib` passed with `444 passed`, `0 failed`, and `1 ignored`, reducing the broad Rust library regression risk around the open durable writeback path without changing the accepted cleanup/commit HTTP-stimulus boundary.
+
+**Productization supplement (ADV-SM-PROD-002BO)**: `root.runtime.mutation.contract_repair_approval`, `root.tests.api_v4_productization_contract_repair`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own approve durable writeback tracked integration sweep evidence.
+The tracked integration test command covering 11 tracked test binaries passed with 64 integration tests, including the approve durable disk application success and HTTP source-write rollback routes, while deliberately excluding untracked local v4 productization tests from the formal record.
