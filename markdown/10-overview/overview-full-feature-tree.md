@@ -10365,3 +10365,9 @@ Productization supplement: ADV-SM-PROD-003G Guard Builder parameter boundary sin
 - `qrpc_core_ir/src/v4/machine_contract.rs` - remains the shared source of truth for Guard Builder parameter path boundary checks.
 - `markdown/00-matrix-governance/module-tree.md` - records shared Guard Builder parameter boundary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003G` as the no-drift authority slice for guard parameters.
+
+Productization supplement: ADV-SM-PROD-003H Guard Builder read-only workspace projection surface.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds `MachineGuardDescriptorProjection` and `V4MachineContract::guard_descriptor_projections()` for read-only structured guard workspace consumption.
+- `qrpc_core_ir/src/v4.rs` - covers projected transition/event context, reads, parameter paths, and readiness with execution disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder read-only projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003H` as the workspace projection surface slice.

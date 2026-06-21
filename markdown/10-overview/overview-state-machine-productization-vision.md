@@ -9993,3 +9993,14 @@ AI 不允许:
 | tests | `cargo test -p quantpilot v4_ai_proposal_static_check` continues to cover accepted guard parameter diffs and rejected topology/capability-source paths through the shared core helper. |
 | capability boundary | This does not change the allowed path set; it prevents contract and runtime proposal checks from drifting into different capability boundaries. |
 | rollback | Restore the local static-check helper and remove this record only if the AI proposal boundary intentionally diverges from the descriptor contract in a later typed patch model. |
+
+### ADV-SM-PROD-003H: Guard Builder read-only workspace projection surface
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by exposing a read-only structured guard descriptor projection that workspace code can consume without enabling guard execution. |
+| implementation | `qrpc_core_ir/src/v4/machine_contract.rs` now provides `MachineGuardDescriptorProjection` and `V4MachineContract::guard_descriptor_projections()`. The projection carries transition id, from/to state, event type/source, descriptor reads, proposal parameter paths, and readiness with `execution_enabled=false`. |
+| runtime boundary | Runtime behavior remains unchanged: descriptors still fail closed in v4 runtime and this projection does not approve, apply, execute, or evaluate guards. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers workspace projection fields and verifies projected readiness keeps execution disabled. |
+| capability boundary | This does not mutate topology/Event Catalog/Memory Schema/capability source or active strategy state; it only makes the existing descriptor surface consumable as a read model. |
+| rollback | Remove the projection DTO, projection helper, projection test, and this record if workspace guard reads move to a separate query contract. |

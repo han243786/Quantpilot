@@ -620,6 +620,52 @@ mod tests {
     }
 
     #[test]
+    fn machine_contract_projects_guard_descriptors_for_workspace() {
+        let mut machine = sample_machine();
+        machine.transitions[0].guard = None;
+        machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "trend_guard".to_string(),
+            reads: vec![
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::EventPayload,
+                    path: "ema_fast".to_string(),
+                },
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+            ],
+            parameter_paths: vec![
+                "guard.threshold".to_string(),
+                "risk.max_notional".to_string(),
+            ],
+            explanation: Some("workspace projection surface".to_string()),
+        });
+
+        let projections = machine.guard_descriptor_projections();
+
+        assert_eq!(projections.len(), 1);
+        let projection = &projections[0];
+        assert_eq!(projection.transition_id, "idle_to_long");
+        assert_eq!(projection.from_state, "idle");
+        assert_eq!(projection.to_state, "long_bias");
+        assert_eq!(projection.event_type, "bar_closed");
+        assert_eq!(projection.event_source.as_deref(), Some("market.btc_1m"));
+        assert_eq!(projection.readiness.guard_id, "trend_guard");
+        assert_eq!(projection.readiness.read_count, 2);
+        assert_eq!(projection.readiness.parameter_path_count, 2);
+        assert!(!projection.readiness.execution_enabled);
+        assert_eq!(projection.reads.len(), 2);
+        assert_eq!(
+            projection.parameter_paths,
+            vec![
+                "guard.threshold".to_string(),
+                "risk.max_notional".to_string()
+            ]
+        );
+    }
+
+    #[test]
     fn machine_contract_rejects_invalid_structured_guard_descriptor() {
         let mut machine = sample_machine();
         machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {

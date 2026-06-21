@@ -195,6 +195,19 @@ pub struct MachineGuardDescriptorReadiness {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineGuardDescriptorProjection {
+    pub transition_id: String,
+    pub from_state: String,
+    pub to_state: String,
+    pub event_type: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub event_source: Option<String>,
+    pub readiness: MachineGuardDescriptorReadiness,
+    pub reads: Vec<MachineGuardReadRef>,
+    pub parameter_paths: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct MachineEventSelector {
     pub event_type: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -248,5 +261,26 @@ impl MachineGuardDescriptor {
             parameter_path_count: self.parameter_paths.len(),
             execution_enabled: false,
         }
+    }
+}
+
+impl V4MachineContract {
+    pub fn guard_descriptor_projections(&self) -> Vec<MachineGuardDescriptorProjection> {
+        self.transitions
+            .iter()
+            .filter_map(|transition| {
+                let guard_descriptor = transition.guard_descriptor.as_ref()?;
+                Some(MachineGuardDescriptorProjection {
+                    transition_id: transition.transition_id.clone(),
+                    from_state: transition.from_state.clone(),
+                    to_state: transition.to_state.clone(),
+                    event_type: transition.event.event_type.clone(),
+                    event_source: transition.event.source.clone(),
+                    readiness: guard_descriptor.readiness(),
+                    reads: guard_descriptor.reads.clone(),
+                    parameter_paths: guard_descriptor.parameter_paths.clone(),
+                })
+            })
+            .collect()
     }
 }
