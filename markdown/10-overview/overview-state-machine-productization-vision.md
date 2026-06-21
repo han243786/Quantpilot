@@ -9902,3 +9902,14 @@ AI 不允许:
 | implementation | No runtime capability change; this is a stable verification record for packaging readiness. |
 | vision distance review | `SM-PROD-002` durable approve writeback now has targeted, lib-wide, and tracked integration regression evidence under the accepted cleanup/commit stimulus boundary. Remaining risk is final packaging hygiene, not known behavior. |
 | rollback | Remove this record if the cited tracked integration command fails in the same repo state. |
+
+### ADV-SM-PROD-002BP: Contract repair approve durable writeback final packaging audit
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.8` and `2.9`; close the packaging-hygiene risk left by `002BO` for the `SM-PROD-002` durable approve writeback path. |
+| packaging evidence | Remote `origin/master` is synchronized at `bef3707e3` after the tracked integration sweep record. Before this doc-only final audit record was added, the runtime/API/test target files had no local diff after that push: `src/runtime/mutation/contract_repair_approval.rs`, `src/frontend_api_types.rs`, and `tests/api_v4_productization_contract_repair.rs`. |
+| evidence boundary | The accepted proof set is unchanged: endpoint success, HTTP source-write rollback, helper cleanup/commit rollback, endpoint rollback DTO mapping, lib regression, tracked integration sweep, and governance checks. Untracked local v4 productization tests are noted as extra current-worktree evidence but are not required for the remote proof. |
+| implementation | No runtime capability change; this is the final packaging audit for the current `SM-PROD-002` boundary. |
+| vision distance review | `SM-PROD-002` durable approve writeback is complete under the accepted boundary. Future work should start from a new explicitly scoped North Star slice rather than reopening this one by adding hidden fault controls. |
+| rollback | Remove this record if the target files drift from `origin/master` or any cited evidence command fails in a fresh rerun. |
