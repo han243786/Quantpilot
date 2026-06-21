@@ -57,6 +57,7 @@ pub(super) fn parse_transition(
             freshness: None,
         },
         guard: None,
+        guard_descriptor: None,
         priority: 0,
         action: Some(MachineActionSpec {
             emits,

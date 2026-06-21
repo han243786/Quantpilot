@@ -9925,3 +9925,15 @@ AI 不允许:
 | implementation | No code change in this record; this is a clean baseline handoff from `SM-PROD-002` to `SM-PROD-003` so later implementation cannot silently expand the guard-builder capability boundary. |
 | vision distance review | The North Star moves from approval writeback completion toward Guard Builder minimum usability, while preserving AI proposal-only and runtime reproducibility constraints. Current distance to full North Star remains dominated by structured guard modeling and later workspace integration, not by the closed `SM-PROD-002` path. |
 | rollback | Remove this record and its governance entries if the next implementation slice chooses a different `SM-PROD-003` first boundary or if code already implements structured guard execution before descriptor/readiness evidence exists. |
+
+### ADV-SM-PROD-003B: Guard Builder structured descriptor readiness surface
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; advance `SM-PROD-003` from a frozen boundary into the first code-backed structured guard descriptor/readiness surface without enabling guard execution. |
+| implementation | `MachineTransition` now accepts optional `guard_descriptor` with `guard_id`, declared reads, parameter paths, and explanation. Reads are explicitly categorized as `event_payload`, `machine_memory`, or `readonly_runtime_fact`; descriptor readiness reports read counts, parameter count, and `execution_enabled=false`. Static validation rejects blank guard ids, blank read paths, unknown machine-memory reads, and blank parameter paths. |
+| runtime boundary | `qrpc_runtime/src/v4_runtime/machine_transition_engine.rs` keeps runtime guard execution locked. If a transition carries a structured guard descriptor, the runtime records a more specific rejection reason and fails closed before state mutation or event emission. |
+| tests | `cargo test -p qrpc-core-ir structured_guard` passed with 2 tests; `cargo test -p qrpc-runtime structured_guard` passed with 1 test; `cargo fmt --check` passed. |
+| capability boundary | This slice does not evaluate guard expressions, does not mutate topology/Event Catalog/Memory Schema/capability source, does not change AI approval semantics, and does not write active strategy state. |
+| vision distance review | `SM-PROD-003` now has the first durable contract shape for structured Guard Builder inputs and a fail-closed runtime explanation. Remaining work is workspace projection/UI exposure and proposal-only guard parameter diff binding on top of this descriptor surface. |
+| rollback | Remove `guard_descriptor` DTOs/readiness/static validation/runtime rejection branch/tests and this record if later evidence shows the descriptor should be modeled somewhere other than `MachineTransition`. |

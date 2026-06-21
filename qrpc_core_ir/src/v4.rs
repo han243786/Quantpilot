@@ -114,6 +114,7 @@ mod tests {
                     freshness: Some(EventFreshnessRequirement::FreshOnly),
                 },
                 guard: Some("ema_fast > ema_slow".to_string()),
+                guard_descriptor: None,
                 priority: 100,
                 action: Some(MachineActionSpec {
                     emits: vec!["intent.long".to_string()],
@@ -577,6 +578,79 @@ mod tests {
         assert!(errors
             .iter()
             .any(|message| message.contains("must declare an event_type")));
+    }
+
+    #[test]
+    fn machine_contract_accepts_structured_guard_descriptor_readiness() {
+        let mut machine = sample_machine();
+        machine.transitions[0].guard = None;
+        machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "trend_guard".to_string(),
+            reads: vec![
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::EventPayload,
+                    path: "ema_fast".to_string(),
+                },
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::ReadonlyRuntimeFact,
+                    path: "clock.tick_ms".to_string(),
+                },
+            ],
+            parameter_paths: vec!["guard.threshold".to_string()],
+            explanation: Some("first structured guard descriptor surface".to_string()),
+        });
+
+        assert_eq!(machine.validate_static_contract(), Ok(()));
+        let readiness = machine.transitions[0]
+            .guard_descriptor
+            .as_ref()
+            .unwrap()
+            .readiness();
+        assert_eq!(readiness.guard_id, "trend_guard");
+        assert_eq!(readiness.read_count, 3);
+        assert_eq!(readiness.event_payload_read_count, 1);
+        assert_eq!(readiness.machine_memory_read_count, 1);
+        assert_eq!(readiness.readonly_runtime_fact_read_count, 1);
+        assert_eq!(readiness.parameter_path_count, 1);
+        assert!(!readiness.execution_enabled);
+    }
+
+    #[test]
+    fn machine_contract_rejects_invalid_structured_guard_descriptor() {
+        let mut machine = sample_machine();
+        machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "".to_string(),
+            reads: vec![
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::EventPayload,
+                    path: "".to_string(),
+                },
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "unknown_memory".to_string(),
+                },
+            ],
+            parameter_paths: vec!["".to_string()],
+            explanation: None,
+        });
+
+        let errors = machine.validate_static_contract().unwrap_err();
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("structured guard must declare guard_id")));
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("has an empty read path")));
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("reads undeclared memory field `unknown_memory`")));
+        assert!(errors
+            .iter()
+            .any(|message| message.contains("has an empty parameter path")));
     }
 
     #[test]

@@ -1,6 +1,9 @@
 use std::collections::BTreeSet;
 
-use super::{MachineCachePolicy, MachineRecoveryPolicy, MachineSilencePolicy, V4MachineContract};
+use super::{
+    MachineCachePolicy, MachineGuardReadSource, MachineRecoveryPolicy, MachineSilencePolicy,
+    V4MachineContract,
+};
 use crate::v4::V4_MACHINE_CONTRACT_VERSION;
 
 impl V4MachineContract {
@@ -71,6 +74,11 @@ impl V4MachineContract {
             }
         }
 
+        let declared_memory_names = self
+            .memory
+            .iter()
+            .map(|field| field.name.as_str())
+            .collect::<BTreeSet<_>>();
         let mut transition_ids = BTreeSet::new();
         for transition in &self.transitions {
             if transition.transition_id.trim().is_empty() {
@@ -98,6 +106,44 @@ impl V4MachineContract {
                     "transition `{}` must declare an event_type",
                     transition.transition_id
                 ));
+            }
+            if let Some(guard_descriptor) = &transition.guard_descriptor {
+                if guard_descriptor.guard_id.trim().is_empty() {
+                    errors.push(format!(
+                        "transition `{}` structured guard must declare guard_id",
+                        transition.transition_id
+                    ));
+                }
+                if guard_descriptor.reads.is_empty() {
+                    errors.push(format!(
+                        "transition `{}` structured guard `{}` must declare at least one read",
+                        transition.transition_id, guard_descriptor.guard_id
+                    ));
+                }
+                for read in &guard_descriptor.reads {
+                    if read.path.trim().is_empty() {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` has an empty read path",
+                            transition.transition_id, guard_descriptor.guard_id
+                        ));
+                    }
+                    if read.source == MachineGuardReadSource::MachineMemory
+                        && !declared_memory_names.contains(read.path.as_str())
+                    {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` reads undeclared memory field `{}`",
+                            transition.transition_id, guard_descriptor.guard_id, read.path
+                        ));
+                    }
+                }
+                for parameter_path in &guard_descriptor.parameter_paths {
+                    if parameter_path.trim().is_empty() {
+                        errors.push(format!(
+                            "transition `{}` structured guard `{}` has an empty parameter path",
+                            transition.transition_id, guard_descriptor.guard_id
+                        ));
+                    }
+                }
             }
         }
 

@@ -188,6 +188,7 @@ fn compat_machine(
                 freshness: Some(EventFreshnessRequirement::FreshOrStale),
             },
             guard: None,
+            guard_descriptor: None,
             priority,
             action: Some(MachineActionSpec {
                 emits: emitted_events,

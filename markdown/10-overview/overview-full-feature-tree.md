@@ -10324,3 +10324,13 @@ Productization supplement: ADV-SM-PROD-003A Guard Builder structured guard bound
 - `src/runtime/mutation/ai_proposal/static_check.rs` - remains the AI proposal static-check owner for `v4.transition.guard` domain binding and must preserve proposal-only guard parameter diff semantics.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder structured guard boundary baseline ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003A` as the clean handoff from `SM-PROD-002` to the first `SM-PROD-003` slice.
+
+Productization supplement: ADV-SM-PROD-003B Guard Builder structured descriptor readiness surface.
+- `qrpc_core_ir/src/v4/machine_contract.rs` - adds `MachineGuardDescriptor`, `MachineGuardReadRef`, `MachineGuardReadSource`, descriptor readiness, and optional `MachineTransition.guard_descriptor`.
+- `qrpc_core_ir/src/v4/machine_contract/static_validation.rs` - validates structured guard descriptor ids, read paths, machine-memory reads, and parameter paths without evaluating guard expressions.
+- `qrpc_core_ir/src/v4.rs` - covers structured guard descriptor readiness and invalid descriptor rejection tests.
+- `qrpc_runtime/src/v4_runtime/machine_transition_engine.rs` - keeps structured guard descriptors fail-closed with a descriptor-specific rejection reason.
+- `qrpc_runtime/src/v4_runtime/test_harness.rs` and `qrpc_runtime/src/v4_runtime/test_harness/payload_validation_tests.rs` - cover runtime rejection of structured guard descriptors before state mutation.
+- `quantscript/src/v4_static_audit/transition_parser.rs` and `qrpc_core_ir/src/v4/core_ir_compat_bridge/compat_graph_builder/machine_builder.rs` - keep generated transitions descriptor-free by default.
+- `markdown/00-matrix-governance/module-tree.md` - records structured descriptor readiness ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003B` as the first code-backed `SM-PROD-003` descriptor/readiness slice.

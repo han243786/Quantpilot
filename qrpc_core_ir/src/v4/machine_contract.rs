@@ -110,10 +110,48 @@ pub struct MachineTransition {
     pub event: MachineEventSelector,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub guard: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub guard_descriptor: Option<MachineGuardDescriptor>,
     #[serde(default)]
     pub priority: i32,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub action: Option<MachineActionSpec>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineGuardDescriptor {
+    pub guard_id: String,
+    #[serde(default)]
+    pub reads: Vec<MachineGuardReadRef>,
+    #[serde(default)]
+    pub parameter_paths: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub explanation: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineGuardReadRef {
+    pub source: MachineGuardReadSource,
+    pub path: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum MachineGuardReadSource {
+    EventPayload,
+    MachineMemory,
+    ReadonlyRuntimeFact,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MachineGuardDescriptorReadiness {
+    pub guard_id: String,
+    pub read_count: usize,
+    pub event_payload_read_count: usize,
+    pub machine_memory_read_count: usize,
+    pub readonly_runtime_fact_read_count: usize,
+    pub parameter_path_count: usize,
+    pub execution_enabled: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -145,4 +183,30 @@ pub struct MachineMemoryField {
     pub default_value: Option<Value>,
     #[serde(default)]
     pub nullable: bool,
+}
+
+impl MachineGuardDescriptor {
+    pub fn readiness(&self) -> MachineGuardDescriptorReadiness {
+        MachineGuardDescriptorReadiness {
+            guard_id: self.guard_id.clone(),
+            read_count: self.reads.len(),
+            event_payload_read_count: self
+                .reads
+                .iter()
+                .filter(|read| read.source == MachineGuardReadSource::EventPayload)
+                .count(),
+            machine_memory_read_count: self
+                .reads
+                .iter()
+                .filter(|read| read.source == MachineGuardReadSource::MachineMemory)
+                .count(),
+            readonly_runtime_fact_read_count: self
+                .reads
+                .iter()
+                .filter(|read| read.source == MachineGuardReadSource::ReadonlyRuntimeFact)
+                .count(),
+            parameter_path_count: self.parameter_paths.len(),
+            execution_enabled: false,
+        }
+    }
 }

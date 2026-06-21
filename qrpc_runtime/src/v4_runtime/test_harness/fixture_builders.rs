@@ -194,6 +194,7 @@ pub(super) fn nested_observation_graph(parent_matches: bool) -> V4MachineGraphCo
                 freshness: None,
             },
             guard: None,
+            guard_descriptor: None,
             priority: 0,
             action: Some(MachineActionSpec {
                 emits: Vec::new(),

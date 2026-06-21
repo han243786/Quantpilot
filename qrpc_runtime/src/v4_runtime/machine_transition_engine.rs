@@ -47,6 +47,17 @@ impl V4PaperSimulatedRuntime {
                 );
                 continue;
             }
+            if let Some(guard_descriptor) = &transition.guard_descriptor {
+                let readiness = guard_descriptor.readiness();
+                self.record_event_rejected(
+                    &event,
+                    format!(
+                        "transition `{}` declares structured guard `{}` with {} reads; guard execution is not enabled and v4 runtime fails closed",
+                        transition.transition_id, readiness.guard_id, readiness.read_count
+                    ),
+                );
+                continue;
+            }
             if let Some(memory_name) = preflight.undeclared_memory_write {
                 self.record_event_rejected(
                     &event,
