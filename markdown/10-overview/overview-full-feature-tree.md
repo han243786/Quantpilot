@@ -11193,3 +11193,8 @@ Productization supplement: ADV-SM-PROD-003FB State Machine bundle child machine 
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child states that reference undeclared state groups.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child machine state-group validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FB` as the bundle child machine state-group validation slice.
+
+Productization supplement: ADV-SM-PROD-003FC State Machine graph child machine duplicate-state validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child machines that declare duplicate state ids.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph child machine duplicate-state validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FC` as the graph child machine duplicate-state validation slice.
