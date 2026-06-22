@@ -11333,3 +11333,8 @@ Productization supplement: ADV-SM-PROD-003GD State Machine bundle top-level guar
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards with event-payload reads when the owning machine graph has no Event Catalog.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard event catalog prerequisite gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GD` as the bundle top-level guard event catalog prerequisite slice.
+
+Productization supplement: ADV-SM-PROD-003GE State Machine graph top-level guard unknown transition event gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards attached to transition event types absent from the Event Catalog.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard unknown transition event gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GE` as the graph top-level guard unknown transition event slice.
