@@ -11006,3 +11006,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_summarizes_child_guard_descriptor_policy_surface` covers graph-level child policy projection and summary counts. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child policy summary test and this record if child policy projection coverage moves into a dedicated workspace projection suite. |
+
+### ADV-SM-PROD-003CV: Guard Builder graph child fail-closed blocker projection
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, `2.7`, and `2.9`; continue `SM-PROD-003` by making single-graph workspace views expose child-machine guard, condition, and policy fail-closed blocker codes/reasons before any nested guard execution is enabled. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::guard_descriptor_projections()` and `guard_descriptor_summary()` for a child-machine Guard Builder descriptor with condition and policy surfaces, asserting guard readiness blocker code/reason, condition blocker code/reason, policy blocker code/reason, and disabled-fail-closed summary counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child fail-closed blocker projection is static projection and summary metadata only, no child guard is executed, no condition or policy is evaluated at runtime, no Event Catalog or Memory Schema is edited, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_projects_child_guard_descriptor_fail_closed_blockers` covers graph-level child fail-closed blocker projection and summary counts. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child fail-closed blocker test and this record if child blocker projection coverage moves into a dedicated workspace projection suite. |

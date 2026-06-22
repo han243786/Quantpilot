@@ -10898,3 +10898,8 @@ Productization supplement: ADV-SM-PROD-003CU Guard Builder graph child policy su
 - `qrpc_core_ir/src/v4.rs` - covers graph-level projection and summary counts for child-machine structured guards with timing and fallback policy.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child policy summary gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CU` as the graph child policy summary gate slice.
+
+Productization supplement: ADV-SM-PROD-003CV Guard Builder graph child fail-closed blocker projection.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level projection and summary counts for child-machine structured guard fail-closed blockers.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child fail-closed blocker projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CV` as the graph child fail-closed blocker projection slice.
