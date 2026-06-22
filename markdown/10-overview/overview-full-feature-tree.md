@@ -10781,3 +10781,8 @@ Productization supplement: ADV-SM-PROD-003BX Guard Builder bundle fail-closed bl
 - `qrpc_core_ir/src/v4.rs` - covers two-graph bundle guard projections where descriptor readiness, condition evaluation, and policy execution all expose the shared disabled-fail-closed blocker code and reason.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle fail-closed blocker projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BX` as the bundle fail-closed blocker projection slice.
+
+Productization supplement: ADV-SM-PROD-003BY Guard Builder bundle deterministic projection order.
+- `qrpc_core_ir/src/v4.rs` - covers two-graph bundle guard descriptor projections preserving graph, machine, and transition input order.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle deterministic projection order ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BY` as the bundle deterministic projection order slice.

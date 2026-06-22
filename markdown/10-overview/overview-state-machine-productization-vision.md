@@ -10753,3 +10753,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle fail-closed blocker projection consistency across descriptor, condition, and policy surfaces. |
 | capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the fail-closed blocker bundle test and this record if blocker projection coverage moves into a dedicated compatibility suite. |
+
+### ADV-SM-PROD-003BY: Guard Builder bundle deterministic projection order
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving bundle-level Guard Builder projections preserve deterministic graph, machine, and transition input order for stable workspace rendering and audit comparison. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers a two-graph static contract bundle with structured guards on observation, decision, and execution machines, asserting projection order follows bundle graph order and each graph's machine order. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the projection-order guard is test-only metadata validation, no guard is executed, no topology is changed, no runtime read is performed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers deterministic bundle guard descriptor projection order across graph and machine boundaries. |
+| capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the projection-order bundle test and this record if ordering coverage moves into a dedicated workspace rendering suite. |

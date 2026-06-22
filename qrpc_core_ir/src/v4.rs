@@ -2435,6 +2435,88 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_projects_guard_descriptors_in_input_order() {
+        fn attach_guard_descriptor(
+            graph: &mut V4MachineGraphContract,
+            machine_id: &str,
+            guard_id: &str,
+        ) {
+            let machine = graph
+                .machines
+                .iter_mut()
+                .find(|machine| machine.machine_id == machine_id)
+                .unwrap();
+            machine.transitions[0].guard = None;
+            machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+                guard_id: guard_id.to_string(),
+                reads: Vec::new(),
+                parameter_paths: Vec::new(),
+                conditions: Vec::new(),
+                policy: None,
+                explanation: Some("bundle projection order surface".to_string()),
+            });
+        }
+
+        let mut bundle = sample_static_contract_bundle();
+        bundle.machine_graphs[0].graph_id = "strategy.v4.alpha".to_string();
+        let mut second_graph = sample_machine_graph();
+        second_graph.graph_id = "strategy.v4.beta".to_string();
+        bundle.machine_graphs.push(second_graph);
+        attach_guard_descriptor(
+            &mut bundle.machine_graphs[0],
+            "data.market",
+            "alpha_observation_guard",
+        );
+        attach_guard_descriptor(
+            &mut bundle.machine_graphs[0],
+            "risk.guard",
+            "alpha_risk_guard",
+        );
+        attach_guard_descriptor(
+            &mut bundle.machine_graphs[1],
+            "execution.router",
+            "beta_execution_guard",
+        );
+
+        let projection_order = bundle
+            .guard_descriptor_projections()
+            .into_iter()
+            .map(|projection| {
+                (
+                    projection.graph_id,
+                    projection.guard.machine_id,
+                    projection.guard.guard.readiness.guard_id,
+                    projection.guard.guard.transition_id,
+                )
+            })
+            .collect::<Vec<_>>();
+
+        assert_eq!(
+            projection_order,
+            vec![
+                (
+                    "strategy.v4.alpha".to_string(),
+                    "data.market".to_string(),
+                    "alpha_observation_guard".to_string(),
+                    "data.market.transition".to_string(),
+                ),
+                (
+                    "strategy.v4.alpha".to_string(),
+                    "risk.guard".to_string(),
+                    "alpha_risk_guard".to_string(),
+                    "risk.guard.transition".to_string(),
+                ),
+                (
+                    "strategy.v4.beta".to_string(),
+                    "execution.router".to_string(),
+                    "beta_execution_guard".to_string(),
+                    "execution.router.transition".to_string(),
+                ),
+            ]
+        );
+    }
+
+    #[test]
     fn machine_contract_rejects_invalid_structured_guard_descriptor() {
         let mut machine = sample_machine();
         machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {

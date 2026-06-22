@@ -11761,3 +11761,6 @@ Condition left-read source counts and right parameter-kind counts; static contra
 
 **Productization supplement (ADV-SM-PROD-003BX)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle fail-closed blocker projection.
 `MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE` / `MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON`; static contract bundle tests now pin descriptor readiness, condition projection, and policy projection to one stable fail-closed blocker identity while guard execution, condition evaluation, policy execution, fallback execution, and active strategy writes remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003BY)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle deterministic projection order.
+`V4StaticContractBundle::guard_descriptor_projections`; static contract bundle tests now pin graph, machine, and transition input order for read-only Guard Builder projections while guard execution, topology mutation, and active strategy writes remain disabled.
