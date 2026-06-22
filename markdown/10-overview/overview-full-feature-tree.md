@@ -11138,3 +11138,8 @@ Productization supplement: ADV-SM-PROD-003EQ State Machine graph child machine i
 - `qrpc_core_ir/src/v4.rs` - covers graph-level child machines that reuse their parent machine id.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine graph child machine identity reuse validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EQ` as the graph child machine identity reuse validation slice.
+
+Productization supplement: ADV-SM-PROD-003ER State Machine bundle child machine identity reuse validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child machines that reuse their parent machine id.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child machine identity reuse validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003ER` as the bundle child machine identity reuse validation slice.

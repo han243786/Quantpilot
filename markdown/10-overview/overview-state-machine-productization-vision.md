@@ -11534,3 +11534,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_machine_parent_id_reuse` covers graph-level child machine parent-id reuse validation. |
 | capability boundary | This does not add child-machine aliasing, nested transition execution, action execution, event consumption, event emission, memory mutation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child machine identity reuse validation test and this record if child machine wrapper coverage moves into a shared validation suite. |
+
+### ADV-SM-PROD-003ER: State Machine bundle child machine identity reuse validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving static-contract bundle validation rejects child machines that reuse their parent machine id. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with a `risk.guard` child machine nested under the `risk.guard` parent, asserting bundle validation preserves the parent machine wrapper and the parent-id reuse diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child machine identity reuse gate is static validation only, no child transition is executed, no action is executed, no event is consumed or emitted, no topology is mutated, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_machine_parent_id_reuse` covers bundle-level child machine parent-id reuse validation. |
+| capability boundary | This does not add child-machine aliasing, nested transition execution, action execution, event consumption, event emission, memory mutation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level child machine identity reuse validation test and this record if child machine wrapper coverage moves into a shared validation suite. |
