@@ -10637,3 +10637,9 @@ Productization supplement: ADV-SM-PROD-003AX Guard Builder graph proposal-only d
 - `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for one guard descriptor with a proposal-only parameter surface.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph proposal-only descriptor summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AX` as the graph proposal-only descriptor summary slice.
+
+Productization supplement: ADV-SM-PROD-003AY Guard Builder bundle read-bearing descriptor summary.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates bundle guard descriptor counts for descriptors containing read inputs.
+- `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for one read-bearing guard descriptor.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle read-bearing descriptor summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AY` as the bundle read-bearing descriptor summary slice.
