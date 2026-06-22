@@ -10313,3 +10313,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for a timeout declaration and fail-closed fallback declaration while cooldown declaration remains absent in the focused fixture. |
 | capability boundary | This does not enable guard execution, timer scheduling, cooldown enforcement, fallback execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph policy declaration summary fields, aggregation, related test assertions, and this record if graph-level policy reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003AK: Guard Builder graph machine template summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making graph-level Guard Builder summaries show which machine template classes carry structured guard descriptors in a single graph. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now aggregates observation, decision, and execution guard descriptor counts in `MachineGraphGuardDescriptorSummary` from graph guard projections. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: machine template summary fields are read-only metadata, no guard is executed, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for a decision-machine guard descriptor while observation and execution guard descriptor counts remain zero for the focused fixture. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph machine-template summary fields, aggregation, related test assertions, and this record if machine-template distribution reporting moves into a dedicated workspace query contract. |

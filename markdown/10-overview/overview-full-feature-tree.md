@@ -10553,3 +10553,9 @@ Productization supplement: ADV-SM-PROD-003AJ Guard Builder graph policy declarat
 - `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for timeout and fail-closed fallback declarations while cooldown declaration remains absent in the focused fixture.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph policy declaration summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AJ` as the graph policy declaration summary slice.
+
+Productization supplement: ADV-SM-PROD-003AK Guard Builder graph machine template summary.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - aggregates observation, decision, and execution guard descriptor counts in graph guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for a decision-machine guard descriptor while observation and execution counts remain zero.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph machine template summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AK` as the graph machine template summary slice.
