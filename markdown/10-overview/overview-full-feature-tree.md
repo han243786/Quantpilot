@@ -10613,3 +10613,9 @@ Productization supplement: ADV-SM-PROD-003AT Guard Builder graph conditional des
 - `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for one conditional guard descriptor in the focused fixture.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph conditional descriptor summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AT` as the graph conditional descriptor summary slice.
+
+Productization supplement: ADV-SM-PROD-003AU Guard Builder graph condition fail-closed descriptor summary.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - aggregates guard descriptor counts for descriptors containing disabled-fail-closed conditions.
+- `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for one guard descriptor with a disabled-fail-closed condition.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph condition fail-closed descriptor summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AU` as the graph condition fail-closed descriptor summary slice.

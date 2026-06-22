@@ -954,6 +954,10 @@ mod tests {
         assert_eq!(summary.condition_threshold_parameter_path_count, 1);
         assert_eq!(summary.condition_risk_limit_parameter_path_count, 0);
         assert_eq!(summary.condition_evaluation_enabled_count, 0);
+        assert_eq!(
+            summary.condition_evaluation_disabled_fail_closed_guard_descriptor_count,
+            1
+        );
         assert_eq!(summary.condition_evaluation_disabled_fail_closed_count, 1);
         assert_eq!(summary.policy_declared_count, 1);
         assert_eq!(summary.timing_policy_declared_count, 1);

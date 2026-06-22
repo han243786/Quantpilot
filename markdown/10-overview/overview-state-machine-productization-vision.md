@@ -10423,3 +10423,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for one conditional guard descriptor in the focused fixture. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the conditional descriptor summary field, aggregation, related test assertions, and this record if condition coverage reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003AU: Guard Builder graph condition fail-closed descriptor summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making graph-level Guard Builder summaries distinguish total disabled-fail-closed conditions from how many structured guards contain at least one such condition. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now aggregates `condition_evaluation_disabled_fail_closed_guard_descriptor_count` in `MachineGraphGuardDescriptorSummary` from condition projections. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: condition fail-closed descriptor summary fields are read-only metadata, no guard is executed, no condition is evaluated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for one guard descriptor containing a disabled-fail-closed condition. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the condition fail-closed descriptor summary field, aggregation, related test assertions, and this record if condition fail-closed coverage reporting moves into a dedicated workspace query contract. |
