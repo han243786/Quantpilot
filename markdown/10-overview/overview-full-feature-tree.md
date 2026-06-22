@@ -10868,3 +10868,8 @@ Productization supplement: ADV-SM-PROD-003CO Guard Builder bundle child event re
 - `qrpc_core_ir/src/v4/machine_graph_contract/static_validation/event_usage_validation/event_reference_resolution.rs` - records transition, action emit, and edge event reference context for static validation.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child event registration validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CO` as the bundle child event registration validation gate slice.
+
+Productization supplement: ADV-SM-PROD-003CP Guard Builder bundle child event source summary gate.
+- `qrpc_core_ir/src/v4.rs` - covers static bundle projection and summary counts for child-machine structured guards whose transition event source is missing.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child event source summary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CP` as the bundle child event source summary gate slice.

@@ -2609,6 +2609,75 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_summarizes_child_guard_descriptor_event_source_context() {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.check",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &[],
+                &["risk.guard.child"],
+            ));
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].event.event_type = "risk.child.check".to_string();
+        child.transitions[0].event.source = None;
+        child.transitions[0].action = None;
+        child.transitions[0].guard = None;
+        child.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "risk_child_missing_source_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::EventPayload,
+                path: "symbol".to_string(),
+            }],
+            parameter_paths: Vec::new(),
+            conditions: Vec::new(),
+            policy: None,
+            explanation: Some("child event source summary surface".to_string()),
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        assert_eq!(bundle.validate_static_contract(), Ok(()));
+        let projections = bundle.guard_descriptor_projections();
+        assert_eq!(projections.len(), 1);
+        assert_eq!(projections[0].graph_id, "strategy.v4.sample");
+        assert_eq!(projections[0].guard.machine_id, "risk.guard.child");
+        assert_eq!(
+            projections[0].guard.guard.readiness.guard_id,
+            "risk_child_missing_source_guard"
+        );
+        assert_eq!(projections[0].guard.guard.event_type, "risk.child.check");
+        assert_eq!(projections[0].guard.guard.event_source, None);
+
+        let summary = bundle.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 1);
+        assert_eq!(summary.guarded_machine_count, 1);
+        assert_eq!(summary.guarded_event_type_count, 1);
+        assert_eq!(summary.guarded_event_source_count, 0);
+        assert_eq!(summary.event_source_declared_count, 0);
+        assert_eq!(summary.event_source_missing_count, 1);
+        assert_eq!(summary.decision_guard_descriptor_count, 1);
+        assert_eq!(summary.read_guard_descriptor_count, 1);
+        assert_eq!(summary.event_payload_read_count, 1);
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 1);
+    }
+
+    #[test]
     fn static_contract_bundle_summarizes_child_guard_descriptor_condition_operands() {
         let mut bundle = sample_static_contract_bundle();
         let graph = bundle.machine_graphs.first_mut().unwrap();

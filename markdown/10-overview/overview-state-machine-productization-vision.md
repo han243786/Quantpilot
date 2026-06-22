@@ -10940,3 +10940,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers static bundle rejection for child-machine Guard Builder transitions that reference an undeclared event type with child transition context. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the event reference context diagnostic change, the bundle child event registration test, and this record if nested unknown-event diagnostics move into a dedicated Event Catalog validation suite. |
+
+### ADV-SM-PROD-003CP: Guard Builder bundle child event source summary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving child-machine structured guard projections expose whether their transition event source is declared or missing for workspace inspection. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::guard_descriptor_projections()` and `guard_descriptor_summary()` with a child-machine Guard Builder descriptor whose transition consumes a cataloged event without an explicit source, asserting the bundle summary records missing event-source context. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child event source summary gate is static validation and projection metadata only, no event is consumed at runtime, no child guard is executed, no Event Catalog is edited, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers static bundle event source summary counts for child-machine Guard Builder descriptors. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle child event source summary test and this record if nested event-source projection coverage moves into a dedicated workspace projection suite. |
