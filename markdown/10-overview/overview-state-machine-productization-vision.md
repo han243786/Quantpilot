@@ -10511,3 +10511,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for one guard descriptor containing a disabled-fail-closed condition. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle condition fail-closed descriptor summary field, aggregation, related test assertions, and this record if condition fail-closed coverage reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003BC: Guard Builder bundle policy fail-closed descriptor summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making bundle-level Guard Builder summaries distinguish disabled-fail-closed policy action counts from how many structured guards contain any such policy execution blocker across bundled graphs. |
+| implementation | `qrpc_core_ir/src/v4/static_contract_bundle.rs` now aggregates `policy_execution_disabled_fail_closed_guard_descriptor_count` in `StaticContractBundleGuardDescriptorSummary` from policy projections. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: bundle policy fail-closed descriptor summary fields are read-only metadata, no guard is executed, no fallback is executed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for one guard descriptor containing disabled-fail-closed policy execution blockers. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle policy fail-closed descriptor summary field, aggregation, related test assertions, and this record if policy fail-closed coverage reporting moves into a dedicated workspace query contract. |

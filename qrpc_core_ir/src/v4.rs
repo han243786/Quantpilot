@@ -1159,6 +1159,10 @@ mod tests {
         assert_eq!(summary.fallback_fail_closed_declared_count, 1);
         assert_eq!(summary.policy_timing_execution_enabled_count, 0);
         assert_eq!(
+            summary.policy_execution_disabled_fail_closed_guard_descriptor_count,
+            1
+        );
+        assert_eq!(
             summary.policy_timing_execution_disabled_fail_closed_count,
             1
         );

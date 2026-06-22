@@ -92,6 +92,7 @@ pub struct StaticContractBundleGuardDescriptorSummary {
     pub fallback_declared_count: usize,
     pub fallback_fail_closed_declared_count: usize,
     pub policy_timing_execution_enabled_count: usize,
+    pub policy_execution_disabled_fail_closed_guard_descriptor_count: usize,
     pub policy_timing_execution_disabled_fail_closed_count: usize,
     pub policy_fallback_execution_enabled_count: usize,
     pub policy_fallback_execution_disabled_fail_closed_count: usize,
@@ -215,21 +216,23 @@ impl V4StaticContractBundle {
             if let Some(policy) = &projection.guard.guard.policy_projection {
                 summary.policy_timing_execution_enabled_count +=
                     usize::from(policy.timing_execution_enabled);
-                summary.policy_timing_execution_disabled_fail_closed_count += usize::from(
-                    !policy.timing_execution_enabled
-                        && policy.timing_policy_declared
-                        && policy.execution_blocker_code
-                            == MachineGuardExecutionReadinessState::DisabledFailClosed
-                                .blocker_code(),
-                );
+                let timing_execution_disabled_fail_closed = !policy.timing_execution_enabled
+                    && policy.timing_policy_declared
+                    && policy.execution_blocker_code
+                        == MachineGuardExecutionReadinessState::DisabledFailClosed.blocker_code();
+                summary.policy_timing_execution_disabled_fail_closed_count +=
+                    usize::from(timing_execution_disabled_fail_closed);
                 summary.policy_fallback_execution_enabled_count +=
                     usize::from(policy.fallback_execution_enabled);
-                summary.policy_fallback_execution_disabled_fail_closed_count += usize::from(
-                    !policy.fallback_execution_enabled
-                        && policy.fallback_declared
-                        && policy.execution_blocker_code
-                            == MachineGuardExecutionReadinessState::DisabledFailClosed
-                                .blocker_code(),
+                let fallback_execution_disabled_fail_closed = !policy.fallback_execution_enabled
+                    && policy.fallback_declared
+                    && policy.execution_blocker_code
+                        == MachineGuardExecutionReadinessState::DisabledFailClosed.blocker_code();
+                summary.policy_fallback_execution_disabled_fail_closed_count +=
+                    usize::from(fallback_execution_disabled_fail_closed);
+                summary.policy_execution_disabled_fail_closed_guard_descriptor_count += usize::from(
+                    timing_execution_disabled_fail_closed
+                        || fallback_execution_disabled_fail_closed,
                 );
                 summary.policy_active_strategy_write_enabled_count +=
                     usize::from(policy.active_strategy_write_enabled);

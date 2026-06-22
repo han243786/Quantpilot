@@ -11695,3 +11695,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003BB)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle condition fail-closed descriptor summary.
 `condition_evaluation_disabled_fail_closed_guard_descriptor_count`; static contract bundles can aggregate how many structured guards contain disabled-fail-closed conditions across bundled graphs while condition evaluation, guard execution, and active strategy writes remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003BC)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle policy fail-closed descriptor summary.
+`policy_execution_disabled_fail_closed_guard_descriptor_count`; static contract bundles can aggregate how many structured guards contain disabled-fail-closed policy execution blockers across bundled graphs while policy execution, fallback execution, and guard execution remain disabled.
