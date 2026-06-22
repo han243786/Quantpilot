@@ -11226,3 +11226,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_missing_condition_id` covers graph-level child condition identity validation. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child missing-condition-id validation test and this record if nested condition identity coverage moves into a shared validation suite. |
+
+### ADV-SM-PROD-003DP: Guard Builder bundle child condition identity validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving static-contract bundle validation rejects child-machine Guard Builder conditions that omit `condition_id` before bundled workspace or runtime consumption. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with a child-machine Guard Builder condition whose read and parameter operands are valid but whose `condition_id` is blank, asserting bundle validation preserves child machine id, guard id, and missing-condition-id diagnostic wording. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child condition identity gate is static validation only, no child guard is executed, no condition is evaluated, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_missing_condition_id` covers bundle-level child condition identity validation. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level child missing-condition-id validation test and this record if nested condition identity coverage moves into a shared validation suite. |
