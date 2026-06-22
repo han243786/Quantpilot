@@ -1861,6 +1861,118 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_summarizes_guard_descriptor_condition_operands_across_graphs() {
+        fn attach_risk_guard_descriptor(
+            graph: &mut V4MachineGraphContract,
+            guard_id: &str,
+            reads: Vec<MachineGuardReadRef>,
+            parameter_paths: Vec<String>,
+            conditions: Vec<MachineGuardConditionSpec>,
+        ) {
+            let risk = graph
+                .machines
+                .iter_mut()
+                .find(|machine| machine.machine_id == "risk.guard")
+                .unwrap();
+            risk.transitions[0].guard = None;
+            risk.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+                guard_id: guard_id.to_string(),
+                reads,
+                parameter_paths,
+                conditions,
+                policy: None,
+                explanation: Some("bundle condition operand summary surface".to_string()),
+            });
+        }
+
+        let mut bundle = sample_static_contract_bundle();
+        bundle.machine_graphs[0].graph_id = "strategy.v4.alpha".to_string();
+        let mut second_graph = sample_machine_graph();
+        second_graph.graph_id = "strategy.v4.beta".to_string();
+        bundle.machine_graphs.push(second_graph);
+        attach_risk_guard_descriptor(
+            &mut bundle.machine_graphs[0],
+            "risk_guard_alpha",
+            vec![
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::ReadonlyRuntimeFact,
+                    path: "runtime.mode".to_string(),
+                },
+            ],
+            vec!["guard.enabled".to_string(), "timeout.ms".to_string()],
+            vec![
+                MachineGuardConditionSpec {
+                    condition_id: "memory_guard_check".to_string(),
+                    left_read: MachineGuardReadRef {
+                        source: MachineGuardReadSource::MachineMemory,
+                        path: "last_signal_at".to_string(),
+                    },
+                    comparator: MachineGuardConditionComparator::GreaterThan,
+                    right_parameter_path: "guard.enabled".to_string(),
+                },
+                MachineGuardConditionSpec {
+                    condition_id: "runtime_timeout_check".to_string(),
+                    left_read: MachineGuardReadRef {
+                        source: MachineGuardReadSource::ReadonlyRuntimeFact,
+                        path: "runtime.mode".to_string(),
+                    },
+                    comparator: MachineGuardConditionComparator::Equal,
+                    right_parameter_path: "timeout.ms".to_string(),
+                },
+            ],
+        );
+        attach_risk_guard_descriptor(
+            &mut bundle.machine_graphs[1],
+            "risk_guard_beta",
+            vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::EventPayload,
+                path: "symbol".to_string(),
+            }],
+            vec!["risk.max_notional".to_string()],
+            vec![MachineGuardConditionSpec {
+                condition_id: "event_risk_limit_check".to_string(),
+                left_read: MachineGuardReadRef {
+                    source: MachineGuardReadSource::EventPayload,
+                    path: "symbol".to_string(),
+                },
+                comparator: MachineGuardConditionComparator::NotEqual,
+                right_parameter_path: "risk.max_notional".to_string(),
+            }],
+        );
+
+        let projections = bundle.guard_descriptor_projections();
+        assert_eq!(projections.len(), 2);
+        assert_eq!(projections[0].guard.guard.condition_projections.len(), 2);
+        assert_eq!(projections[1].guard.guard.condition_projections.len(), 1);
+
+        let summary = bundle.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 2);
+        assert_eq!(summary.conditional_guard_descriptor_count, 2);
+        assert_eq!(summary.condition_count, 3);
+        assert_eq!(summary.equal_condition_count, 1);
+        assert_eq!(summary.not_equal_condition_count, 1);
+        assert_eq!(summary.greater_than_condition_count, 1);
+        assert_eq!(summary.condition_event_payload_read_count, 1);
+        assert_eq!(summary.condition_machine_memory_read_count, 1);
+        assert_eq!(summary.condition_readonly_runtime_fact_read_count, 1);
+        assert_eq!(summary.condition_guard_parameter_path_count, 1);
+        assert_eq!(summary.condition_timeout_parameter_path_count, 1);
+        assert_eq!(summary.condition_risk_limit_parameter_path_count, 1);
+        assert_eq!(summary.condition_evaluation_enabled_count, 0);
+        assert_eq!(
+            summary.condition_evaluation_disabled_fail_closed_guard_descriptor_count,
+            2
+        );
+        assert_eq!(summary.condition_evaluation_disabled_fail_closed_count, 3);
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 2);
+    }
+
+    #[test]
     fn machine_contract_rejects_invalid_structured_guard_descriptor() {
         let mut machine = sample_machine();
         machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {

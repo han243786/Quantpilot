@@ -10756,3 +10756,8 @@ Productization supplement: ADV-SM-PROD-003BS Guard Builder bundle mixed read sou
 - `qrpc_core_ir/src/v4.rs` - covers two-graph bundle guard summaries with event-payload, machine-memory, and readonly-runtime-fact read sources.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle mixed read source summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BS` as the bundle mixed read source summary slice.
+
+Productization supplement: ADV-SM-PROD-003BT Guard Builder bundle mixed condition operand summary.
+- `qrpc_core_ir/src/v4.rs` - covers two-graph bundle guard summaries with mixed condition left-read sources and right parameter-path kinds.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle mixed condition operand summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BT` as the bundle mixed condition operand summary slice.
