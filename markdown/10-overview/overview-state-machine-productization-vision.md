@@ -11127,3 +11127,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_unknown_machine_memory_read` covers graph-level child machine memory rejection. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child machine memory validation test and this record if machine-memory coverage moves into a shared validation suite. |
+
+### ADV-SM-PROD-003DG: Guard Builder graph child descriptor hygiene validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving single-graph validation rejects child-machine Guard Builder descriptors with missing ids, empty read paths, and empty proposal parameter paths before workspace or runtime consumption. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with a child-machine Guard Builder descriptor missing `guard_id` and carrying empty read and parameter paths, asserting graph validation preserves child machine context and base hygiene diagnostics. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child descriptor hygiene gate is static validation only, no child guard is executed, no machine memory is read at runtime, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_base_hygiene_violations` covers graph-level child descriptor base hygiene rejection. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child descriptor hygiene validation test and this record if descriptor hygiene coverage moves into a shared validation suite. |

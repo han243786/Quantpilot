@@ -10953,3 +10953,8 @@ Productization supplement: ADV-SM-PROD-003DF Guard Builder graph child machine m
 - `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine undeclared Machine Memory read rejection for structured guards.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child machine memory validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DF` as the graph child machine memory validation gate slice.
+
+Productization supplement: ADV-SM-PROD-003DG Guard Builder graph child descriptor hygiene validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine missing guard id, empty read path, and empty parameter path rejection for structured guards.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child descriptor hygiene validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DG` as the graph child descriptor hygiene validation gate slice.
