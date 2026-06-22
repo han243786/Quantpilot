@@ -10533,3 +10533,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for one guard descriptor containing disabled active-strategy-write parameter and policy surfaces. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle active-strategy-write disabled descriptor summary field, aggregation, related test assertions, and this record if active-strategy-write coverage reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003BE: Guard Builder bundle proposal-only descriptor summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by making bundle-level Guard Builder summaries distinguish proposal-only parameter path totals from how many structured guards contain any proposal-only parameter surface across bundled graphs. |
+| implementation | `qrpc_core_ir/src/v4/static_contract_bundle.rs` now aggregates `proposal_only_guard_descriptor_count` in `StaticContractBundleGuardDescriptorSummary` from parameter-path projections. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: bundle proposal-only descriptor summary fields are read-only metadata, no proposal is applied, no guard parameter write is performed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for one guard descriptor containing multiple proposal-only parameter surfaces. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle proposal-only descriptor summary field, aggregation, related test assertion, and this record if proposal-only coverage reporting moves into a dedicated workspace query contract. |

@@ -64,6 +64,7 @@ pub struct StaticContractBundleGuardDescriptorSummary {
     pub threshold_parameter_path_count: usize,
     pub risk_limit_parameter_path_count: usize,
     pub parameter_path_proposal_only_count: usize,
+    pub proposal_only_guard_descriptor_count: usize,
     pub parameter_path_active_strategy_write_enabled_count: usize,
     pub parameter_path_active_strategy_write_disabled_count: usize,
     pub conditional_guard_descriptor_count: usize,
@@ -159,10 +160,12 @@ impl V4StaticContractBundle {
             summary.cooldown_parameter_path_count += readiness.cooldown_parameter_path_count;
             summary.threshold_parameter_path_count += readiness.threshold_parameter_path_count;
             summary.risk_limit_parameter_path_count += readiness.risk_limit_parameter_path_count;
+            let mut has_proposal_only_parameter_surface = false;
             let mut has_active_strategy_write_disabled_surface = false;
             for parameter_path in &projection.guard.guard.parameter_path_projections {
                 summary.parameter_path_proposal_only_count +=
                     usize::from(parameter_path.proposal_only);
+                has_proposal_only_parameter_surface |= parameter_path.proposal_only;
                 summary.parameter_path_active_strategy_write_enabled_count +=
                     usize::from(parameter_path.active_strategy_write_enabled);
                 summary.parameter_path_active_strategy_write_disabled_count +=
@@ -170,6 +173,8 @@ impl V4StaticContractBundle {
                 has_active_strategy_write_disabled_surface |=
                     !parameter_path.active_strategy_write_enabled;
             }
+            summary.proposal_only_guard_descriptor_count +=
+                usize::from(has_proposal_only_parameter_surface);
             summary.conditional_guard_descriptor_count +=
                 usize::from(readiness.condition_count > 0);
             summary.condition_count += readiness.condition_count;
