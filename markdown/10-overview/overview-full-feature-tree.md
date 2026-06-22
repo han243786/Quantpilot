@@ -10736,3 +10736,8 @@ Productization supplement: ADV-SM-PROD-003BO Guard Builder bundle multi-graph su
 - `qrpc_core_ir/src/v4.rs` - covers two-graph bundle guard summary aggregation across shared local machine, transition, event type, and event source identifiers.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle multi-graph summary aggregation ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BO` as the bundle multi-graph summary aggregation slice.
+
+Productization supplement: ADV-SM-PROD-003BP Guard Builder bundle mixed event source context summary.
+- `qrpc_core_ir/src/v4.rs` - covers two-graph bundle guard summaries with one declared event source and one missing event source.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle mixed event source context summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BP` as the bundle mixed event source context summary slice.

@@ -11734,3 +11734,6 @@ All current shared bundle/graph guard summary count fields; static contract bund
 
 **Productization supplement (ADV-SM-PROD-003BO)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle multi-graph summary aggregation.
 Two-graph bundle guard descriptor summaries; static contract bundle tests now preserve graph-scoped aggregation for shared local machine, transition, event type, and event source identifiers while Event Catalog editing, guard execution, topology mutation, and active strategy writes remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003BP)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle mixed event source context summary.
+`event_source_declared_count` / `event_source_missing_count` / `guarded_event_source_count`; static contract bundle tests now cover mixed declared and missing event source context across bundled graphs while Event Catalog editing, guard execution, topology mutation, and active strategy writes remain disabled.

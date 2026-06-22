@@ -10654,3 +10654,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers two-graph bundle aggregation for guard ids, guarded machines, transitions, event types, event sources, reads, parameter paths, and fail-closed execution counts. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the two-graph bundle aggregation test and this record if multi-graph summary coverage moves into a dedicated workspace aggregation suite. |
+
+### ADV-SM-PROD-003BP: Guard Builder bundle mixed event source context summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving bundle-level Guard Builder summaries can distinguish declared and missing event source context across bundled graphs. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers a two-graph static contract bundle where one structured guarded transition declares an event source and the other omits it, preserving graph-scoped event type counts while counting only declared event sources. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the mixed event-source context guard is test-only metadata validation, no guard is executed, no Event Catalog is edited, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle aggregation of `event_source_declared_count`, `event_source_missing_count`, and `guarded_event_source_count` for mixed graph contexts. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the mixed event-source context bundle test and this record if event-source context coverage moves into a dedicated workspace aggregation suite. |
