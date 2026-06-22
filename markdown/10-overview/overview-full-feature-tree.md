@@ -11263,3 +11263,8 @@ Productization supplement: ADV-SM-PROD-003FP State Machine bundle top-level guar
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards with unknown Machine Memory reads.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard machine memory rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FP` as the bundle top-level guard machine memory rejection slice.
+
+Productization supplement: ADV-SM-PROD-003FQ State Machine bundle top-level guard base hygiene rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards with missing guard ids, empty read paths, and empty parameter paths.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard base hygiene rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FQ` as the bundle top-level guard base hygiene rejection slice.

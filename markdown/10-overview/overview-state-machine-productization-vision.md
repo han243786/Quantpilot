@@ -11809,3 +11809,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_unknown_machine_memory_read` covers bundle-level rejection for top-level structured guards with unknown Machine Memory reads. |
 | capability boundary | This does not add unknown memory tolerance, guard execution, condition evaluation, policy execution, runtime memory reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level top-level guard Machine Memory rejection test and this record if Machine Memory read authority coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003FQ: State Machine bundle top-level guard base hygiene rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying Guard Builder base hygiene through static bundle validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with an `intent.trend` structured guard missing `guard_id` and carrying empty read and parameter paths, asserting bundle validation preserves all three base hygiene diagnostics. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle top-level guard base hygiene rejection gate is static validation only, no guard is executed, no runtime read is performed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_base_hygiene_violations` covers bundle-level rejection for top-level structured guards with missing guard id, empty read path, and empty parameter path. |
+| capability boundary | This does not add malformed guard tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level top-level guard base hygiene rejection test and this record if base hygiene coverage moves into a shared validation fixture suite. |
