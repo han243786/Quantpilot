@@ -5022,6 +5022,47 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_rejects_child_transition_unknown_to_state() {
+        let mut graph = sample_machine_graph();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.check",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &["risk.guard"],
+                &["risk.guard.child"],
+            ));
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].event.event_type = "risk.child.check".to_string();
+        child.transitions[0].event.source = Some("risk.guard".to_string());
+        child.transitions[0].to_state = "risk.child.missing".to_string();
+        child.transitions[0].guard = None;
+        child.transitions[0].action = None;
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("child_machine `risk.guard.child` failed static contract")
+                && message.contains(
+                    "transition `risk.guard.child.transition` references unknown to_state",
+                )
+        }));
+    }
+
+    #[test]
     fn machine_graph_rejects_child_guard_descriptor_event_party_violations() {
         let mut graph = sample_machine_graph();
         graph
