@@ -11930,3 +11930,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_without_reads` covers bundle-level rejection for top-level structured guards with no read, parameter, condition, or policy declaration surface. |
 | capability boundary | This does not add empty guard tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level top-level guard empty surface rejection test and this record if minimum declaration coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003GB: State Machine bundle top-level guard unknown transition event gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying Guard Builder event-catalog context validation through static bundle validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with an `intent.trend` structured guard attached to a transition whose event type is absent from the Event Catalog, asserting bundle validation preserves the machine, transition, event type, and catalog diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle top-level guard unknown transition event gate is static validation only, no guard is executed, no event is consumed, no condition is evaluated, no policy is executed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_unknown_transition_event` covers bundle-level rejection for top-level structured guards attached to undeclared transition event types. |
+| capability boundary | This does not add undeclared event tolerance, guard execution, event consumption, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level top-level guard unknown transition event test and this record if event-catalog context coverage moves into a shared validation fixture suite. |
