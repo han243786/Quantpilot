@@ -11094,3 +11094,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_accepts_child_guard_descriptor_full_static_surface` covers graph-level child full static surface projection and summary counts. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child full static surface test and this record if combined child surface coverage moves into a dedicated workspace projection suite. |
+
+### ADV-SM-PROD-003DD: Guard Builder graph child duplicate input validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving single-graph validation rejects duplicate child-machine Guard Builder reads and parameter paths before workspace or runtime consumption. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with a child-machine Guard Builder descriptor that duplicates a Machine Memory read and a proposal parameter path, asserting graph validation preserves child machine and structured guard context in both errors. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child duplicate input validation gate is static validation only, no child guard is executed, no runtime read is performed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_duplicate_inputs` covers graph-level child duplicate read and parameter-path rejection. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child duplicate input validation test and this record if duplicate-input coverage moves into a shared validation suite. |

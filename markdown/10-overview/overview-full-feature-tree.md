@@ -10938,3 +10938,8 @@ Productization supplement: ADV-SM-PROD-003DC Guard Builder graph child full stat
 - `qrpc_core_ir/src/v4.rs` - covers graph-level validation, projection, and summary counts for a child-machine structured guard spanning all static surfaces.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child full static surface gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DC` as the graph child full static surface gate slice.
+
+Productization supplement: ADV-SM-PROD-003DD Guard Builder graph child duplicate input validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine duplicate read and parameter-path rejection for structured guards.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child duplicate input validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DD` as the graph child duplicate input validation gate slice.
