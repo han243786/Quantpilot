@@ -10577,3 +10577,9 @@ Productization supplement: ADV-SM-PROD-003AN Guard Builder graph guarded transit
 - `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for one guarded transition in the focused fixture.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph guarded transition summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AN` as the graph guarded transition summary slice.
+
+Productization supplement: ADV-SM-PROD-003AO Guard Builder graph guarded event type summary.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - aggregates unique guarded event-type counts in graph guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for one guarded event type in the focused fixture.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph guarded event type summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AO` as the graph guarded event type summary slice.
