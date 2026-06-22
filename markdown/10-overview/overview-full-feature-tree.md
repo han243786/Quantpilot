@@ -11213,3 +11213,8 @@ Productization supplement: ADV-SM-PROD-003FF State Machine bundle child machine 
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child machines that declare zero initial states.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child machine initial-state validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FF` as the bundle child machine initial-state validation slice.
+
+Productization supplement: ADV-SM-PROD-003FG State Machine graph child machine multi-initial validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child machines that declare two initial states.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph child machine multi-initial validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FG` as the graph child machine multi-initial validation slice.
