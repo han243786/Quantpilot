@@ -10918,3 +10918,8 @@ Productization supplement: ADV-SM-PROD-003CY Guard Builder graph child read bind
 - `qrpc_core_ir/src/v4.rs` - covers graph-level projection and summary counts for child-machine structured guard read bindings.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child read binding projection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CY` as the graph child read binding projection gate slice.
+
+Productization supplement: ADV-SM-PROD-003CZ Guard Builder bundle child read binding projection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level graph-scoped projection and summary counts for child-machine structured guard read bindings.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child read binding projection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CZ` as the bundle child read binding projection gate slice.
