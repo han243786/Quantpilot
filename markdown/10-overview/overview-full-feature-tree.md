@@ -10861,3 +10861,10 @@ Productization supplement: ADV-SM-PROD-003CN Guard Builder bundle child event pa
 - `qrpc_core_ir/src/v4.rs` - covers static bundle rejection for child-machine structured guard transitions whose Event Catalog emitter or consumer party is disallowed.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child event party validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CN` as the bundle child event party validation gate slice.
+
+Productization supplement: ADV-SM-PROD-003CO Guard Builder bundle child event registration validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers static bundle rejection for child-machine structured guard transitions whose event type is missing from the Event Catalog.
+- `qrpc_core_ir/src/v4/machine_graph_contract/static_validation/event_usage_validation.rs` - emits undeclared event diagnostics with transition/action/edge reference context.
+- `qrpc_core_ir/src/v4/machine_graph_contract/static_validation/event_usage_validation/event_reference_resolution.rs` - records transition, action emit, and edge event reference context for static validation.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child event registration validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CO` as the bundle child event registration validation gate slice.

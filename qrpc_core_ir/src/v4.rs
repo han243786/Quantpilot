@@ -3713,6 +3713,45 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_rejects_child_guard_descriptor_unknown_transition_event() {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].event.event_type = "risk.child.missing".to_string();
+        child.transitions[0].event.source = Some("risk.guard".to_string());
+        child.transitions[0].action = None;
+        child.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "bundle_child_unknown_event_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::EventPayload,
+                path: "symbol".to_string(),
+            }],
+            parameter_paths: Vec::new(),
+            conditions: Vec::new(),
+            policy: None,
+            explanation: None,
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        let errors = bundle.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("machine `risk.guard.child`")
+                && message.contains("transition `risk.guard.child.transition`")
+                && message.contains("event_type `risk.child.missing`")
+                && message.contains("must be declared in event_catalog")
+        }));
+    }
+
+    #[test]
     fn static_contract_bundle_rejects_child_guard_descriptor_forbidden_parameter_path() {
         let mut bundle = sample_static_contract_bundle();
         let graph = bundle.machine_graphs.first_mut().unwrap();
