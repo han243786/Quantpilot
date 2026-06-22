@@ -11182,3 +11182,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_invalid_condition_operand` covers graph-level child condition operand validation. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child condition operand validation test and this record if nested condition validation coverage moves into a shared validation suite. |
+
+### ADV-SM-PROD-003DL: Guard Builder graph child policy validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving single-graph validation rejects child-machine Guard Builder policies with invalid timing values before workspace or runtime consumption. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with a child-machine Guard Builder policy that declares zero `timeout_ms` and `cooldown_ms`, asserting graph validation preserves child machine id, guard id, and policy validation messages. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child policy validation gate is static validation only, no child guard is executed, no timing or fallback policy is evaluated, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_invalid_policy` covers graph-level child policy validation. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child policy validation test and this record if nested policy validation coverage moves into a shared validation suite. |

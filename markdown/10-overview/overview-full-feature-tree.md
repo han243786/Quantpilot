@@ -10978,3 +10978,8 @@ Productization supplement: ADV-SM-PROD-003DK Guard Builder graph child condition
 - `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine structured guard condition operands that reference undeclared proposal parameter paths.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child condition operand validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DK` as the graph child condition operand validation gate slice.
+
+Productization supplement: ADV-SM-PROD-003DL Guard Builder graph child policy validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine structured guard policies with invalid timing values.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child policy validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DL` as the graph child policy validation gate slice.
