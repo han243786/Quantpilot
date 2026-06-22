@@ -11061,3 +11061,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_projects_child_guard_descriptor_read_context` covers bundle-level child read binding projection and summary counts. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level child read binding projection test and this record if child read binding coverage moves into a dedicated workspace projection suite. |
+
+### ADV-SM-PROD-003DA: Guard Builder graph child transition projection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making single-graph workspace views expose child-machine Guard Builder transition topology evidence before any nested guard execution is enabled. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::guard_descriptor_projections()` and `guard_descriptor_summary()` for a child-machine Guard Builder descriptor, asserting child machine identity, template, transition id, from/to states, event identity, declared source, and summary counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child transition projection gate is static projection and summary metadata only, no child guard is executed, no event is consumed at runtime, no topology mutation is applied, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_projects_child_guard_descriptor_transition_context` covers graph-level child transition topology projection and summary counts. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child transition projection test and this record if child transition topology coverage moves into a dedicated workspace projection suite. |
