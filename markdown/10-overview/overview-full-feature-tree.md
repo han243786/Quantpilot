@@ -10703,3 +10703,9 @@ Productization supplement: ADV-SM-PROD-003BI Guard Builder bundle guarded event 
 - `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for a graph-scoped guarded event type.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle guarded event type summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BI` as the bundle guarded event type summary slice.
+
+Productization supplement: ADV-SM-PROD-003BJ Guard Builder bundle guarded event source summary.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates graph-scoped guarded event source counts across bundle guard descriptor projections.
+- `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for a graph-scoped guarded event source.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle guarded event source summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BJ` as the bundle guarded event source summary slice.

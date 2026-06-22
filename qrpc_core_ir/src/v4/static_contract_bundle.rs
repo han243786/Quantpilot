@@ -55,6 +55,7 @@ pub struct StaticContractBundleGuardDescriptorSummary {
     pub guarded_machine_count: usize,
     pub guarded_transition_count: usize,
     pub guarded_event_type_count: usize,
+    pub guarded_event_source_count: usize,
     pub read_guard_descriptor_count: usize,
     pub read_count: usize,
     pub event_payload_read_count: usize,
@@ -152,6 +153,7 @@ impl V4StaticContractBundle {
         let mut guarded_machine_ids = BTreeSet::new();
         let mut guarded_transition_ids = BTreeSet::new();
         let mut guarded_event_types = BTreeSet::new();
+        let mut guarded_event_sources = BTreeSet::new();
         for projection in self.guard_descriptor_projections() {
             let readiness = &projection.guard.guard.readiness;
             summary.guard_descriptor_count += 1;
@@ -169,6 +171,9 @@ impl V4StaticContractBundle {
                 projection.graph_id.clone(),
                 projection.guard.guard.event_type.clone(),
             ));
+            if let Some(event_source) = &projection.guard.guard.event_source {
+                guarded_event_sources.insert((projection.graph_id.clone(), event_source.clone()));
+            }
             summary.read_guard_descriptor_count += usize::from(readiness.read_count > 0);
             summary.read_count += readiness.read_count;
             summary.event_payload_read_count += readiness.event_payload_read_count;
@@ -283,6 +288,7 @@ impl V4StaticContractBundle {
         summary.guarded_machine_count = guarded_machine_ids.len();
         summary.guarded_transition_count = guarded_transition_ids.len();
         summary.guarded_event_type_count = guarded_event_types.len();
+        summary.guarded_event_source_count = guarded_event_sources.len();
         summary
     }
 }
