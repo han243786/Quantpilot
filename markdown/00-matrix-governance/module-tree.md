@@ -11674,3 +11674,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003AU)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder graph condition fail-closed descriptor summary.
 `condition_evaluation_disabled_fail_closed_guard_descriptor_count`; machine graphs can aggregate how many structured guards contain disabled-fail-closed conditions for single-graph workspace views while condition evaluation and guard execution remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003AV)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder graph policy fail-closed descriptor summary.
+`policy_execution_disabled_fail_closed_guard_descriptor_count`; machine graphs can aggregate how many structured guards contain disabled-fail-closed policy execution blockers for single-graph workspace views while policy execution, fallback execution, and guard execution remain disabled.
