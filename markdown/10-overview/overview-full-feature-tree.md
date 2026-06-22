@@ -10649,3 +10649,9 @@ Productization supplement: ADV-SM-PROD-003AZ Guard Builder bundle parameterized 
 - `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for one parameterized guard descriptor.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle parameterized descriptor summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AZ` as the bundle parameterized descriptor summary slice.
+
+Productization supplement: ADV-SM-PROD-003BA Guard Builder bundle conditional descriptor summary.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates bundle guard descriptor counts for descriptors containing structured conditions.
+- `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for one conditional guard descriptor.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle conditional descriptor summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BA` as the bundle conditional descriptor summary slice.

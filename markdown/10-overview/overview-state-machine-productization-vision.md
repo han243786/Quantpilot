@@ -10489,3 +10489,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for one parameterized guard descriptor. |
 | capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle parameterized descriptor summary field, aggregation, related test assertions, and this record if parameter coverage reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003BA: Guard Builder bundle conditional descriptor summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making bundle-level Guard Builder summaries distinguish total structured conditions from how many structured guards declare any condition across bundled graphs. |
+| implementation | `qrpc_core_ir/src/v4/static_contract_bundle.rs` now aggregates `conditional_guard_descriptor_count` in `StaticContractBundleGuardDescriptorSummary` from descriptor readiness condition counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: bundle conditional descriptor summary fields are read-only metadata, no guard is executed, no condition is evaluated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for one conditional guard descriptor. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle conditional descriptor summary field, aggregation, related test assertions, and this record if condition coverage reporting moves into a dedicated workspace query contract. |

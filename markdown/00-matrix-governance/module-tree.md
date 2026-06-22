@@ -11689,3 +11689,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003AZ)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle parameterized descriptor summary.
 `parameterized_guard_descriptor_count`; static contract bundles can aggregate how many structured guards declare proposal parameter inputs across bundled graphs while proposal application, guard parameter writes, and active strategy writes remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003BA)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle conditional descriptor summary.
+`conditional_guard_descriptor_count`; static contract bundles can aggregate how many structured guards declare conditions across bundled graphs while condition evaluation, guard execution, and active strategy writes remain disabled.
