@@ -11798,3 +11798,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_unknown_readonly_runtime_fact` covers bundle-level rejection for top-level structured guards with unknown readonly runtime fact reads. |
 | capability boundary | This does not add unknown readonly fact tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level top-level guard readonly fact rejection test and this record if readonly runtime fact authority coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003FP: State Machine bundle top-level guard machine memory rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying Machine Memory read authority through static bundle validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with an `intent.trend` structured guard that reads undeclared Machine Memory field `unknown_memory`, asserting bundle validation preserves the guard id and undeclared memory field diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle top-level guard machine memory rejection gate is static validation only, no guard is executed, no memory is read at runtime, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_unknown_machine_memory_read` covers bundle-level rejection for top-level structured guards with unknown Machine Memory reads. |
+| capability boundary | This does not add unknown memory tolerance, guard execution, condition evaluation, policy execution, runtime memory reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level top-level guard Machine Memory rejection test and this record if Machine Memory read authority coverage moves into a shared validation fixture suite. |
