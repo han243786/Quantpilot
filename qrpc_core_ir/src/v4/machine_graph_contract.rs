@@ -84,6 +84,7 @@ pub struct MachineGraphGuardDescriptorSummary {
     pub execution_guard_descriptor_count: usize,
     pub event_source_declared_count: usize,
     pub event_source_missing_count: usize,
+    pub read_guard_descriptor_count: usize,
     pub read_count: usize,
     pub event_payload_read_count: usize,
     pub machine_memory_read_count: usize,
@@ -180,6 +181,7 @@ impl V4MachineGraphContract {
             } else {
                 summary.event_source_missing_count += 1;
             }
+            summary.read_guard_descriptor_count += usize::from(readiness.read_count > 0);
             summary.read_count += readiness.read_count;
             summary.event_payload_read_count += readiness.event_payload_read_count;
             summary.machine_memory_read_count += readiness.machine_memory_read_count;

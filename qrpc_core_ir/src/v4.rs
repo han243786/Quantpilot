@@ -918,6 +918,7 @@ mod tests {
         assert_eq!(summary.execution_guard_descriptor_count, 0);
         assert_eq!(summary.event_source_declared_count, 1);
         assert_eq!(summary.event_source_missing_count, 0);
+        assert_eq!(summary.read_guard_descriptor_count, 1);
         assert_eq!(summary.read_count, 1);
         assert_eq!(summary.event_payload_read_count, 1);
         assert_eq!(summary.parameter_path_count, 1);

@@ -10390,3 +10390,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for one unique guard id in the focused fixture. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the guard-id summary field, aggregation, related test assertions, and this record if guard identity reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003AR: Guard Builder graph read-bearing descriptor summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making graph-level Guard Builder summaries distinguish total read references from how many structured guards declare any read input. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now aggregates `read_guard_descriptor_count` in `MachineGraphGuardDescriptorSummary` from descriptor readiness read counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: read-bearing descriptor summary fields are read-only metadata, no guard is executed, no runtime read is performed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for one read-bearing guard descriptor in the focused fixture. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the read-bearing descriptor summary field, aggregation, related test assertions, and this record if read coverage reporting moves into a dedicated workspace query contract. |

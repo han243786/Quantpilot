@@ -10595,3 +10595,9 @@ Productization supplement: ADV-SM-PROD-003AQ Guard Builder graph guard id summar
 - `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for one guard id in the focused fixture.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph guard id summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AQ` as the graph guard id summary slice.
+
+Productization supplement: ADV-SM-PROD-003AR Guard Builder graph read-bearing descriptor summary.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - aggregates read-bearing guard descriptor counts in graph guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for one read-bearing guard descriptor in the focused fixture.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph read-bearing descriptor summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AR` as the graph read-bearing descriptor summary slice.
