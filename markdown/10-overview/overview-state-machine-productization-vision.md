@@ -11996,3 +11996,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_guard_descriptor_missing_event_catalog` covers graph-level rejection for top-level structured guards with event-payload reads when the owning machine graph has no Event Catalog. |
 | capability boundary | This does not add missing-catalog tolerance, guard execution, event consumption, payload reads, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level top-level guard missing Event Catalog test and this record if graph catalog prerequisite coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003GH: State Machine graph top-level guard duplicate input rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying Guard Builder duplicate input validation through machine graph static validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with an `intent.trend` structured guard that repeats a machine-memory read and repeats a parameter path with different casing, asserting graph validation preserves the guard id and both duplicate-input diagnostics before any bundle wrapping. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph top-level guard duplicate input rejection gate is static validation only, no guard is executed, no runtime read is performed, no condition is evaluated, no policy is executed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_guard_descriptor_duplicate_inputs` covers graph-level rejection for top-level structured guards that duplicate read and parameter declaration surfaces. |
+| capability boundary | This does not add duplicate-input tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level top-level guard duplicate input test and this record if graph duplicate-input coverage moves into a shared validation fixture suite. |

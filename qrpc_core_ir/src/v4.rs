@@ -4603,6 +4603,43 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_rejects_guard_descriptor_duplicate_inputs() {
+        let mut graph = sample_machine_graph();
+        let intent = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "intent.trend")
+            .unwrap();
+        intent.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "graph_duplicate_input_guard".to_string(),
+            reads: vec![
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+            ],
+            parameter_paths: vec!["guard.threshold".to_string(), "GUARD.THRESHOLD".to_string()],
+            conditions: Vec::new(),
+            policy: None,
+            explanation: None,
+        });
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("structured guard `graph_duplicate_input_guard`")
+                && message.contains("declares duplicate machine_memory read `last_signal_at`")
+        }));
+        assert!(errors.iter().any(|message| {
+            message.contains("structured guard `graph_duplicate_input_guard`")
+                && message.contains("declares duplicate parameter path `GUARD.THRESHOLD`")
+        }));
+    }
+
+    #[test]
     fn machine_graph_rejects_child_guard_descriptor_unknown_event_payload_read() {
         let mut graph = sample_machine_graph();
         graph
