@@ -10831,3 +10831,8 @@ Productization supplement: ADV-SM-PROD-003CH Guard Builder bundle child policy v
 - `qrpc_core_ir/src/v4.rs` - covers static bundle rejection for child-machine structured guard policies with invalid timeout and cooldown values.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child policy validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CH` as the bundle child policy validation gate slice.
+
+Productization supplement: ADV-SM-PROD-003CI Guard Builder bundle child duplicate input validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers static bundle rejection for child-machine structured guards with duplicate machine-memory reads and proposal parameter paths.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child duplicate input validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CI` as the bundle child duplicate input validation gate slice.
