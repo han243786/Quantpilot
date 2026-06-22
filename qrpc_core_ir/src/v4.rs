@@ -4274,6 +4274,10 @@ mod tests {
         assert_eq!(projection.guard.machine_id, "risk.guard.child");
         assert_eq!(projection.guard.guard.event_type, "risk.child.check");
         assert_eq!(
+            projection.guard.guard.event_source.as_deref(),
+            Some("risk.guard")
+        );
+        assert_eq!(
             projection.guard.guard.readiness.guard_id,
             "bundle_child_full_static_guard"
         );
@@ -4316,6 +4320,13 @@ mod tests {
 
         let summary = bundle.guard_descriptor_summary();
         assert_eq!(summary.guard_descriptor_count, 1);
+        assert_eq!(summary.guard_id_count, 1);
+        assert_eq!(summary.guarded_machine_count, 1);
+        assert_eq!(summary.guarded_transition_count, 1);
+        assert_eq!(summary.guarded_event_type_count, 1);
+        assert_eq!(summary.guarded_event_source_count, 1);
+        assert_eq!(summary.event_source_declared_count, 1);
+        assert_eq!(summary.event_source_missing_count, 0);
         assert_eq!(summary.decision_guard_descriptor_count, 1);
         assert_eq!(summary.read_guard_descriptor_count, 1);
         assert_eq!(summary.read_count, 3);
