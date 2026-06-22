@@ -88,6 +88,12 @@ pub struct MachineGraphGuardDescriptorSummary {
     pub parameter_path_active_strategy_write_enabled_count: usize,
     pub parameter_path_active_strategy_write_disabled_count: usize,
     pub condition_count: usize,
+    pub equal_condition_count: usize,
+    pub not_equal_condition_count: usize,
+    pub greater_than_condition_count: usize,
+    pub greater_than_or_equal_condition_count: usize,
+    pub less_than_condition_count: usize,
+    pub less_than_or_equal_condition_count: usize,
     pub condition_evaluation_enabled_count: usize,
     pub condition_evaluation_disabled_fail_closed_count: usize,
     pub policy_declared_count: usize,
@@ -149,6 +155,14 @@ impl V4MachineGraphContract {
                     usize::from(!parameter_path.active_strategy_write_enabled);
             }
             summary.condition_count += readiness.condition_count;
+            summary.equal_condition_count += readiness.equal_condition_count;
+            summary.not_equal_condition_count += readiness.not_equal_condition_count;
+            summary.greater_than_condition_count += readiness.greater_than_condition_count;
+            summary.greater_than_or_equal_condition_count +=
+                readiness.greater_than_or_equal_condition_count;
+            summary.less_than_condition_count += readiness.less_than_condition_count;
+            summary.less_than_or_equal_condition_count +=
+                readiness.less_than_or_equal_condition_count;
             for condition in &projection.guard.condition_projections {
                 summary.condition_evaluation_enabled_count +=
                     usize::from(condition.evaluation_enabled);

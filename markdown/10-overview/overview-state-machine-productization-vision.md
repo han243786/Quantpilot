@@ -10280,3 +10280,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for threshold parameter paths while all other parameter kind counts remain zero for the focused fixture. |
 | capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph parameter kind summary fields, aggregation, related test assertions, and this record if graph-level parameter reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003AH: Guard Builder graph condition comparator summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making graph-level Guard Builder summaries distinguish structured condition comparators for single-graph workspace views. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now aggregates comparator-specific condition counts in `MachineGraphGuardDescriptorSummary` from descriptor readiness, matching the existing bundle summary fields at the machine-graph boundary. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: graph comparator summary fields are read-only metadata, no condition is evaluated, no guard is executed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for a not-equal condition comparator while the other comparator counts remain zero for the focused fixture. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph comparator summary fields, aggregation, related test assertions, and this record if graph-level condition reporting moves into a dedicated workspace query contract. |

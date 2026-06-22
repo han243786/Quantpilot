@@ -926,6 +926,12 @@ mod tests {
             1
         );
         assert_eq!(summary.condition_count, 1);
+        assert_eq!(summary.equal_condition_count, 0);
+        assert_eq!(summary.not_equal_condition_count, 1);
+        assert_eq!(summary.greater_than_condition_count, 0);
+        assert_eq!(summary.greater_than_or_equal_condition_count, 0);
+        assert_eq!(summary.less_than_condition_count, 0);
+        assert_eq!(summary.less_than_or_equal_condition_count, 0);
         assert_eq!(summary.condition_evaluation_enabled_count, 0);
         assert_eq!(summary.condition_evaluation_disabled_fail_closed_count, 1);
         assert_eq!(summary.policy_declared_count, 1);

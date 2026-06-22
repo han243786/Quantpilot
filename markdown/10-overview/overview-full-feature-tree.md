@@ -10535,3 +10535,9 @@ Productization supplement: ADV-SM-PROD-003AG Guard Builder graph parameter kind 
 - `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for threshold parameter path counts while preserving proposal-only and active-strategy-write-disabled flags.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph parameter kind summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AG` as the graph parameter kind summary slice.
+
+Productization supplement: ADV-SM-PROD-003AH Guard Builder graph condition comparator summary.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - aggregates equal, not-equal, greater-than, greater-than-or-equal, less-than, and less-than-or-equal condition comparator counts in graph guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for a not-equal structured guard condition while condition evaluation remains disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph condition comparator summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AH` as the graph condition comparator summary slice.
