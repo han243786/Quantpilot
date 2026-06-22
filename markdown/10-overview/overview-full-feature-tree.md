@@ -11278,3 +11278,8 @@ Productization supplement: ADV-SM-PROD-003FS State Machine bundle top-level guar
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards whose conditions reference undeclared parameter paths.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard condition operand rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FS` as the bundle top-level guard condition operand rejection slice.
+
+Productization supplement: ADV-SM-PROD-003FT State Machine bundle top-level guard missing condition id rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards whose conditions omit `condition_id`.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard missing condition id rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FT` as the bundle top-level guard missing condition id rejection slice.
