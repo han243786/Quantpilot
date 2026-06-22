@@ -10962,3 +10962,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_accepts_child_guard_descriptor_full_static_surface` covers declared child event source projection and summary counts. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the declared event-source projection assertions and this record if child event source projection coverage moves into a dedicated workspace projection suite. |
+
+### ADV-SM-PROD-003CR: Guard Builder graph child event source projection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, `2.7`, and `2.9`; continue `SM-PROD-003` by giving single-graph workspace views the same child-machine declared event-source evidence that bundle views now expose. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::guard_descriptor_projections()` and `guard_descriptor_summary()` for a child-machine Guard Builder descriptor whose transition declares source `risk.guard`, asserting graph-level child machine identity, event source identity, guarded source uniqueness, and declared-source counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child event source projection gate is static projection and summary metadata only, no event is consumed at runtime, no child guard is executed, no Event Catalog is edited, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_projects_child_guard_descriptor_event_source_context` covers graph-level child event source projection and summary counts. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child event-source projection test and this record if child event source projection coverage moves into a dedicated workspace projection suite. |

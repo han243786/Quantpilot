@@ -10878,3 +10878,8 @@ Productization supplement: ADV-SM-PROD-003CQ Guard Builder bundle child declared
 - `qrpc_core_ir/src/v4.rs` - covers static bundle projection and summary counts for child-machine structured guards whose transition declares an event source.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child declared event source projection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CQ` as the bundle child declared event source projection gate slice.
+
+Productization supplement: ADV-SM-PROD-003CR Guard Builder graph child event source projection gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level projection and summary counts for child-machine structured guards whose transition declares an event source.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child event source projection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CR` as the graph child event source projection gate slice.
