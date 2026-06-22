@@ -7248,6 +7248,48 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_rejects_child_transition_unknown_from_state() {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.check",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &["risk.guard"],
+                &["risk.guard.child"],
+            ));
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].event.event_type = "risk.child.check".to_string();
+        child.transitions[0].event.source = Some("risk.guard".to_string());
+        child.transitions[0].from_state = "risk.child.missing".to_string();
+        child.transitions[0].guard = None;
+        child.transitions[0].action = None;
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        let errors = bundle.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("child_machine `risk.guard.child` failed static contract")
+                && message.contains(
+                    "transition `risk.guard.child.transition` references unknown from_state",
+                )
+        }));
+    }
+
+    #[test]
     fn static_contract_bundle_accepts_child_guard_descriptor_full_static_surface() {
         let mut bundle = sample_static_contract_bundle();
         let graph = bundle.machine_graphs.first_mut().unwrap();
