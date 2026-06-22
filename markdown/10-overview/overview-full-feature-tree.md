@@ -11173,3 +11173,8 @@ Productization supplement: ADV-SM-PROD-003EX State Machine bundle child machine 
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child machines that omit `machine_id`.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child machine identity hygiene gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EX` as the bundle child machine identity hygiene slice.
+
+Productization supplement: ADV-SM-PROD-003EY State Machine graph child machine depth validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child machines that exceed the supported depth-two nesting limit.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph child machine depth validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EY` as the graph child machine depth validation slice.
