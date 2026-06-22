@@ -10566,3 +10566,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for a graph-scoped guarded machine. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle guarded-machine summary field, aggregation, related test assertion, and this record if guarded-machine coverage reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003BH: Guard Builder bundle guarded transition summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by making bundle-level Guard Builder summaries expose how many graph-scoped transitions carry structured guard descriptors across bundled graphs. |
+| implementation | `qrpc_core_ir/src/v4/static_contract_bundle.rs` now aggregates `guarded_transition_count` in `StaticContractBundleGuardDescriptorSummary` from graph-scoped guard descriptor projections using graph, machine, and transition identity. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: bundle guarded-transition summary fields are read-only metadata, no guard is executed, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for a graph-scoped guarded transition. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle guarded-transition summary field, aggregation, related test assertion, and this record if guarded-transition coverage reporting moves into a dedicated workspace query contract. |

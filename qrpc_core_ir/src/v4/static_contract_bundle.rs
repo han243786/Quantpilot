@@ -53,6 +53,7 @@ pub struct StaticContractBundleGuardDescriptorSummary {
     pub guard_descriptor_count: usize,
     pub guard_id_count: usize,
     pub guarded_machine_count: usize,
+    pub guarded_transition_count: usize,
     pub read_guard_descriptor_count: usize,
     pub read_count: usize,
     pub event_payload_read_count: usize,
@@ -148,6 +149,7 @@ impl V4StaticContractBundle {
         let mut summary = StaticContractBundleGuardDescriptorSummary::default();
         let mut guard_ids = BTreeSet::new();
         let mut guarded_machine_ids = BTreeSet::new();
+        let mut guarded_transition_ids = BTreeSet::new();
         for projection in self.guard_descriptor_projections() {
             let readiness = &projection.guard.guard.readiness;
             summary.guard_descriptor_count += 1;
@@ -155,6 +157,11 @@ impl V4StaticContractBundle {
             guarded_machine_ids.insert((
                 projection.graph_id.clone(),
                 projection.guard.machine_id.clone(),
+            ));
+            guarded_transition_ids.insert((
+                projection.graph_id.clone(),
+                projection.guard.machine_id.clone(),
+                projection.guard.guard.transition_id.clone(),
             ));
             summary.read_guard_descriptor_count += usize::from(readiness.read_count > 0);
             summary.read_count += readiness.read_count;
@@ -268,6 +275,7 @@ impl V4StaticContractBundle {
         }
         summary.guard_id_count = guard_ids.len();
         summary.guarded_machine_count = guarded_machine_ids.len();
+        summary.guarded_transition_count = guarded_transition_ids.len();
         summary
     }
 }

@@ -10691,3 +10691,9 @@ Productization supplement: ADV-SM-PROD-003BG Guard Builder bundle guarded machin
 - `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for a graph-scoped guarded machine.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle guarded machine summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BG` as the bundle guarded machine summary slice.
+
+Productization supplement: ADV-SM-PROD-003BH Guard Builder bundle guarded transition summary.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates graph-scoped guarded transition counts across bundle guard descriptor projections.
+- `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for a graph-scoped guarded transition.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle guarded transition summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BH` as the bundle guarded transition summary slice.
