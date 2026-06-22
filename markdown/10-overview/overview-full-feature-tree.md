@@ -11113,3 +11113,8 @@ Productization supplement: ADV-SM-PROD-003EL State Machine bundle child transiti
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine transitions that target a state missing from the child machine contract.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child transition target-state validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EL` as the bundle child transition target-state validation slice.
+
+Productization supplement: ADV-SM-PROD-003EM State Machine graph child transition source-state validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine transitions that start from a state missing from the child machine contract.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph child transition source-state validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EM` as the graph child transition source-state validation slice.

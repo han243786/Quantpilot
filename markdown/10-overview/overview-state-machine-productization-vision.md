@@ -11479,3 +11479,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_transition_unknown_to_state` covers bundle-level child transition target-state validation. |
 | capability boundary | This does not add nested transition execution, action execution, event consumption, event emission, memory mutation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level child transition target-state validation test and this record if child transition state coverage moves into a shared validation suite. |
+
+### ADV-SM-PROD-003EM: State Machine graph child transition source-state validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving single-graph validation rejects child-machine transitions that start from states missing from the child machine contract. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with a child-machine transition whose `from_state` is absent from the child state list, asserting graph validation preserves the child machine wrapper and the shared unknown source-state diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child transition source-state gate is static validation only, no child transition is executed, no action is executed, no event is consumed or emitted, no topology is mutated, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_transition_unknown_from_state` covers graph-level child transition source-state validation. |
+| capability boundary | This does not add nested transition execution, action execution, event consumption, event emission, memory mutation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child transition source-state validation test and this record if child transition state coverage moves into a shared validation suite. |
