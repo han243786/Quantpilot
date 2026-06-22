@@ -11754,3 +11754,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_accepts_child_guard_descriptor_event_payload_read_from_catalog` covers bundle-level acceptance for child structured guards that read declared event payload fields. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime payload reads, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level child guard payload catalog acceptance test and this record if child guard payload authority coverage moves into a shared projection fixture suite. |
+
+### ADV-SM-PROD-003FL: State Machine bundle top-level guard payload catalog acceptance gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by pairing the graph-level top-level Guard Builder payload catalog binding with bundle-level static validation and projection evidence. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()`, `guard_descriptor_projections()`, and `guard_descriptor_summary()` with an `intent.trend` structured guard that reads `symbol` from the cataloged `bar_closed` event, asserting graph-scoped projection, event source context, payload read binding, declared-source count, and disabled-fail-closed execution state. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle top-level guard payload catalog acceptance gate is static validation and projection metadata only, no guard is executed, no event is consumed at runtime, no payload is read at runtime, no topology is mutated, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_accepts_guard_descriptor_event_payload_read_from_catalog` covers bundle-level acceptance for top-level structured guards that read declared event payload fields. |
+| capability boundary | This does not add guard execution, condition evaluation, policy execution, runtime payload reads, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level top-level guard payload catalog acceptance test and this record if top-level guard payload authority coverage moves into a shared projection fixture suite. |

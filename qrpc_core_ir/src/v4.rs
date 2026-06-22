@@ -6495,6 +6495,69 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_accepts_guard_descriptor_event_payload_read_from_catalog() {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        let intent = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "intent.trend")
+            .unwrap();
+        intent.transitions[0].guard = None;
+        intent.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "bundle_bar_symbol_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::EventPayload,
+                path: "symbol".to_string(),
+            }],
+            parameter_paths: Vec::new(),
+            conditions: Vec::new(),
+            policy: None,
+            explanation: Some(
+                "bundle top-level guard reads a declared event payload field".to_string(),
+            ),
+        });
+
+        assert_eq!(bundle.validate_static_contract(), Ok(()));
+        let projections = bundle.guard_descriptor_projections();
+        assert_eq!(projections.len(), 1);
+        let projection = &projections[0];
+        assert_eq!(projection.graph_id, "strategy.v4.sample");
+        assert_eq!(projection.guard.machine_id, "intent.trend");
+        assert_eq!(projection.guard.guard.event_type, "bar_closed");
+        assert_eq!(
+            projection.guard.guard.event_source.as_deref(),
+            Some("data.market")
+        );
+        assert_eq!(
+            projection.guard.guard.readiness.guard_id,
+            "bundle_bar_symbol_guard"
+        );
+        assert_eq!(projection.guard.guard.readiness.read_count, 1);
+        assert!(!projection.guard.guard.readiness.execution_enabled);
+        assert_eq!(
+            projection.guard.guard.readiness.execution_state,
+            MachineGuardExecutionReadinessState::DisabledFailClosed
+        );
+        assert_eq!(projection.guard.guard.read_projections.len(), 1);
+        assert_eq!(
+            projection.guard.guard.read_projections[0].binding_scope,
+            MachineGuardReadBindingScope::EventPayloadField
+        );
+
+        let summary = bundle.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 1);
+        assert_eq!(summary.guarded_machine_count, 1);
+        assert_eq!(summary.guarded_transition_count, 1);
+        assert_eq!(summary.event_source_declared_count, 1);
+        assert_eq!(summary.read_guard_descriptor_count, 1);
+        assert_eq!(summary.read_count, 1);
+        assert_eq!(summary.event_payload_read_count, 1);
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 1);
+    }
+
+    #[test]
     fn static_contract_bundle_rejects_child_guard_descriptor_unknown_event_payload_read() {
         let mut bundle = sample_static_contract_bundle();
         let graph = bundle.machine_graphs.first_mut().unwrap();
