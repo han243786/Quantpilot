@@ -7013,6 +7013,62 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_rejects_child_transition_action_unauthorized_event_emit() {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.check",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &["risk.guard"],
+                &["risk.guard.child"],
+            ));
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.emit.denied",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &["other.child"],
+                &["execution.router"],
+            ));
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].event.event_type = "risk.child.check".to_string();
+        child.transitions[0].event.source = Some("risk.guard".to_string());
+        child.transitions[0].guard = None;
+        child.transitions[0].action = Some(MachineActionSpec {
+            emits: vec!["risk.child.emit.denied".to_string()],
+            memory_writes: Vec::new(),
+            diagnostics: vec!["bundle_child_unauthorized_emit_probe".to_string()],
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        let errors = bundle.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("machine `risk.guard.child`")
+                && message.contains("transition `risk.guard.child.transition`")
+                && message.contains("cannot emit event `risk.child.emit.denied`")
+        }));
+    }
+
+    #[test]
     fn static_contract_bundle_accepts_child_guard_descriptor_full_static_surface() {
         let mut bundle = sample_static_contract_bundle();
         let graph = bundle.machine_graphs.first_mut().unwrap();
