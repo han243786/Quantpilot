@@ -11105,3 +11105,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_duplicate_inputs` covers graph-level child duplicate read and parameter-path rejection. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child duplicate input validation test and this record if duplicate-input coverage moves into a shared validation suite. |
+
+### ADV-SM-PROD-003DE: Guard Builder graph child readonly runtime fact validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving single-graph validation rejects child-machine Guard Builder reads of undeclared readonly runtime facts before workspace or runtime consumption. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with a child-machine Guard Builder descriptor that reads undeclared readonly runtime fact `provider.secret`, asserting graph validation preserves child machine and structured guard context in the error. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child readonly runtime fact validation gate is static validation only, no child guard is executed, no runtime fact is read, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_unknown_readonly_runtime_fact` covers graph-level child readonly runtime fact rejection. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child readonly runtime fact validation test and this record if runtime fact coverage moves into a shared validation suite. |
