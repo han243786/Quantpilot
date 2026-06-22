@@ -10742,3 +10742,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers combined Guard Builder surface aggregation across two bundled graphs. |
 | capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the combined surface bundle test and this record if multi-surface descriptor coverage moves into a dedicated workspace aggregation suite. |
+
+### ADV-SM-PROD-003BX: Guard Builder bundle fail-closed blocker projection
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving bundle-level Guard Builder projections expose one stable fail-closed blocker identity across descriptor readiness, condition evaluation, and policy execution surfaces. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers a two-graph static contract bundle where one structured guard carries a condition and fail-closed policy while another remains read-only. The test asserts descriptor readiness, condition projection, and policy projection all reuse `MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE` and `MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the blocker projection guard is test-only metadata validation, no condition or policy is executed, no fallback runs, no runtime read is performed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle fail-closed blocker projection consistency across descriptor, condition, and policy surfaces. |
+| capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the fail-closed blocker bundle test and this record if blocker projection coverage moves into a dedicated compatibility suite. |

@@ -10776,3 +10776,8 @@ Productization supplement: ADV-SM-PROD-003BW Guard Builder bundle combined surfa
 - `qrpc_core_ir/src/v4.rs` - covers two-graph bundle guard summaries with one combined read/parameter/condition/policy descriptor and one read-only descriptor.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle combined surface summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BW` as the bundle combined surface summary slice.
+
+Productization supplement: ADV-SM-PROD-003BX Guard Builder bundle fail-closed blocker projection.
+- `qrpc_core_ir/src/v4.rs` - covers two-graph bundle guard projections where descriptor readiness, condition evaluation, and policy execution all expose the shared disabled-fail-closed blocker code and reason.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle fail-closed blocker projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BX` as the bundle fail-closed blocker projection slice.
