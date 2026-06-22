@@ -10555,3 +10555,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for a structured guard descriptor id projected through graph context. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle guard id summary field, aggregation, related test assertion, and this record if guard id coverage reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003BG: Guard Builder bundle guarded machine summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by making bundle-level Guard Builder summaries expose how many graph-scoped machines carry structured guard descriptors across bundled graphs. |
+| implementation | `qrpc_core_ir/src/v4/static_contract_bundle.rs` now aggregates `guarded_machine_count` in `StaticContractBundleGuardDescriptorSummary` from graph-scoped guard descriptor projections. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: bundle guarded-machine summary fields are read-only metadata, no guard is executed, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for a graph-scoped guarded machine. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle guarded-machine summary field, aggregation, related test assertion, and this record if guarded-machine coverage reporting moves into a dedicated workspace query contract. |
