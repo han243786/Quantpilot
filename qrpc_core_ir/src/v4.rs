@@ -911,6 +911,7 @@ mod tests {
         assert_eq!(summary.guarded_machine_count, 1);
         assert_eq!(summary.guarded_transition_count, 1);
         assert_eq!(summary.guarded_event_type_count, 1);
+        assert_eq!(summary.guarded_event_source_count, 1);
         assert_eq!(summary.observation_guard_descriptor_count, 0);
         assert_eq!(summary.decision_guard_descriptor_count, 1);
         assert_eq!(summary.execution_guard_descriptor_count, 0);
