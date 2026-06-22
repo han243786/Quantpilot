@@ -11719,3 +11719,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003BJ)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle guarded event source summary.
 `guarded_event_source_count`; static contract bundles can aggregate how many graph-scoped event sources feed structured guard descriptors across bundled graphs while Event Catalog editing, guard execution, topology mutation, and active strategy writes remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003BK)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle machine template summary.
+`observation_guard_descriptor_count` / `decision_guard_descriptor_count` / `execution_guard_descriptor_count`; static contract bundles can aggregate which machine template classes carry structured guard descriptors across bundled graphs while guard execution, topology mutation, and active strategy writes remain disabled.

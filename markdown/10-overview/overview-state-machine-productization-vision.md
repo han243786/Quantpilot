@@ -10599,3 +10599,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for a graph-scoped guarded event source. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle guarded-event-source summary field, aggregation, related test assertion, and this record if guarded-event-source coverage reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003BK: Guard Builder bundle machine template summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by making bundle-level Guard Builder summaries expose which machine template classes carry structured guard descriptors across bundled graphs. |
+| implementation | `qrpc_core_ir/src/v4/static_contract_bundle.rs` now aggregates `observation_guard_descriptor_count`, `decision_guard_descriptor_count`, and `execution_guard_descriptor_count` in `StaticContractBundleGuardDescriptorSummary` from graph-scoped guard descriptor projections. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: bundle machine-template summary fields are read-only metadata, no guard is executed, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for a decision-machine structured guard descriptor. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle machine-template summary fields, aggregation, related test assertions, and this record if machine-template coverage reporting moves into a dedicated workspace query contract. |

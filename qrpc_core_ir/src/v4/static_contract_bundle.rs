@@ -7,9 +7,9 @@ mod static_validation;
 use super::{
     ComplexityBudgetContract, DeveloperLearningPipelineContract,
     MachineGraphGuardDescriptorProjection, MachineGuardExecutionReadinessState,
-    PluginGovernanceContract, PluginManifestSpec, QsStateMachineProfile, QsTypeSystemContract,
-    ReproducibilityContract, RuntimeModeContract, V4MachineGraphContract, V4VersionManifest,
-    VenueCapabilityMatrix, V4_STATIC_CONTRACT_BUNDLE_VERSION,
+    MachineTemplateKind, PluginGovernanceContract, PluginManifestSpec, QsStateMachineProfile,
+    QsTypeSystemContract, ReproducibilityContract, RuntimeModeContract, V4MachineGraphContract,
+    V4VersionManifest, VenueCapabilityMatrix, V4_STATIC_CONTRACT_BUNDLE_VERSION,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -56,6 +56,9 @@ pub struct StaticContractBundleGuardDescriptorSummary {
     pub guarded_transition_count: usize,
     pub guarded_event_type_count: usize,
     pub guarded_event_source_count: usize,
+    pub observation_guard_descriptor_count: usize,
+    pub decision_guard_descriptor_count: usize,
+    pub execution_guard_descriptor_count: usize,
     pub read_guard_descriptor_count: usize,
     pub read_count: usize,
     pub event_payload_read_count: usize,
@@ -173,6 +176,11 @@ impl V4StaticContractBundle {
             ));
             if let Some(event_source) = &projection.guard.guard.event_source {
                 guarded_event_sources.insert((projection.graph_id.clone(), event_source.clone()));
+            }
+            match &projection.guard.machine_template {
+                MachineTemplateKind::Observation => summary.observation_guard_descriptor_count += 1,
+                MachineTemplateKind::Decision => summary.decision_guard_descriptor_count += 1,
+                MachineTemplateKind::Execution => summary.execution_guard_descriptor_count += 1,
             }
             summary.read_guard_descriptor_count += usize::from(readiness.read_count > 0);
             summary.read_count += readiness.read_count;

@@ -10709,3 +10709,9 @@ Productization supplement: ADV-SM-PROD-003BJ Guard Builder bundle guarded event 
 - `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for a graph-scoped guarded event source.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle guarded event source summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BJ` as the bundle guarded event source summary slice.
+
+Productization supplement: ADV-SM-PROD-003BK Guard Builder bundle machine template summary.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates machine template class counts across bundle guard descriptor projections.
+- `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for a decision-machine structured guard descriptor.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle machine template summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BK` as the bundle machine template summary slice.
