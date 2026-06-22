@@ -11313,3 +11313,8 @@ Productization supplement: ADV-SM-PROD-003FZ State Machine bundle top-level guar
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guard policies that declare no timing or fallback field.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard policy declaration validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FZ` as the bundle top-level guard policy declaration validation slice.
+
+Productization supplement: ADV-SM-PROD-003GA State Machine bundle top-level guard empty surface rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards that declare no reads, parameter paths, conditions, or policy.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard empty surface rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GA` as the bundle top-level guard empty surface rejection slice.

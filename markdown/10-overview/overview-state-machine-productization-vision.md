@@ -11919,3 +11919,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_empty_policy` covers bundle-level rejection for top-level structured guards whose policy object declares no timing or fallback field. |
 | capability boundary | This does not add empty policy tolerance, guard execution, condition evaluation, policy execution, timeout/cooldown scheduling, fallback execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level top-level guard policy declaration validation test and this record if policy declaration coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003GA: State Machine bundle top-level guard empty surface rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying Guard Builder minimum declaration validation through static bundle validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with an `intent.trend` structured guard that declares no reads, parameter paths, conditions, or policy, asserting bundle validation preserves the guard id and minimum declaration diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle top-level guard empty surface rejection gate is static validation only, no guard is executed, no condition is evaluated, no policy is executed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_without_reads` covers bundle-level rejection for top-level structured guards with no read, parameter, condition, or policy declaration surface. |
+| capability boundary | This does not add empty guard tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level top-level guard empty surface rejection test and this record if minimum declaration coverage moves into a shared validation fixture suite. |
