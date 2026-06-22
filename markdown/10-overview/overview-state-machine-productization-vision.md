@@ -10841,3 +10841,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers child-machine Guard Builder fail-closed blocker projection consistency and summary counts. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle child fail-closed blocker projection test and this record if nested blocker projection coverage moves into a dedicated workspace projection suite. |
+
+### ADV-SM-PROD-003CG: Guard Builder bundle child condition operand validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving static contract bundle validation surfaces child-machine structured guard condition operand violations before workspace or runtime consumption. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with a child-machine condition that references an undeclared proposal parameter path, asserting the bundle-level error retains child machine id, guard id, condition id, and missing parameter path. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child condition operand gate is static validation only, no condition is evaluated, no child guard is executed, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers static bundle rejection for child-machine Guard Builder condition operand violations. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle child condition operand validation test and this record if nested condition validation coverage moves into a dedicated validation suite. |

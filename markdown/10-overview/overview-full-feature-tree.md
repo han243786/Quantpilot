@@ -10821,3 +10821,8 @@ Productization supplement: ADV-SM-PROD-003CF Guard Builder bundle child fail-clo
 - `qrpc_core_ir/src/v4.rs` - covers fail-closed blocker consistency across child-machine structured guard readiness, condition, and policy projection surfaces.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child fail-closed blocker projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CF` as the bundle child fail-closed blocker projection slice.
+
+Productization supplement: ADV-SM-PROD-003CG Guard Builder bundle child condition operand validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers static bundle rejection for child-machine structured guard condition operands that reference undeclared proposal parameter paths.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child condition operand validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CG` as the bundle child condition operand validation gate slice.
