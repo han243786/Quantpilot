@@ -10665,3 +10665,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle aggregation of `event_source_declared_count`, `event_source_missing_count`, and `guarded_event_source_count` for mixed graph contexts. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the mixed event-source context bundle test and this record if event-source context coverage moves into a dedicated workspace aggregation suite. |
+
+### ADV-SM-PROD-003BQ: Guard Builder bundle duplicate guard id summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by clarifying that bundle-level Guard Builder `guard_id_count` is a unique-id count across the bundle while graph-scoped machine, transition, event type, and event source counts still retain graph context. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers a two-graph static contract bundle where both structured guards reuse the same `guard_id`, asserting two descriptors but one unique guard id. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the duplicate guard-id summary guard is test-only metadata validation, no guard is executed, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers duplicate guard-id bundle aggregation across two graphs. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the duplicate guard-id bundle test and this record if guard id uniqueness reporting moves into a graph-scoped identity contract. |
