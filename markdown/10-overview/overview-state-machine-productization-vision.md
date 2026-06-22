@@ -10984,3 +10984,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_summarizes_child_guard_descriptor_missing_event_source_context` covers graph-level child missing event source projection and summary counts. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child missing event-source summary test and this record if child event source projection coverage moves into a dedicated workspace projection suite. |
+
+### ADV-SM-PROD-003CT: Guard Builder graph child condition summary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, `2.7`, and `2.9`; continue `SM-PROD-003` by giving single-graph workspace views child-machine condition operand and fail-closed readiness evidence that matches the bundle-level child condition surface. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::guard_descriptor_projections()` and `guard_descriptor_summary()` for a child-machine Guard Builder descriptor with a machine-memory condition and proposal-only threshold parameter, asserting condition operand projections, threshold counts, and disabled-fail-closed condition evaluation counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child condition summary gate is static projection and summary metadata only, no condition is evaluated at runtime, no child guard is executed, no Event Catalog or Memory Schema is edited, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_summarizes_child_guard_descriptor_condition_operands` covers graph-level child condition projection and summary counts. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child condition summary test and this record if child condition projection coverage moves into a dedicated workspace projection suite. |

@@ -3401,6 +3401,116 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_summarizes_child_guard_descriptor_condition_operands() {
+        let mut graph = sample_machine_graph();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.check",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &["risk.guard"],
+                &["risk.guard.child"],
+            ));
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].event.event_type = "risk.child.check".to_string();
+        child.transitions[0].event.source = Some("risk.guard".to_string());
+        child.transitions[0].action = None;
+        child.transitions[0].guard = None;
+        child.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "child_graph_condition_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::MachineMemory,
+                path: "last_signal_at".to_string(),
+            }],
+            parameter_paths: vec!["guard.threshold".to_string()],
+            conditions: vec![MachineGuardConditionSpec {
+                condition_id: "child_graph_memory_threshold_check".to_string(),
+                left_read: MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+                comparator: MachineGuardConditionComparator::LessThanOrEqual,
+                right_parameter_path: "guard.threshold".to_string(),
+            }],
+            policy: None,
+            explanation: Some("child graph condition operand summary surface".to_string()),
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        assert_eq!(graph.validate_static_contract(), Ok(()));
+        let projections = graph.guard_descriptor_projections();
+        assert_eq!(projections.len(), 1);
+        let projection = &projections[0];
+        assert_eq!(projection.machine_id, "risk.guard.child");
+        assert_eq!(
+            projection.guard.readiness.guard_id,
+            "child_graph_condition_guard"
+        );
+        assert_eq!(projection.guard.condition_projections.len(), 1);
+        let condition = &projection.guard.condition_projections[0];
+        assert_eq!(condition.condition_id, "child_graph_memory_threshold_check");
+        assert_eq!(
+            condition
+                .left_read_projection
+                .as_ref()
+                .unwrap()
+                .binding_scope,
+            MachineGuardReadBindingScope::MachineMemoryField
+        );
+        assert_eq!(
+            condition
+                .right_parameter_path_projection
+                .as_ref()
+                .unwrap()
+                .kind,
+            Some(MachineGuardParameterPathKind::Threshold)
+        );
+        assert!(!condition.evaluation_enabled);
+        assert_eq!(
+            condition.evaluation_blocker_code,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+        );
+
+        let summary = graph.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 1);
+        assert_eq!(summary.guarded_machine_count, 1);
+        assert_eq!(summary.decision_guard_descriptor_count, 1);
+        assert_eq!(summary.read_guard_descriptor_count, 1);
+        assert_eq!(summary.read_count, 1);
+        assert_eq!(summary.machine_memory_read_count, 1);
+        assert_eq!(summary.parameterized_guard_descriptor_count, 1);
+        assert_eq!(summary.parameter_path_count, 1);
+        assert_eq!(summary.threshold_parameter_path_count, 1);
+        assert_eq!(summary.parameter_path_proposal_only_count, 1);
+        assert_eq!(summary.conditional_guard_descriptor_count, 1);
+        assert_eq!(summary.condition_count, 1);
+        assert_eq!(summary.less_than_or_equal_condition_count, 1);
+        assert_eq!(summary.condition_machine_memory_read_count, 1);
+        assert_eq!(summary.condition_threshold_parameter_path_count, 1);
+        assert_eq!(summary.condition_evaluation_enabled_count, 0);
+        assert_eq!(
+            summary.condition_evaluation_disabled_fail_closed_guard_descriptor_count,
+            1
+        );
+        assert_eq!(summary.condition_evaluation_disabled_fail_closed_count, 1);
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 1);
+    }
+
+    #[test]
     fn machine_graph_rejects_guard_descriptor_unknown_event_payload_read() {
         let mut graph = sample_machine_graph();
         let intent = graph

@@ -10888,3 +10888,8 @@ Productization supplement: ADV-SM-PROD-003CS Guard Builder graph child missing e
 - `qrpc_core_ir/src/v4.rs` - covers graph-level projection and summary counts for child-machine structured guards whose transition event source is missing.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child missing event source summary gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CS` as the graph child missing event source summary gate slice.
+
+Productization supplement: ADV-SM-PROD-003CT Guard Builder graph child condition summary gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level projection and summary counts for child-machine structured guards with condition operands.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child condition summary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CT` as the graph child condition summary gate slice.
