@@ -11123,3 +11123,8 @@ Productization supplement: ADV-SM-PROD-003EN State Machine bundle child transiti
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine transitions that start from a state missing from the child machine contract.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child transition source-state validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EN` as the bundle child transition source-state validation slice.
+
+Productization supplement: ADV-SM-PROD-003EO State Machine graph child template validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child machines whose template diverges from the parent machine template.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph child template validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EO` as the graph child template validation slice.
