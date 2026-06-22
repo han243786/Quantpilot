@@ -11765,3 +11765,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_accepts_guard_descriptor_event_payload_read_from_catalog` covers bundle-level acceptance for top-level structured guards that read declared event payload fields. |
 | capability boundary | This does not add guard execution, condition evaluation, policy execution, runtime payload reads, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level top-level guard payload catalog acceptance test and this record if top-level guard payload authority coverage moves into a shared projection fixture suite. |
+
+### ADV-SM-PROD-003FM: State Machine bundle top-level guard payload catalog rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by pairing the bundle top-level payload acceptance gate with a fail-closed rejection for structured guards that read undeclared Event Catalog payload fields. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with an `intent.trend` structured guard that reads `missing_payload` from the cataloged `bar_closed` event, asserting the bundle static contract preserves the guard id, missing payload field, and event type diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle top-level guard payload catalog rejection gate is static validation only, no guard is executed, no event is consumed at runtime, no payload is read at runtime, no topology is mutated, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_unknown_event_payload_read` covers bundle-level rejection for top-level structured guards that read undeclared event payload fields. |
+| capability boundary | This does not add undeclared payload tolerance, guard execution, condition evaluation, policy execution, runtime payload reads, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level top-level guard unknown-payload rejection test and this record if top-level guard payload authority coverage moves into a shared Event Catalog validation suite. |
