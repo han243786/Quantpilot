@@ -11638,3 +11638,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003AI)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder graph condition operand summary.
 `condition_event_payload_read_count` / `condition_threshold_parameter_path_count` graph summary fields; machine graphs can aggregate structured guard condition operand counts for single-graph workspace views while runtime reads and condition evaluation remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003AJ)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder graph policy declaration summary.
+`timeout_declared_count` / `cooldown_declared_count` / `fallback_declared_count` graph summary fields; machine graphs can aggregate structured guard policy declarations for single-graph workspace views while timers, cooldowns, and fallback execution remain disabled.

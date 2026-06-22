@@ -106,6 +106,9 @@ pub struct MachineGraphGuardDescriptorSummary {
     pub condition_evaluation_disabled_fail_closed_count: usize,
     pub policy_declared_count: usize,
     pub timing_policy_declared_count: usize,
+    pub timeout_declared_count: usize,
+    pub cooldown_declared_count: usize,
+    pub fallback_declared_count: usize,
     pub fallback_fail_closed_declared_count: usize,
     pub policy_timing_execution_enabled_count: usize,
     pub policy_timing_execution_disabled_fail_closed_count: usize,
@@ -199,6 +202,9 @@ impl V4MachineGraphContract {
             }
             summary.policy_declared_count += usize::from(readiness.policy_declared);
             summary.timing_policy_declared_count += usize::from(readiness.timing_policy_declared);
+            summary.timeout_declared_count += usize::from(readiness.timeout_declared);
+            summary.cooldown_declared_count += usize::from(readiness.cooldown_declared);
+            summary.fallback_declared_count += usize::from(readiness.fallback_declared);
             summary.fallback_fail_closed_declared_count +=
                 usize::from(readiness.fallback_fail_closed_declared);
             if let Some(policy) = &projection.guard.policy_projection {

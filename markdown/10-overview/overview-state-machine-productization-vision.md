@@ -10302,3 +10302,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for an event-payload left read and threshold right parameter path while the other operand counts remain zero for the focused fixture. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph condition operand summary fields, aggregation, related test assertions, and this record if graph-level operand reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003AJ: Guard Builder graph policy declaration summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making graph-level Guard Builder summaries distinguish timeout, cooldown, and fallback policy declarations for single-graph workspace views. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now aggregates `timeout_declared_count`, `cooldown_declared_count`, and `fallback_declared_count` in `MachineGraphGuardDescriptorSummary` from descriptor readiness, matching the existing bundle policy declaration summary fields at the machine-graph boundary. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: graph policy declaration summary fields are read-only metadata, no timer is scheduled, no cooldown is enforced, no fallback is executed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for a timeout declaration and fail-closed fallback declaration while cooldown declaration remains absent in the focused fixture. |
+| capability boundary | This does not enable guard execution, timer scheduling, cooldown enforcement, fallback execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph policy declaration summary fields, aggregation, related test assertions, and this record if graph-level policy reporting moves into a dedicated workspace query contract. |

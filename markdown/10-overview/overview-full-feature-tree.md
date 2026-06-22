@@ -10547,3 +10547,9 @@ Productization supplement: ADV-SM-PROD-003AI Guard Builder graph condition opera
 - `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for an event-payload left read and threshold right parameter while condition evaluation remains disabled.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph condition operand summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AI` as the graph condition operand summary slice.
+
+Productization supplement: ADV-SM-PROD-003AJ Guard Builder graph policy declaration summary.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - aggregates timeout, cooldown, and fallback declaration counts in graph guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for timeout and fail-closed fallback declarations while cooldown declaration remains absent in the focused fixture.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph policy declaration summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AJ` as the graph policy declaration summary slice.
