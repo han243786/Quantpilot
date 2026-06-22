@@ -10903,3 +10903,8 @@ Productization supplement: ADV-SM-PROD-003CV Guard Builder graph child fail-clos
 - `qrpc_core_ir/src/v4.rs` - covers graph-level projection and summary counts for child-machine structured guard fail-closed blockers.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child fail-closed blocker projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CV` as the graph child fail-closed blocker projection slice.
+
+Productization supplement: ADV-SM-PROD-003CW Guard Builder graph child parameter path projection gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level projection and summary counts for child-machine structured guard parameter paths.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child parameter path projection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CW` as the graph child parameter path projection gate slice.

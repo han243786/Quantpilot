@@ -11017,3 +11017,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_projects_child_guard_descriptor_fail_closed_blockers` covers graph-level child fail-closed blocker projection and summary counts. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child fail-closed blocker test and this record if child blocker projection coverage moves into a dedicated workspace projection suite. |
+
+### ADV-SM-PROD-003CW: Guard Builder graph child parameter path projection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, `2.7`, and `2.9`; continue `SM-PROD-003` by making single-graph workspace views expose child-machine parameter path kind, proposal-only, and active-strategy-write-disabled evidence before any nested guard execution is enabled. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::guard_descriptor_projections()` and `guard_descriptor_summary()` for a child-machine Guard Builder descriptor with timeout, cooldown, and risk-limit parameter paths, asserting parameter kind projections, proposal-only flags, active-strategy-write-disabled flags, and summary counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child parameter path projection gate is static projection and summary metadata only, no child guard is executed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_projects_child_guard_descriptor_parameter_path_context` covers graph-level child parameter path projection and summary counts. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child parameter path projection test and this record if child parameter path coverage moves into a dedicated workspace projection suite. |

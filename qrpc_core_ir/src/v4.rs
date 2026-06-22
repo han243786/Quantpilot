@@ -3735,6 +3735,106 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_projects_child_guard_descriptor_parameter_path_context() {
+        let mut graph = sample_machine_graph();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.check",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &["risk.guard"],
+                &["risk.guard.child"],
+            ));
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].event.event_type = "risk.child.check".to_string();
+        child.transitions[0].event.source = Some("risk.guard".to_string());
+        child.transitions[0].action = None;
+        child.transitions[0].guard = None;
+        child.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "child_graph_parameter_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::MachineMemory,
+                path: "last_signal_at".to_string(),
+            }],
+            parameter_paths: vec![
+                "timeout.ms".to_string(),
+                "cooldown.ms".to_string(),
+                "risk.max_position".to_string(),
+            ],
+            conditions: Vec::new(),
+            policy: None,
+            explanation: Some("child graph parameter path projection surface".to_string()),
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        assert_eq!(graph.validate_static_contract(), Ok(()));
+        let projections = graph.guard_descriptor_projections();
+        assert_eq!(projections.len(), 1);
+        let projection = &projections[0];
+        assert_eq!(projection.machine_id, "risk.guard.child");
+        assert_eq!(
+            projection.guard.readiness.guard_id,
+            "child_graph_parameter_guard"
+        );
+        let parameter_paths = &projection.guard.parameter_path_projections;
+        assert_eq!(parameter_paths.len(), 3);
+        assert_eq!(
+            parameter_paths[0].kind,
+            Some(MachineGuardParameterPathKind::Timeout)
+        );
+        assert_eq!(
+            parameter_paths[1].kind,
+            Some(MachineGuardParameterPathKind::Cooldown)
+        );
+        assert_eq!(
+            parameter_paths[2].kind,
+            Some(MachineGuardParameterPathKind::RiskLimit)
+        );
+        assert!(parameter_paths
+            .iter()
+            .all(|path| path.proposal_only && !path.active_strategy_write_enabled));
+
+        let summary = graph.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 1);
+        assert_eq!(summary.guarded_machine_count, 1);
+        assert_eq!(summary.decision_guard_descriptor_count, 1);
+        assert_eq!(summary.parameterized_guard_descriptor_count, 1);
+        assert_eq!(summary.parameter_path_count, 3);
+        assert_eq!(summary.timeout_parameter_path_count, 1);
+        assert_eq!(summary.cooldown_parameter_path_count, 1);
+        assert_eq!(summary.risk_limit_parameter_path_count, 1);
+        assert_eq!(summary.parameter_path_proposal_only_count, 3);
+        assert_eq!(summary.proposal_only_guard_descriptor_count, 1);
+        assert_eq!(
+            summary.parameter_path_active_strategy_write_enabled_count,
+            0
+        );
+        assert_eq!(
+            summary.parameter_path_active_strategy_write_disabled_count,
+            3
+        );
+        assert_eq!(
+            summary.active_strategy_write_disabled_guard_descriptor_count,
+            1
+        );
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 1);
+    }
+
+    #[test]
     fn machine_graph_rejects_guard_descriptor_unknown_event_payload_read() {
         let mut graph = sample_machine_graph();
         let intent = graph
