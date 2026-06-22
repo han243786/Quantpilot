@@ -11116,3 +11116,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_unknown_readonly_runtime_fact` covers graph-level child readonly runtime fact rejection. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child readonly runtime fact validation test and this record if runtime fact coverage moves into a shared validation suite. |
+
+### ADV-SM-PROD-003DF: Guard Builder graph child machine memory validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving single-graph validation rejects child-machine Guard Builder reads of undeclared machine memory fields before workspace or runtime consumption. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with a child-machine Guard Builder descriptor that reads undeclared Machine Memory field `unknown_memory`, asserting graph validation preserves child machine and structured guard context in the error. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child machine memory validation gate is static validation only, no child guard is executed, no machine memory is read at runtime, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_unknown_machine_memory_read` covers graph-level child machine memory rejection. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child machine memory validation test and this record if machine-memory coverage moves into a shared validation suite. |

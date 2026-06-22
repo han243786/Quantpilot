@@ -10948,3 +10948,8 @@ Productization supplement: ADV-SM-PROD-003DE Guard Builder graph child readonly 
 - `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine undeclared readonly runtime fact rejection for structured guards.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child readonly runtime fact validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DE` as the graph child readonly runtime fact validation gate slice.
+
+Productization supplement: ADV-SM-PROD-003DF Guard Builder graph child machine memory validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine undeclared Machine Memory read rejection for structured guards.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child machine memory validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DF` as the graph child machine memory validation gate slice.
