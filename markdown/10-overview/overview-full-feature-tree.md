@@ -10826,3 +10826,8 @@ Productization supplement: ADV-SM-PROD-003CG Guard Builder bundle child conditio
 - `qrpc_core_ir/src/v4.rs` - covers static bundle rejection for child-machine structured guard condition operands that reference undeclared proposal parameter paths.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child condition operand validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CG` as the bundle child condition operand validation gate slice.
+
+Productization supplement: ADV-SM-PROD-003CH Guard Builder bundle child policy validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers static bundle rejection for child-machine structured guard policies with invalid timeout and cooldown values.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child policy validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CH` as the bundle child policy validation gate slice.
