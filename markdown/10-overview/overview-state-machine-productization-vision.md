@@ -11886,3 +11886,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_condition_empty_left_read_path` covers bundle-level rejection for top-level structured guards whose condition left-read operands declare an empty path. |
 | capability boundary | This does not add empty condition read tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level top-level guard condition left-read hygiene test and this record if condition read path coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003FX: State Machine bundle top-level guard condition right-parameter hygiene gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying Guard Builder condition right-parameter hygiene through static bundle validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with an `intent.trend` structured guard whose condition declares an empty `right_parameter_path`, asserting bundle validation preserves the guard id, condition id, and empty-right-parameter diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle top-level guard condition right-parameter hygiene gate is static validation only, no guard is executed, no condition is evaluated, no parameter is applied, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_condition_empty_right_parameter_path` covers bundle-level rejection for top-level structured guards whose condition right-parameter operands declare an empty path. |
+| capability boundary | This does not add empty condition parameter tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level top-level guard condition right-parameter hygiene test and this record if condition parameter path coverage moves into a shared validation fixture suite. |

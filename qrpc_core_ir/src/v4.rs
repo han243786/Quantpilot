@@ -6934,6 +6934,43 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_rejects_guard_descriptor_condition_empty_right_parameter_path() {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        let intent = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "intent.trend")
+            .unwrap();
+        intent.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "bundle_condition_empty_right_parameter_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::MachineMemory,
+                path: "last_signal_at".to_string(),
+            }],
+            parameter_paths: vec!["guard.threshold".to_string()],
+            conditions: vec![MachineGuardConditionSpec {
+                condition_id: "empty_condition_right_parameter".to_string(),
+                left_read: MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+                comparator: MachineGuardConditionComparator::LessThan,
+                right_parameter_path: "".to_string(),
+            }],
+            policy: None,
+            explanation: None,
+        });
+
+        let errors = bundle.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("structured guard `bundle_condition_empty_right_parameter_guard`")
+                && message.contains("condition `empty_condition_right_parameter`")
+                && message.contains("has an empty right parameter path")
+        }));
+    }
+
+    #[test]
     fn static_contract_bundle_rejects_child_guard_descriptor_unknown_event_payload_read() {
         let mut bundle = sample_static_contract_bundle();
         let graph = bundle.machine_graphs.first_mut().unwrap();
