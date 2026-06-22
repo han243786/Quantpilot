@@ -11128,3 +11128,8 @@ Productization supplement: ADV-SM-PROD-003EO State Machine graph child template 
 - `qrpc_core_ir/src/v4.rs` - covers graph-level child machines whose template diverges from the parent machine template.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine graph child template validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EO` as the graph child template validation slice.
+
+Productization supplement: ADV-SM-PROD-003EP State Machine bundle child template validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child machines whose template diverges from the parent machine template.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child template validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EP` as the bundle child template validation slice.
