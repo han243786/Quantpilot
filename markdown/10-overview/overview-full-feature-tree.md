@@ -11013,3 +11013,8 @@ Productization supplement: ADV-SM-PROD-003DR Guard Builder bundle child duplicat
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guard descriptors with duplicated condition ids.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child duplicate condition validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DR` as the bundle child duplicate condition validation gate slice.
+
+Productization supplement: ADV-SM-PROD-003DS Guard Builder graph child condition read validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine structured guard conditions whose left-read operands are not declared in the guard read set.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child condition read validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DS` as the graph child condition read validation gate slice.
