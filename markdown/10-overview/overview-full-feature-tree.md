@@ -11028,3 +11028,8 @@ Productization supplement: ADV-SM-PROD-003DU Guard Builder graph child condition
 - `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine structured guard conditions whose left-read operands declare an empty path.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child condition left-read hygiene gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DU` as the graph child condition left-read hygiene slice.
+
+Productization supplement: ADV-SM-PROD-003DV Guard Builder bundle child condition left-read hygiene gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guard conditions whose left-read operands declare an empty path.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child condition left-read hygiene gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DV` as the bundle child condition left-read hygiene slice.
