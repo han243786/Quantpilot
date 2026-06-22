@@ -10846,3 +10846,8 @@ Productization supplement: ADV-SM-PROD-003CK Guard Builder bundle child machine 
 - `qrpc_core_ir/src/v4.rs` - covers static bundle rejection for child-machine structured guards that read undeclared machine-memory fields.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child machine memory validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CK` as the bundle child machine memory validation gate slice.
+
+Productization supplement: ADV-SM-PROD-003CL Guard Builder bundle child descriptor hygiene validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers static bundle rejection for child-machine structured guards missing guard identity or carrying empty read and parameter paths.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child descriptor hygiene validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CL` as the bundle child descriptor hygiene validation gate slice.
