@@ -11897,3 +11897,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_condition_empty_right_parameter_path` covers bundle-level rejection for top-level structured guards whose condition right-parameter operands declare an empty path. |
 | capability boundary | This does not add empty condition parameter tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level top-level guard condition right-parameter hygiene test and this record if condition parameter path coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003FY: State Machine bundle top-level guard policy timing validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying Guard Builder policy timing validation through static bundle validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with an `intent.trend` structured guard whose policy declares zero `timeout_ms` and `cooldown_ms`, asserting bundle validation preserves the guard id and both timing diagnostics. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle top-level guard policy timing validation gate is static validation only, no guard is executed, no policy is executed, no timeout/cooldown is scheduled, no fallback is executed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_invalid_policy` covers bundle-level rejection for top-level structured guards whose policy timing values are non-positive. |
+| capability boundary | This does not add invalid policy tolerance, guard execution, condition evaluation, policy execution, timeout/cooldown scheduling, fallback execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level top-level guard policy timing validation test and this record if policy timing coverage moves into a shared validation fixture suite. |

@@ -11303,3 +11303,8 @@ Productization supplement: ADV-SM-PROD-003FX State Machine bundle top-level guar
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards whose condition right-parameter operands declare an empty path.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard condition right-parameter hygiene gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FX` as the bundle top-level guard condition right-parameter hygiene slice.
+
+Productization supplement: ADV-SM-PROD-003FY State Machine bundle top-level guard policy timing validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guard policies whose timeout/cooldown timing values are non-positive.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard policy timing validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FY` as the bundle top-level guard policy timing validation slice.
