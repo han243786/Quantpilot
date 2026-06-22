@@ -2810,6 +2810,115 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_projects_child_guard_descriptor_fail_closed_blockers() {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].guard = None;
+        child.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "risk_child_blocked_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::MachineMemory,
+                path: "last_signal_at".to_string(),
+            }],
+            parameter_paths: vec!["timeout.ms".to_string()],
+            conditions: vec![MachineGuardConditionSpec {
+                condition_id: "child_timeout_memory_check".to_string(),
+                left_read: MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+                comparator: MachineGuardConditionComparator::GreaterThanOrEqual,
+                right_parameter_path: "timeout.ms".to_string(),
+            }],
+            policy: Some(MachineGuardPolicySpec {
+                timeout_ms: Some(500),
+                cooldown_ms: None,
+                fallback: Some(MachineGuardFallbackPolicy::FailClosed),
+            }),
+            explanation: Some("child fail-closed blocker surface".to_string()),
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        let projections = bundle.guard_descriptor_projections();
+        assert_eq!(projections.len(), 1);
+        let projection = &projections[0];
+        assert_eq!(projection.graph_id, "strategy.v4.sample");
+        assert_eq!(projection.guard.machine_id, "risk.guard.child");
+        assert_eq!(
+            projection.guard.guard.readiness.guard_id,
+            "risk_child_blocked_guard"
+        );
+        assert_eq!(
+            projection.guard.guard.readiness.execution_blocker_code,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+        );
+        assert_eq!(
+            projection.guard.guard.readiness.execution_blocker_reason,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON
+        );
+
+        let condition = &projection.guard.guard.condition_projections[0];
+        assert!(!condition.evaluation_enabled);
+        assert_eq!(
+            condition.evaluation_blocker_code,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+        );
+        assert_eq!(
+            condition.evaluation_blocker_reason,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON
+        );
+
+        let policy = projection.guard.guard.policy_projection.as_ref().unwrap();
+        assert!(!policy.timing_execution_enabled);
+        assert!(!policy.fallback_execution_enabled);
+        assert!(!policy.active_strategy_write_enabled);
+        assert_eq!(
+            policy.execution_blocker_code,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+        );
+        assert_eq!(
+            policy.execution_blocker_reason,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON
+        );
+
+        let summary = bundle.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 1);
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 1);
+        assert_eq!(summary.condition_evaluation_enabled_count, 0);
+        assert_eq!(summary.condition_evaluation_disabled_fail_closed_count, 1);
+        assert_eq!(
+            summary.condition_evaluation_disabled_fail_closed_guard_descriptor_count,
+            1
+        );
+        assert_eq!(summary.policy_timing_execution_enabled_count, 0);
+        assert_eq!(
+            summary.policy_timing_execution_disabled_fail_closed_count,
+            1
+        );
+        assert_eq!(summary.policy_fallback_execution_enabled_count, 0);
+        assert_eq!(
+            summary.policy_fallback_execution_disabled_fail_closed_count,
+            1
+        );
+        assert_eq!(
+            summary.policy_execution_disabled_fail_closed_guard_descriptor_count,
+            1
+        );
+    }
+
+    #[test]
     fn machine_contract_rejects_invalid_structured_guard_descriptor() {
         let mut machine = sample_machine();
         machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {

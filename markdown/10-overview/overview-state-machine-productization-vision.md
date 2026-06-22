@@ -10830,3 +10830,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers child-machine Guard Builder policy projection, fail-closed blocker reuse, and summary counts. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle child policy summary test and this record if nested policy summary coverage moves into a dedicated workspace projection suite. |
+
+### ADV-SM-PROD-003CF: Guard Builder bundle child fail-closed blocker projection
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving child-machine structured guard readiness, condition evaluation, and policy execution surfaces share the same fail-closed blocker identity in bundle projections. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::guard_descriptor_projections()` with a child-machine structured guard carrying a read, timeout parameter, condition, and fail-closed policy, asserting descriptor, condition, and policy blockers all reuse `MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE` and reason. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: child fail-closed blockers are projection metadata only, no condition or policy is evaluated, no child guard is executed, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers child-machine Guard Builder fail-closed blocker projection consistency and summary counts. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle child fail-closed blocker projection test and this record if nested blocker projection coverage moves into a dedicated workspace projection suite. |
