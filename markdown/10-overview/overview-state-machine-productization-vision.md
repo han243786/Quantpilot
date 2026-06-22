@@ -10885,3 +10885,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers static bundle rejection for child-machine Guard Builder readonly runtime fact catalog violations. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle child readonly runtime fact validation test and this record if nested runtime-fact validation coverage moves into a dedicated validation suite. |
+
+### ADV-SM-PROD-003CK: Guard Builder bundle child machine memory validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving static contract bundle validation surfaces child-machine structured guard machine-memory read violations before workspace or runtime consumption. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with a child-machine guard that reads an undeclared machine-memory field, asserting the bundle-level error retains child machine id, guard id, and undeclared memory field message. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child machine-memory gate is static validation only, no runtime memory is read, no child guard is executed, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers static bundle rejection for child-machine Guard Builder machine-memory read violations. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle child machine-memory validation test and this record if nested memory-read validation coverage moves into a dedicated validation suite. |
