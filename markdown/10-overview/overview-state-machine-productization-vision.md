@@ -10687,3 +10687,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers mixed machine-template bundle aggregation across two graphs. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the mixed machine-template bundle test and this record if template-class coverage moves into a dedicated workspace aggregation suite. |
+
+### ADV-SM-PROD-003BS: Guard Builder bundle mixed read source summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving bundle-level Guard Builder summaries distinguish event-payload, machine-memory, and readonly-runtime-fact reads across bundled graphs. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers a two-graph static contract bundle where one structured guard reads machine memory and a readonly runtime fact while the other reads event payload, asserting per-source read totals. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the mixed read-source summary guard is test-only metadata validation, no guard is executed, no runtime read is performed, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers mixed read-source bundle aggregation across two graphs. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the mixed read-source bundle test and this record if read-source coverage moves into a dedicated workspace aggregation suite. |

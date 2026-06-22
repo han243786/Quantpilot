@@ -11743,3 +11743,6 @@ Two-graph bundle guard descriptor summaries; static contract bundle tests now pr
 
 **Productization supplement (ADV-SM-PROD-003BR)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle mixed machine template summary.
 `observation_guard_descriptor_count` / `decision_guard_descriptor_count` / `execution_guard_descriptor_count`; static contract bundle tests now cover mixed template-class aggregation across bundled graphs while guard execution, topology mutation, and active strategy writes remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003BS)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle mixed read source summary.
+`event_payload_read_count` / `machine_memory_read_count` / `readonly_runtime_fact_read_count`; static contract bundle tests now cover mixed read-source aggregation across bundled graphs while runtime reads, guard execution, topology mutation, and active strategy writes remain disabled.

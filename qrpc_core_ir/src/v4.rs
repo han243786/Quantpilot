@@ -1787,6 +1787,80 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_summarizes_guard_descriptor_read_sources_across_graphs() {
+        fn attach_risk_guard_descriptor(
+            graph: &mut V4MachineGraphContract,
+            guard_id: &str,
+            reads: Vec<MachineGuardReadRef>,
+        ) {
+            let risk = graph
+                .machines
+                .iter_mut()
+                .find(|machine| machine.machine_id == "risk.guard")
+                .unwrap();
+            risk.transitions[0].guard = None;
+            risk.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+                guard_id: guard_id.to_string(),
+                reads,
+                parameter_paths: Vec::new(),
+                conditions: Vec::new(),
+                policy: None,
+                explanation: Some("bundle read source summary surface".to_string()),
+            });
+        }
+
+        let mut bundle = sample_static_contract_bundle();
+        bundle.machine_graphs[0].graph_id = "strategy.v4.alpha".to_string();
+        let mut second_graph = sample_machine_graph();
+        second_graph.graph_id = "strategy.v4.beta".to_string();
+        bundle.machine_graphs.push(second_graph);
+        attach_risk_guard_descriptor(
+            &mut bundle.machine_graphs[0],
+            "risk_guard_alpha",
+            vec![
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::ReadonlyRuntimeFact,
+                    path: "runtime.mode".to_string(),
+                },
+            ],
+        );
+        attach_risk_guard_descriptor(
+            &mut bundle.machine_graphs[1],
+            "risk_guard_beta",
+            vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::EventPayload,
+                path: "symbol".to_string(),
+            }],
+        );
+
+        let projections = bundle.guard_descriptor_projections();
+        assert_eq!(projections.len(), 2);
+        assert_eq!(projections[0].guard.guard.read_projections.len(), 2);
+        assert_eq!(projections[1].guard.guard.read_projections.len(), 1);
+
+        let summary = bundle.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 2);
+        assert_eq!(summary.guard_id_count, 2);
+        assert_eq!(summary.guarded_machine_count, 2);
+        assert_eq!(summary.guarded_transition_count, 2);
+        assert_eq!(summary.guarded_event_type_count, 2);
+        assert_eq!(summary.guarded_event_source_count, 2);
+        assert_eq!(summary.decision_guard_descriptor_count, 2);
+        assert_eq!(summary.read_guard_descriptor_count, 2);
+        assert_eq!(summary.read_count, 3);
+        assert_eq!(summary.event_payload_read_count, 1);
+        assert_eq!(summary.machine_memory_read_count, 1);
+        assert_eq!(summary.readonly_runtime_fact_read_count, 1);
+        assert_eq!(summary.parameterized_guard_descriptor_count, 0);
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 2);
+    }
+
+    #[test]
     fn machine_contract_rejects_invalid_structured_guard_descriptor() {
         let mut machine = sample_machine();
         machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
