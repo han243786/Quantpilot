@@ -10655,3 +10655,9 @@ Productization supplement: ADV-SM-PROD-003BA Guard Builder bundle conditional de
 - `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for one conditional guard descriptor.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle conditional descriptor summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BA` as the bundle conditional descriptor summary slice.
+
+Productization supplement: ADV-SM-PROD-003BB Guard Builder bundle condition fail-closed descriptor summary.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates bundle guard descriptor counts for descriptors containing disabled-fail-closed conditions.
+- `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for one guard descriptor with a disabled-fail-closed condition.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle condition fail-closed descriptor summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BB` as the bundle condition fail-closed descriptor summary slice.

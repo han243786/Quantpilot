@@ -1107,6 +1107,10 @@ mod tests {
         assert_eq!(summary.condition_risk_limit_parameter_path_count, 1);
         assert_eq!(summary.condition_cooldown_parameter_path_count, 0);
         assert_eq!(summary.condition_evaluation_enabled_count, 0);
+        assert_eq!(
+            summary.condition_evaluation_disabled_fail_closed_guard_descriptor_count,
+            1
+        );
         assert_eq!(summary.condition_evaluation_disabled_fail_closed_count, 1);
         let condition_projection = &projection.guard.guard.condition_projections[0];
         assert!(!condition_projection.evaluation_enabled);
