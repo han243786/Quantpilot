@@ -10808,3 +10808,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers static bundle rejection for child-machine Guard Builder parameter path boundary violations. |
 | capability boundary | This does not add nested guard execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle child parameter path boundary test and this record if bundle-level nested parameter-path validation coverage moves into a dedicated validation suite. |
+
+### ADV-SM-PROD-003CD: Guard Builder bundle child condition summary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving child-machine structured guard condition operands enter the same read-only bundle projection and summary surfaces as top-level guards. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::guard_descriptor_projections()` and `guard_descriptor_summary()` with a child-machine condition that binds a machine-memory read to a proposal-only threshold parameter path while preserving graph and child machine context. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: child condition operands are summarized for workspace/productization inspection only, no condition is evaluated, no child guard is executed, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers child-machine Guard Builder condition operand projection and summary counts. |
+| capability boundary | This does not add nested guard execution, condition evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle child condition summary test and this record if nested condition operand summary coverage moves into a dedicated workspace projection suite. |

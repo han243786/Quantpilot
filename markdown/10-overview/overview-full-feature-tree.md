@@ -10806,3 +10806,8 @@ Productization supplement: ADV-SM-PROD-003CC Guard Builder bundle child paramete
 - `qrpc_core_ir/src/v4.rs` - covers static bundle rejection for child-machine structured guard parameter paths outside the proposal-only Guard Builder boundary.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child parameter path boundary gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CC` as the bundle child parameter path boundary gate slice.
+
+Productization supplement: ADV-SM-PROD-003CD Guard Builder bundle child condition summary gate.
+- `qrpc_core_ir/src/v4.rs` - covers read-only bundle projection and summary counts for child-machine structured guard condition operands.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child condition summary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CD` as the bundle child condition summary gate slice.
