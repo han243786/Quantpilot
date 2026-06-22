@@ -10797,3 +10797,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers static bundle rejection for child-machine Guard Builder event-payload violations. |
 | capability boundary | This does not add nested guard execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle child payload validation test and this record if bundle-level nested payload validation coverage moves into a dedicated validation suite. |
+
+### ADV-SM-PROD-003CC: Guard Builder bundle child parameter path boundary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving static contract bundle validation applies the same proposal-only Guard Builder parameter path boundary to child-machine structured guards before workspace or runtime consumption. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with a child-machine structured guard that references `active_strategy.position`, asserting the bundle-level error retains child machine id, guard id, forbidden parameter path, and proposal-only boundary wording. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child parameter path gate is static validation only, no child guard is executed, no proposal is applied, no topology or Event Catalog is edited, and no active strategy state is read or written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers static bundle rejection for child-machine Guard Builder parameter path boundary violations. |
+| capability boundary | This does not add nested guard execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle child parameter path boundary test and this record if bundle-level nested parameter-path validation coverage moves into a dedicated validation suite. |

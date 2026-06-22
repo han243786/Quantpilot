@@ -10801,3 +10801,8 @@ Productization supplement: ADV-SM-PROD-003CB Guard Builder bundle child payload 
 - `qrpc_core_ir/src/v4.rs` - covers static bundle rejection for child-machine structured guard event-payload reads that violate the graph Event Catalog.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child payload validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CB` as the bundle child payload validation gate slice.
+
+Productization supplement: ADV-SM-PROD-003CC Guard Builder bundle child parameter path boundary gate.
+- `qrpc_core_ir/src/v4.rs` - covers static bundle rejection for child-machine structured guard parameter paths outside the proposal-only Guard Builder boundary.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child parameter path boundary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CC` as the bundle child parameter path boundary gate slice.
