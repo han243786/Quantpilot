@@ -11253,3 +11253,8 @@ Productization supplement: ADV-SM-PROD-003FN State Machine bundle top-level guar
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards with duplicate Machine Memory reads and duplicate proposal parameter paths.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard duplicate input rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FN` as the bundle top-level guard duplicate input rejection slice.
+
+Productization supplement: ADV-SM-PROD-003FO State Machine bundle top-level guard readonly fact rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards with unknown readonly runtime fact reads.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard readonly fact rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FO` as the bundle top-level guard readonly fact rejection slice.

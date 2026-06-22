@@ -6625,6 +6625,34 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_rejects_guard_descriptor_unknown_readonly_runtime_fact() {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        let intent = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "intent.trend")
+            .unwrap();
+        intent.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "bundle_unknown_runtime_fact_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::ReadonlyRuntimeFact,
+                path: "provider.secret".to_string(),
+            }],
+            parameter_paths: Vec::new(),
+            conditions: Vec::new(),
+            policy: None,
+            explanation: None,
+        });
+
+        let errors = bundle.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("structured guard `bundle_unknown_runtime_fact_guard`")
+                && message.contains("reads unknown readonly runtime fact `provider.secret`")
+        }));
+    }
+
+    #[test]
     fn static_contract_bundle_rejects_child_guard_descriptor_unknown_event_payload_read() {
         let mut bundle = sample_static_contract_bundle();
         let graph = bundle.machine_graphs.first_mut().unwrap();
