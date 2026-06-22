@@ -11776,3 +11776,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_unknown_event_payload_read` covers bundle-level rejection for top-level structured guards that read undeclared event payload fields. |
 | capability boundary | This does not add undeclared payload tolerance, guard execution, condition evaluation, policy execution, runtime payload reads, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level top-level guard unknown-payload rejection test and this record if top-level guard payload authority coverage moves into a shared Event Catalog validation suite. |
+
+### ADV-SM-PROD-003FN: State Machine bundle top-level guard duplicate input rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying the Guard Builder duplicate input hygiene rule through static bundle validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with an `intent.trend` structured guard that duplicates the `last_signal_at` Machine Memory read and the normalized `guard.threshold` parameter path, asserting bundle validation preserves the guard id and both duplicate-input diagnostics. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle top-level guard duplicate input rejection gate is static validation only, no guard is executed, no runtime read is performed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_duplicate_inputs` covers bundle-level rejection for top-level structured guards with duplicate reads and duplicate parameter paths. |
+| capability boundary | This does not add duplicate-input tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level top-level guard duplicate-input rejection test and this record if duplicate input coverage moves into a shared validation fixture suite. |

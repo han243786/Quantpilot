@@ -11248,3 +11248,8 @@ Productization supplement: ADV-SM-PROD-003FM State Machine bundle top-level guar
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards that read undeclared Event Catalog payload fields.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard payload catalog rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FM` as the bundle top-level guard payload catalog rejection slice.
+
+Productization supplement: ADV-SM-PROD-003FN State Machine bundle top-level guard duplicate input rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards with duplicate Machine Memory reads and duplicate proposal parameter paths.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard duplicate input rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FN` as the bundle top-level guard duplicate input rejection slice.
