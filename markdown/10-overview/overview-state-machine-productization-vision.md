@@ -10786,3 +10786,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers accepted and rejected child-machine event-payload guard reads against the graph Event Catalog. |
 | capability boundary | This does not add nested guard execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the child-machine payload binding tests and this record if nested-machine event payload validation moves into a dedicated traversal validation suite. |
+
+### ADV-SM-PROD-003CB: Guard Builder bundle child payload validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving static contract bundle validation surfaces child-machine structured guard Event Catalog payload violations before workspace or runtime consumption. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with a child-machine structured guard that reads an undeclared event-payload field, asserting the bundle-level error retains child machine id, guard id, payload field, and event type. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child payload gate is static validation only, no child guard is executed, no runtime payload is read, no Event Catalog is edited, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers static bundle rejection for child-machine Guard Builder event-payload violations. |
+| capability boundary | This does not add nested guard execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle child payload validation test and this record if bundle-level nested payload validation coverage moves into a dedicated validation suite. |
