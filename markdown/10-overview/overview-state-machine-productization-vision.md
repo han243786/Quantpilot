@@ -10819,3 +10819,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers child-machine Guard Builder condition operand projection and summary counts. |
 | capability boundary | This does not add nested guard execution, condition evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle child condition summary test and this record if nested condition operand summary coverage moves into a dedicated workspace projection suite. |
+
+### ADV-SM-PROD-003CE: Guard Builder bundle child policy summary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving child-machine structured guard timing and fallback policy declarations enter bundle read-only projection and summary surfaces without enabling execution. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::guard_descriptor_projections()` and `guard_descriptor_summary()` with a child-machine policy that declares timeout, cooldown, and fail-closed fallback while preserving graph and child machine context. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: child policy declarations are summarized for workspace/productization inspection only, no timer or fallback is executed, no child guard is executed, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers child-machine Guard Builder policy projection, fail-closed blocker reuse, and summary counts. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle child policy summary test and this record if nested policy summary coverage moves into a dedicated workspace projection suite. |

@@ -2705,6 +2705,111 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_summarizes_child_guard_descriptor_policy_surface() {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].guard = None;
+        child.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "risk_child_policy_guard".to_string(),
+            reads: Vec::new(),
+            parameter_paths: Vec::new(),
+            conditions: Vec::new(),
+            policy: Some(MachineGuardPolicySpec {
+                timeout_ms: Some(250),
+                cooldown_ms: Some(1_000),
+                fallback: Some(MachineGuardFallbackPolicy::FailClosed),
+            }),
+            explanation: Some("child policy summary surface".to_string()),
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        let projections = bundle.guard_descriptor_projections();
+        assert_eq!(projections.len(), 1);
+        assert_eq!(projections[0].graph_id, "strategy.v4.sample");
+        assert_eq!(projections[0].guard.machine_id, "risk.guard.child");
+        assert_eq!(
+            projections[0].guard.guard.readiness.guard_id,
+            "risk_child_policy_guard"
+        );
+        assert!(projections[0].guard.guard.readiness.policy_declared);
+        assert!(projections[0].guard.guard.readiness.timing_policy_declared);
+        assert!(
+            projections[0]
+                .guard
+                .guard
+                .readiness
+                .fallback_fail_closed_declared
+        );
+        let policy = projections[0]
+            .guard
+            .guard
+            .policy_projection
+            .as_ref()
+            .unwrap();
+        assert_eq!(policy.timeout_ms, Some(250));
+        assert_eq!(policy.cooldown_ms, Some(1_000));
+        assert_eq!(
+            policy.fallback,
+            Some(MachineGuardFallbackPolicy::FailClosed)
+        );
+        assert!(!policy.timing_execution_enabled);
+        assert!(!policy.fallback_execution_enabled);
+        assert!(!policy.active_strategy_write_enabled);
+        assert_eq!(
+            policy.execution_blocker_code,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+        );
+        assert_eq!(
+            policy.execution_blocker_reason,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON
+        );
+
+        let summary = bundle.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 1);
+        assert_eq!(summary.guarded_machine_count, 1);
+        assert_eq!(summary.decision_guard_descriptor_count, 1);
+        assert_eq!(summary.policy_declared_count, 1);
+        assert_eq!(summary.timing_policy_declared_count, 1);
+        assert_eq!(summary.timeout_declared_count, 1);
+        assert_eq!(summary.cooldown_declared_count, 1);
+        assert_eq!(summary.fallback_declared_count, 1);
+        assert_eq!(summary.fallback_fail_closed_declared_count, 1);
+        assert_eq!(summary.policy_timing_execution_enabled_count, 0);
+        assert_eq!(
+            summary.policy_execution_disabled_fail_closed_guard_descriptor_count,
+            1
+        );
+        assert_eq!(
+            summary.policy_timing_execution_disabled_fail_closed_count,
+            1
+        );
+        assert_eq!(summary.policy_fallback_execution_enabled_count, 0);
+        assert_eq!(
+            summary.policy_fallback_execution_disabled_fail_closed_count,
+            1
+        );
+        assert_eq!(summary.policy_active_strategy_write_enabled_count, 0);
+        assert_eq!(summary.policy_active_strategy_write_disabled_count, 1);
+        assert_eq!(
+            summary.active_strategy_write_disabled_guard_descriptor_count,
+            1
+        );
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 1);
+    }
+
+    #[test]
     fn machine_contract_rejects_invalid_structured_guard_descriptor() {
         let mut machine = sample_machine();
         machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {

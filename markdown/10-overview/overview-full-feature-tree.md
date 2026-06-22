@@ -10811,3 +10811,8 @@ Productization supplement: ADV-SM-PROD-003CD Guard Builder bundle child conditio
 - `qrpc_core_ir/src/v4.rs` - covers read-only bundle projection and summary counts for child-machine structured guard condition operands.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child condition summary gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CD` as the bundle child condition summary gate slice.
+
+Productization supplement: ADV-SM-PROD-003CE Guard Builder bundle child policy summary gate.
+- `qrpc_core_ir/src/v4.rs` - covers read-only bundle projection, fail-closed blocker reuse, and summary counts for child-machine structured guard policy declarations.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child policy summary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CE` as the bundle child policy summary gate slice.

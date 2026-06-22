@@ -11779,3 +11779,6 @@ Condition left-read source counts and right parameter-kind counts; static contra
 
 **Productization supplement (ADV-SM-PROD-003CD)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle child condition summary gate.
 `V4StaticContractBundle::guard_descriptor_projections` / `guard_descriptor_summary`; static bundle tests now pin child-machine structured guard condition operand projection and summary counts while nested guard execution, condition evaluation, proposal application, and active strategy writes remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003CE)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle child policy summary gate.
+`V4StaticContractBundle::guard_descriptor_projections` / `guard_descriptor_summary`; static bundle tests now pin child-machine structured guard timing and fail-closed fallback policy projection and summary counts while nested guard execution, policy execution, proposal application, and active strategy writes remain disabled.
