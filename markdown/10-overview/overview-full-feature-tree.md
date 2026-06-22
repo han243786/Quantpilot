@@ -11168,3 +11168,8 @@ Productization supplement: ADV-SM-PROD-003EW State Machine graph child machine i
 - `qrpc_core_ir/src/v4.rs` - covers graph-level child machines that omit `machine_id`.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine graph child machine identity hygiene gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EW` as the graph child machine identity hygiene slice.
+
+Productization supplement: ADV-SM-PROD-003EX State Machine bundle child machine identity hygiene gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child machines that omit `machine_id`.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child machine identity hygiene gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EX` as the bundle child machine identity hygiene slice.
