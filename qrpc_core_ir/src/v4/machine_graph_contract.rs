@@ -79,6 +79,11 @@ pub struct MachineGraphGuardDescriptorSummary {
     pub machine_memory_read_count: usize,
     pub readonly_runtime_fact_read_count: usize,
     pub parameter_path_count: usize,
+    pub guard_parameter_path_count: usize,
+    pub timeout_parameter_path_count: usize,
+    pub cooldown_parameter_path_count: usize,
+    pub threshold_parameter_path_count: usize,
+    pub risk_limit_parameter_path_count: usize,
     pub parameter_path_proposal_only_count: usize,
     pub parameter_path_active_strategy_write_enabled_count: usize,
     pub parameter_path_active_strategy_write_disabled_count: usize,
@@ -130,6 +135,11 @@ impl V4MachineGraphContract {
             summary.machine_memory_read_count += readiness.machine_memory_read_count;
             summary.readonly_runtime_fact_read_count += readiness.readonly_runtime_fact_read_count;
             summary.parameter_path_count += readiness.parameter_path_count;
+            summary.guard_parameter_path_count += readiness.guard_parameter_path_count;
+            summary.timeout_parameter_path_count += readiness.timeout_parameter_path_count;
+            summary.cooldown_parameter_path_count += readiness.cooldown_parameter_path_count;
+            summary.threshold_parameter_path_count += readiness.threshold_parameter_path_count;
+            summary.risk_limit_parameter_path_count += readiness.risk_limit_parameter_path_count;
             for parameter_path in &projection.guard.parameter_path_projections {
                 summary.parameter_path_proposal_only_count +=
                     usize::from(parameter_path.proposal_only);

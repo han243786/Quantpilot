@@ -10529,3 +10529,9 @@ Productization supplement: ADV-SM-PROD-003AF Guard Builder graph readiness summa
 - `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for proposal-only parameters, disabled condition evaluation, disabled policy execution, active-strategy-write-disabled counts, and fail-closed execution counts.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph readiness summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AF` as the graph readiness summary slice.
+
+Productization supplement: ADV-SM-PROD-003AG Guard Builder graph parameter kind summary.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - aggregates guard, timeout, cooldown, threshold, and risk-limit parameter path kind counts in graph guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for threshold parameter path counts while preserving proposal-only and active-strategy-write-disabled flags.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph parameter kind summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AG` as the graph parameter kind summary slice.

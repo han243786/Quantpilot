@@ -10269,3 +10269,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for proposal-only parameters, disabled condition evaluation, disabled policy execution, active-strategy-write-disabled counts, and fail-closed execution counts. |
 | capability boundary | This does not enable guard execution, timer scheduling, cooldown enforcement, fallback execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph summary DTO/method, related test assertions, and this record if graph-level Guard Builder aggregation moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003AG: Guard Builder graph parameter kind summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by making graph-level Guard Builder summaries distinguish guard, timeout, cooldown, threshold, and risk-limit parameter path kinds for single-graph workspace views. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now aggregates parameter path kind counts in `MachineGraphGuardDescriptorSummary` from descriptor readiness, matching the existing proposal-only parameter boundary without adding new path classes. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: graph parameter kind summary fields are read-only metadata, no proposal is applied, no guard parameter is written, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for threshold parameter paths while all other parameter kind counts remain zero for the focused fixture. |
+| capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph parameter kind summary fields, aggregation, related test assertions, and this record if graph-level parameter reporting moves into a dedicated workspace query contract. |
