@@ -3202,6 +3202,92 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_projects_child_guard_descriptor_transition_context() {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.check",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &["risk.guard"],
+                &["risk.guard.child"],
+            ));
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].event.event_type = "risk.child.check".to_string();
+        child.transitions[0].event.source = Some("risk.guard".to_string());
+        child.transitions[0].action = None;
+        child.transitions[0].guard = None;
+        child.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "bundle_child_transition_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::MachineMemory,
+                path: "last_signal_at".to_string(),
+            }],
+            parameter_paths: Vec::new(),
+            conditions: Vec::new(),
+            policy: None,
+            explanation: Some("bundle child transition projection surface".to_string()),
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        assert_eq!(bundle.validate_static_contract(), Ok(()));
+        let projections = bundle.guard_descriptor_projections();
+        assert_eq!(projections.len(), 1);
+        let projection = &projections[0];
+        assert_eq!(projection.graph_id, "strategy.v4.sample");
+        assert_eq!(projection.guard.machine_id, "risk.guard.child");
+        assert_eq!(
+            projection.guard.machine_template,
+            MachineTemplateKind::Decision
+        );
+        assert_eq!(
+            projection.guard.guard.transition_id,
+            "risk.guard.child.transition"
+        );
+        assert_eq!(projection.guard.guard.from_state, "idle");
+        assert_eq!(projection.guard.guard.to_state, "long_bias");
+        assert_eq!(projection.guard.guard.event_type, "risk.child.check");
+        assert_eq!(
+            projection.guard.guard.event_source.as_deref(),
+            Some("risk.guard")
+        );
+        assert_eq!(
+            projection.guard.guard.readiness.guard_id,
+            "bundle_child_transition_guard"
+        );
+
+        let summary = bundle.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 1);
+        assert_eq!(summary.guard_id_count, 1);
+        assert_eq!(summary.guarded_machine_count, 1);
+        assert_eq!(summary.guarded_transition_count, 1);
+        assert_eq!(summary.guarded_event_type_count, 1);
+        assert_eq!(summary.guarded_event_source_count, 1);
+        assert_eq!(summary.event_source_declared_count, 1);
+        assert_eq!(summary.event_source_missing_count, 0);
+        assert_eq!(summary.decision_guard_descriptor_count, 1);
+        assert_eq!(summary.read_guard_descriptor_count, 1);
+        assert_eq!(summary.read_count, 1);
+        assert_eq!(summary.machine_memory_read_count, 1);
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 1);
+    }
+
+    #[test]
     fn machine_contract_rejects_invalid_structured_guard_descriptor() {
         let mut machine = sample_machine();
         machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
