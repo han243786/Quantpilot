@@ -875,8 +875,20 @@ mod tests {
                 path: "symbol".to_string(),
             }],
             parameter_paths: vec!["guard.threshold".to_string()],
-            conditions: Vec::new(),
-            policy: None,
+            conditions: vec![MachineGuardConditionSpec {
+                condition_id: "intent_symbol_threshold_check".to_string(),
+                left_read: MachineGuardReadRef {
+                    source: MachineGuardReadSource::EventPayload,
+                    path: "symbol".to_string(),
+                },
+                comparator: MachineGuardConditionComparator::NotEqual,
+                right_parameter_path: "guard.threshold".to_string(),
+            }],
+            policy: Some(MachineGuardPolicySpec {
+                timeout_ms: Some(150),
+                cooldown_ms: None,
+                fallback: Some(MachineGuardFallbackPolicy::FailClosed),
+            }),
             explanation: Some("graph projection surface".to_string()),
         });
 
@@ -894,6 +906,40 @@ mod tests {
         );
         assert_eq!(projection.guard.readiness.guard_id, "intent_guard");
         assert!(!projection.guard.readiness.execution_enabled);
+        let summary = graph.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 1);
+        assert_eq!(summary.read_count, 1);
+        assert_eq!(summary.event_payload_read_count, 1);
+        assert_eq!(summary.parameter_path_count, 1);
+        assert_eq!(summary.parameter_path_proposal_only_count, 1);
+        assert_eq!(
+            summary.parameter_path_active_strategy_write_enabled_count,
+            0
+        );
+        assert_eq!(
+            summary.parameter_path_active_strategy_write_disabled_count,
+            1
+        );
+        assert_eq!(summary.condition_count, 1);
+        assert_eq!(summary.condition_evaluation_enabled_count, 0);
+        assert_eq!(summary.condition_evaluation_disabled_fail_closed_count, 1);
+        assert_eq!(summary.policy_declared_count, 1);
+        assert_eq!(summary.timing_policy_declared_count, 1);
+        assert_eq!(summary.fallback_fail_closed_declared_count, 1);
+        assert_eq!(summary.policy_timing_execution_enabled_count, 0);
+        assert_eq!(
+            summary.policy_timing_execution_disabled_fail_closed_count,
+            1
+        );
+        assert_eq!(summary.policy_fallback_execution_enabled_count, 0);
+        assert_eq!(
+            summary.policy_fallback_execution_disabled_fail_closed_count,
+            1
+        );
+        assert_eq!(summary.policy_active_strategy_write_enabled_count, 0);
+        assert_eq!(summary.policy_active_strategy_write_disabled_count, 1);
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 1);
     }
 
     #[test]

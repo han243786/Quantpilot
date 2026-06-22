@@ -11626,3 +11626,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003AE)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle policy execution summary.
 `policy_timing_execution_enabled_count` / policy fallback and write count fields; static bundle summaries aggregate disabled timeout/cooldown/fallback execution evidence while runtime policy execution remains disabled.
+
+**Productization supplement (ADV-SM-PROD-003AF)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder graph readiness summary.
+`V4MachineGraphContract::guard_descriptor_summary`; machine graphs can aggregate structured guard descriptor reads, proposal-only parameters, disabled condition evaluation, disabled policy execution, and fail-closed execution for single-graph workspace views while runtime execution remains disabled.

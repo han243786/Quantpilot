@@ -10523,3 +10523,9 @@ Productization supplement: ADV-SM-PROD-003AE Guard Builder bundle policy executi
 - `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for disabled timing execution, fallback execution, active strategy writes, and fail-closed blocker counts.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle policy execution summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AE` as the bundle policy execution summary slice.
+
+Productization supplement: ADV-SM-PROD-003AF Guard Builder graph readiness summary.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - adds `MachineGraphGuardDescriptorSummary` and `V4MachineGraphContract::guard_descriptor_summary()` for graph-level aggregation of structured guard descriptor readiness.
+- `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for proposal-only parameters, disabled condition evaluation, disabled policy execution, active-strategy-write-disabled counts, and fail-closed execution counts.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph readiness summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AF` as the graph readiness summary slice.

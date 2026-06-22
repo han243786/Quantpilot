@@ -12,7 +12,7 @@ use std::collections::BTreeMap;
 use super::{
     default_machine_graph_contract_version, default_machine_graph_edge_activation,
     default_risk_plane_min_priority, default_true, MachineGuardDescriptorProjection,
-    MachineTemplateKind, V4MachineContract,
+    MachineGuardExecutionReadinessState, MachineTemplateKind, V4MachineContract,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -71,6 +71,33 @@ pub struct MachineGraphGuardDescriptorProjection {
     pub guard: MachineGuardDescriptorProjection,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
+pub struct MachineGraphGuardDescriptorSummary {
+    pub guard_descriptor_count: usize,
+    pub read_count: usize,
+    pub event_payload_read_count: usize,
+    pub machine_memory_read_count: usize,
+    pub readonly_runtime_fact_read_count: usize,
+    pub parameter_path_count: usize,
+    pub parameter_path_proposal_only_count: usize,
+    pub parameter_path_active_strategy_write_enabled_count: usize,
+    pub parameter_path_active_strategy_write_disabled_count: usize,
+    pub condition_count: usize,
+    pub condition_evaluation_enabled_count: usize,
+    pub condition_evaluation_disabled_fail_closed_count: usize,
+    pub policy_declared_count: usize,
+    pub timing_policy_declared_count: usize,
+    pub fallback_fail_closed_declared_count: usize,
+    pub policy_timing_execution_enabled_count: usize,
+    pub policy_timing_execution_disabled_fail_closed_count: usize,
+    pub policy_fallback_execution_enabled_count: usize,
+    pub policy_fallback_execution_disabled_fail_closed_count: usize,
+    pub policy_active_strategy_write_enabled_count: usize,
+    pub policy_active_strategy_write_disabled_count: usize,
+    pub execution_enabled_count: usize,
+    pub execution_disabled_fail_closed_count: usize,
+}
+
 impl V4MachineGraphContract {
     pub fn guard_descriptor_projections(&self) -> Vec<MachineGraphGuardDescriptorProjection> {
         let mut all_machines = Vec::new();
@@ -91,5 +118,71 @@ impl V4MachineGraphContract {
                     })
             })
             .collect()
+    }
+
+    pub fn guard_descriptor_summary(&self) -> MachineGraphGuardDescriptorSummary {
+        let mut summary = MachineGraphGuardDescriptorSummary::default();
+        for projection in self.guard_descriptor_projections() {
+            let readiness = &projection.guard.readiness;
+            summary.guard_descriptor_count += 1;
+            summary.read_count += readiness.read_count;
+            summary.event_payload_read_count += readiness.event_payload_read_count;
+            summary.machine_memory_read_count += readiness.machine_memory_read_count;
+            summary.readonly_runtime_fact_read_count += readiness.readonly_runtime_fact_read_count;
+            summary.parameter_path_count += readiness.parameter_path_count;
+            for parameter_path in &projection.guard.parameter_path_projections {
+                summary.parameter_path_proposal_only_count +=
+                    usize::from(parameter_path.proposal_only);
+                summary.parameter_path_active_strategy_write_enabled_count +=
+                    usize::from(parameter_path.active_strategy_write_enabled);
+                summary.parameter_path_active_strategy_write_disabled_count +=
+                    usize::from(!parameter_path.active_strategy_write_enabled);
+            }
+            summary.condition_count += readiness.condition_count;
+            for condition in &projection.guard.condition_projections {
+                summary.condition_evaluation_enabled_count +=
+                    usize::from(condition.evaluation_enabled);
+                summary.condition_evaluation_disabled_fail_closed_count += usize::from(
+                    !condition.evaluation_enabled
+                        && condition.evaluation_blocker_code
+                            == MachineGuardExecutionReadinessState::DisabledFailClosed
+                                .blocker_code(),
+                );
+            }
+            summary.policy_declared_count += usize::from(readiness.policy_declared);
+            summary.timing_policy_declared_count += usize::from(readiness.timing_policy_declared);
+            summary.fallback_fail_closed_declared_count +=
+                usize::from(readiness.fallback_fail_closed_declared);
+            if let Some(policy) = &projection.guard.policy_projection {
+                summary.policy_timing_execution_enabled_count +=
+                    usize::from(policy.timing_execution_enabled);
+                summary.policy_timing_execution_disabled_fail_closed_count += usize::from(
+                    !policy.timing_execution_enabled
+                        && policy.timing_policy_declared
+                        && policy.execution_blocker_code
+                            == MachineGuardExecutionReadinessState::DisabledFailClosed
+                                .blocker_code(),
+                );
+                summary.policy_fallback_execution_enabled_count +=
+                    usize::from(policy.fallback_execution_enabled);
+                summary.policy_fallback_execution_disabled_fail_closed_count += usize::from(
+                    !policy.fallback_execution_enabled
+                        && policy.fallback_declared
+                        && policy.execution_blocker_code
+                            == MachineGuardExecutionReadinessState::DisabledFailClosed
+                                .blocker_code(),
+                );
+                summary.policy_active_strategy_write_enabled_count +=
+                    usize::from(policy.active_strategy_write_enabled);
+                summary.policy_active_strategy_write_disabled_count +=
+                    usize::from(!policy.active_strategy_write_enabled);
+            }
+            summary.execution_enabled_count += usize::from(readiness.execution_enabled);
+            summary.execution_disabled_fail_closed_count += usize::from(
+                readiness.execution_state
+                    == MachineGuardExecutionReadinessState::DisabledFailClosed,
+            );
+        }
+        summary
     }
 }

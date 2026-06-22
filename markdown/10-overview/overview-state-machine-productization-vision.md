@@ -10258,3 +10258,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for disabled timing execution, fallback execution, active strategy writes, and fail-closed blocker counts. |
 | capability boundary | This does not enable guard execution, timer scheduling, cooldown enforcement, fallback execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle policy execution summary fields, aggregation, related test assertions, and this record if policy execution readiness aggregation moves into a dedicated Guard Builder query contract. |
+
+### ADV-SM-PROD-003AF: Guard Builder graph readiness summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by aggregating structured guard descriptor readiness at the machine-graph boundary for single-graph workspace views. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now provides `MachineGraphGuardDescriptorSummary` and `V4MachineGraphContract::guard_descriptor_summary()` for read-only graph-level aggregation of descriptor reads, proposal-only parameters, disabled condition evaluation, disabled policy execution, and fail-closed execution. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: graph summary fields are read-only metadata, no guard condition is evaluated, no timer is scheduled, no fallback is executed, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for proposal-only parameters, disabled condition evaluation, disabled policy execution, active-strategy-write-disabled counts, and fail-closed execution counts. |
+| capability boundary | This does not enable guard execution, timer scheduling, cooldown enforcement, fallback execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph summary DTO/method, related test assertions, and this record if graph-level Guard Builder aggregation moves into a dedicated workspace query contract. |
