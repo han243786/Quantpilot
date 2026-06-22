@@ -11413,3 +11413,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_transition_action_unknown_event_emit` covers bundle-level child action emitted-event registration validation. |
 | capability boundary | This does not add nested transition execution, action execution, event emission, memory mutation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level child action unknown-emitted-event validation test and this record if child action event registration coverage moves into a shared validation suite. |
+
+### ADV-SM-PROD-003EG: State Machine graph child action emit party validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving single-graph validation rejects child-machine transition actions that emit Event Catalog events whose allowed emitters exclude the child machine. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with a child-machine transition action that emits a cataloged event whose `allowed_emitters` list does not include the child machine id, asserting graph validation preserves child machine id, transition id, and cannot-emit diagnostic wording. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child action emit party gate is static validation only, no child transition action is executed, no event is emitted, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_transition_action_unauthorized_event_emit` covers graph-level child action emitted-event party validation. |
+| capability boundary | This does not add nested transition execution, action execution, event emission, memory mutation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child action unauthorized-emitted-event validation test and this record if child action event party coverage moves into a shared validation suite. |
