@@ -10973,3 +10973,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_projects_child_guard_descriptor_event_source_context` covers graph-level child event source projection and summary counts. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child event-source projection test and this record if child event source projection coverage moves into a dedicated workspace projection suite. |
+
+### ADV-SM-PROD-003CS: Guard Builder graph child missing event source summary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, `2.7`, and `2.9`; continue `SM-PROD-003` by pairing graph-level declared-source child evidence with missing-source child evidence so single-graph workspace views can distinguish incomplete event source context. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::guard_descriptor_projections()` and `guard_descriptor_summary()` for a child-machine Guard Builder descriptor whose transition consumes a cataloged event without an explicit source, asserting missing-source counts and zero guarded-source uniqueness. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child missing event source summary gate is static projection and summary metadata only, no event is consumed at runtime, no child guard is executed, no Event Catalog is edited, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_summarizes_child_guard_descriptor_missing_event_source_context` covers graph-level child missing event source projection and summary counts. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child missing event-source summary test and this record if child event source projection coverage moves into a dedicated workspace projection suite. |
