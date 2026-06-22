@@ -11749,3 +11749,6 @@ Two-graph bundle guard descriptor summaries; static contract bundle tests now pr
 
 **Productization supplement (ADV-SM-PROD-003BT)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle mixed condition operand summary.
 Condition left-read source counts and right parameter-kind counts; static contract bundle tests now cover mixed condition operand aggregation across bundled graphs while runtime reads, condition evaluation, guard execution, and active strategy writes remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003BU)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle mixed policy summary.
+`timeout_declared_count` / `cooldown_declared_count` / `fallback_fail_closed_declared_count`; static contract bundle tests now cover mixed timeout, cooldown, and fail-closed fallback policy aggregation across bundled graphs while policy execution, fallback execution, guard execution, and active strategy writes remain disabled.

@@ -10709,3 +10709,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers mixed condition-operand bundle aggregation across two graphs. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the mixed condition-operand bundle test and this record if condition operand coverage moves into a dedicated workspace aggregation suite. |
+
+### ADV-SM-PROD-003BU: Guard Builder bundle mixed policy summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving bundle-level Guard Builder summaries distinguish timeout, cooldown, and fail-closed fallback policy declarations across bundled graphs. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers a two-graph static contract bundle where one structured guard declares timeout plus fail-closed fallback and another declares cooldown, asserting policy declaration and disabled-fail-closed counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the mixed policy summary guard is test-only metadata validation, no policy is executed, no timer or fallback runs, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers mixed policy bundle aggregation across two graphs. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the mixed policy bundle test and this record if policy declaration coverage moves into a dedicated workspace aggregation suite. |
