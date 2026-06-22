@@ -11728,3 +11728,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003BM)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle graph summary parity guard.
 Bundle summary context fields; static contract bundle tests now pin single-graph bundle context counts to their graph summary equivalents while Event Catalog editing, guard execution, topology mutation, and active strategy writes remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003BN)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle full graph summary parity guard.
+All current shared bundle/graph guard summary count fields; static contract bundle tests now pin single-graph bundle count parity with field-specific diagnostics while Event Catalog editing, guard execution, topology mutation, and active strategy writes remain disabled.

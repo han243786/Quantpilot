@@ -10726,3 +10726,8 @@ Productization supplement: ADV-SM-PROD-003BM Guard Builder bundle graph summary 
 - `qrpc_core_ir/src/v4.rs` - asserts single-graph bundle guard summary context fields match their graph summary equivalents.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle graph summary parity guard ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BM` as the bundle graph summary parity guard slice.
+
+Productization supplement: ADV-SM-PROD-003BN Guard Builder bundle full graph summary parity guard.
+- `qrpc_core_ir/src/v4.rs` - enumerates current shared bundle/graph guard summary count fields and asserts single-graph parity with field-specific diagnostics.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle full graph summary parity guard ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BN` as the bundle full graph summary parity guard slice.

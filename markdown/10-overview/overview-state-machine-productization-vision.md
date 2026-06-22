@@ -10632,3 +10632,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle graph-summary parity for Guard Builder context fields. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle graph-summary parity assertions and this record if bundle context parity moves into a dedicated compatibility test suite. |
+
+### ADV-SM-PROD-003BN: Guard Builder bundle full graph summary parity guard
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by locking every current shared Guard Builder bundle summary count field against the graph-level summary for a single bundled graph. |
+| implementation | `qrpc_core_ir/src/v4.rs` now enumerates all shared bundle/graph guard summary count fields in the single-graph bundle projection test and asserts identical values with field-specific mismatch messages. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the full parity guard is test-only metadata validation, no guard is executed, no Event Catalog is edited, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers full bundle graph-summary parity for current shared Guard Builder count fields. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the full bundle graph-summary parity field list and this record if shared summary parity moves into a generated compatibility test. |
