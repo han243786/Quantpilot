@@ -10764,3 +10764,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers deterministic bundle guard descriptor projection order across graph and machine boundaries. |
 | capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the projection-order bundle test and this record if ordering coverage moves into a dedicated workspace rendering suite. |
+
+### ADV-SM-PROD-003BZ: Guard Builder bundle child machine projection
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving bundle-level Guard Builder projections include structured guard descriptors declared inside supported depth-two child machines. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers a static contract bundle where a top-level risk machine and its child machine both declare structured guard descriptors. The test asserts graph context, parent-before-child projection order, child machine id/template/transition metadata, read binding scope, proposal-only risk-limit parameter path, and bundle summary counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the child-machine projection guard is test-only metadata validation, no child machine guard is executed, no runtime read is performed, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle Guard Builder projection of structured descriptors declared in nested child machines. |
+| capability boundary | This does not add nested guard execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the child-machine projection bundle test and this record if nested-machine projection coverage moves into a dedicated traversal suite. |

@@ -11764,3 +11764,6 @@ Condition left-read source counts and right parameter-kind counts; static contra
 
 **Productization supplement (ADV-SM-PROD-003BY)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle deterministic projection order.
 `V4StaticContractBundle::guard_descriptor_projections`; static contract bundle tests now pin graph, machine, and transition input order for read-only Guard Builder projections while guard execution, topology mutation, and active strategy writes remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003BZ)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract.traversal_helpers`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle child machine projection.
+`collect_machine_family` / `V4StaticContractBundle::guard_descriptor_projections`; static contract bundle tests now pin read-only Guard Builder descriptors declared inside supported depth-two child machines while nested guard execution, topology mutation, and active strategy writes remain disabled.

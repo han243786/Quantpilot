@@ -2517,6 +2517,98 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_projects_child_machine_guard_descriptors_with_graph_context() {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        risk.transitions[0].guard = None;
+        risk.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "risk_parent_guard".to_string(),
+            reads: Vec::new(),
+            parameter_paths: Vec::new(),
+            conditions: Vec::new(),
+            policy: None,
+            explanation: Some("parent nested projection surface".to_string()),
+        });
+
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].guard = None;
+        child.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "risk_child_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::ReadonlyRuntimeFact,
+                path: "runtime.mode".to_string(),
+            }],
+            parameter_paths: vec!["risk.max_position".to_string()],
+            conditions: Vec::new(),
+            policy: None,
+            explanation: Some("child nested projection surface".to_string()),
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        let projections = bundle.guard_descriptor_projections();
+        assert_eq!(projections.len(), 2);
+        assert_eq!(projections[0].graph_id, "strategy.v4.sample");
+        assert_eq!(projections[0].guard.machine_id, "risk.guard");
+        assert_eq!(
+            projections[0].guard.guard.readiness.guard_id,
+            "risk_parent_guard"
+        );
+        assert_eq!(projections[1].graph_id, "strategy.v4.sample");
+        assert_eq!(projections[1].guard.machine_id, "risk.guard.child");
+        assert_eq!(
+            projections[1].guard.machine_template,
+            MachineTemplateKind::Decision
+        );
+        assert_eq!(
+            projections[1].guard.guard.transition_id,
+            "risk.guard.child.transition"
+        );
+        assert_eq!(
+            projections[1].guard.guard.readiness.guard_id,
+            "risk_child_guard"
+        );
+        assert_eq!(projections[1].guard.guard.read_projections.len(), 1);
+        assert_eq!(
+            projections[1].guard.guard.read_projections[0].binding_scope,
+            MachineGuardReadBindingScope::ReadonlyRuntimeFact
+        );
+        assert_eq!(
+            projections[1].guard.guard.parameter_path_projections[0].kind,
+            Some(MachineGuardParameterPathKind::RiskLimit)
+        );
+        assert!(projections[1].guard.guard.parameter_path_projections[0].proposal_only);
+        assert!(
+            !projections[1].guard.guard.parameter_path_projections[0].active_strategy_write_enabled
+        );
+
+        let summary = bundle.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 2);
+        assert_eq!(summary.guard_id_count, 2);
+        assert_eq!(summary.guarded_machine_count, 2);
+        assert_eq!(summary.decision_guard_descriptor_count, 2);
+        assert_eq!(summary.read_guard_descriptor_count, 1);
+        assert_eq!(summary.readonly_runtime_fact_read_count, 1);
+        assert_eq!(summary.parameterized_guard_descriptor_count, 1);
+        assert_eq!(summary.risk_limit_parameter_path_count, 1);
+        assert_eq!(summary.proposal_only_guard_descriptor_count, 1);
+        assert_eq!(
+            summary.active_strategy_write_disabled_guard_descriptor_count,
+            1
+        );
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 2);
+    }
+
+    #[test]
     fn machine_contract_rejects_invalid_structured_guard_descriptor() {
         let mut machine = sample_machine();
         machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {

@@ -10786,3 +10786,8 @@ Productization supplement: ADV-SM-PROD-003BY Guard Builder bundle deterministic 
 - `qrpc_core_ir/src/v4.rs` - covers two-graph bundle guard descriptor projections preserving graph, machine, and transition input order.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle deterministic projection order ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BY` as the bundle deterministic projection order slice.
+
+Productization supplement: ADV-SM-PROD-003BZ Guard Builder bundle child machine projection.
+- `qrpc_core_ir/src/v4.rs` - covers static bundle guard descriptor projections for structured guards declared inside supported depth-two child machines.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child machine projection ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BZ` as the bundle child machine projection slice.
