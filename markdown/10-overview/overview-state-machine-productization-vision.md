@@ -10775,3 +10775,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle Guard Builder projection of structured descriptors declared in nested child machines. |
 | capability boundary | This does not add nested guard execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the child-machine projection bundle test and this record if nested-machine projection coverage moves into a dedicated traversal suite. |
+
+### ADV-SM-PROD-003CA: Guard Builder child event payload catalog binding
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by proving structured guard descriptors inside supported child machines use the same Event Catalog payload-field authority as top-level machines. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers graph static validation for a child machine guard descriptor that reads a declared event-payload field and a sibling failure case that reads an undeclared payload field. The rejection includes child machine id, transition id, guard id, payload field, and event type. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the child payload binding guard is static validation only, no child guard is executed, no payload is read at runtime, no Event Catalog is edited, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers accepted and rejected child-machine event-payload guard reads against the graph Event Catalog. |
+| capability boundary | This does not add nested guard execution, expression evaluation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the child-machine payload binding tests and this record if nested-machine event payload validation moves into a dedicated traversal validation suite. |

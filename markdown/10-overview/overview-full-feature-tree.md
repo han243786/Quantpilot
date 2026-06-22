@@ -10791,3 +10791,8 @@ Productization supplement: ADV-SM-PROD-003BZ Guard Builder bundle child machine 
 - `qrpc_core_ir/src/v4.rs` - covers static bundle guard descriptor projections for structured guards declared inside supported depth-two child machines.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child machine projection ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BZ` as the bundle child machine projection slice.
+
+Productization supplement: ADV-SM-PROD-003CA Guard Builder child event payload catalog binding.
+- `qrpc_core_ir/src/v4.rs` - covers accepted and rejected child-machine structured guard event-payload reads against the graph Event Catalog.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder child event payload catalog binding ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CA` as the child event payload catalog binding slice.
