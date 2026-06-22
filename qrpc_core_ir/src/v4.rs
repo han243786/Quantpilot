@@ -5020,6 +5020,74 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_rejects_child_guard_descriptor_duplicate_condition_id() {
+        let mut graph = sample_machine_graph();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.check",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &["risk.guard"],
+                &["risk.guard.child"],
+            ));
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].event.event_type = "risk.child.check".to_string();
+        child.transitions[0].event.source = Some("risk.guard".to_string());
+        child.transitions[0].action = None;
+        child.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "child_graph_duplicate_condition_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::MachineMemory,
+                path: "last_signal_at".to_string(),
+            }],
+            parameter_paths: vec!["guard.threshold".to_string()],
+            conditions: vec![
+                MachineGuardConditionSpec {
+                    condition_id: "repeat_child_condition".to_string(),
+                    left_read: MachineGuardReadRef {
+                        source: MachineGuardReadSource::MachineMemory,
+                        path: "last_signal_at".to_string(),
+                    },
+                    comparator: MachineGuardConditionComparator::GreaterThan,
+                    right_parameter_path: "guard.threshold".to_string(),
+                },
+                MachineGuardConditionSpec {
+                    condition_id: "repeat_child_condition".to_string(),
+                    left_read: MachineGuardReadRef {
+                        source: MachineGuardReadSource::MachineMemory,
+                        path: "last_signal_at".to_string(),
+                    },
+                    comparator: MachineGuardConditionComparator::LessThan,
+                    right_parameter_path: "guard.threshold".to_string(),
+                },
+            ],
+            policy: None,
+            explanation: None,
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("child_machine `risk.guard.child` failed static contract")
+                && message.contains("structured guard `child_graph_duplicate_condition_guard`")
+                && message.contains("declares duplicate condition `repeat_child_condition`")
+        }));
+    }
+
+    #[test]
     fn machine_graph_rejects_child_guard_descriptor_invalid_policy() {
         let mut graph = sample_machine_graph();
         graph
