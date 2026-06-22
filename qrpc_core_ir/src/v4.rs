@@ -6215,6 +6215,68 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_rejects_child_guard_descriptor_condition_empty_right_parameter_path()
+    {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.check",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &["risk.guard"],
+                &["risk.guard.child"],
+            ));
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].event.event_type = "risk.child.check".to_string();
+        child.transitions[0].event.source = Some("risk.guard".to_string());
+        child.transitions[0].action = None;
+        child.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "bundle_child_condition_empty_right_parameter_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::MachineMemory,
+                path: "last_signal_at".to_string(),
+            }],
+            parameter_paths: vec!["guard.threshold".to_string()],
+            conditions: vec![MachineGuardConditionSpec {
+                condition_id: "empty_child_condition_right_parameter".to_string(),
+                left_read: MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+                comparator: MachineGuardConditionComparator::LessThan,
+                right_parameter_path: "".to_string(),
+            }],
+            policy: None,
+            explanation: None,
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        let errors = bundle.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("child_machine `risk.guard.child` failed static contract")
+                && message.contains(
+                    "structured guard `bundle_child_condition_empty_right_parameter_guard`",
+                )
+                && message.contains("condition `empty_child_condition_right_parameter`")
+                && message.contains("has an empty right parameter path")
+        }));
+    }
+
+    #[test]
     fn static_contract_bundle_rejects_child_guard_descriptor_invalid_policy() {
         let mut bundle = sample_static_contract_bundle();
         let graph = bundle.machine_graphs.first_mut().unwrap();

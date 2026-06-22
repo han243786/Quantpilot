@@ -11038,3 +11038,8 @@ Productization supplement: ADV-SM-PROD-003DW Guard Builder graph child condition
 - `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine structured guard conditions whose right parameter operands declare an empty path.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child condition right-parameter hygiene gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DW` as the graph child condition right-parameter hygiene slice.
+
+Productization supplement: ADV-SM-PROD-003DX Guard Builder bundle child condition right-parameter hygiene gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guard conditions whose right parameter operands declare an empty path.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child condition right-parameter hygiene gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DX` as the bundle child condition right-parameter hygiene slice.
