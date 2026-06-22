@@ -11078,3 +11078,8 @@ Productization supplement: ADV-SM-PROD-003EE State Machine graph child action em
 - `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine transition actions that emit events missing from the Event Catalog.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine graph child action emit event registration gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EE` as the graph child action emit event registration slice.
+
+Productization supplement: ADV-SM-PROD-003EF State Machine bundle child action emit event registration gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine transition actions that emit events missing from the Event Catalog.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child action emit event registration gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EF` as the bundle child action emit event registration slice.
