@@ -1086,6 +1086,7 @@ mod tests {
         assert_eq!(summary.read_guard_descriptor_count, 1);
         assert_eq!(summary.read_count, 1);
         assert_eq!(summary.event_payload_read_count, 1);
+        assert_eq!(summary.parameterized_guard_descriptor_count, 1);
         assert_eq!(summary.parameter_path_count, 2);
         assert_eq!(summary.cooldown_parameter_path_count, 1);
         assert_eq!(summary.risk_limit_parameter_path_count, 1);

@@ -10478,3 +10478,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for one read-bearing guard descriptor. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle read-bearing descriptor summary field, aggregation, related test assertions, and this record if read coverage reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003AZ: Guard Builder bundle parameterized descriptor summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by making bundle-level Guard Builder summaries distinguish total proposal parameter paths from how many structured guards declare any proposal parameter input across bundled graphs. |
+| implementation | `qrpc_core_ir/src/v4/static_contract_bundle.rs` now aggregates `parameterized_guard_descriptor_count` in `StaticContractBundleGuardDescriptorSummary` from descriptor readiness parameter path counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: bundle parameterized descriptor summary fields are read-only metadata, no guard is executed, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for one parameterized guard descriptor. |
+| capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle parameterized descriptor summary field, aggregation, related test assertions, and this record if parameter coverage reporting moves into a dedicated workspace query contract. |
