@@ -11446,3 +11446,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_transition_without_event_type` covers graph-level child transition event declaration validation. |
 | capability boundary | This does not add nested transition execution, action execution, event consumption, event emission, memory mutation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child transition event declaration validation test and this record if child transition event-type coverage moves into a shared validation suite. |
+
+### ADV-SM-PROD-003EJ: State Machine bundle child transition event declaration gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving static-contract bundle validation rejects child-machine transitions that omit their required event declaration. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with a child-machine transition whose `event_type` is blank, asserting bundle validation preserves the child machine wrapper and the shared transition event declaration diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child transition event declaration gate is static validation only, no child transition is executed, no action is executed, no event is consumed or emitted, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_transition_without_event_type` covers bundle-level child transition event declaration validation. |
+| capability boundary | This does not add nested transition execution, action execution, event consumption, event emission, memory mutation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level child transition event declaration validation test and this record if child transition event-type coverage moves into a shared validation suite. |
