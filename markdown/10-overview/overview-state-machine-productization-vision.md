@@ -11985,3 +11985,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_guard_descriptor_event_party_violations` covers graph-level rejection for top-level structured guards whose transition event denies the declared emitter or consumer. |
 | capability boundary | This does not add unauthorized event tolerance, guard execution, event consumption, payload reads, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level top-level guard event party authorization test and this record if graph event party coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003GG: State Machine graph top-level guard event catalog prerequisite gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying the Guard Builder Event Catalog prerequisite through machine graph static validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with an `intent.trend` structured guard that reads an event payload field after its machine graph removes the Event Catalog, asserting graph validation fails closed on the catalog prerequisite before any bundle wrapping. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph top-level guard event catalog prerequisite gate is static validation only, no guard is executed, no event is consumed, no payload is read, no condition is evaluated, no policy is executed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_guard_descriptor_missing_event_catalog` covers graph-level rejection for top-level structured guards with event-payload reads when the owning machine graph has no Event Catalog. |
+| capability boundary | This does not add missing-catalog tolerance, guard execution, event consumption, payload reads, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level top-level guard missing Event Catalog test and this record if graph catalog prerequisite coverage moves into a shared validation fixture suite. |
