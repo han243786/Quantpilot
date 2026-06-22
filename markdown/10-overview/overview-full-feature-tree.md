@@ -11048,3 +11048,8 @@ Productization supplement: ADV-SM-PROD-003DY Guard Builder graph child read requ
 - `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine structured guard descriptors whose read set is empty.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child read requirement gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DY` as the graph child read requirement slice.
+
+Productization supplement: ADV-SM-PROD-003DZ Guard Builder bundle child read requirement gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guard descriptors whose read set is empty.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child read requirement gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DZ` as the bundle child read requirement slice.
