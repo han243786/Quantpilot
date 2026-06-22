@@ -10679,3 +10679,9 @@ Productization supplement: ADV-SM-PROD-003BE Guard Builder bundle proposal-only 
 - `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for one guard descriptor with multiple proposal-only parameter surfaces.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle proposal-only descriptor summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BE` as the bundle proposal-only descriptor summary slice.
+
+Productization supplement: ADV-SM-PROD-003BF Guard Builder bundle guard id summary.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates unique structured guard ids across bundle guard descriptor projections.
+- `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for a projected structured guard id.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle guard id summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BF` as the bundle guard id summary slice.
