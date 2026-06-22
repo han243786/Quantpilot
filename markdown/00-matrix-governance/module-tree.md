@@ -11650,3 +11650,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003AM)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder graph guarded machine summary.
 `guarded_machine_count`; machine graphs can aggregate how many unique machines carry structured guard descriptors for single-graph workspace views while runtime execution and topology mutation remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003AN)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder graph guarded transition summary.
+`guarded_transition_count`; machine graphs can aggregate how many unique transitions carry structured guard descriptors for single-graph workspace views while runtime execution and topology mutation remain disabled.
