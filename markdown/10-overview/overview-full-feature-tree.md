@@ -11293,3 +11293,8 @@ Productization supplement: ADV-SM-PROD-003FV State Machine bundle top-level guar
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards whose conditions reference reads not declared by the guard.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard condition read binding rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FV` as the bundle top-level guard condition read binding rejection slice.
+
+Productization supplement: ADV-SM-PROD-003FW State Machine bundle top-level guard condition left-read hygiene gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards whose condition left-read operands declare an empty path.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard condition left-read hygiene gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FW` as the bundle top-level guard condition left-read hygiene slice.
