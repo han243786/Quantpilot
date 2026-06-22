@@ -11153,3 +11153,8 @@ Productization supplement: ADV-SM-PROD-003ET State Machine bundle child machine 
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child machines whose id collides with an existing top-level machine.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child machine top-level identity collision gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003ET` as the bundle child machine top-level identity collision slice.
+
+Productization supplement: ADV-SM-PROD-003EU State Machine graph child machine sibling identity collision gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level sibling child machines under the same parent that reuse a child machine id.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph sibling child machine identity collision gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EU` as the graph sibling child machine identity collision slice.

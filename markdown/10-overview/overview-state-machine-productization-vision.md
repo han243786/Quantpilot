@@ -11567,3 +11567,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_machine_top_level_id_collision` covers bundle-level child machine collisions with top-level machine ids. |
 | capability boundary | This does not add child-machine aliasing, nested transition execution, action execution, event consumption, event emission, memory mutation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level child machine top-level identity collision test and this record if child machine wrapper coverage moves into a shared validation suite. |
+
+### ADV-SM-PROD-003EU: State Machine graph child machine sibling identity collision gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving single-graph validation rejects sibling child machines under the same parent when they reuse a child machine id. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with two `risk.guard.child` machines attached to separate `risk.guard` states, asserting graph validation preserves the parent-machine duplicate child diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child machine sibling identity collision gate is static validation only, no child transition is executed, no action is executed, no event is consumed or emitted, no topology is mutated, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_machine_sibling_id_collision` covers graph-level sibling child machine id collision validation. |
+| capability boundary | This does not add child-machine aliasing, nested transition execution, action execution, event consumption, event emission, memory mutation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level sibling child machine identity collision test and this record if child machine wrapper coverage moves into a shared validation suite. |

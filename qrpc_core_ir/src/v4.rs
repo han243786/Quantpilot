@@ -5221,6 +5221,48 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_rejects_child_machine_sibling_id_collision() {
+        let mut graph = sample_machine_graph();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.check",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &["risk.guard"],
+                &["risk.guard.child"],
+            ));
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut first_child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        first_child.transitions[0].event.event_type = "risk.child.check".to_string();
+        first_child.transitions[0].event.source = Some("risk.guard".to_string());
+        first_child.transitions[0].guard = None;
+        first_child.transitions[0].action = None;
+        let mut second_child = first_child.clone();
+        second_child.transitions[0].transition_id = "risk.guard.child.sibling".to_string();
+        risk.states[0].child_machine = Some(Box::new(first_child));
+        risk.states[1].child_machine = Some(Box::new(second_child));
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("machine `risk.guard` failed static contract")
+                && message.contains("duplicate child_machine `risk.guard.child`")
+                && message.contains("under machine `risk.guard`")
+        }));
+    }
+
+    #[test]
     fn machine_graph_rejects_child_guard_descriptor_event_party_violations() {
         let mut graph = sample_machine_graph();
         graph
