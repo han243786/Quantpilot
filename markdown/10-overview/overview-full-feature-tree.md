@@ -10746,3 +10746,8 @@ Productization supplement: ADV-SM-PROD-003BQ Guard Builder bundle duplicate guar
 - `qrpc_core_ir/src/v4.rs` - covers two-graph bundle guard summaries where two descriptors reuse one guard id while graph-scoped counts remain separate.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle duplicate guard id summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BQ` as the bundle duplicate guard id summary slice.
+
+Productization supplement: ADV-SM-PROD-003BR Guard Builder bundle mixed machine template summary.
+- `qrpc_core_ir/src/v4.rs` - covers two-graph bundle guard summaries with observation, decision, and execution machine template descriptors.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle mixed machine template summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BR` as the bundle mixed machine template summary slice.

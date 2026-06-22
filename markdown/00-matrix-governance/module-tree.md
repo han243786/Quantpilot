@@ -11740,3 +11740,6 @@ Two-graph bundle guard descriptor summaries; static contract bundle tests now pr
 
 **Productization supplement (ADV-SM-PROD-003BQ)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle duplicate guard id summary.
 `guard_id_count`; static contract bundle tests now pin bundle-level unique guard-id counting across bundled graphs while graph-scoped machine, transition, event type, and event source counts remain graph-aware and guard execution stays disabled.
+
+**Productization supplement (ADV-SM-PROD-003BR)**: `root.contracts.core_ir.v4_contracts.static_contract_bundle`, `root.contracts.core_ir.v4_contracts.machine_graph_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder bundle mixed machine template summary.
+`observation_guard_descriptor_count` / `decision_guard_descriptor_count` / `execution_guard_descriptor_count`; static contract bundle tests now cover mixed template-class aggregation across bundled graphs while guard execution, topology mutation, and active strategy writes remain disabled.

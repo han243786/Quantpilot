@@ -10676,3 +10676,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers duplicate guard-id bundle aggregation across two graphs. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the duplicate guard-id bundle test and this record if guard id uniqueness reporting moves into a graph-scoped identity contract. |
+
+### ADV-SM-PROD-003BR: Guard Builder bundle mixed machine template summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving bundle-level Guard Builder summaries distinguish Observation, Decision, and Execution machine template classes across bundled graphs. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers a two-graph static contract bundle with structured guards on observation, decision, and execution machines, asserting one descriptor count for each template class. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the mixed machine-template summary guard is test-only metadata validation, no guard is executed, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers mixed machine-template bundle aggregation across two graphs. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the mixed machine-template bundle test and this record if template-class coverage moves into a dedicated workspace aggregation suite. |
