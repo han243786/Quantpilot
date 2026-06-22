@@ -11063,3 +11063,8 @@ Productization supplement: ADV-SM-PROD-003EB State Machine bundle child action m
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine transition actions that write undeclared machine memory.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child action memory write validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EB` as the bundle child action memory write validation slice.
+
+Productization supplement: ADV-SM-PROD-003EC State Machine graph child action emit event-type hygiene gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine transition actions that emit blank event types.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph child action emit event-type hygiene gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003EC` as the graph child action emit event-type hygiene slice.
