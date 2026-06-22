@@ -10667,3 +10667,9 @@ Productization supplement: ADV-SM-PROD-003BC Guard Builder bundle policy fail-cl
 - `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for one guard descriptor with disabled-fail-closed policy execution blockers.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle policy fail-closed descriptor summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BC` as the bundle policy fail-closed descriptor summary slice.
+
+Productization supplement: ADV-SM-PROD-003BD Guard Builder bundle active-strategy-write disabled descriptor summary.
+- `qrpc_core_ir/src/v4/static_contract_bundle.rs` - aggregates bundle guard descriptor counts for descriptors containing disabled active-strategy-write parameter or policy surfaces.
+- `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for one guard descriptor with disabled active-strategy-write parameter and policy surfaces.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle active-strategy-write disabled descriptor summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BD` as the bundle active-strategy-write disabled descriptor summary slice.
