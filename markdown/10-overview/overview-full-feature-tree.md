@@ -10983,3 +10983,8 @@ Productization supplement: ADV-SM-PROD-003DL Guard Builder graph child policy va
 - `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine structured guard policies with invalid timing values.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child policy validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DL` as the graph child policy validation gate slice.
+
+Productization supplement: ADV-SM-PROD-003DM Guard Builder graph child policy declaration validation gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine structured guard policies that declare no timing or fallback field.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child policy declaration validation gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DM` as the graph child policy declaration validation gate slice.
