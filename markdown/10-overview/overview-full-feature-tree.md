@@ -10721,3 +10721,8 @@ Productization supplement: ADV-SM-PROD-003BL Guard Builder bundle event source d
 - `qrpc_core_ir/src/v4.rs` - covers bundle summary aggregation for a structured guard descriptor with declared event source context.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle event source declaration summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BL` as the bundle event source declaration summary slice.
+
+Productization supplement: ADV-SM-PROD-003BM Guard Builder bundle graph summary parity guard.
+- `qrpc_core_ir/src/v4.rs` - asserts single-graph bundle guard summary context fields match their graph summary equivalents.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle graph summary parity guard ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BM` as the bundle graph summary parity guard slice.

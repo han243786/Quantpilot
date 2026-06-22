@@ -10621,3 +10621,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle summary aggregation for a structured guard descriptor with declared event source context. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle event-source declaration summary fields, aggregation, related test assertions, and this record if event-source declaration coverage reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003BM: Guard Builder bundle graph summary parity guard
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by locking the bundle-level Guard Builder context summary fields against their graph-level equivalents for a single bundled graph. |
+| implementation | `qrpc_core_ir/src/v4.rs` now asserts that bundle guard summary context fields match the contained graph summary for guard ids, guarded machine/transition/event type/event source counts, machine template classes, and event-source declaration counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the parity guard is test-only metadata validation, no guard is executed, no Event Catalog is edited, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers bundle graph-summary parity for Guard Builder context fields. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle graph-summary parity assertions and this record if bundle context parity moves into a dedicated compatibility test suite. |

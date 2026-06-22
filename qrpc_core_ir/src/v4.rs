@@ -1082,6 +1082,11 @@ mod tests {
             !projection.guard.guard.parameter_path_projections[1].active_strategy_write_enabled
         );
         let summary = bundle.guard_descriptor_summary();
+        let graph_summary = bundle
+            .machine_graphs
+            .first()
+            .expect("bundle should contain one test graph")
+            .guard_descriptor_summary();
         assert_eq!(summary.guard_descriptor_count, 1);
         assert_eq!(summary.guard_id_count, 1);
         assert_eq!(summary.guarded_machine_count, 1);
@@ -1093,6 +1098,43 @@ mod tests {
         assert_eq!(summary.execution_guard_descriptor_count, 0);
         assert_eq!(summary.event_source_declared_count, 1);
         assert_eq!(summary.event_source_missing_count, 0);
+        assert_eq!(summary.guard_id_count, graph_summary.guard_id_count);
+        assert_eq!(
+            summary.guarded_machine_count,
+            graph_summary.guarded_machine_count
+        );
+        assert_eq!(
+            summary.guarded_transition_count,
+            graph_summary.guarded_transition_count
+        );
+        assert_eq!(
+            summary.guarded_event_type_count,
+            graph_summary.guarded_event_type_count
+        );
+        assert_eq!(
+            summary.guarded_event_source_count,
+            graph_summary.guarded_event_source_count
+        );
+        assert_eq!(
+            summary.observation_guard_descriptor_count,
+            graph_summary.observation_guard_descriptor_count
+        );
+        assert_eq!(
+            summary.decision_guard_descriptor_count,
+            graph_summary.decision_guard_descriptor_count
+        );
+        assert_eq!(
+            summary.execution_guard_descriptor_count,
+            graph_summary.execution_guard_descriptor_count
+        );
+        assert_eq!(
+            summary.event_source_declared_count,
+            graph_summary.event_source_declared_count
+        );
+        assert_eq!(
+            summary.event_source_missing_count,
+            graph_summary.event_source_missing_count
+        );
         assert_eq!(summary.read_guard_descriptor_count, 1);
         assert_eq!(summary.read_count, 1);
         assert_eq!(summary.event_payload_read_count, 1);
