@@ -937,6 +937,7 @@ mod tests {
             summary.parameter_path_active_strategy_write_disabled_count,
             1
         );
+        assert_eq!(summary.conditional_guard_descriptor_count, 1);
         assert_eq!(summary.condition_count, 1);
         assert_eq!(summary.equal_condition_count, 0);
         assert_eq!(summary.not_equal_condition_count, 1);

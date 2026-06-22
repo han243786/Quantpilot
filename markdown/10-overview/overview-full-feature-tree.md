@@ -10607,3 +10607,9 @@ Productization supplement: ADV-SM-PROD-003AS Guard Builder graph parameterized d
 - `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for one parameterized guard descriptor in the focused fixture.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph parameterized descriptor summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AS` as the graph parameterized descriptor summary slice.
+
+Productization supplement: ADV-SM-PROD-003AT Guard Builder graph conditional descriptor summary.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - aggregates conditional guard descriptor counts in graph guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for one conditional guard descriptor in the focused fixture.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph conditional descriptor summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AT` as the graph conditional descriptor summary slice.
