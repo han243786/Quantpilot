@@ -59,6 +59,8 @@ pub struct StaticContractBundleGuardDescriptorSummary {
     pub observation_guard_descriptor_count: usize,
     pub decision_guard_descriptor_count: usize,
     pub execution_guard_descriptor_count: usize,
+    pub event_source_declared_count: usize,
+    pub event_source_missing_count: usize,
     pub read_guard_descriptor_count: usize,
     pub read_count: usize,
     pub event_payload_read_count: usize,
@@ -176,6 +178,9 @@ impl V4StaticContractBundle {
             ));
             if let Some(event_source) = &projection.guard.guard.event_source {
                 guarded_event_sources.insert((projection.graph_id.clone(), event_source.clone()));
+                summary.event_source_declared_count += 1;
+            } else {
+                summary.event_source_missing_count += 1;
             }
             match &projection.guard.machine_template {
                 MachineTemplateKind::Observation => summary.observation_guard_descriptor_count += 1,
