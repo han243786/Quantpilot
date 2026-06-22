@@ -11270,3 +11270,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_condition_undeclared_read` covers graph-level child condition read binding validation. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child condition-read validation test and this record if nested condition read coverage moves into a shared validation suite. |
+
+### ADV-SM-PROD-003DT: Guard Builder bundle child condition read validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving static-contract bundle validation rejects child-machine Guard Builder conditions whose left-read operands are not declared in the guard read set before bundled workspace or runtime consumption. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with a child-machine Guard Builder condition that references undeclared event-payload read `missing_payload`, asserting bundle validation preserves child machine id, guard id, condition id, source kind, and missing read path. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child condition read gate is static validation only, no child guard is executed, no condition is evaluated, no runtime read is performed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_condition_undeclared_read` covers bundle-level child condition read binding validation. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level child condition-read validation test and this record if nested condition read coverage moves into a shared validation suite. |
