@@ -11853,3 +11853,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_missing_condition_id` covers bundle-level rejection for top-level structured guards whose conditions omit `condition_id`. |
 | capability boundary | This does not add malformed condition identity tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level top-level guard missing condition id rejection test and this record if condition identity coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003FU: State Machine bundle top-level guard duplicate condition id rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying Guard Builder duplicate condition identity rejection through static bundle validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with an `intent.trend` structured guard that declares duplicate condition id `repeat_condition`, asserting bundle validation preserves the guard id and duplicate-condition diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle top-level guard duplicate condition id rejection gate is static validation only, no guard is executed, no condition is evaluated, no parameter is applied, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_duplicate_condition_id` covers bundle-level rejection for top-level structured guards whose conditions repeat a condition id. |
+| capability boundary | This does not add duplicate condition tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level top-level guard duplicate condition id rejection test and this record if condition identity coverage moves into a shared validation fixture suite. |
