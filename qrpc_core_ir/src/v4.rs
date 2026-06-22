@@ -981,6 +981,10 @@ mod tests {
         );
         assert_eq!(summary.policy_active_strategy_write_enabled_count, 0);
         assert_eq!(summary.policy_active_strategy_write_disabled_count, 1);
+        assert_eq!(
+            summary.active_strategy_write_disabled_guard_descriptor_count,
+            1
+        );
         assert_eq!(summary.execution_enabled_count, 0);
         assert_eq!(summary.execution_disabled_fail_closed_count, 1);
     }

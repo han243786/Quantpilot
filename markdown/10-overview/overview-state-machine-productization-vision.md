@@ -10445,3 +10445,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for one guard descriptor containing disabled-fail-closed policy execution blockers. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the policy fail-closed descriptor summary field, aggregation, related test assertions, and this record if policy fail-closed coverage reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003AW: Guard Builder graph active-strategy-write disabled descriptor summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by making graph-level Guard Builder summaries distinguish disabled active-strategy-write action counts from how many structured guards contain any such disabled write surface. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now aggregates `active_strategy_write_disabled_guard_descriptor_count` in `MachineGraphGuardDescriptorSummary` from parameter-path and policy projections. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: active-strategy-write disabled descriptor summary fields are read-only metadata, no proposal is applied, no policy is executed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for one guard descriptor containing disabled active-strategy-write parameter and policy surfaces. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the active-strategy-write disabled descriptor summary field, aggregation, related test assertions, and this record if active-strategy-write coverage reporting moves into a dedicated workspace query contract. |

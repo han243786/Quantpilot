@@ -131,6 +131,7 @@ pub struct MachineGraphGuardDescriptorSummary {
     pub policy_fallback_execution_disabled_fail_closed_count: usize,
     pub policy_active_strategy_write_enabled_count: usize,
     pub policy_active_strategy_write_disabled_count: usize,
+    pub active_strategy_write_disabled_guard_descriptor_count: usize,
     pub execution_enabled_count: usize,
     pub execution_disabled_fail_closed_count: usize,
 }
@@ -185,6 +186,7 @@ impl V4MachineGraphContract {
             } else {
                 summary.event_source_missing_count += 1;
             }
+            let mut has_active_strategy_write_disabled_surface = false;
             summary.read_guard_descriptor_count += usize::from(readiness.read_count > 0);
             summary.read_count += readiness.read_count;
             summary.event_payload_read_count += readiness.event_payload_read_count;
@@ -205,6 +207,8 @@ impl V4MachineGraphContract {
                     usize::from(parameter_path.active_strategy_write_enabled);
                 summary.parameter_path_active_strategy_write_disabled_count +=
                     usize::from(!parameter_path.active_strategy_write_enabled);
+                has_active_strategy_write_disabled_surface |=
+                    !parameter_path.active_strategy_write_enabled;
             }
             summary.conditional_guard_descriptor_count +=
                 usize::from(readiness.condition_count > 0);
@@ -278,7 +282,10 @@ impl V4MachineGraphContract {
                     usize::from(policy.active_strategy_write_enabled);
                 summary.policy_active_strategy_write_disabled_count +=
                     usize::from(!policy.active_strategy_write_enabled);
+                has_active_strategy_write_disabled_surface |= !policy.active_strategy_write_enabled;
             }
+            summary.active_strategy_write_disabled_guard_descriptor_count +=
+                usize::from(has_active_strategy_write_disabled_surface);
             summary.execution_enabled_count += usize::from(readiness.execution_enabled);
             summary.execution_disabled_fail_closed_count += usize::from(
                 readiness.execution_state
