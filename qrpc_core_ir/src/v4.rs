@@ -4530,6 +4530,51 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_rejects_guard_descriptor_event_party_violations() {
+        let mut graph = sample_machine_graph();
+        let bar_closed = graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .iter_mut()
+            .find(|event| event.event_type == "bar_closed")
+            .unwrap();
+        bar_closed.allowed_emitters = vec!["other.market".to_string()];
+        bar_closed.allowed_consumers = vec!["other.intent".to_string()];
+        let intent = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "intent.trend")
+            .unwrap();
+        intent.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "graph_event_party_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::EventPayload,
+                path: "symbol".to_string(),
+            }],
+            parameter_paths: Vec::new(),
+            conditions: Vec::new(),
+            policy: None,
+            explanation: None,
+        });
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("machine `intent.trend`")
+                && message.contains("transition `intent.trend.transition`")
+                && message.contains("is not an allowed consumer")
+                && message.contains("event `bar_closed`")
+        }));
+        assert!(errors.iter().any(|message| {
+            message.contains("machine `intent.trend`")
+                && message.contains("transition `intent.trend.transition`")
+                && message.contains("source `data.market` is not an allowed emitter")
+                && message.contains("event `bar_closed`")
+        }));
+    }
+
+    #[test]
     fn machine_graph_rejects_child_guard_descriptor_unknown_event_payload_read() {
         let mut graph = sample_machine_graph();
         graph

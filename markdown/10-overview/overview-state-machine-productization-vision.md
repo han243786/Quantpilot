@@ -11974,3 +11974,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_guard_descriptor_unknown_transition_event` covers graph-level rejection for top-level structured guards attached to undeclared transition event types. |
 | capability boundary | This does not add undeclared event tolerance, guard execution, event consumption, payload reads, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level top-level guard unknown transition event test and this record if graph event-catalog context coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003GF: State Machine graph top-level guard event party authorization gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying Guard Builder event party authorization validation through machine graph static validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with an `intent.trend` structured guard on `bar_closed` after the Event Catalog denies both the actual emitter and consumer, asserting graph validation preserves the machine, transition, event, consumer, and emitter diagnostics before any bundle wrapping. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph top-level guard event party authorization gate is static validation only, no guard is executed, no event is consumed, no payload is read, no condition is evaluated, no policy is executed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_guard_descriptor_event_party_violations` covers graph-level rejection for top-level structured guards whose transition event denies the declared emitter or consumer. |
+| capability boundary | This does not add unauthorized event tolerance, guard execution, event consumption, payload reads, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level top-level guard event party authorization test and this record if graph event party coverage moves into a shared validation fixture suite. |
