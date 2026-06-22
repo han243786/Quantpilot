@@ -10907,3 +10907,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers static bundle rejection for child-machine Guard Builder descriptor identity and empty-input hygiene violations. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle child descriptor hygiene validation test and this record if nested descriptor hygiene coverage moves into a dedicated validation suite. |
+
+### ADV-SM-PROD-003CM: Guard Builder bundle child descriptor acceptance gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving a child-machine structured guard with cataloged event payload, declared machine memory, readonly runtime fact, proposal-only parameters, condition, and policy is accepted by static contract bundle validation without enabling execution. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with a valid child-machine Guard Builder descriptor spanning payload, memory, readonly fact, parameter, condition, and policy surfaces, then verifies the projection and summary remain disabled-fail-closed. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child descriptor acceptance gate is static validation and projection-readiness only, no child guard is executed, no condition or policy is evaluated, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers static bundle acceptance for a full-surface child-machine Guard Builder descriptor. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle child descriptor acceptance test and this record if full-surface child acceptance coverage moves into a dedicated validation fixture suite. |

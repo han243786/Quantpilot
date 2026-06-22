@@ -4037,6 +4037,155 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_accepts_child_guard_descriptor_full_static_surface() {
+        let mut bundle = sample_static_contract_bundle();
+        let graph = bundle.machine_graphs.first_mut().unwrap();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.check",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &["risk.guard"],
+                &["risk.guard.child"],
+            ));
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].event.event_type = "risk.child.check".to_string();
+        child.transitions[0].event.source = Some("risk.guard".to_string());
+        child.transitions[0].guard = None;
+        child.transitions[0].action = None;
+        child.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "bundle_child_full_static_guard".to_string(),
+            reads: vec![
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::EventPayload,
+                    path: "symbol".to_string(),
+                },
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::ReadonlyRuntimeFact,
+                    path: "runtime.mode".to_string(),
+                },
+            ],
+            parameter_paths: vec!["guard.threshold".to_string(), "timeout.ms".to_string()],
+            conditions: vec![MachineGuardConditionSpec {
+                condition_id: "child_runtime_timeout_check".to_string(),
+                left_read: MachineGuardReadRef {
+                    source: MachineGuardReadSource::ReadonlyRuntimeFact,
+                    path: "runtime.mode".to_string(),
+                },
+                comparator: MachineGuardConditionComparator::Equal,
+                right_parameter_path: "timeout.ms".to_string(),
+            }],
+            policy: Some(MachineGuardPolicySpec {
+                timeout_ms: Some(500),
+                cooldown_ms: Some(1_000),
+                fallback: Some(MachineGuardFallbackPolicy::FailClosed),
+            }),
+            explanation: Some("child full static guard descriptor surface".to_string()),
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        assert_eq!(bundle.validate_static_contract(), Ok(()));
+        let projections = bundle.guard_descriptor_projections();
+        assert_eq!(projections.len(), 1);
+        let projection = &projections[0];
+        assert_eq!(projection.graph_id, "strategy.v4.sample");
+        assert_eq!(projection.guard.machine_id, "risk.guard.child");
+        assert_eq!(projection.guard.guard.event_type, "risk.child.check");
+        assert_eq!(
+            projection.guard.guard.readiness.guard_id,
+            "bundle_child_full_static_guard"
+        );
+        assert_eq!(projection.guard.guard.readiness.read_count, 3);
+        assert_eq!(projection.guard.guard.readiness.parameter_path_count, 2);
+        assert_eq!(projection.guard.guard.readiness.condition_count, 1);
+        assert!(projection.guard.guard.readiness.policy_declared);
+        assert!(!projection.guard.guard.readiness.execution_enabled);
+        assert_eq!(
+            projection.guard.guard.readiness.execution_state,
+            MachineGuardExecutionReadinessState::DisabledFailClosed
+        );
+        assert_eq!(
+            projection.guard.guard.readiness.execution_blocker_code,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+        );
+        assert_eq!(projection.guard.guard.read_projections.len(), 3);
+        assert_eq!(
+            projection.guard.guard.read_projections[0].binding_scope,
+            MachineGuardReadBindingScope::EventPayloadField
+        );
+        assert_eq!(
+            projection.guard.guard.read_projections[1].binding_scope,
+            MachineGuardReadBindingScope::MachineMemoryField
+        );
+        assert_eq!(
+            projection.guard.guard.read_projections[2].binding_scope,
+            MachineGuardReadBindingScope::ReadonlyRuntimeFact
+        );
+        let condition = &projection.guard.guard.condition_projections[0];
+        assert!(!condition.evaluation_enabled);
+        assert_eq!(
+            condition.evaluation_blocker_code,
+            MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_CODE
+        );
+        let policy = projection.guard.guard.policy_projection.as_ref().unwrap();
+        assert!(!policy.timing_execution_enabled);
+        assert!(!policy.fallback_execution_enabled);
+        assert!(!policy.active_strategy_write_enabled);
+
+        let summary = bundle.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 1);
+        assert_eq!(summary.decision_guard_descriptor_count, 1);
+        assert_eq!(summary.read_guard_descriptor_count, 1);
+        assert_eq!(summary.read_count, 3);
+        assert_eq!(summary.event_payload_read_count, 1);
+        assert_eq!(summary.machine_memory_read_count, 1);
+        assert_eq!(summary.readonly_runtime_fact_read_count, 1);
+        assert_eq!(summary.parameterized_guard_descriptor_count, 1);
+        assert_eq!(summary.parameter_path_count, 2);
+        assert_eq!(summary.threshold_parameter_path_count, 1);
+        assert_eq!(summary.timeout_parameter_path_count, 1);
+        assert_eq!(summary.proposal_only_guard_descriptor_count, 1);
+        assert_eq!(summary.conditional_guard_descriptor_count, 1);
+        assert_eq!(summary.condition_readonly_runtime_fact_read_count, 1);
+        assert_eq!(summary.condition_timeout_parameter_path_count, 1);
+        assert_eq!(
+            summary.condition_evaluation_disabled_fail_closed_guard_descriptor_count,
+            1
+        );
+        assert_eq!(summary.policy_declared_count, 1);
+        assert_eq!(summary.timeout_declared_count, 1);
+        assert_eq!(summary.cooldown_declared_count, 1);
+        assert_eq!(summary.fallback_fail_closed_declared_count, 1);
+        assert_eq!(
+            summary.policy_execution_disabled_fail_closed_guard_descriptor_count,
+            1
+        );
+        assert_eq!(
+            summary.active_strategy_write_disabled_guard_descriptor_count,
+            1
+        );
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 1);
+    }
+
+    #[test]
     fn version_manifest_requires_schema_bump_for_semantic_change() {
         let manifest = V4VersionManifest {
             semantic_change_requires_schema_bump: false,
