@@ -11820,3 +11820,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_base_hygiene_violations` covers bundle-level rejection for top-level structured guards with missing guard id, empty read path, and empty parameter path. |
 | capability boundary | This does not add malformed guard tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level top-level guard base hygiene rejection test and this record if base hygiene coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003FR: State Machine bundle top-level guard forbidden parameter rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying the proposal-only parameter boundary through static bundle validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with an `intent.trend` structured guard that references forbidden parameter path `graph.edges`, asserting bundle validation preserves the guard id, forbidden path, and proposal-only boundary diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle top-level guard forbidden parameter rejection gate is static validation only, no guard is executed, no parameter is applied, no topology is mutated, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_guard_descriptor_forbidden_parameter_path` covers bundle-level rejection for top-level structured guards with parameter paths outside the proposal-only guard boundary. |
+| capability boundary | This does not add forbidden parameter tolerance, guard execution, condition evaluation, policy execution, topology mutation, runtime reads, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level top-level guard forbidden-parameter rejection test and this record if proposal-only parameter coverage moves into a shared validation fixture suite. |

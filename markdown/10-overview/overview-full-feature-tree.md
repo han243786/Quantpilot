@@ -11268,3 +11268,8 @@ Productization supplement: ADV-SM-PROD-003FQ State Machine bundle top-level guar
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards with missing guard ids, empty read paths, and empty parameter paths.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard base hygiene rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FQ` as the bundle top-level guard base hygiene rejection slice.
+
+Productization supplement: ADV-SM-PROD-003FR State Machine bundle top-level guard forbidden parameter rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guards with parameter paths outside the proposal-only guard boundary.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard forbidden parameter rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FR` as the bundle top-level guard forbidden parameter rejection slice.
