@@ -921,6 +921,7 @@ mod tests {
         assert_eq!(summary.read_guard_descriptor_count, 1);
         assert_eq!(summary.read_count, 1);
         assert_eq!(summary.event_payload_read_count, 1);
+        assert_eq!(summary.parameterized_guard_descriptor_count, 1);
         assert_eq!(summary.parameter_path_count, 1);
         assert_eq!(summary.guard_parameter_path_count, 0);
         assert_eq!(summary.timeout_parameter_path_count, 0);

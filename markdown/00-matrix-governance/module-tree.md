@@ -11665,3 +11665,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003AR)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder graph read-bearing descriptor summary.
 `read_guard_descriptor_count`; machine graphs can aggregate how many structured guards declare read inputs for single-graph workspace views while runtime reads and guard execution remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003AS)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder graph parameterized descriptor summary.
+`parameterized_guard_descriptor_count`; machine graphs can aggregate how many structured guards declare proposal parameter inputs for single-graph workspace views while proposal application and guard execution remain disabled.

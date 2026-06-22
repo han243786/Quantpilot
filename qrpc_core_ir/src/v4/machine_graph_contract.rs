@@ -89,6 +89,7 @@ pub struct MachineGraphGuardDescriptorSummary {
     pub event_payload_read_count: usize,
     pub machine_memory_read_count: usize,
     pub readonly_runtime_fact_read_count: usize,
+    pub parameterized_guard_descriptor_count: usize,
     pub parameter_path_count: usize,
     pub guard_parameter_path_count: usize,
     pub timeout_parameter_path_count: usize,
@@ -186,6 +187,8 @@ impl V4MachineGraphContract {
             summary.event_payload_read_count += readiness.event_payload_read_count;
             summary.machine_memory_read_count += readiness.machine_memory_read_count;
             summary.readonly_runtime_fact_read_count += readiness.readonly_runtime_fact_read_count;
+            summary.parameterized_guard_descriptor_count +=
+                usize::from(readiness.parameter_path_count > 0);
             summary.parameter_path_count += readiness.parameter_path_count;
             summary.guard_parameter_path_count += readiness.guard_parameter_path_count;
             summary.timeout_parameter_path_count += readiness.timeout_parameter_path_count;

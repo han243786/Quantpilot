@@ -10401,3 +10401,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for one read-bearing guard descriptor in the focused fixture. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the read-bearing descriptor summary field, aggregation, related test assertions, and this record if read coverage reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003AS: Guard Builder graph parameterized descriptor summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making graph-level Guard Builder summaries distinguish total proposal parameter paths from how many structured guards declare any proposal parameter input. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now aggregates `parameterized_guard_descriptor_count` in `MachineGraphGuardDescriptorSummary` from descriptor readiness parameter path counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: parameterized descriptor summary fields are read-only metadata, no guard is executed, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for one parameterized guard descriptor in the focused fixture. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the parameterized descriptor summary field, aggregation, related test assertions, and this record if parameter coverage reporting moves into a dedicated workspace query contract. |
