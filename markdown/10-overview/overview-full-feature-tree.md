@@ -10933,3 +10933,8 @@ Productization supplement: ADV-SM-PROD-003DB Guard Builder bundle child transiti
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level graph-scoped projection and summary counts for child-machine structured guard transition topology.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle child transition projection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DB` as the bundle child transition projection gate slice.
+
+Productization supplement: ADV-SM-PROD-003DC Guard Builder graph child full static surface gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level validation, projection, and summary counts for a child-machine structured guard spanning all static surfaces.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child full static surface gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DC` as the graph child full static surface gate slice.
