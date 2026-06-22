@@ -77,6 +77,8 @@ pub struct MachineGraphGuardDescriptorSummary {
     pub observation_guard_descriptor_count: usize,
     pub decision_guard_descriptor_count: usize,
     pub execution_guard_descriptor_count: usize,
+    pub event_source_declared_count: usize,
+    pub event_source_missing_count: usize,
     pub read_count: usize,
     pub event_payload_read_count: usize,
     pub machine_memory_read_count: usize,
@@ -154,6 +156,11 @@ impl V4MachineGraphContract {
                 MachineTemplateKind::Observation => summary.observation_guard_descriptor_count += 1,
                 MachineTemplateKind::Decision => summary.decision_guard_descriptor_count += 1,
                 MachineTemplateKind::Execution => summary.execution_guard_descriptor_count += 1,
+            }
+            if projection.guard.event_source.is_some() {
+                summary.event_source_declared_count += 1;
+            } else {
+                summary.event_source_missing_count += 1;
             }
             summary.read_count += readiness.read_count;
             summary.event_payload_read_count += readiness.event_payload_read_count;

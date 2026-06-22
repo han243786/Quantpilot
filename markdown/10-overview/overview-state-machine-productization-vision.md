@@ -10324,3 +10324,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for a decision-machine guard descriptor while observation and execution guard descriptor counts remain zero for the focused fixture. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph machine-template summary fields, aggregation, related test assertions, and this record if machine-template distribution reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003AL: Guard Builder graph event source summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, `2.7`, and `2.9`; continue `SM-PROD-003` by making graph-level Guard Builder summaries show whether guarded transitions carry explicit event source context for single-graph workspace views. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now aggregates `event_source_declared_count` and `event_source_missing_count` in `MachineGraphGuardDescriptorSummary` from graph guard projections. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: event source summary fields are read-only metadata, no Event Catalog is edited, no guard is executed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for a guarded transition with a declared event source while the missing-source count remains zero for the focused fixture. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph event-source summary fields, aggregation, related test assertions, and this record if event-source reporting moves into a dedicated workspace query contract. |

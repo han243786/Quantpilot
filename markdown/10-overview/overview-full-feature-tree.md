@@ -10559,3 +10559,9 @@ Productization supplement: ADV-SM-PROD-003AK Guard Builder graph machine templat
 - `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for a decision-machine guard descriptor while observation and execution counts remain zero.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph machine template summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AK` as the graph machine template summary slice.
+
+Productization supplement: ADV-SM-PROD-003AL Guard Builder graph event source summary.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - aggregates declared and missing transition event source counts in graph guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for a guarded transition with a declared event source.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph event source summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AL` as the graph event source summary slice.
