@@ -10720,3 +10720,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers mixed policy bundle aggregation across two graphs. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the mixed policy bundle test and this record if policy declaration coverage moves into a dedicated workspace aggregation suite. |
+
+### ADV-SM-PROD-003BV: Guard Builder bundle mixed parameter path summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving bundle-level Guard Builder summaries distinguish guard, timeout, cooldown, threshold, and risk-limit proposal parameter paths across bundled graphs. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers a two-graph static contract bundle where one structured guard declares guard/timeout/cooldown parameter paths and another declares threshold/risk-limit parameter paths, asserting kind totals plus proposal-only and active-strategy-write-disabled counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the mixed parameter-path summary guard is test-only metadata validation, no proposal parameter is applied, no guard parameter write occurs, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers mixed parameter-path bundle aggregation across two graphs. |
+| capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the mixed parameter-path bundle test and this record if parameter-path coverage moves into a dedicated workspace aggregation suite. |

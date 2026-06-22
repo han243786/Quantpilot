@@ -10766,3 +10766,8 @@ Productization supplement: ADV-SM-PROD-003BU Guard Builder bundle mixed policy s
 - `qrpc_core_ir/src/v4.rs` - covers two-graph bundle guard summaries with mixed timeout, cooldown, and fail-closed fallback policy declarations.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle mixed policy summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BU` as the bundle mixed policy summary slice.
+
+Productization supplement: ADV-SM-PROD-003BV Guard Builder bundle mixed parameter path summary.
+- `qrpc_core_ir/src/v4.rs` - covers two-graph bundle guard summaries with mixed guard, timeout, cooldown, threshold, and risk-limit proposal parameter paths.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder bundle mixed parameter path summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003BV` as the bundle mixed parameter path summary slice.

@@ -2057,6 +2057,110 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_summarizes_guard_descriptor_parameter_paths_across_graphs() {
+        fn attach_risk_guard_descriptor(
+            graph: &mut V4MachineGraphContract,
+            guard_id: &str,
+            parameter_paths: Vec<&str>,
+        ) {
+            let risk = graph
+                .machines
+                .iter_mut()
+                .find(|machine| machine.machine_id == "risk.guard")
+                .unwrap();
+            risk.transitions[0].guard = None;
+            risk.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+                guard_id: guard_id.to_string(),
+                reads: Vec::new(),
+                parameter_paths: parameter_paths
+                    .into_iter()
+                    .map(str::to_string)
+                    .collect::<Vec<_>>(),
+                conditions: Vec::new(),
+                policy: None,
+                explanation: Some("bundle parameter path summary surface".to_string()),
+            });
+        }
+
+        let mut bundle = sample_static_contract_bundle();
+        bundle.machine_graphs[0].graph_id = "strategy.v4.alpha".to_string();
+        let mut second_graph = sample_machine_graph();
+        second_graph.graph_id = "strategy.v4.beta".to_string();
+        bundle.machine_graphs.push(second_graph);
+        attach_risk_guard_descriptor(
+            &mut bundle.machine_graphs[0],
+            "risk_guard_alpha",
+            vec!["guard.enabled", "timeout.ms", "cooldown.ms"],
+        );
+        attach_risk_guard_descriptor(
+            &mut bundle.machine_graphs[1],
+            "risk_guard_beta",
+            vec!["guard.threshold", "risk.max_notional"],
+        );
+
+        let projections = bundle.guard_descriptor_projections();
+        assert_eq!(projections.len(), 2);
+        assert!(projections.iter().all(|projection| projection
+            .guard
+            .guard
+            .parameter_path_projections
+            .iter()
+            .all(|path| path.proposal_only && !path.active_strategy_write_enabled)));
+        let path_kinds = projections
+            .iter()
+            .flat_map(|projection| projection.guard.guard.parameter_path_projections.iter())
+            .map(|path| (path.path.as_str(), path.kind.unwrap()))
+            .collect::<BTreeMap<_, _>>();
+        assert_eq!(path_kinds.len(), 5);
+        assert_eq!(
+            path_kinds.get("guard.enabled"),
+            Some(&MachineGuardParameterPathKind::Guard)
+        );
+        assert_eq!(
+            path_kinds.get("timeout.ms"),
+            Some(&MachineGuardParameterPathKind::Timeout)
+        );
+        assert_eq!(
+            path_kinds.get("cooldown.ms"),
+            Some(&MachineGuardParameterPathKind::Cooldown)
+        );
+        assert_eq!(
+            path_kinds.get("guard.threshold"),
+            Some(&MachineGuardParameterPathKind::Threshold)
+        );
+        assert_eq!(
+            path_kinds.get("risk.max_notional"),
+            Some(&MachineGuardParameterPathKind::RiskLimit)
+        );
+
+        let summary = bundle.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 2);
+        assert_eq!(summary.parameterized_guard_descriptor_count, 2);
+        assert_eq!(summary.parameter_path_count, 5);
+        assert_eq!(summary.guard_parameter_path_count, 1);
+        assert_eq!(summary.timeout_parameter_path_count, 1);
+        assert_eq!(summary.cooldown_parameter_path_count, 1);
+        assert_eq!(summary.threshold_parameter_path_count, 1);
+        assert_eq!(summary.risk_limit_parameter_path_count, 1);
+        assert_eq!(summary.parameter_path_proposal_only_count, 5);
+        assert_eq!(summary.proposal_only_guard_descriptor_count, 2);
+        assert_eq!(
+            summary.parameter_path_active_strategy_write_enabled_count,
+            0
+        );
+        assert_eq!(
+            summary.parameter_path_active_strategy_write_disabled_count,
+            5
+        );
+        assert_eq!(
+            summary.active_strategy_write_disabled_guard_descriptor_count,
+            2
+        );
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 2);
+    }
+
+    #[test]
     fn machine_contract_rejects_invalid_structured_guard_descriptor() {
         let mut machine = sample_machine();
         machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
