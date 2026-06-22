@@ -10589,3 +10589,9 @@ Productization supplement: ADV-SM-PROD-003AP Guard Builder graph guarded event s
 - `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for one guarded event source in the focused fixture.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph guarded event source summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AP` as the graph guarded event source summary slice.
+
+Productization supplement: ADV-SM-PROD-003AQ Guard Builder graph guard id summary.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - aggregates unique guard-id counts in graph guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for one guard id in the focused fixture.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph guard id summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AQ` as the graph guard id summary slice.

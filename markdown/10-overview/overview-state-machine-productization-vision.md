@@ -10379,3 +10379,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for one unique guarded event source in the focused fixture. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the guarded-event-source summary field, aggregation, related test assertions, and this record if guarded event-source coverage reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003AQ: Guard Builder graph guard id summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making graph-level Guard Builder summaries distinguish descriptor volume from unique structured guard identities. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now aggregates `guard_id_count` in `MachineGraphGuardDescriptorSummary` from graph guard descriptor readiness metadata. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: guard-id summary fields are read-only metadata, no guard is executed, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for one unique guard id in the focused fixture. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the guard-id summary field, aggregation, related test assertions, and this record if guard identity reporting moves into a dedicated workspace query contract. |

@@ -74,6 +74,7 @@ pub struct MachineGraphGuardDescriptorProjection {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub struct MachineGraphGuardDescriptorSummary {
     pub guard_descriptor_count: usize,
+    pub guard_id_count: usize,
     pub guarded_machine_count: usize,
     pub guarded_transition_count: usize,
     pub guarded_event_type_count: usize,
@@ -153,6 +154,7 @@ impl V4MachineGraphContract {
 
     pub fn guard_descriptor_summary(&self) -> MachineGraphGuardDescriptorSummary {
         let mut summary = MachineGraphGuardDescriptorSummary::default();
+        let mut guard_ids = BTreeSet::new();
         let mut guarded_machine_ids = BTreeSet::new();
         let mut guarded_transition_ids = BTreeSet::new();
         let mut guarded_event_types = BTreeSet::new();
@@ -160,6 +162,7 @@ impl V4MachineGraphContract {
         for projection in self.guard_descriptor_projections() {
             let readiness = &projection.guard.readiness;
             summary.guard_descriptor_count += 1;
+            guard_ids.insert(readiness.guard_id.clone());
             guarded_machine_ids.insert(projection.machine_id.clone());
             guarded_transition_ids.insert((
                 projection.machine_id.clone(),
@@ -267,6 +270,7 @@ impl V4MachineGraphContract {
                     == MachineGuardExecutionReadinessState::DisabledFailClosed,
             );
         }
+        summary.guard_id_count = guard_ids.len();
         summary.guarded_machine_count = guarded_machine_ids.len();
         summary.guarded_transition_count = guarded_transition_ids.len();
         summary.guarded_event_type_count = guarded_event_types.len();

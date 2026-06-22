@@ -908,6 +908,7 @@ mod tests {
         assert!(!projection.guard.readiness.execution_enabled);
         let summary = graph.guard_descriptor_summary();
         assert_eq!(summary.guard_descriptor_count, 1);
+        assert_eq!(summary.guard_id_count, 1);
         assert_eq!(summary.guarded_machine_count, 1);
         assert_eq!(summary.guarded_transition_count, 1);
         assert_eq!(summary.guarded_event_type_count, 1);
