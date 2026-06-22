@@ -10893,3 +10893,8 @@ Productization supplement: ADV-SM-PROD-003CT Guard Builder graph child condition
 - `qrpc_core_ir/src/v4.rs` - covers graph-level projection and summary counts for child-machine structured guards with condition operands.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child condition summary gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CT` as the graph child condition summary gate slice.
+
+Productization supplement: ADV-SM-PROD-003CU Guard Builder graph child policy summary gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level projection and summary counts for child-machine structured guards with timing and fallback policy.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child policy summary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003CU` as the graph child policy summary gate slice.
