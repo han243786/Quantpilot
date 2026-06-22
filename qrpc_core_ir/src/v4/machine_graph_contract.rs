@@ -7,7 +7,7 @@ pub(super) use traversal_helpers::{collect_machine_family, machine_nested_depth}
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use super::{
     default_machine_graph_contract_version, default_machine_graph_edge_activation,
@@ -74,6 +74,7 @@ pub struct MachineGraphGuardDescriptorProjection {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub struct MachineGraphGuardDescriptorSummary {
     pub guard_descriptor_count: usize,
+    pub guarded_machine_count: usize,
     pub observation_guard_descriptor_count: usize,
     pub decision_guard_descriptor_count: usize,
     pub execution_guard_descriptor_count: usize,
@@ -149,9 +150,11 @@ impl V4MachineGraphContract {
 
     pub fn guard_descriptor_summary(&self) -> MachineGraphGuardDescriptorSummary {
         let mut summary = MachineGraphGuardDescriptorSummary::default();
+        let mut guarded_machine_ids = BTreeSet::new();
         for projection in self.guard_descriptor_projections() {
             let readiness = &projection.guard.readiness;
             summary.guard_descriptor_count += 1;
+            guarded_machine_ids.insert(projection.machine_id.clone());
             match &projection.machine_template {
                 MachineTemplateKind::Observation => summary.observation_guard_descriptor_count += 1,
                 MachineTemplateKind::Decision => summary.decision_guard_descriptor_count += 1,
@@ -252,6 +255,7 @@ impl V4MachineGraphContract {
                     == MachineGuardExecutionReadinessState::DisabledFailClosed,
             );
         }
+        summary.guarded_machine_count = guarded_machine_ids.len();
         summary
     }
 }
