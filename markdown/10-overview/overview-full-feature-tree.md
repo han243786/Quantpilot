@@ -11233,3 +11233,8 @@ Productization supplement: ADV-SM-PROD-003FJ State Machine bundle child machine 
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child machines that declare duplicate state group ids.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child machine duplicate state-group validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FJ` as the bundle child machine duplicate state-group validation slice.
+
+Productization supplement: ADV-SM-PROD-003FK State Machine bundle child guard payload catalog acceptance gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guards that read Event Catalog declared payload fields.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard payload catalog acceptance gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003FK` as the bundle child guard payload catalog acceptance slice.

@@ -11743,3 +11743,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_machine_duplicate_state_group` covers bundle-level rejection for child machines with duplicate state group ids. |
 | capability boundary | This does not add duplicate state-group tolerance, state-group execution, deeper child-machine nesting, child-machine aliasing, nested transition execution, action execution, event consumption, event emission, memory mutation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level child machine duplicate state-group validation test and this record if child machine wrapper coverage moves into a shared validation suite. |
+
+### ADV-SM-PROD-003FK: State Machine bundle child guard payload catalog acceptance gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving static-contract bundle validation accepts child-machine structured guard descriptors that read an Event Catalog declared payload field. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()`, `guard_descriptor_projections()`, and `guard_descriptor_summary()` with a `risk.guard.child` structured guard that reads `symbol` from the cataloged `risk.child.check` event, asserting graph-scoped projection, payload read binding, declared event source count, and disabled-fail-closed execution state. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child guard payload catalog acceptance gate is static validation and projection metadata only, no child guard is executed, no event is consumed at runtime, no payload is read at runtime, no topology is mutated, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_accepts_child_guard_descriptor_event_payload_read_from_catalog` covers bundle-level acceptance for child structured guards that read declared event payload fields. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime payload reads, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level child guard payload catalog acceptance test and this record if child guard payload authority coverage moves into a shared projection fixture suite. |
