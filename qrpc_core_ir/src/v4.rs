@@ -4764,6 +4764,52 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_rejects_child_guard_descriptor_without_reads() {
+        let mut graph = sample_machine_graph();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.check",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &["risk.guard"],
+                &["risk.guard.child"],
+            ));
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].event.event_type = "risk.child.check".to_string();
+        child.transitions[0].event.source = Some("risk.guard".to_string());
+        child.transitions[0].action = None;
+        child.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "child_graph_no_read_guard".to_string(),
+            reads: Vec::new(),
+            parameter_paths: Vec::new(),
+            conditions: Vec::new(),
+            policy: None,
+            explanation: None,
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("child_machine `risk.guard.child` failed static contract")
+                && message.contains("structured guard `child_graph_no_read_guard`")
+                && message.contains("must declare at least one read")
+        }));
+    }
+
+    #[test]
     fn machine_graph_rejects_child_guard_descriptor_event_party_violations() {
         let mut graph = sample_machine_graph();
         graph
