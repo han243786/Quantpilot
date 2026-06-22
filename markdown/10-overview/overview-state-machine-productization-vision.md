@@ -10291,3 +10291,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for a not-equal condition comparator while the other comparator counts remain zero for the focused fixture. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph comparator summary fields, aggregation, related test assertions, and this record if graph-level condition reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003AI: Guard Builder graph condition operand summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making graph-level Guard Builder summaries expose condition left-read sources and right proposal parameter kinds for single-graph workspace views. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now aggregates condition operand counts in `MachineGraphGuardDescriptorSummary` from descriptor readiness, matching the existing bundle operand summary fields at the machine-graph boundary. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: graph condition operand summary fields are read-only metadata, no runtime read occurs, no condition is evaluated, no guard is executed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for an event-payload left read and threshold right parameter path while the other operand counts remain zero for the focused fixture. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph condition operand summary fields, aggregation, related test assertions, and this record if graph-level operand reporting moves into a dedicated workspace query contract. |

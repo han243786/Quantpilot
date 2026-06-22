@@ -94,6 +94,14 @@ pub struct MachineGraphGuardDescriptorSummary {
     pub greater_than_or_equal_condition_count: usize,
     pub less_than_condition_count: usize,
     pub less_than_or_equal_condition_count: usize,
+    pub condition_event_payload_read_count: usize,
+    pub condition_machine_memory_read_count: usize,
+    pub condition_readonly_runtime_fact_read_count: usize,
+    pub condition_guard_parameter_path_count: usize,
+    pub condition_timeout_parameter_path_count: usize,
+    pub condition_cooldown_parameter_path_count: usize,
+    pub condition_threshold_parameter_path_count: usize,
+    pub condition_risk_limit_parameter_path_count: usize,
     pub condition_evaluation_enabled_count: usize,
     pub condition_evaluation_disabled_fail_closed_count: usize,
     pub policy_declared_count: usize,
@@ -163,6 +171,22 @@ impl V4MachineGraphContract {
             summary.less_than_condition_count += readiness.less_than_condition_count;
             summary.less_than_or_equal_condition_count +=
                 readiness.less_than_or_equal_condition_count;
+            summary.condition_event_payload_read_count +=
+                readiness.condition_event_payload_read_count;
+            summary.condition_machine_memory_read_count +=
+                readiness.condition_machine_memory_read_count;
+            summary.condition_readonly_runtime_fact_read_count +=
+                readiness.condition_readonly_runtime_fact_read_count;
+            summary.condition_guard_parameter_path_count +=
+                readiness.condition_guard_parameter_path_count;
+            summary.condition_timeout_parameter_path_count +=
+                readiness.condition_timeout_parameter_path_count;
+            summary.condition_cooldown_parameter_path_count +=
+                readiness.condition_cooldown_parameter_path_count;
+            summary.condition_threshold_parameter_path_count +=
+                readiness.condition_threshold_parameter_path_count;
+            summary.condition_risk_limit_parameter_path_count +=
+                readiness.condition_risk_limit_parameter_path_count;
             for condition in &projection.guard.condition_projections {
                 summary.condition_evaluation_enabled_count +=
                     usize::from(condition.evaluation_enabled);

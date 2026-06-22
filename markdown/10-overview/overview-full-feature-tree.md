@@ -10541,3 +10541,9 @@ Productization supplement: ADV-SM-PROD-003AH Guard Builder graph condition compa
 - `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for a not-equal structured guard condition while condition evaluation remains disabled.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph condition comparator summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AH` as the graph condition comparator summary slice.
+
+Productization supplement: ADV-SM-PROD-003AI Guard Builder graph condition operand summary.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - aggregates condition left-read source counts and right-parameter-kind counts in graph guard descriptor summaries.
+- `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for an event-payload left read and threshold right parameter while condition evaluation remains disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph condition operand summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AI` as the graph condition operand summary slice.
