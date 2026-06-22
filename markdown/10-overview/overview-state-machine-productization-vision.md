@@ -11666,3 +11666,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_machine_duplicate_state` covers graph-level rejection for child machines with duplicate state ids. |
 | capability boundary | This does not add duplicate-state tolerance, state-group execution, deeper child-machine nesting, child-machine aliasing, nested transition execution, action execution, event consumption, event emission, memory mutation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child machine duplicate-state validation test and this record if child machine wrapper coverage moves into a shared validation suite. |
+
+### ADV-SM-PROD-003FD: State Machine bundle child machine duplicate-state validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.4`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving static-contract bundle validation rejects child machines that declare duplicate state ids. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4StaticContractBundle::validate_static_contract()` with a `risk.guard.child` machine that appends a second non-initial `idle` state, asserting bundle validation preserves the child-machine duplicate-state diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child machine duplicate-state validation gate is static validation only, no child transition is executed, no state group is executed, no action is executed, no event is consumed or emitted, no topology is mutated, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_machine_duplicate_state` covers bundle-level rejection for child machines with duplicate state ids. |
+| capability boundary | This does not add duplicate-state tolerance, state-group execution, deeper child-machine nesting, child-machine aliasing, nested transition execution, action execution, event consumption, event emission, memory mutation, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the bundle-level child machine duplicate-state validation test and this record if child machine wrapper coverage moves into a shared validation suite. |
