@@ -2161,6 +2161,144 @@ mod tests {
     }
 
     #[test]
+    fn static_contract_bundle_summarizes_guard_descriptor_combined_surfaces_across_graphs() {
+        fn attach_risk_guard_descriptor(
+            graph: &mut V4MachineGraphContract,
+            guard_id: &str,
+            reads: Vec<MachineGuardReadRef>,
+            parameter_paths: Vec<String>,
+            conditions: Vec<MachineGuardConditionSpec>,
+            policy: Option<MachineGuardPolicySpec>,
+        ) {
+            let risk = graph
+                .machines
+                .iter_mut()
+                .find(|machine| machine.machine_id == "risk.guard")
+                .unwrap();
+            risk.transitions[0].guard = None;
+            risk.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+                guard_id: guard_id.to_string(),
+                reads,
+                parameter_paths,
+                conditions,
+                policy,
+                explanation: Some("bundle combined summary surface".to_string()),
+            });
+        }
+
+        let mut bundle = sample_static_contract_bundle();
+        bundle.machine_graphs[0].graph_id = "strategy.v4.alpha".to_string();
+        let mut second_graph = sample_machine_graph();
+        second_graph.graph_id = "strategy.v4.beta".to_string();
+        bundle.machine_graphs.push(second_graph);
+        attach_risk_guard_descriptor(
+            &mut bundle.machine_graphs[0],
+            "risk_guard_combined",
+            vec![
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::EventPayload,
+                    path: "symbol".to_string(),
+                },
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+            ],
+            vec!["guard.threshold".to_string(), "timeout.ms".to_string()],
+            vec![MachineGuardConditionSpec {
+                condition_id: "event_threshold_check".to_string(),
+                left_read: MachineGuardReadRef {
+                    source: MachineGuardReadSource::EventPayload,
+                    path: "symbol".to_string(),
+                },
+                comparator: MachineGuardConditionComparator::GreaterThanOrEqual,
+                right_parameter_path: "guard.threshold".to_string(),
+            }],
+            Some(MachineGuardPolicySpec {
+                timeout_ms: Some(750),
+                cooldown_ms: None,
+                fallback: Some(MachineGuardFallbackPolicy::FailClosed),
+            }),
+        );
+        attach_risk_guard_descriptor(
+            &mut bundle.machine_graphs[1],
+            "risk_guard_readonly",
+            vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::ReadonlyRuntimeFact,
+                path: "runtime.mode".to_string(),
+            }],
+            Vec::new(),
+            Vec::new(),
+            None,
+        );
+
+        let projections = bundle.guard_descriptor_projections();
+        assert_eq!(projections.len(), 2);
+        let combined = projections
+            .iter()
+            .find(|projection| projection.guard.guard.readiness.guard_id == "risk_guard_combined")
+            .unwrap();
+        assert_eq!(combined.guard.guard.readiness.read_count, 2);
+        assert_eq!(combined.guard.guard.readiness.parameter_path_count, 2);
+        assert_eq!(combined.guard.guard.readiness.condition_count, 1);
+        assert!(combined.guard.guard.readiness.policy_declared);
+
+        let summary = bundle.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 2);
+        assert_eq!(summary.guard_id_count, 2);
+        assert_eq!(summary.read_guard_descriptor_count, 2);
+        assert_eq!(summary.read_count, 3);
+        assert_eq!(summary.event_payload_read_count, 1);
+        assert_eq!(summary.machine_memory_read_count, 1);
+        assert_eq!(summary.readonly_runtime_fact_read_count, 1);
+        assert_eq!(summary.parameterized_guard_descriptor_count, 1);
+        assert_eq!(summary.parameter_path_count, 2);
+        assert_eq!(summary.threshold_parameter_path_count, 1);
+        assert_eq!(summary.timeout_parameter_path_count, 1);
+        assert_eq!(summary.parameter_path_proposal_only_count, 2);
+        assert_eq!(summary.proposal_only_guard_descriptor_count, 1);
+        assert_eq!(
+            summary.parameter_path_active_strategy_write_disabled_count,
+            2
+        );
+        assert_eq!(summary.conditional_guard_descriptor_count, 1);
+        assert_eq!(summary.condition_count, 1);
+        assert_eq!(summary.greater_than_or_equal_condition_count, 1);
+        assert_eq!(summary.condition_event_payload_read_count, 1);
+        assert_eq!(summary.condition_threshold_parameter_path_count, 1);
+        assert_eq!(summary.condition_evaluation_enabled_count, 0);
+        assert_eq!(
+            summary.condition_evaluation_disabled_fail_closed_guard_descriptor_count,
+            1
+        );
+        assert_eq!(summary.condition_evaluation_disabled_fail_closed_count, 1);
+        assert_eq!(summary.policy_declared_count, 1);
+        assert_eq!(summary.timing_policy_declared_count, 1);
+        assert_eq!(summary.timeout_declared_count, 1);
+        assert_eq!(summary.fallback_declared_count, 1);
+        assert_eq!(summary.fallback_fail_closed_declared_count, 1);
+        assert_eq!(
+            summary.policy_execution_disabled_fail_closed_guard_descriptor_count,
+            1
+        );
+        assert_eq!(
+            summary.policy_timing_execution_disabled_fail_closed_count,
+            1
+        );
+        assert_eq!(
+            summary.policy_fallback_execution_disabled_fail_closed_count,
+            1
+        );
+        assert_eq!(summary.policy_active_strategy_write_disabled_count, 1);
+        assert_eq!(
+            summary.active_strategy_write_disabled_guard_descriptor_count,
+            1
+        );
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 2);
+    }
+
+    #[test]
     fn machine_contract_rejects_invalid_structured_guard_descriptor() {
         let mut machine = sample_machine();
         machine.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {

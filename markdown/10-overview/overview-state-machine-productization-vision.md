@@ -10731,3 +10731,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers mixed parameter-path bundle aggregation across two graphs. |
 | capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the mixed parameter-path bundle test and this record if parameter-path coverage moves into a dedicated workspace aggregation suite. |
+
+### ADV-SM-PROD-003BW: Guard Builder bundle combined surface summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving bundle-level Guard Builder summaries keep read, parameter, condition, policy, proposal-only, and active-strategy-write-disabled descriptor counts distinct when one structured guard carries multiple contract-only surfaces. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers a two-graph static contract bundle with one combined structured guard carrying reads, proposal parameter paths, a condition, and a policy plus a second read-only guard. The test asserts read-bearing descriptors count separately from parameterized, conditional, policy, proposal-only, and active-strategy-write-disabled descriptors. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the combined surface summary guard is test-only metadata validation, no condition or policy is executed, no runtime read is performed, no proposal parameter is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers combined Guard Builder surface aggregation across two bundled graphs. |
+| capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the combined surface bundle test and this record if multi-surface descriptor coverage moves into a dedicated workspace aggregation suite. |
