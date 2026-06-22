@@ -75,7 +75,7 @@ mod tests {
         DataBinding, DataBindingKind, ExecutionRule, ExecutionSizingKind, IndicatorNode,
         RiskPolicy, SeriesExpr, SignalKind, SignalRule,
     };
-    use std::collections::BTreeMap;
+    use std::collections::{BTreeMap, BTreeSet};
 
     fn sample_machine() -> V4MachineContract {
         V4MachineContract {
@@ -1534,6 +1534,76 @@ mod tests {
             projection.guard.guard.readiness.execution_blocker_reason,
             MACHINE_GUARD_EXECUTION_DISABLED_FAIL_CLOSED_REASON
         );
+    }
+
+    #[test]
+    fn static_contract_bundle_summarizes_guard_descriptors_across_graphs() {
+        fn attach_risk_guard_descriptor(graph: &mut V4MachineGraphContract, guard_id: &str) {
+            let risk = graph
+                .machines
+                .iter_mut()
+                .find(|machine| machine.machine_id == "risk.guard")
+                .unwrap();
+            risk.transitions[0].guard = None;
+            risk.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+                guard_id: guard_id.to_string(),
+                reads: vec![MachineGuardReadRef {
+                    source: MachineGuardReadSource::EventPayload,
+                    path: "symbol".to_string(),
+                }],
+                parameter_paths: vec!["risk.max_notional".to_string()],
+                conditions: Vec::new(),
+                policy: None,
+                explanation: Some("bundle multi-graph summary surface".to_string()),
+            });
+        }
+
+        let mut bundle = sample_static_contract_bundle();
+        bundle.machine_graphs[0].graph_id = "strategy.v4.alpha".to_string();
+        let mut second_graph = sample_machine_graph();
+        second_graph.graph_id = "strategy.v4.beta".to_string();
+        bundle.machine_graphs.push(second_graph);
+        attach_risk_guard_descriptor(&mut bundle.machine_graphs[0], "risk_guard_alpha");
+        attach_risk_guard_descriptor(&mut bundle.machine_graphs[1], "risk_guard_beta");
+
+        let projections = bundle.guard_descriptor_projections();
+        let graph_ids = projections
+            .iter()
+            .map(|projection| projection.graph_id.as_str())
+            .collect::<BTreeSet<_>>();
+        assert_eq!(projections.len(), 2);
+        assert_eq!(graph_ids.len(), 2);
+        assert!(graph_ids.contains("strategy.v4.alpha"));
+        assert!(graph_ids.contains("strategy.v4.beta"));
+
+        let summary = bundle.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 2);
+        assert_eq!(summary.guard_id_count, 2);
+        assert_eq!(summary.guarded_machine_count, 2);
+        assert_eq!(summary.guarded_transition_count, 2);
+        assert_eq!(summary.guarded_event_type_count, 2);
+        assert_eq!(summary.guarded_event_source_count, 2);
+        assert_eq!(summary.event_source_declared_count, 2);
+        assert_eq!(summary.event_source_missing_count, 0);
+        assert_eq!(summary.decision_guard_descriptor_count, 2);
+        assert_eq!(summary.read_guard_descriptor_count, 2);
+        assert_eq!(summary.read_count, 2);
+        assert_eq!(summary.event_payload_read_count, 2);
+        assert_eq!(summary.parameterized_guard_descriptor_count, 2);
+        assert_eq!(summary.parameter_path_count, 2);
+        assert_eq!(summary.risk_limit_parameter_path_count, 2);
+        assert_eq!(summary.parameter_path_proposal_only_count, 2);
+        assert_eq!(summary.proposal_only_guard_descriptor_count, 2);
+        assert_eq!(
+            summary.parameter_path_active_strategy_write_disabled_count,
+            2
+        );
+        assert_eq!(
+            summary.active_strategy_write_disabled_guard_descriptor_count,
+            2
+        );
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 2);
     }
 
     #[test]

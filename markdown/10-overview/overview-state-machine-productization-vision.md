@@ -10643,3 +10643,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers full bundle graph-summary parity for current shared Guard Builder count fields. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the full bundle graph-summary parity field list and this record if shared summary parity moves into a generated compatibility test. |
+
+### ADV-SM-PROD-003BO: Guard Builder bundle multi-graph summary aggregation
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving bundle-level Guard Builder summaries aggregate structured guard descriptor metadata across more than one graph. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers a two-graph static contract bundle with matching machine, transition, event type, and event source names but different graph ids, ensuring graph-scoped summary counts are not collapsed by shared local ids. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the multi-graph aggregation guard is test-only metadata validation, no guard is executed, no Event Catalog is edited, no topology is changed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers two-graph bundle aggregation for guard ids, guarded machines, transitions, event types, event sources, reads, parameter paths, and fail-closed execution counts. |
+| capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the two-graph bundle aggregation test and this record if multi-graph summary coverage moves into a dedicated workspace aggregation suite. |
