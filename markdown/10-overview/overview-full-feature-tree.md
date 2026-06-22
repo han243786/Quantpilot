@@ -10631,3 +10631,9 @@ Productization supplement: ADV-SM-PROD-003AW Guard Builder graph active-strategy
 - `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for one guard descriptor with disabled active-strategy-write parameter and policy surfaces.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph active-strategy-write disabled descriptor summary ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AW` as the graph active-strategy-write disabled descriptor summary slice.
+
+Productization supplement: ADV-SM-PROD-003AX Guard Builder graph proposal-only descriptor summary.
+- `qrpc_core_ir/src/v4/machine_graph_contract.rs` - aggregates guard descriptor counts for descriptors containing proposal-only parameter surfaces.
+- `qrpc_core_ir/src/v4.rs` - covers graph summary aggregation for one guard descriptor with a proposal-only parameter surface.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph proposal-only descriptor summary ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003AX` as the graph proposal-only descriptor summary slice.

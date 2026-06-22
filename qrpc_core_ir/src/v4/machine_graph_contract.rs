@@ -97,6 +97,7 @@ pub struct MachineGraphGuardDescriptorSummary {
     pub threshold_parameter_path_count: usize,
     pub risk_limit_parameter_path_count: usize,
     pub parameter_path_proposal_only_count: usize,
+    pub proposal_only_guard_descriptor_count: usize,
     pub parameter_path_active_strategy_write_enabled_count: usize,
     pub parameter_path_active_strategy_write_disabled_count: usize,
     pub conditional_guard_descriptor_count: usize,
@@ -186,6 +187,7 @@ impl V4MachineGraphContract {
             } else {
                 summary.event_source_missing_count += 1;
             }
+            let mut has_proposal_only_parameter_surface = false;
             let mut has_active_strategy_write_disabled_surface = false;
             summary.read_guard_descriptor_count += usize::from(readiness.read_count > 0);
             summary.read_count += readiness.read_count;
@@ -203,6 +205,7 @@ impl V4MachineGraphContract {
             for parameter_path in &projection.guard.parameter_path_projections {
                 summary.parameter_path_proposal_only_count +=
                     usize::from(parameter_path.proposal_only);
+                has_proposal_only_parameter_surface |= parameter_path.proposal_only;
                 summary.parameter_path_active_strategy_write_enabled_count +=
                     usize::from(parameter_path.active_strategy_write_enabled);
                 summary.parameter_path_active_strategy_write_disabled_count +=
@@ -210,6 +213,8 @@ impl V4MachineGraphContract {
                 has_active_strategy_write_disabled_surface |=
                     !parameter_path.active_strategy_write_enabled;
             }
+            summary.proposal_only_guard_descriptor_count +=
+                usize::from(has_proposal_only_parameter_surface);
             summary.conditional_guard_descriptor_count +=
                 usize::from(readiness.condition_count > 0);
             summary.condition_count += readiness.condition_count;

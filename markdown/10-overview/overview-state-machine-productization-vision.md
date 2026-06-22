@@ -10456,3 +10456,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for one guard descriptor containing disabled active-strategy-write parameter and policy surfaces. |
 | capability boundary | This does not enable guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the active-strategy-write disabled descriptor summary field, aggregation, related test assertions, and this record if active-strategy-write coverage reporting moves into a dedicated workspace query contract. |
+
+### ADV-SM-PROD-003AX: Guard Builder graph proposal-only descriptor summary
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.8`, and `2.9`; continue `SM-PROD-003` by making graph-level Guard Builder summaries distinguish proposal-only parameter action counts from how many structured guards expose any proposal-only parameter surface. |
+| implementation | `qrpc_core_ir/src/v4/machine_graph_contract.rs` now aggregates `proposal_only_guard_descriptor_count` in `MachineGraphGuardDescriptorSummary` from parameter-path projections. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: proposal-only descriptor summary fields are read-only metadata, no proposal is applied, no guard parameter is written, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir guard_descriptor` covers graph summary aggregation for one guard descriptor containing a proposal-only parameter surface. |
+| capability boundary | This does not add new allowed parameter path classes, guard execution, expression evaluation, runtime read access, proposal application, fallback execution, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the proposal-only descriptor summary field, aggregation, related test assertions, and this record if proposal-only coverage reporting moves into a dedicated workspace query contract. |

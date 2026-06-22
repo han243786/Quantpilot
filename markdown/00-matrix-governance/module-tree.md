@@ -11680,3 +11680,6 @@ The final audit records `origin/master` synchronized at `bef3707e3`, no local di
 
 **Productization supplement (ADV-SM-PROD-003AW)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder graph active-strategy-write disabled descriptor summary.
 `active_strategy_write_disabled_guard_descriptor_count`; machine graphs can aggregate how many structured guards contain disabled active-strategy-write parameter or policy surfaces for single-graph workspace views while proposal application, policy execution, and active strategy writes remain disabled.
+
+**Productization supplement (ADV-SM-PROD-003AX)**: `root.contracts.core_ir.v4_contracts.machine_graph_contract`, `root.contracts.core_ir.v4_contracts.machine_contract`, and `root.markdown.10-overview.overview-state-machine-productization-vision` own Guard Builder graph proposal-only descriptor summary.
+`proposal_only_guard_descriptor_count`; machine graphs can aggregate how many structured guards contain proposal-only parameter surfaces for single-graph workspace views while proposal application, guard parameter writes, and active strategy writes remain disabled.
