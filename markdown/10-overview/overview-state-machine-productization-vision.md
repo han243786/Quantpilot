@@ -11149,3 +11149,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_event_party_violations` covers graph-level child event consumer and source-emitter rejection. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child event party validation test and this record if nested event permission coverage moves into a shared Event Catalog validation suite. |
+
+### ADV-SM-PROD-003DI: Guard Builder graph child event registration validation gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving single-graph validation rejects child-machine Guard Builder transitions that reference events absent from the Event Catalog before workspace or runtime consumption. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with a child-machine Guard Builder descriptor whose transition references undeclared event `risk.child.missing`, asserting graph validation preserves child machine, transition, and event type context in the diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child event registration gate is static validation only, no event is emitted or consumed at runtime, no child guard is executed, no Event Catalog is edited, no proposal is applied, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_unknown_transition_event` covers graph-level child undeclared transition event rejection. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child event registration validation test and this record if nested unknown-event diagnostics move into a shared Event Catalog validation suite. |
