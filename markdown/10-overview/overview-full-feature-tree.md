@@ -10968,3 +10968,8 @@ Productization supplement: ADV-SM-PROD-003DI Guard Builder graph child event reg
 - `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine transition references to undeclared Event Catalog events for structured guards.
 - `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child event registration validation gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DI` as the graph child event registration validation gate slice.
+
+Productization supplement: ADV-SM-PROD-003DJ Guard Builder graph child parameter path boundary gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine rejection for structured guard parameter paths outside the proposal-only Guard Builder boundary.
+- `markdown/00-matrix-governance/module-tree.md` - records Guard Builder graph child parameter path boundary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003DJ` as the graph child parameter path boundary gate slice.

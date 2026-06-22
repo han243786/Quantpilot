@@ -11160,3 +11160,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_unknown_transition_event` covers graph-level child undeclared transition event rejection. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level child event registration validation test and this record if nested unknown-event diagnostics move into a shared Event Catalog validation suite. |
+
+### ADV-SM-PROD-003DJ: Guard Builder graph child parameter path boundary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by proving single-graph validation applies the proposal-only Guard Builder parameter path boundary to child-machine structured guards before workspace or runtime consumption. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with a child-machine Guard Builder descriptor that references forbidden parameter path `active_strategy.position`, asserting graph validation preserves child machine id, guard id, forbidden path, and proposal-only boundary wording. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child parameter path gate is static validation only, no child guard is executed, no proposal is applied, no active strategy state is read or written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_forbidden_parameter_path` covers graph-level child Guard Builder parameter path boundary rejection. |
+| capability boundary | This does not add new allowed parameter path classes, nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child parameter path boundary test and this record if nested parameter-path validation coverage moves into a shared validation suite. |
