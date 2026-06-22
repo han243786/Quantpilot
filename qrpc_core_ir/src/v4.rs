@@ -3503,6 +3503,110 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_projects_child_guard_descriptor_read_context() {
+        let mut graph = sample_machine_graph();
+        graph
+            .event_catalog
+            .as_mut()
+            .unwrap()
+            .events
+            .push(sample_event_spec(
+                "risk.child.check",
+                MachineEventSourceKind::Machine,
+                MachineEventScope::Graph,
+                &["risk.guard"],
+                &["risk.guard.child"],
+            ));
+        let risk = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "risk.guard")
+            .unwrap();
+        let mut child = sample_machine_with(
+            "risk.guard.child",
+            MachineTemplateKind::Decision,
+            risk.priority + 1,
+        );
+        child.transitions[0].event.event_type = "risk.child.check".to_string();
+        child.transitions[0].event.source = Some("risk.guard".to_string());
+        child.transitions[0].action = None;
+        child.transitions[0].guard = None;
+        child.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "child_graph_read_guard".to_string(),
+            reads: vec![
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::EventPayload,
+                    path: "symbol".to_string(),
+                },
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+                MachineGuardReadRef {
+                    source: MachineGuardReadSource::ReadonlyRuntimeFact,
+                    path: "runtime.mode".to_string(),
+                },
+            ],
+            parameter_paths: Vec::new(),
+            conditions: Vec::new(),
+            policy: None,
+            explanation: Some("child graph read projection surface".to_string()),
+        });
+        risk.states[0].child_machine = Some(Box::new(child));
+
+        assert_eq!(graph.validate_static_contract(), Ok(()));
+        let projections = graph.guard_descriptor_projections();
+        assert_eq!(projections.len(), 1);
+        let projection = &projections[0];
+        assert_eq!(projection.machine_id, "risk.guard.child");
+        assert_eq!(
+            projection.guard.readiness.guard_id,
+            "child_graph_read_guard"
+        );
+        assert_eq!(projection.guard.readiness.read_count, 3);
+        assert_eq!(projection.guard.read_projections.len(), 3);
+        assert_eq!(
+            projection.guard.read_projections[0].source_label,
+            "event_payload"
+        );
+        assert_eq!(
+            projection.guard.read_projections[0].binding_scope,
+            MachineGuardReadBindingScope::EventPayloadField
+        );
+        assert_eq!(projection.guard.read_projections[0].path, "symbol");
+        assert_eq!(
+            projection.guard.read_projections[1].source_label,
+            "machine_memory"
+        );
+        assert_eq!(
+            projection.guard.read_projections[1].binding_scope,
+            MachineGuardReadBindingScope::MachineMemoryField
+        );
+        assert_eq!(projection.guard.read_projections[1].path, "last_signal_at");
+        assert_eq!(
+            projection.guard.read_projections[2].source_label,
+            "readonly_runtime_fact"
+        );
+        assert_eq!(
+            projection.guard.read_projections[2].binding_scope,
+            MachineGuardReadBindingScope::ReadonlyRuntimeFact
+        );
+        assert_eq!(projection.guard.read_projections[2].path, "runtime.mode");
+
+        let summary = graph.guard_descriptor_summary();
+        assert_eq!(summary.guard_descriptor_count, 1);
+        assert_eq!(summary.guarded_machine_count, 1);
+        assert_eq!(summary.decision_guard_descriptor_count, 1);
+        assert_eq!(summary.read_guard_descriptor_count, 1);
+        assert_eq!(summary.read_count, 3);
+        assert_eq!(summary.event_payload_read_count, 1);
+        assert_eq!(summary.machine_memory_read_count, 1);
+        assert_eq!(summary.readonly_runtime_fact_read_count, 1);
+        assert_eq!(summary.execution_enabled_count, 0);
+        assert_eq!(summary.execution_disabled_fail_closed_count, 1);
+    }
+
+    #[test]
     fn machine_graph_summarizes_child_guard_descriptor_condition_operands() {
         let mut graph = sample_machine_graph();
         graph

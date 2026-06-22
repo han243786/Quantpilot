@@ -11039,3 +11039,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_projects_child_guard_descriptor_parameter_path_context` covers bundle-level child parameter path projection and summary counts. |
 | capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the bundle-level child parameter path projection test and this record if child parameter path coverage moves into a dedicated workspace projection suite. |
+
+### ADV-SM-PROD-003CY: Guard Builder graph child read binding projection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making single-graph workspace views expose child-machine Guard Builder read binding scope evidence across Event Payload, Machine Memory, and Readonly Runtime Fact sources before any nested guard execution is enabled. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::guard_descriptor_projections()` and `guard_descriptor_summary()` for a child-machine Guard Builder descriptor with all three read sources, asserting read projection source labels, binding scopes, paths, and summary counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child read binding projection gate is static projection and summary metadata only, no child guard is executed, no runtime read is performed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_projects_child_guard_descriptor_read_context` covers graph-level child read binding projection and summary counts. |
+| capability boundary | This does not add nested guard execution, condition evaluation, policy execution, runtime read access, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level child read binding projection test and this record if child read binding coverage moves into a dedicated workspace projection suite. |
