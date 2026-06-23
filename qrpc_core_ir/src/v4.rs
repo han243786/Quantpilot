@@ -4726,6 +4726,31 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_rejects_guard_descriptor_forbidden_parameter_path() {
+        let mut graph = sample_machine_graph();
+        let intent = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "intent.trend")
+            .unwrap();
+        intent.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "graph_forbidden_parameter_guard".to_string(),
+            reads: Vec::new(),
+            parameter_paths: vec!["graph.edges".to_string()],
+            conditions: Vec::new(),
+            policy: None,
+            explanation: None,
+        });
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("structured guard `graph_forbidden_parameter_guard`")
+                && message.contains("parameter path `graph.edges`")
+                && message.contains("outside the proposal-only guard boundary")
+        }));
+    }
+
+    #[test]
     fn machine_graph_rejects_child_guard_descriptor_unknown_event_payload_read() {
         let mut graph = sample_machine_graph();
         graph

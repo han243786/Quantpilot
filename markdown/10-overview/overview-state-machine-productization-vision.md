@@ -12040,3 +12040,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_guard_descriptor_base_hygiene_violations` covers graph-level rejection for top-level structured guards with missing guard identity and empty declaration paths. |
 | capability boundary | This does not add malformed guard tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level top-level guard base hygiene test and this record if graph hygiene coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003GL: State Machine graph top-level guard parameter boundary rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying Guard Builder proposal-only parameter boundary validation through machine graph static validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with an `intent.trend` structured guard that declares `graph.edges` as a parameter path, asserting graph validation preserves the guard id, forbidden path, and proposal-only boundary diagnostic before any bundle wrapping. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph top-level guard parameter boundary rejection gate is static validation only, no guard is executed, no parameter is mutated, no topology is changed, no condition is evaluated, no policy is executed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_guard_descriptor_forbidden_parameter_path` covers graph-level rejection for top-level structured guards with parameter paths outside the proposal-only guard boundary. |
+| capability boundary | This does not add forbidden parameter tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level top-level guard parameter boundary test and this record if graph parameter-boundary coverage moves into a shared validation fixture suite. |

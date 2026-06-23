@@ -11368,3 +11368,8 @@ Productization supplement: ADV-SM-PROD-003GK State Machine graph top-level guard
 - `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards with missing guard identity and empty declaration paths.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard base hygiene rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GK` as the graph top-level guard base hygiene slice.
+
+Productization supplement: ADV-SM-PROD-003GL State Machine graph top-level guard parameter boundary rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards with parameter paths outside the proposal-only guard boundary.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard parameter boundary rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GL` as the graph top-level guard parameter boundary slice.
