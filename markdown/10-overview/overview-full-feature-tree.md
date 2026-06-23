@@ -11403,3 +11403,8 @@ Productization supplement: ADV-SM-PROD-003GR State Machine graph top-level guard
 - `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards whose condition right-parameter operands declare an empty path.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard condition right-parameter hygiene rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GR` as the graph top-level guard condition right-parameter hygiene slice.
+
+Productization supplement: ADV-SM-PROD-003GS State Machine graph top-level guard empty surface rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards with no read, parameter, condition, or policy declaration surface.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard empty surface rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GS` as the graph top-level guard empty surface slice.
