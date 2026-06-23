@@ -11388,3 +11388,8 @@ Productization supplement: ADV-SM-PROD-003GO State Machine graph top-level guard
 - `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards whose conditions repeat a condition id.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard duplicate condition rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GO` as the graph top-level guard duplicate condition slice.
+
+Productization supplement: ADV-SM-PROD-003GP State Machine graph top-level guard condition read declaration rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards whose conditions reference reads not declared by the guard.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard condition read declaration rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GP` as the graph top-level guard condition read declaration slice.
