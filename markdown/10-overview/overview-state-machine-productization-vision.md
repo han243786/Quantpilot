@@ -12238,3 +12238,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_projects_guard_descriptor_fail_closed_blockers_across_surfaces` covers bundle-level top-level structured guard fail-closed blocker projections and summary counts across readiness, condition, and policy surfaces. |
 | capability boundary | This does not add top-level guard execution, condition evaluation, policy execution, timeout/cooldown scheduling, fallback execution, runtime fact reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle top-level fail-closed blocker coverage moves into a shared projection fixture suite or is folded into a broader Guard Builder projection evidence record. |
+
+### ADV-SM-PROD-003HD: State Machine bundle guard projection input-order gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making bundle-level Guard Builder projection ordering deterministic and directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::guard_descriptor_projections()` across two graphs and three top-level structured guards, proving projection order preserves bundle graph order and in-graph machine/transition order for graph id, machine id, guard id, and transition id. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle guard projection input-order gate is read-only projection ordering metadata only, no guard is executed, no event is consumed, no runtime read is performed, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_projects_guard_descriptors_in_input_order` covers deterministic bundle-level structured guard projection ordering across graph and machine surfaces. |
+| capability boundary | This does not add guard execution, condition evaluation, policy execution, runtime reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle guard projection ordering coverage moves into a shared projection fixture suite or is folded into a broader workspace projection evidence record. |
