@@ -12139,3 +12139,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_guard_descriptor_invalid_policy` covers graph-level rejection for top-level structured guards whose policy timing values are non-positive. |
 | capability boundary | This does not add invalid policy tolerance, guard execution, condition evaluation, policy execution, timeout/cooldown scheduling, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level top-level guard policy timing test and this record if graph policy timing coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003GU: State Machine graph top-level guard policy declaration rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying Guard Builder policy declaration validation through machine graph static validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with an `intent.trend` structured guard whose policy object declares no `timeout_ms`, `cooldown_ms`, or fallback, asserting graph validation preserves the guard id and empty-policy diagnostic before any bundle wrapping. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph top-level guard policy declaration rejection gate is static validation only, no guard is executed, no condition is evaluated, no policy is executed, no timeout/cooldown scheduling or fallback execution is performed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_guard_descriptor_empty_policy` covers graph-level rejection for top-level structured guards whose policy object declares no timing or fallback field. |
+| capability boundary | This does not add empty policy tolerance, guard execution, condition evaluation, policy execution, timeout/cooldown scheduling, fallback execution, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level top-level guard policy declaration test and this record if graph policy declaration coverage moves into a shared validation fixture suite. |

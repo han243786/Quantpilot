@@ -5035,6 +5035,34 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_rejects_guard_descriptor_empty_policy() {
+        let mut graph = sample_machine_graph();
+        let intent = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "intent.trend")
+            .unwrap();
+        intent.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "graph_empty_policy_guard".to_string(),
+            reads: Vec::new(),
+            parameter_paths: Vec::new(),
+            conditions: Vec::new(),
+            policy: Some(MachineGuardPolicySpec {
+                timeout_ms: None,
+                cooldown_ms: None,
+                fallback: None,
+            }),
+            explanation: None,
+        });
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("structured guard `graph_empty_policy_guard`")
+                && message.contains("policy must declare timeout_ms, cooldown_ms, or fallback")
+        }));
+    }
+
+    #[test]
     fn machine_graph_rejects_child_guard_descriptor_unknown_event_payload_read() {
         let mut graph = sample_machine_graph();
         graph
