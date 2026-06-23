@@ -12282,3 +12282,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_duplicate_inputs` covers bundle-level rejection for child-machine structured guards with duplicate machine-memory reads and duplicate parameter paths. |
 | capability boundary | This does not add duplicate guard input tolerance, child guard execution, condition evaluation, policy execution, runtime reads, parameter resolution, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle child guard duplicate input rejection coverage moves into a shared validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |
+
+### ADV-SM-PROD-003HH: State Machine bundle child guard event party rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making static-contract bundle child Guard Builder event party rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::validate_static_contract()` with a `risk.guard.child` structured guard on `risk.child.check` whose Event Catalog entry allows only `other.risk` emitters and `other.child` consumers, asserting bundle validation preserves child transition context and rejects both unauthorized consumer and unauthorized emitter wiring. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child guard event party rejection gate is static validation only, no child guard is executed, no event is consumed, no event source is trusted at runtime, no payload is read at runtime, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_event_party_violations` covers bundle-level rejection for child-machine structured guards whose transition event consumer and source violate Event Catalog parties. |
+| capability boundary | This does not add event party tolerance, child guard execution, condition evaluation, policy execution, runtime payload reads, event consumption, event source trust, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle child guard event party rejection coverage moves into a shared Event Catalog validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |
