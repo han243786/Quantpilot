@@ -12161,3 +12161,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_accepts_child_guard_descriptor_event_payload_read_from_catalog` covers graph-level acceptance for child-machine structured guards that read Event Catalog declared payload fields. |
 | capability boundary | This does not add child guard execution, condition evaluation, policy execution, runtime payload reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if child guard payload catalog acceptance coverage moves into a shared graph projection fixture suite or is renamed under a broader child guard catalog acceptance record. |
+
+### ADV-SM-PROD-003GW: State Machine graph top-level guard payload catalog acceptance gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making the graph-level top-level Guard Builder payload catalog acceptance test directly traceable from the North Star record, complementing the earlier broad Event Catalog binding slice. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4MachineGraphContract::validate_static_contract()` with an `intent.trend` structured guard that reads `symbol` from the declared `bar_closed` payload, proving single-graph static validation accepts catalog-bound top-level guard payload reads before any bundle wrapping. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph top-level guard payload catalog acceptance gate is static validation only, no guard is executed, no event is consumed at runtime, no payload is read at runtime, no condition or policy is evaluated, no topology is mutated, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_accepts_guard_descriptor_event_payload_read_from_catalog` covers graph-level acceptance for top-level structured guards that read Event Catalog declared payload fields. |
+| capability boundary | This does not add top-level guard execution, condition evaluation, policy execution, runtime payload reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if top-level guard payload catalog acceptance coverage moves into a shared graph projection fixture suite or is merged back into the broad Event Catalog binding record. |
