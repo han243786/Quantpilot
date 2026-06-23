@@ -11408,3 +11408,8 @@ Productization supplement: ADV-SM-PROD-003GS State Machine graph top-level guard
 - `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards with no read, parameter, condition, or policy declaration surface.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard empty surface rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GS` as the graph top-level guard empty surface slice.
+
+Productization supplement: ADV-SM-PROD-003GT State Machine graph top-level guard policy timing rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards whose policy timing values are non-positive.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard policy timing rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GT` as the graph top-level guard policy timing slice.
