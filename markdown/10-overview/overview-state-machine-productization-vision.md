@@ -12348,3 +12348,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_unknown_machine_memory_read` covers bundle-level rejection for child-machine structured guards that read undeclared machine-memory fields. |
 | capability boundary | This does not add unknown memory tolerance, child guard execution, condition evaluation, policy execution, runtime memory reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle child guard unknown memory coverage moves into a shared Memory Schema validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |
+
+### ADV-SM-PROD-003HN: State Machine bundle child guard unknown runtime fact rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making static-contract bundle child Guard Builder readonly runtime fact rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::validate_static_contract()` with a `risk.guard.child` structured guard that reads readonly runtime fact `provider.secret`, asserting bundle validation preserves child machine context and rejects runtime facts outside the declared readonly fact allowlist. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child guard unknown runtime fact rejection gate is static validation only, no child guard is executed, no readonly runtime fact is read at runtime, no condition or policy is evaluated, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_unknown_readonly_runtime_fact` covers bundle-level rejection for child-machine structured guards that read unknown readonly runtime facts. |
+| capability boundary | This does not add unknown runtime fact tolerance, child guard execution, condition evaluation, policy execution, runtime fact reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle child guard unknown runtime fact coverage moves into a shared readonly-fact validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |

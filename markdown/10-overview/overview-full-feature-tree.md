@@ -11508,3 +11508,8 @@ Productization supplement: ADV-SM-PROD-003HM State Machine bundle child guard un
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guards that read undeclared machine-memory fields.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard unknown memory rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HM` as the bundle child guard unknown memory rejection slice.
+
+Productization supplement: ADV-SM-PROD-003HN State Machine bundle child guard unknown runtime fact rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guards that read unknown readonly runtime facts.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard unknown runtime fact rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HN` as the bundle child guard unknown runtime fact rejection slice.
