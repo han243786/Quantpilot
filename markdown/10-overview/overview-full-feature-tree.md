@@ -11488,3 +11488,8 @@ Productization supplement: ADV-SM-PROD-003HI State Machine bundle child guard fo
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guards that declare parameter paths outside the proposal-only guard boundary.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard forbidden parameter path rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HI` as the bundle child guard forbidden parameter path rejection slice.
+
+Productization supplement: ADV-SM-PROD-003HJ State Machine bundle child guard invalid condition operand rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guard conditions that reference undeclared right-side parameter paths.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard invalid condition operand rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HJ` as the bundle child guard invalid condition operand rejection slice.

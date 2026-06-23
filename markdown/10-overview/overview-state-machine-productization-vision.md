@@ -12304,3 +12304,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_forbidden_parameter_path` covers bundle-level rejection for child-machine structured guards that declare parameter paths outside the proposal-only guard boundary. |
 | capability boundary | This does not add forbidden parameter tolerance, child guard execution, condition evaluation, policy execution, parameter resolution, active strategy reads/writes, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle child guard forbidden parameter path coverage moves into a shared parameter-boundary validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |
+
+### ADV-SM-PROD-003HJ: State Machine bundle child guard invalid condition operand rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making static-contract bundle child Guard Builder condition operand rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::validate_static_contract()` with a `risk.guard.child` structured guard whose condition `missing_child_parameter` compares `last_signal_at` against undeclared `guard.missing`, asserting bundle validation preserves child machine context and rejects condition operands outside the declared guard parameter set. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child guard invalid condition operand rejection gate is static validation only, no child guard is executed, no condition is evaluated, no parameter value is resolved, no runtime read is performed, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_invalid_condition_operand` covers bundle-level rejection for child-machine structured guard conditions that reference undeclared right-side parameter paths. |
+| capability boundary | This does not add invalid condition tolerance, child guard execution, condition evaluation, policy execution, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle child guard invalid condition operand coverage moves into a shared condition-validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |
