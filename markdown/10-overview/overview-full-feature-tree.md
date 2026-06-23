@@ -11498,3 +11498,8 @@ Productization supplement: ADV-SM-PROD-003HK State Machine bundle child guard in
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guard policies with non-positive timeout and cooldown values.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard invalid policy rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HK` as the bundle child guard invalid policy rejection slice.
+
+Productization supplement: ADV-SM-PROD-003HL State Machine bundle child guard unknown event payload rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guards that read event payload fields outside the Event Catalog contract.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard unknown event payload rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HL` as the bundle child guard unknown event payload rejection slice.

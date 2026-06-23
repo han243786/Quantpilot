@@ -12326,3 +12326,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_invalid_policy` covers bundle-level rejection for child-machine structured guard policies with non-positive timeout and cooldown values. |
 | capability boundary | This does not add invalid policy tolerance, child guard execution, condition evaluation, policy execution, timeout/cooldown scheduling, fallback execution, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle child guard invalid policy coverage moves into a shared policy-validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |
+
+### ADV-SM-PROD-003HL: State Machine bundle child guard unknown event payload rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making static-contract bundle child Guard Builder Event Catalog payload-field rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::validate_static_contract()` with a `risk.guard.child` structured guard that reads event payload path `missing_payload` on `risk.child.check`, asserting bundle validation preserves child machine context and rejects payload reads not declared by the Event Catalog event contract. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child guard unknown event payload rejection gate is static validation only, no child guard is executed, no event is consumed, no payload is read at runtime, no condition or policy is evaluated, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_unknown_event_payload_read` covers bundle-level rejection for child-machine structured guards that read event payload fields outside the Event Catalog contract. |
+| capability boundary | This does not add unknown payload tolerance, child guard execution, condition evaluation, policy execution, runtime payload reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle child guard unknown event payload coverage moves into a shared Event Catalog payload-validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |
