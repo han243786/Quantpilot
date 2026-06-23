@@ -12227,3 +12227,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_projects_child_machine_guard_descriptors_with_graph_context` covers bundle-level parent and child structured guard projections with graph context and summary counts. |
 | capability boundary | This does not add parent or child guard execution, condition evaluation, policy execution, runtime fact reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle child guard graph-context projection coverage moves into a shared projection fixture suite or is folded into a broader workspace projection evidence record. |
+
+### ADV-SM-PROD-003HC: State Machine bundle top-level guard fail-closed blocker projection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making the bundle-level top-level Guard Builder fail-closed blocker projection evidence directly traceable from the North Star record across readiness, condition, policy, and summary surfaces. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::guard_descriptor_projections()` and `guard_descriptor_summary()` across two graphs, including a top-level `risk.guard` structured guard with readonly-runtime-fact read, timeout parameter, condition, timing/fail-closed policy, and disabled-fail-closed blocker code/reason across readiness, condition, policy, active-strategy-write, and summary counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle top-level guard fail-closed blocker projection gate is read-only projection metadata only, no top-level guard is executed, no condition or policy is evaluated, no timeout/cooldown is scheduled, no fallback is executed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_projects_guard_descriptor_fail_closed_blockers_across_surfaces` covers bundle-level top-level structured guard fail-closed blocker projections and summary counts across readiness, condition, and policy surfaces. |
+| capability boundary | This does not add top-level guard execution, condition evaluation, policy execution, timeout/cooldown scheduling, fallback execution, runtime fact reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle top-level fail-closed blocker coverage moves into a shared projection fixture suite or is folded into a broader Guard Builder projection evidence record. |
