@@ -4751,6 +4751,42 @@ mod tests {
     }
 
     #[test]
+    fn machine_graph_rejects_guard_descriptor_invalid_condition_operand() {
+        let mut graph = sample_machine_graph();
+        let intent = graph
+            .machines
+            .iter_mut()
+            .find(|machine| machine.machine_id == "intent.trend")
+            .unwrap();
+        intent.transitions[0].guard_descriptor = Some(MachineGuardDescriptor {
+            guard_id: "graph_invalid_condition_guard".to_string(),
+            reads: vec![MachineGuardReadRef {
+                source: MachineGuardReadSource::MachineMemory,
+                path: "last_signal_at".to_string(),
+            }],
+            parameter_paths: vec!["guard.threshold".to_string()],
+            conditions: vec![MachineGuardConditionSpec {
+                condition_id: "missing_parameter".to_string(),
+                left_read: MachineGuardReadRef {
+                    source: MachineGuardReadSource::MachineMemory,
+                    path: "last_signal_at".to_string(),
+                },
+                comparator: MachineGuardConditionComparator::LessThan,
+                right_parameter_path: "guard.missing".to_string(),
+            }],
+            policy: None,
+            explanation: None,
+        });
+
+        let errors = graph.validate_static_contract().unwrap_err();
+        assert!(errors.iter().any(|message| {
+            message.contains("structured guard `graph_invalid_condition_guard`")
+                && message.contains("condition `missing_parameter`")
+                && message.contains("references undeclared parameter path `guard.missing`")
+        }));
+    }
+
+    #[test]
     fn machine_graph_rejects_child_guard_descriptor_unknown_event_payload_read() {
         let mut graph = sample_machine_graph();
         graph
