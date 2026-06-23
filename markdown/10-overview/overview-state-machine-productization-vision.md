@@ -12403,3 +12403,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_summarizes_child_guard_descriptor_policy_surface` covers bundle-level child-machine structured guard policy projections and summary counts. |
 | capability boundary | This does not add child guard execution, condition evaluation, policy execution, timeout/cooldown scheduling, fallback execution, active strategy writes, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, or AI automatic apply. |
 | rollback | Remove this record if bundle child guard policy summary coverage moves into a shared projection fixture suite or is folded into a broader child Guard Builder summary evidence record. |
+
+### ADV-SM-PROD-003HS: State Machine bundle guard combined surface summary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making static-contract bundle Guard Builder combined cross-graph summary evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::guard_descriptor_projections()` and `guard_descriptor_summary()` across `strategy.v4.alpha` and `strategy.v4.beta`, proving combined read-source counts, threshold and timeout proposal-only parameter counts, greater-than-or-equal condition counts, timeout/fail-closed fallback policy counts, readonly runtime fact counts, and disabled condition/policy/execution fail-closed counts across bundled graphs. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle guard combined surface summary gate is read-only projection and summary metadata only, no guard is executed, no condition or policy is evaluated, no timeout/cooldown is scheduled, no fallback is executed, no runtime read is performed, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_summarizes_guard_descriptor_combined_surfaces_across_graphs` covers bundle-level cross-graph structured guard combined surface projections and summary counts. |
+| capability boundary | This does not add guard execution, condition evaluation, policy execution, timeout/cooldown scheduling, fallback execution, runtime reads, active strategy writes, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, or AI automatic apply. |
+| rollback | Remove this record if bundle combined surface summary coverage moves into a shared projection fixture suite or is folded into a broader Guard Builder bundle summary evidence record. |
