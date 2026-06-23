@@ -11433,3 +11433,8 @@ Productization supplement: ADV-SM-PROD-003GX State Machine graph top-level guard
 - `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards that read undeclared Event Catalog payload fields.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard payload catalog rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GX` as the graph top-level guard payload catalog rejection slice.
+
+Productization supplement: ADV-SM-PROD-003GY State Machine graph child guard payload catalog rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level child-machine structured guards that read undeclared Event Catalog payload fields.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph child guard payload catalog rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GY` as the graph child guard payload catalog rejection slice.

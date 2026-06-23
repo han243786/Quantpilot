@@ -12183,3 +12183,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_guard_descriptor_unknown_event_payload_read` covers graph-level rejection for top-level structured guards that read undeclared Event Catalog payload fields. |
 | capability boundary | This does not add undeclared payload tolerance, top-level guard execution, condition evaluation, policy execution, runtime payload reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if top-level guard payload catalog rejection coverage moves into a shared graph validation fixture suite or is merged back into the broad Event Catalog binding record. |
+
+### ADV-SM-PROD-003GY: State Machine graph child guard payload catalog rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by pairing graph-level child Guard Builder payload catalog acceptance with the existing fail-closed rejection evidence for child guards that read undeclared payload fields. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4MachineGraphContract::validate_static_contract()` with a `risk.guard.child` structured guard that reads undeclared `missing_payload` from `risk.child.check`, asserting single-graph static validation preserves the child machine, guard id, event id, and unknown-payload diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph child guard payload catalog rejection gate is static validation only, no child guard is executed, no event is consumed at runtime, no payload is read at runtime, no condition or policy is evaluated, no topology is mutated, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_unknown_event_payload_read` covers graph-level rejection for child-machine structured guards that read undeclared Event Catalog payload fields. |
+| capability boundary | This does not add undeclared child payload tolerance, child guard execution, condition evaluation, policy execution, runtime payload reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if child guard payload catalog rejection coverage moves into a shared graph validation fixture suite or is merged into a broader child Guard Builder payload record. |
