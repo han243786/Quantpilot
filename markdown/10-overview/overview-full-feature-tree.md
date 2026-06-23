@@ -11518,3 +11518,8 @@ Productization supplement: ADV-SM-PROD-003HO State Machine bundle child guard un
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guards whose transition event type is not declared in the Event Catalog.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard unknown transition event rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HO` as the bundle child guard unknown transition event rejection slice.
+
+Productization supplement: ADV-SM-PROD-003HP State Machine bundle child guard condition operand summary gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guard condition operand projections and summary counts.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard condition operand summary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HP` as the bundle child guard condition operand summary slice.

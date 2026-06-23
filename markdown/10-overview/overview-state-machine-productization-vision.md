@@ -12370,3 +12370,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_unknown_transition_event` covers bundle-level rejection for child-machine structured guards whose transition event type is not declared in the Event Catalog. |
 | capability boundary | This does not add unknown event tolerance, child guard execution, condition evaluation, policy execution, runtime payload reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle child guard unknown transition event coverage moves into a shared Event Catalog declaration fixture suite or is folded into a broader child Guard Builder validation evidence record. |
+
+### ADV-SM-PROD-003HP: State Machine bundle child guard condition operand summary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making static-contract bundle child Guard Builder condition operand projection and summary evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::guard_descriptor_projections()` and `guard_descriptor_summary()` with a `risk.guard.child` structured guard condition `child_memory_threshold_check`, proving machine-memory left-read binding, threshold right-parameter kind, proposal-only parameter counts, less-than-or-equal condition counts, and fail-closed disabled condition evaluation counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child guard condition operand summary gate is read-only projection and summary metadata only, no child guard is executed, no condition is evaluated, no runtime read is performed, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_summarizes_child_guard_descriptor_condition_operands` covers bundle-level child-machine structured guard condition operand projections and summary counts. |
+| capability boundary | This does not add child guard execution, condition evaluation, parameter resolution, runtime reads, policy execution, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle child guard condition operand summary coverage moves into a shared projection fixture suite or is folded into a broader child Guard Builder summary evidence record. |
