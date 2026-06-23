@@ -12359,3 +12359,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_unknown_readonly_runtime_fact` covers bundle-level rejection for child-machine structured guards that read unknown readonly runtime facts. |
 | capability boundary | This does not add unknown runtime fact tolerance, child guard execution, condition evaluation, policy execution, runtime fact reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle child guard unknown runtime fact coverage moves into a shared readonly-fact validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |
+
+### ADV-SM-PROD-003HO: State Machine bundle child guard unknown transition event rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making static-contract bundle child Guard Builder transition event declaration rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::validate_static_contract()` with a `risk.guard.child` structured guard on transition event `risk.child.missing`, asserting bundle validation preserves child transition context and rejects event types missing from the Event Catalog. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child guard unknown transition event rejection gate is static validation only, no child guard is executed, no event is consumed, no payload is read at runtime, no condition or policy is evaluated, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_unknown_transition_event` covers bundle-level rejection for child-machine structured guards whose transition event type is not declared in the Event Catalog. |
+| capability boundary | This does not add unknown event tolerance, child guard execution, condition evaluation, policy execution, runtime payload reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle child guard unknown transition event coverage moves into a shared Event Catalog declaration fixture suite or is folded into a broader child Guard Builder validation evidence record. |
