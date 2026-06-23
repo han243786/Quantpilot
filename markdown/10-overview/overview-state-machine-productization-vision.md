@@ -12249,3 +12249,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_projects_guard_descriptors_in_input_order` covers deterministic bundle-level structured guard projection ordering across graph and machine surfaces. |
 | capability boundary | This does not add guard execution, condition evaluation, policy execution, runtime reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle guard projection ordering coverage moves into a shared projection fixture suite or is folded into a broader workspace projection evidence record. |
+
+### ADV-SM-PROD-003HE: State Machine bundle top-level guard graph-context projection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making the bundle-level top-level Guard Builder graph-context projection and graph-summary parity evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::guard_descriptor_projections()` and `guard_descriptor_summary()` with a `risk.guard` structured guard, proving graph id, machine id/template, transition id, event type/source, event-payload read binding, proposal-only risk-limit and cooldown parameter classification, disabled active-strategy writes, and parity between bundle and graph summary counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle top-level guard graph-context projection gate is read-only projection metadata only, no top-level guard is executed, no event is consumed, no payload is read at runtime, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_projects_guard_descriptors_with_graph_context` covers bundle-level top-level structured guard projections with graph context and summary parity. |
+| capability boundary | This does not add top-level guard execution, condition evaluation, policy execution, runtime payload reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle top-level guard graph-context projection coverage moves into a shared projection fixture suite or is folded into a broader workspace projection evidence record. |
