@@ -11353,3 +11353,8 @@ Productization supplement: ADV-SM-PROD-003GH State Machine graph top-level guard
 - `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards that duplicate read and parameter declaration surfaces.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard duplicate input rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GH` as the graph top-level guard duplicate input slice.
+
+Productization supplement: ADV-SM-PROD-003GI State Machine graph top-level guard readonly fact rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards that read unknown readonly runtime facts.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard readonly fact rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GI` as the graph top-level guard readonly fact slice.

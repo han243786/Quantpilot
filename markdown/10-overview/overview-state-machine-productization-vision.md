@@ -12007,3 +12007,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_guard_descriptor_duplicate_inputs` covers graph-level rejection for top-level structured guards that duplicate read and parameter declaration surfaces. |
 | capability boundary | This does not add duplicate-input tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove the graph-level top-level guard duplicate input test and this record if graph duplicate-input coverage moves into a shared validation fixture suite. |
+
+### ADV-SM-PROD-003GI: State Machine graph top-level guard readonly fact rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by carrying Guard Builder readonly runtime fact validation through machine graph static validation for top-level structured guard descriptors. |
+| implementation | `qrpc_core_ir/src/v4.rs` now covers `V4MachineGraphContract::validate_static_contract()` with an `intent.trend` structured guard that reads an undeclared readonly runtime fact, asserting graph validation preserves the guard id and unknown fact diagnostic before any bundle wrapping. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph top-level guard readonly fact rejection gate is static validation only, no guard is executed, no runtime fact is read, no condition is evaluated, no policy is executed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_guard_descriptor_unknown_readonly_runtime_fact` covers graph-level rejection for top-level structured guards that read unknown readonly runtime facts. |
+| capability boundary | This does not add unknown readonly fact tolerance, guard execution, condition evaluation, policy execution, runtime reads, proposal application, topology mutation, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove the graph-level top-level guard readonly fact test and this record if graph readonly fact coverage moves into a shared validation fixture suite. |
