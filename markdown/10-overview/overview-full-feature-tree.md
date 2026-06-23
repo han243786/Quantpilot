@@ -11538,3 +11538,8 @@ Productization supplement: ADV-SM-PROD-003HS State Machine bundle guard combined
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level cross-graph structured guard combined surface projections and summary counts.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle guard combined surface summary gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HS` as the bundle guard combined surface summary slice.
+
+Productization supplement: ADV-SM-PROD-003HT State Machine bundle guard condition operand cross-graph summary gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level cross-graph structured guard condition operand projections and summary counts.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle guard condition operand cross-graph summary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HT` as the bundle guard condition operand cross-graph summary slice.
