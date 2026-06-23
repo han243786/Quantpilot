@@ -12194,3 +12194,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_child_guard_descriptor_unknown_event_payload_read` covers graph-level rejection for child-machine structured guards that read undeclared Event Catalog payload fields. |
 | capability boundary | This does not add undeclared child payload tolerance, child guard execution, condition evaluation, policy execution, runtime payload reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if child guard payload catalog rejection coverage moves into a shared graph validation fixture suite or is merged into a broader child Guard Builder payload record. |
+
+### ADV-SM-PROD-003GZ: State Machine graph top-level guard projection summary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making the graph-level top-level Guard Builder projection and summary evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4MachineGraphContract::guard_descriptor_projections()` and `guard_descriptor_summary()` with an `intent.trend` structured guard spanning payload read, proposal-only threshold parameter, condition, timing/fail-closed policy, machine context, event source, and disabled-fail-closed summary counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the graph top-level guard projection summary gate is read-only projection metadata only, no guard is executed, no condition or policy is evaluated, no timeout/cooldown is scheduled, no fallback is executed, no proposal is applied, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_projects_guard_descriptors_with_machine_context` covers graph-level top-level structured guard projections with machine context and summary counts. |
+| capability boundary | This does not add top-level guard execution, condition evaluation, policy execution, timeout/cooldown scheduling, fallback execution, runtime payload reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if graph top-level guard projection and summary coverage moves into a shared graph projection fixture suite or is folded into a broader workspace projection evidence record. |
