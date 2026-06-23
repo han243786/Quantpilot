@@ -11363,3 +11363,8 @@ Productization supplement: ADV-SM-PROD-003GJ State Machine graph top-level guard
 - `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards that read undeclared machine memory fields.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard machine memory rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GJ` as the graph top-level guard machine memory slice.
+
+Productization supplement: ADV-SM-PROD-003GK State Machine graph top-level guard base hygiene rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers graph-level top-level structured guards with missing guard identity and empty declaration paths.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine graph top-level guard base hygiene rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003GK` as the graph top-level guard base hygiene slice.
