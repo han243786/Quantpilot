@@ -12293,3 +12293,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_event_party_violations` covers bundle-level rejection for child-machine structured guards whose transition event consumer and source violate Event Catalog parties. |
 | capability boundary | This does not add event party tolerance, child guard execution, condition evaluation, policy execution, runtime payload reads, event consumption, event source trust, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle child guard event party rejection coverage moves into a shared Event Catalog validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |
+
+### ADV-SM-PROD-003HI: State Machine bundle child guard forbidden parameter path rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making static-contract bundle child Guard Builder proposal-only parameter boundary rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::validate_static_contract()` with a `risk.guard.child` structured guard that declares `active_strategy.position` as a parameter path, asserting bundle validation preserves child machine context and rejects paths outside the proposal-only guard boundary. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child guard forbidden parameter path rejection gate is static validation only, no child guard is executed, no parameter value is resolved, no active strategy field is read or written, no proposal is applied, no topology is mutated, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_forbidden_parameter_path` covers bundle-level rejection for child-machine structured guards that declare parameter paths outside the proposal-only guard boundary. |
+| capability boundary | This does not add forbidden parameter tolerance, child guard execution, condition evaluation, policy execution, parameter resolution, active strategy reads/writes, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle child guard forbidden parameter path coverage moves into a shared parameter-boundary validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |

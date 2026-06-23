@@ -11483,3 +11483,8 @@ Productization supplement: ADV-SM-PROD-003HH State Machine bundle child guard ev
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guards whose transition event consumer and source violate Event Catalog parties.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard event party rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HH` as the bundle child guard event party rejection slice.
+
+Productization supplement: ADV-SM-PROD-003HI State Machine bundle child guard forbidden parameter path rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guards that declare parameter paths outside the proposal-only guard boundary.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard forbidden parameter path rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HI` as the bundle child guard forbidden parameter path rejection slice.
