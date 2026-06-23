@@ -12381,3 +12381,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_summarizes_child_guard_descriptor_condition_operands` covers bundle-level child-machine structured guard condition operand projections and summary counts. |
 | capability boundary | This does not add child guard execution, condition evaluation, parameter resolution, runtime reads, policy execution, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle child guard condition operand summary coverage moves into a shared projection fixture suite or is folded into a broader child Guard Builder summary evidence record. |
+
+### ADV-SM-PROD-003HQ: State Machine bundle child guard event source summary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making static-contract bundle child Guard Builder event-source projection and summary evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::guard_descriptor_projections()` and `guard_descriptor_summary()` with a `risk.guard.child` structured guard on `risk.child.check` whose transition omits event source, proving child graph context, event type projection, missing event-source projection, guarded event type/source summary counts, event-payload read count, and fail-closed disabled execution count. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child guard event source summary gate is read-only projection and summary metadata only, no child guard is executed, no event is consumed, no event source is trusted at runtime, no payload is read at runtime, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_summarizes_child_guard_descriptor_event_source_context` covers bundle-level child-machine structured guard event-source projections and summary counts. |
+| capability boundary | This does not add child guard execution, event consumption, event source trust, runtime payload reads, condition evaluation, policy execution, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle child guard event-source summary coverage moves into a shared projection fixture suite or is folded into a broader child Guard Builder summary evidence record. |

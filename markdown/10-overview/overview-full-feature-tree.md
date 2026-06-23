@@ -11523,3 +11523,8 @@ Productization supplement: ADV-SM-PROD-003HP State Machine bundle child guard co
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guard condition operand projections and summary counts.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard condition operand summary gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HP` as the bundle child guard condition operand summary slice.
+
+Productization supplement: ADV-SM-PROD-003HQ State Machine bundle child guard event source summary gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guard event-source projections and summary counts.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard event source summary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HQ` as the bundle child guard event source summary slice.
