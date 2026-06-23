@@ -11548,3 +11548,8 @@ Productization supplement: ADV-SM-PROD-003HU State Machine bundle guard duplicat
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level cross-graph duplicate guard-id projections and summary counts.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle guard duplicate id cross-graph summary gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HU` as the bundle guard duplicate id cross-graph summary slice.
+
+Productization supplement: ADV-SM-PROD-003HV State Machine bundle guard descriptor cross-graph summary gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level cross-graph guard descriptor projections and summary counts.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle guard descriptor cross-graph summary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HV` as the bundle guard descriptor cross-graph summary slice.
