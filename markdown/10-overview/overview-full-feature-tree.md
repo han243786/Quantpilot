@@ -11473,3 +11473,8 @@ Productization supplement: ADV-SM-PROD-003HF State Machine bundle child guard ba
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guards with missing guard identity and empty declaration paths.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard base hygiene rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HF` as the bundle child guard base hygiene rejection slice.
+
+Productization supplement: ADV-SM-PROD-003HG State Machine bundle child guard duplicate input rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guards with duplicate machine-memory reads and duplicate parameter paths.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard duplicate input rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HG` as the bundle child guard duplicate input rejection slice.

@@ -12271,3 +12271,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_base_hygiene_violations` covers bundle-level rejection for child-machine structured guards with missing guard identity and empty declaration paths. |
 | capability boundary | This does not add malformed child guard tolerance, child guard execution, condition evaluation, policy execution, runtime reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle child guard base hygiene rejection coverage moves into a shared validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |
+
+### ADV-SM-PROD-003HG: State Machine bundle child guard duplicate input rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making static-contract bundle child Guard Builder duplicate input rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::validate_static_contract()` with a `risk.guard.child` structured guard that repeats the `last_signal_at` machine-memory read and repeats `guard.threshold` through case-folded parameter paths, asserting bundle validation preserves child machine context and both duplicate-input diagnostics. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child guard duplicate input rejection gate is static validation only, no child guard is executed, no runtime read is performed, no parameter value is resolved, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_duplicate_inputs` covers bundle-level rejection for child-machine structured guards with duplicate machine-memory reads and duplicate parameter paths. |
+| capability boundary | This does not add duplicate guard input tolerance, child guard execution, condition evaluation, policy execution, runtime reads, parameter resolution, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle child guard duplicate input rejection coverage moves into a shared validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |
