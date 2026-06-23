@@ -11448,3 +11448,8 @@ Productization supplement: ADV-SM-PROD-003HA State Machine bundle child guard fa
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level child structured guard fail-closed blocker projections and summary counts.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard fail-closed blocker projection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HA` as the bundle child guard fail-closed blocker projection slice.
+
+Productization supplement: ADV-SM-PROD-003HB State Machine bundle child guard graph-context projection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level parent and child structured guard projections with graph context and summary counts.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard graph-context projection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HB` as the bundle child guard graph-context projection slice.
