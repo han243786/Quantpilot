@@ -12260,3 +12260,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_projects_guard_descriptors_with_graph_context` covers bundle-level top-level structured guard projections with graph context and summary parity. |
 | capability boundary | This does not add top-level guard execution, condition evaluation, policy execution, runtime payload reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle top-level guard graph-context projection coverage moves into a shared projection fixture suite or is folded into a broader workspace projection evidence record. |
+
+### ADV-SM-PROD-003HF: State Machine bundle child guard base hygiene rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making the static-contract bundle child Guard Builder base hygiene rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::validate_static_contract()` with a `risk.guard.child` structured guard that omits `guard_id` and declares empty read and parameter paths, asserting bundle validation preserves child machine context and all base hygiene diagnostics. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle child guard base hygiene rejection gate is static validation only, no child guard is executed, no runtime read is performed, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_rejects_child_guard_descriptor_base_hygiene_violations` covers bundle-level rejection for child-machine structured guards with missing guard identity and empty declaration paths. |
+| capability boundary | This does not add malformed child guard tolerance, child guard execution, condition evaluation, policy execution, runtime reads, event consumption, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle child guard base hygiene rejection coverage moves into a shared validation fixture suite or is folded into a broader child Guard Builder validation evidence record. |

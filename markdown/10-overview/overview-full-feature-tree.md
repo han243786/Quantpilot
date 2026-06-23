@@ -11468,3 +11468,8 @@ Productization supplement: ADV-SM-PROD-003HE State Machine bundle top-level guar
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level top-level structured guard projections with graph context and summary parity.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle top-level guard graph-context projection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HE` as the bundle top-level guard graph-context projection slice.
+
+Productization supplement: ADV-SM-PROD-003HF State Machine bundle child guard base hygiene rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level child-machine structured guards with missing guard identity and empty declaration paths.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle child guard base hygiene rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HF` as the bundle child guard base hygiene rejection slice.
