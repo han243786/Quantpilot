@@ -58,6 +58,12 @@ jobs:
         shell: cmd
         run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-cleanup-boundary.ps1
 
+      - name: Prepare Tauri frontendDist placeholder
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path frontend/dist | Out-Null
+          Set-Content -Encoding UTF8 -Path frontend/dist/index.html -Value '<!doctype html><html><body></body></html>'
+
       # ── Rust 编译与测试 ──
 
       - name: Rust format check

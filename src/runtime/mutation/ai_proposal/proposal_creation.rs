@@ -188,6 +188,7 @@ pub(crate) async fn create_runtime_ai_proposal(
             review_state: RuntimeApprovalReviewState::Pending,
             chain_stage_impact: vec!["intent".to_string(), "agent".to_string()],
             sandbox_report_url: None,
+            source_runner_evidence: None,
             rollback_plan: RuntimeRollbackPlan {
                 method: "generation_rollback".to_string(),
                 target_generation: 0,

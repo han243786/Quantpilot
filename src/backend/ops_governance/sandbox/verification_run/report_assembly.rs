@@ -22,6 +22,7 @@ pub(super) fn build_report(
         verdict,
         warnings,
         replay_fidelity: fidelity,
+        productization_replay_diff: None,
         generated_at_ms: now_ms,
     }
 }
