@@ -12546,3 +12546,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_contract_rejects_duplicate_structured_guard_descriptor_inputs` covers machine-level structured guard descriptor duplicate read and duplicate parameter path rejection diagnostics. |
 | capability boundary | This does not add duplicate input resolution, guard execution, condition evaluation, parameter resolution, runtime reads, policy execution, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if machine-level duplicate descriptor input rejection coverage moves into a shared Guard Builder validation fixture suite or is folded into a broader machine contract evidence record. |
+
+### ADV-SM-PROD-003IF: State Machine machine guard descriptor invalid condition rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making machine-level structured Guard Builder condition rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4MachineContract::validate_static_contract()` rejecting structured guard conditions with an empty `condition_id`, an event-payload left read that was not declared on the descriptor, and a right parameter path that was not declared on the descriptor. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the machine guard descriptor invalid condition rejection gate is static validation only, no invalid condition is evaluated, no guard is executed, no parameter value is resolved, no runtime read is performed, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_contract_rejects_invalid_structured_guard_descriptor_conditions` covers machine-level structured guard descriptor condition rejection diagnostics. |
+| capability boundary | This does not add condition evaluation, guard execution, parameter resolution, runtime reads, policy execution, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if machine-level invalid condition rejection coverage moves into a shared Guard Builder validation fixture suite or is folded into a broader machine contract evidence record. |

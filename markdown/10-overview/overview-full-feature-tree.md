@@ -11598,3 +11598,8 @@ Productization supplement: ADV-SM-PROD-003IE State Machine machine guard descrip
 - `qrpc_core_ir/src/v4.rs` - covers machine-level structured guard descriptor duplicate read and duplicate parameter path rejection diagnostics.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine machine guard descriptor duplicate input rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IE` as the machine guard descriptor duplicate input rejection slice.
+
+Productization supplement: ADV-SM-PROD-003IF State Machine machine guard descriptor invalid condition rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers machine-level structured guard descriptor condition rejection diagnostics.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine machine guard descriptor invalid condition rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IF` as the machine guard descriptor invalid condition rejection slice.
