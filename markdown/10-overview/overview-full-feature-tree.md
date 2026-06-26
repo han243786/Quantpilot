@@ -11583,3 +11583,8 @@ Productization supplement: ADV-SM-PROD-003IB State Machine machine guard descrip
 - `qrpc_core_ir/src/v4.rs` - covers machine-level structured guard descriptor readiness counts, policy flags, and disabled-fail-closed blocker metadata.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine machine guard descriptor readiness gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IB` as the machine guard descriptor readiness slice.
+
+Productization supplement: ADV-SM-PROD-003IC State Machine machine guard descriptor workspace projection gate.
+- `qrpc_core_ir/src/v4.rs` - covers machine-level structured guard descriptor workspace projections for transition context, reads, parameter paths, conditions, policies, and disabled-fail-closed blocker metadata.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine machine guard descriptor workspace projection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IC` as the machine guard descriptor workspace projection slice.

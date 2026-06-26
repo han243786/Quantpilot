@@ -12513,3 +12513,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_contract_accepts_structured_guard_descriptor_readiness` covers machine-level structured guard descriptor readiness counts, policy flags, and disabled-fail-closed blocker metadata. |
 | capability boundary | This does not add guard execution, condition evaluation, parameter resolution, runtime reads, policy execution, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if machine-level guard descriptor readiness coverage moves into a shared Guard Builder readiness fixture suite or is folded into a broader machine contract evidence record. |
+
+### ADV-SM-PROD-003IC: State Machine machine guard descriptor workspace projection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making the machine-level Guard Builder workspace projection surface directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4MachineContract::guard_descriptor_projections()` on a machine transition, proving transition context, event source, event-payload and machine-memory read projections, threshold and risk-limit parameter projections, a greater-than-or-equal condition projection, fail-closed condition blocker metadata, and timeout/cooldown/fail-closed policy projection metadata. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the machine guard descriptor workspace projection gate is read-only contract projection metadata only, no guard is executed, no condition is evaluated, no policy timing or fallback is executed, no parameter value is resolved, no runtime read is performed, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_contract_projects_guard_descriptors_for_workspace` covers machine-level structured guard descriptor workspace projections for transition context, reads, parameter paths, conditions, policies, and disabled-fail-closed blocker metadata. |
+| capability boundary | This does not add guard execution, condition evaluation, policy execution, fallback execution, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if machine-level guard descriptor workspace projection coverage moves into a shared Guard Builder projection fixture suite or is folded into a broader machine contract evidence record. |
