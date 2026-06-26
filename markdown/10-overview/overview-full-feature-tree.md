@@ -11573,3 +11573,8 @@ Productization supplement: ADV-SM-PROD-003HZ State Machine bundle guard policy m
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level cross-graph timeout, cooldown, fallback, fail-closed fallback, disabled policy execution, and disabled active-strategy write summary counts.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle guard policy mix summary gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HZ` as the bundle guard policy mix summary slice.
+
+Productization supplement: ADV-SM-PROD-003IA State Machine bundle guard parameter path summary gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level cross-graph guard, timeout, cooldown, threshold, and risk-limit parameter path projections, proposal-only counts, and disabled active-strategy write summary counts.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle guard parameter path summary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IA` as the bundle guard parameter path summary slice.

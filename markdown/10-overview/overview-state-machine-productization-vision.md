@@ -12491,3 +12491,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_summarizes_guard_descriptor_policy_mix_across_graphs` covers bundle-level cross-graph timeout, cooldown, fallback, fail-closed fallback, disabled policy execution, and disabled active-strategy write summary counts. |
 | capability boundary | This does not add policy execution, fallback execution, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle cross-graph policy mix summary coverage moves into a shared projection fixture suite or is folded into a broader Guard Builder bundle summary evidence record. |
+
+### ADV-SM-PROD-003IA: State Machine bundle guard parameter path summary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making static-contract bundle Guard Builder parameter path summary evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::guard_descriptor_projections()` and `guard_descriptor_summary()` across `strategy.v4.alpha` and `strategy.v4.beta`, proving guard, timeout, cooldown, threshold, and risk-limit parameter path kinds are summarized across two guarded descriptors while all paths remain proposal-only and active-strategy writes remain disabled. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle guard parameter path summary gate is read-only projection and summary metadata only, no parameter value is resolved, no guard is executed, no condition is evaluated, no runtime read is performed, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_summarizes_guard_descriptor_parameter_paths_across_graphs` covers bundle-level cross-graph guard, timeout, cooldown, threshold, and risk-limit parameter path projections, proposal-only counts, and disabled active-strategy write summary counts. |
+| capability boundary | This does not add parameter resolution, guard execution, condition evaluation, runtime reads, policy execution, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle cross-graph parameter path summary coverage moves into a shared projection fixture suite or is folded into a broader Guard Builder bundle summary evidence record. |
