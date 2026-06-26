@@ -11653,3 +11653,8 @@ Productization supplement: ADV-SM-PROD-003IP State Machine v4 machine contract t
 - `qrpc_core_ir/src/v4.rs` - covers v4 machine contract rejection for a transition without an event type.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine contract transition event type rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IP` as the v4 machine contract transition event type rejection slice.
+
+Productization supplement: ADV-SM-PROD-003IQ State Machine v4 machine contract unknown transition target rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 machine contract rejection for a transition target outside the declared state set.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine contract unknown transition target rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IQ` as the v4 machine contract unknown transition target rejection slice.
