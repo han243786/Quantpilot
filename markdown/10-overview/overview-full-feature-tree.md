@@ -11623,3 +11623,8 @@ Productization supplement: ADV-SM-PROD-003IJ State Machine legacy Core IR v4 mis
 - `qrpc_core_ir/src/v4.rs` - covers legacy Core IR to v4 bridge rejection for missing risk policies.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine legacy Core IR v4 missing risk policies rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IJ` as the legacy Core IR v4 missing risk policies rejection slice.
+
+Productization supplement: ADV-SM-PROD-003IK State Machine legacy Core IR v4 unknown edge endpoint rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers legacy Core IR to v4 bridge rejection for unknown edge endpoints.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine legacy Core IR v4 unknown edge endpoint rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IK` as the legacy Core IR v4 unknown edge endpoint rejection slice.

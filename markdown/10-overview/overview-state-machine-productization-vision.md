@@ -12601,3 +12601,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir core_ir_v4_bridge_rejects_missing_risk_policies` covers legacy Core IR to v4 bridge rejection for missing risk policies. |
 | capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if missing risk policy bridge rejection coverage moves into a shared compatibility bridge fixture suite or is folded into a broader v4 bridge evidence record. |
+
+### ADV-SM-PROD-003IK: State Machine legacy Core IR v4 unknown edge endpoint rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the legacy Core IR to v4 bridge unknown edge endpoint rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `bridge_core_ir_to_v4_machine_graph()` rejecting a legacy Core IR fixture after adding an edge from an unknown source node to `exec_1`, returning `CoreIrV4BridgeVerdict::Rejected`, withholding the generated graph, and emitting the `V4BRIDGE031` diagnostic. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the unknown edge endpoint bridge gate is static compatibility validation only, no graph contract is emitted for the invalid input, no runtime graph is attached, no lowering is attached, no order is submitted, no provider capability is claimed, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir core_ir_v4_bridge_rejects_unknown_core_ir_edge_endpoint` covers legacy Core IR to v4 bridge rejection for unknown edge endpoints. |
+| capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if unknown edge endpoint bridge rejection coverage moves into a shared compatibility bridge fixture suite or is folded into a broader v4 bridge evidence record. |
