@@ -12568,3 +12568,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_contract_rejects_invalid_structured_guard_descriptor_policy` covers machine-level structured guard descriptor policy rejection diagnostics. |
 | capability boundary | This does not add policy execution, fallback execution, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if machine-level invalid policy rejection coverage moves into a shared Guard Builder validation fixture suite or is folded into a broader machine contract evidence record. |
+
+### ADV-SM-PROD-003IH: State Machine legacy Core IR v4 default machine bridge gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the legacy Core IR to v4 default machine graph bridge evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `bridge_core_ir_to_v4_machine_graph()` accepting a legacy Core IR fixture and producing the default observation, decision, and execution machines, a decision-machine risk plane, and the risk-approved decision-to-execution edge while keeping lowering and runtime attachment flags disabled. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the legacy Core IR v4 default machine bridge gate is static compatibility mapping and validation only, no runtime graph is attached, no lowering is attached, no order is submitted, no provider capability is claimed, no topology is mutated outside the generated contract report, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir core_ir_v4_bridge_maps_legacy_core_ir_to_default_machines` covers legacy Core IR to v4 default machine graph compatibility mapping. |
+| capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if legacy Core IR v4 bridge mapping coverage moves into a shared compatibility bridge fixture suite or is folded into a broader v4 bridge evidence record. |

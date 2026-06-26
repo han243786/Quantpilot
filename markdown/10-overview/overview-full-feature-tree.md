@@ -11608,3 +11608,8 @@ Productization supplement: ADV-SM-PROD-003IG State Machine machine guard descrip
 - `qrpc_core_ir/src/v4.rs` - covers machine-level structured guard descriptor policy rejection diagnostics.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine machine guard descriptor invalid policy rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IG` as the machine guard descriptor invalid policy rejection slice.
+
+Productization supplement: ADV-SM-PROD-003IH State Machine legacy Core IR v4 default machine bridge gate.
+- `qrpc_core_ir/src/v4.rs` - covers legacy Core IR to v4 default machine graph compatibility mapping.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine legacy Core IR v4 default machine bridge gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IH` as the legacy Core IR v4 default machine bridge slice.
