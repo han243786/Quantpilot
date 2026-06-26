@@ -11728,3 +11728,8 @@ Productization supplement: ADV-SM-PROD-003JE State Machine v4 QS profile direct 
 - `qrpc_core_ir/src/v4.rs` - covers v4 QS state-machine profile rejection when controlled action blocks are allowed to submit orders directly.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 QS profile direct order submit rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003JE` as the v4 QS profile direct order submit rejection slice.
+
+Productization supplement: ADV-SM-PROD-003JF State Machine v4 QS profile nested state machines required rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 QS state-machine profile rejection when nested state machine support is disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 QS profile nested state machines required rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003JF` as the v4 QS profile nested state machines required rejection slice.
