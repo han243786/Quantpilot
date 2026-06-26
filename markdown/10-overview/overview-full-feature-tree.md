@@ -11743,3 +11743,9 @@ Productization supplement: ADV-SM-PROD-003JH State Machine v4 runtime mode defau
 - `qrpc_core_ir/src/v4.rs` - covers v4 runtime trading mode default contract acceptance and LiveSimulated local simulated settlement authority.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 runtime mode default acceptance gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003JH` as the v4 runtime mode default acceptance slice.
+
+Productization supplement: ADV-SM-PROD-003JI State Machine v4 runtime mode all-modes rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 runtime trading mode rejection when LiveSimulated is removed from the default mode set.
+- `qrpc_core_ir/src/v4/runtime_mode_contract.rs` - defines the required runtime trading modes as PaperActual, PaperSimulated, LiveActual, and LiveSimulated.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 runtime mode all-modes rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003JI` as the v4 runtime mode all-modes rejection slice.

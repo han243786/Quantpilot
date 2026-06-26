@@ -12865,3 +12865,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir runtime_mode_contract_default_is_valid` covers v4 runtime trading mode default contract acceptance and LiveSimulated local simulated settlement authority. |
 | capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, provider fills, local fills, ledger mutation, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if runtime mode default acceptance coverage moves into a shared runtime mode contract fixture suite or is folded into a broader v4 static contract evidence record. |
+
+### ADV-SM-PROD-003JI: State Machine v4 runtime mode all-modes rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the v4 runtime trading mode required-mode rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `RuntimeModeContract::validate_static_contract()` rejecting a default v4 runtime mode contract whose `modes` omit `RuntimeTradingMode::LiveSimulated`; `qrpc_core_ir/src/v4/runtime_mode_contract.rs` defines the required set as `PaperActual`, `PaperSimulated`, `LiveActual`, and `LiveSimulated`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the all-modes rejection gate is static runtime-mode contract validation only, no runtime graph is attached, no order is submitted, no provider capability is claimed, no fill is emitted, no ledger is mutated, no topology is mutated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir runtime_mode_contract_requires_all_four_modes` covers v4 runtime trading mode rejection when the required `LiveSimulated` mode is removed from the default contract. |
+| capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, provider fills, local fills, ledger mutation, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if required runtime mode rejection coverage moves into a shared runtime mode contract fixture suite or is folded into a broader v4 static contract evidence record. |
