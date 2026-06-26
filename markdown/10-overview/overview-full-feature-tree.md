@@ -11578,3 +11578,8 @@ Productization supplement: ADV-SM-PROD-003IA State Machine bundle guard paramete
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level cross-graph guard, timeout, cooldown, threshold, and risk-limit parameter path projections, proposal-only counts, and disabled active-strategy write summary counts.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle guard parameter path summary gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IA` as the bundle guard parameter path summary slice.
+
+Productization supplement: ADV-SM-PROD-003IB State Machine machine guard descriptor readiness gate.
+- `qrpc_core_ir/src/v4.rs` - covers machine-level structured guard descriptor readiness counts, policy flags, and disabled-fail-closed blocker metadata.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine machine guard descriptor readiness gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IB` as the machine guard descriptor readiness slice.

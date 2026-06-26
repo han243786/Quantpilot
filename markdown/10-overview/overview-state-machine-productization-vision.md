@@ -12502,3 +12502,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_summarizes_guard_descriptor_parameter_paths_across_graphs` covers bundle-level cross-graph guard, timeout, cooldown, threshold, and risk-limit parameter path projections, proposal-only counts, and disabled active-strategy write summary counts. |
 | capability boundary | This does not add parameter resolution, guard execution, condition evaluation, runtime reads, policy execution, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle cross-graph parameter path summary coverage moves into a shared projection fixture suite or is folded into a broader Guard Builder bundle summary evidence record. |
+
+### ADV-SM-PROD-003IB: State Machine machine guard descriptor readiness gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making the machine-level structured Guard Builder readiness surface directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `MachineGuardDescriptor::readiness()` on a validated machine transition, proving event-payload, machine-memory, and readonly-runtime-fact read counts; timeout and threshold parameter path counts; a greater-than condition; timeout, cooldown, and fail-closed fallback policy flags; and the disabled-fail-closed execution blocker code and reason. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the machine guard descriptor readiness gate is read-only contract metadata only, no guard is executed, no condition is evaluated, no parameter value is resolved, no runtime read is performed, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir machine_contract_accepts_structured_guard_descriptor_readiness` covers machine-level structured guard descriptor readiness counts, policy flags, and disabled-fail-closed blocker metadata. |
+| capability boundary | This does not add guard execution, condition evaluation, parameter resolution, runtime reads, policy execution, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if machine-level guard descriptor readiness coverage moves into a shared Guard Builder readiness fixture suite or is folded into a broader machine contract evidence record. |
