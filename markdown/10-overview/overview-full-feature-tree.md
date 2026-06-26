@@ -11678,3 +11678,8 @@ Productization supplement: ADV-SM-PROD-003IU State Machine v4 machine graph exec
 - `qrpc_core_ir/src/v4.rs` - covers v4 machine graph contract rejection when execution flow lacks a dedicated risk plane.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine graph execution risk plane required rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IU` as the v4 machine graph execution risk plane required rejection slice.
+
+Productization supplement: ADV-SM-PROD-003IV State Machine v4 machine graph execution bypass edge rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 machine graph contract rejection for execution edges that bypass the risk plane.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine graph execution bypass edge rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IV` as the v4 machine graph execution bypass edge rejection slice.
