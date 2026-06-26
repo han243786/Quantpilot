@@ -12810,3 +12810,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir qs_state_machine_profile_default_is_valid` covers v4 QS state-machine profile default contract acceptance and key policy defaults. |
 | capability boundary | This does not add QS lowering, runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if QS profile default acceptance coverage moves into a shared QS profile contract fixture suite or is folded into a broader v4 static contract evidence record. |
+
+### ADV-SM-PROD-003JD: State Machine v4 QS profile required template rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the v4 QS state-machine profile required template rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `QsStateMachineProfile::validate_static_contract()` rejecting a default QS profile whose `allowed_templates` removes `MachineTemplateKind::Execution`, returning static profile contract errors that include `must allow` and `Execution`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the required template rejection gate is static QS profile contract validation only, no QS compiler lowering is attached, no runtime graph is attached, no order is submitted, no provider capability is claimed, no topology is mutated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir qs_state_machine_profile_requires_all_three_templates` covers v4 QS state-machine profile rejection when Observation, Decision, or Execution template support is missing. |
+| capability boundary | This does not add QS lowering, runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if required template rejection coverage moves into a shared QS profile contract fixture suite or is folded into a broader v4 static contract evidence record. |

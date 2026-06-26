@@ -11718,3 +11718,8 @@ Productization supplement: ADV-SM-PROD-003JC State Machine v4 QS profile default
 - `qrpc_core_ir/src/v4.rs` - covers v4 QS state-machine profile default contract acceptance and key policy defaults.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 QS profile default acceptance gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003JC` as the v4 QS profile default acceptance slice.
+
+Productization supplement: ADV-SM-PROD-003JD State Machine v4 QS profile required template rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 QS state-machine profile rejection when required machine template support is missing.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 QS profile required template rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003JD` as the v4 QS profile required template rejection slice.
