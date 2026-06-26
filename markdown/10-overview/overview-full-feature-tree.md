@@ -11643,3 +11643,8 @@ Productization supplement: ADV-SM-PROD-003IN State Machine v4 machine contract d
 - `qrpc_core_ir/src/v4.rs` - covers v4 machine contract acceptance for a depth-two child machine fixture.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine contract depth-two child machine acceptance gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IN` as the v4 machine contract depth-two child machine acceptance slice.
+
+Productization supplement: ADV-SM-PROD-003IO State Machine v4 machine contract depth-three child machine rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 machine contract rejection for depth-three child machine nesting.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine contract depth-three child machine rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IO` as the v4 machine contract depth-three child machine rejection slice.
