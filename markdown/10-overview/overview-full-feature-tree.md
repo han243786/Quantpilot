@@ -11668,3 +11668,8 @@ Productization supplement: ADV-SM-PROD-003IS State Machine v4 machine graph cycl
 - `qrpc_core_ir/src/v4.rs` - covers v4 machine graph contract rejection for cyclic machine graphs.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine graph cycle rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IS` as the v4 machine graph cycle rejection slice.
+
+Productization supplement: ADV-SM-PROD-003IT State Machine v4 machine graph unknown edge target rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 machine graph contract rejection for an edge target outside the declared machine set.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine graph unknown edge target rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IT` as the v4 machine graph unknown edge target rejection slice.
