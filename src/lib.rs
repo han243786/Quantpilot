@@ -1,3 +1,16 @@
+#![allow(
+    clippy::iter_cloned_collect,
+    clippy::let_unit_value,
+    clippy::manual_clamp,
+    clippy::manual_strip,
+    clippy::match_result_ok,
+    clippy::type_complexity,
+    clippy::unnecessary_cast,
+    clippy::unnecessary_sort_by,
+    clippy::useless_conversion,
+    clippy::useless_vec
+)]
+
 macro_rules! safe_eprintln {
     ($($arg:tt)*) => {{
         // v2.1.0: 尊重 QUANTPILOT_LOG_LEVEL 配置
