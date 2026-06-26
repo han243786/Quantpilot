@@ -12623,3 +12623,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir core_ir_v4_bridge_rejects_core_ir_cycle` covers legacy Core IR to v4 bridge rejection for Core IR cycles. |
 | capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if Core IR cycle bridge rejection coverage moves into a shared compatibility bridge fixture suite or is folded into a broader v4 bridge evidence record. |
+
+### ADV-SM-PROD-003IM: State Machine v4 machine contract flat state group acceptance gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the v4 machine contract flat state group acceptance evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4MachineContract::validate_static_contract()` accepting the canonical `sample_machine()` flat state group fixture by returning `Ok(())`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the flat state group acceptance gate is static contract validation only, no runtime graph is attached, no lowering is attached, no order is submitted, no provider capability is claimed, no topology is mutated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_contract_accepts_flat_state_group` covers v4 machine contract acceptance for a flat state group fixture. |
+| capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if flat state group machine contract acceptance coverage moves into a shared machine contract fixture suite or is folded into a broader v4 static contract evidence record. |

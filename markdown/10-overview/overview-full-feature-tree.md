@@ -11633,3 +11633,8 @@ Productization supplement: ADV-SM-PROD-003IL State Machine legacy Core IR v4 cyc
 - `qrpc_core_ir/src/v4.rs` - covers legacy Core IR to v4 bridge rejection for Core IR cycles.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine legacy Core IR v4 cycle rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IL` as the legacy Core IR v4 cycle rejection slice.
+
+Productization supplement: ADV-SM-PROD-003IM State Machine v4 machine contract flat state group acceptance gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 machine contract acceptance for a flat state group fixture.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine contract flat state group acceptance gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IM` as the v4 machine contract flat state group acceptance slice.
