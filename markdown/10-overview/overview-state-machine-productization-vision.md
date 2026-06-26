@@ -12634,3 +12634,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_contract_accepts_flat_state_group` covers v4 machine contract acceptance for a flat state group fixture. |
 | capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if flat state group machine contract acceptance coverage moves into a shared machine contract fixture suite or is folded into a broader v4 static contract evidence record. |
+
+### ADV-SM-PROD-003IN: State Machine v4 machine contract depth-two child machine acceptance gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the v4 machine contract depth-two child machine acceptance evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4MachineContract::validate_static_contract()` accepting a parent `sample_machine()` whose first state owns a child `sample_machine()` with `machine_id = intent.trend.child`, returning `Ok(())`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the depth-two child machine acceptance gate is static contract validation only, no runtime graph is attached, no lowering is attached, no order is submitted, no provider capability is claimed, no topology is mutated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_contract_accepts_depth_two_child_machine` covers v4 machine contract acceptance for a depth-two child machine fixture. |
+| capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if depth-two child machine acceptance coverage moves into a shared machine contract fixture suite or is folded into a broader v4 static contract evidence record. |
