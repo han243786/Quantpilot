@@ -11628,3 +11628,8 @@ Productization supplement: ADV-SM-PROD-003IK State Machine legacy Core IR v4 unk
 - `qrpc_core_ir/src/v4.rs` - covers legacy Core IR to v4 bridge rejection for unknown edge endpoints.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine legacy Core IR v4 unknown edge endpoint rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IK` as the legacy Core IR v4 unknown edge endpoint rejection slice.
+
+Productization supplement: ADV-SM-PROD-003IL State Machine legacy Core IR v4 cycle rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers legacy Core IR to v4 bridge rejection for Core IR cycles.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine legacy Core IR v4 cycle rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IL` as the legacy Core IR v4 cycle rejection slice.
