@@ -11558,3 +11558,8 @@ Productization supplement: ADV-SM-PROD-003HW State Machine bundle guard mixed ev
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level cross-graph mixed declared/missing event-source projections and summary counts.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle guard mixed event source summary gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HW` as the bundle guard mixed event source summary slice.
+
+Productization supplement: ADV-SM-PROD-003HX State Machine bundle guard template class summary gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level cross-graph observation, execution, and decision guard descriptor class projections and summary counts.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle guard template class summary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HX` as the bundle guard template class summary slice.
