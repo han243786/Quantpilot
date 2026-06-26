@@ -1,6 +1,6 @@
-export { getCapabilityActionBlockReason } from "./capabilityActionBlocks";
-export { buildCapabilityContext, getCapabilityBoundaryIssues } from "./capabilityBoundary";
-export { isCapabilitySyncBlocked } from "./capabilitySync";
+export { getCapabilityActionBlockReason } from "./capabilityActionBlocks.js";
+export { buildCapabilityContext, getCapabilityBoundaryIssues } from "./capabilityBoundary.js";
+export { isCapabilitySyncBlocked } from "./capabilitySync.js";
 export {
   CAPABILITY_ACTION_MAP,
   DECLARED_INDICATOR_KINDS,
@@ -12,4 +12,4 @@ export {
   SUPPORTED_RUNTIME_MODES,
   SUPPORTED_SYMBOLS,
   WORKSPACE_SURFACE_MAP
-} from "./capabilityCatalog";
+} from "./capabilityCatalog.js";

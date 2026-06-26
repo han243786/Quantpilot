@@ -104,7 +104,7 @@ describe("strategyWorkspaceAuxiliaryTabsShell", () => {
       body: JSON.stringify({ source: "source text" })
     });
     expect(buildSourceScenarioHttpError(500, "x".repeat(350)).error).toHaveLength(
-      "HTTP 500: ".length + 300
+      "Request failed (".length + String(500).length + "): ".length + 300
     );
     expect(buildSourceScenarioStepPresentation("passed")).toEqual({
       icon: "✓",

@@ -1,5 +1,5 @@
-import { CAPABILITY_ACTION_MAP } from "./capabilityCatalog";
-import { getCapabilityBoundaryIssues } from "./capabilityBoundary";
+import { CAPABILITY_ACTION_MAP } from "./capabilityCatalog.js";
+import { getCapabilityBoundaryIssues } from "./capabilityBoundary.js";
 
 function normalizeUiActionStatus(actionKey, capabilities) {
   const action = CAPABILITY_ACTION_MAP[actionKey];

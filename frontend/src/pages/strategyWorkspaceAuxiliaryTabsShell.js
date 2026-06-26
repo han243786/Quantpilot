@@ -100,7 +100,7 @@ export function buildSourceScenarioRunRequest(source) {
 }
 
 export function buildSourceScenarioHttpError(status, text) {
-  return { error: `HTTP ${status}: ${String(text).slice(0, 300)}` };
+  return { error: `Request failed (${status}): ${String(text).slice(0, 300)}` };
 }
 
 export function buildSourceScenarioStepPresentation(status) {
