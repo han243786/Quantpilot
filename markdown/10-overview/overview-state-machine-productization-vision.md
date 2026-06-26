@@ -12689,3 +12689,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_accepts_top_level_dag_with_risk_plane` covers v4 machine graph contract acceptance for a top-level DAG with risk plane. |
 | capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if top-level DAG risk plane acceptance coverage moves into a shared machine graph contract fixture suite or is folded into a broader v4 static graph contract evidence record. |
+
+### ADV-SM-PROD-003IS: State Machine v4 machine graph cycle rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the v4 machine graph cycle rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4MachineGraphContract::validate_static_contract()` rejecting a `sample_machine_graph()` after adding an `execution.router` to `intent.trend` edge that creates a cycle, returning static graph contract errors that include `machine graph must be acyclic`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the machine graph cycle rejection gate is static graph contract validation only, no runtime graph is attached, no lowering is attached, no order is submitted, no provider capability is claimed, no topology is mutated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_cycle` covers v4 machine graph contract rejection for cyclic machine graphs. |
+| capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if machine graph cycle rejection coverage moves into a shared machine graph contract fixture suite or is folded into a broader v4 static graph contract evidence record. |

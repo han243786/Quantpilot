@@ -11663,3 +11663,8 @@ Productization supplement: ADV-SM-PROD-003IR State Machine v4 machine graph top-
 - `qrpc_core_ir/src/v4.rs` - covers v4 machine graph contract acceptance for a top-level DAG with risk plane.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine graph top-level DAG risk plane acceptance gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IR` as the v4 machine graph top-level DAG risk plane acceptance slice.
+
+Productization supplement: ADV-SM-PROD-003IS State Machine v4 machine graph cycle rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 machine graph contract rejection for cyclic machine graphs.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine graph cycle rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IS` as the v4 machine graph cycle rejection slice.
