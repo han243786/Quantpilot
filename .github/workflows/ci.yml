@@ -27,6 +27,8 @@ jobs:
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@1.95.0
+        with:
+          components: rustfmt, clippy
 
       # ── 检查流水线 (§4.1) ──
 
