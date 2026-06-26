@@ -12788,3 +12788,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_unknown_transition_event` covers v4 machine graph contract rejection when transition events are missing from the Event Catalog. |
 | capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if unknown transition event rejection coverage moves into a shared graph event usage fixture suite or is folded into a broader v4 static graph contract evidence record. |
+
+### ADV-SM-PROD-003JB: State Machine v4 machine graph event emitter permission rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the v4 machine graph Event Catalog emitter permission rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4MachineGraphContract::validate_static_contract()` rejecting a `sample_machine_graph()` whose `risk.approved` event spec changes `allowed_emitters` to `other.risk`, returning graph event party errors that include `not an allowed emitter`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the event emitter permission rejection gate is graph static event party validation only, no runtime graph is attached, no lowering is attached, no order is submitted, no provider capability is claimed, no topology is mutated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_rejects_event_emitter_not_allowed` covers v4 machine graph contract rejection when an event source is outside the Event Catalog allowed emitter set. |
+| capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if event emitter permission rejection coverage moves into a shared graph event party fixture suite or is folded into a broader v4 static graph contract evidence record. |
