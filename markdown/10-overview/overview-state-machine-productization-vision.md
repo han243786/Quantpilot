@@ -12766,3 +12766,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_event_catalog_rejects_untyped_payload_field` covers v4 Event Catalog contract rejection for payload fields without a declared type name. |
 | capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if payload type name rejection coverage moves into a shared event catalog contract fixture suite or is folded into a broader v4 static graph contract evidence record. |
+
+### ADV-SM-PROD-003IZ: State Machine v4 machine graph event catalog required rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the v4 machine graph required Event Catalog rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4MachineGraphContract::validate_static_contract()` rejecting a `sample_machine_graph()` whose `event_catalog` is removed while transition or edge events remain, returning graph event usage errors that include `must declare event_catalog`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the required Event Catalog rejection gate is graph static event usage validation only, no runtime graph is attached, no lowering is attached, no order is submitted, no provider capability is claimed, no topology is mutated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_requires_event_catalog_for_events` covers v4 machine graph contract rejection when transition or edge events exist without an Event Catalog. |
+| capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if required Event Catalog rejection coverage moves into a shared graph event usage fixture suite or is folded into a broader v4 static graph contract evidence record. |
