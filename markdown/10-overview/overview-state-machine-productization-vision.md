@@ -12447,3 +12447,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_summarizes_guard_descriptors_across_graphs` covers bundle-level cross-graph guard descriptor projections and summary counts. |
 | capability boundary | This does not add guard execution, condition evaluation, parameter resolution, runtime reads, policy execution, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle cross-graph guard descriptor summary coverage moves into a shared projection fixture suite or is folded into a broader Guard Builder bundle summary evidence record. |
+
+### ADV-SM-PROD-003HW: State Machine bundle guard mixed event source summary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making static-contract bundle Guard Builder mixed event-source summary evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::guard_descriptor_projections()` and `guard_descriptor_summary()` across `strategy.v4.alpha` and `strategy.v4.beta`, proving two guarded transitions can summarize one declared event source and one missing event source while preserving two descriptor, guard id, machine, transition, and event type counts. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle guard mixed event-source summary gate is read-only projection and summary metadata only, no event source is inferred, no guard is executed, no condition is evaluated, no parameter value is resolved, no runtime read is performed, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_summarizes_guard_descriptor_mixed_event_sources` covers bundle-level cross-graph mixed declared/missing event-source projections and summary counts. |
+| capability boundary | This does not add event-source inference, guard execution, condition evaluation, parameter resolution, runtime reads, policy execution, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle cross-graph mixed event-source summary coverage moves into a shared projection fixture suite or is folded into a broader Guard Builder bundle summary evidence record. |
