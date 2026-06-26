@@ -11648,3 +11648,8 @@ Productization supplement: ADV-SM-PROD-003IO State Machine v4 machine contract d
 - `qrpc_core_ir/src/v4.rs` - covers v4 machine contract rejection for depth-three child machine nesting.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine contract depth-three child machine rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IO` as the v4 machine contract depth-three child machine rejection slice.
+
+Productization supplement: ADV-SM-PROD-003IP State Machine v4 machine contract transition event type rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 machine contract rejection for a transition without an event type.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine contract transition event type rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IP` as the v4 machine contract transition event type rejection slice.

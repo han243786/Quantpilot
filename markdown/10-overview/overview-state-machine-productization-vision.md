@@ -12656,3 +12656,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_contract_rejects_depth_three_child_machine` covers v4 machine contract rejection for depth-three child machine nesting. |
 | capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if depth-three child machine rejection coverage moves into a shared machine contract fixture suite or is folded into a broader v4 static contract evidence record. |
+
+### ADV-SM-PROD-003IP: State Machine v4 machine contract transition event type rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the v4 machine contract transition event type rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4MachineContract::validate_static_contract()` rejecting a `sample_machine()` whose first transition clears `event.event_type`, returning static contract errors that include `must declare an event_type`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the transition event type rejection gate is static contract validation only, no runtime graph is attached, no lowering is attached, no order is submitted, no provider capability is claimed, no topology is mutated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_contract_rejects_transition_without_event` covers v4 machine contract rejection for a transition without an event type. |
+| capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if transition event type rejection coverage moves into a shared machine contract fixture suite or is folded into a broader v4 static contract evidence record. |
