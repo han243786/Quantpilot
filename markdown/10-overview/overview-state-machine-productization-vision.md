@@ -12744,3 +12744,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_requires_high_priority_decision_risk_machine` covers v4 machine graph contract rejection when the decision risk machine is below the required high-priority threshold. |
 | capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if high-priority risk machine rejection coverage moves into a shared machine graph contract fixture suite or is folded into a broader v4 static graph contract evidence record. |
+
+### ADV-SM-PROD-003IX: State Machine v4 event catalog strong typed event acceptance gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the v4 Event Catalog strong typed event acceptance evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `MachineEventCatalog::validate_static_contract()` accepting the canonical `sample_event_catalog()` with the v4 catalog schema version and strong event specs for market, machine, intent, and risk-plane flow by returning `Ok(())`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the strong typed event acceptance gate is local Event Catalog static contract validation only, no runtime graph is attached, no lowering is attached, no order is submitted, no provider capability is claimed, no topology is mutated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_event_catalog_accepts_strong_events` covers v4 Event Catalog contract acceptance for the canonical strong typed event catalog. |
+| capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if strong typed Event Catalog acceptance coverage moves into a shared event catalog contract fixture suite or is folded into a broader v4 static graph contract evidence record. |

@@ -11688,3 +11688,8 @@ Productization supplement: ADV-SM-PROD-003IW State Machine v4 machine graph high
 - `qrpc_core_ir/src/v4.rs` - covers v4 machine graph contract rejection when the decision risk machine is below the required high-priority threshold.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine graph high-priority risk machine rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IW` as the v4 machine graph high-priority risk machine rejection slice.
+
+Productization supplement: ADV-SM-PROD-003IX State Machine v4 event catalog strong typed event acceptance gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 Event Catalog contract acceptance for the canonical strong typed event catalog.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 event catalog strong typed event acceptance gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IX` as the v4 Event Catalog strong typed event acceptance slice.
