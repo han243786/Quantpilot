@@ -17,7 +17,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-gover
 | --- | --- |
 | disallowed_claim（禁止声明） | 4 |
 | restricted（受限） | 6 |
-| supported（已支持） | 66 |
+| supported（已支持） | 65 |
 | trace_only（仅追踪） | 1 |
 
 ## 按系列汇总
@@ -31,7 +31,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-gover
 | runtime_mode（运行模式） | 1 |
 | strategy_ir_indicator_kind（策略 IR 指标类型） | 18 |
 | symbol（交易对） | 3 |
-| ui_action（UI 操作） | 15 |
+| ui_action（UI 操作） | 14 |
 | user_facing_claim（面向用户声明） | 7 |
 | workspace_surface（工作区界面） | 10 |
 
@@ -119,7 +119,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\check-capability-gover
 | ui.action.export_runtime_config | export_runtime_config | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | 只在当前策略图编译通过后导出图生成的 runtime_config。; 当前端正在同步后端能力快照或进入安全回退模式时，该操作会被锁定。 |
 | ui.action.export_quantscript | export_quantscript | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | 只导出当前 strategy_graph 草稿，不依赖后端能力门禁，也不会替代 formal QuantScript 编译链路。 |
 | ui.action.compile | compile | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | 策略中间表示只承担语义预检。; 运行时编译仍然是可运行输出的最终真源。 |
-| ui.action.start_simulation | start_simulation | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | 当前 Beta 边界内仅支持纸面模拟运行时。; 缓存回退模式下仍可见，但依旧受后端校验约束。 |
 | ui.action.start_v4_simulation | start_v4_simulation | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | v4 模拟运行只接收 v4 QS 静态审计通过后的 machine graph handoff。; 嵌套状态机当前为 beta，深度上限为 2，并必须输出复杂度预算与层级 evidence。; 该入口固定使用 PaperSimulated，本地模拟成交不会连接 provider submission。 |
 | ui.action.run_backtest | run_backtest | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | v4 backtest uses /api/runtime/backtest with runtime_kind=v4 and exposes v4_artifact evidence without enabling provider submission.; v4.5.0 adds beta tick_replay artifacts, advanced simulated order evidence, and microstructure metrics under the same PaperSimulated boundary.; 当前仅提供基础回放/回测支持，不宣称研究级回测能力。; 缓存回退模式下仍可见，但依旧受后端校验约束。 |
 | ui.action.stop_runtime | stop_runtime | supported | frontend editor owner | action gating, reason text, E2E | backend:/api/capabilities.ui_actions.actions | 停止入口只对当前运行中会话可用。 |
