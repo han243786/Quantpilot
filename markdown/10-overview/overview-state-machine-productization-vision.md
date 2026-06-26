@@ -12821,3 +12821,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir qs_state_machine_profile_requires_all_three_templates` covers v4 QS state-machine profile rejection when Observation, Decision, or Execution template support is missing. |
 | capability boundary | This does not add QS lowering, runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if required template rejection coverage moves into a shared QS profile contract fixture suite or is folded into a broader v4 static contract evidence record. |
+
+### ADV-SM-PROD-003JE: State Machine v4 QS profile direct order submit rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the v4 QS state-machine profile direct order submit rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `QsStateMachineProfile::validate_static_contract()` rejecting a default QS profile whose `action_block_policy.allow_direct_order_submit` is set to `true`, returning static profile contract errors that include `must not submit orders directly`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the direct order submit rejection gate is static QS profile contract validation only, no QS compiler lowering is attached, no runtime graph is attached, no order is submitted, no provider capability is claimed, no topology is mutated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir qs_state_machine_profile_rejects_direct_order_submit` covers v4 QS state-machine profile rejection when controlled action blocks are allowed to submit orders directly. |
+| capability boundary | This does not add QS lowering, runtime lowering, runtime execution, provider-native submission, direct order submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if direct order submit rejection coverage moves into a shared QS profile contract fixture suite or is folded into a broader v4 static contract evidence record. |
