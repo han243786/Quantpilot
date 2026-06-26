@@ -12799,3 +12799,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_event_emitter_not_allowed` covers v4 machine graph contract rejection when an event source is outside the Event Catalog allowed emitter set. |
 | capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if event emitter permission rejection coverage moves into a shared graph event party fixture suite or is folded into a broader v4 static graph contract evidence record. |
+
+### ADV-SM-PROD-003JC: State Machine v4 QS profile default acceptance gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the v4 QS state-machine profile default acceptance evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `default_v4_qs_state_machine_profile()` producing a `QsStateMachineProfile` that validates with `Ok(())`, allows state groups and nested state machines, and requires a dedicated high-priority risk plane. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the QS profile default acceptance gate is static profile contract validation only, no QS compiler lowering is attached, no runtime graph is attached, no order is submitted, no provider capability is claimed, no topology is mutated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir qs_state_machine_profile_default_is_valid` covers v4 QS state-machine profile default contract acceptance and key policy defaults. |
+| capability boundary | This does not add QS lowering, runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if QS profile default acceptance coverage moves into a shared QS profile contract fixture suite or is folded into a broader v4 static contract evidence record. |
