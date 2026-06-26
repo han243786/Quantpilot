@@ -11673,3 +11673,8 @@ Productization supplement: ADV-SM-PROD-003IT State Machine v4 machine graph unkn
 - `qrpc_core_ir/src/v4.rs` - covers v4 machine graph contract rejection for an edge target outside the declared machine set.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine graph unknown edge target rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IT` as the v4 machine graph unknown edge target rejection slice.
+
+Productization supplement: ADV-SM-PROD-003IU State Machine v4 machine graph execution risk plane required rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 machine graph contract rejection when execution flow lacks a dedicated risk plane.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine graph execution risk plane required rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IU` as the v4 machine graph execution risk plane required rejection slice.
