@@ -12733,3 +12733,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir machine_graph_rejects_execution_bypass_edge` covers v4 machine graph contract rejection for execution edges that bypass the risk plane. |
 | capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if execution bypass edge rejection coverage moves into a shared machine graph contract fixture suite or is folded into a broader v4 static graph contract evidence record. |
+
+### ADV-SM-PROD-003IW: State Machine v4 machine graph high-priority risk machine rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the v4 machine graph high-priority risk machine rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4MachineGraphContract::validate_static_contract()` rejecting a `sample_machine_graph()` whose `risk.guard` machine priority is raised to `100`, returning static graph contract errors that include `below min_priority`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the high-priority risk machine rejection gate is static graph contract validation only, no runtime graph is attached, no lowering is attached, no order is submitted, no provider capability is claimed, no topology is mutated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir machine_graph_requires_high_priority_decision_risk_machine` covers v4 machine graph contract rejection when the decision risk machine is below the required high-priority threshold. |
+| capability boundary | This does not add runtime lowering, runtime execution, provider-native submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if high-priority risk machine rejection coverage moves into a shared machine graph contract fixture suite or is folded into a broader v4 static graph contract evidence record. |
