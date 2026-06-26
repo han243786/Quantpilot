@@ -11703,3 +11703,8 @@ Productization supplement: ADV-SM-PROD-003IZ State Machine v4 machine graph even
 - `qrpc_core_ir/src/v4.rs` - covers v4 machine graph contract rejection when transition or edge events exist without an Event Catalog.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine graph event catalog required rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003IZ` as the v4 machine graph Event Catalog required rejection slice.
+
+Productization supplement: ADV-SM-PROD-003JA State Machine v4 machine graph unknown transition event rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 machine graph contract rejection when transition events are missing from the Event Catalog.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 machine graph unknown transition event rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003JA` as the v4 machine graph unknown transition event rejection slice.
