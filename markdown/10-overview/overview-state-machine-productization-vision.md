@@ -12480,3 +12480,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir static_contract_bundle_summarizes_guard_descriptor_read_sources_across_graphs` covers bundle-level cross-graph machine-memory, readonly-runtime-fact, and event-payload guard read-source projections and summary counts. |
 | capability boundary | This does not add guard read execution, guard execution, condition evaluation, parameter resolution, runtime reads, policy execution, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if bundle cross-graph read-source summary coverage moves into a shared projection fixture suite or is folded into a broader Guard Builder bundle summary evidence record. |
+
+### ADV-SM-PROD-003HZ: State Machine bundle guard policy mix summary gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.3`, `2.7`, `2.8`, and `2.9`; continue `SM-PROD-003` by making static-contract bundle Guard Builder policy mix summary evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `V4StaticContractBundle::guard_descriptor_projections()` and `guard_descriptor_summary()` across `strategy.v4.alpha` and `strategy.v4.beta`, proving timeout, cooldown, fallback, fail-closed fallback, policy timing, disabled policy execution, and disabled active-strategy write counts are summarized across two guarded descriptors. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the bundle guard policy mix summary gate is read-only projection and summary metadata only, no policy timing is executed, no fallback is executed, no guard is executed, no condition is evaluated, no parameter value is resolved, no runtime read is performed, no proposal is applied, no topology is mutated, no active strategy state is written, and no Event Catalog or Memory Schema is edited. |
+| tests | `cargo test -p qrpc-core-ir static_contract_bundle_summarizes_guard_descriptor_policy_mix_across_graphs` covers bundle-level cross-graph timeout, cooldown, fallback, fail-closed fallback, disabled policy execution, and disabled active-strategy write summary counts. |
+| capability boundary | This does not add policy execution, fallback execution, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if bundle cross-graph policy mix summary coverage moves into a shared projection fixture suite or is folded into a broader Guard Builder bundle summary evidence record. |

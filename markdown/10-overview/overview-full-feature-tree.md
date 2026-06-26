@@ -11568,3 +11568,8 @@ Productization supplement: ADV-SM-PROD-003HY State Machine bundle guard read sou
 - `qrpc_core_ir/src/v4.rs` - covers bundle-level cross-graph machine-memory, readonly-runtime-fact, and event-payload guard read-source projections and summary counts.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle guard read source summary gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HY` as the bundle guard read source summary slice.
+
+Productization supplement: ADV-SM-PROD-003HZ State Machine bundle guard policy mix summary gate.
+- `qrpc_core_ir/src/v4.rs` - covers bundle-level cross-graph timeout, cooldown, fallback, fail-closed fallback, disabled policy execution, and disabled active-strategy write summary counts.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine bundle guard policy mix summary gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003HZ` as the bundle guard policy mix summary slice.
