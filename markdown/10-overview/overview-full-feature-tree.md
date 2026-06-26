@@ -11733,3 +11733,8 @@ Productization supplement: ADV-SM-PROD-003JF State Machine v4 QS profile nested 
 - `qrpc_core_ir/src/v4.rs` - covers v4 QS state-machine profile rejection when nested state machine support is disabled.
 - `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 QS profile nested state machines required rejection gate ownership.
 - `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003JF` as the v4 QS profile nested state machines required rejection slice.
+
+Productization supplement: ADV-SM-PROD-003JG State Machine v4 QS profile high-priority risk plane rejection gate.
+- `qrpc_core_ir/src/v4.rs` - covers v4 QS state-machine profile rejection when the dedicated high-priority risk plane requirement is disabled.
+- `markdown/00-matrix-governance/module-tree.md` - records State Machine v4 QS profile high-priority risk plane rejection gate ownership.
+- `markdown/10-overview/overview-state-machine-productization-vision.md` - records `ADV-SM-PROD-003JG` as the v4 QS profile high-priority risk plane rejection slice.

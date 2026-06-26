@@ -12843,3 +12843,14 @@ AI 不允许:
 | tests | `cargo test -p qrpc-core-ir qs_state_machine_profile_requires_nested_state_machines_enabled` covers v4 QS state-machine profile rejection when nested state machine support is disabled. |
 | capability boundary | This does not add QS lowering, runtime lowering, runtime execution, provider-native submission, direct order submission, guard execution, condition evaluation, parameter resolution, runtime reads, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
 | rollback | Remove this record if nested state machine support rejection coverage moves into a shared QS profile contract fixture suite or is folded into a broader v4 static contract evidence record. |
+
+### ADV-SM-PROD-003JG: State Machine v4 QS profile high-priority risk plane rejection gate
+
+| field | value |
+| --- | --- |
+| vision alignment | Bind `2.1`, `2.3`, `2.7`, and `2.9`; continue `SM-PROD-003` by making the v4 QS state-machine profile high-priority risk plane rejection evidence directly traceable from the North Star record. |
+| implementation | `qrpc_core_ir/src/v4.rs` covers `QsStateMachineProfile::validate_static_contract()` rejecting a default QS profile whose `risk_plane_policy.dedicated_high_priority_risk_plane_required` is set to `false`, returning static profile contract errors that include `high-priority risk safety plane`. |
+| runtime boundary | Runtime behavior remains unchanged and fail-closed: the high-priority risk plane rejection gate is static QS profile contract validation only, no QS compiler lowering is attached, no runtime graph is attached, no order is submitted, no provider capability is claimed, no topology is mutated, and no active strategy state is written. |
+| tests | `cargo test -p qrpc-core-ir qs_state_machine_profile_requires_high_priority_risk_plane` covers v4 QS state-machine profile rejection when the dedicated high-priority risk plane requirement is disabled. |
+| capability boundary | This does not add QS lowering, runtime lowering, runtime execution, provider-native submission, direct order submission, guard execution, condition evaluation, parameter resolution, runtime reads, risk-plane bypass, topology mutation, proposal application, Event Catalog/Memory Schema editing, capability source mutation, AI automatic apply, or active strategy writes. |
+| rollback | Remove this record if high-priority risk plane rejection coverage moves into a shared QS profile contract fixture suite or is folded into a broader v4 static contract evidence record. |
